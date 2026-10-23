@@ -190,6 +190,8 @@ export function runBorrowTests(tmsLinks: BorrowTmsLinks, tags: string[]) {
 
         await app.borrow.clickWithdrawCollateral();
         await app.borrow.authorizeWithdraw();
+        await waitForPreviousStepToLand();
+        await app.borrow.deauthorizeBorrowing();
 
         await app.borrow.expectWithdrawSuccess();
         await app.borrow.clickBackToMyLoans();

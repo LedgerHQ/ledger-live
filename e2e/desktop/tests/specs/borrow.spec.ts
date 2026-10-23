@@ -255,20 +255,25 @@ test.describe("Borrow", () => {
       await app.borrow.clickRepaidLoanDashboardRow();
       await app.borrow.clickWithdrawCollateral();
 
-      const signWithdrawOnDevice = async () => {
+      const signContractOnDevice = async () => {
         await app.speculos.acceptEnableTransactionCheck();
         await app.speculos.signEvmContractTransaction();
       };
 
       await app.borrow.clickAuthorizeWithdraw();
-      await app.borrow.completeHostDeviceSignature(signWithdrawOnDevice);
+      await app.borrow.completeHostDeviceSignature(signContractOnDevice);
 
       if (await app.borrow.clickExecutionTryAgainIfVisible()) {
         await app.borrow.clickAuthorizeWithdraw();
-        await app.borrow.completeHostDeviceSignature(signWithdrawOnDevice);
+        await app.borrow.completeHostDeviceSignature(signContractOnDevice);
       }
 
-      await app.borrow.expectWithdrawExecutionCompleted();
+      await app.borrow.expectWithdrawStepCompleted();
+
+      await app.borrow.clickDeauthorizeBorrowing();
+      await app.borrow.completeHostDeviceSignature(signContractOnDevice);
+      await app.borrow.expectDeauthorizeBorrowingStepCompleted();
+
       await app.borrow.expectWithdrawSuccess();
       await app.borrow.clickBackToMyLoans();
       await waitForLoanOutcome("withdrawn");
