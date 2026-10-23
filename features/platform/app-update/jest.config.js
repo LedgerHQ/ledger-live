@@ -1,20 +1,6 @@
-const { withEsmDeps } = require("@support/jest/shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
-const config = {
-  testEnvironment: "node",
-  passWithNoTests: true,
-  roots: ["<rootDir>/src"],
-  testMatch: ["**/*.test.ts"],
-  transform: {
-    "^.+\\.(t|j)sx?$": ["@swc/jest", { jsc: { target: "esnext" } }],
-  },
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  reporters: [
-    "default",
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
-};
-
-module.exports = withEsmDeps(config);
+module.exports = createSharedJestConfig(
+  { rootDir: __dirname, passWithNoTests: true },
+  { esm: true },
+);

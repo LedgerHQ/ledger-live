@@ -1,7 +1,7 @@
 import { sanitizeError } from "./index";
 import axios from "axios";
 
-const COUNTERVALUES_URL = "https://global.api.prd.ledger.com/countervalue/v3/spot/simple";
+const COUNTERVALUES_URL = "https://countervalues.live.ledger.com/v3/spot/simple";
 
 /**
  * Fetches the current USD price for a currency from the Ledger countervalues API

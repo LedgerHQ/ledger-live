@@ -7,6 +7,7 @@ import type {
   ProgressDisplay,
 } from "../../../hooks/useFinishingProgress";
 import type { OsUpdateSheetSpec, OsUpdateStepLayoutSpec } from "..";
+import { OsUpdateButton } from "../../../analytics/types";
 import { FINISHING_ANIMATION_MS } from "../../UpdateProgressScreen/ProgressBar";
 import { UpdateProgressScreen } from "../../UpdateProgressScreen";
 import { UpdatesAppliedScreen } from "../../UpdatesAppliedScreen";
@@ -27,6 +28,7 @@ type Props = Readonly<{
   /** The last progress shown, kept behind the sheets. */
   lastDisplay?: ProgressDisplay;
   onClose: () => void;
+  trackClick: (button: OsUpdateButton) => void;
 }>;
 
 function getScreen({
@@ -80,7 +82,12 @@ function getScreen({
   }
 }
 
-function getSheet({ state, deviceModelId, deviceName }: Props): OsUpdateSheetSpec | undefined {
+function getSheet({
+  state,
+  deviceModelId,
+  deviceName,
+  trackClick,
+}: Props): OsUpdateSheetSpec | undefined {
   switch (state.type) {
     case RestoreBackupStateType.LOADING:
     case RestoreBackupStateType.RESTORING:
@@ -98,18 +105,39 @@ function getSheet({ state, deviceModelId, deviceName }: Props): OsUpdateSheetSpe
       return {
         content: <ContinueOnDeviceContent deviceModelId={deviceModelId} deviceName={deviceName} />,
       };
-    case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
-      return {
-        content: <SecureConnectionRefusedContent onRetry={state.retry} onCancel={state.cancel} />,
+    case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED: {
+      const onRetry = () => {
+        trackClick(OsUpdateButton.RETRY);
+        state.retry();
       };
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
+      };
+      return {
+        content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
+      };
+    }
     case RestoreBackupStateType.DEVICE_DISCONNECTED:
       return { content: <DeviceDisconnectedContent /> };
-    case RestoreBackupStateType.OUT_OF_MEMORY:
-      return { content: <OutOfMemoryContent onCancel={state.cancel} /> };
-    case RestoreBackupStateType.UNEXPECTED_ERROR:
-      return {
-        content: <UnexpectedErrorContent onCancel={state.cancel} />,
+    case RestoreBackupStateType.OUT_OF_MEMORY: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
       };
+      return {
+        content: <OutOfMemoryContent onCancel={onCancel} />,
+      };
+    }
+    case RestoreBackupStateType.UNEXPECTED_ERROR: {
+      const onCancel = () => {
+        trackClick(OsUpdateButton.CANCEL);
+        state.cancel();
+      };
+      return {
+        content: <UnexpectedErrorContent onCancel={onCancel} />,
+      };
+    }
     default: {
       const unhandled: never = state;
       return unhandled;

@@ -10,4 +10,7 @@ import { appConfigStorage } from "./storage";
 const storage = Config.DETOX ? e2eAppConfigStorage : appConfigStorage;
 
 /** The configuration of this session, resolved once when this module is evaluated. */
-export const appConfig = loadAppConfig(storage, profileOf(Config.CONFIG_PROFILE, __DEV__));
+export const { config: appConfig, session: appConfigSession } = loadAppConfig(
+  storage,
+  profileOf(Config.CONFIG_PROFILE, __DEV__),
+);

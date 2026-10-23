@@ -19,7 +19,9 @@ const LAYERS = {
   "features/flow/oxlint.config.mts": layer("features-flow"),
   "features/platform/oxlint.config.mts": layer("features-platform"),
   "libs/oxlint.config.mts": layer("libs"),
+  "libs/coin-modules/oxlint.config.mts": layer("libs-coin"),
   "libs/coin-tester-modules/oxlint.config.mts": layer("libs-coin-tester"),
+  "libs/wallet-btc/oxlint.config.mts": layer("libs-coin"),
   "shared/oxlint.config.mts": layer("shared"),
   "support/oxlint.config.mts": layer("support"),
   "tools/oxlint.config.mts": layer("tools"),
@@ -126,6 +128,46 @@ test("a missing layer config is reported for the packages it covers", () => {
     ["libs/coin-tester-modules/oxlint.config.mts"],
   );
   assert.deepEqual(messages(root, "libs/c"), []);
+});
+
+test("a package that is its own layer root passes with its layer config", () => {
+  const root = workspace({
+    "libs/coin-modules/a/package.json": manifest({ lint: "oxlint src" }),
+    "libs/wallet-btc/package.json": manifest({ lint: "oxlint src" }),
+  });
+  assert.deepEqual(messages(root, "libs/coin-modules/a"), []);
+  assert.deepEqual(messages(root, "libs/wallet-btc"), []);
+});
+
+test("a package that is its own layer root is checked like any other layer", () => {
+  const root = workspace({
+    "libs/wallet-btc/oxlint.config.mts": layer("libs"),
+    "libs/wallet-btc/.oxlintrc.json": "{}",
+    "libs/wallet-btc/src/oxlint.config.mts": layer("libs-coin"),
+    "libs/wallet-btc/package.json": manifest(),
+  });
+  assert.deepEqual(
+    lint
+      .check({ workspaceRoot: root, projectRoot: "libs/wallet-btc" })
+      .map(v => v.file)
+      .sort(),
+    [
+      "libs/wallet-btc/.oxlintrc.json",
+      "libs/wallet-btc/oxlint.config.mts",
+      "libs/wallet-btc/src/oxlint.config.mts",
+    ],
+  );
+  assert.match(messages(root, "libs/wallet-btc").at(-1), /@support\/lint\/libs-coin/);
+
+  const missing = workspace({
+    "libs/wallet-btc/oxlint.config.mts": null,
+    "libs/wallet-btc/package.json": manifest(),
+  });
+  // libs/ has a config, but it is not the preset wallet-btc runs on.
+  assert.deepEqual(
+    lint.check({ workspaceRoot: missing, projectRoot: "libs/wallet-btc" }).map(v => v.file),
+    ["libs/wallet-btc/oxlint.config.mts"],
+  );
 });
 
 test("a config at the workspace root is reported", () => {

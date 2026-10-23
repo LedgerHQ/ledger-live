@@ -10,6 +10,7 @@
     "./features-flow": "./features-flow.mts",
     "./features-platform": "./features-platform.mts",
     "./libs": "./libs.mts",
+    "./libs-coin": "./libs-coin.mts",
     "./libs-coin-tester": "./libs-coin-tester.mts",
     "./shared": "./shared.mts",
     "./support": "./support.mts",

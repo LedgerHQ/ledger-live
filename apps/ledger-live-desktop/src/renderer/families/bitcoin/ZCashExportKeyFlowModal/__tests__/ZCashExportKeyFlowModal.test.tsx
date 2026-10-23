@@ -316,4 +316,82 @@ describe("ZCash Export UFVK Flow", () => {
       }),
     ).toBeVisible();
   });
+
+  describe("birthday block height", () => {
+    const findBlockHeightAtDate = jest.fn(async (_account: unknown, date: string) =>
+      date === "2026-07-28" ? 3_428_143 : 3_500_000,
+    );
+
+    const renderBirthdayStep = (props: {
+      birthday?: string;
+      invalidBirthday?: boolean;
+      syncFromZero?: boolean;
+    }) => {
+      const bridge = { findBlockHeightAtDate };
+      jest
+        .spyOn(require("@ledgerhq/live-common/bridge/index"), "getAccountBridge")
+        .mockReturnValue(
+          Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge }),
+        );
+      const element = (p: typeof props) => (
+        <Body
+          stepId="birthday"
+          ufvk={ufvk}
+          ufvkExportError={ufvkExportError}
+          onStepIdChanged={jest.fn()}
+          onUfvkChanged={jest.fn()}
+          onConnectionFailed={jest.fn()}
+          onRetry={jest.fn()}
+          onClose={jest.fn()}
+          birthday={p.birthday ?? "2026-07-28"}
+          invalidBirthday={p.invalidBirthday ?? false}
+          syncFromZero={p.syncFromZero ?? false}
+          handleBirthdayChange={jest.fn()}
+          handleSyncFromZero={jest.fn()}
+          handleEnableShieldedBalance={jest.fn()}
+          params={{ account }}
+        />
+      );
+      const view = render(element(props));
+      return { rerender: (p: typeof props) => view.rerender(element(p)) };
+    };
+
+    beforeEach(() => findBlockHeightAtDate.mockClear());
+
+    it("shows the block height the birthday resolves to", async () => {
+      renderBirthdayStep({});
+
+      expect(await screen.findByTestId("birthday-block-height")).toHaveTextContent(
+        "Block height: 3428143",
+      );
+    });
+
+    it("hides it when the date is invalid", async () => {
+      renderBirthdayStep({ invalidBirthday: true });
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      expect(screen.queryByTestId("birthday-block-height")).not.toBeInTheDocument();
+      expect(findBlockHeightAtDate).not.toHaveBeenCalled();
+    });
+
+    it("hides it when scanning from block zero", async () => {
+      renderBirthdayStep({ syncFromZero: true });
+
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      expect(screen.queryByTestId("birthday-block-height")).not.toBeInTheDocument();
+      expect(findBlockHeightAtDate).not.toHaveBeenCalled();
+    });
+
+    it("updates the height when the date changes", async () => {
+      const { rerender } = renderBirthdayStep({});
+      expect(await screen.findByText("Block height: 3428143")).toBeVisible();
+
+      rerender({ birthday: "2026-09-01" });
+
+      expect(await screen.findByText("Block height: 3500000")).toBeVisible();
+      expect(screen.queryByText("Block height: 3428143")).not.toBeInTheDocument();
+    });
+  });
 });

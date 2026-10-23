@@ -564,7 +564,7 @@ describe("sendFeatures", () => {
 
   describe("applyMemoToTransaction", () => {
     describe("fallback behavior", () => {
-      it.each(["algorand", "stacks", "internet_computer", "mina"])(
+      it.each(["algorand", "internet_computer", "mina"])(
         "should use default memo field for %s",
         family => {
           const result = applyMemoToTransaction(family, "test memo");
@@ -582,6 +582,14 @@ describe("sendFeatures", () => {
       it("should apply memo for solana", () => {
         expect(applyMemoToTransaction("solana", "test memo", {})).toEqual({
           memoType: "TEXT",
+          memoValue: "test memo",
+        });
+      });
+
+      it("should set memo, memoType and memoValue for stacks", () => {
+        expect(applyMemoToTransaction("stacks", "test memo")).toEqual({
+          memo: "test memo",
+          memoType: "memo",
           memoValue: "test memo",
         });
       });

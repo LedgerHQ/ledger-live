@@ -19,12 +19,8 @@ const NETWORK_NOISE_HOSTS = [
   "datadoghq.com",
   "braze.com",
   "cdn.live.ledger.com",
-];
-
-/** Countervalues routes: the gateway host is shared with other services, so match its path too. */
-const NETWORK_NOISE_URL_PREFIXES = [
-  "global.api.prd.ledger.com/countervalue/",
-  "global.api.stg.ledger-test.com/countervalue/",
+  "countervalues.live.ledger.com",
+  "countervalues.api.live.ledger.com",
 ];
 
 const NETWORK_NOISE_ASSET_EXTENSIONS = new Set([
@@ -68,8 +64,6 @@ function isNoiseNetworkUrl(url: string): boolean {
   }
   const lowerPath = pathname.toLowerCase();
   if (NETWORK_NOISE_ASSET_EXTENSIONS.has(pathExtension(lowerPath))) return true;
-  const hostPath = `${host}${lowerPath}`;
-  if (NETWORK_NOISE_URL_PREFIXES.some(prefix => hostPath.startsWith(prefix))) return true;
   return NETWORK_NOISE_HOSTS.some(
     noiseHost => host === noiseHost || host.endsWith(`.${noiseHost}`),
   );

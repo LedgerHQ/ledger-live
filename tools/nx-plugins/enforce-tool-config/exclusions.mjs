@@ -3,63 +3,51 @@
 //
 // `rules` names the rules an entry exempts the subtree from. A rule added before every package
 // conforms adds entries scoped to it, and its tool migration deletes them. Give every entry an exit
-// condition.
+// condition. A PERMANENT entry records a decision to keep a config as it is: its exit condition
+// says when to revisit that decision.
 
 const LINT_LEAVES =
   "keep their own oxlint config, which no support/lint preset reproduces yet. Exit condition: " +
   "the subtree moves onto its layer's preset and its config is deleted.";
+
+const PERMANENT_LEAF =
+  "PERMANENT: a leaf config with one consumer, which a preset would only wrap. Exit condition: " +
+  "revisit when a second package needs the same config.";
 
 // The jest rule: consumers of @support/jest whose config does not come out of a preset factory.
 const JEST_ESM_HELPER_ONLY =
   "TEMPORARY. A hand-rolled jest config that only takes withEsmDeps from @support/jest/shared. " +
   "Exit condition: the package builds its config with a preset factory, or stops depending on " +
   "@support/jest.";
-const JEST_FLOW_NATIVE_ONLY =
-  "TEMPORARY. Native-only tests: the config drops the web project from createFlowJestConfig() " +
-  "instead of passing overrides. Exit condition: @support/jest/features-flow offers a native-only " +
-  "factory, as @support/jest/shared does with createSharedUiNativeJestConfig.";
 
 /** @type {Record<string, { rules: string[], reason: string }>} */
 export const EXCLUSIONS = {
   apps: {
     rules: ["lint", "tsconfig"],
     reason:
-      `TEMPORARY. lint: the applications ${LINT_LEAVES} ` +
-      "tsconfig: application configs carry bundler, platform and build settings no preset " +
-      "covers yet. Exit condition: an application archetype in @support/tsconfig, then each " +
-      "application moved onto it.",
+      `lint: the applications keep their own oxlint config. ${PERMANENT_LEAF} ` +
+      "tsconfig: TEMPORARY. Application configs carry bundler, platform and build settings no " +
+      "preset covers yet. Exit condition: an application archetype in @support/tsconfig, then " +
+      "each application moved onto it.",
   },
-  "apps/web-tools": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
+  "apps/web-tools": {
+    rules: ["jest"],
+    reason:
+      "A jsdom app config that only takes withEsmDeps from @support/jest/shared. " + PERMANENT_LEAF,
+  },
   e2e: {
     rules: ["lint", "tsconfig"],
     reason:
-      `TEMPORARY. lint: the end-to-end suites ${LINT_LEAVES} ` +
-      "tsconfig: end-to-end suites run their own TypeScript setups (Playwright, Detox). Exit " +
-      "condition: the suites moved onto a @support/tsconfig preset.",
+      `lint: the end-to-end suites keep their own oxlint config. ${PERMANENT_LEAF} ` +
+      "tsconfig: TEMPORARY. End-to-end suites run their own TypeScript setups (Playwright, " +
+      "Detox). Exit condition: the suites moved onto a @support/tsconfig preset.",
   },
-  "features/flow/app-availability": {
-    rules: ["jest"],
-    reason:
-      "TEMPORARY. The config edits the projects createFlowJestConfig() returns, adding a web " +
-      "setup file and a native module mapping. Exit condition: the features-flow factory takes " +
-      "per-project overrides.",
-  },
-  "features/flow/app-longer-password": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-password-removal": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-password-setup": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-protection-prompt": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-unlock": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
   "features/platform/app-lock": {
     rules: ["jest"],
     reason:
       "TEMPORARY. A features/platform package: it hand-rolls a node project and borrows the " +
       "native project of @support/jest/features-flow for its UI folders. Exit condition: a preset " +
       "covers features/platform packages.",
-  },
-  "features/platform/app-update": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
-  "libs/coin-modules": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The coin modules, and coin-bitcoin on top of them, ${LINT_LEAVES}`,
   },
   "libs/coin-modules/coin-bitcoin": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/coin-modules/coin-zcash": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
@@ -70,10 +58,6 @@ export const EXCLUSIONS = {
       "tsconfig: a composite project rooted at the package directory, with a nested src/ " +
       "project that references it; no lib preset emits from that layout. Exit condition: the " +
       "package builds from src/ like the other libs, then extends @support/tsconfig/lib.",
-  },
-  "libs/ledger-services": {
-    rules: ["lint"],
-    reason: `TEMPORARY. The ledger-services packages ${LINT_LEAVES}`,
   },
   "libs/ledgerjs": {
     rules: ["lint", "tsconfig", "jest"],
@@ -86,8 +70,6 @@ export const EXCLUSIONS = {
       "jest: their jest config only takes withEsmDeps from @support/jest/shared. Exit " +
       "condition: it is built by a preset factory.",
   },
-  "libs/live-signer-celo": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
-  "libs/live-signer-evm": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/transaction-observability": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ui": {
     rules: ["lint", "tsconfig"],
@@ -99,19 +81,18 @@ export const EXCLUSIONS = {
       "extends a @support/tsconfig preset.",
   },
   "libs/wallet-btc": {
-    rules: ["lint", "jest"],
+    rules: ["jest"],
     reason:
-      `TEMPORARY. lint: wallet-btc ${LINT_LEAVES} ` +
-      "jest: its jest configs only take withEsmDeps from @support/jest/shared. Exit condition: " +
-      "they are built by a preset factory.",
+      "TEMPORARY. Its jest configs only take withEsmDeps from @support/jest/shared. Exit " +
+      "condition: they are built by a preset factory.",
   },
   tests: {
     rules: ["lint", "tsconfig"],
     reason:
-      `TEMPORARY. lint: the test apps ${LINT_LEAVES} ` +
-      "tsconfig: the dummy apps the end-to-end suites load are standalone web apps with their " +
-      "own compiler options. Exit condition: they move onto a @support/tsconfig preset with the " +
-      "e2e suites.",
+      `lint: the test apps keep their own oxlint config. ${PERMANENT_LEAF} ` +
+      "tsconfig: TEMPORARY. The dummy apps the end-to-end suites load are standalone web apps " +
+      "with their own compiler options. Exit condition: they move onto a @support/tsconfig preset " +
+      "with the e2e suites.",
   },
   tools: {
     rules: ["tsconfig"],

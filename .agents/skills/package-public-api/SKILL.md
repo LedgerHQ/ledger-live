@@ -40,6 +40,48 @@ anything, but it re-exports like a barrel: `export *` from a relative file and a
 re-export only. So `export * from "./exports"` in the index with the sorting or the proxy in
 `exports.ts` fails the same way (`hidden-barrel`, `cross-package-reexport`, …).
 
+## Where a barrel may sit
+
+Under `src/`, an `index.*` (platform variants included) is allowed in three places:
+
+1. **An entry**: `src/index.*`, or the target of a `package.json#exports` entry. Test support
+   entries count.
+2. **One level below an entry**: an entry reaches it through `export * from "./dir"`, directly or
+   through plain modules. An entry reached from another entry counts from itself, so
+   `jest.native.ts` re-exporting `index.native.ts` adds no level.
+3. **An internals location**: `internals/`, as defined below.
+
+```text
+src/
+├── index.ts                    # ✅ entry: export * from "./hooks";
+├── hooks/index.ts              # ✅ one level below the entry
+├── hooks/useThing/index.ts     # ❌ nested-barrel: entry → hooks → hooks/useThing
+├── internals/index.ts          # ✅ internals location
+└── Row/index.ts                # ❌ orphan-barrel: imported by view.ts, re-exported by no entry
+```
+
+**Why.** A barrel only earns its place as the public face of a package or of one part of it. An
+orphan is an indirection no consumer sees, and it outlives its entry: drop `"./state"` from
+`exports` and `state/index.ts` stays behind as an orphan, so the same check catches it. A chain of
+barrels hides where a name comes from.
+
+**Fix an orphan** (`orphan-barrel`) by asking whether another package uses what it groups:
+
+- **Yes**: expose it with one `export * from "./dir"` line in the root barrel.
+- **No**: delete the barrel and import the files directly, or move the folder under `internals/`.
+  Expose only code another package imports.
+
+**Fix a nested barrel** (`nested-barrel`) by re-exporting its files from the first-level barrel
+instead of chaining barrels. An `index.tsx` that holds code is a module, not a barrel: rename it
+after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
+
+Purity of what a barrel reaches stays with the rules above. The debt found when the check landed
+sits in
+[`intermediate-barrels.js`](../../../tools/nx-plugins/enforce-package-structure/intermediate-barrels.js).
+It only shrinks: fixing a listed barrel means deleting its entry, and a test fails on an entry
+whose file is gone or allowed. Never add one. Packages with `skip` in `exceptions.js` are not
+checked.
+
 ## Where private code goes
 
 Three recognised forms, usable at any depth:
@@ -134,3 +176,4 @@ Refuse and point here when you see:
 - an `import`, a declaration or a local `export default` in any `index.*`
 - `export * as ns from` — namespacing is still sorting
 - a barrel re-exporting `internals`, or re-exporting another workspace package
+- a new `index.*` below `src/` that no entry re-exports, or that a barrel below an entry re-exports

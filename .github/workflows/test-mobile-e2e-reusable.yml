@@ -178,7 +178,7 @@ on:
         description: "Runner label for the Android tests"
         required: false
         type: string
-        default: ledger-live-linux-e2e-8CPU-32RAM
+        default: ledger-wallet-8cpu-github-public-cached
       max_shards:
         description: "Max number of shards per platform (0 = no cap)"
         required: false
@@ -285,16 +285,8 @@ env:
   E2E_BROADCAST_BOTH_MOBILE_PLATFORMS: ${{ inputs.enable_broadcast == true && inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
-  # Android AVD configuration
-  AVD_API: 36
-  AVD_ARCH: x86_64
-  AVD_PROFILE: pixel_9_pro
-  AVD_TARGET: google_apis
-  AVD_NAME: "Android_Emulator"
-  AVD_CORES: 2
-  AVD_RAM_SIZE: 3072
-  AVD_HEAP_SIZE: 1024
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  # Android AVD configuration: tools/actions/composites/setup-android-avd/avd.env, loaded
+  # into each job that needs it by that action at @develop, never from the checkout under test.
   MOBILE_ARTIFACTS_ROOT: e2e/mobile/artifacts
   E2E_TEST_RESULTS_PREFIX_IOS: e2e-test-results-ios
   E2E_TEST_RESULTS_PREFIX_ANDROID: e2e-test-results-android
@@ -317,8 +309,10 @@ jobs:
       android_timeout: ${{ steps.generate-shards.outputs.android_timeout }}
       ios_native_exists: ${{ steps.check-ios-native.outputs.cache-hit }}
       ios_js_exists: ${{ steps.check-js.outputs.ios }}
+      ios_js_prefix: ${{ steps.check-js.outputs.ios_prefix }}
       android_native_exists: ${{ steps.check-android-native.outputs.cache-hit }}
       android_js_exists: ${{ steps.check-js.outputs.android }}
+      android_js_prefix: ${{ steps.check-js.outputs.android_prefix }}
       ios_native_key: ${{ steps.cache-keys.outputs.ios_native_key }}
       ios_js_key: ${{ steps.cache-keys.outputs.ios_js_key }}
       android_native_key: ${{ steps.cache-keys.outputs.android_native_key }}
@@ -379,14 +373,29 @@ jobs:
           IOS_HASH: ${{ inputs.js_bundle_hash_ios }}
           ANDROID_HASH: ${{ inputs.js_bundle_hash_android }}
         run: |
-          # @nx/s3-cache stores each task result at <cacheKeyPrefix>/<hash>
-          exists() {
-            [ -n "$1" ] &&
-              aws s3api head-object --bucket "$CACHE_BUCKET" --key "${NX_CACHE_KEY_PREFIX}/$1" > /dev/null 2>&1 &&
-              echo true || echo false
+          # @nx/s3-cache stores each task result at <cacheKeyPrefix>/<hash>. Branches also look in
+          # develop/, read only: the hash covers every input, so the same hash is the same bundle,
+          # and a freshly rebased branch finds the one develop already built.
+          cached_prefix() {
+            local prefix
+            [ -n "$1" ] || return 1
+            for prefix in "$NX_CACHE_KEY_PREFIX" develop; do
+              if aws s3api head-object --bucket "$CACHE_BUCKET" --key "${prefix}/$1" > /dev/null 2>&1; then
+                echo "$prefix"
+                return 0
+              fi
+            done
+            return 1
           }
-          echo "ios=$(exists "$IOS_HASH")" | tee -a "$GITHUB_OUTPUT"
-          echo "android=$(exists "$ANDROID_HASH")" | tee -a "$GITHUB_OUTPUT"
+          report() {
+            local prefix
+            if prefix="$(cached_prefix "$2")"; then
+              printf '%s=true\n%s_prefix=%s\n' "$1" "$1" "$prefix"
+            else
+              echo "$1=false"
+            fi
+          }
+          { report ios "$IOS_HASH"; report android "$ANDROID_HASH"; } | tee -a "$GITHUB_OUTPUT"
 
       - name: Resolve per-platform Speculos device
         id: devices
@@ -484,6 +493,11 @@ jobs:
             }
           ' "$raw"
 
+      - name: Load AVD configuration
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          config_only: "true"
+
       - name: Determine cache keys
         id: cache-keys
         env:
@@ -500,12 +514,7 @@ jobs:
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
           echo "android_timing_cache_key=${PREFIX}android-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
           echo "ios_timing_cache_key=${PREFIX}ios-e2e-timing-${{ hashFiles('e2e/mobile/specs') }}-2" >> $GITHUB_OUTPUT
-          # QAA-1509: this cache carries /usr/local/lib/android/sdk/emulator/, so the
-          # emulator binary every shard runs is whichever one sdkmanager installed the
-          # last time this key changed -- the setup job is skipped while the object
-          # exists. Bump the trailing version to force a rebuild onto a current
-          # emulator; the one pinned since AVD_API went to 36 segfaults mid-run.
-          echo "avd_cache_key=${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9" >> $GITHUB_OUTPUT
+          echo "avd_cache_key=${AVD_CACHE_KEY}" >> $GITHUB_OUTPUT
           echo "pod_check_key=${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/Podfile', 'pnpm-lock.yaml') }}-pod-lockfile-validated" >> "$GITHUB_OUTPUT"
 
       - name: Prepare test filter
@@ -668,22 +677,13 @@ jobs:
     name: "Setup Android AVD"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.outputs.avd_exists != 'true' }}
-    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    # Same runner as the shards that load its snapshot.
+    runs-on: ${{ inputs.android_runner_label || 'ledger-wallet-8cpu-github-public-cached' }}
     steps:
+      # Same version determine-builds loaded the configuration from, so the AVD matches its key.
       - name: Setup Android AVDs
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
         with:
-          ref: ${{ inputs.ref || github.sha }}
-          avd_api: ${{ env.AVD_API }}
-          avd_arch: ${{ env.AVD_ARCH }}
-          avd_profile: ${{ env.AVD_PROFILE }}
-          avd_target: ${{ env.AVD_TARGET }}
-          avd_name: ${{ env.AVD_NAME }}
-          avd_cores: ${{ env.AVD_CORES }}
-          avd_ram_size: ${{ env.AVD_RAM_SIZE }}
-          avd_heap_size: ${{ env.AVD_HEAP_SIZE }}
-          avd_options: ${{ env.AVD_OPTIONS }}
-          cache_key: ${{ needs.determine-builds.outputs.avd_cache_key }}
           r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
           r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           r2_endpoint: ${{ secrets.R2_ENDPOINT }}
@@ -861,6 +861,7 @@ jobs:
       - name: Fetch JS Build from the Nx cache
         if: ${{ needs.determine-builds.outputs.ios_js_exists == 'true' }}
         env:
+          NX_CACHE_KEY_PREFIX: ${{ needs.determine-builds.outputs.ios_js_prefix }}
           ENDPOINT: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           REGION: ${{ secrets.AWS_CACHE_REGION }}
           CACHE_BUCKET: ${{ env.cache-bucket }}
@@ -980,7 +981,7 @@ jobs:
       contents: read
     needs: [build-android, determine-builds, setup-android-avd]
     if: ${{ always() && !cancelled() && inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' && needs.determine-builds.result == 'success' && contains(fromJSON('["success","skipped"]'), needs.build-android.result) && (needs.setup-android-avd.result == 'success' || needs.setup-android-avd.result == 'skipped') }}
-    runs-on: ${{ inputs.android_runner_label || 'ledger-live-linux-e2e-8CPU-32RAM' }}
+    runs-on: ${{ inputs.android_runner_label || 'ledger-wallet-8cpu-github-public-cached' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -1014,11 +1015,30 @@ jobs:
         continue-on-error: true
         uses: LedgerHQ/ledger-live/tools/actions/composites/start-usage-sampler@develop
 
+      # On the Android E2E runner image the AVD sits on a disk whose first read can be slow: copying
+      # it in "Duplicate AVDs" has taken up to 94 s. Read it now in the background, so that read
+      # overlaps the checkout, install and e2e dependency build instead of holding up the copy.
+      - name: Read the preinstalled AVD ahead (background)
+        run: |
+          [ -f "${HOME}/.android/avd-cache-key" ] || exit 0
+          log="${RUNNER_TEMP}/avd-read-ahead.log"
+          echo "started $(date -u +%T)" > "$log"
+          nohup bash -c '
+            start=$(date +%s)
+            find "${HOME}/.android/avd" -type f -exec cat {} + > /dev/null
+            echo "read $(du -sh "${HOME}/.android/avd" | cut -f1) in $(( $(date +%s) - start ))s, done $(date -u +%T)"
+          ' >> "$log" 2>&1 &
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
           persist-credentials: false
+
+      - name: Load AVD configuration
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          config_only: "true"
 
       - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
@@ -1026,7 +1046,7 @@ jobs:
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-pnpm-cache: "false"
+          skip-pnpm-cache: "true"
           cache-develop-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
           cache-branch-role-arn: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
           nx-key: ${{ secrets.NX_KEY }}
@@ -1048,6 +1068,9 @@ jobs:
 
       - name: Setup Android Environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        with:
+          # The shard runs no sdkmanager: adb, build-tools and the emulator are already here.
+          install_sdk: "false"
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -1073,6 +1096,7 @@ jobs:
       - name: Fetch JS Bundle from the Nx cache
         if: ${{ needs.determine-builds.outputs.android_js_exists == 'true' }}
         env:
+          NX_CACHE_KEY_PREFIX: ${{ needs.determine-builds.outputs.android_js_prefix }}
           REGION: ${{ secrets.AWS_CACHE_REGION }}
           CACHE_BUCKET: ${{ env.cache-bucket }}
           HASH: ${{ inputs.js_bundle_hash_android }}
@@ -1101,7 +1125,29 @@ jobs:
         run: node node_modules/detox/scripts/postinstall.js
         working-directory: apps/ledger-live-mobile
 
+      # A runner image with this AVD baked in (setup-android-avd's stamp) skips the download.
+      # Otherwise remove the image's AVD, so the R2 copy isn't extracted on top of it.
+      - name: Check for a preinstalled AVD
+        id: preinstalled-avd
+        env:
+          AVD_CACHE_KEY_WANTED: ${{ needs.determine-builds.outputs.avd_cache_key }}
+        run: |
+          stamp="${HOME}/.android/avd-cache-key"
+          if [ "$(cat "$stamp" 2>/dev/null)" = "${AVD_CACHE_KEY_WANTED}" ]; then
+            echo "Preinstalled AVD matches ${AVD_CACHE_KEY_WANTED}"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -f "$stamp" ]; then
+            echo "::warning title=Runner image AVD is out of date::Image has $(cat "$stamp"), need ${AVD_CACHE_KEY_WANTED}; using R2."
+            rm -rf "${HOME}/.android/avd" "$stamp" \
+              /usr/local/lib/android/sdk/emulator \
+              "/usr/local/lib/android/sdk/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
+          fi
+          echo "found=false" >> "$GITHUB_OUTPUT"
+
       - name: Download android emulator
+        if: steps.preinstalled-avd.outputs.found != 'true'
         timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
@@ -1114,12 +1160,30 @@ jobs:
           region: auto
           destination: /
 
+      - name: Report the AVD in use
+        continue-on-error: true
+        env:
+          AVD_SOURCE: ${{ steps.preinstalled-avd.outputs.found == 'true' && 'runner image' || 'R2' }}
+          AVD_CACHE_KEY_WANTED: ${{ needs.determine-builds.outputs.avd_cache_key }}
+        run: |
+          sdk=/usr/local/lib/android/sdk
+          {
+            echo "### Android AVD (${AVD_SOURCE})"
+            echo "- Key: \`${AVD_CACHE_KEY_WANTED}\`"
+            echo "- Emulator: \`$("${sdk}/emulator/emulator" -version 2>/dev/null | head -1)\`"
+            echo "- System image revision: \`$(sed -n 's/^Pkg.Revision=//p' "${sdk}/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}/source.properties")\`"
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Duplicate AVDs for parallel testing
         uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
         with:
           source_avd_name: ${{ env.AVD_NAME }}
           target_suffixes: "_2,_3"
           avd_api: ${{ env.AVD_API }}
+
+      - name: Report the AVD read-ahead
+        continue-on-error: true
+        run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
 
       - name: Cleanup any running Android emulators (pre-boot)
         run: tools/scripts/cleanup-android-emulators.sh || true
@@ -1128,8 +1192,7 @@ jobs:
         run: |
           LOG_FILE="${{ env.MOBILE_ARTIFACTS_ROOT }}/emulator-boot.log"
           mkdir -p ${{ env.MOBILE_ARTIFACTS_ROOT }}
-          export AVD_NAME="${{ env.AVD_NAME }}"
-          export AVD_OPTIONS="${{ env.AVD_OPTIONS }}"
+          # AVD_NAME and AVD_OPTIONS come from the "Load AVD configuration" step.
           nohup bash tools/scripts/boot-android-emulators-ci.sh > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Android emulators boot started in background."
         shell: bash
@@ -1165,8 +1228,8 @@ jobs:
 
       - name: Get Android device info
         run: |
-          DEVICE_NAME=$(echo '${{ env.AVD_PROFILE }}' | sed 's/_/ /g; s/\b\w/\U&/g')
-          echo "DEVICE_INFO=${DEVICE_NAME} (Android ${{ env.AVD_API }})" >> $GITHUB_ENV
+          DEVICE_NAME=$(echo "${AVD_PROFILE}" | sed 's/_/ /g; s/\b\w/\U&/g')
+          echo "DEVICE_INFO=${DEVICE_NAME} (Android ${AVD_API})" >> $GITHUB_ENV
 
       - name: Compute userdata cache key date
         if: ${{ env.USERDATA_CACHE_ENABLED == 'true' }}

@@ -7,6 +7,7 @@ import {
   someCV,
   noneCV,
 } from "@stacks/transactions";
+import type { StacksMemo } from "../types";
 
 /**
  * Converts a memo string to a buffer Clarity Value for sending in transactions
@@ -20,6 +21,15 @@ export const memoToBufferCV = (memo?: any): ClarityValue => {
   }
   return someCV(bufferCV(new Uint8Array(Buffer.from(String(memo)))));
 };
+
+/**
+ * Reads the memo text off a transfer intent
+ *
+ * @param memo - The intent's memo
+ * @returns The memo text, or undefined when the intent carries none
+ */
+export const memoFromIntent = (memo?: StacksMemo): string | undefined =>
+  memo?.type === "string" && memo.kind === "memo" && memo.value !== "" ? memo.value : undefined;
 
 /**
  * Converts a hex string (from memo) to a readable string

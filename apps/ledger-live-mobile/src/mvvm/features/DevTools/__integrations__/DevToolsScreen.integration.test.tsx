@@ -21,6 +21,7 @@ jest.mock(
     useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
     usePayCardToolProps: () => ({ marker: "pay-card-props" }),
     useEnvDevToolProps: () => ({ marker: "env-props" }),
+    useAppConfigToolProps: () => ({ marker: "app-config-props" }),
     useDeviceOnboardingActor: () => ({
       state: null,
       context: null,
@@ -92,6 +93,7 @@ describe("DevToolsScreen", () => {
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },
       { id: "env", config: { marker: "env-props" } },
+      { id: "app-config", config: { marker: "app-config-props" } },
       {
         id: "pay-card",
         config: {

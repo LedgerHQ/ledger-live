@@ -57,6 +57,7 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify asset ready to earn {{{0}}}")
   async verifyAssetReadyToEarn(ticker: string) {
+    await waitWebElementByTestId(this.assetItemTicker(ticker));
     await detoxExpect(getWebElementByTestId(this.assetItemTicker(ticker))).toExist();
   }
 

@@ -201,7 +201,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{ contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features') || contains(needs.determine-affected.outputs.paths, 'enforce-i18n-keys') || contains(needs.determine-affected.outputs.paths, 'enforce-tool-config') || contains(needs.determine-affected.outputs.paths, 'devtools') || contains(needs.determine-affected.outputs.paths, 'support') || contains(needs.determine-affected.outputs.paths, 'tests/') || contains(needs.determine-affected.outputs.paths, 'tools/') }}
+    if: ${{ github.event.merge_group.base_ref == 'refs/heads/develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}

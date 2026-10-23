@@ -4,8 +4,8 @@ import { server } from "@tests/server";
 import { http, HttpResponse } from "msw";
 import { MarketCapCard } from "../index";
 
-const API_ENDPOINT = "https://global.api.prd.ledger.com/countervalue/v3/markets/global";
-const SPOT_SIMPLE_URL = "https://global.api.prd.ledger.com/countervalue/v3/spot/simple";
+const API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets/global";
+const SPOT_SIMPLE_URL = "https://countervalues.live.ledger.com/v3/spot/simple";
 
 // percentageChanges are ratios (0.1 => +10.00%).
 const createMockResponse = (marketCap: number, dailyChangeRatio: number) => ({

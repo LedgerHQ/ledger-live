@@ -4,7 +4,7 @@ import { mockBtcCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__moc
 import type { State } from "~/reducers/types";
 import { useAssetMarketData } from "../useAssetMarketData";
 
-const COUNTERVALUES_API = "https://global.api.prd.ledger.com/countervalue";
+const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
 
 type MarketQueryParams = {
   ids: string[];

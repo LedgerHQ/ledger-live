@@ -1,7 +1,9 @@
 import Config from "react-native-config";
+import RNRestart from "react-native-restart";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { authApiExtra } from "@shared/auth";
+import { createAppConfigMiddleware } from "@shared/app-config";
 import { AuthSDK } from "@ledgerhq/auth";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
@@ -43,7 +45,7 @@ import {
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { selectFeature } from "@shared/feature-flags";
-import { appConfig } from "~/setup";
+import { appConfig, appConfigSession } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
@@ -64,7 +66,12 @@ export const store = configureStore({
         immutableCheck: false,
         thunk: {
           extraArgument: {
-            ...accountDataExtra(accountDataSources((): State => store.getState())),
+            ...accountDataExtra(
+              accountDataSources(
+                (): State => store.getState(),
+                (action): unknown => store.dispatch(action),
+              ),
+            ),
             ...calApiExtra({
               calServiceUrl: getEnv("CAL_SERVICE_URL"),
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -123,6 +130,9 @@ export const store = configureStore({
           getIdentitiesState: (state: State) => state.identities,
           getAnalyticsConsent: canPushDeviceIdsSelector,
         }),
+      )
+      .concat(
+        createAppConfigMiddleware({ session: appConfigSession, reload: () => RNRestart.restart() }),
       )
       .concat(createMobileFeatureFlagsMiddleware())
       .concat(sleepingListener.middleware)

@@ -1,7 +1,7 @@
 import { http } from "msw";
 import ethMockHourly from "./fixtures/countervalues/ethMockedHourly.json";
 
-const COUNTERVALUES_BASE = "https://global.api.prd.ledger.com/countervalue/v3";
+const COUNTERVALUES_BASE = "https://countervalues.live.ledger.com/v3";
 
 function createHistoricalHandler(granularity: "daily" | "hourly") {
   return http.get(`${COUNTERVALUES_BASE}/historical/${granularity}/simple`, ({ request }) => {
