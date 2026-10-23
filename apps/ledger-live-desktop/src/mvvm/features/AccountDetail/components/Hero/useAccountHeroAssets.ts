@@ -1,7 +1,6 @@
 import { useMemo } from "react";
-import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
-import { listHeldAssets } from "@features/platform-quick-actions";
+import { listHeldAssets, sumAssetValues } from "@features/platform-quick-actions";
 import { useSelector } from "LLD/hooks/redux";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -17,13 +16,13 @@ export function useAccountHeroAssets(account: Account): readonly AccountAsset[] 
 
 export function useAccountCountervalue(assets: readonly AccountAsset[]): number | undefined {
   const calculateCountervalue = useCalculateCountervalueCallback();
-  return useMemo(() => {
-    const values = assets.map(({ currency, account }) =>
-      account.balance.isZero()
-        ? new BigNumber(0)
-        : calculateCountervalue(currency, account.balance),
-    );
-    if (values.every(value => value == null)) return undefined;
-    return values.reduce((sum, value) => sum + (value?.toNumber() ?? 0), 0);
-  }, [assets, calculateCountervalue]);
+  return useMemo(
+    () =>
+      sumAssetValues(
+        assets,
+        ({ account }) => !account.balance.isZero(),
+        ({ currency, account }) => calculateCountervalue(currency, account.balance)?.toNumber(),
+      ),
+    [assets, calculateCountervalue],
+  );
 }

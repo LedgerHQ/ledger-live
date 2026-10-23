@@ -138,6 +138,19 @@ describe("AccountDetail hero", () => {
     expect(screen.getByTestId(`${ACTIONS}-buy`)).toBeEnabled();
   });
 
+  it("shows a $0 balance when every asset of the account is empty", async () => {
+    renderHero(funded(btcAccount, 0));
+
+    expect(await screen.findByTestId(`${HERO}-balance`)).toBeVisible();
+  });
+
+  it("does not show a $0 balance when a funded token has no quote", async () => {
+    renderHero({ ...funded(ethAccountWithToken, 0), subAccounts: [usdcAccount] });
+
+    expect(await screen.findByTestId(ACTIONS)).toBeVisible();
+    expect(screen.queryByTestId(`${HERO}-balance`)).toBeNull();
+  });
+
   it("lets the user pick which funded asset of the account to send", async () => {
     const { user } = renderHero(ethAccountWithToken);
 

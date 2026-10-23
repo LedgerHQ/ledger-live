@@ -70,3 +70,15 @@ export function sortAssetsByValue<T>(
     .sort((a, b) => b.value - a.value)
     .map(({ asset }) => asset);
 }
+
+export function sumAssetValues<T>(
+  assets: readonly T[],
+  isFunded: (asset: T) => boolean,
+  valueOf: (asset: T) => number | undefined,
+): number | undefined {
+  const funded = assets.filter(isFunded);
+  if (funded.length === 0) return 0;
+  const values = funded.map(valueOf).filter((value): value is number => value !== undefined);
+  if (values.length === 0) return undefined;
+  return values.reduce((sum, value) => sum + value, 0);
+}

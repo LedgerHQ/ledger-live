@@ -3,6 +3,7 @@ import {
   listHeldAssets,
   resolveAssetsByAction,
   sortAssetsByValue,
+  sumAssetValues,
 } from "./accountAssets";
 
 const amount = (value: number) => ({ gt: (other: number) => value > other });
@@ -95,5 +96,34 @@ describe("sortAssetsByValue", () => {
     const sorted = sortAssetsByValue(["a", "b", "c", "d"], id => values[id]);
 
     expect(sorted).toEqual(["b", "d", "a", "c"]);
+  });
+});
+
+type Asset = Readonly<{ balance: number; value?: number }>;
+const sum = (assets: readonly Asset[]) =>
+  sumAssetValues(
+    assets,
+    ({ balance }) => balance > 0,
+    ({ value }) => value,
+  );
+
+describe("sumAssetValues", () => {
+  it("is zero when every asset is empty", () => {
+    expect(sum([{ balance: 0 }, { balance: 0 }])).toBe(0);
+  });
+
+  it("is unknown when no funded asset has a value, even next to empty ones", () => {
+    expect(sum([{ balance: 0, value: 0 }, { balance: 5 }])).toBeUndefined();
+  });
+
+  it("adds the values of the funded assets that have one", () => {
+    expect(
+      sum([
+        { balance: 0, value: 0 },
+        { balance: 5, value: 10 },
+        { balance: 2 },
+        { balance: 1, value: 3 },
+      ]),
+    ).toBe(13);
   });
 });
