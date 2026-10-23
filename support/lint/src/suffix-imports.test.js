@@ -132,6 +132,22 @@ test("allows a /web platform entry from web code only", () => {
   }
 });
 
+test("treats a platform entry with an extension like the bare entry", () => {
+  const universal = inPackage("dual", "Foo.tsx");
+  for (const specifier of ["@shared/lottie/native.js", "@shared/lottie/native.ts"]) {
+    for (const filename of [universal, inPackage("web-only", "Upsell.tsx")]) {
+      assert.deepEqual(findPlatformSuffix(specifier, filename), { kind: "native", fixed: null });
+    }
+    assert.equal(findPlatformSuffix(specifier, inPackage("dual", "Animation.native.tsx")), null);
+  }
+  for (const specifier of ["@shared/lottie/web.js", "@shared/lottie/web.tsx"]) {
+    for (const filename of [universal, inPackage("native-only", "Sheet.tsx")]) {
+      assert.deepEqual(findPlatformSuffix(specifier, filename), { kind: "web", fixed: null });
+    }
+    assert.equal(findPlatformSuffix(specifier, inPackage("dual", "Animation.web.tsx")), null);
+  }
+});
+
 test("leaves third-party platform entry points alone", () => {
   for (const specifier of [
     "styled-components/native",
