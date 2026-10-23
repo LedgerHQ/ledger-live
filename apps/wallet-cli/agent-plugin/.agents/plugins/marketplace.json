@@ -1,0 +1,19 @@
+{
+  "name": "agent-skills",
+  "interface": {
+    "displayName": "Ledger Agent Skills"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/LedgerHQ/agent-skills.git"
+      },
+      "policy": {
+        "installation": "AVAILABLE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

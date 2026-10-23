@@ -1,0 +1,11 @@
+{
+  "id": "agent-skills",
+  "name": "Ledger Agent Skills",
+  "description": "Ledger wallet-cli skill for AI agents: run Ledger hardware-wallet flows from the terminal, and enroll as an Agent Intent agent that imports Ledger Sync accounts and proposes payments that a human approves on their Ledger device.",
+  "skills": ["./skills"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}
