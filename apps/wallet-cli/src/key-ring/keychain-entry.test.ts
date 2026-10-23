@@ -4,9 +4,9 @@ import {
   wrapSecret,
   unwrapSecret,
   assertOsKeychainAvailable,
-  KeychainUnavailableError,
   _setTestKeychainProbe,
 } from "./keychain-entry";
+import { KeychainUnavailableError } from "./keychain-unavailable-error";
 import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 
 const KEY_HEX = "cafe".repeat(16);

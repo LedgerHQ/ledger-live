@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../shared/ui";
-import { KeychainUnavailableError } from "../key-ring/keychain-entry";
+import { KeychainUnavailableError } from "../key-ring/keychain-unavailable-error";
 import type { AgentIntentKeyStore } from "../session/session-store";
 import {
   activateAgentIntentMocks,

@@ -420,7 +420,7 @@ describe("JsonCommandOutput", () => {
   });
 
   it("emits a missing OS keychain as a keychain_unavailable error envelope with exit code 1", async () => {
-    const { KeychainUnavailableError } = await import("./key-ring/keychain-entry");
+    const { KeychainUnavailableError } = await import("./key-ring/keychain-unavailable-error");
     const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
 
     const err = await out

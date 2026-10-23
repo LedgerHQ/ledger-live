@@ -40,8 +40,8 @@ const {
   loadAgentIntentSecretKey,
   saveAgentIntentSecretKey,
 } = await import("./agent-intent-keychain");
-const { assertOsKeychainAvailable, KeychainUnavailableError, _setTestKeychainProbe } =
-  await import("./keychain-entry");
+const { assertOsKeychainAvailable, _setTestKeychainProbe } = await import("./keychain-entry");
+const { KeychainUnavailableError } = await import("./keychain-unavailable-error");
 
 beforeEach(() => {
   store.clear();

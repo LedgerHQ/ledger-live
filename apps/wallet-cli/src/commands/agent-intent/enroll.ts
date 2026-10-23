@@ -26,7 +26,8 @@ import {
   saveAgentIntentKeyFile,
   deleteAgentIntentKeyFile,
 } from "../../key-ring/agent-intent-key-file";
-import { assertOsKeychainAvailable, KeychainUnavailableError } from "../../key-ring/keychain-entry";
+import { assertOsKeychainAvailable } from "../../key-ring/keychain-entry";
+import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { authenticateEnrollmentCompletion } from "../../agent-intent/completion-auth";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../../agent-intent/profile-format";

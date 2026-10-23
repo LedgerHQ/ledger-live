@@ -1,7 +1,7 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
-import { KeychainUnavailableError } from "../../key-ring/keychain-entry";
+import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
 import {
   activateAgentIntentMocks,

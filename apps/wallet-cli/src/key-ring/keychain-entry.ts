@@ -4,6 +4,7 @@ import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { errMessage } from "../shared/error-message";
 import { encryptData, decryptData, hexToBytes } from "./crypto";
+import { KeychainUnavailableError } from "./keychain-unavailable-error";
 
 const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
@@ -12,11 +13,6 @@ const PROBE_SERVICE = `${APP_NAME}-probe`;
 // Without a pin, Linux `new Entry()` silently falls back to the kernel keyring, which loses the key
 // on reboot. Pinned, the constructor throws when no Secret Service is reachable.
 const SECRET_SERVICE_ONLY: EntryOptions = { linux: { store: "secret-service" } };
-
-// Reported as `keychain_unavailable` in the JSON error envelope.
-export class KeychainUnavailableError extends Error {
-  override name = "KeychainUnavailableError";
-}
 
 // The pinned constructor is the whole check: a read would also report errors (a timeout, a locked
 // collection) that don't mean the Secret Service is missing.

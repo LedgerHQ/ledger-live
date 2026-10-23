@@ -13,6 +13,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
@@ -1116,8 +1117,7 @@ class JsonCommandOutput implements CommandOutput {
         },
       };
     }
-    // Matched by name: importing the class would load the native keyring module for every command.
-    if (e instanceof Error && e.name === "KeychainUnavailableError") {
+    if (e instanceof KeychainUnavailableError) {
       return {
         ok: false,
         error: { command: this._ctx.command, code: "keychain_unavailable", message: e.message },
