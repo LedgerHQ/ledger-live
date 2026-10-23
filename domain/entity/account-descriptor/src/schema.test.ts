@@ -9,9 +9,14 @@ describe("AccountDescriptorSchema", () => {
     },
   );
 
+  it("accepts a mock descriptor", () => {
+    const mock = mockAddressAccountDescriptor({ purpose: "mock" });
+    expect(AccountDescriptorSchema.parse(mock)).toEqual(mock);
+  });
+
   it.each([
     ["an empty address", { address: "" }],
-    ["a purpose other than account", { purpose: "contact" }],
+    ["a purpose other than account or mock", { purpose: "contact" }],
     ["an unknown version", { version: "1" }],
     ["an unknown type", { type: "multisig" }],
     ["an empty network", { network: "" }],

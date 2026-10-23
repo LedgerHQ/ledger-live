@@ -3,7 +3,11 @@
  *
  * ADR: https://ledgerhq.atlassian.net/wiki/spaces/TA/pages/6975946770/ADR+-+Account+descriptor
  */
-import { parseAccountDescriptor, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import {
+  InvalidAccountDescriptorError,
+  parseAccountDescriptor,
+  type AccountDescriptor,
+} from "@domain/entity-account-descriptor";
 
 export {
   AccountDescriptorSchema as AccountDescriptorV1Schema,
@@ -28,6 +32,13 @@ export function upgradeLegacyDescriptor(input: string): string {
   return [purpose, "2", type, networkFromLegacy(name, env), ...rest].join(":");
 }
 
-/** Parses an ADR descriptor, upgrading a version 1 string first. */
-export const parseV1 = (input: string): AccountDescriptor =>
-  parseAccountDescriptor(upgradeLegacyDescriptor(input));
+/** Parses an ADR descriptor, upgrading a version 1 string first; a `mock` descriptor is not an account wallet-cli can use. */
+export function parseV1(input: string): AccountDescriptor {
+  const descriptor = parseAccountDescriptor(upgradeLegacyDescriptor(input));
+  if (descriptor.purpose !== "account") {
+    throw new InvalidAccountDescriptorError(
+      `Invalid AccountDescriptor: wallet-cli only reads purpose "account"`,
+    );
+  }
+  return descriptor;
+}

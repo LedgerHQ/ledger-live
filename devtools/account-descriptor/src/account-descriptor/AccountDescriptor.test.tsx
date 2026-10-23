@@ -10,6 +10,7 @@ describe("AccountDescriptor", () => {
           {
             accountUUID: "uuid-1",
             legacyId: "js:2:ethereum:0xabc:",
+            purpose: "account",
             type: "address",
             network: "ethereum (main)",
             path: "m/44h/60h/0h/0/0",
@@ -17,6 +18,7 @@ describe("AccountDescriptor", () => {
           },
           {
             accountUUID: "uuid-2",
+            purpose: "mock",
             type: "utxo",
             network: "bitcoin (main)",
             path: "m/84h/0h/0h",
@@ -29,5 +31,8 @@ describe("AccountDescriptor", () => {
     expect(screen.getByText("js:2:ethereum:0xabc:")).toBeVisible();
     expect(screen.getByText("xpub6")).toBeVisible();
     expect(screen.getByText("—")).toBeVisible();
+    expect(screen.getByText("mock")).toHaveClass("text-warning");
+    expect(screen.getByText("mock").closest("tr")).toHaveClass("bg-warning-transparent");
+    expect(screen.getByText("account").closest("tr")).not.toHaveClass("bg-warning-transparent");
   });
 });

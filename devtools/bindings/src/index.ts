@@ -16,3 +16,4 @@ export { useAccountDescriptorToolProps } from "./useAccountDescriptorToolProps";
 export { useAccountDataToolProps } from "./useAccountDataToolProps";
 export { createAccountDataRecorder } from "./accountDataRecorder";
 export type { AccountDataRecorder } from "./accountDataRecorder";
+export { useMockAccountsToolProps } from "./useMockAccountsToolProps";

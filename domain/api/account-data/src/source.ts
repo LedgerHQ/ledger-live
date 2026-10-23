@@ -4,7 +4,11 @@ import type {
   AccountDataResult,
   AccountDataSourceId,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
+import type {
+  AccountDescriptor,
+  AccountPurpose,
+  AccountUUID,
+} from "@domain/entity-account-descriptor";
 
 export type AccountTarget = {
   readonly accountUUID: AccountUUID;
@@ -28,6 +32,8 @@ export type AccountDataBatchReader<K extends AccountDataKind> = (
 export type AccountDataSource = {
   readonly id: AccountDataSourceId;
   /** Pure and synchronous, decided from the descriptor alone. Only asked when the source has a reader for `kind`. */
+  /** The descriptor purposes it serves, `account` only by default: a `mock` descriptor never reaches a real source. */
+  readonly purposes?: readonly AccountPurpose[];
   supports(descriptor: AccountDescriptor, kind: AccountDataKind): boolean;
   readonly read?: { readonly [K in AccountDataKind]?: AccountDataReader<K> };
   readonly readBatch?: { readonly [K in AccountDataKind]?: AccountDataBatchReader<K> };

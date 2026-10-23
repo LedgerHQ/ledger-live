@@ -100,6 +100,10 @@ describe("parseV1", () => {
     expect(() => parseV1(`wallet:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`)).toThrow(/purpose/);
   });
 
+  it("throws on a mock descriptor", () => {
+    expect(() => parseV1(`mock:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`)).toThrow(/only reads purpose/);
+  });
+
   it("throws on wrong version", () => {
     expect(() => parseV1(`account:3:utxo:bitcoin:${XPUB}:m/84h/0h/0h`)).toThrow(/version/);
   });
