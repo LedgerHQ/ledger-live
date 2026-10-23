@@ -39,7 +39,7 @@ describe("web-tools store: countervalues", () => {
 
     expect(result.data).toEqual({ bitcoin: 9000 });
     expect((fetchSpy.mock.calls[0][0] as Request).url).toContain(
-      "https://global.api.prd.ledger.com/countervalue/v3/spot/simple",
+      "https://countervalues.live.ledger.com/v3/spot/simple",
     );
     fetchSpy.mockRestore();
   });
