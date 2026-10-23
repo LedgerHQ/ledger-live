@@ -310,6 +310,8 @@ overrides:
   "@radix-ui/react-slot": "^1.2.4"
   "@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils": "1.1.3"
   "@ton/ton>zod": "catalog:"
+  # @expo/cli 54.x pins 0.81.5 exactly; align on react-native 0.81.6 to dedupe debugger-frontend
+  "@expo/cli>@react-native/dev-middleware": "0.81.6"
   jest-environment-node: "30.5.0"
   jest-mock: "30.5.0"
   jest-matcher-utils: "30.5.0"

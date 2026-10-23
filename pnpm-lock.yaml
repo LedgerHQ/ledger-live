@@ -657,6 +657,7 @@ overrides:
   '@radix-ui/react-slot': ^1.2.4
   '@ledgerhq/device-signer-kit-aleo>@ledgerhq/signer-utils': 1.1.3
   '@ton/ton>zod': 4.6.7
+  '@expo/cli>@react-native/dev-middleware': 0.81.6
   jest-environment-node: 30.5.0
   jest-mock: 30.5.0
   jest-matcher-utils: 30.5.0
@@ -26531,16 +26532,8 @@ packages:
       '@react-native/metro-config':
         optional: true
 
-  '@react-native/debugger-frontend@0.81.5':
-    resolution: {integrity: sha512-bnd9FSdWKx2ncklOetCgrlwqSGhMHP2zOxObJbOWXoj7GHEmih4MKarBo5/a8gX8EfA1EwRATdfNBQ81DY+h+w==}
-    engines: {node: '>= 20.19.4'}
-
   '@react-native/debugger-frontend@0.81.6':
     resolution: {integrity: sha512-aGw28yzbtm25GQuuxNeVAT72tLuGoH0yh79uYOIZkvjI+5x1NjZyPrgiLZ2LlZi5dJdxfbz30p1zUcHvcAzEZw==}
-    engines: {node: '>= 20.19.4'}
-
-  '@react-native/dev-middleware@0.81.5':
-    resolution: {integrity: sha512-WfPfZzboYgo/TUtysuD5xyANzzfka8Ebni6RIb2wDxhb56ERi7qDrE4xGhtPsjCL4pQBXSVxyIlCy0d8I6EgGA==}
     engines: {node: '>= 20.19.4'}
 
   '@react-native/dev-middleware@0.81.6':
@@ -42314,7 +42307,7 @@ snapshots:
       '@expo/spawn-async': 1.8.0
       '@expo/ws-tunnel': 1.0.6
       '@expo/xcpretty': 4.3.1
-      '@react-native/dev-middleware': 0.81.5(bufferutil@4.1.0)(utf-8-validate@5.0.10)
+      '@react-native/dev-middleware': 0.81.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)
       '@urql/core': 5.1.1(graphql@16.14.2)
       '@urql/exchange-retry': 1.3.1(graphql@16.14.2)
       accepts: 1.3.8
@@ -47018,27 +47011,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@react-native/debugger-frontend@0.81.5': {}
-
   '@react-native/debugger-frontend@0.81.6': {}
-
-  '@react-native/dev-middleware@0.81.5(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
-    dependencies:
-      '@isaacs/ttlcache': 1.4.1
-      '@react-native/debugger-frontend': 0.81.5
-      chrome-launcher: 0.15.2
-      chromium-edge-launcher: 0.2.0
-      connect: 3.7.0
-      debug: 4.4.3(supports-color@5.5.0)
-      invariant: 2.2.4
-      nullthrows: 1.1.1
-      open: 7.4.2
-      serve-static: 1.16.2
-      ws: 6.2.3(bufferutil@4.1.0)(utf-8-validate@5.0.10)
-    transitivePeerDependencies:
-      - bufferutil
-      - supports-color
-      - utf-8-validate
 
   '@react-native/dev-middleware@0.81.6(bufferutil@4.1.0)(utf-8-validate@5.0.10)':
     dependencies:
