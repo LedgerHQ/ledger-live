@@ -17,10 +17,12 @@ const getMainActions = ({
   account,
   parentAccount,
   parentRoute,
+  isNewSendFlowEnabled = false,
 }: {
   account: AleoAccount;
   parentAccount?: Account;
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
+  isNewSendFlowEnabled?: boolean;
 }): ActionButtonEvent[] => {
   const mainAccount = getMainAccount<AleoAccount>(account, parentAccount);
   const transparentBalance = mainAccount.aleoResources?.transparentBalance;
@@ -52,28 +54,32 @@ const getMainActions = ({
           },
         ]
       : []),
-    {
-      id: "public_to_private",
-      label: i18n.t("aleo.accountActions.publicToPrivate"),
-      Icon: IconsLegacy.TransferMedium,
-      event: "button_clicked",
-      eventProperties: {
-        button: "public_to_private",
-        currency: "ALEO",
-        page: "Account Page",
-      },
-      disabled: !account.balance.gt(0),
-      modalOnDisabledClick: {
-        component: ZeroBalanceDisabledModalContent,
-      },
-      navigationParams: [
-        NavigatorName.SendFunds,
-        {
-          screen: ScreenName.AleoSendBalanceSelection,
-          params: { account, parentAccount, isSelfTransfer: true },
-        },
-      ] satisfies NavigationParamsType,
-    },
+    ...(isNewSendFlowEnabled
+      ? []
+      : [
+          {
+            id: "public_to_private",
+            label: i18n.t("aleo.accountActions.publicToPrivate"),
+            Icon: IconsLegacy.TransferMedium,
+            event: "button_clicked",
+            eventProperties: {
+              button: "public_to_private",
+              currency: "ALEO",
+              page: "Account Page",
+            },
+            disabled: !account.balance.gt(0),
+            modalOnDisabledClick: {
+              component: ZeroBalanceDisabledModalContent,
+            },
+            navigationParams: [
+              NavigatorName.SendFunds,
+              {
+                screen: ScreenName.AleoSendBalanceSelection,
+                params: { account, parentAccount, isSelfTransfer: true },
+              },
+            ] satisfies NavigationParamsType,
+          },
+        ]),
   ];
 };
 

@@ -284,6 +284,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
         llmIcpStaking,
         canStakeUsingLedgerLive,
         bridge,
+        isNewSendFlowEnabled: shouldUseNewFlow,
       }) ?? [],
     [
       walletState,
@@ -297,6 +298,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       llmIcpStaking,
       canStakeUsingLedgerLive,
       bridge,
+      shouldUseNewFlow,
     ],
   );
 

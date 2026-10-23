@@ -49,6 +49,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
       title: "",
+      gestureEnabled: false,
     },
   },
   // Rendered as a bottomsheet overlay from the recipient screen, not a stack screen.

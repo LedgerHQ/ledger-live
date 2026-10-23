@@ -92,7 +92,7 @@ function createFlowConfig(overrides?: Partial<SendFlowConfig>): SendFlowConfig {
       [SEND_FLOW_STEP.BALANCE_TYPE]: { id: SEND_FLOW_STEP.BALANCE_TYPE, canGoBack: false },
       [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
         id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
-        canGoBack: true,
+        canGoBack: false,
       },
       [SEND_FLOW_STEP.RECIPIENT]: {
         id: SEND_FLOW_STEP.RECIPIENT,
