@@ -6,11 +6,14 @@ import {
   setEnabledFn,
   setExtraPropsFn,
   setPropsFilter,
+  trackPage,
 } from "@shared/analytics";
 import {
   rememberSeededOnboarding,
   resetSeededOnboardingAnalytics,
+  seededButtons,
   seededPages,
+  trackSeededChecksSuccess,
   trackSeededClick,
   trackSeededOnboardingStarted,
   trackSeededPage,
@@ -96,5 +99,69 @@ describe("seeded analytics delivery", () => {
       }),
     );
     expect(track.mock.calls[0]?.[1]).not.toHaveProperty("deviceType", "nanoX");
+  });
+
+  it("keeps the predecessor as source after a refusal drawer rewrites the previous page", async () => {
+    await trackSeededPage(seededPages.genuineCheckStarted);
+    await trackSeededPage(seededPages.genuineCheckRefused);
+    await trackPage(
+      { category: "Genuine check error", name: "drawer" },
+      { updateRoutes: true, refreshSource: false },
+    );
+    track.mockClear();
+
+    await trackSeededClick(seededButtons.retryGenuineCheck, seededPages.genuineCheckRefused);
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: seededButtons.retryGenuineCheck,
+        page: seededPages.genuineCheckRefused,
+        source: seededPages.genuineCheckStarted,
+      }),
+    );
+  });
+
+  it("uses Ledger Sync as the source of a skip drawer click", async () => {
+    await trackSeededPage(seededPages.checksSuccess);
+    await trackSeededPage(seededPages.ledgerSync);
+    await trackPage(
+      { category: seededPages.skipDrawer },
+      { updateRoutes: true, refreshSource: true },
+    );
+    track.mockClear();
+
+    await trackSeededClick(seededButtons.yesSkip, seededPages.skipDrawer);
+    await trackSeededClick(seededButtons.enableSync, seededPages.skipDrawer);
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: seededButtons.yesSkip,
+        page: seededPages.skipDrawer,
+        source: seededPages.ledgerSync,
+      }),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: seededButtons.enableSync,
+        page: seededPages.skipDrawer,
+        source: seededPages.ledgerSync,
+      }),
+    );
+  });
+
+  it("emits checks success again after the current page leaves success", async () => {
+    await trackSeededChecksSuccess();
+    await trackSeededPage(seededPages.checkOsVersion);
+    track.mockClear();
+
+    await trackSeededChecksSuccess();
+
+    expect(track).toHaveBeenCalledWith(
+      `Page ${seededPages.checksSuccess}`,
+      expect.objectContaining({ source: seededPages.checkOsVersion }),
+    );
   });
 });

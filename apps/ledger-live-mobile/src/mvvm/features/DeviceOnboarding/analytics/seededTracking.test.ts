@@ -224,6 +224,65 @@ describe("seeded onboarding analytics", () => {
     );
   });
 
+  it("should emit checks success again after the funnel leaves that page", () => {
+    trackSeededChecksSuccess();
+    trackSeededPage(seededPages.checkOsVersion);
+    trackSeededChecksSuccess();
+
+    const successCalls = jest
+      .mocked(trackPage)
+      .mock.calls.filter(([payload]) => payload.category === seededPages.checksSuccess);
+    expect(successCalls).toHaveLength(2);
+  });
+
+  it("should keep the predecessor as the click source after a drawer rewrites it", () => {
+    jest.mocked(getCurrentTrackingPage).mockReturnValueOnce(seededPages.genuineCheckStarted);
+    jest.mocked(getPreviousTrackingPage).mockReturnValue(seededPages.genuineCheckRefused);
+
+    trackSeededPage(seededPages.genuineCheckRefused);
+    trackSeededClick(seededButtons.retryGenuineCheck, seededPages.genuineCheckRefused);
+    jest.mocked(getPreviousTrackingPage).mockReturnValue("Page Pairing");
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: seededButtons.retryGenuineCheck,
+        page: seededPages.genuineCheckRefused,
+        source: seededPages.genuineCheckStarted,
+      }),
+      expect.anything(),
+    );
+  });
+
+  it("should use Ledger Sync as the source of a skip drawer click", () => {
+    jest.mocked(getCurrentTrackingPage).mockReturnValueOnce(seededPages.checksSuccess);
+    jest.mocked(getPreviousTrackingPage).mockReturnValue(seededPages.ledgerSync);
+
+    trackSeededPage(seededPages.ledgerSync);
+    trackSeededClick(seededButtons.yesSkip, seededPages.skipDrawer);
+    trackSeededClick(seededButtons.enableSync, seededPages.skipDrawer);
+    jest.mocked(getPreviousTrackingPage).mockReturnValue("Page Pairing");
+
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: seededButtons.yesSkip,
+        page: seededPages.skipDrawer,
+        source: seededPages.ledgerSync,
+      }),
+      expect.anything(),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "button_clicked",
+      expect.objectContaining({
+        button: seededButtons.enableSync,
+        page: seededPages.skipDrawer,
+        source: seededPages.ledgerSync,
+      }),
+      expect.anything(),
+    );
+  });
+
   it("should publish a seeded page without pinning source itself", () => {
     rememberSeededOnboarding({ deviceType: "stax", deviceVersion: "1.2.0" });
 

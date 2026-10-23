@@ -186,7 +186,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   useEffect(() => {
     if (!page) return;
     if (page === seededPages.checksSuccess) {
-      trackSeededChecksSuccess();
+      void trackSeededChecksSuccess();
       return;
     }
     void trackSeededPage(page);

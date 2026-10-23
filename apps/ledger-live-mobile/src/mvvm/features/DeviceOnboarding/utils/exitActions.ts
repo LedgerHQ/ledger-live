@@ -32,14 +32,14 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     seededOnEntry,
   }) => {
     if (seededOnEntry) {
-      trackSeededChecksSuccess();
+      void trackSeededChecksSuccess();
       void trackSeededOnboardingDone();
     }
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
   offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededOnEntry }) => {
-    if (seededOnEntry) trackSeededChecksSuccess();
+    if (seededOnEntry) void trackSeededChecksSuccess();
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,

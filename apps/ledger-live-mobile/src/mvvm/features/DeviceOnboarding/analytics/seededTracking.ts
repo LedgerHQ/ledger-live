@@ -46,7 +46,6 @@ export const seededButtons = {
 type SeededSession = {
   started: boolean;
   finished: boolean;
-  checksSuccessTracked: boolean;
   ledgerSyncEligibility: YesNo;
   firmwareUpdateAvailability: YesNo | null;
   firmwareUpdateDone: YesNo;
@@ -58,7 +57,6 @@ type SeededSession = {
 const freshSession = (): SeededSession => ({
   started: false,
   finished: false,
-  checksSuccessTracked: false,
   ledgerSyncEligibility: "no",
   firmwareUpdateAvailability: null,
   firmwareUpdateDone: "no",
@@ -66,9 +64,13 @@ const freshSession = (): SeededSession => ({
 });
 
 let session = freshSession();
+let lastSeededPage = "";
+let pageSource: string | null = null;
 
 export function resetSeededOnboardingAnalytics(): void {
   session = freshSession();
+  lastSeededPage = "";
+  pageSource = null;
 }
 
 export function rememberSeededOnboarding(input: {
@@ -140,22 +142,26 @@ export function seededCheckPage(
   return null;
 }
 
-function sourceProp(): { source?: string } {
-  const source = getPreviousTrackingPage();
+function sourceProp(page?: string | null): { source?: string } {
+  const live = getPreviousTrackingPage();
+  const current = page || getCurrentTrackingPage();
+  const collapsed = Boolean(live) && live === current;
+  const source = !live || collapsed ? pageSource || undefined : live;
   return source ? { source } : {};
 }
 
 export function trackSeededPage(page: string): void | Promise<void> {
+  pageSource = getCurrentTrackingPage();
+  lastSeededPage = page;
   return trackPage(
     { category: page, props: seededSharedProps() },
     { updateRoutes: true, refreshSource: true, callerWins: seededCallerWins },
   );
 }
 
-export function trackSeededChecksSuccess(): void {
-  if (session.checksSuccessTracked) return;
-  session.checksSuccessTracked = true;
-  void trackSeededPage(seededPages.checksSuccess);
+export function trackSeededChecksSuccess(): void | Promise<void> {
+  if (lastSeededPage === seededPages.checksSuccess) return;
+  return trackSeededPage(seededPages.checksSuccess);
 }
 
 export function trackSeededClick(button: string, page?: string | null): Promise<void> {
@@ -164,7 +170,7 @@ export function trackSeededClick(button: string, page?: string | null): Promise<
     "button_clicked",
     {
       ...seededSharedProps(),
-      ...sourceProp(),
+      ...sourceProp(currentPage),
       button,
       ...(currentPage ? { page: currentPage } : {}),
     },
