@@ -1,4 +1,8 @@
-import type { TxData } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  MemoNotSupported,
+  StringMemo,
+  TxData,
+} from "@ledgerhq/coin-module-framework/api/index";
 
 /**
  * Craft-time extras for pox-5's `stake` call, carried through the framework's `MaybeTxData`
@@ -23,3 +27,7 @@ export interface StacksTxData extends TxData {
   /** Optional pool-specific calldata forwarded to the target signer-manager contract. */
   signerCalldata?: string;
 }
+
+/** A transfer's memo as the generic bridge hands it over: `memoType: "memo"` on the transaction
+ * becomes a `StringMemo` of that kind, and no memo becomes `MemoNotSupported`. */
+export type StacksMemo = MemoNotSupported | StringMemo<"memo">;

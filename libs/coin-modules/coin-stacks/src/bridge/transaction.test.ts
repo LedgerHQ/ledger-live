@@ -79,6 +79,33 @@ describe("transaction serialization", () => {
     expect(toTransactionRaw(transaction)).toEqual(raw);
   });
 
+  it("round-trips memo, memoType and memoValue so the generic bridge keeps the memo", () => {
+    const raw: TransactionRaw = {
+      ...baseRaw(),
+      recipient: "SP1abc",
+      memo: "1234",
+      memoType: "memo",
+      memoValue: "1234",
+    };
+
+    const transaction = fromTransactionRaw(raw);
+    expect(transaction.memo).toBe("1234");
+    expect(transaction.memoType).toBe("memo");
+    expect(transaction.memoValue).toBe("1234");
+
+    expect(toTransactionRaw(transaction)).toEqual(raw);
+  });
+
+  it("keeps a cleared memoType as a literal null", () => {
+    const raw: TransactionRaw = { ...baseRaw(), recipient: "SP1abc", memoType: null };
+
+    const transaction = fromTransactionRaw(raw);
+    expect(transaction.memoType).toBeNull();
+    expect(transaction.memoValue).toBeUndefined();
+
+    expect(toTransactionRaw(transaction)).toEqual(raw);
+  });
+
   it("throws on an unrecognized network", () => {
     const raw: TransactionRaw = { ...baseRaw(), network: "not-a-real-network" };
     expect(() => fromTransactionRaw(raw)).toThrow("network not-a-real-network not valid");
