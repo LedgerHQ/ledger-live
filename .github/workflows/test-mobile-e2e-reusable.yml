@@ -104,6 +104,12 @@ on:
         required: false
         type: string
         default: ""
+      ios_max_workers:
+        description: "Simulators (Jest workers) per iOS shard"
+        required: false
+        type: choice
+        options: ["3", "2", "1"]
+        default: "3"
 
   workflow_call:
     inputs:
@@ -184,6 +190,11 @@ on:
         required: false
         type: number
         default: 0
+      ios_max_workers:
+        description: "Simulators (Jest workers) per iOS shard"
+        required: false
+        type: string
+        default: "3"
       check_pod_lockfile:
         description: "Validate the iOS Pod lockfile when the native build comes from cache"
         required: false
@@ -763,6 +774,7 @@ jobs:
       # nanoS needs the pinned Speculinho snapshot. Keyed on the resolved device, not inputs.speculos_device,
       # which is empty on nightlies. Keep the tag in sync with the Android job.
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.ios_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
+      E2E_MAX_WORKERS: ${{ inputs.ios_max_workers || '3' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -913,6 +925,25 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      # Parallelism study: per-process memory footprint (top MEM includes compressed pages) every 10s.
+      - name: Start memory sampler
+        env:
+          SAMPLER_DIR: ${{ runner.temp }}/mem-sampler
+        run: |
+          mkdir -p "$SAMPLER_DIR"
+          nohup bash -c '
+            while true; do
+              ts=$(date +%s)
+              top -l 1 -s 0 -stats pid,ppid,mem,command | awk -v ts="$ts" "NR>12 {print ts\"\t\"\$0}" >> "$SAMPLER_DIR/top.tsv"
+              ps -axo pid=,ppid=,rss=,command= | awk -v ts="$ts" "/node|launchd_sim|ledgerlivemobile|CoreSimulator/ {print ts\"\t\"\$0}" >> "$SAMPLER_DIR/ps.tsv"
+              printf "%s\t%s\t%s\t%s\n" "$ts" "$(sysctl -n kern.memorystatus_vm_pressure_level)" "$(sysctl -n vm.swapusage)" "$(vm_stat | tr "\n" "|")" >> "$SAMPLER_DIR/vm.tsv"
+              sleep 10
+            done' > /dev/null 2>&1 &
+          echo $! > "$SAMPLER_DIR/pid"
+          echo "max_workers=${E2E_MAX_WORKERS} shard=${{ matrix.shard }}" > "$SAMPLER_DIR/meta.txt"
+          echo "NODE_OPTIONS=${NODE_OPTIONS}" >> "$SAMPLER_DIR/meta.txt"
+          date +%s > "$SAMPLER_DIR/start"
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
@@ -936,6 +967,22 @@ jobs:
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+
+      - name: Stop memory sampler
+        if: always()
+        env:
+          SAMPLER_DIR: ${{ runner.temp }}/mem-sampler
+        run: |
+          date +%s > "$SAMPLER_DIR/end"
+          kill "$(cat "$SAMPLER_DIR/pid")" 2>/dev/null || true
+
+      - name: Upload memory sampler
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: mem-sampler-w${{ env.E2E_MAX_WORKERS }}-shard${{ matrix.shard }}
+          path: ${{ runner.temp }}/mem-sampler
+          retention-days: 14
 
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && matrix.shard == 1
