@@ -1,41 +1,25 @@
-const { withEsmDeps } = require("@support/jest/shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
-const config = {
-  passWithNoTests: true,
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.test.ts",
-    "!src/**/*.spec.ts",
-    "!src/__tests__/**/*.ts",
-  ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
-  testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
+module.exports = createSharedJestConfig(
+  {
+    rootDir: __dirname,
+    passWithNoTests: true,
+    collectCoverageFrom: [
+      "src/**/*.ts",
+      "!src/**/*.test.ts",
+      "!src/**/*.spec.ts",
+      "!src/__tests__/**/*.ts",
+    ],
+    moduleNameMapper: {
+      "^@ledgerhq/wallet-btc/(.*)$": "<rootDir>/src/$1",
+    },
+    testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
+    modulePathIgnorePatterns: ["__tests__/fixtures"],
+    setupFilesAfterEnv: [
+      "@ledgerhq/wallet-framework-test-setup",
+      "@ledgerhq/disable-network-setup",
+      "@ledgerhq/test-quarantine/jest-retries",
     ],
   },
-  moduleNameMapper: {
-    "^@ledgerhq/wallet-btc/(.*)$": "<rootDir>/src/$1",
-  },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
-  modulePathIgnorePatterns: ["__tests__/fixtures"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
-};
-
-module.exports = withEsmDeps(config);
+  { esm: true },
+);

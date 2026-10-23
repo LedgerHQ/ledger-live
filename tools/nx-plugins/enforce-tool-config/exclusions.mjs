@@ -49,8 +49,6 @@ export const EXCLUSIONS = {
       "native project of @support/jest/features-flow for its UI folders. Exit condition: a preset " +
       "covers features/platform packages.",
   },
-  "libs/coin-modules/coin-bitcoin": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
-  "libs/coin-modules/coin-zcash": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ledger-live-common": {
     rules: ["lint", "tsconfig"],
     reason:
@@ -79,12 +77,6 @@ export const EXCLUSIONS = {
       "emits next to it, react builds ES2019 with preserveSymlinks, native extends nothing and " +
       "shared emits without rootDir. Exit condition: each package builds from src/ to lib/ and " +
       "extends a @support/tsconfig preset.",
-  },
-  "libs/wallet-btc": {
-    rules: ["jest"],
-    reason:
-      "TEMPORARY. Its jest configs only take withEsmDeps from @support/jest/shared. Exit " +
-      "condition: they are built by a preset factory.",
   },
   tests: {
     rules: ["lint", "tsconfig"],
