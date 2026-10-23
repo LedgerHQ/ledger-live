@@ -40,7 +40,6 @@ export const EXCLUSIONS = {
       "native project of @support/jest/features-flow for its UI folders. Exit condition: a preset " +
       "covers features/platform packages.",
   },
-  "features/platform/app-update": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/coin-modules": {
     rules: ["lint"],
     reason: `TEMPORARY. The coin modules, and coin-bitcoin on top of them, ${LINT_LEAVES}`,
@@ -70,8 +69,6 @@ export const EXCLUSIONS = {
       "jest: their jest config only takes withEsmDeps from @support/jest/shared. Exit " +
       "condition: it is built by a preset factory.",
   },
-  "libs/live-signer-celo": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
-  "libs/live-signer-evm": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/transaction-observability": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ui": {
     rules: ["lint", "tsconfig"],
