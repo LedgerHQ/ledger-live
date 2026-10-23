@@ -49,6 +49,7 @@ import { appConfig, appConfigSession } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
+import { createCountervaluesStartupEventsMiddleware } from "LLM/utils/countervaluesStartupEvents";
 import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
 
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
@@ -136,6 +137,7 @@ export const store = configureStore({
       )
       .concat(createMobileFeatureFlagsMiddleware())
       .concat(sleepingListener.middleware)
+      .concat(createCountervaluesStartupEventsMiddleware())
       .concat(createMobileCountervaluesMiddleware()),
 
   enhancers: getDefaultEnhancers => {
