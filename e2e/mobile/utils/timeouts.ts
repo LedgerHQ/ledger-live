@@ -5,6 +5,9 @@
  *  - `TIMEOUT`  — upper bounds: "give up after this long".
  *  - `INTERVAL` — fixed waits: "wait this long", once or between attempts.
  *
+ * `TIMEOUT` is shared with the desktop suite: it lives in `@ledgerhq/live-e2e-shared/timeouts`
+ * and this file re-exports it.
+ *
  * Passing an `INTERVAL` where a `TIMEOUT` belongs (or the reverse) is almost always a
  * bug, so they never share a name or a lookup.
  *
@@ -19,8 +22,9 @@
  * Either way, a call site never passes a bare number.
  *
  * `jest.config.js` requires this file as well as the test code, so it must stay free of
- * imports and of non-erasable TypeScript syntax (no `enum`, no `namespace`) — Node strips
- * the types at require time.
+ * non-erasable TypeScript syntax (no `enum`, no `namespace`) — Node strips the types at
+ * require time — and import nothing but `@ledgerhq/live-e2e-shared`, which
+ * `jest.config.js` already loads.
  */
 
 /*
@@ -32,43 +36,7 @@
  * the object, so the two cannot drift apart.
  */
 
-/** Upper bounds for "wait until X happens", from shortest to longest. */
-interface TimeoutScale {
-  /** "Is this already on screen right now?". Never for something still loading. */
-  readonly xxxsmall: number;
-  /** Probe an element that is either already mounted or genuinely absent. */
-  readonly xxsmall: number;
-  /** A short probe: an optional affordance that may or may not render (e.g. an "expand"
-   * toggle), where waiting the full `small` budget would be paid on every miss. */
-  readonly xsmall: number;
-  /** A purely local UI transition: a drawer opens, a screen pushes, a list re-renders. */
-  readonly small: number;
-  /** One round-trip outside the native UI: the E2E bridge, a webview reacting. */
-  readonly medium: number;
-  /** A swap quote or amount that has to settle after a provider round-trip. */
-  readonly large: number;
-  /** Something remote getting ready: a live app, Speculos, quotes, a partner's reply. */
-  readonly xlarge: number;
-  /** The element-helper default: a screen that mounts behind a sync or a webview. */
-  readonly xxlarge: number;
-  /** Cold start, portfolio first paint, fee estimation, a broadcast landing. */
-  readonly xxxlarge: number;
-  /** An on-chain confirmation, e.g. a token approval being mined. */
-  readonly xxxxlarge: number;
-}
-
-export const TIMEOUT: TimeoutScale = {
-  xxxsmall: 500,
-  xxsmall: 1_000,
-  xsmall: 2_000,
-  small: 5_000,
-  medium: 10_000,
-  large: 20_000,
-  xlarge: 30_000,
-  xxlarge: 60_000,
-  xxxlarge: 120_000,
-  xxxxlarge: 300_000,
-};
+export { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 /** Fixed waits: a pause, or the cadence between attempts. Never use these as a timeout. */
 interface IntervalScale {

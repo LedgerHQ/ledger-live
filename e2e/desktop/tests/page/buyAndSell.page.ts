@@ -11,6 +11,7 @@ import { doubleDecodeGoToURL } from "tests/utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "tests/utils/getAccountAddressesUtils";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelectorFromInstance } from "tests/utils/modularSelectorUtils";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -259,7 +260,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     let balanceTooLow = false;
     if (operation === OperationType.Sell) {
       try {
-        await this.verifyElementIsVisible(this.amountInputError, 2000);
+        await this.verifyElementIsVisible(this.amountInputError, TIMEOUT.xsmall);
         balanceTooLow = true;
       } catch {
         // No error shown — balance covers the requested amount.
@@ -368,7 +369,7 @@ export class BuyAndSellPage extends WebViewAppPage {
           return false;
         },
         {
-          timeout: 10_000,
+          timeout: TIMEOUT.medium,
           intervals: [200],
           message: "No settled GoTo URL found in webviewUrlHistory after waiting.",
         },

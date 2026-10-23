@@ -1,4 +1,5 @@
 import { readFile } from "fs/promises";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 const getUserdata = async (userdataFile: string) => {
   const jsonFile = await readFile(userdataFile, "utf-8");
@@ -9,7 +10,7 @@ const getUserdata = async (userdataFile: string) => {
 export const FRESH_INSTALL_SETTINGS = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: false };
 
 const POLL_INTERVAL_MS = 200;
-const DEFAULT_TIMEOUT_MS = 10000;
+const DEFAULT_TIMEOUT_MS = TIMEOUT.medium;
 
 /**
  * Waits up to `timeoutMs` for app.json to contain at least `minCount` accounts in data.accounts.
@@ -88,7 +89,7 @@ export async function waitForIdentitiesInAppJson(
 export async function waitForIdentitiesRegenerated(
   userdataFile: string,
   previousUserId: string,
-  timeoutMs: number = 60000,
+  timeoutMs: number = TIMEOUT.xxlarge,
 ): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   let lastUserId: string | undefined;

@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 declare global {
   interface Window {
@@ -50,7 +51,7 @@ export class Redux {
     });
   };
 
-  public async waitForReduxAction(actionType: string, timeout: number = 10000) {
+  public async waitForReduxAction(actionType: string, timeout: number = TIMEOUT.medium) {
     return new Promise((resolve, reject) => {
       const checkAction = () => {
         const action = this.actions.find(action => action.type === actionType);

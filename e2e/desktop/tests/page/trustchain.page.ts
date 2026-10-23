@@ -5,6 +5,7 @@ import {
   getTrustchainAccountName,
   getTrustchainAccounts,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/pulledData";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 /**
  * Assertions on what a Ledger Sync trustchain holds, read through the CLI rather than the UI.
@@ -34,14 +35,14 @@ export class TrustchainPage {
   }
 
   @step("Expect trustchain to hold account $0 on $1")
-  async expectToHoldAccount(accountId: string, currencyId: string, timeout = 60_000) {
+  async expectToHoldAccount(accountId: string, currencyId: string, timeout = TIMEOUT.xxlarge) {
     await expect
       .poll(async () => this.getAccounts(), { timeout })
       .toEqual([expect.objectContaining({ id: accountId, currencyId })]);
   }
 
   @step("Expect trustchain to hold exactly the accounts $0")
-  async expectAccountIds(accountIds: string[], timeout = 60_000) {
+  async expectAccountIds(accountIds: string[], timeout = TIMEOUT.xxlarge) {
     await expect
       .poll(
         async () =>
@@ -62,7 +63,7 @@ export class TrustchainPage {
   }
 
   @step("Expect account $0 to be named $1 in the trustchain")
-  async expectAccountName(accountId: string, accountName: string, timeout = 60_000) {
+  async expectAccountName(accountId: string, accountName: string, timeout = TIMEOUT.xxlarge) {
     await expect.poll(async () => this.getAccountName(accountId), { timeout }).toBe(accountName);
   }
 }

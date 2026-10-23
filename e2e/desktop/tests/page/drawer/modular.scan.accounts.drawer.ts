@@ -1,6 +1,7 @@
 import { Drawer } from "tests/component/drawer.component";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export class ModularScanAccountsDrawer extends Drawer {
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
@@ -51,7 +52,8 @@ export class ModularScanAccountsDrawer extends Drawer {
 
   @step("Select first account")
   async selectFirstAccount() {
-    await this.confirmButton.waitFor({ state: "visible" });
+    // The button appears once the device has scanned the accounts.
+    await this.confirmButton.waitFor({ state: "visible", timeout: TIMEOUT.xxxlarge });
     if (await this.deselectAllButton.isVisible()) {
       await this.deselectAllButton.click();
       await this.firstAccountRow.click();

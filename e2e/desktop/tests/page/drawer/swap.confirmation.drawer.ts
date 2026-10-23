@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export class SwapConfirmationDrawer extends Drawer {
   private exchangeError = this.page.locator("#error-CompleteExchangeError span").first();
@@ -18,11 +19,11 @@ export class SwapConfirmationDrawer extends Drawer {
   @step("Verify swap completion: $0")
   async verifyExchangeCompletedTextContent(currencyToReceive: string) {
     await expect(this.swapCompletedMessage).toHaveText("Transaction broadcast successfully", {
-      timeout: 120000,
+      timeout: TIMEOUT.xxxlarge,
     });
     await expect(this.swapCompletedDescription).toHaveText(
       `Your Swap operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process and send your ${currencyToReceive}.`,
-      { timeout: 60000 },
+      { timeout: TIMEOUT.xxlarge },
     );
   }
 

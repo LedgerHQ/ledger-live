@@ -1,5 +1,6 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export async function launchApp({
   env,
@@ -45,6 +46,6 @@ export async function launchApp({
     colorScheme: theme,
     locale: lang,
     executablePath: require("electron/index.js"),
-    timeout: 120000,
+    timeout: TIMEOUT.xxxlarge,
   });
 }

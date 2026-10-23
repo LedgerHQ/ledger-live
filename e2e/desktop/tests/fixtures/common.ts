@@ -36,6 +36,7 @@ import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
+import { TIMEOUT } from "tests/utils/timeouts";
 import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
@@ -305,9 +306,7 @@ export const test = base.extend<TestFixtures>({
   page: async ({ electronApp, speculos, cliCommandsOnApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
-
-    // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
-    page.setDefaultTimeout(120000);
+    page.setDefaultTimeout(TIMEOUT.xxxlarge);
 
     attachNetworkLogging(page, testInfo);
     // capture main app (Ledger Wallet) network logs, attached to Allure on failure
@@ -339,9 +338,9 @@ export const test = base.extend<TestFixtures>({
     const webviewCollector = new PageLogCollector();
     webviewCollector.attachWebview(electronApp);
 
-    // app is loaded
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForSelector("#loader-container", { state: "hidden" });
+    // app is loaded: on a slow CI runner, start-up takes longer than 30s
+    await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });
+    await page.waitForSelector("#loader-container", { state: "hidden", timeout: TIMEOUT.xxxlarge });
 
     // A relaunched remote Speculos is a new session, on its own URL and token.
     // A local one keeps its port, so the app needs no update.

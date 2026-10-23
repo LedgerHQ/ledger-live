@@ -5,6 +5,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 type AddAccountTestCase = {
   readonly currency: Currency;
@@ -108,7 +109,7 @@ for (const currency of currencies) {
           await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
           await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
         }
-        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+        await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, TIMEOUT.small);
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");
         await app.accounts.navigateToAccountByName(firstAccountName);
@@ -167,7 +168,7 @@ test.describe("Add account", () => {
 
       await app.portfolio.checkOperationHistory();
       await app.portfolio.expectBalanceVisibility();
-      await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, 5000);
+      await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, TIMEOUT.small);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.accounts.navigateToAccountByName(firstAccountName);
