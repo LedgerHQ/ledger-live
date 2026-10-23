@@ -50,6 +50,18 @@ id = "generic-api-key"
 
     [[rules.allowlists]]
     condition = "AND"
+    description = "Ignore public XRPL testnet token identifiers (hex currency codes, MPT issuance IDs, issuer addresses) in the prototype devTokens.ts -- remove together with that file."
+    regexTarget = "match"
+    regexes = [
+        '''[0-9A-F]{40}''',
+        '''\br[1-9A-HJ-NP-Za-km-z]{24,34}\b''',
+    ]
+    paths = [
+        '''libs/ledger-live-common/src/families/xrp/devTokens\.ts''',
+    ]
+
+    [[rules.allowlists]]
+    condition = "AND"
     description = "Ignore Clarinet's own public, deterministic devnet private keys (Devnet.toml comments and the matching hex private keys in fixtures.ts) -- matched by exact value, not by path, so a real key added anywhere else in these files would still be caught."
     regexTarget = "match"
     regexes = [

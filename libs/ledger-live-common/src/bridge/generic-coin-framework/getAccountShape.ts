@@ -288,7 +288,11 @@ function parentOpsForTxWithNonInternalOperations(
   accountId: string,
   address: string,
 ): OperationCommon[] {
-  const nativeOps = transactionOps.filter(isNativeLiveOp);
+  // An opt-in names its token but stays on the parent account (never routed to a token account, see
+  // newAssetOperations): kept as the parent so it keeps the OPT_IN type of its pending operation
+  const nativeOps = transactionOps.filter(
+    op => isNativeLiveOp(op) || op.type === "OPT_IN" || op.type === "OPT_OUT",
+  );
   // subOperationIndex holds types-live Operation[]; we use OperationCommon in this bridge
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- framework type vs bridge type
   const subOperations = (subOperationIndex.get(hash) ?? []) as OperationCommon[];
@@ -398,12 +402,14 @@ function buildParentOperations(
 
 const TOKEN_LOOKUP_BATCH_SIZE = 50;
 
-// Lower-cased, like every other asset reference comparison here: a chain's balance response and
-// its own derivations aren't guaranteed to agree on casing.
-function lowercasedReference(asset: AssetInfo): string | undefined {
-  return "assetReference" in asset && asset.assetReference
-    ? asset.assetReference.toLowerCase()
-    : undefined;
+// Lower-cased reference by default, like every other asset reference comparison here: a chain's
+// balance response and its own derivations aren't guaranteed to agree on casing. With
+// `exactAssetMatch`, the exact (assetOwner, assetReference) pair.
+function assetKey(asset: AssetInfo, exactAssetMatch: boolean | undefined): string | undefined {
+  if (!("assetReference" in asset) || !asset.assetReference) return undefined;
+  return exactAssetMatch
+    ? JSON.stringify([asset.assetOwner, asset.assetReference])
+    : asset.assetReference.toLowerCase();
 }
 
 /**
@@ -422,26 +428,28 @@ async function resolveUnbalancedTokenAssets(
   {
     getTokenFromAsset,
     getAssetFromToken,
-  }: Pick<BridgeApi, "getTokenFromAsset" | "getAssetFromToken">,
+    exactAssetMatch,
+  }: Pick<BridgeApi, "getTokenFromAsset" | "getAssetFromToken" | "exactAssetMatch">,
   address: string,
   blacklistedTokenIds: string[],
 ): Promise<AssetInfo[]> {
   if (!getTokenFromAsset || !getAssetFromToken) return [];
 
-  const balanced = new Set(balances.map(b => lowercasedReference(b.asset)));
-  const unbalanced = new Map<string, OperationCommon>();
+  const balanced = new Set(balances.map(b => assetKey(b.asset, exactAssetMatch)));
+  const unbalanced = new Map<string | undefined, AssetInfo>();
   for (const op of operations) {
-    const reference = String(op.extra.assetReference).toLowerCase();
-    if (!balanced.has(reference) && !unbalanced.has(reference)) unbalanced.set(reference, op);
-  }
-
-  const resolve = async (op: OperationCommon) => {
     // `"token"` when the precise type is unknown, as when building a transaction intent.
-    const token = await getTokenFromAsset({
+    const asset = {
       type: "token",
       assetReference: String(op.extra.assetReference),
       assetOwner: String(op.extra.assetOwner),
-    });
+    };
+    const key = assetKey(asset, exactAssetMatch);
+    if (!balanced.has(key) && !unbalanced.has(key)) unbalanced.set(key, asset);
+  }
+
+  const resolve = async (asset: AssetInfo) => {
+    const token = await getTokenFromAsset(asset);
     return token && !blacklistedTokenIds.includes(token.id)
       ? getAssetFromToken(token, address)
       : undefined;
@@ -791,16 +799,15 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     // read would never be re-processed -- silently freezing its subAccount's balance and
     // operations at their pre-sweep state forever instead of ever reflecting the sweep.
     const getAssetFromToken = bridgeApi.getAssetFromToken;
-    // Lower-cased: a chain's balance-listing response and its own `getAssetFromToken` derivation
-    // aren't guaranteed to agree on reference casing (observed on Stacks -- the balance response
-    // lowercases addresses, `getAssetFromToken` returns the contract address verbatim/uppercase),
-    // so a case-sensitive comparison here would misclassify an still-held, non-zero token as
-    // vanished and inject a spurious zero-value duplicate for it.
-    const freshAssetReferences = new Set(
+    // Lower-cased unless `exactAssetMatch`: a chain's balance-listing response and its own
+    // `getAssetFromToken` derivation aren't guaranteed to agree on reference casing (observed on
+    // Stacks -- the balance response lowercases addresses, `getAssetFromToken` returns the contract
+    // address verbatim/uppercase), so a case-sensitive comparison here would misclassify an
+    // still-held, non-zero token as vanished and inject a spurious zero-value duplicate for it.
+    const freshAssetKeys = new Set(
       freshTokenAssetsBalances
-        .map(b => ("assetReference" in b.asset ? b.asset.assetReference : undefined))
-        .filter((ref): ref is string => !!ref)
-        .map(ref => ref.toLowerCase()),
+        .map(b => assetKey(b.asset, bridgeApi.exactAssetMatch))
+        .filter((key): key is string => !!key),
     );
     // Not gated on "fresh list non-empty": a wallet whose only token gets fully swept legitimately
     // reports an empty token list on the next balance read (some chains, e.g. Stacks, omit
@@ -819,14 +826,9 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           } catch {
             return [];
           }
-          if (
-            !asset ||
-            !("assetReference" in asset) ||
-            !asset.assetReference ||
-            freshAssetReferences.has(asset.assetReference.toLowerCase())
-          ) {
-            return [];
-          }
+          if (!asset) return [];
+          const key = assetKey(asset, bridgeApi.exactAssetMatch);
+          if (!key || freshAssetKeys.has(key)) return [];
           return [{ value: 0n, asset }];
         })
       : [];
@@ -1100,7 +1102,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
           syncConfig.blacklistedTokenIds ?? [],
         )
       : [];
-    const lateReferences = new Set(lateAssets.map(lowercasedReference));
+    const lateKeys = new Set(lateAssets.map(asset => assetKey(asset, bridgeApi.exactAssetMatch)));
     const lateTokenBalances =
       balanceOptions && lateAssets.length
         ? (
@@ -1108,7 +1110,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
               ...balanceOptions,
               knownAssets: [...(balanceOptions.knownAssets ?? []), ...lateAssets],
             })
-          ).filter(b => lateReferences.has(lowercasedReference(b.asset)))
+          ).filter(b => lateKeys.has(assetKey(b.asset, bridgeApi.exactAssetMatch)))
         : [];
 
     const familyShapes = await bridgeApi.buildTokenAccountShapes?.(address);
@@ -1119,6 +1121,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       operations: newAssetOperations,
       getTokenFromAsset: bridgeApi.getTokenFromAsset,
       familyShapes,
+      exactAssetMatch: bridgeApi.exactAssetMatch,
     });
     // A from-scratch sync goes through the same call with nothing stored, rather than around it:
     // the bound has to apply to the sub-accounts this sync *creates* too. `paginateOperations`

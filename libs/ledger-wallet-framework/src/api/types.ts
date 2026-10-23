@@ -64,6 +64,15 @@ export type BridgeApi = {
   getChainSpecificRules?: ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo | undefined;
+  /**
+   * When true, sync matches a token on its exact (`assetOwner`, `assetReference`) pair, case
+   * included: operation to token account, stored token to fresh balance, late-token detection. For a
+   * chain whose references are case-sensitive (XRPL: `BDI` and `bdi` are two currencies).
+   *
+   * Default: the reference lowercased, since some chains' balance and operation paths disagree on
+   * casing (Stacks); operations are then also matched on `assetOwner`, the other checks are not.
+   */
+  exactAssetMatch?: boolean;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
   /**
    * Maps the family's own transaction fields onto the intent's `data` (the coin module's `TxData`);

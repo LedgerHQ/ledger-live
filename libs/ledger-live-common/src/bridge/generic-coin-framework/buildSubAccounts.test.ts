@@ -4,6 +4,37 @@ import { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { AssetInfo, Balance } from "@ledgerhq/coin-module-framework/api/types";
 
+function buildCaseVariantSubAccounts(exactAssetMatch?: boolean) {
+  return buildSubAccounts({
+    exactAssetMatch,
+    accountId: "accountId",
+    syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+    allTokenAssetsBalances: [
+      { value: 10n, asset: { type: "iou", assetReference: "BDI", assetOwner: "issuer" } },
+      { value: 20n, asset: { type: "iou", assetReference: "bdi", assetOwner: "issuer" } },
+    ],
+    operations: [
+      {
+        hash: "txUpper",
+        extra: { assetReference: "BDI", assetOwner: "issuer", ledgerOpType: "IN" },
+      },
+      {
+        hash: "txLower",
+        extra: { assetReference: "bdi", assetOwner: "issuer", ledgerOpType: "IN" },
+      },
+    ] as any,
+    getTokenFromAsset: async asset => {
+      return asset.type === "iou" ? ({ id: asset.assetReference } as TokenCurrency) : undefined;
+    },
+  });
+}
+
+function toHashesByToken(subAccounts: TokenAccount[]) {
+  return Object.fromEntries(
+    subAccounts.map(subAccount => [subAccount.token.id, subAccount.operations.map(op => op.hash)]),
+  );
+}
+
 describe("buildSubAccounts", () => {
   it("builds sub accounts from asset operations and balances, preserving operations order", async () => {
     const subAccounts = await buildSubAccounts({
@@ -330,6 +361,26 @@ describe("buildSubAccounts", () => {
     });
 
     expect(subAccounts[0].operations.map(op => op.id)).toEqual(["accountId+tokenNoRef-matches-IN"]);
+  });
+
+  describe("two references from one issuer differing only by case (XRPL BDI and bdi)", () => {
+    it("keeps two token accounts, each with its own operations, for a family with exactAssetMatch", async () => {
+      const subAccounts = await buildCaseVariantSubAccounts(true);
+
+      expect(toHashesByToken(subAccounts)).toEqual({
+        BDI: ["txUpper"],
+        bdi: ["txLower"],
+      });
+    });
+
+    it("still matches case-insensitively for a family without it", async () => {
+      const subAccounts = await buildCaseVariantSubAccounts();
+
+      expect(toHashesByToken(subAccounts)).toEqual({
+        BDI: ["txUpper", "txLower"],
+        bdi: ["txUpper", "txLower"],
+      });
+    });
   });
 });
 

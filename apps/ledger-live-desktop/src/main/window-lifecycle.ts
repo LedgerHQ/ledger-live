@@ -61,6 +61,8 @@ const webPreferences: WebPreferences = {
   nodeIntegration: false,
   contextIsolation: true,
   sandbox: true,
+  // TEMP local bypass: public XRP testnet nodes reject CORS (no ACAO, custom x-ledger-* headers).
+  webSecurity: !__DEV__,
   // globally disable spellchecks which aren't useful to us & problematic for crypto address fields & so on
   spellcheck: false, // FIXME we should overrides this directly on the input fields instead of globally disabling it
 };

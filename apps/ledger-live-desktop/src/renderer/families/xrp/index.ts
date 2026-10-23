@@ -6,12 +6,15 @@ import {
 import { LLDCoinFamily } from "../types";
 import sendRecipientFields from "./SendRecipientFields";
 import operationDetails from "./operationDetails";
+import tokenList from "./TokenList";
 import { Account } from "@ledgerhq/types-live";
 
 const family: LLDCoinFamily<Account, Transaction, TransactionStatus, XrpOperation> = {
   operationDetails,
   sendRecipientFields,
   sendRecipientCanNext: status => !status.errors.transaction,
+  tokenList,
+  modalsToPreload: ["MODAL_XRP_ADD_TOKEN"],
 };
 
 export default family;

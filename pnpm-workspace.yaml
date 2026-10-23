@@ -312,6 +312,7 @@ overrides:
   "@ton/ton>zod": "catalog:"
   # @expo/cli 54.x pins 0.81.5 exactly; align on react-native 0.81.6 to dedupe debugger-frontend
   "@expo/cli>@react-native/dev-middleware": "0.81.6"
+  "@ledgerhq/coin-xrp": "link:../coin-modules/libs/coin-modules/coin-xrp"
   jest-environment-node: "30.5.0"
   jest-mock: "30.5.0"
   jest-matcher-utils: "30.5.0"

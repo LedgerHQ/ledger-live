@@ -1,3 +1,4 @@
+import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../zcashRouting";
 import { sendFeatures } from "./features";
@@ -6,6 +7,12 @@ const celo = getCryptoCurrencyById("celo");
 const stellar = getCryptoCurrencyById("stellar");
 const ethereum = getCryptoCurrencyById("ethereum");
 const zcash = getCryptoCurrencyById("zcash");
+const xrp = getCryptoCurrencyById("ripple");
+const rlusd = {
+  type: "TokenCurrency",
+  id: "ripple/iou/rlusd",
+  parentCurrencyId: "ripple",
+} as TokenCurrency;
 
 describe("sendFeatures.hasDefaultStrategy / getDefaultStrategyPatch", () => {
   it("Celo: declares a default strategy that clears feesStrategy + fees only", () => {
@@ -88,5 +95,17 @@ describe("sendFeatures.getTrackingAttributes", () => {
 
   it("returns {} for an undefined currency", () => {
     expect(sendFeatures.getTrackingAttributes(undefined, {})).toEqual({});
+  });
+});
+
+describe("sendFeatures.canSendMax", () => {
+  it("XRP: disables max for the coin and enables it for its tokens", () => {
+    expect(sendFeatures.canSendMax(xrp)).toBe(false);
+    expect(sendFeatures.canSendMax(rlusd)).toBe(true);
+  });
+
+  it("defaults to true without a descriptor value", () => {
+    expect(sendFeatures.canSendMax(ethereum)).toBe(true);
+    expect(sendFeatures.canSendMax(undefined)).toBe(true);
   });
 });

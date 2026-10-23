@@ -14,6 +14,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { useFeature } from "@features/platform-feature-flags";
 import { buildAssetsSorted } from "@ledgerhq/live-common/modularDrawer/utils/buildAssetsSorted";
 import useEnv from "@features/platform-env";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 
 export function useModularDialogData() {
   const modularDrawerFeature = useFeature("lldModularDrawer");
@@ -39,7 +40,15 @@ export function useModularDialogData() {
   const useCase = useSelector(modularDialogUseCaseSelector);
   const areCurrenciesFiltered = useSelector(modularDialogAreCurrenciesFilteredSelector);
 
-  const { data, isLoading, isSuccess, error, errorInfo, loadNext, refetch } = useAssetsData({
+  const {
+    data: rawData,
+    isLoading,
+    isSuccess,
+    error,
+    errorInfo,
+    loadNext,
+    refetch,
+  } = useAssetsData({
     search: searchedValue,
     currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
     networkIds: resolvedNetworkIds,
@@ -51,6 +60,33 @@ export function useModularDialogData() {
     isStaging,
     includeTestNetworks: devMode,
   });
+
+  // TEMP local bypass: DADA does not list ripple_testnet, so add it next to ripple in dev mode.
+  const data = useMemo(() => {
+    if (!devMode || !rawData?.cryptoAssets.ripple || rawData.cryptoAssets.ripple_testnet) {
+      return rawData;
+    }
+    const id = "ripple_testnet";
+    const name = "XRP (Testnet)";
+    const ids = rawData.currenciesOrder.metaCurrencyIds;
+    const at = ids.indexOf("ripple") + 1;
+    return {
+      ...rawData,
+      cryptoAssets: {
+        ...rawData.cryptoAssets,
+        [id]: { id, ticker: "XRP", name, assetsIds: { [id]: id } },
+      },
+      networks: { ...rawData.networks, [id]: { id, name } },
+      cryptoOrTokenCurrencies: {
+        ...rawData.cryptoOrTokenCurrencies,
+        [id]: getCryptoCurrencyById(id),
+      },
+      currenciesOrder: {
+        ...rawData.currenciesOrder,
+        metaCurrencyIds: [...ids.slice(0, at), id, ...ids.slice(at)],
+      },
+    };
+  }, [devMode, rawData]);
 
   const assetsSorted = useMemo(
     () =>

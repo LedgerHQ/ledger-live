@@ -22,6 +22,8 @@ export const ripple_testnet = currency({
     },
   ],
   family: "xrp",
+  // TEMP prototype: shows the token list and its add-token button (XRPL tokens: IOU, MPT)
+  tokenTypes: ["iou", "mpt"],
   isTestnetFor: "ripple",
   explorerViews: [
     {

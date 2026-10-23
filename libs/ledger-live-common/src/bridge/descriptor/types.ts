@@ -332,7 +332,8 @@ export type FlowEffect = Readonly<{
 }>;
 
 export type SendAmountDescriptor = Readonly<{
-  canSendMax?: boolean;
+  /** The function form receives the sent currency: the token itself, not its parent coin */
+  canSendMax?: boolean | ((currency: CryptoOrTokenCurrency) => boolean);
   /**
    * Generic and family agnostic effects executed by the `useFlowEffects` runner
    * while the Amount step is active. Each effect returns a transaction

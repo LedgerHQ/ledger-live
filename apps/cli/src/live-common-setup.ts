@@ -15,6 +15,7 @@ import { calApiExtra } from "@shared/api-services";
 import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { getEnv } from "@shared/env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { withXrpDevTokens } from "@ledgerhq/live-common/families/xrp/devTokens";
 
 const NON_SPECULOS_DEVICE_ERROR =
   "This CLI only supports Speculos devices (set SPECULOS_API_PORT). " +
@@ -70,4 +71,9 @@ export const calStore = configureStore({
     }).concat(cryptoAssetsApi.middleware),
 });
 
-setFrameworkCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: calStore.dispatch }));
+// TEMP prototype: same ripple_testnet bypass and XRP dev tokens as LLD's bridge-setup.ts
+const calCryptoAssetsStore = buildCryptoAssetsStore({ dispatch: calStore.dispatch });
+const getTokensSyncHash = calCryptoAssetsStore.getTokensSyncHash;
+calCryptoAssetsStore.getTokensSyncHash = async currencyId =>
+  currencyId === "ripple_testnet" ? "" : getTokensSyncHash(currencyId);
+setFrameworkCryptoAssetsStore(withXrpDevTokens(calCryptoAssetsStore));

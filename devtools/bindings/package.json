@@ -49,7 +49,7 @@
     "@shared/app-config": "workspace:*",
     "@shared/env": "workspace:*",
     "@shared/feature-flags": "workspace:*",
-    "bignumber.js": "catalog:",
+    "bignumber.js": "9.1.2",
     "xstate": "catalog:"
   },
   "peerDependencies": {
