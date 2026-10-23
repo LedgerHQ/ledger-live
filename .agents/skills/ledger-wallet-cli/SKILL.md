@@ -363,13 +363,12 @@ enroll with. Without `--environment` and `--app-url`, `enroll` uses production.
 `enrollment-pending` NDJSON event), then waits on an encrypted Trustchain relay channel bound into the
 signed request. The frontend delivers the completion over that channel; there is no `complete`
 command and no manual JSON fallback. Run it so you can read its output while it waits (for example in
-the background), and **send the enrollment URL to the user as soon as it is printed**. **Keep the
-process running** until it prints the final `enrolled` result (json: `status: "success"`,
-`enrolled: true`, `trustchainId`, `accountAccessEnvironment`, `keyStore`). The wait is bounded by
-`--expires-in` (default 30m).
+the background), and **send the enrollment URL and its fingerprint to the user as soon as they are
+printed**. **Keep the process running** until it prints the final `enrolled` result (json:
+`status: "success"`, `enrolled: true`, `trustchainId`, `accountAccessEnvironment`, `keyStore`). The
+wait is bounded by `--expires-in` (default 30m).
 
-**Keep credentials private.** Send the user only the enrollment URL and the fingerprint, never the
-agent's secret key, access tokens or session file.
+**Keep credentials private.** Never share the agent's secret key, access tokens or session file.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
