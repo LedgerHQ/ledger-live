@@ -507,7 +507,9 @@ pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethe
   Permit2 signature is skipped, because the frontend can't prepare one yet and the intent would
   stay stuck in review.
 - **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
-  quoted, so the provider is always one the frontend can prepare.
+  quoted, so the provider is always one the frontend can prepare. More than 5% above the quote
+  prints a warning on stderr (with `--dry-run` too): the reviewer sees a fresh quote, not your
+  amount.
 - **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
   intent may already exist.
 ### Listing the agent's intents (`agent-intent intents`)
