@@ -1,6 +1,7 @@
 import type { ZodType } from "zod";
 import { InvalidAccountDescriptorError } from "./errors";
 import {
+  AccountPurposeSchema,
   AddressAccountDescriptorSchema,
   UtxoAccountDescriptorSchema,
   type AccountDescriptor,
@@ -18,7 +19,7 @@ function validate<T>(schema: ZodType<T>, value: unknown): T {
   return result.data;
 }
 
-/** `account:2:<type>:<network_id>:<xpub or address>:<path>` */
+/** `<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`, the purpose being `account` or `mock` */
 export function serializeAccountDescriptor(descriptor: AccountDescriptor): string {
   const { purpose, version, type, network, path } = descriptor;
   const subject = descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
@@ -26,10 +27,11 @@ export function serializeAccountDescriptor(descriptor: AccountDescriptor): strin
 }
 
 export function parseAccountDescriptor(input: string): AccountDescriptor {
-  const [purpose, version, type, network, ...rest] = input.split(SEP);
-  if (purpose !== "account") {
+  const [rawPurpose, version, type, network, ...rest] = input.split(SEP);
+  const purpose = AccountPurposeSchema.safeParse(rawPurpose);
+  if (!purpose.success) {
     throw new InvalidAccountDescriptorError(
-      `Invalid AccountDescriptor: expected purpose "account"`,
+      `Invalid AccountDescriptor: expected purpose "account" or "mock"`,
     );
   }
   if (version !== "2") {
@@ -43,7 +45,7 @@ export function parseAccountDescriptor(input: string): AccountDescriptor {
 
   const path = rest.at(-1);
   const subject = rest.slice(0, -1).join(SEP);
-  const common = { purpose, version, type, network, path };
+  const common = { purpose: purpose.data, version, type, network, path };
 
   if (type === "utxo") {
     return validate(UtxoAccountDescriptorSchema, { ...common, xpub: subject });

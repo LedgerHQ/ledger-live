@@ -24,6 +24,7 @@ export const ToolKind = {
   FEATURE: "feature",
   SHARED: "shared",
   LIB: "lib",
+  TOOL: "tool",
 } as const;
 
 /** Utility: extracts the union of value types from an object type. */
