@@ -89,6 +89,7 @@ function makeAgentIntentProfile(overrides: Partial<Record<string, unknown>> = {}
     environment: "staging" as const,
     bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
     publicKey: `02${"0".repeat(64)}`,
+    keyStore: "os-keychain" as const,
     enrollmentExpiresAt: "2026-06-01T00:00:00.000Z",
     createdAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
@@ -295,6 +296,34 @@ describe("ring-field resilience", () => {
     const session = await Session.read();
     expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
     expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
+  });
+
+  it("defaults keyStore to os-keychain for a profile enrolled before the plaintext fallback", async () => {
+    useTmpState();
+    const { keyStore: _keyStore, ...legacyProfile } = makeAgentIntentProfile();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({ accounts: [], agentIntentProfiles: [legacyProfile] }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")?.keyStore).toBe("os-keychain");
+  });
+
+  it("keeps a plaintext-file keyStore and flags an unknown one as invalid", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ keyStore: "plaintext-file" }),
+          makeAgentIntentProfile({ profileId: "odd-store", keyStore: "usb-stick" }),
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")?.keyStore).toBe("plaintext-file");
+    expect(session.invalidAgentIntentProfileIds).toEqual(["odd-store"]);
   });
 
   it("flags a profile with a malformed enrollment expiry as invalid instead of pending", async () => {

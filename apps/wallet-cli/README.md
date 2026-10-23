@@ -30,7 +30,7 @@ Most commands accept `--output json`. `send`, `earn deposit`, `earn withdraw`, `
 | Agent skill | `skill list`, `skill retrieve`, `skill install`, `skill doctor` | no |
 
 - **Key Ring** encrypts files or text (AES-256-GCM) under named keys backed by Ledger Key Ring (LKRP). After `ring init`, it needs network access but no device.
-- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It needs no device or signer and never broadcasts, and its trust model is separate from `ring`. It needs a working OS keychain (on Linux, a Secret Service provider such as gnome-keyring).
+- **Agent Intent** gives a remote agent its own software identity. The agent proposes Ethereum and Solana sends and Ethereum swaps, and a human reviews them in the Agent Intent frontend. It needs no device or signer and never broadcasts, and its trust model is separate from `ring`. It stores the agent key in the OS keychain (on Linux, a Secret Service provider such as gnome-keyring); without one, or (on Linux) when it refuses the write or can't read the profile's entry, e.g. a locked collection, `agent-intent enroll` fails with `keychain_unavailable`. On Linux only, `--allow-plaintext-key` stores the key in an unencrypted 0600 file instead, only after the human explicitly agrees, and is ignored when a keychain is available and accepts the key. A profile enrolled that way needs a wallet-cli that has this flag.
 
 The wallet-cli skill documents each command, the safety rules and the Agent Intent flow in detail. Print it with `wallet-cli skill retrieve wallet-cli-usage`, or read the [source on GitHub](https://github.com/LedgerHQ/ledger-live/blob/develop/.agents/skills/ledger-wallet-cli/SKILL.md).
 
@@ -55,7 +55,7 @@ wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 ## Environment and storage
 
 - `USER_ID` defaults to `wallet-cli`, so the DMK firmware distribution salt stays stable.
-- `swap quote`, `swap execute` and `agent-intent swap` authenticate their quote requests to the Ledger API with a dedicated key. The key is stored in the OS keychain as `api-auth-key-<hash>` (service `ledger-wallet-cli`). Without a usable keychain, a one-off key authenticates that run only. It is not the Key Ring key, and `session reset` and `ring destroy` do not remove it. If authentication fails or takes more than 10 s (not counting a keychain dialog waiting for the user), the request is sent without a token.
+- `swap quote`, `swap execute` and `agent-intent swap` authenticate their quote requests to the Ledger API with a dedicated key. The key is stored in the OS keychain as `api-auth-key-<hash>` (service `ledger-wallet-cli`). Without a usable OS keychain (on Linux: no Secret Service), or when the key can't be saved there, quote requests are sent without a token and a warning is printed on stderr; no throwaway key is generated. It is not the Key Ring key, and `session reset` and `ring destroy` do not remove it. If authentication fails or takes more than 10 s (not counting a keychain dialog waiting for the user), the request is sent without a token.
 - `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults for development. The swap API stays on production.
 
 ## Speculos

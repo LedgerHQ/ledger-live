@@ -13,6 +13,7 @@ import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAs
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
@@ -329,6 +330,7 @@ export type AgentIntentEnrolled = {
   profileId: string;
   trustchainId: string;
   accountAccessEnvironment: string;
+  keyStore: AgentIntentProfileMeta["keyStore"];
 };
 
 function formatAccountAccess(profile: AgentIntentProfileMeta): string {
@@ -784,12 +786,12 @@ class HumanCommandOutput implements CommandOutput {
     const w = Math.max(7, ...profiles.map(p => p.profileId.length));
     writeStdout(
       `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
-        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("ACCOUNT ACCESS")}`,
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("KEY STORE")}  ${colors.bold("ACCOUNT ACCESS")}`,
     );
     for (const p of profiles) {
       writeStdout(
         `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
-          `${agentIntentProfileStatus(p)}  ${formatAccountAccess(p)}`,
+          `${agentIntentProfileStatus(p)}  ${p.keyStore}  ${formatAccountAccess(p)}`,
       );
     }
   }
@@ -804,6 +806,7 @@ class HumanCommandOutput implements CommandOutput {
       "Status",
       "Public key",
       "Fingerprint",
+      "Key store",
       "BFF URL",
       "Keycloak URL",
       "Trustchain ID",
@@ -823,6 +826,7 @@ class HumanCommandOutput implements CommandOutput {
         line("Status", agentIntentProfileStatus(profile)),
         line("Public key", profile.publicKey),
         line("Fingerprint", formatAgentPublicKeyFingerprint(profile.publicKey)),
+        line("Key store", profile.keyStore),
         line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
         ...(profile.keycloakBaseUrl === undefined
           ? []
@@ -894,10 +898,11 @@ class HumanCommandOutput implements CommandOutput {
     profileId,
     trustchainId,
     accountAccessEnvironment,
+    keyStore,
   }: AgentIntentEnrolled): void {
     writeStdout(
       `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ` +
-        `${trustchainId} (account access: ${accountAccessEnvironment})`,
+        `${trustchainId} (account access: ${accountAccessEnvironment}, key store: ${keyStore})`,
     );
   }
 
@@ -1110,6 +1115,12 @@ class JsonCommandOutput implements CommandOutput {
           code: e.state.code,
           message,
         },
+      };
+    }
+    if (e instanceof KeychainUnavailableError) {
+      return {
+        ok: false,
+        error: { command: this._ctx.command, code: "keychain_unavailable", message: e.message },
       };
     }
     return {

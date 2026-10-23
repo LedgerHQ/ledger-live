@@ -81,7 +81,7 @@
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-devices": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",
-    "@napi-rs/keyring": "1.3.0",
+    "@napi-rs/keyring": "2.1.2",
     "@noble/hashes": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@segment/analytics-node": "3.1.0",

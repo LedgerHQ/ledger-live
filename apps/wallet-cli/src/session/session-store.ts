@@ -48,6 +48,9 @@ type _AgentIntentEnvironmentsExhaustive = AssertTrue<
   AgentIntentEnvironment extends (typeof AGENT_INTENT_ENVIRONMENTS)[number] ? true : false
 >;
 
+export const AGENT_INTENT_KEY_STORES = ["os-keychain", "plaintext-file"] as const;
+export type AgentIntentKeyStore = (typeof AGENT_INTENT_KEY_STORES)[number];
+
 // Ledger Sync (App-16) stream the agent was granted on enrollment — references only, not secret.
 const AgentIntentAccountAccessSchema = z.object({
   mode: z.literal("direct-app16-key-reader"),
@@ -57,7 +60,9 @@ const AgentIntentAccountAccessSchema = z.object({
 });
 
 // Non-secret Agent Intent profile metadata only. The profile's private key never lives here — it
-// is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`).
+// is stored in the OS keychain, keyed by `profileId` (see `key-ring/agent-intent-keychain.ts`), or,
+// for a profile enrolled with `--allow-plaintext-key` on a host without a usable OS keychain, in an
+// unencrypted 0600 file (see `key-ring/agent-intent-key-file.ts`). `keyStore` records which.
 const AgentIntentProfileSchema = z.object({
   profileId: z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE),
   displayName: z.string().min(1).max(80),
@@ -69,6 +74,8 @@ const AgentIntentProfileSchema = z.object({
   // SEC1-prefixed: 02/03 + 32-byte x-coordinate (compressed) or 04 + 64-byte x/y (uncompressed) —
   // not just any 66/130-char hex string, matching what secp256k1.getPublicKey() actually produces.
   publicKey: z.string().regex(/^0[23][0-9a-f]{64}$|^04[0-9a-f]{128}$/i),
+  // Defaulted so profiles enrolled before the plaintext fallback keep parsing.
+  keyStore: z.enum(AGENT_INTENT_KEY_STORES).default("os-keychain"),
   trustchainId: z.string().optional(),
   accountAccess: AgentIntentAccountAccessSchema.optional(),
   // Set while `agent-intent recover` waits for approval; a bad value is dropped, not fatal.
@@ -119,7 +126,7 @@ const ringFields = {
  * never bricks every command); returning the raw records (not just their ids) is what lets `write()`
  * carry them forward unchanged instead of a subsequent write from ANY command (enroll,
  * reset, ring, discover — every one of them calls `write()`) silently erasing them from disk and
- * orphaning their OS-keychain secret for good.
+ * orphaning their OS-keychain secret or key file for good.
  */
 function invalidAgentIntentProfileRaws(root: unknown): unknown[] {
   const raw =
@@ -332,9 +339,9 @@ export class Session {
   /**
    * `profileId`s of `agentIntentProfiles` entries the last read dropped for failing schema
    * validation — recoverable enough to name, not enough to load. See `agent-intent list`'s use of
-   * this: each id's OS-keychain secret (if any) is orphaned only once nothing else records it —
-   * which, since `write()` now carries the raw record forward (see below), requires an explicit
-   * `session reset` rather than just any subsequent write.
+   * this: each id's OS-keychain secret or key file (if any) is orphaned only once nothing else
+   * records it — which, since `write()` now carries the raw record forward (see below), requires an
+   * explicit `session reset` rather than just any subsequent write.
    */
   get invalidAgentIntentProfileIds(): ReadonlyArray<string> {
     return invalidAgentIntentProfileIds(this._invalidAgentIntentProfileRaws);
@@ -439,8 +446,9 @@ export class Session {
     if (this._passwordSalt) data.passwordSalt = this._passwordSalt;
     // Invalid raws ride along unchanged (never re-validated, never mutated by anything in this
     // class) so a write from ANY command — not just `agent-intent` ones — can't silently erase an
-    // entry the last read couldn't parse and orphan its OS-keychain secret. They keep failing
-    // validation on the next read, which is the intended outcome: recoverable-by-name, not adopted.
+    // entry the last read couldn't parse and orphan its OS-keychain secret or key file. They keep
+    // failing validation on the next read, which is the intended outcome: recoverable-by-name, not
+    // adopted.
     const agentIntentProfiles = [
       ...this._agentIntentProfiles,
       ...this._invalidAgentIntentProfileRaws,

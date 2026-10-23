@@ -321,7 +321,8 @@ pnpm --silent wallet-cli start ring destroy
 
 Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
 software identity local to this machine — **no device required for enroll/recover/list/show/sync**. Each
-profile gets its own secp256k1 keypair; the private key never leaves the OS keychain and is never
+profile gets its own secp256k1 keypair; the private key never leaves the OS keychain (or a plaintext
+key file, only when the human explicitly allowed it — see **Keychain required**) and is never
 printed, logged, or included in any command's output (human or `--output json`).
 
 ```bash
@@ -354,7 +355,7 @@ value outside this list.
 signed request. The frontend delivers the completion over that channel; there is no `complete`
 command and no manual JSON fallback. **Keep the process running** until it prints the final
 `enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
-`accountAccessEnvironment`). The wait is bounded by `--expires-in` (default 30m).
+`accountAccessEnvironment`, `keyStore`). The wait is bounded by `--expires-in` (default 30m).
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
@@ -367,7 +368,7 @@ cannot be resumed — start a fresh enrollment with a **new** `--profile` id.
 **Recovery reuses the same key.** `recover --profile <id>` signs a recovery request for the
 profile's existing key and Trustchain (no new key, `accountAccess` untouched), then waits on the relay
 exactly like `enroll` (json: a `recovery-pending` event, then `status: "success"`, `recovered: true`,
-`trustchainId`). Any enrolled profile whose keychain key matches the recorded public key can be
+`trustchainId`). Any enrolled profile whose agent key matches the recorded public key can be
 recovered, whatever its `--source`. The completion must name the same agent key, the same signed request
 and the same Trustchain, and the agent key must obtain an App-18 token for it (App-16 is not
 re-checked). While it waits, `list`/`show` report `recovering`; on timeout, Ctrl+C, or a failed
@@ -380,14 +381,45 @@ against what the Agent Intent frontend/device displays before approving. A misma
 means the enrollment request was tampered with or sent to the wrong agent.
 
 **Duplicate protection:** `enroll` refuses to reuse a `--profile` id already recorded in the session,
-and separately refuses if a keychain entry for that id exists without a matching session record
-(an inconsistent state you must clear manually before re-enrolling under the same id).
+and separately refuses if a keychain entry or a stale key file for that id exists without a matching
+session record (an inconsistent state you must clear manually before re-enrolling under the same id).
 
 **Keychain required:** `enroll` needs a working OS keychain — macOS Keychain, Windows Credential
 Manager, or on Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an
-unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll` fails with
-`Could not store the agent's secret key in the OS keychain (…)` and saves nothing — fix the keychain
-and re-run the same command; there is no file-based fallback by design.
+unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll`, and every
+command reading an `os-keychain` profile, fails with `keychain_unavailable` (json `error.code`) and
+saves nothing. Make sure it ran with the sandbox bypass first. If the message says the OS keychain
+refused to store the agent key or can't read the profile's entry (e.g. a locked collection), ask the
+human to unlock it and re-run the same `enroll`. If it still fails, or the human can't unlock it,
+**stop and ask the human, verbatim:**
+
+> My environment doesn't support keychain access. To use and persist my access credentials I need to save passwords in plaintext in my environment. I won't be able to perform actions without your approval on Ledger Agent Intent. Can I proceed?
+
+Only after an explicit yes **in the current conversation** re-run the same `enroll` with
+`--allow-plaintext-key`. On a no (or anything short of a clear yes), stop: don't enroll, and
+report that enrollment can't be completed in this environment. Never add the flag pre-emptively,
+and never on consent from an earlier or other session. The OS keychain still wins when it is
+available and accepts the write (a notice on stderr says the flag was ignored). Otherwise the key
+goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g. `~/.local/state/ledger-wallet-cli/…`),
+mode 0600 but **unencrypted**, and `enroll` names that file in a stderr notice; every
+command reading it warns on stderr, and `show` reports it (json `keyStore: "plaintext-file"`,
+human "Key store" line). A key file that group or others can access, that another user owns, or that
+is a symlink is refused; `chmod 600` fixes loose permissions. A `plaintext-file` profile
+needs a wallet-cli whose `agent-intent enroll --help` lists `--allow-plaintext-key`: an older one
+doesn't know the key file and drops `keyStore` when it rewrites the session file. An existing
+profile that fails with `keychain_unavailable` can't be read here: first ask the human whether it
+was enrolled from a session with a working keychain (e.g. a desktop session) and run from there, or
+make that Secret Service reachable. Only when the human confirms an older wallet-cli enrolled it
+here without one (its key went to the kernel keyring and is gone), re-enroll under a new
+`--profile` id (same consent rule).
+
+On macOS and Windows a refused write fails `enroll` with the generic `Could not store the agent's
+secret key in the OS keychain`, and an existing entry it can't read with `Could not read the OS
+keychain entry` (no `keychain_unavailable`). Make sure it ran with the sandbox bypass; if it still
+fails, stop and ask the human to unlock the keychain or allow access in the system prompt, then
+re-run the same `enroll`. If that's not possible, report that enrollment can't be completed in this
+environment. Never offer `--allow-plaintext-key` for these errors: the plaintext fallback is
+Linux-only.
 
 **Environment isolation:** each profile records the environment (`staging`/`production`) it was
 enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
@@ -402,12 +434,12 @@ App-16 application path) once enrolled.
 
 `agent-intent sync --profile <id>` imports the accounts synchronized from your other Ledger Wallet
 instances (desktop, mobile) so they can be referenced by label. It authenticates with the **agent's
-own key** (from the OS keychain), which the frontend added to the App-16 stream at enrollment — it
+own key** (keychain or key file), which the frontend added to the App-16 stream at enrollment — it
 never opens the device and there is no separate Ledger Sync enrollment. The environment comes from
 the profile's `accountAccess`.
 
 - **Requires an enrolled profile:** a `pending`/`expired` profile (no `accountAccess`) or a missing
-  keychain key fails with a clear error.
+  agent key fails with a clear error.
 - **Lost access is reported, not repaired:** if the agent was removed from Ledger Sync, `sync`
   reports "no longer has Ledger Sync access" and deletes nothing.
 - **Key rotation is followed:** if Ledger Sync rotated its key (a member was removed), the profile's
@@ -451,7 +483,7 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 
 - **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
-  `--bff-url`/`--keycloak-url` override carries over), and its key in the OS keychain.
+  `--bff-url`/`--keycloak-url` override carries over), and its agent key (OS keychain or key file).
 - **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
   the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `SOL`
   → Solana and any other ticker → Ethereum. A `--account` label must be a mainnet account of that
@@ -681,3 +713,5 @@ Get the Solana `--stake-account` address from `earn positions <account>` (its `s
 | `[✖] Speculos not reachable at <url>. …` (exit code 3)                                               | `SPECULOS_API_PORT` set, but no Speculos answers there, or the connect fails                                                                           | Ask the user to start Speculos, fix the variables, or unset them to use a USB Ledger.                                                                                                                                                                                                                                                                                                 |
 | `[✖] Timed out talking to Speculos at <url>. …` (exit code 6)                                        | the emulated app waits for a button press, no answer to the connect, or a different app than the command needs                                         | Tell the user the flow needs an on-device approval, or that Speculos is down or runs an app this command does not use.                                                                                                                                                                                                                                                                |
 | `device-state … awaiting_approval … reason: unlock` (JSON stream)                                     | device locked                                                                                                                                          | Keep the command running — the CLI resumes automatically once unlocked. Ask the user to unlock the device with their PIN.                                                                                                                                                                                                                                                             |
+| `keychain_unavailable` (json `error.code`) | `agent-intent enroll`: no Secret Service on Linux, or the OS keychain refused to store the agent key or can't read the profile's entry (e.g. a locked collection). Other `agent-intent` commands: the profile's keychain can't be reached | Follow **Keychain required**: when the keychain refused the write or can't read the entry, ask the human to unlock it first; never add `--allow-plaintext-key` without the human's explicit yes. |
+| `Could not store the agent's secret key in the OS keychain` or `Could not read the OS keychain entry` | `agent-intent enroll` on macOS/Windows: the keychain refused the write, or the read of an existing entry (locked, or access denied) | Re-run with the sandbox bypass; if it still fails, ask the human to unlock the keychain or allow access, then re-run. Never offer `--allow-plaintext-key` (Linux-only). |

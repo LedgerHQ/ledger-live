@@ -115,6 +115,7 @@ describe("session reset — corrupt file recovery", () => {
     const err = JSON.parse(stdout);
     expect(err.ok).toBe(false);
     expect(err.error.message).toMatch(/Agent Intent profiles.*cannot be recovered/is);
+    expect(err.error.message).toMatch(/plaintext key files in .*agent-intent-keys/);
     expect(err.error.message).toMatch(/--force/);
     expect(await Bun.file(path).text()).toBe(": : :\n\t- [");
   });

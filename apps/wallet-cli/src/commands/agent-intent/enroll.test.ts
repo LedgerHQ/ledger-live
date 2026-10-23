@@ -1,6 +1,8 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { installOutputCapture } from "../../shared/ui";
+import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
+import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -30,7 +32,7 @@ type WaitInput = {
 let storedProfile: Profile | undefined;
 // Set only by the race test: what the locked recheck (2nd Session.read) sees instead of `storedProfile`.
 let profileOnLockedRecheck: Profile | undefined | "same-as-stored";
-let keychainHasEntry: boolean;
+let hasSecretKeyImpl: () => boolean;
 let invalidProfileIds: string[];
 let addAgentIntentProfileImpl: (profile: Profile) => void;
 let writeImpl: () => void;
@@ -45,9 +47,14 @@ let hostWait: (input: WaitInput) => Promise<Completion>;
 let waitStarted: () => void;
 let authenticateOverride: ((input: Record<string, unknown>) => Promise<void>) | undefined;
 let authenticateInputs: Array<Record<string, unknown>>;
+let keychainProbe: () => unknown;
+let keyFileExists: boolean;
+let deleteKeyFileSucceeds: boolean;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
+const savedKeyFiles = new Set<string>();
+const deletedKeyFileCalls: string[] = [];
 
 function makeCompletion(environment: "staging" | "production" = "production"): Completion {
   return {
@@ -103,8 +110,9 @@ beforeAll(() =>
     sessionRead: async () => makeSession(),
     // The real lock does mkdirSync + a real file lock — irrelevant to these checks/rollback tests.
     noopSessionLock: true,
+    keychainProbe: () => keychainProbe(),
     keychain: {
-      hasAgentIntentSecretKey: (_profileId: string) => keychainHasEntry,
+      hasAgentIntentSecretKey: (_profileId: string) => hasSecretKeyImpl(),
       saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
         if (saveSecretKeyError) throw saveSecretKeyError;
         savedSecretKeys.add(profileId);
@@ -113,6 +121,17 @@ beforeAll(() =>
         deletedSecretKeyCalls.push(profileId);
         if (deleteSecretKeySucceeds) savedSecretKeys.delete(profileId);
         return deleteSecretKeySucceeds;
+      },
+    },
+    keyFile: {
+      hasAgentIntentKeyFile: (_profileId: string) => keyFileExists,
+      saveAgentIntentKeyFile: (profileId: string, _secretKeyHex: string) => {
+        savedKeyFiles.add(profileId);
+      },
+      deleteAgentIntentKeyFile: (profileId: string) => {
+        deletedKeyFileCalls.push(profileId);
+        if (deleteKeyFileSucceeds) savedKeyFiles.delete(profileId);
+        return deleteKeyFileSucceeds;
       },
     },
     sdk: {
@@ -164,6 +183,7 @@ type EnrollFlags = {
   "keycloak-url"?: string;
   "expires-in": string;
   environment: "staging" | "production";
+  "allow-plaintext-key": boolean;
   output?: "human" | "json";
 };
 
@@ -175,6 +195,7 @@ function runEnroll(overrides: Partial<EnrollFlags> = {}) {
     source: "openclaw",
     "expires-in": "30m",
     environment: "production",
+    "allow-plaintext-key": false,
     ...overrides,
   };
   return (
@@ -185,12 +206,20 @@ function runEnroll(overrides: Partial<EnrollFlags> = {}) {
 describe("agent-intent enroll", () => {
   let restore: () => void;
   let stdout: string[];
+  let stderr: string[];
+  let restorePlatform: () => void;
 
   beforeEach(() => {
+    restorePlatform = overridePlatform("linux");
+    keychainProbe = () => [];
+    keyFileExists = false;
+    deleteKeyFileSucceeds = true;
+    savedKeyFiles.clear();
+    deletedKeyFileCalls.length = 0;
     storedProfile = undefined;
     profileOnLockedRecheck = "same-as-stored";
     sessionReadCalls = 0;
-    keychainHasEntry = false;
+    hasSecretKeyImpl = () => false;
     invalidProfileIds = [];
     deleteSecretKeySucceeds = true;
     saveSecretKeyError = undefined;
@@ -210,10 +239,14 @@ describe("agent-intent enroll", () => {
     addAgentIntentProfileImpl = () => {};
     writeImpl = () => {};
     stdout = [];
-    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
+    stderr = [];
+    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
   });
 
-  afterEach(() => restore());
+  afterEach(() => {
+    restore();
+    restorePlatform();
+  });
 
   describe("pre-checks and local persistence", () => {
     it("refuses to overwrite a profile id already recorded in the session", async () => {
@@ -224,10 +257,196 @@ describe("agent-intent enroll", () => {
     });
 
     it("refuses to enroll when a keychain entry already exists but isn't recorded in the session", async () => {
-      keychainHasEntry = true;
+      hasSecretKeyImpl = () => true;
 
       await expect(runEnroll()).rejects.toThrow(
         /keychain entry for profile "test-agent" already exists/,
+      );
+    });
+
+    it("never writes over a keychain entry it can't read, reporting keychain_unavailable", async () => {
+      hasSecretKeyImpl = () => {
+        throw new Error("Couldn't access platform storage: Secret Service: object locked");
+      };
+
+      const err = await runEnroll().catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /The OS keychain can't read the entry of profile "test-agent" \(.*object locked\), so nothing was saved\. Unlock the keychain collection and re-run/,
+      );
+      expect(requestInputs).toEqual([]);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(savedKeyFiles.size).toBe(0);
+    });
+
+    it("stores the key in the plaintext file with --allow-plaintext-key when the keychain entry can't be read", async () => {
+      hasSecretKeyImpl = () => {
+        throw new Error("Couldn't access platform storage: Secret Service: object locked");
+      };
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });
+      expect(stderr.join("")).toMatch(
+        /The OS keychain can't read the entry of profile "test-agent" \(.*object locked\); the agent key goes to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
+    });
+
+    it("keeps the generic error off Linux when the keychain entry can't be read", async () => {
+      overridePlatform("darwin"); // afterEach restores the real platform
+      hasSecretKeyImpl = () => {
+        throw new Error("User canceled the operation.");
+      };
+
+      const err = await runEnroll({ "allow-plaintext-key": true }).catch((e: unknown) => e);
+
+      expect(err).not.toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /^Could not read the OS keychain entry of profile "test-agent" \(User canceled the operation\.\)\. Agent Intent needs a working OS keychain.*Nothing was saved\.$/,
+      );
+      expect(savedKeyFiles.size).toBe(0);
+      expect(savedSecretKeys.size).toBe(0);
+    });
+
+    it("fails closed before generating a key or printing a link when no OS keychain is available", async () => {
+      keychainProbe = failingKeychainProbe;
+
+      const err = await runEnroll().catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /No OS keychain is available.*--allow-plaintext-key only after the human explicitly agrees/s,
+      );
+      expect(requestInputs).toEqual([]);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(stdout).toEqual([]);
+    });
+
+    it("reports keychain_unavailable in json mode without printing a link", async () => {
+      keychainProbe = failingKeychainProbe;
+
+      await expect(runEnroll({ output: "json" })).rejects.toThrow();
+
+      const lines = stdout
+        .join("")
+        .trim()
+        .split("\n")
+        .map(l => JSON.parse(l));
+      expect(lines).toEqual([
+        {
+          ok: false,
+          error: {
+            command: "agent-intent enroll",
+            code: "keychain_unavailable",
+            message: expect.stringContaining("No OS keychain is available"),
+          },
+        },
+      ]);
+      expect(savedSecretKeys.size).toBe(0);
+    });
+
+    it("probes the keychain once and only re-reads the entry inside the session lock", async () => {
+      let probeCalls = 0;
+      keychainProbe = () => {
+        probeCalls++;
+        return [];
+      };
+      let entryReads = 0;
+      // The precheck sees no entry; a concurrent enroll writes one before the locked recheck.
+      hasSecretKeyImpl = () => entryReads++ > 0;
+
+      await expect(runEnroll()).rejects.toThrow(
+        /keychain entry for profile "test-agent" already exists/,
+      );
+      expect(probeCalls).toBe(1);
+      expect(entryReads).toBe(2);
+      expect(sessionReadCalls).toBe(2);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(stdout).toEqual([]);
+    });
+
+    it("stores the key in the OS keychain and records keyStore os-keychain when one is available", async () => {
+      await runEnroll({ output: "json" });
+
+      expect(savedSecretKeys.has("test-agent")).toBe(true);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "os-keychain" });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "os-keychain",
+      });
+      expect(stderr.join("")).not.toContain("--allow-plaintext-key");
+    });
+
+    it("stores the key in a plaintext file with --allow-plaintext-key when no OS keychain is available", async () => {
+      keychainProbe = failingKeychainProbe;
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({
+        keyStore: "plaintext-file",
+        trustchainId: "app18-root",
+      });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "plaintext-file",
+        enrolled: true,
+      });
+      const notices = stderr.join("").match(/goes to the plaintext file/g) ?? [];
+      expect(notices).toHaveLength(1);
+      expect(stderr.join("")).toMatch(
+        /No OS keychain is available \(Platform failure: DBus error: .*org\.freedesktop\.secrets.*\); the agent key goes to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
+    });
+
+    it("ignores --allow-plaintext-key with a stderr notice when the OS keychain is available", async () => {
+      await runEnroll({ "allow-plaintext-key": true });
+
+      expect(savedSecretKeys.has("test-agent")).toBe(true);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "os-keychain" });
+      expect(stderr.join("")).toContain(
+        "OS keychain is available: the agent key is stored in the OS keychain and " +
+          "--allow-plaintext-key was ignored.",
+      );
+    });
+
+    it("refuses to enroll when an agent key file already exists but isn't recorded in the session", async () => {
+      keyFileExists = true;
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toThrow(
+        /agent key file for profile "test-agent" already exists.*Remove it manually/s,
+      );
+      expect(savedKeyFiles.size).toBe(0);
+      expect(requestInputs).toEqual([]);
+    });
+
+    it("rolls back the key file when the session write fails after the file was written", async () => {
+      keychainProbe = failingKeychainProbe;
+      const sessionError = new Error("disk full");
+      writeImpl = () => {
+        throw sessionError;
+      };
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toBe(sessionError);
+
+      expect(deletedKeyFileCalls).toEqual(["test-agent"]);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+    });
+
+    it("surfaces a combined error when the key file rollback itself fails", async () => {
+      keychainProbe = failingKeychainProbe;
+      writeImpl = () => {
+        throw new Error("disk full");
+      };
+      deleteKeyFileSucceeds = false;
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toThrow(
+        /disk full.*Additionally, the key file rollback.*failed.*remove that file manually/s,
       );
     });
 
@@ -268,18 +487,149 @@ describe("agent-intent enroll", () => {
       expect(savedSecretKeys.has("test-agent")).toBe(true);
     });
 
-    it("reports an actionable error and saves no profile when the OS keychain is unavailable", async () => {
-      saveSecretKeyError = new Error("Platform secure storage failure: no Secret Service provider");
+    it("reports keychain_unavailable with the write error when the keychain refuses the write", async () => {
+      saveSecretKeyError = new Error(
+        "Couldn't access platform storage: Secret Service: object locked",
+      );
       let profileAdded = false;
       addAgentIntentProfileImpl = () => {
         profileAdded = true;
       };
 
-      await expect(runEnroll()).rejects.toThrow(
-        /Could not store the agent's secret key in the OS keychain \(Platform secure storage failure.*Secret Service provider.*Nothing was saved/s,
-      );
+      await expect(runEnroll({ output: "json" })).rejects.toThrow();
+
+      const lines = stdout
+        .join("")
+        .trim()
+        .split("\n")
+        .map(l => JSON.parse(l));
+      expect(lines).toEqual([
+        {
+          ok: false,
+          error: {
+            command: "agent-intent enroll",
+            code: "keychain_unavailable",
+            message: expect.stringMatching(
+              /The OS keychain refused to store the agent key \(Couldn't access platform storage: Secret Service: object locked\).*Unlock the keychain collection and re-run.*--allow-plaintext-key only after the human explicitly agrees/s,
+            ),
+          },
+        },
+      ]);
       expect(profileAdded).toBe(false);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(savedKeyFiles.size).toBe(0);
       expect(deletedSecretKeyCalls).toEqual([]);
+      expect(deletedKeyFileCalls).toEqual([]);
+    });
+
+    it("stores the key in the plaintext file with --allow-plaintext-key when the keychain refuses the write", async () => {
+      saveSecretKeyError = new Error("Couldn't access platform storage: Prompt dismissed");
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "plaintext-file",
+        enrolled: true,
+      });
+      expect(stderr.join("")).toMatch(
+        /The OS keychain refused the write \(Couldn't access platform storage: Prompt dismissed\); the agent key went to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
+      expect(stderr.join("")).not.toContain("was ignored");
+    });
+
+    it("rolls back the fallback key file when the session write fails", async () => {
+      saveSecretKeyError = new Error("Couldn't access platform storage: Prompt dismissed");
+      const sessionError = new Error("disk full");
+      writeImpl = () => {
+        throw sessionError;
+      };
+
+      await expect(runEnroll({ "allow-plaintext-key": true })).rejects.toBe(sessionError);
+
+      expect(deletedKeyFileCalls).toEqual(["test-agent"]);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+    });
+
+    it("keeps the generic error and never falls back to the key file off Linux", async () => {
+      overridePlatform("darwin"); // afterEach restores the real platform
+      saveSecretKeyError = new Error("User canceled the operation.");
+
+      const err = await runEnroll({ "allow-plaintext-key": true }).catch((e: unknown) => e);
+
+      expect(err).not.toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /Could not store the agent's secret key in the OS keychain \(User canceled the operation\.\)/,
+      );
+      expect(savedKeyFiles.size).toBe(0);
+      expect(savedSecretKeys.size).toBe(0);
+    });
+
+    it("reports keychain_unavailable when the Secret Service disappears before the write", async () => {
+      let probeCalls = 0;
+      // The precheck passes; the probe after the failed write does not.
+      keychainProbe = () => {
+        probeCalls++;
+        if (probeCalls > 1) failingKeychainProbe();
+        return [];
+      };
+      saveSecretKeyError = new Error("Platform secure storage failure: zbus error");
+      let profileAdded = false;
+      addAgentIntentProfileImpl = () => {
+        profileAdded = true;
+      };
+
+      await expect(runEnroll({ output: "json" })).rejects.toThrow();
+
+      expect(probeCalls).toBe(2);
+      const lines = stdout
+        .join("")
+        .trim()
+        .split("\n")
+        .map(l => JSON.parse(l));
+      expect(lines).toEqual([
+        {
+          ok: false,
+          error: {
+            command: "agent-intent enroll",
+            code: "keychain_unavailable",
+            message: expect.stringContaining("No OS keychain is available"),
+          },
+        },
+      ]);
+      expect(profileAdded).toBe(false);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(savedKeyFiles.size).toBe(0);
+      expect(deletedSecretKeyCalls).toEqual([]);
+      expect(deletedKeyFileCalls).toEqual([]);
+    });
+
+    it("stores the key in the plaintext file with --allow-plaintext-key when the Secret Service disappears before the write", async () => {
+      let probeCalls = 0;
+      // The precheck passes; the probe after the failed write does not.
+      keychainProbe = () => {
+        probeCalls++;
+        if (probeCalls > 1) failingKeychainProbe();
+        return [];
+      };
+      saveSecretKeyError = new Error("Platform secure storage failure: zbus error");
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(probeCalls).toBe(2);
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
+        keyStore: "plaintext-file",
+        enrolled: true,
+      });
+      expect(stderr.join("")).toMatch(
+        /No OS keychain is reachable anymore \(Platform secure storage failure: zbus error\); the agent key went to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
     });
 
     it("rolls back the keychain entry when addAgentIntentProfile itself throws", async () => {

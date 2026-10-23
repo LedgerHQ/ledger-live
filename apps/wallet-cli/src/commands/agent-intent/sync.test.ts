@@ -29,6 +29,7 @@ function makeProfile(patch: Partial<AgentIntentProfileMeta> = {}): AgentIntentPr
     environment: "staging",
     bffBaseUrl: "https://bff.example",
     publicKey: AGENT_PUBLIC_KEY,
+    keyStore: "os-keychain",
     trustchainId: "app18-root",
     accountAccess: { ...accountAccess },
     ledgerSyncVersion: 5,

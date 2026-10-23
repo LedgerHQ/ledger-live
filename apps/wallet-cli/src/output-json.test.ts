@@ -419,6 +419,30 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("emits a missing OS keychain as a keychain_unavailable error envelope with exit code 1", async () => {
+    const { KeychainUnavailableError } = await import("./key-ring/keychain-unavailable-error");
+    const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
+
+    const err = await out
+      .run(async () => {
+        throw new KeychainUnavailableError("No OS keychain is available.");
+      })
+      .catch((e: unknown) => e);
+
+    expect(err).toBeInstanceOf(CliProcessExitError);
+    expect((err as CliProcessExitError).code).toBe(1);
+    expect(parseLines()).toEqual([
+      {
+        ok: false,
+        error: {
+          command: "agent-intent enroll",
+          code: "keychain_unavailable",
+          message: "No OS keychain is available.",
+        },
+      },
+    ]);
+  });
+
   const baseAgentIntentProfile = {
     profileId: "test-agent",
     displayName: "Test Agent",
@@ -427,6 +451,7 @@ describe("JsonCommandOutput", () => {
     environment: "staging" as const,
     bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
     publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+    keyStore: "os-keychain" as const,
     enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
     createdAt: "2026-09-22T10:58:47.007Z",
   };
@@ -470,6 +495,14 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("agentIntentProfileShow reports the profile's key store", () => {
+    const out = createCommandOutput("json", { command: "agent-intent show", network: "all" });
+    out.agentIntentProfileShow({ ...baseAgentIntentProfile, keyStore: "plaintext-file" });
+
+    const [line] = parseLines();
+    expect(line).toMatchObject({ profile: { keyStore: "plaintext-file" } });
+  });
+
   it("agentIntentEnrollmentPending emits an enrollment-pending event, not a final envelope", () => {
     const out = createCommandOutput("json", { command: "agent-intent enroll", network: "all" });
     out.agentIntentEnrollmentPending({
@@ -497,6 +530,7 @@ describe("JsonCommandOutput", () => {
       profileId: "test-agent",
       trustchainId: "tc-1",
       accountAccessEnvironment: "staging",
+      keyStore: "plaintext-file",
     });
 
     const [line] = parseLines();
@@ -505,6 +539,7 @@ describe("JsonCommandOutput", () => {
       profileId: "test-agent",
       trustchainId: "tc-1",
       accountAccessEnvironment: "staging",
+      keyStore: "plaintext-file",
       enrolled: true,
     });
   });

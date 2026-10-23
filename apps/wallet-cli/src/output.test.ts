@@ -691,6 +691,7 @@ describe("HumanCommandOutput", () => {
       environment: "staging" as const,
       bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
       publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+      keyStore: "os-keychain" as const,
       enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
       createdAt: "2026-09-22T10:58:47.007Z",
     };
@@ -728,6 +729,15 @@ describe("HumanCommandOutput", () => {
       expect(writes.join("")).toContain("expired");
     });
 
+    it("agentIntentProfiles shows each profile's key store", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, keyStore: "plaintext-file" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("KEY STORE");
+      expect(out).toContain("plaintext-file");
+    });
+
     it("agentIntentProfiles renders dim message when there are no profiles", () => {
       createCommandOutput("human", ctx).agentIntentProfiles([]);
       expect(writes.join("")).toContain("No Agent Intent profiles");
@@ -741,6 +751,14 @@ describe("HumanCommandOutput", () => {
       const out = writes.join("");
       expect(out).toContain("Fingerprint:");
       expect(out).toContain(baseProfile.publicKey);
+    });
+
+    it("agentIntentProfileShow shows the profile's key store", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        keyStore: "plaintext-file",
+      });
+      expect(writes.join("")).toMatch(/Key store:\s+plaintext-file/);
     });
 
     it("agentIntentProfileShow redacts credentials embedded in the BFF URL", () => {
@@ -796,11 +814,13 @@ describe("HumanCommandOutput", () => {
         profileId: "test-agent",
         trustchainId: "tc-1",
         accountAccessEnvironment: "staging",
+        keyStore: "plaintext-file",
       });
       const out = writes.join("");
       expect(out).toContain("test-agent");
       expect(out).toContain("tc-1");
       expect(out).toContain("staging");
+      expect(out).toContain("key store: plaintext-file");
     });
 
     it("agentIntentRecoveryPending prints the URL, fingerprint and the keep-running hint", () => {

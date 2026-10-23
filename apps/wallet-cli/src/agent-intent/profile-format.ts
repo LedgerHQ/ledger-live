@@ -48,7 +48,7 @@ export function formatInvalidAgentIntentProfilesWarning(
     `⚠ ${ids.length} Agent Intent profile(s) failed to load (invalid session record): ` +
     `${ids.join(", ")}.\n` +
     `  Each record is kept as-is in session.yaml but ignored until it is fixed there. Removing ` +
-    `it instead orphans its OS-keychain secret.\n`
+    `it instead orphans its OS-keychain secret or key file.\n`
   );
 }
 

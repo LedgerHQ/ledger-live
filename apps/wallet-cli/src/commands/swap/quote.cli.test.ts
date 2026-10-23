@@ -150,36 +150,37 @@ describe("quote command — API auth key", () => {
     expect(await storedApiAuthPubkey(fixture.env)).toBe(signature.credential.publicKey);
   });
 
-  it("signs every challenge of a run with the same one-off key when the keychain is unavailable", async () => {
-    const signingKeys: string[] = [];
-    const quote = makeSwapQuoteRoutes({ rejectTokens: true });
-    const rejectingServer = new MockServer([
-      ...makeAuthRoutes({
-        onAuthenticateRequest: ({ signature }) => {
-          signingKeys.push(signature.credential.publicKey);
-        },
-      }),
+  it("sends the quote without a token, and asks for no challenge, when the keychain is unavailable", async () => {
+    let challenges = 0;
+    const quote = makeSwapQuoteRoutes();
+    const noKeyServer = new MockServer([
+      ...makeAuthRoutes({ onChallengeRequest: () => challenges++ }),
       ...quote.routes,
     ]);
-    rejectingServer.start();
+    const warn = spyOn(console, "warn").mockImplementation(() => {});
     useApiAuthKeychain({
       getPassword: () => {
         throw new Error("no secret service");
       },
       setPassword: () => {},
     });
+    noKeyServer.start();
     try {
-      const { exitCode, stdout } = await runCli(JSON_QUOTE_ARGS, {
-        WALLET_CLI_MOCK_PORT: String(rejectingServer.port),
+      const { exitCode, stdout, stderr } = await runCli(JSON_QUOTE_ARGS, {
+        WALLET_CLI_MOCK_PORT: String(noKeyServer.port),
         ...fixture.env,
       });
 
-      expect(exitCode).toBe(1);
-      expect(JSON.parse(stdout).error.message).toBe("No quotes available: noQuotes");
-      expect(signingKeys).toEqual([expect.any(String), signingKeys[0]]);
+      expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
+      expect(JSON.parse(stdout).quotes[0].provider).toBe("paraswap");
+      expect(quote.quoteAuthorizations).toEqual([null]);
+      expect(challenges).toBe(0);
+      expect(warn).not.toHaveBeenCalled();
+      expect(stderr).toMatch(/No usable OS keychain/);
     } finally {
       useApiAuthKeychain(null);
-      rejectingServer.stop();
+      warn.mockRestore();
+      noKeyServer.stop();
     }
   });
 

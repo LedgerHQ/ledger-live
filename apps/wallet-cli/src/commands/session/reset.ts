@@ -2,6 +2,7 @@ import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { APP_NAME, Session, withSessionLock } from "../../session/session-store";
 import { hasStoredKey } from "../../key-ring/keychain";
+import { agentIntentKeyDir } from "../../key-ring/agent-intent-key-file";
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { createCommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
@@ -40,10 +41,11 @@ export default defineCommand({
           if (!flags.force) {
             throw new Error(
               "Session file is invalid YAML and cannot be salvaged. Any Agent Intent profiles it held " +
-                "cannot be recovered, and their OS-keychain secrets (if any) become orphaned — " +
-                "`agent-intent enroll` will refuse to reuse those profile ids until you remove each " +
-                "one's keychain entry by hand. Re-run `session reset --force` to overwrite the file " +
-                "with an empty session anyway.",
+                "cannot be recovered, and their OS-keychain secrets or plaintext key files in " +
+                `${agentIntentKeyDir()} (if any) become orphaned — \`agent-intent enroll\` will ` +
+                "refuse to reuse those profile ids until you remove each one's keychain entry or key " +
+                "file by hand. Re-run `session reset --force` to overwrite the file with an empty " +
+                "session anyway.",
               { cause: err },
             );
           }
