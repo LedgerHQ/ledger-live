@@ -110,6 +110,30 @@ describe("createCoinModuleCallTransmitter", () => {
     expect(transmit({ ...failure(), status: "success" })).toBe(true);
   });
 
+  it("draws once per session, so a session sends all of its sync-path successes or none", () => {
+    const random = jest.fn().mockReturnValueOnce(0.4).mockReturnValue(0.99);
+    const transmit = createCoinModuleCallTransmitter(
+      () => ({ ...config, syncPathSampleRate: 0.5 }),
+      { random },
+    );
+    const success = { ...failure(), status: "success" as const };
+
+    expect([transmit(success), transmit(success), transmit(success)]).toEqual([true, true, true]);
+    expect(random).toHaveBeenCalledTimes(1);
+  });
+
+  it("compares the session draw with the rate read on every event", () => {
+    let syncPathSampleRate = 0.5;
+    const transmit = createCoinModuleCallTransmitter(() => ({ ...config, syncPathSampleRate }), {
+      random: () => 0.4,
+    });
+    const success = { ...failure(), status: "success" as const };
+
+    expect(transmit(success)).toBe(true);
+    syncPathSampleRate = 0.3;
+    expect(transmit(success)).toBe(false);
+  });
+
   it("sends nothing for sync-path methods, failures included, when the sync path is excluded", () => {
     const transmit = createCoinModuleCallTransmitter(
       () => ({ ...config, includeSyncPath: false, syncPathSampleRate: 1 }),
@@ -153,13 +177,10 @@ describe("default randomness and clock", () => {
   afterEach(() => jest.restoreAllMocks());
 
   // A sink builds its transmitter at module load, before any test stubs the globals.
-  it("reads Math.random at call time, so a later stub is honoured", () => {
+  it("draws Math.random on first use, so a stub set after construction is honoured", () => {
     const transmit = createCoinModuleCallTransmitter(() => config);
-    const random = jest.spyOn(Math, "random");
+    jest.spyOn(Math, "random").mockReturnValue(0);
 
-    random.mockReturnValue(0.99);
-    expect(transmit(call("success"))).toBe(false);
-    random.mockReturnValue(0);
     expect(transmit(call("success"))).toBe(true);
   });
 

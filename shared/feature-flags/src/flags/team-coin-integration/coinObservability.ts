@@ -8,7 +8,8 @@ import { flagWith } from "../../define";
  *
  * `includeSyncPath: false` turns off `coin_module_call` for the sync-path (read) methods, failures
  * included, and keeps the transaction-path calls and `tx_broadcast`. `syncPathSampleRate` is the
- * share of sync-path successes sent (failures and transaction-path calls are always sent).
+ * share of app sessions whose sync-path successes are sent, all of them or none per session
+ * (failures and transaction-path calls are always sent).
  * `maxFailuresPerKey` caps the failures sent per method, currency and error name within an hour,
  * so a node outage does not turn every client into a log storm.
  *

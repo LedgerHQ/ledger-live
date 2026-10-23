@@ -21,7 +21,7 @@ host needs to consume the events lives here, with no legacy import.
 - `createCoinModuleCallTransmitter`: the policy for a sink that leaves the process:
   - transaction-path calls (`craftTransaction`, `craftRawTransaction`, `estimateFees`, `combine`,
     `broadcast`, `validateIntent`) are always sent;
-  - read-path successes are sampled;
+  - read-path successes are sampled per app session: a session sends all of them or none;
   - failures are capped per method, currency and error name, per hour;
   - `includeSyncPath: false` drops the read path entirely, failures included.
 - `setCoinObservabilityConfigReader` / `toCoinObservabilityConfig`: the host injects its

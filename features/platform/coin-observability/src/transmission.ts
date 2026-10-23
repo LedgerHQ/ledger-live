@@ -38,7 +38,13 @@ export function shouldTransmitCoinModuleCall(
 
 /**
  * Builds the stateful transmission policy a sink applies: {@link shouldTransmitCoinModuleCall}
- * plus a cap on failures. Without the cap, a node outage makes every active client send a
+ * plus a cap on failures.
+ *
+ * Sync-path sampling is drawn once per transmitter, so once per app session, not per event: a
+ * session sends all of its sync-path successes or none of them, and a sampled session can be
+ * followed call by call. The draw is compared with the configured rate on every event, so a rate
+ * change still applies at once.
+ * Without the cap, a node outage makes every active client send a
  * failure per call and per sync cycle; with it, each client sends at most `maxFailuresPerKey`
  * per hour for a given method, currency and error, which still shows the outage and how wide it
  * is. Past the cap the failure rate is therefore a lower bound, not an exact count.
@@ -51,6 +57,9 @@ export function createCoinModuleCallTransmitter(
   { random = defaultRandom, clock = defaultClock } = {},
 ): (event: CoinModuleCallEvent) => boolean {
   const failures = new Map<string, { count: number; windowStart: number }>();
+  // Drawn on first use rather than here: a sink builds its transmitter at module load.
+  let sessionDraw: number | undefined;
+  const sessionRandom = (): number => (sessionDraw ??= random());
 
   return event => {
     const config = readConfig();
@@ -59,7 +68,7 @@ export function createCoinModuleCallTransmitter(
     if (event.status !== "failure") {
       return shouldTransmitCoinModuleCall(event, {
         syncPathSampleRate: config.syncPathSampleRate,
-        random,
+        random: sessionRandom,
       });
     }
 
