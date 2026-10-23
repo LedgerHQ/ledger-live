@@ -103,16 +103,7 @@ env:
   MAESTRO_VERSION: 2.10.0
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
-  # Same AVD as the E2E workflow, so its R2 cache entry is reused.
-  AVD_API: 36
-  AVD_ARCH: x86_64
-  AVD_PROFILE: pixel_9_pro
-  AVD_TARGET: google_apis
-  AVD_NAME: "Android_Emulator"
-  AVD_CORES: 2
-  AVD_RAM_SIZE: 3072
-  AVD_HEAP_SIZE: 1024
-  AVD_OPTIONS: -no-window -gpu swiftshader_indirect -accel on -no-audio -no-boot-anim -camera-back none -camera-front none -no-metrics
+  # The AVD itself (AVD_* and AVD_CACHE_KEY) comes from setup-android-avd@develop, like E2E.
   # Two emulators share the 8-CPU runner; each gets 3 cores instead of the E2E default of 2.
   PERF_AVD_CORES: 3
 
@@ -390,19 +381,63 @@ jobs:
       fail-fast: false
       matrix:
         scenario: ${{ fromJSON(needs.plan.outputs.scenarios) }}
-    # Needs /dev/kvm: the documented exception for Android emulator jobs in this file.
-    runs-on: [ledger-live-linux-e2e-8CPU-32RAM]
+    # Needs /dev/kvm: the documented runner for Android emulator jobs in this file, whose image
+    # holds the toolchain and the E2E AVD.
+    runs-on: ledger-wallet-8cpu-github-public-cached
     timeout-minutes: 300
     steps:
+      # Same as the E2E shards: the image's disk can be slow on first read, so read the
+      # preinstalled AVD in the background before "Duplicate the AVD" copies it.
+      - name: Read the preinstalled AVD ahead (background)
+        run: |
+          [ -f "${HOME}/.android/avd-cache-key" ] || exit 0
+          log="${RUNNER_TEMP}/avd-read-ahead.log"
+          echo "started $(date -u +%T)" > "$log"
+          nohup bash -c '
+            start=$(date +%s)
+            find "${HOME}/.android/avd" -type f -exec cat {} + > /dev/null
+            echo "read $(du -sh "${HOME}/.android/avd" | cut -f1) in $(( $(date +%s) - start ))s, done $(date -u +%T)"
+          ' >> "$log" 2>&1 &
+
+      # AVD_* and AVD_CACHE_KEY from develop's avd.env: the emulator measured is E2E's, whatever
+      # commit the builds come from.
+      - name: Load AVD configuration
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
+        with:
+          config_only: "true"
+
       - name: Setup Android Environment
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-env@develop
+        with:
+          # adb, build-tools and the emulator are on the image.
+          install_sdk: "false"
+
+      # As in the E2E shards: use the image's AVD when its stamp matches the key, otherwise remove
+      # it so the R2 copy isn't extracted on top of it.
+      - name: Check for a preinstalled AVD
+        id: preinstalled-avd
+        run: |
+          stamp="${HOME}/.android/avd-cache-key"
+          if [ "$(cat "$stamp" 2>/dev/null)" = "${AVD_CACHE_KEY}" ]; then
+            echo "Preinstalled AVD matches ${AVD_CACHE_KEY}"
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ -f "$stamp" ]; then
+            echo "::warning title=Runner image AVD is out of date::Image has $(cat "$stamp"), need ${AVD_CACHE_KEY}; using R2."
+            rm -rf "${HOME}/.android/avd" "$stamp" \
+              /usr/local/lib/android/sdk/emulator \
+              "/usr/local/lib/android/sdk/system-images/android-${AVD_API}/${AVD_TARGET}/${AVD_ARCH}"
+          fi
+          echo "found=false" >> "$GITHUB_OUTPUT"
 
       - name: Download android emulator
+        if: steps.preinstalled-avd.outputs.found != 'true'
         timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9
+          key: ${{ env.AVD_CACHE_KEY }}
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
@@ -410,33 +445,21 @@ jobs:
           region: auto
           destination: /
 
-      - name: Create the AVD (cache miss)
-        if: ${{ steps.avd.outputs.cache-hit != 'true' }}
+      # No R2 credentials: the spike never writes E2E's AVD cache.
+      - name: Create the AVD (not on the image nor in R2)
+        if: steps.preinstalled-avd.outputs.found != 'true' && steps.avd.outputs.cache-hit != 'true'
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-android-avd@develop
-        with:
-          ref: ${{ github.sha }}
-          avd_api: ${{ env.AVD_API }}
-          avd_arch: ${{ env.AVD_ARCH }}
-          avd_profile: ${{ env.AVD_PROFILE }}
-          avd_target: ${{ env.AVD_TARGET }}
-          avd_name: ${{ env.AVD_NAME }}
-          avd_cores: ${{ env.AVD_CORES }}
-          avd_ram_size: ${{ env.AVD_RAM_SIZE }}
-          avd_heap_size: ${{ env.AVD_HEAP_SIZE }}
-          avd_options: ${{ env.AVD_OPTIONS }}
-          cache_key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}_5-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-${{ env.AVD_HEAP_SIZE }}-r2-v9
-          r2_access_key: ${{ secrets.R2_ACCESS_KEY_ID }}
-          r2_secret_key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          r2_endpoint: ${{ secrets.R2_ENDPOINT }}
 
-      - name: Duplicate the AVD for the second emulator
-        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
-        with:
-          source_avd_name: ${{ env.AVD_NAME }}
-          target_suffixes: "_2"
-          avd_api: ${{ env.AVD_API }}
+      - name: Report the AVD in use
+        env:
+          AVD_SOURCE: ${{ steps.preinstalled-avd.outputs.found == 'true' && 'runner image' || steps.avd.outputs.cache-hit == 'true' && 'R2' || 'created in this job' }}
+        run: |
+          {
+            echo "### Android emulator (${{ matrix.scenario }})"
+            echo "- AVD from: $AVD_SOURCE"
+            echo "- Key: \`${AVD_CACHE_KEY}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      # After the AVD steps: setup-android-avd checks the repo out again into the workspace.
       # staging.kstr is the keystore that secrets.ANDROID_KEYSTORE_PATH points to.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -489,6 +512,17 @@ jobs:
           BIN=$(dirname "$(find "$RUNNER_TEMP/maestro-cli" -type f -name maestro -path "*/bin/*" | head -1)")
           echo "$BIN" >> "$GITHUB_PATH"
           "$BIN/maestro" --version
+
+      - name: Report the AVD read-ahead
+        run: cat "${RUNNER_TEMP}/avd-read-ahead.log" 2>/dev/null || echo "No preinstalled AVD to read ahead."
+
+      # Last before booting, so the read-ahead started at the top has had time to run.
+      - name: Duplicate the AVD for the second emulator
+        uses: LedgerHQ/ledger-live/tools/actions/composites/duplicate-avd@develop
+        with:
+          source_avd_name: ${{ env.AVD_NAME }}
+          target_suffixes: "_2"
+          avd_api: ${{ env.AVD_API }}
 
       - name: Boot two emulators
         env:
