@@ -3632,6 +3632,16 @@
       "offline": "You’re offline. Please check your connection"
     }
   },
+  "servicesEntryPoints": {
+    "perps": {
+      "title": "Perps",
+      "description": "Invest with leverage"
+    },
+    "borrow": {
+      "title": "Loans",
+      "description": "Borrow stablecoins"
+    }
+  },
   "addAccountsModal": {
     "title": "Add account",
     "ctaAdd": "Add accounts",

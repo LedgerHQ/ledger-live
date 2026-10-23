@@ -10,6 +10,7 @@ import { TFunction } from "i18next";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
 import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import { useBorrowLiveConfig } from "LLD/features/Borrow/hooks/useBorrowLiveConfig";
 import { useResumeAddAccountAfterOnboarding } from "./useResumeAddAccountAfterOnboarding";
 
@@ -21,6 +22,8 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayAssetSection: boolean;
   readonly shouldDisplayAssetDiscoverability: boolean;
   readonly shouldDisplayBorrowSection: boolean;
+  readonly shouldDisplayPerpsEntryPoint: boolean;
+  readonly shouldDisplayServicesEntryPoints: boolean;
   readonly shouldDisplayOperationsList: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
   readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
@@ -43,7 +46,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayBrazePlacement,
   } = useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
+  const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
+  const shouldDisplayBorrowSection =
+    (borrowConfig?.enabled ?? false) && !shouldDisplayServicesEntryPoints;
   const { t } = useTranslation();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
@@ -85,6 +90,8 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
+    shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
+    shouldDisplayServicesEntryPoints,
     shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
     filterOperations,

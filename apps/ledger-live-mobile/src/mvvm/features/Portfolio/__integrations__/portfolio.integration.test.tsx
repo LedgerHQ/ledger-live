@@ -7,6 +7,7 @@ import {
   overrideInitialStateWithReadOnly,
   overrideInitialStateWithPerpsEntryPoint,
   overrideInitialStateWithPerpsAndAssetSection,
+  overrideInitialStateWithServicesEntryPoints,
   overrideInitialStateWithAssetSection,
   overrideInitialStateWithNoAccountsAndAssetSection,
   overrideInitialStateWithOnboardingWidgetVisible,
@@ -34,6 +35,16 @@ const setupDadaApiLoading = () => {
     ),
   );
 };
+
+function renderedSectionsOrder() {
+  return screen
+    .getAllByTestId(
+      /^(PortfolioCryptosList|portfolio-services-entry-points|PortfolioStablecoinsList)$/,
+    )
+    .map(function getTestID(node) {
+      return node.props.testID;
+    });
+}
 
 describe("Portfolio Screen", () => {
   it("should render Portfolio", async () => {
@@ -91,6 +102,43 @@ describe("Portfolio Screen", () => {
       await screen.findByTestId("PortfolioAccountsList");
 
       expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
+    });
+  });
+
+  describe("Services Entry Points", () => {
+    it("should display the services between the cryptos and stablecoins sections", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithServicesEntryPoints(true),
+      });
+
+      await screen.findByTestId("portfolio-services-entry-points");
+      await screen.findByTestId("PortfolioStablecoinsList");
+
+      expect(renderedSectionsOrder()).toEqual([
+        "PortfolioCryptosList",
+        "portfolio-services-entry-points",
+        "PortfolioStablecoinsList",
+      ]);
+    });
+
+    it("should replace the legacy perps and borrow entry points", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithServicesEntryPoints(true),
+      });
+
+      await screen.findByTestId("portfolio-services-entry-points");
+
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+      expect(screen.queryByTestId("portfolio-borrow-entry-point")).toBeNull();
+    });
+
+    it("should keep the legacy perps entry point when the asset section is hidden", async () => {
+      renderWithReactQuery(<PortfolioTest />, {
+        overrideInitialState: overrideInitialStateWithServicesEntryPoints(false),
+      });
+
+      expect(await screen.findByTestId("portfolio-perps-entry-point")).toBeVisible();
+      expect(screen.queryByTestId("portfolio-services-entry-points")).toBeNull();
     });
   });
 
