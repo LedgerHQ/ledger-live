@@ -74,7 +74,7 @@ export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
   if (!initialized || !transmitCoinModuleCall(event)) return;
 
   if (event.status === "failure") {
-    datadogLogs.logger.warn("coin_module_call", { coinModule: event });
+    datadogLogs.logger.error("coin_module_call", { coinModule: event });
   } else {
     datadogLogs.logger.info("coin_module_call", { coinModule: event });
   }

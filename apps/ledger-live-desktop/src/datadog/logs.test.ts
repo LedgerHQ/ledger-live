@@ -309,10 +309,10 @@ describe("datadog logs", () => {
         });
       });
 
-      it("logs a failure as warn, even on the sync path", () => {
+      it("logs a failure as error, even on the sync path", () => {
         const failure = { ...call, method: "getBalance", status: "failure" as const };
         coinModuleCallLogger(failure);
-        expect(datadogLogs.logger.warn).toHaveBeenCalledWith("coin_module_call", {
+        expect(datadogLogs.logger.error).toHaveBeenCalledWith("coin_module_call", {
           coinModule: failure,
         });
       });

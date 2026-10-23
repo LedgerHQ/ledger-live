@@ -240,7 +240,7 @@ export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
   if (!isDatadogEnabled || !transmitCoinModuleCall(event)) return;
 
   if (event.status === "failure") {
-    DdLogs.warn("coin_module_call", { coinModule: event });
+    DdLogs.error("coin_module_call", { coinModule: event });
   } else {
     DdLogs.info("coin_module_call", { coinModule: event });
   }

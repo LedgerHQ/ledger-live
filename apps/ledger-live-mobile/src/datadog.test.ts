@@ -154,10 +154,10 @@ describe("coinModuleCallLogger", () => {
     expect(DdLogs.info).toHaveBeenCalledWith("coin_module_call", { coinModule: call });
   });
 
-  it("logs a failure as warn, even on the sync path", () => {
+  it("logs a failure as error, even on the sync path", () => {
     const failure = { ...call, method: "getBalance", status: "failure" as const };
     coinModuleCallLogger(failure);
-    expect(DdLogs.warn).toHaveBeenCalledWith("coin_module_call", { coinModule: failure });
+    expect(DdLogs.error).toHaveBeenCalledWith("coin_module_call", { coinModule: failure });
   });
 
   it("drops a sync-path success outside the sample", () => {
