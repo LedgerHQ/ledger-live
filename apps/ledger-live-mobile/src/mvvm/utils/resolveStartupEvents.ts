@@ -1,4 +1,3 @@
-import { getTimeSinceStartup } from "react-native-startup-time";
 import { startupEvents, startupFirstImportTime, type StartupEvent } from "./logStartupTime";
 
 export type GroupedStartupEvent = StartupEvent & { count: number };
@@ -16,16 +15,8 @@ const NOT_LOGGED_EVENTS = new Set<string>([
   STARTUP_EVENTS.CURRENCY_HYDRATED,
 ]);
 
-const startupTsp = new Promise<number>(resolve => {
-  // On dev it doesn't make sense to compare to the app starting time due to metro start time
-  // And also because react-native-startup-time does not reset on reload (so it keeps on increasing).
-  if (__DEV__) return resolve(startupFirstImportTime);
-  const now = Date.now();
-  getTimeSinceStartup().then(t => resolve(now - t));
-});
-
+// Times are relative to the first JS import. Datadog RUM measures the native part of the startup.
 export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
-  const awaitedTsp = await startupTsp;
   const resolved = new Map<string, GroupedStartupEvent>();
   startupEvents
     .filter(e => !NOT_LOGGED_EVENTS.has(e.event))
@@ -35,7 +26,7 @@ export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
         event,
         existing
           ? { event, time: existing.time, count: existing.count + 1 }
-          : { event, time: time - awaitedTsp, count: 1 },
+          : { event, time: time - startupFirstImportTime, count: 1 },
       );
     });
 

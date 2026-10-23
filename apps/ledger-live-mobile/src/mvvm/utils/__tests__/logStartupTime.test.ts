@@ -1,5 +1,5 @@
 import "../logStartup/beforeJSImports";
-import { logStartupEvent, startupEvents } from "../logStartupTime";
+import { logStartupEvent, startupEvents, startupFirstImportTime } from "../logStartupTime";
 import { resolveStartupEvents } from "../resolveStartupEvents";
 
 describe("logStartupTime", () => {
@@ -20,6 +20,12 @@ describe("logStartupTime", () => {
       { event: "Step 2", time: expect.any(Number), count: 1 },
       { event: "Step 3", time: expect.any(Number), count: 1 },
     ]);
+  });
+
+  it("should resolve times relative to the first JS import", async () => {
+    startupEvents.splice(0);
+    startupEvents.push({ event: "Step 1", time: startupFirstImportTime + 42 });
+    expect(await resolveStartupEvents()).toEqual([{ event: "Step 1", time: 42, count: 1 }]);
   });
 
   it("should group identical events", async () => {
