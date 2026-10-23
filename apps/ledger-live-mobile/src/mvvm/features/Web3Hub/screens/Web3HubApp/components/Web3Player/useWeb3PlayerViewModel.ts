@@ -9,6 +9,7 @@ import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/Custom
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { usePredictionsHandlers } from "LLM/features/Predictions";
 
 type CurrentAccountHistDB = ReturnType<typeof useCurrentAccountHistDB>;
 
@@ -62,14 +63,16 @@ export default function useWeb3PlayerViewModel({
   const accounts = useSelector(flattenAccountsSelector);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customPredictionsHandlers = usePredictionsHandlers();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
       ...loggerHandlers,
       ...customPTXHandlers,
       ...customDeeplinkHandlers,
+      ...customPredictionsHandlers,
     };
-  }, [customPTXHandlers, customDeeplinkHandlers]);
+  }, [customPTXHandlers, customDeeplinkHandlers, customPredictionsHandlers]);
 
   return {
     webviewAPIRef,

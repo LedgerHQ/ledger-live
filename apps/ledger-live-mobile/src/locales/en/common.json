@@ -12082,5 +12082,47 @@
         }
       }
     }
+  },
+  "predictions": {
+    "onboarding": {
+      "intro": {
+        "title": "Trade on future events",
+        "subtitle": "Now you can access the world's largest prediction market, where you can trade on event outcomes. Provided by MoonPay.",
+        "items": {
+          "polymarket": {
+            "title": "Access Polymarket in Ledger Wallet",
+            "subtitle": "Now available in Ledger Wallet"
+          },
+          "markets": {
+            "title": "Sports, Tech, Crypto, Weather, Politics",
+            "subtitle": "And more, discover all markets"
+          },
+          "clearSign": {
+            "title": "Clear sign all",
+            "subtitle": "You define and clear sign the amount to trade"
+          }
+        },
+        "discover": "Discover predictions",
+        "learnMore": "Learn more"
+      },
+      "terms": {
+        "title": "Terms & Conditions",
+        "body": "Prediction markets are speculative, carry substantial risk, and may not be appropriate for all users. Trading in these markets involves significant risks, including: total loss of funds (a position can lose its entire value); market and resolution risk (outcomes are settled under each market's rules, which may differ from your expectations); liquidity risk (you may not be able to sell a position at the price you want, or at all); and smart contract risk (code vulnerabilities). Carefully assess these risks and understand how each market works before proceeding. Refer to the <termsLink>Terms of Use</termsLink> for more information.",
+        "checkbox": "You acknowledge that you have read and understand the above disclaimer and accept the risks of trading on prediction markets.",
+        "cta": "Agree and Continue"
+      },
+      "consent": {
+        "title": "Clear signed trade on Polymarket via MoonPay",
+        "description": "Select a Ledger Wallet address to sign your trades and to withdraw your Predictions balance.",
+        "bullets": {
+          "dedicatedWallet": "Dedicated trading wallet: MoonPay Trade creates a wallet specifically for your Polymarket activity. Deposit only what you plan to trade. Direct logins on Polymarket are not supported.",
+          "secureSigning": "Secure signing: Every trade instruction is clear signed using your selected Ledger Wallet address.",
+          "withdraw": "Withdraw anytime: Transfer your trading balance back to your Ledger Wallet whenever you choose."
+        },
+        "checkbox": "By continuing, you agree to create a MoonPay Trade wallet address and authorize the selected Ledger Wallet address to sign trade instructions and to receive your funds when you withdraw.",
+        "cta": "Continue",
+        "footer": "Crypto transaction services are provided by third-party provider MoonPay. Ledger provides no advice or recommendations."
+      }
+    }
   }
 }
