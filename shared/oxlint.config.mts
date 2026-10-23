@@ -1,1 +1,1 @@
-export { default } from "@support/lint/base";
+export { default } from "@support/lint/shared";

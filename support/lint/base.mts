@@ -2,8 +2,8 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "oxlint";
 
 // The root of the lint preset chain. Every other preset in this package extends it, so the baseline
-// is written once and a layer preset only records where it differs. Layers that do not differ
-// (domain/, shared/, features/platform/) use it as is.
+// is written once and a layer preset only records where it differs. A layer that does not differ
+// (domain/) uses it as is.
 //
 // Most of what follows is *demotions*. oxlint's `correctness` category is an error by default and
 // contains the React Compiler rules, which this codebase treats as advice rather than as a build
@@ -85,8 +85,8 @@ export default defineConfig({
     "unicorn/no-useless-fallback-in-spread": "warn",
     "unicorn/no-useless-spread": "warn",
 
-    // Declared so any layer can flip it on without naming a plugin path. Only devtools enforces it
-    // today.
+    // Declared so any layer can flip it on without naming a plugin path. The devtools,
+    // features-flow, features-platform and shared presets enforce it.
     "suffix-imports/no-platform-suffix": "off",
   },
   overrides: [
