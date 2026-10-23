@@ -9,7 +9,6 @@ import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
-import { PAYTAB_SPECS_DIR } from "tests/reporters/cardSessionReporter";
 import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
@@ -18,11 +17,17 @@ import {
   attachMergedFeatureFlags,
   attachSpeculinhoLogs,
 } from "tests/utils/allureUtils";
-import { isLastRetry } from "tests/utils/testInfoUtils";
+import { isLastRetry, isPaytabTest } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import {
+  EXCLUSIVE_LOCK_FIXTURE_TIMEOUT,
+  lockDeclaredTargets,
+  type LockDeclaration,
+} from "tests/utils/exclusiveLock";
+import type { Lease } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import {
   canSkipSpeculosLaunch,
@@ -77,6 +82,8 @@ type TestFixtures = {
   annotationLinks: void;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
+  lockDeclaration: LockDeclaration;
+  exclusiveLock: Lease;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -101,6 +108,26 @@ export const test = base.extend<TestFixtures>({
   localManifestOverride: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
+  lockDeclaration: {},
+
+  // Automatic fixtures are set up before the others, so the lock is held before Speculos and the
+  // app start, and released after they stop, unless the test releases it sooner. The Allure labels
+  // and links come first, so a test whose lock fails still reports them.
+  exclusiveLock: [
+    async (
+      { teamOwnerLabel: _teamOwnerLabel, annotationLinks: _annotationLinks, lockDeclaration, env },
+      use,
+      testInfo,
+    ) => {
+      const lease = await lockDeclaredTargets(lockDeclaration, env, testInfo);
+      try {
+        await use({ release: () => lease?.release() ?? Promise.resolve() });
+      } finally {
+        await lease?.release();
+      }
+    },
+    { auto: true, timeout: EXCLUSIVE_LOCK_FIXTURE_TIMEOUT },
+  ],
 
   teamOwnerLabel: [
     async ({ teamOwner }, use) => {
@@ -254,7 +281,7 @@ export const test = base.extend<TestFixtures>({
     );
     delete env[CARD_SESSION_BOOTSTRAP_ENV];
 
-    if (testInfo.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`)) {
+    if (isPaytabTest(testInfo)) {
       const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
       env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
       env["CARD_BAANX_CLIENT_KEY"] =

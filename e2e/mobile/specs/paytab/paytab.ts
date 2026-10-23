@@ -8,6 +8,7 @@ import {
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { PAY_CARD } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { importContacts } from "@e2e/bridge/server";
@@ -18,6 +19,7 @@ import {
 } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { isIos } from "@e2e/helpers/commonHelpers";
+import { declareBroadcastAccounts, declareSharedResources } from "@e2e/helpers/exclusiveLock";
 
 const ALL_STABLECOINS = "All stablecoins";
 const BANK_TRANSFER_CREATE_ACCOUNT = "Create an account";
@@ -147,6 +149,7 @@ export function runPayRequestTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runPayNewPaymentTest(tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(transaction.accountToDebit);
   describe("Pay tab", () => {
     beforeAll(async () => {
       await initPayTabApp(FF_NEW_SEND_FLOW_ENABLED);
@@ -178,6 +181,7 @@ export function runPayNewPaymentTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runPayContactTest(tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(transaction.accountToDebit);
   describe("Pay tab", () => {
     beforeAll(async () => {
       await initPayTabApp(FF_NEW_SEND_FLOW_ENABLED);
@@ -212,6 +216,7 @@ export function runPayContactTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runPayFreezeTest(tmsLinks: string[], tags: string[]) {
+  declareSharedResources(PAY_CARD);
   describe("Pay tab", () => {
     beforeAll(async () => {
       await initPayTabApp();

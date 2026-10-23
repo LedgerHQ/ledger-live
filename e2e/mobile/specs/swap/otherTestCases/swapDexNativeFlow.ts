@@ -7,6 +7,8 @@ import { beforeAllFunctionSwap } from "@e2e/specs/swap/swap.setup";
 import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import { declareCliBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
+import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
@@ -17,6 +19,7 @@ export function runSwapDexNativeFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
+  if (needsTokenAllowance(fromAccount, provider)) declareCliBroadcastAccounts(fromAccount);
   (provider.availableOnLns ? describe : describeIfNotNanoS)("Swap - DEX native flow", () => {
     beforeAll(async () => {
       await app.speculos.setExchangeDependencies(fromAccount, toAccount);

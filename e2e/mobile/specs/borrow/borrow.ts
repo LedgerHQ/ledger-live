@@ -12,6 +12,7 @@ import {
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { BroadcastFlow, shouldRunBroadcastFlow } from "@e2e/helpers/broadcastRotation";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { FF_BORROW_ENABLED } from "@e2e/utils/featureFlagUtils";
@@ -73,6 +74,7 @@ async function resetBorrowState(flowName: string) {
  * file's describes in parallel, and one `BroadcastFlow.BORROW` slot keeps them on one platform.
  */
 export function runBorrowTests(tmsLinks: BorrowTmsLinks, tags: string[]) {
+  declareBroadcastAccounts(loanAccount, collateralAccount, debtAccount);
   // Not on LNS, as on Desktop: the nanos Ethereum app blind-signs every Morpho step.
   const describeBorrowFlow = shouldRunBroadcastFlow(BroadcastFlow.BORROW)
     ? describeIfNotNanoS
