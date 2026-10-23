@@ -273,6 +273,16 @@ verifyDepsBeforeRun: false
 # See: https://github.com/google/prefab/issues/187
 virtualStoreDirMaxLength: 80
 
+# Optional deps only reachable from code paths we never load
+ignoredOptionalDependencies:
+  # @opentui/core: only its "./3d" entry imports them, wallet-cli renders the 2D TUI
+  - "@dimforge/rapier2d-simd-compat"
+  - bun-webgpu
+  - planck
+  - three
+  # @polkadot/rpc-provider: ScProvider light client, coin-polkadot uses WS/HTTP providers
+  - "@substrate/connect"
+
 overrides:
   # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
   "@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos": "workspace:^"
