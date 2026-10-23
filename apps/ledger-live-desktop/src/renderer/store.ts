@@ -53,13 +53,36 @@ export function getStoreValue<T>(key: string, storeId: string): T | undefined {
   return isEmpty(value) ? undefined : (value as T);
 }
 
-export function setStoreValue<T>(key: string, value: T, storeId: string) {
-  const path = storePath(key, storeId);
-  if (path.length > 0) cache = writePath(cache, path, value);
-  storeBridge.set(storeKey(key, storeId), value);
+// The undo restores the whole top-level entry, unless a later write has replaced it.
+const writeCache = (path: string[], value: unknown): (() => void) => {
+  if (path.length === 0) return () => {};
+  const [entry] = path;
+  const previous = cache;
+  cache = writePath(cache, path, value);
+  const written = cache[entry];
+  return () => {
+    if (cache[entry] === written) cache = { ...cache, [entry]: previous[entry] };
+  };
+};
+
+export async function setStoreValue<T>(key: string, value: T, storeId: string): Promise<void> {
+  const undo = writeCache(storePath(key, storeId), value);
+  try {
+    await storeBridge.set(storeKey(key, storeId), value);
+  } catch (error) {
+    undo();
+    throw error;
+  }
 }
 
-export function resetStore() {
-  cache = {};
-  storeBridge.clear();
+export async function resetStore(): Promise<void> {
+  const previous = cache;
+  const cleared: StoreObject = {};
+  cache = cleared;
+  try {
+    await storeBridge.clear();
+  } catch (error) {
+    if (cache === cleared) cache = previous;
+    throw error;
+  }
 }
