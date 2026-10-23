@@ -74,6 +74,7 @@ support/jest/                                            @ledgerhq/platform
 support/lint/                                            @ledgerhq/platform
 support/tsconfig/                                        @ledgerhq/platform
 support/lint/libs-coin.mts                               @ledgerhq/coin-integration @ledgerhq/platform
+support/jest/libs-coin/                                  @ledgerhq/coin-integration @ledgerhq/platform
 
 # Wallet — libs
 libs/live-send/                                          @ledgerhq/wallet-xp
