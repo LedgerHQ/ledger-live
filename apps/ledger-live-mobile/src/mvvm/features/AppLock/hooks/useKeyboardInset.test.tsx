@@ -1,13 +1,10 @@
 import { act, renderHook } from "@tests/test-renderer";
-import { Keyboard, Platform } from "react-native";
+import ReactNative from "react-native";
 import { useKeyboardInset } from "./useKeyboardInset";
 
-const WINDOW_HEIGHT = 800;
+const { Keyboard, Platform } = ReactNative;
 
-jest.mock("react-native/Libraries/Utilities/useWindowDimensions", () => ({
-  __esModule: true,
-  default: () => ({ height: windowHeight, width: 400, scale: 2, fontScale: 1 }),
-}));
+const WINDOW_HEIGHT = 800;
 
 let windowHeight = WINDOW_HEIGHT;
 
@@ -19,6 +16,12 @@ const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide"
 beforeEach(() => {
   windowHeight = WINDOW_HEIGHT;
   listeners.clear();
+  jest.spyOn(ReactNative, "useWindowDimensions").mockImplementation(() => ({
+    height: windowHeight,
+    width: 400,
+    scale: 2,
+    fontScale: 1,
+  }));
   jest.spyOn(Keyboard, "metrics").mockReturnValue(undefined);
   jest.spyOn(Keyboard, "addListener").mockImplementation(((
     event: string,

@@ -1,8 +1,9 @@
 import "LLM/utils/logStartup/beforeJSImports";
+// Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
+import "./iosWebsocketFix";
 require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
-import "./iosWebsocketFix";
 import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";
