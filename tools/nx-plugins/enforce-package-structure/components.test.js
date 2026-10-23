@@ -941,12 +941,23 @@ test("R3 does not resolve a type parameter to the module-level type it shadows",
   for (const contractModule of [
     "type List<Tile> = Tile[];\nexport type CardProps = { items: List<string> };\n",
     "type Box<Tile> = { value: Tile };\nexport type CardProps = Box<string>;\n",
+    "type Identity<Tile> = Tile;\ntype Tiles = Identity<string>[];\nexport type CardProps = { items: Tiles };\n",
   ]) {
     assert.deepEqual(
       check(card({ "Card.types.ts": `type Tile = { onPress(): void };\n${contractModule}` })),
       [],
       contractModule,
     );
+  }
+});
+
+test("R3 does not check the type arguments of a local callback alias", () => {
+  for (const contractModule of [
+    "type Handler<T> = (value: T) => void;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
+    "type Handler<T> = (value: T) => void;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
+    "type Handler<T> = (value: T) => void;\ntype Relay<T> = Handler<T>;\nexport type CardProps = { onSelect: Relay<{ onPress(): void }> };\n",
+  ]) {
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
   }
 });
 

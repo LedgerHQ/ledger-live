@@ -852,12 +852,35 @@ function propsOfContract(node, module, seen = new Set()) {
     return node.types.flatMap(type => propsOfContract(type, module, seen));
   }
   if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+    if (enclosingScopeNames(node, false).has(node.typeName.text)) return [];
     if (node.typeName.text === "Readonly" && node.typeArguments?.length === 1) {
       return propsOfContract(node.typeArguments[0], module, seen);
     }
     return local(node.typeName.text);
   }
   return [];
+}
+
+/**
+ * @param {string} name
+ * @param {ReturnType<typeof parseModule>} module
+ * @param {Set<string>} seen
+ * @returns {boolean} true when the local type `name` is a function or constructor type, directly
+ *   or through local aliases, such as `type Handler<T> = (value: T) => void`
+ */
+function isLocalCallback(name, module, seen = new Set()) {
+  const declaration = module.types.get(name);
+  if (!declaration || !ts.isTypeAliasDeclaration(declaration) || seen.has(name)) return false;
+  seen.add(name);
+  let type = declaration.type;
+  while (ts.isParenthesizedTypeNode(type)) type = type.type;
+  if (ts.isFunctionTypeNode(type) || ts.isConstructorTypeNode(type)) return true;
+  return (
+    ts.isTypeReferenceNode(type) &&
+    ts.isIdentifier(type.typeName) &&
+    !enclosingScopeNames(type, false).has(type.typeName.text) &&
+    isLocalCallback(type.typeName.text, module, seen)
+  );
 }
 
 /**
@@ -886,6 +909,8 @@ function reachableProps(declaration, module) {
       // A type parameter shadows the module-level type of the same name.
       const local = !enclosingScopeNames(node, false).has(name) && module.types.get(name);
       if (local) {
+        // A callback alias keeps its type arguments, the callback's parameters, unchecked.
+        if (isLocalCallback(name, module)) return;
         pending.push(...propsOfContract(node, module, seen));
         if (ts.isTypeAliasDeclaration(local) && !aliases.has(name)) {
           aliases.add(name);
