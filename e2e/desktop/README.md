@@ -110,7 +110,7 @@ the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed 
 
 ### E2E_FEATURE_FLAGS_JSON
 
-Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flag Resolution](../docs/e2e-conventions.md#feature-flags).
+Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flags](../docs/e2e-conventions.md#feature-flags).
 
 ### Feature Flag presets
 
