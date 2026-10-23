@@ -263,6 +263,8 @@ minimumReleaseAgeExclude:
   - "@ledgerhq/*"
   # Security fix for the compromised eMudhra intermediate CAs, younger than minimumReleaseAge
   - electron@44.9.3
+  # Renovate security update: react-router@7.18.2
+  - react-router@7.18.2
 
 autoInstallPeers: false
 enablePrePostScripts: true
