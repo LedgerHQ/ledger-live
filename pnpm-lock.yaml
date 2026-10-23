@@ -684,7 +684,7 @@ patchedDependencies:
   '@ton/core': 9329da4fb3122df62d833d0c4d847d33a35a9457ee48997870bc044fc80b7324
   bigint-buffer@1.1.5: 8b68e3a6ff85b08428e730e15c185b6ef716497a858ca1f30f6e628828bac536
   buffer@6.0.3: 42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d
-  detox-allure2-adapter@1.0.0-alpha.42: c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba
+  detox-allure2-adapter@1.0.0-alpha.42: ddb0dbcaa421672ba23c05f29c7a4578344f6680b23e32d8f8388038b1a6ecd8
   detox@20.51.3: 8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b
   react-native-fast-pbkdf2@0.3.1: 9b199e9f649c144e6edf3cf2db68b2900f64612817b8bb70c972cb0e1c727170
   react-native-image-crop-tools@1.6.4: 8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2
@@ -6547,7 +6547,7 @@ importers:
         version: 20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.0)(@jest/types@30.5.0)(bufferutil@4.1.0)(expect@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))(utf-8-validate@6.0.6)
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.42
-        version: 1.0.0-alpha.42(patch_hash=c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba)(detox@20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.0)(@jest/types@30.5.0)(bufferutil@4.1.0)(expect@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))(utf-8-validate@6.0.6))(jest-allure2-reporter@2.2.8(@jest/environment@30.5.0)(@jest/reporters@30.5.0)(@jest/types@30.5.0)(bunyan@2.0.5)(encoding@0.1.13)(jest-docblock@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))
+        version: 1.0.0-alpha.42(patch_hash=ddb0dbcaa421672ba23c05f29c7a4578344f6680b23e32d8f8388038b1a6ecd8)(detox@20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.0)(@jest/types@30.5.0)(bufferutil@4.1.0)(expect@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))(utf-8-validate@6.0.6))(jest-allure2-reporter@2.2.8(@jest/environment@30.5.0)(@jest/reporters@30.5.0)(@jest/types@30.5.0)(bunyan@2.0.5)(encoding@0.1.13)(jest-docblock@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))))
       expect:
         specifier: 30.5.0
         version: 30.5.0
@@ -19147,7 +19147,7 @@ importers:
     dependencies:
       '@ledgerhq/icons-ui':
         specifier: workspace:^
-        version: file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)
+        version: link:../icons
       '@ledgerhq/ui-shared':
         specifier: workspace:^
         version: link:../shared
@@ -19181,9 +19181,6 @@ importers:
       styled-system:
         specifier: ^5.1.5
         version: 5.1.5
-    dependenciesMeta:
-      '@ledgerhq/icons-ui':
-        injected: true
     devDependencies:
       '@rspack/core':
         specifier: 'catalog:'
@@ -24233,21 +24230,6 @@ packages:
 
   '@ledgerhq/hw-transport@6.36.1':
     resolution: {integrity: sha512-glmZmmqrC/M9CWGJQvkiNP7piKquH3oySyymA8s7TBkejyuZezDq44phk8njhkWzhntOCADKrEp36mWcwYeIFQ==}
-
-  '@ledgerhq/icons-ui@file:libs/ui/packages/icons':
-    resolution: {directory: libs/ui/packages/icons, type: directory}
-    peerDependencies:
-      '@types/react': 19.0.14
-      react: 19.1.4
-      react-native: '>=0.64.0'
-      react-native-svg: '>=12.1.1'
-      styled-components: '*'
-      styled-system: '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react-native:
-        optional: true
 
   '@ledgerhq/ledger-key-ring-protocol@1.1.0':
     resolution: {integrity: sha512-pm4yu9/pbJa4/5MwoBihH02R8n/KR/uO4AU60Q/JlgcyaX+AoKdVL/oBwh2QDtwaDY4dMODRxRfGolxoo3DEcA==}
@@ -43982,16 +43964,6 @@ snapshots:
       '@ledgerhq/logs': 6.19.0
       events: 3.3.0
 
-  '@ledgerhq/icons-ui@file:libs/ui/packages/icons(@types/react@19.0.14)(react-native-svg@15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(styled-components@5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4))(styled-system@5.1.5)':
-    dependencies:
-      react: 19.1.4
-      react-native-svg: 15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
-      styled-components: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
-      styled-system: 5.1.5
-    optionalDependencies:
-      '@types/react': 19.0.14
-      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@18.0.1(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
-
   '@ledgerhq/ledger-key-ring-protocol@1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/auth': 0.1.1
@@ -52301,7 +52273,7 @@ snapshots:
   detect-node@2.1.0:
     optional: true
 
-  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=c0c5e6419e53a25ed902cac4ce3608f467d0332b34c90b669fed2089e2bf97ba)(detox@20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.0)(@jest/types@30.5.0)(bufferutil@4.1.0)(expect@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))(utf-8-validate@6.0.6))(jest-allure2-reporter@2.2.8(@jest/environment@30.5.0)(@jest/reporters@30.5.0)(@jest/types@30.5.0)(bunyan@2.0.5)(encoding@0.1.13)(jest-docblock@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))):
+  detox-allure2-adapter@1.0.0-alpha.42(patch_hash=ddb0dbcaa421672ba23c05f29c7a4578344f6680b23e32d8f8388038b1a6ecd8)(detox@20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.0)(@jest/types@30.5.0)(bufferutil@4.1.0)(expect@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))(utf-8-validate@6.0.6))(jest-allure2-reporter@2.2.8(@jest/environment@30.5.0)(@jest/reporters@30.5.0)(@jest/types@30.5.0)(bunyan@2.0.5)(encoding@0.1.13)(jest-docblock@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))):
     dependencies:
       archiver: 6.0.2
       detox: 20.51.3(patch_hash=8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b)(@jest/environment@30.5.0)(@jest/types@30.5.0)(bufferutil@4.1.0)(expect@30.5.0)(jest-environment-jsdom@30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6))(jest-environment-node@30.5.0)(jest@30.5.0(@types/node@24.12.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)))(utf-8-validate@6.0.6)
