@@ -57,6 +57,7 @@
     "stableSavings",
     "ptxEarnCtaOnMobile",
     "earnWithdrawV2",
+    "earnPartialWithdraw",
     "llmWalletApiDeviceIntentSign"
   ]
 }
