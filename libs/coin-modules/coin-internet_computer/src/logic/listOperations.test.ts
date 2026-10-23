@@ -3,7 +3,7 @@ import { mapTxToOps } from "../bridge/bridgeHelpers/account";
 import { fetchTxnsPage } from "../network/api";
 import type { Operation, TransactionWithId } from "../network/idl/index.types";
 import { getBlockInfo } from "./getBlockInfo";
-import { indexedTime, listOperations, toOperations } from "./listOperations";
+import { indexedBlockTime, listOperations, toOperations } from "./listOperations";
 
 jest.mock("../network/api", () => ({ fetchTxnsPage: jest.fn() }));
 jest.mock("./getBlockInfo", () => ({ getBlockInfo: jest.fn() }));
@@ -42,7 +42,6 @@ describe("toOperations", () => {
       recipients: [OTHER],
       value: 100_000_000n,
       asset: { type: "native" },
-      memo: { type: "string", kind: "memo", value: "7" },
       details: { memo: "7" },
       tx: {
         block: { height: 42, hash: "", time: new Date(1750760223449) },
@@ -94,7 +93,7 @@ describe("toOperations", () => {
       expect(op.tx.date).toEqual(old.date);
       expect(op.senders).toEqual(old.senders);
       expect(op.recipients).toEqual(old.recipients);
-      expect(op.memo).toEqual({ type: "string", kind: "memo", value: old.extra.memo });
+      expect(op.details?.memo).toBe(old.extra.memo);
       expect(new BigNumber(op.tx.fees.toString())).toEqual(old.fee);
       const value = new BigNumber(op.value.toString());
       expect(op.type === "OUT" ? value.plus(old.fee) : value).toEqual(old.value);
@@ -114,22 +113,15 @@ describe("toOperations", () => {
   });
 });
 
-describe("indexedTime", () => {
-  it("prefers the block time", () => {
-    expect(indexedTime(tx(1n, transfer(ME, OTHER)))).toEqual(new Date(1750760223449));
+describe("indexedBlockTime", () => {
+  it("reads the block time", () => {
+    expect(indexedBlockTime(tx(1n, transfer(ME, OTHER)))).toEqual(new Date(1750760223449));
   });
 
-  it("falls back to the creation time", () => {
+  it("ignores the sender-set creation time", () => {
     const txInfo = tx(1n, transfer(ME, OTHER));
     txInfo.transaction.timestamp = [];
-    expect(indexedTime(txInfo)).toEqual(new Date(1750760220000));
-  });
-
-  it("gives nothing when neither is known", () => {
-    const txInfo = tx(1n, transfer(ME, OTHER));
-    txInfo.transaction.timestamp = [];
-    txInfo.transaction.created_at_time = [];
-    expect(indexedTime(txInfo)).toBeUndefined();
+    expect(indexedBlockTime(txInfo)).toBeUndefined();
   });
 });
 
@@ -137,7 +129,6 @@ describe("listOperations", () => {
   it("dates a transaction the index gives no time for by its block", async () => {
     const txInfo = tx(30n, transfer(OTHER, ME));
     txInfo.transaction.timestamp = [];
-    txInfo.transaction.created_at_time = [];
     mockFetchTxnsPage.mockResolvedValue({ transactions: [txInfo], oldestTxId: 30n });
     mockGetBlockInfo.mockResolvedValue({ height: 30, hash: "h", time: new Date(5) });
 
@@ -145,6 +136,7 @@ describe("listOperations", () => {
 
     expect(mockGetBlockInfo).toHaveBeenCalledWith(30);
     expect(items[0].tx.date).toEqual(new Date(5));
+    expect(items[0].tx.block.time).toEqual(new Date(5));
   });
 
   it("queries the index with the lowercase address", async () => {
@@ -174,6 +166,14 @@ describe("listOperations", () => {
     await listOperations(ME, { minHeight: 0, cursor: "20", limit: 5000 });
 
     expect(mockFetchTxnsPage).toHaveBeenCalledWith(ME, 20n, 100);
+  });
+
+  it("rounds a fractional limit down to a whole number of transactions", async () => {
+    mockFetchTxnsPage.mockResolvedValue({ transactions: [], oldestTxId: 10n });
+
+    await listOperations(ME, { minHeight: 0, limit: 2.5 });
+
+    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ME, undefined, 2);
   });
 
   it("ends the stream on the account's oldest transaction", async () => {

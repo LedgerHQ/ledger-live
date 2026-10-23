@@ -6,7 +6,6 @@ import type {
 import { FETCH_TXNS_LIMIT } from "../consts";
 import { fetchTxnsPage } from "../network/api";
 import type { TransactionWithId } from "../network/idl/index.types";
-import type { IcpMemo } from "../types/memo";
 import { NATIVE_ASSET } from "./getBalance";
 import { getBlockInfo } from "./getBlockInfo";
 import { hashTransaction } from "./hashTransaction";
@@ -14,10 +13,12 @@ import { hashTransaction } from "./hashTransaction";
 const NANOS_PER_MILLI = 1_000_000n;
 const CURSOR_PATTERN = /^\d+$/;
 
-/** The transaction's block time as the index reports it, else its creation time. */
-export function indexedTime({ transaction }: TransactionWithId): Date | undefined {
-  const nanos =
-    transaction.timestamp[0]?.timestamp_nanos ?? transaction.created_at_time[0]?.timestamp_nanos;
+/**
+ * The transaction's block time as the index reports it. `created_at_time` is no substitute: the
+ * sender sets it, and the ledger accepts it up to a day before the block.
+ */
+export function indexedBlockTime({ transaction }: TransactionWithId): Date | undefined {
+  const nanos = transaction.timestamp[0]?.timestamp_nanos;
   return nanos === undefined ? undefined : new Date(Number(nanos / NANOS_PER_MILLI));
 }
 
@@ -29,11 +30,7 @@ export function indexedTime({ transaction }: TransactionWithId): Date | undefine
  * The value is the transferred amount alone: the generic framework adds `tx.fees` to an outgoing
  * native operation itself.
  */
-export function toOperations(
-  txInfo: TransactionWithId,
-  address: string,
-  date: Date,
-): Operation<IcpMemo>[] {
+export function toOperations(txInfo: TransactionWithId, address: string, date: Date): Operation[] {
   const { transaction } = txInfo;
   if (!("Transfer" in transaction.operation)) return [];
 
@@ -48,15 +45,14 @@ export function toOperations(
   });
   const memo = transaction.memo.toString();
 
-  const toOperation = (type: "IN" | "OUT"): Operation<IcpMemo> => ({
+  const toOperation = (type: "IN" | "OUT"): Operation => ({
     id: `${hash}-${type}`,
     type,
     senders: [from],
     recipients: [to],
     value: amount.e8s,
     asset: NATIVE_ASSET,
-    memo: { type: "string", kind: "memo", value: memo },
-    // The generic framework reads the memo it shows from here.
+    // The generic framework reads the memo from `details`; `Operation` carries no typed memo.
     details: { memo },
     tx: {
       hash,
@@ -86,14 +82,18 @@ export function toOperations(
 export async function listOperations(
   address: string,
   options: ListOperationsOptions,
-): Promise<Page<Operation<IcpMemo>>> {
+): Promise<Page<Operation>> {
   if (options.order === "asc") throw new Error("ascending order is not supported");
   if (options.cursor !== undefined && !CURSOR_PATTERN.test(options.cursor)) {
     throw new Error(`[ICP](listOperations) Invalid cursor: ${options.cursor}`);
   }
 
   // `limit` is a soft limit by contract, so it is clamped to what one index query serves.
-  const limit = Math.min(Math.max(options.limit ?? FETCH_TXNS_LIMIT, 1), FETCH_TXNS_LIMIT);
+  // It is also rounded down: the index takes a whole number of transactions.
+  const limit = Math.min(
+    Math.max(Math.floor(options.limit ?? FETCH_TXNS_LIMIT), 1),
+    FETCH_TXNS_LIMIT,
+  );
   const start = options.cursor === undefined ? undefined : BigInt(options.cursor);
   const { transactions, oldestTxId } = await fetchTxnsPage(address.toLowerCase(), start, limit);
 
@@ -101,9 +101,11 @@ export async function listOperations(
   // Pages run newest-first, so a transaction below the floor means every later one is too.
   const reachedFloor = transactions.some(({ id }) => id < minHeight);
   const kept = transactions.filter(({ id }) => id >= minHeight);
-  // A transaction without an indexed time takes its block's time, never the current time.
+  // A transaction without an indexed time takes its block's time from the ledger.
   const dates = await Promise.all(
-    kept.map(async txInfo => indexedTime(txInfo) ?? (await getBlockInfo(Number(txInfo.id))).time),
+    kept.map(
+      async txInfo => indexedBlockTime(txInfo) ?? (await getBlockInfo(Number(txInfo.id))).time,
+    ),
   );
   const items = kept.flatMap((txInfo, i) => toOperations(txInfo, address, dates[i]));
 

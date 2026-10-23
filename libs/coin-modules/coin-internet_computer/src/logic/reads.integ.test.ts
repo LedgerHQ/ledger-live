@@ -9,6 +9,8 @@ import { listOperations } from "./listOperations";
 // 5432782, newest first.
 const ADDRESS = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
 const HISTORY = [25132406, 25132352, 25132338, 5432782];
+// Anyone can send to the account, so each walk starts just above its known history.
+const ABOVE_HISTORY = String(HISTORY[0] + 1);
 
 describe("lastBlock", () => {
   it("returns the tip with a hash, a recent time and its parent", async () => {
@@ -67,7 +69,7 @@ describe("getBalance", () => {
 
 describe("listOperations", () => {
   it("walks the whole history in pages, newest first", async () => {
-    const first = await listOperations(ADDRESS, { minHeight: 0, limit: 2 });
+    const first = await listOperations(ADDRESS, { minHeight: 0, limit: 2, cursor: ABOVE_HISTORY });
     expect(first.items.map(op => op.tx.block.height)).toEqual(HISTORY.slice(0, 2));
     expect(first.next).toBe(String(HISTORY[1]));
 
@@ -77,15 +79,15 @@ describe("listOperations", () => {
   });
 
   it("stops at minHeight", async () => {
-    const page = await listOperations(ADDRESS, { minHeight: HISTORY[2] });
+    const page = await listOperations(ADDRESS, { minHeight: HISTORY[2], cursor: ABOVE_HISTORY });
 
     expect(page.items.map(op => op.tx.block.height)).toEqual(HISTORY.slice(0, 3));
     expect(page.next).toBeUndefined();
   });
 
   it("reports the hashes and dates the account bridge reports", async () => {
-    const { items } = await listOperations(ADDRESS, { minHeight: 0 });
-    const legacy = (await fetchTxns(ADDRESS, BigInt(HISTORY[0] + 1))).flatMap(
+    const { items } = await listOperations(ADDRESS, { minHeight: 0, cursor: ABOVE_HISTORY });
+    const legacy = (await fetchTxns(ADDRESS, BigInt(ABOVE_HISTORY))).flatMap(
       mapTxToOps("accountId", ADDRESS),
     );
 
