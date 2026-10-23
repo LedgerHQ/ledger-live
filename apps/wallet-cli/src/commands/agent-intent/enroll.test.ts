@@ -582,3 +582,24 @@ describe("agent-intent enroll --source", () => {
     },
   );
 });
+
+describe("agent-intent enroll --name and --description", () => {
+  const { options } = enrollCommand as unknown as {
+    options: Record<
+      "name" | "description",
+      { schema: { safeParse: (value: unknown) => { success: boolean } } }
+    >;
+  };
+
+  it.each([
+    ["name", 80],
+    ["description", 280],
+  ] as const)("accepts a %s of up to %i characters and rejects a longer one", (option, limit) => {
+    expect(options[option].schema.safeParse("a".repeat(limit)).success).toBe(true);
+    expect(options[option].schema.safeParse("a".repeat(limit + 1)).success).toBe(false);
+  });
+
+  it.each(["name", "description"] as const)("rejects a %s made only of spaces", option => {
+    expect(options[option].schema.safeParse("   ").success).toBe(false);
+  });
+});
