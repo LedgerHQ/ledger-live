@@ -60,15 +60,13 @@ export const EXCLUSIONS = {
       "package builds from src/ like the other libs, then extends @support/tsconfig/lib.",
   },
   "libs/ledgerjs": {
-    rules: ["lint", "tsconfig", "jest"],
+    rules: ["lint", "tsconfig"],
     reason:
       `TEMPORARY. lint: the ledgerjs packages ${LINT_LEAVES} ` +
       "tsconfig: the 22 ledgerjs packages extend the shared libs/ledgerjs/tsconfig.json across " +
       "package boundaries; moving them onto the lib preset would spell its six options out in " +
       "each package. Exit condition: those options are dropped or folded into a preset, then " +
-      "each package extends @support/tsconfig/lib. " +
-      "jest: their jest config only takes withEsmDeps from @support/jest/shared. Exit " +
-      "condition: it is built by a preset factory.",
+      "each package extends @support/tsconfig/lib.",
   },
   "libs/transaction-observability": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ui": {
