@@ -246,8 +246,9 @@ export default defineCommand({
     }),
     "allow-plaintext-key": option(z.boolean().default(false), {
       description:
-        "Store the agent key unencrypted in a 0600 file when no OS keychain is available or (on " +
-        "Linux) it refuses the write. Use only after the human explicitly agrees.",
+        "Linux only: store the agent key unencrypted in a 0600 file when no Secret Service is " +
+        "reachable or it can't take the key (e.g. a locked collection). Use only after the human " +
+        "explicitly agrees.",
       argumentKind: "flag",
     }),
     output: outputOption,
