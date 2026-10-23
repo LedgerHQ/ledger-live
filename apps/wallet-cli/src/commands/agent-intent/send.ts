@@ -4,7 +4,7 @@ import { createNonce, encodeSendIntentTlv, type FeeStrategy } from "@ledgerhq/ag
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
-import { resolveOutputFormat } from "../inputs";
+import { resolveAccountDescriptorV1, resolveOutputFormat } from "../inputs";
 import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../../agent-intent/evm";
 import {
   FEE_STRATEGIES,
@@ -19,15 +19,17 @@ import {
   findEthereumToken,
   findSolanaMintProgram,
   findSolanaToken,
+  sameTicker,
 } from "../../agent-intent/token-lookup";
 import { resolveSenderFromAccount } from "../../agent-intent/sender";
+import { resolveTokenByTicker } from "../../agent-intent/token-by-ticker";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
   submitAgentIntent,
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
-import { createCommandOutput } from "../../output";
+import { createCommandOutput, type CommandOutput } from "../../output";
 
 function parseSenderInput(flags: {
   account?: string;
@@ -38,20 +40,29 @@ function parseSenderInput(flags: {
   throw new Error("Pass exactly one sender: --account <session-label> or --from <address>.");
 }
 
-/**
- * `--token` picks the network by its shape: a `0x` contract is an ERC-20 on Ethereum, anything else
- * an SPL mint on Solana. Without it, the SOL ticker proposes a native Solana send and any other an
- * Ethereum one. Read before the output is set up, so it never throws: a malformed `--amount` is
- * reported by the full parse inside the command.
- */
-function networkOf(flags: { amount: string; token?: string }): IntentNetwork {
+const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+function networkOfAddress(address: string): IntentNetwork {
+  if (/^0x/i.test(address)) return "ethereum";
+  if (BASE58_ADDRESS.test(address)) return "solana";
+  throw new Error(
+    `--from ${address} is neither an EVM address (0x…) nor a Solana one (base58), so it names no ` +
+      "network for the token.",
+  );
+}
+
+/** A token's network is `--token`'s by its shape, else the sender's. */
+async function networkOf(
+  flags: { amount: string; token?: string },
+  senderInput: { account: string } | { from: string },
+): Promise<IntentNetwork> {
   if (flags.token) return /^0x/i.test(flags.token) ? "ethereum" : "solana";
-  try {
-    const { ticker } = parseAmountWithTicker(flags.amount);
-    return ticker.toUpperCase() === solanaAsset().ticker.toUpperCase() ? "solana" : "ethereum";
-  } catch {
-    return "ethereum";
-  }
+  const { ticker } = parseAmountWithTicker(flags.amount);
+  if (sameTicker(ticker, solanaAsset().ticker)) return "solana";
+  if (sameTicker(ticker, ethereumAsset().ticker)) return "ethereum";
+  if ("from" in senderInput) return networkOfAddress(senderInput.from);
+  const descriptor = await resolveAccountDescriptorV1(senderInput.account);
+  return descriptor.network.name === "solana" ? "solana" : "ethereum";
 }
 
 /** A Solana send has no fee level (the service sets the priority fee); a memo is Solana only. */
@@ -107,48 +118,50 @@ function solanaAsset(): SolanaAsset {
   return { type: "native", ticker: sol.ticker, decimals: sol.units[0].magnitude };
 }
 
-async function resolveEthereumAsset(
+function ethereumAsset(): EthereumAsset {
+  const eth = getCryptoCurrencyById("ethereum");
+  return { type: "native", ticker: eth.ticker, decimals: eth.units[0].magnitude };
+}
+
+/** `fromFlag`: the address came from `--token` rather than from the ticker, to name it in errors. */
+async function resolveErc20(
   ticker: string,
-  tokenContract: string | undefined,
+  tokenContract: string,
+  fromFlag: boolean,
 ): Promise<EthereumAsset> {
-  if (!tokenContract) {
-    const eth = getCryptoCurrencyById("ethereum");
-    if (ticker.toUpperCase() !== eth.ticker.toUpperCase()) {
-      throw new Error(
-        `--amount is in ${ticker}, but without --token the intent sends native ${eth.ticker}. ` +
-          `Pass the token's contract with --token, use '${eth.ticker}', or use '${solanaAsset().ticker}' ` +
-          "for a Solana send.",
-      );
-    }
-    return { type: "native", ticker: eth.ticker, decimals: eth.units[0].magnitude };
-  }
   const contract = parseEvmAddress(tokenContract, "token");
+  const label = fromFlag ? `--token ${contract}` : contract;
   const token = await findEthereumToken(contract);
   if (!token) {
     throw new Error(
-      `--token ${contract} is not a known ERC-20 token on Ethereum mainnet. Check the contract ` +
+      `${label} is not a known ERC-20 token on Ethereum mainnet. Check the contract ` +
         "address with `wallet-cli assets token ethereum <address>`.",
     );
   }
-  if (ticker.toUpperCase() !== token.ticker.toUpperCase()) {
+  if (!sameTicker(ticker, token.ticker)) {
     throw new Error(
-      `--amount is in ${ticker}, but --token ${contract} is ${token.ticker}. Fix whichever one is wrong.`,
+      `--amount is in ${ticker}, but ${label} is ${token.ticker}. Fix whichever one is wrong.`,
     );
   }
   return { type: "erc20", ticker: token.ticker, decimals: token.decimals, contract };
 }
 
-async function resolveSplToken(ticker: string, mint: string): Promise<SolanaAsset> {
+async function resolveSplToken(
+  ticker: string,
+  mint: string,
+  fromFlag: boolean,
+): Promise<SolanaAsset> {
+  const label = fromFlag ? `--token ${mint}` : mint;
   const token = await findSolanaToken(mint);
   if (!token) {
     throw new Error(
-      `--token ${mint} is not a known SPL token on Solana mainnet. Check the mint address with ` +
+      `${label} is not a known SPL token on Solana mainnet. Check the mint address with ` +
         "`wallet-cli assets token solana <mint>`.",
     );
   }
-  if (ticker.toUpperCase() !== token.ticker.toUpperCase()) {
+  if (!sameTicker(ticker, token.ticker)) {
     throw new Error(
-      `--amount is in ${ticker}, but --token ${mint} is ${token.ticker}. Fix whichever one is wrong.`,
+      `--amount is in ${ticker}, but ${label} is ${token.ticker}. Fix whichever one is wrong.`,
     );
   }
   // Fails closed: a mint the node can't confirm as a classic SPL token is refused too.
@@ -156,23 +169,40 @@ async function resolveSplToken(ticker: string, mint: string): Promise<SolanaAsse
   if (program !== "spl-token") {
     throw new Error(
       program === "spl-token-2022"
-        ? `--token ${mint} (${token.ticker}) is a Token-2022 mint, which Agent Intent can't send yet.`
-        : `--token ${mint} (${token.ticker}) isn't a mint of the SPL Token program on Solana mainnet.`,
+        ? `${label} (${token.ticker}) is a Token-2022 mint, which Agent Intent can't send yet.`
+        : `${label} (${token.ticker}) isn't a mint of the SPL Token program on Solana mainnet.`,
     );
   }
   return { type: "spl-token", ticker: token.ticker, decimals: token.decimals, mint: token.mint };
 }
 
-/** On Solana, SOL or the SPL token that `--token` names; on Ethereum, ETH or the ERC-20 it names. */
+/** The native asset for its ticker, else the token that `--token` names or the ticker resolves to. */
 async function resolveNetworkAsset(
   network: IntentNetwork,
   ticker: string,
   token: string | undefined,
+  senderInput: { account: string } | { from: string },
+  out: Pick<CommandOutput, "withActivity">,
 ): Promise<NetworkAsset> {
-  if (network === "ethereum") {
-    return { network, asset: await resolveEthereumAsset(ticker, token) };
+  if (!token) {
+    const eth = ethereumAsset();
+    const sol = solanaAsset();
+    if (network === "ethereum" && sameTicker(ticker, eth.ticker)) return { network, asset: eth };
+    if (network === "solana" && sameTicker(ticker, sol.ticker)) return { network, asset: sol };
   }
-  return { network, asset: token ? await resolveSplToken(ticker, token) : solanaAsset() };
+  const address =
+    token ??
+    (await resolveTokenByTicker(
+      network,
+      ticker,
+      "account" in senderInput ? senderInput.account : undefined,
+      out,
+    ));
+  const fromFlag = token !== undefined;
+  if (network === "ethereum") {
+    return { network, asset: await resolveErc20(ticker, address, fromFlag) };
+  }
+  return { network, asset: await resolveSplToken(ticker, address, fromFlag) };
 }
 
 export default defineCommand({
@@ -203,7 +233,8 @@ export default defineCommand({
     token: option(z.string().min(1).optional(), {
       description:
         "Token to send: an ERC-20 contract (0x…, Ethereum mainnet) or an SPL token mint (base58, " +
-        "Solana mainnet). Omit for native ETH or SOL.",
+        "Solana mainnet). Without it, the --amount ticker picks the token the --account holds or " +
+        "the only one CAL lists, on the sender's network, and fails if several match.",
     }),
     "fee-strategy": option(z.enum(FEE_STRATEGIES).optional(), {
       description:
@@ -219,13 +250,12 @@ export default defineCommand({
     }),
   },
   handler: async ({ flags }) => {
-    const network = networkOf(flags);
-    const out = createCommandOutput(resolveOutputFormat(flags.output), {
-      command: "agent-intent send",
-      network: `${network}:main`,
-    });
+    const ctx = { command: "agent-intent send", network: "" };
+    const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
     await out.run(async () => {
       const senderInput = parseSenderInput(flags);
+      const network = await networkOf(flags, senderInput);
+      ctx.network = `${network}:main`;
       assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const { sender, recipient, senderField } = await resolveParties(
@@ -234,7 +264,13 @@ export default defineCommand({
         flags.to,
       );
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
-      const networkAsset = await resolveNetworkAsset(network, ticker, flags.token);
+      const networkAsset = await resolveNetworkAsset(
+        network,
+        ticker,
+        flags.token,
+        senderInput,
+        out,
+      );
       const { asset } = networkAsset;
       const amount = parseDecimalAmount(displayAmount, asset.decimals, asset.ticker);
 

@@ -128,10 +128,7 @@ setCurrenciesResolver({
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
-setFrameworkCryptoAssetsStore(
-  buildStandaloneCryptoAssetsStore({
-    calServiceUrl: getEnv("CAL_SERVICE_URL"),
-    ledgerClientVersion,
-  }),
-);
+/** Resolved once here for every CAL client: the crypto assets store and the ticker lookup. */
+export const calApiConfig = { calServiceUrl: getEnv("CAL_SERVICE_URL"), ledgerClientVersion };
+setFrameworkCryptoAssetsStore(buildStandaloneCryptoAssetsStore(calApiConfig));
 registerWalletCliDmkTransport();
