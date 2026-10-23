@@ -24,6 +24,7 @@ export const bootstrap = bridge.bootstrap;
 export const db = bridge.db;
 export const updater = bridge.updater;
 export const deeplink = bridge.deeplink;
+export const webview = bridge.webview;
 export const app = bridge.app;
 export const files = bridge.files;
 export const power = bridge.power;
