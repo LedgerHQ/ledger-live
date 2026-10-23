@@ -106,6 +106,17 @@ export async function reachAmountStep(
   balanceType?: BalanceType,
 ) {
   await openNewSendFromAccount(app, tx, balanceType);
+  await passRecipientStep(app, tx);
+}
+
+/** Reaches the Amount step from the account page the app is already on. */
+export async function reachAmountStepFromCurrentAccount(app: Application, tx: Transaction) {
+  await app.account.clickSend();
+  await app.newSendFlow.waitForDialog();
+  await passRecipientStep(app, tx);
+}
+
+async function passRecipientStep(app: Application, tx: Transaction) {
   await app.newSendFlow.typeAddress(requireRecipientAddress(tx));
 
   const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;

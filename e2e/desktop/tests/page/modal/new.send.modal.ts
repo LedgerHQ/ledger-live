@@ -50,8 +50,34 @@ export class NewSendModal extends Modal {
     .or(this.confirmationInfoContent);
   readonly successConfirmationTitle = this.dialog.getByTestId("send-confirmation-success-title");
   readonly viewDetailsButton = this.dialog.getByTestId("send-confirmation-view-details-button");
+  private readonly confirmationCloseButton = this.dialog.getByTestId(
+    "send-confirmation-close-button",
+  );
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
   readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
+  private readonly sponsoredFeeNudge = this.dialog.getByTestId("send-sponsored-fee-nudge");
+  private readonly feePaymentEntry = this.dialog.getByTestId("send-fee-payment-entry");
+  private readonly feePaymentConfirmButton = this.dialog.getByTestId("send-fee-payment-confirm");
+  private readonly sponsoredFeeValue = this.dialog.getByTestId("send-sponsored-fee-value");
+  private readonly sponsoredFeeError = this.dialog.getByTestId("send-sponsored-fee-error");
+  private readonly sponsoredRentArriving = this.dialog.getByTestId("send-sponsored-rent-arriving");
+  private readonly networkFeesRow = this.dialog.getByTestId("send-network-fees-row");
+  private readonly sponsoredPolling = this.dialog.getByTestId("send-sponsored-polling");
+  private readonly sponsoredFailure = this.dialog.getByTestId("send-sponsored-failure");
+  private readonly sponsoredFailureRetry = this.dialog.getByTestId("send-sponsored-failure-retry");
+  private readonly sponsoredFailureRetryBlocked = this.dialog.getByTestId(
+    "send-sponsored-failure-retry-blocked",
+  );
+  private readonly sponsoredFailureCancel = this.dialog.getByTestId(
+    "send-sponsored-failure-cancel",
+  );
+  private readonly notEnoughFeeTokenCopy = (ticker: string) =>
+    this.dialog.getByText(`You don't have enough ${ticker}`);
+
+  private readonly feePaymentOption = (optionId: string) =>
+    this.dialog.getByTestId(`send-fee-payment-option-${optionId}`);
+  private readonly feePaymentOptionFee = (optionId: string) =>
+    this.dialog.getByTestId(`send-fee-payment-option-${optionId}-fee`);
 
   getFeePreset(preset: Fee) {
     return this.page.getByTestId(`send-fees-preset-${preset.toLowerCase()}`);
@@ -266,6 +292,8 @@ export class NewSendModal extends Modal {
   @step("Click review to proceed to signature")
   async clickReview() {
     await expect(this.reviewButton).toBeEnabled();
+    // A loading Review is still enabled; a sponsored send needs its quote first.
+    await expect(this.reviewButton).not.toHaveAttribute("aria-busy", "true");
     await this.reviewButton.click();
   }
 
@@ -283,6 +311,107 @@ export class NewSendModal extends Modal {
     await item.waitFor({ state: "hidden" });
   }
 
+  @step("Verify the sponsored fee offer is shown")
+  async expectSponsoredNudgeVisible() {
+    await expect(this.sponsoredFeeNudge).toBeVisible();
+  }
+
+  @step("Open the fee payment options")
+  async openFeePayment() {
+    await this.feePaymentEntry.click();
+  }
+
+  @step("Verify fee payment option $0 costs $1")
+  async expectFeePaymentOptionFee(optionId: string, fee: string) {
+    await expect(this.feePaymentOptionFee(optionId)).toContainText(fee);
+  }
+
+  @step("Select fee payment option: $0")
+  async selectFeePaymentOption(optionId: string) {
+    const option = this.feePaymentOption(optionId);
+    await option.click();
+    await expect(option).toHaveAttribute("aria-pressed", "true");
+  }
+
+  @step("Confirm the fee payment option")
+  async confirmFeePayment() {
+    await this.feePaymentConfirmButton.click();
+    await expect(this.feePaymentConfirmButton).toBeHidden();
+  }
+
+  @step("Verify the network fee is paid with the sponsored option")
+  async expectSponsoredFeeSelected() {
+    await expect(this.sponsoredFeeValue).toBeVisible();
+  }
+
+  @step("Verify sponsored fee error: $0")
+  async expectSponsoredFeeError(message: string | RegExp) {
+    await expect(this.sponsoredFeeError).toContainText(message);
+  }
+
+  @step("Verify a paid rent is still arriving")
+  async expectRentArriving() {
+    await expect(this.sponsoredRentArriving).toBeVisible();
+  }
+
+  @step("Verify no rent is offered")
+  async expectNoFeePaymentOffer() {
+    await expect(this.feePaymentEntry).toBeHidden();
+  }
+
+  // NaN while the row shows no TRX amount yet (the `--` placeholder), which no comparison passes.
+  private async networkFeeTrx(): Promise<number> {
+    const match = /([\d.,]+)\s*TRX/.exec(await this.networkFeesRow.innerText());
+    return match ? Number(match[1].replaceAll(",", "")) : Number.NaN;
+  }
+
+  @step("Read the network fee in TRX once it is estimated for the amount")
+  async settledNetworkFeeTrx(): Promise<number> {
+    await expect(this.reviewButton).toBeEnabled();
+    await expect(this.reviewButton).not.toHaveAttribute("aria-busy", "true");
+    await expect.poll(() => this.networkFeeTrx()).toBeGreaterThan(0);
+    return this.networkFeeTrx();
+  }
+
+  @step("Verify the network fee dropped below $0 TRX once the rent landed")
+  async expectFeeDroppedOnRentDelivery(feeBefore: number) {
+    await expect(this.sponsoredRentArriving).toBeHidden();
+    await expect.poll(() => this.networkFeeTrx()).toBeLessThan(feeBefore);
+  }
+
+  @step("Verify the energy delivery wait is shown")
+  async waitForSponsoredPolling() {
+    await expect(this.sponsoredPolling).toBeVisible();
+  }
+
+  @step("Verify the sponsored send failed: $0")
+  async expectSponsoredFailure(message: string | RegExp) {
+    await expect(this.sponsoredFailure).toContainText(message);
+  }
+
+  @step("Verify Retry is locked while the paid rent may still land")
+  async expectRetryLocked() {
+    await expect(this.sponsoredFailureRetry).toBeDisabled();
+    await expect(this.sponsoredFailureRetryBlocked).toBeVisible();
+  }
+
+  @step("Verify Retry is offered as: $0")
+  async expectRetryOffered(label: string | RegExp) {
+    await expect(this.sponsoredFailureRetry).toBeEnabled();
+    await expect(this.sponsoredFailureRetry).toHaveText(label);
+  }
+
+  @step("Verify no message says $0 is short")
+  async expectNoFeeTokenShortfall(ticker: string) {
+    await expect(this.notEnoughFeeTokenCopy(ticker)).toHaveCount(0);
+  }
+
+  @step("Cancel the failed sponsored send")
+  async cancelSponsoredFailure() {
+    await this.sponsoredFailureCancel.click();
+    await expect(this.dialog).toBeHidden();
+  }
+
   @step("Wait for signature screen or device action loader")
   async waitForSignature() {
     await this.deviceActionLoader.or(this.signaturePrompt).waitFor({ state: "visible" });
@@ -291,6 +420,12 @@ export class NewSendModal extends Modal {
   @step("Wait for terminal confirmation screen")
   async waitForConfirmation() {
     await this.confirmationTerminalContent.waitFor({ state: "visible" });
+  }
+
+  @step("Close the confirmation screen")
+  async closeConfirmation() {
+    await this.confirmationCloseButton.click();
+    await expect(this.dialog).toBeHidden();
   }
 
   @step("Wait success confirmation screen")

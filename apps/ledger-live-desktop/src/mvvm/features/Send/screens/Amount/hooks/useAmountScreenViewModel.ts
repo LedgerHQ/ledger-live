@@ -2,6 +2,8 @@ import { useCallback, useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency } from "@ledgerhq/ledger-wallet-framework/account/helpers";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type {
   SendFlowTransactionActions,
@@ -69,6 +71,7 @@ export function useAmountScreenViewModel({
     feeCurrencyTicker,
     feeTokenAccount,
     sponsoredUnaffordable,
+    rentArriving,
   } = useSponsoredSend();
   const sponsoredSelected = selectedFeeOptionId === sponsoredFeeOptionId;
 
@@ -296,6 +299,8 @@ export function useAmountScreenViewModel({
   const sponsoredReviewNotReady =
     !hasInsufficientFundsError && sponsoredSelected && available && (!intentReady || !quote);
 
+  const rentChangesFee = sendFeatures.rentChangesFee(getAccountCurrency(account));
+
   return {
     amountValue: amountInput.amountValue,
     amountInputMaxDecimalLength: amountInput.amountInputMaxDecimalLength,
@@ -323,6 +328,8 @@ export function useAmountScreenViewModel({
           provider: providerName,
         })
       : null,
+    sponsoredRentNotice:
+      rentArriving && rentChangesFee ? t("newSendFlow.feePayment.rentArriving") : null,
     reviewLoading: amountComputationPending || sponsoredReviewNotReady,
     ...networkFees,
     feeSelector: {

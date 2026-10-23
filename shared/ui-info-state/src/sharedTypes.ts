@@ -31,6 +31,9 @@ export type InfoStateBanner = Readonly<{
 
   /** Visual treatment for the banner. Defaults to info. */
   appearance?: "info" | "warning" | "error" | "success";
+
+  /** Optional test identifier forwarded to the banner. */
+  testID?: string;
 }>;
 
 /** Props shared by every preset, on every platform. */

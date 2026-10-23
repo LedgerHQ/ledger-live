@@ -37,6 +37,7 @@ jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
     hasCoinControl: () => false,
     getFeePresetOptions: jest.fn(() => []),
     getBalanceTypeConfig: jest.fn(),
+    rentChangesFee: jest.fn(),
   },
 }));
 
@@ -191,6 +192,7 @@ describe("useAmountScreenViewModel", () => {
       currency_id: "bitcoin",
     });
     jest.mocked(sendFeatures.getBalanceTypeConfig).mockReturnValue(null);
+    jest.mocked(sendFeatures.rentChangesFee).mockReturnValue(false);
 
     mockedGetAccountBridge.mockReturnValue({
       updateTransaction: (tx: Record<string, unknown>, patch: Record<string, unknown>) => ({
@@ -582,6 +584,99 @@ describe("useAmountScreenViewModel", () => {
       expect(result.current.reviewShowIcon).toBe(false);
       expect(result.current.reviewDisabled).toBe(false);
       expect(result.current.reviewLoading).toBe(false);
+    });
+
+    describe("a Tronify rent that is still arriving", () => {
+      const ARRIVING_NOTICE =
+        "Your energy rental is still on its way. Network fees will update once it arrives.";
+      const status = {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber(0),
+        amount: new BigNumber(1),
+        totalSpent: new BigNumber(1),
+      } as TransactionStatus;
+
+      function buildTronParams() {
+        mockedGetAccountCurrency.mockImplementation(account =>
+          account?.type === "TokenAccount" ? account.token : getCryptoCurrencyById("tron"),
+        );
+        mockedGetMainAccount.mockImplementation(
+          (account: Account | TokenAccount, parentAccount?: Account | null) => {
+            if (isAccount(account)) return account;
+            if (!parentAccount) throw new Error("A token account needs its parent account");
+            return parentAccount;
+          },
+        );
+        const usdtAccount = createMockTronUsdtAccount({ parentId: "tron_parent" });
+        // The Tron descriptor's answer: only the TRC-20 send burns energy.
+        jest
+          .mocked(sendFeatures.rentChangesFee)
+          .mockImplementation(currency => currency === usdtAccount.token);
+        const tronAccount = createMockAccount({
+          id: "tron_parent",
+          currency: getCryptoCurrencyById("tron"),
+          subAccounts: [usdtAccount],
+        });
+        const transaction = {
+          family: "tron",
+          recipient: "TRecipient",
+          amount: new BigNumber(1),
+          useAllAmount: false,
+        } as Transaction;
+        return { usdtAccount, tronAccount, transaction };
+      }
+
+      beforeEach(() => {
+        mockedUseSponsoredSend.mockReturnValue({
+          ...SPONSORED_IDENTITY,
+          selectedFeeOptionId: "standard",
+          available: false,
+          rentArriving: true,
+          quote: null,
+        } as never);
+      });
+
+      it("should tell the user when a rent is arriving on a USDT send", () => {
+        const { usdtAccount, tronAccount, transaction } = buildTronParams();
+
+        const { result } = renderViewModel(
+          usdtAccount,
+          { ...transaction, subAccountId: usdtAccount.id } as Transaction,
+          status,
+          tronAccount,
+        );
+
+        expect(result.current.sponsoredRentNotice).toBe(ARRIVING_NOTICE);
+      });
+
+      it("should stay silent when the send is native TRX, whose fee the rent won't change", () => {
+        const { tronAccount, transaction } = buildTronParams();
+
+        const { result } = renderViewModel(tronAccount, transaction, status);
+
+        expect(result.current.sponsoredRentNotice).toBeNull();
+      });
+
+      it("should stay silent when no rent is arriving", () => {
+        const { usdtAccount, tronAccount, transaction } = buildTronParams();
+        mockedUseSponsoredSend.mockReturnValue({
+          ...SPONSORED_IDENTITY,
+          selectedFeeOptionId: "standard",
+          available: true,
+          rentArriving: false,
+          quote: QUOTE,
+        } as never);
+
+        const { result } = renderViewModel(
+          usdtAccount,
+          { ...transaction, subAccountId: usdtAccount.id } as Transaction,
+          status,
+          tronAccount,
+        );
+
+        expect(result.current.sponsoredRentNotice).toBeNull();
+      });
     });
 
     it("does not force-disable review when the fee token covers the rent", () => {
