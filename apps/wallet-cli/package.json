@@ -23,6 +23,7 @@
     "predev": "node ./scripts/generate-skills-manifest.mjs",
     "dev": "bun --hot ./src/cli.ts",
     "generate:skills": "node ./scripts/generate-skills-manifest.mjs",
+    "export:agent-plugin": "node ./scripts/export-agent-plugin.mjs",
     "prebuild": "node ./scripts/generate-skills-manifest.mjs",
     "build": "node ./scripts/build.mjs",
     "prepare:npm": "node ./scripts/prepare-npm.mjs",
