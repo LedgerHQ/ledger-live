@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import {
@@ -17,6 +18,7 @@ interface WalletAssetsViewModelResult {
   shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayBorrowSection: boolean;
+  shouldDisplayServicesSection: boolean;
   onBorrowPress: () => void;
 }
 
@@ -30,6 +32,7 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const borrowConfig = useBorrowLiveConfig();
+  const { isEnabled: shouldDisplayServicesSection } = useServicesEntryPointsFeature();
   const { onPress: onBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const hasMore = useMemo(
@@ -47,7 +50,8 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     shouldAddBottomPadding: shouldDisplayOperationsList && walletCardsDisplayed.length === 0,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
-    shouldDisplayBorrowSection: borrowConfig?.enabled ?? false,
+    shouldDisplayBorrowSection: (borrowConfig?.enabled ?? false) && !shouldDisplayServicesSection,
+    shouldDisplayServicesSection,
     onBorrowPress,
   };
 }

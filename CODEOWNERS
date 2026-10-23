@@ -233,6 +233,7 @@ domain/entity/market-index-altcoin-season/               @ledgerhq/wallet-xp
 domain/api/market-index-fear-and-greed/                  @ledgerhq/wallet-xp
 domain/api/market-index-altcoin-season/                  @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
+features/flow/portfolio-services-entry-points/          @ledgerhq/wallet-xp
 
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration

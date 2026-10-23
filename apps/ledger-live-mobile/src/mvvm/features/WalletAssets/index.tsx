@@ -23,6 +23,7 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
+    shouldDisplayServicesSection,
     onBorrowPress,
   } = useWalletAssetsViewModel();
   const { bottom } = useSafeAreaInsets();
@@ -40,6 +41,7 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
         variant={variant}
         shouldDisplayAssetSection={shouldDisplayAssetSection}
         shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
+        shouldDisplayServicesSection={variant !== "readOnly" && shouldDisplayServicesSection}
       />
       {variant !== "readOnly" && shouldDisplayBorrowSection && (
         <PortfolioBorrowSection onPress={onBorrowPress} />

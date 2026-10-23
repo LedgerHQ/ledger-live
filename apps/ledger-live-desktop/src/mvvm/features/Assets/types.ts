@@ -1,10 +1,15 @@
+import type { ReactNode } from "react";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 
 /** Router state hint so asset detail can resolve ledger id ≠ market id (e.g. xStocks). */
 export type AssetNavigationMarketState = Pick<MarketCurrencyData, "id" | "ledgerIds">;
 
-export type AssetsViewProps = {
+export type AssetsProps = {
+  readonly afterCryptosSection?: ReactNode;
+};
+
+export type AssetsViewProps = AssetsProps & {
   readonly isLoading: boolean;
   readonly sections: AssetSectionData[];
 };

@@ -71,6 +71,38 @@ describe("usePortfolioViewModel", () => {
     expect(result.current.hasExchangeBannerCTA).toBe(true);
   });
 
+  it("should replace the perps and borrow entry points when services entry points are enabled", () => {
+    const { result } = renderHook(() => usePortfolioViewModel(), {
+      initialState: {
+        settings: INITIAL_STATE,
+        ...withFlagOverrides({
+          entryPointsServices: { enabled: true },
+          ptxBorrowLiveApp: { enabled: true },
+        }),
+      },
+    });
+
+    expect(result.current.shouldDisplayServicesEntryPoints).toBe(true);
+    expect(result.current.shouldDisplayPerpsEntryPoint).toBe(false);
+    expect(result.current.shouldDisplayBorrowSection).toBe(false);
+  });
+
+  it("should keep the perps and borrow entry points when services entry points are disabled", () => {
+    const { result } = renderHook(() => usePortfolioViewModel(), {
+      initialState: {
+        settings: INITIAL_STATE,
+        ...withFlagOverrides({
+          entryPointsServices: { enabled: false },
+          ptxBorrowLiveApp: { enabled: true },
+        }),
+      },
+    });
+
+    expect(result.current.shouldDisplayServicesEntryPoints).toBe(false);
+    expect(result.current.shouldDisplayPerpsEntryPoint).toBe(true);
+    expect(result.current.shouldDisplayBorrowSection).toBe(true);
+  });
+
   it("should expose clear cache banner visibility when enabled in settings", () => {
     const { result } = renderHook(() => usePortfolioViewModel(), {
       initialState: {

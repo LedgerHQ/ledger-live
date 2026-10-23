@@ -5,6 +5,7 @@ import { useSelector } from "~/context/hooks";
 import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import useEnv from "@features/platform-env";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import { useSharedValue } from "react-native-reanimated";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Features } from "@shared/feature-flags";
@@ -37,6 +38,8 @@ interface UsePortfolioViewModelResult {
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
+  shouldDisplayPerpsEntryPoint: boolean;
+  shouldDisplayServicesSection: boolean;
   showAssets: boolean;
   isLNUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -63,6 +66,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
+  const { isEnabled: shouldDisplayServicesSection } = useServicesEntryPointsFeature();
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
@@ -151,6 +155,8 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetDiscoverability,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
+    shouldDisplayPerpsEntryPoint: !shouldDisplayServicesSection,
+    shouldDisplayServicesSection,
     showAssets,
     isLNUpsellBannerShown,
     isAddModalOpened,
