@@ -80,7 +80,7 @@ function checkProfileAndChooseKeyStore(
         "manually (or choose a different --profile id) before re-enrolling.",
     );
   }
-  const keyStore = prechecked ?? chooseKeyStore(allowPlaintextKey);
+  const keyStore = prechecked ?? chooseKeyStore(profileId, allowPlaintextKey);
   return keyStore === "os-keychain" ? checkNoKeychainEntry(profileId, allowPlaintextKey) : keyStore;
 }
 
@@ -110,13 +110,18 @@ function checkNoKeychainEntry(profileId: string, allowPlaintextKey: boolean): Ag
 
 // The OS keychain always wins; the plaintext file is only a consented fallback. Runs before
 // anything is generated or printed, so the human never approves a link that can't be saved.
-function chooseKeyStore(allowPlaintextKey: boolean): AgentIntentKeyStore {
+function chooseKeyStore(profileId: string, allowPlaintextKey: boolean): AgentIntentKeyStore {
   try {
     assertOsKeychainAvailable(NO_KEYCHAIN_HINT);
     return "os-keychain";
   } catch (e) {
-    if (allowPlaintextKey && e instanceof KeychainUnavailableError) return "plaintext-file";
-    throw e;
+    if (!allowPlaintextKey || !(e instanceof KeychainUnavailableError)) throw e;
+    writeStderr(
+      `⚠ No OS keychain is available (${errMessage(e.cause)}); the agent key goes to the ` +
+        `plaintext file ${agentIntentKeyFilePath(profileId)} because --allow-plaintext-key was ` +
+        "passed.\n",
+    );
+    return "plaintext-file";
   }
 }
 

@@ -399,7 +399,7 @@ report that enrollment can't be completed in this environment. Never add the fla
 and never on consent from an earlier or other session. The OS keychain still wins when it is
 available and accepts the write (a notice on stderr says the flag was ignored). Otherwise the key
 goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g. `~/.local/state/ledger-wallet-cli/…`),
-mode 0600 but **unencrypted**, with a stderr notice if the keychain refused the write; every
+mode 0600 but **unencrypted**, and `enroll` names that file in a stderr notice; every
 command reading it warns on stderr, and `show` reports it (json `keyStore: "plaintext-file"`,
 human "Key store" line). A key file that group or others can access, that another user owns, or that
 is a symlink is refused; `chmod 600` fixes loose permissions. A `plaintext-file` profile

@@ -395,6 +395,11 @@ describe("agent-intent enroll", () => {
         keyStore: "plaintext-file",
         enrolled: true,
       });
+      const notices = stderr.join("").match(/goes to the plaintext file/g) ?? [];
+      expect(notices).toHaveLength(1);
+      expect(stderr.join("")).toMatch(
+        /No OS keychain is available \(Platform failure: DBus error: .*org\.freedesktop\.secrets.*\); the agent key goes to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
     });
 
     it("ignores --allow-plaintext-key with a stderr notice when the OS keychain is available", async () => {
