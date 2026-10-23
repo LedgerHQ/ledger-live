@@ -62,8 +62,6 @@ const createTransaction = (): Transaction => ({
   fees: null,
   gas: null,
   memo: null,
-  validators: [],
-  sourceValidator: null,
   networkInfo: null,
   useAllAmount: false,
 });

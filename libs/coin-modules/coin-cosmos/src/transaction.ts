@@ -117,7 +117,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     memo: tr.memo,
     ...(memoType !== undefined ? { memoType } : {}),
     ...(memoValue !== undefined ? { memoValue } : {}),
-    mode: tr.mode,
+    // Persisted before the generic bridge, which only knows the `compoundReward` staking mode.
+    mode: tr.mode === "claimRewardCompound" ? "compoundReward" : tr.mode,
     ...legacyValidatorFields(tr),
   } as Transaction;
 };

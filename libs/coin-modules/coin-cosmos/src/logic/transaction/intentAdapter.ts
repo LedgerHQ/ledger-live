@@ -19,7 +19,7 @@ function extractMemo(intent: TransactionIntent): string {
 }
 
 // The memo the legacy bridge put on every staking transaction the user gave no memo to.
-const STAKING_DEFAULT_MEMO = "Ledger Live";
+export const STAKING_DEFAULT_MEMO = "Ledger Live";
 
 // Cosmos has no plain "withdraw" (rewards are claimed via claimReward), so it maps to undefined.
 const STAKING_MODE: Record<StakingOperation, CosmosOperationMode | undefined> = {
@@ -47,9 +47,11 @@ export function intentToMessageParams(
 
   if (intent.intentType === "staking") {
     const stakingIntent = intent as StakingTransactionIntent;
-    const mode = STAKING_MODE[stakingIntent.mode];
+    // The generic bridge only sets `mode` once a validator is picked; `type` carries it before.
+    const operation = stakingIntent.mode ?? (stakingIntent.type as StakingOperation);
+    const mode = STAKING_MODE[operation];
     if (!mode) {
-      throw new Error(`unsupported staking mode: ${stakingIntent.mode}`);
+      throw new Error(`unsupported staking mode: ${operation}`);
     }
     // Redelegate: valAddress is the source, dstValAddress the destination.
     const isRedelegate = mode === "redelegate";
@@ -63,7 +65,9 @@ export function intentToMessageParams(
         : {}),
       validators: [
         {
-          address: isRedelegate ? (stakingIntent.dstValAddress ?? "") : stakingIntent.valAddress,
+          address: isRedelegate
+            ? (stakingIntent.dstValAddress ?? "")
+            : (stakingIntent.valAddress ?? ""),
           amount,
         },
       ],

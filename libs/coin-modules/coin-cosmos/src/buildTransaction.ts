@@ -285,9 +285,6 @@ export function resolveTransactionValidators(
   transaction: CosmosLikeTransaction,
 ): CosmosDelegationInfo[] {
   if (transaction.mode === "send") return [];
-  const modeAddress =
-    transaction.mode === "redelegate" ? transaction.dstValAddress : transaction.valAddress;
-  if (!modeAddress && transaction.validators?.length) return transaction.validators;
   const address =
     transaction.mode === "redelegate" ? getDstValAddress(transaction) : getValAddress(transaction);
   return address ? [{ address, amount: transaction.amount }] : [];
@@ -295,17 +292,12 @@ export function resolveTransactionValidators(
 
 /** Validator the transaction acts on (the source validator when redelegating), "" when it has none. */
 export function getValAddress(transaction: CosmosLikeTransaction): string {
-  if (transaction.mode === "send") return "";
-  if (transaction.mode === "redelegate") {
-    return transaction.valAddress || transaction.sourceValidator || "";
-  }
-  return transaction.valAddress || transaction.validators?.[0]?.address || "";
+  return transaction.mode === "send" ? "" : transaction.valAddress;
 }
 
 /** Destination validator of a redelegation, "" for any other mode. */
 export function getDstValAddress(transaction: CosmosLikeTransaction): string {
-  if (transaction.mode !== "redelegate") return "";
-  return transaction.dstValAddress || transaction.validators?.[0]?.address || "";
+  return transaction.mode === "redelegate" ? transaction.dstValAddress : "";
 }
 
 export function resolveSourceValidator(transaction: CosmosLikeTransaction): string | undefined {

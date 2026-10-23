@@ -17,18 +17,26 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/ledger-wallet-framework/errors";
+import { log } from "@ledgerhq/logs";
 import cryptoFactory from "../../chain/chain";
 import { type CosmosCoinConfig } from "../../config";
+import { CosmosAPI } from "../../network/Cosmos";
 import {
   ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
   CosmosMemoTooLong,
+  CosmosRedelegationInProgress,
+  CosmosTooManyRedelegations,
   CosmosTooManyUnbondings,
   NotEnoughDelegationBalance,
   RedelegateDstValAddressRequired,
   ValAddressRequired,
 } from "../../errors";
-import { COSMOS_MAX_MEMO_LENGTH, COSMOS_MAX_UNBONDINGS } from "../../logic";
+import {
+  COSMOS_MAX_MEMO_LENGTH,
+  COSMOS_MAX_REDELEGATIONS,
+  COSMOS_MAX_UNBONDINGS,
+} from "../../logic";
 import { validateAddress } from "../validateAddress";
 
 function clampPositive(value: bigint): bigint {
@@ -52,9 +60,9 @@ function validateMemoLength(intent: TransactionIntent<StringMemo | MemoNotSuppor
  * Validate a transfer or staking intent in the Alpaca `TransactionValidation` shape. A leaner
  * reimplementation of the bridge `getTransactionStatus`, not a full mirror: it covers the core
  * recipient/amount/fee rules (plus `feeTooHigh` and claim-reward-fee warnings) and, for staking, the
- * delegation and unbonding rules read from the `stake` positions the balances carry. It omits the
- * redelegation rules (too many, in progress): redelegations are not part of the balances. Staking →
- * {@link validateStakingIntent}.
+ * delegation and unbonding rules read from the `stake` positions the balances carry. Redelegations
+ * are not part of the balances: a redelegate intent reads them from the chain
+ * ({@link validateRedelegations}). Staking → {@link validateStakingIntent}.
  */
 export async function validateIntent(
   currencyId: string,
@@ -82,6 +90,14 @@ export async function validateIntent(
       config,
     );
     if (memoError) result.errors.transaction = memoError;
+    if (!result.errors.redelegation) {
+      const redelegationError = await validateRedelegations(
+        currencyId,
+        intent as StakingTransactionIntent,
+        config,
+      );
+      if (redelegationError) result.errors.redelegation = redelegationError;
+    }
     return result;
   }
 
@@ -163,6 +179,45 @@ function validateAccountStakingRules(
   }
 
   return errors;
+}
+
+/**
+ * The redelegation rules the bridge `getTransactionStatus` enforced from `stakingResources`: at most
+ * {@link COSMOS_MAX_REDELEGATIONS} pending redelegations, and none away from a validator still
+ * receiving one (the SDK refuses transitive redelegations). A failed lookup does not block the
+ * transaction: the chain enforces the same rules at broadcast.
+ */
+async function validateRedelegations(
+  currencyId: string,
+  intent: StakingTransactionIntent,
+  config?: CosmosCoinConfig,
+): Promise<Error | undefined> {
+  if (intent.mode !== "redelegate" || !intent.valAddress || !config) return undefined;
+
+  let redelegations;
+  try {
+    redelegations = await new CosmosAPI(currencyId, undefined, config).getRedelegationsWithQueued(
+      intent.sender,
+      config.denom,
+    );
+  } catch (error) {
+    log("cosmos/validateIntent", "failed to fetch redelegations", { error });
+    return undefined;
+  }
+
+  if (redelegations.length >= COSMOS_MAX_REDELEGATIONS) {
+    return new CosmosTooManyRedelegations();
+  }
+  const now = new Date();
+  if (
+    redelegations.some(
+      redelegation =>
+        redelegation.validatorDstAddress === intent.valAddress && redelegation.completionDate > now,
+    )
+  ) {
+    return new CosmosRedelegationInProgress();
+  }
+  return undefined;
 }
 
 /**

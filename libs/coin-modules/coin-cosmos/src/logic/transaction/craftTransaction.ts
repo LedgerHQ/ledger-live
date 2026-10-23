@@ -48,7 +48,13 @@ export async function craftTransaction(
   const chainInstance = cryptoFactory(currencyId, config);
 
   const { aminoMsgs, protoMsgs } = txToMessages(params, chainInstance);
-  const { accountNumber, sequence, pubKeyType } = await api.getAccount(intent.sender);
+  const account = await api.getAccount(intent.sender);
+  const { accountNumber, pubKeyType } = account;
+  // The caller's sequence accounts for pending operations the network does not report yet.
+  const sequence =
+    typeof intent.sequence === "bigint" && intent.sequence >= 0n
+      ? intent.sequence
+      : account.sequence;
 
   const fees = customFees ?? (await estimateFees(config, currencyId, intent));
   const gasLimitValue = fees.parameters?.gasLimit;
