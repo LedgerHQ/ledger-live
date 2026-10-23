@@ -1,4 +1,4 @@
-import { initializeApp, deleteApp, FirebaseApp } from "firebase/app";
+import { initializeApp, deleteApp, FirebaseApp } from "@firebase/app";
 import {
   getRemoteConfig,
   fetchAndActivate,
@@ -6,7 +6,7 @@ import {
   getAll,
   getValue,
   RemoteConfig,
-} from "firebase/remote-config";
+} from "@firebase/remote-config";
 import isMatch from "lodash/isMatch";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
