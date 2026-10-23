@@ -396,6 +396,39 @@ describe("getFeesForTransaction Test", () => {
         expect(result1).toEqual(expected);
         expect(result2).toEqual(expected);
       });
+
+      it("should not reuse a cached fee for another recipient", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: true,
+            vm_status: [],
+            expiration_timestamp_secs: 5,
+            gas_used: "202",
+            gas_unit_price: "102",
+          },
+        ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccount();
+        account.xpub = "xpub";
+        const transaction = createFixtureTransaction();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(11);
+
+        await getFeesForTransaction.getEstimatedGas(
+          account,
+          { ...transaction, recipient: "0x1" },
+          aptosClient,
+        );
+        await getFeesForTransaction.getEstimatedGas(
+          account,
+          { ...transaction, recipient: "0x2" },
+          aptosClient,
+        );
+
+        expect(simulateTransaction.mock.calls).toHaveLength(2);
+      });
     });
   });
 
