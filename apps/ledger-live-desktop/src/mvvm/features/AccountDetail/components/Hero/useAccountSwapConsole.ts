@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import useEnv from "@features/platform-env";
 import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { resolveSwapConsole } from "@features/flow-account-detail-hero";
 import { listHeldAssets } from "@features/platform-quick-actions";
@@ -11,7 +10,7 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 export function useAccountSwapConsole(account: Account | undefined): boolean | undefined {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const { data: swappableIds, isResolved } = useFetchCurrencyAll();
-  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
+  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!process.env.MOCK);
 
   const isSwapAvailable = useMemo(() => {
     if (!account) return false;
