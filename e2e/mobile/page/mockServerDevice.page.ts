@@ -10,6 +10,7 @@ const SUCCESS_STATUS_WORD = "9000";
 
 export class MockServerDevicePage extends MockServerSessionHandle {
   promptElem = (testId: string) => element(by.id(testId));
+  staticPromptElem = () => element(by.id("static-testid"));
 
   @Step("Mock the dashboard contact rename")
   async mockDashboardRename() {
@@ -22,6 +23,12 @@ export class MockServerDevicePage extends MockServerSessionHandle {
   @Step("Confirm the open device prompt")
   async confirmDeviceIntent(testId: string) {
     const prompt = this.promptElem(testId);
+    const staticPrompt = this.staticPromptElem();
+    try {
+      await waitFor(staticPrompt).toBeVisible().withTimeout(TIMEOUT.xxlarge);
+    } catch {
+      // Ignore if static prompt is not visible
+    }
     await waitFor(prompt).toBeVisible().withTimeout(TIMEOUT.xxlarge);
     await this.approvePromptsUntil(async () => {
       try {
