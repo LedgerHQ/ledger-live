@@ -256,7 +256,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork}}
+    if: ${{ !github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -469,6 +469,7 @@ jobs:
       - test-domain
       - test-devtools
       - test-support
+      - enforce-boundaries
       - test-design-system
       - build-web-tools
       - test-cli
