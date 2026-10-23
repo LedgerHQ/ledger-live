@@ -78,7 +78,7 @@ passes (default 2), the next pass waits for busy locks.
 | `E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES` | The `lock_deferral_passes` workflow input |
 | `E2E_EXCLUSIVE_LOCK_DEFER` | The pass runners, on each pass. Do not set it |
 | `E2E_EXCLUSIVE_LOCK_MODE` | The `exclusive_lock` workflow input: `remote` (default) or `local` |
-| `E2E_EXCLUSIVE_LOCK_PRIORITY` | The workflows: `high` when the ref under test is `release` or `hotfix`, otherwise `normal` |
+| `E2E_EXCLUSIVE_LOCK_PRIORITY` | The workflows: `high` when the ref under test is `release` or `hotfix`, or with the `lock_high_priority` input, otherwise `normal` |
 
 While R2 is down, dispatch with `exclusive_lock: local`. Each machine still keeps its own tests
 apart, but CI machines no longer keep each other away.
@@ -87,7 +87,11 @@ Every run gets time for one full lock wait, since a run without broadcast still 
 and CLI approval accounts. The iOS step's timeout includes 30 extra minutes (60 to 120 min, 120 on
 a broadcast run), and the desktop test step gets 70 min. Android's 90 min already covers it. The
 timeout is on the test step, so the results finished before it are still uploaded. Desktop
-broadcast runs share the `desktop-e2e-broadcast` concurrency group, so two never overlap.
+broadcast runs share the `desktop-e2e-broadcast` concurrency group, so two never overlap. On both
+platforms, release and hotfix broadcast runs get a group each (`desktop-e2e-broadcast-release`,
+`mobile-e2e-broadcast-hotfix`, …), so a newer develop broadcast run never replaces one waiting.
+`lock_high_priority` broadcast runs share `-high`, so they run next to a develop one, as release
+and hotfix runs do.
 
 ## Reading the logs
 
