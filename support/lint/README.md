@@ -62,10 +62,11 @@ rspack, `preferNativePlatform` in Re.Pack. A suffix in the specifier itself is r
 cross-platform contamination from tsc, and rots on a rename. See [tsconfig.md](../../docs/tsconfig.md).
 
 `base` registers the rule off. `devtools`, `features-flow`, `features-platform` and `shared`
-turn it on. It checks `import`, `export`, dynamic `import()`, `require()` and the `jest.mock`
-family, and reports three shapes.
+turn it on. It checks `import`, `export`, dynamic `import()`, type-level `import()`, `require()`
+and the `jest.mock` family, and reports three shapes.
 
-**A trailing `.web` or `.native`.** Autofixable: `oxlint --fix` strips the suffix.
+**A trailing `.web` or `.native`, before an optional JS or TS extension.** Autofixable:
+`oxlint --fix` strips the suffix and keeps the extension.
 
 ```ts
 // ✗

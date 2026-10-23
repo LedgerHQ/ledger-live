@@ -3,7 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const RELATIVE_SUFFIX = /\.(?:web|native)$/;
+const RELATIVE_SUFFIX = /\.(?:web|native)(\.[cm]?[jt]sx?)?$/;
 const SUBPATH_SUFFIX = /\/(web|native)$/;
 
 // Only our own workspace packages. `styled-components/native`, `@ledgerhq/crypto-icons/native` and
@@ -79,7 +79,7 @@ function findPlatformSuffix(specifier, filename) {
   if (typeof specifier !== "string") return null;
 
   if (RELATIVE_SUFFIX.test(specifier)) {
-    return { kind: "relative", fixed: specifier.replace(RELATIVE_SUFFIX, "") };
+    return { kind: "relative", fixed: specifier.replace(RELATIVE_SUFFIX, "$1") };
   }
 
   const subpath = SUBPATH_SUFFIX.exec(specifier);
@@ -156,6 +156,7 @@ const noPlatformSuffixImports = {
       ExportNamedDeclaration: checkSource,
       ExportAllDeclaration: checkSource,
       ImportExpression: checkSource,
+      TSImportType: checkSource,
       CallExpression: checkCall,
     };
   },

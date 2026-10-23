@@ -55,6 +55,15 @@ test("strips a trailing platform suffix from a relative specifier", () => {
   });
 });
 
+test("strips the suffix before an explicit extension and keeps the extension", () => {
+  assert.deepEqual(findPlatformSuffix("./Foo.native.js"), { kind: "relative", fixed: "./Foo.js" });
+  assert.deepEqual(findPlatformSuffix("./Foo.web.tsx"), { kind: "relative", fixed: "./Foo.tsx" });
+  assert.deepEqual(findPlatformSuffix("../store.native.mjs"), {
+    kind: "relative",
+    fixed: "../store.mjs",
+  });
+});
+
 test("reports a platform entry of a workspace package from cross-platform code, without a fix", () => {
   for (const filename of [
     inPackage("dual", "Foo.tsx"),
@@ -158,7 +167,9 @@ test("matches only a suffix at the end of the specifier", () => {
   for (const specifier of [
     "./webview",
     "./x.webview",
+    "./x.webview.js",
     "./config.website",
+    "./Foo.native.json",
     "./native-helpers",
     "@features/flow-contacts",
     "@features/flow-contacts/native/extra",
@@ -193,6 +204,7 @@ test("visits every shape a specifier can appear in", () => {
     "ExportNamedDeclaration",
     "ExportAllDeclaration",
     "ImportExpression",
+    "TSImportType",
     "CallExpression",
   ]) {
     assert.equal(typeof visitors[shape], "function", shape);
@@ -293,6 +305,9 @@ test("oxlint runs the rule end to end, with the file name of each importer", () 
     'export * from "./steps/native";',
     'jest.mock("./c.web");',
     'void import("./d.web");',
+    'import e from "./e.web.js";',
+    'type F = typeof import("./f.native");',
+    'type G = import("@shared/lottie/native").G;',
     "",
   ].join("\n");
   const root = fixture({
@@ -324,11 +339,16 @@ test("oxlint runs the rule end to end, with the file name of each importer", () 
     "pkg/src/Foo.native.tsx:5",
     "pkg/src/Foo.native.tsx:6",
     "pkg/src/Foo.native.tsx:7",
+    "pkg/src/Foo.native.tsx:8",
+    "pkg/src/Foo.native.tsx:9",
     "pkg/src/Foo.tsx:1",
+    "pkg/src/Foo.tsx:10",
     "pkg/src/Foo.tsx:2",
     "pkg/src/Foo.tsx:3",
     "pkg/src/Foo.tsx:5",
     "pkg/src/Foo.tsx:6",
     "pkg/src/Foo.tsx:7",
+    "pkg/src/Foo.tsx:8",
+    "pkg/src/Foo.tsx:9",
   ]);
 });
