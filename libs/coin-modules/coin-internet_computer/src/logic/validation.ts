@@ -13,18 +13,11 @@ export const validatePrincipal = (principal: string): ValidationResult => {
   }
 };
 
-export const validateAddress = (address: string): ValidationResult => {
-  const defaultError = "Invalid address, account identifier could not be created.";
-  try {
-    const accId = AccountIdentifier.fromHex(address);
-    if (!accId?.toHex()) {
-      return { isValid: false, error: defaultError };
-    }
-    return { isValid: true };
-  } catch (e) {
-    return { isValid: false, error: e instanceof Error ? e.message || defaultError : defaultError };
-  }
-};
+// The checksum catches a mistyped identifier before funds go to an account nobody controls.
+export const validateAddress = (address: string): ValidationResult =>
+  AccountIdentifier.isValid(address)
+    ? { isValid: true }
+    : { isValid: false, error: "Invalid address, expected a 64-character account identifier." };
 
 // The ledger transfer memo is a Nat64; reject negative or out-of-range values up front rather
 // than letting Candid encoding fail at signing time.
