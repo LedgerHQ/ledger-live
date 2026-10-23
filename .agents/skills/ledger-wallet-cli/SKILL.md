@@ -403,7 +403,7 @@ mode 0600 but **unencrypted**, with a stderr notice if the keychain refused the 
 command reading it warns on stderr, and `show` reports it (json `keyStore: "plaintext-file"`,
 human "Key store" line). A key file that isn't a 0600 regular file owned by the current user (after
 a `chmod`, or a symlink) is refused, and the error says how to fix it. A `plaintext-file` profile
-needs wallet-cli 2.12.0 or later: an older one
+needs a wallet-cli whose `agent-intent enroll --help` lists `--allow-plaintext-key`: an older one
 doesn't know the key file and drops `keyStore` when it rewrites the session file. An existing
 profile that fails with `keychain_unavailable` can't be read here: first ask the human whether it
 was enrolled from a session with a working keychain (e.g. a desktop session) and run from there, or

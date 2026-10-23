@@ -82,7 +82,7 @@ describe("loadProfileIdentity", () => {
 
     expect(err).toBeInstanceOf(KeychainUnavailableError);
     expect((err as Error).message).toMatch(
-      /Profile "bot" can't be read here.*Make the Secret Service reachable and re-run.*DBUS_SESSION_BUS_ADDRESS.*Only if an older wallet-cli \(before 2\.12\.0\) enrolled it.*kernel keyring.*then that key is gone\. Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id.*--allow-plaintext-key/s,
+      /Profile "bot" can't be read here.*Make the Secret Service reachable and re-run.*DBUS_SESSION_BUS_ADDRESS.*Only if a wallet-cli that predates --allow-plaintext-key enrolled it.*kernel keyring.*then that key is gone\. Re-enroll with `wallet-cli agent-intent enroll` under a new --profile id.*--allow-plaintext-key/s,
     );
     expect((err as Error).message).not.toContain("plaintext agent key file exists");
     expect(keychainReads).toBe(0);
