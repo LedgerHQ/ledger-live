@@ -30,8 +30,10 @@ export const getCanisterIdlFunc = (
 export const encodeCanisterIdlFunc = (func: IDL.FuncClass, args: unknown[]) =>
   IDL.encode(func.argTypes, args);
 
+// Copied first: `IDL.decode` reads a view's underlying buffer from its start, so a view at a nonzero
+// offset (a Buffer slice, or a field `Cbor.decode` returns) decodes the wrong bytes.
 export const decodeCanisterIdlFunc = <T>(func: IDL.FuncClass, args: Uint8Array): T =>
-  IDL.decode(func.retTypes, args) as T;
+  IDL.decode(func.retTypes, Uint8Array.from(args)) as T;
 
 // An archive canister's get_encoded_blocks. The ledger hands it out as a callback for the blocks it
 // no longer holds; the vendored ledger IDL declares it only inline, so it is restated here.
