@@ -379,7 +379,8 @@ export function getCryptoAssetsCacheState(): Promise<PersistedCAL | null> {
   return storage.get("cryptoAssetsCache") as Promise<PersistedCAL | null>;
 }
 export async function saveCryptoAssetsCacheState(persistedData: PersistedCAL): Promise<void> {
-  if (persistedData.tokens.length > 0) {
+  // Hashes alone are saved too, so a changed hash that evicts every token also clears them on disk
+  if (persistedData.tokens.length > 0 || persistedData.hashes !== undefined) {
     await storage.save("cryptoAssetsCache", persistedData);
   }
 }

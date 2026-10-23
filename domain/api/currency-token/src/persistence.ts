@@ -3,12 +3,8 @@ import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { ThunkDispatch } from "@reduxjs/toolkit";
 import { calApi } from "@shared/api-services";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY } from "./internals";
-import {
-  buildRestoreCacheEntries,
-  groupTokensByCurrency,
-  resolveCurrenciesToEvict,
-} from "./internals/restore";
+import { PERSISTENCE_VERSION, SYNC_HASH_QUERY_KEY, UNCHECKED_TOKEN_TTL } from "./internals";
+import { buildRestoreCacheEntries, buildSyncHashCacheEntries } from "./internals/restore";
 import { PersistedCALSchema } from "./schema";
 import type { PersistedCAL, PersistedTokenEntry, TokenByAddressInCurrencyParams } from "./types";
 
@@ -77,7 +73,11 @@ export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTok
   return tokens;
 }
 
-/** Extracts the `currencyId → hash` map from fulfilled `getTokensSyncHash` queries. */
+/**
+ * Extracts the `currencyId → hash` map from the `getTokensSyncHash` queries that hold a hash. A
+ * refetch that is pending or failed keeps its last hash, so a stored hash survives a hash check that
+ * has not succeeded yet.
+ */
 export function extractHashesFromState(state: WithCryptoAssetsApi): Record<string, string> {
   const rtkState = state[cryptoAssetsApi.reducerPath];
 
@@ -89,8 +89,7 @@ export function extractHashesFromState(state: WithCryptoAssetsApi): Record<strin
 
   for (const [queryKey, query] of Object.entries(rtkState.queries)) {
     if (
-      query?.status === "fulfilled" &&
-      query.endpointName === "getTokensSyncHash" &&
+      query?.endpointName === "getTokensSyncHash" &&
       query.data &&
       typeof query.data === "string"
     ) {
@@ -137,48 +136,46 @@ export function persistedCALContentEqual(a: PersistedCAL | null, b: PersistedCAL
   return true;
 }
 
-/** Filters out persisted tokens older than `ttl` (ms). */
-export function filterExpiredTokens(
-  tokens: PersistedTokenEntry[],
-  ttl: number,
-): PersistedTokenEntry[] {
-  const now = Date.now();
-  return tokens.filter(token => now - token.timestamp < ttl);
-}
-
 /**
- * Restores persisted tokens into the RTK Query cache. For a currency with a stored hash, validates
- * it against the current server hash and skips restoring that currency when the hash changed or the
- * hash fetch failed. Currencies with no stored hash are restored unconditionally (backward-compatible
- * with pre-hash persisted blobs).
+ * Restores persisted tokens into the RTK Query cache without waiting for the network, so the app
+ * loads with them even when CAL does not answer.
+ *
+ * A currency with a stored hash gets its tokens back whatever their age, with that hash, and its
+ * hash is checked again in the background. When the hash changed, `getTokensSyncHash` evicts the
+ * token cache; when the check fails, the tokens and the stored hash stay. Tokens of a currency with
+ * no stored hash cannot be checked, so they are restored only within {@link UNCHECKED_TOKEN_TTL}.
  */
-export async function restoreTokensToCache(
+export function restoreTokensToCache(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatch: ThunkDispatch<any, any, any>,
   persistedData: PersistedCAL,
-  ttl: number,
-): Promise<void> {
-  const validTokens = filterExpiredTokens(persistedData.tokens, ttl);
-  if (validTokens.length === 0) {
+): void {
+  const storedHashes = persistedData.hashes ?? {};
+  const now = Date.now();
+  const tokens = persistedData.tokens.filter(
+    ({ data, timestamp }) =>
+      storedHashes[data.parentCurrencyId] !== undefined || now - timestamp < UNCHECKED_TOKEN_TTL,
+  );
+  if (tokens.length === 0) {
     return;
   }
 
-  const tokensByCurrency = groupTokensByCurrency(validTokens);
-  const currencyIdsToEvict = await resolveCurrenciesToEvict(
-    dispatch,
-    tokensByCurrency,
-    persistedData.hashes ?? {},
-  );
-
-  const tokensToRestore = validTokens.filter(
-    entry => !currencyIdsToEvict.has(entry.data.parentCurrencyId),
-  );
-  if (tokensToRestore.length === 0) {
-    return;
+  const hashes: Record<string, string> = {};
+  for (const { data } of tokens) {
+    const hash = storedHashes[data.parentCurrencyId];
+    if (hash !== undefined) hashes[data.parentCurrencyId] = hash;
   }
 
-  const entries = buildRestoreCacheEntries(tokensToRestore);
-  if (entries.length > 0) {
-    dispatch(cryptoAssetsApi.util.upsertQueryEntries(entries));
+  dispatch(
+    cryptoAssetsApi.util.upsertQueryEntries([
+      ...buildRestoreCacheEntries(tokens),
+      ...buildSyncHashCacheEntries(hashes),
+    ]),
+  );
+
+  for (const currencyId of Object.keys(hashes)) {
+    dispatch(
+      cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: true }),
+    );
   }
 }
