@@ -14,10 +14,6 @@ const JEST_ESM_HELPER_ONLY =
   "TEMPORARY. A hand-rolled jest config that only takes withEsmDeps from @support/jest/shared. " +
   "Exit condition: the package builds its config with a preset factory, or stops depending on " +
   "@support/jest.";
-const JEST_FLOW_NATIVE_ONLY =
-  "TEMPORARY. Native-only tests: the config drops the web project from createFlowJestConfig() " +
-  "instead of passing overrides. Exit condition: @support/jest/features-flow offers a native-only " +
-  "factory, as @support/jest/shared does with createSharedUiNativeJestConfig.";
 
 /** @type {Record<string, { rules: string[], reason: string }>} */
 export const EXCLUSIONS = {
@@ -37,18 +33,6 @@ export const EXCLUSIONS = {
       "tsconfig: end-to-end suites run their own TypeScript setups (Playwright, Detox). Exit " +
       "condition: the suites moved onto a @support/tsconfig preset.",
   },
-  "features/flow/app-availability": {
-    rules: ["jest"],
-    reason:
-      "TEMPORARY. The config edits the projects createFlowJestConfig() returns, adding a web " +
-      "setup file and a native module mapping. Exit condition: the features-flow factory takes " +
-      "per-project overrides.",
-  },
-  "features/flow/app-longer-password": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-password-removal": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-password-setup": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-protection-prompt": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
-  "features/flow/app-unlock": { rules: ["jest"], reason: JEST_FLOW_NATIVE_ONLY },
   "features/platform/app-lock": {
     rules: ["jest"],
     reason:
