@@ -17,6 +17,7 @@ self-hosted-runner:
     - ledger-wallet-4cpu-aws-public-cached
     - ledger-wallet-8cpu-aws-public-cached
     - ledger-wallet-16cpu-aws-public-cached
+    - ledger-wallet-8cpu-github-public-cached
     - performance-pool
     - general-pool
     - qaa
