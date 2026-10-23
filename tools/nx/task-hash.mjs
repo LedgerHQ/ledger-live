@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 /**
- * Prints the Nx hash of a target's configurations without running them, one `<configuration>=<hash>` line each.
+ * Prints the Nx hash of a target's configurations without running them, one `<configuration>=<hash>` line each,
+ * or a single `hash=<hash>` line for a target without configurations.
  * CI uses the hash to look up `<cacheKeyPrefix>/<hash>` in the S3 cache before deciding whether a build job is needed.
  *
- * Usage: node tools/nx/task-hash.mjs <project> <target> <configuration...>
+ * Usage: node tools/nx/task-hash.mjs <project> <target> [configuration...]
  * Example: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android
+ * Example: node tools/nx/task-hash.mjs live-mobile e2e:native:ios
  *
  * Runs with NX_DAEMON=false so the hash comes from the same in-process hasher `nx run` uses on CI.
  */
@@ -27,8 +29,8 @@ const args = process.argv.slice(2);
 // --details also prints, on stderr, each input that makes up the hash, to compare two runs
 const details = args.includes("--details");
 const [project, target, ...configurations] = args.filter(arg => arg !== "--details");
-if (!project || !target || configurations.length === 0) {
-  console.error("Usage: node tools/nx/task-hash.mjs <project> <target> <configuration...>");
+if (!project || !target) {
+  console.error("Usage: node tools/nx/task-hash.mjs <project> <target> [configuration...]");
   process.exit(1);
 }
 
@@ -37,7 +39,7 @@ const nxJson = readNxJson();
 const hasher = createTaskHasher(projectGraph, nxJson);
 const extraTargetDependencies = mapTargetDefaultsToDependencies(nxJson.targetDefaults);
 
-for (const configuration of configurations) {
+for (const configuration of configurations.length > 0 ? configurations : [undefined]) {
   const taskGraph = createTaskGraph(
     projectGraph,
     extraTargetDependencies,
@@ -46,13 +48,14 @@ for (const configuration of configurations) {
     configuration,
     {},
   );
-  const task = taskGraph.tasks[`${project}:${target}:${configuration}`];
+  const taskId = [project, target, configuration].filter(Boolean).join(":");
+  const task = taskGraph.tasks[taskId];
   if (!task) {
-    console.error(`No task ${project}:${target}:${configuration} in the task graph`);
+    console.error(`No task ${taskId} in the task graph`);
     process.exit(1);
   }
   const hash = await hasher.hashTask(task, taskGraph, getTaskSpecificEnv(task, projectGraph));
-  console.log(`${configuration}=${hash.value}`);
+  console.log(`${configuration ?? "hash"}=${hash.value}`);
   if (details) {
     console.error(JSON.stringify({ configuration, ...hash.details }, null, 2));
   }

@@ -1,5 +1,27 @@
 {
   "name": "live-mobile",
+  "namedInputs": {
+    "nativeBuild": [
+      "{projectRoot}/.env.mock",
+      "{projectRoot}/.env.mock.prerelease",
+      "{projectRoot}/app.json",
+      "{projectRoot}/react-native.config.js",
+      "{projectRoot}/Gemfile",
+      "{projectRoot}/Gemfile.lock",
+      "{projectRoot}/scripts/e2e-ci.mjs",
+      "{projectRoot}/scripts/native-deps.mjs",
+      "{workspaceRoot}/e2e/mobile/detox.config.js",
+      "{workspaceRoot}/e2e/mobile/scripts/syncAppVersion.js",
+      "{workspaceRoot}/patches/react-native*.patch",
+      "{workspaceRoot}/patches/detox@*.patch",
+      "{workspaceRoot}/patches/expo*.patch",
+      "{workspaceRoot}/patches/@callstack__repack*.patch",
+      "{workspaceRoot}/libs/ui/packages/native/src/assets/fonts/**",
+      {
+        "runtime": "node apps/ledger-live-mobile/scripts/native-deps.mjs"
+      }
+    ]
+  },
   "targets": {
     "lint": {
       "inputs": [
@@ -55,6 +77,41 @@
         "{workspaceRoot}/e2e/mobile/detox.config.js",
         "{workspaceRoot}/e2e/mobile/scripts/**"
       ]
+    },
+    "e2e:native:ios": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["@ledgerhq/native-ui:build"],
+      "cache": true,
+      "inputs": [
+        "nativeBuild",
+        "{projectRoot}/ios/**",
+        "!{projectRoot}/ios/build/**",
+        "!{projectRoot}/ios/Pods/**"
+      ],
+      "outputs": [
+        "{projectRoot}/ios/build/Build/Products/Release-iphonesimulator"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "pnpm e2e:ci -p ios -b"
+      }
+    },
+    "e2e:native:android": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "nativeBuild",
+        "{projectRoot}/android/**",
+        "!{projectRoot}/android/build/**",
+        "!{projectRoot}/android/app/build/**"
+      ],
+      "outputs": [
+        "{projectRoot}/android/app/build/outputs/apk"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "pnpm e2e:ci -p android -b"
+      }
     },
     "e2e:bundle": {
       "executor": "nx:run-commands",
