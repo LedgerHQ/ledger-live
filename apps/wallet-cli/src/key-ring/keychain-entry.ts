@@ -79,14 +79,6 @@ export function deleteKeychainEntry(entry: () => Entry): boolean {
   }
 }
 
-export function hasKeychainEntry(entry: () => Entry): boolean {
-  try {
-    return entry().getPassword() != null;
-  } catch {
-    return false;
-  }
-}
-
 /**
  * CRLF-tolerant line split: a keychain entry written on Windows may carry a trailing `\r`, and
  * `trim()` alone only strips the string's outer ends, so a bare `split("\n")` would leave a

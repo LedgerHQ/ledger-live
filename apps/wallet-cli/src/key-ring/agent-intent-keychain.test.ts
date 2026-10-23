@@ -62,11 +62,17 @@ describe("Agent Intent keychain entries", () => {
     for (const args of constructed) expect(args[2]).toEqual(SECRET_SERVICE_ONLY);
   });
 
-  it("report no key and a failed delete, without throwing, when the entry can't be built", () => {
+  it("report a failed delete, without throwing, when the entry can't be built", () => {
     constructorError = new Error("Platform failure: DBus error");
 
-    expect(hasAgentIntentSecretKey("bot")).toBe(false);
     expect(deleteAgentIntentSecretKey("bot")).toBe(false);
+  });
+
+  it("throw from the existence check, instead of reporting no key, when the entry can't be read", async () => {
+    await saveAgentIntentSecretKey("bot", "deadbeef");
+    backendError = new Error("Secret Service: object locked");
+
+    expect(() => hasAgentIntentSecretKey("bot")).toThrow("object locked");
   });
 
   it("report an absent key as deleted", () => {

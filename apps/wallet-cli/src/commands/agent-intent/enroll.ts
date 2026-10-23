@@ -80,13 +80,31 @@ function checkProfileAndChooseKeyStore(
     );
   }
   const keyStore = prechecked ?? chooseKeyStore(allowPlaintextKey);
-  if (keyStore === "os-keychain" && hasAgentIntentSecretKey(profileId)) {
+  return keyStore === "os-keychain" ? checkNoKeychainEntry(profileId, allowPlaintextKey) : keyStore;
+}
+
+// An entry that can't be read, e.g. one in a locked collection, may be the only copy of an older
+// key. It is never written over: it counts as a keychain that refuses the write.
+function checkNoKeychainEntry(profileId: string, allowPlaintextKey: boolean): AgentIntentKeyStore {
+  let exists: boolean;
+  try {
+    exists = hasAgentIntentSecretKey(profileId);
+  } catch (e) {
+    const refusal = `can't read the entry of profile "${profileId}"`;
+    assertPlaintextFallbackAllowed(e, refusal, allowPlaintextKey);
+    writeStderr(
+      `⚠ The OS keychain ${refusal} (${errMessage(e)}); the agent key goes to the plaintext ` +
+        `file ${agentIntentKeyFilePath(profileId)} because --allow-plaintext-key was passed.\n`,
+    );
+    return "plaintext-file";
+  }
+  if (exists) {
     throw new Error(
       `A keychain entry for profile "${profileId}" already exists but is not recorded in the ` +
         "session. Remove it manually (or choose a different --profile id) before re-enrolling.",
     );
   }
-  return keyStore;
+  return "os-keychain";
 }
 
 // The OS keychain always wins; the plaintext file is only a consented fallback. Runs before
@@ -98,6 +116,30 @@ function chooseKeyStore(allowPlaintextKey: boolean): AgentIntentKeyStore {
   } catch (e) {
     if (allowPlaintextKey && e instanceof KeychainUnavailableError) return "plaintext-file";
     throw e;
+  }
+}
+
+// A reachable keychain that can't take the key (a refused write, an unreadable entry) gives way to
+// the key file only on Linux and only with --allow-plaintext-key.
+function assertPlaintextFallbackAllowed(
+  e: unknown,
+  refusal: string,
+  allowPlaintextKey: boolean,
+): void {
+  if (process.platform !== "linux") {
+    throw new Error(
+      `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
+        "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
+        "Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an " +
+        "unlocked collection. Nothing was saved.",
+      { cause: e },
+    );
+  }
+  if (!allowPlaintextKey) {
+    throw new KeychainUnavailableError(
+      `The OS keychain ${refusal} (${errMessage(e)}), so nothing was saved. ${REFUSED_WRITE_HINT}`,
+      { cause: e },
+    );
   }
 }
 
@@ -143,23 +185,8 @@ async function saveSecretKey(
       );
       return "plaintext-file";
     }
-    if (process.platform !== "linux") {
-      throw new Error(
-        `Could not store the agent's secret key in the OS keychain (${errMessage(e)}). Agent ` +
-          "Intent needs a working OS keychain: macOS Keychain, Windows Credential Manager, or on " +
-          "Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an " +
-          "unlocked collection. Nothing was saved.",
-        { cause: e },
-      );
-    }
     // Reachable but refusing the write, e.g. a locked collection with no one to unlock it.
-    if (!allowPlaintextKey) {
-      throw new KeychainUnavailableError(
-        `The OS keychain refused to store the agent key (${errMessage(e)}), so nothing was ` +
-          `saved. ${REFUSED_WRITE_HINT}`,
-        { cause: e },
-      );
-    }
+    assertPlaintextFallbackAllowed(e, "refused to store the agent key", allowPlaintextKey);
     saveKeyFile(profileId, secretKey);
     writeStderr(
       `⚠ The OS keychain refused the write (${errMessage(e)}); the agent key went to the ` +

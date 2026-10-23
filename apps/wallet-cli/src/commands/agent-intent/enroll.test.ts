@@ -264,6 +264,53 @@ describe("agent-intent enroll", () => {
       );
     });
 
+    it("never writes over a keychain entry it can't read, reporting keychain_unavailable", async () => {
+      hasSecretKeyImpl = () => {
+        throw new Error("Couldn't access platform storage: Secret Service: object locked");
+      };
+
+      const err = await runEnroll().catch((e: unknown) => e);
+
+      expect(err).toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /The OS keychain can't read the entry of profile "test-agent" \(.*object locked\), so nothing was saved\. Unlock the keychain collection and re-run/,
+      );
+      expect(requestInputs).toEqual([]);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(savedKeyFiles.size).toBe(0);
+    });
+
+    it("stores the key in the plaintext file with --allow-plaintext-key when the keychain entry can't be read", async () => {
+      hasSecretKeyImpl = () => {
+        throw new Error("Couldn't access platform storage: Secret Service: object locked");
+      };
+
+      await runEnroll({ "allow-plaintext-key": true, output: "json" });
+
+      expect(savedKeyFiles.has("test-agent")).toBe(true);
+      expect(savedSecretKeys.size).toBe(0);
+      expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });
+      expect(stderr.join("")).toMatch(
+        /The OS keychain can't read the entry of profile "test-agent" \(.*object locked\); the agent key goes to the plaintext file .*test-agent\.key because --allow-plaintext-key was passed/,
+      );
+    });
+
+    it("keeps the generic error off Linux when the keychain entry can't be read", async () => {
+      overridePlatform("darwin"); // afterEach restores the real platform
+      hasSecretKeyImpl = () => {
+        throw new Error("User canceled the operation.");
+      };
+
+      const err = await runEnroll({ "allow-plaintext-key": true }).catch((e: unknown) => e);
+
+      expect(err).not.toBeInstanceOf(KeychainUnavailableError);
+      expect((err as Error).message).toMatch(
+        /Could not store the agent's secret key in the OS keychain \(User canceled the operation\.\)/,
+      );
+      expect(savedKeyFiles.size).toBe(0);
+      expect(savedSecretKeys.size).toBe(0);
+    });
+
     it("fails closed before generating a key or printing a link when no OS keychain is available", async () => {
       keychainProbe = failingKeychainProbe;
 
