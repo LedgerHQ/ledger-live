@@ -38,6 +38,8 @@ Before adding or changing a `runs-on` in `.github/workflows/`, read the [ci-runn
 
 Reusable workflows and composite actions are called `@develop`, even from release and hotfix branches whose code is older. Before changing one, read the [ci-workflow-refs](./.agents/skills/ci-workflow-refs/SKILL.md) skill.
 
+Runner images bake the mise toolchain and the Android AVD. Before changing a version in `mise.toml` or the AVD configuration, read the [runner-images](./.agents/skills/runner-images/SKILL.md) skill.
+
 ## Configuration and environment variables
 
 Before adding any configuration value — an environment variable, a URL, a partner key — read [/docs/configuration.md](/docs/configuration.md) to pick its home. `@shared/env` is deprecated and takes no new definitions.
