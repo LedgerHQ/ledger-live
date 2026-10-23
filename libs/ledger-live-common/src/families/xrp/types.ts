@@ -18,19 +18,31 @@ export type XrpOperationExtra = {
 
 export type XrpOperation = Operation<XrpOperationExtra>;
 
-export type Transaction = TransactionCommon & {
-  family: "xrp";
-  fees: BigNumber | null | undefined;
-  networkInfo: NetworkInfo | null | undefined;
-  tag: number | null | undefined;
+// "changeTrust" opts in to a token: a TrustSet for an IOU, an MPTokenAuthorize for an MPT
+type XrpTransactionMode = "send" | "changeTrust";
+
+// An opt-in names its token here, since the account has no token account for it yet
+type XrpOptInFields = {
+  mode?: XrpTransactionMode;
+  assetReference?: string;
+  assetOwner?: string;
 };
 
-export type TransactionRaw = TransactionCommonRaw & {
-  family: "xrp";
-  fees: string | null | undefined;
-  networkInfo: NetworkInfoRaw | null | undefined;
-  tag: number | null | undefined;
-};
+export type Transaction = TransactionCommon &
+  XrpOptInFields & {
+    family: "xrp";
+    fees: BigNumber | null | undefined;
+    networkInfo: NetworkInfo | null | undefined;
+    tag: number | null | undefined;
+  };
+
+export type TransactionRaw = TransactionCommonRaw &
+  XrpOptInFields & {
+    family: "xrp";
+    fees: string | null | undefined;
+    networkInfo: NetworkInfoRaw | null | undefined;
+    tag: number | null | undefined;
+  };
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

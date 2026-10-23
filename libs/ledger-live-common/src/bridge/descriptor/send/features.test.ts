@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { isZcashShieldedEnabled, setZcashShieldedEnabled } from "../../zcashRouting";
 import { sendFeatures } from "./features";
 

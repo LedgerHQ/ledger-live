@@ -65,19 +65,27 @@ function buildTokenAccount({
   };
 }
 
+function referenceKey(assetReference: string, exactAssetMatch: boolean | undefined): string {
+  return exactAssetMatch ? assetReference : assetReference.toLowerCase();
+}
+
 /**
- * Groups `operations` once by (lowercased `assetReference`, `assetOwner`) so that each token's
- * matching operations can be looked up instead of refiltering the whole list. Only operations
- * whose `extra.assetReference` is a string are indexed here: the existing predicate lowercases
- * only when *both* sides are strings, so an op whose reference isn't a string can never match a
- * string-typed balance reference (and vice versa) — see `nonStringReferenceOperations` below,
- * which keeps those out of the index and lets them be matched by the original predicate.
+ * Groups `operations` once by (`assetReference`, `assetOwner`), the reference lowercased unless
+ * `exactAssetMatch`, so that each token's matching operations can be looked up instead of
+ * refiltering the whole list. Only operations whose `extra.assetReference` is a string are indexed
+ * here: the existing predicate lowercases only when *both* sides are strings, so an op whose
+ * reference isn't a string can never match a string-typed balance reference (and vice versa) — see
+ * `nonStringReferenceOperations` below, which keeps those out of the index and lets them be matched
+ * by the original predicate.
  */
-function indexOperationsByAssetReference(operations: OperationCommon[]): {
-  byLowercasedReference: Map<string, Map<unknown, OperationCommon[]>>;
+function indexOperationsByAssetReference(
+  operations: OperationCommon[],
+  exactAssetMatch: boolean | undefined,
+): {
+  byReference: Map<string, Map<unknown, OperationCommon[]>>;
   nonStringReferenceOperations: OperationCommon[];
 } {
-  const byLowercasedReference = new Map<string, Map<unknown, OperationCommon[]>>();
+  const byReference = new Map<string, Map<unknown, OperationCommon[]>>();
   const nonStringReferenceOperations: OperationCommon[] = [];
 
   for (const op of operations) {
@@ -87,11 +95,11 @@ function indexOperationsByAssetReference(operations: OperationCommon[]): {
       continue;
     }
 
-    const lowered = assetReference.toLowerCase();
-    let byOwner = byLowercasedReference.get(lowered);
+    const key = referenceKey(assetReference, exactAssetMatch);
+    let byOwner = byReference.get(key);
     if (!byOwner) {
       byOwner = new Map();
-      byLowercasedReference.set(lowered, byOwner);
+      byReference.set(key, byOwner);
     }
 
     const owner = op.extra.assetOwner;
@@ -103,7 +111,7 @@ function indexOperationsByAssetReference(operations: OperationCommon[]): {
     }
   }
 
-  return { byLowercasedReference, nonStringReferenceOperations };
+  return { byReference, nonStringReferenceOperations };
 }
 
 export async function buildSubAccounts({
@@ -113,6 +121,7 @@ export async function buildSubAccounts({
   operations,
   getTokenFromAsset,
   familyShapes,
+  exactAssetMatch,
 }: {
   accountId: string;
   allTokenAssetsBalances: Balance[];
@@ -120,6 +129,7 @@ export async function buildSubAccounts({
   operations: OperationCommon[];
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   familyShapes?: Record<string, FamilyAccountShape>;
+  exactAssetMatch?: boolean;
 }): Promise<TokenAccount[]> {
   const { blacklistedTokenIds = [] } = syncConfig;
   const tokenAccounts: TokenAccount[] = [];
@@ -135,22 +145,24 @@ export async function buildSubAccounts({
     })),
   );
 
-  const { byLowercasedReference, nonStringReferenceOperations } =
-    indexOperationsByAssetReference(operations);
+  const { byReference, nonStringReferenceOperations } = indexOperationsByAssetReference(
+    operations,
+    exactAssetMatch,
+  );
 
   for (const { balance, token } of tokenBalances) {
     // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const assetReference = balance.asset?.["assetReference"];
       const assetOwner = balance.asset?.["assetOwner"];
-      // assetReference compared case-insensitively: a chain's own listOperations output and
-      // its balance/getAssetFromToken derivation aren't guaranteed to agree on reference casing
-      // (observed on Stacks -- one path lowercases a composite contract-address string, the
-      // other returns it verbatim), so an exact-string match here would silently drop an
-      // operation from its subAccount.
+      // assetReference compared case-insensitively unless `exactAssetMatch`: a chain's own
+      // listOperations output and its balance/getAssetFromToken derivation aren't guaranteed to
+      // agree on reference casing (observed on Stacks -- one path lowercases a composite
+      // contract-address string, the other returns it verbatim), so an exact-string match here
+      // would silently drop an operation from its subAccount.
       const matchingOperations =
         typeof assetReference === "string"
-          ? (byLowercasedReference.get(assetReference.toLowerCase())?.get(assetOwner) ?? [])
+          ? (byReference.get(referenceKey(assetReference, exactAssetMatch))?.get(assetOwner) ?? [])
           : nonStringReferenceOperations.filter(
               op =>
                 op.extra.assetReference === assetReference && op.extra.assetOwner === assetOwner,

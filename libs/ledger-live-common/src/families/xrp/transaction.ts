@@ -11,6 +11,14 @@ import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 
+const pickOptInFields = ({ mode, assetReference, assetOwner }: Transaction | TransactionRaw) => {
+  return {
+    ...(mode && { mode }),
+    ...(assetReference && { assetReference }),
+    ...(assetOwner && { assetOwner }),
+  };
+};
+
 export const formatTransaction = (
   { amount, recipient, fees, tag, useAllAmount }: Transaction,
   account: Account,
@@ -38,6 +46,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const { networkInfo } = tr;
   return {
     ...common,
+    ...pickOptInFields(tr),
     family: tr.family,
     tag: tr.tag,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
@@ -53,6 +62,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const { networkInfo } = t;
   return {
     ...common,
+    ...pickOptInFields(t),
     family: t.family,
     tag: t.tag,
     fees: t.fees ? t.fees.toString() : null,
