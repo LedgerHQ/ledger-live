@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { act, renderHook } from "@tests/test-renderer";
 import { getAleoCurrencyConfigById } from "@ledgerhq/live-common/families/aleo/config";
 import { TRANSACTION_TYPE } from "@ledgerhq/live-common/families/aleo/constants";
-import type { Transaction } from "@ledgerhq/live-common/families/aleo/types";
+import type { RecordPickingStrategy, Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import { useAleoEstimatedTimeViewModel } from "./useAleoEstimatedTimeViewModel";
 
@@ -35,7 +35,7 @@ function makePrivateTransaction(amountRecordCount: number, feeRecordCommitment: 
   } as Transaction;
 }
 
-function mockPickingStrategy(recordPickingStrategy: AleoCoinConfig["recordPickingStrategy"]) {
+function mockPickingStrategy(recordPickingStrategy: RecordPickingStrategy) {
   mockedGetAleoCurrencyConfigById.mockReturnValue({ recordPickingStrategy } as AleoCoinConfig);
 }
 

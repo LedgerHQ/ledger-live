@@ -50,6 +50,7 @@ function getSendingAccount(
   const sendingAccount = transaction.subAccountId
     ? syncedAccount.subAccounts?.find(subAccount => subAccount.id === transaction.subAccountId)
     : syncedAccount;
+
   return sendingAccount && isAleoAccount(sendingAccount) ? sendingAccount : null;
 }
 
@@ -59,9 +60,9 @@ function getRecordLimitedAmount(account: AleoAccount | AleoTokenAccount): BigNum
       ? account.unspentPrivateRecords
       : account.aleoResources?.unspentPrivateRecords) ?? [];
   const maxRecords = getMaxPrivateRecordsForAccount(account);
-  const spendableRecordCount = unspentRecords.filter(record =>
-    new BigNumber(record.microcredits).isGreaterThan(0),
-  ).length;
+  const spendableRecordCount = unspentRecords.filter(record => {
+    return new BigNumber(record.microcredits).isGreaterThan(0);
+  }).length;
   if (spendableRecordCount <= maxRecords) return null;
 
   return sumPrivateRecords(
@@ -88,6 +89,7 @@ export function useSendBalanceTypeSyncViewModel({
 
   useEffect(() => {
     isMountedRef.current = true;
+
     return () => {
       isMountedRef.current = false;
     };
@@ -97,12 +99,14 @@ export function useSendBalanceTypeSyncViewModel({
     (syncedAccount: Account) => {
       if (!isMountedRef.current) return;
       if (!isAleoAccount(syncedAccount) || !syncedAccount.aleoResources?.provableApi) return;
+
       const sendingAccount = getSendingAccount(syncedAccount, transaction);
       const amount = sendingAccount ? getRecordLimitedAmount(sendingAccount) : null;
       if (sendingAccount && amount) {
         setRecordLimit({ account: sendingAccount, amount });
         return;
       }
+
       onComplete();
     },
     [transaction, onComplete],
@@ -129,6 +133,7 @@ export function useSendBalanceTypeSyncViewModel({
 
   if (recordLimit) {
     const unit = getAccountCurrency(recordLimit.account).units[0];
+
     return {
       status: "recordLimit",
       title: t("aleo.send.balanceTypeSync.recordLimitTitle", {

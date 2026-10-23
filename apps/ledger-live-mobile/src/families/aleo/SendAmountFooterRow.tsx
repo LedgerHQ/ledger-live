@@ -35,8 +35,8 @@ type EstimatedTimeRowProps = Readonly<{
 function EstimatedTimeRow({ viewModel }: EstimatedTimeRowProps) {
   const { label, value, info } = viewModel;
   const infoBottomSheetRef = useBottomSheetRef();
-  const styles = useStyleSheet(
-    theme => ({
+  const styles = useStyleSheet(theme => {
+    return {
       row: {
         alignItems: "center",
         paddingVertical: theme.spacings.s12,
@@ -47,9 +47,8 @@ function EstimatedTimeRow({ viewModel }: EstimatedTimeRowProps) {
         alignItems: "center",
         gap: theme.spacings.s4,
       },
-    }),
-    [],
-  );
+    };
+  }, []);
 
   const handleOpenInfo = useCallback(() => {
     infoBottomSheetRef.current?.present();
@@ -111,10 +110,12 @@ function AleoSendAmountFooterRow({
 }: Readonly<{ account: Account; transaction: AleoTransaction }>) {
   const viewModel = useAleoEstimatedTimeViewModel(account, transaction);
   if (!viewModel) return null;
+
   return <EstimatedTimeRow viewModel={viewModel} />;
 }
 
 export default function SendAmountFooterRow({ account, transaction }: Props) {
   if (transaction.family !== "aleo") return null;
+
   return <AleoSendAmountFooterRow account={account} transaction={transaction} />;
 }

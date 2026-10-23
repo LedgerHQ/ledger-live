@@ -71,6 +71,7 @@ function SendBalanceTypeSyncView({
 
 function PrivateSync(props: PrivateSyncProps) {
   const viewModel = useSendBalanceTypeSyncViewModel(props);
+
   return <SendBalanceTypeSyncView viewModel={viewModel} />;
 }
 
@@ -81,6 +82,7 @@ function AleoSendBalanceTypeSync({
   onClose,
 }: SendBalanceTypeSyncProps) {
   if (!isAleoAccount(account) || transaction.family !== "aleo") return null;
+
   return (
     <PrivateSync
       account={account}
@@ -92,8 +94,9 @@ function AleoSendBalanceTypeSync({
 }
 
 const aleoSendBalanceTypeSync: SendBalanceTypeSync = {
-  isRequired: ({ transaction }) =>
-    transaction.family === "aleo" && isPrivateTransaction(transaction),
+  isRequired: ({ transaction }) => {
+    return transaction.family === "aleo" && isPrivateTransaction(transaction);
+  },
   Component: AleoSendBalanceTypeSync,
 };
 

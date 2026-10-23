@@ -32,6 +32,8 @@ const privateTransaction = {
   properties: { amountRecordCommitments: [], feeRecordCommitment: null },
 } as Transaction;
 
+const { Component: SyncComponent, isRequired } = aleoSendBalanceTypeSync;
+
 function mockSync(state: { progress?: number; isSyncing?: boolean; error?: Error | null } = {}) {
   mockedUseAleoPrivateSync.mockReturnValue({
     progress: state.progress ?? 0,
@@ -42,7 +44,7 @@ function mockSync(state: { progress?: number; isSyncing?: boolean; error?: Error
   });
 }
 
-function withRecords(microcredits: number[]): AleoAccount {
+function makeAccountWithRecords(microcredits: number[]): AleoAccount {
   return makeAleoAccount({
     unspentPrivateRecords: microcredits.map(makeRecord),
     provableApi: { scannerStatus: { synced: true, percentage: 100 } },
@@ -53,8 +55,6 @@ function completeSync(syncedAccount: Account) {
   const { onAccountUpdated } = mockedUseAleoPrivateSync.mock.calls.at(-1)![0];
   act(() => onAccountUpdated?.(syncedAccount));
 }
-
-const { Component: SyncComponent, isRequired } = aleoSendBalanceTypeSync;
 
 function renderSync(
   transaction: Transaction = privateTransaction,
@@ -112,6 +112,7 @@ describe("aleoSendBalanceTypeSync", () => {
     const { user } = renderSync();
 
     expect(screen.getByText("Private sync failed")).toBeOnTheScreen();
+
     await user.press(screen.getByText("Try again"));
 
     expect(mockStart).toHaveBeenCalledTimes(1);
@@ -133,7 +134,7 @@ describe("aleoSendBalanceTypeSync", () => {
     const { unmount } = renderSync();
 
     unmount();
-    completeSync(withRecords([ONE_ALEO]));
+    completeSync(makeAccountWithRecords([ONE_ALEO]));
 
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
@@ -141,7 +142,7 @@ describe("aleoSendBalanceTypeSync", () => {
   it("GIVEN one transaction can use every record WHEN synced THEN the flow moves on", () => {
     renderSync();
 
-    completeSync(withRecords(Array.from({ length: 14 }, () => ONE_ALEO)));
+    completeSync(makeAccountWithRecords(Array.from({ length: 14 }, () => ONE_ALEO)));
 
     expect(mockOnComplete).toHaveBeenCalledTimes(1);
   });
@@ -149,7 +150,7 @@ describe("aleoSendBalanceTypeSync", () => {
   it("GIVEN zero-value records WHEN synced THEN they do not count against the limit", () => {
     renderSync();
 
-    completeSync(withRecords([...Array.from({ length: 14 }, () => ONE_ALEO), 0, 0]));
+    completeSync(makeAccountWithRecords([...Array.from({ length: 14 }, () => ONE_ALEO), 0, 0]));
 
     expect(mockOnComplete).toHaveBeenCalledTimes(1);
   });
@@ -158,8 +159,8 @@ describe("aleoSendBalanceTypeSync", () => {
     renderSync();
 
     completeSync({
-      ...withRecords([ONE_ALEO]),
-      aleoResources: { ...withRecords([ONE_ALEO]).aleoResources!, provableApi: null },
+      ...makeAccountWithRecords([ONE_ALEO]),
+      aleoResources: { ...makeAccountWithRecords([ONE_ALEO]).aleoResources!, provableApi: null },
     } as AleoAccount);
 
     expect(mockOnComplete).not.toHaveBeenCalled();
@@ -168,7 +169,9 @@ describe("aleoSendBalanceTypeSync", () => {
   it("GIVEN more records than one transaction can use WHEN synced THEN it warns how much can be sent", async () => {
     const { user } = renderSync();
 
-    completeSync(withRecords([...Array.from({ length: 14 }, () => ONE_ALEO), ONE_ALEO / 2]));
+    completeSync(
+      makeAccountWithRecords([...Array.from({ length: 14 }, () => ONE_ALEO), ONE_ALEO / 2]),
+    );
 
     expect(screen.getByText("You can send up to 14 ALEO")).toBeOnTheScreen();
     expect(screen.getByText(/one transaction can use a maximum of 14\./)).toBeOnTheScreen();
@@ -192,7 +195,7 @@ describe("aleoSendBalanceTypeSync", () => {
 
     renderSync(tokenTransaction);
 
-    completeSync({ ...withRecords([]), subAccounts: [tokenAccount] });
+    completeSync({ ...makeAccountWithRecords([]), subAccounts: [tokenAccount] });
 
     expect(screen.getByText("You can send up to 13 USAD")).toBeOnTheScreen();
     expect(screen.getByText(/one transaction can use a maximum of 13\./)).toBeOnTheScreen();
