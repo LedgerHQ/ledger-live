@@ -321,8 +321,6 @@ describe("validateIntent", () => {
       asset: {
         type: "trc20",
         assetReference: TRC20_ADDRESS,
-        name: "USDT",
-        unit: { name: "USDT", code: "USDT", magnitude: 6 },
         assetOwner: SENDER,
       },
     });

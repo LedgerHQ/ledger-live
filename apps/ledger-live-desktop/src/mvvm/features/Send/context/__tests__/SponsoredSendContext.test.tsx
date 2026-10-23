@@ -486,7 +486,11 @@ describe("SponsoredSendContext", () => {
           paymentTxId: "txA",
           payerAddress: "TPayer",
           rentPayment: {
-            asset: { type: "trc20", assetReference: "TOtherToken" },
+            asset: {
+              type: "trc20",
+              assetReference: "TOtherToken",
+              unit: { name: "OTHER", code: "OTHER", magnitude: 6 },
+            },
             amount: 3_200_000n,
           },
         });
