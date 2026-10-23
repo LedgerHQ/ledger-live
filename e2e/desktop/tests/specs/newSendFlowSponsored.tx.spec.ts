@@ -9,23 +9,20 @@ import { FF_NEW_SEND_FLOW_ENABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import { reachAmountStep } from "tests/utils/newSendFlowUtils";
 
-// No B2CQA test exists for the sponsored send yet.
-const TMS_TICKET = "LIVE-32798";
-
 const tx = new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "1");
 
 // The fake's rents as the app rounds them; the device shows them in full (FAKE_TRONIFY_RENT).
 const QUOTED_RENT_SHOWN = "3.16945 USDT";
 const RAISED_RENT_SHOWN = "4.75418 USDT";
 
-const testOptions = {
+const testOptions = (tmsTicket: string) => ({
   tag: buildTags({
     currencyId: tx.accountToDebit.currency.id,
     // The Nano S Tron app predates the Tronify service page.
     skipLNS: true,
   }),
-  annotation: { type: "TMS", description: TMS_TICKET },
-};
+  annotation: { type: "TMS", description: tmsTicket },
+});
 const label = tx.accountToDebit.currency.testLabel;
 
 test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
@@ -49,7 +46,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
 
     test(
       `[${label}] - Send paying the network fee in USDT, rent payment then transfer on device`,
-      testOptions,
+      testOptions("B2CQA-6705"),
       async ({ app, tronify }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
@@ -86,7 +83,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
 
     test(
       `[${label}] - Send paying the network fee in USDT is blocked when USDT can't cover amount and rent`,
-      testOptions,
+      testOptions("B2CQA-6706"),
       async ({ app }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
@@ -108,7 +105,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
 
     test(
       `[${label}] - Send paying the network fee in USDT fails with Retry locked when energy never arrives, and a reopened Send waits for it`,
-      testOptions,
+      testOptions("B2CQA-6707"),
       async ({ app, tronify }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
@@ -145,7 +142,7 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
 
     test(
       `[${label}] - Send paying the network fee in USDT shows the new price when the order costs more than the quote`,
-      testOptions,
+      testOptions("B2CQA-6708"),
       async ({ app }) => {
         await reachAmountStep(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
