@@ -232,5 +232,5 @@
     "typescript": "catalog:",
     "zx": "8.8.5"
   },
-  "packageManager": "pnpm@11.28.7"
+  "packageManager": "pnpm@12.15.0"
 }
