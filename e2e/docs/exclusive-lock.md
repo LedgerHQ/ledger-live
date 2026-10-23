@@ -40,6 +40,9 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
 6. **Wait.** A waiter polls every 5–7.5 s for up to 30 min (`EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS`),
    then fails. When a settle window ends, the waiter that has waited longest claims first. If every
    R2 request fails for 2 min, it fails then with `ExclusiveLockStoreDownError`.
+   With `E2E_EXCLUSIVE_LOCK_PRIORITY=high` (release and hotfix runs), a waiter polls every 1–1.5 s
+   and claims as the settle window ends, while the others wait 2 s more, so it nearly always goes
+   next. It still waits for the current holder.
 7. **Nesting.** A CLI approval inside a test that already holds the account joins that hold instead
    of waiting for it. The test's release waits for the approval to finish.
 8. **Without R2.** If `E2E_EXCLUSIVE_LOCK_*` is unset, or `E2E_EXCLUSIVE_LOCK_MODE` is `local`, a
@@ -75,6 +78,7 @@ passes (default 2), the next pass waits for busy locks.
 | `E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES` | The `lock_deferral_passes` workflow input |
 | `E2E_EXCLUSIVE_LOCK_DEFER` | The pass runners, on each pass. Do not set it |
 | `E2E_EXCLUSIVE_LOCK_MODE` | The `exclusive_lock` workflow input: `remote` (default) or `local` |
+| `E2E_EXCLUSIVE_LOCK_PRIORITY` | The workflows: `high` when the ref under test is `release` or `hotfix`, otherwise `normal` |
 
 While R2 is down, dispatch with `exclusive_lock: local`. Each machine still keeps its own tests
 apart, but CI machines no longer keep each other away.

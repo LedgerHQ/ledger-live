@@ -18,12 +18,16 @@ const LEASE_MS = 120_000;
 const STORE_OUTAGE_MS = LEASE_MS;
 const HEARTBEAT_MS = 20_000;
 const POLL_MS = 5_000;
+const HIGH_PRIORITY_POLL_MS = 1_000;
 // How long a lock attempt that must not wait keeps retrying lock store errors.
 const TRY_LOCK_STORE_RETRY_MS = 30_000;
 // Long enough for the last transaction to reach the nodes the next holder reads its nonce from.
 const SETTLE_MS = 45_000;
 // Under POLL_MS minus the lock store's 1 s age rounding, so waiters still claim before try-locks.
 const SETTLE_CLAIM_SPREAD_MS = 3_500;
+// Over the lock store's 1 s age rounding, so a high-priority waiter claiming a settled key a little
+// early still claims it before the others.
+const SETTLE_CLAIM_HEAD_START_MS = 2_000;
 const R2_KEY_PREFIX = "e2e-broadcast-locks/";
 const HOLDER_PREFIX = `${os.hostname()}:${process.pid}:`;
 const LIVE_HOLDS = Symbol.for("@ledgerhq/live-e2e-shared/exclusiveLock/liveHolds");
@@ -116,6 +120,19 @@ const isMachineLocalMode = (): boolean => {
     );
   }
   return mode === "local";
+};
+
+/** "high" for release and hotfix runs: their waiters poll faster and claim a released key first. */
+const EXCLUSIVE_LOCK_PRIORITY_ENV = "E2E_EXCLUSIVE_LOCK_PRIORITY";
+
+const isHighPriority = (): boolean => {
+  const priority = process.env[EXCLUSIVE_LOCK_PRIORITY_ENV] || "normal";
+  if (priority !== "normal" && priority !== "high") {
+    throw new ExclusiveLockConfigError(
+      `[exclusiveLock] ${EXCLUSIVE_LOCK_PRIORITY_ENV} must be "normal" or "high", not "${priority}"`,
+    );
+  }
+  return priority === "high";
 };
 
 function remoteLockStoreFromEnv(): LockStore | undefined {
@@ -216,6 +233,7 @@ async function acquireKey(
     if (holds[key] === hold) Reflect.deleteProperty(holds, key);
   };
   const acquireTimeoutMs = Math.max(0, deadline - Date.now());
+  const highPriority = isHighPriority();
   const store = remoteLockStoreFromEnv();
   const lease = store
     ? await acquireDistributedLock(store, key, {
@@ -224,13 +242,15 @@ async function acquireKey(
         leaseMs: LEASE_MS,
         settleMs: sharedResourceKeys.has(key) ? 0 : SETTLE_MS,
         heartbeatMs: HEARTBEAT_MS,
-        pollMs: POLL_MS,
+        pollMs: highPriority ? HIGH_PRIORITY_POLL_MS : POLL_MS,
         acquireTimeoutMs: giveUpIfHeld
           ? Math.min(TRY_LOCK_STORE_RETRY_MS, acquireTimeoutMs)
           : acquireTimeoutMs,
         storeOutageMs: STORE_OUTAGE_MS,
         giveUpWhenHeld: giveUpIfHeld,
         settleClaimSpreadMs: SETTLE_CLAIM_SPREAD_MS,
+        settleClaimHeadStartMs: SETTLE_CLAIM_HEAD_START_MS,
+        highPriority,
         log: consoleLogger,
         onLost: forget,
       })
