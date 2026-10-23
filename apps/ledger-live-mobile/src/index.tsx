@@ -16,6 +16,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import "./analytics/registerTransactionObserver";
+import "./datadogObservers";
 import Config from "react-native-config";
 import useEnv from "@features/platform-env";
 import { AppAvailability } from "@features/flow-app-availability";
@@ -72,6 +73,10 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  coinObservabilityConfigFor,
+  setCoinObservabilityConfigReader,
+} from "@features/platform-coin-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -142,6 +147,14 @@ store.subscribe(
     apiBaseUrl: Config.EARN_API_BASE_URL,
   }),
 );
+setCoinObservabilityConfigReader(() => {
+  const state = store.getState();
+  return coinObservabilityConfigFor({
+    consentGranted: reportErrorsEnabledSelector(state),
+    datadogEnabled: selectFeature(state, "llmDatadog")?.enabled ?? false,
+    coinObservability: selectFeature(state, "coinObservability"),
+  });
+});
 
 const styles = StyleSheet.create({
   root: {

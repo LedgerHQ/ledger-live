@@ -280,6 +280,7 @@
     "@domain/entity-recent-addresses": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
+    "@features/platform-coin-observability": "workspace:^",
     "@features/platform-device-intent": "workspace:^",
     "@features/platform-env": "workspace:^",
     "@features/platform-feature-flags": "workspace:^",
