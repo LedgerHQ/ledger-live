@@ -8,7 +8,7 @@ The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`co
 
 ## Webview and native
 
-Callers MUST use `WebElementHelpers` or `NativeElementHelpers` from [`elementHelpers`](../helpers/elementHelpers.ts) before writing a Detox matcher. Both are available as globals.
+Callers MUST use an installed global function before writing a Detox matcher. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. A direct import of either object MUST be used only where those globals are not available.
 
 ### Webview operations MUST use Detox web helpers
 
