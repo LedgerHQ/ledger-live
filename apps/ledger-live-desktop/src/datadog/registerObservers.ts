@@ -1,4 +1,5 @@
 import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
+import { log } from "@ledgerhq/logs";
 import { setTransactionObserver } from "@ledgerhq/transaction-observability";
 import { coinModuleCallLogger, transactionBroadcastLogger } from "./logs";
 
@@ -13,16 +14,12 @@ import { coinModuleCallLogger, transactionBroadcastLogger } from "./logs";
 setCoinModuleCallObserver(coinModuleCallLogger);
 setTransactionObserver(transactionBroadcastLogger);
 
-// Dev-only: shows every coin-module call locally, unsampled.
-if (process.env.NODE_ENV !== "production") {
-  setCoinModuleCallObserver(event => {
-    // eslint-disable-next-line no-console
-    console.log(`[coin-module-call] ${event.family}/${event.method} ${event.status}`, {
-      network: event.network,
-      durationMs: event.durationMs,
-      ...(event.errorName
-        ? { errorName: event.errorName, errorCategory: event.errorCategory }
-        : {}),
-    });
+// Every call, unsampled, in the local logs: printed with `VERBOSE=1` or `VERBOSE=coin-module-call`,
+// and part of the logs a user exports. Nothing here leaves the device.
+setCoinModuleCallObserver(event => {
+  log("coin-module-call", `${event.family}/${event.method} ${event.status}`, {
+    network: event.network,
+    durationMs: event.durationMs,
+    ...(event.errorName ? { errorName: event.errorName, errorCategory: event.errorCategory } : {}),
   });
-}
+});
