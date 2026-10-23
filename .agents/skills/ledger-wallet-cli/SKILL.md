@@ -122,7 +122,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 
 ‡`ring init` requires a password to protect the ring. `WALLET_PASS` must already be provided in the environment by the developer/user before the command runs — the agent never sets or injects it (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)).
 
-‡‡`ring destroy` prompts for typed confirmation (`"destroy"`). Pipe it in non-interactive shells: `echo "destroy" | wallet-cli ring destroy`. If a password was set, `WALLET_PASS` must already be present in the environment (provided by the developer, not the agent).
+‡‡`ring destroy` prompts for typed confirmation (`"destroy"`) and, if a password was set, for the password, so hand the human the command to run in their own terminal ([`references/ring.md`](references/ring.md), Destroy).
 
 ### session view / reset
 
@@ -274,42 +274,7 @@ The `id` printed here is the same id accepted by `swap quote --from` / `--to` an
 
 ### ring — Ledger Key Ring (LKRP)
 
-Trustless, hardware-rooted encryption for files and text. The key ring is provisioned once on your Ledger via the Ledger Sync app; afterwards `encrypt`/`decrypt` run **without** the device — keys derive deterministically via HKDF-SHA256 from the LKRP-shared root and never leave AES-256-GCM. `encrypt`/`decrypt` still call the LKRP backend to restore the trustchain on each invocation, so network access is required. The ring is recoverable from your seed on any new machine.
-
-```bash
-# One-time provisioning (device required). Password comes from WALLET_PASS in the environment (see below); name the machine with --name.
-pnpm --silent wallet-cli start ring init
-pnpm --silent wallet-cli start ring init --name my-laptop
-
-# File round-trip (no device after init):
-pnpm --silent wallet-cli start ring encrypt --key my-oss-project -i .publish-tokens -o .publish-tokens.enc
-pnpm --silent wallet-cli start ring decrypt --key my-oss-project -i .publish-tokens.enc -o .publish-tokens
-
-# Text via stdin/stdout (clipboard pattern):
-pbpaste | pnpm --silent wallet-cli start ring encrypt --key personal-notes | pbcopy
-pbpaste | pnpm --silent wallet-cli start ring decrypt --key personal-notes | pbcopy
-
-# List the keys this machine has used; tear down the ring:
-pnpm --silent wallet-cli start ring keys
-pnpm --silent wallet-cli start ring destroy
-```
-
-> **Always provision with a password.** The ring must be protected by a password. The user provides it via `WALLET_PASS` in the environment before running `ring init` (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)) — the agent never provisions a ring without one.
-
-> **Decrypted output is sensitive.** `ring decrypt` emits secrets — never print them to the terminal, `cat` a decrypted file, or otherwise surface the decrypted contents, since they land in the agent transcript, logs, and scrollback. Pipe `decrypt` straight to its destination (a file via `-o`, another process, or the clipboard as shown above) or capture it into an env var; avoid `--output`/logging sinks that could echo it back.
-
-`--key <name>` derives a per-name AES-256-GCM key; matching name at decrypt time is mandatory. Names are free-form (max 253 chars, no whitespace) — common patterns: project slugs (`my-oss-project`), env tags (`openClaw-prod`), notebooks (`personal-notes`).
-
-**Non-TTY (CI / agentic) password injection:** the `ring` commands read the password from the `WALLET_PASS` env var when there is no TTY. **The password itself must be provisioned by the developer/user (exported in the environment or stored in the OS keychain) — the agent never chooses, types, or otherwise handles the secret value; it only references what the user has already provisioned.**
-
-- **Never write the password literally** into a command (e.g. `WALLET_PASS=hunter2 wallet-cli …`, or via a flag). A literal leaks into shell history, `ps` output, CI logs, and — when an agent runs the command — the **agent transcript**. This applies to throwaway/test passwords too: make it a habit, because the same command shape is reused with a real secret.
-- **Always inject via command substitution** so the secret never appears in the command text you type:
-  - macOS : `WALLET_PASS=$(security find-generic-password -a default -s ledger-wallet-cli -w) wallet-cli ring encrypt …`
-  - Linux : `WALLET_PASS=$(secret-tool lookup service ledger-wallet-cli account default) wallet-cli ring encrypt …`
-- **Agents must not handle the secret at all.** Ask the user to store the password once in their OS keychain, then reference only the `$(…)` substitution. If a test or `ring init` needs a password, store a throwaway value in the keychain first (`security add-generic-password -a default -s ledger-wallet-cli -w`) and inject it the same way — never type the literal into a tool call.
-- Even via substitution the value lives in the child process environment (readable via `ps eww` by the same user) — acceptable, but prefer the keychain form and avoid `--output json` sinks or logs that could echo it back.
-
-**Rotation limitation:** the domain key derives from the ring's wallet-sync encryption key, which the LKRP protocol **rotates when a ring member is removed**. After a rotation, data encrypted before it can no longer be decrypted (decrypt fails with a "wrong key name, corrupted data, or the Ledger Key Ring rotated" error, and the CLI prints a `⚠ Ledger Key Ring rotated` warning). Re-encrypt the affected data under the new ring after a member is removed. `ring destroy` aborts (no changes) if you enter a wrong password, and also if `WALLET_PASS` is set but empty (a failed keychain lookup) — this is treated as a mistake, not a skip, so it never orphans the remote ring. To intentionally skip the remote teardown and wipe only local credentials, press Enter at the interactive password prompt.
+Read [`references/ring.md`](references/ring.md) before any `ring` command: the `WALLET_PASS` injection, init, encrypt and decrypt, rotation, destroy, and the ring errors.
 
 ---
 
