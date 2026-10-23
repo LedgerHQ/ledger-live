@@ -23,6 +23,12 @@ describe("useServicesEntryPointsFeature", () => {
     expect(result.current).toEqual({ isEnabled: true, services: ["borrow", "perps"] });
   });
 
+  it("should fall back to the default order when the flag has no params", () => {
+    const { result } = renderFeature({ entryPointsServices: { enabled: true } });
+
+    expect(result.current).toEqual({ isEnabled: true, services: ["perps", "borrow"] });
+  });
+
   it("should stay enabled when no service is available so the legacy entry points stay hidden", () => {
     const { result } = renderFeature({
       entryPointsServices: { enabled: true, params: { services: ["perps"] } },
