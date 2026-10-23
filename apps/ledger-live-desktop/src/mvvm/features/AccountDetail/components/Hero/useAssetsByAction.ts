@@ -8,13 +8,12 @@ import type { AccountAsset, AccountAssetsByAction } from "./types";
 
 export type AssetsByActionResult = Readonly<{
   byAction: AccountAssetsByAction;
-  isSwapLoading: boolean;
   deactivatedCurrencyIds: ReadonlySet<string>;
 }>;
 
 export function useAssetsByAction(assets: readonly AccountAsset[]): AssetsByActionResult {
   const { getSupportedCryptoCurrencyIds } = useRampCatalog();
-  const { data: swappableIds, isLoading: isSwapLoading } = useFetchCurrencyAll();
+  const { data: swappableIds } = useFetchCurrencyAll();
   const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
   const { getCanStakeCurrency } = useStake();
 
@@ -25,5 +24,5 @@ export function useAssetsByAction(assets: readonly AccountAsset[]): AssetsByActi
     isStakeable: getCanStakeCurrency,
   });
 
-  return { byAction, isSwapLoading, deactivatedCurrencyIds };
+  return { byAction, deactivatedCurrencyIds };
 }

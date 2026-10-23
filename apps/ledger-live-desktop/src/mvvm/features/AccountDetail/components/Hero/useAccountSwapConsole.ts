@@ -1,22 +1,28 @@
 import { useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import useEnv from "@features/platform-env";
+import { useFeatureFlaggedCurrencies } from "@features/platform-currencies";
 import { resolveSwapConsole } from "@features/flow-account-detail-hero";
 import { listHeldAssets } from "@features/platform-quick-actions";
 import { useSelector } from "LLD/hooks/redux";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { useAssetsByAction } from "./useAssetsByAction";
 
 export function useAccountSwapConsole(account: Account | undefined): boolean | undefined {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const assets = useMemo(
-    () => (account ? listHeldAssets(account, new Set(blacklistedTokenIds)) : []),
-    [account, blacklistedTokenIds],
-  );
-  const { byAction, isSwapLoading, deactivatedCurrencyIds } = useAssetsByAction(assets);
+  const { data: swappableIds, isResolved } = useFetchCurrencyAll();
+  const { deactivatedCurrencyIds } = useFeatureFlaggedCurrencies(!!useEnv("MOCK"));
 
-  if (!account || isSwapLoading) return undefined;
-  return resolveSwapConsole("desktop", {
-    isCurrencySupported: !deactivatedCurrencyIds.has(account.currency.id),
-    isSwapAvailable: byAction.swap.length > 0,
-  });
+  const isSwapAvailable = useMemo(() => {
+    if (!account) return false;
+    const swappable = new Set(swappableIds);
+    return listHeldAssets(account, new Set(blacklistedTokenIds)).some(
+      ({ currency }) => !deactivatedCurrencyIds.has(currency.id) && swappable.has(currency.id),
+    );
+  }, [account, blacklistedTokenIds, deactivatedCurrencyIds, swappableIds]);
+
+  if (!account) return undefined;
+  const isCurrencySupported = !deactivatedCurrencyIds.has(account.currency.id);
+  if (isCurrencySupported && !isResolved) return undefined;
+  return resolveSwapConsole("desktop", { isCurrencySupported, isSwapAvailable });
 }
