@@ -26,6 +26,7 @@ function SendBalanceTypeSyncView({
     return (
       <InfoState
         preset="error"
+        size="hug"
         title={viewModel.title}
         description={viewModel.description}
         primaryCta={{ label: viewModel.retryLabel, onPress: viewModel.onRetry }}
@@ -39,6 +40,7 @@ function SendBalanceTypeSyncView({
     return (
       <InfoState
         preset="info"
+        size="hug"
         title={viewModel.title}
         description={viewModel.description}
         primaryCta={{ label: viewModel.continueLabel, onPress: viewModel.onContinue }}
@@ -49,7 +51,7 @@ function SendBalanceTypeSyncView({
 
   return (
     <Box
-      lx={{ flex: 1, alignItems: "center", justifyContent: "center", gap: "s16", padding: "s24" }}
+      lx={{ alignItems: "center", gap: "s16", padding: "s24" }}
       testID="aleo-balance-type-sync-syncing"
     >
       <Spinner size={32} />

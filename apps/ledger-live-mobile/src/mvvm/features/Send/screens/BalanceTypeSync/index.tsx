@@ -1,25 +1,40 @@
 import React from "react";
-import { SendFlowLayout } from "../../components/SendFlowLayout";
+import { BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import type { BalanceTypeSyncSheetViewModel } from "../BalanceType/hooks/useBalanceTypeScreenViewModel";
 import { useBalanceTypeSyncScreenViewModel } from "./hooks/useBalanceTypeSyncScreenViewModel";
 
-export function BalanceTypeSyncScreen() {
+export function BalanceTypeSyncSheet({
+  isOpen,
+  onClose,
+  onComplete,
+}: BalanceTypeSyncSheetViewModel) {
   const viewModel = useBalanceTypeSyncScreenViewModel();
+  const { bottom: bottomInset } = useSafeAreaInsets();
 
   if (!viewModel.ready) {
     return null;
   }
 
-  const { SyncComponent, account, transaction, onComplete, onClose } = viewModel;
+  const { SyncComponent, account, transaction } = viewModel;
 
   return (
-    <SendFlowLayout>
-      <SyncComponent
-        key={account.id}
-        account={account}
-        transaction={transaction}
-        onComplete={onComplete}
-        onClose={onClose}
-      />
-    </SendFlowLayout>
+    <QueuedBottomSheet
+      isRequestingToBeOpened={isOpen}
+      onClose={onClose}
+      enableDynamicSizing
+      testID="balance-type-sync-sheet"
+    >
+      <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+        <SyncComponent
+          key={account.id}
+          account={account}
+          transaction={transaction}
+          onComplete={onComplete}
+          onClose={onClose}
+        />
+      </BottomSheetView>
+    </QueuedBottomSheet>
   );
 }

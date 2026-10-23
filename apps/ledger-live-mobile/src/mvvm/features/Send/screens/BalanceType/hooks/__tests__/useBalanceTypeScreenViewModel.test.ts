@@ -245,10 +245,12 @@ describe("useBalanceTypeScreenViewModel", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it("GIVEN a pick that needs an account sync WHEN a pool is selected THEN the sync step opens", () => {
+  it("GIVEN a pick that needs an account sync WHEN a pool is selected THEN the sync sheet opens", () => {
     mockedIsSendBalanceTypeSyncRequired.mockReturnValue(true);
 
     const { result } = renderViewModel();
+    expect(getReadyViewModel(result).sync.isOpen).toBe(false);
+
     act(() => getReadyViewModel(result).onSelect("private"));
 
     expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
@@ -256,7 +258,30 @@ describe("useBalanceTypeScreenViewModel", () => {
       id: "tx1",
       pool: "private",
     });
-    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowBalanceTypeSync);
+    expect(getReadyViewModel(result).sync.isOpen).toBe(true);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN an open sync sheet WHEN it is closed THEN it closes and the screen stays", () => {
+    mockedIsSendBalanceTypeSyncRequired.mockReturnValue(true);
+
+    const { result } = renderViewModel();
+    act(() => getReadyViewModel(result).onSelect("private"));
+    act(() => getReadyViewModel(result).sync.onClose());
+
+    expect(getReadyViewModel(result).sync.isOpen).toBe(false);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN an open sync sheet WHEN the sync completes THEN it closes and the recipient step opens", () => {
+    mockedIsSendBalanceTypeSyncRequired.mockReturnValue(true);
+
+    const { result } = renderViewModel();
+    act(() => getReadyViewModel(result).onSelect("private"));
+    act(() => getReadyViewModel(result).sync.onComplete());
+
+    expect(getReadyViewModel(result).sync.isOpen).toBe(false);
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
   });
 
   it("GIVEN a ready view model WHEN rendered several times THEN the page is tracked once", () => {

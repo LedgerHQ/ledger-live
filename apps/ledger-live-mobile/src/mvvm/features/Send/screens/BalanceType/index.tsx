@@ -1,5 +1,6 @@
 import React from "react";
 import { SendFlowLayout } from "../../components/SendFlowLayout";
+import { BalanceTypeSyncSheet } from "../BalanceTypeSync";
 import { BalanceTypeScreenView } from "./components/BalanceTypeScreenView";
 import { useBalanceTypeScreenViewModel } from "./hooks/useBalanceTypeScreenViewModel";
 
@@ -13,6 +14,7 @@ export function BalanceTypeScreen() {
   return (
     <SendFlowLayout>
       <BalanceTypeScreenView viewModel={viewModel} />
+      <BalanceTypeSyncSheet {...viewModel.sync} />
     </SendFlowLayout>
   );
 }

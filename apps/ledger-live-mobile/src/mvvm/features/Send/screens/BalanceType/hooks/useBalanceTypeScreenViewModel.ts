@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { trackPage } from "@shared/analytics";
 import type { SendFlowState } from "@ledgerhq/live-common/flows/send/types";
@@ -36,6 +36,12 @@ export type BalanceTypeOption = Readonly<{
   hideSubtitle?: boolean;
 }>;
 
+export type BalanceTypeSyncSheetViewModel = Readonly<{
+  isOpen: boolean;
+  onClose: () => void;
+  onComplete: () => void;
+}>;
+
 export type BalanceTypeScreenViewModel =
   | Readonly<{ ready: false }>
   | Readonly<{
@@ -43,6 +49,7 @@ export type BalanceTypeScreenViewModel =
       selectedOptionId: string | null;
       options: readonly BalanceTypeOption[];
       onSelect: (optionId: string) => void;
+      sync: BalanceTypeSyncSheetViewModel;
     }>;
 
 export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
@@ -63,6 +70,7 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
   const bridge = useAccountBridgeOrNull<FlowTransaction>(account, parentAccount);
   const unit = useMaybeAccountUnit(account ?? undefined);
   const trackingProperties = useSendFlowTrackingProperties();
+  const [isSyncOpen, setIsSyncOpen] = useState(false);
 
   const balanceTypeConfig = useMemo(
     () => (account ? sendFeatures.getBalanceTypeConfig(getAccountCurrency(account)) : null),
@@ -98,11 +106,12 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       const selectedTransaction = poolChanged
         ? bridge.updateTransaction(transaction, selectionPatch)
         : transaction;
-      navigation.navigate(
-        isSendBalanceTypeSyncRequired(mainAccount, selectedTransaction)
-          ? ScreenName.SendFlowBalanceTypeSync
-          : ScreenName.SendFlowRecipient,
-      );
+      if (isSendBalanceTypeSyncRequired(mainAccount, selectedTransaction)) {
+        setIsSyncOpen(true);
+        return;
+      }
+
+      navigation.navigate(ScreenName.SendFlowRecipient);
     },
     [
       account,
@@ -115,6 +124,13 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
       navigation,
     ],
   );
+
+  const onSyncClose = useCallback(() => setIsSyncOpen(false), []);
+
+  const onSyncComplete = useCallback(() => {
+    setIsSyncOpen(false);
+    navigation.navigate(ScreenName.SendFlowRecipient);
+  }, [navigation]);
 
   if (!account || !transaction || !bridge || !balanceTypeConfig) {
     return { ready: false };
@@ -157,5 +173,6 @@ export function useBalanceTypeScreenViewModel(): BalanceTypeScreenViewModel {
     selectedOptionId: balanceTypeConfig.getSelectedOptionId(transaction),
     options,
     onSelect,
+    sync: { isOpen: isSyncOpen, onClose: onSyncClose, onComplete: onSyncComplete },
   };
 }
