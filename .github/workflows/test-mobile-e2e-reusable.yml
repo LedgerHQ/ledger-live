@@ -77,18 +77,10 @@ on:
         type: boolean
         default: true
       capture_network:
-        description: "Android: capture DNS and HTTPS traffic on the runner and time it against each launch"
+        description: "Android: capture DNS and HTTPS traffic on the runner and inside the emulators, and time it against each launch"
         required: false
         type: boolean
         default: true
-      # cellular by default: the emulator's Wi-Fi emulation delays every packet the guest receives by
-      # 100–300 ms, which made the app's ready wait slow and noisy (runs 39941337433 vs 39961518241).
-      emulator_network:
-        description: "Android: emulator network path. cellular turns Wi-Fi off (whose emulation delays every packet) and captures each launch inside the emulator too"
-        required: false
-        type: choice
-        options: [cellular, wifi]
-        default: cellular
       emulator_cores:
         description: "Android: CPU cores per emulator (two emulators share an 8-CPU runner; the E2E AVD has 2)"
         required: false
@@ -133,7 +125,6 @@ jobs:
           SETTLE: ${{ inputs.settle_seconds }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
-          EMULATOR_NETWORK: ${{ inputs.emulator_network }}
           BRANCH_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
@@ -169,7 +160,7 @@ jobs:
             echo "- A: \`$LABEL_A\` → \`$A\`"
             echo "- B: \`$LABEL_B\` → \`$B\`"
             echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch"
-            echo "- Android: one job (runner) per scenario, emulator network: $EMULATOR_NETWORK, $PERF_AVD_CORES cores per emulator"
+            echo "- Android: one job (runner) per scenario, cellular network like E2E, $PERF_AVD_CORES cores per emulator"
           } >> "$GITHUB_STEP_SUMMARY"
 
   build-android:
@@ -529,8 +520,6 @@ jobs:
           avd_api: ${{ env.AVD_API }}
 
       - name: Boot two emulators
-        env:
-          EMULATOR_NETWORK: ${{ inputs.emulator_network }}
         run: |
           set -euo pipefail
           tools/scripts/cleanup-android-emulators.sh || true
@@ -553,19 +542,22 @@ jobs:
           {
             echo "- Emulator CPUs (nproc): $(for serial in emulator-5554 emulator-5556; do printf '%s=%s ' "$serial" "$(adb -s "$serial" shell nproc | tr -d '\r')"; done)"
           } >> "$GITHUB_STEP_SUMMARY"
-          # cellular: traffic leaves through the emulated mobile network (eth0) instead of Wi-Fi (wlan0).
-          if [[ "$EMULATOR_NETWORK" == cellular ]]; then
-            for serial in emulator-5554 emulator-5556; do
-              adb -s "$serial" shell svc wifi disable
-              for _ in $(seq 30); do
-                net=$(adb -s "$serial" shell dumpsys connectivity | sed -n 's/.*Active default network: \([0-9]*\).*/\1/p' | head -1)
-                if adb -s "$serial" shell dumpsys connectivity | grep "NetworkAgentInfo{network{$net}" | grep -q CELLULAR; then
-                  echo "$serial default network: cellular"; break
-                fi
-                sleep 2
-              done
+          # Cellular like the E2E emulators (tools/scripts/boot-android-emulators-ci.sh, which boots
+          # three emulators and can't be reused here): the emulated Wi-Fi delays every packet the
+          # guest receives by 100–300 ms.
+          for serial in emulator-5554 emulator-5556; do
+            adb -s "$serial" shell svc wifi disable
+            cellular=false
+            for _ in $(seq 30); do
+              dump=$(adb -s "$serial" shell dumpsys connectivity)
+              net=$(sed -n 's/.*Active default network: \([0-9]*\).*/\1/p' <<<"$dump" | head -1)
+              if [[ -n "$net" && "$(grep -F "NetworkAgentInfo{network{$net}" <<<"$dump")" == *"Transports: CELLULAR"* ]]; then
+                echo "$serial is on cellular"; cellular=true; break
+              fi
+              sleep 2
             done
-          fi
+            [[ "$cellular" == true ]] || echo "::warning title=Emulator not on cellular::$serial is not on cellular after 60 s"
+          done
           # Wait until post-boot work is done: 1-minute load average below 1 on both (max 15 min).
           deadline=$((SECONDS + 900))
           for serial in emulator-5554 emulator-5556; do
@@ -600,8 +592,8 @@ jobs:
           PAUSE_IDLE: ${{ inputs.pause_idle_emulator }}
           # The hosts of the two requests WaitForAppReady waits for, timed from the runner itself.
           NET_BASELINE: ${{ inputs.capture_network && 'https://firebaseremoteconfig.googleapis.com/,https://global.api.prd.ledger.com/countervalue/v3/markets' || '' }}
-          # The emulator's own capture only sees the mobile network, so only with Wi-Fi off.
-          GUEST_CAPTURE: ${{ inputs.emulator_network == 'cellular' }}
+          # The emulator's own capture of each launch; it only sees the cellular network, now always used.
+          GUEST_CAPTURE: ${{ inputs.capture_network }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
