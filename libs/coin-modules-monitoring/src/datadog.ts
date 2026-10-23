@@ -17,7 +17,7 @@ export interface LogEntry {
   duration: number;
   currencyName: string;
   coinModuleName: string;
-  operationType: "scan" | "sync";
+  operationType: "scan" | "sync" | "throughput";
   accountType: AccountType;
   transactions: number;
   accountAddressOrXpub: string;
@@ -25,6 +25,11 @@ export interface LogEntry {
   networkCallsByDomain: Record<string, number>;
   cpu: Dist;
   memory: Dist;
+  opsPerSecond?: number;
+  callsPerOperation?: number;
+  pages?: number;
+  pageDuration?: Dist;
+  exhausted?: boolean;
 }
 
 export async function submitLogs(entries: LogEntry[]) {

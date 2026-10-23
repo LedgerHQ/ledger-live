@@ -24,7 +24,7 @@ function average(values: number[]): number {
   return values.reduce((previous, current) => previous + current) / values.length;
 }
 
-function computeStats(values: number[]): Dist {
+export function computeStats(values: number[]): Dist {
   if (values.length === 0) {
     return { min: 0, average: 0, max: 0, p90: 0, p99: 0, p50: 0, p95: 0 };
   }
