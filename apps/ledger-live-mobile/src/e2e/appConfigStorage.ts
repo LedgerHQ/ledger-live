@@ -9,5 +9,6 @@ import type { ConfigStorage } from "@shared/app-config";
 export const e2eAppConfigStorage: ConfigStorage = {
   getAll: () => LaunchArguments.value<{ appConfig?: unknown }>().appConfig,
   set() {},
+  remove() {},
   clear() {},
 };

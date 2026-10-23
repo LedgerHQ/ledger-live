@@ -2,7 +2,7 @@
   "name": "@shared/app-config",
   "version": "0.0.0",
   "private": true,
-  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values and the thunk extraArgument contracts they feed",
+  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values, and the middleware and slice that save a new selection for the next session",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -21,6 +21,7 @@
     "format:check": "oxfmt --check src"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

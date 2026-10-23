@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { ConfigSchemaSwitches } from "./types";
+import type { ConfigSchemaSwitches } from "../types";
 
 type UnionToIntersection<Union> = (Union extends unknown ? (union: Union) => void : never) extends (
   intersection: infer Intersection,

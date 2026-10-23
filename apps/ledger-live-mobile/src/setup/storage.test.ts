@@ -22,6 +22,15 @@ describe("appConfigStorage", () => {
     expect(appConfigStorage.getAll()).toEqual({ ledgerKeyRing: "staging", otherSwitch: "prod" });
   });
 
+  it("removes the selection of one switch, keeping the other switches", () => {
+    appConfigStorage.set("ledgerKeyRing", "staging");
+    appConfigStorage.set("otherSwitch", "prod");
+
+    appConfigStorage.remove("ledgerKeyRing");
+
+    expect(appConfigStorage.getAll()).toEqual({ otherSwitch: "prod" });
+  });
+
   it("clears the selections", () => {
     appConfigStorage.set("ledgerKeyRing", "staging");
 

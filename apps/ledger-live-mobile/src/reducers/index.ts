@@ -4,6 +4,7 @@ import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
+import { appConfigReducer } from "@shared/app-config";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -63,6 +64,7 @@ export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  appConfig: appConfigReducer,
   appstate,
   auth,
   ble,
