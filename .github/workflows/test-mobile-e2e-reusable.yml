@@ -94,10 +94,6 @@ on:
         options: ["3", "2", "4"]
         default: "3"
 
-concurrency:
-  group: mobile-startup-perf-${{ github.ref_name }}
-  cancel-in-progress: false
-
 permissions:
   contents: read
 
@@ -662,6 +658,11 @@ jobs:
     name: "iOS startup (2 simulators)"
     needs: [plan, build-ios]
     if: ${{ inputs.platforms != 'Android Only' }}
+    # One iOS measurement at a time on the shared Mac pool; Android jobs each get their own VM,
+    # so Android runs are not limited.
+    concurrency:
+      group: mobile-startup-perf-ios-${{ github.ref_name }}
+      cancel-in-progress: false
     # Same pool as the iOS E2E tests.
     runs-on: ["qaa", macOS, ARM64, "performance-pool"]
     timeout-minutes: 300
