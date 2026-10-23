@@ -1,10 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import type { AccountHeroAvailability, AccountHeroPort } from "@features/flow-account-detail-hero";
-import { hasAnyFunds } from "@features/platform-quick-actions";
+import { useAccountHeroStatus, type AccountHeroPort } from "@features/flow-account-detail-hero";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
@@ -15,13 +14,6 @@ import { useAccountHeroActions } from "./useAccountHeroActions";
 import { usePickAccountAsset, type AccountAssetPicker } from "./usePickAccountAsset";
 import { useAccountCountervalue, useAccountHeroAssets } from "./useAccountHeroAssets";
 import { useAssetsByAction } from "./useAssetsByAction";
-
-function hasAccountActivity(account: Account): boolean {
-  const accounts = [account, ...(account.subAccounts ?? [])];
-  return accounts.some(
-    ({ operations, pendingOperations }) => operations.length > 0 || pendingOperations.length > 0,
-  );
-}
 
 function useBalanceFormatter(): AccountHeroPort["balance"]["formatter"] {
   const locale = useSelector(localeSelector);
@@ -50,26 +42,17 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
   const { pickAsset, pickerProps } = usePickAccountAsset();
   const onAction = useAccountHeroActions(account, assets, byAction, pickAsset);
 
-  const availability = useMemo(
-    (): AccountHeroAvailability => ({
-      isCurrencySupported: !deactivatedCurrencyIds.has(account.currency.id),
-      isBuyAvailable: byAction.buy.length > 0,
-      isSellAvailable: byAction.sell.length > 0,
-      isSwapAvailable: byAction.swap.length > 0,
-      isEarnAvailable: byAction.earn.length > 0,
-      isSendSupported: !isSendDisabledForFamily(account.currency.family),
-      isReceiveSupported: canReceive(account, undefined),
-    }),
-    [account, byAction, deactivatedCurrencyIds],
-  );
+  const status = useAccountHeroStatus(account, assets, byAction, {
+    isCurrencySupported: !deactivatedCurrencyIds.has(account.currency.id),
+    isSendSupported: !isSendDisabledForFamily(account.currency.family),
+    isReceiveSupported: canReceive(account, undefined),
+  });
 
   return {
     port: {
       platform: "desktop",
       balance: { countervalue, formatter, discreet, isLoading: false },
-      availability,
-      hasFunds: hasAnyFunds(assets),
-      hasActivity: hasAccountActivity(account),
+      ...status,
       onAction,
     },
     assetPicker: pickerProps,

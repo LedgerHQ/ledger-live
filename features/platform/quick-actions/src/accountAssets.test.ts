@@ -2,6 +2,7 @@ import {
   hasAnyFunds,
   listHeldAssets,
   resolveAssetsByAction,
+  resolveAvailableAssetsByAction,
   sortAssetsByValue,
   sumAssetValues,
 } from "./accountAssets";
@@ -87,6 +88,37 @@ describe("resolveAssetsByAction", () => {
     });
 
     expect(byAction).toEqual({ buy: [], sell: [], swap: [], earn: [] });
+  });
+});
+
+describe("resolveAvailableAssetsByAction", () => {
+  const assets = listHeldAssets(account({ eth: 1, usdc: 1, pol: 1 }), new Set());
+  const sources = {
+    buyableIds: ["ethereum", "usdc"],
+    sellableIds: ["usdc"],
+    swappableIds: ["ethereum", "pol"],
+    deactivatedIds: new Set<string>(),
+    isStakeable: (id: string) => id === "ethereum",
+  };
+
+  it("keeps, for each action, the assets listed by its source", () => {
+    const byAction = resolveAvailableAssetsByAction(assets, sources);
+
+    expect(ids(byAction.buy)).toEqual(["ethereum", "usdc"]);
+    expect(ids(byAction.sell)).toEqual(["usdc"]);
+    expect(ids(byAction.swap)).toEqual(["ethereum", "pol"]);
+    expect(ids(byAction.earn)).toEqual(["ethereum"]);
+  });
+
+  it("drops deactivated currencies from every action", () => {
+    const byAction = resolveAvailableAssetsByAction(assets, {
+      ...sources,
+      deactivatedIds: new Set(["ethereum"]),
+    });
+
+    expect(ids(byAction.buy)).toEqual(["usdc"]);
+    expect(ids(byAction.swap)).toEqual(["pol"]);
+    expect(byAction.earn).toEqual([]);
   });
 });
 

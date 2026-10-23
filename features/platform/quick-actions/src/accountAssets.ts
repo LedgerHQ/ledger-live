@@ -61,6 +61,30 @@ export function resolveAssetsByAction<T extends HeldAsset<WithId, Spendable, unk
   };
 }
 
+export type AssetActionSources = Readonly<{
+  buyableIds: readonly string[];
+  sellableIds: readonly string[];
+  swappableIds: readonly string[];
+  deactivatedIds: ReadonlySet<string>;
+  isStakeable: (currencyId: string) => boolean;
+}>;
+
+export function resolveAvailableAssetsByAction<T extends HeldAsset<WithId, Spendable, unknown>>(
+  assets: readonly T[],
+  { buyableIds, sellableIds, swappableIds, deactivatedIds, isStakeable }: AssetActionSources,
+): AssetsByAction<T> {
+  const buyable = new Set(buyableIds);
+  const sellable = new Set(sellableIds);
+  const swappable = new Set(swappableIds);
+  const isActive = (currencyId: string) => !deactivatedIds.has(currencyId);
+  return resolveAssetsByAction(assets, {
+    isBuyable: id => isActive(id) && buyable.has(id),
+    isSellable: id => isActive(id) && sellable.has(id),
+    isSwappable: id => isActive(id) && swappable.has(id),
+    isStakeable: id => isActive(id) && isStakeable(id),
+  });
+}
+
 export function sortAssetsByValue<T>(
   assets: readonly T[],
   valueOf: (asset: T) => number,
