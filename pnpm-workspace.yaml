@@ -311,6 +311,10 @@ overrides:
   "@jest/types": "30.5.0"
   expect: "30.5.0"
   "pretty-format@^30.0.0": "30.5.0"
+  # Only @polkadot/rpc-provider/mock (MockProvider) imports these; we never load it
+  "@polkadot/rpc-provider>@polkadot/types-support": "-"
+  "@polkadot/rpc-provider>mock-socket": "-"
+  "@polkadot/rpc-provider>nock": "-"
 
 patchedDependencies:
   "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch"
