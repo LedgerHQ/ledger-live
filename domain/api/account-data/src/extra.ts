@@ -41,3 +41,9 @@ export function getAccountDataRuntime(extra: unknown): AccountDataRuntime {
   if (!isAccountDataExtra(extra)) throw new AccountDataRouterMissingError();
   return extra.accountData;
 }
+
+/** Adds a source to the store's router at runtime (see `AccountDataRouter.addSource`); resolves to its remover. */
+export const addAccountDataSource =
+  (source: AccountDataSource) =>
+  (_dispatch: unknown, _getState: unknown, extra: unknown): (() => void) =>
+    getAccountDataRuntime(extra).router.addSource(source);

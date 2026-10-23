@@ -9,8 +9,13 @@ const withinBip32Range = (path: string) =>
     .slice(1)
     .every(segment => Number.parseInt(segment, 10) < 2 ** 31);
 
+/** `account` names a real account; `mock` a generated one, served by the mock source only. */
+export const AccountPurposeSchema = z.enum(["account", "mock"]);
+
+export type AccountPurpose = z.infer<typeof AccountPurposeSchema>;
+
 export const UtxoAccountDescriptorSchema = z.object({
-  purpose: z.literal("account"),
+  purpose: AccountPurposeSchema,
   version: z.literal("2"),
   type: z.literal("utxo"),
   network: NetworkSchema,
@@ -33,7 +38,7 @@ export const UtxoAccountDescriptorSchema = z.object({
 });
 
 export const AddressAccountDescriptorSchema = z.object({
-  purpose: z.literal("account"),
+  purpose: AccountPurposeSchema,
   version: z.literal("2"),
   type: z.literal("address"),
   network: NetworkSchema,

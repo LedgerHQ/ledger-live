@@ -5,3 +5,4 @@ export * from "./cloud-sync";
 export * from "./account-balance";
 export * from "./account-descriptor";
 export * from "./account-data";
+export * from "./mock-accounts";

@@ -19,6 +19,7 @@ import {
   useAccountBalanceToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useMockAccountsToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -89,6 +90,7 @@ export function useDevToolsScreenViewModel() {
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -101,6 +103,7 @@ export function useDevToolsScreenViewModel() {
       { id: "account-data", config: accountDataToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
+      { id: "mock-accounts", config: mockAccountsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -112,6 +115,7 @@ export function useDevToolsScreenViewModel() {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountDataToolProps,
+      mockAccountsToolProps,
     ],
   );
 

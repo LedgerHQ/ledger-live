@@ -20,6 +20,7 @@ export function useAccountDescriptorToolProps(): AccountDescriptorToolProps {
       entries.map(({ accountUUID, legacyId, descriptor }) => ({
         accountUUID,
         legacyId,
+        purpose: descriptor.purpose,
         type: descriptor.type,
         network: descriptor.network,
         path: descriptor.path,
