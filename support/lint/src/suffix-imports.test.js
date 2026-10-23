@@ -152,7 +152,14 @@ test("leaves @support/* subpaths alone, they are its documented API", () => {
 });
 
 test("flags a relative web.ts or native.ts module, without offering a fix", () => {
-  for (const specifier of ["./web", "./steps/Detail/native", "../screens/AddContact/web"]) {
+  for (const specifier of [
+    "./web",
+    "./steps/Detail/native",
+    "../screens/AddContact/web",
+    "./web.tsx",
+    "./steps/Detail/native.js",
+    "./steps/Detail/native.ts",
+  ]) {
     for (const filename of [inPackage("dual", "index.ts"), inPackage("dual", "index.native.ts")]) {
       assert.deepEqual(
         findPlatformSuffix(specifier, filename),
@@ -171,6 +178,7 @@ test("matches only a suffix at the end of the specifier", () => {
     "./config.website",
     "./Foo.native.json",
     "./native-helpers",
+    "./native.json",
     "@features/flow-contacts",
     "@features/flow-contacts/native/extra",
   ]) {

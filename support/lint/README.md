@@ -78,8 +78,8 @@ import Foo from "./Foo";
 jest.mock("./internals/digest");
 ```
 
-**A relative `web` or `native` module.** Reported without an autofix: dropping the segment
-resolves to another module, so the fix is to rename the file.
+**A relative `web` or `native` module, with or without a JS or TS extension.** Reported without
+an autofix: dropping the segment resolves to another module, so the fix is to rename the file.
 
 ```ts
 // ✗
