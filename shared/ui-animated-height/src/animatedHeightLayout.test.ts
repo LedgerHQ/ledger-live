@@ -1,13 +1,10 @@
-/**
- * @jest-environment jsdom
- */
 import {
   isAnimatedHeightCapped,
   isStackedHeightTarget,
   measureStackedHeight,
   readAvailableHeight,
   resolveAnimatedHeight,
-} from "../animatedHeightLayout";
+} from "./animatedHeightLayout";
 
 const originalOffsetHeight = Object.getOwnPropertyDescriptor(HTMLElement.prototype, "offsetHeight");
 

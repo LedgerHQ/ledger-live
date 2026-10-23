@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/live-common/flows/send/types";
 import type { SendStepConfig } from "../types";
 import { SendHeader } from "./SendHeader";
-import { AnimatedHeight, useAnimatedHeightCapped } from "./AnimatedHeight";
+import { AnimatedHeight, useAnimatedHeightCapped } from "@shared/ui-animated-height";
 import { track } from "@shared/analytics";
 import { useSendFlowTrackingProperties } from "../hooks/useSendFlowTrackingProperties";
 import { useRecipientContactSelection } from "../context/RecipientContactSelectionContext";
