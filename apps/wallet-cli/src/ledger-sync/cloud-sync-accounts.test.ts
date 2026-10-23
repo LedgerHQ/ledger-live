@@ -74,7 +74,7 @@ describe("mergeSyncedAccounts", () => {
     const report = mergeSyncedAccounts(session, [ETH_RAW]);
 
     expect(report.imported).toEqual([
-      expect.objectContaining({ status: "imported", network: "ethereum:main" }),
+      expect.objectContaining({ status: "imported", network: "ethereum" }),
     ]);
     expect(report.unchanged).toEqual([]);
     expect(report.skipped).toEqual([]);
@@ -216,7 +216,7 @@ describe("mergeSyncedAccounts", () => {
         reason: expect.stringMatching(/^Invalid account id .*: it names/),
       }),
     ]);
-    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
   });
 
   // Object.prototype keys guard against a predicate that also accepts inherited properties.
@@ -239,7 +239,7 @@ describe("mergeSyncedAccounts", () => {
           reason: expect.stringContaining(`Derivation mode "${mode}"`),
         }),
       ]);
-      expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+      expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
     },
   );
 
@@ -269,8 +269,8 @@ describe("mergeSyncedAccounts", () => {
         reason: expect.stringContaining("No derivation mode for ethereum matches path"),
       }),
     ]);
-    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
-    expect(session.accounts.map(({ descriptor }) => parseV1(descriptor).network.name)).toEqual([
+    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
+    expect(session.accounts.map(({ descriptor }) => parseV1(descriptor).network)).toEqual([
       "bitcoin",
     ]);
   });
@@ -281,8 +281,8 @@ describe("mergeSyncedAccounts", () => {
 
     const report = mergeSyncedAccounts(session, [BTC_RAW, ETH_RAW]);
 
-    expect(report.imported).toEqual([expect.objectContaining({ network: "ethereum:main" })]);
-    expect(report.unchanged).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "ethereum" })]);
+    expect(report.unchanged).toEqual([expect.objectContaining({ network: "bitcoin" })]);
     expect(session.accounts).toHaveLength(2);
   });
 
@@ -299,7 +299,7 @@ describe("mergeSyncedAccounts", () => {
         reason: expect.stringMatching(/^Invalid account id/),
       }),
     ]);
-    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin:main" })]);
+    expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
   });
 
   it("gives a synced account a fresh label when its default one is taken by a different local account", () => {

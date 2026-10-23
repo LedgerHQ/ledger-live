@@ -57,7 +57,7 @@ describe("balances command", () => {
 
     const data = JSON.parse(stdout);
     expect(data.command).toBe("balances");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(Array.isArray(data.balances)).toBe(true);
     expect(data.balances.length).toBeGreaterThanOrEqual(1);
 

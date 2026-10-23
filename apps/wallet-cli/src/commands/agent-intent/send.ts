@@ -222,7 +222,7 @@ export default defineCommand({
     const network = networkOf(flags);
     const out = createCommandOutput(resolveOutputFormat(flags.output), {
       command: "agent-intent send",
-      network: `${network}:main`,
+      network,
     });
     await out.run(async () => {
       const senderInput = parseSenderInput(flags);

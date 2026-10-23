@@ -139,7 +139,7 @@ describe("depositEvm full broadcast path", () => {
     statusSteps = ["success"];
     const result = await depositEvm({
       descriptor,
-      network: "ethereum:main",
+      network: "ethereum",
       productId: PRODUCT.id,
       amount: "100 USDC",
       dryRun: false,
@@ -170,7 +170,7 @@ describe("depositEvm dry-run with a pending approve", () => {
   it("validates the approve but skips the deposit build instead of hitting the 500", async () => {
     const result = await depositEvm({
       descriptor,
-      network: "ethereum:main",
+      network: "ethereum",
       productId: PRODUCT.id,
       amount: "100 USDC",
       dryRun: true,

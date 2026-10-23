@@ -45,11 +45,11 @@ async function discoverAccounts({
   session,
   out,
 }: DiscoverAccountsParams): Promise<AccountDescriptorV1[]> {
-  const scanSpin = out.spin(`Scanning for ${colors.bold(network.name)} accounts…`);
+  const scanSpin = out.spin(`Scanning for ${colors.bold(network)} accounts…`);
   let count = 0;
   const discovered: AccountDescriptorV1[] = [];
 
-  const networks = [`${network.name}:${network.env}`];
+  const networks = [network];
   const device = await getWalletCliDeviceModelId();
   trackDiscoveryStarted({ networks, device });
 
@@ -85,7 +85,7 @@ export default defineCommand({
   options: {
     network: option(z.string().min(1).optional(), {
       description:
-        'Network to scan, e.g. "bitcoin", "ethereum", "ethereum:goerli" (or first positional arg). No env = mainnet.',
+        'Network id to scan, e.g. "bitcoin", "ethereum", "ethereum_sepolia" (or first positional arg).',
       short: "n",
     }),
     output: outputOption,
@@ -96,19 +96,18 @@ export default defineCommand({
     const networkArg = flags.network ?? positional[0];
     if (!networkArg) {
       throw new Error(
-        'Missing network: use --network <name> or -n <name>, e.g. "bitcoin", "ethereum:goerli".',
+        'Missing network: use --network <name> or -n <name>, e.g. "bitcoin", "ethereum_sepolia".',
       );
     }
 
     const network = parseNetworkArg(networkArg);
     const currencyId = currencyIdFromNetwork(network);
     const managerAppName = getManagerAppNameForCurrencyId(currencyId);
-    const networkStr = `${network.name}:${network.env}`;
-    walletCliDebug(`account discover: network=${networkStr}, output=${output}`);
+    walletCliDebug(`account discover: network=${network}, output=${output}`);
 
     const out = createCommandOutput(output, {
       command: "account discover",
-      network: networkStr,
+      network,
     });
 
     await out.run(async () => {

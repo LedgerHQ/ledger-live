@@ -43,7 +43,7 @@ describe("JsonCommandOutput", () => {
   it("emits device-state events as NDJSON before the final envelope", () => {
     const out = createCommandOutput("json", {
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
     });
 
@@ -55,7 +55,7 @@ describe("JsonCommandOutput", () => {
     expect(lines[0]).toEqual({
       type: "device-state",
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
       state: { code: "awaiting_approval", reason: "unlock" },
       message: "Ledger is locked. Enter your PIN on the device.",
@@ -63,7 +63,7 @@ describe("JsonCommandOutput", () => {
     expect(lines[1]).toMatchObject({
       status: "success",
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
       address: "0xabc",
       verified: true,
@@ -74,7 +74,7 @@ describe("JsonCommandOutput", () => {
   it("emits a pre-verify-address NDJSON event so agents can surface the address", () => {
     const out = createCommandOutput("json", {
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
     });
 
@@ -85,7 +85,7 @@ describe("JsonCommandOutput", () => {
     expect(lines[0]).toEqual({
       type: "pre-verify-address",
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
       address: "0xabc",
     });
@@ -94,7 +94,7 @@ describe("JsonCommandOutput", () => {
   it("emits a signature-requested device-state event during send before the final envelope", () => {
     const out = createCommandOutput("json", {
       command: "send",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
     });
 
@@ -108,7 +108,7 @@ describe("JsonCommandOutput", () => {
     expect(lines[0]).toEqual({
       type: "device-state",
       command: "send",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
       state: { code: "awaiting_approval", reason: "sign" },
       message: "Review on device. Approve or reject.",
@@ -116,7 +116,7 @@ describe("JsonCommandOutput", () => {
     expect(lines[1]).toMatchObject({
       status: "success",
       command: "send",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
       recipient: "0xabc",
       amount: "0.1 ETH",
@@ -560,15 +560,15 @@ describe("JsonCommandOutput", () => {
   it("reconcileDiscoveredLabels() patches buffered account labels before flushDiscovery emits them", () => {
     const descriptor = {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
-      network: { name: "bitcoin", env: "main" },
+      network: "bitcoin",
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;
     const out = createCommandOutput("json", {
       command: "account discover",
-      network: "bitcoin:main",
+      network: "bitcoin",
     });
 
     out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
@@ -588,7 +588,7 @@ describe("JsonCommandOutput", () => {
   it("agentIntentSync emits the four imported/unchanged/skipped/invalid arrays", () => {
     const out = createCommandOutput("json", { command: "agent-intent sync", network: "all" });
     out.agentIntentSync({
-      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum" }],
       unchanged: [],
       skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
       invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],
@@ -597,7 +597,7 @@ describe("JsonCommandOutput", () => {
     const [line] = parseLines();
     expect(line).toMatchObject({
       status: "success",
-      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum" }],
       unchanged: [],
       skipped: [{ status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" }],
       invalid: [{ status: "invalid", id: "js:2:ethereum::ethM", reason: "empty address" }],

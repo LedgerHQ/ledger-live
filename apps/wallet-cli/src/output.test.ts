@@ -98,7 +98,7 @@ describe("HumanCommandOutput", () => {
   it("uses the canonical device-state text for signature requests", () => {
     const out = createCommandOutput("human", {
       command: "send",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
     });
     const spin = out.spin("Preparing transaction…") as unknown as MockSpinner;
@@ -120,7 +120,7 @@ describe("HumanCommandOutput", () => {
     try {
       const out = createCommandOutput("human", {
         command: "send",
-        network: "ethereum:main",
+        network: "ethereum",
         account: "js:2:ethereum:0x123",
       });
       out.spin("Broadcasting…");
@@ -403,11 +403,11 @@ describe("HumanCommandOutput", () => {
     const writes: string[] = [];
     const restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
     try {
-      const out = createCommandOutput("human", { command: "earn deposit", network: "solana:main" });
+      const out = createCommandOutput("human", { command: "earn deposit", network: "solana" });
       out.earnDepositResult({
         family: "solana",
         account: "acc",
-        network: "solana:main",
+        network: "solana",
         amount: "1 SOL",
         product: "VoteAcct1",
         validator: "VoteAcct1",
@@ -428,12 +428,12 @@ describe("HumanCommandOutput", () => {
     try {
       const out = createCommandOutput("human", {
         command: "earn deposit",
-        network: "ethereum:main",
+        network: "ethereum",
       });
       out.earnDepositResult({
         family: "evm",
         account: "0xabc",
-        network: "ethereum:main",
+        network: "ethereum",
         amount: "0.5 ETH",
         product: "vault_kiln_eth",
         dryRun: true,
@@ -481,16 +481,16 @@ describe("HumanCommandOutput", () => {
     });
     const descriptor = {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
-      network: { name: "bitcoin", env: "main" },
+      network: "bitcoin",
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;
     try {
       const out = createCommandOutput("human", {
         command: "account discover",
-        network: "bitcoin:main",
+        network: "bitcoin",
       });
       out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
       out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
@@ -828,8 +828,8 @@ describe("HumanCommandOutput", () => {
 
     it("agentIntentSync reports imported, unchanged, skipped, and invalid entries", () => {
       createCommandOutput("human", ctx).agentIntentSync({
-        imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
-        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum:main" }],
+        imported: [{ status: "imported", label: "eth-1", network: "ethereum" }],
+        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum" }],
         skipped: [
           { status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" },
         ],

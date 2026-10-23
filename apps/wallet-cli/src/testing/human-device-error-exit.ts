@@ -5,7 +5,7 @@ import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 
 const out = createCommandOutput("human", {
   command: "test-human-device-error-exit",
-  network: "ethereum:main",
+  network: "ethereum",
 });
 
 try {

@@ -11,7 +11,7 @@ const withinBip32Range = (path: string) =>
 
 export const UtxoAccountDescriptorSchema = z.object({
   purpose: z.literal("account"),
-  version: z.literal("1"),
+  version: z.literal("2"),
   type: z.literal("utxo"),
   network: NetworkSchema,
   xpub: z
@@ -34,7 +34,7 @@ export const UtxoAccountDescriptorSchema = z.object({
 
 export const AddressAccountDescriptorSchema = z.object({
   purpose: z.literal("account"),
-  version: z.literal("1"),
+  version: z.literal("2"),
   type: z.literal("address"),
   network: NetworkSchema,
   address: z.string().min(1),
