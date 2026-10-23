@@ -6,7 +6,7 @@ describe("skill list — human", () => {
     const { stdout, exitCode, stderr } = await runCli(["skill", "list"]);
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(stdout).toContain("wallet-cli-usage");
-    expect(stdout).toMatch(/USB-based CLI/i);
+    expect(stdout).toMatch(/Ledger hardware wallet/i);
   });
 });
 
