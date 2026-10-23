@@ -1,12 +1,26 @@
 import Client from "bitcoin-core";
 
-// fetched from bitcoin.conf
-const client: any = new Client({
-  version: "0.24.1",
-  username: "user",
-  password: "pass",
-  host: "http://localhost:18443",
-});
+// The wallet of the tester on the node. The coin-sandbox node has its own wallet loaded too, so
+// every wallet call names this one.
+export const WALLET = "coinTester";
+
+// The RPC of the coin-sandbox instance, known once it is up (credentials of coin-sandbox's node)
+let rpc: any;
+
+export function setBitcoinRpc(host: string): void {
+  rpc = new Client({ version: "0.24.1", username: "user", password: "pass", host, wallet: WALLET });
+}
+
+const client: any = new Proxy(
+  {},
+  {
+    get: (_, key) => {
+      if (rpc === undefined) throw new Error("the Bitcoin RPC is not set: is the sandbox up?");
+      const value = rpc[key];
+      return typeof value === "function" ? value.bind(rpc) : value;
+    },
+  },
+);
 
 export async function loadWallet(name: string): Promise<void> {
   try {
@@ -45,6 +59,10 @@ async function loadExistingWallet(name: string): Promise<void> {
       console.error(`❌ Failed to load existing wallet "${name}":`, message);
     }
   }
+}
+
+export async function getWalletAddress(): Promise<string> {
+  return await client.getNewAddress();
 }
 
 export async function mineToWalletAddress(param: string) {
