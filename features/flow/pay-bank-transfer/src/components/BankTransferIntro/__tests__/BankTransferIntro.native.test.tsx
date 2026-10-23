@@ -8,6 +8,11 @@ import { BankTransferIntro } from "../BankTransferIntro";
 import type { BankTransferIntroProps } from "../../../types";
 import { I18nWrapper } from "./i18nWrapper";
 
+jest.mock("react-native-gesture-handler", () => {
+  const { Pressable } = jest.requireActual("react-native");
+  return { TouchableOpacity: Pressable };
+});
+
 jest.mock("@features/platform-pay-analytics", () =>
   jest.requireActual("@features/platform-pay-analytics/testing/module-mock"),
 );

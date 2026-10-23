@@ -2,6 +2,9 @@
 export const BANK_TRANSFER_INTRO_RESOURCES = {
   en: {
     translation: {
+      common: {
+        close: "Close",
+      },
       payTab: {
         bankTransferIntro: {
           title: "Send cash, receive stablecoin",

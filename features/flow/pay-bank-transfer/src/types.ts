@@ -30,6 +30,7 @@ export type BankTransferIntroViewModel = Readonly<{
   description: string;
   createAccountLabel: string;
   logInLabel: string;
+  closeLabel: string;
   providedBy: string;
   heroImage?: BankTransferIntroHeroImage;
   rows: readonly BankTransferIntroRow[];

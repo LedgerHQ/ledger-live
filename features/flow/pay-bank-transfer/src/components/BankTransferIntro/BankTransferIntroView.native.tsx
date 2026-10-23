@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Image, type ImageSourcePropType } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import {
-  BottomSheetHeader,
   BottomSheetView,
   Box,
   Button,
@@ -18,12 +18,21 @@ import { FEATURE_INTRO_PAGE, PayTrackPage } from "@features/platform-pay-analyti
 import { BANK_TRANSFER_INTRO_FLOW } from "./useBankTransferIntroViewModel";
 import type { BankTransferIntroViewProps } from "../../types";
 
+const closeButtonStyle = {
+  alignItems: "center" as const,
+  justifyContent: "center" as const,
+  width: 44,
+  height: 44,
+  backgroundColor: "transparent",
+};
+
 export function BankTransferIntroView({
   isOpen,
   title,
   description,
   createAccountLabel,
   logInLabel,
+  closeLabel,
   providedBy,
   heroImage,
   rows,
@@ -79,7 +88,17 @@ export function BankTransferIntroView({
             name={BANK_TRANSFER_INTRO_FLOW}
             flow={BANK_TRANSFER_INTRO_FLOW}
           />
-          <BottomSheetHeader density="expanded" />
+          <Box lx={{ alignItems: "flex-end" }}>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={closeLabel}
+              onPress={handleClosePress}
+              style={closeButtonStyle}
+              testID="bottom-sheet-header-close-button"
+            >
+              <Icons.Close size={16} />
+            </TouchableOpacity>
+          </Box>
           <Box lx={{ gap: "s16" }}>
             {heroImage ? (
               <Image
