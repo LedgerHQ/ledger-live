@@ -10,7 +10,7 @@ import {
   readTransferOutcome,
   throwIfLedgerTransferRefused,
 } from "./api";
-import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "../network/candid";
+import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "./candid";
 
 // Encode a governance canister *reply* (return value) using the real vendored IDL, so the decode
 // functions run against genuine candid bytes rather than a hand-rolled buffer.
@@ -28,7 +28,7 @@ jest.mock("@icp-sdk/core/agent", () => ({
 }));
 
 // getRootKey() reads the agent's embedded root key; stub the agent so no network/embedded-key logic runs.
-jest.mock("../network/agent", () => ({
+jest.mock("./agent", () => ({
   getAgent: jest.fn().mockResolvedValue({ rootKey: new Uint8Array(0) }),
 }));
 

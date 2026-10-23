@@ -26,8 +26,9 @@ import {
   ICPStakeNotRefreshed,
 } from "../errors";
 import { createIngressExpiry } from "../logic/buildTransaction";
-import { getAgent } from "../network/agent";
+import { getAgent } from "./agent";
 import {
+  archiveEncodedBlocksFunc,
   decodeCanisterIdlFunc,
   encodeCanisterIdlFunc,
   fromOpt,
@@ -35,11 +36,11 @@ import {
   governanceIdlFactory,
   indexIdlFactory,
   ledgerIdlFactory,
-} from "../network/candid";
+} from "./candid";
 import type {
   GetAccountIdentifierTransactionsResponse,
   TransactionWithId,
-} from "../network/idl/index.types";
+} from "./idl/index.types";
 import type { ListNeuronsResponse, NeuronCommandOutcome } from "../types/neuron";
 
 function requestIdFromHex(hex: string): RequestId {
@@ -125,7 +126,8 @@ export const broadcastTxn = async (
   return null;
 };
 
-export const fetchBalance = async (address: string): Promise<BigNumber> => {
+/** The account's balance in e8s, or undefined when the index canister did not answer. */
+export const queryBalance = async (address: string): Promise<bigint | undefined> => {
   const agent = await getAgent(ICP_NETWORK_URL);
   const indexCanister = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
   const getBalanceIdlFunc = getCanisterIdlFunc(indexIdlFactory, "get_account_identifier_balance");
@@ -137,33 +139,40 @@ export const fetchBalance = async (address: string): Promise<BigNumber> => {
   });
 
   if (balanceRes.status !== "replied") {
-    log("debug", `[ICP](fetchBalance) Query failed: ${balanceRes.status}`);
-    return BigNumber(0);
+    log("debug", `[ICP](queryBalance) Query failed: ${balanceRes.status}`);
+    return undefined;
   }
 
   const [balance] = decodeCanisterIdlFunc<[bigint]>(getBalanceIdlFunc, balanceRes.reply.arg);
-  if (!balance) {
-    return BigNumber(0);
-  }
-
-  return BigNumber(balance.toString());
+  return balance ?? 0n;
 };
 
-export const fetchTxns = async (
-  address: string,
-  startBlockHeight: bigint,
-  stopBlockHeight = BigInt(0),
-): Promise<TransactionWithId[]> => {
-  if (startBlockHeight <= stopBlockHeight) {
-    return [];
-  }
+// The account bridge reads an unanswered balance query as 0 rather than failing the sync.
+export const fetchBalance = async (address: string): Promise<BigNumber> =>
+  BigNumber(((await queryBalance(address)) ?? 0n).toString());
 
+export interface TxnsPage {
+  /** Newest first. */
+  transactions: TransactionWithId[];
+  /** Id of the account's oldest transaction, absent when it has none. */
+  oldestTxId: bigint | undefined;
+}
+
+/**
+ * One page of the account's history from the index canister, newest first. `start` is exclusive:
+ * the page begins with the newest transaction older than it, or with the newest one when absent.
+ */
+export const fetchTxnsPage = async (
+  address: string,
+  start: bigint | undefined,
+  maxResults: number = FETCH_TXNS_LIMIT,
+): Promise<TxnsPage> => {
   const agent = await getAgent(ICP_NETWORK_URL);
   const canisterId = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
   const transactionsRawRequest = {
     account_identifier: address,
-    start: [startBlockHeight],
-    max_results: BigInt(FETCH_TXNS_LIMIT),
+    start: start === undefined ? [] : [start],
+    max_results: BigInt(maxResults),
   };
 
   const getTransactionsIdlFunc = getCanisterIdlFunc(
@@ -179,24 +188,85 @@ export const fetchTxns = async (
     methodName: "get_account_identifier_transactions",
   });
 
-  invariant(transactionsRes.status === "replied", "[ICP](fetchTxns) Query failed");
-  const [response] = decodeCanisterIdlFunc<[{ Ok: GetAccountIdentifierTransactionsResponse }]>(
-    getTransactionsIdlFunc,
-    transactionsRes.reply.arg,
-  );
-  invariant(response, "[ICP](fetchTxns) Decoding failed");
+  invariant(transactionsRes.status === "replied", "[ICP](fetchTxnsPage) Query failed");
+  const [response] = decodeCanisterIdlFunc<
+    [{ Ok?: GetAccountIdentifierTransactionsResponse; Err?: { message: string } }]
+  >(getTransactionsIdlFunc, transactionsRes.reply.arg);
+  invariant(response, "[ICP](fetchTxnsPage) Decoding failed");
+  invariant(response.Ok, `[ICP](fetchTxnsPage) Index refused the query: ${response.Err?.message}`);
 
-  if (response.Ok.transactions.length === 0) {
+  return {
+    transactions: response.Ok.transactions,
+    oldestTxId: response.Ok.oldest_tx_id ? fromOpt(response.Ok.oldest_tx_id) : undefined,
+  };
+};
+
+export const fetchTxns = async (
+  address: string,
+  startBlockHeight: bigint,
+  stopBlockHeight = BigInt(0),
+): Promise<TransactionWithId[]> => {
+  if (startBlockHeight <= stopBlockHeight) {
     return [];
   }
 
-  const nextTxns = await fetchTxns(
-    address,
-    response.Ok.transactions.at(-1)?.id ?? BigInt(0),
-    stopBlockHeight,
-  );
+  const { transactions } = await fetchTxnsPage(address, startBlockHeight);
+  if (transactions.length === 0) {
+    return [];
+  }
 
-  return [...response.Ok.transactions, ...nextTxns];
+  const nextTxns = await fetchTxns(address, transactions.at(-1)?.id ?? BigInt(0), stopBlockHeight);
+
+  return [...transactions, ...nextTxns];
+};
+
+interface QueryEncodedBlocksResponse {
+  blocks: Uint8Array[];
+  chain_length: bigint;
+  archived_blocks: { start: bigint; length: bigint; callback: [Principal, string] }[];
+}
+
+/**
+ * The protobuf-encoded block at `height`, or undefined above the chain tip. The ledger holds only
+ * its most recent blocks; for an older one it answers with the archive canister that holds it,
+ * which is queried in turn.
+ */
+export const fetchEncodedBlock = async (height: bigint): Promise<Uint8Array | undefined> => {
+  const agent = await getAgent(ICP_NETWORK_URL);
+  const ledgerCanister = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
+  const queryIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "query_encoded_blocks");
+  const args = { start: height, length: BigInt(1) };
+
+  const res = await agent.query(ledgerCanister, {
+    arg: encodeCanisterIdlFunc(queryIdlFunc, [args]),
+    methodName: "query_encoded_blocks",
+  });
+  invariant(res.status === "replied", "[ICP](fetchEncodedBlock) Query failed");
+  const [response] = decodeCanisterIdlFunc<[QueryEncodedBlocksResponse]>(
+    queryIdlFunc,
+    res.reply.arg,
+  );
+  invariant(response, "[ICP](fetchEncodedBlock) Decoding failed");
+
+  if (response.blocks.length > 0) return response.blocks[0];
+
+  const archive = response.archived_blocks.find(
+    range => range.start <= height && height < range.start + range.length,
+  );
+  if (!archive) return undefined;
+
+  const [archiveCanister, archiveMethod] = archive.callback;
+  const archiveRes = await agent.query(archiveCanister, {
+    arg: encodeCanisterIdlFunc(archiveEncodedBlocksFunc, [args]),
+    methodName: archiveMethod,
+  });
+  invariant(archiveRes.status === "replied", "[ICP](fetchEncodedBlock) Archive query failed");
+  const [archived] = decodeCanisterIdlFunc<[{ Ok?: Uint8Array[]; Err?: unknown }]>(
+    archiveEncodedBlocksFunc,
+    archiveRes.reply.arg,
+  );
+  invariant(archived?.Ok, "[ICP](fetchEncodedBlock) Archive refused the query");
+  return archived.Ok[0];
 };
 
 // ICP update calls finalize in a few seconds; poll well past that so an indeterminate result is an

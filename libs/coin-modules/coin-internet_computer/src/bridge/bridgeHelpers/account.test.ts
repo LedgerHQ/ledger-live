@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 
-jest.mock("../../api", () => ({
+jest.mock("../../network/api", () => ({
   fetchBlockHeight: jest.fn(),
   fetchBalance: jest.fn(),
   fetchTxns: jest.fn(),
 }));
 
-import * as api from "../../api";
+import * as api from "../../network/api";
 import { deriveAddressFromPubkey } from "../../logic/crypto";
 import { ICPAccount, ICPNeuron, NeuronsData, NeuronState } from "../../types";
 import { getAccountShape, postSync } from "./account";
