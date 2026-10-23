@@ -8,6 +8,9 @@ const esmPackages = ["@mysten"];
 export default {
   ...baseConfig,
   rootDir: __dirname,
+  // No @ledgerhq/test-quarantine dependency: drop its reporter and retries.
+  reporters: baseConfig.reporters.filter(reporter => reporter !== "@ledgerhq/test-quarantine/jest"),
+  setupFilesAfterEnv: [],
   transform: {
     ...baseConfig.transform,
     [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [

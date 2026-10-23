@@ -14,17 +14,4 @@ export default {
     "!src/**/__tests__/**",
     "!tests/**",
   ],
-  coverageReporters: [
-    "json",
-    ["lcov", { file: "lcov.info", projectRoot: "../../../../" }],
-    "json-summary",
-    "text",
-  ],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
 };
