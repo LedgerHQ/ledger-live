@@ -5,6 +5,13 @@ import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { NavigatorName, ScreenName } from "~/const";
 import prepareSignTransaction from "./liveSDKLogic";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { act } from "@testing-library/react-native";
+import { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
+import { Linking } from "react-native";
+import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
+import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
+import { closePlatformExchange } from "./closePlatformExchange";
 
 /** Drives the `llmWalletApiDeviceIntentSign` flag via Redux state (see withFlagOverrides). */
 type DeviceIntentSignFlagOverride = {
@@ -28,6 +35,7 @@ jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
 
 jest.mock("@ledgerhq/live-common/wallet-api/react", () => ({
   safeGetRefValue: jest.fn(),
+  ExchangeType: { 0: "SWAP", SWAP: 0 },
 }));
 
 jest.mock("LLM/features/ModularDrawer", () => ({
@@ -45,6 +53,14 @@ jest.mock("@react-navigation/native", () => {
 jest.mock("@ledgerhq/live-common/wallet-api/ModularDrawer/useDrawerConfiguration", () => ({
   useDrawerConfiguration: jest.fn(() => ({ createDrawerConfiguration: jest.fn(() => ({})) })),
 }));
+
+jest.mock("./domainCheckReport", () => ({
+  reportDomainCheckViolation: jest.fn(),
+  reportDroppedBridgeMessage: jest.fn(),
+  reportIfStrictlyDisallowed: jest.fn(),
+}));
+
+jest.mock("./closePlatformExchange", () => ({ closePlatformExchange: jest.fn() }));
 
 jest.mock("./liveSDKLogic", () => ({
   __esModule: true,
@@ -144,6 +160,171 @@ describe("useWebviewState", () => {
         uri: "https://new.example.com",
       });
     });
+  });
+
+  describe("domain check reports", () => {
+    const request = (url: string, isTopFrame = true) =>
+      ({ url, isTopFrame }) as unknown as ShouldStartLoadRequest;
+
+    beforeEach(() => {
+      mockGetInitialURL.mockReturnValue("https://example.com/");
+    });
+
+    afterEach(() => {
+      jest.mocked(isUrlAllowedByManifestDomains).mockImplementation(() => true);
+    });
+
+    it("checks every committed main-frame URL against the strict domains", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, null, undefined),
+      );
+
+      act(() => {
+        result.current.webviewProps.onNavigationStateChange?.({
+          url: "https://evil.com/page",
+          title: "",
+          loading: false,
+          canGoBack: false,
+          canGoForward: false,
+          lockIdentifier: 0,
+          navigationType: "other",
+        });
+      });
+
+      expect(reportIfStrictlyDisallowed).toHaveBeenCalledWith({
+        manifest: mockManifest,
+        url: "https://evil.com/page",
+        frameType: "main_frame",
+        kind: "navigation",
+      });
+    });
+
+    it("reports a load the domain check blocks", () => {
+      const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(true);
+      jest
+        .mocked(isUrlAllowedByManifestDomains)
+        .mockImplementation(url => new URL(url).origin === "https://example.com");
+      const { result } = renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          null,
+          undefined,
+        ),
+      );
+
+      expect(result.current.onShouldStartLoadWithRequest(request("https://example.com/next"))).toBe(
+        true,
+      );
+      expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/"))).toBe(false);
+      expect(result.current.onShouldStartLoadWithRequest(request("ledgerlive://discover"))).toBe(
+        false,
+      );
+
+      expect(reportDomainCheckViolation).toHaveBeenCalledTimes(1);
+      expect(reportDomainCheckViolation).toHaveBeenCalledWith({
+        manifest: mockManifest,
+        url: "https://evil.com/",
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
+      openURL.mockRestore();
+    });
+
+    it("reports an initial URL the domain check blocks", () => {
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      mockGetInitialURL.mockReturnValue("https://evil.com/");
+
+      renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          null,
+          undefined,
+        ),
+      );
+
+      expect(reportDomainCheckViolation).toHaveBeenCalledWith({
+        manifest: mockManifest,
+        url: "https://evil.com/",
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
+    });
+
+    it("does not report blocks while the domain check is off", () => {
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest }, null, undefined),
+      );
+
+      expect(result.current.onShouldStartLoadWithRequest(request("https://evil.com/"))).toBe(true);
+      expect(reportDomainCheckViolation).not.toHaveBeenCalled();
+    });
+  });
+});
+
+const shouldStartRequest = (url: string, isTopFrame?: boolean) =>
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  ({ url, isTopFrame }) as ShouldStartLoadRequest;
+
+describe("useWebviewState - onShouldStartLoadWithRequest", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetInitialURL.mockReturnValue("https://example.com");
+    jest
+      .mocked(isUrlAllowedByManifestDomains)
+      .mockImplementation(
+        jest.requireActual("@ledgerhq/live-common/wallet-api/manifestDomainUtils")
+          .isUrlAllowedByManifestDomains,
+      );
+  });
+
+  afterAll(() => {
+    jest.mocked(isUrlAllowedByManifestDomains).mockImplementation(() => true);
+  });
+
+  it("keeps the current behaviour when the flag is off", () => {
+    const { result } = renderHook(() =>
+      useWebviewState(
+        { manifest: mockManifest, manifestDomainCheckEnabled: false },
+        null,
+        undefined,
+      ),
+    );
+
+    expect(
+      result.current.onShouldStartLoadWithRequest(shouldStartRequest("https://evil.com", true)),
+    ).toBe(true);
+    expect(
+      result.current.onShouldStartLoadWithRequest(shouldStartRequest("http://example.com", true)),
+    ).toBe(true);
+  });
+
+  it("cancels main-frame loads outside manifest.domains when the flag is on", () => {
+    const { result } = renderHook(() =>
+      useWebviewState(
+        { manifest: mockManifest, manifestDomainCheckEnabled: true },
+        null,
+        undefined,
+      ),
+    );
+    const { onShouldStartLoadWithRequest } = result.current;
+
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://example.com/path", true))).toBe(
+      true,
+    );
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://evil.com", true))).toBe(false);
+    expect(
+      onShouldStartLoadWithRequest(shouldStartRequest("https://example.com.evil.com", true)),
+    ).toBe(false);
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("http://example.com", true))).toBe(
+      false,
+    );
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://evil.com"))).toBe(false);
+    expect(onShouldStartLoadWithRequest(shouldStartRequest("https://3ds.bank.com", false))).toBe(
+      true,
+    );
   });
 });
 
@@ -395,5 +576,155 @@ describe("useUiHook - account.request cancel navigation", () => {
     drawerCallArgs.onAccountSelected({ id: "acc-1" } as AccountLike, undefined);
     expect(onAccountRequestSuccess).toHaveBeenCalledTimes(1);
     expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("useUiHook - account.request of a closed session", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function openAccountRequest(session: BridgeSession) {
+    const onAccountRequestCancel = jest.fn();
+    const onAccountRequestSuccess = jest.fn();
+    const onSuccess = jest.fn();
+    const onCancel = jest.fn();
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        bridgeSessionRef: { current: session },
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: jest.fn(),
+        onAccountRequestCancel,
+        onAccountRequestSuccess,
+      }),
+    );
+    result.current["account.request"]!({
+      currencyIds: ["ethereum"],
+      onSuccess,
+      onCancel,
+      areCurrenciesFiltered: false,
+    });
+    return {
+      drawerCallArgs: mockOpenDrawer.mock.calls[0]?.[0],
+      onAccountRequestCancel,
+      onAccountRequestSuccess,
+      onSuccess,
+      onCancel,
+    };
+  }
+
+  it("does not reach the host when its drawer is cancelled after the session closed", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { drawerCallArgs, onAccountRequestCancel, onCancel } = openAccountRequest(session);
+
+    session.close();
+    drawerCallArgs.onCancel();
+
+    expect(onAccountRequestCancel).not.toHaveBeenCalled();
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
+  it("does not select an account for a closed session", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { drawerCallArgs, onAccountRequestSuccess, onSuccess } = openAccountRequest(session);
+
+    session.close();
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    drawerCallArgs.onAccountSelected({ id: "acc-1" } as AccountLike, undefined);
+
+    expect(onAccountRequestSuccess).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it("still reaches the host while the session is open", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { drawerCallArgs, onAccountRequestCancel, onCancel } = openAccountRequest(session);
+
+    drawerCallArgs.onCancel();
+
+    expect(onAccountRequestCancel).toHaveBeenCalledTimes(1);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+});
+
+const completeExchange = (uiHook: ReturnType<typeof useUiHook>) =>
+  uiHook["exchange.complete"]!({
+    exchangeParams: { exchangeType: 0, provider: "p", exchange: {}, transaction: {} } as never,
+    onSuccess: jest.fn(),
+    onCancel: jest.fn(),
+  });
+
+describe("useUiHook - exchange device of a bridge session", () => {
+  const device = { deviceId: "device-a", modelId: "nanoX", wired: false } as never;
+  const startResult = { startExchangeResult: { nonce: "nonce" }, device } as never;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  function renderUiHook(session: BridgeSession) {
+    const bridgeSessionRef = { current: session };
+    const { result } = renderHook(() =>
+      useUiHook({
+        manifest: mockManifest,
+        bridgeSessionRef,
+        requestDeviceIntentSign: jest.fn(),
+        requestDeviceIntentSignMessage: jest.fn(),
+      }),
+    );
+    return { result, bridgeSessionRef };
+  }
+
+  const lastNavigationParams = () => mockNavigate.mock.calls[mockNavigate.mock.calls.length - 1][1];
+
+  it("hands the device of exchange.start to exchange.complete of the same session", () => {
+    const { result } = renderUiHook(new BridgeSession("https://a.com", jest.fn()));
+
+    result.current["exchange.start"]!({
+      exchangeType: "SWAP",
+      onSuccess: jest.fn(),
+      onCancel: jest.fn(),
+    });
+    act(() => lastNavigationParams().params.onResult(startResult));
+    completeExchange(result.current);
+
+    expect(lastNavigationParams().params.device).toBe(device);
+  });
+
+  it("does not hand a device selected before a reset to the next origin", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { result, bridgeSessionRef } = renderUiHook(session);
+
+    result.current["exchange.start"]!({
+      exchangeType: "SWAP",
+      onSuccess: jest.fn(),
+      onCancel: jest.fn(),
+    });
+    act(() => lastNavigationParams().params.onResult(startResult));
+    session.close();
+    bridgeSessionRef.current = new BridgeSession("https://b.com", jest.fn());
+    completeExchange(result.current);
+
+    expect(lastNavigationParams().params.device).toBeUndefined();
+  });
+
+  it("ignores an exchange.start result arriving after its session closed", () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { result, bridgeSessionRef } = renderUiHook(session);
+
+    result.current["exchange.start"]!({
+      exchangeType: "SWAP",
+      onSuccess: jest.fn(),
+      onCancel: jest.fn(),
+    });
+    const { onResult } = lastNavigationParams().params;
+    session.close();
+    bridgeSessionRef.current = new BridgeSession("https://b.com", jest.fn());
+    act(() => onResult(startResult));
+    completeExchange(result.current);
+
+    expect(lastNavigationParams().params.device).toBeUndefined();
+    expect(closePlatformExchange).not.toHaveBeenCalled();
   });
 });

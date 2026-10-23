@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import { CHANNELS, type Unsubscribe } from "~/bridge/contract";
-import { deeplink, updater } from "./push";
+import { deeplink, updater, webview } from "./push";
 
 type Listener = (...args: unknown[]) => void;
 const mockListeners = new Map<string, Set<Listener>>();
@@ -38,6 +38,32 @@ describe("preload push bridge", () => {
       channel: CHANNELS.deepLinking,
       subscribe: (callback: (payload: unknown) => void): Unsubscribe => deeplink.onOpen(callback),
       payload: "ledgerlive://accounts",
+    },
+    {
+      name: "webview.onDomainCheckViolation",
+      channel: CHANNELS.webviewDomainCheckViolation,
+      subscribe: (callback: (payload: unknown) => void): Unsubscribe =>
+        webview.onDomainCheckViolation(callback),
+      payload: {
+        origin: "https://evil.com",
+        manifestId: "swap",
+        appVersion: "2.130.0",
+        platform: "desktop",
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      },
+    },
+    {
+      name: "webview.onMessage",
+      channel: CHANNELS.webviewBridgeMessage,
+      subscribe: (callback: (payload: unknown) => void): Unsubscribe => webview.onMessage(callback),
+      payload: {
+        guestId: 7,
+        origin: "https://app.example.com",
+        channel: "webviewToParent",
+        message: "{}",
+      },
     },
   ])("$name", ({ channel, subscribe, payload }) => {
     it("should deliver the payload only, never the IPC event", () => {

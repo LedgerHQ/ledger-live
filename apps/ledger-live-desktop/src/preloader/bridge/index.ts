@@ -8,7 +8,7 @@ import {
 } from "~/bridge/contract";
 import { expose } from "./expose";
 import { db } from "./db";
-import { deeplink, updater } from "./push";
+import { deeplink, updater, webview } from "./push";
 import { app, files, power, store } from "./shell";
 import { shell, system } from "./system";
 import { zcash } from "./zcash";
@@ -39,6 +39,7 @@ export function installBridge(): void {
     db,
     updater,
     deeplink,
+    webview,
     app,
     files,
     power,

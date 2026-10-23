@@ -5,6 +5,17 @@ import { track } from "@shared/analytics";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
 import type { RefObject } from "react";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { reportBlockedInitialLoad } from "./domainCheckReport";
+
+jest.mock("./domainCheckReport", () => ({
+  reportBlockedInitialLoad: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
@@ -147,6 +158,84 @@ describe("useWebviewState", () => {
       rerender({ manifest: updatedManifest });
 
       expect(result.current.webviewProps.src).toBe("https://new.example.com");
+    });
+
+    it("reports the initial load when the domain check keeps an empty domain list on about:blank", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/swap?address=0xabc");
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      const manifest = { ...mockManifest, domains: [] };
+
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.src).toBe("about:blank");
+      expect(reportBlockedInitialLoad).toHaveBeenCalledWith(
+        manifest,
+        "https://example.com/swap?address=0xabc",
+      );
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(true);
+    });
+
+    it("does not report an initial load the domain check allows", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+
+      renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("webviewProps.webpreferences", () => {
+    beforeEach(() => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+    });
+
+    it("carries the manifest domains when the domain check is on", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins(["https://example.com"]),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: ["https://example.com"] }),
+        ].join(","),
+      );
+    });
+
+    it("carries an empty origin list when the manifest has no domains", () => {
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: { ...mockManifest, domains: undefined as unknown as string[] },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins([]),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: [] }),
+        ].join(","),
+      );
+    });
+
+    it("marks the guest as unrestricted when the domain check is off", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: false }, null),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins(UNRESTRICTED_ORIGINS),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: ["https://example.com"] }),
+        ].join(","),
+      );
     });
   });
 

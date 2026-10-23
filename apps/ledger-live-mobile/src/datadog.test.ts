@@ -1,4 +1,5 @@
-import { DdLogs } from "@datadog/mobile-react-native";
+import { DatadogProvider, DdLogs, TrackingConsent } from "@datadog/mobile-react-native";
+import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
 import {
   ErrorCategory,
   TransactionDataSource,
@@ -9,21 +10,98 @@ import {
   broadcastLogger,
   coinModuleCallLogger,
   customErrorEventMapper,
+  initializeDatadogProvider,
+  isDatadogRecording,
+  stopDatadogRecording,
   transactionBroadcastLogger,
 } from "./datadog";
-import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
 
 const observabilityOn = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 5 };
 
 jest.mock("@datadog/mobile-react-native", () => ({
   DdLogs: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
-  TrackingConsent: {},
+  TrackingConsent: { GRANTED: "granted", NOT_GRANTED: "not_granted" },
   DatadogProvider: { initialize: jest.fn() },
 }));
 
 jest.mock("@datadog/mobile-react-navigation", () => ({}));
 jest.mock("./const", () => ({ ScreenName: {} }));
 jest.mock("./utils/datadogUtils", () => ({ buildFeatureFlagTags: jest.fn(() => ({})) }));
+
+describe("isDatadogRecording", () => {
+  it("is false until the provider is initialized with the user's consent", () => {
+    expect(isDatadogRecording()).toBe(false);
+  });
+});
+
+describe("recording gate", () => {
+  const initialize = jest.mocked(DatadogProvider.initialize);
+  let initializeProvider: typeof initializeDatadogProvider;
+  let isRecording: typeof isDatadogRecording;
+  let stopRecording: typeof stopDatadogRecording;
+
+  beforeEach(() => {
+    process.env.DATADOG_CLIENT_TOKEN_VAR = "token";
+    process.env.DATADOG_APPLICATION_ID_VAR = "app-id";
+    jest.isolateModules(() => {
+      ({
+        initializeDatadogProvider: initializeProvider,
+        isDatadogRecording: isRecording,
+        stopDatadogRecording: stopRecording,
+      } = require("./datadog"));
+    });
+    initialize.mockReset();
+  });
+
+  afterEach(() => {
+    delete process.env.DATADOG_CLIENT_TOKEN_VAR;
+    delete process.env.DATADOG_APPLICATION_ID_VAR;
+  });
+
+  it("opens once the provider is initialized with the user's consent", async () => {
+    await initializeProvider({}, TrackingConsent.GRANTED);
+
+    expect(isRecording()).toBe(true);
+  });
+
+  it("stays closed without the user's consent", async () => {
+    await initializeProvider({}, TrackingConsent.NOT_GRANTED);
+
+    expect(isRecording()).toBe(false);
+  });
+
+  it("closes when recording is stopped, e.g. the feature flag is turned off", async () => {
+    await initializeProvider({}, TrackingConsent.GRANTED);
+
+    stopRecording();
+
+    expect(isRecording()).toBe(false);
+  });
+
+  it("is not reopened by an initialization that completes after recording was stopped", async () => {
+    let finish: () => void = () => {};
+    initialize.mockReturnValueOnce(new Promise<void>(resolve => (finish = resolve)));
+    const pending = initializeProvider({}, TrackingConsent.GRANTED);
+
+    stopRecording();
+    finish();
+    await pending;
+
+    expect(isRecording()).toBe(false);
+  });
+
+  it("is not reopened by an older initialization that completes after a newer one", async () => {
+    let finishOlder: () => void = () => {};
+    initialize.mockReturnValueOnce(new Promise<void>(resolve => (finishOlder = resolve)));
+    const older = initializeProvider({}, TrackingConsent.GRANTED);
+    await initializeProvider({}, TrackingConsent.NOT_GRANTED);
+
+    finishOlder();
+    await older;
+
+    expect(isRecording()).toBe(false);
+  });
+});
 
 describe("customErrorEventMapper", () => {
   const mapError = customErrorEventMapper(false);

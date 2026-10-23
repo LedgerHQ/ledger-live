@@ -7,6 +7,7 @@ import {
   ExchangeType,
   UiHook,
   useConfig,
+  useDappSessionUiHook,
   useWalletAPIServer,
   SetCurrentAccountHistDb,
   useCacheBustedLiveApps,
@@ -19,7 +20,15 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector } from "~/context/hooks";
-import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
 import { appVersion } from "LLM/utils/appVersion";
 import { useTheme } from "styled-components/native";
@@ -39,15 +48,23 @@ import {
   E2E_WEBVIEW_CONSOLE_LOG_TYPE,
   E2E_WEBVIEW_NETWORK_LOG_TYPE,
 } from "../../e2e/webviewNetworkLogCapture";
-import { webviewLogStore } from "../../e2e/webviewLogStore";
+import {
+  webviewLogStore,
+  type WebviewConsoleLog,
+  type WebviewNetworkLog,
+} from "../../e2e/webviewLogStore";
 import { getTrackingRouteLiveAppSource } from "./analytics";
+import {
+  reportDomainCheckViolation,
+  reportDroppedBridgeMessage,
+  reportIfStrictlyDisallowed,
+} from "./domainCheckReport";
 import { walletSelector } from "~/reducers/wallet";
 import {
   CacheMode,
   ShouldStartLoadRequest,
   WebViewOpenWindowEvent,
 } from "react-native-webview/lib/WebViewTypes";
-import { Linking } from "react-native";
 import { useCacheBustedLiveAppsDB } from "~/screens/Platform/v2/hooks";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -55,6 +72,18 @@ import type { WalletApiDeviceIntentSignRequest } from "LLM/features/WalletApiSig
 import type { WalletApiDeviceIntentSignMessageRequest } from "LLM/features/WalletApiSignature/components/MessageSignatureDrawer";
 import { useDeviceIntentSignEnabled } from "LLM/features/WalletApiSignature/hooks/useDeviceIntentSignEnabled";
 import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
+import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
+import {
+  isLedgerDeeplink,
+  openWindowExternally,
+  shouldStartLoadWithManifestDomains,
+} from "./manifestDomainGuard";
+import {
+  acceptWebviewMessage,
+  getMessagingAllowedOrigins,
+  useBridgeAllowedDomains,
+  useWebviewBridgeSession,
+} from "./bridge";
 export function useWebView(
   {
     manifest,
@@ -99,17 +128,22 @@ export function useWebView(
     [],
   );
 
-  const { webviewProps, webviewRef, onShouldStartLoadWithRequest, isBlockedByDomainCheck } =
-    useWebviewState(
-      {
-        manifest: manifest satisfies AppManifest,
-        inputs,
-        manifestDomainCheckEnabled,
-      },
-      ref,
-      onStateChange,
-      serverRef,
-    );
+  const {
+    webviewProps,
+    webviewRef,
+    onShouldStartLoadWithRequest,
+    isBlockedByDomainCheck,
+    mainFrameUrl,
+  } = useWebviewState(
+    {
+      manifest: manifest satisfies AppManifest,
+      inputs,
+      manifestDomainCheckEnabled,
+    },
+    ref,
+    onStateChange,
+    serverRef,
+  );
 
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
@@ -134,8 +168,11 @@ export function useWebView(
   const [publicKeyUnavailableError, setPublicKeyUnavailableError] = useState<Error | null>(null);
   const clearPublicKeyUnavailableError = useCallback(() => setPublicKeyUnavailableError(null), []);
 
+  // Read by the UI flows that prepare asynchronously, to not open once their session is closed.
+  const bridgeSessionRef = useRef<BridgeSession | undefined>(undefined);
   const uiHook = useUiHook({
     manifest,
+    bridgeSessionRef,
     onTransactionBroadcast: onWalletApiTransactionBroadcast,
     requestDeviceIntentSign: setDeviceIntentSignRequest,
     requestDeviceIntentSignMessage: setDeviceIntentSignMessageRequest,
@@ -160,29 +197,34 @@ export function useWebView(
         const webview = safeGetRefValue(webviewRef);
         webview.reload();
       },
-      // TODO: wallet-api-server lifecycle is not perfect and will try to send messages before a ref is available. Some additional thinkering is needed here.
-      postMessage: (message: string) => {
-        try {
-          const webview = safeGetRefValue(webviewRef);
-
-          webview.postMessage(message);
-        } catch {
-          console.warn(
-            "wallet-api-server tried to send a message while the webview was not yet initialized.",
-            message,
-          );
-        }
-      },
     };
   }, [webviewRef]);
 
+  // The drawers a Live App opened are closed when its main frame moves to another origin.
+  const { closeDrawer: closeModularDrawer, isOpen: isModularDrawerOpen } =
+    useModularDrawerController();
+  const closeLiveAppDrawers = useCallback(() => {
+    setDeviceIntentSignRequest(null);
+    setDeviceIntentSignMessageRequest(null);
+    setPublicKeyUnavailableError(null);
+    if (isModularDrawerOpen) {
+      closeModularDrawer();
+    }
+  }, [closeModularDrawer, isModularDrawerOpen]);
+
+  const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, closeLiveAppDrawers);
+  useLayoutEffect(() => {
+    bridgeSessionRef.current = bridge.session;
+  }, [bridge.session]);
+  const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
+  const messagingAllowedOrigins = useMemo(
+    () => getMessagingAllowedOrigins(allowedDomains),
+    [allowedDomains],
+  );
+
   const walletState = useSelector(walletSelector);
 
-  const {
-    onMessage: onMessageRaw,
-    onLoadError,
-    server,
-  } = useWalletAPIServer({
+  const { onLoadError, server } = useWalletAPIServer({
     accountNames: walletState.accountNames,
     manifest: manifest satisfies AppManifest,
     accounts,
@@ -191,6 +233,7 @@ export function useWebView(
     webviewHook,
     uiHook,
     customHandlers,
+    bridgeSession: bridge.session,
   });
   const [cacheBustedLiveAppsDb, setCacheBustedLiveAppsDbState, cacheBustedLoaded] =
     useCacheBustedLiveAppsDB();
@@ -206,55 +249,83 @@ export function useWebView(
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  // A dapp request opens its UI, and is broadcast, only while the session it came from is open.
+  const dappUiHook = useDappSessionUiHook(bridge.session, uiHook);
   const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     currentAccountHistDb,
     setCurrentAccountHistDb,
     accounts,
-    uiHook,
-    postMessage: webviewHook.postMessage,
+    uiHook: dappUiHook,
+    postMessage: bridge.session.send,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
     referrer: inputs?.referrer?.toString(),
     mevProtected,
+    session: bridge.session,
   });
 
+  // A queued dapp message runs once its session is active, with the handler of that session.
+  const onDappMessageRef = useRef(onDappMessage);
+  useLayoutEffect(() => {
+    onDappMessageRef.current = onDappMessage;
+  }, [onDappMessage]);
+
+  const { accept } = bridge;
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
-      if (e.nativeEvent?.data) {
-        try {
-          const msg = JSON.parse(e.nativeEvent.data);
+      const data = e.nativeEvent?.data;
+      if (!data) return;
+      reportIfStrictlyDisallowed({
+        manifest,
+        url: e.nativeEvent.url,
+        frameType: "unknown",
+        kind: "bridge",
+      });
 
-          if (Config.DETOX && msg.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
-            webviewLogStore.addNetworkLog(msg.payload);
-            return;
-          }
-          if (Config.DETOX && msg.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
-            webviewLogStore.addConsoleLog(msg.payload);
-            return;
-          }
+      let msg: { type?: unknown; payload?: unknown } | null | undefined;
+      try {
+        msg = JSON.parse(data);
+      } catch {
+        msg = undefined;
+      }
 
-          if (Config.MOCK && msg.type === "e2eTest") {
-            sendWalletAPIResponse(msg.payload);
-          } else if (msg.type === "dapp") {
-            onDappMessage(msg);
-          } else {
-            onMessageRaw(e.nativeEvent.data);
-          }
-        } catch {
-          onMessageRaw(e.nativeEvent.data);
-        }
+      if (Config.DETOX && msg?.type === E2E_WEBVIEW_NETWORK_LOG_TYPE) {
+        webviewLogStore.addNetworkLog(msg.payload as WebviewNetworkLog);
+        return;
+      }
+      if (Config.DETOX && msg?.type === E2E_WEBVIEW_CONSOLE_LOG_TYPE) {
+        webviewLogStore.addConsoleLog(msg.payload as WebviewConsoleLog);
+        return;
+      }
+      if (Config.MOCK && msg?.type === "e2eTest") {
+        sendWalletAPIResponse(msg.payload as Record<string, unknown>);
+        return;
+      }
+
+      const session = acceptWebviewMessage(e, allowedDomains, accept, sender =>
+        reportDroppedBridgeMessage(manifest, sender),
+      );
+      if (!session) return;
+
+      if (msg?.type === "dapp") {
+        const dappMessage = msg;
+        session.deliver(() =>
+          onDappMessageRef.current(dappMessage as Parameters<typeof onDappMessage>[0]),
+        );
+      } else {
+        session.receive(data);
       }
     },
-    [onDappMessage, onMessageRaw],
+    [accept, allowedDomains, manifest],
   );
 
-  const onOpenWindow = useCallback((event: WebViewOpenWindowEvent) => {
-    const { targetUrl } = event.nativeEvent;
-    // Don't use canOpenURL as we cannot check unknown apps on the phone
-    // Without listing everything in plist and android manifest
-    Linking.openURL(targetUrl);
-  }, []);
+  const onOpenWindow = useCallback(
+    (event: WebViewOpenWindowEvent) => {
+      openWindowExternally(event.nativeEvent.targetUrl, !!manifestDomainCheckEnabled);
+    },
+    [manifestDomainCheckEnabled],
+  );
 
   useEffect(() => {
     if (webviewRef && webviewRef.current && manifest.cacheBustingId !== undefined) {
@@ -292,6 +363,7 @@ export function useWebView(
   return {
     onLoadError,
     onMessage,
+    messagingAllowedOrigins,
     onOpenWindow,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,
@@ -326,7 +398,10 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const initialURL = useMemo(
+    () => getInitialURL(inputs, manifest, { enforceManifestDomains: manifestDomainCheckEnabled }),
+    [manifest, inputs, manifestDomainCheckEnabled],
+  );
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   // Mirror desktop's originWhitelist logic: when the flag is on, validate the initial URL
@@ -361,8 +436,15 @@ export function useWebviewState(
   useEffect(() => {
     if (isBlockedByDomainCheck) {
       setState(s => ({ ...s, loading: false, isAppUnavailable: true }));
+      reportDomainCheckViolation({
+        manifest,
+        url: initialURL,
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
     }
-  }, [isBlockedByDomainCheck]);
+  }, [initialURL, isBlockedByDomainCheck, manifest]);
   const { theme } = useTheme();
 
   const source = useMemo(
@@ -475,12 +557,33 @@ export function useWebviewState(
     }
   }, [state, onStateChange]);
 
+  useEffect(() => {
+    reportIfStrictlyDisallowed({
+      manifest,
+      url: state.url,
+      frameType: "main_frame",
+      kind: "navigation",
+    });
+  }, [manifest, state.url]);
+
   const onShouldStartLoadWithRequest = useCallback(
     (request: ShouldStartLoadRequest): boolean => {
       if (!manifestDomainCheckEnabled) return true;
-      return isUrlAllowedByManifestDomains(request.url, manifest.domains ?? []);
+      if (shouldStartLoadWithManifestDomains(request, manifest.domains ?? [])) return true;
+      const isMainFrame = request.isTopFrame !== false;
+      // Main-frame Ledger deeplinks are handed to Linking, not blocked.
+      if (!(isMainFrame && isLedgerDeeplink(request.url))) {
+        reportDomainCheckViolation({
+          manifest,
+          url: request.url,
+          frameType: isMainFrame ? "main_frame" : "sub_frame",
+          kind: "navigation",
+          outcome: "blocked",
+        });
+      }
+      return false;
     },
-    [manifestDomainCheckEnabled, manifest.domains],
+    [manifestDomainCheckEnabled, manifest],
   );
 
   const props: Partial<WebViewProps> = useMemo(
@@ -499,6 +602,8 @@ export function useWebviewState(
     webviewRef,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,
+    /** Main-frame URL, updated from load start: the bridge session follows its origin */
+    mainFrameUrl: state.url,
   };
 }
 
@@ -520,10 +625,13 @@ export interface Props {
   requestDeviceIntentSignMessage: (request: WalletApiDeviceIntentSignMessageRequest) => void;
   onAccountRequestCancel?: () => void;
   onAccountRequestSuccess?: () => void;
+  /** Session of the Wallet API server the UI flows are opened for */
+  bridgeSessionRef?: React.RefObject<BridgeSession | undefined>;
 }
 
 export function useUiHook({
   manifest,
+  bridgeSessionRef,
   onTransactionBroadcast,
   onPublicKeyUnavailable,
   requestDeviceIntentSign,
@@ -532,7 +640,11 @@ export function useUiHook({
   onAccountRequestSuccess,
 }: Props): UiHook {
   const navigation = useNavigation();
-  const [device, setDevice] = useState<Device>();
+  // The device of an exchange belongs to the session that started it: the next origin never gets it.
+  const [exchangeDevice, setExchangeDevice] = useState<{
+    device: Device;
+    session: BridgeSession | undefined;
+  }>();
   const { createDrawerConfiguration } = useDrawerConfiguration();
   const { openDrawer: openModularDrawer } = useModularDrawerController();
   const deviceIntentSignEnabled = useDeviceIntentSignEnabled(manifest.id);
@@ -558,16 +670,21 @@ export function useUiHook({
 
         const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
+        // Closing the drawer of a session that is gone (origin change) must not reach the host,
+        // e.g. leave the screen of the Live App.
+        const session = bridgeSessionRef?.current;
         setOriginFlow(flow);
         openModularDrawer?.({
           source: source,
           flow: flow,
           enableAccountSelection: true,
           onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) => {
+            if (session && !session.isOpen) return;
             onAccountRequestSuccess?.();
             onSuccess(account, parentAccount);
           },
           onCancel: () => {
+            if (session && !session.isOpen) return;
             onCancel?.();
             onAccountRequestCancel?.();
           },
@@ -653,7 +770,10 @@ export function useUiHook({
         onError,
       }) => {
         try {
+          const session = bridgeSessionRef?.current;
           const tx = await prepareSignTransaction(account, parentAccount, liveTx);
+          // The main frame changed origin while the transaction was prepared.
+          if (session && !session.isOpen) return;
 
           // When enabled, skip the recap/fee "buffer" screen and connect to the device
           // directly through the DeviceIntentExecutor, surfaced as a bottom-sheet drawer
@@ -741,6 +861,7 @@ export function useUiHook({
         });
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        const session = bridgeSessionRef?.current;
         navigation.navigate(NavigatorName.PlatformExchange, {
           screen: ScreenName.PlatformStartExchange,
           params: {
@@ -748,12 +869,16 @@ export function useUiHook({
               exchangeType: ExchangeType[exchangeType],
             },
             onResult: result => {
+              // A late result of a closed session changes neither the device nor the flows of
+              // the next origin: its own flow is already gone.
+              if (session && !session.isOpen) return;
+
               if (result.startExchangeError) {
                 onCancel(result.startExchangeError.error);
               }
 
               if (result.startExchangeResult) {
-                setDevice(result.device);
+                setExchangeDevice(result.device ? { device: result.device, session } : undefined);
                 onSuccess(result.startExchangeResult.nonce);
               }
 
@@ -763,6 +888,9 @@ export function useUiHook({
         });
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        const session = bridgeSessionRef?.current;
+        const device =
+          exchangeDevice && exchangeDevice.session === session ? exchangeDevice.device : undefined;
         navigation.navigate(NavigatorName.PlatformExchange, {
           screen: ScreenName.PlatformCompleteExchange,
           params: {
@@ -777,13 +905,14 @@ export function useUiHook({
             },
             device,
             onResult: (result: { operation?: Operation; error?: Error }) => {
+              if (session && !session.isOpen) return;
               if (result.error) {
                 onCancel(result.error);
               }
               if (result.operation) {
                 onSuccess(result.operation.hash);
               }
-              setDevice(undefined);
+              setExchangeDevice(undefined);
               closePlatformExchange(navigation);
             },
           },
@@ -795,7 +924,7 @@ export function useUiHook({
       source,
       flow,
       navigation,
-      device,
+      exchangeDevice,
       createDrawerConfiguration,
       onTransactionBroadcast,
       deviceIntentSignEnabled,
@@ -806,6 +935,7 @@ export function useUiHook({
       onAccountRequestCancel,
       onAccountRequestSuccess,
       onPublicKeyUnavailable,
+      bridgeSessionRef,
     ],
   );
 }

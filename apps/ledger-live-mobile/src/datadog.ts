@@ -43,6 +43,22 @@ const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicatio
 
 export const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
 
+let recording = false;
+/** Identifies the latest initialization: an older one finishing late must not open the gate. */
+let initialization = 0;
+
+/**
+ * Whether an event sent now is recorded: the provider is initialized and the user granted
+ * tracking consent. Unlike `isDatadogEnabled`, this follows the feature flag and the consent.
+ */
+export const isDatadogRecording = (): boolean => recording;
+
+/** Closes the recording gate (feature flag off, ...) and discards the initialization in flight. */
+export const stopDatadogRecording = (): void => {
+  initialization++;
+  recording = false;
+};
+
 const baseConfig = {
   clientToken,
   env: Config.DATADOG_ENV || "",
@@ -69,6 +85,8 @@ export const initializeDatadogProvider = async (
   if (!isDatadogEnabled) {
     return;
   }
+  const current = ++initialization;
+  recording = false;
 
   const {
     serviceName,
@@ -128,6 +146,8 @@ export const initializeDatadogProvider = async (
   };
 
   await DatadogProvider.initialize(config);
+  if (current !== initialization) return;
+  recording = trackingConsent === TrackingConsent.GRANTED;
 };
 
 /**

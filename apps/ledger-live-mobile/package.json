@@ -285,7 +285,6 @@
     "i18next": "catalog:",
     "invariant": "2.2.4",
     "jotai": "2.17.0",
-    "json-rpc-2.0": "0.2.19",
     "lodash": "catalog:",
     "lottie-react-native": "7.3.8",
     "node-libs-react-native": "1.2.1",

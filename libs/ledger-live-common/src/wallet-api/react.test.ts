@@ -1,21 +1,27 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act, cleanup } from "@testing-library/react";
+import { renderHook, act, cleanup, waitFor } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import type { WalletHandlers } from "@ledgerhq/wallet-api-server";
 import type { AccountNamesState } from "@domain/entity-account-name";
 import { createFixtureAccount } from "../mock/fixtures/cryptoCurrencies";
 import type { TrackingAPI } from "./tracking";
-import type { useWalletAPIServerOptions } from "./react";
-import { AccountPublicKeyUnavailable } from "../errors";
-import { accountGetPublicKeyLogic } from "./logic";
+import { type UiHook, type useWalletAPIServerOptions, useDappSessionUiHook } from "./react";
+import { AccountPublicKeyUnavailable, BridgeSessionClosed } from "../errors";
+import { accountGetPublicKeyLogic, signRawTransactionLogic } from "./logic";
+import { getAccountBridge } from "../bridge";
+import { BridgeSession } from "./bridgeSession";
+import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { useEffect } from "react";
+import { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import {
   getAccountIdFromWalletAccountId,
   resolveWalletApiSpendableBalance,
   resolveWalletApiMaxSpendable,
 } from "./converters";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import openTransportAsSubject from "../hw/openTransportAsSubject";
 
 const walletState: AccountNamesState = new Map();
 const mockSetHandler = jest.fn();
@@ -62,6 +68,17 @@ jest.mock("./converters", () => ({
 jest.mock("./logic", () => ({
   ...jest.requireActual("./logic"),
   accountGetPublicKeyLogic: jest.fn(),
+  signRawTransactionLogic: jest.fn(),
+}));
+
+jest.mock("../bridge", () => ({
+  ...jest.requireActual("../bridge"),
+  getAccountBridge: jest.fn(),
+}));
+
+jest.mock("../hw/signMessage/index", () => ({
+  ...jest.requireActual("../hw/signMessage/index"),
+  prepareMessageToSign: jest.fn(async (_account: unknown, message: string) => ({ message })),
 }));
 
 jest.mock("../hw/openTransportAsSubject", () => ({
@@ -134,8 +151,8 @@ function createDefaultOptions(
     },
     webviewHook: {
       reload: jest.fn(),
-      postMessage: jest.fn(),
     },
+    bridgeSession: new BridgeSession("https://test.app", jest.fn()),
     uiHook: {},
     ...overrides,
   };
@@ -155,16 +172,102 @@ describe("useWalletAPIServer", () => {
     const { result } = renderHook(() => useWalletAPIServer(options));
 
     expect(result.current).toHaveProperty("server");
-    expect(result.current).toHaveProperty("onMessage");
     expect(result.current).toHaveProperty("onLoad");
     expect(result.current).toHaveProperty("onReload");
     expect(result.current).toHaveProperty("onLoadError");
     expect(result.current).toHaveProperty("widgetLoaded");
 
-    expect(typeof result.current.onMessage).toBe("function");
     expect(typeof result.current.onLoad).toBe("function");
     expect(typeof result.current.onReload).toBe("function");
     expect(typeof result.current.onLoadError).toBe("function");
+  });
+
+  it("serves the bridge session it is given", () => {
+    const options = createDefaultOptions();
+    renderHook(() => useWalletAPIServer(options));
+
+    expect(WalletAPIServer).toHaveBeenCalledTimes(1);
+    expect(jest.mocked(WalletAPIServer).mock.calls[0][0]).toBe(options.bridgeSession);
+  });
+
+  it("delivers the session messages once the server handlers are registered", async () => {
+    const options = createDefaultOptions();
+    let handlersAtDelivery = 0;
+    options.bridgeSession.deliver(() => {
+      handlersAtDelivery = mockSetHandler.mock.calls.length;
+    });
+
+    renderHook(() => useWalletAPIServer(options));
+    await act(async () => {});
+
+    expect(handlersAtDelivery).toBeGreaterThan(0);
+    expect(handlersAtDelivery).toBe(mockSetHandler.mock.calls.length);
+  });
+
+  it("delivers them after the effects of the hooks the host calls next (e.g. a dapp transport)", async () => {
+    const options = createDefaultOptions();
+    let isNextHookReady = false;
+    let wasReadyAtDelivery: boolean | undefined;
+    options.bridgeSession.deliver(() => {
+      wasReadyAtDelivery = isNextHookReady;
+    });
+
+    renderHook(() => {
+      useWalletAPIServer(options);
+      useEffect(() => {
+        isNextHookReady = true;
+      }, []);
+    });
+    await act(async () => {});
+
+    expect(wasReadyAtDelivery).toBe(true);
+  });
+
+  it("keeps the device transport of the session when the manifest is updated", () => {
+    jest.mocked(openTransportAsSubject).mockClear();
+    const complete = jest.fn();
+    jest
+      .mocked(openTransportAsSubject)
+      .mockReturnValue({ subscribe: jest.fn(), complete } as unknown as ReturnType<
+        typeof openTransportAsSubject
+      >);
+    let onDeviceConnected: (result: unknown) => void = () => {};
+    const uiDeviceTransport = jest.fn(({ onSuccess }) => {
+      onDeviceConnected = onSuccess;
+    });
+    const options = createDefaultOptions({ uiHook: { "device.transport": uiDeviceTransport } });
+    const { rerender } = renderHook(
+      (props: useWalletAPIServerOptions) => useWalletAPIServer(props),
+      { initialProps: options },
+    );
+    void getRegisteredHandler("device.transport")({ appName: "Ethereum" });
+    onDeviceConnected({ device: { deviceId: "device", modelId: "nanoX" } });
+    expect(openTransportAsSubject).toHaveBeenCalledTimes(1);
+
+    rerender({ ...options, manifest: { ...options.manifest, name: "Renamed" } });
+    expect(complete).not.toHaveBeenCalled();
+
+    rerender({ ...options, bridgeSession: new BridgeSession("https://other.test.app", jest.fn()) });
+    expect(complete).toHaveBeenCalledTimes(1);
+  });
+
+  it("runs a new server, with its handlers, config and permissions, for each bridge session", () => {
+    const options = createDefaultOptions();
+    const { rerender, result } = renderHook(
+      (props: useWalletAPIServerOptions) => useWalletAPIServer(props),
+      { initialProps: options },
+    );
+    const firstServer = result.current.server;
+    const handlersPerServer = mockSetHandler.mock.calls.length;
+    const nextSession = new BridgeSession("https://other.test.app", jest.fn());
+
+    rerender({ ...options, bridgeSession: nextSession });
+
+    expect(result.current.server).not.toBe(firstServer);
+    expect(jest.mocked(WalletAPIServer).mock.calls[1][0]).toBe(nextSession);
+    expect(mockSetHandler.mock.calls.length).toBe(2 * handlersPerServer);
+    expect(mockSetConfig).toHaveBeenCalledTimes(2);
+    expect(mockSetPermissions).toHaveBeenCalledTimes(2);
   });
 
   it("should start with widgetLoaded as false", () => {
@@ -437,6 +540,112 @@ describe("account.request handler", () => {
   });
 });
 
+describe("UI flows of a closed bridge session", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("does not open a UI flow once the session is closed", () => {
+    const uiAccountRequest = jest.fn();
+    const options = createDefaultOptions({ uiHook: { "account.request": uiAccountRequest } });
+    renderHook(() => useWalletAPIServer(options));
+
+    options.bridgeSession.close();
+    void getRegisteredHandler("account.request")({});
+
+    expect(uiAccountRequest).not.toHaveBeenCalled();
+  });
+
+  it("does not open the device for a connection that completes after the session is closed", () => {
+    let onDeviceConnected: (result: unknown) => void = () => {};
+    const uiDeviceTransport = jest.fn(({ onSuccess }) => {
+      onDeviceConnected = onSuccess;
+    });
+    const options = createDefaultOptions({ uiHook: { "device.transport": uiDeviceTransport } });
+    renderHook(() => useWalletAPIServer(options));
+
+    void getRegisteredHandler("device.transport")({ appName: "Ethereum" });
+    options.bridgeSession.close();
+    onDeviceConnected({ device: { deviceId: "device", modelId: "nanoX" } });
+
+    expect(uiDeviceTransport).toHaveBeenCalledTimes(1);
+    expect(openTransportAsSubject).not.toHaveBeenCalled();
+  });
+});
+
+describe("signing flow of a closed bridge session", () => {
+  afterEach(() => {
+    cleanup();
+    liveBlindSigningReporter.setContext({ liveAppContext: null });
+  });
+
+  it("rejects a signing flow left open and restores the signing attribution", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    const uiMessageSign = jest.fn();
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "message.sign": uiMessageSign },
+    });
+    renderHook(() => useWalletAPIServer(options));
+
+    const request = getRegisteredHandler("message.sign")({
+      accountId: "wallet-account-id",
+      message: Buffer.from("hello"),
+      meta: undefined,
+    });
+    await waitFor(() => expect(uiMessageSign).toHaveBeenCalled());
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBe("test-app");
+
+    options.bridgeSession.close();
+
+    await expect(request).rejects.toBeInstanceOf(BridgeSessionClosed);
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+});
+
+describe("broadcast of a closed bridge session", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("does not broadcast a signed transaction when the session closes while the bridge is prepared", async () => {
+    const account = createFixtureAccount("01");
+    jest.mocked(getAccountIdFromWalletAccountId).mockReturnValue(account.id);
+    jest
+      .mocked(signRawTransactionLogic)
+      .mockResolvedValue({ operation: { hash: "hash" }, signature: "signature" } as never);
+    const broadcast = jest.fn();
+    let prepareBridge: (bridge: { broadcast: typeof broadcast }) => void = () => {};
+    jest.mocked(getAccountBridge).mockReturnValue(
+      new Promise(resolve => {
+        prepareBridge = resolve;
+      }) as never,
+    );
+    const options = createDefaultOptions({
+      accounts: [account],
+      uiHook: { "transaction.signRaw": jest.fn() },
+    });
+    renderHook(() => useWalletAPIServer(options));
+
+    const request = getRegisteredHandler("transaction.signRaw")({
+      accountId: "wallet-account-id",
+      transaction: "raw",
+      broadcast: true,
+    } as never);
+    await waitFor(() => expect(getAccountBridge).toHaveBeenCalled());
+    options.bridgeSession.close();
+    prepareBridge({ broadcast });
+
+    await expect(request).rejects.toBeInstanceOf(BridgeSessionClosed);
+    expect(broadcast).not.toHaveBeenCalled();
+  });
+});
+
 describe("account.getMaxSpendable handler", () => {
   const getHandler = () => {
     const call = mockSetHandler.mock.calls.find(([name]) => name === "account.getMaxSpendable");
@@ -664,3 +873,51 @@ function createMockTracking(): TrackingAPI {
     dappSignTypedDataFail: jest.fn(),
   } as unknown as TrackingAPI;
 }
+
+describe("useDappSessionUiHook", () => {
+  const setup = () => {
+    const session = new BridgeSession("https://app.example.com", jest.fn());
+    const uiHook = {
+      "account.request": jest.fn(),
+      "message.sign": jest.fn(),
+      "transaction.sign": jest.fn(),
+      "transaction.broadcast": jest.fn(),
+    } as unknown as UiHook;
+    const { result } = renderHook(() => useDappSessionUiHook(session, uiHook));
+    return { session, uiHook, dappUiHook: result.current };
+  };
+
+  it("opens the signing UI while the session of the request is open", () => {
+    const { uiHook, dappUiHook } = setup();
+    const onSuccess = jest.fn();
+
+    dappUiHook["message.sign"]({ onSuccess } as never);
+    jest.mocked(uiHook["message.sign"]).mock.calls[0][0].onSuccess("0xsignature");
+
+    expect(onSuccess).toHaveBeenCalledWith("0xsignature");
+  });
+
+  it("opens no signing UI once the session closed while the request was prepared", () => {
+    const { session, uiHook, dappUiHook } = setup();
+
+    session.close();
+    dappUiHook["message.sign"]({ onSuccess: jest.fn() } as never);
+    dappUiHook["transaction.sign"]({ onSuccess: jest.fn() } as never);
+    dappUiHook["account.request"]({ onSuccess: jest.fn() } as never);
+
+    expect(uiHook["message.sign"]).not.toHaveBeenCalled();
+    expect(uiHook["transaction.sign"]).not.toHaveBeenCalled();
+    expect(uiHook["account.request"]).not.toHaveBeenCalled();
+  });
+
+  it("drops the callbacks of a signing UI that completes after the session closed", () => {
+    const { session, uiHook, dappUiHook } = setup();
+    const onSuccess = jest.fn();
+
+    dappUiHook["transaction.sign"]({ onSuccess } as never);
+    session.close();
+    jest.mocked(uiHook["transaction.sign"]).mock.calls[0][0].onSuccess({} as never);
+
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+});

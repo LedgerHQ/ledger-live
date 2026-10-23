@@ -56,6 +56,7 @@ const transformIncludePatterns = [
   "d3-.*",
   "internmap",
   "react-native-mmkv",
+  "react-native-webview",
 ];
 
 /** @type {import('@swc/jest').JestConfigWithTsJest} */
