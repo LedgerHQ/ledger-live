@@ -1,5 +1,29 @@
 # @ledgerhq/wallet-cli
 
+## 2.12.0
+
+### Minor Changes
+
+- [#23036](https://github.com/LedgerHQ/ledger-live/pull/23036) [`b50561d`](https://github.com/LedgerHQ/ledger-live/commit/b50561d318555decaf22dd4988291051b63e81fc) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Load only the invoked command's modules at startup, build the binaries without Bunli command generation, and report `ring encrypt` and `ring decrypt` under their own names in analytics
+
+- [#23368](https://github.com/LedgerHQ/ledger-live/pull/23368) [`2a42474`](https://github.com/LedgerHQ/ledger-live/commit/2a424743c0aa773caccdb8d270c2bfd73dc1441f) Thanks [@LL782](https://github.com/LL782)! - Read an SPL mint's token program through getMaybeTokenMint
+
+- [#23298](https://github.com/LedgerHQ/ledger-live/pull/23298) [`6f440f6`](https://github.com/LedgerHQ/ledger-live/commit/6f440f6c7d1a297826a48abbcd4d02cbffe3fc45) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - fix(wallet-cli): keep swap quotes authenticated while the keychain dialog is open
+
+  The 10 s auth timeout no longer counts the time the macOS keychain dialog waits for the user. Before, answering it slowly sent the quote without a token.
+
+## 2.12.0-next.0
+
+### Minor Changes
+
+- [#23036](https://github.com/LedgerHQ/ledger-live/pull/23036) [`b50561d`](https://github.com/LedgerHQ/ledger-live/commit/b50561d318555decaf22dd4988291051b63e81fc) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Load only the invoked command's modules at startup, build the binaries without Bunli command generation, and report `ring encrypt` and `ring decrypt` under their own names in analytics
+
+- [#23368](https://github.com/LedgerHQ/ledger-live/pull/23368) [`2a42474`](https://github.com/LedgerHQ/ledger-live/commit/2a424743c0aa773caccdb8d270c2bfd73dc1441f) Thanks [@LL782](https://github.com/LL782)! - Read an SPL mint's token program through getMaybeTokenMint
+
+- [#23298](https://github.com/LedgerHQ/ledger-live/pull/23298) [`6f440f6`](https://github.com/LedgerHQ/ledger-live/commit/6f440f6c7d1a297826a48abbcd4d02cbffe3fc45) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - fix(wallet-cli): keep swap quotes authenticated while the keychain dialog is open
+
+  The 10 s auth timeout no longer counts the time the macOS keychain dialog waits for the user. Before, answering it slowly sent the quote without a token.
+
 ## 2.11.2
 
 ### Patch Changes
@@ -329,99 +353,5 @@
 - [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) [`ba6e9c1`](https://github.com/LedgerHQ/ledger-live/commit/ba6e9c1e542ad28a59b0163e3b453e2f047a48b9) Thanks [@ysitbon](https://github.com/ysitbon)! - Import currency accessors from the domain layer instead of the `@ledgerhq/live-common/currencies` barrel.
 
   Crypto accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByTicker`, `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `hasCryptoCurrencyId`) now come from `@domain/entity-currency-crypto`, and fiat accessors (`getFiatCurrencyByTicker`, `findFiatCurrencyByTicker`, `listFiatCurrencies`, `hasFiatCurrencyTicker`) from `@domain/entity-currency-fiat`. The re-exports that forwarded them through `@ledgerhq/live-common/currencies` are removed; the barrel keeps its formatting, colour, helper, marketcap, support and URI-scheme exports. Behaviour is unchanged — the barrel already delegated to these same domain functions.
-
-## 2.1.0
-
-### Minor Changes
-
-- [#19159](https://github.com/LedgerHQ/ledger-live/pull/19159) [`7096cea`](https://github.com/LedgerHQ/ledger-live/commit/7096cea26156431db96ff5ab977cfb04885211e7) Thanks [@Justkant](https://github.com/Justkant)! - Add a `skill` command group (`list`, `retrieve`, `install`) that ships the Ledger wallet-cli agent skill embedded inside the compiled binary, so `wallet-cli skill install` works with zero prior setup. Installs into the right location for most agents via `--agent` (`claude`, `cursor`, `codex`, or the generic `agents` → `.agents/skills`), with `--global` and `--dir` overrides.
-
-- [#19160](https://github.com/LedgerHQ/ledger-live/pull/19160) [`d56837e`](https://github.com/LedgerHQ/ledger-live/commit/d56837e6a6063120931595f5c775fdb1521b79ac) Thanks [@Justkant](https://github.com/Justkant)! - Add `wallet-cli skill doctor` to detect drift between installed agent skills and the skills shipped in the running binary (`up-to-date`, `outdated`, `modified-locally`, `missing`), with a conservative `--fix` self-heal that reinstalls outdated/missing skills and only overwrites locally modified ones under `--force`. Skills are now version-locked via a `.wallet-cli-skill.json` provenance sidecar written on install, and the `skill install` JSON envelope surfaces the wallet-cli version and per-skill content hashes.
-
-- [#19161](https://github.com/LedgerHQ/ledger-live/pull/19161) [`4d5b3fb`](https://github.com/LedgerHQ/ledger-live/commit/4d5b3fbdf65100d34027d2140eff5478c97b3ac2) Thanks [@Justkant](https://github.com/Justkant)! - Add a one-time, agent-aware first-run nudge that prints a tailored hint to stderr (e.g. `wallet-cli skill install --agent claude`) on the first real command, so agents discover the embedded skill. It is shown at most once per user (persisted via an XDG state marker), silent under `--output json` and for `skill *` commands, opt-out via `WALLET_CLI_NO_NUDGE=1`, and fully best-effort (never throws or changes exit codes). Agent detection is centralized in a new `agent-detection` helper that `isAgentEnvironment()` now delegates to.
-
-- [#19773](https://github.com/LedgerHQ/ledger-live/pull/19773) [`2a532b7`](https://github.com/LedgerHQ/ledger-live/commit/2a532b7a27f2536ae64b2e6e35829b91046ad968) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - `swap execute` now reports `amountExpectedTo` in display units (e.g. `1.2345` ETH) instead of atomic units, both in the human output and the JSON envelope, and sends the same display-unit value as the `toAmount` analytics property. The atomic value is still available under the new `amountExpectedToAtomic` field for scripts that relied on the previous behaviour. `magnitudeAwareRate` is unchanged and stays an atomic-to over atomic-from ratio, matching live-common's convention.
-
-- [#19598](https://github.com/LedgerHQ/ledger-live/pull/19598) [`9dc6491`](https://github.com/LedgerHQ/ledger-live/commit/9dc6491192f071285315c4b48340e1a02688dae9) Thanks [@koda-apps](https://github.com/apps/koda-apps)! - fix: add missing provider field to swap_completed analytics event
-
-- [#19871](https://github.com/LedgerHQ/ledger-live/pull/19871) [`d243bd0`](https://github.com/LedgerHQ/ledger-live/commit/d243bd0cd2489a836961a724e60f6049a27f74d6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): consume `validateAddress` through `CoinModuleApi` instance
-
-- [#19797](https://github.com/LedgerHQ/ledger-live/pull/19797) [`93c54da`](https://github.com/LedgerHQ/ledger-live/commit/93c54daf4076e1163a9b7db86107ab2765b81b5d) Thanks [@ysitbon](https://github.com/ysitbon)! - Repoint remaining @ledgerhq/cryptoassets value-barrel imports to @domain/entity-currency-crypto and @domain/entity-currency-fiat; inline ApiAsset wire-type into the dada-client entities module; drop @ledgerhq/cryptoassets from wallet-cli devDependencies
-
-## 2.0.1
-
-### Patch Changes
-
-- Refresh README documentation for the `2.0.0` release: bump the version, retitle the status section to v2, and document the `earn` (staking & DeFi yield) and `ring` (Ledger Key Ring / LKRP encryption) command groups in the commands table, `--help` list, and prerequisites.
-
-## 2.0.0
-
-> This is a manual major version bump. There are no breaking changes; the `2.0.0` release marks the addition of the `earn` and `ring` command groups as a product milestone. All entries below are additive (minor) or fixes (patch).
-
-### Minor Changes
-
-- Add `ring` command group: a developer surface to your Ledger Key Ring (LKRP) for trustless, hardware-rooted encryption of files and text.
-
-  Commands: `ring init`, `ring encrypt`, `ring decrypt`, `ring keys`, `ring destroy`. Files via `-i/-o`, text via stdin/stdout. Keys are AES-256-GCM, derived per-name with HKDF-SHA256 from the LKRP-shared root key; the ring is recoverable from your Ledger.
-
-- Earn: add `earn deposit`, `earn withdraw`, and `earn positions` commands. `earn deposit`/`earn withdraw` support EVM ERC-4626 Kiln vaults (the backend-built approve→deposit / redeem calldata is run through the EVM bridge, opening the Ethereum app with the `Kiln` clear-signing app as a dependency, with a gas-limit buffer for the gas-heavy vault calls and on-chain status polling) and Solana native staking (`stake.createAccount` to delegate; a two-phase unstake that undelegates first and then withdraws the inactive lamports with `--finalize`). `earn positions` lists backend stake views and enriches Solana with on-chain stake accounts so `earn withdraw --stake-account` has a concrete target. Positions still being refreshed are flagged with a `(stale)` marker, and `--fresh` triggers a background refresh whose results show up on a re-run. All three accept `--output json`, and deposit/withdraw accept `--dry-run` to prepare and validate without signing or broadcasting.
-
-  Earn yields: source Solana validators from the validator-details endpoint and merge Figment APY (Net APY now shown for validators), surface more validators with a configurable `--limit`, and separate informational grow/provider rows from concrete `earn deposit --product` targets in the output. Without `--network`, the listing is now restricted to CLI-supported earn networks (ethereum, solana) and narrowed to the user's discovered accounts, with `--all` to bypass the account filter. Rows the CLI cannot deposit into directly now carry a `ledgerlive://` deeplink to act on in the wallet: provider rows link to their live app (`ledgerlive://discover/<liveAppId>`), and grow rows link to the Earn deposit flow for the asset (`ledgerlive://earn/deposit?cryptoAssetId=<deposit_token>&accountId=<walletApiId>`, defaulting to the first discovered account per network with `--account` to override). For ERC-20 deposit tokens the deeplink targets the token sub-account id (not the parent) so the deposit page selects the right token. Solana delegation does not go through a live app (the Earn live app itself opens the native modal), so SOL rows instead link to the native delegation modal (`ledgerlive://earn?action=stake-account&accountId=<walletApiId>`, falling back to `action=stake` when no account is known). Deeplinks render as OSC 8 hyperlinks (clickable in terminals that support it, plain copy-pasteable URL when piped or unsupported)
-
-- Make the `@ledgerhq/cryptoassets` fiat registry injectable (`setFiatCurrenciesStore`) and inject the `@domain/entity-currency-fiat` registry at each app's bootstrap, so the domain registry is the single runtime source of truth for fiat currency data. The bundled fiat list stays as the fallback and is kept in sync by the existing parity test.
-
-### Patch Changes
-
-- `ring destroy` now handles the non-destructive application deactivation introduced by the LKRP per-application close: it calls `destroyApplication` directly (which is idempotent on an already-closed stream) and, when the member has been ejected from the ring (`TrustchainEjected` — removed by another owner, or the trustchain destroyed remotely), treats the remote as already gone and proceeds to the local credential wipe instead of aborting as a transient network failure. `ring encrypt`/`ring decrypt` now surface actionable guidance when the wallet-cli application has been deactivated on the ring.
-
-- Add `fromCurrency` and `toCurrency` fields to the `swap_completed` analytics event.
-
-- Add tests for the Device Intent Executor (DIE).
-
-## 1.1.0
-
-### Minor Changes
-
-- [#18670](https://github.com/LedgerHQ/ledger-live/pull/18670) [`8de4c1a`](https://github.com/LedgerHQ/ledger-live/commit/8de4c1a112ad768b767ddbecfbc7c2d49bbdce8c) Thanks [@CremaFR](https://github.com/CremaFR)! - Fix swap execution into token accounts that do not exist yet
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-- [#18215](https://github.com/LedgerHQ/ledger-live/pull/18215) [`b1c20cf`](https://github.com/LedgerHQ/ledger-live/commit/b1c20cfc2595e8ec2019e94ef15238852e4e9fea) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Fix Solana `send --memo` failing before the signing prompt. The wallet-cli bridge was projecting `--memo` as a top-level transaction field, but `@ledgerhq/coin-solana` only reads it from `tx.model.uiState.memo`. The memo never reached the command descriptor, no Memo program instruction was added to the message, and the resulting half-prepared transaction broke the USB/DMK transport. `--memo` is now projected into `tx.model.uiState.memo` for both native and SPL-token transfers.
-
-- [#18203](https://github.com/LedgerHQ/ledger-live/pull/18203) [`0322baa`](https://github.com/LedgerHQ/ledger-live/commit/0322baa8ab7ad8ac5c45c805e7159653047ee7bf) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove to fresh address
-
-- [#18256](https://github.com/LedgerHQ/ledger-live/pull/18256) [`eb1dae8`](https://github.com/LedgerHQ/ledger-live/commit/eb1dae8fc14ff8e0bc1e1ce040712492a0328451) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Derive "supported currencies" from the coin-modules registry instead of `setSupportedCurrencies`.
-
-  Each `CoinModuleLoader` now declares a `supportedCoins: CryptoCurrencyId[]` field, and a currency is supported when it appears in a registered loader's `supportedCoins`. The framework `setSupportedCurrencies` / `listSupportedCurrencies` / `isCurrencySupported` and the `EXPERIMENTAL_CURRENCIES` env are removed; `listSupportedCurrencies` / `isCurrencySupported` are now exported from `@ledgerhq/live-common/currencies` backed by the registry. Apps no longer maintain a supported-currencies list — registering the coin modules is what makes their currencies supported.
-
-- Inject the domain-backed crypto-currency registry (`@domain/entity-currency-crypto`) at app bootstrap via `setCryptoCurrenciesStore`, making the domain registry the runtime source of truth for currency data. The bundled data in `@ledgerhq/cryptoassets` stays as the fallback.
-
-- add swap cli die
-
-- add init segment analytics
-
-- add lifecycle analytics
-
-- add analytics to help command
-
-- add account analytics
-
-- add send analytics
-
-- add analytics for swap cli
-
-- Add swap analytics tracking (started, completed, rejected) to the DIE swap pipeline
-
-### Patch Changes
-
-- remove mention of die
-
-## 1.0.2
-
-### Patch Changes
-
-- [#17664](https://github.com/LedgerHQ/ledger-live/pull/17664) [`8056a28`](https://github.com/LedgerHQ/ledger-live/commit/8056a28b60e14ec6764343131364e2e82c54b188) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add /accepted and /cancelled to swap cli
-
-- Emit a plain greppable `hash: <txHash>` line to stdout on broadcast (human output) so scripts can capture the transaction hash without parsing ANSI-styled status lines.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

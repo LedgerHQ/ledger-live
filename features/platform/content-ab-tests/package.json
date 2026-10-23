@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-content-ab-tests",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "English copy overrides from Remote Config content experiments",
   "main": "src/index.ts",

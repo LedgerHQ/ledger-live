@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-balance",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Account balance entity: the crypto amount of each asset an account holds",
   "main": "src/index.ts",

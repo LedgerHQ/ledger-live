@@ -1,5 +1,29 @@
 # @features/flow-contacts-edit-contact
 
+## 0.7.0
+
+### Minor Changes
+
+- [#23453](https://github.com/LedgerHQ/ledger-live/pull/23453) [`5e9a60a`](https://github.com/LedgerHQ/ledger-live/commit/5e9a60ac27b41be43d1ea24b0d11acec92260c49) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Edit contact copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @features/platform-contacts@0.11.0
+  - @domain/entity-contact@0.12.1
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#23453](https://github.com/LedgerHQ/ledger-live/pull/23453) [`5e9a60a`](https://github.com/LedgerHQ/ledger-live/commit/5e9a60ac27b41be43d1ea24b0d11acec92260c49) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Edit contact copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @features/platform-contacts@0.11.0-next.0
+  - @domain/entity-contact@0.12.1-next.0
+
 ## 0.6.2
 
 ### Patch Changes

@@ -1,5 +1,41 @@
 # @features/flow-fear-and-greed
 
+## 0.4.0
+
+### Minor Changes
+
+- [#23429](https://github.com/LedgerHQ/ledger-live/pull/23429) [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump Lumen to lumen-design-core 0.1.32, lumen-ui-react 0.1.64, lumen-ui-rnative 0.1.67 and lumen-utils-shared 0.1.16, and migrate `Spot` to its palette API (`icon` required, `appearance="icon"` dropped, `check`/`info`/`error`/`warning`/`loader` mapped to explicit icons, `number` moved to `SpotNumber`). The devtools native jest preset now mocks `react-native-gesture-handler`, which the new lumen `Toaster` imports.
+
+- [#23359](https://github.com/LedgerHQ/ledger-live/pull/23359) [`e5762fc`](https://github.com/LedgerHQ/ledger-live/commit/e5762fc3dc7bb36007c8133efefeeb6523cebf05) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the web and native dependencies for the Fear and Greed flow package
+
+- [#23360](https://github.com/LedgerHQ/ledger-live/pull/23360) [`a782d57`](https://github.com/LedgerHQ/ledger-live/commit/a782d57262cda0475c54417c8b769955df316e78) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the desktop Fear and Greed UI into the flow package
+
+- [#23361](https://github.com/LedgerHQ/ledger-live/pull/23361) [`a02d06c`](https://github.com/LedgerHQ/ledger-live/commit/a02d06c1556ac855233d3b9b427cd812628a7aba) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the mobile Fear and Greed UI into the flow package
+
+### Patch Changes
+
+- Updated dependencies [[`2ebd029`](https://github.com/LedgerHQ/ledger-live/commit/2ebd029cd006cb89ceb240705247ccf5529c3c50), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @shared/ui-queued-bottom-sheet@0.7.0
+  - @domain/api-market-index-fear-and-greed@0.4.2
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#23429](https://github.com/LedgerHQ/ledger-live/pull/23429) [`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Bump Lumen to lumen-design-core 0.1.32, lumen-ui-react 0.1.64, lumen-ui-rnative 0.1.67 and lumen-utils-shared 0.1.16, and migrate `Spot` to its palette API (`icon` required, `appearance="icon"` dropped, `check`/`info`/`error`/`warning`/`loader` mapped to explicit icons, `number` moved to `SpotNumber`). The devtools native jest preset now mocks `react-native-gesture-handler`, which the new lumen `Toaster` imports.
+
+- [#23359](https://github.com/LedgerHQ/ledger-live/pull/23359) [`e5762fc`](https://github.com/LedgerHQ/ledger-live/commit/e5762fc3dc7bb36007c8133efefeeb6523cebf05) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the web and native dependencies for the Fear and Greed flow package
+
+- [#23360](https://github.com/LedgerHQ/ledger-live/pull/23360) [`a782d57`](https://github.com/LedgerHQ/ledger-live/commit/a782d57262cda0475c54417c8b769955df316e78) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the desktop Fear and Greed UI into the flow package
+
+- [#23361](https://github.com/LedgerHQ/ledger-live/pull/23361) [`a02d06c`](https://github.com/LedgerHQ/ledger-live/commit/a02d06c1556ac855233d3b9b427cd812628a7aba) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the mobile Fear and Greed UI into the flow package
+
+### Patch Changes
+
+- Updated dependencies [[`2ebd029`](https://github.com/LedgerHQ/ledger-live/commit/2ebd029cd006cb89ceb240705247ccf5529c3c50), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @shared/ui-queued-bottom-sheet@0.7.0-next.0
+  - @domain/api-market-index-fear-and-greed@0.4.2-next.0
+
 ## 0.3.0
 
 ### Minor Changes

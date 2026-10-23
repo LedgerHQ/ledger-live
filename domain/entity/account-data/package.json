@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-data",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Account data registry, the open map of what an account can be asked for, and the status of its reads",
   "main": "src/index.ts",

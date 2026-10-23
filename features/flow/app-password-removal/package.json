@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-password-removal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "App password removal flow for Ledger Wallet Mobile: deactivating the password and keeping the last protection while a card is active",
   "main": "src/index.ts",

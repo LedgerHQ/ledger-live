@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-tron",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [

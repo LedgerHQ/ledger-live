@@ -1,5 +1,29 @@
 # @features/flow-contacts-delete-contact
 
+## 0.3.0
+
+### Minor Changes
+
+- [#23431](https://github.com/LedgerHQ/ledger-live/pull/23431) [`47e5b74`](https://github.com/LedgerHQ/ledger-live/commit/47e5b740cf64f177fd1cbbfa7f5bf74de3d45661) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Delete contact copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @features/platform-contacts@0.11.0
+  - @domain/entity-contact@0.12.1
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23431](https://github.com/LedgerHQ/ledger-live/pull/23431) [`47e5b74`](https://github.com/LedgerHQ/ledger-live/commit/47e5b740cf64f177fd1cbbfa7f5bf74de3d45661) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Resolve Delete contact copy inside the package with @shared/i18n
+
+### Patch Changes
+
+- Updated dependencies [[`39529a8`](https://github.com/LedgerHQ/ledger-live/commit/39529a8a0df1a57d4e75218f098a4b367452627c), [`4fd1ebc`](https://github.com/LedgerHQ/ledger-live/commit/4fd1ebc94718ead589f235824f0440803341feb9)]:
+  - @features/platform-contacts@0.11.0-next.0
+  - @domain/entity-contact@0.12.1-next.0
+
 ## 0.2.5
 
 ### Patch Changes

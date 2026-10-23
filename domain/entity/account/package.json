@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "description": "Account entity: the account identity every account-* entity is keyed by, and the accounts of the app by AccountUUID",
   "main": "src/index.ts",

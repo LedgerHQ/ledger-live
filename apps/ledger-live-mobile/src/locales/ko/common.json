@@ -632,6 +632,10 @@
       "title" : "문제가 발생했습니다(오류 #17)",
       "description" : "아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
+    "CosmosMemoTooLong" : {
+      "title" : "메모가 최대 길이를 초과했습니다",
+      "description" : "입력하신 메모는 {{memoLength}}바이트입니다. 최대 {{maxLength}}바이트까지 입력할 수 있습니다. 메모 크기를 줄여주세요."
+    },
     "DeviceAppVerifyNotSupported" : {
       "title" : "My Ledger를 열어 이 앱을 업데이트하세요",
       "description" : "앱 인증이 지원되지 않습니다."
@@ -1163,6 +1167,10 @@
       "title" : "장치에서 트랜잭션이 거부되었습니다",
       "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
+    "TransferOfferExpiredError" : {
+      "title" : "이 제안은 만료되었습니다",
+      "description" : "이체 제안이 수락 전에 만료되었습니다. 전송자에게 새 제안을 보내달라고 요청하세요."
+    },
     "TransportError" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "{{message}} 다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -1449,6 +1457,10 @@
     },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
+    },
+    "StacksStakeInPreparePhase" : {
+      "title" : "다음 보상 주기까지 스테이킹이 일시 중지됩니다",
+      "description" : "Stacks 네트워크에서 다음 보상 주기를 준비하는 동안에는 새로운 스테이킹을 받지 없습니다. 스테이킹은 비트코인 기준 {{blocksUntilReopen}} 블록 후 다시 시작됩니다."
     },
     "StellarWrongMemoFormat" : {
       "title" : "메모 형식이 잘못되었습니다"
@@ -1852,6 +1864,27 @@
     "ICPIncreaseStakeWarning" : {
       "title" : "기존 락업된 스테이킹 물량에 추가합니다",
       "description" : "이 수량은 뉴런의 기존 스테이킹 자산에 합산되며 동일한 락업 해제 기간이 적용됩니다. 따라서 락업 해제가 완료될 때까지는 사용할 수 없습니다."
+    }
+  },
+  "accountDetailSettings" : {
+    "title" : "계정 설정",
+    "menu" : {
+      "changeName" : "이름 변경",
+      "viewAdvancedLogs" : "고급 로그 보기",
+      "removeAccount" : "포트폴리오에서 계정 삭제"
+    },
+    "advancedLogs" : {
+      "title" : "고급 로그",
+      "derivationTip" : "{{tag}} xpub 입니다. 서드파티 지갑으로 가져올 때 동일한 파생 모드를 선택하세요.",
+      "synchronised" : "동기화: {{date}}",
+      "copy" : "로그 복사",
+      "copied" : "복사됨"
+    },
+    "remove" : {
+      "title" : "계정을 삭제하시겠습니까?",
+      "description" : "이 계정과 연결된 자산은 더 이상 포트폴리오에 표시되지 않습니다. 블록체인상의 자산에는 아무런 영향을 미치지 않습니다.",
+      "confirm" : "계정 삭제",
+      "cancel" : "취소"
     }
   },
   "crash" : {
@@ -2525,6 +2558,35 @@
       "progress" : "앱을 설치하는 동안 Ledger Wallet을 종료하지 마세요.",
       "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
       "skipped" : "아직 {{ productName }}에서 이용할 수 없습니다"
+    }
+  },
+  "deviceOnboarding" : {
+    "checks" : {
+      "close" : "닫기",
+      "synchronizing" : {
+        "title" : "동기화 중..."
+      },
+      "idle" : {
+        "title" : "장치 상태를 확인하세요",
+        "description" : "Ledger 장치가 정품이며 최신 상태인지 확인해 주세요.",
+        "cta" : "장치 상태 확인하기"
+      },
+      "checking" : {
+        "title" : "장치 상태를 확인하세요",
+        "description" : "Ledger 사이너의 보안 상태와 최신 업데이트 여부를 확인하고 있습니다.",
+        "cta" : "확인 중..."
+      },
+      "succeeded" : {
+        "title" : "장치가 정품이며 최신 상태입니다",
+        "cta" : "계속"
+      }
+    },
+    "syncOffer" : {
+      "title" : "지갑 동기화",
+      "description" : "스마트폰을 변경하거나 컴퓨터에서 접속해도 잔액과 포트폴리오가 끊김 없이 동기화됩니다.",
+      "learnMore" : "자세히 알아보기",
+      "activate" : "활성화하기",
+      "skip" : "다음에"
     }
   },
   "onboarding" : {
@@ -3546,8 +3608,6 @@
       "buy" : "매수",
       "connect" : "연결",
       "buyLedger" : "Ledger 구매하기",
-      "receive" : "수령",
-      "send" : "전송",
       "transferDrawer" : {
         "title" : "전송",
         "receiveCrypto" : "암호화폐 주소로 받기",
@@ -4238,7 +4298,7 @@
       },
       "transactionsAlerts" : {
         "title" : "트랜잭션 알림(베타)",
-        "desc" : "이더리움, 이더리움 클래식, 폴리곤, BNB 체인, 아발란체 트랜잭션 알림을 받아보세요."
+        "desc" : "이더리움, 폴리곤, BNB 스마트 체인, 아발란체 및 이더리움 클래식에 대해 트랜잭션 알림을 보내드립니다"
       },
       "totalMarketCap" : {
         "title" : "전체 시가총액",
@@ -4376,6 +4436,9 @@
       "featureFlagsRestoreAll" : "모든 플래그 값 복원",
       "featureFlagsTabAll" : "전체",
       "featureFlagsTabGroups" : "그룹",
+      "contentAbTests" : {
+        "invalidPayload" : "잘못된 페이로드입니다. \"enabled\"는 불리언 값이어야 하며 \"copy\"는 키를 문자열에 매핑해야 합니다."
+      },
       "firebaseProject" : "이 빌드에서 대상으로 하는 Firebase 프로젝트:",
       "showBannerDesc" : "플래그 재정의 시 배너 표시",
       "bannerTitle" : "플래그가 로컬로 재정의되었습니다",
@@ -5345,6 +5408,35 @@
             "CUSTOM" : "코인 직접 선택"
           }
         }
+      },
+      "feePayment" : {
+        "insufficientFunds" : "결제 금액과 {{provider}} 에너지 대여 수수료를 충당할 {{feeCurrency}}이(가) 부족합니다."
+      },
+      "sponsoredRentSignature" : {
+        "crafting" : "에너지 대여 준비 중...",
+        "strategy" : "에너지 대여 - {{provider}}",
+        "fee" : "대여 수수료: {{amount}}",
+        "cancelled" : {
+          "title" : "에너지 대여 취소됨",
+          "description" : "대여 수수료 결제를 거부하셨습니다. 자산에는 아무런 영향이 없습니다."
+        }
+      },
+      "sponsoredPolling" : {
+        "title" : "에너지 지급 대기 중",
+        "waiting" : "{{provider}}에서 대여한 에너지를 전송하고 있습니다. 약간의 시간이 소요될 수 있습니다.",
+        "elapsed" : "경과 시간: {{time}}"
+      },
+      "sponsoredFailure" : {
+        "rentPayment" : "수수료 결제 실패 — 자산이 전송되지 않았습니다.",
+        "rentPaymentReportedFailed" : "{{provider}}에서 수수료 결제가 실패한 것으로 표시나지만, 정상 처리될 가능성도 있습니다.",
+        "priceIncreased" : "에너지 대여 비용이 {{fee}}(으)로 인상되었습니다. 자산은 전송되지 않았습니다.",
+        "deliveryFailed" : "에너지가 전송되지 않았습니다. 대여 수수료 결제액은 전송되었습니다 — 환불을 받으려면 {{provider}} 지원팀으로 문의하세요{{txidSuffix}}.",
+        "transfer" : "전송에 실패했으나 대여한 에너지는 여전히 유효합니다 — 전송을 다시 시도할 수 있습니다.",
+        "retryLocked" : "대여 비용이 중복 결제되지 않도록 {{time}} 후에 다시 시도해 주세요.",
+        "retry" : "다시 시도",
+        "retryPaying" : "다시 결제하고 재시도하세요",
+        "acceptPrice" : "새로운 비용 수락",
+        "cancel" : "취소"
       }
     },
     "pendingTxWarning" : "대기 중인 수신 트랜잭션이 있습니다. 대기 중 트랜잭션은 취소될 수 있으니 주의하시기 바랍니다.",
@@ -5748,6 +5840,110 @@
     },
     "chooseAccountToFund" : "자산을 추가할 계정을 선택하세요"
   },
+  "connectNewDevice" : {
+    "discovering" : {
+      "title" : "Ledger 장치 검색 중",
+      "description" : {
+        "bluetooth" : "Ledger 장치 잠금이 해제되어 있고 페어링하려는 휴대폰이 가까이 있는지 확인하세요.",
+        "bluetoothAndUsb" : "Ledger를 잠금 해제하고 Bluetooth 또는 USB 케이블을 사용해 스마트폰에 연결하세요.",
+        "usb" : "Ledger를 잠금 해제하고 USB 케이블을 사용해 스마트폰에 연결하세요."
+      },
+      "select" : "연결",
+      "selectAccessibilityLabel" : "{{deviceName}} 연결하기",
+      "deviceNotFound" : "장치가 보이지 않습니다"
+    },
+    "connecting" : {
+      "bluetooth" : {
+        "title" : "{{deviceName}} 장치와 페어링",
+        "description" : "메시지가 표시되면 {{productName}}에서 코드를 확인 및 승인하세요."
+      },
+      "usb" : {
+        "title" : "{{deviceName}}에 연결 중"
+      }
+    },
+    "connected" : {
+      "bluetooth" : {
+        "title" : "장치가 페어링되었습니다"
+      },
+      "usb" : {
+        "title" : "장치가 연결되었습니다"
+      }
+    }
+  },
+  "osUpdates" : {
+    "actions" : {
+      "retry" : "다시 시도",
+      "cancel" : "취소",
+      "close" : "닫기"
+    },
+    "closeConfirmation" : {
+      "title" : "OS 업데이트가 진행 중입니다",
+      "description" : "지금 업데이트를 취소하면 설정 및 앱이 제대로 복구되지 않을 수 있습니다.",
+      "continue" : "OS 업데이트 계속",
+      "cancel" : "OS 업데이트 취소"
+    },
+    "whatsNew" : {
+      "productName" : "LedgerOS™",
+      "version" : "버전 {{version}}",
+      "banner" : "만약을 대비하여 24개 단어로 구성된 복구 문구를 복구 시트에 기록해 두고 언제든 사용할 수 있도록 안전하게 보관하세요.",
+      "title" : "OS에 무엇이 새롭게 업데이트되었나요?",
+      "start" : "업데이트 시작"
+    },
+    "preparing" : {
+      "title" : "설치 준비 중"
+    },
+    "progress" : {
+      "updatingTitle" : "{{productName}} 업데이트 중",
+      "restoringTitle" : "앱 및 설정 복구 중",
+      "updateCount" : "업데이트({{index}}/{{count}}단계)",
+      "description" : "업데이트가 완료될 때까지 장치의 연결을 유지하고 가까이 두세요."
+    },
+    "applied" : {
+      "title" : "업데이트 완료",
+      "description" : "{{productName}} 장치가 최신 상태입니다"
+    },
+    "restored" : {
+      "title" : "백업이 복원되었습니다",
+      "description" : "앱과 설정이 {{productName}}에 다시 복원되었습니다."
+    },
+    "continueOnDevice" : {
+      "title" : "{{productName}}에서 계속하기",
+      "description" : "보안 스크린에 표시된 안내를 따라주세요."
+    },
+    "unlockDevice" : {
+      "title" : "{{productName}} 잠금 해제"
+    },
+    "deviceDisconnected" : {
+      "title" : "장치 연결 해제됨",
+      "description" : "계속하려면 Ledger 장치를 다시 연결해 주세요. 업데이트가 자동으로 재개됩니다."
+    },
+    "unexpectedError" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "OS 업데이트를 계속할 수 없습니다. 문제가 지속되면 Ledger 고객 지원팀으로 문의하세요."
+    },
+    "batteryTooLow" : {
+      "title" : "{{productName}} 장치를 충전해 주세요",
+      "description" : "장치 배터리가 {{percentage}}%입니다. 계속하려면 장치를 케이블로 연결하거나 20% 이상 충전해 주세요."
+    },
+    "backupSelection" : {
+      "title" : "기존 백업을 사용하시겠어요?",
+      "description" : "마지막 백업이 생성된 지 24시간이 지났습니다. 최신 백업이 생성된 지 24시간이 지났습니다.기존 백업을 그대로 사용하거나, 기존 백업을 대체할 새 백업을 생성할 수 있습니다. 보안 키 자격 증명도 백업에 함께 포함됩니다.",
+      "useExisting" : "기존 백업 사용",
+      "createNew" : "새 백업 생성"
+    },
+    "secureConnectionRefused" : {
+      "title" : "보안 연결 거부됨",
+      "description" : "장치에서 보안 연결을 거부했습니다. 계속하려면 다시 시도해 주세요."
+    },
+    "installFirmwareRefused" : {
+      "title" : "설치 거부됨",
+      "description" : "장치에서 설치가 거부되어 업데이트를 계속할 수 없습니다."
+    },
+    "outOfMemory" : {
+      "title" : "장치 저장 공간 부족",
+      "description" : "장치 메모리가 부족하여 계속 진행할 수 없습니다. 공간을 확보한 후 다시 시도하세요."
+    }
+  },
   "deviceIntentExecutor" : {
     "genericStates" : {
       "retryableDeviceLocked" : {
@@ -5936,7 +6132,12 @@
               }
             },
             "bluetoothStateUnknownCheckOnly" : {
-              "title" : "블루투스 확인 중"
+              "title" : "Bluetooth 응답 없음",
+              "description" : "Bluetooth가 응답하지 않습니다. 잠시 기다린 후 다시 시도하세요. 문제가 계속되면 Bluetooth를 껐다가 다시 켜 주세요.",
+              "cta" : {
+                "retry" : "다시 시도하세요",
+                "ignore" : "USB로 계속하기"
+              }
             },
             "bluetoothUnsupported" : {
               "title" : "블루투스 미지원",
@@ -8500,6 +8701,73 @@
       }
     }
   },
+  "stacks" : {
+    "stake" : {
+      "stepperHeader" : {
+        "pool" : "풀",
+        "amount" : "수량",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결",
+        "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
+      },
+      "pool" : {
+        "description" : "STX를 위임할 풀의 주소와 STX를 몇 번의 보상 주기 동안 잠글지 입력하세요",
+        "poolAddressLabel" : "풀 주소",
+        "poolAddressError" : "풀 컨트랙트 주소를 입력하세요. (예: SP….pool-name)",
+        "numCyclesLabel" : "주기 횟수",
+        "numCyclesError" : "주기 수를 {{min}}~{{max}} 사이의 정수로 입력하세요."
+      },
+      "amount" : {
+        "disclaimer" : "스테이킹 풀에서 잠금을 해제하기 전까지 STX가 잠김 처리됩니다.",
+        "pool" : "풀",
+        "numCycles" : "주기 횟수",
+        "available" : "이용 가능"
+      },
+      "validation" : {
+        "success" : {
+          "title" : "자산을 성공적으로 스테이킹했습니다.",
+          "description" : "블록체인이 트랜잭션 검증을 완료하면 계정 잔액이 업데이트됩니다."
+        }
+      }
+    },
+    "unstake" : {
+      "title" : "언스테이킹",
+      "stepperHeader" : {
+        "summary" : "언스테이킹",
+        "selectDevice" : "장치 선택",
+        "connectDevice" : "장치 연결"
+      },
+      "summary" : {
+        "info" : "스테이킹을 해제하면 잠금 기간이 단축됩니다. STX는 즉시 잠금 해제되지 않고, 단축된 잠금 기간이 끝나면 사용할 수 있습니다.",
+        "pool" : "풀",
+        "noPosition" : "이 계정에는 해제할 수 있는 활성 스테이킹 포지션이 없습니다."
+      },
+      "validation" : {
+        "success" : {
+          "title" : "언스테이킹 요청 완료",
+          "description" : "STX 위임 해제가 성공적으로 브로드캐스트되었습니다."
+        }
+      }
+    },
+    "account" : {
+      "staked" : "스테이킹 완료",
+      "unlockCycle" : "주기 잠금 해제"
+    },
+    "info" : {
+      "available" : {
+        "title" : "이용 가능",
+        "description" : "사용하거나 스테이킹할 수 있는 STX 수량."
+      },
+      "staked" : {
+        "title" : "스테이킹 완료",
+        "description" : "스테이킹 풀에 위임되어 pox-5에 의해 잠겨 있는 STX 수량."
+      },
+      "unlockCycle" : {
+        "title" : "주기 잠금 해제",
+        "description" : "스테이킹된 STX의 잠금이 해제되는 보상 주기."
+      }
+    }
+  },
   "sui" : {
     "info" : {
       "estimatedReward" : "받은 보상",
@@ -10148,6 +10416,20 @@
       }
     }
   },
+  "accountDetail" : {
+    "assets" : {
+      "title" : "자산"
+    },
+    "transactions" : {
+      "title" : "트랜잭션"
+    },
+    "editName" : {
+      "title" : "이름 변경",
+      "description" : "체계적인 관리를 위해 이 주소에 별칭을 지정해 주세요 (예: {{ticker}}-거래, {{ticker}}-DeFi).",
+      "label" : "주소 별칭",
+      "submit" : "이름 변경"
+    }
+  },
   "assetDetail" : {
     "balanceGraph" : {
       "marketPrice" : "시장가",
@@ -10337,6 +10619,7 @@
     }
   },
   "largeMover" : {
+    "coinPosition" : "{{total}}중 {{position}}",
     "info" : "정보",
     "marketCap" : "시가총액",
     "volume" : "거래량(24시간)",
@@ -11232,13 +11515,16 @@
   "myWallet" : {
     "quickActions" : {
       "recover" : "[L] Recover",
-      "backup" : "백업",
       "help" : "도움말",
       "referral" : "친구 추천"
     },
+    "walletBackups" : {
+      "title" : "지갑 백업",
+      "description" : "자산 액세스 권한을 미리 안전하게 백업"
+    },
     "contacts" : {
       "title" : "주소록",
-      "description" : "주소록 관리"
+      "description" : "등록된 주소 관리"
     },
     "backupHub" : {
       "title" : "비밀 복구 문구 백업",
@@ -11537,6 +11823,9 @@
         "unbondedAmount" : "스테이킹 해제 수량"
       }
     },
+    "operationTypes" : {
+      "WITHDRAW_UNBONDED" : "수령"
+    },
     "shared" : {
       "sponsoredByProvable" : "Provable 후원"
     }
@@ -11582,7 +11871,8 @@
     "addAddress" : "주소 추가",
     "addYourAddress" : "주소 추가",
     "searchPlaceholder" : "이름으로 검색",
-    "searchNoResults" : "검색 결과가 없습니다",
+    "searchNoResults" : "주소록에서 해당 이름을 찾을 수 없습니다",
+    "searchNoResultsDescription" : "이름이나 철자를 다시 확인해 주세요.",
     "addContactDrawer" : {
       "namePlaceholder" : "이름",
       "namingDisclaimer" : "개인 정보 보호를 위해 본명을 입력하지 않도록 주의하세요. 닉네임 또는 이름+이니셜 사용을 권장합니다 예: 'John S.'",
@@ -11615,7 +11905,7 @@
       "continueToReview" : "검토 계속하기",
       "invalidLabel" : "특수 문자는 허용되지 않습니다.",
       "duplicateLabel" : "해당 연락처에서 이미 사용 중인 주소 별칭입니다.",
-      "labelTooLong" : "주소명이 길이 제한을 초과합니다.",
+      "tooLongLabel" : "주소명이 길이 제한을 초과합니다.",
       "privacyPolicy" : "Ledger 개인정보 보호정책 자세히 알아보기"
     },
     "addAddressReview" : {
@@ -11635,7 +11925,6 @@
     "detail" : {
       "meDisplayName" : "{{name}}(내 주소)",
       "ledgerWalletAddresses" : "Ledger Wallet 주소",
-      "myAddresses" : "내 주소",
       "emptyState" : {
         "contactTitle" : "저장된 {{name}}님의 주소가 없습니다",
         "meTitle" : "내 주소 저장하기",

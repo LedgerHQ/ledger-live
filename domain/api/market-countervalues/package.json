@@ -1,6 +1,6 @@
 {
   "name": "@domain/api-market-countervalues",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Domain API client for countervalues (Countervalues Service): rate fetching and the loadCountervalues orchestration",
   "main": "src/index.ts",

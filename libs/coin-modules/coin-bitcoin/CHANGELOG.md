@@ -1,5 +1,51 @@
 # @ledgerhq/coin-bitcoin
 
+## 1.0.0
+
+### Major Changes
+
+- [#22964](https://github.com/LedgerHQ/ledger-live/pull/22964) [`ca063c4`](https://github.com/LedgerHQ/ledger-live/commit/ca063c4cfad79f12118c5af5bc0ef323857f90bd) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(wallet-btc): inject `logger` instead of using `@ledgerhq/logs`
+
+### Minor Changes
+
+- [#23283](https://github.com/LedgerHQ/ledger-live/pull/23283) [`d2b8471`](https://github.com/LedgerHQ/ledger-live/commit/d2b84711b137f42930f006f7a079fc104c92633d) Thanks [@cted-ledger](https://github.com/cted-ledger)! - remove the zcash code, now served by coin-zcash: the zcash chain adapter, the chain adapter mechanism it was the only user of, `hw-getFullViewingKey` and the zcash network, fee and signing branches
+
+- [#23046](https://github.com/LedgerHQ/ledger-live/pull/23046) [`7b3040a`](https://github.com/LedgerHQ/ledger-live/commit/7b3040ad872c183fd2beb81a965037b5310ab87a) Thanks [@qperrot](https://github.com/qperrot)! - feat(coin-bitcoin): add a stateless single-address alpaca api (balance, history, blocks, fees, crafting, combine, intent validation, broadcast) for every bitcoin-family currency, with the hw-app-btc createPaymentTransaction parameters of what it crafts; each currency's transaction and address format comes from its coin config; dash and qtum get an explicit explorerId. `validateAddress` moves to `@ledgerhq/coin-bitcoin/logic/validateAddress` (the root `@ledgerhq/coin-bitcoin/validateAddress` subpath is removed)
+
+- [#23214](https://github.com/LedgerHQ/ledger-live/pull/23214) [`b599cb2`](https://github.com/LedgerHQ/ledger-live/commit/b599cb25afbc5ce2dbdcd0cc1b6126a49bba8068) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate bitcoinjs-lib to v7 (Uint8Array, bigint amounts) and varuint-bitcoin to v2
+
+- [#23108](https://github.com/LedgerHQ/ledger-live/pull/23108) [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@noble/curves` to 2.4.0 (ESM-only), use the `.js` subpaths and pass `prehash: false` where a digest is signed or verified. CommonJS consumers of `@ledgerhq/hw-app-btc` and `@ledgerhq/wallet-btc` now need Node >= 20.19 (synchronous `require(esm)`) or an ESM-capable bundler.
+
+### Patch Changes
+
+- Updated dependencies [[`b599cb2`](https://github.com/LedgerHQ/ledger-live/commit/b599cb25afbc5ce2dbdcd0cc1b6126a49bba8068), [`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`ca063c4`](https://github.com/LedgerHQ/ledger-live/commit/ca063c4cfad79f12118c5af5bc0ef323857f90bd), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/wallet-btc@1.0.0
+  - @ledgerhq/ledger-wallet-framework@3.8.0
+  - @ledgerhq/types-live@6.128.0
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#22964](https://github.com/LedgerHQ/ledger-live/pull/22964) [`ca063c4`](https://github.com/LedgerHQ/ledger-live/commit/ca063c4cfad79f12118c5af5bc0ef323857f90bd) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(wallet-btc): inject `logger` instead of using `@ledgerhq/logs`
+
+### Minor Changes
+
+- [#23283](https://github.com/LedgerHQ/ledger-live/pull/23283) [`d2b8471`](https://github.com/LedgerHQ/ledger-live/commit/d2b84711b137f42930f006f7a079fc104c92633d) Thanks [@cted-ledger](https://github.com/cted-ledger)! - remove the zcash code, now served by coin-zcash: the zcash chain adapter, the chain adapter mechanism it was the only user of, `hw-getFullViewingKey` and the zcash network, fee and signing branches
+
+- [#23046](https://github.com/LedgerHQ/ledger-live/pull/23046) [`7b3040a`](https://github.com/LedgerHQ/ledger-live/commit/7b3040ad872c183fd2beb81a965037b5310ab87a) Thanks [@qperrot](https://github.com/qperrot)! - feat(coin-bitcoin): add a stateless single-address alpaca api (balance, history, blocks, fees, crafting, combine, intent validation, broadcast) for every bitcoin-family currency, with the hw-app-btc createPaymentTransaction parameters of what it crafts; each currency's transaction and address format comes from its coin config; dash and qtum get an explicit explorerId. `validateAddress` moves to `@ledgerhq/coin-bitcoin/logic/validateAddress` (the root `@ledgerhq/coin-bitcoin/validateAddress` subpath is removed)
+
+- [#23214](https://github.com/LedgerHQ/ledger-live/pull/23214) [`b599cb2`](https://github.com/LedgerHQ/ledger-live/commit/b599cb25afbc5ce2dbdcd0cc1b6126a49bba8068) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Migrate bitcoinjs-lib to v7 (Uint8Array, bigint amounts) and varuint-bitcoin to v2
+
+- [#23108](https://github.com/LedgerHQ/ledger-live/pull/23108) [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump `@noble/curves` to 2.4.0 (ESM-only), use the `.js` subpaths and pass `prehash: false` where a digest is signed or verified. CommonJS consumers of `@ledgerhq/hw-app-btc` and `@ledgerhq/wallet-btc` now need Node >= 20.19 (synchronous `require(esm)`) or an ESM-capable bundler.
+
+### Patch Changes
+
+- Updated dependencies [[`b599cb2`](https://github.com/LedgerHQ/ledger-live/commit/b599cb25afbc5ce2dbdcd0cc1b6126a49bba8068), [`80f99a8`](https://github.com/LedgerHQ/ledger-live/commit/80f99a819b13d3ec2bd39d896de46e0a433b9954), [`f40b1c2`](https://github.com/LedgerHQ/ledger-live/commit/f40b1c20948a5c7921796926f620201f1bb8d574), [`75498cf`](https://github.com/LedgerHQ/ledger-live/commit/75498cf55065bccf17d09b780866ae031c01701a), [`e66d21e`](https://github.com/LedgerHQ/ledger-live/commit/e66d21ea7ccb706d718703b69d2133ede3294c1a), [`bcea51b`](https://github.com/LedgerHQ/ledger-live/commit/bcea51b0b2c9ef09b9e068f97ed3c67a0e45e188), [`98c994b`](https://github.com/LedgerHQ/ledger-live/commit/98c994bc1f46a03366096531afac2471f07f397b), [`ca063c4`](https://github.com/LedgerHQ/ledger-live/commit/ca063c4cfad79f12118c5af5bc0ef323857f90bd), [`696357f`](https://github.com/LedgerHQ/ledger-live/commit/696357f754751853758d67c88bf34df9302b9b97)]:
+  - @ledgerhq/wallet-btc@1.0.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.8.0-next.0
+  - @ledgerhq/types-live@6.128.0-next.0
+
 ## 0.55.0
 
 ### Minor Changes
@@ -381,105 +427,5 @@
   - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
   - @ledgerhq/live-signer-zcash@0.9.0-next.0
   - @ledgerhq/wallet-btc@0.3.0
-
-## 0.50.0
-
-### Minor Changes
-
-- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
-
-  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
-
-  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
-
-- [#20221](https://github.com/LedgerHQ/ledger-live/pull/20221) [`facb60a`](https://github.com/LedgerHQ/ledger-live/commit/facb60a8abbc42b5067fb4d69d68577c6da2f232) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash transparent sends being rejected from the mempool for "unpaid actions is higher than the limit" (LIVE-35152).
-
-  ZIP-317 charges per logical action — `max(inputs, outputs)`, floored at two actions, so 10 000 zats minimum — while the shared Bitcoin path prices transactions in sat/vByte. The account-wide rate was derived from the marginal fee spread over one input (5000 zats over ~148 vBytes ⇒ 34 sat/vB), which billed only 7684 zats on a one-input, two-output send: below the floor, and rejected by the node.
-
-  A single rate cannot express ZIP-317, since the floor stays flat while the byte count grows — a rate covering a one-input send would charge nearly double the fee owed on a two-input one. The rate is now chosen per transaction: `getAccountNetworkInfo` provides the rate that covers ZIP-317 for any layout (~53 sat/vB, set by the smallest transaction), and the Zcash chain adapter tightens it to the transaction's actual layout through the new `ChainAdapter.resolveFeePerByte` hook, falling back to the safe rate whenever the tighter one cannot be confirmed. Resulting fees land within ~2% above the ZIP-317 amount instead of under it.
-
-  Only the legacy transparent path is affected — the flows routed to the PCZT builder already compute their ZIP-317 fee directly.
-
-### Patch Changes
-
-- Updated dependencies [[`7b4b965`](https://github.com/LedgerHQ/ledger-live/commit/7b4b965ce521cc6289ebeba50cca1a317f3417cd), [`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
-  - @ledgerhq/live-signer-zcash@0.8.0
-  - @ledgerhq/types-live@6.118.0
-  - @ledgerhq/ledger-wallet-framework@2.7.0
-  - @ledgerhq/wallet-btc@0.3.0
-
-## 0.50.0-next.0
-
-### Minor Changes
-
-- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
-
-  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
-
-  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
-
-- [#20221](https://github.com/LedgerHQ/ledger-live/pull/20221) [`facb60a`](https://github.com/LedgerHQ/ledger-live/commit/facb60a8abbc42b5067fb4d69d68577c6da2f232) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash transparent sends being rejected from the mempool for "unpaid actions is higher than the limit" (LIVE-35152).
-
-  ZIP-317 charges per logical action — `max(inputs, outputs)`, floored at two actions, so 10 000 zats minimum — while the shared Bitcoin path prices transactions in sat/vByte. The account-wide rate was derived from the marginal fee spread over one input (5000 zats over ~148 vBytes ⇒ 34 sat/vB), which billed only 7684 zats on a one-input, two-output send: below the floor, and rejected by the node.
-
-  A single rate cannot express ZIP-317, since the floor stays flat while the byte count grows — a rate covering a one-input send would charge nearly double the fee owed on a two-input one. The rate is now chosen per transaction: `getAccountNetworkInfo` provides the rate that covers ZIP-317 for any layout (~53 sat/vB, set by the smallest transaction), and the Zcash chain adapter tightens it to the transaction's actual layout through the new `ChainAdapter.resolveFeePerByte` hook, falling back to the safe rate whenever the tighter one cannot be confirmed. Resulting fees land within ~2% above the ZIP-317 amount instead of under it.
-
-  Only the legacy transparent path is affected — the flows routed to the PCZT builder already compute their ZIP-317 fee directly.
-
-### Patch Changes
-
-- Updated dependencies [[`7b4b965`](https://github.com/LedgerHQ/ledger-live/commit/7b4b965ce521cc6289ebeba50cca1a317f3417cd), [`56cfe0b`](https://github.com/LedgerHQ/ledger-live/commit/56cfe0bc6673f416f739c1593abfec718230952d), [`a464f7d`](https://github.com/LedgerHQ/ledger-live/commit/a464f7d6092607ff6b81aa6ec0cd29ef6cfcf35a), [`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152), [`635fa12`](https://github.com/LedgerHQ/ledger-live/commit/635fa12d47f5a98858326f4dd68962dffe82eda9)]:
-  - @ledgerhq/live-signer-zcash@0.8.0-next.0
-  - @ledgerhq/types-live@6.118.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.7.0-next.0
-  - @ledgerhq/wallet-btc@0.3.0
-
-## 0.49.0
-
-### Minor Changes
-
-- [#19980](https://github.com/LedgerHQ/ledger-live/pull/19980) [`ba69273`](https://github.com/LedgerHQ/ledger-live/commit/ba692732b521c42f934acf540641ecbfdb837004) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Convert error classes from createCustomErrorClass factory to native extends Error (LIVE-32915 tier 1a)
-
-- [#20349](https://github.com/LedgerHQ/ledger-live/pull/20349) [`f79de59`](https://github.com/LedgerHQ/ledger-live/commit/f79de59f95ed384fc2b2e49dfa28efb1a0493d4a) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix Zcash transparent sends being rejected from the mempool for "unpaid actions is higher than the limit" (LIVE-35152).
-
-  ZIP-317 charges per logical action — `max(inputs, outputs)`, floored at two actions, so 10 000 zats minimum — while the shared Bitcoin path prices transactions in sat/vByte. The account-wide rate was derived from the marginal fee spread over one input (5000 zats over ~148 vBytes ⇒ 34 sat/vB), which billed only 7684 zats on a one-input, two-output send: below the floor, and rejected by the node.
-
-  A single rate cannot express ZIP-317, since the floor stays flat while the byte count grows — a rate covering a one-input send would charge nearly double the fee owed on a two-input one. The rate is now chosen per transaction: `getAccountNetworkInfo` provides the rate that covers ZIP-317 for any layout (~53 sat/vB, set by the smallest transaction), and the Zcash chain adapter tightens it to the transaction's actual layout through the new `ChainAdapter.resolveFeePerByte` hook, falling back to the safe rate whenever the tighter one cannot be confirmed. Resulting fees land within ~2% above the ZIP-317 amount instead of under it.
-
-  Only the legacy transparent path is affected — the flows routed to the PCZT builder already compute their ZIP-317 fee directly.
-
-- [#20070](https://github.com/LedgerHQ/ledger-live/pull/20070) [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the now-dead `@ledgerhq/cryptoassets` currency/fiat store injection from the app bootstraps. Nothing reads the legacy currency/fiat accessors anymore (the runtime source of truth is the domain-backed wallet-framework currency resolver), so `setCryptoCurrenciesStore` / `setFiatCurrenciesStore` injected a store no consumer queried. Drop the calls, drop the `@ledgerhq/cryptoassets` dependency from the apps, and remove the remaining stale references to the package in comments.
-
-- [#20114](https://github.com/LedgerHQ/ledger-live/pull/20114) [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa) Thanks [@semeano](https://github.com/semeano)! - Add Ironwood support to Zcash
-
-- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report what a Zcash transaction actually did, rather than what an explorer can infer from its transparent bundle. An explorer that sees only the transparent side is wrong about two things whenever value crosses a shielded boundary:
-
-  - **The fee**, derived as `Σ transparent inputs − Σ transparent outputs`, swallows any value that entered a shielded pool: a transparent-to-shielded send of 0.1 ZEC paying 0.00055 in fees was reported as having paid 0.10055.
-  - **The destination**, since the payee lives in an encrypted output, fell back to the transparent change address — which pays the sender back rather than the payee.
-
-  Both are now recovered from the raw transaction in a single fetch, through a `transactionDetails` method on the ZCash client (native and IPC) backed by `@ledgerhq/zcash-utils`: the fee from the value balance of every pool, the payee by trial-decrypting our own outputs with the account's viewing key.
-
-  A new `resolveTransactionDetails` chain-adapter hook applies fees to transactions before operations are derived, so a transaction's sender and recipient agree on its cost, and supersedes the change address with the recovered payee while keeping any genuine transparent recipient. When an optimistic operation is reconciled with its confirmed counterpart, the address the user actually entered is preferred over the recovered one, which is the same destination but not necessarily the same string. A transaction that cannot be resolved keeps the fee and recipients the explorer reported.
-
-- [#20021](https://github.com/LedgerHQ/ledger-live/pull/20021) [`aa27732`](https://github.com/LedgerHQ/ledger-live/commit/aa2773257ffa4480b33c2a219c9986eb40e293fb) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Fix how a Zcash account holding shielded funds accounts for its own history. The account is described by two syncs that see different things — the transparent one reads an explorer, the shielded one scans compact blocks with the viewing key — and where they meet, five things were wrong:
-
-  - **A shielded-to-transparent send looked like an internal transfer of 0 ZEC.** Classification only looked at the shielded pools, where such a send nets out; the value that left had gone to a transparent output nobody was reading. It is now classified on what left the pools _and_ what reached the transparent bundle, using the transparent totals the native scanner reports.
-  - **An outgoing shielded operation reported an amount excluding the fee**, unlike every other outgoing operation and unlike the optimistic operation shown before confirmation — so the displayed amount changed once the transaction confirmed. The fee is now counted in the amount.
-  - **Spendable balance dropped to the transparent balance** each time a transparent sync landed, then recovered on the next shielded sync. The chain now states its balance once and it serves as both balance and spendable balance.
-  - **The shielded scan cursor could move backwards**, notably to zero when the scanner was already at the tip, triggering a full rescan on the next sync. The cursor now only ever advances.
-  - **The optimistic operation was never reconciled**, since a confirmed shielded operation carries a different identifier than the pending one it replaces, leaving the send listed twice. Pending operations are now matched by transaction hash.
-
-- [#20188](https://github.com/LedgerHQ/ledger-live/pull/20188) [`f8b5b51`](https://github.com/LedgerHQ/ledger-live/commit/f8b5b51856c57c68ca50d13b00d124d261c26504) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash fee pricing calculations and max estimation.
-
-### Patch Changes
-
-- Updated dependencies [[`1070564`](https://github.com/LedgerHQ/ledger-live/commit/107056410174d3da2d45c468232a8d742aea021f), [`2e1aecc`](https://github.com/LedgerHQ/ledger-live/commit/2e1aeccf6c91761c5d09c91e4be10dcc8c22eb7b), [`1af9ec9`](https://github.com/LedgerHQ/ledger-live/commit/1af9ec984928e0bf5fd23ce12edcc6131b0302a0), [`f715aa5`](https://github.com/LedgerHQ/ledger-live/commit/f715aa516225f72124e083e3ffa0f254b9d5df4f), [`52253f7`](https://github.com/LedgerHQ/ledger-live/commit/52253f70c302056cdc6b367cdd8b1db408b5e07d), [`c475d28`](https://github.com/LedgerHQ/ledger-live/commit/c475d288b4978aa3011c9e76f3e9a1e2f9733010), [`a534db5`](https://github.com/LedgerHQ/ledger-live/commit/a534db5c41da6957d38a330c1da6f7db1b693763), [`c622459`](https://github.com/LedgerHQ/ledger-live/commit/c622459fcbff5dcc094ee10eb360f2a835036007), [`524d763`](https://github.com/LedgerHQ/ledger-live/commit/524d7636d85a79379a9b086323d3121f3199bd1f), [`dbf8acf`](https://github.com/LedgerHQ/ledger-live/commit/dbf8acf27c9405548e7eb559d163a8e0883a20aa), [`0afef49`](https://github.com/LedgerHQ/ledger-live/commit/0afef49b60283afb44172de65891e435c2f0d637)]:
-  - @ledgerhq/errors@7.0.0
-  - @ledgerhq/ledger-wallet-framework@2.6.0
-  - @ledgerhq/live-network@3.0.0
-  - @ledgerhq/live-signer-zcash@0.7.0
-  - @ledgerhq/wallet-btc@0.3.0
-  - @ledgerhq/live-env@3.0.0
-  - @ledgerhq/types-live@6.117.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

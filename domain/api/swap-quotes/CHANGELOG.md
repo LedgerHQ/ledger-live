@@ -1,5 +1,19 @@
 # @domain/api-swap-quotes
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1
+
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/api-services@0.10.1-next.0
+
 ## 0.3.0
 
 ### Minor Changes
