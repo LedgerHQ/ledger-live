@@ -18,16 +18,18 @@ type Flags = {
 };
 
 function mockFlags(flags: Flags) {
-  mockUseFeature.mockImplementation(
-    key => (flags[key as keyof Flags] ?? null) as ReturnType<typeof useFeature>,
-  );
+  mockUseFeature.mockImplementation(function getFlag(key) {
+    return (flags[key as keyof Flags] ?? null) as ReturnType<typeof useFeature>;
+  });
 }
 
-const enabledServices = (services: string[]): Flags => ({
-  entryPointsServices: { enabled: true, params: { services } },
-  ptxPerpsLiveApp: { enabled: true },
-  ptxBorrowLiveApp: { enabled: true },
-});
+function enabledServices(services: string[]): Flags {
+  return {
+    entryPointsServices: { enabled: true, params: { services } },
+    ptxPerpsLiveApp: { enabled: true },
+    ptxBorrowLiveApp: { enabled: true },
+  };
+}
 
 function renderEntryPoints(onOpenService = jest.fn()) {
   render(
@@ -38,10 +40,11 @@ function renderEntryPoints(onOpenService = jest.fn()) {
   return { onOpenService };
 }
 
-const renderedServices = () =>
-  screen
-    .getAllByTestId(/^portfolio-services-entry-point-/)
-    .map(tile => tile.dataset.testid?.replace("portfolio-services-entry-point-", ""));
+function renderedServices() {
+  return screen.getAllByTestId(/^portfolio-services-entry-point-/).map(function getService(tile) {
+    return tile.dataset.testid?.replace("portfolio-services-entry-point-", "");
+  });
+}
 
 describe("ServicesEntryPoints (Web)", () => {
   beforeEach(() => {

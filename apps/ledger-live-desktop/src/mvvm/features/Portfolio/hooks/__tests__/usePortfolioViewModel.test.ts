@@ -72,7 +72,7 @@ describe("usePortfolioViewModel", () => {
   });
 
   it("should replace the perps and borrow entry points when services entry points are enabled", () => {
-    const { result } = renderHook(() => usePortfolioViewModel(), {
+    const { result } = renderHook(usePortfolioViewModel, {
       initialState: {
         settings: INITIAL_STATE,
         ...withFlagOverrides({
@@ -88,7 +88,7 @@ describe("usePortfolioViewModel", () => {
   });
 
   it("should keep the perps and borrow entry points when services entry points are disabled", () => {
-    const { result } = renderHook(() => usePortfolioViewModel(), {
+    const { result } = renderHook(usePortfolioViewModel, {
       initialState: {
         settings: INITIAL_STATE,
         ...withFlagOverrides({

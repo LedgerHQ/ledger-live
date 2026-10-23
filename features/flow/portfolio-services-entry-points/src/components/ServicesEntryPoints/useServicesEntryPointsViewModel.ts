@@ -12,7 +12,7 @@ export function useServicesEntryPointsViewModel({
   const { services } = useServicesEntryPointsFeature();
 
   const onPressService = useCallback(
-    (service: ServiceEntryPointId) => {
+    function onPressService(service: ServiceEntryPointId) {
       track("button_clicked", {
         button: `${service}_entry_point`,
         flow: service,

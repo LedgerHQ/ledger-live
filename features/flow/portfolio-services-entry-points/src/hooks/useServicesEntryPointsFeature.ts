@@ -17,7 +17,9 @@ export function useServicesEntryPointsFeature(): ServicesEntryPointsFeature {
   const { perps, borrow } = availability;
 
   const services = useMemo(
-    () => (isEnabled ? resolveServices(order, { perps, borrow }) : []),
+    function resolveEnabledServices() {
+      return isEnabled ? resolveServices(order, { perps, borrow }) : [];
+    },
     [isEnabled, order, perps, borrow],
   );
 

@@ -11,7 +11,7 @@ export function usePortfolioServicesEntryPointsViewModel(): PortfolioServicesEnt
   const location = useLocation();
 
   const onOpenService = useCallback(
-    (service: ServiceEntryPointId) => {
+    function onOpenService(service: ServiceEntryPointId) {
       switch (service) {
         case "perps":
           navigate("/perps");

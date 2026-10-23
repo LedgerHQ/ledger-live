@@ -19,16 +19,18 @@ type Flags = {
 };
 
 function mockFlags(flags: Flags) {
-  mockUseFeature.mockImplementation(
-    key => (flags[key as keyof Flags] ?? null) as ReturnType<typeof useFeature>,
-  );
+  mockUseFeature.mockImplementation(function getFlag(key) {
+    return (flags[key as keyof Flags] ?? null) as ReturnType<typeof useFeature>;
+  });
 }
 
-const enabledServices = (services: string[]): Flags => ({
-  entryPointsServices: { enabled: true, params: { services } },
-  ptxPerpsLiveAppMobile: { enabled: true },
-  ptxBorrowLiveApp: { enabled: true },
-});
+function enabledServices(services: string[]): Flags {
+  return {
+    entryPointsServices: { enabled: true, params: { services } },
+    ptxPerpsLiveAppMobile: { enabled: true },
+    ptxBorrowLiveApp: { enabled: true },
+  };
+}
 
 function renderEntryPoints(onOpenService = jest.fn()) {
   render(
@@ -49,11 +51,12 @@ describe("ServicesEntryPoints (Native)", () => {
 
     renderEntryPoints();
 
-    const tiles = screen.getByTestId("portfolio-services-entry-points").children;
-    expect(tiles.map(tile => (typeof tile === "string" ? tile : tile.props.testID))).toEqual([
-      "portfolio-services-entry-point-borrow",
-      "portfolio-services-entry-point-perps",
-    ]);
+    const cards = screen.getAllByTestId(/^portfolio-services-entry-point-/);
+    expect(
+      cards.map(function getTestID(card: { props: { testID?: string } }) {
+        return card.props.testID;
+      }),
+    ).toEqual(["portfolio-services-entry-point-borrow", "portfolio-services-entry-point-perps"]);
     expect(screen.getByText("servicesEntryPoints.borrow.title")).toBeVisible();
     expect(screen.getByText("servicesEntryPoints.perps.description")).toBeVisible();
   });

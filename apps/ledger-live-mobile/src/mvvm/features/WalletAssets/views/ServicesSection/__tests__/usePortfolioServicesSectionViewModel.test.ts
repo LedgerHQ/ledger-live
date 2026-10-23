@@ -6,7 +6,9 @@ const mockNavigate = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate }),
+  useNavigation: function useNavigation() {
+    return { navigate: mockNavigate };
+  },
 }));
 
 describe("usePortfolioServicesSectionViewModel", () => {
@@ -15,7 +17,7 @@ describe("usePortfolioServicesSectionViewModel", () => {
   });
 
   it("should navigate to the Perps tab when opening perps", () => {
-    const { result } = renderHook(() => usePortfolioServicesSectionViewModel());
+    const { result } = renderHook(usePortfolioServicesSectionViewModel);
 
     result.current.onOpenService("perps");
 
@@ -25,7 +27,7 @@ describe("usePortfolioServicesSectionViewModel", () => {
   });
 
   it("should navigate to the Borrow screen when opening borrow", () => {
-    const { result } = renderHook(() => usePortfolioServicesSectionViewModel());
+    const { result } = renderHook(usePortfolioServicesSectionViewModel);
 
     result.current.onOpenService("borrow");
 
