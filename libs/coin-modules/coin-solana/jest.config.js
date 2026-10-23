@@ -1,40 +1,9 @@
-const transformIncludePatterns = ["ky"];
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
 
-module.exports = {
-  passWithNoTests: true,
-  collectCoverageFrom: ["src/**/*.ts", "!src/**/*.test.ts", "!src/**/*.spec.ts"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts", ".integ.test.ts"],
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
+module.exports = createLibsCoinJestConfig(
+  {
+    rootDir: __dirname,
+    modulePathIgnorePatterns: ["__tests__/fixtures"],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
-  modulePathIgnorePatterns: ["__tests__/fixtures"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
-};
+  { extraEsmDeps: ["ky"] },
+);

@@ -1,40 +1,13 @@
-module.exports = {
-  passWithNoTests: true,
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.test.ts",
-    "!src/**/*.spec.ts",
-    "!src/test/**/*.ts",
-    "!src/__tests__/**/*.ts",
-  ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
+  // src/__tests__/bridge/serialization.ts is a suite without the `.test.ts` suffix.
+  testMatch: ["**/*.test.ts", "**/__tests__/**/*.ts"],
   coveragePathIgnorePatterns: [
     "src/test",
     "src/types",
     "src/index.ts",
     "src/bridge/bridge.fixture.ts",
   ],
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
-};
+});
