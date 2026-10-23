@@ -10,7 +10,8 @@ description: |
 # Ledger Wallet Testing Skill
 
 > Jest + MSW + React Testing Library (Desktop) / React Native Testing Library (Mobile)
-> ❌ E2E tests → Use `e2e` skill
+> ❌ E2E tests → Use `e2e-desktop-add-or-update` / `e2e-mobile-add-or-update` skills
+> ⚠️ A new desktop flow needs Jest tests **and** an `e2e/desktop` spec. `apps/ledger-live-desktop/tests/specs` (mocked Playwright) is frozen: fix, update or delete, never add a spec file or test case.
 
 ---
 

@@ -1,3 +1,6 @@
+> [!WARNING]
+> This mocked Playwright suite is frozen: fix, update or delete existing specs, but do not add spec files or test cases. Cover new flows with Jest tests and [`e2e/desktop`](../../../e2e/desktop/README.md).
+
 # Table of Contents
 
 - [Introduction](#introduction)

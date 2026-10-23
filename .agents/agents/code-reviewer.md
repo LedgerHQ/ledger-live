@@ -49,6 +49,7 @@ By default, review unstaged changes from `git diff`. The user may specify differ
 - **`shared/` packages**: no `@ledgerhq/` scope, `"private": true`, no dependencies on `domain/` packages. For the full conventions, also read `shared/README.md`.
 - Sonar issues: complexity, duplication, security hotspots
 - Missing integration tests for new features under `src/mvvm/` (required by the mvvm-architecture skill)
+- **Frozen desktop mock Playwright suite:** flag any new spec file or new `test(` under `apps/ledger-live-desktop/tests/specs/`; ask for Jest + `e2e/desktop` coverage instead. Fixes, updates and deletions there are fine.
 - Lumen UI compliance: verify new UI in `src/mvvm/` uses design-system components
 - **Coin-families contract:** In generic code (outside `families/<family>/`), flag new `if (family === "…")` or coin-specific hooks; suggest extending the families contract and implementing in the family folder instead.
 - **Cross-team files:** When a PR touches a file owned by multiple teams, suggest the team-split convention: split into `[foo]/index.ts` and `[foo]/team-[team]/*.ts`; one file or small set per team; index re-exports all. CODEOWNERS defines the allowed `team-*` slugs.
