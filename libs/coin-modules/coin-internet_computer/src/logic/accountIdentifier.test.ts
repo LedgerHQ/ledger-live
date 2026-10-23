@@ -48,6 +48,25 @@ describe("AccountIdentifier.fromHex", () => {
   });
 });
 
+describe("AccountIdentifier.isValid", () => {
+  const VALID = "bc48adb687ce410003215edd17d4c6a576d4fe6b64e242bac382aa88ccf15417";
+
+  it.each([VALID, VALID.toUpperCase()])("accepts %s", hex => {
+    expect(AccountIdentifier.isValid(hex)).toBe(true);
+  });
+
+  it.each([
+    ["a wrong checksum", "00" + VALID.slice(2)],
+    ["a short identifier", VALID.slice(0, 62)],
+    ["a long identifier", VALID + "00"],
+    ["a non-hex character", VALID.slice(0, 63) + "z"],
+    ["a principal", GOVERNANCE],
+    ["an empty string", ""],
+  ])("rejects %s", (_, hex) => {
+    expect(AccountIdentifier.isValid(hex)).toBe(false);
+  });
+});
+
 describe("SubAccount.fromBytes", () => {
   it("rejects anything but 32 bytes", () => {
     expect(SubAccount.fromBytes(new Uint8Array(31))).toEqual(

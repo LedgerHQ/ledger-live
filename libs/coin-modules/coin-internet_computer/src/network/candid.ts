@@ -33,5 +33,24 @@ export const encodeCanisterIdlFunc = (func: IDL.FuncClass, args: unknown[]) =>
 export const decodeCanisterIdlFunc = <T>(func: IDL.FuncClass, args: Uint8Array): T =>
   IDL.decode(func.retTypes, args) as T;
 
+// An archive canister's get_encoded_blocks. The ledger hands it out as a callback for the blocks it
+// no longer holds; the vendored ledger IDL declares it only inline, so it is restated here.
+export const archiveEncodedBlocksFunc = IDL.Func(
+  [IDL.Record({ start: IDL.Nat64, length: IDL.Nat64 })],
+  [
+    IDL.Variant({
+      Ok: IDL.Vec(IDL.Vec(IDL.Nat8)),
+      Err: IDL.Variant({
+        BadFirstBlockIndex: IDL.Record({
+          requested_index: IDL.Nat64,
+          first_valid_index: IDL.Nat64,
+        }),
+        Other: IDL.Record({ error_message: IDL.Text, error_code: IDL.Nat64 }),
+      }),
+    }),
+  ],
+  ["query"],
+);
+
 /** The value of a decoded Candid `opt` (`[]` | `[value]`), or undefined when absent. */
 export const fromOpt = <T>(opt: [] | [T]): T | undefined => (opt.length ? opt[0] : undefined);

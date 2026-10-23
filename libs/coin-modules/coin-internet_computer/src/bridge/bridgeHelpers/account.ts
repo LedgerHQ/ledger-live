@@ -5,7 +5,7 @@ import { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
+import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../network/api";
 import {
   dedupeRetypedOperations,
   normalizeEpochTimestamp,
@@ -123,7 +123,7 @@ function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): st
   throw new Error("publicKey wasn't properly restored");
 }
 
-const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
+export const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
   return (txInfo: TransactionWithId): InternetComputerOperation[] => {
     const { transaction: txn } = txInfo;
     const ops: InternetComputerOperation[] = [];

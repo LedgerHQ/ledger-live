@@ -1,12 +1,12 @@
 import { broadcast } from "./broadcast";
 import { MAINNET_LEDGER_CANISTER_ID } from "../consts";
-import { broadcastTxn, readTransferOutcome } from "../api";
+import { broadcastTxn, readTransferOutcome } from "../network/api";
 
 // The ledger's verdict is read by a mock; what is made of it is the real thing.
-jest.mock("../api", () => ({
+jest.mock("../network/api", () => ({
   broadcastTxn: jest.fn(),
   readTransferOutcome: jest.fn(),
-  throwIfLedgerTransferRefused: jest.requireActual("../api").throwIfLedgerTransferRefused,
+  throwIfLedgerTransferRefused: jest.requireActual("../network/api").throwIfLedgerTransferRefused,
 }));
 
 describe("broadcast", () => {
