@@ -29,7 +29,6 @@ import { GenericAwarenessModalDrawer } from "LLM/features/GenericAwarenessModal/
 import { RecoverIntroPortfolioMount } from "LLM/features/BackupHub";
 import { LargeScreenUpsellModalPortfolioMount } from "LLM/features/LargeScreenUpsell";
 import { LazyOnboardingTourPortfolioMount } from "LLM/features/LazyOnboardingBanner";
-import { PortfolioServicesSection } from "LLM/features/WalletAssets/views/ServicesSection";
 
 import {
   PortfolioAssetsSection,
@@ -70,7 +69,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     onBackFromUpdate,
     shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint,
-    shouldDisplayServicesSection,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
@@ -156,13 +154,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
           shouldAddBottomPadding={shouldAddBottomPaddingForLegacyAssets}
         />,
       );
-      if (shouldDisplayServicesSection) {
-        sections.push(
-          <Box key="servicesSection" px={6}>
-            <PortfolioServicesSection />
-          </Box>,
-        );
-      }
     }
 
     if (isAWalletCardDisplayed) {
@@ -187,7 +178,6 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     backgroundColor,
     shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint,
-    shouldDisplayServicesSection,
     shouldAddBottomPaddingForLegacyAssets,
   ]);
 

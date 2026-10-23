@@ -1,4 +1,5 @@
-import type { ServiceEntryPointId, ServicesAvailability } from "../types";
+import type { ServiceEntryPointId } from "../types";
+import type { ServicesAvailability } from "../types.internals";
 
 function isServiceEntryPointId(
   value: unknown,

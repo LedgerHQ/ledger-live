@@ -1,5 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
-import { usePortfolioServicesSectionViewModel } from "../usePortfolioServicesSectionViewModel";
+import { usePortfolioServicesSectionViewModel } from "./usePortfolioServicesSectionViewModel";
 import { NavigatorName, ScreenName } from "~/const";
 
 const mockNavigate = jest.fn();

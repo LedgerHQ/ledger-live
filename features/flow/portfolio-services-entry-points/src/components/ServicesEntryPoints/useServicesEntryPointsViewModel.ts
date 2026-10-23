@@ -11,8 +11,8 @@ export function useServicesEntryPointsViewModel({
 }: ServicesEntryPointsProps): ServicesEntryPointsViewProps {
   const { services } = useServicesEntryPointsFeature();
 
-  const onPressService = useCallback(
-    function onPressService(service: ServiceEntryPointId) {
+  const trackAndOpenService = useCallback(
+    function trackAndOpenService(service: ServiceEntryPointId) {
       track("button_clicked", {
         button: `${service}_entry_point`,
         flow: service,
@@ -23,5 +23,5 @@ export function useServicesEntryPointsViewModel({
     [page, onOpenService],
   );
 
-  return { services, onPressService };
+  return { services, onOpenService: trackAndOpenService };
 }

@@ -10,15 +10,19 @@ the Crypto and Stablecoins sections. They replace the Perps and Borrow banners b
 
 | Export | Description |
 | --- | --- |
-| `ServicesEntryPoints` | The cards, in the flag order. Tracks `button_clicked` and calls `onOpenService(service)` (`.web` / `.native`) |
-| `useServicesEntryPointsFeature()` | `{ isEnabled, services }`: apps hide the legacy entry points when `isEnabled` |
+| `ServicesEntryPoints` | The cards, in the flag order. Tracks `button_clicked` and calls `onOpenService(service)`. Its view is split in `.web` / `.native` |
+| `ServicesEntryPointsProps` | `{ page, onOpenService }` |
+| `useServicesEntryPointsFeature()` | `ServicesEntryPointsFeature`: `{ isEnabled, services }`. Apps hide the legacy entry points when `isEnabled` |
 | `getServicesEntryPointsAttributes(flag)` | Analytics properties for the A/B test |
+| `ServiceEntryPointId` | `"perps" \| "borrow"` |
 
 ## Feature flag
 
 `entryPointsServices` (`@shared/feature-flags`, team Wallet XP):
 
-- `enabled` shows the section and hides the legacy Perps and Borrow entry points.
+- `enabled` shows the section and hides the legacy Perps and Borrow entry points. It only applies
+  with the Wallet 4.0 asset section (`lwdWallet40` / `lwmWallet40` `assetSection`): without it there
+  is no Crypto and Stablecoins section, so the legacy entry points stay.
 - `params.services` sets which services are shown and their order, e.g. `["borrow", "perps"]`.
 
 A service is shown only when its own feature is on: `ptxPerpsLiveApp` on desktop,

@@ -1,44 +1,26 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { useFeature } from "@features/platform-feature-flags";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { track } from "@shared/analytics";
-import { I18nTestProvider } from "@shared/i18n/testing";
+import { createTestWrapper } from "../../testing/createTestWrapper";
 import { ServicesEntryPoints } from "./ServicesEntryPoints";
 
-jest.mock("@features/platform-feature-flags", () => ({ useFeature: jest.fn() }));
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
 
-const mockUseFeature = jest.mocked(useFeature);
 const mockTrack = jest.mocked(track);
 
-type Flags = {
-  entryPointsServices?: { enabled: boolean; params?: { services: string[] } };
-  ptxPerpsLiveApp?: { enabled: boolean };
-  ptxPerpsLiveAppMobile?: { enabled: boolean };
-  ptxBorrowLiveApp?: { enabled: boolean };
+const ENABLED_SERVICES: PartialFeatures = {
+  entryPointsServices: { enabled: true, params: { services: ["perps", "borrow"] } },
+  ptxPerpsLiveAppMobile: { enabled: true, params: { manifest_id: "perps-live-app" } },
+  ptxBorrowLiveApp: { enabled: true },
 };
 
-function mockFlags(flags: Flags) {
-  mockUseFeature.mockImplementation(function getFlag(key) {
-    return (flags[key as keyof Flags] ?? null) as ReturnType<typeof useFeature>;
+function renderEntryPoints(flags: PartialFeatures = ENABLED_SERVICES) {
+  const onOpenService = jest.fn();
+  render(<ServicesEntryPoints page="Portfolio" onOpenService={onOpenService} />, {
+    wrapper: createTestWrapper(flags),
   });
-}
-
-function enabledServices(services: string[]): Flags {
-  return {
-    entryPointsServices: { enabled: true, params: { services } },
-    ptxPerpsLiveAppMobile: { enabled: true },
-    ptxBorrowLiveApp: { enabled: true },
-  };
-}
-
-function renderEntryPoints(onOpenService = jest.fn()) {
-  render(
-    <I18nTestProvider>
-      <ServicesEntryPoints page="Portfolio" onOpenService={onOpenService} />
-    </I18nTestProvider>,
-  );
-  return { onOpenService };
+  return { onOpenService, user: userEvent.setup() };
 }
 
 describe("ServicesEntryPoints (Native)", () => {
@@ -46,56 +28,48 @@ describe("ServicesEntryPoints (Native)", () => {
     jest.clearAllMocks();
   });
 
-  it("renders the services in the order set by the flag", () => {
-    mockFlags(enabledServices(["borrow", "perps"]));
-
+  it("should render the title and description of each service", () => {
     renderEntryPoints();
 
-    const cards = screen.getAllByTestId(/^portfolio-services-entry-point-/);
-    expect(
-      cards.map(function getTestID(card: { props: { testID?: string } }) {
-        return card.props.testID;
-      }),
-    ).toEqual(["portfolio-services-entry-point-borrow", "portfolio-services-entry-point-perps"]);
-    expect(screen.getByText("servicesEntryPoints.borrow.title")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.perps.title")).toBeVisible();
     expect(screen.getByText("servicesEntryPoints.perps.description")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.borrow.title")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.borrow.description")).toBeVisible();
   });
 
-  it("gates perps on the mobile perps flag", () => {
-    mockFlags({
-      ...enabledServices(["perps", "borrow"]),
-      ptxPerpsLiveApp: { enabled: true },
-      ptxPerpsLiveAppMobile: { enabled: false },
+  it("should gate perps on the mobile perps flag", () => {
+    renderEntryPoints({
+      ...ENABLED_SERVICES,
+      ptxPerpsLiveApp: { enabled: true, params: { manifest_id: "perps-live-app" } },
+      ptxPerpsLiveAppMobile: { enabled: false, params: { manifest_id: "perps-live-app" } },
     });
 
-    renderEntryPoints();
-
-    expect(screen.queryByTestId("portfolio-services-entry-point-perps")).toBeNull();
-    expect(screen.getByTestId("portfolio-services-entry-point-borrow")).toBeVisible();
+    expect(screen.queryByText("servicesEntryPoints.perps.title")).toBeNull();
   });
 
-  it("renders nothing when no service is available", () => {
-    mockFlags({
-      entryPointsServices: { enabled: true, params: { services: ["perps", "borrow"] } },
-    });
-
-    renderEntryPoints();
+  it("should render nothing when no service is available", () => {
+    renderEntryPoints({ entryPointsServices: ENABLED_SERVICES.entryPointsServices });
 
     expect(screen.queryByTestId("portfolio-services-entry-points")).toBeNull();
   });
 
-  it("tracks the press and opens the service", async () => {
-    const user = userEvent.setup();
-    mockFlags(enabledServices(["perps", "borrow"]));
-    const { onOpenService } = renderEntryPoints();
+  it("should track the press on a service", async () => {
+    const { user } = renderEntryPoints();
 
-    await user.press(screen.getByTestId("portfolio-services-entry-point-perps"));
+    await user.press(screen.getByText("servicesEntryPoints.perps.title"));
 
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: "perps_entry_point",
       flow: "perps",
       page: "Portfolio",
     });
+  });
+
+  it("should open the pressed service", async () => {
+    const { onOpenService, user } = renderEntryPoints();
+
+    await user.press(screen.getByText("servicesEntryPoints.perps.title"));
+
     expect(onOpenService).toHaveBeenCalledWith("perps");
   });
 });

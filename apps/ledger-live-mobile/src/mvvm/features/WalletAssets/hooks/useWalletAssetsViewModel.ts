@@ -18,7 +18,7 @@ interface WalletAssetsViewModelResult {
   shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayBorrowSection: boolean;
-  shouldDisplayServicesSection: boolean;
+  shouldDisplayServicesEntryPoints: boolean;
   onBorrowPress: () => void;
 }
 
@@ -32,7 +32,7 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const borrowConfig = useBorrowLiveConfig();
-  const { isEnabled: shouldDisplayServicesSection } = useServicesEntryPointsFeature();
+  const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const { onPress: onBorrowPress } = usePortfolioBorrowSectionViewModel();
 
   const hasMore = useMemo(
@@ -50,8 +50,9 @@ export function useWalletAssetsViewModel(): WalletAssetsViewModelResult {
     shouldAddBottomPadding: shouldDisplayOperationsList && walletCardsDisplayed.length === 0,
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
-    shouldDisplayBorrowSection: (borrowConfig?.enabled ?? false) && !shouldDisplayServicesSection,
-    shouldDisplayServicesSection,
+    shouldDisplayBorrowSection:
+      (borrowConfig?.enabled ?? false) && !shouldDisplayServicesEntryPoints,
+    shouldDisplayServicesEntryPoints,
     onBorrowPress,
   };
 }

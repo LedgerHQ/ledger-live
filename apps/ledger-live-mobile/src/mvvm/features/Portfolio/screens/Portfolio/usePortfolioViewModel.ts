@@ -39,7 +39,6 @@ interface UsePortfolioViewModelResult {
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
   shouldDisplayPerpsEntryPoint: boolean;
-  shouldDisplayServicesSection: boolean;
   showAssets: boolean;
   isLNUpsellBannerShown: boolean;
   isAddModalOpened: boolean;
@@ -66,7 +65,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetDiscoverability,
   } = useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
-  const { isEnabled: shouldDisplayServicesSection } = useServicesEntryPointsFeature();
+  const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
   const isFocused = useIsFocused();
@@ -155,8 +154,7 @@ const usePortfolioViewModel = (navigation: {
     shouldDisplayAssetDiscoverability,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
-    shouldDisplayPerpsEntryPoint: !shouldDisplayServicesSection,
-    shouldDisplayServicesSection,
+    shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
     showAssets,
     isLNUpsellBannerShown,
     isAddModalOpened,

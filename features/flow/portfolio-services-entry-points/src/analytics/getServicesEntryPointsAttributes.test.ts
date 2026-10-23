@@ -1,7 +1,7 @@
 import { getServicesEntryPointsAttributes } from "./getServicesEntryPointsAttributes";
 
 describe("getServicesEntryPointsAttributes", () => {
-  it("reports the flag state and the services order", () => {
+  it("should report the flag state and the services order", () => {
     expect(
       getServicesEntryPointsAttributes({
         enabled: true,
@@ -10,7 +10,7 @@ describe("getServicesEntryPointsAttributes", () => {
     ).toEqual({ isEnabled: true, services: ["borrow", "perps"] });
   });
 
-  it("reports a disabled flag with no services when the flag is not loaded", () => {
+  it("should report a disabled flag with no services when the flag is not loaded", () => {
     expect(getServicesEntryPointsAttributes(null)).toEqual({ isEnabled: false, services: [] });
   });
 });
