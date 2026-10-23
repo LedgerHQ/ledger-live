@@ -6,7 +6,7 @@
 
 feat(account-descriptor): identify the network by its CAL network_id
 
-The descriptor becomes `account:2:<type>:<network_id>:<key>:<path>` and the entity only reads version 2. The network id is the exact CAL id, case included (`LBRY`).
+The descriptor becomes `account:2:<type>:<network_id>:<key>:<path>` and the entity only reads version 2.
 
 wallet-cli, breaking:
 

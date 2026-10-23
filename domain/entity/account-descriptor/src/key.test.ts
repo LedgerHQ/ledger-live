@@ -28,9 +28,8 @@ describe("accountDescriptorKey", () => {
     expect(accountDescriptorKey(utxo("m/84H/0H/0H"))).toBe(key);
   });
 
-  it("keeps the network id exact, as the CAL writes it", () => {
-    expect(accountDescriptorKey(utxo("m/84h/0h/0h", "LBRY"))).toContain(":LBRY:");
-    expect(accountDescriptorKey(utxo("m/84h/0h/0h", "Bitcoin"))).not.toBe(
+  it("collapses the network case", () => {
+    expect(accountDescriptorKey(utxo("m/84h/0h/0h", "Bitcoin"))).toBe(
       accountDescriptorKey(utxo("m/84h/0h/0h")),
     );
   });
