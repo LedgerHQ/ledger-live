@@ -8,17 +8,17 @@ The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`co
 
 ## Webview and native
 
-Callers MUST use an installed global function before writing a Detox matcher. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. A direct import of either object MUST be used only where those globals are not available.
+### Callers MUST reuse the installed NativeElementHelpers and WebElementHelpers globals
 
-### Webview operations MUST use Detox web helpers
+Callers MUST use an installed global function. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. A direct import of either object MUST be used only where those globals are not available.
 
-A webview operation MUST call a `WebElementHelpers` function first, such as `getWebElementByTestId`. Those helpers use the Detox web matchers. A caller MUST NOT call `web.element` when one of these helpers can reach the element.
+A webview operation MUST call an installed `WebElementHelpers` global first, such as `getWebElementByTestId`. A caller MUST NOT call `web.element` when one of these globals can reach the element.
 
-### Native operations MUST use regular Detox matchers
-
-A native operation MUST call a `NativeElementHelpers` function first, such as `getElementById`. Those helpers use the regular Detox matchers. A caller MUST NOT call `element(by...)` when one of these helpers can reach the element.
+A native operation MUST call an installed `NativeElementHelpers` global first, such as `getElementById`. A caller MUST NOT call `element(by...)` when one of these globals can reach the element.
 
 ### A shared Live App test id SHOULD match the desktop test id
+
+When a Live App element already has a test id on desktop, the mobile selector SHOULD use that same id.
 
 ## Structure
 
