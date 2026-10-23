@@ -22,6 +22,7 @@ type Props<T, P> = ApiOptions<T> & {
 };
 
 const apiCache = {};
+const pendingRequests = {};
 
 export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
   queryFn,
@@ -42,8 +43,10 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
     setData(undefined);
     setError(undefined);
 
+    const request = pendingRequests[cacheKey] ?? queryFn({ ...queryProps });
+    pendingRequests[cacheKey] = request;
     try {
-      const res = await queryFn({ ...queryProps });
+      const res = await request;
       setData(res);
       setIsLoading(false);
       apiCache[cacheKey] = { data: res, timestamp: new Date().getTime() };
@@ -54,6 +57,7 @@ export function useAPI<T, P extends Record<PropertyKey, unknown> | undefined>({
         onError?.(e);
       }
     } finally {
+      if (pendingRequests[cacheKey] === request) delete pendingRequests[cacheKey];
       setIsLoading(false);
     }
   };
