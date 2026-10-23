@@ -252,6 +252,14 @@ const android = {
     );
     return failed ? null : parseCpuStat(stdout);
   },
+  // Virtual CPUs the emulator actually has (the -cores it was booted with).
+  async cpuCount(device) {
+    const { stdout, failed } = await run("adb", ["-s", device, "shell", "nproc"], {
+      allowFail: true,
+    });
+    const count = Number(stdout.trim());
+    return failed || !Number.isInteger(count) ? null : count;
+  },
   // Epoch ms on the runner's clock at which the app process started. The startup events count
   // from process start, while `am start` spends a few hundred ms before the process exists.
   async processStart(device) {
@@ -359,6 +367,9 @@ const ios = {
     return null;
   },
   async processStart() {
+    return null;
+  },
+  async cpuCount() {
     return null;
   },
   async startCapture() {
@@ -736,6 +747,9 @@ async function main() {
         pauseIdle: PAUSE_IDLE && PLATFORM === "android",
         guestCapture: GUEST_CAPTURE && PLATFORM === "android",
         hostCpus: os.cpus().length,
+        deviceCpus: Object.fromEntries(
+          await Promise.all(DEVICES.map(async d => [d, await P.cpuCount(d)])),
+        ),
         userdata: {
           "no-accounts": opts["no-accounts-userdata"],
           accounts: opts["accounts-userdata"],

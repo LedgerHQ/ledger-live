@@ -87,6 +87,12 @@ on:
         type: choice
         options: [wifi, cellular]
         default: wifi
+      emulator_cores:
+        description: "Android: CPU cores per emulator (two emulators share an 8-CPU runner; the E2E AVD has 2)"
+        required: false
+        type: choice
+        options: ["3", "2", "4"]
+        default: "3"
 
 concurrency:
   group: mobile-startup-perf-${{ github.ref_name }}
@@ -104,8 +110,8 @@ env:
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
   # The AVD itself (AVD_* and AVD_CACHE_KEY) comes from setup-android-avd@develop, like E2E.
-  # Two emulators share the 8-CPU runner; each gets 3 cores instead of the E2E default of 2.
-  PERF_AVD_CORES: 3
+  # Two emulators share the 8-CPU runner; each gets emulator_cores (3 by default; E2E's AVD has 2).
+  PERF_AVD_CORES: ${{ inputs.emulator_cores || '3' }}
 
 jobs:
   plan:
@@ -165,7 +171,7 @@ jobs:
             echo "- A: \`$LABEL_A\` → \`$A\`"
             echo "- B: \`$LABEL_B\` → \`$B\`"
             echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch"
-            echo "- Android: one job (runner) per scenario, emulator network: $EMULATOR_NETWORK"
+            echo "- Android: one job (runner) per scenario, emulator network: $EMULATOR_NETWORK, $PERF_AVD_CORES cores per emulator"
           } >> "$GITHUB_STEP_SUMMARY"
 
   build-android:
@@ -531,7 +537,8 @@ jobs:
           set -euo pipefail
           tools/scripts/cleanup-android-emulators.sh || true
           mkdir -p "$RESULTS_DIR/android"
-          # Cold boot: the cached snapshot was taken with 2 cores and cannot be loaded with 3.
+          # Cold boot for every core count, so changing emulator_cores changes nothing else: the
+          # cached snapshot was taken with 2 cores and cannot be loaded with 3 or 4.
           # shellcheck disable=SC2086
           nohup "$ANDROID_HOME/emulator/emulator" -avd "$AVD_NAME" -port 5554 $AVD_OPTIONS -no-snapshot-load -no-snapshot-save -cores "$PERF_AVD_CORES" > "$RESULTS_DIR/android/emulator-1.log" 2>&1 &
           # shellcheck disable=SC2086
@@ -545,6 +552,9 @@ jobs:
             done
             echo "$serial booted"
           done
+          {
+            echo "- Emulator CPUs (nproc): $(for serial in emulator-5554 emulator-5556; do printf '%s=%s ' "$serial" "$(adb -s "$serial" shell nproc | tr -d '\r')"; done)"
+          } >> "$GITHUB_STEP_SUMMARY"
           # cellular: traffic leaves through the emulated mobile network (eth0) instead of Wi-Fi (wlan0).
           if [[ "$EMULATOR_NETWORK" == cellular ]]; then
             for serial in emulator-5554 emulator-5556; do
