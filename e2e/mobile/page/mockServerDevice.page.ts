@@ -9,7 +9,7 @@ const HMAC_NAME_HEX = "11".repeat(32);
 const SUCCESS_STATUS_WORD = "9000";
 
 export class MockServerDevicePage extends MockServerSessionHandle {
-  promptElement = (testId: string) => element(by.id(testId));
+  promptElem = (testId: string) => element(by.id(testId));
 
   @Step("Mock the dashboard contact rename")
   async mockDashboardRename() {
@@ -21,7 +21,7 @@ export class MockServerDevicePage extends MockServerSessionHandle {
 
   @Step("Confirm the open device prompt")
   async confirmDeviceIntent(testId: string) {
-    const prompt = this.promptElement(testId);
+    const prompt = this.promptElem(testId);
     await waitFor(prompt).toBeVisible().withTimeout(TIMEOUT.xxlarge);
     await this.approvePromptsUntil(async () => {
       try {
