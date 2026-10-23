@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { chmodSync, mkdirSync, mkdtempSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  statSync,
+  symlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import {
@@ -61,18 +69,41 @@ describe("agent-intent key file", () => {
     expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
   });
 
-  it("warns on stderr, but still reads the key, when the file is readable by others", () => {
+  it("refuses a key file readable by others, with a chmod hint", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");
     chmodSync(agentIntentKeyFilePath("bot"), 0o644);
-    const stderr: string[] = [];
-    const restore = installOutputCapture({ stderr: s => stderr.push(s) });
-    try {
-      expect(loadAgentIntentKeyFile("bot")).toBe("deadbeef");
-    } finally {
-      restore();
-    }
 
-    expect(stderr.join("")).toMatch(/Permissions 644 for .*bot\.key are too open/);
+    expect(() => loadAgentIntentKeyFile("bot")).toThrow(
+      /Permissions 644 for .*bot\.key are too open: run `chmod 600 .*bot\.key`/,
+    );
+  });
+
+  it("refuses a symlink in place of the key file", () => {
+    const target = join(stateHome, "elsewhere.key");
+    writeFileSync(target, "deadbeef", { mode: 0o600 });
+    mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true });
+    symlinkSync(target, agentIntentKeyFilePath("bot"));
+
+    expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is a symlink/);
+  });
+
+  it("refuses a key path that is not a regular file", () => {
+    mkdirSync(agentIntentKeyFilePath("bot"), { recursive: true, mode: 0o700 });
+
+    expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
+  });
+
+  it("refuses a key file owned by another user", () => {
+    saveAgentIntentKeyFile("bot", "deadbeef");
+    const realGetuid = process.getuid;
+    process.getuid = () => statSync(agentIntentKeyFilePath("bot")).uid + 1;
+    try {
+      expect(() => loadAgentIntentKeyFile("bot")).toThrow(
+        /bot\.key is not owned by the current user/,
+      );
+    } finally {
+      process.getuid = realGetuid;
+    }
   });
 
   it("reads a 0600 key file without a permissions warning", () => {

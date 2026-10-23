@@ -1,9 +1,18 @@
-import { chmodSync, existsSync, mkdirSync, readFileSync, statSync, unlinkSync } from "node:fs";
+import {
+  chmodSync,
+  closeSync,
+  constants,
+  existsSync,
+  fstatSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  unlinkSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { writeSecureFile } from "../shared/secure-file";
-import { writeStderr } from "../shared/ui";
 
 // Unencrypted fallback for an Agent Intent profile's secret key, used only on a host without a
 // usable OS keychain and only after the human explicitly agreed
@@ -23,21 +32,36 @@ export function saveAgentIntentKeyFile(profileId: string, secretKeyHex: string):
   writeSecureFile(path, Buffer.from(secretKeyHex));
 }
 
+// Like ssh with a private key: the human agreed to a 0600 file of their own, so anything else is
+// refused before the key is read. Checked on the descriptor it is read from, never through a symlink.
 export function loadAgentIntentKeyFile(profileId: string): string | null {
   const path = agentIntentKeyFilePath(profileId);
+  let fd: number;
   try {
-    const secretKey = readFileSync(path, "utf8").trim();
-    // Like ssh's "permissions are too open", but only a warning: the human already chose plaintext.
-    const mode = statSync(path).mode & 0o777;
+    fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+  } catch (e) {
+    const code = e instanceof Error && "code" in e ? e.code : undefined;
+    if (code === "ENOENT") return null;
+    if (code === "ELOOP") {
+      throw new Error(`${path} is a symlink, not the key file itself.`, { cause: e });
+    }
+    throw e;
+  }
+  try {
+    const stat = fstatSync(fd);
+    if (!stat.isFile()) throw new Error(`${path} is not a regular file.`);
+    if (stat.uid !== process.getuid?.()) {
+      throw new Error(`${path} is not owned by the current user.`);
+    }
+    const mode = stat.mode & 0o777;
     if (mode & 0o077) {
-      writeStderr(
-        `⚠ Permissions ${mode.toString(8)} for ${path} are too open: run \`chmod 600 ${path}\`.\n`,
+      throw new Error(
+        `Permissions ${mode.toString(8)} for ${path} are too open: run \`chmod 600 ${path}\`.`,
       );
     }
-    return secretKey;
-  } catch (e) {
-    if (e instanceof Error && "code" in e && e.code === "ENOENT") return null;
-    throw e;
+    return readFileSync(fd, "utf8").trim();
+  } finally {
+    closeSync(fd);
   }
 }
 
