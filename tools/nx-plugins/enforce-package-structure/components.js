@@ -896,6 +896,8 @@ function reachableProps(declaration, module) {
   }
   /** @param {ts.TypeElement} prop @param {Bindings} bindings */
   function addProp(prop, bindings) {
+    // `{ [id: string]: Tile }` holds tiles but declares no prop of its own.
+    if (ts.isIndexSignatureDeclaration(prop)) visit(prop.type, bindings);
     if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
     props.add(prop);
     if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, bindings);

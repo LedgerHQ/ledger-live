@@ -908,6 +908,19 @@ test("R3 checks the local types a contract's props hold, at any depth", () => {
   );
 });
 
+test("R3 checks the values of an index signature", () => {
+  for (const contractModule of [
+    "export type CardProps = { items: { [id: string]: { onPress(): void } } };\n",
+    "interface Tiles { [id: string]: { onPress(): void } }\nexport type CardProps = { items: Tiles };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
 test("R3 checks the local types a prop holds behind a local alias", () => {
   for (const aliases of [
     "type Tile = { onPress(): void };\ntype Tiles = Tile[];",
