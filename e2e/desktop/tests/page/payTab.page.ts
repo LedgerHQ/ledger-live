@@ -74,11 +74,15 @@ export class PayTabPage extends AppPage {
     await expect(this.filterPill).toHaveText(label);
   }
 
-  @step("Filter the balance on $0")
-  async filterBalance(rowKey: string) {
+  async filterBalanceAndExpectFilterPill(rowKey: string, label: string, errorMessage: string) {
     await this.filterPill.click();
     await this.filterOption(rowKey).click();
     await this.filterConfirm.click();
+    try {
+      await expect(this.filterPill).toHaveText(label);
+    } catch {
+      throw new Error(errorMessage);
+    }
   }
 
   @step("Open deposit options")

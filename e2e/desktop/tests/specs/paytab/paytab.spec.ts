@@ -92,10 +92,16 @@ test.describe("Pay tab", () => {
       await app.payTab.expectBalanceAmount();
       await app.payTab.expectFilterPill(ALL_STABLECOINS);
 
-      await app.payTab.filterBalance(FILTER_TICKER.toLowerCase());
-      await app.payTab.expectFilterPill(FILTER_TICKER);
-      await app.payTab.filterBalance("all");
-      await app.payTab.expectFilterPill(ALL_STABLECOINS);
+      await app.payTab.filterBalanceAndExpectFilterPill(
+        FILTER_TICKER.toLowerCase(),
+        FILTER_TICKER,
+        `Expected filter pill to show ${FILTER_TICKER}`,
+      );
+      await app.payTab.filterBalanceAndExpectFilterPill(
+        "all",
+        ALL_STABLECOINS,
+        `Expected filter pill to show ${ALL_STABLECOINS}`,
+      );
 
       await app.payTab.openDepositOptions();
       await app.payTab.expectDepositOptions();

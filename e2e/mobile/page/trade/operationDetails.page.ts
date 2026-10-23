@@ -118,7 +118,6 @@ export default class OperationDetailsPage {
     if (operationType) await this.checkTransactionType(operationType);
   }
 
-  @Step("Check that transaction details are displayed {{{0}}}")
   async checkTransactionDetailsVisibility(accountName?: string) {
     await this.waitForOperationDetails();
     await detoxExpect(this.account()).toBeVisible();
