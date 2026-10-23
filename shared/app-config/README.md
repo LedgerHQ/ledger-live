@@ -3,17 +3,16 @@
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development for [ADR-0001 runtime configuration overrides](https://ledgerhq.atlassian.net/browse/LIVE-38076); API may change.
 
-Resolves the configuration of an app session once, before the store builds the Redux thunk
-`extraArgument`. Each app wraps `resolveAppConfig` in a pure `loadAppConfig(storage, profile)`, next
+Resolves the configuration of an app session once, before the store is created. Each app wraps `resolveAppConfig` in a pure `loadAppConfig(storage, profile)`, next
 to a pure `profileOf` that derives the profile from the build (`apps/*/src/setup/load.ts`). Its
 `apps/*/src/setup/session.ts` binds the storage and profile of the session:
 
 - **Desktop** exports `loadAppConfig(storage?)`, which the store factory calls when the store is
   created, never at module level. Playwright runs seed `localStorage` in `init()`, after the modules
   are evaluated, and pass the selections of `PLAYWRIGHT_RUN.appConfig` as a static storage.
-- **Mobile** exports `appConfig`, resolved when the module is evaluated: MMKV and the launch
-  arguments are both read synchronously. Detox builds read the selections from the `appConfig`
-  launch argument (a JSON string) instead of MMKV.
+- **Mobile** exports `appConfig` and `appConfigSession`, resolved when the module is evaluated: MMKV
+  and the launch arguments are both read synchronously. Detox builds read the selections from the
+  `appConfig` launch argument (a JSON string) instead of MMKV.
 
 - A **switch** is a closed set of option groups that the build declares, one per option id
   (`prod`, `staging`). Selecting an option moves all its values together and never accepts a value
@@ -87,6 +86,13 @@ authProvider: new AuthSDK(
   },
   { provider },
 ),
+// …
+.concat(
+  createAppConfigMiddleware({
+    session: appConfigSession,
+    reload: () => window.api?.reloadRenderer(),
+  }),
+)
 ```
 
 ## Changes take a reload
@@ -102,25 +108,60 @@ choice, not a limitation to work around:
   set of backends.
 
 So the store never re-reads a configuration value on a request to follow a runtime change, and a
-debug tool that changes one saves it and asks for a reload. Only Keycloak reads the configuration so
+debug tool that changes one saves it, then reloads when the developer asks: a reload can be slow
+under a debugger or on an emulator, so several changes take a single one. Only Keycloak reads the configuration so
 far: the other services keep their `@shared/env` reads until they move to it.
+
+## Selecting an option
+
+`resolveAppConfig` returns the configuration as `config`, and what it was resolved from as
+`session`: the declared switches, the default option, the selections read at boot and the storage.
+Each store hands `session` to `createAppConfigMiddleware`, with the `reload` that starts the next
+session. The storage and the reload are dependencies, so they stay in the middleware's closure
+rather than in the thunk `extraArgument`, which only carries config.
+
+- Once the store is created, the middleware sets the `appConfig` slice to the session without its
+  storage, and its saved selections to the ones read at boot. Register `appConfigReducer` under
+  `state.appConfig`; `appConfigSessionSelector` returns `null` until then.
+- `selectAppConfigOption` saves an option of a declared switch, in the slice and with
+  `ConfigStorage.set`. `resetAppConfigSwitch` removes the selection of a declared switch, in the
+  slice and with `ConfigStorage.remove`, so the next session follows the default. Any other switch
+  id or option id is ignored. Neither reloads: the session keeps running on the selections it
+  booted with, and `appConfigSavedSelectionsSelector` returns the ones the next session resolves
+  from.
+- `reloadAppConfig` calls `reload`, which starts the next session.
+
+The `app-config` devtool reads the slice and dispatches these actions through
+`useAppConfigToolProps()` from `@devtools/bindings`.
 
 ## Exports
 
-| Export                      | Purpose                                                          |
-| --------------------------- | ---------------------------------------------------------------- |
-| `defineConfigSchema`        | Declares the value schemas of each switch and of the fixed values |
-| `resolveAppConfig`          | Resolves and parses the configuration of one session, frozen      |
-| `InvalidConfigOptionError`  | An option of a switch fails the schema of that switch             |
-| `DuplicateConfigValueError` | A value name is declared more than once in the schema             |
-| `ConfigSchema`              | Type of what `defineConfigSchema` returns                         |
-| `ConfigSchemaSwitches`      | Type of the value schemas of each switch, by switch id            |
-| `ConfigSwitch`              | Type of one switch: label and options                             |
-| `ConfigOptionId`            | Type of an option id: `prod` or `staging`                         |
-| `ConfigOptions`             | Type of the options of a switch, typed by its shape               |
-| `ConfigStorage`             | Type of the storage the app persists the selections in            |
-| `AppConfig`                 | Type of the configuration a schema describes                      |
-| `Zod`                       | Type of the zod namespace the callback receives                   |
+| Export                             | Purpose                                                           |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `defineConfigSchema`               | Declares the value schemas of each switch and of the fixed values |
+| `resolveAppConfig`                 | Resolves and parses the configuration of one session, frozen      |
+| `createAppConfigMiddleware`        | Sets the `appConfig` slice, saves selections, reloads on request  |
+| `selectAppConfigOption`            | Action: saves an option of a declared switch                      |
+| `resetAppConfigSwitch`             | Action: removes the selection of a declared switch                |
+| `reloadAppConfig`                  | Action: starts the next session                                   |
+| `appConfigReducer`                 | Reducer of the `appConfig` slice                                  |
+| `appConfigSessionSelector`         | The session of the `appConfig` slice, or `null` until it is set   |
+| `appConfigSavedSelectionsSelector` | The selections the next session resolves from                     |
+| `APP_CONFIG_OPTION_IDS`            | The id of each option every switch declares, in display order     |
+| `InvalidConfigOptionError`         | An option of a switch fails the schema of that switch             |
+| `DuplicateConfigValueError`        | A value name is declared more than once in the schema             |
+| `ConfigSchema`                     | Type of what `defineConfigSchema` returns                         |
+| `ConfigSchemaSwitches`             | Type of the value schemas of each switch, by switch id            |
+| `ConfigSwitch`                     | Type of one switch: label and options                             |
+| `ConfigSwitches`                   | Type of the switches an app declares, whatever their values       |
+| `ConfigOptionId`                   | Type of an option id: `prod` or `staging`                         |
+| `ConfigOptions`                    | Type of the options of a switch, typed by its shape               |
+| `ConfigStorage`                    | Type of the storage the app persists the selections in            |
+| `AppConfig`                        | Type of the configuration a schema describes                      |
+| `AppConfigSession`                 | Type of what a configuration was resolved from: its `session`     |
+| `AppConfigMiddlewareConfig`        | Type of what `createAppConfigMiddleware` takes                    |
+| `AppConfigState`                   | Type of the `appConfig` slice                                     |
+| `Zod`                              | Type of the zod namespace the callback receives                   |
 
 Apps reach zod only through `defineConfigSchema`, and do not declare it. Its API is still part of
 their schemas, a deliberate exception to "hide the lib" in

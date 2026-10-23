@@ -1,5 +1,5 @@
 import type { z } from "zod";
-import type { ValuesShape } from "./types.internals";
+import type { ValuesShape } from "./internals/types";
 
 /** The zod namespace `defineConfigSchema` hands to its callback. */
 export type Zod = typeof z;
@@ -7,6 +7,8 @@ export type Zod = typeof z;
 export type ConfigStorage = {
   readonly getAll: () => unknown;
   readonly set: (key: string, value: ConfigOptionId) => void;
+  /** Removes the selection of one switch, which then resolves to the default. */
+  readonly remove: (key: string) => void;
   readonly clear: () => void;
 };
 
@@ -36,6 +38,32 @@ export type ConfigOptions<Shape extends z.ZodRawShape> = Readonly<
 export type ConfigSwitch<Options extends Readonly<Record<ConfigOptionId, unknown>>> = {
   readonly label: string;
   readonly options: Options;
+};
+
+/** The switches an app declares, by switch id, whatever the shape of their values. */
+export type ConfigSwitches = Readonly<
+  Record<string, ConfigSwitch<Readonly<Record<ConfigOptionId, Readonly<Record<string, unknown>>>>>>
+>;
+
+/** What the configuration of a session was resolved from, as `resolveAppConfig` returns it. */
+export type AppConfigSession = {
+  readonly switches: ConfigSwitches;
+  /** The option of every switch without a valid selection. It depends on the build. */
+  readonly default: ConfigOptionId;
+  /** The option id saved for each switch, as read at boot. */
+  readonly selections: Readonly<Record<string, ConfigOptionId>>;
+  readonly storage: ConfigStorage;
+};
+
+/** The `appConfig` slice. */
+export type AppConfigState = {
+  /**
+   * What the configuration of this session was resolved from, without its storage. `null` until
+   * `createAppConfigMiddleware` sets it, right after the store is created.
+   */
+  readonly session: Omit<AppConfigSession, "storage"> | null;
+  /** The option id saved for each switch, which the next session resolves from. */
+  readonly savedSelections: Readonly<Record<string, ConfigOptionId>>;
 };
 
 /** The configuration a schema describes, as `resolveAppConfig` returns it. */

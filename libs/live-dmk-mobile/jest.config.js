@@ -11,6 +11,10 @@ module.exports = {
   },
   testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
+  moduleNameMapper: {
+    "^@ledgerhq/device-transport-kit-mockserver$":
+      "<rootDir>/tests/__mocks__/device-transport-kit-mockserver.ts",
+  },
   setupFilesAfterEnv: ["<rootDir>/tests.setup.ts", "@ledgerhq/test-quarantine/jest-retries"],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [

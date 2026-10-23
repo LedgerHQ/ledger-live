@@ -8,6 +8,7 @@ import {
   rnBleTransportIdentifier,
 } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PeerRemovedPairing } from "../errors";
@@ -119,6 +120,22 @@ describe("mobile connectDevice utils", () => {
       const discoveredDevice = makeDiscoveredDevice({
         id: "SpeculosID",
         transport: speculosIdentifier,
+      });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
+        { knownDevice, discoveredDevice },
+      ]);
+    });
+
+    it("should match mock server known devices by mapped DMK device model", () => {
+      const knownDevice: KnownDevice = {
+        ...knownDeviceA,
+        id: "",
+        transport: mockserverIdentifier,
+      };
+      const discoveredDevice = makeDiscoveredDevice({
+        id: "mock-server-device",
+        transport: mockserverIdentifier,
       });
 
       expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
@@ -274,6 +291,18 @@ describe("mobile connectDevice utils", () => {
           }),
         ),
       ).toBe(buildSpeculosLegacyDeviceId("http://localhost:5000"));
+    });
+
+    it("should keep mock server device ids unchanged", () => {
+      expect(
+        buildMobileCompatDeviceId(
+          makeConnectedDevice({
+            id: "mock-device-id",
+            type: "USB",
+            transport: mockserverIdentifier,
+          }),
+        ),
+      ).toBe("mock-device-id");
     });
 
     it("should keep the Speculos device id when no target is set", () => {

@@ -9,6 +9,9 @@ export const DEFAULT_PAGE_SIZE = 1000;
 /** Response header holding the CAL commit hash, used for token-cache invalidation. */
 export const HEADER_X_LEDGER_COMMIT = "X-Ledger-Commit";
 
+/** Token list hash reported for a network the CAL lists no token for. */
+export const EMPTY_TOKEN_LIST_HASH = "no-tokens";
+
 /** Response header carrying the pagination cursor for the next page. */
 export const HEADER_X_LEDGER_NEXT = "x-ledger-next";
 

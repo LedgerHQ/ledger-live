@@ -1,15 +1,24 @@
 import {
   CONTACT_ADDRESS_DATASET,
+  CONTACTS_ETHEREUM_APP_VERSION,
   CONTACTS_OS_VERSION_BY_MODEL,
   SEEDED_CONTACT_NAMES,
   createSeededContactGroups,
   generateContactName,
 } from "@ledgerhq/live-e2e-shared/contacts";
+import { deviceUnderTest } from "@ledgerhq/live-e2e-shared/mockServer/devices";
+import { withInstallHashes } from "@ledgerhq/live-e2e-shared/mockServer/installedApps";
+import {
+  disposeMockServerSession,
+  provisionMockServerSession,
+} from "@ledgerhq/live-e2e-shared/mockServer/session";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import type { LedgerSyncCliCommand } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
+import { device } from "detox";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import { describeIfNotNanoS, launchApp } from "@e2e/helpers/commonHelpers";
+import { MockServerDevicePage } from "@e2e/page/mockServerDevice.page";
 import {
   LEDGER_SYNC_FEATURE_FLAGS,
   cleanupLedgerSyncAfterAll,
@@ -17,6 +26,7 @@ import {
   verifyLedgerSyncEnvironment,
 } from "@e2e/helpers/ledgerSyncHelpers";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 import type { ApplicationOptions } from "@e2e/page/index";
 import type { PartialFeatures } from "@shared/feature-flags";
@@ -38,6 +48,22 @@ const CONTACTS_USERDATA = "contacts";
 
 const CONTACT_NAME = generateContactName();
 const RENAMED_CONTACT_NAME = generateContactName();
+
+function tagContactsScenario(tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.WALLET_XP);
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+}
+
+async function addContactAndOpenIt(name: string) {
+  await app.mainNavigation.openMyWallet();
+  await app.myWallet.openContacts();
+  await app.contacts.addContact(name);
+  await app.contacts.expectSavedContactDisplayed(name);
+  const contactRowId = await app.contacts.getSavedContactRowId(name);
+  await app.contacts.openSavedContact(contactRowId);
+  return contactRowId;
+}
 
 // i18n `contacts.addressCount_zero`.
 const NO_ADDRESS_LABEL = "0 address";
@@ -186,8 +212,120 @@ export function runBrowseAndSearchContactsTest(tmsLinks: string[], tags: string[
   });
 }
 
-// Rename returns the device to the dashboard and ends this Speculos session.
-// Covered by renameContactIntent unit tests.
+// On-device rename leaves the Ethereum app for the dashboard, which ends a Speculos session.
+const CONTACTS_APP_CATALOG_PROVIDER = 4;
+const REGISTER_DEVICE_PROMPT_ID = "contacts-register-external-address-continue-on-device";
+const ETHEREUM_ADDRESS = CONTACT_ADDRESS_DATASET.find(
+  row => row.networkId === "ethereum" && !row.isEns,
+);
+
+export function runRenameContactOnDeviceTest(tmsLinks: string[], tags: string[]) {
+  describeIfContactsDeviceSupported("Contacts - rename with an address (mock server)", () => {
+    if (!ETHEREUM_ADDRESS) {
+      throw new Error("No Ethereum address in the contact dataset");
+    }
+
+    setupLedgerSyncSeed();
+    cleanupLedgerSyncAfterAll();
+
+    let mockServer: MockServerDevicePage;
+    let session: { baseUrl: string; token: string } | undefined;
+
+    beforeAll(async () => {
+      const contactsOsVersion = CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()];
+      if (!contactsOsVersion) {
+        throw new Error("No contacts firmware is published for this device");
+      }
+
+      const deviceConfig = deviceUnderTest();
+      const apps = (
+        await withInstallHashes(
+          deviceConfig.modelId,
+          [{ name: AppInfos.ETHEREUM.name, version: CONTACTS_ETHEREUM_APP_VERSION }],
+          { firmware: contactsOsVersion, provider: CONTACTS_APP_CATALOG_PROVIDER },
+        )
+      ).map(appVersion => {
+        if (!appVersion.version) throw new Error(`App "${appVersion.name}" has no version`);
+        return { name: appVersion.name, version: appVersion.version, hash: appVersion.hash };
+      });
+      const { modelId, ...config } = {
+        ...deviceConfig,
+        firmware_version: contactsOsVersion,
+        apps,
+      };
+      session = await provisionMockServerSession([config]);
+      mockServer = new MockServerDevicePage(session.baseUrl, session.token);
+
+      const port = await launchApp({
+        newInstance: true,
+        launchArgs: {
+          mockServerToken: session.token,
+          mockServerModel: modelId,
+          forceProvider: String(CONTACTS_APP_CATALOG_PROVIDER),
+          ...(process.env.MOCK_SERVER_TRANSPORT_URL
+            ? { mockServerUrl: process.env.MOCK_SERVER_TRANSPORT_URL }
+            : {}),
+        },
+      });
+      await device.reverseTcpPort(port);
+      await verifyLedgerSyncEnvironment();
+
+      const trustchainCommands = [
+        ...app.ledgerSync.initializeEmptyTrustchain(),
+        (userdataPath?: string) => app.ledgerSync.saveTrustchainToUserdata(userdataPath),
+      ];
+      await app.init({
+        userdata: CONTACTS_USERDATA,
+        featureFlags: CONTACTS_FEATURE_FLAGS,
+        cliCommands: [],
+        cliCommandsOnApp: trustchainCommands.map(cmd => ({ app: AppInfos.LS, cmd })),
+      });
+      await app.common.removeSpeculos();
+      await app.mainNavigation.waitForWallet40Ready();
+    });
+
+    afterAll(async () => {
+      if (!session) return;
+      try {
+        await disposeMockServerSession(session.baseUrl, session.token);
+      } catch {
+        // The session expires on its own. A failed dispose must not hide the spec result.
+      }
+    });
+
+    tagContactsScenario(tmsLinks, tags);
+
+    it("Register an address and rename the contact on the device", async () => {
+      const contactRowId = await addContactAndOpenIt(CONTACT_NAME);
+      await app.contacts.detail.expectName(CONTACT_NAME);
+      await app.contacts.detail.expectNoAddresses();
+
+      await app.contacts.detail.openAddAddress();
+      await app.contacts.detail.enterAddress(ETHEREUM_ADDRESS);
+
+      // iOS Workaround: the mock device sheet never goes idle - disable sync for remainder of the spec
+      await app.common.disableSynchronizationForiOS();
+      await app.contacts.detail.tapAddressNameContinue();
+      await mockServer.confirmDeviceIntent(REGISTER_DEVICE_PROMPT_ID);
+      await app.contacts.detail.expectAddressSaved(
+        ETHEREUM_ADDRESS.savedValue,
+        ETHEREUM_ADDRESS.networkId,
+      );
+
+      await mockServer.mockDashboardRename();
+      await app.contacts.detail.renameContact(RENAMED_CONTACT_NAME);
+      await app.contacts.detail.expectName(RENAMED_CONTACT_NAME, TIMEOUT.xxlarge);
+      await app.contacts.detail.expectRenameDeviceSheetClosed();
+      await mockServer.dismissDeviceCompletionStatus();
+
+      await app.contacts.detail.deleteContact();
+      await app.contacts.expectScreenVisible(TIMEOUT.xxlarge);
+      await app.contacts.expectSavedContactRemoved(contactRowId);
+      await app.contacts.expectEmptyState();
+    });
+  });
+}
+
 export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags: string[]) {
   describeIfContactsDeviceSupported("Contacts", () => {
     setupLedgerSyncSeed();
@@ -197,18 +335,10 @@ export function runCreateDeleteContactWithAddressesTest(tmsLinks: string[], tags
       await initAppWithContactDevice();
     });
 
-    setTeamOwner(Team.WALLET_XP);
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
+    tagContactsScenario(tmsLinks, tags);
 
     it("Create and delete a contact with addresses", async () => {
-      await app.mainNavigation.openMyWallet();
-      await app.myWallet.openContacts();
-      await app.contacts.addContact(CONTACT_NAME);
-      await app.contacts.expectSavedContactDisplayed(CONTACT_NAME);
-
-      const contactRowId = await app.contacts.getSavedContactRowId(CONTACT_NAME);
-      await app.contacts.openSavedContact(contactRowId);
+      const contactRowId = await addContactAndOpenIt(CONTACT_NAME);
 
       for (const [index, addressData] of CONTACT_ADDRESS_DATASET.entries()) {
         await app.contacts.detail.addAddress(addressData);

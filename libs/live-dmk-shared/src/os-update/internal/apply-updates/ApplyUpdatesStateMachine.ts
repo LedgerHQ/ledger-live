@@ -1083,6 +1083,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED,
+          error: context.error,
           cancel: () => context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
         }),
       },
@@ -1142,6 +1143,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
           type: "sendStateUpdate",
           params: ({ context }) => ({
             type: ApplyUpdatesStateType.UNEXPECTED_ERROR,
+            error: context.error,
             cancel: () => context.send({ type: ApplyUpdatesStateMachineEventType.CANCEL }),
           }),
         },

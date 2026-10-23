@@ -12,6 +12,7 @@ import {
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
+  useGetTokenListHashQuery,
 } from "./api";
 import { ApiResponseSchema } from "./schema";
 import type { TokenByIdParams, TokenByAddressInCurrencyParams } from "./types";
@@ -80,10 +81,11 @@ describe("cryptoAssetsApi configuration", () => {
     expect(cryptoAssetsApi).toBe(calApi);
   });
 
-  it("should expose all four endpoints", () => {
+  it("should expose all five endpoints", () => {
     expect(cryptoAssetsApi.endpoints.findTokenById).toBeDefined();
     expect(cryptoAssetsApi.endpoints.findTokenByAddressInCurrency).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokensSyncHash).toBeDefined();
+    expect(cryptoAssetsApi.endpoints.getTokenListHash).toBeDefined();
     expect(cryptoAssetsApi.endpoints.getTokensData).toBeDefined();
   });
 
@@ -92,6 +94,7 @@ describe("cryptoAssetsApi configuration", () => {
     expect(useFindTokenByIdQuery).toBeDefined();
     expect(useFindTokenByAddressInCurrencyQuery).toBeDefined();
     expect(useGetTokensSyncHashQuery).toBeDefined();
+    expect(useGetTokenListHashQuery).toBeDefined();
   });
 });
 
@@ -249,5 +252,87 @@ describe("cryptoAssetsApi requests", () => {
     );
 
     expect(result.isError).toBe(true);
+  });
+
+  it("getTokenListHash returns the network token list hash from /v1/networks", async () => {
+    mockFetch([{ id: "solana", token_list_hash: "f61ca8f4b4123c59" }]);
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokenListHash.initiate("solana"),
+    );
+
+    expect(result.data).toBe("f61ca8f4b4123c59");
+    // getTokenListHash calls fetch with a URL object; stringify before asserting.
+    const url = new URL(String(fetchSpy.mock.calls[0][0]));
+    expect(url.origin + url.pathname).toBe("https://cal.test/v1/networks");
+    expect(url.searchParams.get("id")).toBe("solana");
+    expect(url.searchParams.get("output")).toBe("id,token_list_hash");
+  });
+
+  it("getTokenListHash returns a fixed hash for a network without tokens", async () => {
+    mockFetch([{ id: "bitcoin" }]);
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokenListHash.initiate("bitcoin"),
+    );
+
+    expect(result.data).toBe("no-tokens");
+  });
+
+  it("getTokenListHash errors with 404 on an empty network array", async () => {
+    mockFetch([]);
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokenListHash.initiate("unknown"),
+    );
+
+    expect(result.error).toMatchObject({ status: 404 });
+  });
+
+  it("getTokenListHash errors on a malformed response", async () => {
+    mockFetch({ id: "ethereum", token_list_hash: "abc123" });
+    const store = makeStore();
+
+    const result = await store.dispatch(
+      cryptoAssetsApi.endpoints.getTokenListHash.initiate("ethereum"),
+    );
+
+    expect(result.error).toMatchObject({ status: "PARSING_ERROR" });
+  });
+
+  it("a metadata-only CAL update moves the commit but not the token list hash", async () => {
+    // Same token list, new commit: a token's decimals or name changed. The token cache must see the
+    // change (commit), the account history must not (token list hash).
+    const respond = (commit: string) => (input: RequestInfo | URL) =>
+      Promise.resolve(
+        String(input).includes("/v1/networks")
+          ? new Response(JSON.stringify([{ id: "solana", token_list_hash: "same-list" }]), {
+              headers: { "Content-Type": "application/json", "X-Ledger-Commit": commit },
+            })
+          : new Response(JSON.stringify([{ id: "solana" }]), {
+              headers: { "Content-Type": "application/json", "X-Ledger-Commit": commit },
+            }),
+      );
+    const readBoth = async () => {
+      const store = makeStore();
+      const commit = await store.dispatch(
+        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("solana"),
+      );
+      const list = await store.dispatch(
+        cryptoAssetsApi.endpoints.getTokenListHash.initiate("solana"),
+      );
+      return { commit: commit.data, list: list.data };
+    };
+
+    fetchSpy = jest.spyOn(globalThis, "fetch").mockImplementation(respond("commit-before"));
+    const before = await readBoth();
+    fetchSpy.mockImplementation(respond("commit-after"));
+    const after = await readBoth();
+
+    expect(after.commit).not.toBe(before.commit);
+    expect(after.list).toBe(before.list);
   });
 });

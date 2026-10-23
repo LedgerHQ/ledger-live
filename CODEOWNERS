@@ -73,6 +73,7 @@ support/fmt/                                             @ledgerhq/platform
 support/jest/                                            @ledgerhq/platform
 support/lint/                                            @ledgerhq/platform
 support/tsconfig/                                        @ledgerhq/platform
+support/lint/libs-coin.mts                               @ledgerhq/coin-integration @ledgerhq/platform
 
 # Wallet — libs
 libs/live-send/                                          @ledgerhq/wallet-xp
@@ -243,6 +244,7 @@ tools/actions/composites/monitor/                        @ledgerhq/coin-integrat
 # Coin modules owned by Coin Integration
 # (libs/coin-*/ above already defaults to @ledgerhq/coin-integration; these make
 #  ownership explicit. New/unlisted modules still fall back to that wildcard.)
+/libs/coin-modules/oxlint.config.mts                                     @ledgerhq/coin-integration @ledgerhq/platform
 libs/coin-modules/coin-module-boilerplate/                               @ledgerhq/coin-integration
 libs/coin-modules/coin-bitcoin/                                          @ledgerhq/coin-integration
 libs/coin-modules/coin-cosmos/                                           @ledgerhq/coin-integration
@@ -458,7 +460,6 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/productTour.
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/__tests__/productTour.handler.test.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                      @ledgerhq/engagement
-apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useNotifications.ts                                @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts                                        @ledgerhq/engagement

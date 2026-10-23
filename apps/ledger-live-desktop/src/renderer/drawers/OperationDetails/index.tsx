@@ -179,6 +179,14 @@ const OperationD = (props: Props) => {
     : null;
 
   const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
+  const confirmationsI18nKey = specific?.operationDetails?.getConfirmationsI18nKey?.({
+    currencyId: mainAccount.currency.id,
+  });
+  const confirmationsLabel =
+    confirmationsI18nKey && confirmationsString
+      ? t(confirmationsI18nKey, { count: Number(confirmationsString) })
+      : confirmationsString;
+  const confirmationsSuffix = confirmationsLabel ? ` (${confirmationsLabel})` : "";
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
@@ -622,11 +630,7 @@ const OperationD = (props: Props) => {
               : isConfirmed
                 ? t("operationDetails.confirmed")
                 : t("operationDetails.notConfirmed")}
-            {getEnv("PLAYWRIGHT_RUN")
-              ? ""
-              : hasFailed
-                ? null
-                : `${confirmationsString ? ` (${confirmationsString})` : ``}`}
+            {getEnv("PLAYWRIGHT_RUN") || hasFailed ? null : confirmationsSuffix}
           </Box>
         </OpDetailsData>
       </OpDetailsSection>

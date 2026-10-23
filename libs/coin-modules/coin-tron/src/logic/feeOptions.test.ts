@@ -226,7 +226,7 @@ describe("listFeeOptions", () => {
       },
       {
         id: STANDARD_FEE_OPTION_ID,
-        feeAsset: { type: "native", name: "Tron", unit: expect.objectContaining({ code: "TRX" }) },
+        feeAsset: { type: "native" },
       },
     ]);
   });

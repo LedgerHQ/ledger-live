@@ -1,5 +1,6 @@
 import type { Account, DeviceInfo, DeviceModelInfo, PortfolioRange } from "@ledgerhq/types-live";
 import type { FeatureFlagsState } from "@shared/feature-flags";
+import type { AppConfigState } from "@shared/app-config";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { ActionDialogParams } from "@ledgerhq/live-common/wallet-api/validation/actionDialogParams";
 import type { DeviceModelId } from "@ledgerhq/devices";
@@ -453,6 +454,7 @@ export type DeeplinkInstallAppState = {
 
 export type State = LLMRTKApiState & {
   accounts: AccountsState;
+  appConfig: AppConfigState;
   appstate: AppState;
   auth: AuthState;
   ble: BleState;

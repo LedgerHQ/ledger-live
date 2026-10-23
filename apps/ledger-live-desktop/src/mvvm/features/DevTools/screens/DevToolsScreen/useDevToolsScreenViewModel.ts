@@ -19,6 +19,7 @@ import {
   useAccountBalanceToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAppConfigToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -33,6 +34,7 @@ export function useDevToolsScreenViewModel() {
   const featureFlagsToolProps = useFeatureFlagsToolProps();
   const payCardToolProps = usePayCardToolProps();
   const envToolProps = useEnvDevToolProps();
+  const appConfigToolProps = useAppConfigToolProps();
   const prodToggle = useProdToggle();
   const { wire, wireState } = useDevToolsRelay();
 
@@ -94,6 +96,7 @@ export function useDevToolsScreenViewModel() {
     () => [
       { id: "feature-flags", config: featureFlagsToolProps },
       { id: "env", config: envToolProps },
+      { id: "app-config", config: appConfigToolProps },
       { id: "pay-card", config: payCardToolProps },
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
@@ -105,6 +108,7 @@ export function useDevToolsScreenViewModel() {
     [
       featureFlagsToolProps,
       envToolProps,
+      appConfigToolProps,
       payCardToolProps,
       trustchainToolProps,
       cloudSyncToolProps,

@@ -71,6 +71,50 @@ needs none of this: it runs on node, which has them already.
 module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 ```
 
+Top-level options (e.g. `passWithNoTests`) go at the root of the argument:
+
+```js
+module.exports = require("@support/jest/features-flow").createFlowJestConfig({
+  passWithNoTests: true,
+});
+```
+
+### Per-project overrides
+
+`webOverrides` and `nativeOverrides` merge into the web and the native project. Two keys add to
+the project's defaults instead of replacing them:
+
+- `setupFilesAfterEnv`: the files run after the project's own setup files.
+- `moduleNameMapper`: the entries join the default mocks; an entry with the same pattern replaces
+  that mock.
+
+Any other key replaces the project's value.
+
+```js
+const path = require("path");
+
+module.exports = require("@support/jest/features-flow").createFlowJestConfig({
+  webOverrides: {
+    setupFilesAfterEnv: [path.resolve(__dirname, "jest/setup.web.js")],
+  },
+  nativeOverrides: {
+    moduleNameMapper: {
+      "^my-native-dep$": path.resolve(__dirname, "jest/mocks/my-native-dep.js"),
+    },
+  },
+});
+```
+
+### Native-only packages
+
+`createFlowNativeJestConfig()` returns the native project alone, for a package without web tests.
+It takes the same options as `createFlowJestConfig()` except `webOverrides`, and needs neither
+`jest-environment-jsdom` nor `@testing-library/jest-dom`.
+
+```js
+module.exports = require("@support/jest/features-flow").createFlowNativeJestConfig();
+```
+
 Add the dependency:
 
 ```jsonc

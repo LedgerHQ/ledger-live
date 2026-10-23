@@ -17,7 +17,7 @@ describe("getBalance via MSW", () => {
 
     const balances = await getBalance(ADDR);
 
-    expect(balances).toEqual([{ value: 500_000_000n, asset: { type: "native", name: "KAS" } }]);
+    expect(balances).toEqual([{ value: 500_000_000n, asset: { type: "native" } }]);
   });
 
   it("defaults to zero when the address is absent from the response (pristine account)", async () => {

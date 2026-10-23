@@ -19,7 +19,7 @@ describe("getBalance", () => {
     const balances = await getBalance(ADDRESS);
 
     expect(mockGetBalancesForAddresses).toHaveBeenCalledWith([ADDRESS]);
-    expect(balances).toEqual([{ value: 500000000n, asset: { type: "native", name: "KAS" } }]);
+    expect(balances).toEqual([{ value: 500000000n, asset: { type: "native" } }]);
   });
 
   it("falls back to 0 when the address is absent from the indexer response", async () => {
@@ -27,7 +27,7 @@ describe("getBalance", () => {
 
     const balances = await getBalance(ADDRESS);
 
-    expect(balances).toEqual([{ value: 0n, asset: { type: "native", name: "KAS" } }]);
+    expect(balances).toEqual([{ value: 0n, asset: { type: "native" } }]);
   });
 
   it("propagates network errors", async () => {

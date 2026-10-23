@@ -4,16 +4,26 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { HostOnboardingEvent } from "@features/platform-device-onboarding";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { findMatchingNewDevice } from "@ledgerhq/live-dmk-mobile";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 
 const delegatedState = "checks.firmwareUpdateDelegated";
 
+// The OS update reboot changes the BLE address, the advertised name and the USB id.
+export function isRebootedDevice(before: Device, after: Device): boolean {
+  if (before.modelId !== after.modelId) return false;
+  if (before.wired && after.wired) return true;
+  return findMatchingNewDevice(before, [after]) !== null;
+}
+
 type UseFirmwareUpdateHandoverInput = {
   device: Device | null;
   isDeviceOnboarded: boolean;
   machineState: string | null;
+  currentSessionId: string | null;
   send: (event: HostOnboardingEvent) => void;
+  onReconnectRequired: () => void;
 };
 
 type BaseNavigation = NativeStackNavigationProp<
@@ -26,7 +36,9 @@ export function useFirmwareUpdateHandover({
   device,
   isDeviceOnboarded,
   machineState,
+  currentSessionId,
   send,
+  onReconnectRequired,
 }: UseFirmwareUpdateHandoverInput) {
   const navigation = useNavigation<BaseNavigation>();
   const baseNavigation = navigation.getParent<BaseNavigation>(BASE_NAVIGATOR_ID) ?? navigation;
@@ -37,9 +49,14 @@ export function useFirmwareUpdateHandover({
   const freshResultRef = useRef(false);
   const delegatedRef = useRef(false);
   const wasDelegatedRef = useRef(false);
-  if (delegated && !wasDelegatedRef.current) closedRef.current = false;
-  wasDelegatedRef.current = delegated;
-  delegatedRef.current = delegated;
+  const onReconnectRequiredRef = useRef(onReconnectRequired);
+  const currentSessionIdRef = useRef(currentSessionId);
+
+  useEffect(() => {
+    if (delegated && !wasDelegatedRef.current) closedRef.current = false;
+    wasDelegatedRef.current = delegated;
+    delegatedRef.current = delegated;
+  }, [delegated]);
 
   const {
     state: { deviceInfo, firmwareUpdateContext, status },
@@ -56,11 +73,37 @@ export function useFirmwareUpdateHandover({
     send({ type: "FIRMWARE_UPDATE_FLOW_CLOSED" });
   }, [send]);
 
-  const onBackFromUpdate = useCallback(() => {
-    if (closedRef.current) return;
-    baseNavigation.goBack();
-    closeHandoverOnce();
-  }, [baseNavigation, closeHandoverOnce]);
+  const returnFromUpdate = useCallback(
+    (rebooted: boolean) => {
+      if (closedRef.current) return;
+      if (!rebooted) {
+        closeHandoverOnce();
+        return;
+      }
+      closedRef.current = true;
+      awaitingReturnRef.current = false;
+      onReconnectRequiredRef.current();
+    },
+    [closeHandoverOnce],
+  );
+
+  const onBackFromUpdate = useCallback(
+    (updateStep?: string) => {
+      if (closedRef.current) return;
+      awaitingReturnRef.current = false;
+      baseNavigation.goBack();
+      returnFromUpdate(updateStep === "completed" || currentSessionIdRef.current === null);
+    },
+    [baseNavigation, returnFromUpdate],
+  );
+
+  useEffect(() => {
+    onReconnectRequiredRef.current = onReconnectRequired;
+  }, [onReconnectRequired]);
+
+  useEffect(() => {
+    currentSessionIdRef.current = currentSessionId;
+  }, [currentSessionId]);
 
   useEffect(() => {
     if (!delegated) {
@@ -110,8 +153,9 @@ export function useFirmwareUpdateHandover({
 
   useFocusEffect(
     useCallback(() => {
-      if (awaitingReturnRef.current) closeHandoverOnce();
-    }, [closeHandoverOnce]),
+      if (!awaitingReturnRef.current) return;
+      returnFromUpdate(currentSessionIdRef.current === null);
+    }, [returnFromUpdate]),
   );
 
   return { close: closeHandoverOnce };

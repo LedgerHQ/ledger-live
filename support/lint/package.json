@@ -9,6 +9,7 @@
     "./devtools": "./devtools.mts",
     "./features-flow": "./features-flow.mts",
     "./libs": "./libs.mts",
+    "./libs-coin": "./libs-coin.mts",
     "./libs-coin-tester": "./libs-coin-tester.mts",
     "./support": "./support.mts",
     "./tools": "./tools.mts",
@@ -21,6 +22,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   }

@@ -1,3 +1,7 @@
 {
-  "extends": "@support/tsconfig/node"
+  "extends": "@support/tsconfig/node",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["*.mts", "src/**/*.js"]
 }

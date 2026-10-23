@@ -12,6 +12,7 @@ export const tools = {
   "account-balance": platform.accountBalance,
   "account-descriptor": platform.accountDescriptor,
   "account-data": platform.accountData,
+  "app-config": platform.appConfig,
 } as const;
 
 /**
@@ -38,4 +39,5 @@ export type DevToolConfig =
   | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps }
   | { id: "account-balance"; config: platform.AccountBalanceToolProps }
   | { id: "account-descriptor"; config: platform.AccountDescriptorToolProps }
-  | { id: "account-data"; config: platform.AccountDataToolProps };
+  | { id: "account-data"; config: platform.AccountDataToolProps }
+  | { id: "app-config"; config: platform.AppConfigToolProps };

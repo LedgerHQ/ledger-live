@@ -8,6 +8,7 @@
 // location. Re-exporting another package turns the barrel into a proxy: two import paths for the
 // same symbol, and no obvious original provider.
 
+const path = require("node:path");
 const ts = require("typescript");
 
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
@@ -315,8 +316,44 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
   return violations;
 }
 
+// Where an `index.*` under src/ may sit: as an entry (src/index.* or a package.json#exports
+// target), one `export *` level below an entry, or in an internals location. Each code is worded
+// once for the violation, the CLI hint and the waivers.
+const BARREL_LOCATION = {
+  "orphan-barrel": {
+    rule: "No entry reaches this barrel through `export *`",
+    fix:
+      "if another package uses what it groups, re-export it from the root with one " +
+      '`export * from "./dir"` line; otherwise delete the barrel and import the files directly, ' +
+      "or move the folder under internals/. Expose only code another package imports",
+  },
+  "nested-barrel": {
+    rule: "This barrel is reached more than one `export *` level below its entry",
+    fix: "re-export the files from the first-level barrel instead of chaining barrels",
+  },
+};
+
+/**
+ * Report an `index.*` that BARREL_LOCATION does not allow.
+ *
+ * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
+ * @param {string} file posix-style path of the `index.*`, from the repo root
+ * @param {number | undefined} depth barrels from its nearest entry to it, itself included: 0 for
+ *   an entry, undefined when no entry reaches it
+ * @returns {Violation[]}
+ */
+function checkBarrelLocation(projectRoot, file, depth) {
+  if (isInternalSpecifier(path.posix.dirname(file.slice(projectRoot.length + 1)))) return [];
+  if (depth !== undefined && depth <= 1) return [];
+  const code = depth === undefined ? "orphan-barrel" : "nested-barrel";
+  const { rule, fix } = BARREL_LOCATION[code];
+  return [{ line: 1, code, message: `${projectRoot}: ${rule}. Fix: ${fix}`, text: "" }];
+}
+
 module.exports = {
+  BARREL_LOCATION,
   checkBarrel,
+  checkBarrelLocation,
   checkReachedModule,
   isBarrelFile,
   isInternalSpecifier,

@@ -11,6 +11,7 @@ import type { NavigatorScreenParams } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device as DmkDevice } from "@ledgerhq/live-dmk-shared";
 import type {
   PerpsDepositUiParams,
   PerpsSignResult,
@@ -112,6 +113,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
+import type { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -411,8 +413,8 @@ export type BaseNavigatorStackParamList = {
     isDeviceOnboarded?: boolean;
   };
   [ScreenName.OsUpdate]: {
-    device: Device;
-    mode?: "bootloaderRepair" | "restoreBackup";
+    device: DmkDevice;
+    mode?: OsUpdateFlowMode;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;

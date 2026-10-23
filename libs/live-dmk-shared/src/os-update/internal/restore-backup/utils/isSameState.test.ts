@@ -17,8 +17,8 @@ describe("isSameState", () => {
     it("should ignore the callbacks carried by a state", () => {
       expect(
         isSameState(
-          { type: RestoreBackupStateType.OUT_OF_MEMORY, cancel: noop },
-          { type: RestoreBackupStateType.OUT_OF_MEMORY, cancel: () => undefined },
+          { type: RestoreBackupStateType.OUT_OF_MEMORY, error: undefined, cancel: noop },
+          { type: RestoreBackupStateType.OUT_OF_MEMORY, error: undefined, cancel: () => undefined },
         ),
       ).toBe(true);
     });

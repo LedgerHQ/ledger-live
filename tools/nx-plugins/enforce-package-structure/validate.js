@@ -1,18 +1,28 @@
 "use strict";
 
-// Checks that every `index.*` in a new-architecture package is a pure barrel, that every module
+// Checks that every `index.*` in a new-architecture package is a pure barrel where
+// BARREL_LOCATION (rules.js) allows one, that every module
 // those barrels reach through `export *`, or that `package.json#exports` names, re-exports like
-// one, and that the public components of a dual-platform package keep one API and one kind of
-// entry (components.js). The barrel rule follows a file's role, not its name.
+// one, and that the public components of a dual-platform package keep one API, one neutral props
+// contract and one kind of entry (components.js). The barrel rule follows a file's role, not its
+// name.
 //
 // Run for one package (the inferred `lint:structure` target passes its project root) or for all
 // of them at once (no argument), which is handy to audit the workspace.
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { checkBarrel, checkReachedModule, isBarrelFile, starReexportTargets } = require("./rules");
+const {
+  BARREL_LOCATION,
+  checkBarrel,
+  checkBarrelLocation,
+  checkReachedModule,
+  isBarrelFile,
+  starReexportTargets,
+} = require("./rules");
 const { checkComponents, isIgnoredEntry, resolveRelative } = require("./components");
 const { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
+const { INTERMEDIATE_BARREL_WAIVERS } = require("./intermediate-barrels");
 
 const EXCEPTIONS_FILE = "tools/nx-plugins/enforce-package-structure/exceptions.js";
 
@@ -131,21 +141,76 @@ function targetFilesOf(target) {
 }
 
 /**
- * Every source file named in `package.json#exports`, test support entries left out as
- * components.js does.
+ * Every source file named in `package.json#exports`. Test support entries are left out as
+ * components.js does, unless asked for: they are still entries, so their barrels are not
+ * intermediate.
  *
  * @param {unknown} exportsField
+ * @param {boolean} [withTestSupport]
  * @returns {string[]}
  */
-function entryPointsOf(exportsField) {
+function entryPointsOf(exportsField, withTestSupport = false) {
   if (!exportsField || typeof exportsField !== "object") return targetFilesOf(exportsField);
   // An object of conditions alone is the target of the root entry.
   if (!Object.keys(exportsField).some(key => key.startsWith("."))) {
     return targetFilesOf(exportsField);
   }
   return Object.entries(exportsField).flatMap(([subpath, target]) =>
-    isIgnoredEntry(subpath) ? [] : targetFilesOf(target),
+    !withTestSupport && isIgnoredEntry(subpath) ? [] : targetFilesOf(target),
   );
+}
+
+/**
+ * A barrel and its platform variants, which the bundlers treat as one module; any other file
+ * alone.
+ *
+ * @param {string} file absolute path
+ * @returns {string[]}
+ */
+function indexVariants(file) {
+  if (!isBarrelFile(path.basename(file))) return [file];
+  const directory = path.dirname(file);
+  try {
+    return fs
+      .readdirSync(directory)
+      .filter(isBarrelFile)
+      .map(name => path.join(directory, name));
+  } catch {
+    return [file];
+  }
+}
+
+/**
+ * How many barrels each file sits below its nearest entry, following relative `export *` the way
+ * the bundlers resolve it. An entry is 0, so an entry reached from another entry counts from
+ * itself; a barrel an entry reaches, directly or through plain modules, is 1.
+ *
+ * @param {string[]} entries absolute paths
+ * @returns {Map<string, number>} absolute path to depth, for the files an entry reaches
+ */
+function barrelDepths(entries) {
+  const entrySet = new Set(entries.flatMap(indexVariants));
+  const depths = new Map([...entrySet].map(file => [file, 0]));
+  const queue = [...entrySet];
+  while (queue.length > 0) {
+    const file = queue.shift();
+    let source;
+    try {
+      source = fs.readFileSync(file, "utf8");
+    } catch {
+      continue;
+    }
+    for (const specifier of starReexportTargets(source, file)) {
+      for (const target of resolveModule(file, specifier).flatMap(indexVariants)) {
+        if (entrySet.has(target)) continue;
+        const depth = depths.get(file) + (isBarrelFile(path.basename(target)) ? 1 : 0);
+        if (depth >= (depths.get(target) ?? Infinity)) continue;
+        depths.set(target, depth);
+        queue.push(target);
+      }
+    }
+  }
+  return depths;
 }
 
 /**
@@ -154,6 +219,7 @@ function entryPointsOf(exportsField) {
  * @param {Record<string, Record<string, { rules: string[] }>>} [componentExceptions]
  * @param {Record<string, string>} [fileExceptions] the exception audit passes `{}` to see what
  *   each entry hides
+ * @param {Record<string, string>} [intermediateBarrelWaivers] likewise for its own audit
  * @returns {Array<{ file: string, line: number, code: string, message: string, text: string, rule?: string }>}
  */
 function checkPackage(
@@ -161,6 +227,7 @@ function checkPackage(
   projectRoot,
   componentExceptions = COMPONENT_EXCEPTIONS,
   fileExceptions = FILE_EXCEPTIONS,
+  intermediateBarrelWaivers = INTERMEDIATE_BARREL_WAIVERS,
 ) {
   const found = applyComponentWaivers(
     projectRoot,
@@ -198,8 +265,11 @@ function checkPackage(
 
   // `skip` exempts the package from the barrel rule, traversal included.
   if (!options.skip) {
+    const barrels = [];
     walk(path.join(packageDir, "src"), file => {
-      if (isBarrelFile(path.basename(file))) visit(file);
+      if (!isBarrelFile(path.basename(file))) return;
+      barrels.push(file);
+      visit(file);
     });
 
     let manifest = {};
@@ -211,23 +281,38 @@ function checkPackage(
     for (const entry of entryPointsOf(manifest.exports)) {
       visit(path.join(packageDir, entry));
     }
+
+    const sourceRoot = path.join(packageDir, "src");
+    const depths = barrelDepths([
+      ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
+      ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
+    ]);
+    for (const barrel of barrels) {
+      const relative = path.relative(workspaceRoot, barrel).split(path.sep).join("/");
+      if (Object.hasOwn(intermediateBarrelWaivers, relative)) continue;
+      for (const violation of checkBarrelLocation(projectRoot, relative, depths.get(barrel))) {
+        found.push({ file: relative, ...violation });
+      }
+    }
   }
 
   return found.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
 }
 
 /**
- * Problems with the file exception list itself: an entry must name an existing file, hide at
- * least one violation, and state its exit condition, so the list only ever shrinks.
+ * Problems with a list of files allowed to keep their violations: an entry must name an existing
+ * file, hide at least one violation, and state its exit condition, so the list only ever shrinks.
  *
  * @param {string} workspaceRoot
- * @param {Record<string, string>} fileExceptions
+ * @param {Record<string, string>} list
+ * @param {(projectRoot: string) => Array<{ file: string }>} violationsWithout what each package
+ *   reports with the list emptied
  * @returns {string[]}
  */
-function auditFileExceptions(workspaceRoot, fileExceptions) {
+function auditList(workspaceRoot, list, violationsWithout) {
   const problems = [];
   const reported = new Map();
-  for (const [file, reason] of Object.entries(fileExceptions)) {
+  for (const [file, reason] of Object.entries(list)) {
     if (!/exit condition/i.test(reason)) {
       problems.push(`${file}: the reason states no exit condition`);
     }
@@ -237,16 +322,43 @@ function auditFileExceptions(workspaceRoot, fileExceptions) {
     }
     const projectRoot = file.slice(0, file.indexOf("/src/"));
     if (!reported.has(projectRoot)) {
-      const files = new Set(
-        checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, {}).map(v => v.file),
-      );
-      reported.set(projectRoot, files);
+      reported.set(projectRoot, new Set(violationsWithout(projectRoot).map(v => v.file)));
     }
     if (!reported.get(projectRoot).has(file)) {
       problems.push(`${file}: no violation left to except, delete the entry`);
     }
   }
   return problems;
+}
+
+/**
+ * Problems with the file exception list itself, see auditList.
+ *
+ * @param {string} workspaceRoot
+ * @param {Record<string, string>} fileExceptions
+ * @returns {string[]}
+ */
+function auditFileExceptions(workspaceRoot, fileExceptions) {
+  return auditList(workspaceRoot, fileExceptions, projectRoot =>
+    checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, {}).filter(
+      v => !Object.hasOwn(BARREL_LOCATION, v.code),
+    ),
+  );
+}
+
+/**
+ * Problems with the intermediate barrel waiver list itself, see auditList.
+ *
+ * @param {string} workspaceRoot
+ * @param {Record<string, string>} waivers
+ * @returns {string[]}
+ */
+function auditIntermediateBarrelWaivers(workspaceRoot, waivers) {
+  return auditList(workspaceRoot, waivers, projectRoot =>
+    checkPackage(workspaceRoot, projectRoot, COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, {}).filter(v =>
+      Object.hasOwn(BARREL_LOCATION, v.code),
+    ),
+  );
 }
 
 function main() {
@@ -275,7 +387,7 @@ function main() {
     if (violation.text) console.error(`       ${violation.text}`);
   }
 
-  if (violations.some(v => !v.rule)) {
+  if (violations.some(v => !v.rule && !Object.hasOwn(BARREL_LOCATION, v.code))) {
     console.error(
       '\nAn `index.*` may only contain `export * from "./x"` and an optional default re-export.',
     );
@@ -285,8 +397,22 @@ function main() {
     console.error("Move anything private to an internals location: internals/, internals.ts,");
     console.error("or a <name>.internals.ts companion. See .agents/skills/package-public-api.");
   }
+  for (const [code, { rule, fix }] of Object.entries(BARREL_LOCATION)) {
+    if (!violations.some(v => v.code === code)) continue;
+    console.error(`\n${code}: ${rule}.`);
+    console.error(`Fix: ${fix}. See .agents/skills/package-public-api.`);
+  }
   if (violations.some(v => v.rule)) {
     console.error("\nR1: a universal component is exported on both platforms under the same name.");
+    console.error(
+      "R2: both implementations take one props type, declared in one unsuffixed module.",
+    );
+    console.error(
+      "R3: that contract has no platform import, type, className, style or gesture name.",
+    );
+    console.error(
+      "R4: a platform module that declares a universal component exports nothing else.",
+    );
     console.error("R5: a component is exported from universal entries or from platform entries,");
     console.error("never both, and a platform entry points at a suffixed module of its own.");
     console.error("See docs/adr/universal-components.md.");
@@ -296,7 +422,12 @@ function main() {
   process.exit(1);
 }
 
-module.exports = { auditFileExceptions, checkPackage, findPackageRoots };
+module.exports = {
+  auditFileExceptions,
+  auditIntermediateBarrelWaivers,
+  checkPackage,
+  findPackageRoots,
+};
 
 if (require.main === module) {
   main();

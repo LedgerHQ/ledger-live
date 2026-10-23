@@ -10,7 +10,24 @@ preset is code rather than a JSON file, which is why jest configuration lives in
 | --- | --- | --- |
 | [`@support/jest/devtools`](./devtools) | `devtools/*` | Dual web/native presets plus themed render fixtures (`/web`, `/native`) |
 | [`@support/jest/features-flow`](./features-flow) | `features/flow/*` | Dual web/native preset plus Lumen passthrough stubs |
-| [`@support/jest/shared`](./shared) | `shared/*` | Node preset for logic packages, web/native and native-only presets for UI packages |
+| [`@support/jest/shared`](./shared) | `shared/*`, `libs/*` | Node preset for logic packages, web/native and native-only presets for UI packages |
+
+`createSharedJestConfig(overrides, options)` is the node base for `shared/*` and `libs/*` packages,
+and for node packages of other layers that no layer preset covers yet. Its options:
+
+- `esm: true` applies `withEsmDeps` to the result, after the overrides, for a package that
+  `require`s an ESM-only dependency (`@noble/*` v2). `extraEsmDeps` keeps more pnpm store prefixes
+  transformed (`["@ledgerhq\\+"]`).
+- `projectRoot` sets the lcov reporter's root. Without it, the preset derives it from
+  `overrides.rootDir` when set (pass `rootDir: __dirname` from a package that is not two levels
+  deep), else uses `../../`.
+
+```js
+module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
+```
+
+Tests live in `src/` and match `*.test.ts`; a package whose tests live elsewhere overrides `roots`
+and `testMatch`. The preset reports to `github-actions` on CI.
 
 A consumer declares `"@support/jest": "workspace:*"` in its `devDependencies` and keeps a
 `jest.config.js` built by a preset factory:

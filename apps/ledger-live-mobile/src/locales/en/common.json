@@ -1871,6 +1871,7 @@
     "menu": {
       "changeName": "Change name",
       "viewAdvancedLogs": "View advanced logs",
+      "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
     },
     "advancedLogs": {
@@ -5887,6 +5888,21 @@
       "description": "Apps and settings were not fully restored on your device.",
       "restore": "Restore",
       "delete": "Delete backup"
+    },
+    "bootloaderDiscovered": {
+      "title": "Device in Bootloader mode.",
+      "description": "Click on \"Continue\" to update it.",
+      "continue": "Continue"
+    },
+    "banner": {
+      "wallet40": {
+        "title": {
+          "default": "OS update available",
+          "manager": "Ledger OS update available"
+        },
+        "version": "Version {{firmwareVersion}}",
+        "cta": "Update"
+      }
     },
     "restoreConfirmation": {
       "title": "Restore your previous configuration?",

@@ -1,7 +1,7 @@
 import type { ConfigStorage } from "@shared/app-config";
 import { loadAppConfig, profileOf } from "./load";
 
-const noSelections: ConfigStorage = { getAll: () => ({}), set() {}, clear() {} };
+const noSelections: ConfigStorage = { getAll: () => ({}), set() {}, remove() {}, clear() {} };
 
 describe("profileOf", () => {
   it.each([
@@ -24,7 +24,7 @@ describe("loadAppConfig", () => {
     ["prod", "https://global.api.prd.ledger.com/keycloak"],
     ["staging", "https://global.api.stg.ledger-test.com/keycloak"],
   ] as const)("resolves the Keycloak of the %s profile", (profile, keycloakBaseUrl) => {
-    expect(loadAppConfig(noSelections, profile)).toMatchObject({
+    expect(loadAppConfig(noSelections, profile).config).toMatchObject({
       keycloakBaseUrl,
       keycloakClientId: "ledger-keycloak",
       keycloakRealm: "ledger-bc-customers",

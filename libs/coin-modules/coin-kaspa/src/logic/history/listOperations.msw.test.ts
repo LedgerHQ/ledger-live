@@ -49,7 +49,7 @@ describe("listOperations via MSW", () => {
     // Framework Operation.value is the pure amount — the generic adapter re-adds fees for OUT.
     expect(op.tx.fees).toBe(50_000n);
     expect(op.value).toBe(700_000n);
-    expect(op.asset).toEqual({ type: "native", name: "KAS" });
+    expect(op.asset).toEqual({ type: "native" });
   });
 
   it("returns an undefined cursor and no items when the indexer has no data", async () => {

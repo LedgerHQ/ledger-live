@@ -23,5 +23,6 @@ export type PreChecksState =
     }
   | {
       type: PreChecksStateType.UNEXPECTED_ERROR;
+      error: unknown;
       cancel: () => void;
     };

@@ -1,5 +1,9 @@
 import React from "react";
 import { I18nTestProvider } from "@shared/i18n/testing";
+import { LinkingProvider } from "@shared/linking";
+
+export const openExternal = jest.fn();
+export const onLinkOpened = jest.fn();
 
 const resources = {
   en: {
@@ -9,6 +13,7 @@ const resources = {
         menu: {
           changeName: "Change name",
           viewAdvancedLogs: "View advanced logs",
+          viewExplorer: "View in explorer",
           removeAccount: "Remove account from portfolio",
         },
         changeName: {
@@ -39,5 +44,9 @@ const resources = {
 };
 
 export function I18nWrapper({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <I18nTestProvider resources={resources}>{children}</I18nTestProvider>;
+  return (
+    <LinkingProvider config={{ openExternal, onLinkOpened }}>
+      <I18nTestProvider resources={resources}>{children}</I18nTestProvider>
+    </LinkingProvider>
+  );
 }

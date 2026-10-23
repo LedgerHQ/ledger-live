@@ -86,6 +86,7 @@ export type ScriptedTestDevice = {
   passGenuineCheck(): void;
   failGenuineCheck(): void;
   reportFirmwareUpToDate(): void;
+  reportAvailableFirmware(): void;
   failFirmwareCheck(): void;
   isWatching(sessionId: string): boolean;
   /** What the device screen shows: the early-check (genuine check) screen once Enter is accepted. */
@@ -104,6 +105,11 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
   let onEarlyCheckScreen = false;
 
   const sendCommand = jest.fn(async ({ command }: { command: object }) => {
+    // The machine checks the open app before each read. The device is on the dashboard: it
+    // answers at once and takes no reply the test queued.
+    if ("name" in command && command.name === "getAppAndVersion") {
+      return CommandResultFactory({ data: { name: "BOLOS", version: "1.0.0" } });
+    }
     const reply = await commandReplies.next();
     if (
       command instanceof ToggleEarlyCheckCommand &&
@@ -196,10 +202,13 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     reportFirmwareUpToDate() {
       last(firmwareChecks).push({
         status: DeviceActionStatus.Completed,
-        output: {
-          firmwareVersion: { os: "1.4.0", mcu: "1.0.0", bootloader: "1.0.0" },
-          firmwareUpdateContext: { availableUpdate: undefined },
-        } as GetDeviceMetadataDAOutput,
+        output: firmwareMetadata(undefined),
+      });
+    },
+    reportAvailableFirmware() {
+      last(firmwareChecks).push({
+        status: DeviceActionStatus.Completed,
+        output: firmwareMetadata({ finalFirmware: { version: "2.0.0" } }),
       });
     },
     failFirmwareCheck() {
@@ -221,6 +230,13 @@ export function createScriptedTestDevice(): ScriptedTestDevice {
     sessions.set(id, states);
     return states;
   }
+}
+
+function firmwareMetadata(availableUpdate: object | undefined): GetDeviceMetadataDAOutput {
+  return {
+    firmwareVersion: { os: "1.4.0", mcu: "1.0.0", bootloader: "1.0.0" },
+    firmwareUpdateContext: { availableUpdate },
+  } as GetDeviceMetadataDAOutput;
 }
 
 function createReplyQueue<T>() {

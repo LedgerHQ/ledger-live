@@ -117,6 +117,7 @@ describe("zcash mock bridge", () => {
     it("exposes the whole zcash-only surface the host app calls unconditionally", () => {
       expect(typeof accountBridge.getFullViewingKey).toBe("function");
       expect(typeof accountBridge.deriveShieldedAddress).toBe("function");
+      expect(typeof accountBridge.findBlockHeightAtDate).toBe("function");
       expect(typeof accountBridge.getShieldedAddress).toBe("function");
     });
 
@@ -147,6 +148,12 @@ describe("zcash mock bridge", () => {
       expect(classifyZcashRecipient(address)).toEqual({
         recipientType: "private",
       });
+    });
+
+    it("findBlockHeightAtDate answers a fixed block height", async () => {
+      await expect(accountBridge.findBlockHeightAtDate(zcashAccount(), "2026-07-28")).resolves.toBe(
+        3_428_143,
+      );
     });
 
     it("getShieldedAddress echoes the account's own address, so receive verification matches", async () => {

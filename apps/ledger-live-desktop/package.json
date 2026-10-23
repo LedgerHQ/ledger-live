@@ -252,7 +252,6 @@
     "path-browserify": "^1.0.1",
     "prando": "5.1.2",
     "qrcode": "catalog:",
-    "querystring-es3": "^0.2.1",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-easy-crop": "4.7.5",
