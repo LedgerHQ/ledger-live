@@ -1,4 +1,5 @@
 import { Principal } from "@icp-sdk/core/principal";
+import { MAX_NAT64 } from "../consts";
 import { AccountIdentifier } from "./accountIdentifier";
 
 type ValidationResult = { isValid: boolean; error?: string };
@@ -21,12 +22,10 @@ export const validateAddress = (address: string): ValidationResult =>
 
 // The ledger transfer memo is a Nat64; reject negative or out-of-range values up front rather
 // than letting Candid encoding fail at signing time.
-const MAX_MEMO = 2n ** 64n - 1n;
-
 export const validateMemo = (memo?: string): ValidationResult => {
   try {
     const value = BigInt(memo ?? 0);
-    if (value < 0n || value > MAX_MEMO) {
+    if (value < 0n || value > MAX_NAT64) {
       return { isValid: false };
     }
     return { isValid: true };

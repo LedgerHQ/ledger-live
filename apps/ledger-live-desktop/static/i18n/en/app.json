@@ -8878,6 +8878,10 @@
       "title": "Request not sent",
       "description": "The Internet Computer did not take the request, so nothing was sent and nothing changed. Please try again. {{reason}}"
     },
+    "ICPTransactionExpired": {
+      "title": "Transaction expired",
+      "description": "The signed transaction was not sent in time, so nothing was sent and nothing changed. Please sign it again."
+    },
     "ICPInvalidPercentage": {
       "title": "Percentage out of range",
       "description": "Enter a whole number between 1 and 100."
