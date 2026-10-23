@@ -1,3 +1,5 @@
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+
 const sharedConfig = {
   testEnvironment: "node",
   transform: {
@@ -16,22 +18,8 @@ const sharedConfig = {
 // Two projects: `unit` runs with @ledgerhq/disable-network-setup (nock blocks all net connect),
 // while `msw` runs the `.msw.test.ts` suites WITHOUT it — nock and MSW both build on
 // @mswjs/interceptors, so they cannot share the same run. Mirrors coin-mina.
-module.exports = {
-  passWithNoTests: true,
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.test.ts",
-    "!src/**/*.spec.ts",
-    "!src/test/**/*.ts",
-    "!src/__tests__/**/*.ts",
-  ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
   coveragePathIgnorePatterns: ["src/test", "src/types", "src/index.ts"],
   projects: [
     {
@@ -52,4 +40,4 @@ module.exports = {
       setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
     },
   ],
-};
+});
