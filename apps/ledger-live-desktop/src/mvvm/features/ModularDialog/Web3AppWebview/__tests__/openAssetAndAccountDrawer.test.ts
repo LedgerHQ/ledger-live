@@ -23,6 +23,28 @@ describe("useOpenAssetAndAccount - openAssetAndAccount", () => {
     expect(store.getState().modularDialog.isOpen).toBe(true);
   });
 
+  it("should set flow and source in the store when provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({
+      drawerConfiguration: config,
+      flow: "swap",
+      source: "Asset",
+    });
+
+    expect(store.getState().modularDialog.flow).toBe("swap");
+    expect(store.getState().modularDialog.source).toBe("Asset");
+  });
+
+  it("should leave flow and source untouched when not provided", () => {
+    const { result, store } = renderHook(() => useOpenAssetAndAccount());
+
+    result.current.openAssetAndAccount({ drawerConfiguration: config });
+
+    expect(store.getState().modularDialog.flow).toBe("");
+    expect(store.getState().modularDialog.source).toBe("");
+  });
+
   it("should handle callback mode success", () => {
     const onSuccess = jest.fn();
 
