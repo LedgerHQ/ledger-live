@@ -24,6 +24,7 @@ the Crypto and Stablecoins sections. They replace the Perps and Borrow banners b
   with the Wallet 4.0 asset section (`lwdWallet40` / `lwmWallet40` `assetSection`): without it there
   is no Crypto and Stablecoins section, so the legacy entry points stay.
 - `params.services` sets which services are shown and their order, e.g. `["borrow", "perps"]`.
+  Without `params`, the default order applies.
 
 A service is shown only when its own feature is on: `ptxPerpsLiveApp` on desktop,
 `ptxPerpsLiveAppMobile` on mobile, `ptxBorrowLiveApp` on both.
