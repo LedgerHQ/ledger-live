@@ -21,6 +21,16 @@ export const WALLET_API_FAMILIES = [...FAMILIES, ...Object.values(FAMILIES_MAPPI
 
 export const WALLET_API_VERSION = "2.0.0";
 
+/**
+ * Device apps a live app may name in `bitcoin.signPsbt` `options.hwAppId`, per account currency.
+ * Without `hwAppId` the currency's own app signs. Any other name is rejected before the device
+ * is used, so a live app cannot send a PSBT to an unvetted app. Security-relevant: review changes.
+ */
+export const BITCOIN_SIGN_PSBT_ALLOWED_APPS: Readonly<Record<string, ReadonlySet<string>>> = {
+  bitcoin: new Set(["Hashi"]),
+  bitcoin_testnet: new Set(["Hashi Test"]),
+};
+
 export const BROWSE_SEARCH_OPTIONS: Fuse.IFuseOptions<AppManifest> = {
   keys: ["name", "categories"],
   threshold: 0.1,

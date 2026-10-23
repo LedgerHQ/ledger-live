@@ -509,6 +509,14 @@ export class AccountPublicKeyUnavailable extends Error {
   }
 }
 
+// Thrown by bitcoin.signPsbt when the requested device app is not allowed for the account.
+export class SignPsbtAppNotAllowed extends Error {
+  override name = "SignPsbtAppNotAllowed";
+  constructor(message?: string) {
+    super(message || "SignPsbtAppNotAllowed");
+  }
+}
+
 export class ValidationError extends Error {
   override name = "ValidationError";
   constructor(message?: string) {
