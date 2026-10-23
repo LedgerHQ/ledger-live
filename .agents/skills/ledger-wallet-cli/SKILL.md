@@ -331,7 +331,7 @@ printed, logged, or included in any command's output (human or `--output json`).
 # human approves in the Agent Intent frontend (default environment: production):
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source other \
-  --environment staging --app-url https://app.agents.ledger-test.com --expires-in 2h
+  --environment production --app-url https://app.agents.ledger-test.com --expires-in 2h
 
 # Same, but print the URL and exit, leaving a background listener; then poll it:
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code \
@@ -360,7 +360,8 @@ value outside this list.
 enroll with. Without `--environment` and `--app-url`, `enroll` uses production.
 
 - `app.agents.ledger.com`: `--environment production --app-url https://app.agents.ledger.com`
-- `app.agents.ledger-test.com`: `--environment staging --app-url https://app.agents.ledger-test.com`
+- `app.agents.ledger-test.com`: `--environment production --app-url https://app.agents.ledger-test.com`
+  (this test app runs on the production services)
 - Any other URL (for example `http://localhost:5173` or a preview deploy): `--app-url <that URL>`,
   with `https://` added to a bare host, and ask the user whether it runs on `staging` or
   `production` if that is unclear.
