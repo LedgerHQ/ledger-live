@@ -1,47 +1,68 @@
 import React from "react";
 import {
   Box,
+  Card,
+  CardContent,
+  CardContentDescription,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
   Spot,
-  Tile,
-  TileContent,
-  TileDescription,
-  TileTitle,
 } from "@ledgerhq/lumen-ui-rnative";
-import { CoinStacked, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Coins, Infinite } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import type { ServiceEntryPointId } from "../../types";
 import type { ServicesEntryPointsViewProps } from "./ServicesEntryPointsView.types";
 
 const ICONS = {
   perps: Infinite,
-  borrow: CoinStacked,
+  borrow: Coins,
 } as const satisfies Record<ServiceEntryPointId, unknown>;
+
+type ServiceCardProps = Readonly<{
+  service: ServiceEntryPointId;
+  onPressService: (service: ServiceEntryPointId) => void;
+}>;
+
+function ServiceCard({ service, onPressService }: ServiceCardProps) {
+  const { t } = useTranslation();
+
+  function handlePress() {
+    onPressService(service);
+  }
+
+  return (
+    <Card
+      lx={{ flex: 1 }}
+      testID={`portfolio-services-entry-point-${service}`}
+      onPress={handlePress}
+    >
+      <CardHeader>
+        <CardLeading lx={{ flex: 0, flexDirection: "column", alignItems: "flex-start", gap: "s8" }}>
+          <Spot icon={ICONS[service]} />
+          <CardContent>
+            <CardContentTitle>{t(`servicesEntryPoints.${service}.title`)}</CardContentTitle>
+            <CardContentDescription>
+              {t(`servicesEntryPoints.${service}.description`)}
+            </CardContentDescription>
+          </CardContent>
+        </CardLeading>
+      </CardHeader>
+    </Card>
+  );
+}
 
 export function ServicesEntryPointsView({
   services,
   onPressService,
 }: ServicesEntryPointsViewProps) {
-  const { t } = useTranslation();
-
   if (services.length === 0) return null;
 
   return (
     <Box lx={{ flexDirection: "row", gap: "s12" }} testID="portfolio-services-entry-points">
-      {services.map(service => (
-        <Tile
-          key={service}
-          appearance="card"
-          lx={{ flex: 1 }}
-          testID={`portfolio-services-entry-point-${service}`}
-          onPress={() => onPressService(service)}
-        >
-          <Spot icon={ICONS[service]} />
-          <TileContent>
-            <TileTitle>{t(`servicesEntryPoints.${service}.title`)}</TileTitle>
-            <TileDescription>{t(`servicesEntryPoints.${service}.description`)}</TileDescription>
-          </TileContent>
-        </Tile>
-      ))}
+      {services.map(function renderServiceCard(service) {
+        return <ServiceCard key={service} service={service} onPressService={onPressService} />;
+      })}
     </Box>
   );
 }
