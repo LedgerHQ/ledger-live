@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { usePerpsHandlers } from "LLD/features/Perps/hooks/usePerpsHandlers";
+import { usePredictionsHandlers } from "LLD/features/Predictions/hooks/usePredictionsHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -65,6 +66,7 @@ export default function WebPlatformPlayer({
   const { mobileView, setMobileView } = useMobileView();
 
   const customPerpsHandlers = usePerpsHandlers(accounts);
+  const customPredictionsHandlers = usePredictionsHandlers(onClose);
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
     return {
@@ -74,6 +76,7 @@ export default function WebPlatformPlayer({
       ...customLiveAppModalHandlers,
       ...props.customHandlers,
       ...customPerpsHandlers,
+      ...customPredictionsHandlers,
     };
   }, [
     customPTXHandlers,
@@ -81,6 +84,7 @@ export default function WebPlatformPlayer({
     customDeeplinkHandlers,
     customLiveAppModalHandlers,
     customPerpsHandlers,
+    customPredictionsHandlers,
   ]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
