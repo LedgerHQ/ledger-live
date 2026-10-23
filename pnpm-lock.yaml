@@ -669,6 +669,9 @@ overrides:
   '@jest/types': 30.5.0
   expect: 30.5.0
   pretty-format@^30.0.0: 30.5.0
+  '@polkadot/rpc-provider>@polkadot/types-support': '-'
+  '@polkadot/rpc-provider>mock-socket': '-'
+  '@polkadot/rpc-provider>nock': '-'
 
 patchedDependencies:
   '@bunli/core@0.9.1': 9f2206355a37ee31169d7ee9c87e59a3e1cb4592b35c6f01ac33c8fe5c0105bf
@@ -25787,10 +25790,6 @@ packages:
     resolution: {integrity: sha512-Dd59y4e3AFCrH9xiqMU4xlG5+Zy0OTy7GQvqJVYXZFyAH+4HYDlxXjJGcSidGAmJcclSYfS3wyEkfw+j1EOVEw==}
     engines: {node: '>=18'}
 
-  '@polkadot/types-support@16.5.4':
-    resolution: {integrity: sha512-Ra6keCaO73ibxN6MzA56jFq9EReje7jjE4JQfzV5IpyDZdXcmPyJiEfa2Yps/YSP13Gc2e38t9FFyVau0V+SFQ==}
-    engines: {node: '>=18'}
-
   '@polkadot/types@16.5.4':
     resolution: {integrity: sha512-8Oo1QWaL0DkIc/n2wKBIozPWug/0b2dPVhL+XrXHxJX7rIqS0x8sXDRbM9r166sI0nTqJiUho7pRIkt2PR/DMQ==}
     engines: {node: '>=18'}
@@ -34773,10 +34772,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  mock-socket@9.3.1:
-    resolution: {integrity: sha512-qxBgB7Qa2sEQgHFjj0dSigq7fX4k6Saisd5Nelwp2q8mlbAFh5dHV9JTTlF8viYJLSSWgMCZFUom8PJcMNBoJw==}
-    engines: {node: '>= 8'}
-
   moment@2.30.1:
     resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
 
@@ -34917,10 +34912,6 @@ packages:
 
   nock@13.5.4:
     resolution: {integrity: sha512-yAyTfdeNJGGBFxWdzSKCBYxs5FxLbCg5X5Q4ets974hcQzG1+qCxvIyOo4j2Ry6MUlhWVMX4OoYDefAIIwupjw==}
-    engines: {node: '>= 10.13'}
-
-  nock@13.5.6:
-    resolution: {integrity: sha512-o2zOYiCpzRqSzPj0Zt/dQ/DqZeYoaQ7TUonc/xUPjCGl9WeHpNbxgVvOquXYAaJzI0M9BXV3HTzG0p8IUAbBTQ==}
     engines: {node: '>= 10.13'}
 
   nock@14.0.3:
@@ -45917,15 +45908,12 @@ snapshots:
     dependencies:
       '@polkadot/keyring': 14.0.1(@polkadot/util-crypto@14.0.1(@polkadot/util@14.0.1))(@polkadot/util@14.0.1)
       '@polkadot/types': 16.5.4
-      '@polkadot/types-support': 16.5.4
       '@polkadot/util': 14.0.1
       '@polkadot/util-crypto': 14.0.1(@polkadot/util@14.0.1)
       '@polkadot/x-fetch': 14.0.1
       '@polkadot/x-global': 14.0.1
       '@polkadot/x-ws': 14.0.1(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       eventemitter3: 5.0.1
-      mock-socket: 9.3.1
-      nock: 13.5.6
       tslib: 2.6.2
     transitivePeerDependencies:
       - bufferutil
@@ -45957,11 +45945,6 @@ snapshots:
       '@polkadot/types': 16.5.4
       '@polkadot/types-codec': 16.5.4
       '@polkadot/types-create': 16.5.4
-      '@polkadot/util': 14.0.1
-      tslib: 2.6.2
-
-  '@polkadot/types-support@16.5.4':
-    dependencies:
       '@polkadot/util': 14.0.1
       tslib: 2.6.2
 
@@ -57346,8 +57329,6 @@ snapshots:
 
   mkdirp@3.0.1: {}
 
-  mock-socket@9.3.1: {}
-
   moment@2.30.1: {}
 
   moo-color@1.0.3:
@@ -57498,14 +57479,6 @@ snapshots:
   nocache@3.0.4: {}
 
   nock@13.5.4:
-    dependencies:
-      debug: 4.4.3(supports-color@5.5.0)
-      json-stringify-safe: 5.0.1
-      propagate: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
-
-  nock@13.5.6:
     dependencies:
       debug: 4.4.3(supports-color@5.5.0)
       json-stringify-safe: 5.0.1
