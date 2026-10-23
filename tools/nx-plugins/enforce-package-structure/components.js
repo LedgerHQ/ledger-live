@@ -870,6 +870,7 @@ function reachableProps(declaration, module) {
   function bindingsKey(bindings) {
     const pairs = new Set();
     const visited = new Set();
+    /** @param {Bindings} current */
     function collect(current) {
       if (visited.has(current)) return;
       visited.add(current);
