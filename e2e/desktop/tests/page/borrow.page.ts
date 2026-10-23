@@ -62,6 +62,8 @@ export class BorrowPage extends WebViewAppPage {
   private readonly withdrawExecutionScreen = "borrow-withdraw-execution-screen";
   private readonly authorizeWithdraw = "borrow-authorize-withdraw-button";
   private readonly withdrawStepDone = "borrow-withdraw-step-done";
+  private readonly deauthorizeBorrowing = "borrow-deauthorize-borrowing-button";
+  private readonly deauthorizeBorrowingStepDone = "borrow-deauthorize-borrowing-step-done";
   private readonly withdrawCompletionCard = "borrow-withdraw-completion-card";
   private readonly backToMyLoans = "borrow-back-to-my-loans-button";
   private readonly hostSignModalTextPattern = /Approve token|Sign transaction/i;
@@ -568,17 +570,34 @@ export class BorrowPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.withdrawExecutionScreen)).toBeVisible();
   }
 
-  @step("Wait for withdraw execution to complete")
-  async expectWithdrawExecutionCompleted() {
+  @step("Wait for withdraw step to complete")
+  async expectWithdrawStepCompleted() {
+    const webview = await this.getWebView();
+    await this.expectFlowComplete(
+      webview,
+      [webview.getByTestId(this.withdrawStepDone)],
+      "Withdraw step",
+    );
+    await expect(webview.getByTestId(this.deauthorizeBorrowing)).toBeEnabled();
+    await waitForChainNonceSettled();
+  }
+
+  @step("Click Deauthorize borrowing")
+  async clickDeauthorizeBorrowing() {
+    await this.clickWhenEnabled(this.deauthorizeBorrowing);
+  }
+
+  @step("Wait for deauthorize borrowing step to complete")
+  async expectDeauthorizeBorrowingStepCompleted() {
     const webview = await this.getWebView();
     await this.expectFlowComplete(
       webview,
       [
-        webview.getByTestId(this.withdrawStepDone),
+        webview.getByTestId(this.deauthorizeBorrowingStepDone),
         webview.getByTestId(this.withdrawCompletionCard),
         webview.getByTestId(this.backToMyLoans),
       ],
-      "Withdraw execution",
+      "Deauthorize borrowing step",
     );
   }
 

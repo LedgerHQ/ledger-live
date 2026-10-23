@@ -52,6 +52,8 @@ export default class BorrowPage {
   private readonly withdrawExecutionScreenId = "borrow-withdraw-execution-screen";
   private readonly authorizeWithdrawButtonId = "borrow-authorize-withdraw-button";
   private readonly withdrawStepDoneId = "borrow-withdraw-step-done";
+  private readonly deauthorizeBorrowingButtonId = "borrow-deauthorize-borrowing-button";
+  private readonly deauthorizeBorrowingStepDoneId = "borrow-deauthorize-borrowing-step-done";
   private readonly withdrawCompletionCardId = "borrow-withdraw-completion-card";
   private readonly backToMyLoansButtonId = "borrow-back-to-my-loans-button";
 
@@ -280,7 +282,22 @@ export default class BorrowPage {
   async authorizeWithdraw() {
     await this.authorizeStep(
       this.authorizeWithdrawButtonId,
-      [this.withdrawStepDoneId, this.withdrawCompletionCardId, this.backToMyLoansButtonId],
+      this.withdrawStepDoneId,
+      () => this.signContractTransaction(),
+      this.withdrawExecutionScreenId,
+    );
+  }
+
+  /** Withdrawing the last loan's collateral also revokes Morpho's borrowing authorization. */
+  @Step("Deauthorize borrowing and sign on device")
+  async deauthorizeBorrowing() {
+    await this.authorizeStep(
+      this.deauthorizeBorrowingButtonId,
+      [
+        this.deauthorizeBorrowingStepDoneId,
+        this.withdrawCompletionCardId,
+        this.backToMyLoansButtonId,
+      ],
       () => this.signContractTransaction(),
       this.withdrawExecutionScreenId,
     );
