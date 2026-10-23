@@ -17,7 +17,6 @@ module.exports = (path, options) => {
         "@firebase/firestore-compat",
         "@firebase/messaging",
         "@firebase/util",
-        "firebase",
         "uuid",
         "rpc-websockets",
         "@solana/codecs",
