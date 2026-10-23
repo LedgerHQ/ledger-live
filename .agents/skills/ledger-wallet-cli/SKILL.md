@@ -525,7 +525,8 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
 
 - **One page per run.** `--page-size` is 1, 5, 10, 50 or 100 (default 10). When more intents exist,
   JSON has a `nextCursor` (human output prints the follow-up command); it is `null` on the last
-  page. With `--cursor`, `--status` and `--page-size` are ignored.
+  page. `--cursor` keeps the first page's filters and page size, so it refuses `--status` and
+  `--page-size`. The human table shows the creation time in UTC.
 - **`--status`** takes comma-separated states: `created`, `crafted`, `signed`, `broadcast`,
   `success`, `failed`, `rejected`, `cancelled`, `expired`. An unknown state is rejected before
   signing in.
