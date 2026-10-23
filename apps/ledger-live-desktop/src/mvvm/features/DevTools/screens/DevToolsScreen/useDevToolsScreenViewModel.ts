@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
-import { useDispatch } from "LLD/hooks/redux";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -20,6 +21,7 @@ import {
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
   useAppConfigToolProps,
+  useAccountNameToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -91,6 +93,8 @@ export function useDevToolsScreenViewModel() {
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const legacyAccounts = useSelector(accountsSelector);
+  const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -104,6 +108,7 @@ export function useDevToolsScreenViewModel() {
       { id: "account-data", config: accountDataToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
+      { id: "account-name", config: accountNameToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -116,6 +121,7 @@ export function useDevToolsScreenViewModel() {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountDataToolProps,
+      accountNameToolProps,
     ],
   );
 
