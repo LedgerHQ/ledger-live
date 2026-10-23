@@ -3,14 +3,14 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-Services entry points (Perps, Borrow) displayed as tiles on the Ledger Wallet portfolio, between
+Services entry points (Perps, Borrow) displayed as Lumen cards on the Ledger Wallet portfolio, between
 the Crypto and Stablecoins sections. They replace the Perps and Borrow banners behind an A/B test.
 
 ## Exports
 
 | Export | Description |
 | --- | --- |
-| `ServicesEntryPoints` | The tiles, in the flag order. Tracks `button_clicked` and calls `onOpenService(service)` (`.web` / `.native`) |
+| `ServicesEntryPoints` | The cards, in the flag order. Tracks `button_clicked` and calls `onOpenService(service)` (`.web` / `.native`) |
 | `useServicesEntryPointsFeature()` | `{ isEnabled, services }`: apps hide the legacy entry points when `isEnabled` |
 | `getServicesEntryPointsAttributes(flag)` | Analytics properties for the A/B test |
 
@@ -29,7 +29,7 @@ A service is shown only when its own feature is on: `ptxPerpsLiveApp` on desktop
 ```tsx
 import { ServicesEntryPoints } from "@features/flow-portfolio-services-entry-points";
 
-<ServicesEntryPoints page="Portfolio" onOpenService={service => navigateTo(service)} />;
+<ServicesEntryPoints page="Portfolio" onOpenService={openService} />;
 ```
 
 Navigation stays in each app. Wording keys live under `servicesEntryPoints` in each app catalog.
