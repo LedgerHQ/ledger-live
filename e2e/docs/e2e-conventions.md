@@ -1,16 +1,16 @@
 # Shared E2E conventions
 
-This document outlines the shared conventions for writing E2E tests across desktop and mobile clients in this repository.
+Rules for desktop and mobile E2E tests. MUST and MUST NOT are required. SHOULD is the default, and the same section states any exception.
 
-## State
+## Test state
 
-### Deterministic setup
+### Setup MUST be deterministic
 
-Seed dismissed introductions, onboarding, and settings through fixtures and feature flags. Do not branch the flow on whether something is visible.
+Tests MUST seed dismissed introductions, onboarding, and settings through fixtures and feature flags. Tests MUST NOT branch the flow on whether something is visible.
 
 ### Feature Flags
 
-Set `E2E_FEATURE_FLAGS_JSON` to inject feature flags for a Desktop or Mobile run. The value is a JSON object of flag keys. An empty value is ignored. Arrays, scalars, `null`, and invalid JSON are rejected.
+Set `E2E_FEATURE_FLAGS_JSON` to inject feature flags for a Desktop or Mobile run. The value MUST be a JSON object of flag keys. An empty value is ignored. Arrays, scalars, `null`, and invalid JSON MUST be rejected.
 
 ```json
 {
@@ -36,51 +36,55 @@ Feature Flags apply in this order. A later layer replaces the same key:
 
 See [Desktop Feature Flag Presets](../desktop/README.md#feature-flag-presets) and [Mobile Feature Flag Presets](../mobile/README.md#feature-flag-presets) for available options.
 
-## Shared E2E fixtures and helpers
+## Shared support
 
-Shared E2E test support lives in `libs/live-e2e-shared`. Consider declaring shared data, types and utility functions here for reuse across both desktop and mobile E2E tests. Keep client-specific logic in the respective desktop or mobile directories.
+### Shared fixtures and helpers MUST live in libs/live-e2e-shared
+
+Shared data, types, and utility functions MUST be declared in `libs/live-e2e-shared` when both desktop and mobile use them. Client-specific logic MUST stay in the desktop or mobile directory.
 
 ## Page objects
 
-### Selectors are stored on the relevant page object
+### Selectors MUST live on the page object that renders the screen
 
-Selectors and test ids live on the page object that renders the screen. Specs do not repeat those string literals.
+Specs MUST NOT repeat selector or test-id string literals.
 
-### Selectors are non-public readonly
+### Selectors MUST be non-public and readonly
 
-Selectors are `private readonly` by default. Use `protected readonly` for subclass contracts; never expose them publicly.
+Selectors MUST be `private readonly`. A selector that is part of a subclass contract MUST be `protected readonly`. A selector MUST NOT be public.
 
-### UI Actions
+### Page objects MUST own atomic UI actions
 
-Atomic UI actions live on the page object for reusability and consistency. A spec only describes the scenario.
+A spec MUST describe only the scenario.
 
-### Assertion-method prefix
+### A page object MUST keep one assertion-method prefix
 
-A page object uses one assertion-method prefix and keeps it (`expect*`, `check*`, or `verify*`).
+The prefix MUST be one of `expect*`, `check*`, or `verify*`, and that page object MUST keep it.
 
-### Shared cross-page workflows
+### Cross-page workflows MUST live in a util, builder, or flow
 
-Reusable scenario orchestration across independent pages lives in a util, builder or flow module. A cohesive action may remain on the page object that owns its input and delegate to a composed destination page.
+Reusable scenario orchestration across independent pages MUST live in a util, builder, or flow module. A cohesive action MAY remain on the page object that owns its input and delegate to a composed destination page.
 
-## TMS annotation for every test
+## Tests
 
-Every test includes a TMS annotation with a valid `B2CQA-XXXX` id. See [Desktop](../desktop/docs/e2e-desktop-conventions.md#tms-annotation) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#tmslink-attaches-the-id) for how each client attaches it.
+### Every test MUST include a TMS annotation
 
-## Failures
+Every test MUST include a TMS annotation with a valid `B2CQA-XXXX` id. See [Desktop](../desktop/docs/e2e-desktop-conventions.md#every-test-must-include-a-tms-annotation) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#the-test-function-must-call-tmslink) for how each client attaches it.
 
-Do not add retry loops, manual polling, or a second tap to hide an interaction failure. Fix an incorrect wait; otherwise diagnose the underlying product, environment, build, or test-flow issue.
+### Tests MUST NOT hide an interaction failure
 
-## Pay tab
+Tests MUST NOT add retry loops, manual polling, or a second tap to hide an interaction failure. An incorrect wait MUST be fixed. Otherwise the underlying product, environment, build, or test-flow issue MUST be diagnosed.
 
-Pay tab specs must live under the `paytab` directory so they automatically opt in to an injected Card session. Injection differs by client. See [Desktop](../desktop/README.md#pay-tab) and [Mobile](../mobile/README.md#pay-tab).
+### Paytab specs MUST live under paytab
 
-## Named parameters
+Paytab specs MUST live under the `paytab` directory so they automatically opt in to an injected Card session. Injection differs by client. See [Desktop](../desktop/README.md#pay-tab) and [Mobile](../mobile/README.md#pay-tab).
 
-Use a single options object instead of positional parameters when a function or constructor has any of:
+### Ambiguous parameters MUST use one options object
+
+A function or constructor MUST take a single options object instead of positional parameters when it has any of:
 
 - 3 or more parameters
 - an optional parameter that callers would skip with `undefined`
-- 2 or more parameters of the same type that could be swapped without a type error (e.g. `tmsLinks` and `tags`)
+- 2 or more parameters of the same type that could be swapped without a type error (for example `tmsLinks` and `tags`)
 
 Keep 1–2 obvious parameters positional.
 
