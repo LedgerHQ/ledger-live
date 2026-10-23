@@ -15,7 +15,6 @@ import { loadProfileIdentity } from "../../agent-intent/profile-identity";
 import { keycloakOverride } from "../../agent-intent/relay";
 import { describeAgentIntentListError } from "../../agent-intent/service-errors";
 import { parseStatusFilter, toIntentListEntries } from "../../agent-intent/intent-list";
-import { findEthereumToken } from "../../agent-intent/token-lookup";
 import { createCommandOutput } from "../../output";
 
 const PAGE_SIZES = AGENT_INTENT_PAGE_SIZES.map(String) as [string, ...string[]];
@@ -73,7 +72,7 @@ export default defineCommand({
 
       out.agentIntentIntents({
         profileId: profile.profileId,
-        intents: await toIntentListEntries(page.intents, findEthereumToken),
+        intents: await toIntentListEntries(page.intents),
         nextCursor: page.nextCursor ?? null,
       });
     });
