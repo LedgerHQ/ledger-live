@@ -857,23 +857,29 @@ function reachableProps(declaration, module) {
   /** @typedef {Map<ts.TypeParameterDeclaration, { node: ts.TypeNode, bindings: Bindings }>} Bindings */
   const props = new Set();
   const expanded = new Set();
-  const expanding = [];
   const ids = new Map();
   /** @param {ts.Node} node @returns {number} */
   function idOf(node) {
     if (!ids.has(node)) ids.set(node, ids.size);
     return ids.get(node);
   }
-  // What a type argument stands for once the type parameters it names are replaced.
-  /** @param {ts.TypeNode} node @param {Bindings} bindings @returns {ts.TypeNode} */
-  function resolve(node, bindings) {
-    while (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
-      const parameter = typeParameterAt(node, node.typeName.text);
-      const bound = parameter && bindings.get(parameter);
-      if (!bound) break;
-      ({ node, bindings } = bound);
+  // Every parameter-to-argument pair `bindings` reaches, through the bindings of each argument.
+  // A set, not a tree, so a type that nests its own argument, `Nest<T> = { next: Nest<{ wrap: T }> }`,
+  // reaches a key it already expanded.
+  /** @param {Bindings} bindings @returns {string} */
+  function bindingsKey(bindings) {
+    const pairs = new Set();
+    const visited = new Set();
+    function collect(current) {
+      if (visited.has(current)) return;
+      visited.add(current);
+      for (const [parameter, bound] of current) {
+        pairs.add(`${idOf(parameter)}:${idOf(bound.node)}`);
+        collect(bound.bindings);
+      }
     }
-    return node;
+    collect(bindings);
+    return [...pairs].sort().join(",");
   }
   /** @param {ts.TypeNode} node @param {Bindings} bindings @returns {boolean} */
   function isBoundParameter(node, bindings) {
@@ -881,18 +887,25 @@ function reachableProps(declaration, module) {
     const parameter = typeParameterAt(node, node.typeName.text);
     return Boolean(parameter && bindings.has(parameter));
   }
+  /** @param {ts.Node} node @param {Bindings} bindings @returns {boolean} */
+  function mentionsBoundParameter(node, bindings) {
+    return (
+      isBoundParameter(node, bindings) ||
+      Boolean(ts.forEachChild(node, child => mentionsBoundParameter(child, bindings) || undefined))
+    );
+  }
   /** @param {ts.TypeElement} prop @param {Bindings} bindings */
   function addProp(prop, bindings) {
     if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
     props.add(prop);
     if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, bindings);
   }
-  // A local type with no bound parameter reads the same everywhere, so it is expanded once; a
-  // generic one is not expanded again inside itself with the same arguments, so recursive types
-  // terminate.
+  // A local type is expanded once per set of bindings: a repeated instantiation adds no prop, and
+  // a recursive type terminates.
   /**
    * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} local
-   * @param {ts.NodeArray<ts.TypeNode> | undefined} typeArguments
+   * @param {ReadonlyArray<ts.TypeNode> | undefined} typeArguments undefined for the contract, whose
+   *   parameters stay unbound; a reference binds an omitted argument to its parameter's default
    * @param {Bindings} bindings
    */
   function expand(local, typeArguments, bindings) {
@@ -900,17 +913,14 @@ function reachableProps(declaration, module) {
     (local.typeParameters ?? []).forEach((parameter, index) => {
       const argument = typeArguments?.[index];
       if (argument) inner.set(parameter, { node: argument, bindings });
+      // A default can name an earlier parameter: `Box<T, U = T>`.
+      else if (typeArguments && parameter.default) {
+        inner.set(parameter, { node: parameter.default, bindings: inner });
+      }
     });
-    const key = [local, ...[...inner.values()].map(bound => resolve(bound.node, bound.bindings))]
-      .map(idOf)
-      .join(",");
-    if (inner.size === 0) {
-      if (expanded.has(key)) return;
-      expanded.add(key);
-    } else {
-      if (expanding.includes(key)) return;
-      expanding.push(key);
-    }
+    const key = `${idOf(local)};${bindingsKey(inner)}`;
+    if (expanded.has(key)) return;
+    expanded.add(key);
     if (ts.isTypeAliasDeclaration(local)) {
       visit(local.type, inner);
     } else {
@@ -919,7 +929,6 @@ function reachableProps(declaration, module) {
         for (const type of clause.types) visit(type, inner);
       }
     }
-    if (inner.size > 0) expanding.pop();
   }
   /** @param {ts.Node} node @param {Bindings} bindings */
   function visit(node, bindings) {
@@ -937,8 +946,8 @@ function reachableProps(declaration, module) {
     }
     if (ts.isConditionalTypeNode(node)) {
       if (
-        !isBoundParameter(node.checkType, bindings) &&
-        !isBoundParameter(node.extendsType, bindings)
+        !mentionsBoundParameter(node.checkType, bindings) &&
+        !mentionsBoundParameter(node.extendsType, bindings)
       ) {
         visit(node.checkType, bindings);
         visit(node.extendsType, bindings);
@@ -969,7 +978,7 @@ function reachableProps(declaration, module) {
     const contractHeritage =
       ts.isExpressionWithTypeArguments(node) && node.parent.parent === declaration;
     if (local) {
-      expand(local, node.typeArguments, bindings);
+      expand(local, node.typeArguments ?? [], bindings);
     } else if (PROPS_PRESERVING_TYPES.has(name) || contractHeritage) {
       for (const argument of node.typeArguments ?? []) visit(argument, bindings);
     }

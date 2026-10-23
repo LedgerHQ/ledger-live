@@ -971,6 +971,7 @@ test("R3 does not check a type argument a local generic drops", () => {
     `type Label<T> = { text: string };\nexport type CardProps = { label: Label<${argument}> };\n`,
     `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
     `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+    `type Pressable<T> = [T] extends [${argument}] ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
   ]) {
     assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
   }
@@ -986,6 +987,8 @@ test("R3 checks a type argument where a local generic places it in props", () =>
     `type Tree<T> = { value: T; children: Tree<T>[] };\nexport type CardProps = { tree: Tree<${argument}> };\n`,
     `type Nest<T> = { value: T; next: Nest<{ wrap: T }> };\nexport type CardProps = { nest: Nest<${argument}> };\n`,
     `type Wrap<T> = { item: T };\ntype Outer<X> = Wrap<{ value: X }>;\nexport type CardProps = { a: Outer<string>; b: Outer<${argument}> };\n`,
+    `type Outer<T> = Box<{ item: T }>;\ntype Box<T> = { value: T; next?: Outer<${argument}> };\nexport type CardProps = Outer<string>;\n`,
+    `type Box<T, U = T> = { value: U };\nexport type CardProps = Box<${argument}>;\n`,
   ]) {
     assert.deepEqual(
       check(card({ "Card.types.ts": contractModule })),
@@ -993,6 +996,20 @@ test("R3 checks a type argument where a local generic places it in props", () =>
       contractModule,
     );
   }
+});
+
+test("R3 expands a repeated instantiation of a local generic once", () => {
+  // Expanding `left` and `right` separately doubles the work at every level: about a minute here.
+  const nested = Array.from({ length: 24 }).reduce(
+    inner => `Pair<${inner}>`,
+    "{ onPress(): void }",
+  );
+  const contractModule = `type Pair<T> = { left: T; right: T };\nexport type CardProps = { pair: ${nested} };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
 });
 
 test("R3 checks keyof, conditions and imported heritage arguments outside a local generic", () => {
