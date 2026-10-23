@@ -20,13 +20,13 @@ jest.mock("@shared/analytics", () => ({
 let currentPage = "Ledger Sync";
 let previousPage = "Page Before";
 
-function renderScreen() {
+function renderScreen(analytics?: boolean) {
   const onActivate = jest.fn();
   const onSkip = jest.fn();
   const onLearnMore = jest.fn();
   const onQuit = jest.fn();
   const view = renderHook(() =>
-    useSyncOfferScreenViewModel({ onActivate, onSkip, onLearnMore, onQuit }),
+    useSyncOfferScreenViewModel({ onActivate, onSkip, onLearnMore, onQuit, analytics }),
   );
 
   return { ...view, onActivate, onSkip, onLearnMore, onQuit };
@@ -185,6 +185,21 @@ describe("useSyncOfferScreenViewModel", () => {
 
     expect(restoreTrackingPages).not.toHaveBeenCalled();
     expect(onActivate).toHaveBeenCalledTimes(1);
+  });
+
+  it("should omit seeded tracking when the offer is not a seeded entry", () => {
+    const { result, onQuit } = renderScreen(false);
+
+    expect(result.current.trackingProps).toEqual({});
+    act(() => {
+      result.current.onQuit();
+      result.current.onOpenSkip();
+      result.current.skipDrawer.onSkip();
+    });
+
+    expect(onQuit).toHaveBeenCalledTimes(1);
+    expect(track).not.toHaveBeenCalled();
+    expect(trackPage).not.toHaveBeenCalled();
   });
 
   it("should pass the shared seeded props to the skip drawer", () => {

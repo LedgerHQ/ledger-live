@@ -36,13 +36,16 @@ export function useLeaveOnboarding({
 
   return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
     if (!navigateOnExit || !device) return;
-    rememberSeededOnboarding({
-      ledgerSyncEligible: context.offerSync,
-      deviceType: context.deviceModelId,
-      deviceVersion: context.firmwareVersion,
-      updateOffered: context.firmware?.kind === "offered",
-      firmwareChecked: context.firmware?.kind === "checked",
-    });
+    const seededOnEntry = context.onboardedOnEntry === true;
+    if (seededOnEntry) {
+      rememberSeededOnboarding({
+        ledgerSyncEligible: context.offerSync,
+        deviceType: context.deviceModelId,
+        deviceVersion: context.firmwareVersion,
+        updateOffered: context.firmware?.kind === "offered",
+        firmwareChecked: context.firmware?.kind === "checked",
+      });
+    }
     const genuine = isCurrentSessionGenuine(context);
     const seeded = context.isOnboarded === true;
     const firmwareNeedsLegacyFlow =
@@ -60,6 +63,7 @@ export function useLeaveOnboarding({
       wasReadOnlyAtEntry,
       isGenuine: genuine,
       deviceWasSeeded: seeded,
+      seededOnEntry,
       firmwareNeedsLegacyFlow,
       hasCompletedOnboarding,
     });

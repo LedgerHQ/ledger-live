@@ -96,15 +96,26 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const pageRef = useRef<string | null>(null);
   const analyticsAttempt = useRef(false);
-  const page = seededCheckPage(
-    onboarding.state,
-    onboarding.context?.checksPaused === true,
-    readString(onboarding.context?.genuineFailureKind),
+  const seededOnEntry = readSeededOnEntry(onboarding.context);
+  const page = seededOnEntry
+    ? seededCheckPage(
+        onboarding.state,
+        onboarding.context?.checksPaused === true,
+        readString(onboarding.context?.genuineFailureKind),
+      )
+    : null;
+
+  const trackClick = useCallback(
+    (button: string, pageName?: string | null) => {
+      if (!readSeededOnEntry(onboarding.context)) return;
+      void trackSeededClick(button, pageName);
+    },
+    [onboarding.context],
   );
 
   const leave = useCallback(() => {
     allowLeave.current = true;
-    void trackSeededOnboardingAborted();
+    if (readSeededOnEntry(onboarding.context)) void trackSeededOnboardingAborted();
     onboarding.reset();
     navigation.goBack();
   }, [navigation, onboarding]);
@@ -121,7 +132,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const closeFirmwareHandover = onboarding.closeFirmwareHandover;
 
   const closeFromHeader = useCallback(() => {
-    void trackSeededClick(seededButtons.close, pageRef.current);
+    trackClick(seededButtons.close, pageRef.current);
     if (onboarding.state === firmwareUpdateDelegatedState) {
       closeFirmwareHandover();
       return;
@@ -131,17 +142,17 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       return;
     }
     leave();
-  }, [closeFirmwareHandover, leave, onboarding.state, onboarding.status, quitMachine]);
+  }, [closeFirmwareHandover, leave, onboarding.state, onboarding.status, quitMachine, trackClick]);
 
   const closeLostSession = useCallback(() => {
-    void trackSeededClick(seededButtons.close, pageRef.current);
+    trackClick(seededButtons.close, pageRef.current);
     quitMachine();
-  }, [quitMachine]);
+  }, [quitMachine, trackClick]);
 
   const closeFirmwareReconnect = useCallback(() => {
-    void trackSeededClick(seededButtons.close, pageRef.current);
+    trackClick(seededButtons.close, pageRef.current);
     leaveFirmwareReconnect();
-  }, [leaveFirmwareReconnect]);
+  }, [leaveFirmwareReconnect, trackClick]);
 
   const retry = useCallback(() => {
     onboarding.reset();
@@ -161,6 +172,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       analyticsAttempt.current = true;
       resetSeededOnboardingAnalytics();
     }
+    if (!seededOnEntry) return;
     rememberSeededOnboarding({
       ledgerSyncEligible: offerSync,
       deviceType: onboarding.liveDevice?.modelId ?? onboarding.context?.deviceModelId,
@@ -169,7 +181,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       firmwareChecked: onboarding.context?.firmwareChecked === true,
     });
     void trackSeededOnboardingStarted();
-  }, [offerSync, onboarding.context, onboarding.liveDevice]);
+  }, [offerSync, onboarding.context, onboarding.liveDevice, seededOnEntry]);
 
   useEffect(() => {
     if (!page) return;
@@ -276,29 +288,29 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         readString(onboarding.context?.availableFirmwareVersion),
       ),
       onStart: () => {
-        void trackSeededClick(seededButtons.initiateGenuineCheck, pageRef.current);
+        trackClick(seededButtons.initiateGenuineCheck, pageRef.current);
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" });
       },
       onRetry: () => {
         if (pageRef.current === seededPages.genuineCheckRefused) {
-          void trackSeededClick(seededButtons.retryGenuineCheck, pageRef.current);
+          trackClick(seededButtons.retryGenuineCheck, pageRef.current);
         }
         send({ type: "RETRY" });
       },
       onCloseSheet: () => send({ type: "CLOSE" }),
       onAcceptUpdate: () => {
-        markFirmwareUpdateAccepted();
-        void trackSeededClick(seededButtons.continueUpdate, pageRef.current);
+        if (seededOnEntry) markFirmwareUpdateAccepted();
+        trackClick(seededButtons.continueUpdate, pageRef.current);
         send({ type: "USER_ACCEPT" });
       },
       onDeclineUpdate: () => {
-        void trackSeededClick(seededButtons.close, seededPages.osUpdateRequired);
+        trackClick(seededButtons.close, seededPages.osUpdateRequired);
         send({ type: "USER_DECLINE" });
       },
       onContinue:
         onboarding.state === "checks.checksSucceeded"
           ? () => {
-              void trackSeededClick(seededButtons.continueUpdate, seededPages.checksSuccess);
+              trackClick(seededButtons.continueUpdate, seededPages.checksSuccess);
               send({ type: "CONTINUE" });
             }
           : undefined,
@@ -318,4 +330,9 @@ function matchesPairedDevice(knownId: string, pairedDeviceId: string | undefined
 
 function readString(value: unknown): string | null {
   return typeof value === "string" ? value : null;
+}
+
+function readSeededOnEntry(context: unknown): boolean {
+  if (!context || typeof context !== "object" || !("onboardedOnEntry" in context)) return false;
+  return context.onboardedOnEntry === true;
 }

@@ -18,26 +18,36 @@ type ExitDeps = {
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
+  seededOnEntry: boolean;
   firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
 
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
-  completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
-    trackSeededChecksSuccess();
-    void trackSeededOnboardingDone();
+  completed: ({
+    dispatch,
+    navigation,
+    wasReadOnlyAtEntry,
+    hasCompletedOnboarding,
+    seededOnEntry,
+  }) => {
+    if (seededOnEntry) {
+      trackSeededChecksSuccess();
+      void trackSeededOnboardingDone();
+    }
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
-  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
-    trackSeededChecksSuccess();
+  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededOnEntry }) => {
+    if (seededOnEntry) trackSeededChecksSuccess();
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,
+      seededOnEntry,
     });
   },
-  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) => {
-    void trackSeededOnboardingAborted();
+  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet, seededOnEntry }) => {
+    if (seededOnEntry) void trackSeededOnboardingAborted();
     resetToMyLedger(navigation, device, shouldDisplayMyWallet);
   },
   legacyFallback: ({
@@ -47,6 +57,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     wasReadOnlyAtEntry,
     isGenuine,
     deviceWasSeeded,
+    seededOnEntry,
     firmwareNeedsLegacyFlow,
     hasCompletedOnboarding,
   }) => {
@@ -59,21 +70,28 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
         resetToLegacySeededChecks(navigation, device);
         return;
       }
-      void trackSeededOnboardingAborted();
+      if (seededOnEntry) void trackSeededOnboardingAborted();
       navigation.goBack();
       return;
     }
-    void trackSeededOnboardingDone();
+    if (seededOnEntry) void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
-  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
+  userQuit: ({
+    dispatch,
+    navigation,
+    wasReadOnlyAtEntry,
+    isGenuine,
+    hasCompletedOnboarding,
+    seededOnEntry,
+  }) => {
     if (!isGenuine) {
-      void trackSeededOnboardingAborted();
+      if (seededOnEntry) void trackSeededOnboardingAborted();
       navigation.goBack();
       return;
     }
-    void trackSeededOnboardingDone();
+    if (seededOnEntry) void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },

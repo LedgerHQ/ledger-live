@@ -54,6 +54,7 @@ jest.mock("@react-navigation/native", () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
+      seededOnEntry: true,
     },
   }),
 }));

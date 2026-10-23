@@ -32,7 +32,7 @@ export type SyncOfferViewProps = Readonly<{
   onOpenSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
-  trackingProps: ReturnType<typeof seededSharedProps>;
+  trackingProps: Partial<ReturnType<typeof seededSharedProps>>;
   callerWins: readonly string[];
   skipDrawer: SkipDrawerProps;
 }>;
@@ -42,6 +42,7 @@ export type SyncOfferScreenProps = Readonly<{
   onSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
+  analytics?: boolean;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -49,6 +50,7 @@ export function useSyncOfferScreenViewModel({
   onSkip,
   onLearnMore,
   onQuit,
+  analytics = true,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
@@ -70,6 +72,10 @@ export function useSyncOfferScreenViewModel({
     skipDrawerAction.current = true;
     closeSkipDrawer();
   };
+  const trackClick = (button: string, page: string) => {
+    if (!analytics) return;
+    void trackSeededClick(button, page);
+  };
 
   return {
     title: t("deviceOnboarding.syncOffer.title"),
@@ -79,11 +85,11 @@ export function useSyncOfferScreenViewModel({
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
     onActivate: () => {
-      void trackSeededClick(seededButtons.activateSync, seededPages.ledgerSync);
+      trackClick(seededButtons.activateSync, seededPages.ledgerSync);
       onActivate();
     },
     onOpenSkip: () => {
-      void trackSeededClick(seededButtons.skip, seededPages.ledgerSync);
+      trackClick(seededButtons.skip, seededPages.ledgerSync);
       offerPages.current = {
         current: getCurrentTrackingPage(),
         previous: getPreviousTrackingPage(),
@@ -91,27 +97,27 @@ export function useSyncOfferScreenViewModel({
       setIsSkipDrawerOpen(true);
     },
     onLearnMore: () => {
-      void trackSeededClick(seededButtons.learnMore, seededPages.ledgerSync);
+      trackClick(seededButtons.learnMore, seededPages.ledgerSync);
       onLearnMore();
     },
     onQuit: () => {
-      void trackSeededClick(seededButtons.close, seededPages.ledgerSync);
+      trackClick(seededButtons.close, seededPages.ledgerSync);
       onQuit();
     },
-    trackingProps: seededSharedProps(),
-    callerWins: seededCallerWins,
+    trackingProps: analytics ? seededSharedProps() : {},
+    callerWins: analytics ? seededCallerWins : [],
     skipDrawer: {
       isOpen: isSkipDrawerOpen,
       onClose: closeSkipDrawer,
       onSkip: () => {
         closeSkipDrawerForAction();
-        void trackSeededClick(seededButtons.yesSkip, seededPages.skipDrawer);
-        void trackSeededPage(seededPages.ledgerSyncRefused);
+        trackClick(seededButtons.yesSkip, seededPages.skipDrawer);
+        if (analytics) void trackSeededPage(seededPages.ledgerSyncRefused);
         onSkip();
       },
       onActivate: () => {
         closeSkipDrawerForAction();
-        void trackSeededClick(seededButtons.enableSync, seededPages.skipDrawer);
+        trackClick(seededButtons.enableSync, seededPages.skipDrawer);
         onActivate();
       },
     },

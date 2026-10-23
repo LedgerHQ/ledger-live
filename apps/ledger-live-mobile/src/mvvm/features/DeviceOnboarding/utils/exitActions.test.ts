@@ -97,6 +97,7 @@ describe("exitActions", () => {
       params: {
         device: stax,
         wasReadOnlyAtEntry: true,
+        seededOnEntry: true,
       },
     });
   });
@@ -211,6 +212,14 @@ describe("exitActions", () => {
     expect(track).toHaveBeenCalledWith("onboarding_aborted", expect.anything(), expect.anything());
   });
 
+  it("should finish an unseeded device without seeded analytics", () => {
+    const { opened } = leave("completed", { seededOnEntry: false });
+
+    expect(opened?.path).toEqual(portfolio);
+    expect(track).not.toHaveBeenCalled();
+    expect(trackPage).not.toHaveBeenCalled();
+  });
+
   it("should track the success page when seeded checks complete", () => {
     leave("completed");
 
@@ -288,6 +297,7 @@ function leave(reason: DeviceOnboardingExitReason, overrides: Partial<ExitDeps> 
     wasReadOnlyAtEntry: false,
     isGenuine: false,
     deviceWasSeeded: false,
+    seededOnEntry: true,
     firmwareNeedsLegacyFlow: false,
     hasCompletedOnboarding: false,
     ...overrides,

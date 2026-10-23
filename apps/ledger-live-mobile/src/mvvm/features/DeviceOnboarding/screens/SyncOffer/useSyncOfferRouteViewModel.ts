@@ -34,7 +34,7 @@ type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboa
 export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
+  const { device, wasReadOnlyAtEntry, seededOnEntry } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const [handoverStarted, setHandoverStarted] = useState(false);
   const completedOnSync = useRef(false);
@@ -56,26 +56,28 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
       if (completedOnSync.current) return;
       completedOnSync.current = true;
       allowLeave.current = true;
-      if (syncDone) {
+      if (seededOnEntry && syncDone) {
         markLedgerSyncDone();
         void trackSeededPage(seededPages.ledgerSyncSuccess);
       }
-      void trackSeededOnboardingDone();
+      if (seededOnEntry) void trackSeededOnboardingDone();
       complete();
       notifyFlowCompleted("onboarding");
       resetToPortfolio(navigation);
     },
-    [complete, navigation, notifyFlowCompleted],
+    [complete, navigation, notifyFlowCompleted, seededOnEntry],
   );
 
   useEffect(() => {
     let focused = true;
-    rememberSeededOnboarding({ deviceType: device.modelId });
-    void trackSeededPage(seededPages.ledgerSync);
+    if (seededOnEntry) {
+      rememberSeededOnboarding({ deviceType: device.modelId });
+      void trackSeededPage(seededPages.ledgerSync);
+    }
     const unsubscribeFocus = navigation.addListener("focus", () => {
       if (focused) return;
       focused = true;
-      void trackSeededPage(seededPages.ledgerSync);
+      if (seededOnEntry) void trackSeededPage(seededPages.ledgerSync);
     });
     const unsubscribeBlur = navigation.addListener("blur", () => {
       focused = false;
@@ -84,7 +86,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
       unsubscribeFocus();
       unsubscribeBlur();
     };
-  }, [device.modelId, navigation]);
+  }, [device.modelId, navigation, seededOnEntry]);
 
   useEffect(() => {
     if (!handoverStarted || !hasTrustchain) return;
@@ -114,5 +116,6 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     onSkip: leaveToPortfolio,
     onQuit: leaveToPortfolio,
     onLearnMore,
+    analytics: seededOnEntry,
   };
 }
