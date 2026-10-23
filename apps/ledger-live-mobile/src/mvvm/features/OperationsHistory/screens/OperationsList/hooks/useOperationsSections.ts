@@ -4,7 +4,7 @@ import { AccountLike, DailyOperationsSection, Operation, Account } from "@ledger
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import { currencySettingsDefaults } from "~/helpers/CurrencySettingsDefaults";
-import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
+import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import type { CurrencySettings, State } from "~/reducers/types";
 
 export type OperationsListSection = DailyOperationsSection & { isPending?: boolean };
@@ -88,7 +88,7 @@ export function useOperationsSections(
   rawSections: DailyOperationsSection[],
 ): OperationsListSection[] {
   const flattenedAccounts = useSelector(flattenAccountsSelector);
-  const accounts = useSelector(shallowAccountsSelector);
+  const accounts = useSelector(accountsSelector);
   const currenciesSettings = useSelector((state: State) => state.settings.currenciesSettings);
 
   const flattenedAccountsById = useMemo(() => {
