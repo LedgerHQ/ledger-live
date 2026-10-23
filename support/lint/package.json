@@ -24,6 +24,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@ledgerhq/lumen-lint-plugin": "catalog:",
     "@types/node": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"

@@ -27,6 +27,7 @@
     "@domain/entity-contact": "workspace:*",
     "@features/platform-contacts": "workspace:^",
     "@shared/i18n": "workspace:*",
+    "@ledgerhq/lumen-utils-shared": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:"

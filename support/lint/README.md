@@ -29,7 +29,7 @@ rule that several packages of a layer need belongs in that layer's preset.
 | --- | --- | --- |
 | `base` | `domain/` | The baseline |
 | `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on, `jsx-a11y/aria-role` off in native files |
-| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on, with waivers |
+| `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal; platform-suffix rule on, with waivers; Lumen's `recommended` lint preset (`@ledgerhq/lumen-lint-plugin`) on `*.web.{ts,tsx}` |
 | `features-platform` | `features/platform/` | Platform-suffix rule on, with waivers |
 | `shared` | `shared/` | Platform-suffix rule on, with waivers |
 | `support` | `support/` | Console allowed |
