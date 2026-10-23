@@ -2,12 +2,11 @@ name: "[Desktop] - E2E Only - Scheduled/Manual"
 run-name: >
   @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
-# Broadcast runs, and lock_without_broadcast runs that lock as one would, never overlap: a new one
-# waits for the running one. GitHub keeps one waiting run per group, so a newer broadcast run
-# replaces the one already waiting. Other runs never wait.
+# Broadcast runs never overlap: a new one waits for the running one. GitHub keeps one waiting run
+# per group, so a newer broadcast run replaces the one already waiting. Other runs never wait.
 concurrency:
   group: >-
-    ${{ (inputs.enable_broadcast || inputs.lock_without_broadcast || github.event.schedule == '0 1 * * 1') && 'desktop-e2e-broadcast' || format('desktop-e2e-{0}-{1}', github.run_id, inputs.speculos_device || 'nanoSP') }}
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 'desktop-e2e-broadcast' || format('desktop-e2e-{0}-{1}', github.run_id, inputs.speculos_device || 'nanoSP') }}
   cancel-in-progress: false
 
 on:
