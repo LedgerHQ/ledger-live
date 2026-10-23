@@ -19,6 +19,8 @@ export interface ModularDialogParams {
   areCurrenciesFiltered?: boolean;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
+  /** Replaces the default add account flow opened from the account selection step. */
+  onAddAccount?: () => void;
   onClose?: () => void;
 }
 
@@ -86,6 +88,8 @@ export const modularDialogOnCloseSelector = (state: State) =>
   state.modularDialog.dialogParams?.onClose;
 export const modularDialogOnAccountSelectedSelector = (state: State) =>
   state.modularDialog.dialogParams?.onAccountSelected;
+export const modularDialogOnAddAccountSelector = (state: State) =>
+  state.modularDialog.dialogParams?.onAddAccount;
 export const modularDialogOnAssetSelectedSelector = (state: State) =>
   state.modularDialog.dialogParams?.onAssetSelected;
 export const modularDialogConfigurationSelector = (state: State) =>

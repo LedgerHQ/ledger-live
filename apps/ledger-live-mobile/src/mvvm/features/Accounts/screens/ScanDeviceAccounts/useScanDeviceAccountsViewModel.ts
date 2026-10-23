@@ -36,6 +36,31 @@ const getCustomNoAssociatedAccounts = (currency: CryptoOrTokenCurrency) => {
   return noAssociatedAccountsByFamily[currency.family];
 };
 
+/**
+ * With only new accounts, preselects the first one if nothing is selected yet; otherwise
+ * preselects every account that holds funds and is not in the wallet yet.
+ */
+function getAutoSelectedIds({
+  selectedIds,
+  scannedAccountId,
+  onlyNewAccounts,
+  hasAlreadyBeenImported,
+  isNewAccount,
+}: {
+  selectedIds: string[];
+  scannedAccountId: string;
+  onlyNewAccounts: boolean;
+  hasAlreadyBeenImported: boolean;
+  isNewAccount: boolean;
+}): string[] {
+  if (onlyNewAccounts) {
+    return hasAlreadyBeenImported || selectedIds.length > 0 ? selectedIds : [scannedAccountId];
+  }
+  return !hasAlreadyBeenImported && !isNewAccount
+    ? uniq([...selectedIds, scannedAccountId])
+    : selectedIds;
+}
+
 export default function useScanDeviceAccountsViewModel({
   existingAccounts,
   blacklistedTokenIds,
@@ -64,6 +89,7 @@ export default function useScanDeviceAccountsViewModel({
     onCloseNavigation,
     navigationDepth,
     context,
+    autoSelect = true,
   } = route.params || {};
 
   const customFlow = getCustomAddAccountFlow(currency);
@@ -262,7 +288,8 @@ export default function useScanDeviceAccountsViewModel({
         renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
       }),
     );
-    const { onSuccess } = route.params;
+    const { onSuccess, onAccountsAdded } = route.params;
+    onAccountsAdded?.(accountsToAdd);
 
     if (inline) {
       popInlineScreens();
@@ -380,17 +407,20 @@ export default function useScanDeviceAccountsViewModel({
 
     if (!hasAlreadyBeenScanned) {
       setScannedAccounts([...scannedAccounts, latestScannedAccount]);
-      setSelectedIds(
-        onlyNewAccounts
-          ? hasAlreadyBeenImported || selectedIds.length > 0
-            ? selectedIds
-            : [latestScannedAccount.id]
-          : !hasAlreadyBeenImported && !isNewAccount
-            ? uniq([...selectedIds, latestScannedAccount.id])
-            : selectedIds,
-      );
+      if (autoSelect) {
+        setSelectedIds(
+          getAutoSelectedIds({
+            selectedIds,
+            scannedAccountId: latestScannedAccount.id,
+            onlyNewAccounts,
+            hasAlreadyBeenImported,
+            isNewAccount,
+          }),
+        );
+      }
     }
   }, [
+    autoSelect,
     customFlow,
     existingAccounts,
     latestScannedAccount,
@@ -488,6 +518,7 @@ export default function useScanDeviceAccountsViewModel({
     returnToSwap,
     currency,
     onCloseNavigation,
+    autoSelect,
     confirmLabel: t(
       customFlow?.scanDeviceAccountsCtaI18nKey ?? "addAccounts.scanDeviceAccounts.confirm",
       { count: selectedIds.length },

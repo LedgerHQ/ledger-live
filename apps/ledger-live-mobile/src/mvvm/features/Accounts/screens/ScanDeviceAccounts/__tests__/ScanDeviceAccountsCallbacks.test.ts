@@ -154,6 +154,20 @@ describe("useScanDeviceAccountsViewModel callbacks", () => {
     expect(track).toHaveBeenCalledWith("accounts_added", expect.anything());
   });
 
+  it("reports the added accounts through onAccountsAdded", async () => {
+    const onAccountsAdded = jest.fn();
+    setRouteParams("ethereum", "device-1", { onAccountsAdded });
+    setScanObservable(of(makeDiscoveredEvent(createAccount())));
+
+    const { result } = renderScan();
+    await waitFor(() => expect(result.current.scannedAccounts).toHaveLength(1));
+    await waitFor(() => expect(result.current.scanning).toBe(false));
+
+    act(() => result.current.importAccounts());
+
+    expect(onAccountsAdded).toHaveBeenCalledWith(result.current.scannedAccounts);
+  });
+
   it("resolves inline import by popping before onSuccess and does not cancel", async () => {
     const callOrder: string[] = [];
     const onSuccess = jest.fn(() => callOrder.push("success"));

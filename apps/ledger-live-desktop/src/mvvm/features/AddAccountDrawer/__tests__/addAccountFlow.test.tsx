@@ -1,6 +1,6 @@
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import React from "react";
+import React, { type ComponentProps } from "react";
 import { act, render, screen, userEvent, waitFor } from "tests/testSetup";
 import { track, trackPage } from "@shared/analytics";
 import {
@@ -179,7 +179,11 @@ jest.mock("@shared/analytics", () => ({
   trackPage: jest.fn(),
 }));
 
-const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
+const setup = (
+  currency = arbitrumCurrency,
+  state?: Partial<State>,
+  props?: Partial<ComponentProps<typeof ModularDrawerAddAccountFlowManager>>,
+) => {
   const initialState = {
     settings: AFTER_ONBOARDING_STATE,
     ...state,
@@ -190,7 +194,7 @@ const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
     },
   };
 
-  return render(<ModularDrawerAddAccountFlowManager currency={currency} />, {
+  return render(<ModularDrawerAddAccountFlowManager currency={currency} {...props} />, {
     initialState,
   });
 };
@@ -452,5 +456,61 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
     expectTrackPage(3, "add account success");
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
+  });
+
+  describe("migration mode", () => {
+    it("should preselect the discovered account by default", async () => {
+      setup();
+
+      await mockScanAccountsSubscription([ARB_ACCOUNT]);
+
+      expect(screen.getByRole("button", { name: "Confirm" })).toBeEnabled();
+    });
+
+    it("should leave discovered accounts unchecked when autoSelect is false", async () => {
+      setup(arbitrumCurrency, undefined, { autoSelect: false });
+
+      await mockScanAccountsSubscription([ARB_ACCOUNT]);
+
+      expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
+    });
+
+    it("should only enable Confirm once the user selects an account", async () => {
+      setup(arbitrumCurrency, undefined, { autoSelect: false });
+
+      await mockScanAccountsSubscription([ARB_ACCOUNT]);
+      await userEvent.click(screen.getByTestId("account-row-Arbitrum 2"));
+
+      expect(screen.getByRole("button", { name: "Confirm" })).toBeEnabled();
+    });
+
+    it("should report the accounts as soon as they are added", async () => {
+      const onAccountsAdded = jest.fn();
+      setup(arbitrumCurrency, undefined, { onAccountsAdded });
+
+      await mockScanAccountsSubscription([ARB_ACCOUNT]);
+      await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+      expect(onAccountsAdded).toHaveBeenCalledWith([
+        expect.objectContaining({ id: ARB_ACCOUNT.id }),
+      ]);
+    });
+
+    it("should replace the success CTAs with Done and hand the added accounts over", async () => {
+      const onDone = jest.fn();
+      setup(arbitrumCurrency, undefined, { onDone });
+
+      await mockScanAccountsSubscription([ARB_ACCOUNT]);
+      await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+      expect(
+        screen.queryByRole("button", { name: "Add funds to my account" }),
+      ).not.toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole("button", { name: "Done" }));
+
+      expect(onDone).toHaveBeenCalledWith([expect.objectContaining({ id: ARB_ACCOUNT.id })]);
+      expect(setDrawer).toHaveBeenCalled();
+    });
   });
 });

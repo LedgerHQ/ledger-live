@@ -16,6 +16,12 @@ export type CommonParams = {
   navigationDepth?: number;
   currency: CryptoOrTokenCurrency;
   sourceScreenName?: string;
+  /** When false, the scan screen leaves every discovered account unchecked. Defaults to true. */
+  autoSelect?: boolean;
+  /** Called with the selected accounts as soon as they are added to the wallet. */
+  onAccountsAdded?: (accountsToAdd: Account[]) => void;
+  /** Called with the added accounts when the user taps Done on the success screen. */
+  onDone?: (accountsToAdd: Account[]) => void;
 };
 export type NetworkBasedAddAccountNavigator = {
   [ScreenName.ScanDeviceAccounts]: CommonParams & {
