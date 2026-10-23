@@ -110,6 +110,11 @@ on:
         type: choice
         options: ["3", "2", "1"]
         default: "3"
+      hires_sampler:
+        description: "Also sample CPU, disk and paging every second on iOS shards"
+        required: false
+        type: boolean
+        default: false
 
   workflow_call:
     inputs:
@@ -195,6 +200,11 @@ on:
         required: false
         type: string
         default: "3"
+      hires_sampler:
+        description: "Also sample CPU, disk and paging every second on iOS shards"
+        required: false
+        type: boolean
+        default: false
       check_pod_lockfile:
         description: "Validate the iOS Pod lockfile when the native build comes from cache"
         required: false
@@ -775,6 +785,7 @@ jobs:
       # which is empty on nightlies. Keep the tag in sync with the Android job.
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.ios_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
       E2E_MAX_WORKERS: ${{ inputs.ios_max_workers || '3' }}
+      HIRES_SAMPLER: ${{ inputs.hires_sampler && 'true' || 'false' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -940,7 +951,16 @@ jobs:
               sleep 10
             done' > /dev/null 2>&1 &
           echo $! > "$SAMPLER_DIR/pid"
-          echo "max_workers=${E2E_MAX_WORKERS} shard=${{ matrix.shard }}" > "$SAMPLER_DIR/meta.txt"
+          if [ "$HIRES_SAMPLER" = "true" ]; then
+            # 1s: CPU split + top CPU consumers, paging/compression deltas, per-disk ops and service time (ns).
+            nohup top -l 0 -s 1 -n 25 -o cpu -stats pid,ppid,cpu,mem,command > "$SAMPLER_DIR/hires-top.txt" 2>&1 &
+            echo $! >> "$SAMPLER_DIR/pid"
+            nohup bash -c 'vm_stat 1 | while IFS= read -r l; do echo "$(date +%s) $l"; done' > "$SAMPLER_DIR/hires-vmstat.txt" 2>&1 &
+            echo $! >> "$SAMPLER_DIR/pid"
+            nohup bash -c 'while true; do echo "$(date +%s) $(ioreg -c IOBlockStorageDriver -r -w0 -d 1 | grep -o "\"Statistics\" = {[^}]*}" | tr "\n" "|")"; sleep 1; done' > "$SAMPLER_DIR/hires-disk.txt" 2>&1 &
+            echo $! >> "$SAMPLER_DIR/pid"
+          fi
+          echo "max_workers=${E2E_MAX_WORKERS} shard=${{ matrix.shard }} hires=${HIRES_SAMPLER}" > "$SAMPLER_DIR/meta.txt"
           echo "NODE_OPTIONS=${NODE_OPTIONS}" >> "$SAMPLER_DIR/meta.txt"
           date +%s > "$SAMPLER_DIR/start"
 
@@ -974,7 +994,8 @@ jobs:
           SAMPLER_DIR: ${{ runner.temp }}/mem-sampler
         run: |
           date +%s > "$SAMPLER_DIR/end"
-          kill "$(cat "$SAMPLER_DIR/pid")" 2>/dev/null || true
+          xargs kill < "$SAMPLER_DIR/pid" 2>/dev/null || true
+          pkill -x vm_stat 2>/dev/null || true
 
       - name: Upload memory sampler
         if: always()
