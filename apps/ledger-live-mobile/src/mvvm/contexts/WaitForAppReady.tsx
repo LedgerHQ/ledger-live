@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAppAvailability } from "@features/flow-app-availability";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
 import { useSelector } from "~/context/hooks";
+import { markAppLetThrough } from "~/context/startCountervaluesWhenReady";
 import LoadingApp from "~/components/LoadingApp";
 import { useWait } from "../hooks/useWait";
 import { logStartupEvent } from "../utils/logStartupTime";
@@ -31,8 +32,13 @@ export function WaitForAppReady({
   logWhenFirstMet(!pendingAvailabilityCheck, "WaitForAppReady availability checked");
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
+  const letThrough = timedOut || isLoaded;
 
-  if (!timedOut && !isLoaded) {
+  useEffect(() => {
+    if (letThrough) markAppLetThrough();
+  }, [letThrough]);
+
+  if (!letThrough) {
     return <LoadingApp />;
   }
 

@@ -2,7 +2,7 @@ import { configureStore, type UnknownAction } from "@reduxjs/toolkit";
 import { startCountervaluesSync } from "@features/platform-market-countervalues";
 import { featureFlagsReducer, setRemoteFlagsReady } from "@shared/feature-flags";
 import { startupEvents } from "LLM/utils/logStartupTime";
-import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
+import { markAppLetThrough, startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 
 const savedState = { status: {} };
 
@@ -43,6 +43,11 @@ function deferred() {
 }
 
 describe("startCountervaluesWhenReady", () => {
+  beforeAll(() => {
+    // These cases are about the readiness wait: the app is already let through.
+    markAppLetThrough();
+  });
+
   beforeEach(() => {
     jest.useFakeTimers();
   });

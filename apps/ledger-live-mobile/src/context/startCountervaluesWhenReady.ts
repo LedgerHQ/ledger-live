@@ -22,11 +22,35 @@ export function startCountervaluesWhenReady(
   savedState: CounterValuesStateRaw | undefined,
   currenciesHydrated: Promise<unknown>,
 ): Promise<void> {
-  return whenAppReady(store, currenciesHydrated).then(() => {
+  return Promise.all([whenAppReady(store, currenciesHydrated), whenAppLetThrough()]).then(() => {
     logStartupEvent("Countervalues sync started");
     store.dispatch(startCountervaluesSync({ savedState }));
   });
 }
+
+let letAppThrough: () => void = () => {};
+const appLetThrough = new Promise<void>(resolve => {
+  letAppThrough = resolve;
+});
+
+/** Called by `WaitForAppReady` once it lets the app through. */
+export function markAppLetThrough(): void {
+  letAppThrough();
+}
+
+// Experiment: start the countervalues loop only once `WaitForAppReady` has let the app through,
+// so its first work does not land during startup. The timeout keeps the loop from never starting.
+function whenAppLetThrough(): Promise<void> {
+  return new Promise(resolve => {
+    const timer = setTimeout(resolve, LET_THROUGH_MAX_WAIT_MS);
+    void appLetThrough.then(() => {
+      clearTimeout(timer);
+      resolve();
+    });
+  });
+}
+
+const LET_THROUGH_MAX_WAIT_MS = 3_000;
 
 /**
  * Resolves once the currencies are hydrated and the remote flags ready, or after `MAX_WAIT_MS`,
