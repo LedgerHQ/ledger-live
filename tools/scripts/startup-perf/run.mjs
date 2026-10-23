@@ -41,6 +41,9 @@ const { values: opts } = parseArgs({
     maestro: { type: "string", default: "maestro" },
     "bridge-port": { type: "string", default: "8099" },
     "pause-idle": { type: "string", default: "true" },
+    // Comma-separated URLs timed with curl from the runner before each launch: the network
+    // without the emulator, to compare with the same requests made by the app.
+    "net-baseline": { type: "string", default: "" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -59,6 +62,10 @@ const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
 const BRIDGE_PORT = Number(opts["bridge-port"]);
 const PAUSE_IDLE = opts["pause-idle"] === "true";
+const NET_BASELINE = opts["net-baseline"]
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
 // The startup being measured ends within ~5 s of the launch command returning.
 const LOAD_WINDOW_MS = 5000;
 const OUT_DIR = opts["out-dir"];
@@ -497,6 +504,35 @@ async function loadSnapshot(device) {
   };
 }
 
+// curl timings from the runner, in ms: DNS lookup, TCP connect, TLS done, first byte, total.
+async function curlTimings(url) {
+  const { stdout, failed } = await run(
+    "curl",
+    [
+      "-s",
+      "-o",
+      "/dev/null",
+      "--max-time",
+      "10",
+      "-w",
+      "%{time_namelookup} %{time_connect} %{time_appconnect} %{time_starttransfer} %{time_total} %{http_code}",
+      url,
+    ],
+    { allowFail: true, timeoutMs: 15_000 },
+  );
+  const [dns, connect, tls, firstByte, total, status] = stdout.trim().split(" ").map(Number);
+  if (failed || !Number.isFinite(total)) return { failed: true };
+  const ms = s => Math.round(s * 1000);
+  return {
+    dnsMs: ms(dns),
+    connectMs: ms(connect - dns),
+    tlsMs: ms(tls - connect),
+    firstByteMs: ms(firstByte - tls),
+    totalMs: ms(total),
+    status,
+  };
+}
+
 const percent = (part, whole) => (whole > 0 ? Math.round((part / whole) * 1000) / 10 : null);
 
 export function loadBetween(a, b) {
@@ -540,6 +576,10 @@ async function sample(meta) {
       record.clearedDialogs = dialogs;
       await sleep(DIALOG_RECOVERY_MS);
     }
+    if (NET_BASELINE.length) {
+      record.runnerNetwork = {};
+      for (const url of NET_BASELINE) record.runnerNetwork[url] = await curlTimings(url);
+    }
     const idleStart = await loadSnapshot(meta.device);
     await sleep(IDLE_MS);
     const idleEnd = await loadSnapshot(meta.device);
@@ -557,6 +597,8 @@ async function sample(meta) {
       host: hostCpuTimes(),
       throttledUs: await cgroupThrottledUs(),
     };
+    // Epoch ms of the launch command, to line the launch up with a network capture.
+    record.launchAt = Date.now();
     const launch = await P.launch(meta.device, { mock: "0" });
     await sleep(Math.min(LOAD_WINDOW_MS, SETTLE_MS));
     const launchEnd = await loadSnapshot(meta.device);

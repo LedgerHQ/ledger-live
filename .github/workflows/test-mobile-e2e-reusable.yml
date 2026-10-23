@@ -76,6 +76,11 @@ on:
         required: false
         type: boolean
         default: true
+      capture_network:
+        description: "Android: capture DNS and HTTPS traffic on the runner and time it against each launch"
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: mobile-startup-perf-${{ github.ref_name }}
@@ -509,6 +514,19 @@ jobs:
           done
           adb devices
 
+      # The emulator's user-mode network turns every guest connection into a plain socket of the
+      # emulator process, so a capture on the runner sees the network side of each app request.
+      - name: Start network capture
+        if: ${{ inputs.capture_network }}
+        run: |
+          set -euo pipefail
+          command -v tcpdump > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq tcpdump; }
+          # -Z: write the file as the runner user. -U: flush each packet, so stopping loses nothing.
+          nohup sudo -n tcpdump -i any -n -s 2048 -U -Z "$(id -un)" -w "$RESULTS_DIR/android/network.pcap" \
+            'tcp port 443 or port 53' > "$RESULTS_DIR/android/tcpdump.log" 2>&1 &
+          sleep 3
+          pgrep -x tcpdump > /dev/null || { cat "$RESULTS_DIR/android/tcpdump.log"; echo "::warning::tcpdump did not start: no network capture"; }
+
       - name: Measure
         env:
           SCENARIO: ${{ matrix.scenario }}
@@ -516,6 +534,8 @@ jobs:
           SETTLE: ${{ inputs.settle_seconds }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           PAUSE_IDLE: ${{ inputs.pause_idle_emulator }}
+          # The hosts of the two requests WaitForAppReady waits for, timed from the runner itself.
+          NET_BASELINE: ${{ inputs.capture_network && 'https://firebaseremoteconfig.googleapis.com/,https://global.api.prd.ledger.com/countervalue/v3/markets' || '' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -528,6 +548,7 @@ jobs:
             --scenarios "$SCENARIO" --pairs "$PAIRS" --settle-ms "$((SETTLE * 1000))" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --pause-idle "$PAUSE_IDLE" \
+            --net-baseline "$NET_BASELINE" \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
@@ -543,6 +564,18 @@ jobs:
             --preset "$PRESET" --threshold-ms "$THRESHOLD" \
             --label-a "$LABEL_A" --label-b "$LABEL_B" \
             --summary "$GITHUB_STEP_SUMMARY" --json "$RESULTS_DIR/android/summary.json"
+
+      - name: Stop network capture and analyse it
+        if: ${{ always() && inputs.capture_network }}
+        run: |
+          sudo -n pkill -INT -x tcpdump || true
+          sleep 3
+          PCAP="$RESULTS_DIR/android/network.pcap"
+          [[ -s "$PCAP" ]] || { echo "No capture to analyse"; exit 0; }
+          node tools/scripts/startup-perf/network.mjs \
+            --pcap "$PCAP" --samples "$RESULTS_DIR/android/samples.jsonl" \
+            --summary "$GITHUB_STEP_SUMMARY" --json "$RESULTS_DIR/android/network.json"
+          gzip -1 "$PCAP"
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ always() }}
