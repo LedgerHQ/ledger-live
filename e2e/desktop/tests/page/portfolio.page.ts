@@ -174,7 +174,7 @@ export class PortfolioPage extends AppPage {
   async expectAccountsPersistedInAppJson(
     userdataFile: string,
     minCount: number = 1,
-    timeoutMs: number = 5000,
+    timeoutMs: number = TIMEOUT.small,
   ) {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
   }

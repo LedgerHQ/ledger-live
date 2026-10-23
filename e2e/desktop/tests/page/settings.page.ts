@@ -190,7 +190,7 @@ export class SettingsPage extends AppPage {
 
   @step("Expect exported logs file to be created")
   async expectExportLogsFileCreated() {
-    const timeout = 5000;
+    const timeout = TIMEOUT.small;
     const fileExists = await FileUtils.waitForFileToExist(
       SettingsPage.EXPORT_LOGS_SOURCE_PATH,
       timeout,

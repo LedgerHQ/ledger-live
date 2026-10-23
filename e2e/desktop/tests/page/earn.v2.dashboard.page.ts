@@ -4,6 +4,7 @@ import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Accoun
 import { EarnBasePage } from "tests/page/earn.base.page";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import type { Application } from "tests/page/index";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export class EarnV2Page extends EarnBasePage {
   private readonly maxPotentialRewards = "max-potential-rewards";
@@ -271,7 +272,7 @@ export class EarnV2Page extends EarnBasePage {
     expect(selector, "Expected ASSET modular selector to be visible").not.toBeNull();
     await selector!.selectAsset(currency);
     // Multi-network assets (e.g. ETH) trigger a network chooser after asset selection.
-    if (await app.modularDialog.waitForNetworkDialogVisible(5000)) {
+    if (await app.modularDialog.waitForNetworkDialogVisible(TIMEOUT.small)) {
       await app.modularDialog.selectNetwork(currency);
     }
   }

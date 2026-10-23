@@ -17,7 +17,7 @@ import { TIMEOUT } from "tests/utils/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
-const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+const APPROVAL_PROCESSING_TIMEOUT = TIMEOUT.xxxxlarge;
 type SwapSurface = "full" | "embedded";
 
 type PercentageKey = "25%" | "50%" | "75%";
@@ -480,7 +480,7 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
 
     try {
-      await this.waitForSelectorPopulated(webview, this.fromAccountCoinSelector, 5_000);
+      await this.waitForSelectorPopulated(webview, this.fromAccountCoinSelector, TIMEOUT.small);
     } catch {
       // Page context closed or from-selector not yet pre-populated; caller will proceed to manual selection
       return false;
@@ -495,7 +495,7 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
 
     try {
-      await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, 5_000);
+      await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, TIMEOUT.small);
     } catch {
       // to-selector was not pre-populated; caller will proceed to manual selection
       return false;
@@ -806,8 +806,8 @@ export class SwapPage extends WebViewAppPage {
     // revealed is more reliable than waiting longer on a single attempt.
     await expect(async () => {
       await wrapper.hover();
-      await expect(anyPercentageButton).toBeVisible({ timeout: 2_000 });
-    }).toPass({ timeout: 20_000 });
+      await expect(anyPercentageButton).toBeVisible({ timeout: TIMEOUT.xsmall });
+    }).toPass({ timeout: TIMEOUT.large });
   }
 
   // Max/% are Lumen `Tag` components rendered as plain <div>s: `disabled` only

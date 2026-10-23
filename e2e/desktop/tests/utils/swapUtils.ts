@@ -17,6 +17,7 @@ import {
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";
 import { withTemporarySpeculos } from "tests/utils/speculosUtils";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   test.use({
@@ -97,7 +98,9 @@ export async function selectAccountMAD(selector: ModularDialog, account: Account
 // Resolves the native account picker after a token-only deeplink: the modular
 // dialog (Wallet 4.0+) or the legacy drawer. 30s covers back-to-back dialogs.
 export async function selectAccountFromDeeplinkDrawer(app: Application, account: Account) {
-  const isModularDialogVisible = await app.modularDialog.waitForAccountSelectionVisible(30_000);
+  const isModularDialogVisible = await app.modularDialog.waitForAccountSelectionVisible(
+    TIMEOUT.xlarge,
+  );
   if (isModularDialogVisible) {
     await app.modularDialog.selectAccountByName(account);
   } else {
