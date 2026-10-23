@@ -263,6 +263,8 @@ minimumReleaseAgeExclude:
   - "@ledgerhq/*"
   # Security fix for the compromised eMudhra intermediate CAs, younger than minimumReleaseAge
   - electron@44.9.3
+  # Renovate security update: body-parser@2.4.0
+  - body-parser@2.4.0
 
 autoInstallPeers: false
 enablePrePostScripts: true
