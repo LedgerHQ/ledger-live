@@ -1,6 +1,7 @@
 import { configureStore, type UnknownAction } from "@reduxjs/toolkit";
 import { startCountervaluesSync } from "@features/platform-market-countervalues";
 import { featureFlagsReducer, setRemoteFlagsReady } from "@shared/feature-flags";
+import { startupEvents } from "LLM/utils/logStartupTime";
 import { startCountervaluesWhenReady } from "./startCountervaluesWhenReady";
 
 const savedState = { status: {} };
@@ -86,6 +87,16 @@ describe("startCountervaluesWhenReady", () => {
     await jest.advanceTimersByTimeAsync(0);
 
     expect(starts).toHaveLength(1);
+  });
+
+  it("logs a startup event when it starts the sync", async () => {
+    startupEvents.splice(0);
+    const { store, appStore } = createStore();
+    store.dispatch(setRemoteFlagsReady());
+
+    await startCountervaluesWhenReady(appStore, savedState, Promise.resolve());
+
+    expect(startupEvents.map(e => e.event)).toEqual(["Countervalues sync started"]);
   });
 
   it("clears its timer and its subscription when readiness wins", async () => {
