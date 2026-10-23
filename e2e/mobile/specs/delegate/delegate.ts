@@ -94,11 +94,11 @@ export function runDelegateTest(
       await app.stake.expectProvider(currencyId, delegation.provider);
       await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo({ delegation, amount: amountWithCode, fees });
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode, fees });
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode, fees });
+      await verifyStakeOperationDetailsInfo({ delegation, amountWithCode, fees });
     });
   });
 }
@@ -125,11 +125,11 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
       await app.stake.validateAmount(currencyId);
       await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo({ delegation, amount: amountWithCode });
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode });
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
+      await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
     });
   });
 }
@@ -220,11 +220,11 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
         await app.stake.expectProvider(currencyId, delegation.provider);
         await app.stake.summaryContinue(currencyId);
 
-        await verifyAppValidationStakeInfo({ delegation, amount: amountWithCode });
+        await verifyAppValidationStakeInfo({ delegation, amountWithCode });
         await app.speculos.signDelegationTransaction(delegation);
         await app.common.successViewDetails();
 
-        await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
+        await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
       },
       MINA_PAIR_TEST_TIMEOUT_MS,
     );
@@ -323,11 +323,11 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.stake.setCeloLockAmount(delegation.amount);
       await app.stake.validateAmount(currencyId);
 
-      await verifyAppValidationStakeInfo({ delegation, amount: amountWithCode });
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode });
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
+      await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
     });
   });
 }
@@ -359,14 +359,14 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.stake.validateCeloVoteAmount();
       await app.stake.celoVoteSummaryContinue();
 
-      await verifyAppValidationStakeInfo({ delegation: votedDelegation, amount: amountWithCode });
+      await verifyAppValidationStakeInfo({ delegation: votedDelegation, amountWithCode });
       await app.speculos.signDelegationTransaction(votedDelegation);
 
       await app.common.successViewDetails();
 
       await verifyStakeOperationDetailsInfo({
         delegation: votedDelegation,
-        amount: amountWithCode,
+        amountWithCode,
         operationType: "VOTE",
       });
     });
@@ -397,7 +397,7 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
       await app.tezosStake.startEarning();
       await app.tezosStake.continueFromDelegationSummary();
 
-      await verifyAppValidationStakeInfo({ delegation, amount: amountWithCode });
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode });
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.tezosStake.verifyDelegationSuccess();

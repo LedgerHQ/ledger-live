@@ -51,6 +51,6 @@ describeIfNotNanoS("Delegate", () => {
     await app.evmStake.expectSuccessMessage();
     await app.common.successViewDetails();
 
-    await verifyStakeOperationDetailsInfo({ delegation, amount: amountWithCode });
+    await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
   });
 });

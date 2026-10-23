@@ -2,12 +2,12 @@ import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
 type VerifyAppValidationStakeInfoOptions = {
   delegation: DelegateType;
-  amount: string;
+  amountWithCode: string;
   fees?: string;
 };
 
 export async function verifyAppValidationStakeInfo(options: VerifyAppValidationStakeInfoOptions) {
-  const { delegation, amount, fees } = options;
+  const { delegation, amountWithCode, fees } = options;
   const currenciesForValidationAmount = [
     Currency.ATOM,
     Currency.NEAR,
@@ -31,7 +31,7 @@ export async function verifyAppValidationStakeInfo(options: VerifyAppValidationS
   await app.deviceValidation.expectDeviceValidationScreen();
 
   if (currenciesForValidationAmount.includes(currency)) {
-    await app.deviceValidation.expectAmount(amount);
+    await app.deviceValidation.expectAmount(amountWithCode);
   }
   if (currenciesForValidationProvider.includes(currency)) {
     await app.deviceValidation.expectProvider(provider);
@@ -44,7 +44,7 @@ export async function verifyAppValidationStakeInfo(options: VerifyAppValidationS
 
 type VerifyStakeOperationDetailsInfoOptions = {
   delegation: DelegateType;
-  amount: string;
+  amountWithCode: string;
   fees?: string;
   operationType?: "VOTE";
 };
@@ -52,7 +52,7 @@ type VerifyStakeOperationDetailsInfoOptions = {
 export async function verifyStakeOperationDetailsInfo(
   options: VerifyStakeOperationDetailsInfoOptions,
 ) {
-  const { delegation, amount, fees, operationType } = options;
+  const { delegation, amountWithCode, fees, operationType } = options;
   const currenciesForProvider = [
     Currency.ATOM,
     Currency.INJ,
@@ -94,7 +94,7 @@ export async function verifyStakeOperationDetailsInfo(
   await app.operationDetails.checkAccount(delegation.account.accountName);
 
   if (currenciesForAmount.includes(currency)) {
-    await app.operationDetails.checkDelegatedAmount(amount);
+    await app.operationDetails.checkDelegatedAmount(amountWithCode);
   }
   if (currenciesForProvider.includes(currency)) {
     await app.operationDetails.checkProvider(provider);
