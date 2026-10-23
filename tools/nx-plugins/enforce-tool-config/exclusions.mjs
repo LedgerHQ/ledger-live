@@ -70,7 +70,6 @@ export const EXCLUSIONS = {
       "jest: their jest config only takes withEsmDeps from @support/jest/shared. Exit " +
       "condition: it is built by a preset factory.",
   },
-  "libs/transaction-observability": { rules: ["jest"], reason: JEST_ESM_HELPER_ONLY },
   "libs/ui": {
     rules: ["lint", "tsconfig"],
     reason:
