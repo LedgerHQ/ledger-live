@@ -9983,7 +9983,8 @@
               "label": "Birthday height",
               "tooltip": "Default: today's date. Change only for existing accounts with past private (shielded) activity.",
               "syncFromZero": "This account received shielded ZEC in the past, but I can't retrieve the birth height. Scan from block 0 (this may take a long time).",
-              "error": "Invalid date"
+              "error": "Invalid date",
+              "height": "Block height: {{height}}"
             },
             "ufvk": {
               "text": "To begin, you must export your Unified Full Viewing Key (UFVK). This action requires your confirmation on your Ledger device."
@@ -10012,7 +10013,10 @@
       "shieldedSaplingTx": "🛡 Private (Sapling)",
       "shieldedOrchardTx": "🛡 Private (Orchard)",
       "shieldedIronwoodTx": "🛡 Private (Ironwood)",
-      "memo": "Memo"
+      "memo": "Memo",
+      "blockHeight": "Block height",
+      "confirmations_one": "{{count}} confirmation",
+      "confirmations_other": "{{count}} confirmations"
     }
   },
   "aleo": {
