@@ -112,7 +112,10 @@ export async function launchSpeculos(appName: string) {
   const testName = jestExpect.getState().testPath || "unknown";
   let device;
   try {
-    device = await startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]);
+    // Study (ios-e2e-timers): one Allure step per Speculos start, whichever path asked for it.
+    device = await allure.step(`[speculos] start ${appName}`, () =>
+      startSpeculos(testName ?? "cli_speculos", specs[appName.replace(/ /g, "_")]),
+    );
   } catch (e: unknown) {
     const err = e instanceof Error ? e : new Error(String(e));
     globalThis.speculosStartupErrorMessage = err.message;
@@ -225,7 +228,10 @@ export async function deleteSpeculos(deviceId?: string): Promise<number | undefi
   const port = await findPortByDeviceId(deviceId);
   let stopped = false;
   try {
+    // Study (ios-e2e-timers): logged, not an Allure step, because env teardown calls this outside a test.
+    const stopStartedAt = Date.now();
     stopped = await stopSpeculos(deviceId);
+    log.info("E2E", `[timing] speculos stop ${deviceId} ${Date.now() - stopStartedAt}ms`);
     if (stopped) {
       log.info("E2E", `Speculos successfully stopped for device ${deviceId}`);
     } else {
@@ -351,7 +357,9 @@ export async function withTemporarySpeculos<T>(
     // what publishes this device's SPECULOS_ADDRESS; registering first sends the work to the
     // caller's device instead.
     if (isSpeculosRemote()) {
-      await waitForSpeculosReady(speculos.id);
+      await allure.step(`[speculos] wait ready (temporary ${appName})`, () =>
+        waitForSpeculosReady(speculos.id),
+      );
     }
     await registerSpeculos(speculos.port);
     return await work();
