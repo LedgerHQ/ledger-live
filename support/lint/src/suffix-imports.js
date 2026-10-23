@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const RELATIVE_SUFFIX = /\.(?:web|native)(\.[cm]?[jt]sx?)?$/;
-const SUBPATH_SUFFIX = /\/(web|native)$/;
+const SUBPATH_SUFFIX = /\/(web|native)(?:\.[cm]?[jt]sx?)?$/;
 
 // Only our own workspace packages. `styled-components/native`, `@ledgerhq/crypto-icons/native` and
 // `@react-navigation/native` are third-party platform entry points, and `@support/*` test tooling
