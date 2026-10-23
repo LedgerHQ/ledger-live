@@ -285,7 +285,7 @@ env:
   E2E_BROADCAST_BOTH_MOBILE_PLATFORMS: ${{ inputs.enable_broadcast == true && inputs.tests_type != 'iOS Only' && inputs.tests_type != 'Android Only' }}
   # iOS Simulator configuration
   IOS_SIMULATOR_DEVICE: iPhone 15
-  # Android AVD configuration
+  # Android AVD configuration. CI runner images bake this AVD: update LedgerHQ/ledger-wallet-runners when changing it.
   AVD_API: 36
   AVD_ARCH: x86_64
   AVD_PROFILE: pixel_9_pro
