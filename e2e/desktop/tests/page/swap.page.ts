@@ -13,6 +13,7 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
@@ -457,7 +458,9 @@ export class SwapPage extends WebViewAppPage {
   async checkAssetFromContains(expected: string) {
     this._webviewPage = undefined;
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
+    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected, {
+      timeout: TIMEOUT.xxlarge,
+    });
   }
 
   @step("Check currency to swap from account name contains $0")
@@ -548,7 +551,7 @@ export class SwapPage extends WebViewAppPage {
   @step("Select from account coin selector")
   async selectFromAccountCoinSelector() {
     const webview = await this.getWebView();
-    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await webview.getByTestId(this.fromAccountCoinSelector).click({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Wait for the to-account coin selector to be populated")

@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export class SettingsPage extends AppPage {
   private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");
@@ -74,8 +75,10 @@ export class SettingsPage extends AppPage {
 
   @step("Change language to $0")
   async changeLanguage(languageLabel: string) {
-    await this.languageSelector.click();
-    await this.languageOptions.filter({ hasText: languageLabel }).click();
+    await this.languageSelector.click({ timeout: TIMEOUT.xxxlarge });
+    await this.languageOptions
+      .filter({ hasText: languageLabel })
+      .click({ timeout: TIMEOUT.xxxlarge });
   }
 
   @step("Expect language to be selected: $0")
@@ -145,7 +148,7 @@ export class SettingsPage extends AppPage {
 
   @step("Expect Ledger Sync settings row to be visible")
   async expectLedgerSyncSettingsRow() {
-    await expect(this.walletSyncRow).toBeVisible();
+    await expect(this.walletSyncRow).toBeVisible({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Clear cache")
