@@ -90,7 +90,7 @@ describe("TON api (mainnet)", () => {
         type: "OUT",
         asset: { type: "native" },
         value: 100000000n,
-        tx: expect.objectContaining({ hash: jettonSendTx.in_msg.hash, fees: 2600565n }),
+        tx: expect.objectContaining({ hash: jettonSendTx.in_msg.hash, fees: 2600565n + 535471n }),
       }),
     );
     expect(operations).toContainEqual(

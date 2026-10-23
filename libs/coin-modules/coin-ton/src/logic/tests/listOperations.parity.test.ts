@@ -77,6 +77,10 @@ const BOOK: TonAddressBook = {
   [SECONDARY]: { user_friendly: "EQDUkQbpTVIgt7v66-JTFR-3-eXRFz_4V66F-Ufn6vOg0KzT" },
 };
 
+// The legacy bridge charges a send `total_fees` only, without the forward fees its messages carry.
+const forwardFees = (tx: TonTransaction) =>
+  tx.out_msgs.reduce((sum, message) => sum + BigInt(message.fwd_fee ?? 0), 0n);
+
 describe("listOperations parity with the legacy bridge", () => {
   const server = setupServer();
   const context = createMockTonContext();
@@ -147,16 +151,25 @@ describe("listOperations parity with the legacy bridge", () => {
       ],
     ];
 
-    it.each(cases)("maps %s as the legacy bridge does", async (_, tx, addressBook) => {
-      serve({ transactions: [tx], addressBook });
+    it.each(cases)(
+      "maps %s as the legacy bridge does, a send's fee plus its forward fees",
+      async (_, tx, addressBook) => {
+        serve({ transactions: [tx], addressBook });
 
-      const { items } = await listOperations(context, mockAddress, { minHeight: 0 });
+        const { items } = await listOperations(context, mockAddress, { minHeight: 0 });
 
-      expect(items).toHaveLength(1);
-      expect(items.map(apiView)).toEqual(
-        mapTxToOps(mockAccountId, mockAddress, addressBook)(tx).map(legacyView),
-      );
-    });
+        expect(items).toHaveLength(1);
+        expect(items.map(apiView)).toEqual(
+          mapTxToOps(
+            mockAccountId,
+            mockAddress,
+            addressBook,
+          )(tx)
+            .map(legacyView)
+            .map(op => (op.type === "OUT" ? { ...op, fees: op.fees + forwardFees(tx) } : op)),
+        );
+      },
+    );
 
     it("maps an incoming transfer with fees, without the legacy fee sub-operation", async () => {
       const tx = { ...base, total_fees: "15" };

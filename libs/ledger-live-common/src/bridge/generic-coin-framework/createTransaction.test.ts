@@ -203,6 +203,24 @@ describe("createTransaction", () => {
     });
   });
 
+  it("returns the TON default native send transaction, without a nonce", () => {
+    const account = {
+      type: "Account",
+      currency: getCryptoCurrencyById("ton"),
+    } as unknown as Account;
+
+    expect(createTransaction(account)).toEqual({
+      family: "ton",
+      amount: new BigNumber(0),
+      recipient: "",
+      fees: null,
+      useAllAmount: false,
+      mode: "send",
+      memoType: null,
+      memoValue: null,
+    });
+  });
+
   it("throws for an unsupported currency family", () => {
     const account = {
       type: "Account",
