@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { execFileSync } from "node:child_process";
 import {
   chmodSync,
   mkdirSync,
@@ -92,6 +93,16 @@ describe("agent-intent key file", () => {
 
     expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
   });
+
+  it.skipIf(process.platform === "win32")(
+    "refuses a FIFO in place of the key file without blocking",
+    () => {
+      mkdirSync(dirname(agentIntentKeyFilePath("bot")), { recursive: true, mode: 0o700 });
+      execFileSync("mkfifo", ["-m", "600", agentIntentKeyFilePath("bot")]);
+
+      expect(() => loadAgentIntentKeyFile("bot")).toThrow(/bot\.key is not a regular file/);
+    },
+  );
 
   it("refuses a key file owned by another user", () => {
     saveAgentIntentKeyFile("bot", "deadbeef");

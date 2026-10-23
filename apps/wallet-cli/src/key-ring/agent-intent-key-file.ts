@@ -33,12 +33,13 @@ export function saveAgentIntentKeyFile(profileId: string, secretKeyHex: string):
 }
 
 // Like ssh with a private key: the human agreed to a 0600 file of their own, so anything else is
-// refused before the key is read. Checked on the descriptor it is read from, never through a symlink.
+// refused before the key is read. Checked on the descriptor it is read from, never through a symlink,
+// and opened non-blocking so a FIFO is rejected instead of hanging the open.
 export function loadAgentIntentKeyFile(profileId: string): string | null {
   const path = agentIntentKeyFilePath(profileId);
   let fd: number;
   try {
-    fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW);
+    fd = openSync(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
   } catch (e) {
     const code = e instanceof Error && "code" in e ? e.code : undefined;
     if (code === "ENOENT") return null;
