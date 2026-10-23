@@ -908,6 +908,139 @@ test("R3 checks the local types a contract's props hold, at any depth", () => {
   );
 });
 
+test("R3 checks the values of an index signature", () => {
+  for (const contractModule of [
+    "export type CardProps = { items: { [id: string]: { onPress(): void } } };\n",
+    "interface Tiles { [id: string]: { onPress(): void } }\nexport type CardProps = { items: Tiles };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
+test("R3 checks the local types a prop holds behind a local alias", () => {
+  for (const aliases of [
+    "type Tile = { onPress(): void };\ntype Tiles = Tile[];",
+    "type Tiles = ReadonlyArray<{ onPress(): void }>;",
+    "type List<T> = Array<T & { onPress(): void }>;\ntype Tiles = List<{ title: string }>;",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `${aliases}\nexport type CardProps = { items: Tiles };\n` })),
+      ["R3 contract-gesture-callback Card"],
+      aliases,
+    );
+  }
+});
+
+test("R3 follows cyclic local aliases once", () => {
+  assert.deepEqual(
+    check(
+      card({
+        "Card.types.ts": [
+          "type Tiles = Tile[];",
+          "type Tile = Tiles | { onPress(): void };",
+          "export type CardProps = { items: Tiles };",
+        ].join("\n"),
+      }),
+    ),
+    ["R3 contract-gesture-callback Card"],
+  );
+});
+
+test("R3 does not resolve a type parameter to the module-level type it shadows", () => {
+  for (const contractModule of [
+    "type List<Tile> = Tile[];\nexport type CardProps = { items: List<string> };\n",
+    "type Box<Tile> = { value: Tile };\nexport type CardProps = Box<string>;\n",
+    "type Identity<Tile> = Tile;\ntype Tiles = Identity<string>[];\nexport type CardProps = { items: Tiles };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `type Tile = { onPress(): void };\n${contractModule}` })),
+      [],
+      contractModule,
+    );
+  }
+});
+
+test("R3 does not check the type arguments of a local callback alias", () => {
+  for (const contractModule of [
+    "type Handler<T> = (value: T) => void;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
+    "type Handler<T> = (value: T) => void;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
+    "type Handler<T> = (value: T) => void;\ntype Relay<T> = Handler<T>;\nexport type CardProps = { onSelect: Relay<{ onPress(): void }> };\n",
+    "type Handler<T> = ((value: T) => void) | undefined;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
+    "type Handler<T> = ((value: T) => void) | null;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
+  ]) {
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
+  }
+});
+
+test("R3 does not check a type argument a local generic drops", () => {
+  const argument = "{ title: string; onPress(): void }";
+  for (const contractModule of [
+    `type WithoutPress<T> = Omit<T, "onPress">;\ntype Tiles = WithoutPress<${argument}>[];\nexport type CardProps = { items: Tiles };\n`,
+    `type WithoutPress<T> = Omit<T, "onPress">;\nexport type CardProps = { items: WithoutPress<${argument}>[] };\n`,
+    `type Label<T> = { text: string };\nexport type CardProps = { label: Label<${argument}> };\n`,
+    `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+    `type Pressable<T> = [T] extends [${argument}] ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+  ]) {
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
+  }
+});
+
+test("R3 checks a type argument where a local generic places it in props", () => {
+  const argument = "{ onPress(): void }";
+  for (const contractModule of [
+    `type Wrap<T> = { item: T };\ntype Tiles = Wrap<${argument}>[];\nexport type CardProps = { items: Tiles };\n`,
+    `type Handler<T> = ((value: T) => void) | T;\nexport type CardProps = { onSelect: Handler<${argument}> };\n`,
+    `type Wrap<T> = { item: T };\ntype Relay<U> = Wrap<U>;\nexport type CardProps = { items: Relay<${argument}> };\n`,
+    `interface Box<T> { value: T }\ninterface Wrapper<T> extends Box<T> {}\nexport type CardProps = { box: Wrapper<${argument}> };\n`,
+    `type Tree<T> = { value: T; children: Tree<T>[] };\nexport type CardProps = { tree: Tree<${argument}> };\n`,
+    `type Nest<T> = { value: T; next: Nest<{ wrap: T }> };\nexport type CardProps = { nest: Nest<${argument}> };\n`,
+    `type Wrap<T> = { item: T };\ntype Outer<X> = Wrap<{ value: X }>;\nexport type CardProps = { a: Outer<string>; b: Outer<${argument}> };\n`,
+    `type Outer<T> = Box<{ item: T }>;\ntype Box<T> = { value: T; next?: Outer<${argument}> };\nexport type CardProps = Outer<string>;\n`,
+    `type Box<T, U = T> = { value: U };\nexport type CardProps = Box<${argument}>;\n`,
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
+test("R3 expands a repeated instantiation of a local generic once", () => {
+  // Expanding `left` and `right` separately doubles the work at every level: about a minute here.
+  const nested = Array.from({ length: 24 }).reduce(
+    inner => `Pair<${inner}>`,
+    "{ onPress(): void }",
+  );
+  const contractModule = `type Pair<T> = { left: T; right: T };\nexport type CardProps = { pair: ${nested} };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 checks keyof, conditions and imported heritage arguments outside a local generic", () => {
+  const tile = "type Tile = { onPress(): void };\n";
+  for (const contractModule of [
+    'import type { Base } from "./Base";\nexport interface CardProps extends Base<{ onPress(): void }> { title: string }\n',
+    `${tile}export type CardProps = { sortBy: keyof Tile };\n`,
+    `${tile}export type CardProps = { k: Tile extends string ? 1 : 2 };\n`,
+    `${tile}export interface CardProps extends Omit<Tile, keyof Tile> {}\n`,
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
 test("R3 checks the props a local generic contract receives as type arguments", () => {
   for (const contractModule of [
     "type Box<T> = { value: T };\nexport type CardProps = Box<{ onPress(): void }>;\n",
