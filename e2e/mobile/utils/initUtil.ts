@@ -15,8 +15,12 @@ import { waitForSpeculosReady } from "@ledgerhq/live-e2e-shared/speculosCI";
 import { showSpeculosScreen } from "@ledgerhq/live-e2e-shared/speculosScreen";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { TEST_TIMEOUT } from "@e2e/utils/timeouts";
+import { allure } from "jest-allure2-reporter/api";
 
 import type { PartialFeatures } from "@shared/feature-flags";
+
+// Study (ios-e2e-timers): names each Account initialization phase in the Allure report.
+const timed = <T>(name: string, fn: () => Promise<T>): Promise<T> => allure.step(name, fn);
 
 const SPECULOS_SETUP_BUDGET_MS = TEST_TIMEOUT - 120_000;
 const SPECULOS_READY_TIMEOUT_MS = 75_000;
@@ -73,15 +77,12 @@ async function executeCliCommand(
   userdataPath?: string,
   speculosAddress?: string,
 ): Promise<unknown> {
-  const resultOrPromise = await cmd(userdataPath, speculosAddress);
-
   let result: unknown;
   try {
-    if (isObservable(resultOrPromise)) {
-      result = await lastValueFrom(resultOrPromise);
-    } else {
-      result = resultOrPromise;
-    }
+    result = await timed(`[cli] ${cmd.name || "command"}`, async () => {
+      const resultOrPromise = await cmd(userdataPath, speculosAddress);
+      return isObservable(resultOrPromise) ? lastValueFrom(resultOrPromise) : resultOrPromise;
+    });
   } catch (error) {
     log.error("[CLI] ❌ Error executing command:", sanitizeError(error));
     throw sanitizeError(error);
@@ -392,7 +393,9 @@ export class InitializationManager {
     } = options;
     const deadline = Date.now() + SPECULOS_SETUP_BUDGET_MS;
 
-    await InitializationManager.setFeatureFlags(featureFlags);
+    await timed("[init] set feature flags (bridge)", () =>
+      InitializationManager.setFeatureFlags(featureFlags),
+    );
 
     const skipSpeculos =
       !!speculosForSetupOnly &&
@@ -401,8 +404,12 @@ export class InitializationManager {
       cliCommands.every(cmd => cmd.canUseGeneratedUserdata?.() ?? false);
 
     if (skipSpeculos) {
-      await executeCliCommands(cliCommands, userdataPath, deadline);
-      await InitializationManager.finalizeSetup(userdataSpeculos);
+      await timed("[init] CLI commands (generated userdata, no Speculos)", () =>
+        executeCliCommands(cliCommands, userdataPath, deadline),
+      );
+      await timed("[init] loadConfig (bridge import userdata)", () =>
+        InitializationManager.finalizeSetup(userdataSpeculos),
+      );
       return;
     }
 
@@ -427,21 +434,25 @@ export class InitializationManager {
           .map(app => [app.name, app]),
       ).values(),
     ];
-    const speculosDevices = await launchSpeculosDevices(appsToLaunch);
-    if (isSpeculosRemote()) await waitForSpeculosDevicesReady(speculosDevices, deadline);
+    const speculosDevices = await timed(`[init] launch ${appsToLaunch.length} Speculos`, () =>
+      launchSpeculosDevices(appsToLaunch),
+    );
+    if (isSpeculosRemote()) {
+      await timed("[init] wait remote Speculos ready", () =>
+        waitForSpeculosDevicesReady(speculosDevices, deadline),
+      );
+    }
 
     // Execute app-specific commands with retry logic
-    await executeCliCommandsOnApp(
-      commandsByApp,
-      speculosDevices,
-      userdataPath,
-      deadline,
-      speculosApp,
+    await timed(`[init] CLI commands on app (${cliCommandsOnApp.length})`, () =>
+      executeCliCommandsOnApp(commandsByApp, speculosDevices, userdataPath, deadline, speculosApp),
     );
 
     // Setup main Speculos app if specified
     if (speculosApp) {
-      await setupMainSpeculosApp(speculosApp, speculosDevices, deadline);
+      await timed("[init] setup main Speculos (register + screen)", () =>
+        setupMainSpeculosApp(speculosApp, speculosDevices, deadline),
+      );
       const mainEntry = speculosDevices[speculosApp.name];
       log.info(
         `✅ Main Speculos app [${speculosApp.name}] setup complete. Port: ${mainEntry.speculosPort}, Device: ${mainEntry.deviceId}`,
@@ -449,9 +460,13 @@ export class InitializationManager {
     }
 
     // Execute global commands with internal full-run retry and Speculos re-initialization
-    await executeCliCommands(cliCommands, userdataPath, deadline, speculosApp, speculosDevices);
+    await timed(`[init] global CLI commands (${cliCommands.length})`, () =>
+      executeCliCommands(cliCommands, userdataPath, deadline, speculosApp, speculosDevices),
+    );
 
-    await InitializationManager.finalizeSetup(userdataSpeculos);
+    await timed("[init] loadConfig (bridge import userdata)", () =>
+      InitializationManager.finalizeSetup(userdataSpeculos),
+    );
   }
 
   static async initializeFreshInstall(options: InitOptions): Promise<void> {

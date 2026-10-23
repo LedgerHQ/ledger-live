@@ -76,7 +76,9 @@ module.exports = {
     // Only governs how long Detox waits before printing "The app is busy with: <resources>", which
     // is the most useful clue when a wait never resolves. 10s is what was in force while this key
     // sat under `behavior`, where Detox does not read it.
-    debugSynchronization: 10000,
+    // Study (ios-e2e-timers): log the busy resources of every invocation slower than this, so the
+    // ~1.75s floor on taps/deeplinks can be attributed (network, JS timers, animations...).
+    debugSynchronization: Number(process.env.E2E_DEBUG_SYNC_MS) || 1000,
   },
   // Specified in full rather than inherited from detox-allure2-adapter/preset-detox: `pnpm mobile
   // e2e:build` installs only the app's dependencies, and that preset belongs to this package, so
