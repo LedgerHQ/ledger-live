@@ -508,7 +508,7 @@ describe("useSendHeaderViewModel", () => {
   describe("leaving the amount step", () => {
     const ADDRESS = "0x1234567890abcdef1234567890abcdef12345678";
 
-    const mockAmountStep = () => {
+    const mockAmountStep = (recipient: Record<string, unknown> = { address: ADDRESS }) => {
       mockedUseCurrentSendFlowStep.mockReturnValue([
         SEND_FLOW_STEP.AMOUNT,
         {
@@ -529,10 +529,34 @@ describe("useSendHeaderViewModel", () => {
             currency: { ...mockAccount.currency, id: "ethereum" },
           },
           transaction: { transaction: { recipient: ADDRESS }, status: {} },
-          recipient: { address: ADDRESS },
+          recipient,
         },
       } as never);
     };
+
+    it("GIVEN a recipient without a display label WHEN on the amount step THEN the header shows the formatted address", () => {
+      mockAmountStep();
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.formattedAddress).toBe("0x123456...12345678");
+    });
+
+    it("GIVEN a self-transfer recipient with a display label WHEN on the amount step THEN the header shows the label", () => {
+      mockAmountStep({ address: ADDRESS, displayLabel: "Private balance", isSelfTransfer: true });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.formattedAddress).toBe("Private balance");
+    });
+
+    it("GIVEN a display label for another address WHEN on the amount step THEN the header ignores it", () => {
+      mockAmountStep({ address: "0xother", displayLabel: "Private balance" });
+
+      const { result } = renderHook(() => useSendHeaderViewModel());
+
+      expect(result.current.formattedAddress).toBe("0x123456...12345678");
+    });
 
     it("opens Recipient when Amount is the first screen in the flow", () => {
       mockAmountStep();

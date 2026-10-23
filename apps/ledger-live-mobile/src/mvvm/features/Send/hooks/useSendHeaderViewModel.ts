@@ -181,8 +181,10 @@ export function useSendHeaderViewModel(): SendHeaderViewModel {
   const recipientFromTransaction = useMemo(() => {
     const address = state.transaction.transaction?.recipient;
     if (!address || typeof address !== "string") return null;
-    return { address } as const;
-  }, [state.transaction.transaction?.recipient]);
+    const displayLabel =
+      state.recipient?.address === address ? state.recipient.displayLabel : undefined;
+    return { address, displayLabel } as const;
+  }, [state.transaction.transaction?.recipient, state.recipient]);
 
   const recipientHeader = useMemo(
     () =>
