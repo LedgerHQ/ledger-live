@@ -816,14 +816,22 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      # Branches whose build-e2e-deps still depends on live-mobile:build (release, main, hotfix
+      # until this reaches them) need live-mobile's libs installed. Drop once they've caught up.
+      - name: Compute install filter
+        run: |
+          if grep -q '"live-mobile:build"' e2e/mobile/project.json; then
+            echo 'PNPM_EXTRA_FILTER=--filter=live-mobile...' >> "$GITHUB_ENV"
+          fi
+
       - uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         name: install dependencies
         id: install-dependencies
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          command: pnpm i --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." ${PNPM_EXTRA_FILTER:+"$PNPM_EXTRA_FILTER"} --frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." ${PNPM_EXTRA_FILTER:+"$PNPM_EXTRA_FILTER"} --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
@@ -832,7 +840,7 @@ jobs:
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
       - name: Detox Post Install
-        run: node node_modules/detox/scripts/postinstall.js
+        run: node ../../e2e/mobile/node_modules/detox/scripts/postinstall.js
         working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
@@ -1093,12 +1101,20 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      # Branches whose build-e2e-deps still depends on live-mobile:build (release, main, hotfix
+      # until this reaches them) need live-mobile's libs installed. Drop once they've caught up.
+      - name: Compute install filter
+        run: |
+          if grep -q '"live-mobile:build"' e2e/mobile/project.json; then
+            echo 'PNPM_EXTRA_FILTER=--filter=live-mobile...' >> "$GITHUB_ENV"
+          fi
+
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." ${PNPM_EXTRA_FILTER:+"$PNPM_EXTRA_FILTER"} --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
-        run: node node_modules/detox/scripts/postinstall.js
+        run: node ../../e2e/mobile/node_modules/detox/scripts/postinstall.js
         working-directory: apps/ledger-live-mobile
 
       - name: Download android emulator
