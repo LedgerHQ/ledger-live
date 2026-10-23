@@ -1,13 +1,14 @@
 import { Page, expect, test } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { TIMEOUT } from "tests/utils/timeouts";
 
 export abstract class WebViewAppPage extends AppPage {
   public _webviewPage?: Page;
   public webviewUrlHistory: string[] = [];
 
   protected abstract readonly webviewIdentifier: string;
-  protected defaultWebViewTimeout = 60_000;
+  protected defaultWebViewTimeout = TIMEOUT.xxlarge;
 
   /** The first Electron window whose title matches this page's webview identifier. */
   private async findWebviewWindow(): Promise<Page | undefined> {
