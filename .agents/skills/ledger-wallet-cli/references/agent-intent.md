@@ -235,7 +235,7 @@ It needs an `enrolled` profile whose key is still on this machine (keychain or k
 
 - **Every real send is real.** Each `send` or `swap` without `--dry-run` creates a real pending intent; an unwanted one is rejected by the human or cancelled (step 9).
 - **One host.** Enrollment, recovery and review links open on `https://app.agents.ledger.com/` (staging profiles: `https://app.agents.ledger-test.com/`). Give the human the `intentId` with each review link, so they can find the intent there. Send a link only when it opens on that host; any other host is not Ledger's page: tell the human instead.
-- **No blind retry.** Every run uses a fresh nonce, so a re-run after a timeout, an HTTP 5xx or a missing review link proposes a second intent even when the first one landed. List `intents` (step 9) and take any non-final intent of the same `type` (`send` or `swap`) and `sender`, created since the failed call, as the one that landed: give the human its `id`. When none shows, tell the human, and re-run only on their yes. Done when the human has that `id`, or has said yes to the re-run.
+- **No blind retry.** Every run uses a fresh nonce, so a re-run after a timeout, an HTTP 5xx or a missing review link proposes a second intent even when the first one landed. List `intents` (step 9) and take any intent of the same `type` (`send` or `swap`) and `sender`, created since the failed call, in any status, as the one that landed: give the human its `id` and `status`. The human may have approved it already, so a final status does not mean the call failed: `success` means the payment went through, and nothing is re-run. When none shows, tell the human, and re-run only on their yes. Done when the human has that `id`, or has said yes to the re-run.
 
 ## 12. Errors
 
