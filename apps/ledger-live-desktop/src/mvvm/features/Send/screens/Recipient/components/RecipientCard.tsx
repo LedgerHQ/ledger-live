@@ -52,7 +52,7 @@ export function RecipientCard({
       appearance="gray"
       size="sm"
       disabled={!isReady || !hasAddressBook}
-      className="w-full"
+      className="w-full whitespace-nowrap"
       onClick={onAddContact}
       data-testid="send-recipient-card-add-contact"
     >
