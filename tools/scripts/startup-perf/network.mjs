@@ -3,7 +3,9 @@
 // lookups and HTTPS connections made in its first seconds, and when the answers WaitForAppReady
 // waits for (remote flags, OFAC check) reached the runner, against when the app stopped waiting.
 // Answers that arrive well before the app stops waiting mean the time goes inside the emulator
-// (its network stack or CPU), not on the network.
+// (its network stack or CPU), not on the network. With per-launch captures from inside the
+// emulator (run.mjs --guest-capture), the same requests are also timed from the emulator's side.
+import { existsSync } from "node:fs";
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -23,12 +25,66 @@ export const GATES = [
 const RUNNER_HOSTS =
   /(^|\.)(github\.com|githubusercontent\.com|githubapp\.com|blob\.core\.windows\.net)$/;
 
-export function perLaunch(samples, connections, lookups) {
+// One request split into steps, in ms: who spends each one is the point. Inside the emulator:
+// DNS answer → connect, connected → TLS hello, server handshake → TLS finish, TLS finish → request.
+// On the network: TCP connect, the server's first answer. On the server: request → answer.
+export function requestSteps(c, lookups) {
+  if (!c || c.failed) return null;
+  const lookup = lookups.findLast(l => l.name === c.sni && l.ms !== null && l.at + l.ms <= c.synAt);
+  const dnsAnswered =
+    lookup && c.synAt - (lookup.at + lookup.ms) < 2000 ? lookup.at + lookup.ms : null;
+  const serverHandshakeAt =
+    c.helloAt !== null && c.firstAnswerMs !== null ? c.helloAt + c.firstAnswerMs : null;
+  const diff = (a, b) =>
+    a === null || a === undefined || b === null || b === undefined ? null : Math.round(a - b);
+  return {
+    dnsToConnectMs: diff(c.synAt, dnsAnswered),
+    connectMs: c.connectMs,
+    connectedToHelloMs: diff(c.helloAt, c.synAckAt),
+    serverHandshakeMs: c.firstAnswerMs,
+    clientHandshakeMs: diff(c.finishAt, serverHandshakeAt),
+    finishToRequestMs: diff(c.requestAt, c.finishAt),
+    serverResponseMs: diff(c.responseStart, c.requestAt),
+    totalMs: diff(c.responseEnd, c.synAt),
+  };
+}
+
+const STEPS = [
+  ["dnsToConnectMs", "DNS answer → connection opened"],
+  ["connectMs", "TCP connect"],
+  ["connectedToHelloMs", "Connected → TLS hello sent"],
+  ["serverHandshakeMs", "Server answers the hello"],
+  ["clientHandshakeMs", "Server's answer → TLS finish sent"],
+  ["finishToRequestMs", "TLS finish → request sent"],
+  ["serverResponseMs", "Request → first byte of the answer"],
+  ["totalMs", "**Connection start → answer received**"],
+];
+
+// guest(sample): the emulator-side { connections, lookups } of that launch, or null.
+export function perLaunch(samples, connections, lookups, guest = () => null) {
   return samples
     .filter(s => s.ok && !s.warmup && Number.isFinite(s.launchAt))
     .map(s => {
       const inWindow = c => c.synAt >= s.launchAt - 200 && c.synAt <= s.launchAt + WINDOW_MS;
       const flows = connections.filter(c => inWindow(c) && !RUNNER_HOSTS.test(c.sni ?? ""));
+      // Times count from the app's process start when run.mjs recorded it, like the startup events.
+      const t0 = Number.isFinite(s.processStartAt) ? s.processStartAt : s.launchAt;
+      const inside = guest(s);
+      const gates = {};
+      for (const g of GATES) {
+        gates[g.host] = {
+          runner: requestSteps(
+            flows.find(c => c.sni === g.host),
+            lookups,
+          ),
+          emulator: inside
+            ? requestSteps(
+                inside.connections.find(c => c.sni === g.host),
+                inside.lookups,
+              )
+            : null,
+        };
+      }
       const hosts = {};
       for (const c of flows) {
         const host = c.sni ?? c.server;
@@ -36,7 +92,7 @@ export function perLaunch(samples, connections, lookups) {
         const lookup = lookups.find(
           l => l.name === host && l.at >= s.launchAt - 200 && l.at <= c.synAt,
         );
-        const after = t => (t === null ? null : Math.round(t - s.launchAt));
+        const after = t => (t === null ? null : Math.round(t - t0));
         hosts[host] = {
           startMs: after(c.synAt),
           dnsMs: lookup?.ms ?? null,
@@ -60,7 +116,9 @@ export function perLaunch(samples, connections, lookups) {
         device: s.device,
         side: s.side,
         appStartupTime: s.appStartupTime,
-        // Event times count from process start, which follows the launch command by a few ms.
+        fromProcessStart: t0 !== s.launchAt,
+        launchToProcessMs: t0 !== s.launchAt ? t0 - s.launchAt : null,
+        // Event times count from process start.
         waitStartMs: waitStart,
         waitEndMs: waitEnd,
         gatesAnsweredMs,
@@ -69,6 +127,7 @@ export function perLaunch(samples, connections, lookups) {
         connections: flows.length,
         failedConnections: flows.filter(c => c.failed).length,
         ipv6Connections: flows.filter(c => c.ipv6).length,
+        gates,
         hosts,
         runnerNetwork: s.runnerNetwork ?? null,
       };
@@ -85,21 +144,38 @@ export function toMarkdown(launches) {
   const lines = ["### Network during startup", ""];
   if (!launches.length)
     return lines.concat("No launch could be lined up with the capture.", "").join("\n");
+  const fromStart = launches.every(l => l.fromProcessStart);
+  const after = fromStart ? "after process start" : "after launch";
   lines.push(
-    "Timed on the runner, which sees every connection of the emulator. Times in ms, median ± spread; “after launch” counts from the launch command.",
+    `Timed on the runner, which sees every connection of the emulator. Times in ms, median ± spread; “${after}” counts from ${fromStart ? "the app's process start, like the startup events" : "the launch command, a few hundred ms before the app's process exists"}.`,
     "",
-    "| Scenario | Launches | App waits from → to | Remote flags + OFAC answered | App stops waiting after the answers | Connections / failed / IPv6 |",
-    "| --- | --- | --- | --- | --- | --- |",
+    "| Scenario | Launches | Launch command → process start | App waits from → to | Remote flags + OFAC answered | App stops waiting after the answers | Connections / failed / IPv6 |",
+    "| --- | --- | --- | --- | --- | --- | --- |",
   );
   for (const scenario of [...new Set(launches.map(l => l.scenario))]) {
     const g = launches.filter(l => l.scenario === scenario);
     lines.push(
-      `| ${scenario} | ${g.length} | ${stat(g.map(l => l.waitStartMs))} → ${stat(g.map(l => l.waitEndMs))} | ${stat(g.map(l => l.gatesAnsweredMs))} | ${stat(g.map(l => l.waitAfterAnswersMs))} | ${fmt(median(g.map(l => l.connections)))} / ${g.reduce((a, l) => a + l.failedConnections, 0)} / ${g.reduce((a, l) => a + l.ipv6Connections, 0)} |`,
+      `| ${scenario} | ${g.length} | ${stat(g.map(l => l.launchToProcessMs))} | ${stat(g.map(l => l.waitStartMs))} → ${stat(g.map(l => l.waitEndMs))} | ${stat(g.map(l => l.gatesAnsweredMs))} | ${fromStart ? stat(g.map(l => l.waitAfterAnswersMs)) : "–"} | ${fmt(median(g.map(l => l.connections)))} / ${g.reduce((a, l) => a + l.failedConnections, 0)} / ${g.reduce((a, l) => a + l.ipv6Connections, 0)} |`,
     );
+  }
+  const withEmulator = launches.some(l => GATES.some(g => l.gates[g.host]?.emulator));
+  const views = withEmulator ? ["runner", "emulator"] : ["runner"];
+  lines.push(
+    "",
+    `Requests the app waits for, step by step${withEmulator ? ", seen from the runner and from inside the emulator: the difference is the emulator's network layer" : ""}:`,
+    "",
+    `| Step | ${GATES.flatMap(g => views.map(v => `${g.label} (${v})`)).join(" | ")} |`,
+    `| --- | ${GATES.flatMap(() => views.map(() => "---")).join(" | ")} |`,
+  );
+  for (const [key, label] of STEPS) {
+    const cells = GATES.flatMap(g =>
+      views.map(v => stat(launches.map(l => l.gates[g.host]?.[v]?.[key]))),
+    );
+    lines.push(`| ${label} | ${cells.join(" | ")} |`);
   }
   lines.push(
     "",
-    "| Host (TLS name) | Launches | Starts after launch | DNS | DNS → connect | TCP connect | TLS handshake | First answer after launch: starts → ends | Failed |",
+    `| Host (TLS name) | Launches | Starts ${after} | DNS | DNS → connect | TCP connect | TLS handshake | First answer ${after}: starts → ends | Failed |`,
     "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
   );
   const counts = new Map();
@@ -150,7 +226,23 @@ async function main() {
     .filter(l => l.trim())
     .map(l => JSON.parse(l));
   const packets = readPcap(await readFile(values.pcap));
-  const launches = perLaunch(samples, tcpConnections(packets), dnsLookups(packets));
+  // Emulator-side captures, one per launch, recorded relative to the samples file's folder.
+  const guestCaptures = new Map();
+  for (const s of samples) {
+    const file = s.guestPcap && path.join(path.dirname(values.samples), s.guestPcap);
+    if (!file || !existsSync(file)) continue;
+    const guestPackets = readPcap(await readFile(file));
+    guestCaptures.set(s, {
+      connections: tcpConnections(guestPackets),
+      lookups: dnsLookups(guestPackets),
+    });
+  }
+  const launches = perLaunch(
+    samples,
+    tcpConnections(packets),
+    dnsLookups(packets),
+    s => guestCaptures.get(s) ?? null,
+  );
   const markdown = toMarkdown(launches);
   console.log(markdown);
   if (values.summary) await appendFile(values.summary, markdown + "\n");

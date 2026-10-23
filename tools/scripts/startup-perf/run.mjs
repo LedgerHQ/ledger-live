@@ -12,7 +12,7 @@
 // On Android the other emulator is paused from the launch until the read, so it takes no host CPU,
 // and each sample records the CPU load on the host and in the device before and after the launch.
 import { execFile } from "node:child_process";
-import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { appendFile, copyFile, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
@@ -44,6 +44,9 @@ const { values: opts } = parseArgs({
     // Comma-separated URLs timed with curl from the runner before each launch: the network
     // without the emulator, to compare with the same requests made by the app.
     "net-baseline": { type: "string", default: "" },
+    // Android: capture each launch's packets inside the emulator too (console "network capture").
+    // It only covers the cellular interface, so it is for emulators with Wi-Fi turned off.
+    "guest-capture": { type: "string", default: "false" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -62,6 +65,7 @@ const IDLE_MS = Number(opts["idle-ms"]);
 const SETTLE_MS = Number(opts["settle-ms"]);
 const BRIDGE_PORT = Number(opts["bridge-port"]);
 const PAUSE_IDLE = opts["pause-idle"] === "true";
+const GUEST_CAPTURE = opts["guest-capture"] === "true";
 const NET_BASELINE = opts["net-baseline"]
   .split(",")
   .map(s => s.trim())
@@ -71,6 +75,7 @@ const LOAD_WINDOW_MS = 5000;
 const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
+const GUEST_PCAP_DIR = path.join(OUT_DIR, "guest-network");
 // Per device: with strict alternation, a device that never reads would otherwise go unnoticed.
 const MAX_CONSECUTIVE_FAILURES = 4;
 // After a dialog's process is restarted, let the device settle before the next launch.
@@ -247,6 +252,38 @@ const android = {
     );
     return failed ? null : parseCpuStat(stdout);
   },
+  // Epoch ms on the runner's clock at which the app process started. The startup events count
+  // from process start, while `am start` spends a few hundred ms before the process exists.
+  async processStart(device) {
+    const before = Date.now();
+    const { stdout, failed } = await run(
+      "adb",
+      ["-s", device, "shell", `cat /proc/uptime; cat /proc/$(pidof -s ${APP_ID})/stat`],
+      { allowFail: true, timeoutMs: 20_000 },
+    );
+    const after = Date.now();
+    return failed ? null : parseProcessStart(stdout, (before + after) / 2);
+  },
+  // Starts the emulator's own capture (console "network capture"), which only accepts a bare
+  // file name and writes it under the AVD folder; returns the full path it reports.
+  async startCapture(device, fileName) {
+    const { stdout } = await run(
+      "adb",
+      ["-s", device, "emu", "network", "capture", "start", fileName],
+      {
+        timeoutMs: 30_000,
+      },
+    );
+    const file = stdout.match(/capturing to (\S+\.pcap)/)?.[1];
+    if (!file) throw new Error(`network capture start on ${device}: ${stdout.trim()}`);
+    return file;
+  },
+  async stopCapture(device) {
+    await run("adb", ["-s", device, "emu", "network", "capture", "stop"], {
+      allowFail: true,
+      timeoutMs: 30_000,
+    });
+  },
   async diagnostics(device, file) {
     const { stdout } = await run("adb", ["-s", device, "logcat", "-d", "-t", "3000"], {
       allowFail: true,
@@ -254,6 +291,16 @@ const android = {
     await writeFile(file, stdout);
   },
 };
+
+// /proc/uptime followed by /proc/<pid>/stat, read at `readAt` on the runner's clock. Field 22 of
+// stat is the process start in clock ticks since boot (USER_HZ is 100 on Android).
+export function parseProcessStart(text, readAt) {
+  const uptime = Number(text.match(/^(\d+\.\d+) /m)?.[1]);
+  const stat = text.slice(text.lastIndexOf(")") + 2).split(" ");
+  const startTicks = Number(stat[19]);
+  if (!Number.isFinite(uptime) || !Number.isFinite(startTicks)) return null;
+  return Math.round(readAt - (uptime - startTicks / 100) * 1000);
+}
 
 // /proc/loadavg followed by /proc/stat: 1-minute load average and the cumulative CPU time of all
 // cores, in ticks. Steal is time the virtual CPUs were ready to run but the host ran something else.
@@ -311,6 +358,13 @@ const ios = {
   async cpuStat() {
     return null;
   },
+  async processStart() {
+    return null;
+  },
+  async startCapture() {
+    throw new Error("no emulator capture on iOS");
+  },
+  async stopCapture() {},
   async diagnostics(device, file) {
     const { stdout } = await run(
       "xcrun",
@@ -553,6 +607,15 @@ export function loadBetween(a, b) {
   return load;
 }
 
+// Moves an emulator capture out of the AVD folder into <out-dir>/guest-network; returns its path
+// relative to the out dir, as samples.jsonl records it.
+async function keepCapture(file) {
+  const dest = path.join(GUEST_PCAP_DIR, path.basename(file));
+  await copyFile(file, dest);
+  await unlink(file).catch(() => {});
+  return path.relative(OUT_DIR, dest);
+}
+
 const consecutiveFailures = new Map();
 let lastLaunchDevice = null;
 
@@ -567,6 +630,7 @@ async function sample(meta) {
   const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
   const other = DEVICES.find(d => d !== meta.device);
   let paused = false;
+  let capturing = false;
   try {
     // Stop the app on both devices so the idle one is not syncing in the background.
     for (const device of DEVICES) await P.stop(device);
@@ -590,6 +654,14 @@ async function sample(meta) {
       });
     }
     lastLaunchDevice = meta.device;
+    let captureFile = null;
+    if (GUEST_CAPTURE) {
+      captureFile = await P.startCapture(meta.device, `${name}.pcap`).catch(error => {
+        log(`  no emulator capture for this launch: ${error.message}`);
+        return null;
+      });
+      capturing = captureFile !== null;
+    }
     // Host only: reading the device here would add work right before the launch.
     const launchStart = {
       ...idleEnd,
@@ -607,6 +679,12 @@ async function sample(meta) {
       beforeLaunch: loadBetween(idleStart, idleEnd),
       duringLaunch: loadBetween(launchStart, launchEnd),
     };
+    record.processStartAt = await P.processStart(meta.device);
+    if (capturing) {
+      capturing = false;
+      await P.stopCapture(meta.device);
+      record.guestPcap = await keepCapture(captureFile);
+    }
     await sleep(Math.max(0, SETTLE_MS - LOAD_WINDOW_MS));
     if (paused) {
       paused = false;
@@ -622,6 +700,7 @@ async function sample(meta) {
   } finally {
     // A device left paused would hang every later adb command sent to it.
     if (paused) await P.resume(other);
+    if (capturing) await P.stopCapture(meta.device);
   }
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
@@ -639,6 +718,7 @@ async function sample(meta) {
 async function main() {
   validateOptions();
   await mkdir(DEBUG_DIR, { recursive: true });
+  if (GUEST_CAPTURE) await mkdir(GUEST_PCAP_DIR, { recursive: true });
   await writeFile(SAMPLES_FILE, "");
   await writeFile(
     path.join(OUT_DIR, "meta.json"),
@@ -654,6 +734,7 @@ async function main() {
         idleMs: IDLE_MS,
         settleMs: SETTLE_MS,
         pauseIdle: PAUSE_IDLE && PLATFORM === "android",
+        guestCapture: GUEST_CAPTURE && PLATFORM === "android",
         hostCpus: os.cpus().length,
         userdata: {
           "no-accounts": opts["no-accounts-userdata"],
