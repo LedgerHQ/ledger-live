@@ -1,5 +1,29 @@
 # @ledgerhq/wallet-cli
 
+## 2.13.0
+
+### Minor Changes
+
+- [#22763](https://github.com/LedgerHQ/ledger-live/pull/22763) [`6b445da`](https://github.com/LedgerHQ/ledger-live/commit/6b445da2f92d7c630424faa7cc31a01bc67db0b9) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Run device commands against Speculos when `SPECULOS_API_PORT` is set, with stable exit codes when the emulator is unreachable. `live-dmk-shared` now owns the Speculos target parsing and transport factory shared with `live-dmk-desktop`
+
+- [#23521](https://github.com/LedgerHQ/ledger-live/pull/23521) [`0b7d6fb`](https://github.com/LedgerHQ/ledger-live/commit/0b7d6fbcfc50ba33f6f3168bfc58ba1092014b1a) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - Fail `agent-intent enroll` with `keychain_unavailable` when Linux has no Secret Service, and add `--allow-plaintext-key` to store the agent key in a 0600 file after the human agrees. When a Secret Service is reachable but refuses the write (e.g. a locked collection), `enroll` also fails with `keychain_unavailable` and the write error, or, with `--allow-plaintext-key`, stores the key in the file and says so on stderr. Each profile records its `keyStore` (`os-keychain` or `plaintext-file`), shown by `agent-intent show` and in the `list`/`show` JSON. Older wallet-cli versions don't know `plaintext-file` profiles and drop `keyStore` when they rewrite the session file. On Linux, Agent Intent and Ledger API auth keychain entries are pinned to the Secret Service, so they never fall back to the kernel keyring. Existing Agent Intent profiles read on Linux without a reachable Secret Service now fail with `keychain_unavailable`, asking to make it reachable and re-run; only a profile an older wallet-cli enrolled without one (whose key went to the kernel keyring) is gone and must be re-enrolled under a new `--profile` id (with `--allow-plaintext-key` only after the human agrees). A keychain read error that may be transient asks to unlock the OS keychain, and a failed delete of a keychain entry (e.g. on `ring destroy` or an enroll rollback) is now reported instead of being taken as success. Swap quote requests no longer use a throwaway API key when the OS keychain is missing or can't save it: they are sent without a token, with a warning on stderr.
+
+### Patch Changes
+
+- [#23707](https://github.com/LedgerHQ/ledger-live/pull/23707) [`d0604f8`](https://github.com/LedgerHQ/ledger-live/commit/d0604f8c9ff42a19f5f73928f52353c63481a5da) Thanks [@Justkant](https://github.com/Justkant)! - Build the binaries with Bun 1.4.4, whose root certificate store (NSS 3.131.1) no longer trusts the compromised eMudhra CAs
+
+- [#23243](https://github.com/LedgerHQ/ledger-live/pull/23243) [`b90f7c0`](https://github.com/LedgerHQ/ledger-live/commit/b90f7c0f6c705d945fe0ccd4f1231adeb4ee32b6) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent sync` imports accounts a previous wallet-cli version skipped
+
+- [#22517](https://github.com/LedgerHQ/ledger-live/pull/22517) [`43e1ad1`](https://github.com/LedgerHQ/ledger-live/commit/43e1ad1af4578bfb965c5d79d53a7eeef2403562) Thanks [@mmysl-ledger-ext](https://github.com/mmysl-ledger-ext)! - Explain Solana `earn deposit` amount errors with the network minimum delegation, the max stakeable amount, and the balance needed to stake
+
+- [#23612](https://github.com/LedgerHQ/ledger-live/pull/23612) [`6ea25da`](https://github.com/LedgerHQ/ledger-live/commit/6ea25da0c6060df6aa5056eceacaeedf3d76d2ba) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - The account sync hash is now the CAL token list hash of the account's network (`token_list_hash` from `/v1/networks`, new `getTokenListHash` endpoint) instead of the `X-Ledger-Commit` header. The commit header changed on every CAL deployment, so an update to any chain's tokens made every account of every network resync from scratch. A network the CAL lists no token for gets a fixed `no-tokens` hash.
+
+  The token cache is still validated against the commit (`getTokensSyncHash` endpoint), so a metadata-only token correction still evicts it.
+
+  Stored sync hashes were built from the commit, so each account resyncs from scratch once after this update.
+
+- [#23690](https://github.com/LedgerHQ/ledger-live/pull/23690) [`750d4bf`](https://github.com/LedgerHQ/ledger-live/commit/750d4bf2f8c70aa114e98222e25770a9a2cdfa70) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update @ledgerhq/coin-evm to 16.0.0 and drop the removed currencyId argument from its API and logic calls
+
 ## 2.12.0
 
 ### Minor Changes
