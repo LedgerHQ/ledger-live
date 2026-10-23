@@ -92,6 +92,11 @@ export const deviceOnboardingMachine = setup({
       !context.checksPaused && context.firmware?.kind === "offered",
     checksAlreadyPassed: ({ context }) =>
       currentVerdict(context)?.isGenuine === true && context.firmware?.kind === "checked",
+    successAlreadyAcknowledged: ({ context }) =>
+      context.successAcknowledgedOnSession === context.sessionId,
+    acknowledgedSeededDevice: ({ context }) =>
+      context.successAcknowledgedOnSession === context.sessionId &&
+      context.onboardedOnEntry === true,
     onEarlyCheckScreen: ({ context }) => context.onEarlyCheckScreen,
     isOnboarded: ({ context }) => context.isOnboarded,
     onboardedOnEntry: ({ context }) => context.onboardedOnEntry === true,
@@ -304,9 +309,20 @@ export const deviceOnboardingMachine = setup({
 
         checksSucceeded: {
           always: [
-            { guard: "onboardedOnEntry", target: "#deviceOnboarding.onboardedExit" },
-            { target: "#deviceOnboarding.deviceSetup" },
+            { guard: "acknowledgedSeededDevice", target: "#deviceOnboarding.onboardedExit" },
+            { guard: "successAlreadyAcknowledged", target: "#deviceOnboarding.deviceSetup" },
           ],
+          on: {
+            SESSION_CHANGED: { target: "checksIdle", actions: "startNewSession" },
+            CONTINUE: [
+              {
+                guard: "onboardedOnEntry",
+                target: "#deviceOnboarding.onboardedExit",
+                actions: "acknowledgeSuccess",
+              },
+              { target: "#deviceOnboarding.deviceSetup", actions: "acknowledgeSuccess" },
+            ],
+          },
         },
       },
     },

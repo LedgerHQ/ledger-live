@@ -26,6 +26,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
+    successAcknowledgedOnSession: null,
     firmware: null,
     currentSetupStep: null,
     recoveryKeyBackupOpen: false,
@@ -131,6 +132,7 @@ export const contextActions = {
     genuineVerdict: null,
     lastGenuineFailure: null,
     checksPaused: false,
+    successAcknowledgedOnSession: null,
   }),
   // A new session starts the checks over: the old firmware answer and failure belong to the old one.
   startNewSession: update(({ event }) => {
@@ -151,8 +153,15 @@ export const contextActions = {
       return {};
     }
 
-    return { sessionId: event.sessionId, genuineVerdict: null };
+    return {
+      sessionId: event.sessionId,
+      genuineVerdict: null,
+      successAcknowledgedOnSession: null,
+    };
   }),
+  acknowledgeSuccess: update(({ context }) => ({
+    successAcknowledgedOnSession: context.sessionId,
+  })),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),
   rememberSetupStep: update(({ context, event }) => {

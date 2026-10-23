@@ -505,4 +505,24 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       expect.objectContaining({ navigateOnExit: true, wasReadOnlyAtEntry: true }),
     );
   });
+
+  it("should leave the success screen when the user continues", () => {
+    useSession.mockReturnValue(session({ state: "checks.checksSucceeded" }));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    checksOf(result.current).onContinue?.();
+
+    expect(send).toHaveBeenCalledWith({ type: "CONTINUE" });
+  });
+
+  it("should withhold continue while the device is still leaving its check screen", () => {
+    useSession.mockReturnValue(session({ state: "checks.leavingEarlyCheckScreen" }));
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const checks = checksOf(result.current);
+
+    expect(checks.state).toBe("succeeded");
+    expect(checks.onContinue).toBeUndefined();
+  });
 });

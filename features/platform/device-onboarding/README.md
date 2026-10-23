@@ -57,8 +57,11 @@ const actor = createActor(
 ```
 
 Screens show the current state and send the user's events: `CONTINUE`, `RETRY`, `SKIP`, `CLOSE`,
-`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. `CONTINUE` is only for `awaitingStart`, right after the
-first device read.
+`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. `CONTINUE` starts the flow after the first device read, and
+leaves the success screen once both checks have passed. That screen stays up until the user
+continues, so Ledger Sync is not opened before they can see it. A session change while it is up
+runs the checks again. A firmware update shows the screen again, even when the device keeps the
+same session id.
 
 The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOST` from
 `sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its firmware update flow returns on a

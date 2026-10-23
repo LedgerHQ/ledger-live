@@ -169,6 +169,8 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   lastGenuineFailure: GenuineFailureReport | null;
   onEarlyCheckScreen: boolean;
   checksPaused: boolean;
+  /** Session whose success screen the user already left. A new session asks again. */
+  successAcknowledgedOnSession: DeviceSessionId | null;
   firmware: FirmwareCheck | null;
   currentSetupStep: OnboardingStep | null;
   recoveryKeyBackupOpen: boolean;
