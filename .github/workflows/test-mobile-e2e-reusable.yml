@@ -82,11 +82,11 @@ on:
         type: boolean
         default: true
       emulator_cores:
-        description: "Android: CPU cores per emulator (two emulators share an 8-CPU runner; the E2E AVD has 2)"
+        description: "Android: CPU cores per emulator (two share the 8-CPU runner, the idle one paused during each launch; the E2E AVD has 2)"
         required: false
         type: choice
-        options: ["3", "2", "4"]
-        default: "3"
+        options: ["4", "3", "2"]
+        default: "4"
 
 permissions:
   contents: read
@@ -100,8 +100,10 @@ env:
   MAESTRO_SHA256: 29b675e10cc12080e445e9bfb2e2b4e4dfb9c0f2e30d5884120d258b5e1cd991
   RESULTS_DIR: startup-perf-results
   # The AVD itself (AVD_* and AVD_CACHE_KEY) comes from setup-android-avd@develop, like E2E.
-  # Two emulators share the 8-CPU runner; each gets emulator_cores (3 by default; E2E's AVD has 2).
-  PERF_AVD_CORES: ${{ inputs.emulator_cores || '3' }}
+  # Two emulators share the 8-CPU runner; each gets emulator_cores (E2E's AVD has 2). 4 by default:
+  # the other emulator is paused during each launch, and 4 was faster with tighter A/A margins
+  # than 3 or 2 (runs 39989878998, 39966762708, 39970514979).
+  PERF_AVD_CORES: ${{ inputs.emulator_cores || '4' }}
 
 jobs:
   plan:
