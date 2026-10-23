@@ -1,5 +1,5 @@
 import type { Features } from "@shared/feature-flags";
-import type { RestorableLargeScreenUpsellModalState } from "./state";
+import type { RestorableLargeScreenUpsellModalState } from "./state/schema";
 
 type LargeScreenUpsellParams = NonNullable<Features["largeScreenUpsell"]["params"]>;
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-react";
-import type { LargeScreenUpsellModalViewModel } from "../../screens/LargeScreenUpsellModal/types";
+import type { LargeScreenUpsellModalViewModel } from "../screens/LargeScreenUpsellModal/types";
 
 type LargeScreenUpsellModalContentProps = Pick<
   LargeScreenUpsellModalViewModel,
