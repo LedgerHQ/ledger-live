@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/recover/list/show/sync/send/swap/intents/status/cancel — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose Ethereum and Solana payments and Ethereum swaps for human review, list the intents it proposed, check their status and cancel them, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/wait/recover/list/show/sync/send/swap/intents/status/cancel — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose Ethereum and Solana payments and Ethereum swaps for human review, list the intents it proposed, check their status and cancel them, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
 ---
 
 # wallet-cli
@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read the local session file, so they run without the bypass.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`/`wait`: they only read local files (the session; `wait` also the listener's lock and log), so they run without the bypass. `agent-intent enroll --detach` still needs it.
 
 > **Speculos:** When `SPECULOS_API_PORT` is set, device commands talk to a Speculos emulator over HTTP instead of a USB Ledger (`SPECULOS_DEVICE` names the model). Use it only when the user set it up. Speculos cannot approve on-device prompts, so stick to flows like `account discover`: a prompt to open the app gives up after `--device-timeout` (exit code 6), and an unanswered signing or address verification prompt blocks for about 5 minutes before it exits with code 1 (`GeneralDmkError`); `genuine-check` refuses to run on it. The sandbox lets HTTP to a local Speculos through, but `account discover` still needs `dangerouslyDisableSandbox: true`: it saves the found accounts to `session.yaml` in the user state dir, which the sandbox cannot write. Inside the sandbox the scan still exits 0, but the accounts are not saved (`⚠ Found accounts were NOT saved to the session`).
 
@@ -46,7 +46,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
 | "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
 | "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
-| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name> --source <runtime>` (no device; blocks until approved) |
+| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name> --source <runtime>` (no device; blocks until approved), or with `--detach`, then `agent-intent wait --profile <id>` |
 | "recover this agent", "re-enroll an agent into its trustchain"                       | `agent-intent recover --profile <id>` (no device; blocks until approved) |
 | "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
@@ -106,6 +106,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
 | `agent-intent enroll` | No    | **Required** | No          | Yes     |
+| `agent-intent wait`  | No     | No           | No          | No      |
 | `agent-intent recover` | No   | **Required** | No          | Yes     |
 | `agent-intent list`  | No     | No           | No          | No      |
 | `agent-intent show`  | No     | No           | No          | No      |
@@ -331,6 +332,11 @@ pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My B
 pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source other \
   --environment staging --expires-in 2h
 
+# Same, but print the URL and exit, leaving a background listener; then poll it:
+pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code \
+  --detach --output json
+pnpm --silent wallet-cli start agent-intent wait --profile my-bot --output json
+
 # Re-enroll an enrolled profile's existing key into its previous Trustchain, then
 # BLOCK until approved (environment/keycloak come from the profile):
 pnpm --silent wallet-cli start agent-intent recover --profile my-bot
@@ -354,7 +360,19 @@ value outside this list.
 signed request. The frontend delivers the completion over that channel; there is no `complete`
 command and no manual JSON fallback. **Keep the process running** until it prints the final
 `enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
-`accountAccessEnvironment`). The wait is bounded by `--expires-in` (default 30m).
+`accountAccessEnvironment`). The wait is bounded by `--expires-in` (default 30m). The human should
+open the link once and keep the page open after clicking Review until the device approval finishes:
+leaving the page after Review closes the relay channel and the listener ends (`listener_exited`).
+
+**Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
+--detach` starts the same listener in the background, prints its `enrollment-pending` line plus
+`listenerPid` and `logPath`, and exits. Then call `agent-intent wait --profile <id> [--timeout 25s]`,
+which reads local state only and reports one of:
+- `enrolled` (same result as `enroll`), exit 0 — done.
+- `enrollment-waiting` (`profileId`, `expiresAt`, `listenerPid`, `enrollmentUrl` while the log still
+  has it), exit 0 — still pending: call `wait` again.
+- an error with `error.code` `listener_exited`, `enrollment_expired` or `profile_not_found`, exit 1 —
+  start a fresh enrollment with a new `--profile` id.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate

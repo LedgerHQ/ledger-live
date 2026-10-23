@@ -67,6 +67,17 @@ export type OutputContext = {
   account?: string;
 };
 
+/** A command failure with a stable machine-readable `code` in the JSON error envelope, for errors an
+ * agent is expected to branch on. Exits 1, like any other error. */
+export class CodedCommandError extends Error {
+  constructor(
+    readonly code: string,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
 /** Outcome of `ring destroy`, shared by the interface, both output impls, and the producer. */
 export type RingDestroyResult = {
   remoteSucceeded: boolean;
@@ -244,6 +255,9 @@ export interface CommandOutput {
   agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void;
   /** Final `agent-intent enroll` result once the relayed completion is verified and saved. */
   agentIntentEnrolled(result: AgentIntentEnrolled): void;
+  /** `agent-intent wait` timed out while the enrollment listener is still waiting for approval
+   * (json: `enrollment-waiting` event). */
+  agentIntentEnrollmentWaiting(result: AgentIntentEnrollmentWaiting): void;
   /** First `agent-intent recover` event, before blocking on the relay (json: NDJSON
    * `recovery-pending` event). Never includes the secret key. */
   agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void;
@@ -311,6 +325,17 @@ export type AgentIntentEnrollmentPending = {
   enrollmentUrl: string;
   fingerprint: string;
   expiresAt: string;
+  /** Set by `enroll --detach`: the background listener that waits for the approval. */
+  listenerPid?: number;
+  logPath?: string;
+};
+
+export type AgentIntentEnrollmentWaiting = {
+  profileId: string;
+  expiresAt: string;
+  listenerPid: number;
+  /** From the listener's log, while it still has the pending line. */
+  enrollmentUrl?: string;
 };
 
 export type AgentIntentRecoveryPending = {
@@ -843,14 +868,38 @@ class HumanCommandOutput implements CommandOutput {
     enrollmentUrl,
     fingerprint,
     expiresAt,
+    listenerPid,
+    logPath,
   }: AgentIntentEnrollmentPending): void {
     this._agentIntentLinkPending(
       enrollmentUrl,
       fingerprint,
       "Compare this fingerprint with the one shown when the enrollment link is opened, before " +
         "approving — this step never touches a Ledger device.",
-      `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
-        "this process running.",
+      logPath === undefined
+        ? `Profile "${profileId}" saved as pending. Waiting for approval until ${expiresAt} — keep ` +
+            "this process running."
+        : `Profile "${profileId}" saved as pending. A background listener (pid ${listenerPid}, ` +
+            `log ${logPath}) waits for approval until ${expiresAt}. Run \`wallet-cli agent-intent ` +
+            `wait --profile ${profileId}\` to check whether the enrollment completed.`,
+    );
+  }
+
+  agentIntentEnrollmentWaiting({
+    profileId,
+    expiresAt,
+    listenerPid,
+    enrollmentUrl,
+  }: AgentIntentEnrollmentWaiting): void {
+    writeStdout(
+      `Profile "${profileId}" is still pending. Its listener (pid ${listenerPid}) waits for ` +
+        `approval until ${expiresAt}.`,
+    );
+    if (enrollmentUrl !== undefined) writeStdout(`Enrollment link: ${enrollmentUrl}`);
+    writeStdout(
+      colors.dim(
+        `Run \`wallet-cli agent-intent wait --profile ${profileId}\` again to keep waiting.`,
+      ),
     );
   }
 
@@ -1114,7 +1163,11 @@ class JsonCommandOutput implements CommandOutput {
     }
     return {
       ok: false,
-      error: { command: this._ctx.command, message: HumanFormatter.formatError(e) },
+      error: {
+        command: this._ctx.command,
+        ...(e instanceof CodedCommandError ? { code: e.code } : {}),
+        message: HumanFormatter.formatError(e),
+      },
     };
   }
 
@@ -1457,6 +1510,15 @@ class JsonCommandOutput implements CommandOutput {
 
   agentIntentEnrolled(result: AgentIntentEnrolled): void {
     this._writeNdjson(this._envelope({ ...result, enrolled: true }));
+  }
+
+  agentIntentEnrollmentWaiting(result: AgentIntentEnrollmentWaiting): void {
+    this._writeNdjson({
+      type: "enrollment-waiting",
+      command: this._ctx.command,
+      network: this._ctx.network,
+      ...result,
+    });
   }
 
   agentIntentRecoveryPending(result: AgentIntentRecoveryPending): void {
