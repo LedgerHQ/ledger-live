@@ -10,8 +10,8 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 - Deterministic testing scenarios for EVM-based coins
 - Support for multiple EVM chains (Ethereum, Polygon, Scroll, Blast, Sonic)
 - Local signer written in Typescript
-- The Ethereum, Polygon and BNB scenarios ask coin-sandbox for a real node (geth 1.17.8, bor 2.10.2, bsc 1.7.8: the
-  versions of production) and its Atlas indexer. USDC (USDT on BNB) is preloaded by coin-sandbox at its mainnet address,
+- The Ethereum, Polygon and BNB scenarios ask coin-sandbox for a real node (geth 1.17.8 on Ethereum and 1.7.8 on BNB, bor 2.10.2:
+  the versions of production) and its Atlas indexer. USDC (USDT on BNB) is preloaded by coin-sandbox at its mainnet address,
   and the account is funded by airdrop. No mock: Atlas is the explorer and gas tracker, and any request that leaves the machine fails
 - The other scenarios still use Anvil, a mainnet fork, and a mocked explorer
 
