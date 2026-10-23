@@ -956,8 +956,42 @@ test("R3 does not check the type arguments of a local callback alias", () => {
     "type Handler<T> = (value: T) => void;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
     "type Handler<T> = (value: T) => void;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
     "type Handler<T> = (value: T) => void;\ntype Relay<T> = Handler<T>;\nexport type CardProps = { onSelect: Relay<{ onPress(): void }> };\n",
+    "type Handler<T> = ((value: T) => void) | undefined;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
+    "type Handler<T> = ((value: T) => void) | null;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
   ]) {
     assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
+  }
+});
+
+test("R3 does not check a type argument a local generic drops", () => {
+  const argument = "{ title: string; onPress(): void }";
+  for (const contractModule of [
+    `type WithoutPress<T> = Omit<T, "onPress">;\ntype Tiles = WithoutPress<${argument}>[];\nexport type CardProps = { items: Tiles };\n`,
+    `type WithoutPress<T> = Omit<T, "onPress">;\nexport type CardProps = { items: WithoutPress<${argument}>[] };\n`,
+    `type Label<T> = { text: string };\nexport type CardProps = { label: Label<${argument}> };\n`,
+    `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+  ]) {
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
+  }
+});
+
+test("R3 checks a type argument where a local generic places it in props", () => {
+  const argument = "{ onPress(): void }";
+  for (const contractModule of [
+    `type Wrap<T> = { item: T };\ntype Tiles = Wrap<${argument}>[];\nexport type CardProps = { items: Tiles };\n`,
+    `type Handler<T> = ((value: T) => void) | T;\nexport type CardProps = { onSelect: Handler<${argument}> };\n`,
+    `type Wrap<T> = { item: T };\ntype Relay<U> = Wrap<U>;\nexport type CardProps = { items: Relay<${argument}> };\n`,
+    `interface Box<T> { value: T }\ninterface Wrapper<T> extends Box<T> {}\nexport type CardProps = { box: Wrapper<${argument}> };\n`,
+    `type Tree<T> = { value: T; children: Tree<T>[] };\nexport type CardProps = { tree: Tree<${argument}> };\n`,
+    `type Nest<T> = { value: T; next: Nest<{ wrap: T }> };\nexport type CardProps = { nest: Nest<${argument}> };\n`,
+    `type Wrap<T> = { item: T };\ntype Outer<X> = Wrap<{ value: X }>;\nexport type CardProps = { a: Outer<string>; b: Outer<${argument}> };\n`,
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
   }
 });
 

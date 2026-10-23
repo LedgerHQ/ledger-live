@@ -771,16 +771,16 @@ function statementNames(statement) {
 
 /**
  * @param {ts.Node} node
- * @returns {Set<string>} the names an `infer` clause declares in `node`
+ * @returns {ts.TypeParameterDeclaration[]} the type parameters an `infer` clause declares in `node`
  */
-function inferredNames(node) {
-  const names = new Set();
+function inferredParameters(node) {
+  const parameters = [];
   function visit(child) {
-    if (ts.isInferTypeNode(child)) names.add(child.typeParameter.name.text);
+    if (ts.isInferTypeNode(child)) parameters.push(child.typeParameter);
     ts.forEachChild(child, visit);
   }
   visit(node);
-  return names;
+  return parameters;
 }
 
 /**
@@ -803,7 +803,9 @@ function enclosingScopeNames(node, values) {
       for (const parameter of scope.typeParameters ?? []) names.add(parameter.name.text);
       if (ts.isMappedTypeNode(scope)) names.add(scope.typeParameter.name.text);
       if (ts.isConditionalTypeNode(scope) && child === scope.trueType) {
-        for (const name of inferredNames(scope.extendsType)) names.add(name);
+        for (const parameter of inferredParameters(scope.extendsType)) {
+          names.add(parameter.name.text);
+        }
       }
     }
     if (ts.isModuleBlock(scope)) {
@@ -817,127 +819,131 @@ function enclosingScopeNames(node, values) {
 }
 
 /**
- * The props of a contract type, following `Readonly`, intersections, unions and the types the
- * contract module declares. Types from other modules are not followed.
- *
- * @param {ts.Node | undefined} node
- * @param {ReturnType<typeof parseModule>} module
- * @param {Set<string>} seen
- * @returns {Array<ts.PropertySignature | ts.MethodSignature>}
- */
-function propsOfContract(node, module, seen = new Set()) {
-  if (!node) return [];
-  function local(name) {
-    if (seen.has(name)) return [];
-    seen.add(name);
-    return propsOfContract(module.types.get(name), module, seen);
-  }
-  if (ts.isTypeAliasDeclaration(node) || ts.isParenthesizedTypeNode(node)) {
-    return propsOfContract(node.type, module, seen);
-  }
-  if (ts.isInterfaceDeclaration(node) || ts.isTypeLiteralNode(node)) {
-    const heritage = ts.isInterfaceDeclaration(node)
-      ? (node.heritageClauses ?? []).flatMap(clause =>
-          clause.types.flatMap(type =>
-            ts.isIdentifier(type.expression) ? local(type.expression.text) : [],
-          ),
-        )
-      : [];
-    const members = node.members.filter(
-      member => ts.isPropertySignature(member) || ts.isMethodSignature(member),
-    );
-    return [...members, ...heritage];
-  }
-  if (ts.isIntersectionTypeNode(node) || ts.isUnionTypeNode(node)) {
-    return node.types.flatMap(type => propsOfContract(type, module, seen));
-  }
-  if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
-    if (enclosingScopeNames(node, false).has(node.typeName.text)) return [];
-    if (node.typeName.text === "Readonly" && node.typeArguments?.length === 1) {
-      return propsOfContract(node.typeArguments[0], module, seen);
-    }
-    return local(node.typeName.text);
-  }
-  return [];
-}
-
-/**
+ * @param {ts.Node} node
  * @param {string} name
- * @param {ReturnType<typeof parseModule>} module
- * @param {Set<string>} seen
- * @returns {boolean} true when the local type `name` is a function or constructor type, directly
- *   or through local aliases, such as `type Handler<T> = (value: T) => void`
+ * @returns {ts.TypeParameterDeclaration | undefined} the type parameter `name` refers to at
+ *   `node`: one of an enclosing declaration, mapped type or `infer` clause, the innermost first
  */
-function isLocalCallback(name, module, seen = new Set()) {
-  const declaration = module.types.get(name);
-  if (!declaration || !ts.isTypeAliasDeclaration(declaration) || seen.has(name)) return false;
-  seen.add(name);
-  let type = declaration.type;
-  while (ts.isParenthesizedTypeNode(type)) type = type.type;
-  if (ts.isFunctionTypeNode(type) || ts.isConstructorTypeNode(type)) return true;
-  return (
-    ts.isTypeReferenceNode(type) &&
-    ts.isIdentifier(type.typeName) &&
-    !enclosingScopeNames(type, false).has(type.typeName.text) &&
-    isLocalCallback(type.typeName.text, module, seen)
-  );
+function typeParameterAt(node, name) {
+  let child = node;
+  for (let scope = node.parent; scope && !ts.isSourceFile(scope); scope = scope.parent) {
+    const parameters = [...(scope.typeParameters ?? [])];
+    if (ts.isMappedTypeNode(scope)) parameters.push(scope.typeParameter);
+    if (ts.isConditionalTypeNode(scope) && child === scope.trueType) {
+      parameters.push(...inferredParameters(scope.extendsType));
+    }
+    const parameter = parameters.find(candidate => candidate.name.text === name);
+    if (parameter) return parameter;
+    child = scope;
+  }
+  return undefined;
 }
 
 /**
  * The props of a contract and of the local types its props hold, at any depth: a list of tiles
  * whose items declare `onPress` is checked like the contract itself, also behind a local alias
- * such as `type Tiles = Tile[]`. Callback parameters, types from other modules and the arguments
- * of `Pick`, `Omit` and other library types that drop props are not followed.
+ * such as `type Tiles = Tile[]`. A local generic type binds its parameters to its type arguments,
+ * so an argument is checked only where the type's body places it: `Box<T> = { value: T }` checks
+ * it, `Omit<T, "onPress">` and `(value: T) => void` do not. Callback parameters, `keyof` operands,
+ * the condition of a conditional type, types from other modules and the arguments of `Pick`,
+ * `Omit` and other library types that drop props are not followed.
  *
  * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
  * @param {ReturnType<typeof parseModule>} module
  * @returns {Set<ts.PropertySignature | ts.MethodSignature>}
  */
 function reachableProps(declaration, module) {
-  const seen = new Set();
-  const aliases = new Set();
+  /** @typedef {Map<ts.TypeParameterDeclaration, { node: ts.TypeNode, bindings: Bindings }>} Bindings */
   const props = new Set();
-  const pending = propsOfContract(declaration, module, seen);
-  function visit(node) {
-    if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) return;
-    if (ts.isTypeLiteralNode(node)) {
-      pending.push(...propsOfContract(node, module, seen));
-      return;
+  const expanded = new Set();
+  const expanding = [];
+  const ids = new Map();
+  function idOf(node) {
+    if (!ids.has(node)) ids.set(node, ids.size);
+    return ids.get(node);
+  }
+  // What a type argument stands for once the type parameters it names are replaced.
+  function resolve(node, bindings) {
+    while (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+      const parameter = typeParameterAt(node, node.typeName.text);
+      const bound = parameter && bindings.get(parameter);
+      if (!bound) break;
+      ({ node, bindings } = bound);
     }
-    if (ts.isTypeReferenceNode(node)) {
-      const name = ts.isIdentifier(node.typeName) ? node.typeName.text : "";
-      // A type parameter shadows the module-level type of the same name.
-      const local = !enclosingScopeNames(node, false).has(name) && module.types.get(name);
-      if (local) {
-        // A callback alias keeps its type arguments, the callback's parameters, unchecked.
-        if (isLocalCallback(name, module)) return;
-        pending.push(...propsOfContract(node, module, seen));
-        if (ts.isTypeAliasDeclaration(local) && !aliases.has(name)) {
-          aliases.add(name);
-          visit(local.type);
-        }
-      } else if (!PROPS_PRESERVING_TYPES.has(name)) {
-        return;
+    return node;
+  }
+  function addProp(prop, bindings) {
+    if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
+    props.add(prop);
+    if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, bindings);
+  }
+  // A local type with no bound parameter reads the same everywhere, so it is expanded once; a
+  // generic one is not expanded again inside itself with the same arguments, so recursive types
+  // terminate.
+  function expand(local, typeArguments, bindings) {
+    const inner = new Map();
+    (local.typeParameters ?? []).forEach((parameter, index) => {
+      const argument = typeArguments?.[index];
+      if (argument) inner.set(parameter, { node: argument, bindings });
+    });
+    const key = [local, ...[...inner.values()].map(bound => resolve(bound.node, bound.bindings))]
+      .map(idOf)
+      .join(",");
+    if (inner.size === 0) {
+      if (expanded.has(key)) return;
+      expanded.add(key);
+    } else {
+      if (expanding.includes(key)) return;
+      expanding.push(key);
+    }
+    if (ts.isTypeAliasDeclaration(local)) {
+      visit(local.type, inner);
+    } else {
+      for (const member of local.members) addProp(member, inner);
+      for (const clause of local.heritageClauses ?? []) {
+        for (const type of clause.types) visit(type, inner);
       }
     }
-    ts.forEachChild(node, visit);
+    if (inner.size > 0) expanding.pop();
   }
-  // A local generic contract, `Box<{ onPress(): void }>`, holds props in its type arguments.
-  if (ts.isTypeAliasDeclaration(declaration)) {
-    aliases.add(declaration.name.text);
-    visit(declaration.type);
+  function visit(node, bindings) {
+    if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) return;
+    if (ts.isTypeOperatorNode(node) && node.operator === ts.SyntaxKind.KeyOfKeyword) return;
+    if (ts.isTypeLiteralNode(node)) {
+      for (const member of node.members) addProp(member, bindings);
+      return;
+    }
+    if (ts.isConditionalTypeNode(node)) {
+      visit(node.trueType, bindings);
+      visit(node.falseType, bindings);
+      return;
+    }
+    const reference = ts.isTypeReferenceNode(node)
+      ? node.typeName
+      : ts.isExpressionWithTypeArguments(node)
+        ? node.expression
+        : undefined;
+    if (!reference) {
+      ts.forEachChild(node, child => visit(child, bindings));
+      return;
+    }
+    if (!ts.isIdentifier(reference)) return;
+    const name = reference.text;
+    const parameter = typeParameterAt(node, name);
+    if (parameter) {
+      const bound = bindings.get(parameter);
+      if (bound) visit(bound.node, bound.bindings);
+      return;
+    }
+    // A namespace declaration shadows the module-level type of the same name.
+    const local = !enclosingScopeNames(node, false).has(name) && module.types.get(name);
+    if (local) {
+      expand(local, node.typeArguments, bindings);
+    } else if (PROPS_PRESERVING_TYPES.has(name)) {
+      for (const argument of node.typeArguments ?? []) visit(argument, bindings);
+    }
   }
-  for (const clause of ts.isInterfaceDeclaration(declaration)
-    ? (declaration.heritageClauses ?? [])
-    : []) {
-    for (const type of clause.types) visit(type);
-  }
-  for (let index = 0; index < pending.length; index++) {
-    const prop = pending[index];
-    if (props.has(prop)) continue;
-    props.add(prop);
-    if (ts.isPropertySignature(prop) && prop.type) visit(prop.type);
-  }
+  expand(declaration, undefined, new Map());
   return props;
 }
 
