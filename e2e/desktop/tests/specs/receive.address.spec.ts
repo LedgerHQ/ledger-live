@@ -13,7 +13,7 @@ import {
 import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { buildTags } from "tests/utils/tagsUtils";
+import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 
 type ReceiveTestCase = {
   account: Account;
@@ -32,6 +32,7 @@ const nativeAccounts: ReceiveTestCase[] = [
   { account: Account.XTZ_1, xrayTicket: "B2CQA-2564, B2CQA-2695" },
   { account: Account.BSC_1, xrayTicket: "B2CQA-2686, B2CQA-2696, B2CQA-2698" },
   { account: Account.ZEC_1, xrayTicket: "B2CQA-6604" },
+  { account: Account.SUI_1, xrayTicket: "B2CQA-6250" },
 ];
 
 const tokenAccount = { account: TokenAccount.ETH_USDT_1, xrayTicket: "B2CQA-5694" };
@@ -71,7 +72,7 @@ for (const receive of nativeAccounts) {
       {
         tag: buildTags({
           currencyId: receive.account.currency.id,
-          skipLNS: receiveBlockedOnLNS,
+          skipLNS: receiveBlockedOnLNS || shouldSkipLNSTag(receive.account.currency.id),
           extraTags: receive.account === Account.ETH_1 ? ["@smoke"] : [],
         }),
         annotation: {
