@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { element, by } from "detox";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
 
@@ -32,7 +33,7 @@ export default class PayTabPage {
   freezeConfirmId = "freeze-confirm-action";
   frozenVisualId = "card-visual-frozen";
 
-  requestTitle = () => element(by.id("pay-request-receive-title"));
+  private readonly requestTitle = () => element(by.id("pay-request-receive-title"));
 
   requestAddress = () => getElementById("pay-request-receive-address");
   requestQr = () => getElementById("pay-request-receive-qr-code");
