@@ -1,6 +1,5 @@
 ---
 "@ledgerhq/live-common": patch
-"@ledgerhq/wallet-cli": patch
 "@ledgerhq/coin-celo": patch
 ---
 

@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/wallet-cli": minor
 "@ledgerhq/live-dmk-shared": minor
 "@ledgerhq/live-dmk-desktop": patch
 ---
