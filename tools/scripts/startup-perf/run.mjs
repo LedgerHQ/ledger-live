@@ -472,8 +472,9 @@ export function parseEvents(texts) {
   return events;
 }
 
-// Maestro only dumps the rows on screen, so the list is scrolled until no new event shows up.
-const MAX_SCROLLS = 4;
+// Maestro only dumps the rows on screen, so the list is scrolled until no new event shows up. Each
+// scroll moves about half a screen; 10 covers the ~35 rows of the most instrumented builds.
+const MAX_SCROLLS = 10;
 
 async function readRemainingEvents(device, events) {
   const all = { ...events };
