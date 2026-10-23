@@ -8,7 +8,14 @@ import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebvie
 import { buildSwapNavigationState } from "../utils/swapNavigation";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 
-type NavigateToSwap = (ledgerCurrency: CryptoOrTokenCurrency) => void;
+export type SwapNavigationOptions = Readonly<{
+  source?: string;
+}>;
+
+type NavigateToSwap = (
+  ledgerCurrency: CryptoOrTokenCurrency,
+  options?: SwapNavigationOptions,
+) => void;
 
 interface UseSwapNavigationResult {
   navigateToSwap: NavigateToSwap;
@@ -22,7 +29,7 @@ export function useSwapNavigation(): UseSwapNavigationResult {
   const { openAssetAndAccount } = useOpenAssetAndAccount();
 
   const navigateToSwap = useCallback<NavigateToSwap>(
-    (ledgerCurrency: CryptoOrTokenCurrency) => {
+    (ledgerCurrency, options) => {
       const fromPath = location.pathname;
       const availableAccounts = getAvailableAccountsById(ledgerCurrency.id, flattenedAccounts);
       const hasAccounts = availableAccounts.length > 0;
@@ -55,6 +62,8 @@ export function useSwapNavigation(): UseSwapNavigationResult {
         currencies: [ledgerCurrency.id],
         areCurrenciesFiltered: true,
         useCase: "swap",
+        flow: "swap",
+        source: options?.source,
         drawerConfiguration: {},
         onSuccess: (account, parentAccount) => {
           navigate("/swap", {
