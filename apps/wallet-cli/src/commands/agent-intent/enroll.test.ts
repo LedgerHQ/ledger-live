@@ -932,3 +932,37 @@ describe("agent-intent enroll --source", () => {
     },
   );
 });
+
+describe("agent-intent enroll --name and --description", () => {
+  const { options } = enrollCommand as unknown as {
+    options: Record<
+      "name" | "description",
+      {
+        schema: {
+          safeParse: (value: unknown) => {
+            success: boolean;
+            error?: { issues: { message: string }[] };
+          };
+        };
+      }
+    >;
+  };
+
+  it.each([
+    ["name", 80],
+    ["description", 280],
+  ] as const)("accepts a %s of up to %i characters and rejects a longer one", (option, limit) => {
+    expect(options[option].schema.safeParse("a".repeat(limit)).success).toBe(true);
+    expect(options[option].schema.safeParse("a".repeat(limit + 1)).success).toBe(false);
+  });
+
+  it.each([
+    ["name", ""],
+    ["name", " \t\n"],
+    ["description", ""],
+    ["description", " \t\n"],
+  ] as const)("rejects a blank %s (%j) with one message", (option, value) => {
+    const messages = options[option].schema.safeParse(value).error?.issues.map(i => i.message);
+    expect(messages).toEqual(["Must not be blank."]);
+  });
+});
