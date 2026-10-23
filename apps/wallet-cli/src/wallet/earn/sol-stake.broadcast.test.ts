@@ -3,10 +3,7 @@ import type { AccountDescriptor } from "../models";
 import type { CommandOutput } from "../../output";
 import type { WalletAdapter } from "../index";
 import type { EarnDeviceContext } from "./device-context";
-import {
-  activateSignBroadcastMock,
-  deactivateSignBroadcastMock,
-} from "./__test-helpers__/sign-and-broadcast-mock";
+import { signBroadcastMock } from "./__test-helpers__/sign-and-broadcast-mock";
 
 // The live (broadcast) path runs through the shared sign-and-broadcast helper, which opens a device
 // session and calls wallet.send. Replace it with a double whose returned txHash we control, so we can
@@ -19,7 +16,7 @@ let nextTxHash: string | undefined = "0xsolsig";
 const signAndBroadcastIntent = mock(async () => ({ txHash: nextTxHash }));
 
 beforeAll(() => {
-  activateSignBroadcastMock({ signAndBroadcastIntent });
+  signBroadcastMock.activate({ signAndBroadcastIntent });
 });
 
 const { depositSolana, withdrawSolana } = await import("./sol-stake");
@@ -27,7 +24,7 @@ const { depositSolana, withdrawSolana } = await import("./sol-stake");
 afterAll(() => {
   // Release this file's fake so the sign-and-broadcast double does not bleed into sibling test files
   // when the whole earn directory runs in one bun process.
-  deactivateSignBroadcastMock();
+  signBroadcastMock.deactivate();
 });
 
 const descriptor = {

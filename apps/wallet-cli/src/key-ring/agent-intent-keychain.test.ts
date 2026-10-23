@@ -1,35 +1,16 @@
-import { afterAll, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { InMemoryKeychain } from "../testing/in-memory-keychain";
+import { loadAgentIntentSecretKey, saveAgentIntentSecretKey } from "./agent-intent-keychain";
+import { _setTestKeychain } from "./keychain-entry";
 
-const store = new Map<string, string>();
-let backendError: Error | undefined;
-
-mock.module("@napi-rs/keyring", () => ({
-  Entry: class {
-    #k: string;
-    constructor(svc: string, acc: string) {
-      this.#k = `${svc}:${acc}`;
-    }
-    setPassword(v: string) {
-      store.set(this.#k, v);
-    }
-    getPassword() {
-      if (backendError) throw backendError;
-      return store.get(this.#k) ?? null;
-    }
-    deletePassword() {
-      store.delete(this.#k);
-    }
-  },
-}));
-afterAll(() => mock.restore());
-
-const { loadAgentIntentSecretKey, saveAgentIntentSecretKey } =
-  await import("./agent-intent-keychain");
+const keychain = new InMemoryKeychain();
+beforeAll(() => _setTestKeychain(keychain.open));
+afterAll(() => _setTestKeychain(null));
 
 describe("loadAgentIntentSecretKey", () => {
   beforeEach(() => {
-    store.clear();
-    backendError = undefined;
+    keychain.entries.clear();
+    keychain.readError = undefined;
   });
 
   it("returns the stored secret key", async () => {
@@ -42,7 +23,7 @@ describe("loadAgentIntentSecretKey", () => {
   });
 
   it("propagates keychain backend errors instead of reporting a missing key", async () => {
-    backendError = new Error("keychain locked");
+    keychain.readError = new Error("keychain locked");
     await expect(loadAgentIntentSecretKey("bot")).rejects.toThrow("keychain locked");
   });
 });

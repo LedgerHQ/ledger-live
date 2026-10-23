@@ -5,11 +5,8 @@ import type { AccountDescriptor } from "../models";
 import type { CommandOutput } from "../../output";
 import type { WalletAdapter } from "../index";
 import type { DefiProduct } from "./api.types";
-import { activateEarnApiMock, deactivateEarnApiMock } from "./__test-helpers__/earn-api-mock";
-import {
-  activateSignBroadcastMock,
-  deactivateSignBroadcastMock,
-} from "./__test-helpers__/sign-and-broadcast-mock";
+import { earnApiMock } from "./__test-helpers__/earn-api-mock";
+import { signBroadcastMock } from "./__test-helpers__/sign-and-broadcast-mock";
 
 const PRODUCT: DefiProduct = {
   id: "usdc-vault",
@@ -31,7 +28,7 @@ beforeAll(() => {
   // depositEvm's chain guard reads chainId via getCurrencyConfiguration (LiveConfig); seed the real
   // wallet-cli config so it resolves deterministically when this file runs in isolation.
   LiveConfig.setConfig(walletCliConfig);
-  activateEarnApiMock({
+  earnApiMock.activate({
     getDefiProducts: async () => [PRODUCT],
     // 204 no-action: the allowance is already sufficient, so only the deposit leg signs.
     postDefiApprove: async () => ({ status: 204, kind: "no-action" }),
@@ -53,7 +50,7 @@ beforeAll(() => {
     },
     getEthTxStatus: async () => ({ data: { status: "success" } }),
   });
-  activateSignBroadcastMock({
+  signBroadcastMock.activate({
     signAndBroadcastIntent,
     prepareIntentDryRun: async () => ({}),
   });
@@ -64,8 +61,8 @@ const { depositEvm } = await import("./eth-vault-pipeline");
 afterAll(() => {
   // Release this file's fakes so they don't bleed into sibling test files when the whole directory runs
   // in one bun process.
-  deactivateEarnApiMock();
-  deactivateSignBroadcastMock();
+  earnApiMock.deactivate();
+  signBroadcastMock.deactivate();
 });
 
 const descriptor = {

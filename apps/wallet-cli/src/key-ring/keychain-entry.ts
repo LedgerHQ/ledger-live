@@ -7,6 +7,29 @@ import { encryptData, decryptData, hexToBytes } from "./crypto";
 const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
 
+/** The part of an OS keychain entry wallet-cli uses. */
+export type KeychainEntry = Pick<Entry, "getPassword" | "setPassword" | "deletePassword">;
+
+type OpenKeychainEntry = (service: string, account: string) => KeychainEntry;
+
+const openOsKeychainEntry: OpenKeychainEntry = (service, account) => new Entry(service, account);
+let openTestEntry: OpenKeychainEntry | null = null;
+
+/**
+ * @internal Test seam — opens every keychain entry in a fake keychain and returns the one it
+ * replaces; `null` restores the OS keychain.
+ */
+export function _setTestKeychain(open: OpenKeychainEntry | null): OpenKeychainEntry | null {
+  const previous = openTestEntry;
+  openTestEntry = open;
+  return previous;
+}
+
+/** The only way wallet-cli reaches the OS keychain, so a test can swap it with `_setTestKeychain`. */
+export function openKeychainEntry(service: string, account: string): KeychainEntry {
+  return (openTestEntry ?? openOsKeychainEntry)(service, account);
+}
+
 /**
  * A namespaced OS-keychain entry. `hashParts` are hashed together with the state dir so distinct
  * profiles/namespaces/parallel test workers never cross-read each other's entries; `accountPrefix`
@@ -15,19 +38,19 @@ const ENC_PREFIX = "ENC:";
  * Once a caller starts using a given `(accountPrefix, hashParts)` pairing, that pairing becomes
  * load-bearing for it — changing either would silently orphan that caller's already-stored entries.
  */
-export function keychainEntry(accountPrefix: string, ...hashParts: string[]): Entry {
+export function keychainEntry(accountPrefix: string, ...hashParts: string[]): KeychainEntry {
   const digest = createHash("sha256")
     .update([stateDir(APP_NAME), ...hashParts].join(" "))
     .digest("hex")
     .slice(0, 16);
-  return new Entry(SERVICE, `${accountPrefix}-${digest}`);
+  return openKeychainEntry(SERVICE, `${accountPrefix}-${digest}`);
 }
 
 /**
  * "Deleted" and "already absent" both satisfy the postcondition (no key remains), so both collapse
  * to `true`; only a thrown backend error (the key may still persist) returns `false`.
  */
-export function deleteKeychainEntry(entry: Entry): boolean {
+export function deleteKeychainEntry(entry: KeychainEntry): boolean {
   try {
     entry.deletePassword();
     return true;
@@ -36,7 +59,7 @@ export function deleteKeychainEntry(entry: Entry): boolean {
   }
 }
 
-export function hasKeychainEntry(entry: Entry): boolean {
+export function hasKeychainEntry(entry: KeychainEntry): boolean {
   try {
     return entry.getPassword() != null;
   } catch {

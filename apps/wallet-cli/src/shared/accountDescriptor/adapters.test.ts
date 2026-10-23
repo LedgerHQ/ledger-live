@@ -1,3 +1,4 @@
+import "../../live-common-setup";
 import { describe, expect, it } from "bun:test";
 import { toV1, toV0, UnsupportedFamilyError } from "./adapters";
 import type { AccountDescriptorV0 } from "./v0";
