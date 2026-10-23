@@ -81,12 +81,14 @@ on:
         required: false
         type: boolean
         default: true
+      # cellular by default: the emulator's Wi-Fi emulation delays every packet the guest receives by
+      # 100–300 ms, which made the app's ready wait slow and noisy (runs 39941337433 vs 39961518241).
       emulator_network:
-        description: "Android: emulator network path. cellular turns Wi-Fi off, and captures each launch inside the emulator too"
+        description: "Android: emulator network path. cellular turns Wi-Fi off (whose emulation delays every packet) and captures each launch inside the emulator too"
         required: false
         type: choice
-        options: [wifi, cellular]
-        default: wifi
+        options: [cellular, wifi]
+        default: cellular
       emulator_cores:
         description: "Android: CPU cores per emulator (two emulators share an 8-CPU runner; the E2E AVD has 2)"
         required: false
