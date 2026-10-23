@@ -128,6 +128,7 @@
     "@features/flow-pay-deposit": "workspace:^",
     "@features/flow-pay-feature-tour": "workspace:^",
     "@features/flow-pay-request": "workspace:^",
+    "@features/flow-portfolio-services-entry-points": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-app-update": "workspace:*",

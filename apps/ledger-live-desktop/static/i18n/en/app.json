@@ -9727,6 +9727,16 @@
     },
     "noDeviceTitle": "Your secure crypto wallet"
   },
+  "servicesEntryPoints": {
+    "perps": {
+      "title": "Perps",
+      "description": "Invest with leverage"
+    },
+    "borrow": {
+      "title": "Loans",
+      "description": "Borrow stablecoins"
+    }
+  },
   "marketBanner": {
     "title": "Market",
     "genericError": "Connection failed",

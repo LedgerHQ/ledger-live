@@ -170,6 +170,8 @@ describe("PortfolioView", () => {
     shouldDisplayAssetDiscoverability: false,
     shouldDisplayOperationsList: true,
     shouldDisplayBorrowSection: false,
+    shouldDisplayPerpsEntryPoint: true,
+    shouldDisplayServicesEntryPoints: false,
     shouldDisplayBrazePlacement: false,
     isClearCacheBannerVisible: false,
     filterOperations: () => true,
@@ -519,6 +521,63 @@ describe("PortfolioView", () => {
         flow: "perps",
         page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
+      expect(mockNavigate).toHaveBeenCalledWith("/perps");
+    });
+  });
+
+  describe("Services Entry Points", () => {
+    const renderPortfolioWithServices = () =>
+      render(
+        <PortfolioView
+          {...defaultProps}
+          shouldDisplayPerpsEntryPoint={false}
+          shouldDisplayServicesEntryPoints
+        />,
+        {
+          initialState: {
+            settings: {
+              ...AFTER_ONBOARDING_STATE,
+            },
+            ...withFlagOverrides({
+              entryPointsServices: { enabled: true, params: { services: ["borrow", "perps"] } },
+              ptxPerpsLiveApp: { enabled: true },
+              ptxBorrowLiveApp: { enabled: true },
+            }),
+          },
+        },
+      );
+
+    it("should render the services between the crypto and stablecoin sections", async () => {
+      renderPortfolioWithServices();
+
+      const services = await screen.findByTestId("portfolio-services-entry-points");
+      const cryptos = screen.getByTestId("cryptos-section");
+      const stablecoins = screen.getByTestId("stablecoins-section");
+
+      expect(cryptos.compareDocumentPosition(services)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+      expect(services.compareDocumentPosition(stablecoins)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+      expect(
+        screen.getAllByTestId(/^portfolio-services-entry-point-/).map(tile => tile.dataset.testid),
+      ).toEqual(["portfolio-services-entry-point-borrow", "portfolio-services-entry-point-perps"]);
+      expect(screen.queryByTestId("portfolio-perps-entry-point")).toBeNull();
+    });
+
+    it("should track and navigate when clicking a service", async () => {
+      const { user } = renderPortfolioWithServices();
+
+      await user.click(await screen.findByTestId("portfolio-services-entry-point-borrow"));
+
+      expect(track).toHaveBeenCalledWith("button_clicked", {
+        button: "borrow_entry_point",
+        flow: "borrow",
+        page: PORTFOLIO_TRACKING_PAGE_NAME,
+      });
+      expect(mockNavigate).toHaveBeenCalledWith("/borrow", {
+        state: { returnTo: expect.any(String) },
+      });
+
+      await user.click(screen.getByTestId("portfolio-services-entry-point-perps"));
+
       expect(mockNavigate).toHaveBeenCalledWith("/perps");
     });
   });

@@ -67,6 +67,21 @@ export const overrideInitialStateWithPerpsAndAssetSection = withFlagOverrides(
   }),
 );
 
+export const overrideInitialStateWithServicesEntryPoints = withFlagOverrides(
+  {
+    lwmWallet40: { params: { assetSection: true } },
+    entryPointsServices: { enabled: true, params: { services: ["borrow", "perps"] } },
+    ptxPerpsLiveAppMobile: { enabled: true },
+    ptxBorrowLiveApp: { enabled: true },
+  },
+  state => ({
+    ...state,
+    accounts: {
+      active: [mockAccount],
+    },
+  }),
+);
+
 export const overrideInitialStateWithAssetSection =
   (assetSection: boolean, accounts: Account[] = [mockAccount]) =>
   (state: State): State =>
