@@ -3,7 +3,7 @@ import { CardLoginView } from "./CardLoginView";
 import { useCardLoginViewModel } from "./useCardLoginViewModel";
 import { openHostedUrlInSecureBrowser } from "./openHostedLogin.native";
 import { mobileWallet } from "./mobileWallet.native";
-import type { CardLoginProps } from "./types";
+import type { CardLoginProps } from "./CardLogin.types";
 
 export function CardLogin({
   children,

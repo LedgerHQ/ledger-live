@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { selectCardAuthStatus, selectIsCardSessionResolving } from "../state/selectors";
-import type { PayCardAuthStatus } from "../state/types";
+import type { PayCardAuthStatus } from "../state/hostTypes";
 
 /**
  * Where the Card session stands, for hosts that compose the Card flow around it. Unlike

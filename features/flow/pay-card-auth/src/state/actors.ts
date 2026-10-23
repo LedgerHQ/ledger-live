@@ -4,7 +4,8 @@ import { buildAuthorizeUrl } from "./buildAuthorizeUrl";
 import { parseCallbackUrl } from "./callbackUrl";
 import { MissingLoginStateError } from "./errors";
 import type { PayCardLoginErrorKind } from "./errors";
-import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "./types";
+import type { CardLoginOauthConfig, PayCardAuthCallback } from "./hostTypes";
+import type { CardLoginPorts } from "./types";
 
 /**
  * Every asynchronous step of the login, as an invoked actor. Each one takes what it needs as input and

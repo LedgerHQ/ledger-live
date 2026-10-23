@@ -10,17 +10,8 @@
 // Every entry is temporary. Give each one an exit condition so it can be deleted rather than
 // inherited.
 
-const OWNING_TEAM_DEFERRAL =
-  "TEMPORARY. Conformant barrels were prepared and verified for this package, then reverted so the " +
-  "owning team can land the change on its own schedule. Exit condition: the team converts its " +
-  '`index.*` files to `export * from "./x"`, moving anything private to an internals location, ' +
-  "then deletes this entry. Nothing here is blocked — only deferred.";
-
 /** @type {Record<string, { skip?: boolean, allowNonRelative?: boolean, reason: string }>} */
 const PACKAGE_EXCEPTIONS = {
-  // @ledgerhq/ptx
-  "features/flow/pay-card-auth": { skip: true, reason: OWNING_TEAM_DEFERRAL },
-
   "shared/env": {
     skip: true,
     reason:
