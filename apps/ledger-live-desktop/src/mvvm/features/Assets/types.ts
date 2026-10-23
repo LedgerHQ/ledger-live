@@ -9,10 +9,12 @@ export type AssetsProps = {
   readonly afterCryptosSection?: ReactNode;
 };
 
-export type AssetsViewProps = AssetsProps & {
+export type AssetsViewModelResult = {
   readonly isLoading: boolean;
   readonly sections: AssetSectionData[];
 };
+
+export type AssetsViewProps = AssetsViewModelResult & AssetsProps;
 
 export type AssetSectionData = {
   readonly sectionId: string;

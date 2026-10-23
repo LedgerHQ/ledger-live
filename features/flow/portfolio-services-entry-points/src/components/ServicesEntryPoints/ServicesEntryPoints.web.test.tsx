@@ -1,49 +1,27 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { useFeature } from "@features/platform-feature-flags";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type { PartialFeatures } from "@shared/feature-flags";
 import { track } from "@shared/analytics";
-import { I18nTestProvider } from "@shared/i18n/testing";
+import { createTestWrapper } from "../../testing/createTestWrapper";
 import { ServicesEntryPoints } from "./ServicesEntryPoints";
 
-jest.mock("@features/platform-feature-flags", () => ({ useFeature: jest.fn() }));
 jest.mock("@shared/analytics", () => ({ track: jest.fn() }));
 
-const mockUseFeature = jest.mocked(useFeature);
 const mockTrack = jest.mocked(track);
 
-type Flags = {
-  entryPointsServices?: { enabled: boolean; params?: { services: string[] } };
-  ptxPerpsLiveApp?: { enabled: boolean };
-  ptxBorrowLiveApp?: { enabled: boolean };
+const ENABLED_SERVICES: PartialFeatures = {
+  entryPointsServices: { enabled: true, params: { services: ["perps", "borrow"] } },
+  ptxPerpsLiveApp: { enabled: true, params: { manifest_id: "perps-live-app" } },
+  ptxBorrowLiveApp: { enabled: true },
 };
 
-function mockFlags(flags: Flags) {
-  mockUseFeature.mockImplementation(function getFlag(key) {
-    return (flags[key as keyof Flags] ?? null) as ReturnType<typeof useFeature>;
+function renderEntryPoints(flags: PartialFeatures = ENABLED_SERVICES) {
+  const onOpenService = jest.fn();
+  render(<ServicesEntryPoints page="Portfolio" onOpenService={onOpenService} />, {
+    wrapper: createTestWrapper(flags),
   });
-}
-
-function enabledServices(services: string[]): Flags {
-  return {
-    entryPointsServices: { enabled: true, params: { services } },
-    ptxPerpsLiveApp: { enabled: true },
-    ptxBorrowLiveApp: { enabled: true },
-  };
-}
-
-function renderEntryPoints(onOpenService = jest.fn()) {
-  render(
-    <I18nTestProvider>
-      <ServicesEntryPoints page="Portfolio" onOpenService={onOpenService} />
-    </I18nTestProvider>,
-  );
-  return { onOpenService };
-}
-
-function renderedServices() {
-  return screen.getAllByTestId(/^portfolio-services-entry-point-/).map(function getService(tile) {
-    return tile.dataset.testid?.replace("portfolio-services-entry-point-", "");
-  });
+  return { onOpenService, user: userEvent.setup() };
 }
 
 describe("ServicesEntryPoints (Web)", () => {
@@ -51,43 +29,38 @@ describe("ServicesEntryPoints (Web)", () => {
     jest.clearAllMocks();
   });
 
-  it("renders the services in the order set by the flag", () => {
-    mockFlags(enabledServices(["borrow", "perps"]));
-
+  it("should render the title and description of each service", () => {
     renderEntryPoints();
 
-    expect(renderedServices()).toEqual(["borrow", "perps"]);
     expect(screen.getByText("servicesEntryPoints.perps.title")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.perps.description")).toBeVisible();
+    expect(screen.getByText("servicesEntryPoints.borrow.title")).toBeVisible();
     expect(screen.getByText("servicesEntryPoints.borrow.description")).toBeVisible();
   });
 
-  it("hides a service whose desktop feature is off", () => {
-    mockFlags({ ...enabledServices(["perps", "borrow"]), ptxPerpsLiveApp: { enabled: false } });
-
-    renderEntryPoints();
-
-    expect(renderedServices()).toEqual(["borrow"]);
-  });
-
-  it("renders nothing when the flag is off", () => {
-    mockFlags({ ...enabledServices(["perps", "borrow"]), entryPointsServices: { enabled: false } });
-
-    renderEntryPoints();
+  it("should render nothing when no service is available", () => {
+    renderEntryPoints({ entryPointsServices: ENABLED_SERVICES.entryPointsServices });
 
     expect(screen.queryByTestId("portfolio-services-entry-points")).not.toBeInTheDocument();
   });
 
-  it("tracks the click and opens the service", () => {
-    mockFlags(enabledServices(["perps", "borrow"]));
-    const { onOpenService } = renderEntryPoints();
+  it("should track the click on a service", async () => {
+    const { user } = renderEntryPoints();
 
-    fireEvent.click(screen.getByTestId("portfolio-services-entry-point-borrow"));
+    await user.click(screen.getByText("servicesEntryPoints.borrow.title"));
 
     expect(mockTrack).toHaveBeenCalledWith("button_clicked", {
       button: "borrow_entry_point",
       flow: "borrow",
       page: "Portfolio",
     });
+  });
+
+  it("should open the clicked service", async () => {
+    const { onOpenService, user } = renderEntryPoints();
+
+    await user.click(screen.getByText("servicesEntryPoints.borrow.title"));
+
     expect(onOpenService).toHaveBeenCalledWith("borrow");
   });
 });

@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { AssetSection } from "./components/AssetsSection";
+import { CRYPTOS_SECTION_ID } from "./constants";
 import { AssetsViewProps } from "./types";
 
 export function AssetsView({ isLoading, sections, afterCryptosSection }: AssetsViewProps) {
@@ -12,7 +13,7 @@ export function AssetsView({ isLoading, sections, afterCryptosSection }: AssetsV
         return (
           <Fragment key={section.sectionId}>
             <AssetSection {...section} />
-            {section.sectionId === "cryptos" && afterCryptosSection}
+            {section.sectionId === CRYPTOS_SECTION_ID && afterCryptosSection}
           </Fragment>
         );
       })}

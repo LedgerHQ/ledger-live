@@ -96,6 +96,7 @@ describe("usePortfolioViewModel", () => {
       initialState: {
         settings: INITIAL_STATE,
         ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
           entryPointsServices: { enabled: true },
           ptxBorrowLiveApp: { enabled: true },
         }),
@@ -112,7 +113,25 @@ describe("usePortfolioViewModel", () => {
       initialState: {
         settings: INITIAL_STATE,
         ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
           entryPointsServices: { enabled: false },
+          ptxBorrowLiveApp: { enabled: true },
+        }),
+      },
+    });
+
+    expect(result.current.shouldDisplayServicesEntryPoints).toBe(false);
+    expect(result.current.shouldDisplayPerpsEntryPoint).toBe(true);
+    expect(result.current.shouldDisplayBorrowSection).toBe(true);
+  });
+
+  it("should keep the perps and borrow entry points when the asset section is hidden", () => {
+    const { result } = renderHook(usePortfolioViewModel, {
+      initialState: {
+        settings: INITIAL_STATE,
+        ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { assetSection: false } },
+          entryPointsServices: { enabled: true },
           ptxBorrowLiveApp: { enabled: true },
         }),
       },

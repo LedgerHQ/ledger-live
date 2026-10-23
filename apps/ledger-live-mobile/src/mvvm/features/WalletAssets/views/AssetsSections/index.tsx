@@ -10,20 +10,20 @@ interface AssetsSectionsProps {
   variant: WalletAssetsVariant;
   shouldDisplayAssetSection: boolean;
   shouldDisplayAssetDiscoverability: boolean;
-  shouldDisplayServicesSection: boolean;
+  shouldDisplayServicesEntryPoints: boolean;
 }
 
 export const AssetsSections: React.FC<AssetsSectionsProps> = ({
   variant,
   shouldDisplayAssetSection,
   shouldDisplayAssetDiscoverability,
-  shouldDisplayServicesSection,
+  shouldDisplayServicesEntryPoints,
 }) => {
   if (shouldDisplayAssetSection) {
     return (
       <Box lx={{ gap: "s16" }}>
         <PortfolioCryptosSection variant={variant} />
-        {shouldDisplayServicesSection && <PortfolioServicesSection />}
+        {shouldDisplayServicesEntryPoints && <PortfolioServicesSection />}
         <PortfolioStablecoinsSection variant={variant} />
         {shouldDisplayAssetDiscoverability && <PortfolioStocksSection variant={variant} />}
       </Box>

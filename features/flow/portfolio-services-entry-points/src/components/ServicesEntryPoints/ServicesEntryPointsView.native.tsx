@@ -21,22 +21,18 @@ const ICONS = {
 
 type ServiceCardProps = Readonly<{
   service: ServiceEntryPointId;
-  onPressService: (service: ServiceEntryPointId) => void;
+  onOpenService: (service: ServiceEntryPointId) => void;
 }>;
 
-function ServiceCard({ service, onPressService }: ServiceCardProps) {
+function ServiceCard({ service, onOpenService }: ServiceCardProps) {
   const { t } = useTranslation();
 
   function handlePress() {
-    onPressService(service);
+    onOpenService(service);
   }
 
   return (
-    <Card
-      lx={{ flex: 1 }}
-      testID={`portfolio-services-entry-point-${service}`}
-      onPress={handlePress}
-    >
+    <Card lx={{ flex: 1 }} onPress={handlePress}>
       <CardHeader>
         <CardLeading lx={{ flex: 0, flexDirection: "column", alignItems: "flex-start", gap: "s8" }}>
           <Spot icon={ICONS[service]} />
@@ -52,16 +48,13 @@ function ServiceCard({ service, onPressService }: ServiceCardProps) {
   );
 }
 
-export function ServicesEntryPointsView({
-  services,
-  onPressService,
-}: ServicesEntryPointsViewProps) {
+export function ServicesEntryPointsView({ services, onOpenService }: ServicesEntryPointsViewProps) {
   if (services.length === 0) return null;
 
   return (
     <Box lx={{ flexDirection: "row", gap: "s12" }} testID="portfolio-services-entry-points">
       {services.map(function renderServiceCard(service) {
-        return <ServiceCard key={service} service={service} onPressService={onPressService} />;
+        return <ServiceCard key={service} service={service} onOpenService={onOpenService} />;
       })}
     </Box>
   );

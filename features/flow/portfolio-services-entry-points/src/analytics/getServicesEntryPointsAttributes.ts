@@ -1,5 +1,5 @@
 import type { Feature } from "@shared/feature-flags";
-import type { ServicesEntryPointsFlagParams } from "../types";
+import type { ServicesEntryPointsFlagParams } from "../types.internals";
 
 type ServicesEntryPointsFlag = Feature<ServicesEntryPointsFlagParams> | null | undefined;
 

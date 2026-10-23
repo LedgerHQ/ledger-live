@@ -3,6 +3,6 @@ import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 export default createDualPlatformKnipConfig({
   packagePath: "features/flow/portfolio-services-entry-points",
   platform: "native",
-  entry: ["src/index.native.ts"],
+  entry: [],
   additionalProjectExcludes: ["src/index.ts"],
 });

@@ -40,9 +40,6 @@ export const PortfolioView = memo(function PortfolioView({
 }: PortfolioViewModelResult) {
   const shouldDisplayAddAccountCta = totalAccounts === 0 && !shouldDisplayAssetSection;
   const shouldRenderLegacyOperationsList = !shouldDisplayOperationsList && totalOperations > 0;
-  const servicesEntryPoints = shouldDisplayServicesEntryPoints ? (
-    <PortfolioServicesEntryPoints />
-  ) : null;
 
   return (
     <>
@@ -75,12 +72,13 @@ export const PortfolioView = memo(function PortfolioView({
           {shouldDisplayPerpsEntryPoint && <PerpsEntryPoint />}
 
           {shouldDisplayAssetSection ? (
-            <Assets afterCryptosSection={servicesEntryPoints} />
+            <Assets
+              afterCryptosSection={
+                shouldDisplayServicesEntryPoints ? <PortfolioServicesEntryPoints /> : null
+              }
+            />
           ) : (
-            <>
-              <AssetDistribution />
-              {servicesEntryPoints}
-            </>
+            <AssetDistribution />
           )}
           {shouldDisplayAssetDiscoverability && <StocksSection />}
           {shouldDisplayBorrowSection && <BorrowEntryPoint />}
