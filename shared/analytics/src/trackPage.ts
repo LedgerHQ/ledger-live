@@ -36,6 +36,7 @@ export function trackPage(
     updateRoutes = false,
     refreshSource = false,
     avoidDuplicates = false,
+    callerWins,
   }: TrackPageOptions = {},
 ): void | Promise<void> {
   const fullScreenName = buildFullScreenName(category, name);
@@ -62,5 +63,5 @@ export function trackPage(
   const source = getPreviousTrackingPage();
   const eventProps = source ? { source, ...normalizedProps } : normalizedProps;
 
-  return trackEvent({ kind: "page", eventName, props: eventProps, mandatory });
+  return trackEvent({ kind: "page", eventName, props: eventProps, mandatory, callerWins });
 }

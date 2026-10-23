@@ -13,6 +13,7 @@ import {
   ToggleEarlyCheckCommandError,
   type ToggleEarlyCheckErrorCode,
 } from "./device/toggleEarlyCheckCommand";
+import { stateValueToString } from "./host";
 import { deviceOnboardingMachine } from "./machine";
 import { settle } from "./tests/actorHarness";
 import {
@@ -91,6 +92,15 @@ describe("routing", () => {
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
     expect(fake.earlyCheckToggles()).toEqual([]);
+  });
+
+  it("publishes the seeded success screen before completing", async () => {
+    const seen: string[] = [];
+    const { actor } = await start({ osVersion: [os(seeded)], ...passingChecks }, { seen });
+
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(seen).toContain("checks.checksSucceeded");
+    expect(seen.at(-1)).toBe("done");
   });
 
   it("checks a device whose onboarding step it cannot parse, which is every device today", async () => {
@@ -1541,6 +1551,7 @@ async function launch(
     hostsSeedSetup: boolean;
     omitHostsSeedSetup: boolean;
     leaveOnboarding: (reason: string, context: DeviceOnboardingContext) => void;
+    seen?: string[];
   }> = {},
 ): Promise<{ actor: OnboardingActor; fake: FakeOnboardingDmk }> {
   const fake = createFakeOnboardingDmk(script);
@@ -1559,7 +1570,14 @@ async function launch(
       offerSync: overrides.offerSync ?? false,
       ...(overrides.omitHostsSeedSetup ? {} : { hostsSeedSetup: overrides.hostsSeedSetup ?? true }),
     },
-  }).start();
+  });
+  if (overrides.seen) {
+    const seen = overrides.seen;
+    actor.subscribe(snapshot => {
+      seen.push(stateValueToString(snapshot.value));
+    });
+  }
+  actor.start();
 
   started.push(actor);
   await settle();

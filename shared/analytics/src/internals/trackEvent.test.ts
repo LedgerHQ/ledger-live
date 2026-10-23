@@ -104,6 +104,29 @@ describe("trackEvent", () => {
       });
     });
 
+    it("keeps listed caller props and drops a listed key the caller omitted", async () => {
+      const analyticsClient = createAnalyticsClient();
+      setAnalytics(analyticsClient);
+      setExtraPropsFn(() => ({
+        platform: "mobile",
+        deviceVersion: "9.9.9",
+        appVersion: "1.0.0",
+      }));
+
+      await trackEvent({
+        kind: "track",
+        eventName: "Seeded",
+        props: { platform: "lwm", deviceType: "stax" },
+        callerWins: ["platform", "deviceType", "deviceVersion"],
+      });
+
+      expect(analyticsClient.track).toHaveBeenCalledWith("Seeded", {
+        platform: "lwm",
+        deviceType: "stax",
+        appVersion: "1.0.0",
+      });
+    });
+
     it("uses mandatory extra props for mandatory events", async () => {
       const analyticsClient = createAnalyticsClient();
       setAnalytics(analyticsClient);

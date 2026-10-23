@@ -3,6 +3,11 @@ import type { DeviceOnboardingExitReason } from "@features/platform-device-onboa
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
+import {
+  trackSeededChecksSuccess,
+  trackSeededOnboardingAborted,
+  trackSeededOnboardingDone,
+} from "../analytics/seededTracking";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
 
 type ExitDeps = {
@@ -19,17 +24,22 @@ type ExitDeps = {
 
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
   completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
+    trackSeededChecksSuccess();
+    void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
   offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
+    trackSeededChecksSuccess();
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,
     });
   },
-  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
-    resetToMyLedger(navigation, device, shouldDisplayMyWallet),
+  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) => {
+    void trackSeededOnboardingAborted();
+    resetToMyLedger(navigation, device, shouldDisplayMyWallet);
+  },
   legacyFallback: ({
     navigation,
     device,
@@ -49,17 +59,21 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
         resetToLegacySeededChecks(navigation, device);
         return;
       }
+      void trackSeededOnboardingAborted();
       navigation.goBack();
       return;
     }
+    void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
   userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
     if (!isGenuine) {
+      void trackSeededOnboardingAborted();
       navigation.goBack();
       return;
     }
+    void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },

@@ -11,6 +11,8 @@ export type TrackScreenProps = {
   avoidDuplicates?: boolean;
   /** Send the screen event even when standard analytics tracking is disabled. */
   mandatory?: boolean;
+  /** Keys whose caller value survives host enrichment. */
+  callerWins?: readonly string[];
   [key: string]: unknown;
 };
 
@@ -24,6 +26,7 @@ export function TrackScreen({
   refreshSource = true,
   avoidDuplicates = false,
   mandatory = false,
+  callerWins,
   ...props
 }: TrackScreenProps): null {
   const isFocused = useIsFocused();
@@ -35,10 +38,16 @@ export function TrackScreen({
     if (isFocused) {
       trackPage(
         { category, name, props },
-        { updateRoutes: true, refreshSource, avoidDuplicates, mandatory },
+        {
+          updateRoutes: true,
+          refreshSource,
+          avoidDuplicates,
+          mandatory,
+          ...(callerWins ? { callerWins } : {}),
+        },
       );
     }
-  }, [category, name, props, isFocused, refreshSource, avoidDuplicates, mandatory]);
+  }, [category, name, props, isFocused, refreshSource, avoidDuplicates, mandatory, callerWins]);
 
   return null;
 }

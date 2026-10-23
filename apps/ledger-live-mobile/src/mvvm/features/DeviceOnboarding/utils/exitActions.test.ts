@@ -1,3 +1,4 @@
+import { track, trackPage } from "@shared/analytics";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -10,7 +11,15 @@ import {
   setReadOnlyMode,
 } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
+import { resetSeededOnboardingAnalytics } from "../analytics/seededTracking";
 import { exitActions } from "./exitActions";
+
+jest.mock("@shared/analytics", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getCurrentTrackingPage: jest.fn(() => ""),
+  getPreviousTrackingPage: jest.fn(() => ""),
+}));
 
 type ExitDeps = Parameters<(typeof exitActions)[DeviceOnboardingExitReason]>[0];
 type Route = { name: string; params?: unknown; state?: { routes: Route[] } };
@@ -25,6 +34,11 @@ const stax: Device = {
 const portfolio = [NavigatorName.Base, NavigatorName.Main];
 
 describe("exitActions", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    resetSeededOnboardingAnalytics();
+  });
+
   it.each([
     [
       "resumeFirmwareUpdate",
@@ -172,6 +186,65 @@ describe("exitActions", () => {
         },
       ],
     });
+  });
+
+  it("should abort seeded onboarding when the update continues outside this funnel", () => {
+    leave("resumeFirmwareUpdate");
+
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_aborted",
+      expect.objectContaining({ firmware_update_done: "no", ledger_sync_done: "no" }),
+      expect.anything(),
+    );
+  });
+
+  it("should leave a legacy detour untracked", () => {
+    leave("legacyFallback");
+    leave("legacyFallback", { deviceWasSeeded: true, firmwareNeedsLegacyFlow: true });
+
+    expect(track).not.toHaveBeenCalled();
+  });
+
+  it("should abort when a seeded failure leaves after a supported firmware", () => {
+    leave("legacyFallback", { deviceWasSeeded: true, firmwareNeedsLegacyFlow: false });
+
+    expect(track).toHaveBeenCalledWith("onboarding_aborted", expect.anything(), expect.anything());
+  });
+
+  it("should track the success page when seeded checks complete", () => {
+    leave("completed");
+
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Genuine Check & OS success" }),
+      expect.anything(),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "no" }),
+      expect.anything(),
+    );
+  });
+
+  it("should complete seeded onboarding when a genuine device quits", () => {
+    leave("userQuit", { isGenuine: true });
+
+    expect(track).toHaveBeenCalledWith("onboarding_done", expect.anything(), expect.anything());
+  });
+
+  it("should abort seeded onboarding when the device quits before it is genuine", () => {
+    leave("userQuit", { isGenuine: false });
+
+    expect(track).toHaveBeenCalledWith("onboarding_aborted", expect.anything(), expect.anything());
+  });
+
+  it("should track checks success without completing when the sync offer opens", () => {
+    leave("offerLedgerSync");
+
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Genuine Check & OS success" }),
+      expect.anything(),
+    );
+    expect(track).not.toHaveBeenCalled();
   });
 
   it("should finish a seeded fallback only after a current genuine verdict", () => {

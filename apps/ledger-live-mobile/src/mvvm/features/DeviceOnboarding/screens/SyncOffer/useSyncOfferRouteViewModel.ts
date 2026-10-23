@@ -15,6 +15,13 @@ import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import {
+  markLedgerSyncDone,
+  rememberSeededOnboarding,
+  seededPages,
+  trackSeededOnboardingDone,
+  trackSeededPage,
+} from "../../analytics/seededTracking";
 import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
 import { resetToPortfolio } from "../../utils/exitActions";
 import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
@@ -44,22 +51,48 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     [navigation],
   );
 
-  const finishOnboarding = useCallback(() => {
-    if (completedOnSync.current) return;
-    completedOnSync.current = true;
-    allowLeave.current = true;
-    complete();
-    notifyFlowCompleted("onboarding");
-    resetToPortfolio(navigation);
-  }, [complete, navigation, notifyFlowCompleted]);
+  const finishOnboarding = useCallback(
+    (syncDone: boolean) => {
+      if (completedOnSync.current) return;
+      completedOnSync.current = true;
+      allowLeave.current = true;
+      if (syncDone) {
+        markLedgerSyncDone();
+        void trackSeededPage(seededPages.ledgerSyncSuccess);
+      }
+      void trackSeededOnboardingDone();
+      complete();
+      notifyFlowCompleted("onboarding");
+      resetToPortfolio(navigation);
+    },
+    [complete, navigation, notifyFlowCompleted],
+  );
+
+  useEffect(() => {
+    let focused = true;
+    rememberSeededOnboarding({ deviceType: device.modelId });
+    void trackSeededPage(seededPages.ledgerSync);
+    const unsubscribeFocus = navigation.addListener("focus", () => {
+      if (focused) return;
+      focused = true;
+      void trackSeededPage(seededPages.ledgerSync);
+    });
+    const unsubscribeBlur = navigation.addListener("blur", () => {
+      focused = false;
+    });
+    return () => {
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [device.modelId, navigation]);
 
   useEffect(() => {
     if (!handoverStarted || !hasTrustchain) return;
-    finishOnboarding();
+    finishOnboarding(true);
   }, [finishOnboarding, handoverStarted, hasTrustchain]);
 
   const leaveToPortfolio = useCallback(() => {
-    finishOnboarding();
+    finishOnboarding(false);
   }, [finishOnboarding]);
 
   const onActivate = useCallback(() => {

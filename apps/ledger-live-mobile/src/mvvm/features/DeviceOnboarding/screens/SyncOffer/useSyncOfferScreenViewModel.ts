@@ -1,5 +1,18 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import {
+  getCurrentTrackingPage,
+  getPreviousTrackingPage,
+  restoreTrackingPages,
+} from "@shared/analytics";
 import { useTranslation } from "~/context/Locale";
+import {
+  seededButtons,
+  seededCallerWins,
+  seededPages,
+  seededSharedProps,
+  trackSeededClick,
+  trackSeededPage,
+} from "../../analytics/seededTracking";
 
 type SkipDrawerProps = Readonly<{
   isOpen: boolean;
@@ -19,6 +32,8 @@ export type SyncOfferViewProps = Readonly<{
   onOpenSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
+  trackingProps: ReturnType<typeof seededSharedProps>;
+  callerWins: readonly string[];
   skipDrawer: SkipDrawerProps;
 }>;
 
@@ -37,7 +52,24 @@ export function useSyncOfferScreenViewModel({
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
-  const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
+  const offerPages = useRef<{ current: string; previous: string } | null>(null);
+  const skipDrawerAction = useRef(false);
+  const closeSkipDrawer = () => {
+    setIsSkipDrawerOpen(false);
+    if (skipDrawerAction.current) {
+      skipDrawerAction.current = false;
+      offerPages.current = null;
+      return;
+    }
+    const saved = offerPages.current;
+    offerPages.current = null;
+    if (!saved) return;
+    restoreTrackingPages(saved.current, saved.previous);
+  };
+  const closeSkipDrawerForAction = () => {
+    skipDrawerAction.current = true;
+    closeSkipDrawer();
+  };
 
   return {
     title: t("deviceOnboarding.syncOffer.title"),
@@ -46,19 +78,40 @@ export function useSyncOfferScreenViewModel({
     activateLabel: t("deviceOnboarding.syncOffer.activate"),
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
-    onActivate,
-    onOpenSkip: () => setIsSkipDrawerOpen(true),
-    onLearnMore,
-    onQuit,
+    onActivate: () => {
+      void trackSeededClick(seededButtons.activateSync, seededPages.ledgerSync);
+      onActivate();
+    },
+    onOpenSkip: () => {
+      void trackSeededClick(seededButtons.skip, seededPages.ledgerSync);
+      offerPages.current = {
+        current: getCurrentTrackingPage(),
+        previous: getPreviousTrackingPage(),
+      };
+      setIsSkipDrawerOpen(true);
+    },
+    onLearnMore: () => {
+      void trackSeededClick(seededButtons.learnMore, seededPages.ledgerSync);
+      onLearnMore();
+    },
+    onQuit: () => {
+      void trackSeededClick(seededButtons.close, seededPages.ledgerSync);
+      onQuit();
+    },
+    trackingProps: seededSharedProps(),
+    callerWins: seededCallerWins,
     skipDrawer: {
       isOpen: isSkipDrawerOpen,
       onClose: closeSkipDrawer,
       onSkip: () => {
-        closeSkipDrawer();
+        closeSkipDrawerForAction();
+        void trackSeededClick(seededButtons.yesSkip, seededPages.skipDrawer);
+        void trackSeededPage(seededPages.ledgerSyncRefused);
         onSkip();
       },
       onActivate: () => {
-        closeSkipDrawer();
+        closeSkipDrawerForAction();
+        void trackSeededClick(seededButtons.enableSync, seededPages.skipDrawer);
         onActivate();
       },
     },
