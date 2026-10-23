@@ -5,8 +5,14 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { auditFileExceptions, checkPackage, findPackageRoots } = require("./validate");
+const {
+  auditFileExceptions,
+  auditIntermediateBarrelWaivers,
+  checkPackage,
+  findPackageRoots,
+} = require("./validate");
 const { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
+const { INTERMEDIATE_BARREL_WAIVERS } = require("./intermediate-barrels");
 
 const REPO_ROOT = path.resolve(__dirname, "../../..");
 
@@ -37,10 +43,13 @@ test("nested barrels are checked, at any depth", () => {
     "shared/thing/src/index.ts": 'export * from "./deep";\n',
     "shared/thing/src/deep/nested/index.ts": 'export { a } from "./a";\n',
   });
-  const found = checkPackage(root, "shared/thing");
-  assert.equal(found.length, 1);
-  assert.equal(found[0].file, "shared/thing/src/deep/nested/index.ts");
-  assert.equal(found[0].code, "not-a-barrel");
+  assert.deepEqual(
+    checkPackage(root, "shared/thing").map(v => [v.file, v.code]),
+    [
+      ["shared/thing/src/deep/nested/index.ts", "not-a-barrel"],
+      ["shared/thing/src/deep/nested/index.ts", "orphan-barrel"],
+    ],
+  );
 });
 
 test("tests and non-index files are left alone", () => {
@@ -346,4 +355,245 @@ test("an `.ios` file does not hide its `.android` sibling", () => {
     checkPackage(root, "shared/thing").map(v => v.file),
     ["shared/thing/src/theme.android.ts", "shared/thing/src/theme.ios.ts"],
   );
+});
+
+/**
+ * @param {Record<string, string>} files
+ * @returns {string[][]} each barrel location violation, as [file, code]
+ */
+function barrelLocations(files) {
+  return checkPackage(workspace(files), "shared/thing", {}, {}, {})
+    .filter(v => v.code === "orphan-barrel" || v.code === "nested-barrel")
+    .map(v => [v.file, v.code]);
+}
+
+test("the root barrel and its platform variants are allowed", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/src/index.ts": 'export * from "./schema";\n',
+      "shared/thing/src/index.native.ts": 'export * from "./schema";\n',
+      "shared/thing/src/index.web.tsx": 'export * from "./schema";\n',
+      "shared/thing/src/schema.ts": "export const a = 1;\n",
+    }),
+    [],
+  );
+});
+
+test("an exports target is an entry, so its own first-level barrels are allowed", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/package.json": JSON.stringify({
+        exports: {
+          ".": "./src/index.ts",
+          "./state": {
+            "react-native": "./src/state/index.native.ts",
+            default: "./src/state/index.ts",
+          },
+        },
+      }),
+      "shared/thing/src/index.ts": 'export * from "./schema";\n',
+      "shared/thing/src/schema.ts": "export const a = 1;\n",
+      "shared/thing/src/state/index.ts": 'export * from "./slice";\n',
+      "shared/thing/src/state/index.native.ts": 'export * from "./slice";\n',
+      "shared/thing/src/state/slice/index.ts": 'export * from "./slice";\n',
+      "shared/thing/src/state/slice/slice.ts": "export const slice = 1;\n",
+    }),
+    [],
+  );
+});
+
+test("a barrel one `export *` level below an entry is allowed, even through a plain module", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/src/index.ts": 'export * from "./hooks";\nexport * from "./api";\n',
+      "shared/thing/src/hooks/index.ts": 'export * from "./useThing";\n',
+      "shared/thing/src/hooks/useThing.ts": "export const useThing = () => 1;\n",
+      "shared/thing/src/api.ts": 'export * from "./client";\nexport const api = 1;\n',
+      "shared/thing/src/client/index.ts": 'export * from "./client";\n',
+      "shared/thing/src/client/client.ts": "export const client = 1;\n",
+    }),
+    [],
+  );
+});
+
+test("a barrel in an internals location is allowed", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/src/index.ts": 'export * from "./schema";\n',
+      "shared/thing/src/schema.ts":
+        'import { helper } from "./internals";\nexport const a = helper;\n',
+      "shared/thing/src/internals/index.ts": 'export * from "./helper";\n',
+      "shared/thing/src/internals/helper.ts": "export const helper = 1;\n",
+    }),
+    [],
+  );
+});
+
+test("a barrel two levels below its entry is nested, on every platform", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/src/index.ts": 'export * from "./components";\n',
+      "shared/thing/src/components/index.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/Card/index.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/Card/index.native.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/Card/index.web.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/Card/Card.ts": "export const Card = 1;\n",
+    }),
+    [
+      ["shared/thing/src/components/Card/index.native.ts", "nested-barrel"],
+      ["shared/thing/src/components/Card/index.ts", "nested-barrel"],
+      ["shared/thing/src/components/Card/index.web.ts", "nested-barrel"],
+    ],
+  );
+});
+
+test("an entry reached from another entry counts from itself", () => {
+  const files = {
+    "shared/thing/src/index.ts": 'export * from "./legacy";\n',
+    "shared/thing/src/legacy/index.ts": 'export * from "./store";\n',
+    "shared/thing/src/legacy/store/index.ts": 'export * from "./slice";\n',
+    "shared/thing/src/legacy/store/slice.ts": "export const slice = 1;\n",
+  };
+  const manifest = exports => ({ "shared/thing/package.json": JSON.stringify({ exports }) });
+  // Two levels below the root, but one below the `./legacy` entry.
+  assert.deepEqual(
+    barrelLocations({
+      ...files,
+      ...manifest({ ".": "./src/index.ts", "./legacy": "./src/legacy/index.ts" }),
+    }),
+    [],
+  );
+  assert.deepEqual(barrelLocations({ ...files, ...manifest({ ".": "./src/index.ts" }) }), [
+    ["shared/thing/src/legacy/store/index.ts", "nested-barrel"],
+  ]);
+});
+
+test("a barrel only its own package imports is an orphan, on every platform", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/src/index.ts": 'export * from "./view";\n',
+      "shared/thing/src/view.ts": 'import { Row } from "./Row";\nexport const view = Row;\n',
+      "shared/thing/src/Row/index.native.ts": 'export * from "./Row";\n',
+      "shared/thing/src/Row/index.web.ts": 'export * from "./Row";\n',
+      "shared/thing/src/Row/Row.ts": "export const Row = 1;\n",
+    }),
+    [
+      ["shared/thing/src/Row/index.native.ts", "orphan-barrel"],
+      ["shared/thing/src/Row/index.web.ts", "orphan-barrel"],
+    ],
+  );
+});
+
+test("an orphan `index.tsx` holding code is reported for both rules", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts": 'export * from "./schema";\n',
+    "shared/thing/src/schema.ts": "export const a = 1;\n",
+    "shared/thing/src/Card/index.tsx": "export const Card = () => <div />;\n",
+  });
+  assert.deepEqual(
+    checkPackage(root, "shared/thing", {}, {}, {}).map(v => [v.file, v.code]),
+    [
+      ["shared/thing/src/Card/index.tsx", "not-a-barrel"],
+      ["shared/thing/src/Card/index.tsx", "orphan-barrel"],
+    ],
+  );
+});
+
+test("a barrel whose entry is dropped becomes an orphan", () => {
+  const files = {
+    "shared/thing/src/index.ts": 'export * from "./schema";\n',
+    "shared/thing/src/schema.ts": "export const a = 1;\n",
+    "shared/thing/src/testing/index.ts": 'export * from "./render";\n',
+    "shared/thing/src/testing/render.ts": "export const render = () => null;\n",
+  };
+  const withEntry = {
+    ...files,
+    "shared/thing/package.json": JSON.stringify({
+      exports: { ".": "./src/index.ts", "./testing": "./src/testing/index.ts" },
+    }),
+  };
+  const withoutEntry = {
+    ...files,
+    "shared/thing/package.json": JSON.stringify({ exports: { ".": "./src/index.ts" } }),
+  };
+  assert.deepEqual(barrelLocations(withEntry), []);
+  assert.deepEqual(barrelLocations(withoutEntry), [
+    ["shared/thing/src/testing/index.ts", "orphan-barrel"],
+  ]);
+});
+
+test("a package marked `skip` has no barrel location violation either", () => {
+  const root = workspace({
+    "shared/env/src/index.ts": 'export * from "./schema";\n',
+    "shared/env/src/schema.ts": "export const a = 1;\n",
+    "shared/env/src/deep/index.ts": 'export * from "./value";\n',
+    "shared/env/src/deep/value.ts": "export const value = 1;\n",
+  });
+  assert.deepEqual(checkPackage(root, "shared/env", {}, {}, {}), []);
+});
+
+test("an intermediate barrel waiver hides that file only", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts": 'export * from "./schema";\n',
+    "shared/thing/src/schema.ts": "export const a = 1;\n",
+    "shared/thing/src/a/index.ts": 'export * from "./x";\n',
+    "shared/thing/src/a/x.ts": "export const x = 1;\n",
+    "shared/thing/src/b/index.ts": 'export * from "./y";\n',
+    "shared/thing/src/b/y.ts": "export const y = 1;\n",
+  });
+  const waivers = { "shared/thing/src/a/index.ts": "Exit condition: none needed in a test." };
+  assert.deepEqual(
+    checkPackage(root, "shared/thing", {}, {}, waivers).map(v => v.file),
+    ["shared/thing/src/b/index.ts"],
+  );
+});
+
+test("the waiver audit flags a missing file, an allowed barrel and a missing exit condition", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts": 'export * from "./value";\n',
+    "shared/thing/src/value.ts": 'export { a } from "./a";\n',
+    "shared/thing/src/deep/index.ts": 'export * from "./value";\n',
+    "shared/thing/src/deep/value.ts": "export const b = 1;\n",
+  });
+  const reason = "TEMPORARY. Exit condition: fix it.";
+  assert.deepEqual(
+    auditIntermediateBarrelWaivers(root, { "shared/thing/src/deep/index.ts": reason }),
+    [],
+  );
+  assert.deepEqual(
+    auditIntermediateBarrelWaivers(root, { "shared/thing/src/gone/index.ts": reason }),
+    ["shared/thing/src/gone/index.ts: no such file"],
+  );
+  // The root barrel is allowed, and value.ts has a violation of another rule only.
+  assert.deepEqual(
+    auditIntermediateBarrelWaivers(root, {
+      "shared/thing/src/index.ts": reason,
+      "shared/thing/src/value.ts": reason,
+    }),
+    [
+      "shared/thing/src/index.ts: no violation left to except, delete the entry",
+      "shared/thing/src/value.ts: no violation left to except, delete the entry",
+    ],
+  );
+  assert.deepEqual(
+    auditIntermediateBarrelWaivers(root, { "shared/thing/src/deep/index.ts": "Because." }),
+    ["shared/thing/src/deep/index.ts: the reason states no exit condition"],
+  );
+});
+
+test("the file exception audit ignores barrel location violations", () => {
+  const root = workspace({
+    "shared/thing/src/index.ts": 'export * from "./schema";\n',
+    "shared/thing/src/schema.ts": "export const a = 1;\n",
+    "shared/thing/src/deep/index.ts": 'export * from "./value";\n',
+    "shared/thing/src/deep/value.ts": "export const b = 1;\n",
+  });
+  assert.deepEqual(
+    auditFileExceptions(root, { "shared/thing/src/deep/index.ts": "Exit condition: fix it." }),
+    ["shared/thing/src/deep/index.ts: no violation left to except, delete the entry"],
+  );
+});
+
+test("every intermediate barrel waiver names a file that is still reported", () => {
+  assert.deepEqual(auditIntermediateBarrelWaivers(REPO_ROOT, INTERMEDIATE_BARREL_WAIVERS), []);
 });
