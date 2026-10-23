@@ -9,6 +9,11 @@ export const setCurrentTrackingPage = (source?: string): void => {
   currentPage = source;
 };
 
+export const setTrackingPageValues = (current?: string, previous?: string): void => {
+  currentPage = current;
+  previousPage = previous;
+};
+
 export const updateTrackingPages = (page: string, refreshSource: boolean): void => {
   previousPage = currentPage;
   if (refreshSource) {

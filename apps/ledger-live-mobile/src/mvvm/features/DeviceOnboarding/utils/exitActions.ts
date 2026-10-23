@@ -3,6 +3,11 @@ import type { DeviceOnboardingExitReason } from "@features/platform-device-onboa
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
+import {
+  trackSeededChecksSuccess,
+  trackSeededOnboardingAborted,
+  trackSeededOnboardingDone,
+} from "../analytics/seededTracking";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
 
 type ExitDeps = {
@@ -13,23 +18,38 @@ type ExitDeps = {
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
+  seededOnEntry: boolean;
   firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
 
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
-  completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
+  completed: ({
+    dispatch,
+    navigation,
+    wasReadOnlyAtEntry,
+    hasCompletedOnboarding,
+    seededOnEntry,
+  }) => {
+    if (seededOnEntry) {
+      void trackSeededChecksSuccess();
+      void trackSeededOnboardingDone();
+    }
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
-  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
+  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededOnEntry }) => {
+    if (seededOnEntry) void trackSeededChecksSuccess();
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,
+      seededOnEntry,
     });
   },
-  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
-    resetToMyLedger(navigation, device, shouldDisplayMyWallet),
+  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet, seededOnEntry }) => {
+    if (seededOnEntry) void trackSeededOnboardingAborted();
+    resetToMyLedger(navigation, device, shouldDisplayMyWallet);
+  },
   legacyFallback: ({
     navigation,
     device,
@@ -37,6 +57,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     wasReadOnlyAtEntry,
     isGenuine,
     deviceWasSeeded,
+    seededOnEntry,
     firmwareNeedsLegacyFlow,
     hasCompletedOnboarding,
   }) => {
@@ -49,17 +70,28 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
         resetToLegacySeededChecks(navigation, device);
         return;
       }
+      if (seededOnEntry) void trackSeededOnboardingAborted();
       navigation.goBack();
       return;
     }
+    if (seededOnEntry) void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },
-  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
+  userQuit: ({
+    dispatch,
+    navigation,
+    wasReadOnlyAtEntry,
+    isGenuine,
+    hasCompletedOnboarding,
+    seededOnEntry,
+  }) => {
     if (!isGenuine) {
+      if (seededOnEntry) void trackSeededOnboardingAborted();
       navigation.goBack();
       return;
     }
+    if (seededOnEntry) void trackSeededOnboardingDone();
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     resetToPortfolio(navigation);
   },

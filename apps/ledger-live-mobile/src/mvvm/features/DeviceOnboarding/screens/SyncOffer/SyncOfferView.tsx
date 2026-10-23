@@ -27,6 +27,8 @@ export function SyncOfferView({
   onOpenSkip,
   onLearnMore,
   onQuit,
+  trackingProps,
+  callerWins,
   skipDrawer,
 }: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
@@ -100,6 +102,8 @@ export function SyncOfferView({
         handleClose={skipDrawer.onClose}
         openSync={skipDrawer.onActivate}
         skipSync={skipDrawer.onSkip}
+        trackingProps={trackingProps}
+        callerWins={callerWins}
       />
     </Box>
   );

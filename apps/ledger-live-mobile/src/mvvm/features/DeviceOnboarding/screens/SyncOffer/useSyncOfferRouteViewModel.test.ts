@@ -1,9 +1,18 @@
+import { track, trackPage } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
+import { resetSeededOnboardingAnalytics } from "../../analytics/seededTracking";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
+
+jest.mock("@shared/analytics", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getCurrentTrackingPage: jest.fn(() => ""),
+  getPreviousTrackingPage: jest.fn(() => "Ledger Sync"),
+}));
 
 const device = {
   deviceId: "device-id",
@@ -26,24 +35,26 @@ jest.mock("LLM/features/NotificationsPrompt", () => ({
   useNotificationsPrompt: () => ({ notifyFlowCompleted: mockNotifyFlowCompleted }),
 }));
 const listeners = new Map<string, (event: { preventDefault: () => void }) => void>();
+const navigation = {
+  addListener: (event: string, handler: (event: { preventDefault: () => void }) => void) => {
+    listeners.set(event, handler);
+    return jest.fn();
+  },
+  getParent: () => ({
+    navigate: parentNavigate,
+    reset,
+    getParent: () => undefined,
+  }),
+};
 
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual<typeof import("@react-navigation/native")>("@react-navigation/native"),
-  useNavigation: () => ({
-    addListener: (event: string, handler: (event: { preventDefault: () => void }) => void) => {
-      listeners.set(event, handler);
-      return jest.fn();
-    },
-    getParent: () => ({
-      navigate: parentNavigate,
-      reset,
-      getParent: () => undefined,
-    }),
-  }),
+  useNavigation: () => navigation,
   useRoute: () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
+      seededOnEntry: true,
     },
   }),
 }));
@@ -70,6 +81,7 @@ function renderOffer(hasTrustchain: boolean, language?: string) {
 describe("useSyncOfferRouteViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    resetSeededOnboardingAnalytics();
     listeners.clear();
   });
 
@@ -156,6 +168,7 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(openURL).toHaveBeenCalledWith(
       "https://www.ledger.com/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
     );
+    expect(track).not.toHaveBeenCalledWith("OpenURL", expect.anything());
   });
 
   it("should open the Ledger Sync Academy page in the app language", () => {
@@ -166,6 +179,75 @@ describe("useSyncOfferRouteViewModel", () => {
 
     expect(openURL).toHaveBeenCalledWith(
       "https://www.ledger.com/fr/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
+    );
+    expect(track).not.toHaveBeenCalledWith("OpenURL", expect.anything());
+  });
+
+  it("should track the sync offer without completing when activation starts", () => {
+    const { result } = renderOffer(false);
+
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        category: "Ledger Sync",
+        props: expect.objectContaining({
+          platform: "lwm",
+          seedConfiguration: "already_seeded",
+          deviceType: DeviceModelId.stax,
+        }),
+      }),
+      expect.anything(),
+    );
+
+    act(() => result.current.onActivate());
+
+    expect(track).not.toHaveBeenCalledWith("onboarding_done", expect.anything(), expect.anything());
+  });
+
+  it("should track sync success and completion when the trustchain lands", () => {
+    const { result } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Ledger Sync Success" }),
+      expect.anything(),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "yes" }),
+      expect.anything(),
+    );
+  });
+
+  it("should track the offer again when focus returns after activation", () => {
+    const { result } = renderOffer(false);
+    const pagesBeforeReturn = jest.mocked(trackPage).mock.calls.length;
+
+    act(() => result.current.onActivate());
+    act(() => listeners.get("blur")?.({ preventDefault: jest.fn() }));
+    act(() => listeners.get("focus")?.({ preventDefault: jest.fn() }));
+
+    expect(jest.mocked(trackPage).mock.calls.length).toBe(pagesBeforeReturn + 1);
+    expect(trackPage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ category: "Ledger Sync" }),
+      expect.anything(),
+    );
+    expect(track).not.toHaveBeenCalledWith("onboarding_done", expect.anything(), expect.anything());
+  });
+
+  it("should complete without sync when the offer is skipped", () => {
+    const { result } = renderOffer(false);
+
+    act(() => result.current.onSkip());
+
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "no" }),
+      expect.anything(),
+    );
+    expect(trackPage).not.toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Ledger Sync Success" }),
+      expect.anything(),
     );
   });
 });

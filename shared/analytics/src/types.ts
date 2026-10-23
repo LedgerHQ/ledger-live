@@ -41,10 +41,16 @@ export type PropsFilter = (props: Props) => Props;
 
 export type TrackOptions = {
   mandatory?: boolean;
+  /**
+   * Caller values for these keys survive host enrichment. A listed key the caller omitted is
+   * removed, so a host value cannot stand in for it.
+   */
+  callerWins?: readonly string[];
 };
 
 export type TrackPageOptions = {
   avoidDuplicates?: boolean;
+  callerWins?: readonly string[];
   mandatory?: boolean;
   refreshSource?: boolean;
   updateRoutes?: boolean;

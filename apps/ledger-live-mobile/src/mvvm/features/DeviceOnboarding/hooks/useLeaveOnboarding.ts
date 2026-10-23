@@ -9,6 +9,7 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import { rememberSeededOnboarding } from "../analytics/seededTracking";
 import { exitActions } from "../utils/exitActions";
 import { isCurrentSessionGenuine } from "../utils/genuineSession";
 
@@ -35,6 +36,16 @@ export function useLeaveOnboarding({
 
   return (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
     if (!navigateOnExit || !device) return;
+    const seededOnEntry = context.onboardedOnEntry === true;
+    if (seededOnEntry) {
+      rememberSeededOnboarding({
+        ledgerSyncEligible: context.offerSync,
+        deviceType: context.deviceModelId,
+        deviceVersion: context.firmwareVersion,
+        updateOffered: context.firmware?.kind === "offered",
+        firmwareChecked: context.firmware?.kind === "checked",
+      });
+    }
     const genuine = isCurrentSessionGenuine(context);
     const seeded = context.isOnboarded === true;
     const firmwareNeedsLegacyFlow =
@@ -52,6 +63,7 @@ export function useLeaveOnboarding({
       wasReadOnlyAtEntry,
       isGenuine: genuine,
       deviceWasSeeded: seeded,
+      seededOnEntry,
       firmwareNeedsLegacyFlow,
       hasCompletedOnboarding,
     });

@@ -25,7 +25,7 @@ import type { Props, TrackOptions } from "./types";
 export async function track(
   event: string,
   props?: Error | Props | null,
-  { mandatory = false }: TrackOptions = {},
+  { mandatory = false, callerWins }: TrackOptions = {},
 ): Promise<void> {
   if (mandatory || isEnabled()) {
     const normalizedProps = normalizeProps(props);
@@ -36,6 +36,7 @@ export async function track(
       eventName: event,
       props: page ? { page, ...normalizedProps } : normalizedProps,
       mandatory,
+      callerWins,
     });
   }
 }

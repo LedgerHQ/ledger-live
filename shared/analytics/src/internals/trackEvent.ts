@@ -8,9 +8,27 @@ type TrackEvent = {
   eventName: string;
   props: Props;
   mandatory?: boolean;
+  callerWins?: readonly string[];
 };
 
-export async function trackEvent({ kind, eventName, props, mandatory = false }: TrackEvent) {
+function mergeWithExtras(props: Props, extraProps: Props, callerWins?: readonly string[]): Props {
+  const merged: Props = { ...props, ...extraProps };
+  if (!callerWins) return merged;
+
+  for (const key of callerWins) {
+    if (props[key] !== undefined) merged[key] = props[key];
+    else delete merged[key];
+  }
+  return merged;
+}
+
+export async function trackEvent({
+  kind,
+  eventName,
+  props,
+  mandatory = false,
+  callerWins,
+}: TrackEvent) {
   let filteredProps: Props;
 
   try {
@@ -37,7 +55,7 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   let filteredExtras: Props;
 
   try {
-    filteredExtras = applyPropsFilter({ ...props, ...extraProps });
+    filteredExtras = applyPropsFilter(mergeWithExtras(props, extraProps, callerWins));
   } catch {
     publishEvent({ eventName, deliveryStatus: "failed_filter" });
     return;

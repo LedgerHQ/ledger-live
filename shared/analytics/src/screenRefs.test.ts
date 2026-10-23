@@ -2,6 +2,7 @@ import {
   getCurrentTrackingPage,
   getPreviousTrackingPage,
   resetTrackingPages,
+  restoreTrackingPages,
   setTrackingSource,
 } from "./screenRefs";
 import { updateTrackingPages } from "./internals/screenRefs.internals";
@@ -32,6 +33,17 @@ describe("screenRefs", () => {
 
     expect(getCurrentTrackingPage()).toBe("Market");
     expect(getPreviousTrackingPage()).toBe("Portfolio");
+  });
+
+  it("restores both pages after a transient screen", () => {
+    setTrackingSource("Page Before");
+    updateTrackingPages("Seeded - Ledger Sync", true);
+    updateTrackingPages("Drawer : Skip Ledger sync confirmation", true);
+
+    restoreTrackingPages("Seeded - Ledger Sync", "Page Before");
+
+    expect(getCurrentTrackingPage()).toBe("Seeded - Ledger Sync");
+    expect(getPreviousTrackingPage()).toBe("Page Before");
   });
 
   it("overrides the current page through setTrackingSource", () => {

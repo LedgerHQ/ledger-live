@@ -17,6 +17,19 @@ import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
+import {
+  markFirmwareUpdateAccepted,
+  rememberSeededOnboarding,
+  resetSeededOnboardingAnalytics,
+  seededButtons,
+  seededCheckPage,
+  seededPages,
+  trackSeededChecksSuccess,
+  trackSeededClick,
+  trackSeededOnboardingAborted,
+  trackSeededOnboardingStarted,
+  trackSeededPage,
+} from "../../analytics/seededTracking";
 import { useDeviceOnboarding } from "../../hooks/useDeviceOnboarding";
 import { useOfferSync } from "../../hooks/useOfferSync";
 import { toChecksError, toChecksScreenState, toFirmwareUpdate } from "../../utils/checksPhase";
@@ -81,8 +94,28 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "SESSION_READY" });
   }, [send, sessionReady]);
 
+  const pageRef = useRef<string | null>(null);
+  const analyticsAttempt = useRef(false);
+  const seededOnEntry = readSeededOnEntry(onboarding.context);
+  const page = seededOnEntry
+    ? seededCheckPage(
+        onboarding.state,
+        onboarding.context?.checksPaused === true,
+        readString(onboarding.context?.genuineFailureKind),
+      )
+    : null;
+
+  const trackClick = useCallback(
+    (button: string, pageName?: string | null) => {
+      if (!readSeededOnEntry(onboarding.context)) return;
+      void trackSeededClick(button, pageName);
+    },
+    [onboarding.context],
+  );
+
   const leave = useCallback(() => {
     allowLeave.current = true;
+    if (readSeededOnEntry(onboarding.context)) void trackSeededOnboardingAborted();
     onboarding.reset();
     navigation.goBack();
   }, [navigation, onboarding]);
@@ -98,13 +131,28 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
 
   const closeFirmwareHandover = onboarding.closeFirmwareHandover;
 
-  const quitOrLeave = useCallback(() => {
+  const closeFromHeader = useCallback(() => {
+    trackClick(seededButtons.close, pageRef.current);
+    if (onboarding.state === firmwareUpdateDelegatedState) {
+      closeFirmwareHandover();
+      return;
+    }
     if (onboarding.status === "running" && onboarding.state) {
       quitMachine();
       return;
     }
     leave();
-  }, [leave, onboarding.state, onboarding.status, quitMachine]);
+  }, [closeFirmwareHandover, leave, onboarding.state, onboarding.status, quitMachine, trackClick]);
+
+  const closeLostSession = useCallback(() => {
+    trackClick(seededButtons.close, pageRef.current);
+    quitMachine();
+  }, [quitMachine, trackClick]);
+
+  const closeFirmwareReconnect = useCallback(() => {
+    trackClick(seededButtons.close, pageRef.current);
+    leaveFirmwareReconnect();
+  }, [leaveFirmwareReconnect, trackClick]);
 
   const retry = useCallback(() => {
     onboarding.reset();
@@ -114,6 +162,35 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const reconnect = useCallback(() => {
     onboarding.connect();
   }, [onboarding]);
+
+  useEffect(() => {
+    if (page) pageRef.current = page;
+  }, [page]);
+
+  useEffect(() => {
+    if (!analyticsAttempt.current) {
+      analyticsAttempt.current = true;
+      resetSeededOnboardingAnalytics();
+    }
+    if (!seededOnEntry) return;
+    rememberSeededOnboarding({
+      ledgerSyncEligible: offerSync,
+      deviceType: onboarding.liveDevice?.modelId ?? onboarding.context?.deviceModelId,
+      deviceVersion: readString(onboarding.context?.firmwareVersion),
+      updateOffered: Boolean(readString(onboarding.context?.availableFirmwareVersion)),
+      firmwareChecked: onboarding.context?.firmwareChecked === true,
+    });
+    void trackSeededOnboardingStarted();
+  }, [offerSync, onboarding.context, onboarding.liveDevice, seededOnEntry]);
+
+  useEffect(() => {
+    if (!page) return;
+    if (page === seededPages.checksSuccess) {
+      void trackSeededChecksSuccess();
+      return;
+    }
+    void trackSeededPage(page);
+  }, [page]);
 
   useEffect(
     () =>
@@ -159,14 +236,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         retryLabel: t("common.retry"),
         closeLabel,
         onRetry: reconnect,
-        onQuit: leaveFirmwareReconnect,
+        onQuit: closeFirmwareReconnect,
       };
     }
     return {
       status: "connecting",
       title: t("deviceOnboarding.connection.connecting"),
       closeLabel,
-      onQuit: leaveFirmwareReconnect,
+      onQuit: closeFirmwareReconnect,
     };
   }
 
@@ -177,7 +254,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       retryLabel: t("common.retry"),
       closeLabel,
       onRetry: reconnect,
-      onQuit: quitMachine,
+      onQuit: closeLostSession,
     };
   }
 
@@ -189,14 +266,14 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         retryLabel: t("common.retry"),
         closeLabel,
         onRetry: retry,
-        onQuit: quitOrLeave,
+        onQuit: closeFromHeader,
       };
     }
     return {
       status: "connecting",
       title: t("deviceOnboarding.connection.connecting"),
       closeLabel,
-      onQuit: quitOrLeave,
+      onQuit: closeFromHeader,
     };
   }
 
@@ -210,18 +287,34 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         readString(onboarding.context?.firmwareVersion),
         readString(onboarding.context?.availableFirmwareVersion),
       ),
-      onStart: () =>
-        send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
-      onRetry: () => send({ type: "RETRY" }),
+      onStart: () => {
+        trackClick(seededButtons.initiateGenuineCheck, pageRef.current);
+        send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" });
+      },
+      onRetry: () => {
+        if (pageRef.current === seededPages.genuineCheckRefused) {
+          trackClick(seededButtons.retryGenuineCheck, pageRef.current);
+        }
+        send({ type: "RETRY" });
+      },
       onCloseSheet: () => send({ type: "CLOSE" }),
-      onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
-      onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
+      onAcceptUpdate: () => {
+        if (seededOnEntry) markFirmwareUpdateAccepted();
+        trackClick(seededButtons.continueUpdate, pageRef.current);
+        send({ type: "USER_ACCEPT" });
+      },
+      onDeclineUpdate: () => {
+        trackClick(seededButtons.close, seededPages.osUpdateRequired);
+        send({ type: "USER_DECLINE" });
+      },
       onContinue:
         onboarding.state === "checks.checksSucceeded"
-          ? () => send({ type: "CONTINUE" })
+          ? () => {
+              trackClick(seededButtons.continueUpdate, seededPages.checksSuccess);
+              send({ type: "CONTINUE" });
+            }
           : undefined,
-      onQuit:
-        onboarding.state === firmwareUpdateDelegatedState ? closeFirmwareHandover : quitMachine,
+      onQuit: closeFromHeader,
     },
   };
 }
@@ -237,4 +330,9 @@ function matchesPairedDevice(knownId: string, pairedDeviceId: string | undefined
 
 function readString(value: unknown): string | null {
   return typeof value === "string" ? value : null;
+}
+
+function readSeededOnEntry(context: unknown): boolean {
+  if (!context || typeof context !== "object" || !("onboardedOnEntry" in context)) return false;
+  return context.onboardedOnEntry === true;
 }
