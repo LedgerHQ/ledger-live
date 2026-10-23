@@ -485,6 +485,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -711,6 +712,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
