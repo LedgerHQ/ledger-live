@@ -7,7 +7,7 @@ import { FAKE_TRONIFY_RENT, TRONIFY_OPTION_ID } from "@ledgerhq/live-e2e-shared/
 import { deviceShowsTronifyService } from "@ledgerhq/live-e2e-shared/families/tronSponsored";
 import { FF_NEW_SEND_FLOW_ENABLED } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
-import { reachAmountStep } from "tests/utils/newSendFlowUtils";
+import { reachAmountStep, reachAmountStepFromCurrentAccount } from "tests/utils/newSendFlowUtils";
 
 const tx = new Transaction(TokenAccount.TRX_USDT, TokenAccount.TRX_USDT_2, "1");
 
@@ -71,6 +71,13 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
         await app.speculos.signSendTransaction(tx);
         await app.newSendFlow.waitForSuccessConfirmation();
         await tronify.expectUsdtTransferBroadcast(tx.accountToCredit.address, tx.amount);
+
+        // Back on the USDT account, its latest operation is the transfer just sent.
+        await app.newSendFlow.closeConfirmation();
+        await app.account.clickOnLastOperationAndReturnStatus();
+        await app.sendDrawer.expectOperationType("Sent");
+        await app.sendDrawer.expectAmountVisible(tx.amount);
+        await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
       },
     );
   });
@@ -123,16 +130,19 @@ test.describe("Send - new flow - fee paid in USDT with Tronify", () => {
         await app.newSendFlow.expectSponsoredFailure("Energy was not delivered.");
         await app.newSendFlow.expectRetryLocked();
         await app.newSendFlow.cancelSponsoredFailure();
+        const quotesBefore = await tronify.rentQuoteCount();
 
         // The paid rent may still land: a reopened Send must not rent again meanwhile.
-        await reachAmountStep(app, tx);
+        await reachAmountStepFromCurrentAccount(app, tx);
         await app.newSendFlow.fillCryptoAmount(tx.amount);
         await app.newSendFlow.expectRentArriving();
-        const feesBefore = await app.newSendFlow.networkFees();
+        const feeBefore = await app.newSendFlow.settledNetworkFeeTrx();
+        // Once the step has settled: an offer would follow a quote.
+        await app.newSendFlow.expectNoFeePaymentOffer();
+        await tronify.expectNoNewRentQuote(quotesBefore);
 
-        tronify.landPaidRents();
-        await app.newSendFlow.expectFeesReestimatedOnRentDelivery(feesBefore);
-        await tronify.expectRentPaidOnce();
+        await tronify.landPaidRents();
+        await app.newSendFlow.expectFeeDroppedOnRentDelivery(feeBefore);
       },
     );
   });

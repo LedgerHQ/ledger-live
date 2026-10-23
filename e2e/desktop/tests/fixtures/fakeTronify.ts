@@ -6,14 +6,14 @@ import {
   type FakeTronify,
   type FakeTronifyScenario,
 } from "@ledgerhq/live-e2e-shared/tronify/index";
-import { FakeTronifyPage } from "tests/page/fakeTronify.page";
+import { FakeTronifyChecks } from "tests/utils/fakeTronify";
 import base from "tests/fixtures/common";
 
 type TronifyScenario = { scenario: FakeTronifyScenario; params?: Record<string, unknown> };
 
 type FakeTronifyFixtures = {
   tronifyScenario: TronifyScenario;
-  tronify: FakeTronifyPage;
+  tronify: FakeTronifyChecks;
 };
 
 type FakeTronifyWorkerFixtures = {
@@ -45,7 +45,7 @@ export const test = base.extend<FakeTronifyFixtures, FakeTronifyWorkerFixtures>(
 
   tronify: async ({ fakeTronify, tronifyScenario }, use, testInfo) => {
     fakeTronify.setScenario(tronifyScenario.scenario, tronifyScenario.params);
-    await use(new FakeTronifyPage(fakeTronify));
+    await use(new FakeTronifyChecks(fakeTronify));
 
     // On failure only, like the other debug attachments (QAA-1433).
     if (testInfo.status !== testInfo.expectedStatus) {
@@ -56,8 +56,9 @@ export const test = base.extend<FakeTronifyFixtures, FakeTronifyWorkerFixtures>(
     }
   },
 
-  coinConfigOverrides: async ({ tronify }, use) => {
-    await use(tronifyCoinConfig(tronify.fake));
+  // Depends on `tronify` so the scenario is set before the app reads the coin-config.
+  coinConfigOverrides: async ({ fakeTronify, tronify: _scenarioSet }, use) => {
+    await use(tronifyCoinConfig(fakeTronify));
   },
 });
 

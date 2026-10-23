@@ -50,6 +50,9 @@ export class NewSendModal extends Modal {
     .or(this.confirmationInfoContent);
   readonly successConfirmationTitle = this.dialog.getByTestId("send-confirmation-success-title");
   readonly viewDetailsButton = this.dialog.getByTestId("send-confirmation-view-details-button");
+  private readonly confirmationCloseButton = this.dialog.getByTestId(
+    "send-confirmation-close-button",
+  );
   readonly deviceActionLoader = this.page.getByTestId("device-action-loader");
   readonly signaturePrompt = this.dialog.getByTestId("send-signature-prompt");
   private readonly sponsoredFeeNudge = this.dialog.getByTestId("send-sponsored-fee-nudge");
@@ -346,23 +349,34 @@ export class NewSendModal extends Modal {
     await expect(this.sponsoredFeeError).toContainText(message);
   }
 
-  @step("Verify a paid rent is still arriving, and no other rent is offered")
+  @step("Verify a paid rent is still arriving")
   async expectRentArriving() {
     await expect(this.sponsoredRentArriving).toBeVisible();
+  }
+
+  @step("Verify no rent is offered")
+  async expectNoFeePaymentOffer() {
     await expect(this.feePaymentEntry).toBeHidden();
   }
 
-  @step("Read the network fees")
-  async networkFees(): Promise<string> {
-    await expect(this.networkFeesRow).toBeVisible();
-    return this.networkFeesRow.innerText();
+  // NaN while the row shows no TRX amount yet (the `--` placeholder), which no comparison passes.
+  private async networkFeeTrx(): Promise<number> {
+    const match = /([\d.,]+)\s*TRX/.exec(await this.networkFeesRow.innerText());
+    return match ? Number(match[1].replaceAll(",", "")) : Number.NaN;
   }
 
-  @step("Verify the network fees were estimated again once the rent landed")
-  async expectFeesReestimatedOnRentDelivery(feesBefore: string) {
+  @step("Read the network fee in TRX once it is estimated for the amount")
+  async settledNetworkFeeTrx(): Promise<number> {
+    await expect(this.reviewButton).toBeEnabled();
+    await expect(this.reviewButton).not.toHaveAttribute("aria-busy", "true");
+    await expect.poll(() => this.networkFeeTrx()).toBeGreaterThan(0);
+    return this.networkFeeTrx();
+  }
+
+  @step("Verify the network fee dropped below $0 TRX once the rent landed")
+  async expectFeeDroppedOnRentDelivery(feeBefore: number) {
     await expect(this.sponsoredRentArriving).toBeHidden();
-    // innerText, as networkFees() read it: textContent drops the layout's line breaks.
-    await expect(this.networkFeesRow).not.toHaveText(feesBefore, { useInnerText: true });
+    await expect.poll(() => this.networkFeeTrx()).toBeLessThan(feeBefore);
   }
 
   @step("Verify the energy delivery wait is shown")
@@ -406,6 +420,12 @@ export class NewSendModal extends Modal {
   @step("Wait for terminal confirmation screen")
   async waitForConfirmation() {
     await this.confirmationTerminalContent.waitFor({ state: "visible" });
+  }
+
+  @step("Close the confirmation screen")
+  async closeConfirmation() {
+    await this.confirmationCloseButton.click();
+    await expect(this.dialog).toBeHidden();
   }
 
   @step("Wait success confirmation screen")

@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import {
   RENT_ORDER_PATH,
   RENT_PAYMENT_UPLOAD_PATH,
+  RENT_QUOTE_PATH,
   hasUsdtTransferBroadcast,
   type FakeTronify,
 } from "@ledgerhq/live-e2e-shared/tronify/index";
@@ -9,9 +10,9 @@ import { step } from "tests/misc/reporters/step";
 
 const FAKE_TIMEOUT_MS = 30_000;
 
-/** The local fake standing in for Tronify and TronGrid: what the app sent it. */
-export class FakeTronifyPage {
-  constructor(readonly fake: FakeTronify) {}
+/** Checks on the local fake standing in for Tronify and TronGrid: what the app sent it. */
+export class FakeTronifyChecks {
+  constructor(private readonly fake: FakeTronify) {}
 
   private requestCount(path: string) {
     return this.fake.log().filter(request => request.path.startsWith(path)).length;
@@ -52,6 +53,17 @@ export class FakeTronifyPage {
       .toEqual({ orders: 1, uploads: 1 });
   }
 
+  @step("Count the rent quotes the app asked for")
+  rentQuoteCount(): Promise<number> {
+    return Promise.resolve(this.requestCount(RENT_QUOTE_PATH));
+  }
+
+  @step("Expect the app to have asked for no rent quote beyond the first $0")
+  expectNoNewRentQuote(quotesBefore: number): Promise<void> {
+    expect(this.requestCount(RENT_QUOTE_PATH)).toBe(quotesBefore);
+    return Promise.resolve();
+  }
+
   @step("Expect a $1 USDT transfer to $0 broadcast to the fake TronGrid")
   async expectUsdtTransferBroadcast(recipient: string | undefined, amount: string) {
     await expect
@@ -62,7 +74,9 @@ export class FakeTronifyPage {
   }
 
   /** Delivers the energy of every paid rent, as a rent landing late. */
-  landPaidRents() {
+  @step("Land the energy of every paid rent")
+  landPaidRents(): Promise<void> {
     this.fake.landPaidRents();
+    return Promise.resolve();
   }
 }

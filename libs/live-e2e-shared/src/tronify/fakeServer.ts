@@ -61,7 +61,8 @@ export function upstreamTronGrid(): string {
   return process.env.API_TRONGRID_PROXY || "https://tron.coin.ledger.com";
 }
 
-/** The Tronify endpoints that place a rent order and report its payment, as the fake logs them. */
+/** The Tronify endpoints that quote a rent, place its order and report its payment, as the fake logs them. */
+export const RENT_QUOTE_PATH = "/api/tronRent/queryPreorderInfo";
 export const RENT_ORDER_PATH = "/api/tronRent/addTronRentRecord";
 export const RENT_PAYMENT_UPLOAD_PATH = "/api/tronRent/uploadHash";
 const FAKE_POLL_MS = 250;
