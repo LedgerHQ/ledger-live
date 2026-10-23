@@ -216,6 +216,10 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       onCloseSheet: () => send({ type: "CLOSE" }),
       onAcceptUpdate: () => send({ type: "USER_ACCEPT" }),
       onDeclineUpdate: () => send({ type: "USER_DECLINE" }),
+      onContinue:
+        onboarding.state === "checks.checksSucceeded"
+          ? () => send({ type: "CONTINUE" })
+          : undefined,
       onQuit:
         onboarding.state === firmwareUpdateDelegatedState ? closeFirmwareHandover : quitMachine,
     },

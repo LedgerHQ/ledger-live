@@ -464,6 +464,7 @@ describe("scripted device onboarding", () => {
 
     device.acceptToggle();
     act(() => device.reportFirmwareUpToDate());
+    await leaveSuccessScreen(result);
     await waitFor(() => expect(result.current.state).toBe("deviceSetup.waiting"));
 
     act(() =>
@@ -520,6 +521,11 @@ async function connectToGenuineCheck(
   await waitFor(() => expect(result.current.state).toBe("checks.genuineCheck.running"));
 }
 
+async function leaveSuccessScreen(result: ScriptedHook) {
+  await waitFor(() => expect(result.current.state).toBe("checks.checksSucceeded"));
+  act(() => result.current.send({ type: "CONTINUE" }));
+}
+
 async function finishSetup(
   result: ScriptedHook,
   device: ReturnType<typeof createScriptedTestDevice>,
@@ -529,6 +535,7 @@ async function finishSetup(
 
   device.acceptToggle();
   act(() => device.reportFirmwareUpToDate());
+  await leaveSuccessScreen(result);
   await waitFor(() => expect(result.current.state).toBe("deviceSetup.waiting"));
 
   act(() =>

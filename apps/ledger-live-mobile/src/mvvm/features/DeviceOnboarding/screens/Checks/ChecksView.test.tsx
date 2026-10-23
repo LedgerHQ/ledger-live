@@ -180,16 +180,26 @@ describe("ChecksView", () => {
     expect(onStart).not.toHaveBeenCalled();
   });
 
-  it("should move on by itself once the device is genuine and up to date", async () => {
-    const { user, onQuit, onStart, onRetry, onCloseSheet, onAcceptUpdate, onDeclineUpdate } =
-      renderChecks("succeeded");
+  it("should keep continue waiting while the success screen cannot be left yet", () => {
+    renderChecks("succeeded");
     const continueButton = screen.getByRole("button", { name: "Continue" });
 
     expect(screen.getByText("Device genuine and up-to-date")).toBeVisible();
     expect(within(continueButton).getByLabelText("Loading")).toBeVisible();
+  });
+
+  it("should continue when the user leaves the success screen", async () => {
+    const onContinue = jest.fn();
+    const { user, onQuit, onStart, onRetry, onCloseSheet, onAcceptUpdate, onDeclineUpdate } =
+      renderChecks("succeeded", { onContinue });
+    const continueButton = screen.getByRole("button", { name: "Continue" });
+
+    expect(screen.getByText("Device genuine and up-to-date")).toBeVisible();
+    expect(within(continueButton).queryByLabelText("Loading")).toBeNull();
 
     await user.press(continueButton);
 
+    expect(onContinue).toHaveBeenCalledTimes(1);
     expect(onStart).not.toHaveBeenCalled();
     expect(onRetry).not.toHaveBeenCalled();
     expect(onCloseSheet).not.toHaveBeenCalled();

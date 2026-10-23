@@ -123,6 +123,7 @@ export function useChecksScreenViewModel({
   onStart,
   onRetry,
   onCloseSheet,
+  onContinue,
   onQuit,
   onAcceptUpdate,
   onDeclineUpdate,
@@ -175,7 +176,7 @@ export function useChecksScreenViewModel({
       title: t("deviceOnboarding.checks.succeeded.title"),
       primaryLabel: t("deviceOnboarding.checks.succeeded.cta"),
       primaryTestID: checksTestIds.continue,
-      primaryLoading: true,
+      ...(onContinue ? { onPrimary: onContinue } : { primaryLoading: true }),
     },
   };
 
