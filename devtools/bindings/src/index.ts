@@ -13,6 +13,7 @@ export type { OnboardingActorSnapshot } from "./useDeviceOnboardingActor";
 export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";
 export { useAccountBalanceToolProps } from "./useAccountBalanceToolProps";
 export { useAccountDescriptorToolProps } from "./useAccountDescriptorToolProps";
+export { useAccountNameToolProps } from "./useAccountNameToolProps";
 export { useAccountDataToolProps } from "./useAccountDataToolProps";
 export { createAccountDataRecorder } from "./accountDataRecorder";
 export type { AccountDataRecorder } from "./accountDataRecorder";

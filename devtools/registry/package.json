@@ -27,7 +27,8 @@
     "@devtools/account-balance": "workspace:*",
     "@devtools/account-descriptor": "workspace:*",
     "@devtools/account-data": "workspace:*",
-    "@devtools/app-config": "workspace:*"
+    "@devtools/app-config": "workspace:*",
+    "@devtools/account-name": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"
