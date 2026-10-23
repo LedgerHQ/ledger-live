@@ -5,6 +5,7 @@ import { getBridgeApi } from "./bridge";
 import {
   bigNumberToBigIntDeep,
   computeUseAllAmount,
+  feeOptionFromTransaction,
   feeParametersToJsonSafe,
   getNativeSpendableAfterPending,
   getPendingTokenSpent,
@@ -153,7 +154,10 @@ export function genericPrepareTransaction(
     const estimated =
       customParametersFees && !transaction.useAllAmount
         ? undefined
-        : await coinModuleApi.estimateFees(context, intent, { customFeesParameters });
+        : await coinModuleApi.estimateFees(context, intent, {
+            customFeesParameters,
+            ...feeOptionFromTransaction(transaction),
+          });
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()), parameters: estimated?.parameters }
       : (estimated as FeeEstimation);

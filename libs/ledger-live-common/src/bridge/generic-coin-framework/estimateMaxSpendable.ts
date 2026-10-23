@@ -6,6 +6,7 @@ import { buildContext } from "./api/context";
 import { createTransaction } from "./createTransaction";
 import {
   computeUseAllAmount,
+  feeOptionFromTransaction,
   getNativeSpendableAfterPending,
   getPendingTokenSpent,
   transactionToIntent,
@@ -43,6 +44,7 @@ export function genericEstimateMaxSpendable(
         intent => coinModuleApi.craftTransactionData(context, intent),
         bridgeApi.buildIntentData,
       ),
+      feeOptionFromTransaction(transaction),
     );
     const estimation: FeeEstimation = {
       value: BigNumber.isBigNumber(transaction?.fees)
