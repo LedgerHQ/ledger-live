@@ -1,6 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createCommandOutput } from "../../output";
+import { mainnetOf } from "../../shared/accountDescriptor";
 import { walletCliDebug } from "../../shared/log";
 import { writeStderr } from "../../shared/ui";
 import { WalletAdapter } from "../../wallet";
@@ -59,13 +60,17 @@ export default defineCommand({
       // refetch the way the live-app's react-query layer does, so surfacing staleness is the only
       // way to tell the user the snapshot is incomplete and a re-run will show refreshed rows.
       // (getStakes/v1 is kept in wallet/earn/api.ts as the bare-array fallback if we ever need it.)
-      const { data: views, meta } = await getStakesV3([{ network, address, fresh }]);
+      // Staking keys off the mainnet: a testnet account is looked up as its mainnet, as before version 2.
+      const stakingNetwork = mainnetOf(network);
+      const { data: views, meta } = await getStakesV3([
+        { network: stakingNetwork, address, fresh },
+      ]);
 
       // Enrich Solana positions with on-chain stake accounts so undelegate/withdraw can target a
       // concrete `--stake-account`. This is the only place those addresses surface in the CLI. Done
       // best-effort: a chain-sync failure must not sink the backend snapshot we already have.
       let stakes: EarnSolanaStake[] | undefined;
-      if (network === "solana") {
+      if (stakingNetwork === "solana") {
         try {
           const descriptor = await resolveAccountDescriptor(
             resolveAccountArg(flags.account, positional),

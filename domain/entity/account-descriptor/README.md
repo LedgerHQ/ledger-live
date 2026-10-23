@@ -11,7 +11,7 @@ The account descriptor (see the [ADR](https://ledgerhq.atlassian.net/wiki/spaces
 
 `account:2:<type>:<network_id>:<xpub or address>:<path>`
 
-- `network_id`: the CAL network id (`bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`), lowercase in the canonical key.
+- `network_id`: the CAL network id (`bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`), exact and case-sensitive (`LBRY`), the same in the canonical key.
 
 - `utxo`: the subject is an xpub, the path is hardened up to the account.
 - `address`: the subject is the address, the path is the full path of that address.

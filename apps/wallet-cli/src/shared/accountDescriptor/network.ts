@@ -1,4 +1,9 @@
-import { UnknownNetworkError, type Network } from "@domain/entity-account-descriptor";
+import {
+  UnknownNetworkError,
+  currencyIdFromNetwork,
+  type Network,
+} from "@domain/entity-account-descriptor";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { networkFromLegacy } from "./v1";
 
 export {
@@ -25,4 +30,9 @@ export function parseNetworkArg(input: string): Network {
   if (env === undefined) return name;
   if (!env || extra.length > 0) throw new UnknownNetworkError(`Unknown network "${input}"`);
   return networkFromLegacy(name, env === "mainnet" ? "main" : env);
+}
+
+/** The mainnet a testnet network belongs to (`solana_devnet` → `solana`), else the network itself. */
+export function mainnetOf(network: Network): Network {
+  return getCryptoCurrencyById(currencyIdFromNetwork(network)).isTestnetFor ?? network;
 }

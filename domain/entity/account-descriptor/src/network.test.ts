@@ -14,4 +14,9 @@ describe("currencyIdFromNetwork", () => {
   it("throws on an unknown currency", () => {
     expect(() => networkFromCurrencyId("notachain")).toThrow(UnknownNetworkError);
   });
+
+  it("resolves the exact id only: LBRY, not lbry", () => {
+    expect(currencyIdFromNetwork("LBRY")).toBe("LBRY");
+    expect(() => currencyIdFromNetwork("lbry")).toThrow(UnknownNetworkError);
+  });
 });

@@ -268,7 +268,7 @@ describe("earn yields --network ethereum", () => {
 
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     const { data, yields } = parseYields(stdout);
-    // The envelope carries the canonical `name:env` network (matches deposit/withdraw/positions).
+    // The envelope carries the network id (matches deposit/withdraw/positions).
     expect(data.network).toBe("ethereum");
 
     // Only the active provider is surfaced, with its provider id + discover deeplink.

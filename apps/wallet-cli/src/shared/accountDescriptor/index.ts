@@ -17,6 +17,7 @@ export {
   parseNetworkArg,
   networkFromCurrencyId,
   currencyIdFromNetwork,
+  mainnetOf,
   UnknownNetworkError,
 } from "./network";
 

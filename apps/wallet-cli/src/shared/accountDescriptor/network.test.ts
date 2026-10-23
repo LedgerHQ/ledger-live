@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
   parseNetworkArg,
+  mainnetOf,
   networkFromCurrencyId,
   currencyIdFromNetwork,
   UnknownNetworkError,
@@ -41,5 +42,18 @@ describe("currencyIdFromNetwork", () => {
 
   it("throws UnknownNetworkError for unknown network", () => {
     expect(() => currencyIdFromNetwork("notachain")).toThrow(UnknownNetworkError);
+  });
+});
+
+describe("mainnetOf", () => {
+  it("maps a testnet to its mainnet and keeps a mainnet", () => {
+    expect(mainnetOf("solana_testnet")).toBe("solana");
+    expect(mainnetOf("solana_devnet")).toBe("solana");
+    expect(mainnetOf("ethereum_sepolia")).toBe("ethereum");
+    expect(mainnetOf("solana")).toBe("solana");
+  });
+
+  it("throws on an unknown network", () => {
+    expect(() => mainnetOf("nope")).toThrow(UnknownNetworkError);
   });
 });
