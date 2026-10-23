@@ -57,10 +57,11 @@ runs:
       shell: bash
       run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
 
-    # Self-hosted runner images ship mise and every tool pinned in mise.toml - only run when not applicable
+    # Self-hosted and custom GitHub-hosted runner images ship mise and every tool pinned in
+    # mise.toml. Elsewhere mise is missing, so this reports found=false and mise-action runs.
     - name: Detect preinstalled mise tools
       id: mise-preinstalled
-      if: inputs.use-mise == 'true' && runner.environment == 'self-hosted' && runner.os == 'Linux'
+      if: inputs.use-mise == 'true' && runner.os == 'Linux'
       shell: bash
       env:
         MISE_EXPERIMENTAL: "1"

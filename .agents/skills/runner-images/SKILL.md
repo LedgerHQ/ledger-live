@@ -1,6 +1,6 @@
 ---
 name: runner-images
-description: Self-hosted CI runner images in LedgerHQ/ledger-wallet-runners bake this repo's toolchain. Read before changing a version in `mise.toml` or `mise.lock` (mise itself, node, pnpm, bun or any other mise tool) or the Android AVD configuration (`AVD_*` in `test-mobile-e2e-reusable.yml`, `tools/actions/composites/setup-android-avd`, `tools/scripts/patch-avd-config.sh`).
+description: Self-hosted CI runner images in LedgerHQ/ledger-wallet-runners bake this repo's toolchain. Read before changing a version in `mise.toml` or `mise.lock` (mise itself, node, pnpm, bun or any other mise tool) or the Android AVD configuration (`tools/actions/composites/setup-android-avd`, including `avd.env`, or `tools/scripts/patch-avd-config.sh`).
 ---
 
 # Runner images
@@ -11,7 +11,7 @@ The `ledger-wallet-*` runner images are built in [LedgerHQ/ledger-wallet-runners
 
 - `mise.toml`: `min_version`, any entry under `[tools]` (node, pnpm, bun, gitleaks, hk, ...), or a tool added or removed
 - `mise.lock` changes from a version bump
-- AVD: any `AVD_*` env value in `.github/workflows/test-mobile-e2e-reusable.yml` (API level, arch, profile, target, cores, RAM, heap, emulator options), the `setup-android-avd` action, or `patch-avd-config.sh`
+- AVD: any value in `tools/actions/composites/setup-android-avd/avd.env` (API level, arch, profile, target, cores, RAM, heap, emulator build and options), the rest of the `setup-android-avd` action, or `patch-avd-config.sh`
 
 Renovate bumps count too when you are the one reviewing or editing them.
 

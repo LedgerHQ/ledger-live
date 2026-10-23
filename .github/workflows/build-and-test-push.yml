@@ -120,7 +120,7 @@ jobs:
       smoke_tests: true
       ci_smoke: true
       macos_runner_label: general-pool
-      android_runner_label: ledger-live-linux-8CPU-32RAM
+      android_runner_label: ledger-wallet-8cpu-github-public-cached
       max_shards: 1
 
   # Tests
