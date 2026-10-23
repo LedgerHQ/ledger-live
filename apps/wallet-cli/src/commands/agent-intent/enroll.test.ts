@@ -32,7 +32,7 @@ type WaitInput = {
 let storedProfile: Profile | undefined;
 // Set only by the race test: what the locked recheck (2nd Session.read) sees instead of `storedProfile`.
 let profileOnLockedRecheck: Profile | undefined | "same-as-stored";
-let keychainHasEntry: boolean;
+let hasSecretKeyImpl: () => boolean;
 let invalidProfileIds: string[];
 let addAgentIntentProfileImpl: (profile: Profile) => void;
 let writeImpl: () => void;
@@ -112,7 +112,7 @@ beforeAll(() =>
     noopSessionLock: true,
     keychainProbe: () => keychainProbe(),
     keychain: {
-      hasAgentIntentSecretKey: (_profileId: string) => keychainHasEntry,
+      hasAgentIntentSecretKey: (_profileId: string) => hasSecretKeyImpl(),
       saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
         if (saveSecretKeyError) throw saveSecretKeyError;
         savedSecretKeys.add(profileId);
@@ -219,7 +219,7 @@ describe("agent-intent enroll", () => {
     storedProfile = undefined;
     profileOnLockedRecheck = "same-as-stored";
     sessionReadCalls = 0;
-    keychainHasEntry = false;
+    hasSecretKeyImpl = () => false;
     invalidProfileIds = [];
     deleteSecretKeySucceeds = true;
     saveSecretKeyError = undefined;
@@ -257,7 +257,7 @@ describe("agent-intent enroll", () => {
     });
 
     it("refuses to enroll when a keychain entry already exists but isn't recorded in the session", async () => {
-      keychainHasEntry = true;
+      hasSecretKeyImpl = () => true;
 
       await expect(runEnroll()).rejects.toThrow(
         /keychain entry for profile "test-agent" already exists/,
@@ -301,16 +301,21 @@ describe("agent-intent enroll", () => {
       expect(savedSecretKeys.size).toBe(0);
     });
 
-    it("probes the keychain again inside the session lock, right before writing", async () => {
+    it("probes the keychain once and only re-reads the entry inside the session lock", async () => {
       let probeCalls = 0;
       keychainProbe = () => {
         probeCalls++;
-        if (probeCalls > 1) failingKeychainProbe();
         return [];
       };
+      let entryReads = 0;
+      // The precheck sees no entry; a concurrent enroll writes one before the locked recheck.
+      hasSecretKeyImpl = () => entryReads++ > 0;
 
-      await expect(runEnroll()).rejects.toThrow(KeychainUnavailableError);
-      expect(probeCalls).toBe(2);
+      await expect(runEnroll()).rejects.toThrow(
+        /keychain entry for profile "test-agent" already exists/,
+      );
+      expect(probeCalls).toBe(1);
+      expect(entryReads).toBe(2);
       expect(sessionReadCalls).toBe(2);
       expect(savedSecretKeys.size).toBe(0);
       expect(stdout).toEqual([]);
@@ -513,10 +518,10 @@ describe("agent-intent enroll", () => {
 
     it("reports keychain_unavailable when the Secret Service disappears before the write", async () => {
       let probeCalls = 0;
-      // Precheck and locked recheck pass; the probe after the failed write does not.
+      // The precheck passes; the probe after the failed write does not.
       keychainProbe = () => {
         probeCalls++;
-        if (probeCalls > 2) failingKeychainProbe();
+        if (probeCalls > 1) failingKeychainProbe();
         return [];
       };
       saveSecretKeyError = new Error("Platform secure storage failure: zbus error");
@@ -527,7 +532,7 @@ describe("agent-intent enroll", () => {
 
       await expect(runEnroll({ output: "json" })).rejects.toThrow();
 
-      expect(probeCalls).toBe(3);
+      expect(probeCalls).toBe(2);
       const lines = stdout
         .join("")
         .trim()
@@ -552,17 +557,17 @@ describe("agent-intent enroll", () => {
 
     it("stores the key in the plaintext file with --allow-plaintext-key when the Secret Service disappears before the write", async () => {
       let probeCalls = 0;
-      // Precheck and locked recheck pass; the probe after the failed write does not.
+      // The precheck passes; the probe after the failed write does not.
       keychainProbe = () => {
         probeCalls++;
-        if (probeCalls > 2) failingKeychainProbe();
+        if (probeCalls > 1) failingKeychainProbe();
         return [];
       };
       saveSecretKeyError = new Error("Platform secure storage failure: zbus error");
 
       await runEnroll({ "allow-plaintext-key": true, output: "json" });
 
-      expect(probeCalls).toBe(3);
+      expect(probeCalls).toBe(2);
       expect(savedKeyFiles.has("test-agent")).toBe(true);
       expect(savedSecretKeys.size).toBe(0);
       expect(storedProfile).toMatchObject({ keyStore: "plaintext-file" });

@@ -52,11 +52,13 @@ const REFUSED_WRITE_HINT =
 
 /** Checked once (fast) before generating an identity, and again (authoritative) inside the lock
  * right before writing — a concurrent enroll of the same profile id could pass the first check and
- * still lose the race to the second. Also returns where the agent key will be stored. */
+ * still lose the race to the second. Also returns where the agent key will be stored: the second
+ * check reuses the first one's keychain probe (`prechecked`) and only re-reads the entry. */
 function checkProfileAndChooseKeyStore(
   session: Session,
   profileId: string,
   allowPlaintextKey: boolean,
+  prechecked?: AgentIntentKeyStore,
 ): AgentIntentKeyStore {
   if (session.getAgentIntentProfile(profileId)) {
     throw new Error(
@@ -77,7 +79,7 @@ function checkProfileAndChooseKeyStore(
         "manually (or choose a different --profile id) before re-enrolling.",
     );
   }
-  const keyStore = chooseKeyStore(allowPlaintextKey);
+  const keyStore = prechecked ?? chooseKeyStore(allowPlaintextKey);
   if (keyStore === "os-keychain" && hasAgentIntentSecretKey(profileId)) {
     throw new Error(
       `A keychain entry for profile "${profileId}" already exists but is not recorded in the ` +
@@ -242,7 +244,11 @@ export default defineCommand({
       // Fast, unlocked precheck: fail on an obvious typo/duplicate before spending a keypair
       // generation + signature on it. Not a substitute for the recheck below — a concurrent enroll
       // of the same profile can still pass this one.
-      checkProfileAndChooseKeyStore(await Session.read(), profileId, flags["allow-plaintext-key"]);
+      const precheckedKeyStore = checkProfileAndChooseKeyStore(
+        await Session.read(),
+        profileId,
+        flags["allow-plaintext-key"],
+      );
 
       const identity = createSoftwareAgentIdentity();
       const host = createRelayHost(environment, expiresInMs);
@@ -267,6 +273,7 @@ export default defineCommand({
             session,
             profileId,
             flags["allow-plaintext-key"],
+            precheckedKeyStore,
           );
 
           const keyStore = await saveSecretKey(
