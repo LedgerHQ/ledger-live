@@ -3,7 +3,10 @@ import type { AccountHeroAvailability } from "../hero/types";
 
 export function resolveSwapConsole(
   platform: QuickActionsPlatform,
-  { isCurrencySupported, isSwapAvailable }: AccountHeroAvailability,
+  {
+    isCurrencySupported,
+    isSwapAvailable,
+  }: Pick<AccountHeroAvailability, "isCurrencySupported" | "isSwapAvailable">,
 ): boolean {
   return platform === "desktop" && isCurrencySupported && isSwapAvailable;
 }

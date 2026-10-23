@@ -1,9 +1,22 @@
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { renderHook } from "tests/testSetup";
+import { getAccountUrl } from "~/renderer/utils";
 import { useSwapAvailability } from "../useSwapAvailability";
 import { useAssetRouteLedgerIds } from "LLD/features/AssetDetail/hooks/useAssetRouteLedgerIds";
 import { useTradeAvailability } from "@ledgerhq/asset-detail";
 
 jest.mock("LLD/features/AssetDetail/hooks/useAssetRouteLedgerIds");
+
+const mockSwapCurrencies: { ids: string[]; isLoading: boolean } = { ids: [], isLoading: false };
+
+jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/exchange/swap/hooks/index"),
+  useFetchCurrencyAll: () => ({
+    data: mockSwapCurrencies.ids,
+    isLoading: mockSwapCurrencies.isLoading,
+  }),
+}));
 jest.mock("@ledgerhq/asset-detail", () => ({
   ...jest.requireActual("@ledgerhq/asset-detail"),
   useTradeAvailability: jest.fn(),
@@ -76,5 +89,44 @@ describe("useSwapAvailability", () => {
     const { result } = renderHook(() => useSwapAvailability("/asset/bitcoin"));
 
     expect(result.current).toBe(false);
+  });
+
+  describe("account detail routes", () => {
+    const btcAccount = genAccount("swap-availability-btc", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+    const renderOnAccount = (accountId: string) =>
+      renderHook(() => useSwapAvailability(getAccountUrl(accountId)), {
+        initialState: { accounts: [btcAccount] },
+      });
+
+    beforeEach(() => {
+      mockLedgerIds([]);
+      mockSwap(false);
+      mockSwapCurrencies.isLoading = false;
+    });
+
+    it("shows the panel when swap supports an asset of the account", () => {
+      mockSwapCurrencies.ids = ["bitcoin"];
+
+      expect(renderOnAccount(btcAccount.id).result.current).toBe(true);
+    });
+
+    it("hides the panel when swap supports no asset of the account", () => {
+      mockSwapCurrencies.ids = [];
+
+      expect(renderOnAccount(btcAccount.id).result.current).toBe(false);
+    });
+
+    it("keeps the panel while the swap currencies are loading", () => {
+      mockSwapCurrencies.ids = [];
+      mockSwapCurrencies.isLoading = true;
+
+      expect(renderOnAccount(btcAccount.id).result.current).toBe(true);
+    });
+
+    it("does not gate an unknown account", () => {
+      expect(renderOnAccount("unknown").result.current).toBe(true);
+    });
   });
 });
