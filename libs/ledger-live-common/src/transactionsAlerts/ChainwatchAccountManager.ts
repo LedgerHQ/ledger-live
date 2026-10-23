@@ -11,10 +11,30 @@ const hexAddressPattern = /^0x[0-9a-f]+$/i;
 const isNotFoundError = (error: unknown) =>
   typeof error === "object" && error !== null && "status" in error && error.status === 404;
 
-const addressMatchesSuffix = (address: string, suffix: string) =>
-  hexAddressPattern.test(address)
-    ? address.toLowerCase().endsWith(suffix.toLowerCase())
-    : address.endsWith(suffix);
+// Hex addresses match case-insensitively, other addresses exactly.
+const tailKey = (address: string, length: number) => {
+  const tail = address.slice(address.length - length);
+  return hexAddressPattern.test(address) ? `hex:${tail.toLowerCase()}` : `exact:${tail}`;
+};
+
+const suffixKeys = (suffix: string) => [`hex:${suffix.toLowerCase()}`, `exact:${suffix}`];
+
+const tailKeys = (addresses: string[], lengths: Set<number>) =>
+  new Set(
+    addresses.flatMap(address =>
+      [...lengths]
+        .filter(length => length <= address.length)
+        .map(length => tailKey(address, length)),
+    ),
+  );
+
+const makeSubscriptionMatcher = (suffixes: string[]) => {
+  const lengths = new Set(suffixes.map(suffix => suffix.length));
+  const keys = new Set(suffixes.flatMap(suffixKeys));
+  return (address: string) =>
+    Boolean(address) &&
+    [...lengths].some(length => length <= address.length && keys.has(tailKey(address, length)));
+};
 
 class ChainwatchAccountManager {
   chainwatchBaseUrl: string;
@@ -63,14 +83,12 @@ class ChainwatchAccountManager {
   }
 
   accountAlreadySubscribed(address: string) {
-    if (!address) return false;
-    return this.suffixes.some(suffix => addressMatchesSuffix(address, suffix));
+    return makeSubscriptionMatcher(this.suffixes)(address);
   }
 
   async registerNewAddresses(addressesToRegister: string[]) {
-    const addresses = addressesToRegister.filter(
-      address => address && !this.accountAlreadySubscribed(address),
-    );
+    const isSubscribed = makeSubscriptionMatcher(this.suffixes);
+    const addresses = addressesToRegister.filter(address => address && !isSubscribed(address));
     if (addresses.length > 0) {
       await network({
         method: "PUT",
@@ -81,17 +99,17 @@ class ChainwatchAccountManager {
   }
 
   async removeAddresses(addressesToRemove: string[]) {
-    const addresses = addressesToRemove.filter(
-      address => address && this.accountAlreadySubscribed(address),
-    );
+    const isSubscribed = makeSubscriptionMatcher(this.suffixes);
+    const addresses = addressesToRemove.filter(address => isSubscribed(address));
     if (addresses.length > 0) {
       await network({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
         data: addresses,
       });
+      const removedKeys = tailKeys(addresses, new Set(this.suffixes.map(suffix => suffix.length)));
       this.suffixes = this.suffixes.filter(
-        suffix => !addresses.some(address => addressMatchesSuffix(address, suffix)),
+        suffix => !suffixKeys(suffix).some(key => removedKeys.has(key)),
       );
     }
   }

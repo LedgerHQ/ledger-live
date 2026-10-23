@@ -102,6 +102,13 @@ describe("ChainwatchAccountManager", () => {
     });
   });
 
+  it("should ignore case when matching hexadecimal addresses", () => {
+    accountManager.suffixes = ["abcd"];
+
+    expect(accountManager.accountAlreadySubscribed("0x12ABCD")).toBe(true);
+    expect(accountManager.accountAlreadySubscribed("0x12ABCE")).toBe(false);
+  });
+
   it("should preserve case when matching non-hexadecimal addresses", () => {
     accountManager.suffixes = ["AbCd"];
 
