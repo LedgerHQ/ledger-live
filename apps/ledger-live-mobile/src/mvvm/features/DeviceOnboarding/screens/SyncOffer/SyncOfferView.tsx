@@ -2,6 +2,8 @@ import React from "react";
 import { Box, Button, IconButton, NavBar, NavBarTrailing, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useExperimental } from "~/experimental";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
@@ -31,9 +33,15 @@ export function SyncOfferView({
 }: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
   const theme = colorScheme === "dark" ? "dark" : "light";
+  const { top: topInset } = useSafeAreaInsets();
+  const topPadding = useExperimental() ? 0 : topInset;
 
   return (
-    <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
+    <Box
+      testID={syncOfferTestIds.screen}
+      lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}
+      style={{ paddingTop: topPadding }}
+    >
       <NavBar density="compact">
         <NavBarTrailing>
           <IconButton

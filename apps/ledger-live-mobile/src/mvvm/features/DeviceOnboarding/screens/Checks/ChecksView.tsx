@@ -12,6 +12,7 @@ import {
 import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useExperimental } from "~/experimental";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
@@ -83,11 +84,12 @@ export function ChecksView({
   errorDrawer,
   notGenuineDrawer,
 }: ChecksViewProps) {
-  const { bottom: bottomInset } = useSafeAreaInsets();
+  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+  const topPadding = useExperimental() ? 0 : topInset;
 
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
-      <Box lx={{ flex: 1, gap: "s24" }}>
+      <Box lx={{ flex: 1, gap: "s24" }} style={{ paddingTop: topPadding }}>
         <NavBar density="compact">
           {onQuit ? (
             <NavBarTrailing>
