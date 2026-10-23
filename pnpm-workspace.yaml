@@ -301,6 +301,7 @@ overrides:
   lodash: "catalog:"
   tslib: "2.6.2"
   "@ethersproject/providers>ws": "7.5.10"
+  "utf-8-validate": "6.0.6"
   elliptic: "6.6.1"
   use-latest-callback: "0.1.9"
   use-isomorphic-layout-effect: "^1.2.1"
