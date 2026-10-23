@@ -1,7 +1,7 @@
 # @features/flow-portfolio-services-entry-points
 
-> [!CAUTION]
-> **Status: UNSTABLE** — In active development; API may change.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Services entry points (Perps, Borrow) displayed as tiles on the Ledger Wallet portfolio, between
 the Crypto and Stablecoins sections. They replace the Perps and Borrow banners behind an A/B test.
