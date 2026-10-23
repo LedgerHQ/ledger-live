@@ -1555,6 +1555,7 @@ function swapIntentSummaryJson(summary: SwapIntentSummary): Record<string, unkno
     toAmount: summary.toAmount,
     provider: summary.provider,
     quoted: summary.quoted,
+    needsTokenApproval: summary.needsTokenApproval,
     ...(summary.description ? { description: summary.description } : {}),
   };
 }
