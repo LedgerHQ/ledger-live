@@ -32,7 +32,8 @@ export default class PayTabPage {
   freezeConfirmId = "freeze-confirm-action";
   frozenVisualId = "card-visual-frozen";
 
-  requestTitle = () => getElementById("pay-request-receive-title");
+  requestTitle = () => element(by.id("pay-request-receive-title"));
+
   requestAddress = () => getElementById("pay-request-receive-address");
   requestQr = () => getElementById("pay-request-receive-qr-code");
   requestShare = () => getElementById("pay-request-receive-share");

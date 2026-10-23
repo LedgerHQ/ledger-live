@@ -90,7 +90,7 @@ test.describe("Pay tab", () => {
       await app.payTab.expectScreenVisible();
       await app.payTab.expectFundedBalance();
       await app.payTab.expectBalanceAmount();
-      // await app.payTab.expectFilterPill(ALL_STABLECOINS);
+      await app.payTab.expectFilterPill(ALL_STABLECOINS);
 
       await app.payTab.filterBalanceAndExpectFilterPill(
         FILTER_TICKER.toLowerCase(),

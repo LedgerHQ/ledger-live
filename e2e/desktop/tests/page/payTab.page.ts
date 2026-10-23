@@ -69,6 +69,11 @@ export class PayTabPage extends AppPage {
     await expect(this.balanceAmount).toContainText(/\d/);
   }
 
+  @step("Expect the filter pill to read $0")
+  async expectFilterPill(label: string) {
+    await expect(this.filterPill).toHaveText(label);
+  }
+
   async filterBalanceAndExpectFilterPill(rowKey: string, label: string, errorMessage: string) {
     await this.filterPill.click();
     await this.filterOption(rowKey).click();
