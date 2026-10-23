@@ -2,12 +2,12 @@ import { intParser, boolParser, stringParser, stringArrayParser } from "@ledgerh
 
 const teamWalletXp = {
   LEDGER_COUNTERVALUES_API: {
-    def: "https://countervalues.live.ledger.com",
+    def: "https://global.api.prd.ledger.com/countervalue",
     parser: stringParser,
     desc: "Ledger countervalues API",
   },
   LEDGER_COUNTERVALUES_API_STAGING: {
-    def: "https://countervalues-service.api.ledger-test.com",
+    def: "https://global.api.stg.ledger-test.com/countervalue",
     parser: stringParser,
     desc: "Ledger countervalues API (staging)",
   },

@@ -5,7 +5,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { shortAddressPreview, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { DataRow } from "~/components/ValidateOnDeviceDataRow";
 import LText from "~/components/LText";

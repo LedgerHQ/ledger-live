@@ -12,10 +12,12 @@
  *
  * `scope:support` is allowed as a target everywhere: support packages are development tooling,
  * taken as devDependencies, and the Nx graph does not distinguish those from runtime dependencies.
- * It has no rule as a *source* for the same reason — one would constrain a support package's own
- * test-tooling dependencies (lumen, react-native) for no benefit.
+ * As a source, it may only reach `scope:support` and `scope:shared`: tooling carries no domain or
+ * feature knowledge, so a test harness that needs a domain's mocks lives in that domain package.
+ * Third-party test tooling (lumen, react-native) is not a graph node and stays unconstrained.
  */
 const DEP_CONSTRAINTS = [
+  { sourceTag: "scope:support", onlyDependOnLibsWithTags: ["scope:support", "scope:shared"] },
   { sourceTag: "scope:shared", onlyDependOnLibsWithTags: ["scope:shared", "scope:support"] },
   {
     sourceTag: "scope:domain",

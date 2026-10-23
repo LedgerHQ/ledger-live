@@ -11,7 +11,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer,
   getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
 import { TokenAccount } from "@ledgerhq/types-live";
 import { Delegation, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 import { openURL } from "~/renderer/linking";

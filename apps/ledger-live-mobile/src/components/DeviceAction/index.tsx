@@ -68,6 +68,8 @@ import {
 } from "./Screen/DeviceDeprecationScreen";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FlowName, getCurrencyName, getFlowName } from "./utils";
+import { ScreenName } from "~/const";
+import type { BaseNavigation } from "../RootNavigator/types/helpers";
 import { useFeature } from "@features/platform-feature-flags";
 
 export type Status = PartialNullable<{
@@ -184,10 +186,12 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const { colors: colorsFromStyled } = useThemeFromStyledComponents();
 
   const llmNanoSDeprecation = useFeature("llmNanoSDeprecation");
+  const isLdmkOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const baseNavigation = useNavigation<BaseNavigation>();
   const {
     appAndVersion,
     device,
@@ -713,7 +717,14 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 
   if (deviceInfo && deviceInfo.isBootloader) {
     return renderBootloaderStep({
-      onAutoRepair: onAutoRepair!,
+      onAutoRepair:
+        isLdmkOsUpdatesEnabled && device
+          ? () =>
+              baseNavigation.navigate(ScreenName.OsUpdate, {
+                device,
+                mode: "bootloaderRepair",
+              })
+          : onAutoRepair!,
       t,
     });
   }

@@ -21,7 +21,7 @@ import { track } from "@shared/analytics";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { mockStocksResponse } from "@domain/api-aggregated-assets/mock/stocks";
 
-const MARKET_API_ENDPOINT = "https://countervalues.live.ledger.com/v3/markets";
+const MARKET_API_ENDPOINT = "https://global.api.prd.ledger.com/countervalue/v3/markets";
 const DADA_API_ENDPOINT = "https://dada.api.ledger-test.com/v1/assets";
 
 const mockNavigate = jest.fn();

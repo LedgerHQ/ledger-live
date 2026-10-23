@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "tests/testSetup";
 import { AnimatedLogo } from "../index";
 
-jest.mock("@shared/lottie", () => {
+jest.mock("@shared/lottie/web", () => {
   const MockLottie = (props: Record<string, unknown>) => (
     <div data-testid="lottie" data-is-paused={String(props.paused)} />
   );

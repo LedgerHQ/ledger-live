@@ -1,8 +1,0 @@
-{
-  "name": "@support/jest-shared",
-  "targets": {
-    "build": {
-      "executor": "nx:noop"
-    }
-  }
-}

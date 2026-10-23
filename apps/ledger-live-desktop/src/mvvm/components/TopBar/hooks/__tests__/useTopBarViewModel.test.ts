@@ -1,11 +1,4 @@
-import {
-  Devices,
-  Eye,
-  Experiment,
-  Refresh,
-  Settings,
-  Tools,
-} from "@ledgerhq/lumen-ui-react/symbols";
+import { Devices, Eye, Experiment, Refresh, Tools } from "@ledgerhq/lumen-ui-react/symbols";
 import { createElement } from "react";
 import { MemoryRouter } from "react-router";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
@@ -15,7 +8,6 @@ import { useDiscreetMode } from "../useDiscreetMode";
 import { useExperimentalFeatures } from "../useExperimentalFeatures";
 import { useFeatureFlags } from "../useFeatureFlags";
 import { useMockServerTransport } from "../useMockServerTransport";
-import { useSettings } from "../useSettings";
 import type { TopBarSlot } from "../../types";
 
 jest.mock("../useActivityIndicator");
@@ -23,7 +15,6 @@ jest.mock("../useDiscreetMode");
 jest.mock("../useExperimentalFeatures");
 jest.mock("../useFeatureFlags");
 jest.mock("../useMockServerTransport");
-jest.mock("../useSettings");
 
 const defaults = {
   discreetMode: { handleDiscreet: jest.fn(), discreetIcon: Eye, tooltip: "Discreet" },
@@ -36,7 +27,6 @@ const defaults = {
     icon: Refresh,
     onTooltipShow: undefined,
   },
-  settings: { handleSettings: jest.fn(), settingsIcon: Settings, tooltip: "Settings" },
   experimental: {
     isVisible: false,
     handleExperimental: jest.fn(),
@@ -66,7 +56,6 @@ type SetupOptions = {
   featureFlagsVisible?: boolean;
   mockServerVisible?: boolean;
   operationsList?: boolean;
-  myWallet?: boolean;
   route?: string;
 };
 
@@ -77,7 +66,6 @@ const setup = ({
   featureFlagsVisible = false,
   mockServerVisible = false,
   operationsList = false,
-  myWallet = false,
   route,
 }: SetupOptions = {}) => {
   jest.mocked(useDiscreetMode).mockReturnValue(defaults.discreetMode);
@@ -86,7 +74,6 @@ const setup = ({
     hasAccounts,
     isRotating,
   });
-  jest.mocked(useSettings).mockReturnValue(defaults.settings);
   jest.mocked(useExperimentalFeatures).mockReturnValue({
     ...defaults.experimental,
     isVisible: experimentalVisible,
@@ -100,15 +87,11 @@ const setup = ({
     isVisible: mockServerVisible,
   });
 
-  const needsFlags = operationsList || myWallet;
-  const initialState = needsFlags
+  const initialState = operationsList
     ? withFlagOverrides({
         lwdWallet40: {
           enabled: true,
-          params: {
-            ...(operationsList && { operationsList: true }),
-            ...(myWallet && { myWallet: true }),
-          },
+          params: { operationsList: true },
         },
       })
     : undefined;
@@ -137,34 +120,12 @@ describe("useTopBarViewModel", () => {
 
   describe("slot ordering", () => {
     it.each<[string, SetupOptions, string[]]>([
-      [
-        "default (with accounts)",
-        {},
-        ["synchronize", "notification", "discreet", "settings", "my ledger"],
-      ],
-      [
-        "without accounts",
-        { hasAccounts: false },
-        ["notification", "discreet", "settings", "my ledger"],
-      ],
+      ["default (with accounts)", {}, ["synchronize", "discreet"]],
+      ["without accounts", { hasAccounts: false }, ["discreet"]],
       [
         "all optional slots visible",
         { experimentalVisible: true, featureFlagsVisible: true, operationsList: true },
-        [
-          "experimental",
-          "feature flags",
-          "synchronize",
-          "notification",
-          "discreet",
-          "history",
-          "settings",
-          "my ledger",
-        ],
-      ],
-      [
-        "myWallet enabled hides settings, my ledger, and notification",
-        { myWallet: true },
-        ["synchronize", "discreet"],
+        ["experimental", "feature flags", "synchronize", "discreet", "history"],
       ],
     ])("%s", (_name, options, expectedLabels) => {
       const { result } = setup(options);

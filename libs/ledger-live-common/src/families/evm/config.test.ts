@@ -66,12 +66,18 @@ describe("evmConfig", () => {
       unit: { name: "BTC", code: "BTC", magnitude: 18 },
       node: { type: "external", uri: "https://alpen.testnet.alpen.org" },
       explorer: { type: "blockscout", uri: "https://explorer.testnet.alpen.org/api" },
+      forceLegacyTransactions: true,
+      minGasPrice: "2000000",
       status: { type: "active", features: [{ id: "blockchain_txs", status: "active" }] },
     });
     expect(config).not.toMatchObject({ explorer: { type: "none" } });
     expect(config).not.toHaveProperty("finalizationLevel");
     expect(isLedgerBased(evmConfig.config_currency_alpen_testnet)).toBe(false);
     expect(config).not.toHaveProperty("ledgerExplorerUri");
+  });
+
+  it("should keep alpen testnet legacy even when the env disables forced legacy transactions", () => {
+    expect(getCurrencyConfiguration("alpen_testnet").forceLegacyTransactions).toBe(true);
   });
 
   it("should reflects an env change made after configuration load", () => {

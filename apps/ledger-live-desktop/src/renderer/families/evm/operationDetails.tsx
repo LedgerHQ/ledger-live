@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import {
   getValidatorExplorerUrl,
   resolveRedelegationValidators,

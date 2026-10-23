@@ -646,9 +646,11 @@ export const renderAllowOpeningApp = ({
 export const renderWarningOutdated = ({
   passWarning,
   appName,
+  onOpenManager,
 }: {
   passWarning: () => void;
   appName: string;
+  onOpenManager?: () => void;
 }) => (
   <Wrapper id={`warning-outdated-app`}>
     <Logo warning>
@@ -664,7 +666,7 @@ export const renderWarningOutdated = ({
       <Button onClick={passWarning}>
         <Trans i18nKey="common.continue" />
       </Button>
-      <OpenManagerButton ml={4} mt={0} appName={appName} updateApp />
+      <OpenManagerButton ml={4} mt={0} appName={appName} updateApp onOpenManager={onOpenManager} />
     </ButtonContainer>
   </Wrapper>
 );
@@ -874,6 +876,7 @@ export const renderError = ({
   error,
   t,
   withOpenManager,
+  onOpenManager,
   onRetry,
   withExportLogs,
   list,
@@ -896,6 +899,7 @@ export const renderError = ({
   error: Error | ErrorConstructor | DmkError;
   t: TFunction;
   withOpenManager?: boolean;
+  onOpenManager?: () => void;
   onRetry?: (() => void) | null | undefined;
   withExportLogs?: boolean;
   list?: boolean;
@@ -1007,6 +1011,7 @@ export const renderError = ({
             appName={managerAppName}
             updateApp={eName === "UpdateYourApp"}
             firmwareUpdate={eName === "LatestFirmwareVersionRequired"}
+            onOpenManager={onOpenManager}
           />
         ) : (
           <>

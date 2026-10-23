@@ -60,6 +60,7 @@
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
@@ -68,6 +69,6 @@
     "react-native-safe-area-context": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "@support/jest": "workspace:*"
   }
 }

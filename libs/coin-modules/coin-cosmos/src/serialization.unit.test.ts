@@ -170,10 +170,7 @@ describe("assignFromAccountRaw", () => {
 
     expect(account.sequence).toBe(0);
     expect(account.stakingResources).toEqual(createEmptyStakingResources());
-    expect(account.cosmosResources).toEqual({
-      ...createEmptyStakingResources(),
-      sequence: 0,
-    });
+    expect(account).not.toHaveProperty("cosmosResources");
   });
 
   describe("legacy raw accounts", () => {
@@ -225,8 +222,8 @@ describe("assignFromAccountRaw", () => {
         pendingRewardsBalance: BigNumber(1),
         unbondingBalance: BigNumber(4),
       });
-      expect(account.cosmosResources.delegatedBalance).toEqual(BigNumber(42));
-      expect(account.cosmosResources.sequence).toBe(7);
+      expect(account.sequence).toBe(7);
+      expect(account).not.toHaveProperty("cosmosResources");
     });
 
     it("keeps the raw stakingResources over the legacy cosmosResources when both are present", () => {

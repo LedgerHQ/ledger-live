@@ -21,7 +21,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { Container } from "../shared/Container";
 
 export default function StepDevice(props: StepProps) {
-  const { account } = props;
+  const { account, onConnectionFailed } = props;
   const [deviceIsReady, setDeviceIsReady] = useState(false);
   const mainAccount = account ? getMainAccount(account) : null;
   const action = useConnectAppAction();
@@ -40,6 +40,7 @@ export default function StepDevice(props: StepProps) {
       action={action}
       request={request}
       onResult={() => setDeviceIsReady(true)}
+      onError={onConnectionFailed}
       analyticsPropertyFlow="exportUfvk"
       location={HOOKS_TRACKING_LOCATIONS.receiveModal}
     />

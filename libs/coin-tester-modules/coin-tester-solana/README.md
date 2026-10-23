@@ -3,13 +3,14 @@
 > [!NOTE]
 > **Status: STABLE** — Production-ready; API is considered stable.
 
-This package contains the deterministic testing infrastructure for Solana in Ledger Live.
+Deterministic integration tester for `@ledgerhq/coin-solana`. Asks coin-sandbox for an Agave
+validator and runs one scenario through the generic coin framework.
 
 ## Features
 
 - Deterministic testing scenarios for Solana
 - Local signer written in Typescript
-- Integration with Agave for local blockchain simulation, on two validators: `mainnet` (Agave version and features of production) and `devnet` (upcoming ones). Versions are pinned in `docker-compose.yml`.
+- Agave 4.3.0 (the version and the features of production), started by coin-sandbox, with the four SPL tokens of the scenario preloaded and airdropped by it
 
 ## Usage
 
@@ -18,14 +19,16 @@ import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { scenarioSolana } from "@ledgerhq/coin-tester-solana";
 
 // Run a test scenario
-await executeScenario(scenarioSolana("devnet"), "generic-adapter");
+await executeScenario(scenarioSolana);
 ```
 
 ## Development
 
-Run the tests with `pnpm start`. It builds the Agave images one at a time before running the tests: two Agave compiles at once don't fit in Docker Desktop's default memory.
+Run the tests with `pnpm coin:tester:solana start`. They need coin-sandbox's server running (`deno task server`
+in its repository, port 8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon. A full run takes ~35 s.
 
-On Apple Silicon, Agave is built from source the first time each version is used (about 7 minutes per version). Anza ships no Linux arm64 release, and amd64 emulation lacks the io_uring Agave requires. Next runs use the Docker cache.
+On Apple Silicon, coin-sandbox builds Agave from source the first time a version is used (about 7 minutes).
+Anza ships no Linux arm64 release, and amd64 emulation lacks the io_uring Agave requires. Next runs use the Docker cache.
 
 ## Dependencies
 

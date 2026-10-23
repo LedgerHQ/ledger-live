@@ -1,5 +1,5 @@
 // `workerThreads: true` is required for validating object with `bigint` values
-const { withEsmDeps } = require("@support/jest-shared");
+const { withEsmDeps } = require("@support/jest/shared");
 
 const config = {
   testEnvironment: "node",

@@ -29,11 +29,15 @@ function buildTarget(projectRoot) {
     executor: "nx:run-commands",
     cache: true,
     inputs: [
-      `{projectRoot}/src/**/index*.ts`,
-      `{projectRoot}/src/**/index*.tsx`,
+      // Any source file can be reached through `export *` or named in `package.json#exports`.
+      `{projectRoot}/src/**/*`,
+      `{projectRoot}/package.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/rules.js`,
+      `{workspaceRoot}/${PLUGIN_ROOT}/components.js`,
+      `{workspaceRoot}/${PLUGIN_ROOT}/components.config.json`,
       `{workspaceRoot}/${PLUGIN_ROOT}/validate.js`,
       `{workspaceRoot}/${PLUGIN_ROOT}/exceptions.js`,
+      { externalDependencies: ["typescript"] },
     ],
     options: {
       cwd: "{workspaceRoot}",

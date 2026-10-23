@@ -18,6 +18,7 @@ export type PerpsDepositSignViewModel = {
   onDismiss: () => void;
   /** Errors raised while connecting to the device, which never reach the execution. */
   onDeviceError: (error: Error) => void;
+  onOpenManager: () => void;
 };
 
 export function usePerpsDepositSignViewModel(
@@ -65,5 +66,7 @@ export function usePerpsDepositSignViewModel(
     onClose,
     onDismiss,
     onDeviceError,
+    // Opening My Ledger leaves the flow, like a dismiss.
+    onOpenManager: onDismiss,
   };
 }

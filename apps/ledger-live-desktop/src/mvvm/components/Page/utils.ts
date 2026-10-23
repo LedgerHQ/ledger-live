@@ -95,7 +95,7 @@ const RIGHT_PANEL_PAGES = new Set<string>(["/", "/analytics"]);
  */
 const CARD_RIGHT_PANEL_PAGES = new Set<string>(["/paytab"]);
 
-const isAggregatedAssetDetailPath = (pathname: string): boolean =>
+export const isAggregatedAssetDetailPath = (pathname: string): boolean =>
   pathname === "/asset" || pathname.startsWith("/asset/");
 
 /**

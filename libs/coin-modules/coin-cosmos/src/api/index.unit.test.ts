@@ -10,7 +10,7 @@ jest.mock("../network/Cosmos", () => ({
       .fn()
       .mockResolvedValue({ accountNumber: 0, sequence: 0, pubKeyType: "", pubKey: "" }),
     getLatestBlockInfo: jest.fn().mockResolvedValue({ height: 1, hash: "hash", time: new Date() }),
-    getTransactionsPage: jest.fn().mockResolvedValue({ txs: [], hasMore: false }),
+    getTransactionsPage: jest.fn().mockResolvedValue({ streams: [] }),
     getValidators: jest.fn().mockResolvedValue([]),
     getDelegations: jest.fn().mockResolvedValue([]),
     getUnbondings: jest.fn().mockResolvedValue([]),

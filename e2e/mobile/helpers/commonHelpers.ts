@@ -42,6 +42,11 @@ export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
     ? describe(...args)
     : describe.skip("[not available on LNS] " + args[0], args[1]);
 
+export const describeIfNanoS = (...args: Parameters<typeof describe>) =>
+  process.env.SPECULOS_DEVICE === Device.LNS.name
+    ? describe(...args)
+    : describe.skip("[LNS only] " + args[0], args[1]);
+
 /** `describeIfNotNanoS` when one of the currencies is not supported on LNS, `describe` otherwise. */
 export const describeIfNanoSSupports = (...currencyIds: string[]) =>
   currencyIds.some(currencyId => isCurrencyUnsupportedOnLNS(currencyId))
@@ -60,10 +65,26 @@ export function isSpeculosRemote(): boolean {
   return process.env.REMOTE_SPECULOS === "true";
 }
 
-/**
- * Creates a regex string for Detox URL blacklisting
- * @returns Formatted regex string for Detox
- */
+// Escapes regex metacharacters so a dynamic value (ticker, provider name, currency name, ...)
+// can be embedded in a RegExp and matched literally.
+export const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+
+const DEFAULT_MOCK_SERVER_HOST_PATTERN = ".*device-mock-server.*";
+
+function mockServerDetoxUrlPattern(): string {
+  const raw = process.env.MOCK_SERVER_TRANSPORT_URL;
+  if (!raw) return DEFAULT_MOCK_SERVER_HOST_PATTERN;
+  try {
+    const host = new URL(raw).host;
+    if (!host) return DEFAULT_MOCK_SERVER_HOST_PATTERN;
+    return `.*${escapeRegExp(host)}.*`;
+  } catch {
+    return DEFAULT_MOCK_SERVER_HOST_PATTERN;
+  }
+}
+
+/** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
     ".*sdk.*.braze.*",
@@ -73,6 +94,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
     ".*speculos.*ldg-tech.com.*",
+    mockServerDetoxUrlPattern(),
     ".*optimism.*",
     ".*speculos.ledgerlabs.net.*",
   ];
@@ -88,6 +110,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
   const port = await findFreePort();
   closeBridge();
   const wsToken = initBridge(port);
+  const { launchArgs: extraLaunchArgs, ...restConfig } = customConfig;
   await device.launchApp({
     launchArgs: {
       wsPort: port,
@@ -98,12 +121,13 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
+      ...extraLaunchArgs,
     },
     languageAndLocale: {
       language: "en-US",
       locale: "en-US",
     },
-    ...customConfig,
+    ...restConfig,
   });
   return port;
 }
@@ -179,11 +203,6 @@ export const normalizeText = (text: string) =>
     .replace(/\s+/g, " ")
     .replace(/\u202F/g, " ")
     .trim();
-
-// Escapes regex metacharacters so a dynamic value (ticker, provider name, currency name, ...)
-// can be embedded in a RegExp and matched literally.
-export const escapeRegExp = (value: string) =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
 export const parseTickerAmount = (text: string, ticker: string) => {
   const normalized = normalizeText(text).replace(/,/g, "");

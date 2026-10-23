@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen, userEvent, waitFor } from "@testing-library/react-native";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { listenToCardApi } from "@support/msw-features-flow-pay-card";
-import { CARD_TRANSACTIONS_URL, SECTION_TITLE, cardApiWrapper } from "../__tests__/cardApiStore";
+import { CARD_TRANSACTIONS_URL, listenToCardApi } from "@domain/api-card-management/mock/card-api";
+import { SECTION_TITLE, cardApiWrapper } from "../__tests__/cardApiStore";
 import { CardTransactions } from "./CardTransactions";
 
 const server = listenToCardApi();

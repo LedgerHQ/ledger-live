@@ -17,7 +17,7 @@ function intent(overrides: Partial<TransactionIntent> = {}): TransactionIntent {
 }
 
 function nativeBalance(value: bigint): Balance[] {
-  return [{ value, asset: { type: "native", name: "KAS" } }];
+  return [{ value, asset: { type: "native" } }];
 }
 
 describe("validateIntent", () => {

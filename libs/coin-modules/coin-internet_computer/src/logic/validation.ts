@@ -1,5 +1,5 @@
-import { AccountIdentifier } from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
+import { Principal } from "@icp-sdk/core/principal";
+import { AccountIdentifier } from "./accountIdentifier";
 
 type ValidationResult = { isValid: boolean; error?: string };
 

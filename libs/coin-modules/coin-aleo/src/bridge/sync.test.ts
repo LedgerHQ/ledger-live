@@ -28,11 +28,15 @@ import {
   mockUnspentRecord1,
 } from "../__tests__/fixtures/account.fixture";
 import { getMockedConfig } from "../__tests__/fixtures/config.fixture";
-import type { AleoAccount, AleoTokenAccount } from "../types";
+import type { AleoAccount, AleoPrivateRecord, AleoTokenAccount } from "../types";
 import { AleoApiConfigurationResetError } from "../errors";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { deepFreezeLikeImmer } from "../__tests__/helpers/freeze";
-import { getMockedRecord, MOCK_ALEO_ADDRESS } from "../__tests__/fixtures/api.fixture";
+import {
+  getMockedRecord,
+  getMockedTransactionDetails,
+  MOCK_ALEO_ADDRESS,
+} from "../__tests__/fixtures/api.fixture";
 import coinConfig from "../config";
 import {
   accessProvableApi,
@@ -84,6 +88,7 @@ const mockListOperations = jest.mocked(listOperations);
 const mockAccessProvableApi = jest.mocked(accessProvableApi);
 const mockFetchAllOwnedRecords = jest.mocked(fetchAllOwnedRecords);
 const mockListPrivateOperations = jest.mocked(listPrivateOperations);
+const getKnownTransactionIds = () => mockListPrivateOperations.mock.calls[0][0].knownTransactionIds;
 const mockGetPrivateBalance = jest.mocked(getPrivateBalance);
 const mockPatchPublicOperations = jest.mocked(patchPublicOperations);
 const mockApiClient = jest.mocked(apiClient);
@@ -1246,6 +1251,7 @@ describe("sync.ts", () => {
         address: mockAccount.freshAddress,
         ledgerAccountId: expect.any(String),
         privateRecords: mockPrivateRecords,
+        knownTransactionIds: new Set(),
       });
       expect(mockGetPrivateBalance).toHaveBeenCalledTimes(1);
       expect(mockGetPrivateBalance).toHaveBeenCalledWith({
@@ -1257,6 +1263,58 @@ describe("sync.ts", () => {
       expect(result?.aleoResources?.privateBalance).toEqual(new BigNumber(50000));
       expect(result?.aleoResources?.unspentPrivateRecords).toEqual(mockUnspentResult);
       expect(result?.aleoResources?.lastPrivateSyncDate).toBeInstanceOf(Date);
+    });
+
+    it("should pass the hashes of already listed operations as known transaction ids", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const oldPrivateOp = getMockedOperation({
+        id: "old-private",
+        hash: "at1oldprivate",
+        extra: { transactionType: "private", functionId: "transfer_private" },
+      });
+      const publicOp = getMockedOperation({ id: "public", hash: "at1public" });
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: { ...mockInitialAccount, operations: [oldPrivateOp] },
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [publicOp],
+      });
+
+      expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
+      expect(getKnownTransactionIds()).toEqual(new Set(["at1public", "at1oldprivate"]));
+    });
+
+    it("should leave cached private fee operations out of known transaction ids", async () => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      const oldFeeOp = getMockedOperation({
+        id: "old-fee",
+        type: "FEES",
+        hash: "at1oldfee",
+        extra: { transactionType: "private", functionId: "fee_private" },
+      });
+
+      await performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: { ...mockInitialAccount, operations: [oldFeeOp] },
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+
+      expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
+      expect(getKnownTransactionIds()).toEqual(new Set());
     });
 
     it("should use latest private operation blockHeight as start cursor for getAccountOwnedRecords", async () => {
@@ -1721,6 +1779,73 @@ describe("sync.ts", () => {
         }),
       );
     });
+
+    const runTokenSync = (tokenRecords: AleoPrivateRecord[]) => {
+      mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);
+      mockFetchAllOwnedRecords
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce([])
+        .mockResolvedValueOnce(tokenRecords)
+        .mockResolvedValueOnce([]);
+
+      return performPrivateSync({
+        info: {
+          index: mockAccount.index,
+          derivationPath: mockAccount.freshAddressPath,
+          address: mockAccount.freshAddress,
+          currency: mockCurrency,
+          derivationMode: mockDerivationMode,
+          initialAccount: mockInitialAccount,
+        },
+        syncConfig: mockSyncConfig,
+        currentPublicOps: [],
+      });
+    };
+
+    it("should pass the hashes of the account's outgoing token transfers as known transaction ids", async () => {
+      mockApiClient.getTransactionById.mockResolvedValueOnce(
+        getMockedTransactionDetails("at1token"),
+      );
+
+      await runTokenSync([
+        { ...tokenPrivateRecord, sender: MOCK_ALEO_ADDRESS, transaction_id: "at1token  " },
+        getMockedRecord({
+          transaction_id: "at1token",
+          function_name: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+        }),
+        getMockedRecord({ transaction_id: "at1join", function_name: "join" }),
+      ]);
+
+      expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
+      expect(getKnownTransactionIds()).toEqual(new Set(["at1token"]));
+    });
+
+    it.each([
+      ["an incoming token transfer", { sender: "aleo1sender" }],
+      [
+        "a token missing from the catalog",
+        { sender: MOCK_ALEO_ADDRESS, program_name: "unknown_token.aleo" },
+      ],
+      [
+        "a shield of the account's own public tokens",
+        {
+          sender: MOCK_ALEO_ADDRESS,
+          function_name: EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
+        },
+      ],
+      [
+        "a batched token transfer",
+        { sender: MOCK_ALEO_ADDRESS, function_name: `${EXPLORER_TRANSFER_TYPES.PRIVATE}_2` },
+      ],
+    ])(
+      "should leave %s eligible for a fee operation",
+      async (_, overrides: Partial<AleoPrivateRecord>) => {
+        await runTokenSync([{ ...tokenPrivateRecord, ...overrides, transaction_id: "at1token" }]);
+
+        expect(mockListPrivateOperations).toHaveBeenCalledTimes(1);
+        expect(getKnownTransactionIds()).toEqual(new Set());
+      },
+    );
 
     it("should pass token records to listPrivateOperations for consumed tag computation", async () => {
       mockAccessProvableApi.mockResolvedValueOnce(configuredProvableApi);

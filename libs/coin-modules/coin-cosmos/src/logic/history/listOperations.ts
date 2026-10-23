@@ -1,4 +1,5 @@
 import { ListOperationsOptions, Operation, Page } from "@ledgerhq/coin-module-framework/api/index";
+import { BigNumber } from "bignumber.js";
 import type { CosmosCoinConfig } from "../../config";
 import { CosmosAPI } from "../../network/Cosmos";
 import { toOperationExtraRaw } from "../../serialization";
@@ -12,9 +13,31 @@ const PAGE_SIZE = 100;
 // already folds it into op.value — so emit value excluding fee to avoid double-counting.
 const FEE_READDED_BY_FRAMEWORK = new Set(["OUT", "DELEGATE", "UNDELEGATE", "REDELEGATE"]);
 
+type MessageOwners = { from_address?: string; delegator_address?: string; sender?: string };
+type TxMessage = MessageOwners & { msg?: MessageOwners };
+
+function isSentBy(tx: CosmosTx, address: string): boolean {
+  return tx.tx.body.messages.some((message: TxMessage) => {
+    const { from_address, delegator_address, sender } = message.msg ?? message;
+    return [from_address, delegator_address, sender].includes(address);
+  });
+}
+
+function isCreditedTo(tx: CosmosTx, address: string): boolean {
+  return tx.events.some(
+    event =>
+      event.type === "transfer" &&
+      event.attributes.some(attr => attr.key === "recipient" && attr.value === address),
+  );
+}
+
 function toOperation(op: CosmosParsedOperation): Operation {
   const details = toOperationExtraRaw(op.extra) as Record<string, unknown>;
-  const value = FEE_READDED_BY_FRAMEWORK.has(op.type) ? op.value.minus(op.fee) : op.value;
+  const value = op.hasFailed
+    ? new BigNumber(0)
+    : FEE_READDED_BY_FRAMEWORK.has(op.type)
+      ? op.value.minus(op.fee)
+      : op.value;
   const { familyExtra } = op.extra;
   if (familyExtra) {
     const rawFamilyExtra: Record<string, unknown> = {};
@@ -81,19 +104,23 @@ export async function listOperations(
   // offset+limit per stream: the merged top-N is a subset of each stream's top-N, so it's the exact page.
   const count = offset + limit;
 
-  const { txs, hasMore } = await api.getTransactionsPage(address, count);
+  const { streams } = await api.getTransactionsPage(address, count);
 
-  // sender + recipient streams overlap, so dedupe on tx hash.
+  // sender + recipient + fee payer streams overlap, so dedupe on tx hash.
   const deduped = new Map<string, CosmosTx>();
-  for (const tx of txs) {
+  for (const tx of streams.flatMap(stream => stream.txs)) {
     if (!deduped.has(tx.txhash)) {
       deduped.set(tx.txhash, tx);
     }
   }
   const uniqueTxs = [...deduped.values()];
 
-  // A raw tx below minHeight means we've paged past the floor — nothing older remains to fetch.
-  const reachedFloor = uniqueTxs.some(tx => Number(tx.height) < options.minHeight);
+  // A stream is done once it has no more results or its window already reaches below minHeight:
+  // everything older it could still return is below the floor. One stream past the floor says
+  // nothing about the others.
+  const hasOlderToFetch = streams.some(
+    stream => stream.hasMore && !stream.txs.some(tx => Number(tx.height) < options.minHeight),
+  );
 
   const sortedTxs = uniqueTxs
     .filter(tx => Number(tx.height) >= options.minHeight)
@@ -106,16 +133,24 @@ export async function listOperations(
       return 0;
     });
 
-  // Slice in tx-space, then parse — a drop shortens a page but never skips.
-  const items = parseCosmosOperations(
-    { address, unitCode },
-    sortedTxs.slice(offset, offset + limit),
-  ).map(toOperation);
+  // Slice in tx-space, then parse and filter — a drop shortens a page but never skips.
+  const pageTxs = sortedTxs.slice(offset, offset + limit);
+  const sentHashes = new Set(pageTxs.filter(tx => isSentBy(tx, address)).map(tx => tx.txhash));
+  const creditedHashes = new Set(
+    pageTxs.filter(tx => isCreditedTo(tx, address)).map(tx => tx.txhash),
+  );
+  // The fee payer stream also returns txs other accounts sent and we only sponsored: keep those only
+  // when they credit the address (incoming transfer, or a reward paid to its withdraw address).
+  const items = parseCosmosOperations({ address, unitCode }, pageTxs)
+    .filter(op => {
+      if (sentHashes.has(op.hash)) return true;
+      if (op.hasFailed) return false;
+      return op.type === "IN" || (op.type === "REWARD" && creditedHashes.has(op.hash));
+    })
+    .map(toOperation);
   // Key `next` on the floor, not page fullness, so a short page from parse-drops still advances.
   const next =
-    offset + limit < sortedTxs.length || (hasMore && !reachedFloor)
-      ? String(offset + limit)
-      : undefined;
+    offset + limit < sortedTxs.length || hasOlderToFetch ? String(offset + limit) : undefined;
 
   return { items, next };
 }

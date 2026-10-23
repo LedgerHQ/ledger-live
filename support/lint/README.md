@@ -28,7 +28,7 @@ rule that several packages of a layer need belongs in that layer's preset.
 | Preset | Layer | Differs from `base` |
 | --- | --- | --- |
 | `base` | `domain/`, `shared/`, `features/platform/` | The baseline |
-| `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on |
+| `devtools` | `devtools/` | Automatic JSX runtime, console allowed, platform-suffix rule on, `jsx-a11y/aria-role` off in native files |
 | `features-flow` | `features/flow/` | `any` and test-structure rules are errors; lodash, `expo-clipboard`, `navigator.clipboard` and live-common `lib/` restricted; React Compiler rules fatal in the packages that had them fatal |
 | `support` | `support/` | Console allowed |
 | `tools` | `tools/` | Node only, console allowed, `build/` ignored |
@@ -44,9 +44,9 @@ anchor to the directory of the layer config that re-exports the preset.
 
 ## Conformance
 
-`lint:tool-config` rejects an oxlint config anywhere but the layer roots, a layer config that does
-more than re-export its preset, a `-c` on an oxlint call, and a rule flag outside the allowlist or
-on another script than `lint`. Subtrees that keep their own config for now (the apps, the e2e
+`lint:tool-config` rejects an oxlint config anywhere but the layer roots (the workspace root
+included), a missing or edited layer config, a `-c` on an oxlint call, and a rule flag outside the
+allowlist or on another script than `lint`. Subtrees that keep their own config for now (the apps, the e2e
 suites, a few legacy `libs/` trees) are listed in the plugin's `exclusions.mjs`.
 
 ## Rules

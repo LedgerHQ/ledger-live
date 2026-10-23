@@ -9,6 +9,7 @@ import { act, renderHook, waitFor } from "tests/testSetup";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { upsertShieldedSubscription } from "~/renderer/reducers/shieldedSyncSubscriptions";
 import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
+import { markFirstSyncFailed } from "../zcashActivationTracking";
 import { useZcashShieldedSync } from "../useZcashShieldedSync";
 
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
@@ -17,7 +18,11 @@ jest.mock("@ledgerhq/live-common/bridge/index", () => ({
 jest.mock("../ZCashExportKeyFlowModal/sync", () => ({
   syncStateUpdater: jest.fn(() => ({ type: "test/syncStateUpdater" })),
 }));
+jest.mock("../zcashActivationTracking", () => ({
+  markFirstSyncFailed: jest.fn(),
+}));
 const mockedGetAccountBridge = jest.mocked(getAccountBridge);
+const mockedMarkFirstSyncFailed = jest.mocked(markFirstSyncFailed);
 const mockedSyncStateUpdater = jest.mocked(syncStateUpdater);
 
 const baseAccount = createFixtureAccount();
@@ -111,6 +116,34 @@ describe("useZcashShieldedSync", () => {
         syncType: SYNC_TYPE_SHIELDED,
       });
     });
+  });
+
+  it("stops without a sync error when the sync fails, and reports the failure", async () => {
+    const account = buildAccount();
+    mockedGetAccountBridge.mockReturnValue({
+      sync: jest.fn(
+        () =>
+          new Observable<(a: unknown) => unknown>(subscriber => {
+            subscriber.error(new Error("engine down"));
+          }),
+      ),
+    } as unknown as ReturnType<typeof getAccountBridge>);
+
+    const { result } = renderHook(() => useZcashShieldedSync(account), {
+      initialState: { shieldedSyncSubscriptions: [] },
+    });
+
+    act(() => {
+      result.current.startShieldedSync();
+    });
+
+    await waitFor(() => {
+      expect(mockedSyncStateUpdater).toHaveBeenCalledWith(
+        expect.objectContaining({ id: account.id }),
+        { syncState: "stopped", progress: 0 },
+      );
+    });
+    expect(mockedMarkFirstSyncFailed).toHaveBeenCalledWith(account.id);
   });
 
   it("is a no-op when a sync is already in flight for the account", () => {

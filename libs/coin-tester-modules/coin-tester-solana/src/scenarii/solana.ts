@@ -15,16 +15,17 @@ import {
 import type { SolanaAccount, SolanaStakingPosition } from "@ledgerhq/coin-solana/types";
 import { listSolanaStakingPositions } from "@ledgerhq/coin-solana/logic";
 import BigNumber from "bignumber.js";
+import { Keypair } from "@solana/web3.js";
 import { setEnv } from "@shared/env";
-import { type AgaveCluster, airdrop, killAgave, spawnAgave } from "../agave";
+import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
-  PAYER,
   STAKE_ACCOUNT,
   VOTE_ACCOUNT,
-  createSplAccount,
   initStakeAccount,
   initVoteAccount,
+  setSolanaRpc,
 } from "../connection";
 import { buildSigners } from "../signer";
 import { getBridges } from "../helpers";
@@ -549,13 +550,20 @@ function makeScenarioTransactions(address: string): SolanaScenarioTransaction[] 
 }
 
 let closeMSW: (() => void) | null = null;
+let sandbox: Sandbox | undefined;
 
-export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransaction, Account> => ({
-  name: `Ledger Live Basic Solana Transactions (${cluster})`,
+export const scenarioSolana: Scenario<GenericTransaction, Account> = {
+  name: "Ledger Live Basic Solana Transactions",
   setup: async () => {
-    await spawnAgave(cluster);
+    sandbox = await startSandbox(
+      { family: "solana", network: "solana" },
+      { node: { provider: "agave", version: "4.3.0" } },
+    );
+    const rpc = sandbox.endpoints.node;
+    if (rpc === undefined) throw new Error("the sandbox instance has no node endpoint");
+    setSolanaRpc(rpc);
 
-    setEnv("API_SOLANA_PROXY", "http://localhost:8899");
+    setEnv("API_SOLANA_PROXY", rpc);
 
     LiveConfig.setConfig({
       config_currency_solana: {
@@ -581,16 +589,18 @@ export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransacti
 
     const account = makeAccount(address, SOLANA);
 
-    await airdrop(cluster, account.freshAddress, 5);
-    await airdrop(cluster, PAYER.publicKey.toBase58(), 5);
-    await createSplAccount(account.freshAddress, SOLANA_USDC, 5, "spl-token");
-    await createSplAccount(account.freshAddress, SOLANA_CWIF, 5, "spl-token-2022");
-    await createSplAccount(account.freshAddress, SOLANA_VIRTUAL, 5, "spl-token");
-    await createSplAccount(account.freshAddress, SOLANA_TSLAX, 5, "spl-token-2022");
+    await sandbox.airdrop(account.freshAddress, 5);
+    // The sandbox creates the associated token account, then mints
+    for (const token of [SOLANA_USDC, SOLANA_CWIF, SOLANA_VIRTUAL, SOLANA_TSLAX]) {
+      await sandbox.airdrop(account.freshAddress, 5, token.contractAddress);
+    }
     await initVoteAccount();
-    await initStakeAccount(account.freshAddress, WITHDRAWABLE_AMOUNT);
+    // A throwaway key pays for the stake account: the sandbox funds it, no key is kept in the tester
+    const stakePayer = Keypair.generate();
+    await sandbox.airdrop(stakePayer.publicKey.toBase58(), 5);
+    await initStakeAccount(stakePayer, account.freshAddress, WITHDRAWABLE_AMOUNT);
 
-    closeMSW = initMSW();
+    closeMSW = initMSW(rpc);
 
     return {
       account,
@@ -602,6 +612,7 @@ export const scenarioSolana = (cluster: AgaveCluster): Scenario<GenericTransacti
   teardown: async () => {
     closeMSW?.();
     closeMSW = null;
-    await killAgave();
+    await sandbox?.down();
+    sandbox = undefined;
   },
-});
+};

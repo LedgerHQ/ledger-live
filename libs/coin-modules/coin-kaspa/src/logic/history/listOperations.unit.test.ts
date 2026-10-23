@@ -248,7 +248,7 @@ describe("listOperations", () => {
       // Framework Operation.value is the pure amount — the generic adapter re-adds fees for OUT.
       expect(op.tx.fees).toBe(50000n);
       expect(op.value).toBe(700000n);
-      expect(op.asset).toEqual({ type: "native", name: "KAS" });
+      expect(op.asset).toEqual({ type: "native" });
     });
 
     it("maps an IN transaction to a framework Operation with the received amount", async () => {

@@ -1,4 +1,5 @@
 import React, {
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -127,6 +128,11 @@ export function QueuedBottomSheet({
     [footerStore],
   );
 
+  const handleOpen = useCallback(() => {
+    if (handleOpened()) return;
+    onOpened?.();
+  }, [handleOpened, onOpened]);
+
   return (
     <GorhomForwardingBottomSheet
       {...replaceStackBehavior}
@@ -146,10 +152,7 @@ export function QueuedBottomSheet({
       onBack={hasBackButton ? hookOnBack : undefined}
       onHeaderClosePressed={handleHeaderClosePressed}
       onAnimate={handleAnimate}
-      onOpen={() => {
-        if (handleOpened()) return;
-        onOpened?.();
-      }}
+      onOpen={handleOpen}
       onDismiss={handleDismiss}
       backdropPressBehavior={preventBackdropClick || areBottomSheetsLocked ? "none" : "close"}
       onBackdropPress={handleBackdropPress}
@@ -179,13 +182,14 @@ type FooterSlotProps = BottomSheetFooterProps &
 function FooterSlot({
   store,
   onHeightChange,
+  animatedFooterPosition,
   ...footerProps
 }: FooterSlotProps): React.JSX.Element | null {
   const content = useSyncExternalStore(store.subscribe, store.getContent, store.getContent);
   if (content === null || content === undefined) return null;
 
   return (
-    <BottomSheetFooter {...footerProps}>
+    <BottomSheetFooter animatedFooterPosition={animatedFooterPosition} {...footerProps}>
       <QueuedBottomSheetFooter onHeightChange={onHeightChange}>{content}</QueuedBottomSheetFooter>
     </BottomSheetFooter>
   );

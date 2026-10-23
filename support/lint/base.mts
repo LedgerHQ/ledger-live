@@ -96,14 +96,7 @@ export default defineConfig({
       plugins: ["jest"],
       rules: {
         "typescript/no-explicit-any": "warn",
-        "react/no-children-prop": "off",
       },
-    },
-    {
-      // jsx-a11y encodes DOM and ARIA semantics. On React Native `role` is an ordinary prop with
-      // its own vocabulary, and components define their own `role` too, so the rule misfires.
-      files: ["**/*.native.*"],
-      rules: { "jsx-a11y/aria-role": "off" },
     },
   ],
 });

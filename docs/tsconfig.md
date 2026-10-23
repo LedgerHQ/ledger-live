@@ -43,9 +43,7 @@ Each package carries a solution root (`tsconfig.json`) plus one config per platf
 
 ```json
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": { "moduleResolution": "bundler" },
-  "files": [],
+  "extends": "@support/tsconfig/dual",
   "references": [
     { "path": "./tsconfig.web.json" },
     { "path": "./tsconfig.native.json" }
@@ -53,33 +51,24 @@ Each package carries a solution root (`tsconfig.json`) plus one config per platf
 }
 ```
 
-`"files": []` is the critical detail. It tells TypeScript that this config owns **no source files directly**. It is a shared `compilerOptions` bag plus a pointer to the platform configs. Platform-specific files (`.web.*`, `.native.*`) are included by only one child config; unsuffixed shared files are included by both and type-checked in each platform context.
+The `dual` preset sets `"files": []`, and that is the critical detail. It tells TypeScript that this config owns **no source files directly**. It is a shared `compilerOptions` bag plus a pointer to the platform configs. Platform-specific files (`.web.*`, `.native.*`) are included by only one child config; unsuffixed shared files are included by both and type-checked in each platform context.
 
 ### `tsconfig.web.json` — web platform
 
 ```json
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "moduleSuffixes": [".web", ""]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.native.*"]
-}
+{ "extends": ["./tsconfig.json", "@support/tsconfig/web"] }
 ```
+
+The `web` preset carries `moduleSuffixes: [".web", ""]`, includes `src/` and excludes
+`src/**/*.native.*`. Listing `./tsconfig.json` first keeps the solution root's `types` and options.
 
 ### `tsconfig.native.json` — mobile platform
 
 ```json
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "moduleSuffixes": [".native", ""]
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/**/*.web.*"]
-}
+{ "extends": ["./tsconfig.json", "@support/tsconfig/native"] }
 ```
+
+The `native` preset mirrors it: `moduleSuffixes: [".native", ""]`, web files excluded.
 
 ---
 
@@ -152,35 +141,18 @@ Every package needs a solution root (`tsconfig.json`) plus one config per platfo
 
 ---
 
-## Upcoming: support package simplification (WIP)
+## Presets
 
-> **Status:** in progress — PR [#19921](https://github.com/LedgerHQ/ledger-live/pull/19921). Not yet merged.
+Every package extends one of the `@support/tsconfig` presets, one per project archetype, and
+declares only what a preset cannot know: its `types`, the `references` of a solution root, and any
+genuine difference from its archetype. The list of presets and how to pick one is in
+[`support/tsconfig`](../support/tsconfig/README.md).
 
-The 3-file pattern described above is correct but verbose — every package repeats the same `compilerOptions`, `include`, and `exclude`. A set of `@support/ts-config-*` packages under `support/` is being introduced to eliminate that duplication.
-
-### What changes
-
-**`tsconfig.base.json`** becomes a one-line shim:
-```json
-{ "extends": "@support/ts-config-base-legacy" }
-```
-
-**Web-only packages** collapse to a single file:
-```json
-{ "extends": "@support/ts-config-web" }
-```
-
-**Cross-platform ("both") packages** keep 3 files but each is minimal:
-```json
-// tsconfig.json
-{ "extends": "@support/ts-config-web-x-native", "files": [], "references": [{"path": "./tsconfig.web.json"}, {"path": "./tsconfig.native.json"}] }
-
-// tsconfig.web.json
-{ "extends": "@support/ts-config-web-x-native/tsconfig.web.json" }
-
-// tsconfig.native.json
-{ "extends": "@support/ts-config-web-x-native/tsconfig.native.json" }
-```
+`pnpm lint:tool-config` enforces it: a package config sets `extends`, `references`, `include`,
+`exclude`, `files`, `compilerOptions.types` and `compilerOptions.paths`, nothing that repeats what it
+inherits. Every other compiler option belongs to a preset; a package that does not meet the
+strictness of its preset yet may relax it only while the rule's debt list names that option for
+the file.
 
 ---
 
@@ -192,4 +164,4 @@ The pattern is already in use across the codebase:
 - `features/flow/pay-card-*`, `features/flow/flow-contacts-*`
 - `features/platform/contacts`
 - `shared/ui-qr-code`, `shared/ui-queued-bottom-sheet`
-- `support/jest-devtools`
+- `support/jest/devtools`

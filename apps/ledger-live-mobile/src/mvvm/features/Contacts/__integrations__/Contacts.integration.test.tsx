@@ -5,6 +5,7 @@ import type { RouteProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -1278,6 +1279,7 @@ describe("Contacts integration", () => {
 
   it("should prefill the saved address and update the address value", async () => {
     const newAddress = "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd";
+    const savedAddressPreview = "0xabcdef...cdefabcd";
     const { user } = render(<MyWalletNavigator />, {
       overrideInitialState: withContactsPageReadyState(
         { lwmContacts: { enabled: true, params: { newBadge: false } } },
@@ -1301,18 +1303,26 @@ describe("Contacts integration", () => {
     });
 
     await user.press(screen.getByTestId("contacts-rename-address-confirm"));
+
     await waitFor(() => {
       expect(screen.queryByTestId("contacts-rename-address-confirm")).toBeNull();
+      expect(screen.queryByTestId("contacts-address-detail-dialog")).toBeNull();
+      expect(
+        screen.getByTestId("contacts-detail-address-address-ethereum-value"),
+      ).toHaveTextContent(savedAddressPreview);
+    });
+
+    // The sheet mock never emits onDismiss, so a close stays leaving until this fallback.
+    // Reopening earlier reuses that sheet and keeps the previous address on screen.
+    act(() => {
+      jest.advanceTimersByTime(600);
     });
 
     await user.press(screen.getByTestId("contacts-detail-address-row-address-ethereum"));
 
-    // The sheet closes before the save lands, so wait on the saved value, not the sheet.
-    await waitFor(() => {
-      expect(screen.getByTestId("contacts-address-detail-full-address")).toHaveTextContent(
-        newAddress,
-      );
-    });
+    expect(await screen.findByTestId("contacts-address-detail-full-address")).toHaveTextContent(
+      newAddress,
+    );
   });
 
   it("should hide delete from the Me contact actions menu", async () => {

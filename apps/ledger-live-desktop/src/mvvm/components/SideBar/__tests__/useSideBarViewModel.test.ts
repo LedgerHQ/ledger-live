@@ -4,7 +4,6 @@ import { useSideBarViewModel } from "../useSideBarViewModel";
 import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_VALUE_TO_TRACK_ENTRY } from "../utils/constants";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
 import * as analytics from "@shared/analytics";
-import type { SideBarViewModel } from "../types";
 import { defaultInitialState, withFeatureFlags } from "./testUtils";
 import { isSideBarNavValue } from "../utils";
 
@@ -24,28 +23,6 @@ const mockedUseNavigate = jest.mocked(useNavigate);
 function renderViewModel(initialState = defaultInitialState) {
   return renderHook(() => useSideBarViewModel(), { initialState, minimal: false });
 }
-
-type NavHandlerName = NonNullable<
-  {
-    [K in keyof SideBarViewModel]: SideBarViewModel[K] extends () => void ? K : never;
-  }[keyof SideBarViewModel]
->;
-
-const NAV_HANDLER_CASES: ReadonlyArray<{
-  handler: NavHandlerName;
-  path: string;
-  trackEntry: string;
-}> = [
-  { handler: "handleClickSwap", path: SIDEBAR_VALUE_TO_PATH.swap, trackEntry: "swap" },
-  { handler: "handleClickEarn", path: SIDEBAR_VALUE_TO_PATH.earn, trackEntry: "earn" },
-  { handler: "handleClickCatalog", path: SIDEBAR_VALUE_TO_PATH.discover, trackEntry: "platform" },
-  { handler: "handleClickCardWallet", path: SIDEBAR_VALUE_TO_PATH.card, trackEntry: "card" },
-  { handler: "handleClickMarket", path: "/market", trackEntry: "market" },
-  { handler: "handleClickManager", path: "/manager", trackEntry: "manager" },
-  { handler: "handleClickExchange", path: "/exchange", trackEntry: "exchange" },
-  { handler: "handleClickPerps", path: "/perps", trackEntry: "perps" },
-  { handler: "handleClickCard", path: "/card", trackEntry: "card" },
-];
 
 const ACTIVE_CHANGE_NAV_CASES = Object.keys(SIDEBAR_VALUE_TO_PATH)
   .filter(isSideBarNavValue)
@@ -77,169 +54,17 @@ describe("useSideBarViewModel", () => {
 
     expect(result.current).toMatchObject({
       collapsed: false,
-      noAccounts: false,
-      totalStarredAccounts: 0,
+      isAccountsDisabled: false,
       active: "home",
-      isMyWalletEnabled: false,
     });
-  });
-
-  it("should expose My Wallet state when enabled", () => {
-    const { result } = renderViewModel(
-      withFeatureFlags({
-        lwdWallet40: { enabled: true, params: { myWallet: true } },
-      }),
-    );
-
-    expect(result.current.isMyWalletEnabled).toBe(true);
   });
 
   describe("collapse", () => {
-    it("should toggle collapsed via handleCollapse", () => {
-      const { result } = renderViewModel();
-
-      act(() => result.current.handleCollapse());
-      expect(result.current.collapsed).toBe(true);
-
-      act(() => result.current.handleCollapse());
-      expect(result.current.collapsed).toBe(false);
-    });
-
     it("should set collapsed explicitly via handleCollapsedChange", () => {
       const { result } = renderViewModel();
 
       act(() => result.current.handleCollapsedChange(true));
       expect(result.current.collapsed).toBe(true);
-    });
-  });
-
-  describe("navigation handlers", () => {
-    it("should navigate to /accounts via handleClickAccounts when asset section is off", () => {
-      const trackSpy = jest.spyOn(analytics, "track");
-      const { result } = renderViewModel();
-
-      act(() => {
-        result.current.handleClickAccounts();
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.accounts);
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "accounts",
-        page: "/",
-        flagged: false,
-      });
-
-      trackSpy.mockRestore();
-    });
-
-    it("should navigate to /cryptos via handleClickAccounts when asset section is on", () => {
-      const trackSpy = jest.spyOn(analytics, "track");
-      const { result } = renderViewModel(
-        withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { assetSection: true } },
-        }),
-      );
-
-      act(() => {
-        result.current.handleClickAccounts();
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "accounts",
-        page: "/",
-        flagged: false,
-      });
-
-      trackSpy.mockRestore();
-    });
-
-    it.each(NAV_HANDLER_CASES)(
-      "should navigate to $path and track '$trackEntry' via $handler",
-      ({ handler, path, trackEntry }) => {
-        const trackSpy = jest.spyOn(analytics, "track");
-        const { result } = renderViewModel();
-
-        act(() => {
-          result.current[handler]();
-        });
-
-        expect(mockNavigate).toHaveBeenCalledWith(path);
-        expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-          entry: trackEntry,
-          page: "/",
-          flagged: false,
-        });
-
-        trackSpy.mockRestore();
-      },
-    );
-
-    it("should skip navigation when already on target path", () => {
-      const { result } = renderViewModel();
-
-      act(() => result.current.handleClickDashboard());
-
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("handleClickRefer", () => {
-    it("should navigate when referral program is enabled with path", () => {
-      const { result } = renderViewModel(
-        withFeatureFlags({
-          referralProgramDesktopSidebar: {
-            enabled: true,
-            params: { path: "/refer-a-friend", isNew: false },
-          },
-        }),
-      );
-
-      act(() => result.current.handleClickRefer());
-
-      expect(mockNavigate).toHaveBeenCalledWith("/refer-a-friend");
-    });
-
-    it("should not navigate when referral program is disabled", () => {
-      const { result } = renderViewModel();
-
-      act(() => result.current.handleClickRefer());
-
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
-  });
-
-  describe("handleClickRecover", () => {
-    it("should open modal and track when enabled without openRecoverFromSidebar", () => {
-      const trackSpy = jest.spyOn(analytics, "track");
-      const { result } = renderViewModel(
-        withFeatureFlags({ protectServicesDesktop: { enabled: true } }),
-      );
-
-      act(() => result.current.handleClickRecover());
-
-      expect(mockNavigate).not.toHaveBeenCalled();
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "recover",
-        page: "/",
-        flagged: false,
-      });
-      trackSpy.mockRestore();
-    });
-
-    it("should track menuentry_clicked for recover when feature is not enabled", () => {
-      const trackSpy = jest.spyOn(analytics, "track");
-      const { result } = renderViewModel();
-
-      act(() => result.current.handleClickRecover());
-
-      expect(mockNavigate).not.toHaveBeenCalled();
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "recover",
-        page: "/",
-        flagged: false,
-      });
-      trackSpy.mockRestore();
     });
   });
 
@@ -298,34 +123,6 @@ describe("useSideBarViewModel", () => {
         trackSpy.mockRestore();
       },
     );
-
-    it("should delegate to handleClickRefer for 'refer'", () => {
-      const { result } = renderViewModel(
-        withFeatureFlags({
-          referralProgramDesktopSidebar: { enabled: true, params: { path: "/refer-a-friend" } },
-        }),
-      );
-
-      act(() => result.current.handleActiveChange("refer"));
-
-      expect(mockNavigate).toHaveBeenCalledWith("/refer-a-friend");
-    });
-
-    it("should delegate to handleClickRecover for 'recover'", () => {
-      const trackSpy = jest.spyOn(analytics, "track");
-      const { result } = renderViewModel(
-        withFeatureFlags({ protectServicesDesktop: { enabled: true } }),
-      );
-
-      act(() => result.current.handleActiveChange("recover"));
-
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "recover",
-        page: "/",
-        flagged: false,
-      });
-      trackSpy.mockRestore();
-    });
 
     it("should ignore unknown values", () => {
       const { result } = renderViewModel();

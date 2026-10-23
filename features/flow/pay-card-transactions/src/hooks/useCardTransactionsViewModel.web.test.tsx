@@ -5,8 +5,8 @@ import {
   mockPayCardTransactions,
 } from "@domain/api-card-management/mock/card-transactions";
 import { useCardTransactionsViewModel } from "./useCardTransactionsViewModel";
-import { listenToCardApi } from "@support/msw-features-flow-pay-card";
-import { CARD_TRANSACTIONS_URL, CATEGORY_LABELS, cardApiWrapper } from "../__tests__/cardApiStore";
+import { CARD_TRANSACTIONS_URL, listenToCardApi } from "@domain/api-card-management/mock/card-api";
+import { CATEGORY_LABELS, cardApiWrapper } from "../__tests__/cardApiStore";
 
 const server = listenToCardApi();
 

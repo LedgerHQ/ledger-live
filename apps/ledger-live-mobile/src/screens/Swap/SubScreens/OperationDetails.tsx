@@ -1,15 +1,15 @@
 import React, { useMemo } from "react";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  getCryptoCurrencyById,
+  getDefaultExplorerView,
+  getTransactionExplorer as getDefaultTransactionExplorer,
+} from "@domain/entity-currency-crypto";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
-import {
-  getDefaultExplorerView,
-  getTransactionExplorer as getDefaultTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { flattenAccountsSelector } from "~/reducers/accounts";

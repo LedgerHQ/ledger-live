@@ -3,7 +3,7 @@ import { Button, Box } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import type { DrawerProps } from "./ViewProps";
 import type { IconComponent } from "LLM/utils/getDeviceIcon";
-import UnsupportedUpdateDrawer from "./UnsupportedUpdateDrawer";
+import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
 
 type Wallet40PortfolioBannerProps = {
   deviceIcon: IconComponent;

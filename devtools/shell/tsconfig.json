@@ -1,18 +1,11 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/tsconfig/dual",
   "compilerOptions": {
     "paths": {
       "jest/*": ["./jest/*"]
     },
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "noEmit": true,
     "types": ["jest"]
   },
-  "files": [],
   "references": [
     { "path": "./tsconfig.web.json" },
     { "path": "./tsconfig.native.json" }

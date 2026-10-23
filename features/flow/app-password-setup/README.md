@@ -20,4 +20,4 @@ rule come from [`@features/platform-app-lock`](../../platform/app-lock/README.md
 ## Native only
 
 The epic is mobile only, so the package ships no `.web` variants. Tests use the native project of
-`@support/jest-features-flow` (`*.native.test.ts(x)`).
+`@support/jest/features-flow` (`*.native.test.ts(x)`).

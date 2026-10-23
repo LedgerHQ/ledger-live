@@ -1,4 +1,4 @@
-import { IDL } from "@dfinity/candid";
+import { IDL } from "@icp-sdk/core/candid";
 import invariant from "invariant";
 
 export { idlFactory as ledgerIdlFactory } from "./idl/ledger.idl";
@@ -30,5 +30,8 @@ export const getCanisterIdlFunc = (
 export const encodeCanisterIdlFunc = (func: IDL.FuncClass, args: unknown[]) =>
   IDL.encode(func.argTypes, args);
 
-export const decodeCanisterIdlFunc = <T>(func: IDL.FuncClass, args: ArrayBuffer): T =>
+export const decodeCanisterIdlFunc = <T>(func: IDL.FuncClass, args: Uint8Array): T =>
   IDL.decode(func.retTypes, args) as T;
+
+/** The value of a decoded Candid `opt` (`[]` | `[value]`), or undefined when absent. */
+export const fromOpt = <T>(opt: [] | [T]): T | undefined => (opt.length ? opt[0] : undefined);

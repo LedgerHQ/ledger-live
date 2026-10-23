@@ -36,6 +36,7 @@ import i18n from "~/renderer/i18n/init";
 import { setZcashShieldedEnabled } from "@ledgerhq/live-common/families/zcash/setup";
 import { LinkingProviderWrapper } from "~/renderer/components/LinkingProviderWrapper";
 import { MockServerDeviceWindow } from "LLD/components/MockServerDeviceWindow";
+import { FamilyAppEffects } from "LLD/components/FamilyAppEffects";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -101,6 +102,7 @@ const InnerApp = () => {
                               <QueryClientProvider client={queryClient}>
                                 <Default />
                                 <MockServerDeviceWindow />
+                                <FamilyAppEffects />
                                 <ReactQueryDevtoolsProvider />
                               </QueryClientProvider>
                             </DrawerProvider>

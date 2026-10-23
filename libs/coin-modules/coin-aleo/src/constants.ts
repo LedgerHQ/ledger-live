@@ -14,6 +14,8 @@ export const EXPLORER_TRANSFER_TYPES = {
   PUBLIC_TO_PRIVATE: "transfer_public_to_private",
   FEE_PRIVATE: "fee_private",
   FEE_PUBLIC: "fee_public",
+  JOIN: "join",
+  SPLIT: "split",
 };
 
 export const TRANSACTION_TYPE = {

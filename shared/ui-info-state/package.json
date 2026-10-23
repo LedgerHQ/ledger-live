@@ -11,8 +11,6 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.web.ts"
     },
-    "./native": "./src/index.native.ts",
-    "./web": "./src/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -51,7 +49,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

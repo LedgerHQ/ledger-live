@@ -1,8 +1,6 @@
 import { createApi as createEvmApi } from "@ledgerhq/coin-evm/api";
-import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import type { CoinModuleApi } from "@ledgerhq/coin-module-framework/api/types";
-import { getCurrencyConfiguration } from "../../config";
 
-export function createLocalEvmApi(currencyId: string): CoinModuleApi<any> {
-  return createEvmApi(currencyId) as unknown as CoinModuleApi<any>;
+export function createLocalEvmApi(): CoinModuleApi<any> {
+  return createEvmApi() as unknown as CoinModuleApi<any>;
 }

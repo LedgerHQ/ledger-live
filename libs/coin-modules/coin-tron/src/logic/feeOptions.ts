@@ -5,8 +5,6 @@ import {
   STANDARD_FEE_OPTION_ID,
   TRONIFY_FEE_OPTION_ID,
   TRONIFY_PAY_ASSET,
-  TRX_CURRENCY_NAME,
-  TRX_UNIT,
   tronifyPayAsset,
 } from "./constants";
 import { estimateFees } from "./estimateFees";
@@ -20,7 +18,7 @@ type TronIntent = TransactionIntent<TronMemo, TronTxData>;
 // mutating an option must never leak into the module-level constants.
 const standardOption = (): FeeOptionMeta => ({
   id: STANDARD_FEE_OPTION_ID,
-  feeAsset: { type: "native", name: TRX_CURRENCY_NAME, unit: { ...TRX_UNIT } },
+  feeAsset: { type: "native" },
 });
 const tronifyOption = (): FeeOptionMeta => ({
   id: TRONIFY_FEE_OPTION_ID,

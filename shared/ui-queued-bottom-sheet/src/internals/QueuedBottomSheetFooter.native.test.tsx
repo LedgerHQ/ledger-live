@@ -10,16 +10,35 @@ import {
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
 import { QueuedBottomSheetFooter } from "./QueuedBottomSheetFooter.native";
 
-const KEYBOARD_SHOWN = 1;
-
-let gorhomKeyboard: { status: number; heightWithinContainer: number } | null = null;
 let keyboardMetrics: KeyboardMetrics | undefined;
+const footerOnScreen = { y: 0, width: 390, height: 80 };
+const KEYBOARD_TOP = 500;
 
-jest.mock("@gorhom/bottom-sheet", () => ({
-  KEYBOARD_STATUS: { UNDETERMINED: 0, SHOWN: 1, HIDDEN: 2 },
-  useBottomSheetInternal: () =>
-    gorhomKeyboard === null ? null : { animatedKeyboardState: { get: () => gorhomKeyboard } },
-}));
+jest.mock("react-native", () => {
+  const ReactActual = require("react");
+  const actual = jest.requireActual("react-native");
+  const MockView = ReactActual.forwardRef(
+    (
+      props: { children?: React.ReactNode },
+      ref: React.Ref<{
+        measureInWindow: (
+          callback: (x: number, y: number, width: number, height: number) => void,
+        ) => void;
+      }>,
+    ) => {
+      ReactActual.useImperativeHandle(ref, () => ({
+        measureInWindow: (
+          callback: (x: number, y: number, width: number, height: number) => void,
+        ) => {
+          callback(0, footerOnScreen.y, footerOnScreen.width, footerOnScreen.height);
+        },
+      }));
+      return ReactActual.createElement(actual.View, props);
+    },
+  );
+
+  return { ...actual, View: MockView };
+});
 
 const BOTTOM_INSET = 48;
 
@@ -33,8 +52,9 @@ describe("QueuedBottomSheetFooter (native)", () => {
 
   beforeEach(() => {
     listeners.clear();
-    gorhomKeyboard = null;
     keyboardMetrics = undefined;
+    footerOnScreen.y = 0;
+    footerOnScreen.height = 80;
     Keyboard.metrics = () => keyboardMetrics;
     jest.spyOn(Keyboard, "addListener").mockImplementation(((
       event: KeyboardEventName,
@@ -78,8 +98,6 @@ describe("QueuedBottomSheetFooter (native)", () => {
     expect(footerTranslateY()).toBe(0);
   });
 
-  // Android reports a keyboard height that stops short of the system bars, so dropping the safe
-  // area while the keyboard is up would leave the action half behind it.
   it("keeps its bottom safe area while the Android keyboard is up", () => {
     Platform.OS = "android";
     renderFooter();
@@ -96,17 +114,84 @@ describe("QueuedBottomSheetFooter (native)", () => {
     expect(footerTranslateY()).toBe(0);
   });
 
-  it("rises on iOS over a keyboard gorhom never offset", () => {
+  it("lifts an iOS footer by the amount still overlapping the keyboard", () => {
     Platform.OS = "ios";
-    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
+    footerOnScreen.y = 740;
+    keyboardMetrics = openKeyboard();
     renderFooter();
 
     expect(footerTranslateY()).toBe(-320);
   });
 
+  it("stays put on iOS when the footer already sits on the keyboard", () => {
+    Platform.OS = "ios";
+    footerOnScreen.y = 420;
+    keyboardMetrics = openKeyboard();
+    renderFooter();
+
+    expect(footerTranslateY()).toBe(0);
+  });
+
+  it("stays put on iOS when the footer is already clear of an open keyboard", () => {
+    Platform.OS = "ios";
+    footerOnScreen.y = 320;
+    keyboardMetrics = openKeyboard();
+    renderFooter();
+
+    expect(footerTranslateY()).toBe(0);
+  });
+
+  it("corrects the iOS lift on a later frame when the keyboard is already open", () => {
+    Platform.OS = "ios";
+    footerOnScreen.y = 740;
+    keyboardMetrics = openKeyboard();
+    const pending: Array<(time: number) => void> = [];
+    const runtime = globalThis as unknown as {
+      requestAnimationFrame: (callback: (time: number) => void) => number;
+    };
+    const originalFrame = runtime.requestAnimationFrame;
+    runtime.requestAnimationFrame = callback => {
+      pending.push(callback);
+      return pending.length;
+    };
+
+    try {
+      renderFooter();
+      expect(footerTranslateY()).toBe(-320);
+
+      footerOnScreen.y = 420;
+      act(() => {
+        pending.splice(0).forEach(callback => callback(0));
+      });
+
+      expect(footerTranslateY()).toBe(0);
+    } finally {
+      runtime.requestAnimationFrame = originalFrame;
+    }
+  });
+
+  it("drops the extra iOS lift after the sheet moves the footer up", () => {
+    Platform.OS = "ios";
+    footerOnScreen.y = 740;
+    renderFooter();
+
+    act(() => {
+      listeners.get("keyboardWillShow")?.(keyboardEvent());
+    });
+    expect(footerTranslateY()).toBe(-320);
+
+    footerOnScreen.y = 420;
+    act(() => {
+      listeners.get("keyboardDidShow")?.(keyboardEvent());
+    });
+
+    expect(footerTranslateY()).toBe(0);
+  });
+
   it("keeps the iOS footer down when the keyboard hides during sampling", () => {
     Platform.OS = "ios";
-    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
+    footerOnScreen.y = 740;
+    keyboardMetrics = openKeyboard();
     const pending: Array<(time: number) => void> = [];
     const runtime = globalThis as unknown as {
       requestAnimationFrame: (callback: (time: number) => void) => number;
@@ -134,22 +219,18 @@ describe("QueuedBottomSheetFooter (native)", () => {
     }
   });
 
-  it("leaves an iOS keyboard gorhom already cleared alone", () => {
+  it("rises on iOS when the keyboard opens after the sheet mounted", () => {
     Platform.OS = "ios";
-    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
-    gorhomKeyboard = { status: KEYBOARD_SHOWN, heightWithinContainer: 320 };
+    footerOnScreen.y = 740;
     renderFooter();
 
     expect(footerTranslateY()).toBe(0);
-  });
 
-  it("closes only the iOS gap gorhom left", () => {
-    Platform.OS = "ios";
-    keyboardMetrics = { height: 320, screenX: 0, screenY: 0, width: 390 };
-    gorhomKeyboard = { status: KEYBOARD_SHOWN, heightWithinContainer: 100 };
-    renderFooter();
+    act(() => {
+      listeners.get("keyboardDidShow")?.(keyboardEvent());
+    });
 
-    expect(footerTranslateY()).toBe(-220);
+    expect(footerTranslateY()).toBe(-320);
   });
 
   function showKeyboard(height: number) {
@@ -165,6 +246,14 @@ describe("QueuedBottomSheetFooter (native)", () => {
   }
 });
 
+function openKeyboard(): KeyboardMetrics {
+  return { height: 320, screenX: 0, screenY: KEYBOARD_TOP, width: 390 };
+}
+
+function keyboardEvent(): KeyboardEvent {
+  return { endCoordinates: openKeyboard() } as KeyboardEvent;
+}
+
 function renderFooter() {
   return render(
     <QueuedBottomSheetFooter onHeightChange={jest.fn()}>
@@ -174,10 +263,30 @@ function renderFooter() {
 }
 
 function footerTranslateY(): number {
-  const [lifted] = screen.UNSAFE_getAllByType(View);
-  return lifted.props.style.transform[0].translateY;
+  const lifted = screen
+    .UNSAFE_getAllByType(View)
+    .find(view => view.props.style?.transform?.[0]?.translateY !== undefined);
+  return lifted?.props.style.transform[0].translateY;
 }
 
 function footerPaddingBottom(): number {
-  return screen.getByTestId("footer-action").parent!.props.style.paddingBottom;
+  let node: { props: { style?: unknown }; parent: typeof node | null } | null =
+    screen.getByTestId("footer-action");
+  while (node) {
+    const padding = paddingBottom(node.props.style);
+    if (padding !== undefined) return padding;
+    node = node.parent;
+  }
+  throw new Error("footer padding was not rendered");
+}
+
+function paddingBottom(style: unknown): number | undefined {
+  if (Array.isArray(style)) {
+    return style.map(paddingBottom).find(value => value !== undefined);
+  }
+  if (style && typeof style === "object" && "paddingBottom" in style) {
+    const value = style.paddingBottom;
+    return typeof value === "number" ? value : undefined;
+  }
+  return undefined;
 }

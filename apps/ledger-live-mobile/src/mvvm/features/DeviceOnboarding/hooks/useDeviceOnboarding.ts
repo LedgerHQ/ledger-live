@@ -3,6 +3,7 @@ import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
+  stateValueToString,
   type OnboardingEvent,
   type SessionEvent,
 } from "@features/platform-device-onboarding";
@@ -19,7 +20,7 @@ import {
 } from "@ledgerhq/live-dmk-shared";
 import type { Subscription } from "rxjs";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
-import { useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
+import { isRebootedDevice, useFirmwareUpdateHandover } from "./useFirmwareUpdateHandover";
 import { useLeaveOnboarding } from "./useLeaveOnboarding";
 import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag";
 import { createDeviceOnboardingPorts } from "../utils/ports";
@@ -30,9 +31,29 @@ type UseDeviceOnboardingInput = {
   knownDevices: KnownDevice[];
   offerSync: boolean;
   navigateOnExit?: boolean;
+  wasReadOnlyAtEntry?: boolean;
+  /** Runs right before the exit navigates, so the host can stop blocking back. */
+  onLeave?: () => void;
 };
 
 type StoppableActor = { stop(): void };
+
+export type DeviceOnboardingSession = DeviceOnboardingToolProps & {
+  liveDevice: Device | null;
+  /** Drops a firmware lookup that has not opened its screen yet. */
+  closeFirmwareHandover: () => void;
+  abortFirmwareReconnect: () => void;
+};
+
+async function releaseDeviceSession(
+  dmk: DeviceManagementKit | null,
+  ports: { closeSession: () => Promise<void>; currentSessionId: () => string } | null,
+): Promise<void> {
+  const sessionId = ports?.currentSessionId() ?? null;
+  await ports?.closeSession().catch(() => undefined);
+  if (!dmk || !sessionId) return;
+  await dmk.disconnect({ sessionId }).catch(() => undefined);
+}
 
 function statusWithActor(
   actor: { getSnapshot(): unknown } | null,
@@ -45,7 +66,9 @@ export function useDeviceOnboarding({
   knownDevices,
   offerSync,
   navigateOnExit = true,
-}: UseDeviceOnboardingInput): DeviceOnboardingToolProps {
+  wasReadOnlyAtEntry = false,
+  onLeave,
+}: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
   const [device, setDevice] = useState<DeviceOnboardingToolProps["device"]>(null);
   const [error, setError] = useState<string | null>(null);
@@ -53,8 +76,11 @@ export function useDeviceOnboarding({
   const { featureFlag, setFeatureFlag, isFeatureFlagOverridden, resetFeatureFlag } =
     useDeviceOnboardingFeatureFlag();
   const hostsSeedSetup = Boolean(featureFlag?.enabled && featureFlag.params.connectUnseededDevice);
-
-  const leaveOnboarding = useLeaveOnboarding({ device: liveDevice, navigateOnExit });
+  const leaveOnboarding = useLeaveOnboarding({
+    device: liveDevice,
+    navigateOnExit,
+    wasReadOnlyAtEntry,
+  });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
   const connectionRef = useRef<Subscription | null>(null);
@@ -62,6 +88,12 @@ export function useDeviceOnboarding({
   const selectedDevices = useRef(new Set<string>());
   const adoptGeneration = useRef(0);
   const onEventRef = useRef<(event: OnboardingEvent) => void>(() => undefined);
+  const waitingAfterUpdateRef = useRef(false);
+  const liveDeviceRef = useRef(liveDevice);
+  const expectedDeviceRef = useRef<Device | null>(null);
+  const releasedSessionRef = useRef<string | null>(null);
+  const releaseRef = useRef<Promise<void>>(Promise.resolve());
+  const connectRef = useRef<() => void>(() => undefined);
 
   const handleDone = useCallback(() => {
     setStatus("exited");
@@ -85,13 +117,16 @@ export function useDeviceOnboarding({
     send,
     sendToActor,
     startActor,
+    discardActor,
     resetActor,
-    stopActor,
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No mobile onboarding session",
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
-    leaveOnboarding,
+    leaveOnboarding: (reason, context) => {
+      onLeave?.();
+      leaveOnboarding(reason, context);
+    },
   });
 
   const dropLostTransport = useCallback(() => {
@@ -140,12 +175,40 @@ export function useDeviceOnboarding({
         sessionId: result.sessionId,
         wired: result.compatDeviceWired,
       });
+      const previousPorts = portsRef.current;
       portsRef.current = nextPorts;
+      if (previousPorts && previousPorts.currentSessionId() !== nextPorts.currentSessionId()) {
+        await previousPorts.closeSession().catch(() => undefined);
+      }
       try {
         const session = await nextPorts.openSession();
 
         if (generation !== adoptGeneration.current) {
           await nextPorts.closeSession();
+          return;
+        }
+
+        const incomingDevice: Device = {
+          deviceId: result.compatDeviceId,
+          deviceName: result.compatDeviceName,
+          modelId: dmkToLedgerDeviceIdMap[session.deviceModelId],
+          wired: result.compatDeviceWired,
+        };
+        const expectedDevice = expectedDeviceRef.current;
+        const reusedSession = result.sessionId === releasedSessionRef.current;
+        const differentDevice =
+          expectedDevice !== null && !isRebootedDevice(expectedDevice, incomingDevice);
+        if (
+          actorRef.current &&
+          waitingAfterUpdateRef.current &&
+          (reusedSession || differentDevice)
+        ) {
+          await nextPorts.closeSession().catch(() => undefined);
+          await result.dmk.disconnect({ sessionId: result.sessionId }).catch(() => undefined);
+          if (generation !== adoptGeneration.current) return;
+          if (portsRef.current === nextPorts) portsRef.current = null;
+          setError("Unable to reconnect to the device");
+          setStatus(statusWithActor(actorRef.current));
           return;
         }
 
@@ -155,13 +218,25 @@ export function useDeviceOnboarding({
           sessionId: nextPorts.currentSessionId(),
           wired: result.compatDeviceWired,
         });
-        setLiveDevice({
-          deviceId: result.compatDeviceId,
-          deviceName: result.compatDeviceName,
-          modelId: dmkToLedgerDeviceIdMap[session.deviceModelId],
-          wired: result.compatDeviceWired,
-        });
+        setLiveDevice(incomingDevice);
         setError(null);
+
+        if (actorRef.current && waitingAfterUpdateRef.current) {
+          send({ type: "SESSION_READY" });
+          const stillWaiting =
+            stateValueToString(actorRef.current.getSnapshot().value) ===
+            "awaitingSessionAfterFirmwareUpdate";
+          if (stillWaiting) {
+            setError("Unable to reconnect to the device");
+            setStatus(statusWithActor(actorRef.current));
+            return;
+          }
+          waitingAfterUpdateRef.current = false;
+          startSessionListener(result, nextPorts.currentSessionId());
+          setSessionReady(true);
+          setStatus("running");
+          return;
+        }
 
         if (actorRef.current) {
           // The machine takes the new session first: a locked device reports LOCKED as soon as
@@ -281,9 +356,9 @@ export function useDeviceOnboarding({
     connectionRef.current = null;
     sessionActorRef.current?.stop();
     sessionActorRef.current = null;
-    resetActor();
-    void portsRef.current?.closeSession();
+    const ports = portsRef.current;
     portsRef.current = null;
+    void resetActor().then(() => ports?.closeSession());
     retryRef.current = null;
     setStatus("idle");
     setDevice(null);
@@ -291,10 +366,58 @@ export function useDeviceOnboarding({
     setError(null);
   }, [portsRef, resetActor]);
 
-  useFirmwareUpdateHandover({
+  const reconnectAfterUpdate = useCallback(() => {
+    const actor = actorRef.current;
+    if (!actor?.getSnapshot().can({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" })) return;
+    waitingAfterUpdateRef.current = true;
+    expectedDeviceRef.current = liveDeviceRef.current;
+    releasedSessionRef.current = portsRef.current?.currentSessionId() ?? null;
+    dropLostTransport();
+    send({ type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" });
+    const ports = portsRef.current;
+    portsRef.current = null;
+    const generation = adoptGeneration.current;
+    releaseRef.current = releaseDeviceSession(dmk, ports).then(() => {
+      if (generation !== adoptGeneration.current || !waitingAfterUpdateRef.current) return;
+      connectRef.current();
+    });
+  }, [actorRef, dmk, dropLostTransport, portsRef, send]);
+  const abortFirmwareReconnect = useCallback(() => {
+    adoptGeneration.current += 1;
+    waitingAfterUpdateRef.current = false;
+    connectionRef.current?.unsubscribe();
+    connectionRef.current = null;
+    sessionActorRef.current?.stop();
+    sessionActorRef.current = null;
+    const actor = actorRef.current;
+    if (
+      actor &&
+      stateValueToString(actor.getSnapshot().value) === "awaitingSessionAfterFirmwareUpdate"
+    ) {
+      send({ type: "QUIT" });
+    }
+    discardActor();
+    actor?.stop();
+    const ports = portsRef.current;
+    portsRef.current = null;
+    void releaseDeviceSession(dmk, ports);
+    retryRef.current = null;
+    setStatus("idle");
+    setDevice(null);
+    setLiveDevice(null);
+    setError(null);
+  }, [actorRef, discardActor, dmk, portsRef, send]);
+  useEffect(() => {
+    liveDeviceRef.current = liveDevice;
+    connectRef.current = connect;
+  }, [connect, liveDevice]);
+  const { close: closeFirmwareHandover } = useFirmwareUpdateHandover({
     device: liveDevice,
+    isDeviceOnboarded: context?.isOnboarded ?? false,
     machineState: state,
+    currentSessionId: device?.sessionId ?? null,
     send,
+    onReconnectRequired: reconnectAfterUpdate,
   });
   useKeepScreenAwake(status === "connecting" || status === "running");
 
@@ -303,14 +426,17 @@ export function useDeviceOnboarding({
       adoptGeneration.current += 1;
       connectionRef.current?.unsubscribe();
       sessionActorRef.current?.stop();
-      stopActor();
+      const ports = portsRef.current;
+      portsRef.current = null;
+      void resetActor().then(() => ports?.closeSession());
     },
-    [stopActor],
+    [portsRef, resetActor],
   );
 
   return {
     status,
     device,
+    liveDevice,
     state,
     context,
     machineContext,
@@ -322,6 +448,8 @@ export function useDeviceOnboarding({
     connect,
     send,
     reset,
+    closeFirmwareHandover,
+    abortFirmwareReconnect,
     featureFlag,
     setFeatureFlag,
     isFeatureFlagOverridden,

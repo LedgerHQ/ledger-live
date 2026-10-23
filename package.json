@@ -215,6 +215,7 @@
     "@react-native/babel-plugin-codegen": "catalog:",
     "@support/fmt": "workspace:*",
     "@support/lint": "workspace:*",
+    "@support/tsconfig": "workspace:*",
     "@ton/crypto": "^3.3.0",
     "@typescript-eslint/parser": "catalog:",
     "chalk": "4.1.2",
@@ -230,5 +231,5 @@
     "typescript": "catalog:",
     "zx": "8.8.5"
   },
-  "packageManager": "pnpm@10.24.0"
+  "packageManager": "pnpm@11.28.7"
 }

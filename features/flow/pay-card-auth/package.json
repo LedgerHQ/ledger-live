@@ -44,7 +44,7 @@
     "xstate": "catalog:"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",

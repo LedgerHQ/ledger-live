@@ -232,11 +232,7 @@ function makeStakingTransactions(valAddress: string, startBurnHt: number): Staki
     expect: (prev, curr) => {
       expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
       const [latestOp] = curr.operations;
-      // `Operation.type` is cast, not runtime-mapped, from `coin-stacks`'s own raw pox-5 function
-      // name (`generic-coin-framework/utils.ts`'s `adaptCoreOperationToLiveOperation`) -- the
-      // `OperationType` union only has the uppercase convention, so the real runtime value here is
-      // the lowercase Clarity function name.
-      expect(latestOp.type as string).toBe("stake");
+      expect(latestOp.type).toBe("DELEGATE");
       // Balance is total (locked stays in it, only the fee leaves); spendableBalance drops by at
       // least the staked amount -- not asserted as an exact equality, since the generic-adapter's
       // exact locked-funds arithmetic isn't otherwise exercised by this package's existing tests.
@@ -264,7 +260,7 @@ function makeStakingTransactions(valAddress: string, startBurnHt: number): Staki
     expect: (prev, curr) => {
       expect(curr.operations.length).toBeGreaterThan(prev.operations.length);
       const [latestOp] = curr.operations;
-      expect(latestOp.type as string).toBe("unstake");
+      expect(latestOp.type).toBe("UNDELEGATE");
       expect(curr.balance).toStrictEqual(prev.balance.minus(latestOp.fee));
     },
   };
@@ -324,8 +320,8 @@ export const scenarioStacksStaking: Scenario<GenericTransaction, Account> = {
   },
 
   afterAll: account => {
-    expect(account.operations.some(op => (op.type as string) === "stake")).toBe(true);
-    expect(account.operations.some(op => (op.type as string) === "unstake")).toBe(true);
+    expect(account.operations.some(op => op.type === "DELEGATE")).toBe(true);
+    expect(account.operations.some(op => op.type === "UNDELEGATE")).toBe(true);
   },
 
   teardown: () => {},

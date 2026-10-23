@@ -1,4 +1,4 @@
-// Exercises the account read/query helpers' branch + pagination logic. The @dfinity candid codec is
+// Exercises the account read/query helpers' branch + pagination logic. The candid codec is
 // upstream-tested, so getAgent (the query transport) and the candid decode are mocked and we assert
 // the function's own handling of replied/non-replied, absent values, and pagination.
 const mockQuery = jest.fn();
@@ -25,7 +25,7 @@ afterEach(() => jest.clearAllMocks());
 describe("fetchBalance", () => {
   it("returns the balance when the query replies", async () => {
     mockQuery.mockResolvedValue(replied());
-    mockDecode.mockReturnValue([500n]); // fromNullable([500n]) => 500n
+    mockDecode.mockReturnValue([500n]);
     expect((await fetchBalance("addr")).toString()).toBe("500");
   });
 
@@ -36,7 +36,7 @@ describe("fetchBalance", () => {
 
   it("returns 0 when the balance is absent", async () => {
     mockQuery.mockResolvedValue(replied());
-    mockDecode.mockReturnValue([]); // fromNullable([]) => undefined
+    mockDecode.mockReturnValue([]);
     expect((await fetchBalance("addr")).toString()).toBe("0");
   });
 });

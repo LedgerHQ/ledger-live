@@ -32,14 +32,20 @@ function currencyTags(currencyId: string): string[] {
   return [`@${currencyId}`, ...(family ? [`@family-${family}`] : [])];
 }
 
+function selectedDeviceTags(skipLNS: boolean, onlyLNS: boolean): string[] {
+  if (onlyLNS) return ["@LNS"];
+  return skipLNS ? deviceTagsWithoutLNS() : deviceTags();
+}
+
 export function buildTags(params: {
   currencyId?: string;
   skipLNS?: boolean;
+  onlyLNS?: boolean;
   extraTags?: string[];
 }): string[] {
-  const { currencyId, skipLNS = false, extraTags = [] } = params;
+  const { currencyId, skipLNS = false, onlyLNS = false, extraTags = [] } = params;
   return [
-    ...(skipLNS ? deviceTagsWithoutLNS() : deviceTags()),
+    ...selectedDeviceTags(skipLNS, onlyLNS),
     ...(currencyId ? currencyTags(currencyId) : []),
     ...extraTags,
   ];

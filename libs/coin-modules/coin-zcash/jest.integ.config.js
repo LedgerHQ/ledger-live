@@ -1,4 +1,4 @@
-const { withEsmDeps } = require("@support/jest-shared");
+const { withEsmDeps } = require("@support/jest/shared");
 
 /** @type {import('jest').Config} */
 const config = {

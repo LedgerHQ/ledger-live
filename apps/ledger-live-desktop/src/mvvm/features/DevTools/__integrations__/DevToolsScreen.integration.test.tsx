@@ -35,6 +35,13 @@ jest.mock("@devtools/bindings", () => ({
   }),
   useTrustchainDevToolProps: () => ({ marker: "trustchain-props" }),
   useCloudSyncDevToolProps: () => ({ marker: "cloud-sync-props" }),
+  useAccountDescriptorToolProps: () => ({ marker: "account-descriptor-props" }),
+  useAccountBalanceToolProps: () => ({ marker: "account-balance-props" }),
+  useAccountDataToolProps: () => ({ marker: "account-data-props" }),
+  createAccountDataRecorder: () => ({
+    instrument: (sources: unknown) => sources,
+    middleware: () => (next: (action: unknown) => unknown) => next,
+  }),
 }));
 
 jest.mock("../../DeviceOnboarding/hooks/useDeviceOnboarding", () => ({
@@ -73,6 +80,9 @@ describe("DevToolsScreen", () => {
           { id: "trustchain", config: { marker: "trustchain-props" } },
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
           { id: "device-onboarding", config: { marker: "device-onboarding-props" } },
+          { id: "account-data", config: { marker: "account-data-props" } },
+          { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
+          { id: "account-balance", config: { marker: "account-balance-props" } },
         ],
       }),
     );

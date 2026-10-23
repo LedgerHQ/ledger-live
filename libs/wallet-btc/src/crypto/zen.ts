@@ -39,7 +39,7 @@ class Zen extends Base {
   }
 
   async customGetAddress(
-    derivationMode: string,
+    _derivationMode: string,
     xpub: string,
     account: number,
     index: number,

@@ -16,10 +16,14 @@ import {
   useProdToggle,
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
+  useAccountBalanceToolProps,
+  useAccountDescriptorToolProps,
+  useAccountDataToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { accountDataRecorder } from "~/config/account-data-setup";
 
 const APPLICATION_ID = 16;
 
@@ -82,6 +86,9 @@ export function useDevToolsScreenViewModel() {
     prodToggle.trustchainApiBaseUrl,
   );
   const deviceOnboardingProps = useDeviceOnboarding();
+  const accountDescriptorToolProps = useAccountDescriptorToolProps();
+  const accountBalanceToolProps = useAccountBalanceToolProps();
+  const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -91,6 +98,9 @@ export function useDevToolsScreenViewModel() {
       { id: "trustchain", config: trustchainToolProps },
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
+      { id: "account-data", config: accountDataToolProps },
+      { id: "account-descriptor", config: accountDescriptorToolProps },
+      { id: "account-balance", config: accountBalanceToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -99,6 +109,9 @@ export function useDevToolsScreenViewModel() {
       trustchainToolProps,
       cloudSyncToolProps,
       deviceOnboardingProps,
+      accountDescriptorToolProps,
+      accountBalanceToolProps,
+      accountDataToolProps,
     ],
   );
 

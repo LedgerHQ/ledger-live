@@ -1,5 +1,5 @@
 import React from "react";
-import { Lottie } from "@shared/lottie";
+import { Lottie } from "@shared/lottie/web";
 import { useProductTourSlideItemViewModel } from "../hooks/useProductTourSlideItemViewModel";
 
 interface ProductTourSlideItemProps {

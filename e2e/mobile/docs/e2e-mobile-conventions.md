@@ -78,14 +78,24 @@ Parameters are Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@St
 
 ### `$TmsLink` attaches the id
 
-The spec passes the `B2CQA-XXXX` id. The test function calls `$TmsLink` before its tests:
+The spec passes the `B2CQA-XXXX` id and the test function calls `$TmsLink`. `$TmsLink`, `$Tag` and `setTeamOwner` attach to the next `describe`, `it` or hook defined after them, so placement decides which tests get them:
+
+- Inside a `describe`, call `$TmsLink` and `$Tag` right before **each** `it`, after the hooks. A `beforeAll` in between takes them, and one call before several `it`s only reaches the first.
+- Call `setTeamOwner` before the `describe`, so every test in it gets the owner.
 
 ```ts
 // spec
 runBrowseAndSearchContactsTest(["B2CQA-6240"], tags);
 
 // test function
-tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+setTeamOwner(Team.WALLET_XP);
+describe("Contacts", () => {
+  beforeAll(async () => { /* ... */ });
+
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  it("browses contacts", async () => { /* ... */ });
+});
 ```
 
 ## Stability

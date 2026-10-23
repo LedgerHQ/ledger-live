@@ -73,3 +73,15 @@ Do not add retry loops, manual polling, or a second tap to hide an interaction f
 ## Pay tab
 
 Pay tab specs must live under the `paytab` directory so they automatically opt in to an injected Card session. Injection differs by client. See [Desktop](../desktop/README.md#pay-tab) and [Mobile](../mobile/README.md#pay-tab).
+
+## Named parameters
+
+Use a single options object instead of positional parameters when a function or constructor has any of:
+
+- 3 or more parameters
+- an optional parameter that callers would skip with `undefined`
+- 2 or more parameters of the same type that could be swapped without a type error (e.g. `tmsLinks` and `tags`)
+
+Keep 1–2 obvious parameters positional.
+
+Declare an `XxxOptions` type, take `options: XxxOptions` and destructure it on the first line. In a constructor, declare the fields and assign each one explicitly rather than `Object.assign(this, options)`, so strict checks still cover every field. Callers pass only the fields they need. Keep `""` where it is a real value: it is not the same as omitting the field.

@@ -4,7 +4,9 @@
 > **Status: UNSTABLE** — The layer was just introduced; only the jest preset below exists so far.
 
 Development-only tooling: shared test, TypeScript, lint and format configuration. Packages here
-never ship runtime code, and consumers depend on them through `devDependencies` only.
+never ship runtime code, and consumers depend on them through `devDependencies` only. They carry no
+domain or feature knowledge: a support package depends only on `support/` and `shared/` packages,
+which `pnpm lint:boundaries` enforces. Mocks and fixtures of a domain live in that domain package.
 
 ## Why a package per preset, and not a file at the workspace root
 
@@ -36,11 +38,9 @@ Two kinds of preset:
 | Package | Applies to |
 | --- | --- |
 | [`fmt`](./fmt) | every package: the repository's only oxfmt config, re-exported by the root `oxfmt.config.mts`. Packages carry none and pass no `-c` |
-| [`jest-devtools`](./jest-devtools) | `devtools/*` — dual web/native jest presets plus themed render fixtures |
-| [`jest-features-flow`](./jest-features-flow) | `features/flow/*` — dual web/native jest preset plus Lumen passthrough stubs |
-| [`jest-shared`](./jest-shared) | `shared/*` — flat node preset for logic packages, dual web/native and native-only presets for UI packages |
+| [`jest`](./jest) | jest presets per layer (`devtools`, `features-flow`, `shared`) with their setup files, mocks and fixtures |
 | [`lint`](./lint) | oxlint presets, one per layer that differs, and the monorepo-wide custom rules |
-| [`msw-features-flow-pay-card`](./msw-features-flow-pay-card) | `features/flow/pay-card-*` — MSW + RTK Query test store and server |
+| [`tsconfig`](./tsconfig) | every package: TypeScript presets, one per project archetype |
 
 ## Conformance
 

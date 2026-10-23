@@ -15,9 +15,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import { Lottie, resolveLottieSource, type LottieSource } from "LLM/components/Lottie";
 import { DeviceActionContent } from "LLM/components/DeviceActionContent";
+import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
 import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
-import { UnsupportedFirmwareVersionView } from "LLM/components/UnsupportedFirmwareVersion";
+import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
 import darkLoadingAnimation from "./animations/dark/loading.lottie";
@@ -59,7 +60,7 @@ function Illustration({ kind }: Readonly<{ kind: ChecksIllustration }>) {
       <Lottie
         key={`${theme}-${kind}`}
         source={illustrationSources[theme][kind]}
-        loop
+        loop={kind !== "success"}
         style={{ width: illustrationSize, height: illustrationSize }}
       />
     </Box>
@@ -77,55 +78,59 @@ export function ChecksView({
   onQuit,
   closeLabel,
   allowSheet,
-  updateSheet,
+  firmwareUpdate,
+  unsupportedUpdate,
   errorDrawer,
   notGenuineDrawer,
 }: ChecksViewProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
-    <Box testID={checksTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
-      <NavBar density="compact">
-        {onQuit ? (
-          <NavBarTrailing>
-            <IconButton
-              appearance="no-background"
-              size="md"
-              icon={Close}
-              accessibilityLabel={closeLabel}
-              testID={checksTestIds.quit}
-              onPress={onQuit}
-            />
-          </NavBarTrailing>
-        ) : null}
-      </NavBar>
-      {illustration ? <Illustration kind={illustration} /> : null}
-      <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
-        <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
-          {title}
-        </Text>
-        {description ? (
-          <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
-            {description}
+    <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <Box lx={{ flex: 1, gap: "s24" }}>
+        <NavBar density="compact">
+          {onQuit ? (
+            <NavBarTrailing>
+              <IconButton
+                appearance="no-background"
+                size="md"
+                icon={Close}
+                accessibilityLabel={closeLabel}
+                testID={checksTestIds.quit}
+                onPress={onQuit}
+              />
+            </NavBarTrailing>
+          ) : null}
+        </NavBar>
+        {illustration ? <Illustration kind={illustration} /> : null}
+        <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
+          <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
+            {title}
           </Text>
+          {description ? (
+            <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+              {description}
+            </Text>
+          ) : null}
+        </Box>
+        {primaryLabel ? (
+          <Box lx={{ paddingHorizontal: "s16" }} style={{ paddingBottom: bottomInset }}>
+            {primaryLoading ? (
+              <Button appearance="transparent" size="lg" isFull loading>
+                {primaryLabel}
+              </Button>
+            ) : (
+              <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
+                {primaryLabel}
+              </Button>
+            )}
+          </Box>
         ) : null}
       </Box>
-      {primaryLabel ? (
-        <Box lx={{ paddingHorizontal: "s16", paddingBottom: "s24" }}>
-          {primaryLoading ? (
-            <Button appearance="transparent" size="lg" isFull loading>
-              {primaryLabel}
-            </Button>
-          ) : (
-            <Button appearance="base" size="lg" isFull testID={primaryTestID} onPress={onPrimary}>
-              {primaryLabel}
-            </Button>
-          )}
-        </Box>
-      ) : null}
       {allowSheet ? (
         <QueuedBottomSheet
           isRequestingToBeOpened
+          noCloseButton={!allowSheet.onClose}
           onHeaderClosePressed={allowSheet.onClose}
           preventBackdropClick
           enablePanDownToClose={false}
@@ -146,25 +151,8 @@ export function ChecksView({
           </BottomSheetView>
         </QueuedBottomSheet>
       ) : null}
-      {updateSheet ? (
-        <QueuedBottomSheet
-          isRequestingToBeOpened
-          onHeaderClosePressed={updateSheet.onClose}
-          preventBackdropClick
-          enablePanDownToClose={false}
-          testID={checksTestIds.updateSheet}
-          enableDynamicSizing
-          contentHasBottomSpace
-        >
-          <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
-            <BottomSheetHeader />
-            <UnsupportedFirmwareVersionView
-              onUpdateLedgerOs={updateSheet.onUpdate}
-              onCancel={updateSheet.onCancel}
-            />
-          </BottomSheetView>
-        </QueuedBottomSheet>
-      ) : null}
+      {firmwareUpdate.isOpen ? <FirmwareUpdateAvailableDrawer {...firmwareUpdate} /> : null}
+      {unsupportedUpdate.isOpen ? <UnsupportedUpdateDrawer {...unsupportedUpdate} /> : null}
       <GenuineCheckErrorDrawer
         isOpen={errorDrawer.isOpen}
         error={null}

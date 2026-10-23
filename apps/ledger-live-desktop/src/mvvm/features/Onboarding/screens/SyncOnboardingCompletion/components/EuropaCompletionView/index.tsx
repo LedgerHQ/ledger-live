@@ -1,5 +1,5 @@
 import React from "react";
-import { Lottie } from "@shared/lottie";
+import { Lottie } from "@shared/lottie/web";
 import { getEnv } from "@shared/env";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";

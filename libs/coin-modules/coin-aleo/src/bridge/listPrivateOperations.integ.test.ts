@@ -8,6 +8,7 @@ import {
   testnetIncomingPrivateRecord2,
   testnetLedgerAccountId,
   testnetOutgoingChangeRecord,
+  testnetRejectedFeePrivateRecord,
   testnetViewKey,
 } from "../__tests__/fixtures/api.fixture";
 import { getPristineAccount } from "../__tests__/helpers/account";
@@ -30,6 +31,7 @@ describe("listPrivateOperations", () => {
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
       privateRecords: [testnetIncomingPrivateRecord1, testnetIncomingPrivateRecord2],
+      knownTransactionIds: new Set(),
     });
 
     expect(operations).toHaveLength(2);
@@ -62,6 +64,7 @@ describe("listPrivateOperations", () => {
       address: emptyAddress,
       ledgerAccountId: `js:2:aleo_testnet:${emptyAddress}:`,
       privateRecords: [],
+      knownTransactionIds: new Set(),
     });
 
     expect(result.operations).toEqual([]);
@@ -75,6 +78,7 @@ describe("listPrivateOperations", () => {
       address: testnetAddress,
       ledgerAccountId: testnetLedgerAccountId,
       privateRecords: [testnetOutgoingChangeRecord],
+      knownTransactionIds: new Set(),
     });
 
     expect(consumedRecordTags.has(testnetConsumedRecordTag)).toBe(true);
@@ -83,6 +87,30 @@ describe("listPrivateOperations", () => {
         type: "OUT",
         hash: testnetOutgoingChangeRecord.transaction_id.trim(),
         senders: [testnetAddress],
+      }),
+    ]);
+  });
+
+  it("lists a call rejected at finalize and paid with fee_private as a failed FEES operation", async () => {
+    const { operations } = await listPrivateOperations({
+      config,
+      viewKey: testnetViewKey,
+      address: testnetAddress,
+      ledgerAccountId: testnetLedgerAccountId,
+      privateRecords: [testnetRejectedFeePrivateRecord],
+      knownTransactionIds: new Set(),
+    });
+
+    expect(operations).toEqual([
+      expect.objectContaining({
+        type: "FEES",
+        hash: testnetRejectedFeePrivateRecord.transaction_id.trim(),
+        value: new BigNumber(2776),
+        fee: new BigNumber(2776),
+        hasFailed: true,
+        senders: [testnetAddress],
+        recipients: [],
+        blockHeight: testnetRejectedFeePrivateRecord.block_height,
       }),
     ]);
   });

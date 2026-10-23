@@ -45,6 +45,7 @@ import { INITIAL_STATE as RATINGS_INITIAL_STATE } from "~/reducers/ratings";
 import { INITIAL_STATE as RECEIVE_OPTIONS_DRAWER_INITIAL_STATE } from "~/reducers/receiveOptionsDrawer";
 import { INITIAL_STATE as REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE } from "~/reducers/rebornBuyDeviceDrawer";
 import { INITIAL_STATE as TRANSFER_DRAWER_INITIAL_STATE } from "~/reducers/transferDrawer";
+import { INITIAL_STATE as OS_UPDATE_INITIAL_STATE } from "LLM/features/OsUpdate/state/osUpdateSlice";
 import { INITIAL_STATE as SETTINGS_INITIAL_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
 import { State } from "~/reducers/types";
@@ -91,6 +92,7 @@ const INITIAL_STATE: State = {
   rebornBuyDeviceDrawer: REBORN_BUY_DEVICE_DRAWER_INITIAL_STATE,
   currencyRegionRestrictedDrawer: CURRENCY_REGION_RESTRICTED_DRAWER_INITIAL_STATE,
   transferDrawer: TRANSFER_DRAWER_INITIAL_STATE,
+  osUpdate: OS_UPDATE_INITIAL_STATE,
   notifications: NOTIFICATIONS_INITIAL_STATE,
   postOnboarding: POST_ONBOARDING_INITIAL_STATE,
   postOnboardingHubDrawer: POST_ONBOARDING_HUB_DRAWER_INITIAL_STATE,

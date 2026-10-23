@@ -21,6 +21,17 @@ export const ApiTokenResponseSchema = z.object({
 /** Schema for the CAL `/v1/tokens` response: an array of tokens. */
 export const ApiResponseSchema = z.array(ApiTokenResponseSchema);
 
+/**
+ * Schema for the CAL `/v1/networks` response projected on `id,token_list_hash`. A network without
+ * tokens has no `token_list_hash`.
+ */
+export const ApiNetworkTokenListHashResponseSchema = z.array(
+  z.object({
+    id: z.string(),
+    token_list_hash: z.string().optional(),
+  }),
+);
+
 /** Schema for a persisted token entry: a {@link TokenCurrency} plus cache-restoration metadata. */
 export const PersistedTokenEntrySchema = z.object({
   /** Serializable token data (post-LIVE-32268 `TokenCurrency` is already serializable). */

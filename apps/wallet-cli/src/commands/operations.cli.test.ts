@@ -45,7 +45,7 @@ const POINT_ONE_ETH_OUT_TX = {
 //   lastBlock → /block/current
 //   getBalance → /balance + /txs (token detection)
 //   listOperations → /txs
-//   getSyncHash → /v1/currencies (CAL client, getTokensSyncHash via getSyncHash())
+//   getSyncHash → /v1/networks + /v1/currencies (CAL client, getTokensSyncHash via getSyncHash())
 function baseRoutes(txsFixture: object) {
   return [
     {
@@ -68,8 +68,14 @@ function baseRoutes(txsFixture: object) {
       match: /erc20\/balances/,
       response: [],
     },
-    // getSyncHash (via getTokensSyncHash): must return non-empty array + X-Ledger-Commit header
-    // otherwise the store throws LedgerAPI4xx (empty array → status 404 → remapRtkQueryError)
+    // getSyncHash (via getTokensSyncHash): the token list hash route must return a non-empty
+    // array, otherwise the store throws LedgerAPI4xx (empty array → status 404 → remapRtkQueryError).
+    // The commit route feeds the token cache validation.
+    {
+      method: "GET",
+      match: /\/v1\/networks/,
+      response: [{ id: "ethereum", token_list_hash: "mock-sync-hash-0000000000000000" }],
+    },
     {
       method: "GET",
       match: /\/v1\/currencies/,

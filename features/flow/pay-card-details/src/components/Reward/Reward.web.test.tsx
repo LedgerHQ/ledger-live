@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
-import { CARD_CASHBACK_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
+import { CARD_CASHBACK_URL, listenToCardApi } from "@domain/api-card-management/mock/card-api";
 import { cardApiWrapper } from "../../__tests__/cardApiStore";
 import { REWARD_SUBTITLE } from "../../__tests__/i18nWrapper";
 import { Reward } from "./Reward";

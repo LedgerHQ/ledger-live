@@ -86,6 +86,7 @@ export function AssetDetailView({
             currency={currency}
             distributionItem={distributionItem}
             isLoading={isLoading}
+            ledgerIds={ledgerIds}
           />
           <StockDisclaimerBanner show={showStockDisclaimerBanner} />
           <Addresses
@@ -109,7 +110,7 @@ export function AssetDetailView({
         </Box>
       </ScrollView>
       <Footer currency={currency} ledgerIds={ledgerIds} />
-      <TransferDrawer currency={currency} ledgerIds={ledgerIds} />
+      <TransferDrawer />
       <AssetCoinOptionsSheetView
         isOpen={coinOptions.isCoinOptionsSheetOpen}
         onClose={coinOptions.closeCoinOptions}

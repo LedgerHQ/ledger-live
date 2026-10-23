@@ -1871,6 +1871,7 @@
     "menu": {
       "changeName": "Change name",
       "viewAdvancedLogs": "View advanced logs",
+      "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
     },
     "advancedLogs": {
@@ -2587,6 +2588,10 @@
       "learnMore": "Learn more",
       "activate": "Activate",
       "skip": "Skip for now"
+    },
+    "connection": {
+      "connecting": "Connecting to your device",
+      "failed": "Connection failed"
     }
   },
   "onboarding": {
@@ -3437,10 +3442,10 @@
       "skipCta": "I’ll do it later",
       "skip": {
         "title": "Are you sure?",
-        "description": "If you skip this, you'll have to manually re-add all your accounts, balances, and history if you switch to a new phone or computer.",
-        "descriptionEmphasis": "You can always disable it from your settings.",
-        "skipCTA": "Yes, skip",
-        "syncCTA": "No, sync my wallet"
+        "description": "If you change phone or use Ledger Wallet on another phone or computer, you'll need to sync your accounts manually.",
+        "descriptionEmphasis": "Please note that you can always enable or disable it from your settings",
+        "skipCTA": "Yes skip",
+        "syncCTA": "No, enable sync"
       }
     },
     "seedStep": {
@@ -5410,6 +5415,15 @@
         }
       },
       "feePayment": {
+        "title": "Select fee payment",
+        "regular": "Regular transfer",
+        "sponsored": "Pay with {{provider}}",
+        "payIn": "Pay network fee in {{feeCurrency}}",
+        "paidIn": "Paid in {{currency}}",
+        "nudge": "You could save {{amount}} with {{provider}}",
+        "saved": "Saved with {{provider}}",
+        "confirm": "Confirm",
+        "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
         "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
       },
       "sponsoredRentSignature": {
@@ -5869,6 +5883,24 @@
     }
   },
   "osUpdates": {
+    "backupBanner": {
+      "title": "Backup found",
+      "description": "Apps and settings were not fully restored on your device.",
+      "restore": "Restore",
+      "delete": "Delete backup"
+    },
+    "restoreConfirmation": {
+      "title": "Restore your previous configuration?",
+      "description": "I confirm I want to restore apps & settings from my previous configuration and any app & data created since will be lost.",
+      "confirm": "Restore",
+      "cancel": "Cancel"
+    },
+    "deleteConfirmation": {
+      "title": "Delete your backup?",
+      "description": "I am aware previous configuration and app & data from my last backup, including Security Key credentials, will be lost.",
+      "confirm": "Delete backup",
+      "cancel": "Cancel"
+    },
     "actions": {
       "retry": "Retry",
       "cancel": "Cancel",
@@ -10298,7 +10330,7 @@
             "steps": {
               "step1": "Make sure Ledger Sync is activated on one of your apps.",
               "step2": "Open the Ledger Wallet app you want to sync.",
-              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
               "step4": "Scan QR code."
             }
           }
@@ -10311,7 +10343,7 @@
             "steps": {
               "step1": "Make sure Ledger Sync is activated on one of your apps.",
               "step2": "Open the Ledger Wallet you want to sync with.",
-              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Show QR</0>",
               "step4": "Scan QR code."
             }
           }
@@ -10422,9 +10454,25 @@
       }
     }
   },
+  "accountDetailHero": {
+    "actions": {
+      "transfer": "Transfer",
+      "receive": "Receive",
+      "send": "Send",
+      "swap": "Swap",
+      "buy": "Buy",
+      "sell": "Sell",
+      "earn": "Earn",
+      "more": "More"
+    }
+  },
   "accountDetail": {
     "assets": {
       "title": "Assets"
+    },
+    "refreshStatus": {
+      "upToDate": "Account up to date",
+      "syncError": "Account data couldn’t load"
     },
     "transactions": {
       "title": "Transactions"
@@ -10435,6 +10483,9 @@
       "label": "Address name",
       "submit": "Change name"
     }
+  },
+  "accountAssetPicker": {
+    "title": "Select an asset"
   },
   "assetDetail": {
     "balanceGraph": {

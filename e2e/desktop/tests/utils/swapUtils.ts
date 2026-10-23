@@ -147,6 +147,8 @@ export async function ensureTokenApproval(
   console.log("CLI result: Current Allowance: ", currentAllowance);
   if (currentAllowance) return;
 
+  // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
+  await revokeTokenApproval(fromAccount, provider);
   const spender = provider.contractAddress;
   await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
     const result = await approveTokenCommand(

@@ -267,6 +267,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "cronos",
         uri: "https://proxycronosexplorer.api.live.ledger.com/explorer/api",
       },
+      // Cronos rejects txs below a global min fee of 375 gwei/gas, which eth_feeHistory doesn't reflect
+      minGasPrice: "375000000000",
     },
   },
   config_currency_core: {
@@ -1165,7 +1167,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
-        uri: "https://unichain-rpc.publicnode.com",
+        uri: "https://unichain.coin.ledger.com",
       },
       explorer: {
         type: "blockscout",
@@ -1277,6 +1279,12 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
         type: "blockscout",
         uri: "https://explorer.testnet.alpen.org/api",
       },
+      // Alpen's fee market is sparse: the base fee holds at 0.000875-0.001 gwei and
+      // eth_feeHistory reports no tips, so EIP-1559 estimation falls back to a 1 gwei tip
+      // (~1000x the real cost). Zero-tip transactions are included, so price as legacy from
+      // eth_gasPrice with a 2x-base-fee floor. Re-measure after a regenesis and at mainnet.
+      forceLegacyTransactions: true,
+      minGasPrice: "2000000",
     },
   },
 };

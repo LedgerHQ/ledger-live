@@ -1,4 +1,3 @@
-import type { TransactionWithId } from "@dfinity/ledger-icp";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -15,6 +14,7 @@ import {
 import { ICP_FEES } from "../../consts";
 import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "../../logic/crypto";
 import { hashTransaction } from "../../logic/hashTransaction";
+import type { TransactionWithId } from "../../network/idl/index.types";
 import {
   ICPAccount,
   ICPNeuron,

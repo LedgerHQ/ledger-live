@@ -89,10 +89,10 @@ function renderAccountScreen(
 }
 
 describe("AccountDetail entry", () => {
-  it("opens the new screen when the flag is on", () => {
+  it("opens the new screen when the flag is on", async () => {
     renderAccountScreen({ accountId: btcAccount.id }, { enabled: true });
 
-    expect(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.screen)).toBeVisible();
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.screen)).toBeVisible();
     expect(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
     expect(screen.getByTestId("bottom-fade-gradient")).toBeOnTheScreen();
     expect(screen.queryByTestId("legacy-account-screen")).toBeNull();

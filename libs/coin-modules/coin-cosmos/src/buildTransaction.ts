@@ -284,23 +284,32 @@ export const txToMessages = (
 export function resolveTransactionValidators(
   transaction: CosmosLikeTransaction,
 ): CosmosDelegationInfo[] {
-  if (transaction.mode === "redelegate") {
-    return transaction.dstValAddress
-      ? [{ address: transaction.dstValAddress, amount: transaction.amount }]
-      : (transaction.validators ?? []);
-  }
-  return transaction.valAddress
-    ? [{ address: transaction.valAddress, amount: transaction.amount }]
-    : (transaction.validators ?? []);
+  if (transaction.mode === "send") return [];
+  const modeAddress =
+    transaction.mode === "redelegate" ? transaction.dstValAddress : transaction.valAddress;
+  if (!modeAddress && transaction.validators?.length) return transaction.validators;
+  const address =
+    transaction.mode === "redelegate" ? getDstValAddress(transaction) : getValAddress(transaction);
+  return address ? [{ address, amount: transaction.amount }] : [];
 }
 
-export function resolveSourceValidator(
-  transaction: CosmosLikeTransaction,
-): string | null | undefined {
-  if (transaction.mode === "redelegate" && (transaction.valAddress || transaction.dstValAddress)) {
-    return transaction.valAddress;
+/** Validator the transaction acts on (the source validator when redelegating), "" when it has none. */
+export function getValAddress(transaction: CosmosLikeTransaction): string {
+  if (transaction.mode === "send") return "";
+  if (transaction.mode === "redelegate") {
+    return transaction.valAddress || transaction.sourceValidator || "";
   }
-  return transaction.sourceValidator;
+  return transaction.valAddress || transaction.validators?.[0]?.address || "";
+}
+
+/** Destination validator of a redelegation, "" for any other mode. */
+export function getDstValAddress(transaction: CosmosLikeTransaction): string {
+  if (transaction.mode !== "redelegate") return "";
+  return transaction.dstValAddress || transaction.validators?.[0]?.address || "";
+}
+
+export function resolveSourceValidator(transaction: CosmosLikeTransaction): string | undefined {
+  return transaction.mode === "redelegate" ? getValAddress(transaction) || undefined : undefined;
 }
 
 export function normalizeCosmosOperationMode(mode: CosmosOperationMode): CosmosOperationMode {

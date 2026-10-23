@@ -61,6 +61,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/psbtv2": "catalog:",
@@ -70,7 +71,7 @@
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
     "bitcoin-core": "^5.0.0",
-    "bitcoinjs-lib": "^7.0.2",
+    "bitcoinjs-lib": "catalog:",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },

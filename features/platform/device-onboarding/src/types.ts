@@ -108,6 +108,7 @@ export type OnboardingEvent =
     }
   | { type: "FIRMWARE_CHECK_FAILED"; output: unknown }
   | { type: "FIRMWARE_UPDATE_FLOW_CLOSED"; sessionId: DeviceSessionId }
+  | { type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" }
   | { type: "RETRY" }
   | { type: "SKIP" }
   | { type: "CLOSE" }
@@ -141,7 +142,7 @@ export type DeviceOnboardingInput = {
   dmk: DeviceManagementKit;
   /**
    * The session the machine talks to. It changes only through SESSION_READY, SESSION_CHANGED or
-   * FIRMWARE_UPDATE_FLOW_CLOSED.
+   * FIRMWARE_UPDATE_FLOW_CLOSED. FIRMWARE_UPDATE_RECONNECT_REQUIRED waits for the next one.
    */
   sessionId: DeviceSessionId;
   deviceId: string;

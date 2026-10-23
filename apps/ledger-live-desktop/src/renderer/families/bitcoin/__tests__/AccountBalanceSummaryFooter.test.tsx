@@ -10,7 +10,13 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SYNC_TYPE_SHIELDED } from "@ledgerhq/types-live";
 import { syncStateUpdater } from "../ZCashExportKeyFlowModal/sync";
+import { track } from "@shared/analytics";
 
+jest.mock("@shared/analytics", () => ({
+  ...jest.requireActual("@shared/analytics"),
+  track: jest.fn(),
+}));
+const mockedTrack = jest.mocked(track);
 jest.mock("~/renderer/hooks/useAccountUnit");
 const mockedUseAccountUnit = jest.mocked(useAccountUnit);
 jest.mock("@ledgerhq/live-common/bridge/index", () => ({
@@ -547,6 +553,52 @@ describe("Bitcoin Account Balance Summary Footer", () => {
       expect(screen.getByText("0.5 ZEC")).toBeInTheDocument(); // private, ironwood
       expect(screen.getByText("0.9 ZEC")).toBeInTheDocument(); // available, balance as-is
       expect(screen.queryByText("0.4 ZEC")).not.toBeInTheDocument(); // never the subtraction result
+    });
+  });
+
+  describe("enable private balance funnel intro", () => {
+    const renderWithState = (syncState: "disabled" | "ready") => {
+      mockedUseAccountUnit.mockReturnValue({ code: "ZEC", name: "Zcash", magnitude: 8 });
+      mockedGetAccountBridge.mockReturnValue({
+        sync: () => new Observable(),
+      } as unknown as ReturnType<typeof getAccountBridge>);
+      return render(
+        <AccountBalanceSummaryFooter
+          account={{
+            ...account,
+            currency: { id: "zcash" } as CryptoCurrency,
+            privateInfo: { ...DEFAULT_ZCASH_PRIVATE_INFO, syncState },
+          }}
+        />,
+        { initialState: withFlagOverrides({ zcashShielded: { enabled: true } }) },
+      );
+    };
+
+    it("tracks the intro click once when the private balance is disabled", async () => {
+      const { user } = renderWithState("disabled");
+
+      await user.click(await screen.findByTestId("show-private-balance-button"));
+
+      const introCalls = mockedTrack.mock.calls.filter(([name]) => name === "button_clicked2");
+      expect(introCalls).toEqual([
+        [
+          "button_clicked2",
+          {
+            button: "Enable private balance",
+            page: "Page Account",
+            flow: "exportUfvk",
+            currency: "zcash",
+          },
+        ],
+      ]);
+    });
+
+    it("does not track the intro event from another sync state", async () => {
+      const { user } = renderWithState("ready");
+
+      await user.click(await screen.findByTestId("start-sync-button"));
+
+      expect(mockedTrack).not.toHaveBeenCalledWith("button_clicked2", expect.anything());
     });
   });
 });

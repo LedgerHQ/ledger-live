@@ -345,6 +345,44 @@ describe("OsUpdatesOrchestratorComponent", () => {
     });
   });
 
+  describe("completion callback", () => {
+    it("is not called before the workflow has completed", () => {
+      mockProgress({
+        step: OsUpdatesSteps.PRE_CHECKS,
+        state: { type: PreChecksStateType.LOADING },
+      });
+      const onCompleted = jest.fn();
+
+      render(
+        <OsUpdatesOrchestratorComponent
+          {...makeInput()}
+          onCompleted={onCompleted}
+          platformComponents={platformComponents}
+        />,
+      );
+
+      expect(onCompleted).not.toHaveBeenCalled();
+    });
+
+    it("is called when the updates are applied", () => {
+      mockProgress({
+        step: OsUpdatesSteps.APPLY_UPDATES,
+        state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+      });
+      const onCompleted = jest.fn();
+
+      render(
+        <OsUpdatesOrchestratorComponent
+          {...makeInput()}
+          onCompleted={onCompleted}
+          platformComponents={platformComponents}
+        />,
+      );
+
+      expect(onCompleted).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("forwards the orchestrator input to the hook without the platform components", () => {
     mockProgress(null);
     const input = makeInput();

@@ -1,5 +1,6 @@
 import type { ConnectedDevice, DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import type { OsUpdate } from "@ledgerhq/dmk-ledger-wallet";
+import { log } from "@ledgerhq/logs";
 import { createActor, fromPromise, sendTo, setup, type Actor, type AnyActorRef } from "xstate";
 import { ApplyUpdatesStateType } from "../../api/model/ApplyUpdatesState";
 import { CreateBackupStateType } from "../../api/model/CreateBackupState";
@@ -21,6 +22,8 @@ import {
   type OsUpdatesState,
 } from "./types";
 import { toProgress } from "./utils/toProgress";
+
+jest.mock("@ledgerhq/logs", () => ({ log: jest.fn() }));
 
 const SESSION_ID = "session-id";
 const AN_OS_UPDATE = {} as OsUpdate;
@@ -435,6 +438,50 @@ describe("OsUpdatesOrchestratorStateMachine", () => {
           cancel: expect.any(Function),
         },
       });
+    });
+  });
+
+  describe("logs", () => {
+    const logged = () => (log as jest.Mock).mock.calls;
+
+    beforeEach(() => {
+      (log as jest.Mock).mockClear();
+    });
+
+    it("should log each step the orchestrator enters", () => {
+      start(withSteps({ preChecks: stepStub(PreChecksNextAction.CreateBackup) }));
+      finishPreChecks();
+
+      expect(logged()).toEqual(
+        expect.arrayContaining([
+          ["OsUpdatesOrchestrator", "state: step", { step: OsUpdatesSteps.PRE_CHECKS }],
+          ["OsUpdatesOrchestrator", "state: step", { step: OsUpdatesSteps.CREATE_BACKUP }],
+        ]),
+      );
+    });
+
+    it("should log the failed step with the error the child crashed on", async () => {
+      start(withSteps({ preChecks: throwingStep("pre-checks crashed") }));
+      await Promise.resolve();
+
+      expect(logged()).toContainEqual([
+        "OsUpdatesOrchestrator",
+        "state: Failed",
+        { step: OsUpdatesSteps.PRE_CHECKS, error: new Error("pre-checks crashed") },
+      ]);
+    });
+
+    it("should log the stop request with the step it interrupted", () => {
+      start(withSteps({ preChecks: stepStub(PreChecksNextAction.Completed) }));
+
+      child("preChecks")?.send({ type: "REQUEST_STOP" });
+
+      expect(logged()).toEqual(
+        expect.arrayContaining([
+          ["OsUpdatesOrchestrator", "event: stop", { step: OsUpdatesSteps.PRE_CHECKS }],
+          ["OsUpdatesOrchestrator", "state: Stopped"],
+        ]),
+      );
     });
   });
 });

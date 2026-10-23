@@ -4,6 +4,7 @@ import {
   type Backup,
   type RestoreBackupDAInput,
 } from "@ledgerhq/dmk-ledger-wallet";
+import { log } from "@ledgerhq/logs";
 import { assign, enqueueActions, fromPromise, sendTo, setup } from "xstate";
 import { createDeviceActionStateMachine } from "../../../device-action/CreateDeviceActionStateMachine/createDeviceActionStateMachine";
 import type { DeviceBackupStorage } from "../../api/model/DeviceBackupStorage";
@@ -25,10 +26,12 @@ import {
   type RestoreBackupStateMachineOutput,
 } from "./types";
 import { clampRestoreState } from "./utils/clampRestoreState";
-import { hasAnythingToRestore } from "./utils/hasAnythingToRestore";
+import { hasAnythingToRestore } from "../../api/utils/hasAnythingToRestore";
 import { isSameState } from "./utils/isSameState";
 import { restoreProgress } from "./utils/restoreProgress";
 import { toRestoreBackupState } from "./utils/toRestoreBackupState";
+
+const LOG_TYPE = "OsUpdatesRestoreBackup";
 
 export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
   types: {
@@ -67,6 +70,10 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
       if (context.lastSentState !== null && isSameState(context.lastSentState, next)) {
         return;
       }
+      // The restore progress changes the state on every tick: only its type is worth a log.
+      if (context.lastSentState?.type !== next.type) {
+        log(LOG_TYPE, `state: ${next.type}`);
+      }
       enqueue.sendTo(context.parentRef, {
         type: OsUpdatesOrchestratorStateMachineEventType.STATE_UPDATE,
         state: next,
@@ -77,6 +84,15 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
           next.type === RestoreBackupStateType.RESTORING ? next.progress : context.lastProgress,
       });
     }),
+    logState: (_, name: string) => {
+      log(LOG_TYPE, `state: ${name}`);
+    },
+    logError: ({ context }, name: string) => {
+      log(LOG_TYPE, `state: ${name}`, { error: context.error });
+    },
+    logEvent: (_, name: string) => {
+      log(LOG_TYPE, `event: ${name}`);
+    },
     sendStop: sendTo(({ context }) => context.parentRef, {
       type: OsUpdatesOrchestratorStateMachineEventType.STOP,
     } as const),
@@ -226,7 +242,10 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
         }),
       },
       on: {
-        [RestoreBackupStateMachineEventType.RETRY]: "RestoreBackup",
+        [RestoreBackupStateMachineEventType.RETRY]: {
+          target: "RestoreBackup",
+          actions: { type: "logEvent", params: "retry" },
+        },
         [RestoreBackupStateMachineEventType.CANCEL]: "Canceled",
       },
     },
@@ -243,6 +262,7 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
       },
     },
     CheckErrorCause: {
+      entry: { type: "logError", params: "CheckErrorCause" },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({
@@ -270,19 +290,22 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
       },
     },
     UnrecoverableError: {
-      entry: {
-        type: "sendStateUpdate",
-        params: ({ context }) => ({
-          type: RestoreBackupStateType.UNEXPECTED_ERROR,
-          cancel: () => context.send({ type: RestoreBackupStateMachineEventType.CANCEL }),
-        }),
-      },
+      entry: [
+        { type: "logError", params: "UnrecoverableError" },
+        {
+          type: "sendStateUpdate",
+          params: ({ context }) => ({
+            type: RestoreBackupStateType.UNEXPECTED_ERROR,
+            cancel: () => context.send({ type: RestoreBackupStateMachineEventType.CANCEL }),
+          }),
+        },
+      ],
       on: {
         [RestoreBackupStateMachineEventType.CANCEL]: "Canceled",
       },
     },
     Canceled: {
-      entry: "sendStop",
+      entry: [{ type: "logState", params: "Canceled" }, "sendStop"],
     },
     BackupRestored: {
       entry: {

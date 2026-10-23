@@ -1,0 +1,8 @@
+{
+  "name": "@support/jest",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -3,7 +3,6 @@ import type { Either } from "purify-ts";
 import {
   type ConnectError,
   type DeviceId,
-  type DeviceModelId,
   type DisconnectHandler,
   type DmkError,
   type Transport as DmkTransport,
@@ -13,63 +12,12 @@ import {
   type TransportFactory,
   type TransportIdentifier,
 } from "@ledgerhq/device-management-kit";
+import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
+import { SpeculosTransportSession, type SpeculosSessionTarget } from "@ledgerhq/live-dmk-shared";
 import {
-  speculosIdentifier,
-  speculosTransportFactory,
-} from "@ledgerhq/device-transport-kit-speculos";
-import {
-  ledgerToDmkDeviceIdMap,
-  SpeculosTransportSession,
-  type SpeculosSessionTarget,
-} from "@ledgerhq/live-dmk-shared";
-import { DeviceModelId as LLDeviceModelId } from "@ledgerhq/types-devices";
-
-type SpeculosTarget = Readonly<{
-  url: string;
-  deviceModelId: DeviceModelId;
-  bearerToken?: string;
-}>;
-
-const SPECULOS_DEVICE_TO_MODEL: Record<string, LLDeviceModelId> = {
-  nanoS: LLDeviceModelId.nanoS,
-  nanoSP: LLDeviceModelId.nanoSP,
-  nanoX: LLDeviceModelId.nanoX,
-  stax: LLDeviceModelId.stax,
-  flex: LLDeviceModelId.europa,
-  europa: LLDeviceModelId.europa,
-  nanoGen5: LLDeviceModelId.apex,
-};
-
-const DEFAULT_SPECULOS_MODEL = LLDeviceModelId.nanoSP;
-
-function withoutTrailingSlashes(value: string): string {
-  let end = value.length;
-  while (end > 0 && value[end - 1] === "/") end--;
-  return value.slice(0, end);
-}
-
-function endsWithPort(host: string): boolean {
-  let index = host.length - 1;
-  if (index < 0 || host[index] < "0" || host[index] > "9") return false;
-  while (index >= 0 && host[index] >= "0" && host[index] <= "9") index--;
-  return index >= 0 && host[index] === ":";
-}
-
-function readSpeculosTarget(): SpeculosTarget | null {
-  const port = process.env.SPECULOS_API_PORT;
-  if (!port) return null;
-
-  const configuredHost = withoutTrailingSlashes(process.env.SPECULOS_ADDRESS ?? "http://127.0.0.1");
-  const url = endsWithPort(configuredHost) ? configuredHost : `${configuredHost}:${port}`;
-  const model =
-    SPECULOS_DEVICE_TO_MODEL[process.env.SPECULOS_DEVICE ?? ""] ?? DEFAULT_SPECULOS_MODEL;
-
-  return {
-    url,
-    deviceModelId: ledgerToDmkDeviceIdMap[model],
-    bearerToken: process.env.SPECULOS_SESSION_TOKEN,
-  };
-}
+  readSpeculosTarget,
+  speculosTargetTransportFactory,
+} from "@ledgerhq/live-dmk-shared/transport/speculosTarget";
 
 function ignoreCompletion<T>(source: Observable<T>): Observable<T> {
   return new Observable(subscriber => {
@@ -83,10 +31,7 @@ function ignoreCompletion<T>(source: Observable<T>): Observable<T> {
 }
 
 function openSpeculosTransport(args: TransportArgs) {
-  return (target: SpeculosSessionTarget) =>
-    speculosTransportFactory(target.url, true, target.deviceModelId, {
-      bearerToken: target.bearerToken,
-    })(args);
+  return (target: SpeculosSessionTarget) => speculosTargetTransportFactory(target)(args);
 }
 
 export class SpeculosDmkTransport implements DmkTransport {

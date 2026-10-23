@@ -86,6 +86,7 @@ import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
+import OsUpdateFlow from "LLM/features/OsUpdate/screens/OsUpdateFlow";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
@@ -670,6 +671,11 @@ export default function BaseNavigator() {
             headerLeft: FirmwareUpdateHeaderLeft,
             headerRight: FirmwareUpdateHeaderRight,
           }}
+        />
+        <Stack.Screen
+          name={ScreenName.OsUpdate}
+          component={OsUpdateFlow}
+          options={{ headerShown: false, gestureEnabled: false }}
         />
         <Stack.Screen
           name={NavigatorName.AddAccounts}

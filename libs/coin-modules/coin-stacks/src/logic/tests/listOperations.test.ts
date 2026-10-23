@@ -497,7 +497,7 @@ describe("listOperations", () => {
     const { items } = await listOperations(SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
-    expect(items[0].type).toBe("send-many");
+    expect(items[0].type).toBe("CONTRACT_CALL");
     expect(items[0].value).toBe(0n);
   });
 
@@ -722,23 +722,31 @@ describe("listOperations", () => {
     await expect(listOperations(RECIPIENT, { minHeight: 0 })).rejects.toThrow("metadata API down");
   });
 
-  it("maps any other contract call (e.g. pox-5 stake) to a generic operation", async () => {
+  const contractCallTx = (contract_id: string, function_name: string) =>
+    baseTx({
+      tx_type: "contract_call",
+      contract_call: { contract_id, function_name, function_signature: "", function_args: [] },
+    });
+
+  it.each([
+    ["SP000000000000000000002Q6VF78.pox-5", "stake", "DELEGATE"],
+    ["SP000000000000000000002Q6VF78.pox-5", "unstake", "UNDELEGATE"],
+    ["ST000000000000000000002AMW42H.pox-5", "stake", "DELEGATE"],
+    ["SP000000000000000000002Q6VF78.pox-4", "stake", "DELEGATE"],
+    ["SP000000000000000000002Q6VF78.pox-5", "get-staker-info", "CONTRACT_CALL"],
+    ["SP_USER.pox-5", "stake", "CONTRACT_CALL"],
+    ["SP_USER.staking-pool", "stake", "CONTRACT_CALL"],
+    ["SP_USER.dex", "swap", "CONTRACT_CALL"],
+  ])("types a %s %s contract call as %s", async (contractId, functionName, expectedType) => {
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
-      baseTx({
-        tx_type: "contract_call",
-        contract_call: {
-          contract_id: "SP000000000000000000002Q6VF78.pox-5",
-          function_name: "stake",
-          function_signature: "",
-          function_args: [],
-        },
-      }),
+      contractCallTx(contractId, functionName),
     ]);
 
     const { items } = await listOperations(SENDER, { minHeight: 0 });
 
     expect(items).toHaveLength(1);
-    expect(items[0].type).toBe("stake");
+    expect(items[0].type).toBe(expectedType);
+    expect(items[0].details?.ledgerOpType).toBe(expectedType);
     expect(items[0].senders).toEqual([SENDER]);
   });
 

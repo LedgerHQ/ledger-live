@@ -322,7 +322,6 @@ function getPayTabRenderInput({
           card_native: cardEnabled,
           card_live_app: cardLiveApp,
           card_disclaimer: cardDisclaimer,
-          legacyTopUp: false,
         },
       },
     },

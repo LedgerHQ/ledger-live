@@ -6,6 +6,7 @@
       "{workspaceRoot}/nx.s3.defaults.json",
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
+      "{workspaceRoot}/support/tsconfig/base.json",
       "{workspaceRoot}/package.json",
       "{workspaceRoot}/pnpm-workspace.yaml",
       "{workspaceRoot}/patches/**/*"
@@ -18,6 +19,7 @@
       "!{projectRoot}/lib/**",
       "!{projectRoot}/lib-es/**"
     ],
+    "tsConfig": ["{workspaceRoot}/support/tsconfig/**/*"],
     "desktopEnv": [
       {
         "env": "APPLECONNECT_API_KEY_CONTENT"
@@ -344,6 +346,7 @@
         "{projectRoot}/lib-es/**",
         "{projectRoot}/build/**"
       ],
+      "inputs": ["default", "^default", "tsConfig"],
       "cache": true
     },
     "lint": {
@@ -373,6 +376,7 @@
       "inputs": [
         "default",
         "^default",
+        "tsConfig",
         {
           "env": "CI_OS"
         }

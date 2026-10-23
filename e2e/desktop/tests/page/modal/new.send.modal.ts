@@ -63,6 +63,9 @@ export class NewSendModal extends Modal {
   private readonly contactAddressRow = (addressId: string) =>
     this.dialog.getByTestId(`send-recipient-contact-address-${addressId}`);
 
+  private readonly balanceTypeOption = (optionId: string) =>
+    this.dialog.getByTestId(`balance-type-${optionId}`);
+
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
     // Return null when the element isn't populated yet so callers can retry.
@@ -73,6 +76,11 @@ export class NewSendModal extends Modal {
   @step("Wait for send flow dialog to open")
   async waitForDialog() {
     await this.dialog.waitFor({ state: "visible" });
+  }
+
+  @step("Select balance type: $0")
+  async selectBalanceType(optionId: "public" | "private") {
+    await this.balanceTypeOption(optionId).click();
   }
 
   @step("Type address in search input: $0")

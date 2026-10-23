@@ -7,6 +7,7 @@ import {
   GenuineOverride,
   formatTime,
   formatValue,
+  stateKind,
   useDeviceOnboardingViewModel,
   type LogLine,
 } from "./useDeviceOnboardingViewModel";
@@ -46,6 +47,29 @@ describe("formatTime", () => {
   it("marks a timestamp it cannot read rather than printing NaN", () => {
     expect(formatTime(Number.NaN)).toBe("—");
     expect(formatTime(Number.MAX_SAFE_INTEGER)).toBe("—");
+  });
+});
+
+describe("stateKind", () => {
+  it.each([
+    ["readingState", "progress"],
+    ["checks.checksIdle", "progress"],
+    ["checks.genuineCheck.awaitingApproval", "genuine"],
+    ["checks.enteringEarlyCheckScreen", "genuine"],
+    ["checks.firmwareUpdateOffered", "firmware"],
+    ["deviceSetup.restoreWords", "setup"],
+    ["deviceLocked", "locked"],
+    ["awaitingSession", "session"],
+    ["checks.genuineFailed", "failed"],
+    ["checks.firmwareCheckFailed", "failed"],
+    ["checks.notGenuineSupport", "failed"],
+    ["bootloaderRecovery", "failed"],
+    ["checks.checksSucceeded", "succeeded"],
+    ["syncOffer", "succeeded"],
+    ["exitOnboarding", "quit"],
+    ["somethingAddedLater", "progress"],
+  ])("classifies %p as %p", (state, expected) => {
+    expect(stateKind(state)).toBe(expected);
   });
 });
 

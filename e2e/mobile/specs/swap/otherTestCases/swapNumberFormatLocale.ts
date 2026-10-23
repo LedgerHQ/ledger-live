@@ -32,6 +32,7 @@ const languageCases: { languageId: FormattedNumberLanguage; label: string }[] = 
 ];
 
 export function runSwapNumberFormatLocaleTest(tmsLinks: string[], tags: string[]) {
+  setTeamOwner(Team.SWAP);
   describe("Swap - amount formatting by language", () => {
     beforeAll(async () => {
       await app.init({
@@ -59,11 +60,10 @@ export function runSwapNumberFormatLocaleTest(tmsLinks: string[], tags: string[]
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(Team.SWAP);
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
 
     for (const { languageId, label } of languageCases) {
+      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
       it(`Swap amounts are formatted correctly for language: ${label}`, async () => {
         // Previous iteration may have left the app inside the swap webview.
         await app.mainNavigation.openPortfolioViaDeeplink();

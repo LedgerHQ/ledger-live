@@ -31,7 +31,7 @@ describe("getAddress resolver", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (mockSigner.getAddress as jest.Mock).mockResolvedValue(mockSignerResponse);
-    (mockSignerContext as jest.Mock).mockImplementation((deviceId, callback) =>
+    (mockSignerContext as jest.Mock).mockImplementation((_deviceId, callback) =>
       callback(mockSigner),
     );
     mockedEip55.encode.mockReturnValue("0x742d35Cc6634C0532925a3b8D0B251d8c1743eC4");

@@ -9,3 +9,4 @@ export * from "./model/ResolveOsUpdatePath";
 export * from "./model/RestoreBackupState";
 export * from "./use-case/OsUpdatesOrchestratorUseCase";
 export * from "./use-case/ResolveOsUpdatePathUseCase";
+export * from "./utils/hasAnythingToRestore";
