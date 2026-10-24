@@ -35,22 +35,35 @@ outputs:
 runs:
   using: "composite"
   steps:
-    # Each connection to the cache is slow on the macOS runners, so fetch many small parts in
-    # parallel. The CLI default (8 MB parts, 10 at a time) leaves a small cache on 1-3 streams.
-    - name: Tune S3 transfers (macOS)
+    # The first `aws` call on a fresh macOS runner VM takes ~60s before doing anything, so macOS
+    # downloads use s5cmd (a single static binary) instead.
+    - name: Install s5cmd (macOS)
       if: runner.os == 'macOS'
       shell: bash
       run: |
-        aws configure set default.s3.max_concurrent_requests 64
-        aws configure set default.s3.multipart_chunksize 1MB
+        [[ -x "$RUNNER_TEMP/s5cmd/s5cmd" ]] && exit 0
+        tarball="s5cmd_${S5CMD_VERSION}_macOS-arm64.tar.gz"
+        mkdir -p "$RUNNER_TEMP/s5cmd"
+        curl -fsSL --retry 3 -o "$RUNNER_TEMP/s5cmd/$tarball" "https://github.com/peak/s5cmd/releases/download/v${S5CMD_VERSION}/${tarball}"
+        echo "${S5CMD_SHA256}  $RUNNER_TEMP/s5cmd/$tarball" | shasum -a 256 -c -
+        tar -xzf "$RUNNER_TEMP/s5cmd/$tarball" -C "$RUNNER_TEMP/s5cmd" s5cmd
+      env:
+        S5CMD_VERSION: 2.3.0
+        S5CMD_SHA256: ae007bc96276f498ae3c1fb017e57630cf93ef260cfe7e97b365522e240c973f
 
     - name: Downloading files
       id: download-cache
       shell: bash
       run: |
         ENDPOINT_URL="${INPUTS_ENDPOINT:-s3.${INPUTS_REGION}.amazonaws.com}"
-        aws s3 cp s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst /tmp/cache.tzst --endpoint-url "https://${ENDPOINT_URL}" --region ${INPUTS_REGION} --no-progress
+        if [[ "$RUNNER_OS" == "macOS" ]]; then
+          "$RUNNER_TEMP/s5cmd/s5cmd" --endpoint-url "https://${ENDPOINT_URL}" \
+            cp "s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst" /tmp/cache.tzst
+        else
+          aws s3 cp s3://${INPUTS_BUCKET}/${INPUTS_KEY}/cache.tzst /tmp/cache.tzst --endpoint-url "https://${ENDPOINT_URL}" --region ${INPUTS_REGION} --no-progress
+        fi
       env:
+        AWS_REGION: ${{ inputs.region }}
         AWS_ACCESS_KEY_ID: ${{ inputs.accessKey }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secretKey }}
         AWS_SESSION_TOKEN: ${{ inputs.sessionToken }}

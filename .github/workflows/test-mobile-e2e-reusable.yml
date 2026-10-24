@@ -837,7 +837,7 @@ jobs:
         working-directory: apps/ledger-live-mobile
 
       - name: Download Native Build
-        # Study: this branch's download composite (tuned S3 settings on macOS).
+        # Study: this branch's download composite (s5cmd on macOS).
         uses: ./tools/actions/composites/cache/download
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
@@ -850,7 +850,7 @@ jobs:
 
       - name: Download JS Build
         if: ${{ needs.determine-builds.outputs.ios_js_exists != 'true' }}
-        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
+        uses: ./tools/actions/composites/cache/download
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
           key: ${{ needs.determine-builds.outputs.ios_js_key }}
