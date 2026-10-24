@@ -1,0 +1,56 @@
+# Perfetto config for one traced launch (run.mjs --trace-launches): CPU scheduling of every thread,
+# the app's own trace sections and the framework's view/graphics sections, and CPU time counters.
+# No "dalvik" category: with it, ART records the owner of every contended lock in the measured app.
+# run.mjs stops it with SIGTERM once the launch window is over; duration_ms is only a safety cap.
+buffers {
+  size_kb: 65536
+  fill_policy: DISCARD
+}
+buffers {
+  size_kb: 4096
+  fill_policy: DISCARD
+}
+data_sources {
+  config {
+    name: "linux.ftrace"
+    target_buffer: 0
+    ftrace_config {
+      ftrace_events: "sched/sched_switch"
+      ftrace_events: "sched/sched_waking"
+      ftrace_events: "sched/sched_wakeup_new"
+      ftrace_events: "sched/sched_process_exit"
+      ftrace_events: "task/task_newtask"
+      ftrace_events: "task/task_rename"
+      ftrace_events: "power/cpu_idle"
+      atrace_categories: "am"
+      atrace_categories: "wm"
+      atrace_categories: "view"
+      atrace_categories: "gfx"
+      atrace_categories: "binder_driver"
+      atrace_apps: "com.ledger.live"
+      # Per CPU: 4 vCPUs drained every 250 ms.
+      buffer_size_kb: 4096
+      drain_period_ms: 250
+    }
+  }
+}
+data_sources {
+  config {
+    name: "linux.process_stats"
+    target_buffer: 1
+    process_stats_config {
+      scan_all_processes_on_start: true
+    }
+  }
+}
+data_sources {
+  config {
+    name: "linux.sys_stats"
+    target_buffer: 1
+    sys_stats_config {
+      stat_period_ms: 100
+      stat_counters: STAT_CPU_TIMES
+    }
+  }
+}
+duration_ms: 30000

@@ -42,7 +42,8 @@ export function hodgesLehmann(diffs) {
 export function pairUp(samples, metric) {
   const byKey = new Map();
   for (const s of samples) {
-    if (!s.ok || s.warmup) continue;
+    // Traced launches carry the tracer's load.
+    if (!s.ok || s.warmup || s.traced) continue;
     const value = metric(s);
     if (!Number.isFinite(value)) continue;
     const key = `${s.platform}|${s.scenario}|${s.phase}|${s.round}`;
@@ -148,6 +149,7 @@ export function summarise(samples, { preset, thresholdMs }) {
       scenario,
       pairs: pairs.length,
       failed: measured.filter(s => !s.ok).length,
+      traced: measured.filter(s => s.traced).length,
       launches: measured.length,
       medianA: median(pairs.map(p => p.A)),
       medianB: median(pairs.map(p => p.B)),
@@ -207,7 +209,7 @@ const LOAD_MEASURES = [
 export function loadSummary(samples) {
   const groups = new Map();
   for (const s of samples) {
-    if (!s.ok || s.warmup || !s.load || !Number.isFinite(s.appStartupTime)) continue;
+    if (!s.ok || s.warmup || s.traced || !s.load || !Number.isFinite(s.appStartupTime)) continue;
     const key = `${s.platform}|${s.scenario}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(s);
@@ -292,6 +294,12 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
   lines.push(
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
+    ...rows
+      .filter(r => r.traced)
+      .map(
+        r =>
+          `${r.platform} ${r.scenario}: ${r.traced} traced launches left out (the tracer adds load).`,
+      ),
     `The mean (with a bootstrap 95% interval) is what the manual test compares. "Flags a slowdown of" is the true B − A the ${thresholdMs} ms gate catches 80% of the time at this noise; a true ${thresholdMs} ms is caught half the time.`,
     "",
   );
