@@ -1,5 +1,5 @@
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useMemo } from "react";
+import React, { useEffect, useLayoutEffect, useMemo } from "react";
 import { Platform } from "react-native";
 import Animated from "react-native-reanimated";
 import { ProductTourPortfolioMount } from "LLM/features/ProductTour";
@@ -41,6 +41,7 @@ import {
   PortfolioPerpsEntryPoint,
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -53,6 +54,14 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
 });
 
 export const PortfolioScreen = ({ navigation }: NavigationProps) => {
+  logStartupEvent("Portfolio render");
+  // Commit (layout effect) vs after the frame (passive effect), to place the startup stall.
+  useLayoutEffect(() => {
+    logStartupEvent("Portfolio layout effect");
+  }, []);
+  useEffect(() => {
+    logStartupEvent("Portfolio effect");
+  }, []);
   const {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,

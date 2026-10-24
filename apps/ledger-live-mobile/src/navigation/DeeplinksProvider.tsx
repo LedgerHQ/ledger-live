@@ -967,6 +967,7 @@ export const DeeplinksProvider = ({
             linking={linking}
             ref={navigationRef}
             onReady={() => {
+              logStartupEvent("Navigation container ready");
               setIsNavigationContainerReady(true);
               isReadyRef.current = true;
             }}

@@ -6,10 +6,12 @@ import AccountsNavigator from "./AccountsNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import PortfolioRootScreen from "./PortfolioRootScreen";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 
 const Stack = createNativeStackNavigator<PortfolioNavigatorStackParamList>();
 
 export default function PortfolioNavigator() {
+  logStartupEvent("PortfolioNavigator render");
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 

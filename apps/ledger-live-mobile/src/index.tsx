@@ -325,6 +325,7 @@ function App() {
  * SafeAreaView).
  */
 function AppView() {
+  logStartupEvent("AppView render");
   // TODO: Normally, we should use a SafeAreaView as root view to avoid
   // importing it everywhere and recalculating the insets.
   return (

@@ -109,6 +109,7 @@ import FeesNavigator from "./FeesNavigator";
 import { getEarnScreenOptionsFromRouteParams } from "./getEarnScreenOptions";
 import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 import LiveAppModalScreen from "LLM/features/LiveAppModal";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
@@ -174,6 +175,7 @@ function FirmwareUpdateHeaderRight() {
 }
 
 export default function BaseNavigator() {
+  logStartupEvent("BaseNavigator render");
   const { t } = useTranslation();
   const route = useRoute<
     RouteProp<{
