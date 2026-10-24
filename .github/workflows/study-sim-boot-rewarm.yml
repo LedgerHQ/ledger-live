@@ -1,0 +1,44 @@
+name: "[Study] Simulator first vs second boot"
+
+# Study only: on a fresh runner VM, boot the three CI simulators one at a time, shut them down,
+# then boot them again. Per boot: seconds; per phase: disk bytes read/written and simulator data
+# growth. Local commands only; no checkout, secrets or network.
+on:
+  push:
+    branches: [study/sim-boot-rewarm]
+
+permissions: {}
+
+jobs:
+  boot:
+    runs-on: [qaa, macOS, ARM64, performance-pool]
+    timeout-minutes: 20
+    steps:
+      - name: Boot, shut down, boot again
+        run: |
+          DEVICES=("iOS Simulator" "iOS Simulator 2" "iOS Simulator 3")
+          now() { /usr/bin/python3 -c 'import time; print(f"{time.time():.1f}")'; }
+          # Sum of bytes read/written across block devices, from the same IOKit counters node_exporter reads.
+          disk() { /usr/sbin/ioreg -c IOBlockStorageDriver -r -w0 -d 1 |
+            awk 'match($0, /"Bytes \(Read\)"=[0-9]+/) { r += substr($0, RSTART+15, RLENGTH-15) }
+                 match($0, /"Bytes \(Write\)"=[0-9]+/) { w += substr($0, RSTART+16, RLENGTH-16) }
+                 END { printf "%d %d\n", r, w }'; }
+          udid() { xcrun simctl list devices -j | /opt/homebrew/bin/jq -r --arg n "$1" '[.devices[][] | select(.name == $n)][0].udid'; }
+          datakb() { local t=0; for d in "${DEVICES[@]}"; do t=$((t + $(du -sk "$HOME/Library/Developer/CoreSimulator/Devices/$(udid "$d")/data" | cut -f1))); done; echo "$t"; }
+          phase() {
+            local label=$1; shift
+            read -r r0 w0 < <(disk); local k0; k0=$(datakb); local p0; p0=$(now)
+            "$@"
+            read -r r1 w1 < <(disk); local k1; k1=$(datakb); local p1; p1=$(now)
+            awk -v l="$label" -v s="$(echo "$p1 - $p0" | bc)" -v r=$((r1 - r0)) -v w=$((w1 - w0)) -v k=$((k1 - k0)) \
+              'BEGIN { printf "%-22s %6.1fs  read %6.2f GB  write %6.2f GB  sim data %+7.1f MB\n", l, s, r/1e9, w/1e9, k/1024 }'
+          }
+          boot_each() { for d in "${DEVICES[@]}"; do
+            local t0; t0=$(now); xcrun simctl boot "$d"; xcrun simctl bootstatus "$d" >/dev/null
+            echo "  $d booted in $(echo "$(now) - $t0" | bc)s"; done; }
+          shutdown_all() { for d in "${DEVICES[@]}"; do xcrun simctl shutdown "$d"; done; }
+          sw_vers -productVersion; free_gb=$(df -g / | awk 'NR==2 {print $4}'); echo "disk free ${free_gb} GB"
+          phase "first boot (sequential)" boot_each
+          phase "shutdown" shutdown_all
+          phase "second boot (sequential)" boot_each
+          phase "shutdown" shutdown_all
