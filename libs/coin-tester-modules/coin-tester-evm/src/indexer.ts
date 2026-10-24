@@ -776,7 +776,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "polygon":
         case "core":
         case "base":
-        case "scroll":
         case "bsc":
         case "robinhood":
         case "robinhood_testnet":
@@ -796,7 +795,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "polygon":
         case "core":
         case "base":
-        case "scroll":
         case "bsc":
         case "robinhood":
         case "robinhood_testnet":
@@ -870,26 +868,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
           contract_address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
           ticker: "USDC",
           name: "USD Coin (PoS)",
-          units: [
-            {
-              code: "USDC",
-              name: "USDC",
-              magnitude: 6,
-            },
-          ],
-          delisted: false,
-          standard: "erc20",
-          decimals: 6,
-        });
-      } else if (
-        id === "scroll/erc20/usd_coin" ||
-        (contractAddress === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && network === "scroll")
-      ) {
-        response.push({
-          id: "scroll/erc20/usd_coin",
-          contract_address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
-          ticker: "USDC",
-          name: "USD Coin",
           units: [
             {
               code: "USDC",
