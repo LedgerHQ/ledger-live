@@ -183,11 +183,32 @@ jobs:
           command: pnpm exec nx run live-mobile:e2e:ci -- -p ios -b $([[ "$PRODUCTION" == "true" ]] && printf %s '--production')
           disable_cache: ${{ inputs.disable-nx-cache || false }}
 
+      # Study: size of the whole Products dir versus the .app Detox installs.
+      - name: Report native build size
+        continue-on-error: true
+        working-directory: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
+        run: |
+          echo "== raw size"
+          du -sh . ledgerlivemobile.app ledgerlivemobile.app.dSYM 2>/dev/null
+          echo "== top-level entries"
+          du -sk -- * | sort -rn | head -25 | awk '{printf "%9.1f MB  %s\n", $1/1024, $2}'
+          echo "== outside the .app, by kind (MB)"
+          find . -type f -not -path "./ledgerlivemobile.app/*" | awk '
+            { k = "other" }
+            /\.dSYM\// { k = "dSYM" } /\.a$/ { k = "static lib .a" } /\.(h|hpp)$/ { k = "headers" }
+            /\.swiftmodule/ { k = "swiftmodule" } /\.bundle\// { k = "bundles" } /\.framework\// { k = "frameworks" }
+            { print k "\t" $0 }' | while IFS=$'\t' read -r k f; do printf "%s\t%s\n" "$k" "$(stat -f %z "$f")"; done |
+            awk -F'\t' '{ s[$1] += $2; n[$1]++ } END { for (k in s) printf "%9.1f MB  %5d files  %s\n", s[k]/1048576, n[k], k }' | sort -rn
+          echo "== zstd-compressed (what S3 stores)"
+          printf "whole dir: "; gtar --posix -cf - . | zstdmt -c | wc -c | awk '{printf "%.1f MB\n", $1/1048576}'
+          printf "app only:  "; gtar --posix -cf - ledgerlivemobile.app | zstdmt -c | wc -c | awk '{printf "%.1f MB\n", $1/1048576}'
+
       - name: Upload Detox Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
+          # Detox installs only the .app; the rest of Products is pod build output and the dSYM.
+          path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}/ledgerlivemobile.app
           key: ${{ inputs.ios-native-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
