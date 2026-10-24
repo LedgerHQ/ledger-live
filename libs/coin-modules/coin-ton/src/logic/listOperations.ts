@@ -190,6 +190,16 @@ function messageComment(message: TonMessage | null | undefined): TonComment {
 
 const hasValue = (message: TonMessage): boolean => !!message.value && message.value !== "0";
 
+// `total_fees` holds the action phase's share of the forwarding fees only: the rest travels in each
+// message the account sends, and the account pays it all the same.
+const forwardFees = (tx: TonTransaction): bigint =>
+  tx.out_msgs
+    .filter(message => message.source === tx.account)
+    .reduce(
+      (sum, message) => sum + BigInt(message.fwd_fee ?? 0) + BigInt(message.ihr_fee ?? 0),
+      0n,
+    );
+
 /** The OUT value excludes the fee; the generic adapter adds it. */
 function nativeOperations(
   tx: TonTransaction,
@@ -218,7 +228,7 @@ function nativeOperations(
     tx: {
       hash,
       block: { height, hash: "", time: date },
-      fees: BigInt(tx.total_fees),
+      fees: BigInt(tx.total_fees) + (type === "OUT" ? forwardFees(tx) : 0n),
       date,
       failed:
         tx.description.compute_ph.success === false && tx.description.compute_ph.exit_code !== 0,

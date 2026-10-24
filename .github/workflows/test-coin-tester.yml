@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 env:
-  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo"
+  COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo ton"
   # The coin testers that run against coin-sandbox, and the coin-sandbox networks each one starts
   COIN_SANDBOX_NETWORKS: '{"solana": ["solana"], "tron": ["tron"], "evm": ["ethereum", "polygon", "bsc"]}'
 
