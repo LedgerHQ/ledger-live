@@ -27,13 +27,12 @@ runs:
         nohup bash -c "
         set -euo pipefail
         N=$N
+        # Study: one simulator at a time, so each boot has the disk to itself.
         for ((i=1; i<=N; i++)); do
           if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
           xcrun simctl boot \"\$name\" || true
-        done
-        for ((i=1; i<=N; i++)); do
-          if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
           xcrun simctl bootstatus \"\$name\"
+          echo \"\$(date -u +%T) booted \$name\"
         done
         echo '✅ All simulators booted'
         " > "$LOG_FILE" 2>&1 &
