@@ -52,10 +52,10 @@ on:
         type: string
         default: "20"
       settle_seconds:
-        description: "Seconds to wait after each launch before reading the value"
+        description: "Seconds to wait after each launch before reading the value (the startup ends within ~4 s)"
         required: true
         type: string
-        default: "15"
+        default: "5"
       accounts_userdata:
         description: "Userdata files (e2e/mobile/userdata, comma-separated) merged for the accounts scenario"
         required: true
@@ -66,6 +66,11 @@ on:
         required: true
         type: string
         default: "100"
+      read_all_events:
+        description: "Read every startup event row (slower); by default the first screen and the last rows"
+        required: false
+        type: boolean
+        default: false
       e2e_babel_plugin:
         description: "Bundle with DETOX=1 like the E2E builds (adds collapsable={false} to every view)"
         required: false
@@ -128,6 +133,7 @@ jobs:
           THRESHOLD: ${{ inputs.threshold_ms }}
           SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
+          READ_ROWS: ${{ inputs.read_all_events && 'every event row read' || 'first screen and last event rows read' }}
         run: |
           set -euo pipefail
           if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 2 || PAIRS % 2 )); then
@@ -161,7 +167,7 @@ jobs:
             echo ""
             echo "- A: \`$LABEL_A\` → \`$A\`"
             echo "- B: \`$LABEL_B\` → \`$B\`"
-            echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch"
+            echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch, ${READ_ROWS}"
             echo "- Android: one job (runner) per scenario, cellular network like E2E, $PERF_AVD_CORES cores per emulator"
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -597,12 +603,14 @@ jobs:
           NET_BASELINE: ${{ inputs.capture_network && 'https://firebaseremoteconfig.googleapis.com/,https://countervalues.live.ledger.com/v3/markets' || '' }}
           # The emulator's own capture of each launch; it only sees the cellular network, now always used.
           GUEST_CAPTURE: ${{ inputs.capture_network }}
+          ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
           APP_B=builds/b/signed.apk
           [[ -f "$APP_B" ]] || APP_B="$APP_A"
-          node tools/scripts/startup-perf/run.mjs \
+          # shellcheck disable=SC2086 # ALL_EVENTS is empty or one flag
+          node tools/scripts/startup-perf/run.mjs $ALL_EVENTS \
             --platform android \
             --devices emulator-5554,emulator-5556 \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
@@ -741,12 +749,14 @@ jobs:
           PAIRS: ${{ inputs.pairs }}
           SETTLE: ${{ inputs.settle_seconds }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
+          ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
           APP_B=builds/b/ledgerlivemobile.app
           [[ -d "$APP_B" ]] || APP_B="$APP_A"
-          node tools/scripts/startup-perf/run.mjs \
+          # shellcheck disable=SC2086 # ALL_EVENTS is empty or one flag
+          node tools/scripts/startup-perf/run.mjs $ALL_EVENTS \
             --platform ios \
             --devices "$SIM_1,$SIM_2" \
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \

@@ -3,7 +3,8 @@
 // build B, and writes one JSON line per launch to <out-dir>/samples.jsonl.
 //
 // Each launch is a plain `adb shell am start` / `xcrun simctl launch` with no test tool attached.
-// Maestro only opens Settings > Debug > Performance afterwards to read "App startup time".
+// Maestro only opens Settings > Debug > Performance afterwards to read "App startup time", then the
+// last rows (or, with --all-events, every row).
 // Accounts are injected once per install through the E2E bridge (bridge.mjs), then persisted by the app.
 // Launches strictly alternate between the two devices, so every launch follows one on the other
 // device: in run 39731729203 a launch right after one on the same simulator was ~270 ms faster.
@@ -35,8 +36,10 @@ const { values: opts } = parseArgs({
     },
     pairs: { type: "string", default: "20" },
     warmups: { type: "string", default: "1" },
-    "idle-ms": { type: "string", default: "5000" },
-    "settle-ms": { type: "string", default: "15000" },
+    "idle-ms": { type: "string", default: "2000" },
+    "settle-ms": { type: "string", default: "5000" },
+    // Read every startup event row; by default only the first screen and the last rows are read.
+    "all-events": { type: "boolean", default: false },
     flow: { type: "string", default: path.join(import.meta.dirname, "read-performance.yaml") },
     maestro: { type: "string", default: "maestro" },
     "bridge-port": { type: "string", default: "8099" },
@@ -77,6 +80,9 @@ const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const GUEST_PCAP_DIR = path.join(OUT_DIR, "guest-network");
 const SCROLL_FLOW = path.join(import.meta.dirname, "scroll-performance.yaml");
+const SCROLL_TO_END_FLOW = path.join(import.meta.dirname, "scroll-performance-to-end.yaml");
+// "App startup time" is the later of these two; a read before both exist would under-report it.
+const FINAL_EVENTS = ["App started", "Splash screen faded"];
 // Per device: with strict alternation, a device that never reads would otherwise go unnoticed.
 const MAX_CONSECUTIVE_FAILURES = 4;
 // After a dialog's process is restarted, let the device settle before the next launch.
@@ -98,6 +104,16 @@ function validateOptions() {
 
 process.env.MAESTRO_CLI_NO_ANALYTICS = "1";
 process.env.MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED = "true";
+
+// By default Maestro uninstalls and reinstalls its driver apps on every call (about 50 s per read
+// in run 40006507791), which also keeps the host busy right before the next launch. Without the
+// reinstall it installs them once, when missing.
+function maestro(device, command, args, { timeoutMs }) {
+  return run(opts.maestro, ["--device", device, command, "--no-reinstall-driver", ...args], {
+    timeoutMs,
+    allowFail: true,
+  });
+}
 
 const log = message => console.log(`[${new Date().toISOString().slice(11, 19)}] ${message}`);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -271,7 +287,17 @@ const android = {
       { allowFail: true, timeoutMs: 20_000 },
     );
     const after = Date.now();
-    return failed ? null : parseProcessStart(stdout, (before + after) / 2);
+    if (failed) return null;
+    const at = parseProcessStart(stdout, (before + after) / 2);
+    return at === null ? null : { at, pid: parseStatPid(stdout) };
+  },
+  async pid(device) {
+    const { stdout, failed } = await run("adb", ["-s", device, "shell", "pidof", "-s", APP_ID], {
+      allowFail: true,
+      timeoutMs: 20_000,
+    });
+    const pid = Number(stdout.trim());
+    return failed || !Number.isInteger(pid) || pid <= 0 ? null : pid;
   },
   // Starts the emulator's own capture (console "network capture"), which only accepts a bare
   // file name and writes it under the AVD folder; returns the full path it reports.
@@ -289,7 +315,7 @@ const android = {
   },
   screenSizes: new Map(),
   // A slow swipe from 75% to 30% of the screen height, so the list moves about half a screen.
-  async scrollDown(device) {
+  async scrollDown(device, { fling = false } = {}) {
     if (!this.screenSizes.has(device)) {
       const { stdout } = await run("adb", ["-s", device, "shell", "wm", "size"], {
         allowFail: true,
@@ -299,12 +325,27 @@ const android = {
     }
     const [width, height] = this.screenSizes.get(device);
     const x = String(Math.round(width / 2));
+    if (fling) {
+      const from = String(Math.round(height * 0.85));
+      const to = String(Math.round(height * 0.15));
+      for (let i = 0; i < 3; i++) {
+        await run("adb", ["-s", device, "shell", "input", "swipe", x, from, x, to, "80"], {
+          allowFail: true,
+        });
+      }
+      await sleep(1500);
+      return;
+    }
     const from = String(Math.round(height * 0.75));
     const to = String(Math.round(height * 0.3));
     await run("adb", ["-s", device, "shell", "input", "swipe", x, from, x, to, "600"], {
       allowFail: true,
     });
     await sleep(800);
+  },
+  // Three fast swipes fling the list to its end; then the momentum is left to stop.
+  async scrollToEnd(device) {
+    await this.scrollDown(device, { fling: true });
   },
   async stopCapture(device) {
     await run("adb", ["-s", device, "emu", "network", "capture", "stop"], {
@@ -328,6 +369,12 @@ export function parseProcessStart(text, readAt) {
   const startTicks = Number(stat[19]);
   if (!Number.isFinite(uptime) || !Number.isFinite(startTicks)) return null;
   return Math.round(readAt - (uptime - startTicks / 100) * 1000);
+}
+
+// The pid, first field of the /proc/<pid>/stat line that follows /proc/uptime.
+export function parseStatPid(text) {
+  const pid = Number(text.match(/^(\d+) \(/m)?.[1]);
+  return Number.isInteger(pid) && pid > 0 ? pid : null;
 }
 
 // /proc/loadavg followed by /proc/stat: 1-minute load average and the cumulative CPU time of all
@@ -389,6 +436,9 @@ const ios = {
   async processStart() {
     return null;
   },
+  async pid() {
+    return null;
+  },
   async cpuCount() {
     return null;
   },
@@ -397,10 +447,10 @@ const ios = {
   },
   async stopCapture() {},
   async scrollDown(device) {
-    await run(opts.maestro, ["--device", device, "test", SCROLL_FLOW], {
-      timeoutMs: 120_000,
-      allowFail: true,
-    });
+    await maestro(device, "test", [SCROLL_FLOW], { timeoutMs: 60_000 });
+  },
+  async scrollToEnd(device) {
+    await maestro(device, "test", [SCROLL_TO_END_FLOW], { timeoutMs: 60_000 });
   },
   async diagnostics(device, file) {
     const { stdout } = await run(
@@ -476,15 +526,16 @@ export function parseEvents(texts) {
 // scroll moves about half a screen; 10 covers the ~35 rows of the most instrumented builds.
 const MAX_SCROLLS = 10;
 
-async function readRemainingEvents(device, events) {
+async function readHierarchyEvents(device) {
+  const hierarchy = await maestro(device, "hierarchy", [], { timeoutMs: 60_000 });
+  return parseEvents(hierarchyTexts(hierarchy.stdout));
+}
+
+async function readAllEvents(device, events) {
   const all = { ...events };
   for (let i = 0; i < MAX_SCROLLS; i++) {
     await P.scrollDown(device);
-    const hierarchy = await run(opts.maestro, ["--device", device, "hierarchy"], {
-      timeoutMs: 120_000,
-      allowFail: true,
-    });
-    const found = Object.entries(parseEvents(hierarchyTexts(hierarchy.stdout))).filter(
+    const found = Object.entries(await readHierarchyEvents(device)).filter(
       ([name]) => !(name in all),
     );
     if (!found.length) break;
@@ -493,22 +544,36 @@ async function readRemainingEvents(device, events) {
   return all;
 }
 
+// The first screen is already read; by default only the end of the list is added, where the rows
+// are in the order the events were first logged, so the final events are there.
+async function readRemainingEvents(device, events) {
+  if (opts["all-events"]) return readAllEvents(device, events);
+  await P.scrollToEnd(device);
+  const all = { ...events, ...(await readHierarchyEvents(device)) };
+  // A list too short to fling, or a fling that stopped early: fall back to scrolling.
+  return FINAL_EVENTS.every(name => name in all) ? all : readAllEvents(device, all);
+}
+
 async function readPerformance(device, debugName) {
   let lastTexts = [];
   let lastFlow = null;
   for (let attempt = 1; attempt <= 2; attempt++) {
-    lastFlow = await run(opts.maestro, ["--device", device, "test", opts.flow], {
-      timeoutMs: 240_000,
-      allowFail: true,
-    });
+    // The first call on a device also installs Maestro's driver apps.
+    lastFlow = await maestro(device, "test", [opts.flow], { timeoutMs: 120_000 });
     for (let i = 0; i < 3; i++) {
-      const hierarchy = await run(opts.maestro, ["--device", device, "hierarchy"], {
-        timeoutMs: 120_000,
-        allowFail: true,
-      });
+      const hierarchy = await maestro(device, "hierarchy", [], { timeoutMs: 60_000 });
       lastTexts = hierarchyTexts(hierarchy.stdout);
       const parsed = parsePerformance(lastTexts);
-      if (parsed) return { ...parsed, events: await readRemainingEvents(device, parsed.events) };
+      if (parsed) {
+        const events = await readRemainingEvents(device, parsed.events);
+        const missing = FINAL_EVENTS.filter(name => !(name in events));
+        if (missing.length) {
+          throw new Error(
+            `${missing.join(" and ")} not logged when the screen opened: App startup time would be under-reported`,
+          );
+        }
+        return { ...parsed, events };
+      }
       await sleep(2000);
     }
     // A second attempt cannot get past a system dialog; the launch is not trusted either.
@@ -742,7 +807,9 @@ async function sample(meta) {
       beforeLaunch: loadBetween(idleStart, idleEnd),
       duringLaunch: loadBetween(launchStart, launchEnd),
     };
-    record.processStartAt = await P.processStart(meta.device);
+    const processStart = await P.processStart(meta.device);
+    record.processStartAt = processStart?.at ?? null;
+    record.pid = processStart?.pid ?? null;
     if (capturing) {
       capturing = false;
       await P.stopCapture(meta.device);
@@ -754,6 +821,11 @@ async function sample(meta) {
       await P.resume(other);
     }
     const perf = await readPerformance(meta.device, name);
+    // A crash or restart between the launch and the read would show another launch's value.
+    const pidAtRead = record.pid === null ? null : await P.pid(meta.device);
+    if (record.pid !== null && pidAtRead !== record.pid) {
+      throw new Error(`the app process changed before the read (pid ${record.pid} → ${pidAtRead})`);
+    }
     Object.assign(record, launch, perf, { ok: true });
     consecutiveFailures.set(meta.device, 0);
   } catch (error) {
