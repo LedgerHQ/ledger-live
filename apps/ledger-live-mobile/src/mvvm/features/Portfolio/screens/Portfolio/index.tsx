@@ -42,6 +42,7 @@ import {
 } from "../../components";
 import { Box } from "@ledgerhq/native-ui";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
+import { readHermesGcStats, type HermesGcStats } from "LLM/utils/hermesGcStats";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -53,11 +54,45 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(Collapsibl
       : PROGRESS_VIEW_OFFSET_LEGACY_IOS,
 });
 
+// Startup probes: renders before the first commit (more than 1 means React threw a render away and
+// redid it), and Hermes garbage collections between the first render and that commit.
+let rendersBeforeFirstCommit = 0;
+let committed = false;
+let gcAtFirstRender: HermesGcStats | undefined;
+
+function logGcStats(prefix: string, stats: HermesGcStats | undefined) {
+  if (!stats) {
+    logStartupEvent(`${prefix} GC stats unavailable`);
+    return;
+  }
+  logStartupEvent(`${prefix} GCs ${stats.count}`);
+  logStartupEvent(`${prefix} GC pause ${Math.round(stats.pauseMs)}`);
+}
+
 export const PortfolioScreen = ({ navigation }: NavigationProps) => {
+  if (!committed) {
+    rendersBeforeFirstCommit++;
+    if (rendersBeforeFirstCommit === 1) {
+      gcAtFirstRender = readHermesGcStats();
+      logGcStats("Before Portfolio render", gcAtFirstRender);
+    }
+  }
   logStartupEvent("Portfolio render");
   // Commit (layout effect) vs after the frame (passive effect), to place the startup stall.
   useLayoutEffect(() => {
     logStartupEvent("Portfolio layout effect");
+    committed = true;
+    logStartupEvent(`Portfolio renders before commit ${rendersBeforeFirstCommit}`);
+    const now = readHermesGcStats();
+    logGcStats(
+      "Portfolio commit",
+      now && gcAtFirstRender
+        ? {
+            count: now.count - gcAtFirstRender.count,
+            pauseMs: now.pauseMs - gcAtFirstRender.pauseMs,
+          }
+        : undefined,
+    );
   }, []);
   useEffect(() => {
     logStartupEvent("Portfolio effect");
