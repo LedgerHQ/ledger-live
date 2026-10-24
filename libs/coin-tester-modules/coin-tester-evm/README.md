@@ -8,11 +8,13 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 ## Features
 
 - Deterministic testing scenarios for EVM-based coins
-- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Blast, Sonic)
+- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic)
 - Local signer written in Typescript
-- The Ethereum, Polygon and BNB scenarios ask coin-sandbox for a real node (geth 1.17.9 on Ethereum, bsc 1.8.1 (BNB Chain's geth fork) on BNB, bor 2.10.2:
-  the versions of production) and its Atlas indexer. USDC (USDT on BNB) is preloaded by coin-sandbox at its mainnet address,
-  and the account is funded by airdrop. No mock: Atlas is the explorer and gas tracker, and any request that leaves the machine fails
+- The Ethereum, Polygon, BNB and Optimism scenarios ask coin-sandbox for a real node (geth 1.17.9 on Ethereum, bsc 1.8.1 (BNB Chain's geth fork) on BNB, bor 2.10.2,
+  op-reth 2.6.1 on Optimism: the versions of production) and its indexer: Atlas, and Blockscout 12.0.3 (built for the
+  optimism chain type) on Optimism. USDC (USDT on BNB) is
+  preloaded by coin-sandbox at its mainnet address, and the account is funded by airdrop. No mock: the indexer is the explorer (and the gas tracker
+  but on Optimism, which asks its node), and any request that leaves the machine fails
 - The other scenarios still use Anvil, a mainnet fork, and a mocked explorer
 
 ## Usage
@@ -27,9 +29,9 @@ await executeScenario(scenarioEthereum);
 
 ## Development
 
-Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon and BNB scenarios need coin-sandbox's server running (`deno task
+Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB and Optimism scenarios need coin-sandbox's server running (`deno task
 server` in its repository, port 8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon, and `docker login
-jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon). It takes about a minute. The
+jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon; Optimism has none). It takes about a minute. The
 others need Docker for Anvil and network access to their fork RPC. To run one scenario:
 `pnpm coin:tester:evm start -t "scenario BNB"`.
 
