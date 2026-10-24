@@ -35,6 +35,15 @@ outputs:
 runs:
   using: "composite"
   steps:
+    # Each connection to the cache is slow on the macOS runners, so fetch many small parts in
+    # parallel. The CLI default (8 MB parts, 10 at a time) leaves a small cache on 1-3 streams.
+    - name: Tune S3 transfers (macOS)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        aws configure set default.s3.max_concurrent_requests 64
+        aws configure set default.s3.multipart_chunksize 1MB
+
     - name: Downloading files
       id: download-cache
       shell: bash
