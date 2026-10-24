@@ -22,6 +22,11 @@ const startupTsp = new Promise<number>(resolve => {
   getTimeSinceStartup().then(t => resolve(now - t));
 });
 
+/** Device wall-clock epoch (ms) of the startup reference, to line the events up with a trace. */
+export function getStartMarkEpoch(): Promise<number> {
+  return startupTsp;
+}
+
 export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
   const awaitedTsp = await startupTsp;
   const resolved = new Map<string, GroupedStartupEvent>();

@@ -43,6 +43,7 @@ import {
 import { Box } from "@ledgerhq/native-ui";
 import { logStartupEvent } from "LLM/utils/logStartupTime";
 import { readHermesGcStats, type HermesGcStats } from "LLM/utils/hermesGcStats";
+import { getStartMarkEpoch } from "LLM/utils/resolveStartupEvents";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PortfolioNavigatorStackParamList, ScreenName.Portfolio>
 >;
@@ -83,6 +84,10 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     logStartupEvent("Portfolio layout effect");
     committed = true;
     logStartupEvent(`Portfolio renders before commit ${rendersBeforeFirstCommit}`);
+    // Lets run.mjs place every event on a Perfetto trace's clock.
+    void getStartMarkEpoch().then(epoch =>
+      logStartupEvent(`Start mark epoch ${Math.round(epoch)}`),
+    );
     const now = readHermesGcStats();
     logGcStats(
       "Portfolio commit",
