@@ -3,11 +3,13 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
-import { VITALIK, callMyDealer, expectAddressInList, getBridges, sonic } from "../helpers";
-import { killAnvil, spawnAnvil } from "../anvil";
+import { blockscoutOf, swapTokens } from "../sandboxEvm";
+import { VITALIK, expectAddressInList, getBridges, sonic } from "../helpers";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BRIDGED_USDC_ON_SONIC as USDC_ON_SONIC } from "../tokenFixtures";
 import { buildSigner } from "../signer";
@@ -75,11 +77,33 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
   return [scenarioSendSTransaction, scenarioSendUSDCTransaction, scenarioSendMaxSTransaction];
 };
 
+let sandbox: Sandbox | undefined;
+let closeGuard: (() => void) | null = null;
+// Puts the token store of the other scenarios of the run back
+let restoreTokens: (() => void) | null = null;
+let provider: ethers.JsonRpcProvider;
+let blockscout: ReturnType<typeof blockscoutOf>;
+
+/** Whole units airdropped to the scenario's account: the chain starts with the dealer only. */
+const S_AIRDROP = 10_000;
+const USDC_AIRDROP = 100;
+
 export const scenarioSonic: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic S Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://sonic-rpc.publicnode.com", signer.exportMnemonic());
+    sandbox = await startSandbox(
+      { family: "evm", network: "sonic" },
+      {
+        node: { provider: "sonic", version: "2.2.5" },
+        indexer: { provider: "blockscout", version: "12.0.3" },
+      },
+    );
+    const { node: rpc, indexer: explorer } = sandbox.endpoints;
+    if (rpc === undefined || explorer === undefined) {
+      throw new Error("the sandbox instance has no node or indexer endpoint");
+    }
+    blockscout = blockscoutOf(explorer);
 
     const info: EvmConfigInfo = {
       status: {
@@ -90,12 +114,13 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
       unit: { name: "S", code: "S", magnitude: 18 },
       node: {
         type: "external",
-        uri: "http://127.0.0.1:8545",
+        uri: rpc,
       },
+      // Blockscout answers the etherscan API, internal transactions included
       explorer: {
-        type: "etherscan",
+        type: "blockscout",
         noCache: true,
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
+        uri: `${explorer}/api`,
       },
       supportedTokens: ["erc721", "erc1155"],
     };
@@ -106,7 +131,10 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    initMswHandlers(info);
+    // USDC.e is a mainnet token the sandbox preloads at its address
+    restoreTokens = swapTokens(sonic.id, [USDC_ON_SONIC]);
+
+    closeGuard = forbidRemoteRequests();
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
@@ -117,19 +145,13 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, sonic);
 
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    provider = new ethers.JsonRpcProvider(rpc);
 
-    const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    setBlock(lastBlockNumber + 1);
-
-    // Get USDC
-    await callMyDealer({
-      provider,
-      drug: USDC_ON_SONIC,
-      junkie: address,
-      dose: ethers.parseUnits("100", USDC_ON_SONIC.units[0].magnitude),
-    });
+    // The chain starts with the dealer only: the account gets its S and its USDC.e by airdrop
+    await sandbox.airdrop(address, S_AIRDROP);
+    await sandbox.airdrop(address, USDC_AIRDROP, USDC_ON_SONIC.contractAddress);
+    // The first sync must see both airdrops
+    await blockscout.waitForBlock(await provider.getBlockNumber());
 
     return {
       currencyBridge,
@@ -145,18 +167,25 @@ export const scenarioSonic: Scenario<GenericTransaction, Account> = {
     );
   },
   getTransactions: address => makeScenarioTransactions({ address }),
-  beforeSync: async () => {
-    await indexBlocks(146);
+  mockIndexer: async (_account, optimistic) => {
+    const receipt = await provider.waitForTransaction(optimistic.hash, 1, 60_000);
+    if (receipt === null) throw new Error(`${optimistic.hash} is not in a block after 60 s`);
+    await blockscout.waitForBlock(receipt.blockNumber);
   },
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
     );
-    expect(account.operations.length).toBe(4);
+    // The S airdrop (IN), the USDC.e airdrop (NONE on the parent account), then the three sends
+    expect(account.operations.length).toBe(5);
   },
   teardown: async () => {
-    resetIndexer();
-    await killAnvil();
+    closeGuard?.();
+    closeGuard = null;
+    restoreTokens?.();
+    restoreTokens = null;
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };
