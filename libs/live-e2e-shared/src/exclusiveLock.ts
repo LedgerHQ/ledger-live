@@ -23,11 +23,10 @@ const HIGH_PRIORITY_POLL_MS = 1_000;
 const TRY_LOCK_STORE_RETRY_MS = 30_000;
 // Long enough for the last transaction to reach the nodes the next holder reads its nonce from.
 const SETTLE_MS = 45_000;
-// Under POLL_MS minus the lock store's 1 s age rounding, so waiters still claim before try-locks.
-const SETTLE_CLAIM_SPREAD_MS = 3_500;
-// Over the lock store's 1 s age rounding, so a high-priority waiter claiming a settled key a little
-// early still claims it before the others.
-const SETTLE_CLAIM_HEAD_START_MS = 2_000;
+const SETTLE_CLAIM_SPREAD_MS = 1_500;
+// The high-priority spread plus 2 s, over the lock store's 1 s age rounding either way, so
+// high-priority waiters still claim a settled key before the others.
+const SETTLE_CLAIM_HEAD_START_MS = 3_500;
 const R2_KEY_PREFIX = "e2e-broadcast-locks/";
 const HOLDER_PREFIX = `${os.hostname()}:${process.pid}:`;
 const LIVE_HOLDS = Symbol.for("@ledgerhq/live-e2e-shared/exclusiveLock/liveHolds");

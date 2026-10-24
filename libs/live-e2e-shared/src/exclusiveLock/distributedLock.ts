@@ -17,9 +17,9 @@ export type DistributedLockOptions = {
   /** Gives up once every lock store request has failed for this long, e.g. while it is down. */
   readonly storeOutageMs?: number;
   readonly giveUpWhenHeld?: boolean;
-  /** Waiters spread their claims over it when a settle window ends, the longest-waiting first. */
+  /** Waiters of one priority spread their settle-end claims over it, the longest-waiting first. */
   readonly settleClaimSpreadMs?: number;
-  /** The start of that spread, left to high-priority waiters, who claim as the window ends. */
+  /** How much later than high-priority waiters the others start claiming a settled key. */
   readonly settleClaimHeadStartMs?: number;
   readonly highPriority?: boolean;
   readonly log: LockLogger;
@@ -286,24 +286,25 @@ class Acquisition {
     if (held) this.announceWait();
     if (settling && giveUpWhenHeld) {
       this.settleWaitedOut = { etag: settling.etag, leftMs: settleLeftMs(settling) };
-      // A poll later than the holders of its priority waiting for the key, so they claim it first.
-      await this.sleep(this.settleWaitedOut.leftMs + pollMs);
+      // A poll after the newest waiter of its priority claims, so its waiters claim the key first.
+      await this.sleep(this.settleWaitedOut.leftMs + this.settleClaimDelayMs(0) + pollMs);
       this.retryFrom = this.now();
       return;
     }
     this.throwIfStoreDown();
     this.throwIfTimedOut();
     await this.sleep(
-      settling ? settleLeftMs(settling) + this.settleClaimDelayMs() : this.pollDelayMs(),
+      settling
+        ? settleLeftMs(settling) + this.settleClaimDelayMs(this.now() - this.startedAt)
+        : this.pollDelayMs(),
     );
   }
 
-  private settleClaimDelayMs() {
+  private settleClaimDelayMs(waitedMs: number) {
     const { settleClaimSpreadMs = 0, settleClaimHeadStartMs = 0, highPriority } = this.options;
-    if (highPriority) return 0;
-    const spreadLeftMs = Math.max(0, settleClaimSpreadMs - settleClaimHeadStartMs);
-    const waitedShare = Math.min(1, (this.now() - this.startedAt) / FIRST_IN_LINE_AFTER_MS);
-    return Math.round(settleClaimHeadStartMs + spreadLeftMs * (1 - waitedShare));
+    const waitedShare = Math.min(1, waitedMs / FIRST_IN_LINE_AFTER_MS);
+    const headStartMs = highPriority ? 0 : settleClaimHeadStartMs;
+    return Math.round(headStartMs + settleClaimSpreadMs * (1 - waitedShare));
   }
 
   private settleCountsDown(settling: StoredLock) {

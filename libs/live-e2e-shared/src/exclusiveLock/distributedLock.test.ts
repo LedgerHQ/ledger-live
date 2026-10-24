@@ -609,7 +609,7 @@ test("claims first at settle end once it has waited ten minutes", async () => {
   assert.equal(clock.now - (releasedAt ?? 0), 45_000);
 });
 
-test("claims the moment the settle window ends with high priority, even when it has only just started waiting", async () => {
+test("claims last of the high-priority waiters, before the head start ends, when it has only just started waiting", async () => {
   const clock = { now: 0 };
   const store = new MemoryLockStore(clock);
   const ios = await acquireDistributedLock(
@@ -624,14 +624,46 @@ test("claims the moment the settle window ends with high priority, even when it 
     store,
     "key",
     options(clock, "android", {
-      settleClaimSpreadMs: 3_000,
-      settleClaimHeadStartMs: 2_000,
+      settleClaimSpreadMs: 1_500,
+      settleClaimHeadStartMs: 3_500,
       highPriority: true,
     }),
   );
   await android.release();
 
-  assert.equal(clock.now, 45_000);
+  assert.equal(clock.now, 46_500);
+});
+
+test("claims first at settle end with high priority once it has waited ten minutes", async () => {
+  const clock = { now: 0 };
+  const store = new MemoryLockStore(clock);
+  const ios = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "ios", { settleMs: 45_000, leaseMs: 3_600_000 }),
+  );
+  let releasedAt: number | undefined;
+
+  const android = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "android", {
+      settleClaimSpreadMs: 1_500,
+      settleClaimHeadStartMs: 3_500,
+      highPriority: true,
+      acquireTimeoutMs: 3_600_000,
+      sleep: async ms => {
+        clock.now += ms;
+        if (releasedAt === undefined && clock.now >= 600_000) {
+          releasedAt = clock.now;
+          await ios.release();
+        }
+      },
+    }),
+  );
+  await android.release();
+
+  assert.equal(clock.now - (releasedAt ?? 0), 45_000);
 });
 
 test("leaves the head start of a settle window to high-priority waiters once it has waited ten minutes", async () => {
@@ -648,8 +680,8 @@ test("leaves the head start of a settle window to high-priority waiters once it 
     store,
     "key",
     options(clock, "android", {
-      settleClaimSpreadMs: 3_000,
-      settleClaimHeadStartMs: 2_000,
+      settleClaimSpreadMs: 1_500,
+      settleClaimHeadStartMs: 3_500,
       acquireTimeoutMs: 3_600_000,
       sleep: async ms => {
         clock.now += ms;
@@ -662,7 +694,7 @@ test("leaves the head start of a settle window to high-priority waiters once it 
   );
   await android.release();
 
-  assert.equal(clock.now - (releasedAt ?? 0), 47_000);
+  assert.equal(clock.now - (releasedAt ?? 0), 48_500);
 });
 
 test("claims last at settle end after the head start when it has only just started waiting", async () => {
@@ -679,11 +711,11 @@ test("claims last at settle end after the head start when it has only just start
   const android = await acquireDistributedLock(
     store,
     "key",
-    options(clock, "android", { settleClaimSpreadMs: 3_000, settleClaimHeadStartMs: 2_000 }),
+    options(clock, "android", { settleClaimSpreadMs: 1_500, settleClaimHeadStartMs: 3_500 }),
   );
   await android.release();
 
-  assert.equal(clock.now, 48_000);
+  assert.equal(clock.now, 50_000);
 });
 
 test("waits out a released key's settle window a poll after waiting holders instead of giving up on it", async () => {
@@ -705,6 +737,57 @@ test("waits out a released key's settle window a poll after waiting holders inst
   await android.release();
 
   assert.equal(clock.now, 46_000);
+});
+
+test("waits out a settle window until a poll after the newest waiter of its priority would claim the key", async () => {
+  const clock = { now: 0 };
+  const store = new MemoryLockStore(clock);
+  const ios = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "ios", { settleMs: 45_000 }),
+  );
+  await ios.release();
+  clock.now = 5_000;
+
+  const android = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "android", {
+      giveUpWhenHeld: true,
+      settleClaimSpreadMs: 1_500,
+      settleClaimHeadStartMs: 3_500,
+    }),
+  );
+  await android.release();
+
+  assert.equal(clock.now, 51_000);
+});
+
+test("waits out a settle window with high priority only until a poll after the newest high-priority waiter", async () => {
+  const clock = { now: 0 };
+  const store = new MemoryLockStore(clock);
+  const ios = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "ios", { settleMs: 45_000 }),
+  );
+  await ios.release();
+  clock.now = 5_000;
+
+  const android = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "android", {
+      giveUpWhenHeld: true,
+      settleClaimSpreadMs: 1_500,
+      settleClaimHeadStartMs: 3_500,
+      highPriority: true,
+    }),
+  );
+  await android.release();
+
+  assert.equal(clock.now, 47_500);
 });
 
 test("keeps waiting out the same settle window when the lock store's clock runs behind", async () => {
