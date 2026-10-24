@@ -13,6 +13,7 @@
 // On Android the other emulator is paused from the launch until the read, so it takes no host CPU,
 // and each sample records the CPU load on the host and in the device before and after the launch.
 import { execFile } from "node:child_process";
+import { existsSync } from "node:fs";
 import { appendFile, copyFile, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -50,6 +51,10 @@ const { values: opts } = parseArgs({
     // Android: capture each launch's packets inside the emulator too (console "network capture").
     // It only covers the cellular interface, so it is for emulators with Wi-Fi turned off.
     "guest-capture": { type: "string", default: "false" },
+    // Android: record a Perfetto trace of N measured launches per scenario: whole rounds (both
+    // sides), spread over both phases, so N is rounded up to a multiple of 4. Tracing adds load, so
+    // these samples are flagged `traced` and left out of the analysis.
+    "trace-launches": { type: "string", default: "0" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -69,6 +74,7 @@ const SETTLE_MS = Number(opts["settle-ms"]);
 const BRIDGE_PORT = Number(opts["bridge-port"]);
 const PAUSE_IDLE = opts["pause-idle"] === "true";
 const GUEST_CAPTURE = opts["guest-capture"] === "true";
+const TRACE_LAUNCHES = Number(opts["trace-launches"]);
 const NET_BASELINE = opts["net-baseline"]
   .split(",")
   .map(s => s.trim())
@@ -79,6 +85,9 @@ const OUT_DIR = opts["out-dir"];
 const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const GUEST_PCAP_DIR = path.join(OUT_DIR, "guest-network");
+const TRACE_DIR = path.join(OUT_DIR, "traces");
+const PERFETTO_CONFIG = path.join(import.meta.dirname, "perfetto-startup.pbtx");
+const DEVICE_PERFETTO_CONFIG = "/data/local/tmp/startup-perf.pbtx";
 const SCROLL_FLOW = path.join(import.meta.dirname, "scroll-performance.yaml");
 const SCROLL_TO_END_FLOW = path.join(import.meta.dirname, "scroll-performance-to-end.yaml");
 // "App startup time" is the later of these two; a read before both exist would under-report it.
@@ -96,6 +105,15 @@ function validateOptions() {
   }
   if (!Number.isInteger(PAIRS) || PAIRS < 2 || PAIRS % 2) {
     throw new Error("--pairs must be an even number ≥ 2");
+  }
+  if (!Number.isInteger(TRACE_LAUNCHES) || TRACE_LAUNCHES < 0) {
+    throw new Error("--trace-launches must be a whole number ≥ 0");
+  }
+  if (TRACE_LAUNCHES > 0 && PLATFORM !== "android") {
+    throw new Error("--trace-launches is Android only");
+  }
+  if (TRACE_LAUNCHES > 0 && !existsSync(PERFETTO_CONFIG)) {
+    throw new Error(`missing ${PERFETTO_CONFIG}`);
   }
   for (const s of SCENARIOS) {
     if (!["no-accounts", "accounts"].includes(s)) throw new Error(`unknown scenario ${s}`);
@@ -353,6 +371,73 @@ const android = {
       timeoutMs: 30_000,
     });
   },
+  // CPU time of each app thread so far, from /proc/<pid>/task/*/schedstat: time on a CPU and time
+  // runnable but waiting for one. Read once the launch window is over, so it adds no load to it.
+  // Also returns the uptime (CLOCK_BOOTTIME, a trace's clock) at which they were read.
+  async threadStats(device, pid) {
+    if (!pid) return null;
+    const script = `cat /proc/uptime; cd /proc/${pid}/task 2>/dev/null && for t in *; do read -r c < $t/comm; read -r s < $t/schedstat; echo "$t|$c|$s"; done`;
+    const { stdout, failed } = await run("adb", ["-s", device, "shell", script], {
+      allowFail: true,
+      timeoutMs: 20_000,
+    });
+    if (failed) return null;
+    const uptime = Number(stdout.match(/^(\d+\.\d+) /m)?.[1]);
+    return { atUptime: Number.isFinite(uptime) ? uptime : null, threads: parseThreadStats(stdout) };
+  },
+  tracedDevices: new Set(),
+  // Starts a background Perfetto trace; the config is piped in, since traced cannot read files the
+  // shell user owns. The trace file must live in /data/misc/perfetto-traces.
+  async startTrace(device, name) {
+    if (!this.tracedDevices.has(device)) {
+      await run("adb", ["-s", device, "push", PERFETTO_CONFIG, DEVICE_PERFETTO_CONFIG]);
+      this.tracedDevices.add(device);
+    }
+    const file = `/data/misc/perfetto-traces/${name}.pftrace`;
+    // With --background, perfetto prints the pid of the tracing process and exits.
+    const { stdout } = await run(
+      "adb",
+      [
+        "-s",
+        device,
+        "shell",
+        `rm -f ${file}; cat ${DEVICE_PERFETTO_CONFIG} | perfetto --txt -c - -o ${file} --background 2>&1`,
+      ],
+      { timeoutMs: 30_000, allowFail: true },
+    );
+    const pid = Number(
+      stdout
+        .trim()
+        .split("\n")
+        .map(line => line.trim())
+        .findLast(line => /^\d+$/.test(line)),
+    );
+    if (!Number.isInteger(pid) || pid <= 0) {
+      throw new Error(`perfetto did not start: ${stdout.trim().slice(-1000)}`);
+    }
+    return { pid, file };
+  },
+  // SIGTERM makes perfetto flush and write the trace; wait for it to exit before pulling the file.
+  // Returns whether it exited, i.e. whether the pulled file is complete.
+  async stopTrace(device, trace, dest) {
+    await run("adb", ["-s", device, "shell", "kill", "-TERM", String(trace.pid)], {
+      allowFail: true,
+    });
+    let exited = false;
+    for (let i = 0; i < 60 && !exited; i++) {
+      const { stdout } = await run("adb", ["-s", device, "shell", "pidof", "perfetto"], {
+        allowFail: true,
+      });
+      exited = !stdout.trim().split(/\s+/).includes(String(trace.pid));
+      if (!exited) await sleep(250);
+    }
+    try {
+      if (dest) await run("adb", ["-s", device, "pull", trace.file, dest], { timeoutMs: 120_000 });
+    } finally {
+      await run("adb", ["-s", device, "shell", "rm", "-f", trace.file], { allowFail: true });
+    }
+    return exited;
+  },
   async diagnostics(device, file) {
     const { stdout } = await run("adb", ["-s", device, "logcat", "-d", "-t", "3000"], {
       allowFail: true,
@@ -375,6 +460,26 @@ export function parseProcessStart(text, readAt) {
 export function parseStatPid(text) {
   const pid = Number(text.match(/^(\d+) \(/m)?.[1]);
   return Number.isInteger(pid) && pid > 0 ? pid : null;
+}
+
+// "<tid>|<name>|<run ns> <wait ns> <timeslices>" lines into the threads that ran at least 1 ms,
+// busiest first, in ms.
+export function parseThreadStats(text) {
+  const threads = [];
+  for (const line of text.split("\n")) {
+    const m = line.match(/^(\d+)\|(.*)\|(\d+) (\d+) (\d+)\s*$/);
+    if (!m) continue;
+    const runMs = Number(m[3]) / 1e6;
+    if (runMs < 1) continue;
+    threads.push({
+      tid: Number(m[1]),
+      name: m[2],
+      runMs: Math.round(runMs * 10) / 10,
+      waitMs: Math.round((Number(m[4]) / 1e6) * 10) / 10,
+      slices: Number(m[5]),
+    });
+  }
+  return threads.sort((a, b) => b.runMs - a.runMs);
 }
 
 // /proc/loadavg followed by /proc/stat: 1-minute load average and the cumulative CPU time of all
@@ -437,6 +542,9 @@ const ios = {
     return null;
   },
   async pid() {
+    return null;
+  },
+  async threadStats() {
     return null;
   },
   async cpuCount() {
@@ -747,6 +855,14 @@ async function keepCapture(file) {
 const consecutiveFailures = new Map();
 let lastLaunchDevice = null;
 
+// Whole rounds, spread evenly over each phase: ceil(N / 4) rounds per phase, both sides each.
+function traceThis(meta) {
+  if (TRACE_LAUNCHES === 0 || meta.warmup) return false;
+  const perPhase = Math.ceil(TRACE_LAUNCHES / 4);
+  const stride = Math.max(1, Math.floor(PAIRS / 2 / perPhase));
+  return meta.round % stride === 0 && meta.round / stride < perPhase;
+}
+
 async function sample(meta) {
   const record = {
     platform: PLATFORM,
@@ -759,6 +875,7 @@ async function sample(meta) {
   const other = DEVICES.find(d => d !== meta.device);
   let paused = false;
   let capturing = false;
+  let trace = null;
   try {
     // Stop the app on both devices so the idle one is not syncing in the background.
     for (const device of DEVICES) await P.stop(device);
@@ -771,6 +888,15 @@ async function sample(meta) {
     if (NET_BASELINE.length) {
       record.runnerNetwork = {};
       for (const url of NET_BASELINE) record.runnerNetwork[url] = await curlTimings(url);
+    }
+    // Started before the idle wait, so its own start-up is over by the launch.
+    if (traceThis(meta)) {
+      record.traced = true;
+      trace = await P.startTrace(meta.device, name).catch(error => {
+        record.traceError = String(error?.message ?? error).slice(0, 500);
+        console.log(`::warning title=No trace::${name}: ${record.traceError.split("\n")[0]}`);
+        return null;
+      });
     }
     const idleStart = await loadSnapshot(meta.device);
     await sleep(IDLE_MS);
@@ -810,6 +936,22 @@ async function sample(meta) {
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
     record.pid = processStart?.pid ?? null;
+    const threadStats = await P.threadStats(meta.device, record.pid);
+    record.threads = threadStats?.threads ?? null;
+    record.threadsAtUptime = threadStats?.atUptime ?? null;
+    if (trace) {
+      // A trace that cannot be kept must not cost the launch's measurement.
+      const dest = path.join(TRACE_DIR, `${name}.pftrace`);
+      try {
+        record.traceComplete = await P.stopTrace(meta.device, trace, dest);
+        record.trace = path.relative(OUT_DIR, dest);
+      } catch (error) {
+        record.traceError = String(error?.message ?? error).slice(0, 500);
+        console.log(`::warning title=Trace lost::${name}: ${record.traceError.split("\n")[0]}`);
+      } finally {
+        trace = null;
+      }
+    }
     if (capturing) {
       capturing = false;
       await P.stopCapture(meta.device);
@@ -836,6 +978,7 @@ async function sample(meta) {
     // A device left paused would hang every later adb command sent to it.
     if (paused) await P.resume(other);
     if (capturing) await P.stopCapture(meta.device);
+    if (trace) await P.stopTrace(meta.device, trace, null).catch(() => {});
   }
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
@@ -854,6 +997,7 @@ async function main() {
   validateOptions();
   await mkdir(DEBUG_DIR, { recursive: true });
   if (GUEST_CAPTURE) await mkdir(GUEST_PCAP_DIR, { recursive: true });
+  if (TRACE_LAUNCHES > 0) await mkdir(TRACE_DIR, { recursive: true });
   await writeFile(SAMPLES_FILE, "");
   await writeFile(
     path.join(OUT_DIR, "meta.json"),
@@ -870,6 +1014,7 @@ async function main() {
         settleMs: SETTLE_MS,
         pauseIdle: PAUSE_IDLE && PLATFORM === "android",
         guestCapture: GUEST_CAPTURE && PLATFORM === "android",
+        traceLaunches: TRACE_LAUNCHES,
         hostCpus: os.cpus().length,
         deviceCpus: Object.fromEntries(
           await Promise.all(DEVICES.map(async d => [d, await P.cpuCount(d)])),

@@ -86,6 +86,11 @@ on:
         required: false
         type: boolean
         default: true
+      trace_launches:
+        description: "Android: Perfetto-trace N measured launches per scenario (whole rounds over both phases, rounded up to a multiple of 4; left out of the verdict)"
+        required: false
+        type: string
+        default: "0"
       emulator_cores:
         description: "Android: CPU cores per emulator (two share the 8-CPU runner, the idle one paused during each launch; the E2E AVD has 2)"
         required: false
@@ -604,6 +609,7 @@ jobs:
           # The emulator's own capture of each launch; it only sees the cellular network, now always used.
           GUEST_CAPTURE: ${{ inputs.capture_network }}
           ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
+          TRACE_LAUNCHES: ${{ inputs.trace_launches || '0' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -619,6 +625,7 @@ jobs:
             --pause-idle "$PAUSE_IDLE" \
             --net-baseline "$NET_BASELINE" \
             --guest-capture "$GUEST_CAPTURE" \
+            --trace-launches "$TRACE_LAUNCHES" \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
