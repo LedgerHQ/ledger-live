@@ -70,6 +70,52 @@ export function atlasOf(uri: string, explorerId: string) {
 }
 
 /**
+ * The Blockscout of a chain, which the sandbox starts as its explorer: `uri` is the indexer endpoint of the instance.
+ * Live reads it as an etherscan-compatible explorer (`/api`), and its internal transactions block by block.
+ */
+export function blockscoutOf(uri: string) {
+  const get = async (path: string, deadline: number): Promise<unknown> => {
+    const signal = AbortSignal.timeout(Math.max(deadline - Date.now(), 1));
+    try {
+      const response = await fetch(`${uri}${path}`, { signal });
+      if (!response.ok) return undefined;
+      return await response.json().catch(error => {
+        if (signal.aborted) throw error;
+        return undefined;
+      });
+    } catch (error) {
+      if (signal.aborted)
+        throw new Error(`Blockscout did not answer ${path} before the deadline`, { cause: error });
+      throw error;
+    }
+  };
+
+  return {
+    /**
+     * Waits until Blockscout has indexed `block` and processed its internal transactions: it answers a block it has
+     * not traced yet with `meta.status` 2 (1 once it has), and a sync that read it then would miss them.
+     */
+    waitForBlock: async (block: number): Promise<void> => {
+      const deadline = Date.now() + TIMEOUT_MS;
+      while (Date.now() < deadline) {
+        const blocks = (await get("/api/v2/blocks", deadline)) as
+          | { items?: { height: number }[] }
+          | undefined;
+        if ((blocks?.items?.[0]?.height ?? -1) >= block) {
+          const internal = (await get(
+            `/api/v2/blocks/${block}/internal-transactions`,
+            deadline,
+          )) as { meta?: { status?: number } } | undefined;
+          if (internal?.meta?.status === 1) return;
+        }
+        await sleep(500);
+      }
+      throw new Error(`Blockscout did not index block ${block} in 60 s`);
+    },
+  };
+}
+
+/**
  * Swaps the token store for an in-memory one that knows `tokens`, the mainnet tokens the sandbox preloads at their
  * address: no CAL to ask. Returns what puts the store of the other scenarios of the run back.
  */
