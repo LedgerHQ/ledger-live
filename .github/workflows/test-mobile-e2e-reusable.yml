@@ -786,6 +786,7 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.ios_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
       E2E_MAX_WORKERS: ${{ inputs.ios_max_workers || '3' }}
       HIRES_SAMPLER: ${{ inputs.hires_sampler && 'true' || 'false' }}
+      E2E_DEVICE_LOGS: ${{ ((github.event_name == 'schedule' && !inputs.ci_smoke) || inputs.generate_ai_artifacts) && 'true' || 'false' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -957,7 +958,7 @@ jobs:
             echo $! >> "$SAMPLER_DIR/pid"
             nohup bash -c 'vm_stat 1 | while IFS= read -r l; do echo "$(date +%s) $l"; done' > "$SAMPLER_DIR/hires-vmstat.txt" 2>&1 &
             echo $! >> "$SAMPLER_DIR/pid"
-            nohup bash -c 'while true; do echo "$(date +%s) $(ioreg -c IOBlockStorageDriver -r -w0 -d 1 | grep -o "\"Statistics\" = {[^}]*}" | tr "\n" "|")"; sleep 1; done' > "$SAMPLER_DIR/hires-disk.txt" 2>&1 &
+            nohup bash -c 'while true; do echo "$(date +%s) $(/usr/sbin/ioreg -c IOBlockStorageDriver -r -w0 -d 1 | grep -o "\"Statistics\" = {[^}]*}" | tr "\n" "|")"; sleep 1; done' > "$SAMPLER_DIR/hires-disk.txt" 2>&1 &
             echo $! >> "$SAMPLER_DIR/pid"
           fi
           echo "max_workers=${E2E_MAX_WORKERS} shard=${{ matrix.shard }} hires=${HIRES_SAMPLER}" > "$SAMPLER_DIR/meta.txt"
@@ -1056,6 +1057,7 @@ jobs:
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
+      E2E_DEVICE_LOGS: ${{ ((github.event_name == 'schedule' && !inputs.ci_smoke) || inputs.generate_ai_artifacts) && 'true' || 'false' }}
       # Same nanoS snapshot rule as the iOS job.
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.android_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
     outputs:

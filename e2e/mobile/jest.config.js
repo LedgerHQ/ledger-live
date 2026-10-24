@@ -145,7 +145,9 @@ const jestAllure2ReporterOptions = {
 
 // Video recording is handled by patched detox-allure2-adapter via DETOX_ENABLE_VIDEO env var in globalSetup
 const detoxAllure2AdapterOptions = {
-  deviceLogs: true,
+  // Streams every simulator process at debug level (~2.6 of 12 vCPU on iOS); only failing tests keep
+  // what it collects, and only the AI artifact needs it, so CI enables it just for those runs.
+  deviceLogs: !process.env.CI || process.env.E2E_DEVICE_LOGS === "true",
   deviceScreenshots: false,
   deviceVideos: false,
   deviceViewHierarchy: false,
