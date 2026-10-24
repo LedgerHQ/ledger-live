@@ -915,6 +915,16 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      # Study: stop each simulator persisting its unified log to disk (live `log stream` still works).
+      - name: Turn off simulator log persistence
+        continue-on-error: true
+        run: |
+          for d in "iOS Simulator" "iOS Simulator 2" "iOS Simulator 3"; do
+            xcrun simctl bootstatus "$d" >/dev/null
+            xcrun simctl spawn "$d" log config --mode "persist:off"
+            echo "$d: $(xcrun simctl spawn "$d" log config --status 2>&1 | head -1)"
+          done
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
