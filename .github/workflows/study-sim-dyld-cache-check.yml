@@ -1,0 +1,23 @@
+name: "[Study] Simulator dyld cache present"
+
+# Study only: does a runner VM start with the simulator dyld shared cache for its macOS build and
+# the "iOS Simulator" runtime? Prints true or false. Reads local paths only; no checkout or secrets.
+on:
+  push:
+    branches: [study/sim-dyld-cache-check]
+
+permissions: {}
+
+jobs:
+  check:
+    runs-on: [qaa, macOS, ARM64, performance-pool]
+    timeout-minutes: 5
+    steps:
+      - name: Simulator dyld cache matches host and runtime build
+        run: |
+          host=$(sw_vers -buildVersion)
+          runtime_id=$(xcrun simctl list devices -j | /opt/homebrew/bin/jq -r '.devices | to_entries[] | select(any(.value[]; .name == "iOS Simulator")) | .key' | head -1)
+          runtime_build=$(xcrun simctl list runtimes -j | /opt/homebrew/bin/jq -r --arg id "$runtime_id" '.runtimes[] | select(.identifier == $id) | .buildversion')
+          found=$(find /Library/Developer/CoreSimulator/Caches/dyld "$HOME/Library/Developer/CoreSimulator/Caches/dyld" \
+            -name 'dyld_sim_shared_cache_*' -path "*${host}*" -path "*${runtime_build}*" 2>/dev/null | head -1)
+          [[ -n "$runtime_build" && -n "$found" ]] && echo true || echo false
