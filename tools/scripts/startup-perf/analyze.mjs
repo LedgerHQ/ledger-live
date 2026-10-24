@@ -67,8 +67,50 @@ function verdictFor(preset, hl, thresholdMs) {
       ? `Detected: the fix is ${Math.round(-hl.estimate)} ms faster`
       : `Not detected ${ci}`;
   }
-  if (hl.estimate > thresholdMs) return `FAIL: B is slower by more than ${thresholdMs} ms`;
-  return hl.high <= thresholdMs ? "PASS" : "PASS (interval reaches the threshold)";
+  // The gate is on the estimate; when the interval holds the threshold, more pairs could flip it.
+  const inconclusive =
+    hl.low <= thresholdMs && hl.high >= thresholdMs
+      ? ` (inconclusive: ${ci} contains ${thresholdMs} ms)`
+      : "";
+  if (hl.estimate > thresholdMs) {
+    return `FAIL: B is slower by more than ${thresholdMs} ms${inconclusive}`;
+  }
+  return `PASS${inconclusive}`;
+}
+
+// The true slowdown the gate flags 80% of the time: the estimate exceeds the threshold when the
+// true B − A is the threshold plus 0.84 standard errors, the error read off the 95% interval
+// (normal approximation).
+export function detectableAt80(hl, thresholdMs) {
+  if (!hl || hl.low === null) return null;
+  return thresholdMs + 0.8416 * ((hl.high - hl.low) / (2 * Z_95));
+}
+
+// Mean of the differences with a percentile bootstrap 95% interval, the mean being what the manual
+// test compares. Seeded, so the same samples always give the same interval.
+export function bootstrapMean(diffs, resamples = 4000) {
+  const n = diffs.length;
+  if (n < 6) return null;
+  let seed = 0x9e3779b9;
+  const random = () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const mean = values => values.reduce((a, v) => a + v, 0) / values.length;
+  const means = [];
+  for (let r = 0; r < resamples; r++) {
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += diffs[Math.floor(random() * n)];
+    means.push(sum / n);
+  }
+  means.sort((a, b) => a - b);
+  return {
+    estimate: mean(diffs),
+    low: means[Math.floor(0.025 * resamples)],
+    high: means[Math.ceil(0.975 * resamples) - 1],
+  };
 }
 
 export function summarise(samples, { preset, thresholdMs }) {
@@ -113,6 +155,8 @@ export function summarise(samples, { preset, thresholdMs }) {
       spread: robustSd(centred),
       instanceBias,
       amStart,
+      mean: bootstrapMean(adjusted),
+      detectable: detectableAt80(hl, thresholdMs),
       verdict: verdictFor(preset, hl, thresholdMs),
     };
   });
@@ -232,19 +276,23 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
     `A = ${labelA} · B = ${labelB}. Value read from Settings > Debug > Performance > App startup time.`,
     preset === "custom" ? `B fails when it is slower than A by more than ${thresholdMs} ms.` : "",
     "",
-    "| Platform | Scenario | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Spread of B − A (ms) | Device bias (ms) | `am start` B − A (ms) | Failed launches | Verdict |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Platform | Scenario | Pairs | Median A (ms) | Median B (ms) | B − A (ms) | 95% interval (ms) | Mean B − A (ms) | Flags a slowdown of (ms) | Spread of B − A (ms) | Device bias (ms) | `am start` B − A (ms) | Failed launches | Verdict |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
   ];
   for (const r of rows) {
     const interval =
       r.hl?.low === null || !r.hl ? "–" : `${signed(r.hl.low)} to ${signed(r.hl.high)}`;
+    const mean = r.mean
+      ? `${signed(r.mean.estimate)} (${signed(r.mean.low)} to ${signed(r.mean.high)})`
+      : "–";
     lines.push(
-      `| ${r.platform} | ${r.scenario} | ${r.pairs} | ${fmt(r.medianA)} | ${fmt(r.medianB)} | ${signed(r.hl?.estimate)} | ${interval} | ${fmt(r.spread)} | ${signed(r.instanceBias)} | ${r.platform === "android" ? signed(r.amStart?.estimate) : "–"} | ${r.failed}/${r.launches} | ${r.verdict} |`,
+      `| ${r.platform} | ${r.scenario} | ${r.pairs} | ${fmt(r.medianA)} | ${fmt(r.medianB)} | ${signed(r.hl?.estimate)} | ${interval} | ${mean} | ${fmt(r.detectable)} | ${fmt(r.spread)} | ${signed(r.instanceBias)} | ${r.platform === "android" ? signed(r.amStart?.estimate) : "–"} | ${r.failed}/${r.launches} | ${r.verdict} |`,
     );
   }
   lines.push(
     "",
     "B − A is the Hodges–Lehmann median of the paired differences, after removing the device bias: how much slower the second emulator or simulator is than the first, measured thanks to the halfway swap.",
+    `The mean (with a bootstrap 95% interval) is what the manual test compares. "Flags a slowdown of" is the true B − A the ${thresholdMs} ms gate catches 80% of the time at this noise; a true ${thresholdMs} ms is caught half the time.`,
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");
