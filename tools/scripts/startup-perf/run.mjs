@@ -55,6 +55,9 @@ const { values: opts } = parseArgs({
     // sides), spread over both phases, so N is rounded up to a multiple of 4. Tracing adds load, so
     // these samples are flagged `traced` and left out of the analysis.
     "trace-launches": { type: "string", default: "0" },
+    // Diagnostics: dump the home screen's view hierarchy (testIDs on screen) ~5 s after the first N
+    // measured launches of each scenario, after the launch window.
+    "dump-home": { type: "string", default: "0" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -75,6 +78,7 @@ const BRIDGE_PORT = Number(opts["bridge-port"]);
 const PAUSE_IDLE = opts["pause-idle"] === "true";
 const GUEST_CAPTURE = opts["guest-capture"] === "true";
 const TRACE_LAUNCHES = Number(opts["trace-launches"]);
+const DUMP_HOME = Number(opts["dump-home"]);
 const NET_BASELINE = opts["net-baseline"]
   .split(",")
   .map(s => s.trim())
@@ -105,6 +109,9 @@ function validateOptions() {
   }
   if (!Number.isInteger(PAIRS) || PAIRS < 2 || PAIRS % 2) {
     throw new Error("--pairs must be an even number ≥ 2");
+  }
+  if (!Number.isInteger(DUMP_HOME) || DUMP_HOME < 0) {
+    throw new Error("--dump-home must be a whole number ≥ 0");
   }
   if (!Number.isInteger(TRACE_LAUNCHES) || TRACE_LAUNCHES < 0) {
     throw new Error("--trace-launches must be a whole number ≥ 0");
@@ -653,6 +660,27 @@ export function hierarchyTexts(stdout) {
   return texts;
 }
 
+// The view ids (React Native testIDs) in a `maestro hierarchy` dump, in screen order, deduplicated.
+export function hierarchyIds(stdout) {
+  const start = stdout.indexOf("{");
+  const end = stdout.lastIndexOf("}");
+  if (start < 0 || end < start) return [];
+  let root;
+  try {
+    root = JSON.parse(stdout.slice(start, end + 1));
+  } catch {
+    return [];
+  }
+  const ids = new Set();
+  const visit = node => {
+    const id = node?.attributes?.["resource-id"] ?? node?.attributes?.identifier;
+    if (typeof id === "string" && id && !id.startsWith("android:")) ids.add(id);
+    (node?.children ?? []).forEach(visit);
+  };
+  visit(root);
+  return [...ids];
+}
+
 // Reads the Performance screen (src/screens/Settings/Debug/Performance): "App startup time"
 // then one "<event> (xN)" row per startup event, each followed by "<time> ms".
 export function parsePerformance(texts) {
@@ -899,6 +927,7 @@ async function keepCapture(file) {
 
 const consecutiveFailures = new Map();
 let lastLaunchDevice = null;
+const homeDumps = new Map();
 
 // Whole rounds, spread evenly over each phase: ceil(N / 4) rounds per phase, both sides each.
 function traceThis(meta) {
@@ -1007,6 +1036,18 @@ async function sample(meta) {
     if (paused) {
       paused = false;
       await P.resume(other);
+    }
+    if (!meta.warmup && (homeDumps.get(meta.scenario) ?? 0) < DUMP_HOME) {
+      homeDumps.set(meta.scenario, (homeDumps.get(meta.scenario) ?? 0) + 1);
+      const at = Date.now() - record.launchAt;
+      const home = await maestro(meta.device, "hierarchy", [], { timeoutMs: 60_000 });
+      const file = path.join(DEBUG_DIR, `${name}-home.json`);
+      await writeFile(file, home.stdout);
+      record.homeScreen = {
+        at,
+        file: path.relative(OUT_DIR, file),
+        ids: hierarchyIds(home.stdout),
+      };
     }
     const perf = await readPerformance(meta.device, name);
     // A crash or restart between the launch and the read would show another launch's value.

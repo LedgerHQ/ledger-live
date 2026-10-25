@@ -91,6 +91,11 @@ on:
         required: false
         type: string
         default: "0"
+      dump_home_screen:
+        description: "Diagnostics: dump the home screen's view hierarchy ~5 s after the first N measured launches per scenario"
+        required: false
+        type: string
+        default: "0"
       emulator_cores:
         description: "Android: CPU cores per emulator (two share the 8-CPU runner, the idle one paused during each launch; the E2E AVD has 2)"
         required: false
@@ -253,6 +258,18 @@ jobs:
       - name: Build mobile dependencies
         run: pnpm build:llm:deps
 
+      # .env.mock.prerelease sends swap requests to staging; store builds use prod
+      # (.env.android.release / .env.ios.release), so the measured build does too.
+      - name: Point swap requests at prod
+        working-directory: apps/ledger-live-mobile
+        run: |
+          set -euo pipefail
+          if grep -q '^SWAP_API_BASE=' .env.mock.prerelease; then
+            sed -i.bak 's#^SWAP_API_BASE=.*#SWAP_API_BASE="https://swap.ledger.com/v5"#' .env.mock.prerelease
+            rm -f .env.mock.prerelease.bak
+          fi
+          grep '^SWAP_API_BASE=' .env.mock.prerelease || echo "No SWAP_API_BASE in .env.mock.prerelease: the app default applies"
+
       # Same build type and env file as the E2E "production Firebase" build, but without
       # SKIP_JS_BUNDLING, so Gradle bundles the JS into the APK like a store build.
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
@@ -351,6 +368,18 @@ jobs:
       # The JS bundle imports the compiled output of the workspace libraries (live-common, native-ui…).
       - name: Build mobile dependencies
         run: pnpm build:llm:deps
+
+      # .env.mock.prerelease sends swap requests to staging; store builds use prod
+      # (.env.android.release / .env.ios.release), so the measured build does too.
+      - name: Point swap requests at prod
+        working-directory: apps/ledger-live-mobile
+        run: |
+          set -euo pipefail
+          if grep -q '^SWAP_API_BASE=' .env.mock.prerelease; then
+            sed -i.bak 's#^SWAP_API_BASE=.*#SWAP_API_BASE="https://swap.ledger.com/v5"#' .env.mock.prerelease
+            rm -f .env.mock.prerelease.bak
+          fi
+          grep '^SWAP_API_BASE=' .env.mock.prerelease || echo "No SWAP_API_BASE in .env.mock.prerelease: the app default applies"
 
       # Release configuration for the simulator with .env.mock.prerelease (production Firebase),
       # with the JS bundled by Xcode.
@@ -621,6 +650,7 @@ jobs:
           GUEST_CAPTURE: ${{ inputs.capture_network }}
           ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
           TRACE_LAUNCHES: ${{ inputs.trace_launches || '0' }}
+          DUMP_HOME: ${{ inputs.dump_home_screen || '0' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -637,6 +667,7 @@ jobs:
             --net-baseline "$NET_BASELINE" \
             --guest-capture "$GUEST_CAPTURE" \
             --trace-launches "$TRACE_LAUNCHES" \
+            --dump-home "$DUMP_HOME" \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
@@ -768,6 +799,7 @@ jobs:
           SETTLE: ${{ inputs.settle_seconds }}
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
+          DUMP_HOME: ${{ inputs.dump_home_screen || '0' }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
@@ -780,6 +812,7 @@ jobs:
             --app-a "$APP_A" --app-b "$APP_B" --app-id "$APP_ID" \
             --scenarios "$SCENARIOS" --pairs "$PAIRS" --settle-ms "$((SETTLE * 1000))" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
+            --dump-home "$DUMP_HOME" \
             --out-dir "$RESULTS_DIR/ios"
 
       - name: Analyse
