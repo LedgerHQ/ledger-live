@@ -2,7 +2,7 @@
 
 Command-line tool for Ledger Wallet flows over USB, built on the Device Management Kit (DMK) and [Bunli](https://www.npmjs.com/package/bunli). It covers a focused set of flows and does not aim for parity with Ledger Wallet desktop or mobile.
 
-Supported networks: **bitcoin**, **ethereum** and **solana**, including their tokens.
+Supported networks: **bitcoin**, **ethereum**, **solana**, and native **XRP** on Mainnet and Testnet.
 
 ## Usage
 
@@ -10,6 +10,8 @@ Supported networks: **bitcoin**, **ethereum** and **solana**, including their to
 wallet-cli account discover ethereum        # needs a Ledger on USB; saves accounts as ethereum-1, ethereum-2…
 wallet-cli balances --account ethereum-1    # session label from discover
 wallet-cli send --account ethereum-1 --to 0x… --amount "0.01 ETH" --dry-run
+wallet-cli account discover --network ripple:testnet
+wallet-cli send --account ripple-1 --to rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH --amount "1 XRP" --destination-tag 123 --dry-run
 wallet-cli <command> --help                 # exact flags and defaults
 ```
 
