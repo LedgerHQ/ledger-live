@@ -31,7 +31,7 @@
     "@shared/app-config": "workspace:*"
   },
   "devDependencies": {
-    "@babel/plugin-transform-export-namespace-from": "7.27.1",
+    "@babel/plugin-transform-export-namespace-from": "8.0.1",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

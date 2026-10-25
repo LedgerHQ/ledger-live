@@ -59,7 +59,7 @@
     "react-native-worklets": "catalog:",
     "babel-jest": "catalog:",
     "@react-native/babel-preset": "catalog:",
-    "@babel/plugin-transform-export-namespace-from": "7.27.1",
+    "@babel/plugin-transform-export-namespace-from": "8.0.1",
     "jest-sonar": "0.2.16",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

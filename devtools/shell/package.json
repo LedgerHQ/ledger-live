@@ -102,7 +102,7 @@
     }
   },
   "devDependencies": {
-    "@babel/plugin-transform-export-namespace-from": "7.27.1",
+    "@babel/plugin-transform-export-namespace-from": "8.0.1",
     "@jest/globals": "catalog:",
     "@support/jest": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
