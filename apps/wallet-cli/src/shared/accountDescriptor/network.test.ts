@@ -20,6 +20,7 @@ describe("parseNetworkArg", () => {
     ["Ethereum", "ethereum"],
     ["bitcoin_testnet", "bitcoin_testnet"],
     ["Ethereum_Sepolia", "ethereum_sepolia"],
+    ["ripple:testnet", "ripple_testnet"],
   ])("reads the network id %s", (input, network) => {
     expect(parseNetworkArg(input)).toBe(net(network));
   });
@@ -30,6 +31,7 @@ describe("parseNetworkArg", () => {
     ["bitcoin", "bitcoin"],
     ["bitcoin:testnet", "bitcoin_testnet"],
     ["solana:devnet", "solana_devnet"],
+    ["ripple:TESTNET", "ripple_testnet"],
     ["Bitcoin:TESTNET", "bitcoin_testnet"],
   ])("reads the deprecated <name>:<env> form %s", (input, network) => {
     expect(parseNetworkArg(input)).toBe(net(network));
@@ -72,10 +74,13 @@ describe("networkOfV0", () => {
 });
 
 describe("currencyIdFromNetwork", () => {
-  it.each(["bitcoin", "bitcoin_testnet", "solana_devnet", "ethereum"])("round-trips %s", id => {
+  it.each(["bitcoin", "bitcoin_testnet", "solana_devnet", "ethereum", "ripple", "ripple_testnet"])(
+    "round-trips %s",
+    id => {
     const currencyId = CryptoCurrencyIdSchema.parse(id);
     expect(currencyIdFromNetwork(networkFromCurrencyId(currencyId))).toBe(currencyId);
-  });
+    },
+  );
 
   it("throws UnknownNetworkError for unknown network", () => {
     expect(() => currencyIdFromNetwork(net("notachain"))).toThrow(UnknownNetworkError);
@@ -97,6 +102,7 @@ describe("currencyIdFromNetwork", () => {
     "ethereum_hoodi",
     "solana_devnet",
     "solana_testnet",
+    "ripple_testnet",
   ])("accepts the %s testnet of a supported network", network => {
     expect(currencyIdFromNetwork(net(network))).toBe(CryptoCurrencyIdSchema.parse(network));
   });
