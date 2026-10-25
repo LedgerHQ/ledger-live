@@ -2,7 +2,14 @@ import network from "@ledgerhq/live-network/network";
 import { getSwapAPIBaseURL, getSwapUserIP } from "../../../exchange/swap";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../../exchange/swap/const/timeout";
 import { PERPS_WITHDRAW_SUBMIT_PATH } from "./constants";
-import { WithdrawApiError, WithdrawSubmitUnknownOutcomeError, toWithdrawError } from "./errors";
+import {
+  WithdrawAddressScreeningError,
+  WithdrawApiError,
+  WithdrawLowLiquidityError,
+  WithdrawMinimumAmountError,
+  WithdrawSubmitUnknownOutcomeError,
+  toWithdrawError,
+} from "./errors";
 import {
   WithdrawSubmitResultSchema,
   type WithdrawPayload,
@@ -58,12 +65,18 @@ export async function submitWithdraw({
   return result.data;
 }
 
-const UNKNOWN_OUTCOME_STATUSES = [502, 504];
-
+// Definite only when the backend says it rejected the transfer: a 4xx or a known rejection code.
 function isDefiniteSubmitFailure(error: unknown): boolean {
-  return (
-    error instanceof WithdrawApiError &&
-    !(error instanceof WithdrawSubmitUnknownOutcomeError) &&
-    !UNKNOWN_OUTCOME_STATUSES.includes(error.status ?? 0)
-  );
+  if (!(error instanceof WithdrawApiError) || error instanceof WithdrawSubmitUnknownOutcomeError) {
+    return false;
+  }
+  if (
+    error instanceof WithdrawMinimumAmountError ||
+    error instanceof WithdrawLowLiquidityError ||
+    error instanceof WithdrawAddressScreeningError
+  ) {
+    return true;
+  }
+  const status = error.status ?? 0;
+  return status >= 400 && status < 500;
 }

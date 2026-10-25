@@ -4,7 +4,11 @@ import { NetworkDown } from "@ledgerhq/live-network/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { submitWithdraw } from "./api";
 import { WithdrawPayloadSchema } from "./schemas";
-import { WithdrawApiError, WithdrawSubmitUnknownOutcomeError } from "./errors";
+import {
+  WithdrawApiError,
+  WithdrawLowLiquidityError,
+  WithdrawSubmitUnknownOutcomeError,
+} from "./errors";
 import {
   errorBody,
   mayanWithdrawPayload,
@@ -78,7 +82,7 @@ describe("SwapKit withdraw API", () => {
     });
 
     it("never retries a failed submit, and reports a definite failure as such", async () => {
-      respond(500, errorBody("SOMETHING_ELSE"));
+      respond(400, errorBody("SOMETHING_ELSE"));
 
       const error = await submitWithdraw({ payload: mayanPayload, signature }).catch(
         (e: unknown) => e,
@@ -92,6 +96,8 @@ describe("SwapKit withdraw API", () => {
     it.each([
       ["a 502 with an HTML body", 502, "<html>Bad gateway</html>"],
       ["a 504 with an empty body", 504, ""],
+      ["a 503 with an HTML body", 503, "<html>Service unavailable</html>"],
+      ["an unrecognized 500", 500, errorBody("SOMETHING_ELSE")],
     ])("reports an unknown outcome on %s", async (_, status, body) => {
       respond(status, body);
 
@@ -116,6 +122,17 @@ describe("SwapKit withdraw API", () => {
       await expect(submitWithdraw({ payload: mayanPayload, signature })).rejects.toBeInstanceOf(
         WithdrawSubmitUnknownOutcomeError,
       );
+    });
+
+    it("reports a known rejection code as definite even on a 5xx", async () => {
+      respond(500, errorBody("SWAP_QUOTE_LOW_LIQUIDITY"));
+
+      const error = await submitWithdraw({ payload: mayanPayload, signature }).catch(
+        (e: unknown) => e,
+      );
+
+      expect(error).toBeInstanceOf(WithdrawLowLiquidityError);
+      expect(error).not.toBeInstanceOf(WithdrawSubmitUnknownOutcomeError);
     });
 
     it("reports an unknown outcome on 502 SUBMIT_FAILED_ERROR", async () => {
