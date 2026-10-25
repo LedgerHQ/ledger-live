@@ -11,6 +11,7 @@ import {
   applyEvmGasLimitMultiplier,
   BridgeAdapter,
   buildSolanaTransactionPatch,
+  buildXrpTransactionPatch,
   toSolanaStakeLimits,
 } from "./bridge";
 import { SolanaStakeAmountError } from "../earn/errors";
@@ -193,6 +194,40 @@ describe("buildSolanaTransactionPatch", () => {
       memoType: "STAKE_ACCOUNT",
       memoValue: "",
     });
+  });
+});
+
+describe("buildXrpTransactionPatch", () => {
+  it("maps the optional destination tag to the XRP transaction tag", () => {
+    expect(
+      buildXrpTransactionPatch({
+        family: "xrp",
+        recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+        amount: "1 XRP",
+        destinationTag: 123,
+      }),
+    ).toEqual({ tag: 123 });
+  });
+
+  it("preserves a zero destination tag", () => {
+    expect(
+      buildXrpTransactionPatch({
+        family: "xrp",
+        recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+        amount: "1 XRP",
+        destinationTag: 0,
+      }),
+    ).toEqual({ tag: 0 });
+  });
+
+  it("omits the tag when it is not specified", () => {
+    expect(
+      buildXrpTransactionPatch({
+        family: "xrp",
+        recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+        amount: "1 XRP",
+      }),
+    ).toEqual({});
   });
 });
 

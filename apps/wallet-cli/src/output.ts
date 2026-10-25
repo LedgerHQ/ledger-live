@@ -140,7 +140,7 @@ export interface CommandOutput {
   sessionView(accounts: readonly SessionEntry[]): void;
 
   /** Output a dry-run prepared transaction (human: formatted lines; json: envelope). */
-  sendDryRun(p: { recipient: string; amount: string; fees: string }): void;
+  sendDryRun(p: { recipient: string; amount: string; fees: string; destinationTag?: number }): void;
   /** Handle one send observable event (human: update active spinner; json: accumulate data). */
   sendEvent(event: SendEvent): void;
   /** Signal send stream complete. Json: write result envelope (account from ctx). Human: noop. */
@@ -510,13 +510,24 @@ class HumanCommandOutput implements CommandOutput {
     }
   }
 
-  private _printTransactionLines(p: { recipient: string; amount: string; fees: string }): void {
+  private _printTransactionLines(p: {
+    recipient: string;
+    amount: string;
+    fees: string;
+    destinationTag?: number;
+  }): void {
     writeStdout(`  To:     ${p.recipient}`);
     writeStdout(`  Amount: ${colors.bold(colors.green(p.amount))}`);
     writeStdout(`  Fees:   ${colors.dim(p.fees)}`);
+    if (p.destinationTag !== undefined) writeStdout(`  Tag:    ${p.destinationTag}`);
   }
 
-  sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
+  sendDryRun(p: {
+    recipient: string;
+    amount: string;
+    fees: string;
+    destinationTag?: number;
+  }): void {
     this._printTransactionLines(p);
   }
 
@@ -1253,9 +1264,20 @@ class JsonCommandOutput implements CommandOutput {
     this._writeNdjson(this._envelope({ accounts }));
   }
 
-  sendDryRun(p: { recipient: string; amount: string; fees: string }): void {
+  sendDryRun(p: {
+    recipient: string;
+    amount: string;
+    fees: string;
+    destinationTag?: number;
+  }): void {
     this._writeNdjson(
-      this._envelope({ dry_run: true, recipient: p.recipient, amount: p.amount, fee: p.fees }),
+      this._envelope({
+        dry_run: true,
+        recipient: p.recipient,
+        amount: p.amount,
+        fee: p.fees,
+        ...(p.destinationTag === undefined ? {} : { destination_tag: p.destinationTag }),
+      }),
     );
   }
 
@@ -1264,6 +1286,8 @@ class JsonCommandOutput implements CommandOutput {
       this._sendResult.recipient = event.recipient;
       this._sendResult.amount = event.amount;
       this._sendResult.fee = event.fees;
+      if (event.destinationTag !== undefined)
+        this._sendResult.destination_tag = event.destinationTag;
     } else if (event.type === "device-signature-requested") {
       this._emitDeviceStateEvent({ code: "awaiting_approval", reason: "sign" });
     } else if (event.type === "broadcasted") {

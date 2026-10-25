@@ -125,6 +125,29 @@ describe("JsonCommandOutput", () => {
     });
   });
 
+  it("includes the XRP destination tag in the dry-run result", () => {
+    const out = createCommandOutput("json", {
+      command: "send",
+      network: "ripple:testnet",
+      account: "js:2:ripple:rAddress",
+    });
+
+    out.sendDryRun({
+      recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+      amount: "1 XRP",
+      fees: "0.00001 XRP",
+      destinationTag: 0,
+    });
+
+    expect(parseLines()[0]).toMatchObject({
+      status: "success",
+      command: "send",
+      network: "ripple:testnet",
+      dry_run: true,
+      destination_tag: 0,
+    });
+  });
+
   it("emits genuine check output as a success envelope", () => {
     const out = createCommandOutput("json", {
       command: "genuine-check",

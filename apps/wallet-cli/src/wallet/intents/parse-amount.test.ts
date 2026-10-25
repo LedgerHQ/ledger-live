@@ -4,9 +4,15 @@ import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { parseAmountWithTicker } from "./parse-amount";
 
 const ethCurrency = getCryptoCurrencyById("ethereum");
+const xrpCurrency = getCryptoCurrencyById("ripple");
 
 const ethAccount = {
   currency: ethCurrency,
+  subAccounts: [],
+} as unknown as Account;
+
+const xrpAccount = {
+  currency: xrpCurrency,
   subAccounts: [],
 } as unknown as Account;
 
@@ -25,6 +31,12 @@ const ethWithUsdt = {
 } as unknown as Account;
 
 describe("parseAmountWithTicker", () => {
+  it("converts XRP to integer drops using Ledger's six decimal unit", () => {
+    const { assetId, amount } = parseAmountWithTicker("1.234567 XRP", xrpAccount);
+    expect(assetId).toBe("ripple");
+    expect(amount.toFixed()).toBe("1234567");
+  });
+
   it("parses 'NUMBER TICKER' format for native currency", () => {
     const { assetId, amount } = parseAmountWithTicker("0.5 ETH", ethAccount);
     expect(assetId).toBe("ethereum");

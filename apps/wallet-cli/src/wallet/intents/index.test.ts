@@ -5,6 +5,7 @@ import {
   BitcoinTransactionIntentSchema,
   EvmTransactionIntentSchema,
   SolanaTransactionIntentSchema,
+  XrpTransactionIntentSchema,
 } from "./index";
 
 describe("AmountWithTickerSchema", () => {
@@ -206,6 +207,40 @@ describe("SolanaTransactionIntentSchema", () => {
 });
 
 describe("TransactionIntentSchema", () => {
+  it("accepts a native XRP payment with a destination tag", () => {
+    const result = XrpTransactionIntentSchema.safeParse({
+      family: "xrp",
+      recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+      amount: "1.25 XRP",
+      destinationTag: 0,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it.each(["invalid", "", "r0000000000000000000000000000000000"])(
+    "rejects malformed XRP recipient %s",
+    recipient => {
+      expect(
+        XrpTransactionIntentSchema.safeParse({
+          family: "xrp",
+          recipient,
+          amount: "1 XRP",
+        }).success,
+      ).toBe(false);
+    },
+  );
+
+  it.each([-1, 4_294_967_296, 1.5])("rejects invalid XRP destination tag %s", destinationTag => {
+    expect(
+      XrpTransactionIntentSchema.safeParse({
+        family: "xrp",
+        recipient: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+        amount: "1 XRP",
+        destinationTag,
+      }).success,
+    ).toBe(false);
+  });
+
   it("rejects unknown family", () => {
     expect(
       TransactionIntentSchema.safeParse({
