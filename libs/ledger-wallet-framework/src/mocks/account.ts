@@ -162,8 +162,8 @@ const hardcodedMarketcap = [
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
 const currencyIdApproxMarketPrice: Record<string, number> = {
   bitcoin: 0.0073059,
-  ethereum: 5.7033e-14,
-  ethereum_classic: 1.4857e-15,
+  ethereum: 2.4e-14,
+  ethereum_classic: 6.3e-16,
   bitcoin_cash: 0.0011739,
   bitcoin_gold: 0.00005004,
   litecoin: 0.00011728,
@@ -171,9 +171,9 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   dogecoin: 4.9e-9,
   dash: 0.0003367,
   zcash: 0.000205798,
-  polygon: 1.0e-15,
-  bsc: 5.0e-14,
-  optimism: 2.0e-15,
+  polygon: 4.2e-16,
+  bsc: 2.1e-14,
+  optimism: 8.4e-16,
 };
 // TODO fix the mock to never generate negative balance...
 
@@ -189,7 +189,7 @@ export function genOperation(
   const ticker = account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
-    (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 100000000 * rng.next() * rng.next()),
+    (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 5000000000 * rng.next() * rng.next()),
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
@@ -267,7 +267,7 @@ export function genTokenAccount(
     swapHistory: [],
     balanceHistoryCache: emptyHistoryCache,
   };
-  const operationsSize = rng.nextInt(1, 200);
+  const operationsSize = rng.nextInt(10, 30);
   tokenAccount.operations = Array(operationsSize)
     .fill(null)
     .reduce((ops: Operation[]) => {
@@ -305,7 +305,7 @@ export function genAccount(
         .listCryptoCurrencies()
         .filter(c => currencyIdApproxMarketPrice[c.id]),
     );
-  const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
+  const operationsSize = opts.operationsSize ?? rng.nextInt(10, 30);
   const swapHistorySize = opts.swapHistorySize || 0;
   const withNft = opts.withNft ?? false;
   const address = genAddress(currency, rng);
