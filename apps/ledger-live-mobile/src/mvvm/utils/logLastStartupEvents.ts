@@ -9,6 +9,12 @@ import mmkvStorageWrapper, { type MMKVMonitoredRead } from "../storage/mmkvStora
 type LastStartupEvent = (typeof STARTUP_EVENTS)["APP_STARTED" | "NAV_READY"];
 export const LAST_STARTUP_EVENT_VALUES = [STARTUP_EVENTS.APP_STARTED, STARTUP_EVENTS.NAV_READY];
 
+let markStartupComplete: () => void = () => {};
+/** Settles once every value in {@link LAST_STARTUP_EVENT_VALUES} has been logged. */
+export const startupComplete = new Promise<void>(resolve => {
+  markStartupComplete = resolve;
+});
+
 export const LAST_EVENTS_BUFFER = 10_000; // We want to make sure we capture any event that might happen right after the last startup event
 
 /**
@@ -30,6 +36,7 @@ export async function logLastStartupEvents(eventName: LastStartupEvent): Promise
 
   const otherStartupEvents = LAST_STARTUP_EVENT_VALUES.filter(e => e !== eventName);
   if (!alreadyLogged.has(eventName) && otherStartupEvents.every(e => alreadyLogged.has(e))) {
+    markStartupComplete();
     try {
       DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, { viewNamePredicate });
       const [storageState] = await Promise.all([
