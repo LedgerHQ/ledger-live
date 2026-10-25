@@ -13,7 +13,7 @@ const quote = {
   quoteId: "quote-1",
   amountTo: new BigNumber("0.3"),
   payoutNetworkFees: new BigNumber("0.0004"),
-  expiry: 1792000000000,
+  expiry: Date.now() + 60_000,
 };
 
 const sourceAccount = { id: "source-1" } as AccountLike;
@@ -73,6 +73,40 @@ describe("usePerpsWithdrawQuote", () => {
     const { result } = renderQuote(baseParams);
 
     await waitFor(() => expect(result.current.error).toBe(error), { timeout: 2000 });
+  });
+
+  it("refreshes an expired quote with unchanged inputs, dropping it while refreshing", async () => {
+    const refreshed = { ...quote, quoteId: "quote-2" };
+    mockFetchWithdrawQuote
+      .mockImplementationOnce(() => Promise.resolve({ ...quote, expiry: Date.now() + 1_000 }))
+      .mockResolvedValueOnce(refreshed);
+    const { result } = renderQuote(baseParams);
+
+    await passDebounce();
+    expect(result.current.quote?.quoteId).toBe("quote-1");
+
+    await act(async () => {
+      jest.advanceTimersByTime(1_000);
+    });
+    expect(result.current).toEqual({ quote: undefined, isLoading: true, error: null });
+
+    await passDebounce();
+    expect(result.current.quote).toBe(refreshed);
+    expect(mockFetchWithdrawQuote).toHaveBeenCalledTimes(2);
+  });
+
+  it("stops refreshing once unmounted", async () => {
+    mockFetchWithdrawQuote.mockImplementation(() =>
+      Promise.resolve({ ...quote, expiry: Date.now() + 100 }),
+    );
+    const { unmount } = renderQuote(baseParams);
+
+    await passDebounce();
+    unmount();
+    await passDebounce();
+    await passDebounce();
+
+    expect(mockFetchWithdrawQuote).toHaveBeenCalledTimes(1);
   });
 
   it("only quotes the amount the form settled on", async () => {
