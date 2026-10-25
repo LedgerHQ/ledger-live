@@ -42,7 +42,9 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
    R2 request fails for 2 min, it fails then with `ExclusiveLockStoreDownError`.
    With `E2E_EXCLUSIVE_LOCK_PRIORITY=high` (release and hotfix runs), a waiter polls every 1–1.5 s
    and claims within 1.5 s of a settle window's end, before the others, who claim 3.5–5 s after
-   it. Each group still goes longest-waiting first. It still waits for the current holder.
+   it. Each group still goes longest-waiting first. The others' delay shrinks as they wait, so
+   after about 10 min they claim with high-priority waiters instead of after them. A
+   high-priority waiter still waits for the current holder.
 7. **Nesting.** A CLI approval inside a test that already holds the account joins that hold instead
    of waiting for it. The test's release waits for the approval to finish.
 8. **Without R2.** If `E2E_EXCLUSIVE_LOCK_*` is unset, or `E2E_EXCLUSIVE_LOCK_MODE` is `local`, a

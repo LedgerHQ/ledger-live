@@ -19,7 +19,7 @@ export type DistributedLockOptions = {
   readonly giveUpWhenHeld?: boolean;
   /** Waiters of one priority spread their settle-end claims over it, the longest-waiting first. */
   readonly settleClaimSpreadMs?: number;
-  /** How much later than high-priority waiters the others start claiming a settled key. */
+  /** The others' delay behind high-priority waiters at settle end; it shrinks as they wait. */
   readonly settleClaimHeadStartMs?: number;
   readonly highPriority?: boolean;
   readonly log: LockLogger;
@@ -47,19 +47,27 @@ const errorMessage = (error: unknown) => (error instanceof Error ? error.message
 const isFatalStoreError = (error: unknown) =>
   error instanceof Error && error.name === "ExclusiveLockStoreFatalError";
 
-const isLockFree = ({ record, ageMs }: StoredLock) =>
-  (record.released && ageMs >= record.settleMs) || ageMs > record.leaseMs;
+/** A settled key stays closed to a request until its own settle claim delay has passed too. */
+const isLockFree = ({ record, ageMs }: StoredLock, settleClaimDelayMs: number) => {
+  const closedForMs = record.settleMs > 0 ? record.settleMs + settleClaimDelayMs : 0;
+  return (record.released && ageMs >= closedForMs) || ageMs > record.leaseMs;
+};
 
 const settleLeftMs = ({ record, ageMs }: StoredLock) => record.settleMs - ageMs;
 
-async function claim(store: LockStore, key: string, record: LockRecord): Promise<ClaimResult> {
+async function claim(
+  store: LockStore,
+  key: string,
+  record: LockRecord,
+  settleClaimDelayMs: number,
+): Promise<ClaimResult> {
   const created = await store.create(key, record);
   if (created) return { status: "claimed", etag: created };
 
   const current = await store.read(key);
   if (!current) return { status: "raced" };
   const ownClaimCommittedUnacknowledged = current.record.holder === record.holder;
-  if (!ownClaimCommittedUnacknowledged && !isLockFree(current)) {
+  if (!ownClaimCommittedUnacknowledged && !isLockFree(current, settleClaimDelayMs)) {
     return { status: "held", current };
   }
 
@@ -232,7 +240,7 @@ class Acquisition {
   /** Resolves to undefined when the store failed in a way a later claim may get past. */
   private async tryClaim(): Promise<ClaimResult | undefined> {
     try {
-      const result = await claim(this.store, this.key, this.record);
+      const result = await claim(this.store, this.key, this.record, this.ownSettleClaimDelayMs());
       this.trackRejectedEtag(result);
       if (result.status === "held") this.lastHeld = result.current;
       this.lastError = undefined;
@@ -286,25 +294,33 @@ class Acquisition {
     if (held) this.announceWait();
     if (settling && giveUpWhenHeld) {
       this.settleWaitedOut = { etag: settling.etag, leftMs: settleLeftMs(settling) };
-      // A poll after the newest waiter of its priority claims, so its waiters claim the key first.
-      await this.sleep(this.settleWaitedOut.leftMs + this.settleClaimDelayMs(0) + pollMs);
+      // A poll apart at least, over the lock store's 1 s age rounding, so the window reads as ending.
+      await this.sleep(
+        Math.max(pollMs, this.settleWaitedOut.leftMs + this.ownSettleClaimDelayMs()),
+      );
       this.retryFrom = this.now();
       return;
     }
     this.throwIfStoreDown();
     this.throwIfTimedOut();
     await this.sleep(
-      settling
-        ? settleLeftMs(settling) + this.settleClaimDelayMs(this.now() - this.startedAt)
-        : this.pollDelayMs(),
+      settling ? settleLeftMs(settling) + this.ownSettleClaimDelayMs() : this.pollDelayMs(),
     );
+  }
+
+  private ownSettleClaimDelayMs() {
+    const { giveUpWhenHeld, pollMs } = this.options;
+    // A try-lock claims a poll after the newest waiter of its priority, so its waiters go first.
+    return giveUpWhenHeld
+      ? this.settleClaimDelayMs(0) + pollMs
+      : this.settleClaimDelayMs(this.now() - this.startedAt);
   }
 
   private settleClaimDelayMs(waitedMs: number) {
     const { settleClaimSpreadMs = 0, settleClaimHeadStartMs = 0, highPriority } = this.options;
     const waitedShare = Math.min(1, waitedMs / FIRST_IN_LINE_AFTER_MS);
     const headStartMs = highPriority ? 0 : settleClaimHeadStartMs;
-    return Math.round(headStartMs + settleClaimSpreadMs * (1 - waitedShare));
+    return Math.round((headStartMs + settleClaimSpreadMs) * (1 - waitedShare));
   }
 
   private settleCountsDown(settling: StoredLock) {

@@ -25,7 +25,8 @@ const TRY_LOCK_STORE_RETRY_MS = 30_000;
 const SETTLE_MS = 45_000;
 const SETTLE_CLAIM_SPREAD_MS = 1_500;
 // The high-priority spread plus 2 s, over the lock store's 1 s age rounding either way, so
-// high-priority waiters still claim a settled key before the others.
+// high-priority waiters still claim a settled key before the others, until those have waited
+// several minutes.
 const SETTLE_CLAIM_HEAD_START_MS = 3_500;
 const R2_KEY_PREFIX = "e2e-broadcast-locks/";
 const HOLDER_PREFIX = `${os.hostname()}:${process.pid}:`;
