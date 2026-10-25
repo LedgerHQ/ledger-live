@@ -75,5 +75,6 @@ export async function fetchPerpsWithdrawQuote({
       message: providerError.message,
       additionalFields: providerError.parameter,
     },
+    requestedAmount: amount,
   });
 }

@@ -52,26 +52,29 @@ const ErrorBodySchema = z.looseObject({
 export function toWithdrawError({
   status,
   body,
+  requestedAmount,
 }: {
   status: number;
   body: unknown;
+  requestedAmount?: string;
 }): WithdrawApiError {
   const parsed = ErrorBodySchema.safeParse(body);
   const code = parsed.success ? parsed.data.code : undefined;
   const message = (parsed.success && parsed.data.message) || `Withdraw API HTTP ${status}`;
   const fields = { status, code };
+  const minAmount = DecimalSchema.safeParse(
+    parsed.success ? parsed.data.additionalFields?.minAmount : undefined,
+  );
 
-  // Swap's off-limits error covers both bounds; only a minimum means "too low".
+  // Swap's off-limits error can carry both bounds; it's "too low" only if the amount is under the minimum.
   const isBelowMinimum =
     code === "FROM_CURRENCY_MINIMUM_AMOUNT_ERROR" ||
     (code === "amount_off_limits" &&
-      parsed.success &&
-      parsed.data.additionalFields?.minAmount !== undefined);
+      minAmount.success &&
+      requestedAmount !== undefined &&
+      new BigNumber(requestedAmount).lt(minAmount.data));
 
   if (isBelowMinimum) {
-    const minAmount = DecimalSchema.safeParse(
-      parsed.success ? parsed.data.additionalFields?.minAmount : undefined,
-    );
     return new WithdrawMinimumAmountError(message, {
       ...fields,
       minAmount: minAmount.success ? minAmount.data : undefined,

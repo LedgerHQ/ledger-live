@@ -108,17 +108,34 @@ describe("fetchPerpsWithdrawQuote", () => {
 
   it.each([
     ["amount_off_limits", { minAmount: "5" }],
+    ["amount_off_limits", { minAmount: "5", maxAmount: "100" }],
     ["FROM_CURRENCY_MINIMUM_AMOUNT_ERROR", { minAmount: "5" }],
-  ])("maps %s to a minimum amount error with the minimum", async (code, parameter) => {
+  ])("maps %s %o below the minimum to a minimum amount error", async (code, parameter) => {
     mockedFetchQuotes.mockResolvedValue({
       rawQuotes: [],
       providerErrors: [providerError(code, parameter)],
     });
 
-    const error = await fetchPerpsWithdrawQuote(request).catch((e: unknown) => e);
+    const error = await fetchPerpsWithdrawQuote({ ...request, amount: "2" }).catch(
+      (e: unknown) => e,
+    );
 
     expect(error).toBeInstanceOf(WithdrawMinimumAmountError);
     expect(error).toMatchObject({ minAmount: new BigNumber(5) });
+  });
+
+  it("does not report an amount above the maximum as too low when both bounds are returned", async () => {
+    mockedFetchQuotes.mockResolvedValue({
+      rawQuotes: [],
+      providerErrors: [providerError("amount_off_limits", { minAmount: "5", maxAmount: "100" })],
+    });
+
+    const error = await fetchPerpsWithdrawQuote({ ...request, amount: "200" }).catch(
+      (e: unknown) => e,
+    );
+
+    expect(error).toBeInstanceOf(WithdrawApiError);
+    expect(error).not.toBeInstanceOf(WithdrawMinimumAmountError);
   });
 
   it("does not report an amount above the maximum as too low", async () => {
