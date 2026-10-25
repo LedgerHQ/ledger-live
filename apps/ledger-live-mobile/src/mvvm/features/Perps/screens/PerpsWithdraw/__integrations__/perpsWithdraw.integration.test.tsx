@@ -66,7 +66,7 @@ const quote = {
   quoteId: "quote-1",
   amountTo: new BigNumber("0.3"),
   payoutNetworkFees: new BigNumber("0.0004"),
-  expiry: 1792000000000,
+  expiry: Date.now() + 60_000,
 };
 
 const mockNavigation = { navigate: jest.fn(), goBack: jest.fn(), setOptions: jest.fn() };
