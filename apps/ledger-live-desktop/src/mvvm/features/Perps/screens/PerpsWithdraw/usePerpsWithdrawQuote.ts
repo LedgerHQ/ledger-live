@@ -35,7 +35,7 @@ function requestKeyOf({
   return [amount, sourceAccount.id, destinationAccount.id, counterValueCurrency].join("|");
 }
 
-/** Debounced swap quote, refreshed whenever the amount or destination changes. */
+/** Debounced swap quote, refreshed when the amount or destination changes and when it expires. */
 export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWithdrawQuoteState {
   const { amount, sourceAccount, destinationAccount, accounts, counterValueCurrency } = params;
   const requestKey = requestKeyOf(params);
@@ -43,6 +43,7 @@ export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWi
     key: null,
     state: IDLE,
   });
+  const [refreshCount, setRefreshCount] = useState(0);
 
   useEffect(() => {
     if (requestKey === null || !destinationAccount) {
@@ -53,6 +54,7 @@ export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWi
     setCurrent({ key: requestKey, state: LOADING });
 
     let stale = false;
+    let expiryTimeout: ReturnType<typeof setTimeout> | undefined;
     const timeout = setTimeout(() => {
       fetchPerpsWithdrawQuote({
         accounts,
@@ -62,8 +64,12 @@ export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWi
         counterValueCurrency,
       })
         .then(quote => {
-          if (!stale)
-            setCurrent({ key: requestKey, state: { quote, isLoading: false, error: null } });
+          if (stale) return;
+          setCurrent({ key: requestKey, state: { quote, isLoading: false, error: null } });
+          expiryTimeout = setTimeout(
+            () => setRefreshCount(count => count + 1),
+            Math.max(quote.expiry - Date.now(), 0),
+          );
         })
         .catch((error: unknown) => {
           if (stale) return;
@@ -81,10 +87,11 @@ export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWi
     return () => {
       stale = true;
       clearTimeout(timeout);
+      clearTimeout(expiryTimeout);
     };
     // The key covers every input; account churn must not restart the request.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [requestKey]);
+  }, [requestKey, refreshCount]);
 
   // Effects run a render late, so a stale result is dropped here instead.
   if (current.key !== requestKey) return requestKey === null ? IDLE : LOADING;
