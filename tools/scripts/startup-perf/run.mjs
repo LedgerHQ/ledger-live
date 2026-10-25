@@ -227,6 +227,37 @@ const android = {
       },
     };
   },
+  // Screen state before a launch: wakefulness and the focused window. The job keeps the screen on
+  // and the keyguard off, so waking it here should never be needed; when it is, the sample says so.
+  async ensureScreenOn(device) {
+    const read = async () => {
+      const { stdout } = await run(
+        "adb",
+        [
+          "-s",
+          device,
+          "shell",
+          "dumpsys power | grep -m1 mWakefulness=; dumpsys window | grep -m1 mCurrentFocus=",
+        ],
+        { allowFail: true, timeoutMs: 20_000 },
+      );
+      return parseScreenState(stdout);
+    };
+    const before = await read();
+    if (before.wakefulness === "Awake" && !before.keyguard) return before;
+    log(
+      `  ${device}: screen ${before.wakefulness ?? "unknown"}, focus ${before.focus ?? "unknown"}; waking it`,
+    );
+    await run(
+      "adb",
+      ["-s", device, "shell", "input keyevent KEYCODE_WAKEUP; wm dismiss-keyguard"],
+      {
+        allowFail: true,
+      },
+    );
+    await sleep(1000);
+    return { ...(await read()), wokenFrom: before };
+  },
   // Package named by a system dialog that has the focus ("System UI isn't responding", a crash
   // dialog), or null. It covers the app, so Maestro cannot read the screen.
   async blockingDialog(device) {
@@ -500,6 +531,17 @@ export function parseCpuStat(text) {
   };
 }
 
+// "mWakefulness=Awake" and "mCurrentFocus=Window{… u0 <name>}" lines; the keyguard has the focus
+// through the notification shade (API 31+) or its own window.
+export function parseScreenState(text) {
+  const focus = text.match(/mCurrentFocus=Window\{\S+ \S+ ([^}]+)\}/)?.[1]?.trim() ?? null;
+  return {
+    wakefulness: text.match(/mWakefulness=(\w+)/)?.[1] ?? null,
+    focus,
+    keyguard: /NotificationShade|Keyguard/i.test(focus ?? ""),
+  };
+}
+
 export function parseBlockingDialog(dumpsysWindow) {
   return (
     dumpsysWindow.match(
@@ -529,6 +571,9 @@ const ios = {
   },
   async clearDialogs() {
     return [];
+  },
+  async ensureScreenOn() {
+    return null;
   },
   // Simulators are processes on the host: nothing to pause, and their load is the host's.
   async pause() {
@@ -885,6 +930,7 @@ async function sample(meta) {
       record.clearedDialogs = dialogs;
       await sleep(DIALOG_RECOVERY_MS);
     }
+    record.screen = await P.ensureScreenOn(meta.device);
     if (NET_BASELINE.length) {
       record.runnerNetwork = {};
       for (const url of NET_BASELINE) record.runnerNetwork[url] = await curlTimings(url);

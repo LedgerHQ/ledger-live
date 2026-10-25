@@ -439,9 +439,11 @@ jobs:
           fi
           echo "found=false" >> "$GITHUB_OUTPUT"
 
+      # A miss (no copy in R2) fails the download; the next step then creates the AVD.
       - name: Download android emulator
         if: steps.preinstalled-avd.outputs.found != 'true'
         timeout-minutes: 10
+        continue-on-error: true
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: avd
         with:
@@ -550,7 +552,14 @@ jobs:
             for key in window_animation_scale transition_animation_scale animator_duration_scale; do
               adb -s "$serial" shell settings put global "$key" 1
             done
-            echo "$serial booted"
+            # Screen on and unlocked for the whole run, as Detox ensures for E2E: wake it, drop the
+            # keyguard, keep it on while plugged in (3 = AC + USB) and never time out.
+            adb -s "$serial" shell input keyevent KEYCODE_WAKEUP
+            adb -s "$serial" shell locksettings set-disabled true || true
+            adb -s "$serial" shell wm dismiss-keyguard
+            adb -s "$serial" shell settings put global stay_on_while_plugged_in 3
+            adb -s "$serial" shell settings put system screen_off_timeout 2147483647
+            echo "$serial booted, screen $(adb -s "$serial" shell dumpsys power | sed -n 's/.*mWakefulness=\([A-Za-z]*\).*/\1/p' | head -1)"
           done
           {
             echo "- Emulator CPUs (nproc): $(for serial in emulator-5554 emulator-5556; do printf '%s=%s ' "$serial" "$(adb -s "$serial" shell nproc | tr -d '\r')"; done)"
@@ -575,12 +584,14 @@ jobs:
           # Wait until post-boot work is done: 1-minute load average below 1 on both (max 15 min).
           deadline=$((SECONDS + 900))
           for serial in emulator-5554 emulator-5556; do
+            idle=false
             while (( SECONDS < deadline )); do
               load=$(adb -s "$serial" shell cat /proc/loadavg | cut -d' ' -f1)
-              awk -v l="$load" 'BEGIN { exit !(l < 1.0) }' && break
+              awk -v l="$load" 'BEGIN { exit !(l < 1.0) }' && { idle=true; break; }
               echo "$serial load $load, waiting"
               sleep 15
             done
+            [[ "$idle" == true ]] || echo "::warning title=Emulator not idle::$serial load average still ${load:-unknown} after 15 min; measuring anyway"
           done
           adb devices
 
