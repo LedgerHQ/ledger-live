@@ -328,43 +328,38 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "type": "OUT",
           "value": "24179365079365080000",
         },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "FA9F2933F9CED773DCF5F8C1117AF4E45E98EF4964EC4C4DAFF7F74AA0AFC73A",
+          "blockHeight": 105416,
+          "date": 2018-03-13T23:43:44.874Z,
+          "extra": {},
+          "fee": "71077844311377250000",
+          "hash": "247830DE45CF319BA762EC5B522505A2F4A0639202E9CF471F122A05CBF925F3",
+          "id": "mock_op_0_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0xFD5711163A51227244E933220578E6ACA3308CED",
+          ],
+          "senders": [
+            "0xC5DFAC2C4EA290A9C6FE697EA93A965016D1577E",
+          ],
+          "type": "IN",
+          "value": "7.107784431137725e+21",
+        },
       ],
       "day": 2018-03-13T04:00:00.000Z,
     },
     {
       "data": [
         {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "44E933220578E6ACA3308CEDFA9F2933F9CED773DCF5F8C1117AF4E45E98EF49",
-          "blockHeight": 183796,
-          "date": 2018-03-13T01:59:34.172Z,
-          "extra": {},
-          "fee": "10488",
-          "hash": "D1577E92FB247830DE45CF319BA762EC5B522505A2F4A0639202E9CF471F122A",
-          "id": "mock_op_0_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1Lnhxc9NzBxpLS865PFgN7A8UA",
-          ],
-          "senders": [
-            "13dRkKrwdmBnFvfBc3gaoPztQcTvfbDecP",
-          ],
-          "type": "IN",
-          "value": "1048772",
-        },
-      ],
-      "day": 2018-03-12T04:00:00.000Z,
-    },
-    {
-      "data": [
-        {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "69B092BEA2117BBD221F19B946ACA35A74B31EE8B1CA5586CF6E37087C7A776B",
           "blockHeight": 188487,
           "date": 2018-03-11T22:11:50.341Z,
           "extra": {},
-          "fee": "100190476190476200",
+          "fee": "37796407185628740000",
           "hash": "2A2ED3F83B794B6B7EAEABBEF5F0C3E234A239462BC4809688DA3B5140DE8EC8",
-          "id": "mock_op_0_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_0_mock:1:flare:gaobd6:",
           "recipients": [
             "0xBED3BFB65A9C4A6701827B4D4979DCEB8D8D049B",
           ],
@@ -372,7 +367,25 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x2868C9DF8E5BD3FA5D473617BE2D1B5A57300422",
           ],
           "type": "OUT",
-          "value": "10019047619047619000",
+          "value": "3.779640718562874e+21",
+        },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "A912682732F541321664462EB397AB14BFF1D1BE8A2B301F9DF1B74EAAC7B589",
+          "blockHeight": 105171,
+          "date": 2018-03-11T10:19:51.799Z,
+          "extra": {},
+          "fee": "92544910179640720000",
+          "hash": "DE2EB7CF3FD90CFDA1E9961DE26B05DD068BA5E4BE565C40D40336AF4204B2DC",
+          "id": "mock_op_1_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0x3B4AF24E7EFC9C62ED2B7AE5F5CED29C454D0D86",
+          ],
+          "senders": [
+            "0x7E7AE4DA372C15E0E372F2800899BE13F882719C",
+          ],
+          "type": "IN",
+          "value": "9.254491017964072e+21",
         },
         {
           "accountId": "mock:1:ethereum_classic:gaobd4:",
@@ -398,14 +411,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "DB27809FC7AD94553A22A3D9115AC05C8AF19662EC5A72AF306835E12C5AE90F",
           "blockHeight": 188388,
           "date": 2018-03-10T21:25:50.854Z,
           "extra": {},
-          "fee": "32873015873015876",
+          "fee": "12401197604790420000",
           "hash": "E3153D78CE9909500D3DB4FDDF2B02DFF19372203BBE79E21A2316B939419C2D",
-          "id": "mock_op_1_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_1_mock:1:flare:gaobd6:",
           "recipients": [
             "0x1502E0CF5643F56FD0CD07D374E34E3A9010DBA9",
           ],
@@ -413,7 +426,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x3E01BFAAFE07ECEAA2A3AF88D1FEF37B60B11A93",
           ],
           "type": "IN",
-          "value": "3287301587301587500",
+          "value": "1.240119760479042e+21",
         },
       ],
       "day": 2018-03-10T05:00:00.000Z,
@@ -421,14 +434,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "D03357B46CD7FECBC3D8BC6C27C11CA899833A864FA4F39316C363421B8948D9",
           "blockHeight": 188132,
           "date": 2018-03-08T05:21:45.017Z,
           "extra": {},
-          "fee": "411523809523809600",
+          "fee": "155245508982035940000",
           "hash": "1C612E02A32E28F149B8F648670F8E13F70D2119BA0C0B96255217472646B524",
-          "id": "mock_op_2_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_2_mock:1:flare:gaobd6:",
           "recipients": [
             "0x0FA789B2188D8A0D05A4C113FD907B2D434E710E",
           ],
@@ -436,7 +449,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x701413699245DE983B512A749BD7B3D795DD5325",
           ],
           "type": "OUT",
-          "value": "41152380952380960000",
+          "value": "1.5524550898203593e+22",
         },
       ],
       "day": 2018-03-08T05:00:00.000Z,
@@ -462,22 +475,22 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "value": "25150793650793652000",
         },
         {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "C3B4AF24E7EFC9C62ED2B7AE5F5CED29C454D0D86A912682732F541321664462",
-          "blockHeight": 183175,
-          "date": 2018-03-06T14:41:51.593Z,
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "EB7917073351F0C8FAFD07D561683EB410379645487CAB83F768171AD9AF4DA9",
+          "blockHeight": 104695,
+          "date": 2018-03-06T11:20:35.338Z,
           "extra": {},
-          "fee": "133527",
-          "hash": "5E0E372F2800899BE13F882719CEE4ADE2EB7CF3FD90CFDA1E9961DE26B05DD0",
-          "id": "mock_op_1_mock:1:litecoin:gaobd8:",
+          "fee": "18502994011976050000",
+          "hash": "21A8035092F815A749486D751E6B106298E5B82FADE7D2299C5C3CBD34D4BA15",
+          "id": "mock_op_2_mock:1:flare:gaobd8:",
           "recipients": [
-            "1WjgLuKgtNPMmG3pG3DEPeyJ93Gj8s",
+            "0x1C1928274C9BAA565761E3E9E38F422E61A5D481",
           ],
           "senders": [
-            "1HnJqdzyTxUFgf1dyoUFfUd9VuTevKrgD",
+            "0xA94F11354181CB000BDB33F9DF3D9A3F694D0AFC",
           ],
           "type": "IN",
-          "value": "13352660",
+          "value": "1.8502994011976048e+21",
         },
       ],
       "day": 2018-03-06T05:00:00.000Z,
@@ -527,14 +540,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "99A2F70BB210C4DC675794A2DA1E4877D6B84284BFAB0C001EA63D1FB619833C",
           "blockHeight": 140982,
           "date": 2018-03-04T19:59:22.910Z,
           "extra": {},
-          "fee": "281619047619047650",
+          "fee": "106239520958083840000",
           "hash": "7516F11007EBBA0796FB963272763384C2B31FC6784BA1C087BCE57417CDFBB2",
-          "id": "mock_op_0_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_0_mock:1:flare:gaobd7:",
           "recipients": [
             "0x2BB2BB1A9F0DE99E6F1D1C7332C52BB7257CA822",
           ],
@@ -542,7 +555,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x648CF75112E81B2A29AEAD55CFBA2CB3C0B08C7D",
           ],
           "type": "IN",
-          "value": "28161904761904763000",
+          "value": "1.0623952095808384e+22",
         },
       ],
       "day": 2018-03-04T05:00:00.000Z,
@@ -550,14 +563,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "13C32F97E4C325BCA73F371C43D240E9440A6E335280CE26CE006ED5476D19B5",
           "blockHeight": 140868,
           "date": 2018-03-03T15:31:21.339Z,
           "extra": {},
-          "fee": "23333333333333336",
+          "fee": "8802395209580839000",
           "hash": "A289403C9B106A932524E5BDFE51FA66E5E50A88CB8B66D7D9541E574F98A02F",
-          "id": "mock_op_1_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_1_mock:1:flare:gaobd7:",
           "recipients": [
             "0xB8D1C43C3B97EEEEF6D5A4BD7FD5F6C4E1A410A0",
           ],
@@ -565,7 +578,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0xDBA6EB994DD130D2A59AB749BAE63A018CC1E89C",
           ],
           "type": "IN",
-          "value": "2333333333333333500",
+          "value": "880239520958083900000",
         },
       ],
       "day": 2018-03-03T05:00:00.000Z,
@@ -573,14 +586,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "F6A05D68F7E20C955DF79BCCE8CAB62271B509624EA51723674CB02FACB3C609",
           "blockHeight": 140787,
           "date": 2018-03-02T19:07:04.186Z,
           "extra": {},
-          "fee": "157666666666666700",
+          "fee": "59479041916167670000",
           "hash": "A6DDC0044E0A9D1B5FF006D5B765C952CBDAD11384D34837395B06306DF6937E",
-          "id": "mock_op_2_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_2_mock:1:flare:gaobd7:",
           "recipients": [
             "0xBBC9F0EC72809D0995D4BCAF1DD0E92FFE955A41",
           ],
@@ -588,7 +601,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x6CD2577EE4F581347AA6D7926B1CEDAFDEFBD5EA",
           ],
           "type": "OUT",
-          "value": "15766666666666668000",
+          "value": "5.947904191616767e+21",
         },
       ],
       "day": 2018-03-02T05:00:00.000Z,
@@ -637,6 +650,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "subOperations": [],
           "type": "OUT",
           "value": "18333333333333336",
+        },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "F95DE223B362093DA7866261C4343D64BED81F2608A458225DEFA24A26CD1D9E",
+          "blockHeight": 104139,
+          "date": 2018-02-28T16:23:16.030Z,
+          "extra": {},
+          "fee": "264125748502994030000",
+          "hash": "0678A57C2470033B659B03AD1ADD52866EBE0001BE9B6599574CB6402965849D",
+          "id": "mock_op_3_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0xE40EA86D10DE6093614F9FB5C6A4D7E3B614B7D2",
+          ],
+          "senders": [
+            "0x51441E6C4961EDBA494E36D2D7DD94D333B15121",
+          ],
+          "type": "IN",
+          "value": "2.64125748502994e+22",
         },
       ],
       "day": 2018-02-28T05:00:00.000Z,
@@ -740,78 +771,6 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "type": "IN",
           "value": "6746031746031746000",
         },
-        {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "F713453E0A3A6068553C662811A5DA24A2EF19B8070004D5ADB489FCA8FB27B2",
-          "blockHeight": 117547,
-          "date": 2018-02-26T23:09:48.577Z,
-          "extra": {},
-          "fee": "1495310",
-          "hash": "6EFF4EB579AE88D459D2C457ECC83D8360F35E3F82C82021350CB438AB77C96D",
-          "id": "mock_op_0_mock:1:litecoin:gaobd9:",
-          "recipients": [
-            "1eSgPrSoaRABSLkajS6eLZ3ccFn1FzHhS",
-          ],
-          "senders": [
-            "1ZN6qjDaqiAcmGmf7syJprLsSQs",
-          ],
-          "type": "IN",
-          "value": "149531036",
-        },
-        {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "453F19226E727863F4F96DDAC53ECBE0A72E1E866B883650147ADFABC830A4A5",
-          "blockHeight": 117542,
-          "date": 2018-02-26T21:57:55.346Z,
-          "extra": {},
-          "fee": "115877",
-          "hash": "DDBEC81C206F7BC893E73FDB905936C8C30451C12BC0093C08AAE5CB7539D04F",
-          "id": "mock_op_1_mock:1:litecoin:gaobd9:",
-          "recipients": [
-            "1dgVgAFRSw9VGb9jBRZBhST7uR2vrR",
-          ],
-          "senders": [
-            "1F52GNR4rtL51XK3ExWtNpBmNjiQdU",
-          ],
-          "type": "IN",
-          "value": "11587653",
-        },
-        {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "299C5C3CBD34D4BA151C1928274C9BAA565761E3E9E38F422E61A5D481EB7917",
-          "blockHeight": 182417,
-          "date": 2018-02-26T17:16:12.352Z,
-          "extra": {},
-          "fee": "2214018",
-          "hash": "589C37A94F11354181CB000BDB33F9DF3D9A3F694D0AFCA46421A8035092F815",
-          "id": "mock_op_2_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1UHdGYQsSK6uPk41P8ZZvMkZBzgsuVp9",
-          ],
-          "senders": [
-            "1Vei5Gjzw5r6juYg8kF16ybsy7kTGve",
-          ],
-          "type": "IN",
-          "value": "221401773",
-        },
-        {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "3AD1ADD52866EBE0001BE9B6599574CB6402965849DE40EA86D10DE6093614F9",
-          "blockHeight": 182413,
-          "date": 2018-02-26T16:12:33.582Z,
-          "extra": {},
-          "fee": "282657",
-          "hash": "87CAB83F768171AD9AF4DA98A451441E6C4961EDBA494E36D2D7DD94D333B151",
-          "id": "mock_op_3_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "18wtoc3QVWeLUkAKT32CCiRMdj4",
-          ],
-          "senders": [
-            "1N6y1oYyfyq1VsNN6RWCujJ51DUa",
-          ],
-          "type": "IN",
-          "value": "28265688",
-        },
       ],
       "day": 2018-02-26T05:00:00.000Z,
     },
@@ -854,6 +813,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "subOperations": [],
           "type": "OUT",
           "value": "212000000000000000",
+        },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "FA0BCC46313FAC299BF42A156D77648FC3006DA8A2F118C0BEB4DF03FCBFBB15",
+          "blockHeight": 103731,
+          "date": 2018-02-24T10:30:56.916Z,
+          "extra": {},
+          "fee": "146005988023952100000",
+          "hash": "DD968449D2D4F6391ABF93D0A940622AA5C09322970BADE07588962B71F49A2B",
+          "id": "mock_op_4_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0xFB33B31A924D1B9DC77E0B5141C156BC34B92381",
+          ],
+          "senders": [
+            "0x355484A0894D062530BD35D711FD77FE86D9B4AE",
+          ],
+          "type": "OUT",
+          "value": "1.460059880239521e+22",
         },
         {
           "accountId": "mock:1:ethereum_classic:gaobd3:",
@@ -944,6 +921,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "subOperations": [],
           "type": "IN",
           "value": "91000000000000000",
+        },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "8E7ACCC2EC6042FCB056BDF3978A50137EB69EC37AE5CD6E09DD6CC6F84B0EB7",
+          "blockHeight": 103363,
+          "date": 2018-02-20T14:26:30.747Z,
+          "extra": {},
+          "fee": "340640718562874300000",
+          "hash": "43C45B01C4B74375E32BB7FC69365D51D1CDF1C9883E20C6511250FC8136C98A",
+          "id": "mock_op_5_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0x97FB51FD292E54EF4330D3F23D1DFBBFC220A14A",
+          ],
+          "senders": [
+            "0x7D1264964BA51F3332083925A69C9567D4CFBB08",
+          ],
+          "type": "IN",
+          "value": "3.4064071856287428e+22",
         },
         {
           "accountId": "mock:1:ethereum_classic:gaobd5:",
@@ -1046,6 +1041,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
+          "accountId": "mock:1:hypercore:gaobd9:",
+          "blockHash": "89FCA8FB27B204074104661DE5108503F8E5C2C6BB697E60DDDBEC81C206F7BC",
+          "blockHeight": 173752,
+          "date": 2018-02-18T21:02:47.848Z,
+          "extra": {},
+          "fee": "668400",
+          "hash": "021350CB438AB77C96DBA6A6D6C962275C9B61A580994C03F4B7F713453E0A3A",
+          "id": "mock_op_0_mock:1:hypercore:gaobd9:",
+          "recipients": [
+            "0xEFF4EB579AE88D459D2C457ECC83D8360F35E3F8",
+          ],
+          "senders": [
+            "0x6068553C662811A5DA24A2EF19B8070004D5ADB4",
+          ],
+          "type": "OUT",
+          "value": "66840000",
+        },
+        {
           "accountId": "mock:1:ethereum_classic:gaobd3:",
           "blockHash": "9DD235E2F3BC779DD30D49349A4C194E6E8313584DDC6483AB6B0363076704CC",
           "blockHeight": 178057,
@@ -1069,14 +1082,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "AEA1706D878A4EA0DFA0276CBC16C5E1627E3D4A5971981D54B4B207C134EB50",
           "blockHeight": 139483,
           "date": 2018-02-17T05:04:49.472Z,
           "extra": {},
-          "fee": "22412698412698416",
+          "fee": "8455089820359282000",
           "hash": "B066EEF16E0C25D962EF62D8916274DEB3F7A6D1B3837D25BE1B09F7D9BC3376",
-          "id": "mock_op_3_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_3_mock:1:flare:gaobd7:",
           "recipients": [
             "0xD165D0EACE55EBD480D423FAB775290F7C075214",
           ],
@@ -1084,7 +1097,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x50F9336C38427CA4088C3D7F18454BC810956BA0",
           ],
           "type": "IN",
-          "value": "2241269841269841400",
+          "value": "845508982035928200000",
         },
       ],
       "day": 2018-02-17T05:00:00.000Z,
@@ -1108,6 +1121,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           ],
           "type": "IN",
           "value": "247619047619047600",
+        },
+        {
+          "accountId": "mock:1:hypercore:gaobd9:",
+          "blockHash": "D978A7773B3C50D1B1BDA4AE41B5172C399FAF723A3C36103EF802FD9CD6239F",
+          "blockHeight": 173403,
+          "date": 2018-02-15T05:38:18.687Z,
+          "extra": {},
+          "fee": "282700",
+          "hash": "4F6AA7B2467F27492B2682B671E60ED6453F19226E727863F4F96DDAC53ECBE0",
+          "id": "mock_op_1_mock:1:hypercore:gaobd9:",
+          "recipients": [
+            "0xE73FDB905936C8C30451C12BC0093C08AAE5CB75",
+          ],
+          "senders": [
+            "0xA72E1E866B883650147ADFABC830A4A5BB96518B",
+          ],
+          "type": "OUT",
+          "value": "28270000",
         },
       ],
       "day": 2018-02-15T05:00:00.000Z,
@@ -1162,50 +1193,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "D4F6391ABF93D0A940622AA5C09322970BADE07588962B71F49A2B355484A089",
-          "blockHeight": 181117,
-          "date": 2018-02-13T04:13:45.303Z,
-          "extra": {},
-          "fee": "240791",
-          "hash": "61C4343D64BED81F2608A458225DEFA24A26CD1D9E2F7FB33B31A924D1B9DC77",
-          "id": "mock_op_4_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "13hK5H8n6KPimEHhcACW89QczrpcRXHJbs9",
-          ],
-          "senders": [
-            "1RgJrVuDkN4GkVq8zcMqt9ADjCRB1ZBreS",
-          ],
-          "type": "IN",
-          "value": "24079126",
-        },
-        {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "CFBB087CCE43C45B01C4B74375E32BB7FC69365D51D1CDF1C9883E20C6511250",
-          "blockHeight": 181116,
-          "date": 2018-02-13T03:52:16.892Z,
-          "extra": {},
-          "fee": "1453786",
-          "hash": "6313FAC299BF42A156D77648FC3006DA8A2F118C0BEB4DF03FCBFBB1535C7D12",
-          "id": "mock_op_5_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1JaRJkfM6xDCE94WCc8LfRcnbLSVpG",
-          ],
-          "senders": [
-            "19LE2hsCNpT55zpUSyuWQpbiGftzg1",
-          ],
-          "type": "IN",
-          "value": "145378581",
-        },
-        {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "0B52D54535467D7B68E3DD310B488EBCADEFB73E9EA53768DE4FF7F0F7B4F7C6",
           "blockHeight": 185860,
           "date": 2018-02-12T13:33:22.147Z,
           "extra": {},
-          "fee": "469777777777777800",
+          "fee": "177221556886227550000",
           "hash": "4FB013518D1E3CAECC20E60223933EA722167A9F4F4BDF7A5E5484555CF7E6E1",
-          "id": "mock_op_3_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_3_mock:1:flare:gaobd6:",
           "recipients": [
             "0x016B82AA2EBA5D7F0DDDA59E36E4879CE261E88B",
           ],
@@ -1213,17 +1208,17 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x7952F0CB454C41CD6544FFD8AA39E7D372BD19D0",
           ],
           "type": "IN",
-          "value": "46977777777777780000",
+          "value": "1.7722155688622754e+22",
         },
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "7C3D2DA481A3D8BF147370343D7341F83287F848B157568DC18CF16C1B27D943",
           "blockHeight": 139019,
           "date": 2018-02-12T09:15:06.760Z,
           "extra": {},
-          "fee": "33079365079365080",
+          "fee": "12479041916167666000",
           "hash": "6505B036E99F0C4B95FAE841E31859CF9391079A13868C19BC00821573B2A5D7",
-          "id": "mock_op_4_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_4_mock:1:flare:gaobd7:",
           "recipients": [
             "0x3328FD417B29706B188308F0F9FC5AEDED49836E",
           ],
@@ -1231,33 +1226,10 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x3958B5AAE632B920EA8D10B8967578CBFB30C87F",
           ],
           "type": "IN",
-          "value": "3307936507936508000",
+          "value": "1.2479041916167664e+21",
         },
       ],
       "day": 2018-02-12T05:00:00.000Z,
-    },
-    {
-      "data": [
-        {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "ABAA2298CD9ABAAFCD15BF124B753A1CEC8658377C972EBC523C816955BE74D8",
-          "blockHeight": 115844,
-          "date": 2018-02-09T05:23:23.779Z,
-          "extra": {},
-          "fee": "221692",
-          "hash": "72C399FAF723A3C36103EF802FD9CD6239F8C6E730CA73D598B1127E9DBE5A0F",
-          "id": "mock_op_2_mock:1:litecoin:gaobd9:",
-          "recipients": [
-            "1M6YircUXgSSVEiEmM2p5j6iqgFdwG",
-          ],
-          "senders": [
-            "1iKhopSAVb5Z5sRwyQVQBbnbXdRg",
-          ],
-          "type": "OUT",
-          "value": "22169167",
-        },
-      ],
-      "day": 2018-02-09T05:00:00.000Z,
     },
     {
       "data": [
@@ -1310,6 +1282,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "363F8AE5745D9CF2A6BB1AA08F2486F4F429950F3C9EACB01F54AE0A3780E268",
+          "blockHeight": 101954,
+          "date": 2018-02-05T22:14:15.911Z,
+          "extra": {},
+          "fee": "33305389221556888000",
+          "hash": "4C55FC4EBEC5B22FE2BA635B5D6C3D78279626AEE88F00171E0FBA23A5443422",
+          "id": "mock_op_6_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0x1FE82E5C9F9680F471852E871CB9A25334334444",
+          ],
+          "senders": [
+            "0xF6D5B13D48B8AFE4B9635D3E90561D6501D7F3D5",
+          ],
+          "type": "IN",
+          "value": "3.3305389221556886e+21",
+        },
+        {
           "accountId": "mock:1:ethereum_classic:gaobd3:",
           "blockHash": "8D42320BBE37B0C4E851AE73B29A92275CA80CCC29A6AF75BD233E35D167E85B",
           "blockHeight": 176813,
@@ -1326,6 +1316,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           ],
           "type": "IN",
           "value": "1488888888888888800",
+        },
+        {
+          "accountId": "mock:1:hypercore:gaobd9:",
+          "blockHash": "7A26E3E3DAFCAD756441CCDBD3516B3B372AA6F90D7353DCBDD3FBFAAC4E31BF",
+          "blockHeight": 172462,
+          "date": 2018-02-05T10:29:34.851Z,
+          "extra": {},
+          "fee": "3686500",
+          "hash": "7629C98A6AABAA2298CD9ABAAFCD15BF124B753A1CEC8658377C972EBC523C81",
+          "id": "mock_op_2_mock:1:hypercore:gaobd9:",
+          "recipients": [
+            "0x6955BE74D867F146ED3FF2F67CA7C602B63B9DC5",
+          ],
+          "senders": [
+            "0xE730CA73D598B1127E9DBE5A0F3B5BCD7279191D",
+          ],
+          "type": "IN",
+          "value": "368650000",
         },
         {
           "accountId": "mock:1:ethereum_classic:gaobd3:",
@@ -1483,40 +1491,22 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "6DAB04526348E767E7188DC4707C667933F09B8027396918EEE0CA8C5A246E3E",
-          "blockHeight": 114863,
-          "date": 2018-01-30T00:11:06.723Z,
+          "accountId": "mock:1:hypercore:gaobd9:",
+          "blockHash": "EE3ADC5793C2271F2E95B93BF7D5E7706FEA56648345B953BD9707133A595B6C",
+          "blockHeight": 171842,
+          "date": 2018-01-29T23:30:31.679Z,
           "extra": {},
-          "fee": "438608",
-          "hash": "6E3E3DAFCAD756441CCDBD3516B3B372AA6F90D7353DCBDD3FBFAAC4E31BFF2A",
-          "id": "mock_op_3_mock:1:litecoin:gaobd9:",
+          "fee": "2320500",
+          "hash": "67E7188DC4707C667933F09B8027396918EEE0CA8C5A246E3EA217BC44C76E14",
+          "id": "mock_op_3_mock:1:hypercore:gaobd9:",
           "recipients": [
-            "1sJ7gV4bRQHuZL5519mkamdxSayiUQ",
+            "0x7D41A719664E851102CC9C9F79FB766DAB045263",
           ],
           "senders": [
-            "1HQtpCyxBwNVmdUmR1BgRCjbpn",
+            "0x9EF6498A7586A7C41F4E6DC34D8B4C331EF0D38A",
           ],
-          "type": "IN",
-          "value": "43860845",
-        },
-        {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "42BA86506249AF43871F71BC76618025997D84A695D9F18175B58908B4951DB8",
-          "blockHeight": 114815,
-          "date": 2018-01-29T12:08:49.393Z,
-          "extra": {},
-          "fee": "2444662",
-          "hash": "34D8B4C331EF0D38AEE3ADC5793C2271F2E95B93BF7D5E7706FEA56648345B95",
-          "id": "mock_op_4_mock:1:litecoin:gaobd9:",
-          "recipients": [
-            "1jsbV2S7EEeNbLiRntwm5sRueAz",
-          ],
-          "senders": [
-            "1ioHHmSRw6HcvzRFbWeTNWPeUmK6yJ",
-          ],
-          "type": "IN",
-          "value": "244466234",
+          "type": "OUT",
+          "value": "232050000",
         },
         {
           "accountId": "mock:1:ethereum_classic:gaobd4:",
@@ -1542,14 +1532,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "7D4D353BDE177A83BF72A9AD70B4F42BB5604B76A24BB03380BB911F4F3C1FFE",
           "blockHeight": 184328,
           "date": 2018-01-27T14:28:24.996Z,
           "extra": {},
-          "fee": "1587301587301587",
+          "fee": "598802395209580900",
           "hash": "29A4B4DD07EA360D571A795CAC83F607C7470E646128E8525928B8BB6046FE84",
-          "id": "mock_op_4_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_4_mock:1:flare:gaobd6:",
           "recipients": [
             "0xCAD860BEE3B7DFF423ACBF21425BA0817C0D9058",
           ],
@@ -1557,7 +1547,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x164D77DE11EBE1084128CB9D17ECF25120668CDD",
           ],
           "type": "IN",
-          "value": "158730158730158720",
+          "value": "59880239520958090000",
         },
       ],
       "day": 2018-01-27T05:00:00.000Z,
@@ -1612,14 +1602,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "F9C6CDA2D04E9BC0F680A312C6E408E511589BB3436329BBD4DA7B870BB513CD",
           "blockHeight": 137120,
           "date": 2018-01-23T14:26:40.340Z,
           "extra": {},
-          "fee": "4222222222222222",
+          "fee": "1592814371257485000",
           "hash": "43362D642E29EF0881FE79E1F6EA6431BDF2D80823A6BD07525CEDE4208C0D2B",
-          "id": "mock_op_5_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_5_mock:1:flare:gaobd7:",
           "recipients": [
             "0x039180563DE6D591551024CFAB25D5540B9D12C7",
           ],
@@ -1627,7 +1617,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x11E8D36099105360082AE4AF3FBA1BC18FA62664",
           ],
           "type": "IN",
-          "value": "422222222222222200",
+          "value": "159281437125748500000",
         },
       ],
       "day": 2018-01-23T05:00:00.000Z,
@@ -1654,14 +1644,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "value": "344250000000000000",
         },
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "16BA853D753D6D7DB90306DE92AD6F9E0CCC4FA21069034AEEA512108EE036F7",
           "blockHeight": 137037,
           "date": 2018-01-22T17:35:21.553Z,
           "extra": {},
-          "fee": "17126984126984128",
+          "fee": "6461077844311377000",
           "hash": "5C08C5E18A92510690BB23AD6D35ABC7A2312F3B5E13BB01B658E415CA4E059E",
-          "id": "mock_op_6_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_6_mock:1:flare:gaobd7:",
           "recipients": [
             "0xE725A096F67F35C1B1143D08C0491CB448A198E9",
           ],
@@ -1669,7 +1659,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x66AB74363136418DBAADC4A568CFD2338C13C559",
           ],
           "type": "IN",
-          "value": "1712698412698412800",
+          "value": "646107784431137700000",
         },
         {
           "accountId": "mock:1:ethereum:gaobd1:",
@@ -1715,14 +1705,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "CE0C361EEF07FF935FEED6FE1816499CF6DC39EE253ED14F9086760F168E23F3",
           "blockHeight": 183808,
           "date": 2018-01-22T04:33:47.631Z,
           "extra": {},
-          "fee": "67952380952380960",
+          "fee": "25634730538922160000",
           "hash": "5F68EE3E9AB5E0E03DA20D06A6B37A442547BC95E23353D019D1DE5B0FAA62A4",
-          "id": "mock_op_5_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_5_mock:1:flare:gaobd6:",
           "recipients": [
             "0x6C0F8C073B120924C6D4CD970E4349B2003275B4",
           ],
@@ -1730,7 +1720,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0xD3163BF1826CD4EF2C54C26D35C9D456EFE05F37",
           ],
           "type": "IN",
-          "value": "6795238095238096000",
+          "value": "2.563473053892216e+21",
         },
       ],
       "day": 2018-01-21T05:00:00.000Z,
@@ -1793,24 +1783,6 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "type": "IN",
           "value": "25615873015873016000",
         },
-        {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "4B9635D3E90561D6501D7F3D5FB544C55FC4EBEC5B22FE2BA635B5D6C3D78279",
-          "blockHeight": 178819,
-          "date": 2018-01-20T05:44:42.841Z,
-          "extra": {},
-          "fee": "1641286",
-          "hash": "23D1DFBBFC220A14A8E7ACCC2EC6042FCB056BDF3978A50137EB69EC37AE5CD6",
-          "id": "mock_op_6_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1FQmcWecUykL5yqAc9uKGtzJEE",
-          ],
-          "senders": [
-            "11ZspQkmQxWHk2uiUujPyRrLj6DpHZjXdzt",
-          ],
-          "type": "OUT",
-          "value": "164128581",
-        },
       ],
       "day": 2018-01-20T05:00:00.000Z,
     },
@@ -1857,47 +1829,6 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     },
     {
       "data": [
-        {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "268ACDEB18F430BDC6AE9EF2B06A598EB2D574434307E009D5164407913FD77A",
-          "blockHeight": 178665,
-          "date": 2018-01-18T15:05:59.457Z,
-          "extra": {},
-          "fee": "3639069",
-          "hash": "9680F471852E871CB9A25334334444363F8AE5745D9CF2A6BB1AA08F2486F4F4",
-          "id": "mock_op_7_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1acM2zEobtgnk46xNJeu2fDVY2t",
-          ],
-          "senders": [
-            "1wwXYz117U5u4xifACeNFGDG897ztWBt",
-          ],
-          "type": "IN",
-          "value": "363906889",
-        },
-      ],
-      "day": 2018-01-18T05:00:00.000Z,
-    },
-    {
-      "data": [
-        {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "DB8C4B0D5A847B0E4E54545D83498A7BFA3805E9DF93E656DDCDC726182B77DD",
-          "blockHeight": 178599,
-          "date": 2018-01-17T22:43:32.117Z,
-          "extra": {},
-          "fee": "1605389",
-          "hash": "1AEBABA3111F81462F341266AE83F7C58874382E76D2A084BDC097A808ED46E9",
-          "id": "mock_op_8_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1s1mPyLDTyQnW3dJB38sSuXQkrPJhC8fb",
-          ],
-          "senders": [
-            "1H4f1GmXsDxZ4AYeWLtXwLS1jj",
-          ],
-          "type": "IN",
-          "value": "160538881",
-        },
         {
           "accountId": "mock:1:ethereum_classic:gaobd4:",
           "blockHash": "6B6D7024A5B0DB98B36F7F81E9D38463480934FBF22A50A8BF06E30B8DE89550",
@@ -2044,47 +1975,6 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:litecoin:gaobd8:",
-          "blockHash": "6EAF6CBADF97B7F662086A96354616F247C8C893907F24EC00EC5B3A30457B21",
-          "blockHeight": 177953,
-          "date": 2018-01-11T05:04:44.602Z,
-          "extra": {},
-          "fee": "1376535",
-          "hash": "F4214B1DDFC7F0E3E8EA5810E4503C03098086505ED26A76D7B7FCE8C395471B",
-          "id": "mock_op_9_mock:1:litecoin:gaobd8:",
-          "recipients": [
-            "1H5FjbLm8ormQTsAtEhCccWVtcy",
-          ],
-          "senders": [
-            "19veku4PGmotk9aiQXn6vtHQ6nDmoZr79F",
-          ],
-          "type": "OUT",
-          "value": "137653478",
-        },
-      ],
-      "day": 2018-01-11T05:00:00.000Z,
-    },
-    {
-      "data": [
-        {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "383A714FE5D0ED6C0362D2C0797510C381B4B065EC12BEC98E36D0E5C04EC15D",
-          "blockHeight": 113042,
-          "date": 2018-01-11T01:03:34.569Z,
-          "extra": {},
-          "fee": "575802",
-          "hash": "DFBF984059967DCD78721FA1BD0FA4E744ADF1D40388DFE7E08FDB5F523573F2",
-          "id": "mock_op_5_mock:1:litecoin:gaobd9:",
-          "recipients": [
-            "13enxDmRLqtjqD9vdvwmoee6AQhg",
-          ],
-          "senders": [
-            "1vRuYyBoT1E8wC9muJY8s1A9Lx5p",
-          ],
-          "type": "IN",
-          "value": "57580150",
-        },
-        {
           "accountId": "mock:1:ethereum_classic:gaobd3:",
           "blockHash": "75FCA527CE833244013E6AB5F3D33CFFE2DF1D4EAB8E0E660E8C4EDB436DFAAA",
           "blockHeight": 174334,
@@ -2101,6 +1991,24 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           ],
           "type": "IN",
           "value": "97915873015873010000",
+        },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "8ED46E9CD0C6F537F6C80A4201D7E86BD64B32A9DB8C4B0D5A847B0E4E54545D",
+          "blockHeight": 99415,
+          "date": 2018-01-10T11:25:14.683Z,
+          "extra": {},
+          "fee": "108329341317365270000",
+          "hash": "164407913FD77A21F141A04C8D3F8128A85E8F570BB7A5C1AEBABA3111F81462",
+          "id": "mock_op_7_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0xEB18F430BDC6AE9EF2B06A598EB2D574434307E0",
+          ],
+          "senders": [
+            "0xF341266AE83F7C58874382E76D2A084BDC097A80",
+          ],
+          "type": "OUT",
+          "value": "1.0832934131736527e+22",
         },
       ],
       "day": 2018-01-10T05:00:00.000Z,
@@ -2148,31 +2056,26 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "type": "IN",
           "value": "117460317460317460",
         },
-      ],
-      "day": 2018-01-08T05:00:00.000Z,
-    },
-    {
-      "data": [
         {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "65988BE092704371E575CE172BC76FFB25B5761396399031A296651D0EC19F3C",
-          "blockHeight": 112685,
-          "date": 2018-01-07T07:43:05.177Z,
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "29B68C1EE461C3CC8D1236EAF6CBADF97B7F662086A96354616F247C8C893907",
+          "blockHeight": 99244,
+          "date": 2018-01-08T16:41:29.039Z,
           "extra": {},
-          "fee": "394696",
-          "hash": "70BC0AAF113695C01C94929D474E3BCB7320F61EE652D2C91CBE22797FED5C5F",
-          "id": "mock_op_6_mock:1:litecoin:gaobd9:",
+          "fee": "3766467065868264000",
+          "hash": "B95C2CDC67D2E3B39987E9F2BB4F4214B1DDFC7F0E3E8EA5810E4503C0309808",
+          "id": "mock_op_8_mock:1:flare:gaobd8:",
           "recipients": [
-            "1er8PmQkseCQGnMbueGPDCfRht1ZTcEcH",
+            "0x98A7BFA3805E9DF93E656DDCDC726182B77DD59A",
           ],
           "senders": [
-            "18n4LfhifjJWvzfLBouMnitcD6d",
+            "0x6505ED26A76D7B7FCE8C395471BE2EABE164CCEC",
           ],
-          "type": "IN",
-          "value": "39469645",
+          "type": "OUT",
+          "value": "376646706586826400000",
         },
       ],
-      "day": 2018-01-07T05:00:00.000Z,
+      "day": 2018-01-08T05:00:00.000Z,
     },
     {
       "data": [
@@ -2194,20 +2097,38 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "type": "IN",
           "value": "4620634920634921000",
         },
+        {
+          "accountId": "mock:1:flare:gaobd8:",
+          "blockHash": "D1007145232657C01CAEF49667B5CD6C13C4E5462461EA59BC573365227050A3",
+          "blockHeight": 99019,
+          "date": 2018-01-06T08:26:05.416Z,
+          "extra": {},
+          "fee": "19544910179640720000",
+          "hash": "C93D3CDD928BE40025DBACD082DB689C4D67E9E5240417C10E094A0826DD517B",
+          "id": "mock_op_9_mock:1:flare:gaobd8:",
+          "recipients": [
+            "0xDC9C17076B37717FB7D96B83D88604942C4B369A",
+          ],
+          "senders": [
+            "0xEC00EC5B3A30457B21E78BB6C3757605FBF06B77",
+          ],
+          "type": "IN",
+          "value": "1.954491017964072e+21",
+        },
       ],
       "day": 2018-01-06T05:00:00.000Z,
     },
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd7:",
+          "accountId": "mock:1:flare:gaobd7:",
           "blockHash": "B12DDC94AA3588CC513FCA1E088F8FC2825ED3DB556B2BC7ADBCBAE56AD782A5",
           "blockHeight": 135430,
           "date": 2018-01-05T23:58:50.638Z,
           "extra": {},
-          "fee": "415095238095238100",
+          "fee": "156592814371257480000",
           "hash": "830F10972A47F63CDDDD11CE9B999E62725A072CE8CDCF5F443EECFD91C13C1F",
-          "id": "mock_op_7_mock:1:ethereum_classic:gaobd7:",
+          "id": "mock_op_7_mock:1:flare:gaobd7:",
           "recipients": [
             "0xC13FB3B02041C80796EB703F123C2407CC0BE04D",
           ],
@@ -2215,7 +2136,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x438FDE5B808E2CF16F6B67AB2800372F16B62B15",
           ],
           "type": "OUT",
-          "value": "41509523809523810000",
+          "value": "1.5659281437125748e+22",
         },
       ],
       "day": 2018-01-05T05:00:00.000Z,
@@ -2246,14 +2167,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
     {
       "data": [
         {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "137EC3DF0E0BB483E5DCEA0F2BD675A6E62E781F3C10EC1CCC11D015FA427CDB",
           "blockHeight": 182059,
           "date": 2018-01-03T23:17:41.606Z,
           "extra": {},
-          "fee": "385301587301587400",
+          "fee": "145353293413173660000",
           "hash": "EF073B43F545845762C1CA2F55AF1EF393ECB62E2E74C90C2E9FE0B2E286A732",
-          "id": "mock_op_6_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_6_mock:1:flare:gaobd6:",
           "recipients": [
             "0xC309E8E51A09A05BB665BF4A5900588271E6E35C",
           ],
@@ -2261,7 +2182,7 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0x54F15C3ED4D7F006DE3BD993C57F966897D18069",
           ],
           "type": "IN",
-          "value": "38530158730158735000",
+          "value": "1.4535329341317365e+22",
         },
         {
           "accountId": "mock:1:ethereum_classic:gaobd4:",
@@ -2282,14 +2203,14 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
           "value": "15739682539682540000",
         },
         {
-          "accountId": "mock:1:ethereum_classic:gaobd6:",
+          "accountId": "mock:1:flare:gaobd6:",
           "blockHash": "19FA7D0A1B9103F8F1B557C71D1C175A283E9C677285FB24CD65CE927245710B",
           "blockHeight": 181989,
           "date": 2018-01-03T05:45:07.006Z,
           "extra": {},
-          "fee": "416761904761904800",
+          "fee": "157221556886227550000",
           "hash": "920A9935128FDD607106E0E3C5C849D7E17069F482AF9889F938738621D8A582",
-          "id": "mock_op_7_mock:1:ethereum_classic:gaobd6:",
+          "id": "mock_op_7_mock:1:flare:gaobd6:",
           "recipients": [
             "0x916239D7A21C480FC0AB179FE8147D360A15C9F1",
           ],
@@ -2297,33 +2218,10 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
             "0xEB445ED2C47666A5F9EA4DD652BB3F666B7CCE50",
           ],
           "type": "IN",
-          "value": "41676190476190474000",
+          "value": "1.5722155688622754e+22",
         },
       ],
       "day": 2018-01-03T05:00:00.000Z,
-    },
-    {
-      "data": [
-        {
-          "accountId": "mock:1:litecoin:gaobd9:",
-          "blockHash": "7977D94855789DA6B4B2BF19B40B46A2529EEC5074A2CB532880E4ABFBB723D9",
-          "blockHeight": 112289,
-          "date": 2018-01-03T04:44:53.968Z,
-          "extra": {},
-          "fee": "53547",
-          "hash": "1C48AAA71185DF995DCDE246EBB16F4782F926D0BF244CA45A85019E5D686434",
-          "id": "mock_op_7_mock:1:litecoin:gaobd9:",
-          "recipients": [
-            "1rJZyRb9NsZPPg8TsWR6sFV14WoLkFfH6kV",
-          ],
-          "senders": [
-            "1BYCLyBE6x1KacmZ5HtiUjUZ98pawnqq",
-          ],
-          "type": "OUT",
-          "value": "5354706",
-        },
-      ],
-      "day": 2018-01-02T05:00:00.000Z,
     },
     {
       "data": [
@@ -2367,6 +2265,100 @@ exports[`groupAccountOperationsByDay basic 2 1`] = `
         },
       ],
       "day": 2018-01-01T05:00:00.000Z,
+    },
+    {
+      "data": [
+        {
+          "accountId": "mock:1:ethereum:gaobd1:",
+          "blockHash": "409A1FBEE89BCF37A9746F0441B9E807F5B45A841CF97CB2FB26780D87CFC957",
+          "blockHeight": 95101,
+          "date": 2017-12-31T07:55:50.817Z,
+          "extra": {},
+          "fee": "7002083333333334",
+          "hash": "794269EB9C9EEC5DEDD75FF9D9EB59843543976B4D2A7364FFA4267B271E52D3",
+          "id": "mock_op_11_mock:1:ethereum:gaobd1:",
+          "recipients": [
+            "0xAA4E1C409FAB21675386223BE069235198086BEB",
+          ],
+          "senders": [
+            "0x45723F125BBDDE2F69B53EC09DB37E4562281A28",
+          ],
+          "subOperations": [],
+          "type": "IN",
+          "value": "700208333333333400",
+        },
+      ],
+      "day": 2017-12-31T05:00:00.000Z,
+    },
+    {
+      "data": [
+        {
+          "accountId": "mock:1:flare:gaobd7:",
+          "blockHash": "C9C4FB83F67C531CD7D4799F1533298AF6414AB8D20699460F5151486F01FF99",
+          "blockHeight": 134838,
+          "date": 2017-12-30T19:56:36.037Z,
+          "extra": {},
+          "fee": "228257485029940130000",
+          "hash": "EE1C5976EC93D4450C17F9F592A9445AD52B07C4275772134FE983FBB8C9AFF6",
+          "id": "mock_op_8_mock:1:flare:gaobd7:",
+          "recipients": [
+            "0x2434C5DE384263F62CC3C96EE176710A90850C59",
+          ],
+          "senders": [
+            "0x95961A7B8464B7B0A176164EF66419B7A3CB36E0",
+          ],
+          "type": "IN",
+          "value": "2.2825748502994013e+22",
+        },
+      ],
+      "day": 2017-12-30T05:00:00.000Z,
+    },
+    {
+      "data": [
+        {
+          "accountId": "mock:1:flare:gaobd7:",
+          "blockHash": "4C92F1C04B8F8B28182B4950FB385C91A6DA82699A8499C4C781E4F8F8D42107",
+          "blockHeight": 134699,
+          "date": 2017-12-29T09:09:04.225Z,
+          "extra": {},
+          "fee": "11976047904191616",
+          "hash": "9BEFD6A9247BD413014CE343FCF7738F778197E89768C093C8B9A76BD3DFAD78",
+          "id": "mock_op_9_mock:1:flare:gaobd7:",
+          "recipients": [
+            "0x98C2FAF75743F311BBD94DE71EF7906AA9032D93",
+          ],
+          "senders": [
+            "0x8A35A9BFFA3C8AD07AF35EBC4A92C5C28722CD3D",
+          ],
+          "type": "IN",
+          "value": "1197604790419161600",
+        },
+      ],
+      "day": 2017-12-29T05:00:00.000Z,
+    },
+    {
+      "data": [
+        {
+          "accountId": "mock:1:ethereum:gaobd1:",
+          "blockHash": "3E11CDD671DD407B2358589C53D6F7A65BE52986209AC311FCBFE15AF820A0E8",
+          "blockHeight": 94695,
+          "date": 2017-12-27T02:20:13.736Z,
+          "extra": {},
+          "fee": "145416666666667",
+          "hash": "AAE4BEC4AA54F7CB236AC4BD5B988417DA0F747AA72D3CB6D91BA2D624B86E3F",
+          "id": "mock_op_12_mock:1:ethereum:gaobd1:",
+          "recipients": [
+            "0xB13312A0CB38AB6D12D4C9779109D5731CAEF9E3",
+          ],
+          "senders": [
+            "0xDCC117971F35126A6BB02E83627DDDEE487DDFC1",
+          ],
+          "subOperations": [],
+          "type": "IN",
+          "value": "14541666666666668",
+        },
+      ],
+      "day": 2017-12-26T05:00:00.000Z,
     },
   ],
 }

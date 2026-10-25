@@ -173,7 +173,20 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   zcash: 0.000205798,
   polygon: 4.2e-16,
   bsc: 2.1e-14,
-  optimism: 8.4e-16,
+  optimism: 2.4e-14,
+  arbitrum: 2.4e-14,
+  base: 2.4e-14,
+  base_sepolia: 2.4e-14,
+  linea: 2.4e-14,
+  linea_sepolia: 2.4e-14,
+  blast: 2.4e-14,
+  blast_sepolia: 2.4e-14,
+  solana: 2.5e-7,
+  aleo: 1e-4,
+  aleo_testnet: 1e-4,
+  concordium: 1e-4,
+  hypercore: 1e-4,
+  flare: 1.67e-18,
 };
 // TODO fix the mock to never generate negative balance...
 
@@ -193,9 +206,16 @@ export function genOperation(
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
-  const divider =
-    (account.type === "Account" && currencyIdApproxMarketPrice[account.currency.id]) ||
-    currencyIdApproxMarketPrice.bitcoin;
+  // Currencies with no approximated market price still need a plausible
+  // magnitude: target roughly 1000 units per operation so balances never
+  // collapse to zero for the long tail of supported currencies.
+  const dividerCurrency = account.type === "TokenAccount" ? account.token : account.currency;
+  const knownDivider = dividerCurrency
+    ? currencyIdApproxMarketPrice[dividerCurrency.id]
+    : undefined;
+  const magnitude =
+    dividerCurrency?.units?.[0]?.magnitude ?? superAccount?.currency?.units?.[0]?.magnitude ?? 8;
+  const divider = knownDivider ?? 100000 / (1000 * Math.pow(10, magnitude));
   const value = new BigNumber(
     Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider),
   );

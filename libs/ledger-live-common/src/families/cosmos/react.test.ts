@@ -105,10 +105,15 @@ describe("cosmos/react", () => {
       it("should only return delegations which have some pending rewards", async () => {
         const { account, prepare } = await setup();
         await prepare();
+        const delegations = account.stakingResources.delegations as CosmosDelegation[];
+        const delegationsWithRewards = delegations.filter(({ pendingRewards }) =>
+          pendingRewards.gt(0),
+        );
         const { result } = renderHook(() =>
           hooks.useCosmosFamilyMappedDelegations(account, "claimReward"),
         );
-        expect(result.current.length).toBe(3);
+        expect(delegationsWithRewards.length).toBeGreaterThan(0);
+        expect(result.current.length).toBe(delegationsWithRewards.length);
       });
     });
   });
