@@ -127,7 +127,11 @@ const walletCliLoaders: CoinModuleLoader[] = [
       import("@ledgerhq/live-common/families/xrp/walletApiAdapter").then(m => m.default),
     loadPlatformAdapter: () =>
       import("@ledgerhq/live-common/families/xrp/platformAdapter").then(m => m.default),
-    loadSigner: () => import("@ledgerhq/live-common/families/xrp/signer").then(m => m.default),
+    loadSigner: async () => {
+      const setup = await import("@ledgerhq/live-common/families/xrp/setup");
+      setup.setXrpLdmkEnabled(true);
+      return import("@ledgerhq/live-common/families/xrp/signer").then(m => m.default);
+    },
     loadBridgeExtensions: () =>
       import("@ledgerhq/live-common/families/xrp/bridgeExtensions").then(m => m.default),
     loadLocalApi: () =>
