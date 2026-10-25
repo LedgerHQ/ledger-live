@@ -9,7 +9,6 @@
         <item name="backgroundColor">@color/background_light</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
-        <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:forceDarkAllowed">false</item>
         <item name="android:windowBackground">#000000</item>
