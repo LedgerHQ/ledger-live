@@ -103,6 +103,27 @@ async function signWith(signResult: unknown) {
   return execution;
 }
 
+/** Starts the deposit and stops at the Exchange confirmation, keeping the swap's callbacks. */
+async function startSwap() {
+  const onSuccess = jest.fn();
+  const onCancel = jest.fn();
+  mockExecuteSwap.mockImplementation(async deps => {
+    deps.uiHooks["custom.exchange.swap"]({ exchangeParams: swapUiRequest, onSuccess, onCancel });
+  });
+
+  const hook = renderHook(() =>
+    usePerpsDepositExecution(params, {
+      onDone: jest.fn(),
+      onRefused: jest.fn(),
+      onNotEnoughBalance: jest.fn(),
+    }),
+  );
+  await act(async () => {
+    await hook.result.current.executeDeposit();
+  });
+  return { ...hook, onSuccess, onCancel };
+}
+
 describe("usePerpsDepositExecution", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -110,6 +131,43 @@ describe("usePerpsDepositExecution", () => {
   });
 
   afterEach(() => cancelDepositRequest());
+
+  it("cancels the swap when the deposit is closed mid-flow, so it is reported as cancelled", async () => {
+    const { result, unmount, onCancel } = await startSwap();
+    expect(result.current.deviceStep).toMatchObject({ kind: "device", stepId: "confirm" });
+
+    unmount();
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onCancel).toHaveBeenCalledWith(expect.objectContaining({ name: "DrawerClosedError" }));
+  });
+
+  it("does not cancel a swap that already settled when the deposit is closed", async () => {
+    const { result, unmount, onSuccess, onCancel } = await startSwap();
+    await answerDeviceStep(result.current.deviceStep, {
+      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+    });
+    await answerDeviceStep(result.current.deviceStep, {
+      signedOperation: { operation, signature: "0xsig" },
+    });
+    expect(onSuccess).toHaveBeenCalled();
+
+    unmount();
+
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
+  it("does not cancel a failed swap twice when the deposit is closed", async () => {
+    const { result, unmount, onCancel } = await startSwap();
+    await answerDeviceStep(result.current.deviceStep, {
+      completeExchangeError: new CompleteExchangeError("INIT", "Error", "boom"),
+    });
+    expect(onCancel).toHaveBeenCalledTimes(1);
+
+    unmount();
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
 
   it("quotes the deposit as a swap against the perps provider, at the price the review showed", async () => {
     mockExecuteSwap.mockResolvedValue({ operationHash: operation.hash, swapId: "swap-1" });
