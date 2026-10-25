@@ -80,6 +80,10 @@ describe("networkFromCurrencyId", () => {
     });
   });
 
+  it("maps ripple_testnet to the XRPL Testnet network", () => {
+    expect(networkFromCurrencyId("ripple_testnet")).toEqual({ name: "ripple", env: "testnet" });
+  });
+
   it("throws UnknownNetworkError for unknown currency", () => {
     expect(() => networkFromCurrencyId("not_a_currency")).toThrow(UnknownNetworkError);
   });
@@ -96,6 +100,10 @@ describe("networkStringFromCurrencyId", () => {
 
   it("maps devnet currencyId to canonical string", () => {
     expect(networkStringFromCurrencyId("solana_devnet")).toBe("solana:devnet");
+  });
+
+  it("maps the XRPL Testnet currencyId to its canonical network string", () => {
+    expect(networkStringFromCurrencyId("ripple_testnet")).toBe("ripple:testnet");
   });
 
   it("throws UnknownNetworkError for unknown currencyId", () => {

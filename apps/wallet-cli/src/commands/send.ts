@@ -36,6 +36,7 @@ type SendFlags = {
   validator?: string;
   "stake-account"?: string;
   memo?: string;
+  "destination-tag"?: number;
   data?: string;
   "dry-run": boolean;
   output?: "human" | "json";
@@ -65,6 +66,12 @@ const INTENT_BUILDERS: Record<string, IntentBuilder> = {
     validator: flags.validator,
     stakeAccount: flags["stake-account"],
     memo: flags.memo,
+  }),
+  xrp: flags => ({
+    family: "xrp",
+    recipient: flags.to,
+    amount: flags.amount,
+    destinationTag: flags["destination-tag"],
   }),
 };
 
@@ -130,7 +137,10 @@ export default defineCommand({
       description: "Stake account address (Solana staking only)",
     }),
     memo: option(z.string().min(1).optional(), {
-      description: "Memo/tag (Solana only)",
+      description: "Memo (Solana only)",
+    }),
+    "destination-tag": option(z.coerce.number().int().min(0).max(4_294_967_295).optional(), {
+      description: "XRPL destination tag (XRP only; unsigned 32-bit integer)",
     }),
     data: option(
       z
