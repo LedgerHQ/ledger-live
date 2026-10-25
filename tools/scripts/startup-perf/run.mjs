@@ -423,6 +423,28 @@ const android = {
     const uptime = Number(stdout.match(/^(\d+\.\d+) /m)?.[1]);
     return { atUptime: Number.isFinite(uptime) ? uptime : null, threads: parseThreadStats(stdout) };
   },
+  // Two screenshots ~0.3 s apart, pulled to `${base}-1.png` / `-2.png`: their difference shows what
+  // is still being redrawn.
+  async screenshots(device, base) {
+    await run("adb", [
+      "-s",
+      device,
+      "shell",
+      "screencap -p /data/local/tmp/startup-perf-1.png; sleep 0.3; screencap -p /data/local/tmp/startup-perf-2.png",
+    ]);
+    const files = [];
+    for (const n of [1, 2]) {
+      await run("adb", [
+        "-s",
+        device,
+        "pull",
+        `/data/local/tmp/startup-perf-${n}.png`,
+        `${base}-${n}.png`,
+      ]);
+      files.push(`${base}-${n}.png`);
+    }
+    return files;
+  },
   tracedDevices: new Set(),
   // Starts a background Perfetto trace; the config is piped in, since traced cannot read files the
   // shell user owns. The trace file must live in /data/misc/perfetto-traces.
@@ -598,6 +620,9 @@ const ios = {
   },
   async threadStats() {
     return null;
+  },
+  async screenshots() {
+    return [];
   },
   async cpuCount() {
     return null;
@@ -1043,10 +1068,14 @@ async function sample(meta) {
       const home = await maestro(meta.device, "hierarchy", [], { timeoutMs: 60_000 });
       const file = path.join(DEBUG_DIR, `${name}-home.json`);
       await writeFile(file, home.stdout);
+      const shots = await P.screenshots(meta.device, path.join(DEBUG_DIR, `${name}-home`)).catch(
+        () => [],
+      );
       record.homeScreen = {
         at,
         file: path.relative(OUT_DIR, file),
         ids: hierarchyIds(home.stdout),
+        shots: shots.map(f => path.relative(OUT_DIR, f)),
       };
     }
     const perf = await readPerformance(meta.device, name);
