@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
@@ -72,6 +72,11 @@ export type PerpsDepositExecutionCallbacks = Readonly<{
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
+
+// Named like the swap drawer's, so /swap/cancelled reports a closed deposit the same way.
+class DrawerClosedError extends Error {
+  override name = "DrawerClosedError";
+}
 const FEE_STRATEGY = "medium";
 
 /** The swap orchestration's analytics sink, pointed at the perps flow. */
@@ -88,6 +93,13 @@ export function usePerpsDepositExecution(
   { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
+
+  const cancelSwapRef = useRef<((error: Error) => void) | null>(null);
+
+  useEffect(
+    () => () => cancelSwapRef.current?.(new DrawerClosedError("User closed the deposit")),
+    [],
+  );
 
   const dispatch = useDispatch();
   const accounts = useSelector(flattenAccountsSelector);
@@ -252,10 +264,18 @@ export function usePerpsDepositExecution(
               );
             },
             "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+              const cancel = (error: Error) => {
+                if (cancelSwapRef.current !== cancel) return;
+                cancelSwapRef.current = null;
+                onCancel(error);
+              };
+              cancelSwapRef.current = cancel;
               void confirmSignAndBroadcast(exchangeParams).then(result => {
+                if (cancelSwapRef.current !== cancel) return;
+                cancelSwapRef.current = null;
                 signed = result;
                 onSuccess({ operationHash: result.operation.hash, swapId: result.swapId ?? "" });
-              }, onCancel);
+              }, cancel);
             },
             // The signing dialog renders errors itself, so there is no separate
             // error screen to open — reject and let the catch below take over.
