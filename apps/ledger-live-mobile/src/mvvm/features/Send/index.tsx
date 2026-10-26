@@ -23,6 +23,7 @@ import { CustomFeesScreen } from "./screens/CustomFees";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
   [SEND_FLOW_STEP.BALANCE_TYPE]: BalanceTypeScreen,
+  [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: () => <></>,
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.RECENT_HISTORY]: () => <></>,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,

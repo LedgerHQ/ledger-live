@@ -307,6 +307,26 @@ describe("useSendFlowTransaction", () => {
       });
     });
 
+    it("GIVEN a recipient without a self-transfer flag WHEN it is set THEN it is treated as a plain send", () => {
+      const buildSelfTransferPatch = stubBalanceTypeConfig("aleo1self");
+
+      const { result } = renderHook(() =>
+        useSendFlowTransaction({
+          account: mockAccount,
+          parentAccount: null,
+        }),
+      );
+
+      act(() => {
+        result.current.actions.setRecipient({ address: "aleo1other" });
+      });
+
+      expect(buildSelfTransferPatch).toHaveBeenCalledWith({
+        isSelfTransfer: false,
+        transaction: mockTransaction,
+      });
+    });
+
     it("should not update when account is null", () => {
       const { result } = renderHook(() =>
         useSendFlowTransaction({

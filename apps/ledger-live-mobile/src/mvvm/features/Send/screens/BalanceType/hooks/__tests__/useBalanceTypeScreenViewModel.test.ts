@@ -6,6 +6,7 @@ import type { BalanceTypeOption } from "@ledgerhq/live-common/bridge/descriptor/
 import { trackPage } from "@shared/analytics";
 import { ScreenName } from "~/const";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
+import { isSendBalanceTypeSyncRequired } from "../../../../utils/familySendSlots";
 import {
   useBalanceTypeScreenViewModel,
   type BalanceTypeScreenViewModel,
@@ -16,6 +17,9 @@ jest.mock("@react-navigation/native", () => ({
   useNavigation: jest.fn(),
 }));
 jest.mock("../../../../context/SendFlowContext");
+jest.mock("../../../../utils/familySendSlots", () => ({
+  isSendBalanceTypeSyncRequired: jest.fn(() => false),
+}));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: jest.fn((account: { id: string } | null) => {
     return account ? { updateTransaction: mockBridgeUpdateTransaction } : null;
@@ -47,6 +51,7 @@ const mockedUseNavigation = jest.mocked(useNavigation);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+const mockedIsSendBalanceTypeSyncRequired = jest.mocked(isSendBalanceTypeSyncRequired);
 const mockedTrackPage = jest.mocked(trackPage);
 
 const PUBLIC_POOL: BalanceTypeOption = {
@@ -88,7 +93,6 @@ function stubBalanceTypeConfig(options: readonly BalanceTypeOption[]) {
     getSelectableBalance: jest.fn(() => new BigNumber(0)),
   };
   mockedGetBalanceTypeConfig.mockReturnValue(config);
-
   return config;
 }
 
@@ -121,6 +125,7 @@ function getReadyViewModel(result: { current: BalanceTypeScreenViewModel }) {
 describe("useBalanceTypeScreenViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedIsSendBalanceTypeSyncRequired.mockReturnValue(false);
     mockedUseNavigation.mockReturnValue({ navigate: mockNavigate } as never);
     mockedUseSendFlowActions.mockReturnValue({
       transaction: { updateTransaction: mockUpdateTransaction, setTransaction: mockSetTransaction },
@@ -217,12 +222,10 @@ describe("useBalanceTypeScreenViewModel", () => {
 
       expect(mockResetRecipient).toHaveBeenCalledTimes(1);
       expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
-
       const updater = mockUpdateTransaction.mock.calls[0][0] as (
         tx: Record<string, unknown>,
       ) => Record<string, unknown>;
       updater({ id: "tx1" });
-
       expect(config.buildSelectionPatch).toHaveBeenCalledWith(optionId);
       expect(mockBridgeUpdateTransaction).toHaveBeenCalledWith({ id: "tx1" }, { pool: optionId });
       expect(mockSetTransaction).not.toHaveBeenCalled();
@@ -249,6 +252,45 @@ describe("useBalanceTypeScreenViewModel", () => {
 
     expect(mockUpdateTransaction).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN a pick that needs an account sync WHEN a pool is selected THEN the sync sheet opens", () => {
+    mockedIsSendBalanceTypeSyncRequired.mockReturnValue(true);
+
+    const { result } = renderViewModel();
+    expect(getReadyViewModel(result).sync.isOpen).toBe(false);
+
+    act(() => getReadyViewModel(result).onSelect("private"));
+
+    expect(mockUpdateTransaction).toHaveBeenCalledTimes(1);
+    expect(mockedIsSendBalanceTypeSyncRequired).toHaveBeenCalledWith(mockAccount, {
+      id: "tx1",
+      pool: "private",
+    });
+    expect(getReadyViewModel(result).sync.isOpen).toBe(true);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN an open sync sheet WHEN it is closed THEN it closes and the screen stays", () => {
+    mockedIsSendBalanceTypeSyncRequired.mockReturnValue(true);
+
+    const { result } = renderViewModel();
+    act(() => getReadyViewModel(result).onSelect("private"));
+    act(() => getReadyViewModel(result).sync.onClose());
+
+    expect(getReadyViewModel(result).sync.isOpen).toBe(false);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN an open sync sheet WHEN the sync completes THEN it closes and the recipient step opens", () => {
+    mockedIsSendBalanceTypeSyncRequired.mockReturnValue(true);
+
+    const { result } = renderViewModel();
+    act(() => getReadyViewModel(result).onSelect("private"));
+    act(() => getReadyViewModel(result).sync.onComplete());
+
+    expect(getReadyViewModel(result).sync.isOpen).toBe(false);
+    expect(mockNavigate).toHaveBeenCalledWith(ScreenName.SendFlowRecipient);
   });
 
   it("GIVEN a ready view model WHEN rendered several times THEN the page is tracked once", () => {

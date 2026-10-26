@@ -82,6 +82,17 @@ describe("accountActions.getMainActions", () => {
 
     expect(action.disabled).toBe(false);
   });
+
+  it("omits publicToPrivate when the new send flow offers the self transfer instead", () => {
+    mockStakingEnabled(true);
+
+    const actions = accountActions.getMainActions({
+      account: ALEO_ACCOUNT_1,
+      isNewSendFlowEnabled: true,
+    });
+
+    expect(actions.map(action => action.id)).toEqual(["stake"]);
+  });
 });
 
 const findStake = (account = ALEO_ACCOUNT_1) =>

@@ -28,9 +28,11 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
       title: "",
     },
   },
+  // Rendered as a bottomsheet overlay from the balance type screen, not a stack screen.
   [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
     id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
     canGoBack: false,
+    floating: true,
     showHeaderRight: false,
     showTitle: false,
   },

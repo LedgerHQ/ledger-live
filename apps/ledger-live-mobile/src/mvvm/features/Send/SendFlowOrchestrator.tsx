@@ -29,12 +29,6 @@ type SendFlowOrchestratorProps = Readonly<{
   children?: React.ReactNode;
 }>;
 
-type SendFlowNavigatorProps = Readonly<{
-  stepRegistry: StepRegistry<SendFlowStep>;
-  flowConfig: SendFlowConfig;
-  onClose: () => void;
-}>;
-
 function getInitialSendFlowStep(
   initParams: SendFlowInitParams | undefined,
   uiConfig: SendFlowUiConfig,
@@ -42,13 +36,17 @@ function getInitialSendFlowStep(
   if (uiConfig.hasBalanceTypeStep) {
     return SEND_FLOW_STEP.BALANCE_TYPE;
   }
-
   if (canSkipRecipientStep(initParams, uiConfig)) {
     return SEND_FLOW_STEP.AMOUNT;
   }
-
   return SEND_FLOW_STEP.RECIPIENT;
 }
+
+type SendFlowNavigatorProps = Readonly<{
+  stepRegistry: StepRegistry<SendFlowStep>;
+  flowConfig: SendFlowConfig;
+  onClose: () => void;
+}>;
 
 function SendFlowNavigator({ stepRegistry, flowConfig, onClose }: SendFlowNavigatorProps) {
   const { isSigning } = useSendSignature();

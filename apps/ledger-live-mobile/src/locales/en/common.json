@@ -5269,6 +5269,19 @@
           "notice": "Sync required"
         }
       },
+      "recipient": {
+        "selfTransfer": {
+          "title": "Self transfer",
+          "toPrivate": {
+            "action": "Send to private balance",
+            "label": "Private balance"
+          },
+          "toPublic": {
+            "action": "Send to public balance",
+            "label": "Public balance"
+          }
+        }
+      },
       "title": "Send {{currency}}",
       "selectAddress": "Select address",
       "available": "Available {{amount}}",
@@ -11898,6 +11911,14 @@
       }
     },
     "send": {
+      "balanceTypeSync": {
+        "title": "Refreshing your private balance",
+        "progress": "{{percentage}}%",
+        "errorTitle": "Private sync failed",
+        "errorDescription": "Something went wrong, please try again",
+        "recordLimitTitle": "You can send up to {{amount}}",
+        "recordLimitDescription": "Your balance is split across several records, and one transaction can use a maximum of {{maxRecords}}. To send more, make multiple transactions."
+      },
       "balanceSelection": {
         "title": "Select balance",
         "convertToPrivate": "Transfer from public",

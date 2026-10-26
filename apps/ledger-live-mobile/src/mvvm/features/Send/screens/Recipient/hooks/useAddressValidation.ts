@@ -18,6 +18,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { useTranslation } from "~/context/Locale";
 
 import { useBridgeRecipientValidation } from "@ledgerhq/live-common/flows/send/recipient/hooks/useBridgeRecipientValidation";
 import { findMatchedContact } from "@ledgerhq/live-common/flows/send/recipient/utils/findMatchedContact";
@@ -30,8 +31,11 @@ import type {
   RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
-import { applyRecipientSelfTransferState } from "../../../utils/selfTransferTarget";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
+import {
+  applyRecipientSelfTransferState,
+  getAccountSelfTransferTarget,
+} from "../../../utils/selfTransferTarget";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
   return domain.status === "loading" || domain.status === "queued";
@@ -67,6 +71,7 @@ export function useAddressValidation({
   canSearchContactsByName = false,
   debounceMs,
 }: UseAddressValidationProps): UseAddressValidationResult {
+  const { t } = useTranslation();
   const [validationState, setValidationState] = useState<{
     status: AddressValidationStatus;
     error: AddressValidationError;
@@ -224,7 +229,18 @@ export function useAddressValidation({
 
   const { formattedBalance, formattedCounterValue } =
     useFormattedAccountBalance(matchedLedgerAccount);
-  const accountName = useMaybeAccountName(matchedLedgerAccount);
+  const matchedLedgerAccountName = useMaybeAccountName(matchedLedgerAccount);
+
+  const selfTransferPoolLabel = useMemo(() => {
+    if (!currentAccountMatch || !account) return undefined;
+    const target = getAccountSelfTransferTarget(account, transaction, parentAccount);
+    if (!target || target.address.toLowerCase() !== addressForBridgeValidation.toLowerCase()) {
+      return undefined;
+    }
+    return t(`send.newSendFlow.${target.translationKey}.label`);
+  }, [currentAccountMatch, account, parentAccount, transaction, addressForBridgeValidation, t]);
+
+  const accountName = selfTransferPoolLabel ?? matchedLedgerAccountName;
 
   const validateAddress = useCallback(async () => {
     if (!searchValue) {
@@ -308,7 +324,7 @@ export function useAddressValidation({
 
     const matchedAccounts: MatchedAccount[] = allMatchedAccounts.map(acc => ({
       account: acc,
-      accountName: undefined, // Will be resolved in the component
+      accountName: acc.id === currentAccountMatch?.id ? selfTransferPoolLabel : undefined,
       accountBalance: undefined,
       accountBalanceFormatted: undefined,
     }));
@@ -357,6 +373,7 @@ export function useAddressValidation({
     formattedBalance,
     formattedCounterValue,
     accountName,
+    selfTransferPoolLabel,
     mainAccount,
     currency,
     addressForBridgeValidation,
