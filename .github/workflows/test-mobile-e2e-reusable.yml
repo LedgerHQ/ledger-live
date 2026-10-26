@@ -1261,7 +1261,7 @@ jobs:
       # then rejects every certificate issued since. Also holds the tests until the emulators boot.
       - name: Sync Android emulator clocks
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/sync-android-emulator-clocks@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/sync-android-emulator-clocks@test/e2e-QAA-1665-clock-sync
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
