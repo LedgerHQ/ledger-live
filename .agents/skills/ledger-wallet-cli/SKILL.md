@@ -378,9 +378,9 @@ local state only and reports one of:
 - `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` once the profile is saved, and
   `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait` again. While the
   listener is still starting, `expiresAt` and `enrollmentUrl` are absent; keep polling.
-- an error with `error.code` `listener_exited`, `enrollment_expired` or `profile_not_found` (no
-  profile and no listener, or a listener that has not saved it within 3 minutes), exit 1 — start a
-  fresh enrollment with a new `--profile` id.
+- an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
+  profile within 3 minutes), `enrollment_expired` or `profile_not_found` (no profile and no
+  listener), exit 1 — the enrollment is lost: start a fresh one with a new `--profile` id.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate

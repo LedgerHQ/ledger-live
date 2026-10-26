@@ -401,7 +401,7 @@ describe("agent-intent wait", () => {
     });
   });
 
-  it("fails with profile_not_found when a live listener has not saved its profile in time", async () => {
+  it("fails with listener_stuck when a live listener has not saved its profile in time", async () => {
     profileReads = [undefined];
 
     await withEnrollListenerLock("test-agent", async () => {
@@ -412,7 +412,7 @@ describe("agent-intent wait", () => {
       expect(code).toBe(1);
       expect(line).toMatchObject({
         error: {
-          code: "profile_not_found",
+          code: "listener_stuck",
           message: expect.stringContaining(
             `listener (pid ${process.pid}) has not saved it within 3 minutes`,
           ),

@@ -66,8 +66,9 @@ function lockAgeMs(lockPath: string): number {
 
 /** Returns how long to keep polling for a profile not saved yet, or reports `enrollment-waiting`
  * at the deadline. A live listener that has not saved its profile yet (keypair, keychain unlock)
- * is starting, for at most LISTENER_STARTING_MAX_MS; with none, the profile is not found. A plain
- * `enroll` whose human answers a keychain prompt later than that is accepted as not found too. */
+ * is starting, for at most LISTENER_STARTING_MAX_MS, then stuck; with none, the profile is not
+ * found. A plain `enroll` whose human answers a keychain prompt later than that is accepted as stuck
+ * too. */
 function checkMissingProfile(
   out: CommandOutput,
   profileId: string,
@@ -84,7 +85,7 @@ function checkMissingProfile(
   }
   if (lockAgeMs(lockPath) > LISTENER_STARTING_MAX_MS) {
     throw new CodedCommandError(
-      "profile_not_found",
+      "listener_stuck",
       `No Agent Intent profile named "${profileId}": its enrollment listener (pid ` +
         `${listenerPid}) has not saved it within ${LISTENER_STARTING_MAX_MS / 60_000} minutes, ` +
         "so it is stuck or its pid was reused. Start a fresh enrollment with a new --profile id.",
