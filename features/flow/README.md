@@ -59,7 +59,7 @@ screens/<Screen>/    # one folder per screen, when the flow has several (optiona
 components/          # UI pieces of the views (.web.tsx / .native.tsx)
 copy/                # hooks turning i18n keys into labels (optional)
 logic/               # pure business rules, no React (optional)
-model/               # framework-free view model, controller and ports (optional)
+model/               # framework-free lifecycle model: state constructors, controller and ports (optional)
 state/               # flow state: slice and selectors, or a React reducer (optional)
 hooks/               # shared React hooks (optional)
 types.ts             # types shared across the package (optional)

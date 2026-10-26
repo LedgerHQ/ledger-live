@@ -12,7 +12,7 @@ features/flow/pay-card/src/
 ├── useCardViewModel.ts
 ├── CardView.web.tsx
 ├── CardView.native.tsx
-├── useCardStatusRefresh.web.ts      # platform-specific hook used by the view model
+├── useCardStatusRefresh.web.ts      # platform-specific hook used by the ViewModel
 ├── useCardStatusRefresh.native.ts
 ├── useCardLifecycleTracking.ts
 ├── derivePayCardAnalyticsMilestones.ts
@@ -28,13 +28,14 @@ features/flow/flow-contacts-add-address/src/
 ├── copy/                            # useAddAddressEntryCopy.ts, useAddAddressReviewLabels.ts, ...
 ├── screens/
 │   ├── AddressEntry/
-│   │   ├── components/              # used by this screen only
-│   │   └── viewModel/               # useContactsAddAddressEntryViewModel.{web,native}.ts
-│   ├── AddressName/
+│   │   ├── components/              # entry and View folders (deviation: belong at the screen root)
+│   │   └── viewModel/               # deviation: the ViewModel belongs at the screen root
+│   ├── AddressName/                 # deviation: native is one file, no ViewModel or View
 │   ├── Review/
+│   │   ├── ContactsAddAddressReview.web.tsx       # entry: View + ViewModel
 │   │   ├── useContactsAddAddressReviewViewModel.web.ts
 │   │   ├── ContactsAddAddressReviewView.web.tsx
-│   │   ├── ContactsAddAddressReview.native.tsx
+│   │   ├── ContactsAddAddressReview.native.tsx    # deviation: one file, no ViewModel or View
 │   │   └── types.ts
 │   └── Flow/                        # ContactsAddAddressFlowContent.{web,native}.tsx: switch on the step
 ├── state/
@@ -49,7 +50,7 @@ features/flow/flow-contacts-add-address/src/
 └── index.native.ts
 ```
 
-## Framework-free model: `@features/flow-contacts-delete-address`
+## Lifecycle model: `@features/flow-contacts-delete-address`
 
 ```text
 features/flow/flow-contacts-delete-address/src/
@@ -60,10 +61,10 @@ features/flow/flow-contacts-delete-address/src/
 ├── copy/useDeleteAddressLabels.ts
 ├── model/
 │   ├── addressDeleteController.ts   # takes the ports, returns the next lifecycle
-│   ├── addressDeleteViewModel.ts    # pure lifecycle constructors
+│   ├── addressDeleteViewModel.ts    # pure lifecycle constructors (the name predates "lifecycle model")
 │   └── ports.ts                     # ContactAddressDeletionPort, injected by the app
 ├── createContactAddressDeletePort.ts
-├── useDeleteAddressFlowViewModel.ts # the React hook over model/
+├── useDeleteAddressFlowViewModel.ts # the ViewModel: the React hook over model/
 ├── types.ts
 ├── exports.ts
 ├── index.ts                         # ./exports + the .web dialog
