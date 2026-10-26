@@ -34,3 +34,19 @@ Wide layouts cap the column at 376px. Narrow layouts keep 16px side padding and 
 description wrap. The globe spot sits 24px above the copy, and the action sits 32px below that
 block. When `action` is set, a gray large Lumen button with an external-link icon is shown, sized
 to its label.
+
+## Scope
+
+Use it only for a full-screen block with no exit. A block inside a dialog or a bottom sheet uses
+[`InfoState`](../ui-info-state) in that container instead, like
+[`CurrencyRegionRestrictedDialog`](../../apps/ledger-live-desktop/src/mvvm/features/CurrencyRegionRestrictedDialog)
+and
+[`RegionRestrictedDrawer`](../../apps/ledger-live-mobile/src/mvvm/features/Accounts/components/RegionRestrictedDrawer).
+Those were checked for reuse (LIVE-38966) and kept apart because:
+
+- this view paints its own canvas and fills the screen, while the modal sizes to its content and
+  sets the info tint;
+- their full-width base "Learn more" and gray "Close" buttons differ from the single gray,
+  label-sized action here;
+- the dialog header and the sheet already close them, so a close prop here would add a second
+  path.
