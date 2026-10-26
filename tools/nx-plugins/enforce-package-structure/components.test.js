@@ -921,6 +921,19 @@ test("R3 checks the values of an index signature", () => {
   }
 });
 
+test("R3 checks the value a getter returns", () => {
+  for (const contractModule of [
+    "export type CardProps = { item: { get value(): { onPress(): void } } };\n",
+    "interface Item { get value(): { onPress(): void } }\nexport type CardProps = { item: Item };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
 test("R3 checks the local types a prop holds behind a local alias", () => {
   for (const aliases of [
     "type Tile = { onPress(): void };\ntype Tiles = Tile[];",

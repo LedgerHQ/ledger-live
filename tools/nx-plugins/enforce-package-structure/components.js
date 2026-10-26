@@ -1011,8 +1011,9 @@ function reachableProps(declaration, module) {
   }
   /** @param {ts.TypeElement} prop @param {Context} context */
   function addPropNow(prop, context) {
-    // `{ [id: string]: Tile }` holds tiles but declares no prop of its own.
+    // `{ [id: string]: Tile }` and `{ get tile(): Tile }` hold a tile but declare no callback.
     if (ts.isIndexSignatureDeclaration(prop)) visit(prop.type, context);
+    if (ts.isGetAccessorDeclaration(prop) && prop.type) visit(prop.type, context);
     if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
     props.add(prop);
     if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, context);
