@@ -11362,9 +11362,6 @@ importers:
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
         version: link:../../wallet-framework-test-setup
-      '@provablehq/sdk':
-        specifier: 0.10.2
-        version: 0.10.2
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -13825,9 +13822,6 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../types-live
-      '@provablehq/sdk':
-        specifier: 0.10.2
-        version: 0.10.2
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -25756,12 +25750,6 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@provablehq/sdk@0.10.2':
-    resolution: {integrity: sha512-ZDJsWPSZOZKNRyKGsHMyX0Zxr2RJYwidCwCgIZrvyvk/AewCKv1pOU6ARCM4Hx3eaQVfzEo2h/IJQxWzltubuQ==}
-
-  '@provablehq/wasm@0.10.2':
-    resolution: {integrity: sha512-/SdilgSWmUshels/DmqmzM1KwCFcQXUSI++SdrL029m6qvgU/kX22J0SqmZ46z/NhDp6ZJRDNNEd0A+tzPTSIA==}
-
   '@radix-ui/number@1.1.1':
     resolution: {integrity: sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g==}
 
@@ -28809,6 +28797,8 @@ packages:
 
   '@types/object-hash@2.2.1':
     resolution: {integrity: sha512-i/rtaJFCsPljrZvP/akBqEwUP2y5cZLOmvO+JaYnz01aPknrQ+hB5MRcO7iqCUsFaYfTG8kGfKUyboA07xeDHQ==}
+
+  '@types/pako@1.0.7': {}
 
   '@types/pako@2.0.3':
     resolution: {integrity: sha512-bq0hMV9opAcrmE0Byyo0fY3Ew4tgOevJmQ9grUhpXQhYfyLJ1Kqg3P33JT5fdbT2AjeAjR51zqqVjAL/HMkx7Q==}
@@ -34063,6 +34053,8 @@ packages:
   logkitty@0.7.1:
     resolution: {integrity: sha512-/3ER20CTTbahrCrpYfPn7Xavv9diBROZpoXGVZDWMw4b/X4uuUwAC0ki85tgsdMRONURyIJbcOvS94QsUBYPbQ==}
     hasBin: true
+
+  loglevel@1.9.2: {}
 
   long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
@@ -45485,18 +45477,6 @@ snapshots:
   '@protobufjs/pool@1.1.0': {}
 
   '@protobufjs/utf8@1.1.0': {}
-
-  '@provablehq/sdk@0.10.2':
-    dependencies:
-      '@provablehq/wasm': 0.10.2
-      '@scure/base': 2.3.0
-      comlink: 4.4.2
-      core-js: 3.47.0
-      libsodium-wrappers: 0.8.4
-      mime: 4.1.0
-      xmlhttprequest-ssl: 4.0.0
-
-  '@provablehq/wasm@0.10.2': {}
 
   '@radix-ui/number@1.1.1': {}
 
