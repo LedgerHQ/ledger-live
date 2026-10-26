@@ -58,9 +58,13 @@ export default defineCommand({
     });
     await out.run(async () => {
       // The service applies the cursor's own filters, so new ones would be silently dropped.
-      if (flags.cursor && (flags.status !== undefined || flags["page-size"] !== undefined)) {
+      const conflictingFlags = (["status", "page-size"] as const).filter(
+        flag => flags[flag] !== undefined,
+      );
+      if (flags.cursor && conflictingFlags.length > 0) {
         throw new Error(
-          "--cursor continues with the filters and page size of the listing that returned it: drop --status and --page-size.",
+          "--cursor continues with the filters and page size of the listing that returned it: " +
+            `drop ${conflictingFlags.map(flag => `--${flag}`).join(" and ")}.`,
         );
       }
       const status = parseStatusFilter(flags.status);

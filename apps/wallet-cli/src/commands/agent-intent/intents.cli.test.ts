@@ -26,7 +26,7 @@ describe("agent-intent intents (CLI)", () => {
     expect(exitCode).toBe(1);
     expect(JSON.parse(stdout).error.message).toBe(
       "--cursor continues with the filters and page size of the listing that returned it: drop " +
-        "--status and --page-size.",
+        "--page-size.",
     );
   });
 });

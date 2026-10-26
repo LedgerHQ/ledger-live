@@ -21,6 +21,7 @@ const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
 const RECIPIENT = "0xfB6916095ca1df60bB79Ce92cE3Ea74c37c5d359";
 const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 const UNKNOWN_TOKEN = toChecksumAddress("0x1111111111111111111111111111111111111111");
+const BASE58_CURSOR = "3vQB7B6MrGQZaxCuFg4oh";
 
 const enrolledProfile = {
   profileId: "bot",
@@ -195,11 +196,16 @@ describe("agent-intent intents", () => {
     expect(queries).toEqual([{ status: undefined, pageSize: undefined, cursor: "next-token" }]);
   });
 
-  it.each([{ status: "signed" }, { "page-size": "50" }])(
-    "refuses %j with a cursor before touching the keychain",
-    async flags => {
+  it.each([
+    [{ status: "signed" }, "--status"],
+    [{ "page-size": "50" }, "--page-size"],
+    [{ status: "signed", "page-size": "50" }, "--status and --page-size"],
+  ])(
+    "refuses %j with a cursor before touching the keychain, naming only those flags",
+    async (flags, named) => {
       await expect(runIntents({ cursor: "next-token", ...flags })).rejects.toThrow(
-        "--cursor continues with the filters and page size of the listing that returned it: drop --status and --page-size.",
+        "--cursor continues with the filters and page size of the listing that returned it: " +
+          `drop ${named}.`,
       );
       expect(queries).toEqual([]);
       expect(secretKeyReads).toBe(0);
@@ -220,13 +226,16 @@ describe("agent-intent intents", () => {
     expect(stdout.join("")).toContain("2026-10-07 10:30");
   });
 
-  it("shows a creation time it can't parse as the service sent it", async () => {
-    listImpl = async () => ({ intents: [record({ createdAt: "yesterday" })] });
+  it.each(["yesterday", "2026-10-07T10:00:00"])(
+    "shows a creation time %p with no offset to place in UTC as the service sent it",
+    async createdAt => {
+      listImpl = async () => ({ intents: [record({ createdAt })] });
 
-    await runIntents();
+      await runIntents();
 
-    expect(stdout.join("")).toContain("yesterday");
-  });
+      expect(stdout.join("")).toContain(createdAt);
+    },
+  );
 
   it("shows ERC-20 amounts in token units only when the token is known", async () => {
     listImpl = async () => ({
@@ -250,7 +259,7 @@ describe("agent-intent intents", () => {
   });
 
   it("prints a human table and the command for the next page", async () => {
-    listImpl = async () => ({ intents: [record()], nextCursor: "next-token" });
+    listImpl = async () => ({ intents: [record()], nextCursor: BASE58_CURSOR });
 
     await runIntents();
 
@@ -260,8 +269,18 @@ describe("agent-intent intents", () => {
     expect(text).toContain("0.01 ETH");
     expect(text).toContain(RECIPIENT);
     expect(text).toContain(
-      "More intents: run `wallet-cli agent-intent intents --profile bot --cursor next-token`",
+      `More intents: run \`wallet-cli agent-intent intents --profile bot --cursor ${BASE58_CURSOR}\``,
     );
+  });
+
+  it("gives only the cursor, not a command to paste, when the cursor isn't base58", async () => {
+    listImpl = async () => ({ intents: [record()], nextCursor: "abc def;$(id)" });
+
+    await runIntents();
+
+    const text = stdout.join("");
+    expect(text).toContain("More intents: next cursor abc def;$(id)");
+    expect(text).not.toContain("wallet-cli agent-intent intents");
   });
 
   it("strips terminal control characters from service values in the table and hint", async () => {
@@ -283,7 +302,7 @@ describe("agent-intent intents", () => {
       expect(text).not.toContain(sequence);
     }
     expect(text).toContain("id-[2J");
-    expect(text).toContain("--profile bot --cursor next-[2Jtoken`");
+    expect(text).toContain("More intents: next cursor next-[2Jtoken");
   });
 
   it.each(["abc", "0x10", "-5", "1.5"])(

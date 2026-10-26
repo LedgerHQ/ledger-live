@@ -9,6 +9,7 @@
  */
 
 import type { Spinner } from "yocto-spinner";
+import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
@@ -971,9 +972,12 @@ class HumanCommandOutput implements CommandOutput {
       for (const row of rows) writeStdout(format(row));
     }
     if (nextCursor) {
+      const cursorIsSafeToPaste = BASE58_CURSOR.test(nextCursor);
       writeStdout(
         colors.dim(
-          `More intents: run \`wallet-cli agent-intent intents --profile ${profileId} --cursor ${stripControlChars(nextCursor)}\``,
+          cursorIsSafeToPaste
+            ? `More intents: run \`wallet-cli agent-intent intents --profile ${profileId} --cursor ${nextCursor}\``
+            : `More intents: next cursor ${stripControlChars(nextCursor)}`,
         ),
       );
     }
@@ -1028,11 +1032,13 @@ class HumanCommandOutput implements CommandOutput {
   }
 }
 
-/** "2026-10-07 10:00" in UTC, whatever offset the service sent; unparsable text is kept. */
+const BASE58_CURSOR = /^[1-9A-HJ-NP-Za-km-z]+$/;
+const ISO_DATETIME_WITH_OFFSET = z.iso.datetime({ offset: true });
+
+/** "2026-10-07 10:00" in UTC, whatever offset the service sent; text without one is kept. */
 function utcMinute(timestamp: string): string {
-  const date = new Date(timestamp);
-  if (Number.isNaN(date.getTime())) return timestamp;
-  return date.toISOString().replace("T", " ").slice(0, 16);
+  if (!ISO_DATETIME_WITH_OFFSET.safeParse(timestamp).success) return timestamp;
+  return new Date(timestamp).toISOString().replace("T", " ").slice(0, 16);
 }
 
 /** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
