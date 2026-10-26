@@ -1,8 +1,12 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import { TronifyApiError } from "../../types/errors";
 import { recoverDeviceSignature } from "../combine";
-import { TRONIFY_PAY_ASSET, payAssetBaseUnits, tronifyPayAsset } from "../constants";
+import {
+  TRONIFY_PAY_ASSET,
+  payAssetBaseUnits,
+  tronifyPayAsset,
+  type SponsoredFeeAsset,
+} from "../constants";
 import type {
   EnergyRentOrder,
   EnergyRentSignedTransaction,
@@ -40,7 +44,7 @@ export function reservationDedupKey(paymentTxId: string): string {
 
 /** What the platform should lock against the payer's USDT until TX-A syncs: the order's rent in USDT
  * base units, rounded up so a sub-unit quote never under-reserves the lock. */
-export function rentPayment(order: EnergyRentOrder): { asset: AssetInfo; amount: bigint } {
+export function rentPayment(order: EnergyRentOrder): { asset: SponsoredFeeAsset; amount: bigint } {
   const amount = payAssetBaseUnits(order.payCoinAmt);
   if (
     String(order.payCoinCode).toUpperCase() !== TRONIFY_PAY_ASSET.unit.code ||
