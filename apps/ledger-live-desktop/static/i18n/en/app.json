@@ -9685,8 +9685,7 @@
       "cta": {
         "addFunds": "Add funds to my account",
         "selectAccount": "Continue",
-        "close": "Close",
-        "done": "Done"
+        "close": "Close"
       }
     },
     "genericError": {

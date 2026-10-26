@@ -107,39 +107,59 @@ describe("usePerpsHandlers", () => {
 
   describe("migration.execute", () => {
     const legacyAccount = { id: "legacy-1" } as never;
-    const discovered = [{ id: "hc-1" }] as never[];
+    const hypercoreAccount = { id: "hc-1", type: "Account" } as never;
 
-    const startMigration = () => {
-      renderHook(() => usePerpsHandlers([]));
+    const startMigration = (existingAccounts: never[] = []) => {
+      const view = renderHook(() => usePerpsHandlers([]));
       const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
-      const request = migrationExecute?.({ legacyAccount, existingAccounts: [] });
-      const [, { params }] = mockNavigate.mock.calls[0];
-      return { request, params };
+      const request = migrationExecute?.({ legacyAccount, existingAccounts });
+      const [drawerParams] = mockOpenDrawer.mock.calls.at(-1);
+      return { ...view, request, drawerParams };
     };
 
-    it("should open hypercore device selection without preselecting accounts", () => {
-      startMigration().request?.catch(() => {});
+    it.each([
+      ["no Hyperliquid account", []],
+      ["Hyperliquid accounts", [hypercoreAccount]],
+    ])("should open the hypercore account drawer when the wallet has %s", (_, existing) => {
+      const { request, drawerParams } = startMigration(existing as never[]);
+      request?.catch(() => {});
 
-      expect(mockNavigate).toHaveBeenCalledWith("DeviceSelection", {
-        screen: "SelectDevice",
-        params: expect.objectContaining({
-          currency: expect.objectContaining({ id: "hypercore" }),
-          context: "addAccounts",
-          autoSelect: false,
-          onDone: expect.any(Function),
+      expect(drawerParams).toEqual(
+        expect.objectContaining({
+          currencies: ["hypercore"],
+          areCurrenciesFiltered: true,
+          enableAccountSelection: true,
+          uiUseCase: "perpetuals:receive",
         }),
-      });
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it("should resolve with the accounts the user confirmed on Done", async () => {
-      const { request, params } = startMigration();
+    it("should resolve with the account the user picks or adds", async () => {
+      const { request, drawerParams } = startMigration();
 
-      params.onDone(discovered);
+      drawerParams.onAccountSelected(hypercoreAccount);
 
-      await expect(request).resolves.toEqual(discovered);
+      await expect(request).resolves.toEqual([hypercoreAccount]);
     });
 
-    it("should reject when the user comes back to Perps without Done", async () => {
+    it("should reject when the user closes the drawer or abandons Add account", async () => {
+      const { request, drawerParams } = startMigration();
+
+      drawerParams.onCancel();
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("should reject when the user picks a token account", async () => {
+      const { request, drawerParams } = startMigration();
+
+      drawerParams.onAccountSelected({ id: "token", type: "TokenAccount" });
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("should reject when the user comes back to Perps without selecting", async () => {
       const { request } = startMigration();
 
       const [event, onFocus] = mockAddListener.mock.calls[0];
@@ -150,92 +170,36 @@ describe("usePerpsHandlers", () => {
       await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
     });
 
-    it("should stay a success when the user leaves the success screen without Done", async () => {
-      const { request, params } = startMigration();
+    it("should stay a success when Perps regains focus after the selection", async () => {
+      const { request, drawerParams } = startMigration();
 
-      params.onAccountsAdded(discovered);
+      drawerParams.onAccountSelected(hypercoreAccount);
       mockAddListener.mock.calls[0][1]();
 
-      await expect(request).resolves.toEqual(discovered);
+      await expect(request).resolves.toEqual([hypercoreAccount]);
     });
 
-    it("should ignore a Done from an abandoned attempt", async () => {
-      const { request: first, params: firstParams } = startMigration();
-      const staleId = getMigrationRequestId();
+    it("should ignore a selection from an abandoned attempt", async () => {
+      const { request: first, drawerParams: firstParams } = startMigration();
       mockAddListener.mock.calls[0][1]();
       await expect(first).rejects.toBeInstanceOf(UserRefusedOnDevice);
 
       const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
       const second = migrationExecute?.({ legacyAccount, existingAccounts: [] });
-      firstParams.onDone(discovered);
+      firstParams.onAccountSelected(hypercoreAccount);
+      firstParams.onCancel();
       settleMigrationRequest(getMigrationRequestId(), [{ id: "hc-2" }] as never[]);
 
-      expect(staleId).not.toBe(getMigrationRequestId());
       await expect(second).resolves.toEqual([{ id: "hc-2" }]);
     });
 
     it("should reject an in-flight migration when the live app unmounts", async () => {
-      const { unmount } = renderHook(() => usePerpsHandlers([]));
-      const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
-      const request = migrationExecute?.({ legacyAccount, existingAccounts: [] });
+      const { request, unmount } = startMigration();
+
       unmount();
 
       await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
       expect(mockRemoveFocusListener).toHaveBeenCalled();
-    });
-
-    describe("when the wallet already has Hyperliquid accounts", () => {
-      const existingAccount = { id: "hc-existing", type: "Account" } as never;
-
-      const startWithExisting = () => {
-        renderHook(() => usePerpsHandlers([]));
-        const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
-        const request = migrationExecute?.({ legacyAccount, existingAccounts: [existingAccount] });
-        const [drawerParams] = mockOpenDrawer.mock.calls[0];
-        return { request, drawerParams };
-      };
-
-      it("should offer the existing accounts before any discovery", () => {
-        const { request, drawerParams } = startWithExisting();
-        request?.catch(() => {});
-
-        expect(drawerParams).toEqual(
-          expect.objectContaining({
-            currencies: ["hypercore"],
-            areCurrenciesFiltered: true,
-            enableAccountSelection: true,
-            uiUseCase: "perpetuals:receive",
-          }),
-        );
-        expect(mockNavigate).not.toHaveBeenCalled();
-      });
-
-      it("should resolve with the existing account the user picks", async () => {
-        const { request, drawerParams } = startWithExisting();
-
-        drawerParams.onAccountSelected(existingAccount);
-
-        await expect(request).resolves.toEqual([existingAccount]);
-      });
-
-      it("should switch to the migration discovery on Add account", async () => {
-        const { request, drawerParams } = startWithExisting();
-
-        drawerParams.onAddAccount();
-
-        const [, { params }] = mockNavigate.mock.calls[0];
-        expect(params).toEqual(expect.objectContaining({ autoSelect: false }));
-        params.onDone(discovered);
-        await expect(request).resolves.toEqual(discovered);
-      });
-
-      it("should reject when the user closes the selector", async () => {
-        const { request, drawerParams } = startWithExisting();
-
-        drawerParams.onCancel();
-
-        await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
-      });
     });
   });
 });

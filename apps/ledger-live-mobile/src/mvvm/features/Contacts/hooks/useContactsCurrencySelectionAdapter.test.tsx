@@ -31,8 +31,6 @@ function mockModularDrawerController(
     enableAccountSelection: false,
     handleAccountSelected,
     handleCurrencySelected,
-    hasAddAccountOverride: false,
-    handleAddAccount: jest.fn(),
     isOpen: true,
     networksConfiguration: undefined,
     openDrawer,

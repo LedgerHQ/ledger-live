@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Text } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Observable, of } from "rxjs";
 import type { Account } from "@ledgerhq/types-live";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Button } from "@ledgerhq/native-ui";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
@@ -12,93 +10,33 @@ import {
   setWalletApiIdForAccountId,
 } from "@ledgerhq/live-common/wallet-api/converters";
 import { cancelMigrationRequest } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
-import {
-  act,
-  render,
-  screen,
-  waitFor,
-  withFlagOverrides,
-  withReadOnlyDisabled,
-} from "@tests/test-renderer";
-import { NavigatorName, ScreenName } from "~/const";
+import { render, screen, waitFor, withReadOnlyDisabled } from "@tests/test-renderer";
+import { ScreenName } from "~/const";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { State } from "~/reducers/types";
-import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AddAccountsNavigator from "LLM/features/Accounts/Navigator";
-import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
-import { IsDeviceLockedResultType } from "~/hooks/useIsDeviceLockedPolling/types";
+import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { usePerpsHandlers } from "../hooks/usePerpsHandlers";
 
-jest.mock("@ledgerhq/live-common/hw/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/hw/index"),
-  discoverDevices: jest.fn(() =>
-    of({
-      type: "add" as const,
-      id: "usb|1",
-      name: "Ledger Stax",
-      deviceModel: { id: DeviceModelId.stax },
-      wired: true,
-    }),
-  ),
-}));
-
-jest.mock("~/hooks/deviceActions", () => ({
-  __esModule: true,
-  useAppDeviceAction: () => {
-    const device = { modelId: "stax" as const, deviceId: "usb|1" };
-    const appAndVersion = { name: "Ethereum", version: "1.0.0" };
-    return {
-      useHook: () => ({ device, isLocked: false, opened: true, appAndVersion }),
-      mapResult: () => ({ device, appAndVersion }),
-    };
-  },
-}));
-
-jest.mock("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling", () => ({
-  ...jest.requireActual("~/hooks/useIsDeviceLockedPolling/useIsDeviceLockedPolling"),
-  useIsDeviceLockedPolling: () => ({
-    result: { type: IsDeviceLockedResultType.unlocked },
-    retry: jest.fn(),
-  }),
-}));
-
-let triggerNext: (account: Account) => void = () => null;
-let triggerComplete: () => void = () => null;
-
-jest.mock("@ledgerhq/live-common/bridge/index", () => ({
-  __esModule: true,
-  getCurrencyBridge: () => {
-    const bridge = {
-      scanAccounts: () =>
-        new Observable<{ account: Account }>(subscriber => {
-          triggerNext = account => subscriber.next({ account });
-          triggerComplete = () => subscriber.complete();
-        }),
-      preload: () => Promise.resolve(true),
-      hydrate: () => true,
-    };
-    return Object.assign(Promise.resolve(bridge), { status: "fulfilled", value: bridge });
-  },
-  getAccountBridge: () => {
-    const accountBridge = { isAccountEmpty: () => false };
-    return Object.assign(Promise.resolve(accountBridge), {
-      status: "fulfilled",
-      value: accountBridge,
-    });
-  },
-}));
+// The drawer's own steps, Add account included, are covered by the ModularDrawer integration
+// tests. Here the drawer is driven through its controller, as its UI would.
 
 const legacyAccount = genAccount("perps-legacy", { currency: getCryptoCurrencyById("arbitrum") });
-const discoveredAccount = genAccount("perps-hc-discovered", {
+const existingAccount = genAccount("perps-hc-existing", {
   currency: getCryptoCurrencyById("hypercore"),
 });
+const addedAccount = genAccount("perps-hc-added", { currency: getCryptoCurrencyById("hypercore") });
 
 const MIGRATE = "Migrate";
+const SELECT_EXISTING = "Select existing";
+const SELECT_ADDED = "Select added";
+const CLOSE_DRAWER = "Close drawer";
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
-/** Stands in for the Perps live app: calls the wallet API method and prints the outcome. */
-function PerpsScreen() {
-  const handlers = usePerpsHandlers([legacyAccount]);
+/** Stands in for the Perps live app and the drawer UI. */
+function PerpsScreen({ accounts }: Readonly<{ accounts: Account[] }>) {
+  const handlers = usePerpsHandlers(accounts);
+  const { isOpen, preselectedCurrencies, handleAccountSelected, closeDrawer } =
+    useModularDrawerController();
   const [outcome, setOutcome] = useState("pending");
 
   const migrate = () => {
@@ -118,93 +56,89 @@ function PerpsScreen() {
       <Button type="main" onPress={migrate}>
         {MIGRATE}
       </Button>
+      <Text testID="drawer">{isOpen ? `open:${preselectedCurrencies.join(",")}` : "closed"}</Text>
+      <Button type="main" onPress={() => handleAccountSelected(existingAccount)}>
+        {SELECT_EXISTING}
+      </Button>
+      <Button type="main" onPress={() => handleAccountSelected(addedAccount)}>
+        {SELECT_ADDED}
+      </Button>
+      <Button type="main" onPress={closeDrawer}>
+        {CLOSE_DRAWER}
+      </Button>
       <Text testID="migration-outcome">{outcome}</Text>
     </>
   );
 }
 
-function Harness() {
+function Harness({ accounts }: Readonly<{ accounts: Account[] }>) {
   return (
-    <NotificationsPromptProvider>
-      <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
-        <Stack.Screen name={ScreenName.MockedModularDrawer} component={PerpsScreen} />
-        <Stack.Screen
-          name={NavigatorName.DeviceSelection}
-          component={DeviceSelectionNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.AddAccounts}
-          component={AddAccountsNavigator}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NotificationsPromptProvider>
+    <Stack.Navigator initialRouteName={ScreenName.MockedModularDrawer}>
+      <Stack.Screen name={ScreenName.MockedModularDrawer}>
+        {() => <PerpsScreen accounts={accounts} />}
+      </Stack.Screen>
+    </Stack.Navigator>
   );
 }
 
-const overrideInitialState = (state: State) =>
-  withFlagOverrides({})(withReadOnlyDisabled({ ...state, accounts: { active: [legacyAccount] } }));
-
-const advanceTimers = () => act(() => jest.advanceTimersByTime(500));
-
-async function connectDeviceAndScan(user: ReturnType<typeof render>["user"]) {
-  await user.press(screen.getByText(MIGRATE));
-  advanceTimers();
-  await user.press(screen.getByText(/ledger stax/i));
-  advanceTimers();
-  await waitFor(() => expect(screen.getByText(/checking the blockchain/i)).toBeVisible());
-  await act(() => triggerNext(discoveredAccount));
-  await act(() => triggerComplete());
-}
-
-describe("Perps migration integration", () => {
-  beforeAll(() => setWalletApiIdForAccountId(legacyAccount.id));
-  afterEach(() => cancelMigrationRequest());
-
-  it("adds the selected Hyperliquid account and returns to Perps on Done", async () => {
-    const { user, store } = render(<Harness />, { overrideInitialState });
-
-    await connectDeviceAndScan(user);
-    expect(screen.getByText(/confirm/i)).toBeDisabled();
-
-    await user.press(screen.getAllByText(/hyperliquid/i).at(-1)!);
-    await user.press(screen.getByText(/confirm/i));
-
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("migration-outcome", { includeHiddenElements: true }),
-      ).toHaveTextContent(
-        JSON.stringify({
-          accounts: [
-            { accountId: getWalletApiIdFromAccountId(discoveredAccount.id), created: true },
-          ],
-        }),
-      ),
-    );
-    expect(store.getState().accounts.active.map((a: Account) => a.id)).toContain(
-      discoveredAccount.id,
-    );
-
-    await user.press(screen.getByText(/^done$/i));
-    expect(screen.getByText(MIGRATE)).toBeVisible();
+const renderWith = (accounts: Account[]) =>
+  render(<Harness accounts={accounts} />, {
+    overrideInitialState: (state: State) =>
+      withReadOnlyDisabled({ ...state, accounts: { active: accounts } }),
   });
 
-  it("cancels when the user leaves before adding anything", async () => {
-    const { user, store } = render(<Harness />, { overrideInitialState });
+const expectOutcome = (text: string) =>
+  waitFor(() => expect(screen.getByTestId("migration-outcome")).toHaveTextContent(text));
 
-    await connectDeviceAndScan(user);
-    // Back to the Perps screen through the header close, as a device error would do too.
-    await user.press(screen.getAllByTestId(/NavigationHeaderCloseButton/i).at(-1)!);
-    advanceTimers();
-    await user.press(screen.getAllByText(/^cancel$/i).at(-1)!);
-    advanceTimers();
+describe("Perps migration integration", () => {
+  beforeAll(() =>
+    [legacyAccount, existingAccount, addedAccount].forEach(account =>
+      setWalletApiIdForAccountId(account.id),
+    ),
+  );
+  afterEach(() => cancelMigrationRequest());
 
-    await waitFor(() =>
-      expect(
-        screen.getByTestId("migration-outcome", { includeHiddenElements: true }),
-      ).toHaveTextContent("UserRefusedOnDevice"),
+  it("opens the hypercore account drawer", async () => {
+    const { user } = renderWith([legacyAccount]);
+
+    await user.press(screen.getByText(MIGRATE));
+
+    expect(screen.getByTestId("drawer")).toHaveTextContent("open:hypercore");
+  });
+
+  it("hands the Hyperliquid account the user picks to the live app as not created", async () => {
+    const { user } = renderWith([legacyAccount, existingAccount]);
+
+    await user.press(screen.getByText(MIGRATE));
+    await user.press(screen.getByText(SELECT_EXISTING));
+
+    await expectOutcome(
+      JSON.stringify({
+        accounts: [{ accountId: getWalletApiIdFromAccountId(existingAccount.id), created: false }],
+      }),
     );
-    expect(store.getState().accounts.active).toHaveLength(1);
+    expect(screen.getByTestId("drawer")).toHaveTextContent("closed");
+  });
+
+  it("hands an account added from the drawer to the live app as created", async () => {
+    const { user } = renderWith([legacyAccount, existingAccount]);
+
+    await user.press(screen.getByText(MIGRATE));
+    await user.press(screen.getByText(SELECT_ADDED));
+
+    await expectOutcome(
+      JSON.stringify({
+        accounts: [{ accountId: getWalletApiIdFromAccountId(addedAccount.id), created: true }],
+      }),
+    );
+  });
+
+  it("cancels when the user closes the drawer or abandons Add account", async () => {
+    const { user } = renderWith([legacyAccount]);
+
+    await user.press(screen.getByText(MIGRATE));
+    await user.press(screen.getByText(CLOSE_DRAWER));
+
+    await expectOutcome("UserRefusedOnDevice");
   });
 });

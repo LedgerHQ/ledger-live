@@ -1,18 +1,11 @@
 import { AccountLike } from "@ledgerhq/types-live";
 import { Registry } from "./Registry";
-import {
-  AccountCallback,
-  AddAccountCallback,
-  CancelCallback,
-  CurrencyCallback,
-  RegistryManager,
-} from "./types";
+import { AccountCallback, CancelCallback, CurrencyCallback, RegistryManager } from "./types";
 
 // Global registries that persist across re-renders
 export const callbackRegistry = new Registry<AccountCallback>();
 export const currencyCallbackRegistry = new Registry<CurrencyCallback>();
 export const cancelCallbackRegistry = new Registry<CancelCallback>();
-export const addAccountCallbackRegistry = new Registry<AddAccountCallback>();
 
 /**
  * Reset all registries - should be called during app reset/cleanup
@@ -21,7 +14,6 @@ export const resetAllRegistries = () => {
   callbackRegistry.clear();
   currencyCallbackRegistry.clear();
   cancelCallbackRegistry.clear();
-  addAccountCallbackRegistry.clear();
 };
 
 export const registryActions: RegistryManager = {
@@ -64,23 +56,12 @@ export const registryActions: RegistryManager = {
 
   unregisterCancelCallback: id => cancelCallbackRegistry.unregister(id),
 
-  registerAddAccountCallback: (id, callback) => addAccountCallbackRegistry.register(id, callback),
-
-  executeAddAccountCallback: id => {
-    const callback = addAccountCallbackRegistry.get(id);
-    if (callback) {
-      callback();
-      addAccountCallbackRegistry.unregister(id);
-    }
-  },
-
   clearCallbacks: () => resetAllRegistries(),
 
   getCallbackKeys: (): string[] => [
     ...callbackRegistry.keys(),
     ...currencyCallbackRegistry.keys(),
     ...cancelCallbackRegistry.keys(),
-    ...addAccountCallbackRegistry.keys(),
   ],
 
   resetAll: () => resetAllRegistries(),

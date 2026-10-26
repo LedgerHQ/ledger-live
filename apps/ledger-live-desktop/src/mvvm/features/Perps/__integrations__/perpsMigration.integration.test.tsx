@@ -9,14 +9,20 @@ import {
 } from "@ledgerhq/live-common/wallet-api/converters";
 import { cancelMigrationRequest } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
 import { act, render, renderHook, screen } from "tests/testSetup";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { usePerpsHandlers } from "../hooks/usePerpsHandlers";
 
-jest.mock("~/renderer/drawers/Provider", () => ({
-  __esModule: true,
-  ...jest.requireActual("~/renderer/drawers/Provider"),
-  setDrawer: jest.fn(),
-}));
+// Spied, not stubbed: the drawer provider must still see the add account drawer open and close.
+jest.mock("~/renderer/drawers/Provider", () => {
+  const actual = jest.requireActual("~/renderer/drawers/Provider");
+  return {
+    __esModule: true,
+    ...actual,
+    setDrawer: jest.fn((...args: unknown[]) => actual.setDrawer(...args)),
+  };
+});
 
 // The device is connected as soon as the connect step shows up.
 jest.mock("~/renderer/components/DeviceAction", () => {
@@ -71,7 +77,10 @@ type MigrateAccount = (req: {
 
 function setup(accounts: Account[]) {
   accounts.forEach(account => setWalletApiIdForAccountId(account.id));
-  const view = renderHook(() => usePerpsHandlers(accounts), { initialState: { accounts } });
+  const view = renderHook(() => usePerpsHandlers(accounts), {
+    initialState: { accounts },
+    minimal: false,
+  });
   const migrateAccount = view.result.current["custom.perps.migrateAccount"] as MigrateAccount;
   const request = migrateAccount({
     params: { legacyAccountId: getWalletApiIdFromAccountId(legacyAccount.id) },
@@ -81,10 +90,18 @@ function setup(accounts: Account[]) {
   return { ...view, request };
 }
 
-/** Renders the drawer the migration opened, as the drawer provider would. */
-function renderOpenedDrawer(store: ReturnType<typeof setup>["store"]) {
-  const [Component, props] = jest.mocked(setDrawer).mock.calls[0];
-  if (!Component) throw new Error("the migration did not open a drawer");
+/** What the selector's Add account does: opens the shared add account flow in selection mode. */
+function addAccountFromSelector(store: ReturnType<typeof setup>["store"]) {
+  const onAccountSelected = store.getState().modularDialog.dialogParams?.onAccountSelected;
+  const { result } = renderHook(
+    () => useOpenAssetFlow({ location: ModularDrawerLocation.ADD_ACCOUNT }, "perps"),
+    { store },
+  );
+  act(() =>
+    result.current.openAddAccountFlow(getCryptoCurrencyById("hypercore"), onAccountSelected),
+  );
+  const [Component, props] = jest.mocked(setDrawer).mock.calls.at(-1) ?? [];
+  if (!Component) throw new Error("Add account did not open a drawer");
   return render(<Component {...props} />, { store });
 }
 
@@ -100,84 +117,44 @@ describe("Perps migration integration", () => {
   beforeEach(() => jest.mocked(setDrawer).mockClear());
   afterEach(() => cancelMigrationRequest());
 
-  describe("when the wallet has no Hyperliquid account", () => {
-    it("adds the account the user selects and hands it to the live app as created", async () => {
-      const { request, store } = setup([legacyAccount]);
-      const { user } = renderOpenedDrawer(store);
+  it("hands the Hyperliquid account the user picks to the live app as not created", async () => {
+    const { request, store } = setup([legacyAccount, existingHypercoreAccount]);
 
-      await scan([discoveredHypercoreAccount]);
+    const params = store.getState().modularDialog.dialogParams;
+    expect(params?.currencies).toEqual(["hypercore"]);
+    act(() => params?.onAccountSelected?.(existingHypercoreAccount));
 
-      const confirm = screen.getByRole("button", { name: "Confirm" });
-      expect(confirm).toBeDisabled();
-
-      await user.click(screen.getAllByTestId(/^account-row-/)[0]);
-      await user.click(confirm);
-
-      await expect(request).resolves.toEqual({
-        accounts: [
-          { accountId: getWalletApiIdFromAccountId(discoveredHypercoreAccount.id), created: true },
-        ],
-      });
-      expect(store.getState().accounts.map((a: Account) => a.id)).toContain(
-        discoveredHypercoreAccount.id,
-      );
-
-      await user.click(screen.getByRole("button", { name: "Done" }));
-      expect(setDrawer).toHaveBeenLastCalledWith();
-    });
-
-    it("cancels when the flow is closed before anything is added", async () => {
-      const { request, store } = setup([legacyAccount]);
-      const { unmount } = renderOpenedDrawer(store);
-
-      await scan([discoveredHypercoreAccount]);
-      unmount();
-
-      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
-      expect(store.getState().accounts).toHaveLength(1);
+    await expect(request).resolves.toEqual({
+      accounts: [
+        { accountId: getWalletApiIdFromAccountId(existingHypercoreAccount.id), created: false },
+      ],
     });
   });
 
-  describe("when the wallet already has a Hyperliquid account", () => {
-    it("hands the account the user picks to the live app as not created", async () => {
-      const { request, store } = setup([legacyAccount, existingHypercoreAccount]);
+  it("hands an account added through the selector's Add account to the live app as created", async () => {
+    const { request, store } = setup([legacyAccount]);
+    const { user } = addAccountFromSelector(store);
 
-      const params = store.getState().modularDialog.dialogParams;
-      expect(params?.currencies).toEqual(["hypercore"]);
-      act(() => params?.onAccountSelected?.(existingHypercoreAccount));
+    // The scan preselects the discovered account, as in any add account flow.
+    await scan([discoveredHypercoreAccount]);
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    await user.click(await screen.findByRole("button", { name: "Continue" }));
 
-      await expect(request).resolves.toEqual({
-        accounts: [
-          { accountId: getWalletApiIdFromAccountId(existingHypercoreAccount.id), created: false },
-        ],
-      });
-      expect(setDrawer).not.toHaveBeenCalled();
+    await expect(request).resolves.toEqual({
+      accounts: [
+        { accountId: getWalletApiIdFromAccountId(discoveredHypercoreAccount.id), created: true },
+      ],
     });
+    expect(store.getState().accounts.map((a: Account) => a.id)).toContain(
+      discoveredHypercoreAccount.id,
+    );
+  });
 
-    it("runs the discovery flow from the selector's Add account", async () => {
-      const { request, store } = setup([legacyAccount, existingHypercoreAccount]);
+  it("cancels when the user closes the selector", async () => {
+    const { request, store } = setup([legacyAccount, existingHypercoreAccount]);
 
-      act(() => store.getState().modularDialog.dialogParams?.onAddAccount?.());
-      expect(store.getState().modularDialog.isOpen).toBe(false);
+    act(() => store.getState().modularDialog.dialogParams?.onClose?.());
 
-      const { user } = renderOpenedDrawer(store);
-      await scan([discoveredHypercoreAccount]);
-      await user.click(screen.getAllByTestId(/^account-row-/)[0]);
-      await user.click(screen.getByRole("button", { name: "Confirm" }));
-
-      await expect(request).resolves.toEqual({
-        accounts: [
-          { accountId: getWalletApiIdFromAccountId(discoveredHypercoreAccount.id), created: true },
-        ],
-      });
-    });
-
-    it("cancels when the user closes the selector", async () => {
-      const { request, store } = setup([legacyAccount, existingHypercoreAccount]);
-
-      act(() => store.getState().modularDialog.dialogParams?.onClose?.());
-
-      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
-    });
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
   });
 });

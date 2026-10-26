@@ -5853,8 +5853,7 @@
     },
     "addAccountsSuccess": {
       "ctaAddFunds": "Add funds to my account",
-      "ctaClose": "Close",
-      "ctaDone": "Done"
+      "ctaClose": "Close"
     },
     "addAccountsWarning": {
       "cantCreateAccount": {

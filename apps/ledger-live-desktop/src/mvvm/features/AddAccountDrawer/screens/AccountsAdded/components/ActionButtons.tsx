@@ -7,26 +7,10 @@ interface Props {
   onAddFunds: () => void;
   onClose: () => void;
   isAccountSelectionFlow: boolean;
-  isDoneFlow?: boolean;
 }
 
-export const ActionButtons = ({
-  onAddFunds,
-  onClose,
-  isAccountSelectionFlow,
-  isDoneFlow = false,
-}: Props) => {
+export const ActionButtons = ({ onAddFunds, onClose, isAccountSelectionFlow }: Props) => {
   const { t } = useTranslation();
-
-  if (isDoneFlow) {
-    return (
-      <Box paddingBottom={FOOTER_PADDING_BOTTOM_PX} paddingTop={FOOTER_PADDING_TOP_PX} zIndex={1}>
-        <Button onClick={onClose} size="large" variant="main" data-testid="accounts-added-done">
-          {t("modularAssetDrawer.accountsAdded.cta.done")}
-        </Button>
-      </Box>
-    );
-  }
 
   return (
     <Box paddingBottom={FOOTER_PADDING_BOTTOM_PX} paddingTop={FOOTER_PADDING_TOP_PX} zIndex={1}>

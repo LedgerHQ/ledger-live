@@ -14,9 +14,6 @@ type CommonParams = {
   onCloseNavigation?: () => void;
   navigationDepth?: number;
   sourceScreenName?: string;
-  autoSelect?: boolean;
-  onAccountsAdded?: (accountsToAdd: Account[]) => void;
-  onDone?: (accountsToAdd: Account[]) => void;
 };
 
 export type SelectDeviceRouteParams = CommonParams & {

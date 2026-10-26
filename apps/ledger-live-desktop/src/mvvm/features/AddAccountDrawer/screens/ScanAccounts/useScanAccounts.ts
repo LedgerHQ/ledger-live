@@ -38,8 +38,6 @@ export interface UseScanAccountsProps {
   currency: CryptoCurrency;
   deviceId: string;
   deferAccountAddition?: boolean;
-  /** When false, discovered accounts are left unchecked. Defaults to true. */
-  autoSelect?: boolean;
   onComplete: (accounts: Account[]) => void;
   navigateToWarningScreen: (reason: WarningReason, account?: Account) => void;
 }
@@ -48,7 +46,6 @@ export function useScanAccounts({
   currency,
   deviceId,
   deferAccountAddition = false,
-  autoSelect = true,
   onComplete,
   navigateToWarningScreen,
 }: UseScanAccountsProps) {
@@ -129,16 +126,14 @@ export function useScanAccounts({
         .subscribe({
           next: (accounts: Account[]) => {
             setScannedAccounts(accounts);
-            if (autoSelect) {
-              setSelectedIds(current =>
-                computeSelectedIdsFromScan(
-                  accounts,
-                  existingAccountsRef.current,
-                  current,
-                  isAccountEmpty,
-                ),
-              );
-            }
+            setSelectedIds(current =>
+              computeSelectedIdsFromScan(
+                accounts,
+                existingAccountsRef.current,
+                current,
+                isAccountEmpty,
+              ),
+            );
             setScanning(true);
           },
           error: e => {
@@ -152,15 +147,14 @@ export function useScanAccounts({
       cancelled = true;
       stopSubscription(false);
     };
-  }, [autoSelect, blacklistedTokenIds, currency, deviceId, isAccountEmpty, stopSubscription]);
+  }, [blacklistedTokenIds, currency, deviceId, isAccountEmpty, stopSubscription]);
 
   useLayoutEffect(() => {
-    if (!autoSelect) return;
     const resolved = scannedAccountsRef.current.filter(a => emptyByIdRef.current.has(a.id));
     setSelectedIds(current =>
       computeSelectedIdsFromScan(resolved, existingAccounts, current, isAccountEmpty),
     );
-  }, [autoSelect, existingAccounts, isAccountEmpty]);
+  }, [existingAccounts, isAccountEmpty]);
 
   const {
     importableAccounts,

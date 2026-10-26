@@ -5,17 +5,17 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { PerpsMigrationUiParams } from "@ledgerhq/live-common/wallet-api/Perps/migration";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { PerpsMigrationDiscovery } from "../components/PerpsMigrationDiscovery";
-import { CloseButton } from "LLD/features/ModularDialog/components/CloseButton";
+import type { AccountLike } from "@ledgerhq/types-live";
+import { context as drawerContext } from "~/renderer/drawers/Provider";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
-import { useDispatch } from "LLD/hooks/redux";
-import { closeDialog, openDialog } from "~/renderer/reducers/modularDialog";
-import { useCallback, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "LLD/hooks/redux";
+import {
+  closeDialog,
+  modularDialogIsOpenSelector,
+  openDialog,
+} from "~/renderer/reducers/modularDialog";
+import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
 import {
@@ -30,23 +30,6 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
 
 const HYPERCORE_CURRENCY_ID = "hypercore";
-
-function openMigrationDiscovery(requestId: string | null) {
-  const settle = (accounts: Account[]) => settleMigrationRequest(requestId, accounts);
-
-  setDrawer(
-    PerpsMigrationDiscovery,
-    {
-      requestId,
-      currency: getCryptoCurrencyById(HYPERCORE_CURRENCY_ID),
-      autoSelect: false,
-      // Settle on add, so leaving the success step any other way than Done stays a success.
-      onAccountsAdded: settle,
-      onDone: settle,
-    },
-    { closeButtonComponent: CloseButton, onRequestClose: () => setDrawer() },
-  );
-}
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(
@@ -84,41 +67,45 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
 
   const dispatch = useDispatch();
 
-  const uiMigrationExecute = useCallback(
-    ({ existingAccounts }: PerpsMigrationUiParams) => {
-      const request = beginMigrationRequest();
-      const requestId = getMigrationRequestId();
+  // Same selector as the account.request of the discover apps: pick a Hyperliquid account, or add
+  // one through its Add account step, which hands the added account back to onAccountSelected.
+  const migrationRequestId = useRef<string | null>(null);
+  const uiMigrationExecute = useCallback(() => {
+    const request = beginMigrationRequest();
+    const requestId = getMigrationRequestId();
+    migrationRequestId.current = requestId;
 
-      if (existingAccounts.length === 0) {
-        openMigrationDiscovery(requestId);
-      } else {
-        dispatch(
-          openDialog({
-            currencies: [HYPERCORE_CURRENCY_ID],
-            areCurrenciesFiltered: true,
-            dialogConfiguration: createModularDrawerConfiguration(),
-            uiUseCase: PERPS_UI_USE_CASE.receive,
-            onAccountSelected: account => {
-              dispatch(closeDialog());
-              if (account.type === "Account") {
-                settleMigrationRequest(requestId, [account]);
-              } else {
-                cancelMigrationRequest();
-              }
-            },
-            onAddAccount: () => {
-              dispatch(closeDialog());
-              openMigrationDiscovery(requestId);
-            },
-            onClose: () => cancelMigrationRequest(),
-          }),
-        );
-      }
+    dispatch(
+      openDialog({
+        currencies: [HYPERCORE_CURRENCY_ID],
+        areCurrenciesFiltered: true,
+        dialogConfiguration: createModularDrawerConfiguration(),
+        uiUseCase: PERPS_UI_USE_CASE.receive,
+        onAccountSelected: account => {
+          dispatch(closeDialog());
+          if (account.type === "Account") {
+            settleMigrationRequest(requestId, [account]);
+          } else {
+            cancelMigrationRequest(requestId);
+          }
+        },
+        onClose: () => cancelMigrationRequest(requestId),
+      }),
+    );
 
-      return request;
-    },
-    [dispatch],
-  );
+    return request;
+  }, [dispatch]);
+
+  // Add account replaces the selector with the add account drawer, and closing that drawer reports
+  // nothing back. Once neither is open, a request that is still pending was abandoned.
+  const { state: drawerState } = useContext(drawerContext);
+  const isDialogOpen = useSelector(modularDialogIsOpenSelector);
+  const isFlowOpen = isDialogOpen || drawerState.open;
+  const wasFlowOpen = useRef(false);
+  useEffect(() => {
+    if (wasFlowOpen.current && !isFlowOpen) cancelMigrationRequest(migrationRequestId.current);
+    wasFlowOpen.current = isFlowOpen;
+  }, [isFlowOpen]);
 
   useEffect(() => () => cancelMigrationRequest(), []);
 

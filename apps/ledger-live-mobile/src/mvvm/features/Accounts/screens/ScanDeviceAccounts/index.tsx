@@ -83,7 +83,6 @@ function ScanDeviceAccounts() {
     viewAllCreatedAccounts,
     currency,
     returnToSwap,
-    autoSelect,
     confirmLabel,
     scanDeviceAccountsBack,
   } = useScanDeviceAccountsViewModel({
@@ -158,7 +157,7 @@ function ScanDeviceAccounts() {
           return (
             <View key={id}>
               <ScannedAccountsSection
-                defaultSelected={autoSelect && defaultSelected}
+                defaultSelected={defaultSelected}
                 key={id}
                 showHint={selectable && i === 0 && !Config.DETOX}
                 header={

@@ -21,7 +21,6 @@ const AccountsAdded = ({
   navigateToFundAccount,
   navigateToSelectAccount,
   isAccountSelectionFlow,
-  onDone,
 }: Readonly<AccountsAddedProps>) => {
   const source = useSelector(modularDialogSourceSelector);
   const formatAccount = useAccountFormatter();
@@ -47,7 +46,6 @@ const AccountsAdded = ({
       page: ADD_ACCOUNT_PAGE_NAME.ADD_ACCOUNTS_SUCCESS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-    onDone?.(accounts);
     setDrawer();
   };
 
@@ -77,7 +75,6 @@ const AccountsAdded = ({
         onAddFunds={handleAddFunds}
         onClose={handleClose}
         isAccountSelectionFlow={isAccountSelectionFlow}
-        isDoneFlow={!!onDone}
       />
     </>
   );

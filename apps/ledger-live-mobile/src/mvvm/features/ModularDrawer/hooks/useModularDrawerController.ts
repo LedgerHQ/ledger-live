@@ -42,7 +42,6 @@ export const useModularDrawerController = () => {
     categories,
     callbackId,
     cancelCallbackId,
-    addAccountCallbackId,
     enableAccountSelection,
     completionMode,
     presentation,
@@ -59,7 +58,6 @@ export const useModularDrawerController = () => {
       categories: state.modularDrawer.categories,
       callbackId: state.modularDrawer.callbackId,
       cancelCallbackId: state.modularDrawer.cancelCallbackId,
-      addAccountCallbackId: state.modularDrawer.addAccountCallbackId,
       enableAccountSelection: state.modularDrawer.enableAccountSelection,
       completionMode: state.modularDrawer.completionMode,
       presentation: state.modularDrawer.presentation,
@@ -81,15 +79,12 @@ export const useModularDrawerController = () => {
     registerCancelCallback,
     executeCancelCallback,
     unregisterCancelCallback,
-    registerAddAccountCallback,
-    executeAddAccountCallback,
     resetAll,
   } = useCallbackRegistry();
 
   const openDrawer = useCallback(
     (params?: DrawerParams) => {
-      const { onAccountSelected, onCurrencySelected, onCancel, onAddAccount, ...otherParams } =
-        params ?? {};
+      const { onAccountSelected, onCurrencySelected, onCancel, ...otherParams } = params ?? {};
 
       if (completionMode === "currency" && callbackId) {
         executeCurrencyCallback(callbackId, null);
@@ -109,13 +104,11 @@ export const useModularDrawerController = () => {
         resolveCallbackId(onCurrencySelected, registerCurrencyCallback);
 
       const cancelCallbackIdToUse = resolveCallbackId(onCancel, registerCancelCallback);
-      const addAccountCallbackIdToUse = resolveCallbackId(onAddAccount, registerAddAccountCallback);
 
       const paramsWithIds: DrawerRemoteParams = {
         ...otherParams,
         callbackId: callbackIdToUse,
         cancelCallbackId: cancelCallbackIdToUse,
-        addAccountCallbackId: addAccountCallbackIdToUse,
       };
 
       dispatch(openModularDrawer(paramsWithIds));
@@ -128,7 +121,6 @@ export const useModularDrawerController = () => {
       registerCallback,
       registerCurrencyCallback,
       registerCancelCallback,
-      registerAddAccountCallback,
       resetAll,
     ],
   );
@@ -177,29 +169,6 @@ export const useModularDrawerController = () => {
     [callbackId, cancelCallbackId, dispatch, executeCallback, unregisterCancelCallback, resetAll],
   );
 
-  // Hands Add account over to the caller instead of the default device flow. Closing the drawer
-  // this way is not a cancellation, so the cancel callback is dropped first.
-  const handleAddAccount = useCallback(() => {
-    if (cancelCallbackId) {
-      unregisterCancelCallback(cancelCallbackId);
-    }
-    try {
-      if (addAccountCallbackId) {
-        executeAddAccountCallback(addAccountCallbackId);
-      }
-    } finally {
-      dispatch(closeModularDrawer());
-      resetAll();
-    }
-  }, [
-    addAccountCallbackId,
-    cancelCallbackId,
-    dispatch,
-    executeAddAccountCallback,
-    unregisterCancelCallback,
-    resetAll,
-  ]);
-
   const handleCurrencySelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       if (cancelCallbackId) {
@@ -242,7 +211,5 @@ export const useModularDrawerController = () => {
     hideDrawer,
     handleAccountSelected,
     handleCurrencySelected,
-    hasAddAccountOverride: Boolean(addAccountCallbackId),
-    handleAddAccount,
   };
 };

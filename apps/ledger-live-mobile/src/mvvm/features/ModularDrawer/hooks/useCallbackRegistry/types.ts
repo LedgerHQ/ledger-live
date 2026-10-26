@@ -4,7 +4,6 @@ import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 export type AccountCallback = (account: AccountLike, parentAccount?: AccountLike) => void;
 export type CurrencyCallback = (currency: CryptoOrTokenCurrency | null) => void;
 export type CancelCallback = () => void;
-export type AddAccountCallback = () => void;
 
 export interface RegistryManager {
   // Callback methods
@@ -18,8 +17,6 @@ export interface RegistryManager {
   registerCancelCallback: (id: string, callback: CancelCallback) => void;
   executeCancelCallback: (id: string) => void;
   unregisterCancelCallback: (id: string) => void;
-  registerAddAccountCallback: (id: string, callback: AddAccountCallback) => void;
-  executeAddAccountCallback: (id: string) => void;
   clearCallbacks: () => void;
   getCallbackKeys: () => string[];
 

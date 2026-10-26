@@ -15,7 +15,6 @@ import {
 } from "~/reducers/modularDrawer";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 import type { ModularDrawerProps } from "../ModularDrawer";
-import { useModularDrawerController } from "./useModularDrawerController";
 
 type ModularDrawerStateProps = {
   assetsSorted?: AssetData[];
@@ -203,13 +202,7 @@ export function useModularDrawerState({
     [asset, network, assetsSorted, isAcceptedCurrency],
   );
 
-  const { hasAddAccountOverride, handleAddAccount } = useModularDrawerController();
-
   const onAddNewAccount = () => {
-    if (hasAddAccountOverride) {
-      handleAddAccount();
-      return;
-    }
     if (!accountCurrency) return;
     navigateToDeviceWithCurrency(accountCurrency);
   };

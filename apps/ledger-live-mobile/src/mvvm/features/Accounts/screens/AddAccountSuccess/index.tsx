@@ -24,7 +24,6 @@ function View({
   goToAccounts,
   keyExtractor,
   onCloseNavigation,
-  isDoneFlow,
 }: ViewProps) {
   const { t } = useTranslation();
 
@@ -62,23 +61,15 @@ function View({
         />
       </Flex>
       <Flex px={6} paddingTop={6} rowGap={6}>
-        {!isDoneFlow && (
-          <AddFundsButton
-            accounts={accountsToAdd}
-            currency={currency}
-            sourceScreenName={AnalyticPages.AddAccountSuccess}
-          />
-        )}
+        <AddFundsButton
+          accounts={accountsToAdd}
+          currency={currency}
+          sourceScreenName={AnalyticPages.AddAccountSuccess}
+        />
         <CloseWithConfirmation
           showButton
-          buttonText={
-            isDoneFlow
-              ? t("addAccounts.addAccountsSuccess.ctaDone")
-              : t("addAccounts.addAccountsSuccess.ctaClose")
-          }
+          buttonText={t("addAccounts.addAccountsSuccess.ctaClose")}
           onClose={onCloseNavigation}
-          skipNavigation={isDoneFlow}
-          disablePostOnboardingRedirect={isDoneFlow}
         />
       </Flex>
     </SafeAreaView>
