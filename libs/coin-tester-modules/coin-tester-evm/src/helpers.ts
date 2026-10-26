@@ -25,6 +25,7 @@ export const bnb = getCryptoCurrencyById("bsc");
 export const base = getCryptoCurrencyById("base");
 export const arcTestnet = getCryptoCurrencyById("arc_testnet");
 export const robinhoodTestnet = getCryptoCurrencyById("robinhood_testnet");
+export const alpenTestnet = getCryptoCurrencyById("alpen_testnet");
 export const ERC20Interface = new ethers.Interface(ERC20_ABI);
 export const ERC721Interface = new ethers.Interface(ERC721_ABI);
 export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);
@@ -36,6 +37,14 @@ export function expectAddressInList(list: string[] | undefined, address: string)
   const normalizedAddress = address?.toLowerCase() ?? "";
   const found = list.some(a => (a ?? "").toLowerCase() === normalizedAddress);
   expect(found).toBe(true);
+}
+
+/** Asserts that the transaction mined on the local node is a legacy (type 0) one, priced at or above `minGasPrice`. */
+export async function expectLegacyTransaction(hash: string, minGasPrice: bigint): Promise<void> {
+  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+  const transaction = await provider.getTransaction(hash);
+  expect(transaction?.type).toBe(0);
+  expect(transaction?.gasPrice ?? 0n).toBeGreaterThanOrEqual(minGasPrice);
 }
 
 export async function getBridges(signer: Signer): Promise<{
