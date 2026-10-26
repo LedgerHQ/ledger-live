@@ -6,7 +6,7 @@ jest.mock("@ledgerhq/lumen-design-core", () => ({ ledgerLiveThemes: {} }));
 
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { StyleProvider } from "../StyleProvider.native";
+import { StyleProvider } from "../StyleProvider";
 
 const mockTheme = {} as never;
 

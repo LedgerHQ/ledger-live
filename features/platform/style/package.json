@@ -14,10 +14,14 @@
       "react-native": "./src/hooks/index.native.ts",
       "default": "./src/hooks/index.ts"
     },
+    "./web": "./src/webExports.web.ts",
+    "./native": "./src/nativeExports.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -46,6 +50,7 @@
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "styled-components": "catalog:",

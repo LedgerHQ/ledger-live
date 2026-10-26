@@ -5,7 +5,7 @@ import type { DefaultTheme } from "styled-components";
 
 type ColorScheme = "light" | "dark" | "system";
 
-type StyleProviderProps = Readonly<{
+export type StyleProviderProps = Readonly<{
   /** Pre-merged theme object (app is responsible for merging via @ledgerhq/react-ui tokens). */
   theme?: DefaultTheme;
   /** Lumen color scheme — renders LumenThemeProvider when provided (e.g. web-tools). */
