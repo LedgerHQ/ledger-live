@@ -21,7 +21,7 @@ On iOS every call does nothing: iOS has no navigation bar.
 ```ts
 import { applyNavigationBarTheme } from "@shared/system-bars";
 
-applyNavigationBarTheme({ backgroundColor: colors.card, isDark: dark }).catch(console.error);
+applyNavigationBarTheme({ backgroundColor: theme.colors.bg.canvas, isDark }).catch(console.error);
 ```
 
 ## Edge-to-edge

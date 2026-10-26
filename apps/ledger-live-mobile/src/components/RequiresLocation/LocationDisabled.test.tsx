@@ -1,6 +1,6 @@
 import React from "react";
 import { Linking } from "react-native";
-import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
+import { render, screen, waitFor } from "@tests/test-renderer";
 import LocationDisabled from "./LocationDisabled";
 
 describe("LocationDisabled", () => {
@@ -14,19 +14,19 @@ describe("LocationDisabled", () => {
     sendIntentSpy.mockRestore();
   });
 
-  it("opens the Android location settings when there is no retry callback", () => {
-    render(<LocationDisabled />);
+  it("opens the Android location settings when there is no retry callback", async () => {
+    const { user } = render(<LocationDisabled />);
 
-    fireEvent.press(screen.getByText("Open location settings"));
+    await user.press(screen.getByText("Open location settings"));
 
     expect(sendIntentSpy).toHaveBeenCalledWith("android.settings.LOCATION_SOURCE_SETTINGS");
   });
 
-  it("opens the Android location settings when forced, even with a retry callback", () => {
+  it("opens the Android location settings when forced, even with a retry callback", async () => {
     const onRetry = jest.fn();
-    render(<LocationDisabled onRetry={onRetry} forceOpenSettings />);
+    const { user } = render(<LocationDisabled onRetry={onRetry} forceOpenSettings />);
 
-    fireEvent.press(screen.getByText("Open location settings"));
+    await user.press(screen.getByText("Open location settings"));
 
     expect(sendIntentSpy).toHaveBeenCalledWith("android.settings.LOCATION_SOURCE_SETTINGS");
     expect(onRetry).not.toHaveBeenCalled();
@@ -35,19 +35,19 @@ describe("LocationDisabled", () => {
   it("opens the app settings when the location settings cannot be opened", async () => {
     sendIntentSpy.mockRejectedValue(new Error("Could not launch Intent"));
     const openSettingsSpy = jest.spyOn(Linking, "openSettings").mockResolvedValue(undefined);
-    render(<LocationDisabled />);
+    const { user } = render(<LocationDisabled />);
 
-    fireEvent.press(screen.getByText("Open location settings"));
+    await user.press(screen.getByText("Open location settings"));
 
     await waitFor(() => expect(openSettingsSpy).toHaveBeenCalledTimes(1));
     openSettingsSpy.mockRestore();
   });
 
-  it("calls the retry callback instead of opening the settings", () => {
+  it("calls the retry callback instead of opening the settings", async () => {
     const onRetry = jest.fn();
-    render(<LocationDisabled onRetry={onRetry} />);
+    const { user } = render(<LocationDisabled onRetry={onRetry} />);
 
-    fireEvent.press(screen.getByText("Try enabling location again"));
+    await user.press(screen.getByText("Try enabling location again"));
 
     expect(onRetry).toHaveBeenCalledTimes(1);
     expect(sendIntentSpy).not.toHaveBeenCalled();

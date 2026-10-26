@@ -15,38 +15,38 @@ describe("logStartupTime", () => {
     const step2 = logStartupEvent("Step 2");
     expect(startupEvents).toEqual([step1, step2]);
     await p;
-    expect(await resolveStartupEvents()).toEqual([
+    expect(resolveStartupEvents()).toEqual([
       { event: "Step 1", time: expect.any(Number), count: 1 },
       { event: "Step 2", time: expect.any(Number), count: 1 },
       { event: "Step 3", time: expect.any(Number), count: 1 },
     ]);
   });
 
-  it("should resolve times relative to the first JS import", async () => {
+  it("should resolve times relative to the first JS import", () => {
     startupEvents.splice(0);
     startupEvents.push({ event: "Step 1", time: startupFirstImportTime + 42 });
-    expect(await resolveStartupEvents()).toEqual([{ event: "Step 1", time: 42, count: 1 }]);
+    expect(resolveStartupEvents()).toEqual([{ event: "Step 1", time: 42, count: 1 }]);
   });
 
-  it("should group identical events", async () => {
+  it("should group identical events", () => {
     startupEvents.splice(0);
     logStartupEvent("Step 1");
     logStartupEvent("Step 2");
     logStartupEvent("Step 1");
-    expect(await resolveStartupEvents()).toEqual([
+    expect(resolveStartupEvents()).toEqual([
       { event: "Step 1", time: expect.any(Number), count: 2 },
       { event: "Step 2", time: expect.any(Number), count: 1 },
     ]);
   });
 
-  it("should keep logging events regardless of resolve calls", async () => {
+  it("should keep logging events regardless of resolve calls", () => {
     startupEvents.splice(0);
     logStartupEvent("Step 1");
-    expect(await resolveStartupEvents()).toEqual([
+    expect(resolveStartupEvents()).toEqual([
       { event: "Step 1", time: expect.any(Number), count: 1 },
     ]);
     logStartupEvent("Step 2");
-    expect(await resolveStartupEvents()).toEqual([
+    expect(resolveStartupEvents()).toEqual([
       { event: "Step 1", time: expect.any(Number), count: 1 },
       { event: "Step 2", time: expect.any(Number), count: 1 },
     ]);

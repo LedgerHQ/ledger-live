@@ -16,7 +16,7 @@ const NOT_LOGGED_EVENTS = new Set<string>([
 ]);
 
 // Times are relative to the first JS import. Datadog RUM measures the native part of the startup.
-export async function resolveStartupEvents(): Promise<GroupedStartupEvent[]> {
+export function resolveStartupEvents(): GroupedStartupEvent[] {
   const resolved = new Map<string, GroupedStartupEvent>();
   startupEvents
     .filter(e => !NOT_LOGGED_EVENTS.has(e.event))
