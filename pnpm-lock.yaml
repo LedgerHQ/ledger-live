@@ -1261,6 +1261,9 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../libs/live-signer-evm
+      '@ledgerhq/live-signer-solana':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-solana
       '@ledgerhq/live-signer-tron':
         specifier: workspace:^
         version: link:../../libs/live-signer-tron
@@ -2156,6 +2159,9 @@ importers:
       '@ledgerhq/live-signer-evm':
         specifier: workspace:^
         version: link:../../libs/live-signer-evm
+      '@ledgerhq/live-signer-solana':
+        specifier: workspace:^
+        version: link:../../libs/live-signer-solana
       '@ledgerhq/live-signer-tron':
         specifier: workspace:^
         version: link:../../libs/live-signer-tron
