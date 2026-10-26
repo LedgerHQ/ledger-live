@@ -544,7 +544,9 @@ pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethe
   fee, then reviews the swap. The command says so on stderr, and JSON output has
   `needsTokenApproval: true`.
 - **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
-  quoted, so the provider is always one the frontend can prepare.
+  quoted, so the provider is always one the frontend can prepare. More than 5% above the quote
+  prints a warning on stderr (with `--dry-run` too): the reviewer sees a fresh quote, with your
+  amount shown only as the proposal it replaced.
 - **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
   intent may already exist.
 ### Listing the agent's intents (`agent-intent intents`)
