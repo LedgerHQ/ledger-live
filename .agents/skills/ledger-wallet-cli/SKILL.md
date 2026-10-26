@@ -359,8 +359,9 @@ value outside this list.
 **One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
 `enrollment-pending` NDJSON event with `enrollmentUrl`, `fingerprint`, `expiresAt` and `keyStore`),
 then waits on an encrypted Trustchain relay channel bound into the signed request. When `keyStore`
-is `plaintext-file`, tell the human the agent key is stored unencrypted before handing over the link. The frontend delivers the completion over that channel; there is no `complete`
-command and no manual JSON fallback. **Keep the process running** until it prints the final
+is `plaintext-file`, tell the human the agent key is stored unencrypted before handing over the link.
+The frontend delivers the completion over that channel; there is no `complete` command and no manual
+JSON fallback. **Keep the process running** until it prints the final
 `enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
 `accountAccessEnvironment`, `keyStore`). The wait is bounded by `--expires-in` (default 30m). The human should
 open the link once and keep the page open after clicking Review until the device approval finishes:
@@ -368,20 +369,20 @@ leaving the page after Review closes the relay channel and the listener ends (`l
 
 **Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
 --detach` starts the same listener in the background, prints its `enrollment-pending` line plus
-`listenerPid` and `logPath`, and exits, usually within seconds, up to 2 minutes while the human
-answers an OS keychain unlock prompt. Give that tool call a timeout of at least 3 minutes (Claude
-Code Bash `timeout` ≥ 180000), so the CLI's own limit fires first. If your tool call times out
-first, run `wait` on the same id, and once it reports `enrollmentUrl`, take the fingerprint from
-`agent-intent show --profile <id>` and send the human the link, fingerprint and `expiresAt`. Then
-call `agent-intent wait --profile <id> [--timeout 25s]` (also with the sandbox bypass), which reads
-local state only and reports one of:
+`listenerPid` and `logPath`, and exits: usually within seconds, up to 2 minutes when the human must
+unlock the OS keychain, so give that tool call a timeout of at least 3 minutes (Claude Code Bash
+`timeout` ≥ 180000). Then poll `agent-intent wait --profile <id> [--timeout 25s]` (also with the
+sandbox bypass), which reads local state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
-- `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` once the profile is saved, and
-  `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait` again. While the
-  listener is still starting, `expiresAt` and `enrollmentUrl` are absent; keep polling.
+- `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` and `fingerprint` once the profile
+  is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait`
+  again.
 - an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
   profile within 3 minutes), `enrollment_expired` or `profile_not_found` (no profile and no
   listener), exit 1 — the enrollment is lost: start a fresh one with a new `--profile` id.
+
+If `enroll --detach` timed out in your tool before printing its line, hand the human the
+`enrollmentUrl`, `fingerprint` and `expiresAt` from `wait` once it reports them.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate

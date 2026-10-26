@@ -337,6 +337,8 @@ export type AgentIntentEnrollmentWaiting = {
   profileId: string;
   /** Absent while the listener is starting and has not saved the profile yet. */
   expiresAt?: string;
+  /** Absent while the listener is starting, like `expiresAt`. */
+  fingerprint?: string;
   listenerPid: number;
   /** From the listener's log, while it still has the pending line. */
   enrollmentUrl?: string;
@@ -897,6 +899,7 @@ class HumanCommandOutput implements CommandOutput {
     expiresAt,
     listenerPid,
     enrollmentUrl,
+    fingerprint,
   }: AgentIntentEnrollmentWaiting): void {
     writeStdout(
       expiresAt === undefined
@@ -906,6 +909,7 @@ class HumanCommandOutput implements CommandOutput {
             `approval until ${expiresAt}.`,
     );
     if (enrollmentUrl !== undefined) writeStdout(`Enrollment link: ${enrollmentUrl}`);
+    if (fingerprint !== undefined) writeStdout(`Public key fingerprint: ${fingerprint}`);
     writeStdout(
       colors.dim(
         `Run \`wallet-cli agent-intent wait --profile ${profileId}\` again to keep waiting.`,

@@ -56,6 +56,7 @@ function pendingProfile(expiresInMs = 30 * 60_000): Profile {
   return {
     profileId: "test-agent",
     environment: "production",
+    publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
     enrollmentExpiresAt: new Date(Date.now() + expiresInMs).toISOString(),
   };
 }
@@ -210,6 +211,7 @@ describe("agent-intent wait", () => {
         network: "all",
         profileId: "test-agent",
         expiresAt: profile.enrollmentExpiresAt,
+        fingerprint: "Ez4f ubY2 TD8k Ve",
         listenerPid: process.pid,
         enrollmentUrl: "https://agent.example.com#request=opaque",
       });
@@ -255,6 +257,7 @@ describe("agent-intent wait", () => {
     const text = stdout.join("");
     expect(text).toContain(`Profile "test-agent" is still pending`);
     expect(text).toContain(`(pid ${process.pid})`);
+    expect(text).toContain("Public key fingerprint: Ez4f ubY2 TD8k Ve");
     expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` again");
   });
 

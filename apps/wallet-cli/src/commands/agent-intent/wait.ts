@@ -1,4 +1,5 @@
 import { defineCommand, option } from "@bunli/core";
+import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import { statSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 import { z } from "zod";
@@ -158,6 +159,7 @@ function checkProfile(
   out.agentIntentEnrollmentWaiting({
     profileId,
     expiresAt: profile.enrollmentExpiresAt,
+    fingerprint: formatAgentPublicKeyFingerprint(profile.publicKey),
     listenerPid: livePid,
     ...(enrollmentUrl === undefined ? {} : { enrollmentUrl }),
   });
