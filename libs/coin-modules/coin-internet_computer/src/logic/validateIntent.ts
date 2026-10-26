@@ -14,7 +14,14 @@ import {
 import { MAX_NAT64, TRANSFER_FEE } from "../consts";
 import { InvalidMemoICP } from "../errors";
 import { AccountIdentifier } from "./accountIdentifier";
-import { type IcpIntent, memoOf, unpayableFee, unsupportedIntent } from "./intent";
+import {
+  type IcpIntent,
+  type IcpStakingIntent,
+  memoOf,
+  unpayableFee,
+  unsupportedIntent,
+} from "./intent";
+import { isNeuronCommandIntent, neuronCommandOf, unpayableCommandFee } from "./neuronCommand";
 
 const CURRENCY_NAME = "Internet Computer";
 
@@ -30,6 +37,27 @@ function recipientError({ sender, recipient }: IcpIntent): Error | undefined {
 }
 
 /**
+ * A neuron command spends nothing. Only checks that need no neuron state run here, because the
+ * neuron's state is not readable from the account. Governance judges the rest: it refuses most
+ * commands the state does not allow, but caps a dissolve delay that an increase takes past the
+ * maximum.
+ */
+function validateNeuronCommand(
+  intent: IcpStakingIntent,
+  customFees: FeeEstimation | undefined,
+): TransactionValidation {
+  const errors: Record<string, Error> = {};
+  const command = neuronCommandOf(intent);
+  if (command instanceof Error) errors.transaction = command;
+  const feeRefusal = unpayableCommandFee(customFees);
+  if (feeRefusal) errors.fees = new InvalidTransactionError(feeRefusal);
+  if (!AccountIdentifier.isValid(intent.sender)) {
+    errors.sender = new InvalidAddress("", { currencyName: CURRENCY_NAME });
+  }
+  return { errors, warnings: {}, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+}
+
+/**
  * The send checks of the account bridge's `getTransactionStatus`. The available balance excludes
  * `locked`, which holds what pending operations already spend.
  */
@@ -38,6 +66,8 @@ export function validateIntent(
   balances: Balance[],
   customFees?: FeeEstimation,
 ): TransactionValidation {
+  if (isNeuronCommandIntent(intent)) return validateNeuronCommand(intent, customFees);
+
   const errors: Record<string, Error> = {};
   const estimatedFees = TRANSFER_FEE;
 

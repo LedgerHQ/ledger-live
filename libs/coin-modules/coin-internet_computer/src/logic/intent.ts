@@ -1,9 +1,40 @@
-import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
+import type {
+  FeeEstimation,
+  StakingTransactionIntent,
+  TransactionIntent,
+  TxData,
+  TxDataNotSupported,
+} from "@ledgerhq/coin-module-framework/api/index";
 import { TRANSFER_FEE } from "../consts";
 import type { IcpMemo } from "../types";
+import { deriveAddressFromPubkey } from "./crypto";
 import { validateMemo } from "./validation";
 
-export type IcpIntent = TransactionIntent<IcpMemo>;
+/** The parameters of a neuron command that the intent's own fields cannot carry. */
+export interface IcpNeuronCommandData extends TxData {
+  type: "neuron";
+  /** Seconds to add to the dissolve delay (`increase_dissolve_delay`). */
+  additionalDissolveDelaySeconds?: number;
+}
+
+export type IcpTxData = TxDataNotSupported | IcpNeuronCommandData;
+
+export type IcpIntent = TransactionIntent<IcpMemo, IcpTxData>;
+
+/** A neuron command: `type` names the command and `valAddress` the neuron id. */
+export type IcpStakingIntent = StakingTransactionIntent<IcpMemo, IcpTxData>;
+
+/**
+ * The sender's public key. The call is signed by the key's principal and acts for that principal's
+ * default account only, so the sender must be that account.
+ */
+export function senderPublicKeyOf({ sender, senderPublicKey }: IcpIntent): string {
+  if (!senderPublicKey) throw new Error("[ICP](craftTransaction) senderPublicKey is required");
+  if (deriveAddressFromPubkey(senderPublicKey) !== sender.toLowerCase()) {
+    throw new Error("[ICP](craftTransaction) sender is not the default account of senderPublicKey");
+  }
+  return senderPublicKey;
+}
 
 /**
  * Why the module cannot carry out the intent, or undefined when it can: native ICP sends only.

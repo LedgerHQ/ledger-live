@@ -1,28 +1,39 @@
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
+import { IDL } from "@icp-sdk/core/candid";
 import { Principal } from "@icp-sdk/core/principal";
-import { ICPTransactionExpired } from "../errors";
-import { broadcastTxn, readTransferOutcome } from "../network/api";
+import {
+  ICPCallRejected,
+  ICPCallUnconfirmed,
+  ICPGovernanceRejected,
+  ICPTransactionExpired,
+} from "../errors";
+import { broadcastTxn, readReplyFromCanister, readTransferOutcome } from "../network/api";
 import {
   decodeCanisterIdlArgs,
   encodeCanisterIdlFunc,
   getCanisterIdlFunc,
+  governanceIdlFactory,
   ledgerIdlFactory,
 } from "../network/candid";
 import { broadcast } from "./broadcast";
 import { createUnsignedTransfer, type TransferRawRequest } from "./buildTransaction";
-import { combine, type DecodedCallContent } from "./combine";
+import { combine, type DecodedCallContent, type DecodedReadStateContent } from "./combine";
 import { craftTransaction } from "./craftTransaction";
 import { deriveAddressFromPubkey } from "./crypto";
 import { hashTransaction } from "./hashTransaction";
+import { craftNeuronCommand } from "./neuronCommand";
 
 jest.mock("../network/api", () => ({
   broadcastTxn: jest.fn(),
   readTransferOutcome: jest.fn(),
+  readReplyFromCanister: jest.fn(),
   throwIfLedgerTransferRefused: jest.requireActual("../network/api").throwIfLedgerTransferRefused,
+  decodeManageNeuronReply: jest.requireActual("../network/api").decodeManageNeuronReply,
 }));
 
 const mockBroadcastTxn = jest.mocked(broadcastTxn);
 const mockReadTransferOutcome = jest.mocked(readTransferOutcome);
+const mockReadReplyFromCanister = jest.mocked(readReplyFromCanister);
 
 const PUBKEY =
   "0484bf7562262bbd6940085748f3be6afa52ae317155181ece31b66351ccffa4b08cc43d63b2859d469fee15f31c9edb5324266e6fd0407e87382d60fc4511acd8";
@@ -141,5 +152,145 @@ describe("broadcast", () => {
 
     await expect(broadcast(tx)).rejects.toThrow(/Not a ledger transfer/);
     expect(mockBroadcastTxn).not.toHaveBeenCalled();
+  });
+});
+
+const manageNeuronReplyOf = (response: unknown) =>
+  new Uint8Array(
+    IDL.encode(getCanisterIdlFunc(governanceIdlFactory, "manage_neuron").retTypes, [response]),
+  );
+
+const manageNeuronReply = (command: unknown) => manageNeuronReplyOf({ command: [command] });
+
+describe("broadcast a neuron command", () => {
+  type Envelope<T> = { content: T; sender_pubkey: Uint8Array; sender_sig: Uint8Array };
+  type SignedCommand = {
+    call: Envelope<DecodedCallContent>;
+    read_state: Envelope<DecodedReadStateContent>;
+  };
+
+  const signedCommand = () => {
+    const { transaction } = craftNeuronCommand({
+      intentType: "staking",
+      type: "start_dissolving",
+      mode: "delegate",
+      valAddress: "123",
+      sender: SENDER,
+      senderPublicKey: PUBKEY,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+    });
+    return combine(transaction, ["ab".repeat(64) + "cd".repeat(64)], PUBKEY);
+  };
+
+  const decodeSigned = (tx: string) => Cbor.decode<SignedCommand>(Buffer.from(tx, "hex"));
+  const requestIdHex = (tx: string) =>
+    Buffer.from(requestIdOf(decodeSigned(tx).call.content)).toString("hex");
+
+  beforeEach(() => {
+    mockReadReplyFromCanister.mockResolvedValue(manageNeuronReply({ Configure: {} }));
+  });
+
+  it("submits the call with its read_state request and returns the request id", async () => {
+    const tx = signedCommand();
+    const { call, read_state } = decodeSigned(tx);
+
+    await expect(broadcast(tx)).resolves.toBe(requestIdHex(tx));
+    const [callBlob, readStateBlob, canisterId, requestId] =
+      mockReadReplyFromCanister.mock.calls[0];
+    expect(canisterId).toBe("rrkah-fqaaa-aaaaa-aaaaq-cai");
+    expect(requestId).toBe(requestIdHex(tx));
+    expect(Buffer.from(Cbor.decode<SignedCommand["call"]>(callBlob).sender_sig)).toEqual(
+      Buffer.from(call.sender_sig),
+    );
+    expect(
+      Buffer.from(Cbor.decode<SignedCommand["read_state"]>(readStateBlob!).sender_sig),
+    ).toEqual(Buffer.from(read_state.sender_sig));
+  });
+
+  it("fails with governance's reason when it refuses the command", async () => {
+    mockReadReplyFromCanister.mockResolvedValue(
+      manageNeuronReply({
+        Error: { error_message: "Neuron is already dissolving", error_type: 9 },
+      }),
+    );
+
+    const error = await broadcast(signedCommand()).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ICPGovernanceRejected);
+    expect(error).toMatchObject({ reason: "Neuron is already dissolving" });
+  });
+
+  it("keeps the replica's rejection: the command never ran", async () => {
+    mockReadReplyFromCanister.mockRejectedValue(new ICPCallRejected());
+
+    await expect(broadcast(signedCommand())).rejects.toThrow(ICPCallRejected);
+  });
+
+  it.each([
+    ["no terminal reply", () => mockReadReplyFromCanister.mockResolvedValue(null)],
+    [
+      "a dropped connection",
+      () => mockReadReplyFromCanister.mockRejectedValue(new Error("ECONNRESET")),
+    ],
+    [
+      "a reply that does not decode",
+      () => mockReadReplyFromCanister.mockResolvedValue(new Uint8Array([0])),
+    ],
+    [
+      "a reply without a command",
+      () => mockReadReplyFromCanister.mockResolvedValue(manageNeuronReplyOf({ command: [] })),
+    ],
+    [
+      "a reply to another command",
+      () => mockReadReplyFromCanister.mockResolvedValue(manageNeuronReply({ Follow: {} })),
+    ],
+  ])("reports %s as unconfirmed, with the request id", async (_, arrange) => {
+    arrange();
+    const tx = signedCommand();
+
+    const error = await broadcast(tx).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ICPCallUnconfirmed);
+    expect(error).toMatchObject({ requestId: requestIdHex(tx) });
+  });
+
+  it("refuses a command past its ingress expiry without submitting it", async () => {
+    const tx = signedCommand();
+    jest.setSystemTime(NOW + 5 * 60 * 1000);
+
+    await expect(broadcast(tx)).rejects.toThrow(ICPTransactionExpired);
+    expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
+  });
+
+  it("refuses a read_state request that polls another call", async () => {
+    const signed = decodeSigned(signedCommand());
+    const tx = Buffer.from(
+      Cbor.encode({
+        ...signed,
+        read_state: {
+          ...signed.read_state,
+          content: {
+            ...signed.read_state.content,
+            paths: [[new TextEncoder().encode("request_status"), new Uint8Array(32)]],
+          },
+        },
+      }),
+    ).toString("hex");
+
+    await expect(broadcast(tx)).rejects.toThrow(/does not poll this call/);
+    expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
+  });
+
+  it("refuses a call that is not a neuron command", async () => {
+    const signed = decodeSigned(signedCommand());
+    const tx = Buffer.from(
+      Cbor.encode({
+        ...signed,
+        call: { ...signed.call, content: { ...signed.call.content, method_name: "list_neurons" } },
+      }),
+    ).toString("hex");
+
+    await expect(broadcast(tx)).rejects.toThrow(/Not a neuron command/);
+    expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
   });
 });
