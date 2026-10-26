@@ -3594,7 +3594,7 @@ DEPENDENCIES:
   - "fmt (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/fmt.podspec`)"
   - "glog (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/glog.podspec`)"
   - "hermes-engine (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)"
-  - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@7.3.8_@lottiefiles+dotlotti_07b23c9cf3afca0eb784f469a2743942/node_modules/lottie-react-native`)"
+  - "lottie-react-native (from `../../../node_modules/.pnpm/lottie-react-native@7.3.8_@lottiefiles+dotlotti_83919b967a1664c246edbb991dfbf178/node_modules/lottie-react-native`)"
   - "NitroMmkv (from `../../../node_modules/.pnpm/react-native-mmkv@4.3.2_react-native-nitro-modu_c2c78378a0257e38a5b00d1c6b01ffdc/node_modules/react-native-mmkv`)"
   - "NitroModules (from `../../../node_modules/.pnpm/react-native-nitro-modules@0.35.9_react-native@_8e20865de37be3a070f56a90df32648e/node_modules/react-native-nitro-modules`)"
   - "RCT-Folly (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)"
@@ -3802,7 +3802,7 @@ EXTERNAL SOURCES:
     :podspec: "../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2025-07-07-RNv0.81.0-e0fc67142ec0763c6b6153ca2bf96df815539782
   lottie-react-native:
-    :path: "../../../node_modules/.pnpm/lottie-react-native@7.3.8_@lottiefiles+dotlotti_07b23c9cf3afca0eb784f469a2743942/node_modules/lottie-react-native"
+    :path: "../../../node_modules/.pnpm/lottie-react-native@7.3.8_@lottiefiles+dotlotti_83919b967a1664c246edbb991dfbf178/node_modules/lottie-react-native"
   NitroMmkv:
     :path: "../../../node_modules/.pnpm/react-native-mmkv@4.3.2_react-native-nitro-modu_c2c78378a0257e38a5b00d1c6b01ffdc/node_modules/react-native-mmkv"
   NitroModules:
