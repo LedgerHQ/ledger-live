@@ -33,6 +33,7 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
+import { predictionsSlice } from "@domain/entity-predictions";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { isPayAction, persistPayCard } from "./payPersistence";
 
@@ -123,6 +124,18 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
 
     if (oldState.marketBanner !== newState.marketBanner) {
       setKey("app", "marketBanner", marketBannerStoreSelector(newState));
+    }
+
+    return res;
+  }
+
+  if (action.type.startsWith(`${predictionsSlice.name}/`)) {
+    const oldState = store.getState();
+    const res = next(action);
+    const newState = store.getState();
+
+    if (oldState.predictions !== newState.predictions) {
+      setKey("app", "predictions", newState.predictions);
     }
 
     return res;
