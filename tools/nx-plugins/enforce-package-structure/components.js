@@ -871,6 +871,14 @@ function reachableProps(declaration, module) {
   const props = new Set();
   /** @type {Map<Context, Set<ts.Node>>} */
   const visited = new Map();
+  // A worklist instead of recursion, so a long chain of local types, `T0 { next?: T1 }` and so
+  // on, cannot overflow the stack. The work a step queues runs before older work, in the order
+  // it was queued, so props come out in the order a recursive walk finds them.
+  /** @typedef {["visit", ts.Node, Context] | ["prop", ts.TypeElement, Context]} Work */
+  /** @type {Work[]} */
+  const pending = [];
+  /** @type {Work[]} */
+  let queued = [];
   /** @type {Map<ts.TypeParameterDeclaration, Argument[]>} */
   const argumentsOf = new Map();
   const bound = new Set();
@@ -969,8 +977,16 @@ function reachableProps(declaration, module) {
     entryOf(readsOf, reference, () => new Set()).add(index);
     for (const outer of [...entryOf(contextsOf, reference, () => [])]) visit(argument, outer);
   }
-  /** @param {ts.TypeElement} prop @param {Context} context */
+  /**
+   * Queues `prop` for `addPropNow`.
+   *
+   * @param {ts.TypeElement} prop @param {Context} context
+   */
   function addProp(prop, context) {
+    queued.push(["prop", prop, context]);
+  }
+  /** @param {ts.TypeElement} prop @param {Context} context */
+  function addPropNow(prop, context) {
     // `{ [id: string]: Tile }` holds tiles but declares no prop of its own.
     if (ts.isIndexSignatureDeclaration(prop)) visit(prop.type, context);
     if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
@@ -1009,8 +1025,16 @@ function reachableProps(declaration, module) {
       }
     }
   }
-  /** @param {ts.Node} node @param {Context} context */
+  /**
+   * Queues `node` for `step`.
+   *
+   * @param {ts.Node} node @param {Context} context
+   */
   function visit(node, context) {
+    queued.push(["visit", node, context]);
+  }
+  /** @param {ts.Node} node @param {Context} context */
+  function step(node, context) {
     if (!markVisited(node, context)) return;
     if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) return;
     if (
@@ -1062,7 +1086,19 @@ function reachableProps(declaration, module) {
       for (const argument of node.typeArguments ?? []) visit(argument, context);
     }
   }
+  /** Moves the work the last step queued onto `pending`, the first queued on top. */
+  function flush() {
+    for (let index = queued.length - 1; index >= 0; index--) pending.push(queued[index]);
+    queued = [];
+  }
   expand(declaration, undefined, "contract");
+  flush();
+  while (pending.length > 0) {
+    const [kind, node, context] = pending.pop();
+    if (kind === "prop") addPropNow(node, context);
+    else step(node, context);
+    flush();
+  }
   return props;
 }
 

@@ -1063,6 +1063,20 @@ test("R3 reads a default shared down a chain of types once per reference", () =>
   assert.ok(Date.now() - start < 5000);
 });
 
+test("R3 follows a long chain of local types without overflowing the stack", () => {
+  // A recursive walk overflows the stack at about a thousand levels.
+  for (const declare of [
+    level => `interface T${level} { next?: T${level + 1} }`,
+    level => `type T${level} = { next?: T${level + 1} };`,
+  ]) {
+    const types = Array.from({ length: 5000 }, (_, level) => declare(level));
+    const contractModule = `${types.join("\n")}\ninterface T5000 { onPress(): void }\nexport type CardProps = { head: T0 };\n`;
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+      "R3 contract-gesture-callback Card",
+    ]);
+  }
+});
+
 test("R3 follows a rotation of wrapped arguments in linear time", () => {
   // Expanding each instantiation with its own bindings grows factorially: a crash at 10.
   for (const length of [10, 20]) {
