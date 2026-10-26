@@ -18708,6 +18708,9 @@ importers:
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../support/jest
