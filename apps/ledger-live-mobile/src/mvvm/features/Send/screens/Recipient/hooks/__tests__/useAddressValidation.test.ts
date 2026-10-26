@@ -718,4 +718,81 @@ describe("useAddressValidation", () => {
     const matchedIds = result.current.result.matchedAccounts?.map(m => m.account.id) || [];
     expect(matchedIds).not.toContain("eth_1");
   });
+
+  describe("with a balance-type self-transfer target", () => {
+    const transaction = {
+      family: "aleo",
+      recipient: "",
+      mode: "transfer",
+    } as unknown as Transaction;
+
+    beforeEach(() => {
+      mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
+      mockedSendFeatures.getBalanceTypeConfig.mockReturnValue({
+        getSelfTransferTarget: () => ({
+          address: "source_address",
+          translationKey: "recipient.selfTransfer.toPrivate",
+          isDestinationPublic: false,
+        }),
+        buildSelfTransferPatch: ({ isSelfTransfer }: { isSelfTransfer: boolean }) => ({
+          mode: isSelfTransfer ? "self_transfer" : "transfer",
+        }),
+      } as never);
+    });
+
+    it("validates the self-transfer address as a self-transfer", () => {
+      renderHook(() =>
+        useAddressValidation({
+          searchValue: "source_address",
+          currency: mockAccount.currency,
+          account: mockAccount,
+          transaction,
+          currentAccountId: mockAccount.id,
+        }),
+      );
+
+      expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          transaction: expect.objectContaining({ mode: "self_transfer" }),
+        }),
+      );
+    });
+
+    it("validates any other address as a regular transfer", () => {
+      renderHook(() =>
+        useAddressValidation({
+          searchValue: "other_address",
+          currency: mockAccount.currency,
+          account: mockAccount,
+          transaction,
+          currentAccountId: mockAccount.id,
+        }),
+      );
+
+      expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          transaction: expect.objectContaining({ mode: "transfer" }),
+        }),
+      );
+    });
+
+    it("names the matched current account after the pool it sends to", () => {
+      mockedUseSelector.mockReturnValue([mockAccount]);
+
+      const { result } = renderHook(() =>
+        useAddressValidation({
+          searchValue: "source_address",
+          currency: mockAccount.currency,
+          account: mockAccount,
+          transaction,
+          currentAccountId: mockAccount.id,
+        }),
+      );
+
+      expect(result.current.result.accountName).toBe("Private balance");
+      expect(result.current.result.matchedAccounts).toEqual([
+        expect.objectContaining({ account: mockAccount, accountName: "Private balance" }),
+      ]);
+    });
+  });
 });
