@@ -905,6 +905,13 @@ function reachableProps(declaration, module) {
   // reads the previous inferred parameter twice would otherwise rescan it twice per level.
   /** @type {Map<Context, Map<ts.TypeParameterDeclaration, boolean>>} */
   const inferredBound = new Map();
+  // A node that reads no type parameter means the same for every reference, so a default read by
+  // many sibling references, `Box<T = { ... }>`, is visited once, and a node that does read one
+  // queues only its reading children after the first reference.
+  /** @type {Map<ts.Node, boolean>} */
+  const readsParameter = new Map();
+  /** @type {Map<ts.Node, ReadonlyArray<ts.Node>>} */
+  const readingChildren = new Map();
   const ids = new Map();
   /** @param {object | string} value @returns {number} */
   function idOf(value) {
@@ -1073,7 +1080,46 @@ function reachableProps(declaration, module) {
    * @param {ts.Node} node @param {Context} context
    */
   function visit(node, context) {
-    queued.push(["visit", node, context]);
+    const shared = typeof context === "object" && !readsTypeParameter(node);
+    queued.push(["visit", node, shared ? "local" : context]);
+  }
+  /**
+   * @param {ts.Node} node
+   * @returns {boolean} true when `node` names a type parameter of a local type or an `infer`
+   *   clause, whose meaning depends on the reference that reads it
+   */
+  function readsTypeParameter(node) {
+    if (!readsParameter.has(node)) {
+      let reads = false;
+      if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+        const owner = typeParameterAt(node, node.typeName.text)?.parent;
+        reads = Boolean(
+          owner &&
+          (ts.isTypeAliasDeclaration(owner) ||
+            ts.isInterfaceDeclaration(owner) ||
+            ts.isInferTypeNode(owner)),
+        );
+      }
+      if (!reads) {
+        reads = Boolean(ts.forEachChild(node, child => readsTypeParameter(child) || undefined));
+      }
+      readsParameter.set(node, reads);
+    }
+    return readsParameter.get(node);
+  }
+  /**
+   * @template {ts.Node} T
+   * @param {ts.Node} node @param {ReadonlyArray<T>} children @param {Context} context
+   * @returns {ReadonlyArray<T>} the children to queue: all of them, or after the first reference
+   *   the ones that read a type parameter, as the others were queued in the shared context
+   */
+  function childrenToQueue(node, children, context) {
+    if (typeof context !== "object") return children;
+    if (!readingChildren.has(node)) {
+      readingChildren.set(node, children.filter(readsTypeParameter));
+      return children;
+    }
+    return /** @type {ReadonlyArray<T>} */ (readingChildren.get(node));
   }
   /** @param {ts.Node} node @param {Context} context */
   function step(node, context) {
@@ -1087,7 +1133,9 @@ function reachableProps(declaration, module) {
       return;
     }
     if (ts.isTypeLiteralNode(node)) {
-      for (const member of node.members) addProp(member, context);
+      for (const member of childrenToQueue(node, node.members, context)) {
+        addProp(member, readsTypeParameter(member) ? context : "local");
+      }
       return;
     }
     if (ts.isConditionalTypeNode(node)) {
@@ -1108,7 +1156,11 @@ function reachableProps(declaration, module) {
         ? node.expression
         : undefined;
     if (!reference) {
-      ts.forEachChild(node, child => visit(child, context));
+      const children = [];
+      ts.forEachChild(node, child => {
+        children.push(child);
+      });
+      for (const child of childrenToQueue(node, children, context)) visit(child, context);
       return;
     }
     const name = ts.isIdentifier(reference) ? reference.text : "";

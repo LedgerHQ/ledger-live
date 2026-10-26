@@ -1119,6 +1119,26 @@ test("R3 reads a parameter's arguments once however often the type places it", (
   assert.ok(Date.now() - start < 5000);
 });
 
+test("R3 reads a wide default once for many sibling references", () => {
+  // Visiting the default once per reference grows with references times fields.
+  const fields = Array.from({ length: 10000 }, (_, index) => `f${index}: string;`).join(" ");
+  for (const [declaration, sibling, last, expected] of [
+    [`type Box<T = { ${fields} }> = { value: T };`, "Box", "Box", []],
+    [
+      `type Box<A, T = { ${fields} first: A }> = { value: T };`,
+      "Box<string>",
+      "Box<{ onPress(): void }>",
+      ["R3 contract-gesture-callback Card"],
+    ],
+  ]) {
+    const siblings = Array.from({ length: 10000 }, (_, index) => `b${index}: ${sibling};`);
+    const contractModule = `${declaration}\nexport type CardProps = { ${siblings.join(" ")} last: ${last} };\n`;
+    const start = Date.now();
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), expected);
+    assert.ok(Date.now() - start < 5000);
+  }
+});
+
 test("R3 follows a rotation of wrapped arguments in linear time", () => {
   // Expanding each instantiation with its own bindings grows factorially: a crash at 10.
   for (const length of [10, 20]) {
