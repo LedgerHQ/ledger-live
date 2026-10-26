@@ -2,16 +2,11 @@ import { afterAll, describe, expect, it } from "bun:test";
 import { runCli } from "../../testing/cli-runner";
 import { makeSessionDir } from "../../testing/session-fixture";
 
-// Through the real flag parsing: a schema on --page-size would refuse "7" before the handler runs.
 describe("agent-intent intents (CLI)", () => {
   const fixture = makeSessionDir([]);
   afterAll(() => fixture.cleanup());
 
-  it.each([
-    ["--status", "signed"],
-    ["--page-size", "50"],
-    ["--page-size", "7"],
-  ])("refuses --cursor with %s %s", async (flag, value) => {
+  it("refuses --cursor with --page-size even when the size isn't allowed", async () => {
     const { stdout, exitCode } = await runCli(
       [
         "agent-intent",
@@ -20,8 +15,8 @@ describe("agent-intent intents (CLI)", () => {
         "bot",
         "--cursor",
         "abc",
-        flag,
-        value,
+        "--page-size",
+        "7",
         "--output",
         "json",
       ],

@@ -4,7 +4,6 @@ import {
   AGENT_INTENT_PAGE_SIZES,
   AGENT_INTENT_STATUSES,
   createAgentIntentClient,
-  isAgentIntentPageSize,
   type AgentIntentPage,
   type AgentIntentPageSize,
 } from "@ledgerhq/agent-intent-sdk";
@@ -22,8 +21,8 @@ import { createCommandOutput } from "../../output";
 // Checked in the handler rather than by a zod enum, so that `--cursor` refuses it like `--status`.
 function parsePageSize(value: string | undefined): AgentIntentPageSize | undefined {
   if (value === undefined) return undefined;
-  const size = /^\d+$/.test(value) ? Number(value) : Number.NaN;
-  if (!isAgentIntentPageSize(size)) {
+  const size = AGENT_INTENT_PAGE_SIZES.find(candidate => String(candidate) === value);
+  if (size === undefined) {
     throw new Error(`--page-size must be one of ${AGENT_INTENT_PAGE_SIZES.join(", ")}.`);
   }
   return size;

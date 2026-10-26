@@ -206,7 +206,7 @@ describe("agent-intent intents", () => {
     },
   );
 
-  it.each(["7", "10.0", "abc"])("rejects --page-size %p", async pageSize => {
+  it.each(["7", "010", "10.0", "abc"])("rejects --page-size %p", async pageSize => {
     await expect(runIntents({ "page-size": pageSize })).rejects.toThrow(
       "--page-size must be one of 1, 5, 10, 50, 100.",
     );
@@ -249,7 +249,7 @@ describe("agent-intent intents", () => {
     ).toEqual(["2.5 USDC", null]);
   });
 
-  it("prints a human table with a next-page hint", async () => {
+  it("prints a human table and the command for the next page", async () => {
     listImpl = async () => ({ intents: [record()], nextCursor: "next-token" });
 
     await runIntents();
@@ -259,7 +259,9 @@ describe("agent-intent intents", () => {
     expect(text).toContain("2026-10-07 10:00");
     expect(text).toContain("0.01 ETH");
     expect(text).toContain(RECIPIENT);
-    expect(text).toContain("re-run with --cursor next-token");
+    expect(text).toContain(
+      "More intents: run `wallet-cli agent-intent intents --profile bot --cursor next-token`",
+    );
   });
 
   it("strips terminal control characters from service values in the table and hint", async () => {
@@ -281,7 +283,7 @@ describe("agent-intent intents", () => {
       expect(text).not.toContain(sequence);
     }
     expect(text).toContain("id-[2J");
-    expect(text).toContain("re-run with --cursor next-[2Jtoken");
+    expect(text).toContain("--profile bot --cursor next-[2Jtoken`");
   });
 
   it.each(["abc", "0x10", "-5", "1.5"])(

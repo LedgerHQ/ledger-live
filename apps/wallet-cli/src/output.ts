@@ -972,7 +972,9 @@ class HumanCommandOutput implements CommandOutput {
     }
     if (nextCursor) {
       writeStdout(
-        colors.dim(`More intents: re-run with --cursor ${stripControlChars(nextCursor)}`),
+        colors.dim(
+          `More intents: run \`wallet-cli agent-intent intents --profile ${profileId} --cursor ${stripControlChars(nextCursor)}\``,
+        ),
       );
     }
   }
