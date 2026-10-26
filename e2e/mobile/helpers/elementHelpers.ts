@@ -240,8 +240,13 @@ export const NativeElementHelpers = {
   },
 
   async waitForElementNotVisible(id: string | RegExp, timeout = TIMEOUT.xxlarge): Promise<boolean> {
-    const el = element(by.id(id));
+    return NativeElementHelpers.waitForElementNotVisibleByElement(element(by.id(id)), timeout);
+  },
 
+  async waitForElementNotVisibleByElement(
+    el: NativeElement,
+    timeout = TIMEOUT.xxlarge,
+  ): Promise<boolean> {
     try {
       await NativeElementHelpers.expect(el).not.toBeVisible();
       return true;
@@ -455,9 +460,14 @@ export const NativeElementHelpers = {
   },
 
   async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {
-    const attributes = await retryUntilTimeout(async () =>
-      NativeElementHelpers.getElementById(id, index).getAttributes(),
+    return NativeElementHelpers.getAttributesByElement(
+      NativeElementHelpers.getElementById(id, index),
+      index,
     );
+  },
+
+  async getAttributesByElement(elem: NativeElement, index = 0): Promise<Detox.ElementAttributes> {
+    const attributes = await retryUntilTimeout(async () => elem.getAttributes());
     if ("elements" in attributes) {
       return attributes.elements[index];
     }
@@ -465,9 +475,14 @@ export const NativeElementHelpers = {
   },
 
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {
-    const attributes = await retryUntilTimeout(async () =>
-      NativeElementHelpers.getElementById(id, index).getAttributes(),
+    return NativeElementHelpers.getTextByElement(
+      NativeElementHelpers.getElementById(id, index),
+      index,
     );
+  },
+
+  async getTextByElement(elem: NativeElement, index = 0): Promise<string> {
+    const attributes = await retryUntilTimeout(async () => elem.getAttributes());
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
