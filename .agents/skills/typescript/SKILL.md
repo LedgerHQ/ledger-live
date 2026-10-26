@@ -25,7 +25,7 @@ description: TypeScript + React typing conventions for Ledger Wallet. Read when 
 ## Data & Types
 
 - Store a package's or folder's shared types in a `types.ts` file (e.g. `domain/entity/contact/src/types.ts`).
-- Declare the props of a component split into `X.web.tsx` and `X.native.tsx` in an unsuffixed `X.types.ts` beside them, with no `.web` / `.native` sibling. It is the one contract both platforms annotate their props with, so it imports nothing platform-specific (see [`package-public-api`](../package-public-api/SKILL.md#universal-components), rules R2 to R4). Example: `features/flow/contacts/src/ContactsView.types.ts`.
+- Declare the props of a component split into `X.web.tsx` and `X.native.tsx` in an unsuffixed `X.types.ts` beside them, with no `.web` / `.native` sibling. It is the one contract both platforms annotate their props with, so it imports nothing platform-specific (see [`package-public-api`](../package-public-api/SKILL.md#universal-components), rules R2 to R4). Example: `ServicesEntryPointsView.types.ts` in `features/flow/portfolio-services-entry-points/src/components/ServicesEntryPoints/`.
 - Use Zod for runtime validation.
 
 ## Imports & Exports

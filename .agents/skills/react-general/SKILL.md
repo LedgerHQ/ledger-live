@@ -60,7 +60,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 
 ## Platform-Specific Code
 
-- **Web vs native** (packages under `features/`, `shared/`, `domain/`): split by file suffix, `X.web.tsx` for desktop and `X.native.tsx` for mobile, and import the unsuffixed `./X`. The `moduleSuffixes` in `support/tsconfig/web.json` and `support/tsconfig/native.json` pick the right file. Both files take one props contract declared in `X.types.ts`, as `ContactsView.types.ts`, `ContactsView.web.tsx` and `ContactsView.native.tsx` in `features/flow/contacts/src/` do (see [`package-public-api`](../package-public-api/SKILL.md#universal-components)).
+- **Web vs native** (packages under `features/`, `shared/`, `domain/`): split by file suffix, `X.web.tsx` for desktop and `X.native.tsx` for mobile, and import the unsuffixed `./X`. The `moduleSuffixes` in `support/tsconfig/web.json` and `support/tsconfig/native.json` pick the right file. Both files take one props contract declared in `X.types.ts`, as `ServicesEntryPointsView.types.ts`, `ServicesEntryPointsView.web.tsx` and `ServicesEntryPointsView.native.tsx` in `features/flow/portfolio-services-entry-points/src/components/ServicesEntryPoints/` do (see [`package-public-api`](../package-public-api/SKILL.md#universal-components)).
 - **React Native**: use `Platform.select` for small iOS/Android variations inside a `.native` file; ensure behavior parity across iOS and Android.
 - **Desktop**: use environment flags for Electron/Web differences; keep platform abstraction consistent.
 
