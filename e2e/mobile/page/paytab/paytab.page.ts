@@ -21,6 +21,9 @@ export default class PayTabPage {
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
   payTileId = "pay-contacts-pay-tile";
+  // The deposit sheet, still dismissing, renders the same close button id.
+  bankTransferCloseButton = () =>
+    getElementByIdWithAncestorIds(this.bankTransferCloseId, this.bankTransferContentId);
   contactTile = (contactId: string) => getElementById(`pay-contacts-tile-${contactId}`);
   successStepId = "pay-success-step";
   successTitleId = "pay-success-title";
@@ -91,6 +94,7 @@ export default class PayTabPage {
 
   @Step("Expect the bank transfer intro with {{{0}}}")
   async expectBankTransferIntro(createAccountLabel: string) {
+    await waitForElementNotVisible(this.depositOptionsId);
     await waitForFullyVisibleById(this.bankTransferContentId);
     await detoxExpect(
       getElementByIdWithDescendantTexts(this.bankTransferCreateAccountId, createAccountLabel),
@@ -99,7 +103,7 @@ export default class PayTabPage {
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    await tapById(this.bankTransferCloseId);
+    await tapByElement(this.bankTransferCloseButton());
     if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
       throw new Error(`${this.bankTransferContentId} stayed visible`);
     }
