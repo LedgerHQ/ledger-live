@@ -1,40 +1,31 @@
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+
+// The @mysten packages ship `.mjs` files, which the preset's ESM transform does not cover.
 const esmPackages = ["@mysten", "@scure", "@noble"];
 
-module.exports = {
-  collectCoverageFrom: ["src/**/*.ts"],
-  coveragePathIgnorePatterns: [".*\\.integ\\.test\\.[tj]s"],
-  coverageDirectory: "coverage",
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
+module.exports = createLibsCoinJestConfig(
+  {
+    rootDir: __dirname,
+    coveragePathIgnorePatterns: [".*\\.integ\\.test\\.[tj]s"],
+    transform: {
+      "^.+\\.(ts|tsx)$": [
+        "@swc/jest",
+        {
+          jsc: {
+            target: "esnext",
+          },
         },
-      },
-    ],
-    [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
+      ],
+      [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
+        "@swc/jest",
+        {
+          jsc: {
+            target: "esnext",
+          },
         },
-      },
-    ],
+      ],
+    },
+    transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-};
+  { esm: false },
+);
