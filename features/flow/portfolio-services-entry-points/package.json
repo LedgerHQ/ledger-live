@@ -37,6 +37,7 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",

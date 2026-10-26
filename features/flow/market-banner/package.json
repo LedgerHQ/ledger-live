@@ -26,6 +26,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",

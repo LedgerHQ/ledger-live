@@ -1,4 +1,4 @@
-// Web (jsdom) setup shared across features/flow packages.
+// Web (jsdom) setup of every dual web/native preset.
 
 // Mock window.matchMedia for components that read it.
 Object.defineProperty(window, "matchMedia", {

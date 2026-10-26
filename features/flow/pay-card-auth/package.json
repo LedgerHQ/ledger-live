@@ -43,6 +43,7 @@
     "xstate": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@gorhom/bottom-sheet": "catalog:",

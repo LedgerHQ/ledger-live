@@ -48,8 +48,14 @@ module.exports = createSharedJestConfig({
 
 Dual-project config for UI packages with both web and native tests:
 
-- **web** (`*.web.test.ts?(x)`) — jsdom environment, `@testing-library/jest-dom`.
+- **web** (`*.web.test.ts?(x)` and unsuffixed `*.test.ts?(x)`): jsdom environment,
+  `@testing-library/jest-dom`.
 - **native** (`*.native.test.ts?(x)`) — node environment, Lumen/RN stubs.
+
+Both projects retry a failing test once on CI (`@ledgerhq/test-quarantine/jest-retries`), and the
+config reports to sonar, test quarantine and, on CI, `github-actions`. A consumer declares
+`"@ledgerhq/test-quarantine": "workspace:*"` in its `devDependencies`: jest resolves the reporter
+and the setup file from the consumer.
 
 Requires `jest-environment-jsdom` and `@testing-library/jest-dom` in devDependencies.
 
@@ -58,8 +64,9 @@ const { createSharedUiJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiJestConfig();
 ```
 
-Per-project customisation via `webOverrides` / `nativeOverrides`. Providing `moduleNameMapper`
-inside an override **replaces** the default Lumen/RN stubs for that project:
+Per-project customisation via `webOverrides` / `nativeOverrides`. `moduleNameMapper` and
+`setupFilesAfterEnv` **add** to the project's defaults (an entry with the same pattern replaces
+that mock); any other key replaces the project's value:
 
 ```js
 module.exports = createSharedUiJestConfig({
@@ -119,17 +126,20 @@ module.exports = withEsmDeps(config, { extraDeps: ["@ledgerhq\\+"] });
 
 ## Lumen handling
 
-Identical to `@support/jest/features-flow`: Lumen barrels and `@ledgerhq/crypto-icons` are
-redirected to Proxy passthrough stubs so tests don't need to transform them or install their
-peer graph. See `mocks/passthrough-web.js` and `mocks/passthrough-native.js`.
+Identical to `@support/jest/features-flow`, from the same core: Lumen barrels and
+`@ledgerhq/crypto-icons` are redirected to Proxy passthrough stubs so tests don't need to
+transform them or install their peer graph. See `../core/mocks/passthrough-web.js` and
+`../core/mocks/passthrough-native.js`, exported as `@support/jest/shared/mocks/*` for a consumer
+that wraps one.
 
 ## Usage
 
-Add the dependency:
+Add the dependencies (every preset here reports to test quarantine):
 
 ```jsonc
 // package.json
 "devDependencies": {
+  "@ledgerhq/test-quarantine": "workspace:*",
   "@support/jest": "workspace:*"
 }
 ```

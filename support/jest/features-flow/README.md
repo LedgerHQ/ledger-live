@@ -7,10 +7,15 @@ Shared jest configuration for `features/flow/*` packages.
 
 `createFlowJestConfig()` returns a dual-project jest config:
 
-- **web** (`*.web.test.ts?(x)`) — jsdom environment, for Desktop.
+- **web** (`*.web.test.ts?(x)` and unsuffixed `*.test.ts?(x)`): jsdom environment, for Desktop.
 - **native** (`*.native.test.ts?(x)`) — node environment, for Mobile.
 
-Both projects transpile TS/TSX with `@swc/jest`.
+Both projects transpile TS/TSX with `@swc/jest` and retry a failing test once on CI
+(`@ledgerhq/test-quarantine/jest-retries`). The config reports to sonar, test quarantine and, on
+CI, `github-actions`. The projects, the common mocks and the reporters come from the core shared
+with `@support/jest/shared` (see [the package README](../README.md)); this preset adds the native
+mocks below, the native resolver, the Lumen utils and design tokens transform allowlist, and the
+web polyfills.
 
 The Native project resolves the `react-native` conditional export for workspace `@features/*`
 and `@shared/*` packages only. This keeps flow package imports platform-correct without changing each consumer's
@@ -53,11 +58,11 @@ contract, and `jest.mock` the module in a test that needs the provider or the qu
 
 ## Web environment polyfills
 
-`setup/web.js` polyfills the Encoding API (`TextEncoder` / `TextDecoder`) on the jsdom global.
+`setup/web.js`, run after the core's web setup (which mocks `window.matchMedia`), polyfills the
+Encoding API (`TextEncoder` / `TextDecoder`) on the jsdom global.
 jsdom doesn't implement it, unlike every runtime this code ships to (browsers, React Native,
 Node), so a package reading `TextEncoder` at module-eval time — `@ledgerhq/device-contacts-kit`
 does — throws `ReferenceError` the moment a web test imports it, even transitively.
-It also mocks `window.matchMedia`.
 
 The same file installs the fetch primitives (`fetch`, `Response`, `Request`, streams,
 `BroadcastChannel`) from `undici`, which MSW reads on import. Without them a web test throws
@@ -115,11 +120,12 @@ It takes the same options as `createFlowJestConfig()` except `webOverrides`, and
 module.exports = require("@support/jest/features-flow").createFlowNativeJestConfig();
 ```
 
-Add the dependency:
+Add the dependencies:
 
 ```jsonc
 // package.json
 "devDependencies": {
+  "@ledgerhq/test-quarantine": "workspace:*",
   "@support/jest": "workspace:*"
 }
 ```

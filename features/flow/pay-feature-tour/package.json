@@ -35,6 +35,7 @@
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/feature-flags": "workspace:^",
     "@support/jest": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
