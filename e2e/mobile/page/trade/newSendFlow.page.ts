@@ -1,5 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
+import escapeRegExp from "lodash/escapeRegExp";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+
+const wholeTextContaining = (text: string) =>
+  new RegExp(String.raw`^[\s\S]*${escapeRegExp(text)}[\s\S]*$`);
 
 export default class NewSendFlowPage {
   @Step("Navigate to token send screen")
@@ -20,6 +24,30 @@ export default class NewSendFlowPage {
   amountContinueEnabledButtonId = "enabled-amount-continue-button";
   signaturePromptId = "send-signature-prompt";
   successViewTransactionId = "send-confirmation-success-view-transaction";
+
+  private readonly amountContinueDisabledButtonId = "disabled-amount-continue-button";
+  private readonly successConfirmationId = "send-confirmation-success";
+  private readonly sponsoredFeeNudgeId = "send-sponsored-fee-nudge";
+  private readonly sponsoredFeeValueId = "send-sponsored-fee-value";
+  private readonly sponsoredFeeErrorId = "send-sponsored-fee-error";
+  private readonly feePaymentEntryId = "send-fee-payment-entry";
+  private readonly feePaymentConfirmId = "send-fee-payment-confirm";
+  private readonly feePaymentOptionId = (optionId: string) => `send-fee-payment-option-${optionId}`;
+  private readonly sponsoredRentSignaturePromptId = "send-sponsored-rent-signature-prompt";
+  private readonly sponsoredPollingId = "send-sponsored-polling";
+  private readonly sponsoredFailureId = "send-sponsored-failure";
+  private readonly sponsoredFailureRetryId = "send-sponsored-failure-retry";
+  private readonly sponsoredFailureRetryBlockedId = "send-sponsored-failure-retry-blocked";
+  private readonly sponsoredFailureCancelId = "send-sponsored-failure-cancel";
+  private readonly amountInputId = "amount-input";
+  private readonly retryLockedNotice = () => getElementById(this.sponsoredFailureRetryBlockedId);
+  private readonly textContaining = (text: string) => getElementByText(wholeTextContaining(text));
+  private readonly feePaymentOptionShowing = (optionId: string, text: string) =>
+    getElementByIdWithDescendantTexts(this.feePaymentOptionId(optionId), wholeTextContaining(text));
+  private readonly sponsoredFeeErrorShowing = (text: string) =>
+    getElementByIdAndText(this.sponsoredFeeErrorId, wholeTextContaining(text));
+  private readonly sponsoredFailureRetryShowing = (text: string) =>
+    getElementByIdWithDescendantTexts(this.sponsoredFailureRetryId, wholeTextContaining(text));
 
   contactAddressPickerId = "pay-contact-address-picker";
   recipientCardAvatarId = "send-recipient-card-avatar";
@@ -97,8 +125,100 @@ export default class NewSendFlowPage {
   @Step("Click review to proceed to signature {{{0}}}")
   async setAmountAndReviewNewFlow(amount: string) {
     await this.setAmountNewFlow(amount);
+    await this.tapReviewNewFlow();
+  }
+
+  @Step("Click review")
+  async tapReviewNewFlow() {
     await waitForElementById(this.amountContinueEnabledButtonId);
     await tapById(this.amountContinueEnabledButtonId);
+  }
+
+  @Step("Verify review button is disabled")
+  async expectReviewDisabled() {
+    await waitForElementById(this.amountContinueDisabledButtonId);
+  }
+
+  @Step("Verify the sponsored fee offer is shown")
+  async expectSponsoredNudgeVisible() {
+    await waitForElementById(this.sponsoredFeeNudgeId);
+  }
+
+  @Step("Open the fee payment options")
+  async openFeePayment() {
+    await tapById(this.feePaymentEntryId);
+    await waitForFullyVisibleById(this.feePaymentConfirmId);
+  }
+
+  @Step("Verify fee payment option {{{0}}} costs {{{1}}}")
+  async expectFeePaymentOptionFee(optionId: string, fee: string) {
+    await waitForElement(this.feePaymentOptionShowing(optionId, fee));
+  }
+
+  @Step("Select fee payment option: {{{0}}}")
+  async selectFeePaymentOption(optionId: string) {
+    await tapById(this.feePaymentOptionId(optionId));
+  }
+
+  @Step("Confirm the fee payment option")
+  async confirmFeePayment() {
+    await tapById(this.feePaymentConfirmId);
+    jestExpect(await waitForElementNotVisible(this.feePaymentConfirmId)).toBe(true);
+  }
+
+  @Step("Pay the network fee with fee payment option: {{{0}}}")
+  async payFeeWith(optionId: string) {
+    await this.openFeePayment();
+    await this.selectFeePaymentOption(optionId);
+    await this.confirmFeePayment();
+  }
+
+  @Step("Verify the network fee is paid with the sponsored option")
+  async expectSponsoredFeeSelected() {
+    await waitForElementById(this.sponsoredFeeValueId);
+  }
+
+  @Step("Verify sponsored fee error: {{{0}}}")
+  async expectSponsoredFeeError(message: string) {
+    await waitForElement(this.sponsoredFeeErrorShowing(message));
+  }
+
+  @Step("Wait for the rent payment signature screen")
+  async waitForRentSignature() {
+    await waitForElementById(this.sponsoredRentSignaturePromptId);
+  }
+
+  @Step("Verify the energy delivery wait is shown")
+  async expectSponsoredPolling() {
+    await waitForElementById(this.sponsoredPollingId);
+  }
+
+  @Step("Verify the sponsored send failed: {{{0}}}")
+  async expectSponsoredFailure(message: string) {
+    await waitForElementById(this.sponsoredFailureId);
+    await waitForElement(this.textContaining(message));
+  }
+
+  // Detox can't read a disabled button on iOS, so check that pressing Retry changes nothing.
+  @Step("Verify Retry is locked while the paid rent may still land")
+  async expectRetryLocked() {
+    await waitForElement(this.retryLockedNotice());
+    await tapById(this.sponsoredFailureRetryId);
+    await waitForElement(this.retryLockedNotice());
+  }
+
+  @Step("Verify Retry is offered as {{{0}}}, without the message: {{{1}}}")
+  async expectRetryOffered(label: string, absentMessage: string) {
+    await waitForElement(this.sponsoredFailureRetryShowing(label));
+    await detoxExpect(this.retryLockedNotice()).not.toExist();
+    await detoxExpect(this.textContaining(absentMessage)).not.toExist();
+  }
+
+  @Step("Cancel the failed sponsored send")
+  async cancelSponsoredFailure() {
+    await tapById(this.sponsoredFailureCancelId);
+    jestExpect(await waitForElementNotVisible(this.sponsoredFailureId)).toBe(true);
+    jestExpect(await waitForElementNotVisible(this.amountInputId)).toBe(true);
   }
 
   @Step("Wait for signature screen or device action loader")
@@ -148,6 +268,11 @@ export default class NewSendFlowPage {
     await waitForElementById(this.recipientContactNameId);
     const actualName = await getTextOfElement(this.recipientContactNameId);
     jestExpect(actualName).toEqual(contactName);
+  }
+
+  @Step("Wait for the success confirmation screen")
+  async waitForSuccessConfirmation() {
+    await waitForElementById(this.successConfirmationId);
   }
 
   @Step("Wait for and tap success confirmation screen")
