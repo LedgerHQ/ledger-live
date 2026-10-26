@@ -6,7 +6,8 @@ import { useFilteredProviders } from "./useFilteredProviders";
 
 export function useFetchCurrencyAll() {
   const fetchAdditionalCoins = useFeature("fetchAdditionalCoins");
-  const { providers, error } = useFilteredProviders();
+  const { providers, loading: areProvidersLoading, error: providersError } = useFilteredProviders();
+  const enabled = !providersError && providers.length > 0;
 
   const { data, ...rest } = useAPI({
     queryFn: fetchCurrencyAll,
@@ -15,10 +16,12 @@ export function useFetchCurrencyAll() {
       providers,
     },
     staleTimeout: FETCH_CURRENCIES_TIMEOUT_MS,
-    enabled: !error && providers.length > 0,
+    enabled,
   });
   return {
     ...rest,
     data: data ?? [],
+    isResolved:
+      data !== undefined || rest.error !== undefined || (!areProvidersLoading && !enabled),
   };
 }

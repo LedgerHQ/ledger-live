@@ -12,6 +12,7 @@ import { useSwapVisibility } from "LLD/components/RightPanel/Swap/useSwapVisibil
 import { useSwapAvailability } from "LLD/components/RightPanel/Swap/useSwapAvailability";
 import { useCardVisibility } from "LLD/components/RightPanel/Card/useCardVisibility";
 import { useSwapConsoleAbtest } from "LLD/features/AssetDetail/hooks/useSwapConsoleAbtest";
+import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
@@ -28,8 +29,12 @@ export const usePageViewModel = (): PageViewModelResult => {
   const isSwapAvailableForRoute = useSwapAvailability(pathname);
   const isCardEnabled = useCardVisibility();
   const { isConsoleEnabled } = useSwapConsoleAbtest();
+  const isAccountDetailPage = useIsAccountDetailPage(pathname);
 
-  const variant = getRightPanelVariant(pathname, { shouldDisplayAggregatedAssets });
+  const variant = getRightPanelVariant(pathname, {
+    shouldDisplayAggregatedAssets,
+    isAccountDetailPage,
+  });
   const isSwapConsoleHidden = isAggregatedAssetDetailPath(pathname) && !isConsoleEnabled;
   const isSwapUsable = isSwapEnabled && isSwapAvailableForRoute && !isSwapConsoleHidden;
 
