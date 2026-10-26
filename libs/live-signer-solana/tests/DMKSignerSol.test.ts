@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 // tests/DmkSignerSol.test.ts
 import { DmkSignerSol } from "../src/DmkSignerSol";
+import { solanaAddressBookProvider } from "../src/addressBook/solanaAddressBookProvider";
+import { SignerSolanaBuilder } from "@ledgerhq/device-signer-kit-solana";
 import { DeviceActionStatus } from "@ledgerhq/device-management-kit";
 import { ContextModuleBuilder } from "@ledgerhq/context-module";
 import { getEnv } from "@ledgerhq/live-env";
@@ -37,10 +39,17 @@ jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
 jest.mock("@ledgerhq/device-signer-kit-solana", () => ({
   SignerSolanaBuilder: jest.fn().mockImplementation(() => ({
     withContextModule: jest.fn().mockReturnThis(),
-    build: () => ({}),
+    withAddressBook: jest.fn().mockReturnThis(),
+    build: jest.fn(() => ({})),
   })),
   SignMessageVersion: { Raw: "raw", Legacy: "legacy", V0: "v0", V1: "v1" },
 }));
+
+const lastBuilder = () =>
+  (SignerSolanaBuilder as unknown as jest.Mock).mock.results.at(-1)?.value as {
+    withAddressBook: jest.Mock;
+    build: jest.Mock;
+  };
 
 describe("DmkSignerSol", () => {
   let signer: DmkSignerSol;
@@ -455,5 +464,43 @@ describe("DmkSignerSol", () => {
         branch: "main",
       });
     });
+  });
+});
+
+describe("DmkSignerSol address book", () => {
+  const book = { contactGroups: [], ledgerAccounts: [] };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.mocked(getEnv).mockReturnValue("https://global.api.prd.ledger.com/cal" as never);
+    solanaAddressBookProvider.clearSource();
+  });
+
+  afterEach(() => {
+    solanaAddressBookProvider.clearSource();
+  });
+
+  it("does not provide an address book when no source is registered", () => {
+    new DmkSignerSol({} as any, "sessionId");
+
+    expect(lastBuilder().withAddressBook).not.toHaveBeenCalled();
+    expect(lastBuilder().build).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not provide an address book when the registered source yields undefined", () => {
+    solanaAddressBookProvider.setSource(() => undefined);
+
+    new DmkSignerSol({} as any, "sessionId");
+
+    expect(lastBuilder().withAddressBook).not.toHaveBeenCalled();
+  });
+
+  it("provides the snapshot to the builder when a source yields one", () => {
+    solanaAddressBookProvider.setSource(() => book);
+
+    new DmkSignerSol({} as any, "sessionId");
+
+    expect(lastBuilder().withAddressBook).toHaveBeenCalledWith(book);
+    expect(lastBuilder().build).toHaveBeenCalledTimes(1);
   });
 });
