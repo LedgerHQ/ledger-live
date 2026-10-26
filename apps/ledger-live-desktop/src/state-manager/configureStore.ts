@@ -1,12 +1,8 @@
 import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/toolkit";
 import { UnknownAction } from "redux";
-import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
-import { authApiExtra } from "@shared/auth";
 import { createAppConfigMiddleware } from "@shared/app-config";
-import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
   calApiExtra,
   cardApi,
@@ -40,7 +36,6 @@ import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
 import { accountDataRecorder, accountDataSources } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
-import { selectFeature } from "@shared/feature-flags";
 import { loadAppConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import {
@@ -118,23 +113,6 @@ const customCreateStore = ({
                 // Read on every request, so the debug settings can change it without a restart.
                 getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-              }),
-              ...authApiExtra({
-                isFeatureEnabled: (): boolean =>
-                  selectFeature(store.getState(), "lwdAuth").enabled ?? false,
-                authProvider: new AuthSDK(
-                  {
-                    clientId: appConfig.keycloakClientId,
-                    keycloakBaseUrl: appConfig.keycloakBaseUrl,
-                    keycloakRealm: appConfig.keycloakRealm,
-                    disablePkce: true,
-                  },
-                  {
-                    provider: new LkrpIdentityProvider(
-                      (): TrustchainStore => store.getState().trustchain,
-                    ),
-                  },
-                ),
               }),
             },
           },

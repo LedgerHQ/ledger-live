@@ -441,6 +441,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@shared/api-services": "workspace:^",
+    "@shared/auth": "workspace:^",
     "@solana/web3.js": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
