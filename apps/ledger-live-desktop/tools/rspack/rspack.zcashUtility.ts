@@ -1,7 +1,7 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { commonConfig, rootFolder } from "./rspack.common";
-import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils";
+import { commonConfig, rootFolder } from "./rspack.common.ts";
+import { buildMainEnv, buildDotEnvDefine, DOTENV_FILE } from "./utils.ts";
 
 /**
  * Creates the rspack configuration for the ZCash UtilityProcess bundle.

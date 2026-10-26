@@ -177,7 +177,6 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "ts-node": "^10.9.2",
     "typescript": "catalog:"
   }
 }

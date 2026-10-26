@@ -1,14 +1,14 @@
 import path from "path";
 import fs from "fs";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { commonConfig, rootFolder } from "./rspack.common";
+import { commonConfig, rootFolder } from "./rspack.common.ts";
 import {
   buildRendererEnv,
   buildDotEnvDefine,
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-} from "./utils";
+} from "./utils.ts";
 
 const workersPath = path.join(rootFolder, "src", "renderer", "webworkers", "workers");
 

@@ -12,6 +12,5 @@ export const openURL = (url: string): void => {
     console.warn(`Blocked potentially unsafe URL: ${url}`);
     return;
   }
-  // eslint-disable-next-line no-restricted-syntax -- This IS the safe wrapper that validates URLs
   shell.openExternal(url);
 };

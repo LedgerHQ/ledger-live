@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
-const ts = require("typescript");
+const { API, JsxEmit, ModuleKind, ModuleResolutionKind } = require("typescript/sync");
+const { ScriptTarget } = require("typescript/ast");
+const ts = require("typescript/ast/is");
 
 const ROOT = path.resolve(__dirname, "../../..");
 const SCANNED_LAYERS = ["features", "domain", "shared"];
@@ -170,7 +172,7 @@ function unwrap(node) {
     ts.isAsExpression(n) ||
     ts.isSatisfiesExpression(n) ||
     ts.isNonNullExpression(n) ||
-    ts.isTypeAssertionExpression(n)
+    ts.isTypeAssertion(n)
   ) {
     n = n.expression;
   }
@@ -188,11 +190,11 @@ function cartesian(parts) {
 
 // Union of string literal types -> values, null when any member is open (string, any, ...)
 function typeValues(type) {
-  if (type.isStringLiteral()) return [type.value];
-  if (!type.isUnion()) return null;
+  if (type.isStringLiteralType()) return [type.value];
+  if (!type.isUnionType()) return null;
   const values = [];
-  for (const member of type.types) {
-    if (!member.isStringLiteral()) return null;
+  for (const member of type.getTypes()) {
+    if (!member.isStringLiteralType()) return null;
     values.push(member.value);
   }
   return values;
@@ -285,7 +287,7 @@ function hookNamespace(call, checker) {
 // Nearest enclosing declaration that gives a binding its value: its initializer, or "parameter".
 function bindingOrigin(decl) {
   for (let n = decl; n; n = n.parent) {
-    if (ts.isParameter(n)) return "parameter";
+    if (ts.isParameterDeclaration(n)) return "parameter";
     if (ts.isVariableDeclaration(n)) return n.initializer ? unwrap(n.initializer) : null;
   }
   return null;
@@ -297,13 +299,13 @@ function isI18nextImport(decl) {
 }
 
 // Returns { prefixes } when the callee is a translation function, otherwise null.
-function translatorOf(callee, checker) {
+function translatorOf(callee, checker, symbols) {
   if (ts.isPropertyAccessExpression(callee)) {
     return callee.name.text === "t" ? translatorSource(callee.expression, checker) : null;
   }
   if (!ts.isIdentifier(callee)) return null;
-  const symbol = checker.getSymbolAtLocation(callee);
-  const decl = symbol?.valueDeclaration ?? symbol?.declarations?.[0];
+  const symbol = symbols.get(callee);
+  const decl = (symbol?.valueDeclaration ?? symbol?.declarations?.[0])?.resolve();
   if (!decl) return TRANSLATE_NAMES.has(callee.text) ? { prefixes: [""] } : null;
   if (ts.isBindingElement(decl)) {
     if ((decl.propertyName ?? decl.name).getText() !== "t") return null;
@@ -318,7 +320,7 @@ function translatorOf(callee, checker) {
     }
     return null;
   }
-  if (ts.isParameter(decl)) return callee.text === "t" ? { prefixes: [""] } : null;
+  if (ts.isParameterDeclaration(decl)) return callee.text === "t" ? { prefixes: [""] } : null;
   if (ts.isImportSpecifier(decl)) return isI18nextImport(decl) ? { prefixes: [""] } : null;
   return null;
 }
@@ -378,41 +380,61 @@ function workspaceEntries() {
   return entries;
 }
 
+// Relative imports resolve on a second server: a resolve callback calling into its own server deadlocks.
+let servers;
+function tsServers() {
+  servers ??= { program: new API({ cwd: ROOT }), resolver: new API({ cwd: ROOT }) };
+  return servers;
+}
+
 // Only relative imports and workspace packages are followed: deterministic, no built libs needed.
 function createProgram(files) {
   const options = {
     noEmit: true,
-    jsx: ts.JsxEmit.Preserve,
-    target: ts.ScriptTarget.ESNext,
-    module: ts.ModuleKind.ESNext,
-    moduleResolution: ts.ModuleResolutionKind.Bundler,
+    jsx: JsxEmit.Preserve,
+    target: ScriptTarget.ESNext,
+    module: ModuleKind.ESNext,
+    moduleResolution: ModuleResolutionKind.Bundler,
     strict: true,
     skipLibCheck: true,
     resolveJsonModule: true,
     types: [],
   };
-  const host = ts.createCompilerHost(options);
+  const { program, resolver } = tsServers();
   const entries = workspaceEntries();
-  const resolveOne = (name, containingFile) => {
-    if (name.startsWith("."))
-      return ts.resolveModuleName(name, containingFile, options, host).resolvedModule;
-    const entry = entries.get(name);
-    if (!entry) return undefined;
-    return {
-      resolvedFileName: entry,
-      extension: entry.endsWith(".tsx") ? ts.Extension.Tsx : ts.Extension.Ts,
-    };
+  const standard = resolver.createModuleResolver(options);
+  const moduleResolver = program.createModuleResolver(options, {
+    resolveModuleName: (name, containingDirectory, mode) => {
+      if (name.startsWith(".")) {
+        const resolved = standard.resolveModuleName(name, containingDirectory, mode).resolvedModule;
+        return resolved && { resolvedFileName: resolved.resolvedFileName };
+      }
+      const entry = entries.get(name);
+      return entry && { resolvedFileName: entry };
+    },
+  });
+  return program.createProgram(files, options, { moduleResolver });
+}
+
+// Symbols of every identifier callee, fetched in one round trip to the tsc server.
+function calleeSymbols(sf, checker) {
+  const callees = [];
+  const collect = node => {
+    if (ts.isCallExpression(node) && node.arguments.length > 0 && ts.isIdentifier(node.expression))
+      callees.push(node.expression);
+    node.forEachChild(collect);
   };
-  host.resolveModuleNameLiterals = (literals, containingFile) =>
-    literals.map(literal => ({ resolvedModule: resolveOne(literal.text, containingFile) }));
-  return ts.createProgram(files, options, host);
+  collect(sf);
+  const symbols = callees.length > 0 ? checker.getSymbolAtLocation(callees) : [];
+  return new Map(callees.map((callee, i) => [callee, symbols[i]]));
 }
 
 // Sites: { line, kind: "static" | "enumerated" | "unverifiable", keys: [{ key, contexts }] }
 function extractKeys(file, program = createProgram([file])) {
   const sf = program.getSourceFile(file);
   if (!sf) return [];
-  const checker = program.getTypeChecker();
+  const checker = program.getProject().checker;
+  const symbols = calleeSymbols(sf, checker);
   const sites = [];
   const record = (node, expr, prefixes, call, plural, hookNs = null) => {
     const { line } = sf.getLineAndCharacterOfPosition(node.getStart());
@@ -433,7 +455,7 @@ function extractKeys(file, program = createProgram([file])) {
   };
   const visit = node => {
     if (ts.isCallExpression(node) && node.arguments.length > 0) {
-      const translator = translatorOf(node.expression, checker);
+      const translator = translatorOf(node.expression, checker, symbols);
       if (translator) {
         record(
           node,
@@ -450,7 +472,7 @@ function extractKeys(file, program = createProgram([file])) {
         : node.initializer;
       if (init) record(node, init, [""], null, hasCountAttribute(node));
     }
-    ts.forEachChild(node, visit);
+    node.forEachChild(visit);
   };
   visit(sf);
   return sites;
@@ -508,6 +530,7 @@ function main() {
   const files = SCANNED_LAYERS.flatMap(layer => [...walk(path.join(ROOT, layer))]);
   const baseline = readBaseline();
   const analysis = analyzeFiles(files, catalogs, resolveConsumers());
+  Object.values(tsServers()).forEach(server => server.close());
   const { unverifiable, stats } = analysis;
   const missing = analysis.missing
     .map(m => ({

@@ -610,7 +610,6 @@ apps/ledger-live-mobile/e2e/                                                @led
 # Platform — monorepo / toolchain (before cross-team opt-out so opt-out patterns win on overlapping paths)
 # codeowners-check: allow-override
 /oxfmt.config.mts                                     @ledgerhq/platform
-**/.eslintrc.*                                        @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform

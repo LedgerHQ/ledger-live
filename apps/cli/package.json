@@ -57,7 +57,6 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "ts-node": "10.9.2",
     "@rslib/core": "catalog:",
     "yaml": "2.8.1",
     "oxfmt": "catalog:",

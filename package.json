@@ -219,9 +219,7 @@
     "@support/lint": "workspace:*",
     "@support/tsconfig": "workspace:*",
     "@ton/crypto": "^3.3.0",
-    "@typescript-eslint/parser": "catalog:",
     "chalk": "4.1.2",
-    "eslint": "8.57.0",
     "jest-sonar": "0.2.16",
     "knip": "6.32.2",
     "nx": "catalog:",
@@ -229,7 +227,6 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "rimraf": "4.4.1",
-    "@typescript/native": "catalog:",
     "typescript": "catalog:",
     "zx": "8.8.5"
   },

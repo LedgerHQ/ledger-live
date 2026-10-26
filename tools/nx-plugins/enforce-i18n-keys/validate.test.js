@@ -187,11 +187,11 @@ describe("extractKeys: type-enumerated dynamic keys", () => {
       declare const part: "title" | "body";
       t(\`flow.\${variant}.\${part}\`);
     `;
-    assert.deepStrictEqual(keysOf(source), [
-      "flow.buy.title",
+    assert.deepStrictEqual(keysOf(source).sort(), [
       "flow.buy.body",
-      "flow.sell.title",
+      "flow.buy.title",
       "flow.sell.body",
+      "flow.sell.title",
     ]);
   });
 

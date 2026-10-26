@@ -53,6 +53,8 @@ jobs:
 
       - name: Run Danger
         working-directory: tools/danger
-        run: pnpm danger ci --dangerfile dangerfile.ts
+        run: pnpm danger ci --dangerfile dangerfile.mts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Node strips the types; Danger's transpiler needs the TS6 API
+          DANGER_DISABLE_TRANSPILATION: "true"

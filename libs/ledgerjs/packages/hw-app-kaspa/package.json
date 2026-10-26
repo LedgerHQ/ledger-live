@@ -11,6 +11,9 @@
     "src",
     "CHANGELOG.md"
   ],
+  "nx": {
+    "implicitDependencies": ["@ledgerhq/ledger-libs"]
+  },
   "scripts": {
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
     "watch": "tsc --watch --project tsconfig.build.json",
@@ -47,8 +50,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "ts-node": "^10.9.2"
+    "oxfmt": "catalog:"
   },
   "exports": {
     ".": {

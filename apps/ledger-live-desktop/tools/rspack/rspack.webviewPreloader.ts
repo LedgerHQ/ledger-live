@@ -1,13 +1,13 @@
 import path from "path";
 import { rspack, type RspackOptions } from "@rspack/core";
-import { commonConfig, rootFolder } from "./rspack.common";
+import { commonConfig, rootFolder } from "./rspack.common.ts";
 import {
   buildMainEnv,
   buildDotEnvDefine,
   DOTENV_FILE,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-} from "./utils";
+} from "./utils.ts";
 
 /**
  * Creates the rspack configuration for the webview preloader script

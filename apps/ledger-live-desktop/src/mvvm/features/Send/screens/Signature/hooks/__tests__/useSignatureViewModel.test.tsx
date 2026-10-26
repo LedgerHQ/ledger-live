@@ -101,12 +101,10 @@ jest.mock("../../../../context/SendFlowTrackingContext", () => ({
   })),
 }));
 
-// eslint-disable-next-line
 jest.mock("@ledgerhq/live-common/hooks/useBroadcast", () => ({
   useBroadcast: jest.fn(() => broadcastFn),
 }));
 
-// eslint-disable-next-line
 jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => {
   global.__isUserRefusedTransactionErrorMock = jest.fn(() => false);
   return {

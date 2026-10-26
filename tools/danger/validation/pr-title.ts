@@ -1,5 +1,5 @@
-import { lintPrTitle } from "../commitlint";
-import { isMergeConflictsPr, stripPlatformPrefix } from "../pull-request";
+import { lintPrTitle } from "../commitlint.ts";
+import { isMergeConflictsPr, stripPlatformPrefix } from "../pull-request.ts";
 
 async function validatePrTitle() {
   if (isMergeConflictsPr(danger.github.pr.title)) return;

@@ -8,6 +8,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleSuffixes": [".web", ""],
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "rootDir": ".",
     "paths": {
       "*": ["./*"],

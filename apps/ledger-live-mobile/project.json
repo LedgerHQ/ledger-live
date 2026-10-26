@@ -5,6 +5,7 @@
       "inputs": [
         "default",
         "^default",
+        "lintConfig",
         {
           "env": "CI_OS"
         }
@@ -14,6 +15,7 @@
       "inputs": [
         "default",
         "^default",
+        "lintConfig",
         {
           "env": "CI_OS"
         }
@@ -23,6 +25,7 @@
       "inputs": [
         "default",
         "^default",
+        "lintConfig",
         {
           "env": "CI_OS"
         }

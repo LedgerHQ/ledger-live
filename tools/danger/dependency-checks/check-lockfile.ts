@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseAllDocuments } from "yaml";
-import { assertDependencyChecks } from "./validate.js";
+import { assertDependencyChecks } from "./validate.cjs";
 
 function findLockfile(from: string): string {
   const candidate = path.join(from, "pnpm-lock.yaml");

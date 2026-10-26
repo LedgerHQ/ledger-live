@@ -1,41 +1,41 @@
-const ts = require("typescript");
+const { API, formatDiagnosticsWithColorAndContext } = require("typescript/sync");
 const path = require("path");
 const { EOL } = require("os");
 
 const rootDirectory = path.resolve(__dirname, "..", "..", "..");
 const e2eDirectory = path.resolve(__dirname, "..");
 
-const parseConfigHost = {
-  useCaseSensitiveFileNames: ts.sys.useCaseSensitiveFileNames,
-  readDirectory: ts.sys.readDirectory,
-  fileExists: ts.sys.fileExists,
-  readFile: ts.sys.readFile,
-  getCurrentDirectory: ts.sys.getCurrentDirectory,
-  onUnRecoverableConfigFileDiagnostic: diagnostic => {
-    console.error(ts.flattenDiagnosticMessageText(diagnostic.messageText, EOL));
-    process.exit(1);
-  },
-};
-
 function compile() {
   const configPath = path.join(e2eDirectory, "tsconfig.json");
-  const config = ts.getParsedCommandLineOfConfigFile(configPath, { noEmit: true }, parseConfigHost);
+  const api = new API({ cwd: e2eDirectory });
+  const project = api
+    .createSnapshot({ openProjects: [configPath] })
+    .getConfiguredProject(configPath);
 
-  if (!config) {
+  if (!project) {
     console.error(`❌ - Could not read ${configPath}`);
     process.exitCode = 1;
+    api.close();
     return;
   }
 
-  const program = ts.createProgram(config.fileNames, config.options);
+  const { program } = project;
 
   console.log(`⏳ - Running typescript type checker...`);
 
-  const allDiagnostics = ts
-    .getPreEmitDiagnostics(program)
-    // Only include errors from e2e/mobile directory
+  const allDiagnostics = [
+    ...program.getConfigFileParsingDiagnostics(),
+    ...program.getProgramDiagnostics(),
+    ...program.getSyntacticDiagnostics(),
+    ...program.getGlobalDiagnostics(),
+    ...program.getSemanticDiagnostics(),
+  ]
+    // Config errors, plus errors from e2e/mobile sources
     .filter(
-      diag => diag.file?.fileName.startsWith(e2eDirectory) && /\.tsx?/.test(diag.file.fileName),
+      ({ fileName }) =>
+        !fileName ||
+        /tsconfig[^/]*\.json$/.test(fileName) ||
+        (fileName.startsWith(e2eDirectory) && /\.[cm]?tsx?$/.test(fileName)),
     );
 
   const formatDiagnosticHost = {
@@ -44,7 +44,7 @@ function compile() {
     getCanonicalFileName: p => p,
   };
 
-  console.log(ts.formatDiagnosticsWithColorAndContext(allDiagnostics, formatDiagnosticHost));
+  console.log(formatDiagnosticsWithColorAndContext(allDiagnostics, formatDiagnosticHost));
 
   if (allDiagnostics.length > 0) {
     console.log(`⚠️ - Found ${allDiagnostics.length} errors. `);
@@ -52,6 +52,7 @@ function compile() {
   } else {
     console.log("✅ - All Good!");
   }
+  api.close();
 }
 
 compile();

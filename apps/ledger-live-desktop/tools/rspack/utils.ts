@@ -1,12 +1,15 @@
 import childProcess from "child_process";
 import fs from "fs";
 import path from "path";
+import { createRequire } from "module";
 import * as dotenv from "dotenv";
 import { prerelease } from "semver";
 import type { Plugins } from "@rspack/core";
-import pkg from "../../package.json";
+import pkg from "../../package.json" with { type: "json" };
 
-export const lldRoot = path.resolve(__dirname, "..", "..");
+const require = createRequire(import.meta.url);
+
+export const lldRoot = path.resolve(import.meta.dirname, "..", "..");
 
 let GIT_REVISION = process.env.GIT_REVISION;
 
@@ -198,7 +201,6 @@ export const isRsdoctorEnabled = () =>
 
 export function getRsdoctorPlugin(bundleName: string): Plugins {
   if (isRsdoctorEnabled()) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { RsdoctorRspackPlugin } = require("@rsdoctor/core");
     const isCI = process.env.CI === "true" || process.env.CI === "1";
     const repoRoot = path.resolve(lldRoot, "..", "..");

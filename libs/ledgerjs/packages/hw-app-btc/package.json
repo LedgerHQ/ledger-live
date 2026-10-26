@@ -87,8 +87,7 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0"
+    "source-map-support": "^0.5.21"
   },
   "files": [
     "lib",
@@ -96,6 +95,9 @@
     "src",
     "CHANGELOG.md"
   ],
+  "nx": {
+    "implicitDependencies": ["@ledgerhq/ledger-libs"]
+  },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/.test.ts.disabled|node_modules|lib-es|lib/' --passWithNoTests",

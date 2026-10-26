@@ -2,6 +2,7 @@
   "name": "@tools/danger",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "devDependencies": {
     "@commitlint/config-conventional": "catalog:",
     "@commitlint/lint": "catalog:",

@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import * as React from "react";
 import { screen, waitFor, fireEvent, renderWithReactQuery } from "@tests/test-renderer";
 import { server, http, HttpResponse } from "@tests/server";

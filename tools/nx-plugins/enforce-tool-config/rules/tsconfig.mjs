@@ -37,12 +37,56 @@ const SKIP_DIRS = new Set(["node_modules", "lib", "lib-es", "dist", "build", "co
 
 /** @typedef {import("./index.mjs").Violation} Violation */
 
-/** Loaded on first use: most `lint:tool-config` runs are cache hits and never get here. */
-let typescript;
-function ts() {
-  typescript ??= require("typescript");
-  return typescript;
+/**
+ * Spawns a tsc process, so a check opens it lazily: most runs are cache hits.
+ * @param {string} cwd
+ */
+function openTypeScript(cwd) {
+  const { API, DiagnosticCategory } = require("typescript/sync");
+  const { serverFS } = require("typescript/fs");
+  /** @type {string[]} */
+  let read = [];
+  const api = new API({
+    cwd,
+    fs: {
+      directoryExists: serverFS.useOS,
+      fileExists: serverFS.useOS,
+      // Source files are not listed: the rule compares options and file specs, never programs.
+      getAccessibleEntries: () => ({ files: [], directories: [], symlinks: [] }),
+      readFile: file => {
+        read.push(file);
+        return serverFS.useOS;
+      },
+      realpath: serverFS.useOS,
+      stat: serverFS.useOS,
+      writeFile: serverFS.error,
+      removeFile: serverFS.error,
+    },
+  });
+  return {
+    DiagnosticCategory,
+    /** @param {string} file absolute */
+    readConfigFile: file => api.readConfigFile(file),
+    /**
+     * Parses `config` as TypeScript does when it is the content of `file`.
+     * @param {string} file absolute
+     * @param {unknown} config
+     * @returns {{ parsed: ParsedCommandLine, read: string[] }} read: files the parse read, extends included
+     */
+    parse(file, config) {
+      read = [];
+      const parsed = api.parseJsonConfigFileContent(config, { configFileName: file });
+      return { parsed, read };
+    },
+    close: () => api.close(),
+  };
 }
+
+/**
+ * @typedef {import("typescript/sync").ParsedCommandLine} ParsedCommandLine
+ * @typedef {import("typescript/sync").Diagnostic} Diagnostic
+ * @typedef {ReturnType<typeof openTypeScript>} TypeScript
+ */
 
 /**
  * @param {string} workspaceRoot
@@ -85,36 +129,31 @@ export function findConfigs(packageDir) {
   return out.sort();
 }
 
-/**
- * Parses a config as TypeScript does, from `text` instead of the file on disk. Source files are
- * not listed: the rule compares options and file specs, never programs.
- *
- * @param {string} file absolute
- * @param {string} text
- * @returns {import("typescript").ParsedCommandLine | undefined}
- */
-function parse(file, text) {
-  const host = {
-    ...ts().sys,
-    readFile: candidate => (path.resolve(candidate) === file ? text : ts().sys.readFile(candidate)),
-    readDirectory: () => [],
-    onUnRecoverableConfigFileDiagnostic: () => {},
-  };
-  return ts().getParsedCommandLineOfConfigFile(file, undefined, host);
-}
-
 // "No inputs were found": expected, since `parse` lists no source files.
 const NO_INPUTS = 18003;
 
 /**
- * @param {import("typescript").ParsedCommandLine} parsed
- * @returns {import("typescript").Diagnostic[]}
+ * @param {TypeScript} ts
+ * @param {ParsedCommandLine} parsed
+ * @returns {Diagnostic[]}
  */
-function errorsOf(parsed) {
+function errorsOf(ts, parsed) {
   return parsed.errors.filter(
     diagnostic =>
-      diagnostic.category === ts().DiagnosticCategory.Error && diagnostic.code !== NO_INPUTS,
+      diagnostic.category === ts.DiagnosticCategory.Error && diagnostic.code !== NO_INPUTS,
   );
+}
+
+/**
+ * @param {Diagnostic} diagnostic
+ * @param {string} [indent]
+ * @returns {string} the message and its chain, one nested message per line
+ */
+function messageOf(diagnostic, indent = "") {
+  return [
+    indent + diagnostic.text,
+    ...(diagnostic.messageChain ?? []).map(next => messageOf(next, `${indent}  `)),
+  ].join("\n");
 }
 
 /**
@@ -122,13 +161,12 @@ function errorsOf(parsed) {
  * unset, or the file specs as absolute paths (`${configDir}` substituted, relative specs resolved
  * against the config).
  *
- * @param {import("typescript").ParsedCommandLine | undefined} parsed
+ * @param {ParsedCommandLine} parsed
  * @param {string} key a compiler option, or one of FILE_KEYS
  * @param {string} configDir absolute
  * @returns {string} comparable serialisation
  */
 function resolvedValue(parsed, key, configDir) {
-  if (!parsed) return "unresolved";
   if (Object.hasOwn(RELAXATIONS, key)) {
     const { options } = parsed;
     return String(options[key] ?? (STRICT_FAMILY.has(key) && options.strict === true));
@@ -199,84 +237,90 @@ export function check({ workspaceRoot, projectRoot }, { debt = TSCONFIG_DEBT } =
   const basePreset = realpath(path.join(workspaceRoot, PRESET_ROOT, "base.json"));
   const relative = file => path.relative(workspaceRoot, file).split(path.sep).join("/");
 
-  for (const file of configs) {
-    const name = relative(file);
-    const configDir = path.dirname(file);
-    const report = message => violations.push({ file: name, message });
+  /** @type {TypeScript | undefined} */
+  let session;
+  const ts = () => (session ??= openTypeScript(workspaceRoot));
+  try {
+    for (const file of configs) {
+      const name = relative(file);
+      const configDir = path.dirname(file);
+      const report = message => violations.push({ file: name, message });
 
-    const text = fs.readFileSync(file, "utf8");
-    const { config, error } = ts().parseConfigFileTextToJson(file, text);
-    if (error) {
-      report(`cannot be parsed: ${ts().flattenDiagnosticMessageText(error.messageText, "\n")}`);
-      continue;
-    }
+      const { config, error } = ts().readConfigFile(file);
+      if (error) {
+        report(`cannot be parsed: ${messageOf(error)}`);
+        continue;
+      }
 
-    for (const key of Object.keys(config)) {
-      if (!TOP_LEVEL_KEYS.has(key)) report(`"${key}" is not allowed in a package tsconfig`);
-    }
+      for (const key of Object.keys(config)) {
+        if (!TOP_LEVEL_KEYS.has(key)) report(`"${key}" is not allowed in a package tsconfig`);
+      }
 
-    const entries = config.extends === undefined ? [] : [config.extends].flat();
-    if (entries.length === 0) report(`must extend a ${PRESET_PACKAGE} preset`);
-    const problems = entries
-      .map(entry => extendsProblem(entry, configDir, packageDir, presets, checked))
-      .filter(Boolean);
-    for (const problem of problems) report(`extends ${problem}`);
+      const entries = config.extends === undefined ? [] : [config.extends].flat();
+      if (entries.length === 0) report(`must extend a ${PRESET_PACKAGE} preset`);
+      const problems = entries
+        .map(entry => extendsProblem(entry, configDir, packageDir, presets, checked))
+        .filter(Boolean);
+      for (const problem of problems) report(`extends ${problem}`);
 
-    const listed = new Set(debt[name] ?? []);
-    const options = config.compilerOptions ?? {};
-    for (const [key, value] of Object.entries(options)) {
-      if (ALLOWED_OPTIONS.has(key)) continue;
-      if (!Object.hasOwn(RELAXATIONS, key)) {
-        report(`compilerOptions.${key} belongs to a preset: extend the preset that sets it`);
-      } else if (value !== RELAXATIONS[key]) {
-        report(`compilerOptions.${key} may only relax the preset, to ${RELAXATIONS[key]}`);
-      } else if (!listed.has(key)) {
+      const listed = new Set(debt[name] ?? []);
+      const options = config.compilerOptions ?? {};
+      for (const [key, value] of Object.entries(options)) {
+        if (ALLOWED_OPTIONS.has(key)) continue;
+        if (!Object.hasOwn(RELAXATIONS, key)) {
+          report(`compilerOptions.${key} belongs to a preset: extend the preset that sets it`);
+        } else if (value !== RELAXATIONS[key]) {
+          report(`compilerOptions.${key} may only relax the preset, to ${RELAXATIONS[key]}`);
+        } else if (!listed.has(key)) {
+          report(
+            `compilerOptions.${key} relaxes the strictness of its preset: fix the code instead, or list it in ${DEBT_FILE}`,
+          );
+        }
+      }
+      for (const key of listed) {
+        if (options[key] !== RELAXATIONS[key]) {
+          report(
+            `${DEBT_FILE} lists compilerOptions.${key}, which the config no longer relaxes; remove it`,
+          );
+        }
+      }
+
+      // Whether a key repeats what the config inherits only means something once extends resolves.
+      if (problems.length > 0) continue;
+      const { parsed, read } = ts().parse(file, config);
+      const [firstError] = errorsOf(ts(), parsed);
+      if (firstError) {
+        report(`does not resolve: ${messageOf(firstError)}`);
+        continue;
+      }
+      // The lib/build, lib/esm and lib/tests mixins only add to an archetype: on their own they
+      // leave out the base options, `strict` among them.
+      if (entries.length > 0 && !read.some(parent => realpath(parent) === basePreset)) {
         report(
-          `compilerOptions.${key} relaxes the strictness of its preset: fix the code instead, or list it in ${DEBT_FILE}`,
+          `inherits no ${PRESET_PACKAGE} archetype: extend one before a lib/build, lib/esm or lib/tests mixin`,
         );
       }
-    }
-    for (const key of listed) {
-      if (options[key] !== RELAXATIONS[key]) {
-        report(
-          `${DEBT_FILE} lists compilerOptions.${key}, which the config no longer relaxes; remove it`,
-        );
+      const keys = [
+        ...Object.keys(options).map(key => ({
+          key,
+          isOption: true,
+          label: `compilerOptions.${key}`,
+        })),
+        ...FILE_KEYS.filter(key => key in config).map(key => ({
+          key,
+          isOption: false,
+          label: key,
+        })),
+      ];
+      for (const { key, isOption, label } of keys) {
+        const { parsed: inherited } = ts().parse(file, without(config, key, isOption));
+        if (resolvedValue(parsed, key, configDir) === resolvedValue(inherited, key, configDir)) {
+          report(`${label} repeats what the config inherits; remove it`);
+        }
       }
     }
-
-    // Whether a key repeats what the config inherits only means something once extends resolves.
-    if (problems.length > 0) continue;
-    const parsed = parse(file, text);
-    if (!parsed || errorsOf(parsed).length > 0) {
-      const [first] = parsed ? errorsOf(parsed) : [];
-      const reason = first
-        ? ts().flattenDiagnosticMessageText(first.messageText, "\n")
-        : "unknown error";
-      report(`does not resolve: ${reason}`);
-      continue;
-    }
-    // The lib/build, lib/esm and lib/tests mixins only add to an archetype: on their own they
-    // leave out the base options, `strict` among them.
-    const chain = parsed.options.configFile?.extendedSourceFiles ?? [];
-    if (entries.length > 0 && !chain.some(parent => realpath(parent) === basePreset)) {
-      report(
-        `inherits no ${PRESET_PACKAGE} archetype: extend one before a lib/build, lib/esm or lib/tests mixin`,
-      );
-    }
-    const keys = [
-      ...Object.keys(options).map(key => ({
-        key,
-        isOption: true,
-        label: `compilerOptions.${key}`,
-      })),
-      ...FILE_KEYS.filter(key => key in config).map(key => ({ key, isOption: false, label: key })),
-    ];
-    for (const { key, isOption, label } of keys) {
-      const inherited = parse(file, JSON.stringify(without(config, key, isOption)));
-      if (resolvedValue(parsed, key, configDir) === resolvedValue(inherited, key, configDir)) {
-        report(`${label} repeats what the config inherits; remove it`);
-      }
-    }
+  } finally {
+    session?.close();
   }
 
   // Entries for configs that are gone, so the debt list cannot keep a dead file alive.

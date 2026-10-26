@@ -23,6 +23,7 @@
     "pedantic": "off"
   },
   "plugins": ["eslint", "import", "oxc", "unicorn", "typescript", "react", "jest"],
+  "jsPlugins": ["../../support/lint/src/restricted-syntax.js"],
   "ignorePatterns": ["*.min.js", "src/mvvm/hooks/redux.ts", "tests/artifacts/**"],
   "rules": {
     "eslint/no-unused-vars": "warn",
@@ -186,6 +187,68 @@
       "plugins": ["jest"],
       "rules": {
         "typescript/no-explicit-any": "warn"
+      }
+    },
+    {
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "rules": {
+        "restricted-syntax/no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.object.name='shell'][callee.property.name='openExternal']",
+            "message": "Do not use shell.openExternal() directly. In renderer code, use openURL() from '~/renderer/linking' instead to prevent RCE vulnerabilities. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal. See: https://www.electronjs.org/docs/latest/tutorial/security#15-do-not-use-openexternal-with-untrusted-content"
+          },
+          {
+            "selector": "MemberExpression[object.name='shell'][property.name='openExternal']",
+            "message": "Do not use shell.openExternal directly. In renderer code, use openURL() from '~/renderer/linking'. In main-process code, validate the URL with isUrlSafe before calling shell.openExternal."
+          }
+        ]
+      }
+    },
+    {
+      "files": [
+        "src/renderer/linking.ts",
+        "src/main/openURL.ts",
+        "src/renderer/components/LinkingProviderWrapper.tsx"
+      ],
+      "rules": {
+        "restricted-syntax/no-restricted-syntax": "off"
+      }
+    },
+    {
+      "files": ["src/mvvm/features/Send/**/*.ts", "src/mvvm/features/Send/**/*.tsx"],
+      "rules": {
+        "restricted-syntax/no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.object.name='shell'][callee.property.name='openExternal']",
+            "message": "Do not use shell.openExternal() directly. In renderer code, use openURL() from '~/renderer/linking' instead to prevent RCE vulnerabilities."
+          },
+          {
+            "selector": "ImportDeclaration[source.value=/^@ledgerhq\\/coin-/]",
+            "message": "Send must not import coin modules. Move family-specific behavior behind the send flow/families contract."
+          },
+          {
+            "selector": "ExportNamedDeclaration[source.value=/^@ledgerhq\\/coin-/]",
+            "message": "Send must not re-export coin modules. Move family-specific behavior behind the send flow/families contract."
+          },
+          {
+            "selector": "ExportAllDeclaration[source.value=/^@ledgerhq\\/coin-/]",
+            "message": "Send must not re-export coin modules. Move family-specific behavior behind the send flow/families contract."
+          },
+          {
+            "selector": "BinaryExpression[operator=/^[=!]==?$/] MemberExpression[property.name='family']",
+            "message": "Send must not branch on `.family`. Move family-specific behavior behind the send flow/families contract."
+          },
+          {
+            "selector": "CallExpression[callee.property.name='includes'] MemberExpression[property.name='family']",
+            "message": "Send must not check `.family` with includes(). Move family-specific behavior behind the send flow/families contract."
+          },
+          {
+            "selector": "SwitchStatement[discriminant.property.name='family'], SwitchStatement[discriminant.expression.property.name='family']",
+            "message": "Send must not switch on `.family`. Move family-specific behavior behind the send flow/families contract."
+          }
+        ]
       }
     }
   ]

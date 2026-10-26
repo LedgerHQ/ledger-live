@@ -42,8 +42,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "bip32-path": "^0.4.2",
-    "jest": "catalog:",
-    "ts-node": "^10.4.0"
+    "jest": "catalog:"
   },
   "files": [
     "lib",
@@ -51,6 +50,9 @@
     "src",
     "CHANGELOG.md"
   ],
+  "nx": {
+    "implicitDependencies": ["@ledgerhq/ledger-libs"]
+  },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "prebuild": "pnpm pbjs -t static-module -w es6 -r ledger_trade -o src/generate-protocol.js ./protocol.proto && pnpm pbts -o src/generate-protocol.d.ts src/generate-protocol.js && pnpm exec oxfmt src/generate-protocol.js src/generate-protocol.d.ts",

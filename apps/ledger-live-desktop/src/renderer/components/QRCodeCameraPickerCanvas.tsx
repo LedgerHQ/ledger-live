@@ -123,7 +123,7 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
     if (!getUserMedia) {
       this.setState({
         error: new NoAccessToCamera(),
-      }); // eslint-disable-line
+      });
     } else {
       Promise.race([
         getUserMedia({

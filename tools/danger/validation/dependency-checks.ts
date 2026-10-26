@@ -1,4 +1,4 @@
-import { checkLockfile } from "../dependency-checks/check-lockfile";
+import { checkLockfile } from "../dependency-checks/check-lockfile.ts";
 
 async function validateDependencyChecks() {
   const message = checkLockfile();

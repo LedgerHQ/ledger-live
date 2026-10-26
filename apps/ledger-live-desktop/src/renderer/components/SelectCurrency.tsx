@@ -35,7 +35,7 @@ type Props = {
   isDisabled?: boolean;
   id?: string;
   renderValueOverride?: ({ data }: { data: CurrencyOption }) => React.ReactNode;
-  stylesMap?: (a: StylesConfig<CurrencyOption>) => CreateStylesReturnType<CurrencyOption>;
+  stylesMap?: (a: StylesConfig<CurrencyOption, false>) => CreateStylesReturnType<CurrencyOption>;
   onMenuOpen?: () => void;
   small?: boolean;
   onMenuScrollToBottom?: () => void;
@@ -127,7 +127,7 @@ const SelectCurrency = ({
   }, [searchInputValue, options, fuseOptions]);
 
   return (
-    <Select
+    <Select<CurrencyOption, false>
       id={id}
       autoFocus={autoFocus}
       value={selectedOption}

@@ -475,7 +475,6 @@
     "react-test-renderer": "catalog:",
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",
-    "ts-node": "^10.4.0",
     "typescript": "catalog:",
     "undici": "catalog:",
     "uuid": "catalog:",

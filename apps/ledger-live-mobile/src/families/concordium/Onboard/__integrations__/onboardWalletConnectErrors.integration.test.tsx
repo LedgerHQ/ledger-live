@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import React from "react";
 import { Linking } from "react-native";
 import { screen, render, waitFor } from "@tests/test-renderer";

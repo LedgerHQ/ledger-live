@@ -33,9 +33,7 @@
     "**/scripts/**",
     "**/tools/**",
     "**/*.mock.*",
-    "**/*.d.ts",
-    "**/.eslintrc.guardrails.js",
-    "**/.eslintrc.i18n.js"
+    "**/*.d.ts"
   ],
   "workspaces": {
     "./apps/ledger-live-desktop": {

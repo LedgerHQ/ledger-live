@@ -73,7 +73,6 @@ Within LWD, use the following commands for TDD and validatiion checks:
 
 ```bash
 pnpm nx run live-mobile:lint            # lint (with "lint:fix" to fix)
-pnpm nx run live-mobile:lint:i18n       # localization lint
 pnpm nx run live-mobile:format:check    # code formatting (with "format" to format)
 pnpm nx run live-mobile:typecheck       # typecheck
 pnpm nx run live-mobile:test:jest       # unit tests

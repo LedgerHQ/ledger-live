@@ -52,8 +52,6 @@ type ModalContentProps = {
 };
 
 function ModalContent(
-  // eslint is wrong here, it should not complain
-  // eslint-disable-next-line
   { children, noScroll, pt }: ModalContentProps,
   containerRef: React.ForwardedRef<HTMLDivElement>,
 ) {

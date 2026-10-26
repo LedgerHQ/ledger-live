@@ -9,7 +9,8 @@
 // same symbol, and no obvious original provider.
 
 const path = require("node:path");
-const ts = require("typescript");
+const ts = require("typescript/ast");
+const { parse } = require("./parse");
 
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
 
@@ -231,8 +232,7 @@ function checkBarrel(source, options = {}) {
  * @returns {Array<{ line: number, kind: "star" | "namespace" | "named", isDefault: boolean, specifier: string, text: string }>}
  */
 function reexportsOf(source, file) {
-  const scriptKind = /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-  const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, scriptKind);
+  const sourceFile = parse(file, source);
   const lines = source.split("\n");
   const found = [];
   for (const statement of sourceFile.statements) {

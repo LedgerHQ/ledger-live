@@ -1,9 +1,12 @@
 import type { DistributionItem, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrencyIdSchema, type TokenCurrency } from "@domain/entity-currency-token";
-import { CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById } from "@domain/entity-currency-crypto";
+import {
+  CRYPTO_CURRENCIES_REGISTRY as cryptocurrenciesById,
+  type CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 
-export const btc = cryptocurrenciesById["bitcoin"];
-export const eth = cryptocurrenciesById["ethereum"];
+export const btc: CryptoCurrency = cryptocurrenciesById["bitcoin"];
+export const eth: CryptoCurrency = cryptocurrenciesById["ethereum"];
 
 export function makeToken(id: string, ticker: string, name: string, magnitude = 6): TokenCurrency {
   return {
@@ -39,9 +42,18 @@ export function makeDistItem(
 
 // ── Token fixtures ──
 
-export const usdcEth = makeToken("ethereum/erc20/usdc", "USDC", "USD Coin");
-export const usdcArbitrum = makeToken("arbitrum/erc20/usdc", "USDC", "USD Coin (Arbitrum)");
-export const usdcBase = makeToken("base/erc20/usdc", "USDC", "USD Coin (Base)");
-export const usdtEth = makeToken("ethereum/erc20/usdt", "USDT", "Tether USD");
-export const calEth = makeToken("ethereum/erc20/caldera", "CAL", "Caldera", 18);
-export const calArbitrum = makeToken("arbitrum/erc20/caldera", "CAL", "Caldera (Arbitrum)", 18);
+export const usdcEth: TokenCurrency = makeToken("ethereum/erc20/usdc", "USDC", "USD Coin");
+export const usdcArbitrum: TokenCurrency = makeToken(
+  "arbitrum/erc20/usdc",
+  "USDC",
+  "USD Coin (Arbitrum)",
+);
+export const usdcBase: TokenCurrency = makeToken("base/erc20/usdc", "USDC", "USD Coin (Base)");
+export const usdtEth: TokenCurrency = makeToken("ethereum/erc20/usdt", "USDT", "Tether USD");
+export const calEth: TokenCurrency = makeToken("ethereum/erc20/caldera", "CAL", "Caldera", 18);
+export const calArbitrum: TokenCurrency = makeToken(
+  "arbitrum/erc20/caldera",
+  "CAL",
+  "Caldera (Arbitrum)",
+  18,
+);

@@ -1,5 +1,5 @@
-import { lintCommitMessage } from "../commitlint";
-import { isMergeConflictsPr } from "../pull-request";
+import { lintCommitMessage } from "../commitlint.ts";
+import { isMergeConflictsPr } from "../pull-request.ts";
 
 type Offender = {
   sha: string;

@@ -1,5 +1,3 @@
-#!/usr/bin/env ts-node
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import fs from "fs";
@@ -16,10 +14,10 @@ import {
   createZcashUtilityConfig,
   startDev,
   lldRoot,
-} from "./rspack";
+} from "./rspack/index.ts";
 
-const yargs = require("yargs");
-const processReleaseNotes = require("./utils/processReleaseNotes");
+import yargs from "yargs";
+import processReleaseNotes from "./utils/processReleaseNotes.js";
 
 // Electron process manager
 class Electron {
@@ -212,25 +210,21 @@ const build = async (argv: { port?: number }) => {
 };
 
 // CLI setup
-yargs
+yargs(process.argv.slice(2))
   .usage("Usage: $0 <command> [options]")
-  .command({
-    command: ["dev", "$0"],
-    desc: "Start the development workflow with HMR",
-    builder: (y: any) =>
+  .command(
+    ["dev", "$0"],
+    "Start the development workflow with HMR",
+    y =>
       y.option("port", {
         alias: "p",
         type: "number",
         default: 8080,
         description: "Development server port",
       }),
-    handler: startDevMode,
-  })
-  .command({
-    command: "build",
-    desc: "Build the app for production",
-    handler: build,
-  })
+    argv => startDevMode(argv),
+  )
+  .command("build", "Build the app for production", {}, () => build({}))
   .help("h")
   .alias("h", "help")
   .parse();

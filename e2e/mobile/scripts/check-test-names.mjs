@@ -23,7 +23,8 @@
  * Keep the value out of the name and log it from the test body instead. If a call really is
  * deterministic, put `// deterministic-title-ok` on the line above the declaration.
  */
-import ts from "typescript";
+import * as ts from "typescript/ast";
+import { API } from "typescript/sync";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -63,16 +64,25 @@ const containsCall = node => {
   (function scan(n) {
     if (found) return;
     if (ts.isCallExpression(n) || ts.isNewExpression(n)) found = true;
-    else ts.forEachChild(n, scan);
+    else n.forEachChild(scan);
   })(node);
   return found;
+};
+
+const api = new API({ cwd: ROOT });
+const parse = (file, text) => {
+  const retained = api.createSourceFile(file, text, {
+    scriptKind: file.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  });
+  retained.dispose();
+  return retained.sourceFile;
 };
 
 const violations = [];
 
 for (const file of files) {
   const text = fs.readFileSync(file, "utf8");
-  const src = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  const src = parse(file, text);
   const rel = path.relative(ROOT, file);
   const lineOf = node => src.getLineAndCharacterOfPosition(node.getStart(src)).line + 1;
   const optedOut = node =>
@@ -86,7 +96,7 @@ for (const file of files) {
       let hasCall = false;
       (function scan(n) {
         if (ts.isCallExpression(n)) hasCall = true;
-        ts.forEachChild(n, scan);
+        n.forEachChild(scan);
       })(node.initializer);
       if (hasCall && !optedOut(node)) {
         callBackedBindings.set(node.name.text, {
@@ -95,7 +105,7 @@ for (const file of files) {
         });
       }
     }
-    ts.forEachChild(node, collect);
+    node.forEachChild(collect);
   })(src);
 
   (function visit(node) {
@@ -137,9 +147,11 @@ for (const file of files) {
         }
       }
     }
-    ts.forEachChild(node, visit);
+    node.forEachChild(visit);
   })(src);
 }
+
+api.close();
 
 if (violations.length === 0) {
   console.log(`✅ ${files.length} files: every test title is stable across retries.`);

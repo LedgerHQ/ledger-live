@@ -5,7 +5,12 @@ import { GroupedAccount } from "./groupAccountsByAsset";
 export const calculateProviderTotals = (
   currencies: CryptoOrTokenCurrency[],
   groupedAccountsByAsset: Record<string, GroupedAccount>,
-) => {
+): {
+  totalBalance: BigNumber;
+  totalFiatValue: BigNumber;
+  hasAccounts: boolean;
+  referenceCurrency: CryptoOrTokenCurrency | null;
+} => {
   let totalBalance = new BigNumber(0);
   let totalFiatValue = new BigNumber(0);
   let hasAccounts = false;

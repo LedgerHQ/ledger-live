@@ -1,4 +1,4 @@
-import { estimateNodeModulesSizeDelta, formatMb } from "../node-modules-size";
+import { estimateNodeModulesSizeDelta, formatMb } from "../node-modules-size.ts";
 
 const LABEL = "deps-size";
 const OVERRIDE_LABEL = "deps-size-approved";

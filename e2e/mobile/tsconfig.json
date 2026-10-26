@@ -2,7 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "baseUrl": ".",
     "experimentalDecorators": true,
     "jsx": "react-native",
     "types": ["node", "jest"],

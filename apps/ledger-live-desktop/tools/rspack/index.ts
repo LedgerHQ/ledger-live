@@ -10,14 +10,14 @@
  * - Workers (Web workers)
  */
 
-export { createMainConfig } from "./rspack.main";
-export { createRendererConfig } from "./rspack.renderer";
-export { createPreloaderConfig } from "./rspack.preloader";
-export { createWebviewPreloaderConfig } from "./rspack.webviewPreloader";
-export { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader";
-export { createWorkerConfig, getWorkerEntries } from "./rspack.worker";
-export { createZcashUtilityConfig } from "./rspack.zcashUtility";
+export { createMainConfig } from "./rspack.main.ts";
+export { createRendererConfig } from "./rspack.renderer.ts";
+export { createPreloaderConfig } from "./rspack.preloader.ts";
+export { createWebviewPreloaderConfig } from "./rspack.webviewPreloader.ts";
+export { createWebviewDappPreloaderConfig } from "./rspack.webviewDappPreloader.ts";
+export { createWorkerConfig, getWorkerEntries } from "./rspack.worker.ts";
+export { createZcashUtilityConfig } from "./rspack.zcashUtility.ts";
 
-export * from "./rspack.common";
-export * from "./utils";
-export * from "./devServer";
+export * from "./rspack.common.ts";
+export * from "./utils.ts";
+export * from "./devServer.ts";

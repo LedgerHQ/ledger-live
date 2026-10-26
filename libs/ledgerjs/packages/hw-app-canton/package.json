@@ -58,8 +58,7 @@
     "jest": "catalog:",
     "protobufjs-cli": "2.4.1",
     "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0"
+    "source-map-support": "^0.5.21"
   },
   "files": [
     "lib",
@@ -68,6 +67,9 @@
     "tests/fixtures/prepare-transfer.json",
     "CHANGELOG.md"
   ],
+  "nx": {
+    "implicitDependencies": ["@ledgerhq/ledger-libs"]
+  },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

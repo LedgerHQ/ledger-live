@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
+import { createRequire } from "module";
 import { rspack, type RspackOptions } from "@rspack/core";
 import { ReactRefreshRspackPlugin } from "@rspack/plugin-react-refresh";
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const ProcessReadGuard = require("./processReadGuard.cjs");
-import { commonConfig, rootFolder } from "./rspack.common";
+import ProcessReadGuard from "./processReadGuard.cjs";
+import { commonConfig, rootFolder } from "./rspack.common.ts";
 import {
   buildRendererEnv,
   buildDotEnvDefine,
@@ -12,7 +12,9 @@ import {
   lldRoot,
   getRsdoctorPlugin,
   isRsdoctorEnabled,
-} from "./utils";
+} from "./utils.ts";
+
+const require = createRequire(import.meta.url);
 
 const rendererCrashHandler = path.resolve(rootFolder, "src", "renderer", "pre.ts");
 const rendererProcessShim = path.resolve(rootFolder, "src", "renderer", "bootstrap", "process.ts");
@@ -260,7 +262,7 @@ export function createRendererConfig(
           test: /\.js$/,
           include:
             /[\\/]node_modules[\\/](assert|vfile|path-browserify|randombytes|randomfill|eventsource|icon-sdk-js|util)[\\/]/,
-          use: [path.resolve(__dirname, "processShimLoader.cjs")],
+          use: [path.resolve(import.meta.dirname, "processShimLoader.cjs")],
         },
       ],
     },

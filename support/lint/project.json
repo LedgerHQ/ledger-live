@@ -10,7 +10,7 @@
       "inputs": ["{projectRoot}/src/**/*"],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node --test support/lint/src/suffix-imports.test.js"
+        "command": "node --test support/lint/src/suffix-imports.test.js support/lint/src/js-plugins.test.js"
       }
     }
   }

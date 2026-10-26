@@ -64,7 +64,6 @@ Within LWD, use the following commands for TDD and validatiion checks:
 ```bash
 pnpm nx run ledger-live-desktop:test:jest --with-deps    # unit tests
 pnpm desktop lint                                        # lint check
-pnpm desktop lint:guardrails                             # security focused lint check
 pnpm desktop typecheck                                   # typecheck
 ```
 

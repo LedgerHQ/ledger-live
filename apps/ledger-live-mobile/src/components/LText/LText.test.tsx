@@ -1,4 +1,3 @@
-/* eslint-disable i18next/no-literal-string */
 import * as React from "react";
 
 import LText from ".";

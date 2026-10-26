@@ -77,7 +77,6 @@
     "oxlint": "catalog:",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "10.9.2",
     "tsconfig-paths": "^4.2.0",
     "ws": "catalog:"
   }

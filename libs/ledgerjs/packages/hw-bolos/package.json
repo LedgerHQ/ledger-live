@@ -24,6 +24,9 @@
   "dependencies": {
     "@ledgerhq/hw-transport": "catalog:"
   },
+  "nx": {
+    "implicitDependencies": ["@ledgerhq/ledger-libs"]
+  },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
@@ -42,8 +45,7 @@
     "jest": "catalog:",
     "rimraf": "^4.4.1",
     "@swc/jest": "catalog:",
-    "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "@swc/core": "catalog:"
   },
   "exports": {
     ".": {

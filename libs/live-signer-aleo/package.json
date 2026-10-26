@@ -55,7 +55,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "rimraf": "^4.4.1",
-    "ts-node": "^10.4.0",
     "ws": "catalog:"
   },
   "exports": {

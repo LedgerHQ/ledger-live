@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-const ts = require("typescript");
+const { API, formatDiagnosticsWithColorAndContext } = require("typescript/sync");
 const path = require("path");
 const { EOL } = require("os");
 
@@ -16,23 +16,32 @@ const appSourcePrefixes = [
 ];
 
 function compile() {
-  const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());
-  const program = ts.createProgram(config.fileNames, {
-    ...config.options,
-    noEmit: true,
-  });
+  const configPath = path.join(projectDirectory, "tsconfig.json");
+  const api = new API({ cwd: projectDirectory });
+  const project = api
+    .createSnapshot({ openProjects: [configPath] })
+    .getConfiguredProject(configPath);
+  if (!project) throw new Error(`Could not load ${configPath}`);
+  const { parsedCommandLine: config, program } = project;
 
   console.log(`⏳ - Running typescript type checker on ${config.fileNames.length} files…`);
 
   let nbOfFilteredDiagnostics = 0;
 
-  const allDiagnostics = ts.getPreEmitDiagnostics(program).filter(diag => {
-    if (!diag.file) return true;
-    const fileName = diag.file.fileName;
-    if (typeof fileName !== "string") return true;
+  const allDiagnostics = [
+    ...program.getConfigFileParsingDiagnostics(),
+    ...program.getProgramDiagnostics(),
+    ...program.getSyntacticDiagnostics(),
+    ...program.getGlobalDiagnostics(),
+    ...program.getSemanticDiagnostics(),
+  ].filter(diag => {
+    const { fileName } = diag;
+    if (!fileName || /tsconfig[^/]*\.json$/.test(fileName)) return true;
     const isAppSource = appSourcePrefixes.some(prefix => fileName.startsWith(prefix));
     const pass =
-      /\.tsx?/.test(fileName) && isAppSource && excluded.every(zone => !fileName.startsWith(zone));
+      /\.[cm]?tsx?$/.test(fileName) &&
+      isAppSource &&
+      excluded.every(zone => !fileName.startsWith(zone));
     if (!pass) nbOfFilteredDiagnostics++;
     return pass;
   });
@@ -44,13 +53,13 @@ function compile() {
   };
 
   if (allDiagnostics.length > 0) {
-    console.log(ts.formatDiagnosticsWithColorAndContext(allDiagnostics, formatDiagnosticHost));
+    console.log(formatDiagnosticsWithColorAndContext(allDiagnostics, formatDiagnosticHost));
 
     console.log("Errors  Files");
     console.log("‾‾‾‾‾‾  ‾‾‾‾‾");
 
     const errorsByFile = allDiagnostics.reduce((acc, diag) => {
-      const fileName = diag.file ? diag.file.fileName : "<global>";
+      const fileName = diag.fileName ?? "<global>";
       acc[fileName] = (acc[fileName] || 0) + 1;
       return acc;
     }, {});
@@ -75,6 +84,7 @@ function compile() {
     console.log("✅ - All Good!");
   }
   console.log(`(Filtered ${nbOfFilteredDiagnostics} errors)`);
+  api.close();
 }
 
 compile();
