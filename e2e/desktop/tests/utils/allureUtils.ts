@@ -11,6 +11,7 @@ import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { Drawer } from "tests/component/drawer.component";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import type { PlacementOptions } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 
 const readFileAsync = promisify(readFile);
 
@@ -143,6 +144,31 @@ export async function addTeamOwner(team: Team) {
   await allure.owner(teamString);
   await allure.parentSuite(teamString);
   await allure.feature(teamString);
+}
+
+export const TEAM_OWNER_ANNOTATION_TYPE = "allure.label.owner";
+
+// Describe details that place a test in the Allure tree as Team / Folder / test, or
+// Team / Folder / Scenario / test. Annotations are read when the test starts, so they also reach
+// tests skipped before any fixture runs, and the subSuite overrides the describe path
+// allure-playwright would put there.
+const TEAM_LABEL_TYPES = [
+  TEAM_OWNER_ANNOTATION_TYPE,
+  "allure.label.parentSuite",
+  "allure.label.feature",
+];
+
+export function ownedBy(team: Team, options: PlacementOptions) {
+  const { folder, scenario } = options;
+  const levels = scenario
+    ? [
+        { type: "allure.label.suite", description: folder },
+        { type: "allure.label.subSuite", description: scenario },
+      ]
+    : [{ type: "allure.label.subSuite", description: folder }];
+  return {
+    annotation: [...TEAM_LABEL_TYPES.map(type => ({ type, description: team })), ...levels],
+  };
 }
 
 export async function attachMergedFeatureFlags(

@@ -2,7 +2,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 
 const nativeSendTransactions: NewSendFlowEntry[] = [
@@ -21,7 +20,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.ALGO_1, Account.ALGO_2, "0.001"),
     xrayTicket: "B2CQA-2810",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.SOL_1, Account.SOL_2, "0.000001"),
@@ -38,7 +36,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001"),
     xrayTicket: "B2CQA-2816",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(
@@ -85,12 +82,10 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.ADA_1, Account.ADA_2, "1"),
     xrayTicket: "B2CQA-2815",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001"),
     xrayTicket: "B2CQA-3802",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.BASE_1, Account.BASE_2, "0.000001"),
@@ -100,12 +95,10 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.VET_1, Account.VET_2, "0.1"),
     xrayTicket: "B2CQA-4247",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ICP_1, Account.ICP_2, "0.001"),
     xrayTicket: "B2CQA-4742",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.OSMO_1, Account.OSMO_2, "0.00001"),
@@ -114,7 +107,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
     xrayTicket: "B2CQA-6267",
-    teamOwner: Team.BST,
     balanceType: "public",
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
@@ -129,7 +121,6 @@ const memoSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "0.0001", undefined, "123456"),
     xrayTicket: "B2CQA-6037",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "memoText"),

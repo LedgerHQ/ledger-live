@@ -5,6 +5,7 @@ const transaction = new Transaction(Account.DOT_1, Account.DOT_1, "0.5");
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "Destination and source accounts must not be the same.",
+  scenario: "same as sender",
   tmsLinks: ["B2CQA-2711"],
   tags: [
     "@NanoSP",

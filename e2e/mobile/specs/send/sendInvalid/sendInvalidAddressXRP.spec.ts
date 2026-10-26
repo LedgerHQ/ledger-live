@@ -5,6 +5,7 @@ const transaction = new Transaction(Account.XRP_1, Account.XRP_1, "1", undefined
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "Destination and source accounts must not be the same.",
+  scenario: "same as sender",
   tmsLinks: ["B2CQA-2712"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ripple", "@family-xrp"],
 });
