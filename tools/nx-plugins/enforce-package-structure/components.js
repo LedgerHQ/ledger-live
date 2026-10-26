@@ -860,10 +860,12 @@ function typeParameterAt(node, name) {
 function reachableProps(declaration, module) {
   // Where a node is visited: the contract's own expansion, whose parameters stay unbound; the
   // body of a referenced local type, whose parameters take the arguments of every reference; or
-  // the default of a parameter a reference omits, which reads that reference's arguments.
+  // the default of a parameter a reference omits, which reads that reference's arguments in every
+  // context the reference is visited in. One context per reference keeps a recursive default,
+  // `Chain<T = { next?: Chain }>`, and a default shared down a chain of types finite and linear.
   /**
-   * @typedef {"contract" | "local" | DefaultContext} Context
-   * @typedef {{ reference: ts.TypeReferenceNode | ts.ExpressionWithTypeArguments, outer: Context }} DefaultContext
+   * @typedef {ts.TypeReferenceNode | ts.ExpressionWithTypeArguments} Reference
+   * @typedef {"contract" | "local" | Reference} Context
    * @typedef {{ node: ts.Node, context: Context }} Argument
    */
   const props = new Set();
@@ -873,8 +875,10 @@ function reachableProps(declaration, module) {
   const argumentsOf = new Map();
   const bound = new Set();
   const referenced = new Set();
-  /** @type {Map<ts.Node, Map<Context, DefaultContext>>} */
-  const defaultContexts = new Map();
+  /** @type {Map<Reference, Context[]>} */
+  const contextsOf = new Map();
+  /** @type {Map<Reference, Set<number>>} */
+  const readsOf = new Map();
   const ids = new Map();
   /** @param {object | string} value @returns {number} */
   function idOf(value) {
@@ -882,20 +886,13 @@ function reachableProps(declaration, module) {
     return ids.get(value);
   }
   /**
-   * @param {DefaultContext["reference"]} reference
-   * @param {Context} outer
-   * @returns {DefaultContext} one object per reference and context, so contexts compare by identity
+   * @template T
+   * @param {Map<Reference, T>} map @param {Reference} reference @param {() => T} create
+   * @returns {T}
    */
-  function defaultContext(reference, outer) {
-    // A default that references its own type, `Chain<T = { next?: Chain }>`, reenters a context
-    // that already reads `reference`, and reaches the same nodes from there.
-    for (let context = outer; typeof context === "object"; context = context.outer) {
-      if (context.reference === reference) return context;
-    }
-    if (!defaultContexts.has(reference)) defaultContexts.set(reference, new Map());
-    const byOuter = defaultContexts.get(reference);
-    if (!byOuter.has(outer)) byOuter.set(outer, { reference, outer });
-    return byOuter.get(outer);
+  function entryOf(map, reference, create) {
+    if (!map.has(reference)) map.set(reference, create());
+    return map.get(reference);
   }
   /**
    * @param {ts.Node} node @param {Context} context
@@ -909,18 +906,6 @@ function reachableProps(declaration, module) {
     return true;
   }
   /**
-   * @param {ts.TypeParameterDeclaration} parameter @param {DefaultContext} context
-   * @returns {Argument | undefined} what the reference of `context` binds `parameter` to
-   */
-  function defaultArgument(parameter, context) {
-    const index = parameter.parent.typeParameters.indexOf(parameter);
-    const argument = context.reference.typeArguments?.[index];
-    if (argument) return { node: argument, context: context.outer };
-    // A default can name an earlier parameter: `Box<T, U = T>`.
-    if (parameter.default) return { node: parameter.default, context };
-    return undefined;
-  }
-  /**
    * @param {ts.TypeParameterDeclaration} parameter @param {Context} context
    * @returns {boolean} true when `parameter` takes an argument where `context` reads it
    */
@@ -929,7 +914,8 @@ function reachableProps(declaration, module) {
     if (!ts.isTypeAliasDeclaration(owner) && !ts.isInterfaceDeclaration(owner)) return false;
     if (context === "contract") return false;
     if (context === "local") return true;
-    return Boolean(defaultArgument(parameter, context));
+    const index = owner.typeParameters.indexOf(parameter);
+    return Boolean(context.typeArguments?.[index] || parameter.default);
   }
   /** @param {ts.TypeNode} node @param {Context} context @returns {boolean} */
   function isBoundParameter(node, context) {
@@ -972,8 +958,16 @@ function reachableProps(declaration, module) {
       }
       return;
     }
-    const argument = defaultArgument(parameter, /** @type {DefaultContext} */ (context));
-    if (argument) visit(argument.node, argument.context);
+    const reference = /** @type {Reference} */ (context);
+    const index = parameter.parent.typeParameters.indexOf(parameter);
+    const argument = reference.typeArguments?.[index];
+    // A default can name an earlier parameter: `Box<T, U = T>`.
+    if (!argument) {
+      visit(parameter.default, reference);
+      return;
+    }
+    entryOf(readsOf, reference, () => new Set()).add(index);
+    for (const outer of [...entryOf(contextsOf, reference, () => [])]) visit(argument, outer);
   }
   /** @param {ts.TypeElement} prop @param {Context} context */
   function addProp(prop, context) {
@@ -987,21 +981,21 @@ function reachableProps(declaration, module) {
    * Binds the arguments of `reference` to the parameters of `local`, then visits its body once.
    *
    * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} local
-   * @param {DefaultContext["reference"] | undefined} reference undefined for the contract, whose
+   * @param {Reference | undefined} reference undefined for the contract, whose
    *   parameters stay unbound; a reference binds an omitted argument to its parameter's default
    * @param {Context} context where `reference` is visited
    */
   function expand(local, reference, context) {
     if (reference) {
+      entryOf(contextsOf, reference, () => []).push(context);
+      for (const index of entryOf(readsOf, reference, () => new Set())) {
+        visit(reference.typeArguments[index], context);
+      }
       (local.typeParameters ?? []).forEach((parameter, index) => {
         const argument = reference.typeArguments?.[index];
         if (argument) bind(parameter, { node: argument, context });
-        else if (parameter.default) {
-          bind(parameter, {
-            node: parameter.default,
-            context: defaultContext(reference, context),
-          });
-        }
+        else if (parameter.default)
+          bind(parameter, { node: parameter.default, context: reference });
       });
     }
     const body = reference ? "local" : "contract";

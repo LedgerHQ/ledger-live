@@ -1012,6 +1012,7 @@ test("R3 checks a type argument where a local generic places it in props", () =>
     `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, { wrap: A }> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
     "type Chain<T = { next?: Chain; onPress(): void }> = { value: T };\nexport type CardProps = { chain: Chain };\n",
     `type Chain<A, T = { item: A; next?: Chain<A> }> = { value: T };\nexport type CardProps = { chain: Chain<${argument}> };\n`,
+    `type Chain<A, B, C, D = { item: A; next?: Chain<B, C, A> }> = { value: D };\nexport type CardProps = Chain<string, number, ${argument}>;\n`,
   ]) {
     assert.deepEqual(
       check(card({ "Card.types.ts": contractModule })),
@@ -1041,6 +1042,20 @@ test("R3 follows a rotation of many parameters in linear time", () => {
   const rotated = [...parameters.slice(1), parameters[0]];
   const values = [...parameters.slice(1).map(() => "string"), "{ onPress(): void }"];
   const contractModule = `type Rotate<${parameters}> = { value: P0; next?: Rotate<${rotated}> };\nexport type CardProps = { item: Rotate<${values}> };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 reads a default shared down a chain of types once per reference", () => {
+  // Keying a default on the whole chain of references doubles the work at every level.
+  const aliases = ["type D0<T = { onPress(): void }> = T;"];
+  for (let level = 1; level <= 24; level++) {
+    aliases.push(`type D${level}<T = [D${level - 1}, D${level - 1}]> = T;`);
+  }
+  const contractModule = `${aliases.join("\n")}\nexport type CardProps = { d: D24 };\n`;
   const start = Date.now();
   assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
     "R3 contract-gesture-callback Card",
