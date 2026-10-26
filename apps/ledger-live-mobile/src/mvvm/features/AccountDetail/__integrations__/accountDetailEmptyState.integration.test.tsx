@@ -47,6 +47,7 @@ const emptied = (account: Account): Account => ({
 const neverUsedAccount: Account = {
   ...emptied(usedAccount),
   operations: [],
+  operationsCount: 0,
   pendingOperations: [],
 };
 
@@ -94,7 +95,7 @@ describe("AccountDetail empty state", () => {
   it("keeps the sections for an account used then emptied", async () => {
     renderAccount(emptied(usedAccount));
 
-    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.assets)).toBeVisible();
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeNull();
   });
 
@@ -102,7 +103,7 @@ describe("AccountDetail empty state", () => {
     const [pending]: Operation[] = usedAccount.operations;
     renderAccount({ ...neverUsedAccount, pendingOperations: [pending] });
 
-    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.assets)).toBeVisible();
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeNull();
   });
 });

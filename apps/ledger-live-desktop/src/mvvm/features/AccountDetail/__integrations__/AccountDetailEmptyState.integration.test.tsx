@@ -2,7 +2,6 @@ import React from "react";
 import { BigNumber } from "bignumber.js";
 import { Route, Routes } from "react-router";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import { render, screen, withFlagOverrides } from "tests/testSetup";
@@ -12,13 +11,6 @@ import AccountDetailRoute from "../AccountDetailRoute";
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
   SyncOneAccountOnMount: () => null,
-}));
-
-jest.mock("@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog");
-
-jest.mock("@ledgerhq/live-common/exchange/swap/hooks/index", () => ({
-  ...jest.requireActual("@ledgerhq/live-common/exchange/swap/hooks/index"),
-  useFetchCurrencyAll: () => ({ data: ["ethereum"], isResolved: true }),
 }));
 
 jest.mock("LLD/hooks/useStake", () => ({
@@ -47,6 +39,7 @@ const emptied = (account: Account): Account => ({
 const neverUsedAccount: Account = {
   ...emptied(usedAccount),
   operations: [],
+  operationsCount: 0,
   pendingOperations: [],
 };
 
@@ -57,6 +50,7 @@ function renderAccount(account: Account) {
     </Routes>,
     {
       initialRoute: getAccountUrl(account.id),
+      withRampCatalog: true,
       initialState: {
         ...withFlagOverrides({ accountDetail: { enabled: true } }),
         accounts: [account],
@@ -66,19 +60,14 @@ function renderAccount(account: Account) {
 }
 
 describe("AccountDetail empty state", () => {
-  beforeEach(() => {
-    jest.mocked(useRampCatalog).mockReturnValue({
-      isCurrencyAvailable: () => true,
-      getSupportedCryptoCurrencyIds: () => ["ethereum"],
-    } as unknown as ReturnType<typeof useRampCatalog>);
-  });
-
   it("replaces the sections with the empty state for a never used account", async () => {
     renderAccount(neverUsedAccount);
 
     expect(await screen.findByTestId(EMPTY_STATE)).toBeVisible();
     expect(screen.getByText("No activity yet")).toBeVisible();
-    expect(screen.getByText("Start by adding funds through Receive, Swap or Buy.")).toBeVisible();
+    expect(
+      await screen.findByText("Start by adding funds through Receive, Swap or Buy."),
+    ).toBeVisible();
     expect(screen.queryByTestId(ASSETS)).toBeNull();
     expect(screen.getByTestId("account-detail-hero")).toBeVisible();
   });
