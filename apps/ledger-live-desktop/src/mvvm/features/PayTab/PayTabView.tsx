@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Balance } from "@features/flow-pay-balance";
 import { Contacts, ContactAddressPicker } from "@features/flow-pay-contact";
-import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
+import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction/web";
 import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";

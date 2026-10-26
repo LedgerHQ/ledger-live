@@ -119,13 +119,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsRenameContactDrawer: componentWaiver("R1", "R5"),
     ContactsRenameContactFooter: componentWaiver("R1", "R5"),
   },
-  "features/flow/flow-contacts-introduction": {
-    "./native": entryWaiver(),
-    ContactsFeatureIntroductionContent: componentWaiver("R1", "R5"),
-    ContactsFeatureIntroductionDialog: componentWaiver("R1"),
-    ContactsLedgerSyncIntroductionContent: componentWaiver("R1", "R5"),
-    ContactsLedgerSyncIntroductionDialog: componentWaiver("R1"),
-  },
   "features/flow/flow-contacts-list": {
     "./native": entryWaiver(),
     ContactsAddContactHeaderButton: componentWaiver("R1", "R4", "R5"),
