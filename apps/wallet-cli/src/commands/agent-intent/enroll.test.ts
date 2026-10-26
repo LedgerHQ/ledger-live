@@ -1021,7 +1021,7 @@ describe("agent-intent enroll --detach", () => {
 
   afterEach(() => restore());
 
-  it("re-runs enroll in the background with the parsed flags, minus --detach and --output", async () => {
+  it("re-runs enroll in the background with the parsed flags not at their default, minus --detach and --output", async () => {
     await runEnroll({ detach: true, output: "human", "app-url": "https://agent.example.com" });
 
     expect(spawnedCommands).toHaveLength(1);
@@ -1032,12 +1032,8 @@ describe("agent-intent enroll --detach", () => {
       "enroll",
       "--profile=test-agent",
       "--name=Test Agent",
-      "--description=Remote agent that proposes intents for review.",
       "--source=openclaw",
       "--app-url=https://agent.example.com",
-      "--expires-in=30m",
-      "--environment=production",
-      "--allow-plaintext-key=false",
       "--output=json",
     ]);
     expect(command[0]).toBe(process.execPath);
@@ -1062,6 +1058,7 @@ describe("agent-intent enroll --detach", () => {
       "--environment",
       "staging",
       "--keycloak-url=https://keycloak.example.com/",
+      "--allow-plaintext-key",
       "--output",
       "json",
     ];
@@ -1073,6 +1070,7 @@ describe("agent-intent enroll --detach", () => {
     const childArgv = command.slice(command.indexOf("agent-intent") + 1);
     expect(childArgv[0]).toBe("enroll");
     expect(childArgv.filter(arg => /^--(help|version|llms|detach)/.test(arg))).toEqual([]);
+    expect(childArgv).not.toContain("--allow-plaintext-key=false");
     expect(await parseEnrollFlags(childArgv.slice(1))).toEqual({
       ...(await parseEnrollFlags(parentArgv.slice(1))),
       detach: false,

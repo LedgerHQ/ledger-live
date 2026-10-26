@@ -230,8 +230,8 @@ async function saveSecretKey(
 
 /** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
  * listener's pending line and returns. The child's flags are rebuilt from the parsed values of
- * enroll's own options (minus `detach` and `output`), so options added to `enroll` later carry over
- * without argv parsing. */
+ * enroll's own options (minus `detach`, `output`, and those left at their default), so options added
+ * to `enroll` later carry over without argv parsing. */
 async function startDetachedEnroll(
   flags: { profile: string; [flag: string]: unknown },
   out: CommandOutput,
@@ -247,9 +247,12 @@ async function startDetachedEnroll(
 
   const args = ["agent-intent", "enroll"];
   // Only enroll's own options: `flags` also carries bunli's global flags (--help, --version, ...).
-  for (const name of Object.keys(enrollCommand.options ?? {})) {
+  for (const [name, { schema }] of Object.entries(enrollCommand.options ?? {})) {
     const value = flags[name];
     if (name === "detach" || name === "output" || value === undefined) continue;
+    // Left at its default, an option stays off the listener's argv: the listener parses it back.
+    const fallback = schema.safeParse(undefined);
+    if (fallback.success && fallback.data === value) continue;
     if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
       throw new TypeError(`--${name} has a value --detach cannot pass on to the listener.`);
     }
