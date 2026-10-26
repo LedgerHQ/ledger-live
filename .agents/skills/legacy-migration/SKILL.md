@@ -17,9 +17,10 @@ of each `libs/` area live in [the architecture guide](../../../docs/monorepo-arc
 - Only `apps/` imports both sides. Legacy code may consume new code as migration glue, never the
   reverse.
 - **No new exception.** `BOUNDARY_EXCEPTIONS` in
-  [`constraints.js`](../../../tools/nx-plugins/enforce-boundaries/constraints.js) holds one entry,
-  `shared/env` to `@ledgerhq/live-env`, until that package leaves the repo. When a new package
-  needs legacy code, inject it (below); never add an entry.
+  [`constraints.js`](../../../tools/nx-plugins/enforce-boundaries/constraints.js) lists the
+  existing allowances for a new package to depend on a legacy one, each kept only until that legacy
+  package leaves the repo. When a new package needs legacy code, inject it (below); never add an
+  entry.
 - Never re-export a legacy type from a new-architecture barrel.
 
 `pnpm lint:boundaries` enforces the import rules: it checks the Nx graph against the layer
@@ -43,8 +44,10 @@ Point every caller at the replacement and stop new ones from appearing:
 - Mark each legacy export `@deprecated`, naming the replacement package and export.
 - Migrate the callers. Legacy code that stays may import the new package.
 - Ban the old import in the apps with an `eslint/no-restricted-imports` pattern in their
-  `.oxlintrc.json`, with `importNamePattern` and a `message` naming the new package. Desktop and
-  mobile do not enable `typescript/no-deprecated`, so `@deprecated` alone blocks nothing there.
+  `.oxlintrc.json`, with `importNamePattern` and a `message` naming the new package. Both apps set
+  `typescript/no-deprecated` to `error`, but it is a type-aware rule and neither app runs oxlint
+  type-aware, so it catches nothing: `@deprecated` alone blocks nothing there, and this ban is the
+  only real guard.
 - Notify open PRs still using the old path: [impacting-prs](../impacting-prs/SKILL.md).
 
 Example: the currency accessors moved to `@domain/entity-currency-crypto` and
