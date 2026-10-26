@@ -1146,6 +1146,21 @@ test("R3 reads a wide default once for many sibling references, read or not", ()
   }
 });
 
+test("R3 keeps many defaulted parameters and many references linear", () => {
+  // Keeping each reference once per parameter it omits grows with references times parameters.
+  const parameters = Array.from({ length: 10000 }, (_, index) => `P${index} = string`);
+  const references = Array.from({ length: 10000 }, (_, index) => `b${index}: Box;`);
+  for (const [body, last, expected] of [
+    ["{ value: string }", "Box", []],
+    ["{ value: P0 }", "Box<{ onPress(): void }>", ["R3 contract-gesture-callback Card"]],
+  ]) {
+    const contractModule = `type Box<${parameters.join(", ")}> = ${body};\nexport type CardProps = { ${references.join(" ")} last: ${last} };\n`;
+    const start = Date.now();
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), expected);
+    assert.ok(Date.now() - start < 5000);
+  }
+});
+
 test("R3 follows a rotation of wrapped arguments in linear time", () => {
   // Expanding each instantiation with its own bindings grows factorially: a crash at 10.
   for (const length of [10, 20]) {

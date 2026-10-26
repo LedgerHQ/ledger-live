@@ -880,6 +880,7 @@ function reachableProps(declaration, module) {
   // default once per reference reaches, and a recursive or widely shared default stays linear.
   /**
    * @typedef {ts.TypeReferenceNode | ts.ExpressionWithTypeArguments} Reference
+   * @typedef {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} Local
    * @typedef {"contract" | "local" | ts.TypeParameterDeclaration} Context the parameter whose
    *   default is visited, for a default
    * @typedef {{ node: ts.Node, context: Context }} Argument
@@ -899,12 +900,18 @@ function reachableProps(declaration, module) {
   const argumentsOf = new Map();
   const bound = new Set();
   const referenced = new Set();
-  // Per parameter with a default: the references that omit it, with the context each is visited
-  // in, and the earlier parameters its default reads.
-  /** @type {Map<ts.TypeParameterDeclaration, Array<[Reference, Context]>>} */
-  const omittersOf = new Map();
-  /** @type {Map<ts.TypeParameterDeclaration, Set<ts.TypeParameterDeclaration>>} */
-  const defaultReads = new Map();
+  // Per local type, kept once per reference rather than per omitted parameter: the references
+  // by the number of arguments they give, each with the context it is visited in; the first index
+  // some reference omits; and, per earlier parameter a default reads, the last index whose default
+  // does.
+  /** @type {Map<Local, Map<number, Array<[Reference, Context]>>>} */
+  const referencesOf = new Map();
+  /** @type {Map<Local, number>} */
+  const omittedFrom = new Map();
+  /** @type {Map<Local, Map<ts.TypeParameterDeclaration, number>>} */
+  const defaultReadsOf = new Map();
+  /** @type {Map<ts.TypeParameterDeclaration, number>} */
+  const positions = new Map();
   // Whether an `infer` parameter is bound, per context: a chain of conditionals whose condition
   // reads the previous inferred parameter twice would otherwise rescan it twice per level.
   /** @type {Map<Context, Map<ts.TypeParameterDeclaration, boolean>>} */
@@ -923,6 +930,18 @@ function reachableProps(declaration, module) {
   function entryOf(map, key, create) {
     if (!map.has(key)) map.set(key, create());
     return map.get(key);
+  }
+  /**
+   * @param {ts.TypeParameterDeclaration} parameter of a local type
+   * @returns {number} its index in its type's parameter list
+   */
+  function positionOf(parameter) {
+    if (!positions.has(parameter)) {
+      /** @type {Local} */ (parameter.parent).typeParameters.forEach((each, index) => {
+        positions.set(each, index);
+      });
+    }
+    return positions.get(parameter);
   }
   /**
    * @param {ts.Node} node @param {Context} context
@@ -1008,24 +1027,26 @@ function reachableProps(declaration, module) {
       }
       return;
     }
-    // A default can name an earlier parameter: `Box<T, U = T>`.
-    const reads = entryOf(defaultReads, context, () => new Set());
-    if (reads.has(parameter)) return;
-    reads.add(parameter);
-    for (const [reference, outer] of [...entryOf(omittersOf, context, () => [])]) {
-      readOmitted(parameter, reference, outer);
+    // A default can name an earlier parameter: `Box<T, U = T>`. It reads the argument of each
+    // reference that omits the default but gives the parameter, and the parameter's own default
+    // once some reference omits both. The references that omit an earlier default reading it,
+    // and so this one too, were read already.
+    const local = /** @type {Local} */ (context.parent);
+    const reads = entryOf(defaultReadsOf, local, () => new Map());
+    const position = positionOf(parameter);
+    const index = positionOf(context);
+    const before = reads.get(parameter) ?? -1;
+    if (index <= before) return;
+    reads.set(parameter, index);
+    if (parameter.default && (omittedFrom.get(local) ?? Infinity) <= position) {
+      visit(parameter.default, parameter);
     }
-  }
-  /**
-   * Visits what `reference`, visited in `context` and omitting a later parameter, gives `parameter`.
-   *
-   * @param {ts.TypeParameterDeclaration} parameter @param {Reference} reference
-   * @param {Context} context
-   */
-  function readOmitted(parameter, reference, context) {
-    const argument = reference.typeArguments?.[parameter.parent.typeParameters.indexOf(parameter)];
-    if (argument) visit(argument, context);
-    else if (parameter.default) visit(parameter.default, parameter);
+    const byGiven = entryOf(referencesOf, local, () => new Map());
+    for (let given = Math.max(before, position) + 1; given <= index; given++) {
+      for (const [reference, outer] of [...(byGiven.get(given) ?? [])]) {
+        visit(reference.typeArguments[position], outer);
+      }
+    }
   }
   /**
    * Queues `prop` for `addPropNow`.
@@ -1054,18 +1075,27 @@ function reachableProps(declaration, module) {
    */
   function expand(local, reference, context) {
     if (reference) {
-      (local.typeParameters ?? []).forEach((parameter, index) => {
-        const argument = reference.typeArguments?.[index];
-        if (argument) {
-          bind(parameter, { node: argument, context });
-        } else if (parameter.default) {
-          entryOf(omittersOf, parameter, () => []).push([reference, context]);
-          for (const read of [...entryOf(defaultReads, parameter, () => new Set())]) {
-            readOmitted(read, reference, context);
-          }
-          bind(parameter, { node: parameter.default, context: parameter });
-        }
-      });
+      const parameters = local.typeParameters ?? [];
+      const given = Math.min(reference.typeArguments?.length ?? 0, parameters.length);
+      const byGiven = entryOf(referencesOf, local, () => new Map());
+      entryOf(byGiven, given, () => []).push([reference, context]);
+      const reads = entryOf(defaultReadsOf, local, () => new Map());
+      for (let index = 0; index < given; index++) {
+        const argument = reference.typeArguments[index];
+        bind(parameters[index], { node: argument, context });
+        // A default this reference omits reads the argument.
+        if (given <= (reads.get(parameters[index]) ?? -1)) visit(argument, context);
+      }
+      // A default is bound once, by the first reference that omits its parameter, and read once
+      // by the defaults that read the parameter.
+      const from = omittedFrom.get(local) ?? parameters.length;
+      for (let index = given; index < from; index++) {
+        const parameter = parameters[index];
+        if (!parameter.default) continue;
+        bind(parameter, { node: parameter.default, context: parameter });
+        if (reads.has(parameter)) visit(parameter.default, parameter);
+      }
+      omittedFrom.set(local, Math.min(from, given));
     }
     const body = reference ? "local" : "contract";
     if (!markVisited(local, body)) return;
