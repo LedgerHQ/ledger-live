@@ -17,6 +17,7 @@ import axios from "axios";
 import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceLabels } from "./enum/DeviceLabels";
+import { TIMEOUT } from "./timeouts";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
@@ -68,13 +69,13 @@ import { sendAleo } from "./families/aleo";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
-const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = TIMEOUT.xxxlarge;
 // Derived from timeout + interval so the budget can't silently drift if either changes.
 export const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 
-const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = TIMEOUT.xxxlarge;
 export const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SEND_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
