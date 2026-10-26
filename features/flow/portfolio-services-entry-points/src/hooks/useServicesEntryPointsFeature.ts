@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
+import { getServicesOrder } from "../utils/getServicesOrder";
 import { resolveServices } from "../utils/resolveServices";
 import type { ServiceEntryPointId } from "../types";
 import { usePlatformServicesConfig } from "./usePlatformServicesConfig";
@@ -14,8 +14,7 @@ export function useServicesEntryPointsFeature(): ServicesEntryPointsFeature {
   const feature = useFeature("entryPointsServices");
   const { availability, isAssetSectionDisplayed } = usePlatformServicesConfig();
   const isEnabled = (feature?.enabled ?? false) && isAssetSectionDisplayed;
-  const order =
-    feature?.params?.services ?? FEATURE_FLAGS_DEFAULTS.entryPointsServices.params?.services;
+  const order = getServicesOrder(feature);
   const { perps, borrow } = availability;
 
   const services = useMemo(
