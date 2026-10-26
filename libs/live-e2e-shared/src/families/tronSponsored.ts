@@ -12,9 +12,9 @@ import { DeviceLabels } from "../enum/DeviceLabels";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "../deviceInteraction/DeviceController";
 
-// Models the catalog serves Tron app 0.8.0+. Nano S stops at 0.7.0, and Nano X still gets 0.7.10;
-// add Nano X once 0.8.0 ships for it.
+// Models the catalog serves Tron app 0.8.0+. Nano S stops at 0.7.0.
 const TRONIFY_SERVICE_PAGE_MODELS: ReadonlySet<DeviceModelId> = new Set([
+  DeviceModelId.nanoX,
   DeviceModelId.nanoSP,
   DeviceModelId.stax,
   DeviceModelId.europa,

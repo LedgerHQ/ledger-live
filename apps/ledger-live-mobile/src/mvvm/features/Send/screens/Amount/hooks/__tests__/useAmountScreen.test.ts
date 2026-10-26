@@ -3,11 +3,16 @@ import { track } from "@shared/analytics";
 import { useAmountScreen } from "../useAmountScreen";
 
 const mockStartSigning = jest.fn();
+const mockSetAmountFocused = jest.fn();
 let mockReviewReady: boolean;
 
-jest.mock("@react-navigation/native", () => ({
-  useNavigation: () => ({ navigate: jest.fn() }),
-}));
+jest.mock("@react-navigation/native", () => {
+  const { useEffect } = jest.requireActual("react");
+  return {
+    useNavigation: () => ({ navigate: jest.fn() }),
+    useFocusEffect: (effect: () => void | (() => void)) => useEffect(effect, [effect]),
+  };
+});
 jest.mock("@shared/analytics", () => ({
   trackPage: jest.fn(),
   track: jest.fn(),
@@ -24,7 +29,10 @@ jest.mock("../../../../context/SendSignatureContext", () => ({
   useSendSignature: () => ({ startSigning: mockStartSigning }),
 }));
 jest.mock("../../../../context/SponsoredSendContext", () => ({
-  useSponsoredSend: () => ({ reviewReady: mockReviewReady }),
+  useSponsoredSend: () => ({
+    reviewReady: mockReviewReady,
+    setAmountFocused: mockSetAmountFocused,
+  }),
 }));
 jest.mock("../../../../context/SendFlowTrackingContext", () => ({
   useSendFlowTracking: () => ({ recipientType: "address" }),
@@ -60,5 +68,15 @@ describe("useAmountScreen", () => {
 
     expect(mockStartSigning).not.toHaveBeenCalled();
     expect(track).not.toHaveBeenCalled();
+  });
+
+  it("should report the screen's focus to the sponsored send when it mounts and unmounts", () => {
+    mockReviewReady = true;
+    const { unmount } = renderHook(() => useAmountScreen());
+    expect(mockSetAmountFocused).toHaveBeenLastCalledWith(true);
+
+    unmount();
+
+    expect(mockSetAmountFocused).toHaveBeenLastCalledWith(false);
   });
 });

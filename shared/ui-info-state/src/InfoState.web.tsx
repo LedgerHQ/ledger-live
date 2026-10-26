@@ -44,7 +44,14 @@ export function InfoState(props: InfoStateProps) {
           {title || description ? (
             <div className="flex w-full flex-col items-center gap-8 text-center">
               {title ? <h3 className="heading-4-semi-bold text-base">{title}</h3> : null}
-              {description ? <p className="body-2 text-muted">{description}</p> : null}
+              {description ? (
+                <p
+                  className="body-2 text-muted"
+                  data-testid={testID ? `${testID}-description` : undefined}
+                >
+                  {description}
+                </p>
+              ) : null}
             </div>
           ) : null}
         </div>

@@ -10,6 +10,7 @@ import { NANO_APP_CATALOG_PATH } from "@e2e/utils/constants";
 import { isPaytabSpec, paytabCardSession } from "@e2e/utils/paytab";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { ledgerSyncEnvironment } from "@ledgerhq/live-e2e-shared/ledgerSync/environment";
+import { FAKE_TRONIFY_PORT } from "@ledgerhq/live-e2e-shared/tronify/constants";
 import { CARD_SESSION_BOOTSTRAP_ENV } from "@ledgerhq/baanx-test-client";
 
 const BASE_DEEPLINK = "ledgerlive://";
@@ -81,6 +82,19 @@ function mockServerDetoxUrlPattern(): string {
   }
 }
 
+export const ANDROID_EMULATOR_HOST = "10.0.2.2";
+
+export function fakeTronifyPort(): number {
+  return FAKE_TRONIFY_PORT + Number(process.env.JEST_WORKER_ID ?? 1) - 1;
+}
+
+let broadcastsReachOnlyFakeNodes = false;
+
+/** Call while registering a spec whose broadcasts only reach local fake nodes. */
+export function allowBroadcastToFakeNodes() {
+  broadcastsReachOnlyFakeNodes = true;
+}
+
 /** Creates a regex string for Detox URL blacklisting. */
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
@@ -90,6 +104,7 @@ function createDetoxURLBlacklistRegex(): string {
     ".*tron.coin.ledger.com/wallet/getBrokerage.*",
     ".*global.api.prd.ledger.com/cal.*",
     ".*127.0.0.1.*",
+    `.*${ANDROID_EMULATOR_HOST}:${fakeTronifyPort()}.*`,
     ".*speculos.*ldg-tech.com.*",
     mockServerDetoxUrlPattern(),
     ".*optimism.*",
@@ -116,7 +131,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
       wsToken,
       detoxURLBlacklistRegex: createDetoxURLBlacklistRegex(),
       mock: "0",
-      disable_broadcast: isAppBroadcastDisabled() ? 1 : 0,
+      disable_broadcast: isAppBroadcastDisabled() && !broadcastsReachOnlyFakeNodes ? 1 : 0,
       ledger_sync_environment: ledgerSyncEnvironment,
       IS_TEST: true,
       ...cardSession,
