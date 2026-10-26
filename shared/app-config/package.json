@@ -2,7 +2,7 @@
   "name": "@shared/app-config",
   "version": "0.1.0",
   "private": true,
-  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values, and the middleware and slice that save a new selection for the next session",
+  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values, dev values on staging-default builds, and the middleware and slice that save changes for the next session",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

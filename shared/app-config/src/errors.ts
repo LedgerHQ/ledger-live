@@ -21,3 +21,13 @@ export class DuplicateConfigValueError extends Error {
     this.valueName = valueName;
   }
 }
+
+/** A switch and a fixed value have the same id, so their selections would share one key. */
+export class DuplicateConfigIdError extends Error {
+  override name = "DuplicateConfigIdError";
+  readonly id: string;
+  constructor(id: string) {
+    super(`Config switch "${id}" has the name of a fixed value`);
+    this.id = id;
+  }
+}

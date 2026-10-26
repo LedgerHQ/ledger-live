@@ -1,7 +1,7 @@
-import type { ConfigStorage } from "@shared/app-config";
+import { readOnlyConfigStorage, type AppConfigStorage } from "@shared/app-config";
 import { loadAppConfig, profileOf } from "./load";
 
-const noSelections: ConfigStorage = { getAll: () => ({}), set() {}, remove() {}, clear() {} };
+const noSelections = storageOf({}, {});
 
 describe("profileOf", () => {
   it.each([
@@ -25,4 +25,28 @@ describe("loadAppConfig", () => {
       keycloakRealm: "ledger-bc-customers",
     });
   });
+
+  it("resolves the dev values of a staging profile on Dev", () => {
+    const storage = storageOf(
+      { ledgerKeyRing: "dev", keycloakRealm: "dev" },
+      { keycloakBaseUrl: "http://localhost:8080", keycloakRealm: "dev-realm" },
+    );
+
+    expect(loadAppConfig(storage, "staging").config).toMatchObject({
+      keycloakBaseUrl: "http://localhost:8080",
+      trustchainApiBaseUrl: "https://trustchain-backend.api.aws.stg.ldg-tech.com",
+      keycloakRealm: "dev-realm",
+    });
+    expect(loadAppConfig(storage, "prod").config).toMatchObject({
+      keycloakBaseUrl: "https://global.api.prd.ledger.com/keycloak",
+      keycloakRealm: "ledger-bc-customers",
+    });
+  });
 });
+
+function storageOf(selections: unknown, devValues: unknown): AppConfigStorage {
+  return {
+    selections: readOnlyConfigStorage(() => selections),
+    devValues: readOnlyConfigStorage(() => devValues),
+  };
+}

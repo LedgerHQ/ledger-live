@@ -2,7 +2,7 @@
   "name": "@devtools/app-config",
   "version": "0.1.0",
   "private": true,
-  "description": "DevTools panel to select an option of each app config switch, applied after a reload",
+  "description": "DevTools panel to select an option of each app config switch, or type dev values on staging-default builds, applied after a reload",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

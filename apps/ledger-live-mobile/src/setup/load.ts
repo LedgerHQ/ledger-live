@@ -1,4 +1,4 @@
-import { type ConfigStorage, resolveAppConfig } from "@shared/app-config";
+import { type AppConfigStorage, resolveAppConfig } from "@shared/app-config";
 import { appConfigSchema } from "./schema";
 
 /**
@@ -14,8 +14,8 @@ export const profileOf = (
   return configProfile === "staging" ? "staging" : "prod";
 };
 
-/** Resolves the configuration from the selections in `storage`. Unselected switches take `profile`. */
-export const loadAppConfig = (storage: ConfigStorage, profile: "prod" | "staging") =>
+/** Resolves the configuration from what `storage` holds. Unselected switches take `profile`. */
+export const loadAppConfig = (storage: AppConfigStorage, profile: "prod" | "staging") =>
   resolveAppConfig({
     schema: appConfigSchema,
     storage,

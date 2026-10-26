@@ -99,6 +99,7 @@ import {
   coinObservabilityConfigFor,
   setCoinObservabilityConfigReader,
 } from "@features/platform-coin-observability";
+import { readOnlyConfigStorage } from "@shared/app-config";
 import { loadAppConfig } from "~/setup";
 
 const rootNode = document.getElementById("react-root");
@@ -155,7 +156,10 @@ async function init() {
         dateString: require("../../tests/time.js").default,
       });
     }
-    configStorage = { getAll: () => spectronData.appConfig, set() {}, remove() {}, clear() {} };
+    configStorage = {
+      selections: readOnlyConfigStorage(() => spectronData.appConfig),
+      devValues: readOnlyConfigStorage(() => spectronData.appConfigDevValues),
+    };
   }
   const store = createStore({
     dbMiddleware,
