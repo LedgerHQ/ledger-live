@@ -35,6 +35,17 @@ function sanitizeErrorContext(error: Error): BroadcastFailureLog["errorContext"]
   return context;
 }
 
+/** The frames of the stack. Its header quotes the original message, on as many lines as it has. */
+function stackFrames(error: Error): string[] {
+  const stack = error.stack ?? "";
+  const headerEnd = stack.indexOf(error.message);
+  if (headerEnd === -1) return [];
+  return stack
+    .slice(headerEnd + error.message.length)
+    .split("\n")
+    .filter(line => STACK_FRAME.test(line));
+}
+
 /**
  * Prepares a failed broadcast for a monitoring sink.
  *
@@ -46,7 +57,7 @@ function sanitizeErrorContext(error: Error): BroadcastFailureLog["errorContext"]
 export function toBroadcastFailureLog(event: ErrorLogEvent): BroadcastFailureLog {
   const { error } = event;
   const message = sanitizeErrorMessage(error.message);
-  const frames = (error.stack ?? "").split("\n").filter(line => STACK_FRAME.test(line));
+  const frames = stackFrames(error);
   const sanitizedError = new Error(message);
   sanitizedError.name = error.name;
   sanitizedError.stack = [`${error.name}: ${message}`, ...frames].join("\n");

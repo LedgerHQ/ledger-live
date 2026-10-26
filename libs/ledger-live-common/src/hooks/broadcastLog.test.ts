@@ -43,6 +43,26 @@ describe("toBroadcastFailureLog", () => {
     expect(log.error.stack).toBe("Error: rejected tx [id]\n    at broadcast (bridge.js:1:1)");
   });
 
+  it("keeps no line of a multiline message in the stack", () => {
+    const address = "0x71C7656EC7ab88b098defB751B7401B5f6d8976F";
+    const error = new Error(`rejected\n    at sender ${address}`);
+    error.stack = `Error: rejected\n    at sender ${address}\n    at broadcast (bridge.js:1:1)`;
+
+    const log = toBroadcastFailureLog(failure(error));
+
+    expect(log.error.message).toBe("rejected\n    at sender [id]");
+    expect(log.error.stack).toBe(
+      "Error: rejected\n    at sender [id]\n    at broadcast (bridge.js:1:1)",
+    );
+  });
+
+  it("keeps no frame when the stack header does not quote the message", () => {
+    const error = new Error("failed");
+    error.stack = `Error: rejected tx ${signedTx}\n    at broadcast (bridge.js:1:1)`;
+
+    expect(toBroadcastFailureLog(failure(error)).error.stack).toBe("Error: failed");
+  });
+
   it("keeps flat error properties sanitized and drops nested ones", () => {
     const error = Object.assign(new Error("failed"), {
       code: "ERR_REJECTED",
