@@ -215,7 +215,9 @@ const StepReceiveFunds = ({
             <Trans i18nKey="families.concordium.receive.messageIfSkipped" />{" "}
             <LinkWithExternalIcon
               style={{ display: "inline-flex" }}
-              onClick={() => explorerUrl && openURL(explorerUrl)}
+              onClick={() =>
+                explorerUrl && openURL(explorerUrl, "OpenURL", {}, { sensitive: true })
+              }
               label={<Trans i18nKey="families.concordium.receive.verifyLink" />}
             />
           </Alert>

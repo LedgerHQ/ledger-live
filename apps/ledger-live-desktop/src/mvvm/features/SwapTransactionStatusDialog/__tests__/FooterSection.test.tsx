@@ -24,6 +24,8 @@ describe("FooterSection", () => {
     expect(mockedOpenURL).toHaveBeenCalledWith(
       "https://explorer.test/tx/1",
       "SwapTransactionStatus_ViewExplorer",
+      {},
+      { sensitive: true },
     );
   });
 
