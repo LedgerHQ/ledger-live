@@ -17,6 +17,7 @@ User-facing feature packages shared across desktop and mobile apps. Each subdire
 
 ## Conventions
 
+- **MVVM is the flow convention**: each screen is a `useXViewModel.ts` plus `XView.web.tsx` / `XView.native.tsx`, and the View renders its props only (no store, navigation or query hook). The rules are in the [mvvm-architecture skill](../../.agents/skills/mvvm-architecture/SKILL.md)
 - One flow package per user-facing feature
 - Package name: `@features/flow-<name>`
 - Directory name: `features/flow/<name>/`

@@ -1,8 +1,8 @@
 ---
 name: flow-package
 description: |
-  The anatomy of a `features/flow/<name>` package: flat `src/` or `screens/<Screen>/`, view model and
-  platform views, flow state versus entity state, local routing, and where `copy/`, `logic/`,
+  The anatomy of a `features/flow/<name>` package: MVVM for every screen, flat `src/` or
+  `screens/<Screen>/`, flow state versus entity state, local routing, and where `copy/`, `logic/`,
   `model/`, `types.ts` and `exports.ts` go. Use when creating or editing a package under
   `features/flow/**`, or when reviewing its folder layout.
 ---
@@ -14,6 +14,25 @@ package sits among the layers is [structure-flow](../structure-flow/SKILL.md); h
 work is [package-public-api](../package-public-api/SKILL.md). This skill covers what goes inside
 `src/`. Every rule names a package on `develop` to copy from; the full trees are in
 [references/examples.md](references/examples.md).
+
+## MVVM is the convention
+
+Every flow package is MVVM, with no exception: each screen, and each component with its own state,
+is a `useXViewModel.ts` plus `XView.web.tsx` / `XView.native.tsx`. The View renders its props
+only: no store, navigation or query hook. The ViewModel and View rules are the
+[mvvm-architecture](../mvvm-architecture/SKILL.md) ones; this skill does not restate them.
+
+What is specific to a flow package:
+
+- The View is split per platform, `XView.web.tsx` and `XView.native.tsx`, on one props type.
+  Suffix the ViewModel too (`useXViewModel.web.ts`) only when the two platforms really differ.
+- A component exported from a universal entry keeps one props contract on both platforms: see the
+  [universal components ADR](../../../docs/adr/universal-components.md).
+
+Example: `useCardViewModel.ts`, `CardView.web.tsx` and `CardView.native.tsx` in
+`@features/flow-pay-card`; `useCardAssetsViewModel.ts` and `CardAssetsView.*.tsx` in
+`@features/flow-pay-card-assets`. `view.web.tsx` in `@features/flow-fear-and-greed` predates the
+naming rule: rename it when you touch it.
 
 ## One screen: flat `src/`
 
@@ -56,21 +75,6 @@ Example: `@features/flow-contacts-add-address`, also `@features/flow-contacts-in
 
 Do not add `steps/`. Some older packages still have one (`@features/flow-app-unlock`,
 `@features/flow-app-password-setup`): rename it to `screens/` when you touch the package.
-
-## View model and views
-
-- `useXViewModel.ts` returns everything the view renders: values, labels and callbacks. It holds
-  the hooks (`react-redux`, RTK Query, `@shared/i18n`) and no JSX.
-- `XView.web.tsx` and `XView.native.tsx` render the view model's output and call its callbacks.
-  They read no store and fetch nothing.
-- Suffix the view model too (`useXViewModel.web.ts`) only when the two platforms really differ.
-- Keep a component exported from a universal entry on one props contract for both platforms: see
-  the [universal components ADR](../../../docs/adr/universal-components.md).
-
-Example: `useCardViewModel.ts`, `CardView.web.tsx` and `CardView.native.tsx` in
-`@features/flow-pay-card`; `useCardAssetsViewModel.ts` and `CardAssetsView.*.tsx` in
-`@features/flow-pay-card-assets`. `view.web.tsx` in `@features/flow-fear-and-greed` predates the
-naming rule: rename it when you touch it.
 
 ## Flow state versus entity state
 
@@ -122,7 +126,8 @@ The flow owns moving between its own screens; the app owns navigation to and fro
 ## Review
 
 - One screen: flat `src/`. Several: `screens/<Screen>/`. No `steps/`.
-- Each view has a `useXViewModel` and `XView.web.tsx` / `XView.native.tsx`; views read no store.
+- MVVM everywhere: each screen is a `useXViewModel.ts` plus `XView.web.tsx` / `XView.native.tsx`,
+  and the View renders props only, per [mvvm-architecture](../mvvm-architecture/SKILL.md).
 - Flow state holds only what the flow decides; entity data stays in `domain/entity`.
 - Screen changes live in flow state; app navigation comes in as callbacks.
 - `copy/`, `logic/`, `model/`, `types.ts` and `exports.ts` hold what the table says, no more.
