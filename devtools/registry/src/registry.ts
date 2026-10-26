@@ -10,6 +10,7 @@ export const tools = {
   "cloud-sync": platform.cloudSync,
   "device-onboarding": engagement.deviceOnboarding,
   "account-balance": platform.accountBalance,
+  "account-portfolio": platform.accountPortfolio,
   "account-descriptor": platform.accountDescriptor,
   "account-data": platform.accountData,
   "app-config": platform.appConfig,
@@ -39,6 +40,7 @@ export type DevToolConfig =
   | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps }
   | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps }
   | { id: "account-balance"; config: platform.AccountBalanceToolProps }
+  | { id: "account-portfolio"; config: platform.AccountPortfolioToolProps }
   | { id: "account-descriptor"; config: platform.AccountDescriptorToolProps }
   | { id: "account-data"; config: platform.AccountDataToolProps }
   | { id: "app-config"; config: platform.AppConfigToolProps }
