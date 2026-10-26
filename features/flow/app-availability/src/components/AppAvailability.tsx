@@ -41,7 +41,7 @@ export function AppAvailability({ children, testID }: AppAvailabilityProps): Rea
         description={t(copy.descriptionKey)}
         action={{
           label: t("geoBlocking.learnMore"),
-          onPress: openLearnMore,
+          onSelect: openLearnMore,
           testID: "app-availability-learn-more",
         }}
         testID={testID}

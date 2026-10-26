@@ -1,6 +1,6 @@
 export type AppUnavailableAction = Readonly<{
   label: string;
-  onPress: () => void;
+  onSelect: () => void;
   testID?: string;
 }>;
 

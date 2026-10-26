@@ -184,9 +184,6 @@ const COMPONENT_EXCEPTIONS = {
     TrackPage: componentWaiver("R1", "R4"),
     TrackScreen: componentWaiver("R1", "R4"),
   },
-  "shared/ui-app-unavailable": {
-    AppUnavailable: componentWaiver("R3"),
-  },
   "shared/ui-info-state": {
     DialogBackgroundGradient: componentWaiver("R1"),
     DialogBackgroundToneProvider: componentWaiver("R1"),

@@ -7,7 +7,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "clipboard",
   "lottie",
   "network-status",
-  "ui-app-unavailable",
   "ui-info-state",
   "ui-qr-code",
   "ui-queued-bottom-sheet",
