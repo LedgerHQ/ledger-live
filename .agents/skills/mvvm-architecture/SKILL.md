@@ -1,49 +1,56 @@
 ---
 name: mvvm-architecture
-description: Plan, review, and develop desktop and mobile app features following our MVVM architectural pattern. Applies to all new .ts and .tsx files within /apps/ledger-live-desktop or /apps/ledger-live-mobile
+description: The Container, ViewModel, View convention of app composition code under apps/*/src/mvvm/** and of every features/flow package. Read when creating, editing or reviewing files in apps/*/src/mvvm/**, or view model and view files in features/flow/** (use*ViewModel.ts, *View.web.tsx, *View.native.tsx). Decide where new code goes with structure-flow first.
 ---
 
 # MVVM Architecture
 
-## The new standard for desktop and mobile apps
+## Scope
 
-- New code for `ledger-live-desktop` and `ledger-live-mobile` must go into `src/mvvm/`
-- Eventually no feature code within these apps will live outside of `src/mvvm`
-- New features, screens, components, hooks, and utilities belong in `src/mvvm/`
-- Code changes with `src/mvvm` must conform to these `mvvm` patterns
-- Code reviews enforce strict adherence
+`apps/<app>/src/mvvm/` holds two kinds of code:
+
+- **App screens composing `@features/*`**: the screen, its routing, store and analytics wiring, and
+  the adapters that connect a feature package to app internals.
+- **App-only features**: code that depends on app internals and that no other app or flow reuses.
+
+`src/mvvm` is not the default home of new code. Decide placement with
+[structure-flow](../structure-flow/SKILL.md) first: business-aware UI and journeys go to
+`features/`, data access to `domain/`, generic code to `shared/`. The app folder keeps only what
+composes them.
+
+Example: desktop `src/mvvm/features/Contacts/` renders `@features/flow-contacts` and passes it
+app-side adapters (`useContactsCurrencySelectionAdapter`, `useContactsAddressValidationAdapter`).
+The contacts journey itself lives in the flow package.
+
+The [ViewModel pattern](#viewmodel-pattern) is not apps-only: it is also mandatory in every
+`features/flow` package. The folder structure below is apps-only; the anatomy of a flow package
+belongs to the flow-package skill.
 
 ## Folder Structure
+
+Applies to `apps/*/src/mvvm/` only.
 
 ```
 src/mvvm/
 ├── features/
 │   └── FeatureName/
 │       ├── __integrations__/    ← mandatory integration tests
-│       ├── components/          ← reusable UI across screens
+│       ├── components/          ← UI reused across this feature's screens
 │       ├── screens/             ← individual screen folders
-│       ├── hooks/               ← feature-specific hooks
+│       ├── hooks/               ← feature-scoped hooks, adapters to app internals
 │       └── utils/               ← feature-scoped utilities
-├── components/                  ← global shared UI
+├── components/                  ← UI shared by several app features
 ├── hooks/
 └── utils/
 ```
 
-### Feature Folder Responsibilities
-
-- `components/` gathers reusable UI elements across multiple screens.
-- `screens/` contains individual screen folders and their private building blocks.
-- `hooks/` contains feature-specific reusable hooks.
-- `utils/` contains feature-scoped utilities.
-
-### Nesting Guidelines
-
-- Place elements inside the closest folder matching their reuse scope.
-- Screen-specific building blocks stay inside the screen folder.
-- Feature-level components belong to `FeatureName/components/`.
-- Global shared UI belongs to `src/mvvm/components/`.
+Place each element in the closest folder matching its reuse scope: screen-specific building blocks
+stay in the screen folder, feature-level ones in `FeatureName/components/`, app-wide ones in
+`src/mvvm/components/`. An element several apps need belongs in a package, not here.
 
 ## Component & File Patterns
+
+In `src/mvvm/`:
 
 - Each component in its own folder with `index.tsx` as entry.
 - ViewModel hooks always named `use<ComponentName>ViewModel.ts`.
@@ -56,9 +63,28 @@ src/mvvm/
 Components needing external logic use **Container → ViewModel → View**:
 
 - The ViewModel produces data and handlers.
-- The View receives everything via props — no direct hook calls to external systems.
+- The View receives everything via props, with no direct hook calls to external systems.
 
-### Violation checklist — flag if any `index.tsx` View under `screens/` or `components/` within `src/mvvm/`:
+This applies to `apps/*/src/mvvm/**` and to `features/flow/**`.
+
+### In a `features/flow` package
+
+One `use<Screen>ViewModel.ts` per screen produces data and handlers; `<Screen>View.web.tsx` and
+`<Screen>View.native.tsx` render its props only, with no store, navigation or query hooks. The
+container passes one to the other.
+
+Example: `@features/flow-portfolio-services-entry-points`, in
+`src/components/ServicesEntryPoints/`:
+
+```
+ServicesEntryPoints.tsx               ← <ServicesEntryPointsView {...useServicesEntryPointsViewModel(props)} />
+useServicesEntryPointsViewModel.ts    ← feature flag, analytics, handlers
+ServicesEntryPointsView.types.ts      ← the props contract both views share
+ServicesEntryPointsView.web.tsx       ← props only
+ServicesEntryPointsView.native.tsx    ← props only
+```
+
+### Violation checklist: flag any View (`index.tsx` under `screens/` or `components/` in `src/mvvm/`, or `*View.web.tsx` / `*View.native.tsx` in `features/flow/`) that
 
 - Imports `useSelector` or `useDispatch` from `react-redux`
 - Imports `useNavigation` or `useRoute` from `@react-navigation/*`
@@ -78,11 +104,14 @@ Components needing external logic use **Container → ViewModel → View**:
 
 - Keep relative imports shallow (within one directory level).
 - Use TypeScript path aliases for broader access.
-- Never import `index.tsx` explicitly — use folder alias exports.
+- Never import `index.tsx` explicitly; use folder alias exports.
+- Import packages through their public entry (`@features/flow-contacts`), never a relative path
+  into them.
 
 ## Data Fetching
 
-Use RTK Query (`dada-client` and `cal-client` are reference implementations). See [`rtk-query-api`](../rtk-query-api/SKILL.md) skill.
+API calls and RTK Query endpoints live in a `domain/api` package such as `@domain/api-push-devices`.
+A ViewModel in `src/mvvm` calls their hooks; it does not define endpoints.
 
 ## Design System
 
@@ -93,4 +122,6 @@ New UI in `src/mvvm/` must use Lumen:
 
 ## Testing
 
-Every new feature under `src/mvvm/` **must have an integration test** in `__integrations__/` — create a minimal test when the folder is first added. See [`testing`](../testing/SKILL.md) skill.
+Every feature folder under `src/mvvm/features/` **must have an integration test** in
+`__integrations__/`; create a minimal test when the folder is first added. See
+[`testing`](../testing/SKILL.md) skill.
