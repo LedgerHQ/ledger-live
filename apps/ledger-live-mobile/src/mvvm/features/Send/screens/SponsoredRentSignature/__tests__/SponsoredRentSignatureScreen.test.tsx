@@ -25,7 +25,12 @@ const buildViewModel = (
   craftingLabel: "Preparing energy rental…",
   feeAmountLabel: "3.2 USDT",
   cancelLabel: "Cancel",
-  intentExtraProps: { strategyLabel: "Energy rental - Provider", feeLabel: "Rental fee: 3.2 USDT" },
+  intentExtraProps: {
+    strategyLabel: "Energy rental - Provider",
+    feeLabel: "Rental fee: 3.2 USDT",
+    providerName: "Provider",
+    termsUrl: "https://provider.example/terms",
+  },
   onIntentJobStateChanged: jest.fn(),
   onIntentJobError: jest.fn(),
   onUserCancel: jest.fn(),

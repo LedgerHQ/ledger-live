@@ -21,6 +21,9 @@ export function SponsoredRentSignatureScreen() {
     strategyLabel,
     feeLabel,
     feeAmountLabel,
+    providerName,
+    termsUrl,
+    onOpenTerms,
     request,
     action,
     onResult,
@@ -86,6 +89,10 @@ export function SponsoredRentSignatureScreen() {
       strategyLabel={strategyLabel}
       feeLabel={feeLabel}
       feeAmountLabel={feeAmountLabel}
+      providerName={providerName}
+      // Signing accepts the terms: a sign error has nothing left to accept.
+      termsUrl={signError ? null : termsUrl}
+      onOpenTerms={onOpenTerms}
     >
       {content}
     </SponsoredRentSignatureScreenView>

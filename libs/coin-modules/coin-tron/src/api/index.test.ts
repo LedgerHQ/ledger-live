@@ -309,6 +309,7 @@ test("createSponsoredSendApi exposes the energy-rent seam methods", () => {
   expect(seam).toMatchObject({
     feeOptionId: TRONIFY_FEE_OPTION_ID,
     providerName: "Tronify",
+    providerTermsUrl: "https://www.tronify.io/#/Terms?sourceFlag=tronify",
     waivesErrorKeys: ["gasLimit"],
     waivesWarningKeys: ["amount"],
   });

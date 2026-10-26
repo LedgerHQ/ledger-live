@@ -16,9 +16,9 @@ describe("useSponsoredPollingViewModel", () => {
   it("exposes a formatted elapsed label starting at 00:00", () => {
     const { result } = renderHook(() => useSponsoredPollingViewModel());
 
-    expect(result.current.title).toBe("Waiting for energy delivery");
+    expect(result.current.title).toBe("Your energy is being delivered");
     expect(result.current.elapsedLabel).toContain("00:00");
-    expect(result.current.waitingLabel).toContain("Provider is delivering");
+    expect(result.current.waitingLabel).toBe("This usually takes up to 30 seconds.");
   });
 
   it("increments the elapsed counter once per second while polling, and clears the interval on unmount", () => {
