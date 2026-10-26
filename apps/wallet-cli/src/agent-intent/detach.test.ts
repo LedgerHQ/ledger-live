@@ -183,7 +183,7 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
   it("returns the child's first JSON line while the child keeps running", async () => {
     const { logPath } = enrollListenerPaths("my-agent");
     const child = startChild(
-      'console.error("a banner on stderr");' +
+      'process.stderr.write("a banner on stderr\\n");' +
         'console.log(JSON.stringify({ type: "enrollment-pending", profileId: "my-agent" }));' +
         "setInterval(() => {}, 1000);",
       logPath,
