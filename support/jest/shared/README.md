@@ -95,7 +95,9 @@ const { createSharedUiNativeJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiNativeJestConfig();
 ```
 
-Pass extra `moduleNameMapper` entries to add package-specific mocks alongside the base ones:
+`moduleNameMapper` and `setupFilesAfterEnv` add to the preset's, as in the dual preset; any other
+key replaces it. Pass extra `moduleNameMapper` entries to add package-specific mocks alongside the
+base ones:
 
 ```js
 module.exports = createSharedUiNativeJestConfig({

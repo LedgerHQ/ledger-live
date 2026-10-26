@@ -8,6 +8,7 @@ const {
   quarantineReporter,
   quarantineRetries,
   swcTransform,
+  withProjectOverrides,
 } = require("../core");
 
 /**
@@ -113,20 +114,25 @@ function createSharedUiJestConfig(options) {
  * Jest config for a shared/ui-* package with native-only tests (*.native.test.ts).
  *
  * Provides react-native, safe-area-context, Lumen native, and image stubs by default.
- * Pass extra `moduleNameMapper` entries to add package-specific mocks alongside the base ones.
- * Requires no web-only dependencies (jest-environment-jsdom, @testing-library/jest-dom).
+ * `moduleNameMapper` and `setupFilesAfterEnv` overrides add to the preset's (an entry with the
+ * same pattern replaces that mock); any other key replaces it. Requires no web-only dependencies (jest-environment-jsdom, @testing-library/jest-dom).
  *
  * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedUiNativeJestConfig({ moduleNameMapper: extraMocks = {}, ...overrides } = {}) {
-  return createSharedJestConfig({
-    collectCoverage: true,
-    testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-    moduleFileExtensions: platformExtensions("native"),
-    moduleNameMapper: { ...nativeMocks, ...extraMocks },
-    ...overrides,
-  });
+function createSharedUiNativeJestConfig(overrides = {}) {
+  return createSharedJestConfig(
+    withProjectOverrides(
+      {
+        collectCoverage: true,
+        testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+        moduleFileExtensions: platformExtensions("native"),
+        moduleNameMapper: { ...nativeMocks },
+        setupFilesAfterEnv: [quarantineRetries],
+      },
+      overrides,
+    ),
+  );
 }
 
 module.exports = {

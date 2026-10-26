@@ -61,15 +61,13 @@ const nativeMocks = {
 
 // Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
 // platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one.
-const platformExtensions = platform => [
-  `${platform}.tsx`,
-  `${platform}.ts`,
-  "tsx",
-  "ts",
-  "js",
-  "jsx",
-  "json",
-];
+/**
+ * @param {"web" | "native"} platform
+ * @returns {string[]}
+ */
+function platformExtensions(platform) {
+  return [`${platform}.tsx`, `${platform}.ts`, "tsx", "ts", "js", "jsx", "json"];
+}
 
 /**
  * Applies a project override: `setupFilesAfterEnv` and `moduleNameMapper` add to the project's
@@ -199,4 +197,5 @@ module.exports = {
   quarantineReporter,
   quarantineRetries,
   swcTransform,
+  withProjectOverrides,
 };
