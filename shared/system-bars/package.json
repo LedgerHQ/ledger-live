@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "description": "Theme the Android system navigation bar from React Native, with expo-navigation-bar",
-  "main": "src/index.native.ts",
-  "react-native": "src/index.native.ts",
-  "types": "src/index.native.ts",
+  "main": "src/index.ts",
+  "react-native": "src/index.ts",
+  "types": "src/index.ts",
   "exports": {
     ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.native.ts"
+      "react-native": "./src/index.ts",
+      "default": "./src/index.ts"
     },
     "./package.json": "./package.json"
   },

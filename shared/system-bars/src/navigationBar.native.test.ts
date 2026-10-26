@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 import * as ExpoNavigationBar from "expo-navigation-bar";
-import { applyNavigationBarTheme } from "./navigationBar.native";
+import { applyNavigationBarTheme } from "./navigationBar";
 
 jest.mock("expo-navigation-bar", () => ({
   setButtonStyleAsync: jest.fn(),
