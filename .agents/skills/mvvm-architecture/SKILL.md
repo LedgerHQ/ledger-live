@@ -1,6 +1,6 @@
 ---
 name: mvvm-architecture
-description: Organize and review app composition code under apps/*/src/mvvm/** in ledger-live-desktop and ledger-live-mobile, with the Container, ViewModel, View pattern. Read when creating, editing or reviewing files in apps/*/src/mvvm/**. Decide where new code goes with structure-flow first.
+description: The Container, ViewModel, View convention of app composition code under apps/*/src/mvvm/** and of every features/flow package. Read when creating, editing or reviewing files in apps/*/src/mvvm/**, or view model and view files in features/flow/** (use*ViewModel.ts, *View.web.tsx, *View.native.tsx). Decide where new code goes with structure-flow first.
 ---
 
 # MVVM Architecture
@@ -22,7 +22,13 @@ Example: desktop `src/mvvm/features/Contacts/` renders `@features/flow-contacts`
 app-side adapters (`useContactsCurrencySelectionAdapter`, `useContactsAddressValidationAdapter`).
 The contacts journey itself lives in the flow package.
 
+The [ViewModel pattern](#viewmodel-pattern) is not apps-only: it is also mandatory in every
+`features/flow` package. The folder structure below is apps-only; the anatomy of a flow package
+belongs to the flow-package skill.
+
 ## Folder Structure
+
+Applies to `apps/*/src/mvvm/` only.
 
 ```
 src/mvvm/
@@ -44,6 +50,8 @@ stay in the screen folder, feature-level ones in `FeatureName/components/`, app-
 
 ## Component & File Patterns
 
+In `src/mvvm/`:
+
 - Each component in its own folder with `index.tsx` as entry.
 - ViewModel hooks always named `use<ComponentName>ViewModel.ts`.
 - Support files alongside: `types.ts`, `styles.ts`.
@@ -57,7 +65,26 @@ Components needing external logic use **Container → ViewModel → View**:
 - The ViewModel produces data and handlers.
 - The View receives everything via props, with no direct hook calls to external systems.
 
-### Violation checklist: flag any `index.tsx` View under `screens/` or `components/` in `src/mvvm/` that
+This applies to `apps/*/src/mvvm/**` and to `features/flow/**`.
+
+### In a `features/flow` package
+
+One `use<Screen>ViewModel.ts` per screen produces data and handlers; `<Screen>View.web.tsx` and
+`<Screen>View.native.tsx` render its props only, with no store, navigation or query hooks. The
+container passes one to the other.
+
+Example: `@features/flow-portfolio-services-entry-points`, in
+`src/components/ServicesEntryPoints/`:
+
+```
+ServicesEntryPoints.tsx               ← <ServicesEntryPointsView {...useServicesEntryPointsViewModel(props)} />
+useServicesEntryPointsViewModel.ts    ← feature flag, analytics, handlers
+ServicesEntryPointsView.types.ts      ← the props contract both views share
+ServicesEntryPointsView.web.tsx       ← props only
+ServicesEntryPointsView.native.tsx    ← props only
+```
+
+### Violation checklist: flag any View (`index.tsx` under `screens/` or `components/` in `src/mvvm/`, or `*View.web.tsx` / `*View.native.tsx` in `features/flow/`) that
 
 - Imports `useSelector` or `useDispatch` from `react-redux`
 - Imports `useNavigation` or `useRoute` from `@react-navigation/*`
