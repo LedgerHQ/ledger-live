@@ -196,6 +196,7 @@ libs/ledger-live-common/src/intents/                                @ledgerhq/co
 libs/ledger-live-common/src/transaction/                            @ledgerhq/coin-integration
 libs/ledger-live-common/src/walletConnect/                          @ledgerhq/coin-integration
 libs/ledger-services/                                               @ledgerhq/coin-integration
+features/platform/coin-observability/                               @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/mvvm/features/Send/                    @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/components/Transaction*/      @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/components/SignMessage*/      @ledgerhq/coin-integration
