@@ -99,9 +99,9 @@ catalog:
   "@react-navigation/native-stack": 7.3.26
   react-native-screens: 4.15.4
   # React Native Community
-  "@react-native-community/cli": 18.0.1
-  "@react-native-community/cli-platform-android": 18.0.1
-  "@react-native-community/cli-platform-ios": 18.0.1
+  "@react-native-community/cli": 20.2.0
+  "@react-native-community/cli-platform-android": 20.2.0
+  "@react-native-community/cli-platform-ios": 20.2.0
   # Expo
   expo: 54.0.33
   expo-constants: 18.0.13
