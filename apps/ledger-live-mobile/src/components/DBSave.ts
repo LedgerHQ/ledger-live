@@ -363,6 +363,7 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 1000,
     getChangesStats: cryptoAssetsNotEquals,
     lense: extractPersistedCALFromState,
+    saveAtStart: true, // the background hash check can update the cache before this effect mounts
   });
 
   useDBSaveEffect({

@@ -1,4 +1,7 @@
 import type { AccountHeroAvailability } from "../hero/types";
+import { hasAccountActivity } from "./hasAccountActivity";
+import { resolveAccountCountervalue } from "./resolveAccountCountervalue";
+import { resolveAccountHeroAvailability } from "./resolveAccountHeroAvailability";
 import { resolveEmptyState } from "./resolveEmptyState";
 import { resolveSwapConsole } from "./resolveSwapConsole";
 
@@ -52,5 +55,70 @@ describe("resolveEmptyState", () => {
       resolveEmptyState({ hasActivity: false, availability: availability(overrides) })
         .fundingActions,
     ).toEqual(expected);
+  });
+});
+
+describe("resolveAccountHeroAvailability", () => {
+  const support = { isCurrencySupported: true, isSendSupported: false, isReceiveSupported: true };
+
+  it("makes an action available when one asset of the account supports it", () => {
+    expect(
+      resolveAccountHeroAvailability({ buy: ["eth"], sell: [], swap: ["eth"], earn: [] }, support),
+    ).toEqual({
+      ...support,
+      isBuyAvailable: true,
+      isSellAvailable: false,
+      isSwapAvailable: true,
+      isEarnAvailable: false,
+    });
+  });
+});
+
+describe("hasAccountActivity", () => {
+  const empty = { operations: [], pendingOperations: [] };
+
+  it("has no activity without any operation", () => {
+    expect(hasAccountActivity({ ...empty, subAccounts: [empty] })).toBe(false);
+  });
+
+  it("counts operations and pending operations of the account and its tokens", () => {
+    expect(hasAccountActivity({ ...empty, pendingOperations: [{}] })).toBe(true);
+    expect(hasAccountActivity({ ...empty, subAccounts: [{ ...empty, operations: [{}] }] })).toBe(
+      true,
+    );
+  });
+});
+
+const valuedAsset = (currency: string, balance: number) => ({
+  currency,
+  account: { balance: { isZero: () => balance === 0, value: balance } },
+});
+const quotes: Record<string, number> = { eth: 2, usdc: 1 };
+const calculate = (currency: string, balance: { value: number }) =>
+  currency in quotes ? { toNumber: () => quotes[currency] * balance.value } : undefined;
+
+describe("resolveAccountCountervalue", () => {
+  it("sums the countervalues of the coin and its tokens", () => {
+    expect(
+      resolveAccountCountervalue([valuedAsset("eth", 3), valuedAsset("usdc", 4)], calculate),
+    ).toBe(10);
+  });
+
+  it("is zero when every balance is zero, even without quotes", () => {
+    expect(
+      resolveAccountCountervalue([valuedAsset("pol", 0), valuedAsset("dai", 0)], calculate),
+    ).toBe(0);
+  });
+
+  it("is unknown when no funded asset has a quote", () => {
+    expect(
+      resolveAccountCountervalue([valuedAsset("eth", 0), valuedAsset("pol", 5)], calculate),
+    ).toBeUndefined();
+  });
+
+  it("skips funded assets without a quote", () => {
+    expect(
+      resolveAccountCountervalue([valuedAsset("eth", 1), valuedAsset("pol", 5)], calculate),
+    ).toBe(2);
   });
 });

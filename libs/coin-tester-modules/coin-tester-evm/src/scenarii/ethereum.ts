@@ -101,7 +101,7 @@ export const scenarioEthereum: Scenario<GenericTransaction, Account> = {
     sandbox = await startSandbox(
       { family: "evm", network: "ethereum" },
       {
-        node: { provider: "geth", version: "1.17.8" },
+        node: { provider: "geth", version: "1.17.9" },
         indexer: { provider: "atlas", version: "2.38.16" },
       },
     );

@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { db } from "~/renderer/bridge";
 import type { Serializable } from "~/bridge/contract";
 import { getEnv } from "@shared/env";
+import type { ConfigSelectionId } from "@shared/app-config";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
 import accountModel from "~/helpers/accountModel";
@@ -75,7 +76,8 @@ type DatabaseValues = {
   history: { lastSeenOperationDate: string | null };
   PLAYWRIGHT_RUN: {
     localStorage?: Record<string, string>;
-    appConfig?: Record<string, "staging" | "prod">;
+    appConfig?: Record<string, ConfigSelectionId>;
+    appConfigDevValues?: Record<string, string>;
   };
   discover: DiscoverDB;
   ptx: {

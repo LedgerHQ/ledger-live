@@ -4,5 +4,8 @@ export const CAL_REDUCER_PATH = "calApi";
 /** Max retries for transient CAL request failures. */
 export const MAX_RETRIES = 3;
 
+/** Time after which a CAL request attempt is aborted, so a hung CAL never blocks its caller. */
+export const CAL_REQUEST_TIMEOUT_MS = 30_000;
+
 /** Request header carrying the Ledger client version on every CAL request. */
 export const HEADER_X_LEDGER_CLIENT_VERSION = "X-Ledger-Client-Version";

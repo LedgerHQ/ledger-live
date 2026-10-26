@@ -9,7 +9,7 @@ The public API of a dual-platform package has two shapes today: 54 of its 85 pub
 This ADR uses these terms:
 
 - A **dual-platform package** resolves its public API per platform: it has a `react-native` condition in `package.json#exports`, a `./web` or `./native` subpath, or `.web` / `.native` files reachable from an entry.
-- A **universal entry** is an entry of `package.json#exports` with a `react-native` condition, such as `.`. A **platform entry** is a `./web` or `./native` subpath without a condition, so the importer names the platform.
+- A **universal entry** is an entry of `package.json#exports` that resolves per platform: it has a `react-native` condition, such as `.`, or it has no condition and its exports resolve to different modules on web and on native. A **platform entry** is a `./web` or `./native` subpath without a condition, so the importer names the platform.
 - A **universal component** is a React component exported from a universal entry. A **platform component** is one exported from a platform entry.
 - A **contract** is the unsuffixed module that declares the props type of a universal component.
 
@@ -186,6 +186,7 @@ flowchart TD
 ```
 
 - The rule reads the entries from `package.json#exports` and resolves each one twice, the way the two app bundlers do. Desktop builds with Rspack: `default` condition, `.web` before the unsuffixed file. Mobile builds with Re.Pack 5.2.5 (`Repack.getResolveOptions` with `preferNativePlatform: true` in [rspack.config.mjs](../../apps/ledger-live-mobile/rspack.config.mjs)): `react-native` condition, `.ios` or `.android`, then `.native`, then the unsuffixed file. No `.ios` or `.android` file exists under `features/`, `shared/` or `domain/` today; the rule treats one as a native variant. It follows re-exports to the module that declares each export.
+- An entry without a condition counts as universal when its two resolutions differ: a different set of export names, or a different declaring module for one of them. An entry that resolves the same on both platforms, such as one that imports `./View.web` explicitly, is not universal and the rule skips it.
 - It parses modules with the TypeScript parser (`ts.createSourceFile`) and builds no program, so it runs on the root dev dependencies that the boundaries job installs. [enforce-i18n-keys/validate.js](../../tools/nx-plugins/enforce-i18n-keys/validate.js) is the existing precedent for the TypeScript API in an nx plugin.
 - It treats as a component every PascalCase named export of a `.tsx` module that is a function: a declaration, an arrow function, or a `memo(...)` or `forwardRef(...)` call. A `createContext` result is not a function and is skipped.
 - Within R3, a prop whose JSDoc carries `@platform` must be optional and typed `boolean`, `number`, `string` or a union of string literals. The parser reads JSDoc tags (`ts.getJSDocTags`) without a type checker. An untagged platform-only prop looks like any other prop and passes; review catches it, as it catches the "outnumber" heuristic above.
@@ -250,6 +251,7 @@ flowchart LR
 
 - Internal components, which no entry of `package.json#exports` reaches.
 - Single-platform packages, such as the native-only `features/flow/app-*` packages.
+- Test support entries, whose subpath has a segment starting with `test` or `mock`, such as `./testing` or `./testing/module-mock`. They serve test setups, not app code.
 - A `@shared/ui` package that re-exports Lumen per platform. It removes duplicated import lines inside implementations and leaves the public contract unchanged, so it needs a decision of its own.
 - Suffixed import specifiers, such as `./X.native` or a relative `native.ts` barrel, which the platform-suffix cleanup removes. A platform entry is a package subpath, not a suffix, and the cleanup's subpath check allows it from code of the same platform (R5).
 

@@ -278,5 +278,32 @@ describe("genericGetTransactionStatus", () => {
 
       expect("gasLimit" in readParameters()).toBe(false);
     });
+
+    it("hands the sponsoring context to validateIntent so a sponsored send is validated as sponsored", async () => {
+      const getStatus = genericGetTransactionStatus("mainnet", "tron");
+
+      await getStatus(account, {
+        amount: new BigNumber(100),
+        useAllAmount: false,
+        recipient: "TRecipient",
+        family: "tron",
+        sponsored: true,
+      } as any);
+
+      expect(readParameters().sponsored).toBe(true);
+    });
+
+    it("leaves the sponsored key out of the fee parameters when the transaction carries no sponsoring context", async () => {
+      const getStatus = genericGetTransactionStatus("mainnet", "tron");
+
+      await getStatus(account, {
+        amount: new BigNumber(100),
+        useAllAmount: false,
+        recipient: "TRecipient",
+        family: "tron",
+      } as any);
+
+      expect("sponsored" in readParameters()).toBe(false);
+    });
   });
 });

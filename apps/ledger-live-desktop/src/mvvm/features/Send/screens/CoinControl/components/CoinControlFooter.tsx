@@ -58,6 +58,7 @@ export function CoinControlFooter({
         onClick={reviewShowIcon ? onReview : onGetFunds}
         disabled={reviewDisabled}
         loading={reviewLoading}
+        aria-busy={reviewLoading}
         icon={reviewShowIcon ? LedgerLogo : undefined}
         data-testid={ctaTestId}
         className="rounded-full"

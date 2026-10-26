@@ -70,6 +70,12 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "coverage": "jest --coverage --passWithNoTests",
     "clean": "rimraf lib lib-es",

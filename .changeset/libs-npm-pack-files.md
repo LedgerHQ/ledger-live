@@ -1,0 +1,56 @@
+---
+"@ledgerhq/coin-aleo": patch
+"@ledgerhq/coin-algorand": patch
+"@ledgerhq/coin-aptos": patch
+"@ledgerhq/coin-bitcoin": patch
+"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-cardano": patch
+"@ledgerhq/coin-casper": patch
+"@ledgerhq/coin-celo": patch
+"@ledgerhq/coin-concordium": patch
+"@ledgerhq/coin-cosmos": patch
+"@ledgerhq/coin-filecoin": patch
+"@ledgerhq/coin-hedera": patch
+"@ledgerhq/coin-icon": patch
+"@ledgerhq/coin-internet_computer": patch
+"@ledgerhq/coin-kaspa": patch
+"@ledgerhq/coin-mina": patch
+"@ledgerhq/coin-multiversx": patch
+"@ledgerhq/coin-near": patch
+"@ledgerhq/coin-polkadot": patch
+"@ledgerhq/coin-solana": patch
+"@ledgerhq/coin-stacks": patch
+"@ledgerhq/coin-sui": patch
+"@ledgerhq/coin-ton": patch
+"@ledgerhq/coin-tron": patch
+"@ledgerhq/coin-vechain": patch
+"@ledgerhq/coin-zcash": patch
+"@ledgerhq/concordium-core": patch
+"@ledgerhq/ledger-wallet-framework": patch
+"@ledgerhq/hw-app-algorand": patch
+"@ledgerhq/hw-app-aptos": patch
+"@ledgerhq/hw-app-btc": patch
+"@ledgerhq/hw-app-canton": patch
+"@ledgerhq/hw-app-celo": patch
+"@ledgerhq/hw-app-cosmos": patch
+"@ledgerhq/hw-app-eth": patch
+"@ledgerhq/hw-app-exchange": patch
+"@ledgerhq/hw-app-hedera": patch
+"@ledgerhq/hw-app-icon": patch
+"@ledgerhq/hw-app-kaspa": patch
+"@ledgerhq/hw-app-multiversx": patch
+"@ledgerhq/hw-app-near": patch
+"@ledgerhq/hw-app-polkadot": patch
+"@ledgerhq/hw-app-solana": patch
+"@ledgerhq/hw-app-str": patch
+"@ledgerhq/hw-app-sui": patch
+"@ledgerhq/hw-app-tezos": patch
+"@ledgerhq/hw-app-trx": patch
+"@ledgerhq/hw-app-vet": patch
+"@ledgerhq/hw-app-xrp": patch
+"@ledgerhq/types-devices": patch
+"@ledgerhq/types-live": patch
+"@ledgerhq/wallet-btc": patch
+---
+
+fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped

@@ -38,7 +38,7 @@ describe("receive --verify command (mock DMK)", () => {
     expect(preVerify).toMatchObject({
       type: "pre-verify-address",
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       address: MOCK_ETH_ADDRESS,
     });
 
@@ -48,14 +48,14 @@ describe("receive --verify command (mock DMK)", () => {
     expect(deviceState).toMatchObject({
       type: "device-state",
       command: "receive",
-      network: "ethereum:main",
+      network: "ethereum",
       state: { code: "awaiting_approval", reason: "verify_address" },
       message: "Review address on device. Approve or reject.",
     });
 
     const data = lines.at(-1);
     expect(data.command).toBe("receive");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(deviceState.account).toBe(data.account);
     expect(data.address.toLowerCase()).toBe(MOCK_ETH_ADDRESS.toLowerCase());
     expect(data.verified).toBe(true);
@@ -73,6 +73,20 @@ describe("receive --verify command (mock DMK)", () => {
     const data = JSON.parse(stdout);
     expect(data.verified).toBe(false);
     expect(data.source).toBe("software-derivation");
+  });
+
+  it("resolves a session label stored as a version 1 descriptor", async () => {
+    const v1 = `account:1:address:ethereum:main:${MOCK_ETH_ADDRESS}:m/44h/60h/0h/0/0`;
+    const fixture = makeSessionDir([{ label: "ethereum-1", descriptor: v1 }]);
+    sessionCleanup = fixture.cleanup;
+    const { stdout, exitCode, stderr } = await runCli(
+      ["receive", "--account", "ethereum-1", "--verify=false", "--output", "json"],
+      { WALLET_CLI_MOCK_PORT: String(server.port), ...fixture.env },
+    );
+    expect(exitCode, `stderr: ${stderr}`).toBe(0);
+    const data = JSON.parse(stdout);
+    expect(data.network).toBe("ethereum");
+    expect(data.account).toBe(MOCK_ETH_DESCRIPTOR);
   });
 
   it("human output: warns when --verify=false", async () => {

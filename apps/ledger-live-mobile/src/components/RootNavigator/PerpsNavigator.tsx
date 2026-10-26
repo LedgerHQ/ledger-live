@@ -1,17 +1,19 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
-import { useTheme } from "styled-components/native";
+import { useTheme as useLumenTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { ScreenName } from "~/const";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import {
+  createLumenNativeStackNavigator,
+  getStackNavigationConfigV4,
+} from "LLM/components/Navigation";
 import { PerpsNavigatorParamList } from "./types/PerpsNavigator";
 import { PerpsLiveAppWrapper } from "LLM/features/Perps";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 
-const Stack = createNativeStackNavigator<PerpsNavigatorParamList>();
+const Stack = createLumenNativeStackNavigator<PerpsNavigatorParamList>();
 
 export default function PerpsNavigator() {
-  const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const { theme } = useLumenTheme();
+  const stackNavigationConfig = useMemo(() => getStackNavigationConfigV4(theme), [theme]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
 
   const options = useMemo(

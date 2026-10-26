@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createCommandOutput } from "../../output";
-import { parseNetworkArg, serializeNetwork } from "../../shared/accountDescriptor";
+import { parseNetworkArg } from "../../shared/accountDescriptor";
 import { Session } from "../../session/session-store";
 import { DEFAULT_STAKE_VALIDATORS_LIMIT, listEarnYieldRows } from "../../wallet/earn/yields";
 import { outputOption, resolveOutputFormat } from "../inputs";
@@ -12,8 +12,7 @@ export default defineCommand({
   description: "List earn yield opportunities (no device required)",
   options: {
     network: option(z.string().min(1).optional(), {
-      description:
-        'Filter by network and enrich with provider details, e.g. "ethereum", "solana". No env = mainnet.',
+      description: 'Filter by network and enrich with provider details, e.g. "ethereum", "solana".',
       short: "n",
     }),
     limit: option(z.coerce.number().int().positive().default(DEFAULT_STAKE_VALIDATORS_LIMIT), {
@@ -36,10 +35,9 @@ export default defineCommand({
     const output = resolveOutputFormat(flags.output);
     const networkArg = flags.network;
 
-    // Canonical `name:env` form (e.g. "ethereum" -> "ethereum:main"), so both the JSON envelope and
-    // analytics match what deposit/withdraw/positions emit. Empty when listing all networks.
+    // Empty when listing all networks.
     const parsedNetwork = networkArg ? parseNetworkArg(networkArg) : undefined;
-    const trackedNetwork = parsedNetwork ? serializeNetwork(parsedNetwork) : "";
+    const trackedNetwork = parsedNetwork ?? "";
 
     const out = createCommandOutput(output, {
       command: "earn yields",

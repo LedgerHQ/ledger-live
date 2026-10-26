@@ -62,7 +62,7 @@ import type {
 export type OutputContext = {
   /** Command name as it appears in the JSON envelope, e.g. "balances", "account discover". */
   command: string;
-  /** Network string, e.g. "bitcoin", "ethereum:goerli". */
+  /** Network id, e.g. "bitcoin", "ethereum_sepolia". */
   network: string;
   /** Account identifier included in JSON envelopes (optional — not all commands have one). */
   account?: string;
@@ -1566,6 +1566,7 @@ function swapIntentSummaryJson(summary: SwapIntentSummary): Record<string, unkno
     toAmount: summary.toAmount,
     provider: summary.provider,
     quoted: summary.quoted,
+    needsTokenApproval: summary.needsTokenApproval,
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

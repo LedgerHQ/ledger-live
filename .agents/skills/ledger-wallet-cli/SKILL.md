@@ -73,7 +73,7 @@ If the user asks for any of the following, surface that wallet-cli does not supp
 
 ## Session & labels
 
-`account discover` persists accounts. Each gets a label: `<network>[-derivation][-env]-<n>` (e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum-sepolia-1`).
+`account discover` persists accounts. Each gets a label: `<network>[-derivation]-<n>` (e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum_sepolia-1`).
 
 All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account discover` first to populate the session.
 
@@ -136,10 +136,10 @@ pnpm --silent wallet-cli start session reset
 ```bash
 pnpm --silent wallet-cli start account discover ethereum
 pnpm --silent wallet-cli start account discover bitcoin
-pnpm --silent wallet-cli start account discover ethereum:sepolia
+pnpm --silent wallet-cli start account discover ethereum_sepolia
 ```
 
-Networks: `bitcoin` (mainnet), `ethereum`, `solana`, `ethereum:sepolia`, `bitcoin:testnet`, `solana:devnet`.
+Networks are CAL network ids: `bitcoin`, `ethereum`, `solana`, `ethereum_sepolia`, `bitcoin_testnet`, `solana_devnet` (the old `ethereum:sepolia` form is still accepted).
 
 ### receive
 
@@ -497,8 +497,8 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
   above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
-  (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum:main` or
-  `solana:main`.
+  (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum` or
+  `solana`.
 - **`--fee-strategy slow|medium|fast`** (Ethereum only, default `medium`) is the fee level the human
   is asked to approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
   responsible for that.
@@ -535,9 +535,14 @@ pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethe
   asset has, zero, a sign or an exponent is an error. The quoted amount to receive is rounded
   **down** to the bought asset's precision. JSON output gives `fromAmount` and `toAmount` as strings.
 - **Providers:** only `oneinch`, `velora`, `okx` and `lifi`, the ones the frontend can turn into a
-  transaction today (`1inch` is accepted for `oneinch`). A quote that needs a token approval or a
-  Permit2 signature is skipped, because the frontend can't prepare one yet and the intent would
-  stay stuck in review.
+  transaction today (`1inch` is accepted for `oneinch`). A quote that needs a Permit2 signature is
+  skipped, and so is one whose token approval the frontend can't send: an approval of another token
+  than the one sold, or USDT with an allowance left or not reported (its `approve` fails until the
+  allowance is reset to 0). The intent would stay stuck in review.
+- **Token approval:** the best quote is kept even when the sold token needs an approval first. The
+  reviewer approves it in the Agent Intent frontend, in a separate transaction with its own network
+  fee, then reviews the swap. The command says so on stderr, and JSON output has
+  `needsTokenApproval: true`.
 - **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
   quoted, so the provider is always one the frontend can prepare.
 - **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the

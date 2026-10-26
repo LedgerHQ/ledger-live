@@ -13,7 +13,7 @@ import { TrackPage } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { OnboardingContext } from "../../index";
+import { OnboardingContext } from "../../OnboardingContext";
 
 const SelectDeviceContainer = styled(Flex).attrs({
   height: "100%",

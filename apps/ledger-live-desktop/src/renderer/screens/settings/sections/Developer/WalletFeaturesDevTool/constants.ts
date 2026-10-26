@@ -8,7 +8,6 @@ export const WALLET_FEATURES_PARAMS = [
     key: "brazePlacement",
     label: "Braze Placement",
   },
-  { key: "operationsList", label: "TX History" },
   { key: "aggregatedAssets", label: "Aggregated Assets" },
   { key: "assetDiscoverability", label: "Asset Discoverability" },
   { key: "pnl", label: "PnL" },

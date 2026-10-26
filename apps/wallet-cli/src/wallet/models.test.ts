@@ -37,12 +37,18 @@ describe("parseShortAccountDescriptor", () => {
 
 describe("parseAccountDescriptor", () => {
   it("delegates to toV0(parseV1()) for V1-prefixed input", () => {
-    const v1Input = `account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`;
+    const v1Input = `account:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`;
     const result = parseAccountDescriptor(v1Input);
     expect(result.currencyId).toBe("bitcoin");
     expect(result.seedIdentifier).toBe(XPUB);
     expect(result.derivationMode).toBe("native_segwit");
     expect(result.index).toBe(0);
+  });
+
+  it("reads a version 1 descriptor as the same account as version 2", () => {
+    expect(parseAccountDescriptor(`account:1:utxo:bitcoin:testnet:${XPUB}:m/84h/1h/0h`)).toEqual(
+      parseAccountDescriptor(`account:2:utxo:bitcoin_testnet:${XPUB}:m/84h/1h/0h`),
+    );
   });
 
   it("delegates to parseShortAccountDescriptor for js:2: input", () => {

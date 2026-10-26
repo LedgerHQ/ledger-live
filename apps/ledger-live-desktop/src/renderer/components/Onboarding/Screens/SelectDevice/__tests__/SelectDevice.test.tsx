@@ -16,20 +16,7 @@ jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-jest.mock("../../../index", () => {
-  const { createContext } = jest.requireActual<typeof import("react")>("react");
-  return {
-    OnboardingContext: createContext<{
-      deviceModelId: DeviceModelId | null;
-      setDeviceModelId: (id: DeviceModelId | null) => void;
-    }>({
-      deviceModelId: null,
-      setDeviceModelId: () => {},
-    }),
-  };
-});
-
-import { OnboardingContext } from "../../../index";
+import { OnboardingContext } from "../../../OnboardingContext";
 import { SelectDevice } from "../index";
 
 const renderSelectDevice = (featureFlags: Parameters<typeof withFlagOverrides>[0] = {}) => {

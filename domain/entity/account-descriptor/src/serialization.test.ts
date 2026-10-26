@@ -5,47 +5,45 @@ import { parseAccountDescriptor, serializeAccountDescriptor } from "./serializat
 
 const UTXO: AccountDescriptor = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "main" },
+  network: "bitcoin",
   xpub: XPUB,
   path: "m/84h/0h/0h",
 };
 
 const ETH: AccountDescriptor = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
-  network: { name: "ethereum", env: "main" },
+  network: "ethereum",
   address: ETH_ADDR,
   path: "m/44h/60h/0h/0/0",
 };
 
 const SOL: AccountDescriptor = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
-  network: { name: "solana", env: "devnet" },
+  network: "solana_devnet",
   address: SOL_ADDR,
   path: "m/44h/501h/0h/0h",
 };
 
 describe("serializeAccountDescriptor", () => {
-  it("keeps the string form wallet-cli stores", () => {
-    expect(serializeAccountDescriptor(UTXO)).toBe(
-      `account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`,
-    );
+  it("writes version 2", () => {
+    expect(serializeAccountDescriptor(UTXO)).toBe(`account:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`);
     expect(serializeAccountDescriptor(ETH)).toBe(
-      `account:1:address:ethereum:main:${ETH_ADDR}:m/44h/60h/0h/0/0`,
+      `account:2:address:ethereum:${ETH_ADDR}:m/44h/60h/0h/0/0`,
     );
     expect(serializeAccountDescriptor(SOL)).toBe(
-      `account:1:address:solana:devnet:${SOL_ADDR}:m/44h/501h/0h/0h`,
+      `account:2:address:solana_devnet:${SOL_ADDR}:m/44h/501h/0h/0h`,
     );
   });
 });
 
 describe("parseAccountDescriptor", () => {
-  it.each([UTXO, ETH, SOL])("round-trips $type $network.name", descriptor => {
+  it.each([UTXO, ETH, SOL])("round-trips $type $network", descriptor => {
     expect(parseAccountDescriptor(serializeAccountDescriptor(descriptor))).toEqual(descriptor);
   });
 
@@ -61,53 +59,52 @@ describe("parseAccountDescriptor", () => {
   });
 
   it.each([
-    ["too few fields", "account:1:utxo:bitcoin:main"],
-    ["wrong purpose", `wallet:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`],
-    ["wrong version", `account:2:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`],
-    ["unknown type", `account:1:xpub:bitcoin:main:${XPUB}:m/84h/0h/0h`],
+    ["too few fields", "account:2:utxo:bitcoin:main"],
+    ["version 1", `account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`],
+    ["wrong purpose", `wallet:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`],
+    ["wrong version", `account:3:utxo:bitcoin:${XPUB}:m/84h/0h/0h`],
+    ["unknown type", `account:2:xpub:bitcoin:${XPUB}:m/84h/0h/0h`],
   ])("rejects %s", (_, input) => {
     expect(() => parseAccountDescriptor(input)).toThrow(InvalidAccountDescriptorError);
   });
 
   it("rejects a non hardened utxo path", () => {
-    expect(() => parseAccountDescriptor(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0`)).toThrow(
+    expect(() => parseAccountDescriptor(`account:2:utxo:bitcoin:${XPUB}:m/84h/0h/0`)).toThrow(
       InvalidAccountDescriptorError,
     );
   });
 
   it("rejects an address path that is not a derivation path", () => {
-    expect(() =>
-      parseAccountDescriptor(`account:1:address:ethereum:main:${ETH_ADDR}:garbage`),
-    ).toThrow(InvalidAccountDescriptorError);
+    expect(() => parseAccountDescriptor(`account:2:address:ethereum:${ETH_ADDR}:garbage`)).toThrow(
+      InvalidAccountDescriptorError,
+    );
   });
 
-  it("rejects ':' in the network fields", () => {
-    expect(
-      AccountDescriptorSchema.safeParse({ ...ETH, network: { name: "a:b", env: "main" } }).success,
-    ).toBe(false);
+  it("rejects ':' in the network id", () => {
+    expect(AccountDescriptorSchema.safeParse({ ...ETH, network: "a:b" }).success).toBe(false);
   });
 
   it.each([
-    `account:1:utxo:bitcoin:main:${XPUB}`,
-    `${XPUB}:1:utxo:bitcoin:main:a:m/84h/0h/0h`,
-    `account:${XPUB}:utxo:bitcoin:main:a:m/84h/0h/0h`,
-    `account:1:${XPUB}:bitcoin:main:a:m/84h/0h/0h`,
+    `account:2:utxo:bitcoin:${XPUB}`,
+    `${XPUB}:2:utxo:bitcoin:a:m/84h/0h/0h`,
+    `account:${XPUB}:utxo:bitcoin:a:m/84h/0h/0h`,
+    `account:2:${XPUB}:bitcoin:a:m/84h/0h/0h`,
   ])("does not leak the input in the error message of %s", input => {
     expect(() => parseAccountDescriptor(input)).toThrow(InvalidAccountDescriptorError);
     expect(() => parseAccountDescriptor(input)).not.toThrow(new RegExp(XPUB));
   });
 
   it.each([
-    `account:1:utxo:bitcoin:main:${XPUB}:m/084h/0h/0h`,
-    `account:1:utxo:bitcoin:main:${XPUB}:m/2147483648h/0h/0h`,
-    `account:1:address:ethereum:main:${ETH_ADDR}:m/44h/60h/0h/0/00`,
-    `account:1:address:ethereum:main:${ETH_ADDR}:m/44h/60h/0h/0/2147483648`,
+    `account:2:utxo:bitcoin:${XPUB}:m/084h/0h/0h`,
+    `account:2:utxo:bitcoin:${XPUB}:m/2147483648h/0h/0h`,
+    `account:2:address:ethereum:${ETH_ADDR}:m/44h/60h/0h/0/00`,
+    `account:2:address:ethereum:${ETH_ADDR}:m/44h/60h/0h/0/2147483648`,
   ])("rejects the non-canonical or out-of-range path of %s", input => {
     expect(() => parseAccountDescriptor(input)).toThrow(InvalidAccountDescriptorError);
   });
 
   it.each([" xprvKey", "\txprvKey"])("rejects a whitespace-prefixed private key %j", xpub => {
-    expect(() => parseAccountDescriptor(`account:1:utxo:bitcoin:main:${xpub}:m/84h/0h/0h`)).toThrow(
+    expect(() => parseAccountDescriptor(`account:2:utxo:bitcoin:${xpub}:m/84h/0h/0h`)).toThrow(
       InvalidAccountDescriptorError,
     );
   });
@@ -116,7 +113,7 @@ describe("parseAccountDescriptor", () => {
     "rejects a %s key",
     prefix => {
       expect(() =>
-        parseAccountDescriptor(`account:1:utxo:bitcoin:main:${prefix}Key:m/84h/0h/0h`),
+        parseAccountDescriptor(`account:2:utxo:bitcoin:${prefix}Key:m/84h/0h/0h`),
       ).toThrow(InvalidAccountDescriptorError);
     },
   );

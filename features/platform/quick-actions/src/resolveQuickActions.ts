@@ -44,7 +44,7 @@ function resolveDesktopCurrencyActions({
     active("receive"),
     activeIf("send", hasFunds),
     ...(isBuyAvailable ? [active("buy")] : []),
-    activeIf("sell", isSellAvailable && hasFunds),
+    ...(isSellAvailable ? [activeIf("sell", hasFunds)] : []),
     ...(isEarnAvailable ? [activeIf("earn", hasFunds)] : []),
   ];
 }

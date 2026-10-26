@@ -15,10 +15,11 @@ import React from "react";
 import { Linking } from "react-native";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { makeSetEarnMenuBottomSheetAction } from "~/actions/earn";
-import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { AnalyticEvents } from "LLM/hooks/useAnalytics/enums";
 import { NavigatorName, ScreenName } from "~/const";
 import { earnMenuBottomSheetSelector } from "~/reducers/earn";
+import type { OptionMetadata } from "~/reducers/types";
 
 function isValidIntent(intent?: string): intent is "deposit" | "withdraw" {
   return ["deposit", "withdraw"].includes(intent ?? "");
@@ -102,29 +103,50 @@ export function EarnMenuBottomSheet({ navigation }: EarnMenuBottomSheetProps) {
       isRequestingToBeOpened={isRequestingToBeOpened}
       onClose={closeBottomSheet}
       enableDynamicSizing
+      contentHasBottomSpace
     >
-      <BottomSheetView style={{ paddingBottom: 24 }}>
-        <BottomSheetHeader />
-        {options.map(({ icon, label, metadata }) => {
-          const { link, live_app, ...tracked } = metadata;
-          const IconComponent = resolveMenuItemIcon(icon);
-          return link ? (
-            <ListItem
-              key={label}
-              testID={`earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`}
-              onPress={() => handleMenuItemPress(link, live_app, tracked)}
-              style={{ marginHorizontal: -8 }}
-            >
-              <ListItemLeading>
-                {IconComponent && <Spot icon={IconComponent} />}
-                <ListItemContent>
-                  <ListItemTitle>{label}</ListItemTitle>
-                </ListItemContent>
-              </ListItemLeading>
-            </ListItem>
-          ) : null;
-        })}
-      </BottomSheetView>
+      <EarnMenuSheetBody options={options} onPress={handleMenuItemPress} />
     </QueuedBottomSheet>
+  );
+}
+
+type EarnMenuOption = {
+  icon: string;
+  label: string;
+  metadata: OptionMetadata;
+};
+
+function EarnMenuSheetBody({
+  options,
+  onPress,
+}: Readonly<{
+  options: EarnMenuOption[];
+  onPress: (link: string, liveApp: string | undefined, tracked: Record<string, unknown>) => void;
+}>) {
+  const bottomInset = useBottomSheetBottomInset();
+
+  return (
+    <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
+      <BottomSheetHeader />
+      {options.map(({ icon, label, metadata }) => {
+        const { link, live_app, ...tracked } = metadata;
+        const IconComponent = resolveMenuItemIcon(icon);
+        return link ? (
+          <ListItem
+            key={label}
+            testID={`earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`}
+            onPress={() => onPress(link, live_app, tracked)}
+            style={{ marginHorizontal: -8 }}
+          >
+            <ListItemLeading>
+              {IconComponent && <Spot icon={IconComponent} />}
+              <ListItemContent>
+                <ListItemTitle>{label}</ListItemTitle>
+              </ListItemContent>
+            </ListItemLeading>
+          </ListItem>
+        ) : null;
+      })}
+    </BottomSheetView>
   );
 }

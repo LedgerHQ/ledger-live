@@ -10,6 +10,7 @@ preset is code rather than a JSON file, which is why jest configuration lives in
 | --- | --- | --- |
 | [`@support/jest/devtools`](./devtools) | `devtools/*` | Dual web/native presets plus themed render fixtures (`/web`, `/native`) |
 | [`@support/jest/features-flow`](./features-flow) | `features/flow/*` | Dual web/native preset plus Lumen passthrough stubs |
+| [`@support/jest/libs-coin`](#libs-coin) | `libs/coin-modules/*`, `libs/wallet-btc` | Node unit and integration presets for coin modules |
 | [`@support/jest/shared`](./shared) | `shared/*`, `libs/*` | Node preset for logic packages, web/native and native-only presets for UI packages |
 
 `createSharedJestConfig(overrides, options)` is the node base for `shared/*` and `libs/*` packages,
@@ -28,6 +29,36 @@ module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
 
 Tests live in `src/` and match `*.test.ts`; a package whose tests live elsewhere overrides `roots`
 and `testMatch`. The preset reports to `github-actions` on CI.
+
+## libs-coin
+
+A coin module, or a library that ships coin logic the same way (`libs/wallet-btc`), builds its
+configs from `@support/jest/libs-coin` rather than from `createSharedJestConfig` directly. Both
+factories sit on `createSharedJestConfig` and take the same options (`esm`, `extraEsmDeps`,
+`projectRoot`).
+
+- `createLibsCoinJestConfig(overrides, options)`, for `jest.config.js`: the unit tests. It adds
+  `passWithNoTests`, the coin setup files (`@ledgerhq/wallet-framework-test-setup`,
+  `@ledgerhq/disable-network-setup`, `@ledgerhq/test-quarantine/jest-retries`), coverage of
+  `src/**/*.ts` minus the tests, and leaves out the `*.integ.test.ts` and `*.integration.test.ts`
+  suites. `collectCoverageFrom` and `testPathIgnorePatterns` overrides add to the preset's; every
+  other key replaces it, so a package that needs other setup files passes its whole list.
+- `createLibsCoinIntegJestConfig(overrides, options)`, for `jest.integ.config.js`: the
+  `*.integ.test.ts` suites, which hit live networks. A 60 s timeout, `forceExit`,
+  `passWithNoTests`, the wallet framework setup only and the default reporter: no quarantine and
+  no sonar report. Every override replaces the preset's key.
+
+`esm` is on by default: the bitcoin family (`coin-bitcoin`, `coin-zcash`, `wallet-btc`) reaches
+`@noble/curves` v2, which is ESM-only, and fails to load without it. A module that reaches no
+ESM-only dependency can pass `{ esm: false }`. Without the lcov `projectRoot` option or `rootDir`, the root is `../../../`, the depth
+of `libs/coin-modules/*`.
+
+```js
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
+  modulePathIgnorePatterns: ["__tests__/fixtures"],
+});
+```
 
 A consumer declares `"@support/jest": "workspace:*"` in its `devDependencies` and keeps a
 `jest.config.js` built by a preset factory:

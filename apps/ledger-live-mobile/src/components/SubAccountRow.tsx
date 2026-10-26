@@ -47,6 +47,7 @@ function SubAccountRow({
     account,
     range,
   });
+  const valueChange = useCounterValue ? countervalueChange : cryptoChange;
 
   const handleLongPress = useCallback(() => {
     if (account.type === "TokenAccount") {
@@ -89,9 +90,7 @@ function SubAccountRow({
               placeholderProps={placeholderProps}
               Wrapper={AccountCv}
             />
-            {countervalueChange && (
-              <Delta percent valueChange={useCounterValue ? countervalueChange : cryptoChange} />
-            )}
+            {valueChange.percentage ? <Delta percent valueChange={valueChange} /> : null}
           </Box>
         </Flex>
       </RectButton>

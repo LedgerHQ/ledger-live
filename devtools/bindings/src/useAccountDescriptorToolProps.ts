@@ -21,10 +21,7 @@ export function useAccountDescriptorToolProps(): AccountDescriptorToolProps {
         accountUUID,
         legacyId,
         type: descriptor.type,
-        network:
-          descriptor.network.env === "main"
-            ? descriptor.network.name
-            : `${descriptor.network.name} (${descriptor.network.env})`,
+        network: descriptor.network,
         path: descriptor.path,
         key: descriptor.type === "utxo" ? descriptor.xpub : descriptor.address,
       })),

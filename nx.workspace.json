@@ -323,6 +323,8 @@
     ],
     "lintConfig": [
       "{workspaceRoot}/support/lint/**/*",
+      "{workspaceRoot}/features/platform/style/tailwind.css",
+      "{workspaceRoot}/features/platform/style/tailwind.config.ts",
       "{workspaceRoot}/*/oxlint.config.mts",
       "{workspaceRoot}/*/*/oxlint.config.mts"
     ]
