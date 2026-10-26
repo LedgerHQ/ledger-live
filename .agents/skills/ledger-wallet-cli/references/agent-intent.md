@@ -130,7 +130,7 @@ Done when you have reported every imported and unchanged label with its network,
 `agent-intent send` proposes a transfer on Ethereum mainnet (ETH or an ERC-20 token) or Solana mainnet (SOL or an SPL token). A staging profile also proposes a mainnet transfer. The asset picks the network: a `0x` contract in `--token` is an ERC-20 on Ethereum, a base58 mint in `--token` an SPL token on Solana; without `--token`, the ticker `SOL` sends SOL and any other ticker must be `ETH`.
 
 - **Sender:** pass `--from <address>` on the asset's network.
-  1. The human named an address: use it. Otherwise run `pnpm --silent wallet-cli start session view --output json`; a candidate is an `accounts` entry whose `descriptor` starts with `account:1:address:ethereum:main:` followed by `0x` plus 40 hex characters (Ethereum), or with `account:1:address:solana:main:` followed by a base58 address (Solana). A label the human named counts only if it is a candidate.
+  1. The human named an address: use it. Otherwise run `pnpm --silent wallet-cli start session view --output json`; a candidate is an `accounts` entry whose `descriptor` starts with `account:2:address:ethereum:` followed by `0x` plus 40 hex characters (Ethereum), or with `account:2:address:solana:` followed by a base58 address (Solana). A label the human named counts only if it is a candidate.
   2. No candidate and the profile is enrolled: run only `pnpm --silent wallet-cli start agent-intent sync --profile <id> --output json` (no step 6 report), then list again.
   3. Show each candidate's label and address and ask which to send from; with one candidate, take it: the dry run shows it to the human.
   4. Still no candidate: ask the human for the sender address.
