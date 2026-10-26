@@ -102,6 +102,7 @@ function checkProfile(
       profileId,
       trustchainId: profile.trustchainId,
       accountAccessEnvironment: profile.accountAccess?.environment ?? profile.environment,
+      keyStore: profile.keyStore,
     });
     return undefined;
   }

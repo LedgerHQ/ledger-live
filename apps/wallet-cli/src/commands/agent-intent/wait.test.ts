@@ -128,7 +128,7 @@ describe("agent-intent wait", () => {
   afterEach(() => restore());
 
   it("reports enrolled with the same envelope as enroll, exit 0", async () => {
-    profileReads = [ENROLLED];
+    profileReads = [{ ...ENROLLED, keyStore: "plaintext-file" }];
 
     const { code, line } = await runWaitJson(stdout);
 
@@ -139,6 +139,7 @@ describe("agent-intent wait", () => {
       profileId: "test-agent",
       trustchainId: "app18-root",
       accountAccessEnvironment: "production",
+      keyStore: "plaintext-file",
       enrolled: true,
     });
   });
