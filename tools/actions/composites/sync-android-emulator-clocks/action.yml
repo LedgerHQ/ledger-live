@@ -1,0 +1,28 @@
+name: "Sync Android emulator clocks"
+description: "Wait for the E2E emulators to boot, then set any clock that is off to the runner's UTC time"
+# Self-contained: the script is read relative to this action, never from the job's checkout,
+# so release and hotfix runs get it from develop without a backport.
+inputs:
+  serials:
+    description: "Space-separated adb serials of the emulators"
+    required: false
+    default: "emulator-5554 emulator-5556 emulator-5558"
+  boot_timeout:
+    description: "Seconds to wait for all emulators to finish booting"
+    required: false
+    default: "300"
+  tolerance:
+    description: "Largest clock difference in seconds that is left as is"
+    required: false
+    default: "60"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Sync Android emulator clocks
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/sync-android-emulator-clocks.sh"
+      env:
+        EMULATOR_SERIALS: ${{ inputs.serials }}
+        BOOT_TIMEOUT: ${{ inputs.boot_timeout }}
+        CLOCK_TOLERANCE: ${{ inputs.tolerance }}
