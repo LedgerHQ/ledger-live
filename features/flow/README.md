@@ -6,14 +6,14 @@ User-facing feature packages shared across desktop and mobile apps. Each subdire
 
 ## Scope
 
-`@features/flow-<name>` (e.g. `@features/flow-market-banner`, `@features/flow-wallet`)
+`@features/flow-<name>` (e.g. `@features/flow-contacts`, `@features/flow-pay-card`)
 
 ## Responsibility
 
 - Provide **UI components** with business context, using `.web.tsx` / `.native.tsx` extensions for platform-specific variants
 - Own **feature-local state** (local Redux slices, thunks) when the feature requires it
-- Expose **feature-local routing** when the feature contains multiple steps or sub-views
-- Must NOT contain app-specific screen composition — that belongs in `apps/`
+- Own **local routing** between its own screens; the app owns navigation to and from the flow
+- Must NOT contain app-specific screen composition: that belongs in `apps/`
 
 ## Conventions
 
@@ -26,7 +26,7 @@ User-facing feature packages shared across desktop and mobile apps. Each subdire
 - Nx tag inferred automatically: `type:feature-flow`
 - Platform-specific files use `.web.tsx` / `.native.tsx` suffixes; shared logic uses `.ts` / `.tsx`
 - A component exported from a universal entry takes one props contract on both platforms; one that cannot goes behind a `./web` or `./native` entry: see the [universal components ADR](../../docs/adr/universal-components.md)
-- Barrel export via `src/index.ts`
+- Barrel exports via `src/index.ts` (web) and `src/index.native.ts` (native), which share the platform-agnostic API through `src/exports.ts` when there is one
 
 ## Testing
 
@@ -51,14 +51,18 @@ Integration tests should cover app-owned wiring only: navigation, feature-flag g
 
 ## File Structure
 
-Each package follows this layout inside `src/`:
+A flow with one screen keeps a flat `src/`; a flow with several screens puts each in `src/screens/<Screen>/`. Each view is a `useXViewModel.ts` plus `XView.web.tsx` / `XView.native.tsx`. The [flow-package skill](../../.agents/skills/flow-package/SKILL.md) is the canonical layout, with an example package for each rule.
 
 ```
-components/          # UI components with business context (.web.tsx / .native.tsx)
-hooks/               # Feature-local hooks (optional)
-router/              # Local routing when the feature has multiple views (optional)
-steps/               # Individual steps in a multi-step flow (optional)
-state/               # Feature-local Redux slice or thunks (optional)
-utils/               # Feature-local helpers (optional)
-index.ts             # Barrel exports (required)
+screens/<Screen>/    # one folder per screen, when the flow has several (optional)
+components/          # UI pieces of the views (.web.tsx / .native.tsx)
+copy/                # hooks turning i18n keys into labels (optional)
+logic/               # pure business rules, no React (optional)
+model/               # framework-free view model, controller and ports (optional)
+state/               # flow state: slice and selectors, or a React reducer (optional)
+hooks/               # shared React hooks (optional)
+types.ts             # types shared across the package (optional)
+exports.ts           # platform-agnostic public API (optional)
+index.ts             # web barrel (required)
+index.native.ts      # native barrel (when the package renders native UI)
 ```
