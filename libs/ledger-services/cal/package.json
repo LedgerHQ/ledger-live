@@ -70,13 +70,13 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "dotenv": "^16.4.5",
+    "dotenv": "16.4.7",
     "expect": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "ts-node": "^10.9.2"
+    "ts-node": "10.9.2"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

@@ -90,7 +90,7 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "typescript": "catalog:"
   }
 }

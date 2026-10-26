@@ -83,7 +83,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "bs58check": "^4.0.0",
+    "bs58check": "4.0.0",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

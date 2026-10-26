@@ -31,11 +31,11 @@
     "@types/react": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^4.4.1",
-    "source-map-support": "^0.5.21",
+    "rimraf": "4.4.1",
+    "source-map-support": "0.5.21",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   },
   "files": [
     "lib",

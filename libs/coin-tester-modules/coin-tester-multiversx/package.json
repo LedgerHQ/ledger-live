@@ -70,7 +70,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "rimraf": "^5",
+    "rimraf": "5.0.10",
     "@swc/jest": "catalog:",
     "@swc/core": "catalog:",
     "typescript": "catalog:",

@@ -56,8 +56,8 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.4.0"
+    "source-map-support": "0.5.21",
+    "ts-node": "10.9.2"
   },
   "gitHead": "dd0dea64b58e5a9125c8a422dcffd29e5ef6abec",
   "exports": {

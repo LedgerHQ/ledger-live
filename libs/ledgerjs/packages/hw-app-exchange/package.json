@@ -41,9 +41,9 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
-    "bip32-path": "^0.4.2",
+    "bip32-path": "0.4.2",
     "jest": "catalog:",
-    "ts-node": "^10.4.0"
+    "ts-node": "10.9.2"
   },
   "files": [
     "lib",

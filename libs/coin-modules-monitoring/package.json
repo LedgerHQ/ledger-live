@@ -37,10 +37,10 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "axios": "catalog:",
-    "bignumber.js": "^9.1.2",
+    "bignumber.js": "9.1.2",
     "jest": "catalog:",
     "nock": "14.0.3",
-    "tsx": "^4.7.1",
+    "tsx": "4.20.6",
     "typescript": "catalog:"
   },
   "typesVersions": {
