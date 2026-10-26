@@ -33,6 +33,7 @@ const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
 // USDC is a classic SPL Token mint, PYUSD a Token-2022 one.
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const PYUSD_MINT = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
+const TOKEN_2022_USDC_MINT = "Usdc2o22Mint11111111111111111111111111111111";
 
 const DEEPLINK = "https://app.agents.ledger-test.com/intents/intent-123";
 
@@ -52,6 +53,10 @@ const enrolledProfile = {
 const accounts = [
   { label: "ethereum-1", descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0` },
   { label: "solana-1", descriptor: `account:2:address:solana:${SOL_SENDER}:m/44h/501h/0h/0h` },
+  {
+    label: "solana_devnet-1",
+    descriptor: `account:2:address:solana_devnet:${SOL_SENDER}:m/44h/501h/0h/0h`,
+  },
   {
     label: "solana-corrupt",
     descriptor: `account:2:address:solana:${SOL_SENDER}11:m/44h/501h/1h/0h`,
@@ -81,6 +86,11 @@ let accountTokensError: Error | undefined;
 const usdc = { ticker: "USDC", name: "USD Coin", address: USDC.toLowerCase() };
 const usdcMint = { ticker: "USDC", name: "USD Coin", address: USDC_MINT };
 const pyusdMint = { ticker: "PYUSD", name: "PayPal USD", address: PYUSD_MINT };
+const token2022UsdcMint = {
+  ticker: "USDC",
+  name: "USD Coin (Token-2022)",
+  address: TOKEN_2022_USDC_MINT,
+};
 const pepe = { ticker: "PEPE", name: "Pepe", address: PEPE.toLowerCase() };
 const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY.toLowerCase() };
 
@@ -119,6 +129,7 @@ beforeAll(() =>
         ({
           [USDC_MINT]: { ticker: "USDC", decimals: 6, mint: USDC_MINT },
           [PYUSD_MINT]: { ticker: "PYUSD", decimals: 6, mint: PYUSD_MINT },
+          [TOKEN_2022_USDC_MINT]: { ticker: "USDC", decimals: 6, mint: TOKEN_2022_USDC_MINT },
         })[mint] ?? null,
       findSolanaMintProgram: async (mint: string) => mintPrograms[mint],
       // Like CAL: the ticker as typed or uppercase, matched case-sensitively.
@@ -185,7 +196,11 @@ describe("agent-intent send", () => {
     makeClient = undefined;
     stdout = [];
     stderr = [];
-    mintPrograms = { [USDC_MINT]: "spl-token", [PYUSD_MINT]: "spl-token-2022" };
+    mintPrograms = {
+      [USDC_MINT]: "spl-token",
+      [PYUSD_MINT]: "spl-token-2022",
+      [TOKEN_2022_USDC_MINT]: "spl-token-2022",
+    };
     calTokens = { ethereum: [usdc, pepe, pepeCopy], solana: [usdcMint, pyusdMint] };
     tickerLookups = [];
     accountTokens = {};
@@ -314,10 +329,13 @@ describe("agent-intent send", () => {
       expect(submittedIntents).toEqual([expect.objectContaining({ sender: SOL_SENDER })]);
     });
 
-    it("refuses an Ethereum account for a SOL amount", async () => {
+    it("refuses an Ethereum account for a SOL amount, pointing to --token", async () => {
       await expect(
         sol({ from: undefined, account: "ethereum-1", output: undefined }),
-      ).rejects.toThrow(/on ethereum; this Agent Intent send needs a Solana mainnet account/);
+      ).rejects.toThrow(
+        'Account "ethereum-1" is on ethereum, but SOL is a native Solana send. To send a token ' +
+          "with that ticker from this account, pass its address with --token.",
+      );
       expect(submittedIntents).toEqual([]);
     });
 
@@ -452,6 +470,19 @@ describe("agent-intent send", () => {
       );
     });
 
+    it("asks a Solana devnet account for a Solana mainnet one, not an Ethereum one", async () => {
+      await expect(
+        runSend({
+          from: undefined,
+          account: "solana_devnet-1",
+          to: SOL_RECIPIENT,
+          amount: "25 USDC",
+          "fee-strategy": undefined,
+        }),
+      ).rejects.toThrow(/on solana_devnet; this Agent Intent send needs a Solana mainnet account/);
+      expect(tickerLookups).toEqual([]);
+    });
+
     it("rejects an unknown label", async () => {
       await expect(runSend({ from: undefined, account: "ethereum-9" })).rejects.toThrow(
         /No account labeled "ethereum-9"/,
@@ -515,7 +546,7 @@ describe("agent-intent send", () => {
     it("takes the token the --account holds before any ticker lookup, checksummed", async () => {
       accountTokens = { "ethereum-1": [pepe] };
 
-      await runSend({ from: undefined, account: "ethereum-1", amount: "1 PEPE", output: "json" });
+      await runSend({ from: undefined, account: "ethereum-1", amount: "1 pepe", output: "json" });
 
       expect(submittedIntents).toEqual([
         expect.objectContaining({ asset: { type: "erc20", assetReference: PEPE } }),
@@ -540,6 +571,41 @@ describe("agent-intent send", () => {
         expect.objectContaining({ asset: { type: "spl-token", assetReference: USDC_MINT } }),
       ]);
       expect(tickerLookups).toEqual([]);
+    });
+
+    it("skips a Token-2022 mint when the Solana --account also holds a classic one", async () => {
+      accountTokens = { "solana-1": [token2022UsdcMint, usdcMint] };
+
+      await runSend({
+        from: undefined,
+        account: "solana-1",
+        to: SOL_RECIPIENT,
+        amount: "25 USDC",
+        "fee-strategy": undefined,
+        output: "json",
+      });
+
+      expect(submittedIntents).toEqual([
+        expect.objectContaining({ asset: { type: "spl-token", assetReference: USDC_MINT } }),
+      ]);
+    });
+
+    it("refuses the only Token-2022 mint a Solana --account holds rather than CAL's", async () => {
+      accountTokens = { "solana-1": [token2022UsdcMint] };
+
+      await expect(
+        runSend({
+          from: undefined,
+          account: "solana-1",
+          to: SOL_RECIPIENT,
+          amount: "25 USDC",
+          "fee-strategy": undefined,
+        }),
+      ).rejects.toThrow(
+        `${TOKEN_2022_USDC_MINT} (USDC) is a Token-2022 mint, which Agent Intent can't send yet.`,
+      );
+      expect(tickerLookups).toEqual([]);
+      expect(submittedIntents).toEqual([]);
     });
 
     it("asks for --token when it can't read the --account's tokens", async () => {
@@ -592,7 +658,7 @@ describe("agent-intent send", () => {
         asset: { type: "erc20", ticker: "USDC", contract: USDC },
       });
       expect(stderrLines()).toContain(
-        `usdc is ${USDC} (USD Coin), the only ERC-20 token with that ticker on Ethereum mainnet.`,
+        `USDC is ${USDC} (USD Coin), the only ERC-20 token with that ticker on Ethereum mainnet.`,
       );
     });
 
@@ -655,6 +721,16 @@ describe("agent-intent send", () => {
       await expect(runSend({ from: SOL_SENDER, amount: "1 ETH" })).rejects.toThrow(
         /--from .*not an EVM address/,
       );
+    });
+
+    it("keeps ETH native for a Solana --account, pointing to --token for an SPL ETH", async () => {
+      await expect(
+        runSend({ from: undefined, account: "solana-1", amount: "1 ETH" }),
+      ).rejects.toThrow(
+        'Account "solana-1" is on solana, but ETH is a native Ethereum send. To send a token with ' +
+          "that ticker from this account, pass its address with --token.",
+      );
+      expect(tickerLookups).toEqual([]);
     });
 
     it("still refuses a Token-2022 mint it resolved", async () => {

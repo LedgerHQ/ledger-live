@@ -9,7 +9,7 @@ import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
 import { BigNumber } from "bignumber.js";
 import { z } from "zod";
 import { resolveAccountDescriptor } from "../commands/inputs";
-import { calApiConfig } from "../live-common-setup";
+import { calApiConfig } from "../shared/cal-config";
 import { WalletAdapter } from "../wallet";
 
 export type EthereumToken = { ticker: string; decimals: number; contract: string };

@@ -5,7 +5,7 @@ import type { CoinModuleLoader } from "@ledgerhq/live-common/coin-modules/types"
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { setEnv, getEnv } from "@shared/env";
+import { setEnv } from "@shared/env";
 import { bridgeEnvToNetworkState } from "@ledgerhq/live-common/network/setup";
 import { registerWalletCliDmkTransport } from "./device/register-dmk-transport";
 import {
@@ -19,6 +19,7 @@ import {
 } from "@domain/entity-currency-crypto";
 import { setCurrenciesResolver } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
+import { calApiConfig } from "./shared/cal-config";
 import { ledgerClientVersion } from "./shared/client-version";
 import { withDefaultUserAgent } from "./shared/default-user-agent";
 
@@ -128,6 +129,5 @@ setCurrenciesResolver({
 setWalletAPIVersion(WALLET_API_VERSION);
 registerCoinModules(walletCliLoaders);
 LiveConfig.setConfig(walletCliConfig);
-export const calApiConfig = { calServiceUrl: getEnv("CAL_SERVICE_URL"), ledgerClientVersion };
 setFrameworkCryptoAssetsStore(buildStandaloneCryptoAssetsStore(calApiConfig));
 registerWalletCliDmkTransport();

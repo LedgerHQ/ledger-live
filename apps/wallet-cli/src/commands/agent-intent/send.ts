@@ -30,6 +30,7 @@ import {
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
+import { mainnetOf } from "../../shared/accountDescriptor";
 
 const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
@@ -42,6 +43,12 @@ function networkOfAddress(address: string, flag: "from" | "token"): IntentNetwor
   );
 }
 
+function nativeNetworkOf(ticker: string): IntentNetwork | undefined {
+  if (sameTicker(ticker, solanaAsset().ticker)) return "solana";
+  if (sameTicker(ticker, ethereumAsset().ticker)) return "ethereum";
+  return undefined;
+}
+
 /** `--token`'s network by its shape, else ETH's or SOL's, and only then the sender's. */
 async function networkOf(
   ticker: string,
@@ -49,11 +56,23 @@ async function networkOf(
   senderInput: { account: string } | { address: string },
 ): Promise<IntentNetwork> {
   if (token) return networkOfAddress(token, "token");
-  if (sameTicker(ticker, solanaAsset().ticker)) return "solana";
-  if (sameTicker(ticker, ethereumAsset().ticker)) return "ethereum";
-  if ("address" in senderInput) return networkOfAddress(senderInput.address, "from");
-  const descriptor = await resolveAccountDescriptorV1(senderInput.account);
-  return descriptor.network === "solana" ? "solana" : "ethereum";
+  const nativeNetwork = nativeNetworkOf(ticker);
+  if ("address" in senderInput) {
+    return nativeNetwork ?? networkOfAddress(senderInput.address, "from");
+  }
+  const { network: accountNetwork } = await resolveAccountDescriptorV1(senderInput.account);
+  const accountMainnet = mainnetOf(accountNetwork);
+  if (!nativeNetwork) return accountMainnet === "solana" ? "solana" : "ethereum";
+  const otherIntentNetwork = nativeNetwork === "solana" ? "ethereum" : "solana";
+  if (accountMainnet === otherIntentNetwork) {
+    const native = getCryptoCurrencyById(nativeNetwork);
+    throw new Error(
+      `Account "${senderInput.account}" is on ${accountNetwork}, but ${native.ticker} is a native ` +
+        `${native.name} send. To send a token with that ticker from this account, pass its ` +
+        "address with --token.",
+    );
+  }
+  return nativeNetwork;
 }
 
 /** A Solana send has no fee level (the service sets the priority fee); a memo is Solana only. */
@@ -173,11 +192,10 @@ async function resolveNetworkAsset(
   senderInput: { account: string } | { address: string },
   out: Pick<CommandOutput, "withActivity">,
 ): Promise<NetworkAsset> {
-  if (!token) {
-    const eth = ethereumAsset();
-    const sol = solanaAsset();
-    if (network === "ethereum" && sameTicker(ticker, eth.ticker)) return { network, asset: eth };
-    if (network === "solana" && sameTicker(ticker, sol.ticker)) return { network, asset: sol };
+  if (!token && nativeNetworkOf(ticker) === network) {
+    return network === "ethereum"
+      ? { network, asset: ethereumAsset() }
+      : { network, asset: solanaAsset() };
   }
   const address =
     token ??

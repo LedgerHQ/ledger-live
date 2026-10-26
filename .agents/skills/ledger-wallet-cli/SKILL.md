@@ -500,10 +500,11 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
 - **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
   ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
   Without `--token`, the ticker resolves to the one listed token of that ticker the `--account`
-  holds a balance of (this syncs the account), else to the one listed CAL token with it, and stderr
-  names the address picked. Tickers aren't unique: several matches is an error listing the
-  candidates (pick one with `--token`), and so is a ticker CAL doesn't list on that network. CAL
-  matches tickers case-sensitively: type mixed-case ones as listed (`USDe`, `stETH`).
+  holds a balance of (this syncs the account; among several, Token-2022 mints don't count), else to
+  the one listed CAL token with it, and stderr names the address picked. Tickers aren't unique:
+  several matches is an error listing the candidates (pick one with `--token`), and so is a ticker
+  CAL doesn't list on that network. CAL matches tickers case-sensitively: type mixed-case ones as
+  listed (`USDe`, `stETH`).
 - **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
   characters, an emoji counts as two; Solana only) goes on chain with the transfer.
 - **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount

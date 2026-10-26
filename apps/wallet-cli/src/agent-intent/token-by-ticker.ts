@@ -1,9 +1,11 @@
 import type { CommandOutput } from "../output";
+import { errMessage } from "../shared/error-message";
 import { writeStderr } from "../shared/ui";
 import { toChecksumAddress } from "./evm";
 import type { IntentNetwork } from "./send-intent";
 import {
   findAccountTokens,
+  findSolanaMintProgram,
   findTokensByTicker,
   MAX_CANDIDATES,
   sameTicker,
@@ -12,10 +14,6 @@ import {
 
 const TOKEN_KIND = { ethereum: "ERC-20 token", solana: "SPL token" } as const;
 const MAINNET = { ethereum: "Ethereum mainnet", solana: "Solana mainnet" } as const;
-
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 function listCandidates(tokens: TokenCandidate[]): string {
   const more = tokens.length >= MAX_CANDIDATES ? "\n  … and maybe more" : "";
@@ -27,7 +25,14 @@ function checksummed(network: IntentNetwork, tokens: TokenCandidate[]): TokenCan
   return tokens.map(token => ({ ...token, address: toChecksumAddress(token.address) }));
 }
 
+async function withoutToken2022(tokens: TokenCandidate[]): Promise<TokenCandidate[]> {
+  const programs = await Promise.all(tokens.map(token => findSolanaMintProgram(token.address)));
+  const sendable = tokens.filter((_, i) => programs[i] !== "spl-token-2022");
+  return sendable.length > 0 ? sendable : tokens;
+}
+
 async function heldTokens(
+  network: IntentNetwork,
   account: string,
   ticker: string,
   out: Pick<CommandOutput, "withActivity">,
@@ -38,10 +43,11 @@ async function heldTokens(
       "Tokens read",
       () => findAccountTokens(account),
     );
-    return tokens.filter(token => sameTicker(token.ticker, ticker));
+    const held = tokens.filter(token => sameTicker(token.ticker, ticker));
+    return network === "solana" && held.length > 1 ? await withoutToken2022(held) : held;
   } catch (error) {
     throw new Error(
-      `Couldn't read the tokens account "${account}" holds (${errorMessage(error)}). Pass the ` +
+      `Couldn't read the tokens account "${account}" holds (${errMessage(error)}). Pass the ` +
         `${ticker} token's address with --token.`,
       { cause: error },
     );
@@ -56,7 +62,7 @@ export async function resolveTokenByTicker(
 ): Promise<string> {
   const kind = TOKEN_KIND[network];
   if (account) {
-    const held = checksummed(network, await heldTokens(account, ticker, out));
+    const held = checksummed(network, await heldTokens(network, account, ticker, out));
     if (held.length > 1) {
       throw new Error(
         `Account "${account}" holds several ${kind}s with the ticker ${ticker}:` +
@@ -64,8 +70,9 @@ export async function resolveTokenByTicker(
       );
     }
     if (held.length === 1) {
-      writeStderr(`${ticker} is ${held[0].address} (${held[0].name}), held by "${account}".\n`);
-      return held[0].address;
+      const [only] = held;
+      writeStderr(`${only.ticker} is ${only.address} (${only.name}), held by "${account}".\n`);
+      return only.address;
     }
   }
 
@@ -83,9 +90,10 @@ export async function resolveTokenByTicker(
         `${listCandidates(listed)}\nPass the one to send with --token.`,
     );
   }
+  const [only] = listed;
   writeStderr(
-    `${ticker} is ${listed[0].address} (${listed[0].name}), the only ${kind} with that ticker on ` +
+    `${only.ticker} is ${only.address} (${only.name}), the only ${kind} with that ticker on ` +
       `${MAINNET[network]}.\n`,
   );
-  return listed[0].address;
+  return only.address;
 }
