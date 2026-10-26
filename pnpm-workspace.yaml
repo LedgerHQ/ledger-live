@@ -73,6 +73,7 @@ catalog:
   "@ledgerhq/domain-service": 1.9.1
   "@ledgerhq/evm-tools": 2.0.0
   "@ledgerhq/lumen-design-core": 0.1.32
+  "@ledgerhq/lumen-lint-plugin": 0.1.0
   "@ledgerhq/lumen-ui-react": 0.1.64
   "@ledgerhq/lumen-ui-rnative": 0.1.67
   "@ledgerhq/lumen-utils-shared": 0.1.16
@@ -163,7 +164,6 @@ catalog:
   class-variance-authority: 0.7.1
   clsx: 2.1.1
   electron: 44.9.3
-  eslint-plugin-better-tailwindcss: 4.7.0
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 2.4.0
