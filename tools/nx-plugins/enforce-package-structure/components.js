@@ -863,24 +863,33 @@ function reachableProps(declaration, module) {
     if (!ids.has(node)) ids.set(node, ids.size);
     return ids.get(node);
   }
-  // Every parameter-to-argument pair `bindings` reaches, through the bindings of each argument.
-  // A set, not a tree, so a type that nests its own argument, `Nest<T> = { next: Nest<{ wrap: T }> }`,
-  // reaches a key it already expanded.
-  /** @param {Bindings} bindings @returns {string} */
-  function bindingsKey(bindings) {
-    const pairs = new Set();
-    const visited = new Set();
-    /** @param {Bindings} current */
-    function collect(current) {
-      if (visited.has(current)) return;
-      visited.add(current);
-      for (const [parameter, bound] of current) {
-        pairs.add(`${idOf(parameter)}:${idOf(bound.node)}`);
-        collect(bound.bindings);
-      }
+  // Each parameter's argument, followed by the key of that argument's own bindings. A pair that
+  // repeats on its path ends the branch, so a type that nests its own argument,
+  // `Nest<T> = { next: Nest<{ wrap: T }> }`, reaches a key it already expanded, while
+  // `Rotate<A, B, C> = { next?: Rotate<B, C, A> }` keeps a key per rotation.
+  /** @param {Bindings} bindings @param {Set<string>} path @returns {string} */
+  function bindingsKey(bindings, path = new Set()) {
+    return [...bindings]
+      .map(([parameter, bound]) => {
+        const pair = `${idOf(parameter)}:${idOf(bound.node)}`;
+        if (path.has(pair)) return `${pair}*`;
+        return `${pair}(${bindingsKey(bound.bindings, new Set(path).add(pair))})`;
+      })
+      .join(",");
+  }
+  // An argument that names a bound parameter binds to that parameter's own argument, so
+  // `Rotate<B, C, A>` keeps the key of a rotation shallow.
+  /**
+   * @param {ts.TypeNode} node @param {Bindings} bindings
+   * @returns {{ node: ts.TypeNode, bindings: Bindings }}
+   */
+  function bind(node, bindings) {
+    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
+      const parameter = typeParameterAt(node, node.typeName.text);
+      const bound = parameter && bindings.get(parameter);
+      if (bound) return bound;
     }
-    collect(bindings);
-    return [...pairs].sort().join(",");
+    return { node, bindings };
   }
   /** @param {ts.TypeNode} node @param {Bindings} bindings @returns {boolean} */
   function isBoundParameter(node, bindings) {
@@ -915,10 +924,10 @@ function reachableProps(declaration, module) {
     const inner = new Map();
     (local.typeParameters ?? []).forEach((parameter, index) => {
       const argument = typeArguments?.[index];
-      if (argument) inner.set(parameter, { node: argument, bindings });
+      if (argument) inner.set(parameter, bind(argument, bindings));
       // A default can name an earlier parameter: `Box<T, U = T>`.
       else if (typeArguments && parameter.default) {
-        inner.set(parameter, { node: parameter.default, bindings: inner });
+        inner.set(parameter, bind(parameter.default, inner));
       }
     });
     const key = `${idOf(local)};${bindingsKey(inner)}`;

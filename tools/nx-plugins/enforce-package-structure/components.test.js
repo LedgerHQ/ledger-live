@@ -1002,6 +1002,8 @@ test("R3 checks a type argument where a local generic places it in props", () =>
     `type Wrap<T> = { item: T };\ntype Outer<X> = Wrap<{ value: X }>;\nexport type CardProps = { a: Outer<string>; b: Outer<${argument}> };\n`,
     `type Outer<T> = Box<{ item: T }>;\ntype Box<T> = { value: T; next?: Outer<${argument}> };\nexport type CardProps = Outer<string>;\n`,
     `type Box<T, U = T> = { value: U };\nexport type CardProps = Box<${argument}>;\n`,
+    `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, A> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
+    `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, { wrap: A }> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
   ]) {
     assert.deepEqual(
       check(card({ "Card.types.ts": contractModule })),
@@ -1018,6 +1020,19 @@ test("R3 expands a repeated instantiation of a local generic once", () => {
     "{ onPress(): void }",
   );
   const contractModule = `type Pair<T> = { left: T; right: T };\nexport type CardProps = { pair: ${nested} };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 keys a rotation of many parameters on the arguments they name", () => {
+  // Keying each rotation on the one before it grows tenfold per parameter: a crash here.
+  const parameters = Array.from({ length: 12 }, (_, index) => `P${index}`);
+  const rotated = [...parameters.slice(1), parameters[0]];
+  const values = [...parameters.slice(1).map(() => "string"), "{ onPress(): void }"];
+  const contractModule = `type Rotate<${parameters}> = { value: P0; next?: Rotate<${rotated}> };\nexport type CardProps = { item: Rotate<${values}> };\n`;
   const start = Date.now();
   assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
     "R3 contract-gesture-callback Card",
