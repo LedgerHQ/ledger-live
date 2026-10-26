@@ -211,7 +211,7 @@ function convertSyncedAccount(
     };
   }
 
-  let v1: unknown;
+  let v1: AccountDescriptorV1;
   try {
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
@@ -233,11 +233,11 @@ function convertSyncedAccount(
   // toV1() builds the path from any known mode, so a mode from another family (segwit on
   // Ethereum) converts but can't round-trip through toV0(), which every label-based command uses.
   try {
-    toV0(validated.data);
+    toV0(v1);
   } catch (e) {
     return { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
-  return { status: "converted", descriptor: validated.data };
+  return { status: "converted", descriptor: v1 };
 }
 
 /**
