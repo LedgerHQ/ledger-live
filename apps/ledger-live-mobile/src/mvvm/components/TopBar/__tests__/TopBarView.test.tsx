@@ -2,6 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { TopBarView } from "../TopBarView/index";
+import { BELL_NOTIFICATION_DOT_TEST_ID } from "../components/BellNotificationIcon";
 
 jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
   const makeIcon = (testID: string) => () => <Text testID={testID}>{testID}</Text>;
@@ -9,7 +10,6 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
   return {
     Compass: makeIcon("icon-compass"),
     Bell: makeIcon("icon-bell"),
-    BellNotification: makeIcon("icon-bell-notification"),
     Settings: makeIcon("icon-settings"),
     Warning: makeIcon("icon-warning"),
     Clock: makeIcon("icon-clock"),
@@ -141,16 +141,16 @@ describe("TopBarView", () => {
     const { getByTestId, queryByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
 
     expect(getByTestId("icon-bell")).toBeVisible();
-    expect(queryByTestId("icon-bell-notification")).toBeNull();
+    expect(queryByTestId(BELL_NOTIFICATION_DOT_TEST_ID)).toBeNull();
   });
 
-  it("should render bell notification icon when there are unread notifications", () => {
-    const { getByTestId, queryByTestId } = renderWithReactQuery(
+  it("should render bell icon with a notification dot when there are unread notifications", () => {
+    const { getByTestId } = renderWithReactQuery(
       <TopBarView {...defaultProps} hasUnreadNotifications />,
     );
 
-    expect(getByTestId("icon-bell-notification")).toBeVisible();
-    expect(queryByTestId("icon-bell")).toBeNull();
+    expect(getByTestId(BELL_NOTIFICATION_DOT_TEST_ID)).toBeVisible();
+    expect(getByTestId("icon-bell")).toBeVisible();
   });
 
   it("should render sync icon button when there are accounts and sync errors", () => {
