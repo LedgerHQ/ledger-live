@@ -68,10 +68,14 @@ const DEP_CONSTRAINTS = [
  */
 const BOUNDARY_EXCEPTIONS = [{ sourceRoot: "shared/env", allowedImport: "@ledgerhq/live-env" }];
 
+/** Workspace roots whose source files may import neither a legacy package nor a path into `libs/`. */
+const LEGACY_SOURCE_ROOTS = ["shared", "domain", "features"];
+
+const LEGACY_IMPORT_RULE = `Legacy @ledgerhq/* imports are forbidden in ${LEGACY_SOURCE_ROOTS.map(r => `${r}/`).join(", ")} source files.`;
+
 /**
- * Legacy `@ledgerhq/*` packages banned in shared/, domain/ and features/ source files, on top of
- * the ones derived from the graph (every `scope:libs` node). These left `libs/` for npm, so the
- * graph no longer tags them.
+ * Legacy packages for `LEGACY_IMPORT_RULE`, on top of every `scope:libs` node of the graph.
+ * These left `libs/` for npm, so the graph no longer tags them.
  */
 const LEGACY_PACKAGES = [
   "@ledgerhq/live-config",
@@ -100,6 +104,8 @@ const BANNED_DEPENDENCIES = [];
 module.exports = {
   DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
+  LEGACY_SOURCE_ROOTS,
+  LEGACY_IMPORT_RULE,
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,

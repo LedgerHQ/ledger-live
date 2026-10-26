@@ -4,6 +4,8 @@ const { createProjectGraphAsync } = require("@nx/devkit");
 const {
   DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
+  LEGACY_SOURCE_ROOTS,
+  LEGACY_IMPORT_RULE,
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,
@@ -108,8 +110,7 @@ function collectLegacyPackageNames(graph, workspaceRoot) {
 }
 
 /**
- * Scan source files under shared/, domain/, features/ for any import of a legacy
- * @ledgerhq/* package or any relative import that resolves into libs/.
+ * Scan source files under `LEGACY_SOURCE_ROOTS` for violations of `LEGACY_IMPORT_RULE`.
  *
  * @param {string} workspaceRoot
  * @param {Set<string>} legacyPackages  set of legacy @ledgerhq/* package names
@@ -117,7 +118,7 @@ function collectLegacyPackageNames(graph, workspaceRoot) {
  * @returns {SourceViolation[]}
  */
 function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = []) {
-  const roots = ["shared", "domain", "features"].map(r => path.join(workspaceRoot, r));
+  const roots = LEGACY_SOURCE_ROOTS.map(r => path.join(workspaceRoot, r));
   const libsRoot = path.join(workspaceRoot, "libs");
   const violations = [];
 
@@ -340,9 +341,7 @@ async function main() {
     for (const v of sourceViolations) {
       console.error(`  ${v.file}  →  ${v.specifier}`);
     }
-    console.error(
-      "\nLegacy @ledgerhq/* imports are forbidden in shared/, domain/, features/ source files.\n",
-    );
+    console.error(`\n${LEGACY_IMPORT_RULE}\n`);
   }
 
   const bannedExternalViolations = findBannedExternalViolations(
