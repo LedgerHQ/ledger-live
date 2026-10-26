@@ -6857,9 +6857,6 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
-      '@ledgerhq/lumen-utils-shared':
-        specifier: 'catalog:'
-        version: 0.1.18(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -8690,9 +8687,6 @@ importers:
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
         version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
-      '@ledgerhq/lumen-utils-shared':
-        specifier: 'catalog:'
-        version: 0.1.18(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -9256,9 +9250,6 @@ importers:
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../platform/pay-analytics
-      '@ledgerhq/lumen-utils-shared':
-        specifier: 'catalog:'
-        version: 0.1.18(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)

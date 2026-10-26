@@ -31,7 +31,6 @@
   "dependencies": {
     "@features/platform-quick-actions": "workspace:*",
     "@ledgerhq/crypto-icons": "catalog:",
-    "@ledgerhq/lumen-utils-shared": "catalog:",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
