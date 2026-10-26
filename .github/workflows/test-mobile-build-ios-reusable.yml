@@ -187,7 +187,8 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         with:
           endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
-          path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
+          # Detox installs only the .app; the rest of Products is pod build output and the dSYM (~93% of the cache).
+          path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}/ledgerlivemobile.app
           key: ${{ inputs.ios-native-cache-key }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
