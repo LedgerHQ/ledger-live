@@ -79,7 +79,7 @@ When `SPECULOS_API_PORT` is set, device commands talk to a Speculos emulator ove
 
 With no specific task, run `pnpm --silent wallet-cli start session view` immediately, show the result, then ask what to do next. When labels already exist, skip `account discover`.
 
-`account discover` stores each account under a label `<network>[-derivation][-env]-<n>`, e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum-sepolia-1`. Every `--account` flag takes a label.
+`account discover` stores each account under a label `<network>[-derivation]-<n>`, e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum_sepolia-1`. Every `--account` flag takes a label.
 
 ## Intent map
 
@@ -115,7 +115,7 @@ Exact flags: `pnpm --silent wallet-cli start <command> --help`. Add `--output js
 
 ```bash
 pnpm --silent wallet-cli start session view
-pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, ethereum:sepolia, bitcoin:testnet, solana:devnet
+pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, ethereum_sepolia, bitcoin_testnet, solana_devnet
 pnpm --silent wallet-cli start receive ethereum-1             # --no-verify skips the device check
 pnpm --silent wallet-cli start balances ethereum-1 --output json
 pnpm --silent wallet-cli start operations ethereum-1 --limit 20 --cursor <cursor>
