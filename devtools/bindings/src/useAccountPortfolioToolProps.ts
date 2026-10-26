@@ -1,7 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { registrationOf } from "@domain/api-account-portfolio";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { readOrCreatePortfolioId } from "@features/platform-account-portfolio";
 import { bodyOf, describeSent } from "./portfolioActions/requests";
 import { RUNNERS, type PortfolioDispatch } from "./portfolioActions/runners";
 import type {
@@ -9,7 +11,6 @@ import type {
   PortfolioRequest,
   PortfolioResult,
 } from "./portfolioActions/types";
-import { registrationOf } from "./portfolioRegistration";
 
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = { accountEntries: AccountsState };
@@ -19,17 +20,8 @@ const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => st
 const PORTFOLIO_ID_KEY = "ledger-live.devtools.account-portfolio-id";
 
 /** A portfolio id private to this browser session. */
-function sessionPortfolioId(): string {
-  try {
-    const existing = globalThis.sessionStorage?.getItem(PORTFOLIO_ID_KEY);
-    if (existing) return existing;
-    const id = `ledger-live-${crypto.randomUUID()}`;
-    globalThis.sessionStorage?.setItem(PORTFOLIO_ID_KEY, id);
-    return id;
-  } catch {
-    return `ledger-live-${crypto.randomUUID()}`;
-  }
-}
+const sessionPortfolioId = () =>
+  readOrCreatePortfolioId(globalThis.sessionStorage, PORTFOLIO_ID_KEY);
 
 const labelOf = (descriptor: AccountDescriptor) =>
   `${descriptor.network} ${

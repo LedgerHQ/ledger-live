@@ -1,10 +1,8 @@
-import type { PortfolioRegistration } from "@domain/api-account-portfolio";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { PortfolioRegistration } from "../types";
 import { bitcoinRegistration } from "./bitcoin";
 import { evmRegistration } from "./evm";
 import type { PortfolioRegistrationStrategy } from "./types";
-
-export type { PortfolioRegistrationStrategy } from "./types";
 
 /**
  * The families registered for now. Solana is not on the list: the service answers 400 "not yet

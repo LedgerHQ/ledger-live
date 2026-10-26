@@ -1,5 +1,5 @@
-import type { PortfolioRegistration } from "@domain/api-account-portfolio";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { PortfolioRegistration } from "../types";
 
 /**
  * How one family of accounts is registered with the Portfolio service. A strategy owns everything

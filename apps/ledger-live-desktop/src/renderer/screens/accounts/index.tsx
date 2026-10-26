@@ -16,6 +16,8 @@ import AccountsHeader from "./AccountsHeader";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import { getAccountUrl } from "~/renderer/utils";
+import ServiceAccounts from "LLD/features/ServiceAccounts";
+import { useIsPortfolioServiceEnabled } from "LLD/features/ServiceAccounts/hooks/useIsPortfolioServiceEnabled";
 
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
@@ -31,6 +33,7 @@ export default function AccountsPage() {
     [mode, flattenedAccounts, rawAccounts],
   );
   const navigate = useNavigate();
+  const isPortfolioServiceEnabled = useIsPortfolioServiceEnabled();
 
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount?: Account | null) => {
@@ -55,7 +58,16 @@ export default function AccountsPage() {
       {ledgerSyncOptimisationFlag?.enabled && (
         <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} />
       )}
-      <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
+      {isPortfolioServiceEnabled ? (
+        <ServiceAccounts />
+      ) : (
+        <AccountList
+          onAccountClick={onAccountClick}
+          accounts={accounts}
+          range={range}
+          mode={mode}
+        />
+      )}
       <LNSUpsellBanner location="accounts" mb={30} />
     </>
   );

@@ -1,6 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { AssetTableItem } from "LLD/components/AssetsTable/types";
-
 export type CryptoAddressesViewModel = {
   readonly showBackButton: boolean;
   readonly navigateBack: () => void;
@@ -11,6 +10,8 @@ export type CryptoAddressesViewModel = {
   readonly onAccountClick: (account: AccountLike, parentAccount?: Account | null) => void;
   readonly rows: AccountLike[];
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
+  /** Development only: the table reads the Portfolio service instead of the wallet. */
+  readonly isPortfolioServiceEnabled: boolean;
 };
 
 export type CryptoAssetsViewModel = {
