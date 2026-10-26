@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Apex, Flex, LedgerDevices, Nano, Stax } from "@ledgerhq/lumen-ui-react/symbols";
+import { Flex, LedgerDevices, Nano, NanoGen5, Stax } from "@ledgerhq/lumen-ui-react/symbols";
 
 import { getDeviceIcon } from "../getDeviceIcon";
 
@@ -20,7 +20,7 @@ describe("getDeviceIcon", () => {
   });
 
   it("should return the Apex icon for Ledger Apex", () => {
-    expect(getDeviceIcon(DeviceModelId.apex)).toBe(Apex);
+    expect(getDeviceIcon(DeviceModelId.apex)).toBe(NanoGen5);
   });
 
   it("should return the generic Ledger devices icon for an unknown model", () => {

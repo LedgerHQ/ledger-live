@@ -24,9 +24,8 @@
     "unimported": "pnpm knip --directory ../.. -c shared/ui-info-state/knip.web.config.mjs -W shared/ui-info-state --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/ui-info-state/knip.native.config.mjs -W shared/ui-info-state --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@shared/ui-queued-bottom-sheet": "workspace:*",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.0.0",

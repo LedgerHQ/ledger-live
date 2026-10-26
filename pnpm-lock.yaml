@@ -324,20 +324,20 @@ catalogs:
       specifier: 6.19.0
       version: 6.19.0
     '@ledgerhq/lumen-design-core':
-      specifier: 0.1.32
-      version: 0.1.32
+      specifier: 0.1.34
+      version: 0.1.34
     '@ledgerhq/lumen-lint-plugin':
-      specifier: 0.1.0
-      version: 0.1.0
+      specifier: 0.1.1
+      version: 0.1.1
     '@ledgerhq/lumen-ui-react':
-      specifier: 0.1.64
-      version: 0.1.64
-    '@ledgerhq/lumen-ui-rnative':
       specifier: 0.1.67
       version: 0.1.67
+    '@ledgerhq/lumen-ui-rnative':
+      specifier: 0.1.70
+      version: 0.1.70
     '@ledgerhq/lumen-utils-shared':
-      specifier: 0.1.16
-      version: 0.1.16
+      specifier: 0.1.18
+      version: 0.1.18
     '@ledgerhq/psbtv2':
       specifier: 0.6.2
       version: 0.6.2
@@ -401,9 +401,6 @@ catalogs:
     '@polkadot/util-crypto':
       specifier: 14.0.1
       version: 14.0.1
-    '@radix-ui/react-checkbox':
-      specifier: 1.3.2
-      version: 1.3.2
     '@radix-ui/react-dialog':
       specifier: 1.1.15
       version: 1.1.15
@@ -413,9 +410,6 @@ catalogs:
     '@radix-ui/react-select':
       specifier: 2.2.6
       version: 2.2.6
-    '@radix-ui/react-switch':
-      specifier: 1.2.6
-      version: 1.2.6
     '@radix-ui/react-tooltip':
       specifier: 1.2.8
       version: 1.2.8
@@ -590,9 +584,6 @@ catalogs:
     class-variance-authority:
       specifier: 0.7.1
       version: 0.7.1
-    clsx:
-      specifier: 2.1.1
-      version: 2.1.1
     detox:
       specifier: 20.51.3
       version: 20.51.3
@@ -761,9 +752,6 @@ catalogs:
     stylis:
       specifier: 4.0.0
       version: 4.0.0
-    tailwind-merge:
-      specifier: 3.4.0
-      version: 3.4.0
     tailwindcss:
       specifier: ^4.1.0
       version: 4.2.2
@@ -793,7 +781,6 @@ overrides:
   debug>supports-color: '-'
   '@hiero-ledger/cryptography>expo-crypto': '-'
   '@hiero-ledger/sdk>expo-crypto': '-'
-  '@ledgerhq/lumen-ui-react>tailwind-merge': 3.4.0
   '@ledgerhq/lumen-ui-react>@tanstack/react-table': 8.21.3
   '@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos': workspace:^
   '@mysten/ledgerjs-hw-app-sui>@ledgerhq/ledger-cal-service': workspace:^
@@ -886,10 +873,10 @@ importers:
         version: link:tools/create-release-hash
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-lint-plugin':
         specifier: 'catalog:'
-        version: 0.1.0(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
+        version: 0.1.1(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       '@nx/devkit':
         specifier: 'catalog:'
         version: 22.7.12(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
@@ -1371,13 +1358,13 @@ importers:
         version: 2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-mockserver-react':
         specifier: 'catalog:'
-        version: 0.1.1(1f11960775f916512cc6398db95b19f3)
+        version: 0.1.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@ledgerhq/lumen-ui-react@0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.2(@ledgerhq/context-module@2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
@@ -1443,10 +1430,10 @@ importers:
         version: 6.19.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -1471,9 +1458,6 @@ importers:
       '@ledgerhq/zcash-utils':
         specifier: 'catalog:'
         version: 2.8.0
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1483,9 +1467,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -1576,9 +1557,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       color:
         specifier: 4.2.3
         version: 4.2.3
@@ -1705,9 +1683,6 @@ importers:
       styled-system:
         specifier: 'catalog:'
         version: 5.1.5
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       timemachine:
         specifier: 0.3.2
         version: 0.3.2
@@ -2266,7 +2241,7 @@ importers:
         version: 2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@ledgerhq/device-core':
         specifier: workspace:^
         version: link:../../libs/device-core
@@ -2344,10 +2319,10 @@ importers:
         version: 6.19.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/native-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/native
@@ -3287,7 +3262,7 @@ importers:
         version: 10.0.0
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -3326,10 +3301,10 @@ importers:
         version: 6.19.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/react-ui':
         specifier: workspace:^
         version: link:../../libs/ui/packages/react
@@ -3339,9 +3314,6 @@ importers:
       '@ledgerhq/wallet-pnl':
         specifier: workspace:^
         version: link:../../libs/wallet-pnl
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3354,9 +3326,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3399,9 +3368,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       encoding:
         specifier: ^0.1.13
         version: 0.1.13
@@ -3459,9 +3425,6 @@ importers:
       stylis:
         specifier: 'catalog:'
         version: 4.0.0
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -3760,19 +3723,16 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3782,9 +3742,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -3833,9 +3790,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -3872,9 +3826,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4032,22 +3983,19 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@react-native/babel-preset':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
@@ -4090,9 +4038,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -4129,9 +4074,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4150,19 +4092,16 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4172,9 +4111,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4223,9 +4159,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -4262,9 +4195,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4273,7 +4203,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@support/jest':
         specifier: workspace:*
         version: link:../../support/jest
@@ -4337,19 +4267,16 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4359,9 +4286,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4410,9 +4334,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-document-picker:
         specifier: 'catalog:'
         version: 13.1.6(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -4458,9 +4379,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4475,19 +4393,16 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4497,9 +4412,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4548,9 +4460,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -4587,9 +4496,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4740,19 +4646,16 @@ importers:
         version: 30.5.0
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4762,9 +4665,6 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4819,9 +4719,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -4864,9 +4761,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -4909,28 +4803,19 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
-      '@ledgerhq/lumen-utils-shared':
-        specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -4979,9 +4864,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -5024,9 +4906,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -5041,22 +4920,19 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -5102,9 +4978,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       expo-haptics:
         specifier: 'catalog:'
         version: 15.0.8(expo@54.0.33(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(graphql@16.14.2)(react-native-webview@13.16.1(patch_hash=d6fc65af8843b53a07ea09153f9789ae0e615b957fc57a921f62f87f7dd59506)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)(utf-8-validate@6.0.6))
@@ -5141,9 +5014,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -6908,13 +6778,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -6986,10 +6856,10 @@ importers:
         version: link:../../platform/quick-actions
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -6999,13 +6869,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7099,13 +6969,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7309,10 +7179,10 @@ importers:
         version: link:../../platform/app-lock
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7376,10 +7246,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7437,10 +7307,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7510,10 +7380,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7574,10 +7444,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7650,28 +7520,22 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
-      '@radix-ui/react-checkbox':
-        specifier: 'catalog:'
-        version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-dialog':
         specifier: 'catalog:'
         version: 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-slot':
         specifier: ^1.2.4
         version: 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch':
-        specifier: 'catalog:'
-        version: 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip':
         specifier: 'catalog:'
         version: 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -7717,9 +7581,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -7753,9 +7614,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -7780,10 +7638,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7880,10 +7738,10 @@ importers:
         version: link:../../platform/feature-flags
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -7965,13 +7823,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8005,9 +7863,6 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8032,9 +7887,6 @@ importers:
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8053,10 +7905,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8129,10 +7981,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8219,7 +8071,7 @@ importers:
         version: link:../../platform/contacts
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
@@ -8232,10 +8084,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8323,13 +8175,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8399,13 +8251,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8469,19 +8321,13 @@ importers:
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8554,28 +8400,22 @@ importers:
       '@features/platform-contacts':
         specifier: workspace:^
         version: link:../../platform/contacts
-      '@ledgerhq/lumen-utils-shared':
+      '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
+        version: 0.1.34
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8660,10 +8500,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8688,9 +8528,6 @@ importers:
       '@types/react-dom':
         specifier: 19.0.0
         version: 19.0.0
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
@@ -8703,9 +8540,6 @@ importers:
       react-redux:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -8714,10 +8548,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8765,13 +8599,13 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8855,10 +8689,10 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -8874,13 +8708,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -8959,13 +8793,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9062,7 +8896,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9155,7 +8989,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -9177,10 +9011,10 @@ importers:
         version: 3.2.2(react@19.1.4)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9310,16 +9144,16 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9424,7 +9258,7 @@ importers:
         version: link:../../platform/pay-analytics
       '@ledgerhq/lumen-utils-shared':
         specifier: 'catalog:'
-        version: 0.1.16(react@19.1.4)
+        version: 0.1.18(react@19.1.4)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -9443,13 +9277,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9555,10 +9389,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9728,10 +9562,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9815,7 +9649,7 @@ importers:
         version: link:../../platform/contacts
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
@@ -9828,13 +9662,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -9928,13 +9762,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10022,13 +9856,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10112,7 +9946,7 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/crypto-icons':
         specifier: 'catalog:'
-        version: 2.0.6(9547f9e0e9596b12f43535050f669b97)
+        version: 2.0.6(03ff95977f23d973b12d46a9c28c8169)
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -10128,13 +9962,13 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10225,13 +10059,13 @@ importers:
         version: link:../../platform/style
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10498,10 +10332,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10717,10 +10551,10 @@ importers:
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -10903,10 +10737,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
@@ -11358,19 +11192,13 @@ importers:
     dependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
     devDependencies:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
@@ -20799,10 +20627,10 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -20866,22 +20694,19 @@ importers:
 
   shared/ui-info-state:
     dependencies:
+      '@ledgerhq/lumen-design-core':
+        specifier: 'catalog:'
+        version: 0.1.34
       '@shared/ui-queued-bottom-sheet':
         specifier: workspace:*
         version: link:../ui-queued-bottom-sheet
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-      tailwind-merge:
-        specifier: 'catalog:'
-        version: 3.4.0
     devDependencies:
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -20993,7 +20818,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -21069,7 +20894,7 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../support/test-quarantine
@@ -21136,13 +20961,13 @@ importers:
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
-        version: 0.1.32
+        version: 0.1.34
       '@ledgerhq/lumen-ui-react':
         specifier: 'catalog:'
-        version: 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+        version: 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
-        version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+        version: 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       '@testing-library/dom':
         specifier: 'catalog:'
         version: 10.4.1
@@ -21193,7 +21018,7 @@ importers:
     devDependencies:
       '@ledgerhq/lumen-lint-plugin':
         specifier: 'catalog:'
-        version: 0.1.0(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
+        version: 0.1.1(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
@@ -24463,13 +24288,14 @@ packages:
   '@ledgerhq/logs@6.19.0':
     resolution: {integrity: sha512-kmWj18C7eTtuytdaWygzVrQm9EoD4YWuYnd/kY8stVBBAzRdJzrGlm013ijQF6I/kGLKlGY7JKmll6j32KGpfQ==}
 
-  '@ledgerhq/lumen-design-core@0.1.32':
-    resolution: {integrity: sha512-eZR4zbLAViqrqlcgi+YteADK0oQelr3THSh9+pBXkk34bg8TfCQqROEdwVC+F2coGs85F9LoJdi8Y5lb1PdzIw==}
+  '@ledgerhq/lumen-design-core@0.1.34':
+    resolution: {integrity: sha512-9a5/0u9YMX/X62yxrgTthoPDdd5eKrF5QKYaDyLrn4LTJF/8kdU7hXB7W9F+aW+d0rDJyrSpWIa+JcKfrrvLbw==}
 
-  '@ledgerhq/lumen-lint-plugin@0.1.0':
-    resolution: {integrity: sha512-t32oO0X8r+LtQJZUmrXKWJPNwwzmYzVEUbFL7LNoTYrKd1jpHUvoI1CyZRAQ+xKuHMU9f6BvJQsBvY6mf0zG+g==}
+  '@ledgerhq/lumen-lint-plugin@0.1.1':
+    resolution: {integrity: sha512-3kTn4tEoLHiZbX0WtKrsW4yEywgy3u+upUgRD3NB874gy0UJOHDLrcf/jkcGu6v15gM4+6ZgtqXIVOpNrs9B4w==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
+      '@ledgerhq/lumen-design-core': 0.1.34
       eslint: ^9.30.0 || ^10.0.0
       oxlint: ^1.82.0
       tailwindcss: ^4.1.17
@@ -24481,28 +24307,24 @@ packages:
       tailwindcss:
         optional: true
 
-  '@ledgerhq/lumen-ui-react@0.1.64':
-    resolution: {integrity: sha512-VAdIGtZw8dQXG81CYQe1aOakg74XYRl051w7BVYzyHnaXr7CcbjQkzfCvg9yuEQozWvBi+tICyKlqXxpEVq05g==}
+  '@ledgerhq/lumen-ui-react@0.1.67':
+    resolution: {integrity: sha512-cnqOT5AYzRgmPH/70NiXaZIKNkKyxEXIlsb7omZLVehGhhQSUkB0sxGhflu32LmDha0jLxMVNJ8ie1cOSWzJfA==}
     peerDependencies:
       '@base-ui/react': ^1.3.0
-      '@ledgerhq/lumen-design-core': 0.1.32
-      '@radix-ui/react-checkbox': ^1.3.2
+      '@ledgerhq/lumen-design-core': 0.1.34
       '@radix-ui/react-dialog': ^1.1.15
       '@radix-ui/react-slot': ^1.2.4
-      '@radix-ui/react-switch': ^1.2.6
       '@radix-ui/react-tooltip': ^1.2.8
       '@tanstack/react-table': 8.21.3
       class-variance-authority: ^0.7.1
-      clsx: ^2.1.1
       react: 19.1.4
       react-dom: 19.1.4
-      tailwind-merge: 3.4.0
 
-  '@ledgerhq/lumen-ui-rnative@0.1.67':
-    resolution: {integrity: sha512-6mqomgHcCdVffhvnNtQvq7lMPcwcMcaq0dfcAQcPFJfhDDyvYFAVgFOGV/9FmwQseat3DUTwhlYafa3LZYSGqg==}
+  '@ledgerhq/lumen-ui-rnative@0.1.70':
+    resolution: {integrity: sha512-0FFjWXzJPzUeHxHp5Xu00cu/q6VfQmNguT5TBH/80cq/5TtAY1F3n/N5nrcSVhFv1jZ1ayuh2HXIlZST0c1Rlw==}
     peerDependencies:
       '@gorhom/bottom-sheet': ^5.0.0
-      '@ledgerhq/lumen-design-core': 0.1.32
+      '@ledgerhq/lumen-design-core': 0.1.34
       '@sbaiahmed1/react-native-blur': ^4.5.5
       '@types/react': 19.0.14
       expo: '>=54.0.0'
@@ -24510,18 +24332,18 @@ packages:
       react: 19.1.4
       react-native: ~0.81.6
       react-native-gesture-handler: '>=2.0.0'
-      react-native-reanimated: ^4.1.0
+      react-native-reanimated: ^4.3.0
       react-native-safe-area-context: ^4.0.0 || ^5.0.0
       react-native-svg: ^15.0.0
-      react-native-worklets: '>=0.5.0'
+      react-native-worklets: ^0.8.0
     peerDependenciesMeta:
       react-native-gesture-handler:
         optional: true
       react-native-worklets:
         optional: true
 
-  '@ledgerhq/lumen-utils-shared@0.1.16':
-    resolution: {integrity: sha512-bdujeFFMfAukjNNhuhCJCSOgB838D9mgRkVXVtYCK9FfWcFtpDWIv65j1Dh18vw1stv3sOvukYha48DMobpcKw==}
+  '@ledgerhq/lumen-utils-shared@0.1.18':
+    resolution: {integrity: sha512-ehbZH+lB6I7Jbdb/GY690xzhKg8zqgx1OupoNFCasqnKKA+dbflKpXEwQTIsQTEsarRPjBIhvR6xcRaCcO4MSw==}
     peerDependencies:
       react: 19.1.4
 
@@ -26057,27 +25879,11 @@ packages:
   '@radix-ui/number@1.1.1':
     resolution: {integrity: sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g==}
 
-  '@radix-ui/primitive@1.1.2':
-    resolution: {integrity: sha512-XnbHrrprsNqZKQhStrSwgRUQzoCI1glLzdw79xiZPoofhGICeZRSQ3dIxAKH1gb3OHfNf4d6f+vAv3kil2eggA==}
-
   '@radix-ui/primitive@1.1.3':
     resolution: {integrity: sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg==}
 
   '@radix-ui/react-arrow@1.1.7':
     resolution: {integrity: sha512-F+M1tLhO+mlQaOWspE8Wstg+z6PwxwRd8oQ8IXceWz92kfAmalTRf0EjrouQeo7QssEPfCn05B4Ihs1K9WQ/7w==}
-    peerDependencies:
-      '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
-      react: 19.1.4
-      react-dom: 19.1.4
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-
-  '@radix-ui/react-checkbox@1.3.2':
-    resolution: {integrity: sha512-yd+dI56KZqawxKZrJ31eENUwqc1QSqg4OZ15rybGjF2ZNwMO+wCyHzAVLRp9qoYJf7kYy0YpZ2b0JCzJ42HZpA==}
     peerDependencies:
       '@types/react': 19.0.14
       '@types/react-dom': 19.0.0
@@ -26238,19 +26044,6 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@radix-ui/react-presence@1.1.4':
-    resolution: {integrity: sha512-ueDqRbdc4/bkaQT3GIpLQssRlFgWaL/U2z/S31qRwwLWoxHLgry3SIfCwhxeQNbirEUXFa+lq3RL3oBYXtcmIA==}
-    peerDependencies:
-      '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
-      react: 19.1.4
-      react-dom: 19.1.4
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
-        optional: true
-
   '@radix-ui/react-presence@1.1.5':
     resolution: {integrity: sha512-/jfEwNDdQVBCNvjkGit4h6pMOzq8bHkopq458dPt2lMjx+eBQUohZNG9A7DtO/O5ukSbxuaNGXMjHicgwy6rQQ==}
     peerDependencies:
@@ -26310,19 +26103,6 @@ packages:
       react: 19.1.4
     peerDependenciesMeta:
       '@types/react':
-        optional: true
-
-  '@radix-ui/react-switch@1.2.6':
-    resolution: {integrity: sha512-bByzr1+ep1zk4VubeEVViV592vu2lHE2BZY5OnzehZqOOgogN80+mNtCqPkhn2gklJqOpxWgPoYTSnhBCqpOXQ==}
-    peerDependencies:
-      '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
-      react: 19.1.4
-      react-dom: 19.1.4
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-dom':
         optional: true
 
   '@radix-ui/react-tooltip@1.2.8':
@@ -37502,11 +37282,11 @@ packages:
       '@eslint/css':
         optional: true
 
-  tailwind-merge@2.6.0:
-    resolution: {integrity: sha512-P+Vu1qXfzediirmHOC3xKGAYeZtPcV9g76X+xg2FD4tYgR71ewMA35Y3sCz3zhiN/dwefRpJX0yBcgwi1fXNQA==}
-
   tailwind-merge@3.4.0:
     resolution: {integrity: sha512-uSaO4gnW+b3Y2aWoWfFpX62vn2sR3skfhbjsEnaBI81WD1wBLlHZe5sWf0AqjksNdYTbGBEd0UasQMT3SNV15g==}
+
+  tailwind-merge@3.7.0:
+    resolution: {integrity: sha512-XPPUyAc+cvspz3lHTcR/QgPfW2A0lv/xQNIjX3HGhLR+Nq2lHaLq5MtTesHn8GUr3W3DguT2KT5x3NVgRtYwmA==}
 
   tailwindcss@4.1.18:
     resolution: {integrity: sha512-4+Z+0yiYyEtUVCScyfHCxOYP06L5Ne+JiHhY2IjR2KWMIWhJOYZKLSGZaP5HkZ8+bY0cxfzwDE5uOmzFXyIwxw==}
@@ -43187,13 +42967,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/crypto-icons@2.0.6(9547f9e0e9596b12f43535050f669b97)':
+  '@ledgerhq/crypto-icons@2.0.6(03ff95977f23d973b12d46a9c28c8169)':
     dependencies:
       react: 19.1.4
     optionalDependencies:
-      '@ledgerhq/lumen-design-core': 0.1.32
-      '@ledgerhq/lumen-ui-react': 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
-      '@ledgerhq/lumen-ui-rnative': 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/lumen-design-core': 0.1.34
+      '@ledgerhq/lumen-ui-react': 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/lumen-ui-rnative': 0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)
       react-dom: 19.1.4(react@19.1.4)
       react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
 
@@ -43229,11 +43009,11 @@ snapshots:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       purify-ts: 2.1.0
 
-  '@ledgerhq/device-mockserver-react@0.1.1(1f11960775f916512cc6398db95b19f3)':
+  '@ledgerhq/device-mockserver-react@0.1.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@ledgerhq/lumen-ui-react@0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-mockserver-client': 1.3.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
-      '@ledgerhq/lumen-ui-react': 0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)
+      '@ledgerhq/lumen-ui-react': 0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
 
@@ -43513,13 +43293,16 @@ snapshots:
 
   '@ledgerhq/logs@6.19.0': {}
 
-  '@ledgerhq/lumen-design-core@0.1.32':
+  '@ledgerhq/lumen-design-core@0.1.34':
     dependencies:
+      clsx: 2.1.1
+      tailwind-merge: 3.7.0
       tailwindcss: 4.2.2
       tslib: 2.6.2
 
-  '@ledgerhq/lumen-lint-plugin@0.1.0(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)':
+  '@ledgerhq/lumen-lint-plugin@0.1.1(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)':
     dependencies:
+      '@ledgerhq/lumen-design-core': 0.1.34
       '@shadcn/lint': 0.2.3(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-better-tailwindcss: 4.7.0(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
     optionalDependencies:
@@ -43531,32 +43314,28 @@ snapshots:
       - '@typescript-eslint/parser'
       - typescript
 
-  '@ledgerhq/lumen-ui-react@0.1.64(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.32)(@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(clsx@2.1.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)(tailwind-merge@3.4.0)':
+  '@ledgerhq/lumen-ui-react@0.1.67(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@base-ui/react': 1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@ledgerhq/lumen-design-core': 0.1.32
-      '@ledgerhq/lumen-utils-shared': 0.1.16(react@19.1.4)
-      '@radix-ui/react-checkbox': 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@ledgerhq/lumen-design-core': 0.1.34
+      '@ledgerhq/lumen-utils-shared': 0.1.18(react@19.1.4)
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-slot': 1.2.4(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@radix-ui/react-tooltip': 1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@tanstack/react-table': 8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/d3-scale': 4.0.9
       '@types/d3-shape': 3.2.0
       class-variance-authority: 0.7.1
-      clsx: 2.1.1
       d3-scale: 4.0.2
       d3-shape: 3.2.0
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
-      tailwind-merge: 3.4.0
 
-  '@ledgerhq/lumen-ui-rnative@0.1.67(9ca6403ceb5c460b5293452ce53faf5f)':
+  '@ledgerhq/lumen-ui-rnative@0.1.70(d23002c6fb6bfbe72b731ae1a1f14c07)':
     dependencies:
       '@gorhom/bottom-sheet': 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
-      '@ledgerhq/lumen-design-core': 0.1.32
-      '@ledgerhq/lumen-utils-shared': 0.1.16(react@19.1.4)
+      '@ledgerhq/lumen-design-core': 0.1.34
+      '@ledgerhq/lumen-utils-shared': 0.1.18(react@19.1.4)
       '@sbaiahmed1/react-native-blur': 4.5.5(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       '@types/d3-scale': 4.0.9
       '@types/d3-shape': 3.2.0
@@ -43574,11 +43353,9 @@ snapshots:
       react-native-gesture-handler: 2.28.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       react-native-worklets: 0.8.1(patch_hash=8e8345e8a8ac8f4108e6743d9899f8d9f1e5b8af1901df406704331269df6e25)(@babel/core@7.28.5)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
 
-  '@ledgerhq/lumen-utils-shared@0.1.16(react@19.1.4)':
+  '@ledgerhq/lumen-utils-shared@0.1.18(react@19.1.4)':
     dependencies:
-      clsx: 2.1.1
       react: 19.1.4
-      tailwind-merge: 2.6.0
 
   '@ledgerhq/psbtv2@0.6.2(@typescript/typescript6@6.0.2)':
     dependencies:
@@ -45007,29 +44784,11 @@ snapshots:
 
   '@radix-ui/number@1.1.1': {}
 
-  '@radix-ui/primitive@1.1.2': {}
-
   '@radix-ui/primitive@1.1.3': {}
 
   '@radix-ui/react-arrow@1.1.7(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
-    optionalDependencies:
-      '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
-
-  '@radix-ui/react-checkbox@1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@radix-ui/primitive': 1.1.2
-      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-context': 1.1.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-presence': 1.1.4(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-use-previous': 1.1.1(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-use-size': 1.1.1(@types/react@19.0.14)(react@19.1.4)
       react: 19.1.4
       react-dom: 19.1.4(react@19.1.4)
     optionalDependencies:
@@ -45194,16 +44953,6 @@ snapshots:
       '@types/react': 19.0.14
       '@types/react-dom': 19.0.0
 
-  '@radix-ui/react-presence@1.1.4(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-use-layout-effect': 1.1.1(@types/react@19.0.14)(react@19.1.4)
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
-    optionalDependencies:
-      '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
-
   '@radix-ui/react-presence@1.1.5(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
       '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.0.14)(react@19.1.4)
@@ -45275,21 +45024,6 @@ snapshots:
       react: 19.1.4
     optionalDependencies:
       '@types/react': 19.0.14
-
-  '@radix-ui/react-switch@1.2.6(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
-    dependencies:
-      '@radix-ui/primitive': 1.1.3
-      '@radix-ui/react-compose-refs': 1.1.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-context': 1.1.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-primitive': 2.1.3(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
-      '@radix-ui/react-use-controllable-state': 1.2.2(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-use-previous': 1.1.1(@types/react@19.0.14)(react@19.1.4)
-      '@radix-ui/react-use-size': 1.1.1(@types/react@19.0.14)(react@19.1.4)
-      react: 19.1.4
-      react-dom: 19.1.4(react@19.1.4)
-    optionalDependencies:
-      '@types/react': 19.0.14
-      '@types/react-dom': 19.0.0
 
   '@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:
@@ -58756,9 +58490,9 @@ snapshots:
 
   tailwind-csstree@0.3.3: {}
 
-  tailwind-merge@2.6.0: {}
-
   tailwind-merge@3.4.0: {}
+
+  tailwind-merge@3.7.0: {}
 
   tailwindcss@4.1.18: {}
 
