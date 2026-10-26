@@ -1,28 +1,8 @@
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
-index 80c6803..9588423 100644
+index 80c6803..81a6ea2 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
-@@ -46,6 +46,7 @@ import org.json.JSONObject;
- 
- import java.util.List;
- import java.util.Map;
-+import java.util.Objects;
- import java.util.Set;
- 
- public class RNCWebView extends WebView implements LifecycleEventListener {
-@@ -58,6 +59,11 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
-     RNCWebViewBridge fallbackBridge;
-     protected @Nullable
-     WebViewCompat.WebMessageListener bridgeListener = null;
-+    // Ledger Live patch (LIVE-39616): origin rules of the frames the bridge is exposed to, any
-+    // origin when null. No upstream issue or PR yet: kept as a documented exception of the
-+    // patch policy (LIVE-38205). Remove once react-native-webview lets apps pass the
-+    // allowedOriginRules of addWebMessageListener, or the bridge leaves react-native-webview.
-+    @Nullable protected Set<String> messagingAllowedOrigins = null;
- 
-     /**
-      * android.webkit.WebChromeClient fundamentally does not support JS injection into frames other
-@@ -95,6 +101,20 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -95,6 +95,10 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
          mRNCWebViewClient.setBasicAuthCredential(credential);
      }
  
@@ -30,28 +10,10 @@ index 80c6803..9588423 100644
 +        mRNCWebViewClient.setAllowsUnsecureHttps(allowsUnsecureHttps);
 +    }
 +
-+    // Ledger patch (LIVE-39616), see RNCWebViewClient#setAllowedMainFrameOrigins.
-+    protected @Nullable List<String> mAllowedMainFrameOrigins = null;
-+
-+    public void setAllowedMainFrameOrigins(@Nullable List<String> origins) {
-+        mAllowedMainFrameOrigins = origins;
-+        if (mRNCWebViewClient != null) {
-+            mRNCWebViewClient.setAllowedMainFrameOrigins(origins);
-+        }
-+    }
-+
      public void setSendContentSizeChangeEvents(boolean sendContentSizeChangeEvents) {
          this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
      }
-@@ -221,6 +241,7 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
-         if (client instanceof RNCWebViewClient) {
-             mRNCWebViewClient = (RNCWebViewClient) client;
-             mRNCWebViewClient.setProgressChangedFilter(progressChangedFilter);
-+            mRNCWebViewClient.setAllowedMainFrameOrigins(mAllowedMainFrameOrigins);
-         }
-     }
- 
-@@ -253,15 +274,10 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -253,7 +257,7 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
              this.bridgeListener = new WebViewCompat.WebMessageListener() {
                @Override
                public void onPostMessage(@NonNull WebView view, @NonNull WebMessageCompat message, @NonNull Uri sourceOrigin, boolean isMainFrame, @NonNull JavaScriptReplyProxy replyProxy) {
@@ -59,48 +21,8 @@ index 80c6803..9588423 100644
 +                RNCWebView.this.onMessage(message.getData(), sourceOrigin.toString(), isMainFrame);
                }
              };
--            WebViewCompat.addWebMessageListener(
--              webView,
--              JAVASCRIPT_INTERFACE,
--              Set.of("*"),
--              this.bridgeListener
--            );
-+            addBridgeListener(webView);
-           }
-         } else {
-           if (fallbackBridge == null) {
-@@ -272,6 +288,30 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
-         injectJavascriptObject();
-     }
- 
-+    // Ledger Live patch (LIVE-39616): an invalid rule fails closed, the bridge is not exposed.
-+    private void addBridgeListener(WebView webView) {
-+        Set<String> rules = messagingAllowedOrigins == null ? Set.of("*") : messagingAllowedOrigins;
-+        if (rules.isEmpty()) {
-+            return;
-+        }
-+        try {
-+            WebViewCompat.addWebMessageListener(webView, JAVASCRIPT_INTERFACE, rules, this.bridgeListener);
-+        } catch (IllegalArgumentException e) {
-+            FLog.w("RNCWebView", "Invalid messagingAllowedOrigins, the bridge is not exposed", e);
-+        }
-+    }
-+
-+    public void setMessagingAllowedOrigins(@Nullable Set<String> origins) {
-+        if (Objects.equals(messagingAllowedOrigins, origins)) {
-+            return;
-+        }
-+        messagingAllowedOrigins = origins;
-+        if (bridgeListener != null && WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
-+            WebViewCompat.removeWebMessageListener(this, JAVASCRIPT_INTERFACE);
-+            addBridgeListener(this);
-+        }
-+    }
-+
-     private void injectJavascriptObject() {
-       if (getSettings().getJavaScriptEnabled()) {
-         String js = "(function(){\n" +
-@@ -325,6 +365,11 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+             WebViewCompat.addWebMessageListener(
+@@ -325,6 +329,12 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
      }
  
      public void onMessage(String message, String sourceUrl) {
@@ -108,11 +30,12 @@ index 80c6803..9588423 100644
 +    }
 +
 +    // Ledger Live patch (LIVE-39616): reports whether the sender is the main frame, when known.
++    // Remove once react-native-webview forwards isMainFrame upstream.
 +    public void onMessage(String message, String sourceUrl, @Nullable Boolean isMainFrame) {
          ThemedReactContext reactContext = getThemedReactContext();
          RNCWebView mWebView = this;
  
-@@ -338,6 +383,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -338,6 +348,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
                      }
                      WritableMap data = mRNCWebViewClient.createWebViewEvent(webView, sourceUrl);
                      data.putString("data", message);
@@ -122,7 +45,7 @@ index 80c6803..9588423 100644
  
                      if (mMessagingJSModule != null) {
                          dispatchDirectMessage(data);
-@@ -349,6 +397,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+@@ -349,6 +362,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
          } else {
              WritableMap eventData = Arguments.createMap();
              eventData.putString("data", message);
@@ -133,38 +56,18 @@ index 80c6803..9588423 100644
              if (mMessagingJSModule != null) {
                  dispatchDirectMessage(eventData);
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
-index 0287e1c..cf6ce1a 100644
+index 0287e1c..4efe38d 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
-@@ -2,6 +2,7 @@ package com.reactnativecommunity.webview;
- 
- import android.annotation.TargetApi;
- import android.graphics.Bitmap;
-+import android.net.Uri;
- import android.net.http.SslError;
- import android.os.Build;
- import android.os.SystemClock;
-@@ -35,6 +36,9 @@ import com.reactnativecommunity.webview.events.TopShouldStartLoadWithRequestEven
- import android.webkit.CookieManager;
- import android.webkit.CookieSyncManager;
- 
-+import java.io.ByteArrayInputStream;
-+import java.util.List;
-+import java.util.Locale;
- import java.util.concurrent.atomic.AtomicReference;
- 
- public class RNCWebViewClient extends WebViewClient {
-@@ -42,6 +46,9 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -42,6 +42,7 @@ public class RNCWebViewClient extends WebViewClient {
      protected static final int SHOULD_OVERRIDE_URL_LOADING_TIMEOUT = 250;
  
      protected boolean mLastLoadFailed = false;
 +    protected boolean mAllowsUnsecureHttps = false;
-+    // Volatile: shouldInterceptRequest reads it off the UI thread.
-+    protected volatile @Nullable List<String> mAllowedMainFrameOrigins = null;
      protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
      protected @Nullable RNCBasicAuthCredential basicAuthCredential = null;
  
-@@ -49,6 +56,76 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -49,6 +50,10 @@ public class RNCWebViewClient extends WebViewClient {
          basicAuthCredential = credential;
      }
  
@@ -172,163 +75,31 @@ index 0287e1c..cf6ce1a 100644
 +        mAllowsUnsecureHttps = allowsUnsecureHttps;
 +    }
 +
-+    // Ledger patch (LIVE-39616): opt-in, synchronous main-frame origin check so that a
-+    // disallowed main-frame URL is cancelled natively instead of being allowed when the
-+    // JS round trip of onShouldStartLoadWithRequest exceeds SHOULD_OVERRIDE_URL_LOADING_TIMEOUT.
-+    // Remove once react-native-webview ships an equivalent native allowlist upstream.
-+    public void setAllowedMainFrameOrigins(@Nullable List<String> origins) {
-+        mAllowedMainFrameOrigins = origins;
-+    }
-+
-+    // Entries: exact origin ("https://example.com[:port]"), any host for a scheme
-+    // ("https://" or "https://*") or subdomains ("https://*.example.com[:port]").
-+    // Any other scheme is blocked: JS is still notified, e.g. to open a deeplink with Linking.
-+    protected boolean isMainFrameOriginBlocked(String url) {
-+        final List<String> allowedOrigins = mAllowedMainFrameOrigins;
-+        if (allowedOrigins == null) return false;
-+
-+        final Uri uri = Uri.parse(url);
-+        final String rawScheme = uri.getScheme();
-+        if (rawScheme == null) return true;
-+        final String scheme = rawScheme.toLowerCase(Locale.ROOT);
-+        if (!scheme.equals("http") && !scheme.equals("https")) return true;
-+
-+        final String rawHost = uri.getHost();
-+        if (rawHost == null || rawHost.isEmpty()) return true;
-+        final int port = uri.getPort();
-+        final boolean isDefaultPort = port == -1
-+            || (scheme.equals("https") && port == 443)
-+            || (scheme.equals("http") && port == 80);
-+        final String host = rawHost.toLowerCase(Locale.ROOT) + (isDefaultPort ? "" : ":" + port);
-+        final String origin = scheme + "://" + host;
-+
-+        for (String entry : allowedOrigins) {
-+            if (entry == null) continue;
-+            final String pattern = entry.trim();
-+            if (pattern.isEmpty()) continue;
-+            if (pattern.equals(origin)) return false;
-+            if (pattern.equals(scheme + "://") || pattern.equals(scheme + "://*")) return false;
-+            final String wildcardPrefix = scheme + "://*.";
-+            if (pattern.startsWith(wildcardPrefix)) {
-+                final String suffix = pattern.substring(wildcardPrefix.length());
-+                if (!suffix.isEmpty() && host.endsWith("." + suffix)) return false;
-+            }
-+        }
-+        return true;
-+    }
-+
-+    protected static boolean isHttpUrl(String url) {
-+        final String scheme = Uri.parse(url).getScheme();
-+        return "http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme);
-+    }
-+
-+    // Ledger patch (LIVE-39616): subframe rule of the app's JS guard (web and local documents
-+    // only), for the fallback where JS cannot decide synchronously.
-+    protected static boolean isSubframeUrlBlocked(String url) {
-+        final String scheme = Uri.parse(url).getScheme();
-+        if (scheme == null) return true;
-+        switch (scheme.toLowerCase(Locale.ROOT)) {
-+            case "https":
-+            case "about":
-+            case "blob":
-+            case "data":
-+                return false;
-+            default:
-+                return true;
-+        }
-+    }
-+
      @Override
      public void onPageFinished(WebView webView, String url) {
          super.onPageFinished(webView, url);
-@@ -83,6 +160,16 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -92,6 +97,10 @@ public class RNCWebViewClient extends WebViewClient {
  
-     @Override
-     public void onPageStarted(WebView webView, String url, Bitmap favicon) {
-+      // Ledger patch (LIVE-39616): the redirect hops of a main-frame POST (e.g. a 307/308 after a
-+      // form submission) reach neither shouldOverrideUrlLoading nor shouldInterceptRequest, so a
-+      // main frame committed outside allowedMainFrameOrigins is replaced with about:blank.
-+      if (isHttpUrl(url) && isMainFrameOriginBlocked(url)) {
-+        FLog.w(TAG, "Replaced a main frame committed outside allowedMainFrameOrigins with about:blank.");
-+        webView.stopLoading();
-+        webView.loadUrl("about:blank");
-+        dispatchShouldStartLoadWithRequestEvent(webView, url, true);
-+        return;
-+      }
-       super.onPageStarted(webView, url, favicon);
-       mLastLoadFailed = false;
- 
-@@ -90,8 +177,32 @@ public class RNCWebViewClient extends WebViewClient {
-       reactWebView.callInjectedJavaScriptBeforeContentLoaded();
-     }
- 
-+    // Ledger patch (LIVE-39616): shouldOverrideUrlLoading is not called for POST navigations
-+    // (form submissions) nor for loadUrl, so main-frame http(s) requests are checked here too.
-+    @Override
-+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-+        final String url = request.getUrl().toString();
-+        if (request.isForMainFrame() && isHttpUrl(url) && isMainFrameOriginBlocked(url)) {
-+            FLog.w(TAG, "Blocked a main-frame request to an origin outside allowedMainFrameOrigins.");
-+            return new WebResourceResponse("text/plain", "utf-8", 403, "Forbidden", null, new ByteArrayInputStream(new byte[0]));
-+        }
-+        return super.shouldInterceptRequest(view, request);
-+    }
-+
      @Override
      public boolean shouldOverrideUrlLoading(WebView view, String url) {
 +        return this.shouldOverrideUrlLoading(view, url, true);
 +    }
 +
 +    protected boolean shouldOverrideUrlLoading(WebView view, String url, boolean isMainFrame) {
-+        // Ledger patch (LIVE-39616): cancel disallowed main-frame URLs synchronously. JS still
-+        // receives the request without a lock; a loadUrl replay is blocked by shouldInterceptRequest.
-+        if (isMainFrame && isMainFrameOriginBlocked(url)) {
-+            FLog.w(TAG, "Blocked main-frame navigation to an origin outside allowedMainFrameOrigins.");
-+            dispatchShouldStartLoadWithRequestEvent(view, url, true);
-+            return true;
-+        }
-+
          final RNCWebView rncWebView = (RNCWebView) view;
          final boolean isJsDebugging = rncWebView.getReactApplicationContext().getJavaScriptContextHolder().get() == 0;
  
-@@ -102,6 +213,8 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -102,6 +111,9 @@ public class RNCWebViewClient extends WebViewClient {
  
              final WritableMap event = createWebViewEvent(view, url);
              event.putDouble("lockIdentifier", lockIdentifier);
-+            // Ledger patch (LIVE-39616): forward the real frame instead of leaving isTopFrame unset.
++            // Ledger Live patch (LIVE-39616): forward the real frame instead of leaving isTopFrame
++            // unset. Remove once react-native-webview sets isTopFrame on Android upstream.
 +            event.putBoolean("isTopFrame", isMainFrame);
              rncWebView.dispatchDirectShouldStartLoadWithRequest(event);
  
              try {
-@@ -129,21 +242,31 @@ public class RNCWebViewClient extends WebViewClient {
-             return shouldOverride;
-         } else {
-             FLog.w(TAG, "Couldn't use blocking synchronous call for onShouldStartLoadWithRequest due to debugging or missing Catalyst instance, falling back to old event-and-load.");
-+            // Ledger patch (LIVE-39616): JS replays an accepted request with loadUrl, which would
-+            // load a subframe URL as the main document. With the allowlist on, subframes are decided
-+            // here with the JS guard's rule; without it, they keep the upstream handling.
-+            if (!isMainFrame && mAllowedMainFrameOrigins != null) return isSubframeUrlBlocked(url);
-             progressChangedFilter.setWaitingForCommandLoadUrl(true);
- 
--            int reactTag = RNCWebViewWrapper.getReactTagFromWebView(view);
--            UIManagerHelper.getEventDispatcherForReactTag((ReactContext) view.getContext(), reactTag).dispatchEvent(new TopShouldStartLoadWithRequestEvent(
--                    reactTag,
--                    createWebViewEvent(view, url)));
-+            dispatchShouldStartLoadWithRequestEvent(view, url, isMainFrame);
-             return true;
-         }
-     }
- 
-+    protected void dispatchShouldStartLoadWithRequestEvent(WebView view, String url, boolean isMainFrame) {
-+        int reactTag = RNCWebViewWrapper.getReactTagFromWebView(view);
-+        final WritableMap event = createWebViewEvent(view, url);
-+        event.putBoolean("isTopFrame", isMainFrame);
-+        UIManagerHelper.getEventDispatcherForReactTag((ReactContext) view.getContext(), reactTag).dispatchEvent(new TopShouldStartLoadWithRequestEvent(
-+                reactTag,
-+                event));
-+    }
-+
-     @TargetApi(Build.VERSION_CODES.N)
+@@ -143,7 +155,7 @@ public class RNCWebViewClient extends WebViewClient {
      @Override
      public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
          final String url = request.getUrl().toString();
@@ -337,7 +108,7 @@ index 0287e1c..cf6ce1a 100644
      }
  
      @Override
-@@ -167,7 +290,12 @@ public class RNCWebViewClient extends WebViewClient {
+@@ -167,7 +179,12 @@ public class RNCWebViewClient extends WebViewClient {
          // Cancel request after obtaining top-level URL.
          // If request is cancelled before obtaining top-level URL, undesired behavior may occur.
          // Undesired behavior: Return value of WebView.getUrl() may be the current URL instead of the failing URL.
@@ -352,7 +123,7 @@ index 0287e1c..cf6ce1a 100644
          int code = error.getPrimaryError();
          String description = "";
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
-index f83033b..e1a7b52 100644
+index f83033b..4d546d2 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
 @@ -563,6 +563,10 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
@@ -366,99 +137,38 @@ index f83033b..e1a7b52 100644
      fun setAndroidLayerType(viewWrapper: RNCWebViewWrapper, layerTypeString: String?) {
          val view = viewWrapper.webView
          val layerType = when (layerTypeString) {
-@@ -651,6 +655,11 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
-       }
-     }
- 
-+    fun setMessagingAllowedOrigins(viewWrapper: RNCWebViewWrapper, value: ReadableArray?) {
-+        val origins = value?.toArrayList()?.filterIsInstance<String>()?.toSet()
-+        viewWrapper.webView.setMessagingAllowedOrigins(origins)
-+    }
-+
-     fun setMenuCustomItems(viewWrapper: RNCWebViewWrapper, value: ReadableArray?) {
-         val view = viewWrapper.webView
-         when (value) {
-@@ -659,6 +668,12 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
-         }
-     }
- 
-+    fun setAllowedMainFrameOrigins(viewWrapper: RNCWebViewWrapper, value: ReadableArray?) {
-+        viewWrapper.webView.setAllowedMainFrameOrigins(
-+            value?.toArrayList()?.mapNotNull { it as? String }
-+        )
-+    }
-+
-     fun setNestedScrollEnabled(viewWrapper: RNCWebViewWrapper, value: Boolean) {
-         val view = viewWrapper.webView
-         view.nestedScrollEnabled = value
 diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 4709e28..de5bed4 100644
+index 4709e28..723fcc9 100644
 --- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -88,6 +88,17 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+@@ -88,6 +88,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
          mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
      }
  
 +    @ReactProp(name = "allowsUnsecureHttps")
 +    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
 +        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
-+    }
-+
-+    @Override
-+    @ReactProp(name = "allowedMainFrameOrigins")
-+    public void setAllowedMainFrameOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
-+        mRNCWebViewManagerImpl.setAllowedMainFrameOrigins(view, value);
 +    }
 +
      @Override
      @ReactProp(name = "allowsProtectedMedia")
      public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
-@@ -236,6 +247,12 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
-         mRNCWebViewManagerImpl.setMessagingEnabled(view, value);
-     }
- 
-+    @Override
-+    @ReactProp(name = "messagingAllowedOrigins")
-+    public void setMessagingAllowedOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
-+        mRNCWebViewManagerImpl.setMessagingAllowedOrigins(view, value);
-+    }
-+
-     @Override
-     @ReactProp(name = "messagingModuleName")
-     public void setMessagingModuleName(RNCWebViewWrapper view, @Nullable String value) {
 diff --git a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 974337f..63e2fc7 100644
+index 974337f..f721441 100644
 --- a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -67,6 +67,16 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
+@@ -67,6 +67,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
          mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
      }
  
 +    @ReactProp(name = "allowsUnsecureHttps")
 +    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
 +        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
-+    }
-+
-+    @ReactProp(name = "allowedMainFrameOrigins")
-+    public void setAllowedMainFrameOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
-+        mRNCWebViewManagerImpl.setAllowedMainFrameOrigins(view, value);
 +    }
 +
      @ReactProp(name = "allowsProtectedMedia")
      public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
          mRNCWebViewManagerImpl.setAllowsProtectedMedia(view, value);
-@@ -184,6 +194,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
-         mRNCWebViewManagerImpl.setMessagingEnabled(view, value);
-     }
- 
-+    @ReactProp(name = "messagingAllowedOrigins")
-+    public void setMessagingAllowedOrigins(RNCWebViewWrapper view, @Nullable ReadableArray value) {
-+        mRNCWebViewManagerImpl.setMessagingAllowedOrigins(view, value);
-+    }
-+
-     @ReactProp(name = "menuItems")
-     public void setMenuCustomItems(RNCWebViewWrapper view, @Nullable ReadableArray items) {
-         mRNCWebViewManagerImpl.setMenuCustomItems(view, items);
 diff --git a/apple/RNCWebView.mm b/apple/RNCWebView.mm
 index c0816b6..476c545 100644
 --- a/apple/RNCWebView.mm
@@ -486,19 +196,20 @@ index 1f6bbfd..c854638 100644
  @property (nonatomic, assign) BOOL bounces;
  @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
 diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
-index 7f5c24d..fd07cb3 100644
+index 7f5c24d..c257917 100644
 --- a/apple/RNCWebViewImpl.m
 +++ b/apple/RNCWebViewImpl.m
-@@ -786,6 +786,8 @@ - (void)userContentController:(WKUserContentController *)userContentController
+@@ -786,6 +786,9 @@ - (void)userContentController:(WKUserContentController *)userContentController
        NSMutableDictionary<NSString *, id> *event = [self baseEvent];
        [event addEntriesFromDictionary: @{@"data": message.body}];
        [event addEntriesFromDictionary: @{@"url": message.frameInfo.request.URL.absoluteString}];
-+      // Ledger Live patch (LIVE-39616): whether the sender is the main frame.
++      // Ledger Live patch (LIVE-39616): whether the sender is the main frame. Remove once
++      // react-native-webview forwards isMainFrame upstream.
 +      [event addEntriesFromDictionary: @{@"isMainFrame": @(message.frameInfo.isMainFrame)}];
        _onMessage(event);
      }
    }
-@@ -1161,6 +1163,12 @@ - (void)                    webView:(WKWebView *)webView
+@@ -1161,6 +1164,12 @@ - (void)                    webView:(WKWebView *)webView
      completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
      return;
    }
@@ -511,14 +222,15 @@ index 7f5c24d..fd07cb3 100644
    if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
      SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
      if (localCertificate != nil) {
-@@ -1345,8 +1353,12 @@ - (void)                  webView:(WKWebView *)webView
+@@ -1345,8 +1354,13 @@ - (void)                  webView:(WKWebView *)webView
  
      WKNavigationType navigationType = navigationAction.navigationType;
      NSURLRequest *request = navigationAction.request;
 -    BOOL isTopFrame = [request.URL isEqual:request.mainDocumentURL];
      BOOL hasTargetFrame = navigationAction.targetFrame != nil;
-+    // Ledger patch (LIVE-39616): use the target frame when WebKit provides it; comparing the
++    // Ledger Live patch (LIVE-39616): use the target frame when WebKit provides it; comparing the
 +    // request URL with mainDocumentURL mislabels an iframe that loads the top document URL.
++    // Remove once react-native-webview uses targetFrame.isMainFrame upstream.
 +    BOOL isTopFrame = hasTargetFrame
 +      ? navigationAction.targetFrame.isMainFrame
 +      : [request.URL isEqual:request.mainDocumentURL];
@@ -538,7 +250,7 @@ index f8f375f..a6103fc 100644
  RCT_EXPORT_VIEW_PROPERTY(mediaPlaybackRequiresUserAction, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
 diff --git a/lib/WebViewTypes.d.ts b/lib/WebViewTypes.d.ts
-index 998cc88..5871692 100644
+index 998cc88..9f0233f 100644
 --- a/lib/WebViewTypes.d.ts
 +++ b/lib/WebViewTypes.d.ts
 @@ -68,6 +68,10 @@ export interface FileDownload {
@@ -576,7 +288,7 @@ index 998cc88..5871692 100644
      /**
       * Function that is invoked when the WebKit WebView content process gets terminated.
       * @platform macos
-@@ -893,6 +907,26 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
+@@ -893,6 +907,11 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
       * Sets ability to open fullscreen videos on Android devices.
       */
      allowsFullscreenVideo?: boolean;
@@ -585,72 +297,20 @@ index 998cc88..5871692 100644
 +     * @platform android
 +     */
 +    allowsUnsecureHttps?: boolean;
-+    /**
-+     * Android only. When set, a main-frame navigation or request (POST and loadUrl included) to an
-+     * http(s) origin matching no entry, or to any other scheme, is cancelled natively and
-+     * synchronously. onShouldStartLoadWithRequest is still notified of a cancelled navigation.
-+     * Entries: exact origin ("https://example.com"), any host ("https://*") or subdomains
-+     * ("https://*.example.com").
-+     * @platform android
-+     */
-+    allowedMainFrameOrigins?: readonly string[];
-+    /**
-+     * Origin rules (androidx.webkit `addWebMessageListener` format) of the frames that get
-+     * `window.ReactNativeWebView`. Any origin when unset, none when empty.
-+     * @platform android
-+     */
-+    messagingAllowedOrigins?: string[];
      /**
       * Configuring Dark Theme
       *
 diff --git a/src/RNCWebViewNativeComponent.ts b/src/RNCWebViewNativeComponent.ts
-index 7f4e6c4..67b66b1 100644
+index 7f4e6c4..0e33237 100644
 --- a/src/RNCWebViewNativeComponent.ts
 +++ b/src/RNCWebViewNativeComponent.ts
-@@ -29,6 +29,8 @@ export type WebViewMessageEvent = Readonly<{
+@@ -29,6 +29,9 @@ export type WebViewMessageEvent = Readonly<{
    canGoForward: boolean;
    lockIdentifier: Double;
    data: string;
-+  // Ledger Live patch (LIVE-39616): whether the sender is the main frame.
++  // Ledger Live patch (LIVE-39616): whether the sender is the main frame. Remove once
++  // react-native-webview forwards isMainFrame upstream.
 +  isMainFrame: boolean;
  }>;
  export type WebViewOpenWindowEvent = Readonly<{
    targetUrl: string;
-@@ -147,6 +149,7 @@ export interface NativeProps extends ViewProps {
-   allowFileAccess?: boolean;
-   allowsProtectedMedia?: boolean;
-   allowsFullscreenVideo?: boolean;
-+  allowedMainFrameOrigins?: ReadonlyArray<string>;
-   androidLayerType?: WithDefault<'none' | 'software' | 'hardware', 'none'>;
-   cacheMode?: WithDefault<
-     | 'LOAD_DEFAULT'
-@@ -161,6 +164,8 @@ export interface NativeProps extends ViewProps {
-   geolocationEnabled?: boolean;
-   lackPermissionToDownloadMessage?: string;
-   messagingModuleName: string;
-+  // Ledger Live patch (LIVE-39616): origin rules of the frames the bridge is exposed to.
-+  messagingAllowedOrigins?: ReadonlyArray<string>;
-   minimumFontSize?: Int32;
-   mixedContentMode?: WithDefault<'never' | 'always' | 'compatibility', 'never'>;
-   nestedScrollEnabled?: boolean;
-diff --git a/src/WebViewTypes.ts b/src/WebViewTypes.ts
-index eca8141..4240de5 100644
---- a/src/WebViewTypes.ts
-+++ b/src/WebViewTypes.ts
-@@ -1093,6 +1093,16 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
-    */
-   allowsFullscreenVideo?: boolean;
- 
-+  /**
-+   * Android only. When set, a main-frame navigation or request (POST and loadUrl included) to an
-+   * http(s) origin matching no entry, or to any other scheme, is cancelled natively and
-+   * synchronously. onShouldStartLoadWithRequest is still notified of a cancelled navigation.
-+   * Entries: exact origin ("https://example.com"), any host ("https://*") or subdomains
-+   * ("https://*.example.com").
-+   * @platform android
-+   */
-+  allowedMainFrameOrigins?: readonly string[];
-+
-   /**
-    * Configuring Dark Theme
-    *

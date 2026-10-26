@@ -49,12 +49,7 @@ import { WebviewAPI, WebviewProps } from "./types";
 import { BridgeSessionClosed } from "@ledgerhq/live-common/errors";
 import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import { useWebviewState } from "./helpers";
-import {
-  acceptWebviewMessage,
-  getMessagingAllowedOrigins,
-  useBridgeAllowedDomains,
-  useWebviewBridgeSession,
-} from "./bridge";
+import { acceptWebviewMessage, useBridgeAllowedDomains, useWebviewBridgeSession } from "./bridge";
 import { closePlatformExchange } from "./closePlatformExchange";
 import { closeLiveAppFlows } from "./closeLiveAppFlows";
 import { getTrackingRouteLiveAppSource } from "./analytics";
@@ -107,6 +102,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       onShouldStartLoadWithRequest,
       isBlockedByDomainCheck,
+      retryAfterDomainCheckBlock,
       mainFrameUrl,
     } = useWebviewState(
       {
@@ -153,10 +149,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl, closeLiveAppFlowsAndDrawers);
     const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
-    const messagingAllowedOrigins = useMemo(
-      () => getMessagingAllowedOrigins(allowedDomains),
-      [allowedDomains],
-    );
 
     const requestAccount = useCallback(
       ({
@@ -589,7 +581,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
 
     if (isBlockedByDomainCheck) {
-      return <NetworkError handleTryAgain={() => {}} />;
+      return <NetworkError handleTryAgain={retryAfterDomainCheckBlock} />;
     }
 
     return (
@@ -605,13 +597,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         originWhitelist={
           manifestDomainCheckEnabled ? MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST : manifest.domains
         }
-        allowedMainFrameOrigins={manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined}
         onShouldStartLoadWithRequest={
           manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
         }
         allowsInlineMediaPlayback
         onMessage={handleMessage}
-        messagingAllowedOrigins={messagingAllowedOrigins}
         onError={handleError}
         onOpenWindow={onOpenWindow}
         overScrollMode="content"

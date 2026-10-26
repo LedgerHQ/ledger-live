@@ -4,6 +4,7 @@ import type * as WebViewShared from "react-native-webview/lib/WebViewShared";
 import {
   MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST,
   isExternallyOpenableUrl,
+  isMainFrameUrlBlocked,
   openWindowExternally,
   shouldStartLoadWithManifestDomains,
 } from "./manifestDomainGuard";
@@ -208,5 +209,24 @@ describe("isExternallyOpenableUrl", () => {
     expect(isExternallyOpenableUrl("ledgerlive://x")).toBe(false);
     expect(isExternallyOpenableUrl("HTTP://a.com")).toBe(false);
     expect(isExternallyOpenableUrl("mailto:a@b.c")).toBe(false);
+  });
+});
+
+describe("isMainFrameUrlBlocked", () => {
+  it.each(["https://evil.com/", "http://app.example.com/", "https://app.example.com.evil.com/"])(
+    "blocks %s",
+    url => {
+      expect(isMainFrameUrlBlocked(url, DOMAINS)).toBe(true);
+    },
+  );
+
+  it.each([
+    "https://app.example.com/swap",
+    "https://pay.partner.com/",
+    "about:blank",
+    "data:text/html,hi",
+    "",
+  ])("lets %s through", url => {
+    expect(isMainFrameUrlBlocked(url, DOMAINS)).toBe(false);
   });
 });

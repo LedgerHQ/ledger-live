@@ -43,11 +43,11 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const {
       onMessage,
-      messagingAllowedOrigins,
       onLoadError,
       onOpenWindow,
       onShouldStartLoadWithRequest,
       isBlockedByDomainCheck,
+      retryAfterDomainCheckBlock,
       webviewProps,
       webviewRef,
       webviewCacheOptions,
@@ -99,7 +99,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     }
 
     if (isBlockedByDomainCheck) {
-      return <NetworkError handleTryAgain={() => {}} />;
+      return <NetworkError handleTryAgain={retryAfterDomainCheckBlock} />;
     }
 
     return (
@@ -116,15 +116,11 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           originWhitelist={
             manifestDomainCheckEnabled ? MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST : manifest.domains
           }
-          allowedMainFrameOrigins={
-            manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined
-          }
           onShouldStartLoadWithRequest={
             manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
           }
           allowsInlineMediaPlayback
           onMessage={onMessage}
-          messagingAllowedOrigins={messagingAllowedOrigins}
           onError={(event: { nativeEvent?: { description?: string; code?: number } }) => {
             if (Config.DETOX) {
               const desc = event?.nativeEvent?.description;

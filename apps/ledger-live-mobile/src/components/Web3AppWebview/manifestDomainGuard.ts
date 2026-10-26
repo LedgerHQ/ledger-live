@@ -58,6 +58,17 @@ export function shouldStartLoadWithManifestDomains(
   return isUrlAllowedByManifestDomains(request.url, domains);
 }
 
+/**
+ * A main frame that committed an http(s) URL outside manifest.domains. Android does not ask
+ * onShouldStartLoadWithRequest for POST navigations, and lets a navigation through when JS does
+ * not answer in time: such a main frame is only detected once it starts loading.
+ */
+export function isMainFrameUrlBlocked(url: string, domains: string[]): boolean {
+  const protocol = getProtocol(url);
+  if (protocol !== "https:" && protocol !== "http:") return false;
+  return !isUrlAllowedByManifestDomains(url, domains);
+}
+
 export function openWindowExternally(targetUrl: string, restrictToSafeSchemes: boolean): void {
   if (restrictToSafeSchemes && !isExternallyOpenableUrl(targetUrl)) return;
   // Don't use canOpenURL as we cannot check unknown apps on the phone

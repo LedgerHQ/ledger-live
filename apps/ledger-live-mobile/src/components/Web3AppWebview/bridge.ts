@@ -76,31 +76,6 @@ export function acceptWebviewMessage(
 }
 
 /**
- * Android `addWebMessageListener` origin rules for the manifest domains: the bridge object is
- * only injected in frames on those origins. A scheme-wide domain (`https://`, `https://*`) has no
- * equivalent rule, so it falls back to any origin, still checked in JS.
- */
-export function getMessagingAllowedOrigins(domains: string[] | undefined): string[] | undefined {
-  if (domains === undefined) return undefined;
-  const rules = new Set<string>();
-  for (const domain of domains) {
-    // The host is a name, an IPv4 address or a bracketed IPv6 address ("http://[::1]:3000").
-    const match = /^(https?):\/\/(\*\.|\*)?(\[[\da-f:.]+\]|[^/*:[\]]*)(:\d+)?$/i.exec(
-      domain.trim(),
-    );
-    if (!match) continue;
-    const [, scheme, wildcard, host, port = ""] = match;
-    if (!host) {
-      if (wildcard !== "*." && port === "") return undefined;
-      continue;
-    }
-    if (wildcard === "*" || (wildcard && host.startsWith("["))) continue;
-    rules.add(`${scheme}://${wildcard ?? ""}${host}${port}`);
-  }
-  return [...rules];
-}
-
-/**
  * The bridge session of a Live App WebView. When the main frame moves to another origin,
  * `onReset` closes the flows the Live App opened.
  */

@@ -93,10 +93,6 @@ describe("useWebView bridge messages", () => {
   });
 
   describe("with the domain check on", () => {
-    it("restricts the Android listener to the manifest origins", () => {
-      expect(renderWebView(true).messagingAllowedOrigins).toEqual(["https://app.example.com"]);
-    });
-
     it("answers the main frame on a manifest origin", () => {
       const { onMessage } = renderWebView(true);
 
@@ -144,10 +140,6 @@ describe("useWebView bridge messages", () => {
   });
 
   describe("with the domain check off", () => {
-    it("exposes the bridge to any origin", () => {
-      expect(renderWebView(false).messagingAllowedOrigins).toBeUndefined();
-    });
-
     it("answers a frame the platform cannot tell, but never a subframe", () => {
       const { onMessage } = renderWebView(false);
 

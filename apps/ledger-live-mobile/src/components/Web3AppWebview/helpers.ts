@@ -75,15 +75,11 @@ import { AccountPublicKeyUnavailable } from "@ledgerhq/live-common/errors";
 import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import {
   isLedgerDeeplink,
+  isMainFrameUrlBlocked,
   openWindowExternally,
   shouldStartLoadWithManifestDomains,
 } from "./manifestDomainGuard";
-import {
-  acceptWebviewMessage,
-  getMessagingAllowedOrigins,
-  useBridgeAllowedDomains,
-  useWebviewBridgeSession,
-} from "./bridge";
+import { acceptWebviewMessage, useBridgeAllowedDomains, useWebviewBridgeSession } from "./bridge";
 export function useWebView(
   {
     manifest,
@@ -133,6 +129,7 @@ export function useWebView(
     webviewRef,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,
+    retryAfterDomainCheckBlock,
     mainFrameUrl,
   } = useWebviewState(
     {
@@ -217,10 +214,6 @@ export function useWebView(
     bridgeSessionRef.current = bridge.session;
   }, [bridge.session]);
   const allowedDomains = useBridgeAllowedDomains(manifest.domains, manifestDomainCheckEnabled);
-  const messagingAllowedOrigins = useMemo(
-    () => getMessagingAllowedOrigins(allowedDomains),
-    [allowedDomains],
-  );
 
   const walletState = useSelector(walletSelector);
 
@@ -363,10 +356,10 @@ export function useWebView(
   return {
     onLoadError,
     onMessage,
-    messagingAllowedOrigins,
     onOpenWindow,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,
+    retryAfterDomainCheckBlock,
     webviewCacheOptions,
     webviewProps,
     webviewRef,
@@ -423,7 +416,11 @@ export function useWebviewState(
     return "";
   }, [initialURL, manifest.domains, manifest.url, manifestDomainCheckEnabled]);
 
-  const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "";
+  const isInitialUrlBlocked = manifestDomainCheckEnabled && webviewSrc === "";
+  // A main frame committed outside manifest.domains: the WebView is unmounted until a retry.
+  const [blockedMainFrameUrl, setBlockedMainFrameUrl] = useState<string>();
+  const isBlockedByDomainCheck = isInitialUrlBlocked || blockedMainFrameUrl !== undefined;
+  const retryAfterDomainCheckBlock = useCallback(() => setBlockedMainFrameUrl(undefined), []);
 
   useEffect(() => {
     setURI(webviewSrc);
@@ -434,7 +431,7 @@ export function useWebviewState(
   // When blocked, immediately surface isAppUnavailable without waiting for WebView load
   // events (which would hang on an empty URI).
   useEffect(() => {
-    if (isBlockedByDomainCheck) {
+    if (isInitialUrlBlocked) {
       setState(s => ({ ...s, loading: false, isAppUnavailable: true }));
       reportDomainCheckViolation({
         manifest,
@@ -444,7 +441,7 @@ export function useWebviewState(
         outcome: "blocked",
       });
     }
-  }, [initialURL, isBlockedByDomainCheck, manifest]);
+  }, [initialURL, isInitialUrlBlocked, manifest]);
   const { theme } = useTheme();
 
   const source = useMemo(
@@ -515,16 +512,38 @@ export function useWebviewState(
     }));
   }, []);
 
-  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(({ nativeEvent }) => {
-    setState(oldState => ({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-      isAppUnavailable: oldState.isAppUnavailable,
-    }));
-  }, []);
+  const blockMainFrameIfDisallowed = useCallback(
+    (url: string) => {
+      if (!manifestDomainCheckEnabled || !isMainFrameUrlBlocked(url, manifest.domains ?? [])) {
+        return;
+      }
+      webviewRef.current?.stopLoading();
+      setBlockedMainFrameUrl(url);
+      reportDomainCheckViolation({
+        manifest,
+        url,
+        frameType: "main_frame",
+        kind: "navigation",
+        outcome: "blocked",
+      });
+    },
+    [manifest, manifestDomainCheckEnabled],
+  );
+
+  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(
+    ({ nativeEvent }) => {
+      blockMainFrameIfDisallowed(nativeEvent.url);
+      setState(oldState => ({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+        isAppUnavailable: oldState.isAppUnavailable,
+      }));
+    },
+    [blockMainFrameIfDisallowed],
+  );
 
   const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(({ nativeEvent }) => {
     setState(oldState => ({
@@ -539,6 +558,7 @@ export function useWebviewState(
 
   const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
     event => {
+      blockMainFrameIfDisallowed(event.url);
       setState(oldState => ({
         title: event.title,
         url: event.url,
@@ -548,7 +568,7 @@ export function useWebviewState(
         isAppUnavailable: oldState.isAppUnavailable,
       }));
     },
-    [],
+    [blockMainFrameIfDisallowed],
   );
 
   useEffect(() => {
@@ -602,6 +622,8 @@ export function useWebviewState(
     webviewRef,
     onShouldStartLoadWithRequest,
     isBlockedByDomainCheck,
+    /** Clears a block on a main frame committed outside manifest.domains: the WebView reloads */
+    retryAfterDomainCheckBlock,
     /** Main-frame URL, updated from load start: the bridge session follows its origin */
     mainFrameUrl: state.url,
   };

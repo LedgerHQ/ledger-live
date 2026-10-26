@@ -10,6 +10,7 @@ import { act } from "@testing-library/react-native";
 import { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import { Linking } from "react-native";
 import type { ShouldStartLoadRequest } from "react-native-webview/lib/WebViewTypes";
+import type { WebViewProps } from "react-native-webview";
 import { reportDomainCheckViolation, reportIfStrictlyDisallowed } from "./domainCheckReport";
 import { closePlatformExchange } from "./closePlatformExchange";
 
@@ -726,5 +727,109 @@ describe("useUiHook - exchange device of a bridge session", () => {
 
     expect(lastNavigationParams().params.device).toBeUndefined();
     expect(closePlatformExchange).not.toHaveBeenCalled();
+  });
+});
+
+const loadStart = (url: string) =>
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  ({
+    nativeEvent: { url, title: "", loading: true, canGoBack: false, canGoForward: false },
+  }) as unknown as Parameters<NonNullable<WebViewProps["onLoadStart"]>>[0];
+
+describe("useWebviewState - main frame committed outside manifest.domains", () => {
+  const renderWebviewState = (manifestDomainCheckEnabled: boolean) => {
+    const stopLoading = jest.fn();
+    const hook = renderHook(() =>
+      useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled }, null, undefined),
+    );
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    (hook.result.current.webviewRef as { current: unknown }).current = { stopLoading };
+    return { ...hook, stopLoading };
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetInitialURL.mockReturnValue("https://example.com");
+    jest
+      .mocked(isUrlAllowedByManifestDomains)
+      .mockImplementation(
+        jest.requireActual("@ledgerhq/live-common/wallet-api/manifestDomainUtils")
+          .isUrlAllowedByManifestDomains,
+      );
+  });
+
+  afterAll(() => {
+    jest.mocked(isUrlAllowedByManifestDomains).mockImplementation(() => true);
+  });
+
+  it("stops the load, unmounts the WebView and reports the block", () => {
+    const { result, stopLoading } = renderWebviewState(true);
+
+    act(() => {
+      result.current.webviewProps.onLoadStart?.(loadStart("https://evil.com/form"));
+    });
+
+    expect(stopLoading).toHaveBeenCalled();
+    expect(result.current.isBlockedByDomainCheck).toBe(true);
+    expect(reportDomainCheckViolation).toHaveBeenCalledWith({
+      manifest: mockManifest,
+      url: "https://evil.com/form",
+      frameType: "main_frame",
+      kind: "navigation",
+      outcome: "blocked",
+    });
+  });
+
+  it("blocks a main frame reported by a navigation state change", () => {
+    const { result } = renderWebviewState(true);
+
+    act(() => {
+      result.current.webviewProps.onNavigationStateChange?.({
+        url: "https://evil.com/",
+        title: "",
+        loading: false,
+        canGoBack: false,
+        canGoForward: false,
+        lockIdentifier: 0,
+        navigationType: "other",
+      });
+    });
+
+    expect(result.current.isBlockedByDomainCheck).toBe(true);
+  });
+
+  it("mounts the WebView again on retry", () => {
+    const { result } = renderWebviewState(true);
+
+    act(() => {
+      result.current.webviewProps.onLoadStart?.(loadStart("https://evil.com/"));
+    });
+    act(() => {
+      result.current.retryAfterDomainCheckBlock();
+    });
+
+    expect(result.current.isBlockedByDomainCheck).toBe(false);
+  });
+
+  it.each(["https://example.com/next", "about:blank"])("lets %s through", url => {
+    const { result, stopLoading } = renderWebviewState(true);
+
+    act(() => {
+      result.current.webviewProps.onLoadStart?.(loadStart(url));
+    });
+
+    expect(stopLoading).not.toHaveBeenCalled();
+    expect(result.current.isBlockedByDomainCheck).toBe(false);
+  });
+
+  it("blocks nothing while the domain check is off", () => {
+    const { result, stopLoading } = renderWebviewState(false);
+
+    act(() => {
+      result.current.webviewProps.onLoadStart?.(loadStart("https://evil.com/"));
+    });
+
+    expect(stopLoading).not.toHaveBeenCalled();
+    expect(result.current.isBlockedByDomainCheck).toBe(false);
   });
 });

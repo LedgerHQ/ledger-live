@@ -4,7 +4,6 @@ import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSessi
 import {
   acceptWebviewMessage,
   buildOriginBoundMessageScript,
-  getMessagingAllowedOrigins,
   useWebviewBridgeSession,
 } from "./bridge";
 
@@ -123,49 +122,6 @@ describe("acceptWebviewMessage", () => {
 
     expect(accept).toHaveBeenCalledTimes(1);
     expect(accept).toHaveBeenCalledWith("https://evil.com");
-  });
-});
-
-describe("getMessagingAllowedOrigins", () => {
-  it("maps manifest domains to Android web message origin rules", () => {
-    expect(
-      getMessagingAllowedOrigins([
-        "https://app.example.com",
-        "https://*.partner.com",
-        "http://localhost:3000",
-        " https://app.example.com ",
-        "https://app.example.com/path",
-        "ftp://files.example.com",
-      ]),
-    ).toEqual(["https://app.example.com", "https://*.partner.com", "http://localhost:3000"]);
-  });
-
-  it.each([["https://"], ["https://*"], ["http://*"]])(
-    "falls back to any origin for the scheme-wide domain %s",
-    domain => {
-      expect(getMessagingAllowedOrigins(["https://app.example.com", domain])).toBeUndefined();
-    },
-  );
-
-  it("skips a wildcard without a host", () => {
-    expect(getMessagingAllowedOrigins(["https://*.", "https://app.example.com"])).toEqual([
-      "https://app.example.com",
-    ]);
-  });
-
-  it("exposes the bridge to no origin for empty domains", () => {
-    expect(getMessagingAllowedOrigins([])).toEqual([]);
-  });
-
-  it("keeps a bracketed IPv6 host", () => {
-    expect(getMessagingAllowedOrigins(["http://[::1]:3000", "https://[2001:db8::1]"])).toEqual([
-      "http://[::1]:3000",
-      "https://[2001:db8::1]",
-    ]);
-  });
-
-  it("leaves the bridge to any origin when the domain check is off", () => {
-    expect(getMessagingAllowedOrigins(undefined)).toBeUndefined();
   });
 });
 
