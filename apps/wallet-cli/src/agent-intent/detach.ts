@@ -11,8 +11,10 @@ import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
 
 const LISTENER_DIR = "agent-intent-enroll";
 const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
-/** Room for a Secret Service or Keychain unlock prompt before the listener prints its pending line. */
-export const STARTUP_TIMEOUT_MS = 120_000;
+/** How long a `--detach` parent waits for the listener's first line. Past it the parent hands the
+ * listener over to `wait` instead of stopping it: a keychain unlock prompt can hold it longer, and a
+ * listener blocked in a keychain write only sees a stop signal once the write returns. */
+export const STARTUP_TIMEOUT_MS = 30_000;
 const STARTUP_POLL_MS = 100;
 const START_LOCK_MARGIN_MS = 5_000;
 
@@ -163,12 +165,13 @@ export const ErrorLineSchema = z.object({
 });
 
 /** Waits for the child's first NDJSON line in its log. Fails if the child exits (or cannot start)
- * without printing one, and kills it if it prints nothing within the startup timeout. */
+ * without printing one; returns undefined, leaving the child running, if it prints nothing within
+ * the startup timeout. */
 export async function readFirstLogJsonLine(
   child: ChildProcess,
   logPath: string,
   timeoutMs = STARTUP_TIMEOUT_MS,
-): Promise<Record<string, unknown>> {
+): Promise<Record<string, unknown> | undefined> {
   let exited: string | undefined;
   const onExit = (code: number | null, signal: NodeJS.Signals | null) => {
     exited = signal ? `was killed by ${signal}` : `exited with code ${code}`;
@@ -190,13 +193,7 @@ export async function readFirstLogJsonLine(
           `The enrollment listener ${exitedBeforeRead} before printing its first event. See ${logPath}.`,
         );
       }
-      if (Date.now() >= deadline) {
-        child.kill();
-        throw new Error(
-          `The enrollment listener printed no event within ${timeoutMs / 1000}s and was stopped. ` +
-            `See ${logPath}.`,
-        );
-      }
+      if (Date.now() >= deadline) return undefined;
       await sleep(STARTUP_POLL_MS);
     }
   } finally {

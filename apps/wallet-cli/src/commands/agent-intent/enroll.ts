@@ -229,9 +229,11 @@ async function saveSecretKey(
 }
 
 /** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
- * listener's pending line and returns. The child's flags are rebuilt from the parsed values of
- * enroll's own options (minus `detach`, `output`, and those left at their default), so options added
- * to `enroll` later carry over without argv parsing. */
+ * listener's pending line and returns. A listener with no line by the startup timeout (e.g. at a
+ * keychain unlock prompt) keeps running and is reported as `enrollment-waiting`, for `wait` to
+ * follow. The child's flags are rebuilt from the parsed values of enroll's own options (minus
+ * `detach`, `output`, and those left at their default), so options added to `enroll` later carry
+ * over without argv parsing. */
 async function startDetachedEnroll(
   flags: { profile: string; [flag: string]: unknown },
   out: CommandOutput,
@@ -278,6 +280,13 @@ async function startDetachedEnroll(
       for (const line of readLogLinesBeforeFirstJson(logPath)) writeStderr(`${line}\n`);
     }
   });
+  if (first === undefined) {
+    // Unreachable in practice: a child that never started reports its spawn error first.
+    if (child.pid === undefined)
+      throw new Error(`The enrollment listener did not start. See ${logPath}.`);
+    out.agentIntentEnrollmentWaiting({ profileId, listenerPid: child.pid, logPath });
+    return;
+  }
   const pending = PendingLineSchema.safeParse(first);
   if (pending.success) {
     const { enrollmentUrl, fingerprint, expiresAt, keyStore } = pending.data;

@@ -253,14 +253,15 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     );
   });
 
-  it("stops a child that prints nothing before the startup timeout", async () => {
+  it("returns undefined and leaves the child running when it prints nothing before the startup timeout", async () => {
     const { logPath } = enrollListenerPaths("my-agent");
     const child = startChild("setInterval(() => {}, 1000);", logPath);
-    const exited = new Promise(resolve => child.once("exit", resolve));
 
-    await expect(readFirstLogJsonLine(child, logPath, 300)).rejects.toThrow(
-      /printed no event within 0.3s and was stopped/,
-    );
-    await exited;
+    expect(await readFirstLogJsonLine(child, logPath, 300)).toBeUndefined();
+    await Bun.sleep(100); // room for a stop signal to land
+    expect(child.killed).toBe(false);
+    expect(child.exitCode).toBeNull();
+    expect(child.signalCode).toBeNull();
+    expect(() => process.kill(child.pid!, 0)).not.toThrow();
   });
 });

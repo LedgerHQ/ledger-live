@@ -45,8 +45,7 @@ afterAll(() => {
 });
 
 const { default: waitCommand, pollEnrollment } = await import("./wait");
-const { enrollListenerPaths, STARTUP_TIMEOUT_MS, withEnrollListenerLock } =
-  await import("../../agent-intent/detach");
+const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
 
 // Resolved per test: XDG_STATE_HOME only points at the temp dir once `beforeAll` has run.
 let logPath: string;
@@ -393,11 +392,11 @@ describe("agent-intent wait", () => {
     expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` again");
   });
 
-  it("keeps waiting for a live listener still starting up to a minute past the parent's startup timeout", async () => {
+  it("keeps waiting for a live listener still starting after minutes, e.g. at a keychain prompt", async () => {
     profileReads = [undefined];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const takenAt = (Date.now() - STARTUP_TIMEOUT_MS - 59_000) / 1000;
+      const takenAt = (Date.now() - 4 * 60_000) / 1000;
       utimesSync(lockPath, takenAt, takenAt);
       const { code, line } = await pollWaitJson(stdout, 50);
 
@@ -406,11 +405,11 @@ describe("agent-intent wait", () => {
     });
   });
 
-  it("fails with listener_stuck when a live listener has not saved its profile in time", async () => {
+  it("fails with listener_stuck when a live listener has not saved its profile within 10 minutes", async () => {
     profileReads = [undefined];
 
     await withEnrollListenerLock("test-agent", async () => {
-      const takenAt = (Date.now() - 3 * 60_000 - 1_000) / 1000;
+      const takenAt = (Date.now() - 10 * 60_000 - 1_000) / 1000;
       utimesSync(lockPath, takenAt, takenAt);
       const { code, line } = await pollWaitJson(stdout);
 
@@ -419,7 +418,7 @@ describe("agent-intent wait", () => {
         error: {
           code: "listener_stuck",
           message: expect.stringContaining(
-            `listener (pid ${process.pid}) has not saved it within 3 minutes`,
+            `listener (pid ${process.pid}) has not saved it within 10 minutes`,
           ),
         },
       });

@@ -369,20 +369,23 @@ leaving the page after Review closes the relay channel and the listener ends (`l
 
 **Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
 --detach` starts the same listener in the background, prints its `enrollment-pending` line plus
-`listenerPid` and `logPath`, and exits: usually within seconds, up to 2 minutes when the human must
-unlock the OS keychain, so give that tool call a timeout of at least 3 minutes (Claude Code Bash
-`timeout` ≥ 180000). Then poll `agent-intent wait --profile <id> [--timeout 25s]` (also with the
-sandbox bypass), which reads local state only and reports one of:
+`listenerPid` and `logPath`, and exits within 30 seconds. If the listener has no link by then
+(still starting, e.g. at an OS keychain unlock prompt the human must answer), it prints
+`enrollment-waiting` instead (`profileId`, `listenerPid`, `logPath`, no link yet), exit 0, and leaves
+the listener running: tell the human to answer the prompt. Either way, poll
+`agent-intent wait --profile <id> [--timeout 25s]` (also with the sandbox bypass), which reads local
+state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
 - `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` and `fingerprint` once the profile
   is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait`
   again.
 - an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
-  profile within 3 minutes), `enrollment_expired` or `profile_not_found` (no profile and no
+  profile within 10 minutes), `enrollment_expired` or `profile_not_found` (no profile and no
   listener), exit 1 — the enrollment is lost: start a fresh one with a new `--profile` id.
 
-If `enroll --detach` timed out in your tool before printing its line, hand the human the
-`enrollmentUrl`, `fingerprint` and `expiresAt` from `wait` once it reports them.
+If `enroll --detach` printed `enrollment-waiting` (or timed out in your tool before printing its
+line), hand the human the `enrollmentUrl`, `fingerprint` and `expiresAt` from `wait` once it reports
+them.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate

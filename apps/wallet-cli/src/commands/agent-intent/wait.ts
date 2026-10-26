@@ -16,7 +16,6 @@ import {
   ErrorLineSchema,
   PendingLineSchema,
   readLogJsonLines,
-  STARTUP_TIMEOUT_MS,
 } from "../../agent-intent/detach";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
@@ -25,9 +24,11 @@ const POLL_INTERVAL_MS = 2_000;
 /** The SDK fails the relay at the link's expiry, so a pid still in the lock this long after it is
  * one an unclean exit (SIGKILL, SIGHUP) left behind, which the OS may have reused. */
 const LISTENER_EXPIRY_GRACE_MS = 60_000;
-/** A `--detach` parent stops a listener with no pending line after STARTUP_TIMEOUT_MS, so one still
- * holding its lock a minute later, profile unsaved, outlived its parent or is a reused pid. */
-const LISTENER_STARTING_MAX_MS = STARTUP_TIMEOUT_MS + 60_000;
+/** How long a live listener may hold its lock without saving its profile. A human may answer a
+ * keychain unlock prompt late; past this, the listener is reported `listener_stuck`: stuck, or its
+ * pid was reused. */
+// todo: fixed 10 min cap, store the listener's start/expiry if prompts take longer
+const LISTENER_STARTING_MAX_MS = 10 * 60_000;
 
 /** The message of the last error envelope the listener logged, if any. */
 function lastLoggedError(logPath: string): string | undefined {
@@ -66,10 +67,9 @@ function lockAgeMs(lockPath: string): number {
 }
 
 /** Returns how long to keep polling for a profile not saved yet, or reports `enrollment-waiting`
- * at the deadline. A live listener that has not saved its profile yet (keypair, keychain unlock)
- * is starting, for at most LISTENER_STARTING_MAX_MS, then stuck; with none, the profile is not
- * found. A plain `enroll` whose human answers a keychain prompt later than that is accepted as stuck
- * too. */
+ * at the deadline. A live listener that has not saved its profile yet (keypair, keychain unlock
+ * prompt) is starting, for at most LISTENER_STARTING_MAX_MS, then stuck; with none, the profile is
+ * not found. A human who answers a keychain prompt later than that is accepted as stuck too. */
 function checkMissingProfile(
   out: CommandOutput,
   profileId: string,

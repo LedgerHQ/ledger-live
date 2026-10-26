@@ -59,7 +59,7 @@ let deleteKeyFileSucceeds: boolean;
 
 type FakeChild = { pid: number; kill: () => void };
 let spawnedCommands: string[][];
-let firstLogLine: () => Promise<Record<string, unknown>>;
+let firstLogLine: () => Promise<Record<string, unknown> | undefined>;
 let childKilled: boolean;
 
 const savedSecretKeys = new Set<string>();
@@ -1133,6 +1133,40 @@ describe("agent-intent enroll --detach", () => {
     expect(text).toContain("background listener (pid 4242");
     expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent`");
     expect(text).not.toContain("keep this process running");
+  });
+
+  it("hands a listener with no first line by the startup timeout over to wait, without stopping it", async () => {
+    firstLogLine = async () => undefined;
+
+    await runEnroll({ detach: true, output: "json" });
+
+    const lines = stdout
+      .join("")
+      .trim()
+      .split("\n")
+      .map(l => JSON.parse(l));
+    expect(lines).toEqual([
+      {
+        type: "enrollment-waiting",
+        command: "agent-intent enroll",
+        network: "all",
+        profileId: "test-agent",
+        listenerPid: 4242,
+        logPath: enrollListenerPaths("test-agent").logPath,
+      },
+    ]);
+    expect(childKilled).toBe(false);
+  });
+
+  it("tells the human a listener still starting may be waiting for a keychain unlock prompt", async () => {
+    firstLogLine = async () => undefined;
+
+    await runEnroll({ detach: true });
+
+    const text = stdout.join("");
+    expect(text).toContain("is not saved yet");
+    expect(text).toContain("OS keychain unlock prompt");
+    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` again");
   });
 
   it("keeps the code of the listener's error in its own json error envelope", async () => {
