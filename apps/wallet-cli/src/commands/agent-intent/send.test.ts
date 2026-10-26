@@ -622,17 +622,19 @@ describe("agent-intent send", () => {
       expect(submittedIntents).toEqual([]);
     });
 
-    it("asks for --token when it can't read the --account's tokens", async () => {
+    it("falls back to CAL, saying why on stderr, when it can't read the --account's tokens", async () => {
       accountTokensError = new Error("RPC unreachable");
 
-      await expect(
-        runSend({ from: undefined, account: "ethereum-1", amount: "25 USDC" }),
-      ).rejects.toThrow(
-        'Couldn\'t read the tokens account "ethereum-1" holds (RPC unreachable). Pass the USDC ' +
-          "token's address with --token.",
+      await runSend({ from: undefined, account: "ethereum-1", amount: "25 USDC" });
+
+      expect(submittedIntents).toEqual([
+        expect.objectContaining({ asset: { type: "erc20", assetReference: USDC } }),
+      ]);
+      expect(tickerLookups).toEqual(["ethereum USDC"]);
+      expect(stderrLines()).toContain(
+        'Couldn\'t read the tokens account "ethereum-1" holds (RPC unreachable), so USDC is ' +
+          "looked up in the Crypto Assets List instead.",
       );
-      expect(tickerLookups).toEqual([]);
-      expect(submittedIntents).toEqual([]);
     });
 
     it("refuses when the --account holds several tokens with the ticker", async () => {

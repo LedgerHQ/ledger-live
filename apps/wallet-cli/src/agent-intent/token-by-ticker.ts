@@ -47,11 +47,11 @@ async function heldTokens(
     const held = tokens.filter(token => sameTicker(token.ticker, ticker));
     return network === "solana" && held.length > 1 ? await withoutToken2022(held) : held;
   } catch (error) {
-    throw new Error(
-      `Couldn't read the tokens account "${account.label}" holds (${errMessage(error)}). Pass the ` +
-        `${ticker} token's address with --token.`,
-      { cause: error },
+    writeStderr(
+      `Couldn't read the tokens account "${account.label}" holds (${errMessage(error)}), so ` +
+        `${ticker} is looked up in the Crypto Assets List instead.\n`,
     );
+    return [];
   }
 }
 
