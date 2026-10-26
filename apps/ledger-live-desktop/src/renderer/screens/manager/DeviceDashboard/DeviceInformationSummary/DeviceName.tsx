@@ -45,11 +45,11 @@ const DeviceName: React.FC<Props> = ({
 
   const onSuccess = useCallback(
     (deviceName: string) => {
-      track("Page Manager RenamedDevice", { deviceName });
+      track("Page Manager RenamedDevice", { modelId: device.modelId });
       setName(deviceName);
       onRefreshDeviceInfo();
     },
-    [onRefreshDeviceInfo],
+    [device.modelId, onRefreshDeviceInfo],
   );
 
   const openDeviceRename = useCallback(() => {
