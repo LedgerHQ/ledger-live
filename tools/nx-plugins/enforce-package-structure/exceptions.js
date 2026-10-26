@@ -192,9 +192,6 @@ const COMPONENT_EXCEPTIONS = {
     DialogBackgroundToneProvider: componentWaiver("R1"),
     InfoState: componentWaiver("R2"),
   },
-  "shared/ui-queued-bottom-sheet": {
-    QueuedBottomSheet: componentWaiver("R1", "R3"),
-  },
 };
 
 // Files allowed to keep their violations, keyed by posix path from the repo root. These are the
