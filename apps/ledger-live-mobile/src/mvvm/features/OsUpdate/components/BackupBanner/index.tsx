@@ -46,12 +46,7 @@ export function BackupBanner({ device }: BackupBannerProps) {
           <Button appearance="gray" size="sm" onPress={onRestore} testID="backup-banner-restore">
             {t("osUpdates.backupBanner.restore")}
           </Button>
-          <Button
-            appearance="transparent"
-            size="sm"
-            onPress={onDelete}
-            testID="backup-banner-delete"
-          >
+          <Button appearance="base" size="sm" onPress={onDelete} testID="backup-banner-delete">
             {t("osUpdates.backupBanner.delete")}
           </Button>
         </Box>
