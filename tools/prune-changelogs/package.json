@@ -19,6 +19,7 @@
   "devDependencies": {
     "@manypkg/get-packages": "1.1.3",
     "@types/node": "catalog:",
+    "app-builder-bin": "4.2.0",
     "prettier": "2.8.8",
     "typescript": "catalog:"
   }
