@@ -90,6 +90,12 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/.test.ts.disabled|node_modules|lib-es|lib/' --passWithNoTests",

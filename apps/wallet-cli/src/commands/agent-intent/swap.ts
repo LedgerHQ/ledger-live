@@ -11,6 +11,7 @@ import {
   quotedReceiveAmount,
   resolveAgentSwapProvider,
   toSdkSwapIntent,
+  warnIfTokenApprovalNeeded,
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote } from "../../agent-intent/swap-quote";
@@ -55,20 +56,29 @@ async function expectedReceive(input: {
   fromAmount: string;
   sender: string;
   out: Pick<CommandOutput, "spin">;
-}): Promise<{ toAmount: string; provider: string; quoted: boolean }> {
+}): Promise<{
+  toAmount: string;
+  provider: string;
+  quoted: boolean;
+  needsTokenApproval: boolean;
+}> {
   const { to, provider } = input;
   const typed =
     input.toAmount === undefined ? undefined : parseSwapAmount(input.toAmount, to, "to-amount");
   const spinner = input.out.spin("Fetching swap quotes…");
   const quote = await fetchAgentSwapQuote({
     from: input.from.id,
+    ...(input.from.contract ? { fromContract: input.from.contract } : {}),
     to: to.id,
     amount: input.fromAmount,
     sender: input.sender,
     providers: provider ? [provider] : AGENT_INTENT_SWAP_PROVIDERS,
   });
   spinner?.success(`Quoted by ${quote.provider}`);
-  if (typed) return { toAmount: typed, provider: quote.provider, quoted: false };
+  const { needsTokenApproval } = quote;
+  if (typed) {
+    return { toAmount: typed, provider: quote.provider, quoted: false, needsTokenApproval };
+  }
 
   const quoted = quotedReceiveAmount(quote.receiveAmount, to);
   if (!quoted) {
@@ -77,7 +87,7 @@ async function expectedReceive(input: {
         "Sell a larger --amount.",
     );
   }
-  return { toAmount: quoted, provider: quote.provider, quoted: true };
+  return { toAmount: quoted, provider: quote.provider, quoted: true, needsTokenApproval };
 }
 
 export default defineCommand({
@@ -160,11 +170,13 @@ export default defineCommand({
 
       if (flags["dry-run"]) {
         out.agentIntentSwapDryRun(summary);
+        warnIfTokenApprovalNeeded(summary);
         return;
       }
 
       const submitted = await submitAgentIntent(profile, client => client.createSwapIntent(intent));
       out.agentIntentSwap({ ...summary, ...submitted });
+      warnIfTokenApprovalNeeded(summary);
       warnIfReviewLinkUnusable(submitted);
     });
   },

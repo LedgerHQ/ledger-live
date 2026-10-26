@@ -28,6 +28,7 @@ import { seedMockServerKnownDevice } from "~/renderer/reducers/knownDevices";
 import { getMockServerSessionToken, setFirmwareDistributionSalt } from "@ledgerhq/live-dmk-desktop";
 import { getLocalStorageEnvs } from "~/renderer/experimental";
 import "~/renderer/analytics/registerTransactionObserver";
+import "~/datadog/registerObservers";
 import { hydrateCurrency } from "~/renderer/bridge/cache";
 import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
@@ -48,6 +49,7 @@ import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
+  crashReportingSelector,
   languageSelector,
   trackingEnabledSelector,
   hideEmptyTokenAccountsSelector,
@@ -93,6 +95,10 @@ import { setAnalyticsFeatureFlagMethod } from "~/renderer/analytics/segment";
 import { getVersionedRedirects } from "LLD/hooks/useVersionedStakePrograms";
 import { initHistory } from "~/renderer/reducers/history";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  coinObservabilityConfigFor,
+  setCoinObservabilityConfigReader,
+} from "@features/platform-coin-observability";
 import { readOnlyConfigStorage } from "@shared/app-config";
 import { loadAppConfig } from "~/setup";
 
@@ -192,6 +198,14 @@ async function init() {
       apiBaseUrl: process.env.EARN_API_BASE_URL,
     }),
   );
+  setCoinObservabilityConfigReader(() => {
+    const state = store.getState();
+    return coinObservabilityConfigFor({
+      consentGranted: crashReportingSelector(state),
+      datadogEnabled: selectFeature(state, "lldDatadog")?.enabled ?? false,
+      coinObservability: selectFeature(state, "coinObservability"),
+    });
+  });
 
   // Hydrate persisted crypto assets tokens from app.json
   // Cross-caching is automatic: tokens are cached under both ID and address lookups

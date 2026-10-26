@@ -1,4 +1,5 @@
 import { getCoinModuleApi } from "./index";
+import { setCoinModuleCallObserver } from "@features/platform-coin-observability";
 import { coinModuleLoaders } from "../../../coin-modules/loaders";
 import { registerCoinModules, resetCoinModulesForTests } from "../../../coin-modules/registry";
 import * as xrpModule from "@ledgerhq/coin-xrp/api";
@@ -159,5 +160,32 @@ describe("getCoinModuleApi", () => {
     expect(lastBlock).toHaveBeenCalled();
     expect(logger).toHaveBeenCalledWith("[coin-module] lastBlock: call");
     expect(logger).toHaveBeenCalledWith("[coin-module] lastBlock: ok");
+  });
+
+  it("reports each call made through the resolver to the call observers", async () => {
+    const observer = jest.fn();
+    const unsubscribe = setCoinModuleCallObserver(observer);
+    const lastBlock = jest.fn().mockResolvedValue({ height: 1 });
+    jest.spyOn(xrpModule, "createApi").mockReturnValue({ ...mockApiInstance, lastBlock } as any);
+
+    try {
+      const result = await getCoinModuleApi("xrp", "local");
+      await result.lastBlock({ logger: jest.fn() } as any);
+      expect(() => result.getStakes({} as any, "addr")).toThrow("getStakes is not supported");
+    } finally {
+      unsubscribe();
+    }
+
+    expect(observer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: "lastBlock",
+        network: "xrp",
+        family: "xrp",
+        status: "success",
+      }),
+    );
+    expect(observer).toHaveBeenCalledWith(
+      expect.objectContaining({ method: "getStakes", status: "not_supported" }),
+    );
   });
 });

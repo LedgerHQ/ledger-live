@@ -68,6 +68,9 @@ jobs:
       - name: build libs
         run: pnpm exec nx run-many -t build --projects=tag:scope:libs
 
+      - name: check packed packages
+        run: node tools/scripts/check-packed-packages.mjs
+
       - name: snapshot versioning
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

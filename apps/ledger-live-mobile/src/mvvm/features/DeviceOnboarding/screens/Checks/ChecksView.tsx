@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  BottomSheetHeader,
-  BottomSheetView,
-  Box,
-  Button,
-  IconButton,
-  NavBar,
-  NavBarTrailing,
-  Text,
-} from "@ledgerhq/lumen-ui-rnative";
-import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -19,6 +9,7 @@ import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailabl
 import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
 import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
+import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { checksTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { ChecksIllustration, ChecksViewProps } from "./useChecksScreenViewModel";
 import darkLoadingAnimation from "./animations/dark/loading.lottie";
@@ -88,20 +79,7 @@ export function ChecksView({
   return (
     <Box testID={checksTestIds.screen} lx={{ flex: 1, backgroundColor: "canvas" }}>
       <Box lx={{ flex: 1, gap: "s24" }}>
-        <NavBar density="compact">
-          {onQuit ? (
-            <NavBarTrailing>
-              <IconButton
-                appearance="no-background"
-                size="md"
-                icon={Close}
-                accessibilityLabel={closeLabel}
-                testID={checksTestIds.quit}
-                onPress={onQuit}
-              />
-            </NavBarTrailing>
-          ) : null}
-        </NavBar>
+        <DeviceOnboardingCloseBar label={closeLabel} testID={checksTestIds.quit} onPress={onQuit} />
         {illustration ? <Illustration kind={illustration} /> : null}
         <Box lx={{ flexGrow: 1, gap: "s8", paddingHorizontal: "s16", paddingBottom: "s16" }}>
           <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>

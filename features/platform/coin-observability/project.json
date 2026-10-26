@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-coin-observability",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -136,6 +136,13 @@
     "oxlint": "catalog:",
     "timemachine": "^0.3.2"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "types",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rm -rf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

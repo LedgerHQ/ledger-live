@@ -32,6 +32,7 @@ const config: PlaywrightTestConfig = {
           "allure-playwright",
           {
             detail: false,
+            suiteTitle: false,
             links: {
               issue: {
                 nameTemplate: "%s",
@@ -45,7 +46,10 @@ const config: PlaywrightTestConfig = {
           },
         ],
       ]
-    : [["./tests/reporters/cardSessionReporter.ts"], ["allure-playwright", { detail: false }]],
+    : [
+        ["./tests/reporters/cardSessionReporter.ts"],
+        ["allure-playwright", { detail: false, suiteTitle: false }],
+      ],
 };
 
 export default config;
