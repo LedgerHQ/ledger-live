@@ -2,7 +2,10 @@ import { datadogLogs } from "@datadog/browser-logs";
 import type { LogEvent } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 import { buildBeforeSend, getDatadogBuildConfig, type ShouldSendCallback } from "./config";
-import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
+import {
+  toBroadcastFailureLog,
+  toBroadcastLogEvent,
+} from "@ledgerhq/live-common/hooks/broadcastLog";
 import {
   createCoinModuleCallTransmitter,
   readCoinObservabilityConfig,
@@ -102,14 +105,9 @@ export function broadcastLogger(event: LogEvent): void {
   if (!initialized) return;
 
   if (event.status === "success") {
-    datadogLogs.logger.info("broadcast_success", { event });
+    datadogLogs.logger.info("broadcast_success", { event: toBroadcastLogEvent(event) });
   } else {
-    const { error, ...rest } = event;
-    const errorContext = extractErrorContext(error);
-    datadogLogs.logger.error(
-      "broadcast_failure",
-      { event: rest, errorContext: errorContext },
-      error,
-    );
+    const { event: loggedEvent, errorContext, error } = toBroadcastFailureLog(event);
+    datadogLogs.logger.error("broadcast_failure", { event: loggedEvent, errorContext }, error);
   }
 }
