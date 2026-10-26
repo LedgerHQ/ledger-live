@@ -15,6 +15,18 @@ export interface IcpNeuronCommandData extends TxData {
   type: "neuron";
   /** Seconds to add to the dissolve delay (`increase_dissolve_delay`). */
   additionalDissolveDelaySeconds?: number;
+  /** The dissolve delay to set, in seconds from now (`set_dissolve_delay`). */
+  dissolveDelaySeconds?: number;
+  /** The principal to add or remove (`add_hot_key`, `remove_hot_key`). */
+  hotKey?: string;
+  /** Whether governance stakes new maturity on its own (`auto_stake_maturity`). */
+  autoStakeMaturity?: boolean;
+  /** The share of maturity to use, 1 to 100; absent means all (`spawn_neuron`, `stake_maturity`). */
+  percentage?: number;
+  /** The topic to follow on; absent means `Unspecified` (`follow`). */
+  followTopic?: string;
+  /** The neurons to follow on the topic; empty clears it (`follow`). */
+  followeeIds?: string[];
 }
 
 export type IcpTxData = TxDataNotSupported | IcpNeuronCommandData;

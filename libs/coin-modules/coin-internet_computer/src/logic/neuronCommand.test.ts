@@ -2,8 +2,29 @@ import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
 import { BigNumber } from "bignumber.js";
-import { MAINNET_GOVERNANCE_CANISTER_ID, NNS_MAXIMUM_DISSOLVE_DELAY } from "../consts";
-import { ICPDissolveDelayGTMax, ICPInvalidDissolveDelayIncrease } from "../errors";
+import {
+  MAINNET_GOVERNANCE_CANISTER_ID,
+  MAX_FOLLOWEES_PER_TOPIC,
+  MAX_NAT64,
+  MIN_NEURON_STAKE,
+  NNS_MAXIMUM_DISSOLVE_DELAY,
+  NNS_MINIMUM_DISSOLVE_DELAY,
+  TRANSFER_FEE,
+} from "../consts";
+import {
+  ICPDissolveDelayGTMax,
+  ICPDissolveDelayLTMin,
+  ICPDuplicateFollowee,
+  ICPFolloweeIsSelf,
+  ICPFollowTopicNotAllowed,
+  ICPHotKeyIsController,
+  ICPInvalidDissolveDelayIncrease,
+  ICPInvalidFolloweeId,
+  ICPInvalidHotKey,
+  ICPInvalidPercentage,
+  ICPTooManyFollowees,
+  NotEnoughTransferAmount,
+} from "../errors";
 import { decodeCanisterIdlArgs, getCanisterIdlFunc, governanceIdlFactory } from "../network/candid";
 import type { Transaction } from "../types";
 import {
@@ -40,6 +61,57 @@ const increase = (seconds?: number): IcpStakingIntent =>
     data: { type: "neuron", additionalDissolveDelaySeconds: seconds },
   });
 
+const withData = (
+  type: string,
+  data: Record<string, unknown> = {},
+  overrides: Record<string, unknown> = {},
+): IcpStakingIntent => command({ type, data: { type: "neuron", ...data }, ...overrides });
+
+const SIGNER = derivePrincipalFromPubkey(PUBKEY).toText();
+const HOT_KEY = Principal.fromUint8Array(new Uint8Array([1, 2, 3])).toText();
+const MIN_SPLIT = BigInt(MIN_NEURON_STAKE) + TRANSFER_FEE;
+
+// Each command with the data that builds it, and the fields it adds to the neuron id.
+const COMMANDS: Array<[string, IcpStakingIntent, Partial<Transaction>]> = [
+  ["start_dissolving", withData("start_dissolving"), {}],
+  ["stop_dissolving", withData("stop_dissolving"), {}],
+  ["disburse", withData("disburse"), {}],
+  ["disburse to the sender", withData("disburse", {}, { recipient: SENDER }), {}],
+  ["refresh_voting_power", withData("refresh_voting_power"), {}],
+  ["increase_dissolve_delay", increase(604_800), { additionalDissolveDelay: "604800" }],
+  [
+    "set_dissolve_delay",
+    withData("set_dissolve_delay", { dissolveDelaySeconds: NNS_MINIMUM_DISSOLVE_DELAY }),
+    { dissolveDelay: String(NNS_MINIMUM_DISSOLVE_DELAY) },
+  ],
+  ["add_hot_key", withData("add_hot_key", { hotKey: HOT_KEY }), { hotKeyToAdd: HOT_KEY }],
+  ["remove_hot_key", withData("remove_hot_key", { hotKey: HOT_KEY }), { hotKeyToRemove: HOT_KEY }],
+  [
+    "auto_stake_maturity",
+    withData("auto_stake_maturity", { autoStakeMaturity: false }),
+    { autoStakeMaturity: false },
+  ],
+  ["stake_maturity", withData("stake_maturity", { percentage: 50 }), { percentageToStake: "50" }],
+  ["stake_maturity of all", withData("stake_maturity"), {}],
+  ["spawn_neuron", withData("spawn_neuron", { percentage: 100 }), { percentageToSpawn: "100" }],
+  ["spawn_neuron_from_maturity", withData("spawn_neuron_from_maturity"), {}],
+  [
+    "split_neuron",
+    withData("split_neuron", {}, { amount: MIN_SPLIT }),
+    { amount: new BigNumber(MIN_SPLIT.toString()) },
+  ],
+  [
+    "follow",
+    withData("follow", { followTopic: "Governance", followeeIds: ["0456", "789"] }),
+    { followTopic: "Governance", followeesIds: ["456", "789"] },
+  ],
+  [
+    "follow clearing the default topic",
+    withData("follow", { followeeIds: [] }),
+    { followTopic: "Unspecified", followeesIds: [] },
+  ],
+];
+
 const decode = (hex: string) => {
   const { call, read_state } = Cbor.decode<{
     call: DecodedCallContent;
@@ -62,9 +134,15 @@ describe("isNeuronCommandIntent", () => {
   it.each([
     ["a staking intent for a command", command(), true],
     ["a staking intent for another type", command({ type: "stake" }), false],
+    ["a staking intent for a stake transfer", command({ type: "create_neuron" }), false],
+    ["an inherited property name", command({ type: "constructor" }), false],
     ["a send", command({ intentType: "transaction" }), false],
   ])("recognizes %s", (_, intent, expected) => {
     expect(isNeuronCommandIntent(intent)).toBe(expected);
+  });
+
+  it.each(COMMANDS)("recognizes %s", (_, intent) => {
+    expect(isNeuronCommandIntent(intent)).toBe(true);
   });
 });
 
@@ -77,10 +155,12 @@ describe("neuronCommandOf", () => {
     });
   });
 
-  it("reads the increase from the intent data", () => {
-    expect(neuronCommandOf(increase(604_800))).toMatchObject({
-      type: "increase_dissolve_delay",
-      additionalDissolveDelay: "604800",
+  it.each(COMMANDS)("builds %s from the intent data", (_, intent, fields) => {
+    expect(neuronCommandOf(intent)).toEqual({
+      type: intent.type,
+      neuronId: "123",
+      amount: new BigNumber(0),
+      ...fields,
     });
   });
 
@@ -111,6 +191,96 @@ describe("neuronCommandOf", () => {
       "an increase past the maximum",
       increase(NNS_MAXIMUM_DISSOLVE_DELAY + 1),
       ICPDissolveDelayGTMax,
+    ],
+    [
+      "a delay below the minimum",
+      withData("set_dissolve_delay", { dissolveDelaySeconds: NNS_MINIMUM_DISSOLVE_DELAY - 1 }),
+      ICPDissolveDelayLTMin,
+    ],
+    [
+      "a delay past the maximum",
+      withData("set_dissolve_delay", { dissolveDelaySeconds: NNS_MAXIMUM_DISSOLVE_DELAY + 1 }),
+      ICPDissolveDelayGTMax,
+    ],
+    ["no delay", withData("set_dissolve_delay"), ICPDissolveDelayLTMin],
+    [
+      "a fractional delay",
+      withData("set_dissolve_delay", { dissolveDelaySeconds: NNS_MINIMUM_DISSOLVE_DELAY + 0.5 }),
+      ICPDissolveDelayLTMin,
+    ],
+    ["no hot key to add", withData("add_hot_key"), ICPInvalidHotKey],
+    [
+      "a hot key that is not a principal",
+      withData("add_hot_key", { hotKey: "x" }),
+      ICPInvalidHotKey,
+    ],
+    [
+      "the signer's own principal as hot key",
+      withData("add_hot_key", { hotKey: SIGNER }),
+      ICPHotKeyIsController,
+    ],
+    ["no hot key to remove", withData("remove_hot_key"), ICPInvalidHotKey],
+    ["a partial disburse", withData("disburse", {}, { amount: 1n }), InvalidTransactionError],
+    [
+      "a disburse to another account",
+      withData("disburse", {}, { recipient: "00".repeat(32) }),
+      InvalidTransactionError,
+    ],
+    ["no auto-stake setting", withData("auto_stake_maturity"), InvalidTransactionError],
+    ["a percentage of 0", withData("stake_maturity", { percentage: 0 }), ICPInvalidPercentage],
+    ["a percentage past 100", withData("spawn_neuron", { percentage: 101 }), ICPInvalidPercentage],
+    [
+      "a fractional percentage",
+      withData("spawn_neuron_from_maturity", { percentage: 1.5 }),
+      ICPInvalidPercentage,
+    ],
+    [
+      "a split that leaves the child under the minimum stake",
+      withData("split_neuron", {}, { amount: MIN_SPLIT - 1n }),
+      NotEnoughTransferAmount,
+    ],
+    [
+      "a split past Nat64",
+      withData("split_neuron", {}, { amount: MAX_NAT64 + 1n }),
+      InvalidTransactionError,
+    ],
+    [
+      "a reserved topic",
+      withData("follow", { followTopic: "SnsDecentralizationSale", followeeIds: [] }),
+      ICPFollowTopicNotAllowed,
+    ],
+    [
+      "a topic the device refuses",
+      withData("follow", { followTopic: "SubnetRental", followeeIds: [] }),
+      ICPFollowTopicNotAllowed,
+    ],
+    [
+      "an inherited property name as topic",
+      withData("follow", { followTopic: "toString", followeeIds: [] }),
+      ICPFollowTopicNotAllowed,
+    ],
+    ["no followees", withData("follow"), InvalidTransactionError],
+    [
+      "too many followees",
+      withData("follow", {
+        followeeIds: Array.from({ length: MAX_FOLLOWEES_PER_TOPIC + 1 }, (_, i) => String(i + 1)),
+      }),
+      ICPTooManyFollowees,
+    ],
+    [
+      "a followee that is not a neuron id",
+      withData("follow", { followeeIds: ["x"] }),
+      ICPInvalidFolloweeId,
+    ],
+    [
+      "a followee listed twice",
+      withData("follow", { followeeIds: ["456", "0456"] }),
+      ICPDuplicateFollowee,
+    ],
+    [
+      "the neuron itself as followee",
+      withData("follow", { followeeIds: ["0123"] }),
+      ICPFolloweeIsSelf,
     ],
     ["another type", command({ type: "stake" }), InvalidTransactionError],
     [
@@ -149,15 +319,10 @@ describe("craftNeuronCommand", () => {
     expect(details?.expiresAt).toBe(Number(call.ingress_expiry / 1_000_000n));
   });
 
-  it("crafts the call and read_state request the account bridge signs", () => {
-    const { transaction } = craftNeuronCommand(increase(604_800));
+  it.each(COMMANDS)("crafts %s as the account bridge signs it", (_, intent, fields) => {
+    const { transaction } = craftNeuronCommand(intent);
     const bridgeCall = createUnsignedNeuronCommandTransaction(
-      {
-        type: "increase_dissolve_delay",
-        neuronId: "123",
-        additionalDissolveDelay: "604800",
-        amount: new BigNumber(0),
-      } as Transaction,
+      { type: intent.type, neuronId: "123", amount: new BigNumber(0), ...fields } as Transaction,
       PUBKEY,
     );
 
