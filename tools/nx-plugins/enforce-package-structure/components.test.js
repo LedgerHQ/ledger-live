@@ -1094,6 +1094,31 @@ test("R3 follows a long chain of local types without overflowing the stack", () 
   }
 });
 
+test("R3 checks a chain of inferred parameters in linear time", () => {
+  // Rechecking the previous inferred parameter at each read doubles the work at every level.
+  let body = "[A23, A23]";
+  for (let level = 23; level >= 0; level--) {
+    const previous = level === 0 ? "T" : `A${level - 1}`;
+    body = `[${previous}, ${previous}] extends infer A${level} ? ${body} : never`;
+  }
+  const contractModule = `export type CardProps<T = string> = { k: ${body} };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), []);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 reads a parameter's arguments once however often the type places it", () => {
+  // Queueing every argument again at each read grows with reads times arguments.
+  const references = Array.from({ length: 10000 }, (_, index) => `r${index}?: R<{ w: T }>;`);
+  const reads = Array.from({ length: 10000 }, (_, index) => `v${index}: T;`);
+  const contractModule = `type R<T> = { ${references.join(" ")} ${reads.join(" ")} };\nexport type CardProps = { r: R<{ onPress(): void }> };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
 test("R3 follows a rotation of wrapped arguments in linear time", () => {
   // Expanding each instantiation with its own bindings grows factorially: a crash at 10.
   for (const length of [10, 20]) {

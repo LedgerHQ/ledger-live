@@ -901,6 +901,10 @@ function reachableProps(declaration, module) {
   const contextsOf = new Map();
   /** @type {Map<Reference, Set<number>>} */
   const readsOf = new Map();
+  // Whether an `infer` parameter is bound, per context: a chain of conditionals whose condition
+  // reads the previous inferred parameter twice would otherwise rescan it twice per level.
+  /** @type {Map<Context, Map<ts.TypeParameterDeclaration, boolean>>} */
+  const inferredBound = new Map();
   const ids = new Map();
   /** @param {object | string} value @returns {number} */
   function idOf(value) {
@@ -934,8 +938,16 @@ function reachableProps(declaration, module) {
   function isBound(parameter, context) {
     const owner = parameter.parent;
     if (ts.isInferTypeNode(owner)) {
-      const conditional = inferringConditional(parameter);
-      return Boolean(conditional && mentionsBoundParameter(conditional.checkType, context));
+      if (!inferredBound.has(context)) inferredBound.set(context, new Map());
+      const known = inferredBound.get(context);
+      if (!known.has(parameter)) {
+        const conditional = inferringConditional(parameter);
+        known.set(
+          parameter,
+          Boolean(conditional && mentionsBoundParameter(conditional.checkType, context)),
+        );
+      }
+      return known.get(parameter);
     }
     if (!ts.isTypeAliasDeclaration(owner) && !ts.isInterfaceDeclaration(owner)) return false;
     if (context === "contract") return false;
@@ -983,7 +995,10 @@ function reachableProps(declaration, module) {
       return;
     }
     if (!isBound(parameter, context)) return;
+    // A parameter or a reference's argument already read gets its later arguments from `bind`
+    // and `expand`.
     if (context === "local") {
+      if (referenced.has(parameter)) return;
       referenced.add(parameter);
       for (const argument of [...(argumentsOf.get(parameter) ?? [])]) {
         visit(argument.node, argument.context);
@@ -998,7 +1013,9 @@ function reachableProps(declaration, module) {
       visit(parameter.default, reference);
       return;
     }
-    entryOf(readsOf, reference, () => new Set()).add(index);
+    const reads = entryOf(readsOf, reference, () => new Set());
+    if (reads.has(index)) return;
+    reads.add(index);
     for (const outer of [...entryOf(contextsOf, reference, () => [])]) visit(argument, outer);
   }
   /**
