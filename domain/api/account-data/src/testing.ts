@@ -57,9 +57,9 @@ export const sourceIdOf = (id: string) => AccountDataSourceIdSchema.parse(id);
 /** The `index`th toy account: address `0x<index>`, on `network` (ethereum by default). */
 export const descriptorOf = (index: number, network = "ethereum"): AccountDescriptor => ({
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
-  network: { name: network, env: "main" },
+  network,
   address: `0x${index}`,
   path: `m/44h/60h/${index}h/0/0`,
 });

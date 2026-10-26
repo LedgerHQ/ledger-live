@@ -45,7 +45,7 @@ describe("depositSolana", () => {
     const { wallet, intents } = makeWallet();
     const result = await depositSolana({
       descriptor: DESCRIPTOR,
-      network: "solana:main",
+      network: "solana",
       validator: "voteAcc123",
       amount: "1.5 SOL",
       dryRun: true,
@@ -64,7 +64,7 @@ describe("depositSolana", () => {
     expect(result).toMatchObject({
       family: "solana",
       account: DESCRIPTOR.id,
-      network: "solana:main",
+      network: "solana",
       amount: "1.5 SOL",
       product: "voteAcc123",
       validator: "voteAcc123",
@@ -79,7 +79,7 @@ describe("depositSolana", () => {
     await expect(
       depositSolana({
         descriptor: DESCRIPTOR,
-        network: "solana:main",
+        network: "solana",
         validator: "",
         amount: "1 SOL",
         dryRun: true,
@@ -122,7 +122,7 @@ function makeFailingWallet(error: unknown) {
 const depositDryRun = (wallet: WalletAdapter, amount: string) =>
   depositSolana({
     descriptor: DESCRIPTOR,
-    network: "solana:main",
+    network: "solana",
     validator: "voteAcc123",
     amount,
     dryRun: true,
@@ -263,7 +263,7 @@ describe("withdrawSolana", () => {
     const { wallet, intents } = makeWallet();
     const result = await withdrawSolana({
       descriptor: DESCRIPTOR,
-      network: "solana:main",
+      network: "solana",
       stakeAccount: "stakeAcc456",
       finalize: false,
       dryRun: true,
@@ -294,7 +294,7 @@ describe("withdrawSolana", () => {
     const { wallet, intents } = makeWallet();
     const result = await withdrawSolana({
       descriptor: DESCRIPTOR,
-      network: "solana:main",
+      network: "solana",
       stakeAccount: "stakeAcc456",
       finalize: true,
       dryRun: true,
@@ -318,7 +318,7 @@ describe("withdrawSolana", () => {
     await expect(
       withdrawSolana({
         descriptor: DESCRIPTOR,
-        network: "solana:main",
+        network: "solana",
         stakeAccount: "",
         finalize: false,
         dryRun: true,
@@ -335,7 +335,7 @@ describe("withdrawSolana", () => {
       await expect(
         withdrawSolana({
           descriptor: DESCRIPTOR,
-          network: "solana:main",
+          network: "solana",
           stakeAccount: "stakeAcc456",
           amount: "1 SOL",
           finalize,

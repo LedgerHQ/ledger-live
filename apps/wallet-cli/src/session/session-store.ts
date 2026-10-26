@@ -6,7 +6,7 @@ import { z } from "zod";
 import { SUPPORTED_AGENT_SOURCES, type AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import type { Trustchain } from "@ledgerhq/ledger-key-ring-protocol/types";
 import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
-import { serializeV1 } from "../shared/accountDescriptor";
+import { serializeV1, upgradeLegacyDescriptor } from "../shared/accountDescriptor";
 import { writeSecureFile } from "../shared/secure-file";
 import { PASSWORD_SALT_RE } from "../key-ring/crypto";
 import { PROFILE_ID_RE, PROFILE_ID_MESSAGE } from "../agent-intent/profile-format";
@@ -20,7 +20,8 @@ const SessionEntrySchema = z.object({
     .string()
     .min(1)
     .regex(/^[A-Za-z0-9_-]+$/, "Session label must not contain ':' or other special characters"),
-  descriptor: z.string(),
+  // Version 1 descriptors are rewritten to version 2 on load, and persisted on the next write.
+  descriptor: z.string().transform(upgradeLegacyDescriptor),
 });
 
 const TrustchainMetaSchema = z.object({
@@ -254,14 +255,15 @@ function derivationLabel(path: string): string {
   }
 }
 
+const BITCOIN_NETWORKS = new Set(["bitcoin", "bitcoin_testnet", "bitcoin_regtest"]);
+
 export function generateLabel(
   descriptor: AccountDescriptorV1,
   existingLabels: Set<string>,
 ): string {
   const { network } = descriptor;
-  const parts = [network.name];
-  if (network.name === "bitcoin") parts.push(derivationLabel(descriptor.path));
-  if (network.env !== "main") parts.push(network.env);
+  const parts = [network];
+  if (BITCOIN_NETWORKS.has(network)) parts.push(derivationLabel(descriptor.path));
   const base = parts.join("-");
   for (let n = 1; ; n++) {
     const candidate = `${base}-${n}`;

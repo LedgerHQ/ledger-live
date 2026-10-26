@@ -131,7 +131,7 @@ describe("earn withdraw --dry-run (EVM full exit)", () => {
 
     const data = parseWithdrawResult(stdout);
     expect(data.command).toBe("earn withdraw");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(data.family).toBe("evm");
     expect(data.dryRun).toBe(true);
     expect(data.product).toBe(VAULT.id);

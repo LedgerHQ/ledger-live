@@ -62,7 +62,7 @@ import type {
 export type OutputContext = {
   /** Command name as it appears in the JSON envelope, e.g. "balances", "account discover". */
   command: string;
-  /** Network string, e.g. "bitcoin", "ethereum:goerli". */
+  /** Network id, e.g. "bitcoin", "ethereum_sepolia". */
   network: string;
   /** Account identifier included in JSON envelopes (optional — not all commands have one). */
   account?: string;

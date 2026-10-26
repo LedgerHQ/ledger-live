@@ -130,7 +130,7 @@ export default defineCommand({
   handler: async ({ flags }) => {
     const out = createCommandOutput(resolveOutputFormat(flags.output), {
       command: "agent-intent swap",
-      network: "ethereum:main",
+      network: "ethereum",
     });
     await out.run(async () => {
       const senderInput = parseSenderInput(flags);

@@ -13,11 +13,9 @@ export async function resolveSenderFromAccount(
   network: keyof typeof MAINNET_ACCOUNT,
 ): Promise<string> {
   const descriptor = await resolveAccountDescriptorV1(label);
-  const { name, env } = descriptor.network;
-  if (name !== network || env !== "main" || descriptor.type !== "address") {
-    const actual = env === "main" ? name : `${name} ${env}`;
+  if (descriptor.network !== network || descriptor.type !== "address") {
     throw new Error(
-      `Account "${label}" is on ${actual}; this Agent Intent ${intentType} needs ` +
+      `Account "${label}" is on ${descriptor.network}; this Agent Intent ${intentType} needs ` +
         `${MAINNET_ACCOUNT[network]}.`,
     );
   }

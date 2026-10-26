@@ -138,7 +138,7 @@ describe("earn deposit --dry-run (EVM)", () => {
 
     const data = parseDepositResult(stdout);
     expect(data.command).toBe("earn deposit");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(data.family).toBe("evm");
     expect(data.dryRun).toBe(true);
     expect(data.product).toBe(VAULT.id);

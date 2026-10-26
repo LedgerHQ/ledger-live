@@ -64,7 +64,7 @@ export function depositWalletAccountId(
 }
 
 /**
- * Network names (env-agnostic, e.g. "ethereum", "solana") the user has discovered accounts for.
+ * Network ids (e.g. "ethereum", "solana") the user has discovered accounts for.
  * Used to narrow the no-network listing to what the user actually holds. Unparseable/legacy
  * session descriptors are skipped rather than failing the command.
  */
@@ -72,7 +72,7 @@ function discoveredNetworkNames(session: EarnYieldSession): Set<string> {
   const names = new Set<string>();
   for (const entry of session.accounts) {
     try {
-      names.add(parseV1(entry.descriptor).network.name);
+      names.add(parseV1(entry.descriptor).network);
     } catch {
       // ignore descriptors that no longer parse
     }
@@ -93,7 +93,7 @@ function parentAccountIdsByNetwork(
   for (const entry of session.accounts) {
     let name: string;
     try {
-      name = parseV1(entry.descriptor).network.name;
+      name = parseV1(entry.descriptor).network;
     } catch {
       continue;
     }
@@ -118,7 +118,7 @@ function parentAccountIdsByNetwork(
         `Account "${accountLabel}" could not be resolved from the session (its stored descriptor is outdated). Run \`account discover\` to refresh the session.`,
       );
     }
-    byNetwork.set(parseV1(entry.descriptor).network.name, id);
+    byNetwork.set(parseV1(entry.descriptor).network, id);
   }
 
   return byNetwork;
@@ -276,19 +276,17 @@ export function selectStakeValidators(
  * Only meaningful on mainnet; the backing lists are mainnet-only.
  */
 async function depositProductRows(network: Network, limit: number): Promise<EarnYieldRow[]> {
-  if (network.env !== "main") return [];
-
-  if (network.name === "solana") {
+  if (network === "solana") {
     const validators = (await getSolanaValidators()).map(normalizeSolanaValidator);
-    return selectStakeValidators(validators, limit).map(v => validatorToRow(v, network.name));
+    return selectStakeValidators(validators, limit).map(v => validatorToRow(v, network));
   }
 
-  if (network.name === "ethereum") {
+  if (network === "ethereum") {
     const products = await getDefiProducts();
     return products
       .filter(isVaultDepositable)
       .slice(0, limit)
-      .map(p => vaultToRow(p, network.name));
+      .map(p => vaultToRow(p, network));
   }
 
   return [];
@@ -306,12 +304,12 @@ export async function listEarnYieldRows({
 
   if (network) {
     const growRows = grow
-      .filter(item => item.network === network.name)
+      .filter(item => item.network === network)
       .map(item => growItemToRow(item, parentAccountIds));
 
     const currencyId = currencyIdFromNetwork(network);
     const providers = await getCurrencyProviders(currencyId);
-    const providerRows = providers.filter(p => p.active).map(p => providerToRow(p, network.name));
+    const providerRows = providers.filter(p => p.active).map(p => providerToRow(p, network));
     const productRows = await depositProductRows(network, limit);
 
     return [...growRows, ...providerRows, ...productRows];

@@ -1,48 +1,21 @@
 import { z } from "zod";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CRYPTO_CURRENCIES_IDS } from "@domain/entity-currency-crypto";
 import { UnknownNetworkError } from "./errors";
 
-/** A blockchain by name and environment; `env` is `main` or the testnet suffix of the currency id. */
-/** `:` is the separator of the serialized descriptor, so it cannot appear in a field. */
-const NetworkFieldSchema = z
+/** The CAL network id, for now the same as the currency id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`. */
+export const NetworkSchema = z
   .string()
   .min(1)
-  .refine(v => !v.includes(":"), { message: "Network fields must not contain ':'" });
-
-export const NetworkSchema = z.object({
-  name: NetworkFieldSchema,
-  env: NetworkFieldSchema,
-});
+  .regex(/^[^\s:]+$/, "Network id must not contain ':' or whitespace");
 
 export type Network = z.infer<typeof NetworkSchema>;
 
-/** "bitcoin_testnet" -> { name: "bitcoin", env: "testnet" }, "ethereum" -> { name: "ethereum", env: "main" } */
-export function networkFromCurrencyId(currencyId: string): Network {
-  let currency;
-  try {
-    currency = getCryptoCurrencyById(currencyId);
-  } catch {
-    throw new UnknownNetworkError(
-      `Unknown currencyId "${currencyId}": not found in currency registry`,
-    );
-  }
-  const parentPrefix = currency.isTestnetFor ? `${currency.isTestnetFor}_` : undefined;
-  if (currency.isTestnetFor && parentPrefix && currency.id.startsWith(parentPrefix)) {
-    return { name: currency.isTestnetFor, env: currency.id.slice(parentPrefix.length) };
-  }
-  return { name: currency.id, env: "main" };
+const KNOWN_NETWORKS: ReadonlySet<string> = new Set(CRYPTO_CURRENCIES_IDS);
+
+export function currencyIdFromNetwork(network: Network): string {
+  if (!KNOWN_NETWORKS.has(network)) throw new UnknownNetworkError(`Unknown network "${network}"`);
+  return network;
 }
 
-/** { name: "bitcoin", env: "testnet" } -> "bitcoin_testnet", env "main" -> the bare name. Case-insensitive. */
-export function currencyIdFromNetwork(network: Network): string {
-  const name = network.name.toLowerCase();
-  const env = network.env.toLowerCase();
-  const currencyId = env === "main" ? name : `${name}_${env}`;
-  try {
-    return getCryptoCurrencyById(currencyId).id;
-  } catch {
-    throw new UnknownNetworkError(
-      `No currency found for network "${network.name}:${network.env}" (tried currencyId "${currencyId}")`,
-    );
-  }
-}
+export const networkFromCurrencyId = (currencyId: string): Network =>
+  currencyIdFromNetwork(currencyId);

@@ -45,7 +45,7 @@ import type {
 export type DepositSolanaParams = {
   /** Resolved source account (the Solana account funding the stake). */
   descriptor: AccountDescriptor;
-  /** Canonical network string, e.g. "solana:main". */
+  /** Network id, e.g. "solana". */
   network: string;
   /** Validator vote account address to delegate to (the `--product` value for SOL). */
   validator: string;
@@ -65,7 +65,7 @@ export type DepositSolanaParams = {
 export type WithdrawSolanaParams = {
   /** Resolved source account (the Solana account that owns the stake account). */
   descriptor: AccountDescriptor;
-  /** Canonical network string, e.g. "solana:main". */
+  /** Network id, e.g. "solana". */
   network: string;
   /** Stake account address to undelegate / withdraw from. */
   stakeAccount: string;

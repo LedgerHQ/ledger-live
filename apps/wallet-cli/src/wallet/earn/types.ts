@@ -130,7 +130,7 @@ export type EarnDepositResult = {
   family: string;
   /** Resolved account id/descriptor id. */
   account: string;
-  /** Network string, e.g. "ethereum:main" | "solana:main". */
+  /** Network string, e.g. "ethereum" | "solana". */
   network: string;
   /** Human amount requested by the user. */
   amount: string;
@@ -154,7 +154,7 @@ export type EarnWithdrawResult = {
   family: string;
   /** Resolved account id/descriptor id. */
   account: string;
-  /** Network string, e.g. "ethereum:main" | "solana:main". */
+  /** Network string, e.g. "ethereum" | "solana". */
   network: string;
   /** Human amount requested, when applicable (omitted for full/finalize withdrawals). */
   amount?: string;

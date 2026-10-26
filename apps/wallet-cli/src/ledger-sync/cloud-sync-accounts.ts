@@ -14,7 +14,6 @@ import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
   toV0,
   toV1,
-  serializeNetwork,
   UnsupportedFamilyError,
   UnknownNetworkError,
   AccountDescriptorV1Schema,
@@ -264,7 +263,7 @@ export function mergeSyncedAccounts(
       report.invalid.push(converted);
     } else {
       const { label, added } = session.addDescriptor(converted.descriptor);
-      const network = serializeNetwork(converted.descriptor.network);
+      const network = converted.descriptor.network;
       if (added) report.imported.push({ status: "imported", label, network });
       else report.unchanged.push({ status: "unchanged", label, network });
     }

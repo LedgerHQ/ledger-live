@@ -87,7 +87,7 @@ describe("depositEvm device app", () => {
   it("keeps the Ethereum app but passes the Kiln app dependency to clear-sign vault calldata", async () => {
     const result = await depositEvm({
       descriptor,
-      network: "ethereum:main",
+      network: "ethereum",
       productId: PRODUCT.id,
       amount: "100 USDC",
       dryRun: false,

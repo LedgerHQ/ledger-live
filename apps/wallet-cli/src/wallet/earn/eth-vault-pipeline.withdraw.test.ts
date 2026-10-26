@@ -101,7 +101,7 @@ describe("withdrawEvm", () => {
     ethTxStatus = "success";
     const result = await withdrawEvm({
       descriptor,
-      network: "ethereum:main",
+      network: "ethereum",
       productId: PRODUCT.id,
       amount: "50 USDC",
       dryRun: false,
@@ -124,7 +124,7 @@ describe("withdrawEvm", () => {
     await expect(
       withdrawEvm({
         descriptor,
-        network: "ethereum:main",
+        network: "ethereum",
         productId: PRODUCT.id,
         amount: "50 USDC",
         dryRun: false,
@@ -139,7 +139,7 @@ describe("withdrawEvm", () => {
     await expect(
       withdrawEvm({
         descriptor,
-        network: "ethereum:main",
+        network: "ethereum",
         productId: PRODUCT.id,
         amount: "50 DAI",
         dryRun: false,
@@ -154,7 +154,7 @@ describe("withdrawEvm", () => {
     ethTxStatus = "success";
     const result = await withdrawEvm({
       descriptor,
-      network: "ethereum:main",
+      network: "ethereum",
       productId: PRODUCT.id,
       amount: undefined,
       dryRun: false,

@@ -46,16 +46,16 @@ const enrolledProfile = {
 };
 
 const accounts = [
-  { label: "ethereum-1", descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0` },
-  { label: "solana-1", descriptor: `account:1:address:solana:main:${SOL_SENDER}:m/44h/501h/0h/0h` },
+  { label: "ethereum-1", descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0` },
+  { label: "solana-1", descriptor: `account:2:address:solana:${SOL_SENDER}:m/44h/501h/0h/0h` },
   {
     label: "solana-corrupt",
-    descriptor: `account:1:address:solana:main:${SOL_SENDER}11:m/44h/501h/1h/0h`,
+    descriptor: `account:2:address:solana:${SOL_SENDER}11:m/44h/501h/1h/0h`,
   },
   {
     label: "bitcoin-native-1",
     descriptor:
-      "account:1:utxo:bitcoin:main:xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz:m/84h/0h/0h",
+      "account:2:utxo:bitcoin:xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz:m/84h/0h/0h",
   },
 ];
 
@@ -187,7 +187,7 @@ describe("agent-intent send", () => {
         status: "success",
         command: "agent-intent send",
         // The envelope's network, unchanged by Solana support.
-        network: "ethereum:main",
+        network: "ethereum",
         intentId: "intent-123",
         deeplink: DEEPLINK,
         profileId: "bot",
@@ -269,7 +269,7 @@ describe("agent-intent send", () => {
       const result = jsonResult();
       expect(result).toMatchObject({
         status: "success",
-        network: "solana:main",
+        network: "solana",
         asset: { type: "native", ticker: "SOL", decimals: 9 },
         amount: "500000000",
         memo: "Invoice 42",
@@ -363,7 +363,7 @@ describe("agent-intent send", () => {
         },
       ]);
       expect(jsonResult()).toMatchObject({
-        network: "solana:main",
+        network: "solana",
         asset: { type: "spl-token", ticker: "USDC", decimals: 6, mint: USDC_MINT },
         amount: "25500000",
         displayAmount: "25.5",
