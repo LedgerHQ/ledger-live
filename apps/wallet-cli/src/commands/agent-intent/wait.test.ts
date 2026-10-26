@@ -185,8 +185,8 @@ describe("agent-intent wait", () => {
     expect(line).toMatchObject({ enrolled: true });
   });
 
-  it("reports enrollment-waiting with the listener and the logged link at timeout, exit 0", async () => {
-    const profile = pendingProfile();
+  it("reports enrollment-waiting with the listener, key store and logged link at timeout, exit 0", async () => {
+    const profile: Profile = { ...pendingProfile(), keyStore: "plaintext-file" };
     profileReads = [profile];
     writeLog([
       "a banner on stderr",
@@ -196,7 +196,7 @@ describe("agent-intent wait", () => {
         enrollmentUrl: "https://agent.example.com#request=opaque",
         fingerprint: "AB12",
         expiresAt: profile.enrollmentExpiresAt,
-        keyStore: "os-keychain",
+        keyStore: "plaintext-file",
       }),
     ]);
 
@@ -211,6 +211,7 @@ describe("agent-intent wait", () => {
         profileId: "test-agent",
         expiresAt: profile.enrollmentExpiresAt,
         fingerprint: "Ez4f ubY2 TD8k Ve",
+        keyStore: "plaintext-file",
         listenerPid: process.pid,
         enrollmentUrl: "https://agent.example.com#request=opaque",
       });

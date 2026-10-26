@@ -376,9 +376,9 @@ the listener running: tell the human to answer the prompt. Either way, poll
 `agent-intent wait --profile <id> [--timeout 25s]` (also with the sandbox bypass), which reads local
 state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
-- `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` and `fingerprint` once the profile
-  is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait`
-  again.
+- `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt`, `fingerprint` and `keyStore` once
+  the profile is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending:
+  call `wait` again.
 - an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
   profile within 10 minutes), `enrollment_expired` or `profile_not_found` (no profile and no
   listener), exit 1 — the enrollment is lost: start a fresh one with a new `--profile` id.

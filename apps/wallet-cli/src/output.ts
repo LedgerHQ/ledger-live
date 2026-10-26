@@ -340,6 +340,8 @@ export type AgentIntentEnrollmentWaiting = {
   expiresAt?: string;
   /** Absent while the listener is starting, like `expiresAt`. */
   fingerprint?: string;
+  /** Absent while the listener is starting, like `expiresAt`. */
+  keyStore?: AgentIntentProfileMeta["keyStore"];
   listenerPid: number;
   /** From the listener's log, while it still has the pending line. */
   enrollmentUrl?: string;

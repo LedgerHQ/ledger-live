@@ -160,6 +160,7 @@ function checkProfile(
     profileId,
     expiresAt: profile.enrollmentExpiresAt,
     fingerprint: formatAgentPublicKeyFingerprint(profile.publicKey),
+    keyStore: profile.keyStore,
     listenerPid: livePid,
     ...(enrollmentUrl === undefined ? {} : { enrollmentUrl }),
   });
