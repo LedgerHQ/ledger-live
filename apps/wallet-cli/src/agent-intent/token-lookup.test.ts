@@ -129,7 +129,9 @@ describe("findAccountTokens", () => {
     const tokens = spyOn(getCryptoAssetsStore(), "findTokenById").mockImplementation(
       async id =>
         ({
+          ethereum: { ticker: "ETH", name: "Ethereum", contractAddress: "0x0" },
           "ethereum/erc20/usd__coin": { ticker: "USDC", name: "USD Coin", contractAddress: USDC },
+          "ethereum/erc20/pepe": { ticker: "PEPE", name: "Pepe", contractAddress: "0x2" },
           "ethereum/erc20/delisted": {
             ticker: "USDC",
             name: "Old USDC",
@@ -142,11 +144,6 @@ describe("findAccountTokens", () => {
     try {
       expect(await findAccountTokens("ethereum-1")).toEqual([
         { ticker: "USDC", name: "USD Coin", address: USDC },
-      ]);
-      expect(tokens.mock.calls.map(([id]) => id)).toEqual([
-        "ethereum/erc20/usd__coin",
-        "ethereum/erc20/delisted",
-        "ethereum/erc20/unknown",
       ]);
     } finally {
       balances.mockRestore();

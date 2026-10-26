@@ -489,11 +489,11 @@ pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethe
   profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
   `--bff-url`/`--keycloak-url` override carries over), and its agent key (OS keychain or key file).
 - **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
-  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana); without it, `ETH`
-  and `SOL` are native sends, and any other ticker is a token on the sender's network (the
-  `--account`'s; for `--from`, `0x` → Ethereum, base58 → Solana). A `--account` label must be a
-  mainnet account of that network. The Agent Intent SDK has no testnet, so a staging profile also
-  proposes a mainnet transfer.
+  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana, anything else is
+  an error); without it, `ETH` and `SOL` are native sends, and any other ticker is a token on the
+  sender's network (the `--account`'s; for `--from`, `0x` → Ethereum, base58 → Solana). A
+  `--account` label must be a mainnet account of that network. The Agent Intent SDK has no
+  testnet, so a staging profile also proposes a mainnet transfer.
 - **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
   mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
   Solana, `--from` and `--to` must be canonical base58 32-byte addresses.

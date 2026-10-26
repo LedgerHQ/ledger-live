@@ -78,11 +78,11 @@ let tickerLookups: string[];
 let accountTokens: Record<string, TokenCandidate[]>;
 let accountTokensError: Error | undefined;
 
-const usdc = { ticker: "USDC", name: "USD Coin", address: USDC };
+const usdc = { ticker: "USDC", name: "USD Coin", address: USDC.toLowerCase() };
 const usdcMint = { ticker: "USDC", name: "USD Coin", address: USDC_MINT };
 const pyusdMint = { ticker: "PYUSD", name: "PayPal USD", address: PYUSD_MINT };
-const pepe = { ticker: "PEPE", name: "Pepe", address: PEPE };
-const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY };
+const pepe = { ticker: "PEPE", name: "Pepe", address: PEPE.toLowerCase() };
+const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY.toLowerCase() };
 
 beforeAll(() =>
   activateAgentIntentMocks({
@@ -512,7 +512,7 @@ describe("agent-intent send", () => {
   describe("token from the --amount ticker, without --token", () => {
     const stderrLines = () => stderr.join("").split("\n");
 
-    it("takes the token the --account holds before any ticker lookup", async () => {
+    it("takes the token the --account holds before any ticker lookup, checksummed", async () => {
       accountTokens = { "ethereum-1": [pepe] };
 
       await runSend({ from: undefined, account: "ethereum-1", amount: "1 PEPE", output: "json" });
@@ -617,7 +617,7 @@ describe("agent-intent send", () => {
       expect(jsonResult()).toMatchObject({ network: "solana" });
     });
 
-    it("lists the candidates when CAL has several tokens with the ticker", async () => {
+    it("lists the candidates, checksummed, when CAL has several tokens with the ticker", async () => {
       await expect(runSend({ amount: "1 PEPE" })).rejects.toThrow(
         "Several ERC-20 tokens on Ethereum mainnet have the ticker PEPE:\n" +
           `  ${PEPE} (Pepe)\n  ${PEPE_COPY} (Pepe_0xbe042e)\nPass the one to send with --token.`,
@@ -641,6 +641,14 @@ describe("agent-intent send", () => {
           "so it names no network for the token.",
       );
       expect(tickerLookups).toEqual([]);
+    });
+
+    it("refuses a --token that is neither an EVM nor a Solana address", async () => {
+      await expect(runSend({ amount: "25 USDC", token: "usdc" })).rejects.toThrow(
+        "--token usdc is neither an EVM address (0x…) nor a Solana one (base58), so it names no " +
+          "network for the token.",
+      );
+      expect(submittedIntents).toEqual([]);
     });
 
     it("keeps ETH on Ethereum, so a base58 --from is refused", async () => {

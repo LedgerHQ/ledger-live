@@ -70,11 +70,9 @@ export function sameTicker(a: string, b: string): boolean {
   return a.toUpperCase() === b.toUpperCase();
 }
 
-/** A token a ticker can resolve to: `address` is its ERC-20 contract or SPL mint. */
 export type TokenCandidate = { ticker: string; name: string; address: string };
 
 const TOKEN_STANDARD = { ethereum: "erc20", solana: "spl" } as const;
-/** Enough to tell one match from several and to list them; CAL filters before it applies. */
 export const MAX_CANDIDATES = 20;
 const CAL_TIMEOUT_MS = 10_000;
 
@@ -110,8 +108,7 @@ async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: stri
   return tokens.data;
 }
 
-/** CAL matches tickers case-sensitively: this finds the ticker as typed or uppercase, not `USDe`
- * from `usde`. */
+/** CAL matches tickers case-sensitively, so this looks up the ticker as typed and uppercase. */
 export async function findTokensByTicker(
   network: keyof typeof TOKEN_STANDARD,
   ticker: string,
@@ -130,7 +127,6 @@ export async function findTokensByTicker(
   return [...candidates.values()];
 }
 
-/** The listed CAL tokens a session account holds a non-zero balance of. Syncs the account. */
 export async function findAccountTokens(label: string): Promise<TokenCandidate[]> {
   const descriptor = await resolveAccountDescriptor(label);
   const balances = await new WalletAdapter().getAccountBalances(descriptor);

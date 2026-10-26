@@ -1,5 +1,6 @@
 import type { CommandOutput } from "../output";
 import { writeStderr } from "../shared/ui";
+import { toChecksumAddress } from "./evm";
 import type { IntentNetwork } from "./send-intent";
 import {
   findAccountTokens,
@@ -19,6 +20,11 @@ function errorMessage(error: unknown): string {
 function listCandidates(tokens: TokenCandidate[]): string {
   const more = tokens.length >= MAX_CANDIDATES ? "\n  … and maybe more" : "";
   return tokens.map(token => `\n  ${token.address} (${token.name})`).join("") + more;
+}
+
+function checksummed(network: IntentNetwork, tokens: TokenCandidate[]): TokenCandidate[] {
+  if (network !== "ethereum") return tokens;
+  return tokens.map(token => ({ ...token, address: toChecksumAddress(token.address) }));
 }
 
 async function heldTokens(
@@ -42,7 +48,6 @@ async function heldTokens(
   }
 }
 
-/** Never a guess: the one token `account` holds with the ticker, else the one CAL lists. */
 export async function resolveTokenByTicker(
   network: IntentNetwork,
   ticker: string,
@@ -51,7 +56,7 @@ export async function resolveTokenByTicker(
 ): Promise<string> {
   const kind = TOKEN_KIND[network];
   if (account) {
-    const held = await heldTokens(account, ticker, out);
+    const held = checksummed(network, await heldTokens(account, ticker, out));
     if (held.length > 1) {
       throw new Error(
         `Account "${account}" holds several ${kind}s with the ticker ${ticker}:` +
@@ -64,7 +69,7 @@ export async function resolveTokenByTicker(
     }
   }
 
-  const listed = await findTokensByTicker(network, ticker);
+  const listed = checksummed(network, await findTokensByTicker(network, ticker));
   if (listed.length === 0) {
     throw new Error(
       `No ${kind} on ${MAINNET[network]} has the ticker ${ticker} in the Crypto Assets List, ` +

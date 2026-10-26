@@ -33,25 +33,25 @@ import { createCommandOutput, type CommandOutput } from "../../output";
 
 const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
-function networkOfAddress(address: string): IntentNetwork {
+function networkOfAddress(address: string, flag: "from" | "token"): IntentNetwork {
   if (/^0x/i.test(address)) return "ethereum";
   if (BASE58_ADDRESS.test(address)) return "solana";
   throw new Error(
-    `--from ${address} is neither an EVM address (0x…) nor a Solana one (base58), so it names no ` +
+    `--${flag} ${address} is neither an EVM address (0x…) nor a Solana one (base58), so it names no ` +
       "network for the token.",
   );
 }
 
-/** A token's network is `--token`'s by its shape, else the sender's. */
+/** `--token`'s network by its shape, else ETH's or SOL's, and only then the sender's. */
 async function networkOf(
-  flags: { amount: string; token?: string },
+  ticker: string,
+  token: string | undefined,
   senderInput: { account: string } | { address: string },
 ): Promise<IntentNetwork> {
-  if (flags.token) return /^0x/i.test(flags.token) ? "ethereum" : "solana";
-  const { ticker } = parseAmountWithTicker(flags.amount);
+  if (token) return networkOfAddress(token, "token");
   if (sameTicker(ticker, solanaAsset().ticker)) return "solana";
   if (sameTicker(ticker, ethereumAsset().ticker)) return "ethereum";
-  if ("address" in senderInput) return networkOfAddress(senderInput.address);
+  if ("address" in senderInput) return networkOfAddress(senderInput.address, "from");
   const descriptor = await resolveAccountDescriptorV1(senderInput.account);
   return descriptor.network === "solana" ? "solana" : "ethereum";
 }
@@ -114,14 +114,13 @@ function ethereumAsset(): EthereumAsset {
   return { type: "native", ticker: eth.ticker, decimals: eth.units[0].magnitude };
 }
 
-/** `fromFlag`: the address came from `--token` rather than from the ticker, to name it in errors. */
 async function resolveErc20(
   ticker: string,
   tokenContract: string,
-  fromFlag: boolean,
+  fromTokenFlag: boolean,
 ): Promise<EthereumAsset> {
   const contract = parseEvmAddress(tokenContract, "token");
-  const label = fromFlag ? `--token ${contract}` : contract;
+  const label = fromTokenFlag ? `--token ${contract}` : contract;
   const token = await findEthereumToken(contract);
   if (!token) {
     throw new Error(
@@ -140,9 +139,9 @@ async function resolveErc20(
 async function resolveSplToken(
   ticker: string,
   mint: string,
-  fromFlag: boolean,
+  fromTokenFlag: boolean,
 ): Promise<SolanaAsset> {
-  const label = fromFlag ? `--token ${mint}` : mint;
+  const label = fromTokenFlag ? `--token ${mint}` : mint;
   const token = await findSolanaToken(mint);
   if (!token) {
     throw new Error(
@@ -167,7 +166,6 @@ async function resolveSplToken(
   return { type: "spl-token", ticker: token.ticker, decimals: token.decimals, mint: token.mint };
 }
 
-/** The native asset for its ticker, else the token that `--token` names or the ticker resolves to. */
 async function resolveNetworkAsset(
   network: IntentNetwork,
   ticker: string,
@@ -189,11 +187,11 @@ async function resolveNetworkAsset(
       "account" in senderInput ? senderInput.account : undefined,
       out,
     ));
-  const fromFlag = token !== undefined;
+  const fromTokenFlag = token !== undefined;
   if (network === "ethereum") {
-    return { network, asset: await resolveErc20(ticker, address, fromFlag) };
+    return { network, asset: await resolveErc20(ticker, address, fromTokenFlag) };
   }
-  return { network, asset: await resolveSplToken(ticker, address, fromFlag) };
+  return { network, asset: await resolveSplToken(ticker, address, fromTokenFlag) };
 }
 
 export default defineCommand({
@@ -245,7 +243,8 @@ export default defineCommand({
     const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
     await out.run(async () => {
       const senderInput = parseSenderInput({ account: flags.account, address: flags.from }, "from");
-      const network = await networkOf(flags, senderInput);
+      const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
+      const network = await networkOf(ticker, flags.token, senderInput);
       ctx.network = network;
       assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
@@ -254,7 +253,6 @@ export default defineCommand({
         senderInput,
         flags.to,
       );
-      const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
       const networkAsset = await resolveNetworkAsset(
         network,
         ticker,
