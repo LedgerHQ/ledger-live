@@ -1,5 +1,6 @@
 import type { FiatCurrency } from "./schema";
 import { FIAT_CURRENCIES_BY_TICKER, FIAT_CURRENCIES_REGISTRY } from "./constants";
+import { OFAC_FIAT_TICKERS } from "./constants.internals";
 
 /** Looks up a fiat currency by its ISO 4217 ticker (e.g. `"USD"`); `undefined` when unknown. */
 export function findFiatCurrencyByTicker(ticker: string): FiatCurrency | undefined {
@@ -23,4 +24,9 @@ export function listFiatCurrencies(): FiatCurrency[] {
 /** Whether a fiat currency ISO 4217 ticker is known. */
 export function hasFiatCurrencyTicker(ticker: string): boolean {
   return Object.hasOwn(FIAT_CURRENCIES_BY_TICKER, ticker);
+}
+
+/** Whether a fiat currency ISO 4217 ticker is restricted under OFAC sanctions (case-insensitive). */
+export function isSanctionedFiatTicker(ticker: string): boolean {
+  return OFAC_FIAT_TICKERS.has(ticker.toUpperCase());
 }
