@@ -61,9 +61,32 @@ const DEP_CONSTRAINTS = [
   },
 ];
 
-/** Per-package exceptions: { sourceRoot, targetRoot, allowedImport }. Remove when @ledgerhq/live-env moves to ts-libs. */
-const BOUNDARY_EXCEPTIONS = [
-  { sourceRoot: "shared/env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+/**
+ * Per-package exceptions: { sourceRoot, targetRoot?, allowedImport }. `targetRoot` scopes an
+ * exception to a graph edge; without it the exception only allows the source import.
+ * `shared/env` wraps `@ledgerhq/live-env` and is the one package allowed to import it.
+ */
+const BOUNDARY_EXCEPTIONS = [{ sourceRoot: "shared/env", allowedImport: "@ledgerhq/live-env" }];
+
+/**
+ * Legacy `@ledgerhq/*` packages banned in shared/, domain/ and features/ source files, on top of
+ * the ones derived from the graph (every `scope:libs` node). These left `libs/` for npm, so the
+ * graph no longer tags them.
+ */
+const LEGACY_PACKAGES = [
+  "@ledgerhq/live-config",
+  "@ledgerhq/live-env",
+  "@ledgerhq/live-currency-format",
+  "@ledgerhq/domain-service",
+  "@ledgerhq/evm-tools",
+];
+
+/**
+ * Third-party packages a tagged source may neither declare in its manifest nor import.
+ * Entities hold schemas, types and state: no UI framework.
+ */
+const BANNED_EXTERNALS_BY_TAG = [
+  { sourceTag: "type:domain-entity", packages: ["react", "react-native"] },
 ];
 
 /**
@@ -74,4 +97,10 @@ const BOUNDARY_EXCEPTIONS = [
  */
 const BANNED_DEPENDENCIES = [];
 
-module.exports = { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS, BANNED_DEPENDENCIES };
+module.exports = {
+  DEP_CONSTRAINTS,
+  BOUNDARY_EXCEPTIONS,
+  LEGACY_PACKAGES,
+  BANNED_EXTERNALS_BY_TAG,
+  BANNED_DEPENDENCIES,
+};

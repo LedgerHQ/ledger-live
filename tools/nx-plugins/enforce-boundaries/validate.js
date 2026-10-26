@@ -1,7 +1,13 @@
 "use strict";
 
 const { createProjectGraphAsync } = require("@nx/devkit");
-const { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS, BANNED_DEPENDENCIES } = require("./constraints");
+const {
+  DEP_CONSTRAINTS,
+  BOUNDARY_EXCEPTIONS,
+  LEGACY_PACKAGES,
+  BANNED_EXTERNALS_BY_TAG,
+  BANNED_DEPENDENCIES,
+} = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -12,6 +18,7 @@ const path = require("node:path");
  * @typedef {{ sourceName: string, sourceTags: string[], target: string, targetTags: string[] }} Violation
  * @typedef {{ file: string, specifier: string }} SourceViolation
  * @typedef {{ manifest: string, dependency: string, field: string, reason: string }} BannedDepViolation
+ * @typedef {{ file: string, specifier: string, field?: string, sourceTag: string }} BannedExternalViolation
  */
 
 const DEPENDENCY_FIELDS = [
@@ -43,6 +50,30 @@ function walkSourceFiles(dir, callback) {
       callback(full);
     }
   }
+}
+
+/**
+ * Specifiers of `from "SPEC"`, `import "SPEC"`, `require("SPEC")` and `import("SPEC")` in a source file.
+ *
+ * @param {string} content
+ * @returns {string[]}
+ */
+function importSpecifiers(content) {
+  const re = /(?:from|import|require\s*\(|import\s*\()\s*['"]([^'"]+)['"]/g;
+  return [...content.matchAll(re)].map(m => m[1]);
+}
+
+/**
+ * Package name of a bare specifier: "@ledgerhq/logs/types" → "@ledgerhq/logs", "react/jsx-runtime" → "react".
+ *
+ * @param {string} spec
+ * @returns {string}
+ */
+function packageNameOf(spec) {
+  return spec
+    .split("/")
+    .slice(0, spec.startsWith("@") ? 2 : 1)
+    .join("/");
 }
 
 /**
@@ -78,12 +109,11 @@ function collectLegacyPackageNames(graph, workspaceRoot) {
 
 /**
  * Scan source files under shared/, domain/, features/ for any import of a legacy
- * in-repo @ledgerhq/* package (one that lives under libs/) or any relative import
- * that resolves into libs/.
+ * @ledgerhq/* package or any relative import that resolves into libs/.
  *
  * @param {string} workspaceRoot
- * @param {Set<string>} legacyPackages  set of in-repo @ledgerhq/* package names
- * @param {Array<{sourceRoot: string, targetRoot: string, allowedImport: string}>} exceptions
+ * @param {Set<string>} legacyPackages  set of legacy @ledgerhq/* package names
+ * @param {Array<{sourceRoot: string, targetRoot?: string, allowedImport: string}>} exceptions
  * @returns {SourceViolation[]}
  */
 function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = []) {
@@ -100,15 +130,9 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
         return;
       }
 
-      // Capture specifiers from: from "SPEC", require("SPEC"), import("SPEC")
-      const re = /(?:from|require\s*\(|import\s*\()\s*['"]([^'"]+)['"]/g;
-      let m;
-      while ((m = re.exec(content)) !== null) {
-        const spec = m[1];
-
+      for (const spec of importSpecifiers(content)) {
         if (spec.startsWith("@ledgerhq/")) {
-          // Strip sub-paths: "@ledgerhq/logs/types" → "@ledgerhq/logs"
-          const pkg = spec.split("/").slice(0, 2).join("/");
+          const pkg = packageNameOf(spec);
           if (legacyPackages.has(pkg)) {
             const relFile = path.relative(workspaceRoot, file);
             const isExcepted = exceptions.some(
@@ -173,6 +197,63 @@ function findBannedDependencyViolations(graph, workspaceRoot, bannedDependencies
 }
 
 /**
+ * Check every project carrying a rule's source tag for a third-party package it may not use:
+ * declared in any dependency field of its manifest, or imported by a source file under its root.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @param {Array<{sourceTag: string, packages: string[]}>} rules
+ * @returns {BannedExternalViolation[]}
+ */
+function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
+  const violations = [];
+
+  for (const node of Object.values(graph.nodes)) {
+    const root = node.data?.root;
+    if (!root) continue;
+    const tags = node.data?.tags ?? [];
+
+    for (const { sourceTag, packages } of rules) {
+      if (!tags.includes(sourceTag)) continue;
+      const banned = new Set(packages);
+
+      const manifest = path.join(root, "package.json");
+      let pkg = {};
+      try {
+        pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
+      } catch {}
+      for (const field of DEPENDENCY_FIELDS) {
+        for (const dependency of Object.keys(pkg[field] ?? {})) {
+          if (banned.has(dependency)) {
+            violations.push({ file: manifest, specifier: dependency, field, sourceTag });
+          }
+        }
+      }
+
+      walkSourceFiles(path.join(workspaceRoot, root), file => {
+        let content;
+        try {
+          content = fs.readFileSync(file, "utf8");
+        } catch {
+          return;
+        }
+        for (const spec of importSpecifiers(content)) {
+          if (banned.has(packageNameOf(spec))) {
+            violations.push({
+              file: path.relative(workspaceRoot, file),
+              specifier: spec,
+              sourceTag,
+            });
+          }
+        }
+      });
+    }
+  }
+
+  return violations;
+}
+
+/**
  * Walk the Nx project graph and collect every edge that violates the
  * DEP_CONSTRAINTS rules. A given edge can match multiple constraints
  * (e.g. a `type:domain-api` source also has `scope:domain`); the
@@ -180,7 +261,7 @@ function findBannedDependencyViolations(graph, workspaceRoot, bannedDependencies
  * source tags. Exported for unit testing against a synthetic graph.
  *
  * @param {ProjectGraphLike} graph
- * @param {Array<{sourceRoot: string, targetRoot: string, allowedImport: string}>} exceptions
+ * @param {Array<{sourceRoot: string, targetRoot?: string, allowedImport: string}>} exceptions
  * @returns {Violation[]}
  */
 function findViolations(graph, exceptions = []) {
@@ -243,7 +324,10 @@ async function main() {
   }
 
   const workspaceRoot = process.cwd();
-  const legacyPackages = collectLegacyPackageNames(graph, workspaceRoot);
+  const legacyPackages = new Set([
+    ...collectLegacyPackageNames(graph, workspaceRoot),
+    ...LEGACY_PACKAGES,
+  ]);
   const sourceViolations = findSourceImportViolations(
     workspaceRoot,
     legacyPackages,
@@ -257,7 +341,25 @@ async function main() {
       console.error(`  ${v.file}  →  ${v.specifier}`);
     }
     console.error(
-      "\n@ledgerhq/* workspace-package imports are forbidden in shared/, domain/, features/ source files.\n",
+      "\nLegacy @ledgerhq/* imports are forbidden in shared/, domain/, features/ source files.\n",
+    );
+  }
+
+  const bannedExternalViolations = findBannedExternalViolations(
+    graph,
+    workspaceRoot,
+    BANNED_EXTERNALS_BY_TAG,
+  );
+
+  if (bannedExternalViolations.length > 0) {
+    hasError = true;
+    console.error(`\n✗ ${bannedExternalViolations.length} banned-external violation(s):\n`);
+    for (const v of bannedExternalViolations) {
+      const where = v.field ? ` (${v.field})` : "";
+      console.error(`  ${v.file}  →  ${v.specifier}${where}  [${v.sourceTag}]`);
+    }
+    console.error(
+      "\nPackages banned per source tag are listed in tools/nx-plugins/enforce-boundaries/constraints.js\n",
     );
   }
 
@@ -291,6 +393,7 @@ module.exports = {
   findSourceImportViolations,
   collectLegacyPackageNames,
   findBannedDependencyViolations,
+  findBannedExternalViolations,
 };
 
 if (require.main === module) {
