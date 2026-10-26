@@ -17,6 +17,7 @@ import { makeSessionDir } from "../../testing/session-fixture";
 import { ETH_DESCRIPTOR } from "../../testing/constants";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { InMemoryKeychain } from "../../testing/in-memory-keychain";
+import { resetTestSeams } from "../../shared/test-seam";
 
 function runCliWithStdin(
   args: string[],
@@ -37,7 +38,7 @@ function runCliWithStdin(
 const keychain = new InMemoryKeychain();
 const _store = keychain.entries;
 beforeAll(() => _setTestKeychain(keychain.open));
-afterAll(() => _setTestKeychain(null));
+afterAll(resetTestSeams);
 // A test that fakes LKRP SDK methods hands the next one back the real (WALLET_CLI_MOCK) SDK.
 afterEach(() => _setTestLkrpSdk(null));
 
@@ -227,6 +228,21 @@ describe("ring — happy path", () => {
   });
 });
 
+describe("ring init — password", () => {
+  const { env, cleanup } = makeTmpDir();
+  afterAll(cleanup);
+
+  it("rejects an empty password", async () => {
+    const r = await runCli(["ring", "init", "--name", "pw-member", "--output", "json"], {
+      ...env,
+      ...MOCK_ENV_DMK,
+      WALLET_PASS: "",
+    });
+    expect(r.exitCode).toBe(1);
+    expect(r.stdout).toMatch(/must not be empty/i);
+  });
+});
+
 describe("ring — with password", () => {
   let dir: string;
   let env: Record<string, string>;
@@ -256,25 +272,9 @@ describe("ring — with password", () => {
     return runCliWithStdin(["ring", "destroy"], { ...env, WALLET_PASS: password }, ["destroy"]);
   }
 
-  it("init stores password-wrapped key", () => {
+  it("init stores the member's private key password-wrapped", () => {
     expect(initResult.stdout).toContain("pw-member");
-  });
-
-  it("init rejects empty password", async () => {
-    const { dir: d2, env: e2 } = makeTmpDir();
-    const r = await runCli(["ring", "init", "--name", "pw-member", "--output", "json"], {
-      ...e2,
-      ...MOCK_ENV_DMK,
-      WALLET_PASS: "",
-    });
-    rmSync(d2, { recursive: true, force: true });
-    expect(r.exitCode).toBe(1);
-    expect(r.stdout).toMatch(/must not be empty/i);
-  });
-
-  it("keychain stores encrypted private key", () => {
-    const allValues = [..._store.values()];
-    expect(allValues.some(v => v.startsWith("ENC:"))).toBe(true);
+    expect([..._store.values()].some(v => v.startsWith("ENC:"))).toBe(true);
   });
 
   it("encrypt with correct password decrypts member credentials", async () => {

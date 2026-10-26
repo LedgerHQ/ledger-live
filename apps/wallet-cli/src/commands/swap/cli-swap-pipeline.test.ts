@@ -7,7 +7,11 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { getAccountBridge as getLiveAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import * as swapAnalytics from "../../analytics/swap-analytics";
 import type { CommandOutput } from "../../output";
-import { runFullSwapPipeline, type FullSwapPipelineInput } from "./cli-swap-pipeline";
+import {
+  runFullSwapPipeline,
+  type FullSwapPipelineInput,
+  type SwapPipelineDeps,
+} from "./cli-swap-pipeline";
 
 /**
  * The full swap pipeline must keep the Exchange app session open across the entire
@@ -71,16 +75,7 @@ const fakes = {
   decodeSwapPayload: async () => ({ amountToWallet }),
   setBroadcastTransaction: setBroadcastTransactionMock,
   postSwapCancelled: postSwapCancelledMock,
-} as unknown as Pick<
-  FullSwapPipelineInput,
-  | "withLedgerManagerAppSession"
-  | "startExchange"
-  | "completeExchange"
-  | "retrieveSwapPayload"
-  | "decodeSwapPayload"
-  | "setBroadcastTransaction"
-  | "postSwapCancelled"
->;
+} as unknown as Partial<SwapPipelineDeps>;
 
 function makeAccount(id: string, units: Unit[] = [mockEthUnit]): Account {
   return {
@@ -147,7 +142,6 @@ async function getDeviceModelId() {
  */
 function runPipeline(overrides: Partial<FullSwapPipelineInput> = {}) {
   return runFullSwapPipeline({
-    ...fakes,
     out: makeOutput(),
     provider: "changelly",
     amount: "1",
@@ -155,9 +149,8 @@ function runPipeline(overrides: Partial<FullSwapPipelineInput> = {}) {
     feeStrategy: "medium",
     fromAccount: makeAccount("from"),
     toAccount: makeAccount("to"),
-    getAccountBridge,
-    getDeviceModelId,
     ...overrides,
+    deps: { ...fakes, getAccountBridge, getDeviceModelId, ...overrides.deps },
   });
 }
 
@@ -233,9 +226,9 @@ describe("runFullSwapPipeline session lifecycle", () => {
       } as unknown as ReturnType<typeof getLiveAccountBridge>;
     };
 
-    await expect(runPipeline({ getAccountBridge: getAccountBridgeWithSignFailure })).rejects.toBe(
-      signError,
-    );
+    await expect(
+      runPipeline({ deps: { getAccountBridge: getAccountBridgeWithSignFailure } }),
+    ).rejects.toBe(signError);
 
     expect(setBroadcastTransactionMock).not.toHaveBeenCalled();
     expect(postSwapCancelledMock).toHaveBeenCalledTimes(1);

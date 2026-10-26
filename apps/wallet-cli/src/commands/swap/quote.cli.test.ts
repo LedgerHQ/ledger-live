@@ -10,6 +10,7 @@ import { ledgerClientVersion } from "../../shared/client-version";
 import { KEYCLOAK_TOKEN, makeAuthRoutes } from "../../testing/auth-routes";
 import { SWAP_QUOTE_ARGS, makeSwapQuoteRoutes } from "../../testing/swap-quote-routes";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
+import { resetTestSeams } from "../../shared/test-seam";
 
 const ACCOUNTS = [{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }];
 const JSON_QUOTE_ARGS = [...SWAP_QUOTE_ARGS, "--output", "json"];
@@ -284,7 +285,7 @@ describe("quote command — authentication failures", () => {
 
   describe("when an auth call does not answer", () => {
     beforeAll(() => _setTestAuthRequestTimeoutMs(200));
-    afterAll(() => _setTestAuthRequestTimeoutMs(null));
+    afterAll(resetTestSeams);
 
     it.each([
       [

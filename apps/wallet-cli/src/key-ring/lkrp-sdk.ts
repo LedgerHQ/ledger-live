@@ -3,6 +3,7 @@ import type { TrustchainSDK, WithDevice } from "@ledgerhq/ledger-key-ring-protoc
 import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { getEnv } from "@shared/env";
+import { createTestSeam } from "../shared/test-seam";
 import {
   AGENT_INTENT_TRUSTCHAIN_URLS,
   LEDGER_SYNC_APPLICATION_ID,
@@ -22,15 +23,13 @@ const createRealLkrpSdk: CreateLkrpSdk = memberName =>
     withDevice,
   );
 
-let createSdk = createRealLkrpSdk;
+const createSdk = createTestSeam(createRealLkrpSdk);
 
 /** @internal Test seam — makes `createLkrpSdk` return a fake SDK; `null` restores the real one. */
-export function _setTestLkrpSdk(create: CreateLkrpSdk | null): void {
-  createSdk = create ?? createRealLkrpSdk;
-}
+export const _setTestLkrpSdk = createSdk.set;
 
 export function createLkrpSdk(memberName = "wallet-cli"): TrustchainSDK {
-  return createSdk(memberName);
+  return createSdk.get()(memberName);
 }
 
 export const refuseAgentDevice: WithDevice = () => () => {

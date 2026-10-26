@@ -7,6 +7,7 @@ import { createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { getActiveSpeculosTarget } from "../device/speculos-target";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
+import { createTestSeam } from "../shared/test-seam";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
 import { runObservable } from "./run-observable";
@@ -14,12 +15,10 @@ import { commandDescription } from "./registry";
 
 const SOCKET_EVENT_PAYLOAD_GENUINE = "0000";
 
-let genuineCheck = getGenuineCheckFromDeviceId;
+const genuineCheck = createTestSeam(getGenuineCheckFromDeviceId);
 
 /** @internal Test seam — replaces the device genuine check; `null` restores live-common's. */
-export function _setTestGenuineCheck(check: typeof getGenuineCheckFromDeviceId | null): void {
-  genuineCheck = check ?? getGenuineCheckFromDeviceId;
-}
+export const _setTestGenuineCheck = genuineCheck.set;
 
 class NonGenuineDeviceError extends Error {
   constructor() {
@@ -81,10 +80,12 @@ export default defineCommand({
 
       await withDmkDeviceSession(async () => {
         await runObservable<GetGenuineCheckFromDeviceIdResult>({
-          source$: genuineCheck({
-            deviceId: WALLET_CLI_DMK_DEVICE_ID,
-            deviceName: null,
-          }).pipe(timeout({ each: flags["device-timeout"] })),
+          source$: genuineCheck
+            .get()({
+              deviceId: WALLET_CLI_DMK_DEVICE_ID,
+              deviceName: null,
+            })
+            .pipe(timeout({ each: flags["device-timeout"] })),
           onNext: ({ socketEvent, lockedDevice }) => {
             if (lockedDevice) {
               out.deviceState({ code: "awaiting_approval", reason: "unlock" });

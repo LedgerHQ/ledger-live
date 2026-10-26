@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
 import { errMessage } from "../shared/error-message";
+import { createTestSeam } from "../shared/test-seam";
 import { encryptData, decryptData, hexToBytes } from "./crypto";
 import { KeychainUnavailableError } from "./keychain-unavailable-error";
 
@@ -25,17 +26,13 @@ type OpenKeychainEntry = (
 
 const openOsKeychainEntry: OpenKeychainEntry = (service, account, options) =>
   new Entry(service, account, options);
-let openTestEntry: OpenKeychainEntry | null = null;
+const openEntry = createTestSeam(openOsKeychainEntry);
 
 /**
  * @internal Test seam — opens every keychain entry in a fake keychain and returns the one it
  * replaces; `null` restores the OS keychain.
  */
-export function _setTestKeychain(open: OpenKeychainEntry | null): OpenKeychainEntry | null {
-  const previous = openTestEntry;
-  openTestEntry = open;
-  return previous;
-}
+export const _setTestKeychain = openEntry.set;
 
 /** The only way wallet-cli reaches the OS keychain, so a test can swap it with `_setTestKeychain`. */
 export function openKeychainEntry(
@@ -43,7 +40,7 @@ export function openKeychainEntry(
   account: string,
   options?: EntryOptions,
 ): KeychainEntry {
-  return (openTestEntry ?? openOsKeychainEntry)(service, account, options);
+  return openEntry.get()(service, account, options);
 }
 
 // The pinned constructor is the whole check: a read would also report errors (a timeout, a locked
@@ -52,19 +49,17 @@ function probeSecretService(): KeychainEntry {
   return openKeychainEntry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY);
 }
 
-let probeKeychain: () => unknown = probeSecretService;
+const probeKeychain = createTestSeam<() => unknown>(probeSecretService);
 
 // Test seam — keeps tests off the OS keychain; `null` restores it.
-export function _setTestKeychainProbe(probe: (() => unknown) | null): void {
-  probeKeychain = probe ?? probeSecretService;
-}
+export const _setTestKeychainProbe = probeKeychain.set;
 
 // Reports a missing Secret Service up front, with a hint, instead of failing on the first pinned
 // entry. Not memoized: callers probe right before they read or write.
 export function assertOsKeychainAvailable(hint: string): void {
   if (process.platform !== "linux") return;
   try {
-    probeKeychain();
+    probeKeychain.get()();
   } catch (e) {
     throw new KeychainUnavailableError(
       `No OS keychain is available: no Secret Service provider (e.g. gnome-keyring or KeePassXC) ` +

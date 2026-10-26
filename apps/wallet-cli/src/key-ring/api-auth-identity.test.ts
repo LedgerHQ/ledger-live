@@ -11,6 +11,7 @@ import { pubkeyFromPrivatekey } from "./crypto";
 import { _setTestKeychain, _setTestKeychainProbe } from "./keychain-entry";
 import { installOutputCapture } from "../shared/ui";
 import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
+import { resetTestSeams } from "../shared/test-seam";
 
 const origStateHome = process.env.XDG_STATE_HOME;
 let keychain: InMemoryKeychain;
@@ -42,7 +43,7 @@ beforeEach(() => {
 
 afterEach(() => {
   restoreOutput();
-  _setTestKeychain(null);
+  resetTestSeams();
   if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
   else process.env.XDG_STATE_HOME = origStateHome;
 });
@@ -120,7 +121,6 @@ describe("loadApiAuthIdentity", () => {
       expect(opened).toBe(0);
       expect(stderr).toEqual([expect.stringMatching(/No usable OS keychain/)]);
     } finally {
-      _setTestKeychainProbe(null);
       restorePlatform();
     }
   });

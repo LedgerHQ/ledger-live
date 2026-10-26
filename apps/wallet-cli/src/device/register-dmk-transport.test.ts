@@ -23,6 +23,7 @@ import {
   resetWalletCliDmkSession,
 } from "./register-dmk-transport";
 import { getActiveSpeculosTarget } from "./speculos-target";
+import { resetTestSeams } from "../shared/test-seam";
 
 type Deferred<T = void> = {
   promise: Promise<T>;
@@ -117,11 +118,19 @@ beforeEach(async () => {
 
 afterEach(async () => {
   await disposeWalletCliDmkTransportFully();
-  _setTestDmk(null);
-  _setTestDmkTransport(null);
+  resetTestSeams();
 });
 
 describe("ensureWalletCliDmkTransport", () => {
+  it("refuses a new kit factory while a kit is cached, so the cached one is never left open", async () => {
+    _setTestDmk(async () => makeDmk().kit);
+    await ensureWalletCliDmkTransport();
+
+    expect(() => _setTestDmk(null)).toThrow("Dispose the cached DMK kit");
+    await disposeWalletCliDmkTransportFully();
+    expect(() => _setTestDmk(null)).not.toThrow();
+  });
+
   it("reuses the same transport until the caller resets the session", async () => {
     const fake = makeDmk();
     _setTestDmk(async () => fake.kit);

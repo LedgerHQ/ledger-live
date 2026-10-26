@@ -3,8 +3,7 @@ import "../live-common-setup";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "bun:test";
 import http from "node:http";
 import https from "node:https";
-import { liveCommonAxiosDefaults, redirectHttpTo, runCli } from "./cli-runner";
-import { ETH_DESCRIPTOR } from "./constants";
+import { liveCommonAxiosDefaults, redirectHttpTo, runCleanups, runCli } from "./cli-runner";
 import { MockServer } from "./mock-server";
 import { makeSessionDir } from "./session-fixture";
 
@@ -103,6 +102,39 @@ describe("redirectHttpTo", () => {
     expect(https.request).toBe(original.https);
     expect(axiosDefaults.map(defaults => defaults.adapter)).toEqual(original.axiosAdapters);
   });
+
+  it("installs once when redirects overlap, so clearing still puts the originals back", async () => {
+    const original = { fetch: globalThis.fetch, http: http.request, https: https.request };
+
+    await Promise.all([redirectHttpTo(server.port), redirectHttpTo(server.port)]);
+    await redirectHttpTo(null);
+
+    expect(globalThis.fetch).toBe(original.fetch);
+    expect(http.request).toBe(original.http);
+    expect(https.request).toBe(original.https);
+  });
+});
+
+describe("runCleanups", () => {
+  it("runs every cleanup, last first, even when one throws, and returns the first error", () => {
+    const ran: string[] = [];
+    const first = new Error("first");
+
+    const failure = runCleanups([
+      () => ran.push("a"),
+      () => {
+        ran.push("b");
+        throw new Error("second");
+      },
+      () => {
+        ran.push("c");
+        throw first;
+      },
+    ]);
+
+    expect(ran).toEqual(["c", "b", "a"]);
+    expect(failure).toEqual({ error: first });
+  });
 });
 
 describe("runCli", () => {
@@ -120,19 +152,17 @@ describe("runCli", () => {
     expect(globalThis.fetch).toBe(originalFetch);
   });
 
-  it("ignores an inherited XDG_STATE_HOME and starts the run with an empty session", async () => {
-    const developerState = makeSessionDir([{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }]);
+  it("refuses an XDG_STATE_HOME the test set in process.env but didn't pass", async () => {
+    const seeded = makeSessionDir([]);
     const savedStateHome = process.env.XDG_STATE_HOME;
-    process.env.XDG_STATE_HOME = developerState.env.XDG_STATE_HOME;
+    process.env.XDG_STATE_HOME = seeded.env.XDG_STATE_HOME;
     try {
-      const { stdout, exitCode } = await runCli(["session", "view", "--output", "json"]);
-
-      expect(exitCode).toBe(0);
-      expect(JSON.parse(stdout).accounts).toEqual([]);
+      await expect(runCli(["session", "view"])).rejects.toThrow("pass it in env too");
+      expect((await runCli(["session", "view"], seeded.env)).exitCode).toBe(0);
     } finally {
       if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
       else process.env.XDG_STATE_HOME = savedStateHome;
-      developerState.cleanup();
+      seeded.cleanup();
     }
   });
 });

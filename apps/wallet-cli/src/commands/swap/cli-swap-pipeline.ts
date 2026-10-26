@@ -85,6 +85,30 @@ export async function runSwapPayloadOnly(
   return retrieveSwapPayload(data);
 }
 
+export type SwapPipelineDeps = {
+  getAccountBridge: typeof getAccountBridge;
+  getDeviceModelId: typeof getWalletCliDeviceModelId;
+  withLedgerManagerAppSession: typeof withLedgerManagerAppSession;
+  startExchange: typeof startExchange;
+  completeExchange: typeof completeExchange;
+  retrieveSwapPayload: typeof retrieveSwapPayload;
+  decodeSwapPayload: typeof decodeSwapPayload;
+  setBroadcastTransaction: typeof setBroadcastTransaction;
+  postSwapCancelled: typeof postSwapCancelled;
+};
+
+const defaultSwapPipelineDeps: SwapPipelineDeps = {
+  getAccountBridge,
+  getDeviceModelId: getWalletCliDeviceModelId,
+  withLedgerManagerAppSession,
+  startExchange,
+  completeExchange,
+  retrieveSwapPayload,
+  decodeSwapPayload,
+  setBroadcastTransaction,
+  postSwapCancelled,
+};
+
 export type FullSwapPipelineInput = {
   out: CommandOutput;
   provider: string;
@@ -96,16 +120,8 @@ export type FullSwapPipelineInput = {
   toAccount: AccountLike;
   fromParentAccount?: Account;
   toParentAccount?: Account;
-  getAccountBridge?: typeof getAccountBridge;
-  getDeviceModelId?: typeof getWalletCliDeviceModelId;
-  withLedgerManagerAppSession?: typeof withLedgerManagerAppSession;
-  startExchange?: typeof startExchange;
-  completeExchange?: typeof completeExchange;
-  retrieveSwapPayload?: typeof retrieveSwapPayload;
-  decodeSwapPayload?: typeof decodeSwapPayload;
-  setBroadcastTransaction?: typeof setBroadcastTransaction;
-  postSwapCancelled?: typeof postSwapCancelled;
   flowId?: string;
+  deps?: Partial<SwapPipelineDeps>;
 };
 
 export type FullSwapPipelineResult = {
@@ -156,18 +172,17 @@ function buildStrategyTransaction(args: {
 async function startExchangeContext(
   out: CommandOutput,
   provider: string,
-  getDeviceModelId: typeof getWalletCliDeviceModelId,
-  start: typeof startExchange,
+  deps: SwapPipelineDeps,
 ): Promise<StartExchangeContext> {
   out.swapExecuteProgress(
     `[1/5] Starting new exchange transaction on the device (open the ${EXCHANGE_APP_NAME} app when prompted)…`,
   );
   const device: Device = {
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
-    modelId: (await getDeviceModelId())!,
+    modelId: (await deps.getDeviceModelId())!,
     wired: true,
   };
-  const events = start({
+  const events = deps.startExchange({
     device,
     exchangeType: EXCHANGE_SWAP,
     provider,
@@ -207,16 +222,15 @@ async function completeExchangeTransaction(
       fromCurrency: CryptoOrTokenCurrency;
       toCurrency: CryptoOrTokenCurrency;
     };
-    getDeviceModelId: typeof getWalletCliDeviceModelId;
-    completeExchange: typeof completeExchange;
   },
+  deps: SwapPipelineDeps,
 ): Promise<Transaction> {
   out.swapExecuteProgress(
     "[3/5] Completing exchange on device: partner checks, payout/refund validation, then confirm when the device asks…",
   );
-  const obs = input.completeExchange({
+  const obs = deps.completeExchange({
     deviceId: WALLET_CLI_DMK_DEVICE_ID,
-    deviceModelId: await input.getDeviceModelId(),
+    deviceModelId: await deps.getDeviceModelId(),
     provider: input.provider,
     binaryPayload: input.binaryPayload,
     signature: input.signature,
@@ -253,10 +267,10 @@ async function signAndBroadcast(
   fromAccount: AccountLike,
   fromParentAccount: Account | null | undefined,
   transaction: Transaction,
-  getBridge: typeof getAccountBridge,
+  deps: SwapPipelineDeps,
 ): Promise<{ operationHash?: string }> {
   const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-  const bridge = await getBridge(fromAccount, fromParentAccount);
+  const bridge = await deps.getAccountBridge(fromAccount, fromParentAccount);
   out.swapExecuteProgress("[5/5] Signing and broadcasting — follow prompts on the device…");
 
   const sign$ = bridge.signOperation({
@@ -297,17 +311,9 @@ export async function runFullSwapPipeline(
     toAccount,
     fromParentAccount: fromParent,
     toParentAccount: toParent,
-    getAccountBridge: getBridge = getAccountBridge,
-    getDeviceModelId = getWalletCliDeviceModelId,
-    withLedgerManagerAppSession: withAppSession = withLedgerManagerAppSession,
-    startExchange: start = startExchange,
-    completeExchange: complete = completeExchange,
-    retrieveSwapPayload: retrievePayload = retrieveSwapPayload,
-    decodeSwapPayload: decode = decodeSwapPayload,
-    setBroadcastTransaction: setBroadcast = setBroadcastTransaction,
-    postSwapCancelled: postCancelled = postSwapCancelled,
     flowId,
   } = input;
+  const deps = { ...defaultSwapPipelineDeps, ...input.deps };
 
   const accounts: AccountLike[] = [fromAccount, toAccount, fromParent, toParent].filter(
     (a): a is AccountLike => a != null,
@@ -340,17 +346,12 @@ export async function runFullSwapPipeline(
   }
 
   try {
-    return await withAppSession(EXCHANGE_APP_NAME, async () => {
-      const { transactionId, deviceInfo } = await startExchangeContext(
-        out,
-        provider,
-        getDeviceModelId,
-        start,
-      );
+    return await deps.withLedgerManagerAppSession(EXCHANGE_APP_NAME, async () => {
+      const { transactionId, deviceInfo } = await startExchangeContext(out, provider, deps);
       hardwareWalletType = deviceInfo.modelId;
 
       out.swapExecuteProgress("[2/5] Requesting swap payload from Ledger swap API…");
-      const payload = await retrievePayload({
+      const payload = await deps.retrieveSwapPayload({
         provider,
         deviceTransactionId: transactionId,
         fromAccountAddress,
@@ -380,7 +381,7 @@ export async function runFullSwapPipeline(
         );
       }
 
-      const accountBridge = await getBridge(fromAccount, fromParentAccount);
+      const accountBridge = await deps.getAccountBridge(fromAccount, fromParentAccount);
       const subAccountId =
         fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
       const bridgeTx = accountBridge.createTransaction(fromAccount);
@@ -393,7 +394,7 @@ export async function runFullSwapPipeline(
         },
       );
 
-      const decodePayload = await decode(payload.binaryPayload);
+      const decodePayload = await deps.decodeSwapPayload(payload.binaryPayload);
       const toUnit = toCurrency.units[0];
       if (!toUnit) {
         throw new Error(`Destination currency has no unit defined: ${toCurrency.id}`);
@@ -418,26 +419,28 @@ export async function runFullSwapPipeline(
         toCurrency,
       };
 
-      const transaction = await completeExchangeTransaction(out, {
-        provider,
-        binaryPayload: payload.binaryPayload,
-        signature: payload.signature,
-        rateType,
-        transaction: tx,
-        exchange,
-        getDeviceModelId,
-        completeExchange: complete,
-      });
+      const transaction = await completeExchangeTransaction(
+        out,
+        {
+          provider,
+          binaryPayload: payload.binaryPayload,
+          signature: payload.signature,
+          rateType,
+          transaction: tx,
+          exchange,
+        },
+        deps,
+      );
       const { operationHash } = await signAndBroadcast(
         out,
         fromAccount,
         fromParentAccount,
         transaction,
-        getBridge,
+        deps,
       );
 
       if (swapId && operationHash) {
-        setBroadcast({
+        deps.setBroadcastTransaction({
           provider,
           result: { operation: operationHash, swapId },
           sourceCurrencyId: fromCurrency.id,
@@ -495,7 +498,7 @@ export async function runFullSwapPipeline(
         : new CompleteExchangeError("INIT", rawErrorName, errorMessageWithCause);
 
     if (swapId) {
-      await postCancelled({
+      await deps.postSwapCancelled({
         provider,
         swapId,
         swapStep: getSwapStepFromError(completeExchangeError),

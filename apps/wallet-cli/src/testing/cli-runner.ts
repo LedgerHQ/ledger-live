@@ -11,7 +11,7 @@
  *     HTTP interceptor, and any `mock.module(...)` registrations) is SHARED across files.
  *   - Within that single process, tests run one at a time, so stdout/stderr capture,
  *     env-var patching, and DMK state are safe without locks as long as each call cleans
- *     up after itself (see the `finally` block in runCli).
+ *     up after itself (see `runCleanups` in runCli).
  *   - Because module mocks are global and cannot be undone, a test file that has to mock a
  *     module also imported by these CLI runs uses `createGatedModuleMock` (see
  *     `gated-module-mock.ts`), so other files keep the real module.
@@ -75,13 +75,17 @@ type SetTestKeychainFn = typeof import("../key-ring/keychain-entry")._setTestKey
 
 /**
  * Keychain `runCli` gives the CLI unless the test installed its own with `_setTestKeychain`, so runs
- * never touch the developer's real keychain. Entries are keyed by account, one per XDG_STATE_HOME.
+ * never touch the developer's real keychain. Shared by the runs that pass an XDG_STATE_HOME, so a
+ * later run finds the keys an earlier one stored there; entries are keyed by account, one per dir.
  */
 const runCliKeychain = new InMemoryKeychain();
 
-/** Points the keychain seam at the test's own keychain, or else at `runCliKeychain`; returns the undo. */
-function useRunCliKeychain(setTestKeychain: SetTestKeychainFn): () => void {
-  const testKeychain = setTestKeychain(runCliKeychain.open);
+/** Points the keychain seam at the test's own keychain, or else at `keychain`; returns the undo. */
+function useRunCliKeychain(
+  setTestKeychain: SetTestKeychainFn,
+  keychain = runCliKeychain,
+): () => void {
+  const testKeychain = setTestKeychain(keychain.open);
   if (testKeychain) setTestKeychain(testKeychain);
   return () => {
     setTestKeychain(testKeychain);
@@ -118,6 +122,7 @@ export async function storedApiAuthPubkey(env: {
 // HTTP interceptor — installed while a mock port is set
 // ---------------------------------------------------------------------------
 
+let interceptorsInstall: Promise<void> | null = null;
 let uninstallInterceptors: (() => void) | null = null;
 let currentMockPort: number | null = null;
 
@@ -286,7 +291,11 @@ export async function redirectHttpTo(port: number | null): Promise<void> {
     stopRedirectingHttp();
     return;
   }
-  uninstallInterceptors ??= await installInterceptors();
+  // The promise, not its result, so overlapping calls share one install.
+  interceptorsInstall ??= installInterceptors().then(uninstall => {
+    uninstallInterceptors = uninstall;
+  });
+  await interceptorsInstall;
   currentMockPort = port;
 }
 
@@ -294,6 +303,7 @@ function stopRedirectingHttp(): void {
   currentMockPort = null;
   uninstallInterceptors?.();
   uninstallInterceptors = null;
+  interceptorsInstall = null;
 }
 
 // ---------------------------------------------------------------------------
@@ -302,7 +312,7 @@ function stopRedirectingHttp(): void {
 
 /**
  * Build a mock DMK transport from the env vars used by the subprocess wrapper.
- * Returns true if mocking was installed (so we know to clean up in finally).
+ * Returns true if mocking was installed (so runCli registers its undo).
  */
 async function setupDmkMock(
   env: Record<string, string>,
@@ -360,6 +370,22 @@ export type RunResult = {
   exitCode: number;
 };
 
+/** The XDG_STATE_HOME the test process started with, e.g. the developer's own; runs ignore it. */
+const launchStateHome = process.env.XDG_STATE_HOME;
+
+/** Runs every cleanup, last registered first, even when one throws; returns the first error. */
+export function runCleanups(cleanups: readonly (() => void)[]): { error: unknown } | undefined {
+  let failure: { error: unknown } | undefined;
+  for (const cleanup of cleanups.toReversed()) {
+    try {
+      cleanup();
+    } catch (error) {
+      failure ??= { error };
+    }
+  }
+  return failure;
+}
+
 /**
  * Run the CLI in-process with the given argv and env overrides.
  * Captures stdout/stderr and returns them along with the exit code.
@@ -379,6 +405,12 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
     WALLET_CLI_NO_NUDGE: "1",
     ...env,
   };
+  // A test that seeded state through process.env and didn't pass it would run on an empty dir.
+  if (env.XDG_STATE_HOME === undefined && process.env.XDG_STATE_HOME !== launchStateHome) {
+    throw new Error(
+      "runCli ignores process.env.XDG_STATE_HOME, which this test changed: pass it in env too",
+    );
+  }
 
   // 0. Lazy-load the CLI module graph (once per test process; cached once it loads).
   //    Doing this lazily ensures module-resolution failures appear as individual
@@ -394,7 +426,7 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
   const cleanups: (() => void)[] = [];
   const outChunks: string[] = [];
   const errChunks: string[] = [];
-  let exitCode = 0;
+  let outcome: { exitCode: number } | { error: unknown };
   try {
     // 1. HTTP interceptor
     if (mergedEnv.WALLET_CLI_MOCK_PORT) {
@@ -409,10 +441,13 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
 
     // 3. State dir (session.yaml and the like): the XDG_STATE_HOME passed in `env`, or a new empty
     //    one (process.env's is ignored), so runs never read or write the developer's real session.
+    //    Nothing reads a new dir's keys after the run, so they go in a keychain of its own.
+    let keychain = runCliKeychain;
     if (mergedEnv.XDG_STATE_HOME === undefined) {
       const stateHome = mkdtempSync(path.join(tmpdir(), "wallet-cli-test-"));
       cleanups.push(() => rmSync(stateHome, { recursive: true, force: true }));
       mergedEnv.XDG_STATE_HOME = stateHome;
+      keychain = new InMemoryKeychain();
     }
 
     // 4. Temporary env vars (XDG_STATE_HOME, etc.)
@@ -427,22 +462,23 @@ export async function runCli(args: string[], env: Record<string, string> = {}): 
       },
     });
     // 6. Keychain: the test's own, or the in-memory one
-    const restoreKeychain = useRunCliKeychain(setTestKeychain);
+    const restoreKeychain = useRunCliKeychain(setTestKeychain, keychain);
     // Steps 4–6 only assign variables and cannot throw, so they register their undo together.
     cleanups.push(() => restoreEnv(savedEnv), restoreOutputCapture, restoreKeychain);
 
-    exitCode = await runMain(args);
+    outcome = { exitCode: await runMain(args) };
   } catch (e) {
     const code = getCliProcessExitCode(e);
-    if (code === null) throw e;
-    exitCode = code;
-  } finally {
-    for (const cleanup of cleanups.toReversed()) cleanup();
+    outcome = code === null ? { error: e } : { exitCode: code };
   }
+  // Not in a `finally`, so a failing cleanup can't hide the run's own error.
+  const cleanupFailure = runCleanups(cleanups);
+  if ("error" in outcome) throw outcome.error;
+  if (cleanupFailure) throw cleanupFailure.error;
 
   return {
     stdout: outChunks.join("").trim(),
     stderr: errChunks.join("").trim(),
-    exitCode,
+    exitCode: outcome.exitCode,
   };
 }

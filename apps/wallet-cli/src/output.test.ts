@@ -12,10 +12,11 @@ import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
 import { createCommandOutput } from "./output";
 import { _setTestSpinner, installOutputCapture } from "./shared/ui";
 import { FakeSpinners } from "./testing/fake-spinner";
+import { resetTestSeams } from "./shared/test-seam";
 
 const spinners = new FakeSpinners();
 beforeAll(() => _setTestSpinner(spinners.create));
-afterAll(() => _setTestSpinner(null));
+afterAll(resetTestSeams);
 
 describe("HumanCommandOutput", () => {
   const envVars = [

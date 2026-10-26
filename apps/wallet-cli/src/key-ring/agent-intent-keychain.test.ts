@@ -13,6 +13,7 @@ import {
   assertOsKeychainAvailable,
 } from "./keychain-entry";
 import { KeychainUnavailableError } from "./keychain-unavailable-error";
+import { resetTestSeams } from "../shared/test-seam";
 
 const SECRET_SERVICE_ONLY = { linux: { store: "secret-service" } };
 
@@ -33,7 +34,7 @@ beforeAll(() => {
     };
   });
 });
-afterAll(() => _setTestKeychain(null));
+afterAll(resetTestSeams);
 
 beforeEach(() => {
   keychain = new InMemoryKeychain();

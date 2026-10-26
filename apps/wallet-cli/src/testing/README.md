@@ -49,8 +49,9 @@ the first option that works:
 2. **Test seam** — when the test can't pass the dependency in (e.g. code reached
    through `runCli`), an `@internal` `_setTest*` setter (`_setTestKeychain`,
    `_setTestLkrpSdk`, `_setTestGenuineCheck`, `_setTestSpinner`,
-   `_setTestDmkTransport`, `_setTestDmk`). Set it in `beforeAll`/`beforeEach`,
-   pass `null` in the matching `after*` hook.
+   `_setTestDmkTransport`, `_setTestDmk`), built with `createTestSeam`
+   (`shared/test-seam.ts`). Set it in `beforeAll`/`beforeEach` and call
+   `resetTestSeams()` in the matching `after*` hook, which restores every seam.
 3. **Environment fake** — `MockServer` and `MockDeviceManagementKit` above.
 4. **`spyOn`** — on a module namespace, restored in `afterEach` or `finally`.
 5. **`createGatedModuleMock`** — when none of the above fits. It forwards to the

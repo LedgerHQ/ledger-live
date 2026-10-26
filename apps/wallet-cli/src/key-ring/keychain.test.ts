@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "bun:test"
 import { InMemoryKeychain } from "../testing/in-memory-keychain";
 import { deletePrivateKey, hasStoredKey, loadMemberCredentials, savePrivateKey } from "./keychain";
 import { _setTestKeychain } from "./keychain-entry";
+import { resetTestSeams } from "../shared/test-seam";
 
 let keychain: InMemoryKeychain;
 const opened: unknown[][] = [];
@@ -12,7 +13,7 @@ beforeAll(() => {
     return keychain.open(service, account);
   });
 });
-afterAll(() => _setTestKeychain(null));
+afterAll(resetTestSeams);
 
 describe("ring member key keychain entry", () => {
   beforeEach(() => {

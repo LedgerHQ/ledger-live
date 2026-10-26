@@ -13,6 +13,7 @@ import {
   hasWalletCliDeviceInterruptScope,
   withWalletCliDeviceInterruptScope,
 } from "./interrupt-scope";
+import { createTestSeam } from "../shared/test-seam";
 import { restoreTerminalCursor } from "../shared/ui";
 
 /** Device id passed to live-common `withDevice` / bridge methods for the first USB Ledger (DMK node WebUSB). */
@@ -48,38 +49,37 @@ let persistentDmk: Promise<WalletCliDmk> | null = null;
 let pendingTransport: Promise<WalletCliDmkTransport> | null = null;
 let exitHooksRegistered = false;
 
-let _testTransport: WalletCliDmkTransport | null = null;
-
 class InitialSessionBusyError extends Error {
   constructor() {
     super(INITIAL_SESSION_BUSY_MESSAGE);
   }
 }
 
-/** @internal Test seam — install before the CLI starts (as `runCli` does for `WALLET_CLI_MOCK_DMK=1`) to bypass USB discovery. */
-export function _setTestDmkTransport(t: WalletCliDmkTransport | null): void {
-  _testTransport = t;
+const testTransport = createTestSeam<WalletCliDmkTransport | null>(null, () => {
   singleton = null;
   pendingTransport = null;
-}
+});
+
+/** @internal Test seam — install before the CLI starts (as `runCli` does for `WALLET_CLI_MOCK_DMK=1`) to bypass USB discovery. */
+export const _setTestDmkTransport = testTransport.set;
 
 type CreateWalletCliDmk = (speculos: SpeculosTarget | null) => Promise<WalletCliDmk>;
 
 /** Loads `./dmk` on the first open rather than at startup: it pulls node-usb. */
 const createRealDmk: CreateWalletCliDmk = async speculos =>
   (await import("./dmk")).createDeviceManagementKit(speculos);
-let createDmk = createRealDmk;
+const createDmk = createTestSeam(createRealDmk, () => {
+  // Dropped unclosed, a cached kit would keep its node-usb/Speculos handles and the process alive.
+  if (persistentDmk) {
+    throw new Error("Dispose the cached DMK kit (disposeWalletCliDmkTransportFully) first");
+  }
+});
 
 /**
  * @internal Test seam — builds a fake kit instead of loading `./dmk`; `null` restores the real one.
- * Drops the cached kit and session without closing them, so the next open uses the new factory.
+ * Throws while a kit is cached, so the next open always uses the new factory.
  */
-export function _setTestDmk(create: CreateWalletCliDmk | null): void {
-  createDmk = create ?? createRealDmk;
-  singleton = null;
-  pendingTransport = null;
-  persistentDmk = null;
-}
+export const _setTestDmk = createDmk.set;
 
 function closeDmkQuietly(dmk: DeviceManagementKit): void {
   try {
@@ -102,10 +102,12 @@ function terminateWalletCliFromSignal(code: number): void {
 }
 
 function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
-  persistentDmk ??= createDmk(getActiveSpeculosTarget()).catch(error => {
-    persistentDmk = null;
-    throw error;
-  });
+  persistentDmk ??= createDmk
+    .get()(getActiveSpeculosTarget())
+    .catch(error => {
+      persistentDmk = null;
+      throw error;
+    });
   return persistentDmk;
 }
 
@@ -130,7 +132,7 @@ async function disconnectHeldDmk(held: Singleton | null, mode: "reset" | "dispos
   if (!held) return;
 
   const disconnect = held.dmk.disconnect({ sessionId: held.transport.sessionId });
-  if (mode === "reset" || _testTransport) {
+  if (mode === "reset" || testTransport.get()) {
     await disconnect.catch(() => {});
     return;
   }
@@ -146,7 +148,7 @@ async function destroyHeldDmk(held: Singleton | null, mode: "reset" | "dispose")
   // reconnecting while one is still in flight would race/corrupt the next session.
   // dispose is process-exit, where a wedged transfer must not keep us alive, so it
   // is bounded by DISPOSE_DESTROY_TIMEOUT_MS instead.
-  if (mode === "reset" || _testTransport) {
+  if (mode === "reset" || testTransport.get()) {
     await held.destroyTransport().catch(() => {});
   } else {
     await awaitWithTimeout(held.destroyTransport(), DISPOSE_DESTROY_TIMEOUT_MS);
@@ -285,12 +287,9 @@ async function createWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
  */
 export function ensureWalletCliDmkTransport(): Promise<WalletCliDmkTransport> {
   return withWalletCliDeviceInterruptScope(async () => {
-    if (_testTransport) {
-      singleton ??= {
-        dmk: _testTransport.dmk,
-        transport: _testTransport,
-        destroyTransport: async () => {},
-      };
+    const transport = testTransport.get();
+    if (transport) {
+      singleton ??= { dmk: transport.dmk, transport, destroyTransport: async () => {} };
       return singleton.transport;
     }
 
@@ -318,7 +317,7 @@ async function teardownDmk(mode: "reset" | "dispose"): Promise<void> {
 
   await disconnectHeldDmk(held, mode);
 
-  if (_testTransport) return;
+  if (testTransport.get()) return;
 
   await destroyHeldDmk(held, mode);
   await teardownPersistentDmk(held, mode);

@@ -1,10 +1,11 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { FakeSpinners } from "../testing/fake-spinner";
 import { _setTestSpinner, spinner } from "./ui";
+import { resetTestSeams } from "./test-seam";
 
 const spinners = new FakeSpinners();
 beforeAll(() => _setTestSpinner(spinners.create));
-afterAll(() => _setTestSpinner(null));
+afterAll(resetTestSeams);
 
 describe("spinner", () => {
   const envVars = [
