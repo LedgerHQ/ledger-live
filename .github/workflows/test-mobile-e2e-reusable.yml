@@ -1257,10 +1257,18 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: "TEST ONLY: set emulator-5556 clock back to 2026-08-25"
+        run: |
+          adb -s emulator-5556 wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 1; done'
+          adb -s emulator-5556 shell su 0 date -u 082512002026.00
+
       # QAA-1665: an emulator restored from the AVD snapshot can keep its clock and reject newer certificates.
       - name: Sync Android emulator clocks
         timeout-minutes: 10
-        uses: LedgerHQ/ledger-live/tools/actions/composites/sync-android-emulator-clocks@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/sync-android-emulator-clocks@test/e2e-QAA-1665-clock-skew
+
+      - name: "TEST ONLY: emulator clocks after the sync"
+        run: for s in emulator-5554 emulator-5556 emulator-5558; do echo "$s $(adb -s $s shell date -u +%FT%TZ), runner $(date -u +%FT%TZ)"; done
 
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
