@@ -68,10 +68,10 @@ const DEP_CONSTRAINTS = [
  */
 const BOUNDARY_EXCEPTIONS = [{ sourceRoot: "shared/env", allowedImport: "@ledgerhq/live-env" }];
 
-/** Workspace roots whose source files may import neither a legacy package nor a path into `libs/`. */
+/** Workspace roots checked by `LEGACY_IMPORT_RULE`. */
 const LEGACY_SOURCE_ROOTS = ["shared", "domain", "features"];
 
-const LEGACY_IMPORT_RULE = `Legacy @ledgerhq/* imports are forbidden in ${LEGACY_SOURCE_ROOTS.map(r => `${r}/`).join(", ")} source files.`;
+const LEGACY_IMPORT_RULE = `Legacy @ledgerhq/* imports and relative paths into libs/ are forbidden in ${LEGACY_SOURCE_ROOTS.map(r => `${r}/`).join(", ")} source files.`;
 
 /**
  * Legacy packages for `LEGACY_IMPORT_RULE`, on top of every `scope:libs` node of the graph.
