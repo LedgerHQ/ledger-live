@@ -763,6 +763,8 @@ jobs:
       # nanoS needs the pinned Speculinho snapshot. Keyed on the resolved device, not inputs.speculos_device,
       # which is empty on nightlies. Keep the tag in sync with the Android job.
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.ios_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
+      # Device logs only feed the AI artifact, so stream them only when that artifact is built.
+      E2E_DEVICE_LOGS: ${{ ((github.event_name == 'schedule' && !inputs.ci_smoke) || inputs.generate_ai_artifacts) && 'true' || 'false' }}
     outputs:
       status: ${{ steps.run-ios.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
@@ -990,6 +992,8 @@ jobs:
       SPECULOS_DEVICE: ${{ needs.determine-builds.outputs.android_device }}
       # Same nanoS snapshot rule as the iOS job.
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ needs.determine-builds.outputs.android_device == 'nanoS' && 'speculos-38ccc68068db-coinapps-85c7e5c' || 'latest' }}
+      # Device logs only feed the AI artifact, so stream them only when that artifact is built.
+      E2E_DEVICE_LOGS: ${{ ((github.event_name == 'schedule' && !inputs.ci_smoke) || inputs.generate_ai_artifacts) && 'true' || 'false' }}
     outputs:
       status: ${{ steps.run-android.outcome }}
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
