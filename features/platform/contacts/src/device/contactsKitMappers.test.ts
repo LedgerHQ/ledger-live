@@ -76,6 +76,25 @@ describe("mapIdentifierToBytes", () => {
     // WHEN / THEN
     expect(() => mapIdentifierToBytes(value, "tron")).toThrow(ContactDeviceIntentInputError);
   });
+  it("GIVEN a base58 Solana address WHEN mapping THEN it returns its 32-byte public key", () => {
+    // WHEN
+    const result = mapIdentifierToBytes("HxFLKUAmAMLz1jtT3hbvCMELwH5H9tpM2QugP8sKyfhW", "solana");
+
+    // THEN
+    expect(result).toEqual(
+      tryDecodeHex("0xfbe2244bce876db543a36a6408e241d309f18224a25aa7fd42ef7f08d3e19f65"),
+    );
+  });
+
+  it.each([
+    ["a hex address", "0xfbe2244bce876db543a36a6408e241d309f18224a25aa7fd42ef7f08d3e19f65"],
+    ["a non-base58 character", "HxFLKUAmAMLz1jtT3hbvCMELwH5H9tpM2QugP8sKyfh0"],
+    ["a Tron address", "TUjT4fqfNmuCq5wnPfgZayswhGTBcF3U11"],
+    ["an empty string", ""],
+  ])("GIVEN a Solana identifier with %s WHEN mapping THEN it throws", (_label, value) => {
+    // WHEN / THEN
+    expect(() => mapIdentifierToBytes(value, "solana")).toThrow(ContactDeviceIntentInputError);
+  });
 });
 
 describe("mapChainIdForFamily", () => {
@@ -86,6 +105,10 @@ describe("mapChainIdForFamily", () => {
   it("GIVEN the Tron family WHEN mapping THEN it omits the chainId", () => {
     // Tron's coin type must never reach the device: the signer provides without one.
     expect(mapChainIdForFamily(195, "tron")).toBeUndefined();
+  });
+
+  it("GIVEN the Solana family WHEN mapping THEN it omits the chainId", () => {
+    expect(mapChainIdForFamily(501, "solana")).toBeUndefined();
   });
 
   it("GIVEN the EVM family and a non-numeric chainId WHEN mapping THEN it throws", () => {

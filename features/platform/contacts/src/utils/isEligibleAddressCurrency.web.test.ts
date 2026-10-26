@@ -5,6 +5,7 @@ import { isEligibleAddressCurrency } from "./isEligibleAddressCurrency";
 const ETHEREUM = getCryptoCurrencyById("ethereum");
 const BITCOIN = getCryptoCurrencyById("bitcoin");
 const SEI = getCryptoCurrencyById("sei_evm");
+const SOLANA = getCryptoCurrencyById("solana");
 const EVM_CONFIG = {
   status: { type: "active" as const },
   name: "Ethereum",
@@ -69,6 +70,15 @@ describe("isEligibleAddressCurrency", () => {
     expect(
       isEligibleAddressCurrency(["tron"], mockTokenCurrency({ parentCurrencyId: SEI.id })),
     ).toBe(false);
+  });
+
+  it("accepts Solana and its SPL tokens only WHEN the solana family is eligible", () => {
+    const splToken = mockTokenCurrency({ parentCurrencyId: SOLANA.id });
+
+    expect(isEligibleAddressCurrency(["evm", "solana"], SOLANA)).toBe(true);
+    expect(isEligibleAddressCurrency(["evm", "solana"], splToken)).toBe(true);
+    expect(isEligibleAddressCurrency(["evm"], SOLANA, [], EVM_CONFIG)).toBe(false);
+    expect(isEligibleAddressCurrency(["evm"], splToken, [], EVM_CONFIG)).toBe(false);
   });
 
   it("rejects a missing currency or an empty family list", () => {

@@ -66,6 +66,41 @@ describe("resolveContactDeviceContext", () => {
     });
   });
 
+  it("GIVEN Solana WHEN resolving its context THEN it returns the Solana app and coin type", () => {
+    // GIVEN
+    const currencyId = ContactCurrencyIdSchema.parse("solana");
+
+    // WHEN
+    const context = resolveContactDeviceContext(currencyId);
+
+    // THEN
+    expect(context).toEqual({
+      blockchainFamily: "solana",
+      chainId: 501,
+      initializationInput: {
+        appName: "Solana",
+        dependencies: [],
+        requireLatestFirmware: false,
+      },
+    });
+  });
+
+  it("GIVEN an SPL token WHEN resolving its context THEN it uses the Solana network", () => {
+    // GIVEN
+    const currencyId = ContactCurrencyIdSchema.parse(
+      "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+    );
+
+    // WHEN
+    const context = resolveContactDeviceContext(currencyId);
+
+    // THEN
+    expect(context).toMatchObject({
+      blockchainFamily: "solana",
+      initializationInput: { appName: "Solana" },
+    });
+  });
+
   it("GIVEN an unsupported app WHEN resolving its context THEN it rejects the currency", () => {
     // GIVEN
     const currencyId = ContactCurrencyIdSchema.parse("bitcoin");
@@ -111,6 +146,7 @@ describe("isContactDeviceCurrencySupported", () => {
     ["polygon", true],
     ["base/erc20/usd_coin", true],
     ["tron", true],
+    ["solana", true],
     ["ethereum_classic", true],
     ["sei_evm", true],
     ["bitcoin", false],
