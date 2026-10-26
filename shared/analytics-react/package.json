@@ -23,7 +23,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/analytics-react"
+    "unimported": "pnpm knip --directory ../.. -c shared/analytics-react/knip.web.config.mjs -W shared/analytics-react --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/analytics-react/knip.native.config.mjs -W shared/analytics-react --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@shared/analytics": "workspace:*",
