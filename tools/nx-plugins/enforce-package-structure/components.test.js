@@ -1066,7 +1066,7 @@ test("R3 follows a rotation of many parameters in linear time", () => {
   assert.ok(Date.now() - start < 5000);
 });
 
-test("R3 reads a default shared down a chain of types once per reference", () => {
+test("R3 reads a default shared down a chain of types once", () => {
   // Keying a default on the whole chain of references doubles the work at every level.
   const aliases = ["type D0<T = { onPress(): void }> = T;"];
   for (let level = 1; level <= 24; level++) {
@@ -1119,13 +1119,20 @@ test("R3 reads a parameter's arguments once however often the type places it", (
   assert.ok(Date.now() - start < 5000);
 });
 
-test("R3 reads a wide default once for many sibling references", () => {
+test("R3 reads a wide default once for many sibling references, read or not", () => {
   // Visiting the default once per reference grows with references times fields.
   const fields = Array.from({ length: 10000 }, (_, index) => `f${index}: string;`).join(" ");
+  const reading = Array.from({ length: 10000 }, (_, index) => `f${index}: A;`).join(" ");
   for (const [declaration, sibling, last, expected] of [
     [`type Box<T = { ${fields} }> = { value: T };`, "Box", "Box", []],
     [
       `type Box<A, T = { ${fields} first: A }> = { value: T };`,
+      "Box<string>",
+      "Box<{ onPress(): void }>",
+      ["R3 contract-gesture-callback Card"],
+    ],
+    [
+      `type Box<A, T = { ${reading} }> = { value: T };`,
       "Box<string>",
       "Box<{ onPress(): void }>",
       ["R3 contract-gesture-callback Card"],

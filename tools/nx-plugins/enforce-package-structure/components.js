@@ -874,12 +874,14 @@ function inferringConditional(parameter) {
 function reachableProps(declaration, module) {
   // Where a node is visited: the contract's own expansion, whose parameters stay unbound; the
   // body of a referenced local type, whose parameters take the arguments of every reference; or
-  // the default of a parameter a reference omits, which reads that reference's arguments in every
-  // context the reference is visited in. One context per reference keeps a recursive default,
-  // `Chain<T = { next?: Chain }>`, and a default shared down a chain of types finite and linear.
+  // the default of a parameter, visited once whatever the number of references that omit it.
+  // There an earlier parameter reads what those references give it: their argument, or its own
+  // default when they omit it too. Omitted arguments are a suffix, so this is what reading the
+  // default once per reference reaches, and a recursive or widely shared default stays linear.
   /**
    * @typedef {ts.TypeReferenceNode | ts.ExpressionWithTypeArguments} Reference
-   * @typedef {"contract" | "local" | Reference} Context
+   * @typedef {"contract" | "local" | ts.TypeParameterDeclaration} Context the parameter whose
+   *   default is visited, for a default
    * @typedef {{ node: ts.Node, context: Context }} Argument
    */
   const props = new Set();
@@ -897,21 +899,16 @@ function reachableProps(declaration, module) {
   const argumentsOf = new Map();
   const bound = new Set();
   const referenced = new Set();
-  /** @type {Map<Reference, Context[]>} */
-  const contextsOf = new Map();
-  /** @type {Map<Reference, Set<number>>} */
-  const readsOf = new Map();
+  // Per parameter with a default: the references that omit it, with the context each is visited
+  // in, and the earlier parameters its default reads.
+  /** @type {Map<ts.TypeParameterDeclaration, Array<[Reference, Context]>>} */
+  const omittersOf = new Map();
+  /** @type {Map<ts.TypeParameterDeclaration, Set<ts.TypeParameterDeclaration>>} */
+  const defaultReads = new Map();
   // Whether an `infer` parameter is bound, per context: a chain of conditionals whose condition
   // reads the previous inferred parameter twice would otherwise rescan it twice per level.
   /** @type {Map<Context, Map<ts.TypeParameterDeclaration, boolean>>} */
   const inferredBound = new Map();
-  // A node that reads no type parameter means the same for every reference, so a default read by
-  // many sibling references, `Box<T = { ... }>`, is visited once, and a node that does read one
-  // queues only its reading children after the first reference.
-  /** @type {Map<ts.Node, boolean>} */
-  const readsParameter = new Map();
-  /** @type {Map<ts.Node, ReadonlyArray<ts.Node>>} */
-  const readingChildren = new Map();
   const ids = new Map();
   /** @param {object | string} value @returns {number} */
   function idOf(value) {
@@ -919,13 +916,13 @@ function reachableProps(declaration, module) {
     return ids.get(value);
   }
   /**
-   * @template T
-   * @param {Map<Reference, T>} map @param {Reference} reference @param {() => T} create
+   * @template K, T
+   * @param {Map<K, T>} map @param {K} key @param {() => T} create
    * @returns {T}
    */
-  function entryOf(map, reference, create) {
-    if (!map.has(reference)) map.set(reference, create());
-    return map.get(reference);
+  function entryOf(map, key, create) {
+    if (!map.has(key)) map.set(key, create());
+    return map.get(key);
   }
   /**
    * @param {ts.Node} node @param {Context} context
@@ -957,10 +954,9 @@ function reachableProps(declaration, module) {
       return known.get(parameter);
     }
     if (!ts.isTypeAliasDeclaration(owner) && !ts.isInterfaceDeclaration(owner)) return false;
-    if (context === "contract") return false;
-    if (context === "local") return true;
-    const index = owner.typeParameters.indexOf(parameter);
-    return Boolean(context.typeArguments?.[index] || parameter.default);
+    // In a default every parameter of its type is bound: a reference that omits an earlier one
+    // omits the later ones too, and needs a default for each.
+    return context !== "contract";
   }
   /** @param {ts.TypeNode} node @param {Context} context @returns {boolean} */
   function isBoundParameter(node, context) {
@@ -1012,18 +1008,24 @@ function reachableProps(declaration, module) {
       }
       return;
     }
-    const reference = /** @type {Reference} */ (context);
-    const index = parameter.parent.typeParameters.indexOf(parameter);
-    const argument = reference.typeArguments?.[index];
     // A default can name an earlier parameter: `Box<T, U = T>`.
-    if (!argument) {
-      visit(parameter.default, reference);
-      return;
+    const reads = entryOf(defaultReads, context, () => new Set());
+    if (reads.has(parameter)) return;
+    reads.add(parameter);
+    for (const [reference, outer] of [...entryOf(omittersOf, context, () => [])]) {
+      readOmitted(parameter, reference, outer);
     }
-    const reads = entryOf(readsOf, reference, () => new Set());
-    if (reads.has(index)) return;
-    reads.add(index);
-    for (const outer of [...entryOf(contextsOf, reference, () => [])]) visit(argument, outer);
+  }
+  /**
+   * Visits what `reference`, visited in `context` and omitting a later parameter, gives `parameter`.
+   *
+   * @param {ts.TypeParameterDeclaration} parameter @param {Reference} reference
+   * @param {Context} context
+   */
+  function readOmitted(parameter, reference, context) {
+    const argument = reference.typeArguments?.[parameter.parent.typeParameters.indexOf(parameter)];
+    if (argument) visit(argument, context);
+    else if (parameter.default) visit(parameter.default, parameter);
   }
   /**
    * Queues `prop` for `addPropNow`.
@@ -1052,15 +1054,17 @@ function reachableProps(declaration, module) {
    */
   function expand(local, reference, context) {
     if (reference) {
-      entryOf(contextsOf, reference, () => []).push(context);
-      for (const index of entryOf(readsOf, reference, () => new Set())) {
-        visit(reference.typeArguments[index], context);
-      }
       (local.typeParameters ?? []).forEach((parameter, index) => {
         const argument = reference.typeArguments?.[index];
-        if (argument) bind(parameter, { node: argument, context });
-        else if (parameter.default)
-          bind(parameter, { node: parameter.default, context: reference });
+        if (argument) {
+          bind(parameter, { node: argument, context });
+        } else if (parameter.default) {
+          entryOf(omittersOf, parameter, () => []).push([reference, context]);
+          for (const read of [...entryOf(defaultReads, parameter, () => new Set())]) {
+            readOmitted(read, reference, context);
+          }
+          bind(parameter, { node: parameter.default, context: parameter });
+        }
       });
     }
     const body = reference ? "local" : "contract";
@@ -1080,46 +1084,7 @@ function reachableProps(declaration, module) {
    * @param {ts.Node} node @param {Context} context
    */
   function visit(node, context) {
-    const shared = typeof context === "object" && !readsTypeParameter(node);
-    queued.push(["visit", node, shared ? "local" : context]);
-  }
-  /**
-   * @param {ts.Node} node
-   * @returns {boolean} true when `node` names a type parameter of a local type or an `infer`
-   *   clause, whose meaning depends on the reference that reads it
-   */
-  function readsTypeParameter(node) {
-    if (!readsParameter.has(node)) {
-      let reads = false;
-      if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
-        const owner = typeParameterAt(node, node.typeName.text)?.parent;
-        reads = Boolean(
-          owner &&
-          (ts.isTypeAliasDeclaration(owner) ||
-            ts.isInterfaceDeclaration(owner) ||
-            ts.isInferTypeNode(owner)),
-        );
-      }
-      if (!reads) {
-        reads = Boolean(ts.forEachChild(node, child => readsTypeParameter(child) || undefined));
-      }
-      readsParameter.set(node, reads);
-    }
-    return readsParameter.get(node);
-  }
-  /**
-   * @template {ts.Node} T
-   * @param {ts.Node} node @param {ReadonlyArray<T>} children @param {Context} context
-   * @returns {ReadonlyArray<T>} the children to queue: all of them, or after the first reference
-   *   the ones that read a type parameter, as the others were queued in the shared context
-   */
-  function childrenToQueue(node, children, context) {
-    if (typeof context !== "object") return children;
-    if (!readingChildren.has(node)) {
-      readingChildren.set(node, children.filter(readsTypeParameter));
-      return children;
-    }
-    return /** @type {ReadonlyArray<T>} */ (readingChildren.get(node));
+    queued.push(["visit", node, context]);
   }
   /** @param {ts.Node} node @param {Context} context */
   function step(node, context) {
@@ -1133,9 +1098,7 @@ function reachableProps(declaration, module) {
       return;
     }
     if (ts.isTypeLiteralNode(node)) {
-      for (const member of childrenToQueue(node, node.members, context)) {
-        addProp(member, readsTypeParameter(member) ? context : "local");
-      }
+      for (const member of node.members) addProp(member, context);
       return;
     }
     if (ts.isConditionalTypeNode(node)) {
@@ -1156,11 +1119,7 @@ function reachableProps(declaration, module) {
         ? node.expression
         : undefined;
     if (!reference) {
-      const children = [];
-      ts.forEachChild(node, child => {
-        children.push(child);
-      });
-      for (const child of childrenToQueue(node, children, context)) visit(child, context);
+      ts.forEachChild(node, child => visit(child, context));
       return;
     }
     const name = ts.isIdentifier(reference) ? reference.text : "";
