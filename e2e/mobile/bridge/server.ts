@@ -15,6 +15,7 @@ import { log as detoxLog } from "detox";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { v4 as uuid } from "uuid";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import { withTimeout } from "@e2e/utils/withTimeout";
 
 /** Round-trip to the app over the bridge. Exported so a caller can bound a bridge call from outside. */
 export const BRIDGE_RESPONSE_TIMEOUT = TIMEOUT.medium;
@@ -92,22 +93,37 @@ export function init(port = 8099, onConnection?: () => void): string {
   return token;
 }
 
-export function close() {
+export async function close(): Promise<void> {
   if (webSocket.ws) {
     webSocket.ws.removeAllListeners();
     webSocket.ws.close();
     webSocket.ws = undefined;
   }
 
-  if (webSocket.wss) {
-    webSocket.wss.clients.forEach(client => {
+  const wss = webSocket.wss;
+  if (wss) {
+    wss.clients.forEach(client => {
       client.removeAllListeners();
       client.terminate();
     });
 
-    webSocket.wss.close(() => {
-      webSocket.wss = undefined;
-    });
+    await withTimeout(
+      new Promise<void>((resolve, reject) => {
+        wss.close(error => {
+          if (webSocket.wss === wss) {
+            webSocket.wss = undefined;
+          }
+          if (error) {
+            reject(error);
+            return;
+          }
+          resolve();
+        });
+      }),
+      TIMEOUT.small,
+      "closeBridge",
+      { rethrow: false },
+    );
   }
   webSocket.messages = {};
 
