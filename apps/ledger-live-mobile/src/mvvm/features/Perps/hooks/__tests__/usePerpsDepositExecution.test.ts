@@ -107,13 +107,14 @@ async function signWith(signResult: unknown) {
 async function startSwap() {
   const onSuccess = jest.fn();
   const onCancel = jest.fn();
+  const onDone = jest.fn();
   mockExecuteSwap.mockImplementation(async deps => {
     deps.uiHooks["custom.exchange.swap"]({ exchangeParams: swapUiRequest, onSuccess, onCancel });
   });
 
   const hook = renderHook(() =>
     usePerpsDepositExecution(params, {
-      onDone: jest.fn(),
+      onDone,
       onRefused: jest.fn(),
       onNotEnoughBalance: jest.fn(),
     }),
@@ -121,7 +122,7 @@ async function startSwap() {
   await act(async () => {
     await hook.result.current.executeDeposit();
   });
-  return { ...hook, onSuccess, onCancel };
+  return { ...hook, onSuccess, onCancel, onDone };
 }
 
 describe("usePerpsDepositExecution", () => {
@@ -167,6 +168,48 @@ describe("usePerpsDepositExecution", () => {
     unmount();
 
     expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets a broadcast in flight complete when the deposit is closed, without navigating", async () => {
+    let finishBroadcast: ((value: typeof operation) => void) | undefined;
+    mockBroadcast.mockReturnValue(new Promise(resolve => (finishBroadcast = resolve)));
+    const { result, unmount, onSuccess, onCancel, onDone } = await startSwap();
+    await answerDeviceStep(result.current.deviceStep, {
+      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+    });
+    await answerDeviceStep(result.current.deviceStep, {
+      signedOperation: { operation, signature: "0xsig" },
+    });
+
+    unmount();
+    await act(async () => finishBroadcast?.(operation));
+
+    expect(onCancel).not.toHaveBeenCalled();
+    expect(onSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
+    expect(onDone).not.toHaveBeenCalled();
+  });
+
+  it("cancels a swap whose device step only starts after the deposit was closed", async () => {
+    let swapHook: ((args: unknown) => void) | undefined;
+    mockExecuteSwap.mockImplementation(async deps => {
+      swapHook = deps.uiHooks["custom.exchange.swap"];
+    });
+    const { result, unmount } = renderHook(() =>
+      usePerpsDepositExecution(params, {
+        onDone: jest.fn(),
+        onRefused: jest.fn(),
+        onNotEnoughBalance: jest.fn(),
+      }),
+    );
+    await act(async () => {
+      await result.current.executeDeposit();
+    });
+
+    unmount();
+    const onCancel = jest.fn();
+    swapHook?.({ exchangeParams: swapUiRequest, onSuccess: jest.fn(), onCancel });
+
+    expect(onCancel).toHaveBeenCalledWith(expect.objectContaining({ name: "DrawerClosedError" }));
   });
 
   it("quotes the deposit as a swap against the perps provider, at the price the review showed", async () => {
