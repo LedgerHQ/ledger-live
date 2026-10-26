@@ -198,7 +198,7 @@ describe("postSwapCancelled app versions", () => {
   });
 });
 
-describe("postSwapCancelled NotEnoughGas diagnostics", () => {
+describe("postSwapCancelled insufficient funds diagnostics", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedSha256.mockReturnValue(Buffer.from("fakehash"));
@@ -228,6 +228,7 @@ describe("postSwapCancelled NotEnoughGas diagnostics", () => {
     expect(request.data.maxPriorityFeePerGas).toBe("1000000000");
     expect(request.data.balance).toBeUndefined();
     expect(request.data.spendableBalance).toBeUndefined();
+    expect(request.data.maxSpendable).toBeUndefined();
     expect(request.data.pendingOperationsCount).toBeUndefined();
   });
 
@@ -237,6 +238,7 @@ describe("postSwapCancelled NotEnoughGas diagnostics", () => {
       swapId: "swap-id",
       balance: "5000000",
       spendableBalance: "2000000",
+      maxSpendable: "1500000",
       pendingOperationsCount: "2",
     });
 
@@ -245,6 +247,7 @@ describe("postSwapCancelled NotEnoughGas diagnostics", () => {
     };
     expect(request.data.balance).toBe("5000000");
     expect(request.data.spendableBalance).toBe("2000000");
+    expect(request.data.maxSpendable).toBe("1500000");
     expect(request.data.pendingOperationsCount).toBe("2");
     expect(request.data.nativeBalance).toBeUndefined();
     expect(request.data.totalFees).toBeUndefined();

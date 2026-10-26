@@ -223,6 +223,7 @@ type SwapStateRequest = {
   maxPriorityFeePerGas?: string;
   balance?: string;
   spendableBalance?: string;
+  maxSpendable?: string;
   pendingOperationsCount?: string;
 }>;
 
