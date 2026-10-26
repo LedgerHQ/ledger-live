@@ -12,6 +12,7 @@ const {
 } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
+const ts = require("typescript");
 
 /**
  * @typedef {{ data?: { root?: string, tags?: string[] } }} GraphNode
@@ -55,14 +56,14 @@ function walkSourceFiles(dir, callback) {
 }
 
 /**
- * Specifiers of `from "SPEC"`, `import "SPEC"`, `require("SPEC")` and `import("SPEC")` in a source file.
+ * Specifiers of the imports, re-exports, `require()` and `import()` calls of a source file.
+ * The TypeScript scanner skips comments and string contents.
  *
  * @param {string} content
  * @returns {string[]}
  */
 function importSpecifiers(content) {
-  const re = /(?:from|import|require\s*\(|import\s*\()\s*['"]([^'"]+)['"]/g;
-  return [...content.matchAll(re)].map(m => m[1]);
+  return ts.preProcessFile(content, true, true).importedFiles.map(f => f.fileName);
 }
 
 /**

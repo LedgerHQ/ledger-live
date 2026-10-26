@@ -425,6 +425,22 @@ test("dynamic import() of legacy package is flagged", t => {
   assert.equal(violations[0].specifier, "@ledgerhq/live-common");
 });
 
+test("an import after a string reading import or from is flagged, a commented import is not", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/a.ts":
+      'const action = "import";\nimport { a } from "@ledgerhq/logs";\nconst word = "from";\nimport { b } from "@ledgerhq/errors";',
+    "shared/utils/src/b.ts":
+      '// import "@ledgerhq/logs";\n/* require("@ledgerhq/errors") */\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  const violations = findSourceImportViolations(root, legacy);
+  assert.deepEqual(violations.map(v => `${path.basename(v.file)} ${v.specifier}`).sort(), [
+    "a.ts @ledgerhq/errors",
+    "a.ts @ledgerhq/logs",
+  ]);
+});
+
 test("sub-path import is matched by package name", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/logs/types";',
@@ -708,4 +724,19 @@ test("domain/entity source importing react or a react sub-path fails, react-dom-
     "react/jsx-runtime",
   ]);
   assert.ok(violations.every(v => v.field === undefined));
+});
+
+test("domain/entity: react after a string reading import is flagged, a commented react import is not", t => {
+  const root = makeTmpWorkspace({
+    "domain/entity/foo/package.json": JSON.stringify({ name: "@domain/entity-foo" }),
+    "domain/entity/foo/src/a.ts": 'const action = "import";\nimport { useMemo } from "react";',
+    "domain/entity/foo/src/b.ts": '// import "react";\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "domain/entity/foo": ["scope:domain", "type:domain-entity"] });
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(
+    violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
+    ["a.ts react"],
+  );
 });
