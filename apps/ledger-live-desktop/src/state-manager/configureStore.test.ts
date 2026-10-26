@@ -1,6 +1,6 @@
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
-import type { AuthProvider } from "@shared/auth";
+import { getAuthProvider } from "@shared/auth";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challenge";
@@ -54,9 +54,7 @@ describe("customCreateStore", () => {
     it("should execute without a token when ledger auth is disabled by default", async () => {
       const store = customCreateStore({ fetchRemoteFlags: null });
 
-      await dispatchThunk(store, (_dispatch, _getState, extra) =>
-        extra.authProvider.withToken({ queryFn }),
-      );
+      await getAuthProvider(store.dispatch).withToken({ queryFn });
 
       expect(queryFn).toHaveBeenCalledWith();
       expect(endpoints.keycloakAuth).not.toHaveBeenCalled();
@@ -87,9 +85,7 @@ describe("customCreateStore", () => {
         }),
       );
 
-      await dispatchThunk(store, async (_dispatch, _getState, extra) =>
-        extra.authProvider.withToken({ queryFn }),
-      );
+      await getAuthProvider(store.dispatch).withToken({ queryFn });
 
       expect(queryFn).toHaveBeenCalledWith(
         expect.objectContaining({ accessToken: KEYCLOAK_JWT, tokenType: "Bearer" }),
@@ -107,17 +103,6 @@ describe("customCreateStore", () => {
     });
   });
 });
-
-type AuthThunk = (
-  dispatch: unknown,
-  getState: unknown,
-  extra: { authProvider: AuthProvider },
-) => Promise<unknown>;
-type DispatchThunk = (thunk: AuthThunk) => Promise<unknown>;
-function dispatchThunk(store: unknown, thunk: AuthThunk): Promise<unknown> {
-  const dispatch = (store as { dispatch: unknown }).dispatch as DispatchThunk;
-  return dispatch(thunk);
-}
 
 function makeJwt(payload: Record<string, unknown>): string {
   const prefix = Buffer.from(JSON.stringify({ alg: "none", typ: "JWT" })).toString("base64url");

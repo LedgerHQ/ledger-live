@@ -8,6 +8,7 @@ import { getEnv } from "@shared/env";
 import { loadApiAuthIdentity } from "../key-ring/api-auth-identity";
 import { ledgerClientVersion } from "../shared/client-version";
 import { createAuthFetch, excludeFromAuthDeadline } from "./auth-fetch";
+import { createWalletCliAuthMiddleware } from "./middleware/auth";
 
 /**
  * Builds the Redux store behind `getQuotes` and registers its dispatch. Called once per CLI run, so
@@ -49,7 +50,9 @@ export function setupWalletCliStore() {
             }),
           },
         },
-      }).concat(swapApi.middleware),
+      })
+        .concat(createWalletCliAuthMiddleware())
+        .concat(swapApi.middleware),
   });
 
   setSwapQuotesStore(store.dispatch);

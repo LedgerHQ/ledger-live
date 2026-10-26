@@ -51,6 +51,7 @@ import {
   createDesktopCountervaluesMiddleware,
   type CountervaluesSources,
 } from "./middleware/countervalues";
+import { createDesktopAuthMiddleware } from "./middleware/auth";
 
 type Props = FeatureFlagsSources & {
   state?: State;
@@ -139,6 +140,8 @@ const customCreateStore = ({
           },
         }),
       )
+        // Before the app's middlewares, so the provider request stops here instead of reaching the logger and db.
+        .concat(createDesktopAuthMiddleware(appConfig))
         .concat(logger)
         .concat(createAccountAliasMiddleware())
         .concat(analyticsMiddleware ? [analyticsMiddleware] : [])
