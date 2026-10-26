@@ -65,8 +65,11 @@ runs `knip`, let it confirm the exports are unused.
   that named its paths.
 - A whole package that must stay published but that no workspace package may depend on goes into
   `BANNED_DEPENDENCIES` in `constraints.js` first; delete the package in a later PR.
-- Deleting a published package or a public export needs a changeset:
-  [create-changeset](../create-changeset/SKILL.md).
+- Removing a public export from a package that stays needs a changeset on that package:
+  [create-changeset](../create-changeset/SKILL.md). A deleted package cannot appear in a changeset,
+  since the changeset check rejects packages that are not in the workspace: the changeset names the
+  packages that dropped it, and pending changesets that list it lose that entry
+  ([details](references/injection.md#deleting-a-whole-package)).
 
 Example: once both apps used `@features/platform-feature-flags`, one PR deleted the live-common
 `featureFlags` module and the app feature-flag bridges, about 1,800 lines. `@ledgerhq/errors`
