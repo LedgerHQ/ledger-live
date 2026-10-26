@@ -4,7 +4,6 @@ import MarketBanner from "LLD/features/MarketBanner";
 import PageHeader from "LLD/components/PageHeader";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
-import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
 import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
@@ -28,15 +27,11 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayAssetSection,
   shouldDisplayAssetDiscoverability,
   shouldDisplayBorrowSection,
-  shouldDisplayOperationsList,
   shouldDisplayBrazePlacement,
-  accounts,
-  filterOperations,
   t,
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
   const shouldDisplayAddAccountCta = totalAccounts === 0 && !shouldDisplayAssetSection;
-  const shouldRenderLegacyOperationsList = !shouldDisplayOperationsList && totalOperations > 0;
 
   return (
     <>
@@ -74,16 +69,6 @@ export const PortfolioView = memo(function PortfolioView({
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
           {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}
-          {shouldRenderLegacyOperationsList && (
-            <OperationsList
-              accounts={accounts}
-              title={t("dashboard.recentActivity")}
-              withAccount
-              withSubAccounts
-              filterOperation={filterOperations}
-              t={t}
-            />
-          )}
         </div>
       </div>
     </>

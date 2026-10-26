@@ -5,7 +5,6 @@ export const lwdWallet40 = flagWith(
   {
     lazyOnboarding: z.boolean(),
     assetSection: z.boolean(),
-    operationsList: z.boolean(),
     brazePlacement: z.boolean().optional(),
     aggregatedAssets: z.boolean(),
     pnl: z.boolean(),
@@ -18,7 +17,6 @@ export const lwdWallet40 = flagWith(
     params: {
       lazyOnboarding: true,
       assetSection: false,
-      operationsList: false,
       brazePlacement: true,
       aggregatedAssets: false,
       pnl: false,

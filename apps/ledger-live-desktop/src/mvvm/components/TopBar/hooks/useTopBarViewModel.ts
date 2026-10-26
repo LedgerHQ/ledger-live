@@ -9,11 +9,8 @@ import { useMockServerTransport } from "./useMockServerTransport";
 import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
-  const {
-    shouldDisplayOperationsList,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("desktop");
   const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
     useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
@@ -124,7 +121,7 @@ const useTopBarViewModel = () => {
         onClick: handleDiscreet,
       },
     },
-    ...(shouldDisplayOperationsList ? [{ type: "history" as const }] : []),
+    { type: "history" as const },
   ];
 
   return {
