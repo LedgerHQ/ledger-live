@@ -2,8 +2,8 @@ import { Expiry, SubmitRequestType } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 import {
   DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
-  ICP_FEES,
   MAINNET_LEDGER_CANISTER_ID,
+  TRANSFER_FEE,
 } from "../consts";
 import { encodeCanisterIdlFunc, getCanisterIdlFunc, ledgerIdlFactory } from "../network/candid";
 import { Transaction } from "../types";
@@ -37,17 +37,36 @@ export interface TransferRawRequest {
   from_subaccount: [];
 }
 
+export interface Transfer {
+  recipient: string;
+  amount: bigint;
+  memo: bigint;
+}
+
 export const createUnsignedSendTransaction = (
   transaction: Transaction,
   pubKey: string,
+): { unsignedTransaction: UnsignedTransaction; transferRawRequest: TransferRawRequest } =>
+  createUnsignedTransfer(
+    {
+      recipient: transaction.recipient,
+      amount: BigInt(transaction.amount.toString()),
+      memo: BigInt(transaction.memo ?? 0),
+    },
+    pubKey,
+  );
+
+export const createUnsignedTransfer = (
+  { recipient, amount, memo }: Transfer,
+  pubKey: string,
 ): { unsignedTransaction: UnsignedTransaction; transferRawRequest: TransferRawRequest } => {
-  const toAccount = AccountIdentifier.fromHex(transaction.recipient);
+  const toAccount = AccountIdentifier.fromHex(recipient);
 
   const transferRawRequest: TransferRawRequest = {
     to: toAccount.toUint8Array(),
-    amount: { e8s: BigInt(transaction.amount.toString()) },
-    memo: BigInt(transaction.memo ?? 0),
-    fee: { e8s: BigInt(ICP_FEES) },
+    amount: { e8s: amount },
+    memo,
+    fee: { e8s: TRANSFER_FEE },
     created_at_time: [{ timestamp_nanos: BigInt(Date.now() * 1000000) }],
     from_subaccount: [],
   };
