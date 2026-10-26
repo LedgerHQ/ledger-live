@@ -69,10 +69,6 @@ describe("isSanctionedFiatTicker", () => {
     expect(isSanctionedFiatTicker("RUB")).toBe(true);
   });
 
-  it("ignores the ticker case", () => {
-    expect(isSanctionedFiatTicker("rub")).toBe(true);
-  });
-
   it("is false for other tickers", () => {
     expect(isSanctionedFiatTicker("USD")).toBe(false);
     expect(isSanctionedFiatTicker("EUR")).toBe(false);

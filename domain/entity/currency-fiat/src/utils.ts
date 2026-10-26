@@ -26,7 +26,7 @@ export function hasFiatCurrencyTicker(ticker: string): boolean {
   return Object.hasOwn(FIAT_CURRENCIES_BY_TICKER, ticker);
 }
 
-/** Whether a fiat currency ISO 4217 ticker is restricted under OFAC sanctions (case-insensitive). */
+/** Whether a fiat currency ISO 4217 ticker (e.g. `"RUB"`) is restricted under OFAC sanctions. */
 export function isSanctionedFiatTicker(ticker: string): boolean {
-  return OFAC_FIAT_TICKERS.has(ticker.toUpperCase());
+  return OFAC_FIAT_TICKERS.has(ticker);
 }
