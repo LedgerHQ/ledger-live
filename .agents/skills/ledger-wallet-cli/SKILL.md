@@ -367,14 +367,18 @@ leaving the page after Review closes the relay channel and the listener ends (`l
 
 **Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
 --detach` starts the same listener in the background, prints its `enrollment-pending` line plus
-`listenerPid` and `logPath`, and exits. Then call `agent-intent wait --profile <id> [--timeout 25s]`,
-which reads local state only and reports one of:
+`listenerPid` and `logPath`, and exits, usually within seconds, up to 2 minutes while the human
+answers an OS keychain unlock prompt. If your tool call times out first, run `wait` on the same id,
+and once it reports `enrollmentUrl`, take the fingerprint from `agent-intent show --profile <id>`
+and send the human the link, fingerprint and `expiresAt`. Then call
+`agent-intent wait --profile <id> [--timeout 25s]`, which reads local state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
 - `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` once the profile is saved, and
   `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait` again. While the
   listener is still starting, `expiresAt` and `enrollmentUrl` are absent; keep polling.
-- an error with `error.code` `listener_exited`, `enrollment_expired` or `profile_not_found`, exit 1 —
-  start a fresh enrollment with a new `--profile` id.
+- an error with `error.code` `listener_exited`, `enrollment_expired` or `profile_not_found` (no
+  profile and no listener, or a listener that has not saved it within 3 minutes), exit 1 — start a
+  fresh enrollment with a new `--profile` id.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate

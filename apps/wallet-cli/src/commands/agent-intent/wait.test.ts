@@ -413,7 +413,9 @@ describe("agent-intent wait", () => {
       expect(line).toMatchObject({
         error: {
           code: "profile_not_found",
-          message: expect.stringContaining(`listener (pid ${process.pid}) has not saved it within`),
+          message: expect.stringContaining(
+            `listener (pid ${process.pid}) has not saved it within 3 minutes`,
+          ),
         },
       });
     });
