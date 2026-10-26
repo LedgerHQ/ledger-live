@@ -94,6 +94,13 @@ function createSharedJestConfig(
 
 // ─── shared/ui-* (UI packages) ──────────────────────────────────────────────
 
+// Lumen's shared utils (`cn`) and design tokens ship as ESM and are real values, not stubs, so SWC
+// compiles them. Entries match the pnpm store directory names.
+const lumenTransformAllowlist = ["@ledgerhq\\+lumen-utils-shared", "@ledgerhq\\+lumen-design-core"];
+const lumenTransform = {
+  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${lumenTransformAllowlist.join("|")}))`],
+};
+
 /**
  * Dual-project jest config for a shared/ui-* package with web and native tests.
  *
@@ -107,7 +114,10 @@ function createSharedJestConfig(
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createSharedUiJestConfig(options) {
-  return createDualJestConfig({ depth: "../../", web: {}, native: {} }, options);
+  return createDualJestConfig(
+    { depth: "../../", web: lumenTransform, native: lumenTransform },
+    options,
+  );
 }
 
 /**
