@@ -1,5 +1,7 @@
+import type { Page } from "@playwright/test";
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
+import type { PageLogCollector } from "tests/utils/pageLogCollector";
 import {
   activateLedgerSync,
   expectValidAddressDevice,
@@ -36,6 +38,20 @@ function formatSwapScenario(swap: Swap, amount: string): string {
 }
 
 export class SpeculosPage extends AppPage {
+  constructor(
+    page: Page,
+    private readonly webviewCollector?: PageLogCollector,
+  ) {
+    super(page);
+  }
+
+  /**
+   * Once the swap live app logs a failed swap initialization, Ledger Wallet never sends the
+   * transaction, so the device stays on the Exchange app's idle screen: stop waiting for the review.
+   */
+  private readonly swapInitFailed = (): string | null =>
+    this.webviewCollector?.getSwapInitFailure() ?? null;
+
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
     await expectValidAddressDevice(account, addressDisplayed);
@@ -75,7 +91,7 @@ export class SpeculosPage extends AppPage {
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     const scenario = formatSwapScenario(swap, amount);
     try {
-      await verifyAmountsAndAcceptSwap(swap, amount);
+      await verifyAmountsAndAcceptSwap(swap, amount, this.swapInitFailed);
     } catch (error) {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
@@ -88,12 +104,17 @@ export class SpeculosPage extends AppPage {
     amount: string,
     errorMessage: string | null,
   ) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage);
+    await verifyAmountsAndAcceptSwapForDifferentSeed(
+      swap,
+      amount,
+      errorMessage,
+      this.swapInitFailed,
+    );
   }
 
   @step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-    await verifyAmountsAndRejectSwap(swap, amount);
+    await verifyAmountsAndRejectSwap(swap, amount, this.swapInitFailed);
   }
 
   @step("Activate expert mode")

@@ -64,6 +64,8 @@ type TestFixtures = {
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;
+  /** Webview (e.g. swap live app) console and network logs, attached to Allure on failure. */
+  webviewCollector: PageLogCollector;
   featureFlags: PartialFeatures;
   simulateCamera: string;
   app: Application;
@@ -124,8 +126,8 @@ export const test = base.extend<TestFixtures>({
     { auto: true },
   ],
 
-  app: async ({ page, electronApp }, use) => {
-    const app = new Application(page, electronApp);
+  app: async ({ page, electronApp, webviewCollector }, use) => {
+    const app = new Application(page, electronApp, webviewCollector);
     await use(app);
   },
 
@@ -303,7 +305,12 @@ export const test = base.extend<TestFixtures>({
       // No lingering process (only Reset App reboots the main process into a new instance)
     }
   },
-  page: async ({ electronApp, speculos, cliCommandsOnApp }, use, testInfo) => {
+  webviewCollector: async ({ electronApp }, use) => {
+    const webviewCollector = new PageLogCollector();
+    webviewCollector.attachWebview(electronApp, await electronApp.firstWindow());
+    await use(webviewCollector);
+  },
+  page: async ({ electronApp, speculos, cliCommandsOnApp, webviewCollector }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
     page.setDefaultTimeout(TIMEOUT.xlarge);
@@ -333,10 +340,6 @@ export const test = base.extend<TestFixtures>({
       }
       safeAppendFile(logFile, `${txt}\n`);
     });
-
-    // capture webview console and network logs for debugging (e.g. swap live app)
-    const webviewCollector = new PageLogCollector();
-    webviewCollector.attachWebview(electronApp);
 
     // app is loaded: on a slow CI runner, start-up takes longer than 30s
     await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });

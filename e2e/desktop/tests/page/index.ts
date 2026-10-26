@@ -21,6 +21,8 @@ import { MyLedgerPage } from "tests/page/myLedger.page";
 import { Modal } from "tests/component/modal.component";
 import { OperationDrawer } from "tests/page/drawer/operation.drawer";
 import { PageHolder } from "tests/page/abstractClasses";
+import type { PageLogCollector } from "tests/utils/pageLogCollector";
+import type { ElectronApplication, Page } from "@playwright/test";
 import { PasswordlockModal } from "tests/page/modal/passwordlock.modal";
 import { PortfolioPage } from "tests/page/portfolio.page";
 import { OnboardingPage } from "tests/page/onboarding.page";
@@ -58,6 +60,11 @@ import { TopBarSearch } from "tests/page/topBarSearch.page";
 import { ContactsPage } from "tests/page/contacts.page";
 
 export class Application extends PageHolder {
+  constructor(page: Page, electronApp?: ElectronApplication, webviewCollector?: PageLogCollector) {
+    super(page, electronApp);
+    this.speculos = new SpeculosPage(page, webviewCollector);
+  }
+
   public account = new AccountPage(this.page);
   public accounts = new AccountsPage(this.page);
   public analytics = new AnalyticsPage(this.page);
@@ -95,7 +102,7 @@ export class Application extends PageHolder {
   public sendDrawer = new SendDrawer(this.page);
   public settings = new SettingsPage(this.page);
   public settingsModal = new SettingsModal(this.page);
-  public speculos = new SpeculosPage(this.page);
+  public speculos: SpeculosPage;
   public swap = new SwapPage(this.page, this.electronApp);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
   public marketBanner = new MarketBannerPage(this.page);
