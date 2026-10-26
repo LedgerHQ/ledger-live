@@ -6,7 +6,7 @@ import { setTimeout as sleep } from "node:timers/promises";
 import { stateDir } from "@bunli/utils";
 import { z } from "zod";
 import { DETACHED_LISTENER_ENV } from "../analytics/lifecycle-analytics";
-import { APP_NAME } from "../session/session-store";
+import { AGENT_INTENT_KEY_STORES, APP_NAME } from "../session/session-store";
 import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
 
 const LISTENER_DIR = "agent-intent-enroll";
@@ -153,6 +153,7 @@ export const PendingLineSchema = z.object({
   enrollmentUrl: z.string(),
   fingerprint: z.string(),
   expiresAt: z.string(),
+  keyStore: z.enum(AGENT_INTENT_KEY_STORES),
 });
 
 /** A JSON error envelope, as any command prints it with `--output json`. */

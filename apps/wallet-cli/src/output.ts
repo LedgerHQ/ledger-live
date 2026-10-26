@@ -327,6 +327,7 @@ export type AgentIntentEnrollmentPending = {
   enrollmentUrl: string;
   fingerprint: string;
   expiresAt: string;
+  keyStore: AgentIntentProfileMeta["keyStore"];
   /** Set by `enroll --detach`: the background listener that waits for the approval. */
   listenerPid?: number;
   logPath?: string;

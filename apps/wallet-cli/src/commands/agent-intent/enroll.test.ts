@@ -433,6 +433,10 @@ describe("agent-intent enroll", () => {
         keyStore: "plaintext-file",
         trustchainId: "app18-root",
       });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[0])).toMatchObject({
+        type: "enrollment-pending",
+        keyStore: "plaintext-file",
+      });
       expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
         keyStore: "plaintext-file",
         enrolled: true,
@@ -815,6 +819,7 @@ describe("agent-intent enroll", () => {
         profileId: "test-agent",
         enrollmentUrl: expect.stringContaining("#request=opaque"),
         fingerprint: expect.any(String),
+        keyStore: "os-keychain",
       });
       expect(lines[1]).toMatchObject({
         status: "success",
@@ -1001,6 +1006,7 @@ describe("agent-intent enroll --detach", () => {
     enrollmentUrl: "https://agent.example.com#request=opaque",
     fingerprint: "AB12 CD34",
     expiresAt: "2026-10-21T12:30:00.000Z",
+    keyStore: "plaintext-file",
   };
 
   beforeEach(() => {

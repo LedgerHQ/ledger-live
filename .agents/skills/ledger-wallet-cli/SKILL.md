@@ -357,8 +357,9 @@ matches. Omitting it defaults to `other`. The frontend shows it as the agent's s
 value outside this list.
 
 **One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
-`enrollment-pending` NDJSON event), then waits on an encrypted Trustchain relay channel bound into the
-signed request. The frontend delivers the completion over that channel; there is no `complete`
+`enrollment-pending` NDJSON event with `enrollmentUrl`, `fingerprint`, `expiresAt` and `keyStore`),
+then waits on an encrypted Trustchain relay channel bound into the signed request. When `keyStore`
+is `plaintext-file`, tell the human the agent key is stored unencrypted before handing over the link. The frontend delivers the completion over that channel; there is no `complete`
 command and no manual JSON fallback. **Keep the process running** until it prints the final
 `enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
 `accountAccessEnvironment`, `keyStore`). The wait is bounded by `--expires-in` (default 30m). The human should

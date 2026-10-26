@@ -196,6 +196,7 @@ describe("agent-intent wait", () => {
         enrollmentUrl: "https://agent.example.com#request=opaque",
         fingerprint: "AB12",
         expiresAt: profile.enrollmentExpiresAt,
+        keyStore: "os-keychain",
       }),
     ]);
 
@@ -234,6 +235,7 @@ describe("agent-intent wait", () => {
         enrollmentUrl: "https://agent.example.com#request=stale",
         fingerprint: "AB12",
         expiresAt: "2026-01-01T00:00:00.000Z",
+        keyStore: "os-keychain",
       }),
     ]);
 

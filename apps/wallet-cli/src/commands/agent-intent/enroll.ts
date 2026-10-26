@@ -280,12 +280,13 @@ async function startDetachedEnroll(
   });
   const pending = PendingLineSchema.safeParse(first);
   if (pending.success) {
-    const { enrollmentUrl, fingerprint, expiresAt } = pending.data;
+    const { enrollmentUrl, fingerprint, expiresAt, keyStore } = pending.data;
     out.agentIntentEnrollmentPending({
       profileId: pending.data.profileId,
       enrollmentUrl,
       fingerprint,
       expiresAt,
+      keyStore,
       listenerPid: child.pid,
       logPath,
     });
@@ -476,6 +477,7 @@ const enrollCommand = defineCommand({
             enrollmentUrl,
             fingerprint: formatAgentPublicKeyFingerprint(identity.publicKey),
             expiresAt: enrollmentExpiresAt,
+            keyStore,
           });
 
           const completion = await waitForRelayCompletion(
