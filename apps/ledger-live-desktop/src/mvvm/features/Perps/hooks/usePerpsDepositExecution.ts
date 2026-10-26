@@ -95,9 +95,13 @@ export function usePerpsDepositExecution(
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
 
   const cancelSwapRef = useRef<((error: Error) => void) | null>(null);
+  const closedRef = useRef(false);
 
   useEffect(
-    () => () => cancelSwapRef.current?.(new DrawerClosedError("User closed the deposit")),
+    () => () => {
+      closedRef.current = true;
+      cancelSwapRef.current?.(new DrawerClosedError("User closed the deposit"));
+    },
     [],
   );
 
@@ -150,7 +154,7 @@ export function usePerpsDepositExecution(
    * transaction with the coin app, then broadcasts it.
    */
   const confirmSignAndBroadcast = useCallback(
-    async (exchangeParams: SwapUiRequest) => {
+    async (exchangeParams: SwapUiRequest, onBroadcast: () => void) => {
       const completeResult = await runDeviceStep<CompleteResult>(onResult => ({
         kind: "device",
         stepId: "confirm",
@@ -195,6 +199,7 @@ export function usePerpsDepositExecution(
         throw signResult.transactionSignError;
       }
 
+      onBroadcast();
       const operation = await broadcast(signResult.signedOperation);
 
       const swapId = exchangeParams.swapId;
@@ -245,6 +250,10 @@ export function usePerpsDepositExecution(
           getFeature,
           uiHooks: {
             "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+              if (closedRef.current) {
+                onCancel(new DrawerClosedError("User closed the deposit"));
+                return;
+              }
               void runDeviceStep<StartResult>(onResult => ({
                 kind: "device",
                 stepId: "start",
@@ -264,15 +273,24 @@ export function usePerpsDepositExecution(
               );
             },
             "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+              if (closedRef.current) {
+                onCancel(new DrawerClosedError("User closed the deposit"));
+                return;
+              }
+              let settled = false;
               const cancel = (error: Error) => {
-                if (cancelSwapRef.current !== cancel) return;
+                if (settled) return;
+                settled = true;
                 cancelSwapRef.current = null;
                 onCancel(error);
               };
               cancelSwapRef.current = cancel;
-              void confirmSignAndBroadcast(exchangeParams).then(result => {
-                if (cancelSwapRef.current !== cancel) return;
-                cancelSwapRef.current = null;
+              const keepOnClose = () => {
+                if (cancelSwapRef.current === cancel) cancelSwapRef.current = null;
+              };
+              void confirmSignAndBroadcast(exchangeParams, keepOnClose).then(result => {
+                if (settled) return;
+                settled = true;
                 signed = result;
                 onSuccess({ operationHash: result.operation.hash, swapId: result.swapId ?? "" });
               }, cancel);
@@ -297,6 +315,7 @@ export function usePerpsDepositExecution(
       if (!signed) return;
 
       settleDepositRequest(requestId, { swapId: signed.swapId, amountTo });
+      if (closedRef.current) return;
       openPerpsTransactionSigned({
         receiveCurrencyTicker: receiveCurrency.ticker,
         swapId: signed.swapId,
@@ -304,6 +323,7 @@ export function usePerpsDepositExecution(
       });
       onDone();
     } catch (e) {
+      if (closedRef.current) return;
       if (isUserRefusal(e)) {
         onRefused();
         return;
