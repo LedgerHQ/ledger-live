@@ -1,6 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
+import { BigNumber } from "bignumber.js";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";
@@ -25,7 +26,6 @@ import {
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
-import { BigNumber } from "bignumber.js";
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
   const asset = await findEthereumSwapAsset(id);
@@ -38,9 +38,7 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
   return asset;
 }
 
-/** How far `--to-amount` may exceed the quote before it's worth a warning: the review shows a
- * fresh quote, never this amount. */
-const TO_AMOUNT_WARNING_RATIO = 1.05;
+const TO_AMOUNT_WARNING_PERCENT = 5;
 
 /** A warning, not an error: the agent may know better than the quote. Compared with the unrounded
  * quote, so rounding it to the asset's precision can't trigger it. */
@@ -50,14 +48,14 @@ function warnIfAboveQuote(
   quoted: string | null,
   to: SwapAsset,
 ): void {
-  const limit = new BigNumber(receiveAmount).times(TO_AMOUNT_WARNING_RATIO);
+  const limit = new BigNumber(receiveAmount).times(1 + TO_AMOUNT_WARNING_PERCENT / 100);
   if (limit.isFinite() && new BigNumber(typed).lte(limit)) return;
   const quote = quoted
-    ? `more than 5% above the ${provider} quote (${quoted} ${to.ticker})`
+    ? `more than ${TO_AMOUNT_WARNING_PERCENT}% above the ${provider} quote (${quoted} ${to.ticker})`
     : `above the ${provider} quote, which rounds to nothing in ${to.ticker}`;
   writeStderr(
-    `⚠ --to-amount ${typed} ${to.ticker} is ${quote}; the reviewer will see the lower, ` +
-      "refreshed quote.\n",
+    `⚠ --to-amount ${typed} ${to.ticker} is ${quote}; the reviewer will see a fresh quote, ` +
+      "with your amount shown only as the proposal it replaced.\n",
   );
 }
 

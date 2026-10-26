@@ -327,7 +327,7 @@ describe("agent-intent swap", () => {
       expect(lines).toHaveLength(1);
       expect(JSON.parse(lines[0]!)).toMatchObject({ toAmount: "1050.01", submitted: true });
       expect(stderr.join("")).toContain(
-        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see the lower, refreshed quote.\n",
+        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see a fresh quote, with your amount shown only as the proposal it replaced.\n",
       );
     });
 
@@ -366,7 +366,7 @@ describe("agent-intent swap", () => {
 
       expect(stderr.join("")).toContain(
         "⚠ --to-amount 1 USDC is above the lifi quote, which rounds to nothing in USDC; the " +
-          "reviewer will see the lower, refreshed quote.\n",
+          "reviewer will see a fresh quote, with your amount shown only as the proposal it replaced.\n",
       );
     });
 
@@ -380,7 +380,7 @@ describe("agent-intent swap", () => {
       await runSwap({ "to-amount": "1050.01", "dry-run": true });
 
       expect(stderr.join("")).toContain(
-        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see the lower, refreshed quote.\n",
+        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see a fresh quote, with your amount shown only as the proposal it replaced.\n",
       );
       expect(submittedIntents).toEqual([]);
     });
