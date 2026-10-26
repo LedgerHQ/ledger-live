@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
 import { AccountDetailLayout } from "@features/flow-account-detail";
+import { AccountEmptyState } from "@features/flow-account-detail-hero/native";
 import { TrackScreen } from "@shared/analytics-react";
 import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 import type { Account } from "@ledgerhq/types-live";
@@ -14,12 +15,14 @@ import { Hero } from "./components/Hero";
 import { AccountRefreshStatus } from "./components/RefreshStatus";
 import { Transactions } from "./components/Transactions";
 import type { AccountRefresh } from "./useAccountRefresh";
+import { useAccountDetailContentViewModel } from "./useAccountDetailContentViewModel";
 
 type Props = Readonly<{ account: Account; refresh: AccountRefresh }>;
 
 export function AccountDetailView({ account, refresh }: Props) {
   const { bottom } = useSafeAreaInsets();
   const { colors, dark } = useTheme();
+  const { hero, emptyState } = useAccountDetailContentViewModel(account);
 
   return (
     <Box testID={ACCOUNT_DETAIL_TEST_IDS.screen} lx={screenStyle}>
@@ -49,10 +52,19 @@ export function AccountDetailView({ account, refresh }: Props) {
         />
         <Box lx={contentStyle}>
           <AccountDetailLayout
-            hero={<Hero account={account} />}
+            hero={<Hero {...hero} />}
             customPlace={<Box testID={ACCOUNT_DETAIL_TEST_IDS.customPlace} lx={customPlaceStyle} />}
-            assets={<AssetsSection account={account} />}
-            transactions={<Transactions account={account} />}
+            assets={
+              emptyState.isVisible ? (
+                <AccountEmptyState
+                  fundingActions={emptyState.fundingActions}
+                  testID={ACCOUNT_DETAIL_TEST_IDS.emptyState}
+                />
+              ) : (
+                <AssetsSection account={account} />
+              )
+            }
+            transactions={emptyState.isVisible ? null : <Transactions account={account} />}
           />
         </Box>
       </ScrollView>
