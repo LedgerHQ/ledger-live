@@ -82,6 +82,7 @@ let calTokens: Record<string, TokenCandidate[]>;
 let tickerLookups: string[];
 let accountTokens: Record<string, TokenCandidate[]>;
 let accountTokensError: Error | undefined;
+let accountLookups: number;
 
 const usdc = { ticker: "USDC", name: "USD Coin", address: USDC.toLowerCase() };
 const usdcMint = { ticker: "USDC", name: "USD Coin", address: USDC_MINT };
@@ -97,7 +98,10 @@ const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY.toL
 beforeAll(() =>
   activateAgentIntentMocks({
     sessionRead: async () => ({
-      accounts,
+      get accounts() {
+        accountLookups++;
+        return accounts;
+      },
       getAgentIntentProfile: (id: string) => profiles[id],
     }),
     keychain: {
@@ -139,9 +143,9 @@ beforeAll(() =>
           token => token.ticker === ticker || token.ticker === ticker.toUpperCase(),
         );
       },
-      findAccountTokens: async (label: string) => {
+      findAccountTokens: async (account: { address: string }) => {
         if (accountTokensError) throw accountTokensError;
-        return accountTokens[label] ?? [];
+        return accountTokens[account.address] ?? [];
       },
     },
   }),
@@ -205,6 +209,7 @@ describe("agent-intent send", () => {
     tickerLookups = [];
     accountTokens = {};
     accountTokensError = undefined;
+    accountLookups = 0;
     restore = installOutputCapture({
       stdout: chunk => stdout.push(chunk),
       stderr: chunk => stderr.push(chunk),
@@ -544,7 +549,7 @@ describe("agent-intent send", () => {
     const stderrLines = () => stderr.join("").split("\n");
 
     it("takes the token the --account holds before any ticker lookup, checksummed", async () => {
-      accountTokens = { "ethereum-1": [pepe] };
+      accountTokens = { [SENDER]: [pepe] };
 
       await runSend({ from: undefined, account: "ethereum-1", amount: "1 pepe", output: "json" });
 
@@ -555,8 +560,17 @@ describe("agent-intent send", () => {
       expect(stderrLines()).toContain(`PEPE is ${PEPE} (Pepe), held by "ethereum-1".`);
     });
 
+    it("looks the --account up in the session once for its network, sender and tokens", async () => {
+      accountTokens = { [SENDER]: [pepe] };
+
+      await runSend({ from: undefined, account: "ethereum-1", amount: "1 PEPE" });
+
+      expect(submittedIntents).toHaveLength(1);
+      expect(accountLookups).toBe(1);
+    });
+
     it("takes the SPL token a Solana --account holds", async () => {
-      accountTokens = { "solana-1": [usdcMint] };
+      accountTokens = { [SOL_SENDER]: [usdcMint] };
 
       await runSend({
         from: undefined,
@@ -574,7 +588,7 @@ describe("agent-intent send", () => {
     });
 
     it("skips a Token-2022 mint when the Solana --account also holds a classic one", async () => {
-      accountTokens = { "solana-1": [token2022UsdcMint, usdcMint] };
+      accountTokens = { [SOL_SENDER]: [token2022UsdcMint, usdcMint] };
 
       await runSend({
         from: undefined,
@@ -591,7 +605,7 @@ describe("agent-intent send", () => {
     });
 
     it("refuses the only Token-2022 mint a Solana --account holds rather than CAL's", async () => {
-      accountTokens = { "solana-1": [token2022UsdcMint] };
+      accountTokens = { [SOL_SENDER]: [token2022UsdcMint] };
 
       await expect(
         runSend({
@@ -622,7 +636,7 @@ describe("agent-intent send", () => {
     });
 
     it("refuses when the --account holds several tokens with the ticker", async () => {
-      accountTokens = { "ethereum-1": [pepe, pepeCopy] };
+      accountTokens = { [SENDER]: [pepe, pepeCopy] };
 
       await expect(
         runSend({ from: undefined, account: "ethereum-1", amount: "1 PEPE" }),
@@ -634,7 +648,7 @@ describe("agent-intent send", () => {
     });
 
     it("falls back to CAL when the --account holds no token with the ticker", async () => {
-      accountTokens = { "ethereum-1": [pepe] };
+      accountTokens = { [SENDER]: [pepe] };
 
       await runSend({ from: undefined, account: "ethereum-1", amount: "25 USDC" });
 

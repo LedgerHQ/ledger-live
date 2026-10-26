@@ -1,10 +1,7 @@
 import "../live-common-setup";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, spyOn } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
-import {
-  activateAgentIntentMocks,
-  deactivateAgentIntentMocks,
-} from "../commands/agent-intent/__test-helpers__/agent-intent-mocks";
+import { parseV1 } from "../shared/accountDescriptor";
 import { WalletAdapter } from "../wallet";
 import { findAccountTokens, findTokensByTicker } from "./token-lookup";
 
@@ -104,19 +101,7 @@ describe("findTokensByTicker", () => {
 });
 
 describe("findAccountTokens", () => {
-  beforeAll(() =>
-    activateAgentIntentMocks({
-      sessionRead: async () => ({
-        accounts: [
-          {
-            label: "ethereum-1",
-            descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`,
-          },
-        ],
-      }),
-    }),
-  );
-  afterAll(() => deactivateAgentIntentMocks());
+  const account = parseV1(`account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`);
 
   it("keeps only listed tokens the account holds a balance of", async () => {
     const balances = spyOn(WalletAdapter.prototype, "getAccountBalances").mockResolvedValue([
@@ -142,9 +127,10 @@ describe("findAccountTokens", () => {
     );
 
     try {
-      expect(await findAccountTokens("ethereum-1")).toEqual([
+      expect(await findAccountTokens(account)).toEqual([
         { ticker: "USDC", name: "USD Coin", address: USDC },
       ]);
+      expect(balances).toHaveBeenCalledWith(expect.objectContaining({ currencyId: "ethereum" }));
     } finally {
       balances.mockRestore();
       tokens.mockRestore();

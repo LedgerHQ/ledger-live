@@ -3,6 +3,7 @@ import { errMessage } from "../shared/error-message";
 import { writeStderr } from "../shared/ui";
 import { toChecksumAddress } from "./evm";
 import type { IntentNetwork } from "./send-intent";
+import type { SenderAccount } from "./sender";
 import {
   findAccountTokens,
   findSolanaMintProgram,
@@ -33,21 +34,21 @@ async function withoutToken2022(tokens: TokenCandidate[]): Promise<TokenCandidat
 
 async function heldTokens(
   network: IntentNetwork,
-  account: string,
+  account: SenderAccount,
   ticker: string,
   out: Pick<CommandOutput, "withActivity">,
 ): Promise<TokenCandidate[]> {
   try {
     const tokens = await out.withActivity(
-      `Reading the tokens account "${account}" holds…`,
+      `Reading the tokens account "${account.label}" holds…`,
       "Tokens read",
-      () => findAccountTokens(account),
+      () => findAccountTokens(account.descriptor),
     );
     const held = tokens.filter(token => sameTicker(token.ticker, ticker));
     return network === "solana" && held.length > 1 ? await withoutToken2022(held) : held;
   } catch (error) {
     throw new Error(
-      `Couldn't read the tokens account "${account}" holds (${errMessage(error)}). Pass the ` +
+      `Couldn't read the tokens account "${account.label}" holds (${errMessage(error)}). Pass the ` +
         `${ticker} token's address with --token.`,
       { cause: error },
     );
@@ -57,7 +58,7 @@ async function heldTokens(
 export async function resolveTokenByTicker(
   network: IntentNetwork,
   ticker: string,
-  account: string | undefined,
+  account: SenderAccount | undefined,
   out: Pick<CommandOutput, "withActivity">,
 ): Promise<string> {
   const kind = TOKEN_KIND[network];
@@ -65,13 +66,15 @@ export async function resolveTokenByTicker(
     const held = checksummed(network, await heldTokens(network, account, ticker, out));
     if (held.length > 1) {
       throw new Error(
-        `Account "${account}" holds several ${kind}s with the ticker ${ticker}:` +
+        `Account "${account.label}" holds several ${kind}s with the ticker ${ticker}:` +
           `${listCandidates(held)}\nPass the one to send with --token.`,
       );
     }
     if (held.length === 1) {
       const [only] = held;
-      writeStderr(`${only.ticker} is ${only.address} (${only.name}), held by "${account}".\n`);
+      writeStderr(
+        `${only.ticker} is ${only.address} (${only.name}), held by "${account.label}".\n`,
+      );
       return only.address;
     }
   }

@@ -4,7 +4,7 @@ import { createNonce, encodeSendIntentTlv, type FeeStrategy } from "@ledgerhq/ag
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
-import { resolveAccountDescriptorV1, resolveOutputFormat } from "../inputs";
+import { resolveOutputFormat } from "../inputs";
 import { parseAmountWithTicker, parseDecimalAmount, parseEvmAddress } from "../../agent-intent/evm";
 import {
   FEE_STRATEGIES,
@@ -21,7 +21,12 @@ import {
   findSolanaToken,
   sameTicker,
 } from "../../agent-intent/token-lookup";
-import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
+import {
+  parseSenderInput,
+  resolveSenderAccount,
+  senderFromAccount,
+  type SenderAccount,
+} from "../../agent-intent/sender";
 import { resolveTokenByTicker } from "../../agent-intent/token-by-ticker";
 import {
   assertSdkAcceptsIntent,
@@ -33,6 +38,8 @@ import { createCommandOutput, type CommandOutput } from "../../output";
 import { mainnetOf } from "../../shared/accountDescriptor";
 
 const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+type SenderInput = { account: SenderAccount } | { address: string };
 
 function networkOfAddress(address: string, flag: "from" | "token"): IntentNetwork {
   if (/^0x/i.test(address)) return "ethereum";
@@ -50,24 +57,24 @@ function nativeNetworkOf(ticker: string): IntentNetwork | undefined {
 }
 
 /** `--token`'s network by its shape, else ETH's or SOL's, and only then the sender's. */
-async function networkOf(
+function networkOf(
   ticker: string,
   token: string | undefined,
-  senderInput: { account: string } | { address: string },
-): Promise<IntentNetwork> {
+  senderInput: SenderInput,
+): IntentNetwork {
   if (token) return networkOfAddress(token, "token");
   const nativeNetwork = nativeNetworkOf(ticker);
   if ("address" in senderInput) {
     return nativeNetwork ?? networkOfAddress(senderInput.address, "from");
   }
-  const { network: accountNetwork } = await resolveAccountDescriptorV1(senderInput.account);
-  const accountMainnet = mainnetOf(accountNetwork);
+  const { label, descriptor } = senderInput.account;
+  const accountMainnet = mainnetOf(descriptor.network);
   if (!nativeNetwork) return accountMainnet === "solana" ? "solana" : "ethereum";
   const otherIntentNetwork = nativeNetwork === "solana" ? "ethereum" : "solana";
   if (accountMainnet === otherIntentNetwork) {
     const native = getCryptoCurrencyById(nativeNetwork);
     throw new Error(
-      `Account "${senderInput.account}" is on ${accountNetwork}, but ${native.ticker} is a native ` +
+      `Account "${label}" is on ${descriptor.network}, but ${native.ticker} is a native ` +
         `${native.name} send. To send a token with that ticker from this account, pass its ` +
         "address with --token.",
     );
@@ -105,17 +112,13 @@ type SendParties = {
 };
 
 /** Solana addresses are checked by the SDK later: canonical base58, 32 bytes. */
-async function resolveParties(
-  network: IntentNetwork,
-  senderInput: { account: string } | { address: string },
-  to: string,
-): Promise<SendParties> {
+function resolveParties(network: IntentNetwork, senderInput: SenderInput, to: string): SendParties {
   const recipient = network === "ethereum" ? parseEvmAddress(to, "to") : to;
   if ("account" in senderInput) {
     return {
-      sender: await resolveSenderFromAccount(senderInput.account, "send", network),
+      sender: senderFromAccount(senderInput.account, "send", network),
       recipient,
-      senderField: `account "${senderInput.account}"`,
+      senderField: `account "${senderInput.account.label}"`,
     };
   }
   const sender =
@@ -189,7 +192,7 @@ async function resolveNetworkAsset(
   network: IntentNetwork,
   ticker: string,
   token: string | undefined,
-  senderInput: { account: string } | { address: string },
+  senderInput: SenderInput,
   out: Pick<CommandOutput, "withActivity">,
 ): Promise<NetworkAsset> {
   if (!token && nativeNetworkOf(ticker) === network) {
@@ -260,17 +263,20 @@ export default defineCommand({
     const ctx = { command: "agent-intent send", network: "" };
     const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
     await out.run(async () => {
-      const senderInput = parseSenderInput({ account: flags.account, address: flags.from }, "from");
+      const parsedSender = parseSenderInput(
+        { account: flags.account, address: flags.from },
+        "from",
+      );
+      const senderInput: SenderInput =
+        "account" in parsedSender
+          ? { account: await resolveSenderAccount(parsedSender.account) }
+          : parsedSender;
       const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
-      const network = await networkOf(ticker, flags.token, senderInput);
+      const network = networkOf(ticker, flags.token, senderInput);
       ctx.network = network;
       assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      const { sender, recipient, senderField } = await resolveParties(
-        network,
-        senderInput,
-        flags.to,
-      );
+      const { sender, recipient, senderField } = resolveParties(network, senderInput, flags.to);
       const networkAsset = await resolveNetworkAsset(
         network,
         ticker,

@@ -8,7 +8,7 @@ import { endpointByCurrencyId } from "@ledgerhq/coin-solana/utils";
 import { HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
 import { BigNumber } from "bignumber.js";
 import { z } from "zod";
-import { resolveAccountDescriptor } from "../commands/inputs";
+import { toV0, type AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { calApiConfig } from "../shared/cal-config";
 import { WalletAdapter } from "../wallet";
 
@@ -127,8 +127,8 @@ export async function findTokensByTicker(
   return [...candidates.values()];
 }
 
-export async function findAccountTokens(label: string): Promise<TokenCandidate[]> {
-  const descriptor = await resolveAccountDescriptor(label);
+export async function findAccountTokens(account: AccountDescriptorV1): Promise<TokenCandidate[]> {
+  const descriptor = toV0(account);
   const balances = await new WalletAdapter().getAccountBalances(descriptor);
   const tokens = await Promise.all(
     balances

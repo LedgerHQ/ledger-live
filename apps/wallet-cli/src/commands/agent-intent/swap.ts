@@ -17,7 +17,11 @@ import {
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
-import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
+import {
+  parseSenderInput,
+  resolveSenderAccount,
+  senderFromAccount,
+} from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
@@ -157,7 +161,7 @@ export default defineCommand({
       const sender =
         "address" in senderInput
           ? parseEvmAddress(senderInput.address, "sender")
-          : await resolveSenderFromAccount(senderInput.account, "swap", "ethereum");
+          : senderFromAccount(await resolveSenderAccount(senderInput.account), "swap", "ethereum");
       const from = await resolveSwapAsset(flags.from, "from");
       const to = await resolveSwapAsset(flags.to, "to");
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");
