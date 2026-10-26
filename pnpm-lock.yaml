@@ -371,9 +371,6 @@ catalogs:
     '@nx/devkit':
       specifier: 22.7.12
       version: 22.7.12
-    '@nx/nx-linux-x64-gnu':
-      specifier: 22.7.12
-      version: 22.7.12
     '@nx/s3-cache':
       specifier: 5.0.7
       version: 5.0.7
@@ -891,9 +888,6 @@ importers:
       '@nx/devkit':
         specifier: 'catalog:'
         version: 22.7.12(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
-      '@nx/nx-linux-x64-gnu':
-        specifier: 'catalog:'
-        version: 22.7.12
       '@nx/s3-cache':
         specifier: 'catalog:'
         version: 5.0.7(debug@4.4.3)(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
@@ -44942,7 +44936,8 @@ snapshots:
   '@nx/nx-linux-arm64-musl@22.7.12':
     optional: true
 
-  '@nx/nx-linux-x64-gnu@22.7.12': {}
+  '@nx/nx-linux-x64-gnu@22.7.12':
+    optional: true
 
   '@nx/nx-linux-x64-musl@22.7.12':
     optional: true
