@@ -849,123 +849,192 @@ function typeParameterAt(node, name) {
  * arguments of `Pick`, `Omit` and other library types that drop props are not followed, except
  * that the contract's own heritage clauses check the type arguments of any base.
  *
+ * Each node is visited once per context, and a parameter collects the arguments of every
+ * reference to its type: where the body places the parameter does not depend on the arguments,
+ * so the union reaches what expanding each instantiation would, in time linear in the module.
+ *
  * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} declaration
  * @param {ReturnType<typeof parseModule>} module
  * @returns {Set<ts.PropertySignature | ts.MethodSignature>}
  */
 function reachableProps(declaration, module) {
-  /** @typedef {Map<ts.TypeParameterDeclaration, { node: ts.TypeNode, bindings: Bindings }>} Bindings */
-  const props = new Set();
-  const expanded = new Set();
-  const ids = new Map();
-  /** @param {ts.Node} node @returns {number} */
-  function idOf(node) {
-    if (!ids.has(node)) ids.set(node, ids.size);
-    return ids.get(node);
-  }
-  // Each parameter's argument, followed by the key of that argument's own bindings. A pair that
-  // repeats on its path ends the branch, so a type that nests its own argument,
-  // `Nest<T> = { next: Nest<{ wrap: T }> }`, reaches a key it already expanded, while
-  // `Rotate<A, B, C> = { next?: Rotate<B, C, A> }` keeps a key per rotation.
-  /** @param {Bindings} bindings @param {Set<string>} path @returns {string} */
-  function bindingsKey(bindings, path = new Set()) {
-    return [...bindings]
-      .map(([parameter, bound]) => {
-        const pair = `${idOf(parameter)}:${idOf(bound.node)}`;
-        if (path.has(pair)) return `${pair}*`;
-        return `${pair}(${bindingsKey(bound.bindings, new Set(path).add(pair))})`;
-      })
-      .join(",");
-  }
-  // An argument that names a bound parameter binds to that parameter's own argument, so
-  // `Rotate<B, C, A>` keeps the key of a rotation shallow.
+  // Where a node is visited: the contract's own expansion, whose parameters stay unbound; the
+  // body of a referenced local type, whose parameters take the arguments of every reference; or
+  // the default of a parameter a reference omits, which reads that reference's arguments.
   /**
-   * @param {ts.TypeNode} node @param {Bindings} bindings
-   * @returns {{ node: ts.TypeNode, bindings: Bindings }}
+   * @typedef {"contract" | "local" | DefaultContext} Context
+   * @typedef {{ reference: ts.TypeReferenceNode | ts.ExpressionWithTypeArguments, outer: Context }} DefaultContext
+   * @typedef {{ node: ts.Node, context: Context }} Argument
    */
-  function bind(node, bindings) {
-    if (ts.isTypeReferenceNode(node) && ts.isIdentifier(node.typeName)) {
-      const parameter = typeParameterAt(node, node.typeName.text);
-      const bound = parameter && bindings.get(parameter);
-      if (bound) return bound;
-    }
-    return { node, bindings };
+  const props = new Set();
+  /** @type {Map<Context, Set<ts.Node>>} */
+  const visited = new Map();
+  /** @type {Map<ts.TypeParameterDeclaration, Argument[]>} */
+  const argumentsOf = new Map();
+  const bound = new Set();
+  const referenced = new Set();
+  /** @type {Map<ts.Node, Map<Context, DefaultContext>>} */
+  const defaultContexts = new Map();
+  const ids = new Map();
+  /** @param {object | string} value @returns {number} */
+  function idOf(value) {
+    if (!ids.has(value)) ids.set(value, ids.size);
+    return ids.get(value);
   }
-  /** @param {ts.TypeNode} node @param {Bindings} bindings @returns {boolean} */
-  function isBoundParameter(node, bindings) {
+  /**
+   * @param {DefaultContext["reference"]} reference
+   * @param {Context} outer
+   * @returns {DefaultContext} one object per reference and context, so contexts compare by identity
+   */
+  function defaultContext(reference, outer) {
+    if (!defaultContexts.has(reference)) defaultContexts.set(reference, new Map());
+    const byOuter = defaultContexts.get(reference);
+    if (!byOuter.has(outer)) byOuter.set(outer, { reference, outer });
+    return byOuter.get(outer);
+  }
+  /**
+   * @param {ts.Node} node @param {Context} context
+   * @returns {boolean} false when `node` was already visited in `context`
+   */
+  function markVisited(node, context) {
+    if (!visited.has(context)) visited.set(context, new Set());
+    const nodes = visited.get(context);
+    if (nodes.has(node)) return false;
+    nodes.add(node);
+    return true;
+  }
+  /**
+   * @param {ts.TypeParameterDeclaration} parameter @param {DefaultContext} context
+   * @returns {Argument | undefined} what the reference of `context` binds `parameter` to
+   */
+  function defaultArgument(parameter, context) {
+    const index = parameter.parent.typeParameters.indexOf(parameter);
+    const argument = context.reference.typeArguments?.[index];
+    if (argument) return { node: argument, context: context.outer };
+    // A default can name an earlier parameter: `Box<T, U = T>`.
+    if (parameter.default) return { node: parameter.default, context };
+    return undefined;
+  }
+  /**
+   * @param {ts.TypeParameterDeclaration} parameter @param {Context} context
+   * @returns {boolean} true when `parameter` takes an argument where `context` reads it
+   */
+  function isBound(parameter, context) {
+    const owner = parameter.parent;
+    if (!ts.isTypeAliasDeclaration(owner) && !ts.isInterfaceDeclaration(owner)) return false;
+    if (context === "contract") return false;
+    if (context === "local") return true;
+    return Boolean(defaultArgument(parameter, context));
+  }
+  /** @param {ts.TypeNode} node @param {Context} context @returns {boolean} */
+  function isBoundParameter(node, context) {
     if (!ts.isTypeReferenceNode(node) || !ts.isIdentifier(node.typeName)) return false;
     const parameter = typeParameterAt(node, node.typeName.text);
-    return Boolean(parameter && bindings.has(parameter));
+    return Boolean(parameter && isBound(parameter, context));
   }
-  /** @param {ts.Node} node @param {Bindings} bindings @returns {boolean} */
-  function mentionsBoundParameter(node, bindings) {
+  /** @param {ts.Node} node @param {Context} context @returns {boolean} */
+  function mentionsBoundParameter(node, context) {
     return (
-      isBoundParameter(node, bindings) ||
-      Boolean(ts.forEachChild(node, child => mentionsBoundParameter(child, bindings) || undefined))
+      isBoundParameter(node, context) ||
+      Boolean(ts.forEachChild(node, child => mentionsBoundParameter(child, context) || undefined))
     );
   }
-  /** @param {ts.TypeElement} prop @param {Bindings} bindings */
-  function addProp(prop, bindings) {
+  /**
+   * Adds an argument to `parameter`, and visits it at once if the body already placed the parameter.
+   *
+   * @param {ts.TypeParameterDeclaration} parameter @param {Argument} argument
+   */
+  function bind(parameter, argument) {
+    const key = `${idOf(parameter)}:${idOf(argument.node)}:${idOf(argument.context)}`;
+    if (bound.has(key)) return;
+    bound.add(key);
+    if (!argumentsOf.has(parameter)) argumentsOf.set(parameter, []);
+    argumentsOf.get(parameter).push(argument);
+    if (referenced.has(parameter)) visit(argument.node, argument.context);
+  }
+  /**
+   * Visits the arguments `parameter` takes where `context` reads it, including those a later
+   * reference adds.
+   *
+   * @param {ts.TypeParameterDeclaration} parameter @param {Context} context
+   */
+  function resolve(parameter, context) {
+    if (!isBound(parameter, context)) return;
+    if (context === "local") {
+      referenced.add(parameter);
+      for (const argument of [...(argumentsOf.get(parameter) ?? [])]) {
+        visit(argument.node, argument.context);
+      }
+      return;
+    }
+    const argument = defaultArgument(parameter, /** @type {DefaultContext} */ (context));
+    if (argument) visit(argument.node, argument.context);
+  }
+  /** @param {ts.TypeElement} prop @param {Context} context */
+  function addProp(prop, context) {
     // `{ [id: string]: Tile }` holds tiles but declares no prop of its own.
-    if (ts.isIndexSignatureDeclaration(prop)) visit(prop.type, bindings);
+    if (ts.isIndexSignatureDeclaration(prop)) visit(prop.type, context);
     if (!ts.isPropertySignature(prop) && !ts.isMethodSignature(prop)) return;
     props.add(prop);
-    if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, bindings);
+    if (ts.isPropertySignature(prop) && prop.type) visit(prop.type, context);
   }
-  // A local type is expanded once per set of bindings: a repeated instantiation adds no prop, and
-  // a recursive type terminates.
   /**
+   * Binds the arguments of `reference` to the parameters of `local`, then visits its body once.
+   *
    * @param {ts.TypeAliasDeclaration | ts.InterfaceDeclaration} local
-   * @param {ReadonlyArray<ts.TypeNode> | undefined} typeArguments undefined for the contract, whose
+   * @param {DefaultContext["reference"] | undefined} reference undefined for the contract, whose
    *   parameters stay unbound; a reference binds an omitted argument to its parameter's default
-   * @param {Bindings} bindings
+   * @param {Context} context where `reference` is visited
    */
-  function expand(local, typeArguments, bindings) {
-    const inner = new Map();
-    (local.typeParameters ?? []).forEach((parameter, index) => {
-      const argument = typeArguments?.[index];
-      if (argument) inner.set(parameter, bind(argument, bindings));
-      // A default can name an earlier parameter: `Box<T, U = T>`.
-      else if (typeArguments && parameter.default) {
-        inner.set(parameter, bind(parameter.default, inner));
-      }
-    });
-    const key = `${idOf(local)};${bindingsKey(inner)}`;
-    if (expanded.has(key)) return;
-    expanded.add(key);
+  function expand(local, reference, context) {
+    if (reference) {
+      (local.typeParameters ?? []).forEach((parameter, index) => {
+        const argument = reference.typeArguments?.[index];
+        if (argument) bind(parameter, { node: argument, context });
+        else if (parameter.default) {
+          bind(parameter, {
+            node: parameter.default,
+            context: defaultContext(reference, context),
+          });
+        }
+      });
+    }
+    const body = reference ? "local" : "contract";
+    if (!markVisited(local, body)) return;
     if (ts.isTypeAliasDeclaration(local)) {
-      visit(local.type, inner);
+      visit(local.type, body);
     } else {
-      for (const member of local.members) addProp(member, inner);
+      for (const member of local.members) addProp(member, body);
       for (const clause of local.heritageClauses ?? []) {
-        for (const type of clause.types) visit(type, inner);
+        for (const type of clause.types) visit(type, body);
       }
     }
   }
-  /** @param {ts.Node} node @param {Bindings} bindings */
-  function visit(node, bindings) {
+  /** @param {ts.Node} node @param {Context} context */
+  function visit(node, context) {
+    if (!markVisited(node, context)) return;
     if (ts.isFunctionTypeNode(node) || ts.isConstructorTypeNode(node)) return;
     if (
       ts.isTypeOperatorNode(node) &&
       node.operator === ts.SyntaxKind.KeyOfKeyword &&
-      isBoundParameter(node.type, bindings)
+      isBoundParameter(node.type, context)
     ) {
       return;
     }
     if (ts.isTypeLiteralNode(node)) {
-      for (const member of node.members) addProp(member, bindings);
+      for (const member of node.members) addProp(member, context);
       return;
     }
     if (ts.isConditionalTypeNode(node)) {
       if (
-        !mentionsBoundParameter(node.checkType, bindings) &&
-        !mentionsBoundParameter(node.extendsType, bindings)
+        !mentionsBoundParameter(node.checkType, context) &&
+        !mentionsBoundParameter(node.extendsType, context)
       ) {
-        visit(node.checkType, bindings);
-        visit(node.extendsType, bindings);
+        visit(node.checkType, context);
+        visit(node.extendsType, context);
       }
-      visit(node.trueType, bindings);
-      visit(node.falseType, bindings);
+      visit(node.trueType, context);
+      visit(node.falseType, context);
       return;
     }
     const reference = ts.isTypeReferenceNode(node)
@@ -974,14 +1043,13 @@ function reachableProps(declaration, module) {
         ? node.expression
         : undefined;
     if (!reference) {
-      ts.forEachChild(node, child => visit(child, bindings));
+      ts.forEachChild(node, child => visit(child, context));
       return;
     }
     const name = ts.isIdentifier(reference) ? reference.text : "";
     const parameter = name && typeParameterAt(node, name);
     if (parameter) {
-      const bound = bindings.get(parameter);
-      if (bound) visit(bound.node, bound.bindings);
+      resolve(parameter, context);
       return;
     }
     // A namespace declaration shadows the module-level type of the same name.
@@ -990,12 +1058,12 @@ function reachableProps(declaration, module) {
     const contractHeritage =
       ts.isExpressionWithTypeArguments(node) && node.parent.parent === declaration;
     if (local) {
-      expand(local, node.typeArguments ?? [], bindings);
+      expand(local, node, context);
     } else if (PROPS_PRESERVING_TYPES.has(name) || contractHeritage) {
-      for (const argument of node.typeArguments ?? []) visit(argument, bindings);
+      for (const argument of node.typeArguments ?? []) visit(argument, context);
     }
   }
-  expand(declaration, undefined, new Map());
+  expand(declaration, undefined, "contract");
   return props;
 }
 

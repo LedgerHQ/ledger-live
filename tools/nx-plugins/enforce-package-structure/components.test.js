@@ -985,6 +985,8 @@ test("R3 does not check a type argument a local generic drops", () => {
     `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
     `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
     `type Pressable<T> = [T] extends [${argument}] ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+    `type Box<T, U = T> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
+    `type Box<T, U = { item: T }> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
   ]) {
     assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
   }
@@ -1027,8 +1029,8 @@ test("R3 expands a repeated instantiation of a local generic once", () => {
   assert.ok(Date.now() - start < 5000);
 });
 
-test("R3 keys a rotation of many parameters on the arguments they name", () => {
-  // Keying each rotation on the one before it grows tenfold per parameter: a crash here.
+test("R3 follows a rotation of many parameters in linear time", () => {
+  // Keying each instantiation on the bindings of the one before grows tenfold per parameter.
   const parameters = Array.from({ length: 12 }, (_, index) => `P${index}`);
   const rotated = [...parameters.slice(1), parameters[0]];
   const values = [...parameters.slice(1).map(() => "string"), "{ onPress(): void }"];
@@ -1038,6 +1040,21 @@ test("R3 keys a rotation of many parameters on the arguments they name", () => {
     "R3 contract-gesture-callback Card",
   ]);
   assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 follows a rotation of wrapped arguments in linear time", () => {
+  // Expanding each instantiation with its own bindings grows factorially: a crash at 10.
+  for (const length of [10, 20]) {
+    const parameters = Array.from({ length }, (_, index) => `P${index}`);
+    const wrapped = parameters.map((_, index) => `{ w${index}: P${(index + 1) % length} }`);
+    const values = [...parameters.slice(1).map(() => "string"), "{ onPress(): void }"];
+    const contractModule = `type Rotate<${parameters}> = { value: P0; next?: Rotate<${wrapped}> };\nexport type CardProps = { item: Rotate<${values}> };\n`;
+    const start = Date.now();
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+      "R3 contract-gesture-callback Card",
+    ]);
+    assert.ok(Date.now() - start < 5000);
+  }
 });
 
 test("R3 checks keyof, conditions and imported heritage arguments outside a local generic", () => {
