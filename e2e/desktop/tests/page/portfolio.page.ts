@@ -3,6 +3,7 @@ import { AppPage } from "tests/page/abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted } from "tests/utils/userdata";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
@@ -140,7 +141,7 @@ export class PortfolioPage extends AppPage {
   async expectAccountsPersistedInAppJson(
     userdataFile: string,
     minCount: number = 1,
-    timeoutMs: number = 5000,
+    timeoutMs: number = TIMEOUT.small,
   ) {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
   }
@@ -208,7 +209,7 @@ export class PortfolioPage extends AppPage {
    */
   @step("Expect the portfolio empty state")
   async expectPortfolioEmptyState() {
-    await expect(this.noBalanceTitle).toBeVisible();
+    await expect(this.noBalanceTitle).toBeVisible({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Expect portfolio total balance to not be visible")

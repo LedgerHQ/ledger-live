@@ -1,6 +1,7 @@
 import { Page } from "@playwright/test";
 import { Application } from "tests/page";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 /**
  * Returns the visible modular selector (Dialog), or null if legacy UI.
@@ -25,7 +26,7 @@ export async function getModularSelector(
 
   try {
     const dialogLocator = page.getByTestId(`modular-dialog-screen-${type}_SELECTION`);
-    await dialogLocator.waitFor({ state: "visible", timeout: 5000 });
+    await dialogLocator.waitFor({ state: "visible", timeout: TIMEOUT.small });
 
     if (await dialogLocator.isVisible()) {
       return app.modularDialog;
@@ -64,7 +65,7 @@ export async function getModularSelectorFromInstance(
 ): Promise<ModularDialog | null> {
   try {
     const dialogLocator = page.getByTestId("modular-dialog-screen-ASSET_SELECTION");
-    await dialogLocator.waitFor({ state: "visible", timeout: 5000 });
+    await dialogLocator.waitFor({ state: "visible", timeout: TIMEOUT.small });
 
     if (await dialogLocator.isVisible()) {
       return modularDialog;

@@ -13,10 +13,11 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
-const APPROVAL_PROCESSING_TIMEOUT = 300_000;
+const APPROVAL_PROCESSING_TIMEOUT = TIMEOUT.xxxxlarge;
 type SwapSurface = "full" | "embedded";
 
 type PercentageKey = "25%" | "50%" | "75%";
@@ -457,7 +458,9 @@ export class SwapPage extends WebViewAppPage {
   async checkAssetFromContains(expected: string) {
     this._webviewPage = undefined;
     const webview = await this.getWebView();
-    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected);
+    await expect(webview.getByTestId(this.fromAccountCoinSelector)).toContainText(expected, {
+      timeout: TIMEOUT.xxlarge,
+    });
   }
 
   @step("Check currency to swap from account name contains $0")
@@ -477,7 +480,7 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
 
     try {
-      await this.waitForSelectorPopulated(webview, this.fromAccountCoinSelector, 5_000);
+      await this.waitForSelectorPopulated(webview, this.fromAccountCoinSelector, TIMEOUT.small);
     } catch {
       // Page context closed or from-selector not yet pre-populated; caller will proceed to manual selection
       return false;
@@ -492,7 +495,7 @@ export class SwapPage extends WebViewAppPage {
     const webview = await this.getWebView();
 
     try {
-      await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, 5_000);
+      await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, TIMEOUT.small);
     } catch {
       // to-selector was not pre-populated; caller will proceed to manual selection
       return false;
@@ -548,7 +551,7 @@ export class SwapPage extends WebViewAppPage {
   @step("Select from account coin selector")
   async selectFromAccountCoinSelector() {
     const webview = await this.getWebView();
-    await webview.getByTestId(this.fromAccountCoinSelector).click();
+    await webview.getByTestId(this.fromAccountCoinSelector).click({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Wait for the to-account coin selector to be populated")
@@ -803,8 +806,8 @@ export class SwapPage extends WebViewAppPage {
     // revealed is more reliable than waiting longer on a single attempt.
     await expect(async () => {
       await wrapper.hover();
-      await expect(anyPercentageButton).toBeVisible({ timeout: 2_000 });
-    }).toPass({ timeout: 20_000 });
+      await expect(anyPercentageButton).toBeVisible({ timeout: TIMEOUT.xsmall });
+    }).toPass({ timeout: TIMEOUT.large });
   }
 
   // Max/% are Lumen `Tag` components rendered as plain <div>s: `disabled` only

@@ -6,15 +6,16 @@ import {
 } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
 
 const EXECUTION_TIMEOUT_MS = 240_000;
-const APPROVAL_TIMEOUT_MS = 60_000;
-const SCREEN_TIMEOUT_MS = 60_000;
+const APPROVAL_TIMEOUT_MS = TIMEOUT.xxlarge;
+const SCREEN_TIMEOUT_MS = TIMEOUT.xxlarge;
 /** The partner prepares each transaction server-side, which outlasts the global expect timeout. */
-const DEVICE_SIGNATURE_TIMEOUT_MS = 120_000;
+const DEVICE_SIGNATURE_TIMEOUT_MS = TIMEOUT.xxxlarge;
 
 export class BorrowPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "borrow";
@@ -465,7 +466,7 @@ export class BorrowPage extends WebViewAppPage {
     for (let attempt = 0; attempt < 4; attempt++) {
       await rows.first().click();
       try {
-        await expect(webview).toHaveURL(this.loanOverviewRoutePattern, { timeout: 20_000 });
+        await expect(webview).toHaveURL(this.loanOverviewRoutePattern, { timeout: TIMEOUT.large });
         await expect(webview.getByTestId(this.loanOverviewScreen)).toBeVisible();
         await expect(webview.getByTestId(this.repayButton)).toBeEnabled();
         return;
@@ -519,7 +520,7 @@ export class BorrowPage extends WebViewAppPage {
     await this.clickWhenEnabled(this.repayInFull);
 
     const continueButton = webview.getByTestId(this.repayContinue);
-    await expect(continueButton).toBeEnabled({ timeout: 30_000 });
+    await expect(continueButton).toBeEnabled({ timeout: TIMEOUT.xlarge });
     await continueButton.click();
 
     await expect(webview.getByTestId(this.repayModal)).toBeHidden();

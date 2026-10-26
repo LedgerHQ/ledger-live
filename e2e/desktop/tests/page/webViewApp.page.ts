@@ -1,13 +1,14 @@
 import { Page, expect, test } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export abstract class WebViewAppPage extends AppPage {
   public _webviewPage?: Page;
   public webviewUrlHistory: string[] = [];
 
   protected abstract readonly webviewIdentifier: string;
-  protected defaultWebViewTimeout = 60_000;
+  protected defaultWebViewTimeout = TIMEOUT.xxlarge;
 
   /** The first Electron window whose title matches this page's webview identifier. */
   private async findWebviewWindow(): Promise<Page | undefined> {
@@ -24,7 +25,7 @@ export abstract class WebViewAppPage extends AppPage {
   }
 
   @step("Wait for WebView to be available")
-  protected async getWebView(timeout = 60_000): Promise<Page> {
+  protected async getWebView(timeout = TIMEOUT.xxlarge): Promise<Page> {
     if (this._webviewPage) {
       if (!this._webviewPage.isClosed()) {
         return this._webviewPage;
@@ -177,7 +178,7 @@ export abstract class WebViewAppPage extends AppPage {
     const webview = await this.getWebView();
     const element = webview.getByTestId(testId);
     try {
-      await expect(element).toBeVisible({ timeout: 1000 });
+      await expect(element).toBeVisible({ timeout: TIMEOUT.xxsmall });
       return true;
     } catch {
       return false;

@@ -8,6 +8,14 @@ Playwright rules for `e2e/desktop`. Shared rules: [E2E conventions](../../docs/e
 
 Wait for an element or a navigation instead.
 
+### Pass a timeout as a `TIMEOUT` bucket
+
+Most waits need no timeout: the page and `expect` defaults apply. When one does, pass a `TIMEOUT` bucket from [`@ledgerhq/live-e2e-shared/timeouts`](../../../libs/live-e2e-shared/src/timeouts.ts), not a bare number. Add a named constant in the file only when no bucket fits or the value needs its reason written down. `playwright.config.ts` can keep literals, since the key already names them.
+
+```ts
+await expect(this.walletSyncRow).toBeVisible({ timeout: TIMEOUT.xxlarge }); // not 60_000
+```
+
 ## Specs
 
 ### Do not use Playwright's `test.step()` in a spec

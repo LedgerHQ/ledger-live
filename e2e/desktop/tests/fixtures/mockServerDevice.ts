@@ -8,8 +8,9 @@ import {
 } from "@ledgerhq/live-e2e-shared/mockServer/session";
 import { MockServerDevicePage } from "tests/page/mockServerDevice.page";
 import base from "tests/fixtures/common";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
-const SESSION_TOKEN_TIMEOUT_MS = 30_000;
+const SESSION_TOKEN_TIMEOUT_MS = TIMEOUT.xlarge;
 
 type MockServerFixtures = {
   mockDevice: MockDevice;
