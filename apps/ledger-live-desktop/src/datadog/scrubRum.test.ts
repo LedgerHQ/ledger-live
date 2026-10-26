@@ -72,6 +72,22 @@ describe("scrubResourceUrl", () => {
       );
     });
   });
+
+  describe("portfolio account", () => {
+    it("redacts the account id before /addresses", () => {
+      expect(
+        scrubResourceUrl("https://svc.example/v1/portfolio/p/accounts/base%3A0xFoo/addresses"),
+      ).toBe("https://svc.example/v1/portfolio/p/accounts/[redacted]/addresses");
+    });
+
+    it("redacts a portfolio account id in the account query", () => {
+      expect(
+        scrubResourceUrl(
+          "https://svc.example/v1/portfolio/p/balance?account=base%3A0xFoo&currency=usd",
+        ),
+      ).toBe("https://svc.example/v1/portfolio/p/balance?account=%5Bredacted%5D&currency=usd");
+    });
+  });
 });
 
 describe("scrubViewUrlHash", () => {
