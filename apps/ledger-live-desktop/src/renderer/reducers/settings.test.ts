@@ -825,6 +825,10 @@ describe("counterValueCurrencySelector", () => {
       getFiatCurrencyByTicker("USD"),
     );
   });
+
+  it("falls back to USD for OFAC-sanctioned tickers", () => {
+    expect(counterValueCurrencySelector(buildState("RUB"))).toBe(getFiatCurrencyByTicker("USD"));
+  });
 });
 
 describe("counterValueIdOf", () => {

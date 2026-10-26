@@ -22,24 +22,6 @@ export const FIAT_CURRENCIES_BY_TICKER: Record<string, FiatCurrency> = Object.fr
 );
 
 /**
- * ISO 4217 tickers of fiat currencies restricted under OFAC sanctions programs.
- * Any ticker in this set is excluded from the supported-fiats list.
- */
-export const OFAC_FIAT_TICKERS: ReadonlySet<string> = new Set([
-  "AFN",
-  "BYN",
-  "CUC",
-  "CUP",
-  "IRR",
-  "IQD",
-  "KPW",
-  "RUB",
-  "SDG",
-  "SYP",
-  "MMK",
-]);
-
-/**
  * Ordered list of tickers used as the offline fallback when the CVS endpoint
  * is unreachable. Mirrors the default response of `/v3/supported/fiat`;
  * OFAC-restricted entries are filtered out at runtime by `buildFallbackFiats`.
