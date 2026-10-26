@@ -33,11 +33,18 @@ function lastLoggedError(logPath: string): string | undefined {
   return undefined;
 }
 
-/** The enrollment link from the listener's log, while the log still has its pending line. */
-function loggedEnrollmentUrl(logPath: string, profileId: string): string | undefined {
+/** The enrollment link from the listener's log, while the log still has its pending line. Matched
+ * on the expiry too: a plain `enroll` of a reused profile id leaves an earlier enrollment's log. */
+function loggedEnrollmentUrl(logPath: string, profile: AgentIntentProfileMeta): string | undefined {
   for (const line of readLogJsonLines(logPath)) {
     const pending = PendingLineSchema.safeParse(line);
-    if (pending.success && pending.data.profileId === profileId) return pending.data.enrollmentUrl;
+    if (
+      pending.success &&
+      pending.data.profileId === profile.profileId &&
+      pending.data.expiresAt === profile.enrollmentExpiresAt
+    ) {
+      return pending.data.enrollmentUrl;
+    }
   }
   return undefined;
 }
@@ -115,7 +122,7 @@ function checkProfile(
     status === "expired" ? deadline : Math.min(deadline, Date.parse(profile.enrollmentExpiresAt));
   const remainingMs = end - Date.now();
   if (remainingMs > 0) return remainingMs;
-  const enrollmentUrl = loggedEnrollmentUrl(logPath, profileId);
+  const enrollmentUrl = loggedEnrollmentUrl(logPath, profile);
   out.agentIntentEnrollmentWaiting({
     profileId,
     expiresAt: profile.enrollmentExpiresAt,

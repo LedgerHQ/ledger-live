@@ -223,6 +223,27 @@ describe("agent-intent wait", () => {
     });
   });
 
+  it("omits a link the log kept from an earlier enrollment of a reused profile id", async () => {
+    profileReads = [pendingProfile()];
+    // A plain (not --detach) enroll holds the listener lock but leaves the previous log in place.
+    writeLog([
+      JSON.stringify({
+        type: "enrollment-pending",
+        profileId: "test-agent",
+        enrollmentUrl: "https://agent.example.com#request=stale",
+        fingerprint: "AB12",
+        expiresAt: "2026-01-01T00:00:00.000Z",
+      }),
+    ]);
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const { line } = await pollWaitJson(stdout, 50);
+
+      expect(line.type).toBe("enrollment-waiting");
+      expect(line).not.toHaveProperty("enrollmentUrl");
+    });
+  });
+
   it("tells a human how to keep waiting at timeout", async () => {
     await withEnrollListenerLock("test-agent", async () => {
       await runWait({ timeout: "1s" });
