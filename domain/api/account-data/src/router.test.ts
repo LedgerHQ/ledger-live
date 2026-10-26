@@ -454,3 +454,77 @@ describe("createAccountDataRouter", () => {
     });
   });
 });
+
+describe("addSource", () => {
+  const constant = (id: string, value: number): AccountDataSource => ({
+    id: sourceIdOf(id),
+    supports: () => true,
+    read: { counter: async () => value },
+  });
+
+  it("serves from the next read, after the sources ranked at creation", async () => {
+    const router = createAccountDataRouter([]);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
+      NoAccountDataSourceError,
+    );
+    router.addSource(constant("late", 1));
+    await expect(router.read("counter", descriptor)).resolves.toEqual({
+      data: 1,
+      sourceId: "late",
+    });
+
+    const ranked = createAccountDataRouter([constant("first", 0)]);
+    ranked.addSource(constant("late", 1));
+    await expect(ranked.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("replaces the source sharing its id, and its remover puts it back", async () => {
+    const router = createAccountDataRouter([constant("dev", 0)]);
+    const remove = router.addSource(constant("dev", 1));
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("ranks the latest source still registered when removers run out of order", async () => {
+    const router = createAccountDataRouter([constant("dev", 0)]);
+    const removeA = router.addSource(constant("dev", 1));
+    const removeB = router.addSource(constant("dev", 2));
+    removeA();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+    removeB();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+
+    const added = createAccountDataRouter([]);
+    const removeC = added.addSource(constant("dev", 1));
+    const removeD = added.addSource(constant("dev", 2));
+    removeC();
+    removeD();
+    await expect(added.read("counter", descriptor)).rejects.toBeInstanceOf(
+      NoAccountDataSourceError,
+    );
+  });
+
+  it("removes a registration, not the latest one of the same source", async () => {
+    const router = createAccountDataRouter([]);
+    const a = constant("dev", 1);
+    const removeFirstA = router.addSource(a);
+    const removeB = router.addSource(constant("dev", 2));
+    router.addSource(a);
+    removeFirstA();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    removeB();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+  });
+
+  it("routes a descriptor only to the sources serving its purpose, account by default", async () => {
+    const router = createAccountDataRouter([{ ...constant("none", 0), purposes: [] }]);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
+      NoAccountDataSourceError,
+    );
+    router.addSource(constant("real", 1));
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+  });
+});

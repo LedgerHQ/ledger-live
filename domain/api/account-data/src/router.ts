@@ -5,7 +5,7 @@ import type {
   AccountDataSourceId,
 } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import { coalesce, createRouterContext } from "./internals/router";
+import { addSource, coalesce, createRouterContext } from "./internals/router";
 import type { AccountDataSource } from "./source";
 
 /** As many calls in flight per source as the legacy sync queue allows by default. */
@@ -31,6 +31,8 @@ export type AccountDataRouter = {
     descriptor: AccountDescriptor,
     options?: AccountDataReadOptions<K>,
   ): Promise<AccountDataAnswer<K>>;
+  /** Ranks a source loaded on demand last, or in place of the one sharing its id, for reads not routed yet; returns its remover. */
+  addSource(source: AccountDataSource): () => void;
 };
 
 export type AccountDataRouterOptions = {
@@ -61,5 +63,6 @@ export function createAccountDataRouter(
       if (own.status === "rejected") throw own.reason;
       return own.value;
     },
+    addSource: source => addSource(context, source),
   };
 }
