@@ -558,12 +558,17 @@ describe("Contacts integration", () => {
       {
         skipRouter: true,
         initialState: contactsPageInitialState({
-          contacts: { contacts: mockPopulatedContacts() },
+          contacts: {
+            contacts: [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })],
+          },
         }),
       },
     );
 
     await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
+    await user.click(screen.getByTestId("contacts-detail-add-address"));
+
+    const dialog = screen.getByRole("dialog");
     act(() => {
       store
         .getState()
