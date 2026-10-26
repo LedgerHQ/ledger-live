@@ -144,6 +144,12 @@
     "protobufjs-cli": "2.4.1",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "generate-proto": "node scripts/generate.js",

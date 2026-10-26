@@ -75,6 +75,12 @@
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "coverage": "jest --coverage",
