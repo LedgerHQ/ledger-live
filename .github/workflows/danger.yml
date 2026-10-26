@@ -2,7 +2,8 @@ name: "[CI] - Check PR Validity"
 
 on:
   pull_request:
-    types: [opened, edited, synchronize, reopened]
+    # labeled/unlabeled: re-run when deps-size-approved is added or removed
+    types: [opened, edited, synchronize, reopened, labeled, unlabeled]
     branches:
       - develop
 
