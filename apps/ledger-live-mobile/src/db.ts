@@ -21,6 +21,7 @@ import type {
 } from "./reducers/types";
 import type { HistoryState } from "./reducers/history";
 import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import type { PredictionsState } from "@domain/entity-predictions";
 import {
   mapPersistedKnownDeviceToKnownDevice,
   type KnownDevicesState,
@@ -294,6 +295,14 @@ export async function saveLargeScreenUpsellModalState(
   largeScreenUpsellModalState: LargeScreenUpsellModalState,
 ): Promise<void> {
   await storage.save("largeScreenUpsellModal", largeScreenUpsellModalState);
+}
+
+export function getPredictionsState(): Promise<unknown> {
+  return storage.get("predictions");
+}
+
+export async function savePredictionsState(predictionsState: PredictionsState): Promise<void> {
+  await storage.save("predictions", predictionsState);
 }
 
 export function getMarketState(): Promise<MarketState> {

@@ -23,6 +23,7 @@ function passthroughValue(value) {
 
 module.exports = {
   __esModule: true,
+  Easing: { bezier: () => passthroughValue },
   default: { View: AnimatedView },
   FadeIn: { duration: () => ({}) },
   FadeInUp: { duration: () => ({}) },

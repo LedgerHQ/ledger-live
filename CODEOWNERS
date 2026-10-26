@@ -295,6 +295,7 @@ libs/concordium-core/                                                    @ledger
 # PTX team
 libs/transaction-observability/                                           @ledgerhq/ptx
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
+features/flow/predictions/                                               @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
@@ -329,6 +330,8 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/swap.handler
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/borrow.handler.ts   @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Card/                                         @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/Card/                                        @ledgerhq/ptx
+apps/ledger-live-mobile/src/mvvm/features/Predictions/                                  @ledgerhq/ptx
+apps/ledger-live-desktop/src/mvvm/features/Predictions/                                 @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Swap/                                         @ledgerhq/ptx
 apps/ledger-live-mobile/src/mvvm/features/Stake/                                        @ledgerhq/ptx
 apps/ledger-live-desktop/src/mvvm/features/PtxInfoDialog/                                @ledgerhq/ptx
