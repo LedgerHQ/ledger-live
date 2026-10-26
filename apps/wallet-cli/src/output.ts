@@ -257,8 +257,8 @@ export interface CommandOutput {
   agentIntentEnrollmentPending(result: AgentIntentEnrollmentPending): void;
   /** Final `agent-intent enroll` result once the relayed completion is verified and saved. */
   agentIntentEnrolled(result: AgentIntentEnrolled): void;
-  /** `agent-intent wait` timed out while the enrollment listener is still waiting for approval
-   * (json: `enrollment-waiting` event). */
+  /** `agent-intent wait` timed out while the enrollment listener is still starting or waiting for
+   * approval (json: `enrollment-waiting` event). */
   agentIntentEnrollmentWaiting(result: AgentIntentEnrollmentWaiting): void;
   /** First `agent-intent recover` event, before blocking on the relay (json: NDJSON
    * `recovery-pending` event). Never includes the secret key. */
@@ -334,7 +334,8 @@ export type AgentIntentEnrollmentPending = {
 
 export type AgentIntentEnrollmentWaiting = {
   profileId: string;
-  expiresAt: string;
+  /** Absent while the listener is starting and has not saved the profile yet. */
+  expiresAt?: string;
   listenerPid: number;
   /** From the listener's log, while it still has the pending line. */
   enrollmentUrl?: string;
@@ -897,8 +898,11 @@ class HumanCommandOutput implements CommandOutput {
     enrollmentUrl,
   }: AgentIntentEnrollmentWaiting): void {
     writeStdout(
-      `Profile "${profileId}" is still pending. Its listener (pid ${listenerPid}) waits for ` +
-        `approval until ${expiresAt}.`,
+      expiresAt === undefined
+        ? `Profile "${profileId}" is not saved yet: its listener (pid ${listenerPid}) is still ` +
+            "starting."
+        : `Profile "${profileId}" is still pending. Its listener (pid ${listenerPid}) waits for ` +
+            `approval until ${expiresAt}.`,
     );
     if (enrollmentUrl !== undefined) writeStdout(`Enrollment link: ${enrollmentUrl}`);
     writeStdout(

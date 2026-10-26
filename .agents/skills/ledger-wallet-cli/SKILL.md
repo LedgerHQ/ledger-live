@@ -370,8 +370,9 @@ leaving the page after Review closes the relay channel and the listener ends (`l
 `listenerPid` and `logPath`, and exits. Then call `agent-intent wait --profile <id> [--timeout 25s]`,
 which reads local state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
-- `enrollment-waiting` (`profileId`, `expiresAt`, `listenerPid`, `enrollmentUrl` while the log still
-  has it), exit 0 — still pending: call `wait` again.
+- `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` once the profile is saved, and
+  `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait` again. While the
+  listener is still starting, `expiresAt` and `enrollmentUrl` are absent; keep polling.
 - an error with `error.code` `listener_exited`, `enrollment_expired` or `profile_not_found`, exit 1 —
   start a fresh enrollment with a new `--profile` id.
 

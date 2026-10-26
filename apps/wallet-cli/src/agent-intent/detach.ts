@@ -11,7 +11,7 @@ import { readLiveLockHolderPid, withFileLock } from "../shared/file-lock";
 
 const LISTENER_DIR = "agent-intent-enroll";
 const LOCK_ACQUIRE_TIMEOUT_MS = 1_000;
-const STARTUP_TIMEOUT_MS = 30_000;
+export const STARTUP_TIMEOUT_MS = 30_000;
 const STARTUP_POLL_MS = 100;
 const START_LOCK_MARGIN_MS = 5_000;
 

@@ -1,4 +1,5 @@
 import { defineCommand, option } from "@bunli/core";
+import { statSync } from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 import { z } from "zod";
 import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
@@ -14,6 +15,7 @@ import {
   ErrorLineSchema,
   PendingLineSchema,
   readLogJsonLines,
+  STARTUP_TIMEOUT_MS,
 } from "../../agent-intent/detach";
 import { readLiveLockHolderPid } from "../../shared/file-lock";
 import { CodedCommandError, createCommandOutput, type CommandOutput } from "../../output";
@@ -22,6 +24,9 @@ const POLL_INTERVAL_MS = 2_000;
 /** The SDK fails the relay at the link's expiry, so a pid still in the lock this long after it is
  * one an unclean exit (SIGKILL, SIGHUP) left behind, which the OS may have reused. */
 const LISTENER_EXPIRY_GRACE_MS = 60_000;
+/** A `--detach` parent stops a listener with no pending line after STARTUP_TIMEOUT_MS, so one still
+ * holding its lock a minute later, profile unsaved, outlived its parent or is a reused pid. */
+const LISTENER_STARTING_MAX_MS = STARTUP_TIMEOUT_MS + 60_000;
 
 /** The message of the last error envelope the listener logged, if any. */
 function lastLoggedError(logPath: string): string | undefined {
@@ -49,20 +54,46 @@ function loggedEnrollmentUrl(logPath: string, profile: AgentIntentProfileMeta): 
   return undefined;
 }
 
-/** How long to keep polling for a profile not saved yet, or `profile_not_found`. A live listener
- * that has not saved its profile yet (keypair, keychain unlock) is starting. */
+/** How long ago the lock was taken: its token is written once, on acquire. A lock released
+ * meanwhile reads as fresh, so its dead pid may be reported once, until the next poll or `wait`. */
+function lockAgeMs(lockPath: string): number {
+  try {
+    return Date.now() - statSync(lockPath).mtimeMs;
+  } catch {
+    return 0;
+  }
+}
+
+/** Returns how long to keep polling for a profile not saved yet, or reports `enrollment-waiting`
+ * at the deadline. A live listener that has not saved its profile yet (keypair, keychain unlock)
+ * is starting, for at most LISTENER_STARTING_MAX_MS; with none, the profile is not found. A plain
+ * `enroll` whose human answers a keychain prompt later than that is accepted as not found too. */
 function checkMissingProfile(
+  out: CommandOutput,
   profileId: string,
   listenerPid: number | undefined,
   deadline: number,
-): number {
-  const startingMs = listenerPid === undefined ? 0 : deadline - Date.now();
-  if (startingMs > 0) return startingMs;
-  throw new CodedCommandError(
-    "profile_not_found",
-    `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` ` +
-      "to see your profiles.",
-  );
+  lockPath: string,
+): number | undefined {
+  if (listenerPid === undefined) {
+    throw new CodedCommandError(
+      "profile_not_found",
+      `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` ` +
+        "to see your profiles.",
+    );
+  }
+  if (lockAgeMs(lockPath) > LISTENER_STARTING_MAX_MS) {
+    throw new CodedCommandError(
+      "profile_not_found",
+      `No Agent Intent profile named "${profileId}": its enrollment listener (pid ` +
+        `${listenerPid}) has not saved it within ${LISTENER_STARTING_MAX_MS / 60_000} minutes, ` +
+        "so it is stuck or its pid was reused. Start a fresh enrollment with a new --profile id.",
+    );
+  }
+  const remainingMs = deadline - Date.now();
+  if (remainingMs > 0) return remainingMs;
+  out.agentIntentEnrollmentWaiting({ profileId, listenerPid });
+  return undefined;
 }
 
 /** Fails when no listener can receive the approval any more. An expired link with a live listener
@@ -150,7 +181,7 @@ export async function pollEnrollment(
     const profile = (await Session.read()).getAgentIntentProfile(profileId);
     const waitMs = profile
       ? checkProfile(out, profile, listenerPid, deadline, logPath)
-      : checkMissingProfile(profileId, listenerPid, deadline);
+      : checkMissingProfile(out, profileId, listenerPid, deadline, lockPath);
     if (waitMs === undefined) return;
     await sleep(Math.min(intervalMs, waitMs));
   }

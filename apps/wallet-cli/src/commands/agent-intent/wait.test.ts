@@ -1,6 +1,6 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { CliProcessExitError } from "../../cli-process-exit-error";
@@ -45,7 +45,8 @@ afterAll(() => {
 });
 
 const { default: waitCommand, pollEnrollment } = await import("./wait");
-const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
+const { enrollListenerPaths, STARTUP_TIMEOUT_MS, withEnrollListenerLock } =
+  await import("../../agent-intent/detach");
 
 // Resolved per test: XDG_STATE_HOME only points at the temp dir once `beforeAll` has run.
 let logPath: string;
@@ -355,7 +356,7 @@ describe("agent-intent wait", () => {
     expect(sessionReadCalls).toBe(3);
   });
 
-  it("fails with profile_not_found at --timeout when a live listener never saves its profile", async () => {
+  it("reports enrollment-waiting without expiresAt or a link at --timeout while a live listener has not saved its profile", async () => {
     profileReads = [undefined];
 
     await withEnrollListenerLock("test-agent", async () => {
@@ -363,9 +364,78 @@ describe("agent-intent wait", () => {
       const { code, line } = await pollWaitJson(stdout, 100);
 
       expect(Date.now() - started).toBeGreaterThanOrEqual(90);
-      expect(code).toBe(1);
-      expect(line).toMatchObject({ error: { code: "profile_not_found" } });
+      expect(code).toBe(0);
+      expect(line).toEqual({
+        type: "enrollment-waiting",
+        command: "agent-intent wait",
+        network: "all",
+        profileId: "test-agent",
+        listenerPid: process.pid,
+      });
     });
+  });
+
+  it("tells a human the listener is still starting at timeout", async () => {
+    profileReads = [undefined];
+
+    await withEnrollListenerLock("test-agent", async () => {
+      await pollWait(50, "human");
+    });
+
+    const text = stdout.join("");
+    expect(text).toContain("is not saved yet");
+    expect(text).toContain(`(pid ${process.pid})`);
+    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` again");
+  });
+
+  it("keeps waiting for a live listener still starting up to a minute past the parent's startup timeout", async () => {
+    profileReads = [undefined];
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const takenAt = (Date.now() - STARTUP_TIMEOUT_MS - 59_000) / 1000;
+      utimesSync(lockPath, takenAt, takenAt);
+      const { code, line } = await pollWaitJson(stdout, 50);
+
+      expect(code).toBe(0);
+      expect(line).toMatchObject({ type: "enrollment-waiting", listenerPid: process.pid });
+    });
+  });
+
+  it("fails with profile_not_found when a live listener has not saved its profile in time", async () => {
+    profileReads = [undefined];
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const takenAt = (Date.now() - 3 * 60_000 - 1_000) / 1000;
+      utimesSync(lockPath, takenAt, takenAt);
+      const { code, line } = await pollWaitJson(stdout);
+
+      expect(code).toBe(1);
+      expect(line).toMatchObject({
+        error: {
+          code: "profile_not_found",
+          message: expect.stringContaining(`listener (pid ${process.pid}) has not saved it within`),
+        },
+      });
+    });
+  });
+
+  it("fails with profile_not_found once a listener exits before saving its profile", async () => {
+    mkdirSync(dirname(lockPath), { recursive: true });
+    const holder = Bun.spawn([process.execPath, "-e", "setInterval(() => {}, 1000)"]);
+    writeFileSync(lockPath, `${holder.pid}:a1b2c3d4e5f60718`);
+    // The listener fails (keypair, keychain) and exits after this run read its lock.
+    onFirstSessionRead = async () => {
+      holder.kill();
+      await holder.exited;
+    };
+    profileReads = [undefined];
+
+    const { code, line } = await pollWaitJson(stdout);
+
+    expect(code).toBe(1);
+    expect(line).toMatchObject({ error: { code: "profile_not_found" } });
+    expect(line).not.toMatchObject({ error: { message: expect.stringContaining("not saved") } });
+    expect(sessionReadCalls).toBe(2);
   });
 
   it("fails with profile_not_found for an unknown profile with no listener", async () => {
