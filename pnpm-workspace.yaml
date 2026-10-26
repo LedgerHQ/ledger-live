@@ -284,6 +284,13 @@ ignoredOptionalDependencies:
   - "@substrate/connect"
 
 overrides:
+  # pnpm 11 re-resolution picks undeclared optional peers from elsewhere in the graph and splits their dependents
+  "debug>supports-color": "-"
+  "@hiero-ledger/cryptography>expo-crypto": "-"
+  "@hiero-ledger/sdk>expo-crypto": "-"
+  # lumen-ui-react peers on tailwind-merge 2 and react-table 8.21, align them on the versions the apps ship
+  "@ledgerhq/lumen-ui-react>tailwind-merge": "catalog:"
+  "@ledgerhq/lumen-ui-react>@tanstack/react-table": "catalog:"
   # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
   "@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos": "workspace:^"
   "@mysten/ledgerjs-hw-app-sui>@ledgerhq/ledger-cal-service": "workspace:^"
