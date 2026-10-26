@@ -544,7 +544,9 @@ pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethe
   fee, then reviews the swap. The command says so on stderr, and JSON output has
   `needsTokenApproval: true`.
 - **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
-  quoted, so the provider is always one the frontend can prepare.
+  quoted, so the provider is always one the frontend can prepare. More than 5% above the quote
+  prints a warning on stderr (with `--dry-run` too): the reviewer sees a fresh quote, with your
+  amount shown only as the proposal it replaced.
 - **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
   intent may already exist.
 ### Listing the agent's intents (`agent-intent intents`)
@@ -562,7 +564,8 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
 
 - **One page per run.** `--page-size` is 1, 5, 10, 50 or 100 (default 10). When more intents exist,
   JSON has a `nextCursor` (human output prints the follow-up command); it is `null` on the last
-  page. With `--cursor`, `--status` and `--page-size` are ignored.
+  page. `--cursor` keeps the first page's filters and page size, so it refuses `--status` and
+  `--page-size`. The human table shows the creation time in UTC.
 - **`--status`** takes comma-separated states: `created`, `crafted`, `signed`, `broadcast`,
   `success`, `failed`, `rejected`, `cancelled`, `expired`. An unknown state is rejected before
   signing in.

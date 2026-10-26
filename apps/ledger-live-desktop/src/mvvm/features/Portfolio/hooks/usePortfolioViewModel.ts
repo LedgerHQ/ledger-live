@@ -6,6 +6,7 @@ import uniq from "lodash/uniq";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
+import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import { useBorrowLiveConfig } from "LLD/features/Borrow/hooks/useBorrowLiveConfig";
 import { useResumeAddAccountAfterOnboarding } from "./useResumeAddAccountAfterOnboarding";
 
@@ -17,6 +18,8 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayAssetSection: boolean;
   readonly shouldDisplayAssetDiscoverability: boolean;
   readonly shouldDisplayBorrowSection: boolean;
+  readonly shouldDisplayPerpsEntryPoint: boolean;
+  readonly shouldDisplayServicesEntryPoints: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
   readonly t: TFunction;
   readonly isClearCacheBannerVisible: boolean;
@@ -35,7 +38,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayBrazePlacement,
   } = useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
+  const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
+  const shouldDisplayBorrowSection =
+    (borrowConfig?.enabled ?? false) && !shouldDisplayServicesEntryPoints;
   const { t } = useTranslation();
 
   const totalAccounts = accounts.length;
@@ -58,6 +63,8 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
+    shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
+    shouldDisplayServicesEntryPoints,
     shouldDisplayBrazePlacement,
     t,
     isClearCacheBannerVisible,

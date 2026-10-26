@@ -21,7 +21,7 @@ import { craftTransaction } from "../logic/craftTransaction";
 import { estimateFees } from "../logic/estimateFees";
 import { getBalance } from "../logic/getBalance";
 import { getBlockInfo } from "../logic/getBlockInfo";
-import type { IcpIntent } from "../logic/intent";
+import type { IcpIntent, IcpTxData } from "../logic/intent";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
 import { validateIntent } from "../logic/validateIntent";
@@ -40,9 +40,10 @@ const settle = <T>(step: () => T): Promise<T> => Promise.resolve().then(step);
 // survives and a caller sees exactly which methods exist.
 //
 // Omitted rather than stubbed, and why:
-//   - `getStakes`, `getRewards`, `getValidators` — staking (neurons) is deferred, not impossible:
-//                             neurons are not discoverable from an account identifier, and neuron
-//                             commands need a call and a read-state signature plus claim_or_refresh.
+//   - `getStakes`, `getRewards` — an address does not identify its neurons. No unsigned governance
+//                             call lists a principal's neurons; only a `list_neurons` request the
+//                             device signs does, and that stays with the wiring.
+//   - `getValidators`       — the NNS has no validators.
 //   - `getBlock`            — reading a block together with all its transactions is not supported.
 //   - `getNextSequence`     — the ledger has no account nonce; `created_at_time` deduplicates.
 //                             The generic `signOperation` calls it when the intent has no
@@ -54,8 +55,12 @@ const settle = <T>(step: () => T): Promise<T> => Promise.resolve().then(step);
 // `getAccountInfo` is omitted too: `withDefaults` answers `{ type: "none" }`, as ICP accounts carry
 // no extra metadata.
 //
-// Only `type: "send"` intents are crafted. The default intent mapping reads `mode`, which ICP
-// transactions lack, so the wiring maps ICP's `type` through `computeIntentType`.
+// Two kinds of intent are crafted:
+//   - a native send: `intentType: "transaction"`, `type: "send"`;
+//   - a neuron command: `intentType: "staking"`, `type` the command, the neuron id in `valAddress`,
+//     the parameters in `data`.
+// The default intent mapping reads `mode`, which ICP transactions lack, so it produces neither. The
+// wiring supplies them through the family mapping.
 export function createApi() {
   return {
     lastBlock: (_context: IcpContext): Promise<BlockInfo> => lastBlock(),
@@ -76,8 +81,8 @@ export function createApi() {
       intent: IcpIntent,
       options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> => settle(() => craftTransaction(intent, options?.customFees)),
-    estimateFees: (_context: IcpContext, _intent: IcpIntent): Promise<FeeEstimation> =>
-      settle(estimateFees),
+    estimateFees: (_context: IcpContext, intent: IcpIntent): Promise<FeeEstimation> =>
+      settle(() => estimateFees(intent)),
     combine: (
       _context: IcpContext,
       tx: string,
@@ -98,7 +103,7 @@ export function createApi() {
       _parameters: Partial<AddressValidationCurrencyParameters>,
     ): Promise<boolean> => settle(() => AccountIdentifier.isValid(address)),
     craftTransactionData: (_context: IcpContext, intent: IcpIntent) => craftTransactionData(intent),
-  } satisfies CoinModuleImpl<IcpCurrencyConfig, IcpMemo>;
+  } satisfies CoinModuleImpl<IcpCurrencyConfig, IcpMemo, IcpTxData>;
 }
 
 export default createApi;

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAssets";
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
-import type { AssetsViewProps } from "../types";
+import type { AssetsViewModelResult } from "../types";
 import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";
 import { useSelector } from "LLD/hooks/redux";
@@ -20,6 +20,7 @@ import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
   ASSETS_PRICE_REFRESH_INTERVAL_MS,
+  CRYPTOS_SECTION_ID,
   EMPTY_STATE_CRYPTOS,
   EMPTY_STATE_STABLECOINS,
   MAX_ITEM_DISPLAYED,
@@ -33,7 +34,7 @@ import {
   CRYPTO_TRACKING_PAGE_NAME,
 } from "../../CryptoAddresses/constants";
 
-export function useAssetsViewModel(): AssetsViewProps {
+export function useAssetsViewModel(): AssetsViewModelResult {
   const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
@@ -186,7 +187,7 @@ export function useAssetsViewModel(): AssetsViewProps {
   const sections = useMemo(
     () => [
       {
-        sectionId: "cryptos",
+        sectionId: CRYPTOS_SECTION_ID,
         title: t("assets.cryptos"),
         items: cryptosWithTrend,
         totalCount: isEmptyState ? paddedCryptos.length : categorizedAssets.cryptos.length,

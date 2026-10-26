@@ -1,7 +1,8 @@
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
-import { combine, type DecodedCallContent } from "./combine";
+import { combine, type DecodedCallContent, type DecodedReadStateContent } from "./combine";
 import { craftTransaction } from "./craftTransaction";
-import { deriveAddressFromPubkey, pubkeyToDer } from "./crypto";
+import { deriveAddressFromPubkey, derivePrincipalFromPubkey, pubkeyToDer } from "./crypto";
+import { craftNeuronCommand } from "./neuronCommand";
 
 const PUBKEY =
   "0484bf7562262bbd6940085748f3be6afa52ae317155181ece31b66351ccffa4b08cc43d63b2859d469fee15f31c9edb5324266e6fd0407e87382d60fc4511acd8";
@@ -65,5 +66,79 @@ describe("combine", () => {
   it("refuses a public key other than the sender's", () => {
     const tx = crafted();
     expect(() => combine(tx, [SIGNATURE], OTHER_PUBKEY)).toThrow(/does not match/);
+  });
+});
+
+describe("combine a neuron command", () => {
+  const CALL_SIGNATURE = "ab".repeat(64);
+  const READ_STATE_SIGNATURE = "cd".repeat(64);
+
+  const command = () =>
+    craftNeuronCommand({
+      intentType: "staking",
+      type: "start_dissolving",
+      mode: "delegate",
+      valAddress: "123",
+      sender: deriveAddressFromPubkey(PUBKEY),
+      senderPublicKey: PUBKEY,
+      recipient: "",
+      amount: 0n,
+      asset: { type: "native" },
+    }).transaction;
+
+  type Envelope<T> = { content: T; sender_pubkey: Uint8Array; sender_sig: Uint8Array };
+  const decode = (hex: string) =>
+    Cbor.decode<{
+      call: Envelope<DecodedCallContent>;
+      read_state: Envelope<DecodedReadStateContent>;
+    }>(Buffer.from(hex, "hex"));
+
+  it("signs the call and the read_state request, each in its own envelope", () => {
+    const tx = command();
+    const unsigned = Cbor.decode<{ call: DecodedCallContent; read_state: DecodedReadStateContent }>(
+      Buffer.from(tx, "hex"),
+    );
+
+    const { call, read_state } = decode(
+      combine(tx, [CALL_SIGNATURE + READ_STATE_SIGNATURE], PUBKEY),
+    );
+
+    expect(Buffer.from(call.sender_sig).toString("hex")).toBe(CALL_SIGNATURE);
+    expect(Buffer.from(read_state.sender_sig).toString("hex")).toBe(READ_STATE_SIGNATURE);
+    expect(Buffer.from(call.sender_pubkey)).toEqual(Buffer.from(pubkeyToDer(PUBKEY)));
+    expect(Buffer.from(read_state.sender_pubkey)).toEqual(Buffer.from(pubkeyToDer(PUBKEY)));
+    expect(Buffer.from(requestIdOf(call.content))).toEqual(Buffer.from(requestIdOf(unsigned.call)));
+    expect(Buffer.from(requestIdOf(read_state.content))).toEqual(
+      Buffer.from(requestIdOf(unsigned.read_state)),
+    );
+  });
+
+  it.each([
+    ["one 64-byte signature", SIGNATURE],
+    ["a non-hex signature", `zz${(CALL_SIGNATURE + READ_STATE_SIGNATURE).slice(2)}`],
+  ])("refuses %s", (_, signature) => {
+    expect(() => combine(command(), [signature], PUBKEY)).toThrow(/128-byte hex signature/);
+  });
+
+  it("refuses a public key other than the sender's", () => {
+    expect(() => combine(command(), [CALL_SIGNATURE + READ_STATE_SIGNATURE], OTHER_PUBKEY)).toThrow(
+      /does not match/,
+    );
+  });
+
+  it("refuses a read_state request from another sender", () => {
+    const unsigned = Cbor.decode<{ call: DecodedCallContent; read_state: DecodedReadStateContent }>(
+      Buffer.from(command(), "hex"),
+    );
+    const tx = Buffer.from(
+      Cbor.encode({
+        ...unsigned,
+        read_state: { ...unsigned.read_state, sender: derivePrincipalFromPubkey(OTHER_PUBKEY) },
+      }),
+    ).toString("hex");
+
+    expect(() => combine(tx, [CALL_SIGNATURE + READ_STATE_SIGNATURE], PUBKEY)).toThrow(
+      /another sender/,
+    );
   });
 });

@@ -2,6 +2,7 @@ import {
   findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
+  isSanctionedFiatTicker,
   listFiatCurrencies,
 } from "./utils";
 
@@ -60,5 +61,20 @@ describe("listFiatCurrencies", () => {
   it("returns the same registry object references (not copies)", () => {
     const usd = listFiatCurrencies().find(c => c.ticker === "USD");
     expect(usd).toBe(getFiatCurrencyByTicker("USD"));
+  });
+});
+
+describe("isSanctionedFiatTicker", () => {
+  it("is true for a sanctioned ticker", () => {
+    expect(isSanctionedFiatTicker("RUB")).toBe(true);
+  });
+
+  it("is false for other tickers", () => {
+    expect(isSanctionedFiatTicker("USD")).toBe(false);
+    expect(isSanctionedFiatTicker("EUR")).toBe(false);
+  });
+
+  it("is false for an unknown ticker", () => {
+    expect(isSanctionedFiatTicker("ZZZ")).toBe(false);
   });
 });

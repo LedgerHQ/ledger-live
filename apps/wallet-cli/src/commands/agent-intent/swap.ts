@@ -1,6 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
+import { BigNumber } from "bignumber.js";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";
@@ -14,9 +15,9 @@ import {
   warnIfTokenApprovalNeeded,
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
-import { fetchAgentSwapQuote } from "../../agent-intent/swap-quote";
+import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
-import { resolveSenderFromAccount } from "../../agent-intent/sender";
+import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
@@ -24,15 +25,7 @@ import {
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
-
-function parseSenderInput(flags: {
-  account?: string;
-  sender?: string;
-}): { account: string } | { sender: string } {
-  if (flags.account && !flags.sender) return { account: flags.account };
-  if (flags.sender && !flags.account) return { sender: flags.sender };
-  throw new Error("Pass exactly one sender: --account <session-label> or --sender <address>.");
-}
+import { writeStderr } from "../../shared/ui";
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
   const asset = await findEthereumSwapAsset(id);
@@ -43,6 +36,27 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
     );
   }
   return asset;
+}
+
+const TO_AMOUNT_WARNING_PERCENT = 5;
+
+/** A warning, not an error: the agent may know better than the quote. Compared with the unrounded
+ * quote, so rounding it to the asset's precision can't trigger it. */
+function warnIfAboveQuote(
+  typed: string,
+  { provider, receiveAmount }: AgentSwapQuote,
+  quoted: string | null,
+  to: SwapAsset,
+): void {
+  const limit = new BigNumber(receiveAmount).times(1 + TO_AMOUNT_WARNING_PERCENT / 100);
+  if (limit.isFinite() && new BigNumber(typed).lte(limit)) return;
+  const quote = quoted
+    ? `more than ${TO_AMOUNT_WARNING_PERCENT}% above the ${provider} quote (${quoted} ${to.ticker})`
+    : `above the ${provider} quote, which rounds to nothing in ${to.ticker}`;
+  writeStderr(
+    `⚠ --to-amount ${typed} ${to.ticker} is ${quote}; the reviewer will see a fresh quote, ` +
+      "with your amount shown only as the proposal it replaced.\n",
+  );
 }
 
 /** The provider and amount the intent signs: the best quote the frontend can prepare, with
@@ -76,11 +90,12 @@ async function expectedReceive(input: {
   });
   spinner?.success(`Quoted by ${quote.provider}`);
   const { needsTokenApproval } = quote;
+  const quoted = quotedReceiveAmount(quote.receiveAmount, to);
   if (typed) {
+    warnIfAboveQuote(typed, quote, quoted, to);
     return { toAmount: typed, provider: quote.provider, quoted: false, needsTokenApproval };
   }
 
-  const quoted = quotedReceiveAmount(quote.receiveAmount, to);
   if (!quoted) {
     throw new Error(
       `The ${quote.provider} quote receives less than the smallest unit of ${to.ticker}. ` +
@@ -133,12 +148,15 @@ export default defineCommand({
       network: "ethereum",
     });
     await out.run(async () => {
-      const senderInput = parseSenderInput(flags);
+      const senderInput = parseSenderInput(
+        { account: flags.account, address: flags.sender },
+        "sender",
+      );
       const provider = flags.provider ? resolveAgentSwapProvider(flags.provider) : undefined;
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const sender =
-        "sender" in senderInput
-          ? parseEvmAddress(senderInput.sender, "sender")
+        "address" in senderInput
+          ? parseEvmAddress(senderInput.address, "sender")
           : await resolveSenderFromAccount(senderInput.account, "swap", "ethereum");
       const from = await resolveSwapAsset(flags.from, "from");
       const to = await resolveSwapAsset(flags.to, "to");

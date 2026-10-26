@@ -1,6 +1,6 @@
 import {
   findFiatCurrencyByTicker,
-  OFAC_FIAT_TICKERS,
+  isSanctionedFiatTicker,
   type FiatCurrency,
 } from "@domain/entity-currency-fiat";
 
@@ -17,7 +17,7 @@ export function resolveSupportedFiats(tickers: string[]): FiatCurrency[] {
 
   for (const ticker of tickers) {
     const upper = ticker.toUpperCase();
-    if (OFAC_FIAT_TICKERS.has(upper)) continue;
+    if (isSanctionedFiatTicker(upper)) continue;
 
     const currency = findFiatCurrencyByTicker(upper);
     if (!currency || seen.has(currency.ticker)) continue;

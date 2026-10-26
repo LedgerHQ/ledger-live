@@ -84,6 +84,7 @@ import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common
 import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
 import { getWallet40Attributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/wallet40";
 import { getRemoteABTestingAttributes } from "@ledgerhq/live-common/analytics/remoteABTesting/remoteABTestingAnalytics";
+import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
 import { AuthorizationStatus, type FirebaseMessagingTypes } from "@react-native-firebase/messaging";
 import { getNotificationPermissionStatus } from "~/logic/getNotificationPermissionStatus";
 import { isDatadogEnabled } from "~/datadog";
@@ -506,6 +507,9 @@ const extraProperties = async (store: AppStore) => {
     state,
     analyticsFeatureFlagMethod?.("lwmPasswordRevamp")?.enabled ?? false,
   );
+  const entryPointsServices = getServicesEntryPointsAttributes(
+    analyticsFeatureFlagMethod?.("entryPointsServices"),
+  );
   const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
   const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
 
@@ -565,6 +569,7 @@ const extraProperties = async (store: AppStore) => {
     ...appLockAttributes,
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
+    entryPointsServices,
     accountDetail,
     recoverV2,
     ...remoteABTestingAttributes,

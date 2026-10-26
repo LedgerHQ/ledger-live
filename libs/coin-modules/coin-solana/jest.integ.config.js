@@ -1,31 +1,6 @@
-const transformIncludePatterns = ["ky", "superstruct"];
+const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");
 
-/** @type {import('jest').Config} */
-module.exports = {
-  testEnvironment: "node",
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
-  testRegex: ".integ.test.ts$",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
-  testTimeout: 60_000,
-  forceExit: true,
-  passWithNoTests: true,
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-    [`node_modules/.pnpm/(${transformIncludePatterns.join("|")}).+\\.(js|jsx)?$`]: [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${transformIncludePatterns.join("|")}))`],
-};
+module.exports = createLibsCoinIntegJestConfig(
+  { rootDir: __dirname },
+  { extraEsmDeps: ["ky", "superstruct"] },
+);

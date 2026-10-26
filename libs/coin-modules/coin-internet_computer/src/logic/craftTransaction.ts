@@ -4,13 +4,20 @@ import { MAX_NAT64 } from "../consts";
 import { InvalidMemoICP } from "../errors";
 import { AccountIdentifier } from "./accountIdentifier";
 import { createUnsignedTransfer } from "./buildTransaction";
-import { deriveAddressFromPubkey } from "./crypto";
-import { type IcpIntent, memoOf, unpayableFee, unsupportedIntent } from "./intent";
+import {
+  type IcpIntent,
+  memoOf,
+  senderPublicKeyOf,
+  unpayableFee,
+  unsupportedIntent,
+} from "./intent";
+import { craftNeuronCommand, isNeuronCommandIntent } from "./neuronCommand";
 
 const NANOS_PER_MILLI = 1_000_000n;
 
 /**
- * Craft a ledger transfer as the blob the device signs, `Cbor.encode({ content })`.
+ * Craft a ledger transfer as the blob the device signs, `Cbor.encode({ content })`. A neuron command
+ * is crafted by {@link craftNeuronCommand}.
  *
  * The call carries an ingress expiry of about four minutes, reported as `details.expiresAt` (ms
  * epoch). Past it the node refuses the call, so the transaction is crafted and signed again.
@@ -19,17 +26,15 @@ export function craftTransaction(
   intent: IcpIntent,
   customFees?: FeeEstimation,
 ): CraftedTransaction {
+  if (isNeuronCommandIntent(intent)) return craftNeuronCommand(intent, customFees);
+
   const unsupported = unsupportedIntent(intent);
   if (unsupported) throw new Error(`[ICP](craftTransaction) ${unsupported}`);
   const feeRefusal = unpayableFee(customFees);
   if (feeRefusal) throw new Error(`[ICP](craftTransaction) ${feeRefusal}`);
 
-  const { senderPublicKey, sender, recipient, amount } = intent;
-  if (!senderPublicKey) throw new Error("[ICP](craftTransaction) senderPublicKey is required");
-  // The call is signed by the key's principal and debits that principal's default account only.
-  if (deriveAddressFromPubkey(senderPublicKey) !== sender.toLowerCase()) {
-    throw new Error("[ICP](craftTransaction) sender is not the default account of senderPublicKey");
-  }
+  const { recipient, amount } = intent;
+  const senderPublicKey = senderPublicKeyOf(intent);
   if (!AccountIdentifier.isValid(recipient)) {
     throw new Error(`[ICP](craftTransaction) Invalid recipient: ${recipient}`);
   }

@@ -146,6 +146,9 @@ features/flow/account-detail-settings/                   @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
 features/platform/quick-actions/                         @ledgerhq/wallet-xp
 
+# Wallet — Portfolio
+features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
+
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
 

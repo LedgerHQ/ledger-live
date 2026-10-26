@@ -908,6 +908,290 @@ test("R3 checks the local types a contract's props hold, at any depth", () => {
   );
 });
 
+test("R3 checks the values of an index signature", () => {
+  for (const contractModule of [
+    "export type CardProps = { items: { [id: string]: { onPress(): void } } };\n",
+    "interface Tiles { [id: string]: { onPress(): void } }\nexport type CardProps = { items: Tiles };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
+test("R3 checks the value a getter returns", () => {
+  for (const contractModule of [
+    "export type CardProps = { item: { get value(): { onPress(): void } } };\n",
+    "interface Item { get value(): { onPress(): void } }\nexport type CardProps = { item: Item };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
+test("R3 checks the local types a prop holds behind a local alias", () => {
+  for (const aliases of [
+    "type Tile = { onPress(): void };\ntype Tiles = Tile[];",
+    "type Tiles = ReadonlyArray<{ onPress(): void }>;",
+    "type List<T> = Array<T & { onPress(): void }>;\ntype Tiles = List<{ title: string }>;",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `${aliases}\nexport type CardProps = { items: Tiles };\n` })),
+      ["R3 contract-gesture-callback Card"],
+      aliases,
+    );
+  }
+});
+
+test("R3 follows cyclic local aliases once", () => {
+  assert.deepEqual(
+    check(
+      card({
+        "Card.types.ts": [
+          "type Tiles = Tile[];",
+          "type Tile = Tiles | { onPress(): void };",
+          "export type CardProps = { items: Tiles };",
+        ].join("\n"),
+      }),
+    ),
+    ["R3 contract-gesture-callback Card"],
+  );
+});
+
+test("R3 does not resolve a type parameter to the module-level type it shadows", () => {
+  for (const contractModule of [
+    "type List<Tile> = Tile[];\nexport type CardProps = { items: List<string> };\n",
+    "type Box<Tile> = { value: Tile };\nexport type CardProps = Box<string>;\n",
+    "type Identity<Tile> = Tile;\ntype Tiles = Identity<string>[];\nexport type CardProps = { items: Tiles };\n",
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": `type Tile = { onPress(): void };\n${contractModule}` })),
+      [],
+      contractModule,
+    );
+  }
+});
+
+test("R3 does not check the type arguments of a local callback alias", () => {
+  for (const contractModule of [
+    "type Handler<T> = (value: T) => void;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
+    "type Handler<T> = (value: T) => void;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
+    "type Handler<T> = (value: T) => void;\ntype Relay<T> = Handler<T>;\nexport type CardProps = { onSelect: Relay<{ onPress(): void }> };\n",
+    "type Handler<T> = ((value: T) => void) | undefined;\ntype SelectHandler = Handler<{ onPress(): void }>;\nexport type CardProps = { onSelect: SelectHandler };\n",
+    "type Handler<T> = ((value: T) => void) | null;\nexport type CardProps = { onSelect: Handler<{ onPress(): void }> };\n",
+  ]) {
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
+  }
+});
+
+test("R3 does not check a type argument a local generic drops", () => {
+  const argument = "{ title: string; onPress(): void }";
+  for (const contractModule of [
+    `type WithoutPress<T> = Omit<T, "onPress">;\ntype Tiles = WithoutPress<${argument}>[];\nexport type CardProps = { items: Tiles };\n`,
+    `type WithoutPress<T> = Omit<T, "onPress">;\nexport type CardProps = { items: WithoutPress<${argument}>[] };\n`,
+    `type Label<T> = { text: string };\nexport type CardProps = { label: Label<${argument}> };\n`,
+    `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Keys<T> = keyof (T);\ntype SortKeys = Keys<${argument}>;\nexport type CardProps = { sortBy: SortKeys };\n`,
+    `type Keys<T> = keyof Readonly<T>;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Identity<T> = T extends infer U ? string : never;\nexport type CardProps = { item: Identity<${argument}> };\n`,
+    `type Keys<T> = T extends infer U ? keyof U : never;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Handler<T> = T extends infer U ? (value: U) => void : never;\nexport type CardProps = { onSelect: Handler<${argument}> };\n`,
+    `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+    `type Pressable<T> = [T] extends [${argument}] ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
+    `type Box<T, U = T> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
+    `type Box<T, U = { item: T }> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
+    "type Chain<T = { next?: Chain }> = { value: T };\nexport type CardProps = Chain;\n",
+    `type Chain<A, T = { next?: Chain<{ wrap: A }> }> = { value: T };\nexport type CardProps = { chain: Chain<${argument}> };\n`,
+  ]) {
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
+  }
+});
+
+test("R3 checks a type argument where a local generic places it in props", () => {
+  const argument = "{ onPress(): void }";
+  for (const contractModule of [
+    `type Wrap<T> = { item: T };\ntype Tiles = Wrap<${argument}>[];\nexport type CardProps = { items: Tiles };\n`,
+    `type Handler<T> = ((value: T) => void) | T;\nexport type CardProps = { onSelect: Handler<${argument}> };\n`,
+    `type Wrap<T> = { item: T };\ntype Relay<U> = Wrap<U>;\nexport type CardProps = { items: Relay<${argument}> };\n`,
+    `interface Box<T> { value: T }\ninterface Wrapper<T> extends Box<T> {}\nexport type CardProps = { box: Wrapper<${argument}> };\n`,
+    `type Tree<T> = { value: T; children: Tree<T>[] };\nexport type CardProps = { tree: Tree<${argument}> };\n`,
+    `type Nest<T> = { value: T; next: Nest<{ wrap: T }> };\nexport type CardProps = { nest: Nest<${argument}> };\n`,
+    `type Wrap<T> = { item: T };\ntype Outer<X> = Wrap<{ value: X }>;\nexport type CardProps = { a: Outer<string>; b: Outer<${argument}> };\n`,
+    `type Outer<T> = Box<{ item: T }>;\ntype Box<T> = { value: T; next?: Outer<${argument}> };\nexport type CardProps = Outer<string>;\n`,
+    `type Box<T, U = T> = { value: U };\nexport type CardProps = Box<${argument}>;\n`,
+    `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, A> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
+    `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, { wrap: A }> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
+    "type Chain<T = { next?: Chain; onPress(): void }> = { value: T };\nexport type CardProps = { chain: Chain };\n",
+    `type Chain<A, T = { item: A; next?: Chain<A> }> = { value: T };\nexport type CardProps = { chain: Chain<${argument}> };\n`,
+    `type Chain<A, B, C, D = { item: A; next?: Chain<B, C, A> }> = { value: D };\nexport type CardProps = Chain<string, number, ${argument}>;\n`,
+    `type Identity<T> = T extends infer U ? U : never;\nexport type CardProps = { item: Identity<${argument}> };\n`,
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
+test("R3 expands a repeated instantiation of a local generic once", () => {
+  // Expanding `left` and `right` separately doubles the work at every level: about a minute here.
+  const nested = Array.from({ length: 24 }).reduce(
+    inner => `Pair<${inner}>`,
+    "{ onPress(): void }",
+  );
+  const contractModule = `type Pair<T> = { left: T; right: T };\nexport type CardProps = { pair: ${nested} };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 follows a rotation of many parameters in linear time", () => {
+  // Keying each instantiation on the bindings of the one before grows tenfold per parameter.
+  const parameters = Array.from({ length: 12 }, (_, index) => `P${index}`);
+  const rotated = [...parameters.slice(1), parameters[0]];
+  const values = [...parameters.slice(1).map(() => "string"), "{ onPress(): void }"];
+  const contractModule = `type Rotate<${parameters}> = { value: P0; next?: Rotate<${rotated}> };\nexport type CardProps = { item: Rotate<${values}> };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 reads a default shared down a chain of types once", () => {
+  // Keying a default on the whole chain of references doubles the work at every level.
+  const aliases = ["type D0<T = { onPress(): void }> = T;"];
+  for (let level = 1; level <= 24; level++) {
+    aliases.push(`type D${level}<T = [D${level - 1}, D${level - 1}]> = T;`);
+  }
+  const contractModule = `${aliases.join("\n")}\nexport type CardProps = { d: D24 };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 follows a long chain of local types without overflowing the stack", () => {
+  // A recursive walk overflows the stack at about a thousand levels.
+  for (const declare of [
+    level => `interface T${level} { next?: T${level + 1} }`,
+    level => `type T${level} = { next?: T${level + 1} };`,
+  ]) {
+    const types = Array.from({ length: 5000 }, (_, level) => declare(level));
+    const contractModule = `${types.join("\n")}\ninterface T5000 { onPress(): void }\nexport type CardProps = { head: T0 };\n`;
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+      "R3 contract-gesture-callback Card",
+    ]);
+  }
+});
+
+test("R3 checks a chain of inferred parameters in linear time", () => {
+  // Rechecking the previous inferred parameter at each read doubles the work at every level.
+  let body = "[A23, A23]";
+  for (let level = 23; level >= 0; level--) {
+    const previous = level === 0 ? "T" : `A${level - 1}`;
+    body = `[${previous}, ${previous}] extends infer A${level} ? ${body} : never`;
+  }
+  const contractModule = `export type CardProps<T = string> = { k: ${body} };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), []);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 reads a parameter's arguments once however often the type places it", () => {
+  // Queueing every argument again at each read grows with reads times arguments.
+  const references = Array.from({ length: 10000 }, (_, index) => `r${index}?: R<{ w: T }>;`);
+  const reads = Array.from({ length: 10000 }, (_, index) => `v${index}: T;`);
+  const contractModule = `type R<T> = { ${references.join(" ")} ${reads.join(" ")} };\nexport type CardProps = { r: R<{ onPress(): void }> };\n`;
+  const start = Date.now();
+  assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+    "R3 contract-gesture-callback Card",
+  ]);
+  assert.ok(Date.now() - start < 5000);
+});
+
+test("R3 reads a wide default once for many sibling references, read or not", () => {
+  // Visiting the default once per reference grows with references times fields.
+  const fields = Array.from({ length: 10000 }, (_, index) => `f${index}: string;`).join(" ");
+  const reading = Array.from({ length: 10000 }, (_, index) => `f${index}: A;`).join(" ");
+  for (const [declaration, sibling, last, expected] of [
+    [`type Box<T = { ${fields} }> = { value: T };`, "Box", "Box", []],
+    [
+      `type Box<A, T = { ${fields} first: A }> = { value: T };`,
+      "Box<string>",
+      "Box<{ onPress(): void }>",
+      ["R3 contract-gesture-callback Card"],
+    ],
+    [
+      `type Box<A, T = { ${reading} }> = { value: T };`,
+      "Box<string>",
+      "Box<{ onPress(): void }>",
+      ["R3 contract-gesture-callback Card"],
+    ],
+  ]) {
+    const siblings = Array.from({ length: 10000 }, (_, index) => `b${index}: ${sibling};`);
+    const contractModule = `${declaration}\nexport type CardProps = { ${siblings.join(" ")} last: ${last} };\n`;
+    const start = Date.now();
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), expected);
+    assert.ok(Date.now() - start < 5000);
+  }
+});
+
+test("R3 keeps many defaulted parameters and many references linear", () => {
+  // Keeping each reference once per parameter it omits grows with references times parameters.
+  const parameters = Array.from({ length: 10000 }, (_, index) => `P${index} = string`);
+  const references = Array.from({ length: 10000 }, (_, index) => `b${index}: Box;`);
+  for (const [body, last, expected] of [
+    ["{ value: string }", "Box", []],
+    ["{ value: P0 }", "Box<{ onPress(): void }>", ["R3 contract-gesture-callback Card"]],
+  ]) {
+    const contractModule = `type Box<${parameters.join(", ")}> = ${body};\nexport type CardProps = { ${references.join(" ")} last: ${last} };\n`;
+    const start = Date.now();
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), expected);
+    assert.ok(Date.now() - start < 5000);
+  }
+});
+
+test("R3 follows a rotation of wrapped arguments in linear time", () => {
+  // Expanding each instantiation with its own bindings grows factorially: a crash at 10.
+  for (const length of [10, 20]) {
+    const parameters = Array.from({ length }, (_, index) => `P${index}`);
+    const wrapped = parameters.map((_, index) => `{ w${index}: P${(index + 1) % length} }`);
+    const values = [...parameters.slice(1).map(() => "string"), "{ onPress(): void }"];
+    const contractModule = `type Rotate<${parameters}> = { value: P0; next?: Rotate<${wrapped}> };\nexport type CardProps = { item: Rotate<${values}> };\n`;
+    const start = Date.now();
+    assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [
+      "R3 contract-gesture-callback Card",
+    ]);
+    assert.ok(Date.now() - start < 5000);
+  }
+});
+
+test("R3 checks keyof, conditions and imported heritage arguments outside a local generic", () => {
+  const tile = "type Tile = { onPress(): void };\n";
+  for (const contractModule of [
+    'import type { Base } from "./Base";\nexport interface CardProps extends Base<{ onPress(): void }> { title: string }\n',
+    `${tile}export type CardProps = { sortBy: keyof Tile };\n`,
+    `${tile}export type CardProps = { k: Tile extends string ? 1 : 2 };\n`,
+    `${tile}export interface CardProps extends Omit<Tile, keyof Tile> {}\n`,
+  ]) {
+    assert.deepEqual(
+      check(card({ "Card.types.ts": contractModule })),
+      ["R3 contract-gesture-callback Card"],
+      contractModule,
+    );
+  }
+});
+
 test("R3 checks the props a local generic contract receives as type arguments", () => {
   for (const contractModule of [
     "type Box<T> = { value: T };\nexport type CardProps = Box<{ onPress(): void }>;\n",

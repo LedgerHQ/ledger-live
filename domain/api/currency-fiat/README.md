@@ -20,8 +20,6 @@ part) into an RTK Query model, following the `@domain/api-currency-token` packag
   `transformResponse` validates and resolves the response to `FiatCurrency[]`. The CVS URL is read
   from the store's thunk `extraArgument`; the app supplies it via `cvsApiExtra(...)` so this package
   owns no env/config dependency.
-- `internals/` — **package-private** (not re-exported from `index.ts`): `constants.ts` (cache tags,
-  reducer path, retry count, the OFAC ticker `Set`).
 
 Store wiring (app side):
 
@@ -53,9 +51,8 @@ are deliberately deferred:
   consumers should default with `?? []`. There is no empty-array seeding for now.
 - **Registry-bounded resolution**: tickers the `@domain/entity-currency-fiat` registry doesn't know
   yet are dropped. The registry is being onboarded incrementally.
-- **OFAC list is duplicated** (not shared with `support.ts`) on purpose — the domain package must not
-  depend on `@ledgerhq/live-common`. A single source of truth can be revisited once `support.ts` is
-  retired.
+- **OFAC list lives in `@domain/entity-currency-fiat`**: the converter asks
+  `isSanctionedFiatTicker` and never reads the list.
 
 ## App integration & reconciling legacy usecases (planned, not built yet)
 
