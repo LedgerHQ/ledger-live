@@ -10318,6 +10318,9 @@ importers:
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 'catalog:'
         version: 1.18.2(@ledgerhq/context-module@2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      '@ledgerhq/device-signer-kit-solana':
+        specifier: 'catalog:'
+        version: 1.14.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
       '@ledgerhq/device-signer-kit-tron':
         specifier: 'catalog:'
         version: 0.3.0(@ledgerhq/context-module@2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
