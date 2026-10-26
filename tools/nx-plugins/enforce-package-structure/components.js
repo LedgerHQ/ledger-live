@@ -840,6 +840,20 @@ function typeParameterAt(node, name) {
 }
 
 /**
+ * @param {ts.TypeParameterDeclaration} parameter declared by an `infer` clause
+ * @returns {ts.ConditionalTypeNode | undefined} the conditional type whose condition declares
+ *   `parameter`, undefined for an `infer` outside one, which does not compile
+ */
+function inferringConditional(parameter) {
+  let child = parameter.parent;
+  for (let scope = child.parent; scope && !ts.isSourceFile(scope); scope = scope.parent) {
+    if (ts.isConditionalTypeNode(scope) && child === scope.extendsType) return scope;
+    child = scope;
+  }
+  return undefined;
+}
+
+/**
  * The props of a contract and of the local types its props hold, at any depth: a list of tiles
  * whose items declare `onPress` is checked like the contract itself, also behind a local alias
  * such as `type Tiles = Tile[]`. A local generic type binds its parameters to its type arguments,
@@ -919,6 +933,10 @@ function reachableProps(declaration, module) {
    */
   function isBound(parameter, context) {
     const owner = parameter.parent;
+    if (ts.isInferTypeNode(owner)) {
+      const conditional = inferringConditional(parameter);
+      return Boolean(conditional && mentionsBoundParameter(conditional.checkType, context));
+    }
     if (!ts.isTypeAliasDeclaration(owner) && !ts.isInterfaceDeclaration(owner)) return false;
     if (context === "contract") return false;
     if (context === "local") return true;
@@ -958,6 +976,12 @@ function reachableProps(declaration, module) {
    * @param {ts.TypeParameterDeclaration} parameter @param {Context} context
    */
   function resolve(parameter, context) {
+    // `T extends infer U ? U : never` holds what `T` holds, so `U` reads the checked type.
+    if (ts.isInferTypeNode(parameter.parent)) {
+      const conditional = inferringConditional(parameter);
+      if (conditional) visit(conditional.checkType, context);
+      return;
+    }
     if (!isBound(parameter, context)) return;
     if (context === "local") {
       referenced.add(parameter);

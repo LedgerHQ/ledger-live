@@ -985,6 +985,9 @@ test("R3 does not check a type argument a local generic drops", () => {
     `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
     `type Keys<T> = keyof (T);\ntype SortKeys = Keys<${argument}>;\nexport type CardProps = { sortBy: SortKeys };\n`,
     `type Keys<T> = keyof Readonly<T>;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Identity<T> = T extends infer U ? string : never;\nexport type CardProps = { item: Identity<${argument}> };\n`,
+    `type Keys<T> = T extends infer U ? keyof U : never;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Handler<T> = T extends infer U ? (value: U) => void : never;\nexport type CardProps = { onSelect: Handler<${argument}> };\n`,
     `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
     `type Pressable<T> = [T] extends [${argument}] ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
     `type Box<T, U = T> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
@@ -1013,6 +1016,7 @@ test("R3 checks a type argument where a local generic places it in props", () =>
     "type Chain<T = { next?: Chain; onPress(): void }> = { value: T };\nexport type CardProps = { chain: Chain };\n",
     `type Chain<A, T = { item: A; next?: Chain<A> }> = { value: T };\nexport type CardProps = { chain: Chain<${argument}> };\n`,
     `type Chain<A, B, C, D = { item: A; next?: Chain<B, C, A> }> = { value: D };\nexport type CardProps = Chain<string, number, ${argument}>;\n`,
+    `type Identity<T> = T extends infer U ? U : never;\nexport type CardProps = { item: Identity<${argument}> };\n`,
   ]) {
     assert.deepEqual(
       check(card({ "Card.types.ts": contractModule })),
