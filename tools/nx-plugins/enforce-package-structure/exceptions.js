@@ -133,7 +133,6 @@ const COMPONENT_EXCEPTIONS = {
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
-    CardAssets: componentWaiver("R3"),
     CardAssetsManageDrawer: componentWaiver("R1"),
     CardAssetsManageFooter: componentWaiver("R1"),
     CardAssetsView: componentWaiver("R1", "R3"),

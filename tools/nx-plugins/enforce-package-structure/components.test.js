@@ -669,7 +669,7 @@ test("R3 fails: a contract that imports a platform package", () => {
   for (const specifier of [
     "react-native",
     "react-native-svg",
-    "@ledgerhq/lumen-ui-react",
+    "@ledgerhq/lumen-utils-shared",
     "react-dom",
   ]) {
     assert.deepEqual(
@@ -681,6 +681,20 @@ test("R3 fails: a contract that imports a platform package", () => {
   assert.deepEqual(check(card(contract('icon: import("@ledgerhq/lumen-ui-rnative").Icon;'))), [
     "R3 contract-platform-import Card",
   ]);
+});
+
+test("R3 passes: a contract that imports a type from lumen-ui-react", () => {
+  assert.deepEqual(
+    check(
+      card(
+        contract(
+          "value: FormattedValue;",
+          'import type { FormattedValue } from "@ledgerhq/lumen-ui-react";\n',
+        ),
+      ),
+    ),
+    [],
+  );
 });
 
 test("R3 fails: a contract that references a global DOM type, once per name", () => {

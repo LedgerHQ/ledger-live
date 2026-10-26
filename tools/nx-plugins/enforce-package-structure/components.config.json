@@ -31,7 +31,12 @@
     ]
   },
   "componentWrappers": ["memo", "forwardRef"],
-  "bannedImportPrefixes": ["react-native", "@ledgerhq/lumen-ui-", "react-dom"],
+  "bannedImportPrefixes": [
+    "react-native",
+    "@ledgerhq/lumen-ui-rnative",
+    "@ledgerhq/lumen-utils-shared",
+    "react-dom"
+  ],
   "neutralReactTypes": [
     "ReactNode",
     "ReactElement",
