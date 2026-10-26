@@ -37,7 +37,7 @@ function useValidatorLink(account: Account) {
     const url =
       getValidatorExplorerUrl(account.currency.id, address) ||
       (explorerView && getAddressExplorer(explorerView, address));
-    if (url) openURL(url);
+    if (url) openURL(url, "OpenURL", {}, { sensitive: true });
   };
 }
 

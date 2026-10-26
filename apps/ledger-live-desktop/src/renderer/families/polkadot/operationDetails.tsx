@@ -54,7 +54,7 @@ const redirectAddress = (currency: Currency, address: string) => () => {
   const url =
     currency.type === "CryptoCurrency" &&
     getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 type OperationDetailsValidatorsProps = {
   validators: string[];
