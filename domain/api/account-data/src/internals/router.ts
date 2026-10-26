@@ -32,12 +32,17 @@ export type Coalesced<K extends AccountDataKind> = {
 
 /** What a router keeps between reads: its ranked sources, a limiter per source, the reads of the tick. */
 export type RouterContext = {
-  ranked: readonly AccountDataSource[];
+  ranked: AccountDataSource[];
   /** Calls in flight per source, when the source does not set its own. */
   concurrency: number;
-  limiters: Map<AccountDataSource, Limiter>;
+  limiters: WeakMap<AccountDataSource, Limiter>;
+  /** The registrations under an id not removed yet, in order, the source they replaced first. */
+  stacks: Map<AccountDataSourceId, Registration[]>;
   coalescing: Map<string, Coalesced<AccountDataKind>>;
 };
+
+/** One `addSource` call: a source added twice has two registrations, removed each on its own. */
+type Registration = { source: AccountDataSource };
 
 /** Where a read lands among the targets: its target's key, or its own failure when it cannot be routed. */
 export type ReadSlot = { key: string } | { failure: unknown };
@@ -53,7 +58,13 @@ export function createRouterContext(
     (source, index) => sources.findIndex(each => each.id === source.id) !== index,
   );
   if (duplicate) throw new Error(`Two account data sources share the id "${duplicate.id}"`);
-  return { ranked: [...sources], concurrency, limiters: new Map(), coalescing: new Map() };
+  return {
+    ranked: [...sources],
+    concurrency,
+    limiters: new WeakMap(),
+    stacks: new Map(),
+    coalescing: new Map(),
+  };
 }
 
 const settled = <T>(promise: Promise<T>): Promise<Settled<T>> =>
@@ -142,6 +153,33 @@ export function readFromSource<K extends AccountDataKind>(
   return targets.map(() => rejected(reason));
 }
 
+/** Ranks a source last, or in place of the one sharing its id; its remover, in any order, ranks the latest still registered. */
+export function addSource(context: RouterContext, source: AccountDataSource): () => void {
+  const index = context.ranked.findIndex(each => each.id === source.id);
+  let stack = context.stacks.get(source.id);
+  if (!stack) {
+    stack = index === -1 ? [] : [{ source: context.ranked[index] }];
+    context.stacks.set(source.id, stack);
+  }
+  const registration: Registration = { source };
+  stack.push(registration);
+  if (index === -1) context.ranked.push(source);
+  else context.ranked[index] = source;
+  return () => {
+    const position = stack.indexOf(registration);
+    if (position === -1) return;
+    stack.splice(position, 1);
+    const at = context.ranked.findIndex(each => each.id === source.id);
+    const latest = stack.at(-1);
+    if (latest) {
+      context.ranked[at] = latest.source;
+    } else {
+      context.ranked.splice(at, 1);
+      context.stacks.delete(source.id);
+    }
+  };
+}
+
 /** One target per account and cursor, a slot per read; a read whose descriptor throws fails alone. */
 export function collectTargets(reads: readonly PendingRead[]): {
   slots: ReadSlot[];
@@ -162,6 +200,8 @@ export function collectTargets(reads: readonly PendingRead[]): {
   return { slots, targets };
 }
 
+const DEFAULT_PURPOSES: readonly AccountDescriptor["purpose"][] = ["account"];
+
 /** The first ranked source with a reader for the kind that supports the account, among the pinned one if any. */
 export function pickSource(
   context: RouterContext,
@@ -173,6 +213,7 @@ export function pickSource(
     candidate =>
       (sourceId === undefined || candidate.id === sourceId) &&
       serves(candidate, kind) &&
+      (candidate.purposes ?? DEFAULT_PURPOSES).includes(target.descriptor.purpose) &&
       candidate.supports(target.descriptor, kind),
   );
 }
