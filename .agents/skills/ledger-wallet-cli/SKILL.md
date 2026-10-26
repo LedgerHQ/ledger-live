@@ -13,7 +13,7 @@ Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
 > **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `ring keys` needs neither, and neither does `agent-intent list`/`show`/`wait`: they only read local files (the session; `wait` also the listener's lock and log), so they run without the bypass. `agent-intent enroll --detach` still needs it.
+> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `agent-intent wait` needs it too: it checks the listener's pid, which a sandbox with its own pid namespace cannot see. `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read local files (the session), so they run without the bypass. `agent-intent enroll --detach` still needs it.
 
 > **Speculos:** When `SPECULOS_API_PORT` is set, device commands talk to a Speculos emulator over HTTP instead of a USB Ledger (`SPECULOS_DEVICE` names the model). Use it only when the user set it up. Speculos cannot approve on-device prompts, so stick to flows like `account discover`: a prompt to open the app gives up after `--device-timeout` (exit code 6), and an unanswered signing or address verification prompt blocks for about 5 minutes before it exits with code 1 (`GeneralDmkError`); `genuine-check` refuses to run on it. The sandbox lets HTTP to a local Speculos through, but `account discover` still needs `dangerouslyDisableSandbox: true`: it saves the found accounts to `session.yaml` in the user state dir, which the sandbox cannot write. Inside the sandbox the scan still exits 0, but the accounts are not saved (`⚠ Found accounts were NOT saved to the session`).
 
@@ -106,7 +106,7 @@ All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account d
 | `ring keys`          | No     | No           | No          | No      |
 | `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
 | `agent-intent enroll` | No    | **Required** | No          | Yes     |
-| `agent-intent wait`  | No     | No           | No          | No      |
+| `agent-intent wait`  | No     | **Required** | No          | No      |
 | `agent-intent recover` | No   | **Required** | No          | Yes     |
 | `agent-intent list`  | No     | No           | No          | No      |
 | `agent-intent show`  | No     | No           | No          | No      |
@@ -368,10 +368,12 @@ leaving the page after Review closes the relay channel and the listener ends (`l
 **Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
 --detach` starts the same listener in the background, prints its `enrollment-pending` line plus
 `listenerPid` and `logPath`, and exits, usually within seconds, up to 2 minutes while the human
-answers an OS keychain unlock prompt. If your tool call times out first, run `wait` on the same id,
-and once it reports `enrollmentUrl`, take the fingerprint from `agent-intent show --profile <id>`
-and send the human the link, fingerprint and `expiresAt`. Then call
-`agent-intent wait --profile <id> [--timeout 25s]`, which reads local state only and reports one of:
+answers an OS keychain unlock prompt. Give that tool call a timeout of at least 3 minutes (Claude
+Code Bash `timeout` ≥ 180000), so the CLI's own limit fires first. If your tool call times out
+first, run `wait` on the same id, and once it reports `enrollmentUrl`, take the fingerprint from
+`agent-intent show --profile <id>` and send the human the link, fingerprint and `expiresAt`. Then
+call `agent-intent wait --profile <id> [--timeout 25s]` (also with the sandbox bypass), which reads
+local state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
 - `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt` once the profile is saved, and
   `enrollmentUrl` while the log still has it), exit 0 — still pending: call `wait` again. While the
