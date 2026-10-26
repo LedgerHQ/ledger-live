@@ -1,0 +1,90 @@
+# Injection patterns and deletion details
+
+Detail for [the legacy-migration skill](../SKILL.md). Each pattern keeps the new package free of
+`libs/` imports; the app composition root is the only place that sees both sides.
+
+## Pick the pattern
+
+| The new package needs | Pattern | Real example |
+| --- | --- | --- |
+| A legacy SDK or object shape | Declare structural types on the new side | `shared/cloud-sync/src/trustchain-types.ts` |
+| One behavior, from a hook or a view model | Port passed as an argument | `ContactsCurrencySelectionPort` in `@features/flow-contacts-add-address` |
+| A dependency inside thunks or RTK Query endpoints | Typed slice of the thunk `extraArgument` | `accountDataExtra` in `@domain/api-account-data` |
+| Legacy state mirrored into a new slice | Generic connector with app-supplied mappers | `connectAccountsStore` in `@domain/entity-account` |
+| Legacy code to use the new package | Legacy consumes new | live-common's `createFullSyncSource` implements `AccountDataSource` |
+
+## Structural types on the new side
+
+`@shared/cloud-sync` mirrors the few `@ledgerhq/ledger-key-ring-protocol` types it uses
+(`Trustchain`, `TrustchainSDK`, `JWT`) instead of depending on the package, which would pull its
+native addon chain into domain build targets. The apps' Wallet Sync hooks pass the real SDK, which
+satisfies the mirror structurally. Cost: the mirror can drift from the source, so keep it to the members the package
+calls and delete it with the migration.
+
+## Port passed as an argument
+
+The new package exports a `Readonly<{ ... }>` type named `XxxPort` and takes an implementation where
+it needs the behavior. The flow's view model calls `currencySelection.selectCurrency(networkIds)`;
+desktop's `useContactsCurrencySelectionAdapter` implements it on top of
+`@ledgerhq/live-common/wallet-api/ModularDrawer` and the Contacts screen view model passes it down.
+
+- Keep the port to what the package calls, in the package's own vocabulary (`CryptoCurrency["id"]`,
+  not a legacy type).
+- A package may ship a default implementation that uses only new code, such as
+  `defaultContactAddressCurrencyPort` in `@features/flow-contacts-detail`.
+- Tests pass a `jest.fn()` port instead of mocking a legacy module.
+
+## Thunk `extraArgument`
+
+For code that runs inside thunks or RTK Query endpoints, the package exports a builder that returns
+its own keyed slice of `extraArgument`, and each app spreads it into `configureStore`:
+
+- `accountDataExtra(sources)` puts a router over ranked `AccountDataSource`s under `accountData`.
+  The sources come from `apps/*/src/config/account-data-setup.ts`, which wraps live-common's full
+  sync with the legacy accounts selector and bridge cache.
+- `pushDevicesApiExtra({ pushDevicesServiceUrl, ledgerClientVersion })` validates its config with
+  Zod at store setup, so a missing value fails at boot, not on the first request.
+- `authApiExtra({ authProvider, isFeatureEnabled })` in `@shared/auth` takes an `AuthProvider`
+  contract; desktop builds it from `AuthSDK` and `LkrpIdentityProvider`.
+
+The package reads its slice back from `extraArgument` and throws a named error when it is missing
+(`AccountDataRouterMissingError`). Cost: every app and every test store must spread the builder;
+the shared test store in `@domain/api-account-data/testing` does it once.
+
+## Generic connector
+
+`connectAccountsStore(store, { selectLegacyAccounts, toDescriptor, onError })` is generic over the
+account type, so `@domain/entity-account` never names the legacy `Account`. The app supplies
+`accountsSelector` and `fromLegacyAccount` from live-common.
+
+## Legacy consumes new
+
+Legacy code may import a new package when that moves callers forward: live-common's `apps/react.ts`
+reads flags through `@features/platform-feature-flags`, and live-common's `createFullSyncSource`
+returns an `AccountDataSource`. `@ledgerhq/live-common` is private; for a published legacy package,
+the app injects the private new package at its composition root instead.
+
+## What not to do
+
+- Import a `libs/` package from `shared/`, `domain/` or `features/`, even as a type-only import:
+  `lint:boundaries` scans source imports, not only manifests.
+- Add an entry to `BOUNDARY_EXCEPTIONS` to get unblocked.
+- Re-export a legacy type from a new barrel to save callers an import.
+- Move a legacy type into the new package unchanged. Define the shape the package needs and map to
+  it in the app.
+
+## Deleting a whole package
+
+`@ledgerhq/errors` went in two PRs. The first moved every consumer off it and added it to
+`BANNED_DEPENDENCIES`, so no manifest could declare it again. The second deleted
+`libs/ledgerjs/packages/errors` and, in the same PR, everything that named it:
+
+- its `CODEOWNERS` entry, the root `package.json` scripts and dependency overrides that listed it,
+  and Nx `dependsOn` entries on its build;
+- the `BANNED_DEPENDENCIES` entry, now pointless;
+- the skills that mentioned it;
+- a changeset recording the removal, with `pnpm-lock.yaml` regenerated by `pnpm i`.
+
+Also search pending `.changeset/*.md` files for the package name, with a terminator
+(`@ledgerhq/name["/]`) so longer names do not match: a pending changeset that lists a deleted
+package makes `changeset version` fail.
