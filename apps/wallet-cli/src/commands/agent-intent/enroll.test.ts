@@ -1,7 +1,7 @@
 import "../../live-common-setup";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
 import { createCLI, defineCommand, defineGroup } from "@bunli/core";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { installOutputCapture } from "../../shared/ui";
@@ -992,6 +992,7 @@ async function parseEnrollFlags(argv: string[]): Promise<Record<string, unknown>
 describe("agent-intent enroll --detach", () => {
   let restore: () => void;
   let stdout: string[];
+  let stderr: string[];
   const pendingLine = {
     type: "enrollment-pending",
     command: "agent-intent enroll",
@@ -1012,8 +1013,10 @@ describe("agent-intent enroll --detach", () => {
     hasSecretKeyImpl = () => false;
     sessionReadCalls = 0;
     savedSecretKeys.clear();
+    rmSync(enrollListenerPaths("test-agent").logPath, { force: true });
     stdout = [];
-    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: () => {} });
+    stderr = [];
+    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
   });
 
   afterEach(() => restore());
@@ -1101,6 +1104,22 @@ describe("agent-intent enroll --detach", () => {
     ]);
   });
 
+  it("relays what the listener wrote to stderr before its pending line", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    firstLogLine = async () => {
+      writeFileSync(
+        enrollListenerPaths("test-agent").logPath,
+        warning + JSON.stringify(pendingLine) + "\nlater\n",
+      );
+      return pendingLine;
+    };
+
+    await runEnroll({ detach: true, output: "json" });
+
+    expect(stderr.join("")).toBe(warning);
+    expect(stdout.join("").trim().split("\n")).toHaveLength(1);
+  });
+
   it("tells the human to run agent-intent wait instead of keeping the process running", async () => {
     await runEnroll({ detach: true });
 
@@ -1139,18 +1158,51 @@ describe("agent-intent enroll --detach", () => {
     );
   });
 
-  it("fails when the listener exits before printing anything", async () => {
+  it("relays the listener's stderr before failing with its error envelope", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    const envelope = { ok: false, error: { command: "agent-intent enroll", message: "boom" } };
+    firstLogLine = async () => {
+      writeFileSync(
+        enrollListenerPaths("test-agent").logPath,
+        warning + JSON.stringify(envelope) + "\n",
+      );
+      return envelope;
+    };
+
+    await expect(runEnroll({ detach: true, output: "json" })).rejects.toMatchObject({ code: 1 });
+    expect(stderr.join("")).toBe(warning);
+  });
+
+  it("fails when the listener exits before printing its first event", async () => {
     firstLogLine = () =>
-      Promise.reject(new Error("The enrollment listener exited with code 1 before printing"));
+      Promise.reject(
+        new Error("The enrollment listener exited with code 1 before printing its first event"),
+      );
 
     await expect(runEnroll({ detach: true })).rejects.toThrow(/exited with code 1/);
   });
 
+  it("relays the listener's stderr once when it exits before printing its first event", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    firstLogLine = async () => {
+      writeFileSync(enrollListenerPaths("test-agent").logPath, `${warning}crashed\n`);
+      throw new Error("The enrollment listener exited with code 1 before printing its first event");
+    };
+
+    await expect(runEnroll({ detach: true, output: "json" })).rejects.toMatchObject({ code: 1 });
+    expect(stderr.join("")).toBe(`${warning}crashed\n`);
+  });
+
   it("stops the listener and fails when its first line is neither pending nor an error", async () => {
-    firstLogLine = async () => ({ status: "success" });
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    firstLogLine = async () => {
+      writeFileSync(enrollListenerPaths("test-agent").logPath, `${warning}{"status":"success"}\n`);
+      return { status: "success" };
+    };
 
     await expect(runEnroll({ detach: true })).rejects.toThrow(/unexpected first line/);
     expect(childKilled).toBe(true);
+    expect(stderr.join("")).toBe(warning);
   });
 
   it("refuses to start a second listener while one is running for the profile", async () => {

@@ -44,6 +44,7 @@ import {
   ErrorLineSchema,
   PendingLineSchema,
   readFirstLogJsonLine,
+  readLogLinesBeforeFirstJson,
   selfCommand,
   spawnDetached,
   withEnrollListenerLock,
@@ -264,7 +265,15 @@ async function startDetachedEnroll(
     assertNoLiveEnrollListener(profileId);
     assertProfileNotInSession(await Session.read(), profileId);
     const started = spawnDetached(selfCommand(args), logPath);
-    return { child: started, first: await readFirstLogJsonLine(started, logPath) };
+    try {
+      return { child: started, first: await readFirstLogJsonLine(started, logPath) };
+    } finally {
+      // The listener's stderr only reaches its log: relay what it wrote before its first line, or
+      // all of it when it ended without one (e.g. the plaintext key warning that records the
+      // human's consent), as a plain enroll shows it. Read under the start lock: a concurrent
+      // --detach for this profile truncates the log after it.
+      for (const line of readLogLinesBeforeFirstJson(logPath)) writeStderr(`${line}\n`);
+    }
   });
   const pending = PendingLineSchema.safeParse(first);
   if (pending.success) {

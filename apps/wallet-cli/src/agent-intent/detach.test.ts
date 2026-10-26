@@ -8,6 +8,7 @@ import {
   enrollListenerPaths,
   readFirstLogJsonLine,
   readLogJsonLines,
+  readLogLinesBeforeFirstJson,
   selfCommand,
   spawnDetached,
   withEnrollListenerLock,
@@ -165,6 +166,19 @@ describe("readLogJsonLines", () => {
   });
 });
 
+describe("readLogLinesBeforeFirstJson", () => {
+  it("returns the complete lines before the first JSON object line", () => {
+    const logPath = join(stateHome, "test.log");
+    writeFileSync(logPath, 'warn 1\nwarn 2\n{"a":1}\nafter\n');
+
+    expect(readLogLinesBeforeFirstJson(logPath)).toEqual(["warn 1", "warn 2"]);
+  });
+
+  it("reads a missing log as empty", () => {
+    expect(readLogLinesBeforeFirstJson(join(stateHome, "missing.log"))).toEqual([]);
+  });
+});
+
 describe("spawnDetached + readFirstLogJsonLine", () => {
   it("returns the child's first JSON line while the child keeps running", async () => {
     const { logPath } = enrollListenerPaths("my-agent");
@@ -178,6 +192,7 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     const first = await readFirstLogJsonLine(child, logPath, 10_000);
 
     expect(first).toEqual({ type: "enrollment-pending", profileId: "my-agent" });
+    expect(readLogLinesBeforeFirstJson(logPath)).toEqual(["a banner on stderr"]);
     expect(child.exitCode).toBeNull();
     expect(() => process.kill(child.pid!, 0)).not.toThrow();
   });
@@ -225,7 +240,7 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     const child = startChild('console.error("crashed"); process.exit(3);', logPath);
 
     await expect(readFirstLogJsonLine(child, logPath, 10_000)).rejects.toThrow(
-      `The enrollment listener exited with code 3 before printing anything. See ${logPath}.`,
+      `The enrollment listener exited with code 3 before printing its first event. See ${logPath}.`,
     );
   });
 
@@ -244,7 +259,7 @@ describe("spawnDetached + readFirstLogJsonLine", () => {
     const exited = new Promise(resolve => child.once("exit", resolve));
 
     await expect(readFirstLogJsonLine(child, logPath, 300)).rejects.toThrow(
-      /printed nothing within 0.3s and was stopped/,
+      /printed no event within 0.3s and was stopped/,
     );
     await exited;
   });

@@ -101,26 +101,48 @@ export function spawnDetached(command: readonly string[], logPath: string): Chil
   }
 }
 
-/** Every complete line of the log that parses as a JSON object, in order. Other lines (stderr
- * banners, a crash trace) are skipped. A missing log reads as empty. */
-export function readLogJsonLines(logPath: string): Record<string, unknown>[] {
+/** Every complete line of the log. A missing log reads as empty. */
+function readLogLines(logPath: string): string[] {
   let content: string;
   try {
     content = readFileSync(logPath, "utf8");
   } catch {
     return [];
   }
-  const lines = content.split("\n").slice(0, -1); // the last item is a partial line, or ""
+  return content.split("\n").slice(0, -1); // the last item is a partial line, or ""
+}
+
+/** `line` as a JSON object, or undefined if it is not one. */
+function parseJsonObject(line: string): Record<string, unknown> | undefined {
+  try {
+    const value: unknown = JSON.parse(line);
+    if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+      return value as Record<string, unknown>;
+    }
+  } catch {}
+  return undefined;
+}
+
+/** Every complete line of the log that parses as a JSON object, in order. Other lines (stderr
+ * banners, a crash trace) are skipped. A missing log reads as empty. */
+export function readLogJsonLines(logPath: string): Record<string, unknown>[] {
   const objects: Record<string, unknown>[] = [];
-  for (const line of lines) {
-    try {
-      const value: unknown = JSON.parse(line);
-      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
-        objects.push(value as Record<string, unknown>);
-      }
-    } catch {}
+  for (const line of readLogLines(logPath)) {
+    const object = parseJsonObject(line);
+    if (object) objects.push(object);
   }
   return objects;
+}
+
+/** The complete lines the listener logged before its first JSON object line: what it wrote to
+ * stderr (warnings, notices) before its first event. */
+export function readLogLinesBeforeFirstJson(logPath: string): string[] {
+  const lines: string[] = [];
+  for (const line of readLogLines(logPath)) {
+    if (parseJsonObject(line)) break;
+    lines.push(line);
+  }
+  return lines;
 }
 
 /** The listener's `enrollment-pending` line, as `enroll --output json` prints it. */
@@ -163,13 +185,13 @@ export async function readFirstLogJsonLine(
       if (first) return first;
       if (exitedBeforeRead) {
         throw new Error(
-          `The enrollment listener ${exitedBeforeRead} before printing anything. See ${logPath}.`,
+          `The enrollment listener ${exitedBeforeRead} before printing its first event. See ${logPath}.`,
         );
       }
       if (Date.now() >= deadline) {
         child.kill();
         throw new Error(
-          `The enrollment listener printed nothing within ${timeoutMs / 1000}s and was stopped. ` +
+          `The enrollment listener printed no event within ${timeoutMs / 1000}s and was stopped. ` +
             `See ${logPath}.`,
         );
       }
