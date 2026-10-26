@@ -359,7 +359,6 @@ allowBuilds:
   "@datadog/mobile-react-native": true
   "@firebase/util": false
   "@parcel/watcher": false
-  "@sentry/node-native-stacktrace": false
   "@swc/core": true
   "@taquito/taquito": true
   "bigint-buffer": true
