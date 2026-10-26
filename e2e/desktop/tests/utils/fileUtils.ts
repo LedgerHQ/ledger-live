@@ -2,7 +2,7 @@ import { access, appendFile, mkdir, rename } from "fs/promises";
 import * as path from "path";
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export const NANO_APP_CATALOG_PATH = "tests/artifacts/appVersion/nano-app-catalog.json";
 

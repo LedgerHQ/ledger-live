@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import type { Expect, Page } from "@playwright/test";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export type SoftExpectMatcher = Expect["soft"];
 

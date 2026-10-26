@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { MockServerSessionHandle } from "@ledgerhq/live-e2e-shared/mockServer/session";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const sorted = (appNames: string[]) => [...appNames].sort();
 

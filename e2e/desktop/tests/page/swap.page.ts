@@ -13,7 +13,7 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).

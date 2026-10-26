@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const getUserdata = async (userdataFile: string) => {
   const jsonFile = await readFile(userdataFile, "utf-8");

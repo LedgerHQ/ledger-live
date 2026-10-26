@@ -1,6 +1,6 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export async function launchApp({
   env,

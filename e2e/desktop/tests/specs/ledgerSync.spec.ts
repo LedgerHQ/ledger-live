@@ -14,7 +14,7 @@ import {
   pushAccountsToTrustchain,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const APP_INSTANCE_NAME = "LWD";
 

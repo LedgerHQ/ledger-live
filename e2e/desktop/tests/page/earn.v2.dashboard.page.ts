@@ -4,7 +4,7 @@ import { Account, type AccountType } from "@ledgerhq/live-e2e-shared/enum/Accoun
 import { EarnBasePage } from "tests/page/earn.base.page";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import type { Application } from "tests/page/index";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class EarnV2Page extends EarnBasePage {
   private readonly maxPotentialRewards = "max-potential-rewards";

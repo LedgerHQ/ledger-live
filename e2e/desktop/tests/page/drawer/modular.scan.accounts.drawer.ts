@@ -1,7 +1,7 @@
 import { Drawer } from "tests/component/drawer.component";
 import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class ModularScanAccountsDrawer extends Drawer {
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });

@@ -1,7 +1,7 @@
 /**
  * Upper bounds for "give up after this long", shared by the desktop (Playwright) and mobile
- * (Detox) E2E suites so both speak one duration vocabulary. Each suite re-exports `TIMEOUT` from
- * its own `utils/timeouts.ts`, next to the durations only that suite uses.
+ * (Detox) E2E suites so both speak one duration vocabulary. Desktop imports it from here; mobile
+ * re-exports it from `e2e/mobile/utils/timeouts.ts`, next to the durations only mobile uses.
  *
  * Pick the *smallest* bucket that is not flaky. An oversized timeout costs nothing on a passing
  * test, but it makes a failing one take much longer to report, and on a shared CI runner every

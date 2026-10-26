@@ -3,7 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { isAssetDiscoverabilityEnabled } from "tests/utils/featureFlagUtils";
 import { PageHeader } from "tests/component/pageHeader.component";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class MarketPage extends AppPage {
   private readonly pageHeader = new PageHeader(this.page);

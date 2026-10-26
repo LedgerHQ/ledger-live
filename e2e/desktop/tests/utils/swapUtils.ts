@@ -17,7 +17,7 @@ import {
 import * as allure from "allure-js-commons";
 import BigNumber from "bignumber.js";
 import { withTemporarySpeculos } from "tests/utils/speculosUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export function setupEnv(disableBroadcast: boolean = false): void {
   test.use({

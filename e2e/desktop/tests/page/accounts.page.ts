@@ -3,7 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });

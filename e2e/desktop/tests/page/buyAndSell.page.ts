@@ -11,7 +11,7 @@ import { doubleDecodeGoToURL } from "tests/utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "tests/utils/getAccountAddressesUtils";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelectorFromInstance } from "tests/utils/modularSelectorUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;

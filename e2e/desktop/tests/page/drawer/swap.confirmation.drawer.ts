@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Drawer } from "tests/component/drawer.component";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class SwapConfirmationDrawer extends Drawer {
   private exchangeError = this.page.locator("#error-CompleteExchangeError span").first();

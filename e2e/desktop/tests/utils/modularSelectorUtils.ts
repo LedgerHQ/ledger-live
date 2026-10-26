@@ -1,7 +1,7 @@
 import { Page } from "@playwright/test";
 import { Application } from "tests/page";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 /**
  * Returns the visible modular selector (Dialog), or null if legacy UI.

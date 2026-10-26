@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 declare global {
   interface Window {

@@ -1,7 +1,7 @@
 import { expect, type Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
 

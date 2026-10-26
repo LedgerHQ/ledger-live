@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // For currencies whose backend is slow to answer: mina's rosetta node takes 35s or so on
 // /search/transactions, well past the default expect timeout.

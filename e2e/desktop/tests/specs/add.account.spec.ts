@@ -5,7 +5,7 @@ import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 type AddAccountTestCase = {
   readonly currency: Currency;

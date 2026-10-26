@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { ElectronApplication, expect } from "@playwright/test";
 import { launchApp } from "tests/utils/electronUtils";
 import { getFeatureFlags, getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const environmentFilePath = "allure-results/environment.properties";
 

@@ -2,7 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Dialog } from "tests/component/dialog.component";
 import { expect } from "@playwright/test";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class ModularNetworkDialog extends Dialog {
   private networkSelectorListContainer = this.page

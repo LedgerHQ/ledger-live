@@ -3,7 +3,7 @@ import { AppPage } from "tests/page/abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted } from "tests/utils/userdata";
 import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";

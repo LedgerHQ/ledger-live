@@ -5,7 +5,7 @@ import {
   getTrustchainAccountName,
   getTrustchainAccounts,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/pulledData";
-import { TIMEOUT } from "tests/utils/timeouts";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 /**
  * Assertions on what a Ledger Sync trustchain holds, read through the CLI rather than the UI.
