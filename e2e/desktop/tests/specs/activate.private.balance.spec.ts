@@ -1,5 +1,7 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -9,9 +11,9 @@ const account = Account.ZEC_1;
 const xrayTicket = "B2CQA-4300";
 const birthdayHeight = "2026-08-01";
 
-test.describe("Activate private balance", () => {
+const owner = ownedBy(coinTeamOwner(account.currency.id), { folder: TestFolder.ACCOUNTS });
+test.describe("Activate private balance", owner, () => {
   test.use({
-    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [liveDataCommand(account)],

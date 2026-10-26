@@ -1,5 +1,7 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { liveDataCommand, seedZcashPrivateInfo } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -11,9 +13,9 @@ import { buildTags } from "tests/utils/tagsUtils";
 const account = Account.ZEC_1;
 const xrayTicket = "B2CQA-6606";
 
-test.describe("Receive private address", () => {
+const owner = ownedBy(coinTeamOwner(account.currency.id), { folder: TestFolder.RECEIVE });
+test.describe("Receive private address", owner, () => {
   test.use({
-    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [

@@ -60,6 +60,13 @@ const linkTags = links =>
     .filter(link => TAGGED_LINK_TYPES.has(link.type) && (link.name || link.url))
     .map(link => `${link.type}:${link.name || link.url}`);
 
+// setTeamOwner(team, { folder, scenario? }) files a test under Team / Folder, or Team / Folder / Scenario:
+// the declared labels replace the reporter's defaults (top-level describe as suite, nested describes
+// as subSuite). The default customizers overwrite the test's own suite/subSuite labels, so the
+// declared ones are read from the metadata.
+const declaredLabel = (testCaseMetadata, name) =>
+  testCaseMetadata.labels?.findLast(label => label.name === name)?.value;
+
 const WORKER_KILLED = /A jest worker process \(pid=(?<pid>\d+)\) was terminated/;
 
 function stallReportFor(testFile) {
@@ -90,6 +97,11 @@ const jestAllure2ReporterOptions = {
     },
     labels: {
       host: process.env.RUNNER_NAME,
+      suite: ({ value, testCaseMetadata }) =>
+        declaredLabel(testCaseMetadata, "suite") ??
+        (declaredLabel(testCaseMetadata, "subSuite") ? undefined : value),
+      subSuite: ({ value, testCaseMetadata }) =>
+        declaredLabel(testCaseMetadata, "subSuite") ?? value,
       tag: ({ value, testCaseMetadata }) => [
         ...new Set([...[value ?? []].flat(), ...linkTags(testCaseMetadata.links)]),
       ],

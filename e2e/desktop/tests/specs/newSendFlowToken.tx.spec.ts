@@ -1,7 +1,6 @@
 import { TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const tokenSendTransactions: NewSendFlowEntry[] = [
   {
@@ -16,7 +15,6 @@ const tokenSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(TokenAccount.ALGO_USDT_1, TokenAccount.ALGO_USDT_2, "0.01"),
     xrayTicket: "B2CQA-6111",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_GIGA_2, "0.00001"),

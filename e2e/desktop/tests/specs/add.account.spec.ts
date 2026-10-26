@@ -1,5 +1,8 @@
 import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
@@ -51,9 +54,9 @@ const currencies: AddAccountTestCase[] = [
 ];
 
 for (const currency of currencies) {
-  test.describe("Add account", () => {
+  const owner = ownedBy(coinTeamOwner(currency.currency.id), { folder: TestFolder.ACCOUNTS });
+  test.describe("Add account", owner, () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: currency.currency.speculosApp,
       featureFlags: currency.featureFlags,
@@ -123,9 +126,8 @@ for (const currency of currencies) {
   });
 }
 
-test.describe("Add account", () => {
+test.describe("Add account", ownedBy(Team.BST, { folder: TestFolder.ACCOUNTS }), () => {
   test.use({
-    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.ALEO.speculosApp,
     featureFlags: {

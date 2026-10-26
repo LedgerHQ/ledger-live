@@ -70,6 +70,21 @@ Reusable scenario orchestration across independent pages MUST live in a util, bu
 
 Every test MUST include a TMS annotation with a valid `B2CQA-XXXX` id. See [Desktop](../desktop/docs/e2e-desktop-conventions.md#every-test-must-include-a-tms-annotation) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#the-test-function-must-call-tmslink) for how each client attaches it.
 
+### Tests MUST declare their place in the Allure tree
+
+Desktop and mobile reports share one tree: Team › Folder › test, and Team › Send folder › Scenario › test for New Send Flow sends. Teams on this layout: Coin-integration and BST. Other teams keep a team-only owner until they move, and then join this list.
+
+- A test's team MUST be looked up before asking the user, who is asked only when nothing below gives one [`Team`](../../libs/live-e2e-shared/src/enum/Team.ts) value:
+  1. A test of what a coin module provides (its accounts, receive, send, staking) about one currency MUST use `coinTeamOwner(currency.id)` ([`coinTeamOwner.ts`](../../libs/live-e2e-shared/src/data/coinTeamOwner.ts)), which follows CODEOWNERS: BST 1, 2 and 3 coins go to BST, the rest to Coin-integration.
+  2. Any other test, one spanning several currencies included, takes the owner its spec file, or other specs of the same feature, already declare.
+  3. Otherwise, it takes the CODEOWNERS team of the product code it drives, when that maps to one `Team` value.
+- The folder MUST be a `TestFolder` value from [`TestFolder.ts`](../../libs/live-e2e-shared/src/enum/TestFolder.ts), not a string. Adding a token account is `SUBACCOUNTS`, not `ACCOUNTS`.
+- A New Send Flow send MUST take its folder from `sendFolder(accountToDebit)` and MUST add a `SendScenario`. A send through the legacy flow MUST use `LEGACY_TESTS`. Other folders, `LEGACY_TESTS` included, MUST NOT take a scenario.
+- A new folder or scenario MUST be added to those enums, so both apps show it under the same name.
+- A title MUST read `` `[${currency.testLabel}] - Action - qualifier` ``, or `Action - qualifier` for a test not about one currency, and MUST be unique within its folder or scenario, since the tree shows nothing else there.
+
+See [Desktop](../desktop/docs/e2e-desktop-conventions.md#a-describe-must-pass-ownedby-once-its-team-is-on-the-allure-layout) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#the-test-function-must-call-tmslink) for how each client declares them.
+
 ### Tests MUST NOT hide an interaction failure
 
 Tests MUST NOT add retry loops, manual polling, or a second tap to hide an interaction failure. An incorrect wait MUST be fixed. Otherwise the underlying product, environment, build, or test-flow issue MUST be diagnosed.

@@ -1,6 +1,7 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
-import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { setEnv } from "@shared/env";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
@@ -15,7 +16,7 @@ const delegation = new Delegate(Account.SEI_EVM_1, DELEGATION_AMOUNT, "first-ava
 const tmsLinks: string[] = ["B2CQA-5740"];
 const tags = ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@sei_evm", "@family-evm"];
 
-setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
 tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
 tags.forEach(tag => $Tag(tag));
 describeIfNotNanoS("Delegate", () => {

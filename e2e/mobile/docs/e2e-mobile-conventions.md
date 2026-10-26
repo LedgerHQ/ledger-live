@@ -108,7 +108,8 @@ Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named 
 The spec MUST pass the `B2CQA-XXXX` id and the test function MUST call `$TmsLink`. `$TmsLink`, `$Tag`, and `setTeamOwner` attach to the next `describe`, `it`, or hook defined after them, so placement decides which tests get them:
 
 - Inside a `describe`, `$TmsLink` and `$Tag` MUST be called right before **each** `it`, after the hooks. A `beforeAll` in between takes them, and one call before several `it`s only reaches the first.
-- `setTeamOwner` MUST be called before the `describe`, so every test in it gets the owner.
+- `setTeamOwner` MUST be called before the `describe`, so every test in it gets the owner. When the tests of one `describe` belong to different teams, it MUST be called right before each `it` instead, like `$TmsLink`.
+- A test function whose team is on the Allure layout MUST pass the folder, and the scenario for a New Send Flow send: `setTeamOwner(coinTeamOwner(currency.id), { folder: sendFolder(transaction.accountToDebit), scenario: SendScenario.TRANSACTION })`. Placement rules: [Allure tree](../../docs/e2e-conventions.md#tests-must-declare-their-place-in-the-allure-tree).
 
 ```ts
 // spec

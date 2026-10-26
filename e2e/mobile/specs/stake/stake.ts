@@ -1,6 +1,8 @@
 import { setEnv } from "@shared/env";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { verifyTezosStakingOperationDetails } from "@e2e/models/stake";
@@ -32,7 +34,7 @@ async function goToTezosAccount(delegation: DelegateType) {
 }
 
 function tagSuite(tmsLinks: string[], tags: string[]) {
-  setTeamOwner(Team.BST);
+  setTeamOwner(coinTeamOwner(Currency.XTZ.id), { folder: TestFolder.DELEGATE });
   tags.forEach(tag => $Tag(tag));
   tmsLinks.forEach(tms => $TmsLink(tms));
 }

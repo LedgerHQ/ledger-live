@@ -1,7 +1,9 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import {
   getAccountAddress,
   liveDataCommand,
@@ -29,7 +31,6 @@ const invalidAmounts: Array<{
   transaction: Transaction;
   expectedErrorMessage: string | null;
   xrayTicket: string;
-  teamOwner?: Team;
   // Insufficient funds errors are the only ones routed to the "Get <ticker>" CTA.
   expectsGetFundsCta?: boolean;
 }> = [
@@ -42,7 +43,6 @@ const invalidAmounts: Array<{
     transaction: new Transaction(Account.XRP_1, Account.XRP_3, "0.1", undefined, "noTag"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 XRP to activate it",
     xrayTicket: "B2CQA-2571",
-    teamOwner: Team.BST,
     expectsGetFundsCta: true,
   },
   {
@@ -62,9 +62,13 @@ const invalidAmounts: Array<{
 for (const entry of invalidAmounts) {
   const tx = entry.transaction;
 
-  test.describe("Send - new flow - invalid amount", () => {
+  const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+    folder: sendFolder(tx.accountToDebit),
+    scenario: SendScenario.INVALID_AMOUNT,
+  });
+
+  test.describe("Send - new flow - invalid amount", owner, () => {
     test.use({
-      teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: tx.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(tx)],
@@ -72,9 +76,7 @@ for (const entry of invalidAmounts) {
     });
 
     test(
-      `[${
-        tx.accountToDebit.currency.testLabel
-      }] - Send (new send flow) invalid amount: ${tx.amount || "empty amount"}`,
+      `[${tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${tx.amount || "empty"})`,
       {
         tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
         annotation: { type: "TMS", description: entry.xrayTicket },
@@ -95,11 +97,16 @@ for (const entry of invalidAmounts) {
   });
 }
 
-test.describe("Send - new flow - max amount", () => {
+const ethSendFlow = (scenario: SendScenario) =>
+  ownedBy(coinTeamOwner(Account.ETH_1.currency.id), {
+    folder: sendFolder(Account.ETH_1),
+    scenario,
+  });
+
+test.describe("Send - new flow - max amount", ethSendFlow(SendScenario.MAX_AMOUNT), () => {
   const tx = new Transaction(Account.ETH_1, Account.ETH_2, "send max", Fee.MEDIUM);
 
   test.use({
-    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
@@ -107,7 +114,7 @@ test.describe("Send - new flow - max amount", () => {
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) max amount`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send - max amount`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-6124" },
@@ -124,7 +131,6 @@ const validAddresses: Array<{
   transaction: Transaction;
   testName: string;
   xrayTicket: string;
-  teamOwner?: Team;
   // The recipient screen sends the typed value to the bridge, unless a reverse ENS
   // lookup resolves it first: the resolver re-encodes the address in EIP-55, which
   // suppresses the non-checksummed warning. Only accounts without an ENS record can
@@ -153,13 +159,11 @@ const validAddresses: Array<{
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "1", undefined, "123456"),
     testName: "with tag",
     xrayTicket: "B2CQA-2718",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_2, "2"),
     testName: "without tag",
     xrayTicket: "B2CQA-2719",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "123456"),
@@ -211,9 +215,13 @@ const validAddresses: Array<{
 for (const entry of validAddresses) {
   const tx = entry.transaction;
 
-  test.describe("Send - new flow - valid address", () => {
+  const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+    folder: sendFolder(tx.accountToDebit),
+    scenario: SendScenario.VALID_ADDRESS,
+  });
+
+  test.describe("Send - new flow - valid address", owner, () => {
     test.use({
-      teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: tx.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataWithRecipientAddressCommand(tx, { useScheme: true })],
@@ -221,7 +229,7 @@ for (const entry of validAddresses) {
     });
 
     test(
-      `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) valid address - ${entry.testName}`,
+      `[${tx.accountToDebit.currency.testLabel}] - Send - valid address - ${entry.testName}`,
       {
         tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
         annotation: { type: "TMS", description: entry.xrayTicket },
@@ -253,35 +261,39 @@ const invalidAddresses: Array<{
   transaction: Transaction;
   address?: string;
   expectedErrorMessage: string | null;
+  scenario: string;
   xrayTicket: string;
-  teamOwner?: Team;
 }> = [
   {
     transaction: new Transaction(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.00001", Fee.MEDIUM),
     address: Addresses.BTC_NATIVE_SEGWIT_1,
     expectedErrorMessage: null,
+    scenario: "incorrect format",
     xrayTicket: "B2CQA-2709",
   },
   {
     transaction: new Transaction(Account.ETH_1, Account.EMPTY, "0.00001", Fee.MEDIUM),
     address: " ",
     expectedErrorMessage: null,
+    scenario: "empty",
     xrayTicket: "B2CQA-2710",
   },
   {
     transaction: new Transaction(Account.DOT_1, Account.DOT_1, "0.5"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
+    scenario: "same as sender",
     xrayTicket: "B2CQA-2711",
   },
   {
     transaction: new Transaction(Account.XRP_1, Account.XRP_1, "1", undefined, "123456"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
+    scenario: "same as sender",
     xrayTicket: "B2CQA-2712",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_1, "0.00001"),
     expectedErrorMessage: "Recipient address is the same as the sender address",
+    scenario: "same as sender",
     xrayTicket: "B2CQA-2713",
   },
 ];
@@ -290,9 +302,13 @@ for (const entry of invalidAddresses) {
   const tx = entry.transaction;
   let recipientAddress = entry.address;
 
-  test.describe("Send - new flow - invalid address", () => {
+  const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+    folder: sendFolder(tx.accountToDebit),
+    scenario: SendScenario.INVALID_ADDRESS,
+  });
+
+  test.describe("Send - new flow - invalid address", owner, () => {
     test.use({
-      teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: tx.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -311,9 +327,7 @@ for (const entry of invalidAddresses) {
     });
 
     test(
-      `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) invalid address - ${
-        entry.expectedErrorMessage ?? (entry.address?.trim() ? "incorrect format" : "empty")
-      }`,
+      `[${tx.accountToDebit.currency.testLabel}] - Send - invalid address - ${entry.scenario}`,
       {
         tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
         annotation: { type: "TMS", description: entry.xrayTicket },
@@ -334,11 +348,10 @@ for (const entry of invalidAddresses) {
   });
 }
 
-test.describe("Send - new flow - ENS address", () => {
+test.describe("Send - new flow - ENS address", ethSendFlow(SendScenario.ENS_ADDRESS), () => {
   const tx = new Transaction(Account.ETH_1, Account.ETH_2_WITH_ENS, "0.0001", Fee.MEDIUM);
 
   test.use({
-    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
@@ -347,7 +360,7 @@ test.describe("Send - new flow - ENS address", () => {
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) to ENS address`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send - ENS address`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
       annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027" },

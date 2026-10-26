@@ -1,5 +1,6 @@
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
 type VerifyAddressWarningOptions = {
@@ -24,10 +25,10 @@ export function runVerifyAddressWarningTest(
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(Team.COIN_INTEGRATION);
+    setTeamOwner(coinTeamOwner(account.currency.id), { folder: TestFolder.RECEIVE });
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Verify address warning`, async () => {
+    it(`[${account.currency.testLabel}] - Verify address - tokens warning`, async () => {
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();
