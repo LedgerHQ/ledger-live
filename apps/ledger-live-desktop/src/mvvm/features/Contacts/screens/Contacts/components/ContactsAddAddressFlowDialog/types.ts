@@ -6,7 +6,6 @@ import type {
 export type ContactsAddAddressFlowDialogProps = Readonly<{
   state: AddAddressFlowState;
   supportsDomain: boolean;
-  showPrivacyPolicy: boolean;
   onSanctionedAddressLearnMore: () => void;
   onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
   onContinueFromAddressDetails: () => void;
