@@ -167,7 +167,7 @@ flake.
 
 Pay tab specs need `BAANX_TEST_CLIENT_KEY`, `BAANX_TEST_USER_EMAIL`, `BAANX_TEST_USER_PASSWORD`, and `BAANX_TEST_USER_TOTP_SECRET` environment variables. See [@ledgerhq/baanx-test-client](../tooling/baanx-test-client/README.md).
 
-A spec that needs an injected Card session must live under `specs/paytab/`. On CI, `globalSetup` mints once before workers when the selected spec paths include that directory. Locally, `globalSetup` does not mint; authentication happens only when a selected Pay tab test reaches `launchApp`. `launchApp` injects the session when the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
+A spec that needs an injected Card session must live under `specs/paytab/`. CI keeps every selected file from that directory on one shard per platform, and still balances the other specs across every shard, including that one. On CI, `globalSetup` mints once before workers when the selected spec paths include that directory. Locally, `globalSetup` does not mint; authentication happens only when a selected Pay tab test reaches `launchApp`. `launchApp` injects the session when the spec path contains `/paytab/`. A Pay tab spec anywhere else launches signed out.
 
 ## Stall watchdog
 
