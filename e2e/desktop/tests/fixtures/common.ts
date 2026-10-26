@@ -306,7 +306,7 @@ export const test = base.extend<TestFixtures>({
   page: async ({ electronApp, speculos, cliCommandsOnApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
-    page.setDefaultTimeout(TIMEOUT.xxxlarge);
+    page.setDefaultTimeout(TIMEOUT.xlarge);
 
     attachNetworkLogging(page, testInfo);
     // capture main app (Ledger Wallet) network logs, attached to Allure on failure
