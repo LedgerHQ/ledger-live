@@ -20,6 +20,12 @@ describe("createApi", () => {
     expect(await api.estimateFees(context, {} as never)).toEqual({ value: 10_000n });
   });
 
+  it("estimates no fee for a neuron command", async () => {
+    const intent = { intentType: "staking", type: "start_dissolving" } as never;
+
+    expect(await api.estimateFees(context, intent)).toEqual({ value: 0n });
+  });
+
   it("validates an account identifier by its checksum", async () => {
     const address = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
 

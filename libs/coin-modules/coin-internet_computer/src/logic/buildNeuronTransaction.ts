@@ -11,6 +11,23 @@ import { derivePrincipalFromPubkey } from "./crypto";
 
 const governanceCanisterId = () => Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID);
 
+/** The fields of a neuron operation that its `manage_neuron` command reads. */
+export type NeuronCommand = Pick<
+  Transaction,
+  | "type"
+  | "neuronId"
+  | "amount"
+  | "dissolveDelay"
+  | "additionalDissolveDelay"
+  | "hotKeyToAdd"
+  | "hotKeyToRemove"
+  | "autoStakeMaturity"
+  | "percentageToSpawn"
+  | "percentageToStake"
+  | "followTopic"
+  | "followeesIds"
+>;
+
 const NeuronIdArg = IDL.Record({ id: IDL.Nat64 });
 
 /**
@@ -44,7 +61,7 @@ const buildGovernanceCall = (
 
 // `manage_neuron` command variant per op (vendored ManageNeuronCommandRequest, bar Split — see
 // SPLIT_ARG_TYPE). Candid `opt` = `[]` | `[value]`.
-const buildManageNeuronCommand = (transaction: Transaction, nowSeconds: number): unknown => {
+const buildManageNeuronCommand = (transaction: NeuronCommand, nowSeconds: number): unknown => {
   switch (transaction.type) {
     case "start_dissolving":
       return { Configure: { operation: [{ StartDissolving: {} }] } };
@@ -173,7 +190,7 @@ const buildManageNeuronCommand = (transaction: Transaction, nowSeconds: number):
 
 /** ManageNeuronRequest for a neuron operation, targeting the neuron by id. */
 export const buildManageNeuronArg = (
-  transaction: Transaction,
+  transaction: NeuronCommand,
   nowSeconds: number = Math.floor(Date.now() / 1000),
 ): unknown => {
   if (!transaction.neuronId) {
@@ -187,14 +204,14 @@ export const buildManageNeuronArg = (
 };
 
 /** Every command but Split encodes against the canister's own interface. */
-const manageNeuronArgTypes = (transaction: Transaction): IDL.Type[] =>
+const manageNeuronArgTypes = (transaction: NeuronCommand): IDL.Type[] =>
   transaction.type === "split_neuron"
     ? [SPLIT_ARG_TYPE]
     : getCanisterIdlFunc(governanceIdlFactory, "manage_neuron").argTypes;
 
 /** Unsigned `manage_neuron` update call for a neuron operation. */
 export const createUnsignedNeuronCommandTransaction = (
-  transaction: Transaction,
+  transaction: NeuronCommand,
   pubKey: string,
 ): UnsignedTransaction => {
   const arg = IDL.encode(manageNeuronArgTypes(transaction), [buildManageNeuronArg(transaction)]);

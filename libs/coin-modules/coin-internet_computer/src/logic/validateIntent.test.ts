@@ -7,8 +7,8 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { InvalidMemoICP } from "../errors";
-import type { IcpIntent } from "./intent";
+import { ICPInvalidDissolveDelayIncrease, InvalidMemoICP } from "../errors";
+import type { IcpIntent, IcpStakingIntent } from "./intent";
 import { validateIntent } from "./validateIntent";
 
 const SENDER = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
@@ -124,6 +124,60 @@ describe("validateIntent", () => {
 
     expect(errors.fees).toBeInstanceOf(InvalidTransactionError);
     expect(estimatedFees).toBe(FEE);
+  });
+
+  describe("for a neuron command", () => {
+    const command = (overrides: Partial<IcpStakingIntent> = {}): IcpStakingIntent => ({
+      ...intent(),
+      intentType: "staking",
+      type: "start_dissolving",
+      mode: "delegate",
+      valAddress: "123",
+      recipient: "",
+      amount: 0n,
+      ...overrides,
+    });
+
+    // A command spends nothing, so an empty balance does not block it.
+    it("accepts a command that spends nothing", () => {
+      expect(validateIntent(command(), [])).toEqual({
+        errors: {},
+        warnings: {},
+        estimatedFees: 0n,
+        amount: 0n,
+        totalSpent: 0n,
+      });
+    });
+
+    it("reports a command it cannot build", () => {
+      const { errors } = validateIntent(command({ valAddress: "0" }), []);
+
+      expect(errors.transaction).toBeInstanceOf(InvalidTransactionError);
+    });
+
+    it("reports an invalid dissolve-delay increase", () => {
+      const { errors } = validateIntent(
+        command({
+          type: "increase_dissolve_delay",
+          data: { type: "neuron", additionalDissolveDelaySeconds: 0 },
+        }),
+        [],
+      );
+
+      expect(errors.transaction).toBeInstanceOf(ICPInvalidDissolveDelayIncrease);
+    });
+
+    it("reports a fee", () => {
+      const { errors } = validateIntent(command(), [], { value: FEE });
+
+      expect(errors.fees).toBeInstanceOf(InvalidTransactionError);
+    });
+
+    it("reports an invalid sender", () => {
+      const { errors } = validateIntent(command({ sender: "abc" }), []);
+
+      expect(errors.sender).toBeInstanceOf(InvalidAddress);
+    });
   });
 
   // The generic bridge passes `transaction.fees ?? 0` before `prepareTransaction` fills the fee.
