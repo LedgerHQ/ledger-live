@@ -2,7 +2,7 @@
   "name": "@shared/analytics-react",
   "version": "0.4.0",
   "private": true,
-  "description": "React components tracking through the @shared/analytics pipeline: <Track>, <TrackPage> (web), <TrackScreen> (native)",
+  "description": "React components tracking through the @shared/analytics pipeline: <Track>, <TrackScreen>",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",

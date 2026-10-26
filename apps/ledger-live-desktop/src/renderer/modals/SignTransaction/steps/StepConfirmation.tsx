@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import RetryButton from "~/renderer/components/RetryButton";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
@@ -22,7 +22,7 @@ function StepConfirmation({ account, error }: StepProps) {
   if (error) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Sign Transaction Flow"
           name="Step Confirmation Error"
           currencyName={currencyName}

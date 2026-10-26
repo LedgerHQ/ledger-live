@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -38,7 +38,7 @@ export const AleoSendStepRecipient = ({
 
   return (
     <Box flow={4}>
-      <TrackPage category="Aleo Send Flow" name="Step Recipient" currencyName={currencyName} />
+      <TrackScreen category="Aleo Send Flow" name="Step Recipient" currencyName={currencyName} />
       <>
         {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
         {error ? <ErrorBanner error={error} /> : null}

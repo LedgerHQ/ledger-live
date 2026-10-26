@@ -2,7 +2,7 @@ import React from "react";
 import { ConnectDeviceUIStateTypes } from "@ledgerhq/live-dmk-desktop";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
 import { DeviceIntentTrackingTestWrapper } from "../testUtils";
@@ -10,10 +10,10 @@ import { UnknownErrorState } from "./UnknownErrorState";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: jest.fn(() => null),
+  TrackScreen: jest.fn(() => null),
 }));
 
-const mockedTrackPage = jest.mocked(TrackPage);
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 function renderState(error: unknown = new Error("boom")) {
   return render(
@@ -43,7 +43,7 @@ describe("UnknownErrorState", () => {
     renderState({ _tag: "TransportNotSupportedError" });
 
     // THEN
-    expect(mockedTrackPage).toHaveBeenCalledWith(
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
       expect.objectContaining({
         category: PAGE_CONNECT_DEVICE.UnknownError,
         subError: "TransportNotSupportedError",

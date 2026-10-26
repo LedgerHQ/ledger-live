@@ -26,7 +26,7 @@ jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };

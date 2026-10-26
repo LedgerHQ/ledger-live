@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { multiline } from "~/renderer/styles/helpers";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -59,7 +59,7 @@ const StepConfirmation = ({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
           name="Step Confirmed"
           flow="stake"
@@ -93,7 +93,7 @@ const StepConfirmation = ({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Delegation Flow"
           name="Step Confirmation Error"
           flow="stake"

@@ -39,7 +39,7 @@ jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 
 const buildAccount = (currencyId: string) =>

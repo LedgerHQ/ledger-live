@@ -180,10 +180,6 @@ const COMPONENT_EXCEPTIONS = {
   "features/platform/style": {
     StyleProvider: componentWaiver("R2"),
   },
-  "shared/analytics-react": {
-    TrackPage: componentWaiver("R1", "R4"),
-    TrackScreen: componentWaiver("R1", "R4"),
-  },
   "shared/ui-app-unavailable": {
     AppUnavailable: componentWaiver("R3"),
   },

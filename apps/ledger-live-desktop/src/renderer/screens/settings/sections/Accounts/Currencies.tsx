@@ -5,7 +5,7 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { cryptoCurrenciesSelector } from "~/renderer/reducers/accounts";
-import { Track, TrackPage } from "@shared/analytics-react";
+import { Track, TrackScreen } from "@shared/analytics-react";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import Box from "~/renderer/components/Box";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
@@ -30,7 +30,7 @@ export default function Currencies() {
     <Box>
       {currencyId && currencyName && (
         <>
-          <TrackPage category="Settings" name="Currencies" currencyId={currencyId} />
+          <TrackScreen category="Settings" name="Currencies" currencyId={currencyId} />
           <Track onUpdate event="Crypto asset settings dropdown" currencyName={currencyName} />
         </>
       )}

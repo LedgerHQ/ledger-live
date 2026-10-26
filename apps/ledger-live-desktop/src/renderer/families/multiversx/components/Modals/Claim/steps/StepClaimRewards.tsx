@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import invariant from "invariant";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ModeSelectorField from "../fields/ModeSelectorField";
@@ -65,7 +65,7 @@ const StepClaimRewards = (props: StepProps) => {
   const key = transaction.mode === "claimRewards" ? "claimInfo" : "compoundInfo";
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="ClaimRewards Flow"
         name="Step 1"
         flow="stake"
