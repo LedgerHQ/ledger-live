@@ -1,7 +1,7 @@
 # @shared/ui-app-unavailable
 
 > [!CAUTION]
-> **Status: UNSTABLE** — New package; not yet wired into a host application, and its API may change.
+> **Status: UNSTABLE** — Wired through `@features/flow-app-availability`; its API may grow for other blocked states.
 
 Full-screen blocked view for when Ledger Wallet cannot be used. The host supplies the copy and an
 optional action. The same screen covers geo-block and service-unavailable. There is no query and no
