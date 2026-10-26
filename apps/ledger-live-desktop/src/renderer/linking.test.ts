@@ -1,13 +1,13 @@
 import { track } from "@shared/analytics";
-import { shell } from "~/renderer/bridge";
 import { openURL } from "./linking";
 
 jest.mock("@shared/analytics", () => ({
   track: jest.fn(),
 }));
 
+const mockOpenExternal = jest.fn();
 jest.mock("~/renderer/bridge", () => ({
-  shell: { openExternal: jest.fn() },
+  shell: { openExternal: (url: string) => mockOpenExternal(url) },
 }));
 
 const txUrl =
@@ -22,7 +22,7 @@ describe("openURL", () => {
     openURL(txUrl);
 
     expect(track).toHaveBeenCalledWith("OpenURL", { url: txUrl });
-    expect(shell.openExternal).toHaveBeenCalledWith(txUrl);
+    expect(mockOpenExternal).toHaveBeenCalledWith(txUrl);
   });
 
   it("tracks only the origin of a sensitive URL, and still opens the full URL", () => {
@@ -32,13 +32,13 @@ describe("openURL", () => {
       currencyId: "Ethereum",
       url: "https://etherscan.io",
     });
-    expect(shell.openExternal).toHaveBeenCalledWith(txUrl);
+    expect(mockOpenExternal).toHaveBeenCalledWith(txUrl);
   });
 
   it("does not track when the event name is empty", () => {
     openURL(txUrl, "", {}, { sensitive: true });
 
     expect(track).not.toHaveBeenCalled();
-    expect(shell.openExternal).toHaveBeenCalledWith(txUrl);
+    expect(mockOpenExternal).toHaveBeenCalledWith(txUrl);
   });
 });
