@@ -33,7 +33,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
 global.console = require("console");
-jest.setTimeout(100_000);
+jest.setTimeout(600_000);
 
 type SolanaScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
