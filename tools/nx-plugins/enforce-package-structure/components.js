@@ -887,6 +887,11 @@ function reachableProps(declaration, module) {
    * @returns {DefaultContext} one object per reference and context, so contexts compare by identity
    */
   function defaultContext(reference, outer) {
+    // A default that references its own type, `Chain<T = { next?: Chain }>`, reenters a context
+    // that already reads `reference`, and reaches the same nodes from there.
+    for (let context = outer; typeof context === "object"; context = context.outer) {
+      if (context.reference === reference) return context;
+    }
     if (!defaultContexts.has(reference)) defaultContexts.set(reference, new Map());
     const byOuter = defaultContexts.get(reference);
     if (!byOuter.has(outer)) byOuter.set(outer, { reference, outer });
@@ -1017,7 +1022,7 @@ function reachableProps(declaration, module) {
     if (
       ts.isTypeOperatorNode(node) &&
       node.operator === ts.SyntaxKind.KeyOfKeyword &&
-      isBoundParameter(node.type, context)
+      mentionsBoundParameter(node.type, context)
     ) {
       return;
     }

@@ -983,10 +983,14 @@ test("R3 does not check a type argument a local generic drops", () => {
     `type WithoutPress<T> = Omit<T, "onPress">;\nexport type CardProps = { items: WithoutPress<${argument}>[] };\n`,
     `type Label<T> = { text: string };\nexport type CardProps = { label: Label<${argument}> };\n`,
     `type Keys<T> = keyof T;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
+    `type Keys<T> = keyof (T);\ntype SortKeys = Keys<${argument}>;\nexport type CardProps = { sortBy: SortKeys };\n`,
+    `type Keys<T> = keyof Readonly<T>;\nexport type CardProps = { sortBy: Keys<${argument}> };\n`,
     `type Pressable<T> = T extends ${argument} ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
     `type Pressable<T> = [T] extends [${argument}] ? "button" : "text";\nexport type CardProps = { role: Pressable<string> };\n`,
     `type Box<T, U = T> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
     `type Box<T, U = { item: T }> = { value: U };\nexport type CardProps = { a: Box<string>; b: Box<${argument}, string> };\n`,
+    "type Chain<T = { next?: Chain }> = { value: T };\nexport type CardProps = Chain;\n",
+    `type Chain<A, T = { next?: Chain<{ wrap: A }> }> = { value: T };\nexport type CardProps = { chain: Chain<${argument}> };\n`,
   ]) {
     assert.deepEqual(check(card({ "Card.types.ts": contractModule })), [], contractModule);
   }
@@ -1006,6 +1010,8 @@ test("R3 checks a type argument where a local generic places it in props", () =>
     `type Box<T, U = T> = { value: U };\nexport type CardProps = Box<${argument}>;\n`,
     `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, A> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
     `type Rotate<A, B, C> = { value: A; next?: Rotate<B, C, { wrap: A }> };\nexport type CardProps = { item: Rotate<string, number, ${argument}> };\n`,
+    "type Chain<T = { next?: Chain; onPress(): void }> = { value: T };\nexport type CardProps = { chain: Chain };\n",
+    `type Chain<A, T = { item: A; next?: Chain<A> }> = { value: T };\nexport type CardProps = { chain: Chain<${argument}> };\n`,
   ]) {
     assert.deepEqual(
       check(card({ "Card.types.ts": contractModule })),
