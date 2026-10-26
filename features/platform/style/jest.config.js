@@ -12,16 +12,9 @@ const transform = {
 };
 
 // Imports carry no platform suffix: each project resolves `./X` to its own `X.web` or `X.native`.
-const platformExtensions = platform => [
-  `${platform}.tsx`,
-  `${platform}.ts`,
-  "tsx",
-  "ts",
-  "js",
-  "jsx",
-  "json",
-  "node",
-];
+function platformExtensions(platform) {
+  return [`${platform}.tsx`, `${platform}.ts`, "tsx", "ts", "js", "jsx", "json", "node"];
+}
 
 // Both projects render into jsdom: the native tests mock styled-components/native and Lumen RN.
 function project(platform) {
