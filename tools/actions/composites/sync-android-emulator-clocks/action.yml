@@ -1,28 +1,20 @@
 name: "Sync Android emulator clocks"
-description: "Wait for the E2E emulators to boot, then set any clock that is off to the runner's UTC time"
-# Self-contained: the script is read relative to this action, never from the job's checkout,
-# so release and hotfix runs get it from develop without a backport.
-inputs:
-  serials:
-    description: "Space-separated adb serials of the emulators"
-    required: false
-    default: "emulator-5554 emulator-5556 emulator-5558"
-  boot_timeout:
-    description: "Seconds to wait for all emulators to finish booting"
-    required: false
-    default: "300"
-  tolerance:
-    description: "Largest clock difference in seconds that is left as is"
-    required: false
-    default: "60"
+description: "Wait for the E2E emulators to boot and set any clock more than 60 s off to the runner's UTC time"
 
 runs:
   using: "composite"
   steps:
     - name: Sync Android emulator clocks
       shell: bash
-      run: bash "${GITHUB_ACTION_PATH}/sync-android-emulator-clocks.sh"
-      env:
-        EMULATOR_SERIALS: ${{ inputs.serials }}
-        BOOT_TIMEOUT: ${{ inputs.boot_timeout }}
-        CLOCK_TOLERANCE: ${{ inputs.tolerance }}
+      run: |
+        for serial in emulator-5554 emulator-5556 emulator-5558; do
+          timeout 300 adb -s "$serial" wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 1; done' \
+            || { echo "::error::${serial} did not boot within 300 s"; exit 1; }
+          guest=$(adb -s "$serial" shell date -u +%s)
+          offset=$((guest - $(date -u +%s)))
+          if ((${offset#-} > 60)); then
+            adb -s "$serial" shell su 0 date -u "$(date -u +%m%d%H%M%Y.%S)" > /dev/null \
+              || { echo "::error::Could not set the clock of ${serial}"; exit 1; }
+            echo "::warning title=Emulator clock corrected::${serial} clock was $(date -u -d "@${guest}" +%FT%TZ) (${offset} s off), set to the runner's time"
+          fi
+        done

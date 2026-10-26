@@ -1257,8 +1257,7 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
-      # QAA-1665: an emulator restored from the AVD snapshot can keep the snapshot's clock and
-      # then rejects every certificate issued since. Also holds the tests until the emulators boot.
+      # QAA-1665: an emulator restored from the AVD snapshot can keep its clock and reject newer certificates.
       - name: Sync Android emulator clocks
         timeout-minutes: 10
         uses: LedgerHQ/ledger-live/tools/actions/composites/sync-android-emulator-clocks@develop
