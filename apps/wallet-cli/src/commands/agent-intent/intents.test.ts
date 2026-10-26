@@ -326,7 +326,7 @@ describe("agent-intent intents", () => {
 
     stdout = [];
     await runIntents();
-    expect(stdout.join("")).toContain("0.5 ETH → 1250 USDC");
+    expect(stdout.join("")).toContain("0.5 ETH → 1250 USDC via velora");
     expect(stdout.join("")).toContain("2.5 USDC");
   });
 

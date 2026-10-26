@@ -123,10 +123,10 @@ const CAL_LOOKUPS: AssetLookups = {
 // CAL lists Token-2022 mints as SPL too, so both programs resolve the same way.
 const SOLANA_TOKEN_TYPES: ReadonlySet<string> = new Set(["spl-token", "spl-token-2022"]);
 
-const NATIVE_ASSETS: Record<string, { ticker: string; decimals: number }> = {
-  ethereum: { ticker: "ETH", decimals: 18 },
-  solana: { ticker: "SOL", decimals: 9 },
-};
+const NATIVE_ASSETS = new Map<string, { ticker: string; decimals: number }>([
+  ["ethereum", { ticker: "ETH", decimals: 18 }],
+  ["solana", { ticker: "SOL", decimals: 9 }],
+]);
 
 /** Each asset is looked up once per call, and a failed lookup counts as unknown. */
 function lookupOnce<T>(
@@ -231,7 +231,7 @@ async function sendUnit(
   { network, asset }: AgentIntentSendOperation,
   lookups: AssetLookups,
 ): Promise<{ ticker: string; decimals: number } | null> {
-  if (asset.type === "native") return NATIVE_ASSETS[network] ?? null;
+  if (asset.type === "native") return NATIVE_ASSETS.get(network) ?? null;
   if (!asset.assetReference) return null;
   if (network === "ethereum") return lookups.ethereumToken(asset.assetReference);
   if (network === "solana" && SOLANA_TOKEN_TYPES.has(asset.type)) {

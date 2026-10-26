@@ -964,7 +964,10 @@ class HumanCommandOutput implements CommandOutput {
         [
           utcMinute(i.createdAt),
           i.status,
-          i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          amountWithProvider(
+            i,
+            i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          ),
           i.recipient ?? "—",
           i.id,
         ].map(stripControlChars),
@@ -1046,6 +1049,10 @@ function utcMinute(timestamp: string): string {
   return new Date(timestamp).toISOString().replace("T", " ").slice(0, 16);
 }
 
+function amountWithProvider(i: IntentListEntry, amount: string): string {
+  return i.swap ? `${amount} via ${i.swap.provider}` : amount;
+}
+
 /** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
 function intentDetailLines(
   profileId: string,
@@ -1059,7 +1066,7 @@ function intentDetailLines(
     `Intent:  ${i.id}`,
     `Status:  ${state}${terminal ? " (final)" : ""}`,
     `Profile: ${profileId}`,
-    ...(amount ? [`Amount:  ${amount}${i.swap ? ` via ${i.swap.provider}` : ""}`] : []),
+    ...(amount ? [`Amount:  ${amountWithProvider(i, amount)}`] : []),
     ...(i.sender ? [`From:    ${i.sender}`] : []),
     ...(i.recipient ? [`To:      ${i.recipient}`] : []),
     ...(i.network ? [`Network: ${i.network}`] : []),
