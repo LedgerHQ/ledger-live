@@ -3,16 +3,21 @@ import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { canReceive, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/index";
-import { useAccountHeroStatus, type AccountHeroPort } from "@features/flow-account-detail-hero";
+import {
+  useAccountCountervalue,
+  useAccountHeroStatus,
+  type AccountHeroPort,
+} from "@features/flow-account-detail-hero";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
   localeSelector,
 } from "~/renderer/reducers/settings";
+import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { useAccountHeroActions } from "./useAccountHeroActions";
 import { usePickAccountAsset, type AccountAssetPicker } from "./usePickAccountAsset";
-import { useAccountCountervalue, useAccountHeroAssets } from "./useAccountHeroAssets";
+import { useAccountHeroAssets } from "./useAccountHeroAssets";
 import { useAssetsByAction } from "./useAssetsByAction";
 
 function useBalanceFormatter(): AccountHeroPort["balance"]["formatter"] {
@@ -37,7 +42,7 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
   const discreet = useSelector(discreetModeSelector);
   const formatter = useBalanceFormatter();
   const assets = useAccountHeroAssets(account);
-  const countervalue = useAccountCountervalue(assets);
+  const countervalue = useAccountCountervalue(assets, useCalculateCountervalueCallback());
   const { byAction, deactivatedCurrencyIds } = useAssetsByAction(assets);
   const { pickAsset, pickerProps } = usePickAccountAsset();
   const onAction = useAccountHeroActions(account, assets, byAction, pickAsset);
