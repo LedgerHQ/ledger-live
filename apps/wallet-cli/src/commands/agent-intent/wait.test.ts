@@ -66,6 +66,18 @@ const ENROLLED: Profile = {
   accountAccess: { environment: "production" },
 };
 
+/** The listener's pending line for an enrollment expiring at `expiresAt`. */
+function pendingLogLine(expiresAt: unknown): string {
+  return JSON.stringify({
+    type: "enrollment-pending",
+    profileId: "test-agent",
+    enrollmentUrl: "https://agent.example.com#request=opaque",
+    fingerprint: "AB12",
+    expiresAt,
+    keyStore: "os-keychain",
+  });
+}
+
 function writeLog(lines: string[]): void {
   mkdirSync(dirname(logPath), { recursive: true });
   writeFileSync(logPath, lines.map(line => `${line}\n`).join(""));
@@ -262,7 +274,10 @@ describe("agent-intent wait", () => {
   });
 
   it("fails with listener_exited and the listener's last logged error when no listener runs", async () => {
+    const profile = pendingProfile();
+    profileReads = [profile];
     writeLog([
+      pendingLogLine(profile.enrollmentExpiresAt),
       JSON.stringify({ ok: false, error: { message: "first error" } }),
       "a crash trace",
       JSON.stringify({
@@ -284,6 +299,20 @@ describe("agent-intent wait", () => {
         ),
       },
     });
+  });
+
+  it("quotes no error from a log an earlier enrollment of a reused profile id left", async () => {
+    // A plain (not --detach) enroll leaves the log of an earlier --detach run in place.
+    writeLog([
+      pendingLogLine("2026-01-01T00:00:00.000Z"),
+      JSON.stringify({ ok: false, error: { message: "stale error" } }),
+    ]);
+
+    const { code, line } = await runWaitJson(stdout);
+
+    expect(code).toBe(1);
+    expect(line).toMatchObject({ error: { code: "listener_exited" } });
+    expect(line).not.toMatchObject({ error: { message: expect.stringContaining("last error") } });
   });
 
   it("fails with listener_exited when the lock names a dead process", async () => {

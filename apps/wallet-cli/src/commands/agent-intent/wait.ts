@@ -30,28 +30,35 @@ const LISTENER_EXPIRY_GRACE_MS = 60_000;
 // todo: fixed 10 min cap, store the listener's start/expiry if prompts take longer
 const LISTENER_STARTING_MAX_MS = 10 * 60_000;
 
-/** The message of the last error envelope the listener logged, if any. */
-function lastLoggedError(logPath: string): string | undefined {
+/** The pending line of the profile's current enrollment, if `line` is it. Matched on the expiry
+ * too: a plain `enroll` of a reused profile id leaves an earlier enrollment's log. */
+function currentPendingLine(line: Record<string, unknown>, profile: AgentIntentProfileMeta) {
+  const pending = PendingLineSchema.safeParse(line);
+  return pending.success &&
+    pending.data.profileId === profile.profileId &&
+    pending.data.expiresAt === profile.enrollmentExpiresAt
+    ? pending.data
+    : undefined;
+}
+
+/** The message of the last error envelope the listener logged after the current enrollment's
+ * pending line, if any. */
+function lastLoggedError(logPath: string, profile: AgentIntentProfileMeta): string | undefined {
   const lines = readLogJsonLines(logPath);
-  for (let i = lines.length - 1; i >= 0; i--) {
+  const start = lines.findIndex(line => currentPendingLine(line, profile));
+  if (start === -1) return undefined;
+  for (let i = lines.length - 1; i > start; i--) {
     const failure = ErrorLineSchema.safeParse(lines[i]);
     if (failure.success) return failure.data.error.message;
   }
   return undefined;
 }
 
-/** The enrollment link from the listener's log, while the log still has its pending line. Matched
- * on the expiry too: a plain `enroll` of a reused profile id leaves an earlier enrollment's log. */
+/** The enrollment link from the listener's log, while the log still has its pending line. */
 function loggedEnrollmentUrl(logPath: string, profile: AgentIntentProfileMeta): string | undefined {
   for (const line of readLogJsonLines(logPath)) {
-    const pending = PendingLineSchema.safeParse(line);
-    if (
-      pending.success &&
-      pending.data.profileId === profile.profileId &&
-      pending.data.expiresAt === profile.enrollmentExpiresAt
-    ) {
-      return pending.data.enrollmentUrl;
-    }
+    const pending = currentPendingLine(line, profile);
+    if (pending) return pending.enrollmentUrl;
   }
   return undefined;
 }
@@ -116,7 +123,7 @@ function assertListenerAlive(
         "new --profile id.",
     );
   }
-  const lastError = lastLoggedError(logPath);
+  const lastError = lastLoggedError(logPath, profile);
   throw new CodedCommandError(
     "listener_exited",
     `The enrollment listener of profile "${profileId}" is no longer running, so the ` +
