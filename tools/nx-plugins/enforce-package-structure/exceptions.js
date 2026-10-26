@@ -134,9 +134,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsListView: componentWaiver("R2", "R3", "R5"),
     ContactsSearchNoResults: componentWaiver("R1", "R5"),
   },
-  "features/flow/lazy-onboarding-banner": {
-    LazyOnboardingBannerView: componentWaiver("R1", "R3"),
-  },
   "features/flow/pay-balance": {
     ActionTiles: componentWaiver("R3"),
   },
