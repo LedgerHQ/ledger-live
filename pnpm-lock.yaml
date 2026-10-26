@@ -885,6 +885,9 @@ importers:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
         version: 0.1.32
+      '@ledgerhq/lumen-lint-plugin':
+        specifier: 'catalog:'
+        version: 0.1.0(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       '@nx/devkit':
         specifier: 'catalog:'
         version: 22.7.12(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
