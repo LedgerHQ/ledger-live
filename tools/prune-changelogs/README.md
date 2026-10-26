@@ -59,7 +59,3 @@ edit and every develop/main merge would conflict.
 Files are skipped, not rewritten, when they have no `# name` header, are already
 within the limit, or are so short that the footer would outweigh the entries
 removed.
-
-Pruned output is already prettier-clean, so the tool does not run prettier —
-`test/prettier-stability.test.ts` pins that property, since `changeset version`
-reformats these files on every release.
