@@ -27,7 +27,7 @@ type Host = { os: string; cpu: string };
 type Counts = Map<string, number>;
 type Mover = { name: string; deltaBytes: number; added: string[]; removed: string[] };
 
-export type SizeReport = { exceedsThreshold: boolean; markdown: string };
+export type SizeReport = { deltaBytes: number; markdown: string };
 
 function splitKey(key: string): { name: string; version: string } | null {
   const base = key.split("(", 1)[0].replace(/^\/+/, "");
@@ -249,7 +249,7 @@ const gitShow = (ref: string, path: string) => {
   }
 };
 
-const formatMb = (bytes: number) =>
+export const formatMb = (bytes: number) =>
   `${bytes >= 0 ? "+" : "−"}${(Math.abs(bytes) / 1e6).toFixed(1)} MB`;
 
 function renderMarkdown(r: {
@@ -298,12 +298,10 @@ function renderMarkdown(r: {
 }
 
 /** Throws when sizes cannot be fetched, since a delta priced at 0 would read as "no impact". */
-export async function estimateNodeModulesSizeDelta(thresholdMb: number): Promise<SizeReport> {
+export async function estimateNodeModulesSizeDelta(): Promise<SizeReport> {
   const host: Host = { os: process.platform, cpu: process.arch };
-  // CI points npm at Artifactory (jfrog-npm-auth), so sizes come from the same registry as installs
-  const registry = execFileSync("npm", ["config", "get", "registry"], { encoding: "utf8" })
-    .trim()
-    .replace(/\/$/, "");
+  // Public npm: fetch has no Artifactory token, and sizes do not depend on the install registry
+  const registry = "https://registry.npmjs.org";
 
   const baseLock = parseLockfile(gitShow(BASE, "pnpm-lock.yaml") ?? "");
   const headLock = parseLockfile(gitShow(HEAD, "pnpm-lock.yaml") ?? "");
@@ -334,7 +332,7 @@ export async function estimateNodeModulesSizeDelta(thresholdMb: number): Promise
   );
 
   return {
-    exceedsThreshold: installed.total >= thresholdMb * 1e6,
+    deltaBytes: installed.total,
     markdown: renderMarkdown({
       hostLabel: `${host.os}-${host.cpu}`,
       arch: Boolean(headArch),
