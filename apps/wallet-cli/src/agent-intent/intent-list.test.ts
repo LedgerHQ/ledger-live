@@ -163,6 +163,14 @@ describe("toIntentListEntries", () => {
     });
   });
 
+  it.each(["bitcoin", "constructor", "toString"])(
+    "has no display amount for a native send on network %p",
+    async network => {
+      const [entry] = await toIntentListEntries([record({ ...solanaSend, network })], lookups);
+      expect(entry).toMatchObject({ network, amount: "500000000", displayAmount: null });
+    },
+  );
+
   it("shows an SPL send in token units when CAL knows the mint, and base units otherwise", async () => {
     const spl = (mint: string) =>
       record({
