@@ -2,6 +2,7 @@ import React from "react";
 import { Text } from "react-native";
 import { act, render, screen } from "@tests/test-renderer";
 import { useAppAvailability } from "@features/flow-app-availability";
+import { hide as hideSplashScreen } from "expo-splash-screen";
 import { State } from "~/reducers/types";
 import { WaitForAppReady } from "../WaitForAppReady";
 
@@ -67,5 +68,22 @@ describe("WaitForAppReady", () => {
     });
 
     expect(screen.getByText("App is Ready")).toBeTruthy();
+  });
+
+  it("leaves the native splash screen to the app when the app is available", () => {
+    renderApp(true);
+    expect(hideSplashScreen).not.toHaveBeenCalled();
+  });
+
+  it("hides the native splash screen when the app is unavailable", () => {
+    mockedUseAppAvailability.mockReturnValue({ status: "unavailable", reason: "geoBlocked" });
+    renderApp(true);
+    expect(hideSplashScreen).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the native splash screen while it still waits on an unavailable app", () => {
+    mockedUseAppAvailability.mockReturnValue({ status: "unavailable", reason: "geoBlocked" });
+    renderApp(false);
+    expect(hideSplashScreen).not.toHaveBeenCalled();
   });
 });
