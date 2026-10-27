@@ -41,17 +41,21 @@ function currentPendingLine(line: Record<string, unknown>, profile: AgentIntentP
     : undefined;
 }
 
+/** The last error envelope in `lines` after index `start`, if any. */
+function lastErrorAfter(lines: Record<string, unknown>[], start: number) {
+  for (let i = lines.length - 1; i > start; i--) {
+    const failure = ErrorLineSchema.safeParse(lines[i]);
+    if (failure.success) return failure.data.error;
+  }
+  return undefined;
+}
+
 /** The message of the last error envelope the listener logged after the current enrollment's
  * pending line, if any. */
 function lastLoggedError(logPath: string, profile: AgentIntentProfileMeta): string | undefined {
   const lines = readLogJsonLines(logPath);
   const start = lines.findIndex(line => currentPendingLine(line, profile));
-  if (start === -1) return undefined;
-  for (let i = lines.length - 1; i > start; i--) {
-    const failure = ErrorLineSchema.safeParse(lines[i]);
-    if (failure.success) return failure.data.error.message;
-  }
-  return undefined;
+  return start === -1 ? undefined : lastErrorAfter(lines, start)?.message;
 }
 
 /** The enrollment link from the listener's log, while the log still has its pending line. */
@@ -75,16 +79,28 @@ function lockAgeMs(lockPath: string): number {
 
 /** Returns how long to keep polling for a profile not saved yet, or reports `enrollment-waiting`
  * at the deadline. A live listener that has not saved its profile yet (keypair, keychain unlock
- * prompt) is starting, for at most LISTENER_STARTING_MAX_MS, then stuck; with none, the profile is
- * not found. A human who answers a keychain prompt later than that is accepted as stuck too. */
+ * prompt) is starting, for at most LISTENER_STARTING_MAX_MS, then stuck. With none, the error the
+ * listener logged before its pending line is reported (e.g. a denied keychain prompt), with its own
+ * code when it has one; with no such error, the profile is not found. */
 function checkMissingProfile(
   out: CommandOutput,
   profileId: string,
   listenerPid: number | undefined,
   deadline: number,
-  lockPath: string,
 ): number | undefined {
+  const { logPath, lockPath } = enrollListenerPaths(profileId);
   if (listenerPid === undefined) {
+    // The log of the last --detach run of this id: each spawn truncates it.
+    const lines = readLogJsonLines(logPath);
+    const failure = lines.some(line => PendingLineSchema.safeParse(line).success)
+      ? undefined
+      : lastErrorAfter(lines, -1);
+    if (failure) {
+      throw new CodedCommandError(
+        failure.code ?? "listener_exited",
+        `${failure.message} Log: ${logPath}.`,
+      );
+    }
     throw new CodedCommandError(
       "profile_not_found",
       `No Agent Intent profile named "${profileId}". Run \`wallet-cli agent-intent list\` ` +
@@ -192,7 +208,7 @@ export async function pollEnrollment(
     const profile = (await Session.read()).getAgentIntentProfile(profileId);
     const waitMs = profile
       ? checkProfile(out, profile, listenerPid, deadline, logPath)
-      : checkMissingProfile(out, profileId, listenerPid, deadline, lockPath);
+      : checkMissingProfile(out, profileId, listenerPid, deadline);
     if (waitMs === undefined) return;
     await sleep(Math.min(intervalMs, waitMs));
   }

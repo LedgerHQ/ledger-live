@@ -382,9 +382,11 @@ state only and reports one of:
 - an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
   profile within 10 minutes) or `enrollment_expired`, exit 1 — the enrollment is lost: start a
   fresh one with a new `--profile` id.
-- an error with `error.code` `profile_not_found` (no profile and no listener), exit 1 — first check
-  the id with `wallet-cli agent-intent list`, and start a fresh enrollment only if the profile is
-  really absent.
+- the error a listener logged before saving the profile (e.g. `keychain_unavailable` once the
+  human denied a keychain prompt), exit 1 — handle it like the same error from `enroll`.
+- an error with `error.code` `profile_not_found` (no profile, no listener, no error in its log),
+  exit 1 — first check the id with `wallet-cli agent-intent list`, and start a fresh enrollment
+  only if the profile is really absent.
 
 If `enroll --detach` printed `enrollment-waiting` (or timed out in your tool before printing its
 line), hand the human the `enrollmentUrl`, `fingerprint` and `expiresAt` from `wait` once it reports

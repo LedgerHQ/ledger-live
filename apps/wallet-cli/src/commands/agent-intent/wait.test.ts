@@ -455,11 +455,57 @@ describe("agent-intent wait", () => {
     });
   });
 
-  it("fails with profile_not_found once a listener exits before saving its profile", async () => {
+  it("fails with the listener's own error once it logs one and exits before saving its profile", async () => {
     mkdirSync(dirname(lockPath), { recursive: true });
     const holder = Bun.spawn([process.execPath, "-e", "setInterval(() => {}, 1000)"]);
     writeFileSync(lockPath, `${holder.pid}:a1b2c3d4e5f60718`);
-    // The listener fails (keypair, keychain) and exits after this run read its lock.
+    // The human denies the keychain prompt: the listener logs its error and exits after this run
+    // read its lock.
+    onFirstSessionRead = async () => {
+      writeLog([
+        "a banner on stderr",
+        JSON.stringify({
+          ok: false,
+          error: { code: "keychain_unavailable", message: "The OS keychain refused the write." },
+        }),
+      ]);
+      holder.kill();
+      await holder.exited;
+    };
+    profileReads = [undefined];
+
+    const { code, line } = await pollWaitJson(stdout);
+
+    expect(code).toBe(1);
+    expect(line).toMatchObject({
+      error: {
+        code: "keychain_unavailable",
+        message: `The OS keychain refused the write. Log: ${logPath}.`,
+      },
+    });
+    expect(sessionReadCalls).toBe(2);
+  });
+
+  it("fails with listener_exited when the listener logged an error without a code before saving its profile", async () => {
+    writeLog([JSON.stringify({ ok: false, error: { message: "Could not write the key file." } })]);
+    profileReads = [undefined];
+
+    const { code, line } = await runWaitJson(stdout);
+
+    expect(code).toBe(1);
+    expect(line).toMatchObject({
+      error: {
+        code: "listener_exited",
+        message: `Could not write the key file. Log: ${logPath}.`,
+      },
+    });
+  });
+
+  it("fails with profile_not_found once a listener exits before saving its profile without logging an error", async () => {
+    mkdirSync(dirname(lockPath), { recursive: true });
+    const holder = Bun.spawn([process.execPath, "-e", "setInterval(() => {}, 1000)"]);
+    writeFileSync(lockPath, `${holder.pid}:a1b2c3d4e5f60718`);
+    // The listener is killed after this run read its lock.
     onFirstSessionRead = async () => {
       holder.kill();
       await holder.exited;
@@ -472,6 +518,20 @@ describe("agent-intent wait", () => {
     expect(line).toMatchObject({ error: { code: "profile_not_found" } });
     expect(line).not.toMatchObject({ error: { message: expect.stringContaining("not saved") } });
     expect(sessionReadCalls).toBe(2);
+  });
+
+  it("fails with profile_not_found when the log has an error after a pending line", async () => {
+    // A profile removed after its enrollment: the error is about that enrollment, not a startup.
+    writeLog([
+      pendingLogLine("2026-01-01T00:00:00.000Z"),
+      JSON.stringify({ ok: false, error: { code: "some_code", message: "boom" } }),
+    ]);
+    profileReads = [undefined];
+
+    const { code, line } = await runWaitJson(stdout);
+
+    expect(code).toBe(1);
+    expect(line).toMatchObject({ error: { code: "profile_not_found" } });
   });
 
   it("fails with profile_not_found for an unknown profile with no listener", async () => {
