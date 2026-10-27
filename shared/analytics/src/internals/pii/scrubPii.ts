@@ -124,7 +124,10 @@ function scrubAt(value: unknown, path: string, depth: number, findings: PiiFindi
     return scrubbed.value;
   }
 
-  if (depth >= MAX_DEPTH) return value;
+  if (depth >= MAX_DEPTH && isObject(value)) {
+    findings.push({ path, kind: "max_depth" });
+    return redacted("max_depth");
+  }
 
   if (Array.isArray(value)) {
     let changed = false;

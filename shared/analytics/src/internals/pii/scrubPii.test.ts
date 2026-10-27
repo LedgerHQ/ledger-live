@@ -165,10 +165,24 @@ describe("scrubPii", () => {
     expect(findings).toEqual([{ path: "recipient.to", kind: "evm_address" }]);
   });
 
-  it("stops at a maximum depth so that circular objects do not loop", () => {
+  it("redacts what is below the maximum depth", () => {
+    let nested: Record<string, unknown> = { address: EVM_ADDRESS };
+    for (let level = 0; level < 8; level++) nested = { nested };
+
+    const { value, findings } = scrubPii(nested);
+
+    expect(JSON.stringify(value)).not.toContain(EVM_ADDRESS);
+    expect(findings).toEqual([
+      { path: "nested.nested.nested.nested.nested.nested.nested.nested", kind: "max_depth" },
+    ]);
+  });
+
+  it("stops at the maximum depth so that circular objects do not loop", () => {
     const circular: Record<string, unknown> = { name: "loop" };
     circular.self = circular;
 
-    expect(() => scrubPii(circular)).not.toThrow();
+    expect(scrubPii(circular).findings).toEqual([
+      { path: "self.self.self.self.self.self.self.self", kind: "max_depth" },
+    ]);
   });
 });

@@ -22,6 +22,7 @@ export type PiiKind =
   | "extended_public_key"
   | "bech32_address"
   | "email"
+  | "max_depth"
   | "sensitive_key";
 
 export type PiiFinding = {
