@@ -2,13 +2,14 @@ import { by, element } from "detox";
 import type { ElementAttributes, NativeElement, NativeMatcher } from "detox/detox";
 import { NativeElementHelpers } from "@e2e/helpers/elementHelpers";
 import { TIMEOUT } from "@e2e/utils/timeouts";
+import type { ElementHandle } from "./elementHandle";
 
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
  * To act without waiting, use {@link NativeHandle.raw}. Build one with {@link byId} or {@link byText}.
  */
-export class NativeHandle {
+export class NativeHandle implements ElementHandle {
   private readonly matcher: NativeMatcher;
   private readonly description: string;
 

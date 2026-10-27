@@ -530,9 +530,14 @@ export const WebElementHelpers = {
   },
 
   async getWebElementText(id: string, options?: { index?: number }) {
-    const elem = WebElementHelpers.getWebElementByTestId(id, options);
-    await detoxExpect(elem).toExist();
-    return await elem.runScript(el => (el.innerText || el.textContent || "").trim());
+    return WebElementHelpers.getTextByWebElement(
+      WebElementHelpers.getWebElementByTestId(id, options),
+    );
+  },
+
+  async getTextByWebElement(webElement: WebElement): Promise<string> {
+    await detoxExpect(webElement).toExist();
+    return await webElement.runScript(el => (el.innerText || el.textContent || "").trim());
   },
 
   getWebElementById(id: string, index = 0): WebElement {
@@ -641,8 +646,12 @@ export const WebElementHelpers = {
     const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
       throwOnTimeout: true,
     });
+    await WebElementHelpers.typeTextByWebElement(webElement!, text);
+  },
+
+  async typeTextByWebElement(webElement: WebElement, text: string): Promise<void> {
     await withHardTimeout(
-      webElement!.runScript(
+      webElement.runScript(
         (el: HTMLInputElement, val: string) => {
           const setValue = Object.getOwnPropertyDescriptor(
             HTMLInputElement.prototype,
