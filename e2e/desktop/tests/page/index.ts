@@ -59,8 +59,15 @@ import { CryptoAssetsPage } from "tests/page/cryptoAssets.page";
 import { TopBarSearch } from "tests/page/topBarSearch.page";
 import { ContactsPage } from "tests/page/contacts.page";
 
+type ApplicationOptions = {
+  page: Page;
+  electronApp?: ElectronApplication;
+  webviewCollector?: PageLogCollector;
+};
+
 export class Application extends PageHolder {
-  constructor(page: Page, electronApp?: ElectronApplication, webviewCollector?: PageLogCollector) {
+  constructor(options: ApplicationOptions) {
+    const { page, electronApp, webviewCollector } = options;
     super(page, electronApp);
     this.speculos = new SpeculosPage(page, webviewCollector);
   }

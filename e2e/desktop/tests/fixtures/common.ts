@@ -127,7 +127,7 @@ export const test = base.extend<TestFixtures>({
   ],
 
   app: async ({ page, electronApp, webviewCollector }, use) => {
-    const app = new Application(page, electronApp, webviewCollector);
+    const app = new Application({ page, electronApp, webviewCollector });
     await use(app);
   },
 

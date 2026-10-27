@@ -91,7 +91,7 @@ export class SpeculosPage extends AppPage {
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     const scenario = formatSwapScenario(swap, amount);
     try {
-      await verifyAmountsAndAcceptSwap(swap, amount, this.swapInitFailed);
+      await verifyAmountsAndAcceptSwap(swap, amount, { giveUpWhen: this.swapInitFailed });
     } catch (error) {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
@@ -104,17 +104,14 @@ export class SpeculosPage extends AppPage {
     amount: string,
     errorMessage: string | null,
   ) {
-    await verifyAmountsAndAcceptSwapForDifferentSeed(
-      swap,
-      amount,
-      errorMessage,
-      this.swapInitFailed,
-    );
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage, {
+      giveUpWhen: this.swapInitFailed,
+    });
   }
 
   @step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-    await verifyAmountsAndRejectSwap(swap, amount, this.swapInitFailed);
+    await verifyAmountsAndRejectSwap(swap, amount, { giveUpWhen: this.swapInitFailed });
   }
 
   @step("Activate expert mode")
