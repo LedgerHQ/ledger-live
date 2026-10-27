@@ -16,7 +16,7 @@ Read relevant skills before entering their phase:
 - `create-changeset` before changesets; `create-pr` for draft PRs.
 - `ldls-native` or `ldls-web` before Lumen UI work.
 - `structure-flow` before placing any code; `mvvm-architecture` for the app side in `apps/*/src/mvvm/`.
-- `run-tests` for validation.
+- `validate-changes` for validation.
 
 ## Workflow
 
@@ -24,7 +24,7 @@ Read relevant skills before entering their phase:
 2. Before coding, produce a compact matrix: id/link, area, owning packages, UI impact, tests/screenshots, dependencies, shared work, blockers. Ask consolidated questions for missing mockups, conflicts, unclear copy, APIs, analytics, navigation, flags, and edge cases.
 3. Branch via `git-conventions`. Start unrelated tickets from updated `develop`; chain only for real dependencies, target the previous branch, and state it in the PR. For shared groundwork, prefer one small foundation PR plus dependent PRs.
 4. For each ticket/group, run full `feature-dev`, starting from the agreed placement. Treat tickets and mockups as source of truth; ask on conflicts; use Lumen components; add only English source translations; keep shared utilities owned and justified.
-5. Validate affected scope with lint, relevant tests, typecheck, and screenshots or manual visual checks for UI. Add a changeset with exact package names; use `create-pr` for draft PR and Slack message.
+5. Validate affected scope with `validate-changes`, plus screenshots or manual visual checks for UI. Add a changeset with exact package names; use `create-pr` for draft PR and Slack message.
 6. Handoff each PR with ticket, branch, target, URL, changeset, validation results, screenshots/status, risks, and follow-ups. After the batch, summarize dependency graph and review order.
 
 ## Stop When
