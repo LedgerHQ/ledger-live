@@ -1,6 +1,6 @@
 # ADR: One props contract per public universal component
 
-**Status:** Proposed
+**Status:** Accepted (2026-10-20)
 
 ## Context
 
@@ -191,7 +191,7 @@ flowchart TD
 - It treats as a component every PascalCase named export of a `.tsx` module that is a function: a declaration, an arrow function, or a `memo(...)` or `forwardRef(...)` call. A `createContext` result is not a function and is skipped.
 - Within R3, a prop whose JSDoc carries `@platform` must be optional and typed `boolean`, `number`, `string` or a union of string literals. The parser reads JSDoc tags (`ts.getJSDocTags`) without a type checker. An untagged platform-only prop looks like any other prop and passes; review catches it, as it catches the "outnumber" heuristic above.
 - For R5, the rule also resolves each platform entry and collects the components it exports. It reports a component exported from both a universal entry and a platform entry, and a platform entry that resolves to a module of a universal entry or to a module without its platform's suffix. Components of platform entries skip R1 to R4.
-- The import side of R5 belongs to the `no-platform-suffix` rule of `@support/lint-rules`, which the platform-suffix cleanup extends to subpaths. It allows `/native` subpaths of `@features/*` and `@shared/*` packages only from native code (a `.native` file, the mobile app, a native-only package), the mirror for `/web`, and reports every other import. Without it, a web file that imports `@shared/lottie/native` puts `lottie-react-native` in the desktop bundle.
+- The import side of R5 belongs to the `suffix-imports/no-platform-suffix` rule of `@support/lint`. It allows `/native` subpaths of `@features/*` and `@shared/*` packages only from native code (a `.native` file, the mobile app, a native-only package), the mirror for `/web`, and reports every other import. Without it, a web file that imports `@shared/lottie/native` puts `lottie-react-native` in the desktop bundle.
 - The target's `inputs` widen from `src/**/index*` to `src/**/*.{ts,tsx}` and `package.json`, so a change to a component file invalidates the cache.
 - Waivers live in `exceptions.js`, keyed by package and component. Each one carries an exit condition, which the plugin's existing test already requires of every exception.
 
@@ -211,7 +211,7 @@ The linter checks the convention; the two typecheck passes (`tsconfig.web.json`,
 ## Consequences
 
 - The linter lands with waivers for every current violation, keyed by package and component, plus the contracts that pass every other rule but use a gesture name, such as `onPress` in [ActionTiles/types.ts](https://github.com/LedgerHQ/ledger-live/blob/d5fe20dc9d7d01ff185ec2ee84a4a60709096329/features/flow/pay-balance/src/components/ActionTiles/types.ts#L6).
-- One ticket per package removes the waivers. The contacts packages go first: `features/flow/contacts`, the `flow-contacts-*` packages and `features/platform/contacts` hold most of them.
+- One ticket per package removes the waivers. [exceptions.js](../../tools/nx-plugins/enforce-package-structure/exceptions.js) lists the ones left, so its component waivers are the remaining debt. The contacts packages go first: `features/flow/contacts`, the `flow-contacts-*` packages and `features/platform/contacts` hold most of them.
 - [docs/tsconfig.md](../tsconfig.md) changes: platform-specific prop types stay inside an implementation and never reach a contract.
 - Each migration ticket checks its platform-only props before tagging them. A `bottomInset` that the app fills from the safe area moves into the native implementation, as the pay packages already do, and leaves the contract.
 - The eight packages whose `./native` subpath repeats their universal entry, the seven contacts packages and `shared/ui-info-state`, start with an R5 waiver. Their importers are native code, `.native` files or the native-only `app-*` packages, so each package either drops the subpath and its importers use the universal entry, or narrows the subpath to native-only components.
@@ -258,6 +258,14 @@ flowchart LR
 ## Authoring a universal component
 
 Start from the three shapes in Decision. A universal component is the default; a platform component follows the next section.
+
+The `universal-component` generator writes the starting point of steps 1, 4 and 7: a contract with a `testID` prop, both implementations, a test per platform, and the two barrel lines. It adds them to the barrel the entries already re-export, or to the entries themselves, and never creates a barrel. It refuses a package that is not dual-platform and a name that an entry already exports.
+
+```sh
+pnpm exec nx g @ledgerhq/generators:universal-component ContactsButton --project features/flow/contacts --directory components/ContactsButton
+```
+
+`--directory` is relative to `src/` and defaults to it. Then fill in the props and the two implementations.
 
 1. Write the contract `X.types.ts` next to the implementations, with one exported props type and neutral types only.
 2. Keep platform quirks inside the implementation that has them: a native sheet reads its bottom inset with `useBottomSheetBottomInset()` or `useSafeAreaInsets()` instead of taking a prop. Add a platform-only prop to the contract only when the caller alone knows its value, as an optional primitive tagged `@platform native` or `@platform web`.
@@ -312,6 +320,12 @@ export function ContactsSearch({ query, onSearchQueryChange, bottomOffset = 0, r
 R3 applies to the contract only. `TextInput`, `View` and `HTMLInputElement` appear in the implementations, where they belong.
 
 ## Authoring a platform component
+
+The same generator writes a platform component with `--platform-entry web` or `--platform-entry native`: the component, its props type in the same module, and a test, in `src/web/` or `src/native/` unless `--directory` says otherwise. It re-exports the component from the module that `./web` or `./native` points at, or creates `src/web/index.web.ts` or `src/native/index.native.ts` and adds the subpath to `package.json#exports`. It refuses a component that `.` already exports (R5).
+
+```sh
+pnpm exec nx g @ledgerhq/generators:universal-component WalletPassPreview --project features/flow/pay-card-widget --platform-entry native --directory components/WalletPassPreview
+```
 
 1. Check the shape first. A prop that is awkward to make neutral, or a quirk the implementation can absorb, does not make a component a platform component.
 2. Point `./native`, `./web` or both at a module of their own that carries the platform suffix, so the other platform's typecheck never compiles it. Never point a subpath at the module that the universal entry resolves to.

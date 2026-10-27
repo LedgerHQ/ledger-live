@@ -63,13 +63,16 @@ function IconButton({ icon: _icon, size: _size, ...props }) {
 // Text passed through props (Banner's title/description, Tag's label) has to be rendered as
 // children to be queryable, but the props must stay on the node too: consumer tests assert on
 // them (e.g. `toHaveAttribute("label", …)`), which the generic stub below supported.
-function Banner({ children, title, description, ...props }) {
+// Banner actions are elements: they are rendered, like in the native stub, not set as attributes.
+function Banner({ children, title, description, primaryAction, secondaryAction, ...props }) {
   return React.createElement(
     "div",
     { ...props, title, description },
     title === undefined ? null : React.createElement("span", undefined, title),
     description === undefined ? null : React.createElement("span", undefined, description),
     children,
+    primaryAction,
+    secondaryAction,
   );
 }
 

@@ -1,16 +1,22 @@
-import type { ComponentProps, ReactNode } from "react";
-import type { Spot } from "@ledgerhq/lumen-ui-react";
-import type { DialogBackgroundTone } from "./background/DialogBackgroundContext.web";
+import type { ComponentType, ReactNode } from "react";
 import type { InfoStateBaseProps } from "./sharedTypes";
 
-export * from "./sharedTypes";
+/** Status tone a custom spot can tint its enclosing dialog or bottom sheet with. */
+export type InfoStateBackgroundTone = "error" | "info" | "success";
 
-type LumenSpotProps = ComponentProps<typeof Spot>;
+/** Diameter of the custom spot, in px. */
+export type InfoStateSpotSize = 32 | 40 | 48 | 56 | 72;
 
-/** Props forwarded to the Lumen Spot for the custom spot preset (web). */
-export type InfoStateSpotProps = Pick<LumenSpotProps, "icon" | "size">;
+/** Props forwarded to the Lumen Spot for the custom spot preset. */
+export type InfoStateSpotProps = Readonly<{
+  /** Lumen symbol of the caller's platform, rendered inside the spot. */
+  icon: ComponentType;
 
-/** Props for the web InfoState layout. */
+  /** Defaults to 72. */
+  size?: InfoStateSpotSize;
+}>;
+
+/** Props for the InfoState layout. */
 export type InfoStateProps =
   | (InfoStateBaseProps & {
       /** Renders a caller-provided illustration in a 208px visual slot. */
@@ -23,11 +29,11 @@ export type InfoStateProps =
       spotProps: InfoStateSpotProps;
 
       /**
-       * Tints the dialog with a status gradient. Only the custom spot preset can opt
+       * Tints the enclosing dialog or bottom sheet. Only the custom spot preset can opt
        * in: the status presets already carry their own tone and the remaining presets
        * draw none.
        */
-      backgroundTone?: DialogBackgroundTone;
+      backgroundTone?: InfoStateBackgroundTone;
     })
   | (InfoStateBaseProps & {
       /** Renders a success status Spot. */

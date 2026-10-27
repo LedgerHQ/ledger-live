@@ -272,4 +272,31 @@ describe("usePerpsSignViewModel", () => {
 
     expect(onCancel).not.toHaveBeenCalled();
   });
+
+  it("should apply the top safe area inset while the header is hidden", () => {
+    const props = createNavigationProps();
+    const { result } = renderHook(() => usePerpsSignViewModel(props));
+
+    expect(result.current.safeAreaEdges).toEqual(["top", "bottom"]);
+  });
+
+  it("should drop the top safe area inset while SelectDevice2 shows the header", () => {
+    const props = createNavigationProps();
+    const { result } = renderHook(() => usePerpsSignViewModel(props));
+
+    act(() => {
+      result.current.requestToSetHeaderOptions({
+        type: "set",
+        options: { headerLeft: () => null, headerRight: () => null },
+      });
+    });
+
+    expect(result.current.safeAreaEdges).toEqual(["bottom"]);
+
+    act(() => {
+      result.current.requestToSetHeaderOptions({ type: "clean" });
+    });
+
+    expect(result.current.safeAreaEdges).toEqual(["top", "bottom"]);
+  });
 });

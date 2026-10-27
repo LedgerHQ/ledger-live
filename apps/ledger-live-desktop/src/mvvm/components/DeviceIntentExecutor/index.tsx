@@ -12,7 +12,7 @@ import {
   type SourceFlow,
 } from "@ledgerhq/live-dmk-shared";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { DeviceDisconnected } from "./components/DeviceDisconnected";
 import { IntentError } from "./components/IntentError";
 import { InvalidOperation } from "./components/InvalidOperation";
