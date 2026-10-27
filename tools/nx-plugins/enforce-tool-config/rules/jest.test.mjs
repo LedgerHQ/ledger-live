@@ -490,11 +490,18 @@ function assertSameNames(listed, expected, what) {
   );
 }
 
+/**
+ * @param {string} text
+ * @returns {string[]} the names written as inline code in `text`
+ */
+function names(text) {
+  return [...text.matchAll(/`([A-Za-z]+)`/g)].map(match => match[1]);
+}
+
 test("the README lists the owned keys and the options of each factory the rule holds", () => {
   const lines = fs
     .readFileSync(path.join(REPOSITORY, "support/jest/README.md"), "utf8")
     .split("\n");
-  const names = text => [...text.matchAll(/`([A-Za-z]+)`/g)].map(match => match[1]);
 
   assertSameNames(
     names(readmeBlock(lines, "Override keys a package owns").join(" ")),
