@@ -128,6 +128,12 @@ review checks them.
   `./native` subpath that points at a suffixed module of its own, and is never also exported from a
   universal entry. Only code of that platform imports it.
 
+Scaffold a new one instead of writing it by hand:
+`pnpm exec nx g @ledgerhq/generators:universal-component <Name> --project <package root> [--directory <dir under src>]`
+writes the contract, both implementations, a test per platform and the barrel lines, without a new
+barrel. `--platform-entry web` or `--platform-entry native` writes a platform component behind
+`./web` or `./native` instead. See "Authoring a universal component" in the ADR.
+
 **Facade is not proxy.** Wrapping a legacy lib behind a typed API — as `shared/env` does over
 `@ledgerhq/live-env` — is legitimate: it owns real code and holds a declared
 [`BOUNDARY_EXCEPTION`](../../../tools/nx-plugins/enforce-boundaries/constraints.js). Keeping that

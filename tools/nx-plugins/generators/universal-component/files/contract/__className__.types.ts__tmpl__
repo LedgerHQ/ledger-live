@@ -1,0 +1,4 @@
+export type <%= className %>Props = Readonly<{
+  // See "Authoring a universal component" in docs/adr/universal-components.md.
+  testID?: string;
+}>;

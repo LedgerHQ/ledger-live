@@ -13,6 +13,7 @@
     "@nx/devkit": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "typescript": "catalog:"
   }
 }

@@ -882,10 +882,10 @@ importers:
         version: 0.1.1(@ledgerhq/lumen-design-core@0.1.34)(@typescript-eslint/parser@8.48.1(@typescript/typescript6@6.0.2)(eslint@8.57.0))(@typescript/typescript6@6.0.2)(eslint@8.57.0)(oxlint@1.82.0)(tailwindcss@4.2.2)
       '@nx/devkit':
         specifier: 'catalog:'
-        version: 22.7.12(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
+        version: 22.7.12(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))
       '@nx/s3-cache':
         specifier: 'catalog:'
-        version: 5.0.7(debug@4.4.3)(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
+        version: 5.0.7(debug@4.4.3)(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))
       '@react-native/babel-plugin-codegen':
         specifier: 'catalog:'
         version: 0.81.6(@babel/core@7.28.5)
@@ -898,6 +898,9 @@ importers:
       '@support/tsconfig':
         specifier: workspace:*
         version: link:support/tsconfig
+      '@swc-node/register':
+        specifier: 1.12.1
+        version: 1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -921,7 +924,7 @@ importers:
         version: 6.32.2
       nx:
         specifier: 'catalog:'
-        version: 22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23))
+        version: 22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23))
       nyc:
         specifier: 15.1.0
         version: 15.1.0
@@ -21354,7 +21357,7 @@ importers:
     devDependencies:
       '@nx/devkit':
         specifier: 'catalog:'
-        version: 22.7.12(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
+        version: 22.7.12(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -21370,6 +21373,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   tools/prune-changelogs:
     devDependencies:
@@ -24739,6 +24745,92 @@ packages:
 
   '@noble/secp256k1@1.7.2':
     resolution: {integrity: sha512-/qzwYl5eFLH8OWIecQWM31qld2g1NfjgylK+TNhqtaUKP37Nm+Y+z30Fjhw0Ct8p9yCQEm2N3W/AckdIb3SMcQ==}
+
+  '@node-rs/xxhash-android-arm-eabi@1.7.8':
+    resolution: {integrity: sha512-dOwbmnDzULc5uRgbIvcrxDa7vGdk51GQVREcY98DdxTBd0lomRg/gqAR9ny/S533cD5QTRSvrK+q8KEJMqoG4w==}
+    engines: {node: '>= 12'}
+    cpu: [arm]
+    os: [android]
+
+  '@node-rs/xxhash-android-arm64@1.7.8':
+    resolution: {integrity: sha512-djHN4MBgYkD0uPIGM+IyWrO5aT4vEdsO5bzNxV2+NVl7r1Hdk3PB7GIv0BOKV1C+fkBGXHYJ5xezlOEY1LFDzA==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [android]
+
+  '@node-rs/xxhash-darwin-arm64@1.7.8':
+    resolution: {integrity: sha512-cwhxfUesdIPesdN23VSwh7Ypx9Kx4gvVmH3v6UINADcavnBeizdWRXXefRzdckDphUM2y8WGLko9WMM/86KHYQ==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@node-rs/xxhash-darwin-x64@1.7.8':
+    resolution: {integrity: sha512-YO1x98WbSnMdkaiJiKojnMxNaNxg2QrnHz7W9U4BTSw/IcvvpXGFNxNaSm0FYtO6lZAlfvQpiDr4XGXFXjJtJw==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@node-rs/xxhash-freebsd-x64@1.7.8':
+    resolution: {integrity: sha512-MDsskeigVvvGNEm7G9avNKyHeoqgzBCaDo6KLYsi0T/nEBih+xybVIjZ57+GPxTnpUbet8SrcmU64DgAQC5Rnw==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@node-rs/xxhash-linux-arm-gnueabihf@1.7.8':
+    resolution: {integrity: sha512-ld25nCGEGedwnmn2YgpFbgQNdKnvdQXDeqrwqMuORIbRhtc+QOm1dlcbq+tULN2Vii9G0bcpb6i1lPTEv5ejyQ==}
+    engines: {node: '>= 12'}
+    cpu: [arm]
+    os: [linux]
+
+  '@node-rs/xxhash-linux-arm64-gnu@1.7.8':
+    resolution: {integrity: sha512-Z9YH6BQ1Zywk/nl0j9MG3jRBsIYOed6rSZAGTMT4p924wo9nHll39DZ9hd43kksofInkXOv3WMemzDy7zQ6QFw==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@node-rs/xxhash-linux-arm64-musl@1.7.8':
+    resolution: {integrity: sha512-L847azl5081s2QEsX8KqQF8sJAYw1W7j7rpBQH4l5IBC2/kITgdXTNVmPM/MrDHXI2OumKCtRVoNTVuEP8zYVg==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@node-rs/xxhash-linux-x64-gnu@1.7.8':
+    resolution: {integrity: sha512-tWvNBiFu73/gbZ57uU/3T/3tJ/q+NFAYQj06hsORt6qtllGLz0wJ7azYG/ZlJBfijJA0K7fT+3rThzKJlIdkZg==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@node-rs/xxhash-linux-x64-musl@1.7.8':
+    resolution: {integrity: sha512-HW29+JFyWbBHYzD/SfwkD9xxj5k2VH/VqG+Ltn9JH0PlJHvLQtG4IgXxLPboF9e6Kmwb1fjjBJn46GdT8hxA1w==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@node-rs/xxhash-win32-arm64-msvc@1.7.8':
+    resolution: {integrity: sha512-3vf7hmj1LVOfrUXMfRZI67G9h6fNjWg39vmgbD/IQdC/CQ/39aAXvnNmOY0MJNEnVixml668CCiyRccll0ZiyQ==}
+    engines: {node: '>= 12'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@node-rs/xxhash-win32-ia32-msvc@1.7.8':
+    resolution: {integrity: sha512-1yqUghB7/Megd3AhDO5KkOi/SiVtK+l0ERunxOTiDLmxvO3Vs4nmb3IW2EmH6mNPB732YYN8I2Y4ZQi3eJRt9Q==}
+    engines: {node: '>= 12'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@node-rs/xxhash-win32-x64-msvc@1.7.8':
+    resolution: {integrity: sha512-gccfpBxTsIAtwx23lvw40j+8moYQWBjc9/1ainrRBSke9HV4Oo8d4xQLgcR1wUXBhwE4mtK/f0T4EAE2oshOkg==}
+    engines: {node: '>= 12'}
+    cpu: [x64]
+    os: [win32]
+
+  '@node-rs/xxhash@1.7.8':
+    resolution: {integrity: sha512-sXiVUI18qaCei5Y5qXty7xfEKrk4Vx89qKNZkG2sGWZG/iTThO3Xmnp5IjQpXCy941IksVDcl41HhvWRuhDLyw==}
+    engines: {node: '>= 12'}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -28350,6 +28442,22 @@ packages:
     engines: {node: '>=14'}
     peerDependencies:
       '@svgr/core': '*'
+
+  '@swc-node/core@1.15.0':
+    resolution: {integrity: sha512-WAerrrl087WgenB92XG4Th2t0NQFfMNLYSe0sW2cEMMqM/LQmP4rozsDJl0vuzTrbewjpKQryxFXI+aYig/dBg==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      '@swc/core': '>= 1.13.3'
+      '@swc/types': '>= 0.1'
+
+  '@swc-node/register@1.12.1':
+    resolution: {integrity: sha512-t6t+0bDos+bj0+jcSqKl7+ys/i1an5cEViC0LuIskJFSHONX871nXN8j+gxdKVOgCCpjs0buXUPNnp/0DaV4EQ==}
+    peerDependencies:
+      '@swc/core': '>= 1.4.13'
+      typescript: '>= 4.3 < 7'
+
+  '@swc-node/sourcemap-support@0.6.1':
+    resolution: {integrity: sha512-ovltDVH5QpdHXZkW138vG4+dgcNsxfwxHVoV6BtmTbz2KKl1A8ZSlbdtxzzfNjCjbpayda8Us9eMtcHobm38dA==}
 
   '@swc/core-darwin-arm64@1.15.11':
     resolution: {integrity: sha512-QoIupRWVH8AF1TgxYyeA5nS18dtqMuxNwchjBIwJo3RdwLEFiJq6onOx9JAxHtuPwUkIVuU2Xbp+jCJ7Vzmgtg==}
@@ -43737,6 +43845,61 @@ snapshots:
 
   '@noble/secp256k1@1.7.2': {}
 
+  '@node-rs/xxhash-android-arm-eabi@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-android-arm64@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-darwin-arm64@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-darwin-x64@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-freebsd-x64@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-linux-arm-gnueabihf@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-linux-arm64-gnu@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-linux-arm64-musl@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-linux-x64-gnu@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-linux-x64-musl@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-win32-arm64-msvc@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-win32-ia32-msvc@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash-win32-x64-msvc@1.7.8':
+    optional: true
+
+  '@node-rs/xxhash@1.7.8':
+    optionalDependencies:
+      '@node-rs/xxhash-android-arm-eabi': 1.7.8
+      '@node-rs/xxhash-android-arm64': 1.7.8
+      '@node-rs/xxhash-darwin-arm64': 1.7.8
+      '@node-rs/xxhash-darwin-x64': 1.7.8
+      '@node-rs/xxhash-freebsd-x64': 1.7.8
+      '@node-rs/xxhash-linux-arm-gnueabihf': 1.7.8
+      '@node-rs/xxhash-linux-arm64-gnu': 1.7.8
+      '@node-rs/xxhash-linux-arm64-musl': 1.7.8
+      '@node-rs/xxhash-linux-x64-gnu': 1.7.8
+      '@node-rs/xxhash-linux-x64-musl': 1.7.8
+      '@node-rs/xxhash-win32-arm64-msvc': 1.7.8
+      '@node-rs/xxhash-win32-ia32-msvc': 1.7.8
+      '@node-rs/xxhash-win32-x64-msvc': 1.7.8
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -43749,24 +43912,24 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
 
-  '@nx/devkit@22.6.5(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))':
+  '@nx/devkit@22.6.5(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))':
     dependencies:
       '@zkochan/js-yaml': 0.0.7
       ejs: 5.0.1
       enquirer: 2.3.6
       minimatch: 10.2.4
-      nx: 22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      nx: 22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23))
       semver: 7.8.1
       tslib: 2.6.2
       yargs-parser: 21.1.1
 
-  '@nx/devkit@22.7.12(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))':
+  '@nx/devkit@22.7.12(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))':
     dependencies:
       '@zkochan/js-yaml': 0.0.7
       ejs: 5.0.1
       enquirer: 2.3.6
       minimatch: 10.2.5
-      nx: 22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      nx: 22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23))
       semver: 7.8.1
       tslib: 2.6.2
       yargs-parser: 21.1.1
@@ -43849,16 +44012,16 @@ snapshots:
   '@nx/nx-win32-x64-msvc@22.7.12':
     optional: true
 
-  '@nx/s3-cache@5.0.7(debug@4.4.3)(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))':
+  '@nx/s3-cache@5.0.7(debug@4.4.3)(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))':
     dependencies:
       '@aws-sdk/client-s3': 3.1000.0
       '@aws-sdk/credential-providers': 3.1000.0
       '@aws-sdk/lib-storage': 3.1000.0(@aws-sdk/client-s3@3.1000.0)
-      '@nx/devkit': 22.6.5(nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)))
+      '@nx/devkit': 22.6.5(nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)))
       '@nx/key': 5.0.7(debug@4.4.3)
       '@smithy/property-provider': 4.2.12
       enquirer: 2.4.1
-      nx: 22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      nx: 22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23))
       semver: 7.5.4
       tar-stream: 3.1.7
     transitivePeerDependencies:
@@ -47863,6 +48026,32 @@ snapshots:
       svgo: 3.3.5
     transitivePeerDependencies:
       - typescript
+
+  '@swc-node/core@1.15.0(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)':
+    dependencies:
+      '@swc/core': 1.15.11(@swc/helpers@0.5.23)
+      '@swc/types': 0.1.25
+
+  '@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2)':
+    dependencies:
+      '@node-rs/xxhash': 1.7.8
+      '@swc-node/core': 1.15.0(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)
+      '@swc-node/sourcemap-support': 0.6.1
+      '@swc/core': 1.15.11(@swc/helpers@0.5.23)
+      colorette: 2.0.20
+      debug: 4.4.3
+      fast-json-stable-stringify: 2.1.0
+      oxc-resolver: 11.24.2
+      pirates: 4.0.7
+      tslib: 2.6.2
+      typescript: '@typescript/typescript6@6.0.2'
+    transitivePeerDependencies:
+      - '@swc/types'
+
+  '@swc-node/sourcemap-support@0.6.1':
+    dependencies:
+      source-map-support: 0.5.21
+      tslib: 2.6.2
 
   '@swc/core-darwin-arm64@1.15.11':
     optional: true
@@ -55573,7 +55762,7 @@ snapshots:
 
   nwsapi@2.2.16: {}
 
-  nx@22.7.12(@swc/core@1.15.11(@swc/helpers@0.5.23)):
+  nx@22.7.12(@swc-node/register@1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2))(@swc/core@1.15.11(@swc/helpers@0.5.23)):
     dependencies:
       '@emnapi/core': 1.4.5
       '@emnapi/runtime': 1.4.5
@@ -55700,6 +55889,7 @@ snapshots:
       '@nx/nx-linux-x64-musl': 22.7.12
       '@nx/nx-win32-arm64-msvc': 22.7.12
       '@nx/nx-win32-x64-msvc': 22.7.12
+      '@swc-node/register': 1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2)
       '@swc/core': 1.15.11(@swc/helpers@0.5.23)
 
   nyc@15.1.0:

@@ -1,0 +1,13 @@
+import React from "react";
+<% if (universal) { -%>
+import type { <%= className %>Props } from "./<%= className %>.types";
+<% } else { -%>
+
+export type <%= className %>Props = Readonly<{
+  testID?: string;
+}>;
+<% } -%>
+
+export function <%= className %>({ testID }: <%= className %>Props) {
+  return <div data-testid={testID} />;
+}
