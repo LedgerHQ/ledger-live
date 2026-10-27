@@ -28,13 +28,25 @@ translates it to Lumen, one line per prop:
 
 ```tsx
 // ContactsButton.native.tsx
-import { Card } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Card,
+  CardContent,
+  CardContentTitle,
+  CardHeader,
+  CardLeading,
+} from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsButtonProps } from "./ContactsButton.types";
 
 export function ContactsButton({ title, onOpenContacts, testID }: ContactsButtonProps) {
   return (
     <Card type="interactive" onPress={onOpenContacts} testID={testID}>
-      {title}
+      <CardHeader>
+        <CardLeading>
+          <CardContent>
+            <CardContentTitle>{title}</CardContentTitle>
+          </CardContent>
+        </CardLeading>
+      </CardHeader>
     </Card>
   );
 }
