@@ -12,6 +12,7 @@
     "@commitlint/types": "catalog:",
     "@types/node": "catalog:",
     "danger": "14.0.7",
+    "rxjs": "7.8.1",
     "yaml": "2.8.3"
   }
 }
