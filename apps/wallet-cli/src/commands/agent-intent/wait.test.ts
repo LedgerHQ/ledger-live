@@ -261,6 +261,62 @@ describe("agent-intent wait", () => {
     });
   });
 
+  it("reports enrollment-waiting with the link as soon as a listener still starting logs it", async () => {
+    const profile = pendingProfile();
+    profileReads = [undefined, profile];
+    // The listener saves its profile and logs its pending line after this run's first poll.
+    onFirstSessionRead = async () => writeLog([pendingLogLine(profile.enrollmentExpiresAt)]);
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const started = Date.now();
+      const { code, line } = await pollWaitJson(stdout, 60_000);
+
+      expect(Date.now() - started).toBeLessThan(5_000);
+      expect(code).toBe(0);
+      expect(line).toMatchObject({
+        type: "enrollment-waiting",
+        expiresAt: profile.enrollmentExpiresAt,
+        enrollmentUrl: "https://agent.example.com#request=opaque",
+      });
+    });
+    expect(sessionReadCalls).toBe(2);
+  });
+
+  it("reports enrollment-waiting with the link as soon as it follows the saved profile", async () => {
+    const profile = pendingProfile();
+    profileReads = [profile];
+    // The listener writes the session before its pending line.
+    const logged = setTimeout(() => writeLog([pendingLogLine(profile.enrollmentExpiresAt)]), 50);
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const started = Date.now();
+      const { code, line } = await pollWaitJson(stdout, 60_000);
+
+      expect(Date.now() - started).toBeLessThan(5_000);
+      expect(code).toBe(0);
+      expect(line).toMatchObject({
+        type: "enrollment-waiting",
+        enrollmentUrl: "https://agent.example.com#request=opaque",
+      });
+    });
+    clearTimeout(logged);
+    expect(sessionReadCalls).toBeGreaterThan(1);
+  });
+
+  it("keeps waiting until --timeout when the link was there from the start", async () => {
+    const profile = pendingProfile();
+    profileReads = [profile];
+    writeLog([pendingLogLine(profile.enrollmentExpiresAt)]);
+
+    await withEnrollListenerLock("test-agent", async () => {
+      const started = Date.now();
+      const { line } = await pollWaitJson(stdout, 100);
+
+      expect(Date.now() - started).toBeGreaterThanOrEqual(90);
+      expect(line).toMatchObject({ type: "enrollment-waiting", enrollmentUrl: expect.any(String) });
+    });
+  });
+
   it("tells a human how to keep waiting at timeout", async () => {
     await withEnrollListenerLock("test-agent", async () => {
       await runWait({ timeout: "1s" });

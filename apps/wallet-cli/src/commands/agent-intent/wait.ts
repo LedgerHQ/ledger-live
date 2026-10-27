@@ -152,6 +152,7 @@ function checkProfile(
   listenerPid: number | undefined,
   deadline: number,
   logPath: string,
+  enrollmentUrl: string | undefined,
 ): number | undefined {
   const { profileId } = profile;
   const status = agentIntentProfileStatus(profile);
@@ -174,7 +175,6 @@ function checkProfile(
     status === "expired" ? deadline : Math.min(deadline, Date.parse(profile.enrollmentExpiresAt));
   const remainingMs = end - Date.now();
   if (remainingMs > 0) return remainingMs;
-  const enrollmentUrl = loggedEnrollmentUrl(logPath, profile);
   out.agentIntentEnrollmentWaiting({
     profileId,
     expiresAt: profile.enrollmentExpiresAt,
@@ -187,7 +187,8 @@ function checkProfile(
 }
 
 /** Polls local state until the enrollment of `profileId` is enrolled, failed, or still pending at
- * `timeoutMs`, and reports that on `out`. `intervalMs` is injectable so tests need not sleep. */
+ * `timeoutMs` (or once its link appears, if it had none at the first poll), and reports that on
+ * `out`. `intervalMs` is injectable so tests need not sleep. */
 export async function pollEnrollment(
   out: CommandOutput,
   profileId: string,
@@ -196,14 +197,19 @@ export async function pollEnrollment(
   const { timeoutMs, intervalMs = POLL_INTERVAL_MS } = opts;
   const deadline = Date.now() + timeoutMs;
   const { logPath, lockPath } = enrollListenerPaths(profileId);
+  let startedWithLink: boolean | undefined;
 
   for (;;) {
     // Read before the session: the listener saves its result before releasing the lock, so
     // once the lock reads dead, the session read below already shows anything it saved.
     const listenerPid = readLiveLockHolderPid(lockPath);
     const profile = (await Session.read()).getAgentIntentProfile(profileId);
+    const enrollmentUrl = profile && loggedEnrollmentUrl(logPath, profile);
+    // A call that started before the listener logged its link hands the link over once it appears.
+    startedWithLink ??= enrollmentUrl !== undefined;
+    const linkDeadline = startedWithLink || enrollmentUrl === undefined ? deadline : Date.now();
     const waitMs = profile
-      ? checkProfile(out, profile, listenerPid, deadline, logPath)
+      ? checkProfile(out, profile, listenerPid, linkDeadline, logPath, enrollmentUrl)
       : checkMissingProfile(out, profileId, listenerPid, deadline);
     if (waitMs === undefined) return;
     await sleep(Math.min(intervalMs, waitMs));

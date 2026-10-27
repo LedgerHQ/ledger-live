@@ -378,7 +378,8 @@ state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
 - `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt`, `fingerprint` and `keyStore` once
   the profile is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending:
-  call `wait` again.
+  call `wait` again. While it has no `enrollmentUrl`, do not end your turn: keep calling `wait`,
+  which returns as soon as the link appears.
 - an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
   profile within 10 minutes) or `enrollment_expired`, exit 1 — the enrollment is lost: start a
   fresh one with a new `--profile` id. A keychain unlock prompt answered too late also ends in
