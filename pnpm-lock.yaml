@@ -5212,6 +5212,49 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  domain/api/account-portfolio:
+    dependencies:
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.7
+    devDependencies:
+      '@jest/globals':
+        specifier: 'catalog:'
+        version: 30.5.0
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   domain/api/aggregated-assets:
     dependencies:
       '@domain/api-currency-token':
@@ -38888,9 +38931,6 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.4.3:
-    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
-
   zod@4.6.7:
     resolution: {integrity: sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==}
 
@@ -50023,11 +50063,6 @@ snapshots:
       typescript: '@typescript/typescript6@6.0.2'
       zod: 3.25.76
 
-  abitype@1.2.4(@typescript/typescript6@6.0.2)(zod@4.4.3):
-    optionalDependencies:
-      typescript: '@typescript/typescript6@6.0.2'
-      zod: 4.4.3
-
   abitype@1.2.4(@typescript/typescript6@6.0.2)(zod@4.6.7):
     optionalDependencies:
       typescript: '@typescript/typescript6@6.0.2'
@@ -54168,12 +54203,12 @@ snapshots:
       '@noble/hashes': 2.4.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.4.3)
+      abitype: 1.2.4(@typescript/typescript6@6.0.2)(zod@4.6.7)
       bignumber.js: 9.1.2
       iso-base: 4.4.0
       iso-kv: 3.2.0
       iso-web: 1.4.3
-      zod: 4.4.3
+      zod: 4.6.7
     transitivePeerDependencies:
       - typescript
 
@@ -55013,7 +55048,7 @@ snapshots:
       tinyglobby: 0.2.17
       unbash: 4.0.10
       yaml: 2.9.0
-      zod: 4.4.3
+      zod: 4.6.7
 
   known-css-properties@0.26.0: {}
 
@@ -60434,8 +60469,6 @@ snapshots:
 
   zod@3.25.76:
     optional: true
-
-  zod@4.4.3: {}
 
   zod@4.6.7: {}
 
