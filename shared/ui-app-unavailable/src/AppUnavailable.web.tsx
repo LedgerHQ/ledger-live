@@ -25,7 +25,7 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
           <Button
             appearance="gray"
             icon={ExternalLink}
-            onClick={action.onSelect}
+            onClick={action.onOpenLearnMore}
             data-testid={action.testID}
             size="lg"
           >

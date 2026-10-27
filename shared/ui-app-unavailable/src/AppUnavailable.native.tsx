@@ -29,7 +29,7 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
             appearance="gray"
             size="lg"
             icon={ExternalLink}
-            onPress={action.onSelect}
+            onPress={action.onOpenLearnMore}
             testID={action.testID}
           >
             {action.label}

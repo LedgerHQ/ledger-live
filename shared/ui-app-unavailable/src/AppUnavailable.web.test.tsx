@@ -20,14 +20,14 @@ describe("AppUnavailable", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("should render the action and call onSelect when selected", () => {
-    const onSelect = jest.fn();
+  it("should render the action and call onOpenLearnMore when selected", () => {
+    const onOpenLearnMore = jest.fn();
 
     render(
       <AppUnavailable
         title={TITLE}
         description={DESCRIPTION}
-        action={{ label: ACTION_LABEL, onSelect, testID: "app-unavailable-action" }}
+        action={{ label: ACTION_LABEL, onOpenLearnMore, testID: "app-unavailable-action" }}
       />,
     );
 
@@ -37,6 +37,6 @@ describe("AppUnavailable", () => {
 
     fireEvent.click(button);
 
-    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onOpenLearnMore).toHaveBeenCalledTimes(1);
   });
 });
