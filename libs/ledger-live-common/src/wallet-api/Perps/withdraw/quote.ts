@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "../../../exchange/swap/const/timeout";
-import { getWalletApiIdFromAccountId } from "../../converters";
+import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../../converters";
 import { resolveQuoteId } from "../../Exchange/quotes/normalizer/quoteHelpers";
 import { resolveQuotesInput } from "../../Exchange/quotes/resolveQuotesInput";
 import { fetchQuotes } from "../../Exchange/quotes/service/fetchQuotes";
@@ -39,6 +39,9 @@ export async function fetchPerpsWithdrawQuote({
   amount,
   counterValueCurrency,
 }: PerpsWithdrawQuoteParams): Promise<WithdrawQuote> {
+  // A token account the user never held was never listed to the wallet API, so register it.
+  setWalletApiIdForAccountId(sourceAccount.id);
+  setWalletApiIdForAccountId(destinationAccount.id);
   const quotesInput = resolveQuotesInput(
     {
       amount,
