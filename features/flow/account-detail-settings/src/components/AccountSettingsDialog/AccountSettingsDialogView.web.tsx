@@ -61,13 +61,7 @@ function StepContent(props: AccountSettingsDialogViewProps) {
         />
       );
     case "remove":
-      return (
-        <RemoveStep
-          onBack={props.onShowMenu}
-          onClose={props.onClose}
-          onConfirmRemove={props.onConfirmRemove}
-        />
-      );
+      return <RemoveStep onClose={props.onClose} onConfirmRemove={props.onConfirmRemove} />;
   }
 }
 
