@@ -170,9 +170,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactNameDisclaimer: componentWaiver("R1", "R5"),
     ContactNameInput: componentWaiver("R2", "R5"),
   },
-  "shared/ui-app-unavailable": {
-    AppUnavailable: componentWaiver("R3"),
-  },
   "shared/ui-info-state": {
     DialogBackgroundGradient: componentWaiver("R1"),
     DialogBackgroundToneProvider: componentWaiver("R1"),
