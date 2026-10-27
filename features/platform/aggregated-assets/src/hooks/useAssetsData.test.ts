@@ -13,6 +13,23 @@ jest.mock("@domain/api-aggregated-assets", () => ({
 
 const mockuseGetAssetsDataInfiniteQuery = jest.mocked(useGetAssetsDataInfiniteQuery);
 
+function catalogPage(id: "bitcoin" | "ethereum") {
+  const name = id === "bitcoin" ? "Bitcoin" : "Ethereum";
+  return {
+    cryptoAssets: { [id]: { id, name } },
+    networks: { [id]: { id, name } },
+    cryptoOrTokenCurrencies: { [id]: { id } },
+    interestRates: {},
+    markets: {},
+    currenciesOrder: {
+      metaCurrencyIds: [id],
+      key: "marketCap",
+      order: "desc" as const,
+    },
+    pagination: { nextCursor: undefined },
+  };
+}
+
 const defaultMockValues = {
   data: undefined,
   isLoading: false,
@@ -30,6 +47,60 @@ const defaultMockValues = {
 describe("useAssetsData", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it("should treat retained data as not ready for the current query", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: { pages: [], pageParams: [] },
+      currentData: undefined,
+    });
+
+    const retained = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+    expect(retained.result.current.isCurrentResultReady).toBe(false);
+
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      currentData: { pages: [], pageParams: [] },
+    });
+
+    const ready = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+    expect(ready.result.current.isCurrentResultReady).toBe(true);
+  });
+
+  it("should merge the current cached pages when a refetch still exposes the previous query", () => {
+    const previousPage = catalogPage("bitcoin");
+    const currentPage = catalogPage("ethereum");
+
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: { pages: [previousPage], pageParams: [{ cursor: "" }] },
+      currentData: { pages: [currentPage], pageParams: [{ cursor: "" }] },
+      isFetching: true,
+    });
+
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+
+    expect(result.current.isCurrentResultReady).toBe(true);
+    expect(result.current.data?.cryptoAssets).toEqual({
+      ethereum: { id: "ethereum", name: "Ethereum" },
+    });
+  });
+
+  it("should keep the previous pages for display when the current query has no result", () => {
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: { pages: [catalogPage("bitcoin")], pageParams: [{ cursor: "" }] },
+      currentData: undefined,
+      isFetching: true,
+    });
+
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+
+    expect(result.current.isCurrentResultReady).toBe(false);
+    expect(result.current.data?.cryptoAssets).toEqual({
+      bitcoin: { id: "bitcoin", name: "Bitcoin" },
+    });
   });
 
   it("should return loading state when API is loading", () => {
