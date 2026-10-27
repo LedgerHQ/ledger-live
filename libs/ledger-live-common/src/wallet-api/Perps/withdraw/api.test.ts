@@ -1,7 +1,7 @@
 import { AxiosHeaders } from "axios";
 import network from "@ledgerhq/live-network/network";
 import { NetworkDown } from "@ledgerhq/live-network/errors";
-import { getEnv } from "@ledgerhq/live-env";
+import { getSwapAPIBaseURL } from "../../../exchange/swap";
 import { submitWithdraw } from "./api";
 import { WithdrawPayloadSchema } from "./schemas";
 import {
@@ -19,7 +19,7 @@ import {
 jest.mock("@ledgerhq/live-network/network");
 
 const mockedNetwork = jest.mocked(network);
-const BASE_URL = getEnv("SWAP_API_BASE");
+const BASE_URL = getSwapAPIBaseURL();
 
 const respond = (status: number, data: unknown) =>
   mockedNetwork.mockResolvedValueOnce({
