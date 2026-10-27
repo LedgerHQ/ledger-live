@@ -26,6 +26,21 @@ afterEach(async () => {
   }
 });
 
+async function installOlderSkillWithoutTheReference(
+  dir: string,
+): Promise<{ reference: string; shippedReference: string }> {
+  const first = await runCli(["skill", "install", SKILL_NAME, "--dir", dir]);
+  expect(first.exitCode).toBe(0);
+  const skillRoot = path.join(dir, SKILL_NAME);
+  const reference = path.join(skillRoot, "references", "business-logic.md");
+  const shippedReference = await readFile(reference, "utf8");
+  await appendFile(path.join(skillRoot, "SKILL.md"), "\n<!-- shipped by older wallet-cli -->\n");
+  const olderFiles = (await readTrackedFromDisk(skillRoot)).filter(f => f.path === "SKILL.md");
+  await stampSidecar(skillRoot, "0.0.1", olderFiles);
+  await rm(reference);
+  return { reference, shippedReference };
+}
+
 describe("skill install", () => {
   it("writes SKILL.md and reference files under --dir", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
@@ -88,6 +103,27 @@ describe("skill install", () => {
 
     expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
     expect(await readFile(skillMd, "utf8")).toBe(shipped);
+  });
+
+  it("adds a file an older skill lacked without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference, shippedReference } = await installOlderSkillWithoutTheReference(tmpDir);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(reference, "utf8")).toBe(shippedReference);
+  });
+
+  it("keeps the user's own file where the new skill adds one, without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+    await writeFile(reference, "my own notes\n", "utf8");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode).toBe(1);
+    expect(await readFile(reference, "utf8")).toBe("my own notes\n");
   });
 
   it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {
