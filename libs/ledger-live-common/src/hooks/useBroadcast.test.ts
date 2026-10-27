@@ -126,8 +126,8 @@ describe("useBroadcast", () => {
         isTestnet: false,
         isSendMax: true,
         source: { type: "coin-module", name: "ledger-live-desktop" },
-        txPayload: { signature: "signed-transaction", rawData: { raw_hex: "raw-hex" } },
       });
+      expect(logger.mock.calls[0][0]).not.toHaveProperty("txPayload");
     });
   });
 
