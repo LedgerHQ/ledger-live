@@ -68,6 +68,20 @@ describe("scrubPiiString", () => {
     );
   });
 
+  it("redacts each Ledger account id when ids are joined", () => {
+    const solana = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+
+    expect(scrubPiiString(`js:2:solana:${solana}:solanaMain|js:2:solana:${solana}:`).value).toBe(
+      "js:2:solana:[REDACTED:ledger_account_id]:solanaMain|js:2:solana:[REDACTED:ledger_account_id]:",
+    );
+  });
+
+  it("keeps the token of a Ledger token account id", () => {
+    expect(scrubPiiString(`${LEDGER_ACCOUNT_ID}+ethereum%2Ferc20%2Fusdt`).value).toBe(
+      "js:2:ethereum:[REDACTED:ledger_account_id]:+ethereum%2Ferc20%2Fusdt",
+    );
+  });
+
   it("redacts a Ledger account id with a short address", () => {
     expect(scrubPiiString("js:2:hedera:0.0.1040977:hederaBip44").value).toBe(
       "js:2:hedera:[REDACTED:ledger_account_id]:hederaBip44",

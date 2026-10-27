@@ -34,21 +34,17 @@ const SENSITIVE_KEYS = new Set([
   "rawtx",
 ]);
 
-function redactLedgerAccountId(id: string): string | null {
-  const tokenStart = id.lastIndexOf("+");
-  const token = tokenStart === -1 ? "" : id.slice(tokenStart);
-  const fields = (tokenStart === -1 ? id : id.slice(0, tokenStart)).split(":");
-  const address = fields[3];
-  if (fields.length < 5 || !address) return null;
+function redactLedgerAccountId(id: string): string {
+  const fields = id.split(":");
   fields[3] = redacted("ledger_account_id");
   if (fields[5]) fields[5] = redacted("ledger_account_id");
-  return fields.join(":") + token;
+  return fields.join(":");
 }
 
 const VALUE_PATTERNS: ValuePattern[] = [
   {
     kind: "ledger_account_id",
-    regex: /\b(?:js|libcore|ethereumjs):\d+:[^\s"',\]})]+/g,
+    regex: /\b(?:js|libcore|ethereumjs):\d+:[\w.-]+:[^\s:"',\]})]+:\w*(?::[^\s:"',\]})]+)?/g,
     replace: redactLedgerAccountId,
   },
   {
