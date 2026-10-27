@@ -74,7 +74,7 @@ const VALUE_PATTERNS: ValuePattern[] = [
   },
   {
     kind: "extended_public_key",
-    regex: /\b[xyztuvYZUV]pub[1-9A-HJ-NP-Za-km-z]{100,108}\b/g,
+    regex: /\b[A-Za-z]{2}ub[1-9A-HJ-NP-Za-km-z]{100,108}\b/g,
     replace: () => redacted("extended_public_key"),
   },
   {

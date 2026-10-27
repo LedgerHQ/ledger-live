@@ -17,6 +17,11 @@ describe("scrubPiiString", () => {
     ["an EVM address", `sent to ${EVM_ADDRESS}`, "evm_address"],
     ["an EVM transaction hash", EVM_HASH, "evm_hash"],
     ["an extended public key", XPUB, "extended_public_key"],
+    [
+      "a Litecoin extended public key",
+      "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF",
+      "extended_public_key",
+    ],
     ["a Bitcoin bech32 address", BTC_BECH32, "bech32_address"],
     ["an upper-case Bitcoin bech32 address", BTC_BECH32.toUpperCase(), "bech32_address"],
     ["a Cosmos address", COSMOS_ADDRESS, "bech32_address"],
