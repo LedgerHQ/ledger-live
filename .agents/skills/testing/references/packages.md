@@ -57,6 +57,10 @@ model wiring, not on Lumen's behaviour. Run one project with
   `@domain/entity-contact/schema.mock`.
 - Helpers shared by several test files (store wrappers, render helpers) in `src/__tests__/`, with
   no `.test.` in their name so jest does not run them as suites.
+- Except in `devtools/*`: the `@support/jest/devtools` web project keeps jest's default
+  `testMatch`, which runs every file under `__tests__/` as a suite. Its helpers, fixtures and mocks
+  go in the package's `jest/` folder and are imported as `jest/...`
+  ([support/jest/devtools/README.md](../../../../support/jest/devtools/README.md)).
 
 ## Domain MSW handlers
 
