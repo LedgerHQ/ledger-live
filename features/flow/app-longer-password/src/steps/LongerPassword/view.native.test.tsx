@@ -1,4 +1,4 @@
-import { PasswordDraftProvider } from "@features/platform-app-lock";
+import { PasswordDraftProvider } from "@features/platform-app-lock/native";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import React from "react";

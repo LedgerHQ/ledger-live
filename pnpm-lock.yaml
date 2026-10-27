@@ -10368,6 +10368,9 @@ importers:
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
@@ -10377,6 +10380,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4

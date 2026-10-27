@@ -1,4 +1,4 @@
-import { clearLegacyPassword, readLegacyPassword } from "./legacyPassword.native";
+import { clearLegacyPassword, readLegacyPassword } from "./legacyPassword";
 
 jest.mock("react-native-keychain", () => ({
   ACCESS_CONTROL: { APPLICATION_PASSWORD: "applicationPassword" },

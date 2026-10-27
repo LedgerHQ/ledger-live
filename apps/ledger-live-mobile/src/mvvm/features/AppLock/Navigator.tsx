@@ -1,4 +1,4 @@
-import { PasswordDraftProvider } from "@features/platform-app-lock";
+import { PasswordDraftProvider } from "@features/platform-app-lock/native";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
