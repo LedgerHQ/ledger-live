@@ -3,7 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { PNL_BUTTON, PNL_DETAIL_PAGE } from "LLM/features/Pnl/const";
 import { ANALYTICS_PAGE } from "../../../../../const";
@@ -33,13 +33,10 @@ const compose =
   (state: State): State =>
     transforms.reduce((acc, t) => t(acc), state);
 
-const withPnl = (enabled: boolean) =>
-  compose(withAccounts, withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } }));
-
 describe("usePnlSectionViewModel", () => {
   it("keeps the detail drawer closed by default", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
-      overrideInitialState: withPnl(true),
+      overrideInitialState: withAccounts,
     });
 
     expect(result.current.drawer.isOpen).toBe(false);
@@ -47,7 +44,7 @@ describe("usePnlSectionViewModel", () => {
 
   it("opens the detail drawer when the title press handler runs", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
-      overrideInitialState: withPnl(true),
+      overrideInitialState: withAccounts,
     });
 
     act(() => result.current.openDrawer());
@@ -57,7 +54,7 @@ describe("usePnlSectionViewModel", () => {
 
   it("closes the detail drawer when its onClose runs", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
-      overrideInitialState: withPnl(true),
+      overrideInitialState: withAccounts,
     });
 
     act(() => result.current.openDrawer());
@@ -69,7 +66,7 @@ describe("usePnlSectionViewModel", () => {
 
   it("exposes an unrealised and a realised return card", () => {
     const { result } = renderHook(() => usePnlSectionViewModel(), {
-      overrideInitialState: withPnl(true),
+      overrideInitialState: withAccounts,
     });
 
     expect(result.current.unrealised.title).toBe("Unrealised return");
@@ -79,19 +76,15 @@ describe("usePnlSectionViewModel", () => {
   });
 
   describe("rendering gate", () => {
-    it("disables the section when there are no accounts even if the flag is on", () => {
-      const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { pnl: true } },
-        }),
-      });
+    it("disables the section when there are no accounts", () => {
+      const { result } = renderHook(() => usePnlSectionViewModel());
 
       expect(result.current.shouldDisplayPnl).toBe(false);
     });
 
-    it("enables the section when the flag is on and there are accounts", () => {
+    it("enables the section when there are accounts", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       expect(result.current.shouldDisplayPnl).toBe(true);
@@ -101,7 +94,7 @@ describe("usePnlSectionViewModel", () => {
   describe("discreet mode", () => {
     it("masks card values when discreet mode is on", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: compose(withPnl(true), withDiscreet(true)),
+        overrideInitialState: compose(withAccounts, withDiscreet(true)),
       });
 
       expect(result.current.unrealised.value).toContain("***");
@@ -110,7 +103,7 @@ describe("usePnlSectionViewModel", () => {
 
     it("masks every drawer item value when discreet mode is on", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: compose(withPnl(true), withDiscreet(true)),
+        overrideInitialState: compose(withAccounts, withDiscreet(true)),
       });
 
       for (const item of result.current.drawer.items) {
@@ -120,7 +113,7 @@ describe("usePnlSectionViewModel", () => {
 
     it("does not mask values when discreet mode is off", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: compose(withPnl(true), withDiscreet(false)),
+        overrideInitialState: compose(withAccounts, withDiscreet(false)),
       });
 
       expect(result.current.unrealised.value).not.toContain("***");
@@ -138,7 +131,7 @@ describe("usePnlSectionViewModel", () => {
 
     it("fires a button_clicked track event when the drawer opens", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       act(() => result.current.openDrawer());
@@ -151,7 +144,7 @@ describe("usePnlSectionViewModel", () => {
 
     it("does not fire track again when openDrawer is called twice without closing", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       act(() => result.current.openDrawer());
@@ -162,7 +155,7 @@ describe("usePnlSectionViewModel", () => {
 
     it("fires track again after close → reopen", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       act(() => result.current.openDrawer());
@@ -174,7 +167,7 @@ describe("usePnlSectionViewModel", () => {
 
     it("exposes pageName and source on the drawer", () => {
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       expect(result.current.drawer.pageName).toBe(PNL_DETAIL_PAGE);
@@ -196,17 +189,9 @@ describe("usePnlSectionViewModel", () => {
       spy.mockRestore();
     });
 
-    it("passes an empty accounts list to usePortfolioPnL when the flag is off", () => {
+    it("forwards the real accounts to usePortfolioPnL when there are accounts", () => {
       renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(false),
-      });
-
-      expect(spy).toHaveBeenCalledWith([], expect.anything(), expect.anything());
-    });
-
-    it("forwards the real accounts to usePortfolioPnL when the flag is on", () => {
-      renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       const [accountsArg] = spy.mock.calls[0];
@@ -219,7 +204,7 @@ describe("usePnlSectionViewModel", () => {
       spy.mockReturnValue({});
 
       const { result } = renderHook(() => usePnlSectionViewModel(), {
-        overrideInitialState: withPnl(true),
+        overrideInitialState: withAccounts,
       });
 
       expect(result.current.unrealised.value).toMatch(/0(?:[.,]00)?/);

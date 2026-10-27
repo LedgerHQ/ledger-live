@@ -30,9 +30,7 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
-      shouldDisplayMyWallet:
-        platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
-      shouldDisplayPnl: isEnabled && Boolean(params?.pnl),
+      shouldDisplayMyWallet: platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
       shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
@@ -74,8 +72,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayAggregatedAssets: boolean;
   /** Whether to show the My Wallet component */
   readonly shouldDisplayMyWallet: boolean;
-  /** Whether to show the PNL component */
-  readonly shouldDisplayPnl: boolean;
   /** Whether to show the Asset Discoverability feature */
   readonly shouldDisplayAssetDiscoverability: boolean;
   /** Whether to show the Earn Upselling component */
