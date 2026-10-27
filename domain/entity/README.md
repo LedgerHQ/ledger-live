@@ -18,8 +18,12 @@ For the standard package checklist (private flag, tsconfig, naming…) see [docs
 Entity-specific:
 - One entity per package — `domain/entity/<name>/`
 - Use `zod` for schema definition, `@reduxjs/toolkit` for the slice
-- Barrel export via `src/index.ts` (default export = reducer when applicable)
-- Mock and test files are not re-exported from the barrel
+- Barrel export via `src/index.ts`, `export *` only (see [package-public-api](../../.agents/skills/package-public-api/SKILL.md))
+- With a slice, `slice.ts` exports its complete initial state and `export default <name>Slice.reducer`; the barrel re-exports it with `export { default } from "./slice"`
+- No React: RTK Query hooks belong to `domain/api`, UI to `features/`
+- Mock and test files are not re-exported from the barrel; mocks are `package.json#exports` subpaths (`./schema.mock`, `./slice.mock`)
+
+Schemas, slices, mocks and selectors in detail: the [`domain-data`](../../.agents/skills/domain-data/SKILL.md) skill.
 
 ## File Structure
 
@@ -30,10 +34,10 @@ actions.ts         # Actions for mutating state (optional)
 actions.test.ts    # Actions tests (required if actions exist)
 schema.ts          # Zod schemas + branded value objects (required)
 schema.test.ts     # Schema validation tests (required)
-schema.mock.ts     # Mock factories for tests (required)
-slice.ts           # RTK createSlice (optional)
+schema.mock.ts     # Schema-valid mock factories with overrides (required)
+slice.ts           # RTK createSlice, initial state, default-exported reducer (optional)
 slice.test.ts      # Slice reducer tests (required if slice exists)
-slice.mock.ts      # Mock factories for tests (required if slice exists)
+slice.mock.ts      # Mock slice state built from schema mocks (required if slice exists)
 selectors.ts       # Selectors for reading state (optional)
 selectors.test.ts  # Selector tests (required if selectors exist)
 index.ts           # Barrel exports (required)
