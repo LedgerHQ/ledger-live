@@ -323,7 +323,7 @@
     "react-native-tcp-socket": "6.4.2",
     "react-native-url-polyfill": "4.0.0",
     "react-native-video": "6.16.1",
-    "react-native-view-shot": "5.1.1",
+    "react-native-view-shot": "6.2.1",
     "react-native-vision-camera": "4.7.3",
     "react-native-webview": "13.16.1",
     "react-native-worklets": "catalog:",

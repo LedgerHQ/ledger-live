@@ -2521,7 +2521,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-view-shot (5.1.1):
+  - react-native-view-shot (6.2.1):
     - boost
     - DoubleConversion
     - fast_float
@@ -3647,7 +3647,7 @@ DEPENDENCIES:
   - "react-native-tcp-socket (from `../../../node_modules/.pnpm/react-native-tcp-socket@6.4.2_react-native@0.81_2af7e0ae46a2d40e67603fa9cf2f990d/node_modules/react-native-tcp-socket`)"
   - "react-native-vector-icons-material-design-icons (from `../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_07771db8175c3650d8da4545ec0a8b87/node_modules/@react-native-vector-icons/material-design-icons`)"
   - "react-native-video (from `../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_0e012bc8fc6aaa0efdf7f8dbe9f226ea/node_modules/react-native-video`)"
-  - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._76fe50113247e8f2cf5dc7b649f93f8b/node_modules/react-native-view-shot`)"
+  - "react-native-view-shot (from `../../../node_modules/.pnpm/react-native-view-shot@6.2.1_react-native@0.81._2323c8b98e0bf1ef10430f524e1bbc74/node_modules/react-native-view-shot`)"
   - "react-native-webview (from `../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=d6fc65a_7e96bb4b246d38e2a75fa00b2b999304/node_modules/react-native-webview`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
   - "React-oscompat (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon/oscompat`)"
@@ -3906,7 +3906,7 @@ EXTERNAL SOURCES:
   react-native-video:
     :path: "../../../node_modules/.pnpm/react-native-video@6.16.1_react-native@0.81.6_p_0e012bc8fc6aaa0efdf7f8dbe9f226ea/node_modules/react-native-video"
   react-native-view-shot:
-    :path: "../../../node_modules/.pnpm/react-native-view-shot@5.1.1_react-native@0.81._76fe50113247e8f2cf5dc7b649f93f8b/node_modules/react-native-view-shot"
+    :path: "../../../node_modules/.pnpm/react-native-view-shot@6.2.1_react-native@0.81._2323c8b98e0bf1ef10430f524e1bbc74/node_modules/react-native-view-shot"
   react-native-webview:
     :path: "../../../node_modules/.pnpm/react-native-webview@13.16.1_patch_hash=d6fc65a_7e96bb4b246d38e2a75fa00b2b999304/node_modules/react-native-webview"
   React-NativeModulesApple:
@@ -4123,7 +4123,7 @@ SPEC CHECKSUMS:
   react-native-tcp-socket: 83a30b5da1deed4c720ee25595737ee851c23339
   react-native-vector-icons-material-design-icons: 9e98e87947156bfe95135fb523b62821486044e3
   react-native-video: 6ed94120c73e29c8fbea89ec4e3cedf3528751d6
-  react-native-view-shot: 5ed55de8892be2746074c2f8066e6abc21dd6fd3
+  react-native-view-shot: 0757362ef66df80d63ce4ddd35b89bce59c908b9
   react-native-webview: 83c663c5bdf1357d3e7c00986260cb888ea0e328
   React-NativeModulesApple: 76d9e54adf2b333d0939bbd18102c62bdfebb934
   React-oscompat: d5e3366fbd6c7150e17c1bda85eab583a6fa9fce
