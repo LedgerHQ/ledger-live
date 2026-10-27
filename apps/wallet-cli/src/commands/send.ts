@@ -139,9 +139,15 @@ export default defineCommand({
     memo: option(z.string().min(1).optional(), {
       description: "Memo (Solana only)",
     }),
-    "destination-tag": option(z.coerce.number().int().min(0).max(4_294_967_295).optional(), {
-      description: "XRPL destination tag (XRP only; unsigned 32-bit integer)",
-    }),
+    "destination-tag": option(
+      z.preprocess(
+        value => (typeof value === "string" && value.trim() === "" ? Number.NaN : value),
+        z.coerce.number().int().min(0).max(4_294_967_295).optional(),
+      ),
+      {
+        description: "XRPL destination tag (XRP only; unsigned 32-bit integer)",
+      },
+    ),
     data: option(
       z
         .string()
