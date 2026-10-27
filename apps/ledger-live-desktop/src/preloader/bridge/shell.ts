@@ -31,6 +31,6 @@ export const power: PowerBridge = {
 };
 
 export const store: StoreBridge = {
-  set: (key: string, value: unknown) => ipcRenderer.send(CHANNELS.storeSet, key, value),
-  clear: () => ipcRenderer.send(CHANNELS.storeClear),
+  set: (key: string, value: unknown) => ipcRenderer.invoke(CHANNELS.storeSet, key, value),
+  clear: () => ipcRenderer.invoke(CHANNELS.storeClear),
 };

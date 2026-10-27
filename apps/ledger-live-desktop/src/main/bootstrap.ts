@@ -52,11 +52,11 @@ ipcMain.on(CHANNELS.bootstrap, event => {
   event.returnValue = buildBootstrap();
 });
 
-ipcMain.on(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
+ipcMain.handle(CHANNELS.storeSet, (_event, key: string, value: unknown) => {
   getStore().set(key, value);
 });
 
-ipcMain.on(CHANNELS.storeClear, () => {
+ipcMain.handle(CHANNELS.storeClear, () => {
   getStore().clear();
 });
 
