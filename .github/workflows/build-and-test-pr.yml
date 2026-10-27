@@ -62,7 +62,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@test-e2e-drop-dummy-apps
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -119,7 +119,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && !github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@test-e2e-drop-dummy-apps
     secrets:
       ALLURE_LEDGER_LIVE_PASSWORD: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}

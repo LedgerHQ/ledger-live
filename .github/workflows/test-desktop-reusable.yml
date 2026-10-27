@@ -104,7 +104,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@test-e2e-drop-dummy-apps
         id: setup-test-desktop
         with:
           build_type: testing
