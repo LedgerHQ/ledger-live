@@ -182,7 +182,8 @@ catalog:
   expect: 30.5.0
   i18next: 25.7.3
   isomorphic-ws: 5.0.0
-  bitcoinjs-lib: 7.0.4
+  bip39: 3.1.2
+  bitcoinjs-lib: 7.0.5
   lodash: 4.18.1
   msw: ^2.7.3
   jest: 30.5.0
@@ -257,6 +258,7 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
+  - "bitcoinjs-lib@7.0.5"
 
 autoInstallPeers: false
 enablePrePostScripts: true
@@ -293,6 +295,8 @@ overrides:
   "@types/react-dom": "catalog:"
   csstype: "3.2.3"
   "stellar-base>sodium-native": "^3.2.1"
+  "ed25519-hd-key>bip39": "catalog:"
+  "near-hd-key>bip39": "catalog:"
   "remove-flow-types-loader>flow-remove-types": "^2"
   "remove-flow-types-loader>loader-utils": "*"
   "@ledgerhq/devices": "catalog:"
