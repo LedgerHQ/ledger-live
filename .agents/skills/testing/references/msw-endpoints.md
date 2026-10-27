@@ -35,8 +35,9 @@ it("should show an error when the push fails", async () => {
 - App servers use `onUnhandledRequest: "bypass"`. A handler returning `undefined` still counts as a
   call (`toHaveBeenCalled` passes), but the request goes on to the default `tests/handlers` or the
   real network. Always set a default implementation.
-- Packages without an app server (`shared/*`, `libs/*`) call `setupServer` themselves, with
-  `onUnhandledRequest: "error"`.
+- Packages without an app server (`shared/*`, `domain/*`, `features/*`, `libs/*`) call
+  `setupServer` themselves, with `onUnhandledRequest: "error"`, or start the server their
+  `domain/api/*` package ships ([packages.md](packages.md#domain-msw-handlers)).
 
 ## Examples
 
