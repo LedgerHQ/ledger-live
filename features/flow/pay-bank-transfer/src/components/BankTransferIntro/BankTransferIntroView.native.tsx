@@ -56,19 +56,11 @@ export function BankTransferIntroView({
     actOnce(onLogInPress);
   }, [actOnce, onLogInPress]);
 
-  const handleClosePress = useCallback(() => {
-    actOnce(onClosePress);
-  }, [actOnce, onClosePress]);
-
-  const handleDismiss = useCallback(() => {
-    actOnce(onDismiss);
-  }, [actOnce, onDismiss]);
-
   return (
     <QueuedBottomSheet
       isForcingToBeOpened={isOpen}
-      onClose={handleDismiss}
-      onHeaderClosePressed={handleClosePress}
+      onClose={onDismiss}
+      onHeaderClosePressed={onClosePress}
       enableDynamicSizing
       testID="pay-bank-transfer-intro-sheet"
     >
