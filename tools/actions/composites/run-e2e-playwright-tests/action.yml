@@ -131,8 +131,12 @@ runs:
         PASSED=$(grep -oE '[0-9]+ passed' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
         FAILED=$(grep -oE '[0-9]+ failed' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
         SKIPPED=$(grep -oE '[0-9]+ skipped' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
-        FLAKY=$(grep -oE '[0-9]+ flaky' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
-        TOTAL=$((PASSED + FAILED + SKIPPED + FLAKY))
+        RETRIED_FAILURES=$(grep -oE '[0-9]+ flaky' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
+        FAILED=$((FAILED + RETRIED_FAILURES))
+        TOTAL=$((PASSED + FAILED + SKIPPED))
+        if [ "${RETRIED_FAILURES}" -gt 0 ]; then
+          TEST_EXIT_CODE=1
+        fi
 
         echo "passed=${PASSED}" >> $GITHUB_OUTPUT
         echo "failed=${FAILED}" >> $GITHUB_OUTPUT
@@ -142,7 +146,7 @@ runs:
 
         PASS_RATE=0
         if [ "${TOTAL}" -gt 0 ]; then
-          PASS_RATE=$(( (PASSED + FLAKY) * 100 / TOTAL ))
+          PASS_RATE=$(( PASSED * 100 / TOTAL ))
         fi
 
         echo ""
@@ -152,7 +156,6 @@ runs:
         echo "  Total:   ${TOTAL}"
         echo "  Passed:  ${PASSED}"
         echo "  Failed:  ${FAILED}"
-        echo "  Flaky:   ${FLAKY}"
         echo "  Skipped: ${SKIPPED}"
         echo "  Pass rate: ${PASS_RATE}%"
         echo "========================================"
@@ -187,7 +190,6 @@ runs:
           echo "| Total | ${TOTAL} |"
           echo "| Passed | ${PASSED} |"
           echo "| Failed | ${FAILED} |"
-          echo "| Flaky | ${FLAKY} |"
           echo "| Skipped | ${SKIPPED} |"
           echo "| **Pass rate** | **${PASS_RATE}%** |"
           echo ""
