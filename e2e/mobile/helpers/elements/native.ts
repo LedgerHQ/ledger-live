@@ -54,9 +54,13 @@ export class NativeHandle implements ElementHandle {
   /** Waits until the element is no longer visible. Throws if it is still visible after the timeout. */
   async waitGone(timeout = TIMEOUT.xxlarge): Promise<void> {
     try {
-      await waitFor(this.raw).not.toBeVisible().withTimeout(timeout);
+      await withHardTimeout(
+        waitFor(this.raw).not.toBeVisible().withTimeout(timeout),
+        waitHardTimeout(timeout),
+      );
     } catch (error) {
-      throw new Error(`${this.description} is still visible after ${timeout}ms`, { cause: error });
+      const details = error instanceof Error ? error.message : String(error);
+      throw new Error(`${this.description} did not become hidden: ${details}`, { cause: error });
     }
   }
 
