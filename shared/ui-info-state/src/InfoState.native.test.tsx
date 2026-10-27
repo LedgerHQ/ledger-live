@@ -3,8 +3,8 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Box, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { BottomSheetBackgroundContext } from "@shared/ui-queued-bottom-sheet";
-import { InfoState } from "./InfoState.native";
-import type { InfoStatePreset } from "./types.native";
+import { InfoState } from "./InfoState";
+import type { InfoStatePreset } from "./sharedTypes";
 
 type VisualInfoStatePreset = Exclude<InfoStatePreset, "text">;
 
@@ -164,6 +164,21 @@ describe("InfoState", () => {
       expect(cleanup).toHaveBeenCalledTimes(1);
     },
   );
+
+  it("GIVEN the spot preset with a background tone WHEN the InfoState mounts THEN it requests that tone", () => {
+    // GIVEN
+    const requestBackgroundTone = jest.fn(() => jest.fn());
+
+    // WHEN
+    render(
+      <BottomSheetBackgroundContext.Provider value={{ requestBackgroundTone }}>
+        <InfoState preset="spot" spotProps={{ icon: Search, size: 72 }} backgroundTone="info" />
+      </BottomSheetBackgroundContext.Provider>,
+    );
+
+    // THEN
+    expect(requestBackgroundTone).toHaveBeenCalledWith("info");
+  });
 
   it.each(["illustration", "spot", "text"] as const)(
     "GIVEN the non-status %s preset inside a BottomSheetBackgroundContext provider WHEN the InfoState renders THEN it does not request a background tone",

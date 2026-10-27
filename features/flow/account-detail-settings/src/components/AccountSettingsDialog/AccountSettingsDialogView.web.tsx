@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import { AdvancedLogsStep } from "./steps/AdvancedLogsStep.web";
 import { ChangeNameStep } from "./steps/ChangeNameStep.web";
 import { MenuStep } from "./steps/MenuStep.web";

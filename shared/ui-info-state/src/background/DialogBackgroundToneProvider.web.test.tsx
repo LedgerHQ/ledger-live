@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { useDialogBackgroundTone } from "./useDialogBackgroundTone.web";
-import { DialogBackgroundToneProvider } from "./DialogBackgroundGradient.web";
+import { useDialogBackgroundTone } from "./useDialogBackgroundTone";
+import { DialogBackgroundToneProvider } from "./DialogBackgroundToneProvider";
 
 const statusGradientTones = ["error", "info", "success"] as const;
 

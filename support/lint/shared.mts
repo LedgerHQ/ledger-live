@@ -8,7 +8,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "lottie",
   "network-status",
   "ui-app-unavailable",
-  "ui-info-state",
   "ui-qr-code",
 ];
 

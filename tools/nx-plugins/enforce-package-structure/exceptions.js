@@ -184,11 +184,6 @@ const COMPONENT_EXCEPTIONS = {
   "shared/ui-app-unavailable": {
     AppUnavailable: componentWaiver("R3"),
   },
-  "shared/ui-info-state": {
-    DialogBackgroundGradient: componentWaiver("R1"),
-    DialogBackgroundToneProvider: componentWaiver("R1"),
-    InfoState: componentWaiver("R2"),
-  },
 };
 
 // Files allowed to keep their violations, keyed by posix path from the repo root. These are the
