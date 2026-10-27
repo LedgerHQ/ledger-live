@@ -1,7 +1,10 @@
 {
-  "extends": "@support/tsconfig/client-react",
+  "extends": "@support/tsconfig/dual",
   "compilerOptions": {
-    "moduleSuffixes": [".web", ""],
     "types": ["jest", "node", "@testing-library/jest-dom"]
-  }
+  },
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.native.json" }
+  ]
 }
