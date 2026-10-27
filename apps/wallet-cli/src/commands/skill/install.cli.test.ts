@@ -1,8 +1,9 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, appendFile, mkdtemp, readFile, rm } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../testing/cli-runner";
+import { stampSidecar } from "../../testing/skill-fixtures";
 import { SIDECAR_FILENAME } from "../../skills/registry";
 
 const SKILL_NAME = "wallet-cli-usage";
@@ -45,11 +46,40 @@ describe("skill install", () => {
     expect(stdout).toContain(skillMd);
   });
 
-  it("refuses to overwrite existing files without --force, then succeeds with --force", async () => {
+  it("reinstalls an unedited skill without --force", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
 
     const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
     expect(first.exitCode).toBe(0);
+
+    const second = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(second.exitCode, `stderr: ${second.stderr}`).toBe(0);
+  });
+
+  it("replaces a skill an older wallet-cli installed without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const skillRoot = path.join(tmpDir, SKILL_NAME);
+    const skillMd = path.join(skillRoot, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
+    await stampSidecar(skillRoot, "0.0.1");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
+  });
+
+  it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const skillMd = path.join(tmpDir, SKILL_NAME, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\nlocal hand edit\n");
 
     const second = await runCli([
       "skill",
@@ -64,9 +94,11 @@ describe("skill install", () => {
     const err = JSON.parse(second.stdout);
     expect(err.ok).toBe(false);
     expect(err.error.message).toMatch(/overwrite/i);
+    expect(await readFile(skillMd, "utf8")).toBe(`${shipped}\nlocal hand edit\n`);
 
     const forced = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
     expect(forced.exitCode).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
   });
 
   it("returns a json envelope listing installed paths and root", async () => {

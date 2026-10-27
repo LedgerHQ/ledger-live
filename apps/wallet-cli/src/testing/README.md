@@ -20,6 +20,7 @@ binary.
 | `fake-spinner` | Spinner fake for `_setTestSpinner` that records what it shows |
 | `gated-module-mock` | Module mock that other test files can't see (`createGatedModuleMock`) |
 | `clear-speculos-env` | Test preload (`bunfig.toml`) that drops `SPECULOS_*` exported by the shell, so device tests don't pick the Speculos transport |
+| `skill-fixtures` | Reads an installed skill's files and rewrites its sidecar, e.g. as an older wallet-cli would have |
 
 ## CLI tests
 

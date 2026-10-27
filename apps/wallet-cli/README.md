@@ -43,7 +43,7 @@ wallet-cli skill install --agent claude   # also cursor, codex, agents; --global
 wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 ```
 
-- `skill install` keeps existing files unless you pass `--force`. It writes a `.wallet-cli-skill.json` sidecar with the version and content hash.
+- `skill install` replaces a skill that wallet-cli installed earlier, and keeps one edited since then unless you pass `--force`. It writes a `.wallet-cli-skill.json` sidecar with the version and content hash.
 - `skill doctor` reports each install as `up-to-date`, `outdated`, `modified-locally` or `missing`, and exits non-zero on drift. `--fix` leaves local edits alone unless you add `--force`.
 - On the first command, wallet-cli prints a one-time hint to stderr that suggests `skill install`. The hint is silent with `--output json`. Set `WALLET_CLI_NO_NUDGE=1` to turn it off.
 
