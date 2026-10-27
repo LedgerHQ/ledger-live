@@ -198,7 +198,7 @@ export default defineCommand({
       pullSpin?.stop();
       if (rotated) await persistRotation(profile, expected);
 
-      // Sent without a version, a forced pull of a deleted document reads as up-to-date.
+      // Without a version, CloudSyncSDK.pull() ignores the `no-data` of a deleted document.
       const deletedOnForcedPull =
         pulled.status === "up-to-date" &&
         pulledFromVersion === undefined &&
