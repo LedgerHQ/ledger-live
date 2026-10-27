@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import type { BalanceFilterPickerViewProps } from "../types";
-import { BalanceFilterPickerView } from "../components/Filter/BalanceFilterPickerView.native";
+import { BalanceFilterPickerView } from "../components/Filter/BalanceFilterPickerView";
 import { filterLabels, options, usdcOption } from "./fixtures";
 
 jest.mock("@ledgerhq/crypto-icons/native", () => () => null);

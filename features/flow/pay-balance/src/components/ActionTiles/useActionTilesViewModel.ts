@@ -17,13 +17,13 @@ export function useActionTilesViewModel({ tiles, page }: ActionTilesProps): Acti
       tiles.map(tile => ({
         ...tile,
         label: t(`payTab.actions.${tile.id}`),
-        onPress: () => {
+        onOpenFlow: () => {
           trackButtonClicked({
             button: TRACK_BUTTON[tile.id],
             buttonLocation: "quick action",
             page,
           });
-          tile.onPress();
+          tile.onOpenFlow();
         },
       })),
     [t, tiles, page],

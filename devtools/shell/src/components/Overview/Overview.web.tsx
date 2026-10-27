@@ -23,7 +23,7 @@ export function Overview({
   return (
     <div data-testid={testId} className="flex-1 p-32 overflow-y-auto">
       <p className="body-1 text-muted uppercase tracking-wider">DevTools</p>
-      <h1 className="heading-1 font-semibold">What do you need to inspect?</h1>
+      <h1 className="heading-1">What do you need to inspect?</h1>
       <p className="body-1 text-muted mb-24">Pick a tool from the sidebar.</p>
 
       {recentTools.length > 0 && (

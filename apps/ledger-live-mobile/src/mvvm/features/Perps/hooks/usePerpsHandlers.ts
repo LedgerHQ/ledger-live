@@ -14,7 +14,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();

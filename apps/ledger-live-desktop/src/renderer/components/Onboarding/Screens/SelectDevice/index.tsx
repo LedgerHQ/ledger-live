@@ -9,7 +9,7 @@ import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-case
 import { useFeature } from "@features/platform-feature-flags";
 import CounterfeitWarningDialog from "LLD/features/Onboarding/components/CounterfeitWarningDialog";
 import { DeviceSelector } from "./DeviceSelector";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -83,7 +83,7 @@ export function SelectDevice() {
 
   return (
     <SelectDeviceContainer>
-      <TrackPage category="Onboarding Device - Selection" flow="Onboarding" />
+      <TrackScreen category="Onboarding Device - Selection" flow="Onboarding" />
       <OnboardingNavHeader
         onClickPrevious={() =>
           navigate(

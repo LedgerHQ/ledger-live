@@ -490,7 +490,7 @@ const extraProperties = async (store: AppStore) => {
     ...aggregateData(usbDeviceModelSeen),
   };
 
-  const startupEvents = await resolveStartupEvents();
+  const startupEvents = resolveStartupEvents();
   const legacyStartupTime = startupEvents.find(
     ({ event }) => event === STARTUP_EVENTS.APP_STARTED,
   )?.time;

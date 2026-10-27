@@ -2,7 +2,7 @@ import React from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import type { StepProps } from "../types";
 import { Container } from "../shared/Container";
 
@@ -11,7 +11,12 @@ function StepUfvk({ account }: Readonly<StepProps>) {
 
   return (
     <Container>
-      <TrackPage category="Export ZCash key" name="Step UFVK" flow="exportUfvk" currency="zcash" />
+      <TrackScreen
+        category="Export ZCash key"
+        name="Step UFVK"
+        flow="exportUfvk"
+        currency="zcash"
+      />
       <Alert
         type={"info"}
         containerProps={{ p: 12, borderRadius: 8 }}

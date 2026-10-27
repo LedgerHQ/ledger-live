@@ -33,7 +33,8 @@ function moreTiles(moreActions: readonly QuickAction[]): QuickActionTile[] {
 
 /**
  * Mobile tile layout for the asset / account scopes, from `resolveQuickActions`.
- * Swap supported: Transfer · Swap · More (Buy, Sell, Earn in More).
+ * Swap supported: Transfer · Swap · More (Buy, Sell, Earn in More); a lone active Buy or Sell
+ * shows as its own tile instead of More.
  * Swap not supported: active Buy / Sell become tiles; More only remains for Earn.
  * Transfer shows as Receive when the currency can't send.
  */
@@ -45,11 +46,16 @@ export function layoutQuickActionTiles(
   const swap = actions.find(({ id }) => id === "swap");
 
   if (swap) {
+    const swapTile: QuickActionTile = { id: "swap", state: swap.state };
     const moreActions = actions.filter(({ id }) => MORE_ACTION_IDS.has(id));
-    return {
-      tiles: [...transfer, { id: "swap", state: swap.state }, ...moreTiles(moreActions)],
-      moreActions,
-    };
+    const [single] = moreActions;
+    if (moreActions.length === 1 && isActivePromotable(single)) {
+      return {
+        tiles: [...transfer, swapTile, { id: single.id, state: single.state }],
+        moreActions: [],
+      };
+    }
+    return { tiles: [...transfer, swapTile, ...moreTiles(moreActions)], moreActions };
   }
 
   const promoted = actions.filter(isActivePromotable);

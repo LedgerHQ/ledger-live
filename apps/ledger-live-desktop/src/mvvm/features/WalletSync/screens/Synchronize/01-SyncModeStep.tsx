@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/Card";
 import styled, { useTheme } from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import {
   AnalyticsFlow,
   AnalyticsPage,
@@ -20,7 +20,7 @@ export default function SynchronizeModeStep({ goToQRCode, goToSyncWithDevice }: 
   const { colors } = useTheme();
   return (
     <Flex flexDirection="column" rowGap="16px">
-      <TrackPage
+      <TrackScreen
         category={AnalyticsPage.SyncMethod}
         {...walletSyncEntryFlowProperties(AnalyticsFlow)}
       />

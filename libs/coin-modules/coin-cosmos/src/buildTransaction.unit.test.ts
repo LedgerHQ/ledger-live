@@ -1,12 +1,5 @@
 import { AminoMsg, makeSignDoc, serializeSignDoc } from "@cosmjs/amino";
 import { ExtendedSecp256k1Signature, Secp256k1, sha256 } from "@cosmjs/crypto";
-import {
-  MsgWrappedBeginRedelegate,
-  MsgWrappedDelegate,
-  MsgWrappedUndelegate,
-  protobufPackage as epochingPackage,
-} from "@keplr-wallet/proto-types/babylon/epoching/v1/tx";
-import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import BigNumber from "bignumber.js";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
@@ -15,8 +8,14 @@ import {
   MsgDelegate,
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import cryptoFactory from "./chain/chain";
+import {
+  MsgWrappedBeginRedelegate,
+  MsgWrappedDelegate,
+  MsgWrappedUndelegate,
+  protobufPackage as epochingPackage,
+} from "./proto/babylonEpoching";
 
 import {
   buildTransaction,
@@ -1072,7 +1071,7 @@ describe("txToMessages — babylon epoching wrapping", () => {
     );
   });
 
-  it("uses the canonical x/epoching proto type URLs for all three staking msgs (anchored to the keplr package)", () => {
+  it("uses the canonical x/epoching proto type URLs for all three staking msgs (anchored to the epoching codec package)", () => {
     const canonical = (name: string) => `/${epochingPackage}.${name}`;
     expect(BABYLON_STAKING_MESSAGES.delegate.protoTypeUrl).toEqual(canonical("MsgWrappedDelegate"));
     expect(BABYLON_STAKING_MESSAGES.undelegate.protoTypeUrl).toEqual(
@@ -1210,7 +1209,7 @@ describe("buildTransaction", () => {
     buildTransaction({ ...defaultInfos, gasLimit: "10" });
     expect(feeFromPartialSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        gasLimit: "10",
+        gasLimit: 10n,
       }),
     );
   });

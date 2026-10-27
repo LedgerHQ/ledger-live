@@ -82,6 +82,7 @@ function ConnectDeviceAction({
 export function PerpsSignView({
   t,
   backgroundColor,
+  safeAreaEdges,
   theme,
   selectedDevice,
   connectedDevice,
@@ -96,7 +97,7 @@ export function PerpsSignView({
   requestToSetHeaderOptions,
 }: Readonly<PerpsSignViewModel>) {
   return (
-    <SafeAreaView edges={["bottom"]} style={[styles.root, { backgroundColor }]}>
+    <SafeAreaView edges={safeAreaEdges} style={[styles.root, { backgroundColor }]}>
       <Box lx={{ paddingHorizontal: "s16", paddingVertical: "s8", flex: 1 }}>
         <SelectDevice2
           onSelect={setSelectedDevice}

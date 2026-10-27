@@ -14,7 +14,7 @@ jest.mock("@shared/analytics", () => ({
   trackPage: jest.fn(),
 }));
 
-const mockedTrackPage = jest.mocked(trackPage);
+const mockedTrackScreen = jest.mocked(trackPage);
 import { BTC_ACCOUNT, EMPTY_BTC_ACCOUNT } from "../../__mocks__/accounts.mock";
 import { bitcoinCurrency, ethereumCurrency } from "../../__mocks__/useSelectAssetFlow.mock";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
@@ -455,7 +455,7 @@ describe("History integration", () => {
     renderHistoryWithPayTab("/history?tab=card");
 
     expect(await screen.findByTestId("card-history-signed-out-state")).toBeVisible();
-    expect(mockedTrackPage).not.toHaveBeenCalledWith(
+    expect(mockedTrackScreen).not.toHaveBeenCalledWith(
       expect.objectContaining({ category: "OperationList" }),
       expect.anything(),
     );
@@ -465,7 +465,7 @@ describe("History integration", () => {
     renderHistory();
 
     const operationRows = await screen.findAllByTestId(/history-operation-row-/);
-    expect(mockedTrackPage).toHaveBeenCalledWith(
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
       expect.objectContaining({
         category: "OperationList",
         props: expect.objectContaining({ operationsCount: operationRows.length }),

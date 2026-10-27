@@ -65,7 +65,7 @@ function getURLWhatIsThis({
 
 export const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 
 type OperationDetailsDelegationProps = {

@@ -10,13 +10,14 @@ import {
   runCliGetAddress,
   runCliGetTokenAllowance,
   runCliLiveData,
-  runCliTokenApproval,
+  runCliCommand,
+  tokenApprovalCommand,
   isRetryableError,
 } from "./runCli";
 import type { TokenApprovalOpts } from "./runCli";
 import { sleep } from "./index";
 import { setEnv } from "@shared/env";
-import { runWithCrossProcessLock } from "./crossProcessLock";
+import { runWithExclusiveLock } from "./exclusiveLock";
 import { getCcdAccountAddress } from "./families/concordium";
 import { approveToken } from "./families/evm";
 import { enableBlindSigningOnNanoS } from "./speculos";
@@ -445,15 +446,16 @@ const BROADCAST_RETRY_DELAY_MS = 5_000;
 
 /**
  * Broadcasts one token approve/revoke and retries transient nonce/broadcast
- * failures (underpriced, nonce too low, not confirmed). The CLI runs with
- * `retries: 1` because each re-broadcast re-presents the device prompt, which we
+ * failures (underpriced, nonce too low, not confirmed). The CLI runs once per
+ * attempt because each re-broadcast re-presents the device prompt, which we
  * must drive again via {@link approveToken} — so the retry lives here, not inside
  * the CLI helper. `DISABLE_TRANSACTION_BROADCAST` is forced to "0" per attempt.
  */
 async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<string> {
   for (let attempt = 1; attempt <= MAX_BROADCAST_ATTEMPTS; attempt++) {
     const original = setDisableTransactionBroadcastEnv("0");
-    const result = runCliTokenApproval(opts, 1);
+    const cli = new AbortController();
+    const result = runCliCommand(tokenApprovalCommand(opts), cli.signal);
     // The CLI child has already spawned and inherited the env, so restore it now:
     // holding the flag set across the awaits below could leak it into unrelated
     // work in the same worker process. The finally is kept as a safety net.
@@ -468,17 +470,20 @@ async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<strin
       await approveToken();
       return await result;
     } catch (err) {
-      // Retry only once the previous CLI has actually exited. Its child has no
-      // timeout/kill (see runCliCommand), so cap the wait; if it's still running
-      // we must NOT spawn a second CLI on the same device — bail instead of looping.
+      // Retry only once the previous CLI has actually exited, so two never drive the
+      // same device. One still running after the cap is killed, and the error rethrown
+      // only once it has exited: the account's lock is then released only when the CLI
+      // can no longer broadcast, and its settle window covers a transaction already sent.
       const cliDidSettle = await Promise.race([
         cliSettled.then(() => true),
         sleep(BROADCAST_RETRY_DELAY_MS).then(() => false),
       ]);
       const message = err instanceof Error ? err.message : String(err);
       if (!cliDidSettle) {
+        cli.abort();
+        await cliSettled;
         console.warn(
-          `⚠️ Token ${opts.mode}: previous CLI still running after ${BROADCAST_RETRY_DELAY_MS}ms – aborting retry`,
+          `⚠️ Token ${opts.mode}: previous CLI still running after ${BROADCAST_RETRY_DELAY_MS}ms – killed it, aborting retry`,
           message,
         );
         throw err;
@@ -498,20 +503,21 @@ async function runTokenApprovalWithRetry(opts: TokenApprovalOpts): Promise<strin
 }
 
 /**
- * Serializes the broadcast under a cross-worker lock on the parent EOA so two
- * Playwright workers never grab the same nonce (QAA-1323).
+ * Serializes the broadcast on the parent EOA, until it is confirmed, with every other
+ * worker and CI machine broadcasting from it (QAA-1323).
  */
 async function broadcastTokenApproval(
   account: TokenAccount,
   opts: TokenApprovalOpts,
 ): Promise<string> {
-  const owner = account.parentAccount ?? account;
-  const eoa = (owner.address ?? (await getAccountAddress(owner))).toLowerCase();
-  const lockKey = `${owner.currency.id}:${eoa}`;
   // Before the CLI starts: once its approve reaches the device, the setting can no longer change.
   await enableBlindSigningOnNanoS();
-  // Prevent nonce races across workers (QAA-1323).
-  return runWithCrossProcessLock(lockKey, () => runTokenApprovalWithRetry(opts));
+  return runWithExclusiveLock(
+    [account],
+    `token ${opts.mode}`,
+    () => runTokenApprovalWithRetry(opts),
+    { waitsForConfirmation: opts.waitConfirmation === true },
+  );
 }
 
 export function approveTokenCommand(account: TokenAccount, spender: string, approveAmount: string) {

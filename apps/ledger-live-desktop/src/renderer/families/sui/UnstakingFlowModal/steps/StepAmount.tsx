@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -67,7 +67,7 @@ export default function StepAmount({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Sui Undelegate"
         name="Step Amount"
         flow="stake"

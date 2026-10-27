@@ -10,7 +10,7 @@ import { calculate } from "@domain/entity-market-countervalues";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import type { PerpsDepositUiParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/depositMaxBuffer";
+import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/deposit/maxBuffer";
 import { useFeature } from "@features/platform-feature-flags";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

@@ -17,6 +17,7 @@ import {
 } from "tests/utils/featureFlagUtils";
 import { type NewSendFlowEntry } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 export type ContactsEntry = NewSendFlowEntry & {
   /**
@@ -74,6 +75,7 @@ function useSendFlowFixture(entry: ContactsEntry) {
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
     featureFlags: FEATURE_FLAGS,
+    ...(entry.disableBroadcast && { env: { DISABLE_TRANSACTION_BROADCAST: "1" } }),
   });
 }
 
@@ -87,9 +89,12 @@ function testOptions(entry: ContactsEntry) {
 export function registerSendViaContactTests(entries: ContactsEntry[]) {
   for (const entry of entries) {
     const tx = entry.transaction;
+    const sendLock = exclusiveLockFor({
+      broadcastAccounts: entry.disableBroadcast ? [] : [tx.accountToDebit],
+    });
 
     test.describe("Send - new flow - Address Book", () => {
-      test.describe("Send via contact", () => {
+      test.describe("Send via contact", { lock: sendLock.names }, () => {
         const contact = {
           id: "e2e-contact-multi-address",
           name: generateContactName(),
@@ -118,6 +123,7 @@ export function registerSendViaContactTests(entries: ContactsEntry[]) {
         ];
 
         useSendFlowFixture(entry);
+        test.use(sendLock.fixtures);
 
         test(
           `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) via contact`,

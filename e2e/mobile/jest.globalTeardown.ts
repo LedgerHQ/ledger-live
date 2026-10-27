@@ -70,7 +70,7 @@ export default async () => {
       log.warn("Error collecting env data for report in CI global teardown:", sanitizeError(err));
     }
     try {
-      closeBridge();
+      await closeBridge();
       await withTimeout(cleanupDetox(), GLOBAL_CLEANUP_TIMEOUT, "cleanupDetox");
     } catch (cleanupErr) {
       log.warn("Error during cleanup in CI global teardown:", sanitizeError(cleanupErr));

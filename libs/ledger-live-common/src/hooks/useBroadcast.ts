@@ -14,7 +14,7 @@ import { formatOperation, getMainAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { execAndWaitAtLeast } from "../promise";
 
-type CommonLogEvent = {
+export type CommonLogEvent = {
   appVersion: string;
   source?: TransactionSource;
   currencyId: string;
@@ -24,13 +24,9 @@ type CommonLogEvent = {
   isSendMax: boolean;
 };
 
-type ErrorLogEvent = {
+export type ErrorLogEvent = {
   status: "failure";
   error: Error;
-  txPayload: {
-    signature: string;
-    rawData?: Record<string, unknown>;
-  };
 } & CommonLogEvent;
 
 type SuccessLogEvent = { status: "success" } & CommonLogEvent;
@@ -106,10 +102,6 @@ export const useBroadcast = ({
             logger({
               status: "failure",
               error,
-              txPayload: {
-                signature: signedOperation.signature,
-                ...(signedOperation.rawData ? { rawData: signedOperation.rawData } : {}),
-              },
               ...commonLogEvent,
             });
           }

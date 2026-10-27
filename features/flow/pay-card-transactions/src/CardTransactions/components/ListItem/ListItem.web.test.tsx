@@ -67,11 +67,13 @@ describe("ListItem", () => {
   });
 
   it("reports a row click", () => {
-    const onPress = jest.fn();
-    render(<ListItem item={item()} onPress={onPress} />, { wrapper: cardApiWrapper() });
+    const onOpenTransaction = jest.fn();
+    render(<ListItem item={item()} onOpenTransaction={onOpenTransaction} />, {
+      wrapper: cardApiWrapper(),
+    });
 
     fireEvent.click(screen.getByTestId(`card-transactions-item-${transaction.id}`));
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenTransaction).toHaveBeenCalledTimes(1);
   });
 });

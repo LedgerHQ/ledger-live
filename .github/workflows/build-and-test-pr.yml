@@ -416,6 +416,22 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
+  test-nx-generators:
+    name: "Nx Generators Test"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'tools/nx-plugins/generators')}}
+    uses: ./.github/workflows/test-nx-generators-reusable.yml
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
   notify-e2e-required:
     name: "Notify E2E Required"
     permissions:
@@ -480,6 +496,7 @@ jobs:
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
       - test-e2e-tooling
+      - test-nx-generators
       - determine-affected
       - determine-renovate-dirty
     runs-on: ubuntu-22.04

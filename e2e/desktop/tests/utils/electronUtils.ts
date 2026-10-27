@@ -1,6 +1,7 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { withoutExclusiveLockEnv } from "tests/utils/exclusiveLock";
 
 const FIREBASE_REMOTE_CONFIG_HOST = "firebaseremoteconfig.googleapis.com";
 
@@ -60,7 +61,7 @@ export async function launchApp({
         size: windowSize,
       },
     }),
-    env,
+    env: withoutExclusiveLockEnv(env),
     colorScheme: theme,
     locale: lang,
     executablePath: require("electron/index.js"),

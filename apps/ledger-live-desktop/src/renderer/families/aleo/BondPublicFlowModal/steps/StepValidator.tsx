@@ -5,7 +5,7 @@ import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/aleo/types";
 import { useAleoValidators } from "@ledgerhq/live-common/families/aleo/react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -34,7 +34,7 @@ export default function StepValidator({
 
   return (
     <Box flow={3}>
-      <TrackPage
+      <TrackScreen
         category="Bond Flow"
         name={lockedTo ? "Step Validator Locked" : "Step Validator"}
         currency="aleo"

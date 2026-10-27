@@ -18,15 +18,14 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const accounts = useSelector(accountsSelector);
   const cvState = useCountervaluesCache();
-  const { shouldDisplayAssetSection, shouldDisplayPnl: isPnlFlagOn } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const {
     balanceInfo: syncBalanceInfo,
     portfolio,
     isLoading,
   } = usePortfolioBalanceDisplayState({ legacyRange: true });
 
-  const shouldDisplayPnl = isPnlFlagOn && accounts.length > 0;
+  const shouldDisplayPnl = accounts.length > 0;
 
   const valueChange = useMemo(
     () =>

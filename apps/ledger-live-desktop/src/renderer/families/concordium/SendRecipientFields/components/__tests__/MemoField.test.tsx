@@ -72,7 +72,7 @@ describe("MemoField", () => {
     expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ memo: "new memo" }));
   });
 
-  it("should track memo input event", () => {
+  it("should track memo input event without the memo text", () => {
     const trackProperties = { flow: "send" };
 
     render(<MemoField {...defaultProps} trackProperties={trackProperties} />);
@@ -83,7 +83,7 @@ describe("MemoField", () => {
     expect(track).toHaveBeenCalledWith("button_clicked2", {
       flow: "send",
       button: "input",
-      memo: "tracked memo",
+      hasMemo: true,
     });
   });
 

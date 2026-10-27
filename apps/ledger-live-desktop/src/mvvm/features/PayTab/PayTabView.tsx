@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Balance } from "@features/flow-pay-balance";
 import { Contacts, ContactAddressPicker } from "@features/flow-pay-contact";
-import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction";
+import { ContactsLedgerSyncIntroductionDialog } from "@features/flow-contacts-introduction/web";
 import { DepositOptions } from "@features/flow-pay-deposit";
 import { BankTransferIntro } from "@features/flow-pay-bank-transfer";
 import { RequestReceive, VerifyAddress } from "@features/flow-pay-request";
 import { FeatureTour } from "@features/flow-pay-feature-tour";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import PayTabHeader from "./components/PayTabHeader";
 import { PayCardDisclaimer } from "./components/PayCardDisclaimer";
 import { VerifyAddressExecutorLWD } from "./verifyAddressIntent/VerifyAddressExecutorLWD";
@@ -32,16 +32,16 @@ export function PayTabView({
 
   return (
     <div className="flex flex-col pb-32" data-testid="paytab-screen">
-      <TrackPage category="Pay" balance_filter={initialBalanceFilter} />
+      <TrackScreen category="Pay" balance_filter={initialBalanceFilter} />
       {requestReceive.isOpen && requestReceive.address ? (
-        <TrackPage
+        <TrackScreen
           category="Request complete"
           flow="request"
           asset={requestReceive.asset.ticker}
           network={requestReceive.network}
         />
       ) : null}
-      {trackRequestAddressVerification && <TrackPage category="Request Address Verification" />}
+      {trackRequestAddressVerification && <TrackScreen category="Request Address Verification" />}
       <div className="flex flex-col gap-24">
         <PayTabHeader />
         <Balance {...balance} actionTiles={actionTiles} />
@@ -51,7 +51,7 @@ export function PayTabView({
         <>
           <Contacts {...contacts} />
           {trackRecipientAddressSelection && (
-            <TrackPage category="Recipient address selection" refreshSource={false} />
+            <TrackScreen category="Recipient address selection" refreshSource={false} />
           )}
           <ContactAddressPicker {...contactAddressPicker} />
           <ContactsLedgerSyncIntroductionDialog {...ledgerSyncIntroduction} />

@@ -1,5 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { parse } from "yaml";
+import { loadLockfile } from "./dependency-checks/check-lockfile.ts";
+import { dependencyChains } from "./dependency-checks/validate.js";
 
 /**
  * Estimates how much a PR grows node_modules from the pnpm-lock.yaml diff, without any install.
@@ -13,6 +15,7 @@ const ENTRY_RE = /^ {2}(['"]?)([^'"\s].*?)\1:(?: \{\})?\s*$/;
 const LIST_RE = /^ {4}(cpu|os|libc): \[(.*)\]\s*$/;
 const RELIABILITY_PATHS = ["pnpm-workspace.yaml", "patches"];
 const TOP = 5;
+export const DUPLICATE_FLOOR_BYTES = 1e6;
 // CI runs on glibc Linux; pnpm only installs the libc variant matching the host
 const HOST_LIBC = "glibc";
 // HEAD is the PR merge commit and HEAD^1 the tip of the base branch
@@ -26,8 +29,20 @@ type Lockfile = { installs: string[]; meta: Map<string, Platform> };
 type Host = { os: string; cpu: string };
 type Counts = Map<string, number>;
 type Mover = { name: string; deltaBytes: number; added: string[]; removed: string[] };
+type AddedVersion = { version: string; compatibleWith: string[]; chain?: string };
 
-export type SizeReport = { deltaBytes: number; markdown: string };
+export type Duplicate = {
+  name: string;
+  deltaBytes: number;
+  added: AddedVersion[];
+  existing: string[];
+};
+export type SizeReport = {
+  deltaBytes: number;
+  markdown: string;
+  duplicates: Duplicate[];
+  duplicatesMarkdown: string;
+};
 
 function splitKey(key: string): { name: string; version: string } | null {
   const base = key.split("(", 1)[0].replace(/^\/+/, "");
@@ -183,6 +198,63 @@ function priceDiff(base: Counts, head: Counts, sizeOf: (key: string) => number) 
   return { total, movers };
 }
 
+/** Versions sharing a key satisfy one caret range: same major, or same minor below 1.0.0. Prereleases match nothing. */
+function caretKey(version: string) {
+  const release = version.split("+", 1)[0];
+  if (release.includes("-")) return null;
+  const [major, minor, patch] = release.split(".");
+  if (major !== "0") return major;
+  return minor !== "0" ? `0.${minor}` : `0.0.${patch}`;
+}
+
+const compareVersions = (a: string, b: string) => a.localeCompare(b, "en", { numeric: true });
+
+function versionsByName(counts: Counts) {
+  const out = new Map<string, Set<string>>();
+  for (const key of counts.keys()) {
+    const at = key.lastIndexOf("@");
+    const versions = out.get(key.slice(0, at)) ?? new Set();
+    versions.add(key.slice(at + 1));
+    out.set(key.slice(0, at), versions);
+  }
+  return out;
+}
+
+/** Names already installed that gain a distinct version, when their delta reaches the floor. */
+export function findNewDuplicates(
+  base: Counts,
+  head: Counts,
+  movers: Mover[],
+  floorBytes = DUPLICATE_FLOOR_BYTES,
+): Duplicate[] {
+  const baseVersions = versionsByName(base);
+  const deltaByName = new Map(movers.map(m => [m.name, m.deltaBytes]));
+  const duplicates: Duplicate[] = [];
+  for (const [name, versions] of versionsByName(head)) {
+    const before = baseVersions.get(name);
+    const deltaBytes = deltaByName.get(name) ?? 0;
+    if (!before || versions.size <= before.size || deltaBytes < floorBytes) continue;
+    const all = [...versions].sort(compareVersions);
+    const existing = all.filter(v => before.has(v));
+    const added = all.filter(v => !before.has(v));
+    const compatible = (version: string, pool: string[]) =>
+      pool.filter(v => v !== version && caretKey(v) !== null && caretKey(v) === caretKey(version));
+    duplicates.push({
+      name,
+      deltaBytes,
+      added: added.map(version => {
+        const fromBase = compatible(version, existing);
+        return {
+          version,
+          compatibleWith: fromBase.length ? fromBase : compatible(version, added),
+        };
+      }),
+      existing,
+    });
+  }
+  return duplicates.sort((a, b) => b.deltaBytes - a.deltaBytes);
+}
+
 function unpackedSize(body: unknown): number | null {
   if (typeof body !== "object" || body === null || !("dist" in body)) return null;
   const { dist } = body;
@@ -297,17 +369,56 @@ function renderMarkdown(r: {
   return lines.join("\n");
 }
 
-/** Throws when sizes cannot be fetched, since a delta priced at 0 would read as "no impact". */
-export async function estimateNodeModulesSizeDelta(): Promise<SizeReport> {
-  const host: Host = { os: process.platform, cpu: process.arch };
-  // Public npm: fetch has no Artifactory token, and sizes do not depend on the install registry
-  const registry = "https://registry.npmjs.org";
+function renderDuplicates(duplicates: Duplicate[]) {
+  if (!duplicates.length) return "";
+  const lines = [
+    "## 🧬 New duplicate versions",
+    "",
+    `Packages already in \`node_modules\` install one more version (listed from ${DUPLICATE_FLOOR_BYTES / 1e6} MB).`,
+    "",
+    "| Package | Delta | New version | Already installed | Brought by |",
+    "| --- | ---: | --- | --- | --- |",
+  ];
+  for (const d of duplicates) {
+    d.added.forEach((a, i) => {
+      const lowest = [a.version, ...a.compatibleWith].sort(compareVersions)[0];
+      const compat = a.compatibleWith.length ? ` ♻️ ^${lowest}` : "";
+      const cells = i
+        ? ["", "", ""]
+        : [`\`${d.name}\``, formatMb(d.deltaBytes), d.existing.join(", ") || "—"];
+      lines.push(
+        `| ${cells[0]} | ${cells[1]} | ${a.version}${compat} | ${cells[2]} | ${a.chain ? `\`${a.chain}\`` : "?"} |`,
+      );
+    });
+  }
+  if (duplicates.some(isDedupable)) {
+    lines.push(
+      "",
+      "♻️ `^X`: the new version and an installed one both satisfy `^X`, so the highest could serve both. Align the dependency on it (pnpm catalog), or add an `overrides` entry in `pnpm-workspace.yaml`. A new major is listed for information only.",
+    );
+  }
+  return lines.join("\n");
+}
 
-  const baseLock = parseLockfile(gitShow(BASE, "pnpm-lock.yaml") ?? "");
-  const headLock = parseLockfile(gitShow(HEAD, "pnpm-lock.yaml") ?? "");
+export const isDedupable = (d: Duplicate) => d.added.some(a => a.compatibleWith.length > 0);
+
+type LockfileInput = {
+  base: string;
+  head: string;
+  baseWorkspace: string | null;
+  headWorkspace: string | null;
+  changedFiles: string[];
+  host: Host;
+  lookupSizes: (keys: string[]) => Promise<Map<string, number | null>>;
+};
+
+export async function analyzeLockfiles(input: LockfileInput): Promise<SizeReport> {
+  const { host } = input;
+  const baseLock = parseLockfile(input.base);
+  const headLock = parseLockfile(input.head);
   const meta = new Map([...baseLock.meta, ...headLock.meta]);
-  const baseArch = supportedArchitectures(gitShow(BASE, "pnpm-workspace.yaml"), host);
-  const headArch = supportedArchitectures(gitShow(HEAD, "pnpm-workspace.yaml"), host);
+  const baseArch = supportedArchitectures(input.baseWorkspace, host);
+  const headArch = supportedArchitectures(input.headWorkspace, host);
 
   const base = { installs: baseLock.installs, meta };
   const head = { installs: headLock.installs, meta };
@@ -319,16 +430,25 @@ export async function estimateNodeModulesSizeDelta(): Promise<SizeReport> {
   const needed = [
     ...new Set([...changedKeys(installedBase, installedHead), ...changedKeys(allBase, allHead)]),
   ];
-  const { sizes, failed } = await fetchSizes(needed, registry);
-  if (failed) throw new Error(`${failed} size lookups failed on ${registry}`);
+  const sizes = await input.lookupSizes(needed);
   const sizeOf = (key: string) => sizes.get(key) ?? 0;
 
   const installed = priceDiff(installedBase, installedHead, sizeOf);
   const all = priceDiff(allBase, allHead, sizeOf);
 
-  const changedFiles = git("diff", "--name-only", BASE, HEAD).split("\n").filter(Boolean);
+  const duplicates = findNewDuplicates(installedBase, installedHead, installed.movers);
+  if (duplicates.length) {
+    const chains = dependencyChains(
+      loadLockfile(input.head),
+      duplicates.flatMap(d => d.added.map(a => `${d.name}@${a.version}`)),
+    );
+    for (const d of duplicates) {
+      for (const a of d.added) a.chain = chains.get(`${d.name}@${a.version}`);
+    }
+  }
+
   const unreliable = RELIABILITY_PATHS.filter(p =>
-    changedFiles.some(f => f === p || f.startsWith(`${p}/`)),
+    input.changedFiles.some(f => f === p || f.startsWith(`${p}/`)),
   );
 
   return {
@@ -339,11 +459,34 @@ export async function estimateNodeModulesSizeDelta(): Promise<SizeReport> {
       installedDeltaBytes: installed.total,
       allPlatformsDeltaBytes: all.total,
       movers: installed.movers.length ? installed.movers : all.movers,
-      packageJsonChanged: changedFiles.some(
+      packageJsonChanged: input.changedFiles.some(
         f => f === "package.json" || f.endsWith("/package.json"),
       ),
       unreliable,
       unknownSizes: needed.filter(k => sizes.get(k) == null).length,
     }),
+    duplicates,
+    duplicatesMarkdown: renderDuplicates(duplicates),
   };
+}
+
+/** Throws when sizes cannot be fetched, since a delta priced at 0 would read as "no impact". */
+export async function estimateNodeModulesSizeDelta(
+  refs = { base: BASE, head: HEAD },
+): Promise<SizeReport> {
+  // Public npm: fetch has no Artifactory token, and sizes do not depend on the install registry
+  const registry = "https://registry.npmjs.org";
+  return analyzeLockfiles({
+    base: gitShow(refs.base, "pnpm-lock.yaml") ?? "",
+    head: gitShow(refs.head, "pnpm-lock.yaml") ?? "",
+    baseWorkspace: gitShow(refs.base, "pnpm-workspace.yaml"),
+    headWorkspace: gitShow(refs.head, "pnpm-workspace.yaml"),
+    changedFiles: git("diff", "--name-only", refs.base, refs.head).split("\n").filter(Boolean),
+    host: { os: process.platform, cpu: process.arch },
+    lookupSizes: async keys => {
+      const { sizes, failed } = await fetchSizes(keys, registry);
+      if (failed) throw new Error(`${failed} size lookups failed on ${registry}`);
+      return sizes;
+    },
+  });
 }

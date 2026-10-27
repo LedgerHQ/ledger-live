@@ -12,7 +12,7 @@ jest.mock("@ledgerhq/lumen-ui-rnative/symbols", () => {
   return {
     Nano: makeIcon("device-icon-nano"),
     Flex: makeIcon("device-icon-flex"),
-    Apex: makeIcon("device-icon-apex"),
+    NanoGen5: makeIcon("device-icon-apex"),
     Stax: makeIcon("device-icon-stax"),
   };
 });

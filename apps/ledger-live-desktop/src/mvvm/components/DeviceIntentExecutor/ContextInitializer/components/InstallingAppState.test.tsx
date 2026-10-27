@@ -2,17 +2,17 @@ import React from "react";
 import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { initializerDevice } from "../testUtils";
 import { InstallingAppState } from "./InstallingAppState";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: jest.fn(() => null),
+  TrackScreen: jest.fn(() => null),
 }));
 
-const mockedTrackPage = jest.mocked(TrackPage);
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 describe("InstallingAppState", () => {
   beforeEach(() => {
@@ -34,7 +34,7 @@ describe("InstallingAppState", () => {
   it("should track the installing app page event", () => {
     renderState();
 
-    expect(mockedTrackPage).toHaveBeenCalledWith(
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
       expect.objectContaining({
         category: PAGE_CONNECT_APP.InstallingApp,
         sourceFlow: "my_ledger",

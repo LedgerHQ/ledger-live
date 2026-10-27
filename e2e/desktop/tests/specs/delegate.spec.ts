@@ -26,6 +26,7 @@ import type { Application } from "tests/page";
 import type { DelegateTxType } from "tests/page/drawer/delegate.drawer";
 import { buildTags, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const DISABLE_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "1" };
 // `getEnv` does not read process.env in the test runner, so it would always return the default here.
@@ -55,11 +56,6 @@ function ticketAnnotations({ xrayTicket, bugTicket }: { xrayTicket: string; bugT
     { type: "TMS", description: xrayTicket },
     ...(bugTicket ? [{ type: "BUG", description: bugTicket }] : []),
   ];
-}
-
-/** Lock name shared by tests that broadcast from `account`, so they never race on its nonce. */
-function accountLock(account: Account) {
-  return `account:${account.currency.id}:${account.accountPath}`;
 }
 
 async function openAccount(app: Application, account: Account) {
@@ -166,13 +162,17 @@ async function completeProviderStep(app: Application, provider: string, step: Pr
 for (const scenario of delegateScenarios) {
   const { delegate } = scenario;
   const { currency } = delegate.account;
+  const delegateLock = exclusiveLockFor({
+    broadcastAccounts: scenario.disableBroadcast ? [] : [delegate.account],
+  });
 
-  test.describe("Delegate", () => {
+  test.describe("Delegate", { lock: delegateLock.names }, () => {
     useDelegateFixtures(currency, {
       cliCommands: [liveDataCommand(delegate.account)],
       featureFlags: scenario.featureFlags,
       disableBroadcast: scenario.disableBroadcast,
     });
+    test.use(delegateLock.fixtures);
 
     test(
       `[${currency.testLabel}] - Delegate`,
@@ -248,9 +248,12 @@ test.describe("Delegate", () => {
   );
 });
 
-test.describe("Delegate", () => {
+const seiLock = exclusiveLockFor({ broadcastAccounts: [Account.SEI_EVM_1] });
+
+test.describe("Delegate", { lock: seiLock.names }, () => {
   const seiDelegation = new Delegate(Account.SEI_EVM_1, "1", "first-available");
   const { currency } = seiDelegation.account;
+  test.use(seiLock.fixtures);
   useDelegateFixtures(currency, {
     cliCommands: [liveDataWithAddressCommand(seiDelegation.account, { currency: "sei_evm" })],
     featureFlags: {
@@ -297,12 +300,14 @@ test.describe("Delegate", () => {
 });
 
 const celoStaking = new Delegate(Account.CELO_1, "0.001", "N/A");
+const celoLock = exclusiveLockFor({ broadcastAccounts: [celoStaking.account] });
 
 // Lock and Vote spend from the same account, and the Celo bridge reads its nonce from the latest
 // block: run in parallel, the second transaction reuses the first one's nonce and is rejected.
-test.describe("Lock and vote - CELO", { lock: accountLock(celoStaking.account) }, () => {
+test.describe("Lock and vote - CELO", { lock: celoLock.names }, () => {
   const { currency } = celoStaking.account;
   useDelegateFixtures(currency, { cliCommands: [liveDataCommand(celoStaking.account)] });
+  test.use(celoLock.fixtures);
 
   test(
     `[${currency.testLabel}] - Lock`,
@@ -568,8 +573,10 @@ for (const scenario of stakingLiveAppScenarios) {
   });
 }
 
+const minaPairLock = exclusiveLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
+
 // Tests are skipped while waiting for LIVE-37757 to be done
-test.describe.skip("Delegate - MINA", () => {
+test.describe.skip("Delegate - MINA", { lock: minaPairLock.names }, () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina delegate");
 
@@ -581,6 +588,7 @@ test.describe.skip("Delegate - MINA", () => {
     cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataWithAddressCommand(account)),
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
+  test.use(minaPairLock.fixtures);
 
   test(
     `[${Currency.MINA.testLabel}] - Delegate`,
@@ -618,8 +626,10 @@ test.describe.skip("Delegate - MINA", () => {
   );
 });
 
+const minaRedelegationLock = exclusiveLockFor({ broadcastAccounts: [MINA_REDELEGATION_ACCOUNT] });
+
 // Tests are skipped while waiting for LIVE-37757 to be done
-test.describe.skip("Redelegate - MINA", () => {
+test.describe.skip("Redelegate - MINA", { lock: minaRedelegationLock.names }, () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina redelegate");
 
@@ -629,6 +639,7 @@ test.describe.skip("Redelegate - MINA", () => {
     cliCommands: [liveDataWithAddressCommand(MINA_REDELEGATION_ACCOUNT)],
     featureFlags: FF_MINA_STAKING_ENABLED,
   });
+  test.use(minaRedelegationLock.fixtures);
 
   test(
     `[${Currency.MINA.testLabel}] - Redelegate`,

@@ -1,12 +1,7 @@
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import {
-  Gift,
-  LifeRing,
-  ShieldCheck,
-  ShieldCheckNotification,
-} from "@ledgerhq/lumen-ui-react/symbols";
+import { Gift, LifeRing, ShieldCheck } from "@ledgerhq/lumen-ui-react/symbols";
 import { useFeature } from "@features/platform-feature-flags";
 import { useRecoverEntry } from "LLD/hooks/useRecoverEntry";
 import { ShieldCheckNotificationIcon } from "LLD/features/BackupHub/components/ShieldCheckNotificationIcon";
@@ -49,7 +44,7 @@ export function useActionsListViewModel({
   if (isBackupHubEnabled) {
     recoverIcon = hasCompletedBackup ? ShieldCheck : ShieldCheckNotificationIcon;
   } else {
-    recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
+    recoverIcon = hasClickedRecover ? ShieldCheck : ShieldCheckNotificationIcon;
   }
 
   const openHelp = useCallback(() => {

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import type { BalanceViewProps } from "../types";
-import { BalanceView } from "../components/Hero/BalanceView.native";
+import { BalanceView } from "../components/Hero/BalanceView";
 import { i18nWrapper } from "./i18nWrapper";
 import {
   depositActionTiles,

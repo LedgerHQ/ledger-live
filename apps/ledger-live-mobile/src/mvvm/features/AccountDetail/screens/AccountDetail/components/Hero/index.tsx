@@ -1,16 +1,11 @@
 import React from "react";
-import type { Account } from "@ledgerhq/types-live";
 import { AccountHero } from "@features/flow-account-detail-hero/native";
 import { TransferDrawer } from "LLM/features/QuickActions";
 import { AccountAssetPickerSheet } from "LLM/components/AccountAssetPickerSheet";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../../../testIds";
-import { useAccountHeroPort } from "./useAccountHeroPort";
+import type { AccountHeroPortResult } from "./useAccountHeroPort";
 
-type Props = Readonly<{ account: Account }>;
-
-export function Hero({ account }: Props) {
-  const { port, assetPicker } = useAccountHeroPort(account);
-
+export function Hero({ port, assetPicker }: AccountHeroPortResult) {
   return (
     <>
       <AccountHero {...port} testID={ACCOUNT_DETAIL_TEST_IDS.hero} />

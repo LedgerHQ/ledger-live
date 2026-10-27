@@ -11,7 +11,12 @@ import {
 import { Refresh } from "@ledgerhq/lumen-ui-react/symbols";
 import { useLedgerSyncIntroductionCopy } from "../../copy/useLedgerSyncIntroductionCopy";
 import { useSingleFireDismiss } from "../../internals/useSingleFireDismiss";
-import type { ContactsLedgerSyncIntroductionDialogProps } from "./types";
+
+export type ContactsLedgerSyncIntroductionDialogProps = Readonly<{
+  open: boolean;
+  onActivate: () => void;
+  onDismiss: () => void;
+}>;
 
 export function ContactsLedgerSyncIntroductionDialog({
   open,

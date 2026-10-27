@@ -120,7 +120,7 @@ const UnstakingRow = ({ position, account }: RowProps) => {
   const openTx = useCallback(() => {
     if (!txHash) return;
     const url = getTransactionExplorer(getDefaultExplorerView(account.currency), txHash);
-    if (url) openURL(url);
+    if (url) openURL(url, "OpenURL", {}, { sensitive: true });
   }, [txHash, account.currency]);
 
   const bakerName = baker ? baker.name : shortAddressPreview(position.delegate ?? "");

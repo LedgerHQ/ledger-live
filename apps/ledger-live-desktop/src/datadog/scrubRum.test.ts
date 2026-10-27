@@ -72,6 +72,30 @@ describe("scrubResourceUrl", () => {
       );
     });
   });
+
+  describe("portfolio account", () => {
+    it("redacts the portfolio id, which links every account of a wallet", () => {
+      expect(
+        scrubResourceUrl("https://svc.example/v1/portfolio/ledger-live-1234/balance?size=100"),
+      ).toBe("https://svc.example/v1/portfolio/[redacted]/balance?size=100");
+    });
+
+    it("redacts the account id before /addresses", () => {
+      expect(
+        scrubResourceUrl("https://svc.example/v1/portfolio/p/accounts/base%3A0xFoo/addresses"),
+      ).toBe("https://svc.example/v1/portfolio/[redacted]/accounts/[redacted]/addresses");
+    });
+
+    it("redacts a portfolio account id in the account query", () => {
+      expect(
+        scrubResourceUrl(
+          "https://svc.example/v1/portfolio/p/balance?account=base%3A0xFoo&currency=usd",
+        ),
+      ).toBe(
+        "https://svc.example/v1/portfolio/[redacted]/balance?account=%5Bredacted%5D&currency=usd",
+      );
+    });
+  });
 });
 
 describe("scrubViewUrlHash", () => {

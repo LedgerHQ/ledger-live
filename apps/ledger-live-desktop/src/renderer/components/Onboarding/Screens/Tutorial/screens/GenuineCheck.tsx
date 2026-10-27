@@ -7,13 +7,13 @@ import { OnboardingContext } from "../../../index";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { Device } from "@ledgerhq/types-devices";
 import { useGenuineCheckAction } from "~/renderer/hooks/useConnectAppAction";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 const Success = ({ device, ...trackProps }: { device: Device } & TrackTutorialProps) => {
   const { t } = useTranslation();
   return (
     <Column>
-      <TrackPage
+      <TrackScreen
         category="Set up device"
         name="Final Step Your device is ready"
         flow={trackProps.flow}

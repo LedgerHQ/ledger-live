@@ -5,8 +5,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currenc
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
 import { BigNumber } from "bignumber.js";
-import { loadWallet, mineToWalletAddress, sendTo } from "../helpers";
-import { killAtlas, spawnAtlas } from "../atlas";
+import { mineToWalletAddress } from "../helpers";
+import { killSandbox, spawnSandbox } from "../sandbox";
 import { waitForExplorerSync } from "../utils";
 import { makeGenericAdapterAccount } from "../fixtures";
 import { buildGenericSigner } from "../signer";
@@ -68,14 +68,14 @@ const makeScenarioTransactions = (): ScenarioTransaction<GenericTransaction, Acc
 export const scenarioBitcoinGeneric: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Bitcoin — generic adapter (single address)",
   setup: async () => {
-    await spawnAtlas();
+    const { sandbox, explorerUrl } = await spawnSandbox();
 
     const coinConfig: BitcoinCoinConfig = {
       status: { type: "active" },
       name: "Bitcoin Regtest",
       unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
       explorerId: "btc_regtest",
-      explorer: { url: "http://localhost:9876" },
+      explorer: { url: explorerUrl },
       // As Ledger Live configures regtest: app-bitcoin-new's version 2, RBF-signalling inputs.
       transaction: { version: 2, signalsRbf: true },
     };
@@ -89,14 +89,11 @@ export const scenarioBitcoinGeneric: Scenario<GenericTransaction, Account> = {
     const { accountBridge, currencyBridge } = await getBitcoinGenericBridges(signer);
     const account = makeGenericAdapterAccount(address, publicKey, ADDRESS_PATH, BITCOIN);
 
-    await loadWallet("coinTester");
-    // 101 blocks make the coinbase spendable; then fund the address with three UTXOs.
-    await mineToWalletAddress("101");
-    await sendTo(address, 2);
-    await sendTo(address, 3);
-    await sendTo(address, 2);
-    // History and balance are confirmed-only: confirm the funding before the first sync.
-    await mineToWalletAddress("2");
+    // Fund the address with three UTXOs. Each airdrop mines its block, so the funding is confirmed
+    // before the first sync (history and balance are confirmed-only).
+    await sandbox.airdrop(address, 2);
+    await sandbox.airdrop(address, 3);
+    await sandbox.airdrop(address, 2);
 
     return { accountBridge, currencyBridge, account, retryLimit: 15, retryInterval: 1_000 };
   },
@@ -120,6 +117,6 @@ export const scenarioBitcoinGeneric: Scenario<GenericTransaction, Account> = {
     expect(account.operations.length).toBeGreaterThanOrEqual(7);
   },
   teardown: async () => {
-    await killAtlas();
+    await killSandbox();
   },
 };

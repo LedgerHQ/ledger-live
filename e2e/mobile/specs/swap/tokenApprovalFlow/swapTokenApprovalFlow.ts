@@ -7,6 +7,7 @@ import { getAmountFromUSD } from "@ledgerhq/live-e2e-shared/currencyUtils";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
 import { BroadcastFlow, shouldRunBroadcastFlow } from "@e2e/helpers/broadcastRotation";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 
 /** CLI revoke, then an on-device approval (plus a permit for Uniswap): beyond the default budget. */
 const TOKEN_APPROVAL_TEST_TIMEOUT = 480_000;
@@ -18,6 +19,7 @@ export function runSwapTokenApprovalFlow(
   tmsLinks: string[],
   tags: string[],
 ) {
+  declareBroadcastAccounts(fromAccount);
   const runHere = shouldRunBroadcastFlow(BroadcastFlow.APPROVAL);
   if (!runHere) {
     const broadcastEnabled = process.env.DISABLE_TRANSACTION_BROADCAST === "0";

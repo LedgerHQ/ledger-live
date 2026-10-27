@@ -2,7 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Dialog } from "tests/component/dialog.component";
 import { expect } from "@playwright/test";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class ModularNetworkDialog extends Dialog {
   private networkSelectorListContainer = this.page
@@ -28,7 +28,7 @@ export class ModularNetworkDialog extends Dialog {
           }
         },
         {
-          intervals: [500],
+          intervals: [INTERVAL.short],
           message: `Could not find '${networkName}' in the network selection dialog`,
         },
       )

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Icons } from "@ledgerhq/react-ui/index";
 import { useTheme } from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { LogoWrapper } from "LLD/features/WalletSync/components/LogoWrapper";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 
@@ -12,7 +12,7 @@ export function EnableSync(trackProps: Readonly<TrackTutorialProps>) {
 
   return (
     <Column>
-      <TrackPage
+      <TrackScreen
         category="Set up device"
         name="Ledger Sync"
         flow={trackProps.flow}

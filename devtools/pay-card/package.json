@@ -53,16 +53,12 @@
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-utils-shared": "catalog:",
-    "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
     "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:",
     "react-test-renderer": "catalog:"
   },
   "peerDependencies": {
@@ -71,15 +67,11 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/lumen-utils-shared": "catalog:",
-    "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
     "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
-    "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
+    "class-variance-authority": "catalog:"
   }
 }

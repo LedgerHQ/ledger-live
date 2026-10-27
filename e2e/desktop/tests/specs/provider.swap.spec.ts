@@ -9,7 +9,9 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
+  tokenApprovalBroadcastAccounts,
 } from "tests/utils/swapUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
@@ -33,13 +35,18 @@ const providerFlowTests = [
 ];
 
 for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of providerFlowTests) {
-  test.describe("Swap - DEX native flow", () => {
+  const approvalLock = exclusiveLockFor({
+    cliBroadcastAccounts: tokenApprovalBroadcastAccounts(fromAccount, provider),
+  });
+
+  test.describe("Swap - DEX native flow", { lock: approvalLock.names }, () => {
     setupEnv(true);
 
     test.use({
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: provider.app,
+      ...approvalLock.fixtures,
 
       cliCommandsOnApp: [
         [

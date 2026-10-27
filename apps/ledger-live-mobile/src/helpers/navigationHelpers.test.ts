@@ -39,8 +39,8 @@ const makeNavigation = (state: StackState) => ({
   getState: () => state,
 });
 
-const setParamsOn = (sourceKey: string) => ({
-  ...CommonActions.setParams({ transaction }),
+const setParamsOn = (sourceKey: string, params: object = { transaction }) => ({
+  ...CommonActions.setParams(params),
   source: sourceKey,
   target: navigatorKey,
 });
@@ -64,7 +64,7 @@ describe("popToScreen", () => {
 
     popToScreen(navigation, ScreenName.SendSummary, { transaction });
 
-    expect(navigation.dispatch).toHaveBeenCalledTimes(2);
+    expect(navigation.dispatch).toHaveBeenCalledTimes(3);
     expect(navigation.dispatch).toHaveBeenCalledWith(setParamsOn("recipient-key"));
     expect(navigation.dispatch).toHaveBeenCalledWith(setParamsOn("amount-key"));
   });
@@ -74,9 +74,18 @@ describe("popToScreen", () => {
 
     popToScreen(navigation, ScreenName.SendSummary, { transaction });
 
-    expect(navigation.dispatch).toHaveBeenCalledTimes(2);
+    expect(navigation.dispatch).toHaveBeenCalledTimes(3);
     expect(navigation.dispatch).toHaveBeenCalledWith(setParamsOn("recipient-key"));
     expect(navigation.dispatch).toHaveBeenCalledWith(setParamsOn("amount-key"));
+  });
+
+  it("sets the edited params on the summary itself", () => {
+    const navigation = makeNavigation(baseStackWith([recipientStep, amountStep]));
+    const params = { accountId: "js:2:ripple:rTest:", transaction };
+
+    popToScreen(navigation, ScreenName.SendSummary, params);
+
+    expect(navigation.dispatch).toHaveBeenCalledWith(setParamsOn("summary-key", params));
   });
 
   it("skips the amount step when the recipient went straight to the summary", () => {
@@ -84,8 +93,9 @@ describe("popToScreen", () => {
 
     popToScreen(navigation, ScreenName.SendSummary, { transaction });
 
-    expect(navigation.dispatch).toHaveBeenCalledTimes(1);
+    expect(navigation.dispatch).toHaveBeenCalledTimes(2);
     expect(navigation.dispatch).toHaveBeenCalledWith(setParamsOn("recipient-key"));
+    expect(navigation.dispatch).not.toHaveBeenCalledWith(setParamsOn("amount-key"));
   });
 
   it("still pops when no earlier step is in the stack", () => {
