@@ -4,11 +4,10 @@ import { resolveAccountNotices } from "./resolveAccountNotices";
 const SUPPORT = "https://support.ledger.com";
 
 const signals = (overrides: Partial<AccountNoticeSignals> = {}): AccountNoticeSignals => ({
-  currencyName: "Adi",
+  currencyId: "ethereum",
+  currencyName: "Ethereum",
   supportLink: SUPPORT,
-  isRobinhoodChain: false,
   isRobinhoodDisclaimerEnabled: true,
-  isPerpsAccount: false,
   isPerpsEnabled: true,
   ...overrides,
 });
@@ -39,7 +38,7 @@ describe("resolveAccountNotices", () => {
     ).toEqual([
       {
         id: "willBeDeprecated",
-        currencyName: "Adi",
+        currencyName: "Ethereum",
         date: "Jan 1, 2027",
         action: { type: "learnMore", link: "https://ledger.com/d" },
       },
@@ -52,29 +51,31 @@ describe("resolveAccountNotices", () => {
     ]);
   });
 
-  it("shows the Robinhood disclaimer on a Robinhood chain account", () => {
-    expect(ids({ isRobinhoodChain: true })).toEqual(["robinhoodDisclaimer"]);
-  });
+  it.each(["robinhood", "robinhood_testnet"])(
+    "shows the Robinhood disclaimer on a %s account",
+    currencyId => {
+      expect(ids({ currencyId })).toEqual(["robinhoodDisclaimer"]);
+    },
+  );
 
   it("hides the Robinhood disclaimer when its flag is off", () => {
-    expect(ids({ isRobinhoodChain: true, isRobinhoodDisclaimerEnabled: false })).toEqual([]);
+    expect(ids({ currencyId: "robinhood", isRobinhoodDisclaimerEnabled: false })).toEqual([]);
   });
 
-  it("offers Perps on a Perps account when Perps is enabled", () => {
-    expect(resolveAccountNotices(signals({ isPerpsAccount: true }))).toEqual([
+  it("offers Perps on a Hyperliquid account when Perps is enabled", () => {
+    expect(resolveAccountNotices(signals({ currencyId: "hypercore" }))).toEqual([
       { id: "perps", action: { type: "openPerps" } },
     ]);
-    expect(ids({ isPerpsAccount: true, isPerpsEnabled: false })).toEqual([]);
+    expect(ids({ currencyId: "hypercore", isPerpsEnabled: false })).toEqual([]);
   });
 
-  it("orders status, custom banner, Robinhood then Perps", () => {
+  it("orders status, custom banner, then the currency notices", () => {
     expect(
       ids({
         status: { type: "migration", from: "A", to: "B" },
         customBanner: { text: "Heads up" },
-        isRobinhoodChain: true,
-        isPerpsAccount: true,
+        currencyId: "robinhood",
       }),
-    ).toEqual(["migration", "custom", "robinhoodDisclaimer", "perps"]);
+    ).toEqual(["migration", "custom", "robinhoodDisclaimer"]);
   });
 });

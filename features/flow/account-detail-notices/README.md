@@ -20,32 +20,37 @@ Perps account banner.
 
 ## What the apps own
 
-Reading the signals and handling the actions (opening a link, navigating to Perps). The package
-knows no chain or family: eligibility comes in as plain booleans, computed where that knowledge
-lives:
+Reading the signals (currency id and name, remote currency config, feature flags) and handling
+the actions (opening a link, navigating to Perps).
 
-- `isPerpsAccount`: a family capability (`accountDetailNotices` in the app's families contract),
-  never a `family === "…"` check.
-- `isRobinhoodChain`: the Robinhood chain helper (`isRobinhoodExclusiveAsset` from
-  `@ledgerhq/asset-detail`).
+## Currency notices registry
 
-The package keeps the feature-flag gating, the order, the copy and the rendering.
+Notices tied to a chain (the Robinhood disclaimer, Perps on Hyperliquid) are listed in one table,
+`CURRENCY_NOTICES` in `src/logic/currencyNotices.ts`, keyed by currency id. The rule reads it and
+applies the feature flag of each notice.
+
+This is a deliberate exception to the coin families contract
+(`.agents/skills/coin-families-contract/SKILL.md`): these notices are product and legal content
+about a chain, not coin behaviour, and one declarative table is easier to maintain than a
+capability per family on each app. Keep it to data: no `family === "…"` branch in this package.
 
 ## Adding a notice
 
-A notice is a banner about the account's currency. Adding one means: a new member in the model, a
-line in the rule, its copy, and the signal each app has to provide. TypeScript points at most
-missing pieces: `noticeContent` switches over every notice id, so a new id without copy does not
-compile.
+**Existing notice on a new currency** (for example the Robinhood disclaimer on another Robinhood
+network): add the currency id to `CURRENCY_NOTICES` in `src/logic/currencyNotices.ts` and a case to
+`src/logic/resolveAccountNotices.test.ts`. Nothing else changes.
+
+**New notice**: a new member in the model, a line in the rule, its copy, and the signal each app
+has to provide. TypeScript points at most missing pieces: `noticeContent` switches over every
+notice id, so a new id without copy does not compile.
 
 1. **Model**: in `src/model/types.ts`, add a member to the `AccountNotice` union with its `id`, the
    values its copy needs (for example `currencyName`) and, if it has a button, an `action`
    (`LearnMoreAction` or `OpenPerpsAction`).
 2. **Signal**: if the rule needs a fact it does not have yet, add it to `AccountNoticeSignals` as a
    plain value (string, boolean). Never pass an app type, a config object or a translated string.
-   Chain or family eligibility is a boolean the app computes (a family capability or a currency
-   helper); never put a chain id or a family name in this package. Feature-flag gating stays in
-   the rule.
+   A notice tied to a chain goes in `CURRENCY_NOTICES` (add its id to `CurrencyNoticeId`, its
+   notice to `CURRENCY_NOTICE_BY_ID` and its flag to the `isEnabled` table in the rule).
 3. **Rule**: in `src/logic/resolveAccountNotices.ts`, return the notice from a small function and
    place it in the list returned by `resolveAccountNotices`. The list order is the display order.
 4. **Rule tests**: in `src/logic/resolveAccountNotices.test.ts`, add the default for the new signal

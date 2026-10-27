@@ -3,13 +3,12 @@ export type CurrencyStatusSignal =
   | Readonly<{ type: "willBeDeprecated"; date: string; link?: string }>;
 
 export type AccountNoticeSignals = Readonly<{
+  currencyId: string;
   currencyName: string;
   supportLink: string;
   status?: CurrencyStatusSignal;
   customBanner?: Readonly<{ text: string; link?: string }>;
-  isRobinhoodChain: boolean;
   isRobinhoodDisclaimerEnabled: boolean;
-  isPerpsAccount: boolean;
   isPerpsEnabled: boolean;
 }>;
 

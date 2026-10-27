@@ -1,4 +1,5 @@
 import type { AccountNotice, AccountNoticeSignals, LearnMoreAction } from "../model/types";
+import { CURRENCY_NOTICES, type CurrencyNoticeId } from "./currencyNotices";
 
 const learnMore = (link: string): LearnMoreAction => ({ type: "learnMore", link });
 
@@ -21,24 +22,25 @@ function customNotices({ customBanner }: AccountNoticeSignals): AccountNotice[] 
   return [{ id: "custom", text: customBanner.text, action }];
 }
 
-function robinhoodNotices({
-  isRobinhoodChain,
-  isRobinhoodDisclaimerEnabled,
-}: AccountNoticeSignals): AccountNotice[] {
-  if (!isRobinhoodChain || !isRobinhoodDisclaimerEnabled) return [];
-  return [{ id: "robinhoodDisclaimer" }];
-}
+const CURRENCY_NOTICE_BY_ID: Readonly<Record<CurrencyNoticeId, AccountNotice>> = {
+  robinhoodDisclaimer: { id: "robinhoodDisclaimer" },
+  perps: { id: "perps", action: { type: "openPerps" } },
+};
 
-function perpsNotices({ isPerpsAccount, isPerpsEnabled }: AccountNoticeSignals): AccountNotice[] {
-  if (!isPerpsAccount || !isPerpsEnabled) return [];
-  return [{ id: "perps", action: { type: "openPerps" } }];
+function currencyNotices({
+  currencyId,
+  isRobinhoodDisclaimerEnabled,
+  isPerpsEnabled,
+}: AccountNoticeSignals): AccountNotice[] {
+  const isEnabled: Readonly<Record<CurrencyNoticeId, boolean>> = {
+    robinhoodDisclaimer: isRobinhoodDisclaimerEnabled,
+    perps: isPerpsEnabled,
+  };
+  return (CURRENCY_NOTICES[currencyId] ?? [])
+    .filter(id => isEnabled[id])
+    .map(id => CURRENCY_NOTICE_BY_ID[id]);
 }
 
 export function resolveAccountNotices(signals: AccountNoticeSignals): readonly AccountNotice[] {
-  return [
-    ...statusNotices(signals),
-    ...customNotices(signals),
-    ...robinhoodNotices(signals),
-    ...perpsNotices(signals),
-  ];
+  return [...statusNotices(signals), ...customNotices(signals), ...currencyNotices(signals)];
 }
