@@ -58,9 +58,11 @@ describe("AccountNotices (Web)", () => {
     expect(onOpenPerps).toHaveBeenCalledTimes(1);
   });
 
-  it("shows the remote custom banner text", () => {
+  it("shows the remote custom banner text as the description, so long text is not cut to two lines", () => {
     renderNotices([{ id: "custom", text: "Network upgrade on Monday" }]);
 
-    expect(screen.getByText("Network upgrade on Monday")).toBeInTheDocument();
+    const banner = screen.getByTestId(`${TEST_ID}-custom`);
+    expect(banner).toHaveAttribute("description", "Network upgrade on Monday");
+    expect(banner).not.toHaveAttribute("title");
   });
 });

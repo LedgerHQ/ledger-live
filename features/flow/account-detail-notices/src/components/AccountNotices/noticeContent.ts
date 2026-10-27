@@ -3,7 +3,7 @@ import type { AccountNotice } from "../../model/types";
 
 type Translate = ReturnType<typeof useTranslation>["t"];
 
-export type NoticeContent = Readonly<{ title: string; description?: string }>;
+export type NoticeContent = Readonly<{ title?: string; description?: string }>;
 
 export function noticeContent(t: Translate, notice: AccountNotice): NoticeContent {
   switch (notice.id) {
@@ -21,7 +21,7 @@ export function noticeContent(t: Translate, notice: AccountNotice): NoticeConten
         description: t("accountDetailNotices.willBeDeprecated.description"),
       };
     case "custom":
-      return { title: notice.text };
+      return { description: notice.text };
     case "robinhoodDisclaimer":
       return { title: t("accountDetailNotices.robinhoodDisclaimer.title") };
     case "perps":
