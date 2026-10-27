@@ -240,7 +240,7 @@ jobs:
   e2e-tests:
     name: "Desktop E2E (${{ matrix.device }})"
     needs: [prepare-devices]
-    runs-on: [ledger-wallet-16cpu-aws-public-cached]
+    runs-on: [ledger-wallet-30cpu-aws-public-cached]
     permissions:
       id-token: write
       contents: read
@@ -262,7 +262,7 @@ jobs:
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
-      E2E_WORKERS: 16
+      E2E_WORKERS: 30
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
