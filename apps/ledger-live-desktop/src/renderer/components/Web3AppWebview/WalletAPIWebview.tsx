@@ -131,7 +131,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         return getStoreValue(key, storeId);
       },
       "storage.set": ({ key, value, storeId }) => {
-        setStoreValue(key, value, storeId);
+        return setStoreValue(key, value, storeId);
       },
       "transaction.sign": ({
         account,

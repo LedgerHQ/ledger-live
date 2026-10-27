@@ -1,7 +1,7 @@
 // Bundled into the preload: keep it to types and constants.
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 5;
+export const BRIDGE_VERSION = 6;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -92,8 +92,8 @@ export type PowerBridge = {
 };
 
 export type StoreBridge = {
-  set(key: string, value: unknown): void;
-  clear(): void;
+  set(key: string, value: unknown): Promise<void>;
+  clear(): Promise<void>;
 };
 
 /** Its own group, so the lint guardrail matching on a `shell` object still sees the facade. */
