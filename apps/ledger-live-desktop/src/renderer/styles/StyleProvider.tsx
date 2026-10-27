@@ -7,7 +7,7 @@ import {
   defaultTheme as V3DefaultTheme,
   palettes as V3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
-import { StyleProvider as PlatformStyleProvider } from "@features/platform-style";
+import { StyleProvider as PlatformStyleProvider } from "@features/platform-style/web";
 import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "../actions/general";
 

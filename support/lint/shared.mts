@@ -9,7 +9,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "ui-app-unavailable",
   "ui-info-state",
   "ui-qr-code",
-  "ui-queued-bottom-sheet",
 ];
 
 export default defineConfig({

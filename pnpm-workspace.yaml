@@ -118,6 +118,7 @@ catalog:
   expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
+  expo-navigation-bar: 5.0.10
   expo-network: 8.0.8
   expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
@@ -245,8 +246,6 @@ catalog:
   nx: 22.7.12
   "@nx/devkit": 22.7.12
   detox: 20.51.3
-  # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
-  "@nx/nx-linux-x64-gnu": 22.7.12
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0

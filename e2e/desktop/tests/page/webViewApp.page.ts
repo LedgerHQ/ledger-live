@@ -8,7 +8,7 @@ export abstract class WebViewAppPage extends AppPage {
   public webviewUrlHistory: string[] = [];
 
   protected abstract readonly webviewIdentifier: string;
-  protected defaultWebViewTimeout = TIMEOUT.xxlarge;
+  protected defaultWebViewTimeout = TIMEOUT.xlarge;
 
   /** The first Electron window whose title matches this page's webview identifier. */
   private async findWebviewWindow(): Promise<Page | undefined> {
