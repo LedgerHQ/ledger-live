@@ -8,6 +8,8 @@ const BTC_BECH32 = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
 const COSMOS_ADDRESS = "cosmos1hsk6jryyqjfhp5dhc55tc9jtckygx0eph6dd02";
 const CARDANO_ADDRESS =
   "addr1qx2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer3n0d3vllmyqwsx5wktcd8cc3sq835lu7drv2xwl2wywfgse35a3x";
+const CARDANO_TESTNET_ADDRESS =
+  "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4";
 const LEDGER_ACCOUNT_ID = `js:2:ethereum:${EVM_ADDRESS}:`;
 
 describe("scrubPiiString", () => {
@@ -19,6 +21,7 @@ describe("scrubPiiString", () => {
     ["an upper-case Bitcoin bech32 address", BTC_BECH32.toUpperCase(), "bech32_address"],
     ["a Cosmos address", COSMOS_ADDRESS, "bech32_address"],
     ["a Cardano address", CARDANO_ADDRESS, "bech32_address"],
+    ["a Cardano testnet address", CARDANO_TESTNET_ADDRESS, "bech32_address"],
     ["an email address", "contact me at satoshi@example.com", "email"],
     [
       "an address in a path that looks like a token id",

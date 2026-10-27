@@ -74,7 +74,7 @@ const VALUE_PATTERNS: ValuePattern[] = [
   },
   {
     kind: "bech32_address",
-    regex: /\b[a-z][a-z0-9]{0,14}1[02-9ac-hj-np-z]{38,}\b/gi,
+    regex: /\b[a-z][a-z0-9_]{0,14}1[02-9ac-hj-np-z]{38,}\b/gi,
     replace: () => redacted("bech32_address"),
   },
   {
