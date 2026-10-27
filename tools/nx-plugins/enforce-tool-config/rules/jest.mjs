@@ -6,8 +6,8 @@
 // setup files and module mappings they need, their coverage scope, and how its runs are split
 // (OWNED_KEYS). `webOverrides` / `nativeOverrides` and each `create*Project(...)` entry of
 // `projects` follow the same allowlist. A setup file a package passes adds to the preset's;
-// dropping one of the preset's goes through a named option (NAMED_OPTIONS). Every other key
-// belongs to the preset. The one way around it is jest-debt.mjs, which lists the keys a config may
+// dropping one of the preset's goes through a named option, and a factory takes only the options
+// it reads (FACTORY_OPTIONS). Every other key belongs to the preset. The one way around it is jest-debt.mjs, which lists the keys a config may
 // still set and only shrinks. The overrides and options are object literals, so the rule reads
 // their keys without running the config, and a literal value that leaves the preset's result
 // unchanged is rejected.
@@ -62,15 +62,16 @@ const PROJECT_OVERRIDES = new Set(["webOverrides", "nativeOverrides"]);
 const PROJECT_KEYS = new Set(
   [...OWNED_KEYS].filter(key => key !== "projects" && !PROJECT_OVERRIDES.has(key)),
 );
-/** The options the preset factories take, as their second argument. */
-const NAMED_OPTIONS = new Set([
-  "esm",
-  "extraEsmDeps",
-  "network",
-  "projectRoot",
-  "retries",
-  "walletFramework",
-]);
+/**
+ * The options each preset factory reads from its second argument. A factory missing here takes
+ * none: an option it does not read would be a silent no-op.
+ */
+const FACTORY_OPTIONS = {
+  createSharedJestConfig: ["esm", "extraEsmDeps", "projectRoot", "retries"],
+  createLibsCoinJestConfig: ["esm", "extraEsmDeps", "projectRoot", "network", "walletFramework"],
+  createLibsCoinIntegJestConfig: ["esm", "extraEsmDeps", "projectRoot", "walletFramework"],
+  createLibsCoinJestProject: ["esm", "extraEsmDeps", "network", "walletFramework"],
+};
 // What a package uses instead of overriding a key its preset owns.
 const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
 const FIXES = {
@@ -468,6 +469,23 @@ function repeatsPreset(factory, wrap, value) {
  */
 
 /**
+ * Why a factory does not read an option, naming the factories that do, or null when it reads it.
+ *
+ * @param {string} factory
+ * @param {string} option
+ * @returns {string | null}
+ */
+function optionProblem(factory, option) {
+  if (FACTORY_OPTIONS[factory]?.includes(option)) return null;
+  const readers = Object.keys(FACTORY_OPTIONS).filter(name =>
+    FACTORY_OPTIONS[name].includes(option),
+  );
+  if (readers.length === 0) return `an unknown option "${option}"`;
+  const named = readers.map(name => `${name}()`).join(", ");
+  return `the option "${option}", which it does not read; it belongs to ${named}`;
+}
+
+/**
  * Checks the arguments of one preset call: the overrides, then the options.
  *
  * @param {CheckContext} context
@@ -502,7 +520,8 @@ function checkCall(context, call, allowed, prefix) {
     const { entries, problems: unreadable } = objectEntries(context.source, code, items);
     for (const problem of unreadable) problems.push(`the options of ${name} ${problem}`);
     for (const { key } of entries) {
-      if (!NAMED_OPTIONS.has(key)) problems.push(`passes ${name} an unknown option "${key}"`);
+      const problem = optionProblem(call.factory, key);
+      if (problem) problems.push(`passes ${name} ${problem}`);
     }
   }
 }

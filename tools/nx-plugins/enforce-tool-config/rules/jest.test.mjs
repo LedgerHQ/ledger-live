@@ -398,3 +398,55 @@ test("every debt entry names a config that exists, each key once", () => {
     assert.equal(new Set(keys).size, keys.length, `${file} lists a key twice`);
   }
 });
+
+test("a factory takes only the options it reads, a misplaced one names the factories that do", () => {
+  const integ = 'const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");\n';
+  const cases = [
+    [`${SHARED}module.exports = createSharedJestConfig({}, { retries: false });`, []],
+    [
+      `${SHARED}module.exports = createSharedJestConfig({}, { network: true });`,
+      [
+        'passes createSharedJestConfig() the option "network", which it does not read; it belongs ' +
+          "to createLibsCoinJestConfig(), createLibsCoinJestProject()",
+      ],
+    ],
+    [`${COIN}module.exports = createLibsCoinJestConfig({}, { network: true });`, []],
+    [
+      `${COIN}module.exports = createLibsCoinJestConfig({}, { retries: false });`,
+      [
+        'passes createLibsCoinJestConfig() the option "retries", which it does not read; it ' +
+          "belongs to createSharedJestConfig()",
+      ],
+    ],
+    [`${integ}module.exports = createLibsCoinIntegJestConfig({}, { walletFramework: false });`, []],
+    [
+      `${integ}module.exports = createLibsCoinIntegJestConfig({}, { network: true });`,
+      [
+        'passes createLibsCoinIntegJestConfig() the option "network", which it does not read; it ' +
+          "belongs to createLibsCoinJestConfig(), createLibsCoinJestProject()",
+      ],
+    ],
+    [
+      `${COIN}module.exports = createLibsCoinJestConfig({ projects: [createLibsCoinJestProject({}, { network: true })] });`,
+      [],
+    ],
+    [
+      `${COIN}module.exports = createLibsCoinJestConfig({ projects: [createLibsCoinJestProject({}, { projectRoot: "../" })] });`,
+      [
+        'passes createLibsCoinJestProject() the option "projectRoot", which it does not read; it ' +
+          "belongs to createSharedJestConfig(), createLibsCoinJestConfig(), createLibsCoinIntegJestConfig()",
+      ],
+    ],
+    // The dual presets take no options.
+    [`${FLOW}module.exports = createFlowJestConfig({ webOverrides: {} });`, []],
+    [
+      `${FLOW}module.exports = createFlowJestConfig({}, { esm: true });`,
+      [
+        'passes createFlowJestConfig() the option "esm", which it does not read; it belongs to ' +
+          "createSharedJestConfig(), createLibsCoinJestConfig(), createLibsCoinIntegJestConfig(), " +
+          "createLibsCoinJestProject()",
+      ],
+    ],
+  ];
+  for (const [source, expected] of cases) assert.deepEqual(problems(source), expected, source);
+});
