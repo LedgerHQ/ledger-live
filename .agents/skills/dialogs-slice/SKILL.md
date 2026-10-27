@@ -1,6 +1,6 @@
 ---
 name: dialogs-slice
-description: Global dialogs Redux slice pattern for MVVM dialog state management
+description: Open and close a Ledger Wallet Desktop global dialog through the shared `dialogs` Redux slice (`DIALOG_IDS`, `openDialog`, `selectIsDialogOpen`) and mount it once in `GlobalDialogs`. Use when adding a desktop dialog mounted at the app root and opened from a distant part of the tree, or when editing `apps/ledger-live-desktop/src/renderer/reducers/dialogs.ts`, `src/mvvm/features/GlobalDialogs/` or a feature `*Dialog.ts` helper.
 ---
 
 # Global Dialogs Slice Pattern
@@ -72,14 +72,14 @@ const useMyNewDialogViewModel = () => {
 Add the dialog component to `mvvm/features/GlobalDialogs/index.tsx`:
 
 ```typescript
-import MyNewDialog from "LLD/features/MyFeature";
+const MyNewDialog = lazy(() => import("LLD/features/MyFeature"));
 
 const GlobalDialogs = () => (
   <>
-    <ModularDialogRoot />
-    <SendFlowRoot />
-    <ReleaseNotes />
-    <MyNewDialog />
+    {/* ...existing dialogs */}
+    <Suspense fallback={null}>
+      <MyNewDialog />
+    </Suspense>
   </>
 );
 ```
