@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Usage: collect.sh <run_id> <run_dir>
-# Writes <run_dir>/jobs.json and logs/<job_id>.log for failed jobs. Read-only.
+# Writes <run_dir>/jobs.json, logs/<job_id>.log and selected E2E artifacts. Read-only.
 set -euo pipefail
 RUN_ID="${1:?run id required}"
 RUN_DIR="${2:?run dir required}"
-REPO="${REPO:-LedgerHQ/ledger-live}"
+REPO="LedgerHQ/ledger-live"
 mkdir -p "$RUN_DIR/logs"
 
 if [[ -f "$RUN_DIR/jobs.json" && "${FORCE:-0}" != "1" ]]; then
@@ -26,5 +26,12 @@ while IFS= read -r job_id; do
   gh api "repos/$REPO/actions/jobs/$job_id/logs" |
     sed -E 's/\x1b\[[0-9;]*m//g; s/^[0-9T:.Z-]+ //' > "$RUN_DIR/logs/$job_id.log"
 done < <(jq -r '.failed_jobs[].id' "$RUN_DIR/jobs.json")
+
+mkdir -p "$RUN_DIR/artifacts"
+while IFS= read -r artifact; do
+  [[ "$artifact" =~ ^(playwright-results-|ios-test-artifacts-|android-test-artifacts-) ]] || continue
+  gh run download "$RUN_ID" --repo "$REPO" --name "$artifact" --dir "$RUN_DIR/artifacts/$artifact"
+done < <(gh api --paginate "repos/$REPO/actions/runs/$RUN_ID/artifacts" --jq '.artifacts[] | select(.expired == false) | .name')
+find "$RUN_DIR/artifacts" -name investigation-context.json -exec cp {} "$RUN_DIR/investigation-context.json" \;
 
 echo "collected $(jq '.failed_jobs | length' "$RUN_DIR/jobs.json") failed job(s) for $RUN_ID"

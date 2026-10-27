@@ -272,6 +272,14 @@ jobs:
         with:
           name: images
           path: images-linux.json
+      # This reusable workflow is pinned at @develop; guard the branch-only script for release callers.
+      - name: Write E2E investigation context
+        if: ${{ failure() && !cancelled() && hashFiles('.agents/skills/e2e-failure-investigation/scripts/write-investigation-context.mjs') != '' }}
+        run: |
+          node .agents/skills/e2e-failure-investigation/scripts/write-investigation-context.mjs \
+            apps/ledger-live-desktop/tests/artifacts/investigation-context.json \
+            playwright desktop apps/ledger-live-desktop/tests/artifacts playwright-results-linux
+
       - name: Upload playwright test results
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: ${{ !cancelled() }}

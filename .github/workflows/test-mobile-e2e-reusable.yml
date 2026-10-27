@@ -953,6 +953,14 @@ jobs:
             test_filter=${{ inputs.test_filter }}
             smoke_tests=${{ inputs.smoke_tests || false }}
 
+      # This reusable workflow is pinned at @develop; guard the branch-only script for release callers.
+      - name: Write iOS E2E investigation context
+        if: ${{ failure() && !cancelled() && hashFiles('.agents/skills/e2e-failure-investigation/scripts/write-investigation-context.mjs') != '' }}
+        run: |
+          node .agents/skills/e2e-failure-investigation/scripts/write-investigation-context.mjs \
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/investigation-context.json \
+            detox ios ${{ env.MOBILE_ARTIFACTS_ROOT }} ios-test-artifacts-${{ matrix.shard }}
+
       - name: Upload iOS artifacts
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -1427,6 +1435,14 @@ jobs:
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}
             smoke_tests=${{ inputs.smoke_tests || false }}
+
+      # This reusable workflow is pinned at @develop; guard the branch-only script for release callers.
+      - name: Write Android E2E investigation context
+        if: ${{ failure() && !cancelled() && hashFiles('.agents/skills/e2e-failure-investigation/scripts/write-investigation-context.mjs') != '' }}
+        run: |
+          node .agents/skills/e2e-failure-investigation/scripts/write-investigation-context.mjs \
+            ${{ env.MOBILE_ARTIFACTS_ROOT }}/investigation-context.json \
+            detox android ${{ env.MOBILE_ARTIFACTS_ROOT }} android-test-artifacts-${{ matrix.shard }}
 
       - name: Upload Android artifacts
         if: (!cancelled() || steps.run-android.outcome == 'cancelled')

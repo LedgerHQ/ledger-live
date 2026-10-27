@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "investigation-context.schema.json",
+  "title": "CI E2E investigation context",
+  "type": "object",
+  "required": ["version", "run", "primary_workspace", "evidence", "artifacts"],
+  "properties": {
+    "version": { "const": "1" },
+    "run": {
+      "type": "object",
+      "required": ["id", "url", "workflow", "head_sha", "job", "framework"],
+      "properties": {
+        "id": { "type": ["integer", "string"], "pattern": "^[0-9]+$" },
+        "url": { "type": "string", "format": "uri" },
+        "workflow": { "type": "string" },
+        "head_sha": { "type": "string", "minLength": 7 },
+        "job": { "type": "string" },
+        "framework": { "enum": ["playwright", "detox"] },
+        "platform": { "enum": ["desktop", "ios", "android"] }
+      },
+      "additionalProperties": false
+    },
+    "primary_workspace": {
+      "type": "object",
+      "required": ["repository", "revision", "path"],
+      "properties": {
+        "repository": { "const": "LedgerHQ/ledger-live" },
+        "revision": { "type": "string", "minLength": 7 },
+        "path": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["workflow_log"],
+      "properties": {
+        "workflow_log": { "type": "string", "format": "uri" },
+        "test_results": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["directory", "names"],
+      "properties": {
+        "directory": { "type": "string" },
+        "names": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -17,6 +17,18 @@
     },
     "domain": { "type": "string", "minLength": 1 },
     "state_dir": { "type": "string" },
+    "secondary_repositories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["repository", "revision"],
+        "properties": {
+          "repository": { "enum": ["LedgerHQ/swap-live-app", "LedgerHQ/swap"] },
+          "revision": { "type": "string", "minLength": 7 }
+        },
+        "additionalProperties": false
+      }
+    },
     "delivery": { "enum": ["stdout", "slack"] },
     "force": { "type": "boolean" },
     "adapters": {

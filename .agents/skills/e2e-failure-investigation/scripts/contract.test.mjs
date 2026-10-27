@@ -23,6 +23,31 @@ const run = (script, args) => {
 };
 try {
   run("validate-contract.mjs", ["input", input]);
+  const context = join(dir, "investigation-context.json");
+  const contextResult = spawnSync(
+    "node",
+    [
+      join(root, "scripts", "write-investigation-context.mjs"),
+      context,
+      "playwright",
+      "desktop",
+      "artifacts",
+      "playwright-results-linux",
+    ],
+    {
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        GITHUB_RUN_ID: "1",
+        GITHUB_REPOSITORY: "LedgerHQ/ledger-live",
+        GITHUB_WORKFLOW: "Desktop E2E",
+        GITHUB_JOB: "e2e-tests-linux",
+      },
+    },
+  );
+  if (contextResult.status !== 0) throw new Error(contextResult.stderr || contextResult.stdout);
+  const manifest = JSON.parse(readFileSync(context));
+  if (manifest.primary_workspace.revision.length < 7) throw new Error("manifest revision missing");
   run("preflight.mjs", [input, runDir]);
   const preflight = JSON.parse(readFileSync(join(runDir, "preflight.json")));
   if (preflight.policy.jira_writes !== "requires_explicit_approval")
