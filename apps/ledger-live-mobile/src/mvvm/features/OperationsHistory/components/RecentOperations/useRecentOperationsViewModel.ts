@@ -33,6 +33,22 @@ export type RecentOperationsViewModel = Readonly<{
   hasData: boolean;
 }>;
 
+function toPendingOnlyAccounts(
+  accounts: AccountLike[],
+  isPendingOperation: (op: Operation, account: AccountLike) => boolean,
+): AccountLike[] {
+  return accounts.flatMap(account => {
+    const operations = account.operations.filter(op => isPendingOperation(op, account));
+    const stableHashes = new Set(account.operations.map(op => op.hash));
+    const pendingOperations = account.pendingOperations.filter(op => !stableHashes.has(op.hash));
+    if (operations.length === 0 && pendingOperations.length === 0) return [];
+
+    return account.type === "Account"
+      ? [{ ...account, operations, pendingOperations, subAccounts: [] }]
+      : [{ ...account, operations, pendingOperations }];
+  });
+}
+
 function mergePendingFirst(pending: Operation[], recent: Operation[]): Operation[] {
   const pendingIds = new Set(pending.map(op => op.id));
   const confirmed = recent.filter(op => !pendingIds.has(op.id));
@@ -69,15 +85,19 @@ export function useRecentOperationsViewModel({
   );
 
   const isPendingOperation = useIsPendingOperation();
-  const pendingFilter = useCallback(
-    (op: Operation, account: AccountLike) =>
-      scopedFilter(op, account) && isPendingOperation(op, account),
-    [scopedFilter, isPendingOperation],
+  const pendingOnlyAccounts = useMemo(
+    () =>
+      toPendingOnlyAccounts(
+        flattenedRootAccounts.filter(account => allowedIds.has(account.id)),
+        isPendingOperation,
+      ),
+    [flattenedRootAccounts, allowedIds, isPendingOperation],
   );
 
-  const { sections: pendingSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
-    filterOperation: pendingFilter,
-  });
+  const { sections: pendingSections } = useOperationsV1(
+    pendingOnlyAccounts,
+    MAX_PREVIEW_OPERATIONS,
+  );
   const { sections: recentSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
     filterOperation: scopedFilter,
   });
