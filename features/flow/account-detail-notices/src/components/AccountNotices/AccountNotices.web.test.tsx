@@ -25,19 +25,20 @@ describe("AccountNotices (Web)", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("shows the region restriction and opens its link", async () => {
+  it("shows the migration and opens its link", async () => {
     const { onOpenLink, user } = renderNotices([
       {
-        id: "regionRestricted",
-        currencyName: "Adi",
-        action: { type: "learnMore", link: "https://ledger.com/region" },
+        id: "migration",
+        from: "Elrond",
+        to: "MultiversX",
+        action: { type: "learnMore", link: "https://ledger.com/migration" },
       },
     ]);
 
-    expect(screen.getByText("Adi is not available in your country")).toBeInTheDocument();
+    expect(screen.getByText("Elrond is migrating to MultiversX")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Learn more" }));
 
-    expect(onOpenLink).toHaveBeenCalledWith("https://ledger.com/region");
+    expect(onOpenLink).toHaveBeenCalledWith("https://ledger.com/migration");
   });
 
   it("shows the Robinhood disclaimer without any action", () => {

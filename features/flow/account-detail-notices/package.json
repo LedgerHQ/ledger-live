@@ -2,7 +2,7 @@
   "name": "@features/flow-account-detail-notices",
   "version": "0.1.0",
   "private": true,
-  "description": "Account Detail notices (currency status, region restriction, Robinhood, Perps) for Ledger Wallet",
+  "description": "Account Detail notices (currency status, Robinhood, Perps) for Ledger Wallet",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
   "types": "src/index.ts",

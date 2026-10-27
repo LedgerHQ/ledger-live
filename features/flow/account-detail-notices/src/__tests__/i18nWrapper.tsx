@@ -6,11 +6,6 @@ const resources = {
     translation: {
       accountDetailNotices: {
         actions: { learnMore: "Learn more", openPerps: "Open Perps" },
-        regionRestricted: {
-          title: "{{currencyName}} is not available in your country",
-          description:
-            "You can’t take any action and your balance can’t update due to a region restriction.",
-        },
         migration: {
           title: "{{from}} is migrating to {{to}}",
           description: "Learn more about the migration, or contact support if you need assistance.",

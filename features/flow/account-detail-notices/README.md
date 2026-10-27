@@ -3,8 +3,8 @@
 > **Status: UNSTABLE**: API still being designed for the Account Detail page.
 
 Notices shown on the Account Detail page, above the coin-specific family blocks: currency status
-(migration, upcoming deprecation, remote custom banner), region restriction, the Robinhood chain
-disclaimer and the Perps account banner.
+(migration, upcoming deprecation, remote custom banner), the Robinhood chain disclaimer and the
+Perps account banner.
 
 ## What it owns
 
@@ -20,7 +20,7 @@ disclaimer and the Perps account banner.
 
 ## What the apps own
 
-Reading the signals (remote currency config, account sync error, feature flags) and handling the
+Reading the signals (remote currency config, feature flags) and handling the
 actions (opening a link, navigating to Perps).
 
 ## Adding a notice

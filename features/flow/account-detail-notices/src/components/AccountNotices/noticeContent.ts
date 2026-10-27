@@ -7,13 +7,6 @@ export type NoticeContent = Readonly<{ title: string; description?: string }>;
 
 export function noticeContent(t: Translate, notice: AccountNotice): NoticeContent {
   switch (notice.id) {
-    case "regionRestricted":
-      return {
-        title: t("accountDetailNotices.regionRestricted.title", {
-          currencyName: notice.currencyName,
-        }),
-        description: t("accountDetailNotices.regionRestricted.description"),
-      };
     case "migration":
       return {
         title: t("accountDetailNotices.migration.title", { from: notice.from, to: notice.to }),

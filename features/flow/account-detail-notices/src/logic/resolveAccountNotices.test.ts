@@ -8,7 +8,6 @@ const signals = (overrides: Partial<AccountNoticeSignals> = {}): AccountNoticeSi
   currencyName: "Adi",
   family: "evm",
   supportLink: SUPPORT,
-  isRegionRestricted: false,
   isRobinhoodDisclaimerEnabled: true,
   isPerpsEnabled: true,
   ...overrides,
@@ -20,20 +19,6 @@ const ids = (overrides: Partial<AccountNoticeSignals>) =>
 describe("resolveAccountNotices", () => {
   it("has no notice for a regular account", () => {
     expect(resolveAccountNotices(signals())).toEqual([]);
-  });
-
-  it("warns about a region restriction, with Learn more when a link is known", () => {
-    expect(
-      resolveAccountNotices(
-        signals({ isRegionRestricted: true, regionRestrictedLink: "https://ledger.com/region" }),
-      ),
-    ).toEqual([
-      {
-        id: "regionRestricted",
-        currencyName: "Adi",
-        action: { type: "learnMore", link: "https://ledger.com/region" },
-      },
-    ]);
   });
 
   it("links the migration to its page, or to support without one", () => {
@@ -85,15 +70,14 @@ describe("resolveAccountNotices", () => {
     expect(ids({ family: "hypercore", isPerpsEnabled: false })).toEqual([]);
   });
 
-  it("orders region restriction, status, custom banner, Robinhood then Perps", () => {
+  it("orders status, custom banner, Robinhood then Perps", () => {
     expect(
       ids({
-        isRegionRestricted: true,
         status: { type: "migration", from: "A", to: "B" },
         customBanner: { text: "Heads up" },
         currencyId: "robinhood",
         family: "hypercore",
       }),
-    ).toEqual(["regionRestricted", "migration", "custom", "robinhoodDisclaimer", "perps"]);
+    ).toEqual(["migration", "custom", "robinhoodDisclaimer", "perps"]);
   });
 });

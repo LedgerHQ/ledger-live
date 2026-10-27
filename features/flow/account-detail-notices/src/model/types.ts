@@ -9,8 +9,6 @@ export type AccountNoticeSignals = Readonly<{
   supportLink: string;
   status?: CurrencyStatusSignal;
   customBanner?: Readonly<{ text: string; link?: string }>;
-  isRegionRestricted: boolean;
-  regionRestrictedLink?: string;
   isRobinhoodDisclaimerEnabled: boolean;
   isPerpsEnabled: boolean;
 }>;
@@ -22,7 +20,6 @@ export type OpenPerpsAction = Readonly<{ type: "openPerps" }>;
 export type AccountNoticeAction = LearnMoreAction | OpenPerpsAction;
 
 export type AccountNotice =
-  | Readonly<{ id: "regionRestricted"; currencyName: string; action?: LearnMoreAction }>
   | Readonly<{ id: "migration"; from: string; to: string; action: LearnMoreAction }>
   | Readonly<{
       id: "willBeDeprecated";

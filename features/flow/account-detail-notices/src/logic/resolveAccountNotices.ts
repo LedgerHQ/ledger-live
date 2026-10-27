@@ -6,16 +6,6 @@ const PERPS_FAMILY = "hypercore";
 
 const learnMore = (link: string): LearnMoreAction => ({ type: "learnMore", link });
 
-function regionRestrictedNotices({
-  isRegionRestricted,
-  currencyName,
-  regionRestrictedLink,
-}: AccountNoticeSignals): AccountNotice[] {
-  if (!isRegionRestricted) return [];
-  const action = regionRestrictedLink ? learnMore(regionRestrictedLink) : undefined;
-  return [{ id: "regionRestricted", currencyName, action }];
-}
-
 function statusNotices({
   status,
   currencyName,
@@ -50,7 +40,6 @@ function perpsNotices({ family, isPerpsEnabled }: AccountNoticeSignals): Account
 
 export function resolveAccountNotices(signals: AccountNoticeSignals): readonly AccountNotice[] {
   return [
-    ...regionRestrictedNotices(signals),
     ...statusNotices(signals),
     ...customNotices(signals),
     ...robinhoodNotices(signals),
