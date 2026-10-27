@@ -89,3 +89,16 @@ test(
 ### Journey gates MUST use hard assertions
 
 Supplementary checks (copy, extra UI state) MAY use [soft assertions](soft-expect.md). Journey gates MUST stay hard `expect(...)` so they fail fast and stop the test when a critical condition is not met.
+
+## Exclusive lock implementation
+
+What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). Use `exclusiveLockFor` ([`tests/utils/exclusiveLock.ts`](../tests/utils/exclusiveLock.ts)), with its `names` on the `lock` detail and its `fixtures` in `test.use`:
+
+```ts
+const delegateLock = exclusiveLockFor({ broadcastAccounts: [delegate.account] });
+
+test.describe("Delegate", { lock: delegateLock.names }, () => {
+  test.use(delegateLock.fixtures);
+```
+
+Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`, as `send.swap` does once its provider needs no token approval. The `lock` detail still holds until the test ends.

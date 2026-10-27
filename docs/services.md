@@ -15,7 +15,7 @@ Sections are split by **scope** — the primary axis, because third-party endpoi
 
 Inside the Internal and Third-party tables, rows are grouped by **owning team** (from [`CODEOWNERS`](/CODEOWNERS)), marked with a **bold separator row**. Each row is **service · domain · managed-by · env tag**. Domains are host-only; anything noteworthy is a small line under the domain. **⚠️** = unconfirmed, needs owner input.
 
-**Owning teams** (CODEOWNERS): `Coin Integration` (`@ledgerhq/coin-integration`, `@ledgerhq/blockchain-support`) · `PTX` (`@ledgerhq/ptx`) · `Engagement` (`@ledgerhq/engagement`) · `Platform` (`@ledgerhq/platform`) · `Live Devices` (`@ledgerhq/live-devices`) · `Wallet XP` (`@ledgerhq/wallet-xp`) · `Ledger Sync` (`@ledgerhq/cloud-wallet`) · `Agentic Core` (`@ledgerhq/agentic-core`) · `Recover` (`@ledgerhq/recover-software`).
+**Owning teams** (CODEOWNERS): `Coin Integration` (`@ledgerhq/coin-integration`, `@ledgerhq/blockchain-support`) · `PTX` (`@ledgerhq/ptx`) · `Engagement` (`@ledgerhq/engagement`) · `Platform` (`@ledgerhq/platform`) · `Live Devices` (`@ledgerhq/live-devices`) · `Wallet XP` (`@ledgerhq/wallet-xp`) · `Ledger Sync` (`@ledgerhq/cloud-wallet`) · `Agentic Core` (`@ledgerhq/agentic-core`) · `Recover` (`@ledgerhq/recover-software`) · `QAA` (`@ledgerhq/qaa`).
 
 **Managed by**
 
@@ -181,6 +181,8 @@ Services **not** operated by Ledger, including domains baked into SDKs we ship. 
 | WalletConnect                | `relay.walletconnect.org`<br>_[@walletconnect/sign-client](https://www.npmjs.com/package/@walletconnect/sign-client); also verify/echo/pulse_                                                                                                                           | [SDK](https://www.npmjs.com/package/@walletconnect/sign-client)                | prod           |
 | Card backend API (non-prod)  | `dev.api.baanx.com`<br>_`CARD_BAANX_API_URL` on staging / testing / nightly; Baanx-operated, so outside Ledger monitoring_                                                                                                                                              | [env](/shared/env/src/definitions/team-wallet-xp/index.ts)                     | dev            |
 | Baanx sandbox API (test-only) | `dev.api.baanx.com`<br>_`BAANX_TEST_API_URL`; Baanx auth (`/v1/auth/login` + OTP) by `@ledgerhq/baanx-test-client`, to mint E2E tokens. **Not contacted by the shipped apps** — the apps reach Baanx only through the Card backend_                                   | [code](/e2e/tooling/baanx-test-client/src/types.ts)                                     | dev            |
+| **QAA**                      |                                                                                                                                                                                                                                                                         |                                                                                |                |
+| Cloudflare R2 (E2E exclusive lock, test-only) | `<account>.r2.cloudflarestorage.com`<br>_S3 API, SigV4; bucket `ledger-live-cache`, prefix `e2e-broadcast-locks/`. `E2E_EXCLUSIVE_LOCK_*`, set by the E2E workflows from the `R2_*` secrets. Holds a lease per test account so CI machines never broadcast from it at once. **Not contacted by the shipped apps**_ | [code](/libs/live-e2e-shared/src/exclusiveLock.ts)                              | test           |
 
 ---
 

@@ -155,6 +155,18 @@ Builders are shared with desktop specs. The shape MUST be derived from the produ
 
 iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in a fixture fails on iOS only. Such characters MUST stay out of fixtures, and the test MUST say why.
 
+## Exclusive lock implementation
+
+What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
+
+```ts
+export function runDelegateTest(delegation: DelegateType /* … */) {
+  declareBroadcastAccounts(delegation.account);
+  describe("Delegate", () => {
+```
+
+The spec file holds the lock until its `describe` blocks have run. A file-level `afterAll` runs after the lock is released, so a cleanup that broadcasts goes inside a `describe`.
+
 ## A tracked failure MUST use $KnownFailure
 
 A test that fails because of a tracked bug MUST be flagged with `$KnownFailure`. It MUST NOT be skipped. It still runs once and still fails the run, but Detox does not retry it, so it costs one attempt whatever the retry setting.
