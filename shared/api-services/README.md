@@ -94,6 +94,8 @@ configureStore({
 import or at `defineApiServices`: `createExtra` reads and validates every config once, at store
 creation, and merges the results. `ledgerClientVersion` is passed once, as `CommonConfig`, to every
 service that sends it. Two services giving different values for one `extraArgument` key throw.
+Two descriptors sharing a `reducerPath`, even the same service listed twice, throw at
+`defineApiServices`.
 
 ```ts
 import { calService, cvsService, defineApiServices, type ApiServicesState } from "@shared/api-services";

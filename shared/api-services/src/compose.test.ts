@@ -26,6 +26,18 @@ describe("defineApiServices", () => {
     expect(reducers).toEqual({ firstApi: first.api.reducer, secondApi: second.api.reducer });
   });
 
+  it("throws when two services share a reducer path", () => {
+    expect(() => defineApiServices([fakeService("sameApi"), fakeService("sameApi")])).toThrow(
+      "sameApi is listed more than once",
+    );
+  });
+
+  it("throws when one service is listed twice", () => {
+    const service = fakeService("sameApi");
+
+    expect(() => defineApiServices([service, service])).toThrow("sameApi is listed more than once");
+  });
+
   it("keeps the middlewares in descriptor order", () => {
     const first = fakeService("firstApi");
     const second = fakeService("secondApi");

@@ -27,9 +27,15 @@ export function defineApiServices<const D extends readonly ApiServiceDescriptor[
   middlewares: Middleware[];
   createExtra(common: CommonConfig): object;
 } {
-  const reducers = Object.fromEntries(
-    descriptors.map(({ api }) => [api.reducerPath, api.reducer]),
-  ) as ReducersOf<D>;
+  const reducerEntries: Record<string, Reducer> = {};
+  for (const { api } of descriptors) {
+    // Even the same api twice: its middleware would be registered twice.
+    if (Object.hasOwn(reducerEntries, api.reducerPath)) {
+      throw new Error(`${api.reducerPath} is listed more than once`);
+    }
+    reducerEntries[api.reducerPath] = api.reducer;
+  }
+  const reducers = reducerEntries as ReducersOf<D>;
   const middlewares = descriptors.map(({ api }) => api.middleware);
 
   function createExtra(common: CommonConfig): object {
