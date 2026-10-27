@@ -98,7 +98,7 @@ hides `info`.
 
 | Line or error | Meaning |
 | --- | --- |
-| `waiting for "<key>", held by <holder> (<label>)` | Another test holds the key. The label names it |
+| `waiting for "<key>", held by <holder> (<label>) [ETag …]` | Another test holds the key. The label names it, and the brackets show the lock record as read: its ETag, age, and whether it was released |
 | `moved to a later pass` | Deferred. The test runs again in the next pass |
 | `took over "<key>" … its lease expired` | The previous holder died or stalled for over 120 s |
 | `ExclusiveLockLostError` | This holder stalled past its lease, so broadcasts may have overlapped |

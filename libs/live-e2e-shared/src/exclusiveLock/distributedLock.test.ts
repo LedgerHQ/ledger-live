@@ -414,6 +414,27 @@ test("keeps its committed release as written instead of restarting the settle wi
   assert.equal(store.objects.get("key")?.modifiedAt, 0);
 });
 
+for (const responseLost of [false, true]) {
+  test(`logs the ETag of the released record it wrote${responseLost ? ", even when only the response was lost" : ""}`, async () => {
+    const clock = { now: 0 };
+    const store = new MemoryLockStore(clock);
+    const logger = createLogger();
+    const lease = await acquireDistributedLock(
+      store,
+      "key",
+      options(clock, "ios", { settleMs: 30_000, log: logger.log }),
+    );
+
+    store.commitThenFailNextWrite = responseLost;
+    await lease.release();
+
+    assert.equal(
+      logger.infos.at(-1),
+      `[exclusiveLock] released "key" (ios spec) [ETag ${store.objects.get("key")?.etag}]`,
+    );
+  });
+}
+
 test("marks the lease lost once failed renewals leave it about to lapse", async () => {
   const clock = { now: 0 };
   const store = new MemoryLockStore(clock);
@@ -535,6 +556,44 @@ test("gives up as soon as the key is held when told not to wait", async () => {
   );
   assert.equal(clock.now, 0);
   await ios.release();
+});
+
+test("names the ETag, age and release state of the record it saw when it gives up", async () => {
+  const clock = { now: 0 };
+  const store = new MemoryLockStore(clock);
+  const ios = await acquireDistributedLock(store, "key", options(clock, "ios"));
+  clock.now = 3_000;
+
+  await assert.rejects(
+    acquireDistributedLock(store, "key", options(clock, "android", { giveUpWhenHeld: true })),
+    { message: /held by ios \(ios spec\) \[ETag \S+, 3000ms old, not released\]$/ },
+  );
+  await ios.release();
+});
+
+test("names the settle window of the released record it waits for", async () => {
+  const clock = { now: 0 };
+  const store = new MemoryLockStore(clock);
+  const ios = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "ios", { settleMs: 45_000 }),
+  );
+  await ios.release();
+  clock.now = 5_000;
+  const logger = createLogger();
+
+  const android = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "android", { log: logger.log }),
+  );
+  await android.release();
+
+  assert.match(
+    logger.infos[0],
+    /waiting for "key", held by ios \(ios spec\) \[ETag \S+, 5000ms old, released, settle 45000ms\]$/,
+  );
 });
 
 test("claims a released key the moment its settle window ends when waiting for it", async () => {
@@ -836,13 +895,16 @@ test("claims a settled key a poll after the newest waiter would when it tries on
 });
 
 class WholeSecondAgeLockStore extends MemoryLockStore {
+  reads = 0;
+
   override async read(key: string) {
+    this.reads++;
     const stored = await super.read(key);
     return stored && { ...stored, ageMs: Math.floor(stored.ageMs / 1_000) * 1_000 };
   }
 }
 
-test("checks a settled key again a full poll later, so whole-second ages do not read as stalled", async () => {
+test("checks a settled key again at least a second later when trying once, so whole-second ages do not read as stalled", async () => {
   const clock = { now: 0 };
   const store = new WholeSecondAgeLockStore(clock);
   const ios = await acquireDistributedLock(
@@ -866,6 +928,29 @@ test("checks a settled key again a full poll later, so whole-second ages do not 
   await android.release();
 
   assert.equal(clock.now, 48_100);
+});
+
+test("checks a settled key again at least a second later when waiting, instead of retrying within the same whole-second age", async () => {
+  const clock = { now: 0 };
+  const store = new WholeSecondAgeLockStore(clock);
+  const ios = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "ios", { settleMs: 45_000 }),
+  );
+  await ios.release();
+  clock.now = 46_500;
+  store.reads = 0;
+
+  const android = await acquireDistributedLock(
+    store,
+    "key",
+    options(clock, "android", { highPriority: true, settleClaimSpreadMs: 1_010 }),
+  );
+  const reads = store.reads;
+  await android.release();
+
+  assert.deepEqual({ reads, claimedAt: clock.now }, { reads: 2, claimedAt: 47_500 });
 });
 
 test("keeps waiting out the same settle window when the lock store's clock runs behind", async () => {
