@@ -491,9 +491,12 @@ const OperationD = (props: Props) => {
             fontSize={4}
             onClick={() =>
               url &&
-              openURL(url, "viewOperationInExplorer", {
-                currencyId: currencyName,
-              })
+              openURL(
+                url,
+                "viewOperationInExplorer",
+                { currencyId: currencyName },
+                { sensitive: true },
+              )
             }
             label={t("operationDetails.viewOperation")}
           />
