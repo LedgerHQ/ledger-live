@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { copyToClipboard } from "@shared/clipboard";
-import { CardTransactionDetail } from "./CardTransactionDetail";
+import { CardTransactionDetailDialog } from "./CardTransactionDetailDialog";
 import { CATEGORY_LABELS, DETAIL_COPY, cardApiWrapper } from "../../../__tests__/cardApiStore";
 
 jest.mock("@shared/clipboard");
@@ -11,13 +11,13 @@ jest.mock("@shared/clipboard");
 const transaction = PayCardTransactionSchema.parse(mockPayCardTransactions()[0]);
 const CASHBACK = `${transaction.cashback?.amount} ${transaction.cashback?.currency}`;
 
-describe("CardTransactionDetail (web)", () => {
+describe("CardTransactionDetailDialog", () => {
   beforeEach(() => {
     jest.mocked(copyToClipboard).mockResolvedValue(true);
   });
 
   it("shows the selected transaction details in a dialog", () => {
-    render(<CardTransactionDetail isOpen transaction={transaction} onClose={jest.fn()} />, {
+    render(<CardTransactionDetailDialog isOpen transaction={transaction} onClose={jest.fn()} />, {
       wrapper: cardApiWrapper(),
     });
 
@@ -35,7 +35,7 @@ describe("CardTransactionDetail (web)", () => {
   });
 
   it("copies the processor transaction id", async () => {
-    render(<CardTransactionDetail isOpen transaction={transaction} onClose={jest.fn()} />, {
+    render(<CardTransactionDetailDialog isOpen transaction={transaction} onClose={jest.fn()} />, {
       wrapper: cardApiWrapper(),
     });
 
@@ -48,7 +48,7 @@ describe("CardTransactionDetail (web)", () => {
 
   it("reports a header close", () => {
     const onClose = jest.fn();
-    render(<CardTransactionDetail isOpen transaction={transaction} onClose={onClose} />, {
+    render(<CardTransactionDetailDialog isOpen transaction={transaction} onClose={onClose} />, {
       wrapper: cardApiWrapper(),
     });
 

@@ -1,21 +1,19 @@
 import React, { useCallback } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { CardTransactionDetailView } from "./CardTransactionDetailView";
-import { useCardTransactionDetailViewModel } from "./useCardTransactionDetailViewModel";
-import type { CardTransactionDetailProps } from "./types";
+import { CardTransactionDetail } from "./CardTransactionDetail";
+import type { CardTransactionDetailProps } from "./CardTransactionDetail.types";
 
-type CardTransactionDetailDialogProps = CardTransactionDetailProps &
+export type CardTransactionDetailDialogProps = CardTransactionDetailProps &
   Readonly<{
     isOpen: boolean;
     onClose: () => void;
   }>;
 
-export function CardTransactionDetail({
+export function CardTransactionDetailDialog({
   isOpen,
   onClose,
   ...detailProps
 }: CardTransactionDetailDialogProps) {
-  const viewModel = useCardTransactionDetailViewModel(detailProps);
   const onOpenChange = useCallback(
     (open: boolean) => {
       if (!open) onClose();
@@ -32,7 +30,7 @@ export function CardTransactionDetail({
       >
         <DialogHeader density="compact" onClose={onClose} />
         <DialogBody className="overflow-y-auto">
-          <CardTransactionDetailView {...viewModel} />
+          <CardTransactionDetail {...detailProps} />
         </DialogBody>
       </DialogContent>
     </Dialog>

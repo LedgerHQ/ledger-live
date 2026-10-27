@@ -3,7 +3,7 @@ import type { CardTransactionItem, CardTransactionFormatters } from "../types";
 
 export type CardTransactionsProps = Readonly<{
   formatters?: CardTransactionFormatters;
-  onTransactionPress?: (item: CardTransactionItem) => void;
+  onOpenTransaction?: (item: CardTransactionItem) => void;
   onShowMore?: () => void;
 }>;
 
@@ -12,6 +12,6 @@ export type CardTransactionsScreenViewProps = Readonly<{
   title: string;
   transactions: readonly CardTransactionItem[];
   formatters?: CardTransactionFormatters;
-  onTransactionPress?: (item: CardTransactionItem) => void;
+  onOpenTransaction?: (item: CardTransactionItem) => void;
   onShowMore?: () => void;
 }>;
