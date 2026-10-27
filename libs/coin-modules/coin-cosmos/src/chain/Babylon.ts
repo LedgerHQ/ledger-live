@@ -1,3 +1,8 @@
+import {
+  MsgWrappedBeginRedelegate,
+  MsgWrappedDelegate,
+  MsgWrappedUndelegate,
+} from "../proto/babylonEpoching";
 import CosmosBase, { StakingMessages } from "./cosmosBase";
 
 // The amino `type` is the proto type URL, not the legacy `epoching/WrappedDelegate` codec name:
@@ -5,16 +10,16 @@ import CosmosBase, { StakingMessages } from "./cosmosBase";
 // Matches Keplr and babylon's own SDK (@babylonlabs-io/babylon-proto-ts).
 export const BABYLON_STAKING_MESSAGES: StakingMessages = {
   delegate: {
-    aminoType: "/babylon.epoching.v1.MsgWrappedDelegate",
-    protoTypeUrl: "/babylon.epoching.v1.MsgWrappedDelegate",
+    aminoType: MsgWrappedDelegate.typeUrl,
+    protoTypeUrl: MsgWrappedDelegate.typeUrl,
   },
   undelegate: {
-    aminoType: "/babylon.epoching.v1.MsgWrappedUndelegate",
-    protoTypeUrl: "/babylon.epoching.v1.MsgWrappedUndelegate",
+    aminoType: MsgWrappedUndelegate.typeUrl,
+    protoTypeUrl: MsgWrappedUndelegate.typeUrl,
   },
   beginRedelegate: {
-    aminoType: "/babylon.epoching.v1.MsgWrappedBeginRedelegate",
-    protoTypeUrl: "/babylon.epoching.v1.MsgWrappedBeginRedelegate",
+    aminoType: MsgWrappedBeginRedelegate.typeUrl,
+    protoTypeUrl: MsgWrappedBeginRedelegate.typeUrl,
   },
   wrapped: true,
 };

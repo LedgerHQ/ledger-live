@@ -12400,9 +12400,6 @@ importers:
       '@cosmjs/stargate':
         specifier: ^0.37.0
         version: 0.37.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@keplr-wallet/proto-types':
-        specifier: ^0.12.300
-        version: 0.12.306
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
@@ -12434,8 +12431,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       cosmjs-types:
-        specifier: 0.2.1
-        version: 0.2.1
+        specifier: ^0.10.1
+        version: 0.10.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -24356,9 +24353,6 @@ packages:
     peerDependencies:
       tslib: 2.6.2
 
-  '@keplr-wallet/proto-types@0.12.306':
-    resolution: {integrity: sha512-vKCzgSmnNaUSRm4rAyxQGcf+oaNo/2l68zPNu3XxvqwnGCiHGbmRKc13hk7lBUrGyWnL5+J2NYmJy0E6iqS6xw==}
-
   '@koa/cors@3.4.3':
     resolution: {integrity: sha512-WPXQUaAeAMVaLTEFpoq3T2O1C+FstkjJnDQqy95Ck1UdILajsRhu6mhJ8H2f4NFPRBoCNN+qywTJfq/gGki5mw==}
     engines: {node: '>= 8.0.0'}
@@ -29191,9 +29185,6 @@ packages:
   '@types/lodash@4.17.21':
     resolution: {integrity: sha512-FOvQ0YPD5NOfPgMzJihoT+Za5pdkDJWcbpuj1DjaKZIr/gxodQjY/uWEFlTNqW2ugXHUiL8lRQgw63dzKHZdeQ==}
 
-  '@types/long@4.0.2':
-    resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
-
   '@types/markdown-it@14.1.1':
     resolution: {integrity: sha512-4NpsnpYl2Gt1ljyBGrKMxFYAYvpqbnnkgP/i/g+NLpjEUa3obn1XJCur9YbEXKDAkaXqsR1LbDnGEJ0MmKFxfg==}
 
@@ -31290,9 +31281,6 @@ packages:
 
   cosmjs-types@0.10.1:
     resolution: {integrity: sha512-CENXb4O5GN+VyB68HYXFT2SOhv126Z59631rZC56m8uMWa6/cSlFeai8BwZGT1NMepw0Ecf+U8XSOnBzZUWh9Q==}
-
-  cosmjs-types@0.2.1:
-    resolution: {integrity: sha512-EUG6TgdWkYHBzXjo5tZ82L+0QLijTu/rZGNIbJ/n07ST30GmptYkPmO+REX7qF4YUtli//Rfy0rrNzH9IMrMmw==}
 
   crc-32@1.2.2:
     resolution: {integrity: sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ==}
@@ -34481,9 +34469,6 @@ packages:
     resolution: {integrity: sha512-/3ER20CTTbahrCrpYfPn7Xavv9diBROZpoXGVZDWMw4b/X4uuUwAC0ki85tgsdMRONURyIJbcOvS94QsUBYPbQ==}
     hasBin: true
 
-  long@4.0.0:
-    resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
-
   long@5.3.2:
     resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
 
@@ -36037,10 +36022,6 @@ packages:
     hasBin: true
     peerDependencies:
       protobufjs: ^8.4.1
-
-  protobufjs@6.11.4:
-    resolution: {integrity: sha512-5kQWPaJHi1WoCpjTGszzQ32PG2F4+wRY6BmAT4Vfw56Q2FZ4YZzK20xUYQH4YkfehY1e6QSICrJquM6xXZNcrw==}
-    hasBin: true
 
   protobufjs@7.5.4:
     resolution: {integrity: sha512-CvexbZtbov6jW2eXAvLukXjXUW1TzFaivC46BpWc/3BpcCysb5Vffu+B3XHMm8lVEuy2Mm4XGex8hBSg1yapPg==}
@@ -43884,11 +43865,6 @@ snapshots:
       '@jsonjoy.com/codegen': 17.67.0(tslib@2.6.2)
       tslib: 2.6.2
 
-  '@keplr-wallet/proto-types@0.12.306':
-    dependencies:
-      long: 4.0.0
-      protobufjs: 6.11.4
-
   '@koa/cors@3.4.3':
     dependencies:
       vary: 1.1.2
@@ -49548,8 +49524,6 @@ snapshots:
 
   '@types/lodash@4.17.21': {}
 
-  '@types/long@4.0.2': {}
-
   '@types/markdown-it@14.1.1':
     dependencies:
       '@types/linkify-it': 5.0.0
@@ -52040,11 +52014,6 @@ snapshots:
       typescript: '@typescript/typescript6@6.0.2'
 
   cosmjs-types@0.10.1: {}
-
-  cosmjs-types@0.2.1:
-    dependencies:
-      long: 4.0.0
-      protobufjs: 6.11.4
 
   crc-32@1.2.2: {}
 
@@ -55821,8 +55790,6 @@ snapshots:
       dayjs: 1.11.10
       yargs: 15.4.1
 
-  long@4.0.0: {}
-
   long@5.3.2: {}
 
   loose-envify@1.4.0:
@@ -57859,22 +57826,6 @@ snapshots:
       semver: 7.8.1
       tmp: 0.2.7
       uglify-js: 3.19.3
-
-  protobufjs@6.11.4:
-    dependencies:
-      '@protobufjs/aspromise': 1.1.2
-      '@protobufjs/base64': 1.1.2
-      '@protobufjs/codegen': 2.0.4
-      '@protobufjs/eventemitter': 1.1.0
-      '@protobufjs/fetch': 1.1.0
-      '@protobufjs/float': 1.0.2
-      '@protobufjs/inquire': 1.1.0
-      '@protobufjs/path': 1.1.2
-      '@protobufjs/pool': 1.1.0
-      '@protobufjs/utf8': 1.1.0
-      '@types/long': 4.0.2
-      '@types/node': 24.12.0
-      long: 4.0.0
 
   protobufjs@7.5.4:
     dependencies:
