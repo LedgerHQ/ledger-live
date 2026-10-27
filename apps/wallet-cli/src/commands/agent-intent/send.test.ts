@@ -34,6 +34,7 @@ const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const PYUSD_MINT = "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo";
 const TOKEN_2022_USDC_MINT = "Usdc2o22Mint11111111111111111111111111111111";
+const TOKEN_2022_USDC_COPY_MINT = "Usdc2o22Copy11111111111111111111111111111111";
 
 const DEEPLINK = "https://app.agents.ledger-test.com/intents/intent-123";
 
@@ -91,6 +92,11 @@ const token2022UsdcMint = {
   ticker: "USDC",
   name: "USD Coin (Token-2022)",
   address: TOKEN_2022_USDC_MINT,
+};
+const token2022UsdcCopyMint = {
+  ticker: "USDC",
+  name: "USD Coin copy (Token-2022)",
+  address: TOKEN_2022_USDC_COPY_MINT,
 };
 const pepe = { ticker: "PEPE", name: "Pepe", address: PEPE.toLowerCase() };
 const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY.toLowerCase() };
@@ -204,6 +210,7 @@ describe("agent-intent send", () => {
       [USDC_MINT]: "spl-token",
       [PYUSD_MINT]: "spl-token-2022",
       [TOKEN_2022_USDC_MINT]: "spl-token-2022",
+      [TOKEN_2022_USDC_COPY_MINT]: "spl-token-2022",
     };
     calTokens = { ethereum: [usdc, pepe, pepeCopy], solana: [usdcMint, pyusdMint] };
     tickerLookups = [];
@@ -617,6 +624,27 @@ describe("agent-intent send", () => {
         }),
       ).rejects.toThrow(
         `${TOKEN_2022_USDC_MINT} (USDC) is a Token-2022 mint, which Agent Intent can't send yet.`,
+      );
+      expect(tickerLookups).toEqual([]);
+      expect(submittedIntents).toEqual([]);
+    });
+
+    it("lists several Token-2022 mints a Solana --account holds rather than taking CAL's", async () => {
+      accountTokens = { [SOL_SENDER]: [token2022UsdcMint, token2022UsdcCopyMint] };
+
+      await expect(
+        runSend({
+          from: undefined,
+          account: "solana-1",
+          to: SOL_RECIPIENT,
+          amount: "25 USDC",
+          "fee-strategy": undefined,
+        }),
+      ).rejects.toThrow(
+        `Account "solana-1" holds several SPL tokens with the ticker USDC:\n` +
+          `  ${TOKEN_2022_USDC_MINT} (USD Coin (Token-2022))\n` +
+          `  ${TOKEN_2022_USDC_COPY_MINT} (USD Coin copy (Token-2022))\n` +
+          "Pass the one to send with --token.",
       );
       expect(tickerLookups).toEqual([]);
       expect(submittedIntents).toEqual([]);
