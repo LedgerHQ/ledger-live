@@ -119,7 +119,7 @@ export function OverviewScene({
 
       <CardTransactions
         formatters={formatters}
-        onTransactionPress={item => onTransactionPress(item.transaction)}
+        onOpenTransaction={item => onTransactionPress(item.transaction)}
         onShowMore={onShowMore}
       />
 

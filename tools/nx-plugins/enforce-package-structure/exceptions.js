@@ -154,12 +154,6 @@ const COMPONENT_EXCEPTIONS = {
     CardPrimaryActionButton: componentWaiver("R1"),
     CardTopUpButton: componentWaiver("R1"),
   },
-  "features/flow/pay-card-transactions": {
-    CardTransactionDetail: componentWaiver("R2"),
-    CardTransactions: componentWaiver("R3"),
-    CategoryIcon: componentWaiver("R4"),
-    ListItem: componentWaiver("R3"),
-  },
   "features/flow/pay-contact": {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),

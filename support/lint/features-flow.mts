@@ -48,7 +48,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "pay-card-assets",
   "pay-card-auth",
   "pay-card-details",
-  "pay-card-transactions",
   "pay-card-widget",
   "pay-contact",
   "pay-deposit",
