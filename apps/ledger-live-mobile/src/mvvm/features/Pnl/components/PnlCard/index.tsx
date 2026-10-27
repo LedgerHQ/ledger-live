@@ -15,7 +15,6 @@ import { usePnlCardViewModel } from "./usePnlCardViewModel";
 
 export function PnlCard(props: Readonly<PnlCardProps>) {
   const {
-    shouldRender,
     title,
     displayedValue,
     cardType,
@@ -26,8 +25,6 @@ export function PnlCard(props: Readonly<PnlCardProps>) {
     onPress,
     testID,
   } = usePnlCardViewModel(props);
-
-  if (!shouldRender) return null;
 
   return (
     <Card type={cardType} onPress={onPress} testID={testID}>

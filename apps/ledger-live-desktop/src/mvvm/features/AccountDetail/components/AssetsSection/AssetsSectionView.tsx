@@ -14,8 +14,6 @@ type Props = Readonly<{ viewModel: AssetsSectionViewModel }>;
 export function AssetsSectionView({ viewModel }: Props) {
   const { t } = useTranslation();
 
-  if (!viewModel.isVisible) return null;
-
   return (
     <section className="flex flex-col gap-12" data-testid="account-detail-assets">
       <Subheader>

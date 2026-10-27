@@ -3,7 +3,7 @@
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import React, { forwardRef } from "react";
 import semver from "semver";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { WalletAPIWebview } from "./WalletAPIWebview";
 import { WebviewAPI, WebviewProps } from "./types";
@@ -24,7 +24,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
-    <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />;
+    <TrackScreen category="Platform" name="App" appId={manifest.id} params={inputs} />;
 
     if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
       return (

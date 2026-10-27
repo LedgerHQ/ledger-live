@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text, Icon, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { localeSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
 import MarketCoinChart from "./components/MarketCoinChart";
@@ -80,7 +80,7 @@ export default function MarketCoinScreen() {
 
   return (
     <Container data-testid="market-coin-page-container">
-      <TrackPage
+      <TrackScreen
         category="Page Market Coin"
         currencyName={name}
         starred={isStarred}

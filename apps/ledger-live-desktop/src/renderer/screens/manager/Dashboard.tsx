@@ -9,7 +9,7 @@ import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
 import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceDashboard from "./DeviceDashboard";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -103,7 +103,7 @@ const Dashboard = ({
   }, [result]);
   return (
     <Box flow={4} selectable>
-      <TrackPage
+      <TrackScreen
         category="Manager"
         name="Dashboard"
         deviceModelId={device.modelId}

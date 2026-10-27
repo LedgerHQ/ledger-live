@@ -2,8 +2,13 @@ import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, memo, useMemo, useState } from "react";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { dmkToLedgerDeviceIdMap, type DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import { ConnectNewDevice } from "LLM/components/ConnectNewDevice";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
+import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
@@ -85,6 +90,8 @@ const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) =>
 export default memo(function () {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
+  const isFocused = useIsFocused();
+  const { t } = useTranslation();
 
   const dispatch = useDispatch();
   const { notifyFlowCompleted } = useNotificationsPrompt();
@@ -183,6 +190,48 @@ export default memo(function () {
       wasReadOnlyAtEntry,
     ],
   );
+
+  const onNewDeviceConnected = useCallback(
+    (result: DeviceConnectionResult) => {
+      onFinish({
+        deviceId: result.compatDeviceId,
+        deviceName: result.compatDeviceName,
+        modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
+        wired: result.compatDeviceWired,
+      });
+    },
+    [onFinish],
+  );
+
+  const closeNewDevice = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
+
+  const openDeviceSelection = useCallback(() => {
+    // The device list then helps the user set up, without a new Bluetooth pairing.
+    navigation.navigate(ScreenName.OnboardingDeviceSelection, { missingDevice: true });
+  }, [navigation]);
+
+  if (seededFunnel) {
+    return (
+      <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
+        <DeviceOnboardingCloseBar
+          label={t("common.close")}
+          testID="onboarding-connect-close"
+          onPress={closeNewDevice}
+        />
+        <Box lx={{ flex: 1 }}>
+          {isFocused ? (
+            <ConnectNewDevice
+              onConnected={onNewDeviceConnected}
+              onClose={closeNewDevice}
+              onDeviceNotFound={openDeviceSelection}
+            />
+          ) : null}
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <StyledSafeAreaView>

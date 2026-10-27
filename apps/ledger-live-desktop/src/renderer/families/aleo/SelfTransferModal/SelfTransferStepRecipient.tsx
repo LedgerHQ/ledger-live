@@ -1,6 +1,6 @@
 import React from "react";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -38,7 +38,7 @@ export const SelfTransferStepRecipient = ({
 
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Aleo Self Transfer Flow"
         name="Step Recipient"
         currencyName={currencyName}

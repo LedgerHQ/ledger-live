@@ -31,7 +31,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "~/renderer/modals/Receive/Body";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 const Separator = styled.div`
   border-top: 1px solid ${p => p.theme.colors.neutral.c30};
@@ -248,7 +248,7 @@ const StepReceiveFunds = ({
 
   return (
     <>
-      <TrackPage category={category} name="Step 3" currencyName={currencyName} />
+      <TrackScreen category={category} name="Step 3" currencyName={currencyName} />
 
       <Box px={2}>{renderContent()}</Box>
 

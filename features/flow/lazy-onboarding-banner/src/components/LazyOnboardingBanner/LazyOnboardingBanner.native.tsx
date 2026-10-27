@@ -12,16 +12,12 @@ export function LazyOnboardingBannerView({
   description,
   onPress,
   onClose,
+  testID = "lazy-onboarding-banner",
 }: LazyOnboardingBannerViewProps) {
   if (!isShown) return null;
 
   return (
-    <MediaBanner
-      imageUrl={bannerImageUrl}
-      onPress={onPress}
-      onClose={onClose}
-      testID="lazy-onboarding-banner"
-    >
+    <MediaBanner imageUrl={bannerImageUrl} onPress={onPress} onClose={onClose} testID={testID}>
       <MediaBannerTitle>{title}</MediaBannerTitle>
       <MediaBannerDescription>{description}</MediaBannerDescription>
     </MediaBanner>

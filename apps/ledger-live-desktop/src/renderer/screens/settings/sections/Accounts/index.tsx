@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { SettingsSectionRow as Row, SettingsSectionBody as Body } from "../../SettingsSection";
 import HideEmptyTokenAccountsToggle from "./HideEmptyTokenAccountsToggle";
 import FilterTokenOperationsZeroAmount from "./FilterTokenOperationsZeroAmount";
@@ -13,7 +13,7 @@ export default function SectionAccounts() {
 
   return (
     <Body>
-      <TrackPage category="Settings" name="Accounts" />
+      <TrackScreen category="Settings" name="Accounts" />
       <Row
         title={t("settings.accounts.hideEmptyTokens.title")}
         desc={t("settings.accounts.hideEmptyTokens.desc")}

@@ -42,7 +42,7 @@ afterAll(async () => {
   }
 
   try {
-    closeBridge();
+    await closeBridge();
   } catch (e) {
     log.warn(`setup afterAll closeBridge failed: ${sanitizeError(e)}`);
   }

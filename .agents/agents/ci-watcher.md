@@ -1,8 +1,6 @@
 ---
 name: ci-watcher
 description: Watch GitHub CI for the current branch and report pass/fail with relevant failure logs. Use when waiting for CI results or CI has failed. Use proactively to monitor branch CI.
-model: fast
-is_background: true
 ---
 
 # CI watcher

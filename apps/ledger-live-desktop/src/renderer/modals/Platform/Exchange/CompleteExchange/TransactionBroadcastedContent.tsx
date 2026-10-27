@@ -5,7 +5,7 @@ import { Separator } from "~/renderer/screens/exchange/Swap2/Form/Separator";
 import Button from "~/renderer/components/Button";
 import SwapCompleted from "~/renderer/screens/exchange/Swap2/Form/ExchangeDrawer/SwapCompleted";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { Currency } from "@domain/entity-currency";
 import SellCompleted from "~/renderer/screens/exchange/Sell/SellCompleted";
 import { ExchangeMode, ExchangeModeEnum } from "./Body";
@@ -45,7 +45,7 @@ export function TransactionBroadcastedContent(props: TransactionBroadcastedConte
       paddingBottom={15}
       maxWidth={"100%"}
     >
-      <TrackPage
+      <TrackScreen
         category={mode}
         name={`ModalStep-finished`}
         sourceCurrency={sourceCurrency?.name}

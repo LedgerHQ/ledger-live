@@ -132,4 +132,4 @@ pay-balance/
 ## Tracking
 
 The hero itself does not emit analytics. The host is responsible for tracking `Page Pay` with the
-active `balance_filter` when the tab is viewed (Desktop `TrackPage`, Mobile `TrackScreen`).
+active `balance_filter` when the tab is viewed (`TrackScreen` on Desktop and Mobile).

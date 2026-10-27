@@ -84,7 +84,7 @@ Must fix before merge.
 **Issue title** (confidence: X)
 
 - **File**: `path/to/file.ts:L42`
-- **Rule**: `rule-name.mdc` or bug explanation
+- **Rule**: skill name (e.g. `typescript`) or bug explanation
 - **Issue**: Clear description
 - **Fix**: Concrete suggestion with code
 

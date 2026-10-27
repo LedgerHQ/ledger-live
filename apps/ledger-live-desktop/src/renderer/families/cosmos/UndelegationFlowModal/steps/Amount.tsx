@@ -6,7 +6,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
 import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
@@ -57,7 +57,7 @@ export default function StepAmount({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Undelegation Flow"
         name="Step 1"
         flow="stake"

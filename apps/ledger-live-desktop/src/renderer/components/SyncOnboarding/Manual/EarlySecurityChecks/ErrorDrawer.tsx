@@ -8,7 +8,7 @@ import useEnv from "@features/platform-env";
 import { useNavigate } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
@@ -51,7 +51,7 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
-      <TrackPage category={drawerAnalyticsName} type="drawer" refreshSource={false} />
+      <TrackScreen category={drawerAnalyticsName} type="drawer" refreshSource={false} />
       <Flex px={13} flex={1}>
         {isNotFoundEntityError ? (
           <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
