@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { BalanceEmptyState } from "../components/Hero/BalanceEmptyState.web";
-import { renderWithStyle } from "./renderWithStyle.web";
+import { BalanceEmptyState } from "../components/Hero/BalanceEmptyState";
+import { renderWithStyle } from "./renderWithStyle";
 
 describe("BalanceEmptyState (Web)", () => {
   it("should render the empty title and description", () => {
