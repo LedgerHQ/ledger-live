@@ -20,8 +20,16 @@ Perps account banner.
 
 ## What the apps own
 
-Reading the signals (remote currency config, feature flags) and handling the
-actions (opening a link, navigating to Perps).
+Reading the signals and handling the actions (opening a link, navigating to Perps). The package
+knows no chain or family: eligibility comes in as plain booleans, computed where that knowledge
+lives:
+
+- `isPerpsAccount`: a family capability (`accountDetailNotices` in the app's families contract),
+  never a `family === "…"` check.
+- `isRobinhoodChain`: the Robinhood chain helper (`isRobinhoodExclusiveAsset` from
+  `@ledgerhq/asset-detail`).
+
+The package keeps the feature-flag gating, the order, the copy and the rendering.
 
 ## Adding a notice
 
@@ -34,11 +42,12 @@ compile.
    values its copy needs (for example `currencyName`) and, if it has a button, an `action`
    (`LearnMoreAction` or `OpenPerpsAction`).
 2. **Signal**: if the rule needs a fact it does not have yet, add it to `AccountNoticeSignals` as a
-   plain value (string, boolean). Never pass an app type, a config object or a translated string;
-   keep the decision in the rule.
+   plain value (string, boolean). Never pass an app type, a config object or a translated string.
+   Chain or family eligibility is a boolean the app computes (a family capability or a currency
+   helper); never put a chain id or a family name in this package. Feature-flag gating stays in
+   the rule.
 3. **Rule**: in `src/logic/resolveAccountNotices.ts`, return the notice from a small function and
    place it in the list returned by `resolveAccountNotices`. The list order is the display order.
-   Constants that identify currencies (like `ROBINHOOD_CHAIN_IDS`) live in this file.
 4. **Rule tests**: in `src/logic/resolveAccountNotices.test.ts`, add the default for the new signal
    to `signals()`, a case where the notice shows, a case where it does not, and update the ordering
    test.

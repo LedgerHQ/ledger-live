@@ -1,9 +1,5 @@
 import type { AccountNotice, AccountNoticeSignals, LearnMoreAction } from "../model/types";
 
-const ROBINHOOD_CHAIN_IDS: ReadonlySet<string> = new Set(["robinhood", "robinhood_testnet"]);
-
-const PERPS_FAMILY = "hypercore";
-
 const learnMore = (link: string): LearnMoreAction => ({ type: "learnMore", link });
 
 function statusNotices({
@@ -26,15 +22,15 @@ function customNotices({ customBanner }: AccountNoticeSignals): AccountNotice[] 
 }
 
 function robinhoodNotices({
-  currencyId,
+  isRobinhoodChain,
   isRobinhoodDisclaimerEnabled,
 }: AccountNoticeSignals): AccountNotice[] {
-  if (!isRobinhoodDisclaimerEnabled || !ROBINHOOD_CHAIN_IDS.has(currencyId)) return [];
+  if (!isRobinhoodChain || !isRobinhoodDisclaimerEnabled) return [];
   return [{ id: "robinhoodDisclaimer" }];
 }
 
-function perpsNotices({ family, isPerpsEnabled }: AccountNoticeSignals): AccountNotice[] {
-  if (!isPerpsEnabled || family !== PERPS_FAMILY) return [];
+function perpsNotices({ isPerpsAccount, isPerpsEnabled }: AccountNoticeSignals): AccountNotice[] {
+  if (!isPerpsAccount || !isPerpsEnabled) return [];
   return [{ id: "perps", action: { type: "openPerps" } }];
 }
 

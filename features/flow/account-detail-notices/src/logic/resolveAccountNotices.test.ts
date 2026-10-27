@@ -4,11 +4,11 @@ import { resolveAccountNotices } from "./resolveAccountNotices";
 const SUPPORT = "https://support.ledger.com";
 
 const signals = (overrides: Partial<AccountNoticeSignals> = {}): AccountNoticeSignals => ({
-  currencyId: "adi",
   currencyName: "Adi",
-  family: "evm",
   supportLink: SUPPORT,
+  isRobinhoodChain: false,
   isRobinhoodDisclaimerEnabled: true,
+  isPerpsAccount: false,
   isPerpsEnabled: true,
   ...overrides,
 });
@@ -52,22 +52,19 @@ describe("resolveAccountNotices", () => {
     ]);
   });
 
-  it.each(["robinhood", "robinhood_testnet"])(
-    "shows the Robinhood disclaimer on every %s account",
-    currencyId => {
-      expect(ids({ currencyId })).toEqual(["robinhoodDisclaimer"]);
-    },
-  );
-
-  it("hides the Robinhood disclaimer when its flag is off", () => {
-    expect(ids({ currencyId: "robinhood", isRobinhoodDisclaimerEnabled: false })).toEqual([]);
+  it("shows the Robinhood disclaimer on a Robinhood chain account", () => {
+    expect(ids({ isRobinhoodChain: true })).toEqual(["robinhoodDisclaimer"]);
   });
 
-  it("offers Perps on a Hypercore account when Perps is enabled", () => {
-    expect(resolveAccountNotices(signals({ family: "hypercore" }))).toEqual([
+  it("hides the Robinhood disclaimer when its flag is off", () => {
+    expect(ids({ isRobinhoodChain: true, isRobinhoodDisclaimerEnabled: false })).toEqual([]);
+  });
+
+  it("offers Perps on a Perps account when Perps is enabled", () => {
+    expect(resolveAccountNotices(signals({ isPerpsAccount: true }))).toEqual([
       { id: "perps", action: { type: "openPerps" } },
     ]);
-    expect(ids({ family: "hypercore", isPerpsEnabled: false })).toEqual([]);
+    expect(ids({ isPerpsAccount: true, isPerpsEnabled: false })).toEqual([]);
   });
 
   it("orders status, custom banner, Robinhood then Perps", () => {
@@ -75,8 +72,8 @@ describe("resolveAccountNotices", () => {
       ids({
         status: { type: "migration", from: "A", to: "B" },
         customBanner: { text: "Heads up" },
-        currencyId: "robinhood",
-        family: "hypercore",
+        isRobinhoodChain: true,
+        isPerpsAccount: true,
       }),
     ).toEqual(["migration", "custom", "robinhoodDisclaimer", "perps"]);
   });
