@@ -100,6 +100,7 @@ import {
   customErrorEventMapper,
   customLogEventMapper,
   initializeDatadogProvider,
+  stopDatadogRecording,
 } from "./datadog";
 import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
@@ -277,7 +278,10 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!datadogFF?.enabled) return;
+    if (!datadogFF?.enabled) {
+      stopDatadogRecording();
+      return;
+    }
     const setUserEquipmentId = () => {
       if (isDummyDatadogId(datadogId)) return;
       DdSdkReactNative.setUserInfo({
@@ -295,6 +299,7 @@ function App() {
       .catch(e => {
         console.error("Datadog initialization failed", e);
       });
+    return stopDatadogRecording;
   }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled, datadogId]);
 
   const checkAccountsWithFunds = useCheckAccountWithFunds();
