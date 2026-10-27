@@ -905,6 +905,7 @@ class HumanCommandOutput implements CommandOutput {
     listenerPid,
     enrollmentUrl,
     fingerprint,
+    logPath,
   }: AgentIntentEnrollmentWaiting): void {
     writeStdout(
       expiresAt === undefined
@@ -915,11 +916,9 @@ class HumanCommandOutput implements CommandOutput {
     );
     if (enrollmentUrl !== undefined) writeStdout(`Enrollment link: ${enrollmentUrl}`);
     if (fingerprint !== undefined) writeStdout(`Public key fingerprint: ${fingerprint}`);
-    writeStdout(
-      colors.dim(
-        `Run \`wallet-cli agent-intent wait --profile ${profileId}\` again to keep waiting.`,
-      ),
-    );
+    // Only `enroll --detach` sets logPath: its caller has not run `wait` yet.
+    const next = logPath === undefined ? "again to keep waiting" : "to check on it";
+    writeStdout(colors.dim(`Run \`wallet-cli agent-intent wait --profile ${profileId}\` ${next}.`));
   }
 
   agentIntentRecoveryPending({

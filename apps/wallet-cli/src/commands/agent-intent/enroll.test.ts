@@ -1218,7 +1218,8 @@ describe("agent-intent enroll --detach", () => {
     const text = stdout.join("");
     expect(text).toContain("is not saved yet");
     expect(text).toContain("OS keychain unlock prompt");
-    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` again");
+    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` to check on it");
+    expect(text).not.toContain("again");
   });
 
   it("keeps the code of the listener's error in its own json error envelope", async () => {
