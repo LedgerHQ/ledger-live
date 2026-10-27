@@ -22,6 +22,7 @@ import {
   useAccountPortfolioToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAccountSourcePortfolioToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
 } from "@devtools/bindings";
@@ -100,6 +101,10 @@ export function useDevToolsScreenViewModel() {
     serviceUrl: getPortfolioServiceUrl(),
   });
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const accountSourcePortfolioToolProps = useAccountSourcePortfolioToolProps({
+    serviceUrl: getPortfolioServiceUrl(),
+    recorder: accountDataRecorder,
+  });
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
 
@@ -113,6 +118,7 @@ export function useDevToolsScreenViewModel() {
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-data", config: accountDataToolProps },
+      { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
@@ -132,6 +138,7 @@ export function useDevToolsScreenViewModel() {
       accountOperationToolProps,
       accountPortfolioToolProps,
       accountDataToolProps,
+      accountSourcePortfolioToolProps,
       accountNameToolProps,
     ],
   );
