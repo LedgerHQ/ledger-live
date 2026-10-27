@@ -137,9 +137,6 @@ const COMPONENT_EXCEPTIONS = {
   "features/flow/lazy-onboarding-banner": {
     LazyOnboardingBannerView: componentWaiver("R1", "R3"),
   },
-  "features/flow/pay-balance": {
-    ActionTiles: componentWaiver("R3"),
-  },
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),

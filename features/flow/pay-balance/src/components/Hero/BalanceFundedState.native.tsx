@@ -2,7 +2,7 @@ import React from "react";
 import { AmountDisplay, Box, Pressable } from "@ledgerhq/lumen-ui-rnative";
 import { Eye } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { FormattedValue, BalanceFilterOption } from "../../types";
-import { BalanceFilterSelect } from "../Filter/BalanceFilterSelect.native";
+import { BalanceFilterSelect } from "../Filter/BalanceFilterSelect";
 
 type BalanceFundedStateProps = Readonly<{
   balance: number;

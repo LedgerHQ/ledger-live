@@ -87,8 +87,7 @@ features/flow/pay-balance/src/
 │   └── index.ts                     # exported as @features/flow-pay-balance/state
 ├── types.ts
 ├── exports.ts
-├── index.ts
-└── index.native.ts
+└── index.ts
 ```
 
 A component with its own state, such as `components/Hero/`, follows the same trio as a screen:

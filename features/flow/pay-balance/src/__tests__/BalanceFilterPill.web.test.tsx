@@ -1,8 +1,8 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { BalanceFilterPill } from "../components/Filter/BalanceFilterPill.web";
+import { BalanceFilterPill } from "../components/Filter/BalanceFilterPill";
 import { usdcOption } from "./fixtures";
-import { renderWithStyle } from "./renderWithStyle.web";
+import { renderWithStyle } from "./renderWithStyle";
 
 describe("BalanceFilterPill (Web)", () => {
   it("should render the all-stablecoins label when nothing is selected", () => {

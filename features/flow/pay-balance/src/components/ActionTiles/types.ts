@@ -3,7 +3,8 @@ export type ActionTileId = "deposit" | "request" | "pay";
 /** Host-provided tile: copy is resolved inside the feature from the tile `id`. */
 export type ActionTileInput = Readonly<{
   id: ActionTileId;
-  onPress: () => void;
+  onOpenFlow: () => void;
+  /** @platform web */
   appearance?: "base" | "transparent";
 }>;
 

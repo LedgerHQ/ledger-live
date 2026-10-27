@@ -1,8 +1,8 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { BalanceFundedState } from "../components/Hero/BalanceFundedState.web";
+import { BalanceFundedState } from "../components/Hero/BalanceFundedState";
 import { fundedStateProps, usdcOption } from "./fixtures";
-import { renderWithStyle } from "./renderWithStyle.web";
+import { renderWithStyle } from "./renderWithStyle";
 
 describe("BalanceFundedState (Web)", () => {
   it("should render the funded balance and the filter pill", () => {
