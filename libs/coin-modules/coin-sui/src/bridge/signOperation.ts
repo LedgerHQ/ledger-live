@@ -32,7 +32,7 @@ const signWithDevice = (
     async (suiClient: ClientWithCoreApi) => {
       const ledgerSigner = await LedgerSigner.fromDerivationPath(
         account.freshAddressPath,
-        suiSigner as unknown as Parameters<typeof LedgerSigner.fromDerivationPath>[1],
+        suiSigner,
         suiClient,
       );
       return ledgerSigner.signTransaction(unsigned, objects, resolution);
