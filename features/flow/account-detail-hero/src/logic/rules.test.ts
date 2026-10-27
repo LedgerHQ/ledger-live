@@ -3,6 +3,7 @@ import { hasAccountActivity } from "./hasAccountActivity";
 import { resolveAccountCountervalue } from "./resolveAccountCountervalue";
 import { resolveAccountHeroAvailability } from "./resolveAccountHeroAvailability";
 import { resolveEmptyState } from "./resolveEmptyState";
+import { resolveEmptyStateDescription } from "./resolveEmptyStateDescription";
 import { resolveSwapConsole } from "./resolveSwapConsole";
 
 const availability = (
@@ -120,5 +121,27 @@ describe("resolveAccountCountervalue", () => {
     expect(
       resolveAccountCountervalue([valuedAsset("eth", 1), valuedAsset("pol", 5)], calculate),
     ).toBe(2);
+  });
+});
+
+describe("resolveEmptyStateDescription", () => {
+  it.each([
+    [["receive"], "receive"],
+    [["receive", "swap"], "receiveSwap"],
+    [["receive", "buy"], "receiveBuy"],
+    [["receive", "swap", "buy"], "receiveSwapBuy"],
+    [["swap"], "swap"],
+    [["buy"], "buy"],
+    [["swap", "buy"], "swapBuy"],
+  ] as const)("describes %o as %s", (actions, expected) => {
+    expect(resolveEmptyStateDescription(actions)).toBe(expected);
+  });
+
+  it("does not depend on the order of the actions", () => {
+    expect(resolveEmptyStateDescription(["buy", "receive", "swap"])).toBe("receiveSwapBuy");
+  });
+
+  it("has no description without any funding action", () => {
+    expect(resolveEmptyStateDescription([])).toBeUndefined();
   });
 });

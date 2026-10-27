@@ -2,7 +2,7 @@ import type { AccountHeroAvailability } from "../hero/types";
 
 export type FundingAction = "receive" | "swap" | "buy";
 
-export type AccountEmptyState = Readonly<{
+export type AccountEmptyStateModel = Readonly<{
   isVisible: boolean;
   fundingActions: readonly FundingAction[];
 }>;
@@ -10,7 +10,7 @@ export type AccountEmptyState = Readonly<{
 type Input = Readonly<{ hasActivity: boolean; availability: AccountHeroAvailability }>;
 
 /** The empty state replaces the sections while the account has no activity. */
-export function resolveEmptyState({ hasActivity, availability }: Input): AccountEmptyState {
+export function resolveEmptyState({ hasActivity, availability }: Input): AccountEmptyStateModel {
   const { isCurrencySupported, isReceiveSupported, isSwapAvailable, isBuyAvailable } = availability;
   const fundingActions: FundingAction[] = [
     ...(isReceiveSupported ? (["receive"] as const) : []),
