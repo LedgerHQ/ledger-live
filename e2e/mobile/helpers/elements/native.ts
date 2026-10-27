@@ -21,17 +21,18 @@ const waitHardTimeout = (timeout: number) => Math.max(TIMEOUT.xxxlarge, timeout 
  * To act without waiting, use {@link NativeHandle.raw}. Build one with {@link byId} or {@link byText}.
  */
 export class NativeHandle implements ElementHandle {
-  private readonly matcher: NativeMatcher;
+  private readonly createMatcher: () => NativeMatcher;
   private readonly description: string;
 
-  constructor(matcher: NativeMatcher, description: string) {
-    this.matcher = matcher;
+  constructor(createMatcher: () => NativeMatcher, description: string) {
+    this.createMatcher = createMatcher;
     this.description = description;
   }
 
   /** The first matching Detox element, with no wait and no hard timeout. */
   get raw(): NativeElement {
-    return element(this.matcher).atIndex(0);
+    // Android's atIndex mutates the matcher it wraps, so every element needs a fresh one.
+    return element(this.createMatcher()).atIndex(0);
   }
 
   /** Waits until at least 75% of the element is visible. */
@@ -94,8 +95,9 @@ export class NativeHandle implements ElementHandle {
 }
 
 /** Matches by React Native `testID` (Detox `by.id`). */
-export const byId = (id: string | RegExp): NativeHandle => new NativeHandle(by.id(id), `#${id}`);
+export const byId = (id: string | RegExp): NativeHandle =>
+  new NativeHandle(() => by.id(id), `#${id}`);
 
 /** Matches by visible text (Detox `by.text`). */
 export const byText = (text: string | RegExp): NativeHandle =>
-  new NativeHandle(by.text(text), `text "${text}"`);
+  new NativeHandle(() => by.text(text), `text "${text}"`);
