@@ -290,6 +290,12 @@
     "ws": "catalog:",
     "xstate": "catalog:"
   },
+  "optionalDependencies": {
+    "@ledgerhq/zcash-utils-darwin-arm64": "catalog:",
+    "@ledgerhq/zcash-utils-darwin-x64": "catalog:",
+    "@ledgerhq/zcash-utils-linux-x64-gnu": "catalog:",
+    "@ledgerhq/zcash-utils-win32-x64-msvc": "catalog:"
+  },
   "devDependencies": {
     "@domain/entity-account-descriptor": "workspace:*",
     "@electron/notarize": "3.1.1",
