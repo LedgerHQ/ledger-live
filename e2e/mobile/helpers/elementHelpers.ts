@@ -240,13 +240,8 @@ export const NativeElementHelpers = {
   },
 
   async waitForElementNotVisible(id: string | RegExp, timeout = TIMEOUT.xxlarge): Promise<boolean> {
-    return NativeElementHelpers.waitForElementNotVisibleByElement(element(by.id(id)), timeout);
-  },
+    const el = element(by.id(id));
 
-  async waitForElementNotVisibleByElement(
-    el: NativeElement,
-    timeout = TIMEOUT.xxlarge,
-  ): Promise<boolean> {
     try {
       await NativeElementHelpers.expect(el).not.toBeVisible();
       return true;
@@ -460,14 +455,9 @@ export const NativeElementHelpers = {
   },
 
   async getAttributesOfElement(id: string | RegExp, index = 0): Promise<Detox.ElementAttributes> {
-    return NativeElementHelpers.getAttributesByElement(
-      NativeElementHelpers.getElementById(id, index),
-      index,
+    const attributes = await retryUntilTimeout(async () =>
+      NativeElementHelpers.getElementById(id, index).getAttributes(),
     );
-  },
-
-  async getAttributesByElement(elem: NativeElement, index = 0): Promise<Detox.ElementAttributes> {
-    const attributes = await retryUntilTimeout(() => elem.getAttributes());
     if ("elements" in attributes) {
       return attributes.elements[index];
     }
@@ -475,14 +465,9 @@ export const NativeElementHelpers = {
   },
 
   async getTextOfElement(id: string | RegExp, index = 0): Promise<string> {
-    return NativeElementHelpers.getTextByElement(
-      NativeElementHelpers.getElementById(id, index),
-      index,
+    const attributes = await retryUntilTimeout(async () =>
+      NativeElementHelpers.getElementById(id, index).getAttributes(),
     );
-  },
-
-  async getTextByElement(elem: NativeElement, index = 0): Promise<string> {
-    const attributes = await retryUntilTimeout(() => elem.getAttributes());
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
@@ -530,14 +515,9 @@ export const WebElementHelpers = {
   },
 
   async getWebElementText(id: string, options?: { index?: number }) {
-    return WebElementHelpers.getTextByWebElement(
-      WebElementHelpers.getWebElementByTestId(id, options),
-    );
-  },
-
-  async getTextByWebElement(webElement: WebElement): Promise<string> {
-    await detoxExpect(webElement).toExist();
-    return await webElement.runScript(el => (el.innerText || el.textContent || "").trim());
+    const elem = WebElementHelpers.getWebElementByTestId(id, options);
+    await detoxExpect(elem).toExist();
+    return await elem.runScript(el => (el.innerText || el.textContent || "").trim());
   },
 
   getWebElementById(id: string, index = 0): WebElement {
@@ -646,12 +626,8 @@ export const WebElementHelpers = {
     const webElement = await WebElementHelpers.waitWebElementByTestId(id, {
       throwOnTimeout: true,
     });
-    await WebElementHelpers.typeTextByWebElement(webElement!, text);
-  },
-
-  async typeTextByWebElement(webElement: WebElement, text: string): Promise<void> {
     await withHardTimeout(
-      webElement.runScript(
+      webElement!.runScript(
         (el: HTMLInputElement, val: string) => {
           const setValue = Object.getOwnPropertyDescriptor(
             HTMLInputElement.prototype,

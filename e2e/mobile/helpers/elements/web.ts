@@ -1,7 +1,9 @@
+import { by, expect as detoxExpect, web } from "detox";
 import type { WebElement } from "detox/detox";
-import { WebElementHelpers } from "@e2e/helpers/elementHelpers";
-import { TIMEOUT } from "@e2e/utils/timeouts";
+import { retryUntilTimeout } from "@e2e/utils/retry";
+import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
+import { withHardTimeout } from "./hardTimeout";
 
 /**
  * An element inside a webview (Live App), declared once by its `data-testid`.
@@ -15,32 +17,47 @@ export class WebHandle implements ElementHandle {
     this.testId = testId;
   }
 
-  /** The Detox web element, with no wait. Escape hatch for actions this handle does not wrap. */
+  /** The Detox web element, with no wait and no hard timeout. */
   get raw(): WebElement {
-    return WebElementHelpers.getWebElementByTestId(this.testId);
+    return web.element(by.web.cssSelector(`[data-testid^="${this.testId}"]`));
   }
 
   /** Waits until the element exists in the webview and its text can be read (webviews have no visibility check). */
   async waitVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await WebElementHelpers.waitWebElement(this.raw, timeout);
+    await retryUntilTimeout(() => this.raw.runScript(el => el.innerText), timeout, INTERVAL.long);
   }
 
   /** Waits for the element, then taps it. */
   async tap(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
-    await WebElementHelpers.tapWebElementByElement(this.raw);
+    await withHardTimeout(this.raw.tap(), TIMEOUT.medium);
   }
 
   /** Waits for the input, then sets its value and fires an `input` event so the page's React state updates. */
   async replaceText(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
-    await WebElementHelpers.typeTextByWebElement(this.raw, text);
+    await withHardTimeout(
+      this.raw.runScript(
+        (el: HTMLInputElement, val: string) => {
+          const setValue = Object.getOwnPropertyDescriptor(
+            HTMLInputElement.prototype,
+            "value",
+          )?.set;
+          if (setValue) setValue.call(el, val);
+          else el.value = val;
+          el.dispatchEvent(new Event("input", { bubbles: true }));
+        },
+        [text],
+      ),
+      TIMEOUT.medium,
+    );
   }
 
   /** Waits for the element, then returns its trimmed text. */
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
-    return WebElementHelpers.getTextByWebElement(this.raw);
+    await detoxExpect(this.raw).toExist();
+    return this.raw.runScript(el => (el.innerText || el.textContent || "").trim());
   }
 }
 

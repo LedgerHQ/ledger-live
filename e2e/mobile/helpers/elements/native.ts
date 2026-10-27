@@ -1,8 +1,19 @@
-import { by, element } from "detox";
-import type { ElementAttributes, NativeElement, NativeMatcher } from "detox/detox";
-import { NativeElementHelpers } from "@e2e/helpers/elementHelpers";
+import { by, element, waitFor } from "detox";
+import type {
+  AndroidElementAttributes,
+  IosElementAttributes,
+  NativeElement,
+  NativeMatcher,
+} from "detox/detox";
+import { retryUntilTimeout } from "@e2e/utils/retry";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
+import { withHardTimeout } from "./hardTimeout";
+
+type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
+
+/** A wait answers by itself at its own timeout, so the hard timeout must outlast it. */
+const waitHardTimeout = (timeout: number) => Math.max(TIMEOUT.xxxlarge, timeout + TIMEOUT.xlarge);
 
 /**
  * A native (React Native) element, declared once with its match strategy.
@@ -18,55 +29,67 @@ export class NativeHandle implements ElementHandle {
     this.description = description;
   }
 
-  /** The first matching Detox element, with no wait. Escape hatch for actions this handle does not wrap. */
+  /** The first matching Detox element, with no wait and no hard timeout. */
   get raw(): NativeElement {
     return element(this.matcher).atIndex(0);
   }
 
   /** Waits until at least 75% of the element is visible. */
   async waitVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await NativeElementHelpers.waitForElement(this.raw, timeout);
+    await withHardTimeout(
+      waitFor(this.raw).toBeVisible().withTimeout(timeout),
+      waitHardTimeout(timeout),
+    );
   }
 
   /** Waits until 100% of the element is visible. Use it for bottom sheets: they pass 75% while still sliding. */
   async waitFullyVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await NativeElementHelpers.waitForElement(this.raw, timeout, { visibilityPercentage: 100 });
+    await withHardTimeout(
+      waitFor(this.raw).toBeVisible(100).withTimeout(timeout),
+      waitHardTimeout(timeout),
+    );
   }
 
   /** Waits until the element is no longer visible. Throws if it is still visible after the timeout. */
   async waitGone(timeout = TIMEOUT.xxlarge): Promise<void> {
-    const gone = await NativeElementHelpers.waitForElementNotVisibleByElement(this.raw, timeout);
-    if (!gone) throw new Error(`${this.description} is still visible after ${timeout}ms`);
+    try {
+      await waitFor(this.raw).not.toBeVisible().withTimeout(timeout);
+    } catch (error) {
+      throw new Error(`${this.description} is still visible after ${timeout}ms`, { cause: error });
+    }
   }
 
   /** Waits for visibility, then taps. */
   async tap(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
-    await NativeElementHelpers.tapByElement(this.raw);
+    await withHardTimeout(this.raw.tap());
   }
 
   /** Waits for visibility, then focuses the field, replaces its content and presses Enter. */
   async replaceText(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
-    await NativeElementHelpers.typeTextByElement(this.raw, text);
+    await withHardTimeout(this.raw.tap());
+    await withHardTimeout(this.raw.replaceText(text));
+    await withHardTimeout(this.raw.typeText("\n"));
   }
 
   /** Waits for visibility, then clears the field. */
   async clearText(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
-    await NativeElementHelpers.clearTextByElement(this.raw);
-  }
-
-  /** Waits for visibility, then returns the element's text ("" when it has none). */
-  async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
-    await this.waitVisible(timeout);
-    return NativeElementHelpers.getTextByElement(this.raw);
+    await withHardTimeout(this.raw.clearText());
   }
 
   /** Waits for visibility, then returns the element's attributes (`enabled`, `label`…). */
   async getAttributes(timeout = TIMEOUT.xxlarge): Promise<ElementAttributes> {
     await this.waitVisible(timeout);
-    return NativeElementHelpers.getAttributesByElement(this.raw);
+    const attributes = await retryUntilTimeout(() => this.raw.getAttributes());
+    return "elements" in attributes ? attributes.elements[0] : attributes;
+  }
+
+  /** Waits for visibility, then returns the element's text ("" when it has none). */
+  async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
+    const { text } = await this.getAttributes(timeout);
+    return text ?? "";
   }
 }
 
