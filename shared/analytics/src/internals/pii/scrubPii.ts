@@ -104,10 +104,8 @@ export function scrubPiiString(input: string): { value: string; kinds: PiiKind[]
   return { value, kinds };
 }
 
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  if (typeof value !== "object" || value === null) return false;
-  const prototype = Object.getPrototypeOf(value);
-  return prototype === Object.prototype || prototype === null;
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
 
 function isSensitiveKey(key: string): boolean {
@@ -116,7 +114,7 @@ function isSensitiveKey(key: string): boolean {
 
 function hasContent(value: unknown): boolean {
   if (typeof value === "string") return value.length > 0;
-  return Array.isArray(value) || isPlainObject(value);
+  return isObject(value);
 }
 
 function scrubAt(value: unknown, path: string, depth: number, findings: PiiFinding[]): unknown {
@@ -138,7 +136,7 @@ function scrubAt(value: unknown, path: string, depth: number, findings: PiiFindi
     return changed ? items : value;
   }
 
-  if (isPlainObject(value)) {
+  if (isObject(value)) {
     let changed = false;
     const entries = Object.entries(value).map(([key, item]) => {
       const itemPath = path ? `${path}.${key}` : key;

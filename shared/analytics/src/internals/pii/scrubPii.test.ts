@@ -141,10 +141,28 @@ describe("scrubPii", () => {
     expect(props.nested.to).toBe(EVM_ADDRESS);
   });
 
-  it("keeps class instances as they are", () => {
+  it("keeps class instances without personal data as they are", () => {
     const date = new Date(0);
 
     expect(scrubPii({ date }).value.date).toBe(date);
+  });
+
+  it("redacts bytes under a sensitive key", () => {
+    const { value, findings } = scrubPii({ signature: new Uint8Array([222, 173, 190, 239]) });
+
+    expect(value).toEqual({ signature: "[REDACTED:sensitive_key]" });
+    expect(findings).toEqual([{ path: "signature", kind: "sensitive_key" }]);
+  });
+
+  it("redacts the fields of class instances", () => {
+    class Recipient {
+      constructor(readonly to: string) {}
+    }
+
+    const { value, findings } = scrubPii({ recipient: new Recipient(EVM_ADDRESS) });
+
+    expect(value).toEqual({ recipient: { to: "[REDACTED:evm_address]" } });
+    expect(findings).toEqual([{ path: "recipient.to", kind: "evm_address" }]);
   });
 
   it("stops at a maximum depth so that circular objects do not loop", () => {
