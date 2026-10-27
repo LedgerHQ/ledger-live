@@ -163,7 +163,7 @@ catalog:
   buffer: 6.0.3
   class-variance-authority: 0.7.1
   clsx: 2.1.1
-  electron: 44.9.3
+  electron: 45.0.0
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 2.4.0
@@ -259,8 +259,6 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
-  # Security fix for the compromised eMudhra intermediate CAs, younger than minimumReleaseAge
-  - electron@44.9.3
 
 autoInstallPeers: false
 enablePrePostScripts: true
