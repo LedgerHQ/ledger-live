@@ -519,8 +519,17 @@ export class SwapPage extends WebViewAppPage {
     await amountInput.click();
     await amountInput.fill(amount);
 
-    //wait for potential origin amount error to be loaded
-    await this.page.waitForTimeout(500);
+    // An amount either fails validation (origin amount error) or goes out for quotes; wait until
+    // the app has settled on one. An empty amount triggers neither.
+    if (amount) {
+      await expect(
+        webview
+          .getByTestId(this.fromAccountError)
+          .or(webview.getByTestId(this.bestValueInfoIcon))
+          .or(webview.getByTestId(this.noQuotesPlaceholder))
+          .first(),
+      ).toBeVisible();
+    }
   }
 
   @step("Select currency to swap to: $0")
@@ -555,7 +564,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Wait for the to-account coin selector to be populated")
-  async waitForToAssetSelectorReady(timeout = 40_000) {
+  async waitForToAssetSelectorReady(timeout = TIMEOUT.xlarge) {
     const webview = await this.getWebView();
     try {
       await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, timeout);
@@ -832,9 +841,7 @@ export class SwapPage extends WebViewAppPage {
     await hoverTrigger();
     const tooltips = webview.locator(this.openTooltipSelector);
     await expect
-      .poll(async () => (await tooltips.allTextContents()).map(text => text.trim()), {
-        timeout: 15_000,
-      })
+      .poll(async () => (await tooltips.allTextContents()).map(text => text.trim()))
       .toContain(expected);
   }
 
