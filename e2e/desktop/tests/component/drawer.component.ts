@@ -1,3 +1,4 @@
+import { expect } from "@playwright/test";
 import { Component } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import { Account, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
@@ -11,10 +12,12 @@ export class Drawer extends Component {
   private addAccountButton = this.page.getByTestId("add-account-button");
 
   @step("Wait for drawer to be visible")
-  async waitForDrawerToBeVisible() {
-    await this.content.waitFor({ state: "visible" });
-    await this.closeButton.waitFor({ state: "visible" });
-    await this.drawerOverlay.waitFor({ state: "attached" });
+  async waitForDrawerToBeVisible(timeout?: number) {
+    await this.content.waitFor({ state: "visible", timeout });
+    await this.closeButton.waitFor({ state: "visible", timeout });
+    await this.drawerOverlay.waitFor({ state: "attached", timeout });
+    // The overlay turns opaque as the drawer starts sliding in: wait until it is fully on screen.
+    await expect(this.content).toBeInViewport({ ratio: 1, timeout });
   }
 
   @step("Close drawer")

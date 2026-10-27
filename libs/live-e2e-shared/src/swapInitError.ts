@@ -24,6 +24,58 @@ export function extractSwapInitError(entries: SwapInitLogEntry[]): string | null
   return step ? `Step: ${step}\n\n${body}` : body;
 }
 
+/** The swap request itself is logged under "custom.exchange.swap", so only these mark a failure. */
+const SWAP_INIT_FAILURE_SIGNATURES = SWAP_INIT_ERROR_SIGNATURES.filter(
+  signature => signature !== "custom.exchange.swap",
+);
+
+/**
+ * One line naming the swap-init failure, or null while none was logged. Unlike
+ * `extractSwapInitError`, the swap request alone does not count, so a device wait can poll this
+ * while the swap is still in flight.
+ */
+export function describeSwapInitFailure(entries: SwapInitLogEntry[]): string | null {
+  const failure = entries.find(entry =>
+    SWAP_INIT_FAILURE_SIGNATURES.some(signature => (entry.text ?? "").includes(signature)),
+  );
+  if (!failure) return null;
+
+  const text = failure.text ?? "";
+  const error = innermostError(parseLoggedJson(text));
+  const detail = error ? `${error.name}: ${error.message}` : stripConsoleStyling(text);
+  const step = deriveSwapInitStep([failure]);
+  return (step ? `swap-init failed at ${step}: ${detail}` : `swap-init failed: ${detail}`).slice(
+    0,
+    500,
+  );
+}
+
+/** The JSON a log line carries after its label, if any. */
+function parseLoggedJson(text: string): unknown {
+  const jsonStart = text.indexOf("{");
+  if (jsonStart === -1) return undefined;
+  try {
+    return JSON.parse(text.slice(jsonStart));
+  } catch {
+    return undefined;
+  }
+}
+
+/** The wallet-api error nests the cause under `error.data.data`; the innermost one names it. */
+function innermostError(value: unknown): { name: string; message: string } | undefined {
+  if (value === null || typeof value !== "object") return undefined;
+  const nested =
+    ("error" in value ? innermostError(value.error) : undefined) ??
+    ("data" in value ? innermostError(value.data) : undefined);
+  if (nested) return nested;
+  if ("name" in value && typeof value.name === "string") {
+    if ("message" in value && typeof value.message === "string") {
+      return { name: value.name, message: value.message };
+    }
+  }
+  return undefined;
+}
+
 /** Desktop appends, mobile's webview store prepends, and two sources can be merged into one list. */
 function inChronologicalOrder(matches: SwapInitLogEntry[]): SwapInitLogEntry[] {
   if (!matches.every(entry => entry.timestamp)) return matches;
