@@ -478,6 +478,27 @@ describe("addSource", () => {
     await expect(ranked.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
   });
 
+  it("ranks a source added first ahead of the app's, until removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    const remove = router.addSource(constant("takeover", 1), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("moves a source added first ahead, even in place of one sharing its id", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    router.addSource(constant("dev", 2), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+  });
+
+  it("puts a source replaced by one added first back at its rank once removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const remove = router.addSource(constant("dev", 2), { first: true });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
   it("replaces the source sharing its id, and its remover puts it back", async () => {
     const router = createAccountDataRouter([constant("dev", 0)]);
     const remove = router.addSource(constant("dev", 1));

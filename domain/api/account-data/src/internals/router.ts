@@ -7,7 +7,11 @@ import type {
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { NoAccountDataSourceError } from "../errors";
 import { accountDataQueryKey } from "../queryKey";
-import type { AccountDataAnswer, AccountDataReadOptions } from "../router";
+import type {
+  AccountDataAnswer,
+  AccountDataReadOptions,
+  AddAccountDataSourceOptions,
+} from "../router";
 import type {
   AccountDataBatchReader,
   AccountDataReader,
@@ -42,7 +46,7 @@ export type RouterContext = {
 };
 
 /** One `addSource` call: a source added twice has two registrations, removed each on its own. */
-type Registration = { source: AccountDataSource };
+type Registration = { source: AccountDataSource; first?: boolean; home?: number };
 
 /** Where a read lands among the targets: its target's key, or its own failure when it cannot be routed. */
 export type ReadSlot = { key: string } | { failure: unknown };
@@ -153,18 +157,26 @@ export function readFromSource<K extends AccountDataKind>(
   return targets.map(() => rejected(reason));
 }
 
-/** Ranks a source last, or in place of the one sharing its id; its remover, in any order, ranks the latest still registered. */
-export function addSource(context: RouterContext, source: AccountDataSource): () => void {
+/** Ranks a source last (or first), or in place of the one sharing its id; its remover, in any order, ranks the latest still registered. */
+export function addSource(
+  context: RouterContext,
+  source: AccountDataSource,
+  { first = false }: AddAccountDataSourceOptions = {},
+): () => void {
   const index = context.ranked.findIndex(each => each.id === source.id);
   let stack = context.stacks.get(source.id);
   if (!stack) {
-    stack = index === -1 ? [] : [{ source: context.ranked[index] }];
+    stack = index === -1 ? [] : [{ source: context.ranked[index], home: index }];
     context.stacks.set(source.id, stack);
   }
-  const registration: Registration = { source };
+  const registration: Registration = { source, first };
   stack.push(registration);
-  if (index === -1) context.ranked.push(source);
-  else context.ranked[index] = source;
+  if (index !== -1 && !first) context.ranked[index] = source;
+  else {
+    if (index !== -1) context.ranked.splice(index, 1);
+    if (first) context.ranked.unshift(source);
+    else context.ranked.push(source);
+  }
   return () => {
     const position = stack.indexOf(registration);
     if (position === -1) return;
@@ -172,7 +184,12 @@ export function addSource(context: RouterContext, source: AccountDataSource): ()
     const at = context.ranked.findIndex(each => each.id === source.id);
     const latest = stack.at(-1);
     if (latest) {
-      context.ranked[at] = latest.source;
+      // The source ranked again goes back where it asked to be: first, its original rank, or here.
+      context.ranked.splice(at, 1);
+      let rank = at;
+      if (latest.first) rank = 0;
+      else if (latest.home !== undefined) rank = Math.min(latest.home, context.ranked.length);
+      context.ranked.splice(rank, 0, latest.source);
     } else {
       context.ranked.splice(at, 1);
       context.stacks.delete(source.id);

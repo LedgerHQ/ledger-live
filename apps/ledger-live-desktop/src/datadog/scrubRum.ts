@@ -22,7 +22,9 @@ function scrubReverseResolveSegment(pathname: string): string {
  * The Portfolio service puts the wallet address in that segment (`base:0x…`), before `/addresses`.
  */
 function scrubPortfolioAccountPath(pathname: string): string {
-  return pathname.replace(/(\/accounts\/)([^/]+)(\/addresses\b)/gi, "$1[redacted]$3");
+  return pathname
+    .replace(/(\/portfolio\/)([^/]+)/gi, "$1[redacted]")
+    .replace(/(\/accounts\/)([^/]+)(\/addresses\b)/gi, "$1[redacted]$3");
 }
 
 /** `base:0x…` — a Portfolio account id, which is not a legacy `js:2:…` account id. */
@@ -56,6 +58,7 @@ function scrubQueryParams(searchParams: URLSearchParams): URLSearchParams {
  * - `/address/{address}/…` — coin module path (all chains)
  * - `/reverse-resolve/{address}` — ENS lookup endpoint
  * - `/accounts/{accountId}/addresses` — Portfolio account id (`base:0x…`)
+ * - `/portfolio/{portfolioId}/…` — the per-install portfolio id, which links every account of a wallet
  * - `?{key}=js%3A2%3A…` — full account ID URL-encoded in a query param
  * - `?account=base%3A0x…` — Portfolio account id in a query value
  */

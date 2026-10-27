@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -18,6 +19,8 @@ import {
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
   useAccountBalanceToolProps,
+  useAccountSourcePortfolioToolProps,
+  useAccountAggregationToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
   useAppConfigToolProps,
@@ -27,6 +30,8 @@ import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
 import { accountDataRecorder } from "~/config/account-data-setup";
+import { getEnv } from "@shared/env";
+import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
 
@@ -92,6 +97,15 @@ export function useDevToolsScreenViewModel() {
   const deviceOnboardingProps = useDeviceOnboarding();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
+  const portfolioServiceUrl = getPortfolioServiceUrl(getEnv("PORTFOLIO_SERVICE_URL"));
+  const accountSourcePortfolioToolProps = useAccountSourcePortfolioToolProps({
+    serviceUrl: portfolioServiceUrl,
+    recorder: accountDataRecorder,
+  });
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const accountAggregationToolProps = useAccountAggregationToolProps(accountDataRecorder, {
+    counterValueCurrency,
+  });
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
@@ -109,6 +123,8 @@ export function useDevToolsScreenViewModel() {
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-name", config: accountNameToolProps },
+      { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
+      { id: "account-aggregation", config: accountAggregationToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -120,6 +136,8 @@ export function useDevToolsScreenViewModel() {
       deviceOnboardingProps,
       accountDescriptorToolProps,
       accountBalanceToolProps,
+      accountSourcePortfolioToolProps,
+      accountAggregationToolProps,
       accountDataToolProps,
       accountNameToolProps,
     ],

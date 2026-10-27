@@ -18,3 +18,5 @@ export { useAccountDataToolProps } from "./useAccountDataToolProps";
 export { createAccountDataRecorder } from "./accountDataRecorder";
 export type { AccountDataRecorder } from "./accountDataRecorder";
 export * from "./useAppConfigToolProps";
+export { useAccountSourcePortfolioToolProps } from "./useAccountSourcePortfolioToolProps";
+export { useAccountAggregationToolProps } from "./useAccountAggregationToolProps";

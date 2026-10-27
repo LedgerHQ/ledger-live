@@ -31,9 +31,12 @@ export type AccountDataRouter = {
     descriptor: AccountDescriptor,
     options?: AccountDataReadOptions<K>,
   ): Promise<AccountDataAnswer<K>>;
-  /** Ranks a source loaded on demand last, or in place of the one sharing its id, for reads not routed yet; returns its remover. */
-  addSource(source: AccountDataSource): () => void;
+  /** Ranks a runtime source last, or first, or in place of the one sharing its id; returns its remover. */
+  addSource(source: AccountDataSource, options?: AddAccountDataSourceOptions): () => void;
 };
+
+/** `first` ranks the source ahead of the app's, to take over accounts another source serves. */
+export type AddAccountDataSourceOptions = { first?: boolean };
 
 export type AccountDataRouterOptions = {
   /** Calls in flight per source, when the source does not set its own. */
@@ -63,6 +66,6 @@ export function createAccountDataRouter(
       if (own.status === "rejected") throw own.reason;
       return own.value;
     },
-    addSource: source => addSource(context, source),
+    addSource: (source, options) => addSource(context, source, options),
   };
 }
