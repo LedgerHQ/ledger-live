@@ -121,6 +121,16 @@ describe("scrubPii", () => {
     ]);
   });
 
+  it("redacts property names", () => {
+    const { value, findings } = scrubPii({ "satoshi@example.com": EVM_ADDRESS });
+
+    expect(value).toEqual({ "[REDACTED:email]": "[REDACTED:evm_address]" });
+    expect(findings).toEqual([
+      { path: "[REDACTED:email]", kind: "email" },
+      { path: "[REDACTED:email]", kind: "evm_address" },
+    ]);
+  });
+
   it("keeps empty and boolean values under a sensitive key", () => {
     const props = { address: "", email: false, signature: null };
 

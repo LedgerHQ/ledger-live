@@ -141,8 +141,11 @@ function scrubAt(value: unknown, path: string, depth: number, findings: PiiFindi
 
   if (isObject(value)) {
     let changed = false;
-    const entries = Object.entries(value).map(([key, item]) => {
+    const entries = Object.entries(value).map(([rawKey, item]) => {
+      const { value: key, kinds } = scrubPiiString(rawKey);
       const itemPath = path ? `${path}.${key}` : key;
+      for (const kind of kinds) findings.push({ path: itemPath, kind });
+      if (kinds.length > 0) changed = true;
       if (isSensitiveKey(key) && hasContent(item)) {
         findings.push({ path: itemPath, kind: "sensitive_key" });
         changed = true;
