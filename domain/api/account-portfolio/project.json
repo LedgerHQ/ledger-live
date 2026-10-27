@@ -1,0 +1,8 @@
+{
+  "name": "@domain/api-account-portfolio",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ExternalLink, Globe } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTENT_MAX_WIDTH_PX, SPOT_SIZE } from "./internals/layout";
-import { columnStyle, contentStyle, copyStyle, rootStyle } from "./styles.native";
-import type { AppUnavailableProps } from "./types";
+import { columnStyle, contentStyle, copyStyle, rootStyle } from "./styles";
+import type { AppUnavailableProps } from "./AppUnavailable.types";
 
 export function AppUnavailable({ title, description, action, testID }: AppUnavailableProps) {
   return (
@@ -29,7 +29,7 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
             appearance="gray"
             size="lg"
             icon={ExternalLink}
-            onPress={action.onPress}
+            onPress={action.onOpenLearnMore}
             testID={action.testID}
           >
             {action.label}

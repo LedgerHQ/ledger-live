@@ -6,29 +6,29 @@ import {
   type CardTransactionClickedPage,
 } from "../logic/transactionClickedProperties";
 import type { CardTransactionItem } from "../types";
-import type { CardTransactionsProps } from "./types";
+import type { CardTransactionsProps } from "./CardTransactions.types";
 
 type CardTransactionDetailDialogViewModel = Readonly<{
   selectedTransaction: PayCardTransaction | undefined;
-  onTransactionPress: (item: CardTransactionItem) => void;
+  onOpenTransaction: (item: CardTransactionItem) => void;
   onClose: () => void;
 }>;
 
 export function useCardTransactionDetailDialog({
-  onTransactionPress,
+  onOpenTransaction,
   page = "Pay",
-}: Pick<CardTransactionsProps, "onTransactionPress"> & {
+}: Pick<CardTransactionsProps, "onOpenTransaction"> & {
   page?: CardTransactionClickedPage;
 }): CardTransactionDetailDialogViewModel {
   const [selectedTransaction, setSelectedTransaction] = useState<PayCardTransaction>();
 
   const openTransaction = useCallback(
     (item: CardTransactionItem) => {
-      onTransactionPress?.(item);
+      onOpenTransaction?.(item);
       trackTransactionClicked(transactionClickedProperties(item.transaction, page));
       setSelectedTransaction(item.transaction);
     },
-    [onTransactionPress, page],
+    [onOpenTransaction, page],
   );
 
   const closeTransaction = useCallback(() => {
@@ -37,7 +37,7 @@ export function useCardTransactionDetailDialog({
 
   return {
     selectedTransaction,
-    onTransactionPress: openTransaction,
+    onOpenTransaction: openTransaction,
     onClose: closeTransaction,
   };
 }

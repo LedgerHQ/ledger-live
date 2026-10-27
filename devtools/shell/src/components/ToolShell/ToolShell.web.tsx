@@ -21,7 +21,7 @@ export function ToolShell({ tool, onBack }: ToolShellProps) {
           >
             {tool.category} / {tool.id}
           </button>
-          <h1 className="heading-1 font-semibold">{tool.label}</h1>
+          <h1 className="heading-1">{tool.label}</h1>
           {tool.desc && <p className="body-2 text-muted">{tool.desc}</p>}
         </div>
         {tool.owner && <Tag label={tool.owner} appearance="gray" size="sm" className="shrink-0" />}

@@ -3,8 +3,8 @@ import BigNumber from "bignumber.js";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit, valueFromUnit } from "@ledgerhq/live-common/currencies/index";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
-import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
-import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/depositMaxBuffer";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
+import { getDepositMaxBuffer } from "@ledgerhq/live-common/wallet-api/Perps/deposit/maxBuffer";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   useCalculateCountervalueCallback,
@@ -31,7 +31,7 @@ import {
   PERPS_DEPOSIT_DEFAULT_FUNDING_TICKER,
 } from "../../constants/depositFunding";
 import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
-import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
 import { applyAmountKey, toAmountText } from "./utils/amountKeys";
@@ -334,7 +334,7 @@ export function usePerpsDepositViewModel({
       navigation.replace(ScreenName.PerpsTransactionSigned, {
         receiveCurrencyTicker: receiverCurrency.ticker,
         swapId,
-        provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+        provider: PERPS_SWAPKIT_PROVIDER,
       });
     },
     [navigation, receiverCurrency.ticker],

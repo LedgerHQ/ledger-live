@@ -17,8 +17,8 @@ from `package.json` (`main`, `bin`, `exports`) and its own defaults
 ## Why this isn't just "swap the tool"
 
 knip treats everything listed in a package's `package.json#exports` as an **entry point**.
-Today every package exports a `./*` wildcard mapped to `./src/*.ts` (via the `@ledgerhq/source`
-custom condition declared in `tsconfig.base.json`):
+Most legacy `libs/` packages export a `./*` wildcard mapped to `./src/*.ts` (via the
+`@ledgerhq/source` custom condition declared in `support/tsconfig/base.json`):
 
 ```jsonc
 "./*": {
@@ -33,7 +33,7 @@ Because of this wildcard, knip considers **every top-level `src/*.ts` file "used
 detect unused ("zombie") top-level source files. So a package needs to **replace the `./*` wildcard with explicit, minimal subpath exports** that enumerate
 the package's true public API.
 
-> The few libs already pointed at knip (e.g. `libs/env`, `libs/promise`) still keep the `./*`
+> The few libs already pointed at knip (e.g. `libs/live-wallet`, `libs/live-dmk-mobile`) still keep the `./*`
 > wildcard, so they are only *partially* migrated — **do not** copy them as the template.
 
 ## New package = born migrated

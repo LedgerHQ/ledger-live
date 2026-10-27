@@ -92,10 +92,11 @@ export * from "./steps/Detail"; // steps/Detail/index.native.ts
 **A platform entry imported from the other platform.** A `/native` or `/web` subpath of an
 `@features/*`, `@shared/*` or `@domain/*` package is a
 [platform entry](../../docs/adr/universal-components.md) (R5). Only code of that platform imports
-it: a `.native.*` file, a file of `apps/ledger-live-mobile/`, or a package with a
-`tsconfig.native.json` and no `tsconfig.web.json`, and the mirror for `/web` with
-`apps/ledger-live-desktop/`. Reported without an autofix, since the universal entry does not export
-the same components.
+it: a `.native.*` file, a file of `apps/ledger-live-mobile/`, or a native-only package, and the
+mirror for `/web` with `apps/ledger-live-desktop/`. A package is native-only when it has a
+`tsconfig.native.json` and no `tsconfig.web.json`, or, with neither, when its `tsconfig.json`
+extends `@support/tsconfig/native` directly or through its own configs. Reported without an
+autofix, since the universal entry does not export the same components.
 
 ```ts
 // Lottie.web.tsx

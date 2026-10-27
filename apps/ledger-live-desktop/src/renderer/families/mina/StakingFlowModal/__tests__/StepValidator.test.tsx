@@ -11,7 +11,7 @@ import {
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: function MockTrackPage() {
+  TrackScreen: function MockTrackScreen() {
     return null;
   },
 }));

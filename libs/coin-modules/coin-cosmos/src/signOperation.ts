@@ -1,6 +1,5 @@
 import { makeSignDoc, serializeSignDoc } from "@cosmjs/amino";
 import { Secp256k1Signature } from "@cosmjs/crypto";
-import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { ExpertModeRequired } from "./errors";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -120,7 +119,7 @@ export const buildSignOperation =
           memo: transaction.memo || "",
           pubKeyType,
           pubKey,
-          feeAmount: signDoc.fee.amount as Coin[],
+          feeAmount: signDoc.fee.amount,
           gasLimit: signDoc.fee.gas,
           sequence: signDoc.sequence,
           signature,

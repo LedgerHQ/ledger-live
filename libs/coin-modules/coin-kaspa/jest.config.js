@@ -1,6 +1,7 @@
 const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+const { withEsmDeps } = require("@support/jest/shared");
 
-const sharedConfig = {
+const sharedConfig = withEsmDeps({
   testEnvironment: "node",
   transform: {
     "^.+\\.(ts|tsx)$": [
@@ -13,7 +14,7 @@ const sharedConfig = {
     ],
   },
   testPathIgnorePatterns: ["lib/", "lib-es/", "\\.integ\\.test\\.ts"],
-};
+});
 
 // Two projects: `unit` runs with @ledgerhq/disable-network-setup (nock blocks all net connect),
 // while `msw` runs the `.msw.test.ts` suites WITHOUT it — nock and MSW both build on

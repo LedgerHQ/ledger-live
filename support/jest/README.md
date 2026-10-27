@@ -9,9 +9,18 @@ preset is code rather than a JSON file, which is why jest configuration lives in
 | Preset | Layer | Details |
 | --- | --- | --- |
 | [`@support/jest/devtools`](./devtools) | `devtools/*` | Dual web/native presets plus themed render fixtures (`/web`, `/native`) |
-| [`@support/jest/features-flow`](./features-flow) | `features/flow/*` | Dual web/native preset plus Lumen passthrough stubs |
+| [`@support/jest/features-flow`](./features-flow) | `features/flow/*`, `features/platform/*` | Dual web/native preset plus Lumen passthrough stubs |
 | [`@support/jest/libs-coin`](#libs-coin) | `libs/coin-modules/*`, `libs/wallet-btc` | Node unit and integration presets for coin modules |
 | [`@support/jest/shared`](./shared) | `shared/*`, `libs/*` | Node preset for logic packages, web/native and native-only presets for UI packages |
+
+The dual web/native presets, `createSharedUiJestConfig` and `createFlowJestConfig` (with their
+native-only variants), are built on one private core, `core/`, which is not exported. It holds
+the transform, the platform extensions, the jsdom web and node native projects, the Lumen,
+crypto-icons, react-native and image mocks, the web setup, coverage and reporters (sonar, test
+quarantine, `github-actions` on CI), and one override rule: in `webOverrides` / `nativeOverrides`,
+`moduleNameMapper` and `setupFilesAfterEnv` add to the project's own, every other key replaces
+it. A preset adds only its own mocks, test matching, resolver and transform allowlist. The core's
+mocks stay reachable as `@support/jest/shared/mocks/*`.
 
 `createSharedJestConfig(overrides, options)` is the node base for `shared/*` and `libs/*` packages,
 and for node packages of other layers that no layer preset covers yet. Its options:

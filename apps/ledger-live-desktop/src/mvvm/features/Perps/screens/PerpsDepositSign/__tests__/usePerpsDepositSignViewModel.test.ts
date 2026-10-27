@@ -13,7 +13,7 @@ jest.mock("../../PerpsDeposit/PerpsDepositDialog", () => ({
 }));
 
 const mockCancelDepositRequest = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/depositRequest", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/request", () => ({
   cancelDepositRequest: () => mockCancelDepositRequest(),
 }));
 

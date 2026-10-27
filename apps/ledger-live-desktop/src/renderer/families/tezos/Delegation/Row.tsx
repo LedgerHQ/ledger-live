@@ -94,7 +94,7 @@ const Row = ({ account, parentAccount, delegation, stakingEnabled, delegatedAmou
     if (bakerURL) openURL(bakerURL);
   }, [bakerURL]);
   const openTx = useCallback(() => {
-    if (txURL) openURL(txURL);
+    if (txURL) openURL(txURL, "OpenURL", {}, { sensitive: true });
   }, [txURL]);
   return (
     <Wrapper isPending={delegation.isPending}>

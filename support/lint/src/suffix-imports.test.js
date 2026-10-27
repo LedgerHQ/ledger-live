@@ -25,13 +25,27 @@ function fixture(files) {
 // One package per platform layout, as docs/tsconfig.md describes them.
 const PACKAGES = fixture({
   "dual/package.json": "{}",
-  "dual/tsconfig.native.json": "{}",
-  "dual/tsconfig.web.json": "{}",
+  "dual/tsconfig.json": '{ "extends": "@support/tsconfig/dual" }',
+  "dual/tsconfig.native.json": '{ "extends": ["./tsconfig.json", "@support/tsconfig/native"] }',
+  "dual/tsconfig.web.json": '{ "extends": ["./tsconfig.json", "@support/tsconfig/web"] }',
   "native-only/package.json": "{}",
   "native-only/tsconfig.native.json": "{}",
   "web-only/package.json": "{}",
   "web-only/tsconfig.web.json": "{}",
   "agnostic/package.json": "{}",
+  "extends-native/package.json": "{}",
+  "extends-native/tsconfig.json": '{ "extends": "@support/tsconfig/native" }',
+  "extends-web/package.json": "{}",
+  "extends-web/tsconfig.json":
+    '{ "extends": ["@support/tsconfig/native", "@support/tsconfig/web"] }',
+  "extends-chain/package.json": "{}",
+  "extends-chain/tsconfig.json": '{ "extends": "./config/tsconfig.app" }',
+  "extends-chain/config/tsconfig.app.json": '{ "extends": "./tsconfig.base.json" }',
+  "extends-chain/config/tsconfig.base.json": '{ "extends": "@support/tsconfig/native" }',
+  "extends-logic/package.json": "{}",
+  "extends-logic/tsconfig.json": '{ "extends": "@support/tsconfig/logic" }',
+  "extends-cycle/package.json": "{}",
+  "extends-cycle/tsconfig.json": '{ "extends": "./tsconfig.json" }',
 });
 
 /**
@@ -128,6 +142,42 @@ test("allows a /web platform entry from web code only", () => {
       findPlatformSuffix("@shared/lottie/web", filename),
       { kind: "web", fixed: null },
       filename,
+    );
+  }
+});
+
+test("reads the platform of a package from the preset its tsconfig.json extends", () => {
+  for (const pkg of ["extends-native", "extends-chain"]) {
+    const filename = inPackage(pkg, "Unlock.tsx");
+    assert.equal(findPlatformSuffix("@features/platform-app-lock/native", filename), null, pkg);
+    assert.deepEqual(
+      findPlatformSuffix("@features/platform-app-lock/web", filename),
+      { kind: "web", fixed: null },
+      pkg,
+    );
+  }
+
+  // The last entry of an `extends` list wins, as in tsc.
+  const filename = inPackage("extends-web", "Panel.tsx");
+  assert.equal(findPlatformSuffix("@shared/lottie/web", filename), null);
+  assert.deepEqual(findPlatformSuffix("@shared/lottie/native", filename), {
+    kind: "native",
+    fixed: null,
+  });
+});
+
+test("treats a package as cross-platform when its tsconfig.json reaches no platform preset", () => {
+  for (const pkg of ["dual", "extends-logic", "extends-cycle"]) {
+    const filename = inPackage(pkg, "Foo.tsx");
+    assert.deepEqual(
+      findPlatformSuffix("@shared/lottie/native", filename),
+      { kind: "native", fixed: null },
+      pkg,
+    );
+    assert.deepEqual(
+      findPlatformSuffix("@shared/lottie/web", filename),
+      { kind: "web", fixed: null },
+      pkg,
     );
   }
 });

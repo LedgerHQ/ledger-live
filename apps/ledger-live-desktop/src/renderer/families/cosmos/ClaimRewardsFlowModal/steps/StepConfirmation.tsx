@@ -6,7 +6,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -50,7 +50,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
     const textKey = transaction?.mode === "claimReward" ? "text" : "textCompound";
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="ClaimRewards Cosmos Flow"
           name="Step Confirmed"
           flow="stake"
@@ -86,7 +86,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="ClaimRewards Cosmos Flow"
           name="Step Confirmation Error"
           flow="stake"

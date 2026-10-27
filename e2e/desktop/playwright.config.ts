@@ -1,4 +1,5 @@
 import { PlaywrightTestConfig } from "@playwright/test";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const config: PlaywrightTestConfig = {
   testDir: "./tests/specs",
@@ -6,7 +7,7 @@ const config: PlaywrightTestConfig = {
   timeout: process.env.CI ? 400000 : 1200000,
   outputDir: "./tests/artifacts/test-results",
   expect: {
-    timeout: 41000,
+    timeout: TIMEOUT.large,
   },
   globalTimeout: 0,
   globalSetup: require.resolve("./tests/utils/global.setup"),
@@ -26,6 +27,7 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI
     ? [
         ["./tests/reporters/cardSessionReporter.ts"],
+        ["./tests/reporters/lockDeferralReporter.ts"],
         ["github"],
         ["list"],
         [
@@ -48,6 +50,7 @@ const config: PlaywrightTestConfig = {
       ]
     : [
         ["./tests/reporters/cardSessionReporter.ts"],
+        ["./tests/reporters/lockDeferralReporter.ts"],
         ["allure-playwright", { detail: false, suiteTitle: false }],
       ],
 };

@@ -862,6 +862,7 @@ describe("Contacts integration", () => {
     expect(addressNameInput).toHaveProp("value", mockEthCryptoCurrency.name);
     expect(addressNameInput).toHaveProp("maxLength", 32);
     expect(screen.getByTestId("contacts-add-address-name-count")).toHaveTextContent("8/32");
+    expect(screen.getByTestId("contacts-add-address-name-privacy-policy")).toBeVisible();
     expect(screen.getByText("Name address")).toBeVisible();
     expect(
       screen.getByText(

@@ -215,23 +215,25 @@ describe("datadog logs", () => {
       });
     });
 
-    it("calls datadogLogs.logger.error with correct parameters on failure event", () => {
-      const error = Object.assign(new Error("tx broadcast failed"), {
-        stack: "Error: tx broadcast failed\n  at test:1:1",
+    it("sends only allowlisted, sanitized attributes on failure event", () => {
+      const error = Object.assign(new Error("tx broadcast failed for 0xdeadbeef"), {
+        stack: "Error: tx broadcast failed for 0xdeadbeef\n    at test:1:1",
         transactionId: 0,
         payload: "0x123456789",
+        transaction: { data: "0x123456789" },
       });
 
       broadcastLogger({
         status: "failure",
         error,
-        txPayload: { signature: "signature" },
         appVersion: "1.0.0",
         currencyId: "ethereum",
         family: "evm",
         isTestnet: false,
         isSendMax: false,
         source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: false } },
+        // @ts-expect-error a field outside the allowlist must not reach Datadog
+        txPayload: { signature: "signature" },
       });
 
       expect(datadogLogs.logger.error).toHaveBeenCalledWith(
@@ -239,7 +241,6 @@ describe("datadog logs", () => {
         {
           event: {
             status: "failure",
-            txPayload: { signature: "signature" },
             appVersion: "1.0.0",
             currencyId: "ethereum",
             family: "evm",
@@ -253,11 +254,16 @@ describe("datadog logs", () => {
           },
           errorContext: {
             transactionId: 0,
-            payload: "0x123456789",
+            payload: "[id]",
           },
         },
-        error,
+        expect.objectContaining({
+          name: "Error",
+          message: "tx broadcast failed for [id]",
+          stack: "Error: tx broadcast failed for [id]\n    at test:1:1",
+        }),
       );
+      expect(datadogLogs.logger.error.mock.calls[0][1]).not.toHaveProperty("event.txPayload");
     });
   });
 

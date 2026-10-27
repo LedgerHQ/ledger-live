@@ -1,7 +1,7 @@
 import { Switch } from "@ledgerhq/lumen-ui-react";
 import type { FeatureFlagsToolProps, FlagDisplayState } from "../../types";
 import { FlagEnableIndicator } from "../flagEnableIndicator/FlagEnableIndicator";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 
 interface FlagRowProps {
   readonly display: FlagDisplayState;

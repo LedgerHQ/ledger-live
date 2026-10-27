@@ -18,7 +18,7 @@ import {
 } from "~/renderer/reducers/settings";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export default function AssetPage() {
   const { "*": assetId } = useParams<{ "*": string }>();
@@ -45,7 +45,7 @@ export default function AssetPage() {
   const color = getCurrencyColor(currency, paperColor);
   return (
     <Box>
-      <TrackPage category="Portfolio" name="Asset allocation" currencyName={currency.name} />
+      <TrackScreen category="Portfolio" name="Asset allocation" currencyName={currency.name} />
       <Box mb={24}>
         <AssetHeader account={accounts[0]} parentAccount={parentAccount} />
       </Box>

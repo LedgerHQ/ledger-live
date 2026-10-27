@@ -2,7 +2,7 @@ import React from "react";
 import { ListItem } from "../ListItem";
 import type { ListProps } from "./types";
 
-export function ListView({ transactions, formatters, onTransactionPress }: ListProps) {
+export function ListView({ transactions, formatters, onOpenTransaction }: ListProps) {
   return (
     <div className="-mx-8 flex flex-col" data-testid="card-transactions-list">
       {transactions.map(item => (
@@ -10,7 +10,7 @@ export function ListView({ transactions, formatters, onTransactionPress }: ListP
           key={item.transaction.id}
           item={item}
           formatters={formatters}
-          onPress={onTransactionPress ? () => onTransactionPress(item) : undefined}
+          onOpenTransaction={onOpenTransaction ? () => onOpenTransaction(item) : undefined}
         />
       ))}
     </div>

@@ -32,6 +32,8 @@ When a task involves GitHub â€” pull requests, issues, CI checks, or releases â€
 
 Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
 
+Before pushing a change under `shared/`, `domain/`, `features/`, `support/` or `devtools/`, run `pnpm lint:arch`. It runs the boundary, package-structure, tool-config and i18n-key checks that CI's required module-boundaries job blocks on.
+
 ## CI runners
 
 Before adding or changing a `runs-on` in `.github/workflows/`, read the [ci-runners](./.agents/skills/ci-runners/SKILL.md) skill. Several `ledger-live-*` runners are deprecated.

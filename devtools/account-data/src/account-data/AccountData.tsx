@@ -49,7 +49,7 @@ function AccountData({ statuses, events, maxAge, onClearEvents }: AccountDataToo
           <thead className="text-muted">
             <tr>
               {["Kind", "Account", "State", "Source", "Read at", "Query", "More"].map(column => (
-                <th key={column} className="px-12 py-6 border-b border-base font-normal">
+                <th key={column} className="px-12 py-6 border-b border-base">
                   {column}
                 </th>
               ))}

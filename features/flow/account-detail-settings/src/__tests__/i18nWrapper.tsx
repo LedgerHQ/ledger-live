@@ -35,7 +35,7 @@ const resources = {
           title: "Remove account?",
           description:
             "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
-          confirm: "Yes, remove.",
+          confirm: "Yes, remove",
           cancel: "Keep",
         },
       },

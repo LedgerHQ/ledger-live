@@ -32,7 +32,7 @@ import StepFooter from "./StepFooter";
 import { analyticsDrawerContext, setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { setTrackingSource, track } from "@shared/analytics";
 import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
 import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
@@ -223,7 +223,7 @@ const CustomImage: React.FC<Props> = props => {
                   />
                 }
               >
-                <TrackPage
+                <TrackScreen
                   category={analyticsPageNames.error + error.name}
                   type="drawer"
                   flow={analyticsFlowName}
@@ -345,7 +345,7 @@ const CustomImage: React.FC<Props> = props => {
             />
           }
         >
-          <TrackPage
+          <TrackScreen
             category={analyticsPageNames.success}
             type="drawer"
             flow={analyticsFlowName}

@@ -7,7 +7,12 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { ICPInvalidDissolveDelayIncrease, InvalidMemoICP } from "../errors";
+import { MAX_NAT64, MIN_NEURON_STAKE } from "../consts";
+import {
+  ICPInvalidDissolveDelayIncrease,
+  InvalidMemoICP,
+  NotEnoughTransferAmount,
+} from "../errors";
 import type { IcpIntent, IcpStakingIntent } from "./intent";
 import { validateIntent } from "./validateIntent";
 
@@ -165,6 +170,49 @@ describe("validateIntent", () => {
       );
 
       expect(errors.transaction).toBeInstanceOf(ICPInvalidDissolveDelayIncrease);
+    });
+
+    it("reports the split amount, which the account does not spend", () => {
+      const split = BigInt(MIN_NEURON_STAKE) + FEE;
+
+      expect(validateIntent(command({ type: "split_neuron", amount: split }), [])).toEqual({
+        errors: {},
+        warnings: {},
+        estimatedFees: 0n,
+        amount: split,
+        totalSpent: 0n,
+      });
+    });
+
+    it.each([
+      ["a split under the minimum", command({ type: "split_neuron", amount: 1n }), "amount"],
+      ["a split past Nat64", command({ type: "split_neuron", amount: MAX_NAT64 + 1n }), "amount"],
+      ["a partial disburse", command({ type: "disburse", amount: 1n }), "amount"],
+      [
+        "a disburse to another account",
+        command({ type: "disburse", recipient: RECIPIENT }),
+        "recipient",
+      ],
+    ])("reports %s against the %s", (_, input, field) => {
+      const { errors } = validateIntent(input, []);
+
+      expect(Object.keys(errors)).toEqual([field]);
+    });
+
+    it("reports a split under the minimum as such", () => {
+      const { errors } = validateIntent(command({ type: "split_neuron", amount: 1n }), []);
+
+      expect(errors.amount).toBeInstanceOf(NotEnoughTransferAmount);
+    });
+
+    it("reports an amount on another command as nothing spent", () => {
+      expect(validateIntent(command({ amount: 5n }), []).amount).toBe(0n);
+    });
+
+    it("accepts a disburse to the sender's account", () => {
+      const { errors } = validateIntent(command({ type: "disburse", recipient: SENDER }), []);
+
+      expect(errors).toEqual({});
     });
 
     it("reports a fee", () => {

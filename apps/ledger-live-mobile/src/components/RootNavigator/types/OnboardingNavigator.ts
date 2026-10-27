@@ -27,7 +27,11 @@ export type OnboardingNavigatorParamList = {
     CommonAddAccountNavigatorParamsList;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.OnboardingTermsOfUse]: undefined;
-  [ScreenName.OnboardingDeviceSelection]: undefined;
+  /**
+   * Set when the user taps "I don't see my device".
+   * This list must not start Bluetooth pairing.
+   */
+  [ScreenName.OnboardingDeviceSelection]: { missingDevice?: boolean } | undefined;
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
   [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };

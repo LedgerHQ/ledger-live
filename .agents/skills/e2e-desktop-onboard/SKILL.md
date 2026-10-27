@@ -1,11 +1,7 @@
 ---
 name: e2e-desktop-onboard
-description: Interactive setup wizard for running desktop E2E (Playwright + Speculos) tests locally
+description: Interactive setup wizard for running desktop E2E (Playwright + Speculos) tests locally. Use when a developer sets up their machine to run desktop E2E tests for the first time.
 disable-model-invocation: true
----
-
----
-description: Interactive setup wizard for running desktop E2E (Playwright + Speculos) tests locally
 ---
 
 # Desktop E2E Onboarding

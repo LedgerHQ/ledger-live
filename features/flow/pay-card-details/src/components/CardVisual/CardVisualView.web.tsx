@@ -1,7 +1,7 @@
 import React from "react";
 import { AmountDisplay, Spot } from "@ledgerhq/lumen-ui-react";
 import { Snow } from "@ledgerhq/lumen-ui-react/symbols";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { CardArtwork } from "../CardArtwork/CardArtwork";
 import type { CardVisualViewProps } from "../../types";
 

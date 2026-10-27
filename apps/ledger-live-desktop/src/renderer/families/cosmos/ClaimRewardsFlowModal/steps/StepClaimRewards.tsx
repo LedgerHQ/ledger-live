@@ -8,7 +8,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { isCompoundRewardSupported } from "@ledgerhq/live-common/families/cosmos/logic";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ModeSelectorField from "../fields/ModeSelectorField";
@@ -77,7 +77,7 @@ export default function StepClaimRewards({
   const key = transaction.mode === "claimReward" ? "claimInfo" : "compoundInfo";
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="ClaimRewards Flow"
         name="Step 1"
         flow="stake"

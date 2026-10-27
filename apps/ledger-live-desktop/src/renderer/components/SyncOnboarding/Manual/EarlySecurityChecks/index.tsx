@@ -18,7 +18,7 @@ import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
 import ErrorDrawer from "./ErrorDrawer";
 import DeviceNotGenuineDrawer from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { log } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -489,20 +489,20 @@ const EarlySecurityChecks = ({
         {renderAllowManager({ modelId: deviceModelId, type: themeType })}
       </Popin>
       {isInitialRunOfSecurityChecks && (
-        <TrackPage category="Genuine check and OS update check start" />
+        <TrackScreen category="Genuine check and OS update check start" />
       )}
       {isInitialRunOfSecurityChecks && genuineCheckStatus === SoftwareCheckStatus.cancelled && (
-        <TrackPage category="Error: user declined genuine check on their device" />
+        <TrackScreen category="Error: user declined genuine check on their device" />
       )}
       {isInitialRunOfSecurityChecks && genuineCheckStatus === SoftwareCheckStatus.completed && (
-        <TrackPage category="The genuine check is successful" />
+        <TrackScreen category="The genuine check is successful" />
       )}
       {genuineCheckStatus === SoftwareCheckStatus.completed &&
         firmwareUpdateStatus === SoftwareCheckStatus.completed && (
-          <TrackPage category="The device is genuine and up to date" />
+          <TrackScreen category="The device is genuine and up to date" />
         )}
       {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
-        <TrackPage category="Download OS update" />
+        <TrackScreen category="Download OS update" />
       )}
       <Body
         genuineCheckStatus={

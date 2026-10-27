@@ -14,7 +14,7 @@ import {
   StacksInvalidNumCycles,
   StacksInvalidPoolAddress,
 } from "@ledgerhq/live-common/families/stacks/errors";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Text from "~/renderer/components/Text";
@@ -83,7 +83,7 @@ const StepValidator = ({ account, transaction, onChangeTransaction, error }: Ste
 
   return (
     <Box flow={4} mx={20}>
-      <TrackPage
+      <TrackScreen
         category="Stake Flow"
         name="Step Validator"
         flow="stake"

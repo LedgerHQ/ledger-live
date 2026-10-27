@@ -74,7 +74,6 @@ export function useResolveOsUpdates({
     modelId !== undefined &&
     !!deviceInfo &&
     !deviceInfo.isBootloader &&
-    !deviceInfo.isOSU &&
     isOsUpdateSupported({ modelId, version: deviceInfo.version, wired });
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -33,7 +33,7 @@ const StepConfirmation = (props: StepProps) => {
     })} ${unit.code || "EGLD"}`;
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Withdraw Elrond Flow"
           name="Step Confirmed"
           flow="stake"
@@ -62,7 +62,7 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Withdraw Elrond Flow"
           name="Step Confirmation Error"
           flow="stake"

@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { isContactsSearchNoResultsViewModel, type ContactsListViewProps } from "./types";
 import { useContactsListCopy } from "./copy/useContactsListCopy";
 import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";

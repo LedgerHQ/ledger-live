@@ -10,10 +10,8 @@ import {
   trackContactsLedgerSyncDismiss,
   CONTACTS_FLOW,
 } from "@features/flow-contacts";
-import {
-  isContactsLedgerSyncActivationRequired,
-  type ContactsLedgerSyncIntroductionDialogProps,
-} from "@features/flow-contacts-introduction";
+import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
+import type { ContactsLedgerSyncIntroductionDialogProps } from "@features/flow-contacts-introduction/web";
 import {
   useContactAddressPickerViewModel,
   type ContactAddressPickerProps,

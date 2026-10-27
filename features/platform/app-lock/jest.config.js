@@ -18,6 +18,8 @@ module.exports = {
       roots: ["<rootDir>/src"],
       testMatch: ["**/*.test.ts"],
       testPathIgnorePatterns: ["/node_modules/", ...UI_FOLDERS],
+      // Imports carry no platform suffix: `./biometrics` resolves to `biometrics.native.ts`.
+      moduleFileExtensions: ["native.ts", "ts", "tsx", "js", "mjs", "cjs", "jsx", "json", "node"],
       transform: {
         "^.+\\.(t|j)sx?$": [
           "@swc/jest",

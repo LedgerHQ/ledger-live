@@ -11,7 +11,7 @@ import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 const FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
 
-const EXECUTION_TIMEOUT_MS = 240_000;
+const EXECUTION_TIMEOUT_MS = TIMEOUT.xxxxlarge;
 const APPROVAL_TIMEOUT_MS = TIMEOUT.xxlarge;
 const SCREEN_TIMEOUT_MS = TIMEOUT.xxlarge;
 /** The partner prepares each transaction server-side, which outlasts the global expect timeout. */

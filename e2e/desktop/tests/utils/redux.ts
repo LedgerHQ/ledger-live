@@ -1,5 +1,5 @@
 import { Page } from "@playwright/test";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 declare global {
   interface Window {
@@ -62,7 +62,7 @@ export class Redux {
         }
       };
 
-      const intervalId = setInterval(checkAction, 100);
+      const intervalId = setInterval(checkAction, INTERVAL.instant);
       const timeoutId = setTimeout(() => {
         clearInterval(intervalId);
         reject(new Error(`Timeout waiting for action: ${actionType}`));

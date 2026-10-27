@@ -2,13 +2,21 @@ name: "[Desktop] - E2E Only - Scheduled/Manual"
 run-name: >
   @Desktop E2E • triggered on ${{ inputs.ref || github.ref_name }} by ${{ github.actor }}
 
+# Broadcast runs never overlap: a new one waits for the running one. GitHub keeps one waiting run
+# per group, so a newer broadcast run replaces the one already waiting. Other runs never wait.
+concurrency:
+  group: >-
+    ${{ (inputs.enable_broadcast || github.event.schedule == '0 1 * * 1') && 'desktop-e2e-broadcast' || format('desktop-e2e-{0}-{1}', github.run_id, inputs.speculos_device || 'nanoSP') }}
+  cancel-in-progress: false
+
 on:
   schedule:
     # Monday is the desktop broadcast nightly: real on-chain transactions are sent.
     # Mobile broadcasts on other days (Wednesday iOS, Friday Android) so the two apps never
     # broadcast from the shared QAA accounts on the same day.
     # The device rotates per weekday (see WEEKDAY_DEVICE in prepare-devices).
-    # The cron expression below is matched verbatim in the E2E_BROADCAST_ENABLED env — keep both in sync.
+    # The cron expression below is matched verbatim in the concurrency group and the
+    # E2E_BROADCAST_ENABLED env — keep all three in sync.
     - cron: "0 1 * * 1"
     - cron: "0 1 * * 2-5"
   workflow_dispatch:
@@ -93,6 +101,19 @@ on:
         description: "Repeat each test N times (optional)"
         required: false
         type: number
+      lock_deferral_passes:
+        description: "Passes that move a test whose exclusive lock is busy to the next one (default 2)"
+        required: false
+        type: string
+        default: ""
+      exclusive_lock:
+        description: "Exclusive lock: remote (R2), or local if R2 is down"
+        required: false
+        type: choice
+        options:
+          - remote
+          - local
+        default: remote
 
   workflow_call:
     inputs:
@@ -236,7 +257,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare-devices.outputs.e2e_matrix) }}
-    timeout-minutes: 40
+    timeout-minutes: 90
     env:
       NODE_OPTIONS: "--max-old-space-size=14336"
       INSTRUMENT_BUILD: true
@@ -366,6 +387,7 @@ jobs:
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
+          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -390,6 +412,7 @@ jobs:
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
@@ -437,6 +460,9 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
+        # Every run can also wait up to 30 minutes for a busy exclusive lock: without broadcast, tests
+        # still lock the Pay card and the accounts CLI token approvals broadcast from.
+        timeout-minutes: 70
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
@@ -453,6 +479,12 @@ jobs:
           BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
+          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -463,6 +495,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
+            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
             team=${{ inputs.team || 'all' }}
@@ -472,7 +505,7 @@ jobs:
             repeat_each=${{ inputs.repeat_each }}
 
       - name: Upload Allure test results artifact
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results${{ matrix.artifact_suffix }}
@@ -486,7 +519,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
@@ -580,6 +613,7 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           TEAM_INPUT: ${{ inputs.team || 'all' }}
+          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
         run: |
           DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
@@ -605,6 +639,7 @@ jobs:
             echo "$FILTER_SUMMARY"
             echo "- **Firebase env to target:** $BUILD_TYPE"
             echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
+            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
             echo "- **Feature Flags:** $FEATURE_FLAGS"
             echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
             echo "- **Repeat each:** $REPEAT_EACH"
@@ -652,6 +687,7 @@ jobs:
 
       - name: Run Playwright E2E tests
         id: run-playwright
+        timeout-minutes: 70
         uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
@@ -669,6 +705,12 @@ jobs:
           BAANX_TEST_USER_PASSWORD: ${{ secrets.BAANX_TEST_USER_PASSWORD }}
           BAANX_TEST_USER_TOTP_SECRET: ${{ secrets.BAANX_TEST_USER_TOTP_SECRET }}
           BAANX_TEST_API_URL: ${{ secrets.BAANX_TEST_API_URL }}
+          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -679,6 +721,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
+            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
             speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
@@ -688,7 +731,7 @@ jobs:
             repeat_each=${{ inputs.repeat_each }}
 
       - name: Upload Allure test results artifact
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: allure-results-macos

@@ -104,6 +104,19 @@ on:
         required: false
         type: string
         default: ""
+      lock_deferral_passes:
+        description: "Passes that move a spec whose exclusive lock is busy to the next one (default 2)"
+        required: false
+        type: string
+        default: ""
+      exclusive_lock:
+        description: "Exclusive lock: remote (R2), or local if R2 is down"
+        required: false
+        type: choice
+        options:
+          - remote
+          - local
+        default: remote
 
   workflow_call:
     inputs:
@@ -446,6 +459,7 @@ jobs:
           TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
           COMMIT_SHA: ${{ github.sha }}
           SLACK_NOTIF_STATUS: ${{ (inputs.slack_notif || env.NIGHTLY_RUN == 'true') && 'enabled' || 'disabled' }}
+          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
         run: |
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
@@ -470,6 +484,7 @@ jobs:
           echo "- **Firebase env to target:** $BUILD_TYPE"
           echo "- **Broadcast enabled (iOS):** $IOS_BROADCAST_ENABLED"
           echo "- **Broadcast enabled (Android):** $ANDROID_BROADCAST_ENABLED"
+          echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
           echo "- **Slack notification:** $SLACK_NOTIF_STATUS"
           echo "- **Android Feature Flags:** $ANDROID_FEATURE_FLAGS"
           echo "- **iOS Feature Flags:** $IOS_FEATURE_FLAGS"
@@ -824,8 +839,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..."  --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
@@ -917,7 +932,8 @@ jobs:
 
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
-        timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
+        # A broadcast run can also wait up to 30 minutes for each busy exclusive lock.
+        timeout-minutes: ${{ env.IOS_BROADCAST_ENABLED == 'true' && 120 || fromJSON(needs.determine-builds.outputs.ios_timeout) }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           BAANX_TEST_CLIENT_KEY: ${{ secrets.BAANX_TEST_CLIENT_KEY }}
@@ -937,6 +953,12 @@ jobs:
           SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
+          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
         run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
 
       - name: Add workflow inputs to Allure environment
@@ -948,6 +970,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.IOS_BROADCAST_ENABLED }}
+            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.production_firebase && 'production' || 'testing' }}
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}
@@ -1123,7 +1146,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node node_modules/detox/scripts/postinstall.js
@@ -1280,6 +1303,12 @@ jobs:
           REMOTE_SPECULOS: "true"
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.ANDROID_FEATURE_FLAGS }}
+          E2E_EXCLUSIVE_LOCK_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+          E2E_EXCLUSIVE_LOCK_BUCKET: ${{ secrets.R2_ENDPOINT && 'ledger-live-cache' || '' }}
+          E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
+          E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
         run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
 
       - name: Stop emulator watchdog
@@ -1423,6 +1452,7 @@ jobs:
           context: |
             ref=${{ inputs.ref || github.ref_name }}
             broadcast=${{ env.ANDROID_BROADCAST_ENABLED }}
+            exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.production_firebase && 'production' || 'testing' }}
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}

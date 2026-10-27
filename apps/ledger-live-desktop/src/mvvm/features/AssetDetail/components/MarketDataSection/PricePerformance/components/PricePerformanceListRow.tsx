@@ -25,7 +25,7 @@ export function PricePerformanceListRow({
     <ListItem density="compact" className="pointer-events-none px-0">
       <ListItemLeading>
         <ListItemContent>
-          <ListItemTitle className="font-normal text-muted">{leadingTitle}</ListItemTitle>
+          <ListItemTitle className="text-muted">{leadingTitle}</ListItemTitle>
           {leadingDescription ? (
             <ListItemDescription>{leadingDescription}</ListItemDescription>
           ) : null}

@@ -5,12 +5,12 @@ import {
   formatMerchantName,
   formatSignedAmount,
 } from "./formatCardTransactionItem";
-import type { ListItemProps, ListItemViewProps } from "./types";
+import type { ListItemProps, ListItemViewProps } from "./ListItem.types";
 
 export function useListItemViewModel({
   item,
   formatters,
-  onPress,
+  onOpenTransaction,
 }: ListItemProps): ListItemViewProps {
   const { t } = useTranslation();
   const { transaction, categoryLabel } = item;
@@ -27,6 +27,6 @@ export function useListItemViewModel({
       formatters?.amount,
     ),
     dateLabel: formatCardTransactionDate(transaction.dateTime, formatters?.date),
-    onPress,
+    onOpenTransaction,
   };
 }

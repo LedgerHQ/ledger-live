@@ -14,8 +14,9 @@ decides where the journey starts from (Settings or the Card protection prompt).
 - `steps/ConfirmPassword` — `useConfirmPasswordViewModel` and `ConfirmPasswordView`: checks the
   second entry against the draft and hands the password on once they match.
 
-The longer-password journey reuses both steps. `PasswordField`, the password draft and the length
-rule come from [`@features/platform-app-lock`](../../platform/app-lock/README.md).
+The longer-password journey reuses both steps. The length rule comes from
+[`@features/platform-app-lock`](../../platform/app-lock/README.md), `PasswordField` and the password
+draft from its native entry, `@features/platform-app-lock/native`.
 
 ## Native only
 

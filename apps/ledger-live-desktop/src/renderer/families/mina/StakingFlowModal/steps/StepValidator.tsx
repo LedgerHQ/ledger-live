@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -20,7 +20,7 @@ const StepValidator = ({ account, transaction, onUpdateTransaction, error }: Ste
 
   return (
     <Container>
-      <TrackPage category="Delegation Flow" name="Step Validator" />
+      <TrackScreen category="Delegation Flow" name="Step Validator" />
       {error && <ErrorBanner error={error} />}
       <Box>
         <ValidatorList

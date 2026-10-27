@@ -73,7 +73,11 @@ function resolveMobileCurrencyActions({
 function resolveMobileAccountActions(inputs: CurrencyQuickActionsInputs): readonly QuickAction[] {
   if (inputs.hasFunds) return resolveMobileCurrencyActions(inputs);
   if (!inputs.isCurrencySupported) return [active("transfer")];
-  return [active("transfer"), ...(inputs.isBuyAvailable ? [active("buy")] : [])];
+  return [
+    active("transfer"),
+    ...(inputs.isSwapAvailable ? [active("swap")] : []),
+    ...(inputs.isBuyAvailable ? [active("buy")] : []),
+  ];
 }
 
 function resolveCurrencyActions(inputs: CurrencyQuickActionsInputs): readonly QuickAction[] {

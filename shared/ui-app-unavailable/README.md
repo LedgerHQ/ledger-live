@@ -13,7 +13,7 @@ i18n.
 | --- | --- |
 | `AppUnavailable` | The blocked screen. Platform implementation picked automatically. |
 | `AppUnavailableProps` | `title`, `description`, optional `action`, and optional `testID`. |
-| `AppUnavailableAction` | Optional CTA: `label`, `onPress`, and optional `testID`. |
+| `AppUnavailableAction` | Optional CTA: `label`, `onOpenLearnMore`, and optional `testID`. |
 
 ## Usage
 
@@ -25,7 +25,7 @@ import { AppUnavailable } from "@shared/ui-app-unavailable";
   description="This does not impact your assets. Please try again later."
   action={{
     label: "Learn more",
-    onPress: () => openLink(learnMoreUrl),
+    onOpenLearnMore: () => openLink(learnMoreUrl),
   }}
 />
 ```

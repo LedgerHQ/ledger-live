@@ -1,6 +1,7 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { withoutExclusiveLockEnv } from "tests/utils/exclusiveLock";
 
 export async function launchApp({
   env,
@@ -42,7 +43,7 @@ export async function launchApp({
         size: windowSize,
       },
     }),
-    env,
+    env: withoutExclusiveLockEnv(env),
     colorScheme: theme,
     locale: lang,
     executablePath: require("electron/index.js"),

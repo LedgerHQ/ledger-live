@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Spot } from "@ledgerhq/lumen-ui-react";
 import { ExternalLink, Globe } from "@ledgerhq/lumen-ui-react/symbols";
 import { CONTENT_MAX_WIDTH_PX, SPOT_SIZE } from "./internals/layout";
-import type { AppUnavailableProps } from "./types";
+import type { AppUnavailableProps } from "./AppUnavailable.types";
 
 export function AppUnavailable({ title, description, action, testID }: AppUnavailableProps) {
   return (
@@ -25,7 +25,7 @@ export function AppUnavailable({ title, description, action, testID }: AppUnavai
           <Button
             appearance="gray"
             icon={ExternalLink}
-            onClick={action.onPress}
+            onClick={action.onOpenLearnMore}
             data-testid={action.testID}
             size="lg"
           >

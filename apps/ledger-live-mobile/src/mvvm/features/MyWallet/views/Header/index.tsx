@@ -1,6 +1,7 @@
 import React from "react";
 import { IconButton } from "@ledgerhq/lumen-ui-rnative";
-import { Bell, BellNotification, Settings } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Bell, Settings } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { BellNotificationIcon } from "LLM/components/TopBar/components/BellNotificationIcon";
 import { useTranslation } from "~/context/Locale";
 import { useMyWalletHeaderViewModel } from "./useMyWalletHeaderViewModel";
 
@@ -9,7 +10,7 @@ export function MyWalletHeaderTrailing() {
   const { onNotificationsPress, onSettingsPress, hasUnreadNotifications } =
     useMyWalletHeaderViewModel();
 
-  const NotificationIcon = hasUnreadNotifications ? BellNotification : Bell;
+  const NotificationIcon = hasUnreadNotifications ? BellNotificationIcon : Bell;
 
   return (
     <>
