@@ -19,7 +19,7 @@ export function RecipientHeaderPrefix({ contact, children }: RecipientHeaderPref
           isMe={contact.isMe}
           size="xs"
           ariaHidden
-          testId="send-recipient-contact-avatar"
+          testID="send-recipient-contact-avatar"
         />
       )}
     </span>

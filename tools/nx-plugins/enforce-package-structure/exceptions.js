@@ -144,15 +144,6 @@ const COMPONENT_EXCEPTIONS = {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),
   },
-  "features/platform/contacts": {
-    "./native": entryWaiver(),
-    "./web": entryWaiver(),
-    ContactAvatar: componentWaiver("R2", "R4", "R5"),
-    ContactConfirmationBottomSheet: componentWaiver("R1", "R4", "R5"),
-    ContactConfirmationDialog: componentWaiver("R1"),
-    ContactNameDisclaimer: componentWaiver("R1", "R5"),
-    ContactNameInput: componentWaiver("R2", "R5"),
-  },
 };
 
 // Files allowed to keep their violations, keyed by posix path from the repo root. These are the

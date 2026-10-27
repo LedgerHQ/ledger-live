@@ -30,7 +30,7 @@ describe("ContactNameInput", () => {
   });
 
   it("should render the name field with its character count", () => {
-    render(<ContactNameInput value="Ada" placeholder="Contact name" onChangeText={jest.fn()} />);
+    render(<ContactNameInput value="Ada" placeholder="Contact name" onChangeName={jest.fn()} />);
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp("value", "Ada");
     expect(screen.getByPlaceholderText("Contact name")).toBeVisible();
@@ -38,7 +38,7 @@ describe("ContactNameInput", () => {
   });
 
   it("should capitalize each word of the name", () => {
-    render(<ContactNameInput value="ada" placeholder="Contact name" onChangeText={jest.fn()} />);
+    render(<ContactNameInput value="ada" placeholder="Contact name" onChangeName={jest.fn()} />);
 
     expect(screen.getByTestId("contacts-add-contact-name-input")).toHaveProp(
       "autoCapitalize",
@@ -47,7 +47,7 @@ describe("ContactNameInput", () => {
   });
 
   it("should leave the field unfocused unless a host asks for focus", () => {
-    render(<ContactNameInput value="" placeholder="Contact name" onChangeText={jest.fn()} />);
+    render(<ContactNameInput value="" placeholder="Contact name" onChangeName={jest.fn()} />);
 
     expect(mockFocus).not.toHaveBeenCalled();
   });
@@ -58,14 +58,14 @@ describe("ContactNameInput", () => {
         value=""
         placeholder="Contact name"
         autoFocus={false}
-        onChangeText={jest.fn()}
+        onChangeName={jest.fn()}
       />,
     );
 
     expect(mockFocus).not.toHaveBeenCalled();
 
     rerender(
-      <ContactNameInput value="" placeholder="Contact name" autoFocus onChangeText={jest.fn()} />,
+      <ContactNameInput value="" placeholder="Contact name" autoFocus onChangeName={jest.fn()} />,
     );
 
     expect(mockFocus).toHaveBeenCalledTimes(1);
@@ -78,7 +78,7 @@ describe("ContactNameInput", () => {
         placeholder="Contact name"
         errorMessage="Special characters are not allowed."
         testIDPrefix="contacts-rename-contact"
-        onChangeText={jest.fn()}
+        onChangeName={jest.fn()}
       />,
     );
 

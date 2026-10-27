@@ -44,7 +44,7 @@ export function RecipientContactRow({ contact, label, value }: RecipientContactR
         name={contact.name}
         isMe={contact.isMe}
         size="xs"
-        testId="recipient-contact-avatar"
+        testID="recipient-contact-avatar"
       />
       <Text testID="recipient-contact-name" style={styles.name} numberOfLines={1}>
         {value}

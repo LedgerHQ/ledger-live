@@ -5,16 +5,7 @@ import { Box, Text, TextInput } from "@ledgerhq/lumen-ui-rnative";
 import { DeleteCircleFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
 import { CONTACTS_NATIVE_NAME_INPUT_PROPS } from "../../addressEntry/nativeInputProps";
-
-type ContactNameInputProps = Readonly<{
-  value: string;
-  placeholder: string;
-  errorMessage?: string;
-  isEditable?: boolean;
-  autoFocus?: boolean;
-  testIDPrefix?: string;
-  onChangeText: (name: string) => void;
-}>;
+import type { ContactNameInputProps } from "./ContactNameInput.types";
 
 export function ContactNameInput({
   value,
@@ -23,7 +14,7 @@ export function ContactNameInput({
   isEditable = true,
   autoFocus = false,
   testIDPrefix = "contacts-add-contact",
-  onChangeText,
+  onChangeName,
 }: ContactNameInputProps): React.JSX.Element {
   const isAtNameLengthLimit = value.length === CONTACT_NAME_MAX_LENGTH;
   const inputRef = useRef<NativeTextInput>(null);
@@ -43,7 +34,7 @@ export function ContactNameInput({
         testID={`${testIDPrefix}-name-input`}
         placeholder={placeholder}
         value={value}
-        onChangeText={onChangeText}
+        onChangeText={onChangeName}
         maxLength={CONTACT_NAME_MAX_LENGTH}
         editable={isEditable}
         status={errorMessage ? "error" : undefined}

@@ -1,5 +1,4 @@
 import React from "react";
-import type { ComponentType } from "react";
 import {
   BottomSheetHeader,
   BottomSheetView,
@@ -8,51 +7,31 @@ import {
   Spot,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
+import { InformationFill, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
+import type { ContactConfirmationDialogProps } from "./ContactConfirmationDialog.types";
 
-export type ContactConfirmationBottomSheetLabels = Readonly<{
-  title: string;
-  description: string;
-  confirm: string;
-  cancel: string;
-}>;
-
-export type ContactConfirmationBottomSheetProps = Readonly<{
-  isOpen: boolean;
-  bottomInset?: number;
-  icon: ComponentType;
-  labels: ContactConfirmationBottomSheetLabels;
-  confirmAppearance: "base" | "red";
-  confirmLoading?: boolean;
-  confirmDisabled?: boolean;
-  confirmTestID?: string;
-  /** Anchor for the sheet's content, present only while the sheet is open. */
-  contentTestID?: string;
-  cancelTestID?: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}>;
-
-export function ContactConfirmationBottomSheet({
+export function ContactConfirmationDialog({
   isOpen,
-  bottomInset = 0,
-  icon,
+  tone,
   labels,
-  confirmAppearance,
-  confirmLoading = false,
-  confirmDisabled = false,
-  confirmTestID,
-  contentTestID,
-  cancelTestID,
+  isConfirming = false,
   onConfirm,
   onCancel,
-}: ContactConfirmationBottomSheetProps): React.JSX.Element {
+  testID,
+  confirmTestID,
+  cancelTestID,
+}: ContactConfirmationDialogProps): React.JSX.Element {
+  const isDestructive = tone === "destructive";
+  const bottomInset = useBottomSheetBottomInset();
+
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + 24 }}>
       {isOpen ? (
-        <Box testID={contentTestID} lx={{ gap: "s24", paddingHorizontal: "s16" }}>
+        <Box testID={testID} lx={{ gap: "s24", paddingHorizontal: "s16" }}>
           <BottomSheetHeader />
           <Box lx={{ alignItems: "center", gap: "s16" }}>
-            <Spot icon={icon} size={56} />
+            <Spot icon={isDestructive ? Trash : InformationFill} size={56} />
             <Box lx={{ alignItems: "center", gap: "s8" }}>
               <Text typography="heading3SemiBold" lx={{ color: "base", textAlign: "center" }}>
                 {labels.title}
@@ -64,12 +43,12 @@ export function ContactConfirmationBottomSheet({
           </Box>
           <Box lx={{ gap: "s8" }}>
             <Button
-              appearance={confirmAppearance}
+              appearance={isDestructive ? "red" : "base"}
               size="lg"
               isFull
-              loading={confirmLoading}
-              disabled={confirmDisabled}
-              onPress={onConfirm}
+              loading={isConfirming}
+              disabled={isConfirming}
+              onPress={() => onConfirm()}
               testID={confirmTestID}
             >
               {labels.confirm}
@@ -78,7 +57,7 @@ export function ContactConfirmationBottomSheet({
               appearance="gray"
               size="lg"
               isFull
-              disabled={confirmLoading}
+              disabled={isConfirming}
               onPress={onCancel}
               testID={cancelTestID}
             >
