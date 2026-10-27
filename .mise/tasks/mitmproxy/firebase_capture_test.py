@@ -5,6 +5,7 @@ Tests for firebase_capture.py. Run with the mise-pinned mitmproxy and pytest:
 """
 
 import asyncio
+import gzip
 import json
 import os
 import sys
@@ -20,7 +21,7 @@ FETCH_URL = "https://firebaseremoteconfig.googleapis.com/v1/projects/ledger-live
 TEMPLATE = {"entries": {"feature_x": '{"enabled":true}'}, "state": "UPDATE", "templateVersion": "42"}
 
 
-def fetch_flow(language="en-US", app_id="1:677185650562:web:abc", headers=None):
+def fetch_flow(language="en-US", app_id="1:677185650562:web:abc", headers=None, compress=False):
     body = json.dumps(
         {
             "sdk_version": "12.19.0",
@@ -29,10 +30,15 @@ def fetch_flow(language="en-US", app_id="1:677185650562:web:abc", headers=None):
             "app_id": app_id,
             "language_code": language,
         }
-    )
+    ).encode()
     request = http.Request.make(
-        "POST", FETCH_URL, body, {"content-type": "application/json", "If-None-Match": "*", **(headers or {})}
+        "POST",
+        FETCH_URL,
+        b"",
+        {"content-type": "application/json", "content-encoding": "gzip", "If-None-Match": "*", **(headers or {})},
     )
+    # Like the real SDK: labelled gzip, sent as plain JSON unless compress=True.
+    request.raw_content = gzip.compress(body) if compress else body
     return tflow.tflow(req=request)
 
 
@@ -173,6 +179,16 @@ def test_empty_or_unchanged_templates_are_not_stored():
             answer(leader, body=body)
             addon.response(leader)
             assert not addon.cache
+
+    run(test)
+
+
+def test_body_labelled_gzip_is_read_whether_or_not_it_is_compressed():
+    async def test(addon, _):
+        for flow in (fetch_flow(), fetch_flow(language="fr-FR", compress=True)):
+            await addon.request(flow)
+            assert "firebase_capture_future" in flow.metadata
+        assert len(addon.stats) == 2
 
     run(test)
 

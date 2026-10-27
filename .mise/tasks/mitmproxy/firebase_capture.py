@@ -16,11 +16,13 @@ Request and response bodies are never logged: they carry installation tokens and
 """
 
 import asyncio
+import gzip
 import hashlib
 import json
 import logging
 import re
 import time
+import zlib
 from dataclasses import dataclass
 
 from mitmproxy import ctx, http
@@ -50,14 +52,24 @@ class KeyStats:
     failed: int = 0
 
 
+def request_json(request: http.Request) -> object:
+    # The Firebase SDK sends `Content-Encoding: gzip` with a plain JSON body, so mitmproxy's decoding fails.
+    raw = request.raw_content or b"{}"
+    try:
+        return json.loads(raw)
+    except ValueError:
+        pass
+    try:
+        return json.loads(gzip.decompress(raw))
+    except (OSError, EOFError, ValueError, zlib.error):
+        return None
+
+
 def capture_key(flow: http.HTTPFlow) -> str | None:
     path = flow.request.path.split("?", 1)[0]
     if flow.request.method != "POST" or not FETCH_PATH.match(path):
         return None
-    try:
-        body = json.loads(flow.request.get_text() or "{}")
-    except ValueError:
-        return None
+    body = request_json(flow.request)
     if not isinstance(body, dict):
         return None
     signals = json.dumps(body.get("custom_signals") or {}, sort_keys=True)
