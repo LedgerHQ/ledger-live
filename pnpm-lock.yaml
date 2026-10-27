@@ -21292,6 +21292,9 @@ importers:
       danger:
         specifier: 14.0.7
         version: 14.0.7
+      picocolors:
+        specifier: 1.1.0
+        version: 1.1.0
       rxjs:
         specifier: 7.8.1
         version: 7.8.1
@@ -35793,6 +35796,9 @@ packages:
 
   picocolors@0.2.1:
     resolution: {integrity: sha512-cMlDqaLEqfSaW8Z7N5Jw+lyIW869EzT73/F5lhtY9cLGoVxSXznfgfXMO0Z5K0o0Q2TkTXq+0KFsdnSe3jDViA==}
+
+  picocolors@1.1.0:
+    resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
 
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
@@ -57569,6 +57575,8 @@ snapshots:
   performance-now@2.1.0: {}
 
   picocolors@0.2.1: {}
+
+  picocolors@1.1.0: {}
 
   picocolors@1.1.1: {}
 

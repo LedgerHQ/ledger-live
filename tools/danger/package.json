@@ -13,6 +13,7 @@
     "@types/node": "catalog:",
     "core-js": "2.6.12",
     "danger": "14.0.7",
+    "picocolors": "1.1.0",
     "rxjs": "7.8.1",
     "yaml": "2.8.3"
   }
