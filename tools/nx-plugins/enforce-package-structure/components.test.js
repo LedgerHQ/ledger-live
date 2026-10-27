@@ -670,6 +670,7 @@ test("R3 fails: a contract that imports a platform package", () => {
     "react-native",
     "react-native-svg",
     "@ledgerhq/lumen-ui-react",
+    "@ledgerhq/lumen-utils-shared",
     "react-dom",
   ]) {
     assert.deepEqual(
@@ -681,6 +682,49 @@ test("R3 fails: a contract that imports a platform package", () => {
   assert.deepEqual(check(card(contract('icon: import("@ledgerhq/lumen-ui-rnative").Icon;'))), [
     "R3 contract-platform-import Card",
   ]);
+});
+
+test("R3 passes: a type-only import of a neutralImportTypes name", () => {
+  for (const specifier of ["@ledgerhq/lumen-ui-react", "@ledgerhq/lumen-ui-rnative"]) {
+    for (const [props, header] of [
+      ["value: FormattedValue;", `import type { FormattedValue } from "${specifier}";\n`],
+      ["value: FormattedValue;", `import { type FormattedValue } from "${specifier}";\n`],
+      ["value: Amount;", `import type { FormattedValue as Amount } from "${specifier}";\n`],
+      [`value: import("${specifier}").FormattedValue;`, ""],
+    ]) {
+      assert.deepEqual(
+        check(card(contract(props, header))),
+        [],
+        `${specifier}: ${header || props}`,
+      );
+    }
+  }
+});
+
+test("R3 fails: a Lumen import that is not a type-only neutralImportTypes name", () => {
+  for (const [props, header] of [
+    // A web component in a platform-neutral contract.
+    ["icon: typeof Bell;", 'import { Bell } from "@ledgerhq/lumen-ui-react/symbols";\n'],
+    ["icon: Bell;", 'import type { Bell } from "@ledgerhq/lumen-ui-react/symbols";\n'],
+    ["value: FormattedValue;", 'import { FormattedValue } from "@ledgerhq/lumen-ui-react";\n'],
+    [
+      "value: FormattedValue;",
+      'import type { FormattedValue, ButtonProps } from "@ledgerhq/lumen-ui-react";\n',
+    ],
+    ["value: Lumen.FormattedValue;", 'import type * as Lumen from "@ledgerhq/lumen-ui-react";\n'],
+    [
+      "value: FormattedValue;",
+      'import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";\n',
+    ],
+    ['button: import("@ledgerhq/lumen-ui-react").ButtonProps;', ""],
+    ['format: typeof import("@ledgerhq/lumen-ui-react").FormattedValue;', ""],
+  ]) {
+    assert.deepEqual(
+      check(card(contract(props, header))),
+      ["R3 contract-platform-import Card"],
+      header || props,
+    );
+  }
 });
 
 test("R3 fails: a contract that references a global DOM type, once per name", () => {

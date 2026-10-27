@@ -3,7 +3,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import {
   fetchPerpsDepositQuote,
   type PerpsDepositQuote,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/quote";
 import { useSelector } from "~/context/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";

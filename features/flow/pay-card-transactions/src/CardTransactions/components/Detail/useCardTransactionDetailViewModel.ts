@@ -14,7 +14,7 @@ import type {
   CardTransactionDetailProps,
   CardTransactionDetailRow,
   CardTransactionDetailViewProps,
-} from "./types";
+} from "./CardTransactionDetail.types";
 
 const STATUS_APPEARANCE = {
   CONFIRMED: "success",

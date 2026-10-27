@@ -175,7 +175,7 @@ const AppsScreen = ({
   const hasOsUpdates = useSelector(hasOsUpdatesSelector);
   const latestFirmware = useLatestFirmware(isOsUpdatesEnabled ? null : lastSeenDevice?.deviceInfo);
   const hasBackup = useSelector(hasBackupSelector);
-  const showBackupBanner = isOsUpdatesEnabled && !hasOsUpdates && hasBackup;
+  const showBackupBanner = isOsUpdatesEnabled && hasBackup;
   const showFwUpdateBanner = isOsUpdatesEnabled ? hasOsUpdates : Boolean(latestFirmware);
 
   const appsToUpdate = getEnv("MOCK_APP_UPDATE") ? deviceApps : update;

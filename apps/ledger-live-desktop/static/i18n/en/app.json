@@ -328,7 +328,7 @@
     "remove": {
       "title": "Remove account?",
       "description": "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
-      "confirm": "Yes, remove.",
+      "confirm": "Yes, remove",
       "cancel": "Keep"
     }
   },
@@ -716,18 +716,6 @@
     "buttonTitle": "Test"
   },
   "account": {
-    "subHeader": {
-      "moreInfo": "More info",
-      "cardTitle": "Powered by {{team}}",
-      "drawer": {
-        "title": "{{family}} integration",
-        "subTitle": "The {{family}} integration has been done by the {{team}} team",
-        "description": "Ledger Wallet is an open-source platform.",
-        "description2": "Developers from anywhere in the world can integrate with our Ledger Wallet",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
-        "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
-      }
-    },
     "migrationBanner": {
       "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
       "contactSupport": "Contact support"
@@ -3207,18 +3195,6 @@
       "undelegatingTooltip": "Undelegated assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
       "undelegating": "Pending Withdrawals"
     },
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by MultiversX",
-        "moreInfo": "More info",
-        "drawerTitle": "MultiversX integration",
-        "title": "MultiversX eGold (EGLD) token is now available on Ledger Wallet",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Wallet.",
-        "description2": "The MultiversX eGold (EGLD) Token is native to the MultiversX Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the MultiversX team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
-      }
-    },
     "delegation": {
       "emptyState": {
         "description": "Delegate your EGLD to secure the network and capture your share of the rewards.",
@@ -3575,17 +3551,6 @@
     }
   },
   "celo": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Figment",
-        "moreInfo": "More info",
-        "drawerTitle": "Powered by Figment",
-        "title": "The CELO  token is now available on Ledger Wallet",
-        "description": "You can now start to manage your CELO tokens and secure them through Ledger Wallet.",
-        "description2": "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Powered by Figment"
-      }
-    },
     "lockedBalance": "Locked balance",
     "lockedTooltip": "Assets must be locked and voted for validator groups before earning rewards.",
     "nonvotingLockedBalance": "Non-voting locked balance",
@@ -4999,16 +4964,7 @@
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
       "storageUsageBalance": "Minimum balance",
-      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
-      "subHeader": {
-        "cardTitle": "Powered by Figment",
-        "moreInfo": "More info",
-        "drawerTitle": "Powered by Figment",
-        "title": "The NEAR token is now available on Ledger Wallet",
-        "description": "You can now start to manage your NEAR tokens and secure them through Ledger Wallet.",
-        "description2": "The NEAR token is native to the NEAR chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
     },
     "operationDetails": {
       "extra": {
@@ -5138,16 +5094,7 @@
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
       "storageUsageBalance": "Minimum balance",
-      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
-      "subHeader": {
-        "cardTitle": "Powered by Figment",
-        "moreInfo": "More info",
-        "drawerTitle": "Powered by Figment",
-        "title": "The SUI token is now available on Ledger Wallet",
-        "description": "You can now start to manage your SUI tokens and secure them through Ledger Wallet.",
-        "description2": "The SUI token is native to the SUI chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
     },
     "operationDetails": {
       "extra": {
@@ -10698,6 +10645,18 @@
     }
   },
   "accountDetailHero": {
+    "emptyState": {
+      "title": "No activity yet",
+      "description": {
+        "receive": "Start by adding funds through Receive.",
+        "receiveSwap": "Start by adding funds through Receive or Swap.",
+        "receiveBuy": "Start by adding funds through Receive or Buy.",
+        "receiveSwapBuy": "Start by adding funds through Receive, Swap or Buy.",
+        "swap": "Start by adding funds through Swap.",
+        "buy": "Start by adding funds through Buy.",
+        "swapBuy": "Start by adding funds through Swap or Buy."
+      }
+    },
     "assetPicker": {
       "title": "Select an asset"
     },
@@ -10707,6 +10666,27 @@
       "buy": "Buy",
       "sell": "Sell",
       "earn": "Earn"
+    }
+  },
+  "accountDetailNotices": {
+    "actions": {
+      "learnMore": "Learn more",
+      "openPerps": "Open Perps"
+    },
+    "migration": {
+      "title": "{{from}} is migrating to {{to}}",
+      "description": "Learn more about the migration, or contact support if you need assistance."
+    },
+    "willBeDeprecated": {
+      "title": "{{currencyName}} will not be supported as of {{date}}",
+      "description": "It will still be secured by your Ledger device. Learn more in the Help Center."
+    },
+    "robinhoodDisclaimer": {
+      "title": "Total balance does not include dividends or stock splits."
+    },
+    "perps": {
+      "title": "About Hyperliquid account",
+      "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account"
     }
   },
   "accountDetail": {

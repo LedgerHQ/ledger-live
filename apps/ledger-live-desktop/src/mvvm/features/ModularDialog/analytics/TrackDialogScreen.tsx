@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { ModularDialogEventName } from "./modularDialog.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
@@ -38,7 +38,7 @@ const TrackDialogScreen = <T extends ModularDialogEventName>({
     };
   }, [source, flow, formatAssetConfig, assetsConfig, formatNetworkConfig, networksConfig]);
 
-  return <TrackPage category={page} {...analyticsParams} />;
+  return <TrackScreen category={page} {...analyticsParams} />;
 };
 
 export default React.memo(TrackDialogScreen);

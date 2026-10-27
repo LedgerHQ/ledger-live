@@ -18,6 +18,7 @@ import {
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 type BalanceType = "public" | "private";
 
@@ -136,8 +137,11 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
     const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
     const currency = tx.accountToDebit.currency;
     const currencyLabel = currency.testLabel;
+    const sendLock = exclusiveLockFor({
+      broadcastAccounts: entry.disableBroadcast ? [] : [tx.accountToDebit],
+    });
 
-    test.describe("Send - new flow", () => {
+    test.describe("Send - new flow", { lock: sendLock.names }, () => {
       test.use({
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
@@ -148,6 +152,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
             postSeedHook: entry.postSeedHook,
           }),
         ],
+        ...sendLock.fixtures,
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           ...FF_NEW_SEND_FLOW_ENABLED,

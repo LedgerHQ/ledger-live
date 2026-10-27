@@ -45,7 +45,7 @@ function AccountName({ names, nameOf }: AccountNameToolProps) {
           <thead className="text-muted">
             <tr>
               {COLUMNS.map(({ label }) => (
-                <th key={label} className={`${CELL} border-b border-base font-normal`}>
+                <th key={label} className={`${CELL} border-b border-base`}>
                   {label}
                 </th>
               ))}

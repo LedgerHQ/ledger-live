@@ -3,7 +3,6 @@ name: errors
 description: |
   How to define and check error classes in Ledger Live. Read when adding a new
   error, creating an errors.ts file, or checking an error's type.
-globs: ["**/errors.ts", "**/errors/**/*.ts"]
 ---
 
 # Errors
@@ -45,18 +44,18 @@ export class HttpError extends Error {
 Group a family under a per-package base class so callers can catch the whole set:
 
 ```ts
-export class WalletAuthError extends Error {
-  override name = "WalletAuthError";
+export class ContactError extends Error {
+  override name: string = "ContactError";
 }
-export class WalletAuthSignatureError extends WalletAuthError {
-  override name = "WalletAuthSignatureError";
-  constructor(cause: unknown) {
-    super("failed to sign challenge", { cause });
+export class InvalidContactNameError extends ContactError {
+  override name = "InvalidContactNameError" as const;
+  constructor() {
+    super("Expected letters, spaces, or digits");
   }
 }
 ```
 
-See `libs/ledger-auth/src/errors.ts` for a full reference.
+See `domain/entity/contact/src/errors.ts` for a full reference.
 
 ### `cause`
 
@@ -98,7 +97,8 @@ Use `instanceof` only when you are certain the error has not crossed a boundary
 ## Where errors live
 
 - Logic in one package → that package's `src/errors.ts`.
-- Used only by an app → the app's `src/errors.ts` (`apps/ledger-live-desktop`,
-  `apps/ledger-live-mobile`).
+- Used only by an app → that app's errors file, such as
+  `apps/ledger-live-desktop/src/errors.ts`. Mobile has no app-level errors file yet: add one at the
+  same place the first time it needs one.
 - Shared by several coin modules → `libs/ledger-wallet-framework/src/errors.ts`
   (`@ledgerhq/ledger-wallet-framework/errors`), the shared home below the coin layer.

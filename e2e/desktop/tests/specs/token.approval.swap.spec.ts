@@ -11,9 +11,11 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const xrayTicket = "B2CQA-5632";
 const fromAccount = TokenAccount.ETH_USDC_1;
+const approvalLock = exclusiveLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_1;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
@@ -23,8 +25,10 @@ const eligibleProviders = [
   SwapProvider.ONE_INCH,
   SwapProvider.VELORA,
 ];
+// Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
+const APPROVAL_TEST_TIMEOUT_MS = 480_000;
 
-test.describe("Swap - token approval", () => {
+test.describe("Swap - token approval", { lock: approvalLock.names }, () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token approval flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -36,6 +40,7 @@ test.describe("Swap - token approval", () => {
     teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: fromAccount.currency.speculosApp,
+    ...approvalLock.fixtures,
 
     cliCommandsOnApp: [
       [
@@ -65,8 +70,7 @@ test.describe("Swap - token approval", () => {
     },
     async ({ app }) => {
       const provider = await pickRotatingProvider(eligibleProviders, fromAccount, toAccount);
-      // Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
-      test.setTimeout(480_000);
+      test.setTimeout(APPROVAL_TEST_TIMEOUT_MS);
       await app.swap.logSelectedProvider(provider.uiName);
       await app.speculos.enableBlindSigningOnNanoS();
       await revokeTokenApproval(fromAccount, provider);

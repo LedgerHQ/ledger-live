@@ -16,6 +16,10 @@ We validate that a PR follows the repository conventions:
 
 A last validation, [node-modules-size.ts](./validation/node-modules-size.ts), estimates the `node_modules` size delta from the `pnpm-lock.yaml` diff ([engine](./node-modules-size.ts), no install): it warns and adds the `deps-size` label from +10 MB, fails from +100 MB unless the PR has the `deps-size-approved` label, and thanks the author from −10 MB.
 
+The same diff lists packages already installed that gain one more version, from 1 MB each, with the dependency chain that brought it. It warns when the new version is in the caret range of one already installed (one copy could serve both: align the catalog or add an override); a new major is listed for information. Existing duplicates are never reported, only the ones a PR adds.
+
+Run the tests with `pnpm test` from `tools/danger`.
+
 Both title and commit checks read the repo-root [commitlint.config.js](../../commitlint.config.js) via
 [commitlint.ts](./commitlint.ts), but **they are deliberately not equally strict**:
 

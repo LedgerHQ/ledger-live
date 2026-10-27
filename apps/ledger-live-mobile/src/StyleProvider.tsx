@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { StyleProvider as PlatformStyleProvider } from "@features/platform-style";
+import { StyleProvider as PlatformStyleProvider } from "@features/platform-style/native";
 import { palettes, defaultTheme } from "@ledgerhq/native-ui/styles/index";
 import { Theme as UITheme } from "@ledgerhq/native-ui/styles/theme";
 import { lightTheme as light, darkTheme as dark } from "./colors";

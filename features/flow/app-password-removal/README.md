@@ -15,8 +15,8 @@ the app, which deletes the verifier and decides when removal is allowed.
   while it is the only protection left and a card is active. The Settings password and biometrics
   rows open it.
 
-`PasswordField` and the biometrics types come from
-[`@features/platform-app-lock`](../../platform/app-lock/README.md).
+The biometrics types come from [`@features/platform-app-lock`](../../platform/app-lock/README.md),
+`PasswordField` from its native entry, `@features/platform-app-lock/native`.
 
 ## Native only
 

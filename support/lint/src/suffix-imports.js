@@ -26,11 +26,49 @@ const PLATFORM_APP = {
   web: /(?:^|[/\\])apps[/\\]ledger-live-desktop[/\\]/,
 };
 
+// The `@support/tsconfig` presets that compile a single platform.
+const PLATFORM_PRESET = new Map([
+  ["@support/tsconfig/native", "native"],
+  ["@support/tsconfig/web", "web"],
+]);
+
+/**
+ * The platform of the preset `config` extends, following local `extends` up to a preset. When
+ * `extends` is a list, a later entry wins, as it does in tsc.
+ *
+ * @param {string} config path of a tsconfig file
+ * @param {Set<string>} [seen] configs already visited, against an `extends` cycle
+ * @returns {"native" | "web" | null}
+ */
+function extendedPlatform(config, seen = new Set()) {
+  if (seen.has(config)) return null;
+  seen.add(config);
+
+  let parents;
+  try {
+    parents = [JSON.parse(fs.readFileSync(config, "utf8")).extends ?? []].flat();
+  } catch {
+    return null;
+  }
+
+  for (const parent of parents.reverse()) {
+    if (typeof parent !== "string") continue;
+    let platform = PLATFORM_PRESET.get(parent) ?? null;
+    if (parent.startsWith(".")) {
+      const local = path.resolve(path.dirname(config), parent);
+      platform = extendedPlatform(local.endsWith(".json") ? local : `${local}.json`, seen);
+    }
+    if (platform) return platform;
+  }
+  return null;
+}
+
 const packagePlatformCache = new Map();
 
 /**
  * The platform of the package that owns `dir`, from the tsconfigs it carries: a cross-platform
- * package has `tsconfig.web.json` and `tsconfig.native.json`, a single-platform one only its own.
+ * package has `tsconfig.web.json` and `tsconfig.native.json`, a single-platform one only its own,
+ * or a `tsconfig.json` that extends the preset of its platform.
  *
  * @param {string} dir
  * @returns {"native" | "web" | null}
@@ -43,6 +81,7 @@ function packagePlatform(dir) {
     const native = fs.existsSync(path.join(dir, "tsconfig.native.json"));
     const web = fs.existsSync(path.join(dir, "tsconfig.web.json"));
     if (native !== web) platform = native ? "native" : "web";
+    else if (!native) platform = extendedPlatform(path.join(dir, "tsconfig.json"));
   } else {
     const parent = path.dirname(dir);
     if (parent !== dir) platform = packagePlatform(parent);

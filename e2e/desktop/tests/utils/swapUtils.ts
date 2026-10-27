@@ -8,6 +8,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
+import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 import {
   isTokenAllowanceSufficientCommand,
   approveTokenCommand,
@@ -135,12 +136,22 @@ export async function handleSwapErrorOrSuccess(
   }
 }
 
+/** The accounts {@link ensureTokenApproval} and {@link revokeTokenApproval} broadcast from with the CLI. */
+export const tokenApprovalBroadcastAccounts = (
+  fromAccount: Account | TokenAccount,
+  provider: SwapProvider,
+): readonly Account[] => (needsTokenAllowance(fromAccount, provider) ? [fromAccount] : []);
+
+/**
+ * For a test whose exclusive lock fixture holds `fromAccount` in its `cliBroadcastAccounts`, so the
+ * check, the approval and the swap all run under the lock.
+ */
 export async function ensureTokenApproval(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,
   minAmount: string,
 ) {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return;
+  if (!needsTokenAllowance(fromAccount, provider)) return;
 
   const currentAllowance = await isTokenAllowanceSufficientCommand(
     fromAccount,
@@ -152,11 +163,10 @@ export async function ensureTokenApproval(
 
   // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
   await revokeTokenApproval(fromAccount, provider);
-  const spender = provider.contractAddress;
   await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
     const result = await approveTokenCommand(
       fromAccount,
-      spender,
+      provider.contractAddress,
       new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
     await allure.description(`Token approval result for ${provider.uiName}:\n\n ${result}`);
@@ -167,7 +177,7 @@ export async function revokeTokenApproval(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,
 ) {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return;
+  if (!needsTokenAllowance(fromAccount, provider)) return;
 
   const spender = provider.contractAddress;
   let allowance = await getTokenAllowanceCommand(fromAccount, spender);

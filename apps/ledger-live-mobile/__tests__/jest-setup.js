@@ -328,10 +328,6 @@ jest.mock("expo-application", () => ({
   nativeBuildVersion: "1",
 }));
 
-jest.mock("react-native-startup-time", () => ({
-  getStartupTime: jest.fn(),
-}));
-
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
 // Mock react-native-worklets using official mock (must be before reanimated)

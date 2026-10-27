@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DeviceId, UserId, DatadogId } from "./ids";
+import { DeviceId, UserId, DatadogId, PortfolioId } from "./ids";
 import { initialIdentitiesState, DUMMY_ID_STR } from "./types";
 import { PersistedIdentities } from "./persistence";
 import { v4 as uuid } from "uuid";
@@ -28,6 +28,10 @@ export const identitiesSlice = createSlice({
       state.datadogId = shouldUsePersistedId(datadogIdRaw)
         ? DatadogId.fromString(datadogIdRaw)
         : DatadogId.fromString(uuid());
+      const portfolioIdRaw = action.payload.portfolioId;
+      state.portfolioId = shouldUsePersistedId(portfolioIdRaw)
+        ? PortfolioId.fromString(portfolioIdRaw)
+        : PortfolioId.fromString(uuid());
       state.deviceIds = action.payload.deviceIds.map(DeviceId.fromString);
       state.pushDevicesSyncState = usePersistedUserId
         ? action.payload.pushDevicesSyncState
@@ -45,6 +49,7 @@ export const identitiesSlice = createSlice({
       } else {
         state.datadogId = DatadogId.fromString(uuid());
       }
+      state.portfolioId = PortfolioId.fromString(uuid());
     },
 
     /**
@@ -53,6 +58,7 @@ export const identitiesSlice = createSlice({
     initFromScratch: state => {
       state.userId = UserId.fromString(uuid());
       state.datadogId = DatadogId.fromString(uuid());
+      state.portfolioId = PortfolioId.fromString(uuid());
     },
 
     /**

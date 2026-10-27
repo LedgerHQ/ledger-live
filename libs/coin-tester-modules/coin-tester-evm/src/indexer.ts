@@ -775,9 +775,7 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "sonic":
         case "polygon":
         case "core":
-        case "blast":
         case "base":
-        case "scroll":
         case "bsc":
         case "robinhood":
         case "robinhood_testnet":
@@ -796,9 +794,7 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "sonic":
         case "polygon":
         case "core":
-        case "blast":
         case "base":
-        case "scroll":
         case "bsc":
         case "robinhood":
         case "robinhood_testnet":
@@ -882,46 +878,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
           delisted: false,
           standard: "erc20",
           decimals: 6,
-        });
-      } else if (
-        id === "scroll/erc20/usd_coin" ||
-        (contractAddress === "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4" && network === "scroll")
-      ) {
-        response.push({
-          id: "scroll/erc20/usd_coin",
-          contract_address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
-          ticker: "USDC",
-          name: "USD Coin",
-          units: [
-            {
-              code: "USDC",
-              name: "USDC",
-              magnitude: 6,
-            },
-          ],
-          delisted: false,
-          standard: "erc20",
-          decimals: 6,
-        });
-      } else if (
-        id === "blast/erc20/magic_internet_money" ||
-        (contractAddress === "0x76DA31D7C9CbEAE102aff34D3398bC450c8374c1" && network === "blast")
-      ) {
-        response.push({
-          id: "blast/erc20/magic_internet_money",
-          contract_address: "0x76DA31D7C9CbEAE102aff34D3398bC450c8374c1",
-          ticker: "MIM",
-          name: "Magic Internet Money",
-          units: [
-            {
-              code: "MIM",
-              name: "MIM",
-              magnitude: 18,
-            },
-          ],
-          delisted: false,
-          standard: "erc20",
-          decimals: 18,
         });
       } else if (
         id === "bsc/bep20/binance-peg_bsc-usd" ||

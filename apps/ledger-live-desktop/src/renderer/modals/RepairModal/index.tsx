@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { repairChoices } from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { track } from "@shared/analytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -178,7 +178,7 @@ const RepairModal = ({
       onClose={onClose}
       {...props}
     >
-      <TrackPage category="Modal" name={analyticsName} />
+      <TrackScreen category="Modal" name={analyticsName} />
       <ModalBody
         title={title}
         onClose={onClose}

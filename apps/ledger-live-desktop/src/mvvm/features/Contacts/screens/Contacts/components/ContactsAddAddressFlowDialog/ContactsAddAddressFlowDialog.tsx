@@ -17,7 +17,6 @@ import type { ContactsAddAddressFlowDialogProps } from "./types";
 export function ContactsAddAddressFlowDialog({
   state,
   supportsDomain,
-  showPrivacyPolicy,
   onSanctionedAddressLearnMore,
   onAddressChange,
   onContinueFromAddressDetails,
@@ -34,8 +33,8 @@ export function ContactsAddAddressFlowDialog({
   const confirmAddressLabel = t("contacts.addAddressEntry.confirmAddress");
   const privacyPolicyLabel = t("contacts.addAddressEntry.privacyPolicy");
   const handlePressPrivacyPolicy = useCallback(() => {
-    if (showPrivacyPolicy) openLink(localizedPrivacyPolicyUrl);
-  }, [openLink, showPrivacyPolicy, localizedPrivacyPolicyUrl]);
+    openLink(localizedPrivacyPolicyUrl);
+  }, [openLink, localizedPrivacyPolicyUrl]);
 
   if (state.status === "closed") {
     return null;
@@ -59,19 +58,17 @@ export function ContactsAddAddressFlowDialog({
       >
         {confirmAddressLabel}
       </Button>
-      {showPrivacyPolicy ? (
-        <Link
-          appearance="base"
-          className="cursor-pointer mt-24"
-          data-testid="contacts-add-address-privacy-policy"
-          underline={false}
-          isExternal
-          size="sm"
-          onClick={handlePressPrivacyPolicy}
-        >
-          {privacyPolicyLabel}
-        </Link>
-      ) : null}
+      <Link
+        appearance="base"
+        className="cursor-pointer mt-24"
+        data-testid="contacts-add-address-privacy-policy"
+        underline={false}
+        isExternal
+        size="sm"
+        onClick={handlePressPrivacyPolicy}
+      >
+        {privacyPolicyLabel}
+      </Link>
     </div>
   );
 

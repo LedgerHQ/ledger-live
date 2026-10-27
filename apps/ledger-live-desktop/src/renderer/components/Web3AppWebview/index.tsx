@@ -5,7 +5,7 @@ import React, { forwardRef } from "react";
 import semver from "semver";
 import { serializeAllowedOrigins, UNRESTRICTED_ORIGINS } from "~/bridge/webviewAllowedOrigins";
 import { useFeature } from "@features/platform-feature-flags";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { WalletAPIWebview } from "./WalletAPIWebview";
 import { WebviewAPI, WebviewProps } from "./types";
@@ -26,7 +26,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
-    <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />;
+    <TrackScreen category="Platform" name="App" appId={manifest.id} params={inputs} />;
 
     // The guest's origin allowlist is bound when it is created, so a refreshed manifest
     // with the same id but other domains, or a toggled domain check, must get a new guest.

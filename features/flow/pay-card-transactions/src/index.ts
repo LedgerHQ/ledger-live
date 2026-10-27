@@ -1,1 +1,1 @@
-export * from "./exports.web";
+export * from "./exports";

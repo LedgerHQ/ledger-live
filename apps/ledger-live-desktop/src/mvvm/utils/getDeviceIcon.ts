@@ -1,10 +1,10 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { Nano, Apex, Stax, Flex, LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
+import { Nano, NanoGen5, Stax, Flex, LedgerDevices } from "@ledgerhq/lumen-ui-react/symbols";
 
 export type DeviceIconComponent =
   | typeof Stax
   | typeof Flex
-  | typeof Apex
+  | typeof NanoGen5
   | typeof Nano
   | typeof LedgerDevices;
 
@@ -16,7 +16,7 @@ export function getDeviceIcon(modelId: DeviceModelId | undefined): DeviceIconCom
     case DeviceModelId.europa:
       return Flex;
     case DeviceModelId.apex:
-      return Apex;
+      return NanoGen5;
     case DeviceModelId.nanoX:
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:

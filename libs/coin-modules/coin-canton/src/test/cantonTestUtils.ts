@@ -23,6 +23,30 @@ const PURPOSE_PUBLIC_KEY_FINGERPRINT = 12;
 const PURPOSE_TOPOLOGY_TRANSACTION_SIGNATURE = 11;
 const PURPOSE_MULTI_TOPOLOGY_TRANSACTION_SIGNATURE = 55;
 const MULTIHASH_SHA256_PREFIX = Buffer.from([0x12, 0x20]);
+const ED25519_PKCS8_PREFIX = Buffer.from("302e020100300506032b657004220420", "hex");
+
+// Non-PROD app-canton attestation key (crypto_data.h). Devnet whitelists its public key for the
+// onboarding device challenge, so tests can produce the application signature without a device.
+const TEST_ATTESTATION_KEY = crypto.createPrivateKey({
+  key: Buffer.concat([
+    ED25519_PKCS8_PREFIX,
+    Buffer.from("27f79d857622c1f25202eeed7ae279f1b28b71277c003d278094d17b62016f34", "hex"),
+  ]),
+  format: "der",
+  type: "pkcs8",
+});
+
+/**
+ * Sign the onboarding device challenge as app-canton does: Ed25519 over
+ * multi-hash (34 bytes) ++ challenge nonce (16 bytes) ++ deadline (int64 BE).
+ * @param multiHashHex topology multi-hash, i.e. the gateway's `combined_hash`
+ * @param challengeHex challenge as sent to the device: [0x18][nonce][deadline]
+ */
+export function signDeviceChallenge(multiHashHex: string, challengeHex: string): string {
+  const challengeAndDeadline = Buffer.from(challengeHex, "hex").subarray(1);
+  const data = Buffer.concat([Buffer.from(multiHashHex, "hex"), challengeAndDeadline]);
+  return crypto.sign(null, data, TEST_ATTESTATION_KEY).toString("hex");
+}
 
 export interface CantonTestKeyPair {
   publicKeyHex: string; // Ready for Canton Gateway API
@@ -170,9 +194,10 @@ export function verifySignature(
 
 export function createMockSigner(keyPair: CantonTestKeyPair) {
   return {
-    getAddress: async (_derivationPath: string) => ({
+    getAddress: async (derivationPath: string) => ({
       address: `canton_test_${keyPair.fingerprint.slice(-8)}`,
       publicKey: keyPair.publicKeyHex,
+      path: derivationPath,
     }),
 
     signTransaction: async (
@@ -224,6 +249,9 @@ export function createMockSigner(keyPair: CantonTestKeyPair) {
 
       const cleanHash = hashToSign.startsWith("0x") ? hashToSign.slice(2) : hashToSign;
       const signature = keyPair.sign(cleanHash);
+      if (typeof data === "object" && "challenge" in data && data.challenge) {
+        return { signature, applicationSignature: signDeviceChallenge(cleanHash, data.challenge) };
+      }
       return { signature };
     },
   };

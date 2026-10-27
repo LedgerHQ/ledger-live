@@ -34,6 +34,18 @@ function isQuoteErrorItem(item: unknown): item is QuoteErrorItem {
   return typeof item === "object" && item !== null && "parameter" in item;
 }
 
+/**
+ * Mirrors swap-live-app's approval check: only a token swapped through a provider contract needs
+ * an allowance, not a native asset or a deposit-based provider (e.g. NEAR Intents, MoonPay).
+ */
+export const needsTokenAllowance = (
+  fromAccount: Account,
+  provider: SwapProvider,
+): provider is TokenAllowanceProvider =>
+  Boolean(provider.contractAddress && fromAccount.parentAccount);
+
+export type TokenAllowanceProvider = SwapProvider & { readonly contractAddress: string };
+
 export async function getMinimumSwapAmount(
   accountFrom: Account,
   accountTo: Account,

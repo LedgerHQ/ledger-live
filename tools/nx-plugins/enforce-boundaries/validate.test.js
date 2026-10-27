@@ -10,7 +10,9 @@ const {
   findSourceImportViolations,
   collectLegacyPackageNames,
   findBannedDependencyViolations,
+  findBannedExternalViolations,
 } = require("./validate");
+const { BOUNDARY_EXCEPTIONS, LEGACY_PACKAGES, BANNED_EXTERNALS_BY_TAG } = require("./constraints");
 
 /**
  * @param {Array<{name: string, tags: string[]}>} projects
@@ -423,6 +425,22 @@ test("dynamic import() of legacy package is flagged", t => {
   assert.equal(violations[0].specifier, "@ledgerhq/live-common");
 });
 
+test("an import after a string reading import or from is flagged, a commented import is not", t => {
+  const root = makeTmpWorkspace({
+    "shared/utils/src/a.ts":
+      'const action = "import";\nimport { a } from "@ledgerhq/logs";\nconst word = "from";\nimport { b } from "@ledgerhq/errors";',
+    "shared/utils/src/b.ts":
+      '// import "@ledgerhq/logs";\n/* require("@ledgerhq/errors") */\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const legacy = new Set(["@ledgerhq/logs", "@ledgerhq/errors"]);
+  const violations = findSourceImportViolations(root, legacy);
+  assert.deepEqual(violations.map(v => `${path.basename(v.file)} ${v.specifier}`).sort(), [
+    "a.ts @ledgerhq/errors",
+    "a.ts @ledgerhq/logs",
+  ]);
+});
+
 test("sub-path import is matched by package name", t => {
   const root = makeTmpWorkspace({
     "shared/utils/src/index.ts": 'import type { Foo } from "@ledgerhq/logs/types";',
@@ -614,4 +632,111 @@ test("findBannedDependencyViolations ignores unrelated dependencies and missing 
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
+});
+
+// --- LEGACY_PACKAGES / BANNED_EXTERNALS_BY_TAG (real constraints) ---
+
+test("domain source importing an npm legacy package fails", t => {
+  const root = makeTmpWorkspace({
+    "domain/entity/foo/src/index.ts": 'import { getConfig } from "@ledgerhq/live-config";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(
+    root,
+    new Set(LEGACY_PACKAGES),
+    BOUNDARY_EXCEPTIONS,
+  );
+  assert.equal(violations.length, 1);
+  assert.equal(violations[0].specifier, "@ledgerhq/live-config");
+});
+
+test("shared/env importing @ledgerhq/live-env passes, another shared package fails", t => {
+  const root = makeTmpWorkspace({
+    "shared/env/src/index.ts": 'import { getEnv } from "@ledgerhq/live-env";',
+    "shared/other/src/index.ts": 'import { getEnv } from "@ledgerhq/live-env";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findSourceImportViolations(
+    root,
+    new Set(LEGACY_PACKAGES),
+    BOUNDARY_EXCEPTIONS,
+  );
+  assert.equal(violations.length, 1);
+  assert.ok(violations[0].file.startsWith(path.join("shared", "other")));
+});
+
+/** @param {Record<string, string[]>} tagsByRoot */
+function taggedGraph(tagsByRoot) {
+  return {
+    nodes: Object.fromEntries(
+      Object.entries(tagsByRoot).map(([root, tags]) => [root, { data: { root, tags } }]),
+    ),
+    dependencies: {},
+  };
+}
+
+test("domain/entity manifest declaring react fails", t => {
+  const root = makeTmpWorkspace({
+    "domain/entity/foo/package.json": JSON.stringify({
+      name: "@domain/entity-foo",
+      peerDependencies: { react: "*" },
+      devDependencies: { "react-native": "*" },
+    }),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "domain/entity/foo": ["scope:domain", "type:domain-entity"] });
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(violations.map(v => `${v.specifier}:${v.field}`).sort(), [
+    "react-native:devDependencies",
+    "react:peerDependencies",
+  ]);
+  assert.ok(violations.every(v => v.file === path.join("domain/entity/foo", "package.json")));
+});
+
+test("domain/api manifest declaring react passes", t => {
+  const root = makeTmpWorkspace({
+    "domain/api/foo/package.json": JSON.stringify({
+      name: "@domain/api-foo",
+      peerDependencies: { react: "*" },
+    }),
+    "domain/api/foo/src/hooks.ts": 'import { useMemo } from "react";',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "domain/api/foo": ["scope:domain", "type:domain-api"] });
+  assert.deepEqual(findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG), []);
+});
+
+test("domain/entity source importing react or a react sub-path fails, react-dom-like names do not", t => {
+  const root = makeTmpWorkspace({
+    "domain/entity/foo/package.json": JSON.stringify({ name: "@domain/entity-foo" }),
+    "domain/entity/foo/src/a.ts": 'import { useMemo } from "react";',
+    "domain/entity/foo/src/b.tsx": 'import { jsx } from "react/jsx-runtime";',
+    "domain/entity/foo/src/c.ts": 'import { View } from "react-native-svg";',
+    "domain/entity/foo/src/e.ts": 'import "react-native";',
+    "domain/entity/foo/dist/d.js": 'require("react");',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "domain/entity/foo": ["scope:domain", "type:domain-entity"] });
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(violations.map(v => v.specifier).sort(), [
+    "react",
+    "react-native",
+    "react/jsx-runtime",
+  ]);
+  assert.ok(violations.every(v => v.field === undefined));
+});
+
+test("domain/entity: react after a string reading import is flagged, a commented react import is not", t => {
+  const root = makeTmpWorkspace({
+    "domain/entity/foo/package.json": JSON.stringify({ name: "@domain/entity-foo" }),
+    "domain/entity/foo/src/a.ts": 'const action = "import";\nimport { useMemo } from "react";',
+    "domain/entity/foo/src/b.ts": '// import "react";\nexport {};',
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = taggedGraph({ "domain/entity/foo": ["scope:domain", "type:domain-entity"] });
+  const violations = findBannedExternalViolations(graph, root, BANNED_EXTERNALS_BY_TAG);
+  assert.deepEqual(
+    violations.map(v => `${path.basename(v.file)} ${v.specifier}`),
+    ["a.ts react"],
+  );
 });

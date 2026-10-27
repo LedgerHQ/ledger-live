@@ -163,7 +163,12 @@ describe("Delegation/UnstakingSection (tezos)", () => {
 
     const link = screen.getByText(shortAddressPreview(hash));
     await user.click(link);
-    expect(openURL).toHaveBeenCalledWith(expect.stringContaining(hash));
+    expect(openURL).toHaveBeenCalledWith(
+      expect.stringContaining(hash),
+      "OpenURL",
+      {},
+      { sensitive: true },
+    );
   });
 
   it("activates the tx id link via keyboard (Enter) when focused", () => {
@@ -182,6 +187,11 @@ describe("Delegation/UnstakingSection (tezos)", () => {
     fireEvent.focus(tabbable as Element);
     fireEvent.keyDown(tabbable as Element, { key: "Enter" });
 
-    expect(openURL).toHaveBeenCalledWith(expect.stringContaining(hash));
+    expect(openURL).toHaveBeenCalledWith(
+      expect.stringContaining(hash),
+      "OpenURL",
+      {},
+      { sensitive: true },
+    );
   });
 });

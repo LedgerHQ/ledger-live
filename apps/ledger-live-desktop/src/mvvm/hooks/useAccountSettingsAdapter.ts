@@ -5,7 +5,7 @@ import { accountNameWithDefaultSelector } from "@domain/entity-account-name";
 import type { AccountSettingsAdapter } from "@features/flow-account-detail-settings";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
-import { updateAccount } from "~/renderer/actions/accounts";
+import { removeAccount, updateAccount } from "~/renderer/actions/accounts";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { setAccountName, walletSelector } from "~/renderer/reducers/wallet";
 
@@ -33,8 +33,22 @@ export function useAccountSettingsAdapter(): AccountSettingsAdapter<Account> {
     [dispatch],
   );
 
+  const removeAccountFromPortfolio = useCallback(
+    (account: Account) => {
+      dispatch(removeAccount(account));
+    },
+    [dispatch],
+  );
+
   return useMemo(
-    () => ({ isNameEditDisabled, locale, getAccountName, getDerivationTag, renameAccount }),
-    [isNameEditDisabled, locale, getAccountName, renameAccount],
+    () => ({
+      isNameEditDisabled,
+      locale,
+      getAccountName,
+      getDerivationTag,
+      renameAccount,
+      removeAccount: removeAccountFromPortfolio,
+    }),
+    [isNameEditDisabled, locale, getAccountName, renameAccount, removeAccountFromPortfolio],
   );
 }

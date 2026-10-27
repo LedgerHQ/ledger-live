@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
-import { BalanceEmptyState } from "../components/Hero/BalanceEmptyState.native";
+import { BalanceEmptyState } from "../components/Hero/BalanceEmptyState";
 import { emptyLabels } from "./fixtures";
 
 describe("BalanceEmptyState (Native)", () => {

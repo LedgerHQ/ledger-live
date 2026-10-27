@@ -119,7 +119,7 @@ To watch the device screen during a local run, on Docker or Speculinho, set `SPE
 
 ### E2E_FEATURE_FLAGS_JSON
 
-Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flag Resolution](../docs/e2e-conventions.md#feature-flags).
+Set `E2E_FEATURE_FLAGS_JSON` to inject flags for the run. To understand the format and how feature flags resolve, refer to [Feature Flags](../docs/e2e-conventions.md#feature-flags).
 
 ### Feature Flag presets
 
@@ -137,7 +137,7 @@ See the `ffPresetMap` in `utils/featureFlagUtils.ts` for available presets.
 
 ## Skipping tests from CI
 
-To keep a spec out of CI, use a `.skip.spec.ts` suffix. See [Known failures and skips](docs/e2e-mobile-conventions.md#known-failures-and-skips).
+To keep a spec out of CI, use a `.skip.spec.ts` suffix. See [Known failures and skips](docs/e2e-mobile-conventions.md#a-tracked-failure-must-use-knownfailure).
 
 ## Before committing a test change
 

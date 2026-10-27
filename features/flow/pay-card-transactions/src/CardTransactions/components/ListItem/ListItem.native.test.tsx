@@ -57,14 +57,16 @@ describe("ListItem (native)", () => {
     expect(screen.queryByText("-13.0214 USDC")).toBeNull();
   });
 
-  it("calls onPress when the transaction is selected", async () => {
-    const onPress = jest.fn();
+  it("calls onOpenTransaction when the transaction is selected", async () => {
+    const onOpenTransaction = jest.fn();
     const user = userEvent.setup();
 
-    render(<ListItem item={item()} onPress={onPress} />, { wrapper: cardApiWrapper() });
+    render(<ListItem item={item()} onOpenTransaction={onOpenTransaction} />, {
+      wrapper: cardApiWrapper(),
+    });
 
     await user.press(screen.getByTestId(`card-transactions-item-${transaction.id}`));
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenTransaction).toHaveBeenCalledTimes(1);
   });
 });

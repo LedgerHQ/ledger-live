@@ -28,7 +28,7 @@ jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/components/CurrencyDownStatusAlert", () => ({
   __esModule: true,

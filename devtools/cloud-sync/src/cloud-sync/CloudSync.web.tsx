@@ -90,7 +90,7 @@ function CloudSync(props: CloudSyncDevToolProps) {
           value={vm.json}
           onChange={e => vm.setJson(e.target.value)}
           rows={20}
-          className="w-full font-mono text-xs bg-base border border-base rounded p-8 text-base resize-y"
+          className="w-full font-mono bg-base border border-base rounded p-8 text-base resize-y"
           placeholder="Pull to load the cloud document…"
         />
       </div>

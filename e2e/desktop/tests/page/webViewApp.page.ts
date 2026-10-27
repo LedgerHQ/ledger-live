@@ -1,14 +1,14 @@
 import { Page, expect, test } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export abstract class WebViewAppPage extends AppPage {
   public _webviewPage?: Page;
   public webviewUrlHistory: string[] = [];
 
   protected abstract readonly webviewIdentifier: string;
-  protected defaultWebViewTimeout = TIMEOUT.xxlarge;
+  protected defaultWebViewTimeout = TIMEOUT.xlarge;
 
   /** The first Electron window whose title matches this page's webview identifier. */
   private async findWebviewWindow(): Promise<Page | undefined> {
@@ -49,7 +49,7 @@ export abstract class WebViewAppPage extends AppPage {
         },
         {
           timeout,
-          intervals: [500],
+          intervals: [INTERVAL.short],
           message: `WebView with identifier "${this.webviewIdentifier}" not found after ${timeout}ms`,
         },
       )

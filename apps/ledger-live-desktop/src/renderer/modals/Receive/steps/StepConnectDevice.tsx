@@ -4,7 +4,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { StepProps } from "../Body";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
@@ -42,7 +42,7 @@ export default function StepConnectDevice({
 export function StepConnectDeviceFooter({ t, onSkipConfirm, eventType, currencyName }: StepProps) {
   return (
     <Box horizontal flow={2}>
-      <TrackPage
+      <TrackScreen
         category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step 2"
         currencyName={currencyName}

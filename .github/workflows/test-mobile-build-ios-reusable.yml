@@ -161,6 +161,7 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      # The dummy apps stay until release and hotfix drop them from live-mobile:e2e:ci dependsOn.
       - uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         name: install dependencies
         id: install-dependencies

@@ -8,6 +8,7 @@ import { waitForIdentitiesInAppJson } from "tests/utils/userdata";
 import { FileUtils } from "tests/utils/fileUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 test.describe("Settings", () => {
   test.use({
@@ -166,7 +167,7 @@ test.describe("Settings", () => {
       await app.settingsModal.expectIdentitiesRegenerated(userdataFile, userIdBefore);
 
       expect(
-        await FileUtils.waitForFileToBeRemoved(staleAppJsonBackup, 15000),
+        await FileUtils.waitForFileToBeRemoved(staleAppJsonBackup, TIMEOUT.medium),
         "stale app.json.* backup should be cleaned up on the Reset-app reboot",
       ).toBeTruthy();
     },
@@ -251,4 +252,32 @@ test.describe("Settings", () => {
       },
     );
   }
+});
+
+const themeTestData = [
+  { label: "Light", colorScheme: "light" },
+  { label: "Dark", colorScheme: "dark" },
+] as const;
+
+test.describe("Settings", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding-with-last-seen-device",
+  });
+
+  test(
+    "Change app theme",
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: { type: "TMS", description: "B2CQA-5432" },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openSettings();
+      for (const theme of themeTestData) {
+        await app.settings.changeTheme(theme.label);
+        await app.settings.expectThemeSelected(theme.label);
+        await app.settings.expectAppColorScheme(theme.colorScheme);
+      }
+    },
+  );
 });

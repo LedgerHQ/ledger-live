@@ -9,7 +9,7 @@ import { usePerpsDepositExecution, type PerpsDepositDeviceStep } from "../usePer
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 const mockExecuteSwap = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Exchange/executeSwap", () => ({

@@ -4,7 +4,7 @@ import WebviewErrorDrawer from "./index";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: jest.fn(({ children }: { children?: React.ReactNode }) => <>{children}</>),
+  TrackScreen: jest.fn(({ children }: { children?: React.ReactNode }) => <>{children}</>),
 }));
 
 jest.mock("../../utils/index", () => ({
