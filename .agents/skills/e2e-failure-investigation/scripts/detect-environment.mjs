@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Usage: detect-environment.mjs <run_dir>
 // Reads logs and config/environments.json. Writes environment.json.
-import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -36,30 +36,35 @@ if (swapBase) {
 
 const firebase = config.detection.log_firebase_env.patterns.map(find).find(Boolean) ?? null;
 if (firebase) sources.push(`log firebase env=${firebase}`);
-if (!environment && firebase) environment = firebase === "production" || firebase === "js" ? "production" : "testing";
+if (!environment && firebase)
+  environment = firebase === "production" || firebase === "js" ? "production" : "testing";
 if (!environment) {
   environment = config.detection.workflow_default;
   sources.push("workflow default");
 }
 
-const mismatch = swapBase && firebase && config.environments[environment]?.firebase_env !== (firebase === "js" ? "production" : firebase);
+const mismatch =
+  swapBase &&
+  firebase &&
+  config.environments[environment]?.firebase_env !== (firebase === "js" ? "production" : firebase);
 
-writeFileSync(
-  join(runDir, "environment.json"),
-  JSON.stringify(
-    {
-      environment,
-      settings: config.environments[environment],
-      swap_api_base_seen: swapBase,
-      firebase_env_seen: firebase,
-      feature_flags: find("Feature Flags:\\*{0,2}\\s*(\\S+)"),
-      speculos_mode: find("Speculos:\\*{0,2}\\s*([^\\n*]+)"),
-      sources,
-      mismatch: Boolean(mismatch),
-      known_env_mismatches: config.known_env_mismatches,
-    },
-    null,
-    2,
-  ),
-);
+const result = {
+  environment,
+  settings: config.environments[environment],
+  swap_api_base_seen: swapBase,
+  firebase_env_seen: firebase,
+  feature_flags: find("Feature Flags:\\*{0,2}\\s*(\\S+)"),
+  speculos_mode: find("Speculos:\\*{0,2}\\s*([^\\n*]+)"),
+  sources,
+  mismatch: Boolean(mismatch),
+  known_env_mismatches: config.known_env_mismatches,
+};
+writeFileSync(join(runDir, "environment.json"), `${JSON.stringify(result, null, 2)}\n`);
+
+const preflightPath = join(runDir, "preflight.json");
+if (existsSync(preflightPath)) {
+  const preflight = JSON.parse(readFileSync(preflightPath, "utf8"));
+  preflight.environment = { status: "detected", value: environment, sources };
+  writeFileSync(preflightPath, `${JSON.stringify(preflight, null, 2)}\n`);
+}
 console.log(`environment: ${environment} (${sources.join("; ")})`);

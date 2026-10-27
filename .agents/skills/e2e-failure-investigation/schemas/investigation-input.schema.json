@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "investigation-input.schema.json",
+  "title": "E2E investigation input",
+  "type": "object",
+  "required": ["version", "run", "domain", "policy"],
+  "properties": {
+    "version": { "const": "1" },
+    "run": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": ["integer", "string"], "pattern": "^[0-9]+$" },
+        "repository": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "domain": { "type": "string", "minLength": 1 },
+    "state_dir": { "type": "string" },
+    "delivery": { "enum": ["stdout", "slack"] },
+    "force": { "type": "boolean" },
+    "adapters": {
+      "type": "object",
+      "properties": {
+        "github_actions": { "enum": ["auto", "disabled"] },
+        "koda_mcp": { "enum": ["auto", "disabled"] }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["jira_write_approved"],
+      "properties": { "jira_write_approved": { "type": "boolean" } },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,8 +1,9 @@
 # 01 Collect
 
-Input: `run_id`, `STATE_DIR`. Output: `jobs.json`, `logs/<job_id>.log`.
+Input: versioned investigation input, `STATE_DIR`. Output: `preflight.json`, `jobs.json`, `logs/<job_id>.log`.
 
-1. Run `scripts/collect.sh <run_id> $STATE_DIR/runs/<run_id>`. It needs `gh` access to `LedgerHQ/ledger-live`.
-2. Read `jobs.json`. If the run has no failed jobs, skip stages 02 to 05. Go to stage 06 with `skipped: "no_failures"`.
-3. If a log is empty or missing, retry once. If it stays empty, put the job in `user_actions`.
-4. Add the run to `runs/index.json`.
+1. Run `node scripts/preflight.mjs <input.json> $STATE_DIR/runs/<run_id>` before collection. Stop if its GitHub Actions availability is unavailable.
+2. Run `scripts/collect.sh <run_id> $STATE_DIR/runs/<run_id>`. It uses read-only `gh` access to `LedgerHQ/ledger-live` by default.
+3. Read `jobs.json`. If there are no failed jobs, follow the stage-06 short path.
+4. Retry an empty or missing job log once. If it remains unavailable, add the job and access failure to output gaps.
+5. Add the run to `runs/index.json`.

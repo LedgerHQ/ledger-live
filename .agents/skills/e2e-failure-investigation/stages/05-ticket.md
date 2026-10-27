@@ -1,11 +1,8 @@
 # 05 Ticket
 
-Input: draft findings, the `jira` block of the domain pack. Output: `ticket` field on each finding, `causes.json` updated.
+Input: findings, domain Jira settings, investigation input policy. Output: ticket fields and `causes.json`.
 
-1. Group findings by `cause_id`. Handle each group once.
-2. Skip `flaky` groups, unless their cause is shared with a failed test.
-3. For a group that needs a ticket, gather attachments (see `bug-ticket`, section Gather attachments). Then call the `bug-ticket` skill with a request that follows its `ticket-request.schema.json`. Pass `domain_jira` from the domain pack.
-4. `bug-ticket` returns an existing key (`known`), a new key (created by the agent) or no key (creation is off).
-5. If it returns no key, keep the status and add "create ticket" to `user_actions`.
-6. Update `causes.json`: ticket key, `first_seen`, `last_seen`, run count.
-7. For a `not_confirmed` finding, do not create a ticket.
+1. **Gate:** if `policy.jira_write_approved` is not exactly `true`, do not call `bug-ticket`, do not search Jira, do not gather attachment candidates, and add `Jira write approval was not granted` to each ticket-worthy finding's gaps. Continue to stage 06.
+2. Group non-flaky findings by `cause_id`. Do not ticket `not_confirmed` findings.
+3. With explicit approval, gather attachments only when a ticket is needed, then call `bug-ticket`. Pass `allow_create: false` unless the caller separately authorizes creation.
+4. Record the result and update `causes.json`. A Jira write or attachment must be stated in the final report.

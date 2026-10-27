@@ -1,0 +1,16 @@
+{
+  "github_actions": {
+    "adapter": "gh CLI/API",
+    "capabilities": ["read run metadata", "read jobs", "read logs", "read artifacts"],
+    "prohibited": ["trigger workflows", "rerun workflows", "modify workflows"]
+  },
+  "koda_mcp": {
+    "adapter": null,
+    "capabilities": [],
+    "note": "This skill does not define Koda MCP configuration, authentication, tools, or runtime behavior."
+  },
+  "jira": {
+    "read_only_collection": "automatic",
+    "writes": "explicit approval required"
+  }
+}
