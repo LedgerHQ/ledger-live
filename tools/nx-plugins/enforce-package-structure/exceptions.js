@@ -177,20 +177,10 @@ const COMPONENT_EXCEPTIONS = {
     ContactNameDisclaimer: componentWaiver("R1", "R5"),
     ContactNameInput: componentWaiver("R2", "R5"),
   },
-  "features/platform/style": {
-    StyleProvider: componentWaiver("R2"),
-  },
-  "shared/analytics-react": {
-    TrackPage: componentWaiver("R1", "R4"),
-    TrackScreen: componentWaiver("R1", "R4"),
-  },
   "shared/ui-info-state": {
     DialogBackgroundGradient: componentWaiver("R1"),
     DialogBackgroundToneProvider: componentWaiver("R1"),
     InfoState: componentWaiver("R2"),
-  },
-  "shared/ui-queued-bottom-sheet": {
-    QueuedBottomSheet: componentWaiver("R1", "R3"),
   },
 };
 

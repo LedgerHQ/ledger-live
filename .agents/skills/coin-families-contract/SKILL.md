@@ -3,12 +3,12 @@ name: coin-families-contract
 description: |
   Coin-specific families logic must live in families/.
   Generic UI uses the families contract only (no if (family === "evm") in shared code).
-  Use this guidance for work in "**/families/**", "**/mvvm/**", "**/renderer/**" and "**/screens/**".
+  Use when working in "**/families/**", "**/mvvm/**", "**/renderer/**" and "**/screens/**".
 ---
 
 # Coin families contract (Desktop & Mobile UI)
 
-**Principle:** Coin-specific UI and behavior must live in **families/**. Generic screens, hooks, and components **must not** branch on `family === "evm"` (or any family name). They must use the **families contract**: optional slots defined in the family type, implemented per family, and consumed via a single lookup (e.g. `getLLDCoinFamily(currency.family).SlotName`). This keeps generic code family-agnostic and supports **modularisation and lazy loading**.
+**Principle:** Coin-specific UI and behavior must live in **families/**. Generic screens, hooks, and components **must not** branch on `family === "evm"` (or any family name). They must use the **families contract**: optional slots defined in the family type, implemented per family, and consumed via a single lookup (e.g. `useLLDCoinFamily(currency.family).SlotName`). This keeps generic code family-agnostic and supports **modularisation and lazy loading**.
 
 ## Do not do (anti-patterns)
 
@@ -27,11 +27,11 @@ description: |
 
 2. **Implement only in the family**
 
-   - Put the component or logic in `families/<family>/` (e.g. `families/hedera/NoAssociatedAccounts.tsx`) and export it from the family index (Desktop: in the object passed to `generated`; Mobile: in the generated aggregation if applicable).
+   - Put the component or logic in `families/<family>/` (e.g. `families/hedera/NoAssociatedAccounts.tsx`) and add it to the family object (Desktop: the default export of `families/<family>/index.ts`, loaded on demand through `loaders.ts`; Mobile: in the generated aggregation if applicable).
 
 3. **Use the contract in generic code**
    - Generic code looks up by family and uses the slot if present, with **no** `if (family === "hedera")`:
-   - **Desktop:** `getLLDCoinFamily(currency.family).NoAssociatedAccounts` → use it when defined.
+   - **Desktop:** `useLLDCoinFamily(currency.family).NoAssociatedAccounts` → use it when defined. The hook lives in `apps/ledger-live-desktop/src/renderer/families/useLLDCoinFamily.ts` and is imported from `~/renderer/families`. It suspends while the family chunk loads, so it needs a `<Suspense>` boundary above it. Outside React, `importLLDCoinFamily(name)` from the same module returns a promise.
    - **Mobile:** e.g. `getCustomNoAssociatedAccounts(currency)` returning a component from a family map, then pass it to the screen (e.g. as `CustomNoAssociatedAccounts` in route params).
 
 ## Reference example: Scan Device "no associated accounts"
@@ -41,7 +41,7 @@ description: |
 - **Family implementation:**  
   `apps/ledger-live-desktop/src/renderer/families/hedera/NoAssociatedAccounts.tsx` and `hedera/index.ts` exporting it in the family object.
 - **Generic usage (Desktop):**  
-  `StepImport.tsx` / `useScanAccounts.ts`: `getLLDCoinFamily(mainCurrency.family).NoAssociatedAccounts` — no Hedera-specific branch.
+  `apps/ledger-live-desktop/src/mvvm/features/AddAccountDrawer/screens/ScanAccounts/useScanAccounts.ts`: `useLLDCoinFamily(currency.family).NoAssociatedAccounts`, with no Hedera-specific branch.
 - **Generic usage (Mobile):**  
   `useScanDeviceAccountsViewModel.ts`: `getCustomNoAssociatedAccounts(currency)` from `~/generated/NoAssociatedAccounts`; result passed as `CustomNoAssociatedAccounts` to the NoAssociatedAccounts screen. No `if (family === "hedera")` in the VM.
 
@@ -49,5 +49,5 @@ When you need **new** coin-specific behavior in a generic flow (e.g. post-add-ac
 
 ## Paths
 
-- **Desktop:** `apps/ledger-live-desktop/src/renderer/families/` — contract in `types.ts`, implementations per family, aggregation in `generated.ts`; generic code under `renderer/`, `mvvm/`.
+- **Desktop:** `apps/ledger-live-desktop/src/renderer/families/`: contract in `types.ts`, implementations per family, one dynamic import per family in `loaders.ts`, lookup through `useLLDCoinFamily`; generic code under `renderer/`, `mvvm/`.
 - **Mobile:** `apps/ledger-live-mobile/src/families/` — family-specific UI and flows; generic code under `mvvm/`, `screens/`. Use generated maps or a small helper (e.g. `getCustomNoAssociatedAccounts`) so generic code never branches on family name.

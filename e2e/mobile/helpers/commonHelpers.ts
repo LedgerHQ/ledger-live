@@ -108,7 +108,7 @@ export async function launchApp(customConfig: Detox.DeviceLaunchAppConfig = {}) 
     : {};
 
   const port = await findFreePort();
-  closeBridge();
+  await closeBridge();
   const wsToken = initBridge(port);
   const { launchArgs: extraLaunchArgs, ...restConfig } = customConfig;
   await device.launchApp({

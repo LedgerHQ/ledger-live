@@ -21,7 +21,7 @@ import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/render
 import useTheme from "~/renderer/hooks/useTheme";
 import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { firstValueFrom } from "rxjs";
 import { useAccountName } from "~/renderer/reducers/wallet";
@@ -243,7 +243,7 @@ const StepConnectDeviceFooter = ({ data, onClose, onSkipDevice }: PropsFooter) =
   }, [onSkipDevice]);
   return !skipClicked ? (
     <Box horizontal flow={2}>
-      <TrackPage category="Buy Flow" name="Step 1" />
+      <TrackScreen category="Buy Flow" name="Step 1" />
       <Button
         primary
         inverted

@@ -1,7 +1,7 @@
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -59,7 +59,7 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <S.Container>
-        <TrackPage
+        <TrackScreen
           category="Celo Withdraw"
           name="Step Confirmed"
           flow="stake"
@@ -76,7 +76,7 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <S.Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Celo Withdraw"
           name="Step Confirmation Error"
           flow="stake"

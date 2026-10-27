@@ -2,7 +2,7 @@ import React from "react";
 import { renderHook } from "@testing-library/react";
 import { ThemeProvider } from "styled-components";
 import { resolveThemeVariant } from "../resolveThemeVariant";
-import { useThemeVariant } from "../useThemeVariant.web";
+import { useThemeVariant } from "../useThemeVariant";
 
 describe("resolveThemeVariant", () => {
   it("returns dark for a dark theme", () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { themeSelector } from "~/renderer/actions/general";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Loading from "../../components/LoadingStep";
 import {
   AnalyticsFlow,
@@ -19,7 +19,7 @@ export default function ActivationLoadingStep() {
 
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category={String(AnalyticsPage.Loading)}
         {...walletSyncEntryFlowProperties(AnalyticsFlow)}
       />

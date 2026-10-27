@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { openURL } from "~/renderer/linking";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import Box from "~/renderer/components/Box";
@@ -82,7 +82,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
 
   return (
     <Box flow={4} mx={40}>
-      <TrackPage
+      <TrackScreen
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step Summary"
         flow="stake"

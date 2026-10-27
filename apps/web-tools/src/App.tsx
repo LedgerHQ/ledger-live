@@ -1,7 +1,7 @@
 import "./live-common-setup";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
-import { StyleProvider } from "@features/platform-style";
+import { StyleProvider } from "@features/platform-style/web";
 import { AppRoutes } from "./routes";
 import { store } from "./store";
 import "./globals.css";

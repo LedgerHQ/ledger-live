@@ -3,7 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
@@ -49,7 +49,7 @@ export default function StepDelegation({
 
   return (
     <Box flow={1}>
-      <TrackPage category="Delegation Flow" name="Step Validator" />
+      <TrackScreen category="Delegation Flow" name="Step Validator" />
       {error && <ErrorBanner error={error} />}
       <ValidatorField
         account={account}

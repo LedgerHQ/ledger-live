@@ -198,7 +198,7 @@ export default class TestEnvironment extends DetoxEnvironment {
   declare readonly testPath: string;
 
   async setup() {
-    await armWorkerWatchdog();
+    armWorkerWatchdog();
     setWatchdogState({ spec: this.testPath, phase: "environment setup" });
 
     const workerId = Number(process.env.JEST_WORKER_ID ?? "1");

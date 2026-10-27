@@ -170,15 +170,20 @@ describe("resolveQuickActions", () => {
       expect(ids(mobile())).toEqual(["transfer", "buy", "swap", "sell", "earn"]);
     });
 
-    it("keeps only Transfer and Buy without funds", () => {
+    it("keeps only Transfer, Swap and Buy without funds", () => {
       expect(mobile({ hasFunds: false })).toEqual([
         { id: "transfer", state: "active" },
+        { id: "swap", state: "active" },
         { id: "buy", state: "active" },
       ]);
     });
 
-    it("keeps only Transfer without funds when Buy is unavailable", () => {
-      expect(ids(mobile({ hasFunds: false, isBuyAvailable: false }))).toEqual(["transfer"]);
+    it("drops Swap and Buy without funds when they are unavailable", () => {
+      expect(ids(mobile({ hasFunds: false, isSwapAvailable: false }))).toEqual(["transfer", "buy"]);
+      expect(ids(mobile({ hasFunds: false, isBuyAvailable: false }))).toEqual(["transfer", "swap"]);
+      expect(
+        ids(mobile({ hasFunds: false, isSwapAvailable: false, isBuyAvailable: false })),
+      ).toEqual(["transfer"]);
     });
   });
 });

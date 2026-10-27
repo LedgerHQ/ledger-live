@@ -5,7 +5,7 @@ import { experimentalFeatures, isReadOnlyEnv, Feature } from "~/renderer/experim
 import { useDispatch } from "LLD/hooks/redux";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import { openModal } from "~/renderer/actions/modals";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import useEnv from "@features/platform-env";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
@@ -152,7 +152,7 @@ const SectionExperimental = () => {
 
   return (
     <div data-e2e="experimental_section_title">
-      <TrackPage category="Settings" name="Experimental" />
+      <TrackScreen category="Settings" name="Experimental" />
       <Body>
         <Alert type="security" m={4}>
           <Trans i18nKey="settings.experimental.disclaimer"></Trans>
