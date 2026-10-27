@@ -30,11 +30,13 @@ function expectConfig(result: { current: WalletFeaturesConfig }, expected: Walle
   expect(result.current).toEqual(expected);
 }
 
-function withDesktopMyWallet(
+function withDesktopGraduatedFlags(
   platform: WalletPlatform,
   config: WalletFeaturesConfig,
 ): WalletFeaturesConfig {
-  return platform === "desktop" ? { ...config, shouldDisplayMyWallet: true } : config;
+  return platform === "desktop"
+    ? { ...config, shouldDisplayMyWallet: true, shouldDisplayAggregatedAssets: true }
+    : config;
 }
 
 const makeConfig = (
@@ -80,7 +82,7 @@ describe("useWalletFeaturesConfig hook", () => {
           enabled: false,
           params: ALL_PARAMS_ENABLED,
         });
-        expectConfig(result, withDesktopMyWallet(platform, DISABLED_CONFIG));
+        expectConfig(result, withDesktopGraduatedFlags(platform, DISABLED_CONFIG));
       },
     );
 
@@ -88,7 +90,7 @@ describe("useWalletFeaturesConfig hook", () => {
       "returns DISABLED_CONFIG for %s when the flag is disabled (default)",
       platform => {
         const { result } = renderWalletFeaturesConfig(platform);
-        expectConfig(result, withDesktopMyWallet(platform, DISABLED_CONFIG));
+        expectConfig(result, withDesktopGraduatedFlags(platform, DISABLED_CONFIG));
       },
     );
   });
@@ -99,7 +101,7 @@ describe("useWalletFeaturesConfig hook", () => {
         enabled: true,
         params: ALL_PARAMS_ENABLED,
       });
-      expectConfig(result, withDesktopMyWallet(platform, ALL_CONFIG_ENABLED));
+      expectConfig(result, withDesktopGraduatedFlags(platform, ALL_CONFIG_ENABLED));
     });
 
     describe.each(PLATFORMS)("on %s platform", platform => {
@@ -116,13 +118,16 @@ describe("useWalletFeaturesConfig hook", () => {
         const { result } = renderWalletFeaturesConfig(platform, { enabled: true, params });
         expectConfig(
           result,
-          withDesktopMyWallet(platform, { ...ENABLED_NO_PARAMS_CONFIG, ...expectedOverrides }),
+          withDesktopGraduatedFlags(platform, {
+            ...ENABLED_NO_PARAMS_CONFIG,
+            ...expectedOverrides,
+          }),
         );
       });
 
       it("handles missing params gracefully", () => {
         const { result } = renderWalletFeaturesConfig(platform, { enabled: true });
-        expectConfig(result, withDesktopMyWallet(platform, ENABLED_NO_PARAMS_CONFIG));
+        expectConfig(result, withDesktopGraduatedFlags(platform, ENABLED_NO_PARAMS_CONFIG));
       });
 
       it("handles partial params", () => {
@@ -132,7 +137,7 @@ describe("useWalletFeaturesConfig hook", () => {
         });
         expectConfig(
           result,
-          withDesktopMyWallet(platform, {
+          withDesktopGraduatedFlags(platform, {
             ...ENABLED_NO_PARAMS_CONFIG,
             shouldUseLazyOnboarding: true,
           }),
