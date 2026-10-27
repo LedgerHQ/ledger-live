@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import {
-  fetchPerpsWithdrawQuote,
-  type WithdrawQuote,
-} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/quote";
+import { fetchPerpsWithdrawQuote, type WithdrawQuote } from "./quote";
 
 const QUOTE_DEBOUNCE_MS = 500;
 

@@ -1,11 +1,15 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../../__tests__/test-helpers/dom-polyfill";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { act, renderHook, waitFor } from "tests/testSetup";
-import { WithdrawLowLiquidityError } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/errors";
-import { usePerpsWithdrawQuote, type PerpsWithdrawQuoteParams } from "../usePerpsWithdrawQuote";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { WithdrawLowLiquidityError } from "./errors";
+import { usePerpsWithdrawQuote, type PerpsWithdrawQuoteParams } from "./useWithdrawQuote";
 
 const mockFetchWithdrawQuote = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/quote", () => ({
+jest.mock("./quote", () => ({
   fetchPerpsWithdrawQuote: (params: unknown) => mockFetchWithdrawQuote(params),
 }));
 
