@@ -28,6 +28,8 @@ the actions (opening a link, navigating to Perps).
 Notices tied to a chain (the Robinhood disclaimer, Perps on Hyperliquid) are listed in one table,
 `CURRENCY_NOTICES` in `src/logic/currencyNotices.ts`, keyed by currency id. The rule reads it and
 applies the feature flag of each notice.
+Currency ids are plain strings (the currency entity has no union of ids), so
+`currencyNotices.test.ts` checks that every key is a known currency id.
 
 This is a deliberate exception to the coin families contract
 (`.agents/skills/coin-families-contract/SKILL.md`): these notices are product and legal content

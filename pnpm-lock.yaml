@@ -6940,6 +6940,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/i18n
     devDependencies:
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../../domain/entity/currency-crypto
       '@features/platform-style':
         specifier: workspace:*
         version: link:../../platform/style

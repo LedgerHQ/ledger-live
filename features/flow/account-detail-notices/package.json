@@ -30,6 +30,7 @@
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
+    "@domain/entity-currency-crypto": "workspace:*",
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
