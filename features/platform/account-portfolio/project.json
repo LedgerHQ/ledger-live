@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-account-portfolio",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

@@ -49,6 +49,14 @@ export type PortfolioReadParams = PortfolioParams & {
 
 export type AddRegistrationsParams = PortfolioParams & { registrations: PortfolioRegistration[] };
 
+/** The portfolio ends up registering exactly `registrations`: it is created if missing. */
+export type SyncPortfolioParams = PortfolioParams & { registrations: PortfolioRegistration[] };
+
+export type BalanceSnapshotParams = PortfolioParams & { currency?: string };
+
+/** Every balance group of a portfolio, every page read, valued in `currency`. */
+export type BalanceSnapshot = { currency?: string; items: BalanceGroup[] };
+
 /** `registrationIds` are the ids a portfolio lists in its `registrations`. */
 export type RemoveRegistrationsParams = PortfolioParams & { registrationIds: string[] };
 

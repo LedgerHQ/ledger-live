@@ -15,6 +15,7 @@ import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
 import type { CryptoAddressesViewModel } from "./types";
 import { CryptoTable } from "./components/Table/CryptoTable";
 import { CryptoTableEmptyState } from "./components/Table/CryptoTableEmptyState";
+import ServiceAccounts from "LLD/features/ServiceAccounts";
 import { CRYPTO_TRACKING_PAGE_NAME } from "./constants";
 
 export function CryptoAddressesView({
@@ -32,6 +33,7 @@ export function CryptoAddressesView({
     onAccountClick,
     rows,
     lookupParentAccount,
+    isPortfolioServiceEnabled,
   } = viewModel;
   const { t } = useTranslation();
 
@@ -67,7 +69,12 @@ export function CryptoAddressesView({
           </TableActionBarTrailing>
         </TableActionBar>
         <LedgerSyncEntryPoint entryPoint={EntryPoint.accounts} variant="v4" />
-        {rows.length === 0 ? (
+        {isPortfolioServiceEnabled ? (
+          <ServiceAccounts
+            searchValue={searchValue}
+            emptyState={<CryptoTableEmptyState message={emptyTableMessage} />}
+          />
+        ) : rows.length === 0 ? (
           <CryptoTableEmptyState message={emptyTableMessage} />
         ) : (
           <CryptoTable

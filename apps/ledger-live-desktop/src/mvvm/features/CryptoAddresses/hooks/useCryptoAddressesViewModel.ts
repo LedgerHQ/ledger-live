@@ -16,6 +16,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getDefaultAccountName } from "@domain/entity-account-name";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
 import { parseCryptoAddressesBackPath } from "../utils/cryptoAddressesLocationState";
+import { useIsPortfolioServiceEnabled } from "LLD/features/ServiceAccounts/hooks/useIsPortfolioServiceEnabled";
 
 export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const [searchValue, setSearchValue] = useState("");
   const { rows, lookupParentAccount } = useCryptoAccountRows(searchValue);
+  const isPortfolioServiceEnabled = useIsPortfolioServiceEnabled();
   const { showBackButton, navigateBack } = usePopNavigationBack(parseCryptoAddressesBackPath);
 
   const handleSearchChange = useCallback((value: string) => {
@@ -80,5 +82,6 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
     onAccountClick,
     rows,
     lookupParentAccount,
+    isPortfolioServiceEnabled,
   };
 }

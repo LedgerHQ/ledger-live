@@ -1262,6 +1262,9 @@ importers:
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
+      '@features/platform-account-portfolio':
+        specifier: workspace:*
+        version: link:../../features/platform/account-portfolio
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
@@ -4008,6 +4011,9 @@ importers:
       '@features/flow-pay-request':
         specifier: workspace:*
         version: link:../../features/flow/pay-request
+      '@features/platform-account-portfolio':
+        specifier: workspace:*
+        version: link:../../features/platform/account-portfolio
       '@features/platform-card':
         specifier: workspace:*
         version: link:../../features/platform/card
@@ -5288,6 +5294,9 @@ importers:
 
   domain/api/account-portfolio:
     dependencies:
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../entity/account-descriptor
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -5319,6 +5328,9 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -10339,6 +10351,79 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
+  features/platform/account-portfolio:
+    dependencies:
+      '@domain/api-account-portfolio':
+        specifier: workspace:*
+        version: link:../../../domain/api/account-portfolio
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-descriptor
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+    devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
+      '@shared/api-services':
+        specifier: workspace:*
+        version: link:../../../shared/api-services
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/dom':
+        specifier: 'catalog:'
+        version: 10.4.1
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      jest-sonar:
+        specifier: 0.2.16
+        version: 0.2.16
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0

@@ -22,6 +22,7 @@ const baseViewModel: CryptoAddressesViewModel = {
   onAccountClick: jest.fn(),
   rows: [],
   lookupParentAccount: jest.fn(),
+  isPortfolioServiceEnabled: false,
 };
 
 describe("CryptoAddresses (Crypto page)", () => {

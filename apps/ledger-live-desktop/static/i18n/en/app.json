@@ -9730,7 +9730,23 @@
       "cardDescription": "Borrow at competitive rates",
       "cta": "Explore"
     },
-    "noDeviceTitle": "Your secure crypto wallet"
+    "noDeviceTitle": "Your secure crypto wallet",
+    "service": {
+      "title": "Portfolio service",
+      "subtitle": "Balances read from the Portfolio service.",
+      "loading": "Reading the Portfolio service",
+      "empty": "No accounts on this portfolio yet",
+      "skipped_one": "{{count}} local account was not sent",
+      "skipped_other": "{{count}} local accounts were not sent",
+      "pending": "Pending",
+      "requestFailed": "Portfolio service request failed",
+      "status": {
+        "not_registered": "Not registered",
+        "registration_failure": "Registration failed",
+        "synchronized": "Synchronized",
+        "uninitialized": "Indexing"
+      }
+    }
   },
   "servicesEntryPoints": {
     "perps": {
