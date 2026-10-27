@@ -28,7 +28,6 @@
     "@features/platform-pay-analytics": "workspace:*",
     "@shared/i18n": "workspace:*",
     "@shared/ui-queued-bottom-sheet": "workspace:*",
-    "@ledgerhq/lumen-utils-shared": "catalog:",
     "@ledgerhq/crypto-icons": "catalog:",
     "@reduxjs/toolkit": "catalog:"
   },

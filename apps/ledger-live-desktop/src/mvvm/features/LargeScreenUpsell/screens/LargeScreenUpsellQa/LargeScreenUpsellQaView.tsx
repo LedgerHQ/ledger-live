@@ -33,7 +33,7 @@ function ToggleRow({ label, selected, onChange, name, explanation }: ToggleRowPr
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-16">
-        <span className="body-2 font-medium text-base">{label}</span>
+        <span className="body-2 text-base">{label}</span>
         <Switch name={name} selected={selected} onChange={onChange} />
       </div>
       {explanation ? <p className="body-3 text-muted">{explanation}</p> : null}
@@ -55,7 +55,7 @@ function ParamRow({
 }: ParamRowProps) {
   return (
     <div className="flex flex-col gap-4">
-      <span className="body-2 font-medium text-base">{label}</span>
+      <span className="body-2 text-base">{label}</span>
       <p className="body-3 text-muted">{explanation}</p>
       <div className="flex flex-nowrap items-center gap-8">
         <TextInput
@@ -212,16 +212,13 @@ export function LargeScreenUpsellQaView({
               })}
             </ul>
 
-            <p
-              className="body-2 mb-14 font-medium text-base"
-              data-testid="large-screen-upsell-qa-copy-variant"
-            >
+            <p className="body-2 mb-14 text-base" data-testid="large-screen-upsell-qa-copy-variant">
               {COPY.copyVariantLabel}: {copyVariant}
             </p>
 
             <div className="flex flex-col gap-6" data-testid="large-screen-upsell-qa-reload-hint">
               <p className="body-3 text-muted">{COPY.reloadHintLead}</p>
-              <p className="body-2 font-medium text-warning">{COPY.reloadHintRestart}</p>
+              <p className="body-2 text-warning">{COPY.reloadHintRestart}</p>
               {wouldShow ? (
                 <Button
                   size="sm"
@@ -256,7 +253,7 @@ export function LargeScreenUpsellQaView({
             />
 
             <div className="flex flex-col gap-6">
-              <span className="body-2 font-medium text-base">{COPY.seenNanos}</span>
+              <span className="body-2 text-base">{COPY.seenNanos}</span>
               <div className="flex flex-wrap items-center gap-12">
                 {nanoModelRows.map(row => (
                   <label
@@ -276,7 +273,7 @@ export function LargeScreenUpsellQaView({
             </div>
 
             <div className="flex flex-col gap-6">
-              <span className="body-2 font-medium text-base">{COPY.seenTouchscreens}</span>
+              <span className="body-2 text-base">{COPY.seenTouchscreens}</span>
               <p className="body-3 text-muted">{COPY.seenTouchscreensHint}</p>
               <div className="flex flex-wrap items-center gap-12">
                 {touchscreenModelRows.map(row => (
@@ -297,7 +294,7 @@ export function LargeScreenUpsellQaView({
             </div>
 
             <div className="flex flex-col gap-6">
-              <span className="body-2 font-medium text-base">{COPY.onboardingDate}</span>
+              <span className="body-2 text-base">{COPY.onboardingDate}</span>
               <p className="body-3 text-muted">{COPY.onboardingConfigureHint}</p>
               <p className="body-3 text-muted" data-testid="large-screen-upsell-qa-onboarding">
                 {COPY.currentValue(onboardingDisplay)}
@@ -334,7 +331,7 @@ export function LargeScreenUpsellQaView({
             </div>
 
             <div className="flex flex-col gap-6">
-              <span className="body-2 font-medium text-base">{COPY.retriesEdit}</span>
+              <span className="body-2 text-base">{COPY.retriesEdit}</span>
               <p className="body-3 text-muted" data-testid="large-screen-upsell-qa-retries-status">
                 {COPY.currentValue(COPY.retriesValue(retriesDisplay, killThresholdValue))}
               </p>
@@ -367,7 +364,7 @@ export function LargeScreenUpsellQaView({
             </div>
 
             <div className="flex flex-col gap-6">
-              <span className="body-2 font-medium text-base">{COPY.lastSeenLabel}</span>
+              <span className="body-2 text-base">{COPY.lastSeenLabel}</span>
               <p className="body-3 text-muted">{COPY.lastSeenHint}</p>
               <p
                 className="body-3 text-muted"
@@ -413,7 +410,7 @@ export function LargeScreenUpsellQaView({
 
                 <div className="flex flex-col gap-6">
                   <div className="flex flex-wrap items-center justify-between gap-8">
-                    <span className="body-2 font-medium text-base">{COPY.flagParamsTitle}</span>
+                    <span className="body-2 text-base">{COPY.flagParamsTitle}</span>
                     {hasLocalOverride ? (
                       <Button
                         size="sm"

@@ -2,11 +2,12 @@ import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { useLocation } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Bell, BellNotification } from "@ledgerhq/lumen-ui-react/symbols";
+import { Bell } from "@ledgerhq/lumen-ui-react/symbols";
 import { openInformationCenter } from "~/renderer/actions/UI";
 import { track } from "@shared/analytics";
 import { useUnseenNotificationsCount } from "~/renderer/hooks/useUnseenNotificationsCount";
 import { getEnv } from "@shared/env";
+import { BellNotificationIcon } from "../components/BellNotificationIcon";
 
 export const useNotificationIndicator = () => {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ export const useNotificationIndicator = () => {
   const unseenCount = useUnseenNotificationsCount();
   const totalNotifCount = getEnv("PLAYWRIGHT_RUN") ? 0 : unseenCount;
   const hasUnseen = totalNotifCount > 0;
-  const icon = hasUnseen ? BellNotification : Bell;
+  const icon = hasUnseen ? BellNotificationIcon : Bell;
 
   const handleOpenNotificationCenter = useCallback(() => {
     track("button_clicked2", {

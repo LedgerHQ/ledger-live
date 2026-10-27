@@ -35,7 +35,6 @@
     "@features/flow-pay-card-wallets": "workspace:*",
     "@features/flow-pay-card-widget": "workspace:*",
     "@features/platform-pay-analytics": "workspace:^",
-    "@ledgerhq/lumen-utils-shared": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@shared/i18n": "workspace:*",
     "@shared/linking": "workspace:*",

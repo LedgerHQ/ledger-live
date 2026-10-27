@@ -1,4 +1,4 @@
-import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
+import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import type {
   QuickAction,
   QuickActionId,

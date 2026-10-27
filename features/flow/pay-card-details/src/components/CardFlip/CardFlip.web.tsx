@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { useTranslation } from "@shared/i18n";
 import { CARD_GRADIENT } from "../CardArtwork/cardGradient.web";
 import type { CardFlipProps } from "../../types";

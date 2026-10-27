@@ -1,5 +1,5 @@
 import { Pill } from "../pill/Pill";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 
 export interface FlagEnableIndicatorProps {
   readonly enabled: boolean;

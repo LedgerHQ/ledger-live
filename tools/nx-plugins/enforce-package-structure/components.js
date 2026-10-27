@@ -63,6 +63,12 @@ const STANDARD_LIB_FILE = /^lib\.(?:es\d+|esnext|decorators)(?:\.[\w-]+)*\.d\.ts
 const PLATFORM_SUFFIXES = [".web", ".native", ".ios", ".android"];
 const CONTRACT_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx"];
 const BANNED_IMPORT_PREFIXES = CONFIG.bannedImportPrefixes;
+const NEUTRAL_IMPORT_TYPES = new Map(
+  Object.entries(CONFIG.neutralImportTypes).map(([specifier, names]) => [
+    specifier,
+    new Set(names),
+  ]),
+);
 const NEUTRAL_REACT_TYPES = new Set(CONFIG.neutralReactTypes);
 // Library types whose arguments keep all their props; `Pick` and `Omit` drop some, so R3 does not
 // read their arguments, nor those of imported types.
@@ -689,6 +695,34 @@ function suffixedSiblings(file) {
  * @returns {string[]} the segments of an entity name, `React.JSX.Element` read as three, or none
  *   for an expression that is not a name
  */
+/**
+ * R3: whether an import of a banned module names only `neutralImportTypes`, type-only. A default,
+ * namespace or value binding, a re-export or a `typeof` query is never neutral.
+ *
+ * @param {ts.Node} node an import or export declaration, or an `import("...")` type
+ * @param {string} specifier
+ */
+function isNeutralTypeImport(node, specifier) {
+  const allowed = NEUTRAL_IMPORT_TYPES.get(specifier);
+  if (!allowed) return false;
+  if (ts.isImportTypeNode(node)) {
+    const segments = !node.isTypeOf && node.qualifier ? nameSegments(node.qualifier) : [];
+    return segments.length === 1 && allowed.has(segments[0]);
+  }
+  if (!ts.isImportDeclaration(node)) return false;
+  const clause = node.importClause;
+  const bindings = clause?.namedBindings;
+  if (!clause || clause.name || !bindings || !ts.isNamedImports(bindings)) return false;
+  return (
+    bindings.elements.length > 0 &&
+    bindings.elements.every(
+      element =>
+        (clause.isTypeOnly || element.isTypeOnly) &&
+        allowed.has((element.propertyName ?? element.name).text),
+    )
+  );
+}
+
 function nameSegments(name) {
   if (ts.isIdentifier(name)) return [name.text];
   const [left, right] = ts.isQualifiedName(name)
@@ -1264,7 +1298,11 @@ function checkContractModule(module) {
             ts.isStringLiteral(node.argument.literal)
           ? node.argument.literal.text
           : null;
-    if (specifier && BANNED_IMPORT_PREFIXES.some(prefix => specifier.startsWith(prefix))) {
+    if (
+      specifier &&
+      BANNED_IMPORT_PREFIXES.some(prefix => specifier.startsWith(prefix)) &&
+      !isNeutralTypeImport(node, specifier)
+    ) {
       report(node, "contract-platform-import", `the contract imports \`${specifier}\``);
     }
     if (ts.isImportTypeNode(node) && !node.isTypeOf && node.qualifier && specifier === "react") {

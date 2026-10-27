@@ -1,6 +1,5 @@
 import {
   Bell,
-  BellNotification,
   Clock,
   Devices,
   Eye,
@@ -10,11 +9,12 @@ import {
   Tools,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { DeviceIconComponent } from "LLD/utils/getDeviceIcon";
+import { BellNotificationIcon } from "./components/BellNotificationIcon";
 import { ActivityIndicatorIcon } from "./utils/getActivityIndicatorIcon";
 
 type IconComponent =
   | typeof Bell
-  | typeof BellNotification
+  | typeof BellNotificationIcon
   | typeof Clock
   | typeof Devices
   | typeof Eye
