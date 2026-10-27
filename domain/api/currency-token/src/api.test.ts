@@ -277,11 +277,14 @@ describe("cryptoAssetsApi requests", () => {
   });
 
   it("getTokensSyncHash errors with 404 on an empty currency array", async () => {
+    calEndpoints.currencies.mockImplementation(() =>
+      HttpResponse.json([], { headers: { "X-Ledger-Commit": "commit-hash" } }),
+    );
     const store = makeStore();
     const result = await store.dispatch(
       cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("unknown"),
     );
-    expect(result.isError).toBe(true);
+    expect(result.error).toMatchObject({ status: 404 });
     expectUrl(received(calEndpoints.currencies), "/v1/currencies", {
       id: "unknown",
     });
