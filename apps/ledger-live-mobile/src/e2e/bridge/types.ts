@@ -6,6 +6,7 @@ import { BleState, SettingsState } from "~/reducers/types";
 import type { PayCardPersistedState } from "~/db";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type { Contact } from "@domain/entity-contact";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Subject, Observable } from "rxjs";
 
 import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
@@ -57,6 +58,7 @@ export type ServerData =
       payload: string;
     }
   | { type: "contactsImported"; id: string; payload: "" }
+  | { type: "localManifestsImported"; id: string; payload: string }
   | { type: "ACK"; id: string }
   | { type: "swapSetupDone"; id: string }
   | { type: "swapLiveAppReady" }
@@ -90,6 +92,7 @@ export type MessageData =
     }
   | { type: "importTrustchain"; id: string; payload: TrustchainStore }
   | { type: "importContacts"; id: string; payload: Contact[] }
+  | { type: "importLocalManifests"; id: string; payload: LiveAppManifest[] }
   | { type: "importBle"; id: string; payload: BleState }
   | { type: "importPostOnboarding"; id: string; payload: Partial<PostOnboardingState> }
   | { type: "importPayCard"; id: string; payload: Partial<PayCardPersistedState> }
