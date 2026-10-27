@@ -147,6 +147,56 @@ export const queryBalance = async (address: string): Promise<bigint | undefined>
   return balance ?? 0n;
 };
 
+/**
+ * The account's balance in e8s, read from the ledger itself, as a neuron refresh reads it. Unlike
+ * {@link queryBalance}, it does not lag behind the ledger. Throws when the query is not answered.
+ */
+export const queryLedgerBalance = async (address: string): Promise<bigint> => {
+  const agent = await getAgent(ICP_NETWORK_URL);
+  const func = getCanisterIdlFunc(ledgerIdlFactory, "account_balance");
+  const res = await agent.query(Principal.fromText(MAINNET_LEDGER_CANISTER_ID), {
+    arg: encodeCanisterIdlFunc(func, [{ account: Buffer.from(address, "hex") }]),
+    methodName: "account_balance",
+  });
+  invariant(res.status === "replied", "[ICP](queryLedgerBalance) Query failed");
+  const [{ e8s }] = decodeCanisterIdlFunc<[{ e8s: bigint }]>(func, res.reply.arg);
+  return e8s;
+};
+
+/**
+ * The id of the neuron whose stake sits in governance subaccount `subaccount`, or undefined when no
+ * neuron does. An anonymous `list_neurons` query naming the subaccount alone: governance answers
+ * with the neuron's public information keyed by its id, and no full record. Throws when the query
+ * is not answered, so no answer is never read as "no neuron".
+ */
+export const findNeuronIdBySubaccount = async (
+  subaccount: Uint8Array,
+): Promise<string | undefined> => {
+  const agent = await getAgent(ICP_NETWORK_URL);
+  const func = getCanisterIdlFunc(governanceIdlFactory, "list_neurons");
+  const res = await agent.query(Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID), {
+    arg: encodeCanisterIdlFunc(func, [
+      {
+        neuron_ids: [],
+        neuron_subaccounts: [[{ subaccount }]],
+        include_neurons_readable_by_caller: false,
+        include_empty_neurons_readable_by_caller: [],
+        include_public_neurons_in_full_neurons: [],
+        page_number: [],
+        page_size: [],
+      },
+    ]),
+    methodName: "list_neurons",
+  });
+  invariant(res.status === "replied", "[ICP](findNeuronIdBySubaccount) Query failed");
+  const [{ neuron_infos }] = decodeCanisterIdlFunc<[{ neuron_infos: [bigint, unknown][] }]>(
+    func,
+    res.reply.arg,
+  );
+  const [entry] = neuron_infos;
+  return entry === undefined ? undefined : entry[0].toString();
+};
+
 // The account bridge reads an unanswered balance query as 0 rather than failing the sync.
 export const fetchBalance = async (address: string): Promise<BigNumber> =>
   BigNumber(((await queryBalance(address)) ?? 0n).toString());

@@ -10,11 +10,24 @@ import {
 import { MAX_NAT64, MIN_NEURON_STAKE } from "../consts";
 import {
   ICPInvalidDissolveDelayIncrease,
+  ICPStakeMemoNotRecoverable,
   InvalidMemoICP,
   NotEnoughTransferAmount,
 } from "../errors";
+import { getNeuronStakeSubAccountIdentifier } from "./buildNeuronTransaction";
+import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "./crypto";
+import { findNeuronIdBySubaccount, queryLedgerBalance } from "../network/api";
 import type { IcpIntent, IcpStakingIntent } from "./intent";
-import { validateIntent } from "./validateIntent";
+import { validateIntent, validateIntentWithStakeAccount } from "./validateIntent";
+
+jest.mock("../network/api", () => ({
+  ...jest.requireActual("../network/api"),
+  findNeuronIdBySubaccount: jest.fn(),
+  queryLedgerBalance: jest.fn(),
+}));
+
+const mockFindNeuron = jest.mocked(findNeuronIdBySubaccount);
+const mockLedgerBalance = jest.mocked(queryLedgerBalance);
 
 const SENDER = "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37";
 const RECIPIENT = "5442dcadb1de34824e0a3000db6228ab21f3ad298caa1d910da0bd56d7f892a5";
@@ -233,5 +246,126 @@ describe("validateIntent", () => {
     const { errors } = validateIntent(intent(), native(1_000_000n), { value: 0n });
 
     expect(errors).toEqual({});
+  });
+});
+
+describe("validateIntent for a stake transfer", () => {
+  const PUBKEY =
+    "0484bf7562262bbd6940085748f3be6afa52ae317155181ece31b66351ccffa4b08cc43d63b2859d469fee15f31c9edb5324266e6fd0407e87382d60fc4511acd8";
+  const NONCE = 42n;
+  const STAKE = BigInt(MIN_NEURON_STAKE);
+  const STAKE_ACCOUNT = getNeuronStakeSubAccountIdentifier(
+    derivePrincipalFromPubkey(PUBKEY),
+    NONCE,
+  );
+
+  const stake = (overrides: Partial<IcpStakingIntent> = {}): IcpStakingIntent => ({
+    intentType: "staking",
+    type: "create_neuron",
+    mode: "delegate",
+    valAddress: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+    sender: deriveAddressFromPubkey(PUBKEY),
+    senderPublicKey: PUBKEY,
+    recipient: STAKE_ACCOUNT,
+    amount: STAKE,
+    asset: { type: "native" },
+    data: { type: "neuron", stakeNonce: String(NONCE) },
+    ...overrides,
+  });
+
+  describe("with the stake account read", () => {
+    beforeEach(() => {
+      mockFindNeuron.mockResolvedValue(undefined);
+      mockLedgerBalance.mockResolvedValue(0n);
+    });
+    afterEach(() => jest.resetAllMocks());
+
+    it("accepts a stake into an unused account", async () => {
+      const { errors } = await validateIntentWithStakeAccount(stake(), native(10n * STAKE));
+
+      expect(errors).toEqual({});
+      expect(mockLedgerBalance).toHaveBeenCalledWith(STAKE_ACCOUNT);
+    });
+
+    it("reports a stake into an account in use", async () => {
+      mockFindNeuron.mockResolvedValue("123");
+
+      const { errors } = await validateIntentWithStakeAccount(stake(), native(10n * STAKE));
+
+      expect(errors.transaction?.message).toMatch(/already in use/);
+    });
+
+    // Broadcast does not read the stake account, so validation cannot pass without reading it.
+    it("refuses a stake transfer without the sender's public key, reading nothing", async () => {
+      const { senderPublicKey: _, ...keyless } = stake();
+
+      const { errors } = await validateIntentWithStakeAccount(keyless, native(10n * STAKE));
+
+      expect(errors.transaction?.message).toMatch(/public key/);
+      expect(mockFindNeuron).not.toHaveBeenCalled();
+    });
+
+    it("reads nothing for a stake transfer the stateless checks refuse", async () => {
+      const { errors } = await validateIntentWithStakeAccount(stake(), native(STAKE));
+
+      expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
+      expect(mockFindNeuron).not.toHaveBeenCalled();
+    });
+  });
+
+  it("accepts a stake the balance covers, with the ledger fee", () => {
+    expect(validateIntent(stake(), native(STAKE + FEE))).toEqual({
+      errors: {},
+      warnings: {},
+      estimatedFees: FEE,
+      amount: STAKE,
+      totalSpent: STAKE + FEE,
+    });
+  });
+
+  it("stakes the balance net of the fee", () => {
+    const result = validateIntent(stake({ useAllAmount: true, amount: 0n }), native(2n * STAKE));
+
+    expect(result.errors).toEqual({});
+    expect(result.amount).toBe(2n * STAKE - FEE);
+  });
+
+  it("checks the minimum stake against the balance it would send", () => {
+    const { errors } = validateIntent(stake({ useAllAmount: true, amount: 0n }), native(STAKE));
+
+    expect(errors.amount).toBeInstanceOf(NotEnoughTransferAmount);
+  });
+
+  it("reports a balance that does not cover the stake and the fee", () => {
+    const { errors } = validateIntent(stake(), native(STAKE));
+
+    expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
+  });
+
+  it.each([
+    ["a stake under the minimum", stake({ amount: STAKE - 1n }), "amount", NotEnoughTransferAmount],
+    [
+      "a recipient the nonce does not name",
+      stake({ recipient: RECIPIENT }),
+      "recipient",
+      InvalidTransactionError,
+    ],
+    [
+      "a top-up without a nonce",
+      stake({ type: "increase_stake", valAddress: "123", data: { type: "neuron" } }),
+      "transaction",
+      ICPStakeMemoNotRecoverable,
+    ],
+  ])("reports %s", (_, input, field, error) => {
+    const { errors } = validateIntent(input, native(10n * STAKE));
+
+    expect(Object.keys(errors)).toEqual([field]);
+    expect(errors[field]).toBeInstanceOf(error);
+  });
+
+  it("reports a fee other than the ledger fee", () => {
+    const { errors } = validateIntent(stake(), native(10n * STAKE), { value: 1n });
+
+    expect(errors.fees).toBeInstanceOf(InvalidTransactionError);
   });
 });

@@ -263,22 +263,31 @@ const nonceToBytes = (nonce: bigint): Uint8Array => {
 };
 
 /**
- * The ledger account a neuron stake is transferred to: a governance-canister subaccount derived as
- * SHA-256( 0x0c ‖ "neuron-stake" ‖ controller ‖ nonce_be ). The same `nonce` is the transfer memo,
- * which the governance canister recomputes to claim the neuron.
+ * The governance-canister subaccount a neuron's stake sits in, derived as
+ * SHA-256( 0x0c ‖ "neuron-stake" ‖ controller ‖ nonce_be ). Governance looks a neuron up by it.
+ */
+export const getNeuronStakeSubAccount = (controller: Principal, nonce: bigint): Uint8Array => {
+  const padding = new TextEncoder().encode("neuron-stake");
+  return sha256(
+    new Uint8Array([
+      padding.length,
+      ...padding,
+      ...controller.toUint8Array(),
+      ...nonceToBytes(nonce),
+    ]),
+  );
+};
+
+/**
+ * The ledger account a neuron stake is transferred to: the governance canister's account at
+ * {@link getNeuronStakeSubAccount}. The same `nonce` is the transfer memo, which the governance
+ * canister recomputes to claim the neuron.
  */
 export const getNeuronStakeSubAccountIdentifier = (
   controller: Principal,
   nonce: bigint,
 ): string => {
-  const padding = new TextEncoder().encode("neuron-stake");
-  const data = new Uint8Array([
-    padding.length,
-    ...padding,
-    ...controller.toUint8Array(),
-    ...nonceToBytes(nonce),
-  ]);
-  const subAccount = SubAccount.fromBytes(sha256(data));
+  const subAccount = SubAccount.fromBytes(getNeuronStakeSubAccount(controller, nonce));
   if (subAccount instanceof Error) throw subAccount;
   return AccountIdentifier.fromPrincipal({ principal: governanceCanisterId(), subAccount }).toHex();
 };
