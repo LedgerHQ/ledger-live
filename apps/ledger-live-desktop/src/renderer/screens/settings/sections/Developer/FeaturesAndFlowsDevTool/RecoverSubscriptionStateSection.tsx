@@ -38,12 +38,12 @@ export const RecoverSubscriptionStateSection = () => {
 
   const handleSelect = useCallback(
     (next: LedgerRecoverSubscriptionStateEnum) => {
-      try {
-        setStoreValue("SUBSCRIPTION_STATE", String(next), protectId);
-        setStoreValue("DISPLAY_BANNER", "true", protectId);
-      } catch {
+      Promise.all([
+        setStoreValue("SUBSCRIPTION_STATE", String(next), protectId),
+        setStoreValue("DISPLAY_BANNER", "true", protectId),
+      ]).catch(() => {
         // Banner persistence is best-effort; Redux still reflects the new state for this session.
-      }
+      });
       dispatch(setDisplayBanner({ protectId, displayBanner: true }));
       dispatch(setRecoverState({ protectId, subscriptionState: next }));
       dispatch(removePostOnboardingActionCompleted({ actionId: PostOnboardingActionId.recover }));
