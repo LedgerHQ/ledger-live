@@ -1,7 +1,8 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import { beginWithdrawRequest } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
@@ -39,12 +40,12 @@ jest.mock("@domain/entity-market-countervalues", () => ({
 }));
 
 const mockUseWithdrawCurrencies = jest.fn();
-jest.mock("../useWithdrawCurrencies", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawCurrencies", () => ({
   useWithdrawCurrencies: () => mockUseWithdrawCurrencies(),
 }));
 
 const mockUsePerpsWithdrawQuote = jest.fn();
-jest.mock("../usePerpsWithdrawQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawQuote", () => ({
   usePerpsWithdrawQuote: (params: unknown) => mockUsePerpsWithdrawQuote(params),
 }));
 
@@ -247,6 +248,24 @@ describe("PerpsWithdraw integration", () => {
     expect(mockOpenDrawer.mock.calls[0]?.[0]).not.toHaveProperty("currencies");
     expect(await screen.findByText("Withdraw to BTC")).toBeOnTheScreen();
     expect(input()).toHaveDisplayValue("500");
+  });
+
+  it("should keep a picked token account the user never held and quote towards it", async () => {
+    const emptyUsdc = { ...genTokenAccount(0, ethAccount, usdcToken), balance: new BigNumber(0) };
+    mockOpenDrawer.mockImplementation(({ onAccountSelected }) =>
+      onAccountSelected(emptyUsdc, ethAccount),
+    );
+    const { user } = renderWithdraw();
+
+    await user.press(screen.getByTestId("perps-withdraw-select-currency"));
+
+    expect(await screen.findByText("Withdraw to USDC")).toBeOnTheScreen();
+    expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        destinationAccount: emptyUsdc,
+        accounts: expect.arrayContaining([emptyUsdc]),
+      }),
+    );
   });
 
   it("should block the form when the supported assets cannot be loaded", async () => {
