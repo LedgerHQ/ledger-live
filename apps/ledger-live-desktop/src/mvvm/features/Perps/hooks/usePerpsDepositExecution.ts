@@ -285,10 +285,11 @@ export function usePerpsDepositExecution(
                 onCancel(error);
               };
               cancelSwapRef.current = cancel;
-              const keepOnClose = () => {
+              const beginBroadcast = () => {
+                if (settled) throw new DrawerClosedError("User closed the deposit");
                 if (cancelSwapRef.current === cancel) cancelSwapRef.current = null;
               };
-              void confirmSignAndBroadcast(exchangeParams, keepOnClose).then(result => {
+              void confirmSignAndBroadcast(exchangeParams, beginBroadcast).then(result => {
                 if (settled) return;
                 settled = true;
                 signed = result;
