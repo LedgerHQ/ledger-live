@@ -259,6 +259,14 @@ flowchart LR
 
 Start from the three shapes in Decision. A universal component is the default; a platform component follows the next section.
 
+The `universal-component` generator writes the starting point of steps 1, 4 and 7: a contract with a `testID` prop, both implementations, a test per platform, and the two barrel lines. It adds them to the barrel the entries already re-export, or to the entries themselves, and never creates a barrel. It refuses a package that is not dual-platform and a name that an entry already exports.
+
+```sh
+pnpm exec nx g @ledgerhq/generators:universal-component ContactsButton --project features/flow/contacts --directory components/ContactsButton
+```
+
+`--directory` is relative to `src/` and defaults to it. Then fill in the props and the two implementations.
+
 1. Write the contract `X.types.ts` next to the implementations, with one exported props type and neutral types only.
 2. Keep platform quirks inside the implementation that has them: a native sheet reads its bottom inset with `useBottomSheetBottomInset()` or `useSafeAreaInsets()` instead of taking a prop. Add a platform-only prop to the contract only when the caller alone knows its value, as an optional primitive tagged `@platform native` or `@platform web`.
 3. Count the tagged props. If they outnumber the shared ones, the component is not universal: author it as a platform component.
@@ -312,6 +320,12 @@ export function ContactsSearch({ query, onSearchQueryChange, bottomOffset = 0, r
 R3 applies to the contract only. `TextInput`, `View` and `HTMLInputElement` appear in the implementations, where they belong.
 
 ## Authoring a platform component
+
+The same generator writes a platform component with `--platform-entry web` or `--platform-entry native`: the component, its props type in the same module, and a test, in `src/web/` or `src/native/` unless `--directory` says otherwise. It re-exports the component from the module that `./web` or `./native` points at, or creates `src/web/index.web.ts` or `src/native/index.native.ts` and adds the subpath to `package.json#exports`. It refuses a component that `.` already exports (R5).
+
+```sh
+pnpm exec nx g @ledgerhq/generators:universal-component WalletPassPreview --project features/flow/pay-card-widget --platform-entry native --directory components/WalletPassPreview
+```
 
 1. Check the shape first. A prop that is awkward to make neutral, or a quirk the implementation can absorb, does not make a component a platform component.
 2. Point `./native`, `./web` or both at a module of their own that carries the platform suffix, so the other platform's typecheck never compiles it. Never point a subpath at the module that the universal entry resolves to.

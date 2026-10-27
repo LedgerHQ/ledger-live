@@ -1,0 +1,5 @@
+export type <%= className %>Props = Readonly<{
+  // Props both platforms need, with neutral types. Callbacks name the intent (onOpenContacts)
+  // and receive values, not events. See docs/adr/universal-components.md.
+  testID?: string;
+}>;
