@@ -15,13 +15,17 @@ type Delivery = {
 function scrubDelivery(delivery: Delivery) {
   const name = scrubPii(delivery.eventName, "eventName");
   const properties = scrubPii(delivery.eventProperties, "eventProperties");
-  const propertiesWithoutExtra = scrubPii(delivery.eventPropertiesWithoutExtra);
+  const propertiesWithoutExtra = scrubPii(delivery.eventPropertiesWithoutExtra, "eventProperties");
+  const findings = [...name.findings, ...properties.findings, ...propertiesWithoutExtra.findings];
+  const uniqueFindings = new Map(
+    findings.map(finding => [`${finding.path} ${finding.kind}`, finding]),
+  );
 
   return {
     eventName: name.value,
     eventProperties: properties.value,
     eventPropertiesWithoutExtra: propertiesWithoutExtra.value,
-    piiFindings: [...name.findings, ...properties.findings],
+    piiFindings: [...uniqueFindings.values()],
   };
 }
 

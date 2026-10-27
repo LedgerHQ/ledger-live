@@ -173,6 +173,21 @@ describe("deliver", () => {
         });
       });
 
+      it("publishes findings in props that extra props overwrite", async () => {
+        setAnalytics(createAnalyticsClient());
+
+        await deliver({
+          type: "track",
+          eventName: "Overwritten",
+          eventProperties: { platform: "mobile" },
+          eventPropertiesWithoutExtra: { platform: ADDRESS },
+        });
+
+        expect(events[0].piiFindings).toEqual([
+          { path: "eventProperties.platform", kind: "evm_address" },
+        ]);
+      });
+
       it("does not publish findings for a clean event", async () => {
         setAnalytics(createAnalyticsClient());
 
