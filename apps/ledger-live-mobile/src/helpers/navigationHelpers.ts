@@ -68,14 +68,14 @@ export const popToScreen = <T extends MappedScreen>(
     popTo: (navigator: ScreenToNavigatorMap[T], params: unknown) => void;
   },
   screen: T,
-  params: unknown,
+  params: object,
 ): void => {
   const navigator = screenToNavigatorMap[screen];
-  const transaction = (params as { transaction?: unknown } | undefined)?.transaction;
+  const transaction = "transaction" in params ? params.transaction : undefined;
 
   // Mirror before popping: once popTo runs, the dispatch no longer reaches the earlier steps.
   if (screen === ScreenName.SendSummary && transaction) {
-    syncTransactionToSendSteps(navigation, navigator, transaction, params as object);
+    syncTransactionToSendSteps(navigation, navigator, transaction, params);
   }
 
   navigation.popTo(navigator, { screen, params });
