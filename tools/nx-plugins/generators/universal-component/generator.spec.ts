@@ -254,6 +254,49 @@ describe("universal component", () => {
     ).rejects.toThrow(/inside the package's src/);
   });
 
+  it.each(["components/internals", "internals", "helpers.internals"])(
+    "refuses the private directory %s",
+    async directory => {
+      await expect(
+        universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE, directory }),
+      ).rejects.toThrow(/private location/);
+      expect(tree.exists(`${PACKAGE}/src/${directory}`)).toBe(false);
+    },
+  );
+
+  it("re-exports a component in a dot-folder through a relative specifier", async () => {
+    await universalComponentGenerator(tree, {
+      name: "ContactsButton",
+      project: PACKAGE,
+      directory: ".generated",
+    });
+
+    expect(readText(tree, `${PACKAGE}/src/index.ts`)).toContain(
+      'export * from "./.generated/ContactsButton";',
+    );
+  });
+
+  it.each([
+    ["a type", "export type ContactsButton = string;\n"],
+    ["an interface", "export interface ContactsButton {\n  id: string;\n}\n"],
+    ["an enum", "export enum ContactsButton {\n  Primary,\n}\n"],
+    ["a type-only re-export", 'export type { Model as ContactsButton } from "./model";\n'],
+  ])("refuses a name already exported as %s", async (_, source) => {
+    tree.write(`${PACKAGE}/src/model/types.ts`, source);
+    tree.write(`${PACKAGE}/src/model/index.ts`, 'export type * from "./types";\n');
+    for (const entry of ["index.ts", "index.native.ts"]) {
+      tree.write(
+        `${PACKAGE}/src/${entry}`,
+        `${readText(tree, `${PACKAGE}/src/${entry}`)}export type * from "./model";\n`,
+      );
+    }
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(/already exported from "\."/);
+    expect(tree.exists(`${PACKAGE}/src/ContactsButton.types.ts`)).toBe(false);
+  });
+
   it("writes into the entries of nested conditions", async () => {
     seedDualPackage(tree, {
       ".": {

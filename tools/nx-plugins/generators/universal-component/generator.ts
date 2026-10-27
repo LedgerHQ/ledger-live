@@ -1,6 +1,7 @@
 import { type Tree, generateFiles, names, readJson, updateJson } from "@nx/devkit";
 import type { UniversalComponentGeneratorSchema } from "./schema";
 import { join, posix } from "path";
+import { isInternalSpecifier } from "../../enforce-package-structure/rules.js";
 
 type Platform = "web" | "native";
 
@@ -10,6 +11,7 @@ const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const PLATFORM_FILE = /\.(?:web|native|ios|android)\.[cm]?[jt]sx?$/;
 const BARREL = /^index(?:\.(?:web|native))?\.tsx?$/;
 const STAR_EXPORT = /^export\s+\*\s+from\s+["'](\.[^"']*)["']/gm;
+const ANY_STAR_EXPORT = /^export\s+(?:type\s+)?\*\s+from\s+["'](\.[^"']*)["']/gm;
 // Names the templates import, which a component of the same name would shadow.
 const TEMPLATE_IMPORTS = new Set(["React", "View"]);
 // What a relative specifier can load, on either platform.
@@ -80,10 +82,11 @@ function resolveSpecifier(tree: Tree, fromFile: string, specifier: string): stri
   return CANDIDATE_SUFFIXES.map(suffix => `${base}${suffix}`).filter(file => tree.isFile(file));
 }
 
-// Follows `export *` from the entries and looks for a module declaring `name`.
+// Follows `export *` and `export type *` from the entries and looks for a module declaring `name`,
+// as a value or a type.
 function isExportedFrom(tree: Tree, entryFiles: string[], name: string): boolean {
   const declaration = new RegExp(
-    `\\bexport\\s+(?:declare\\s+)?(?:async\\s+)?(?:function\\*?|const|let|var|class)\\s+${name}\\b|\\bexport\\s*\\{[^}]*\\b${name}\\b[^}]*\\}`,
+    `\\bexport\\s+(?:declare\\s+)?(?:async\\s+|abstract\\s+|const\\s+(?=enum))?(?:function\\*?|const|let|var|class|type|interface|enum)\\s+${name}\\b|\\bexport\\s+(?:type\\s+)?\\{[^}]*\\b${name}\\b[^}]*\\}`,
   );
   const visited = new Set<string>();
   const queue = entryFiles.filter(file => tree.isFile(file));
@@ -93,7 +96,7 @@ function isExportedFrom(tree: Tree, entryFiles: string[], name: string): boolean
     visited.add(file);
     const source = tree.read(file, "utf-8") ?? "";
     if (declaration.test(source)) return true;
-    for (const [, specifier] of source.matchAll(STAR_EXPORT)) {
+    for (const [, specifier] of source.matchAll(ANY_STAR_EXPORT)) {
       queue.push(...resolveSpecifier(tree, file, specifier));
     }
   }
@@ -126,7 +129,7 @@ function barrelsFor(tree: Tree, dir: string, entryFiles: string[]): string[] {
 
 function relativeSpecifier(fromFile: string, target: string): string {
   const relative = posix.relative(posix.dirname(fromFile), target);
-  return relative.startsWith(".") ? relative : `./${relative}`;
+  return relative.startsWith("../") ? relative : `./${relative}`;
 }
 
 function appendLines(tree: Tree, file: string, lines: string[]) {
@@ -142,6 +145,11 @@ function normalizeDirectory(directory: string | undefined): string | undefined {
   const normalized = posix.normalize(directory.replace(/\\/g, "/")).replace(/^\.?\/+|\/+$/g, "");
   if (normalized.split("/").includes("..")) {
     throw new Error(`--directory "${directory}" must stay inside the package's src/.`);
+  }
+  if (isInternalSpecifier(normalized)) {
+    throw new Error(
+      `--directory "${directory}" is a private location, and the generated component is public.`,
+    );
   }
   return normalized === "." ? "" : normalized;
 }
