@@ -20,6 +20,12 @@ describe("scrubPiiString", () => {
     ["a Cosmos address", COSMOS_ADDRESS, "bech32_address"],
     ["a Cardano address", CARDANO_ADDRESS, "bech32_address"],
     ["an email address", "contact me at satoshi@example.com", "email"],
+    [
+      "an address in a path that looks like a token id",
+      `account/address/${EVM_ADDRESS}`,
+      "evm_address",
+    ],
+    ["an email in a path that looks like a token id", "contact/email/satoshi@example.com", "email"],
     ["a Ledger account id", `/account/${LEDGER_ACCOUNT_ID}`, "ledger_account_id"],
     [
       "an explorer link to a Bitcoin transaction",

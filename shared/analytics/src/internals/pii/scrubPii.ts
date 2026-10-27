@@ -15,7 +15,7 @@ const MAX_DEPTH = 8;
 
 const redacted = (kind: PiiKind) => `[REDACTED:${kind}]`;
 
-const CURRENCY_ID = /^[a-z][a-z0-9_]*\/[a-z0-9_]+\/\S+$/;
+const MOVE_TOKEN_ID = /^[a-z][a-z0-9_]*\/[a-z0-9_]+\/0x[0-9a-f]+::\w+::\w+$/i;
 
 const SENSITIVE_KEYS = new Set([
   "address",
@@ -85,7 +85,7 @@ const VALUE_PATTERNS: ValuePattern[] = [
 ];
 
 export function scrubPiiString(input: string): { value: string; kinds: PiiKind[] } {
-  if (CURRENCY_ID.test(input)) {
+  if (MOVE_TOKEN_ID.test(input)) {
     return { value: input, kinds: [] };
   }
 
