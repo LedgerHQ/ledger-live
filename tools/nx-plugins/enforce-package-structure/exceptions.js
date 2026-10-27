@@ -164,10 +164,6 @@ const COMPONENT_EXCEPTIONS = {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),
   },
-  "features/platform/app-lock": {
-    PasswordDraftProvider: componentWaiver("R1"),
-    PasswordField: componentWaiver("R1", "R3"),
-  },
   "features/platform/contacts": {
     "./native": entryWaiver(),
     "./web": entryWaiver(),

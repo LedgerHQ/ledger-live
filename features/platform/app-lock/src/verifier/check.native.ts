@@ -4,14 +4,14 @@ import {
   APP_LOCK_SCRYPT_PARAMS,
   derivePasswordDigest,
   serialiseDerivation,
-} from "./internals/digest.native";
+} from "./internals/digest";
 import {
   clearPasswordVerifier,
   hasStoredVerifier,
   readStoredPassword,
   writePasswordVerifier,
-} from "./internals/store.native";
-import { verifyPassword } from "./internals/verify.native";
+} from "./internals/store";
+import { verifyPassword } from "./internals/verify";
 import type { PasswordCheck } from "./types";
 
 /** The app draws the randomness, so this package needs no source of its own. */

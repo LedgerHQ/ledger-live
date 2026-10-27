@@ -23,7 +23,7 @@ import {
   hasBiometricsMarker,
   getBiometricsAvailability,
   promptBiometrics,
-} from "./biometrics.native";
+} from "./biometrics";
 
 const keychain = jest.requireMock("react-native-keychain");
 
