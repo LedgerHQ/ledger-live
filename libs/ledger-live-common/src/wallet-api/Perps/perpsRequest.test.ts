@@ -48,6 +48,30 @@ describe("createPerpsRequest", () => {
     await expect(current).resolves.toEqual({ swapId: "swap-2" });
   });
 
+  it("rejects with the given error, even once committed, and clears the request", async () => {
+    const pending = request.begin();
+    const id = request.getId();
+    const failure = new Error("submit failed");
+
+    request.markCommitted(id);
+    request.reject(id, failure);
+
+    await expect(pending).rejects.toBe(failure);
+    expect(request.getId()).toBeNull();
+  });
+
+  it("ignores a reject for a stale or missing id", async () => {
+    request.begin().catch(() => undefined);
+    const staleId = request.getId();
+    const current = request.begin();
+
+    request.reject(staleId, new Error("stale"));
+    request.reject(null, new Error("missing"));
+    request.settle(request.getId(), { swapId: "swap-2" });
+
+    await expect(current).resolves.toEqual({ swapId: "swap-2" });
+  });
+
   it("rejects the previous request when a new one begins, so it never hangs", async () => {
     const first = request.begin();
     const firstId = request.getId();

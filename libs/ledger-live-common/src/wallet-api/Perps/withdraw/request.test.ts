@@ -4,6 +4,7 @@ import {
   cancelWithdrawRequest,
   getWithdrawRequestId,
   markWithdrawRequestCommitted,
+  rejectWithdrawRequest,
   settleWithdrawRequest,
 } from "./request";
 import { beginDepositRequest, cancelDepositRequest } from "../deposit/request";
@@ -39,6 +40,18 @@ describe("withdrawRequest", () => {
     settleWithdrawRequest(id, { swapId: "swap-1" });
 
     await expect(request).resolves.toEqual({ swapId: "swap-1" });
+  });
+
+  it("forwards a submission failure once submitted, not a refusal", async () => {
+    const request = beginWithdrawRequest();
+    const id = getWithdrawRequestId();
+    const failure = new Error("submit failed");
+
+    markWithdrawRequestCommitted(id);
+    rejectWithdrawRequest(id, failure);
+
+    await expect(request).rejects.toBe(failure);
+    expect(getWithdrawRequestId()).toBeNull();
   });
 
   it("is independent from the deposit request", async () => {
