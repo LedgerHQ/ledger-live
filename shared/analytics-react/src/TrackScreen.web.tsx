@@ -1,26 +1,20 @@
 import isEqual from "lodash/isEqual";
 import { useEffect, useRef, memo } from "react";
 import { trackPage } from "@shared/analytics";
-
-export type TrackPageProps = {
-  category: string /** First part of the event name string. */;
-  name?: string /** Second part of the event name.  */;
-  refreshSource?: boolean /** Should the full page name become the `source` of further page events. */;
-  mandatory?: boolean /** Send the page event even when standard analytics tracking is disabled. */;
-  [key: string]: unknown;
-};
+import type { TrackScreenProps } from "./TrackScreen.types";
 
 /**
  * Tracks an event named `Page ${category}${name ? " " + name : ""}` whenever
  * category, name, extra properties, refreshSource, or mandatory change.
  */
-const TrackPageComponent = ({
+function TrackScreenComponent({
   category,
   name,
   refreshSource = true,
   mandatory = false,
+  avoidDuplicates: _avoidDuplicates,
   ...props
-}: TrackPageProps): null => {
+}: TrackScreenProps): null {
   const lastTrackedRef = useRef<TrackedPagePayload | undefined>(undefined);
 
   useEffect(() => {
@@ -40,12 +34,12 @@ const TrackPageComponent = ({
   }, [category, name, props, refreshSource, mandatory]);
 
   return null;
-};
+}
 
-export const TrackPage = memo(TrackPageComponent);
+export const TrackScreen = memo(TrackScreenComponent);
 
 type TrackedPagePayload = {
-  category: string;
+  category?: string;
   name?: string;
   props: Record<string, unknown>;
   refreshSource: boolean;

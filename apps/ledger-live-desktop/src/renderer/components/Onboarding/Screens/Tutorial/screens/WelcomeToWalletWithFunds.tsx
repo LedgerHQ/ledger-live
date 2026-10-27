@@ -2,14 +2,14 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 import { Flex, Icons } from "@ledgerhq/react-ui/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 export function WelcomeToWalletWithFunds(trackProps: Readonly<TrackTutorialProps>) {
   const { t } = useTranslation();
 
   return (
     <Column>
-      <TrackPage
+      <TrackScreen
         category="Set up device"
         name="End of onboarding"
         receiveFlowEnded={true}

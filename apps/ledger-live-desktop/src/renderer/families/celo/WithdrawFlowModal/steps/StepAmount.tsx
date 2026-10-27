@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/celo/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
@@ -83,7 +83,7 @@ const StepAmount = ({
     onChange(pendingWithdrawals[0].index);
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Celo Withdraw"
         name="Step 1"
         flow="stake"

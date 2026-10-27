@@ -3,7 +3,7 @@ import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransa
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { isStakingAccount } from "@ledgerhq/types-live";
 import { track } from "@shared/analytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import invariant from "invariant";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
@@ -62,7 +62,7 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Delegation Cosmos"
           name="Step Confirmed"
           flow="stake"
@@ -84,7 +84,7 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Delegation Cosmos"
           name="Step Confirmation Error"
           flow="stake"

@@ -3,7 +3,7 @@ import { PaySuccess } from "@features/flow-pay-contact";
 import { usePaySuccessViewModel } from "./hooks/usePaySuccessViewModel";
 import { useSendFlowTracking } from "../../context/SendFlowTrackingContext";
 import { useSendFlowTrackingProperties } from "../../hooks/useSendFlowTrackingProperties";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 export function PaySuccessScreen() {
   const viewModel = usePaySuccessViewModel();
@@ -20,7 +20,7 @@ export function PaySuccessScreen() {
 
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category="Modal send - transaction sent"
         refreshSource={false}
         {...trackingProperties}

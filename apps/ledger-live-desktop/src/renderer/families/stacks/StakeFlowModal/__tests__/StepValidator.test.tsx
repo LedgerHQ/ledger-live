@@ -19,7 +19,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 
 import StepValidator, { StepValidatorFooter } from "../steps/StepValidator";

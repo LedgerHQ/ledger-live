@@ -1,5 +1,5 @@
 import React from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
 export default function StepConnectDevice({
@@ -18,7 +18,7 @@ export default function StepConnectDevice({
 }: StepProps) {
   return (
     <>
-      <TrackPage category="Send Flow" name="Step ConnectDevice" currencyName={currencyName} />
+      <TrackScreen category="Send Flow" name="Step ConnectDevice" currencyName={currencyName} />
       <GenericStepConnectDevice
         account={account}
         parentAccount={parentAccount}

@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -43,7 +43,7 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Hedera claim rewards"
           name="Step Confirmed"
           flow="stake"
@@ -62,7 +62,7 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Hedera claim rewards"
           name="Step Confirmation Error"
           flow="stake"

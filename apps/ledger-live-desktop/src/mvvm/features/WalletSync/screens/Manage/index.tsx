@@ -9,7 +9,7 @@ import { Option, OptionProps } from "./Option";
 import styled from "styled-components";
 import { useInstances } from "../ManageInstances/useInstances";
 import { useLifeCycle } from "../../hooks/walletSync.hooks";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
 import { useLedgerSyncInfo } from "../../hooks/useLedgerSyncInfo";
 import { AlertError } from "../../components/AlertError";
@@ -91,7 +91,7 @@ const WalletSyncManage = ({ currentPage }: Props) => {
 
   return (
     <Box height="100%" paddingX="40px">
-      <TrackPage category={currentPage} />
+      <TrackScreen category={currentPage} />
       <Box marginBottom={"24px"}>
         <Text fontSize={23} variant="large">
           {t("walletSync.title")}

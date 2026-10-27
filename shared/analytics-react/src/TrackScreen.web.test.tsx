@@ -7,7 +7,7 @@ import {
   setEnabledFn,
   setTrackingSource,
 } from "@shared/analytics";
-import { TrackPage } from "./TrackPage.web";
+import { TrackScreen } from "./TrackScreen";
 
 const track = jest.fn();
 
@@ -20,9 +20,9 @@ beforeEach(() => {
 
 afterEach(cleanup);
 
-describe("TrackPage", () => {
+describe("TrackScreen", () => {
   it("sends a page event named after the category and name on mount", async () => {
-    render(<TrackPage category="Analytics Consent" name="Optional" flow="test-flow" />);
+    render(<TrackScreen category="Analytics Consent" name="Optional" flow="test-flow" />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
@@ -32,13 +32,22 @@ describe("TrackPage", () => {
     });
   });
 
+  it("keeps the native-only avoidDuplicates prop out of the event properties", async () => {
+    render(<TrackScreen category="Portfolio" flow="test-flow" avoidDuplicates />);
+
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledTimes(1);
+    });
+    expect(track).toHaveBeenCalledWith("Page Portfolio", { flow: "test-flow" });
+  });
+
   it("becomes the source of the next page event", async () => {
-    render(<TrackPage category="Portfolio" />);
+    render(<TrackScreen category="Portfolio" />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
     cleanup();
-    render(<TrackPage category="Market" />);
+    render(<TrackScreen category="Market" />);
 
     expect(getCurrentTrackingPage()).toBe("Market");
     await waitFor(() => {
@@ -51,7 +60,7 @@ describe("TrackPage", () => {
   it("leaves the current page untouched when it does not refresh the source", async () => {
     setTrackingSource("Portfolio");
 
-    render(<TrackPage category="Some Drawer" refreshSource={false} />);
+    render(<TrackScreen category="Some Drawer" refreshSource={false} />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
@@ -60,17 +69,17 @@ describe("TrackPage", () => {
   });
 
   it("sends nothing more when re-rendered with the same properties", async () => {
-    const { rerender } = render(<TrackPage category="Portfolio" />);
+    const { rerender } = render(<TrackScreen category="Portfolio" />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    rerender(<TrackPage category="Portfolio" />);
+    rerender(<TrackScreen category="Portfolio" />);
 
     expect(track).toHaveBeenCalledTimes(1);
   });
 
   it("sends another page event when re-rendered with a changed property", async () => {
-    const { rerender } = render(<TrackPage category="Market" currencyId={"btc"} />);
+    const { rerender } = render(<TrackScreen category="Market" currencyId={"btc"} />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
@@ -79,7 +88,7 @@ describe("TrackPage", () => {
       currencyId: "btc",
     });
 
-    rerender(<TrackPage category="Market" currencyId={"eth"} />);
+    rerender(<TrackScreen category="Market" currencyId={"eth"} />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(2);
@@ -92,21 +101,21 @@ describe("TrackPage", () => {
   });
 
   it("sends nothing more when re-rendered with a new but equal object property", async () => {
-    const { rerender } = render(<TrackPage category="Portfolio" meta={{ tab: "assets" }} />);
+    const { rerender } = render(<TrackScreen category="Portfolio" meta={{ tab: "assets" }} />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    rerender(<TrackPage category="Portfolio" meta={{ tab: "assets" }} />);
+    rerender(<TrackScreen category="Portfolio" meta={{ tab: "assets" }} />);
 
     expect(track).toHaveBeenCalledTimes(1);
   });
 
   it("sends another page event when the category changes on a mounted component", async () => {
-    const { rerender } = render(<TrackPage category="Portfolio" />);
+    const { rerender } = render(<TrackScreen category="Portfolio" />);
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
     });
-    rerender(<TrackPage category="Market" />);
+    rerender(<TrackScreen category="Market" />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(2);
@@ -117,7 +126,7 @@ describe("TrackPage", () => {
   });
 
   it("sends a single page event when StrictMode mounts the component twice", async () => {
-    render(<TrackPage category="Portfolio" />, { wrapper: React.StrictMode });
+    render(<TrackScreen category="Portfolio" />, { wrapper: React.StrictMode });
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledTimes(1);
@@ -128,7 +137,7 @@ describe("TrackPage", () => {
   it("sends a mandatory page event even when consent is refused", async () => {
     setEnabledFn(() => false);
 
-    render(<TrackPage category="Analytics Consent" name="Mandatory" mandatory />);
+    render(<TrackScreen category="Analytics Consent" name="Mandatory" mandatory />);
 
     await waitFor(() => {
       expect(track).toHaveBeenCalledWith("Page Analytics Consent Mandatory", {});
@@ -139,12 +148,12 @@ describe("TrackPage", () => {
     setEnabledFn(() => false);
 
     const { rerender } = render(
-      <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" />,
+      <TrackScreen category="Analytics Consent" name="Mandatory" flow="test-flow" />,
     );
     expect(track).not.toHaveBeenCalled();
 
     rerender(
-      <TrackPage category="Analytics Consent" name="Mandatory" flow="test-flow" mandatory />,
+      <TrackScreen category="Analytics Consent" name="Mandatory" flow="test-flow" mandatory />,
     );
 
     await waitFor(() => {
