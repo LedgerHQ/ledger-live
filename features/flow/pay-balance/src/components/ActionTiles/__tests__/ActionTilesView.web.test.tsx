@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
+import { StyleProvider } from "@features/platform-style/web";
 import { ActionTilesView } from "../ActionTilesView.web";
 import type { ActionTilesViewProps } from "../types";
 
