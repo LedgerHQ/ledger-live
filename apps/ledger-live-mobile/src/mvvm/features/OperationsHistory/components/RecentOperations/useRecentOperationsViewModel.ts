@@ -11,6 +11,7 @@ import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1"
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { parseLastSeenMs } from "../../utils/unreadOperations";
+import { useIsPendingOperation } from "../../screens/OperationsList/hooks/useOperationsSections";
 
 export const MAX_PREVIEW_OPERATIONS = 3;
 
@@ -24,12 +25,35 @@ type ResolvedAccount = Readonly<{ account: AccountLike; parentAccount: Account |
 
 export type RecentOperationsViewModel = Readonly<{
   operations: Operation[];
+  pendingOperationIds: ReadonlySet<string>;
   accountByAddress: Map<string, AccountLike>;
   lastSeenTs: number | null;
   findAccount: (accountId: string) => ResolvedAccount | null;
   onHeaderPress: () => void;
   hasData: boolean;
 }>;
+
+function toPendingOnlyAccounts(
+  accounts: AccountLike[],
+  isPendingOperation: (op: Operation, account: AccountLike) => boolean,
+): AccountLike[] {
+  return accounts.flatMap((account): AccountLike[] => {
+    const operations = account.operations.filter(op => isPendingOperation(op, account));
+    const stableHashes = new Set(account.operations.map(op => op.hash));
+    const pendingOperations = account.pendingOperations.filter(op => !stableHashes.has(op.hash));
+    if (operations.length === 0 && pendingOperations.length === 0) return [];
+
+    return account.type === "Account"
+      ? [{ ...account, operations, pendingOperations, subAccounts: [] }]
+      : [{ ...account, operations, pendingOperations }];
+  });
+}
+
+function mergePendingFirst(pending: Operation[], recent: Operation[]): Operation[] {
+  const pendingIds = new Set(pending.map(op => op.id));
+  const confirmed = recent.filter(op => !pendingIds.has(op.id));
+  return [...pending, ...confirmed].slice(0, MAX_PREVIEW_OPERATIONS);
+}
 
 export function useRecentOperationsViewModel({
   accountIds,
@@ -60,13 +84,41 @@ export function useRecentOperationsViewModel({
     [allowedIds],
   );
 
-  const { sections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
+  const isPendingOperation = useIsPendingOperation();
+  const pendingOnlyAccounts = useMemo(
+    () =>
+      toPendingOnlyAccounts(
+        flattenedRootAccounts.filter(account => allowedIds.has(account.id)),
+        isPendingOperation,
+      ),
+    [flattenedRootAccounts, allowedIds, isPendingOperation],
+  );
+
+  const { sections: pendingSections } = useOperationsV1(
+    pendingOnlyAccounts,
+    MAX_PREVIEW_OPERATIONS,
+  );
+  const { sections: recentSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
     filterOperation: scopedFilter,
   });
 
+  const pendingOperations = useMemo(
+    () => pendingSections.flatMap(section => section.data),
+    [pendingSections],
+  );
+
   const operations: Operation[] = useMemo(
-    () => sections.flatMap(section => section.data).slice(0, MAX_PREVIEW_OPERATIONS),
-    [sections],
+    () =>
+      mergePendingFirst(
+        pendingOperations,
+        recentSections.flatMap(section => section.data),
+      ),
+    [pendingOperations, recentSections],
+  );
+
+  const pendingOperationIds = useMemo(
+    () => new Set(pendingOperations.map(op => op.id)),
+    [pendingOperations],
   );
 
   const lastSeenDate = useSelector(lastSeenOperationDateSelector);
@@ -109,6 +161,7 @@ export function useRecentOperationsViewModel({
 
   return {
     operations,
+    pendingOperationIds,
     accountByAddress,
     lastSeenTs,
     findAccount,
