@@ -21,6 +21,11 @@ const teamWalletXp = {
     parser: stringParser,
     desc: "Dynamic Assets Data Aggregator API Prod",
   },
+  PORTFOLIO_SERVICE_URL: {
+    def: "https://portfolio-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Portfolio service url. Staging is the only deployed environment.",
+  },
   CMC_API_URL: {
     def: "https://proxycmc.api.live.ledger.com/v3",
     parser: stringParser,
