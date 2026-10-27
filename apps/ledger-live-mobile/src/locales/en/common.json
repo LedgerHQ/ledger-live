@@ -3881,18 +3881,6 @@
     "subaccountCount_other": "+{{count}} subaccounts"
   },
   "account": {
-    "subHeader": {
-      "moreInfo": "More info",
-      "cardTitle": "Powered by {{team}}",
-      "drawer": {
-        "title": "{{family}} integration",
-        "subTitle": "The {{family}} integration has been done by the {{team}} team",
-        "description": "Ledger Wallet is an open-source platform.",
-        "description2": "Developers from anywhere in the world can integrate with our Ledger Wallet",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
-        "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
-      }
-    },
     "migrationBanner": {
       "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
       "contactSupport": "Contact support"
