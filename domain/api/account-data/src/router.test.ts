@@ -1,5 +1,5 @@
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import { NoAccountDataSourceError } from "./errors";
+import { AccountDataNotServedError, NoAccountDataSourceError } from "./errors";
 import {
   createAccountDataRouter,
   type AccountDataReadOptions,
@@ -585,5 +585,84 @@ describe("addSource", () => {
     );
     router.addSource(constant("real", 1));
     await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+  });
+});
+
+describe("fall-through", () => {
+  const notServed = () => new AccountDataNotServedError("not here");
+  const fallback = (value: number): AccountDataSource => ({
+    id: sourceIdOf("fallback"),
+    supports: () => true,
+    read: { counter: async () => value },
+  });
+  /** Serves even accounts, hands the odd ones to the next source. */
+  const evenOnly: AccountDataSource = {
+    id: sourceIdOf("even"),
+    supports: () => true,
+    readBatch: {
+      counter: async targets =>
+        targets.map(target =>
+          indexOf(target) % 2 === 0
+            ? { status: "fulfilled", value: indexOf(target) }
+            : { status: "rejected", reason: notServed() },
+        ),
+    },
+  };
+
+  it("hands an account a source did not serve to the next ranked source", async () => {
+    const router = createAccountDataRouter([evenOnly, fallback(-1)]);
+    const [even, odd] = await readAll(router, descriptors(2));
+    expect(even).toMatchObject({ status: "fulfilled", value: { data: 0, sourceId: "even" } });
+    expect(odd).toMatchObject({ status: "fulfilled", value: { data: -1, sourceId: "fallback" } });
+  });
+
+  it("rejects with the last refusal when no source is left", async () => {
+    const router = createAccountDataRouter([evenOnly]);
+    await expect(router.read("counter", descriptorOf(1))).rejects.toMatchObject({
+      name: "AccountDataNotServedError",
+    });
+  });
+
+  it("asks each source once, however many refuse", async () => {
+    const refusing = (id: string): AccountDataSource => ({
+      id: sourceIdOf(id),
+      supports: () => true,
+      read: { counter: jest.fn(async () => Promise.reject(notServed())) },
+    });
+    const first = refusing("first");
+    const second = refusing("second");
+    const router = createAccountDataRouter([first, second]);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
+      AccountDataNotServedError,
+    );
+    expect(first.read?.counter).toHaveBeenCalledTimes(1);
+    expect(second.read?.counter).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a next page on the source that handed out its cursor", async () => {
+    const router = createAccountDataRouter([evenOnly, fallback(-1)]);
+    await expect(
+      router.read("counter", descriptorOf(1), { sourceId: sourceIdOf("even"), cursor: "c" }),
+    ).rejects.toBeInstanceOf(AccountDataNotServedError);
+  });
+
+  it.each(["c", ""])(
+    "keeps a cursor %p on its source even when no source is pinned",
+    async cursor => {
+      const router = createAccountDataRouter([evenOnly, fallback(-1)]);
+      await expect(router.read("counter", descriptorOf(1), { cursor })).rejects.toBeInstanceOf(
+        AccountDataNotServedError,
+      );
+    },
+  );
+
+  it("does not fall through on any other failure", async () => {
+    const failing: AccountDataSource = {
+      id: sourceIdOf("failing"),
+      supports: () => true,
+      read: { counter: async () => Promise.reject(new Error("down")) },
+    };
+    const router = createAccountDataRouter([failing, fallback(-1)]);
+    await expect(router.read("counter", descriptor)).rejects.toThrow("down");
   });
 });

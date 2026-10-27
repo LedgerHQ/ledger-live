@@ -224,9 +224,11 @@ export function pickSource(
   kind: AccountDataKind,
   target: AccountTarget,
   sourceId: AccountDataSourceId | undefined,
+  tried: ReadonlySet<AccountDataSource> = new Set(),
 ): AccountDataSource | undefined {
   return context.ranked.find(
     candidate =>
+      !tried.has(candidate) &&
       (sourceId === undefined || candidate.id === sourceId) &&
       serves(candidate, kind) &&
       (candidate.purposes ?? DEFAULT_PURPOSES).includes(target.descriptor.purpose) &&
@@ -307,11 +309,54 @@ export function route<K extends AccountDataKind>(
       group.map(({ target }) => target),
       query,
     );
-    results.forEach((result, index) =>
-      answers.set(group[index].key, withSourceId(result, source.id)),
-    );
+    results.forEach((result, index) => {
+      const { key, target } = group[index];
+      answers.set(key, orNextSource(context, kind, target, { query, sourceId }, source, result));
+    });
   }
   return answersInReadOrder(slots, answers);
+}
+
+const isNotServed = (reason: unknown) =>
+  reason instanceof Error && reason.name === "AccountDataNotServedError";
+
+/** The source's answer, or the next ranked source's when it did not serve the account; never for a pinned source or a cursor. */
+export function orNextSource<K extends AccountDataKind>(
+  context: RouterContext,
+  kind: K,
+  target: AccountTarget,
+  options: AccountDataReadOptions<K>,
+  source: AccountDataSource,
+  result: Promise<Settled<AccountDataResult<K>>>,
+  tried: ReadonlySet<AccountDataSource> = new Set([source]),
+): Promise<Settled<AccountDataAnswer<K>>> {
+  return result.then(answer => {
+    if (
+      answer.status === "fulfilled" ||
+      options.sourceId !== undefined ||
+      target.cursor !== undefined ||
+      !isNotServed(answer.reason)
+    ) {
+      return withSourceId(Promise.resolve(answer), source.id);
+    }
+    let next;
+    try {
+      next = pickSource(context, kind, target, undefined, tried);
+    } catch (error) {
+      return rejected<AccountDataAnswer<K>>(error);
+    }
+    if (!next) return { status: "rejected", reason: answer.reason };
+    const [nextResult] = readFromSource(context, next, kind, [target], options.query);
+    return orNextSource(
+      context,
+      kind,
+      target,
+      options,
+      next,
+      nextResult,
+      new Set([...tried, next]),
+    );
+  });
 }
 
 /** Reads share a tick when they share the kind, the pinned source and the query, whatever its key order. */

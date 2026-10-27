@@ -11,6 +11,7 @@ The source contract, the router that picks a source per account, and the thunks 
 - `addAccountDataSource(source, { first })`: a thunk adding a source to the store's router, for a devtool that cannot reach the app's setup.
 - `fetchAccountData(kind, descriptor, { query, maxAge })` and `fetchMoreAccountData(kind, descriptor, { query })`: head read and next page, guarded by freshness and by the read in flight.
 - `NoAccountDataSourceError`, `AccountDataRouterMissingError`.
+- `AccountDataNotServedError`: a source rejects one account with it to hand the account to the next ranked source (not on a next page, whose cursor belongs to one source).
 - `./testing`: two toy kinds (`counter`, `feed`) and a store, for the tests of other packages.
 
 See [the account data layer](../../../docs/account-data-layer.md) for the read flow and how to add a source.
