@@ -1,6 +1,6 @@
 ---
 name: comments
-description: Stop writing so many comments. Follow these suggestions instead!
+description: Replace code comments with clearer names, explainer variables and test names, and keep the rare necessary comment to one short line or a link. Read when writing or reviewing code and about to add a `//` or `/* */` comment or a JSDoc block, or when a review flags a comment as noise, outdated or a paraphrase of the code.
 ---
 
 # Comments in code

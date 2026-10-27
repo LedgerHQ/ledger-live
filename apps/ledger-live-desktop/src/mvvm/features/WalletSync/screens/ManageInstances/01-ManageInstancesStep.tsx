@@ -2,7 +2,7 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { AnalyticsPage, useLedgerSyncAnalytics } from "../../hooks/useLedgerSyncAnalytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { TinyCard } from "../../components/TinyCard";
 import { useInstances } from "./useInstances";
 import { TrustchainMember } from "@ledgerhq/ledger-key-ring-protocol/types";
@@ -48,7 +48,7 @@ export default function ManageInstancesStep({ goToDeleteInstance }: Props) {
       flex={1}
       minHeight={0}
     >
-      <TrackPage category={AnalyticsPage.ManageInstances} />
+      <TrackScreen category={AnalyticsPage.ManageInstances} />
       <Text fontSize={23} variant="large" color="neutral.c100">
         {t("walletSync.manageInstances.title")}
       </Text>

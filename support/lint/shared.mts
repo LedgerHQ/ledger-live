@@ -3,11 +3,9 @@ import base from "./base.mts";
 import { platformSuffixWaivers } from "./src/suffix-imports.js";
 
 const PLATFORM_SUFFIX_WAIVERS = [
-  "analytics-react",
   "clipboard",
   "lottie",
   "network-status",
-  "ui-app-unavailable",
   "ui-qr-code",
 ];
 

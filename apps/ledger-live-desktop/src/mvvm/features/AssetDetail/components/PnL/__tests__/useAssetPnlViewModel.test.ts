@@ -18,8 +18,7 @@ const mockedUseAssetGroupPnL = jest.mocked(useAssetGroupPnL);
 
 const ZERO = new BigNumber(0);
 
-const flagsOn = withFlagOverrides({ lwdWallet40: { enabled: true, params: { pnl: true } } });
-const flagsOff = withFlagOverrides({ lwdWallet40: { enabled: false } });
+const flagsOn = withFlagOverrides({ lwdWallet40: { enabled: true } });
 
 const distributionItem = buildDistributionItem({
   currency: BTC_ACCOUNT.currency,
@@ -55,12 +54,9 @@ beforeEach(() => {
 });
 
 describe("useAssetPnlViewModel", () => {
-  it("derives shouldDisplayPnl from the wallet feature flag", () => {
-    const on = renderAssetPnlViewModel({ initialState: flagsOn });
-    expect(on.result.current.shouldDisplayPnl).toBe(true);
-
-    const off = renderAssetPnlViewModel({ initialState: flagsOff });
-    expect(off.result.current.shouldDisplayPnl).toBe(false);
+  it("shows the section when the distribution item has accounts", () => {
+    const { result } = renderAssetPnlViewModel({ initialState: flagsOn });
+    expect(result.current.shouldDisplayPnl).toBe(true);
   });
 
   it("hides the section when the distributionItem has no accounts", () => {

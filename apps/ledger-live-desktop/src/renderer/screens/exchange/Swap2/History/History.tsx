@@ -23,7 +23,7 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import HistoryLoading from "./HistoryLoading";
 import HistoryPlaceholder from "./HistoryPlaceholder";
 import { useLocation } from "react-router";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 import { useAutoOpenSwapDialog } from "./useAutoOpenSwapDialog";
 import { exportSwapHistory } from "./exportSwapHistory";
@@ -128,7 +128,7 @@ const History = () => {
   );
   return (
     <>
-      <TrackPage category="Swap" name="Device History" />
+      <TrackScreen category="Swap" name="Device History" />
       <Box p={20}>
         <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
           <ExportOperationsWrapper horizontal>

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Title, Column, SubTitle, TrackTutorialProps } from "../shared";
 import { Flex } from "@ledgerhq/react-ui/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import NewSeedIllustration from "LLD/features/Onboarding/screens/SyncOnboardingCompanion/components/NewSeedPanel/NewSeedIllustration";
 
 export function SecureYourCrypto(trackProps: Readonly<TrackTutorialProps>) {
@@ -10,7 +10,7 @@ export function SecureYourCrypto(trackProps: Readonly<TrackTutorialProps>) {
 
   return (
     <Column>
-      <TrackPage
+      <TrackScreen
         category="Set up device"
         name="Secure your crypto"
         flow={trackProps.flow}

@@ -43,6 +43,11 @@ function lookupNode(lockfile, depPath) {
   return undefined;
 }
 
+/** A pnpm alias ref is the target "name@version" itself, any other ref is the version of `name`. */
+function refDepPath(name, ref) {
+  return /^(@[^/]+\/[^@]+|[^@:/(]+)@/.test(ref) ? ref : `${name}@${ref}`;
+}
+
 function resolvedDependencies(node) {
   const refs = Object.assign({}, ...DEPENDENCY_FIELDS.map(field => node[field]));
   return Object.entries(refs).map(([name, ref]) => [
@@ -65,7 +70,8 @@ function collectResolvedVersions(lockfile) {
   return versionsByName;
 }
 
-function shortestChains(lockfile, patterns) {
+/** BFS from every importer; `keyOf(name, depPath)` names the dependencies to record, null skips one. */
+function shortestChains(lockfile, keyOf) {
   const chains = new Map();
   const visited = new Set();
   const queue = Object.entries(lockfile.importers ?? {}).map(([importerId, importer]) => ({
@@ -78,11 +84,10 @@ function shortestChains(lockfile, patterns) {
 
     for (const [name, ref] of resolvedDependencies(node)) {
       const chainToDependency = [...chain, name];
-      if (matchesPatterns(name, patterns) && !chains.has(name)) {
-        chains.set(name, chainToDependency.join(" > "));
-      }
+      const depPath = refDepPath(name, String(ref));
+      const key = keyOf(name, depPath);
+      if (key && !chains.has(key)) chains.set(key, chainToDependency.join(" > "));
 
-      const depPath = `${name}@${ref}`;
       if (visited.has(depPath)) continue;
       const next = lookupNode(lockfile, depPath);
       if (!next) continue;
@@ -94,8 +99,17 @@ function shortestChains(lockfile, patterns) {
   return chains;
 }
 
+/** Shortest importer chain to each wanted "name@version", peer suffixes ignored. */
+function dependencyChains(lockfile, wanted) {
+  const keys = new Set(wanted);
+  return shortestChains(lockfile, (_name, depPath) => {
+    const key = depPath.split("(", 1)[0];
+    return keys.has(key) ? key : null;
+  });
+}
+
 function collectMatches(lockfile, patterns) {
-  const chains = shortestChains(lockfile, patterns);
+  const chains = shortestChains(lockfile, name => (matchesPatterns(name, patterns) ? name : null));
   const found = new Map();
 
   for (const depPath of Object.keys(packageTable(lockfile))) {
@@ -204,4 +218,4 @@ function assertDependencyChecks(lockfile) {
   );
 }
 
-module.exports = { assertDependencyChecks };
+module.exports = { assertDependencyChecks, dependencyChains };

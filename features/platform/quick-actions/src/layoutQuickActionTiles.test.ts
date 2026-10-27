@@ -19,6 +19,17 @@ describe("layoutQuickActionTiles", () => {
     it("drops More when nothing goes in it", () => {
       expect(tileIds(active("transfer", "swap"))).toEqual(["transfer", "swap"]);
     });
+
+    it("shows a lone Buy as its own tile instead of More", () => {
+      const actions = active("transfer", "swap", "buy");
+
+      expect(tileIds(actions)).toEqual(["transfer", "swap", "buy"]);
+      expect(moreIds(actions)).toEqual([]);
+    });
+
+    it("keeps More for a lone Earn", () => {
+      expect(tileIds(active("transfer", "swap", "earn"))).toEqual(["transfer", "swap", "more"]);
+    });
   });
 
   describe("swap not supported", () => {

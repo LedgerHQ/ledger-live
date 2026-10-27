@@ -332,6 +332,8 @@ overrides:
   "@polkadot/rpc-provider>@polkadot/types-support": "-"
   "@polkadot/rpc-provider>mock-socket": "-"
   "@polkadot/rpc-provider>nock": "-"
+  # @opentui/core bundles jimp into its 3d entry; the declared dep is never resolved
+  "@opentui/core>jimp": "-"
 
 patchedDependencies:
   "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch"

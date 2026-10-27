@@ -1,5 +1,5 @@
 import React from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { Flex } from "@ledgerhq/react-ui";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { Browse } from "./Browse";
@@ -33,7 +33,7 @@ export function Catalog() {
 
   return (
     <Flex flexDirection="column" paddingBottom={100}>
-      <TrackPage category="Platform" name="Catalog" />
+      <TrackScreen category="Platform" name="Catalog" />
 
       <div className="pb-24">
         <PageHeader title={t("platform.catalog.title")} />

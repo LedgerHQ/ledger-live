@@ -3,11 +3,13 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
-import { callMyDealer, expectAddressInList, getBridges, scroll, VITALIK } from "../helpers";
-import { killAnvil, spawnAnvil } from "../anvil";
+import { blockscoutOf, swapTokens } from "../sandboxEvm";
+import { expectAddressInList, getBridges, scroll, VITALIK } from "../helpers";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_SCROLL } from "../tokenFixtures";
 import { buildSigner } from "../signer";
@@ -81,17 +83,33 @@ const makeScenarioTransactions = ({
   return [scenarioSendEthTransaction, scenarioSendUSDCTransaction, scenarioSendMaxEthTransaction];
 };
 
+let sandbox: Sandbox | undefined;
+let closeGuard: (() => void) | null = null;
+// Puts the token store of the other scenarios of the run back
+let restoreTokens: (() => void) | null = null;
+let provider: ethers.JsonRpcProvider;
+let blockscout: ReturnType<typeof blockscoutOf>;
+
+/** Whole units airdropped to the scenario's account: the chain starts with the dealer only. */
+const ETH_AIRDROP = 10_000;
+const USDC_AIRDROP = 100;
+
 export const scenarioScroll: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Scroll Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://scroll-rpc.publicnode.com", signer.exportMnemonic());
-
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-
-    const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    setBlock(lastBlockNumber + 1);
+    sandbox = await startSandbox(
+      { family: "evm", network: "scroll" },
+      {
+        node: { provider: "geth", version: "5.10.2" },
+        indexer: { provider: "blockscout", version: "12.0.3" },
+      },
+    );
+    const { node: rpc, indexer: explorer } = sandbox.endpoints;
+    if (rpc === undefined || explorer === undefined) {
+      throw new Error("the sandbox instance has no node or indexer endpoint");
+    }
+    blockscout = blockscoutOf(explorer);
 
     const info: EvmConfigInfo = {
       status: {
@@ -102,12 +120,13 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
       unit: { name: "ETH", code: "ETH", magnitude: 18 },
       node: {
         type: "external",
-        uri: "http://127.0.0.1:8545",
+        uri: rpc,
       },
+      // Blockscout is the explorer of Live for Scroll, internal transactions and the L1 fee included
       explorer: {
         type: "blockscout",
         noCache: true,
-        uri: "https://proxyblockscout.api.live.ledger.com/534352/api",
+        uri: `${explorer}/api`,
       },
       supportedTokens: ["erc721", "erc1155"],
     };
@@ -117,7 +136,11 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
         default: info,
       },
     });
-    initMswHandlers(info);
+
+    // USDC is a mainnet token the sandbox preloads at its address
+    restoreTokens = swapTokens(scroll.id, [USDC_ON_SCROLL]);
+
+    closeGuard = forbidRemoteRequests();
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
@@ -128,12 +151,13 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, scroll);
 
-    await callMyDealer({
-      provider,
-      drug: USDC_ON_SCROLL,
-      junkie: address,
-      dose: ethers.parseUnits("100", USDC_ON_SCROLL.units[0].magnitude),
-    });
+    provider = new ethers.JsonRpcProvider(rpc);
+
+    // The chain starts with the dealer only: the account gets its ETH and its USDC by airdrop
+    await sandbox.airdrop(address, ETH_AIRDROP);
+    await sandbox.airdrop(address, USDC_AIRDROP, USDC_ON_SCROLL.contractAddress);
+    // The first sync must see both airdrops
+    await blockscout.waitForBlock(await provider.getBlockNumber());
 
     return {
       currencyBridge,
@@ -142,8 +166,10 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
     };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
-  beforeSync: async () => {
-    await indexBlocks(534352);
+  mockIndexer: async (_account, optimistic) => {
+    const receipt = await provider.waitForTransaction(optimistic.hash, 1, 60_000);
+    if (receipt === null) throw new Error(`${optimistic.hash} is not in a block after 60 s`);
+    await blockscout.waitForBlock(receipt.blockNumber);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
@@ -157,10 +183,15 @@ export const scenarioScroll: Scenario<GenericTransaction, Account> = {
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
     );
-    expect(account.operations.length).toBe(4);
+    // The ETH airdrop (IN), the USDC airdrop (NONE on the parent account), then the three sends
+    expect(account.operations.length).toBe(5);
   },
   teardown: async () => {
-    await killAnvil();
-    resetIndexer();
+    closeGuard?.();
+    closeGuard = null;
+    restoreTokens?.();
+    restoreTokens = null;
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };

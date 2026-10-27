@@ -7,7 +7,7 @@ import {
   activatableVotes,
   fallbackValidatorGroup,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
@@ -87,7 +87,7 @@ const StepVote = ({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Celo Activate"
         name="Step 1"
         flow="stake"

@@ -67,6 +67,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/device-management-kit": "catalog:",

@@ -1,4 +1,4 @@
-import { estimateNodeModulesSizeDelta, formatMb } from "../node-modules-size";
+import { estimateNodeModulesSizeDelta, formatMb, isDedupable } from "../node-modules-size";
 
 const LABEL = "deps-size";
 const OVERRIDE_LABEL = "deps-size-approved";
@@ -32,6 +32,14 @@ async function validateNodeModulesSize() {
       message(`node_modules shrinks by ${formatMb(report.deltaBytes)}, thanks!`);
     }
     if (report && (grows || deltaMb <= -SHRINK_MB)) markdown(report.markdown);
+
+    const dedupable = report?.duplicates.filter(isDedupable) ?? [];
+    if (dedupable.length) {
+      warn(
+        `New duplicate version of ${dedupable.map(d => `\`${d.name}\``).join(", ")}, where a version already installed could serve, see below.`,
+      );
+    }
+    if (report?.duplicates.length) markdown(report.duplicatesMarkdown);
 
     if (grows && !labels.has(LABEL)) {
       await danger.github.api.issues.addLabels({ ...issue, labels: [LABEL] });

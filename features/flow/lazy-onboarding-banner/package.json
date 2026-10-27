@@ -4,13 +4,10 @@
   "private": true,
   "description": "Cross-platform lazy onboarding banner decision, CTA and session state",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./src/index.ts",
+    "./native": "./src/native/index.native.ts",
     "./testing": "./src/testing.ts",
     "./package.json": "./package.json"
   },
@@ -24,7 +21,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/flow/lazy-onboarding-banner"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/lazy-onboarding-banner/knip.web.config.mjs -W features/flow/lazy-onboarding-banner --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/lazy-onboarding-banner/knip.native.config.mjs -W features/flow/lazy-onboarding-banner --tsConfig tsconfig.native.json"
   },
   "peerDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
