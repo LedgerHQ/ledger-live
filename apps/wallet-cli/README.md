@@ -11,7 +11,7 @@ wallet-cli account discover ethereum        # needs a Ledger on USB; saves accou
 wallet-cli balances --account ethereum-1    # session label from discover
 wallet-cli send --account ethereum-1 --to 0x… --amount "0.01 ETH" --dry-run
 wallet-cli account discover --network ripple:testnet
-wallet-cli send --account ripple-1 --to rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH --amount "1 XRP" --destination-tag 123 --dry-run
+wallet-cli send --account ripple-testnet-1 --to rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH --amount "1 XRP" --destination-tag 123 --dry-run
 wallet-cli <command> --help                 # exact flags and defaults
 ```
 
