@@ -115,11 +115,13 @@ export class BuyAndSellPage extends WebViewAppPage {
    */
   @step("Wait for the Buy/Sell web app to finish loading")
   private async waitForWebviewReady(testId: string) {
-    const attemptTimeouts = [90_000, 60_000];
+    // The first attempt outlasts a slow boot (over 50s on a loaded runner): reloading mid-boot
+    // would only restart it.
+    const attemptTimeouts = [TIMEOUT.xxxlarge, TIMEOUT.xxlarge];
     // Kept short and independent of the attempt budget: the reload is best-effort (its failure
-    // is ignored), so letting it inherit a 90s deadline would only make the worst case
+    // is ignored), so letting it inherit an attempt's deadline would only make the worst case
     // unpredictable without improving recovery.
-    const reloadTimeout = 15_000;
+    const reloadTimeout = TIMEOUT.medium;
 
     for (const [attempt, readyTimeout] of attemptTimeouts.entries()) {
       // Re-fetch the webview on every attempt: it can be torn down and recreated

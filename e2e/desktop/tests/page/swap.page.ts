@@ -13,7 +13,7 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
@@ -417,16 +417,11 @@ export class SwapPage extends WebViewAppPage {
     await expect(executeSwapButton).toBeVisible();
     await expect(executeSwapButton).toBeEnabled();
     await executeSwapButton.waitFor({ state: "attached" });
-    await executeSwapButton.evaluate((btn: HTMLElement) => {
-      return new Promise<void>(resolve => {
-        const interval = setInterval(() => {
-          if (!btn.hasAttribute("disabled")) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 50);
-      });
-    });
+    await expect
+      .poll(() => executeSwapButton.evaluate(btn => !btn.hasAttribute("disabled")), {
+        intervals: [INTERVAL.instant],
+      })
+      .toBe(true);
     await executeSwapButton.click();
   }
 
