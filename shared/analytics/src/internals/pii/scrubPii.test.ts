@@ -68,6 +68,14 @@ describe("scrubPiiString", () => {
   ])("keeps %s", (_label, input) => {
     expect(scrubPiiString(input)).toEqual({ value: input, kinds: [] });
   });
+
+  it("scans a long word in linear time", () => {
+    const start = Date.now();
+
+    scrubPiiString("a".repeat(50_000));
+
+    expect(Date.now() - start).toBeLessThan(100);
+  });
 });
 
 describe("scrubPii", () => {

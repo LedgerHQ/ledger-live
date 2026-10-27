@@ -51,7 +51,7 @@ function redactLedgerAccountId(id: string): string | null {
 const VALUE_PATTERNS: ValuePattern[] = [
   {
     kind: "ledger_account_id",
-    regex: /[a-z][a-z0-9_]*:\d+:[^\s"',\]})]+/g,
+    regex: /\b(?:js|libcore|ethereumjs):\d+:[^\s"',\]})]+/g,
     replace: redactLedgerAccountId,
   },
   {
