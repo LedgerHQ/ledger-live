@@ -11,10 +11,6 @@ module.exports = createLibsCoinJestConfig(
       // Vendored generated candid factories, excluded from coverage.
       "!src/network/idl/**",
     ],
-    setupFilesAfterEnv: [
-      "@ledgerhq/wallet-framework-test-setup",
-      "@ledgerhq/test-quarantine/jest-retries",
-    ],
   },
-  { extraEsmDeps },
+  { extraEsmDeps, network: true },
 );

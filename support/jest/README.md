@@ -28,8 +28,11 @@ The lcov root is the repository root seen from `rootDir` when set, else the laye
 relative to the repository root, where Sonar reads them.
 
 `createSharedJestConfig(overrides, options)` is the node base for `shared/*` and `libs/*` packages,
-and for node packages of other layers that no layer preset covers yet. Its options:
+and for node packages of other layers that no layer preset covers yet. `setupFilesAfterEnv` adds to
+the preset's test quarantine retries; every other key replaces the preset's. Its options:
 
+- `retries: false` leaves the retries out, for suites where a retry that passes would hide a real
+  failure.
 - `esm: true` applies `withEsmDeps` to the result, after the overrides, for a package that
   `require`s an ESM-only dependency (`@noble/*` v2). `extraEsmDeps` keeps more pnpm store prefixes
   transformed (`["@ledgerhq\\+"]`).
@@ -55,12 +58,36 @@ factories sit on `createSharedJestConfig` and take the same options (`esm`, `ext
   `passWithNoTests`, the coin setup files (`@ledgerhq/wallet-framework-test-setup`,
   `@ledgerhq/disable-network-setup`, `@ledgerhq/test-quarantine/jest-retries`), coverage of
   `src/**/*.ts` minus the tests, and leaves out the `*.integ.test.ts` and `*.integration.test.ts`
-  suites. `collectCoverageFrom` and `testPathIgnorePatterns` overrides add to the preset's; every
-  other key replaces it, so a package that needs other setup files passes its whole list.
+  suites. `setupFilesAfterEnv`, `collectCoverageFrom` and `testPathIgnorePatterns` overrides add to
+  the preset's; every other key replaces it.
 - `createLibsCoinIntegJestConfig(overrides, options)`, for `jest.integ.config.js`: the
   `*.integ.test.ts` suites, which hit live networks. A 60 s timeout, `forceExit`,
   `passWithNoTests`, the wallet framework setup only and the default reporter: no quarantine and
-  no sonar report. Every override replaces the preset's key.
+  no sonar report. `setupFilesAfterEnv` adds to the preset's; every other key replaces it.
+- `createLibsCoinJestProject(overrides, options)`, for each entry of the unit config's `projects`:
+  jest does not pass a config's top-level options down to its projects, so a project starts from
+  the unit defaults (node, transform, ESM dependencies, test matching, setup files) instead of
+  retyping them. Its overrides follow the unit config's rule.
+
+Two options remove a setup file the preset adds:
+
+- `network: true` (unit config and projects) leaves out `@ledgerhq/disable-network-setup`, for
+  suites that mock the network with msw, which cannot share a run with nock.
+- `walletFramework: false` leaves out `@ledgerhq/wallet-framework-test-setup`, for a run that
+  loads it from `setupFiles` or does without it.
+
+```js
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
+  projects: [
+    createLibsCoinJestProject({ displayName: "unit", testPathIgnorePatterns: ["\\.msw\\.test\\.ts"] }),
+    createLibsCoinJestProject(
+      { displayName: "msw", testMatch: ["**/*.msw.test.ts"] },
+      { network: true },
+    ),
+  ],
+});
+```
 
 `esm` is on by default: the bitcoin family (`coin-bitcoin`, `coin-zcash`, `wallet-btc`) reaches
 `@noble/curves` v2, which is ESM-only, and fails to load without it. A module that reaches no
@@ -83,7 +110,23 @@ module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 
 What the package needs on top of the preset goes through the factory's overrides argument. The
 `jest` rule of `pnpm lint:tool-config` checks that every jest config of a consumer exports a
-`create*Config` call from `@support/jest/*`; what the overrides contain is the package's call.
+`create*Config` call from `@support/jest/*`, and that its overrides carry only what the package
+owns:
+
+- where its tests are and how they match: `rootDir`, `roots`, `testMatch`, `testRegex`,
+  `testPathIgnorePatterns`, `modulePathIgnorePatterns`, `passWithNoTests`, `displayName`;
+- what they need to run: `setupFiles`, `setupFilesAfterEnv`, `moduleNameMapper`, `testTimeout`;
+- their coverage scope: `collectCoverageFrom`, `coveragePathIgnorePatterns`;
+- how its runs are split: `maxWorkers`, `workerThreads`, `projects` (a list of
+  `create*Project(...)` calls), `webOverrides` and `nativeOverrides` (the same keys, per project).
+
+Every other key, `transform`, `transformIgnorePatterns` (use `extraEsmDeps`), `testEnvironment` or
+`reporters` among them, belongs to the preset. A setup file a package passes adds to the preset's;
+removing one of the preset's goes through a named option (`retries`, `network`,
+`walletFramework`). The overrides and the options are object literals, so the rule reads their
+keys without running the config, and a literal override that leaves the factory's result unchanged
+is rejected. The configs that still set a preset key are listed, by key, in
+`tools/nx-plugins/enforce-tool-config/rules/jest-debt.mjs`, a list that only shrinks.
 
 Unlike the lint, format and TypeScript presets, consumers keep the dependency: the presets carry
 code and peer dependencies, and the dependency tells nx which test targets a preset change

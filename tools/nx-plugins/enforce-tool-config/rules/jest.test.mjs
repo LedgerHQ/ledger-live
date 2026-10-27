@@ -3,15 +3,29 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import jest, { factoryProblem, maskSource } from "./jest.mjs";
+import { fileURLToPath } from "node:url";
+import { JEST_DEBT } from "./jest-debt.mjs";
+import jest, { factoryProblem, maskSource, overridesProblems, presetLoader } from "./jest.mjs";
 
 const CONSUMER = JSON.stringify({ devDependencies: { "@support/jest": "workspace:*" } });
+const REPOSITORY = fileURLToPath(new URL("../../../..", import.meta.url));
+const loadPreset = presetLoader(REPOSITORY);
+
+/**
+ * @param {string} source a config file
+ * @param {string[]} [listed] its debt entries
+ * @returns {string[]} what the rule reports about its overrides, against the repository presets
+ */
+function problems(source, listed) {
+  return overridesProblems(source, { listed, loadPreset });
+}
 
 /**
  * @param {Record<string, string>} files paths relative to the package root
+ * @param {Record<string, string[]>} [debt]
  * @returns {string[]} the messages the rule reports for that package
  */
-function check(files) {
+function check(files, debt = {}) {
   const workspaceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "jest-rule-test-"));
   const projectRoot = "shared/thing";
   for (const [file, content] of Object.entries(files)) {
@@ -19,7 +33,9 @@ function check(files) {
     fs.mkdirSync(path.dirname(full), { recursive: true });
     fs.writeFileSync(full, content);
   }
-  return jest.check({ workspaceRoot, projectRoot }).map(v => `${v.file}: ${v.message}`);
+  return jest
+    .check({ workspaceRoot, projectRoot }, { debt, loadPreset })
+    .map(v => `${v.file}: ${v.message}`);
 }
 
 test("a package without the @support/jest dependency is not checked", () => {
@@ -58,7 +74,7 @@ test("every way of binding a factory is recognised", () => {
   for (const source of accepted) assert.equal(factoryProblem(source), null, source);
 });
 
-test("the overrides argument is not policed", () => {
+test("parentheses in comments and literals do not end the factory call", () => {
   const source = `const path = require("path");
 const { createSharedUiJestConfig, sharedReporters } = require("@support/jest/shared");
 
@@ -186,4 +202,199 @@ test("a consumer without a jest config is reported", () => {
     "shared/thing/package.json: depends on @support/jest but has no jest config built by one of " +
       "its presets",
   ]);
+});
+
+const SHARED = 'const { createSharedJestConfig } = require("@support/jest/shared");\n';
+const FLOW = 'const { createFlowJestConfig } = require("@support/jest/features-flow");\n';
+const COIN =
+  'const { createLibsCoinJestConfig, createLibsCoinJestProject } = require("@support/jest/libs-coin");\n';
+const NOT_OWNED = "is not an override a package owns";
+
+test("the keys a package owns pass, whatever their value", () => {
+  const source = `${SHARED}const patterns = ["**/*.spec.ts"];
+module.exports = createSharedJestConfig(
+  {
+    rootDir: __dirname,
+    roots: ["<rootDir>"],
+    testMatch: patterns,
+    "moduleNameMapper": { "^x$": require.resolve("./x") },
+    setupFilesAfterEnv: ["./setup.ts"],
+    collectCoverageFrom: ["src/**/*.ts"],
+    maxWorkers: 1,
+    passWithNoTests: true,
+  },
+  { esm: true, extraEsmDeps: ["@scure"], retries: false },
+);
+`;
+  assert.deepEqual(problems(source), []);
+});
+
+test("a key the preset owns is rejected, with the fix to use instead", () => {
+  const source = `${SHARED}module.exports = createSharedJestConfig({
+  transformIgnorePatterns: ["node_modules/(?!x)"],
+  testEnvironment: "jsdom",
+  verbose: true,
+});
+`;
+  assert.deepEqual(problems(source), [
+    `transformIgnorePatterns ${NOT_OWNED}: keep a dependency transformed with the extraEsmDeps option`,
+    `testEnvironment ${NOT_OWNED}: pick the preset of the environment the tests need`,
+    `verbose ${NOT_OWNED}: leave it to the preset`,
+  ]);
+});
+
+test("overrides and options must be object literals the rule can read", () => {
+  assert.deepEqual(
+    problems(`${SHARED}const base = {};\nmodule.exports = createSharedJestConfig(base);`),
+    [
+      "passes createSharedJestConfig() overrides that are not an object literal; write out its keys",
+    ],
+  );
+  assert.deepEqual(problems(`${SHARED}module.exports = createSharedJestConfig(overrides());`), [
+    "passes createSharedJestConfig() overrides that are not an object literal; write out its keys",
+  ]);
+  assert.deepEqual(
+    problems(
+      `${SHARED}module.exports = createSharedJestConfig({ ...base, [key]: 1, roots() {} });`,
+    ),
+    [
+      "overrides spread `...base`; write out its keys",
+      "overrides hold an entry that is not a plain key: `[key]: 1`",
+      "overrides hold an entry that is not a plain key: `roots() {}`",
+    ],
+  );
+  assert.deepEqual(problems(`${SHARED}module.exports = createSharedJestConfig({}, options);`), [
+    "passes createSharedJestConfig() options that are not an object literal; write out its keys",
+  ]);
+  assert.deepEqual(
+    problems(`${SHARED}module.exports = createSharedJestConfig({}, { coverage: true }, 3);`),
+    [
+      "passes createSharedJestConfig() more than overrides and options",
+      'passes createSharedJestConfig() an unknown option "coverage"',
+    ],
+  );
+});
+
+test("a literal override that leaves the preset's result unchanged is rejected", () => {
+  assert.deepEqual(
+    problems(
+      `${SHARED}module.exports = createSharedJestConfig({ testMatch: ["**/*.test.ts"], roots: ["<rootDir>"] });`,
+    ),
+    ["testMatch repeats what the preset sets; remove it"],
+  );
+  // Setup files add to the preset's: an empty list changes nothing.
+  assert.deepEqual(
+    problems(
+      'const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");\n' +
+        "module.exports = createLibsCoinIntegJestConfig({ testTimeout: 60_000, setupFilesAfterEnv: [] });",
+    ),
+    [
+      "testTimeout repeats what the preset sets; remove it",
+      "setupFilesAfterEnv repeats what the preset sets; remove it",
+    ],
+  );
+  // A value the rule cannot read without running the config is not compared.
+  assert.deepEqual(
+    problems(
+      `${SHARED}const match = ["**/*.test.ts"];\nmodule.exports = createSharedJestConfig({ testMatch: match });`,
+    ),
+    [],
+  );
+});
+
+test("the dual presets' project overrides follow the same allowlist", () => {
+  const source = `${FLOW}const path = require("path");
+module.exports = createFlowJestConfig({
+  webOverrides: {
+    setupFilesAfterEnv: [path.resolve(__dirname, "jest/setup.js")],
+    transform: {},
+  },
+  nativeOverrides: {
+    moduleNameMapper: { "^x$": "./x.js" },
+    testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+    webOverrides: {},
+  },
+});
+`;
+  assert.deepEqual(problems(source), [
+    `webOverrides.transform ${NOT_OWNED}: keep a dependency transformed with the extraEsmDeps option`,
+    "nativeOverrides.testMatch repeats what the preset sets; remove it",
+    `nativeOverrides.webOverrides ${NOT_OWNED}: leave it to the preset`,
+  ]);
+  assert.deepEqual(
+    problems(`${FLOW}module.exports = createFlowJestConfig({ webOverrides: shared });`),
+    ["webOverrides is not an object literal; write out its keys"],
+  );
+});
+
+test("projects list preset project calls, each checked like a project's overrides", () => {
+  const accepted = `${COIN}module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
+  projects: [
+    createLibsCoinJestProject({ displayName: "unit", testPathIgnorePatterns: ["\\\\.msw\\\\.test\\\\.ts"] }),
+    createLibsCoinJestProject({ displayName: "msw", testMatch: ["**/*.msw.test.ts"] }, { network: true }),
+  ],
+});
+`;
+  assert.deepEqual(problems(accepted), []);
+
+  const rejected = `${COIN}const shared = { testEnvironment: "node" };
+module.exports = createLibsCoinJestConfig({
+  projects: [
+    { ...shared, displayName: "unit" },
+    createLibsCoinJestProject({ testMatch: ["**/*.test.ts"], transform: {} }, { coverage: true }),
+    createLibsCoinJestConfig(),
+  ],
+});
+`;
+  assert.deepEqual(problems(rejected), [
+    'projects holds `{ ...shared, displayName: "unit" }`, not a @support/jest create*Project(...) call: jest does not pass a preset\'s options down to a project',
+    "projects[createLibsCoinJestProject].testMatch repeats what the preset sets; remove it",
+    `projects[createLibsCoinJestProject].transform ${NOT_OWNED}: keep a dependency transformed with the extraEsmDeps option`,
+    'passes createLibsCoinJestProject() an unknown option "coverage"',
+    "projects holds `createLibsCoinJestConfig()`, not a @support/jest create*Project(...) call: jest does not pass a preset's options down to a project",
+  ]);
+  assert.deepEqual(
+    problems(`${COIN}module.exports = createLibsCoinJestConfig({ projects: list });`),
+    ["projects is not an array literal; list create*Project(...) calls"],
+  );
+});
+
+test("a key the debt list names for the file passes, and an entry it no longer uses is reported", () => {
+  const source = `${SHARED}module.exports = createSharedJestConfig({ testEnvironment: "jsdom" });`;
+  assert.deepEqual(problems(source, ["testEnvironment"]), []);
+  assert.deepEqual(problems(source, ["testEnvironment", "transform"]), [
+    "tools/nx-plugins/enforce-tool-config/rules/jest-debt.mjs lists transform, which the config no " +
+      "longer overrides; remove it",
+  ]);
+});
+
+test("the rule reports overrides by file, and debt entries for configs that are gone", () => {
+  assert.deepEqual(
+    check(
+      {
+        "package.json": CONSUMER,
+        "jest.config.js": `${SHARED}module.exports = createSharedJestConfig({ reporters: [] });`,
+        "jest.integ.config.js": `${SHARED}module.exports = createSharedJestConfig({ globals: {} });`,
+      },
+      {
+        "shared/thing/jest.integ.config.js": ["globals"],
+        "shared/thing/jest.native.config.js": ["transform"],
+        "shared/thing/nested/jest.config.js": ["transform"],
+        "shared/other/jest.config.js": ["transform"],
+      },
+    ),
+    [
+      `shared/thing/jest.config.js: reporters ${NOT_OWNED}: every preset reports the same way`,
+      "tools/nx-plugins/enforce-tool-config/rules/jest-debt.mjs: lists " +
+        "shared/thing/jest.native.config.js, which does not exist; remove it",
+    ],
+  );
+});
+
+test("every debt entry names a config that exists, each key once", () => {
+  for (const [file, keys] of Object.entries(JEST_DEBT)) {
+    assert.ok(fs.existsSync(path.join(REPOSITORY, file)), `${file} does not exist`);
+    assert.equal(new Set(keys).size, keys.length, `${file} lists a key twice`);
+  }
 });

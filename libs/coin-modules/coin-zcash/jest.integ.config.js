@@ -1,6 +1,3 @@
 const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");
 
-module.exports = createLibsCoinIntegJestConfig({
-  rootDir: __dirname,
-  setupFilesAfterEnv: [],
-});
+module.exports = createLibsCoinIntegJestConfig({ rootDir: __dirname }, { walletFramework: false });

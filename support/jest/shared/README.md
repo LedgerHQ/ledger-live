@@ -9,7 +9,7 @@ Shared jest configuration for `shared/*` packages.
 
 ### `shared/*` logic packages
 
-#### `createSharedJestConfig(overrides?)`
+#### `createSharedJestConfig(overrides?, options?)`
 
 Flat node config for the majority of `shared/*` packages.
 
@@ -25,22 +25,20 @@ Optional overrides:
 module.exports = createSharedJestConfig({ passWithNoTests: true });
 ```
 
-#### `jestSonarReporter` / `sharedReporters`
-
-`jestSonarReporter` is the sonar reporter tuple. `sharedReporters` is the full tail
-(`[jestSonarReporter, "@ledgerhq/test-quarantine/jest"]`) — use it when you need to insert
-an extra reporter without duplicating the rest:
+`setupFilesAfterEnv` adds to the preset's test quarantine retries; every other key replaces the
+preset's. `retries: false` leaves the retries out, for suites where a retry that passes would hide a
+real failure:
 
 ```js
-const { createSharedJestConfig, sharedReporters } = require("@support/jest/shared");
-module.exports = createSharedJestConfig({
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ...sharedReporters,
-  ],
-});
+module.exports = createSharedJestConfig({ rootDir: __dirname }, { retries: false });
 ```
+
+#### `jestSonarReporter` / `sharedReporters`
+
+`jestSonarReporter` is the sonar reporter tuple. `sharedReporters` is the tail every node config
+reports to (`[jestSonarReporter, "@ledgerhq/test-quarantine/jest"]`), after `default` and, on CI,
+`github-actions`. A package does not override `reporters`: the `jest` rule of
+`pnpm lint:tool-config` rejects the key.
 
 ### `shared/ui-*` UI packages
 

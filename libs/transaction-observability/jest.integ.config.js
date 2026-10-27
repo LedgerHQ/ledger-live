@@ -8,8 +8,7 @@ module.exports = createSharedJestConfig(
     testPathIgnorePatterns: ["lib/", "lib-es/"],
     testMatch: undefined,
     testRegex: "\\.integration\\.test\\.ts$",
-    // No retries: a retry that passes would hide a real service outage.
-    setupFilesAfterEnv: [],
   },
-  { esm: true },
+  // No retries: a retry that passes would hide a real service outage.
+  { esm: true, retries: false },
 );

@@ -46,10 +46,10 @@ const TEST_TIMEOUT = 30_000;
  * jsdom project for a devtools package's `*.web.test.*` files.
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides] `moduleNameMapper` is merged
- * into the preset's; every other key replaces it.
+ * into the preset's and `setupFilesAfterEnv` adds to it; every other key replaces it.
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
+function createWebJestConfig({ moduleNameMapper, setupFilesAfterEnv = [], ...overrides } = {}) {
   return {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/src"],
@@ -61,7 +61,7 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
     // jest package once private hoist makes that package visible, so map the prefix.
     modulePaths: ["<rootDir>"],
     transformIgnorePatterns: [`node_modules/.pnpm/(?!(${WEB_TRANSFORM_ALLOWLIST.join("|")}))`],
-    setupFilesAfterEnv: ["@testing-library/jest-dom", here("setup/web.js")],
+    setupFilesAfterEnv: ["@testing-library/jest-dom", here("setup/web.js"), ...setupFilesAfterEnv],
     moduleNameMapper: {
       // First matching pattern wins, so a consumer mapper comes before this prefix.
       ...moduleNameMapper,
@@ -85,10 +85,10 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
  * ship inside react-native itself.
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides] `moduleNameMapper` is merged
- * into the preset's; every other key replaces it.
+ * into the preset's and `setupFilesAfterEnv` adds to it; every other key replaces it.
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
+function createNativeJestConfig({ moduleNameMapper, setupFilesAfterEnv = [], ...overrides } = {}) {
   return {
     preset: "react-native",
     roots: ["<rootDir>/src"],
@@ -115,7 +115,7 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
       "^react-native-gesture-handler$": here("mocks/react-native-gesture-handler.tsx"),
       "^expo-haptics$": here("mocks/expo-haptics.ts"),
     },
-    setupFilesAfterEnv: [here("setup/native.ts")],
+    setupFilesAfterEnv: [here("setup/native.ts"), ...setupFilesAfterEnv],
     coverageReporters: coverageReporters("lcov.native.info"),
     reporters: ["default", sonarReporter("sonar-executionTests-native-report.xml")],
     ...overrides,
