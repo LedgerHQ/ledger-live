@@ -22,6 +22,11 @@ quarantine, `github-actions` on CI), and one override rule: in `webOverrides` / 
 it. A preset adds only its own mocks, test matching, resolver and transform allowlist. The core's
 mocks stay reachable as `@support/jest/shared/mocks/*`.
 
+The dual presets set `coverageReporters` at the top level, since jest ignores it inside a project.
+The lcov root is the repository root seen from `rootDir` when set, else the layer's depth
+(`../../` for `shared/*`, `../../../` for `features/*`), so the `SF:` paths in `lcov.info` are
+relative to the repository root, where Sonar reads them.
+
 `createSharedJestConfig(overrides, options)` is the node base for `shared/*` and `libs/*` packages,
 and for node packages of other layers that no layer preset covers yet. Its options:
 
