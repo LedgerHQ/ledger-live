@@ -248,7 +248,6 @@
     "html-to-image": "1.11.13",
     "i18next": "catalog:",
     "invariant": "2.2.4",
-    "json-rpc-2.0": "0.2.19",
     "jsqr": "1.4.0",
     "lodash": "catalog:",
     "path-browserify": "^1.0.1",
