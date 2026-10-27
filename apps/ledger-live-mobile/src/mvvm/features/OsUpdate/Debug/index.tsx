@@ -31,6 +31,7 @@ export default function OsUpdatesOrchestratorDebugScreen() {
         <WhatsNewScreen
           version={viewModel.whatsNew.version}
           notes={viewModel.whatsNew.notes}
+          onOpenReleaseNotes={viewModel.onOpenReleaseNotes}
           onStart={viewModel.onConfirmStart}
           onClose={viewModel.onStop}
         />

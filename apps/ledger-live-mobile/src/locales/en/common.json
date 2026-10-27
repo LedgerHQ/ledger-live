@@ -5956,6 +5956,7 @@
       "version": "Version {{version}}",
       "banner": "Ensure your 24 words Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.",
       "title": "What’s in this OS update?",
+      "releaseNotes": "See full release notes",
       "start": "Start update"
     },
     "preparing": {
