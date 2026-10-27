@@ -5,25 +5,30 @@ import { getSkill, SIDECAR_FILENAME } from "../skills/registry";
 
 const SKILL_NAME = "wallet-cli-usage";
 
-export async function readTrackedFromDisk(
-  skillRoot: string,
-): Promise<{ path: string; content: string }[]> {
+type SkillFileOnDisk = { path: string; content: string };
+
+export async function readTrackedFromDisk(skillRoot: string): Promise<SkillFileOnDisk[]> {
   const skill = getSkill(SKILL_NAME)!;
-  const files: { path: string; content: string }[] = [];
-  for (const f of skill.files) {
-    files.push({ path: f.path, content: await readFile(path.join(skillRoot, f.path), "utf8") });
-  }
-  return files;
+  return Promise.all(
+    skill.files.map(async f => ({
+      path: f.path,
+      content: await readFile(path.join(skillRoot, f.path), "utf8"),
+    })),
+  );
 }
 
-/** Rewrite the sidecar so its hashes match the current on-disk files (with a chosen version). */
-export async function stampSidecar(skillRoot: string, cliVersion: string): Promise<void> {
-  const files = await readTrackedFromDisk(skillRoot);
+/** Rewrite the sidecar as if `cliVersion` had installed `files` (default: the shipped files as on disk). */
+export async function stampSidecar(
+  skillRoot: string,
+  cliVersion: string,
+  files?: SkillFileOnDisk[],
+): Promise<void> {
+  const installedFiles = files ?? (await readTrackedFromDisk(skillRoot));
   const sidecar = {
     name: SKILL_NAME,
     cliVersion,
-    contentHash: hashSkillFiles(files),
-    files: Object.fromEntries(files.map(f => [f.path, hashOne(f.content)])),
+    contentHash: hashSkillFiles(installedFiles),
+    files: Object.fromEntries(installedFiles.map(f => [f.path, hashOne(f.content)])),
     installedAt: new Date().toISOString(),
   };
   await writeFile(

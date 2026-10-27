@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { access, appendFile, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, appendFile, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../testing/cli-runner";
-import { stampSidecar } from "../../testing/skill-fixtures";
+import { readTrackedFromDisk, stampSidecar } from "../../testing/skill-fixtures";
 import { SIDECAR_FILENAME } from "../../skills/registry";
 
 const SKILL_NAME = "wallet-cli-usage";
@@ -65,6 +65,24 @@ describe("skill install", () => {
     const shipped = await readFile(skillMd, "utf8");
     await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
     await stampSidecar(skillRoot, "0.0.1");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
+  });
+
+  it("replaces an older skill that had a file this one dropped, without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const skillRoot = path.join(tmpDir, SKILL_NAME);
+    const skillMd = path.join(skillRoot, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
+    const dropped = { path: "references/dropped.md", content: "a reference since removed\n" };
+    await writeFile(path.join(skillRoot, dropped.path), dropped.content, "utf8");
+    await stampSidecar(skillRoot, "0.0.1", [...(await readTrackedFromDisk(skillRoot)), dropped]);
 
     const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 

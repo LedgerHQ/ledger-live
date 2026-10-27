@@ -70,12 +70,15 @@ export default defineCommand({
         skillsToInstall.push(skill);
       }
 
-      const installed: string[] = [];
-      for (const skill of skillsToInstall) {
-        const { status } = await diagnoseSkill(skill, root);
-        const unedited = status === "up-to-date" || status === "outdated";
-        installed.push(...(await writeSkill(skill, root, { force: flags.force || unedited })));
-      }
+      const installed = (
+        await Promise.all(
+          skillsToInstall.map(async skill => {
+            const { status } = await diagnoseSkill(skill, root);
+            const unedited = status === "up-to-date" || status === "outdated";
+            return writeSkill(skill, root, { force: flags.force || unedited });
+          }),
+        )
+      ).flat();
 
       if (format === "json") {
         emitJson(
