@@ -8,17 +8,17 @@ Feature packages shared across desktop and mobile apps. See [docs/new-library.md
 
 | Path | Purpose | README |
 | --- | --- | --- |
-| `platform/` | Non-functional, cross-feature hooks/selectors/NFR glue — no rendering | [platform/README.md](platform/README.md) |
-| `flow/` | User-facing UI shared across apps (`.web.tsx` / `.native.tsx`) | [flow/README.md](flow/README.md) |
+| `platform/` | Business-aware hooks, selectors, NFR rules, React glue and UI shared by several flows; no screens, no journey | [platform/README.md](platform/README.md) |
+| `flow/` | One user journey each: business-aware UI shared across apps (`.web.tsx` / `.native.tsx`) | [flow/README.md](flow/README.md) |
 
 ## Dependency direction
 
 ```
-domain/entity → domain/api → features/platform → features/flow → apps/
+apps/ → features/flow → features/platform → domain/ → shared/
 ```
 
 - `features/flow/*` may depend on `features/platform/*`, `domain/*` and `shared/*`.
 - `features/platform/*` may depend on `domain/*` and `shared/*`; it must **not** depend on `features/flow/*`.
 - App-specific screen composition stays in `apps/`, not here.
 
-For naming conventions and the full new-package checklist see [docs/new-library.md](../docs/new-library.md).
+To decide between `platform/` and `flow/`, follow the [structure-flow](../.agents/skills/structure-flow/SKILL.md) decision tree. For naming conventions and the full new-package checklist see [docs/new-library.md](../docs/new-library.md).

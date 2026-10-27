@@ -23,12 +23,12 @@ Platform-specific entry points: analytics host wiring, observability, routing, s
 ### `features/`
 Split into two sub-layers:
 
-- **`features/platform/`** — Non-Functional Requirements at feature level. Invisible to users (no screens, no global routing). Hooks, selectors, cross-feature domain-aware helpers, React glue, headless logic shared by both apps. _e.g. `@features/platform-feature-flags`, `@features/platform-coin-loader`._
-- **`features/flow/`** — User-facing features shared across both apps. UI components with business context, local state, user-facing logic. Each app composes these into its own screens.
+- **`features/platform/`**: business-aware code that serves several flows and owns no journey: no screens, no global routing. Hooks, selectors, NFR rules, cross-feature domain-aware helpers, React glue, and UI shared by several flows. _e.g. `@features/platform-feature-flags`, `@features/platform-contacts`._
+- **`features/flow/`**: one user journey per package, shared across both apps. UI components with business context, flow state, user-facing logic. Each app composes these into its own screens. _e.g. `@features/flow-contacts`._
 
 `features/platform/` is where the cross-cutting glue goes, rather than `libs/ledger-live-common`.
 
-See [features/README.md](../features/README.md) for details.
+See [features/README.md](../features/README.md) for details. To decide which layer owns a concern, follow the decision tree of the [structure-flow](../.agents/skills/structure-flow/SKILL.md) skill.
 
 ### `domain/`
 The semantic foundation of the app.
@@ -99,9 +99,12 @@ Never re-export a legacy type from a new-arch barrel.
 | Layer | npm scope | Example |
 |---|---|---|
 | `shared/` | `@shared/<name>` | `@shared/feature-flags` |
-| `domain/entity/` | `@domain/entity-<name>` | `@domain/entity-crypto-asset` |
-| `domain/api/` | `@domain/api-<name>` | `@domain/api-crypto-asset` |
+| `domain/entity/` | `@domain/entity-<name>` | `@domain/entity-contact` |
+| `domain/api/` | `@domain/api-<name>` | `@domain/api-push-devices` |
 | `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
-| `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
+| `features/flow/` | `@features/flow-<name>` | `@features/flow-contacts` |
+| `support/` | `@support/<name>` | `@support/jest` |
 
-No cross-package relative imports — always use the npm package name.
+The folder path gives the package name: `domain/entity/contact` is `@domain/entity-contact`. Inside `<name>`, the namespace comes first, then the qualifier (`currency-crypto`, `market-index-fear-and-greed`). A package that breaks the rule is renamed when someone touches it.
+
+No cross-package relative imports: always use the npm package name.
