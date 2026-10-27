@@ -478,6 +478,65 @@ describe("addSource", () => {
     await expect(ranked.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
   });
 
+  it("ranks a source added first ahead of the app's, until removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    const remove = router.addSource(constant("takeover", 1), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("moves a source added first ahead, even in place of one sharing its id", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    router.addSource(constant("dev", 2), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+  });
+
+  it("puts a source replaced by one added first back at its rank once removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const remove = router.addSource(constant("dev", 2), { first: true });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("puts back a runtime source a first one replaced at its own rank", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    router.addSource(constant("dev", 1));
+    const removeReplacement = router.addSource(constant("dev", 2), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+    removeReplacement();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("leaves the ranking alone when removing a registration that no longer answers", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    const removeShadowed = router.addSource(constant("a", 1), { first: true });
+    router.addSource(constant("a", 2), { first: true });
+    router.addSource(constant("b", 3), { first: true });
+    removeShadowed();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 3 });
+  });
+
+  it("keeps the app's order once first replacements of two of its sources are removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const removeDev = router.addSource(constant("dev", 2), { first: true });
+    const removeApp = router.addSource(constant("app", 3), { first: true });
+    removeDev();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 3 });
+    removeApp();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("restores the app's order whatever order the first sources are removed in", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const removeReplacement = router.addSource(constant("dev", 2), { first: true });
+    const removeOverlay = router.addSource(constant("overlay", 3), { first: true });
+    removeReplacement();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 3 });
+    removeOverlay();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
   it("replaces the source sharing its id, and its remover puts it back", async () => {
     const router = createAccountDataRouter([constant("dev", 0)]);
     const remove = router.addSource(constant("dev", 1));
