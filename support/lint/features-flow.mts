@@ -38,7 +38,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "flow-contacts-detail",
   "flow-contacts-edit-address",
   "flow-contacts-edit-contact",
-  "flow-contacts-introduction",
   "flow-contacts-list",
   "large-screen-upsell",
   "market-banner",

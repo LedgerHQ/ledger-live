@@ -3,10 +3,8 @@ import { DialogBody } from "@ledgerhq/lumen-ui-react";
 import type { AddressValidationError as AddressValidationErrorType } from "@ledgerhq/live-common/flows/send/recipient/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Contact, ContactAddress } from "@domain/entity-contact";
-import {
-  ContactsFeatureIntroductionDialog,
-  type ContactsFeatureIntroduction,
-} from "@features/flow-contacts-introduction";
+import type { ContactsFeatureIntroduction } from "@features/flow-contacts-introduction";
+import { ContactsFeatureIntroductionDialog } from "@features/flow-contacts-introduction/web";
 import type { AddressMatchedSectionViewModel } from "../hooks/useAddressMatchedSectionViewModel";
 import { AddressMatchedSection } from "./AddressMatchedSection";
 import { AddressValidationError } from "./AddressValidationError";
