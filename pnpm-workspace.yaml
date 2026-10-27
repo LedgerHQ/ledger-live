@@ -334,6 +334,8 @@ overrides:
   "@polkadot/rpc-provider>nock": "-"
   # @opentui/core bundles jimp into its 3d entry; the declared dep is never resolved
   "@opentui/core>jimp": "-"
+  # Only lib/internal/web (web fallback) imports the web SDK; iOS/Android use nativeModule.ios/android. invertase/react-native-firebase#9402
+  "@react-native-firebase/app>firebase": "-"
 
 patchedDependencies:
   "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch"
