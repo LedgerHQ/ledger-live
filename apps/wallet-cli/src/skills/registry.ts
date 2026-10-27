@@ -323,8 +323,11 @@ async function readTrackedFile(
 }
 
 async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
-  const onDisk = await readTrackedFile(skillRoot, file.path);
-  return onDisk !== undefined && onDisk.content !== file.content;
+  try {
+    return (await readFile(path.join(skillRoot, file.path), "utf8")) !== file.content;
+  } catch (e) {
+    return (e as { code?: string } | null)?.code !== "ENOENT";
+  }
 }
 
 /**
@@ -336,8 +339,8 @@ async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolea
  *   what this binary ships, otherwise `modified-locally` — without provenance we
  *   can't tell an old version from local edits, so we don't let `--fix` overwrite
  *   it unless the caller also passes `--force`.
- * - Sidecar present: disk hash disagrees with the sidecar, or a file the sidecar
- *   didn't record already exists with other content than shipped →
+ * - Sidecar present: disk hash disagrees with the sidecar, or a path the sidecar
+ *   didn't record already holds anything but the shipped file →
  *   `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
  *   else → `outdated`.
  */
