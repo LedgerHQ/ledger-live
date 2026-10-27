@@ -1,15 +1,15 @@
 import React from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { AccountSettings } from "@features/flow-account-detail-settings";
-import { useAccountSettingsAdapter } from "LLD/hooks/useAccountSettingsAdapter";
 import { HeaderView } from "./HeaderView";
+import { useAccountDetailSettingsAdapter } from "./useAccountDetailSettingsAdapter";
 import { useHeaderViewModel } from "./useHeaderViewModel";
 
 type Props = Readonly<{ account: Account }>;
 
 export function Header({ account }: Props) {
   const viewModel = useHeaderViewModel(account);
-  const accountSettingsAdapter = useAccountSettingsAdapter();
+  const accountSettingsAdapter = useAccountDetailSettingsAdapter();
 
   return (
     <>

@@ -1,10 +1,10 @@
 import React from "react";
 import { Platform } from "react-native";
 import {
-  ContactsFeatureIntroductionContent,
   type ContactsFeatureIntroduction,
   useContactsFeatureIntroductionActions,
 } from "@features/flow-contacts-introduction";
+import { ContactsFeatureIntroductionContent } from "@features/flow-contacts-introduction/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 

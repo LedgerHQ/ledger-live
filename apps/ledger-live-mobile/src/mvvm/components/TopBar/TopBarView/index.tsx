@@ -4,7 +4,6 @@ import { DotIndicator } from "@ledgerhq/lumen-ui-rnative";
 import {
   Compass,
   Bell,
-  BellNotification,
   Settings,
   Warning,
   Clock,
@@ -19,6 +18,7 @@ import { ICON_SIZE } from "LLM/components/TopBar/const";
 import { SyncErrorBottomSheet } from "../components/SyncErrorBottomSheet";
 import { useTopBarViewModel } from "../useTopBarViewModel";
 import { MyWalletTopBarAction } from "../components/MyWalletTopBarAction";
+import { BellNotificationIcon } from "../components/BellNotificationIcon";
 
 const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
   <Warning size={size ?? ICON_SIZE} style={style} color="base" />
@@ -60,7 +60,7 @@ export function TopBarView({
 
   const notificationIcon = useCallback<IconButtonProps["icon"]>(
     ({ size, style }) => {
-      const Icon = hasUnreadNotifications ? BellNotification : Bell;
+      const Icon = hasUnreadNotifications ? BellNotificationIcon : Bell;
       return <Icon size={size ?? ICON_SIZE} style={style} color="base" />;
     },
     [hasUnreadNotifications],

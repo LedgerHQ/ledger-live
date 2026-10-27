@@ -132,10 +132,10 @@ function ErrorBlock({
 
   return (
     <div className="flex flex-row justify-between">
-      <span className="text-sm text-muted basis-1/3 text-left">
+      <span className="text-muted basis-1/3 text-left">
         <Trans i18nKey={translationKey} />
       </span>
-      <span className="text-sm text-base basis-2/3 text-right">{value}</span>
+      <span className="text-base basis-2/3 text-right">{value}</span>
     </div>
   );
 }

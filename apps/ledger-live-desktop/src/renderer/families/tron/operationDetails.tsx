@@ -60,7 +60,7 @@ export const OperationDetailsVotes = ({
   const redirectAddress = useCallback(
     (address: string) => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
-      if (url) openURL(url);
+      if (url) openURL(url, "OpenURL", {}, { sensitive: true });
     },
     [account],
   );
@@ -131,7 +131,7 @@ const OperationDetailsExtra = ({
   const redirectAddress = useCallback(
     (address: string) => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
-      if (url) openURL(url);
+      if (url) openURL(url, "OpenURL", {}, { sensitive: true });
     },
     [account],
   );

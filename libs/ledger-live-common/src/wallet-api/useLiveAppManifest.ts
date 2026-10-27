@@ -1,16 +1,20 @@
 import { useMemo } from "react";
 import { useLocalLiveAppManifest } from "./LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "../platform/providers/RemoteLiveAppProvider/index";
-import { applyCustomDappUrl } from "./manifestDomainUtils";
+import { type ApplyCustomDappUrlOptions, applyCustomDappUrl } from "./manifestDomainUtils";
 
-export function useLiveAppManifest(appId: string | undefined, customDappUrl?: string | null) {
+export function useLiveAppManifest(
+  appId: string | undefined,
+  customDappUrl?: string | null,
+  { enforceManifestDomains }: ApplyCustomDappUrlOptions = {},
+) {
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
 
   const manifest = useMemo(() => {
     const baseManifest = localManifest || remoteManifest;
-    return applyCustomDappUrl(baseManifest, customDappUrl);
-  }, [localManifest, remoteManifest, customDappUrl]);
+    return applyCustomDappUrl(baseManifest, customDappUrl, { enforceManifestDomains });
+  }, [localManifest, remoteManifest, customDappUrl, enforceManifestDomains]);
 
   return manifest;
 }

@@ -1,5 +1,6 @@
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useEffect } from "react";
+import { useFeature } from "@features/platform-feature-flags";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { useNavigation } from "@react-navigation/native";
@@ -28,7 +29,10 @@ export function LiveApp({ route }: Props) {
   const { locale } = useLocale();
 
   const dappUrl = customDappURL || customDappUrl;
-  const manifest = useLiveAppManifest(appId, dappUrl);
+  const manifestDomainCheckEnabled = useFeature("llmWebviewManifestDomainCheck")?.enabled;
+  const manifest = useLiveAppManifest(appId, dappUrl, {
+    enforceManifestDomains: manifestDomainCheckEnabled,
+  });
 
   const isStakeRedirect = Boolean(params.accountId || params.yieldId);
   useDappLifecycleMonitoring(appId, isStakeRedirect);

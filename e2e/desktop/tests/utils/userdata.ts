@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const getUserdata = async (userdataFile: string) => {
   const jsonFile = await readFile(userdataFile, "utf-8");
@@ -9,7 +9,7 @@ const getUserdata = async (userdataFile: string) => {
 /** A fresh install has not seen the analytics opt-in screen, so Get started opens it. */
 export const FRESH_INSTALL_SETTINGS = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: false };
 
-const POLL_INTERVAL_MS = 200;
+const POLL_INTERVAL_MS = INTERVAL.tick;
 const DEFAULT_TIMEOUT_MS = TIMEOUT.medium;
 
 /**

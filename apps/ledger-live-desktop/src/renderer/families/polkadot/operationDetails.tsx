@@ -48,13 +48,16 @@ function getURLWhatIsThis({
 }
 function formatPalletMethod(palletMethod?: string | null): string {
   if (!palletMethod) return "";
-  return palletMethod.split(".").map(startCase).join(" - ");
+  return palletMethod
+    .split(".")
+    .map(part => startCase(part))
+    .join(" - ");
 }
 const redirectAddress = (currency: Currency, address: string) => () => {
   const url =
     currency.type === "CryptoCurrency" &&
     getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 type OperationDetailsValidatorsProps = {
   validators: string[];

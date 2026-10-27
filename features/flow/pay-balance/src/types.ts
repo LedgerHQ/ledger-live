@@ -1,5 +1,5 @@
 import type { BalanceFilter } from "./state";
-import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
+import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import type { ActionTilesProps } from "./components/ActionTiles/types";
 
 // Shared by both platforms (`AmountDisplay`);

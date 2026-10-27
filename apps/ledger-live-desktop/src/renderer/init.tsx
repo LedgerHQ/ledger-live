@@ -19,6 +19,7 @@ import { restorePayCardOnboardingWidget } from "@features/flow-pay-card-widget/s
 import i18n from "~/renderer/i18n/init";
 import { setVisualZoomLevelLimits } from "~/renderer/webFrame";
 import { deeplink } from "~/renderer/bridge";
+import { startDomainCheckViolationReporting } from "~/renderer/components/Web3AppWebview/domainCheckReport";
 import each from "lodash/each";
 import { reload, getKey } from "~/renderer/storage";
 import "~/renderer/styles/global";
@@ -239,6 +240,7 @@ async function init() {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
+  startDomainCheckViolationReporting();
   const initialSettings = (await getKey("app", "settings")) || {};
 
   liveBlindSigningReporter.setConsentSource(() => trackingEnabledSelector(store.getState()));

@@ -10,12 +10,13 @@ MUST and MUST NOT are required. SHOULD is the default, and the same section stat
 
 Tests MUST wait for an element or a navigation instead.
 
-### A timeout MUST be a `TIMEOUT` bucket
+### A timeout or a poll interval MUST be a bucket
 
-A wait SHOULD omit a timeout so the page and `expect` defaults apply. A passed timeout MUST be a `TIMEOUT` bucket from [`@ledgerhq/live-e2e-shared/timeouts`](../../../libs/live-e2e-shared/src/timeouts.ts), not a bare number. A named constant in the file MUST NOT be added unless no bucket fits or the value needs its reason written down. The page default in `tests/fixtures/common.ts` and the `expect` default in `playwright.config.ts` MUST be buckets too. A budget no bucket covers, such as the test timeout, MAY stay a literal in `playwright.config.ts`, since the key already names it.
+A wait SHOULD omit a timeout so the page and `expect` defaults apply. A passed timeout MUST be a `TIMEOUT` bucket from [`@ledgerhq/live-e2e-shared/timeouts`](../../../libs/live-e2e-shared/src/timeouts.ts), not a bare number. A poll interval or a pause between attempts (`expect.poll` `intervals`, a `setTimeout` in a polling loop) MUST be an `INTERVAL` bucket from the same file. A named constant in the file MUST NOT be added unless no bucket fits, such as a per-test budget (`test.setTimeout`) above the largest bucket, and it MUST state its reason. Feature-flag params such as `pollingInterval` or `searchDebounceTime` configure the app, not a wait, so this rule does not apply to them. The page default in `tests/fixtures/common.ts` and the `expect` default in `playwright.config.ts` MUST be buckets too. A budget no bucket covers, such as the test timeout, MAY stay a literal in `playwright.config.ts`, since the key already names it.
 
 ```ts
 await expect(this.walletSyncRow).toBeVisible({ timeout: TIMEOUT.xxlarge }); // not 60_000
+await expect.poll(countEnvs, { intervals: [INTERVAL.medium] }).toBeGreaterThan(0); // not [1_000]
 ```
 
 ## Specs
@@ -89,3 +90,16 @@ test(
 ### Journey gates MUST use hard assertions
 
 Supplementary checks (copy, extra UI state) MAY use [soft assertions](soft-expect.md). Journey gates MUST stay hard `expect(...)` so they fail fast and stop the test when a critical condition is not met.
+
+## Exclusive lock implementation
+
+What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). Use `exclusiveLockFor` ([`tests/utils/exclusiveLock.ts`](../tests/utils/exclusiveLock.ts)), with its `names` on the `lock` detail and its `fixtures` in `test.use`:
+
+```ts
+const delegateLock = exclusiveLockFor({ broadcastAccounts: [delegate.account] });
+
+test.describe("Delegate", { lock: delegateLock.names }, () => {
+  test.use(delegateLock.fixtures);
+```
+
+Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`, as `send.swap` does once its provider needs no token approval. The `lock` detail still holds until the test ends.

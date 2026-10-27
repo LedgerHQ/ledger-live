@@ -52,6 +52,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
@@ -65,7 +66,6 @@
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
@@ -74,7 +74,6 @@
     "react-native": "catalog:",
     "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
-    "tailwind-merge": "catalog:",
     "typescript": "catalog:"
   }
 }

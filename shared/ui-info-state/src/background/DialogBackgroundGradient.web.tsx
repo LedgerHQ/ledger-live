@@ -1,7 +1,6 @@
 import React from "react";
-import { cn } from "../internals/cn.web";
-import { DialogBackgroundContext, type DialogBackgroundTone } from "./DialogBackgroundContext.web";
-import { useDialogBackgroundToneRequests } from "./useDialogBackgroundToneRequests.web";
+import { cn } from "../internals/cn";
+import type { DialogBackgroundTone } from "./DialogBackgroundContext";
 
 type DialogBackgroundGradientProps = Readonly<{
   tone: DialogBackgroundTone;
@@ -22,20 +21,5 @@ export function DialogBackgroundGradient({ tone }: DialogBackgroundGradientProps
       )}
       data-testid={`dialog-status-gradient-${tone}`}
     />
-  );
-}
-
-export function DialogBackgroundToneProvider({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const { backgroundTone, backgroundContextValue } = useDialogBackgroundToneRequests();
-
-  return (
-    <DialogBackgroundContext.Provider value={backgroundContextValue}>
-      {backgroundTone ? <DialogBackgroundGradient tone={backgroundTone} /> : null}
-      {children}
-    </DialogBackgroundContext.Provider>
   );
 }

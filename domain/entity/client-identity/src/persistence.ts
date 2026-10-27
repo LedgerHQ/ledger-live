@@ -1,4 +1,4 @@
-import { IdentitiesState, isDummyUserId, isDummyDatadogId } from "./types";
+import { IdentitiesState, isDummyUserId, isDummyDatadogId, isDummyPortfolioId } from "./types";
 
 /**
  * Serialized format for persistence
@@ -6,6 +6,7 @@ import { IdentitiesState, isDummyUserId, isDummyDatadogId } from "./types";
 export interface PersistedIdentities {
   userId?: string;
   datadogId?: string;
+  portfolioId?: string;
   deviceIds: string[];
   pushDevicesSyncState: "synced" | "unsynced";
   pushDevicesServiceUrl: string | null;
@@ -21,6 +22,9 @@ export function exportIdentitiesForPersistence(state: IdentitiesState): Persiste
   const datadogId = isDummyDatadogId(state.datadogId)
     ? undefined
     : state.datadogId.exportDatadogIdForPersistence();
+  const portfolioId = isDummyPortfolioId(state.portfolioId)
+    ? undefined
+    : state.portfolioId.exportPortfolioIdForPersistence();
 
-  return { userId, datadogId, deviceIds, pushDevicesSyncState, pushDevicesServiceUrl };
+  return { userId, datadogId, portfolioId, deviceIds, pushDevicesSyncState, pushDevicesServiceUrl };
 }

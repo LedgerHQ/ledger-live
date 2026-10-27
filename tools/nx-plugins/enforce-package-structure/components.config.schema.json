@@ -12,6 +12,7 @@
     "extensions",
     "componentWrappers",
     "bannedImportPrefixes",
+    "neutralImportTypes",
     "neutralReactTypes",
     "sharedGlobals",
     "bannedPropNames",
@@ -106,6 +107,16 @@
       "uniqueItems": true,
       "items": { "type": "string", "minLength": 1 },
       "examples": [["react-native", "@ledgerhq/lumen-ui-", "react-dom"]]
+    },
+    "neutralImportTypes": {
+      "description": "R3. Types a contract may import from a module `bannedImportPrefixes` rejects, keyed by the exact module specifier. They hold no platform prop, such as Lumen's `FormattedValue`, which both Lumen UI packages export. The import passes only when it is type-only and names nothing else: `import type { X }`, `import { type X }` or `import(\"...\").X`. A default, namespace or value import, a re-export, a `typeof` query or any other name keeps it rejected.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": { "type": "string", "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*$" }
+      },
+      "examples": [{ "@ledgerhq/lumen-ui-react": ["FormattedValue"] }]
     },
     "neutralReactTypes": {
       "description": "R3. The types a contract may reference from `react`, whether imported, read as `React.X` or as `import(\"react\").X`. React also exports the DOM types of react-dom (`ChangeEvent`, `CSSProperties`, `HTMLAttributes`), so the list names the neutral ones and rejects the rest. A global type the ECMAScript library of the installed TypeScript does not declare, such as `Element` or `MouseEvent`, is rejected without a list, and React Native types need an import that `bannedImportPrefixes` rejects. The check reads names, not types: an alias declared in another module escapes it.",

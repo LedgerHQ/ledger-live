@@ -41,9 +41,10 @@ Hosts may pass `formatters.amount` and `formatters.date`. Amounts fall back to `
 Dates fall back to the runtime locale's medium date. Desktop should pass `useDateFormatter` so the
 region locale and Thai Gregorian calendar apply.
 
-Transaction rows can be selected through `onTransactionPress`. On web, selecting one also opens a
-Lumen dialog; on native the host opens `CardTransactionDetail` in its own navigation shell. The
-detail shows the merchant, relative date and time, amount, status, masked card, funding source and
+Transaction rows report the one the user opens through `onOpenTransaction`. On web, opening one
+also shows it in `CardTransactionDetailDialog`, a Lumen dialog exported for web hosts from
+`@features/flow-pay-card-transactions/web`. On native the host puts `CardTransactionDetail`, the
+universal detail content, in its own sheet or navigation shell. The detail shows the merchant, relative date and time, amount, status, masked card, funding source and
 copyable processor transaction ID. A platform-specific clipboard adapter keeps that side effect out
 of the view. Hosts only provide locale-aware amount and date formatters and, on web, the injected
 tracking callback.

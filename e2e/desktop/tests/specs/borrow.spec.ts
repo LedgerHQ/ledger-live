@@ -3,6 +3,7 @@ import test from "tests/fixtures/common";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { acquireExclusiveLock, type Lease } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import {
   DEFAULT_LOAN,
   ensureRepayTestPrecondition,
@@ -15,6 +16,7 @@ import {
   FF_LWD_WALLET_40_Q2_NO_ANALYTICS_CONSENT,
 } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import { EXCLUSIVE_LOCK_FIXTURE_TIMEOUT, exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 test.describe.configure({ mode: "default" });
 
@@ -22,8 +24,41 @@ const coldStartAccount = Account.ETH_1;
 const openLoanAccount = Account.ETH_4;
 const NANO_APP_CATALOG = resolvePath(__dirname, "../artifacts/appVersion/nano-app-catalog.json");
 
-const BORROW_HOOK_TIMEOUT_MS = 600_000;
+const BORROW_HOOK_TIMEOUT_MS = 600_000 + EXCLUSIVE_LOCK_FIXTURE_TIMEOUT;
 const BORROW_TEST_TIMEOUT_MS = 480_000;
+
+// This file runs in default mode, so Playwright holds the loan lock for the whole file.
+const loanLock = exclusiveLockFor({ broadcastAccounts: [openLoanAccount] });
+
+/**
+ * Holds the loan account from `prepare` until the loan is reset after the tests, so no other CI
+ * machine changes the loan in between. The tests therefore take no exclusive lock of their own.
+ */
+const holdLoanAccount = (
+  flowName: string,
+  prepare: () => Promise<void>,
+  prepareTimeoutMs = BORROW_HOOK_TIMEOUT_MS,
+) => {
+  let lease: Lease | undefined;
+
+  test.beforeAll(async () => {
+    test.setTimeout(prepareTimeoutMs);
+    lease = await acquireExclusiveLock([openLoanAccount], `desktop borrow ${flowName}`, {
+      allowNested: true,
+    });
+    await prepare();
+  });
+
+  test.afterAll(async () => {
+    if (!lease) return;
+    test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
+    try {
+      await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
+    } finally {
+      await lease.release();
+    }
+  });
+};
 
 const coldStartTags = buildTags({ currencyId: coldStartAccount.currency.id });
 
@@ -100,18 +135,9 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow", () => {
+test.describe("Borrow", { lock: loanLock.names }, () => {
   useBorrowOnChain("Open loan flow");
-
-  test.beforeAll(async () => {
-    test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
-  });
-
-  test.afterAll(async () => {
-    test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
-  });
+  holdLoanAccount("open loan", () => resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG }));
 
   test(
     `[${openLoanAccount.currency.testLabel}] - Borrow simulates a loan and completes the open-loan execution`,
@@ -163,18 +189,13 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow", () => {
+test.describe("Borrow", { lock: loanLock.names }, () => {
   useBorrowOnChain("Repay flow");
-
-  test.beforeAll(async () => {
-    test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
-    await ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG });
-  });
-
-  test.afterAll(async () => {
-    test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
-  });
+  holdLoanAccount(
+    "repay",
+    () => ensureRepayTestPrecondition({ nanoAppCatalogPath: NANO_APP_CATALOG }),
+    BORROW_HOOK_TIMEOUT_MS * 2,
+  );
 
   test(
     `[${openLoanAccount.currency.testLabel}] - Borrow hot start opens the repay modal and completes full repay`,
@@ -223,18 +244,13 @@ test.describe("Borrow", () => {
   );
 });
 
-test.describe("Borrow", () => {
+test.describe("Borrow", { lock: loanLock.names }, () => {
   useBorrowOnChain("Withdraw flow");
-
-  test.beforeAll(async () => {
-    test.setTimeout(BORROW_HOOK_TIMEOUT_MS * 2);
-    await ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG });
-  });
-
-  test.afterAll(async () => {
-    test.setTimeout(BORROW_HOOK_TIMEOUT_MS);
-    await resetLoanState({ nanoAppCatalogPath: NANO_APP_CATALOG });
-  });
+  holdLoanAccount(
+    "withdraw",
+    () => ensureWithdrawReadyForUi({ nanoAppCatalogPath: NANO_APP_CATALOG }),
+    BORROW_HOOK_TIMEOUT_MS * 2,
+  );
 
   test(
     `[${openLoanAccount.currency.testLabel}] - Borrow hot start routes a repaid loan to withdraw and completes collateral withdrawal`,

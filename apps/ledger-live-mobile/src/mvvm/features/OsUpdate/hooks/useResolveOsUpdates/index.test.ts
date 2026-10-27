@@ -62,6 +62,15 @@ describe("useResolveOsUpdates", () => {
     expect(store.getState().osUpdate.osUpdates).toEqual([osUpdate]);
   });
 
+  it("resolves the updates of a device in OSU mode", async () => {
+    const { result, store } = render({ deviceInfo: { ...deviceInfo, isOSU: true } });
+
+    await waitFor(() => expect(result.current).toBe(false));
+
+    expect(mockExecute).toHaveBeenCalledWith({ dmk: mockDmk, sessionId: "session-1" });
+    expect(store.getState().osUpdate.osUpdates).toEqual([osUpdate]);
+  });
+
   it("does nothing while the device is not ready", () => {
     const { result, store } = render({ ready: false });
 
@@ -111,7 +120,6 @@ describe("useResolveOsUpdates", () => {
   it.each([
     ["an unsupported version", { deviceInfo: { ...deviceInfo, version: "0.9.0" } }],
     ["a device in bootloader mode", { deviceInfo: { ...deviceInfo, isBootloader: true } }],
-    ["a device in OSU mode", { deviceInfo: { ...deviceInfo, isOSU: true } }],
     [
       "a model without Bluetooth over BLE",
       { device: { ...supportedDevice, modelId: DeviceModelId.nanoSP, wired: false } },

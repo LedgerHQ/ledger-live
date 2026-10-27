@@ -1,7 +1,7 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { StyleProvider } from "@features/platform-style/web";
-import { ActionTilesView } from "../ActionTilesView.web";
+import { ActionTilesView } from "../ActionTilesView";
 import type { ActionTilesViewProps } from "../types";
 
 function renderWithStyle(ui: React.ReactElement) {
@@ -10,9 +10,9 @@ function renderWithStyle(ui: React.ReactElement) {
 
 const defaultProps: ActionTilesViewProps = {
   tiles: [
-    { id: "deposit", label: "Deposit", onPress: jest.fn(), appearance: "base" },
-    { id: "request", label: "Request", onPress: jest.fn(), appearance: "transparent" },
-    { id: "pay", label: "New payment", onPress: jest.fn(), appearance: "transparent" },
+    { id: "deposit", label: "Deposit", onOpenFlow: jest.fn(), appearance: "base" },
+    { id: "request", label: "Request", onOpenFlow: jest.fn(), appearance: "transparent" },
+    { id: "pay", label: "New payment", onOpenFlow: jest.fn(), appearance: "transparent" },
   ],
 };
 
@@ -25,17 +25,17 @@ describe("ActionTilesView (Web)", () => {
     expect(screen.getByTestId("action-tile-pay")).toBeVisible();
   });
 
-  it("should call onPress when a tile is clicked", () => {
-    const onPress = jest.fn();
+  it("should call onOpenFlow when a tile is clicked", () => {
+    const onOpenFlow = jest.fn();
     renderWithStyle(
       <ActionTilesView
-        tiles={[{ id: "deposit", label: "Deposit", onPress, appearance: "base" }]}
+        tiles={[{ id: "deposit", label: "Deposit", onOpenFlow, appearance: "base" }]}
       />,
     );
 
     fireEvent.click(screen.getByTestId("action-tile-deposit"));
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenFlow).toHaveBeenCalledTimes(1);
   });
 
   it("should render tile labels", () => {

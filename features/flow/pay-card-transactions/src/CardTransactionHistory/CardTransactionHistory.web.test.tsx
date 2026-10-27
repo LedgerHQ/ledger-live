@@ -9,7 +9,7 @@ import {
   listenToCardApi,
 } from "@domain/api-card-management/mock/card-api";
 import { cardApiWrapper } from "../__tests__/cardApiStore";
-import { CardTransactionHistory } from "./CardTransactionHistory.web";
+import { CardTransactionHistory } from "./CardTransactionHistory";
 
 const server = listenToCardApi();
 

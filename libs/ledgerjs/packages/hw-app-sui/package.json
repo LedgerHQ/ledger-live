@@ -27,7 +27,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/devices": "catalog:",
-    "@mysten/ledgerjs-hw-app-sui": "^0.8.0",
+    "@mysten/ledgerjs-hw-app-sui": "^0.9.1",
     "semver": "catalog:"
   },
   "devDependencies": {

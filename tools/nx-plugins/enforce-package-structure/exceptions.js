@@ -119,13 +119,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsRenameContactDrawer: componentWaiver("R1", "R5"),
     ContactsRenameContactFooter: componentWaiver("R1", "R5"),
   },
-  "features/flow/flow-contacts-introduction": {
-    "./native": entryWaiver(),
-    ContactsFeatureIntroductionContent: componentWaiver("R1", "R5"),
-    ContactsFeatureIntroductionDialog: componentWaiver("R1"),
-    ContactsLedgerSyncIntroductionContent: componentWaiver("R1", "R5"),
-    ContactsLedgerSyncIntroductionDialog: componentWaiver("R1"),
-  },
   "features/flow/flow-contacts-list": {
     "./native": entryWaiver(),
     ContactsAddContactHeaderButton: componentWaiver("R1", "R4", "R5"),
@@ -134,13 +127,9 @@ const COMPONENT_EXCEPTIONS = {
     ContactsListView: componentWaiver("R2", "R3", "R5"),
     ContactsSearchNoResults: componentWaiver("R1", "R5"),
   },
-  "features/flow/pay-balance": {
-    ActionTiles: componentWaiver("R3"),
-  },
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
-    CardAssets: componentWaiver("R3"),
     CardAssetsManageDrawer: componentWaiver("R1"),
     CardAssetsManageFooter: componentWaiver("R1"),
     CardAssetsView: componentWaiver("R1", "R3"),
@@ -150,12 +139,6 @@ const COMPONENT_EXCEPTIONS = {
     CardArtwork: componentWaiver("R2"),
     CardPrimaryActionButton: componentWaiver("R1"),
     CardTopUpButton: componentWaiver("R1"),
-  },
-  "features/flow/pay-card-transactions": {
-    CardTransactionDetail: componentWaiver("R2"),
-    CardTransactions: componentWaiver("R3"),
-    CategoryIcon: componentWaiver("R4"),
-    ListItem: componentWaiver("R3"),
   },
   "features/flow/pay-contact": {
     Contacts: componentWaiver("R2", "R3"),
@@ -169,11 +152,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactConfirmationDialog: componentWaiver("R1"),
     ContactNameDisclaimer: componentWaiver("R1", "R5"),
     ContactNameInput: componentWaiver("R2", "R5"),
-  },
-  "shared/ui-info-state": {
-    DialogBackgroundGradient: componentWaiver("R1"),
-    DialogBackgroundToneProvider: componentWaiver("R1"),
-    InfoState: componentWaiver("R2"),
   },
 };
 

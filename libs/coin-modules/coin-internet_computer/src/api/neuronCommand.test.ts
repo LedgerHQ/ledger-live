@@ -7,10 +7,12 @@ import {
 } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { Secp256k1KeyIdentity } from "@icp-sdk/core/identity/secp256k1";
+import { Principal } from "@icp-sdk/core/principal";
 import type { IcpContext } from "../config";
+import { MIN_NEURON_STAKE, NNS_MINIMUM_DISSOLVE_DELAY, TRANSFER_FEE } from "../consts";
 import { ICPCallRejected, ICPCallUnconfirmed, ICPGovernanceRejected } from "../errors";
 import { deriveAddressFromPubkey } from "../logic/crypto";
-import type { IcpStakingIntent } from "../logic/intent";
+import type { IcpNeuronCommandData, IcpStakingIntent } from "../logic/intent";
 import { decodeCanisterIdlArgs, getCanisterIdlFunc, governanceIdlFactory } from "../network/candid";
 import { createApi } from "./index";
 
@@ -84,16 +86,91 @@ const intent = (type: string, fields: Partial<IcpStakingIntent> = {}): IcpStakin
   ...fields,
 });
 
-const commands: Array<[string, Partial<IcpStakingIntent>, unknown]> = [
-  ["start_dissolving", {}, { Configure: { operation: [{ StartDissolving: {} }] } }],
+const NOW_SECONDS = 1_750_760_220;
+const HOT_KEY = Principal.fromUint8Array(new Uint8Array([1, 2, 3]));
+const SPLIT = BigInt(MIN_NEURON_STAKE) + TRANSFER_FEE;
+const NEW_NEURON = { created_neuron_id: [{ id: 456n }] };
+
+const data = (fields: Omit<IcpNeuronCommandData, "type">) => ({
+  data: { type: "neuron" as const, ...fields },
+});
+const configure = (operation: unknown) => ({ Configure: { operation: [operation] } });
+
+// Each command: the intent fields, the command governance receives, and governance's answer.
+const commands: Array<[string, Partial<IcpStakingIntent>, unknown, unknown]> = [
+  ["start_dissolving", {}, configure({ StartDissolving: {} }), { Configure: {} }],
+  ["stop_dissolving", {}, configure({ StopDissolving: {} }), { Configure: {} }],
   [
     "increase_dissolve_delay",
-    { data: { type: "neuron", additionalDissolveDelaySeconds: 604_800 } },
-    {
-      Configure: {
-        operation: [{ IncreaseDissolveDelay: { additional_dissolve_delay_seconds: 604_800 } }],
+    data({ additionalDissolveDelaySeconds: 604_800 }),
+    configure({ IncreaseDissolveDelay: { additional_dissolve_delay_seconds: 604_800 } }),
+    { Configure: {} },
+  ],
+  [
+    "set_dissolve_delay",
+    data({ dissolveDelaySeconds: NNS_MINIMUM_DISSOLVE_DELAY }),
+    configure({
+      SetDissolveTimestamp: {
+        dissolve_timestamp_seconds: BigInt(NOW_SECONDS + NNS_MINIMUM_DISSOLVE_DELAY),
       },
-    },
+    }),
+    { Configure: {} },
+  ],
+  [
+    "add_hot_key",
+    data({ hotKey: HOT_KEY.toText() }),
+    configure({ AddHotKey: { new_hot_key: [HOT_KEY] } }),
+    { Configure: {} },
+  ],
+  [
+    "remove_hot_key",
+    data({ hotKey: HOT_KEY.toText() }),
+    configure({ RemoveHotKey: { hot_key_to_remove: [HOT_KEY] } }),
+    { Configure: {} },
+  ],
+  [
+    "auto_stake_maturity",
+    data({ autoStakeMaturity: true }),
+    configure({ ChangeAutoStakeMaturity: { requested_setting_for_auto_stake_maturity: true } }),
+    { Configure: {} },
+  ],
+  [
+    "disburse",
+    {},
+    { Disburse: { to_account: [], amount: [] } },
+    { Disburse: { transfer_block_height: 1n } },
+  ],
+  ["refresh_voting_power", {}, { RefreshVotingPower: {} }, { RefreshVotingPower: {} }],
+  [
+    "stake_maturity",
+    data({ percentage: 50 }),
+    { StakeMaturity: { percentage_to_stake: [50] } },
+    { StakeMaturity: { maturity_e8s: 0n, staked_maturity_e8s: 1n } },
+  ],
+  [
+    "spawn_neuron",
+    data({ percentage: 100 }),
+    { Spawn: { percentage_to_spawn: [100], new_controller: [], nonce: [] } },
+    { Spawn: NEW_NEURON },
+  ],
+  [
+    "spawn_neuron_from_maturity",
+    {},
+    { Spawn: { percentage_to_spawn: [], new_controller: [], nonce: [] } },
+    { Spawn: NEW_NEURON },
+  ],
+  // The canister reads the field the device cannot parse, `memo`, as absent.
+  [
+    "split_neuron",
+    { amount: SPLIT },
+    { Split: { amount_e8s: SPLIT, memo: [] } },
+    { Split: NEW_NEURON },
+  ],
+  [
+    "follow",
+    data({ followTopic: "Governance", followeeIds: ["456"] }),
+    { Follow: { topic: 4, followees: [{ id: 456n }] } },
+    { Follow: {} },
   ],
 ];
 
@@ -123,25 +200,30 @@ describe("a neuron command through the API", () => {
   const submitted = (index: number) =>
     Cbor.decode<Envelope>(new Uint8Array(mockFetch.mock.calls[index][1].body));
 
-  it.each(commands)("%s is accepted when governance answers it", async (type, fields, expected) => {
-    mockCertificate.mockResolvedValue(certificate("replied", reply({ Configure: {} })));
-    mockFetch.mockResolvedValue(answering({ status: "replied", certificate: new Uint8Array(1) }));
+  it.each(commands)(
+    "%s is accepted when governance answers it",
+    async (type, fields, expected, answer) => {
+      // The dissolve timestamp is the delay from now; nothing here waits on a timer.
+      jest.useFakeTimers({ now: NOW_SECONDS * 1000 });
+      mockCertificate.mockResolvedValue(certificate("replied", reply(answer)));
+      mockFetch.mockResolvedValue(answering({ status: "replied", certificate: new Uint8Array(1) }));
 
-    const requestId = await api.broadcast(context, await signed(intent(type, fields)));
+      const requestId = await api.broadcast(context, await signed(intent(type, fields)));
 
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch.mock.calls[0][0]).toMatch(
-      /\/api\/v3\/canister\/rrkah-fqaaa-aaaaa-aaaaq-cai\/call$/,
-    );
-    const call = submitted(0);
-    expect(requestId).toBe(Buffer.from(requestIdOf(call.content)).toString("hex"));
-    const [arg] = decodeCanisterIdlArgs<[{ command: unknown[] }]>(
-      manageNeuron,
-      call.content.arg as Uint8Array,
-    );
-    expect(arg.command).toEqual([expected]);
-    expect(Buffer.from(call.sender_sig)).toEqual(await signatureOver(call.content));
-  });
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockFetch.mock.calls[0][0]).toMatch(
+        /\/api\/v3\/canister\/rrkah-fqaaa-aaaaa-aaaaq-cai\/call$/,
+      );
+      const call = submitted(0);
+      expect(requestId).toBe(Buffer.from(requestIdOf(call.content)).toString("hex"));
+      const [arg] = decodeCanisterIdlArgs<[{ command: unknown[] }]>(
+        manageNeuron,
+        call.content.arg as Uint8Array,
+      );
+      expect(arg.command).toEqual([expected]);
+      expect(Buffer.from(call.sender_sig)).toEqual(await signatureOver(call.content));
+    },
+  );
 
   it("follows a call the node does not answer at once with the signed read_state request", async () => {
     mockCertificate.mockResolvedValue(certificate("replied", reply({ Configure: {} })));

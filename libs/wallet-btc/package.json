@@ -65,7 +65,7 @@
     "varuint-bitcoin": "^2.0.1"
   },
   "devDependencies": {
-    "@bitcoinerlab/secp256k1": "2.0.0",
+    "@bitcoinerlab/secp256k1": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

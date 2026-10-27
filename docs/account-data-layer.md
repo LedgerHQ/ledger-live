@@ -44,7 +44,7 @@ sequenceDiagram
 - **Latest wins.** An answer arriving after a newer read of the same account started is dropped.
 - **Next page.** A paginated kind's result carries `nextCursor`, opaque to everyone but the source that wrote it. `fetchMoreAccountData` hands it back to that source only, for the stored head's query.
 - **Many accounts.** Reads issued in the same tick for one kind, query and source are routed together: one call per chunk of `maxBatchSize` on a source with a batch reader, otherwise its single reader once per account. Either way, at most `concurrency` calls (default 4) are in flight per source. "Refresh all" is one `fetchAccountData` per account, dispatched in one go.
-- **Failures** are per account: an account no source serves fails with `NoAccountDataSourceError`; a failed batch call fails its chunk only, without retrying account by account.
+- **Failures** are per account: an account no source serves fails with `NoAccountDataSourceError`; a failed batch call fails its chunk only, without retrying account by account. A source that cannot serve one account after all rejects it with `AccountDataNotServedError`: the router asks the next ranked source, each source at most once, except on a next page.
 
 Why not RTK Query: its cache would hold the data, where entity slices are what screens and other domains select from, keyed by `AccountUUID`. It also caches per endpoint argument, so it cannot merge the reads of many screens into one source call, nor fall back between sources per account.
 

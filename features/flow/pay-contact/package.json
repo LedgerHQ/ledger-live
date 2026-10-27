@@ -38,6 +38,7 @@
   "devDependencies": {
     "@features/platform-style": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

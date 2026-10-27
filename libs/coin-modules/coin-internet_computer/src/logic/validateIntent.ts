@@ -21,7 +21,12 @@ import {
   unpayableFee,
   unsupportedIntent,
 } from "./intent";
-import { isNeuronCommandIntent, neuronCommandOf, unpayableCommandFee } from "./neuronCommand";
+import {
+  errorFieldOf,
+  isNeuronCommandIntent,
+  neuronCommandOf,
+  unpayableCommandFee,
+} from "./neuronCommand";
 
 const CURRENCY_NAME = "Internet Computer";
 
@@ -48,13 +53,15 @@ function validateNeuronCommand(
 ): TransactionValidation {
   const errors: Record<string, Error> = {};
   const command = neuronCommandOf(intent);
-  if (command instanceof Error) errors.transaction = command;
+  if (command instanceof Error) errors[errorFieldOf(command)] = command;
   const feeRefusal = unpayableCommandFee(customFees);
   if (feeRefusal) errors.fees = new InvalidTransactionError(feeRefusal);
   if (!AccountIdentifier.isValid(intent.sender)) {
     errors.sender = new InvalidAddress("", { currencyName: CURRENCY_NAME });
   }
-  return { errors, warnings: {}, estimatedFees: 0n, amount: 0n, totalSpent: 0n };
+  // A split moves stake from the neuron to a new one, not from the account.
+  const amount = intent.type === "split_neuron" ? intent.amount : 0n;
+  return { errors, warnings: {}, estimatedFees: 0n, amount, totalSpent: 0n };
 }
 
 /**

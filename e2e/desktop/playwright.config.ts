@@ -27,6 +27,7 @@ const config: PlaywrightTestConfig = {
   reporter: process.env.CI
     ? [
         ["./tests/reporters/cardSessionReporter.ts"],
+        ["./tests/reporters/lockDeferralReporter.ts"],
         ["github"],
         ["list"],
         [
@@ -49,6 +50,7 @@ const config: PlaywrightTestConfig = {
       ]
     : [
         ["./tests/reporters/cardSessionReporter.ts"],
+        ["./tests/reporters/lockDeferralReporter.ts"],
         ["allure-playwright", { detail: false, suiteTitle: false }],
       ],
 };

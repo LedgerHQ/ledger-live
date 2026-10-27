@@ -20,7 +20,7 @@ export function ActionTilesView({ tiles }: ActionTilesViewProps) {
           appearance={tile.appearance}
           key={tile.id}
           icon={ICONS[tile.id]}
-          onClick={tile.onPress}
+          onClick={tile.onOpenFlow}
           data-testid={`action-tile-${tile.id}`}
           size="sm"
           className="shrink-0"

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from "react";
-import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import {
   usePerpsDepositExecution,
   type PerpsDepositDeviceStep,
