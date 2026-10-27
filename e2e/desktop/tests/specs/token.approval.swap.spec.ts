@@ -23,6 +23,8 @@ const eligibleProviders = [
   SwapProvider.ONE_INCH,
   SwapProvider.VELORA,
 ];
+// Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
+const APPROVAL_TEST_TIMEOUT_MS = 480_000;
 
 test.describe("Swap - token approval", () => {
   test.skip(
@@ -65,8 +67,7 @@ test.describe("Swap - token approval", () => {
     },
     async ({ app }) => {
       const provider = await pickRotatingProvider(eligibleProviders, fromAccount, toAccount);
-      // Approval (Step 1) can take 1-5 min; extend beyond the 400s CI default.
-      test.setTimeout(480_000);
+      test.setTimeout(APPROVAL_TEST_TIMEOUT_MS);
       await app.swap.logSelectedProvider(provider.uiName);
       await app.speculos.enableBlindSigningOnNanoS();
       await revokeTokenApproval(fromAccount, provider);
