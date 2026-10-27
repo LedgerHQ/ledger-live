@@ -37,7 +37,7 @@ function toPendingOnlyAccounts(
   accounts: AccountLike[],
   isPendingOperation: (op: Operation, account: AccountLike) => boolean,
 ): AccountLike[] {
-  return accounts.flatMap(account => {
+  return accounts.flatMap((account): AccountLike[] => {
     const operations = account.operations.filter(op => isPendingOperation(op, account));
     const stableHashes = new Set(account.operations.map(op => op.hash));
     const pendingOperations = account.pendingOperations.filter(op => !stableHashes.has(op.hash));
