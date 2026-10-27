@@ -1,4 +1,3 @@
-import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import {
   CompositeNavigationProp,
   CompositeScreenProps,
@@ -36,14 +35,6 @@ export type StackNavigatorRoute<
   ParamList extends ParamListBase,
   RouteName = never,
 > = StackNavigatorProps<ParamList, RouteName>["route"];
-
-export type MaterialTopTabNavigatorProps<
-  ParamList extends ParamListBase,
-  RouteName = never,
-> = MaterialTopTabScreenProps<
-  ParamList,
-  RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
->;
 
 export type MainComposite<
   A extends {
