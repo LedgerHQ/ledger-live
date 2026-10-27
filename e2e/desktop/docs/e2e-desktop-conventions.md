@@ -10,9 +10,9 @@ MUST and MUST NOT are required. SHOULD is the default, and the same section stat
 
 Tests MUST wait for an element or a navigation instead.
 
-### Pass a timeout as a `TIMEOUT` bucket
+### A timeout MUST be a `TIMEOUT` bucket
 
-Most waits need no timeout: the page and `expect` defaults apply. When one does, pass a `TIMEOUT` bucket from [`@ledgerhq/live-e2e-shared/timeouts`](../../../libs/live-e2e-shared/src/timeouts.ts), not a bare number. Add a named constant in the file only when no bucket fits or the value needs its reason written down. The defaults follow the same rule: the page default in `tests/fixtures/common.ts` and the `expect` default in `playwright.config.ts` are buckets too. Only budgets no bucket covers, like the test timeout, stay literals in `playwright.config.ts`, since the key already names them.
+A wait SHOULD omit a timeout so the page and `expect` defaults apply. A passed timeout MUST be a `TIMEOUT` bucket from [`@ledgerhq/live-e2e-shared/timeouts`](../../../libs/live-e2e-shared/src/timeouts.ts), not a bare number. A named constant in the file MUST NOT be added unless no bucket fits or the value needs its reason written down. The page default in `tests/fixtures/common.ts` and the `expect` default in `playwright.config.ts` MUST be buckets too. A budget no bucket covers, such as the test timeout, MAY stay a literal in `playwright.config.ts`, since the key already names it.
 
 ```ts
 await expect(this.walletSyncRow).toBeVisible({ timeout: TIMEOUT.xxlarge }); // not 60_000
