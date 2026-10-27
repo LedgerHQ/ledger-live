@@ -183,7 +183,7 @@ function createChangelogFunctions({
       ].join("");
 
       const [firstLine, ...futureLines] = summary.text.split("\n").map(line => line.trimEnd());
-      return `\n\n-${prefix ? `${prefix} -` : ""} ${firstLine}\n${futureLines.map(line => `  ${line}`).join("\n")}`;
+      return `\n\n-${prefix ? `${prefix} -` : ""} ${firstLine}\n${futureLines.map(line => (line ? `  ${line}` : "")).join("\n")}`;
     },
 
     async getDependencyReleaseLine(changesets, dependenciesUpdated, options) {
@@ -200,7 +200,7 @@ function createChangelogFunctions({
       const dependencies = dependenciesUpdated.map(
         dependency => `  - ${dependency.name}@${dependency.newVersion}`,
       );
-      return [`- Updated dependencies [${links.join(", ")}]:`, ...dependencies].join("\n");
+      return [`\n\n- Updated dependencies [${links.join(", ")}]:`, ...dependencies].join("\n");
     },
   };
 }

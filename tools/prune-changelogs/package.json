@@ -19,7 +19,6 @@
   "devDependencies": {
     "@manypkg/get-packages": "1.1.3",
     "@types/node": "catalog:",
-    "prettier": "2.8.8",
     "typescript": "catalog:"
   }
 }

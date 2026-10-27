@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@1.7.0/schema.json",
+  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
   "changelog": [
     "@ledgerhq/changelog",
     {
@@ -7,6 +7,7 @@
     }
   ],
   "commit": false,
+  "format": false,
   "fixed": [
     [
       "@ledgerhq/wallet-cli",
@@ -20,6 +21,9 @@
   "access": "public",
   "baseBranch": "develop",
   "updateInternalDependencies": "patch",
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "updateInternalDependents": "always"
+  },
   "ignore": [],
   "privatePackages": {
     "version": true,

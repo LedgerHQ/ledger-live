@@ -101,7 +101,7 @@ test("formats a release line like changelog-github, with the PR and merge commit
 
   assert.equal(
     line,
-    `\n\n- [#101](https://github.com/${REPO}/pull/101) [\`${shas.first.slice(0, 7)}\`](https://github.com/${REPO}/commit/${shas.first}) Thanks [@alice](https://github.com/alice)! - feat: first change\n  \n  More detail`,
+    `\n\n- [#101](https://github.com/${REPO}/pull/101) [\`${shas.first.slice(0, 7)}\`](https://github.com/${REPO}/commit/${shas.first}) Thanks [@alice](https://github.com/alice)! - feat: first change\n\n  More detail`,
   );
 });
 
@@ -294,7 +294,7 @@ test("builds dependency lines from git without any request", async () => {
 
   assert.equal(
     line,
-    `- Updated dependencies [[\`${shas.first.slice(0, 7)}\`](https://github.com/${REPO}/commit/${shas.first}), [\`${shas.second.slice(0, 7)}\`](https://github.com/${REPO}/commit/${shas.second})]:\n  - @ledgerhq/dep@1.2.3`,
+    `\n\n- Updated dependencies [[\`${shas.first.slice(0, 7)}\`](https://github.com/${REPO}/commit/${shas.first}), [\`${shas.second.slice(0, 7)}\`](https://github.com/${REPO}/commit/${shas.second})]:\n  - @ledgerhq/dep@1.2.3`,
   );
 });
 
