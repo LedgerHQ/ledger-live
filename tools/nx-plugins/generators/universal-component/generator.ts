@@ -5,7 +5,7 @@ import { join, posix } from "path";
 type Platform = "web" | "native";
 
 const ADR = "docs/adr/universal-components.md";
-const R5 = `A component has one kind of entry (R5), see ${ADR}.`;
+const BREAKS_R5 = `which breaks R5, see ${ADR}.`;
 const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const PLATFORM_FILE = /\.(?:web|native|ios|android)\.[cm]?[jt]sx?$/;
 const BARREL = /^index(?:\.(?:web|native))?\.tsx?$/;
@@ -64,9 +64,7 @@ function platformEntryFile(
   const target = exportsField[`./${platform}`];
   if (target === undefined) return undefined;
   if (typeof target !== "string") {
-    throw new Error(
-      `${projectRoot}: the ./${platform} entry has conditions. A platform entry points at one module of its own, see ${ADR}.`,
-    );
+    throw new Error(`${projectRoot}: the ./${platform} entry has conditions, ${BREAKS_R5}`);
   }
   return toPackagePath(projectRoot, target);
 }
@@ -185,7 +183,7 @@ export default async function universalComponentGenerator(
     const platform = options.platformEntry;
     if (isExportedFrom(tree, universalEntries, className)) {
       throw new Error(
-        `${className} is already exported from the universal entry "." of ${projectRoot}. ${R5}`,
+        `${className} is already exported from the universal entry "." of ${projectRoot}, ${BREAKS_R5}`,
       );
     }
     if (
@@ -234,7 +232,7 @@ export default async function universalComponentGenerator(
   }
   if (isExportedFrom(tree, platformEntries, className)) {
     throw new Error(
-      `${className} is already exported from a platform entry of ${projectRoot}. ${R5}`,
+      `${className} is already exported from a platform entry of ${projectRoot}, ${BREAKS_R5}`,
     );
   }
   if (isExportedFrom(tree, universalEntries, className)) {

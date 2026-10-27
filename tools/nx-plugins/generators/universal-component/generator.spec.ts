@@ -239,7 +239,9 @@ describe("universal component", () => {
         project: PACKAGE,
         directory: "wallet",
       }),
-    ).rejects.toThrow(/R5/);
+    ).rejects.toThrow(
+      /platform entry of .*, which breaks R5, see docs\/adr\/universal-components\.md/,
+    );
   });
 
   it("refuses a directory outside src", async () => {
@@ -321,7 +323,9 @@ describe("platform component", () => {
         project: PACKAGE,
         platformEntry: "web",
       }),
-    ).rejects.toThrow(/universal entry.*R5/);
+    ).rejects.toThrow(
+      /universal entry .*, which breaks R5, see docs\/adr\/universal-components\.md/,
+    );
     expect(readText(tree, `${PACKAGE}/package.json`)).toBe(manifest);
   });
 });
