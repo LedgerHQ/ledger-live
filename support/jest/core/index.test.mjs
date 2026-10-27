@@ -211,10 +211,14 @@ for (const [name, create, depth] of [
   });
 }
 
-test("createSharedUiJestConfig: no flow resolver or transform allowlist", () => {
+test("createSharedUiJestConfig: no flow resolver, the lumen transform allowlist only", () => {
   for (const side of ["web", "native"]) {
     const config = project(createSharedUiJestConfig(), side);
     assert.equal(config.resolver, undefined, side);
-    assert.equal(config.transformIgnorePatterns, undefined, side);
+    assert.deepEqual(
+      config.transformIgnorePatterns,
+      ["node_modules/.pnpm/(?!(@ledgerhq\\+lumen-utils-shared|@ledgerhq\\+lumen-design-core))"],
+      side,
+    );
   }
 });
