@@ -17,13 +17,17 @@ describe("buildCreateAssociatedTokenAccountInstruction", () => {
     [PARSED_PROGRAMS.SPL_TOKEN, TOKEN_PROGRAM_ID],
     [PARSED_PROGRAMS.SPL_TOKEN_2022, TOKEN_2022_PROGRAM_ID],
   ] as const)("creates the account under %s", async (tokenProgram, expected) => {
-    const [instruction] = await buildCreateAssociatedTokenAccountInstruction(api, {
-      kind: "token.createATA",
-      owner: OWNER,
-      mint: MINT,
-      associatedTokenAccountAddress: ATA,
-      tokenProgram,
-    });
+    const [instruction] = await buildCreateAssociatedTokenAccountInstruction(
+      api,
+      {
+        kind: "token.createATA",
+        owner: OWNER,
+        mint: MINT,
+        associatedTokenAccountAddress: ATA,
+        tokenProgram,
+      },
+      0.1,
+    );
 
     expect(instruction.keys.some(key => key.pubkey.equals(expected))).toBe(true);
   });

@@ -1,6 +1,8 @@
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { useEffect, useMemo, useState } from "react";
+import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getSolanaValidators } from "@ledgerhq/coin-solana/validators";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import type { SolanaStakeWithMeta } from "@ledgerhq/coin-solana/types";
 import type { StakingResources } from "@ledgerhq/types-live";
 import { listSolanaStakingPositions } from "@ledgerhq/coin-solana/logic";
@@ -19,7 +21,7 @@ export function useSolanaValidators(currency: CryptoCurrency): ValidatorsAppVali
     let cancelled = false;
 
     setValidators(lastSeenValidators.get(currencyId) ?? []);
-    getSolanaValidators(currencyId)
+    getSolanaValidators(buildContext<SolanaCoinConfig>(currencyId), currencyId)
       .then(fetched => {
         lastSeenValidators.set(currencyId, fetched);
         if (!cancelled) setValidators(fetched);

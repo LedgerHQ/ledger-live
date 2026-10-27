@@ -18,6 +18,8 @@ import type {
   TokenBalance,
 } from "@solana/web3.js";
 import { getTokenAccountProgramId } from "../helpers/token";
+import type { SolanaCoinConfig } from "../config";
+import { DEFAULT_NODE_BATCH_SIZE, DEFAULT_NODE_MAX_TX_QUERY } from "../constants";
 import type { ChainAPI } from "../network";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
 import type { SolanaTokenProgram } from "../types";
@@ -29,6 +31,7 @@ const PROGRAM_ID_TO_NAME: Record<string, SolanaTokenProgram> = {
 
 export async function listOperations(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   address: string,
   { minHeight, cursor, order, limit }: ListOperationsOptions,
 ): Promise<Page<Operation>> {
@@ -36,7 +39,8 @@ export async function listOperations(
     throw new Error("ascending order is not supported");
   }
 
-  const rpcLimit = limit ?? 100;
+  const rpcLimit = limit ?? config.node?.maxTxQuery ?? DEFAULT_NODE_MAX_TX_QUERY;
+  const batchSize = config.node?.batchSize ?? DEFAULT_NODE_BATCH_SIZE;
   const decoded = decodeCursor(cursor, address);
   let before = decoded.cursors;
   let activeSources =
@@ -116,7 +120,7 @@ export async function listOperations(
     const txBySignature = new Map<string, ParsedTransactionWithMeta>();
     for (const batch of chunk(
       signatures.map(s => s.signature),
-      PARSED_TRANSACTIONS_BATCH_SIZE,
+      batchSize,
     )) {
       for (const [signature, tx] of indexTransactionsBySignature(
         await api.getParsedTransactions(batch),
@@ -148,9 +152,6 @@ export async function listOperations(
     activeSources = Object.keys(nextCursors);
   }
 }
-
-/** The RPC payload is capped near 50 KB; `network/chain/web3.ts` uses the same size. */
-const PARSED_TRANSACTIONS_BATCH_SIZE = 100;
 
 /** Canonical associated accounts only: `getBalance` reports no others. */
 async function signatureSources(api: ChainAPI, address: string): Promise<string[]> {
