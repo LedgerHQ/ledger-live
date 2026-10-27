@@ -50,7 +50,7 @@ import { closeAllModal } from "~/renderer/actions/modals";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track, setTrackingSource } from "@shared/analytics";
 import Animation from "~/renderer/animations";
 import Button, { Base as ButtonBase } from "~/renderer/components/Button";
@@ -971,7 +971,7 @@ export const renderError = ({
   return (
     <Wrapper id={`error-${isDmkError(error) ? error._tag : error.name}`}>
       {requireFirmwareUpdate ? (
-        <TrackPage category="Firmware Update" name="Error: App Unavailable Update Firmware" />
+        <TrackScreen category="Firmware Update" name="Error: App Unavailable Update Firmware" />
       ) : null}
       <ErrorBody
         Icon={
@@ -1179,7 +1179,7 @@ export const HardwareUpdate = ({
   targetCurrency?: string;
 }) => (
   <Wrapper>
-    <TrackPage
+    <TrackScreen
       category={SWAP_NANO_S_INCOMPATIBILITY_PAGE}
       refreshSource={false}
       {...getSwapNanoSIncompatibilityTrackingProperties(
@@ -1476,7 +1476,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
   return (
     <>
       <ConfirmWrapper>
-        <TrackPage
+        <TrackScreen
           category="Swap"
           name={`ModalStep-summary`}
           sourcecurrency={sourceAccountCurrency?.name}

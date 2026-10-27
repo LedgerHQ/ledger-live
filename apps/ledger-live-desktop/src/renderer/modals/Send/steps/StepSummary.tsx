@@ -8,7 +8,7 @@ import {
   getMainAccount,
   findSubAccountById,
 } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -107,7 +107,7 @@ const StepSummary = (props: StepProps) => {
 
   return (
     <Box flow={4} mx={40}>
-      <TrackPage category="Send Flow" name="Step Summary" currencyName={currencyName} />
+      <TrackScreen category="Send Flow" name="Step Summary" currencyName={currencyName} />
       {utxoLag ? (
         <Alert type="warning">
           <Trans i18nKey="send.steps.details.utxoLag" />

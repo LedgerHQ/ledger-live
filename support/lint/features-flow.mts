@@ -41,7 +41,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "flow-contacts-introduction",
   "flow-contacts-list",
   "large-screen-upsell",
-  "lazy-onboarding-banner",
   "market-banner",
   "pay-bank-transfer",
   "pay-card-assets",

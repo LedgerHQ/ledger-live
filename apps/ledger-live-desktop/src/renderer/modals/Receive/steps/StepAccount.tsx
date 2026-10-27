@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useTokensData } from "@features/platform-currencies";
 import { supportLinkByTokenType } from "~/config/urls";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/Button";
@@ -161,7 +161,7 @@ export default function StepAccount(props: Readonly<StepProps>) {
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step 1"
         isTokenAdd={receiveTokenMode || account?.type === "TokenAccount"}

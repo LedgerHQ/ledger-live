@@ -25,7 +25,7 @@ jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/components/NotEnoughFundsToUnstake", () => ({
   __esModule: true,

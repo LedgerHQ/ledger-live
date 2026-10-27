@@ -13,7 +13,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/modals/Send/AccountFooter", () => ({
   __esModule: true,

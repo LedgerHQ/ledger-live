@@ -252,3 +252,31 @@ test.describe("Settings", () => {
     );
   }
 });
+
+const themeTestData = [
+  { label: "Light", colorScheme: "light" },
+  { label: "Dark", colorScheme: "dark" },
+] as const;
+
+test.describe("Settings", () => {
+  test.use({
+    teamOwner: Team.WALLET_XP,
+    userdata: "skip-onboarding-with-last-seen-device",
+  });
+
+  test(
+    "Change app theme",
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: { type: "TMS", description: "B2CQA-5432" },
+    },
+    async ({ app }) => {
+      await app.mainNavigation.openSettings();
+      for (const theme of themeTestData) {
+        await app.settings.changeTheme(theme.label);
+        await app.settings.expectThemeSelected(theme.label);
+        await app.settings.expectAppColorScheme(theme.colorScheme);
+      }
+    },
+  );
+});

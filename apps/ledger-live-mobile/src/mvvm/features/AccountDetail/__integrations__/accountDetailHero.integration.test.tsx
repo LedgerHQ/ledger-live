@@ -161,12 +161,12 @@ describe("AccountDetail hero", () => {
     expect(screen.getByTestId(moreItem("earn"))).toBeVisible();
   });
 
-  it("shows only Transfer and Buy when no asset has a spendable balance", async () => {
+  it("shows only Transfer, Swap and Buy when no asset has a spendable balance", async () => {
     renderAccount(emptyAccount);
 
     expect(await screen.findByTestId(tile("transfer"))).toBeVisible();
+    expect(screen.getByTestId(tile("swap"))).toBeVisible();
     expect(screen.getByTestId(tile("buy"))).toBeVisible();
-    expect(screen.queryByTestId(tile("swap"))).toBeNull();
     expect(screen.queryByTestId(tile("more"))).toBeNull();
   });
 

@@ -5,27 +5,25 @@
 
 ## Exports
 
-| Export        | Platform     | Description                                                |
-| ------------- | ------------ | ---------------------------------------------------------- |
-| `Track`       | web + native | Fire `track` on mount, unmount, or prop updates            |
-| `TrackPage`   | web          | Fire `trackPage` when category, name, or properties change |
-| `TrackScreen` | native       | Fire `trackPage` when the screen gains focus               |
+| Export             | Platform     | Description                                         |
+| ------------------ | ------------ | --------------------------------------------------- |
+| `Track`            | web + native | Fire `track` on mount, unmount, or prop updates     |
+| `TrackScreen`      | web + native | Fire `trackPage` for the page or screen on display  |
+| `TrackScreenProps` | web + native | Props of `TrackScreen`, shared by both platforms    |
 
-`TrackPage` and `TrackScreen` stay distinct: web tracks page views on prop changes; native tracks only when focused and supports `avoidDuplicates`.
+`TrackScreen` has one contract and tracks the way each platform needs:
+
+- **Web** fires `trackPage` on mount and again whenever category, name, properties, `refreshSource` or `mandatory` change. A re-render with deeply equal props sends nothing.
+- **Native** fires `trackPage` when the screen gains focus. A mounted screen that is not focused sends nothing. `avoidDuplicates` drops the event when the last screen event was this same one; web ignores it.
 
 ## Usage
 
 ```tsx
-import { Track, TrackPage } from "@shared/analytics-react";
+import { Track, TrackScreen } from "@shared/analytics-react";
 
-<TrackPage category="Portfolio" name="Home" flow="main" />
+<TrackScreen category="Portfolio" name="Home" flow="main" />
+<TrackScreen category="Asset" name="Bitcoin" ticker="BTC" avoidDuplicates />
 <Track onMount event="Drawer Opened" drawer="send" />
 ```
 
-```tsx
-import { TrackScreen } from "@shared/analytics-react";
-
-<TrackScreen category="Asset" name="Bitcoin" ticker="BTC" avoidDuplicates />
-```
-
-Extra props on the component become event properties. `mandatory` sends the event even when consent is off. `TrackPage` and `TrackScreen` default `refreshSource` to true.
+Extra props on the component become event properties. `mandatory` sends the event even when consent is off. `TrackScreen` defaults `refreshSource` to true.

@@ -8,7 +8,7 @@ import Button from "~/renderer/components/Button";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import type { StepProps } from "../types";
@@ -31,7 +31,7 @@ function StepAssociationConfirmation({ token, optimisticOperation, error, signed
 
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Hedera Token Association Flow"
           name="Step Confirmed"
           flow="tokenAssociation"
@@ -55,7 +55,7 @@ function StepAssociationConfirmation({ token, optimisticOperation, error, signed
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Hedera Token Association Flow"
           name="Step Confirmation Error"
           flow="tokenAssociation"

@@ -44,7 +44,7 @@ The default entry (`index.ts`) is plain TypeScript, tested in Node:
 - `AppLockError` and its members `WrongPassword`, `PasswordNotSet`. The `name` string is the
   contract; catch `AppLockError` to catch the family.
 
-The native entry (`index.native.ts`) adds what needs React Native:
+On React Native, the same entry resolves to `index.native.ts`, which adds what needs React Native:
 
 - The verifier store — `storeNewPassword`, `checkPassword`, `clearPasswordIfCorrect`,
   `clearStoredPassword`, `hasPasswordVerifier`, and the legacy migration (`migrateLegacyPassword`,
@@ -53,7 +53,8 @@ The native entry (`index.native.ts`) adds what needs React Native:
   [`@shared/password-verifier`](../../../shared/password-verifier/README.md).
 - Biometrics — `getBiometricsAvailability`, `promptBiometrics` (an explicit device-owner check that
   accepts the device passcode) and the marker that records the choice.
-- The shared UI below.
+
+The shared UI has its own native entry, `@features/platform-app-lock/native` (see below).
 
 `AuthenticationType` is **derived** from the two protection flags, not stored: the spec allows
 password-only, biometrics-only and both, so the flags stay the single source of truth and the union
@@ -73,7 +74,14 @@ The biometrics types are unions rather than booleans because each case needs a d
 
 ## Shared UI (native only)
 
-Exported from `index.native.ts` only, so the default entry stays free of UI:
+Exported from the native entry `@features/platform-app-lock/native` (`src/native/index.native.ts`)
+only, so `.` stays free of UI on both platforms. Only native code imports it: a `.native` file, the
+mobile app, or a native-only package such as the app lock flows.
+
+```ts
+import { PasswordField, usePasswordDraft } from "@features/platform-app-lock/native";
+```
+
 
 - `PasswordField` — the one password input every password surface uses, so the label, the reveal
   toggle and the error treatment cannot drift between them.
@@ -82,11 +90,16 @@ Exported from `index.native.ts` only, so the default entry stays free of UI:
   serialisable and gets persisted.
 
 Their tests run in the React Native project of `@support/jest/features-flow`
-(`*.native.test.tsx`); the rest of the package keeps its plain Node project (`*.test.ts`).
+(`*.native.test.tsx`); the rest of the package keeps its plain Node project (`*.test.ts`), which
+resolves `.native` files first so imports carry no platform suffix.
 
 ## Validation
 
+`typecheck` runs `tsconfig.web.json` and `tsconfig.native.json`, and `unimported` runs knip once per
+platform.
+
 ```sh
+pnpm lint
 pnpm test
 pnpm typecheck
 pnpm unimported

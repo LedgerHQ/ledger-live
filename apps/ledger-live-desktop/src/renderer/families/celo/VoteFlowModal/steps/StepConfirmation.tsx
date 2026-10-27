@@ -2,7 +2,7 @@ import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index"
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
@@ -83,7 +83,7 @@ const StepConfirmation = ({
   if (optimisticOperation) {
     return (
       <S.Container>
-        <TrackPage
+        <TrackScreen
           category="Celo Vote"
           name="Step Confirmation"
           flow="stake"
@@ -100,7 +100,7 @@ const StepConfirmation = ({
   if (error) {
     return (
       <S.Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Celo Vote"
           name="Step Confirmation Error"
           flow="stake"

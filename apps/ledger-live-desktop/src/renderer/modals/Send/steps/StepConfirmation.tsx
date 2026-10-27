@@ -4,7 +4,7 @@ import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index"
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -50,7 +50,7 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Send Flow" name="Step Confirmed" currencyName={currencyName} />
+        <TrackScreen category="Send Flow" name="Step Confirmed" currencyName={currencyName} />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -90,7 +90,7 @@ function StepConfirmation({
 
     return (
       <Container shouldSpace={shouldRenderAsBroadcastError}>
-        <TrackPage
+        <TrackScreen
           category="Send Flow"
           name="Step Confirmation Error"
           currencyName={currencyName}

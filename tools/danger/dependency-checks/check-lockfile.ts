@@ -11,12 +11,16 @@ function findLockfile(from: string): string {
   return findLockfile(parent);
 }
 
-export function checkLockfile(): string | null {
+export function loadLockfile(text: string) {
   // pnpm 12 prepends an env document (packageManagerDependencies); the dependency graph is the last one.
-  const docs = Array.from(parseAllDocuments(fs.readFileSync(findLockfile(process.cwd()), "utf8")));
+  const docs = Array.from(parseAllDocuments(text));
   const [yamlError] = docs.flatMap(doc => doc.errors);
   if (yamlError) throw yamlError;
-  const lockfile = docs.at(-1)?.toJS();
+  return docs.at(-1)?.toJS();
+}
+
+export function checkLockfile(): string | null {
+  const lockfile = loadLockfile(fs.readFileSync(findLockfile(process.cwd()), "utf8"));
   try {
     assertDependencyChecks(lockfile);
     return null;

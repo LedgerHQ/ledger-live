@@ -30,7 +30,7 @@ import {
 import { NeuronState } from "@ledgerhq/live-common/families/internet_computer/types";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -142,7 +142,7 @@ const StepManage = ({
 
   return (
     <Box flow={2} px={4}>
-      <TrackPage
+      <TrackScreen
         category="Manage Neurons ICP Flow"
         name="Step Manage"
         flow="stake"

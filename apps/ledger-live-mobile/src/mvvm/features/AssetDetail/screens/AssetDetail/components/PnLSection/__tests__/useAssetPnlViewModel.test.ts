@@ -3,7 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genMockAccount } from "@ledgerhq/live-common/mock/account";
 import type { Account, DistributionItem } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook } from "@tests/test-renderer";
 import {
   PNL_BUTTON,
   PNL_DETAIL_PAGE,
@@ -29,9 +29,6 @@ beforeAll(async () => {
   };
 });
 
-const withPnlFlag = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } });
-
 describe("useAssetPnlViewModel", () => {
   let spy: jest.SpyInstance<
     ReturnType<typeof walletPnlHooks.useAssetGroupPnL>,
@@ -47,9 +44,7 @@ describe("useAssetPnlViewModel", () => {
   });
 
   it("forwards the distribution accounts to useAssetGroupPnL when enabled", () => {
-    renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: true }), {
-      overrideInitialState: withPnlFlag(true),
-    });
+    renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: true }));
 
     expect(spy).toHaveBeenCalledWith(
       distributionItem.accounts,
@@ -59,9 +54,7 @@ describe("useAssetPnlViewModel", () => {
   });
 
   it("short-circuits to an empty accounts list when disabled", () => {
-    renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: false }), {
-      overrideInitialState: withPnlFlag(true),
-    });
+    renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: false }));
 
     expect(spy).toHaveBeenCalledWith([], expect.anything(), expect.anything());
   });
@@ -69,9 +62,7 @@ describe("useAssetPnlViewModel", () => {
   it("falls back to a zero average entry price when useAssetGroupPnL returns null", () => {
     spy.mockReturnValue(null);
 
-    const { result } = renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: true }), {
-      overrideInitialState: withPnlFlag(true),
-    });
+    const { result } = renderHook(() => useAssetPnlViewModel({ distributionItem, enabled: true }));
 
     expect(result.current.secondary.value).toMatch(/0(?:[.,]00)?/);
   });
@@ -82,9 +73,8 @@ describe("useAssetPnlViewModel", () => {
     beforeEach(() => mockedTrack.mockClear());
 
     it("fires a button_clicked track event when the pnl drawer opens", () => {
-      const { result } = renderHook(
-        () => useAssetPnlViewModel({ distributionItem, enabled: true }),
-        { overrideInitialState: withPnlFlag(true) },
+      const { result } = renderHook(() =>
+        useAssetPnlViewModel({ distributionItem, enabled: true }),
       );
 
       act(() => result.current.unrealised.onPress());
@@ -96,9 +86,8 @@ describe("useAssetPnlViewModel", () => {
     });
 
     it("fires a button_clicked track event with the market_stat_definition button when the secondary drawer opens", () => {
-      const { result } = renderHook(
-        () => useAssetPnlViewModel({ distributionItem, enabled: true }),
-        { overrideInitialState: withPnlFlag(true) },
+      const { result } = renderHook(() =>
+        useAssetPnlViewModel({ distributionItem, enabled: true }),
       );
 
       act(() => result.current.secondary.onPress());
@@ -111,9 +100,8 @@ describe("useAssetPnlViewModel", () => {
     });
 
     it("does not fire track again when onPress is called twice without closing", () => {
-      const { result } = renderHook(
-        () => useAssetPnlViewModel({ distributionItem, enabled: true }),
-        { overrideInitialState: withPnlFlag(true) },
+      const { result } = renderHook(() =>
+        useAssetPnlViewModel({ distributionItem, enabled: true }),
       );
 
       act(() => result.current.unrealised.onPress());
@@ -123,9 +111,8 @@ describe("useAssetPnlViewModel", () => {
     });
 
     it("fires track again after close → reopen", () => {
-      const { result } = renderHook(
-        () => useAssetPnlViewModel({ distributionItem, enabled: true }),
-        { overrideInitialState: withPnlFlag(true) },
+      const { result } = renderHook(() =>
+        useAssetPnlViewModel({ distributionItem, enabled: true }),
       );
 
       act(() => result.current.unrealised.onPress());
@@ -136,9 +123,8 @@ describe("useAssetPnlViewModel", () => {
     });
 
     it("guards across different drawers — opening pnl blocks secondary", () => {
-      const { result } = renderHook(
-        () => useAssetPnlViewModel({ distributionItem, enabled: true }),
-        { overrideInitialState: withPnlFlag(true) },
+      const { result } = renderHook(() =>
+        useAssetPnlViewModel({ distributionItem, enabled: true }),
       );
 
       act(() => result.current.unrealised.onPress());
@@ -148,9 +134,8 @@ describe("useAssetPnlViewModel", () => {
     });
 
     it("exposes pageName and source on both drawers", () => {
-      const { result } = renderHook(
-        () => useAssetPnlViewModel({ distributionItem, enabled: true }),
-        { overrideInitialState: withPnlFlag(true) },
+      const { result } = renderHook(() =>
+        useAssetPnlViewModel({ distributionItem, enabled: true }),
       );
 
       expect(result.current.pnlDrawer.pageName).toBe(PNL_DETAIL_PAGE);

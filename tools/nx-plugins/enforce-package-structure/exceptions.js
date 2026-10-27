@@ -134,9 +134,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsListView: componentWaiver("R2", "R3", "R5"),
     ContactsSearchNoResults: componentWaiver("R1", "R5"),
   },
-  "features/flow/lazy-onboarding-banner": {
-    LazyOnboardingBannerView: componentWaiver("R1", "R3"),
-  },
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
@@ -161,10 +158,6 @@ const COMPONENT_EXCEPTIONS = {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),
   },
-  "features/platform/app-lock": {
-    PasswordDraftProvider: componentWaiver("R1"),
-    PasswordField: componentWaiver("R1", "R3"),
-  },
   "features/platform/contacts": {
     "./native": entryWaiver(),
     "./web": entryWaiver(),
@@ -173,10 +166,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactConfirmationDialog: componentWaiver("R1"),
     ContactNameDisclaimer: componentWaiver("R1", "R5"),
     ContactNameInput: componentWaiver("R2", "R5"),
-  },
-  "shared/analytics-react": {
-    TrackPage: componentWaiver("R1", "R4"),
-    TrackScreen: componentWaiver("R1", "R4"),
   },
   "shared/ui-app-unavailable": {
     AppUnavailable: componentWaiver("R3"),

@@ -7,7 +7,7 @@ import { BigNumber } from "bignumber.js";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
 import RedelegationSelectorField from "../fields/RedelegationSelectorField";
@@ -122,7 +122,7 @@ export default function StepValidators({
   const crypto = cryptoFactory(account.currency.id);
   return (
     <Container>
-      <TrackPage
+      <TrackScreen
         category="Redelegation Flow"
         name="Step 1"
         flow="stake"
