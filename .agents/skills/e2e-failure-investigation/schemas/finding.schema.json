@@ -41,7 +41,8 @@
       "properties": {
         "status": { "enum": ["confirmed", "known", "not_confirmed"] },
         "ticket": { "type": ["object", "null"], "properties": { "key": { "type": "string" }, "created_by_agent": { "type": "boolean" } }, "additionalProperties": false },
-        "prd": { "type": "object", "required": ["status"], "properties": { "status": { "enum": ["confirmed", "not_confirmed", "not_applicable", "not_checked"] }, "ref": { "type": "string" } }, "additionalProperties": false }
+        "datadog_run": { "type": "object", "description": "Datadog result for the run environment when the hypothesis area is backend.", "required": ["status"], "properties": { "status": { "enum": ["confirmed", "not_confirmed", "not_checked"] }, "ref": { "type": "string" }, "summary": { "type": "string" } }, "additionalProperties": false },
+        "prd": { "type": "object", "required": ["status"], "properties": { "status": { "enum": ["confirmed", "not_confirmed", "not_applicable", "not_checked"] }, "ref": { "type": "string" }, "summary": { "type": "string" } }, "additionalProperties": false }
       },
       "additionalProperties": false
     },
@@ -50,7 +51,8 @@
   },
   "allOf": [
     { "if": { "properties": { "confidence": { "properties": { "status": { "const": "confirmed" } } } } }, "then": { "properties": { "evidence": { "minItems": 1 } } } },
-    { "if": { "properties": { "confidence": { "properties": { "status": { "const": "known" } } } } }, "then": { "properties": { "confidence": { "required": ["ticket"] } } } }
+    { "if": { "properties": { "confidence": { "properties": { "status": { "const": "known" } } } } }, "then": { "properties": { "confidence": { "required": ["ticket"] } } } },
+    { "if": { "properties": { "hypothesis": { "properties": { "area": { "const": "backend" } } } } }, "then": { "properties": { "confidence": { "required": ["datadog_run", "prd"] } } } }
   ],
   "additionalProperties": false
 }

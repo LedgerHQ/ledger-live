@@ -53,6 +53,11 @@ if (kind === "input") {
       errors.push(`findings[${i}].evidence required for confirmed`);
     if (finding.confidence?.status === "known" && !finding.confidence.ticket)
       errors.push(`findings[${i}].confidence.ticket required for known`);
+    if (
+      finding.hypothesis?.area === "backend" &&
+      (!finding.confidence?.datadog_run || !finding.confidence?.prd)
+    )
+      errors.push(`findings[${i}].confidence.datadog_run and prd required for backend`);
   }
 }
 if (errors.length) {
