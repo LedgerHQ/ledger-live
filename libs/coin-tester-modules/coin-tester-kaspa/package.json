@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@shared/env": "workspace:*",
-    "@bitcoinerlab/secp256k1": "^1.1.1",
+    "@bitcoinerlab/secp256k1": "catalog:",
     "@ledgerhq/coin-kaspa": "workspace:^",
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",

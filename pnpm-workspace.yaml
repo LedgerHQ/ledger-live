@@ -22,6 +22,7 @@ packages:
   - "support/*"
 
 catalog:
+  "@bitcoinerlab/secp256k1": 2.0.0
   "@commitlint/cli": 21.2.0
   "@commitlint/config-conventional": 21.2.0
   "@commitlint/lint": 21.2.0

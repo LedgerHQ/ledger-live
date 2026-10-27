@@ -164,6 +164,9 @@ settings:
 
 catalogs:
   default:
+    '@bitcoinerlab/secp256k1':
+      specifier: 2.0.0
+      version: 2.0.0
     '@commitlint/cli':
       specifier: 21.2.0
       version: 21.2.0
@@ -12000,7 +12003,7 @@ importers:
         version: 3.11.0
     devDependencies:
       '@bitcoinerlab/secp256k1':
-        specifier: 2.0.0
+        specifier: 'catalog:'
         version: 2.0.0
       '@domain/entity-currency-crypto':
         specifier: workspace:^
@@ -13003,8 +13006,8 @@ importers:
   libs/coin-modules/coin-kaspa:
     dependencies:
       '@bitcoinerlab/secp256k1':
-        specifier: ^1.1.1
-        version: 1.2.0
+        specifier: 'catalog:'
+        version: 2.0.0
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 10.0.0
@@ -14715,8 +14718,8 @@ importers:
   libs/coin-tester-modules/coin-tester-kaspa:
     dependencies:
       '@bitcoinerlab/secp256k1':
-        specifier: ^1.1.1
-        version: 1.2.0
+        specifier: 'catalog:'
+        version: 2.0.0
       '@ledgerhq/coin-kaspa':
         specifier: workspace:^
         version: link:../../coin-modules/coin-kaspa
@@ -19855,7 +19858,7 @@ importers:
         version: 2.0.1
     devDependencies:
       '@bitcoinerlab/secp256k1':
-        specifier: 2.0.0
+        specifier: 'catalog:'
         version: 2.0.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
@@ -22693,9 +22696,6 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-
-  '@bitcoinerlab/secp256k1@1.2.0':
-    resolution: {integrity: sha512-jeujZSzb3JOZfmJYI0ph1PVpCRV5oaexCgy+RvCXV8XlY+XFB/2n3WOcvBsKLsOw78KYgnQrQWb2HrKE4be88Q==}
 
   '@bitcoinerlab/secp256k1@2.0.0':
     resolution: {integrity: sha512-l8wO4Hx7fovtcDVU5xYEa7yfP9DokC8QxYlJoaP1zi2/iX+c6NNSvMzq+oCZ8ikqvrXTuhSQ6iP1IRx08kWZgw==}
@@ -40742,10 +40742,6 @@ snapshots:
       '@types/react': 19.0.14
 
   '@bcoe/v8-coverage@0.2.3': {}
-
-  '@bitcoinerlab/secp256k1@1.2.0':
-    dependencies:
-      '@noble/curves': 1.9.7
 
   '@bitcoinerlab/secp256k1@2.0.0':
     dependencies:
