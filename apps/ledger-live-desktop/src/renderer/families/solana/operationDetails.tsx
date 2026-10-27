@@ -29,7 +29,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 
 function useFormatAmount() {
