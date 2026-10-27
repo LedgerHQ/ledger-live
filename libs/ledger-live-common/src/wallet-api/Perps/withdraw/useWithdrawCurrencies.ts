@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchPerpsWithdrawCurrencies } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/currencies";
+import { fetchPerpsWithdrawCurrencies } from "./currencies";
 
 export type WithdrawCurrenciesState = {
   currencyIds: string[] | undefined;

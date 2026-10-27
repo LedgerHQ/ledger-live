@@ -1,8 +1,12 @@
-import { renderHook, waitFor } from "tests/testSetup";
-import { useWithdrawCurrencies } from "../useWithdrawCurrencies";
+/**
+ * @jest-environment jsdom
+ */
+import "../../../__tests__/test-helpers/dom-polyfill";
+import { renderHook, waitFor } from "@testing-library/react";
+import { useWithdrawCurrencies } from "./useWithdrawCurrencies";
 
 const mockFetchWithdrawCurrencies = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/currencies", () => ({
+jest.mock("./currencies", () => ({
   fetchPerpsWithdrawCurrencies: () => mockFetchWithdrawCurrencies(),
 }));
 

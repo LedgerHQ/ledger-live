@@ -1,7 +1,8 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import type { Account } from "@ledgerhq/types-live";
 import {
   WithdrawAddressScreeningError,
@@ -40,12 +41,12 @@ jest.mock("@domain/entity-market-countervalues", () => ({
 }));
 
 const mockUseWithdrawCurrencies = jest.fn();
-jest.mock("../useWithdrawCurrencies", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawCurrencies", () => ({
   useWithdrawCurrencies: () => mockUseWithdrawCurrencies(),
 }));
 
 const mockUsePerpsWithdrawQuote = jest.fn();
-jest.mock("../usePerpsWithdrawQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawQuote", () => ({
   usePerpsWithdrawQuote: (params: unknown) => mockUsePerpsWithdrawQuote(params),
 }));
 
@@ -272,6 +273,23 @@ describe("PerpsWithdraw integration", () => {
     });
     expect(await screen.findByText("Withdraw to BTC")).toBeVisible();
     expect(input()).toHaveValue("500");
+  });
+
+  it("should keep a picked token account the user never held and quote towards it", async () => {
+    const emptyUsdc = { ...genTokenAccount(0, ethAccount, usdcToken), balance: new BigNumber(0) };
+    mockOpenAssetAndAccount.mockResolvedValue({ account: emptyUsdc, parentAccount: ethAccount });
+    const { user } = renderWithdraw();
+    openWithdraw();
+
+    await user.click(screen.getByTestId("perps-withdraw-select-currency"));
+
+    expect(await screen.findByText("Withdraw to USDC")).toBeVisible();
+    expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        destinationAccount: emptyUsdc,
+        accounts: expect.arrayContaining([emptyUsdc]),
+      }),
+    );
   });
 
   it("should block the form when the supported assets cannot be loaded", async () => {
