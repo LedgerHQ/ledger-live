@@ -23,6 +23,7 @@ export async function initIdentities(
     const merged: PersistedIdentities = {
       userId: legacyUser.id,
       datadogId: legacyUser.datadogId,
+      portfolioId: persistedIdentities?.portfolioId,
       deviceIds: Array.isArray(persistedIdentities?.deviceIds) ? persistedIdentities.deviceIds : [],
       pushDevicesSyncState: persistedIdentities?.pushDevicesSyncState ?? "synced",
       pushDevicesServiceUrl: persistedIdentities?.pushDevicesServiceUrl ?? null,
@@ -40,6 +41,7 @@ export async function initIdentities(
       identitiesSlice.actions.initFromPersisted({
         userId: persistedIdentities.userId,
         datadogId: persistedIdentities.datadogId,
+        portfolioId: persistedIdentities.portfolioId,
         deviceIds: Array.isArray(persistedIdentities.deviceIds)
           ? persistedIdentities.deviceIds
           : [],

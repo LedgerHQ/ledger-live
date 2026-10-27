@@ -4,3 +4,6 @@ export const userIdSelector = (state: { identities: IdentitiesState }) => state.
 
 export const datadogIdSelector = (state: { identities: IdentitiesState }) =>
   state.identities.datadogId;
+
+export const portfolioIdSelector = (state: { identities: IdentitiesState }) =>
+  state.identities.portfolioId;
