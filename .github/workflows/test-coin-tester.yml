@@ -18,8 +18,8 @@ permissions:
 env:
   COIN_TESTER_CURRENCIES: "evm polkadot solana bitcoin tezos tron xrp stellar multiversx cosmos cardano casper vechain near stacks kaspa zcash aleo"
   # The coin testers that run against coin-sandbox, and the coin-sandbox networks whose images each one pulls
-  # from GHCR. Bitcoin runs Ledger's images (JFrog), pulled on `up`, so it has none to pull here
-  COIN_SANDBOX_NETWORKS: '{"solana": ["solana"], "tron": ["tron"], "evm": ["ethereum", "polygon", "bsc"], "bitcoin": []}'
+  # from GHCR. Bitcoin's Atlas is not republished: it is pulled from JFrog on `up`
+  COIN_SANDBOX_NETWORKS: '{"solana": ["solana"], "tron": ["tron"], "evm": ["ethereum", "polygon", "bsc"], "bitcoin": ["bitcoin_regtest"]}'
 
 jobs:
   is-affected:
