@@ -22,6 +22,7 @@ import {
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
+  getMigrationRequestId,
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
 import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/constants";
@@ -72,7 +73,8 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
   // legacy address even when the user added several and continued with another one. The flow
   // saves the accounts on Confirm, so the store has them by then.
   const uiMigrationExecute = useCallback(() => {
-    const { id, promise } = beginMigrationRequest();
+    const request = beginMigrationRequest();
+    const id = getMigrationRequestId();
 
     openAddAccountFlow(getCryptoCurrencyById(HYPERCORE_CURRENCY_ID), account => {
       setDrawer();
@@ -83,7 +85,7 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
       }
     });
 
-    return promise;
+    return request;
   }, [openAddAccountFlow, store]);
 
   // Closing the add account drawer reports nothing back, so a request still pending once the

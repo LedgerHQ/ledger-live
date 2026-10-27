@@ -1,37 +1,10 @@
-import { v4 as uuid } from "uuid";
 import type { Account } from "@ledgerhq/types-live";
-import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { createPerpsRequest } from "./perpsRequest";
 
-type PendingMigrationRequest = {
-  id: string;
-  resolve: (accounts: Account[]) => void;
-  reject: (error: Error) => void;
-};
+/** Stays pending across the add account screens until settled or cancelled. */
+const migrationRequest = createPerpsRequest<Account[]>();
 
-let pending: PendingMigrationRequest | null = null;
-
-/**
- * Stays pending across the add account screens until settled or cancelled. Starting a new one
- * cancels any request still pending, so it never hangs.
- */
-export function beginMigrationRequest(): { id: string; promise: Promise<Account[]> } {
-  cancelMigrationRequest();
-  const id = uuid();
-  const promise = new Promise<Account[]>((resolve, reject) => {
-    pending = { id, resolve, reject };
-  });
-  return { id, promise };
-}
-
-export function settleMigrationRequest(id: string, accounts: Account[]) {
-  if (pending?.id !== id) return;
-  pending.resolve(accounts);
-  pending = null;
-}
-
-/** With an `id`, only cancels that request, so a stale caller cannot cancel a newer one. */
-export function cancelMigrationRequest(id?: string | null) {
-  if (id !== undefined && pending?.id !== id) return;
-  pending?.reject(new UserRefusedOnDevice());
-  pending = null;
-}
+export const beginMigrationRequest = migrationRequest.begin;
+export const getMigrationRequestId = migrationRequest.getId;
+export const settleMigrationRequest = migrationRequest.settle;
+export const cancelMigrationRequest = migrationRequest.cancel;

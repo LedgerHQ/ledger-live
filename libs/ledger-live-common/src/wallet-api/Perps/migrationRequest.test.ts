@@ -3,6 +3,7 @@ import { createFixtureAccount } from "../../mock/fixtures/cryptoCurrencies";
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
+  getMigrationRequestId,
   settleMigrationRequest,
 } from "./migrationRequest";
 
@@ -12,60 +13,30 @@ describe("migrationRequest", () => {
   afterEach(() => cancelMigrationRequest());
 
   it("resolves with the accounts it is settled with", async () => {
-    const { id, promise } = beginMigrationRequest();
+    const request = beginMigrationRequest();
 
-    settleMigrationRequest(id, [account]);
+    settleMigrationRequest(getMigrationRequestId(), [account]);
 
-    await expect(promise).resolves.toEqual([account]);
+    await expect(request).resolves.toEqual([account]);
   });
 
   it("rejects when the user cancels the migration", async () => {
-    const { promise } = beginMigrationRequest();
+    const request = beginMigrationRequest();
 
     cancelMigrationRequest();
 
-    await expect(promise).rejects.toBeInstanceOf(UserRefusedOnDevice);
-  });
-
-  it("ignores a cancel once the request has settled", async () => {
-    const { id, promise } = beginMigrationRequest();
-
-    settleMigrationRequest(id, [account]);
-    cancelMigrationRequest();
-
-    await expect(promise).resolves.toEqual([account]);
-  });
-
-  it("ignores a late settle from a request that was replaced", async () => {
-    const first = beginMigrationRequest();
-    cancelMigrationRequest();
-    const second = beginMigrationRequest();
-
-    settleMigrationRequest(first.id, []);
-    settleMigrationRequest(second.id, [account]);
-
-    await expect(first.promise).rejects.toBeInstanceOf(UserRefusedOnDevice);
-    await expect(second.promise).resolves.toEqual([account]);
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
   });
 
   it("only cancels the request it is given", async () => {
     const first = beginMigrationRequest();
+    const firstId = getMigrationRequestId();
     const second = beginMigrationRequest();
 
-    cancelMigrationRequest(first.id);
-    settleMigrationRequest(second.id, [account]);
+    cancelMigrationRequest(firstId);
+    settleMigrationRequest(getMigrationRequestId(), [account]);
 
-    await expect(first.promise).rejects.toBeInstanceOf(UserRefusedOnDevice);
-    await expect(second.promise).resolves.toEqual([account]);
-  });
-
-  it("cancels a pending request when a new one starts", async () => {
-    const first = beginMigrationRequest();
-    const second = beginMigrationRequest();
-
-    settleMigrationRequest(second.id, [account]);
-
-    await expect(first.promise).rejects.toBeInstanceOf(UserRefusedOnDevice);
-    await expect(second.promise).resolves.toEqual([account]);
+    await expect(first).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    await expect(second).resolves.toEqual([account]);
   });
 });

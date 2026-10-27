@@ -20,6 +20,7 @@ import {
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
+  getMigrationRequestId,
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
 import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/constants";
@@ -73,11 +74,12 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
   // Only called when the wallet has no Hyperliquid account at the legacy address: runs the standard
   // add account flow inline and hands back every added account, the server picks the matching one.
   const uiMigrationExecute = useCallback(() => {
-    const { id, promise } = beginMigrationRequest();
+    const request = beginMigrationRequest();
+    const id = getMigrationRequestId();
 
     // Coming back to Perps without added accounts (X, back, device error) abandons the migration.
     const unsubscribe = navigation.addListener("focus", () => cancelMigrationRequest(id));
-    promise.then(unsubscribe, unsubscribe);
+    request.then(unsubscribe, unsubscribe);
 
     navigation.navigate(NavigatorName.DeviceSelection, {
       screen: ScreenName.SelectDevice,
@@ -92,7 +94,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
       },
     });
 
-    return promise;
+    return request;
   }, [navigation]);
 
   useEffect(() => () => cancelMigrationRequest(), []);
