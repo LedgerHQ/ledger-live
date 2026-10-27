@@ -41,7 +41,7 @@ Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](
 - Override the timeout with a bucket: `await this.signaturePrompt.waitVisible(TIMEOUT.xxxlarge)`.
 - Opt out with `.raw`, the Detox element with no wait. Use it only for an action the handle does not wrap. There is no `wait: false` flag: no call site needed one.
 
-The handles call the existing `NativeElementHelpers` and `WebElementHelpers`, so hard timeouts, retries and Allure steps stay the same.
+The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout, and the waits and retries match the globals, so behaviour and Allure steps stay the same.
 
 ## Migrate a page object
 
@@ -73,4 +73,4 @@ async tapRecipientCardSend() {
 
 ## Status
 
-The installed globals stay until every page object is migrated. A migrated page object MUST NOT mix handles with element globals.
+The installed globals stay until every page object is migrated, then `elementHelpers.ts` is deleted. Which rule applies to which page object: [conventions](e2e-mobile-conventions.md#a-page-object-that-imports-element-handles-must-use-them-for-every-element).
