@@ -27,6 +27,12 @@ Prioritize these, but do not exclude others:
 - Sentry
 - Mixpanel
 
+Analytics also leave from the monorepo layers (`shared/`, `domain/`, `features/`, `devtools/`), not only the apps:
+
+- `@shared/analytics` owns `track()` and `trackPage()`; `@shared/analytics-react` wraps them in `<Track>`, `<TrackPage>` and `<TrackScreen>`. The apps plug their vendor (`setAnalytics`) and filters into this pipeline, so a layer call reaches the same vendor as an app call.
+- Feature packages send events either through those functions (`@features/flow-fear-and-greed`) or through an adapter the app injects (`createContactsAnalyticsHelper` in `@features/flow-contacts`, `createPayAnalyticsHelper` in `@features/platform-pay-analytics`). For an adapter, read the app side that builds it: that is where the payload reaches the vendor.
+- `@features/platform-coin-observability` decides when coin errors reach Datadog.
+
 # High-risk variables
 
 Treat any of these as high-risk when found in added lines:
@@ -39,7 +45,8 @@ Treat any of these as high-risk when found in added lines:
 
 2. In added lines, identify:
    - Assignments of high-risk variables (see above)
-   - New calls to third-party sinks or wrappers: `track()`, `trackPage()`, `logger.*()`, `captureException()`
+   - New calls to third-party sinks or wrappers: `track()`, `trackPage()`, `<Track>`, `<TrackPage>`, `<TrackScreen>`, analytics adapter methods (`adapter.track()`, `analytics.trackPage()`, `track*()` helpers), `logger.*()`, `captureException()`
+   - Added lines under `shared/`, `domain/`, `features/` and `devtools/` count as much as added lines under `apps/`
 
 3. In removed lines, identify:
    - Removed guards: `confidentialityFilter`, scrubbing calls, PII-stripping wrappers — flag each removal as a potential leak enabler.
@@ -59,15 +66,27 @@ Treat any of these as high-risk when found in added lines:
 
 # Grep helpers (investigation only)
 
+`SRC` covers the apps and the layers that ship runtime code; `support/` holds development-only presets and never sends data.
+
+```bash
+SRC=(apps shared domain features devtools)
+```
+
+**Analytics call sites in the layers:**
+```bash
+grep -rnE "\btrack(Page)?\(|<Track(Page|Screen)?\b" shared domain features devtools --include="*.ts" --include="*.tsx" \
+  | grep -vE "\.test\.|/__tests__/|/node_modules/"
+```
+
 **`location.pathname` flowing into `track()`** — pathname often assigned before the call:
 ```bash
-find apps \( -name "*.ts" -o -name "*.tsx" \) | grep -vE "\.test\.|/__tests__/|/tests/" | \
+find "${SRC[@]}" -path "*/node_modules" -prune -o \( -name "*.ts" -o -name "*.tsx" \) -print | grep -vE "\.test\.|/__tests__/|/tests/" | \
   xargs perl -0777 -ne 'BEGIN { exit unless @ARGV } print "$ARGV\n" if /track(?:Page)?\([\s\S]{0,500}?location\.pathname/'
 ```
 
 **`window.location.hash` in analytics:**
 ```bash
-grep -rn "window\.location\.hash" apps/ --include="*.ts" --include="*.tsx"
+grep -rn "window\.location\.hash" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx"
 ```
 
 **Address interpolated into `new Error(...)` in coin modules:**
@@ -78,19 +97,19 @@ find libs \( -name "*.ts" -o -name "*.tsx" \) | grep -vE "live-e2e-shared|coin-t
 
 **Signed tx payload on broadcast failure:**
 ```bash
-grep -rn -E "broadcast_failure|broadcastLogger" apps/ --include="*.ts" | grep -v "\.test\."
+grep -rn -E "broadcast_failure|broadcastLogger" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" | grep -v "\.test\."
 ```
 
 **Full transaction object spread into analytics:**
 ```bash
-grep -rn -E "value:[[:space:]]*(params|transaction)\b" apps/ --include="*.ts" --include="*.tsx" \
+grep -rn -E "value:[[:space:]]*(params|transaction)\b" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx" \
   | grep -v "\.test\." \
   | grep -vE "value:[[:space:]]*(params|transaction)\."
 ```
 
 **Signed payload fields in `track()`:**
 ```bash
-grep -rn -E "binaryPayload|payinAddress|fromAccountAddress|toAccountAddress" libs/ apps/ --include="*.ts" --include="*.tsx" \
+grep -rn -E "binaryPayload|payinAddress|fromAccountAddress|toAccountAddress" libs "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx" \
   | grep -vE "\.test\.|/__tests__/|/tests/"
 ```
 
@@ -98,7 +117,7 @@ grep -rn -E "binaryPayload|payinAddress|fromAccountAddress|toAccountAddress" lib
 ```bash
 grep -rn "setPropsFilter(" apps/ --include="*.ts" --include="*.tsx" | grep -v test
 ```
-Desktop registers `confidentialityFilter`; check whether any other app that sends analytics needs a filter.
+`setPropsFilter` lives in `@shared/analytics`; only an app registers one. Desktop registers `confidentialityFilter`, so a layer call site rendered on mobile is unfiltered. Check whether any other app that sends analytics needs a filter.
 
 # Output format
 

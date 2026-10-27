@@ -21,9 +21,22 @@ Builds are slow and expensive (especially desktop = macOS + Linux + Windows). St
 |---|---|
 | `apps/ledger-live-desktop/**` | Desktop |
 | `apps/ledger-live-mobile/**` | Android + iOS |
+| a package under `shared/`, `domain/`, `features/`, `devtools/` | the app(s) that depend on it, see below |
+| `support/**` only (development-only presets) | nothing |
 | shared libs (`libs/**`, e.g. `ledger-live-common`, `coin-modules`) impacting both apps | Desktop + Android + iOS |
 
 If the user explicitly names a platform ("make an APK", "iOS build"), honor that and skip the inference. When in doubt about a shared-lib change, ask which app(s) to build rather than building all three.
+
+**Derive the app from a change in the layers with the Nx graph.** Pass the changed source files; a package depended on by one app only reaches that app (`@features/flow-app-unlock` → mobile, `@features/platform-app-update` → desktop):
+
+```bash
+FILES=$(gh pr view <pr> -R LedgerHQ/ledger-live --json files \
+  --jq '[.files[].path | select(test("^(shared|domain|features|devtools)/") and (endswith("package.json") | not))] | join(",")')
+pnpm nx show projects --affected --files="$FILES" --json \
+  | jq -r '.[] | select(. == "ledger-live-desktop" or . == "live-mobile")'
+```
+
+`ledger-live-desktop` → Desktop, `live-mobile` → Android + iOS. Then narrow by platform suffix, which Nx does not see: a change only in `*.web.ts(x)` files ships on desktop, only in `*.native.ts(x)` on mobile. A `package.json` change marks every dependent app as affected; read what it changes before building all three. A `devtools/` change only shows in the developer tools screen; build it only when someone needs to test that screen.
 
 **Scope off the PR's file list, not `git diff develop...HEAD`.** A stale merge-base makes the local three-dot diff pull in hundreds of unrelated files. When a PR exists, use `gh pr view <pr> -R LedgerHQ/ledger-live --json files --jq '.files[].path'` for the true change set.
 
