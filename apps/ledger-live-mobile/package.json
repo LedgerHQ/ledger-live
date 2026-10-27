@@ -115,6 +115,7 @@
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-account-detail": "workspace:^",
     "@features/flow-account-detail-hero": "workspace:^",
+    "@features/flow-account-detail-notices": "workspace:^",
     "@features/flow-account-detail-settings": "workspace:^",
     "@features/flow-analytics-consent": "workspace:*",
     "@features/flow-app-availability": "workspace:*",
