@@ -10,6 +10,8 @@ const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const PLATFORM_FILE = /\.(?:web|native|ios|android)\.[cm]?[jt]sx?$/;
 const BARREL = /^index(?:\.(?:web|native))?\.tsx?$/;
 const STAR_EXPORT = /^export\s+\*\s+from\s+["'](\.[^"']*)["']/gm;
+// Names the templates import, which a component of the same name would shadow.
+const TEMPLATE_IMPORTS = new Set(["React", "View"]);
 // What a relative specifier can load, on either platform.
 const CANDIDATE_SUFFIXES = [
   ".web.tsx",
@@ -43,16 +45,20 @@ function toPackagePath(projectRoot: string, target: string): string {
   return posix.join(projectRoot, target);
 }
 
+// The modules a target points at, through nested conditions, type-only targets left out.
+function conditionTargets(target: unknown): string[] {
+  if (typeof target === "string") return [target];
+  if (!target || typeof target !== "object") return [];
+  return Object.entries(target)
+    .filter(([condition]) => condition !== "types")
+    .flatMap(([, value]) => conditionTargets(value));
+}
+
 function universalEntryFiles(projectRoot: string, exportsField: Record<string, unknown>): string[] {
   // An object of conditions alone is the target of the root entry.
   const hasSubpaths = Object.keys(exportsField).some(key => key.startsWith("."));
   const root = hasSubpaths ? exportsField["."] : exportsField;
-  const targets =
-    typeof root === "string"
-      ? [root]
-      : Object.entries(root ?? {})
-          .filter(([condition, value]) => condition !== "types" && typeof value === "string")
-          .map(([, value]) => value as string);
+  const targets = conditionTargets(root);
   return [...new Set(targets)].map(target => toPackagePath(projectRoot, target));
 }
 
@@ -155,6 +161,9 @@ export default async function universalComponentGenerator(
   if (!PASCAL_CASE.test(className)) {
     throw new Error(`"${options.name}" does not give a PascalCase component name.`);
   }
+  if (TEMPLATE_IMPORTS.has(className)) {
+    throw new Error(`"${className}" shadows an import of the generated files, pick another name.`);
+  }
 
   const projectRoot = options.project.replace(/\\/g, "/").replace(/^\.\/|\/+$/g, "");
   const manifestPath = `${projectRoot}/package.json`;
@@ -175,6 +184,12 @@ export default async function universalComponentGenerator(
   const platformEntries = (["web", "native"] as const)
     .map(platform => platformEntryFile(projectRoot, exportsField, platform))
     .filter((file): file is string => file !== undefined);
+  const sharedEntry = platformEntries.find(file => universalEntries.includes(file));
+  if (sharedEntry !== undefined) {
+    throw new Error(
+      `${projectRoot}: a platform entry and the universal entry "." share ${sharedEntry}, so a component added to one leaks into the other, ${BREAKS_R5} Give the platform entry a module of its own first.`,
+    );
+  }
   const directory = normalizeDirectory(options.directory);
   const templates = join(__dirname, "files");
   const substitutions = { className, testId: fileName, tmpl: "" };
@@ -204,7 +219,10 @@ export default async function universalComponentGenerator(
       directory === undefined
         ? posix.dirname(entryFile)
         : posix.join(projectRoot, "src", directory);
-    assertNewFiles(tree, [`${dir}/${className}.${platform}.tsx`]);
+    assertNewFiles(
+      tree,
+      [".tsx", ".test.tsx"].map(suffix => `${dir}/${className}.${platform}${suffix}`),
+    );
 
     if (existingEntry === undefined) {
       updateJson(tree, manifestPath, json => {
@@ -242,7 +260,9 @@ export default async function universalComponentGenerator(
   const dir = posix.join(projectRoot, "src", directory ?? "");
   assertNewFiles(
     tree,
-    [".types.ts", ".web.tsx", ".native.tsx"].map(suffix => `${dir}/${className}${suffix}`),
+    [".types.ts", ".web.tsx", ".native.tsx", ".web.test.tsx", ".native.test.tsx"].map(
+      suffix => `${dir}/${className}${suffix}`,
+    ),
   );
   for (const folder of ["contract", "web", "native"]) {
     generateFiles(tree, join(templates, folder), dir, { ...substitutions, universal: true });

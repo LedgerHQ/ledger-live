@@ -253,6 +253,49 @@ describe("universal component", () => {
       }),
     ).rejects.toThrow(/inside the package's src/);
   });
+
+  it("writes into the entries of nested conditions", async () => {
+    seedDualPackage(tree, {
+      ".": {
+        types: "./src/index.ts",
+        "react-native": { default: "./src/index.native.ts" },
+        default: "./src/index.ts",
+      },
+    });
+
+    await universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE });
+
+    for (const barrel of ["index.ts", "index.native.ts"]) {
+      expect(readText(tree, `${PACKAGE}/src/${barrel}`)).toContain(
+        'export * from "./ContactsButton";',
+      );
+    }
+  });
+
+  it("refuses a package whose platform entry is the universal entry's module", async () => {
+    seedDualPackage(tree, { ".": UNIVERSAL, "./native": "./src/index.native.ts" });
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(/share shared\/thing\/src\/index\.native\.ts.*which breaks R5/);
+  });
+
+  it("refuses to overwrite a test written first", async () => {
+    tree.write(`${PACKAGE}/src/ContactsButton.native.test.tsx`, "// written first\n");
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(/Refusing to overwrite .*ContactsButton\.native\.test\.tsx/);
+    expect(readText(tree, `${PACKAGE}/src/ContactsButton.native.test.tsx`)).toBe(
+      "// written first\n",
+    );
+  });
+
+  it.each(["React", "View"])("refuses %s, which the templates import", async name => {
+    await expect(universalComponentGenerator(tree, { name, project: PACKAGE })).rejects.toThrow(
+      /shadows an import/,
+    );
+  });
 });
 
 describe("platform component", () => {
@@ -326,6 +369,34 @@ describe("platform component", () => {
     ).rejects.toThrow(
       /universal entry .*, which breaks R5, see docs\/adr\/universal-components\.md/,
     );
+    expect(readText(tree, `${PACKAGE}/package.json`)).toBe(manifest);
+  });
+
+  it("refuses to append to a platform entry that the universal entry also resolves to", async () => {
+    seedDualPackage(tree, { ".": UNIVERSAL, "./native": "./src/index.native.ts" });
+    const nativeEntry = readText(tree, `${PACKAGE}/src/index.native.ts`);
+
+    await expect(
+      universalComponentGenerator(tree, {
+        name: "WalletButton",
+        project: PACKAGE,
+        platformEntry: "native",
+      }),
+    ).rejects.toThrow(/share .*index\.native\.ts.*which breaks R5/);
+    expect(readText(tree, `${PACKAGE}/src/index.native.ts`)).toBe(nativeEntry);
+  });
+
+  it("refuses to overwrite a test written first, before touching the manifest", async () => {
+    const manifest = readText(tree, `${PACKAGE}/package.json`);
+    tree.write(`${PACKAGE}/src/web/WalletButton.web.test.tsx`, "// written first\n");
+
+    await expect(
+      universalComponentGenerator(tree, {
+        name: "WalletButton",
+        project: PACKAGE,
+        platformEntry: "web",
+      }),
+    ).rejects.toThrow(/Refusing to overwrite .*WalletButton\.web\.test\.tsx/);
     expect(readText(tree, `${PACKAGE}/package.json`)).toBe(manifest);
   });
 });
