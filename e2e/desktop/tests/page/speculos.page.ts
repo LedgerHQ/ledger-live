@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
 import type { PageLogCollector } from "tests/utils/pageLogCollector";
@@ -29,7 +29,6 @@ import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 function formatSwapScenario(swap: Swap, amount: string): string {
   const from = swap.accountToDebit.currency.name;
@@ -52,27 +51,6 @@ export class SpeculosPage extends AppPage {
    */
   private readonly swapInitFailed = (): string | null =>
     this.webviewCollector?.getSwapInitFailure() ?? null;
-
-  private readonly swapErrorDrawer = this.page.getByTestId("drawer-content");
-
-  /**
-   * Runs a swap device step. When it fails because swap initialization failed, the app's error
-   * drawer may still be sliding in: let it finish, so the failure screenshot shows the error.
-   */
-  private async showingSwapInitError(deviceStep: () => void | Promise<void>): Promise<void> {
-    try {
-      await deviceStep();
-    } catch (error) {
-      if (this.swapInitFailed()) {
-        try {
-          await expect(this.swapErrorDrawer).toBeInViewport({ ratio: 1, timeout: TIMEOUT.small });
-        } catch {
-          // Best effort: without the drawer the screenshot is less useful, not wrong.
-        }
-      }
-      throw error;
-    }
-  }
 
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
@@ -113,9 +91,7 @@ export class SpeculosPage extends AppPage {
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     const scenario = formatSwapScenario(swap, amount);
     try {
-      await this.showingSwapInitError(() =>
-        verifyAmountsAndAcceptSwap(swap, amount, { giveUpWhen: this.swapInitFailed }),
-      );
+      await verifyAmountsAndAcceptSwap(swap, amount, { giveUpWhen: this.swapInitFailed });
     } catch (error) {
       if (error instanceof Error) error.message += `\n↳ Swap scenario: ${scenario}`;
       throw error;
@@ -128,18 +104,14 @@ export class SpeculosPage extends AppPage {
     amount: string,
     errorMessage: string | null,
   ) {
-    await this.showingSwapInitError(() =>
-      verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage, {
-        giveUpWhen: this.swapInitFailed,
-      }),
-    );
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount, errorMessage, {
+      giveUpWhen: this.swapInitFailed,
+    });
   }
 
   @step("Verify amounts and reject swap")
   async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-    await this.showingSwapInitError(() =>
-      verifyAmountsAndRejectSwap(swap, amount, { giveUpWhen: this.swapInitFailed }),
-    );
+    await verifyAmountsAndRejectSwap(swap, amount, { giveUpWhen: this.swapInitFailed });
   }
 
   @step("Activate expert mode")

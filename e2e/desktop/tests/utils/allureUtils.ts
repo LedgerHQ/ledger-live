@@ -8,6 +8,7 @@ import { listen } from "@ledgerhq/logs";
 import * as allure from "allure-js-commons";
 import { isLastRetry } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
+import { SwapErrorDrawer } from "tests/page/drawer/swap.error.drawer";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 
 const readFileAsync = promisify(readFile);
@@ -213,6 +214,15 @@ export async function captureArtifacts(
   webviewCollector?: PageLogCollector,
   appCollector?: PageLogCollector,
 ) {
+  // A swap device step stops as soon as swap init fails, while the error drawer still slides in.
+  if (webviewCollector?.getSwapInitFailure()) {
+    try {
+      await new SwapErrorDrawer(page).waitUntilOpen();
+    } catch {
+      // Best effort: the screenshot is still worth taking without the drawer.
+    }
+  }
+
   const screenshot = await page.screenshot();
   await testInfo.attach("App Screenshot", { body: screenshot, contentType: "image/png" });
 
