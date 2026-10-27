@@ -21295,6 +21295,9 @@ importers:
       picocolors:
         specifier: 1.1.0
         version: 1.1.0
+      redux:
+        specifier: 4.2.1
+        version: 4.2.1
       rxjs:
         specifier: 7.8.1
         version: 7.8.1
@@ -36805,6 +36808,9 @@ packages:
     resolution: {integrity: sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==}
     peerDependencies:
       redux: ^5.0.0
+
+  redux@4.2.1:
+    resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
 
   redux@5.0.1:
     resolution: {integrity: sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==}
@@ -58671,6 +58677,10 @@ snapshots:
   redux-thunk@3.1.0(redux@5.0.1):
     dependencies:
       redux: 5.0.1
+
+  redux@4.2.1:
+    dependencies:
+      '@babel/runtime': 7.28.4
 
   redux@5.0.1: {}
 
