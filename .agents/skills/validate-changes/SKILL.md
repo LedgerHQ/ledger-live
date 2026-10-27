@@ -19,10 +19,11 @@ BASE=$(git merge-base origin/develop HEAD)
 ## 1. Format
 
 Formatting is `oxfmt`, with the single repository config `support/fmt/oxfmt.config.mts`. Format
-the changed files; the config already skips Markdown and the generated trees:
+the changed and new files; the config already skips Markdown and the generated trees:
 
 ```bash
-git diff --name-only --diff-filter=d "$BASE" | xargs -r pnpm exec oxfmt --no-error-on-unmatched-pattern
+{ git diff --name-only --diff-filter=d "$BASE"; git ls-files --others --exclude-standard; } \
+  | xargs -r pnpm exec oxfmt --no-error-on-unmatched-pattern
 ```
 
 The pre-commit hook (`hk.pkl`) runs `oxfmt` on staged sources too, so a commit never lands
