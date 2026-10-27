@@ -8,7 +8,7 @@ import {
   type KeyboardMetrics,
 } from "react-native";
 import { act, fireEvent, render, screen } from "@testing-library/react-native";
-import { QueuedBottomSheetFooter } from "./QueuedBottomSheetFooter.native";
+import { QueuedBottomSheetFooter } from "./QueuedBottomSheetFooter";
 
 let keyboardMetrics: KeyboardMetrics | undefined;
 const footerOnScreen = { y: 0, width: 390, height: 80 };

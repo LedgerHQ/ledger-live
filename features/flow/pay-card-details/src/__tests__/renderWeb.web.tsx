@@ -1,6 +1,6 @@
 import React from "react";
 import { render, type RenderOptions } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
+import { StyleProvider } from "@features/platform-style/web";
 import { I18nWrapper } from "./i18nWrapper";
 
 function WebProviders({ children }: { children: React.ReactNode }) {
