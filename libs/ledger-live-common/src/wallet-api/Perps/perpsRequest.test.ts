@@ -27,6 +27,27 @@ describe("createPerpsRequest", () => {
     await expect(pending).rejects.toBeInstanceOf(UserRefusedOnDevice);
   });
 
+  it("cancels the current request by its id", async () => {
+    const pending = request.begin();
+
+    request.cancel(request.getId());
+
+    await expect(pending).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    expect(request.getId()).toBeNull();
+  });
+
+  it("ignores a cancel for a stale or missing id, so it cannot cancel a newer request", async () => {
+    request.begin().catch(() => undefined);
+    const staleId = request.getId();
+    const current = request.begin();
+
+    request.cancel(staleId);
+    request.cancel(null);
+    request.settle(request.getId(), { swapId: "swap-2" });
+
+    await expect(current).resolves.toEqual({ swapId: "swap-2" });
+  });
+
   it("rejects the previous request when a new one begins, so it never hangs", async () => {
     const first = request.begin();
     const firstId = request.getId();

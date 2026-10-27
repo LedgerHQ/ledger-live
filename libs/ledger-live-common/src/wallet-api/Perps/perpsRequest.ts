@@ -12,14 +12,16 @@ export type PerpsRequest<T> = {
   getId: () => string | null;
   settle: (id: string | null, result: T) => void;
   markCommitted: (id: string | null) => void;
-  cancel: () => void;
+  /** With an `id`, only cancels that request, so a stale caller cannot cancel a newer one. */
+  cancel: (id?: string | null) => void;
 };
 
 export function createPerpsRequest<T>(): PerpsRequest<T> {
   const requests = new Map<string, PendingRequest<T>>();
   let currentId: string | null = null;
 
-  const cancel = () => {
+  const cancel = (id?: string | null) => {
+    if (id !== undefined && id !== currentId) return;
     if (currentId === null) return;
     const current = requests.get(currentId);
     if (current?.committed) return;
