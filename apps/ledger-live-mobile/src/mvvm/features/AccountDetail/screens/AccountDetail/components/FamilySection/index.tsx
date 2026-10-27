@@ -5,6 +5,6 @@ import { useFamilySectionViewModel } from "./useFamilySectionViewModel";
 
 type Props = Readonly<{ account: Account }>;
 
-export function FamilySection({ account }: Props) {
+export const FamilySection = ({ account }: Props) => {
   return <FamilySectionView {...useFamilySectionViewModel(account)} />;
-}
+};

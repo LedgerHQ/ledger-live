@@ -14,19 +14,19 @@ type FamilyBlockProps = Partial<{ account: AccountLike; parentAccount: Account }
 
 type FamilyComponent = ((props: FamilyBlockProps) => ReactNode) | undefined;
 
-function renderFamilyBlock(map: object, family: string, props: FamilyBlockProps): ReactNode {
+const renderFamilyBlock = (map: object, family: string, props: FamilyBlockProps): ReactNode => {
   const Component = (map as Record<string, FamilyComponent>)[family];
   return Component ? React.createElement(Component, props) : null;
-}
+};
 
-export function FamilySectionView({
+export const FamilySectionView = ({
   account,
   notices,
   showEarnBlocks,
   showBodyBlocks,
   onOpenLink,
   onOpenPerps,
-}: FamilySectionViewModel) {
+}: FamilySectionViewModel) => {
   const { family } = account.currency;
   const blockProps = { account };
 
@@ -55,4 +55,4 @@ export function FamilySectionView({
         : null}
     </>
   );
-}
+};

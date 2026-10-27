@@ -1,10 +1,10 @@
 import type { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
 import type { CurrencyStatusSignal } from "@features/flow-account-detail-notices";
 
-export function toCurrencyStatusSignal(
+export const toCurrencyStatusSignal = (
   status: CurrencyConfig["status"] | undefined,
   formatDate: (date: Date) => string,
-): CurrencyStatusSignal | undefined {
+): CurrencyStatusSignal | undefined => {
   if (status?.type === "migration") {
     return { type: "migration", from: status.from, to: status.to, link: status.link };
   }
@@ -16,11 +16,11 @@ export function toCurrencyStatusSignal(
     };
   }
   return undefined;
-}
+};
 
-export function toCustomBannerSignal(
+export const toCustomBannerSignal = (
   banner: CurrencyConfig["customBanner"],
-): Readonly<{ text: string; link?: string }> | undefined {
+): Readonly<{ text: string; link?: string }> | undefined => {
   if (!banner?.isDisplay) return undefined;
   return { text: banner.bannerText, link: banner.bannerLink };
-}
+};

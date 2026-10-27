@@ -12,15 +12,15 @@ export type FamilySectionViewModel = AccountNoticesResult &
     showBodyBlocks: boolean;
   }>;
 
-function readCurrencyConfig(currencyId: string): CurrencyConfig | undefined {
+const readCurrencyConfig = (currencyId: string): CurrencyConfig | undefined => {
   try {
     return getCurrencyConfiguration(currencyId);
   } catch {
     return undefined;
   }
-}
+};
 
-export function useFamilySectionViewModel(account: Account): FamilySectionViewModel {
+export const useFamilySectionViewModel = (account: Account): FamilySectionViewModel => {
   const bridge = useAccountBridgeOrNull(account, undefined);
   const currencyConfig = useMemo(
     () => readCurrencyConfig(account.currency.id),
@@ -37,4 +37,4 @@ export function useFamilySectionViewModel(account: Account): FamilySectionViewMo
     showEarnBlocks: !isEmpty && !isDelegationDisabled,
     showBodyBlocks: !isEmpty,
   };
-}
+};

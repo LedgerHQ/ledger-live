@@ -27,7 +27,7 @@ const accountOf = (currencyId: string): Account =>
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
-function renderAccount(account: Account, flags: Record<string, { enabled: boolean }> = {}) {
+const renderAccount = (account: Account, flags: Record<string, { enabled: boolean }> = {}) => {
   return render(
     <Stack.Navigator id={BASE_NAVIGATOR_ID} screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -43,7 +43,7 @@ function renderAccount(account: Account, flags: Record<string, { enabled: boolea
       },
     },
   );
-}
+};
 
 const notice = (id: string) => `${ACCOUNT_DETAIL_TEST_IDS.notices}-${id}`;
 
@@ -55,6 +55,20 @@ describe("AccountDetail notices", () => {
     expect(
       screen.getByText("Total balance does not include dividends or stock splits."),
     ).toBeVisible();
+  });
+
+  it("offers Perps on a Hyperliquid account", async () => {
+    renderAccount(accountOf("hypercore"), { ptxPerpsLiveAppMobile: { enabled: true } });
+
+    expect(await screen.findByTestId(notice("perps"))).toBeVisible();
+    expect(screen.getByTestId(`${notice("perps")}-action`)).toBeVisible();
+  });
+
+  it("does not offer Perps when the Perps flag is off", async () => {
+    renderAccount(accountOf("hypercore"), { ptxPerpsLiveAppMobile: { enabled: false } });
+
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.hero)).toBeVisible();
+    expect(screen.queryByTestId(notice("perps"))).toBeNull();
   });
 
   it("does not show the Robinhood disclaimer on other accounts", async () => {

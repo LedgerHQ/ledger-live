@@ -14,16 +14,16 @@ import { toCurrencyStatusSignal, toCustomBannerSignal } from "./toAccountNoticeS
 
 export type AccountNoticesResult = Omit<AccountNoticesProps, "testID">;
 
-export function useAccountNotices(
+export const useAccountNotices = (
   account: Account,
   currencyConfig: CurrencyConfig | undefined,
-): AccountNoticesResult {
+): AccountNoticesResult => {
   const formatDate = useFormatDate();
   const robinhoodDisclaimer = useFeature("llRobinhoodDisclaimer");
   const perps = useFeature("ptxPerpsLiveAppMobile");
   const { onOpenPerps } = usePerpsAccountBannerViewModel(account.currency);
 
-  const { id: currencyId, name: currencyName, family } = account.currency;
+  const { id: currencyId, name: currencyName } = account.currency;
   const isRobinhoodDisclaimerEnabled = Boolean(robinhoodDisclaimer?.enabled);
   const isPerpsEnabled = Boolean(perps?.enabled);
 
@@ -32,7 +32,6 @@ export function useAccountNotices(
       resolveAccountNotices({
         currencyId,
         currencyName,
-        family,
         supportLink: urls.contactSupportWebview.en,
         status: toCurrencyStatusSignal(currencyConfig?.status, formatDate),
         customBanner: toCustomBannerSignal(currencyConfig?.customBanner),
@@ -43,7 +42,6 @@ export function useAccountNotices(
       currencyConfig,
       currencyId,
       currencyName,
-      family,
       formatDate,
       isPerpsEnabled,
       isRobinhoodDisclaimerEnabled,
@@ -55,4 +53,4 @@ export function useAccountNotices(
   }, []);
 
   return { notices, onOpenLink, onOpenPerps };
-}
+};
