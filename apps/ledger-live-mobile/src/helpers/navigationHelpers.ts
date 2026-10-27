@@ -39,8 +39,8 @@ const findStepStack = (
   );
 };
 
-// The summary gets its params directly too: React Navigation 7.13+ drops the nested params of
-// popTo when the step stack changes in the same update, which these setParams calls do.
+// The summary gets its params directly too: @react-navigation/core 7.17+ drops the nested
+// params of popTo when the step stack changes in the same update, which these setParams calls do.
 const syncTransactionToSendSteps = (
   navigation: StackNavigation,
   navigatorName: string,
