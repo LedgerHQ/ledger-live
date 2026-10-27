@@ -21,7 +21,6 @@ import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { isDeepStrictEqual } from "node:util";
-import vm from "node:vm";
 import { JEST_DEBT } from "./jest-debt.mjs";
 
 const PACKAGE = "@support/jest";
@@ -419,37 +418,121 @@ function objectEntries(source, code, items) {
   return { entries, problems };
 }
 
-/**
- * Whether a value is written as a literal: strings, numbers, booleans, null, undefined, and arrays
- * and objects of those. Template literals count when they interpolate nothing.
- *
- * @param {string} code masked by maskSource
- * @param {Range} range
- * @returns {boolean}
- */
-function isLiteral(code, [start, end]) {
-  const rest = code
-    .slice(start, end)
-    .replace(new RegExp(String.raw`([{,]\s*)(?:${IDENTIFIER}|"[^"]*"|'[^']*')\s*:`, "g"), "$1")
-    .replace(/\b\d[\d_]*(?:\.\d+)?(?:e[+-]?\d+)?\b/gi, "")
-    .replace(/\b(?:true|false|null|undefined)\b/g, "");
-  return /^[\s"'`[\]{},+-]*$/.test(rest);
-}
+const ESCAPES = { b: "\b", f: "\f", n: "\n", r: "\r", t: "\t", v: "\v", 0: "\0" };
 
 /**
+ * The value of a literal written in `source` between `start` and `end`, read without evaluating
+ * anything: strings, template literals without interpolation, numbers, booleans, null,
+ * undefined, and arrays and objects of those, with comments and trailing commas. Null when the
+ * text is anything else, such as a call, a member access or a tagged template.
+ *
  * @param {string} source
- * @param {Range} range a literal, see isLiteral
- * @returns {unknown} its value, as an object of this realm
+ * @param {Range} range
+ * @returns {{ value: unknown } | null}
  */
-function literalValue(source, [start, end]) {
-  return structuredClone(vm.runInNewContext(`(${source.slice(start, end)})`, {}, { timeout: 100 }));
+function readLiteral(source, [start, end]) {
+  let i = start;
+  const fail = () => {
+    throw new SyntaxError("not a literal");
+  };
+  function skip() {
+    for (;;) {
+      while (i < end && /\s/.test(source[i])) i++;
+      if (source.startsWith("//", i)) {
+        const newline = source.indexOf("\n", i);
+        i = newline === -1 || newline > end ? end : newline;
+      } else if (source.startsWith("/*", i)) {
+        const close = source.indexOf("*/", i + 2);
+        if (close === -1 || close + 2 > end) fail();
+        i = close + 2;
+      } else return;
+    }
+  }
+  function string() {
+    const quote = source[i++];
+    let text = "";
+    while (i < end && source[i] !== quote) {
+      if (quote === "`" && source.startsWith("${", i)) fail();
+      if (source[i] === "\\") {
+        const escaped = source[i + 1];
+        const unicode = /^u([0-9a-fA-F]{4})/.exec(source.slice(i + 1, i + 6));
+        if (unicode) {
+          text += String.fromCharCode(parseInt(unicode[1], 16));
+          i += 6;
+        } else {
+          text += ESCAPES[escaped] ?? escaped;
+          i += 2;
+        }
+      } else if (quote !== "`" && source[i] === "\n") fail();
+      else text += source[i++];
+    }
+    if (i >= end) fail();
+    i++;
+    return text;
+  }
+  function key() {
+    if (source[i] === '"' || source[i] === "'") return string();
+    const name = new RegExp(String.raw`^${IDENTIFIER}`).exec(source.slice(i, end));
+    if (!name) fail();
+    i += name[0].length;
+    return name[0];
+  }
+  function list(close, item) {
+    i++;
+    for (;;) {
+      skip();
+      if (source[i] === close) return void i++;
+      item();
+      skip();
+      if (source[i] === ",") i++;
+      else if (source[i] !== close) fail();
+    }
+  }
+  function value() {
+    skip();
+    const char = source[i];
+    if (char === '"' || char === "'" || char === "`") return string();
+    if (char === "[") {
+      const items = [];
+      list("]", () => items.push(value()));
+      return items;
+    }
+    if (char === "{") {
+      const object = {};
+      list("}", () => {
+        const name = key();
+        skip();
+        if (source[i++] !== ":") fail();
+        object[name] = value();
+      });
+      return object;
+    }
+    const number = /^-?\d[\d_]*(?:\.\d[\d_]*)?(?:[eE][+-]?\d+)?(?![\w$])/.exec(
+      source.slice(i, end),
+    );
+    if (number) {
+      i += number[0].length;
+      return Number(number[0].replaceAll("_", ""));
+    }
+    const word = /^(?:true|false|null|undefined)(?![\w$])/.exec(source.slice(i, end));
+    if (!word) fail();
+    i += word[0].length;
+    return { true: true, false: false, null: null, undefined }[word[0]];
+  }
+  try {
+    const result = value();
+    skip();
+    return i === end ? { value: result } : null;
+  } catch {
+    return null;
+  }
 }
 
 /**
  * Whether the override changes what the factory returns without it. A factory that throws on it
  * is left to jest to report.
  *
- * @param {Function} factory
+ * @param {(overrides?: object) => unknown} factory the preset factory, with the call's options
  * @param {(value: unknown) => object} wrap builds the overrides argument holding the value
  * @param {unknown} value
  * @returns {boolean}
@@ -504,8 +587,14 @@ function checkCall(context, call, allowed, prefix) {
   const name = `${call.factory}()`;
   if (extra.length > 0) problems.push(`passes ${name} more than overrides and options`);
 
+  // The comparisons run the factory with the call's own options, so they are skipped when the
+  // options cannot be read without running the config.
   const factory = context.loadPreset(call.preset)?.[call.factory];
-  const make = typeof factory === "function" ? factory : undefined;
+  const readOptions = options ? readLiteral(context.source, options) : { value: undefined };
+  const make =
+    typeof factory === "function" && readOptions
+      ? overridesArgument => factory(overridesArgument, readOptions.value)
+      : undefined;
 
   if (overrides) {
     const items = literalItems(code, overrides, "{");
@@ -536,8 +625,8 @@ function checkCall(context, call, allowed, prefix) {
  *
  * @param {CheckContext} context
  * @param {Range[]} items
- * @param {{ allowed: Set<string>, prefix: string, make?: Function, wrap: (value: unknown) => object }} scope
- *   `make` is the factory, `wrap` builds its overrides argument from this object
+ * @param {{ allowed: Set<string>, prefix: string, make?: (overrides?: object) => unknown, wrap: (value: unknown) => object }} scope
+ *   `make` runs the factory with the call's options, `wrap` builds its overrides argument from this object
  */
 function checkOverrides(context, items, { allowed, prefix, make, wrap }) {
   const { source, code, problems } = context;
@@ -574,8 +663,9 @@ function checkOverrides(context, items, { allowed, prefix, make, wrap }) {
       continue;
     }
 
-    if (make && isLiteral(code, value)) {
-      if (repeatsPreset(make, inner => wrap({ [key]: inner }), literalValue(source, value))) {
+    const literal = make && readLiteral(source, value);
+    if (literal) {
+      if (repeatsPreset(make, inner => wrap({ [key]: inner }), literal.value)) {
         problems.push(`${keyPath} repeats what the preset sets; remove it`);
       }
     }

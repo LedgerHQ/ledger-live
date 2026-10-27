@@ -522,3 +522,56 @@ test("the README lists the owned keys and the options of each factory the rule h
     assertSameNames(names(options), FACTORY_OPTIONS[factory] ?? [], `options of ${factory}`);
   }
 });
+
+test("an override value is read, never run: calls, member access and tagged templates are not literals", () => {
+  const probes = [
+    '[]["constructor"]["constructor"]`globalThis.__jestRuleProbe = 1```',
+    '["**/*.test.ts"]["constructor"]',
+    "`**/*.test.ts`.split``",
+    '[`${"**"}/*.test.ts`]',
+  ];
+  for (const value of probes) {
+    assert.deepEqual(
+      problems(`${SHARED}module.exports = createSharedJestConfig({ testMatch: ${value} });`),
+      [],
+      value,
+    );
+  }
+  assert.equal(globalThis.__jestRuleProbe, undefined);
+
+  // Comments, trailing commas, numeric separators and escapes are still literals.
+  const source = `${SHARED}module.exports = createSharedJestConfig({
+  testMatch: [
+    "**/*.test.ts", // the preset's
+  ],
+  testPathIgnorePatterns: ['lib/', "lib-es/", \`node_modules/\`, /* the preset's */],
+});`;
+  assert.deepEqual(problems(source), [
+    "testMatch repeats what the preset sets; remove it",
+    "testPathIgnorePatterns repeats what the preset sets; remove it",
+  ]);
+});
+
+test("the comparison runs the factory with the call's own options, or not at all", () => {
+  const override = '{ transformIgnorePatterns: ["node_modules/(?!x)"] }';
+  const listed = ["transformIgnorePatterns"];
+  // With the default `esm: true`, withEsmDeps replaces the override.
+  assert.deepEqual(
+    problems(`${COIN}module.exports = createLibsCoinJestConfig(${override});`, listed),
+    ["transformIgnorePatterns repeats what the preset sets; remove it"],
+  );
+  assert.deepEqual(
+    problems(
+      `${COIN}module.exports = createLibsCoinJestConfig(${override}, { esm: false });`,
+      listed,
+    ),
+    [],
+  );
+  // Options the rule cannot read without running the config: no comparison.
+  assert.deepEqual(
+    problems(
+      `${SHARED}const extraEsmDeps = ["@scure"];\nmodule.exports = createSharedJestConfig({ testMatch: ["**/*.test.ts"] }, { extraEsmDeps });`,
+    ),
+    [],
+  );
+});
