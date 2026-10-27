@@ -10,6 +10,7 @@ type Delivery = {
   eventName: string;
   eventProperties: Props;
   eventPropertiesWithoutExtra: Props;
+  failure?: "failed_filter" | "failed_enrichment";
 };
 
 function scrubDelivery(delivery: Delivery) {
@@ -45,6 +46,11 @@ export async function deliver(delivery: Delivery): Promise<void> {
   if (piiFindings.length > 0 && shouldBlockPii()) {
     publish("blocked_pii");
     throw new AnalyticsPiiError(eventName, piiFindings);
+  }
+
+  if (delivery.failure) {
+    publish(delivery.failure);
+    return;
   }
 
   const analytics = getAnalytics();

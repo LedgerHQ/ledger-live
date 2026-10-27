@@ -188,6 +188,27 @@ describe("deliver", () => {
         ]);
       });
 
+      it("publishes a failed event redacted without sending it", async () => {
+        const analytics = createAnalyticsClient();
+        setAnalytics(analytics);
+
+        await deliver({
+          type: "track",
+          eventName: "Unenrichable",
+          eventProperties: { recipient: ADDRESS },
+          eventPropertiesWithoutExtra: { recipient: ADDRESS },
+          failure: "failed_enrichment",
+        });
+
+        expect(analytics.track).not.toHaveBeenCalled();
+        expect(analytics.log).not.toHaveBeenCalled();
+        expect(events[0]).toMatchObject({
+          deliveryStatus: "failed_enrichment",
+          eventProperties: { recipient: "[REDACTED:evm_address]" },
+          piiFindings: [{ path: "eventProperties.recipient", kind: "evm_address" }],
+        });
+      });
+
       it("does not publish findings for a clean event", async () => {
         setAnalytics(createAnalyticsClient());
 
