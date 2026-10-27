@@ -20,7 +20,14 @@ export function useAccountSettingsViewModel<TAccount extends AccountSettingsAcco
   adapter: AccountSettingsAdapter<TAccount>,
   onClose: () => void,
 ): AccountSettingsViewModel {
-  const { isNameEditDisabled, locale, getAccountName, getDerivationTag, renameAccount } = adapter;
+  const {
+    isNameEditDisabled,
+    locale,
+    getAccountName,
+    getDerivationTag,
+    renameAccount,
+    removeAccount,
+  } = adapter;
 
   const onConfirmName = useCallback(
     (name: string) => {
@@ -29,6 +36,11 @@ export function useAccountSettingsViewModel<TAccount extends AccountSettingsAcco
     },
     [account, renameAccount, onClose],
   );
+
+  const onConfirmRemove = useCallback(() => {
+    removeAccount(account);
+    onClose();
+  }, [account, removeAccount, onClose]);
 
   const advancedLogs = useMemo<AdvancedLogsContentProps>(
     () => ({
@@ -53,7 +65,7 @@ export function useAccountSettingsViewModel<TAccount extends AccountSettingsAcco
     isNameEditDisabled,
     advancedLogs,
     onConfirmName,
-    onConfirmRemove: onClose,
+    onConfirmRemove,
     explorerUrl: getAccountExplorerUrl(account),
   };
 }

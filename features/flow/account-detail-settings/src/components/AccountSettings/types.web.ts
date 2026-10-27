@@ -18,6 +18,7 @@ export type AccountSettingsAdapter<TAccount extends AccountSettingsAccount> = Re
   getAccountName: (account: TAccount) => string;
   getDerivationTag: (account: TAccount) => string | undefined;
   renameAccount: (account: TAccount, name: string) => void;
+  removeAccount: (account: TAccount) => void;
 }>;
 
 export type AccountSettingsProps<TAccount extends AccountSettingsAccount> = Readonly<{
