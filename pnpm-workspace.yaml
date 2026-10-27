@@ -245,8 +245,6 @@ catalog:
   nx: 22.7.12
   "@nx/devkit": 22.7.12
   detox: 20.51.3
-  # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
-  "@nx/nx-linux-x64-gnu": 22.7.12
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0

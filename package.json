@@ -213,7 +213,6 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-lint-plugin": "catalog:",
     "@nx/devkit": "catalog:",
-    "@nx/nx-linux-x64-gnu": "catalog:",
     "@nx/s3-cache": "catalog:",
     "@react-native/babel-plugin-codegen": "catalog:",
     "@support/fmt": "workspace:*",
