@@ -2227,34 +2227,6 @@ PODS:
     - TOCropViewController (= 2.5.3)
   - react-native-launch-arguments (4.0.2):
     - React
-  - react-native-pager-view (7.0.0):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-restart (0.0.29):
@@ -3138,8 +3110,34 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNCMaskedView (0.2.9):
+  - RNCMaskedView (0.3.2):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - RNFastImage (8.6.3):
     - React-Core
     - SDWebImage (~> 5.11.1)
@@ -3307,7 +3305,7 @@ PODS:
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNScreens (4.15.4):
+  - RNScreens (4.24.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3334,10 +3332,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.15.4)
+    - RNScreens/common (= 4.24.0)
     - SocketRocket
     - Yoga
-  - RNScreens/common (4.15.4):
+  - RNScreens/common (4.24.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3638,7 +3636,6 @@ DEPENDENCIES:
   - "react-native-fast-pbkdf2 (from `../../../node_modules/.pnpm/react-native-fast-pbkdf2@0.3.1_patch_hash=9b199_71fa22f4b6a1db7867a1f89074fa6dc8/node_modules/react-native-fast-pbkdf2`)"
   - "react-native-image-crop-tools (from `../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_8831e4c76ecdceffdebb3efcab12500c/node_modules/react-native-image-crop-tools`)"
   - "react-native-launch-arguments (from `../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments`)"
-  - "react-native-pager-view (from `../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_2e8afcf45fc888ed024ed2831eb75cdf/node_modules/react-native-pager-view`)"
   - "react-native-randombytes (from `../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes`)"
   - "react-native-restart (from `../../../node_modules/.pnpm/react-native-restart@0.0.29_react-native@0.81.6_3f12f2e70724b79971c9ec97a46dcc8b/node_modules/react-native-restart`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.7.0_react-nati_dec0d0bf7fd0dd6054bb511d43e0d925/node_modules/react-native-safe-area-context`)"
@@ -3681,7 +3678,7 @@ DEPENDENCIES:
   - "ReactCommon/turbomodule/core (from `../../../node_modules/.pnpm/react-native@0.81.6_patch_hash=fbb22f6ab81c7336_9f9367c5ec0023717aa72ae7066b0e6b/node_modules/react-native/ReactCommon`)"
   - "ReactNativeBlur (from `../../../node_modules/.pnpm/@sbaiahmed1+react-native-blur@4.5.5_react-nativ_e299121387728b237d6c0f51e56966c3/node_modules/@sbaiahmed1/react-native-blur`)"
   - "RNCAsyncStorage (from `../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.2.0_872a6de74bbc5726a2be3104345d3b06/node_modules/@react-native-async-storage/async-storage`)"
-  - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_0c47d5b54722480613a459a7826aca89/node_modules/@react-native-masked-view/masked-view`)"
+  - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.3.2_rea_f3a921073dbd7d10a94aa20cba037263/node_modules/@react-native-masked-view/masked-view`)"
   - "RNFastImage (from `../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_829934f903352ef3c8879bbff021a036/node_modules/react-native-fast-image`)"
   - "RNFBApp (from `../../../node_modules/.pnpm/@react-native-firebase+app@22.2.0_5bc6442ff375f713384f11236897c131/node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../../../node_modules/.pnpm/@react-native-firebase+messaging@22.2.0_@react-_c5fdf3e0e8f9f70c905bab9dc68ab414/node_modules/@react-native-firebase/messaging`)"
@@ -3690,7 +3687,7 @@ DEPENDENCIES:
   - "RNKeychain (from `../../../node_modules/.pnpm/react-native-keychain@10.0.0/node_modules/react-native-keychain`)"
   - "RNLocalize (from `../../../node_modules/.pnpm/react-native-localize@2.2.6_react-native@0.81.6_7dfbc808ef379a0b1049b6516b6b0ca8/node_modules/react-native-localize`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_9b445d3ec96e26e70ef80a5e469b6102/node_modules/react-native-reanimated`)"
-  - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.15.4_react-native@0.81.6_80165e2e5c9b475c9de345e741127a6a/node_modules/react-native-screens`)"
+  - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.24.0_react-native@0.81.6_75fc90bcfeca222c07ffbdf3de53e203/node_modules/react-native-screens`)"
   - "RNShare (from `../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share`)"
   - "RNSVG (from `../../../node_modules/.pnpm/react-native-svg@15.15.4_react-native@0.81.6_pa_c81e2e988885c3bea45db55cd5611860/node_modules/react-native-svg`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.8.1_patch_hash=8e8345e8_37d2ad1df67c39bba0bc009c33cc6d1f/node_modules/react-native-worklets`)"
@@ -3887,8 +3884,6 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-image-crop-tools@1.6.4_patch_hash=_8831e4c76ecdceffdebb3efcab12500c/node_modules/react-native-image-crop-tools"
   react-native-launch-arguments:
     :path: "../../../node_modules/.pnpm/react-native-launch-arguments@4.0.2_react-nativ_8050486a74102ec64e9fcab9a4675da1/node_modules/react-native-launch-arguments"
-  react-native-pager-view:
-    :path: "../../../node_modules/.pnpm/react-native-pager-view@7.0.0_react-native@0.81_2e8afcf45fc888ed024ed2831eb75cdf/node_modules/react-native-pager-view"
   react-native-randombytes:
     :path: "../../../node_modules/.pnpm/react-native-randombytes@3.6.1/node_modules/react-native-randombytes"
   react-native-restart:
@@ -3974,7 +3969,7 @@ EXTERNAL SOURCES:
   RNCAsyncStorage:
     :path: "../../../node_modules/.pnpm/@react-native-async-storage+async-storage@2.2.0_872a6de74bbc5726a2be3104345d3b06/node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
-    :path: "../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.2.9_rea_0c47d5b54722480613a459a7826aca89/node_modules/@react-native-masked-view/masked-view"
+    :path: "../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.3.2_rea_f3a921073dbd7d10a94aa20cba037263/node_modules/@react-native-masked-view/masked-view"
   RNFastImage:
     :path: "../../../node_modules/.pnpm/react-native-fast-image@8.6.3_react-native@0.81_829934f903352ef3c8879bbff021a036/node_modules/react-native-fast-image"
   RNFBApp:
@@ -3992,7 +3987,7 @@ EXTERNAL SOURCES:
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@4.3.4_react-native-work_9b445d3ec96e26e70ef80a5e469b6102/node_modules/react-native-reanimated"
   RNScreens:
-    :path: "../../../node_modules/.pnpm/react-native-screens@4.15.4_react-native@0.81.6_80165e2e5c9b475c9de345e741127a6a/node_modules/react-native-screens"
+    :path: "../../../node_modules/.pnpm/react-native-screens@4.24.0_react-native@0.81.6_75fc90bcfeca222c07ffbdf3de53e203/node_modules/react-native-screens"
   RNShare:
     :path: "../../../node_modules/.pnpm/react-native-share@12.2.0/node_modules/react-native-share"
   RNSVG:
@@ -4114,7 +4109,6 @@ SPEC CHECKSUMS:
   react-native-fast-pbkdf2: 329e89b9929a51ed4d9ba88bf355a266f13d9d93
   react-native-image-crop-tools: 0995d2ece9b4b6b04d298bd1dfe00b2b841507f2
   react-native-launch-arguments: d4759f7591e2766e6c5ec746b7032429edaf7058
-  react-native-pager-view: 4046e20b89f9ec1d29155668eb06c76a5f464951
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-restart: b195f3ec6628c041e52753fe84a4851240267957
   react-native-safe-area-context: eda63a662750758c1fdd7e719c9f1026c8d161cb
@@ -4157,7 +4151,7 @@ SPEC CHECKSUMS:
   ReactCommon: 66eb46e6696f1f4816b250ab2807389018bacd78
   ReactNativeBlur: c9fb0b7d56e1899dabe6d6d980be597f533645f6
   RNCAsyncStorage: fd44f4b03e007e642e98df6726737bc66e9ba609
-  RNCMaskedView: 4b5b12efdee55966f1d68f32d4b3401c2acf05c2
+  RNCMaskedView: d707a83784c67099b54b37d056ababb2767ce15e
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNFBApp: 6e738f1d86520e65e7dc4d5a6e7422ff0c908e6a
   RNFBMessaging: 0033d4bd56649e3bbf7553d3eb1cd7f2cdcd070d
@@ -4166,7 +4160,7 @@ SPEC CHECKSUMS:
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
   RNLocalize: 8bf466de4c92d4721b254aabe1ff0a1456e7b9f4
   RNReanimated: 0844eb70577ead04238380363a8be8c8fc4e1a87
-  RNScreens: 4f2aed147a2775017923789d8a0a2d377712ec2e
+  RNScreens: e902eba58a27d3ad399a495d578e8aba3ea0f490
   RNShare: 81b8cfb58b1460c4a197d5379934bdf70980c124
   RNSVG: b1cb00d54dbc3066a3e98732e5418c8361335124
   RNWorklets: 10d3516524deb2a03e2b49cd9176b615e2000a30
