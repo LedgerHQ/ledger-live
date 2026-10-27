@@ -52,10 +52,10 @@ describe("useAccountHeroViewModel", () => {
       expect(result.current.moreActions.map(({ id }) => id)).toEqual(["buy", "sell", "earn"]);
     });
 
-    it("keeps only Transfer and Buy without funds", () => {
+    it("keeps only Transfer, Swap and Buy without funds", () => {
       const { result } = renderViewModel({ hasFunds: false });
 
-      expect(tileIds(result.current.tiles)).toEqual(["transfer", "buy"]);
+      expect(tileIds(result.current.tiles)).toEqual(["transfer", "swap", "buy"]);
       expect(result.current.moreActions).toEqual([]);
     });
 
