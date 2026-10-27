@@ -11,10 +11,7 @@ import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1"
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { parseLastSeenMs } from "../../utils/unreadOperations";
-import {
-  useOperationsSections,
-  type OperationsListSection,
-} from "../../screens/OperationsList/hooks/useOperationsSections";
+import { useIsPendingOperation } from "../../screens/OperationsList/hooks/useOperationsSections";
 
 export const MAX_PREVIEW_OPERATIONS = 3;
 
@@ -36,13 +33,10 @@ export type RecentOperationsViewModel = Readonly<{
   hasData: boolean;
 }>;
 
-function collectPendingOperationIds(sections: OperationsListSection[]): ReadonlySet<string> {
-  const ids = new Set<string>();
-  for (const section of sections) {
-    if (!section.isPending) continue;
-    for (const op of section.data) ids.add(op.id);
-  }
-  return ids;
+function mergePendingFirst(pending: Operation[], recent: Operation[]): Operation[] {
+  const pendingIds = new Set(pending.map(op => op.id));
+  const confirmed = recent.filter(op => !pendingIds.has(op.id));
+  return [...pending, ...confirmed].slice(0, MAX_PREVIEW_OPERATIONS);
 }
 
 export function useRecentOperationsViewModel({
@@ -74,21 +68,37 @@ export function useRecentOperationsViewModel({
     [allowedIds],
   );
 
-  const { sections: rawSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
+  const isPendingOperation = useIsPendingOperation();
+  const pendingFilter = useCallback(
+    (op: Operation, account: AccountLike) =>
+      scopedFilter(op, account) && isPendingOperation(op, account),
+    [scopedFilter, isPendingOperation],
+  );
+
+  const { sections: pendingSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
+    filterOperation: pendingFilter,
+  });
+  const { sections: recentSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
     filterOperation: scopedFilter,
   });
-  const sections = useOperationsSections(rawSections);
+
+  const pendingOperations = useMemo(
+    () => pendingSections.flatMap(section => section.data),
+    [pendingSections],
+  );
 
   const operations: Operation[] = useMemo(
-    () => sections.flatMap(section => section.data).slice(0, MAX_PREVIEW_OPERATIONS),
-    [sections],
+    () =>
+      mergePendingFirst(
+        pendingOperations,
+        recentSections.flatMap(section => section.data),
+      ),
+    [pendingOperations, recentSections],
   );
 
   const pendingOperationIds = useMemo(
-    function computePendingOperationIds() {
-      return collectPendingOperationIds(sections);
-    },
-    [sections],
+    () => new Set(pendingOperations.map(op => op.id)),
+    [pendingOperations],
   );
 
   const lastSeenDate = useSelector(lastSeenOperationDateSelector);

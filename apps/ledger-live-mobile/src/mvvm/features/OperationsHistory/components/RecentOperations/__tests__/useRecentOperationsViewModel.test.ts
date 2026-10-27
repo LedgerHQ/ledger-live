@@ -33,6 +33,23 @@ function withState(activeAccounts: Account[]) {
   };
 }
 
+function withSixBtcConfirmations(account: Account) {
+  return {
+    overrideInitialState: function withSixConfirmations(state: State): State {
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [account] },
+        settings: {
+          ...state.settings,
+          currenciesSettings: {
+            BTC: { confirmationsNb: 6, unit: mockBtcCryptoCurrency.units[0] },
+          },
+        },
+      };
+    },
+  };
+}
+
 function genBitcoinAccounts(count: number, operationsSize = 0): Account[] {
   return Array.from({ length: count }, (_, i) =>
     genAccount(`bitcoin-${i}`, { currency: mockBtcCryptoCurrency, operationsSize }),
@@ -112,27 +129,31 @@ describe("useRecentOperationsViewModel", () => {
         operations: [{ ...newest, blockHeight: confirmed.blockHeight }, ...older],
       };
 
-      const { result } = renderHook(
-        function useScopedViewModel() {
-          return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
-        },
-        {
-          overrideInitialState: function withSixConfirmations(state: State): State {
-            return {
-              ...state,
-              accounts: { ...state.accounts, active: [account] },
-              settings: {
-                ...state.settings,
-                currenciesSettings: {
-                  BTC: { confirmationsNb: 6, unit: mockBtcCryptoCurrency.units[0] },
-                },
-              },
-            };
-          },
-        },
-      );
+      const { result } = renderHook(function useScopedViewModel() {
+        return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+      }, withSixBtcConfirmations(account));
 
       expect([...result.current.pendingOperationIds]).toEqual([newest.id]);
+    });
+
+    it("lists a pending operation older than the preview window first", () => {
+      const confirmed = confirmOperations(genBitcoinAccounts(1, 6)[0]);
+      const oldest = confirmed.operations[confirmed.operations.length - 1];
+      const account: Account = {
+        ...confirmed,
+        operations: [
+          ...confirmed.operations.slice(0, -1),
+          { ...oldest, blockHeight: confirmed.blockHeight },
+        ],
+      };
+
+      const { result } = renderHook(function useScopedViewModel() {
+        return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+      }, withSixBtcConfirmations(account));
+
+      expect(result.current.operations).toHaveLength(MAX_PREVIEW_OPERATIONS);
+      expect(result.current.operations[0].id).toBe(oldest.id);
+      expect([...result.current.pendingOperationIds]).toEqual([oldest.id]);
     });
 
     it("returns no pending operations when all are confirmed", () => {
