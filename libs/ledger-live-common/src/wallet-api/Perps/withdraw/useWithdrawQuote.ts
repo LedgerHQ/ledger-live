@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { fetchPerpsWithdrawQuote, type WithdrawQuote } from "./quote";
@@ -41,6 +41,7 @@ export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWi
     state: IDLE,
   });
   const [refreshCount, setRefreshCount] = useState(0);
+  const refresh = useCallback(() => setRefreshCount(count => count + 1), []);
 
   useEffect(() => {
     if (requestKey === null || !destinationAccount) {
@@ -63,10 +64,7 @@ export function usePerpsWithdrawQuote(params: PerpsWithdrawQuoteParams): PerpsWi
         .then(quote => {
           if (stale) return;
           setCurrent({ key: requestKey, state: { quote, isLoading: false, error: null } });
-          expiryTimeout = setTimeout(
-            () => setRefreshCount(count => count + 1),
-            Math.max(quote.expiry - Date.now(), 0),
-          );
+          expiryTimeout = setTimeout(refresh, Math.max(quote.expiry - Date.now(), 0));
         })
         .catch((error: unknown) => {
           if (stale) return;
