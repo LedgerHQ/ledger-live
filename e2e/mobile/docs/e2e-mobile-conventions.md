@@ -6,11 +6,11 @@ MUST and MUST NOT are required. SHOULD is the default, and the same section stat
 
 The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`contacts.page.ts`](../page/wallet/contacts.page.ts), [`contactDetail.page.ts`](../page/wallet/contactDetail.page.ts), [`contactName.drawer.ts`](../page/drawer/contactName.drawer.ts).
 
-## Detox element creation and interactions MUST use an installed global function
+## Detox element creation and interactions MUST use an element handle or an installed global function
 
-Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only where those globals are not available.
+A page object migrated to [element handles](e2e-mobile-elements.md) MUST use them for every element. Elsewhere, creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only by the element handles or where those globals are not available.
 
-Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers.
+Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals and [`helpers/elements`](../helpers/elements) implements the handles, so they are the only places that call the Detox matchers.
 
 ## A shared Live App test id SHOULD match the desktop test id
 
@@ -76,7 +76,7 @@ The method MUST live on the page that owns its parameter. `deleteContact(rowId)`
 
 A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### Selector helpers MUST be private readonly arrow functions
+### Selector helpers MUST be private readonly class properties
 
 Element getters and parameterized locator builders MUST be private readonly arrow-function class properties. Static IDs passed to waits MUST be private readonly strings. Dynamic IDs MUST use private readonly builder functions. A step MUST NOT build a matcher or ID inline.
 
@@ -84,6 +84,13 @@ Element getters and parameterized locator builders MUST be private readonly arro
 private readonly contactsContent = () => getElementById("contacts-content");
 private readonly savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
 private readonly addContactContentId = "contacts-add-contact-content";
+```
+
+In a page object migrated to element handles, a static locator MUST be a private readonly handle and a dynamic one a private readonly builder that returns a handle:
+
+```ts
+private readonly recipientInput = byId("recipient-input");
+private readonly contactCompactRow = (contactId: string) => byId(`contacts-compact-row-${contactId}`);
 ```
 
 ### Every public method MUST use @Step
