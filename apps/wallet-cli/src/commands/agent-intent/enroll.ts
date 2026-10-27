@@ -253,25 +253,10 @@ function assertSavedInTime(startedAt: number, enrollmentExpiresAt: string): void
   }
 }
 
-/** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
- * listener's pending line and returns. A listener with no line by the startup timeout (e.g. at a
- * keychain unlock prompt) keeps running and is reported as `enrollment-waiting`, for `wait` to
- * follow. The child's flags are rebuilt from the parsed values of enroll's own options (minus
- * `detach`, `output`, and those left at their default), so options added to `enroll` later carry
- * over without argv parsing. */
-async function startDetachedEnroll(
-  flags: { profile: string; [flag: string]: unknown },
-  out: CommandOutput,
-): Promise<void> {
-  if (process.platform === "win32") {
-    throw new Error(
-      "--detach is not supported on Windows. Run `wallet-cli agent-intent enroll` without " +
-        "--detach, as a background job of your shell or agent host.",
-    );
-  }
-  const profileId = flags.profile;
-  const { logPath } = enrollListenerPaths(profileId);
-
+/** The listener's argv, rebuilt from the parsed values of enroll's own options (minus `detach`,
+ * `output`, and those left at their default), so options added to `enroll` later carry over
+ * without argv parsing. */
+function listenerArgs(flags: { [flag: string]: unknown }): string[] {
   const args = ["agent-intent", "enroll"];
   // Only enroll's own options: `flags` also carries bunli's global flags (--help, --version, ...).
   for (const [name, { schema }] of Object.entries(enrollCommand.options ?? {})) {
@@ -286,6 +271,26 @@ async function startDetachedEnroll(
     args.push(`--${name}=${String(value)}`);
   }
   args.push("--output=json");
+  return args;
+}
+
+/** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
+ * listener's pending line and returns. A listener with no line by the startup timeout (e.g. at a
+ * keychain unlock prompt) keeps running and is reported as `enrollment-waiting`, for `wait` to
+ * follow. */
+async function startDetachedEnroll(
+  flags: { profile: string; [flag: string]: unknown },
+  out: CommandOutput,
+): Promise<void> {
+  if (process.platform === "win32") {
+    throw new Error(
+      "--detach is not supported on Windows. Run `wallet-cli agent-intent enroll` without " +
+        "--detach, as a background job of your shell or agent host.",
+    );
+  }
+  const profileId = flags.profile;
+  const { logPath } = enrollListenerPaths(profileId);
+  const args = listenerArgs(flags);
 
   // The start lock keeps a concurrent --detach for this profile from passing the check, then
   // truncating and sharing the log, until this listener holds its own lock or has failed.

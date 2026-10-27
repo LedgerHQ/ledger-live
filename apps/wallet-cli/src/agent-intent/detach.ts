@@ -19,8 +19,8 @@ const STARTUP_POLL_MS = 100;
 const START_LOCK_MARGIN_MS = 5_000;
 /** How long a live listener may hold its lock without saving its profile. A human may answer a
  * keychain unlock prompt late; past this, `wait` reports the listener `listener_stuck`: stuck, or
- * its pid was reused. */
-// todo: fixed 10 min cap, store the listener's start/expiry if prompts take longer
+ * its pid was reused. A fixed cap: storing the listener's start or expiry in its lock would lift it
+ * if prompts ever take longer. */
 export const LISTENER_STARTING_MAX_MS = 10 * 60_000;
 
 /** File name stem of a profile's listener files: the id lowercased, plus a hash of the exact id.
