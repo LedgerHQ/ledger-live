@@ -2,7 +2,7 @@ import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index"
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -26,7 +26,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Solana Delegation Deactivate"
           name="Step Confirmation"
           flow="stake"
@@ -50,7 +50,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Solana Delegation Deactivate"
           name="Step Confirmation Error"
           flow="stake"

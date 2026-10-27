@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
 import type { StakingMappedDelegation } from "@ledgerhq/live-common/families/evm/staking/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button, { Base } from "~/renderer/components/Button";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
@@ -121,7 +121,7 @@ export default function StepValidators({
   }, [transitionTo]);
   return (
     <Container>
-      <TrackPage
+      <TrackScreen
         category="Redelegation Flow"
         name="Step 1"
         flow="stake"

@@ -2,6 +2,7 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
+import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { authApiExtra } from "@shared/auth";
 import { createAppConfigMiddleware } from "@shared/app-config";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
@@ -12,9 +13,12 @@ import {
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
+  portfolioApiExtra,
   pushDevicesApiExtra,
   redactCardApiAction,
   redactCardApiState,
+  redactPortfolioApiAction,
+  redactPortfolioApiState,
   swapApiExtra,
 } from "@shared/api-services";
 import {
@@ -101,6 +105,10 @@ const customCreateStore = ({
                 isCardSessionCurrent,
                 refreshCardSession,
               }),
+              ...portfolioApiExtra({
+                // POC, dev only: empty disables the service.
+                portfolioServiceUrl: getPortfolioServiceUrl(),
+              }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -153,7 +161,10 @@ const customCreateStore = ({
         .concat(createDesktopCountervaluesMiddleware(countervalues))
         .concat(accountDataRecorder.middleware),
     devTools: __DEV__
-      ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+      ? {
+          actionSanitizer: action => redactPortfolioApiAction(redactCardApiAction(action)),
+          stateSanitizer: state => redactPortfolioApiState(redactCardApiState(state)),
+        }
       : false,
   });
 

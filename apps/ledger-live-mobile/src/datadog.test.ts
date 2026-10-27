@@ -79,39 +79,40 @@ describe("broadcastLogger", () => {
     });
   });
 
-  it("calls DdLogs.error with correct parameters on failure event", () => {
+  it("sends only allowlisted, sanitized attributes on failure event", () => {
     const errorSpy = jest.spyOn(DdLogs, "error");
-    const error = Object.assign(new Error("tx broadcast failed"), {
-      stack: "Error: tx broadcast failed\n  at test:1:1",
+    const error = Object.assign(new Error("tx broadcast failed for 0xdeadbeef"), {
+      stack: "Error: tx broadcast failed for 0xdeadbeef\n    at test:1:1",
       transactionId: 0,
       payload: "0x123456789",
+      transaction: { data: "0x123456789" },
     });
 
     broadcastLogger({
       status: "failure",
       error,
-      txPayload: { signature: "signature" },
       appVersion: "1.0.0",
       currencyId: "ethereum",
       family: "family",
       isTestnet: false,
       isSendMax: false,
       source: { type: "coin-module", name: "ledger-live-mobile", flags: { newSendFlow: false } },
+      // @ts-expect-error a field outside the allowlist must not reach Datadog
+      txPayload: { signature: "signature" },
     });
 
     expect(errorSpy).toHaveBeenCalledWith(
       "broadcast_failure",
       "Error",
-      "tx broadcast failed",
-      "Error: tx broadcast failed\n  at test:1:1",
+      "tx broadcast failed for [id]",
+      "Error: tx broadcast failed for [id]\n    at test:1:1",
       {
         errorContext: {
           transactionId: 0,
-          payload: "0x123456789",
+          payload: "[id]",
         },
         event: {
           status: "failure",
-          txPayload: { signature: "signature" },
           appVersion: "1.0.0",
           currencyId: "ethereum",
           family: "family",
@@ -125,6 +126,7 @@ describe("broadcastLogger", () => {
         },
       },
     );
+    expect(errorSpy.mock.calls[0][4]).not.toHaveProperty("event.txPayload");
   });
 });
 

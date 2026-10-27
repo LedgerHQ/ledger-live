@@ -22,7 +22,6 @@ export type AddAddressNameNextStep = "review" | "confirmation";
 
 export type ContactsAddAddressNameProps = Readonly<{
   addressLabel: AddAddressLabelState;
-  showPrivacyPolicy?: boolean;
   nextStep?: AddAddressNameNextStep;
   bottomOffset?: number;
   onChangeText: (value: string) => void;
@@ -31,7 +30,6 @@ export type ContactsAddAddressNameProps = Readonly<{
 
 export function ContactsAddAddressName({
   addressLabel,
-  showPrivacyPolicy = false,
   nextStep = "review",
   bottomOffset = 0,
   onChangeText,
@@ -49,7 +47,7 @@ export function ContactsAddAddressName({
     nextStep === "confirmation"
       ? t("common.continue")
       : t("contacts.addAddressName.continueToReview");
-  const privacyPolicy = showPrivacyPolicy ? t("contacts.addAddressName.privacyPolicy") : undefined;
+  const privacyPolicy = t("contacts.addAddressName.privacyPolicy");
   const openLink = useOpenLink();
   const localizedPrivacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy.native);
   const handlePressPrivacyPolicy = useCallback(() => {
@@ -94,18 +92,16 @@ export function ContactsAddAddressName({
           />
         </Box>
         <Box lx={{ gap: "s16", alignItems: "center" }}>
-          {privacyPolicy ? (
-            <Link
-              testID="contacts-add-address-name-privacy-policy"
-              appearance="base"
-              size="sm"
-              underline={false}
-              isExternal
-              onPress={handlePressPrivacyPolicy}
-            >
-              {privacyPolicy}
-            </Link>
-          ) : null}
+          <Link
+            testID="contacts-add-address-name-privacy-policy"
+            appearance="base"
+            size="sm"
+            underline={false}
+            isExternal
+            onPress={handlePressPrivacyPolicy}
+          >
+            {privacyPolicy}
+          </Link>
           <Button
             testID="contacts-add-address-name-continue"
             appearance="base"

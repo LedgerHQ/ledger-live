@@ -29,8 +29,8 @@ export function CurrencyMappingScreen({ rows, onBack }: CurrencyMappingScreenPro
           <table className="body-3 text-left border-separate border-spacing-x-12">
             <thead>
               <tr className="text-muted">
-                <th className="font-normal whitespace-nowrap">currency.network</th>
-                <th className="font-normal whitespace-nowrap">ledgerId</th>
+                <th className="whitespace-nowrap">currency.network</th>
+                <th className="whitespace-nowrap">ledgerId</th>
               </tr>
             </thead>
             <tbody>

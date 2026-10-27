@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import MarketBanner from "LLD/features/MarketBanner";
 import PageHeader from "LLD/components/PageHeader";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
@@ -41,7 +41,7 @@ export const PortfolioView = memo(function PortfolioView({
       <div className={isClearCacheBannerVisible ? "mb-32" : undefined}>
         <BannerSection topBannerAlerts={true} portfolioBannerContent={false} />
       </div>
-      <TrackPage
+      <TrackScreen
         category={PORTFOLIO_TRACKING_PAGE_NAME}
         totalAccounts={totalAccounts}
         totalOperations={totalOperations}

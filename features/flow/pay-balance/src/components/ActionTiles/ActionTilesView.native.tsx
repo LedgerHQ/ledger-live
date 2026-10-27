@@ -19,7 +19,7 @@ export function ActionTilesView({ tiles }: ActionTilesViewProps) {
           key={tile.id}
           lx={{ flex: 1 }}
           icon={ICONS[tile.id] ?? Plus}
-          onPress={tile.onPress}
+          onPress={tile.onOpenFlow}
           testID={`action-tile-${tile.id}`}
           accessibilityLabel={tile.label}
           isFull

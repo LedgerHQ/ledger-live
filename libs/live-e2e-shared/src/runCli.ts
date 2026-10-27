@@ -139,7 +139,8 @@ export function isRetryableError(message: string): boolean {
   return retryablePatterns.some(pattern => pattern.test(message));
 }
 
-export function runCliCommand(command: string): Promise<string> {
+/** Aborting `signal` kills the CLI; the promise still settles only once it has exited. */
+export function runCliCommand(command: string, signal?: AbortSignal): Promise<string> {
   console.warn(`[CLI] Executing: ledger-live ${command.replace(/\+/g, " ")}`);
 
   return new Promise((resolve, reject) => {
@@ -149,6 +150,7 @@ export function runCliCommand(command: string): Promise<string> {
       stdio: "pipe",
       env: process.env,
     });
+    signal?.addEventListener("abort", () => child.kill("SIGKILL"), { once: true });
 
     let output = "";
     let errorOutput = "";
@@ -242,11 +244,11 @@ export async function runCliGetAddress(opts: GetAddressOpts): Promise<GetAddress
 }
 
 /**
- * `retries` defaults to 3 for standalone callers. Token-approval flows that
- * drive the device prompt themselves pass `retries: 1` and retry one level up
- * (see {@link approveTokenCommand}), so each re-broadcast re-drives the device.
+ * Token-approval flows that drive the device prompt themselves run it once with
+ * {@link runCliCommand} and retry one level up (see {@link approveTokenCommand}),
+ * so each re-broadcast re-drives the device.
  */
-export function runCliTokenApproval(opts: TokenApprovalOpts, retries: number = 3): Promise<string> {
+export function tokenApprovalCommand(opts: TokenApprovalOpts): string {
   const cliOpts = ["tokenApproval"];
   cliOpts.push(`--currency+${opts.currency}`);
   cliOpts.push(`--mode+${opts.mode}`);
@@ -255,7 +257,11 @@ export function runCliTokenApproval(opts: TokenApprovalOpts, retries: number = 3
   cliOpts.push(`--index+${opts.index}`);
   if (opts.approveAmount) cliOpts.push(`--approveAmount+${opts.approveAmount}`);
   if (opts.waitConfirmation) cliOpts.push("--wait-confirmation");
-  return runCliCommandWithRetry(cliOpts.join("+"), retries);
+  return cliOpts.join("+");
+}
+
+export function runCliTokenApproval(opts: TokenApprovalOpts): Promise<string> {
+  return runCliCommandWithRetry(tokenApprovalCommand(opts));
 }
 
 export function runCliGetTokenAllowance(opts: GetTokenAllowanceOpts): Promise<string> {

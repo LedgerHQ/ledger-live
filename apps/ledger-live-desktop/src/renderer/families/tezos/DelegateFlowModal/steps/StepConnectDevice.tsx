@@ -1,5 +1,5 @@
 import React from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import { StepProps } from "../types";
 export default function StepConnectDevice({
@@ -15,7 +15,7 @@ export default function StepConnectDevice({
 }: StepProps) {
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step ConnectDevice"
         flow="stake"

@@ -69,7 +69,7 @@
     "utility-types": "^3.10.0"
   },
   "devDependencies": {
-    "@bitcoinerlab/secp256k1": "2.0.0",
+    "@bitcoinerlab/secp256k1": "catalog:",
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",

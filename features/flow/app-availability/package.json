@@ -14,7 +14,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
@@ -31,6 +31,7 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

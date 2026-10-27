@@ -9,15 +9,13 @@ import { BitcoinSigner, SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import type { BitcoinCoinConfig, BitcoinContext } from "@ledgerhq/coin-bitcoin/config";
 import { BigNumber } from "bignumber.js";
 import {
-  loadWallet,
   mineToWalletAddress,
-  sendTo,
   sendTransaction,
   replaceTransaction,
   getRawMempool,
 } from "../helpers";
 import { makeAccount } from "../fixtures";
-import { killAtlas, spawnAtlas } from "../atlas";
+import { killSandbox, spawnSandbox } from "../sandbox";
 import { findNewUtxo, waitForExplorerSync, waitForTxInMempool } from "../utils";
 import {
   assertCommonTxProperties,
@@ -262,7 +260,7 @@ const mockServer = setupServer();
 export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   name: "Ledger Live Basic Bitcoin Transactions",
   setup: async () => {
-    await spawnAtlas();
+    const { sandbox, explorerUrl } = await spawnSandbox();
 
     const signer: BitcoinSigner | null = await buildSigner();
     const signerContext: SignerContext = (_, crypto, fn) => fn(signer);
@@ -274,7 +272,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       name: "Bitcoin Regtest",
       unit: { name: "bitcoin", code: "𝚝BTC", magnitude: 8 },
       explorerId: "btc_regtest",
-      explorer: { url: "http://localhost:9876" },
+      explorer: { url: explorerUrl },
     };
     const context: BitcoinContext = {
       config: async () => coinConfig,
@@ -305,13 +303,10 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
       }),
     );
     const scenarioAccount = makeAccount(xpub, publicKey, address, BITCOIN, "segwit");
-    await loadWallet("coinTester");
-    // Need to wait 100 blocks to be able to spend coinbase UTXOs
-    await mineToWalletAddress("101");
-    // Fund it with 7 BTC in three send to have 3 UTXOs
-    await sendTo(address, 2);
-    await sendTo(address, 3);
-    await sendTo(address, 2);
+    // Fund it with 7 BTC in three airdrops to have 3 UTXOs
+    await sandbox.airdrop(address, 2);
+    await sandbox.airdrop(address, 3);
+    await sandbox.airdrop(address, 2);
     return {
       accountBridge,
       currencyBridge,
@@ -343,6 +338,8 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
   afterAll: async account => {
     await waitForExplorerSync();
     mockServer.close();
+    // Three airdrops in, nine sends out, and the replacements of "Send Replace" and "Send Cancel"
+    // (a replaced transaction is gone once its replacement is mined)
     expect(account.operations.length).toBeGreaterThanOrEqual(14);
   },
   beforeEach: async () => {
@@ -354,6 +351,6 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     await waitForExplorerSync();
   },
   teardown: async () => {
-    await killAtlas();
+    await killSandbox();
   },
 };

@@ -72,7 +72,7 @@ yourself:
 
 ```bash
 # once, before the workers start
-export CARD_API_TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client token)
+export CARD_API_TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client baanx-token)
 ```
 
 ```ts
@@ -90,7 +90,7 @@ OAuth flow, and rotate), so nothing tries to renew. Re-authenticate per CI run.
 stdout carries the bare token and nothing else; failures go to stderr with a non-zero exit.
 
 ```bash
-TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client token)
+TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client baanx-token)
 ```
 
 `-- --json` prints the full session, `-- --help` lists the variables.
@@ -112,7 +112,7 @@ fine for a run shorter than the 6-hour token life but is not a substitute for th
 Desktop:
 
 ```bash
-export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
+export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client baanx-token -- --session)
 export CARD_BAANX_API_URL=https://<the Baanx host that minted the token>
 export CARD_BAANX_CLIENT_KEY=baanx-client-key-that-minted-the-token
 pnpm --filter ledger-live-desktop start
@@ -123,7 +123,7 @@ substitutes it while bundling, so export it in the terminal that runs the bundle
 transform cache:
 
 ```bash
-export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client token -- --session)
+export CARD_SESSION_BOOTSTRAP=$(pnpm --silent --filter @ledgerhq/baanx-test-client baanx-token -- --session)
 pnpm mobile start --reset-cache
 # second terminal, no exports needed:
 pnpm mobile ios:staging

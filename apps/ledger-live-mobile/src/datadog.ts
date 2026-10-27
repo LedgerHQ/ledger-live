@@ -19,7 +19,10 @@ import { ScreenName } from "./const";
 import type { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
-import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
+import {
+  toBroadcastFailureLog,
+  toBroadcastLogEvent,
+} from "@ledgerhq/live-common/hooks/broadcastLog";
 import {
   createCoinModuleCallTransmitter,
   readCoinObservabilityConfig,
@@ -217,15 +220,12 @@ export function broadcastLogger(event: LogEvent): void {
   if (!isDatadogEnabled) return;
 
   if (event.status === "success") {
-    DdLogs.info("broadcast_success", { event });
+    DdLogs.info("broadcast_success", { event: toBroadcastLogEvent(event) });
   } else {
-    const { error, ...rest } = event;
-    const errorContext = extractErrorContext(error);
+    const { event: loggedEvent, errorContext, error } = toBroadcastFailureLog(event);
     DdLogs.error("broadcast_failure", error.name, error.message, error.stack ?? "", {
-      event: {
-        ...rest,
-      },
-      errorContext: errorContext,
+      event: loggedEvent,
+      errorContext,
     });
   }
 }

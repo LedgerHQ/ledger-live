@@ -18,6 +18,24 @@ function scrubReverseResolveSegment(pathname: string): string {
 }
 
 /**
+ * Redacts the account id in `/accounts/{accountId}/addresses`.
+ * The Portfolio service puts the wallet address in that segment (`base:0x…`), before `/addresses`.
+ */
+function scrubPortfolioAccountPath(pathname: string): string {
+  return pathname
+    .replace(/(\/portfolio\/)([^/]+)/gi, "$1[redacted]")
+    .replace(/(\/accounts\/)([^/]+)(\/addresses\b)/gi, "$1[redacted]$3");
+}
+
+/** `base:0x…` — a Portfolio account id, which is not a legacy `js:2:…` account id. */
+function isPortfolioAccountId(value: string): boolean {
+  const separator = value.indexOf(":");
+  if (separator <= 0) return false;
+  const address = value.slice(separator + 1);
+  return address.startsWith("0x") || address.startsWith("xpub") || address.startsWith("zpub");
+}
+
+/**
  * Scrubs account IDs from URL query parameters.
  * Some Ledger API requests pass the full account ID URL-encoded in a query param,
  * e.g. `?id=js%3A2%3Abitcoin%3Axpub6…%3Anative_segwit`. Each value is decoded
@@ -26,7 +44,9 @@ function scrubReverseResolveSegment(pathname: string): string {
 function scrubQueryParams(searchParams: URLSearchParams): URLSearchParams {
   const scrubbed = new URLSearchParams();
   for (const [key, value] of searchParams) {
-    scrubbed.set(key, scrubAccountId(value));
+    const legacy = scrubAccountId(value);
+    const portfolioAccount = key === "account" || (legacy === value && isPortfolioAccountId(value));
+    scrubbed.set(key, portfolioAccount ? "[redacted]" : legacy);
   }
   return scrubbed;
 }
@@ -34,10 +54,13 @@ function scrubQueryParams(searchParams: URLSearchParams): URLSearchParams {
 /**
  * Scrubs wallet addresses from Datadog RUM resource.url.
  *
- * Three confirmed leak patterns in Ledger API request URLs:
+ * Confirmed leak patterns in Ledger API request URLs:
  * - `/address/{address}/…` — coin module path (all chains)
  * - `/reverse-resolve/{address}` — ENS lookup endpoint
+ * - `/accounts/{accountId}/addresses` — Portfolio account id (`base:0x…`)
+ * - `/portfolio/{portfolioId}/…` — the per-install portfolio id, which links every account of a wallet
  * - `?{key}=js%3A2%3A…` — full account ID URL-encoded in a query param
+ * - `?account=base%3A0x…` — Portfolio account id in a query value
  */
 export function scrubResourceUrl(url: string): string {
   let parsed: URL;
@@ -46,7 +69,9 @@ export function scrubResourceUrl(url: string): string {
   } catch {
     return url;
   }
-  parsed.pathname = scrubReverseResolveSegment(scrubAddressPathSegment(parsed.pathname));
+  parsed.pathname = scrubPortfolioAccountPath(
+    scrubReverseResolveSegment(scrubAddressPathSegment(parsed.pathname)),
+  );
   parsed.search = scrubQueryParams(parsed.searchParams).toString();
   return parsed.toString();
 }

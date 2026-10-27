@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Modal from "~/renderer/components/Modal";
@@ -103,7 +103,7 @@ const ConfirmModal = ({
           </Box>
         )}
       />
-      <TrackPage category="Modal" name={analyticsName} />
+      <TrackScreen category="Modal" name={analyticsName} />
     </Modal>
   );
 };

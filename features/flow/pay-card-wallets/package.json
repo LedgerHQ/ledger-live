@@ -31,6 +31,7 @@
     "@domain/entity-currency": "workspace:^"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

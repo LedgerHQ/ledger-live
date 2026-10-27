@@ -18,13 +18,13 @@ import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
-import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/migration";
+import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(

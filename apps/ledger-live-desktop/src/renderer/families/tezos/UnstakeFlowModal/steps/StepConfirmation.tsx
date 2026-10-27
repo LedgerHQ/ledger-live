@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
@@ -27,7 +27,7 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Unstake Flow"
           name="Step Confirmed"
           flow="stake"
@@ -49,7 +49,7 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Unstake Flow"
           name="Step Confirmation Error"
           flow="stake"

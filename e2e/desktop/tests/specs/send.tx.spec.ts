@@ -11,6 +11,7 @@ import { test } from "tests/fixtures/common";
 import { FF_NEW_SEND_FLOW_DISABLED } from "tests/utils/featureFlagUtils";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const legacySendTransactions: Array<{
   transaction: Transaction;
@@ -57,8 +58,9 @@ const legacySendTransactions: Array<{
 
 for (const entry of legacySendTransactions) {
   const tx = entry.transaction;
+  const sendLock = exclusiveLockFor({ broadcastAccounts: [tx.accountToDebit] });
 
-  test.describe("Send - legacy families", () => {
+  test.describe("Send - legacy families", { lock: sendLock.names }, () => {
     if (entry.sharedAccountAcrossLegs) {
       skipSharedAccountOnSecondaryLeg(`${tx.accountToDebit.currency.testLabel} send`);
     }
@@ -73,6 +75,7 @@ for (const entry of legacySendTransactions) {
         }),
       ],
       featureFlags: FF_NEW_SEND_FLOW_DISABLED,
+      ...sendLock.fixtures,
     });
 
     test(
@@ -173,13 +176,16 @@ test.describe("Send - legacy families - invalid address", () => {
   );
 });
 
-test.describe("Send - legacy families - Concordium testnet", () => {
+const concordiumLock = exclusiveLockFor({ broadcastAccounts: [Account.CCD_TESTNET_1] });
+
+test.describe("Send - legacy families - Concordium testnet", { lock: concordiumLock.names }, () => {
   const tx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "0.000005", undefined);
 
   test.use({
     teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
+    ...concordiumLock.fixtures,
     cliCommands: [
       async (userdataPath?: string) => {
         await liveDataCommand(tx.accountToDebit, {

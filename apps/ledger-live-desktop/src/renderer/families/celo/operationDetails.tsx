@@ -34,7 +34,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 
 const OperationDetailsExtra = ({

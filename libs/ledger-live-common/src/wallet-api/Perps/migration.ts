@@ -1,6 +1,5 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-
-export const HYPERCORE_CURRENCY_ID = "hypercore";
+import { HYPERCORE_CURRENCY_ID } from "./constants";
 
 export type PerpsMigrationParams = {
   /** The legacy (Arbitrum) Perps account to migrate. */

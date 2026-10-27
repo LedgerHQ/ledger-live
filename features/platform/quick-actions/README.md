@@ -57,11 +57,11 @@ Without a signer, only Connect and Buy a Ledger are shown.
 
 When the currency is not supported: mobile keeps only Transfer (like the Asset Detail Transfer button), desktop shows nothing.
 
-**Mobile account scope without funds** is narrower: only Transfer and Buy (Buy shown if buy is available). With funds it follows the mobile column above.
+**Mobile account scope without funds** is narrower: only Transfer, Swap and Buy (Swap and Buy shown if available; Swap opens with the account as destination). With funds it follows the mobile column above.
 
 ## `layoutQuickActionTiles(actions, { isSendSupported })`
 
-Mobile tile layout for the asset and account scopes (an account without funds only has Transfer · Buy).
+Mobile tile layout for the asset and account scopes (an account without funds has Transfer · Swap · Buy).
 
 | Case                 | Tiles                                        | In More          |
 | -------------------- | -------------------------------------------- | ---------------- |
@@ -69,4 +69,5 @@ Mobile tile layout for the asset and account scopes (an account without funds on
 | Swap not available   | Transfer · active Buy · active Sell · More   | Earn             |
 
 - More only appears when it has at least one action.
+- With Swap, a lone active Buy or Sell shows as its own tile instead of More.
 - Transfer shows as Receive when the currency can't send.

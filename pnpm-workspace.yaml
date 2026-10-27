@@ -22,6 +22,7 @@ packages:
   - "support/*"
 
 catalog:
+  "@bitcoinerlab/secp256k1": 2.0.0
   "@commitlint/cli": 21.2.0
   "@commitlint/config-conventional": 21.2.0
   "@commitlint/lint": 21.2.0
@@ -72,11 +73,11 @@ catalog:
   "@ledgerhq/live-currency-format": 0.16.0
   "@ledgerhq/domain-service": 1.9.1
   "@ledgerhq/evm-tools": 2.0.0
-  "@ledgerhq/lumen-design-core": 0.1.32
-  "@ledgerhq/lumen-lint-plugin": 0.1.0
-  "@ledgerhq/lumen-ui-react": 0.1.64
-  "@ledgerhq/lumen-ui-rnative": 0.1.67
-  "@ledgerhq/lumen-utils-shared": 0.1.16
+  "@ledgerhq/lumen-design-core": 0.1.34
+  "@ledgerhq/lumen-lint-plugin": 0.1.1
+  "@ledgerhq/lumen-ui-react": 0.1.67
+  "@ledgerhq/lumen-ui-rnative": 0.1.70
+  "@ledgerhq/lumen-utils-shared": 0.1.18
   # Wallet API
   "@ledgerhq/wallet-api-client": 1.17.0
   "@ledgerhq/wallet-api-client-react": 1.4.36
@@ -118,6 +119,7 @@ catalog:
   expo-image-picker: 17.0.11
   expo-haptics: 15.0.8
   expo-keep-awake: 15.0.8
+  expo-navigation-bar: 5.0.10
   expo-network: 8.0.8
   expo-splash-screen: 31.0.13
   expo-modules-autolinking: 3.0.24
@@ -162,8 +164,7 @@ catalog:
   bs58check: ^2.1.2
   buffer: 6.0.3
   class-variance-authority: 0.7.1
-  clsx: 2.1.1
-  electron: 44.9.3
+  electron: 45.0.0
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 2.4.0
@@ -214,7 +215,6 @@ catalog:
   xstate: 5.19.2
   "@xstate/react": 5.0.2
   tailwindcss: ^4.1.0
-  tailwind-merge: 3.4.0
   tsx: 4.20.6
   ws: 8.22.0
   qrcode: 1.5.4
@@ -230,14 +230,12 @@ catalog:
   "styled-system": 5.1.5
   "stylis": 4.0.0
   "@tanstack/react-virtual": 3.13.16
-  "@radix-ui/react-checkbox": 1.3.2
   "@radix-ui/react-dialog": 1.1.15
   "@radix-ui/react-dropdown-menu": 2.1.16
   "@radix-ui/react-slot": 1.2.4
   "@radix-ui/react-select": 2.2.6
-  "@radix-ui/react-switch": 1.2.6
   "@radix-ui/react-tooltip": 1.2.8
-  "@tanstack/react-table": 8.5.11
+  "@tanstack/react-table": 8.21.3
   "@playwright/test": 1.63.0
   playwright: 1.63.0
   allure-playwright: 3.13.0
@@ -245,8 +243,6 @@ catalog:
   nx: 22.7.12
   "@nx/devkit": 22.7.12
   detox: 20.51.3
-  # pnpm -D skips optionalDependencies; declare here so the CI filtered install picks up the Linux x64 native binding
-  "@nx/nx-linux-x64-gnu": 22.7.12
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0
@@ -261,8 +257,6 @@ catalog:
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
-  # Security fix for the compromised eMudhra intermediate CAs, younger than minimumReleaseAge
-  - electron@44.9.3
 
 autoInstallPeers: false
 enablePrePostScripts: true
@@ -288,8 +282,7 @@ overrides:
   "debug>supports-color": "-"
   "@hiero-ledger/cryptography>expo-crypto": "-"
   "@hiero-ledger/sdk>expo-crypto": "-"
-  # lumen-ui-react peers on tailwind-merge 2 and react-table 8.21, align them on the versions the apps ship
-  "@ledgerhq/lumen-ui-react>tailwind-merge": "catalog:"
+  # lumen-ui-react peers on react-table 8.21, align it on the version the apps ship
   "@ledgerhq/lumen-ui-react>@tanstack/react-table": "catalog:"
   # Older npm-only releases of our own libs: JFrog does not list them, so CI re-resolution fails
   "@mysten/ledgerjs-hw-app-sui>@ledgerhq/hw-bolos": "workspace:^"
@@ -335,6 +328,10 @@ overrides:
   "@polkadot/rpc-provider>@polkadot/types-support": "-"
   "@polkadot/rpc-provider>mock-socket": "-"
   "@polkadot/rpc-provider>nock": "-"
+  # @opentui/core bundles jimp into its 3d entry; the declared dep is never resolved
+  "@opentui/core>jimp": "-"
+  # Only lib/internal/web (web fallback) imports the web SDK; iOS/Android use nativeModule.ios/android. invertase/react-native-firebase#9402
+  "@react-native-firebase/app>firebase": "-"
 
 patchedDependencies:
   "@bunli/core@0.9.1": "patches/@bunli__core@0.9.1.patch"
@@ -361,7 +358,6 @@ allowBuilds:
   "@datadog/mobile-react-native": true
   "@firebase/util": false
   "@parcel/watcher": false
-  "@sentry/node-native-stacktrace": false
   "@swc/core": true
   "@taquito/taquito": true
   "bigint-buffer": true

@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import {
   AnalyticsFlow,
   AnalyticsPage,
@@ -44,7 +44,7 @@ export default function SynchronizeStep({
 
   return (
     <Flex flexDirection="column" width="100%" height="90%" justifyContent="space-between">
-      <TrackPage category={AnalyticsPage.Activation} source={sourcePage} />
+      <TrackScreen category={AnalyticsPage.Activation} source={sourcePage} />
       <Flex
         flexDirection="column"
         alignItems="center"

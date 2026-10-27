@@ -8,7 +8,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDepositRequestId,
   settleDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),

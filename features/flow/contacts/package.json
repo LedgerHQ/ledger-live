@@ -60,14 +60,13 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@reduxjs/toolkit": "catalog:",
     "@tanstack/react-table": "catalog:",
@@ -82,7 +81,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
@@ -94,7 +92,6 @@
     "react-native-svg": "catalog:",
     "react-test-renderer": "catalog:",
     "react-redux": "catalog:",
-    "tailwind-merge": "catalog:",
     "typescript": "catalog:"
   }
 }

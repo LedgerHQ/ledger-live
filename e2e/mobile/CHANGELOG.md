@@ -323,8 +323,8 @@ match one or more of the following constraints` — or before the button had
 
   Each of the three sheet taps now waits for the sheet's own container
   (`transfer-drawer`) at 100% visibility, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed):
   anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
@@ -353,8 +353,8 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
   timeout or adding a retry, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -399,8 +399,8 @@ match one or more of the following constraints` — or before the button had
 
   Each of the three sheet taps now waits for the sheet's own container
   (`transfer-drawer`) at 100% visibility, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed):
   anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
@@ -429,8 +429,8 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
   timeout or adding a retry, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile

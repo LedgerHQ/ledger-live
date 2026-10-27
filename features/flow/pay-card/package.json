@@ -36,6 +36,7 @@
     "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@reduxjs/toolkit": "catalog:",

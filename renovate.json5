@@ -15,6 +15,12 @@
   },
   "packageRules": [
     {
+      "description": "Coin modules: update PRs are opened by the LedgerHQ/coin-modules release workflow",
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@ledgerhq/coin-*"],
+      "enabled": false
+    },
+    {
       "description": "GitHub Actions Internal (CI)",
       "matchManagers": ["github-actions"],
       "matchPackageNames": ["LedgerHQ/*", "ledgerhq/*"],

@@ -4,7 +4,7 @@ import type { ICPTransactionType } from "@ledgerhq/live-common/families/internet
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -52,7 +52,7 @@ const StepConfirmation = ({
   if (optimisticOperation && !error) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Manage Neurons ICP Flow"
           name="Step Confirmed"
           flow="stake"
@@ -78,7 +78,7 @@ const StepConfirmation = ({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Manage Neurons ICP Flow"
           name="Step Confirmation Error"
           flow="stake"

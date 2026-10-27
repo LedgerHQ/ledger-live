@@ -16,7 +16,12 @@ import {
 import * as Icons from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useFeatureIntroductionCopy } from "../../copy/useFeatureIntroductionCopy";
 import { CONTACTS_FEATURE_INTRODUCTION_HERO_IMAGE } from "./assets";
-import type { ContactsFeatureIntroductionContentProps } from "./types";
+import type { ContactsFeatureIntroduction } from "../../state/types";
+
+export type ContactsFeatureIntroductionContentProps = Omit<ContactsFeatureIntroduction, "onClose"> &
+  Readonly<{
+    bottomInset: number;
+  }>;
 
 export function ContactsFeatureIntroductionContent({
   isOpen,

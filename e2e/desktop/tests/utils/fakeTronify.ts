@@ -7,8 +7,9 @@ import {
   type FakeTronify,
 } from "@ledgerhq/live-e2e-shared/tronify/index";
 import { step } from "tests/misc/reporters/step";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
-const FAKE_TIMEOUT_MS = 30_000;
+const FAKE_TIMEOUT_MS = TIMEOUT.xlarge;
 
 /** Checks on the local fake standing in for Tronify and TronGrid: what the app sent it. */
 export class FakeTronifyChecks {

@@ -34,6 +34,30 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 | `type:coin-module` | Under `libs/coin-modules/`, or package name `@ledgerhq/coin-*` except `@ledgerhq/coin-tester*` |
 | `type:coin-tester` | `libs/coin-tester`, `libs/coin-tester-modules/**`, or package name `@ledgerhq/coin-tester*` |
 | `type:live-common` | `libs/ledger-live-common` (and nested workspace packages under that path) |
+| `type:domain-entity` | Under `domain/entity/` |
+| `type:domain-api` | Under `domain/api/` |
+| `type:feature-platform` | Under `features/platform/` |
+| `type:feature-flow` | Under `features/flow/` |
+
+## Boundary constraints
+
+`pnpm lint:boundaries` checks the tags above. The rules live in [`constraints.js`](../tools/nx-plugins/enforce-boundaries/constraints.js). A source package may only depend on packages carrying one of the allowed tags:
+
+| Source tag | Allowed target tags |
+| --- | --- |
+| `scope:support` | `scope:support`, `scope:shared` |
+| `scope:shared` | `scope:shared`, `scope:support` |
+| `scope:domain` | `scope:domain`, `scope:shared`, `scope:support` |
+| `scope:features` | `scope:features`, `scope:domain`, `scope:shared`, `scope:support` |
+| `type:domain-entity` | `type:domain-entity`, `scope:shared`, `scope:support` |
+| `type:domain-api` | `type:domain-entity`, `type:domain-api`, `scope:shared`, `scope:support` |
+| `type:feature-platform` | `type:feature-platform`, `scope:domain`, `scope:shared`, `scope:support` |
+| `type:feature-flow` | `type:feature-flow`, `type:feature-platform`, `scope:domain`, `scope:shared`, `scope:support` |
+
+Packages without these tags (`libs/`, `apps/`, `e2e/`, `tools/`) are unconstrained. Two more rules apply:
+
+- **Legacy packages by name.** Source files in `shared/`, `domain/` and `features/` may not import a legacy `@ledgerhq/*` package: every `scope:libs` package, plus the ones in `LEGACY_PACKAGES` that moved from `libs/` to npm (`@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`, `@ledgerhq/domain-service`, `@ledgerhq/evm-tools`). The only exception is `shared/env` importing `@ledgerhq/live-env`.
+- **No React in `domain/entity`.** `BANNED_EXTERNALS_BY_TAG` keeps `react` and `react-native` out of `type:domain-entity` packages, in their manifest and in their source imports. `domain/api` may expose RTK Query hooks, so it is not concerned.
 
 ## Example commands
 

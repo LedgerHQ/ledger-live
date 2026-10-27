@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -16,13 +16,13 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
-import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/migration";
+import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 
 export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -72,10 +72,12 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
 
   // Only called when the wallet has no Hyperliquid account at the legacy address: runs the standard
   // add account flow inline and hands back every added account, the server picks the matching one.
-  const migrationRequestId = useRef<string | null>(null);
   const uiMigrationExecute = useCallback(() => {
     const { id, promise } = beginMigrationRequest();
-    migrationRequestId.current = id;
+
+    // Coming back to Perps without added accounts (X, back, device error) abandons the migration.
+    const unsubscribe = navigation.addListener("focus", () => cancelMigrationRequest(id));
+    promise.then(unsubscribe, unsubscribe);
 
     navigation.navigate(NavigatorName.DeviceSelection, {
       screen: ScreenName.SelectDevice,
@@ -93,16 +95,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
     return promise;
   }, [navigation]);
 
-  // Coming back to Perps without added accounts (X, back, device error) abandons the migration.
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () =>
-      cancelMigrationRequest(migrationRequestId.current),
-    );
-    return () => {
-      unsubscribe();
-      cancelMigrationRequest();
-    };
-  }, [navigation]);
+  useEffect(() => () => cancelMigrationRequest(), []);
 
   return useMemo<WalletAPICustomHandlers>(
     () =>

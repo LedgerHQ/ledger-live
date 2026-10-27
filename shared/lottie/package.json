@@ -20,7 +20,7 @@
     "format:check": "oxfmt --check src"
   },
   "dependencies": {
-    "@lottiefiles/dotlottie-react": "0.17.13"
+    "@lottiefiles/dotlottie-react": "0.20.0"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
