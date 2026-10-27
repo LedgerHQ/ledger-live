@@ -39,6 +39,15 @@ function genBitcoinAccounts(count: number, operationsSize = 0): Account[] {
   );
 }
 
+function confirmOperations(account: Account): Account {
+  return {
+    ...account,
+    operations: account.operations.map(function confirm(op) {
+      return { ...op, blockHeight: account.blockHeight - 100 };
+    }),
+  };
+}
+
 function params(overrides: Partial<RecentOperationsParams>): RecentOperationsParams {
   return {
     accountIds: [],
@@ -91,6 +100,52 @@ describe("useRecentOperationsViewModel", () => {
       );
 
       expect(result.current.operations).toEqual([]);
+    });
+  });
+
+  describe("pendingOperationIds", () => {
+    it("flags an operation with a block height but not enough confirmations as pending", () => {
+      const confirmed = confirmOperations(genBitcoinAccounts(1, 3)[0]);
+      const [newest, ...older] = confirmed.operations;
+      const account: Account = {
+        ...confirmed,
+        operations: [{ ...newest, blockHeight: confirmed.blockHeight }, ...older],
+      };
+
+      const { result } = renderHook(
+        function useScopedViewModel() {
+          return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+        },
+        {
+          overrideInitialState: function withSixConfirmations(state: State): State {
+            return {
+              ...state,
+              accounts: { ...state.accounts, active: [account] },
+              settings: {
+                ...state.settings,
+                currenciesSettings: {
+                  BTC: { confirmationsNb: 6, unit: mockBtcCryptoCurrency.units[0] },
+                },
+              },
+            };
+          },
+        },
+      );
+
+      expect([...result.current.pendingOperationIds]).toEqual([newest.id]);
+    });
+
+    it("returns no pending operations when all are confirmed", () => {
+      const account = confirmOperations(genBitcoinAccounts(1, 3)[0]);
+
+      const { result } = renderHook(
+        function useScopedViewModel() {
+          return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+        },
+        withState([account]),
+      );
+
+      expect(result.current.pendingOperationIds.size).toBe(0);
     });
   });
 

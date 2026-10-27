@@ -11,6 +11,10 @@ import { useOperationsV1 } from "~/screens/Analytics/Operations/useOperationsV1"
 import { NavigatorName, ScreenName } from "~/const";
 import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { parseLastSeenMs } from "../../utils/unreadOperations";
+import {
+  useOperationsSections,
+  type OperationsListSection,
+} from "../../screens/OperationsList/hooks/useOperationsSections";
 
 export const MAX_PREVIEW_OPERATIONS = 3;
 
@@ -24,12 +28,22 @@ type ResolvedAccount = Readonly<{ account: AccountLike; parentAccount: Account |
 
 export type RecentOperationsViewModel = Readonly<{
   operations: Operation[];
+  pendingOperationIds: ReadonlySet<string>;
   accountByAddress: Map<string, AccountLike>;
   lastSeenTs: number | null;
   findAccount: (accountId: string) => ResolvedAccount | null;
   onHeaderPress: () => void;
   hasData: boolean;
 }>;
+
+function collectPendingOperationIds(sections: OperationsListSection[]): ReadonlySet<string> {
+  const ids = new Set<string>();
+  for (const section of sections) {
+    if (!section.isPending) continue;
+    for (const op of section.data) ids.add(op.id);
+  }
+  return ids;
+}
 
 export function useRecentOperationsViewModel({
   accountIds,
@@ -60,12 +74,20 @@ export function useRecentOperationsViewModel({
     [allowedIds],
   );
 
-  const { sections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
+  const { sections: rawSections } = useOperationsV1(rootAccounts, MAX_PREVIEW_OPERATIONS, {
     filterOperation: scopedFilter,
   });
+  const sections = useOperationsSections(rawSections);
 
   const operations: Operation[] = useMemo(
     () => sections.flatMap(section => section.data).slice(0, MAX_PREVIEW_OPERATIONS),
+    [sections],
+  );
+
+  const pendingOperationIds = useMemo(
+    function computePendingOperationIds() {
+      return collectPendingOperationIds(sections);
+    },
     [sections],
   );
 
@@ -109,6 +131,7 @@ export function useRecentOperationsViewModel({
 
   return {
     operations,
+    pendingOperationIds,
     accountByAddress,
     lastSeenTs,
     findAccount,
