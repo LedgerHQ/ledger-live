@@ -20,6 +20,7 @@ import {
   useAccountBalanceToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
+  useAccountSourcePortfolioToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
 } from "@devtools/bindings";
@@ -27,6 +28,7 @@ import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
 import { accountDataRecorder } from "~/config/account-data-setup";
+import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
 
@@ -93,6 +95,10 @@ export function useDevToolsScreenViewModel() {
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
+  const accountSourcePortfolioToolProps = useAccountSourcePortfolioToolProps({
+    serviceUrl: getPortfolioServiceUrl(),
+    recorder: accountDataRecorder,
+  });
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
 
@@ -106,6 +112,7 @@ export function useDevToolsScreenViewModel() {
       { id: "cloud-sync", config: cloudSyncToolProps },
       { id: "device-onboarding", config: deviceOnboardingProps },
       { id: "account-data", config: accountDataToolProps },
+      { id: "account-source-portfolio", config: accountSourcePortfolioToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-name", config: accountNameToolProps },
@@ -121,6 +128,7 @@ export function useDevToolsScreenViewModel() {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountDataToolProps,
+      accountSourcePortfolioToolProps,
       accountNameToolProps,
     ],
   );

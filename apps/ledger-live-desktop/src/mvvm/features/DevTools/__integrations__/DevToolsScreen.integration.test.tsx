@@ -38,6 +38,7 @@ jest.mock("@devtools/bindings", () => ({
   useAccountDescriptorToolProps: () => ({ marker: "account-descriptor-props" }),
   useAccountBalanceToolProps: () => ({ marker: "account-balance-props" }),
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
+  useAccountSourcePortfolioToolProps: () => ({ marker: "account-source-portfolio-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
@@ -84,6 +85,10 @@ describe("DevToolsScreen", () => {
           { id: "cloud-sync", config: { marker: "cloud-sync-props" } },
           { id: "device-onboarding", config: { marker: "device-onboarding-props" } },
           { id: "account-data", config: { marker: "account-data-props" } },
+          {
+            id: "account-source-portfolio",
+            config: { marker: "account-source-portfolio-props" },
+          },
           { id: "account-descriptor", config: { marker: "account-descriptor-props" } },
           { id: "account-balance", config: { marker: "account-balance-props" } },
           { id: "account-name", config: { marker: "account-name-props" } },

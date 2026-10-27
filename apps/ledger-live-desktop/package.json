@@ -133,6 +133,7 @@
     "@features/platform-account-analytics": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-app-update": "workspace:*",
+    "@features/platform-account-source-portfolio": "workspace:*",
     "@features/platform-card": "workspace:*",
     "@features/platform-coin-observability": "workspace:^",
     "@features/platform-contacts": "workspace:^",

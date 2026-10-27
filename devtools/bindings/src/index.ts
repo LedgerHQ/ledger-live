@@ -15,6 +15,7 @@ export { useAccountBalanceToolProps } from "./useAccountBalanceToolProps";
 export { useAccountDescriptorToolProps } from "./useAccountDescriptorToolProps";
 export { useAccountNameToolProps } from "./useAccountNameToolProps";
 export { useAccountDataToolProps } from "./useAccountDataToolProps";
+export { useAccountSourcePortfolioToolProps } from "./useAccountSourcePortfolioToolProps";
 export { createAccountDataRecorder } from "./accountDataRecorder";
 export type { AccountDataRecorder } from "./accountDataRecorder";
 export * from "./useAppConfigToolProps";

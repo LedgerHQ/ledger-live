@@ -27,6 +27,7 @@
     "@devtools/account-balance": "workspace:*",
     "@devtools/account-descriptor": "workspace:*",
     "@devtools/account-data": "workspace:*",
+    "@devtools/account-source-portfolio": "workspace:*",
     "@devtools/app-config": "workspace:*",
     "@devtools/account-name": "workspace:*"
   },

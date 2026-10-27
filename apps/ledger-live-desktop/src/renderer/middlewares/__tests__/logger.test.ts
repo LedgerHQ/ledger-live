@@ -1,4 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
+import { portfolioListed } from "@features/platform-account-source-portfolio";
 import { CARD_REDUCER_PATH, PORTFOLIO_REDUCER_PATH } from "@shared/api-services";
 import logger from "~/renderer/logger";
 import type { State } from "../../reducers";
@@ -33,6 +34,20 @@ function loggedRecord(): string {
 describe("loggerMiddleware", () => {
   beforeEach(() => {
     onReduxAction.mockReset();
+  });
+
+  it("drops the addresses the Portfolio source records", () => {
+    const address = "0xabababababababababababababababababababab";
+    runMiddleware(
+      portfolioListed({
+        portfolio: { id: "p", registrations: [{ id: "r", type: "evm", address }] },
+        at: 0,
+      }),
+    );
+
+    const record = loggedRecord();
+    expect(record).not.toContain(address);
+    expect(record).toContain(portfolioListed.type);
   });
 
   it("drops the credentials a Card mutation carries, and keeps the endpoint name", () => {

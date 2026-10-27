@@ -38,6 +38,10 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
+import {
+  redactPortfolioSourceAction,
+  redactPortfolioSourceState,
+} from "@features/platform-account-source-portfolio";
 import { accountDataRecorder, accountDataSources } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { selectFeature } from "@shared/feature-flags";
@@ -162,8 +166,10 @@ const customCreateStore = ({
         .concat(accountDataRecorder.middleware),
     devTools: __DEV__
       ? {
-          actionSanitizer: action => redactPortfolioApiAction(redactCardApiAction(action)),
-          stateSanitizer: state => redactPortfolioApiState(redactCardApiState(state)),
+          actionSanitizer: action =>
+            redactPortfolioSourceAction(redactPortfolioApiAction(redactCardApiAction(action))),
+          stateSanitizer: state =>
+            redactPortfolioSourceState(redactPortfolioApiState(redactCardApiState(state))),
         }
       : false,
   });
