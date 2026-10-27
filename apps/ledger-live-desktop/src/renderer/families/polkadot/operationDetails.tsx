@@ -48,7 +48,10 @@ function getURLWhatIsThis({
 }
 function formatPalletMethod(palletMethod?: string | null): string {
   if (!palletMethod) return "";
-  return palletMethod.split(".").map(startCase).join(" - ");
+  return palletMethod
+    .split(".")
+    .map(part => startCase(part))
+    .join(" - ");
 }
 const redirectAddress = (currency: Currency, address: string) => () => {
   const url =
