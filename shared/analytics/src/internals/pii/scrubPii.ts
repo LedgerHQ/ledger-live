@@ -129,6 +129,12 @@ function scrubAt(value: unknown, path: string, depth: number, findings: PiiFindi
     return redacted("max_depth");
   }
 
+  if (isObject(value) && typeof value.toJSON === "function") {
+    const count = findings.length;
+    const next = scrubAt(value.toJSON(), path, depth + 1, findings);
+    return findings.length > count ? next : value;
+  }
+
   if (Array.isArray(value)) {
     let changed = false;
     const items = value.map((item, index) => {

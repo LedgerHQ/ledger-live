@@ -174,6 +174,15 @@ describe("scrubPii", () => {
     expect(scrubPii({ date }).value.date).toBe(date);
   });
 
+  it("redacts what an object serializes to", () => {
+    const link = { toJSON: () => `https://etherscan.io/address/${EVM_ADDRESS}` };
+
+    const { value, findings } = scrubPii({ link });
+
+    expect(value).toEqual({ link: "https://etherscan.io/address/[REDACTED:explorer_url]" });
+    expect(findings).toEqual([{ path: "link", kind: "explorer_url" }]);
+  });
+
   it("redacts bytes under a sensitive key", () => {
     const { value, findings } = scrubPii({ signature: new Uint8Array([222, 173, 190, 239]) });
 
