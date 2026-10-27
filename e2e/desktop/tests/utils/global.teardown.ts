@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { ElectronApplication, expect } from "@playwright/test";
 import { launchApp } from "tests/utils/electronUtils";
 import { getFeatureFlags, getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const environmentFilePath = "allure-results/environment.properties";
 
@@ -42,7 +42,7 @@ export default async function globalTeardown() {
             }
             return appEnvsString.length;
           },
-          { timeout: TIMEOUT.xlarge, intervals: [1_000] },
+          { timeout: TIMEOUT.xlarge, intervals: [INTERVAL.medium] },
         )
         .toBeGreaterThan(0);
     } catch (error) {
@@ -61,7 +61,7 @@ export default async function globalTeardown() {
             }
             return featureFlagsString.length;
           },
-          { timeout: TIMEOUT.xlarge, intervals: [1_000] },
+          { timeout: TIMEOUT.xlarge, intervals: [INTERVAL.medium] },
         )
         .toBeGreaterThan(0);
     } catch (error) {
