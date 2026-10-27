@@ -5,6 +5,7 @@ import { join, posix } from "path";
 type Platform = "web" | "native";
 
 const ADR = "docs/adr/universal-components.md";
+const R5 = `A component has one kind of entry (R5), see ${ADR}.`;
 const PASCAL_CASE = /^[A-Z][A-Za-z0-9]*$/;
 const PLATFORM_FILE = /\.(?:web|native|ios|android)\.[cm]?[jt]sx?$/;
 const BARREL = /^index(?:\.(?:web|native))?\.tsx?$/;
@@ -184,7 +185,7 @@ export default async function universalComponentGenerator(
     const platform = options.platformEntry;
     if (isExportedFrom(tree, universalEntries, className)) {
       throw new Error(
-        `${className} is already exported from the universal entry "." of ${projectRoot}. A component has one kind of entry (R5), see ${ADR}.`,
+        `${className} is already exported from the universal entry "." of ${projectRoot}. ${R5}`,
       );
     }
     if (
@@ -233,7 +234,7 @@ export default async function universalComponentGenerator(
   }
   if (isExportedFrom(tree, platformEntries, className)) {
     throw new Error(
-      `${className} is already exported from a platform entry of ${projectRoot}. A component has one kind of entry (R5), see ${ADR}.`,
+      `${className} is already exported from a platform entry of ${projectRoot}. ${R5}`,
     );
   }
   if (isExportedFrom(tree, universalEntries, className)) {
