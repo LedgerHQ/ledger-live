@@ -44,6 +44,15 @@ describe("scrubPiiString", () => {
     expect(value).toContain(`[REDACTED:${kind}]`);
   });
 
+  it.each([
+    ["account", "https://hashscan.io/mainnet/account/0.0.1040977"],
+    ["transaction", "https://hashscan.io/mainnet/transaction/0.0.1234567-123-123"],
+  ])("redacts a short Hedera %s id in an explorer link", (route, input) => {
+    expect(scrubPiiString(input).value).toBe(
+      `https://hashscan.io/mainnet/${route}/[REDACTED:explorer_url]`,
+    );
+  });
+
   it("keeps the explorer host and route so the event stays useful", () => {
     expect(scrubPiiString(`https://etherscan.io/tx/${EVM_HASH}`).value).toBe(
       "https://etherscan.io/tx/[REDACTED:explorer_url]",
@@ -77,6 +86,7 @@ describe("scrubPiiString", () => {
     ],
     ["a support link", "https://support.ledger.com/article/360017582793"],
     ["a short explorer path", "https://etherscan.io/address/"],
+    ["an app route under account", "https://ledger.com/account/settings"],
   ])("keeps %s", (_label, input) => {
     expect(scrubPiiString(input)).toEqual({ value: input, kinds: [] });
   });

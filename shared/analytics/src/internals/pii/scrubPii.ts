@@ -54,7 +54,7 @@ const VALUE_PATTERNS: ValuePattern[] = [
   {
     kind: "explorer_url",
     regex:
-      /(\bhttps?:\/\/[^\s"']{0,200}?\/(?:tx|txs|transaction|transactions|address|addresses|account|accounts)\/)([^\s/?#"']{20,})/gi,
+      /(\bhttps?:\/\/[^\s"']{0,200}?\/(?:tx|txs|transaction|transactions|address|addresses|account|accounts)\/)([^\s/?#"']{20,}|\d+\.\d+\.\d+[^\s/?#"']*)/gi,
     replace: (_match, prefix) => `${prefix}${redacted("explorer_url")}`,
   },
   {
