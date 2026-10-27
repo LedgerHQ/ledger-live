@@ -7,7 +7,11 @@ import type {
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { NoAccountDataSourceError } from "../errors";
 import { accountDataQueryKey } from "../queryKey";
-import type { AccountDataAnswer, AccountDataReadOptions } from "../router";
+import type {
+  AccountDataAnswer,
+  AccountDataReadOptions,
+  AddAccountDataSourceOptions,
+} from "../router";
 import type {
   AccountDataBatchReader,
   AccountDataReader,
@@ -36,13 +40,16 @@ export type RouterContext = {
   /** Calls in flight per source, when the source does not set its own. */
   concurrency: number;
   limiters: WeakMap<AccountDataSource, Limiter>;
-  /** The registrations under an id not removed yet, in order, the source they replaced first. */
+  /** The registrations under an id not removed yet, in order: the latest answers. */
   stacks: Map<AccountDataSourceId, Registration[]>;
+  /** The next rank keys handed out: below every other for `first`, above every other otherwise. */
+  nextFirst: number;
+  nextLast: number;
   coalescing: Map<string, Coalesced<AccountDataKind>>;
 };
 
-/** One `addSource` call: a source added twice has two registrations, removed each on its own. */
-type Registration = { source: AccountDataSource };
+/** One registration: a source added twice has two, removed each on its own; `rank` orders ids. */
+type Registration = { source: AccountDataSource; rank: number };
 
 /** Where a read lands among the targets: its target's key, or its own failure when it cannot be routed. */
 export type ReadSlot = { key: string } | { failure: unknown };
@@ -62,7 +69,9 @@ export function createRouterContext(
     ranked: [...sources],
     concurrency,
     limiters: new WeakMap(),
-    stacks: new Map(),
+    stacks: new Map(sources.map((source, rank) => [source.id, [{ source, rank }]])),
+    nextFirst: -1,
+    nextLast: sources.length,
     coalescing: new Map(),
   };
 }
@@ -153,30 +162,37 @@ export function readFromSource<K extends AccountDataKind>(
   return targets.map(() => rejected(reason));
 }
 
-/** Ranks a source last, or in place of the one sharing its id; its remover, in any order, ranks the latest still registered. */
-export function addSource(context: RouterContext, source: AccountDataSource): () => void {
-  const index = context.ranked.findIndex(each => each.id === source.id);
-  let stack = context.stacks.get(source.id);
-  if (!stack) {
-    stack = index === -1 ? [] : [{ source: context.ranked[index] }];
-    context.stacks.set(source.id, stack);
-  }
-  const registration: Registration = { source };
+/** The latest registration of each id, by rank: what `pickSource` walks. */
+function rerank(context: RouterContext): void {
+  context.ranked = [...context.stacks.values()]
+    .flatMap(stack => stack.slice(-1))
+    .sort((a, b) => a.rank - b.rank)
+    .map(({ source }) => source);
+}
+
+/** Ranks a source last, first, or in place of the one sharing its id; its remover, in any order, leaves the others' ranks as they were. */
+export function addSource(
+  context: RouterContext,
+  source: AccountDataSource,
+  { first = false }: AddAccountDataSourceOptions = {},
+): () => void {
+  const stack = context.stacks.get(source.id) ?? [];
+  context.stacks.set(source.id, stack);
+  const replaced = stack.at(-1);
+  let rank: number;
+  if (first) rank = context.nextFirst--;
+  else rank = replaced?.rank ?? context.nextLast++;
+  const registration: Registration = { source, rank };
   stack.push(registration);
-  if (index === -1) context.ranked.push(source);
-  else context.ranked[index] = source;
+  rerank(context);
   return () => {
     const position = stack.indexOf(registration);
     if (position === -1) return;
     stack.splice(position, 1);
-    const at = context.ranked.findIndex(each => each.id === source.id);
-    const latest = stack.at(-1);
-    if (latest) {
-      context.ranked[at] = latest.source;
-    } else {
-      context.ranked.splice(at, 1);
+    if (stack.length === 0 && context.stacks.get(source.id) === stack) {
       context.stacks.delete(source.id);
     }
+    rerank(context);
   };
 }
 

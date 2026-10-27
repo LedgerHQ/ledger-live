@@ -3,6 +3,7 @@ import {
   createAccountDataRouter,
   type AccountDataRouter,
   type AccountDataRouterOptions,
+  type AddAccountDataSourceOptions,
 } from "./router";
 import type { AccountDataSource } from "./source";
 
@@ -44,6 +45,6 @@ export function getAccountDataRuntime(extra: unknown): AccountDataRuntime {
 
 /** Adds a source to the store's router at runtime (see `AccountDataRouter.addSource`); returns its remover. */
 export const addAccountDataSource =
-  (source: AccountDataSource) =>
+  (source: AccountDataSource, options?: AddAccountDataSourceOptions) =>
   (_dispatch: unknown, _getState: unknown, extra: unknown): (() => void) =>
-    getAccountDataRuntime(extra).router.addSource(source);
+    getAccountDataRuntime(extra).router.addSource(source, options);
