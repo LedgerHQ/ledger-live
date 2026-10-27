@@ -6,8 +6,9 @@ import {
   deactivateAgentIntentMocks,
 } from "./__test-helpers__/agent-intent-mocks";
 import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
-import { walletCliVersion } from "../../shared/client-version";
+import { ledgerSyncSupport } from "../../ledger-sync/cloud-sync-accounts";
 
+const CURRENT_SUPPORT = ledgerSyncSupport();
 const PROFILE_ID = "my-agent";
 const AGENT_PUBLIC_KEY = "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076";
 const AGENT_SECRET_KEY = "agent-secret-key-must-never-be-printed";
@@ -33,7 +34,7 @@ function makeProfile(patch: Partial<AgentIntentProfileMeta> = {}): AgentIntentPr
     trustchainId: "app18-root",
     accountAccess: { ...accountAccess },
     ledgerSyncVersion: 5,
-    ledgerSyncCliVersion: walletCliVersion,
+    ledgerSyncSupport: CURRENT_SUPPORT,
     enrollmentExpiresAt: "2026-01-01T00:00:00.000Z",
     createdAt: "2025-12-31T00:00:00.000Z",
     ...patch,
@@ -310,17 +311,17 @@ describe("agent-intent sync", () => {
     await runSync();
 
     expect(storedProfile?.ledgerSyncVersion).toBe(42);
-    expect(storedProfile?.ledgerSyncCliVersion).toBe(walletCliVersion);
+    expect(storedProfile?.ledgerSyncSupport).toBe(CURRENT_SUPPORT);
     expect(writeCalls).toBe(1);
   });
 
   it.each([
-    ["by an older wallet-cli", "0.0.1"],
-    ["before the wallet-cli version was recorded", undefined],
+    ["with other import support", "other-support"],
+    ["before the import support was recorded", undefined],
   ])(
-    "should pull everything once when the version was cached %s, then cache it for this one",
-    async (_case, cachedBy) => {
-      storedProfile = makeProfile({ ledgerSyncCliVersion: cachedBy });
+    "should pull everything once when the version was cached %s, then cache it with this one",
+    async (_case, cachedWith) => {
+      storedProfile = makeProfile({ ledgerSyncSupport: cachedWith });
       pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 6 });
 
       await runSync();
@@ -328,7 +329,7 @@ describe("agent-intent sync", () => {
       expect(pullCalls).toEqual([{ environment: "staging", currentVersion: undefined }]);
       expect(mergedInto).toHaveLength(1);
       expect(storedProfile?.ledgerSyncVersion).toBe(6);
-      expect(storedProfile?.ledgerSyncCliVersion).toBe(walletCliVersion);
+      expect(storedProfile?.ledgerSyncSupport).toBe(CURRENT_SUPPORT);
     },
   );
 
@@ -365,8 +366,8 @@ describe("agent-intent sync", () => {
     expect(storedProfile?.ledgerSyncVersion).toBe(5);
   });
 
-  it("should clear the cached version when a forced pull after an upgrade finds no document", async () => {
-    storedProfile = makeProfile({ ledgerSyncCliVersion: "0.0.1" });
+  it("should clear the cached version when a forced pull after a support change finds no document", async () => {
+    storedProfile = makeProfile({ ledgerSyncSupport: "other-support" });
 
     await runSync();
 
@@ -376,17 +377,20 @@ describe("agent-intent sync", () => {
     expect(writeCalls).toBe(1);
   });
 
-  it("should keep a newer version and its wallet-cli version cached by a concurrent sync during a forced pull", async () => {
-    storedProfile = makeProfile({ ledgerSyncCliVersion: "0.0.1" });
+  it("should keep a newer version and its support cached by a concurrent sync during a forced pull", async () => {
+    storedProfile = makeProfile({ ledgerSyncSupport: "other-support" });
     pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 6 });
-    profileAfterFirstRead = makeProfile({ ledgerSyncVersion: 8, ledgerSyncCliVersion: "9.9.9" });
+    profileAfterFirstRead = makeProfile({
+      ledgerSyncVersion: 8,
+      ledgerSyncSupport: "newer-support",
+    });
 
     await runSync();
 
     expect(pullCalls).toEqual([{ environment: "staging", currentVersion: undefined }]);
     expect(mergedInto).toHaveLength(1);
     expect(storedProfile?.ledgerSyncVersion).toBe(8);
-    expect(storedProfile?.ledgerSyncCliVersion).toBe("9.9.9");
+    expect(storedProfile?.ledgerSyncSupport).toBe("newer-support");
   });
 
   it("should merge into a fresh read taken under the lock", async () => {

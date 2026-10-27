@@ -474,22 +474,42 @@ describe("ring-field resilience", () => {
           makeAgentIntentProfile({
             profileId: "cached",
             ledgerSyncVersion: 7,
-            ledgerSyncCliVersion: "2.9.0",
+            ledgerSyncSupport: "3f2a9c41d07be815",
           }),
           {
             ...makeAgentIntentProfile({ profileId: "corrupt" }),
             ledgerSyncVersion: "seven",
-            ledgerSyncCliVersion: 290,
+            ledgerSyncSupport: 290,
           },
         ],
       }),
     );
     const session = await Session.read();
     expect(session.getAgentIntentProfile("cached")?.ledgerSyncVersion).toBe(7);
-    expect(session.getAgentIntentProfile("cached")?.ledgerSyncCliVersion).toBe("2.9.0");
+    expect(session.getAgentIntentProfile("cached")?.ledgerSyncSupport).toBe("3f2a9c41d07be815");
     expect(session.getAgentIntentProfile("corrupt")).toBeDefined();
     expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncVersion).toBeUndefined();
-    expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncCliVersion).toBeUndefined();
+    expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncSupport).toBeUndefined();
+  });
+
+  it("keeps the version an older wallet-cli cached, without any import support", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          {
+            ...makeAgentIntentProfile({ profileId: "older" }),
+            ledgerSyncVersion: 7,
+            ledgerSyncCliVersion: "2.9.0",
+          },
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("older")?.ledgerSyncVersion).toBe(7);
+    expect(session.getAgentIntentProfile("older")?.ledgerSyncSupport).toBeUndefined();
   });
 
   it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
