@@ -108,9 +108,23 @@ async function startSwap() {
   const onSuccess = jest.fn();
   const onCancel = jest.fn();
   const onDone = jest.fn();
-  mockExecuteSwap.mockImplementation(async deps => {
-    deps.uiHooks["custom.exchange.swap"]({ exchangeParams: swapUiRequest, onSuccess, onCancel });
-  });
+  // Like executeSwap, stays pending until the swap hook reports back.
+  mockExecuteSwap.mockImplementation(
+    deps =>
+      new Promise<void>((resolve, reject) => {
+        deps.uiHooks["custom.exchange.swap"]({
+          exchangeParams: swapUiRequest,
+          onSuccess: (result: unknown) => {
+            onSuccess(result);
+            resolve();
+          },
+          onCancel: (error: unknown) => {
+            onCancel(error);
+            reject(error);
+          },
+        });
+      }),
+  );
 
   const hook = renderHook(() =>
     usePerpsDepositExecution(params, {
@@ -120,7 +134,7 @@ async function startSwap() {
     }),
   );
   await act(async () => {
-    await hook.result.current.executeDeposit();
+    void hook.result.current.executeDeposit();
   });
   return { ...hook, onSuccess, onCancel, onDone };
 }
@@ -187,6 +201,24 @@ describe("usePerpsDepositExecution", () => {
     expect(onCancel).not.toHaveBeenCalled();
     expect(onSuccess).toHaveBeenCalledWith({ operationHash: "0xhash", swapId: "swap-1" });
     expect(onDone).not.toHaveBeenCalled();
+  });
+
+  it("does not broadcast when the deposit closes as the signature comes back", async () => {
+    const { result, unmount, onCancel } = await startSwap();
+    await answerDeviceStep(result.current.deviceStep, {
+      completeExchangeResult: { family: "ethereum", amount: new BigNumber("20000000000000000") },
+    });
+    const signStep = result.current.deviceStep;
+    if (signStep.kind !== "device") throw new Error("expected the sign step");
+
+    signStep.withDeviceAction(binding =>
+      binding.onResult({ signedOperation: { operation, signature: "0xsig" } } as never),
+    );
+    unmount();
+    await act(async () => undefined);
+
+    expect(mockBroadcast).not.toHaveBeenCalled();
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
   it("cancels a swap whose device step only starts after the deposit was closed", async () => {
