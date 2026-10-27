@@ -11,6 +11,13 @@ const WORKSPACE_ROOT = path.resolve(__dirname, "../../../..");
 const PACKAGE = "shared/thing";
 const REAL_PACKAGE = "shared/ui-qr-code";
 const UNIVERSAL = { "react-native": "./src/index.native.ts", default: "./src/index.ts" };
+const TEMPLATE_DEPENDENCIES = {
+  dependencies: { react: "catalog:", "react-native": "catalog:" },
+  devDependencies: {
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+  },
+};
 
 const temporaryWorkspaces: string[] = [];
 
@@ -26,6 +33,7 @@ function seedDualPackage(tree: Tree, exportsField: object = { ".": UNIVERSAL }) 
     `${PACKAGE}/package.json`,
     JSON.stringify({
       name: "@shared/thing",
+      ...TEMPLATE_DEPENDENCIES,
       exports: { ...exportsField, "./package.json": "./package.json" },
     }),
   );
@@ -186,7 +194,10 @@ describe("universal component", () => {
   it("writes into an unconditioned entry that resolves per platform", async () => {
     tree.write(
       `${PACKAGE}/package.json`,
-      JSON.stringify({ exports: { ".": "./src/index.ts", "./package.json": "./package.json" } }),
+      JSON.stringify({
+        ...TEMPLATE_DEPENDENCIES,
+        exports: { ".": "./src/index.ts", "./package.json": "./package.json" },
+      }),
     );
     tree.delete(`${PACKAGE}/src/index.native.ts`);
 
@@ -441,6 +452,124 @@ describe("platform component", () => {
       }),
     ).rejects.toThrow(/Refusing to overwrite .*WalletButton\.web\.test\.tsx/);
     expect(readText(tree, `${PACKAGE}/package.json`)).toBe(manifest);
+  });
+
+  it("refuses a package that does not declare what the templates import, naming it", async () => {
+    const manifest = readJson(tree, `${PACKAGE}/package.json`);
+    tree.write(
+      `${PACKAGE}/package.json`,
+      JSON.stringify({ ...manifest, dependencies: { react: "catalog:" }, devDependencies: {} }),
+    );
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(
+      "does not declare @testing-library/react, react-native, @testing-library/react-native, which the generated files import",
+    );
+    expect(tree.exists(`${PACKAGE}/src/ContactsButton.types.ts`)).toBe(false);
+  });
+
+  it("requires only the chosen platform's packages for a platform component", async () => {
+    const manifest = readJson(tree, `${PACKAGE}/package.json`);
+    tree.write(
+      `${PACKAGE}/package.json`,
+      JSON.stringify({
+        ...manifest,
+        dependencies: { react: "catalog:" },
+        devDependencies: { "@testing-library/react": "catalog:" },
+      }),
+    );
+
+    await universalComponentGenerator(tree, {
+      name: "WalletButton",
+      project: PACKAGE,
+      platformEntry: "web",
+    });
+    await expect(
+      universalComponentGenerator(tree, {
+        name: "WalletPass",
+        project: PACKAGE,
+        platformEntry: "native",
+      }),
+    ).rejects.toThrow(/does not declare react-native, @testing-library\/react-native,/);
+  });
+
+  it("refuses a props name the platform entry already exports", async () => {
+    seedDualPackage(tree, { ".": UNIVERSAL, "./web": "./src/web/index.web.ts" });
+    tree.write(`${PACKAGE}/src/web/index.web.ts`, 'export type * from "./types";\n');
+    tree.write(`${PACKAGE}/src/web/types.ts`, "export type WalletButtonProps = string;\n");
+
+    await expect(
+      universalComponentGenerator(tree, {
+        name: "WalletButton",
+        project: PACKAGE,
+        platformEntry: "web",
+      }),
+    ).rejects.toThrow(/WalletButtonProps is already exported from \.\/web/);
+    expect(tree.exists(`${PACKAGE}/src/web/WalletButton.web.tsx`)).toBe(false);
+  });
+});
+
+describe("universal component next to platform entries", () => {
+  let tree: Tree;
+
+  beforeEach(() => {
+    tree = createTreeWithEmptyWorkspace();
+    seedDualPackage(tree, { ".": UNIVERSAL, "./native": "./src/native/index.native.ts" });
+    tree.write(`${PACKAGE}/src/shared/index.ts`, 'export * from "./Other";\n');
+    tree.write(`${PACKAGE}/src/shared/Other.ts`, "export const other = 1;\n");
+    for (const entry of ["index.ts", "index.native.ts"]) {
+      tree.write(
+        `${PACKAGE}/src/${entry}`,
+        `${readText(tree, `${PACKAGE}/src/${entry}`)}export * from "./shared";\n`,
+      );
+    }
+  });
+
+  it("writes into the entries when a platform entry reaches the folder barrel", async () => {
+    tree.write(`${PACKAGE}/src/native/index.native.ts`, 'export * from "../shared";\n');
+    const sharedBarrel = readText(tree, `${PACKAGE}/src/shared/index.ts`);
+
+    await universalComponentGenerator(tree, {
+      name: "ContactsButton",
+      project: PACKAGE,
+      directory: "shared",
+    });
+
+    expect(readText(tree, `${PACKAGE}/src/shared/index.ts`)).toBe(sharedBarrel);
+    for (const entry of ["index.ts", "index.native.ts"]) {
+      expect(readText(tree, `${PACKAGE}/src/${entry}`)).toContain(
+        'export * from "./shared/ContactsButton";',
+      );
+    }
+  });
+
+  it("refuses when a platform entry reaches the universal entry itself", async () => {
+    tree.write(`${PACKAGE}/src/native/index.native.ts`, 'export * from "../index.native";\n');
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(/platform entry re-exports .*index\.native\.ts.*which breaks R5/);
+    expect(tree.exists(`${PACKAGE}/src/ContactsButton.types.ts`)).toBe(false);
+  });
+
+  it("refuses a props name the universal entry already exports", async () => {
+    tree.write(`${PACKAGE}/src/shared/Other.ts`, "export type ContactsButtonProps = string;\n");
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(/ContactsButtonProps is already exported from "\."/);
+  });
+
+  it.each(["web", "native"])("refuses a %s-suffixed contract sibling", async platform => {
+    tree.write(`${PACKAGE}/src/ContactsButton.types.${platform}.ts`, "export {};\n");
+
+    await expect(
+      universalComponentGenerator(tree, { name: "ContactsButton", project: PACKAGE }),
+    ).rejects.toThrow(
+      new RegExp(`Refusing to overwrite .*ContactsButton\\.types\\.${platform}\\.ts`),
+    );
+    expect(tree.exists(`${PACKAGE}/src/ContactsButton.types.ts`)).toBe(false);
   });
 });
 

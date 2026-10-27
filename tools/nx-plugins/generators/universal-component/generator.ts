@@ -14,6 +14,12 @@ const STAR_EXPORT = /^export\s+\*\s+from\s+["'](\.[^"']*)["']/gm;
 const ANY_STAR_EXPORT = /^export\s+(?:type\s+)?\*\s+from\s+["'](\.[^"']*)["']/gm;
 // Names the templates import, which a component of the same name would shadow.
 const TEMPLATE_IMPORTS = new Set(["React", "View"]);
+const PLATFORMS: Platform[] = ["web", "native"];
+// The packages each platform's templates import.
+const TEMPLATE_DEPENDENCIES: Record<Platform, string[]> = {
+  web: ["react", "@testing-library/react"],
+  native: ["react", "react-native", "@testing-library/react-native"],
+};
 // What a relative specifier can load, on either platform.
 const CANDIDATE_SUFFIXES = [
   ".web.tsx",
@@ -82,12 +88,8 @@ function resolveSpecifier(tree: Tree, fromFile: string, specifier: string): stri
   return CANDIDATE_SUFFIXES.map(suffix => `${base}${suffix}`).filter(file => tree.isFile(file));
 }
 
-// Follows `export *` and `export type *` from the entries and looks for a module declaring `name`,
-// as a value or a type.
-function isExportedFrom(tree: Tree, entryFiles: string[], name: string): boolean {
-  const declaration = new RegExp(
-    `\\bexport\\s+(?:declare\\s+)?(?:async\\s+|abstract\\s+|const\\s+(?=enum))?(?:function\\*?|const|let|var|class|type|interface|enum)\\s+${name}\\b|\\bexport\\s+(?:type\\s+)?\\{[^}]*\\b${name}\\b[^}]*\\}`,
-  );
+// The modules the entries expose through `export *` and `export type *`, the entries included.
+function reachableFiles(tree: Tree, entryFiles: string[]): Set<string> {
   const visited = new Set<string>();
   const queue = entryFiles.filter(file => tree.isFile(file));
   while (queue.length > 0) {
@@ -95,12 +97,22 @@ function isExportedFrom(tree: Tree, entryFiles: string[], name: string): boolean
     if (visited.has(file)) continue;
     visited.add(file);
     const source = tree.read(file, "utf-8") ?? "";
-    if (declaration.test(source)) return true;
     for (const [, specifier] of source.matchAll(ANY_STAR_EXPORT)) {
       queue.push(...resolveSpecifier(tree, file, specifier));
     }
   }
-  return false;
+  return visited;
+}
+
+// The first of `names` that a module reachable from the entries declares, as a value or a type.
+function exportedFrom(tree: Tree, entryFiles: string[], names: string[]): string | undefined {
+  const sources = [...reachableFiles(tree, entryFiles)].map(file => tree.read(file, "utf-8") ?? "");
+  return names.find(name => {
+    const declaration = new RegExp(
+      `\\bexport\\s+(?:declare\\s+)?(?:async\\s+|abstract\\s+|const\\s+(?=enum))?(?:function\\*?|const|let|var|class|type|interface|enum)\\s+${name}\\b|\\bexport\\s+(?:type\\s+)?\\{[^}]*\\b${name}\\b[^}]*\\}`,
+    );
+    return sources.some(source => declaration.test(source));
+  });
 }
 
 function reachesDirectly(tree: Tree, entryFile: string, dir: string): boolean {
@@ -111,9 +123,15 @@ function reachesDirectly(tree: Tree, entryFile: string, dir: string): boolean {
   );
 }
 
-// The barrels the new lines go to: the folder's own barrel when every entry re-exports it, so it
-// stays one level below them, else the entries themselves. Never a new barrel.
-function barrelsFor(tree: Tree, dir: string, entryFiles: string[]): string[] {
+// The barrels the new lines go to: the folder's own barrel when every entry re-exports it and no
+// platform entry reaches it, so it stays one level below them, else the entries themselves. Never a
+// new barrel.
+function barrelsFor(
+  tree: Tree,
+  dir: string,
+  entryFiles: string[],
+  platformReach: Set<string>,
+): string[] {
   if (entryFiles.every(entry => posix.dirname(entry) === dir)) return entryFiles;
   const localBarrels = tree.exists(dir)
     ? tree
@@ -121,7 +139,11 @@ function barrelsFor(tree: Tree, dir: string, entryFiles: string[]): string[] {
         .filter(name => BARREL.test(name))
         .map(name => `${dir}/${name}`)
     : [];
-  if (localBarrels.length > 0 && entryFiles.every(entry => reachesDirectly(tree, entry, dir))) {
+  if (
+    localBarrels.length > 0 &&
+    !localBarrels.some(barrel => platformReach.has(barrel)) &&
+    entryFiles.every(entry => reachesDirectly(tree, entry, dir))
+  ) {
     return localBarrels;
   }
   return entryFiles;
@@ -188,6 +210,21 @@ export default async function universalComponentGenerator(
     );
   }
 
+  const declared = new Set(
+    ["dependencies", "devDependencies", "peerDependencies"].flatMap(field =>
+      Object.keys(manifest[field] ?? {}),
+    ),
+  );
+  const required = (options.platformEntry ? [options.platformEntry] : PLATFORMS).flatMap(
+    platform => TEMPLATE_DEPENDENCIES[platform],
+  );
+  const missing = [...new Set(required)].filter(name => !declared.has(name));
+  if (missing.length > 0) {
+    throw new Error(
+      `${projectRoot} does not declare ${missing.join(", ")}, which the generated files import. Add them to its package.json first.`,
+    );
+  }
+
   const universalEntries = universalEntryFiles(projectRoot, exportsField);
   const platformEntries = (["web", "native"] as const)
     .map(platform => platformEntryFile(projectRoot, exportsField, platform))
@@ -201,12 +238,14 @@ export default async function universalComponentGenerator(
   const directory = normalizeDirectory(options.directory);
   const templates = join(__dirname, "files");
   const substitutions = { className, testId: fileName, tmpl: "" };
+  const generatedNames = [className, `${className}Props`];
 
   if (options.platformEntry) {
     const platform = options.platformEntry;
-    if (isExportedFrom(tree, universalEntries, className)) {
+    const universalClash = exportedFrom(tree, universalEntries, generatedNames);
+    if (universalClash !== undefined) {
       throw new Error(
-        `${className} is already exported from the universal entry "." of ${projectRoot}, ${BREAKS_R5}`,
+        `${universalClash} is already exported from the universal entry "." of ${projectRoot}, ${BREAKS_R5}`,
       );
     }
     if (
@@ -220,8 +259,9 @@ export default async function universalComponentGenerator(
     }
     const existingEntry = platformEntryFile(projectRoot, exportsField, platform);
     const entryFile = existingEntry ?? `${projectRoot}/src/${platform}/index.${platform}.ts`;
-    if (isExportedFrom(tree, [entryFile], className)) {
-      throw new Error(`${className} is already exported from ./${platform} of ${projectRoot}.`);
+    const platformClash = exportedFrom(tree, [entryFile], generatedNames);
+    if (platformClash !== undefined) {
+      throw new Error(`${platformClash} is already exported from ./${platform} of ${projectRoot}.`);
     }
     const dir =
       directory === undefined
@@ -256,26 +296,45 @@ export default async function universalComponentGenerator(
       `${projectRoot} has no "." entry in package.json#exports to export a universal component from, see ${ADR}.`,
     );
   }
-  if (isExportedFrom(tree, platformEntries, className)) {
+  const platformClash = exportedFrom(tree, platformEntries, generatedNames);
+  if (platformClash !== undefined) {
     throw new Error(
-      `${className} is already exported from a platform entry of ${projectRoot}, ${BREAKS_R5}`,
+      `${platformClash} is already exported from a platform entry of ${projectRoot}, ${BREAKS_R5}`,
     );
   }
-  if (isExportedFrom(tree, universalEntries, className)) {
-    throw new Error(`${className} is already exported from "." of ${projectRoot}.`);
+  const universalClash = exportedFrom(tree, universalEntries, generatedNames);
+  if (universalClash !== undefined) {
+    throw new Error(`${universalClash} is already exported from "." of ${projectRoot}.`);
   }
 
   const dir = posix.join(projectRoot, "src", directory ?? "");
+  // A platform-suffixed contract would shadow the shared one in the implementations' imports.
+  const contractVariants = ["web", "native", "ios", "android"].flatMap(platform =>
+    [".ts", ".tsx"].map(extension => `.types.${platform}${extension}`),
+  );
   assertNewFiles(
     tree,
-    [".types.ts", ".web.tsx", ".native.tsx", ".web.test.tsx", ".native.test.tsx"].map(
-      suffix => `${dir}/${className}${suffix}`,
-    ),
+    [
+      ".types.ts",
+      ...contractVariants,
+      ".web.tsx",
+      ".native.tsx",
+      ".web.test.tsx",
+      ".native.test.tsx",
+    ].map(suffix => `${dir}/${className}${suffix}`),
   );
+  const platformReach = reachableFiles(tree, platformEntries);
+  const barrels = barrelsFor(tree, dir, universalEntries, platformReach);
+  const leakingBarrel = barrels.find(barrel => platformReach.has(barrel));
+  if (leakingBarrel !== undefined) {
+    throw new Error(
+      `${projectRoot}: a platform entry re-exports ${leakingBarrel}, so a universal component added there leaks into it, ${BREAKS_R5}`,
+    );
+  }
   for (const folder of ["contract", "web", "native"]) {
     generateFiles(tree, join(templates, folder), dir, { ...substitutions, universal: true });
   }
-  for (const barrel of barrelsFor(tree, dir, universalEntries)) {
+  for (const barrel of barrels) {
     const specifier = relativeSpecifier(barrel, `${dir}/${className}`);
     appendLines(tree, barrel, [
       `export * from "${specifier}";`,
