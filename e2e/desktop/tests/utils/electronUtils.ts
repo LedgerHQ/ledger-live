@@ -2,6 +2,23 @@ import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
+const FIREBASE_REMOTE_CONFIG_HOST = "firebaseremoteconfig.googleapis.com";
+
+/**
+ * Sends Remote Config fetches through the capture proxy started by `mise run mitmproxy:capture-start`,
+ * so one fetch serves every launch of the run. The PAC falls back to a direct connection if the proxy dies.
+ */
+function firebaseCaptureProxyArgs(): string[] {
+  const proxy = process.env.E2E_FIREBASE_PROXY;
+  const caSpki = process.env.E2E_FIREBASE_PROXY_SPKI;
+  if (!proxy || !caSpki) return [];
+  const pac = `function FindProxyForURL(url, host) { return host === "${FIREBASE_REMOTE_CONFIG_HOST}" ? "PROXY ${proxy}; DIRECT" : "DIRECT"; }`;
+  return [
+    `--proxy-pac-url=data:application/x-ns-proxy-autoconfig;base64,${Buffer.from(pac).toString("base64")}`,
+    `--ignore-certificate-errors-spki-list=${caSpki}`,
+  ];
+}
+
 export async function launchApp({
   env,
   lang,
@@ -28,6 +45,7 @@ export async function launchApp({
       "--no-sandbox",
       "--enable-logging",
       ...(process.platform === "darwin" ? ["--use-mock-keychain"] : []),
+      ...firebaseCaptureProxyArgs(),
 
       ...(simulateCamera
         ? [
