@@ -38,29 +38,37 @@ function QuotedAmount({
   );
 }
 
-function AmountMessage({
+function AmountMessageText({
   statusError,
   amount,
 }: Pick<PerpsWithdrawViewModel, "statusError" | "amount">) {
   const { t } = useTranslation();
   const provider = getProviderName(PERPS_SWAPKIT_PROVIDER);
 
-  const message = statusError ? (
-    <Text
-      typography="body3"
-      lx={{ color: "error", textAlign: "center" }}
-      testID={`${TEST_ID_PREFIX}-form-error`}
-    >
-      {t(statusError.labelKey, { provider, ...statusError.values })}
-    </Text>
-  ) : amount > 0 ? (
+  if (statusError) {
+    return (
+      <Text
+        typography="body3"
+        lx={{ color: "error", textAlign: "center" }}
+        testID={`${TEST_ID_PREFIX}-form-error`}
+      >
+        {t(statusError.labelKey, { provider, ...statusError.values })}
+      </Text>
+    );
+  }
+  if (amount <= 0) return null;
+  return (
     <Text typography="body3" lx={{ color: "base", textAlign: "center" }}>
       {t("perpsWithdraw.inputSubText", { provider })}
     </Text>
-  ) : null;
+  );
+}
 
+function AmountMessage(props: Pick<PerpsWithdrawViewModel, "statusError" | "amount">) {
   return (
-    <Box lx={{ minHeight: "s40", justifyContent: "center", alignItems: "center" }}>{message}</Box>
+    <Box lx={{ minHeight: "s40", justifyContent: "center", alignItems: "center" }}>
+      <AmountMessageText {...props} />
+    </Box>
   );
 }
 

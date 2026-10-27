@@ -73,17 +73,18 @@ const AccountSelectionContent = ({
   const hasAccounts = detailedAccounts.length > 0;
   const perpsHeading = getPerpsDrawerHeading("account", uiUseCase, hasAccounts);
 
-  const headerTitle = perpsHeading
-    ? t(perpsHeading.titleKey)
-    : uiUseCase === PAY_ACCOUNT_UI_USE_CASE
+  const defaultTitle =
+    uiUseCase === PAY_ACCOUNT_UI_USE_CASE
       ? t("modularDrawer.selectAccountToPayFrom")
       : t("modularDrawer.selectAccount");
+  const headerTitle = perpsHeading ? t(perpsHeading.titleKey) : defaultTitle;
 
+  const defaultDescription = hasAccounts
+    ? undefined
+    : t("modularDrawer.emptyAccounts", { network: asset.name });
   const headerDescription = perpsHeading?.descriptionKey
     ? t(perpsHeading.descriptionKey)
-    : hasAccounts
-      ? undefined
-      : t("modularDrawer.emptyAccounts", { network: asset.name });
+    : defaultDescription;
 
   return (
     <>
