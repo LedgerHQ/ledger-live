@@ -41,12 +41,16 @@ function redactLedgerAccountId(id: string): string {
   return fields.join(":");
 }
 
-const LINK_ID = /([/=])([A-Za-z0-9]{20,}|0\.0\.\d+[\w@.-]*|[\w.-]{2,64}\.near)(?![\w-]|\.\w)/g;
+const LINK_IDS = [
+  /([/=])([A-Za-z0-9]{20,}|[EUk0]Q[\w-]{46})(?![\w-]|\.\w)/g,
+  /([/=])(0\.0\.\d+[\w@.-]*|[\w.-]{2,64}\.near)(?![\w-]|\.\w)/g,
+];
 
 function redactLinkIds(link: string): string | null {
-  const value = link.replace(
-    LINK_ID,
-    (_match, separator) => `${separator}${redacted("explorer_url")}`,
+  const value = LINK_IDS.reduce(
+    (current, pattern) =>
+      current.replace(pattern, (_match, separator) => `${separator}${redacted("explorer_url")}`),
+    link,
   );
   return value === link ? null : value;
 }

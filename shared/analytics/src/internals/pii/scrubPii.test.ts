@@ -64,6 +64,18 @@ describe("scrubPiiString", () => {
     ],
     ["an XRP account", "https://bithomp.com/explorer/", "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe", ""],
     [
+      "a TON address",
+      "https://tonscan.org/address/",
+      "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+      "",
+    ],
+    [
+      "a TON address with a query",
+      "https://tonviewer.com/",
+      "EQAHTHGU1k6CGPLPqrjnmzQgGtvtD4-n8nc-YE3TmWm1_1JZ",
+      "?section=history",
+    ],
+    [
       "a query value",
       "https://ccdscan.io/accounts?daddress=",
       "3ZFGxLtnUUSJGW2WqjMh1DDjxyq5rnytCwkSqxFTpsWSFdQnNn",
@@ -150,6 +162,7 @@ describe("scrubPiiString", () => {
     ["a long word", "a".repeat(50_000)],
     ["a long run of punctuation", "a.".repeat(25_000)],
     ["a long run of link starts", "https://".repeat(6_250)],
+    ["a long run of TON address starts", `https://${"/EQ-".repeat(8_000)}`],
   ])("scans %s in linear time", (_label, input) => {
     const start = Date.now();
 
