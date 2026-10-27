@@ -13,7 +13,7 @@ import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // Uniswap's Permit2 "Approve token access" step can take 1-5 min to confirm on-chain
 // before the sign-permit button appears (the app shows a "1-5 mins" estimate).
@@ -417,16 +417,11 @@ export class SwapPage extends WebViewAppPage {
     await expect(executeSwapButton).toBeVisible();
     await expect(executeSwapButton).toBeEnabled();
     await executeSwapButton.waitFor({ state: "attached" });
-    await executeSwapButton.evaluate((btn: HTMLElement) => {
-      return new Promise<void>(resolve => {
-        const interval = setInterval(() => {
-          if (!btn.hasAttribute("disabled")) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 50);
-      });
-    });
+    await expect
+      .poll(() => executeSwapButton.evaluate(btn => !btn.hasAttribute("disabled")), {
+        intervals: [INTERVAL.instant],
+      })
+      .toBe(true);
     await executeSwapButton.click();
   }
 
@@ -519,8 +514,17 @@ export class SwapPage extends WebViewAppPage {
     await amountInput.click();
     await amountInput.fill(amount);
 
-    //wait for potential origin amount error to be loaded
-    await this.page.waitForTimeout(500);
+    // An amount either fails validation (origin amount error) or goes out for quotes; wait until
+    // the app has settled on one. An empty amount triggers neither.
+    if (amount) {
+      await expect(
+        webview
+          .getByTestId(this.fromAccountError)
+          .or(webview.getByTestId(this.bestValueInfoIcon))
+          .or(webview.getByTestId(this.noQuotesPlaceholder))
+          .first(),
+      ).toBeVisible();
+    }
   }
 
   @step("Select currency to swap to: $0")
@@ -555,7 +559,7 @@ export class SwapPage extends WebViewAppPage {
   }
 
   @step("Wait for the to-account coin selector to be populated")
-  async waitForToAssetSelectorReady(timeout = 40_000) {
+  async waitForToAssetSelectorReady(timeout = TIMEOUT.xlarge) {
     const webview = await this.getWebView();
     try {
       await this.waitForSelectorPopulated(webview, this.toAccountCoinSelector, timeout);
@@ -832,9 +836,7 @@ export class SwapPage extends WebViewAppPage {
     await hoverTrigger();
     const tooltips = webview.locator(this.openTooltipSelector);
     await expect
-      .poll(async () => (await tooltips.allTextContents()).map(text => text.trim()), {
-        timeout: 15_000,
-      })
+      .poll(async () => (await tooltips.allTextContents()).map(text => text.trim()))
       .toContain(expected);
   }
 

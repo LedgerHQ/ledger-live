@@ -1,7 +1,7 @@
 import { Page, expect, test } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
-import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export abstract class WebViewAppPage extends AppPage {
   public _webviewPage?: Page;
@@ -49,7 +49,7 @@ export abstract class WebViewAppPage extends AppPage {
         },
         {
           timeout,
-          intervals: [500],
+          intervals: [INTERVAL.short],
           message: `WebView with identifier "${this.webviewIdentifier}" not found after ${timeout}ms`,
         },
       )
