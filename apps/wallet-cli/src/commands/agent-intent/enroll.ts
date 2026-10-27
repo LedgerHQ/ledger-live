@@ -42,6 +42,7 @@ import {
   assertNoLiveEnrollListener,
   enrollListenerPaths,
   ErrorLineSchema,
+  LISTENER_STARTING_MAX_MS,
   PendingLineSchema,
   readFirstLogJsonLine,
   readLogLinesBeforeFirstJson,
@@ -59,6 +60,9 @@ const NO_KEYCHAIN_HINT =
   "Agent Intent stores the agent key in the OS keychain, so nothing was saved. Re-run with " +
   "--allow-plaintext-key only after the human explicitly agrees to store the agent key " +
   "unencrypted on this machine.";
+/** A listener drops a key it saved this close to LISTENER_STARTING_MAX_MS, so `wait` never reports
+ * it stuck right before it saves its profile. */
+const LISTENER_SAVE_MARGIN_MS = 60_000;
 const REFUSED_WRITE_HINT =
   "Unlock the keychain collection and re-run, or re-run with --allow-plaintext-key only after " +
   "the human explicitly agrees to store the agent key unencrypted on this machine.";
@@ -228,6 +232,27 @@ async function saveSecretKey(
   }
 }
 
+function assertSavedInTime(startedAt: number, enrollmentExpiresAt: string): void {
+  const removed =
+    "the key was removed and nothing was saved. Start a fresh enrollment with a new --profile id.";
+  if (Date.now() >= Date.parse(enrollmentExpiresAt)) {
+    throw new CodedCommandError(
+      "enrollment_expired",
+      "The enrollment link expired while the OS keychain was storing the agent key (an unlock " +
+        `prompt answered late?); ${removed}`,
+    );
+  }
+  const maxMs = LISTENER_STARTING_MAX_MS - LISTENER_SAVE_MARGIN_MS;
+  if (Date.now() - startedAt > maxMs) {
+    throw new CodedCommandError(
+      "listener_stuck",
+      `Saving the agent key took over ${maxMs / 60_000} minutes (an OS keychain unlock prompt ` +
+        "answered late?), so `agent-intent wait` may already have reported this enrollment " +
+        `stuck; ${removed}`,
+    );
+  }
+}
+
 /** `--detach`: re-runs this enroll without `--detach` as a background listener, then reports the
  * listener's pending line and returns. A listener with no line by the startup timeout (e.g. at a
  * keychain unlock prompt) keeps running and is reported as `enrollment-waiting`, for `wait` to
@@ -385,6 +410,7 @@ const enrollCommand = defineCommand({
       }
       // Held for the whole run, so `agent-intent wait` can tell a live listener from a dead one.
       await withEnrollListenerLock(flags.profile, async () => {
+        const startedAt = Date.now();
         const expiresInMs = parseDurationMs(flags["expires-in"]);
 
         const { environment, profile: profileId } = flags;
@@ -438,6 +464,9 @@ const enrollCommand = defineCommand({
               flags["allow-plaintext-key"],
             );
             try {
+              // A keychain write blocks until the human answers its unlock prompt, possibly after
+              // the link expired or `wait` gave up on this listener: drop the key then.
+              assertSavedInTime(startedAt, enrollmentExpiresAt);
               session.addAgentIntentProfile({
                 profileId,
                 displayName: flags.name,

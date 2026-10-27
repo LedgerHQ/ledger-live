@@ -381,7 +381,9 @@ state only and reports one of:
   call `wait` again.
 - an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
   profile within 10 minutes) or `enrollment_expired`, exit 1 — the enrollment is lost: start a
-  fresh one with a new `--profile` id.
+  fresh one with a new `--profile` id. A keychain unlock prompt answered too late also ends in
+  `listener_stuck` or `enrollment_expired` (from `enroll` or from `wait`): the key was removed and
+  nothing was saved.
 - the error a listener logged before saving the profile (e.g. `keychain_unavailable` once the
   human denied a keychain prompt), exit 1 — handle it like the same error from `enroll`.
 - an error with `error.code` `profile_not_found` (no profile, no listener, no error in its log),

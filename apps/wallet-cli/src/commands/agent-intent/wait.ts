@@ -14,6 +14,7 @@ import { parseDurationMs } from "../../agent-intent/relay";
 import {
   enrollListenerPaths,
   ErrorLineSchema,
+  LISTENER_STARTING_MAX_MS,
   PendingLineSchema,
   readLogJsonLines,
 } from "../../agent-intent/detach";
@@ -24,11 +25,6 @@ const POLL_INTERVAL_MS = 2_000;
 /** The SDK fails the relay at the link's expiry, so a pid still in the lock this long after it is
  * one an unclean exit (SIGKILL, SIGHUP) left behind, which the OS may have reused. */
 const LISTENER_EXPIRY_GRACE_MS = 60_000;
-/** How long a live listener may hold its lock without saving its profile. A human may answer a
- * keychain unlock prompt late; past this, the listener is reported `listener_stuck`: stuck, or its
- * pid was reused. */
-// todo: fixed 10 min cap, store the listener's start/expiry if prompts take longer
-const LISTENER_STARTING_MAX_MS = 10 * 60_000;
 
 /** The pending line of the profile's current enrollment, if `line` is it. Matched on the expiry
  * too: a plain `enroll` of a reused profile id leaves an earlier enrollment's log. */

@@ -1,5 +1,14 @@
 import "../../live-common-setup";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  setSystemTime,
+} from "bun:test";
 import { createCLI, defineCommand, defineGroup } from "@bunli/core";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -45,6 +54,8 @@ let writeImpl: () => void;
 let sessionReadCalls: number;
 let deleteSecretKeySucceeds: boolean;
 let saveSecretKeyError: Error | undefined;
+/** How far the clock moves while the keychain write runs, e.g. at an unlock prompt. */
+let saveSecretKeyTakesMs: number;
 let enrollmentUrlError: Error | undefined;
 let requestInputs: Array<Record<string, unknown>>;
 let hostOptions: Record<string, unknown> | undefined;
@@ -126,6 +137,7 @@ beforeAll(() =>
       hasAgentIntentSecretKey: (_profileId: string) => hasSecretKeyImpl(),
       saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
         if (saveSecretKeyError) throw saveSecretKeyError;
+        if (saveSecretKeyTakesMs > 0) setSystemTime(Date.now() + saveSecretKeyTakesMs);
         savedSecretKeys.add(profileId);
       },
       deleteAgentIntentSecretKey: (profileId: string) => {
@@ -262,6 +274,7 @@ describe("agent-intent enroll", () => {
     invalidProfileIds = [];
     deleteSecretKeySucceeds = true;
     saveSecretKeyError = undefined;
+    saveSecretKeyTakesMs = 0;
     enrollmentUrlError = undefined;
     requestInputs = [];
     hostOptions = undefined;
@@ -288,6 +301,7 @@ describe("agent-intent enroll", () => {
   afterEach(() => {
     restore();
     restorePlatform();
+    setSystemTime();
   });
 
   describe("pre-checks and local persistence", () => {
@@ -688,6 +702,44 @@ describe("agent-intent enroll", () => {
 
       expect(savedSecretKeys.has("test-agent")).toBe(false);
       expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+    });
+
+    it("removes the key and saves nothing when the keychain write returns near wait's stuck limit", async () => {
+      saveSecretKeyTakesMs = 9 * 60_000 + 1_000;
+
+      const run = runEnroll();
+
+      await expect(run).rejects.toMatchObject({
+        code: "listener_stuck",
+        message: expect.stringContaining("the key was removed and nothing was saved"),
+      });
+      expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+      expect(savedSecretKeys.has("test-agent")).toBe(false);
+      expect(storedProfile).toBeUndefined();
+      expect(stdout.join("")).not.toContain("#request=");
+    });
+
+    it("keeps the key when the keychain write returns just before wait's stuck limit margin", async () => {
+      saveSecretKeyTakesMs = 9 * 60_000 - 1_000;
+
+      await runEnroll();
+
+      expect(deletedSecretKeyCalls).toEqual([]);
+      expect(storedProfile).toMatchObject({ profileId: "test-agent" });
+    });
+
+    it("removes the key and saves nothing when the link expired during the keychain write", async () => {
+      saveSecretKeyTakesMs = 60_000;
+
+      const run = runEnroll({ "expires-in": "45s" });
+
+      await expect(run).rejects.toMatchObject({
+        code: "enrollment_expired",
+        message: expect.stringContaining("expired while the OS keychain was storing the agent key"),
+      });
+      expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+      expect(savedSecretKeys.has("test-agent")).toBe(false);
+      expect(storedProfile).toBeUndefined();
     });
 
     it("catches a same-profile race at the locked recheck even though the precheck passed", async () => {
