@@ -41,6 +41,16 @@ function redactLedgerAccountId(id: string): string {
   return fields.join(":");
 }
 
+const LINK_ID = /([/=])([A-Za-z0-9]{20,}|0\.0\.\d+[\w@.-]*|[\w.-]{2,64}\.near)(?![\w-]|\.\w)/g;
+
+function redactLinkIds(link: string): string | null {
+  const value = link.replace(
+    LINK_ID,
+    (_match, separator) => `${separator}${redacted("explorer_url")}`,
+  );
+  return value === link ? null : value;
+}
+
 const VALUE_PATTERNS: ValuePattern[] = [
   {
     kind: "ledger_account_id",
@@ -49,9 +59,8 @@ const VALUE_PATTERNS: ValuePattern[] = [
   },
   {
     kind: "explorer_url",
-    regex:
-      /(\bhttps?:\/\/[^\s"']{0,200}?\/(?:tx|txs|transaction|transactions|address|addresses|account|accounts)\/)([^\s/?#"']{20,}|\d+\.\d+\.\d+[^\s/?#"']*)/gi,
-    replace: (_match, prefix) => `${prefix}${redacted("explorer_url")}`,
+    regex: /\bhttps?:\/\/[^\s"']+/gi,
+    replace: redactLinkIds,
   },
   {
     kind: "evm_hash",

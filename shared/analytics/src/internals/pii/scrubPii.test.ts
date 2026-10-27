@@ -48,11 +48,31 @@ describe("scrubPiiString", () => {
   });
 
   it.each([
-    ["account", "https://hashscan.io/mainnet/account/0.0.1040977"],
-    ["transaction", "https://hashscan.io/mainnet/transaction/0.0.1234567-123-123"],
-  ])("redacts a short Hedera %s id in an explorer link", (route, input) => {
-    expect(scrubPiiString(input).value).toBe(
-      `https://hashscan.io/mainnet/${route}/[REDACTED:explorer_url]`,
+    ["a Hedera account", "https://hashscan.io/mainnet/account/", "0.0.1040977", ""],
+    ["a Hedera transaction", "https://hashscan.io/mainnet/transaction/", "0.0.1234567-123-123", ""],
+    ["a NEAR account", "https://nearblocks.io/address/", "unknown.near", ""],
+    [
+      "a NEAR transaction",
+      "https://nearblocks.io/txns/",
+      "GgQ6xTuNhTNGVsRAhLFGRUBB1cUv9kmvhBZBrLPZbNSJ",
+      "",
+    ],
+    ["an XRP account", "https://bithomp.com/explorer/", "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe", ""],
+    [
+      "a query value",
+      "https://ccdscan.io/accounts?daddress=",
+      "3ZFGxLtnUUSJGW2WqjMh1DDjxyq5rnytCwkSqxFTpsWSFdQnNn",
+      "",
+    ],
+    [
+      "an id in a sentence",
+      "see (https://solscan.io/account/",
+      "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+      ").",
+    ],
+  ])("redacts %s in a link", (_label, before, id, after) => {
+    expect(scrubPiiString(`${before}${id}${after}`).value).toBe(
+      `${before}[REDACTED:explorer_url]${after}`,
     );
   });
 
@@ -104,6 +124,19 @@ describe("scrubPiiString", () => {
     ["a support link", "https://support.ledger.com/article/360017582793"],
     ["a short explorer path", "https://etherscan.io/address/"],
     ["an app route under account", "https://ledger.com/account/settings"],
+    [
+      "a link with a slug",
+      "https://support.ledger.com/hc/en-us/articles/4404389606417-Download-Ledger-Live",
+    ],
+    [
+      "a link to an asset",
+      "https://cdn.example.com/static/9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM.js",
+    ],
+    ["a link with a version", "https://cdn.live.ledger.com/apps/3.105.0/index.html"],
+    [
+      "a link with campaign values",
+      "https://www.ledger.com/?utm_source=ledger_live&utm_medium=self_referral",
+    ],
   ])("keeps %s", (_label, input) => {
     expect(scrubPiiString(input)).toEqual({ value: input, kinds: [] });
   });

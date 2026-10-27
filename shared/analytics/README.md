@@ -84,7 +84,7 @@ await closeAndFlush();
 It finds:
 
 - values under a sensitive key, such as `address`, `xpub`, `signature`, `txHash` or `email`
-- value shapes: EVM addresses and hashes, extended public keys, bech32 addresses, Ledger account ids, emails, and the id in explorer `/tx/`, `/address/` and `/account/` links
+- value shapes: EVM addresses and hashes, extended public keys, bech32 addresses, Ledger account ids, emails, and ids in links: a path segment or query value of 20 or more letters and digits, a Hedera id or a NEAR account name
 - the same shapes in property names
 - objects more than 8 levels deep, which it does not inspect (`max_depth`)
 
