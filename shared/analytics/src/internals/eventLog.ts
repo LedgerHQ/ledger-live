@@ -10,6 +10,7 @@ export function publishEvent({
   eventProperties = {},
   eventPropertiesWithoutExtra = {},
   deliveryStatus,
+  piiFindings,
 }: AnalyticsEvent): void {
   eventLog.next({
     eventName,
@@ -17,5 +18,6 @@ export function publishEvent({
     eventPropertiesWithoutExtra,
     date: new Date(),
     ...(deliveryStatus !== undefined ? { deliveryStatus } : {}),
+    ...(piiFindings !== undefined ? { piiFindings } : {}),
   });
 }

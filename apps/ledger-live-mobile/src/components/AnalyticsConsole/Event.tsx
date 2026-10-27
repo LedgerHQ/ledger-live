@@ -19,6 +19,7 @@ const deliveryStatusColor: Record<DeliveryStatus, string> = {
   failed_enrichment: "red",
   failed_filter: "red",
   failed_identify: "red",
+  blocked_pii: "red",
 };
 
 const Event: React.FC<Props> = ({
