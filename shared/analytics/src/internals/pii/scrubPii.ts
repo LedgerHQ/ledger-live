@@ -12,7 +12,6 @@ type ValuePattern = {
 };
 
 const MAX_DEPTH = 8;
-const MIN_ACCOUNT_ID_ADDRESS_LENGTH = 20;
 
 const redacted = (kind: PiiKind) => `[REDACTED:${kind}]`;
 
@@ -40,9 +39,7 @@ function redactLedgerAccountId(id: string): string | null {
   const token = tokenStart === -1 ? "" : id.slice(tokenStart);
   const fields = (tokenStart === -1 ? id : id.slice(0, tokenStart)).split(":");
   const address = fields[3];
-  if (fields.length < 5 || !address || address.length < MIN_ACCOUNT_ID_ADDRESS_LENGTH) {
-    return null;
-  }
+  if (fields.length < 5 || !address) return null;
   fields[3] = redacted("ledger_account_id");
   if (fields[5]) fields[5] = redacted("ledger_account_id");
   return fields.join(":") + token;

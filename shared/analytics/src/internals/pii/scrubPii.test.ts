@@ -50,6 +50,12 @@ describe("scrubPiiString", () => {
     );
   });
 
+  it("redacts a Ledger account id with a short address", () => {
+    expect(scrubPiiString("js:2:hedera:0.0.1040977:hederaBip44").value).toBe(
+      "js:2:hedera:[REDACTED:ledger_account_id]:hederaBip44",
+    );
+  });
+
   it.each([
     ["a short hex value", "0x1234"],
     ["a version", "3.105.0"],
