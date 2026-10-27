@@ -30,7 +30,7 @@ Prioritize these, but do not exclude others:
 Analytics also leave from the monorepo layers (`shared/`, `domain/`, `features/`, `devtools/`), not only the apps:
 
 - `@shared/analytics` owns `track()` and `trackPage()`; `@shared/analytics-react` wraps them in `<Track>`, `<TrackPage>` and `<TrackScreen>`. The apps plug their vendor (`setAnalytics`) and filters into this pipeline, so a layer call reaches the same vendor as an app call.
-- Feature packages send events either through those functions (`@features/flow-fear-and-greed`) or through an adapter the app injects (`createContactsAnalyticsHelper` in `@features/flow-contacts`, `createPayAnalyticsHelper` in `@features/platform-pay-analytics`). For an adapter, read the app side that builds it: that is where the payload reaches the vendor.
+- Feature packages send events either through those functions (`@features/flow-fear-and-greed`, and `@features/platform-pay-analytics`, which builds `createPayAnalyticsHelper` on `@shared/analytics`'s `track`) or through an adapter the app injects (`createContactsAnalyticsHelper` in `@features/flow-contacts`). For an injected adapter, read the app side that builds it: that is where the payload reaches the vendor.
 - `@features/platform-coin-observability` decides when coin errors reach Datadog.
 
 # High-risk variables
