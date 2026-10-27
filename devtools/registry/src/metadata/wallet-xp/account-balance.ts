@@ -1,10 +1,11 @@
-import { Category, type ToolMetadata } from "../../types";
+import { Category, ToolKind, type ToolMetadata } from "../../types";
 export type { AccountBalanceToolProps } from "@devtools/account-balance";
 
 export const accountBalance: ToolMetadata = {
-  label: "Balance",
+  label: "account-balance",
+  kind: ToolKind.ENTITY,
   category: Category.ACCOUNTS,
-  owner: "Platform",
+  owner: "Wallet XP",
   desc: "The balance kind of each account: read it, see its rows and its read status.",
   loader: () => import("@devtools/account-balance"),
   platform: "web",
