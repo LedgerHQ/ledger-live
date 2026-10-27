@@ -1,20 +1,14 @@
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 
-const HYPERCORE_CURRENCY_ID = "hypercore";
+export const HYPERCORE_CURRENCY_ID = "hypercore";
 
 export type PerpsMigrationParams = {
-  /** The legacy (Arbitrum) Perps account that started the migration, carried as context. */
+  /** The legacy (Arbitrum) Perps account to migrate. */
   legacyAccountId: string;
 };
 
-export type PerpsMigrationUiParams = {
-  legacyAccount: Account;
-  /** Hyperliquid accounts already in the wallet; the user can pick one instead of adding one. */
-  existingAccounts: Account[];
-};
-
 export type PerpsMigratedAccount = {
-  /** Wallet API account id of a Hyperliquid account the user selected. */
+  /** Wallet API account id of the Hyperliquid account at the legacy account's address. */
   accountId: string;
   /** False when the account was already in the wallet before the flow. */
   created: boolean;
@@ -24,9 +18,23 @@ export type PerpsMigrationResult = {
   accounts: PerpsMigratedAccount[];
 };
 
-export function getHypercoreAccounts(accounts: AccountLike[]): Account[] {
+function getHypercoreAccounts(accounts: AccountLike[]): Account[] {
   return accounts.filter(
     (account): account is Account =>
       account.type === "Account" && account.currency.id === HYPERCORE_CURRENCY_ID,
+  );
+}
+
+/**
+ * The Hyperliquid account holding the legacy account's positions: the one at the same EVM address.
+ * Addresses are compared case-insensitively, as EVM addresses may or may not be checksummed.
+ */
+export function findMigrationAccount(
+  accounts: AccountLike[],
+  legacyAccount: Account,
+): Account | undefined {
+  const legacyAddress = legacyAccount.freshAddress.toLowerCase();
+  return getHypercoreAccounts(accounts).find(
+    account => account.freshAddress.toLowerCase() === legacyAddress,
   );
 }

@@ -6,15 +6,12 @@ import {
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { context as drawerContext } from "~/renderer/drawers/Provider";
-import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
-import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
-import { useDispatch, useSelector } from "LLD/hooks/redux";
-import {
-  closeDialog,
-  modularDialogIsOpenSelector,
-  openDialog,
-} from "~/renderer/reducers/modularDialog";
+import { context as drawerContext, setDrawer } from "~/renderer/drawers/Provider";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
+import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
+import { useStore } from "LLD/hooks/redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
@@ -25,11 +22,9 @@ import {
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
-  getMigrationRequestId,
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
-
-const HYPERCORE_CURRENCY_ID = "hypercore";
+import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/migration";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(
@@ -65,47 +60,42 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
 
   useEffect(() => cancelDepositRequest, []);
 
-  const dispatch = useDispatch();
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "perps",
+  );
 
-  // Same selector as the account.request of the discover apps: pick a Hyperliquid account, or add
-  // one through its Add account step, which hands the added account back to onAccountSelected.
-  const migrationRequestId = useRef<string | null>(null);
+  const store = useStore();
+
+  // Only called when the wallet has no Hyperliquid account at the legacy address. Hands back the
+  // account the user continues with and the wallet accounts, so the server finds the one at the
+  // legacy address even when the user added several and continued with another one. The flow
+  // saves the accounts on Confirm, so the store has them by then.
   const uiMigrationExecute = useCallback(() => {
-    const request = beginMigrationRequest();
-    const requestId = getMigrationRequestId();
-    migrationRequestId.current = requestId;
+    const { id, promise } = beginMigrationRequest();
 
-    dispatch(
-      openDialog({
-        currencies: [HYPERCORE_CURRENCY_ID],
-        areCurrenciesFiltered: true,
-        dialogConfiguration: createModularDrawerConfiguration(),
-        uiUseCase: PERPS_UI_USE_CASE.receive,
-        onAccountSelected: account => {
-          dispatch(closeDialog());
-          if (account.type === "Account") {
-            settleMigrationRequest(requestId, [account]);
-          } else {
-            cancelMigrationRequest(requestId);
-          }
-        },
-        onClose: () => cancelMigrationRequest(requestId),
-      }),
-    );
+    openAddAccountFlow(getCryptoCurrencyById(HYPERCORE_CURRENCY_ID), account => {
+      setDrawer();
+      if (account.type === "Account") {
+        settleMigrationRequest(id, [account, ...accountsSelector(store.getState())]);
+      } else {
+        cancelMigrationRequest(id);
+      }
+    });
 
-    return request;
-  }, [dispatch]);
+    return promise;
+  }, [openAddAccountFlow, store]);
 
-  // Add account replaces the selector with the add account drawer, and closing that drawer reports
-  // nothing back. Once neither is open, a request that is still pending was abandoned.
+  // Closing the add account drawer reports nothing back, so a request still pending once the
+  // drawer is closed was abandoned. Only one runs at a time: starting one cancels the previous.
   const { state: drawerState } = useContext(drawerContext);
-  const isDialogOpen = useSelector(modularDialogIsOpenSelector);
-  const isFlowOpen = isDialogOpen || drawerState.open;
-  const wasFlowOpen = useRef(false);
+  const wasDrawerOpen = useRef(false);
   useEffect(() => {
-    if (wasFlowOpen.current && !isFlowOpen) cancelMigrationRequest(migrationRequestId.current);
-    wasFlowOpen.current = isFlowOpen;
-  }, [isFlowOpen]);
+    if (wasDrawerOpen.current && !drawerState.open) {
+      cancelMigrationRequest();
+    }
+    wasDrawerOpen.current = drawerState.open;
+  }, [drawerState.open]);
 
   useEffect(() => () => cancelMigrationRequest(), []);
 

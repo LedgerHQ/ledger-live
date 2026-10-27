@@ -11,23 +11,20 @@ type PendingMigrationRequest = {
 let pending: PendingMigrationRequest | null = null;
 
 /**
- * Stays pending across the discovery screens until settled or cancelled. Starting a new one
+ * Stays pending across the add account screens until settled or cancelled. Starting a new one
  * cancels any request still pending, so it never hangs.
  */
-export function beginMigrationRequest(): Promise<Account[]> {
+export function beginMigrationRequest(): { id: string; promise: Promise<Account[]> } {
   cancelMigrationRequest();
   const id = uuid();
-  return new Promise((resolve, reject) => {
+  const promise = new Promise<Account[]>((resolve, reject) => {
     pending = { id, resolve, reject };
   });
+  return { id, promise };
 }
 
-export function getMigrationRequestId(): string | null {
-  return pending?.id ?? null;
-}
-
-export function settleMigrationRequest(id: string | null, accounts: Account[]) {
-  if (id === null || pending?.id !== id) return;
+export function settleMigrationRequest(id: string, accounts: Account[]) {
+  if (pending?.id !== id) return;
   pending.resolve(accounts);
   pending = null;
 }

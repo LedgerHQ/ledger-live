@@ -2,8 +2,9 @@ import { act, renderHook } from "tests/testSetup";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { closeDialog } from "~/renderer/reducers/modularDialog";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDepositRequestId,
   settleDepositRequest,
@@ -23,7 +24,14 @@ jest.mock("../../screens/PerpsDeposit/PerpsDepositDialog", () => ({
   openPerpsDeposit: (...args: unknown[]) => mockOpenPerpsDeposit(...args),
 }));
 
+const mockOpenAddAccountFlow = jest.fn();
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
+  useOpenAssetFlow: () => ({ openAddAccountFlow: mockOpenAddAccountFlow }),
+}));
+
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
+
+const AddAccountFlow = () => null;
 
 describe("usePerpsHandlers", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -92,83 +100,63 @@ describe("usePerpsHandlers", () => {
   });
 
   describe("migration.execute", () => {
-    const legacyAccount = { id: "legacy-1" } as never;
     const hypercoreAccount = { id: "hc-1", type: "Account" } as never;
-    const AddAccountFlow = () => null;
 
-    const startMigration = (existingAccounts: never[] = []) => {
+    const startMigration = (walletAccounts: never[] = []) => {
       // Not minimal: the drawer provider tells the hook when the add account drawer closes.
-      const view = renderHook(() => usePerpsHandlers([]), { minimal: false });
+      const view = renderHook(() => usePerpsHandlers([]), {
+        minimal: false,
+        initialState: { accounts: walletAccounts },
+      });
       const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
-      const request = migrationExecute?.({ legacyAccount, existingAccounts });
-      const params = view.store.getState().modularDialog.dialogParams;
-      return { ...view, request, params };
+      const request = migrationExecute?.();
+      const [currency, onAccountSelected] = mockOpenAddAccountFlow.mock.calls.at(-1);
+      return { ...view, request, currency, onAccountSelected };
     };
 
-    // What the selector's Add account does: swaps the dialog for the add account drawer.
-    const openAddAccountFlow = (store: ReturnType<typeof startMigration>["store"]) =>
-      act(() => {
-        store.dispatch(closeDialog());
-        setDrawer(AddAccountFlow, {});
-      });
+    // What openAddAccountFlow does: opens the add account drawer.
+    const openAddAccountDrawer = () => act(() => setDrawer(AddAccountFlow, {}));
 
-    it.each([
-      ["no Hyperliquid account", []],
-      ["Hyperliquid accounts", [hypercoreAccount]],
-    ])("should open the hypercore account selector when the wallet has %s", (_, existing) => {
-      const { request, params, store } = startMigration(existing as never[]);
+    it("should open the add account flow for Hyperliquid", () => {
+      const { request, currency } = startMigration();
       request?.catch(() => {});
 
-      expect(store.getState().modularDialog.isOpen).toBe(true);
-      expect(params).toEqual(
-        expect.objectContaining({
-          currencies: ["hypercore"],
-          areCurrenciesFiltered: true,
-          uiUseCase: "perpetuals:receive",
-        }),
-      );
+      expect(currency).toEqual(expect.objectContaining({ id: "hypercore" }));
     });
 
-    it("should resolve with the account the user picks", async () => {
-      const { request, params, store } = startMigration();
+    it("should resolve with the account the user continues with", async () => {
+      const { request, onAccountSelected } = startMigration();
 
-      act(() => params?.onAccountSelected?.(hypercoreAccount));
-
-      await expect(request).resolves.toEqual([hypercoreAccount]);
-      expect(store.getState().modularDialog.isOpen).toBe(false);
-    });
-
-    it("should resolve with the account added and selected through Add account", async () => {
-      const { request, params, store } = startMigration();
-
-      openAddAccountFlow(store);
-      act(() => params?.onAccountSelected?.(hypercoreAccount));
-      act(() => setDrawer());
+      openAddAccountDrawer();
+      act(() => onAccountSelected(hypercoreAccount));
 
       await expect(request).resolves.toEqual([hypercoreAccount]);
     });
 
-    it("should reject when the user closes the selector", async () => {
-      const { request, params } = startMigration();
+    it("should hand the wallet accounts back too, in case the user continued with another one", async () => {
+      const addedAtLegacyAddress = genAccount("hc-0", {
+        currency: getCryptoCurrencyById("hypercore"),
+      }) as never;
+      const { request, onAccountSelected } = startMigration([addedAtLegacyAddress]);
 
-      params?.onClose?.();
+      act(() => onAccountSelected(hypercoreAccount));
 
-      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+      await expect(request).resolves.toEqual([hypercoreAccount, addedAtLegacyAddress]);
     });
 
-    it("should reject when the user closes the add account drawer without selecting", async () => {
-      const { request, store } = startMigration();
+    it("should reject when the user closes the add account drawer without an account", async () => {
+      const { request } = startMigration();
 
-      openAddAccountFlow(store);
+      openAddAccountDrawer();
       act(() => setDrawer());
 
       await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
     });
 
-    it("should reject when the user picks a token account", async () => {
-      const { request, params } = startMigration();
+    it("should reject when the flow hands back a token account", async () => {
+      const { request, onAccountSelected } = startMigration();
 
-      act(() => params?.onAccountSelected?.({ id: "token", type: "TokenAccount" } as never));
+      act(() => onAccountSelected({ id: "token", type: "TokenAccount" }));
 
       await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
     });

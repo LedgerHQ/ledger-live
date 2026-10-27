@@ -305,16 +305,17 @@ describe("Perps handlers", () => {
 
   describe("custom.perps.migrateAccount", () => {
     const hypercoreCurrency = getCryptoCurrencyById("hypercore");
-    const legacyAccount = createFixtureAccount("legacy", getCryptoCurrencyById("arbitrum"));
+    const legacyAccount = {
+      ...createFixtureAccount("legacy", getCryptoCurrencyById("arbitrum")),
+      freshAddress: "0x0BA1876bEeF0f340f96B7aC540744c74281efb17",
+    };
     const newAccount = {
       ...createFixtureAccount("hc-new", hypercoreCurrency),
       freshAddress: legacyAccount.freshAddress,
-      index: legacyAccount.index,
     };
     const otherNewAccount = {
       ...createFixtureAccount("hc-other", hypercoreCurrency),
-      freshAddress: "0x02",
-      index: 1,
+      freshAddress: "0xFbac539F06a8B4c74f0a487AFb30d05D9D209eB2",
     };
     const migrationParams: PerpsMigrationParams = { legacyAccountId: `wallet:${legacyAccount.id}` };
 
@@ -331,71 +332,54 @@ describe("Perps handlers", () => {
       }) as unknown as MockedHandlers;
     };
 
-    it("runs the discovery flow with the legacy account as context", async () => {
-      mockUiMigrationExecute.mockResolvedValue([newAccount]);
-      const migrationHandlers = buildHandlers([legacyAccount]);
-
-      await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
-
-      expect(mockUiMigrationExecute).toHaveBeenCalledWith({ legacyAccount, existingAccounts: [] });
-    });
-
-    it("reports accounts added by the flow as created", async () => {
-      mockUiMigrationExecute.mockResolvedValue([newAccount]);
-      const migrationHandlers = buildHandlers([legacyAccount]);
-
-      const result = await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
-
-      expect(result).toEqual({
-        accounts: [{ accountId: `wallet:${newAccount.id}`, created: true }],
-      });
-    });
-
-    it("hands the Hyperliquid accounts already in the wallet to the flow", async () => {
-      mockUiMigrationExecute.mockResolvedValue([newAccount]);
-      const migrationHandlers = buildHandlers([legacyAccount, newAccount]);
-
-      await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
-
-      expect(mockUiMigrationExecute).toHaveBeenCalledWith({
-        legacyAccount,
-        existingAccounts: [newAccount],
-      });
-    });
-
-    it("reports an account that was already in the wallet as not created", async () => {
-      mockUiMigrationExecute.mockResolvedValue([newAccount]);
-      const migrationHandlers = buildHandlers([legacyAccount, newAccount]);
+    it("returns the Hyperliquid account at the legacy address without opening the flow", async () => {
+      const migrationHandlers = buildHandlers([legacyAccount, otherNewAccount, newAccount]);
 
       const result = await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
 
       expect(result).toEqual({
         accounts: [{ accountId: `wallet:${newAccount.id}`, created: false }],
       });
+      expect(mockUiMigrationExecute).not.toHaveBeenCalled();
     });
 
-    it("reports a known account rescanned under another id as not created", async () => {
-      const rescanned = { ...newAccount, id: "js:2:hypercore:rescanned:" };
-      mockUiMigrationExecute.mockResolvedValue([rescanned]);
-      const migrationHandlers = buildHandlers([legacyAccount, newAccount]);
+    it("matches the legacy address whatever its case", async () => {
+      const lowercase = { ...newAccount, freshAddress: legacyAccount.freshAddress.toLowerCase() };
+      const migrationHandlers = buildHandlers([legacyAccount, lowercase]);
 
       const result = await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
 
+      expect(result.accounts).toEqual([{ accountId: `wallet:${lowercase.id}`, created: false }]);
+    });
+
+    it("opens the add account flow when no Hyperliquid account is at the legacy address", async () => {
+      mockUiMigrationExecute.mockResolvedValue([newAccount]);
+      const migrationHandlers = buildHandlers([legacyAccount, otherNewAccount]);
+
+      const result = await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
+
+      expect(mockUiMigrationExecute).toHaveBeenCalledWith();
       expect(result).toEqual({
-        accounts: [{ accountId: `wallet:${rescanned.id}`, created: false }],
+        accounts: [{ accountId: `wallet:${newAccount.id}`, created: true }],
       });
     });
 
-    it("returns every account the user selected", async () => {
-      mockUiMigrationExecute.mockResolvedValue([newAccount, otherNewAccount]);
+    it("returns only the added account at the legacy address", async () => {
+      mockUiMigrationExecute.mockResolvedValue([otherNewAccount, newAccount]);
       const migrationHandlers = buildHandlers([legacyAccount]);
 
       const result = await migrationHandlers["custom.perps.migrateAccount"](migrationParams);
 
-      expect(result.accounts.map(({ accountId }) => accountId)).toEqual([
-        `wallet:${newAccount.id}`,
-        `wallet:${otherNewAccount.id}`,
-      ]);
+      expect(result.accounts).toEqual([{ accountId: `wallet:${newAccount.id}`, created: true }]);
+    });
+
+    it("rejects added accounts at another address", async () => {
+      mockUiMigrationExecute.mockResolvedValue([otherNewAccount]);
+      const migrationHandlers = buildHandlers([legacyAccount]);
+
+      await expect(
+        migrationHandlers["custom.perps.migrateAccount"](migrationParams),
+      ).rejects.toThrow("ServerError");
     });
 
     it("forwards a cancellation as is", async () => {
@@ -409,8 +393,8 @@ describe("Perps handlers", () => {
       );
     });
 
-    it("forwards a discovery failure as is", async () => {
-      const failure = new Error("discovery failed");
+    it("forwards an add account failure as is", async () => {
+      const failure = new Error("add account failed");
       mockUiMigrationExecute.mockRejectedValue(failure);
       jest.spyOn(console, "warn").mockImplementation(() => {});
       const migrationHandlers = buildHandlers([legacyAccount]);

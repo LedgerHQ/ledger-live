@@ -3,10 +3,6 @@ import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import {
-  getMigrationRequestId,
-  settleMigrationRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
-import {
   getDepositRequestId,
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
@@ -25,11 +21,6 @@ const mockNavigation = { navigate: mockNavigate, addListener: mockAddListener };
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useNavigation: () => mockNavigation,
-}));
-
-const mockOpenDrawer = jest.fn();
-jest.mock("LLM/features/ModularDrawer", () => ({
-  useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
@@ -106,60 +97,49 @@ describe("usePerpsHandlers", () => {
   });
 
   describe("migration.execute", () => {
-    const legacyAccount = { id: "legacy-1" } as never;
     const hypercoreAccount = { id: "hc-1", type: "Account" } as never;
 
-    const startMigration = (existingAccounts: never[] = []) => {
+    const startMigration = () => {
       const view = renderHook(() => usePerpsHandlers([]));
       const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
-      const request = migrationExecute?.({ legacyAccount, existingAccounts });
-      const [drawerParams] = mockOpenDrawer.mock.calls.at(-1);
-      return { ...view, request, drawerParams };
+      const request = migrationExecute?.();
+      const [navigator, { params: flowParams }] = mockNavigate.mock.calls.at(-1);
+      return { ...view, migrationExecute, request, navigator, flowParams };
     };
 
-    it.each([
-      ["no Hyperliquid account", []],
-      ["Hyperliquid accounts", [hypercoreAccount]],
-    ])("should open the hypercore account drawer when the wallet has %s", (_, existing) => {
-      const { request, drawerParams } = startMigration(existing as never[]);
+    it("should open the inline Hyperliquid add account flow", () => {
+      const { request, navigator, flowParams } = startMigration();
       request?.catch(() => {});
 
-      expect(drawerParams).toEqual(
+      expect(navigator).toBe("DeviceSelection");
+      expect(flowParams).toEqual(
         expect.objectContaining({
-          currencies: ["hypercore"],
-          areCurrenciesFiltered: true,
-          enableAccountSelection: true,
-          uiUseCase: "perpetuals:receive",
+          currency: expect.objectContaining({ id: "hypercore" }),
+          context: "addAccounts",
+          inline: true,
+          navigationDepth: 2,
         }),
       );
-      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it("should resolve with the account the user picks or adds", async () => {
-      const { request, drawerParams } = startMigration();
+    it("should resolve with every account the user added", async () => {
+      const { request, flowParams } = startMigration();
+      const otherAccount = { id: "hc-2", type: "Account" };
 
-      drawerParams.onAccountSelected(hypercoreAccount);
+      flowParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount, otherAccount] });
 
-      await expect(request).resolves.toEqual([hypercoreAccount]);
+      await expect(request).resolves.toEqual([hypercoreAccount, otherAccount]);
     });
 
-    it("should reject when the user closes the drawer or abandons Add account", async () => {
-      const { request, drawerParams } = startMigration();
+    it("should reject when the user closes the add account flow", async () => {
+      const { request, flowParams } = startMigration();
 
-      drawerParams.onCancel();
+      flowParams.onCloseNavigation();
 
       await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
     });
 
-    it("should reject when the user picks a token account", async () => {
-      const { request, drawerParams } = startMigration();
-
-      drawerParams.onAccountSelected({ id: "token", type: "TokenAccount" });
-
-      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
-    });
-
-    it("should reject when the user comes back to Perps without selecting", async () => {
+    it("should reject when the user comes back to Perps without adding an account", async () => {
       const { request } = startMigration();
 
       const [event, onFocus] = mockAddListener.mock.calls[0];
@@ -170,25 +150,25 @@ describe("usePerpsHandlers", () => {
       await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
     });
 
-    it("should stay a success when Perps regains focus after the selection", async () => {
-      const { request, drawerParams } = startMigration();
+    it("should stay a success when Perps regains focus after the accounts are added", async () => {
+      const { request, flowParams } = startMigration();
 
-      drawerParams.onAccountSelected(hypercoreAccount);
+      flowParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount] });
       mockAddListener.mock.calls[0][1]();
 
       await expect(request).resolves.toEqual([hypercoreAccount]);
     });
 
-    it("should ignore a selection from an abandoned attempt", async () => {
-      const { request: first, drawerParams: firstParams } = startMigration();
+    it("should ignore callbacks from an abandoned attempt", async () => {
+      const { request: first, flowParams: firstParams, migrationExecute } = startMigration();
       mockAddListener.mock.calls[0][1]();
       await expect(first).rejects.toBeInstanceOf(UserRefusedOnDevice);
 
-      const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
-      const second = migrationExecute?.({ legacyAccount, existingAccounts: [] });
-      firstParams.onAccountSelected(hypercoreAccount);
-      firstParams.onCancel();
-      settleMigrationRequest(getMigrationRequestId(), [{ id: "hc-2" }] as never[]);
+      const second = migrationExecute?.();
+      const [, { params: secondParams }] = mockNavigate.mock.calls.at(-1);
+      firstParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount] });
+      firstParams.onCloseNavigation();
+      secondParams.onSuccess({ scannedAccounts: [], selected: [{ id: "hc-2" }] });
 
       await expect(second).resolves.toEqual([{ id: "hc-2" }]);
     });

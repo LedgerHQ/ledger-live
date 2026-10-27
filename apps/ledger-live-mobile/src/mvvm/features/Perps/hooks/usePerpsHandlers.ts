@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -8,9 +8,9 @@ import {
   type PerpsSignResult,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ScreenName } from "~/const";
-import { useModularDrawerController } from "LLM/features/ModularDrawer";
-import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { NavigatorName, ScreenName } from "~/const";
+import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {
@@ -20,11 +20,9 @@ import {
 import {
   beginMigrationRequest,
   cancelMigrationRequest,
-  getMigrationRequestId,
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
-
-const HYPERCORE_CURRENCY_ID = "hypercore";
+import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/migration";
 
 export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -72,36 +70,34 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
 
   useEffect(() => cancelDepositRequest, []);
 
-  const { openDrawer } = useModularDrawerController();
-
-  // Same drawer as the account.request of the discover apps: pick a Hyperliquid account, or add
-  // one through its Add account step, which hands the added account back to onAccountSelected.
+  // Only called when the wallet has no Hyperliquid account at the legacy address: runs the standard
+  // add account flow inline and hands back every added account, the server picks the matching one.
+  const migrationRequestId = useRef<string | null>(null);
   const uiMigrationExecute = useCallback(() => {
-    const request = beginMigrationRequest();
-    const requestId = getMigrationRequestId();
+    const { id, promise } = beginMigrationRequest();
+    migrationRequestId.current = id;
 
-    openDrawer({
-      currencies: [HYPERCORE_CURRENCY_ID],
-      areCurrenciesFiltered: true,
-      enableAccountSelection: true,
-      uiUseCase: PERPS_UI_USE_CASE.receive,
-      flow: PERPS_UI_USE_CASE.receive,
-      onAccountSelected: account => {
-        if (account.type === "Account") {
-          settleMigrationRequest(requestId, [account]);
-        } else {
-          cancelMigrationRequest(requestId);
-        }
+    navigation.navigate(NavigatorName.DeviceSelection, {
+      screen: ScreenName.SelectDevice,
+      params: {
+        currency: getCryptoCurrencyById(HYPERCORE_CURRENCY_ID),
+        context: AddAccountContexts.AddAccounts,
+        inline: true,
+        // SelectDevice + the add account screens
+        navigationDepth: 2,
+        onCloseNavigation: () => cancelMigrationRequest(id),
+        onSuccess: res => settleMigrationRequest(id, res?.selected ?? []),
       },
-      onCancel: () => cancelMigrationRequest(requestId),
     });
 
-    return request;
-  }, [openDrawer]);
+    return promise;
+  }, [navigation]);
 
-  // Coming back to Perps without a selected account (X, back, device error) abandons the migration.
+  // Coming back to Perps without added accounts (X, back, device error) abandons the migration.
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => cancelMigrationRequest());
+    const unsubscribe = navigation.addListener("focus", () =>
+      cancelMigrationRequest(migrationRequestId.current),
+    );
     return () => {
       unsubscribe();
       cancelMigrationRequest();

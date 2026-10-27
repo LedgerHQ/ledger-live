@@ -5,12 +5,10 @@ import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { convertAction, type ActionWithNonce } from "./types";
 import { getAccountIdFromWalletAccountId, getWalletApiIdFromAccountId } from "../converters";
 import {
-  getHypercoreAccounts,
+  findMigrationAccount,
   type PerpsMigrationParams,
   type PerpsMigrationResult,
-  type PerpsMigrationUiParams,
 } from "./migration";
-import { sameAccountIdentity } from "../../account/addAccounts";
 import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
@@ -63,10 +61,12 @@ export type PerpsUiHooks = {
    */
   "deposit.execute"?: (params: PerpsDepositUiParams) => Promise<PerpsDepositResult> | void;
   /**
-   * Lets the user pick one of `existingAccounts` or add one through account discovery, and
-   * resolves with the accounts the user selected. Reject with a `UserRefused*` error when the user abandons.
+   * Runs the add account flow for Hyperliquid and resolves with the accounts the user added; other
+   * wallet accounts may come along, only the one at the legacy account's address is used.
+   * Only called when the wallet has no Hyperliquid account at that address.
+   * Reject with a `UserRefused*` error when the user abandons.
    */
-  "migration.execute"?: (params: PerpsMigrationUiParams) => Promise<Account[]>;
+  "migration.execute"?: () => Promise<Account[]>;
 };
 
 export type PerpsSignParams = {
@@ -209,21 +209,34 @@ export const handlers = ({
           );
         }
 
-        const existingAccounts = getHypercoreAccounts(accounts);
-
-        try {
-          const selectedAccounts = await uiMigrationExecute({ legacyAccount, existingAccounts });
+        const existingAccount = findMigrationAccount(accounts, legacyAccount);
+        if (existingAccount) {
           return {
-            accounts: selectedAccounts.map(account => ({
-              accountId: getWalletApiIdFromAccountId(account.id),
-              // Discovery can rescan a known account under a new id, so compare by identity.
-              created: !existingAccounts.some(existing => sameAccountIdentity(existing, account)),
-            })),
+            accounts: [
+              { accountId: getWalletApiIdFromAccountId(existingAccount.id), created: false },
+            ],
           };
+        }
+
+        let addedAccounts: Account[];
+        try {
+          addedAccounts = await uiMigrationExecute();
         } catch (error) {
           console.warn("[perps] Migration request rejected", error);
           throw error;
         }
+
+        const migratedAccount = findMigrationAccount(addedAccounts, legacyAccount);
+        if (!migratedAccount) {
+          throw new ServerError(
+            createUnknownError({
+              message: "no Hyperliquid account at the legacy Perps account address was added",
+            }),
+          );
+        }
+        return {
+          accounts: [{ accountId: getWalletApiIdFromAccountId(migratedAccount.id), created: true }],
+        };
       },
     ),
   };
