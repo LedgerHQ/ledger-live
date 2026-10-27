@@ -124,6 +124,28 @@
     "job": {
       "type": "integer"
     },
+    "datadog_run": {
+      "type": "object",
+      "description": "Datadog result for the run environment. Required for backend causes.",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "confirmed",
+            "not_confirmed",
+            "not_checked"
+          ]
+        },
+        "ref": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
     "prd": {
       "type": "object",
       "description": "Is the problem confirmed in production?",
@@ -140,6 +162,9 @@
           ]
         },
         "ref": {
+          "type": "string"
+        },
+        "summary": {
           "type": "string"
         }
       }

@@ -7,6 +7,7 @@ Input: findings with tickets. Output: `findings.json`, `report.md`.
    - Run, workflow, device, environment, head SHA.
    - Summary in five sentences or fewer: the main causes.
    - One table, grouped by platform, then cause: test, verdict, area, status, ticket.
+   - A "Datadog" table for every finding with `area: backend`: cause, backend, run environment result with numbers and link, PRD result with numbers and link. If a check did not run, write `not checked` and the reason.
    - Flaky tests, listed apart.
    - Counts: failed, flaky, left out by the filter.
    - Open items: every `user_actions` entry.
