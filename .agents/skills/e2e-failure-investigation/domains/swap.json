@@ -1,0 +1,115 @@
+{
+  "domain": "swap",
+  "jira": {
+    "summary_prefix": "[SWAP]",
+    "components": {
+      "product": "SWAP app",
+      "backend": "SWAP backend",
+      "test": "SWAP app",
+      "infra": "SWAP backend"
+    },
+    "dream_team": "Trading"
+  },
+  "test_filter": {
+    "desktop_globs": [
+      "e2e/desktop/tests/specs/*swap*.spec.ts"
+    ],
+    "mobile_globs": [
+      "e2e/mobile/specs/swap/**"
+    ],
+    "tags": [
+      "@swap",
+      "@swapSmoke"
+    ],
+    "include_when_shared_cause": [
+      "Buy entry point from market page",
+      "Delegate from market",
+      "discreet mode"
+    ],
+    "ignore": [
+      "Delegate",
+      "Earn",
+      "Borrow",
+      "Send",
+      "Portfolio",
+      "Staking"
+    ]
+  },
+  "backend": {
+    "_note": "datadog_backend is a key in datadog-backend-check/config/datadog.json. Service names live there.",
+    "swap_api": {
+      "hosts": [
+        "global.api.stg.ledger-test.com/swap",
+        "global.api.prd.ledger.com/swap"
+      ],
+      "datadog_backend": "swap_api"
+    },
+    "countervalues": {
+      "hosts": [
+        "global.api.prd.ledger.com/countervalue"
+      ],
+      "datadog_backend": "countervalues"
+    }
+  },
+  "signatures": [
+    {
+      "id": "countervalues-429",
+      "pattern": "Rate limit exceeded|\\b429 https://global\\.api\\.prd\\.ledger\\.com/countervalue",
+      "cause": "Countervalues gateway rate limit (429)",
+      "verdict_hint": "bug",
+      "area": "backend",
+      "backend": "countervalues",
+      "check": "Count 429s in network failures. Confirm in Datadog for the run window."
+    },
+    {
+      "id": "market-list-empty",
+      "pattern": "market-list-data|market-btc-row|marketItem-",
+      "cause": "Market list did not load",
+      "verdict_hint": "bug",
+      "area": "backend",
+      "backend": "countervalues",
+      "check": "Look for 429 on /countervalue/ in network failures. If none, check market feature flags."
+    },
+    {
+      "id": "empty-swap-amount",
+      "pattern": "Could not resolve USD amount|best-value-info-icon",
+      "cause": "Min amount helper returned no amount, so no quotes appear",
+      "verdict_hint": "test_adjustment",
+      "area": "test",
+      "check": "Find the first link: quote probe minAmount, then getAmountFromUSD error, then the countervalues status."
+    },
+    {
+      "id": "discreet-fiat-missing",
+      "pattern": "\\$\\*\\*\\*",
+      "cause": "Fiat amount missing, countervalues not loaded",
+      "verdict_hint": "bug",
+      "area": "backend",
+      "backend": "countervalues",
+      "check": "Same as countervalues-429."
+    },
+    {
+      "id": "device-review-screen",
+      "pattern": "Review transaction.*not found on device screen",
+      "cause": "Speculos screen text differs from the spec",
+      "verdict_hint": "test_adjustment",
+      "area": "test",
+      "check": "Compare last screen text with the spec for that device. Open, not yet explained for Nano S."
+    },
+    {
+      "id": "account-dialog-removed",
+      "pattern": "getByRole\\('dialog'\\)",
+      "cause": "App skips the account dialog when one account exists",
+      "verdict_hint": "test_adjustment",
+      "area": "test",
+      "check": "Read useSwapNavigation.ts and recent changes to it."
+    },
+    {
+      "id": "sync-stuck",
+      "pattern": "topbar-(action-button-)?synchronize",
+      "cause": "Account sync does not finish",
+      "verdict_hint": null,
+      "area": null,
+      "check": "Not swap. Ignore unless it breaks a swap test."
+    }
+  ]
+}

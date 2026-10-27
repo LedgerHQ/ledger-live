@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bug ticket result",
+  "type": "object",
+  "required": ["action", "reason"],
+  "properties": {
+    "action": { "enum": ["found", "created", "commented", "skipped"] },
+    "key": { "type": ["string", "null"], "pattern": "^LIVE-[0-9]+$" },
+    "url": { "type": ["string", "null"] },
+    "reason": { "type": "string" },
+    "created_by_agent": { "type": "boolean" },
+    "linked_to": { "type": ["string", "null"], "description": "Closed issue linked as a possible regression" },
+    "attached": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "ok"],
+        "properties": { "file": { "type": "string" }, "ok": { "type": "boolean" }, "error": { "type": "string" } }
+      }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "action": { "enum": ["found", "created", "commented"] } } }, "then": { "required": ["key", "url"] } }
+  ]
+}

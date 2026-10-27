@@ -1,0 +1,45 @@
+{
+  "_note": "Edited by owners only. Values read from LIVE field metadata on 2026-10-26. Priority mapping is a first draft and needs review.",
+  "site": "https://ledgerhq.atlassian.net",
+  "cloud_id": "5576c6af-2aa6-451e-b92d-9c02363b46fa",
+  "project": "LIVE",
+  "labels": ["qaa"],
+  "cause_label_prefix": "e2e-",
+  "issue_types": {
+    "bug": { "name": "Bug", "id": "10004", "template": "templates/bug.md" },
+    "test_adjustment": { "name": "Task", "id": "10002", "template": "templates/task.md" }
+  },
+  "components": {
+    "_note": "Names come from the domain pack. Valid values in LIVE: SWAP app, SWAP backend, LLD, LLM, BUY app, SELL App, EARN app, PERPS app.",
+    "ids": { "SWAP app": "11383", "SWAP backend": "11139", "LLD": "11206", "LLM": "11205" }
+  },
+  "fields": {
+    "bug_description": "customfield_10288",
+    "dream_team": "customfield_10332",
+    "phase_detected": "customfield_11137",
+    "affects_versions": "versions"
+  },
+  "dream_team_ids": { "Trading": "40195" },
+  "phase_detected": {
+    "ids": { "Development": "17005", "Pre-Release": "17006", "Production": "17007" },
+    "by_branch": { "develop": "Development", "release/*": "Pre-Release", "hotfix/*": "Pre-Release", "main": "Production" },
+    "default": "Development"
+  },
+  "affects_versions": {
+    "default": { "name": "N/A", "id": "11581" },
+    "_note": "For release branches pick the LWD-x.y or LWM-x.y version that matches the branch if it exists. Otherwise use the default."
+  },
+  "priority_ids": { "Highest": "1", "High": "2", "Medium": "3", "Low": "4", "Lowest": "5" },
+  "priority_mapping": {
+    "_note": "Jira has no Severity field. Use Priority. Keys are used in priority_key.",
+    "bug_production_all_flows": "Highest",
+    "bug_production_single_flow": "High",
+    "bug_testing_all_flows": "High",
+    "bug_testing_single_flow": "Medium",
+    "test_blocks_other_tests": "Medium",
+    "test_single_test": "Low"
+  },
+  "dedupe_jql": "project = LIVE AND labels = \"{cause_label}\" ORDER BY created ASC",
+  "open_status_categories": ["new", "indeterminate"],
+  "limits": { "max_file_mb": 10, "max_total_mb": 25, "max_files": 10 }
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Bug ticket request",
+  "type": "object",
+  "required": ["cause_id", "verdict", "area", "cause", "environment", "run", "tests", "evidence", "priority_key", "domain_jira", "allow_create"],
+  "properties": {
+    "cause_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "verdict": { "enum": ["bug", "test_adjustment"] },
+    "area": { "enum": ["product", "backend", "test", "infra"] },
+    "cause": { "type": "string" },
+    "environment": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "enum": ["testing", "production"] },
+        "swap_api_base": { "type": "string" },
+        "firebase_env": { "type": "string" },
+        "feature_flags": { "type": ["string", "null"] },
+        "speculos_mode": { "type": ["string", "null"] }
+      }
+    },
+    "run": {
+      "type": "object",
+      "required": ["id", "url", "branch", "head_sha"],
+      "properties": {
+        "id": { "type": "integer" },
+        "url": { "type": "string" },
+        "branch": { "type": "string" },
+        "head_sha": { "type": "string" },
+        "created_at": { "type": "string" }
+      }
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["test", "platform"],
+        "properties": {
+          "test": { "type": "string" },
+          "platform": { "enum": ["desktop", "ios", "android"] },
+          "device": { "type": ["string", "null"] },
+          "file": { "type": ["string", "null"] },
+          "line": { "type": ["integer", "null"] },
+          "first_error": { "type": "string" },
+          "failing_step": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object", "required": ["kind", "ref"], "properties": { "kind": { "type": "string" }, "ref": { "type": "string" }, "quote": { "type": "string" } } }
+    },
+    "regression_window": {
+      "type": ["object", "null"],
+      "properties": { "good_sha": { "type": "string" }, "bad_sha": { "type": "string" }, "suspects": { "type": "array", "items": { "type": "string" } } }
+    },
+    "recurrence": {
+      "type": "object",
+      "properties": { "first_seen": { "type": "string" }, "last_seen": { "type": "string" }, "runs": { "type": "integer" } }
+    },
+    "priority_key": { "type": "string", "description": "A key of priority_mapping in config/jira.json" },
+    "domain_jira": {
+      "type": "object",
+      "required": ["summary_prefix", "components"],
+      "properties": {
+        "summary_prefix": { "type": "string" },
+        "components": { "type": "object", "description": "Component name per area", "additionalProperties": { "type": "string" } },
+        "dream_team": { "type": "string" }
+      }
+    },
+    "attachments_dir": { "type": ["string", "null"] },
+    "allow_create": { "type": "boolean" }
+  }
+}

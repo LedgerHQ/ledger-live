@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Datadog backend check result",
+  "type": "object",
+  "required": ["run"],
+  "properties": { "run": { "$ref": "#/definitions/entry" }, "prd": { "$ref": "#/definitions/entry" } },
+  "definitions": {
+    "entry": {
+      "type": "object",
+      "required": ["result", "reason", "env_used"],
+      "properties": {
+        "result": { "enum": ["found", "not_found", "not_checked"] },
+        "reason": { "type": "string" },
+        "env_used": { "enum": ["stg", "prd"] },
+        "query": { "type": "string" },
+        "numbers": {
+          "type": "object",
+          "properties": {
+            "count_window": { "type": "integer" },
+            "count_baseline": { "type": "integer" },
+            "window_minutes": { "type": "number" },
+            "baseline_hours": { "type": "number" },
+            "rate_ratio": { "type": ["number", "null"] }
+          }
+        },
+        "datadog_url": { "type": "string" }
+      }
+    }
+  }
+}

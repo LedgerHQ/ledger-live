@@ -1,0 +1,41 @@
+{
+  "_note": "Edited by owners only. Values with verified:false are guesses and must be confirmed.",
+  "api_host": "api.datadoghq.eu",
+  "environments": {
+    "stg": {
+      "app_host": "ledgerstg.datadoghq.eu",
+      "env_tag": "stg",
+      "api_key_env": "DD_STG_API_KEY",
+      "app_key_env": "DD_STG_APP_KEY",
+      "verified": "app_host and env_tag seen in LIVE-39988. API host for the STG org is unverified."
+    },
+    "prd": {
+      "app_host": "app.datadoghq.eu",
+      "env_tag": "prd",
+      "api_key_env": "DD_PRD_API_KEY",
+      "app_key_env": "DD_PRD_APP_KEY",
+      "verified": "app_host and env_tag seen in LIVE-39988 and LIVE-39630."
+    }
+  },
+  "run_environment_to_datadog": { "testing": "stg", "production": "prd" },
+  "backends": {
+    "swap_api": {
+      "service": "swap-service",
+      "env_follows_run": true,
+      "facets": { "status": "@http.status_code", "route": "@http.route", "provider": "@swap.swap.provider", "error": "@swap.swap.error" },
+      "verified": "service, status, route and provider facets seen in LIVE-39630 and LIVE-39988."
+    },
+    "countervalues": {
+      "service": null,
+      "fixed_env": "prd",
+      "facets": { "status": "@http.status_code" },
+      "verified": "Service name unknown. Host is global.api.prd.ledger.com/countervalue. Fill the service."
+    }
+  },
+  "thresholds": {
+    "min_count": 3,
+    "rate_factor": 3,
+    "window_margin_minutes": 5,
+    "baseline_hours": 24
+  }
+}

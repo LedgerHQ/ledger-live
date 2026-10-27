@@ -1,0 +1,36 @@
+{
+  "domain": "<name>",
+  "jira": {
+    "summary_prefix": "[<TAG>]",
+    "components": {
+      "product": "<component>",
+      "backend": "<component>",
+      "test": "<component>",
+      "infra": "<component>"
+    },
+    "dream_team": "<Dream Team>"
+  },
+  "test_filter": {
+    "desktop_globs": [],
+    "mobile_globs": [],
+    "tags": [],
+    "include_when_shared_cause": [],
+    "ignore": []
+  },
+  "backend": {
+    "<service>": {
+      "datadog_service": null,
+      "hosts": []
+    }
+  },
+  "signatures": [
+    {
+      "id": "<slug>",
+      "pattern": "<regex>",
+      "cause": "<text>",
+      "verdict_hint": "bug",
+      "area": "product",
+      "check": "<what to verify>"
+    }
+  ]
+}

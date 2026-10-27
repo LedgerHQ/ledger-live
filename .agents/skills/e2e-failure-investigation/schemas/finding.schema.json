@@ -1,0 +1,205 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "E2E failure finding",
+  "type": "object",
+  "required": [
+    "test",
+    "platform",
+    "environment",
+    "cause_id",
+    "cause",
+    "verdict",
+    "status",
+    "run",
+    "job"
+  ],
+  "properties": {
+    "test": {
+      "type": "string"
+    },
+    "platform": {
+      "enum": [
+        "desktop",
+        "ios",
+        "android"
+      ]
+    },
+    "device": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "environment": {
+      "enum": [
+        "testing",
+        "production"
+      ]
+    },
+    "cause_id": {
+      "type": "string",
+      "description": "Stable slug, same for the same cause across runs"
+    },
+    "cause": {
+      "type": "string"
+    },
+    "verdict": {
+      "enum": [
+        "bug",
+        "test_adjustment"
+      ]
+    },
+    "area": {
+      "enum": [
+        "product",
+        "backend",
+        "test",
+        "infra"
+      ]
+    },
+    "status": {
+      "enum": [
+        "confirmed",
+        "known",
+        "not_confirmed"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "properties": {
+          "kind": {
+            "enum": [
+              "log_line",
+              "file_line",
+              "pr_diff",
+              "datadog",
+              "network",
+              "artifact"
+            ]
+          },
+          "ref": {
+            "type": "string"
+          },
+          "quote": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ticket": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "created_by_agent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "user_actions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "run": {
+      "type": "integer"
+    },
+    "job": {
+      "type": "integer"
+    },
+    "prd": {
+      "type": "object",
+      "description": "Is the problem confirmed in production?",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "confirmed",
+            "not_confirmed",
+            "not_applicable",
+            "not_checked"
+          ]
+        },
+        "ref": {
+          "type": "string"
+        }
+      }
+    },
+    "outcome": {
+      "enum": [
+        "failed",
+        "flaky"
+      ],
+      "description": "flaky means it passed on retry"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "confirmed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "minItems": 1
+          }
+        },
+        "required": [
+          "evidence"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "known"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "ticket"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "not_confirmed"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "attempts",
+          "user_actions"
+        ]
+      }
+    }
+  ]
+}

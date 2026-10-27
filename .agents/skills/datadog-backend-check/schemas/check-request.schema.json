@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Datadog backend check request",
+  "type": "object",
+  "required": ["run_environment", "backend", "symptom", "window"],
+  "properties": {
+    "run_environment": { "enum": ["testing", "production"] },
+    "backend": { "type": "string" },
+    "symptom": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["http_status", "errors"] },
+        "status": { "type": "string", "pattern": "^[1-5][0-9]{2}$" },
+        "resource": { "type": "string" }
+      }
+    },
+    "window": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": { "start": { "type": "string", "format": "date-time" }, "end": { "type": "string", "format": "date-time" } }
+    },
+    "check_prd": { "type": "boolean", "default": false }
+  },
+  "allOf": [{ "if": { "properties": { "symptom": { "properties": { "type": { "const": "http_status" } } } } }, "then": { "properties": { "symptom": { "required": ["status"] } } } }]
+}
