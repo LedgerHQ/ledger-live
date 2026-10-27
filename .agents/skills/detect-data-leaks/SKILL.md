@@ -29,7 +29,7 @@ Prioritize these, but do not exclude others:
 
 Analytics also leave from the monorepo layers (`shared/`, `domain/`, `features/`, `devtools/`), not only the apps:
 
-- `@shared/analytics` owns `track()` and `trackPage()`; `@shared/analytics-react` wraps them in `<Track>`, `<TrackPage>` and `<TrackScreen>`. The apps plug their vendor (`setAnalytics`) and filters into this pipeline, so a layer call reaches the same vendor as an app call.
+- `@shared/analytics` owns `track()` and `trackPage()`; `@shared/analytics-react` wraps them in `<Track>` and `<TrackScreen>` (universal, web and native). The apps plug their vendor (`setAnalytics`) and filters into this pipeline, so a layer call reaches the same vendor as an app call.
 - Feature packages send events either through those functions (`@features/flow-fear-and-greed`, and `@features/platform-pay-analytics`, which builds `createPayAnalyticsHelper` on `@shared/analytics`'s `track`) or through an adapter the app injects (`createContactsAnalyticsHelper` in `@features/flow-contacts`). For an injected adapter, read the app side that builds it: that is where the payload reaches the vendor.
 - `@features/platform-coin-observability` decides when coin errors reach Datadog.
 
@@ -45,7 +45,7 @@ Treat any of these as high-risk when found in added lines:
 
 2. In added lines, identify:
    - Assignments of high-risk variables (see above)
-   - New calls to third-party sinks or wrappers: `track()`, `trackPage()`, `<Track>`, `<TrackPage>`, `<TrackScreen>`, analytics adapter methods (`adapter.track()`, `analytics.trackPage()`, `track*()` helpers), `logger.*()`, `captureException()`
+   - New calls to third-party sinks or wrappers: `track()`, `trackPage()`, `<Track>`, `<TrackScreen>`, analytics adapter methods (`adapter.track()`, `analytics.trackPage()`, `track*()` helpers), `logger.*()`, `captureException()`
    - Added lines under `shared/`, `domain/`, `features/` and `devtools/` count as much as added lines under `apps/`
 
 3. In removed lines, identify:
@@ -74,7 +74,7 @@ SRC=(apps shared domain features devtools)
 
 **Analytics call sites in the layers:**
 ```bash
-grep -rnE "\btrack(Page)?\(|<Track(Page|Screen)?\b" shared domain features devtools --include="*.ts" --include="*.tsx" \
+grep -rnE "\btrack(Page)?\(|<Track(Screen)?\b" shared domain features devtools --include="*.ts" --include="*.tsx" \
   | grep -vE "\.test\.|/__tests__/|/node_modules/"
 ```
 
