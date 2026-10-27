@@ -81,10 +81,14 @@ describe("scrubPiiString", () => {
     expect(scrubPiiString(input)).toEqual({ value: input, kinds: [] });
   });
 
-  it("scans a long word in linear time", () => {
+  it.each([
+    ["a long word", "a".repeat(50_000)],
+    ["a long run of punctuation", "a.".repeat(25_000)],
+    ["a long run of link starts", "https://".repeat(6_250)],
+  ])("scans %s in linear time", (_label, input) => {
     const start = Date.now();
 
-    scrubPiiString("a".repeat(50_000));
+    scrubPiiString(input);
 
     expect(Date.now() - start).toBeLessThan(100);
   });
