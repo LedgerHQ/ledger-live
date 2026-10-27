@@ -1,6 +1,4 @@
 ---
-"@shared/api-services": minor
-"@domain/api-account-portfolio": minor
 "@devtools/bindings": minor
 "@devtools/account-portfolio": minor
 "@devtools/registry": minor
