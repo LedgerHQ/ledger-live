@@ -19,30 +19,67 @@ import {
   findEthereumToken,
   findSolanaMintProgram,
   findSolanaToken,
+  sameTicker,
 } from "../../agent-intent/token-lookup";
-import { parseSenderInput, resolveSenderFromAccount } from "../../agent-intent/sender";
+import {
+  parseSenderInput,
+  resolveSenderAccount,
+  senderFromAccount,
+  type SenderAccount,
+} from "../../agent-intent/sender";
+import { resolveTokenByTicker } from "../../agent-intent/token-by-ticker";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
   submitAgentIntent,
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
-import { createCommandOutput } from "../../output";
+import { createCommandOutput, type CommandOutput } from "../../output";
+import { mainnetOf } from "../../shared/accountDescriptor";
 
-/**
- * `--token` picks the network by its shape: a `0x` contract is an ERC-20 on Ethereum, anything else
- * an SPL mint on Solana. Without it, the SOL ticker proposes a native Solana send and any other an
- * Ethereum one. Read before the output is set up, so it never throws: a malformed `--amount` is
- * reported by the full parse inside the command.
- */
-function networkOf(flags: { amount: string; token?: string }): IntentNetwork {
-  if (flags.token) return /^0x/i.test(flags.token) ? "ethereum" : "solana";
-  try {
-    const { ticker } = parseAmountWithTicker(flags.amount);
-    return ticker.toUpperCase() === solanaAsset().ticker.toUpperCase() ? "solana" : "ethereum";
-  } catch {
-    return "ethereum";
+const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+type SenderInput = { account: SenderAccount } | { address: string };
+
+function networkOfAddress(address: string, flag: "from" | "token"): IntentNetwork {
+  if (/^0x/i.test(address)) return "ethereum";
+  if (BASE58_ADDRESS.test(address)) return "solana";
+  throw new Error(
+    `--${flag} ${address} is neither an EVM address (0x…) nor a Solana one (base58), so it names no ` +
+      "network for the token.",
+  );
+}
+
+function nativeNetworkOf(ticker: string): IntentNetwork | undefined {
+  if (sameTicker(ticker, solanaAsset().ticker)) return "solana";
+  if (sameTicker(ticker, ethereumAsset().ticker)) return "ethereum";
+  return undefined;
+}
+
+/** `--token`'s network by its shape, else ETH's or SOL's, and only then the sender's. */
+function networkOf(
+  ticker: string,
+  token: string | undefined,
+  senderInput: SenderInput,
+): IntentNetwork {
+  if (token) return networkOfAddress(token, "token");
+  const nativeNetwork = nativeNetworkOf(ticker);
+  if ("address" in senderInput) {
+    return nativeNetwork ?? networkOfAddress(senderInput.address, "from");
   }
+  const { label, descriptor } = senderInput.account;
+  const accountMainnet = mainnetOf(descriptor.network);
+  if (!nativeNetwork) return accountMainnet === "solana" ? "solana" : "ethereum";
+  const otherIntentNetwork = nativeNetwork === "solana" ? "ethereum" : "solana";
+  if (accountMainnet === otherIntentNetwork) {
+    const native = getCryptoCurrencyById(nativeNetwork);
+    throw new Error(
+      `Account "${label}" is on ${descriptor.network}, but ${native.ticker} is a native ` +
+        `${native.name} send. To send a token with that ticker from this account, pass its ` +
+        "address with --token.",
+    );
+  }
+  return nativeNetwork;
 }
 
 /** A Solana send has no fee level (the service sets the priority fee); a memo is Solana only. */
@@ -75,17 +112,13 @@ type SendParties = {
 };
 
 /** Solana addresses are checked by the SDK later: canonical base58, 32 bytes. */
-async function resolveParties(
-  network: IntentNetwork,
-  senderInput: { account: string } | { address: string },
-  to: string,
-): Promise<SendParties> {
+function resolveParties(network: IntentNetwork, senderInput: SenderInput, to: string): SendParties {
   const recipient = network === "ethereum" ? parseEvmAddress(to, "to") : to;
   if ("account" in senderInput) {
     return {
-      sender: await resolveSenderFromAccount(senderInput.account, "send", network),
+      sender: senderFromAccount(senderInput.account, "send", network),
       recipient,
-      senderField: `account "${senderInput.account}"`,
+      senderField: `account "${senderInput.account.label}"`,
     };
   }
   const sender =
@@ -98,48 +131,49 @@ function solanaAsset(): SolanaAsset {
   return { type: "native", ticker: sol.ticker, decimals: sol.units[0].magnitude };
 }
 
-async function resolveEthereumAsset(
+function ethereumAsset(): EthereumAsset {
+  const eth = getCryptoCurrencyById("ethereum");
+  return { type: "native", ticker: eth.ticker, decimals: eth.units[0].magnitude };
+}
+
+async function resolveErc20(
   ticker: string,
-  tokenContract: string | undefined,
+  tokenContract: string,
+  fromTokenFlag: boolean,
 ): Promise<EthereumAsset> {
-  if (!tokenContract) {
-    const eth = getCryptoCurrencyById("ethereum");
-    if (ticker.toUpperCase() !== eth.ticker.toUpperCase()) {
-      throw new Error(
-        `--amount is in ${ticker}, but without --token the intent sends native ${eth.ticker}. ` +
-          `Pass the token's contract with --token, use '${eth.ticker}', or use '${solanaAsset().ticker}' ` +
-          "for a Solana send.",
-      );
-    }
-    return { type: "native", ticker: eth.ticker, decimals: eth.units[0].magnitude };
-  }
   const contract = parseEvmAddress(tokenContract, "token");
+  const label = fromTokenFlag ? `--token ${contract}` : contract;
   const token = await findEthereumToken(contract);
   if (!token) {
     throw new Error(
-      `--token ${contract} is not a known ERC-20 token on Ethereum mainnet. Check the contract ` +
+      `${label} is not a known ERC-20 token on Ethereum mainnet. Check the contract ` +
         "address with `wallet-cli assets token ethereum <address>`.",
     );
   }
-  if (ticker.toUpperCase() !== token.ticker.toUpperCase()) {
+  if (!sameTicker(ticker, token.ticker)) {
     throw new Error(
-      `--amount is in ${ticker}, but --token ${contract} is ${token.ticker}. Fix whichever one is wrong.`,
+      `--amount is in ${ticker}, but ${label} is ${token.ticker}. Fix whichever one is wrong.`,
     );
   }
   return { type: "erc20", ticker: token.ticker, decimals: token.decimals, contract };
 }
 
-async function resolveSplToken(ticker: string, mint: string): Promise<SolanaAsset> {
+async function resolveSplToken(
+  ticker: string,
+  mint: string,
+  fromTokenFlag: boolean,
+): Promise<SolanaAsset> {
+  const label = fromTokenFlag ? `--token ${mint}` : mint;
   const token = await findSolanaToken(mint);
   if (!token) {
     throw new Error(
-      `--token ${mint} is not a known SPL token on Solana mainnet. Check the mint address with ` +
+      `${label} is not a known SPL token on Solana mainnet. Check the mint address with ` +
         "`wallet-cli assets token solana <mint>`.",
     );
   }
-  if (ticker.toUpperCase() !== token.ticker.toUpperCase()) {
+  if (!sameTicker(ticker, token.ticker)) {
     throw new Error(
-      `--amount is in ${ticker}, but --token ${mint} is ${token.ticker}. Fix whichever one is wrong.`,
+      `--amount is in ${ticker}, but ${label} is ${token.ticker}. Fix whichever one is wrong.`,
     );
   }
   // Fails closed: a mint the node can't confirm as a classic SPL token is refused too.
@@ -147,23 +181,38 @@ async function resolveSplToken(ticker: string, mint: string): Promise<SolanaAsse
   if (program !== "spl-token") {
     throw new Error(
       program === "spl-token-2022"
-        ? `--token ${mint} (${token.ticker}) is a Token-2022 mint, which Agent Intent can't send yet.`
-        : `--token ${mint} (${token.ticker}) isn't a mint of the SPL Token program on Solana mainnet.`,
+        ? `${label} (${token.ticker}) is a Token-2022 mint, which Agent Intent can't send yet.`
+        : `${label} (${token.ticker}) isn't a mint of the SPL Token program on Solana mainnet.`,
     );
   }
   return { type: "spl-token", ticker: token.ticker, decimals: token.decimals, mint: token.mint };
 }
 
-/** On Solana, SOL or the SPL token that `--token` names; on Ethereum, ETH or the ERC-20 it names. */
 async function resolveNetworkAsset(
   network: IntentNetwork,
   ticker: string,
   token: string | undefined,
+  senderInput: SenderInput,
+  out: Pick<CommandOutput, "withActivity">,
 ): Promise<NetworkAsset> {
-  if (network === "ethereum") {
-    return { network, asset: await resolveEthereumAsset(ticker, token) };
+  if (!token && nativeNetworkOf(ticker) === network) {
+    return network === "ethereum"
+      ? { network, asset: ethereumAsset() }
+      : { network, asset: solanaAsset() };
   }
-  return { network, asset: token ? await resolveSplToken(ticker, token) : solanaAsset() };
+  const address =
+    token ??
+    (await resolveTokenByTicker(
+      network,
+      ticker,
+      "account" in senderInput ? senderInput.account : undefined,
+      out,
+    ));
+  const fromTokenFlag = token !== undefined;
+  if (network === "ethereum") {
+    return { network, asset: await resolveErc20(ticker, address, fromTokenFlag) };
+  }
+  return { network, asset: await resolveSplToken(ticker, address, fromTokenFlag) };
 }
 
 export default defineCommand({
@@ -194,7 +243,8 @@ export default defineCommand({
     token: option(z.string().min(1).optional(), {
       description:
         "Token to send: an ERC-20 contract (0x…, Ethereum mainnet) or an SPL token mint (base58, " +
-        "Solana mainnet). Omit for native ETH or SOL.",
+        "Solana mainnet). Without it, the --amount ticker picks the token the --account holds or " +
+        "the only one CAL lists, on the sender's network, and fails if several match.",
     }),
     "fee-strategy": option(z.enum(FEE_STRATEGIES).optional(), {
       description:
@@ -210,22 +260,30 @@ export default defineCommand({
     }),
   },
   handler: async ({ flags }) => {
-    const network = networkOf(flags);
-    const out = createCommandOutput(resolveOutputFormat(flags.output), {
-      command: "agent-intent send",
-      network,
-    });
+    const ctx = { command: "agent-intent send", network: "" };
+    const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
     await out.run(async () => {
-      const senderInput = parseSenderInput({ account: flags.account, address: flags.from }, "from");
+      const parsedSender = parseSenderInput(
+        { account: flags.account, address: flags.from },
+        "from",
+      );
+      const senderInput: SenderInput =
+        "account" in parsedSender
+          ? { account: await resolveSenderAccount(parsedSender.account) }
+          : parsedSender;
+      const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
+      const network = networkOf(ticker, flags.token, senderInput);
+      ctx.network = network;
       assertNetworkFlags(network, flags);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      const { sender, recipient, senderField } = await resolveParties(
+      const { sender, recipient, senderField } = resolveParties(network, senderInput, flags.to);
+      const networkAsset = await resolveNetworkAsset(
         network,
+        ticker,
+        flags.token,
         senderInput,
-        flags.to,
+        out,
       );
-      const { amount: displayAmount, ticker } = parseAmountWithTicker(flags.amount);
-      const networkAsset = await resolveNetworkAsset(network, ticker, flags.token);
       const { asset } = networkAsset;
       const amount = parseDecimalAmount(displayAmount, asset.decimals, asset.ticker);
 

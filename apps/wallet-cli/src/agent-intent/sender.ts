@@ -1,10 +1,13 @@
 import { resolveAccountDescriptorV1 } from "../commands/inputs";
+import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { parseEvmAddress } from "./evm";
 
 const MAINNET_ACCOUNT = {
   ethereum: "an Ethereum mainnet account",
   solana: "a Solana mainnet account",
 };
+
+export type SenderAccount = { label: string; descriptor: AccountDescriptorV1 };
 
 /** Exactly one sender: `--account` or the command's own address flag. */
 export function parseSenderInput(
@@ -18,13 +21,16 @@ export function parseSenderInput(
   );
 }
 
+export async function resolveSenderAccount(label: string): Promise<SenderAccount> {
+  return { label, descriptor: await resolveAccountDescriptorV1(label) };
+}
+
 /** Only a mainnet address account on the intent's network can propose it. */
-export async function resolveSenderFromAccount(
-  label: string,
+export function senderFromAccount(
+  { label, descriptor }: SenderAccount,
   intentType: "send" | "swap",
   network: keyof typeof MAINNET_ACCOUNT,
-): Promise<string> {
-  const descriptor = await resolveAccountDescriptorV1(label);
+): string {
   if (descriptor.network !== network || descriptor.type !== "address") {
     throw new Error(
       `Account "${label}" is on ${descriptor.network}; this Agent Intent ${intentType} needs ` +
