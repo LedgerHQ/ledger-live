@@ -915,6 +915,10 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: Check iOS simulators are ready
+        timeout-minutes: 10
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.ios_timeout) }}
