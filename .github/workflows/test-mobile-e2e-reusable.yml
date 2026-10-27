@@ -1257,6 +1257,10 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: Check Android emulators are ready
+        timeout-minutes: 2
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-android-emulators@develop
+
       - name: Run Android Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-android
         timeout-minutes: ${{ fromJSON(needs.determine-builds.outputs.android_timeout) }}
