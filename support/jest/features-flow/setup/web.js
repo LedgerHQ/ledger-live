@@ -1,4 +1,4 @@
-// Web (jsdom) setup shared across features/flow packages.
+// Web (jsdom) setup the features-flow preset adds to the core's (see ../core/setup/web.js).
 
 // jsdom doesn't implement the Encoding API, unlike every runtime this code ships to
 // (browsers, React Native, Node). Packages reading TextEncoder at module-eval time
@@ -28,18 +28,3 @@ if (!global.Response) {
 
   Object.assign(global, { fetch, Headers, FormData, Request, Response });
 }
-
-// Mock window.matchMedia for components that read it.
-Object.defineProperty(window, "matchMedia", {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});

@@ -46,6 +46,7 @@
     }
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",

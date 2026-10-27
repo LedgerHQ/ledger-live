@@ -6914,6 +6914,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7002,6 +7005,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7099,6 +7105,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7212,6 +7221,9 @@ importers:
         specifier: workspace:*
         version: link:../../../shared/ui-app-unavailable
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7300,6 +7312,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7364,6 +7379,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7422,6 +7440,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7492,6 +7513,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7553,6 +7577,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7629,6 +7656,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@radix-ui/react-checkbox':
         specifier: 'catalog:'
         version: 1.3.2(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
@@ -7753,6 +7783,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -7850,6 +7883,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -7935,6 +7971,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8017,6 +8056,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8090,6 +8132,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -8190,6 +8235,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -8281,6 +8329,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8354,6 +8405,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8427,6 +8481,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8515,6 +8572,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -8708,6 +8768,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8814,6 +8877,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8896,6 +8962,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -8990,6 +9059,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -9105,6 +9177,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9241,6 +9316,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9368,6 +9446,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9474,6 +9555,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -9559,6 +9643,9 @@ importers:
         specifier: workspace:^
         version: link:../../../domain/entity/currency
     devDependencies:
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9641,6 +9728,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9741,6 +9831,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -9838,6 +9931,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -9929,6 +10025,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@shared/feature-flags':
         specifier: workspace:^
         version: link:../../../shared/feature-flags
@@ -10032,6 +10131,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
@@ -10126,6 +10228,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -10612,6 +10717,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
@@ -10795,6 +10903,9 @@ importers:
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.67(9ca6403ceb5c460b5293452ce53faf5f)
+      '@ledgerhq/test-quarantine':
+        specifier: workspace:*
+        version: link:../../../support/test-quarantine
       '@support/jest':
         specifier: workspace:*
         version: link:../../../support/jest
