@@ -467,7 +467,7 @@ export const NativeElementHelpers = {
   },
 
   async getAttributesByElement(elem: NativeElement, index = 0): Promise<Detox.ElementAttributes> {
-    const attributes = await retryUntilTimeout(async () => elem.getAttributes());
+    const attributes = await retryUntilTimeout(() => elem.getAttributes());
     if ("elements" in attributes) {
       return attributes.elements[index];
     }
@@ -482,7 +482,7 @@ export const NativeElementHelpers = {
   },
 
   async getTextByElement(elem: NativeElement, index = 0): Promise<string> {
-    const attributes = await retryUntilTimeout(async () => elem.getAttributes());
+    const attributes = await retryUntilTimeout(() => elem.getAttributes());
     return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
   },
 
