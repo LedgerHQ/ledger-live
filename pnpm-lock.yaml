@@ -597,8 +597,8 @@ catalogs:
       specifier: 20.51.3
       version: 20.51.3
     electron:
-      specifier: 44.9.3
-      version: 44.9.3
+      specifier: 45.0.0
+      version: 45.0.0
     expo:
       specifier: 54.0.33
       version: 54.0.33
@@ -1868,7 +1868,7 @@ importers:
         version: 26.15.3
       electron:
         specifier: 'catalog:'
-        version: 44.9.3
+        version: 45.0.0
       electron-builder:
         specifier: 26.15.3
         version: 26.15.3
@@ -6623,7 +6623,7 @@ importers:
         version: 4.17.21
       electron:
         specifier: 'catalog:'
-        version: 44.9.3
+        version: 45.0.0
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -31900,8 +31900,8 @@ packages:
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
 
-  electron@44.9.3:
-    resolution: {integrity: sha512-Cv9/yMnZxNWsMlIe8T4v//NKHdUvbeyoTJoXE3BIcRxus2meeFaO9h/P3zB5d4cBXum51IgAYrT2QjpIDWKpJA==}
+  electron@45.0.0:
+    resolution: {integrity: sha512-yjz4uhMBcO6L5X7CWgRMobf2EMJPnb9j4zuf+nu/TU/6E4Sqfx7fn/a2eACo4qngjml/0JnsoZhxYroJLxLd2w==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -52731,7 +52731,7 @@ snapshots:
       semver: 7.8.5
       tiny-typed-emitter: 2.1.0
 
-  electron@44.9.3:
+  electron@45.0.0:
     dependencies:
       '@electron-internal/extract-zip': 1.0.4
       '@electron/get': 5.0.0
