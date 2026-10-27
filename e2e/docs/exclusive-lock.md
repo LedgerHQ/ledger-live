@@ -7,9 +7,9 @@ account at once reuse its nonce or UTXOs, and one is rejected. The lock lives in
 
 ## Declare what a test broadcasts from
 
-What to declare: [E2E conventions](e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). How:
-[Mobile](../mobile/docs/e2e-mobile-conventions.md#exclusive-lock-implementation) and
-[Desktop](../desktop/docs/e2e-desktop-conventions.md#exclusive-lock-implementation).
+What to declare: [E2E conventions](e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-what-state-they-change). How:
+[Mobile](../mobile/docs/e2e-mobile-conventions.md#tests-that-broadcast-or-change-shared-state-must-declare-it-before-their-describe)
+and [Desktop](../desktop/docs/e2e-desktop-conventions.md#tests-that-broadcast-or-change-shared-state-must-lock-with-exclusivelockfor).
 
 | Target | Mobile | Desktop | Locked |
 | --- | --- | --- | --- |
