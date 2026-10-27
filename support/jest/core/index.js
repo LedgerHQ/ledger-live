@@ -90,12 +90,10 @@ function withProjectOverrides(project, { setupFilesAfterEnv, moduleNameMapper, .
   };
 }
 
-/** @param {ReturnType<typeof lcovCoverageReporters>} coverageReporters */
-function webProject(coverageReporters) {
+function webProject() {
   return {
     testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/"],
     transform: swcTransform,
-    coverageReporters,
     displayName: "web",
     testEnvironment: "jsdom",
     moduleFileExtensions: platformExtensions("web"),
@@ -115,12 +113,10 @@ function webProject(coverageReporters) {
   };
 }
 
-/** @param {ReturnType<typeof lcovCoverageReporters>} coverageReporters */
-function nativeProject(coverageReporters) {
+function nativeProject() {
   return {
     testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/"],
     transform: swcTransform,
-    coverageReporters,
     displayName: "native",
     testEnvironment: "node",
     moduleFileExtensions: platformExtensions("native"),
@@ -168,11 +164,11 @@ function createDualJestConfig(
   { depth, web, native },
   { webOverrides = {}, nativeOverrides = {}, ...overrides } = {},
 ) {
-  const coverageReporters = lcovCoverageReporters(lcovRoot(overrides.rootDir, depth));
-
   return {
     collectCoverage: true,
     coverageDirectory: "./coverage/",
+    // Top level: jest ignores coverageReporters inside a project.
+    coverageReporters: lcovCoverageReporters(lcovRoot(overrides.rootDir, depth)),
     reporters: [
       "default",
       ...(process.env.CI ? ["github-actions"] : []),
@@ -180,8 +176,8 @@ function createDualJestConfig(
       quarantineReporter,
     ],
     projects: [
-      ...(web ? [layerProject(webProject(coverageReporters), web, webOverrides)] : []),
-      layerProject(nativeProject(coverageReporters), native, nativeOverrides),
+      ...(web ? [layerProject(webProject(), web, webOverrides)] : []),
+      layerProject(nativeProject(), native, nativeOverrides),
     ],
     ...overrides,
   };
