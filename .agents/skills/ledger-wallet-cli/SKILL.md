@@ -369,12 +369,16 @@ leaving the page after Review closes the relay channel and the listener ends (`l
 
 **Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
 --detach` starts the same listener in the background, prints its `enrollment-pending` line plus
-`listenerPid` and `logPath`, and exits within 30 seconds. If the listener has no link by then
-(still starting, e.g. at an OS keychain unlock prompt the human must answer), it prints
-`enrollment-waiting` instead (`profileId`, `listenerPid`, `logPath`, no link yet), exit 0, and leaves
-the listener running: tell the human to answer the prompt. Either way, poll
-`agent-intent wait --profile <id> [--timeout 25s]` (also with the sandbox bypass), which reads local
-state only and reports one of:
+`listenerPid` and `logPath`, and exits. That can take about 65 seconds (30 for the listener's
+first line, up to 35 more behind a concurrent `--detach` of the same id): set your tool-call timeout
+to at least 90 seconds. If the listener has no link by then (still starting, e.g. at an OS keychain
+unlock prompt), it prints `enrollment-waiting` instead (`profileId`, `listenerPid`, `logPath`, no
+link yet), exit 0, and leaves the listener running: if an OS keychain unlock prompt is showing, ask
+the human to answer it. While that prompt is open, other wallet-cli commands that change local state
+may fail with a lock timeout: answer the prompt first. Remember the profile id: a profile still
+waiting on a keychain prompt does not show in `agent-intent list`, so before starting a new id, run
+`wait` on the previous one. Either way, poll `agent-intent wait --profile <id> [--timeout 25s]`
+(also with the sandbox bypass), which reads local state only and reports one of:
 - `enrolled` (same result as `enroll`), exit 0 — done.
 - `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt`, `fingerprint` and `keyStore` once
   the profile is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending:
@@ -393,7 +397,8 @@ state only and reports one of:
 
 If `enroll --detach` printed `enrollment-waiting` (or timed out in your tool before printing its
 line), hand the human the `enrollmentUrl`, `fingerprint` and `expiresAt` from `wait` once it reports
-them.
+them, telling them first when its `keyStore` is `plaintext-file`. End your turn only after the link
+was handed over.
 
 **Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
 key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
@@ -771,5 +776,5 @@ Get the Solana `--stake-account` address from `earn positions <account>` (its `s
 | `[✖] Speculos not reachable at <url>. …` (exit code 3)                                               | `SPECULOS_API_PORT` set, but no Speculos answers there, or the connect fails                                                                           | Ask the user to start Speculos, fix the variables, or unset them to use a USB Ledger.                                                                                                                                                                                                                                                                                                 |
 | `[✖] Timed out talking to Speculos at <url>. …` (exit code 6)                                        | the emulated app waits for a button press, no answer to the connect, or a different app than the command needs                                         | Tell the user the flow needs an on-device approval, or that Speculos is down or runs an app this command does not use.                                                                                                                                                                                                                                                                |
 | `device-state … awaiting_approval … reason: unlock` (JSON stream)                                     | device locked                                                                                                                                          | Keep the command running — the CLI resumes automatically once unlocked. Ask the user to unlock the device with their PIN.                                                                                                                                                                                                                                                             |
-| `keychain_unavailable` (json `error.code`) | `agent-intent enroll`: no Secret Service on Linux, or the OS keychain refused to store the agent key or can't read the profile's entry (e.g. a locked collection). Other `agent-intent` commands: the profile's keychain can't be reached | Follow **Keychain required**: when the keychain refused the write or can't read the entry, ask the human to unlock it first; never add `--allow-plaintext-key` without the human's explicit yes. |
+| `keychain_unavailable` (json `error.code`) | `agent-intent enroll` (or `wait`, from its listener's log): no Secret Service on Linux, or the OS keychain refused to store the agent key or can't read the profile's entry (e.g. a locked collection). Other `agent-intent` commands: the profile's keychain can't be reached | Follow **Keychain required**: when the keychain refused the write or can't read the entry, ask the human to unlock it first; never add `--allow-plaintext-key` without the human's explicit yes. |
 | `Could not store the agent's secret key in the OS keychain` or `Could not read the OS keychain entry` | `agent-intent enroll` on macOS/Windows: the keychain refused the write, or the read of an existing entry (locked, or access denied) | Re-run with the sandbox bypass; if it still fails, ask the human to unlock the keychain or allow access, then re-run. Never offer `--allow-plaintext-key` (Linux-only). |
