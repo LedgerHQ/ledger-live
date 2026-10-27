@@ -8,7 +8,10 @@ import {
   type PerpsDepositResult,
   type PerpsSignParams,
   type PerpsSignResult,
+  type PerpsWithdrawParams,
+  type PerpsWithdrawResult,
 } from "./server";
+import BigNumber from "bignumber.js";
 import { getMainAccount, getParentAccount } from "../../account";
 import { withDevice } from "../../hw/deviceAccess";
 import { isDmkTransport } from "../../hw/dmkUtils";
@@ -69,6 +72,20 @@ const WALLET_ACCOUNT_ID = `wallet:${ACCOUNT_ID}`;
 const DERIVATION_PATH = mockAccount.freshAddressPath;
 const DEVICE_ID = "mock-device-id";
 
+const baseHyperCoreAccount = createFixtureAccount("hc");
+const mockHyperCoreAccount = {
+  ...baseHyperCoreAccount,
+  id: "js:2:hypercore:0x0hc:",
+  currency: {
+    ...baseHyperCoreAccount.currency,
+    id: "hypercore",
+    units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+  },
+  // accountValue − usedMargin, in USDC atomic units.
+  spendableBalance: new BigNumber("1000500000"),
+};
+const HYPERCORE_WALLET_ACCOUNT_ID = `wallet:${mockHyperCoreAccount.id}`;
+
 const mockCertificate = { descriptor: "aabbcc", signature: "ddeeff" };
 const mockDeviceData = new Uint8Array([0xaa, 0xbb, 0xcc, 0x15, 0x03, 0xdd, 0xee, 0xff]);
 
@@ -86,11 +103,13 @@ describe("Perps handlers", () => {
   type MockedHandlers = {
     "custom.perps.signActions": (params?: PerpsSignParams) => Promise<PerpsSignResult>;
     "custom.perps.deposit": (params?: PerpsDepositParams) => Promise<PerpsDepositResult>;
+    "custom.perps.withdraw": (params?: unknown) => Promise<PerpsWithdrawResult>;
   };
 
   let mockSignActions: jest.Mock;
   let mockUiSigningExecute: jest.Mock;
   let mockUiDepositExecute: jest.Mock;
+  let mockUiWithdrawExecute: jest.Mock;
   let serverHandlers: MockedHandlers;
 
   beforeEach(() => {
@@ -132,12 +151,14 @@ describe("Perps handlers", () => {
       });
 
     mockUiDepositExecute = jest.fn();
+    mockUiWithdrawExecute = jest.fn();
 
     serverHandlers = handlers({
-      accounts: [mockAccount],
+      accounts: [mockAccount, mockHyperCoreAccount],
       uiHooks: {
         "signing.execute": mockUiSigningExecute,
         "deposit.execute": mockUiDepositExecute,
+        "withdraw.execute": mockUiWithdrawExecute,
       },
     }) as unknown as MockedHandlers;
   });
@@ -292,6 +313,93 @@ describe("Perps handlers", () => {
         serverHandlers["custom.perps.deposit"]({ receiverAccountId: "wallet:unknown" }),
       ).rejects.toThrow("ServerError");
       expect(mockUiDepositExecute).not.toHaveBeenCalled();
+    });
+  });
+  describe("custom.perps.withdraw", () => {
+    const withdrawParams: PerpsWithdrawParams = {
+      sourceAccountId: HYPERCORE_WALLET_ACCOUNT_ID,
+    };
+
+    beforeEach(() => {
+      jest
+        .mocked(getAccountIdFromWalletAccountId)
+        .mockImplementation(id =>
+          id === HYPERCORE_WALLET_ACCOUNT_ID ? mockHyperCoreAccount.id : ACCOUNT_ID,
+        );
+    });
+
+    it("should hand only the source account to withdraw.execute", async () => {
+      await serverHandlers["custom.perps.withdraw"](withdrawParams);
+
+      expect(mockUiWithdrawExecute).toHaveBeenCalledWith({ sourceAccount: mockHyperCoreAccount });
+    });
+
+    it("should resolve with the outcome the withdraw flow settles with", async () => {
+      mockUiWithdrawExecute.mockResolvedValue({ swapId: "swap-1", amountTo: "0.3" });
+
+      const result = await serverHandlers["custom.perps.withdraw"](withdrawParams);
+
+      expect(result).toEqual({ swapId: "swap-1", amountTo: "0.3" });
+    });
+
+    it("should resolve with an empty outcome when the client hook reports none", async () => {
+      mockUiWithdrawExecute.mockReturnValue(undefined);
+
+      await expect(serverHandlers["custom.perps.withdraw"](withdrawParams)).resolves.toEqual({});
+    });
+
+    it("should forward the client's rejection as is", async () => {
+      const refusal = new UserRefusedOnDevice();
+      mockUiWithdrawExecute.mockRejectedValue(refusal);
+      jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      await expect(serverHandlers["custom.perps.withdraw"](withdrawParams)).rejects.toBe(refusal);
+    });
+
+    it.each([
+      ["undefined params", undefined],
+      ["a missing source account", {}],
+      ["an empty source account id", { sourceAccountId: "" }],
+    ])("should throw a ServerError for %s", async (_, params) => {
+      await expect(serverHandlers["custom.perps.withdraw"](params)).rejects.toThrow("ServerError");
+      expect(mockUiWithdrawExecute).not.toHaveBeenCalled();
+    });
+
+    it("should report the source account as not found when it is not in the wallet", async () => {
+      jest
+        .mocked(getAccountIdFromWalletAccountId)
+        .mockImplementation(id => (id === "wallet:unknown" ? "unknown-id" : ACCOUNT_ID));
+
+      await expect(
+        serverHandlers["custom.perps.withdraw"]({
+          ...withdrawParams,
+          sourceAccountId: "wallet:unknown",
+        }),
+      ).rejects.toMatchObject({ error: { code: "AccountNotFound", id: "wallet:unknown" } });
+      expect(mockUiWithdrawExecute).not.toHaveBeenCalled();
+    });
+
+    it("should throw a ServerError when the source is not a HyperCore account", async () => {
+      await expect(
+        serverHandlers["custom.perps.withdraw"]({
+          ...withdrawParams,
+          sourceAccountId: WALLET_ACCOUNT_ID,
+        }),
+      ).rejects.toThrow("ServerError");
+      expect(mockUiWithdrawExecute).not.toHaveBeenCalled();
+    });
+
+    it("should report the method as not implemented when the client has no withdraw hook", async () => {
+      const handlersWithoutWithdraw = handlers({
+        accounts: [mockAccount, mockHyperCoreAccount],
+        uiHooks: { "signing.execute": mockUiSigningExecute },
+      }) as unknown as MockedHandlers;
+
+      await expect(
+        handlersWithoutWithdraw["custom.perps.withdraw"](withdrawParams),
+      ).rejects.toMatchObject({
+        error: expect.objectContaining({ code: "NOT_IMPLEMENTED_BY_WALLET" }),
+      });
     });
   });
 });

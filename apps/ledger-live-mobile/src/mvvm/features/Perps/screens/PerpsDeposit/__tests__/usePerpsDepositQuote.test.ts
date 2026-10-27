@@ -4,7 +4,7 @@ import { act, renderHook, waitFor } from "@tests/test-renderer";
 import { usePerpsDepositQuote, type PerpsDepositQuoteState } from "../usePerpsDepositQuote";
 
 const mockFetchPerpsDepositQuote = jest.fn();
-jest.mock("@ledgerhq/live-common/wallet-api/Perps/depositQuote", () => ({
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/deposit/quote", () => ({
   fetchPerpsDepositQuote: (params: unknown) => mockFetchPerpsDepositQuote(params),
 }));
 

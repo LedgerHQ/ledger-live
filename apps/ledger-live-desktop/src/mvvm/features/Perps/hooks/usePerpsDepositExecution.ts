@@ -11,7 +11,7 @@ import { executeSwap } from "@ledgerhq/live-common/wallet-api/Exchange/executeSw
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import type { SwapUiRequest } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { createAction as createCompleteExchangeAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
@@ -34,7 +34,7 @@ import { isUserRefusal } from "../utils/isUserRefusal";
 import {
   getDepositRequestId,
   settleDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -146,7 +146,7 @@ export function usePerpsDepositExecution(
           render({
             action: completeAction,
             request: {
-              provider: exchangeParams.provider ?? PERPS_DEPOSIT_QUOTE_PROVIDER,
+              provider: exchangeParams.provider ?? PERPS_SWAPKIT_PROVIDER,
               transaction: exchangeParams.transaction,
               binaryPayload: exchangeParams.binaryPayload,
               signature: exchangeParams.signature,
@@ -194,7 +194,7 @@ export function usePerpsDepositExecution(
           magnitudeAwareRate: finalTransaction.amount.isZero()
             ? new BigNumber(0)
             : quotedReceiveAmount.div(finalTransaction.amount),
-          provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+          provider: PERPS_SWAPKIT_PROVIDER,
         });
         if (updateParams.length) {
           dispatch(updateAccountWithUpdater(...updateParams));
@@ -264,7 +264,7 @@ export function usePerpsDepositExecution(
         },
         {
           exchangeType: "SWAP",
-          provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+          provider: PERPS_SWAPKIT_PROVIDER,
           fromAccountId: getWalletApiIdFromAccountId(depositAccount.id),
           toAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
           fromAmount: amountSent,
@@ -280,7 +280,7 @@ export function usePerpsDepositExecution(
       openPerpsTransactionSigned({
         receiveCurrencyTicker: receiveCurrency.ticker,
         swapId: signed.swapId,
-        provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+        provider: PERPS_SWAPKIT_PROVIDER,
       });
       onDone();
     } catch (e) {

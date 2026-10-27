@@ -4,7 +4,7 @@ import {
   cancelDepositRequest,
   getDepositRequestId,
   settleDepositRequest,
-} from "./depositRequest";
+} from "./request";
 
 describe("depositRequest", () => {
   afterEach(() => cancelDepositRequest());
