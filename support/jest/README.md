@@ -108,10 +108,13 @@ A consumer declares `"@support/jest": "workspace:*"` in its `devDependencies` an
 module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 ```
 
-What the package needs on top of the preset goes through the factory's overrides argument. The
-`jest` rule of `pnpm lint:tool-config` checks that every jest config of a consumer exports a
-`create*Config` call from `@support/jest/*`, and that its overrides carry only what the package
-owns:
+What the package needs on top of the preset goes through the factory's overrides argument, and
+the `jest` rule of `pnpm lint:tool-config` checks it: the rule and its exceptions are described in
+the header of `tools/nx-plugins/enforce-tool-config/rules/jest.mjs`. A setup file a package passes
+adds to the preset's. Every key outside this list, `transform`, `transformIgnorePatterns` (use
+`extraEsmDeps`), `testEnvironment` or `reporters` among them, belongs to the preset.
+
+Override keys a package owns:
 
 - where its tests are and how they match: `rootDir`, `roots`, `testMatch`, `testRegex`,
   `testPathIgnorePatterns`, `modulePathIgnorePatterns`, `passWithNoTests`, `displayName`;
@@ -120,13 +123,14 @@ owns:
 - how its runs are split: `maxWorkers`, `workerThreads`, `projects` (a list of
   `create*Project(...)` calls), `webOverrides` and `nativeOverrides` (the same keys, per project).
 
-Every other key, `transform`, `transformIgnorePatterns` (use `extraEsmDeps`), `testEnvironment` or
-`reporters` among them, belongs to the preset. A setup file a package passes adds to the preset's;
-removing one of the preset's goes through a named option (`retries`, `network`,
-`walletFramework`). The overrides and the options are object literals, so the rule reads their
-keys without running the config, and a literal override that leaves the factory's result unchanged
-is rejected. The configs that still set a preset key are listed, by key, in
-`tools/nx-plugins/enforce-tool-config/rules/jest-debt.mjs`, a list that only shrinks.
+Options each factory reads, as its second argument; the other factories take none:
+
+| Factory | Options |
+| --- | --- |
+| `createSharedJestConfig` | `esm`, `extraEsmDeps`, `projectRoot`, `retries` |
+| `createLibsCoinJestConfig` | `esm`, `extraEsmDeps`, `projectRoot`, `network`, `walletFramework` |
+| `createLibsCoinIntegJestConfig` | `esm`, `extraEsmDeps`, `projectRoot`, `walletFramework` |
+| `createLibsCoinJestProject` | `esm`, `extraEsmDeps`, `network`, `walletFramework` |
 
 Unlike the lint, format and TypeScript presets, consumers keep the dependency: the presets carry
 code and peer dependencies, and the dependency tells nx which test targets a preset change

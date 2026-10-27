@@ -1,8 +1,4 @@
-// Jest configs that pass a preset an override the package does not own yet. A config may set a key
-// outside the jest rule's allowlist only while this list names that key for that file.
-//
-// This list only shrinks. The jest rule reports an entry the config no longer sets, so moving a
-// package onto what its preset provides means deleting its entry here.
+// Configs that still override a key outside the jest rule's allowlist; the policy is in jest.mjs.
 
 /** @type {Record<string, string[]>} repo-relative config path to the keys it may override */
 export const JEST_DEBT = {

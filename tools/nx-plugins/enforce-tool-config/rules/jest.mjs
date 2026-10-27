@@ -7,10 +7,15 @@
 // (OWNED_KEYS). `webOverrides` / `nativeOverrides` and each `create*Project(...)` entry of
 // `projects` follow the same allowlist. A setup file a package passes adds to the preset's;
 // dropping one of the preset's goes through a named option, and a factory takes only the options
-// it reads (FACTORY_OPTIONS). Every other key belongs to the preset. The one way around it is jest-debt.mjs, which lists the keys a config may
-// still set and only shrinks. The overrides and options are object literals, so the rule reads
-// their keys without running the config, and a literal value that leaves the preset's result
-// unchanged is rejected.
+// it reads (FACTORY_OPTIONS). Every other key belongs to the preset. The overrides and options are
+// object literals, so the rule reads their keys without running the config, and a literal value
+// that leaves the preset's result unchanged is rejected.
+//
+// The one way around the allowlist is jest-debt.mjs: a config may set a key outside it only while
+// that list names the key for that file. The list only shrinks: the rule reports an entry the
+// config no longer sets, or a config that is gone, so moving a package onto its preset means
+// deleting its entry. support/jest/README.md lists OWNED_KEYS and FACTORY_OPTIONS for package
+// authors; jest.test.mjs keeps that list in step with this file.
 
 import fs from "node:fs";
 import { createRequire } from "node:module";
@@ -35,7 +40,7 @@ const PROJECT_FACTORY = /^create\w*Project$/;
 const PRESET_SPECIFIER = String.raw`["'](@support/jest/[\w-]+)["']`;
 
 /** The override keys a package owns. */
-const OWNED_KEYS = new Set([
+export const OWNED_KEYS = new Set([
   "collectCoverageFrom",
   "coveragePathIgnorePatterns",
   "displayName",
@@ -66,7 +71,7 @@ const PROJECT_KEYS = new Set(
  * The options each preset factory reads from its second argument. A factory missing here takes
  * none: an option it does not read would be a silent no-op.
  */
-const FACTORY_OPTIONS = {
+export const FACTORY_OPTIONS = {
   createSharedJestConfig: ["esm", "extraEsmDeps", "projectRoot", "retries"],
   createLibsCoinJestConfig: ["esm", "extraEsmDeps", "projectRoot", "network", "walletFramework"],
   createLibsCoinIntegJestConfig: ["esm", "extraEsmDeps", "projectRoot", "walletFramework"],

@@ -5,7 +5,14 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { JEST_DEBT } from "./jest-debt.mjs";
-import jest, { factoryProblem, maskSource, overridesProblems, presetLoader } from "./jest.mjs";
+import jest, {
+  FACTORY_OPTIONS,
+  OWNED_KEYS,
+  factoryProblem,
+  maskSource,
+  overridesProblems,
+  presetLoader,
+} from "./jest.mjs";
 
 const CONSUMER = JSON.stringify({ devDependencies: { "@support/jest": "workspace:*" } });
 const REPOSITORY = fileURLToPath(new URL("../../../..", import.meta.url));
@@ -449,4 +456,62 @@ test("a factory takes only the options it reads, a misplaced one names the facto
     ],
   ];
   for (const [source, expected] of cases) assert.deepEqual(problems(source), expected, source);
+});
+
+/**
+ * The lines of the README block that follows the line starting with `lead`, up to a blank line.
+ *
+ * @param {string[]} lines
+ * @param {string} lead
+ * @returns {string[]}
+ */
+function readmeBlock(lines, lead) {
+  const start = lines.findIndex(line => line.startsWith(lead));
+  assert.notEqual(start, -1, `support/jest/README.md has no line starting with "${lead}"`);
+  const block = lines.slice(start + 2);
+  const end = block.indexOf("");
+  return end === -1 ? block : block.slice(0, end);
+}
+
+/**
+ * @param {Iterable<string>} listed what the README lists
+ * @param {Iterable<string>} expected what the rule holds
+ * @param {string} what
+ */
+function assertSameNames(listed, expected, what) {
+  const inReadme = new Set(listed);
+  const inRule = new Set(expected);
+  const missing = [...inRule].filter(name => !inReadme.has(name));
+  const extra = [...inReadme].filter(name => !inRule.has(name));
+  assert.deepEqual(
+    { missing, extra },
+    { missing: [], extra: [] },
+    `${what} in support/jest/README.md`,
+  );
+}
+
+test("the README lists the owned keys and the options of each factory the rule holds", () => {
+  const lines = fs
+    .readFileSync(path.join(REPOSITORY, "support/jest/README.md"), "utf8")
+    .split("\n");
+  const names = text => [...text.matchAll(/`([A-Za-z]+)`/g)].map(match => match[1]);
+
+  assertSameNames(
+    names(readmeBlock(lines, "Override keys a package owns").join(" ")),
+    OWNED_KEYS,
+    "keys",
+  );
+
+  const rows = readmeBlock(lines, "Options each factory reads")
+    .slice(2)
+    .map(row => /^\|\s*`(\w+)`\s*\|(.*)\|\s*$/.exec(row));
+  assert.ok(rows.every(Boolean), "the options table has a row that is not `factory` | options");
+  assertSameNames(
+    rows.map(([, factory]) => factory),
+    Object.keys(FACTORY_OPTIONS),
+    "factories",
+  );
+  for (const [, factory, options] of rows) {
+    assertSameNames(names(options), FACTORY_OPTIONS[factory] ?? [], `options of ${factory}`);
+  }
 });
