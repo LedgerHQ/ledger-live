@@ -248,6 +248,17 @@ describe("scrubPii", () => {
     expect(findings).toEqual([{ path: "link", kind: "explorer_url" }]);
   });
 
+  it("redacts the fields of an object that serializes to a clean value", () => {
+    const recipient = { address: EVM_ADDRESS, toJSON: () => "safe" };
+
+    const { value, findings } = scrubPii({ recipient });
+
+    expect(value).toEqual({
+      recipient: { address: "[REDACTED:sensitive_key]", toJSON: expect.any(Function) },
+    });
+    expect(findings).toEqual([{ path: "recipient.address", kind: "sensitive_key" }]);
+  });
+
   it("redacts bytes under a sensitive key", () => {
     const { value, findings } = scrubPii({ signature: new Uint8Array([222, 173, 190, 239]) });
 

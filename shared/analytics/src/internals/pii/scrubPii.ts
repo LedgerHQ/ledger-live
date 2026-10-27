@@ -141,7 +141,7 @@ function scrubAt(value: unknown, path: string, depth: number, findings: PiiFindi
   if (isObject(value) && typeof value.toJSON === "function") {
     const count = findings.length;
     const next = scrubAt(value.toJSON(), path, depth + 1, findings);
-    return findings.length > count ? next : value;
+    if (findings.length > count) return next;
   }
 
   if (Array.isArray(value)) {
