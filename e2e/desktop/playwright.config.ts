@@ -23,7 +23,11 @@ const config: PlaywrightTestConfig = {
   maxFailures: process.env.CI ? 5 : undefined,
   reportSlowTests: process.env.CI ? { max: 0, threshold: 60000 } : null,
   fullyParallel: true,
-  workers: process.env.REMOTE_SPECULOS === "true" ? "150%" : "100%",
+  workers: process.env.E2E_WORKERS
+    ? Number(process.env.E2E_WORKERS)
+    : process.env.REMOTE_SPECULOS === "true"
+      ? "150%"
+      : "100%",
   reporter: process.env.CI
     ? [
         ["./tests/reporters/cardSessionReporter.ts"],
