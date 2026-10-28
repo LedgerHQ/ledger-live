@@ -14,6 +14,7 @@ const ts = require("typescript");
 /** @typedef {{ line: number, code: string, message: string, text: string, breaker?: ChainBreaker }} Violation */
 /** @typedef {{ line: number, reason: string }} ChainBreak why a barrel breaks a pure chain */
 /** @typedef {ChainBreak & { file: string }} ChainBreaker the barrel that breaks it */
+/** @typedef {{ line: number, kind: "star" | "namespace" | "named" | "code", isDefault: boolean, specifier: string | undefined, text: string }} Statement */
 
 // `index.ts`, and the platform variants beside it: `index.native.ts`, `index.web.tsx`, …
 const BARREL_BASENAME = /^index(?:\.[A-Za-z0-9-]+)*\.[cm]?[jt]sx?$/;
@@ -235,22 +236,28 @@ function parse(source, file) {
 }
 
 /**
- * Every top-level re-export declaration of a module, read with the TypeScript parser alone, so
- * export-looking text in a string, a template, a pattern or JSX is never taken for a statement.
+ * Every top-level statement of a module, sorted by kind and read with the TypeScript parser alone,
+ * so export-looking text in a string, a template, a pattern or JSX is never taken for a statement.
+ * An export declaration is a `star`, `namespace` or `named` export; anything else is `code`.
  *
  * @param {string} source raw file contents
  * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
- * @returns {Array<{ line: number, kind: "star" | "namespace" | "named", isDefault: boolean, specifier: string, text: string }>}
+ * @returns {Statement[]}
  */
-function reexportsOf(source, file) {
+function statementsOf(source, file) {
   const sourceFile = parse(source, file);
   const lines = source.split("\n");
+  /** @type {Statement[]} */
   const found = [];
   for (const statement of sourceFile.statements) {
-    if (!ts.isExportDeclaration(statement)) continue;
-    if (!statement.moduleSpecifier || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
-    const clause = statement.exportClause;
+    if (ts.isEmptyStatement(statement)) continue;
     const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
+    const text = lines[line - 1]?.trim() ?? "";
+    if (!ts.isExportDeclaration(statement)) {
+      found.push({ line, kind: "code", isDefault: false, specifier: undefined, text });
+      continue;
+    }
+    const clause = statement.exportClause;
     found.push({
       line,
       kind: !clause ? "star" : ts.isNamespaceExport(clause) ? "namespace" : "named",
@@ -260,11 +267,27 @@ function reexportsOf(source, file) {
         ts.isNamedExports(clause) &&
         clause.elements.length === 1 &&
         clause.elements[0].name.text === "default",
-      specifier: statement.moduleSpecifier.text,
-      text: lines[line - 1]?.trim() ?? "",
+      specifier:
+        statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)
+          ? statement.moduleSpecifier.text
+          : undefined,
+      text,
     });
   }
   return found;
+}
+
+/**
+ * The re-export declarations of a module: its statements that name a module to export from.
+ *
+ * @param {string} source raw file contents
+ * @param {string} file
+ * @returns {Array<Statement & { specifier: string }>}
+ */
+function reexportsOf(source, file) {
+  return /** @type {Array<Statement & { specifier: string }>} */ (
+    statementsOf(source, file).filter(({ specifier }) => specifier !== undefined)
+  );
 }
 
 /**
@@ -341,33 +364,25 @@ const CHAIN_BREAKS = {
  * The first statement of a barrel that breaks a pure `export *` chain, see CHAIN_BREAKS.
  *
  * @param {string} source raw file contents
- * @param {string} [file]
+ * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
  * @returns {ChainBreak | undefined}
  */
-function chainBreak(source, file = "module.tsx") {
-  const sourceFile = parse(source, file);
-  for (const statement of sourceFile.statements) {
-    if (ts.isEmptyStatement(statement)) continue;
+function chainBreak(source, file) {
+  for (const statement of statementsOf(source, file)) {
     const reason = chainBreakReason(statement);
-    if (!reason) continue;
-    const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
-    return { line, reason };
+    if (reason) return { line: statement.line, reason };
   }
   return undefined;
 }
 
 /**
- * @param {ts.Statement} statement
+ * @param {Statement} statement
  * @returns {string | undefined}
  */
-function chainBreakReason(statement) {
-  if (!ts.isExportDeclaration(statement)) return CHAIN_BREAKS.code;
-  const clause = statement.exportClause;
-  if (clause && ts.isNamespaceExport(clause)) return CHAIN_BREAKS.namespace;
-  if (clause || !statement.moduleSpecifier) return CHAIN_BREAKS.named;
-  const specifier = ts.isStringLiteral(statement.moduleSpecifier)
-    ? statement.moduleSpecifier.text
-    : "";
+function chainBreakReason({ kind, specifier = "" }) {
+  if (kind === "code") return CHAIN_BREAKS.code;
+  if (kind === "namespace") return CHAIN_BREAKS.namespace;
+  if (kind === "named") return CHAIN_BREAKS.named;
   const inside = specifier.startsWith("./") && !path.posix.normalize(specifier).startsWith("..");
   return inside ? undefined : CHAIN_BREAKS.outside;
 }

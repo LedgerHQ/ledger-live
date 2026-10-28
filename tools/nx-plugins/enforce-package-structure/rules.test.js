@@ -363,8 +363,8 @@ test("chainBreak allows `export *` lines down the folder, and comments", () => {
     'export * from "./a/../b";',
     "/* trailing */",
   ].join("\n");
-  assert.equal(chainBreak(source), undefined);
-  assert.equal(chainBreak(""), undefined);
+  assert.equal(chainBreak(source, "index.ts"), undefined);
+  assert.equal(chainBreak("", "index.ts"), undefined);
 });
 
 test("chainBreak names a named export, a rename, code and a path outside the folder", () => {
@@ -381,7 +381,7 @@ test("chainBreak names a named export, a rename, code and a path outside the fol
     ['export * from "@shared/thing";', CHAIN_BREAKS.outside],
   ]) {
     assert.deepEqual(
-      chainBreak(['export * from "./ok";', statement].join("\n")),
+      chainBreak(['export * from "./ok";', statement].join("\n"), "index.ts"),
       { line: 2, reason },
       statement,
     );
