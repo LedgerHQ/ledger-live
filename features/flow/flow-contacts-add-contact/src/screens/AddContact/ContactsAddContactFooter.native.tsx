@@ -1,7 +1,12 @@
 import React from "react";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
 import { useAddContactLabels } from "./copy/useAddContactLabels";
-import type { ContactsAddContactFooterProps } from "./types";
+import type { AddContactContentViewModel } from "./types";
+
+export type ContactsAddContactFooterProps = Pick<
+  AddContactContentViewModel,
+  "isConfirmEnabled" | "isSaving" | "onConfirm"
+>;
 
 export function ContactsAddContactFooter({
   isConfirmEnabled,
