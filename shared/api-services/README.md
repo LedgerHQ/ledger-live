@@ -92,8 +92,8 @@ configureStore({
 (`calService`, `cardService`, `coinMarketCapService`, `cvsService`, `dadaService`, `portfolioService`,
 `pushDevicesService`, `swapService`) that takes the service's own config as a thunk. No thunk runs at
 import or at `defineApiServices`: `createExtra` reads and validates every config once, at store
-creation, and merges the results. `ledgerClientVersion` is passed once, as `CommonConfig`, to every
-service that sends it. Two services giving different values for one `extraArgument` key throw.
+creation, and merges the results. `ledgerClientVersion` is passed once, as `CommonConfig`, and trimmed
+before it reaches every service that sends it. Two services giving different values for one `extraArgument` key throw.
 Two descriptors sharing a `reducerPath`, even the same service listed twice, throw at
 `defineApiServices`.
 

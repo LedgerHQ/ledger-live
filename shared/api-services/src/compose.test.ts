@@ -1,6 +1,7 @@
 import { defineApiServices, type ApiServiceDescriptor, type ApiServicesState } from "./compose";
 import { calApi, calService } from "./services/cal";
 import { dadaApi, dadaService } from "./services/dada";
+import { pushDevicesService } from "./services/push-devices";
 import { swapApi, swapService } from "./services/swap";
 
 const common = { ledgerClientVersion: "test" };
@@ -79,6 +80,16 @@ describe("defineApiServices", () => {
     ]).createExtra(common);
 
     expect(extra).toEqual({ ledgerClientVersion: "test" });
+  });
+
+  it("gives every service the same trimmed client version", () => {
+    const extra = defineApiServices([
+      calService(() => ({ calServiceUrl: "https://cal.test" })),
+      pushDevicesService(() => ({ pushDevicesServiceUrl: "https://push-devices.test" })),
+      swapService(() => ({ getSwapApiBaseUrl: () => "https://swap.test" })),
+    ]).createExtra({ ledgerClientVersion: " 1.2.3 " });
+
+    expect(extra).toMatchObject({ ledgerClientVersion: "1.2.3" });
   });
 
   it("throws when two services give different values for one key", () => {

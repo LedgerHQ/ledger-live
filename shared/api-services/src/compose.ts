@@ -41,8 +41,10 @@ export function defineApiServices<const D extends readonly ApiServiceDescriptor[
   function createExtra(common: CommonConfig): object {
     const extra: Record<string, unknown> = {};
     const owners: Record<string, string> = {};
+    // Some schemas trim the version and others keep it as given: trim once so they all agree.
+    const normalized = { ...common, ledgerClientVersion: common.ledgerClientVersion.trim() };
     for (const { api, buildExtra } of descriptors) {
-      for (const [key, value] of Object.entries(buildExtra(common))) {
+      for (const [key, value] of Object.entries(buildExtra(normalized))) {
         if (Object.hasOwn(extra, key) && !Object.is(extra[key], value)) {
           throw new Error(
             `${api.reducerPath} and ${owners[key]} give different values for extraArgument.${key}`,
