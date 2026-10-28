@@ -11,12 +11,7 @@ const {
 } = require("../core");
 const { deepFreeze } = require("./freeze");
 
-/**
- * Tail reporters shared by every config. Exported so callers that need to insert an extra
- * reporter (e.g. github-actions) can spread this after their insertion:
- *
- *   reporters: ["default", ...(CI ? ["github-actions"] : []), ...sharedReporters]
- */
+// Tail reporters of every node config. The preset sets `reporters`; a package cannot override them.
 const sharedReporters = [jestSonarReporter, quarantineReporter];
 
 // ─── ESM-only dependencies ──────────────────────────────────────────────────
