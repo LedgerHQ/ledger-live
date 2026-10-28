@@ -3,19 +3,27 @@ const { createSharedJestConfig, withEsmDeps } = require("../shared");
 // Integration suites hit live networks; the unit config leaves them to the integration config.
 const integrationTests = ".*\\.(integ|integration)\\.test\\.[tj]s";
 
-const unitIgnorePatterns = ["lib/", "lib-es/", "node_modules/", integrationTests];
-
-const unitCoverage = [
-  "src/**/*.ts",
-  "!src/**/*.test.ts",
-  "!src/**/*.spec.ts",
-  "!src/test/**/*.ts",
-  "!src/__tests__/**/*.ts",
-];
-
-const walletFrameworkSetup = "@ledgerhq/wallet-framework-test-setup";
-const disableNetworkSetup = "@ledgerhq/disable-network-setup";
-const quarantineRetries = "@ledgerhq/test-quarantine/jest-retries";
+/**
+ * The lists the unit config sets. Every override replaces the preset's value, as in jest, so a
+ * package that extends one of them spreads it:
+ *
+ *   collectCoverageFrom: [...libsCoinDefaults.collectCoverageFrom, "!src/datasets/**"],
+ */
+const libsCoinDefaults = Object.freeze({
+  collectCoverageFrom: Object.freeze([
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/**/*.spec.ts",
+    "!src/test/**/*.ts",
+    "!src/__tests__/**/*.ts",
+  ]),
+  setupFilesAfterEnv: Object.freeze([
+    "@ledgerhq/wallet-framework-test-setup",
+    "@ledgerhq/disable-network-setup",
+    "@ledgerhq/test-quarantine/jest-retries",
+  ]),
+  testPathIgnorePatterns: Object.freeze(["lib/", "lib-es/", "node_modules/", integrationTests]),
+});
 
 /**
  * @typedef {object} LibsCoinOptions
@@ -23,26 +31,7 @@ const quarantineRetries = "@ledgerhq/test-quarantine/jest-retries";
  * @property {string[]} [extraEsmDeps] more pnpm store prefixes to keep transformed
  * @property {string} [projectRoot] lcov root; else derived from `overrides.rootDir`, else
  *   `../../../` (a package in libs/coin-modules/)
- * @property {boolean} [network] unit tests and projects: leaves out
- *   `@ledgerhq/disable-network-setup`, for suites that mock the network with msw, which cannot
- *   share a run with nock (default false)
- * @property {boolean} [walletFramework] leaves out `@ledgerhq/wallet-framework-test-setup` when
- *   false (default true)
  */
-
-/**
- * The setup files of a unit run: wallet framework, no network, test quarantine retries.
- *
- * @param {LibsCoinOptions} options
- * @returns {string[]}
- */
-function unitSetupFiles({ network = false, walletFramework = true }) {
-  return [
-    ...(walletFramework ? [walletFrameworkSetup] : []),
-    ...(network ? [] : [disableNetworkSetup]),
-    quarantineRetries,
-  ];
-}
 
 /**
  * @param {import('@jest/types').Config.InitialOptions} config
@@ -54,8 +43,6 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
     esm,
     extraEsmDeps,
     projectRoot: projectRoot ?? (config.rootDir === undefined ? "../../../" : undefined),
-    // The setup files below carry the retries where a run wants them.
-    retries: false,
   });
 }
 
@@ -63,8 +50,8 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  * Unit config of a coin module: node, the coin setup files (wallet framework, no network, test
  * quarantine retries), integration suites left out, coverage of `src/**` minus the tests.
  *
- * `setupFilesAfterEnv`, `collectCoverageFrom` and `testPathIgnorePatterns` add to the preset's;
- * every other key replaces it. `network: true` leaves out the no-network setup.
+ * Every key of `overrides` replaces the preset's; `libsCoinDefaults` holds the lists a package
+ * extends by spreading them.
  *
  *   module.exports = createLibsCoinJestConfig({ rootDir: __dirname });
  *
@@ -72,22 +59,14 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  * @param {LibsCoinOptions} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createLibsCoinJestConfig(
-  {
-    collectCoverageFrom = [],
-    setupFilesAfterEnv = [],
-    testPathIgnorePatterns = [],
-    ...overrides
-  } = {},
-  options = {},
-) {
+function createLibsCoinJestConfig(overrides = {}, options) {
   return sharedConfig(
     {
       passWithNoTests: true,
+      collectCoverageFrom: [...libsCoinDefaults.collectCoverageFrom],
+      setupFilesAfterEnv: [...libsCoinDefaults.setupFilesAfterEnv],
+      testPathIgnorePatterns: [...libsCoinDefaults.testPathIgnorePatterns],
       ...overrides,
-      setupFilesAfterEnv: [...unitSetupFiles(options), ...setupFilesAfterEnv],
-      collectCoverageFrom: [...unitCoverage, ...collectCoverageFrom],
-      testPathIgnorePatterns: [...unitIgnorePatterns, ...testPathIgnorePatterns],
     },
     options,
   );
@@ -96,33 +75,28 @@ function createLibsCoinJestConfig(
 /**
  * One entry of the `projects` of a coin module's unit config: jest does not pass the top-level
  * options of a config down to its projects, so each project starts from the unit defaults here
- * (node, transform, ESM dependencies, test matching, setup files).
- *
- * `setupFilesAfterEnv` and `testPathIgnorePatterns` add to the preset's; every other key replaces
- * it. Takes the unit config's `esm`, `extraEsmDeps`, `network` and `walletFramework` options.
+ * (node, transform, ESM dependencies, test matching, setup files, ignored paths). Every key of
+ * `overrides` replaces the preset's.
  *
  *   projects: [
- *     createLibsCoinJestProject({ displayName: "unit", testPathIgnorePatterns: ["\\.msw\\.test\\.ts"] }),
- *     createLibsCoinJestProject({ displayName: "msw", testMatch: ["**\/*.msw.test.ts"] }, { network: true }),
+ *     createLibsCoinJestProject({ displayName: "unit", testPathIgnorePatterns: [...] }),
+ *     createLibsCoinJestProject({ displayName: "msw", setupFilesAfterEnv: [...] }),
  *   ],
  *
  * @param {import('@jest/types').Config.InitialProjectOptions} [overrides]
- * @param {LibsCoinOptions} [options]
+ * @param {Pick<LibsCoinOptions, "esm" | "extraEsmDeps">} [options]
  * @returns {import('@jest/types').Config.InitialProjectOptions}
  */
-function createLibsCoinJestProject(
-  { setupFilesAfterEnv = [], testPathIgnorePatterns = [], ...overrides } = {},
-  { esm = true, extraEsmDeps = [], ...options } = {},
-) {
+function createLibsCoinJestProject(overrides = {}, { esm = true, extraEsmDeps = [] } = {}) {
   const { testEnvironment, roots, testMatch, transform } = createSharedJestConfig();
   const project = {
     testEnvironment,
     roots,
     testMatch,
     transform,
+    setupFilesAfterEnv: [...libsCoinDefaults.setupFilesAfterEnv],
+    testPathIgnorePatterns: [...libsCoinDefaults.testPathIgnorePatterns],
     ...overrides,
-    setupFilesAfterEnv: [...unitSetupFiles(options), ...setupFilesAfterEnv],
-    testPathIgnorePatterns: [...unitIgnorePatterns, ...testPathIgnorePatterns],
   };
   return esm ? withEsmDeps(project, { extraDeps: extraEsmDeps }) : project;
 }
@@ -130,8 +104,7 @@ function createLibsCoinJestProject(
 /**
  * Integration config of a coin module: the `*.integ.test.ts` suites, which hit live networks,
  * with a 60 s timeout, the wallet framework setup only and the default reporter (no quarantine,
- * no sonar). `setupFilesAfterEnv` adds to the preset's; every other key of `overrides` replaces
- * it. `walletFramework: false` leaves out the wallet framework setup.
+ * no sonar). Every key of `overrides` replaces the preset's.
  *
  *   module.exports = createLibsCoinIntegJestConfig({ rootDir: __dirname });
  *
@@ -139,11 +112,7 @@ function createLibsCoinJestProject(
  * @param {LibsCoinOptions} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createLibsCoinIntegJestConfig(
-  { setupFilesAfterEnv = [], ...overrides } = {},
-  options = {},
-) {
-  const { walletFramework = true } = options;
+function createLibsCoinIntegJestConfig(overrides = {}, options) {
   return sharedConfig(
     {
       testMatch: undefined,
@@ -151,12 +120,9 @@ function createLibsCoinIntegJestConfig(
       testTimeout: 60_000,
       forceExit: true,
       passWithNoTests: true,
+      setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
       reporters: ["default"],
       ...overrides,
-      setupFilesAfterEnv: [
-        ...(walletFramework ? [walletFrameworkSetup] : []),
-        ...setupFilesAfterEnv,
-      ],
     },
     options,
   );
@@ -166,4 +132,5 @@ module.exports = {
   createLibsCoinJestConfig,
   createLibsCoinIntegJestConfig,
   createLibsCoinJestProject,
+  libsCoinDefaults,
 };

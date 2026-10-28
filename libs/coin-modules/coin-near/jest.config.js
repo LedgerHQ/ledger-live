@@ -1,4 +1,8 @@
-const { createLibsCoinJestConfig, createLibsCoinJestProject } = require("@support/jest/libs-coin");
+const {
+  createLibsCoinJestConfig,
+  createLibsCoinJestProject,
+  libsCoinDefaults,
+} = require("@support/jest/libs-coin");
 
 // near-api-js v7 depends on ESM-only @noble/@scure packages, which have to be transpiled for Jest.
 // The preset already keeps @noble transformed.
@@ -15,8 +19,18 @@ module.exports = createLibsCoinJestConfig({
       { extraEsmDeps },
     ),
     createLibsCoinJestProject(
-      { displayName: "msw", testPathIgnorePatterns: ["\\.unit\\.test\\.ts$"] },
-      { extraEsmDeps, network: true },
+      {
+        displayName: "msw",
+        testPathIgnorePatterns: [
+          ...libsCoinDefaults.testPathIgnorePatterns,
+          "\\.unit\\.test\\.ts$",
+        ],
+        setupFilesAfterEnv: [
+          "@ledgerhq/wallet-framework-test-setup",
+          "@ledgerhq/test-quarantine/jest-retries",
+        ],
+      },
+      { extraEsmDeps },
     ),
   ],
 });

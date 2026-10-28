@@ -1,61 +1,46 @@
-// Pins how the node presets treat setup files: a package's list adds to the preset's, and only a
-// named option removes one of the preset's. Also pins the project builder against the unit config.
+// Pins how the libs-coin presets treat overrides: every key replaces the preset's, as in jest, and
+// a package extends a default list by spreading libsCoinDefaults. Also pins the project builder
+// against the unit config.
 
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 import test from "node:test";
 
 const require = createRequire(import.meta.url);
-const { createSharedJestConfig } = require("../shared");
 const {
   createLibsCoinJestConfig,
   createLibsCoinIntegJestConfig,
   createLibsCoinJestProject,
+  libsCoinDefaults,
 } = require(".");
 
-const walletFramework = "@ledgerhq/wallet-framework-test-setup";
-const noNetwork = "@ledgerhq/disable-network-setup";
-const retries = "@ledgerhq/test-quarantine/jest-retries";
-
-test("createSharedJestConfig: setup files add to the retries, `retries: false` drops them", () => {
-  assert.deepEqual(createSharedJestConfig().setupFilesAfterEnv, [retries]);
-  assert.deepEqual(createSharedJestConfig({ setupFilesAfterEnv: ["./a.ts"] }).setupFilesAfterEnv, [
-    retries,
-    "./a.ts",
-  ]);
-  assert.deepEqual(createSharedJestConfig({}, { retries: false }).setupFilesAfterEnv, []);
+test("createLibsCoinJestConfig: the defaults are the unit lists, an override replaces one", () => {
+  const unit = createLibsCoinJestConfig();
+  for (const key of ["collectCoverageFrom", "setupFilesAfterEnv", "testPathIgnorePatterns"]) {
+    assert.deepEqual(unit[key], libsCoinDefaults[key], key);
+    assert.deepEqual(createLibsCoinJestConfig({ [key]: ["x"] })[key], ["x"], key);
+  }
+  assert.deepEqual(
+    createLibsCoinJestConfig({
+      collectCoverageFrom: [...libsCoinDefaults.collectCoverageFrom, "!src/fixtures/**"],
+    }).collectCoverageFrom,
+    [...libsCoinDefaults.collectCoverageFrom, "!src/fixtures/**"],
+  );
+  assert.ok(Object.isFrozen(libsCoinDefaults.setupFilesAfterEnv));
+  assert.notEqual(unit.setupFilesAfterEnv, libsCoinDefaults.setupFilesAfterEnv);
 });
 
-test("createLibsCoinJestConfig: setup files add to the coin ones, options drop one", () => {
-  assert.deepEqual(createLibsCoinJestConfig().setupFilesAfterEnv, [
-    walletFramework,
-    noNetwork,
-    retries,
+test("createLibsCoinIntegJestConfig: the wallet framework setup only, replaced by an override", () => {
+  assert.deepEqual(createLibsCoinIntegJestConfig().setupFilesAfterEnv, [
+    "@ledgerhq/wallet-framework-test-setup",
   ]);
   assert.deepEqual(
-    createLibsCoinJestConfig({ setupFilesAfterEnv: ["./a.ts"] }, { network: true })
-      .setupFilesAfterEnv,
-    [walletFramework, retries, "./a.ts"],
-  );
-  assert.deepEqual(createLibsCoinJestConfig({}, { walletFramework: false }).setupFilesAfterEnv, [
-    noNetwork,
-    retries,
-  ]);
-});
-
-test("createLibsCoinIntegJestConfig: no retries, `walletFramework: false` drops its setup", () => {
-  assert.deepEqual(createLibsCoinIntegJestConfig().setupFilesAfterEnv, [walletFramework]);
-  assert.deepEqual(
-    createLibsCoinIntegJestConfig({ setupFilesAfterEnv: ["./a.ts"] }).setupFilesAfterEnv,
-    [walletFramework, "./a.ts"],
-  );
-  assert.deepEqual(
-    createLibsCoinIntegJestConfig({}, { walletFramework: false }).setupFilesAfterEnv,
+    createLibsCoinIntegJestConfig({ setupFilesAfterEnv: [] }).setupFilesAfterEnv,
     [],
   );
 });
 
-test("createLibsCoinJestProject: the unit config's project options, overrides by the same rule", () => {
+test("createLibsCoinJestProject: the unit config's project options, every override replaces", () => {
   const unit = createLibsCoinJestConfig();
   const project = createLibsCoinJestProject();
   for (const key of [
@@ -75,15 +60,11 @@ test("createLibsCoinJestProject: the unit config's project options, overrides by
   }
 
   const msw = createLibsCoinJestProject(
-    { displayName: "msw", testPathIgnorePatterns: ["\\.unit\\.test\\.ts$"] },
-    { network: true, extraEsmDeps: ["@scure"] },
+    { displayName: "msw", setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"] },
+    { extraEsmDeps: ["@scure"] },
   );
   assert.equal(msw.displayName, "msw");
-  assert.deepEqual(msw.testPathIgnorePatterns, [
-    ...unit.testPathIgnorePatterns,
-    "\\.unit\\.test\\.ts$",
-  ]);
-  assert.deepEqual(msw.setupFilesAfterEnv, [walletFramework, retries]);
+  assert.deepEqual(msw.setupFilesAfterEnv, ["@ledgerhq/test-quarantine/jest-retries"]);
   assert.match(msw.transformIgnorePatterns[0], /@scure/);
   assert.equal("transformIgnorePatterns" in createLibsCoinJestProject({}, { esm: false }), false);
 });

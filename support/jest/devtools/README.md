@@ -30,8 +30,8 @@ module.exports = require("@support/jest/devtools").createWebJestConfig();
 module.exports = require("@support/jest/devtools").createNativeJestConfig();
 ```
 
-Both factories take an optional overrides object. `moduleNameMapper` is merged into the preset's
-and `setupFilesAfterEnv` adds to it; every other key replaces it.
+Both factories take an optional overrides object. `moduleNameMapper` is merged into the preset's;
+every other key replaces it.
 
 ```js
 // jest.native.config.js, adding a package-local mock

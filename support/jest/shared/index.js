@@ -62,8 +62,6 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
 /**
  * Flat jest config for a node package: shared/* logic packages, and libs/* packages.
  *
- * `setupFilesAfterEnv` adds to the preset's; every other key replaces it. `retries: false` leaves out
- * the test quarantine retries, for suites where a retry that passes would hide a real failure.
  * `esm: true` applies `withEsmDeps` (with `extraEsmDeps`) to the result, after the overrides. The
  * lcov `projectRoot` is the option when given, else derived from `overrides.rootDir` when set, else
  * `../../` (a package two levels below the repository root).
@@ -72,12 +70,12 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
  *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides]
- * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string, retries?: boolean }} [options]
+ * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createSharedJestConfig(
-  { setupFilesAfterEnv = [], ...overrides } = {},
-  { esm = false, extraEsmDeps = [], projectRoot, retries = true } = {},
+  overrides = {},
+  { esm = false, extraEsmDeps = [], projectRoot } = {},
 ) {
   const config = {
     testEnvironment: "node",
@@ -88,8 +86,8 @@ function createSharedJestConfig(
     coverageDirectory: "./coverage/",
     coverageReporters: lcovCoverageReporters(projectRoot ?? lcovRoot(overrides.rootDir, "../../")),
     reporters: ["default", ...(process.env.CI ? ["github-actions"] : []), ...sharedReporters],
+    setupFilesAfterEnv: [quarantineRetries],
     ...overrides,
-    setupFilesAfterEnv: [...(retries ? [quarantineRetries] : []), ...setupFilesAfterEnv],
   };
   return esm ? withEsmDeps(config, { extraDeps: extraEsmDeps }) : config;
 }
@@ -140,6 +138,7 @@ function createSharedUiNativeJestConfig(overrides = {}) {
         testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
         moduleFileExtensions: platformExtensions("native"),
         moduleNameMapper: { ...nativeMocks },
+        setupFilesAfterEnv: [quarantineRetries],
       },
       overrides,
     ),

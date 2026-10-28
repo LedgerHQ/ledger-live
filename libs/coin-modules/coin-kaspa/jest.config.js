@@ -1,4 +1,8 @@
-const { createLibsCoinJestConfig, createLibsCoinJestProject } = require("@support/jest/libs-coin");
+const {
+  createLibsCoinJestConfig,
+  createLibsCoinJestProject,
+  libsCoinDefaults,
+} = require("@support/jest/libs-coin");
 
 // Two projects: `unit` runs with @ledgerhq/disable-network-setup (nock blocks all net connect),
 // while `msw` runs the `.msw.test.ts` suites WITHOUT it — nock and MSW both build on
@@ -9,15 +13,13 @@ module.exports = createLibsCoinJestConfig({
   projects: [
     createLibsCoinJestProject({
       displayName: "unit",
-      testPathIgnorePatterns: ["\\.msw\\.test\\.ts"],
+      testPathIgnorePatterns: [...libsCoinDefaults.testPathIgnorePatterns, "\\.msw\\.test\\.ts"],
     }),
-    createLibsCoinJestProject(
-      {
-        displayName: "msw",
-        testMatch: ["**/*.msw.test.ts"],
-        setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/msw-setup.ts"],
-      },
-      { network: true, walletFramework: false },
-    ),
+    createLibsCoinJestProject({
+      displayName: "msw",
+      testMatch: ["**/*.msw.test.ts"],
+      setupFiles: ["@ledgerhq/wallet-framework-test-setup", "./src/test/msw-setup.ts"],
+      setupFilesAfterEnv: ["@ledgerhq/test-quarantine/jest-retries"],
+    }),
   ],
 });

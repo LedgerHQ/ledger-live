@@ -28,11 +28,8 @@ The lcov root is the repository root seen from `rootDir` when set, else the laye
 relative to the repository root, where Sonar reads them.
 
 `createSharedJestConfig(overrides, options)` is the node base for `shared/*` and `libs/*` packages,
-and for node packages of other layers that no layer preset covers yet. `setupFilesAfterEnv` adds to
-the preset's test quarantine retries; every other key replaces the preset's. Its options:
+and for node packages of other layers that no layer preset covers yet. Its options:
 
-- `retries: false` leaves the retries out, for suites where a retry that passes would hide a real
-  failure.
 - `esm: true` applies `withEsmDeps` to the result, after the overrides, for a package that
   `require`s an ESM-only dependency (`@noble/*` v2). `extraEsmDeps` keeps more pnpm store prefixes
   transformed (`["@ledgerhq\\+"]`).
@@ -50,41 +47,36 @@ and `testMatch`. The preset reports to `github-actions` on CI.
 ## libs-coin
 
 A coin module, or a library that ships coin logic the same way (`libs/wallet-btc`), builds its
-configs from `@support/jest/libs-coin` rather than from `createSharedJestConfig` directly. Both
-factories sit on `createSharedJestConfig` and take the same options (`esm`, `extraEsmDeps`,
-`projectRoot`).
+configs from `@support/jest/libs-coin` rather than from `createSharedJestConfig` directly. The
+factories sit on `createSharedJestConfig` and take its options (`esm`, `extraEsmDeps`,
+`projectRoot`). Every override replaces the preset's key, as in jest.
 
 - `createLibsCoinJestConfig(overrides, options)`, for `jest.config.js`: the unit tests. It adds
   `passWithNoTests`, the coin setup files (`@ledgerhq/wallet-framework-test-setup`,
   `@ledgerhq/disable-network-setup`, `@ledgerhq/test-quarantine/jest-retries`), coverage of
   `src/**/*.ts` minus the tests, and leaves out the `*.integ.test.ts` and `*.integration.test.ts`
-  suites. `setupFilesAfterEnv`, `collectCoverageFrom` and `testPathIgnorePatterns` overrides add to
-  the preset's; every other key replaces it.
+  suites.
 - `createLibsCoinIntegJestConfig(overrides, options)`, for `jest.integ.config.js`: the
   `*.integ.test.ts` suites, which hit live networks. A 60 s timeout, `forceExit`,
   `passWithNoTests`, the wallet framework setup only and the default reporter: no quarantine and
-  no sonar report. `setupFilesAfterEnv` adds to the preset's; every other key replaces it.
+  no sonar report.
 - `createLibsCoinJestProject(overrides, options)`, for each entry of the unit config's `projects`:
   jest does not pass a config's top-level options down to its projects, so a project starts from
-  the unit defaults (node, transform, ESM dependencies, test matching, setup files) instead of
-  retyping them. Its overrides follow the unit config's rule.
+  the unit defaults (node, transform, ESM dependencies, test matching, setup files, ignored paths)
+  instead of retyping them.
 
-Two options remove a setup file the preset adds:
-
-- `network: true` (unit config and projects) leaves out `@ledgerhq/disable-network-setup`, for
-  suites that mock the network with msw, which cannot share a run with nock.
-- `walletFramework: false` leaves out `@ledgerhq/wallet-framework-test-setup`, for a run that
-  loads it from `setupFiles` or does without it.
+`libsCoinDefaults` holds the unit lists (`collectCoverageFrom`, `setupFilesAfterEnv`,
+`testPathIgnorePatterns`). A package that extends one spreads it:
 
 ```js
 module.exports = createLibsCoinJestConfig({
   rootDir: __dirname,
+  collectCoverageFrom: [...libsCoinDefaults.collectCoverageFrom, "!src/datasets/**/*.ts"],
   projects: [
-    createLibsCoinJestProject({ displayName: "unit", testPathIgnorePatterns: ["\\.msw\\.test\\.ts"] }),
-    createLibsCoinJestProject(
-      { displayName: "msw", testMatch: ["**/*.msw.test.ts"] },
-      { network: true },
-    ),
+    createLibsCoinJestProject({
+      displayName: "unit",
+      testPathIgnorePatterns: [...libsCoinDefaults.testPathIgnorePatterns, "\\.msw\\.test\\.ts"],
+    }),
   ],
 });
 ```
