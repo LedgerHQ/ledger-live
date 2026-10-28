@@ -141,13 +141,13 @@ function barrelDepths(entries, targetsOf, isBarrel) {
 }
 
 /**
- * For each module below a module that breaks the chain (see chainBreak), that breaker. It taints
- * every module it leads to, which pass it on; an entry breaks nothing. A module is walked once
- * clean and at most once more when tainted.
+ * For each module below a breaker, a barrel that breaks the chain (see chainBreak), that breaker.
+ * It taints every module it leads to, plain modules included, which pass it on; an entry breaks
+ * nothing. A module is walked once clean and at most once more when tainted.
  *
  * @param {Set<string>} entries
  * @param {(file: string) => string[]} targetsOf
- * @param {(file: string) => boolean} breaks whether a module breaks the chain
+ * @param {(file: string) => boolean} breaks whether a file is a breaker
  * @returns {Map<string, string>} module to the breaker above it
  */
 function chainBreakers(entries, targetsOf, breaks) {

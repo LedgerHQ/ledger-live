@@ -12,8 +12,8 @@ const path = require("node:path");
 const ts = require("typescript");
 
 /** @typedef {{ line: number, code: string, message: string, text: string, breaker?: ChainBreaker }} Violation */
-/** @typedef {{ line: number, reason: string }} ChainBreak why a module breaks a pure chain */
-/** @typedef {ChainBreak & { file: string }} ChainBreaker the module that breaks it */
+/** @typedef {{ line: number, reason: string }} ChainBreak why a barrel breaks a pure chain */
+/** @typedef {ChainBreak & { file: string }} ChainBreaker the barrel that breaks it */
 
 // `index.ts`, and the platform variants beside it: `index.native.ts`, `index.web.tsx`, …
 const BARREL_BASENAME = /^index(?:\.[A-Za-z0-9-]+)*\.[cm]?[jt]sx?$/;
@@ -337,7 +337,7 @@ const CHAIN_BREAKS = {
 };
 
 /**
- * The first statement of a module that breaks a pure `export *` chain, see CHAIN_BREAKS.
+ * The first statement of a barrel that breaks a pure `export *` chain, see CHAIN_BREAKS.
  *
  * @param {string} source raw file contents
  * @param {string} [file]
@@ -408,7 +408,7 @@ const BARREL_LOCATION = {
  * @param {number | undefined} depth barrels from its nearest entry to it, itself included: 0 for
  *   an entry, undefined when no entry reaches it
  * @param {ChainBreaker} [breaker] for a barrel more than one
- *   level deep, a module that breaks a chain to it; undefined when every chain to it is pure
+ *   level deep, a barrel that breaks a chain to it; undefined when every chain to it is pure
  * @returns {Violation[]}
  */
 function checkBarrelLocation(projectRoot, file, depth, breaker) {
