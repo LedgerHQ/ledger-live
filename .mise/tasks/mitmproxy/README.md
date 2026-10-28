@@ -261,9 +261,11 @@ overlapping full runs get HTTP 429 and their tests start on default flags.
 `mitmproxy:capture-start` and `mitmproxy:capture-stop` fix that in the `e2e-tests`
 job of `.github/workflows/test-ui-e2e-only-desktop.yml`:
 
-- The `firebase_capture.py` addon sends the first fetch per Firebase project and
-  language upstream, makes concurrent fetches wait for it, and replays the stored
-  answer to every later launch. Only a 200 with `state: UPDATE` is stored.
+- The `firebase_capture.py` addon sends the first fetch per Firebase project,
+  language and Origin upstream, makes concurrent fetches wait for it, and replays
+  the stored answer, Firebase's CORS headers included, to every later launch. Only
+  a 200 with `state: UPDATE` is stored. A fetch that carries a real ETag goes to
+  Firebase untouched, so NO_CHANGE answers stay live.
 - Only Electron uses the proxy, and only for `firebaseremoteconfig.googleapis.com`:
   `e2e/desktop/tests/utils/electronUtils.ts` adds a PAC file and trusts the
   mitmproxy CA by its key hash when `E2E_FIREBASE_PROXY` and

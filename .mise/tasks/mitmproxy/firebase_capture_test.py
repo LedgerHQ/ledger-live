@@ -268,16 +268,44 @@ def test_custom_signals_are_keyed_by_hash_only():
     run(test)
 
 
-def test_replay_allows_the_requesting_origin():
+def test_replay_keeps_firebase_cors_headers_and_each_origin_fetches_its_own():
+    async def test(addon, _):
+        origin = {"Origin": "https://upstream.example"}
+        leader = fetch_flow(headers=origin)
+        await addon.request(leader)
+        answer(leader)
+        addon.response(leader)
+
+        same_origin = fetch_flow(headers=origin)
+        await addon.request(same_origin)
+        assert same_origin.response.headers["access-control-allow-origin"] == "https://upstream.example"
+
+        other_origin = fetch_flow(headers={"Origin": "https://swap.example"})
+        await addon.request(other_origin)
+        assert other_origin.response is None
+        assert "firebase_capture_future" in other_origin.metadata
+
+    run(test)
+
+
+def test_fetch_with_a_real_etag_goes_to_firebase_untouched():
     async def test(addon, _):
         leader = fetch_flow()
         await addon.request(leader)
         answer(leader)
         addon.response(leader)
 
-        webview = fetch_flow(headers={"Origin": "https://swap.example"})
-        await addon.request(webview)
-        assert webview.response.headers["access-control-allow-origin"] == "https://swap.example"
+        refetch = fetch_flow(headers={"If-None-Match": "etag-42"})
+        await addon.request(refetch)
+        assert refetch.response is None
+        assert refetch.request.headers["If-None-Match"] == "etag-42"
+        assert "firebase_capture_key" not in refetch.metadata
+
+        answer(refetch, body={"state": "NO_CHANGE"})
+        addon.response(refetch)
+        assert json.loads(addon.cache[next(iter(addon.cache))].body) == TEMPLATE
+        (stats,) = addon.stats.values()
+        assert (stats.upstream, stats.replayed) == (2, 0)
 
     run(test)
 

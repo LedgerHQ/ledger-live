@@ -6,12 +6,13 @@ renders. Remote Config allows 60 fetches a minute per caller IP, so two overlapp
 throttled (HTTP 429) and their tests start on compiled-default flags.
 
 The first fetch for a key goes upstream. Fetches that arrive while it is in flight wait for it, and
-every later fetch gets the stored answer. Only a 200 with `state: UPDATE` and entries is stored, so
-a 429 or an empty template is passed through and the next fetch tries again.
+every later fetch gets the stored answer, headers included. Only a 200 with `state: UPDATE` and
+entries is stored, so a 429 or an empty template is passed through and the next fetch tries again.
+A fetch that carries a real ETag goes to Firebase untouched, so NO_CHANGE answers stay live.
 
     mitmdump -s firebase_capture.py --set firebase_capture_summary=/path/to/summary.json
 
-Key: request path (one per Firebase project) + app_id + language_code + custom_signals.
+Key: request path (one per Firebase project) + app_id + language_code + custom_signals + Origin.
 Request and response bodies are never logged: they carry installation tokens and the flag template.
 """
 
@@ -75,7 +76,12 @@ def capture_key(flow: http.HTTPFlow) -> str | None:
     # Keys are logged, so custom signals (request-body values) only appear as a hash.
     signals = body.get("custom_signals")
     signals_id = hashlib.sha256(json.dumps(signals, sort_keys=True).encode()).hexdigest()[:12] if signals else "none"
-    return f"{path} app_id={body.get('app_id', '')} language_code={body.get('language_code', '')} custom_signals={signals_id}"
+    # Each origin gets Firebase's own CORS answer instead of a rewritten one.
+    origin = flow.request.headers.get("Origin", "none")
+    return (
+        f"{path} app_id={body.get('app_id', '')} language_code={body.get('language_code', '')} "
+        f"custom_signals={signals_id} origin={origin}"
+    )
 
 
 def usable_snapshot(response: http.Response | None) -> Snapshot | None:
@@ -126,6 +132,11 @@ class FirebaseCapture:
         if key is None:
             return
         stats = self.stats.setdefault(key, KeyStats())
+        etag = flow.request.headers.get("If-None-Match", "")
+        if etag and etag != "*":
+            # The app already holds a template: let Firebase answer NO_CHANGE or a newer one, uncached.
+            stats.upstream += 1
+            return
         loop = asyncio.get_running_loop()
         deadline = loop.time() + ctx.options.firebase_capture_wait
         while key not in self.cache:
@@ -198,13 +209,7 @@ class FirebaseCapture:
                 json.dump(summary, f, indent=2)
 
     def _replay(self, flow: http.HTTPFlow, snapshot: Snapshot) -> None:
-        headers = dict(snapshot.headers)
-        origin = flow.request.headers.get("Origin")
-        if origin:
-            for name in [name for name in headers if name.lower() == "access-control-allow-origin"]:
-                del headers[name]
-            headers["access-control-allow-origin"] = origin
-        flow.response = http.Response.make(200, snapshot.body, headers)
+        flow.response = http.Response.make(200, snapshot.body, snapshot.headers)
 
     def _wake_waiters(self, key: str) -> None:
         # A fetch that stopped waiting can fill the cache before the leader answers.
