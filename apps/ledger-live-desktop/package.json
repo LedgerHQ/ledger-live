@@ -147,6 +147,7 @@
     "@features/platform-feature-flags-firebase": "workspace:^",
     "@features/platform-market-countervalues": "workspace:^",
     "@features/platform-pay-analytics": "workspace:^",
+    "@features/platform-predictions": "workspace:^",
     "@features/platform-quick-actions": "workspace:^",
     "@features/platform-style": "workspace:^",
     "@features/platform-verify-address-intent": "workspace:^",

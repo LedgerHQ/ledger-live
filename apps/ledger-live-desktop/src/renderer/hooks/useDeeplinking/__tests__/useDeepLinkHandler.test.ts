@@ -10,8 +10,44 @@ import {
   FEATURE_INTRO_CAMPAIGN_ID,
   genericAwarenessModalTestContentCards,
 } from "LLD/features/GenericAwarenessModal/testUtils/fixtures";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
+import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import type { LiveAppRegistry } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/types";
 import { useDeepLinkHandler } from "../useDeepLinkHandler";
 import BigNumber from "bignumber.js";
+
+const mockNavigate = jest.fn();
+
+jest.mock("react-router", () => ({
+  ...jest.requireActual("react-router"),
+  useNavigate: () => mockNavigate,
+}));
+
+jest.mock("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index"),
+  useRemoteLiveAppContext: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/live-common/wallet-api/useLiveAppManifest", () => ({
+  useLiveAppManifest: jest.fn(),
+}));
+
+const mockUseRemoteLiveAppContext = jest.mocked(useRemoteLiveAppContext);
+const mockUseLiveAppManifest = jest.mocked(useLiveAppManifest);
+
+const mockLiveAppCatalog = ({ isLoaded }: { isLoaded: boolean }) => {
+  mockUseRemoteLiveAppContext.mockReturnValue({
+    state: {
+      isLoading: !isLoaded,
+      value: isLoaded ? ({} as LiveAppRegistry) : null,
+      error: null,
+    },
+    provider: "production",
+    setProvider: jest.fn(),
+    updateManifests: jest.fn(),
+  });
+};
 
 jest.mock("~/renderer/actions/modals", () => ({
   openModal: jest.fn(() => ({ type: "OPEN_MODAL" })),
@@ -151,6 +187,8 @@ describe("useDeepLinkHandler", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockLiveAppCatalog({ isLoaded: false });
+    mockUseLiveAppManifest.mockReturnValue(undefined);
   });
 
   describe("open overlays", () => {
@@ -434,6 +472,45 @@ describe("useDeepLinkHandler", () => {
       await waitFor(() => {
         expect(store.getState().dialogs.GENERIC_AWARENESS_MODAL).toBeFalsy();
       });
+    });
+  });
+
+  describe("predictions deeplink", () => {
+    const predictionsDeeplink = "ledgerwallet://predictions?eventSlug=will-btc-hit-100k";
+    const onboardedState = { settings: { hasCompletedOnboarding: true } };
+
+    it("opens the predictions live app when its manifest is found", () => {
+      mockLiveAppCatalog({ isLoaded: true });
+      mockUseLiveAppManifest.mockReturnValue({ id: "predictions-live-app" } as LiveAppManifest);
+      const { result } = renderHook(() => useDeepLinkHandler(), { initialState: onboardedState });
+
+      result.current.handler(predictionsDeeplink, false);
+
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/predictions-live-app", {
+        state: { eventSlug: "will-btc-hit-100k" },
+      });
+    });
+
+    it("opens the predictions live app while the live app catalog is loading", () => {
+      const { result } = renderHook(() => useDeepLinkHandler(), { initialState: onboardedState });
+
+      result.current.handler(predictionsDeeplink, true);
+
+      expect(mockNavigate).toHaveBeenCalledWith("/platform/predictions-live-app", {
+        state: { eventSlug: "will-btc-hit-100k" },
+      });
+    });
+
+    it("ignores the link once the loaded catalog has no predictions manifest", () => {
+      const { result, rerender } = renderHook(() => useDeepLinkHandler(), {
+        initialState: onboardedState,
+      });
+
+      mockLiveAppCatalog({ isLoaded: true });
+      rerender();
+      result.current.handler(predictionsDeeplink, false);
+
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });

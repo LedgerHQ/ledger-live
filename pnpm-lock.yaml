@@ -1310,6 +1310,9 @@ importers:
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
+      '@features/platform-predictions':
+        specifier: workspace:^
+        version: link:../../features/platform/predictions
       '@features/platform-quick-actions':
         specifier: workspace:^
         version: link:../../features/platform/quick-actions
@@ -2199,6 +2202,9 @@ importers:
       '@features/platform-pay-analytics':
         specifier: workspace:^
         version: link:../../features/platform/pay-analytics
+      '@features/platform-predictions':
+        specifier: workspace:^
+        version: link:../../features/platform/predictions
       '@features/platform-quick-actions':
         specifier: workspace:^
         version: link:../../features/platform/quick-actions
