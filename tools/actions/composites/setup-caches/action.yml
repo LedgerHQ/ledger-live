@@ -65,6 +65,8 @@ runs:
       shell: bash
       env:
         MISE_EXPERIMENTAL: "1"
+        # mise refuses an untrusted mise.toml; mise-action sets this itself on the fallback path.
+        MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
       run: |
         # Assigning in the condition keeps mise's exit status: a failing `mise ls` (e.g. a mise too
         # old for mise.toml) must fall back to mise-action, not look like "nothing missing".
