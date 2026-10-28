@@ -51,13 +51,10 @@ lets `features/*` and `domain/*` resolve their own copy without depending on an 
 
 ## Dependency rules (enforced by Nx)
 
-```
-apps  →  features/flow  →  features/platform  →  domain  →  shared
-```
-
-Each layer may only import from layers below it. `shared`, `domain`, and `features` must **not**
-import from `libs/` — the new-arch core stays legacy-free. Enforced by
-[`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
+Each layer may only import from layers below it: see the
+[dependency table](../.agents/skills/structure-flow/references/layers.md#dependency-table).
+`shared`, `domain`, and `features` must **not** import from `libs/`: the new-arch core stays
+legacy-free. Enforced by [`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
 
 Third-party libraries follow the same direction (convention, not yet enforced by lint): apps do not declare new ones (framework singletons, the design system and tooling excepted), the lowest valid package
 wraps each one (e.g. `@shared/ui-qr-code`). See the
@@ -96,15 +93,8 @@ Never re-export a legacy type from a new-arch barrel.
 
 ## Naming
 
-| Layer | npm scope | Example |
-|---|---|---|
-| `shared/` | `@shared/<name>` | `@shared/feature-flags` |
-| `domain/entity/` | `@domain/entity-<name>` | `@domain/entity-contact` |
-| `domain/api/` | `@domain/api-<name>` | `@domain/api-push-devices` |
-| `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
-| `features/flow/` | `@features/flow-<name>` | `@features/flow-contacts` |
-| `support/` | `@support/<name>` | `@support/jest` |
-
-The folder path gives the package name: `domain/entity/contact` is `@domain/entity-contact`. Inside `<name>`, the namespace comes first, then the qualifier (`currency-crypto`, `market-index-fear-and-greed`). A package that breaks the rule is renamed when someone touches it.
+The folder path gives the package name, namespace first: see the
+[naming rules](../.agents/skills/structure-flow/references/layers.md#naming), with the table per layer
+and the known deviations.
 
 No cross-package relative imports: always use the npm package name.

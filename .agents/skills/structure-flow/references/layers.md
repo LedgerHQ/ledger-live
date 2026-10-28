@@ -56,6 +56,9 @@ with its tag and its boundary constraint in the same PR.
 
 ## Dependency table
 
+Dependencies point down: `apps` → `features/flow` → `features/platform` → `domain/api` →
+`domain/entity` → `shared`.
+
 | Source              | May depend on                                                      |
 | ------------------- | ------------------------------------------------------------------ |
 | `shared`            | `shared`                                                           |

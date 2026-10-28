@@ -13,12 +13,6 @@ Feature packages shared across desktop and mobile apps. See [docs/new-library.md
 
 ## Dependency direction
 
-```
-apps/ → features/flow → features/platform → domain/ → shared/
-```
+`features/flow/*` sits above `features/platform/*`, never the reverse: see the [dependency table](../.agents/skills/structure-flow/references/layers.md#dependency-table). App-specific screen composition stays in `apps/`, not here.
 
-- `features/flow/*` may depend on `features/platform/*`, `domain/*` and `shared/*`.
-- `features/platform/*` may depend on `domain/*` and `shared/*`; it must **not** depend on `features/flow/*`.
-- App-specific screen composition stays in `apps/`, not here.
-
-To decide between `platform/` and `flow/`, follow the [structure-flow](../.agents/skills/structure-flow/SKILL.md) decision tree. For naming conventions and the full new-package checklist see [docs/new-library.md](../docs/new-library.md).
+To decide between `platform/` and `flow/`, follow the [structure-flow](../.agents/skills/structure-flow/SKILL.md) decision tree. For package names see the [naming rules](../.agents/skills/structure-flow/references/layers.md#naming); for the full new-package checklist see [docs/new-library.md](../docs/new-library.md).

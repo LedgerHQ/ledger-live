@@ -18,10 +18,9 @@ Feature-level packages that know the business, serve several flows or use cases 
 ## Conventions
 
 - One platform package per concern
-- Package name: `@features/platform-<name>`
-- Directory name: `features/platform/<name>/`
+- Package name from the folder path: `features/platform/<name>/` is `@features/platform-<name>` ([naming rules](../../.agents/skills/structure-flow/references/layers.md#naming))
 - `package.json` must have `"private": true`
-- May depend on `scope:domain` and `scope:shared`; must NOT depend on `type:feature-flow`
+- Dependencies follow the [dependency table](../../.agents/skills/structure-flow/references/layers.md#dependency-table); never `features/flow`
 - Nx tag inferred automatically: `type:feature-platform`
 - No screens, no global routing, no app-specific logic and no single-flow internals: code one flow uses stays in that flow until a second one needs it
 - A component with no business meaning goes to `shared/ui-*`, not here

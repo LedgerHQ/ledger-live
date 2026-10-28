@@ -41,19 +41,14 @@ There is no `domain/aggregate`: code that combines several entities follows
 
 ## Entity or flow state
 
-A value is **entity** state when a backend could return it, two features speak of it, it carries its
-own business rules, or a PM says the word. It is **flow** state when it describes what the UI is doing
-now (names with `open`, `step`, `selected`, `draft`), lives only while the flow runs and nobody outside
-reads it. Entity state goes in `domain/entity`; flow state stays in the flow's `state/`. Never promote
-flow state to an entity to share it. Details: [references/heuristics.md](references/heuristics.md#entity-or-flow-state).
+Entity state goes in `domain/entity`, flow state stays in the flow's `state/`, and flow state is never
+promoted to an entity to share it. The criteria that tell them apart:
+[references/heuristics.md](references/heuristics.md#entity-or-flow-state).
 
 ## One flow, one journey
 
-One flow is one use case, with one entry and one exit: one package, one owner. Split a flow at its
-journey lines when it has its own Figma file, its own sprint-review demo or its own feature flag, or
-when its kebab name needs an "and". A "screen" with its own entry point is a flow in disguise. After a
-split, the parent flow becomes a thin orchestrator and pieces several flows share sink to
-`features/platform`, never into a `common/` folder. Example and details:
+One flow is one use case, with one entry and one exit, split at its journey lines; shared pieces sink to
+`features/platform`, never into a `common/` folder. When to split and the contacts example:
 [references/heuristics.md](references/heuristics.md#one-flow-one-journey).
 
 Inside a flow package (flat `src/` or `screens/<Screen>/`, view models, flow state, local routing):
@@ -67,24 +62,18 @@ not intentional coupling. Example: [references/heuristics.md](references/heurist
 
 ## Dependencies point down
 
-```text
-apps → features/flow → features/platform → domain/api → domain/entity → shared
-```
-
+- Each layer depends only on the layers below it, checked by `pnpm lint:boundaries`:
+  [references/layers.md](references/layers.md#dependency-table).
 - `shared/`, `domain/` and `features/` never import `libs/`; only `apps/` imports both sides.
 - Import another package by its npm name, never a relative path; every `index.*` is a pure barrel:
   [package-public-api](../package-public-api/SKILL.md).
 - A third-party runtime library is wrapped by its lowest valid owner:
   [wrap-third-party-libs](../wrap-third-party-libs/SKILL.md).
-- `pnpm lint:boundaries` checks the direction. The full table: [references/layers.md](references/layers.md#dependency-table).
 
 ## Name it namespace first
 
-The folder path gives the package name: `domain/entity/<name>` is `@domain/entity-<name>`, and so on
-for every layer. Inside `<name>`, the namespace comes first, then the qualifier: `currency-crypto`,
-`currency-fiat`, `market-index-fear-and-greed`, `account-name`. A package that breaks either rule is
-renamed when someone touches it, never copied. Table and known deviations:
-[references/layers.md](references/layers.md#naming).
+The folder path gives the package name, namespace first, and a package that breaks the rule is renamed
+when someone touches it: [references/layers.md](references/layers.md#naming).
 
 ## Moving legacy code
 
