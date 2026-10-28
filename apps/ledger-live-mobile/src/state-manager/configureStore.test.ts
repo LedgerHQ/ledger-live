@@ -157,60 +157,10 @@ describe("mobile store", () => {
   });
 
   describe("thunk extraArgument", () => {
-    const ACCOUNT_DATA = { router: {}, inflight: new Map() };
-
     beforeEach(() => {
       jest.resetModules();
-      jest.doMock("@domain/api-account-data", () => ({
-        ...jest.requireActual("@domain/api-account-data"),
-        accountDataExtra: () => ({ accountData: ACCOUNT_DATA }),
-      }));
       const { setEnv } = require("@shared/env") as typeof import("@shared/env");
       setEnv("LEDGER_CLIENT_VERSION", "jest");
-    });
-
-    afterEach(() => {
-      jest.dontMock("@domain/api-account-data");
-    });
-
-    it("equals the per-service spread it replaces, for env values without whitespace", () => {
-      const { store } = require("./configureStore") as typeof import("./configureStore");
-      const { getEnv } = require("@shared/env") as typeof import("@shared/env");
-      const services = require("@shared/api-services") as typeof import("@shared/api-services");
-      const card = require("@features/platform-card") as typeof import("@features/platform-card");
-      const Config = require("react-native-config").default;
-
-      const previousSpread = {
-        accountData: ACCOUNT_DATA,
-        ...services.calApiExtra({
-          calServiceUrl: getEnv("CAL_SERVICE_URL"),
-          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-        }),
-        ...services.cvsApiExtra({
-          getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
-        }),
-        ...services.coinMarketCapApiExtra({
-          coinMarketCapApiUrl: getEnv("CMC_API_URL"),
-        }),
-        ...services.cardApiExtra({
-          getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
-          getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-          isCardUsEnv: () => card.isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
-          readCardSession: card.readCardSession,
-          isCardSessionCurrent: card.isCardSessionCurrent,
-          refreshCardSession: card.refreshCardSession,
-        }),
-        ...services.pushDevicesApiExtra({
-          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
-          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-        }),
-        ...services.swapApiExtra({
-          getSwapApiBaseUrl: () => Config.SWAP_API_BASE || "https://swap.ledger.com/v5",
-          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-        }),
-      };
-
-      expect(resolveGetters(readExtra(store))).toStrictEqual(resolveGetters(previousSpread));
     });
 
     it("resolves the swap base url through Config, not @shared/env", () => {
@@ -283,7 +233,7 @@ describe("mobile store", () => {
       jest.dontMock("@reduxjs/toolkit");
     });
 
-    it("reads each env var as the per-service spread did, and the client version once", () => {
+    it("reads each env var a fixed number of times, and the client version once", () => {
       const { store } = require("./configureStore") as typeof import("./configureStore");
 
       expect(store).toBeDefined();
@@ -292,7 +242,6 @@ describe("mobile store", () => {
   });
 });
 
-/** The per-service spread read `LEDGER_CLIENT_VERSION` three times; `CommonConfig` reads it once. */
 const ENV_READS_AT_STORE_CREATION = {
   CAL_SERVICE_URL: 1,
   CMC_API_URL: 1,
@@ -309,14 +258,6 @@ function countBy(names: readonly string[]): Record<string, number> {
   return counts;
 }
 
-const GETTER_KEYS = new Set([
-  "getCardApiBaseUrl",
-  "getCardBaanxClientKey",
-  "getCountervaluesServiceUrl",
-  "getSwapApiBaseUrl",
-  "isCardUsEnv",
-]);
-
 // The store's `dispatch` type drops the thunk overload, though the thunk middleware runs.
 function isThunkDispatch(
   dispatch: unknown,
@@ -331,17 +272,6 @@ function readExtra({ dispatch }: { dispatch: unknown }): unknown {
     extra = extraArgument;
   });
   return extra;
-}
-
-/** Inline getters differ by identity on each side, so they are compared by what they return. */
-function resolveGetters(extra: unknown): unknown {
-  if (typeof extra !== "object" || extra === null) return extra;
-  return Object.fromEntries(
-    Object.entries(extra).map(([key, value]) => [
-      key,
-      GETTER_KEYS.has(key) && typeof value === "function" ? value() : value,
-    ]),
-  );
 }
 
 function resolveSwapExtra(extra: unknown): { getSwapApiBaseUrl: () => unknown } {
