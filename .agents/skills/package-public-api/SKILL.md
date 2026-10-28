@@ -51,6 +51,7 @@ Under `src/`, an `index.*` (platform variants included) is allowed in three plac
    chain is fine. Deeper, the barrels of every chain to it hold only `export * from "./x"` inside
    their own folder; plain modules on the way do not count. The wording is `BARREL_LOCATION` and
    `CHAIN_BREAKS` in [`rules.js`](../../../tools/nx-plugins/enforce-package-structure/rules.js).
+   <!-- rules.js: BARREL_LOCATION, CHAIN_BREAKS -->
    An entry reached from another entry counts from itself, so `jest.native.ts` re-exporting
    `index.native.ts` adds no level, and the entry may hold whatever the barrel rules allow it.
 3. **An internals location**: `internals/`, as defined below.
