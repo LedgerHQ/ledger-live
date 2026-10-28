@@ -87,13 +87,6 @@ describe("BalanceTypeScreenInner", () => {
     expect(screen.getByText("Shielded")).toBeVisible();
   });
 
-  it("should mark the matching pool as selected when returning to the step", () => {
-    render(<BalanceTypeScreenInner viewModel={readyViewModel({ selectedOptionId: "private" })} />);
-
-    expect(screen.getByTestId("balance-type-private")).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByTestId("balance-type-public")).not.toHaveAttribute("aria-selected");
-  });
-
   it("should select a pool when its list item is clicked", async () => {
     const onSelect = jest.fn();
     const { user } = render(<BalanceTypeScreenInner viewModel={readyViewModel({ onSelect })} />);

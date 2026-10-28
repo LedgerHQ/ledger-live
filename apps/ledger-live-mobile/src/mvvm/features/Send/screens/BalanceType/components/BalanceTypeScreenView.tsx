@@ -22,7 +22,6 @@ type ReadyViewModel = Extract<BalanceTypeScreenViewModel, { ready: true }>;
 
 type OptionItemProps = Readonly<{
   option: BalanceTypeOption;
-  selected: boolean;
   onSelect: (optionId: string) => void;
 }>;
 
@@ -30,16 +29,12 @@ type BalanceTypeScreenViewProps = Readonly<{
   viewModel: ReadyViewModel;
 }>;
 
-function BalanceTypeOptionItem({ option, selected, onSelect }: OptionItemProps) {
+function BalanceTypeOptionItem({ option, onSelect }: OptionItemProps) {
   const { t } = useTranslation();
   const icon = option.icon === "lock" ? UserLock : UserCheck;
 
   return (
-    <ListItem
-      onPress={() => onSelect(option.id)}
-      active={selected}
-      testID={`balance-type-${option.id}`}
-    >
+    <ListItem onPress={() => onSelect(option.id)} testID={`balance-type-${option.id}`}>
       <ListItemLeading>
         <Spot icon={icon} />
         <ListItemContent>
@@ -78,18 +73,13 @@ function BalanceTypeOptionItem({ option, selected, onSelect }: OptionItemProps) 
 
 export function BalanceTypeScreenView({ viewModel }: BalanceTypeScreenViewProps) {
   const { t } = useTranslation();
-  const { options, onSelect, selectedOptionId } = viewModel;
+  const { options, onSelect } = viewModel;
 
   return (
     <ScrollView testID="balance-type-screen" showsVerticalScrollIndicator={false}>
-      <Box lx={{ gap: "s12" }}>
+      <Box lx={{ marginHorizontal: "-s8" }}>
         {options.map(option => (
-          <BalanceTypeOptionItem
-            key={option.id}
-            option={option}
-            selected={option.id === selectedOptionId}
-            onSelect={onSelect}
-          />
+          <BalanceTypeOptionItem key={option.id} option={option} onSelect={onSelect} />
         ))}
       </Box>
       {options

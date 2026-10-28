@@ -60,7 +60,7 @@ describe("Aleo SendAmountFooterRow", () => {
   it("counts the records of a private send, fee record included", () => {
     renderRow(makePrivateTransaction(2, "fee-record"));
 
-    expect(screen.getByText("Signing time")).toBeVisible();
+    expect(screen.getByText("Est. time")).toBeVisible();
     expect(screen.getByTestId("aleo-send-estimated-time-value")).toHaveTextContent("~38 sec");
   });
 
@@ -96,7 +96,7 @@ describe("Aleo SendAmountFooterRow", () => {
     await user.hover(screen.getByTestId("aleo-send-estimated-time-info"));
 
     expect(
-      await screen.findByRole("tooltip", { name: /approves each record this transaction uses/ }),
+      await screen.findByRole("tooltip", { name: /each one adds processing time/ }),
     ).toBeInTheDocument();
   });
 
@@ -105,9 +105,9 @@ describe("Aleo SendAmountFooterRow", () => {
 
     await user.tab();
 
-    expect(screen.getByRole("button", { name: "Signing time" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Est. time" })).toHaveFocus();
     expect(
-      await screen.findByRole("tooltip", { name: /approves each record this transaction uses/ }),
+      await screen.findByRole("tooltip", { name: /each one adds processing time/ }),
     ).toBeInTheDocument();
   });
 });

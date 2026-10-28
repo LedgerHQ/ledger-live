@@ -47,7 +47,7 @@ const SendAmountFooterRow: NonNullable<AleoFamily["SendAmountFooterRow"]> = ({
             <button
               type="button"
               aria-label={t("aleo.send.amount.signingTime.label")}
-              className="inline-flex cursor-help border-0 bg-transparent p-0 text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              className="inline-flex border-0 bg-transparent p-0 text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               data-testid="aleo-send-estimated-time-info"
             >
               <Information size={16} aria-hidden="true" />
