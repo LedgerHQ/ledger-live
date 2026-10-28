@@ -23,7 +23,7 @@ Do not read `support/README.md` for this: it lags behind the per-tool READMEs.
 | TypeScript | `tsconfig.json` that `extends` a preset, plus `types`, `paths`, `references`, `include` / `exclude` / `files` when needed | any other compiler option, an `@support/tsconfig` dependency |
 | Jest | a one-line `jest.config.js` calling a preset factory, `"@support/jest": "workspace:*"` in `devDependencies` | a hand-written config, a config that edits the factory's result |
 | Lint | a `lint` script running plain `oxlint src` | an oxlint config, a `-c` flag, an `oxlint` or `@support/lint` dependency |
-| Format | `format` / `format:check` scripts running plain `oxfmt src` | an oxfmt config, a `-c` flag, an `oxfmt` or `@support/fmt` dependency |
+| Format | a `format` script running plain `oxfmt src`, a `format:check` script running `oxfmt src --check` | an oxfmt config, a `-c` flag, an `oxfmt` or `@support/fmt` dependency |
 
 `oxlint`, `oxfmt` and the tsconfig, lint and fmt presets are devDependencies of the workspace root,
 and a package script finds them there. Many existing packages still list `oxlint` or `oxfmt`: do
