@@ -124,10 +124,12 @@ class FirebaseCapture:
         if key is None:
             return
         stats = self.stats.setdefault(key, KeyStats())
+        loop = asyncio.get_running_loop()
+        deadline = loop.time() + ctx.options.firebase_capture_wait
         while key not in self.cache:
             leader = self.inflight.get(key)
             if leader is None:
-                future = asyncio.get_running_loop().create_future()
+                future = loop.create_future()
                 self.inflight[key] = future
                 flow.metadata[LEADER_KEY] = key
                 flow.metadata[LEADER_FUTURE] = future
@@ -135,7 +137,8 @@ class FirebaseCapture:
                 stats.upstream += 1
                 return
             try:
-                await asyncio.wait_for(asyncio.shield(leader), ctx.options.firebase_capture_wait)
+                # One budget per fetch, however many leaders fail in turn.
+                await asyncio.wait_for(asyncio.shield(leader), max(0.0, deadline - loop.time()))
             except TimeoutError:
                 flow.metadata[LEADER_KEY] = key
                 flow.request.headers.pop("If-None-Match", None)
@@ -156,6 +159,7 @@ class FirebaseCapture:
                 logger.info(
                     f"[firebase_capture] captured {key} templateVersion={snapshot.template_version} entries={snapshot.entries}"
                 )
+                self._wake_waiters(key)
             elif LEADER_FUTURE in flow.metadata:
                 self.stats[key].failed += 1
                 logger.warning(f"[firebase_capture] leader failed {key} status={flow.response.status_code}")
@@ -198,6 +202,12 @@ class FirebaseCapture:
                 del headers[name]
             headers["access-control-allow-origin"] = origin
         flow.response = http.Response.make(200, snapshot.body, headers)
+
+    def _wake_waiters(self, key: str) -> None:
+        # A fetch that stopped waiting can fill the cache before the leader answers.
+        future = self.inflight.pop(key, None)
+        if future is not None and not future.done():
+            future.set_result(None)
 
     def _release(self, flow: http.HTTPFlow) -> None:
         key = flow.metadata.get(LEADER_KEY)

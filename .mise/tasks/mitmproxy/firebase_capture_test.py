@@ -171,6 +171,55 @@ def test_waiter_goes_upstream_after_the_wait_and_its_answer_is_stored():
     run(test)
 
 
+def test_wait_budget_is_not_reset_when_a_leader_is_replaced():
+    async def test(addon, _):
+        loop = asyncio.get_running_loop()
+        started = loop.time()
+        leader = fetch_flow()
+        await addon.request(leader)
+        waiters = [fetch_flow(), fetch_flow()]
+        tasks = {asyncio.create_task(addon.request(flow)): flow for flow in waiters}
+        await asyncio.sleep(0.6)
+
+        answer(leader, status=429, body={"error": {"code": 429}})
+        addon.response(leader)
+        await asyncio.sleep(0.05)
+        (still_waiting,) = [flow for flow in waiters if "firebase_capture_future" not in flow.metadata]
+        (task,) = [task for task, flow in tasks.items() if flow is still_waiting]
+        await asyncio.wait_for(task, 2)
+        assert loop.time() - started < 1.3
+        assert still_waiting.response is None
+        assert still_waiting.metadata["firebase_capture_key"]
+        assert next(iter(addon.stats.values())).timed_out == 1
+
+    run(test)
+
+
+def test_answer_from_a_fetch_that_stopped_waiting_releases_the_others():
+    async def test(addon, _):
+        loop = asyncio.get_running_loop()
+        leader = fetch_flow()
+        await addon.request(leader)
+        stopped_waiting = fetch_flow()
+        await addon.request(stopped_waiting)
+        waiter = fetch_flow()
+        task = asyncio.create_task(addon.request(waiter))
+        await asyncio.sleep(0.05)
+
+        released_at = loop.time()
+        answer(stopped_waiting)
+        addon.response(stopped_waiting)
+        await asyncio.wait_for(task, 0.5)
+        assert loop.time() - released_at < 0.2
+        assert waiter.response.status_code == 200
+
+        answer(leader)
+        addon.response(leader)
+        assert not addon.inflight
+
+    run(test)
+
+
 def test_empty_or_unchanged_templates_are_not_stored():
     async def test(addon, _):
         for body in ({"state": "NO_TEMPLATE"}, {"state": "UPDATE", "entries": {}}, {"state": "NO_CHANGE"}):
