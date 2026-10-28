@@ -3,14 +3,6 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { byId } from "@e2e/helpers/elements/native";
 
 export default class NewSendFlowPage {
-  @Step("Navigate to token send screen")
-  async navigateToTokenSendScreen(parentAccountName: string, tokenAccount: Account) {
-    await app.account.openViaDeeplink();
-    await app.account.goToAccountByName(parentAccountName);
-    await app.account.navigateToTokenInAccount(tokenAccount);
-    await app.account.tapSend();
-  }
-
   private readonly recipientInput = byId("recipient-input");
   private readonly skipMemoContent = byId("send-skip-memo-content");
   private readonly skipMemoConfirm = byId("send-skip-memo-confirm");
@@ -35,6 +27,14 @@ export default class NewSendFlowPage {
     byId(`contacts-compact-row-${contactId}`);
   private readonly contactAddressRow = (addressId: string) =>
     byId(`pay-contact-address-row-${addressId}`);
+
+  @Step("Navigate to token send screen")
+  async navigateToTokenSendScreen(parentAccountName: string, tokenAccount: Account) {
+    await app.account.openViaDeeplink();
+    await app.account.goToAccountByName(parentAccountName);
+    await app.account.navigateToTokenInAccount(tokenAccount);
+    await app.account.tapSend();
+  }
 
   @Step("Fill recipient address and continue: {{{0}}}")
   async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {

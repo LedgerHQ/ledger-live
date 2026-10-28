@@ -24,7 +24,11 @@ export default class EarnV2DashboardPage {
     byId(`staking-provider-${providerId}-title`);
   private readonly earnMenuOption = (label: string) =>
     byId(`earn-menu-option-${label.toLowerCase().replace(/\s+/g, "-")}`);
-  private readonly stakingFlowStartButton = (testId: string | RegExp) => byId(testId);
+  private readonly stakingFlowStartButton = (ticker: string) => {
+    const testId = EarnV2DashboardPage.stakingFlowTestIds[ticker];
+    if (!testId) throw new Error(`No staking flow testID mapped for ticker "${ticker}"`);
+    return byId(testId);
+  };
   private static readonly stakingFlowTestIds: Record<string, string | RegExp> = {
     ATOM: /^(enabled-|disabled-)?cosmos-delegation-start-button$/,
     SOL: /^(enabled-|disabled-)?solana-delegation-start-button$/,
@@ -98,7 +102,6 @@ export default class EarnV2DashboardPage {
   @Step("Verify earn webview redirected to deposit flow")
   async verifyDepositFlowVisible() {
     const url = await waitForWebviewUrl("/deposit");
-    jestExpect(url.toLowerCase()).toContain("/deposit");
     jestExpect(url.toLowerCase()).not.toContain("/v2/");
   }
 
@@ -110,19 +113,14 @@ export default class EarnV2DashboardPage {
 
   @Step("Verify earn webview redirected to withdraw flow")
   async verifyWithdrawalFlowVisible() {
-    const url = await waitForWebviewUrl("/redeem");
-    jestExpect(url.toLowerCase()).toContain("/redeem");
+    await waitForWebviewUrl("/redeem");
   }
 
   // --- Staking Flow Verification (native) ---
 
   @Step("Verify staking flow opened for {{{0}}}")
   async verifyStakingFlowOpened(ticker: string) {
-    const testId = EarnV2DashboardPage.stakingFlowTestIds[ticker];
-    if (!testId) {
-      throw new Error(`No staking flow testID mapped for ticker "${ticker}"`);
-    }
-    await this.stakingFlowStartButton(testId).waitVisible();
+    await this.stakingFlowStartButton(ticker).waitVisible();
   }
 
   @Step("Verify earn flow started for {{{0}}}")
@@ -150,6 +148,8 @@ export default class EarnV2DashboardPage {
     kiln_pooling: "KilnEthereumPooling",
     "stader-eth": "stader-eth",
   };
+  private static readonly providerCardId = (providerId: string) =>
+    EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId;
 
   @Step("Complete ETH deposit amount step with {{{0}}} ETH")
   async completeEthDepositAmountStep(amount: string) {
@@ -187,18 +187,12 @@ export default class EarnV2DashboardPage {
   private readonly amountContinueCta = webById("amount-continue-cta");
   private readonly ethProviderAllCategory = webById("category-filter-all");
   private readonly ethProviderCard = (providerId: string) =>
-    webById(
-      `eth-provider-card-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`,
-    );
+    webById(`eth-provider-card-${EarnV2DashboardPage.providerCardId(providerId)}`);
   // Expandable cards attach onClick to the header. The card root is not clickable.
   private readonly ethProviderHeader = (providerId: string) =>
-    webById(
-      `eth-provider-header-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`,
-    );
+    webById(`eth-provider-header-${EarnV2DashboardPage.providerCardId(providerId)}`);
   private readonly ethProviderDepositCta = (providerId: string) =>
-    webById(
-      `eth-provider-deposit-${EarnV2DashboardPage.ethProviderCardIds[providerId] ?? providerId}`,
-    );
+    webById(`eth-provider-deposit-${EarnV2DashboardPage.providerCardId(providerId)}`);
 
   @Step("Verify deposit screen v2 amount step")
   async verifyV2DepositScreenVisible() {
