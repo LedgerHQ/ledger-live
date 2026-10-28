@@ -3211,9 +3211,6 @@ importers:
       '@devtools/wire':
         specifier: workspace:*
         version: link:../../devtools/wire
-      '@domain/api-currency-token':
-        specifier: workspace:*
-        version: link:../../domain/api/currency-token
       '@domain/api-market-countervalues':
         specifier: workspace:*
         version: link:../../domain/api/market-countervalues
