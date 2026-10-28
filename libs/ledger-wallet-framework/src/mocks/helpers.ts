@@ -49,6 +49,111 @@ export function genHex(length: number, rng: Prando): string {
   return rng.nextString(length, "0123456789ABCDEF");
 }
 
+const ed25519P = (1n << 255n) - 19n;
+// 2^255 - 19 is the curve25519 field; `d` is its curve constant.
+const ed25519D = 37095705934669439343138083508754565189542113879843219016388785533085940283555n;
+const ed25519SignMask = (1n << 255n) - 1n;
+
+function modPow(base: bigint, exponent: bigint, modulo: bigint): bigint {
+  let result = 1n;
+  let b = base % modulo;
+  let e = exponent;
+  while (e > 0n) {
+    if (e & 1n) result = (result * b) % modulo;
+    b = (b * b) % modulo;
+    e >>= 1n;
+  }
+  return result;
+}
+
+/**
+ * True when y is a valid y-coordinate on ed25519, i.e. x² = (y² − 1) / (dy² + 1) has a square root.
+ * @memberof mock/account
+ */
+export function isEd25519CurvePoint(y: bigint): boolean {
+  const y2 = (y * y) % ed25519P;
+  const u = (y2 - 1n + ed25519P) % ed25519P;
+  const v = (ed25519D * y2 + 1n) % ed25519P;
+  const v3 = (((v * v) % ed25519P) * v) % ed25519P;
+  const v7 = (((v3 * v3) % ed25519P) * v) % ed25519P;
+  const x =
+    (((u * v3) % ed25519P) * modPow((u * v7) % ed25519P, (ed25519P - 5n) / 8n, ed25519P)) %
+    ed25519P;
+  const vx2 = (((v * x) % ed25519P) * x) % ed25519P;
+  return vx2 === u || vx2 === ed25519P - u;
+}
+
+/** Swap the byte order of a hex string; ed25519 keys are serialized little-endian. */
+function reverseHexBytes(hex: string): string {
+  return hex.match(/../g)!.reverse().join("");
+}
+
+/**
+ * A 32-byte compressed ed25519 public key, the shape concordium's proxy decodes. The proxy reads
+ * the bytes little-endian (RFC 8032) and rejects about half of random strings, so decode the
+ * candidate the same way and walk y until the curve equation holds. The x parity bit stays 0,
+ * which always decodes. Consumes the same single rng draw as a plain 64-hex xpub, so other
+ * generators stay aligned.
+ * @memberof mock/account
+ */
+export function genEd25519PublicKey(rng: Prando): string {
+  const littleEndian = BigInt(`0x${reverseHexBytes(genHex(64, rng))}`);
+  let y = (littleEndian & ed25519SignMask) % ed25519P;
+  for (let i = 0; i < 64 && !isEd25519CurvePoint(y); i++) {
+    y = (y + 1n) % ed25519P;
+  }
+  return reverseHexBytes(y.toString(16).toUpperCase().padStart(64, "0"));
+}
+
+const bech32Charset = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+const bech32mConstant = 0x2bc830a3;
+
+function bech32Polymod(values: number[]): number {
+  const generator = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
+  let checksum = 1;
+  for (const value of values) {
+    const top = checksum >> 25;
+    checksum = ((checksum & 0x1ffffff) << 5) ^ value;
+    for (let i = 0; i < 5; i++) {
+      if ((top >> i) & 1) checksum ^= generator[i];
+    }
+  }
+  return checksum;
+}
+
+function bech32mChecksum(hrp: string, data: number[]): string {
+  const hrpValues = [...hrp].map(char => char.charCodeAt(0) >> 5);
+  const hrpSeparator = [...hrp].map(char => char.charCodeAt(0) & 31);
+  const polymod = bech32Polymod([...hrpValues, 0, ...hrpSeparator, ...data, 0, 0, 0, 0, 0, 0]);
+  const checksum = polymod ^ bech32mConstant;
+  let out = "";
+  for (let i = 0; i < 6; i++) {
+    out += bech32Charset[(checksum >> (5 * (5 - i))) & 31];
+  }
+  return out;
+}
+
+/**
+ * Generates a valid bech32m address (e.g. aleo) from random bytes.
+ * @memberof mock/account
+ */
+export function genBech32mAddress(hrp: string, byteLength: number, rng: Prando): string {
+  const hex = genHex(byteLength * 2, rng);
+  const data: number[] = [];
+  let accumulator = 0;
+  let bits = 0;
+  for (let i = 0; i < hex.length; i += 2) {
+    accumulator = (accumulator << 8) | parseInt(hex.slice(i, i + 2), 16);
+    bits += 8;
+    while (bits >= 5) {
+      bits -= 5;
+      data.push((accumulator >> bits) & 31);
+    }
+  }
+  if (bits > 0) data.push((accumulator << (5 - bits)) & 31);
+  return `${hrp}1${data.map(value => bech32Charset[value]).join("")}${bech32mChecksum(hrp, data)}`;
+}
+
 /**
  * @memberof mock/account
  */
@@ -65,7 +170,22 @@ export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando
     case "hypercore": // hyperliquid derives an eth-format address
       return `0x${genHex(40, rng)}`;
     case "aleo":
-      return `aleo1${rng.nextString(58, "abcdefghijklmnopqrstuvwxyz0123456789")}`;
+      return genBech32mAddress("aleo", 32, rng);
+    case "celo": // evm-compatible chain whose validator wants a lowercase hex address
+      return `0x${genHex(40, rng).toLowerCase()}`;
+    case "vechain": // evm-compatible chain that lives in its own family
+      return `0x${genHex(40, rng)}`;
+    case "filecoin":
+      // the f1 checksum is blake2b-4, so pin a known-valid fixture address
+      return "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za";
+    case "stacks":
+      // the c32 checksum is blake2b-4, so pin the well-known boot address
+      return "SP000000000000000000002Q6VF78";
+    case "sui":
+      return `0x${genHex(64, rng)}`;
+    case "ton":
+      // raw workchain:hash form, accepted by @ton/core Address.parse
+      return `0:${genHex(64, rng)}`;
     case "cosmos":
       return `${cosmosBech32Prefix[chainId] ?? "cosmos"}1${rng.nextString(
         38,
@@ -82,7 +202,9 @@ export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando
     case "hedera":
       // hedera uses shard.realm.num account ids; the sync resolves the EVM
       // address of that live account, so stay in a range that exists on mainnet
-      return `0.0.${rng.nextInt(1000000, 9999999)}`;
+      return currency.id === "hedera_testnet"
+        ? "0.0.12345" // known on the testnet mirror node, unlike random 7-digit ids
+        : `0.0.${rng.nextInt(1000000, 9999999)}`;
     case "algorand":
       return rng.nextString(58, "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
     default:

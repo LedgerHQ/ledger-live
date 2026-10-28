@@ -30,26 +30,31 @@ async function getLatestBlock(config: AleoCoinConfig): Promise<AleoLatestBlockRe
   return res.data;
 }
 
+// The node answers 404 while the address has no entry in that mapping yet (fresh account).
+const getMapping = async <T>(url: string): Promise<T | null> => {
+  try {
+    const res = await network<T | null>({ method: "GET", url });
+    return res.data;
+  } catch (error) {
+    if ((error as { status?: number }).status === 404) return null;
+    throw error;
+  }
+};
+
 async function getAccountBalance(config: AleoCoinConfig, address: string): Promise<string | null> {
   const { apiUrls, networkType } = config;
 
-  const res = await network<string | null>({
-    method: "GET",
-    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
-  });
-
-  return res.data;
+  return getMapping(
+    `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/account/${address}`,
+  );
 }
 
 async function getBondedMapping(config: AleoCoinConfig, address: string): Promise<string | null> {
   const { apiUrls, networkType } = config;
 
-  const res = await network<string | null>({
-    method: "GET",
-    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/bonded/${address}`,
-  });
-
-  return res.data;
+  return getMapping(
+    `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/bonded/${address}`,
+  );
 }
 
 async function getUnbondingMapping(
@@ -58,23 +63,17 @@ async function getUnbondingMapping(
 ): Promise<string | null> {
   const { apiUrls, networkType } = config;
 
-  const res = await network<string | null>({
-    method: "GET",
-    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/unbonding/${address}`,
-  });
-
-  return res.data;
+  return getMapping(
+    `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/unbonding/${address}`,
+  );
 }
 
 async function getWithdrawMapping(config: AleoCoinConfig, address: string): Promise<string | null> {
   const { apiUrls, networkType } = config;
 
-  const res = await network<string | null>({
-    method: "GET",
-    url: `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/withdraw/${address}`,
-  });
-
-  return res.data;
+  return getMapping(
+    `${apiUrls.node}/v2/${networkType}/program/${PROGRAM_ID.CREDITS}/mapping/withdraw/${address}`,
+  );
 }
 
 async function getCommittee(config: AleoCoinConfig): Promise<AleoCommitteeResponse> {

@@ -6,7 +6,7 @@ import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache } from "../account";
 import { generateHistoryFromOperations } from "../account/balanceHistoryCache";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
-import { genHex, genAddress } from "./helpers";
+import { genHex, genAddress, genEd25519PublicKey } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 import { inferSubOperations } from "../serialization";
@@ -338,8 +338,21 @@ export function genAccount(
   );
   // nb Make the third (ethereum_classic, dogecoin) account originally migratable
   const outdated = ["ethereum_classic", "dogecoin"].includes(currency.id) && `${id}`.endsWith("_2");
-  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
-  const xpub = genHex(64, rng);
+  // Aleo reads the view key from the account id customData (see coin-aleo extractViewKey).
+  const viewKey = currency.family === "aleo" ? `AViewKey1${genHex(48, rng)}` : "";
+  // kaspa parses the xpub as a 99-byte extended public key, i.e. 198 hex chars.
+  // concordium sends the xpub as its public key, which its proxy decodes as an ed25519 point.
+  const xpub =
+    currency.family === "kaspa"
+      ? genHex(198, rng)
+      : currency.family === "concordium"
+        ? genEd25519PublicKey(rng)
+        : genHex(64, rng);
+  // kaspa reads its xpub back from the account id xpubOrAddress field.
+  const accountIdAddress = currency.family === "kaspa" ? xpub : id;
+  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${accountIdAddress}:${
+    viewKey ? `:${viewKey}` : ""
+  }`;
   rng.nextString(rng.nextInt(4, 34)); // to not break the determinism, we will still run this code that used to generate fake account names. remove it when we allow ourself a breaking change.
   const blockHeight = rng.nextInt(100000, 200000);
   rng.nextArrayItem(currency.units); // to not break the determinism, we still run this code. remove it when we allow ourself a breaking change.

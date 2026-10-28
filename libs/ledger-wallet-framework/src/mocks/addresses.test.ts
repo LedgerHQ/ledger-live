@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "./account";
+import { isEd25519CurvePoint } from "./helpers";
 
 /**
  * The mock generator feeds accounts straight into the live sync of each coin
@@ -15,6 +16,11 @@ const cases: Array<[string, RegExp]> = [
   ["blast_sepolia", /^0x[0-9a-fA-F]{40}$/],
   ["hypercore", /^0x[0-9a-fA-F]{40}$/],
   ["flare", /^0x[0-9a-fA-F]{40}$/],
+  ["celo", /^0x[0-9a-fA-F]{40}$/],
+  ["vechain", /^0x[0-9a-fA-F]{40}$/],
+  ["sui", /^0x[0-9a-fA-F]{64}$/],
+  ["ton", /^0:[0-9a-fA-F]{64}$/],
+  ["filecoin", /^f1[a-z2-7]{39}$/],
   ["aleo", /^aleo1[a-z0-9]{58}$/],
   ["cosmos", /^cosmos1[a-z0-9]{38}$/],
   ["coreum", /^core1[a-z0-9]{38}$/],
@@ -33,4 +39,18 @@ test.each(cases)("generates a plausible %s address", (id, expected) => {
   const currency = getCryptoCurrencyById(id);
   const account = genAccount("demo-seed", { currency });
   expect(account.freshAddress).toMatch(expected);
+});
+
+/**
+ * concordium's proxy decodes the mock xpub as a compressed ed25519 public key, little-endian like
+ * RFC 8032, and answers 400 for anything that is not a point on the curve (~half of random strings).
+ */
+test("generates a valid ed25519 public key for concordium", () => {
+  const currency = getCryptoCurrencyById("concordium");
+  const littleEndian = (hex: string) => BigInt(`0x${hex.match(/../g)!.reverse().join("")}`);
+  for (let i = 0; i < 25; i++) {
+    const { xpub } = genAccount(`pubkey-seed-${i}`, { currency });
+    expect(xpub).toMatch(/^[0-9A-F]{64}$/);
+    expect(isEd25519CurvePoint(littleEndian(xpub) & ((1n << 255n) - 1n))).toBe(true);
+  }
 });
