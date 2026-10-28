@@ -223,8 +223,33 @@ function checkOptions(factory, options, accepted) {
   }
 }
 
-/** @type {Map<string, { factory: Function, options: readonly string[] }>} */
+/** @type {Map<string, { factory: Function, options: readonly string[], project: boolean }>} */
 const PRESET_FACTORIES = new Map();
+// The projects a project factory returned: the only entries a config's `projects` may hold.
+const PRESET_PROJECTS = new WeakSet();
+
+/**
+ * Throws when `projects` holds an entry no preset project factory returned: jest does not pass a
+ * config's top-level options down to its projects, so a hand-written one skips the preset.
+ *
+ * @param {string} factory
+ * @param {unknown} projects
+ */
+function checkProjects(factory, projects) {
+  if (projects === undefined) return;
+  const builders = [...PRESET_FACTORIES]
+    .filter(([, entry]) => entry.project)
+    .map(([name]) => `${name}()`)
+    .join(", ");
+  const entries = Array.isArray(projects) ? projects : [projects];
+  entries.forEach((entry, index) => {
+    if (!PRESET_PROJECTS.has(entry)) {
+      throw new Error(
+        `${factory}(): projects[${index}] is not built by a preset project factory: use ${builders}.`,
+      );
+    }
+  });
+}
 
 /**
  * An exported preset factory: it checks the options and the overrides it gets, then returns what
@@ -234,9 +259,10 @@ const PRESET_FACTORIES = new Map();
  * @param {string} name the factory name, for the messages and preset-overrides.js
  * @param {string[]} options the options the factory reads
  * @param {Build} build
+ * @param {{ project?: boolean }} [kind] `project: true` for a factory of `projects` entries
  * @returns {Build} a factory with the signature of `build`
  */
-function presetFactory(name, options, build) {
+function presetFactory(name, options, build, { project = false } = {}) {
   const factory = /** @type {Build} */ (
     (overrides = {}, presetOptions) => {
       checkOptions(name, presetOptions, options);
@@ -247,10 +273,13 @@ function presetFactory(name, options, build) {
         overrides.rootDir,
         options,
       );
-      return build(overrides, presetOptions);
+      checkProjects(name, overrides.projects);
+      const config = build(overrides, presetOptions);
+      if (project) PRESET_PROJECTS.add(config);
+      return config;
     }
   );
-  PRESET_FACTORIES.set(name, { factory, options: deepFreeze([...options]) });
+  PRESET_FACTORIES.set(name, { factory, options: deepFreeze([...options]), project });
   return factory;
 }
 
@@ -258,7 +287,7 @@ function presetFactory(name, options, build) {
  * The factories presetFactory() built so far, with the options each reads: the presets register
  * theirs when they load.
  *
- * @returns {{ name: string, factory: Function, options: readonly string[] }[]}
+ * @returns {{ name: string, factory: Function, options: readonly string[], project: boolean }[]}
  */
 function presetFactories() {
   return [...PRESET_FACTORIES].map(([name, entry]) => ({ name, ...entry }));

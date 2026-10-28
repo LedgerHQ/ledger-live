@@ -157,3 +157,27 @@ test("the exported tables are frozen", () => {
     for (const keys of Object.values(overrides)) assert.ok(Object.isFrozen(keys));
   }
 });
+
+test("projects accept only what a preset project factory returned", () => {
+  const unit = createLibsCoinJestProject({ displayName: "unit" });
+  assert.doesNotThrow(() => createLibsCoinJestConfig({ projects: [unit] }));
+
+  const notBuilt =
+    "projects[1] is not built by a preset project factory: use createLibsCoinJestProject().";
+  assert.throws(() => createLibsCoinJestConfig({ projects: [unit, { displayName: "raw" }] }), {
+    message: `createLibsCoinJestConfig(): ${notBuilt}`,
+  });
+  // A copy is not the factory's result, whatever its shape.
+  assert.throws(() => createSharedJestConfig({ projects: [unit, { ...unit }] }), {
+    message: `createSharedJestConfig(): ${notBuilt}`,
+  });
+  // The project factory checks its own overrides.
+  assert.throws(() => createLibsCoinJestProject({ transform: {} }), {
+    message: /^createLibsCoinJestProject\(\): transform belongs to the preset/,
+  });
+});
+
+test("the registry marks the project factories", () => {
+  const projectFactories = FACTORIES.filter(({ project }) => project).map(({ name }) => name);
+  assert.deepEqual(projectFactories, ["createLibsCoinJestProject"]);
+});
