@@ -9,7 +9,7 @@ import {
   createEmptyContactsListViewModel,
   createPopulatedContactsListViewModel,
 } from "./model/viewModel";
-import { ContactsListView } from "./ContactsListView.web";
+import { ContactsListView } from "./ContactsListView";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });

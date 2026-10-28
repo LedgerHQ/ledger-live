@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { Keyboard, type View } from "react-native";
-import { useKeyboardOverlap } from "./useKeyboardOverlap.native";
+import { useKeyboardOverlap } from "./useKeyboardOverlap";
 
 type KeyboardListener = (event: { endCoordinates: { screenY: number } }) => void;
 

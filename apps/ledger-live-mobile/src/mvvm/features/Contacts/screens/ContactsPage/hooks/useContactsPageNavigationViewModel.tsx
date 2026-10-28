@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
-import { ContactsAddContactHeaderButton } from "@features/flow-contacts";
+import { ContactsAddContactHeaderButton } from "@features/flow-contacts-list/native";
 
 export function useContactsPageNavigationViewModel(
   addContactLabel: string,
