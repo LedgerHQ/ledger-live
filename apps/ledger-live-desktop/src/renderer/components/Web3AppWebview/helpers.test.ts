@@ -11,10 +11,16 @@ import {
   serializeDomainCheckReport,
 } from "~/bridge/webviewAllowedOrigins";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
-import { reportBlockedInitialLoad } from "./domainCheckReport";
+import {
+  reportBlockedInitialLoad,
+  reportInitialURLFallback,
+  reportRejectedLoadURL,
+} from "./domainCheckReport";
 
 jest.mock("./domainCheckReport", () => ({
   reportBlockedInitialLoad: jest.fn(),
+  reportInitialURLFallback: jest.fn(),
+  reportRejectedLoadURL: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
@@ -185,6 +191,43 @@ describe("useWebviewState", () => {
       );
 
       expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+      expect(reportInitialURLFallback).not.toHaveBeenCalled();
+    });
+
+    it("reports the initial URL the domain check replaces with manifest.url", () => {
+      mockGetInitialURL.mockReturnValue("https://other.example.com/swap");
+      jest
+        .mocked(isUrlAllowedByManifestDomains)
+        .mockImplementation(url => url === "https://example.com");
+
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.src).toBe("https://example.com");
+      expect(reportInitialURLFallback).toHaveBeenCalledWith(
+        mockManifest,
+        "https://other.example.com/swap",
+      );
+      expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+      jest.mocked(isUrlAllowedByManifestDomains).mockReset().mockReturnValue(true);
+    });
+
+    it("reports a loadURL the domain check rejects", async () => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+      const webviewAPIRef: RefObject<WebviewAPI | null> = { current: null };
+      renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          webviewAPIRef,
+        ),
+      );
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValueOnce(false);
+
+      await expect(webviewAPIRef.current?.loadURL("https://evil.com/x")).rejects.toThrow(
+        "URL not allowed by manifest domains",
+      );
+      expect(reportRejectedLoadURL).toHaveBeenCalledWith(mockManifest, "https://evil.com/x");
     });
   });
 

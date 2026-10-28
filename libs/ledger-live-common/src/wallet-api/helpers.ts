@@ -141,7 +141,10 @@ const isWhitelistedDomain = (
     }
 
     if (enforceManifestDomains && !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])) {
-      log("wallet-api/helpers", "isWhitelistedDomain: URL origin not in manifest domains");
+      log("wallet-api/helpers", "isWhitelistedDomain: URL origin not in manifest domains", {
+        origin: parsedUrl.origin,
+        manifestId: manifest.id,
+      });
       return false;
     }
 

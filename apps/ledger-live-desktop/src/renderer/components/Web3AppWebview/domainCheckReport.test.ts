@@ -1,11 +1,22 @@
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
+import { log } from "@ledgerhq/logs";
 import { addAction } from "~/datadog/renderer";
 import { webview } from "~/renderer/bridge";
-import { reportBlockedInitialLoad, startDomainCheckViolationReporting } from "./domainCheckReport";
+import {
+  DOMAIN_CHECK_LOG_TYPE,
+  reportBlockedInitialLoad,
+  reportInitialURLFallback,
+  reportRejectedLoadURL,
+  startDomainCheckViolationReporting,
+} from "./domainCheckReport";
 
 jest.mock("~/datadog/renderer", () => ({
   addAction: jest.fn(),
+}));
+
+jest.mock("@ledgerhq/logs", () => ({
+  log: jest.fn(),
 }));
 
 const manifest = {
@@ -53,6 +64,20 @@ describe("domainCheckReport", () => {
 
       expect(addAction).toHaveBeenCalledTimes(2);
     });
+
+    it("logs each distinct violation from main once, even when Datadog is not ready", () => {
+      startDomainCheckViolationReporting();
+      const [listener] = jest.mocked(webview.onDomainCheckViolation).mock.calls[0];
+      const violation = { ...mainFrameViolation, manifestId: "sell" };
+      jest.mocked(addAction).mockReturnValue(false);
+
+      listener(violation);
+      listener(violation);
+      listener({ ...violation, origin: "https://other.com" });
+
+      expect(log).toHaveBeenCalledTimes(2);
+      expect(log).toHaveBeenCalledWith(DOMAIN_CHECK_LOG_TYPE, "violation", violation);
+    });
   });
 
   describe("reportBlockedInitialLoad", () => {
@@ -68,6 +93,40 @@ describe("domainCheckReport", () => {
         kind: "navigation",
         outcome: "blocked",
       });
+    });
+  });
+
+  describe("reportInitialURLFallback", () => {
+    it("logs the rejected initial URL origin once, without sending it to Datadog", () => {
+      const fallbackManifest = { ...manifest, id: "earn" };
+
+      reportInitialURLFallback(fallbackManifest, "https://other.example.com/a?address=0xabc");
+      reportInitialURLFallback(fallbackManifest, "https://other.example.com/b");
+
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(
+        DOMAIN_CHECK_LOG_TYPE,
+        "initial URL rejected, loading manifest.url",
+        expect.objectContaining({ origin: "https://other.example.com", manifestId: "earn" }),
+      );
+      expect(addAction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("reportRejectedLoadURL", () => {
+    it("logs the rejected URL origin once, without sending it to Datadog", () => {
+      const loadManifest = { ...manifest, id: "card" };
+
+      reportRejectedLoadURL(loadManifest, "https://evil.com/a");
+      reportRejectedLoadURL(loadManifest, "https://evil.com/b");
+
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith(
+        DOMAIN_CHECK_LOG_TYPE,
+        "loadURL rejected",
+        expect.objectContaining({ origin: "https://evil.com", manifestId: "card" }),
+      );
+      expect(addAction).not.toHaveBeenCalled();
     });
   });
 });

@@ -23,7 +23,11 @@ import {
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { reportBlockedInitialLoad } from "./domainCheckReport";
+import {
+  reportBlockedInitialLoad,
+  reportInitialURLFallback,
+  reportRejectedLoadURL,
+} from "./domainCheckReport";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -141,6 +145,7 @@ export function useWebviewState(
           manifestDomainCheckEnabled &&
           !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
         ) {
+          reportRejectedLoadURL(manifest, url);
           return Promise.reject(new Error("URL not allowed by manifest domains"));
         }
         const webview = getAttachedWebview(webviewRef);
@@ -159,7 +164,7 @@ export function useWebviewState(
         serverRef?.current?.sendMessage(method, params);
       },
     };
-  }, [manifest.domains, manifestDomainCheckEnabled, serverRef]);
+  }, [manifest, manifestDomainCheckEnabled, serverRef]);
 
   // Track the actual webview DOM node via a callback ref. Unlike a plain ref,
   // a state update re-triggers the listener-attach effect exactly when the
@@ -219,10 +224,13 @@ export function useWebviewState(
   );
 
   const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "about:blank";
+  const isInitialURLReplaced =
+    manifestDomainCheckEnabled && !isBlockedByDomainCheck && webviewSrc !== initialURL;
 
   useEffect(() => {
     if (isBlockedByDomainCheck) reportBlockedInitialLoad(manifest, initialURL);
-  }, [isBlockedByDomainCheck, manifest, initialURL]);
+    if (isInitialURLReplaced) reportInitialURLFallback(manifest, initialURL);
+  }, [isBlockedByDomainCheck, isInitialURLReplaced, manifest, initialURL]);
 
   const handleDidStartLoading = useCallback(() => {
     setState(oldState => ({
