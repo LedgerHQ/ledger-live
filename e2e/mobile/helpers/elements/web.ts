@@ -19,7 +19,7 @@ export class WebHandle implements ElementHandle {
 
   /** The Detox web element, with no wait and no hard timeout. */
   private get raw(): WebElement {
-    return web.element(by.web.cssSelector(`[data-testid^="${this.testId}"]`));
+    return web.element(by.web.cssSelector(`[data-testid="${this.testId}"]`));
   }
 
   /** Waits until the element exists in the webview and its text can be read (webviews have no visibility check). */
@@ -66,5 +66,5 @@ export class WebHandle implements ElementHandle {
   }
 }
 
-/** Matches a webview element whose `data-testid` starts with `testId` (same prefix match as the `*WebTestId` globals). */
+/** Matches a webview element whose `data-testid` equals `testId`. */
 export const webByTestId = (testId: string): WebHandle => new WebHandle(testId);

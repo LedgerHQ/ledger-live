@@ -19,7 +19,7 @@ private readonly keyboardKey = (char: string) => byId(`keyboard-key-${char}`);
 |---|---|
 | `byId(id)` | React Native `testID` |
 | `byText(text)` | visible text |
-| `webByTestId(testId)` | webview `data-testid` starting with `testId` (same prefix match as the `*WebTestId` globals) |
+| `webByTestId(testId)` | webview `data-testid` equal to `testId` (the `*WebTestId` globals match a prefix, so migrate with the full id) |
 
 ## Act
 
