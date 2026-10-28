@@ -860,4 +860,39 @@ describe("genericPrepareTransaction", () => {
       );
     });
   });
+
+  describe("feeOption forwarding", () => {
+    const estimate = async (transaction: object) => {
+      const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(700) });
+      (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+      await genericPrepareTransaction("testnet", "local")(account, {
+        ...baseTransaction,
+        ...transaction,
+      } as GenericTransaction);
+      return estimateFees;
+    };
+
+    it("forwards a string feeOptionId as feeOption alongside customFeesParameters", async () => {
+      const estimateFees = await estimate({ feeOptionId: "standard" });
+
+      expect(estimateFees).toHaveBeenCalledWith(expect.anything(), expect.anything(), {
+        customFeesParameters: {},
+        feeOption: { feeOptionId: "standard" },
+      });
+    });
+
+    it("omits feeOption when the transaction carries no feeOptionId", async () => {
+      const estimateFees = await estimate({});
+
+      const options = estimateFees.mock.calls[0][2];
+      expect(options).toEqual({ customFeesParameters: {} });
+      expect(options).not.toHaveProperty("feeOption");
+    });
+
+    it("omits feeOption when feeOptionId is not a string", async () => {
+      const estimateFees = await estimate({ feeOptionId: 3 });
+
+      expect(estimateFees.mock.calls[0][2]).not.toHaveProperty("feeOption");
+    });
+  });
 });

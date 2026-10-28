@@ -21,7 +21,7 @@ import {
   listOperations,
   buildEnergyRentRequest,
 } from "../logic";
-import { TRONIFY_FEE_OPTION_ID } from ".";
+import { STANDARD_FEE_OPTION_ID, TRONIFY_FEE_OPTION_ID } from "../logic/constants";
 
 jest.mock("../logic", () => ({
   buildEnergyRentRequest: jest.fn(),
@@ -234,6 +234,16 @@ describe("createApi", () => {
         trc20Intent,
       );
       expect(mockEstimateFees).not.toHaveBeenCalled();
+    });
+
+    it("should call estimateFees when feeOptionId is the standard option", async () => {
+      const api = createApi();
+      await api.estimateFees(context, trc20Intent, {
+        feeOption: { feeOptionId: STANDARD_FEE_OPTION_ID },
+      });
+
+      expect(mockEstimateFees).toHaveBeenCalledWith(context.logger, mockTronConfig, trc20Intent);
+      expect(mockEstimateTronifyFees).not.toHaveBeenCalled();
     });
 
     it("should call estimateFees when feeOptionId is an unknown value", async () => {

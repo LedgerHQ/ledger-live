@@ -7,6 +7,7 @@ import type {
   CoinModuleApi,
   CoinModuleImpl,
   Cursor,
+  EstimateFeesOptions,
   FeeEstimation,
   MemoNotSupported,
   Page,
@@ -14,6 +15,8 @@ import type {
   Validator,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { Context } from "@ledgerhq/coin-module-framework/config";
+import { FEE_CURRENCY_BY_CONTRACT } from "../constants";
+import { feeCurrencyForOption, getFeeOptions } from "../logic/feeOptions";
 import { getCeloClient } from "../network/client";
 import { combine } from "./combine";
 import { craftTransaction } from "./craftTransaction";
@@ -38,7 +41,7 @@ const prefixHex = (hex: string): `0x${string}` =>
 /**
  * Celo CoinModuleApi. Celo is an EVM chain, so generic methods delegate to
  * `@ledgerhq/coin-evm`; the CIP-64/`viem/celo`-sensitive methods are overridden
- * (`craftTransaction`, `estimateFees`, `combine`, `broadcast`). Staking uses
+ * (`craftTransaction`, `estimateFees`, `listFeeOptions`, `combine`, `broadcast`). Staking uses
  * Celo's real LockedGold + Election model (not coin-evm's governance shim):
  * `getStakes`/`getValidators` read live state, staking is crafted via `celo.*`
  * intents, `getRewards` is unsupported (no discrete on-chain reward events), and
@@ -76,8 +79,36 @@ export function createApi() {
     estimateFees: (
       _context: CeloContext,
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
-      _options?: { feeOption?: unknown },
-    ) => estimateFees(intent),
+      options?: {
+        customFeesParameters?: FeeEstimation["parameters"];
+        feeOption?: EstimateFeesOptions;
+      },
+    ) => {
+      // A selected fee option replaces any raw `customFeesParameters.feeCurrency`; standard and
+      // unknown ids price in CELO. Without a selection the raw parameter is kept.
+      const feeOptionId = options?.feeOption?.feeOptionId;
+      if (feeOptionId === undefined) return estimateFees(intent, options?.customFeesParameters);
+      const { feeCurrency: _replaced, ...parameters } = options?.customFeesParameters ?? {};
+      const feeCurrency = feeCurrencyForOption(feeOptionId);
+      return estimateFees(intent, feeCurrency ? { ...parameters, feeCurrency } : parameters);
+    },
+    listFeeOptions: async (
+      context: CeloContext,
+      intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+    ) => {
+      const balances = await typedEvmApi.getBalance(context, intent.sender, {
+        includeAssets: async asset =>
+          "assetReference" in asset &&
+          !!asset.assetReference &&
+          FEE_CURRENCY_BY_CONTRACT.has(asset.assetReference.toLowerCase()),
+      });
+      const heldTokens = balances.flatMap(({ asset, value }) =>
+        "assetReference" in asset && asset.assetReference
+          ? [{ contractAddress: asset.assetReference, balance: value }]
+          : [],
+      );
+      return getFeeOptions(heldTokens);
+    },
     combine: (_context: CeloContext, tx: string, signature: string[], _options?) =>
       combine(tx, signature),
     broadcast: (

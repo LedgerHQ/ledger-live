@@ -20,6 +20,7 @@ import type {
   AssetInfo,
   Balance,
   Operation as CoreOperation,
+  EstimateFeesOptions,
   FeeEstimation,
   MapMemo,
   MemoNotSupported,
@@ -1273,3 +1274,17 @@ export const buildOptimisticOperation = (
   }
   return operation;
 };
+
+/**
+ * The `feeOption` estimate option for a transaction that carries a non-empty `feeOptionId`. Families
+ * opt in by adding the field to their transaction; it is not part of `GenericTransaction`.
+ */
+export function feeOptionFromTransaction(
+  transaction: unknown,
+): { feeOption: EstimateFeesOptions } | undefined {
+  if (typeof transaction !== "object" || transaction === null) return undefined;
+  const feeOptionId = Reflect.get(transaction, "feeOptionId");
+  return typeof feeOptionId === "string" && feeOptionId !== ""
+    ? { feeOption: { feeOptionId } }
+    : undefined;
+}

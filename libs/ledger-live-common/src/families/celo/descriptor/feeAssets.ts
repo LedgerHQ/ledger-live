@@ -5,11 +5,13 @@ import type {
   FeeAssetsConfig,
   TransactionPatch,
 } from "../../../bridge/descriptor/types";
-import { FEE_CURRENCY_BY_CONTRACT, FEE_CURRENCY_OPTIONS } from "../logic";
+import {
+  FEE_CURRENCY_BY_CONTRACT,
+  FEE_CURRENCY_OPTIONS,
+  STANDARD_FEE_OPTION_ID,
+  getFeeOptions,
+} from "../logic";
 import { GWEI_DIVISOR } from "./constants";
-
-/** Option id representing the native CELO fee currency (no token override). */
-const NATIVE_OPTION_ID = "celo";
 
 /** Canonical Celo gas values are expressed in Gwei; when paying fees with a token,
  * the UI displays token-decimal values via `customFeeInputValueTransform`.
@@ -22,8 +24,6 @@ const RESET_PATCH: TransactionPatch = {
   feeCurrencyUnwrapped: null,
   feeCurrencyAccountId: null,
 };
-
-type EligibleTokenAccount = TokenAccount & { feeCurrencyName: string };
 
 function getTransactionStringField(transaction: unknown, key: string): string | null {
   if (typeof transaction !== "object" || transaction === null) return null;
@@ -59,21 +59,29 @@ const feeAssetInputValueTransform = {
     transformFiniteValue(value, parsed => parsed.times(GWEI_DIVISOR)),
 };
 
-/** Token sub-accounts with a positive balance that are allowlisted as fee currencies. */
-function getEligibleTokenAccounts(mainAccount: Account): EligibleTokenAccount[] {
-  return (mainAccount.subAccounts ?? [])
-    .filter(
-      (sub): sub is TokenAccount =>
-        sub.type === "TokenAccount" &&
-        sub.balance.gt(0) &&
-        FEE_CURRENCY_BY_CONTRACT.has(sub.token.contractAddress.toLowerCase()),
-    )
-    .map(sub => ({
-      ...sub,
-      feeCurrencyName:
-        FEE_CURRENCY_BY_CONTRACT.get(sub.token.contractAddress.toLowerCase())?.name ??
-        sub.token.name,
-    }));
+/**
+ * Token sub-accounts the coin-module's `getFeeOptions` accepts as fee currencies, keyed by option id
+ * (the lowercased contract address). Options, patches and reconciliation all read this one list.
+ */
+function getSelectableTokens(mainAccount: Account): Map<string, TokenAccount> {
+  const tokenAccounts = new Map<string, TokenAccount>();
+  for (const sub of mainAccount.subAccounts ?? []) {
+    if (sub.type === "TokenAccount") {
+      tokenAccounts.set(sub.token.contractAddress.toLowerCase(), sub);
+    }
+  }
+  const optionIds = getFeeOptions(
+    [...tokenAccounts.values()].map(token => ({
+      contractAddress: token.token.contractAddress,
+      balance: token.balance,
+    })),
+  ).map(option => option.id);
+  return new Map(
+    optionIds.flatMap(id => {
+      const token = tokenAccounts.get(id);
+      return token ? [[id, token] as const] : [];
+    }),
+  );
 }
 
 function getHydratingSelectedTokenOption(transaction: unknown): FeeAssetOption | null {
@@ -85,7 +93,7 @@ function getHydratingSelectedTokenOption(transaction: unknown): FeeAssetOption |
   if (!feeCurrencyOption) return null;
 
   return {
-    id: selectedAccountId,
+    id: feeCurrencyUnwrapped.toLowerCase(),
     ticker: feeCurrencyOption.name,
     label: feeCurrencyOption.name,
     customFeeInputValueTransform: feeAssetInputValueTransform,
@@ -103,7 +111,7 @@ function getHydratingSelectedTokenOption(transaction: unknown): FeeAssetOption |
 export const celoFeeAssets: FeeAssetsConfig = {
   getOptions: ({ mainAccount, transaction }): readonly FeeAssetOption[] => {
     const native: FeeAssetOption = {
-      id: NATIVE_OPTION_ID,
+      id: STANDARD_FEE_OPTION_ID,
       ticker: FEE_CURRENCY_OPTIONS[0].name,
       label: FEE_CURRENCY_OPTIONS[0].name,
       unitLabel: CELO_FEE_UNIT_LABEL,
@@ -115,36 +123,39 @@ export const celoFeeAssets: FeeAssetsConfig = {
       return selectedToken ? [native, selectedToken] : [native];
     }
 
-    // Token options intentionally omit `unitLabel`: the fee input unit falls
-    // back to the ticker while the value is transformed to token decimals.
-    const tokens = getEligibleTokenAccounts(mainAccount).map(token => ({
-      id: token.id,
-      ticker: token.feeCurrencyName,
-      label: token.feeCurrencyName,
-      customFeeInputValueTransform: feeAssetInputValueTransform,
-      currency: token.token,
-      balance: token.spendableBalance,
-    }));
+    // The coin-module decides which held tokens qualify; this only adds display fields.
+    // Token options intentionally omit `unitLabel`: the fee input unit falls back to the
+    // ticker while the value is transformed to token decimals.
+    const tokens = [...getSelectableTokens(mainAccount)].map(([id, token]) => {
+      const name = FEE_CURRENCY_BY_CONTRACT.get(id)?.name ?? token.token.name;
+      return {
+        id,
+        ticker: name,
+        label: name,
+        customFeeInputValueTransform: feeAssetInputValueTransform,
+        currency: token.token,
+        balance: token.spendableBalance,
+      };
+    });
     return [native, ...tokens];
   },
 
   getSelectedOptionId: ({ transaction }): string => {
-    return getFeeCurrencyAccountId(transaction) ?? NATIVE_OPTION_ID;
+    return getFeeCurrencyUnwrapped(transaction)?.toLowerCase() ?? STANDARD_FEE_OPTION_ID;
   },
 
   buildPatch: (optionId, { mainAccount }): TransactionPatch | null => {
-    if (optionId === NATIVE_OPTION_ID) {
+    const id = optionId.toLowerCase();
+    if (id === STANDARD_FEE_OPTION_ID) {
       return RESET_PATCH;
     }
 
-    const tokenAccount = getEligibleTokenAccounts(mainAccount).find(token => token.id === optionId);
+    const tokenAccount = getSelectableTokens(mainAccount).get(id);
     if (!tokenAccount) {
       return RESET_PATCH;
     }
 
-    const matchedOption = FEE_CURRENCY_BY_CONTRACT.get(
-      tokenAccount.token.contractAddress.toLowerCase(),
-    );
+    const matchedOption = FEE_CURRENCY_BY_CONTRACT.get(id);
     if (!matchedOption) {
       return RESET_PATCH;
     }
@@ -161,7 +172,7 @@ export const celoFeeAssets: FeeAssetsConfig = {
     if (!feeCurrencyAccountId) return null;
     // Sub-accounts may still be hydrating: don't reset while we can't tell.
     if (mainAccount.subAccounts === undefined) return null;
-    const stillSelectable = getEligibleTokenAccounts(mainAccount).some(
+    const stillSelectable = [...getSelectableTokens(mainAccount).values()].some(
       token => token.id === feeCurrencyAccountId,
     );
     return stillSelectable ? null : RESET_PATCH;
