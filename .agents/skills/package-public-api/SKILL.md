@@ -61,8 +61,8 @@ src/
 ├── services/index.ts               # ✅ one level below: export * from "./portfolio";
 ├── services/portfolio/index.ts     # ✅ pure chain: entry → services → services/portfolio
 ├── hooks/index.ts                  # ✅ one level below, but breaks the chain:
-│                                   #    export * from "./useThing"; export { a } from "./a";
-├── hooks/useThing/index.ts         # ❌ nested-barrel: hooks/index.ts has a named export
+│                                   #    export * from "./useThing"; export * from "../shared";
+├── hooks/useThing/index.ts         # ❌ nested-barrel: hooks/index.ts re-exports a path outside its folder
 ├── internals/index.ts              # ✅ internals location
 └── Row/index.ts                    # ❌ orphan-barrel: imported by view.ts, re-exported by no entry
 ```
@@ -81,8 +81,8 @@ the folders lead to.
   Expose only code another package imports.
 
 **Fix a nested barrel** (`nested-barrel`) at the barrel the violation names, with its line and
-reason. In the tree above, `hooks/index.ts` drops `export { a } from "./a"`, or re-exports
-`./useThing/useThing` and the nested barrel goes. An `index.tsx` that holds code is a module, not
+reason. In the tree above, `export * from "../shared"` moves from `hooks/index.ts` to the entry, or
+`hooks/index.ts` re-exports `./useThing/useThing` and the nested barrel goes. An `index.tsx` that holds code is a module, not
 a barrel: rename it after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
 
 Purity of what a barrel reaches stays with the rules above. The debt found when the check landed

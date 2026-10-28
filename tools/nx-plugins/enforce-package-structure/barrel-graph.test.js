@@ -83,7 +83,6 @@ test("barrelReach names a breaking barrel below the first level, and skips plain
     [`${root}/broken/index.ts`]: { line: 1, reason: "has a named export" },
   };
   const reach = barrelReach([`${root}/index.ts`], {
-    sourceOf: () => undefined,
     targetsOf: targetsIn(edges),
     breakOf: file => breaks[file],
   });

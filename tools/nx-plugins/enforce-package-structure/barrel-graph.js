@@ -10,6 +10,7 @@ const { resolveRelative } = require("./components");
 
 /** @typedef {import("./rules").ChainBreak} ChainBreak */
 /** @typedef {import("./rules").ChainBreaker} ChainBreaker */
+/** @typedef {ReturnType<typeof moduleGraph>} ModuleGraph */
 
 const NATIVE_EXTENSIONS = require("./components.config.json").extensions.native;
 // Re.Pack builds iOS and Android apart, so a `.ios` file does not hide its `.android` sibling.
@@ -186,7 +187,7 @@ function isBarrel(file) {
  * entry excluded and itself included, that breaks a chain to it. Plain modules are transparent.
  *
  * @param {string[]} entries absolute paths
- * @param {ReturnType<typeof moduleGraph>} graph
+ * @param {Pick<ModuleGraph, "targetsOf" | "breakOf">} graph
  * @returns {Map<string, { depth: number, breaker?: ChainBreaker }>} absolute path to its place,
  *   for the files an entry reaches
  */
