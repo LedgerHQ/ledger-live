@@ -5,7 +5,7 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reducers/wallet";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { isAccountDetailEnabledFor } from "@features/flow-account-detail";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -13,7 +13,6 @@ import type { ColumnDef, Row, SortingState, Updater } from "@tanstack/react-tabl
 import { track } from "@shared/analytics";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../../../constants";
 import { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
-import { computeBalanceSortCountervalueByAccountId } from "../../../utils/aggregateAccounts";
 import { getCryptoAccountAddress } from "LLD/features/CryptoAddresses/utils/getCryptoAccountAddress";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 import { useAccountSettingsDialog } from "./useAccountSettingsDialog";
@@ -39,7 +38,6 @@ export function useCryptoDataTable({
   onRowClick,
 }: UseCryptoDataTableParams) {
   const { t } = useTranslation();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const walletState = useSelector(walletSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
@@ -56,23 +54,14 @@ export function useCryptoDataTable({
   );
 
   const aggregatedDataByAccountId = useMemo(
-    () =>
-      shouldDisplayAggregatedAssets
-        ? computeAggregatedAccountsData(rows, calculateCountervalue)
-        : null,
-    [shouldDisplayAggregatedAssets, rows, calculateCountervalue],
+    () => computeAggregatedAccountsData(rows, calculateCountervalue),
+    [rows, calculateCountervalue],
   );
 
-  const getSortCountervalue = useMemo(() => {
-    if (aggregatedDataByAccountId) {
-      return (id: string) => aggregatedDataByAccountId.get(id)?.countervalue ?? new BigNumber(0);
-    }
-    const countervalueByAccountId = computeBalanceSortCountervalueByAccountId(
-      rows,
-      calculateCountervalue,
-    );
-    return (id: string) => countervalueByAccountId.get(id) ?? new BigNumber(0);
-  }, [aggregatedDataByAccountId, rows, calculateCountervalue]);
+  const getSortCountervalue = useMemo(
+    () => (id: string) => aggregatedDataByAccountId.get(id)?.countervalue ?? new BigNumber(0),
+    [aggregatedDataByAccountId],
+  );
 
   const columns = useMemo<ColumnDef<AccountLike>[]>(
     () => [
@@ -101,17 +90,13 @@ export function useCryptoDataTable({
         cell: AddressCell,
         meta: { align: "end" },
       },
-      ...(shouldDisplayAggregatedAssets
-        ? [
-            {
-              id: "assets",
-              header: t("cryptoAddresses.table.columns.asset"),
-              enableSorting: false,
-              cell: AssetsCell,
-              meta: { align: "end" },
-            } satisfies ColumnDef<AccountLike>,
-          ]
-        : []),
+      {
+        id: "assets",
+        header: t("cryptoAddresses.table.columns.asset"),
+        enableSorting: false,
+        cell: AssetsCell,
+        meta: { align: "end" },
+      },
       {
         id: "balance",
         accessorKey: "balance",
@@ -129,13 +114,12 @@ export function useCryptoDataTable({
         meta: { align: "end" },
       },
     ],
-    [t, walletState, shouldDisplayAggregatedAssets, lookupParentAccount, getSortCountervalue],
+    [t, walletState, lookupParentAccount, getSortCountervalue],
   );
 
   const cellData = useMemo<CryptoTableCellData>(
     () => ({
       walletState,
-      shouldDisplayAggregatedAssets,
       lookupParentAccount,
       blacklistedTokenIds,
       aggregatedDataByAccountId,
@@ -146,7 +130,6 @@ export function useCryptoDataTable({
     }),
     [
       walletState,
-      shouldDisplayAggregatedAssets,
       lookupParentAccount,
       blacklistedTokenIds,
       aggregatedDataByAccountId,

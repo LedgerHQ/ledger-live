@@ -140,7 +140,7 @@ describe("marketPageAnalytics", () => {
   describe("useTrackMarketDiscoverabilityPage", () => {
     it("tracks Page Market with category as an event property", () => {
       renderHook(() =>
-        useTrackMarketDiscoverabilityPage(true, {
+        useTrackMarketDiscoverabilityPage({
           order: Order.MarketCapDesc,
           range: "7d",
           category: "starred",
@@ -160,18 +160,6 @@ describe("marketPageAnalytics", () => {
         },
         { updateRoutes: true, refreshSource: true },
       );
-    });
-
-    it("does not track when discoverability is disabled", () => {
-      renderHook(() =>
-        useTrackMarketDiscoverabilityPage(false, {
-          order: Order.MarketCapDesc,
-          range: "7d",
-          category: "all",
-        }),
-      );
-
-      expect(trackPage).not.toHaveBeenCalled();
     });
   });
 });

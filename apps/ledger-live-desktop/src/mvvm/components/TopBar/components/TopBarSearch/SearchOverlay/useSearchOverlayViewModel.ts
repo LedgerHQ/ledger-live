@@ -2,10 +2,7 @@ import { KeyboardEvent, useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
-import {
-  getMarketOrAssetDetailPath,
-  isAssetOrMarketDetailPath,
-} from "LLD/utils/marketAssetNavigation";
+import { getAssetDetailPath, isAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { setMarketCategory } from "~/renderer/actions/market";
 import { useAssetSearchBar } from "./useAssetSearchBar";
 import { SearchOverlayContextValue } from "./types";
@@ -16,8 +13,7 @@ export function useSearchOverlayViewModel() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const { query, onChangeQuery, isOpen, open, close, mode, suggestions, results } =
     useAssetSearchBar();
 
@@ -30,7 +26,7 @@ export function useSearchOverlayViewModel() {
 
   // Searching while already on a detail page replaces the entry instead of pushing, so repeated
   // searches don't stack in history and a single Back returns to the page before the first search.
-  const replace = isAssetOrMarketDetailPath(location.pathname);
+  const replace = isAssetDetailPath(location.pathname);
 
   const navigateToAsset = useCallback(
     (currencyId: string, marketState?: AssetNavigationMarketState) => {
@@ -50,13 +46,13 @@ export function useSearchOverlayViewModel() {
         // true when clicked from the search results list, false from the default suggestions list.
         searched: displayedMode === "results",
       });
-      navigate(getMarketOrAssetDetailPath(currencyId, shouldDisplayAggregatedAssets), {
+      navigate(getAssetDetailPath(currencyId), {
         state: marketState,
         replace,
       });
       close();
     },
-    [navigate, shouldDisplayAggregatedAssets, close, displayedMode, replace],
+    [navigate, close, displayedMode, replace],
   );
 
   const goToMarket = useCallback(

@@ -12,8 +12,6 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { useTranslation } from "react-i18next";
@@ -42,7 +40,6 @@ function columnHeader(label: string) {
 export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
   const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
   const showPriceColumn = options?.showPriceColumn ?? true;
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
@@ -63,15 +60,11 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
           );
           return (
             <TableCellItem data-testid={`w40-asset-row-${assetTestId}`}>
-              {row.original.isPlaceholder || shouldDisplayAggregatedAssets ? (
-                <CryptoIcon
-                  ledgerId={row.original.currency.id}
-                  ticker={row.original.currency.ticker}
-                  size={getValidCryptoIconSize(40)}
-                />
-              ) : (
-                <CryptoCurrencyIcon currency={row.original.currency} size={40} />
-              )}
+              <CryptoIcon
+                ledgerId={row.original.currency.id}
+                ticker={row.original.currency.ticker}
+                size={getValidCryptoIconSize(40)}
+              />
               <TableCellContent>
                 <TableCellContentTitle>
                   <TruncatedText text={row.original.currency.name} />
@@ -159,7 +152,7 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
         },
       },
     ],
-    [t, emptyFiatValue, showTrendColumnTooltip, shouldDisplayAggregatedAssets],
+    [t, emptyFiatValue, showTrendColumnTooltip],
   );
 
   const table = useLumenDataTable({

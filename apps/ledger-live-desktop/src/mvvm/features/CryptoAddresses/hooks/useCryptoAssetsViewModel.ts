@@ -16,7 +16,6 @@ import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/ut
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -43,7 +42,6 @@ const TRACKING_TYPE_BY_CATEGORY: Record<AssetsPageCategory, "crypto" | "stable" 
 };
 
 export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -145,13 +143,11 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? shouldDisplayAggregatedAssets
-            ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
-            : `/market/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );
     },
-    [navigate, shouldDisplayAggregatedAssets],
+    [navigate],
   );
 
   return {

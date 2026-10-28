@@ -16,10 +16,6 @@ const assetDiscoverabilityOn = withFlagOverrides({
   lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
 });
 
-const assetDiscoverabilityOff = withFlagOverrides({
-  lwdWallet40: { enabled: false },
-});
-
 const createMarketState = (
   category: MarketListCategory = "all",
   overrides: Partial<MarketState> = {},
@@ -30,11 +26,8 @@ const createMarketState = (
     marketParams: {
       range: "24h",
       limit: 50,
-      starred: [],
       order: Order.MarketCapDesc,
       search: "",
-      liveCompatible: false,
-      counterCurrency: "USD",
       ...marketParamsOverrides,
     },
     currentPage: 1,
@@ -176,11 +169,5 @@ describe("useMarketCategories", () => {
     const { result } = renderCategories("gaming");
 
     expect(result.current.selectedCategory).toBe("all");
-  });
-
-  it("skips the trending request when asset discoverability is off", () => {
-    renderCategories("all", assetDiscoverabilityOff);
-
-    expect(mockedUseTrending).toHaveBeenCalledWith(undefined, { skip: true });
   });
 });

@@ -19,8 +19,6 @@ const MARKET_LIST_IDENTITY_KEYS = new Set<keyof MarketListRequestParams>([
   "order",
   "search",
   "range",
-  "starred",
-  "liveCompatible",
   "filter",
 ]);
 
@@ -34,11 +32,8 @@ const initialState: MarketState = {
   marketParams: {
     range: "24h",
     limit: 50,
-    starred: [],
     order: Order.MarketCapDesc,
     search: "",
-    liveCompatible: false,
-    counterCurrency: "USD",
   },
   currentPage: 1,
   hideTransactionsOnChart: false,
@@ -99,7 +94,6 @@ const handlers: MarketHandlers = {
     marketParams: {
       ...state.marketParams,
       range: payload.marketParams.range,
-      counterCurrency: payload.marketParams.counterCurrency,
       order: payload.marketParams.order,
     },
   }),
