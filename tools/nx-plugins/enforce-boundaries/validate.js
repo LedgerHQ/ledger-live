@@ -96,8 +96,8 @@ function importSpecifiers(content) {
 }
 
 /**
- * Specifiers of a source file that load `pkg` at runtime: every import of it but `import type`,
- * `export type … from` and `import("…")` type queries, which the build erases.
+ * Specifiers of a source file that load `pkg` at runtime: every import of it but the type-only
+ * forms `DEVTOOLS_TYPE_ONLY_RULE` allows, which the build erases.
  *
  * @param {string} file
  * @param {string} content

@@ -6,7 +6,7 @@ Keep tools decoupled from the app. The builder is the only bridge between app im
 
 ## Import
 
-This package names each tool's props types without loading the tool. `DEVTOOLS_ALLOWED_IMPORTS`, `DEVTOOLS_TYPE_ONLY_IMPORTS` and `DEVTOOLS_TYPE_ONLY_RULE` in [`constraints.js`](../../tools/nx-plugins/enforce-boundaries/constraints.js) set what it may import from `@devtools/*`. The [devtools import boundary skill](../../.agents/skills/devtools-import-boundary/SKILL.md) explains why.
+This package may import `@devtools/registry`, may import a tool's props types only through `import type`, and may import no other `@devtools/*` package. It names each tool's props types without loading the tool. `DEVTOOLS_ALLOWED_IMPORTS`, `DEVTOOLS_TYPE_ONLY_IMPORTS` and `DEVTOOLS_TYPE_ONLY_RULE` in [`constraints.js`](../../tools/nx-plugins/enforce-boundaries/constraints.js) set what it may import from `@devtools/*`. The [devtools import boundary skill](../../.agents/skills/devtools-import-boundary/SKILL.md) explains why.
 
 ## Builders
 

@@ -6,10 +6,7 @@
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
-        "{workspaceRoot}/.agents/skills/devtools-import-boundary/SKILL.md"
-      ],
+      "inputs": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
       "options": {
         "cwd": "{workspaceRoot}",
         "command": "node --test tools/nx-plugins/enforce-boundaries/validate.test.js"
