@@ -53,11 +53,20 @@ pnpm nx affected -t test --base="$BASE" --exclude=ledger-live-desktop
 ```
 
 The desktop `test` target also runs Playwright end-to-end tests. When the desktop app is affected,
-run its unit tests only, scoped to the changed paths:
+run its whole Jest suite instead: a change in a workspace dependency can break a desktop test
+without touching a desktop file.
 
 ```bash
-pnpm desktop test:jest "src/path/to/changed"
-pnpm mobile test:jest "src/path/to/changed"   # the same scoping, for a quick mobile loop
+pnpm desktop test:jest
+```
+
+While iterating on app files, `--findRelatedTests` runs only the suites that import them. Paths are
+relative to the app; a path passed without the flag filters test file names and finds no suite for a
+source file.
+
+```bash
+pnpm desktop test:jest --findRelatedTests src/path/to/changed.ts
+pnpm mobile test:jest --findRelatedTests src/path/to/changed.ts
 ```
 
 Fix one failure at a time. Never skip, comment out or loosen a test to get green. Write or update
