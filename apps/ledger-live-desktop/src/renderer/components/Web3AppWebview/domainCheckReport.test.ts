@@ -6,7 +6,7 @@ import { webview } from "~/renderer/bridge";
 import {
   DOMAIN_CHECK_LOG_TYPE,
   reportBlockedInitialLoad,
-  reportInitialURLFallback,
+  reportGoToURLFallback,
   reportRejectedLoadURL,
   startDomainCheckViolationReporting,
 } from "./domainCheckReport";
@@ -96,17 +96,15 @@ describe("domainCheckReport", () => {
     });
   });
 
-  describe("reportInitialURLFallback", () => {
-    it("logs the rejected initial URL origin once, without sending it to Datadog", () => {
-      const fallbackManifest = { ...manifest, id: "earn" };
-
-      reportInitialURLFallback(fallbackManifest, "https://other.example.com/a?address=0xabc");
-      reportInitialURLFallback(fallbackManifest, "https://other.example.com/b");
+  describe("reportGoToURLFallback", () => {
+    it("logs the rejected goToURL origin once, without sending it to Datadog", () => {
+      reportGoToURLFallback("earn", "https://other.example.com/a?address=0xabc");
+      reportGoToURLFallback("earn", "https://other.example.com/b");
 
       expect(log).toHaveBeenCalledTimes(1);
       expect(log).toHaveBeenCalledWith(
         DOMAIN_CHECK_LOG_TYPE,
-        "initial URL rejected, loading manifest.url",
+        "goToURL rejected, loading manifest.url",
         expect.objectContaining({ origin: "https://other.example.com", manifestId: "earn" }),
       );
       expect(addAction).not.toHaveBeenCalled();
@@ -115,10 +113,8 @@ describe("domainCheckReport", () => {
 
   describe("reportRejectedLoadURL", () => {
     it("logs the rejected URL origin once, without sending it to Datadog", () => {
-      const loadManifest = { ...manifest, id: "card" };
-
-      reportRejectedLoadURL(loadManifest, "https://evil.com/a");
-      reportRejectedLoadURL(loadManifest, "https://evil.com/b");
+      reportRejectedLoadURL("card", "https://evil.com/a");
+      reportRejectedLoadURL("card", "https://evil.com/b");
 
       expect(log).toHaveBeenCalledTimes(1);
       expect(log).toHaveBeenCalledWith(

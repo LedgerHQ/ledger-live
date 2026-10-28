@@ -24,7 +24,7 @@ const createDomainCheckLogger = (message: string) =>
   createDomainCheckReporter(violation => log(DOMAIN_CHECK_LOG_TYPE, message, violation));
 
 const logViolation = createDomainCheckLogger("violation");
-const logInitialURLFallback = createDomainCheckLogger("initial URL rejected, loading manifest.url");
+const logGoToURLFallback = createDomainCheckLogger("goToURL rejected, loading manifest.url");
 const logRejectedLoadURL = createDomainCheckLogger("loadURL rejected");
 
 const reportViolation = (violation: DomainCheckViolation) => {
@@ -32,12 +32,9 @@ const reportViolation = (violation: DomainCheckViolation) => {
   sendViolationToDatadog(violation);
 };
 
-const blockedMainFrameNavigation = (
-  manifest: LiveAppManifest,
-  url: string,
-): DomainCheckViolation => ({
+const blockedMainFrameNavigation = (manifestId: string, url: string): DomainCheckViolation => ({
   origin: getReportableOrigin(url),
-  manifestId: manifest.id,
+  manifestId,
   appVersion: __APP_VERSION__,
   platform: "desktop",
   frameType: "main_frame",
@@ -57,15 +54,15 @@ export function startDomainCheckViolationReporting(): () => void {
  * URL nor manifest.url is in manifest.domains: main never sees that load.
  */
 export function reportBlockedInitialLoad(manifest: LiveAppManifest, url: string): void {
-  reportViolation(blockedMainFrameNavigation(manifest, url));
+  reportViolation(blockedMainFrameNavigation(manifest.id, url));
 }
 
-/** Logs an initial URL the domain check replaced with manifest.url. */
-export function reportInitialURLFallback(manifest: LiveAppManifest, url: string): void {
-  logInitialURLFallback(blockedMainFrameNavigation(manifest, url));
+/** Logs a `goToURL` input the initial URL validation replaced with manifest.url. */
+export function reportGoToURLFallback(manifestId: string, url: string): void {
+  logGoToURLFallback(blockedMainFrameNavigation(manifestId, url));
 }
 
 /** Logs a `loadURL` call the domain check rejected before it reached the webview. */
-export function reportRejectedLoadURL(manifest: LiveAppManifest, url: string): void {
-  logRejectedLoadURL(blockedMainFrameNavigation(manifest, url));
+export function reportRejectedLoadURL(manifestId: string, url: string): void {
+  logRejectedLoadURL(blockedMainFrameNavigation(manifestId, url));
 }

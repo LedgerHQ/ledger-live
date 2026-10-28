@@ -156,16 +156,13 @@ const isWhitelistedDomain = (
   }
 };
 
-export const getInitialURL = (
+const buildInitialURL = (
   inputs: Record<string, string | boolean | undefined> | undefined,
   manifest: AppManifest,
-  { enforceManifestDomains = false }: { enforceManifestDomains?: boolean } = {},
-) => {
+  isGoToURLAllowed: boolean,
+): string => {
   try {
-    if (
-      typeof inputs?.goToURL === "string" &&
-      isWhitelistedDomain(inputs.goToURL, manifest, enforceManifestDomains)
-    ) {
+    if (isGoToURLAllowed && typeof inputs?.goToURL === "string") {
       if (manifest.params) {
         const goToURL = new URL(inputs.goToURL);
         goToURL.searchParams.set("params", JSON.stringify(manifest.params));
@@ -194,6 +191,32 @@ export const getInitialURL = (
     return manifest.url.toString();
   }
 };
+
+type InitialURL = {
+  url: string;
+  /** The `inputs.goToURL` that failed validation, replaced by the manifest URL. */
+  rejectedGoToURL?: string;
+};
+
+export const resolveInitialURL = (
+  inputs: Record<string, string | boolean | undefined> | undefined,
+  manifest: AppManifest,
+  { enforceManifestDomains = false }: { enforceManifestDomains?: boolean } = {},
+): InitialURL => {
+  const goToURL = typeof inputs?.goToURL === "string" ? inputs.goToURL : undefined;
+  const isGoToURLAllowed =
+    goToURL !== undefined && isWhitelistedDomain(goToURL, manifest, enforceManifestDomains);
+  return {
+    url: buildInitialURL(inputs, manifest, isGoToURLAllowed),
+    rejectedGoToURL: goToURL !== undefined && !isGoToURLAllowed ? goToURL : undefined,
+  };
+};
+
+export const getInitialURL = (
+  inputs: Record<string, string | boolean | undefined> | undefined,
+  manifest: AppManifest,
+  options: { enforceManifestDomains?: boolean } = {},
+) => resolveInitialURL(inputs, manifest, options).url;
 
 export const safeUrl = (url: string) => {
   try {
