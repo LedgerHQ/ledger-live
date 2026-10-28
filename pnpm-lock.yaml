@@ -5707,6 +5707,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@shared/auth':
+        specifier: workspace:^
+        version: link:../../../shared/auth
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -16450,6 +16453,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:^
         version: link:../../shared/api-services
+      '@shared/auth':
+        specifier: workspace:^
+        version: link:../../shared/auth
       '@solana/web3.js':
         specifier: 'catalog:'
         version: 1.99.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
