@@ -15,9 +15,8 @@ describe("calService", () => {
     expect(calService(() => own).buildExtra(common)).toEqual(calApiExtra({ ...own, ...common }));
   });
 
-  it("fails at createExtra when the service url is missing", () => {
-    // @ts-expect-error: calServiceUrl is required
-    const services = defineApiServices([calService(() => ({}))]);
+  it("fails at createExtra when the service url is empty", () => {
+    const services = defineApiServices([calService(() => ({ calServiceUrl: "" }))]);
 
     expect(() => services.createExtra(common)).toThrow(ZodError);
   });

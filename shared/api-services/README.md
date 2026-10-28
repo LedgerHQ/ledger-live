@@ -135,7 +135,8 @@ is never typed with anyone's endpoints — only the injected reference is.
 2. Add `service.ts` with its descriptor factory: `api` plus a `buildExtra` that calls the service's
    `extraArgument` builder. If the schema has a `CommonConfig` field, type the thunk as
    `() => Omit<XApiExtra, keyof CommonConfig>` and merge `common` in. Prove in `service.test.ts` that
-   `buildExtra` builds what the builder builds and that a missing field fails at `createExtra`.
+   `buildExtra` builds what the builder builds, and, when the schema rejects a value its type accepts
+   (an empty string against `.min(1)`), that this value fails at `createExtra`.
 3. Re-export it from `src/services/index.ts`.
 4. Register it in the `rtkQueryApi.ts` of each app that calls it. A service one app never calls stays out of that app.
 

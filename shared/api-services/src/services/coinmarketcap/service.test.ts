@@ -15,9 +15,8 @@ describe("coinMarketCapService", () => {
     expect(coinMarketCapService(() => own).buildExtra(common)).toEqual(coinMarketCapApiExtra(own));
   });
 
-  it("fails at createExtra when the url is missing", () => {
-    // @ts-expect-error: coinMarketCapApiUrl is required
-    const services = defineApiServices([coinMarketCapService(() => ({}))]);
+  it("fails at createExtra when the url is empty", () => {
+    const services = defineApiServices([coinMarketCapService(() => ({ coinMarketCapApiUrl: "" }))]);
 
     expect(() => services.createExtra(common)).toThrow(ZodError);
   });

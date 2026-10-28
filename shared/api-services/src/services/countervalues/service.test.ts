@@ -15,9 +15,10 @@ describe("cvsService", () => {
     expect(cvsService(() => own).buildExtra(common)).toEqual(cvsApiExtra(own));
   });
 
-  it("fails at createExtra when the url getter is missing", () => {
-    // @ts-expect-error: getCountervaluesServiceUrl is required
-    const services = defineApiServices([cvsService(() => ({}))]);
+  it("fails at createExtra when the url getter returns an empty url", () => {
+    const services = defineApiServices([
+      cvsService(() => ({ getCountervaluesServiceUrl: () => "" })),
+    ]);
 
     expect(() => services.createExtra(common)).toThrow(ZodError);
   });

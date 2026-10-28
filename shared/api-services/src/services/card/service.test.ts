@@ -1,5 +1,3 @@
-import { ZodError } from "zod";
-import { defineApiServices } from "../../compose";
 import { cardApi, cardApiExtra } from "./api";
 import { cardService } from "./service";
 import type { CardApiExtra } from "./types";
@@ -21,13 +19,5 @@ describe("cardService", () => {
 
   it("builds the same extraArgument as cardApiExtra", () => {
     expect(cardService(() => own).buildExtra(common)).toEqual(cardApiExtra(own));
-  });
-
-  it("fails at createExtra when a getter is missing", () => {
-    const { getCardApiBaseUrl: _missing, ...incomplete } = own;
-    // @ts-expect-error: getCardApiBaseUrl is required
-    const services = defineApiServices([cardService(() => incomplete)]);
-
-    expect(() => services.createExtra(common)).toThrow(ZodError);
   });
 });

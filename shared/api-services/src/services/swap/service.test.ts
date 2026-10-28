@@ -1,5 +1,3 @@
-import { ZodError } from "zod";
-import { defineApiServices } from "../../compose";
 import { swapApi, swapApiExtra } from "./api";
 import { swapService } from "./service";
 
@@ -13,12 +11,5 @@ describe("swapService", () => {
 
   it("builds the same extraArgument as swapApiExtra, with the common config", () => {
     expect(swapService(() => own).buildExtra(common)).toEqual(swapApiExtra({ ...own, ...common }));
-  });
-
-  it("fails at createExtra when the url getter is missing", () => {
-    // @ts-expect-error: getSwapApiBaseUrl is required
-    const services = defineApiServices([swapService(() => ({}))]);
-
-    expect(() => services.createExtra(common)).toThrow(ZodError);
   });
 });
