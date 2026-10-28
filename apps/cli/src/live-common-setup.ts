@@ -10,8 +10,7 @@ import {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/live-dmk-speculos";
 import { configureStore } from "@reduxjs/toolkit";
-import { cryptoAssetsApi } from "@domain/api-currency-token";
-import { calApiExtra } from "@shared/api-services";
+import { calService, defineApiServices } from "@shared/api-services";
 import { buildCryptoAssetsStore } from "@features/platform-currencies/legacy";
 import { getEnv } from "@shared/env";
 import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
@@ -56,18 +55,21 @@ export function closeAllDevices() {
   closeAllSpeculosDevices();
 }
 
+const apiServices = defineApiServices([
+  calService(() => ({ calServiceUrl: getEnv("CAL_SERVICE_URL") })),
+]);
+
 export const calStore = configureStore({
-  reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
+  reducer: { ...apiServices.reducers },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: false,
       thunk: {
-        extraArgument: calApiExtra({
-          calServiceUrl: getEnv("CAL_SERVICE_URL"),
+        extraArgument: apiServices.createExtra({
           ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") || "cli",
         }),
       },
-    }).concat(cryptoAssetsApi.middleware),
+    }).concat(apiServices.middlewares),
 });
 
 setFrameworkCryptoAssetsStore(buildCryptoAssetsStore({ dispatch: calStore.dispatch }));
