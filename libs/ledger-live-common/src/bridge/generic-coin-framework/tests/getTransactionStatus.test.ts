@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
@@ -304,6 +305,59 @@ describe("genericGetTransactionStatus", () => {
       } as any);
 
       expect("sponsored" in readParameters()).toBe(false);
+    });
+  });
+
+  describe("after a failed fee estimation", () => {
+    const failedTransaction = {
+      amount: new BigNumber(100),
+      useAllAmount: false,
+      recipient: "tz1Recipient",
+      family: "tezos",
+      fees: undefined,
+      feesEstimationFailed: true,
+    } as any;
+
+    it("resolves with the field error validateIntent names", async () => {
+      const notEnoughBalance = new Error("NotEnoughBalance");
+      validateIntent.mockResolvedValue({
+        ...validateIntentResult,
+        errors: { amount: notEnoughBalance },
+      });
+
+      const getStatus = genericGetTransactionStatus("mainnet", "tezos");
+      const result = await getStatus(account, failedTransaction);
+
+      expect(result.errors).toEqual({ amount: notEnoughBalance });
+    });
+
+    it("rejects with the estimation error when validateIntent names no other cause", async () => {
+      const networkError = new Error("NetworkDown");
+      validateIntent.mockResolvedValue({
+        ...validateIntentResult,
+        errors: { estimation: networkError },
+      });
+
+      const getStatus = genericGetTransactionStatus("mainnet", "tezos");
+
+      await expect(getStatus(account, failedTransaction)).rejects.toBe(networkError);
+    });
+
+    it("rejects with FeeNotLoaded when validateIntent is clean", async () => {
+      const getStatus = genericGetTransactionStatus("mainnet", "tezos");
+
+      await expect(getStatus(account, failedTransaction)).rejects.toThrow(FeeNotLoaded);
+    });
+
+    it("resolves a clean status for a transaction not prepared yet", async () => {
+      const getStatus = genericGetTransactionStatus("mainnet", "tezos");
+
+      const result = await getStatus(account, {
+        ...failedTransaction,
+        feesEstimationFailed: undefined,
+      });
+
+      expect(result.errors).toEqual({});
     });
   });
 });

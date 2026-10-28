@@ -1,45 +1,9 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  DialogBody,
-  DialogHeader,
-  Subheader,
-  SubheaderRow,
-  SubheaderTitle,
-} from "@ledgerhq/lumen-ui-react";
+import { Button, DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { LedgerLogo as LedgerIcon } from "@ledgerhq/lumen-ui-react/symbols";
-import { PerpsReviewDetailRow } from "./components/PerpsReviewDetailRow";
-import type { PerpsReviewDetailItem, PerpsReviewViewModel } from "./usePerpsReviewViewModel";
-
-type PerpsReviewSectionProps = Readonly<{
-  titleKey: string;
-  details: readonly PerpsReviewDetailItem[];
-}>;
-
-function PerpsReviewSection({ titleKey, details }: PerpsReviewSectionProps) {
-  const { t } = useTranslation();
-
-  return (
-    <div className="flex flex-col gap-12">
-      <Subheader>
-        <SubheaderRow className="mb-4">
-          <SubheaderTitle>{t(titleKey)}</SubheaderTitle>
-        </SubheaderRow>
-      </Subheader>
-      <div className="flex flex-col gap-8">
-        {details.map(detail => (
-          <PerpsReviewDetailRow
-            key={detail.labelKey}
-            label={t(detail.labelKey)}
-            value={detail.value}
-            testID={detail.testID}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
+import { PerpsReviewSection } from "LLD/features/Perps/components/PerpsReviewSection";
+import type { PerpsReviewViewModel } from "./usePerpsReviewViewModel";
 
 export function PerpsReviewView({
   swapDetails,

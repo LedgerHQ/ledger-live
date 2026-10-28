@@ -254,7 +254,7 @@ describe("swap execute command", () => {
     expect(pipelineInput.feeStrategy).toBe("medium");
     expect(pipelineInput.fromAccount.id).toBe(fromDescriptor.id);
     expect(pipelineInput.toAccount.id).toBe(toDescriptor.id);
-    expect(pipelineInput.getAccountBridge).toBe(getAccountBridgeMock);
+    expect(pipelineInput.deps?.getAccountBridge).toBe(getAccountBridgeMock);
   });
 
   it("creates an empty destination token account when the token sub-account is missing", async () => {

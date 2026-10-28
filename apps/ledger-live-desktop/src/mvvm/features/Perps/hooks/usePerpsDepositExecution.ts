@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
@@ -72,6 +72,11 @@ export type PerpsDepositExecutionCallbacks = Readonly<{
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
+
+// Named like the swap drawer's, so /swap/cancelled reports a closed deposit the same way.
+class DrawerClosedError extends Error {
+  override name = "DrawerClosedError";
+}
 const FEE_STRATEGY = "medium";
 
 /** The swap orchestration's analytics sink, pointed at the perps flow. */
@@ -88,6 +93,17 @@ export function usePerpsDepositExecution(
   { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
+
+  const cancelSwapRef = useRef<((error: Error) => void) | null>(null);
+  const closedRef = useRef(false);
+
+  useEffect(
+    () => () => {
+      closedRef.current = true;
+      cancelSwapRef.current?.(new DrawerClosedError("User closed the deposit"));
+    },
+    [],
+  );
 
   const dispatch = useDispatch();
   const accounts = useSelector(flattenAccountsSelector);
@@ -138,7 +154,7 @@ export function usePerpsDepositExecution(
    * transaction with the coin app, then broadcasts it.
    */
   const confirmSignAndBroadcast = useCallback(
-    async (exchangeParams: SwapUiRequest) => {
+    async (exchangeParams: SwapUiRequest, onBroadcast: () => void) => {
       const completeResult = await runDeviceStep<CompleteResult>(onResult => ({
         kind: "device",
         stepId: "confirm",
@@ -183,6 +199,7 @@ export function usePerpsDepositExecution(
         throw signResult.transactionSignError;
       }
 
+      onBroadcast();
       const operation = await broadcast(signResult.signedOperation);
 
       const swapId = exchangeParams.swapId;
@@ -233,6 +250,10 @@ export function usePerpsDepositExecution(
           getFeature,
           uiHooks: {
             "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+              if (closedRef.current) {
+                onCancel(new DrawerClosedError("User closed the deposit"));
+                return;
+              }
               void runDeviceStep<StartResult>(onResult => ({
                 kind: "device",
                 stepId: "start",
@@ -252,10 +273,28 @@ export function usePerpsDepositExecution(
               );
             },
             "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-              void confirmSignAndBroadcast(exchangeParams).then(result => {
+              if (closedRef.current) {
+                onCancel(new DrawerClosedError("User closed the deposit"));
+                return;
+              }
+              let settled = false;
+              const cancel = (error: Error) => {
+                if (settled) return;
+                settled = true;
+                cancelSwapRef.current = null;
+                onCancel(error);
+              };
+              cancelSwapRef.current = cancel;
+              const beginBroadcast = () => {
+                if (settled) throw new DrawerClosedError("User closed the deposit");
+                if (cancelSwapRef.current === cancel) cancelSwapRef.current = null;
+              };
+              void confirmSignAndBroadcast(exchangeParams, beginBroadcast).then(result => {
+                if (settled) return;
+                settled = true;
                 signed = result;
                 onSuccess({ operationHash: result.operation.hash, swapId: result.swapId ?? "" });
-              }, onCancel);
+              }, cancel);
             },
             // The signing dialog renders errors itself, so there is no separate
             // error screen to open — reject and let the catch below take over.
@@ -277,6 +316,7 @@ export function usePerpsDepositExecution(
       if (!signed) return;
 
       settleDepositRequest(requestId, { swapId: signed.swapId, amountTo });
+      if (closedRef.current) return;
       openPerpsTransactionSigned({
         receiveCurrencyTicker: receiveCurrency.ticker,
         swapId: signed.swapId,
@@ -284,6 +324,7 @@ export function usePerpsDepositExecution(
       });
       onDone();
     } catch (e) {
+      if (closedRef.current) return;
       if (isUserRefusal(e)) {
         onRefused();
         return;

@@ -14,6 +14,7 @@ export const Category = {
   PERFORMANCE: "Performance",
   PLAYGROUND: "Playground",
   ACCOUNTS: "Accounts",
+  APIS: "APIs",
 } as const;
 
 /** Utility: extracts the union of value types from an object type. */

@@ -12,12 +12,13 @@ import {
   unsupportedIntent,
 } from "./intent";
 import { craftNeuronCommand, isNeuronCommandIntent } from "./neuronCommand";
+import { craftStakeTransfer, isStakeTransferIntent } from "./stakeTransfer";
 
 const NANOS_PER_MILLI = 1_000_000n;
 
 /**
  * Craft a ledger transfer as the blob the device signs, `Cbor.encode({ content })`. A neuron command
- * is crafted by {@link craftNeuronCommand}.
+ * is crafted by {@link craftNeuronCommand}, a stake transfer by {@link craftStakeTransfer}.
  *
  * The call carries an ingress expiry of about four minutes, reported as `details.expiresAt` (ms
  * epoch). Past it the node refuses the call, so the transaction is crafted and signed again.
@@ -27,6 +28,7 @@ export function craftTransaction(
   customFees?: FeeEstimation,
 ): CraftedTransaction {
   if (isNeuronCommandIntent(intent)) return craftNeuronCommand(intent, customFees);
+  if (isStakeTransferIntent(intent)) return craftStakeTransfer(intent, customFees);
 
   const unsupported = unsupportedIntent(intent);
   if (unsupported) throw new Error(`[ICP](craftTransaction) ${unsupported}`);

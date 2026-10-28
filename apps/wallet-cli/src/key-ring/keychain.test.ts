@@ -1,64 +1,53 @@
-import { afterAll, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import { InMemoryKeychain } from "../testing/in-memory-keychain";
+import { deletePrivateKey, hasStoredKey, loadMemberCredentials, savePrivateKey } from "./keychain";
+import { _setTestKeychain } from "./keychain-entry";
+import { resetTestSeams } from "../shared/test-seam";
 
-const constructed: unknown[][] = [];
-let stored: string | null;
-let deleteResult: () => boolean;
-let backendError: Error | undefined;
+let keychain: InMemoryKeychain;
+const opened: unknown[][] = [];
 
-mock.module("@napi-rs/keyring", () => ({
-  Entry: class {
-    constructor(...args: unknown[]) {
-      constructed.push(args);
-    }
-    getPassword() {
-      if (backendError) throw backendError;
-      return stored;
-    }
-    deletePassword() {
-      return deleteResult();
-    }
-  },
-}));
-afterAll(() => mock.restore());
-
-const { deletePrivateKey, hasStoredKey, loadMemberCredentials } = await import("./keychain");
+beforeAll(() => {
+  _setTestKeychain((service, account, options) => {
+    opened.push([service, account, options]);
+    return keychain.open(service, account);
+  });
+});
+afterAll(resetTestSeams);
 
 describe("ring member key keychain entry", () => {
   beforeEach(() => {
-    constructed.length = 0;
-    stored = null;
-    deleteResult = () => true;
-    backendError = undefined;
+    keychain = new InMemoryKeychain();
+    opened.length = 0;
   });
 
   // Unpinned on purpose: only Agent Intent and API auth entries require a Secret Service.
   it("is built without store options", () => {
     hasStoredKey();
 
-    expect(constructed).toHaveLength(1);
-    expect(constructed[0]).toHaveLength(2);
+    expect(opened).toHaveLength(1);
+    expect(opened[0][2]).toBeUndefined();
   });
 
-  it("reports a deleted key as deleted", () => {
+  it("reports a deleted key as deleted", async () => {
+    await savePrivateKey("deadbeef");
+
     expect(deletePrivateKey()).toBe(true);
+    expect(keychain.entries.size).toBe(0);
   });
 
   it("reports an absent key as deleted", () => {
-    deleteResult = () => false;
-
     expect(deletePrivateKey()).toBe(true);
   });
 
   it("reports a failed delete as not deleted", () => {
-    deleteResult = () => {
-      throw new Error("keychain locked");
-    };
+    keychain.deleteError = new Error("keychain locked");
 
     expect(deletePrivateKey()).toBe(false);
   });
 
   it("treats an unreadable keychain as holding no key", async () => {
-    backendError = new Error("keychain locked");
+    keychain.readError = new Error("keychain locked");
 
     expect(hasStoredKey()).toBe(false);
     expect(await loadMemberCredentials()).toBeNull();

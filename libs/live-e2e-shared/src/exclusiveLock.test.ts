@@ -366,6 +366,31 @@ test("refuses an unknown lock mode", async () => {
   });
 });
 
+test("refuses an unknown lock priority", async () => {
+  await withEnv({ ...NO_REMOTE_LOCK, E2E_EXCLUSIVE_LOCK_PRIORITY: "urgent" }, async () => {
+    await assert.rejects(acquireExclusiveLock([Account.DOT_1], "unknown priority"), {
+      name: "ExclusiveLockConfigError",
+      message: /E2E_EXCLUSIVE_LOCK_PRIORITY must be "normal" or "high"/,
+    });
+  });
+});
+
+test("claims and releases the account in R2 with high priority", async () => {
+  const r2 = mockR2();
+  try {
+    await withEnv({ ...REMOTE_LOCK, E2E_EXCLUSIVE_LOCK_PRIORITY: "high" }, async () => {
+      await runWithExclusiveLock([Account.XRP_1], "Send XRP from release", async () => {});
+    });
+  } finally {
+    r2.restore();
+  }
+
+  assert.deepEqual(
+    r2.requests.map(({ body }) => (body as { released: boolean }).released),
+    [false, true],
+  );
+});
+
 test("claims and releases the account in R2 when remote locking is configured", async () => {
   const r2 = mockR2();
   try {

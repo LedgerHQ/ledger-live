@@ -1,5 +1,5 @@
 import { useCallback, useMemo, type ChangeEvent, type ClipboardEvent } from "react";
-import { getPastedValue } from "@features/platform-contacts";
+import { getPastedValue } from "@features/platform-contacts/web";
 import { useAddAddressEntryCopy } from "../../../copy/useAddAddressEntryCopy";
 import { useAddAddressNameLabels } from "../../../copy/useAddAddressNameLabels";
 import {

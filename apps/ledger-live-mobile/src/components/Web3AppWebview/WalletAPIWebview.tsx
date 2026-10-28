@@ -13,6 +13,7 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { useFeature } from "@features/platform-feature-flags";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { DappAccountGate } from "./DappAccountGate";
+import { MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST } from "./manifestDomainGuard";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { E2E_WEBVIEW_NETWORK_CAPTURE_SCRIPT } from "~/e2e/webviewNetworkLogCapture";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
@@ -46,6 +47,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onOpenWindow,
       onShouldStartLoadWithRequest,
       isBlockedByDomainCheck,
+      retryAfterDomainCheckBlock,
       webviewProps,
       webviewRef,
       webviewCacheOptions,
@@ -97,7 +99,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     }
 
     if (isBlockedByDomainCheck) {
-      return <NetworkError handleTryAgain={() => {}} />;
+      return <NetworkError handleTryAgain={retryAfterDomainCheckBlock} />;
     }
 
     return (
@@ -111,7 +113,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
           showsVerticalScrollIndicator={false}
           renderLoading={Loader}
-          originWhitelist={manifestDomainCheckEnabled ? undefined : manifest.domains}
+          originWhitelist={
+            manifestDomainCheckEnabled ? MANIFEST_DOMAIN_CHECK_ORIGIN_WHITELIST : manifest.domains
+          }
           onShouldStartLoadWithRequest={
             manifestDomainCheckEnabled ? onShouldStartLoadWithRequest : undefined
           }

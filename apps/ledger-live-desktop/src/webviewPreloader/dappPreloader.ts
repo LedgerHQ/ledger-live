@@ -1,8 +1,11 @@
 import { contextBridge, ipcRenderer, webFrame } from "electron";
 import ethereumProvider from "@ledgerhq/ethereum-provider/lib/ethereum-provider.umd.json";
+import { CHANNELS } from "~/bridge/contract";
 
+// Goes through main, which checks the sending frame before handing the message to the embedder.
 contextBridge.exposeInMainWorld("ElectronWebview", {
-  postMessage: (message: unknown) => ipcRenderer.sendToHost("dappToParent", message),
+  postMessage: (message: unknown) =>
+    ipcRenderer.send(CHANNELS.webviewBridgeMessage, "dappToParent", message),
 });
 
 // `${ethereumProvider.code}` is interpolated once here at preload eval time,

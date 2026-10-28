@@ -3,6 +3,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
 import { swapApi } from "@shared/api-services";
+import { createAuthMiddleware, type AuthProvider } from "@shared/auth";
 
 import { makeQuotesInput } from "./fixtures/quotesInput";
 import { makeRawQuote, makeRawQuoteError } from "./fixtures/rawQuotes";
@@ -13,28 +14,33 @@ const EXTRA = {
   ledgerClientVersion: "test-3.2.1",
 };
 
-function createTestStore(extra: unknown) {
+const unauthenticatedProvider: AuthProvider = {
+  withToken: ({ queryFn }) => queryFn(),
+};
+
+const tokenProvider = (accessToken: string): AuthProvider => ({
+  withToken: ({ queryFn }) => queryFn({ tokenType: "Bearer", accessToken }),
+});
+
+// Both apps register an auth middleware, so the missing-provider fallback is not the path
+// production takes.
+function createTestStore(extra: unknown, authProvider = unauthenticatedProvider) {
   return configureStore({
     reducer: { [swapApi.reducerPath]: swapApi.reducer },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
         thunk: { extraArgument: extra },
-      }).concat(swapApi.middleware),
+      })
+        .concat(
+          createAuthMiddleware({
+            createAuthProvider: () => authProvider,
+            isFeatureEnabled: () => true,
+          }),
+        )
+        .concat(swapApi.middleware),
   });
 }
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const unauthenticatedProvider = {
-  withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) => queryFn(),
-} as never;
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const tokenProvider = (accessToken: string) =>
-  ({
-    withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) =>
-      queryFn({ tokenType: "Bearer", accessToken }),
-  }) as never;
 
 describe("buildQuotesParams", () => {
   it("maps the resolved input to exactly the aggregator query params", () => {
@@ -123,9 +129,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
   });
 
   beforeEach(() => {
-    // Both apps register a provider, so the missing-provider fallback is not
-    // the path production takes.
-    store = createTestStore({ ...EXTRA, authProvider: unauthenticatedProvider });
+    store = createTestStore(EXTRA);
   });
 
   function initiate() {
@@ -206,7 +210,7 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
         return HttpResponse.json([]);
       }),
     );
-    const authedStore = createTestStore({ ...EXTRA, authProvider: tokenProvider("tok-123") });
+    const authedStore = createTestStore(EXTRA, tokenProvider("tok-123"));
 
     await authedStore.dispatch(
       swapQuotesApi.endpoints.fetchQuotes.initiate(
@@ -249,7 +253,6 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     const dynamicStore = createTestStore({
       getSwapApiBaseUrl: () => baseUrl,
       ledgerClientVersion: "test-3.2.1",
-      authProvider: unauthenticatedProvider,
     });
     const initiateOnce = () =>
       dynamicStore.dispatch(
@@ -277,7 +280,6 @@ describe("swapQuotesApi.fetchQuotes (integration)", () => {
     const emptyBaseUrlStore = createTestStore({
       getSwapApiBaseUrl: () => "",
       ledgerClientVersion: "test-3.2.1",
-      authProvider: unauthenticatedProvider,
     });
 
     const result = await emptyBaseUrlStore.dispatch(

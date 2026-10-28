@@ -3,17 +3,24 @@ import { ContactConfirmationDialog } from "@features/platform-contacts";
 import { useDeleteAddressLabels } from "../../copy/useDeleteAddressLabels";
 import type { ContactsDeleteAddressDialogProps } from "./types";
 
-export function ContactsDeleteAddressDialog(
-  props: ContactsDeleteAddressDialogProps,
-): React.ReactNode {
+export function ContactsDeleteAddressDialog({
+  isOpen,
+  isDeleting,
+  onConfirm,
+  onCancel,
+}: ContactsDeleteAddressDialogProps): React.ReactNode {
   const labels = useDeleteAddressLabels();
 
   return (
     <ContactConfirmationDialog
-      {...props}
+      isOpen={isOpen}
+      tone="destructive"
       labels={labels}
-      dialogTestId="contacts-delete-address-dialog"
-      confirmTestId="contacts-delete-address-confirm"
+      isConfirming={isDeleting}
+      onConfirm={() => void onConfirm()}
+      onCancel={onCancel}
+      testID="contacts-delete-address-dialog"
+      confirmTestID="contacts-delete-address-confirm"
     />
   );
 }

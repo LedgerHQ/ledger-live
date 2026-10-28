@@ -118,6 +118,11 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
     balanceType: "public",
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
+  {
+    transaction: new Transaction(Account.XTZ_2, Account.XTZ_1, "0.0001"),
+    xrayTicket: "B2CQA-6094",
+    disableBroadcast: true,
+  },
 ];
 
 const memoSendTransactions: NewSendFlowEntry[] = [

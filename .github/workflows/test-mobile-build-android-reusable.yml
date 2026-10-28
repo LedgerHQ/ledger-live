@@ -109,7 +109,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: ledger-wallet-8cpu-aws-public-cached
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
     steps:
@@ -153,6 +153,8 @@ jobs:
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable KVM group perms
         run: |
+          # aws-public runners have no /dev/kvm, and the build does not need it
+          if [ ! -e /dev/kvm ]; then echo "no /dev/kvm, skipping"; exit 0; fi
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm

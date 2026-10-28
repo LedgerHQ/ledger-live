@@ -29,8 +29,8 @@ import {
 } from "../../constants/depositFunding";
 import { openPerpsReview } from "../PerpsReview/PerpsReviewDialog";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
-import { applyRatio } from "./utils/applyRatio";
-import { toAmountValue } from "./utils/toAmountValue";
+import { applyRatio } from "LLD/features/Perps/utils/applyRatio";
+import { toAmountValue } from "LLD/features/Perps/utils/toAmountValue";
 import { validateDepositFlow, type DepositFormError } from "./utils/validateDepositFlow";
 
 /** Snapshot of the amount-entry form, used to restore it when re-opened. */

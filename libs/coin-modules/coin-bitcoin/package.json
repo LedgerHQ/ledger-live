@@ -91,7 +91,7 @@
     "@types/ripemd160": "^2.0.3",
     "@types/sha.js": "^2.4.4",
     "bip32": "^4.0.0",
-    "bip39": "^3.0.4",
+    "bip39": "catalog:",
     "ecpair": "3.0.2",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",

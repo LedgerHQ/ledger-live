@@ -151,6 +151,13 @@ export type GenericTransaction = TransactionCommon & {
    * storing them here (see `feeParametersToJsonSafe`).
    */
   feeParameters?: JsonSafeRecord;
+  /**
+   * Set by `prepareTransaction` when `estimateFees` rejected for a family that opted into
+   * `BridgeApi.validatesRefusedEstimation`, and cleared by the next successful estimation. It tells
+   * "estimation failed" apart from "not prepared yet": both leave `fees` unset. Derived, so absent
+   * from `GenericTransactionRaw`.
+   */
+  feesEstimationFailed?: boolean;
 };
 
 export type GenericTransactionRaw = TransactionCommonRaw & {

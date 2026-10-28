@@ -1,0 +1,7 @@
+{
+  "extends": "@support/tsconfig/lib",
+  "compilerOptions": {
+    "composite": true,
+    "types": ["node", "jest"]
+  }
+}

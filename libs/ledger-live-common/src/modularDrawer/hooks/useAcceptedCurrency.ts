@@ -25,6 +25,7 @@ const DISABLED_FOR_FLOW: Record<string, (family: CryptoCurrency["family"]) => bo
   [ModularDrawerLocation.SEND_FLOW]: isSendDisabledForFamily,
   [ModularDrawerLocation.RECEIVE_FLOW]: isReceiveDisabledForFamily,
   [PERPS_UI_USE_CASE.fund]: isSendDisabledForFamily,
+  [PERPS_UI_USE_CASE.withdraw]: isReceiveDisabledForFamily,
 };
 
 /**

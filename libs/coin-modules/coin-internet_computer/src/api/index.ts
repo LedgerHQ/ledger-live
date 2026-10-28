@@ -24,11 +24,15 @@ import { getBlockInfo } from "../logic/getBlockInfo";
 import type { IcpIntent, IcpTxData } from "../logic/intent";
 import { lastBlock } from "../logic/lastBlock";
 import { listOperations } from "../logic/listOperations";
-import { validateIntent } from "../logic/validateIntent";
+import { validateIntentWithStakeAccount } from "../logic/validateIntent";
 import type { IcpMemo } from "../types";
 
 // Kept for consumers that import the network client from this entry point.
 export * from "../network/api";
+
+// The claim-only retry for a stake transfer whose claim failed after the transfer settled. It is an
+// unsigned update call, so it stays out of the read-only `call`.
+export { refreshNeuronStake } from "../logic/stakeTransfer";
 
 // Runs a synchronous step as the Promise the contract expects, so a throw becomes a rejection.
 const settle = <T>(step: () => T): Promise<T> => Promise.resolve().then(step);
@@ -55,10 +59,13 @@ const settle = <T>(step: () => T): Promise<T> => Promise.resolve().then(step);
 // `getAccountInfo` is omitted too: `withDefaults` answers `{ type: "none" }`, as ICP accounts carry
 // no extra metadata.
 //
-// Two kinds of intent are crafted:
+// Three kinds of intent are crafted:
 //   - a native send: `intentType: "transaction"`, `type: "send"`;
 //   - a neuron command: `intentType: "staking"`, `type` the command, the neuron id in `valAddress`,
-//     the parameters in `data`.
+//     the parameters in `data`;
+//   - a stake transfer: `intentType: "staking"`, `type` `create_neuron` (the governance canister id
+//     in `valAddress`) or `increase_stake` (the neuron id), the neuron's stake account as recipient
+//     and its nonce in `data.stakeNonce`.
 // The default intent mapping reads `mode`, which ICP transactions lack, so it produces neither. The
 // wiring supplies them through the family mapping.
 export function createApi() {
@@ -96,7 +103,7 @@ export function createApi() {
       balances: Balance[],
       options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> =>
-      settle(() => validateIntent(intent, balances, options?.customFees)),
+      validateIntentWithStakeAccount(intent, balances, options?.customFees),
     validateAddress: (
       _context: IcpContext,
       address: string,

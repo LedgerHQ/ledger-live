@@ -422,7 +422,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{!github.event.pull_request.head.repo.fork && contains(needs.determine-affected.outputs.paths, 'tools/nx-plugins/generators')}}
+    if: ${{!github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' && contains(needs.determine-affected.outputs.paths, 'tools/nx-plugins/generators')}}
     uses: ./.github/workflows/test-nx-generators-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}

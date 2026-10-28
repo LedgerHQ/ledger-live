@@ -5,6 +5,7 @@ import { Card } from "~/renderer/components/Box";
 import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
+import { useFeature } from "@features/platform-feature-flags";
 import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
 import { track } from "@shared/analytics";
 import {
@@ -51,7 +52,10 @@ export function LiveApp({ appId: propsAppId }: LiveAppProps) {
     );
   }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
-  const manifest = useLiveAppManifest(appId, _customDappUrl);
+  const manifestDomainCheckEnabled = useFeature("lldWebviewManifestDomainCheck")?.enabled;
+  const manifest = useLiveAppManifest(appId, _customDappUrl, {
+    enforceManifestDomains: manifestDomainCheckEnabled,
+  });
 
   const handleClose = useCallback(() => {
     if (returnTo?.startsWith("/swap")) {

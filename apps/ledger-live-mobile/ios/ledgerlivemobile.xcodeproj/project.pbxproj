@@ -408,7 +408,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-ios/LottiePrivacyInfo.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/lottie-react-native/Lottie_React_Native_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/nanopb/nanopb_Privacy.bundle",
-				"${PODS_ROOT}/../../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_07771db8175c3650d8da4545ec0a8b87/node_modules/@react-native-vector-icons/material-design-icons/fonts/MaterialDesignIcons.ttf",
+				"${PODS_ROOT}/../../../../node_modules/.pnpm/@react-native-vector-icons+material-design-icon_0e2ef47ceb4fd84e97e85bab985e6c4f/node_modules/@react-native-vector-icons/material-design-icons/fonts/MaterialDesignIcons.ttf",
 				"${PODS_CONFIGURATION_BUILD_DIR}/react-native-view-shot/RNViewShotPrivacyInfo.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
