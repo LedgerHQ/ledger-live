@@ -1,22 +1,52 @@
 import React, { useCallback, useEffect, useState } from "react";
-import type { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { MockServerDevice } from "@ledgerhq/device-mockserver-react";
+import { Bluetooth } from "@ledgerhq/lumen-ui-react/symbols";
 import { getEnv } from "@shared/env";
-import {
-  buildMockServerDeviceId,
-  buildSpeculosDeviceId,
-  DEFAULT_SPECULOS_MODEL,
-  DEFAULT_SPECULOS_URL,
-  parseDeviceId,
-  SPECULOS_MODELS,
-  type TransportKind,
-} from "../deviceTarget";
+import { buildMockServerDeviceId, parseDeviceId, type TransportKind } from "../deviceTarget";
 import { getMockServerUiUrl, useMockServerSession } from "../mockServerSession";
 import { Actionable } from "./Actionable";
+import { MockServerIcon, UsbIcon } from "./DeviceTransportIcons";
 
-const MOCK_SERVER_DEVICE_ZOOM = 1.5;
+const fieldClassName = "bg-muted rounded-md px-8 py-6 body-2 text-base";
 
-const fieldClassName = "bg-base border border-base rounded-md px-8 py-6 body-2 text-base";
+const TRANSPORTS: { kind: TransportKind; label: string; icon: React.ReactNode }[] = [
+  { kind: "webhid", label: "USB", icon: <UsbIcon /> },
+  { kind: "webble", label: "Bluetooth", icon: <Bluetooth size={24} /> },
+  { kind: "mockserver", label: "Mock server", icon: <MockServerIcon /> },
+];
+
+function TransportPicker({
+  kind,
+  onChange,
+}: {
+  kind: TransportKind;
+  onChange: (kind: TransportKind) => void;
+}) {
+  return (
+    <div role="radiogroup" aria-label="Transport" className="flex gap-8">
+      {TRANSPORTS.map(transport => {
+        const selected = transport.kind === kind;
+        return (
+          <button
+            key={transport.kind}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            title={`${transport.label} (${transport.kind})`}
+            onClick={() => onChange(transport.kind)}
+            className={`flex flex-1 cursor-pointer flex-col items-center justify-center gap-4 rounded-md border px-4 py-8 body-4 ${
+              selected
+                ? "border-active bg-base text-base"
+                : "border-transparent bg-muted text-muted hover:text-base"
+            }`}
+          >
+            <span className="flex h-[28px] items-center">{transport.icon}</span>
+            {transport.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export function AppSetDeviceId({
   deviceId,
@@ -26,8 +56,6 @@ export function AppSetDeviceId({
   setDeviceId: (deviceId: string) => void;
 }) {
   const [kind, setKind] = useState<TransportKind>("webhid");
-  const [speculosUrl, setSpeculosUrl] = useState(DEFAULT_SPECULOS_URL);
-  const [speculosModel, setSpeculosModel] = useState<DeviceModelId>(DEFAULT_SPECULOS_MODEL);
   const [mockServerToken, setMockServerToken] = useState("");
   const mockServerSession = useMockServerSession(deviceId);
   const mockServerUrl = getEnv("MOCK_SERVER_TRANSPORT_URL");
@@ -36,19 +64,20 @@ export function AppSetDeviceId({
     const target = parseDeviceId(deviceId);
     if (!target) return;
     setKind(target.kind);
-    if (target.kind === "speculos") {
-      setSpeculosUrl(target.url);
-      setSpeculosModel(target.model);
-    }
     if (target.kind === "mockserver") setMockServerToken(target.token ?? "");
   }, [deviceId]);
 
-  const localDeviceId =
-    kind === "speculos"
-      ? buildSpeculosDeviceId(speculosUrl, speculosModel)
-      : kind === "mockserver"
-        ? buildMockServerDeviceId(mockServerToken)
-        : kind;
+  const localDeviceId = kind === "mockserver" ? buildMockServerDeviceId(mockServerToken) : kind;
+
+  // Picking a transport applies it right away: only a session token to join needs a deliberate
+  // "Apply", since it has to be typed first.
+  const pickTransport = useCallback(
+    (picked: TransportKind) => {
+      setKind(picked);
+      setDeviceId(picked === "mockserver" ? buildMockServerDeviceId(mockServerToken) : picked);
+    },
+    [setDeviceId, mockServerToken],
+  );
 
   const action = useCallback(
     (deviceId: string) => (setDeviceId(deviceId), deviceId),
@@ -59,52 +88,26 @@ export function AppSetDeviceId({
     <>
       <Actionable
         buttonTitle="Set DeviceId"
+        label="Device ID"
         inputs={deviceId !== localDeviceId ? [localDeviceId] : null}
         action={action}
         value={deviceId}
         setValue={v => setDeviceId(v || deviceId)}
         valueDisplay={v => v}
       >
-        <select
-          className={`flex-1 ${fieldClassName}`}
-          value={kind}
-          onChange={e => setKind(e.target.value as TransportKind)}
-        >
-          <option value="webhid">webhid</option>
-          <option value="webble">webble</option>
-          <option value="mockserver">mockserver</option>
-          <option value="speculos">speculos</option>
-        </select>
-        {kind === "speculos" ? (
-          <>
-            <input
-              className={`flex-1 ${fieldClassName}`}
-              aria-label="Speculos URL"
-              value={speculosUrl}
-              onChange={e => setSpeculosUrl(e.target.value)}
-            />
-            <select
-              className={fieldClassName}
-              aria-label="Speculos device model"
-              value={speculosModel}
-              onChange={e => setSpeculosModel(e.target.value as DeviceModelId)}
-            >
-              {SPECULOS_MODELS.map(model => (
-                <option key={model} value={model}>
-                  {model}
-                </option>
-              ))}
-            </select>
-          </>
-        ) : null}
+        <TransportPicker kind={kind} onChange={pickTransport} />
         {kind === "mockserver" ? (
           <input
             className={`flex-1 ${fieldClassName}`}
             aria-label="Mock server session token"
-            placeholder="Session token (empty creates a new session)"
+            placeholder="Session token (optional)"
+            title="Leave empty to create a new mock server session"
             spellCheck={false}
             value={mockServerToken}
             onChange={e => setMockServerToken(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === "Enter" && deviceId !== localDeviceId) setDeviceId(localDeviceId);
+            }}
           />
         ) : null}
       </Actionable>
@@ -121,18 +124,6 @@ export function AppSetDeviceId({
           >
             Open mock server
           </a>
-        </div>
-      ) : null}
-      {mockServerSession?.mockDeviceId ? (
-        // The package exposes no size prop; `zoom` (unlike `transform`) keeps the window fixed to
-        // the viewport.
-        <div className="pointer-events-auto text-base" style={{ zoom: MOCK_SERVER_DEVICE_ZOOM }}>
-          <MockServerDevice
-            url={mockServerUrl}
-            token={mockServerSession.token}
-            deviceId={mockServerSession.mockDeviceId}
-            floating
-          />
         </div>
       ) : null}
     </>

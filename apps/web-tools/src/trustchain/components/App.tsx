@@ -38,6 +38,7 @@ import { AppRestoreTrustchain } from "./AppRestoreTrustchain";
 import { AppWalletSync } from "./AppCloudSync";
 import { AppSetCloudSyncAPIEnv } from "./AppSetCloudSyncAPIEnv";
 import { DeviceInteractionLayer } from "./DeviceInteractionLayer";
+import { MockServerDeviceWindow } from "./MockServerDeviceWindow";
 import { trustchainLifecycle } from "./walletSync";
 import type { DistantDocument } from "@shared/cloud-sync-module";
 import { contactsInitialState } from "@domain/entity-contact";
@@ -168,6 +169,7 @@ const App = () => {
           <div className="min-h-screen w-full bg-canvas">
             <div className="mx-auto flex w-full max-w-[1280px] flex-col px-16 pb-48 body-2 text-base">
               <DeviceInteractionLayer visible={deviceInteractionVisible} />
+              <MockServerDeviceWindow deviceId={deviceId} />
 
               <h2 className="heading-2 mb-8 mt-32 text-base">Wallet Sync Trustchain Playground</h2>
 

@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { MockClient } from "@ledgerhq/device-mockserver-client";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
-import { speculosTransportFactory } from "@ledgerhq/device-transport-kit-speculos";
 import { webBleTransportFactory } from "@ledgerhq/device-transport-kit-web-ble";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
@@ -31,7 +30,12 @@ const MOCK_SERVER_DEVICE = {
   device_type: "flex" as const,
   connectivity_type: "USB" as const,
   firmware_version: "1.6.1",
-  apps: [{ name: LEDGER_SYNC_APP_NAME, version: "1.3.0" }],
+  // The coin apps let "Search with device" add accounts to Ledger Sync (same set as the button).
+  apps: [
+    { name: LEDGER_SYNC_APP_NAME, version: "1.3.0" },
+    { name: "Ethereum", version: "1.22.5" },
+    { name: "Solana", version: "1.17.1" },
+  ],
 };
 
 // The emulated device boots on the dashboard, whereas on a real device the user opens the
@@ -52,8 +56,6 @@ function transportFactoryOf(
       return webHidTransportFactory;
     case "webble":
       return webBleTransportFactory;
-    case "speculos":
-      return speculosTransportFactory(target.url, false, target.model);
   }
 }
 
@@ -93,8 +95,7 @@ async function buildMockServerDmk(
     .build();
 }
 
-// One DMK per deviceId: the Speculos endpoint and model are baked into its transport factory,
-// and a mock server DMK is bound to the session it provisioned.
+// One DMK per deviceId: a mock server DMK is bound to the session it provisioned.
 const dmkByDeviceId = new Map<string, Promise<DeviceManagementKit>>();
 
 function getDmk(deviceId: string, target: DeviceTarget): Promise<DeviceManagementKit> {
@@ -174,8 +175,7 @@ async function doOpen(deviceId: string, target: DeviceTarget): Promise<DmkCompat
   return transport;
 }
 
-// The deviceId selects the transport (see ./deviceTarget): "webhid", "webble", "mockserver" or
-// "speculos|<model>|<url>". Unknown ids are left to other modules.
+// The deviceId selects the transport (see ./deviceTarget): "webhid", "webble" or "mockserver". Unknown ids are left to other modules.
 registerTransportModule({
   id: "dmk",
   open: deviceId => {
