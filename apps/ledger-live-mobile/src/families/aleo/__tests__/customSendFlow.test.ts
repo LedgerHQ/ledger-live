@@ -1,4 +1,5 @@
 import aleoSendFlow from "../customSendFlow";
+import { SendAmountFooterRow } from "../Send/SendAmountFooterRow";
 import { ScreenName } from "~/const";
 import { ALEO_ACCOUNT_1 } from "../__mocks__/account.mock";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -16,6 +17,10 @@ describe("Aleo customSendFlow", () => {
 
   beforeEach(() => {
     navigate.mockClear();
+  });
+
+  it("puts the estimated signing time under the network fees on the Amount step", () => {
+    expect(aleoSendFlow.AmountFooterRow).toBe(SendAmountFooterRow);
   });
 
   describe("buildSendEntrypoint", () => {

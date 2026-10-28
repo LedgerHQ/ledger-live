@@ -9,3 +9,7 @@ You can use and update `apps/ledger-live-desktop/deeplinks-test-page.html` to te
 ## Product Tour
 
 `ledgerlive://product-tour` opens the Product Tour dialog from the Portfolio context when onboarding is complete and the `lwdProductTour` feature flag is enabled.
+
+## Contacts
+
+`ledgerlive://contacts` opens the Contacts page when the `lwdContacts` feature flag is enabled. When the flag is off, the app stays on the home screen.

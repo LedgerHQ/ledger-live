@@ -11927,6 +11927,15 @@
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
         "recordsUsed": "Records used",
         "signingTime": "Signing time"
+      },
+      "amount": {
+        "estimatedTime": {
+          "label": "Est. time",
+          "info": {
+            "title": "How estimated time works",
+            "description": "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm."
+          }
+        }
       }
     },
     "balancesSection": "Balances",

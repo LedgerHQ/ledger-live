@@ -102,4 +102,4 @@ test.describe("Delegate", { lock: delegateLock.names }, () => {
   test.use(delegateLock.fixtures);
 ```
 
-Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`, as `send.swap` does once its provider needs no token approval. The `lock` detail still holds until the test ends.
+Use both: `names` keeps this run's workers apart, and `fixtures` keeps other CI machines away. A test that no longer needs its lock part way through hands it back with the `exclusiveLock` fixture's `release()`. The `lock` detail still holds until the test ends.

@@ -150,10 +150,20 @@ export function genericPrepareTransaction(
       gasOptions: transaction.gasOptions,
     });
 
-    const estimated =
-      customParametersFees && !transaction.useAllAmount
-        ? undefined
-        : await coinModuleApi.estimateFees(context, intent, { customFeesParameters });
+    let estimated: FeeEstimation | undefined;
+    if (!customParametersFees || transaction.useAllAmount) {
+      try {
+        estimated = await coinModuleApi.estimateFees(context, intent, { customFeesParameters });
+      } catch (error) {
+        if (!bridgeApi.validatesRefusedEstimation) throw error;
+        log("generic-coin-framework", "fee estimation failed", { error: String(error) });
+        // A token send-max keeps the amount it was estimated with, so `validateIntent` checks the
+        // same amount the estimation refused. A native send-max has none to keep: it needs the fee.
+        const failedAmount =
+          transaction.useAllAmount && transaction.subAccountId ? amount : transaction.amount;
+        return withFailedEstimation(transaction, assetReference, assetOwner, failedAmount);
+      }
+    }
     const estimation: FeeEstimation = customParametersFees
       ? { value: BigInt(customParametersFees.toFixed()), parameters: estimated?.parameters }
       : (estimated as FeeEstimation);
@@ -179,13 +189,15 @@ export function genericPrepareTransaction(
       bnEq(transaction.amount, nextAmount) &&
       (transaction.assetReference ?? "") === assetReference &&
       (transaction.assetOwner ?? "") === assetOwner &&
-      isEqual(transaction.feeParameters, nextFeeParameters)
+      isEqual(transaction.feeParameters, nextFeeParameters) &&
+      !transaction.feesEstimationFailed
     ) {
       return transaction;
     }
 
     const next: GenericTransaction = {
       ...transaction,
+      feesEstimationFailed: undefined,
       fees,
       amount: nextAmount,
       assetReference,
@@ -230,6 +242,38 @@ export function genericPrepareTransaction(
     }
 
     return next;
+  };
+}
+
+/**
+ * Clears the fees of a previous estimation, so they are not shown as current next to the error
+ * `validateIntent` reports. Returns the same reference when nothing changed: `useBridgeTransaction`
+ * re-prepares on every new transaction reference, so a fresh object on each failure would loop.
+ */
+function withFailedEstimation(
+  transaction: GenericTransaction,
+  assetReference: string,
+  assetOwner: string,
+  amount: BigNumber,
+): GenericTransaction {
+  if (
+    transaction.feesEstimationFailed &&
+    transaction.fees == null &&
+    transaction.feeParameters === undefined &&
+    (transaction.assetReference ?? "") === assetReference &&
+    (transaction.assetOwner ?? "") === assetOwner &&
+    bnEq(transaction.amount, amount)
+  ) {
+    return transaction;
+  }
+  return {
+    ...transaction,
+    amount,
+    fees: undefined,
+    feeParameters: undefined,
+    assetReference,
+    assetOwner,
+    feesEstimationFailed: true,
   };
 }
 
