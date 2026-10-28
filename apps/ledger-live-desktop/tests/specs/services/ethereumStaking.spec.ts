@@ -152,7 +152,12 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await layout.goToPortfolio();
     await portfolioPage.navigateToAsset("ethereum");
     await assetPage.waitForStakeEntry();
-    await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png");
+    await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png", {
+      mask: [
+        page.getByTestId("asset-detail-market-price-section"),
+        page.getByTestId("asset-detail-chart-section"),
+      ],
+    });
   });
 
   await test.step("choose to stake Ethereum", async () => {
