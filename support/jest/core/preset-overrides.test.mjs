@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const PRESET_OVERRIDES = require("./preset-overrides");
+const { PRESET_KEYS } = require(".");
 const {
   createSharedJestConfig,
   createSharedUiJestConfig,
@@ -108,20 +109,47 @@ test("a key preset-overrides.js lists that the overrides no longer set throws", 
 
 test("every entry of preset-overrides.js names a package, a factory, a reason and preset keys", () => {
   const factories = new Set([...flat, ...dual].map(([name]) => name));
-  const presetKeys = new Set([
-    "transform",
-    "transformIgnorePatterns",
-    "testEnvironment",
-    "globals",
-    "reporters",
-    "coverageReporters",
-  ]);
   for (const [pkg, { reason, overrides }] of Object.entries(PRESET_OVERRIDES)) {
     assert.ok(fs.existsSync(path.join(at(pkg), "package.json")), `${pkg} is not a package`);
     assert.ok(reason, `${pkg} has no reason`);
     for (const [factory, keys] of Object.entries(overrides)) {
       assert.ok(factories.has(factory), `${pkg}: ${factory} is not a preset factory`);
-      for (const key of keys) assert.ok(presetKeys.has(key), `${pkg}: ${key} is not a preset key`);
+      for (const key of keys)
+        assert.ok(Object.hasOwn(PRESET_KEYS, key), `${pkg}: ${key} is not a preset key`);
     }
   }
+});
+
+// The option each factory accepts in these tests; a factory missing here takes none.
+const ACCEPTED = {
+  createSharedJestConfig: { esm: true },
+  createLibsCoinJestConfig: { projectRoot: "../../../" },
+  createLibsCoinIntegJestConfig: { extraEsmDeps: ["@scure"] },
+  createLibsCoinJestProject: { esm: false },
+};
+
+for (const [name, create] of [...flat, ...dual]) {
+  test(`${name}: an option it does not read throws, naming the ones it reads`, () => {
+    if (ACCEPTED[name]) assert.doesNotThrow(() => create({}, ACCEPTED[name]));
+    assert.doesNotThrow(() => create({}, {}));
+    assert.throws(
+      () => create({}, { network: true }),
+      new RegExp(`^Error: ${name}\\(\\): it does not read the option "network"; its options: `),
+    );
+  });
+}
+
+test("createLibsCoinJestProject reads no projectRoot: jest takes the lcov root from the top level", () => {
+  assert.throws(
+    () => createLibsCoinJestProject({}, { projectRoot: "../../../" }),
+    /it does not read the option "projectRoot"; its options: `esm`, `extraEsmDeps`\./,
+  );
+});
+
+test("the builder that skips the check is not public", () => {
+  assert.equal("sharedNodeConfig" in require("../shared"), false);
+  const { exports } = JSON.parse(
+    fs.readFileSync(path.join(repository, "support/jest/package.json"), "utf8"),
+  );
+  assert.ok(Object.values(exports).every(target => !target.includes("shared/node")));
 });

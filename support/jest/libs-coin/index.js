@@ -1,5 +1,7 @@
-const { checkPresetOverrides } = require("../core");
-const { sharedNodeConfig, withEsmDeps } = require("../shared");
+const { checkOptions, checkPresetOverrides } = require("../core");
+
+const SHARED_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
+const { sharedNodeConfig, withEsmDeps } = require("../shared/node");
 
 // Integration suites hit live networks; the unit config leaves them to the integration config.
 const integrationTests = ".*\\.(integ|integration)\\.test\\.[tj]s";
@@ -62,6 +64,7 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createLibsCoinJestConfig(overrides = {}, options) {
+  checkOptions("createLibsCoinJestConfig", options, SHARED_OPTIONS);
   checkPresetOverrides("createLibsCoinJestConfig", { "": overrides }, overrides.rootDir);
   return sharedConfig(
     {
@@ -90,7 +93,9 @@ function createLibsCoinJestConfig(overrides = {}, options) {
  * @param {Pick<LibsCoinOptions, "esm" | "extraEsmDeps">} [options]
  * @returns {import('@jest/types').Config.InitialProjectOptions}
  */
-function createLibsCoinJestProject(overrides = {}, { esm = true, extraEsmDeps = [] } = {}) {
+function createLibsCoinJestProject(overrides = {}, options = {}) {
+  checkOptions("createLibsCoinJestProject", options, ["esm", "extraEsmDeps"]);
+  const { esm = true, extraEsmDeps = [] } = options;
   checkPresetOverrides("createLibsCoinJestProject", { "": overrides }, overrides.rootDir);
   const { testEnvironment, roots, testMatch, transform } = sharedNodeConfig();
   const project = {
@@ -117,6 +122,7 @@ function createLibsCoinJestProject(overrides = {}, { esm = true, extraEsmDeps = 
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createLibsCoinIntegJestConfig(overrides = {}, options) {
+  checkOptions("createLibsCoinIntegJestConfig", options, SHARED_OPTIONS);
   checkPresetOverrides("createLibsCoinIntegJestConfig", { "": overrides }, overrides.rootDir);
   return sharedConfig(
     {

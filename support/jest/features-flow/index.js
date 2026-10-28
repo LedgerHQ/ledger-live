@@ -1,5 +1,5 @@
 const path = require("path");
-const { createDualJestConfig } = require("../core");
+const { checkOptions, createDualJestConfig } = require("../core");
 
 // Lumen's shared utils (`cn`, the amount formatters) and its design tokens ship as ESM and are
 // real values the views pass around, so SWC has to compile them instead of a stub standing in —
@@ -43,9 +43,11 @@ const flowLayer = {
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
  * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {Record<string, never>} [extra] none: the factory takes no options, and throws on one
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowJestConfig(options) {
+function createFlowJestConfig(options, extra) {
+  checkOptions("createFlowJestConfig", extra, []);
   return createDualJestConfig(flowLayer, options, "createFlowJestConfig");
 }
 
@@ -55,9 +57,11 @@ function createFlowJestConfig(options) {
  * (jest-environment-jsdom, @testing-library/jest-dom).
  *
  * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {Record<string, never>} [extra] none: the factory takes no options, and throws on one
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowNativeJestConfig(options) {
+function createFlowNativeJestConfig(options, extra) {
+  checkOptions("createFlowNativeJestConfig", extra, []);
   return createDualJestConfig(
     { ...flowLayer, web: undefined },
     options,

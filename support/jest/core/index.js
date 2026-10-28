@@ -199,6 +199,22 @@ function checkPresetOverrides(factory, overrides, rootDir) {
 }
 
 /**
+ * Throws on an option the factory does not read, naming the ones it does.
+ *
+ * @param {string} factory
+ * @param {object | undefined} options the factory's options argument
+ * @param {string[]} accepted
+ */
+function checkOptions(factory, options, accepted) {
+  for (const key of Object.keys(options ?? {})) {
+    if (!accepted.includes(key)) {
+      const reads = accepted.length ? accepted.map(name => `\`${name}\``).join(", ") : "none";
+      throw new Error(`${factory}(): it does not read the option "${key}"; its options: ${reads}.`);
+    }
+  }
+}
+
+/**
  * Projects config of a dual web/native preset: jsdom web project (*.web.test.ts(x) and unsuffixed
  * tests), node native project (*.native.test.ts(x)), test quarantine, sonar and, on CI, the
  * github-actions reporter.
@@ -241,6 +257,8 @@ function createDualJestConfig(
 }
 
 module.exports = {
+  PRESET_KEYS,
+  checkOptions,
   checkPresetOverrides,
   createDualJestConfig,
   jestSonarReporter,
