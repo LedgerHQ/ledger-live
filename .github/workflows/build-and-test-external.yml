@@ -81,7 +81,7 @@ jobs:
     name: "Build Desktop (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-desktop-external-reusable.yml@ci/mise-macos-preinstalled-tools
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -90,7 +90,7 @@ jobs:
     name: "Test Desktop (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-desktop') && github.event.pull_request.head.repo.fork }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-external-reusable.yml@ci/mise-macos-preinstalled-tools
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}
@@ -99,7 +99,7 @@ jobs:
     name: "Build Mobile (External)"
     needs: determine-affected
     if: ${{contains(needs.determine-affected.outputs.paths, 'ledger-live-mobile') && github.event.pull_request.head.repo.fork}}
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-external-reusable.yml@ci/mise-macos-preinstalled-tools
     with:
       ref: ${{ github.event.pull_request.head.ref }}
       repository: ${{ github.event.pull_request.head.repo.full_name }}

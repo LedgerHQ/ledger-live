@@ -102,3 +102,5 @@ That flag shows the analytics debug overlay. What the app still owns is in [docs
 Translations are handled internally at Ledger. If a translation string is broken, report it to [Ledger support](https://support.ledger.com/) rather than editing localized content directly.
 
 Use `pnpm mobile sync-locales` when adding a new supported language.
+
+<!-- CI test: mark live-mobile affected -->

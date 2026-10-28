@@ -143,7 +143,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "false"
@@ -226,7 +226,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}

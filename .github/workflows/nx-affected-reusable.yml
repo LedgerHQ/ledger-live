@@ -47,7 +47,7 @@ jobs:
       # Node and pnpm come from mise.toml, so the versions this job runs cannot drift from the
       # ones the repo pins. This also writes nx.cache-config.json.
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
