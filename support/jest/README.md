@@ -108,29 +108,9 @@ A consumer declares `"@support/jest": "workspace:*"` in its `devDependencies` an
 module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 ```
 
-What the package needs on top of the preset goes through the factory's overrides argument, and
-the `jest` rule of `pnpm lint:tool-config` checks it: the rule and its exceptions are described in
-the header of `tools/nx-plugins/enforce-tool-config/rules/jest.mjs`. A setup file a package passes
-adds to the preset's. Every key outside this list, `transform`, `transformIgnorePatterns` (use
-`extraEsmDeps`), `testEnvironment` or `reporters` among them, belongs to the preset.
-
-Override keys a package owns:
-
-- where its tests are and how they match: `rootDir`, `roots`, `testMatch`, `testRegex`,
-  `testPathIgnorePatterns`, `modulePathIgnorePatterns`, `passWithNoTests`, `displayName`;
-- what they need to run: `setupFiles`, `setupFilesAfterEnv`, `moduleNameMapper`, `testTimeout`;
-- their coverage scope: `collectCoverageFrom`, `coveragePathIgnorePatterns`;
-- how its runs are split: `maxWorkers`, `workerThreads`, `projects` (a list of
-  `create*Project(...)` calls), `webOverrides` and `nativeOverrides` (the same keys, per project).
-
-Options each factory reads, as its second argument; the other factories take none:
-
-| Factory | Options |
-| --- | --- |
-| `createSharedJestConfig` | `esm`, `extraEsmDeps`, `projectRoot`, `retries` |
-| `createLibsCoinJestConfig` | `esm`, `extraEsmDeps`, `projectRoot`, `network`, `walletFramework` |
-| `createLibsCoinIntegJestConfig` | `esm`, `extraEsmDeps`, `projectRoot`, `walletFramework` |
-| `createLibsCoinJestProject` | `esm`, `extraEsmDeps`, `network`, `walletFramework` |
+What the package needs on top of the preset goes through the factory's overrides argument. The
+`jest` rule of `pnpm lint:tool-config` checks that every jest config of a consumer exports a
+`create*Config` call from `@support/jest/*`; what the overrides contain is the package's call.
 
 Unlike the lint, format and TypeScript presets, consumers keep the dependency: the presets carry
 code and peer dependencies, and the dependency tells nx which test targets a preset change
