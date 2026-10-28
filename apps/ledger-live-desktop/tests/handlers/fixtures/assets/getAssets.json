@@ -18,7 +18,6 @@
         "arbitrum": "arbitrum",
         "mantle": "mantle",
         "optimism": "optimism",
-        "blast": "blast",
         "linea": "linea",
         "scroll": "scroll",
         "zksync": "zksync",
@@ -187,10 +186,6 @@
       "id": "tron",
       "name": "Tron"
     },
-    "blast": {
-      "id": "blast",
-      "name": "Blast"
-    },
     "neon_evm": {
       "id": "neon_evm",
       "name": "Neon Evm"
@@ -309,48 +304,6 @@
       "delisted": false,
       "disableCountervalue": false,
       "descriptor": null
-    },
-    "blast": {
-      "type": "crypto_currency",
-      "id": "blast",
-      "name": "Blast",
-      "ticker": "ETH",
-      "units": [
-        {
-          "code": "wei",
-          "name": "wei",
-          "magnitude": 0
-        },
-        {
-          "code": "Kwei",
-          "name": "Kwei",
-          "magnitude": 3
-        },
-        {
-          "code": "Mwei",
-          "name": "Mwei",
-          "magnitude": 6
-        },
-        {
-          "code": "Gwei",
-          "name": "Gwei",
-          "magnitude": 9
-        },
-        {
-          "code": "ETH",
-          "name": "ether",
-          "magnitude": 18
-        }
-      ],
-      "chainId": "81457",
-      "confirmationsNeeded": 30,
-      "symbol": "Ξ",
-      "coinType": 60,
-      "family": "ethereum",
-      "hasSegwit": false,
-      "hasTokens": true,
-      "hrp": null,
-      "disableCountervalue": false
     },
     "arbitrum/erc20/tether_usd": {
       "type": "token_currency",
@@ -1985,37 +1938,6 @@
         0.9998878, 0.9998427, 0.9998899, 0.9998876, 0.99981207, 0.99980783, 0.99990135, 0.9998169,
         0.9998188, 0.99979985, 0.9997984, 0.9998147, 0.99980515, 0.9998125, 0.9998403, 0.9998583,
         0.99980074, 0.9998083
-      ],
-      "fetchAt": "2025-08-22T12:01:52.206708Z"
-    },
-    "blast": {
-      "currencyId": "blast",
-      "marketCap": 497684431307,
-      "fullyDilutedValuation": 497684431307,
-      "totalVolume": 42478668635,
-      "high24h": 4275.74,
-      "low24h": 4074.5,
-      "price": 4119.91,
-      "priceChange24h": -155.8339552515472,
-      "priceChangePercentage1h": -1.5573124572381847,
-      "priceChangePercentage24h": -3.6446037729908545,
-      "priceChangePercentage7d": -12.035819401208823,
-      "priceChangePercentage30d": 7.997705577260973,
-      "priceChangePercentage1y": 55.81241135315812,
-      "marketCapChange24h": -20190250670.661987,
-      "marketCapChangePercentage24h": -3.89867,
-      "circulatingSupply": 120707692.0909859,
-      "totalSupply": 120707692.0909859,
-      "allTimeHigh": 4878.26,
-      "allTimeLow": 0.432979,
-      "allTimeHighDate": "2021-11-10T14:24:19.604Z",
-      "allTimeLowDate": "2015-10-20T00:00:00Z",
-      "sparkline": [
-        4652.7026, 4711.446, 4764.059, 4751.83, 4733.589, 4757.0396, 4604.205, 4544.6235, 4472.9478,
-        4607.9, 4631.789, 4629.0796, 4554.8384, 4444.639, 4429.3877, 4489.3223, 4427.506, 4408.255,
-        4398.1978, 4406.775, 4418.158, 4411.9897, 4476.503, 4540.224, 4537.112, 4529.9795,
-        4480.2104, 4401.338, 4309.2783, 4294.9375, 4302.507, 4368.541, 4356.157, 4295.9004,
-        4234.761, 4283.656, 4292.479, 4185.5137, 4150.538, 4116.616, 4182.477, 4222.761
       ],
       "fetchAt": "2025-08-22T12:01:52.206708Z"
     },

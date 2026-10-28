@@ -33,8 +33,6 @@ export * from "./bitcoin_testnet";
 export * from "./bitlayer";
 export * from "./bittensor";
 export * from "./bittorrent";
-export * from "./blast";
-export * from "./blast_sepolia";
 export * from "./boba";
 export * from "./bsc";
 export * from "./canton_network";
