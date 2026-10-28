@@ -18,7 +18,6 @@ private readonly keyboardKey = (char: string) => byId(`keyboard-key-${char}`);
 | Factory | Matches |
 |---|---|
 | `byId(id)` | React Native `testID` |
-| `byText(text)` | visible text |
 | `webById(id)` | webview `data-testid` equal to `id` (the `*WebTestId` globals match a prefix, so migrate with the full id) |
 | `webByXPath(xpath)` | webview XPath, for an element without a usable `data-testid` |
 
@@ -40,12 +39,12 @@ Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use
 
 ## Default-wait contract
 
-- Every action waits up to `TIMEOUT.xxlarge`, the same default as `waitForElementById`.
+- Every element action waits up to `TIMEOUT.xxlarge`, the same default as `waitForElementById`. `waitForWebviewUrl` defaults to `TIMEOUT.medium`, like the global it replaces.
 - A native wait means at least 75% visible (`waitFullyVisible`: 100%). A webview has no visibility check, so a web wait means the element exists and its text can be read.
 - Override the timeout with a bucket: `await this.signaturePrompt.waitVisible(TIMEOUT.xxxlarge)`.
 - There is no opt-out: a page object cannot reach the Detox element behind a handle. When it needs an action the handle does not wrap, add that action as a handle method.
 
-The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout, and the waits and retries match the globals, so Allure steps stay the same. Unlike the globals, the hard timeout also bounds `getAttributes()` and every web call, so a hung bridge fails the step instead of the whole test.
+The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout and failure text. Unlike the globals, every action waits for its element, and the hard timeout also bounds `getAttributes()` and every web call, so a hung bridge fails the step instead of the whole test.
 
 ## Migrate a page object
 

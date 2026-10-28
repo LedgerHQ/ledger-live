@@ -80,7 +80,7 @@ The method MUST live on the page that owns its parameter. `deleteContact(rowId)`
 
 A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### Selector helpers MUST be private readonly arrow functions
+### In a page object that uses globals, selector helpers MUST be private readonly arrow functions
 
 Element getters and parameterized locator builders MUST be private readonly arrow-function class properties. Static IDs passed to waits MUST be private readonly strings. Dynamic IDs MUST use private readonly builder functions. A step MUST NOT build a matcher or ID inline.
 
