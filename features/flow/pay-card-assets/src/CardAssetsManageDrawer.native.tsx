@@ -19,7 +19,7 @@ import {
 import { MenuBurger } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import { CardAssetsManageFooter } from "./CardAssetsManageFooter";
-import type { CardAssetRow } from "./types";
+import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 type AssetRowProps = Readonly<{
   row: CardAssetRow;
@@ -97,12 +97,13 @@ function AssetRow({
   );
 }
 
-export type CardAssetsManageDrawerProps = Readonly<{
-  rows: readonly CardAssetRow[];
-  onAddAsset?: () => void;
-  onMoveAsset: (id: string, toIndex: number) => Promise<void>;
-  reorderingAssetIds: ReadonlySet<string>;
-}>;
+export type CardAssetsManageDrawerProps = Pick<
+  CardAssetsViewModel,
+  "rows" | "onMoveAsset" | "reorderingAssetIds"
+> &
+  Readonly<{
+    onAddAsset?: () => void;
+  }>;
 
 export function CardAssetsManageDrawer({
   rows,
