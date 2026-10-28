@@ -17,7 +17,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 ## State Management
 
 - Prioritize local state for UI-only concerns.
-- Use RTK Query (with slices) only when necessary for app-wide state. See [`rtk-query-api`](../rtk-query-api/SKILL.md).
+- Use RTK Query (with slices) only when necessary for app-wide state. See [`domain-data`](../domain-data/SKILL.md).
 - Apply optimized selectors to limit re-rendering.
 - Connect Redux at the lowest component level when possible.
 
@@ -42,7 +42,7 @@ _These rules apply to all files, including those inside `src/mvvm/`. See [`mvvm-
 
 ## Data Fetching
 
-- Use RTK Query. See [`rtk-query-api`](../rtk-query-api/SKILL.md).
+- Use RTK Query hooks from a `domain/api` package. See [`domain-data`](../domain-data/SKILL.md).
 - Use consistent loading, retry, and error states.
 - Prefer optimistic UI when appropriate.
 - Apply caching and stale-time strategies.
