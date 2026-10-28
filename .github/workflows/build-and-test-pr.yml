@@ -259,7 +259,7 @@ jobs:
       contents: read
     needs: determine-affected
     if: ${{ !github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
+    uses: ./.github/workflows/test-boundaries-reusable.yml
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
       AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
