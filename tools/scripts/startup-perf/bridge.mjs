@@ -154,6 +154,19 @@ export function startBridge(port = 8099, log = () => {}) {
       const message = { type, id: randomUUID() };
       if (payload !== undefined) message.payload = payload;
       socket.write(encodeFrame(JSON.stringify(message)));
+      return message.id;
+    },
+    // The app's reply of this type to message `id`: "ACK" once its handler is done (a handler that
+    // throws sends none), or e.g. "appEnvs" for getEnvs.
+    async waitFor(id, type, timeoutMs) {
+      const deadline = Date.now() + timeoutMs;
+      for (;;) {
+        const reply = received.find(m => m.id === id && m.type === type);
+        if (reply) return reply;
+        if (Date.now() > deadline)
+          throw new Error(`bridge: no ${type} for ${id} within ${timeoutMs} ms`);
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
     },
     close() {
       socket?.destroy();

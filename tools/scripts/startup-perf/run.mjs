@@ -60,6 +60,10 @@ const { values: opts } = parseArgs({
     // Diagnostics: dump the home screen's view hierarchy (testIDs on screen) ~5 s after the first N
     // measured launches of each scenario, after the launch window.
     "dump-home": { type: "string", default: "0" },
+    // How each build was patched (apply-build-env.sh): prod-like | no-bridge | e2e. A prod-like build
+    // gets no mock=0 launch argument (it has no MOCK to reset) and must report MOCK and DETOX off.
+    "build-env-a": { type: "string", default: "" },
+    "build-env-b": { type: "string", default: "" },
     "out-dir": { type: "string", default: "startup-perf-results" },
   },
 });
@@ -68,6 +72,8 @@ const PLATFORM = opts.platform;
 const DEVICES = (opts.devices ?? "").split(",").filter(Boolean);
 const APPS = { A: opts["app-a"], B: opts["app-b"] };
 const APP_ID = opts["app-id"];
+const BUILD_ENV = { A: opts["build-env-a"], B: opts["build-env-b"] || opts["build-env-a"] };
+const launchArgs = side => (BUILD_ENV[side] === "prod-like" ? {} : { mock: "0" });
 const SCENARIOS = opts.scenarios
   .split(",")
   .map(s => s.trim())
@@ -121,6 +127,11 @@ function validateOptions() {
   }
   if (!Number.isInteger(TRACE_LAUNCHES) || TRACE_LAUNCHES < 0) {
     throw new Error("--trace-launches must be a whole number ≥ 0");
+  }
+  for (const side of ["A", "B"]) {
+    if (!["", "no-bridge", "prod-like", "e2e"].includes(BUILD_ENV[side])) {
+      throw new Error(`--build-env-${side.toLowerCase()} must be no-bridge, prod-like or e2e`);
+    }
   }
   if (TRACE_LAUNCHES > 0 && PLATFORM !== "android") {
     throw new Error("--trace-launches is Android only");
@@ -891,31 +902,78 @@ async function loadUserdata(names) {
   };
 }
 
-async function inject(device, userdata) {
+async function inject(device, userdata, side) {
   const bridge = startBridge(BRIDGE_PORT, m => log(`  [bridge] ${m}`));
   await bridge.listening;
+  const sent = [];
+  const send = (type, payload) => sent.push({ type, id: bridge.send(type, payload) });
+  // An ACK means the app handled the message without throwing (it sends none otherwise).
+  const acknowledged = async () => {
+    for (const { type, id } of sent.splice(0)) {
+      await bridge.waitFor(id, "ACK", 60_000).catch(() => {
+        throw new Error(`injection on ${device}: the app did not acknowledge ${type}`);
+      });
+    }
+  };
   try {
     // Only the app being injected may connect: both devices reach the bridge on the same host port.
     for (const d of DEVICES) await P.stop(d);
     await P.clearDialogs(device);
-    await P.launch(device, { mock: "0", wsPort: BRIDGE_PORT, wsToken: "startup-perf" });
+    await P.launch(device, { ...launchArgs(side), wsPort: BRIDGE_PORT, wsToken: "startup-perf" });
+    // A prod-like build connects ~20 s after its store is ready.
     await bridge.waitForClient(180_000);
     // Let the client finish its handshake before the first message.
     await sleep(2000);
-    bridge.send("acceptTerms");
-    bridge.send("importSettings", userdata.settings);
-    bridge.send("navigate", "Base");
-    if (userdata.accounts.length) bridge.send("importAccounts", userdata.accounts);
-    if (userdata.postOnboarding) bridge.send("importPostOnboarding", userdata.postOnboarding);
+    send("acceptTerms");
+    send("importSettings", userdata.settings);
+    send("navigate", "Base");
+    if (userdata.accounts.length) send("importAccounts", userdata.accounts);
+    if (userdata.postOnboarding) send("importPostOnboarding", userdata.postOnboarding);
+    await acknowledged();
     // Accounts are saved as soon as they are imported. Settings are only saved by the store's
     // save effect, which may not be mounted yet on a fresh install: send them again once it is.
     await sleep(10_000);
-    bridge.send("acceptTerms");
-    bridge.send("importSettings", { ...userdata.settings });
+    send("acceptTerms");
+    send("importSettings", { ...userdata.settings });
+    await acknowledged();
+    await checkTestModes(bridge, device, side);
     await sleep(10_000);
     await P.stop(device);
   } finally {
     await bridge.close();
+  }
+}
+
+// MOCK and DETOX as the app sees them once started (empty when off). Every build must run without
+// MOCK (prod-like has none; the others reset it with mock=0); only prod-like runs without DETOX.
+async function checkTestModes(bridge, device, side) {
+  const mode = BUILD_ENV[side] || "unknown";
+  let envs = null;
+  try {
+    // Apps from before mid-September 2026 reply without the message id: take the reply that came
+    // in before this message's ACK, on the same socket.
+    const from = bridge.received.length;
+    const id = bridge.send("getEnvs");
+    await bridge.waitFor(id, "ACK", 15_000);
+    const reply = bridge.received
+      .slice(from)
+      .find(m => m.type === "appEnvs" && (m.id === id || m.id === undefined));
+    envs = reply ? JSON.parse(reply.payload) : null;
+  } catch {}
+  if (!envs) {
+    if (mode === "prod-like") {
+      throw new Error(`build ${side} is prod-like but its MOCK and DETOX could not be read`);
+    }
+    log(`  ${device}: no getEnvs reply, MOCK and DETOX not checked`);
+    return;
+  }
+  const on = name => Boolean(envs[name]) && envs[name] !== "0";
+  log(
+    `  ${device}: build ${side} (${mode}) runs with MOCK ${on("MOCK") ? "on" : "off"}, DETOX ${on("DETOX") ? "on" : "off"}`,
+  );
+  if (on("MOCK")) throw new Error(`build ${side} runs with MOCK on`);
+  if (mode === "prod-like" && on("DETOX")) {
+    throw new Error(`build ${side} is prod-like but runs with DETOX on`);
   }
 }
 
@@ -1088,7 +1146,7 @@ async function sample(meta) {
     };
     // Epoch ms of the launch command, to line the launch up with a network capture.
     record.launchAt = Date.now();
-    const launch = await P.launch(meta.device, { mock: "0" });
+    const launch = await P.launch(meta.device, launchArgs(meta.side));
     await sleep(Math.min(LOAD_WINDOW_MS, SETTLE_MS));
     const launchEnd = await loadSnapshot(meta.device);
     record.load = {
@@ -1206,6 +1264,7 @@ async function main() {
           "no-accounts": opts["no-accounts-userdata"],
           accounts: opts["accounts-userdata"],
         },
+        buildEnv: BUILD_ENV,
       },
       null,
       2,
@@ -1227,7 +1286,11 @@ async function main() {
         const device = placement[side];
         log(`installing ${side} on ${device} and injecting ${scenario}`);
         await P.install(device, APPS[side]);
-        await inject(device, userdata);
+        await inject(device, userdata, side).catch(async error => {
+          log(`  injection failed (${error.message}); retrying once`);
+          await P.stop(device);
+          await inject(device, userdata, side);
+        });
         for (let w = 0; w < WARMUPS; w++) {
           await sample({ scenario, phase, round: -1 - w, side, device, warmup: true });
         }
