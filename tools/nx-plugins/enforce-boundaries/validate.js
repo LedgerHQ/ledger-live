@@ -45,8 +45,9 @@ function walkSourceFiles(dir, callback) {
   let entries;
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
-    return;
+  } catch (error) {
+    if (error.code === "ENOENT") return;
+    throw error;
   }
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -55,6 +56,30 @@ function walkSourceFiles(dir, callback) {
     } else if (SOURCE_EXTS.has(path.extname(entry.name))) {
       callback(full);
     }
+  }
+}
+
+/**
+ * Manifest of a project root, or `undefined` when it has none. An unreadable or malformed
+ * manifest throws: skipping it would hide its dependencies from every check.
+ *
+ * @param {string} workspaceRoot
+ * @param {string} root
+ * @returns {{ manifest: string, pkg: Record<string, any> } | undefined}
+ */
+function readManifest(workspaceRoot, root) {
+  const manifest = path.join(root, "package.json");
+  let content;
+  try {
+    content = fs.readFileSync(path.join(workspaceRoot, manifest), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return undefined;
+    throw error;
+  }
+  try {
+    return { manifest, pkg: JSON.parse(content) };
+  } catch (error) {
+    throw new Error(`${manifest}: ${error.message}`, { cause: error });
   }
 }
 
@@ -140,14 +165,10 @@ function collectLegacyPackageNames(graph, workspaceRoot) {
     if (!tags.includes("scope:libs")) continue;
     const root = node.data?.root;
     if (!root) continue;
-    try {
-      const pkg = JSON.parse(
-        fs.readFileSync(path.join(workspaceRoot, root, "package.json"), "utf8"),
-      );
-      if (typeof pkg.name === "string" && pkg.name.startsWith("@ledgerhq/")) {
-        names.add(pkg.name);
-      }
-    } catch {}
+    const name = readManifest(workspaceRoot, root)?.pkg.name;
+    if (typeof name === "string" && name.startsWith("@ledgerhq/")) {
+      names.add(name);
+    }
   }
   return names;
 }
@@ -167,12 +188,7 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
 
   for (const root of roots) {
     walkSourceFiles(root, file => {
-      let content;
-      try {
-        content = fs.readFileSync(file, "utf8");
-      } catch {
-        return;
-      }
+      const content = fs.readFileSync(file, "utf8");
 
       for (const spec of importSpecifiers(content)) {
         if (spec.startsWith("@ledgerhq/")) {
@@ -218,13 +234,9 @@ function findBannedDependencyViolations(graph, workspaceRoot, bannedDependencies
   for (const node of Object.values(graph.nodes)) {
     const root = node.data?.root;
     if (!root) continue;
-    const manifest = path.join(root, "package.json");
-    let pkg;
-    try {
-      pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
-    } catch {
-      continue;
-    }
+    const read = readManifest(workspaceRoot, root);
+    if (!read) continue;
+    const { manifest, pkg } = read;
     if (banned.has(pkg.name)) continue; // the banned package itself
 
     for (const field of DEPENDENCY_FIELDS) {
@@ -261,11 +273,10 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
       if (!tags.includes(sourceTag)) continue;
       const banned = new Set(packages);
 
-      const manifest = path.join(root, "package.json");
-      let pkg = {};
-      try {
-        pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
-      } catch {}
+      const { manifest, pkg } = readManifest(workspaceRoot, root) ?? {
+        manifest: path.join(root, "package.json"),
+        pkg: {},
+      };
       for (const field of DEPENDENCY_FIELDS) {
         for (const dependency of Object.keys(pkg[field] ?? {})) {
           if (banned.has(dependency)) {
@@ -275,12 +286,7 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
       }
 
       walkSourceFiles(path.join(workspaceRoot, root), file => {
-        let content;
-        try {
-          content = fs.readFileSync(file, "utf8");
-        } catch {
-          return;
-        }
+        const content = fs.readFileSync(file, "utf8");
         for (const spec of importSpecifiers(content)) {
           if (banned.has(packageNameOf(spec))) {
             violations.push({
@@ -309,11 +315,8 @@ function readManifests(graph, workspaceRoot) {
   for (const [nodeName, node] of Object.entries(graph.nodes)) {
     const root = node.data?.root;
     if (!root) continue;
-    const manifest = path.join(root, "package.json");
-    try {
-      const pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
-      manifests.set(nodeName, { manifest, pkg });
-    } catch {}
+    const read = readManifest(workspaceRoot, root);
+    if (read) manifests.set(nodeName, read);
   }
   return manifests;
 }
