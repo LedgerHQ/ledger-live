@@ -216,41 +216,6 @@ for (const scenario of delegateScenarios) {
 }
 
 test.describe("Delegate", () => {
-  const delegation = new Delegate(Account.ATOM_1, "send max", "Ledger");
-  const { currency } = delegation.account;
-  useDelegateFixtures(currency, {
-    cliCommands: [liveDataCommand(delegation.account)],
-    disableBroadcast: true,
-  });
-
-  test(
-    `[${currency.testLabel}] - Delegate max amount`,
-    {
-      tag: buildTags({ currencyId: currency.id }),
-      annotation: ticketAnnotations({ xrayTicket: "B2CQA-1552" }),
-    },
-    async ({ app }) => {
-      await openAccount(app, delegation.account);
-      await app.account.startStakingFlowFromMainStakeButton();
-      await app.delegate.verifyFirstProviderName(delegation.provider);
-      await app.delegate.continue();
-
-      await app.delegate.fillAmount(delegation.amount);
-      await app.delegate.expectMaxAmountMatchesSpendable();
-      const maxDelegation = new Delegate(
-        delegation.account,
-        await app.delegate.getCryptoAmount(),
-        delegation.provider,
-      );
-      await app.delegate.continue();
-
-      await app.speculos.signDelegationTransaction(maxDelegation);
-      await app.delegate.verifySuccessMessage();
-    },
-  );
-});
-
-test.describe("Delegate", () => {
   const delegation = new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3");
   const { currency } = delegation.account;
   useDelegateFixtures(currency, {
@@ -547,7 +512,7 @@ test.describe("Delegate from market", () => {
     `[${currency.testLabel}] - Delegate from market entry point`,
     {
       tag: buildTags({ currencyId: currency.id }),
-      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771" }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771, B2CQA-1552" }),
     },
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
@@ -570,6 +535,9 @@ test.describe("Delegate from market", () => {
 
       await app.delegate.verifyFirstProviderName(delegation.provider);
       await app.delegate.continue();
+
+      await app.delegate.toggleMaxAmount();
+      await app.delegate.expectMaxAmountMatchesSpendable();
     },
   );
 });

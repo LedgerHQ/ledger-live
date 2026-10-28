@@ -191,11 +191,6 @@ export class DelegateModal extends Modal {
       .toBe(true);
   }
 
-  @step("Read the amount to delegate")
-  async getCryptoAmount(): Promise<string> {
-    return this.readCryptoAmount();
-  }
-
   @step("Verify success message")
   async verifySuccessMessage() {
     await expect(this.successMessageLabel).toBeVisible();
