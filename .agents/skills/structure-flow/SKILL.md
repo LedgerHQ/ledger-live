@@ -13,7 +13,8 @@ status and the import rules live in [the architecture guide](../../../docs/monor
 
 Ask in order and stop at the first yes.
 
-1. **Only used at build or test time?** `support/<name>`, taken as a devDependency.
+1. **Build or test tooling with no business knowledge?** `support/<name>`, taken as a devDependency.
+   Mocks and fixtures of a domain stay in that domain package.
 2. **Zero business meaning, would compile at any company?** `shared/<name>`.
 3. **The business noun itself: its schema, rules, reads?** `domain/entity/<name>`.
    **Fetching or mutating it?** `domain/api/<name>`, injecting endpoints into a base of `@shared/api-services`.
@@ -83,7 +84,7 @@ only legacy code has through injection: [legacy-migration](../legacy-migration/S
 ## devtools is a side scope
 
 `devtools/` holds the debug tool platform the apps embed (`@devtools/<tool>`). It may depend on
-the layers; no layer depends on it. App state reaches a tool as props built in `@devtools/bindings`.
+the layers; only `apps/` depends on it, never `shared/`, `domain/` or `features/`. App state reaches a tool as props built in `@devtools/bindings`.
 Imports between devtools packages: [devtools-import-boundary](../devtools-import-boundary/SKILL.md).
 
 ## Review

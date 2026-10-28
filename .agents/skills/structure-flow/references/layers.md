@@ -6,7 +6,7 @@ Detail for [structure-flow](../SKILL.md). Every example is a package on `develop
 
 | Question (first yes wins)                                    | Layer                      | Example                                                      |
 | ------------------------------------------------------------ | -------------------------- | ------------------------------------------------------------ |
-| 1. Only used at build or test time?                          | `support/`                 | `@support/jest`, `@support/tsconfig`                         |
+| 1. Build or test tooling with no business knowledge?         | `support/`                 | `@support/jest`, `@support/tsconfig`                         |
 | 2. Zero business meaning, would compile at any company?      | `shared/`                  | `@shared/schema-primitives`, `@shared/ui-qr-code`            |
 | 3. The business noun itself?                                 | `domain/entity/`           | `@domain/entity-contact`                                     |
 | 3. Fetching or mutating it?                                  | `domain/api/`              | `@domain/api-push-devices`                                   |
@@ -16,6 +16,9 @@ Detail for [structure-flow](../SKILL.md). Every example is a package on `develop
 
 Traps between neighbours:
 
+- **`support` or the owner.** Test helpers that know a domain (an account mock, a contact fixture)
+  are not `support`: a support package depends only on `support` and `shared`. They live in the
+  package that owns the domain, as [`support/README.md`](../../../../support/README.md) states.
 - **`shared` or `domain`.** A name that says wallet, account, coin or contact is business vocabulary,
   so the code is not `shared`. A `misc/` or `utils2/` package is a junk drawer: split it by owner.
 - **`domain/entity` or `domain/api`.** The schema and the selectors of what a thing *is* stay in the
@@ -106,7 +109,8 @@ Known deviations, renamed when someone touches them, never copied:
 `devtools/` is the debug tool platform the apps embed: `@devtools/shell` renders the tools,
 `@devtools/registry` lists them, and each `@devtools/<tool>` is a self-contained React component that
 takes its data as props. `@devtools/bindings` is the one bridge to app state: it builds those props
-from the store and may depend on the layers. No layer package depends on `devtools/`, and its
+from the store and may depend on the layers. The apps import `devtools/` to embed it; no `shared/`,
+`domain/` or `features/` package depends on it, and its
 internal import table is a convention, not a lint rule: see
 [devtools-import-boundary](../../devtools-import-boundary/SKILL.md) and
 [`devtools/README.md`](../../../../devtools/README.md).

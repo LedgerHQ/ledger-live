@@ -4,14 +4,19 @@ Detail for [structure-flow](../SKILL.md). No linter decides these rules: they ar
 
 ## Entity or flow state
 
-Ask both columns. A value with any yes on the left is entity state.
+Ownership decides: entity state is business data that exists without any journey, flow state is
+what one journey decides about its own UI. The columns are hints toward that answer, not a vote: a PM
+may name the draft address or the current step, and both stay flow state.
 
-| Entity state, in `domain/entity`              | Flow state, in the flow's `state/`                         |
-| --------------------------------------------- | ---------------------------------------------------------- |
-| A backend could return it                     | It describes what the UI is doing now                      |
-| Two or more features speak of it              | Its name says `open`, `step`, `selected`, `draft`          |
-| It carries its own business rules             | It only exists while the flow runs                         |
-| A PM says the word                            | Nobody outside the flow reads it                           |
+| Hints of entity state, in `domain/entity`     | Hints of flow state, in the flow's `state/`                  |
+| --------------------------------------------- | ------------------------------------------------------------ |
+| A backend could return it                     | It describes what the UI is doing now                        |
+| Two or more features speak of it              | Its name says `open`, `step`, `selected`, `draft`, `filter`  |
+| It carries its own business rules             | Only the journey decides its value                           |
+| It still means something with no UI           | Its meaning ends with the journey, even if the app persists it |
+
+The app may register a flow slice in its store or persist it (a list filter): the state stays the
+flow's and its layer does not change.
 
 Examples on `develop`:
 
