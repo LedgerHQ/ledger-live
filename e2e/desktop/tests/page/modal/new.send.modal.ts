@@ -26,6 +26,7 @@ export class NewSendModal extends Modal {
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
+  private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
@@ -91,8 +92,6 @@ export class NewSendModal extends Modal {
 
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
-
-  private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
 
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
