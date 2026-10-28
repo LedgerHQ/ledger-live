@@ -35,6 +35,8 @@ export class NewSendModal extends Modal {
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly amountErrorMessage = this.dialog.getByTestId("send-amount-message");
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
+  private readonly quickAction = (action: AmountQuickAction) =>
+    this.dialog.getByTestId(`send-quick-actions-${action}`);
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
   readonly getFundsButton = this.dialog.getByTestId("send-get-funds-button");
@@ -44,6 +46,9 @@ export class NewSendModal extends Modal {
     "send-confirmation-success-content",
   );
   readonly confirmationErrorContent = this.dialog.getByTestId("send-confirmation-error-content");
+  private readonly confirmationErrorTitle = this.dialog.getByTestId(
+    "send-confirmation-error-title",
+  );
   readonly confirmationInfoContent = this.dialog.getByTestId("send-confirmation-info-content");
   /**
    * Any of the three terminal confirmation screens (success, error, or info).
@@ -95,12 +100,6 @@ export class NewSendModal extends Modal {
 
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
-  private readonly confirmationErrorTitle = this.dialog.getByTestId(
-    "send-confirmation-error-title",
-  );
-
-  private readonly quickAction = (action: AmountQuickAction) =>
-    this.dialog.getByTestId(`send-quick-actions-${action}`);
 
   private async readAmount(): Promise<string> {
     return (await this.amountInput.inputValue()).replaceAll(/\s/g, "");
