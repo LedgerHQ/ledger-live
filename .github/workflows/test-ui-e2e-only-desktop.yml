@@ -262,7 +262,7 @@ jobs:
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
-      E2E_WORKERS: 8
+      E2E_WORKERS: 12
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
