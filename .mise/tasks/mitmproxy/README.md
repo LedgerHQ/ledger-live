@@ -285,4 +285,5 @@ mise run mitmproxy:capture-stop
 ```
 
 Addon tests: `python -m pytest .mise/tasks/mitmproxy/firebase_capture_test.py`
-with mitmproxy 12.2.1 installed.
+with mitmproxy 12.2.1 installed. CI runs them on every PR that touches this folder
+(`.github/workflows/test-mitmproxy-addons-pr.yml`).
