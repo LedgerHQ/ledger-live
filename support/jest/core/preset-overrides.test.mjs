@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const PRESET_OVERRIDES = require("./preset-overrides");
-const { PRESET_KEYS } = require(".");
+const { ALLOWLIST_FIX, ESM_FIX, PRESET_KEYS } = require(".");
 const {
   createSharedJestConfig,
   createSharedUiJestConfig,
@@ -26,7 +26,13 @@ const {
 const { createWebJestConfig, createNativeJestConfig } = require("../devtools");
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
-const at = pkg => path.join(repository, pkg);
+/**
+ * @param {string} pkg a package path from the repository root
+ * @returns {string} its absolute path
+ */
+function at(pkg) {
+  return path.join(repository, pkg);
+}
 
 const flat = [
   ["createSharedJestConfig", createSharedJestConfig],
@@ -56,8 +62,6 @@ for (const [name, create] of flat) {
 
 // A transform override's fix names extraEsmDeps only where the factory reads that option, and
 // the transform allowlist elsewhere.
-const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
-const ALLOWLIST_FIX = "add the dependency to the preset's transform allowlist in support/jest";
 const TRANSFORM_FIXES = {
   createSharedJestConfig: ESM_FIX,
   createSharedUiNativeJestConfig: ALLOWLIST_FIX,
@@ -191,4 +195,13 @@ test("createLibsCoinJestProject reads no projectRoot: jest takes the lcov root f
     () => createLibsCoinJestProject({}, { projectRoot: "../../../" }),
     /it does not read the option "projectRoot"; its options: `esm`, `extraEsmDeps`\./,
   );
+});
+
+test("the exported tables are frozen", () => {
+  assert.ok(Object.isFrozen(PRESET_KEYS));
+  assert.ok(Object.isFrozen(PRESET_OVERRIDES));
+  for (const { overrides } of Object.values(PRESET_OVERRIDES)) {
+    assert.ok(Object.isFrozen(overrides));
+    for (const keys of Object.values(overrides)) assert.ok(Object.isFrozen(keys));
+  }
 });

@@ -81,6 +81,6 @@ function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], proj
 }
 
 // The options sharedNodeConfig() reads, and the node factories built on it.
-const NODE_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
+const NODE_OPTIONS = Object.freeze(["esm", "extraEsmDeps", "projectRoot"]);
 
 module.exports = { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps };

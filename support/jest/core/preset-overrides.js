@@ -3,7 +3,7 @@
 // `rootDir` it gets. This list only shrinks: a listed key the config no longer overrides throws.
 
 /** @type {Record<string, { reason: string, overrides: Record<string, string[]> }>} */
-module.exports = {
+const PRESET_OVERRIDES = {
   "shared/i18n": {
     reason: "React views on the node preset: no preset covers a web-only shared/ package yet.",
     overrides: { createSharedJestConfig: ["testEnvironment", "transform"] },
@@ -24,3 +24,15 @@ module.exports = {
     },
   },
 };
+
+/**
+ * @template T
+ * @param {T} value
+ * @returns {T} the value, frozen with everything it holds
+ */
+function deepFreeze(value) {
+  if (value && typeof value === "object") Object.values(value).forEach(deepFreeze);
+  return Object.freeze(value);
+}
+
+module.exports = deepFreeze(PRESET_OVERRIDES);

@@ -151,14 +151,14 @@ function layerProject(project, layer, overrides) {
 
 // Keys a preset sets for every package of its layer, with what a package uses instead.
 const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
-const PRESET_KEYS = {
+const PRESET_KEYS = Object.freeze({
   transform: ESM_FIX,
   transformIgnorePatterns: ESM_FIX,
   testEnvironment: "pick the preset of the environment the tests need",
   globals: "set the global in a setup file",
   reporters: "every preset reports the same way",
   coverageReporters: "every preset reports coverage the same way",
-};
+});
 // A factory without the extraEsmDeps option keeps its layer's ESM dependencies in its allowlist.
 const ALLOWLIST_FIX = "add the dependency to the preset's transform allowlist in support/jest";
 const TRANSFORM_KEYS = new Set(["transform", "transformIgnorePatterns"]);
@@ -284,6 +284,8 @@ function createDualJestConfig(
 }
 
 module.exports = {
+  ALLOWLIST_FIX,
+  ESM_FIX,
   PRESET_KEYS,
   createDualJestConfig,
   jestSonarReporter,
