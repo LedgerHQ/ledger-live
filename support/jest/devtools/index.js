@@ -6,7 +6,7 @@
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
 const path = require("path");
-const { checkOptions, checkPresetOverrides } = require("../core");
+const { presetFactory } = require("../core");
 
 const here = relative => path.join(__dirname, relative);
 
@@ -48,12 +48,9 @@ const TEST_TIMEOUT = 30_000;
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides] `moduleNameMapper` is merged
  * into the preset's; every other key replaces it.
- * @param {Record<string, never>} [options] none: the factory takes no options, and throws on one
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createWebJestConfig({ moduleNameMapper, ...overrides } = {}, options) {
-  checkOptions("createWebJestConfig", options, []);
-  checkPresetOverrides("createWebJestConfig", { "": overrides }, overrides.rootDir);
+function webJestConfig({ moduleNameMapper, ...overrides } = {}) {
   return {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/src"],
@@ -90,12 +87,9 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}, options) {
  *
  * @param {import('@jest/types').Config.InitialOptions} [overrides] `moduleNameMapper` is merged
  * into the preset's; every other key replaces it.
- * @param {Record<string, never>} [options] none: the factory takes no options, and throws on one
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}, options) {
-  checkOptions("createNativeJestConfig", options, []);
-  checkPresetOverrides("createNativeJestConfig", { "": overrides }, overrides.rootDir);
+function nativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
   return {
     preset: "react-native",
     roots: ["<rootDir>/src"],
@@ -129,4 +123,7 @@ function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}, options
   };
 }
 
-module.exports = { createWebJestConfig, createNativeJestConfig };
+module.exports = {
+  createWebJestConfig: presetFactory("createWebJestConfig", [], webJestConfig),
+  createNativeJestConfig: presetFactory("createNativeJestConfig", [], nativeJestConfig),
+};

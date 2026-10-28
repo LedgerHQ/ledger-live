@@ -12,6 +12,7 @@
         "{projectRoot}/devtools/**/*",
         "{projectRoot}/shared/**/*",
         "{projectRoot}/features-flow/**/*",
+        "{projectRoot}/internals/**/*",
         "{projectRoot}/libs-coin/**/*"
       ],
       "options": {

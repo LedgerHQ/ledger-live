@@ -223,6 +223,30 @@ function checkOptions(factory, options, accepted) {
 }
 
 /**
+ * An exported preset factory: it checks the options and the overrides it gets, then returns what
+ * `build` makes of them. Every preset factory is built here, so none can skip the checks.
+ *
+ * @template {object} Config
+ * @param {string} name the factory name, for the messages and preset-overrides.js
+ * @param {string[]} options the options the factory reads
+ * @param {(overrides: Record<string, any>, options?: Record<string, any>) => Config} build
+ * @returns {(overrides?: Record<string, any>, options?: Record<string, any>) => Config}
+ */
+function presetFactory(name, options, build) {
+  return (overrides = {}, presetOptions) => {
+    checkOptions(name, presetOptions, options);
+    const { webOverrides, nativeOverrides, ...topLevel } = overrides;
+    checkPresetOverrides(
+      name,
+      { "": topLevel, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
+      overrides.rootDir,
+      options,
+    );
+    return build(overrides, presetOptions);
+  };
+}
+
+/**
  * Projects config of a dual web/native preset: jsdom web project (*.web.test.ts(x) and unsuffixed
  * tests), node native project (*.native.test.ts(x)), test quarantine, sonar and, on CI, the
  * github-actions reporter.
@@ -232,19 +256,12 @@ function checkOptions(factory, options, accepted) {
  *
  * @param {DualLayer} layer
  * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
- * @param {string} [factory] the factory the config calls, for checkPresetOverrides
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createDualJestConfig(
   { depth, web, native },
   { webOverrides = {}, nativeOverrides = {}, ...overrides } = {},
-  factory = "createDualJestConfig",
 ) {
-  checkPresetOverrides(
-    factory,
-    { "": overrides, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
-    overrides.rootDir,
-  );
   return {
     collectCoverage: true,
     coverageDirectory: "./coverage/",
@@ -266,14 +283,13 @@ function createDualJestConfig(
 
 module.exports = {
   PRESET_KEYS,
-  checkOptions,
-  checkPresetOverrides,
   createDualJestConfig,
   jestSonarReporter,
   lcovCoverageReporters,
   lcovRoot,
   nativeMocks,
   platformExtensions,
+  presetFactory,
   quarantineReporter,
   quarantineRetries,
   swcTransform,

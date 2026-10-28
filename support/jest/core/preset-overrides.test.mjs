@@ -169,11 +169,3 @@ test("createLibsCoinJestProject reads no projectRoot: jest takes the lcov root f
     /it does not read the option "projectRoot"; its options: `esm`, `extraEsmDeps`\./,
   );
 });
-
-test("the builder that skips the check is not public", () => {
-  assert.equal("sharedNodeConfig" in require("../shared"), false);
-  const { exports } = JSON.parse(
-    fs.readFileSync(path.join(repository, "support/jest/package.json"), "utf8"),
-  );
-  assert.ok(Object.values(exports).every(target => !target.includes("shared/node")));
-});

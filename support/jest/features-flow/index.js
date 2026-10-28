@@ -1,5 +1,5 @@
 const path = require("path");
-const { checkOptions, createDualJestConfig } = require("../core");
+const { createDualJestConfig, presetFactory } = require("../core");
 
 // Lumen's shared utils (`cn`, the amount formatters) and its design tokens ship as ESM and are
 // real values the views pass around, so SWC has to compile them instead of a stub standing in —
@@ -42,31 +42,19 @@ const flowLayer = {
  * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
- * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
- * @param {Record<string, never>} [extra] none: the factory takes no options, and throws on one
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowJestConfig(options, extra) {
-  checkOptions("createFlowJestConfig", extra, []);
-  return createDualJestConfig(flowLayer, options, "createFlowJestConfig");
-}
+const createFlowJestConfig = presetFactory("createFlowJestConfig", [], overrides =>
+  createDualJestConfig(flowLayer, overrides),
+);
 
 /**
  * Jest config for a features/flow package with native-only tests: the native project of
  * createFlowJestConfig(), without the web one. Requires no web-only dependencies
  * (jest-environment-jsdom, @testing-library/jest-dom).
  *
- * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
- * @param {Record<string, never>} [extra] none: the factory takes no options, and throws on one
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowNativeJestConfig(options, extra) {
-  checkOptions("createFlowNativeJestConfig", extra, []);
-  return createDualJestConfig(
-    { ...flowLayer, web: undefined },
-    options,
-    "createFlowNativeJestConfig",
-  );
-}
+const createFlowNativeJestConfig = presetFactory("createFlowNativeJestConfig", [], overrides =>
+  createDualJestConfig({ ...flowLayer, web: undefined }, overrides),
+);
 
 module.exports = { createFlowJestConfig, createFlowNativeJestConfig };

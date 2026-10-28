@@ -80,4 +80,7 @@ function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], proj
   return esm ? withEsmDeps(config, { extraDeps: extraEsmDeps }) : config;
 }
 
-module.exports = { sharedNodeConfig, sharedReporters, withEsmDeps };
+// The options sharedNodeConfig() reads, and the node factories built on it.
+const NODE_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
+
+module.exports = { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps };

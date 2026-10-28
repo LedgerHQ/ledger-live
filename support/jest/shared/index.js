@@ -1,16 +1,18 @@
 const {
-  checkOptions,
-  checkPresetOverrides,
   createDualJestConfig,
   jestSonarReporter,
   nativeMocks,
   platformExtensions,
+  presetFactory,
   quarantineRetries,
   withProjectOverrides,
 } = require("../core");
-const { sharedNodeConfig, sharedReporters, withEsmDeps } = require("./node");
-
-const NODE_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
+const {
+  NODE_OPTIONS,
+  sharedNodeConfig,
+  sharedReporters,
+  withEsmDeps,
+} = require("../internals/node");
 
 // ─── shared/* and libs/* (node packages) ────────────────────────────────────
 
@@ -26,21 +28,12 @@ const NODE_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
  *
  *   module.exports = createSharedJestConfig();
  *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
- *
- * @param {import('@jest/types').Config.InitialOptions} [overrides]
- * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedJestConfig(overrides = {}, options) {
-  checkOptions("createSharedJestConfig", options, NODE_OPTIONS);
-  checkPresetOverrides(
-    "createSharedJestConfig",
-    { "": overrides },
-    overrides.rootDir,
-    NODE_OPTIONS,
-  );
-  return sharedNodeConfig(overrides, options);
-}
+const createSharedJestConfig = presetFactory(
+  "createSharedJestConfig",
+  NODE_OPTIONS,
+  sharedNodeConfig,
+);
 
 // ─── shared/ui-* (UI packages) ──────────────────────────────────────────────
 
@@ -60,18 +53,10 @@ const lumenTransform = {
  * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
- * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
- * @param {Record<string, never>} [extra] none: the factory takes no options, and throws on one
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedUiJestConfig(options, extra) {
-  checkOptions("createSharedUiJestConfig", extra, []);
-  return createDualJestConfig(
-    { depth: "../../", web: lumenTransform, native: lumenTransform },
-    options,
-    "createSharedUiJestConfig",
-  );
-}
+const createSharedUiJestConfig = presetFactory("createSharedUiJestConfig", [], overrides =>
+  createDualJestConfig({ depth: "../../", web: lumenTransform, native: lumenTransform }, overrides),
+);
 
 /**
  * Jest config for a shared/ui-* package with native-only tests (*.native.test.ts).
@@ -80,26 +65,24 @@ function createSharedUiJestConfig(options, extra) {
  * `moduleNameMapper` and `setupFilesAfterEnv` overrides add to the preset's (an entry with the
  * same pattern replaces that mock); any other key replaces it. Requires no web-only dependencies (jest-environment-jsdom, @testing-library/jest-dom).
  *
- * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]
- * @param {Record<string, never>} [options] none: the factory takes no options, and throws on one
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedUiNativeJestConfig(overrides = {}, options) {
-  checkOptions("createSharedUiNativeJestConfig", options, []);
-  checkPresetOverrides("createSharedUiNativeJestConfig", { "": overrides }, overrides.rootDir);
-  return sharedNodeConfig(
-    withProjectOverrides(
-      {
-        collectCoverage: true,
-        testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-        moduleFileExtensions: platformExtensions("native"),
-        moduleNameMapper: { ...nativeMocks },
-        setupFilesAfterEnv: [quarantineRetries],
-      },
-      overrides,
+const createSharedUiNativeJestConfig = presetFactory(
+  "createSharedUiNativeJestConfig",
+  [],
+  overrides =>
+    sharedNodeConfig(
+      withProjectOverrides(
+        {
+          collectCoverage: true,
+          testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+          moduleFileExtensions: platformExtensions("native"),
+          moduleNameMapper: { ...nativeMocks },
+          setupFilesAfterEnv: [quarantineRetries],
+        },
+        overrides,
+      ),
     ),
-  );
-}
+);
 
 module.exports = {
   createSharedJestConfig,

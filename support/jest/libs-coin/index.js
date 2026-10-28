@@ -1,8 +1,5 @@
-const { checkOptions, checkPresetOverrides } = require("../core");
-
-const SHARED_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
-const PROJECT_OPTIONS = ["esm", "extraEsmDeps"];
-const { sharedNodeConfig, withEsmDeps } = require("../shared/node");
+const { presetFactory } = require("../core");
+const { NODE_OPTIONS, sharedNodeConfig, withEsmDeps } = require("../internals/node");
 
 // Integration suites hit live networks; the unit config leaves them to the integration config.
 const integrationTests = ".*\\.(integ|integration)\\.test\\.[tj]s";
@@ -64,14 +61,7 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  * @param {LibsCoinOptions} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createLibsCoinJestConfig(overrides = {}, options) {
-  checkOptions("createLibsCoinJestConfig", options, SHARED_OPTIONS);
-  checkPresetOverrides(
-    "createLibsCoinJestConfig",
-    { "": overrides },
-    overrides.rootDir,
-    SHARED_OPTIONS,
-  );
+function unitJestConfig(overrides, options) {
   return sharedConfig(
     {
       passWithNoTests: true,
@@ -99,15 +89,7 @@ function createLibsCoinJestConfig(overrides = {}, options) {
  * @param {Pick<LibsCoinOptions, "esm" | "extraEsmDeps">} [options]
  * @returns {import('@jest/types').Config.InitialProjectOptions}
  */
-function createLibsCoinJestProject(overrides = {}, options = {}) {
-  checkOptions("createLibsCoinJestProject", options, PROJECT_OPTIONS);
-  const { esm = true, extraEsmDeps = [] } = options;
-  checkPresetOverrides(
-    "createLibsCoinJestProject",
-    { "": overrides },
-    overrides.rootDir,
-    PROJECT_OPTIONS,
-  );
+function projectJestConfig(overrides, { esm = true, extraEsmDeps = [] } = {}) {
   const { testEnvironment, roots, testMatch, transform } = sharedNodeConfig();
   const project = {
     testEnvironment,
@@ -132,14 +114,7 @@ function createLibsCoinJestProject(overrides = {}, options = {}) {
  * @param {LibsCoinOptions} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createLibsCoinIntegJestConfig(overrides = {}, options) {
-  checkOptions("createLibsCoinIntegJestConfig", options, SHARED_OPTIONS);
-  checkPresetOverrides(
-    "createLibsCoinIntegJestConfig",
-    { "": overrides },
-    overrides.rootDir,
-    SHARED_OPTIONS,
-  );
+function integJestConfig(overrides, options) {
   return sharedConfig(
     {
       testMatch: undefined,
@@ -156,8 +131,17 @@ function createLibsCoinIntegJestConfig(overrides = {}, options) {
 }
 
 module.exports = {
-  createLibsCoinJestConfig,
-  createLibsCoinIntegJestConfig,
-  createLibsCoinJestProject,
+  createLibsCoinJestConfig: presetFactory("createLibsCoinJestConfig", NODE_OPTIONS, unitJestConfig),
+  createLibsCoinIntegJestConfig: presetFactory(
+    "createLibsCoinIntegJestConfig",
+    NODE_OPTIONS,
+    integJestConfig,
+  ),
+  // A project reads no projectRoot: jest takes the lcov root from the top level.
+  createLibsCoinJestProject: presetFactory(
+    "createLibsCoinJestProject",
+    ["esm", "extraEsmDeps"],
+    projectJestConfig,
+  ),
   libsCoinDefaults,
 };
