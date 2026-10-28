@@ -2,6 +2,9 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const rules = require("./rules");
 const {
   BARREL_LOCATION,
   CHAIN_BREAKS,
@@ -14,7 +17,7 @@ const {
   isInRepoSpecifier,
   starReexportTargets,
   stripComments,
-} = require("./rules");
+} = rules;
 
 const codes = source => checkBarrel(source).map(v => v.code);
 
@@ -440,4 +443,17 @@ test("the nested-barrel fix names every chain break", () => {
   for (const reason of Object.values(CHAIN_BREAKS)) {
     assert.ok(BARREL_LOCATION["nested-barrel"].fix.includes(reason), reason);
   }
+});
+
+test("every rules.js constant the package-public-api skill cites exists", () => {
+  const skill = fs.readFileSync(
+    path.resolve(__dirname, "../../../.agents/skills/package-public-api/SKILL.md"),
+    "utf8",
+  );
+  const cited = skill
+    .split(/\n\s*\n/)
+    .filter(paragraph => paragraph.includes("enforce-package-structure/rules.js"))
+    .flatMap(paragraph => [...paragraph.matchAll(/`([A-Z][A-Z0-9_]+)`/g)].map(match => match[1]));
+  assert.ok(cited.length > 0, "the skill cites no rules.js constant");
+  for (const name of cited) assert.ok(Object.hasOwn(rules, name), name);
 });

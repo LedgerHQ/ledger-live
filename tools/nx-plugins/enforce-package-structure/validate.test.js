@@ -8,8 +8,6 @@ const path = require("node:path");
 const {
   auditFileExceptions,
   auditIntermediateBarrelWaivers,
-  barrelDepths,
-  chainBreakers,
   checkPackage,
   findPackageRoots,
 } = require("./validate");
@@ -462,72 +460,6 @@ test("a pure `export *` chain down the folders is allowed three levels deep, thr
 });
 
 /**
- * @param {Record<string, string[]>} edges each module to the modules its `export *` loads
- * @returns {(file: string) => string[]}
- */
-function targetsIn(edges) {
-  return file => edges[file] ?? [];
-}
-
-test("barrelDepths counts barrels below the nearest entry, plain modules adding none", () => {
-  const edges = {
-    "index.ts": ["a/index.ts", "api.ts"],
-    "a/index.ts": ["a/b/index.ts", "entry/index.ts"],
-    "api.ts": ["c/index.ts"],
-    "c/index.ts": ["a/b/index.ts"],
-    "entry/index.ts": ["entry/d/index.ts"],
-  };
-  const depths = barrelDepths(new Set(["index.ts", "entry/index.ts"]), targetsIn(edges), file =>
-    file.endsWith("index.ts"),
-  );
-  assert.deepEqual(Object.fromEntries(depths), {
-    "index.ts": 0,
-    "entry/index.ts": 0,
-    "a/index.ts": 1,
-    "api.ts": 0,
-    "a/b/index.ts": 2,
-    "c/index.ts": 1,
-    "entry/d/index.ts": 1,
-  });
-});
-
-test("chainBreakers passes the first breaker down, and an entry breaks nothing", () => {
-  const edges = {
-    "index.ts": ["a/index.ts", "pure/index.ts"],
-    "a/index.ts": ["a/b/index.ts"],
-    "a/b/index.ts": ["a/b/c/index.ts"],
-    "pure/index.ts": ["pure/x/index.ts", "a/b/index.ts"],
-  };
-  const breakers = chainBreakers(
-    new Set(["index.ts"]),
-    targetsIn(edges),
-    file => file === "index.ts" || file === "a/index.ts" || file === "a/b/index.ts",
-  );
-  assert.deepEqual(Object.fromEntries(breakers), {
-    "a/b/index.ts": "a/index.ts",
-    "a/b/c/index.ts": "a/index.ts",
-  });
-});
-
-test("chainBreakers taints a module first walked clean, and stops on a cycle", () => {
-  const edges = {
-    "index.ts": ["pure/index.ts", "bad.ts"],
-    "pure/index.ts": ["pure/x/index.ts"],
-    "pure/x/index.ts": ["pure/index.ts"],
-    "bad.ts": ["pure/x/index.ts"],
-  };
-  const breakers = chainBreakers(
-    new Set(["index.ts"]),
-    targetsIn(edges),
-    file => file === "bad.ts",
-  );
-  assert.deepEqual(Object.fromEntries(breakers), {
-    "pure/x/index.ts": "bad.ts",
-    "pure/index.ts": "bad.ts",
-  });
-});
-
-/**
  * @param {Record<string, string>} files
  * @returns {Array<[string, unknown]>} each nested barrel, as [file, the module that breaks its chain]
  */
@@ -565,19 +497,24 @@ test("a middle module that is not pure `export *` down its folder breaks the cha
   }
 });
 
-test("a plain module with code breaks the chain, and the first breaker is named", () => {
+test("a plain module is transparent: only the barrels of a chain can break it", () => {
+  const files = {
+    "shared/thing/src/index.ts": 'export * from "./api";\n',
+    "shared/thing/src/api.ts": 'export * from "./client";\nexport const api = 1;\n',
+    "shared/thing/src/client/index.ts": 'export * from "./http";\n',
+    "shared/thing/src/client/http/index.ts": 'export * from "./http";\n',
+    "shared/thing/src/client/http/http.ts": "export const http = 1;\n",
+  };
+  assert.deepEqual(brokenChains(files), []);
   assert.deepEqual(
     brokenChains({
-      "shared/thing/src/index.ts": 'export * from "./api";\n',
-      "shared/thing/src/api.ts": 'export * from "./client";\nexport const api = 1;\n',
+      ...files,
       "shared/thing/src/client/index.ts": 'export * from "./http";\nexport const c = 1;\n',
-      "shared/thing/src/client/http/index.ts": 'export * from "./http";\n',
-      "shared/thing/src/client/http/http.ts": "export const http = 1;\n",
     }),
     [
       [
         "shared/thing/src/client/http/index.ts",
-        { file: "shared/thing/src/api.ts", line: 2, reason: CHAIN_BREAKS.code },
+        { file: "shared/thing/src/client/index.ts", line: 2, reason: CHAIN_BREAKS.code },
       ],
     ],
   );

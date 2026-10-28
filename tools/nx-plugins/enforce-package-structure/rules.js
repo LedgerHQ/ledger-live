@@ -379,9 +379,8 @@ function listOf(items) {
   return `${items.slice(0, -1).join(", ")} or ${items[items.length - 1]}`;
 }
 
-// Where an `index.*` under src/ may sit: as an entry (src/index.* or a package.json#exports
-// target), below an entry through a pure `export *` chain down the folders, or in an internals
-// location. Each code is worded once for the violation, the CLI hint and the waivers.
+// The violations of checkBarrelLocation, one per code, each worded once for the violation, the
+// CLI hint and the waivers.
 const BARREL_LOCATION = {
   "orphan-barrel": {
     rule: "No entry reaches this barrel through `export *`",
@@ -395,8 +394,8 @@ const BARREL_LOCATION = {
       "This barrel is reached more than one `export *` level below its entry, through a chain " +
       "that is not pure `export *` down the folders",
     fix:
-      'make every module from below the entry to this barrel hold only `export * from "./x"` ' +
-      `lines naming paths inside its own folder (a module that ${listOf(Object.values(CHAIN_BREAKS))} ` +
+      'make every barrel from below the entry to this one hold only `export * from "./x"` ' +
+      `lines naming paths inside its own folder (a barrel that ${listOf(Object.values(CHAIN_BREAKS))} ` +
       "breaks the chain), or re-export the files from a barrel nearer the entry",
   },
 };
