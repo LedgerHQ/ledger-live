@@ -176,11 +176,13 @@ export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando
     case "vechain": // evm-compatible chain that lives in its own family
       return `0x${genHex(40, rng)}`;
     case "filecoin":
-      // the f1 checksum is blake2b-4, so pin a known-valid fixture address
-      return "f1abjxfbp274xpdqcpuaykwkfb43omjotacm2p3za";
+      // the f1 checksum is blake2b-4, so pin a known-valid fixture address;
+      // this one has a single tx, so paging the explorer stays fast
+      return "f1plmg3kklvmnodfboimcq5w27mnfs2hwjtas6gia";
     case "stacks":
-      // the c32 checksum is blake2b-4, so pin the well-known boot address
-      return "SP000000000000000000002Q6VF78";
+      // the c32 checksum is blake2b-4, so pin a known-valid fixture address;
+      // the boot address SP000000000000000000002Q6VF78 has 17k txs, this one 21
+      return "SP3H6RCZ1X6V85NZBDVCBPGQ1CGBJKY9WYHBKFYBA";
     case "sui":
       return `0x${genHex(64, rng)}`;
     case "ton":
@@ -203,7 +205,7 @@ export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando
       // hedera uses shard.realm.num account ids; the sync resolves the EVM
       // address of that live account, so stay in a range that exists on mainnet
       return currency.id === "hedera_testnet"
-        ? "0.0.12345" // known on the testnet mirror node, unlike random 7-digit ids
+        ? "0.0.1234567" // exists on the testnet mirror node with only 2 txs, so sync is quick
         : `0.0.${rng.nextInt(1000000, 9999999)}`;
     case "algorand":
       return rng.nextString(58, "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
