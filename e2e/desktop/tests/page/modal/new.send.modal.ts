@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import BigNumber from "bignumber.js";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
@@ -91,6 +92,21 @@ export class NewSendModal extends Modal {
 
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
+
+  // Menu items render in a portal, outside the dialog subtree.
+  private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
+  private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
+  private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
+  private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
+
+  private async readAmount(): Promise<string> {
+    return (await this.amountInput.inputValue()).replaceAll(/\s/g, "");
+  }
+
+  private async waitForSettledAmount() {
+    await expect(this.reviewButton).toBeEnabled();
+    await expect(this.reviewButton).not.toHaveAttribute("aria-busy", "true");
+  }
 
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
@@ -233,15 +249,32 @@ export class NewSendModal extends Modal {
     await this.viewDetailsButton.click();
   }
 
-  @step("Fill crypto amount: $0 (switches to crypto mode first)")
-  async fillCryptoAmount(amount: string) {
+  @step("Switch the amount input to crypto mode")
+  async switchToCryptoInput() {
     await expect.poll(() => this.isCryptoInputMode()).not.toBeNull();
     const isCryptoMode = await this.isCryptoInputMode();
     if (!isCryptoMode) {
       await this.toggleInputModeButton.click();
       await expect.poll(() => this.isCryptoInputMode()).toBe(true);
     }
+  }
+
+  @step("Fill crypto amount: $0 (switches to crypto mode first)")
+  async fillCryptoAmount(amount: string) {
+    await this.switchToCryptoInput();
     await this.amountInput.fill(amount);
+  }
+
+  @step("Read the crypto amount once it settles")
+  async getCryptoAmount(): Promise<string> {
+    await this.waitForSettledAmount();
+    return this.readAmount();
+  }
+
+  @step("Verify the crypto amount is lower than $0")
+  async expectCryptoAmountLowerThan(reference: string) {
+    await this.waitForSettledAmount();
+    await expect.poll(async () => new BigNumber(await this.readAmount()).lt(reference)).toBe(true);
   }
 
   @step("Verify crypto amount round-trips exactly: $0")
@@ -309,6 +342,24 @@ export class NewSendModal extends Modal {
     const item = this.getFeePreset(preset);
     await item.click();
     await item.waitFor({ state: "hidden" });
+  }
+
+  @step("Verify the fees menu offers custom fees and coin control")
+  async expectBitcoinFeesMenuOptions() {
+    await expect(this.customFeesMenuItem).toBeVisible();
+    await expect(this.coinControlMenuItem).toBeVisible();
+  }
+
+  @step("Open custom fees from the fees menu")
+  async selectCustomFeesFromMenu() {
+    await expect(this.customFeesMenuItem).toBeVisible();
+    await this.customFeesMenuItem.click();
+  }
+
+  @step("Verify the custom fees screen asks for a fee per byte")
+  async expectCustomFeePerByteScreen() {
+    await expect(this.customFeePerByteInput).toBeVisible();
+    await expect(this.customFeesConfirmButton).toBeVisible();
   }
 
   @step("Verify the sponsored fee offer is shown")
