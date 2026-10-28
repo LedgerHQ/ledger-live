@@ -15,7 +15,7 @@ type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
- * To act without waiting, use {@link NativeHandle.raw}. Build one with {@link byId} or {@link byText}.
+ * Build one with {@link byId} or {@link byText}.
  */
 export class NativeHandle implements ElementHandle {
   private readonly createMatcher: () => NativeMatcher;
@@ -27,7 +27,7 @@ export class NativeHandle implements ElementHandle {
   }
 
   /** The first matching Detox element, with no wait and no hard timeout. */
-  get raw(): NativeElement {
+  private get raw(): NativeElement {
     // Android's atIndex mutates the matcher it wraps, so every element needs a fresh one.
     return element(this.createMatcher()).atIndex(0);
   }

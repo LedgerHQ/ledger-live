@@ -8,7 +8,7 @@ import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
 /**
  * An element inside a webview (Live App), declared once by its `data-testid`.
  * Every action waits up to `timeout` (default 60s) for the element, then acts.
- * To act without waiting, use {@link WebHandle.raw}. Build one with {@link webByTestId}.
+ * Build one with {@link webByTestId}.
  */
 export class WebHandle implements ElementHandle {
   private readonly testId: string;
@@ -18,7 +18,7 @@ export class WebHandle implements ElementHandle {
   }
 
   /** The Detox web element, with no wait and no hard timeout. */
-  get raw(): WebElement {
+  private get raw(): WebElement {
     return web.element(by.web.cssSelector(`[data-testid^="${this.testId}"]`));
   }
 

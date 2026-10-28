@@ -39,7 +39,7 @@ Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](
 - Every action waits up to `TIMEOUT.xxlarge`, the same default as `waitForElementById`.
 - A native wait means at least 75% visible (`waitFullyVisible`: 100%). A webview has no visibility check, so a web wait means the element exists and its text can be read.
 - Override the timeout with a bucket: `await this.signaturePrompt.waitVisible(TIMEOUT.xxxlarge)`.
-- Opt out with `.raw`, the Detox element with no wait. Use it only for an action the handle does not wrap. There is no `wait: false` flag: no call site needed one.
+- There is no opt-out: a page object cannot reach the Detox element behind a handle. When it needs an action the handle does not wrap, add that action as a handle method.
 
 The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout, and the waits and retries match the globals, so Allure steps stay the same. Unlike the globals, the hard timeout also bounds `getAttributes()` and every web call, so a hung bridge fails the step instead of the whole test.
 
