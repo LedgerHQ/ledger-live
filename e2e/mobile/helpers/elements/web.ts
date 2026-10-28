@@ -8,7 +8,7 @@ import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
 /**
  * An element inside a webview (Live App), declared once by its `data-testid`.
  * Every action waits up to `timeout` (default 60s) for the element, then acts.
- * Build one with {@link webByTestId}.
+ * Build one with {@link webById}.
  */
 export class WebHandle implements ElementHandle {
   private readonly testId: string;
@@ -66,5 +66,5 @@ export class WebHandle implements ElementHandle {
   }
 }
 
-/** Matches a webview element whose `data-testid` equals `testId`. */
-export const webByTestId = (testId: string): WebHandle => new WebHandle(testId);
+/** Matches a webview element whose `data-testid` equals `id`. */
+export const webById = (id: string): WebHandle => new WebHandle(id);
