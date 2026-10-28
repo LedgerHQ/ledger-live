@@ -2,6 +2,7 @@
 // left out of the package exports: sharedNodeConfig() skips the check createSharedJestConfig()
 // runs on a package's overrides.
 const {
+  freshReporters,
   jestSonarReporter,
   lcovCoverageReporters,
   lcovRoot,
@@ -12,7 +13,7 @@ const {
 const { deepFreeze } = require("./freeze");
 
 // Tail reporters of every node config. The preset sets `reporters`; a package cannot override them.
-const sharedReporters = [jestSonarReporter, quarantineReporter];
+const sharedReporters = deepFreeze([jestSonarReporter, quarantineReporter]);
 
 // ─── ESM-only dependencies ──────────────────────────────────────────────────
 
@@ -69,7 +70,11 @@ function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], proj
     transform: swcTransform,
     coverageDirectory: "./coverage/",
     coverageReporters: lcovCoverageReporters(projectRoot ?? lcovRoot(overrides.rootDir, "../../")),
-    reporters: ["default", ...(process.env.CI ? ["github-actions"] : []), ...sharedReporters],
+    reporters: freshReporters([
+      "default",
+      ...(process.env.CI ? ["github-actions"] : []),
+      ...sharedReporters,
+    ]),
     setupFilesAfterEnv: [quarantineRetries],
     ...overrides,
   };

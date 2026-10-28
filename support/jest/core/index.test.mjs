@@ -211,6 +211,16 @@ for (const [name, create, depth] of [
   });
 }
 
+for (const [name, create] of dualPresets) {
+  test(`${name}: an unfrozen copy of the frozen sonar reporter, for jest to normalize`, () => {
+    const { jestSonarReporter } = require("../shared");
+    const sonar = create().reporters.find(reporter => reporter[0] === "jest-sonar");
+    assert.deepEqual(sonar, jestSonarReporter);
+    assert.ok(Object.isFrozen(jestSonarReporter[1]));
+    assert.ok(!Object.isFrozen(sonar) && !Object.isFrozen(sonar[1]));
+  });
+}
+
 test("createSharedUiJestConfig: no flow resolver, the lumen transform allowlist only", () => {
   for (const side of ["web", "native"]) {
     const config = project(createSharedUiJestConfig(), side);

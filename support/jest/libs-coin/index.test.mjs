@@ -68,3 +68,25 @@ test("createLibsCoinJestProject: the unit config's project options, every overri
   assert.match(msw.transformIgnorePatterns[0], /@scure/);
   assert.equal("transformIgnorePatterns" in createLibsCoinJestProject({}, { esm: false }), false);
 });
+
+test("the node presets' reporter tables cannot change, and each config gets its own copies", () => {
+  const { createSharedJestConfig, jestSonarReporter, sharedReporters } = require("../shared");
+  const tail = structuredClone(sharedReporters);
+  assert.throws(() => sharedReporters.splice(0), TypeError);
+  assert.throws(() => sharedReporters.push("extra"), TypeError);
+  assert.throws(() => {
+    jestSonarReporter[0] = "other";
+  }, TypeError);
+  assert.throws(() => {
+    jestSonarReporter[1].outputName = "other.xml";
+  }, TypeError);
+  assert.deepEqual(sharedReporters, tail);
+
+  // Jest writes the resolved module path into each reporter tuple it normalizes.
+  for (const config of [createSharedJestConfig(), createLibsCoinJestConfig()]) {
+    assert.deepEqual(config.reporters.slice(-2), tail);
+    const sonar = config.reporters.at(-2);
+    assert.notEqual(sonar, jestSonarReporter);
+    assert.ok(!Object.isFrozen(sonar) && !Object.isFrozen(sonar[1]));
+  }
+});

@@ -12,14 +12,25 @@ const swcTransform = {
   ],
 };
 
-const jestSonarReporter = [
+const jestSonarReporter = deepFreeze([
   "jest-sonar",
   { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-];
+]);
 
 // Bare strings, so jest resolves them from the consumer, which declares the dependency.
 const quarantineReporter = "@ledgerhq/test-quarantine/jest";
 const quarantineRetries = "@ledgerhq/test-quarantine/jest-retries";
+
+/**
+ * Unfrozen copies of reporter entries, for a config's `reporters`: jest's normalization writes the
+ * resolved module path into each reporter tuple it gets.
+ *
+ * @param {import('@jest/types').Config.InitialOptions["reporters"] & unknown[]} reporters
+ * @returns {import('@jest/types').Config.InitialOptions["reporters"]}
+ */
+function freshReporters(reporters) {
+  return structuredClone(reporters);
+}
 
 const repositoryRoot = path.resolve(__dirname, "../../..");
 
@@ -322,12 +333,12 @@ function createDualJestConfig(
     coverageDirectory: "./coverage/",
     // Top level: jest ignores coverageReporters inside a project.
     coverageReporters: lcovCoverageReporters(lcovRoot(overrides.rootDir, depth)),
-    reporters: [
+    reporters: freshReporters([
       "default",
       ...(process.env.CI ? ["github-actions"] : []),
       jestSonarReporter,
       quarantineReporter,
-    ],
+    ]),
     projects: [
       ...(web ? [layerProject(webProject(), web, webOverrides)] : []),
       layerProject(nativeProject(), native, nativeOverrides),
@@ -342,6 +353,7 @@ module.exports = {
   PRESET_KEYS,
   PROJECT_FACTORIES,
   createDualJestConfig,
+  freshReporters,
   jestSonarReporter,
   lcovCoverageReporters,
   lcovRoot,
