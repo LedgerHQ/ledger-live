@@ -16,10 +16,15 @@ const SELECTABLE_DEVICES = [
 type TutorialScreen =
   | "how-to-get-started"
   | "device-how-to"
+  | "import-your-recovery-phrase"
+  | "device-how-to-2"
   | "pin-code"
   | "pin-code-how-to"
   | "new-recovery-phrase"
   | "use-recovery-sheet"
+  | "existing-recovery-phrase"
+  | "recovery-how-to"
+  | "recovery-how-to-2"
   | "recovery-how-to-3"
   | "hide-recovery-phrase"
   | "quiz-success"
@@ -38,6 +43,7 @@ export class OnboardingPage extends AppPage {
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
+  private readonly restoreDeviceOption = this.page.getByTestId("v3-onboarding-restore-device");
   private readonly counterfeitWarningContinueButton = this.page.getByTestId(
     "counterfeit-warning-continue-button",
   );
@@ -54,6 +60,9 @@ export class OnboardingPage extends AppPage {
   private readonly pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
   private readonly pinCodeDrawerNext = this.page.getByTestId("v3-pin-code-drawer");
   private readonly recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
+  private readonly recoveryPhraseLossCheckbox = this.page.getByTestId(
+    "v3-recovery-phrase-loss-checkbox",
+  );
   private readonly recoverySeedDrawerNext = this.page.getByTestId("v3-seed-drawer");
   private readonly hideSeedDrawerNext = this.page.getByTestId("v3-hide-seed-drawer");
   private readonly quizStartButton = this.page.getByTestId("v3-quiz-start-button");
@@ -111,6 +120,11 @@ export class OnboardingPage extends AppPage {
     await this.setupNewDeviceOption.click();
   }
 
+  @step("Choose to restore a device from a recovery phrase")
+  async restoreWithRecoveryPhrase() {
+    await this.restoreDeviceOption.click();
+  }
+
   /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */
   @step("Continue past the counterfeit warning")
   async continuePastCounterfeitWarning() {
@@ -152,6 +166,11 @@ export class OnboardingPage extends AppPage {
   @step("Acknowledge the recovery phrase warning")
   async acceptRecoveryPhrase() {
     await this.recoveryPhraseCheckbox.click();
+  }
+
+  @step("Acknowledge that a lost recovery phrase cannot be recovered")
+  async acceptRecoveryPhraseLoss() {
+    await this.recoveryPhraseLossCheckbox.click();
   }
 
   @step("Continue past the recovery phrase drawer")
@@ -202,6 +221,23 @@ export class OnboardingPage extends AppPage {
     await this.continueRecoverySeedDrawer();
     await this.continueTutorial("hide-recovery-phrase");
     await this.continueHideSeedDrawer();
+  }
+
+  @step("Work through the PIN and existing recovery phrase guides")
+  async completeRestoreTutorialSteps() {
+    await this.continueTutorial("import-your-recovery-phrase");
+    await this.continueTutorial("device-how-to-2");
+
+    await this.acceptPrivatePinCode();
+    await this.continueTutorial("pin-code");
+    await this.continueTutorial("pin-code-how-to");
+    await this.continuePinDrawer();
+
+    await this.acceptRecoveryPhraseLoss();
+    await this.continueTutorial("existing-recovery-phrase");
+    await this.continueTutorial("recovery-how-to");
+    await this.continueTutorial("recovery-how-to-2");
+    await this.continueRecoverySeedDrawer();
   }
 
   @step("Run the genuine check")
