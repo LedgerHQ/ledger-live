@@ -283,3 +283,7 @@ mise run mitmproxy:capture-start  # outside CI it prints an export line: run it 
 pnpm e2e:desktop test:playwright
 mise run mitmproxy:capture-stop
 ```
+
+Addon tests: `python -m pytest .mise/tasks/mitmproxy/firebase_capture_test.py`
+with mitmproxy 12.2.1 installed. CI runs them on every PR that touches this folder
+(`.github/workflows/test-mitmproxy-addons-pr.yml`).
