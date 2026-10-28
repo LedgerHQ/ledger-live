@@ -13,10 +13,10 @@ const {
   isInternalSpecifier,
   isInRepoSpecifier,
   starReexportTargets,
-  stripComments,
 } = require("./rules");
 
-const codes = source => checkBarrel(source).map(v => v.code);
+const barrel = (source, options = {}) => checkBarrel(source, options, "index.ts");
+const codes = source => barrel(source).map(v => v.code);
 
 test("isBarrelFile matches index.* and skips its tests", () => {
   assert.ok(isBarrelFile("domain/entity/contact/src/index.ts"));
@@ -57,7 +57,7 @@ test("a pure barrel produces no violation", () => {
     'export * from "./registry";',
     'export type * from "./types";',
   ].join("\n");
-  assert.deepEqual(checkBarrel(source), []);
+  assert.deepEqual(barrel(source), []);
 });
 
 test("comments and blank lines are ignored", () => {
@@ -68,15 +68,15 @@ test("comments and blank lines are ignored", () => {
     "   comment */",
     'export * from "./schema"; // trailing',
   ].join("\n");
-  assert.deepEqual(checkBarrel(source), []);
+  assert.deepEqual(barrel(source), []);
 });
 
 test("a default re-export is tolerated in both forms", () => {
-  assert.deepEqual(checkBarrel('export { default } from "./useEnv";'), []);
-  assert.deepEqual(checkBarrel('export { featureFlagsReducer as default } from "./data";'), []);
+  assert.deepEqual(barrel('export { default } from "./useEnv";'), []);
+  assert.deepEqual(barrel('export { featureFlagsReducer as default } from "./data";'), []);
   // Real shape of features/platform/env once the hook moves out of the index.
   const source = ['export * from "./useEnv";', 'export { default } from "./useEnv";'].join("\n");
-  assert.deepEqual(checkBarrel(source), []);
+  assert.deepEqual(barrel(source), []);
 });
 
 test("named re-export is a violation — the target file mixes public and private", () => {
@@ -88,7 +88,7 @@ test("named re-export is a violation — the target file mixes public and privat
 
 test("a multi-line named re-export is reported once, at its first line", () => {
   const source = ["export {", "  a,", "  b,", '} from "./x";'].join("\n");
-  const found = checkBarrel(source);
+  const found = barrel(source);
   assert.equal(found.length, 1);
   assert.equal(found[0].code, "not-a-barrel");
   assert.equal(found[0].line, 1);
@@ -124,7 +124,7 @@ test("re-exporting a workspace package is a proxy", () => {
   assert.deepEqual(codes('export * from "@features/flow-contacts-add-contact";'), [
     "cross-package-reexport",
   ]);
-  const found = checkBarrel('export * from "@ledgerhq/live-env";');
+  const found = barrel('export * from "@ledgerhq/live-env";');
   assert.equal(found[0].code, "cross-package-reexport");
   assert.match(found[0].message, /original provider/);
 });
@@ -136,11 +136,11 @@ test("re-exporting a third-party package is reported separately", () => {
 test("allowNonRelative lifts the proxy rule for a sanctioned facade", () => {
   // shared/env wraps the legacy @ledgerhq/live-env behind the repo's only boundary exception.
   const source = 'export * from "@ledgerhq/live-env";';
-  assert.deepEqual(checkBarrel(source, { allowNonRelative: true }), []);
+  assert.deepEqual(barrel(source, { allowNonRelative: true }), []);
   // The exception does not weaken the other rules.
   assert.deepEqual(codes('export { changes } from "@ledgerhq/live-env";'), ["not-a-barrel"]);
   assert.deepEqual(
-    checkBarrel('export * from "./internals";', { allowNonRelative: true }).map(v => v.code),
+    barrel('export * from "./internals";', { allowNonRelative: true }).map(v => v.code),
     ["internals-reexport"],
   );
 });
@@ -151,21 +151,31 @@ test("each offending statement is reported once, with its line", () => {
     'export { a } from "./a";',
     'export { b } from "./b";',
   ].join("\n");
-  const found = checkBarrel(source);
+  const found = barrel(source);
   assert.deepEqual(
     found.map(v => v.line),
     [2, 3],
   );
 });
 
-test("stripComments preserves line numbers", () => {
-  const source = ["/* a", "   b */", 'export * from "./x";'].join("\n");
-  assert.equal(stripComments(source).split("\n").length, 3);
-  assert.equal(checkBarrel(source).length, 0);
+test("a block comment keeps the line numbers of the statements below it", () => {
+  const source = ["/* a", "   b */", 'export * from "./x";', 'export { a } from "./a";'].join("\n");
+  assert.deepEqual(
+    barrel(source).map(v => [v.code, v.line]),
+    [["not-a-barrel", 4]],
+  );
+});
+
+test("an `index.tsx` holding JSX is parsed with JSX", () => {
+  const source = "export const Card = () => <div title=\"export * from 'zod'\" />;";
+  assert.deepEqual(
+    checkBarrel(source, {}, "Card/index.tsx").map(v => [v.code, v.line]),
+    [["not-a-barrel", 1]],
+  );
 });
 
 test("a `//` inside a specifier is not treated as a comment", () => {
-  const found = checkBarrel('export * from "https://example.com/mod";');
+  const found = barrel('export * from "https://example.com/mod";');
   assert.equal(found.length, 1);
   assert.equal(found[0].code, "external-reexport");
 });

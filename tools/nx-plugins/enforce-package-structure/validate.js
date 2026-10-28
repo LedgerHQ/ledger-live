@@ -186,7 +186,7 @@ function checkPackage(
     const relative = toRelative(file);
     if (!Object.hasOwn(fileExceptions, relative)) {
       const violations = isBarrelFile(relative)
-        ? checkBarrel(source, options)
+        ? checkBarrel(source, options, relative)
         : checkReachedModule(source, options, relative);
       for (const violation of violations) {
         found.push({ file: relative, ...violation });

@@ -21,14 +21,6 @@ const BARREL_BASENAME = /^index(?:\.[A-Za-z0-9-]+)*\.[cm]?[jt]sx?$/;
 const TEST_BASENAME = /\.(test|spec)\.[cm]?[jt]sx?$/;
 const SOURCE_EXTENSION = /\.[cm]?[jt]sx?$/;
 
-// `export * from "./x"` and `export type * from "./x"`. Deliberately does not match
-// `export * as ns from "./x"` — namespacing is a form of sorting.
-const STAR_REEXPORT = /^export\s+(?:type\s+)?\*\s+from\s+(['"])([^'"]+)\1\s*;?/;
-
-// `export { default } from "./x"` and `export { X as default } from "./x"`.
-const DEFAULT_REEXPORT =
-  /^export\s+\{\s*(?:default|[A-Za-z_$][\w$]*\s+as\s+default)\s*,?\s*\}\s+from\s+(['"])([^'"]+)\1\s*;?/;
-
 const IN_REPO_SCOPES = [
   "@shared/",
   "@domain/",
@@ -75,132 +67,29 @@ function isInRepoSpecifier(specifier) {
 }
 
 /**
- * Blank out comments while preserving line count and column offsets, so violation line numbers
- * stay accurate. String literals are walked over so a `//` inside a specifier is not mistaken
- * for a comment.
- *
- * @param {string} source
- * @returns {string}
- */
-function stripComments(source) {
-  let out = "";
-  let i = 0;
-  while (i < source.length) {
-    const two = source.slice(i, i + 2);
-    if (two === "//") {
-      while (i < source.length && source[i] !== "\n") {
-        out += " ";
-        i += 1;
-      }
-      continue;
-    }
-    if (two === "/*") {
-      while (i < source.length && source.slice(i, i + 2) !== "*/") {
-        out += source[i] === "\n" ? "\n" : " ";
-        i += 1;
-      }
-      out += "  ";
-      i += 2;
-      continue;
-    }
-    const char = source[i];
-    if (char === '"' || char === "'" || char === "`") {
-      const quote = char;
-      out += char;
-      i += 1;
-      while (i < source.length && source[i] !== quote) {
-        if (source[i] === "\\") {
-          out += source.slice(i, i + 2);
-          i += 2;
-          continue;
-        }
-        out += source[i];
-        i += 1;
-      }
-      out += source[i] ?? "";
-      i += 1;
-      continue;
-    }
-    out += char;
-    i += 1;
-  }
-  return out;
-}
-
-/**
- * Offset just past the end of the statement starting at `start`. Brackets are tracked so a
- * multi-line `export { … } from "./x";` counts as one statement rather than one per line, and
- * quotes are walked over so a `;` inside a specifier does not end it early.
- *
- * @param {string} code comment-stripped source
- * @param {number} start
- * @returns {number}
- */
-function endOfStatement(code, start) {
-  let depth = 0;
-  let i = start;
-  while (i < code.length) {
-    const char = code[i];
-    if (char === '"' || char === "'" || char === "`") {
-      i += 1;
-      while (i < code.length && code[i] !== char) {
-        i += code[i] === "\\" ? 2 : 1;
-      }
-      i += 1;
-      continue;
-    }
-    if (char === "{" || char === "(" || char === "[") depth += 1;
-    else if (char === "}" || char === ")" || char === "]") depth -= 1;
-    else if (depth <= 0 && char === ";") return i + 1;
-    else if (depth <= 0 && char === "\n") return i + 1;
-    i += 1;
-  }
-  return code.length;
-}
-
-/**
  * Report every statement in a barrel that is not an allowed re-export, plus every allowed
- * re-export that points somewhere it must not.
+ * re-export that points somewhere it must not. `export * as ns` is not allowed: namespacing is a
+ * form of sorting.
  *
  * @param {string} source raw file contents
- * @param {{ allowNonRelative?: boolean }} [options]
+ * @param {{ allowNonRelative?: boolean }} options
+ * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
  * @returns {Violation[]}
  */
-function checkBarrel(source, options = {}) {
-  const code = stripComments(source);
+function checkBarrel(source, options, file) {
   const violations = [];
-  let cursor = 0;
 
-  const lineAt = offset => code.slice(0, offset).split("\n").length;
-
-  while (cursor < code.length) {
-    const whitespace = /^\s+/.exec(code.slice(cursor));
-    if (whitespace) {
-      cursor += whitespace[0].length;
-      continue;
-    }
-
-    const rest = code.slice(cursor);
-    const match = STAR_REEXPORT.exec(rest) ?? DEFAULT_REEXPORT.exec(rest);
-
-    if (!match) {
+  for (const { line, kind, isDefault, specifier, text } of statementsOf(source, file)) {
+    const allowed = kind === "star" || (kind === "named" && isDefault);
+    if (!allowed || specifier === undefined) {
       violations.push({
-        line: lineAt(cursor),
+        line,
         code: "not-a-barrel",
         message:
           'a barrel may only contain `export * from "./x"` and an optional default re-export',
-        text: source.split("\n")[lineAt(cursor) - 1]?.trim() ?? "",
+        text,
       });
-      // Consume the whole statement so one bad statement yields exactly one violation.
-      cursor = endOfStatement(code, cursor);
-      continue;
-    }
-
-    const specifier = match[2];
-    const line = lineAt(cursor);
-    const text = source.split("\n")[line - 1]?.trim() ?? "";
-
-    if (isInternalSpecifier(specifier)) {
+    } else if (isInternalSpecifier(specifier)) {
       violations.push({
         line,
         code: "internals-reexport",
@@ -218,8 +107,6 @@ function checkBarrel(source, options = {}) {
         text,
       });
     }
-
-    cursor += match[0].length;
   }
 
   return violations;
@@ -452,5 +339,4 @@ module.exports = {
   isInternalSpecifier,
   isInRepoSpecifier,
   starReexportTargets,
-  stripComments,
 };
