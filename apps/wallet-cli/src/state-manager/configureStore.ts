@@ -6,7 +6,6 @@ import { ledgerClientVersion } from "../shared/client-version";
 import { createWalletCliAuthMiddleware } from "./middleware/auth";
 
 const services = defineApiServices([
-  // Same definition as live-common's swap execute/status paths, read on every request.
   swapService(() => ({ getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE") })),
 ]);
 
