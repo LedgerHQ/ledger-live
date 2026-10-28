@@ -65,10 +65,11 @@ for _ in $(seq 1 15); do
 done
 [ "${READY}" = "true" ] || proxy_off "mitmdump did not listen within 15 seconds"
 
-# Any HTTP status proves the proxy decrypts this host with its own CA and reaches Firebase.
+# A status below 500 proves the proxy decrypts this host with its own CA and reaches Firebase.
+# mitmproxy itself answers 502 when it can't reach the upstream, so 5xx doesn't count.
 STATUS=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 \
 	--proxy "http://127.0.0.1:${usage_port}" --cacert "${CERT}" "https://${FIREBASE_HOST}/" || true)
-[[ "${STATUS}" =~ ^[1-5][0-9][0-9]$ ]] || proxy_off "health check through the proxy failed (status '${STATUS}')"
+[[ "${STATUS}" =~ ^[1-4][0-9][0-9]$ ]] || proxy_off "health check through the proxy failed (status '${STATUS}')"
 
 SPKI=$(openssl x509 -in "${CERT}" -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64)
 [ -n "${SPKI}" ] || proxy_off "could not hash the mitmproxy CA public key"
