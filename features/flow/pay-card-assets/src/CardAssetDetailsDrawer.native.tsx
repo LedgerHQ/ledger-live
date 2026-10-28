@@ -26,7 +26,7 @@ const LOADING_FORMATTER: NonNullable<CardAssetsViewModel["formatBalance"]> = () 
   currencyPosition: "start",
 });
 
-type CardAssetDetailsDrawerProps = Readonly<{
+export type CardAssetDetailsDrawerProps = Readonly<{
   asset: CardAssetRow;
   transactions?: readonly CardTransactionItem[];
   copy: CardAssetDialogCopy;
