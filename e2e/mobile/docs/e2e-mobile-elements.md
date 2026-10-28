@@ -2,7 +2,7 @@
 
 A page object declares each element once as a typed handle, then acts on it. Every action waits for the element first, so a forgotten wait cannot cause a flake.
 
-Code: [`helpers/elements/native.ts`](../helpers/elements/native.ts), [`helpers/elements/web.ts`](../helpers/elements/web.ts). Reference page object: [`newSendFlow.page.ts`](../page/trade/newSendFlow.page.ts).
+Code: [`helpers/elements/native.ts`](../helpers/elements/native.ts), [`helpers/elements/web.ts`](../helpers/elements/web.ts). Reference page objects: [`newSendFlow.page.ts`](../page/trade/newSendFlow.page.ts) (native), [`earnV2Dashboard.page.ts`](../page/trade/earnV2Dashboard.page.ts) (webview and native).
 
 ## Declare
 
@@ -20,6 +20,7 @@ private readonly keyboardKey = (char: string) => byId(`keyboard-key-${char}`);
 | `byId(id)` | React Native `testID` |
 | `byText(text)` | visible text |
 | `webById(id)` | webview `data-testid` equal to `id` (the `*WebTestId` globals match a prefix, so migrate with the full id) |
+| `webByXPath(xpath)` | webview XPath, for an element without a usable `data-testid` |
 
 ## Act
 
@@ -28,11 +29,14 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 | Method | Does |
 |---|---|
 | `waitVisible()` | waits for the element |
+| `waitGone()` | waits until the element is hidden (native) or no longer exists (webview) |
 | `tap()` | waits, then taps |
 | `replaceText(text)` | waits, then replaces the field content |
 | `getText()` | waits, then returns the text |
 
-Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `waitGone()`, `clearText()` and `getAttributes()`.
+Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()` and `getAttributes()`.
+
+Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals.
 
 ## Default-wait contract
 
