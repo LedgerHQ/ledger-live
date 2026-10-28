@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 4.26.0-next.2
+
+### Minor Changes
+
+- [#24025](https://github.com/LedgerHQ/ledger-live/pull/24025) [`eaef2ce`](https://github.com/LedgerHQ/ledger-live/commit/eaef2ce67a4918615003023b028c43039a3d9f09) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add a ledgerlive://contacts deeplink that opens Contacts when lwdContacts is enabled
+
 ## 4.26.0-next.1
 
 ### Minor Changes
