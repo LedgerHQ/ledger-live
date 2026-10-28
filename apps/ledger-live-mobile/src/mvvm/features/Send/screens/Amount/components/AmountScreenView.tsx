@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, type ReactNode } from "react";
 import { ScrollView, View, type LayoutChangeEvent } from "react-native";
 import { Button, Divider } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
@@ -22,9 +22,10 @@ function useMeasuredHeight() {
 
 type AmountScreenViewProps = Readonly<{
   viewModel: Extract<AmountScreenViewModel, { ready: true }>;
+  feesFooterRow?: ReactNode;
 }>;
 
-export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
+export function AmountScreenView({ viewModel, feesFooterRow }: AmountScreenViewProps) {
   const { t } = useTranslation();
   const styles = useStyleSheet(
     theme => ({
@@ -100,6 +101,7 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
         <View style={styles.feesBlock}>
           <View onLayout={onFeesLayout}>
             <NetworkFeesRow viewModel={viewModel.networkFees} sponsored={viewModel.sponsoredFee} />
+            {feesFooterRow}
             <Divider />
           </View>
 
