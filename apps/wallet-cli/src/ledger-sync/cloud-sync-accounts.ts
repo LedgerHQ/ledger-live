@@ -144,7 +144,11 @@ type ImportSupport = {
 };
 
 function sorted(values: Iterable<string>): string[] {
-  return [...values].sort();
+  return [...values].sort((a, b) => {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  });
 }
 
 export function supportFingerprint({
