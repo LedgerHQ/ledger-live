@@ -1175,6 +1175,9 @@ importers:
       '@features/flow-account-detail-hero':
         specifier: workspace:^
         version: link:../../features/flow/account-detail-hero
+      '@features/flow-account-detail-notices':
+        specifier: workspace:^
+        version: link:../../features/flow/account-detail-notices
       '@features/flow-account-detail-settings':
         specifier: workspace:^
         version: link:../../features/flow/account-detail-settings
