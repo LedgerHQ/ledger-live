@@ -11,6 +11,7 @@
 .github/workflows/generate-e2e-userdata.yml             @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-ui-e2e-only-desktop.yml          @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/platform  @ledgerhq/qaa
+/.mise/tasks/mitmproxy/                                 @ledgerhq/platform  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/platform  @ledgerhq/wallet-xp
 /tools/                                                 @ledgerhq/platform
 
