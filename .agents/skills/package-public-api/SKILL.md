@@ -195,4 +195,5 @@ Refuse and point here when you see:
 - an `import`, a declaration or a local `export default` in any `index.*`
 - `export * as ns from` — namespacing is still sorting
 - a barrel re-exporting `internals`, or re-exporting another workspace package
-- a new `index.*` below `src/` that no entry re-exports, or that a barrel below an entry re-exports
+- a new `index.*` below `src/` that no entry re-exports, or that sits more than one level below an
+  entry through a chain a barrel breaks (see "Where a barrel may sit")
