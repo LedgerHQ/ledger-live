@@ -1,4 +1,5 @@
 const { presetFactory } = require("../core");
+const { deepFreeze } = require("../internals/freeze");
 const { NODE_OPTIONS, sharedNodeConfig, withEsmDeps } = require("../internals/node");
 
 // Integration suites hit live networks; the unit config leaves them to the integration config.
@@ -10,20 +11,20 @@ const integrationTests = ".*\\.(integ|integration)\\.test\\.[tj]s";
  *
  *   collectCoverageFrom: [...libsCoinDefaults.collectCoverageFrom, "!src/datasets/**"],
  */
-const libsCoinDefaults = Object.freeze({
-  collectCoverageFrom: Object.freeze([
+const libsCoinDefaults = deepFreeze({
+  collectCoverageFrom: [
     "src/**/*.ts",
     "!src/**/*.test.ts",
     "!src/**/*.spec.ts",
     "!src/test/**/*.ts",
     "!src/__tests__/**/*.ts",
-  ]),
-  setupFilesAfterEnv: Object.freeze([
+  ],
+  setupFilesAfterEnv: [
     "@ledgerhq/wallet-framework-test-setup",
     "@ledgerhq/disable-network-setup",
     "@ledgerhq/test-quarantine/jest-retries",
-  ]),
-  testPathIgnorePatterns: Object.freeze(["lib/", "lib-es/", "node_modules/", integrationTests]),
+  ],
+  testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/", integrationTests],
 });
 
 /**

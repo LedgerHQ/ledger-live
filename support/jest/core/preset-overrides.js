@@ -2,6 +2,8 @@
 // repository root, then by the factory their config calls. A factory finds the entry from the
 // `rootDir` it gets. This list only shrinks: a listed key the config no longer overrides throws.
 
+const { deepFreeze } = require("../internals/freeze");
+
 /** @type {Record<string, { reason: string, overrides: Record<string, string[]> }>} */
 const PRESET_OVERRIDES = {
   "shared/i18n": {
@@ -24,15 +26,5 @@ const PRESET_OVERRIDES = {
     },
   },
 };
-
-/**
- * @template T
- * @param {T} value
- * @returns {T} the value, frozen with everything it holds
- */
-function deepFreeze(value) {
-  if (value && typeof value === "object") Object.values(value).forEach(deepFreeze);
-  return Object.freeze(value);
-}
 
 module.exports = deepFreeze(PRESET_OVERRIDES);

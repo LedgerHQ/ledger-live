@@ -11,19 +11,18 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const PRESET_OVERRIDES = require("./preset-overrides");
-const { ALLOWLIST_FIX, ESM_FIX, PRESET_KEYS } = require(".");
-const {
-  createSharedJestConfig,
-  createSharedUiJestConfig,
-  createSharedUiNativeJestConfig,
-} = require("../shared");
-const { createFlowJestConfig, createFlowNativeJestConfig } = require("../features-flow");
+const { ALLOWLIST_FIX, ESM_FIX, PRESET_KEYS, presetFactories } = require(".");
+// Loading the presets registers their factories.
+const PRESETS = ["shared", "features-flow", "libs-coin", "devtools"].map(name => [
+  name,
+  require(`../${name}`),
+]);
+const { createSharedJestConfig } = require("../shared");
 const {
   createLibsCoinJestConfig,
   createLibsCoinIntegJestConfig,
   createLibsCoinJestProject,
 } = require("../libs-coin");
-const { createWebJestConfig, createNativeJestConfig } = require("../devtools");
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 /**
@@ -34,71 +33,59 @@ function at(pkg) {
   return path.join(repository, pkg);
 }
 
-const flat = [
-  ["createSharedJestConfig", createSharedJestConfig],
-  ["createSharedUiNativeJestConfig", createSharedUiNativeJestConfig],
-  ["createLibsCoinJestConfig", createLibsCoinJestConfig],
-  ["createLibsCoinIntegJestConfig", createLibsCoinIntegJestConfig],
-  ["createLibsCoinJestProject", createLibsCoinJestProject],
-  ["createWebJestConfig", createWebJestConfig],
-  ["createNativeJestConfig", createNativeJestConfig],
-];
-const dual = [
-  ["createSharedUiJestConfig", createSharedUiJestConfig],
-  ["createFlowJestConfig", createFlowJestConfig],
-  ["createFlowNativeJestConfig", createFlowNativeJestConfig],
-];
+const FACTORIES = presetFactories();
+// A value each option accepts, for the factories that read it.
+const OPTION_SAMPLES = { esm: true, extraEsmDeps: ["@scure"], projectRoot: "../../../" };
 
-for (const [name, create] of flat) {
-  test(`${name}: the keys a package owns pass, a key the preset owns throws with its fix`, () => {
-    assert.doesNotThrow(() => create({ rootDir: at("shared/thing"), testMatch: ["**/*.spec.ts"] }));
-    assert.throws(
-      () => create({ transformIgnorePatterns: ["node_modules/(?!x)"] }),
-      new RegExp(`^Error: ${name}\\(\\): transformIgnorePatterns belongs to the preset: `),
-    );
-    assert.throws(() => create({ reporters: ["default"] }), /reporters belongs to the preset/);
-  });
-}
-
-// A transform override's fix names extraEsmDeps only where the factory reads that option, and
-// the transform allowlist elsewhere.
-const TRANSFORM_FIXES = {
-  createSharedJestConfig: ESM_FIX,
-  createSharedUiNativeJestConfig: ALLOWLIST_FIX,
-  createLibsCoinJestConfig: ESM_FIX,
-  createLibsCoinIntegJestConfig: ESM_FIX,
-  createLibsCoinJestProject: ESM_FIX,
-  createWebJestConfig: ALLOWLIST_FIX,
-  createNativeJestConfig: ALLOWLIST_FIX,
-  createSharedUiJestConfig: ALLOWLIST_FIX,
-  createFlowJestConfig: ALLOWLIST_FIX,
-  createFlowNativeJestConfig: ALLOWLIST_FIX,
-};
-
-for (const [name, create, overrides, label] of [
-  ...flat.map(([n, c]) => [n, c, { transform: {} }, "transform"]),
-  ...dual.map(([n, c]) => [
-    n,
-    c,
-    { nativeOverrides: { transformIgnorePatterns: [] } },
-    "nativeOverrides.transformIgnorePatterns",
-  ]),
-]) {
-  test(`${name}: a transform override names the fix the factory takes`, () => {
-    const message = `${name}(): ${label} belongs to the preset: ${TRANSFORM_FIXES[name]}.`;
-    assert.throws(() => create(overrides), { message: new RegExp(`^${escape(message)}`) });
-  });
-}
-
-test("the extraEsmDeps fix is named only by the factories that read the option", () => {
-  for (const [name, create] of [...flat, ...dual]) {
-    if (TRANSFORM_FIXES[name] === ESM_FIX) {
-      assert.doesNotThrow(() => create({}, { extraEsmDeps: ["x"] }), name);
-    } else {
-      assert.throws(() => create({}, { extraEsmDeps: ["x"] }), /does not read the option/, name);
+test("every factory a preset exports is built by presetFactory", () => {
+  const registered = new Map(FACTORIES.map(({ name, factory }) => [name, factory]));
+  for (const [preset, exports] of PRESETS) {
+    for (const [name, value] of Object.entries(exports)) {
+      if (/^create\w*(Config|Project)$/.test(name)) {
+        assert.equal(
+          registered.get(name),
+          value,
+          `${preset}: ${name} is not built by presetFactory`,
+        );
+      }
     }
   }
 });
+
+for (const { name, factory: create, options } of FACTORIES) {
+  test(`${name}: the keys a package owns pass, a key the preset owns throws with its fix`, () => {
+    assert.doesNotThrow(() => create({ rootDir: at("shared/thing"), testMatch: ["**/*.spec.ts"] }));
+    assert.throws(() => create({ reporters: ["default"] }), {
+      message: new RegExp(`^${escape(`${name}(): reporters belongs to the preset: `)}`),
+    });
+    assert.throws(() => create({ nativeOverrides: { testEnvironment: "jsdom" } }), {
+      message: new RegExp(`^${escape(`${name}(): nativeOverrides.testEnvironment belongs`)}`),
+    });
+  });
+
+  // The fix for a transform override names extraEsmDeps where the factory reads that option, the
+  // preset's transform allowlist elsewhere.
+  test(`${name}: a transform override names a fix the factory takes`, () => {
+    const fix = options.includes("extraEsmDeps") ? ESM_FIX : ALLOWLIST_FIX;
+    for (const [overrides, label] of [
+      [{ transform: {} }, "transform"],
+      [{ webOverrides: { transformIgnorePatterns: [] } }, "webOverrides.transformIgnorePatterns"],
+    ]) {
+      const message = `${name}(): ${label} belongs to the preset: ${fix}.`;
+      assert.throws(() => create(overrides), { message: new RegExp(`^${escape(message)}`) });
+    }
+  });
+
+  test(`${name}: it takes the options it reads, and throws on any other`, () => {
+    for (const option of options) {
+      assert.doesNotThrow(() => create({}, { [option]: OPTION_SAMPLES[option] }), option);
+    }
+    const reads = options.length ? options.map(option => `\`${option}\``).join(", ") : "none";
+    assert.throws(() => create({}, { network: true }), {
+      message: `${name}(): it does not read the option "network"; its options: ${reads}.`,
+    });
+  });
+}
 
 /**
  * @param {string} text
@@ -106,22 +93,6 @@ test("the extraEsmDeps fix is named only by the factories that read the option",
  */
 function escape(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-for (const [name, create] of dual) {
-  test(`${name}: a key the preset owns throws at the top level and in a project`, () => {
-    assert.doesNotThrow(() =>
-      create({ passWithNoTests: true, nativeOverrides: { moduleNameMapper: { "^x$": "/x.js" } } }),
-    );
-    assert.throws(
-      () => create({ nativeOverrides: { testEnvironment: "jsdom" } }),
-      new RegExp(`^Error: ${name}\\(\\): nativeOverrides\\.testEnvironment belongs to the preset`),
-    );
-    assert.throws(
-      () => create({ globals: {} }),
-      new RegExp(`^Error: ${name}\\(\\): globals belongs`),
-    );
-  });
 }
 
 test("a key preset-overrides.js lists for the package and the factory passes through", () => {
@@ -159,7 +130,7 @@ test("a key preset-overrides.js lists that the overrides no longer set throws", 
 });
 
 test("every entry of preset-overrides.js names a package, a factory, a reason and preset keys", () => {
-  const factories = new Set([...flat, ...dual].map(([name]) => name));
+  const factories = new Set(FACTORIES.map(({ name }) => name));
   for (const [pkg, { reason, overrides }] of Object.entries(PRESET_OVERRIDES)) {
     assert.ok(fs.existsSync(path.join(at(pkg), "package.json")), `${pkg} is not a package`);
     assert.ok(reason, `${pkg} has no reason`);
@@ -170,25 +141,6 @@ test("every entry of preset-overrides.js names a package, a factory, a reason an
     }
   }
 });
-
-// The option each factory accepts in these tests; a factory missing here takes none.
-const ACCEPTED = {
-  createSharedJestConfig: { esm: true },
-  createLibsCoinJestConfig: { projectRoot: "../../../" },
-  createLibsCoinIntegJestConfig: { extraEsmDeps: ["@scure"] },
-  createLibsCoinJestProject: { esm: false },
-};
-
-for (const [name, create] of [...flat, ...dual]) {
-  test(`${name}: an option it does not read throws, naming the ones it reads`, () => {
-    if (ACCEPTED[name]) assert.doesNotThrow(() => create({}, ACCEPTED[name]));
-    assert.doesNotThrow(() => create({}, {}));
-    assert.throws(
-      () => create({}, { network: true }),
-      new RegExp(`^Error: ${name}\\(\\): it does not read the option "network"; its options: `),
-    );
-  });
-}
 
 test("createLibsCoinJestProject reads no projectRoot: jest takes the lcov root from the top level", () => {
   assert.throws(

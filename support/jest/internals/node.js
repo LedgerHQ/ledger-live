@@ -9,6 +9,7 @@ const {
   quarantineRetries,
   swcTransform,
 } = require("../core");
+const { deepFreeze } = require("./freeze");
 
 /**
  * Tail reporters shared by every config. Exported so callers that need to insert an extra
@@ -81,6 +82,6 @@ function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], proj
 }
 
 // The options sharedNodeConfig() reads, and the node factories built on it.
-const NODE_OPTIONS = Object.freeze(["esm", "extraEsmDeps", "projectRoot"]);
+const NODE_OPTIONS = deepFreeze(["esm", "extraEsmDeps", "projectRoot"]);
 
 module.exports = { NODE_OPTIONS, sharedNodeConfig, sharedReporters, withEsmDeps };

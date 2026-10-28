@@ -2,6 +2,7 @@
 // native projects that `shared` and `features-flow` build on. A layer adds only its own mocks, test
 // matching, resolver and transform allowlist.
 const path = require("path");
+const { deepFreeze } = require("../internals/freeze");
 const PRESET_OVERRIDES = require("./preset-overrides");
 
 const swcTransform = {
@@ -151,7 +152,7 @@ function layerProject(project, layer, overrides) {
 
 // Keys a preset sets for every package of its layer, with what a package uses instead.
 const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
-const PRESET_KEYS = Object.freeze({
+const PRESET_KEYS = deepFreeze({
   transform: ESM_FIX,
   transformIgnorePatterns: ESM_FIX,
   testEnvironment: "pick the preset of the environment the tests need",
@@ -222,6 +223,9 @@ function checkOptions(factory, options, accepted) {
   }
 }
 
+/** @type {Map<string, { factory: Function, options: readonly string[] }>} */
+const PRESET_FACTORIES = new Map();
+
 /**
  * An exported preset factory: it checks the options and the overrides it gets, then returns what
  * `build` makes of them. Every preset factory is built here, so none can skip the checks.
@@ -233,7 +237,7 @@ function checkOptions(factory, options, accepted) {
  * @returns {Build} a factory with the signature of `build`
  */
 function presetFactory(name, options, build) {
-  return /** @type {Build} */ (
+  const factory = /** @type {Build} */ (
     (overrides = {}, presetOptions) => {
       checkOptions(name, presetOptions, options);
       const { webOverrides, nativeOverrides, ...topLevel } = overrides;
@@ -246,6 +250,18 @@ function presetFactory(name, options, build) {
       return build(overrides, presetOptions);
     }
   );
+  PRESET_FACTORIES.set(name, { factory, options: deepFreeze([...options]) });
+  return factory;
+}
+
+/**
+ * The factories presetFactory() built so far, with the options each reads: the presets register
+ * theirs when they load.
+ *
+ * @returns {{ name: string, factory: Function, options: readonly string[] }[]}
+ */
+function presetFactories() {
+  return [...PRESET_FACTORIES].map(([name, entry]) => ({ name, ...entry }));
 }
 
 /**
@@ -293,6 +309,7 @@ module.exports = {
   lcovRoot,
   nativeMocks,
   platformExtensions,
+  presetFactories,
   presetFactory,
   quarantineReporter,
   quarantineRetries,
