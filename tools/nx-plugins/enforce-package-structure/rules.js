@@ -325,9 +325,17 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
   return violations;
 }
 
+// What breaks a pure `export *` chain down the folder tree, worded once for the violation and the
+// `nested-barrel` fix.
+const CHAIN_BREAKS = {
+  named: "has a named export",
+  namespace: "renames with `export * as`",
+  code: "holds code",
+  outside: "re-exports a path outside its folder",
+};
+
 /**
- * Why a module cannot sit in a pure `export *` chain down the folder tree, or undefined when it
- * holds `export * from "./x"` lines alone, each naming a path inside its own folder.
+ * The first statement of a module that breaks a pure `export *` chain, see CHAIN_BREAKS.
  *
  * @param {string} source raw file contents
  * @param {string} [file]
@@ -350,15 +358,23 @@ function chainBreak(source, file = "module.tsx") {
  * @returns {string | undefined}
  */
 function chainBreakReason(statement) {
-  if (!ts.isExportDeclaration(statement)) return "holds code";
+  if (!ts.isExportDeclaration(statement)) return CHAIN_BREAKS.code;
   const clause = statement.exportClause;
-  if (clause && ts.isNamespaceExport(clause)) return "renames with `export * as`";
-  if (clause || !statement.moduleSpecifier) return "has a named export";
+  if (clause && ts.isNamespaceExport(clause)) return CHAIN_BREAKS.namespace;
+  if (clause || !statement.moduleSpecifier) return CHAIN_BREAKS.named;
   const specifier = ts.isStringLiteral(statement.moduleSpecifier)
     ? statement.moduleSpecifier.text
     : "";
   const inside = specifier.startsWith("./") && !path.posix.normalize(specifier).startsWith("..");
-  return inside ? undefined : `re-exports \`${specifier}\`, outside its folder`;
+  return inside ? undefined : CHAIN_BREAKS.outside;
+}
+
+/**
+ * @param {string[]} items
+ * @returns {string} "a, b or c"
+ */
+function listOf(items) {
+  return `${items.slice(0, -1).join(", ")} or ${items[items.length - 1]}`;
 }
 
 // Where an `index.*` under src/ may sit: as an entry (src/index.* or a package.json#exports
@@ -378,8 +394,8 @@ const BARREL_LOCATION = {
       "that is not pure `export *` down the folders",
     fix:
       'make every module from below the entry to this barrel hold only `export * from "./x"` ' +
-      "lines naming paths inside its own folder (a named export, an `export * as`, code or a " +
-      "`../` path breaks the chain), or re-export the files from a barrel nearer the entry",
+      `lines naming paths inside its own folder (a module that ${listOf(Object.values(CHAIN_BREAKS))} ` +
+      "breaks the chain), or re-export the files from a barrel nearer the entry",
   },
 };
 
@@ -405,6 +421,7 @@ function checkBarrelLocation(projectRoot, file, depth, breaker) {
 
 module.exports = {
   BARREL_LOCATION,
+  CHAIN_BREAKS,
   chainBreak,
   checkBarrel,
   checkBarrelLocation,

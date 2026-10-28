@@ -219,14 +219,19 @@ function starReexportedModules(file, source) {
  */
 function barrelReach(entries) {
   const entrySet = new Set(entries.flatMap(indexVariants));
+  /** @type {Map<string, { line: number, reason: string } | undefined>} */
   const breaks = new Map();
-  const breakOf = file => {
+  /**
+   * @param {string} file absolute path
+   * @returns {{ line: number, reason: string } | undefined}
+   */
+  function breakOf(file) {
     if (!breaks.has(file)) {
       const source = readSource(file);
       breaks.set(file, source === undefined ? undefined : chainBreak(source, file));
     }
     return breaks.get(file);
-  };
+  }
 
   const depths = new Map([...entrySet].map(file => [file, 0]));
   const queue = [...entrySet];
@@ -341,7 +346,13 @@ function checkPackage(
     }
 
     const sourceRoot = path.join(packageDir, "src");
-    const toRelative = file => path.relative(workspaceRoot, file).split(path.sep).join("/");
+    /**
+     * @param {string} file absolute path
+     * @returns {string} posix-style path from the repo root
+     */
+    function toRelative(file) {
+      return path.relative(workspaceRoot, file).split(path.sep).join("/");
+    }
     const reach = barrelReach([
       ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
       ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),

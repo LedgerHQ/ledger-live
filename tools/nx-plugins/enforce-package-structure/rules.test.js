@@ -3,6 +3,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
+  BARREL_LOCATION,
+  CHAIN_BREAKS,
   chainBreak,
   checkBarrel,
   checkBarrelLocation,
@@ -367,16 +369,16 @@ test("chainBreak allows `export *` lines down the folder, and comments", () => {
 
 test("chainBreak names a named export, a rename, code and a path outside the folder", () => {
   for (const [statement, reason] of [
-    ['export { a } from "./a";', "has a named export"],
-    ['export { default } from "./a";', "has a named export"],
-    ["export { a };", "has a named export"],
-    ['export * as ns from "./a";', "renames with `export * as`"],
-    ["export const a = 1;", "holds code"],
-    ['import { a } from "./a";', "holds code"],
-    ["export default 1;", "holds code"],
-    ['export * from "../shared";', "re-exports `../shared`, outside its folder"],
-    ['export * from "./a/../../b";', "re-exports `./a/../../b`, outside its folder"],
-    ['export * from "@shared/thing";', "re-exports `@shared/thing`, outside its folder"],
+    ['export { a } from "./a";', CHAIN_BREAKS.named],
+    ['export { default } from "./a";', CHAIN_BREAKS.named],
+    ["export { a };", CHAIN_BREAKS.named],
+    ['export * as ns from "./a";', CHAIN_BREAKS.namespace],
+    ["export const a = 1;", CHAIN_BREAKS.code],
+    ['import { a } from "./a";', CHAIN_BREAKS.code],
+    ["export default 1;", CHAIN_BREAKS.code],
+    ['export * from "../shared";', CHAIN_BREAKS.outside],
+    ['export * from "./a/../../b";', CHAIN_BREAKS.outside],
+    ['export * from "@shared/thing";', CHAIN_BREAKS.outside],
   ]) {
     assert.deepEqual(
       chainBreak(['export * from "./ok";', statement].join("\n")),
@@ -408,7 +410,7 @@ test("checkBarrelLocation allows a deeper barrel no module breaks the chain to",
 });
 
 test("checkBarrelLocation reports an orphan and a nested barrel, with the package root", () => {
-  const breaker = { file: "shared/thing/src/hooks/index.ts", line: 2, reason: "holds code" };
+  const breaker = { file: "shared/thing/src/hooks/index.ts", line: 2, reason: CHAIN_BREAKS.code };
   for (const [depth, code] of [
     [undefined, "orphan-barrel"],
     [2, "nested-barrel"],
@@ -431,7 +433,16 @@ test("a nested barrel names the module that breaks its chain", () => {
   const [found] = checkBarrelLocation("shared/thing", "shared/thing/src/a/b/index.ts", 2, {
     file: "shared/thing/src/a/index.ts",
     line: 3,
-    reason: "has a named export",
+    reason: CHAIN_BREAKS.named,
   });
-  assert.match(found.message, /\(`shared\/thing\/src\/a\/index\.ts` line 3 has a named export\)/);
+  assert.ok(
+    found.message.includes(`(\`shared/thing/src/a/index.ts\` line 3 ${CHAIN_BREAKS.named})`),
+    found.message,
+  );
+});
+
+test("the nested-barrel fix names every chain break", () => {
+  for (const reason of Object.values(CHAIN_BREAKS)) {
+    assert.ok(BARREL_LOCATION["nested-barrel"].fix.includes(reason), reason);
+  }
 });
