@@ -1,3 +1,4 @@
+// Break build cache 1
 // Native cache invalidation: 2026-01-27
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
@@ -131,7 +132,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.100.1"
+        versionName "4.25.0"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
