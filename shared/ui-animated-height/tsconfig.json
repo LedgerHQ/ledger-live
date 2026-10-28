@@ -1,0 +1,6 @@
+{
+  "extends": "@support/tsconfig/client-react",
+  "compilerOptions": {
+    "types": ["jest", "node", "@testing-library/jest-dom"]
+  }
+}

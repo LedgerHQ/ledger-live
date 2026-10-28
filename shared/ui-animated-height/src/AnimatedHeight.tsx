@@ -7,7 +7,6 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import { cn } from "LLD/utils/cn";
 import {
   isAnimatedHeightCapped,
   isStackedHeightTarget,
@@ -23,7 +22,8 @@ export function useAnimatedHeightCapped(): boolean {
 }
 
 type AnimatedHeightProps = Readonly<{
-  header: ReactNode;
+  /** Rendered above the content, never scrolled with it. */
+  header?: ReactNode;
   children: ReactNode;
   /** Transition duration in ms. Defaults to 300. */
   duration?: number;
@@ -112,8 +112,13 @@ export function AnimatedHeight({ header, children, duration = 300 }: AnimatedHei
           transition: `height ${duration}ms ease`,
         }}
       >
-        <div ref={contentRef} className={cn("flex w-full min-h-0 flex-col", isCapped && "h-full")}>
-          <div className="shrink-0">{header}</div>
+        <div
+          ref={contentRef}
+          className={
+            isCapped ? "flex h-full min-h-0 w-full flex-col" : "flex min-h-0 w-full flex-col"
+          }
+        >
+          {header === undefined ? null : <div className="shrink-0">{header}</div>}
           {children}
         </div>
       </div>
