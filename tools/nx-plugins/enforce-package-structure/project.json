@@ -8,6 +8,7 @@
       "cache": true,
       "inputs": [
         "{workspaceRoot}/tools/nx-plugins/enforce-package-structure/**/*",
+        "{workspaceRoot}/.agents/skills/package-public-api/SKILL.md",
         "{workspaceRoot}/domain/**/package.json",
         "{workspaceRoot}/domain/**/*.ts",
         "{workspaceRoot}/domain/**/*.tsx",

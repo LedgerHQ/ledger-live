@@ -328,9 +328,10 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
 }
 
 // What breaks a pure `export *` chain down the folder tree, worded once for the violation and the
-// `nested-barrel` fix.
+// `nested-barrel` fix. Stricter than checkBarrel: the default re-export a barrel may hold still
+// breaks a chain.
 const CHAIN_BREAKS = {
-  named: "has a named export",
+  named: "has a named export or a default re-export",
   namespace: "renames with `export * as`",
   code: "holds code",
   outside: "re-exports a path outside its folder",
