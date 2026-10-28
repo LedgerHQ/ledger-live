@@ -76,10 +76,9 @@ function unitJestConfig(overrides, options) {
 }
 
 /**
- * One entry of the `projects` of a coin module's unit config: jest does not pass the top-level
- * options of a config down to its projects, so each project starts from the unit defaults here
- * (node, transform, ESM dependencies, test matching, setup files, ignored paths). Every key of
- * `overrides` replaces the preset's.
+ * One entry of the `projects` of a coin module's unit config, which starts from the unit defaults
+ * (node, transform, ESM dependencies, test matching, setup files, ignored paths); why a project
+ * needs them: support/jest/README.md. Every key of `overrides` replaces the preset's.
  *
  *   projects: [
  *     createLibsCoinJestProject({ displayName: "unit", testPathIgnorePatterns: [...] }),

@@ -229,8 +229,8 @@ const PRESET_FACTORIES = new Map();
 const PRESET_PROJECTS = new WeakSet();
 
 /**
- * Throws when `projects` holds an entry no preset project factory returned: jest does not pass a
- * config's top-level options down to its projects, so a hand-written one skips the preset.
+ * Throws when `projects` holds an entry no preset project factory returned. Why a project needs one:
+ * `createLibsCoinJestProject` in support/jest/README.md.
  *
  * @param {string} factory
  * @param {unknown} projects
@@ -263,22 +263,27 @@ function checkProjects(factory, projects) {
  * @returns {Build} a factory with the signature of `build`
  */
 function presetFactory(name, options, build, { project = false } = {}) {
-  const factory = /** @type {Build} */ (
-    (overrides = {}, presetOptions) => {
-      checkOptions(name, presetOptions, options);
-      const { webOverrides, nativeOverrides, ...topLevel } = overrides;
-      checkPresetOverrides(
-        name,
-        { "": topLevel, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
-        overrides.rootDir,
-        options,
-      );
-      checkProjects(name, overrides.projects);
-      const config = build(overrides, presetOptions);
-      if (project) PRESET_PROJECTS.add(config);
-      return config;
-    }
-  );
+  /**
+   * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
+   * @param {Record<string, unknown>} [presetOptions] the options `build` reads
+   * @returns {ReturnType<Build>}
+   */
+  function checkedFactory(overrides = {}, presetOptions) {
+    checkOptions(name, presetOptions, options);
+    const { webOverrides, nativeOverrides, ...topLevel } = overrides;
+    checkPresetOverrides(
+      name,
+      { "": topLevel, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
+      overrides.rootDir,
+      options,
+    );
+    checkProjects(name, overrides.projects);
+    const config = build(overrides, presetOptions);
+    if (project) PRESET_PROJECTS.add(config);
+    return config;
+  }
+  // The checks take any factory's arguments; the export keeps the signature of its builder.
+  const factory = /** @type {Build} */ (/** @type {unknown} */ (checkedFactory));
   PRESET_FACTORIES.set(name, { factory, options: deepFreeze([...options]), project });
   return factory;
 }

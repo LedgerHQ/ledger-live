@@ -142,7 +142,7 @@ test("every entry of preset-overrides.js names a package, a factory, a reason an
   }
 });
 
-test("createLibsCoinJestProject reads no projectRoot: jest takes the lcov root from the top level", () => {
+test("createLibsCoinJestProject does not read projectRoot", () => {
   assert.throws(
     () => createLibsCoinJestProject({}, { projectRoot: "../../../" }),
     /it does not read the option "projectRoot"; its options: `esm`, `extraEsmDeps`\./,
