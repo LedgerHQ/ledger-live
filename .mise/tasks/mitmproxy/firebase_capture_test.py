@@ -21,7 +21,7 @@ FETCH_URL = "https://firebaseremoteconfig.googleapis.com/v1/projects/ledger-live
 TEMPLATE = {"entries": {"feature_x": '{"enabled":true}'}, "state": "UPDATE", "templateVersion": "42"}
 
 
-def fetch_flow(language="en-US", app_id="1:677185650562:web:abc", headers=None, compress=False):
+def fetch_flow(language="en-US", app_id="1:677185650562:web:abc", headers=None, compress=False, signals=None):
     body = json.dumps(
         {
             "sdk_version": "12.19.0",
@@ -29,6 +29,7 @@ def fetch_flow(language="en-US", app_id="1:677185650562:web:abc", headers=None, 
             "app_instance_id_token": "secret-token",
             "app_id": app_id,
             "language_code": language,
+            **({"custom_signals": signals} if signals else {}),
         }
     ).encode()
     request = http.Request.make(
@@ -251,6 +252,18 @@ def test_each_language_and_app_has_its_own_entry():
             answer(flow)
             addon.response(flow)
         assert len(addon.cache) == 3
+
+    run(test)
+
+
+def test_custom_signals_are_keyed_by_hash_only():
+    async def test(addon, _):
+        for flow in (fetch_flow(signals={"user_tier": "gold-123"}), fetch_flow(signals={"user_tier": "silver-456"})):
+            await addon.request(flow)
+            assert "firebase_capture_future" in flow.metadata
+        keys = list(addon.stats)
+        assert len(keys) == 2
+        assert not any("gold-123" in key or "silver-456" in key for key in keys)
 
     run(test)
 

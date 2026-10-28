@@ -72,8 +72,10 @@ def capture_key(flow: http.HTTPFlow) -> str | None:
     body = request_json(flow.request)
     if not isinstance(body, dict):
         return None
-    signals = json.dumps(body.get("custom_signals") or {}, sort_keys=True)
-    return f"{path} app_id={body.get('app_id', '')} language_code={body.get('language_code', '')} custom_signals={signals}"
+    # Keys are logged, so custom signals (request-body values) only appear as a hash.
+    signals = body.get("custom_signals")
+    signals_id = hashlib.sha256(json.dumps(signals, sort_keys=True).encode()).hexdigest()[:12] if signals else "none"
+    return f"{path} app_id={body.get('app_id', '')} language_code={body.get('language_code', '')} custom_signals={signals_id}"
 
 
 def usable_snapshot(response: http.Response | None) -> Snapshot | None:
