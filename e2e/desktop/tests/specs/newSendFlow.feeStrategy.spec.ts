@@ -12,7 +12,7 @@ import { reachAmountStep } from "tests/utils/newSendFlowUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 
 test.describe("Send - new flow - fee strategy", () => {
-  const tx = new Transaction(Account.BTC_NATIVE_SEGWIT_1, Account.BTC_NATIVE_SEGWIT_2, "send max");
+  const tx = new Transaction(Account.BTC_NATIVE_SEGWIT_1, Account.BTC_NATIVE_SEGWIT_2, "0.00001");
 
   test.use({
     teamOwner: Team.COIN_INTEGRATION,
@@ -41,7 +41,7 @@ test.describe("Send - new flow - fee strategy", () => {
       await app.newSendFlow.selectFeePreset(Fee.FAST);
       await app.newSendFlow.expectCryptoAmountLowerThan(maxAmountWithSlowFee);
 
-      await app.newSendFlow.fillCryptoAmount("0.00001");
+      await app.newSendFlow.fillCryptoAmount(tx.amount);
       await app.newSendFlow.openFeesMenu();
       await app.newSendFlow.expectBitcoinFeesMenuOptions();
       await app.newSendFlow.selectCoinControlFromMenu();

@@ -10,6 +10,9 @@ import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
 
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
+  private readonly backButton = this.dialog
+    .getByTestId("send-dialog-header")
+    .getByRole("button", { name: "Go back" });
 
   readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
   readonly matchedAddressButtons = this.dialog
@@ -33,6 +36,22 @@ export class NewSendModal extends Modal {
   readonly amountErrorMessage = this.dialog.getByTestId("send-amount-message");
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
+  // Menu items render in a portal, outside the dialog subtree.
+  private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
+  private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
+  private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
+  private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
+  private readonly coinControlStrategySelect = this.dialog.getByTestId(
+    "send-coin-control-strategy-select",
+  );
+  private readonly coinControlAmountInput = this.dialog.getByLabel(/amount to send/i);
+  private readonly coinControlChangeToReturn = this.dialog.getByTestId("send-change-to-return-row");
+  private readonly coinControlFooter = this.dialog.getByTestId("send-coin-control-footer");
+  private readonly coinControlReviewButton =
+    this.coinControlFooter.getByTestId("send-review-button");
+  private readonly coinControlFeesMenuTrigger = this.coinControlFooter.getByTestId(
+    "send-network-fees-menu-trigger",
+  );
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
   readonly getFundsButton = this.dialog.getByTestId("send-get-funds-button");
   readonly toggleInputModeButton = this.dialog.getByTestId("send-toggle-input-mode-button");
@@ -92,26 +111,6 @@ export class NewSendModal extends Modal {
 
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
-
-  private readonly backButton = this.dialog
-    .getByTestId("send-dialog-header")
-    .getByRole("button", { name: "Go back" });
-  // Menu items render in a portal, outside the dialog subtree.
-  private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
-  private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
-  private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
-  private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
-  private readonly coinControlStrategySelect = this.dialog.getByTestId(
-    "send-coin-control-strategy-select",
-  );
-  private readonly coinControlAmountInput = this.dialog.getByLabel(/amount to send/i);
-  private readonly coinControlChangeToReturn = this.dialog.getByTestId("send-change-to-return-row");
-  private readonly coinControlFooter = this.dialog.getByTestId("send-coin-control-footer");
-  private readonly coinControlReviewButton =
-    this.coinControlFooter.getByTestId("send-review-button");
-  private readonly coinControlFeesMenuTrigger = this.coinControlFooter.getByTestId(
-    "send-network-fees-menu-trigger",
-  );
 
   private async readAmount(): Promise<string> {
     return (await this.amountInput.inputValue()).replaceAll(/\s/g, "");
