@@ -10,19 +10,23 @@ fix was ruled out.
 
 ## lint:boundaries
 
-Rerun with `pnpm lint:boundaries`. Each kind of violation prints its own heading.
+Rerun with `pnpm lint:boundaries`. The checks are the `find*Violations` functions of
+[validate.js](../../../../tools/nx-plugins/enforce-boundaries/validate.js), which print one group
+per check.
 
-| Heading | Meaning | Usual fix |
+| Check | What it rejects | Usual fix |
 | --- | --- | --- |
-| `module-boundary violation` | A project depends on a project its tags do not allow, printed as `source [tags] → target [tags]`. Allowed edges are in `constraints.js`: `shared` reaches `shared`; `domain` adds `domain`; `features` adds `features`; `type:domain-entity` reaches no `domain/api`; `type:feature-platform` reaches no flow; `support` reaches `support` and `shared` only. | Move the code to the lowest layer both sides may depend on, or invert the dependency: the lower package exposes a port and the app or a higher package provides it. Place it with the `structure-flow` skill. |
-| `legacy source-import violation` | A file under `shared/`, `domain/` or `features/` imports a legacy `@ledgerhq/*` package (`libs/`, or one listed in `LEGACY_PACKAGES`) or reaches into `libs/` with a relative path. | Import the layer replacement, such as `@domain/entity-contact` or `@shared/schema-primitives`. If none exists, move the needed code into a layer package first; follow the `legacy-migration` skill. |
-| `banned-external violation` | A tagged package declares or imports a third-party package its tag bans: a `domain/entity` package uses `react` or `react-native`. | Keep schemas, types and state in the entity. Put hooks in `domain/api` (it may expose RTK Query hooks) and UI in `features/` or `shared/ui-*`. |
-| `banned-dependency violation` | A manifest declares a package no workspace may depend on, with the reason printed. | Remove the dependency and use the replacement the reason names. |
+| `findViolations` | A project dependency its tags do not allow, by the edges of [constraints.js](../../../../tools/nx-plugins/enforce-boundaries/constraints.js). | Move the code to the lowest layer both sides may depend on, or invert the dependency: the lower package exposes a port and the app or a higher package provides it. Place it with the `structure-flow` skill. |
+| `findSourceImportViolations` | An import of a legacy `@ledgerhq/*` package, or a relative path into `libs/`, from `shared/`, `domain/` or `features/`. | Import the layer replacement, such as `@domain/entity-contact` or `@shared/schema-primitives`. If none exists, move the needed code into a layer package first; follow the `legacy-migration` skill. |
+| `findBannedExternalViolations` | A third-party package the project's tag bans, such as `react` in a `domain/entity` package. | Keep schemas, types and state in the entity. Put hooks in `domain/api` (it may expose RTK Query hooks) and UI in `features/` or `shared/ui-*`. |
+| `findBannedDependencyViolations` | A dependency no workspace may declare. | Remove the dependency and use the replacement its ban entry names. |
 
 ## lint:structure
 
-Rerun one package with `pnpm nx run <project>:lint:structure`. The barrel codes apply to every
-package of `shared/`, `domain/` and `features/`; the public API rules are in the
+Rerun one package with `pnpm nx run <project>:lint:structure`. Each line names its code. The barrel
+codes come from [rules.js](../../../../tools/nx-plugins/enforce-package-structure/rules.js), and
+`stale-waiver` from [validate.js](../../../../tools/nx-plugins/enforce-package-structure/validate.js);
+they apply to every package of `shared/`, `domain/` and `features/`; the public API rules are in the
 `package-public-api` skill.
 
 ### Barrels
@@ -40,8 +44,9 @@ package of `shared/`, `domain/` and `features/`; the public API rules are in the
 
 ### Universal components (R1 to R5)
 
-These rules hold for a package with web and native implementations of a component. The design is
-in [docs/adr/universal-components.md](../../../../docs/adr/universal-components.md).
+These rules hold for a package with web and native implementations of a component. The codes come
+from [components.js](../../../../tools/nx-plugins/enforce-package-structure/components.js); the
+design is in [docs/adr/universal-components.md](../../../../docs/adr/universal-components.md).
 
 | Rule | Code | Usual fix |
 | --- | --- | --- |
@@ -65,23 +70,15 @@ the same change.
 
 ## lint:tool-config
 
-Rerun one package with `pnpm nx run <project>:lint:tool-config`. Each line is printed as
-`[rule] file: message`. A package carries only what its tool cannot inherit from its `support/`
-preset; see [support/README.md](../../../../support/README.md).
+Rerun one package with `pnpm nx run <project>:lint:tool-config`. Each line starts with the rule
+that reported it, one rule per file of
+[enforce-tool-config/rules/](../../../../tools/nx-plugins/enforce-tool-config/rules/); the message
+says what is wrong, and the rule file shows why. A package carries only what its tool cannot
+inherit from its `support/` preset; see [support/README.md](../../../../support/README.md).
 
-| Rule | Message | Usual fix |
+| Rule | What it checks | Usual fix |
 | --- | --- | --- |
-| `fmt` | `oxfmt config outside support/fmt` | Delete the package config; add a pattern the package needs to `support/fmt/oxfmt.config.mts`, relative to the workspace root. |
-| `fmt` | `script "..." passes a config to oxfmt` | Drop the config flag; oxfmt finds the repository config. |
-| `lint` | `oxlint config outside a layer root` | Delete it; set the rule in the layer's `support/lint` preset. |
-| `lint` | `layer config missing` | Restore it as the printed `export { default } from "@support/lint/<preset>";`. |
-| `lint` | `a layer config only re-exports its preset` | Reduce the layer config to that one re-export. |
-| `lint` | `script "..." passes a config to oxlint` | Drop the flag; oxlint finds the layer config. |
-| `lint` | `script "..." sets ...: rule flags go on the "lint" script only`, `... not in the allowlist` | Move the rule to the layer preset, or onto the `lint` script if it is allowlisted. |
-| `tsconfig` | `must extend a @support/tsconfig preset`, `inherits no ... archetype` | Extend the archetype that fits the package before any `lib/build`, `lib/esm` or `lib/tests` mixin. |
-| `tsconfig` | `"<key>" is not allowed in a package tsconfig`, `compilerOptions.<key> belongs to a preset` | Remove the key and extend the preset that sets it. |
-| `tsconfig` | `repeats what the config inherits` | Remove the repeated option. |
-| `tsconfig` | `may only relax the preset`, `relaxes the strictness of its preset` | Fix the code under the preset's strictness. A relaxation that must stay goes in the debt file the message names. |
-| `tsconfig` | `lists ..., which does not exist`, `which the config no longer relaxes` | Remove the stale debt entry. |
-| `tsconfig` | `cannot be parsed`, `does not resolve` | Fix the JSON or the `extends` path. |
-| `jest` | `has no jest config built by one of its presets`, `exports no config`, `exports something other than a single config` | Export one `create*Config(overrides)` call from an `@support/jest/<preset>` in `jest.config.*`. See the `testing` skill. |
+| [`fmt`](../../../../tools/nx-plugins/enforce-tool-config/rules/fmt.mjs) | No oxfmt config in the package and no config flag in its scripts. | Delete the package config and the flag; add a pattern the package needs to `support/fmt/oxfmt.config.mts`, relative to the workspace root. |
+| [`lint`](../../../../tools/nx-plugins/enforce-tool-config/rules/lint.mjs) | oxlint configs exist only at layer roots, each re-exporting its `@support/lint` preset; scripts pass no config flag, and rule flags only on the `lint` script, from an allowlist. | Delete a package config and set the rule in the layer's `support/lint` preset. Reduce a layer config to its preset re-export. Drop config flags; move rule flags to the preset, or to the `lint` script when allowlisted. |
+| [`tsconfig`](../../../../tools/nx-plugins/enforce-tool-config/rules/tsconfig.mjs) | Every tsconfig parses, extends a `@support/tsconfig` archetype, sets only the options a package may set, repeats nothing it inherits and relaxes no strictness outside [tsconfig-debt.mjs](../../../../tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs). | Extend the archetype that fits the package before any `lib/build`, `lib/esm` or `lib/tests` mixin. Remove keys the preset owns and repeated options. Fix the code under the preset's strictness; remove debt entries the config no longer needs. |
+| [`jest`](../../../../tools/nx-plugins/enforce-tool-config/rules/jest.mjs) | A package that depends on `@support/jest` has a jest config that exports a single preset factory call. | Export one `create*Config(overrides)` call from an `@support/jest/<preset>` in `jest.config.*`. See the `testing` skill. |
