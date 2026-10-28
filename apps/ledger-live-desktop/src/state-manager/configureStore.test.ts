@@ -7,9 +7,55 @@ import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challeng
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
+import { getEnv } from "@shared/env";
 import customCreateStore from "./configureStore";
 
+jest.mock("@shared/env", () => {
+  const actual = jest.requireActual<typeof import("@shared/env")>("@shared/env");
+  return { ...actual, getEnv: jest.fn(actual.getEnv) };
+});
+
+/** The env keys the api services read their config from. */
+const SERVICE_ENV_KEYS = [
+  "CAL_SERVICE_URL",
+  "CARD_BAANX_API_URL",
+  "CARD_BAANX_CLIENT_KEY",
+  "CARD_BAANX_US_APP_ID",
+  "CMC_API_URL",
+  "LEDGER_CLIENT_VERSION",
+  "LEDGER_COUNTERVALUES_API",
+  "PUSH_DEVICES_SERVICE_URL",
+  "SWAP_API_BASE",
+] as const;
+
 describe("customCreateStore", () => {
+  describe("thunk extraArgument", () => {
+    it("reads the service env keys at store creation as before, the client version once for all", () => {
+      const getEnvMock = jest.mocked(getEnv);
+      getEnvMock.mockClear();
+
+      customCreateStore({ fetchRemoteFlags: null });
+
+      const reads = Object.fromEntries(
+        SERVICE_ENV_KEYS.map(key => [
+          key,
+          getEnvMock.mock.calls.filter(([name]) => name === key).length,
+        ]),
+      );
+      expect(reads).toEqual({
+        CAL_SERVICE_URL: 1,
+        CARD_BAANX_API_URL: 0,
+        CARD_BAANX_CLIENT_KEY: 0,
+        CARD_BAANX_US_APP_ID: 0,
+        CMC_API_URL: 1,
+        LEDGER_CLIENT_VERSION: 1,
+        LEDGER_COUNTERVALUES_API: 1,
+        PUSH_DEVICES_SERVICE_URL: 2,
+        SWAP_API_BASE: 0,
+      });
+    });
+  });
+
   describe("auth provider flow", () => {
     const MEMBER_CREDENTIALS: MemberCredentials = {
       pubkey: "02e3311a12c450604725f02d1a775ef5cdb4a1b832eb41ac6b1302adbe92a612fc",
