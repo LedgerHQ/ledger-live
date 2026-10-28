@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   DeviceConnectionParams,
   DeviceConnectionResult,
@@ -7,9 +7,12 @@ import {
   dmkToLedgerDeviceIdMap,
   getConnectDeviceFailure,
   useDeviceIntentTracking,
+  type KnownDevice,
 } from "@ledgerhq/live-dmk-shared";
 import {
   connectDevice,
+  isBluetoothDevice,
+  isBluetoothTransportEnabled,
   ConnectDeviceUIStateTypes,
   type ConnectDeviceUIState,
   webHidTransportIdentifier,
@@ -20,6 +23,11 @@ import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useLazyOnboardingActions } from "LLD/hooks/useLazyOnboardingActions";
 import { addNewDeviceModel } from "~/renderer/actions/settings";
 import { knownDevicesSelector } from "~/renderer/reducers/knownDevices";
+import { canConnectWithBluetooth } from "~/renderer/components/Bluetooth/canConnectWithBluetooth";
+import {
+  useConnectBluetooth,
+  type BluetoothConnectionStatus,
+} from "~/renderer/components/Bluetooth/useConnectBluetooth";
 import {
   getTrackingTransport,
   trackDeviceConnected,
@@ -32,10 +40,17 @@ type UseConnectionViewModelParams = {
   onConnected: (connectionResult: DeviceConnectionResult) => void;
 };
 
+export type ConnectionBluetoothViewModel = {
+  status: BluetoothConnectionStatus;
+  onConnect: () => void;
+};
+
 export type ConnectionViewModel = {
   state: ConnectDeviceUIState;
   onConnectLedgerDevice: () => void;
   onBuyLedgerDevice: () => void;
+  /** `null` when Bluetooth is disabled or no accepted model supports it. */
+  bluetooth: ConnectionBluetoothViewModel | null;
 };
 
 export function useConnectionViewModel({
@@ -44,10 +59,16 @@ export function useConnectionViewModel({
 }: UseConnectionViewModelParams): ConnectionViewModel {
   const dispatch = useDispatch();
   const dmk = useDeviceManagementKit();
-  const knownDevices = useSelector(knownDevicesSelector);
   // Plugging in a device updates knownDevices while connecting. Keep the initial value so that
-  // the update cannot restart dmk.connect and race the active WebHID connection.
-  const knownDevicesRef = useRef(knownDevices);
+  // the update cannot restart dmk.connect and race the active WebHID connection. Only a device
+  // newly remembered over Bluetooth restarts the flow (see onBluetoothDeviceRemembered).
+  const knownDevices = useSelector(knownDevicesSelector);
+  const [connectionKnownDevices, setConnectionKnownDevices] = useState(() =>
+    // Without the Bluetooth transport a remembered Bluetooth device can never be reached.
+    isBluetoothTransportEnabled()
+      ? knownDevices
+      : knownDevices.filter(device => !isBluetoothDevice(device)),
+  );
   const { handleConnect, handleBuyDevice } = useLazyOnboardingActions();
   const { sourceFlow, analyticsProperties, reportFailure } = useDeviceIntentTracking();
   const [state, setState] = useState<ConnectDeviceUIState>({
@@ -57,6 +78,27 @@ export function useConnectionViewModel({
     prompted: false,
     connecting: false,
   });
+  const acceptedLedgerDeviceModelIds = useMemo(
+    () =>
+      deviceConnectionParams.acceptedDeviceModelIds.map(
+        deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
+      ),
+    [deviceConnectionParams.acceptedDeviceModelIds],
+  );
+
+  const onBluetoothDeviceRemembered = useCallback((knownDevice: KnownDevice) => {
+    const isSameDevice = (device: KnownDevice) =>
+      device.transport === knownDevice.transport &&
+      device.deviceModelId === knownDevice.deviceModelId;
+    setConnectionKnownDevices(current =>
+      current.find(isSameDevice)?.id === knownDevice.id
+        ? current
+        : [...current.filter(device => !isSameDevice(device)), knownDevice],
+    );
+  }, []);
+  const { status: bluetoothStatus, connect: connectBluetooth } = useConnectBluetooth(
+    onBluetoothDeviceRemembered,
+  );
 
   useEffect(() => {
     switch (state.type) {
@@ -104,10 +146,8 @@ export function useConnectionViewModel({
     };
 
     const subscription = connectDevice({
-      knownDevices: knownDevicesRef.current,
-      acceptedDeviceModelIds: deviceConnectionParams.acceptedDeviceModelIds.map(
-        deviceModelId => dmkToLedgerDeviceIdMap[deviceModelId],
-      ),
+      knownDevices: connectionKnownDevices,
+      acceptedDeviceModelIds: acceptedLedgerDeviceModelIds,
       dmk,
       onConnected: wrappedOnConnected,
       mockServerTransportEnabled: getEnv("MOCK_SERVER_TRANSPORT"),
@@ -116,11 +156,20 @@ export function useConnectionViewModel({
     return () => {
       subscription.unsubscribe();
     };
-  }, [deviceConnectionParams.acceptedDeviceModelIds, dmk, reportFailure, wrappedOnConnected]);
+  }, [
+    acceptedLedgerDeviceModelIds,
+    connectionKnownDevices,
+    dmk,
+    reportFailure,
+    wrappedOnConnected,
+  ]);
 
   return {
     state,
     onConnectLedgerDevice: handleConnect,
     onBuyLedgerDevice: handleBuyDevice,
+    bluetooth: canConnectWithBluetooth(acceptedLedgerDeviceModelIds)
+      ? { status: bluetoothStatus, onConnect: connectBluetooth }
+      : null,
   };
 }

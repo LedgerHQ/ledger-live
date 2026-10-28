@@ -27,12 +27,41 @@ function renderView(
       state={state}
       onConnectLedgerDevice={callbacks.onConnectLedgerDevice ?? jest.fn()}
       onBuyLedgerDevice={callbacks.onBuyLedgerDevice ?? jest.fn()}
+      bluetooth={callbacks.bluetooth ?? null}
     />,
     { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 
 describe("ConnectionView", () => {
+  it("GIVEN Bluetooth is available and there is no known device WHEN clicking the Bluetooth CTA THEN it starts the Bluetooth connection", async () => {
+    const onConnect = jest.fn();
+    const { user } = renderView(
+      { type: ConnectDeviceUIStateTypes.NoKnownDevice },
+      { bluetooth: { status: "idle", onConnect } },
+    );
+
+    await user.click(screen.getByRole("button", { name: "Connect with Bluetooth" }));
+
+    expect(onConnect).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a Bluetooth connection failed WHEN discovering THEN it shows the failure next to the CTA", () => {
+    renderView(
+      { type: ConnectDeviceUIStateTypes.Discovering, devices: [] },
+      { bluetooth: { status: "failed", onConnect: jest.fn() } },
+    );
+
+    expect(screen.getByRole("button", { name: "Connect with Bluetooth" })).toBeVisible();
+    expect(screen.getByText(/Connection failed/)).toBeVisible();
+  });
+
+  it("GIVEN Bluetooth is unavailable WHEN discovering THEN it shows no Bluetooth CTA", () => {
+    renderView({ type: ConnectDeviceUIStateTypes.Discovering, devices: [] });
+
+    expect(screen.queryByRole("button", { name: "Connect with Bluetooth" })).toBeNull();
+  });
+
   it("GIVEN connect device is loading WHEN rendering THEN it shows the loading state", () => {
     // WHEN
     renderView({ type: ConnectDeviceUIStateTypes.Loading });

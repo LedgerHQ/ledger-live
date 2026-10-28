@@ -17,6 +17,10 @@ export {
 export { useActiveMockServerDeviceId } from "./mockServer/useActiveMockServerDeviceId";
 export type { DisplayedDevice } from "@ledgerhq/live-dmk-shared";
 export { connectDevice, type ConnectDeviceInput } from "./connectDevice/connectDevice";
+export { requestBluetoothDevice } from "./bluetooth/requestBluetoothDevice";
+export { webBleTransportIdentifier, isBluetoothDevice } from "./bluetooth/bluetoothDevice";
+export { useBluetoothActivity } from "./bluetooth/useBluetoothActivity";
+export type { BluetoothActivity } from "./bluetooth/bluetoothActivity";
 export { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
 export { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 export type { DmkError } from "@ledgerhq/device-management-kit";

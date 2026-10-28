@@ -34,6 +34,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
+    "@ledgerhq/device-transport-kit-web-ble": "catalog:",
     "@ledgerhq/device-transport-kit-web-hid": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/live-common": "workspace:^",

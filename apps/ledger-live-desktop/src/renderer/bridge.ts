@@ -33,3 +33,4 @@ export const shell = bridge.shell;
 export const system = bridge.system;
 export const zcash = bridge.zcash;
 export const cardSession = bridge.cardSession;
+export const bluetooth = bridge.bluetooth;

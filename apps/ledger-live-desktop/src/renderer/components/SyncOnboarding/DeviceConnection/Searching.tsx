@@ -11,6 +11,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { useSelector } from "LLD/hooks/redux";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
+import { ConnectBluetoothButton } from "~/renderer/components/Bluetooth/ConnectBluetoothButton";
 
 export type SyncOnboardingDeviceConnectionSearchingProps = {
   deviceModelId: DeviceModelId;
@@ -53,6 +54,7 @@ const SyncOnboardingDeviceConnectionSearching = ({
         <Text variant="h3Inter" color="neutral.c100" mt={6} maxWidth={480} textAlign="center">
           {t("syncOnboarding.connection.searching.title", { deviceModelName })}
         </Text>
+        <ConnectBluetoothButton deviceModelId={deviceModelId} />
       </Flex>
       <Link
         position="absolute"

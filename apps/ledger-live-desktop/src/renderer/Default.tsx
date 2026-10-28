@@ -30,6 +30,9 @@ import AnalyticsConsole from "~/renderer/components/AnalyticsConsole";
 import ThemeConsole from "~/renderer/components/ThemeConsole";
 import DebugMock from "~/renderer/components/debug/DebugMock";
 import DebugSkeletons from "~/renderer/components/debug/DebugSkeletons";
+import DebugBluetooth from "~/renderer/components/debug/DebugBluetooth";
+import { BluetoothDeviceChooser } from "~/renderer/components/Bluetooth/BluetoothDeviceChooser";
+import { BluetoothPairingDialog } from "~/renderer/components/Bluetooth/BluetoothPairingDialog";
 import { DisableTransactionBroadcastWarning } from "~/renderer/components/debug/DisableTransactionBroadcastWarning";
 import { DebugWrapper } from "~/renderer/components/debug/shared";
 import useDeeplink from "~/renderer/hooks/useDeeplinking";
@@ -484,6 +487,7 @@ export default function Default() {
                     {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
                     {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
                     {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
+                    {process.env.DEBUG_BLE ? <DebugBluetooth /> : null}
                   </DebugWrapper>
                   {process.env.DISABLE_TRANSACTION_BROADCAST ? (
                     <DisableTransactionBroadcastWarning
@@ -493,6 +497,8 @@ export default function Default() {
 
                   <GlobalDialogs />
                   <GlobalDrawers />
+                  <BluetoothDeviceChooser />
+                  <BluetoothPairingDialog />
 
                   <Routes>
                     <Route

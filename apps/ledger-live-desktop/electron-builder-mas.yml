@@ -26,6 +26,7 @@ mac:
   extendInfo:
     # Auto-clears App Store export compliance (only exempt encryption); mirrors mobile.
     ITSAppUsesNonExemptEncryption: false
+    NSBluetoothAlwaysUsageDescription: Ledger Wallet uses Bluetooth to connect to your Ledger device.
 
 mas:
   type: distribution

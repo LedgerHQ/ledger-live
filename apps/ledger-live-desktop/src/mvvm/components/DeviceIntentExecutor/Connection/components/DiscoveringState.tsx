@@ -8,10 +8,13 @@ import { useTranslation } from "react-i18next";
 
 import { TrackDIEScreen } from "../../components/TrackDIEScreen";
 import { PAGE_CONNECT_DEVICE } from "../../utils/trackDeviceIntent";
+import type { ConnectionBluetoothViewModel } from "../useConnectionViewModel";
+import { ConnectBluetoothAction } from "./ConnectBluetoothAction";
 import { DeviceListItem } from "./DeviceListItem";
 
 type DiscoveringStateProps = {
   state: Extract<ConnectDeviceUIState, { type: typeof ConnectDeviceUIStateTypes.Discovering }>;
+  bluetooth?: ConnectionBluetoothViewModel | null;
 };
 
 function getDeviceKey(device: DisplayedDevice, index: number): string {
@@ -20,7 +23,10 @@ function getDeviceKey(device: DisplayedDevice, index: number): string {
   return `${transport}-${deviceModelId}-${id || name || index}`;
 }
 
-export function DiscoveringState({ state }: Readonly<DiscoveringStateProps>): React.ReactNode {
+export function DiscoveringState({
+  state,
+  bluetooth,
+}: Readonly<DiscoveringStateProps>): React.ReactNode {
   const { t } = useTranslation();
   const hasAvailableDevice = state.devices.some(device => device.type === "available");
 
@@ -39,6 +45,7 @@ export function DiscoveringState({ state }: Readonly<DiscoveringStateProps>): Re
           <DeviceListItem key={getDeviceKey(device, index)} device={device} />
         ))}
       </div>
+      {bluetooth ? <ConnectBluetoothAction bluetooth={bluetooth} /> : null}
     </div>
   );
 }

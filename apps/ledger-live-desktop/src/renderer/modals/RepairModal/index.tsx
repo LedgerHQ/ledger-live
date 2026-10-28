@@ -13,6 +13,8 @@ import Modal, { ModalBody } from "~/renderer/components/Modal";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import IconCheck from "~/renderer/icons/Check";
 import HelpCenterButton from "./components/HelpCenterButton";
+import { useSelector } from "LLD/hooks/redux";
+import { isCurrentDeviceOnBluetoothSelector } from "~/renderer/reducers/devices";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -133,6 +135,8 @@ const RepairModal = ({
 }: Props) => {
   const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null | undefined>(null);
+  // Repairing reflashes the device, which Bluetooth cannot carry: ask for USB instead.
+  const isOnBluetooth = useSelector(isCurrentDeviceOnBluetoothSelector);
 
   const availableRepairChoices = useMemo(() => {
     const choices = [...repairChoices];
@@ -167,8 +171,12 @@ const RepairModal = ({
   };
 
   const onClose = !cancellable && isLoading ? undefined : onReject;
+  const isRepairOverBluetooth = isOnBluetooth && selectedOption?.id !== "somethingElse";
   const disableRepair =
-    isLoading || !selectedOption || !!(error && error?.name === "MCUNotGenuineToDashboard");
+    isLoading ||
+    !selectedOption ||
+    isRepairOverBluetooth ||
+    !!(error && error?.name === "MCUNotGenuineToDashboard");
 
   return (
     <Modal
@@ -193,6 +201,16 @@ const RepairModal = ({
               <DisclaimerStep desc={desc} />
             )}
 
+            {!isLoading && !error && isOnBluetooth ? (
+              <Box px={5} mb={2}>
+                <Text ff="Inter|SemiBold" color="neutral.c100" fontSize={4}>
+                  {t("bluetooth.usbRequired.title")}
+                </Text>
+                <Text ff="Inter|Regular" color="neutral.c80" fontSize={3}>
+                  {t("bluetooth.usbRequired.description")}
+                </Text>
+              </Box>
+            ) : null}
             {!isLoading && !error ? (
               <Box py={2} px={5} color="neutral.c100" fontSize={4}>
                 {availableRepairChoices.map(choice => (

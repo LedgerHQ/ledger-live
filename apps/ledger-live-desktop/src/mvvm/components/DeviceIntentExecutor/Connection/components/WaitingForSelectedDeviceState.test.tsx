@@ -1,6 +1,10 @@
 import React from "react";
 import { getProductName } from "@ledgerhq/devices";
-import { ConnectDeviceUIStateTypes, type ConnectDeviceUIState } from "@ledgerhq/live-dmk-desktop";
+import {
+  ConnectDeviceUIStateTypes,
+  webBleTransportIdentifier,
+  type ConnectDeviceUIState,
+} from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
@@ -19,19 +23,47 @@ type WaitingForSelectedDeviceUIState = Extract<
   { type: typeof ConnectDeviceUIStateTypes.WaitingForSelectedDevice }
 >;
 
-function renderState(device: WaitingForSelectedDeviceUIState["device"]) {
+const bluetooth = { status: "idle" as const, onConnect: jest.fn() };
+
+function renderState(
+  device: WaitingForSelectedDeviceUIState["device"],
+  bluetoothViewModel: typeof bluetooth | null = null,
+) {
   return render(
     <WaitingForSelectedDeviceState
       state={{
         type: ConnectDeviceUIStateTypes.WaitingForSelectedDevice,
         device,
       }}
+      bluetooth={bluetoothViewModel}
     />,
     { wrapper: DeviceIntentTrackingTestWrapper },
   );
 }
 
 describe("WaitingForSelectedDeviceState", () => {
+  it("GIVEN the only known device is a Bluetooth one WHEN waiting for it THEN the user can scan for it", async () => {
+    // GIVEN
+    const { user } = renderState(
+      makeKnownDevice({ name: "0E70", transport: webBleTransportIdentifier }),
+      bluetooth,
+    );
+
+    // WHEN
+    await user.click(screen.getByRole("button", { name: "Connect with Bluetooth" }));
+
+    // THEN
+    expect(bluetooth.onConnect).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a USB device WHEN waiting for it THEN no Bluetooth button is shown", () => {
+    // WHEN
+    renderState(makeKnownDevice({ name: "My Ledger" }), bluetooth);
+
+    // THEN
+    expect(screen.queryByRole("button", { name: "Connect with Bluetooth" })).toBeNull();
+  });
+
   it("GIVEN a selected device with a name WHEN rendering THEN it shows the device name and product-specific title", () => {
     // WHEN
     renderState(makeKnownDevice({ name: "My Ledger" }));

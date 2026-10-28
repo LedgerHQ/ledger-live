@@ -85,6 +85,7 @@ import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import NoSuchAppOnProviderErrorComponent from "./NoSuchAppOnProviderErrorComponent";
 import { UnsupportedFeatureErrorComponent } from "./UnsupportedFeatureErrorComponent";
+import { ConnectBluetoothButton } from "~/renderer/components/Bluetooth/ConnectBluetoothButton";
 
 export const AnimationWrapper = styled.div`
   max-width: 600px;
@@ -1093,6 +1094,7 @@ export const ConnectYourDevice = ({
             <ConnectTroubleshooting onRepair={onRepairModal} />
           </TroubleshootingWrapper>
         ) : null}
+        {!device ? <ConnectBluetoothButton deviceModelId={modelId} /> : null}
       </Footer>
     </Wrapper>
   );

@@ -93,6 +93,12 @@ export const experimentalFeatures: Feature[] = [
     title: <Trans i18nKey="settings.experimental.features.enableNetworkLogs.title" />,
     description: <Trans i18nKey="settings.experimental.features.enableNetworkLogs.description" />,
   },
+  {
+    type: "toggle",
+    name: "EXPERIMENTAL_BLE",
+    title: <Trans i18nKey="settings.experimental.features.experimentalBle.title" />,
+    description: <Trans i18nKey="settings.experimental.features.experimentalBle.description" />,
+  },
 ];
 const lsKey = "experimentalFlags";
 const lsKeyVersion = `${lsKey}_llversion`;

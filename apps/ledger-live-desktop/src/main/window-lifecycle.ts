@@ -5,6 +5,8 @@ import { URL, pathToFileURL } from "url";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
 import { intFromEnv, MIN_HEIGHT, MIN_WIDTH } from "~/config/windowConstants";
 import { closeTrackedWebviewDevTools } from "./webviewHandlers";
+import { setupBluetoothDeviceSelection } from "./bluetooth/deviceSelection";
+import { setupBluetoothPairing } from "./bluetooth/pairing";
 
 export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 1024);
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
@@ -193,6 +195,9 @@ function setupMainWindowHandlers() {
       console.warn("No Ledger HID devices found.");
     }
   });
+
+  setupBluetoothDeviceSelection(mainWindow.webContents);
+  setupBluetoothPairing(mainWindow.webContents);
 
   mainWindow.webContents.session.setPermissionCheckHandler((_, permission) => {
     if (permission === "hid") return true;

@@ -368,7 +368,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
         deviceInfo,
         apps: [],
       };
-      dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware }));
+      dispatch(setLastSeenDeviceInfo({ lastSeenDevice, latestFirmware, wired: device.wired }));
       dispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));
     }
   }, [dispatch, device, deviceInfo, latestFirmware]);

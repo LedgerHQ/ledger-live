@@ -5,6 +5,7 @@ import {
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import { webHidIdentifier as webHidTransportIdentifier } from "@ledgerhq/device-transport-kit-web-hid";
+import { webBleIdentifier } from "@ledgerhq/device-transport-kit-web-ble";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
@@ -115,6 +116,41 @@ describe("desktop connectDevice utils", () => {
       expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
         { knownDevice, discoveredDevice },
       ]);
+    });
+
+    it("GIVEN a Bluetooth known device with the same model, WHEN filtering, THEN it should match regardless of the id", () => {
+      const knownDevice: KnownDevice = {
+        transport: webBleIdentifier,
+        deviceModelId: DeviceModelId.nanoX,
+        id: "chooser-device-id",
+        name: "Ledger Nano X",
+      };
+      const discoveredDevice = makeDiscoveredDevice({
+        id: "web-bluetooth-device-id",
+        transport: webBleIdentifier,
+      });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([
+        { knownDevice, discoveredDevice },
+      ]);
+    });
+
+    it("GIVEN a Bluetooth known device with another model, WHEN filtering, THEN it should not match", () => {
+      const knownDevice: KnownDevice = {
+        transport: webBleIdentifier,
+        deviceModelId: DeviceModelId.nanoSP,
+        id: "",
+        name: "Ledger Nano S Plus",
+      };
+      const discoveredDevice = makeDiscoveredDevice({ transport: webBleIdentifier });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDevice])).toEqual([]);
+    });
+
+    it("GIVEN a WebHID known device and a Bluetooth device of the same model, WHEN filtering, THEN it should not match", () => {
+      const discoveredDevice = makeDiscoveredDevice({ transport: webBleIdentifier });
+
+      expect(filterMatchedDevices([discoveredDevice], [knownDeviceA])).toEqual([]);
     });
 
     it("GIVEN a discovered device from another transport, WHEN filtering, THEN it should not match", () => {

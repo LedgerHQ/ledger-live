@@ -20,6 +20,7 @@ export function ConnectionView({
   state,
   onConnectLedgerDevice,
   onBuyLedgerDevice,
+  bluetooth,
 }: Readonly<ConnectionViewModel>) {
   switch (state.type) {
     case ConnectDeviceUIStateTypes.Loading:
@@ -30,14 +31,15 @@ export function ConnectionView({
         <NoKnownDeviceState
           onConnectLedgerDevice={onConnectLedgerDevice}
           onBuyLedgerDevice={onBuyLedgerDevice}
+          bluetooth={bluetooth}
         />
       );
 
     case ConnectDeviceUIStateTypes.Discovering:
-      return <DiscoveringState state={state} />;
+      return <DiscoveringState state={state} bluetooth={bluetooth} />;
 
     case ConnectDeviceUIStateTypes.WaitingForSelectedDevice:
-      return <WaitingForSelectedDeviceState state={state} />;
+      return <WaitingForSelectedDeviceState state={state} bluetooth={bluetooth} />;
 
     case ConnectDeviceUIStateTypes.DiscoveryError:
       return <DiscoveryErrorState state={state} />;

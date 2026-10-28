@@ -162,6 +162,31 @@
     "stax": "Stax",
     "blue": "Blue"
   },
+  "bluetooth": {
+    "connect": {
+      "cta": "Connect with Bluetooth",
+      "failed": "Connection failed. Make sure Bluetooth is on and your device is unlocked, then try again.",
+      "cancelled": "Bluetooth connection cancelled."
+    },
+    "chooser": {
+      "title": "Select your Ledger",
+      "description": "Pick your Ledger among the devices found nearby. Only select a device you own.",
+      "searching": "Searching for Ledger devices nearby…"
+    },
+    "pairing": {
+      "title": "Bluetooth pairing",
+      "confirmPinDescription": "Check that this code matches the one shown on your Ledger, then confirm on both.",
+      "confirm": "Codes match",
+      "refuse": "Codes don't match",
+      "providePinDescription": "Enter the code shown on your Ledger.",
+      "pinLabel": "Pairing code",
+      "submit": "Pair"
+    },
+    "usbRequired": {
+      "title": "Connect with USB",
+      "description": "OS updates and repairs are not available over Bluetooth. Connect your Ledger with a USB cable to continue."
+    }
+  },
   "operation": {
     "type": {
       "IN": "Received",
@@ -6018,6 +6043,10 @@
         "enableNetworkLogs": {
           "title": "Enable network logs",
           "description": "Enable network logs in the console (error logs are always enabled)"
+        },
+        "experimentalBle": {
+          "title": "Bluetooth connection",
+          "description": "Connect Ledger Flex, Stax, Nano X and Nano Gen5 over Bluetooth. Restart Ledger Wallet after changing this setting. OS updates and repairs still require a USB connection."
         }
       }
     },
@@ -10852,7 +10881,9 @@
       "common": {
         "ledgerDevice": "Ledger device",
         "available": "Available",
-        "notConnected": "Not connected"
+        "notConnected": "Not connected",
+        "usb": "USB",
+        "bluetooth": "Bluetooth"
       },
       "states": {
         "loading": {

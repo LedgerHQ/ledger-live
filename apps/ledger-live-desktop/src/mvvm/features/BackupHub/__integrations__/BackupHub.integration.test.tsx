@@ -100,6 +100,7 @@ const openHubWithDevices = async (
       setLastSeenDeviceInfo({
         lastSeenDevice: { modelId: lastSeenModelId } as DeviceModelInfo,
         latestFirmware: null,
+        wired: true,
       }),
     );
   }

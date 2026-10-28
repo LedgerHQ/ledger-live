@@ -11,6 +11,8 @@ mac:
   category: public.app-category.wallet
   # zcash-utils ships per-arch .node files, identical in both universal slices
   x64ArchFiles: "**/node_modules/@ledgerhq/zcash-utils/*.node"
+  extendInfo:
+    NSBluetoothAlwaysUsageDescription: Ledger Wallet uses Bluetooth to connect to your Ledger device.
   # singleArchFiles: "**/*"
   target:
     - target: dmg

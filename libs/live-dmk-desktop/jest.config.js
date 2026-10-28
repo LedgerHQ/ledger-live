@@ -15,6 +15,8 @@ module.exports = {
   moduleNameMapper: {
     "^@ledgerhq/device-transport-kit-web-hid$":
       "<rootDir>/tests/__mocks__/device-transport-kit-web-hid.ts",
+    "^@ledgerhq/device-transport-kit-web-ble$":
+      "<rootDir>/tests/__mocks__/device-transport-kit-web-ble.ts",
     "^@ledgerhq/device-transport-kit-mockserver$":
       "<rootDir>/tests/__mocks__/device-transport-kit-mockserver.ts",
   },

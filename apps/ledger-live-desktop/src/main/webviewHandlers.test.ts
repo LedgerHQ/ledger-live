@@ -725,6 +725,37 @@ describe("setupWebviewHandlers", () => {
       expect(preventDefault).not.toHaveBeenCalled();
     },
   );
+
+  it("cancels Bluetooth device requests from webview guests", () => {
+    setupWebviewHandlers(["ledgerlive"]);
+
+    const guestContents = {
+      id: 7,
+      getType: jest.fn(() => "webview"),
+      on: jest.fn(),
+      once: jest.fn(),
+      setWindowOpenHandler: jest.fn(),
+    };
+    getWebContentsCreatedHandler()?.(
+      {} as Electron.Event,
+      guestContents as unknown as Electron.WebContents,
+    );
+
+    const selectBluetoothDevice = (jest.mocked(guestContents.on) as jest.Mock).mock.calls.find(
+      ([eventName]) => eventName === "select-bluetooth-device",
+    )?.[1] as ContentsListener | undefined;
+    const preventDefault = jest.fn();
+    const callback = jest.fn();
+
+    selectBluetoothDevice?.(
+      { preventDefault },
+      [{ deviceId: "ledger-flex", deviceName: "Ledger Flex" }],
+      callback,
+    );
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledWith("");
+  });
 });
 
 describe("guest DevTools tracking", () => {

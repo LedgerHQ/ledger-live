@@ -7,6 +7,7 @@ import {
   DeviceSessionState,
   DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
+import { activeDeviceSessionSubject } from "@ledgerhq/live-dmk-shared";
 import { DeviceManagementKitTransport } from "./DeviceManagementKitTransport";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 
@@ -306,5 +307,130 @@ describe("DeviceManagementKitTransport", () => {
     expect(mockObserver.next.mock.calls[0][0].descriptor).not.toBe(
       mockObserver.next.mock.calls[1][0].descriptor,
     );
+  });
+});
+
+describe("DeviceManagementKitTransport.open", () => {
+  const dmk = getDeviceManagementKit();
+
+  const makeDevice = (id: string): DiscoveredDevice =>
+    ({
+      id,
+      deviceModel: { id: "flex", model: DeviceModelId.FLEX, name: "Flex" },
+      name: id,
+      transport: "WEB-BLE-RN-STYLE",
+    }) as DiscoveredDevice;
+  const usbDevice = makeDevice("usb-device");
+  const bleDevice = makeDevice("ble-device");
+
+  let connectedDevices: ConnectedDevice[];
+  let connect: jest.SpyInstance;
+
+  beforeEach(() => {
+    activeDeviceSessionSubject.next(null);
+    connectedDevices = [];
+    jest.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(of([usbDevice, bleDevice]));
+    jest.spyOn(dmk, "listConnectedDevices").mockImplementation(() => connectedDevices);
+    jest
+      .spyOn(dmk, "getDeviceSessionState")
+      .mockReturnValue(of({ deviceStatus: DeviceStatus.CONNECTED } as DeviceSessionState));
+    connect = jest
+      .spyOn(dmk, "connect")
+      .mockImplementation(async ({ device }) => `session-${device.id}`);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    activeDeviceSessionSubject.next(null);
+  });
+
+  it("GIVEN two concurrent opens, WHEN they run, THEN the device is connected only once", async () => {
+    const [first, second] = await Promise.all([
+      DeviceManagementKitTransport.open(bleDevice.id),
+      DeviceManagementKitTransport.open(bleDevice.id),
+    ]);
+
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(second).toBe(first);
+  });
+
+  it("GIVEN concurrent opens of different devices, WHEN they run, THEN each device gets its own session", async () => {
+    const [usbTransport, bleTransport] = await Promise.all([
+      DeviceManagementKitTransport.open(usbDevice.id),
+      DeviceManagementKitTransport.open(bleDevice.id),
+    ]);
+
+    expect(usbTransport.sessionId).toBe("session-usb-device");
+    expect(bleTransport.sessionId).toBe("session-ble-device");
+    expect(connect).toHaveBeenCalledTimes(2);
+  });
+
+  it("GIVEN a device id, WHEN opening, THEN it connects that device rather than the first one", async () => {
+    const transport = await DeviceManagementKitTransport.open(bleDevice.id);
+
+    expect(connect).toHaveBeenCalledWith(expect.objectContaining({ device: bleDevice }));
+    expect(transport.deviceId).toBe(bleDevice.id);
+    expect(transport.sessionId).toBe("session-ble-device");
+  });
+
+  it("GIVEN no device id or an unavailable one, WHEN opening, THEN it connects the first available device", async () => {
+    await DeviceManagementKitTransport.open();
+    activeDeviceSessionSubject.next(null);
+    await DeviceManagementKitTransport.open("unknown-device");
+
+    expect(connect).toHaveBeenNthCalledWith(1, expect.objectContaining({ device: usbDevice }));
+    expect(connect).toHaveBeenNthCalledWith(2, expect.objectContaining({ device: usbDevice }));
+  });
+
+  it("GIVEN the target device is already connected in the DMK, WHEN opening, THEN it reuses that session", async () => {
+    connectedDevices = [{ id: bleDevice.id, sessionId: "existing-session" } as ConnectedDevice];
+
+    const transport = await DeviceManagementKitTransport.open(bleDevice.id);
+
+    expect(connect).not.toHaveBeenCalled();
+    expect(transport.sessionId).toBe("existing-session");
+  });
+
+  it("GIVEN an active session on another device, WHEN opening a device, THEN it does not reuse it", async () => {
+    const usbTransport = await DeviceManagementKitTransport.open(usbDevice.id);
+
+    const bleTransport = await DeviceManagementKitTransport.open(bleDevice.id);
+
+    expect(bleTransport).not.toBe(usbTransport);
+    expect(bleTransport.deviceId).toBe(bleDevice.id);
+  });
+
+  it("GIVEN an active session on the target device, WHEN opening it again, THEN it reuses the transport", async () => {
+    const first = await DeviceManagementKitTransport.open(bleDevice.id);
+
+    const second = await DeviceManagementKitTransport.open(bleDevice.id);
+
+    expect(second).toBe(first);
+    expect(connect).toHaveBeenCalledTimes(1);
+  });
+
+  it("GIVEN a failed open, WHEN opening again, THEN it retries instead of sharing the failure", async () => {
+    connect.mockRejectedValueOnce(new Error("connect failed"));
+
+    await expect(DeviceManagementKitTransport.open(bleDevice.id)).rejects.toThrow("connect failed");
+    const transport = await DeviceManagementKitTransport.open(bleDevice.id);
+
+    expect(transport.sessionId).toBe("session-ble-device");
+    expect(connect).toHaveBeenCalledTimes(2);
+  });
+
+  it("GIVEN a lost session, WHEN exchanging, THEN it reconnects the original device only", async () => {
+    const transport = await DeviceManagementKitTransport.open(bleDevice.id);
+    connect.mockClear();
+    jest.spyOn(dmk, "sendApdu").mockResolvedValue({
+      data: new Uint8Array([]),
+      statusCode: new Uint8Array([0x90, 0x00]),
+    });
+
+    await transport.exchange(Buffer.from([0xe0, 0x01, 0x00, 0x00]));
+
+    expect(connect).toHaveBeenCalledTimes(1);
+    expect(connect).toHaveBeenCalledWith(expect.objectContaining({ device: bleDevice }));
+    expect(transport.sessionId).toBe("session-ble-device");
   });
 });

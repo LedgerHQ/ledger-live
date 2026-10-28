@@ -163,6 +163,7 @@ if (!globalThis.Buffer) {
 }
 
 jest.mock("@ledgerhq/device-transport-kit-web-hid");
+jest.mock("@ledgerhq/device-transport-kit-web-ble");
 
 jest.mock("react-redux", () => {
   const actual = jest.requireActual("react-redux");

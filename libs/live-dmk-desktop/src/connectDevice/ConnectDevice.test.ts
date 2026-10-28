@@ -8,14 +8,17 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { EMPTY } from "rxjs";
 
+import { isBluetoothTransportEnabled } from "../hooks/useDeviceManagementKit";
 import { connectDevice } from "./connectDevice";
 import { MockServerDeviceDiscoverySource } from "./discoveryService/sources/MockServerDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
+import { WebBleDeviceDiscoverySource } from "./discoveryService/sources/WebBleDeviceDiscoverySource";
 import { WebHidDeviceDiscoverySource } from "./discoveryService/sources/WebHidDeviceDiscoverySource";
 import { createConnectionError, filterMatchedDevices } from "./utils";
 
 const mockWebHidListen = jest.fn(() => EMPTY);
 const mockSpeculosListen = jest.fn(() => EMPTY);
+const mockWebBleListen = jest.fn(() => EMPTY);
 
 jest.mock("@ledgerhq/live-dmk-shared", () => {
   const actual = jest.requireActual("@ledgerhq/live-dmk-shared");
@@ -47,7 +50,19 @@ jest.mock("./discoveryService/sources/SpeculosDeviceDiscoverySource", () => ({
   })),
 }));
 
+jest.mock("./discoveryService/sources/WebBleDeviceDiscoverySource", () => ({
+  WebBleDeviceDiscoverySource: jest.fn().mockImplementation(() => ({
+    listen: mockWebBleListen,
+    transportId: "WEB-BLE-RN-STYLE",
+  })),
+}));
+
+jest.mock("../hooks/useDeviceManagementKit", () => ({
+  isBluetoothTransportEnabled: jest.fn(() => false),
+}));
+
 const mockedSharedConnectDeviceUseCase = jest.mocked(sharedConnectDeviceUseCase);
+const mockedIsBluetoothTransportEnabled = jest.mocked(isBluetoothTransportEnabled);
 
 const knownDevice: KnownDevice = {
   transport: webHidTransportIdentifier,
@@ -119,5 +134,34 @@ describe("desktop connectDevice", () => {
     });
 
     expect(MockServerDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
+  });
+
+  it("GIVEN the Bluetooth transport is disabled, WHEN connecting, THEN it should not listen to Web BLE", () => {
+    // GIVEN
+    const dmk = {} as DeviceManagementKit;
+    mockedIsBluetoothTransportEnabled.mockReturnValue(false);
+    connectDevice({ dmk, knownDevices: [knownDevice], onConnected: jest.fn() });
+
+    // WHEN
+    mockedSharedConnectDeviceUseCase.mock.calls[0][0].deviceDiscoveryService.start();
+
+    // THEN
+    expect(WebBleDeviceDiscoverySource).not.toHaveBeenCalled();
+    expect(mockWebBleListen).not.toHaveBeenCalled();
+  });
+
+  it("GIVEN the Bluetooth transport is enabled, WHEN connecting, THEN it should listen to Web BLE too", () => {
+    // GIVEN
+    const dmk = {} as DeviceManagementKit;
+    mockedIsBluetoothTransportEnabled.mockReturnValue(true);
+    connectDevice({ dmk, knownDevices: [knownDevice], onConnected: jest.fn() });
+
+    // WHEN
+    mockedSharedConnectDeviceUseCase.mock.calls[0][0].deviceDiscoveryService.start();
+
+    // THEN
+    expect(WebBleDeviceDiscoverySource).toHaveBeenCalledWith(dmk);
+    expect(mockWebBleListen).toHaveBeenCalled();
+    expect(mockWebHidListen).toHaveBeenCalled();
   });
 });

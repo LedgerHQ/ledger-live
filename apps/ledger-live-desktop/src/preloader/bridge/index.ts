@@ -6,6 +6,7 @@ import {
   type CardSessionBridge,
   type LedgerBridge,
 } from "~/bridge/contract";
+import { bluetooth } from "./bluetooth";
 import { expose } from "./expose";
 import { db } from "./db";
 import { deeplink, updater, webview } from "./push";
@@ -48,6 +49,7 @@ export function installBridge(): void {
     system,
     zcash,
     cardSession,
+    bluetooth,
   };
 
   // Not `ledger`: the E2E suites already use `window.ledger`.

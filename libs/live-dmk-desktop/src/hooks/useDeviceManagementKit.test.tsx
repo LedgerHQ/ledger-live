@@ -65,6 +65,37 @@ describe("useDeviceManagementKit", () => {
       });
     });
   });
+  describe("isBluetoothTransportEnabled", () => {
+    const buildWithBluetoothEnv = async (enabled: boolean) => {
+      const { setEnv } = await import("@shared/env");
+      setEnv("EXPERIMENTAL_BLE", enabled);
+      return import("./useDeviceManagementKit");
+    };
+
+    it("is true when the DMK is built with the Bluetooth env enabled", async () => {
+      await jest.isolateModulesAsync(async () => {
+        const module = await buildWithBluetoothEnv(true);
+        expect(module.isBluetoothTransportEnabled()).toBe(true);
+      });
+    });
+    it("is false when the DMK is built with the Bluetooth env disabled", async () => {
+      await jest.isolateModulesAsync(async () => {
+        const module = await buildWithBluetoothEnv(false);
+        expect(module.isBluetoothTransportEnabled()).toBe(false);
+      });
+    });
+    it("keeps the value the DMK was built with when the env changes afterwards", async () => {
+      await jest.isolateModulesAsync(async () => {
+        const module = await buildWithBluetoothEnv(false);
+        module.getDeviceManagementKit();
+        const { setEnv } = await import("@shared/env");
+        // when
+        setEnv("EXPERIMENTAL_BLE", true);
+        // then
+        expect(module.isBluetoothTransportEnabled()).toBe(false);
+      });
+    });
+  });
   describe("<DeviceManagementKitProvider />", () => {
     it("provides a dmk instance to child element", () => {
       // given

@@ -6,6 +6,7 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { speculosDmkTransportFactory } from "../transport/SpeculosDmkTransport";
+import { bluetoothTransportFactory } from "../bluetooth/bluetoothTransportFactory";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { getEnv } from "@shared/env";
@@ -35,6 +36,9 @@ export const getMockServerTransportUrl = (): string =>
   stripTrailingSlashes(getEnv("MOCK_SERVER_TRANSPORT_URL"));
 
 let instance: DeviceManagementKit | null = null;
+
+/** Whether `instance` was built with the Bluetooth transport; frozen with the instance. */
+let bluetoothTransportEnabled = false;
 
 /**
  * Mock server session token shared with the transport. Set at boot (after a
@@ -87,6 +91,11 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
       .addLogger(new LedgerLiveLogger(LogLevel.Debug))
       .addConfig(firmwareDistributionSalt ? { firmwareDistributionSalt } : {});
 
+    bluetoothTransportEnabled = getEnv("EXPERIMENTAL_BLE");
+    if (bluetoothTransportEnabled) {
+      builder.addTransport(bluetoothTransportFactory);
+    }
+
     if (mockServerTransportEnabled) {
       // Point the secure channel (genuine check, listApps, install…) at the mock
       // server's ScriptRunner WebSocket. The session token is in the path because
@@ -102,6 +111,15 @@ export const getDeviceManagementKit = (): DeviceManagementKit => {
   }
 
   return instance;
+};
+
+/**
+ * True iff the DMK singleton (built on first call) has the Bluetooth transport.
+ * Toggling the env afterwards only takes effect after a restart, so gate Bluetooth UI on this.
+ */
+export const isBluetoothTransportEnabled = (): boolean => {
+  getDeviceManagementKit();
+  return bluetoothTransportEnabled;
 };
 
 /** Applies to the DMK built next, and to the current one if it already exists. */

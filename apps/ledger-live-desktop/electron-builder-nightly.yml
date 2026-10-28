@@ -26,6 +26,8 @@ mac:
   entitlements: build-nightly/mac/entitlements.plist
   entitlementsInherit: build-nightly/mac/entitlements.plist
   icon: build-nightly/icon.icns
+  extendInfo:
+    NSBluetoothAlwaysUsageDescription: Ledger Wallet uses Bluetooth to connect to your Ledger device.
   target:
     - target: dmg
       arch:

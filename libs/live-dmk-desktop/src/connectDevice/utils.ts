@@ -8,10 +8,12 @@ import {
   type MatchedDevice,
 } from "@ledgerhq/live-dmk-shared";
 
+import { webBleTransportIdentifier } from "../bluetooth/bluetoothDevice";
 import { BaseConnectionErrorTypes, type DesktopConnectionError } from "./types";
 
 const MATCHABLE_TRANSPORTS = new Set<string>([
   webHidTransportIdentifier,
+  webBleTransportIdentifier,
   speculosIdentifier,
   mockserverIdentifier,
 ]);

@@ -1,7 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
-import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import {
+  mockserverIdentifier,
+  webBleTransportIdentifier,
+  webHidTransportIdentifier,
+} from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
@@ -17,9 +21,25 @@ export type KnownDevicesState = {
  * Stable, persisted transport codes. They decouple the on-disk format from the
  * DMK transport identifier strings (e.g. `webHidIdentifier`) so persisted data
  * survives a change of those identifiers. Add a new code here for each new
- * supported transport (e.g. `"webble"`).
+ * supported transport.
  */
-export type PersistedKnownDeviceTransport = "webhid";
+export type PersistedKnownDeviceTransport = "webhid" | "webble";
+
+const PERSISTED_TRANSPORT_BY_IDENTIFIER = new Map<string, PersistedKnownDeviceTransport>([
+  [webHidTransportIdentifier, "webhid"],
+  [webBleTransportIdentifier, "webble"],
+]);
+
+const IDENTIFIER_BY_PERSISTED_TRANSPORT: Record<PersistedKnownDeviceTransport, string> = {
+  webhid: webHidTransportIdentifier,
+  webble: webBleTransportIdentifier,
+};
+
+function isPersistedKnownDeviceTransport(
+  transport: string,
+): transport is PersistedKnownDeviceTransport {
+  return Object.hasOwn(IDENTIFIER_BY_PERSISTED_TRANSPORT, transport);
+}
 
 export type PersistedKnownDevice = Omit<KnownDevice, "transport"> & {
   transport: PersistedKnownDeviceTransport;
@@ -34,9 +54,9 @@ export const INITIAL_STATE: KnownDevicesState = {
 };
 
 /**
- * On desktop, devices connect over WebHID, which does not expose a stable per-device
- * identifier we want to persist. A known device is therefore normalized as a WebHID
- * device with an empty `id` and is uniquely identified by its `deviceModelId`.
+ * Over WebHID there is no stable per-device identifier we want to persist. A wired known
+ * device is therefore normalized as a WebHID device with an empty `id` and is uniquely
+ * identified by its `deviceModelId`.
  */
 function mapToWebHidKnownDevice(
   deviceModelId: DeviceModelId,
@@ -78,17 +98,23 @@ export function mapDeviceToKnownDevice(device: Device | null | undefined): Known
 }
 
 /**
+ * Same as `mapDeviceToKnownDevice` for a device reported at runtime. A Bluetooth device is
+ * ignored here: it is remembered with its Bluetooth identity by `rememberKnownDevice`.
+ */
+function mapRuntimeDeviceToKnownDevice(device: Device | null | undefined): KnownDevice | null {
+  if (device && !device.wired) return null;
+  return mapDeviceToKnownDevice(device);
+}
+
+/**
  * Serialize a runtime known device for persistence. Returns `null` for any
  * transport that cannot be persisted, so unknown transports are dropped on save.
  */
 export function mapKnownDeviceToPersistedKnownDevice(
   device: KnownDevice,
 ): PersistedKnownDevice | null {
-  if (device.transport === webHidTransportIdentifier) {
-    return { ...device, transport: "webhid" };
-  }
-
-  return null;
+  const transport = PERSISTED_TRANSPORT_BY_IDENTIFIER.get(device.transport);
+  return transport ? { ...device, transport } : null;
 }
 
 /**
@@ -98,22 +124,23 @@ export function mapKnownDeviceToPersistedKnownDevice(
 export function mapPersistedKnownDeviceToKnownDevice(
   device: Omit<KnownDevice, "transport"> & { transport: string },
 ): KnownDevice | null {
-  if (device.transport === "webhid") {
-    return { ...device, transport: webHidTransportIdentifier };
-  }
-
-  return null;
+  if (!isPersistedKnownDeviceTransport(device.transport)) return null;
+  return { ...device, transport: IDENTIFIER_BY_PERSISTED_TRANSPORT[device.transport] };
 }
 
 function isMockServerDevice(device: KnownDevice): boolean {
   return device.transport === mockserverIdentifier;
 }
 
+/** A physical device is identified by its transport and model: one entry per pair. */
 function upsertKnownDevice(state: KnownDevicesState, device: KnownDevice | null) {
   if (!device) return;
 
   const physicalIndex = state.knownDevices.findIndex(
-    known => known.deviceModelId === device.deviceModelId && !isMockServerDevice(known),
+    known =>
+      known.transport === device.transport &&
+      known.deviceModelId === device.deviceModelId &&
+      !isMockServerDevice(known),
   );
   if (physicalIndex >= 0) {
     const existing = state.knownDevices[physicalIndex];
@@ -135,6 +162,9 @@ const knownDevicesSlice = createSlice({
   initialState: INITIAL_STATE,
   reducers: {
     importKnownDevices: (_state, action: PayloadAction<KnownDevicesState>) => action.payload,
+    rememberKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
+      upsertKnownDevice(state, action.payload);
+    },
     seedMockServerKnownDevice: (state, action: PayloadAction<KnownDevice>) => {
       const savedDevices = state.knownDevices.filter(device => !isMockServerDevice(device));
       state.knownDevices = [...savedDevices, action.payload];
@@ -161,12 +191,14 @@ const knownDevicesSlice = createSlice({
           if (seed) state.knownDevices.push(seed);
         },
       )
-      // Upsert when `lastSeenDevice` changes.
+      // Upsert when `lastSeenDevice` changes, for USB devices only: the Bluetooth ones are
+      // remembered by the chooser with their own transport.
       .addMatcher(
-        (action): action is PayloadAction<{ lastSeenDevice: DeviceModelInfo }> =>
+        (action): action is PayloadAction<{ lastSeenDevice: DeviceModelInfo; wired: boolean }> =>
           action.type === "LAST_SEEN_DEVICE_INFO",
         (state, action) => {
-          upsertKnownDevice(state, mapLastSeenDeviceToKnownDevice(action.payload?.lastSeenDevice));
+          if (!action.payload.wired) return;
+          upsertKnownDevice(state, mapLastSeenDeviceToKnownDevice(action.payload.lastSeenDevice));
         },
       )
       // Upsert when `lastOnboardedDevice` changes. Never remove on null.
@@ -174,20 +206,21 @@ const knownDevicesSlice = createSlice({
         (action): action is PayloadAction<Device | null> =>
           action.type === "SET_LAST_ONBOARDED_DEVICE",
         (state, action) => {
-          upsertKnownDevice(state, mapDeviceToKnownDevice(action.payload));
+          upsertKnownDevice(state, mapRuntimeDeviceToKnownDevice(action.payload));
         },
       )
       // Upsert when `devices.currentDevice` changes (a device is added/connected).
       .addMatcher(
         (action): action is PayloadAction<Device> => action.type === "ADD_DEVICE",
         (state, action) => {
-          upsertKnownDevice(state, mapDeviceToKnownDevice(action.payload));
+          upsertKnownDevice(state, mapRuntimeDeviceToKnownDevice(action.payload));
         },
       );
   },
 });
 
-export const { importKnownDevices, seedMockServerKnownDevice } = knownDevicesSlice.actions;
+export const { importKnownDevices, rememberKnownDevice, seedMockServerKnownDevice } =
+  knownDevicesSlice.actions;
 
 export const knownDevicesSelector = (state: State): KnownDevice[] =>
   state.knownDevices.knownDevices;

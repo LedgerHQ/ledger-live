@@ -95,6 +95,10 @@ export const getCurrentDevice = createSelector(
   },
 );
 
+/** The current device is connected over Bluetooth: OS updates and repairs require USB. */
+export const isCurrentDeviceOnBluetoothSelector = (state: { devices: DevicesState }): boolean =>
+  getCurrentDevice(state)?.wired === false;
+
 export default handleActions<DevicesState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as DevicesHandlers<false>,
   initialState,

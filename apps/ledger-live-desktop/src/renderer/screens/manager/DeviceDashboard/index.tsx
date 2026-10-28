@@ -169,6 +169,7 @@ const DeviceDashboard = ({
       setLastSeenDeviceInfo({
         lastSeenDevice,
         latestFirmware: firmware,
+        wired: device.wired,
       }),
     );
     reduxDispatch(addNewDeviceModel({ deviceModelId: lastSeenDevice.modelId }));

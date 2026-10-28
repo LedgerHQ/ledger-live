@@ -1,12 +1,17 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
-import { mockserverIdentifier, webHidTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
+import {
+  mockserverIdentifier,
+  webBleTransportIdentifier,
+  webHidTransportIdentifier,
+} from "@ledgerhq/live-dmk-desktop";
 import type { DeviceInfo, DeviceModelInfo } from "@ledgerhq/types-live";
 import reducer, {
   INITIAL_STATE,
   seedMockServerKnownDevice,
   importKnownDevices,
+  rememberKnownDevice,
   knownDevicesSelector,
   knownDevicesStoreSelector,
   mapKnownDeviceToPersistedKnownDevice,
@@ -33,15 +38,22 @@ const makeDevice = (overrides: Partial<Device> = {}): Device => ({
 });
 
 const fetchSettings = (payload: Record<string, unknown>) => ({ type: "FETCH_SETTINGS", payload });
-const lastSeenDeviceInfo = (modelId: DeviceModelId) => ({
+const lastSeenDeviceInfo = (modelId: DeviceModelId, wired = true) => ({
   type: "LAST_SEEN_DEVICE_INFO",
-  payload: { lastSeenDevice: makeLastSeenDevice(modelId) },
+  payload: { lastSeenDevice: makeLastSeenDevice(modelId), wired },
 });
 const setLastOnboardedDevice = (payload: Device | null) => ({
   type: "SET_LAST_ONBOARDED_DEVICE",
   payload,
 });
 const addDevice = (payload: Device) => ({ type: "ADD_DEVICE", payload });
+const bluetoothKnownDevice = (overrides: Partial<KnownDevice> = {}): KnownDevice => ({
+  transport: webBleTransportIdentifier,
+  deviceModelId: DeviceModelId.europa,
+  id: "ble-device-id",
+  name: "Flex 1A2B",
+  ...overrides,
+});
 
 function withSpeculosEnv(device: string, run: () => void) {
   const previousDevice = process.env.SPECULOS_DEVICE;
@@ -244,6 +256,11 @@ describe("knownDevices reducer", () => {
       ]);
     });
 
+    it("does not record a device seen over Bluetooth as a USB known device", () => {
+      const state = reducer(INITIAL_STATE, lastSeenDeviceInfo(DeviceModelId.europa, false));
+      expect(state.knownDevices).toEqual([]);
+    });
+
     it("upserts on lastOnboardedDevice change", () => {
       const state = reducer(
         INITIAL_STATE,
@@ -282,6 +299,27 @@ describe("knownDevices reducer", () => {
         DeviceModelId.stax,
         DeviceModelId.europa,
       ]);
+    });
+
+    it("dedupes by transport and device model id", () => {
+      let state = reducer(INITIAL_STATE, addDevice(makeDevice({ modelId: DeviceModelId.europa })));
+      state = reducer(state, rememberKnownDevice(bluetoothKnownDevice()));
+      state = reducer(state, rememberKnownDevice(bluetoothKnownDevice({ id: "new-ble-id" })));
+      expect(state.knownDevices.map(d => [d.transport, d.deviceModelId, d.id])).toEqual([
+        [webHidTransportIdentifier, DeviceModelId.europa, ""],
+        [webBleTransportIdentifier, DeviceModelId.europa, "new-ble-id"],
+      ]);
+    });
+
+    it("does not record a Bluetooth device added at runtime as a USB device", () => {
+      let state = reducer(INITIAL_STATE, addDevice(makeDevice({ wired: false })));
+      state = reducer(state, setLastOnboardedDevice(makeDevice({ wired: false })));
+      expect(state.knownDevices).toEqual([]);
+    });
+
+    it("remembers a Bluetooth device with its chooser id", () => {
+      const state = reducer(INITIAL_STATE, rememberKnownDevice(bluetoothKnownDevice()));
+      expect(state.knownDevices).toEqual([bluetoothKnownDevice()]);
     });
 
     it("keeps a previously known name when the new source has none", () => {
@@ -365,6 +403,13 @@ describe("knownDevices reducer", () => {
         const device = { ...webHidKnownDevice, transport: "httpdebug" } as KnownDevice;
         expect(mapKnownDeviceToPersistedKnownDevice(device)).toBeNull();
       });
+
+      it("persists a web-ble device using the stable transport code", () => {
+        expect(mapKnownDeviceToPersistedKnownDevice(bluetoothKnownDevice())).toEqual({
+          ...bluetoothKnownDevice(),
+          transport: "webble",
+        });
+      });
     });
 
     describe("mapPersistedKnownDeviceToKnownDevice", () => {
@@ -390,6 +435,17 @@ describe("knownDevices reducer", () => {
           id: "",
           name: null,
         };
+        expect(mapPersistedKnownDeviceToKnownDevice(device)).toBeNull();
+      });
+
+      it("hydrates a persisted web-ble device to the runtime transport identifier", () => {
+        expect(
+          mapPersistedKnownDeviceToKnownDevice({ ...bluetoothKnownDevice(), transport: "webble" }),
+        ).toEqual(bluetoothKnownDevice());
+      });
+
+      it("returns null for an inherited object key used as transport code", () => {
+        const device = { ...bluetoothKnownDevice(), transport: "toString" };
         expect(mapPersistedKnownDeviceToKnownDevice(device)).toBeNull();
       });
     });
@@ -422,6 +478,14 @@ describe("knownDevices reducer", () => {
       expect(persisted).not.toBeNull();
       expect(mapPersistedKnownDeviceToKnownDevice(persisted as PersistedKnownDevice)).toEqual(
         webHidKnownDevice,
+      );
+    });
+
+    it("round-trips a web-ble device through export and import", () => {
+      const persisted = mapKnownDeviceToPersistedKnownDevice(bluetoothKnownDevice());
+      expect(persisted).not.toBeNull();
+      expect(mapPersistedKnownDeviceToKnownDevice(persisted as PersistedKnownDevice)).toEqual(
+        bluetoothKnownDevice(),
       );
     });
   });

@@ -1,6 +1,9 @@
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 import {
   BOOTSTRAP_VERSION,
+  type BluetoothBridge,
+  type BluetoothPairingRequest,
+  type BluetoothSelectionRequest,
   type Bootstrap,
   type CardSessionBridge,
   type DbBridge,
@@ -108,4 +111,14 @@ export const zcash: jest.Mocked<ZcashBridge> = {
 
 export const cardSession: CardSessionBridge = {
   takeBootstrap: async () => process.env.CARD_SESSION_BOOTSTRAP || null,
+};
+
+export const bluetooth: jest.Mocked<BluetoothBridge> = {
+  onSelectionRequest: jest.fn(
+    (_callback: (request: BluetoothSelectionRequest) => void) => () => {},
+  ),
+  onSelectionEnd: jest.fn((_callback: (requestId: number) => void) => () => {}),
+  selectDevice: jest.fn(),
+  onPairingRequest: jest.fn((_callback: (request: BluetoothPairingRequest) => void) => () => {}),
+  respondToPairing: jest.fn(),
 };

@@ -56,11 +56,11 @@ export function registerTransportModules() {
 
   /**
    * DeviceManagementKit Transport Module.
-   * It only supports regular USB devices.
+   * It supports USB (WebHID) devices, and Bluetooth devices when the Bluetooth transport is enabled.
    */
   registerTransportModule({
     id: "deviceManagementKitTransport",
-    open: (_id: string, timeoutMs?: number, context?: TraceContext) => {
+    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
       if (whichTransportModuleToUse() !== RendererTransportModule.DeviceManagementKit) return;
 
       trace({
@@ -75,7 +75,7 @@ export function registerTransportModules() {
         },
       });
 
-      return DeviceManagementKitTransport.open();
+      return DeviceManagementKitTransport.open(id);
     },
 
     disconnect: () => Promise.resolve(),

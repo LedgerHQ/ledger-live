@@ -68,12 +68,13 @@ export function useContextInitializerViewModel({
               apps,
             },
             latestFirmware,
+            wired: device.wired,
           }),
         );
         dispatch(addNewDeviceModel({ deviceModelId: modelId }));
       },
     }),
-    [dispatch],
+    [dispatch, device.wired],
   );
 
   useEffect(() => {

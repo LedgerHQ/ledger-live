@@ -279,14 +279,18 @@ export const setPreferredDeviceModel = (preferredDeviceModel: DeviceModelId) =>
 export const setLastSeenDeviceInfo = ({
   lastSeenDevice,
   latestFirmware,
+  wired,
 }: {
   lastSeenDevice: DeviceModelInfo;
   latestFirmware: unknown;
+  /** False over Bluetooth: the device must not be remembered as a USB known device. */
+  wired: boolean;
 }) => ({
   type: "LAST_SEEN_DEVICE_INFO",
   payload: {
     lastSeenDevice,
     latestFirmware,
+    wired,
   },
 });
 export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) => ({

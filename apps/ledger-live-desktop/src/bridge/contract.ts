@@ -3,7 +3,7 @@
 import type { DomainCheckViolation } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
 
 /** Bump on every shape change of `LedgerBridge` or `Bootstrap` respectively. */
-export const BRIDGE_VERSION = 7;
+export const BRIDGE_VERSION = 8;
 export const BOOTSTRAP_VERSION = 2;
 
 export type Serializable =
@@ -141,6 +141,37 @@ export type CardSessionBridge = {
   takeBootstrap(): Promise<string | null>;
 };
 
+export type BluetoothDeviceCandidate = { deviceId: string; deviceName: string };
+
+export type BluetoothSelectionRequest = {
+  requestId: number;
+  devices: BluetoothDeviceCandidate[];
+};
+
+export type BluetoothPairingKind = "confirmPin" | "providePin";
+
+export type BluetoothPairingRequest = {
+  requestId: number;
+  deviceId: string;
+  pairingKind: BluetoothPairingKind;
+  /** The pin to compare with the device screen, for `confirmPin`. */
+  pin?: string;
+};
+
+export type BluetoothPairingResponse = { confirmed: boolean; pin?: string };
+
+/** Backs the in-app Web Bluetooth chooser and the Windows/Linux pairing prompt. */
+export type BluetoothBridge = {
+  /** Fired (again, with the growing list) while a navigator.bluetooth.requestDevice scan runs. */
+  onSelectionRequest(callback: (request: BluetoothSelectionRequest) => void): Unsubscribe;
+  /** Fired when the pending selection request ended (selected, cancelled or timed out). */
+  onSelectionEnd(callback: (requestId: number) => void): Unsubscribe;
+  /** deviceId must be one of the candidates of that request; null cancels. */
+  selectDevice(requestId: number, deviceId: string | null): void;
+  onPairingRequest(callback: (request: BluetoothPairingRequest) => void): Unsubscribe;
+  respondToPairing(requestId: number, response: BluetoothPairingResponse): void;
+};
+
 export type LedgerBridge = {
   version: typeof BRIDGE_VERSION;
   bootstrap: Bootstrap;
@@ -156,7 +187,13 @@ export type LedgerBridge = {
   power: PowerBridge;
   store: StoreBridge;
   cardSession: CardSessionBridge;
+  bluetooth: BluetoothBridge;
 };
+
+/** Main refuses a pending Bluetooth pairing after this delay; the renderer dialog closes too. */
+export const BLUETOOTH_PAIRING_TIMEOUT_MS = 60_000;
+/** A Bluetooth passkey is 6 decimal digits. */
+export const BLUETOOTH_PASSKEY_PATTERN = /^\d{6}$/;
 
 // Every channel is listed here: a generic invoke passthrough would expose all of main,
 // including setEncryptionKey + isEncryptionKeyCorrect, an offline oracle on the account db.
@@ -192,6 +229,11 @@ export const CHANNELS = {
   cardSessionBootstrap: "card-session:bootstrap",
   // Live App <webview> guest -> main, then main -> the guest's embedder.
   webviewBridgeMessage: "webview-bridge:message",
+  bluetoothSelectionRequest: "bluetooth:selection-request",
+  bluetoothSelectionEnd: "bluetooth:selection-end",
+  bluetoothSelectDevice: "bluetooth:select-device",
+  bluetoothPairingRequest: "bluetooth:pairing-request",
+  bluetoothPairingResponse: "bluetooth:pairing-response",
   // Sent by the preload itself, outside the bridge.
   reloadRenderer: "reloadRenderer",
   setBackgroundColor: "set-background-color",

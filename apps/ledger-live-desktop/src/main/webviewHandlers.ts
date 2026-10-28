@@ -396,6 +396,13 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
       domainCheckReportByGuest.delete(contents.id);
     });
 
+    // Guests share the default session but never get Bluetooth: only the main window
+    // answers device requests. Cancelling explicitly does not rely on Electron's default.
+    contents.on("select-bluetooth-device", (event, _devices, callback) => {
+      event.preventDefault();
+      callback("");
+    });
+
     // Block disallowed schemes for:
     //   - `will-navigate`:       top-level navigations from link clicks / JS
     //   - `will-redirect`:       HTTP 3xx redirects (not covered by

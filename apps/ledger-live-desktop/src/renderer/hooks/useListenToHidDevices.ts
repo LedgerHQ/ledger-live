@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 import { Subscription, Observable } from "rxjs";
-import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
+import { DeviceManagementKitTransport, isBluetoothDevice } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 
@@ -19,9 +19,7 @@ export const useListenToHidDevices = () => {
             const stateDevice = {
               deviceId,
               modelId: deviceModel ? deviceModel.id : DeviceModelId.nanoS,
-              // TODO: Update the Transport.listen type whenever we switch to LDMK
-              // @ts-expect-error remapping type
-              wired: deviceModel?.type === "USB",
+              wired: !isBluetoothDevice(device),
             };
             if (type === "add") {
               dispatch(addDevice(stateDevice));

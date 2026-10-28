@@ -2,13 +2,14 @@ import React from "react";
 import {
   ListItem,
   ListItemContent,
+  ListItemDescription,
   ListItemLeading,
   ListItemTitle,
   ListItemTrailing,
   Spot,
   Tag,
 } from "@ledgerhq/lumen-ui-react";
-import type { DisplayedDevice } from "@ledgerhq/live-dmk-desktop";
+import { isBluetoothDevice, type DisplayedDevice } from "@ledgerhq/live-dmk-desktop";
 import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
 import { getProductName } from "@ledgerhq/devices";
 import { getDeviceIcon } from "LLD/utils/getDeviceIcon";
@@ -45,6 +46,13 @@ export function DeviceListItem({ device }: Readonly<DeviceListItemProps>): React
           <ListItemTitle>
             {getDeviceName(device.knownDevice, getProductName(device.knownDevice.deviceModelId))}
           </ListItemTitle>
+          <ListItemDescription>
+            {t(
+              isBluetoothDevice(device.knownDevice)
+                ? "deviceIntentExecutor.connectDevice.common.bluetooth"
+                : "deviceIntentExecutor.connectDevice.common.usb",
+            )}
+          </ListItemDescription>
         </ListItemContent>
       </ListItemLeading>
       <ListItemTrailing>

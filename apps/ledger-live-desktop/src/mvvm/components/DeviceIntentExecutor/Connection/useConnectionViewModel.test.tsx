@@ -6,10 +6,14 @@ import {
   BaseConnectionErrorTypes,
   connectDevice,
   ConnectDeviceUIStateTypes,
+  isBluetoothTransportEnabled,
+  requestBluetoothDevice,
+  webBleTransportIdentifier,
   webHidTransportIdentifier,
   type ConnectDeviceUIState,
   useDeviceManagementKit,
 } from "@ledgerhq/live-dmk-desktop";
+import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
   DeviceIntentTrackingProvider,
   ledgerToDmkDeviceIdMap,
@@ -24,6 +28,7 @@ import { track } from "@shared/analytics";
 import { getEnvDefault, setEnv } from "@shared/env";
 import type { State } from "~/renderer/reducers";
 import createStore, { type ReduxStore } from "~/state-manager/configureStore";
+import { recordBluetoothSelection } from "~/renderer/components/Bluetooth/bluetoothSelection";
 
 import { useConnectionViewModel } from "./useConnectionViewModel";
 
@@ -49,6 +54,8 @@ jest.mock("@ledgerhq/live-dmk-desktop", () => {
   return {
     ...actual,
     connectDevice: jest.fn(),
+    isBluetoothTransportEnabled: jest.fn(),
+    requestBluetoothDevice: jest.fn(),
     useDeviceManagementKit: jest.fn(),
   };
 });
@@ -59,6 +66,8 @@ type ConnectDeviceObserver = {
 
 const mockedUseDeviceManagementKit = jest.mocked(useDeviceManagementKit);
 const mockedConnectDevice = jest.mocked(connectDevice);
+const mockedIsBluetoothTransportEnabled = jest.mocked(isBluetoothTransportEnabled);
+const mockedRequestBluetoothDevice = jest.mocked(requestBluetoothDevice);
 const mockedTrack = jest.mocked(track);
 const mockDmk = { id: "dmk" } as unknown as ReturnType<typeof useDeviceManagementKit>;
 
@@ -169,6 +178,7 @@ describe("useConnectionViewModel", () => {
     connectDeviceObserver = undefined;
     mockUnsubscribe = jest.fn();
     mockedUseDeviceManagementKit.mockReturnValue(mockDmk);
+    mockedIsBluetoothTransportEnabled.mockReturnValue(false);
     setEnv("MOCK_SERVER_TRANSPORT", false);
     mockConnectDeviceSubscription();
   });
@@ -405,6 +415,100 @@ describe("useConnectionViewModel", () => {
       });
 
       expect(mockReportFailure).toHaveBeenLastCalledWith(null);
+    });
+  });
+  describe("Bluetooth", () => {
+    const chooserDeviceId = "chooser-device-id";
+    const discoveredFlex = {
+      id: "dmk-device-id",
+      name: "Flex 1A2B",
+      deviceModel: { model: ledgerToDmkDeviceIdMap[DeviceModelId.europa] },
+      transport: webBleTransportIdentifier,
+    } as unknown as DiscoveredDevice;
+
+    beforeEach(() => {
+      mockedIsBluetoothTransportEnabled.mockReturnValue(true);
+    });
+
+    it("GIVEN the Bluetooth transport is disabled WHEN rendering THEN it exposes no Bluetooth action", () => {
+      mockedIsBluetoothTransportEnabled.mockReturnValue(false);
+
+      const { result } = renderViewModel();
+
+      expect(result.current.bluetooth).toBeNull();
+    });
+
+    it("GIVEN only models without Bluetooth are accepted WHEN rendering THEN it exposes no Bluetooth action", () => {
+      const { result } = renderViewModel({
+        deviceConnectionParams: {
+          acceptedDeviceModelIds: [ledgerToDmkDeviceIdMap[DeviceModelId.nanoSP]],
+        },
+      });
+
+      expect(result.current.bluetooth).toBeNull();
+    });
+
+    it("GIVEN any model is accepted WHEN rendering THEN it exposes an idle Bluetooth action", () => {
+      const { result } = renderViewModel();
+
+      expect(result.current.bluetooth).toEqual({ status: "idle", onConnect: expect.any(Function) });
+    });
+
+    it("GIVEN a Bluetooth device is picked WHEN it is remembered THEN connect device restarts with it", async () => {
+      mockedRequestBluetoothDevice.mockImplementation(async () => {
+        recordBluetoothSelection({ type: "selected", deviceId: chooserDeviceId });
+        return discoveredFlex;
+      });
+      const knownUsbDevice = makeKnownDevice();
+      const { result } = renderViewModel({ knownDevices: [knownUsbDevice] });
+
+      await act(() => result.current.bluetooth?.onConnect());
+
+      const rememberedFlex = {
+        transport: webBleTransportIdentifier,
+        id: chooserDeviceId,
+        deviceModelId: DeviceModelId.europa,
+        name: "Flex 1A2B",
+      };
+      expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+      expect(mockedConnectDevice).toHaveBeenCalledTimes(2);
+      expect(mockedConnectDevice).toHaveBeenLastCalledWith(
+        expect.objectContaining({ knownDevices: [knownUsbDevice, rememberedFlex] }),
+      );
+    });
+
+    it("GIVEN the Bluetooth device is already known WHEN it is picked again THEN connect device keeps running", async () => {
+      mockedRequestBluetoothDevice.mockImplementation(async () => {
+        recordBluetoothSelection({ type: "selected", deviceId: chooserDeviceId });
+        return discoveredFlex;
+      });
+      const { result } = renderViewModel({
+        knownDevices: [
+          makeKnownDevice({
+            transport: webBleTransportIdentifier,
+            id: chooserDeviceId,
+            deviceModelId: DeviceModelId.europa,
+          }),
+        ],
+      });
+
+      await act(() => result.current.bluetooth?.onConnect());
+
+      expect(mockedConnectDevice).toHaveBeenCalledTimes(1);
+      expect(mockUnsubscribe).not.toHaveBeenCalled();
+    });
+
+    it("GIVEN the user cancels the chooser WHEN connecting THEN it reports the cancellation", async () => {
+      mockedRequestBluetoothDevice.mockImplementation(async () => {
+        recordBluetoothSelection({ type: "cancelled" });
+        throw new Error("User cancelled");
+      });
+      const { result } = renderViewModel();
+
+      await act(() => result.current.bluetooth?.onConnect());
+
+      expect(result.current.bluetooth?.status).toBe("cancelled");
+      expect(mockedConnectDevice).toHaveBeenCalledTimes(1);
     });
   });
 });

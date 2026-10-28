@@ -10,15 +10,19 @@ import {
   PAGE_CONNECT_DEVICE,
   trackConnectDeviceButtonClicked,
 } from "../../utils/trackDeviceIntent";
+import type { ConnectionBluetoothViewModel } from "../useConnectionViewModel";
+import { ConnectBluetoothAction } from "./ConnectBluetoothAction";
 
 type NoKnownDeviceStateProps = {
   onConnectLedgerDevice: () => void;
   onBuyLedgerDevice: () => void;
+  bluetooth?: ConnectionBluetoothViewModel | null;
 };
 
 export function NoKnownDeviceState({
   onConnectLedgerDevice,
   onBuyLedgerDevice,
+  bluetooth,
 }: Readonly<NoKnownDeviceStateProps>): React.ReactNode {
   const { t } = useTranslation();
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
@@ -58,6 +62,7 @@ export function NoKnownDeviceState({
         }}
         testID="device-intent-executor-connect-device-no-known-device"
       />
+      {bluetooth ? <ConnectBluetoothAction bluetooth={bluetooth} /> : null}
     </>
   );
 }

@@ -3,6 +3,7 @@ import { getProductName } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
+import { webBleTransportIdentifier } from "@ledgerhq/live-dmk-desktop";
 
 import {
   DeviceIntentTrackingTestWrapper,
@@ -40,6 +41,27 @@ describe("DeviceListItem", () => {
     // THEN
     expect(screen.getByText("Unavailable Ledger")).toBeVisible();
     expect(screen.getByText("Not connected")).toBeVisible();
+  });
+
+  it("GIVEN the same model known over USB and Bluetooth WHEN rendering both THEN each row names its connection", () => {
+    // GIVEN
+    const usbDevice = makeDisplayedDevice({ knownDevice: makeKnownDevice({ name: "Flex" }) });
+    const bluetoothDevice = makeDisplayedDevice({
+      knownDevice: makeKnownDevice({ name: "Flex", transport: webBleTransportIdentifier }),
+    });
+
+    // WHEN
+    render(
+      <>
+        <DeviceListItem device={usbDevice} />
+        <DeviceListItem device={bluetoothDevice} />
+      </>,
+      { wrapper: DeviceIntentTrackingTestWrapper },
+    );
+
+    // THEN
+    expect(screen.getByText("USB")).toBeVisible();
+    expect(screen.getByText("Bluetooth")).toBeVisible();
   });
 
   it("GIVEN a known device without a name WHEN rendering THEN it falls back to the product name", () => {

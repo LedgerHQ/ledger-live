@@ -9,8 +9,10 @@ import {
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import type { Observable } from "rxjs";
 
+import { isBluetoothTransportEnabled } from "../hooks/useDeviceManagementKit";
 import { MockServerDeviceDiscoverySource } from "./discoveryService/sources/MockServerDeviceDiscoverySource";
 import { SpeculosDeviceDiscoverySource } from "./discoveryService/sources/SpeculosDeviceDiscoverySource";
+import { WebBleDeviceDiscoverySource } from "./discoveryService/sources/WebBleDeviceDiscoverySource";
 import { WebHidDeviceDiscoverySource } from "./discoveryService/sources/WebHidDeviceDiscoverySource";
 import { type DesktopConnectDeviceUIState, type DesktopDiscoveryError } from "./types";
 import { createConnectionError, filterMatchedDevices } from "./utils";
@@ -35,6 +37,10 @@ export function connectDevice(input: ConnectDeviceInput): Observable<DesktopConn
   if (input.mockServerTransportEnabled) {
     const mockServerSource = new MockServerDeviceDiscoverySource(input.dmk);
     discoverySources.set(mockServerSource.transportId, mockServerSource);
+  }
+  if (isBluetoothTransportEnabled()) {
+    const webBleSource = new WebBleDeviceDiscoverySource(input.dmk);
+    discoverySources.set(webBleSource.transportId, webBleSource);
   }
 
   return connectDeviceUseCase({

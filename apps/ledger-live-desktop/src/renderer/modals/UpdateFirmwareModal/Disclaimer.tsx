@@ -6,6 +6,7 @@ import { useSelector } from "LLD/hooks/redux";
 import { TrackScreen } from "@shared/analytics-react";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
+import { isCurrentDeviceOnBluetoothSelector } from "~/renderer/reducers/devices";
 
 type Props = {
   firmware: FirmwareUpdateContext;
@@ -15,6 +16,8 @@ type Props = {
 export default function Disclaimer({ firmware, onContinue }: Props) {
   const { t } = useTranslation();
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
+  // The device reboots during the update and Bluetooth cannot reliably reconnect to it.
+  const isOnBluetooth = useSelector(isCurrentDeviceOnBluetoothSelector);
 
   return (
     <Flex flex={1} flexDirection="column" justifyContent="space-between" overflowY="hidden">
@@ -28,6 +31,17 @@ export default function Disclaimer({ firmware, onContinue }: Props) {
         my={12}
       >
         <TrackScreen category="Manager" name="DisclaimerModal" />
+        {isOnBluetooth && (
+          <Flex mb={6}>
+            <Alert
+              type="warning"
+              title={t("bluetooth.usbRequired.title")}
+              renderContent={({ ...props }) => (
+                <Text {...props}>{t("bluetooth.usbRequired.description")}</Text>
+              )}
+            />
+          </Flex>
+        )}
         {hasOnboardedDevice && (
           <Alert
             type="info"
@@ -56,7 +70,12 @@ export default function Disclaimer({ firmware, onContinue }: Props) {
           pb={1}
         >
           <Flex flex={1} />
-          <Button data-testid="modal-continue-button" variant="main" onClick={onContinue}>
+          <Button
+            data-testid="modal-continue-button"
+            variant="main"
+            disabled={isOnBluetooth}
+            onClick={onContinue}
+          >
             {t("manager.firmware.installUpdate")}
           </Button>
         </Flex>

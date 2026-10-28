@@ -195,26 +195,35 @@ const FirmwareUpdate = (props: Props) => {
     <FirmwareUpdateBanner
       right={
         <Box alignItems={"flex-end"} horizontal>
-          {manager.firmwareUpdateRequiresUserToUninstallApps(device.modelId, deviceInfo) && (
+          {device.wired === false ? (
             <Box px={4} horizontal alignItems="center" color="neutral.c00">
               <IconInfoCircle size={12} />
-              <Text
-                style={{
-                  marginLeft: 6,
-                }}
-                ff="Inter"
-                fontSize={4}
-              >
-                <Trans i18nKey="manager.firmware.removeApps" />
+              <Text style={{ marginLeft: 6 }} ff="Inter" fontSize={4}>
+                <Trans i18nKey="bluetooth.usbRequired.title" />
               </Text>
             </Box>
+          ) : (
+            manager.firmwareUpdateRequiresUserToUninstallApps(device.modelId, deviceInfo) && (
+              <Box px={4} horizontal alignItems="center" color="neutral.c00">
+                <IconInfoCircle size={12} />
+                <Text
+                  style={{
+                    marginLeft: 6,
+                  }}
+                  ff="Inter"
+                  fontSize={4}
+                >
+                  <Trans i18nKey="manager.firmware.removeApps" />
+                </Text>
+              </Box>
+            )
           )}
 
           <NewButton
             appearance="gray"
             size="sm"
             data-testid="manager-update-firmware-button"
-            disabled={!!disableFirmwareUpdate}
+            disabled={!!disableFirmwareUpdate || device.wired === false}
             onClick={() => {
               track("button_clicked", {
                 page: "my ledger",

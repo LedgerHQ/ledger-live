@@ -210,6 +210,7 @@ const EarlySecurityChecks = ({
             apps: installed.map(({ name, version }) => ({ name, version })),
           },
           latestFirmware,
+          wired: device.wired,
         }),
       );
 
