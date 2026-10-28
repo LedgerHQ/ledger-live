@@ -169,13 +169,21 @@ function checkPackage(
   const visited = new Set();
   const graph = moduleGraph();
 
+  /**
+   * @param {string} file absolute path
+   * @returns {string} posix-style path from the repo root
+   */
+  function toRelative(file) {
+    return path.relative(workspaceRoot, file).split(path.sep).join("/");
+  }
+
   // Each file is checked once, so an `export *` cycle terminates.
   function visit(file) {
     if (visited.has(file)) return;
     visited.add(file);
     const source = graph.sourceOf(file);
     if (source === undefined) return;
-    const relative = path.relative(workspaceRoot, file).split(path.sep).join("/");
+    const relative = toRelative(file);
     if (!Object.hasOwn(fileExceptions, relative)) {
       const violations = isBarrelFile(relative)
         ? checkBarrel(source, options)
@@ -209,13 +217,6 @@ function checkPackage(
     }
 
     const sourceRoot = path.join(packageDir, "src");
-    /**
-     * @param {string} file absolute path
-     * @returns {string} posix-style path from the repo root
-     */
-    function toRelative(file) {
-      return path.relative(workspaceRoot, file).split(path.sep).join("/");
-    }
     const reach = barrelReach(
       [
         ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
