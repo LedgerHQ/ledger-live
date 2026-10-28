@@ -119,7 +119,6 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
   {
-    // XTZ_2 is delegated, so already revealed: no reveal operation is batched with the send.
     transaction: new Transaction(Account.XTZ_2, Account.XTZ_1, "0.0001"),
     xrayTicket: "B2CQA-6094",
     disableBroadcast: true,
