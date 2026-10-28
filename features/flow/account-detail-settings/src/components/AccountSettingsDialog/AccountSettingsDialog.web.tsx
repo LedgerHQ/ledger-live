@@ -1,7 +1,7 @@
 import React from "react";
-import { AccountSettingsDialogView } from "./AccountSettingsDialogView.web";
-import type { AccountSettingsDialogProps } from "./types.web";
-import { useAccountSettingsDialogViewModel } from "./useAccountSettingsDialogViewModel.web";
+import { AccountSettingsDialogView } from "./AccountSettingsDialogView";
+import type { AccountSettingsDialogProps } from "./types";
+import { useAccountSettingsDialogViewModel } from "./useAccountSettingsDialogViewModel";
 
 export function AccountSettingsDialog(props: AccountSettingsDialogProps) {
   return (

@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "@shared/i18n";
-import type { AccountSettingsDialogStep } from "./types.web";
+import type { AccountSettingsDialogStep } from "./types";
 
 export function useAccountSettingsDialogViewModel(ticker: string): Readonly<{
   step: AccountSettingsDialogStep;

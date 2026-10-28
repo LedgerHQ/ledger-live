@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, TextInput } from "@ledgerhq/lumen-ui-react";
-import type { ChangeNameContentViewProps } from "./types.web";
+import type { ChangeNameContentViewProps } from "./types";
 
 export function ChangeNameContentView({
   value,

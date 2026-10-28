@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
 import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
-import { AccountSettingsSheet } from "./AccountSettingsSheet.native";
-import type { AccountSettingsSheetProps } from "./types.native";
+import { AccountSettingsSheet } from "./AccountSettingsSheet";
+import type { AccountSettingsSheetProps } from "./types";
 
 function renderSheet(overrides: Partial<AccountSettingsSheetProps> = {}) {
   const props: AccountSettingsSheetProps = {

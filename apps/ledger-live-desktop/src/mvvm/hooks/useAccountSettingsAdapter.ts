@@ -2,7 +2,7 @@ import { useCallback, useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/ledger-wallet-framework/derivation";
 import { accountNameWithDefaultSelector } from "@domain/entity-account-name";
-import type { AccountSettingsAdapter } from "@features/flow-account-detail-settings";
+import type { AccountSettingsAdapter } from "@features/flow-account-detail-settings/web";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useSyncPhase } from "LLD/hooks/useSyncPhase";
 import { removeAccount, updateAccount } from "~/renderer/actions/accounts";
