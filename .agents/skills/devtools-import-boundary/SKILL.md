@@ -9,16 +9,18 @@ description: |
 
 Every `@devtools/*` package is **self-contained**. The only permitted cross-package imports within the devtools scope are listed in the table below; all others are forbidden.
 
+`pnpm lint:boundaries` enforces the table. Its source of truth is `DEVTOOLS_ALLOWED_IMPORTS` and `DEVTOOLS_TYPE_ONLY_IMPORTS` in [`tools/nx-plugins/enforce-boundaries/constraints.js`](../../../tools/nx-plugins/enforce-boundaries/constraints.js): change them there, then update this table.
+
 ## Rules
 
 | Package | May import from `@devtools/*` |
 |---|---|
 | `@devtools/registry` | any `@devtools/<tool>` |
 | `@devtools/shell` | `@devtools/transport`, `@devtools/registry` |
-| `@devtools/bindings` | `@devtools/registry` only |
+| `@devtools/bindings` | `@devtools/registry`; any `@devtools/<tool>` through `import type` only |
 | `@devtools/wire` | `@devtools/transport`, `@devtools/protocols` |
 | `@devtools/protocols` | `@devtools/transport` only |
-| `@devtools/relay` | `@devtools/transport` only |
+| `@devtools/relay` | `@devtools/transport`, `@devtools/protocols` |
 | `@devtools/transport-panel` | `@devtools/transport` only |
 | `@devtools/<tool>` | *none* |
 
@@ -32,7 +34,9 @@ The devtools architecture decouples tools from the shell through the registry. T
 - A circular dependency becomes likely (tool → shell → registry → tool).
 - The tool can no longer be rendered standalone, outside the shell.
 
-If `bindings` or `shell` import a tool package directly (instead of through the registry):
+`bindings` builds each tool's props, so it may name a tool's props type with `import type`: the build erases it, and the tool stays lazily loaded. Any other import of a tool from `bindings` (a value import, `import { type X }`, `import()` or `require()`) loads the tool at runtime and fails the check.
+
+If `bindings` or `shell` import a tool package's values directly (instead of through the registry):
 
 - The registry's discriminated union is bypassed and TypeScript loses the narrowing guarantee on `DevToolsConfig`.
 - The `import()` split point disappears, defeating code-splitting.

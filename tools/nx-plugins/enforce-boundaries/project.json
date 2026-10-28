@@ -3,6 +3,15 @@
   "name": "enforce-boundaries",
   "projectType": "library",
   "targets": {
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test tools/nx-plugins/enforce-boundaries/validate.test.js"
+      }
+    },
     "lint:boundaries": {
       "executor": "nx:run-commands",
       "cache": true,

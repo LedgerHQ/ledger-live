@@ -9,6 +9,8 @@ const {
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
 } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -22,6 +24,8 @@ const ts = require("typescript");
  * @typedef {{ file: string, specifier: string }} SourceViolation
  * @typedef {{ manifest: string, dependency: string, field: string, reason: string }} BannedDepViolation
  * @typedef {{ file: string, specifier: string, field?: string, sourceTag: string }} BannedExternalViolation
+ * @typedef {{ source: string, target: string, file?: string }} DevtoolsImportViolation
+ * @typedef {{ manifest: string, dependency: string, field: string }} PrivateDependencyViolation
  */
 
 const DEPENDENCY_FIELDS = [
@@ -30,6 +34,9 @@ const DEPENDENCY_FIELDS = [
   "peerDependencies",
   "optionalDependencies",
 ];
+
+/** The dependency fields a consumer installs; devDependencies are not published. */
+const PUBLISHED_DEPENDENCY_FIELDS = ["dependencies", "peerDependencies", "optionalDependencies"];
 
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
 const SOURCE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
@@ -64,6 +71,44 @@ function walkSourceFiles(dir, callback) {
  */
 function importSpecifiers(content) {
   return ts.preProcessFile(content, true, true).importedFiles.map(f => f.fileName);
+}
+
+/**
+ * Specifiers of a source file that load `pkg` at runtime: every import of it but `import type`,
+ * `export type … from` and `import("…")` type queries, which the build erases.
+ *
+ * @param {string} file
+ * @param {string} content
+ * @param {string} pkg
+ * @returns {string[]}
+ */
+function valueImportsOf(file, content, pkg) {
+  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
+  const specifiers = [];
+  const visit = node => {
+    let spec;
+    if (ts.isImportDeclaration(node) && !node.importClause?.isTypeOnly) {
+      spec = node.moduleSpecifier;
+    } else if (ts.isExportDeclaration(node) && !node.isTypeOnly) {
+      spec = node.moduleSpecifier;
+    } else if (ts.isImportEqualsDeclaration(node) && !node.isTypeOnly) {
+      spec = ts.isExternalModuleReference(node.moduleReference)
+        ? node.moduleReference.expression
+        : undefined;
+    } else if (
+      ts.isCallExpression(node) &&
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === "require"))
+    ) {
+      spec = node.arguments[0];
+    }
+    if (spec && ts.isStringLiteralLike(spec) && packageNameOf(spec.text) === pkg) {
+      specifiers.push(spec.text);
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  return specifiers;
 }
 
 /**
@@ -256,6 +301,111 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
 }
 
 /**
+ * Manifest of every graph node that has one, keyed by node name.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @returns {Map<string, { manifest: string, pkg: Record<string, any> }>}
+ */
+function readManifests(graph, workspaceRoot) {
+  const manifests = new Map();
+  for (const [nodeName, node] of Object.entries(graph.nodes)) {
+    const root = node.data?.root;
+    if (!root) continue;
+    const manifest = path.join(root, "package.json");
+    try {
+      const pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
+      manifests.set(nodeName, { manifest, pkg });
+    } catch {}
+  }
+  return manifests;
+}
+
+/**
+ * @param {string[] | "*" | undefined} allowed
+ * @param {string} target
+ */
+function allows(allowed, target) {
+  return allowed === "*" || (allowed?.includes(target) ?? false);
+}
+
+/**
+ * Collect every `@devtools/*` → `@devtools/*` graph edge the allowed-imports table does not list.
+ * An edge the type-only table lists passes when no source file under the package root loads the
+ * target at runtime; each file that does is reported.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @param {Record<string, string[] | "*">} allowedImports
+ * @param {Record<string, string[] | "*">} typeOnlyImports
+ * @returns {DevtoolsImportViolation[]}
+ */
+function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
+  const manifests = readManifests(graph, workspaceRoot);
+  const byEdge = new Map();
+
+  for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
+    const source = manifests.get(sourceNode)?.pkg.name;
+    if (!source?.startsWith("@devtools/")) continue;
+
+    for (const edge of edges) {
+      const target = manifests.get(edge.target)?.pkg.name;
+      if (!target?.startsWith("@devtools/")) continue;
+      if (allows(allowedImports[source], target)) continue;
+
+      if (!allows(typeOnlyImports[source], target)) {
+        byEdge.set(`${source}\n${target}`, { source, target });
+        continue;
+      }
+      walkSourceFiles(path.join(workspaceRoot, graph.nodes[sourceNode].data.root), file => {
+        const content = fs.readFileSync(file, "utf8");
+        if (valueImportsOf(file, content, target).length === 0) return;
+        const rel = path.relative(workspaceRoot, file);
+        byEdge.set(`${source}\n${target}\n${rel}`, { source, target, file: rel });
+      });
+    }
+  }
+
+  return [...byEdge.values()];
+}
+
+/**
+ * Collect every graph edge from a published package (no `"private": true`) to a private
+ * workspace package it declares in a field that ships to consumers. A package publishing a
+ * generated manifest (`publishConfig.directory`) is skipped: its build decides what ships.
+ *
+ * Not wired into `main` yet: develop still breaks it.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @returns {PrivateDependencyViolation[]}
+ */
+function findPrivateDependencyViolations(graph, workspaceRoot) {
+  const manifests = readManifests(graph, workspaceRoot);
+  const byEdge = new Map();
+
+  for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
+    const source = manifests.get(sourceNode);
+    if (!source || source.pkg.private === true || source.pkg.publishConfig?.directory) continue;
+
+    for (const edge of edges) {
+      const target = manifests.get(edge.target)?.pkg;
+      if (target?.private !== true) continue;
+      for (const field of PUBLISHED_DEPENDENCY_FIELDS) {
+        if (source.pkg[field]?.[target.name] === undefined) continue;
+        byEdge.set(`${source.manifest}\n${target.name}\n${field}`, {
+          manifest: source.manifest,
+          dependency: target.name,
+          field,
+        });
+      }
+    }
+  }
+
+  return [...byEdge.values()];
+}
+
+/**
  * Walk the Nx project graph and collect every edge that violates the
  * DEP_CONSTRAINTS rules. A given edge can match multiple constraints
  * (e.g. a `type:domain-api` source also has `scope:domain`); the
@@ -384,6 +534,25 @@ async function main() {
     );
   }
 
+  const devtoolsViolations = findDevtoolsImportViolations(
+    graph,
+    workspaceRoot,
+    DEVTOOLS_ALLOWED_IMPORTS,
+    DEVTOOLS_TYPE_ONLY_IMPORTS,
+  );
+
+  if (devtoolsViolations.length > 0) {
+    hasError = true;
+    console.error(`\n✗ ${devtoolsViolations.length} devtools import violation(s):\n`);
+    for (const v of devtoolsViolations) {
+      const where = v.file ? `  (value import in ${v.file}; only \`import type\` is allowed)` : "";
+      console.error(`  ${v.source}  →  ${v.target}${where}`);
+    }
+    console.error(
+      "\nAllowed @devtools/* imports are listed in DEVTOOLS_ALLOWED_IMPORTS and DEVTOOLS_TYPE_ONLY_IMPORTS, tools/nx-plugins/enforce-boundaries/constraints.js\n",
+    );
+  }
+
   if (hasError) process.exit(1);
   console.log("✓ module boundaries ok");
 }
@@ -394,6 +563,8 @@ module.exports = {
   collectLegacyPackageNames,
   findBannedDependencyViolations,
   findBannedExternalViolations,
+  findDevtoolsImportViolations,
+  findPrivateDependencyViolations,
 };
 
 if (require.main === module) {

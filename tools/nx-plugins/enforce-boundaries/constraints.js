@@ -101,6 +101,28 @@ const BANNED_EXTERNALS_BY_TAG = [
  */
 const BANNED_DEPENDENCIES = [];
 
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may depend on; "*" allows them all.
+ * A package missing from the table, such as a tool, may depend on none.
+ */
+const DEVTOOLS_ALLOWED_IMPORTS = {
+  "@devtools/registry": "*",
+  "@devtools/shell": ["@devtools/transport", "@devtools/registry"],
+  "@devtools/bindings": ["@devtools/registry"],
+  "@devtools/wire": ["@devtools/transport", "@devtools/protocols"],
+  "@devtools/protocols": ["@devtools/transport"],
+  "@devtools/relay": ["@devtools/transport", "@devtools/protocols"],
+  "@devtools/transport-panel": ["@devtools/transport"],
+};
+
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may reach through `import type` only;
+ * "*" allows them all. The import is erased at build, so the tool stays lazily loaded.
+ */
+const DEVTOOLS_TYPE_ONLY_IMPORTS = {
+  "@devtools/bindings": "*",
+};
+
 module.exports = {
   DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
@@ -109,4 +131,6 @@ module.exports = {
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
 };
