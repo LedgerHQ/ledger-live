@@ -107,6 +107,11 @@ export class NewSendModal extends Modal {
   private readonly coinControlAmountInput = this.dialog.getByLabel(/amount to send/i);
   private readonly coinControlChangeToReturn = this.dialog.getByTestId("send-change-to-return-row");
   private readonly coinControlFooter = this.dialog.getByTestId("send-coin-control-footer");
+  private readonly coinControlReviewButton =
+    this.coinControlFooter.getByTestId("send-review-button");
+  private readonly coinControlFeesMenuTrigger = this.coinControlFooter.getByTestId(
+    "send-network-fees-menu-trigger",
+  );
 
   private async readAmount(): Promise<string> {
     return (await this.amountInput.inputValue()).replaceAll(/\s/g, "");
@@ -387,10 +392,8 @@ export class NewSendModal extends Modal {
     await expect(this.coinControlStrategySelect).toBeVisible();
     await expect(this.coinControlAmountInput).toBeVisible();
     await expect(this.coinControlChangeToReturn).toBeVisible();
-    await expect(this.coinControlFooter.getByTestId("send-review-button")).toBeVisible();
-    await expect(
-      this.coinControlFooter.getByTestId("send-network-fees-menu-trigger"),
-    ).toBeVisible();
+    await expect(this.coinControlReviewButton).toBeVisible();
+    await expect(this.coinControlFeesMenuTrigger).toBeVisible();
   }
 
   @step("Go back to the previous step")
