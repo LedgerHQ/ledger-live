@@ -350,10 +350,12 @@ test.describe("Send - new flow - ENS address", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) to ENS address`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-2202" },
+      annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027" },
     },
     async ({ app }) => {
       await openNewSendFromAccount(app, tx);
+      await app.newSendFlow.typeAddress(Addresses.VITALIK_ENS);
+      await app.newSendFlow.expectRecentHistoryWarning();
       await app.newSendFlow.typeAddress(tx.accountToCredit.ensName ?? "");
       await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
       await app.newSendFlow.fillCryptoAmount(tx.amount);
