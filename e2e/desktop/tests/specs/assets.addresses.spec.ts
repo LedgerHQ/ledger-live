@@ -55,11 +55,11 @@ test.describe("Wallet assets", () => {
         );
         await app.portfolio.cryptoAddressesBanner.expectAddAccountCTAVisible();
 
-        // Step 2: Select a placeholder asset — redirects to the asset market page
-        await test.step("Click placeholder asset - redirected to market page", async () => {
+        // Step 2: Select a placeholder asset — redirects to the asset detail page
+        await test.step("Click placeholder asset - redirected to asset page", async () => {
           await app.portfolio.assetsView.clickAssetInSection("cryptos", Currency.BTC);
           const page = app.layout.getPage();
-          await expect(page).toHaveURL(await coinDetailUrlPattern(page, "bitcoin"));
+          await expect(page).toHaveURL(coinDetailUrlPattern("bitcoin"));
         });
 
         // Step 3: Go back to portfolio

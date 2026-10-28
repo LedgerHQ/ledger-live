@@ -18,8 +18,6 @@ const getLwdWallet40Params = async (page: Page) => {
 export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
   Boolean((await getLwdWallet40Params(page))?.assetSection);
 
-export const isAggregatedAssetsEnabled = async (_page: Page): Promise<boolean> => true;
-
 export const useLocalEarnManifest = process.env.USE_LOCAL_EARN_MANIFEST === "1";
 
 const FF_LWD_WALLET_40_Q1 = {

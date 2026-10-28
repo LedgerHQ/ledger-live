@@ -16,8 +16,7 @@ export class MarketCoinPage extends AppPage {
   @step("Expect market coin page to be visible")
   async expectMarketCoinPageToBeVisible(currencyId: string) {
     const escaped = currencyId.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`).toLowerCase();
-    // Accept both routes: aggregatedAssets ON serves `/asset/:id`, OFF serves `/market/:id`.
-    await expect(this.getPage()).toHaveURL(new RegExp(`/(asset|market)/${escaped}`));
+    await expect(this.getPage()).toHaveURL(new RegExp(`/asset/${escaped}`));
     await this.coinPageContainer.first().waitFor({ state: "attached" });
     await expect(this.loadingPlaceholder).toHaveCount(0);
   }
