@@ -111,7 +111,7 @@ node tools/nx-plugins/enforce-tool-config/validate.mjs features/flow/contacts  #
 ```
 
 Each violation prints as `[rule] file: message`. The rules (`fmt`, `jest`, `lint`, `tsconfig`, and
-the `tsconfig-debt` list it reads) and the fix for each message are in
+the `tsconfig-debt` list it reads) and the fix for each check are in
 [references/tool-config-rules.md](references/tool-config-rules.md).
 
 `lint:tool-config` also runs in `pnpm lint:arch`, which CI requires.
