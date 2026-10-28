@@ -28,7 +28,12 @@ export class NewSendModal extends Modal {
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
+  private readonly memoTypeSelect = this.dialog.getByTestId("send-memo-options-select");
+  // Select options render in a portal, outside the dialog subtree.
+  private readonly memoTypeOption = (memoType: StellarMemoType) =>
+    this.page.getByTestId(`send-memo-select-option-${memoType}`);
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
+  private readonly skipMemoCancelButton = this.dialog.getByTestId("send-skip-memo-cancel");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly amountErrorMessage = this.dialog.getByTestId("send-amount-message");
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
@@ -92,11 +97,6 @@ export class NewSendModal extends Modal {
 
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
-  private readonly skipMemoCancelButton = this.dialog.getByTestId("send-skip-memo-cancel");
-  private readonly memoTypeSelect = this.dialog.getByTestId("send-memo-options-select");
-  // Select options render in a portal, outside the dialog subtree.
-  private readonly memoTypeOption = (memoType: StellarMemoType) =>
-    this.page.getByTestId(`send-memo-select-option-${memoType}`);
 
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
