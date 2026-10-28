@@ -1,3 +1,4 @@
+import type { Principal } from "@icp-sdk/core/principal";
 import type {
   FeeEstimation,
   StakingTransactionIntent,
@@ -7,12 +8,17 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { TRANSFER_FEE } from "../consts";
 import type { IcpMemo } from "../types";
-import { deriveAddressFromPubkey } from "./crypto";
+import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "./crypto";
 import { validateMemo } from "./validation";
 
-/** The parameters of a neuron command that the intent's own fields cannot carry. */
+/** The parameters of a neuron operation that the intent's own fields cannot carry. */
 export interface IcpNeuronCommandData extends TxData {
   type: "neuron";
+  /**
+   * The nonce that names the neuron's stake account, a decimal Nat64 (`create_neuron`,
+   * `increase_stake`). A create_neuron transfer carries it as its memo.
+   */
+  stakeNonce?: string;
   /** Seconds to add to the dissolve delay (`increase_dissolve_delay`). */
   additionalDissolveDelaySeconds?: number;
   /** The dissolve delay to set, in seconds from now (`set_dissolve_delay`). */
@@ -33,8 +39,42 @@ export type IcpTxData = TxDataNotSupported | IcpNeuronCommandData;
 
 export type IcpIntent = TransactionIntent<IcpMemo, IcpTxData>;
 
-/** A neuron command: `type` names the command and `valAddress` the neuron id. */
+/**
+ * A neuron operation: `type` names it and `valAddress` the neuron id, or the governance canister id
+ * for a `create_neuron`.
+ */
 export type IcpStakingIntent = StakingTransactionIntent<IcpMemo, IcpTxData>;
+
+/** The intent field an error concerns, when it is not the transaction as a whole. */
+type ErrorField = "amount" | "recipient";
+
+const errorFields = new WeakMap<Error, ErrorField>();
+
+/** Tag `error` as concerning the intent's `field`. */
+export const fieldError = (field: ErrorField, error: Error): Error => {
+  errorFields.set(error, field);
+  return error;
+};
+
+/** The intent field a neuron operation's error concerns, or `transaction`. */
+export const errorFieldOf = (error: Error): ErrorField | "transaction" =>
+  errorFields.get(error) ?? "transaction";
+
+/** The neuron data the intent carries, if any. */
+export const neuronDataOf = (intent: IcpStakingIntent): IcpNeuronCommandData | undefined => {
+  const data = "data" in intent ? intent.data : undefined;
+  return data?.type === "neuron" ? data : undefined;
+};
+
+/** The principal of the sender's public key, or undefined when the intent carries no usable one. */
+export const signerPrincipalOf = ({ senderPublicKey }: IcpIntent): Principal | undefined => {
+  if (!senderPublicKey) return undefined;
+  try {
+    return derivePrincipalFromPubkey(senderPublicKey);
+  } catch {
+    return undefined;
+  }
+};
 
 /**
  * The sender's public key. The call is signed by the key's principal and acts for that principal's
@@ -49,10 +89,8 @@ export function senderPublicKeyOf({ sender, senderPublicKey }: IcpIntent): strin
 }
 
 /**
- * Why the module cannot carry out the intent, or undefined when it can: native ICP sends only.
- *
- * `type` is checked too: `create_neuron` and `increase_stake` are also ledger transfers and arrive
- * as `intentType: "transaction"`, but their recipient is a governance subaccount.
+ * Why the module cannot carry out the intent as a send, or undefined when it can: native ICP sends
+ * only. A neuron operation, stake transfers included, is a staking intent.
  */
 export function unsupportedIntent(intent: IcpIntent): string | undefined {
   if (intent.intentType !== "transaction") return `${intent.intentType} intents are not supported`;

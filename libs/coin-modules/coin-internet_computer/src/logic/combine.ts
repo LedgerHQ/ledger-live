@@ -22,6 +22,12 @@ export interface DecodedReadStateContent extends Record<string, unknown> {
   sender: Uint8Array;
 }
 
+/** A crafted ledger transfer. A stake transfer carries the nonce of the neuron's stake account. */
+interface DecodedTransfer {
+  content: DecodedCallContent;
+  stake_nonce?: unknown;
+}
+
 /** A crafted neuron command: the call and the read_state request that polls it. */
 export interface DecodedNeuronCommand {
   call: DecodedCallContent;
@@ -79,6 +85,9 @@ const combineNeuronCommand = (
  * `readStateSignatureRS`, both from one interaction. The generic signing flow carries one signature
  * per transaction, so the signer adapter concatenates them. It comes back as
  * `Cbor.encode({ call, read_state })`, one envelope each.
+ *
+ * A stake transfer comes back as `Cbor.encode({ transfer, stake_nonce })`: the signed envelope, and
+ * the unsigned nonce that broadcast checks against it before claiming the neuron.
  */
 export function combine(tx: string, signatures: string[], pubkey: string | undefined): string {
   if (signatures.length !== 1) {
@@ -86,16 +95,18 @@ export function combine(tx: string, signatures: string[], pubkey: string | undef
   }
   if (!pubkey) throw new Error("[ICP](combine) pubkey is required");
 
-  const decoded = Cbor.decode<{ content: DecodedCallContent } | DecodedNeuronCommand>(
-    Buffer.from(tx, "hex"),
-  );
+  const decoded = Cbor.decode<DecodedTransfer | DecodedNeuronCommand>(Buffer.from(tx, "hex"));
   if (isNeuronCommandBlob(decoded)) return combineNeuronCommand(decoded, signatures[0], pubkey);
 
   if (!isHexOfLength(signatures[0], SIGNATURE_BYTES)) {
     throw new Error("[ICP](combine) Expected a 64-byte hex signature (r || s)");
   }
   requireSender(decoded.content.sender, pubkey);
-  return Buffer.from(
-    Cbor.encode(envelope(decoded.content, pubkey, Buffer.from(signatures[0], "hex"))),
-  ).toString("hex");
+  const signed = envelope(decoded.content, pubkey, Buffer.from(signatures[0], "hex"));
+  const { stake_nonce } = decoded;
+  if (stake_nonce === undefined) return Buffer.from(Cbor.encode(signed)).toString("hex");
+  if (typeof stake_nonce !== "string") {
+    throw new TypeError("[ICP](combine) The stake nonce is not a decimal string");
+  }
+  return Buffer.from(Cbor.encode({ transfer: signed, stake_nonce })).toString("hex");
 }
