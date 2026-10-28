@@ -22,6 +22,7 @@ import { ContextModuleBuilder, ContextModuleChainID } from "@ledgerhq/context-mo
 import { getEnv } from "@ledgerhq/live-env";
 import bs58 from "bs58";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/hw-transport/errors";
+import { solanaAddressBookProvider } from "./addressBook/solanaAddressBookProvider";
 
 export type DAError =
   | GetAddressDAError
@@ -63,14 +64,22 @@ export class DmkSignerSol implements SolanaSigner {
     const disabledFeaturesArray = (
       Object.keys(disabledFeatures) as SolanaSignerFeaturesNames[]
     ).filter(f => disabledFeatures[f]);
-    this.dmkSigner = new SignerSolanaBuilder({
+    const builder = new SignerSolanaBuilder({
       dmk,
       sessionId,
       originToken,
       disabledFeatures: disabledFeaturesArray,
-    })
-      .withContextModule(contextModule)
-      .build();
+    }).withContextModule(contextModule);
+
+    // Snapshot the address book for this signer's lifetime, so every transaction
+    // it signs is matched against the same contacts. An absent or empty book
+    // leaves signing behavior unchanged.
+    const addressBook = solanaAddressBookProvider.getAddressBook();
+    if (addressBook !== undefined) {
+      builder.withAddressBook(addressBook);
+    }
+
+    this.dmkSigner = builder.build();
   }
 
   private _mapError<E extends DAError>(error: E): Error {

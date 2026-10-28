@@ -38,6 +38,7 @@
     "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
     "@types/bs58": "catalog:",
     "bs58": "catalog:",
