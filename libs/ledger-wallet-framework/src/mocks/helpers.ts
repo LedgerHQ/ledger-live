@@ -7,6 +7,12 @@ import { getCurrenciesResolver } from "../currencies/resolver";
  */
 const base58Charset = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
+const base58Encode = (value: bigint): string => {
+  let out = "";
+  for (let n = value; n > 0n; n /= 58n) out = base58Charset[Number(n % 58n)] + out;
+  return out;
+};
+
 /**
  * bech32 human readable prefixes of the cosmos family chains.
  * Mirrors coin-cosmos `src/chain` (which the framework does not depend on).
@@ -207,6 +213,10 @@ export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando
       return currency.id === "hedera_testnet"
         ? "0.0.1234567" // exists on the testnet mirror node with only 2 txs, so sync is quick
         : `0.0.${rng.nextInt(1000000, 9999999)}`;
+    case "solana":
+      // solana wants a 32-byte base58 address; forcing the top bit keeps the
+      // encoding at 43-44 chars, so the leading zero byte never gets lost
+      return base58Encode(BigInt(`0x${genHex(64, rng)}`) | (1n << 255n));
     case "algorand":
       return rng.nextString(58, "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567");
     default:
