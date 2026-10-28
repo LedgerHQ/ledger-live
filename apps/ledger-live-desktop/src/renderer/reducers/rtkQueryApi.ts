@@ -24,11 +24,9 @@ import {
 } from "@features/platform-card";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
-/**
- * The `@shared/api-services` backends the app calls. Their endpoints are injected by the
- * `@domain/api-*` use-case packages that own them, which the view-models import directly.
- * Each config thunk runs once, in `createExtra` at store creation.
- */
+// Add new RTK Query API here. `@shared/api-services` entries own one backend each; the endpoints are
+// injected by the `@domain/api-*` use-case package that owns them, which the view-models import
+// directly.
 export const apiServices = defineApiServices([
   calService(() => ({ calServiceUrl: getEnv("CAL_SERVICE_URL") })),
   cardService(() => ({
@@ -50,7 +48,6 @@ export const apiServices = defineApiServices([
   swapService(() => ({ getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE") })),
 ]);
 
-// Add new legacy RTK Query API here; a new backend goes in `apiServices` instead.
 const APIs = {
   [aleoApi.reducerPath]: aleoApi,
   [marketApi.reducerPath]: marketApi,
