@@ -1,6 +1,7 @@
 import { Account } from "./enum/Account";
 import { sanitizeError } from "./index";
 import axios, { AxiosRequestConfig } from "axios";
+import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { SwapProvider } from "./enum/Provider";
 import { getAmountFromUSD } from "./currencyUtils";
 
@@ -35,14 +36,17 @@ function isQuoteErrorItem(item: unknown): item is QuoteErrorItem {
 }
 
 /**
- * Mirrors swap-live-app's approval check: only a token swapped through a provider contract needs
- * an allowance, not a native asset or a deposit-based provider (e.g. NEAR Intents, MoonPay).
+ * Mirrors swap-live-app's approval check: only an ERC-20 token (a token of an EVM account) swapped
+ * through a provider contract needs an allowance, not a native asset or a deposit-based provider
+ * (e.g. NEAR Intents, MoonPay).
  */
 export const needsTokenAllowance = (
   fromAccount: Account,
   provider: SwapProvider,
 ): provider is TokenAllowanceProvider =>
-  Boolean(provider.contractAddress && fromAccount.parentAccount);
+  Boolean(provider.contractAddress) &&
+  fromAccount.parentAccount !== undefined &&
+  getFamilyByCurrencyId(fromAccount.parentAccount.currency.id) === "evm";
 
 export type TokenAllowanceProvider = SwapProvider & { readonly contractAddress: string };
 
