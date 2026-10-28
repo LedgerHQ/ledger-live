@@ -102,12 +102,18 @@ on:
         type: choice
         options: ["4", "3", "2"]
         default: "4"
-      skip_bridge:
-        description: "Builds whose measured launches skip the E2E bridge (socket + network logging); b-only measures its cost (custom preset)"
+      build_env_a:
+        description: "Build A: no-bridge (MOCK+DETOX, E2E bridge skipped on measured launches) | prod-like (no MOCK/DETOX, bridge only for the injection) | e2e (as before 2026-10-28)"
         required: false
         type: choice
-        options: ["both", "b-only", "none"]
-        default: "both"
+        options: ["no-bridge", "prod-like", "e2e"]
+        default: "no-bridge"
+      build_env_b:
+        description: "Build B, same choices. With aa-noise, a mode other than A's builds the same commit twice"
+        required: false
+        type: choice
+        options: ["no-bridge", "prod-like", "e2e"]
+        default: "no-bridge"
 
 permissions:
   contents: read
@@ -137,6 +143,9 @@ jobs:
       ref_b: ${{ steps.plan.outputs.ref_b }}
       label_a: ${{ steps.plan.outputs.label_a }}
       label_b: ${{ steps.plan.outputs.label_b }}
+      env_a: ${{ steps.plan.outputs.env_a }}
+      env_b: ${{ steps.plan.outputs.env_b }}
+      analysis_preset: ${{ steps.plan.outputs.analysis_preset }}
     steps:
       - name: Resolve refs
         id: plan
@@ -150,7 +159,9 @@ jobs:
           SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
           READ_ROWS: ${{ inputs.read_all_events && 'every event row read' || 'first screen and last event rows read' }}
-          SKIP_BRIDGE: ${{ inputs.skip_bridge }}
+          ENV_A: ${{ inputs.build_env_a || 'no-bridge' }}
+          ENV_B: ${{ inputs.build_env_b || 'no-bridge' }}
+          E2E_BABEL: ${{ inputs.e2e_babel_plugin }}
         run: |
           set -euo pipefail
           if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 2 || PAIRS % 2 )); then
@@ -171,8 +182,25 @@ jobs:
               fi
               A="$REF_A"; B="$REF_B"; SIDES='["a","b"]'; LABEL_A="$REF_A"; LABEL_B="$REF_B" ;;
           esac
+          if [[ "$E2E_BABEL" == true && ( "$ENV_A" == prod-like || "$ENV_B" == prod-like ) ]]; then
+            echo "::error::e2e_babel_plugin bundles with DETOX=1, which a prod-like build must not have"; exit 1
+          fi
+          ANALYSIS_PRESET="$PRESET"
+          if [[ "$SIDES" == '["a"]' ]]; then
+            if [[ "$ENV_A" != "$ENV_B" ]]; then
+              # One commit, two build modes: two builds, and B − A is a real difference to judge.
+              SIDES='["a","b"]'; B="$A"; LABEL_B="$LABEL_A"; ANALYSIS_PRESET=custom
+            fi
+          elif [[ "$A" != "$B" && "$ENV_A" != "$ENV_B" ]]; then
+            warning="A and B differ in commit and in build mode, so B − A mixes both"
+            echo "::warning::$warning"
+          fi
+          LABEL_A="$LABEL_A [$ENV_A]"; LABEL_B="$LABEL_B [$ENV_B]"
           {
             echo "sides=$SIDES"
+            echo "env_a=$ENV_A"
+            echo "env_b=$ENV_B"
+            echo "analysis_preset=$ANALYSIS_PRESET"
             echo "scenarios=[\"${SCENARIOS//,/\",\"}\"]"
             echo "ref_a=$A"
             echo "ref_b=$B"
@@ -186,23 +214,9 @@ jobs:
             echo "- B: \`$LABEL_B\` → \`$B\`"
             echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch, ${READ_ROWS}"
             echo "- Android: one job (runner) per scenario, cellular network like E2E, $PERF_AVD_CORES cores per emulator"
-            case "$SKIP_BRIDGE" in
-              both) echo "- E2E bridge skipped on measured launches in both builds" ;;
-              b-only) echo "- E2E bridge skipped on measured launches in build B only" ;;
-              *) echo "- E2E bridge still runs on measured launches (as before 2026-10-28)" ;;
-            esac
+            echo "- Build modes: A $ENV_A, B $ENV_B (prod-like: no MOCK/DETOX, E2E bridge only for the injection; no-bridge: MOCK+DETOX, bridge skipped on measured launches; e2e: as before 2026-10-28)"
+            if [[ -n "${warning:-}" ]]; then echo "- **$warning**"; fi
           } >> "$GITHUB_STEP_SUMMARY"
-          if [[ "$SKIP_BRIDGE" == b-only ]]; then
-            if [[ "$SIDES" == '["a"]' ]]; then
-              warning="$PRESET builds once, so neither build skips the bridge"
-            elif [[ "$A" != "$B" ]]; then
-              warning="A and B are different commits, so B − A also includes the bridge's cost"
-            fi
-            if [[ -n "${warning:-}" ]]; then
-              echo "::warning::skip_bridge=b-only: $warning"
-              echo "- **skip_bridge=b-only: $warning**" >> "$GITHUB_STEP_SUMMARY"
-            fi
-          fi
 
   build-android:
     name: "Android build ${{ matrix.side }}"
@@ -220,6 +234,7 @@ jobs:
     timeout-minutes: 120
     env:
       REF: ${{ matrix.side == 'a' && needs.plan.outputs.ref_a || needs.plan.outputs.ref_b }}
+      BUILD_ENV: ${{ matrix.side == 'a' && needs.plan.outputs.env_a || needs.plan.outputs.env_b }}
       # Pods report the host CPU count; cap Gradle workers to the runner size.
       GRADLE_OPTS: -Dorg.gradle.workers.max=8
     steps:
@@ -227,6 +242,14 @@ jobs:
         with:
           ref: ${{ env.REF }}
           repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      # The spike's scripts, which the app commit being built may predate.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: .startup-perf
+          sparse-checkout: /tools/scripts/startup-perf/
+          sparse-checkout-cone-mode: false
           persist-credentials: false
 
       # Older commits (e.g. the LIVE-36190 pair) don't install with the mise of setup-caches@develop:
@@ -293,34 +316,16 @@ jobs:
           fi
           grep '^SWAP_API_BASE=' .env.mock.prerelease || echo "No SWAP_API_BASE in .env.mock.prerelease: the app default applies"
 
-      # .env.mock.prerelease sets DETOX=1, so every launch runs the E2E bridge's init() once the store
-      # is ready: it hooks fetch and axios to log requests and opens a WebSocket to the bridge, retried
-      # 5 times over ~30 s. Only the injection launch passes a bridge port, so the other launches now
-      # leave init() right after its mock reset (mock=0 still turns MOCK off).
-      - name: Skip the E2E bridge on measured launches
-        if: ${{ inputs.skip_bridge != 'none' && (inputs.skip_bridge != 'b-only' || matrix.side == 'b') }}
-        working-directory: apps/ledger-live-mobile
-        env:
-          SIDE: ${{ matrix.side }}
+      # .env.mock.prerelease sets MOCK=1 and DETOX=1: every launch then runs the E2E bridge's init()
+      # (fetch/axios logging hooks, a retried WebSocket) and DETOX/MOCK-gated code (no skeleton,
+      # Lottie or spinner animations, mocked blur, a keychain clear before the store is ready...).
+      # prod-like turns both off and starts the bridge only on the injection launch (wsPort);
+      # no-bridge keeps them but skips the bridge on measured launches; e2e changes nothing.
+      - name: Apply build mode ${{ env.BUILD_ENV }}
         run: |
           set -euo pipefail
-          file=src/e2e/bridge/client.ts
-          guard='  if (!LaunchArguments.value()["wsPort"]) return; // startup-perf: measured launch, no bridge'
           awk --version 2>&1 | head -1 || true
-          # Before the network logging (from July 2026), or before the socket on older commits.
-          awk -v guard="$guard" '
-            /^export function init[(][)] [{]/ { in_init = 1 }
-            in_init && !done && /^  (initAppNetworkLogging[(][)];|if [(]ws[)] [{])$/ { print guard; done = 1 }
-            /^}/ { in_init = 0 }
-            { print }
-            END { exit done ? 0 : 3 }
-          ' "$file" > "$file.patched" || {
-            echo "::error::No network logging or socket found in init() of $file: the bridge cannot be skipped in this build"
-            exit 1
-          }
-          mv "$file.patched" "$file"
-          grep -n -B2 'startup-perf: measured launch' "$file"
-          echo "- Build ${SIDE}: measured launches skip the E2E bridge" >> "$GITHUB_STEP_SUMMARY"
+          bash .startup-perf/tools/scripts/startup-perf/apply-build-env.sh "$BUILD_ENV"
 
       # Same build type and env file as the E2E "production Firebase" build, but without
       # SKIP_JS_BUNDLING, so Gradle bundles the JS into the APK like a store build.
@@ -334,6 +339,14 @@ jobs:
           CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         run: pnpm mobile e2e:build -c android.emu.prerelease
 
+      # Not yet tried on a CI build, so it only reports; the harness checks MOCK and DETOX at run time.
+      - name: Check the build mode in the APK
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          APK=$(find apps/ledger-live-mobile/android/app/build/outputs/apk/detoxPreRelease -name "*x86_64*.apk" | head -1)
+          bash .startup-perf/tools/scripts/startup-perf/verify-build-env.sh "$BUILD_ENV" android "$APK"
+
       - name: Collect APK
         run: |
           set -euo pipefail
@@ -342,11 +355,13 @@ jobs:
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
-          if grep -q 'startup-perf: measured launch' apps/ledger-live-mobile/src/e2e/bridge/client.ts; then
-            echo skipped > out/bridge.txt
-          else
-            echo runs > out/bridge.txt
-          fi
+          # The mode the source was patched for, from apply-build-env.sh's markers.
+          app=apps/ledger-live-mobile
+          if grep -q 'startup-perf prod-like' "$app/src/index.tsx"; then built=prod-like
+          elif grep -qs 'startup-perf: measured launch' "$app/src/e2e/bridge/client.ts"; then built=no-bridge
+          else built=e2e; fi
+          [[ "$built" == "$BUILD_ENV" ]] || { echo "::error::built as $built, requested $BUILD_ENV"; exit 1; }
+          echo "$built" > out/build_env.txt
           ls -la out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -370,6 +385,7 @@ jobs:
     timeout-minutes: 150
     env:
       REF: ${{ matrix.side == 'a' && needs.plan.outputs.ref_a || needs.plan.outputs.ref_b }}
+      BUILD_ENV: ${{ matrix.side == 'a' && needs.plan.outputs.env_a || needs.plan.outputs.env_b }}
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
@@ -379,6 +395,14 @@ jobs:
         with:
           ref: ${{ env.REF }}
           repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      # The spike's scripts, which the app commit being built may predate.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: .startup-perf
+          sparse-checkout: /tools/scripts/startup-perf/
+          sparse-checkout-cone-mode: false
           persist-credentials: false
 
       # Older commits (e.g. the LIVE-36190 pair) don't install with the mise of setup-caches@develop:
@@ -438,34 +462,16 @@ jobs:
           fi
           grep '^SWAP_API_BASE=' .env.mock.prerelease || echo "No SWAP_API_BASE in .env.mock.prerelease: the app default applies"
 
-      # .env.mock.prerelease sets DETOX=1, so every launch runs the E2E bridge's init() once the store
-      # is ready: it hooks fetch and axios to log requests and opens a WebSocket to the bridge, retried
-      # 5 times over ~30 s. Only the injection launch passes a bridge port, so the other launches now
-      # leave init() right after its mock reset (mock=0 still turns MOCK off).
-      - name: Skip the E2E bridge on measured launches
-        if: ${{ inputs.skip_bridge != 'none' && (inputs.skip_bridge != 'b-only' || matrix.side == 'b') }}
-        working-directory: apps/ledger-live-mobile
-        env:
-          SIDE: ${{ matrix.side }}
+      # .env.mock.prerelease sets MOCK=1 and DETOX=1: every launch then runs the E2E bridge's init()
+      # (fetch/axios logging hooks, a retried WebSocket) and DETOX/MOCK-gated code (no skeleton,
+      # Lottie or spinner animations, mocked blur, a keychain clear before the store is ready...).
+      # prod-like turns both off and starts the bridge only on the injection launch (wsPort);
+      # no-bridge keeps them but skips the bridge on measured launches; e2e changes nothing.
+      - name: Apply build mode ${{ env.BUILD_ENV }}
         run: |
           set -euo pipefail
-          file=src/e2e/bridge/client.ts
-          guard='  if (!LaunchArguments.value()["wsPort"]) return; // startup-perf: measured launch, no bridge'
           awk --version 2>&1 | head -1 || true
-          # Before the network logging (from July 2026), or before the socket on older commits.
-          awk -v guard="$guard" '
-            /^export function init[(][)] [{]/ { in_init = 1 }
-            in_init && !done && /^  (initAppNetworkLogging[(][)];|if [(]ws[)] [{])$/ { print guard; done = 1 }
-            /^}/ { in_init = 0 }
-            { print }
-            END { exit done ? 0 : 3 }
-          ' "$file" > "$file.patched" || {
-            echo "::error::No network logging or socket found in init() of $file: the bridge cannot be skipped in this build"
-            exit 1
-          }
-          mv "$file.patched" "$file"
-          grep -n -B2 'startup-perf: measured launch' "$file"
-          echo "- Build ${SIDE}: measured launches skip the E2E bridge" >> "$GITHUB_STEP_SUMMARY"
+          bash .startup-perf/tools/scripts/startup-perf/apply-build-env.sh "$BUILD_ENV"
 
       # Release configuration for the simulator with .env.mock.prerelease (production Firebase),
       # with the JS bundled by Xcode.
@@ -478,6 +484,13 @@ jobs:
           CARD_OAUTH_REDIRECT_URI: ${{ secrets.CARD_OAUTH_REDIRECT_URI }}
         run: pnpm mobile e2e:build -c ios.sim.prerelease
 
+      # Not yet tried on a CI build, so it only reports; the harness checks MOCK and DETOX at run time.
+      - name: Check the build mode in the app
+        continue-on-error: true
+        run: |
+          bash .startup-perf/tools/scripts/startup-perf/verify-build-env.sh "$BUILD_ENV" ios \
+            apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app
+
       - name: Collect app
         run: |
           set -euo pipefail
@@ -486,11 +499,13 @@ jobs:
           [[ -f "$APP/main.jsbundle" ]] || { echo "::error::$APP has no main.jsbundle"; exit 1; }
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
-          if grep -q 'startup-perf: measured launch' apps/ledger-live-mobile/src/e2e/bridge/client.ts; then
-            echo skipped > out/bridge.txt
-          else
-            echo runs > out/bridge.txt
-          fi
+          # The mode the source was patched for, from apply-build-env.sh's markers.
+          app=apps/ledger-live-mobile
+          if grep -q 'startup-perf prod-like' "$app/src/index.tsx"; then built=prod-like
+          elif grep -qs 'startup-perf: measured launch' "$app/src/e2e/bridge/client.ts"; then built=no-bridge
+          else built=e2e; fi
+          [[ "$built" == "$BUILD_ENV" ]] || { echo "::error::built as $built, requested $BUILD_ENV"; exit 1; }
+          echo "$built" > out/build_env.txt
           ls -la out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -630,7 +645,7 @@ jobs:
             "$BT/zipalign" -f -p 4 "$dir/app.apk" "$dir/aligned.apk"
             # shellcheck disable=SC2086
             "$BT/apksigner" sign --v4-signing-enabled false --ks "$KS_PATH" --ks-pass $KS_PASS --ks-key-alias staging --key-pass $KS_PASS --out "$dir/signed.apk" "$dir/aligned.apk"
-            echo "$dir: $(cat "$dir/sha.txt"), E2E bridge on measured launches: $(cat "$dir/bridge.txt" 2>/dev/null || echo unknown)" | tee -a "$RESULTS_DIR/android/builds.txt"
+            echo "$dir: $(cat "$dir/sha.txt"), build mode $(cat "$dir/build_env.txt" 2>/dev/null || echo unknown)" | tee -a "$RESULTS_DIR/android/builds.txt"
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
@@ -743,6 +758,8 @@ jobs:
           ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
           TRACE_LAUNCHES: ${{ inputs.trace_launches || '0' }}
           DUMP_HOME: ${{ inputs.dump_home_screen || '0' }}
+          BUILD_ENV_A: ${{ needs.plan.outputs.env_a }}
+          BUILD_ENV_B: ${{ needs.plan.outputs.env_b }}
         run: |
           set -euo pipefail
           APP_A=builds/a/signed.apk
@@ -760,12 +777,13 @@ jobs:
             --guest-capture "$GUEST_CAPTURE" \
             --trace-launches "$TRACE_LAUNCHES" \
             --dump-home "$DUMP_HOME" \
+            --build-env-a "$BUILD_ENV_A" --build-env-b "$BUILD_ENV_B" \
             --out-dir "$RESULTS_DIR/android"
 
       - name: Analyse
         if: ${{ always() }}
         env:
-          PRESET: ${{ inputs.preset }}
+          PRESET: ${{ needs.plan.outputs.analysis_preset }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
@@ -849,7 +867,7 @@ jobs:
           for dir in builds/a builds/b; do
             [[ -f "$dir/app.zip" ]] || continue
             ditto -x -k "$dir/app.zip" "$dir"
-            echo "$dir: $(cat "$dir/sha.txt"), E2E bridge on measured launches: $(cat "$dir/bridge.txt" 2>/dev/null || echo unknown)" | tee -a "$RESULTS_DIR/ios/builds.txt"
+            echo "$dir: $(cat "$dir/sha.txt"), build mode $(cat "$dir/build_env.txt" 2>/dev/null || echo unknown)" | tee -a "$RESULTS_DIR/ios/builds.txt"
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
@@ -893,6 +911,8 @@ jobs:
           ACCOUNTS_USERDATA: ${{ inputs.accounts_userdata }}
           ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
           DUMP_HOME: ${{ inputs.dump_home_screen || '0' }}
+          BUILD_ENV_A: ${{ needs.plan.outputs.env_a }}
+          BUILD_ENV_B: ${{ needs.plan.outputs.env_b }}
         run: |
           set -euo pipefail
           APP_A=builds/a/ledgerlivemobile.app
@@ -906,12 +926,13 @@ jobs:
             --scenarios "$SCENARIOS" --pairs "$PAIRS" --settle-ms "$((SETTLE * 1000))" \
             --accounts-userdata "$ACCOUNTS_USERDATA" \
             --dump-home "$DUMP_HOME" \
+            --build-env-a "$BUILD_ENV_A" --build-env-b "$BUILD_ENV_B" \
             --out-dir "$RESULTS_DIR/ios"
 
       - name: Analyse
         if: ${{ always() }}
         env:
-          PRESET: ${{ inputs.preset }}
+          PRESET: ${{ needs.plan.outputs.analysis_preset }}
           THRESHOLD: ${{ inputs.threshold_ms }}
           LABEL_A: ${{ needs.plan.outputs.label_a }}
           LABEL_B: ${{ needs.plan.outputs.label_b }}
