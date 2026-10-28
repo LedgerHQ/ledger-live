@@ -48,10 +48,11 @@ Under `src/`, an `index.*` (platform variants included) is allowed in three plac
    entries count.
 2. **Below an entry through a pure `export *` chain down the folders**: an entry reaches it through
    `export * from "./dir"`. One level below the entry, directly or through plain modules, any
-   chain is fine. Deeper, every module of every chain to it, from below the entry to the barrel
-   itself, holds only `export * from "./x"` lines naming paths inside its own folder. An entry
-   reached from another entry counts from itself, so `jest.native.ts` re-exporting
-   `index.native.ts` adds no level, and the entry may hold whatever the barrel rules allow it.
+   chain is fine. Deeper, no module may break a chain to it: the requirement is worded once, as
+   `BARREL_LOCATION["nested-barrel"]` in
+   [`rules.js`](../../../tools/nx-plugins/enforce-package-structure/rules.js). An entry reached
+   from another entry counts from itself, so `jest.native.ts` re-exporting `index.native.ts` adds
+   no level, and the entry may hold whatever the barrel rules allow it.
 3. **An internals location**: `internals/`, as defined below.
 
 ```text
@@ -79,12 +80,12 @@ the folders lead to.
 - **No**: delete the barrel and import the files directly, or move the folder under `internals/`.
   Expose only code another package imports.
 
-**Fix a nested barrel** (`nested-barrel`) at the module the violation names, file and line: any
-statement other than an `export * from "./x"` inside the module's own folder breaks the chain, and
-the violation gives the reason from `CHAIN_BREAKS` in
-[`rules.js`](../../../tools/nx-plugins/enforce-package-structure/rules.js). Make that module pure
-`export *` down its folder, or re-export the files from a barrel nearer the entry. An `index.tsx` that holds code is a module,
-not a barrel: rename it after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
+**Fix a nested barrel** (`nested-barrel`) at the module the violation names, file, line and
+reason (from `CHAIN_BREAKS`), as its `fix` in `BARREL_LOCATION`
+([`rules.js`](../../../tools/nx-plugins/enforce-package-structure/rules.js)) says. In the tree
+above, `hooks/index.ts` drops `export { a } from "./a"`, or re-exports `./useThing/useThing` and
+the nested barrel goes. An `index.tsx` that holds code is a module, not a barrel: rename it after
+what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
 
 Purity of what a barrel reaches stays with the rules above. The debt found when the check landed
 sits in

@@ -429,16 +429,11 @@ test("checkBarrelLocation reports an orphan and a nested barrel, with the packag
   }
 });
 
-test("a nested barrel names the module that breaks its chain", () => {
-  const [found] = checkBarrelLocation("shared/thing", "shared/thing/src/a/b/index.ts", 2, {
-    file: "shared/thing/src/a/index.ts",
-    line: 3,
-    reason: CHAIN_BREAKS.named,
-  });
-  assert.ok(
-    found.message.includes(`(\`shared/thing/src/a/index.ts\` line 3 ${CHAIN_BREAKS.named})`),
-    found.message,
-  );
+test("a nested barrel carries the module that breaks its chain, and names it", () => {
+  const breaker = { file: "shared/thing/src/a/index.ts", line: 3, reason: CHAIN_BREAKS.named };
+  const [found] = checkBarrelLocation("shared/thing", "shared/thing/src/a/b/index.ts", 2, breaker);
+  assert.deepEqual(found.breaker, breaker);
+  assert.ok(found.message.includes(breaker.file), found.message);
 });
 
 test("the nested-barrel fix names every chain break", () => {

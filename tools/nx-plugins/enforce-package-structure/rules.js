@@ -11,7 +11,7 @@
 const path = require("node:path");
 const ts = require("typescript");
 
-/** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
+/** @typedef {{ line: number, code: string, message: string, text: string, breaker?: ChainBreaker }} Violation */
 /** @typedef {{ line: number, reason: string }} ChainBreak why a module breaks a pure chain */
 /** @typedef {ChainBreak & { file: string }} ChainBreaker the module that breaks it */
 
@@ -415,10 +415,15 @@ const BARREL_LOCATION = {
 function checkBarrelLocation(projectRoot, file, depth, breaker) {
   if (isInternalSpecifier(path.posix.dirname(file.slice(projectRoot.length + 1)))) return [];
   if (depth !== undefined && (depth <= 1 || !breaker)) return [];
-  const code = depth === undefined ? "orphan-barrel" : "nested-barrel";
-  const { rule, fix } = BARREL_LOCATION[code];
-  const brokenAt = breaker ? ` (\`${breaker.file}\` line ${breaker.line} ${breaker.reason})` : "";
-  return [{ line: 1, code, message: `${projectRoot}: ${rule}${brokenAt}. Fix: ${fix}`, text: "" }];
+  if (depth === undefined) {
+    const { rule, fix } = BARREL_LOCATION["orphan-barrel"];
+    const message = `${projectRoot}: ${rule}. Fix: ${fix}`;
+    return [{ line: 1, code: "orphan-barrel", message, text: "" }];
+  }
+  const { rule, fix } = BARREL_LOCATION["nested-barrel"];
+  const brokenAt = `\`${breaker.file}\` line ${breaker.line} ${breaker.reason}`;
+  const message = `${projectRoot}: ${rule} (${brokenAt}). Fix: ${fix}`;
+  return [{ line: 1, code: "nested-barrel", message, text: "", breaker }];
 }
 
 module.exports = {

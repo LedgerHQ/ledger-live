@@ -529,12 +529,12 @@ test("chainBreakers taints a module first walked clean, and stops on a cycle", (
 
 /**
  * @param {Record<string, string>} files
- * @returns {string[][]} each nested barrel, as [file, the module that breaks its chain]
+ * @returns {Array<[string, unknown]>} each nested barrel, as [file, the module that breaks its chain]
  */
 function brokenChains(files) {
   return checkPackage(workspace(files), "shared/thing", {}, {}, {})
     .filter(v => v.code === "nested-barrel")
-    .map(v => [v.file, /\((`[^)]*)\)/.exec(v.message)?.[1]]);
+    .map(v => [v.file, v.breaker]);
 }
 
 test("a middle module that is not pure `export *` down its folder breaks the chain", () => {
@@ -553,7 +553,7 @@ test("a middle module that is not pure `export *` down its folder breaks the cha
     ["export const Row = 1;", CHAIN_BREAKS.code],
     ['export * from "../shared";', CHAIN_BREAKS.outside],
   ]) {
-    const breaker = `\`${middle}\` line 2 ${reason}`;
+    const breaker = { file: middle, line: 2, reason };
     assert.deepEqual(
       brokenChains({ ...card, [middle]: `export * from "./Card";\n${statement}\n` }),
       [
@@ -577,7 +577,7 @@ test("a plain module with code breaks the chain, and the first breaker is named"
     [
       [
         "shared/thing/src/client/http/index.ts",
-        `\`shared/thing/src/api.ts\` line 2 ${CHAIN_BREAKS.code}`,
+        { file: "shared/thing/src/api.ts", line: 2, reason: CHAIN_BREAKS.code },
       ],
     ],
   );
@@ -594,7 +594,11 @@ test("a deep barrel that breaks its own chain names itself", () => {
     [
       [
         "shared/thing/src/services/portfolio/index.ts",
-        `\`shared/thing/src/services/portfolio/index.ts\` line 1 ${CHAIN_BREAKS.outside}`,
+        {
+          file: "shared/thing/src/services/portfolio/index.ts",
+          line: 1,
+          reason: CHAIN_BREAKS.outside,
+        },
       ],
     ],
   );
@@ -613,7 +617,7 @@ test("a pure chain does not excuse another, broken chain to the same barrel", ()
     [
       [
         "shared/thing/src/services/portfolio/index.ts",
-        `\`shared/thing/src/services/index.native.ts\` line 2 ${CHAIN_BREAKS.code}`,
+        { file: "shared/thing/src/services/index.native.ts", line: 2, reason: CHAIN_BREAKS.code },
       ],
     ],
   );

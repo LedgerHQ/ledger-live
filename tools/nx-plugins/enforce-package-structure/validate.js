@@ -278,19 +278,22 @@ function barrelDepths(entries, targetsOf, isBarrel) {
  *
  * @param {Set<string>} entries
  * @param {(file: string) => string[]} targetsOf
- * @param {(file: string) => unknown} breaks truthy for a module that breaks the chain
+ * @param {(file: string) => boolean} breaks whether a module breaks the chain
  * @returns {Map<string, string>} module to the breaker above it
  */
 function chainBreakers(entries, targetsOf, breaks) {
+  /** @type {Map<string, string>} */
   const tainted = new Map();
   const seen = new Set(entries);
   const queue = [...entries];
   while (queue.length > 0) {
     const file = queue.shift();
-    const passed = entries.has(file) ? undefined : (tainted.get(file) ?? (breaks(file) && file));
+    /** @type {string | undefined} */
+    let passed;
+    if (!entries.has(file)) passed = tainted.get(file) ?? (breaks(file) ? file : undefined);
     for (const target of targetsOf(file)) {
       if (entries.has(target)) continue;
-      const taints = passed && !tainted.has(target);
+      const taints = passed !== undefined && !tainted.has(target);
       if (taints) tainted.set(target, passed);
       if (!taints && seen.has(target)) continue;
       seen.add(target);
@@ -313,11 +316,22 @@ function chainBreakers(entries, targetsOf, breaks) {
 function barrelReach(entries, graph) {
   const entrySet = new Set(entries.flatMap(indexVariants));
   const depths = barrelDepths(entrySet, graph.targetsOf, file => isBarrelFile(path.basename(file)));
-  const tainted = chainBreakers(entrySet, graph.targetsOf, graph.breakOf);
+  const tainted = chainBreakers(
+    entrySet,
+    graph.targetsOf,
+    file => graph.breakOf(file) !== undefined,
+  );
+  /** @type {Map<string, { depth: number, breaker?: ChainBreaker }>} */
   const reach = new Map();
   for (const [file, depth] of depths) {
-    const at = depth > 1 ? (tainted.get(file) ?? (graph.breakOf(file) && file)) : undefined;
-    reach.set(file, { depth, breaker: at ? { file: at, ...graph.breakOf(at) } : undefined });
+    /** @type {ChainBreaker | undefined} */
+    let breaker;
+    if (depth > 1) {
+      const at = tainted.get(file) ?? file;
+      const why = graph.breakOf(at);
+      if (why !== undefined) breaker = { file: at, ...why };
+    }
+    reach.set(file, { depth, breaker });
   }
   return reach;
 }
@@ -329,7 +343,7 @@ function barrelReach(entries, graph) {
  * @param {Record<string, string>} [fileExceptions] the exception audit passes `{}` to see what
  *   each entry hides
  * @param {Record<string, string>} [intermediateBarrelWaivers] likewise for its own audit
- * @returns {Array<{ file: string, line: number, code: string, message: string, text: string, rule?: string }>}
+ * @returns {Array<{ file: string, line: number, code: string, message: string, text: string, rule?: string, breaker?: ChainBreaker }>}
  */
 function checkPackage(
   workspaceRoot,
