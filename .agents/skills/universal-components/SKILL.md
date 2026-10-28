@@ -87,9 +87,9 @@ in [ldls-web](../ldls-web/SKILL.md) and [ldls-native](../ldls-native/SKILL.md).
   side is the `suffix-imports/no-platform-suffix` rule of
   [`@support/lint`](../../../support/lint/README.md).
 
-Each failure prints the rule and a message. [references/rules.md](references/rules.md) maps each
-code to its fix and lists [what R3 follows](references/rules.md#what-r3-follows) and what it
-leaves to review.
+Each failure prints the rule and a message. [references/rules.md](references/rules.md) gives the
+usual fix per rule and links the tests that pin
+[what R3 follows](references/rules.md#what-r3-follows) and what it leaves to review.
 
 ## Review-only checks
 
