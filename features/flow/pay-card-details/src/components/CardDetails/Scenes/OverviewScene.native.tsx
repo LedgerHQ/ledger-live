@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Spinner, Text, TileButton } from "@ledgerhq/lumen-ui-rnative";
 import { Eye, EyeCross } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetsView } from "@features/flow-pay-card-assets";
+import { CardAssetsView } from "@features/flow-pay-card-assets/native";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { PayTrackPage } from "@features/platform-pay-analytics";
 import { CardArtwork } from "../../CardArtwork/CardArtwork";

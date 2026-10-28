@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { MenuBurger } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetsManageFooter } from "./CardAssetsManageFooter.native";
+import { CardAssetsManageFooter } from "./CardAssetsManageFooter";
 import type { CardAssetRow } from "./types";
 
 type AssetRowProps = Readonly<{
@@ -97,7 +97,7 @@ function AssetRow({
   );
 }
 
-type CardAssetsManageDrawerProps = Readonly<{
+export type CardAssetsManageDrawerProps = Readonly<{
   rows: readonly CardAssetRow[];
   onAddAsset?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;

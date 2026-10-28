@@ -2,8 +2,8 @@ import React from "react";
 import { act, fireEvent, render, screen, userEvent } from "@testing-library/react-native";
 import DraggableFlatList from "react-native-draggable-flatlist";
 import { TooltipContent } from "@ledgerhq/lumen-ui-rnative";
-import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer.native";
-import { CardAssetsView } from "../CardAssetsView.native";
+import { CardAssetsManageDrawer } from "../CardAssetsManageDrawer";
+import { CardAssetsView } from "../CardAssetsView";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 import type { CardAssetsViewModel } from "../types";
 

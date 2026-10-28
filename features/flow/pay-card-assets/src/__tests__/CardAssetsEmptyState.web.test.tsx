@@ -1,7 +1,7 @@
 import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CardAssetsEmptyState } from "../CardAssetsEmptyState.web";
+import { CardAssetsEmptyState } from "../CardAssetsEmptyState";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 
 describe("CardAssetsEmptyState (web)", () => {

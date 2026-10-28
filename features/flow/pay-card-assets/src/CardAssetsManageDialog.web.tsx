@@ -23,7 +23,7 @@ import {
   DialogHeader,
 } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetsManageRow } from "./CardAssetsManageRow.web";
+import { CardAssetsManageRow } from "./CardAssetsManageRow";
 import type { CardAssetRow } from "./types";
 
 type CardAssetsManageDialogProps = Readonly<{

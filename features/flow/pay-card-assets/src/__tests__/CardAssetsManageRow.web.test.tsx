@@ -2,7 +2,7 @@ import React from "react";
 import { cleanup, render, screen } from "@testing-library/react";
 import { DndContext } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { CardAssetsManageRow } from "../CardAssetsManageRow.web";
+import { CardAssetsManageRow } from "../CardAssetsManageRow";
 
 const row = {
   id: "wallet-usdc",

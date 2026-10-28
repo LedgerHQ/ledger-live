@@ -127,14 +127,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsListView: componentWaiver("R2", "R3", "R5"),
     ContactsSearchNoResults: componentWaiver("R1", "R5"),
   },
-  "features/flow/pay-card-assets": {
-    CardAssetDetailsDrawer: componentWaiver("R1"),
-    CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
-    CardAssetsManageDrawer: componentWaiver("R1"),
-    CardAssetsManageFooter: componentWaiver("R1"),
-    CardAssetsView: componentWaiver("R1", "R3"),
-    CardAssetTransactionDetailDrawer: componentWaiver("R1"),
-  },
   "features/flow/pay-card-details": {
     CardArtwork: componentWaiver("R2"),
     CardPrimaryActionButton: componentWaiver("R1"),
