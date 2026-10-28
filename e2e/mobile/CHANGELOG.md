@@ -1,5 +1,21 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.44.0-next.0
+
+### Minor Changes
+
+- [#23657](https://github.com/LedgerHQ/ledger-live/pull/23657) [`ccc2a93`](https://github.com/LedgerHQ/ledger-live/commit/ccc2a9331940444da253ac8b0c98d9c13a9b7772) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Use named parameters (options object) in runSendInvalidAddressTest, and show "no error message" in the empty address test title.
+
+- [#23747](https://github.com/LedgerHQ/ledger-live/pull/23747) [`aa1562e`](https://github.com/LedgerHQ/ledger-live/commit/aa1562e7e4982a5e1cf31d8f3297fcda82783d3a) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Use named parameters (options object) in verifyStakeOperationDetailsInfo and verifyAppValidationStakeInfo.
+
+- [#23694](https://github.com/LedgerHQ/ledger-live/pull/23694) [`1d1837f`](https://github.com/LedgerHQ/ledger-live/commit/1d1837f195badccf33f54a39ee82d91b883415cb) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Wait for the earn asset row before asserting it exists in verifyAssetReadyToEarn, fixing flaky Earn v2 inline add account tests.
+
+- [#23286](https://github.com/LedgerHQ/ledger-live/pull/23286) [`b78e207`](https://github.com/LedgerHQ/ledger-live/commit/b78e207f1c45bd98b215bcd085e4e3af961a275f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Cover on-device contact rename in mobile E2E against the mock server, and let device intents discover that transport.
+
+- [#23720](https://github.com/LedgerHQ/ledger-live/pull/23720) [`10be9ea`](https://github.com/LedgerHQ/ledger-live/commit/10be9ea45ed5b42babf40a11a0277fce79620ae6) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Move the token approval swaps to Ethereum 5 and revoke a token allowance only when it is too small
+
+- [#23330](https://github.com/LedgerHQ/ledger-live/pull/23330) [`fcdd599`](https://github.com/LedgerHQ/ledger-live/commit/fcdd5998da0bb2b7d32015d1267e9ca50716a574) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Serialize e2e broadcasts per on-chain account across CI machines with an R2-backed lock
+
 ## 0.43.0
 
 ### Minor Changes

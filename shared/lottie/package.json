@@ -1,6 +1,6 @@
 {
   "name": "@shared/lottie",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Cross-platform Lottie player: dotlottie on web, lottie-react-native on mobile",
   "exports": {

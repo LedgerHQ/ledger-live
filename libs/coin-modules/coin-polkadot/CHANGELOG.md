@@ -1,5 +1,19 @@
 # @ledgerhq/coin-polkadot
 
+## 9.1.0-next.0
+
+### Minor Changes
+
+- [#23171](https://github.com/LedgerHQ/ledger-live/pull/23171) [`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1) Thanks [@KVNLS](https://github.com/KVNLS)! - chore: replace node `querystring` with `URLSearchParams` / `encodeURIComponent` and drop the `querystring-es3` renderer fallback
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 9.0.0
 
 ### Major Changes

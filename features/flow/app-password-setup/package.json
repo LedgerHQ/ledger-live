@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-password-setup",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "App password setup flow for Ledger Wallet Mobile: choosing a password and confirming it",
   "main": "src/index.ts",

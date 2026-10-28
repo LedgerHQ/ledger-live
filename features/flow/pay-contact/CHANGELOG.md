@@ -1,5 +1,17 @@
 # @features/flow-pay-contact
 
+## 0.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9a1198f`](https://github.com/LedgerHQ/ledger-live/commit/9a1198fd10a67e2893163985b884c7437b4d036a), [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065), [`57c72ac`](https://github.com/LedgerHQ/ledger-live/commit/57c72ac92d3c9352b751b21bb96d64f19a2b6cb1), [`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645), [`067b492`](https://github.com/LedgerHQ/ledger-live/commit/067b492cafa20166ce080344b7cb2d6c71f43301), [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e)]:
+  - @features/platform-contacts@0.12.0-next.0
+  - @features/flow-contacts-add-contact@0.9.0-next.0
+  - @features/flow-contacts-detail@0.3.0-next.0
+  - @shared/ui-queued-bottom-sheet@0.8.0-next.0
+  - @domain/entity-contact@0.12.2-next.0
+  - @shared/i18n@0.2.0
+
 ## 0.7.0
 
 ### Minor Changes

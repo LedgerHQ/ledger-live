@@ -1,5 +1,13 @@
 # @ledgerhq/coin-tester
 
+## 0.21.0-next.0
+
+### Minor Changes
+
+- [#23659](https://github.com/LedgerHQ/ledger-live/pull/23659) [`2a56df0`](https://github.com/LedgerHQ/ledger-live/commit/2a56df0d21a515958dbf18e652fe1ed0e594736e) Thanks [@qperrot](https://github.com/qperrot)! - Run the Bitcoin deterministic tester on coin-sandbox: the regtest node and Atlas are started through its `up` and funded by its airdrop, instead of the tester's own docker-compose, which is removed with the `docker-compose` dependency
+
+  The coin-tester awaits a transaction's `expect` when it returns a promise, so the next transaction and the last sync wait for it, and its failed assertions fail the scenario
+
 ## 0.20.0
 
 ### Minor Changes

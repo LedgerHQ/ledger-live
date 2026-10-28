@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-data",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "DevTools page for the account data layer: the status of every read and the history of its events",
   "main": "src/index.ts",

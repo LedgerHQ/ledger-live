@@ -1,5 +1,22 @@
 # @shared/ui-info-state
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#23888](https://github.com/LedgerHQ/ledger-live/pull/23888) [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065) Thanks [@zel-kass](https://github.com/zel-kass)! - Bump Lumen to lumen-design-core 0.1.34, lumen-ui-react 0.1.67, lumen-ui-rnative 0.1.70, lumen-utils-shared 0.1.18 and lumen-lint-plugin 0.1.1. `cn` now comes from `@ledgerhq/lumen-design-core/cn` (the local helpers re-export it), the `Apex` icon is renamed `NanoGen5`, the removed `BellNotification` and `ShieldCheckNotification` icons are replaced by the plain icon inside a red `DotIndicator`, `FormattedValue` is imported from `@ledgerhq/lumen-ui-react` instead of `@ledgerhq/lumen-utils-shared`, Tailwind font classes that produce no CSS under the Lumen preset are dropped, and the `clsx`, `tailwind-merge`, `@radix-ui/react-switch` and `@radix-ui/react-checkbox` declarations Lumen no longer needs are removed.
+
+- [#23965](https://github.com/LedgerHQ/ledger-live/pull/23965) [`4216add`](https://github.com/LedgerHQ/ledger-live/commit/4216addd84f49f073e5bd7c0ae7019f40799955f) Thanks [@ysitbon](https://github.com/ysitbon)! - `InfoState` takes one props contract, `InfoStateProps` from `InfoState.types.ts`, on web and native, and the native `spot` preset now honors `backgroundTone` on its bottom sheet. `DialogBackgroundToneProvider` moves to the web platform entry `@shared/ui-info-state/web`; the gradient, context and tone hooks become internal. The universal entry is one unconditioned `src/index.ts`, imports carry no platform suffix, and the package gets a `lint` script.
+
+- [#23416](https://github.com/LedgerHQ/ledger-live/pull/23416) [`d4be6b6`](https://github.com/LedgerHQ/ledger-live/commit/d4be6b620102f2c9f65201935646d32cb365f6ac) Thanks [@ishaba](https://github.com/ishaba)! - Add an optional test id to the info state banner
+
+- [#23675](https://github.com/LedgerHQ/ledger-live/pull/23675) [`efc2a52`](https://github.com/LedgerHQ/ledger-live/commit/efc2a525b2416bf7126945361a280ba34a966766) Thanks [@ysitbon](https://github.com/ysitbon)! - Reach `@shared/ui-info-state` through its universal entry only: the `./native` and `./web` subpaths, which repeated it, are gone, and their importers use `@shared/ui-info-state`. `@features/flow-account-detail-settings` renames its web entry to `src/index.web.ts`, so its native typecheck no longer compiles the web components.
+
+### Patch Changes
+
+- Updated dependencies [[`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645), [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e)]:
+  - @shared/ui-queued-bottom-sheet@0.8.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

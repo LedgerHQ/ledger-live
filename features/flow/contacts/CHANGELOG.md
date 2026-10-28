@@ -1,5 +1,28 @@
 # @features/flow-contacts
 
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#23888](https://github.com/LedgerHQ/ledger-live/pull/23888) [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065) Thanks [@zel-kass](https://github.com/zel-kass)! - Bump Lumen to lumen-design-core 0.1.34, lumen-ui-react 0.1.67, lumen-ui-rnative 0.1.70, lumen-utils-shared 0.1.18 and lumen-lint-plugin 0.1.1. `cn` now comes from `@ledgerhq/lumen-design-core/cn` (the local helpers re-export it), the `Apex` icon is renamed `NanoGen5`, the removed `BellNotification` and `ShieldCheckNotification` icons are replaced by the plain icon inside a red `DotIndicator`, `FormattedValue` is imported from `@ledgerhq/lumen-ui-react` instead of `@ledgerhq/lumen-utils-shared`, Tailwind font classes that produce no CSS under the Lumen preset are dropped, and the `clsx`, `tailwind-merge`, `@radix-ui/react-switch` and `@radix-ui/react-checkbox` declarations Lumen no longer needs are removed.
+
+- [#23918](https://github.com/LedgerHQ/ledger-live/pull/23918) [`42e9955`](https://github.com/LedgerHQ/ledger-live/commit/42e99552b343d4e6be8865807b80f01816af80cd) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(contacts-introduction): split the platform components into web and native entries
+
+  The dialogs move to `@features/flow-contacts-introduction/web` and the bottom-sheet contents to `@features/flow-contacts-introduction/native`, with their props types. The root entry keeps the state, resolvers, preference port and hooks, and is the same on both platforms.
+
+- [#23875](https://github.com/LedgerHQ/ledger-live/pull/23875) [`f717fa9`](https://github.com/LedgerHQ/ledger-live/commit/f717fa924ea60f0e650b01cceb555be46bca510b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Align @tanstack/react-table catalog on 8.21.3 to drop the duplicate 8.5.11 install
+
+### Patch Changes
+
+- Updated dependencies [[`9a1198f`](https://github.com/LedgerHQ/ledger-live/commit/9a1198fd10a67e2893163985b884c7437b4d036a), [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065), [`42e9955`](https://github.com/LedgerHQ/ledger-live/commit/42e99552b343d4e6be8865807b80f01816af80cd), [`57c72ac`](https://github.com/LedgerHQ/ledger-live/commit/57c72ac92d3c9352b751b21bb96d64f19a2b6cb1), [`067b492`](https://github.com/LedgerHQ/ledger-live/commit/067b492cafa20166ce080344b7cb2d6c71f43301)]:
+  - @features/platform-contacts@0.12.0-next.0
+  - @features/flow-contacts-add-contact@0.9.0-next.0
+  - @features/flow-contacts-introduction@1.6.0-next.0
+  - @features/flow-contacts-list@0.11.0-next.0
+  - @features/flow-contacts-delete-contact@0.4.0-next.0
+  - @features/flow-contacts-detail@0.3.0-next.0
+  - @domain/entity-contact@0.12.2-next.0
+
 ## 0.15.0
 
 ### Minor Changes

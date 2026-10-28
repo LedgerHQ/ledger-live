@@ -1,5 +1,17 @@
 # @domain/entity-account-name
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23763](https://github.com/LedgerHQ/ledger-live/pull/23763) [`8fd06da`](https://github.com/LedgerHQ/ledger-live/commit/8fd06da45f7c15ed712e8e1f15719e3165fa6f94) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Read an account name by AccountUUID, and add a Names page to the DevTools Accounts section
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/cloud-sync-module@0.4.0
+  - @domain/entity-account@0.1.1-next.0
+
 ## 0.2.3
 
 ### Patch Changes

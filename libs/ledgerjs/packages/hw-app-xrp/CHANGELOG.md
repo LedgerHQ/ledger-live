@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.39.0-next.0
+
+### Minor Changes
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
 ## 6.38.0
 
 ### Minor Changes

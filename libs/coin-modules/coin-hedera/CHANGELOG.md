@@ -1,5 +1,21 @@
 # @ledgerhq/coin-hedera
 
+## 3.1.0-next.0
+
+### Minor Changes
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+- [#23649](https://github.com/LedgerHQ/ledger-live/pull/23649) [`112cce0`](https://github.com/LedgerHQ/ledger-live/commit/112cce00f8132dc4a0d7287ee3a321fb436cb77f) Thanks [@mdomanski-ext-ledger](https://github.com/mdomanski-ext-ledger)! - chore: bump @hiero-ledger/sdk from 2.84.0 to 2.90.1
+
+- [#23527](https://github.com/LedgerHQ/ledger-live/pull/23527) [`a389665`](https://github.com/LedgerHQ/ledger-live/commit/a389665d6256a750f539ec54516f667cca1fb011) Thanks [@qperrot](https://github.com/qperrot)! - Stop setting name / unit on returned assets
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 3.0.0
 
 ### Major Changes

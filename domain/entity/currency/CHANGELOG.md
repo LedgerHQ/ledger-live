@@ -1,5 +1,14 @@
 # @domain/entity-currency
 
+## 0.4.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4883e43`](https://github.com/LedgerHQ/ledger-live/commit/4883e4316f186755d65348e6648cbc846c62f2bf), [`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8)]:
+  - @domain/entity-currency-fiat@0.5.0-next.0
+  - @domain/entity-currency-crypto@0.17.0-next.0
+  - @domain/entity-currency-token@0.5.7-next.0
+
 ## 0.4.7
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@shared/system-bars",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Theme the Android system navigation bar from React Native, with expo-navigation-bar",
   "main": "src/index.ts",

@@ -1,5 +1,20 @@
 # @ledgerhq/coin-concordium
 
+## 1.7.0-next.0
+
+### Minor Changes
+
+- [#23528](https://github.com/LedgerHQ/ledger-live/pull/23528) [`2218721`](https://github.com/LedgerHQ/ledger-live/commit/2218721c96a5d03a8f4078245bf0bbca238a1f8d) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Bump @walletconnect/sign-client and @walletconnect/types to 2.26.0 and share one SignClient per process, so a reopened onboarding no longer loses its session subscription
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/concordium-core@0.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.6.0
 
 ### Minor Changes

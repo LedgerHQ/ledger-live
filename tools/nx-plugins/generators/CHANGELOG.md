@@ -1,5 +1,11 @@
 # @ledgerhq/generators
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#23974](https://github.com/LedgerHQ/ledger-live/pull/23974) [`b4c7e63`](https://github.com/LedgerHQ/ledger-live/commit/b4c7e631b12e2308ebd49fc38ac9bd2411b8cf18) Thanks [@ysitbon](https://github.com/ysitbon)! - Add a `universal-component` generator that scaffolds a universal component (contract, web and native implementations, a test per platform, barrel lines) or, with `--platform-entry`, a platform component behind `./web` or `./native`.
+
 ## 0.1.0
 
 ### Minor Changes

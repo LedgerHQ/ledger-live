@@ -1,5 +1,18 @@
 # @shared/api-services
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#23740](https://github.com/LedgerHQ/ledger-live/pull/23740) [`5e2a324`](https://github.com/LedgerHQ/ledger-live/commit/5e2a3245cc163b6cc13ef5fd2b7faa85c84ca153) Thanks [@LL782](https://github.com/LL782)! - Each CAL request attempt now ends after 30 seconds, and a timed-out attempt is not retried. A hung CAL no longer keeps token account sync (evm, cardano, celo…) or app loading waiting for ever: sync shows its error indicator instead. The sync hash requests (`getTokensSyncHash`, `getTokenListHash`) now go through the shared CAL base query, so they get the same timeout, cancellation and retries as the other CAL requests.
+
+- [#23944](https://github.com/LedgerHQ/ledger-live/pull/23944) [`0953772`](https://github.com/LedgerHQ/ledger-live/commit/0953772eafec52773cf7a19c08295c72a2e296a2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the Portfolio service client
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/auth@0.7.0
+
 ## 0.10.1
 
 ### Patch Changes

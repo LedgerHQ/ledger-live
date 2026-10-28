@@ -1,5 +1,36 @@
 # @ledgerhq/coin-aptos
 
+## 4.6.0-next.0
+
+### Minor Changes
+
+- [#23697](https://github.com/LedgerHQ/ledger-live/pull/23697) [`8654ca0`](https://github.com/LedgerHQ/ledger-live/commit/8654ca0db8912b41e7f6d74df7df3f67a9d5866c) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix(coin-aptos): order account transactions by version when paging the indexer
+
+  The offset-paginated `account_transactions` queries had no `order_by`, so page boundaries relied on the database's implicit row order. They now order by ascending transaction version.
+
+- [#23709](https://github.com/LedgerHQ/ledger-live/pull/23709) [`e172fe1`](https://github.com/LedgerHQ/ledger-live/commit/e172fe16313acac61b59b7114061bb6c52f0cb67) Thanks [@semeano](https://github.com/semeano)! - fix(coin-aptos): key the fee estimation cache on the recipient
+
+  The cached estimate was reused across recipients for the same amount, so switching to a recipient
+  that needs a new primary store could sign with a gas limit that is too low.
+
+- [#23697](https://github.com/LedgerHQ/ledger-live/pull/23697) [`8654ca0`](https://github.com/LedgerHQ/ledger-live/commit/8654ca0db8912b41e7f6d74df7df3f67a9d5866c) Thanks [@vladyslavchupovskiy-ext-art](https://github.com/vladyslavchupovskiy-ext-art)! - fix(coin-aptos): filter listOperations by block height instead of transaction version
+
+  `minHeight` was compared with transaction versions, so almost the whole history was returned. It is now mapped to the first transaction version of that block, inclusive.
+
+- [#23709](https://github.com/LedgerHQ/ledger-live/pull/23709) [`e172fe1`](https://github.com/LedgerHQ/ledger-live/commit/e172fe16313acac61b59b7114061bb6c52f0cb67) Thanks [@semeano](https://github.com/semeano)! - fix(coin-aptos): reserve the simulated gas on "use max" sends
+
+  A "use max" send always used the default gas limit (200), so a token transfer to a recipient
+  without a primary store for that asset ran out of gas on-chain. It now reserves at least the
+  simulated gas.
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 4.5.0
 
 ### Minor Changes

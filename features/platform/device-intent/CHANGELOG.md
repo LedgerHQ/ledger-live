@@ -1,5 +1,11 @@
 # @features/platform-device-intent
 
+## 5.3.0-next.0
+
+### Minor Changes
+
+- [#23607](https://github.com/LedgerHQ/ledger-live/pull/23607) [`9a1198f`](https://github.com/LedgerHQ/ledger-live/commit/9a1198fd10a67e2893163985b884c7437b4d036a) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Show the device disconnected screen immediately when a contact device action loses the device
+
 ## 5.2.0
 
 ### Minor Changes

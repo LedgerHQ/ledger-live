@@ -1,5 +1,11 @@
 # @domain/entity-client-identity
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#23962](https://github.com/LedgerHQ/ledger-live/pull/23962) [`6ba7d71`](https://github.com/LedgerHQ/ledger-live/commit/6ba7d7194f8f8e3c96303537ccdf944ac7bf53a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add `PortfolioId`, random per install and persisted with the other identities
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@devtools/account-descriptor",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "DevTools page listing the accounts slice: each account descriptor and its legacy id",
   "main": "src/index.ts",

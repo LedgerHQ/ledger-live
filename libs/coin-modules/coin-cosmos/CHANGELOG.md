@@ -1,5 +1,23 @@
 # @ledgerhq/coin-cosmos
 
+## 2.1.0-next.0
+
+### Minor Changes
+
+- [#23615](https://github.com/LedgerHQ/ledger-live/pull/23615) [`4c672f6`](https://github.com/LedgerHQ/ledger-live/commit/4c672f6a9278217ddaea38038cb8c81af5fa7edc) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-cosmos): preserve failed operations
+
+- [#23928](https://github.com/LedgerHQ/ledger-live/pull/23928) [`b44c3d6`](https://github.com/LedgerHQ/ledger-live/commit/b44c3d64ae0be535b0de64e95ce64fd253fab018) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop `@keplr-wallet/proto-types` and `cosmjs-types@0.2.1` (and with them `protobufjs@6`): use `cosmjs-types@0.10` and a local codec for the Babylon `MsgWrapped*` messages, with byte-identical encoding
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+- [#23255](https://github.com/LedgerHQ/ledger-live/pull/23255) [`0240a0c`](https://github.com/LedgerHQ/ledger-live/commit/0240a0c9a069f895516199995483af5f12993277) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(cosmos): slim the account model (sequence, staking resources with validators, mode-based transaction type)
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 2.0.0
 
 ### Major Changes

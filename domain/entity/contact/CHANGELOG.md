@@ -1,5 +1,15 @@
 # @domain/entity-contact
 
+## 0.12.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8)]:
+  - @domain/entity-currency-crypto@0.17.0-next.0
+  - @domain/entity-currency-token@0.5.7-next.0
+  - @shared/cloud-sync-module@0.4.0
+  - @shared/schema-primitives@0.5.0
+
 ## 0.12.1
 
 ### Patch Changes

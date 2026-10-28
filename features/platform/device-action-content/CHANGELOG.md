@@ -1,5 +1,13 @@
 # @features/platform-device-action-content
 
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`6f774fb`](https://github.com/LedgerHQ/ledger-live/commit/6f774fb511e4190d4d0cf51bad655e707f3d0eb9), [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065), [`675d1ca`](https://github.com/LedgerHQ/ledger-live/commit/675d1ca015c7d75a9ec3404c72a86896db7c1d06), [`cc576e8`](https://github.com/LedgerHQ/ledger-live/commit/cc576e8bd942a354cc428053b2b1da54489d1ff0)]:
+  - @shared/lottie@0.1.0-next.0
+  - @features/platform-style@0.5.0-next.0
+
 ## 0.4.0
 
 ### Minor Changes

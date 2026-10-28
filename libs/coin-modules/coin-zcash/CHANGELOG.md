@@ -1,5 +1,24 @@
 # @ledgerhq/coin-zcash
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#23742](https://github.com/LedgerHQ/ledger-live/pull/23742) [`ed45de0`](https://github.com/LedgerHQ/ledger-live/commit/ed45de0004d46f408dac35d2d7522d7697189288) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Bump `@ledgerhq/zcash-utils` to 2.8.0, built on the stable Zcash crates that set the NU7 mainnet activation height (3543405). A mainnet transaction whose target block is past that height is built under the NU7 branch id, with a 120-block default expiry.
+
+- [#23706](https://github.com/LedgerHQ/ledger-live/pull/23706) [`c43b0f9`](https://github.com/LedgerHQ/ledger-live/commit/c43b0f9ff55c39a5a137e210949419263207d322) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Show the block height of a Zcash operation, label its confirmation count, and show the block height the birthday date resolves to in the private balance flow.
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`9d96483`](https://github.com/LedgerHQ/ledger-live/commit/9d96483342e32c626abd69143b3cd24a075254bf), [`d37d80e`](https://github.com/LedgerHQ/ledger-live/commit/d37d80e128d89fcd80630fd4ef13c66587e3bebe), [`dd056b8`](https://github.com/LedgerHQ/ledger-live/commit/dd056b8a4c6c7c28879cfb1c44139b2479281987), [`c4b7982`](https://github.com/LedgerHQ/ledger-live/commit/c4b79825af9468fbb8f5325e77e47536d6b392e9), [`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/live-signer-zcash@0.12.0-next.0
+  - @ledgerhq/wallet-btc@1.1.0-next.0
+  - @ledgerhq/hw-app-btc@12.1.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.0.0
 
 ### Major Changes

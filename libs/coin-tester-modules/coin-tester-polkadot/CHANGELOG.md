@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-polkadot
 
+## 1.21.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2a56df0`](https://github.com/LedgerHQ/ledger-live/commit/2a56df0d21a515958dbf18e652fe1ed0e594736e), [`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/coin-tester@0.21.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/coin-polkadot@9.1.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.21.1
 
 ### Patch Changes

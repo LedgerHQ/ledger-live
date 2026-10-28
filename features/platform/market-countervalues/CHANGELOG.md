@@ -1,5 +1,18 @@
 # @features/platform-market-countervalues
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#23555](https://github.com/LedgerHQ/ledger-live/pull/23555) [`d81d157`](https://github.com/LedgerHQ/ledger-live/commit/d81d157753173799377cf7c2c612394bd50263bf) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Sort Asset Detail addresses by fiat value so the highest balance is shown first
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-market-countervalues@0.2.2-next.0
+  - @domain/entity-currency@0.4.8-next.0
+  - @domain/entity-market-countervalues@0.4.1-next.0
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,5 +1,39 @@
 # @ledgerhq/coin-internet_computer
 
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#23629](https://github.com/LedgerHQ/ledger-live/pull/23629) [`48a4694`](https://github.com/LedgerHQ/ledger-live/commit/48a4694811129461a0992a571970138e2b42302a) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Replace the deprecated @dfinity/\* packages with @icp-sdk/core and derive account identifiers locally; signed payloads are unchanged.
+
+  Breaking: binary values use `Uint8Array` instead of `ArrayBuffer`: `UnsignedTransaction.arg`, the result of `pubkeyToDer`, the replies of `readReplyFromCanister`, and the input of `decodeManageNeuronReply` and `decodeListNeuronsReply`. `Principal` and the agent types come from `@icp-sdk/core`.
+
+### Minor Changes
+
+- [#23760](https://github.com/LedgerHQ/ledger-live/pull/23760) [`5049882`](https://github.com/LedgerHQ/ledger-live/commit/5049882121946e88e75f75536a6b206ea2e38e9f) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Reject an ICP recipient whose length or checksum is wrong, instead of accepting any hex string
+
+- [#23782](https://github.com/LedgerHQ/ledger-live/pull/23782) [`4493b36`](https://github.com/LedgerHQ/ledger-live/commit/4493b361834b7e0cec1e90fd543a53188648ad1e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Decode a candid reply held in a view at a nonzero offset, which was read from the start of its underlying buffer.
+
+- [#23759](https://github.com/LedgerHQ/ledger-live/pull/23759) [`f048349`](https://github.com/LedgerHQ/ledger-live/commit/f048349f45a007200c4416b56c1b4f15194481be) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add the ICP read logic for the CoinModuleApi: blocks (archived ones included), balance and paginated history
+
+- [#23781](https://github.com/LedgerHQ/ledger-live/pull/23781) [`5039dc5`](https://github.com/LedgerHQ/ledger-live/commit/5039dc56c41865e705de7eca774a0fd9df8d01cc) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Expose the CoinModuleApi for native ICP through `createApi` on the `./api` entry point, which keeps exporting the network client.
+
+- [#23878](https://github.com/LedgerHQ/ledger-live/pull/23878) [`145efd9`](https://github.com/LedgerHQ/ledger-live/commit/145efd90c1b8deb7fd1d40c7c15bdc5d8183c02c) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft, combine and broadcast every neuron command through the CoinModuleApi, with the checks that need no neuron state.
+
+- [#23860](https://github.com/LedgerHQ/ledger-live/pull/23860) [`96aabc0`](https://github.com/LedgerHQ/ledger-live/commit/96aabc0b90a7e6996747c36adc3b2eb5df9ce41d) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft, combine and broadcast the start-dissolving and increase-dissolve-delay neuron commands through the CoinModuleApi.
+
+- [#23964](https://github.com/LedgerHQ/ledger-live/pull/23964) [`bee4751`](https://github.com/LedgerHQ/ledger-live/commit/bee47518fe1af95de18b32620e9db2d181cc0169) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft, combine and broadcast neuron stake transfers through the CoinModuleApi, checking the stake account before signing and claiming the neuron once the transfer settles; export `refreshNeuronStake` to retry a failed claim.
+
+- [#23762](https://github.com/LedgerHQ/ledger-live/pull/23762) [`d274455`](https://github.com/LedgerHQ/ledger-live/commit/d27445594da9f804cae72abe911624a58d2ee587) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Replace the constant-false transfer check in ICP history mapping with the intended guard
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.32.2
 
 ### Patch Changes

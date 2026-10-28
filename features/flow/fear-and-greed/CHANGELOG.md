@@ -1,5 +1,19 @@
 # @features/flow-fear-and-greed
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#23792](https://github.com/LedgerHQ/ledger-live/pull/23792) [`3ef486e`](https://github.com/LedgerHQ/ledger-live/commit/3ef486ee49b8dd3dfa5beec224f3baa3afdffd5a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix(fear-and-greed): round the expanded card skeleton with Lumen's 12px radius (`rounded-md`); `rounded-12` is not a Lumen class, so the skeleton rendered with square corners
+
+### Patch Changes
+
+- Updated dependencies [[`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645), [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e)]:
+  - @shared/ui-queued-bottom-sheet@0.8.0-next.0
+  - @shared/analytics@0.4.0
+  - @shared/i18n@0.2.0
+  - @domain/api-market-index-fear-and-greed@0.4.3-next.0
+
 ## 0.4.0
 
 ### Minor Changes

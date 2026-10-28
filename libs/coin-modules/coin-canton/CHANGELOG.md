@@ -1,5 +1,22 @@
 # @ledgerhq/coin-canton
 
+## 1.6.0-next.0
+
+### Minor Changes
+
+- [#23980](https://github.com/LedgerHQ/ledger-live/pull/23980) [`3d47846`](https://github.com/LedgerHQ/ledger-live/commit/3d47846307baebb9f7dbca75764650bf9c11506c) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Sign the onboarding device challenge in the Canton mock signer so integration tests pass now that devnet requires it.
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+- [#23548](https://github.com/LedgerHQ/ledger-live/pull/23548) [`6c6fd48`](https://github.com/LedgerHQ/ledger-live/commit/6c6fd486fbb642bac383e13fdd88ab67397e4bd6) Thanks [@amaslakov](https://github.com/amaslakov)! - Support Canton onboarding with a single PartyToParticipant topology transaction
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/hw-app-canton@0.16.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.5.0
 
 ### Minor Changes

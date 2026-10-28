@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-starred-account",
-  "version": "0.0.2",
+  "version": "0.0.3-next.0",
   "private": true,
   "description": "StarredAccount entity: starred account IDs state, action creators, and selectors",
   "main": "src/index.ts",

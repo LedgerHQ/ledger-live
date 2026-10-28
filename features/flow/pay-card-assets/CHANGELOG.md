@@ -1,5 +1,23 @@
 # @features/flow-pay-card-assets
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#23963](https://github.com/LedgerHQ/ledger-live/pull/23963) [`6c1779a`](https://github.com/LedgerHQ/ledger-live/commit/6c1779af32758f7d6542032888be19c6aa740d59) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the card transaction components universal: `CardTransactions` takes `onOpenTransaction` and `ListItem` takes `onOpenTransaction`, `CardTransactionDetail` is the detail content on both platforms, and the web dialog moves to `CardTransactionDetailDialog` in the `./web` entry. `CategoryIcon` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies [[`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234), [`4216add`](https://github.com/LedgerHQ/ledger-live/commit/4216addd84f49f073e5bd7c0ae7019f40799955f), [`00badce`](https://github.com/LedgerHQ/ledger-live/commit/00badce303d15692c8ff9a91658803da1253af0c), [`6c1779a`](https://github.com/LedgerHQ/ledger-live/commit/6c1779af32758f7d6542032888be19c6aa740d59)]:
+  - @features/platform-pay-analytics@0.4.0-next.0
+  - @features/flow-pay-card-auth@0.11.0-next.0
+  - @features/flow-pay-card-transactions@0.7.0-next.0
+  - @domain/entity-currency@0.4.8-next.0
+  - @features/flow-pay-card-wallets@0.6.2-next.0
+  - @shared/i18n@0.2.0
+  - @shared/ui-list-reorder@0.2.0
+  - @domain/api-card-management@0.8.3-next.0
+
 ## 0.4.0
 
 ### Minor Changes

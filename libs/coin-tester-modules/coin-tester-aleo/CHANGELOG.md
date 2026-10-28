@@ -1,5 +1,15 @@
 # @ledgerhq/coin-tester-aleo
 
+## 0.0.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`8e941a7`](https://github.com/LedgerHQ/ledger-live/commit/8e941a7a7bcb09f8e2f18180a797ba11c1dcb1e3), [`2a56df0`](https://github.com/LedgerHQ/ledger-live/commit/2a56df0d21a515958dbf18e652fe1ed0e594736e), [`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`a389665`](https://github.com/LedgerHQ/ledger-live/commit/a389665d6256a750f539ec54516f667cca1fb011), [`7ea1bad`](https://github.com/LedgerHQ/ledger-live/commit/7ea1bad0c360229ef6caaacbd2ad08b8a4166035), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/coin-aleo@2.9.0-next.0
+  - @ledgerhq/coin-tester@0.21.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 0.0.2
 
 ### Patch Changes

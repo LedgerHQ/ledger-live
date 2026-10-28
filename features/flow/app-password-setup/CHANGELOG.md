@@ -1,5 +1,17 @@
 # @features/flow-app-password-setup
 
+## 0.2.0-next.0
+
+### Minor Changes
+
+- [#23937](https://github.com/LedgerHQ/ledger-live/pull/23937) [`18673dd`](https://github.com/LedgerHQ/ledger-live/commit/18673dd8b397566bdc7ccbf89d3834c81a807a26) Thanks [@ysitbon](https://github.com/ysitbon)! - `PasswordField`, `PasswordFieldProps`, `PasswordDraftProvider`, `usePasswordDraft` and `PasswordDraft` move to the native entry `@features/platform-app-lock/native`, and `@features/platform-app-lock` no longer exports them. The package imports carry no platform suffix and it typechecks a web and a native project.
+
+### Patch Changes
+
+- Updated dependencies [[`18673dd`](https://github.com/LedgerHQ/ledger-live/commit/18673dd8b397566bdc7ccbf89d3834c81a807a26)]:
+  - @features/platform-app-lock@0.7.0-next.0
+  - @shared/i18n@0.2.0
+
 ## 0.1.0
 
 ### Minor Changes

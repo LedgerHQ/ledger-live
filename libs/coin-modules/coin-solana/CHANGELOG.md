@@ -1,5 +1,27 @@
 # @ledgerhq/coin-solana
 
+## 2.6.0-next.0
+
+### Minor Changes
+
+- [#23665](https://github.com/LedgerHQ/ledger-live/pull/23665) [`7e54eae`](https://github.com/LedgerHQ/ledger-live/commit/7e54eaee779cb013a7941bda37a773c33c2f2205) Thanks [@qperrot](https://github.com/qperrot)! - Keep the real rejection reason when a Solana transaction fails at preflight, instead of masking it with "Invalid param: WrongSize".
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+- [#23651](https://github.com/LedgerHQ/ledger-live/pull/23651) [`c69f396`](https://github.com/LedgerHQ/ledger-live/commit/c69f39674c9df9046c0dee22c536250c7b8ef05f) Thanks [@qperrot](https://github.com/qperrot)! - Check the on-chain status of a Solana transaction before reporting a block-height-exceeded confirmation as a failure
+
+- [#23696](https://github.com/LedgerHQ/ledger-live/pull/23696) [`8ed93a7`](https://github.com/LedgerHQ/ledger-live/commit/8ed93a7ac010ddaf756b868e9c8bd5c8d515e2f4) Thanks [@qperrot](https://github.com/qperrot)! - Attach raw simulation error and instruction index to Solana broadcast InvalidTransactionError for Datadog
+
+- [#23677](https://github.com/LedgerHQ/ledger-live/pull/23677) [`2ff0e49`](https://github.com/LedgerHQ/ledger-live/commit/2ff0e493b0acfcfa8efe841a984bc779b5333aba) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): check the stake minimum before a validator is picked
+
+  The mobile delegation flow asks for the amount before the validator, so the recipient is still empty when the amount is validated. The minimum-delegation check was skipped in that case, which let an amount below 1 SOL through to the summary. The summary now also shows its validation error in the alert colour.
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 2.5.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-xrp
 
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359)]:
+  - @ledgerhq/hw-app-xrp@6.39.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

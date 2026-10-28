@@ -1,5 +1,19 @@
 # @features/platform-pay-analytics
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#23906](https://github.com/LedgerHQ/ledger-live/pull/23906) [`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234) Thanks [@ysitbon](https://github.com/ysitbon)! - Make `TrackScreen` one universal component with a shared `TrackScreenProps` contract and remove the web-only `TrackPage`, which desktop now renders as `TrackScreen`
+
+- [#23622](https://github.com/LedgerHQ/ledger-live/pull/23622) [`00badce`](https://github.com/LedgerHQ/ledger-live/commit/00badce303d15692c8ff9a91658803da1253af0c) Thanks [@ysitbon](https://github.com/ysitbon)! - Expose the package through a `react-native` condition with its own `src/index.native.ts`, like the other dual-platform packages.
+
+### Patch Changes
+
+- Updated dependencies [[`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234)]:
+  - @shared/analytics-react@0.5.0-next.0
+  - @shared/analytics@0.4.0
+
 ## 0.3.0
 
 ### Minor Changes

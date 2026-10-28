@@ -1,5 +1,13 @@
 # @ledgerhq/live-signer-cosmos
 
+## 0.6.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`4c672f6`](https://github.com/LedgerHQ/ledger-live/commit/4c672f6a9278217ddaea38038cb8c81af5fa7edc), [`b44c3d6`](https://github.com/LedgerHQ/ledger-live/commit/b44c3d64ae0be535b0de64e95ce64fd253fab018), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`0240a0c`](https://github.com/LedgerHQ/ledger-live/commit/0240a0c9a069f895516199995483af5f12993277)]:
+  - @ledgerhq/coin-cosmos@2.1.0-next.0
+  - @ledgerhq/hw-app-cosmos@6.38.0-next.0
+
 ## 0.6.2
 
 ### Patch Changes

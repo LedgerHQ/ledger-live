@@ -1,5 +1,28 @@
 # @ledgerhq/wallet-cli
 
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#23710](https://github.com/LedgerHQ/ledger-live/pull/23710) [`fd6a3a3`](https://github.com/LedgerHQ/ledger-live/commit/fd6a3a341b07baa2849a9e79e3a05b73863034b7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(account-descriptor): identify the network by its CAL network_id
+
+  The descriptor becomes `account:2:<type>:<network_id>:<key>:<path>` and the entity only reads version 2.
+
+  wallet-cli, breaking:
+
+  - The upgrade is one-way: `session.yaml` is rewritten to version 2 on the next write (e.g. `account discover`), and an older wallet-cli can no longer read it. Don't roll back, pin an older install or run two versions on the same session.
+  - `network` in the JSON envelope and in analytics events is now the network id (`ethereum`, `bitcoin_testnet`), no longer `<name>:<env>` (`ethereum:main`).
+
+### Minor Changes
+
+- [#23774](https://github.com/LedgerHQ/ledger-live/pull/23774) [`b3291d7`](https://github.com/LedgerHQ/ledger-live/commit/b3291d7f9f68daffe2f2561a4cc2c60138e59b8f) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` proposes a swap whose best quote needs an ERC-20 approval the Agent Intent frontend can send, and says so on stderr and in JSON (`needsTokenApproval`)
+
+- [#23292](https://github.com/LedgerHQ/ledger-live/pull/23292) [`9e6bc0e`](https://github.com/LedgerHQ/ledger-live/commit/9e6bc0eeeb0cb72e6aa9712eaf60ae87b1ac83d6) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent intents` shows creation times in UTC, prints the full command for the next page, and refuses `--status` and `--page-size` with `--cursor`
+
+- [#23309](https://github.com/LedgerHQ/ledger-live/pull/23309) [`86d5ce5`](https://github.com/LedgerHQ/ledger-live/commit/86d5ce54ceeba8aa1c8e391f2e2eb5aa64d471db) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` resolves a token from the `--amount` ticker without `--token`, and fails with the candidates when the ticker is ambiguous
+
+- [#23290](https://github.com/LedgerHQ/ledger-live/pull/23290) [`94470c1`](https://github.com/LedgerHQ/ledger-live/commit/94470c16c59c772094836fa0afd397d86dbd0c73) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` warns on stderr when `--to-amount` is more than 5% above the quote
+
 ## 2.13.0
 
 ### Minor Changes

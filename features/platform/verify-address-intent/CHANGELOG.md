@@ -1,5 +1,12 @@
 # @features/platform-verify-address-intent
 
+## 0.3.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9a1198f`](https://github.com/LedgerHQ/ledger-live/commit/9a1198fd10a67e2893163985b884c7437b4d036a)]:
+  - @features/platform-device-intent@5.3.0-next.0
+
 ## 0.3.0
 
 ### Minor Changes

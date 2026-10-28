@@ -1,5 +1,19 @@
 # @ledgerhq/coin-ton
 
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#23686](https://github.com/LedgerHQ/ledger-live/pull/23686) [`845c564`](https://github.com/LedgerHQ/ledger-live/commit/845c56427b3696371d978a71d1e83e5d2bf2922f) Thanks [@amaslakov](https://github.com/amaslakov)! - Add the CoinModuleApi: blocks, balances with jettons, merged native and jetton history, send validation, and crafting, fees, signing and broadcast of TON and jetton transfers
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 0.39.2
 
 ### Patch Changes
