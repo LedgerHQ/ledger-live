@@ -232,15 +232,15 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":"","shard":1},{"device":"%s","is_primary":true,"artifact_suffix":"","shard":2},{"device":"%s","is_primary":true,"artifact_suffix":"","shard":3},{"device":"%s","is_primary":true,"artifact_suffix":"","shard":4}]}\n' "$DEVICE" "$DEVICE" "$DEVICE" "$DEVICE"
             } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
   e2e-tests:
-    name: "Desktop E2E (${{ matrix.device }})"
+    name: "Desktop E2E (${{ matrix.device }}, shard ${{ matrix.shard }}/4)"
     needs: [prepare-devices]
-    runs-on: [ledger-wallet-16cpu-aws-public-cached]
+    runs-on: [ledger-wallet-8cpu-aws-public-cached]
     permissions:
       id-token: write
       contents: read
@@ -262,7 +262,7 @@ jobs:
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
-      E2E_WORKERS: 16
+      E2E_WORKERS: 8
       COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
@@ -464,6 +464,8 @@ jobs:
           invert_filter: ${{ inputs.invert_filter || false }}
           repeat_each: ${{ inputs.repeat_each }}
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
+          shard_index: ${{ matrix.shard }}
+          shard_total: 4
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -502,7 +504,7 @@ jobs:
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: allure-results${{ matrix.artifact_suffix }}
+          name: allure-results${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: "e2e/desktop/allure-results"
 
   e2e-tests-macos:
@@ -746,7 +748,8 @@ jobs:
       - name: Download Allure results from test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results
+          pattern: allure-results-shard-*
+          merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Extract test summary for Slack notification
@@ -878,7 +881,8 @@ jobs:
       - name: Download Allure results from test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results
+          pattern: allure-results-shard-*
+          merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Upload to qaa-allure (sandbox)
