@@ -12,7 +12,6 @@ const {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
-  findPrivateDependencyViolations,
 } = require("./validate");
 const {
   BOUNDARY_EXCEPTIONS,
@@ -752,6 +751,7 @@ test("domain/entity: react after a string reading import is flagged, a commented
 /**
  * A graph whose node names are project roots, with a manifest written for each.
  *
+ * @param {import("node:test").TestContext} t
  * @param {Record<string, object>} manifests keyed by project root
  * @param {Array<[string, string]>} edges [sourceRoot, targetRoot]
  * @param {Record<string, string>} [sources] extra files keyed by workspace-relative path
@@ -788,6 +788,34 @@ function devtoolsViolations(graph, root) {
     DEVTOOLS_TYPE_ONLY_IMPORTS,
   );
 }
+
+/**
+ * The rules table of the devtools-import-boundary skill, read back into the shape of
+ * `DEVTOOLS_ALLOWED_IMPORTS` and `DEVTOOLS_TYPE_ONLY_IMPORTS`.
+ */
+function skillDevtoolsTables() {
+  const skill = fs.readFileSync(
+    path.join(__dirname, "../../../.agents/skills/devtools-import-boundary/SKILL.md"),
+    "utf8",
+  );
+  const allowed = {};
+  const typeOnly = {};
+  for (const [, pkg, cell] of skill.matchAll(/^\| `(@devtools\/[\w-]+)` \| (.+) \|$/gm)) {
+    for (const part of cell.split(";").map(p => p.trim())) {
+      const table = part.endsWith("through `import type` only") ? typeOnly : allowed;
+      table[pkg] = part.startsWith("any `@devtools/<tool>`")
+        ? "*"
+        : [...part.matchAll(/`(@devtools\/[\w-]+)`/g)].map(m => m[1]);
+    }
+  }
+  return { allowed, typeOnly };
+}
+
+test("devtools: the skill's rules table matches constraints.js", () => {
+  const { allowed, typeOnly } = skillDevtoolsTables();
+  assert.deepEqual(allowed, DEVTOOLS_ALLOWED_IMPORTS);
+  assert.deepEqual(typeOnly, DEVTOOLS_TYPE_ONLY_IMPORTS);
+});
 
 const DEVTOOLS_MANIFESTS = {
   "devtools/shell": { name: "@devtools/shell", private: true },
@@ -912,97 +940,4 @@ test("devtools: edges to or from packages outside the scope are ignored", t => {
     ],
   );
   assert.deepEqual(devtoolsViolations(graph, root), []);
-});
-
-test("published-to-private: a published package depending on a private one is forbidden", t => {
-  const { root, graph } = manifestWorkspace(
-    t,
-    {
-      "libs/pub": { name: "@ledgerhq/pub", dependencies: { "@shared/priv": "workspace:^" } },
-      "shared/priv": { name: "@shared/priv", private: true },
-    },
-    [["libs/pub", "shared/priv"]],
-  );
-  assert.deepEqual(findPrivateDependencyViolations(graph, root), [
-    {
-      manifest: path.join("libs/pub", "package.json"),
-      dependency: "@shared/priv",
-      field: "dependencies",
-    },
-  ]);
-});
-
-test("published-to-private: peer and optional dependencies are checked", t => {
-  const { root, graph } = manifestWorkspace(
-    t,
-    {
-      "libs/pub": {
-        name: "@ledgerhq/pub",
-        peerDependencies: { "@shared/priv": "workspace:^" },
-        optionalDependencies: { "@shared/priv": "workspace:^" },
-      },
-      "shared/priv": { name: "@shared/priv", private: true },
-    },
-    [["libs/pub", "shared/priv"]],
-  );
-  assert.deepEqual(
-    findPrivateDependencyViolations(graph, root).map(v => v.field),
-    ["peerDependencies", "optionalDependencies"],
-  );
-});
-
-test("published-to-private: a private package depending on a private one is allowed", t => {
-  const { root, graph } = manifestWorkspace(
-    t,
-    {
-      "shared/a": {
-        name: "@shared/a",
-        private: true,
-        dependencies: { "@shared/b": "workspace:^" },
-      },
-      "shared/b": { name: "@shared/b", private: true },
-    },
-    [["shared/a", "shared/b"]],
-  );
-  assert.deepEqual(findPrivateDependencyViolations(graph, root), []);
-});
-
-test("published-to-private: a private devDependency is allowed", t => {
-  const { root, graph } = manifestWorkspace(
-    t,
-    {
-      "libs/pub": { name: "@ledgerhq/pub", devDependencies: { "@support/jest": "workspace:^" } },
-      "support/jest": { name: "@support/jest", private: true },
-    },
-    [["libs/pub", "support/jest"]],
-  );
-  assert.deepEqual(findPrivateDependencyViolations(graph, root), []);
-});
-
-test("published-to-private: a package publishing a generated manifest is skipped", t => {
-  const { root, graph } = manifestWorkspace(
-    t,
-    {
-      "apps/cli": {
-        name: "@ledgerhq/live-cli",
-        publishConfig: { directory: "dist" },
-        dependencies: { "@shared/priv": "workspace:^" },
-      },
-      "shared/priv": { name: "@shared/priv", private: true },
-    },
-    [["apps/cli", "shared/priv"]],
-  );
-  assert.deepEqual(findPrivateDependencyViolations(graph, root), []);
-});
-
-test("published-to-private: a published dependency is allowed", t => {
-  const { root, graph } = manifestWorkspace(
-    t,
-    {
-      "libs/pub": { name: "@ledgerhq/pub", dependencies: { "@ledgerhq/other": "workspace:^" } },
-      "libs/other": { name: "@ledgerhq/other" },
-    },
-    [["libs/pub", "libs/other"]],
-  );
-  assert.deepEqual(findPrivateDependencyViolations(graph, root), []);
 });

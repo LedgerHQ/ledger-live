@@ -25,7 +25,6 @@ const ts = require("typescript");
  * @typedef {{ manifest: string, dependency: string, field: string, reason: string }} BannedDepViolation
  * @typedef {{ file: string, specifier: string, field?: string, sourceTag: string }} BannedExternalViolation
  * @typedef {{ source: string, target: string, file?: string }} DevtoolsImportViolation
- * @typedef {{ manifest: string, dependency: string, field: string }} PrivateDependencyViolation
  */
 
 const DEPENDENCY_FIELDS = [
@@ -34,9 +33,6 @@ const DEPENDENCY_FIELDS = [
   "peerDependencies",
   "optionalDependencies",
 ];
-
-/** The dependency fields a consumer installs; devDependencies are not published. */
-const PUBLISHED_DEPENDENCY_FIELDS = ["dependencies", "peerDependencies", "optionalDependencies"];
 
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
 const SOURCE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
@@ -85,6 +81,7 @@ function importSpecifiers(content) {
 function valueImportsOf(file, content, pkg) {
   const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
   const specifiers = [];
+  /** @param {import("typescript").Node} node */
   const visit = node => {
     let spec;
     if (ts.isImportDeclaration(node) && !node.importClause?.isTypeOnly) {
@@ -370,42 +367,6 @@ function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, type
 }
 
 /**
- * Collect every graph edge from a published package (no `"private": true`) to a private
- * workspace package it declares in a field that ships to consumers. A package publishing a
- * generated manifest (`publishConfig.directory`) is skipped: its build decides what ships.
- *
- * Not wired into `main` yet: develop still breaks it.
- *
- * @param {ProjectGraphLike} graph
- * @param {string} workspaceRoot
- * @returns {PrivateDependencyViolation[]}
- */
-function findPrivateDependencyViolations(graph, workspaceRoot) {
-  const manifests = readManifests(graph, workspaceRoot);
-  const byEdge = new Map();
-
-  for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
-    const source = manifests.get(sourceNode);
-    if (!source || source.pkg.private === true || source.pkg.publishConfig?.directory) continue;
-
-    for (const edge of edges) {
-      const target = manifests.get(edge.target)?.pkg;
-      if (target?.private !== true) continue;
-      for (const field of PUBLISHED_DEPENDENCY_FIELDS) {
-        if (source.pkg[field]?.[target.name] === undefined) continue;
-        byEdge.set(`${source.manifest}\n${target.name}\n${field}`, {
-          manifest: source.manifest,
-          dependency: target.name,
-          field,
-        });
-      }
-    }
-  }
-
-  return [...byEdge.values()];
-}
-
-/**
  * Walk the Nx project graph and collect every edge that violates the
  * DEP_CONSTRAINTS rules. A given edge can match multiple constraints
  * (e.g. a `type:domain-api` source also has `scope:domain`); the
@@ -457,103 +418,92 @@ ${edge.target}`;
   return [...byEdge.values()];
 }
 
+const CONSTRAINTS_FILE = "tools/nx-plugins/enforce-boundaries/constraints.js";
+
+/**
+ * Print a check's violations, one per line, then its notes and where its rules are listed.
+ *
+ * @template V
+ * @param {string} label  the kind of violation, e.g. "module-boundary"
+ * @param {V[]} violations
+ * @param {(violation: V) => string} format
+ * @param {string} rules  what constraints.js lists for the check, e.g. "Allowed edges"
+ * @param {string[]} [notes]
+ * @returns {boolean} whether the check found violations
+ */
+function reportViolations(label, violations, format, rules, notes = []) {
+  if (violations.length === 0) return false;
+  console.error(`\n✗ ${violations.length} ${label} violation(s):\n`);
+  for (const v of violations) console.error(`  ${format(v)}`);
+  for (const note of notes) console.error(`\n${note}`);
+  console.error(`\n${rules} are listed in ${CONSTRAINTS_FILE}\n`);
+  return true;
+}
+
 async function main() {
-  let hasError = false;
-
   const graph = await createProjectGraphAsync({ exitOnError: true });
-  const graphViolations = findViolations(graph, BOUNDARY_EXCEPTIONS);
-
-  if (graphViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${graphViolations.length} module-boundary violation(s):\n`);
-    for (const v of graphViolations) {
-      const tgtTags = v.targetTags.length > 0 ? v.targetTags.join(", ") : "untagged";
-      console.error(`  ${v.sourceName} [${v.sourceTags.join(", ")}] → ${v.target} [${tgtTags}]`);
-    }
-    console.error(
-      "\nAllowed edges are defined in tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
-
   const workspaceRoot = process.cwd();
   const legacyPackages = new Set([
     ...collectLegacyPackageNames(graph, workspaceRoot),
     ...LEGACY_PACKAGES,
   ]);
-  const sourceViolations = findSourceImportViolations(
-    workspaceRoot,
-    legacyPackages,
-    BOUNDARY_EXCEPTIONS,
-  );
-
-  if (sourceViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${sourceViolations.length} legacy source-import violation(s):\n`);
-    for (const v of sourceViolations) {
-      console.error(`  ${v.file}  →  ${v.specifier}`);
-    }
-    console.error(`\n${LEGACY_IMPORT_RULE}\n`);
-  }
-
-  const bannedExternalViolations = findBannedExternalViolations(
-    graph,
-    workspaceRoot,
-    BANNED_EXTERNALS_BY_TAG,
-  );
-
-  if (bannedExternalViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${bannedExternalViolations.length} banned-external violation(s):\n`);
-    for (const v of bannedExternalViolations) {
-      const where = v.field ? ` (${v.field})` : "";
-      console.error(`  ${v.file}  →  ${v.specifier}${where}  [${v.sourceTag}]`);
-    }
-    console.error(
-      "\nPackages banned per source tag are listed in tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
-
   const bannedDepViolations = findBannedDependencyViolations(
     graph,
     workspaceRoot,
     BANNED_DEPENDENCIES,
   );
 
-  if (bannedDepViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${bannedDepViolations.length} banned-dependency violation(s):\n`);
-    for (const v of bannedDepViolations) {
-      console.error(`  ${v.manifest}  →  ${v.dependency}  (${v.field})`);
-    }
-    const reasons = new Map(bannedDepViolations.map(v => [v.dependency, v.reason]));
-    for (const [dependency, reason] of reasons) {
-      console.error(`\n${dependency} is banned: ${reason}`);
-    }
-    console.error(
-      "\nBanned packages are listed in tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
+  const failed = [
+    reportViolations(
+      "module-boundary",
+      findViolations(graph, BOUNDARY_EXCEPTIONS),
+      v => {
+        const tgtTags = v.targetTags.length > 0 ? v.targetTags.join(", ") : "untagged";
+        return `${v.sourceName} [${v.sourceTags.join(", ")}] → ${v.target} [${tgtTags}]`;
+      },
+      "Allowed edges",
+    ),
+    reportViolations(
+      "legacy source-import",
+      findSourceImportViolations(workspaceRoot, legacyPackages, BOUNDARY_EXCEPTIONS),
+      v => `${v.file}  →  ${v.specifier}`,
+      "Legacy source roots and packages",
+      [LEGACY_IMPORT_RULE],
+    ),
+    reportViolations(
+      "banned-external",
+      findBannedExternalViolations(graph, workspaceRoot, BANNED_EXTERNALS_BY_TAG),
+      v => `${v.file}  →  ${v.specifier}${v.field ? ` (${v.field})` : ""}  [${v.sourceTag}]`,
+      "Packages banned per source tag",
+    ),
+    reportViolations(
+      "banned-dependency",
+      bannedDepViolations,
+      v => `${v.manifest}  →  ${v.dependency}  (${v.field})`,
+      "Banned packages",
+      [...new Map(bannedDepViolations.map(v => [v.dependency, v.reason]))].map(
+        ([dependency, reason]) => `${dependency} is banned: ${reason}`,
+      ),
+    ),
+    reportViolations(
+      "devtools import",
+      findDevtoolsImportViolations(
+        graph,
+        workspaceRoot,
+        DEVTOOLS_ALLOWED_IMPORTS,
+        DEVTOOLS_TYPE_ONLY_IMPORTS,
+      ),
+      v => {
+        const where = v.file
+          ? `  (value import in ${v.file}; only \`import type\` is allowed)`
+          : "";
+        return `${v.source}  →  ${v.target}${where}`;
+      },
+      "Allowed @devtools/* imports (DEVTOOLS_ALLOWED_IMPORTS, DEVTOOLS_TYPE_ONLY_IMPORTS)",
+    ),
+  ].includes(true);
 
-  const devtoolsViolations = findDevtoolsImportViolations(
-    graph,
-    workspaceRoot,
-    DEVTOOLS_ALLOWED_IMPORTS,
-    DEVTOOLS_TYPE_ONLY_IMPORTS,
-  );
-
-  if (devtoolsViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${devtoolsViolations.length} devtools import violation(s):\n`);
-    for (const v of devtoolsViolations) {
-      const where = v.file ? `  (value import in ${v.file}; only \`import type\` is allowed)` : "";
-      console.error(`  ${v.source}  →  ${v.target}${where}`);
-    }
-    console.error(
-      "\nAllowed @devtools/* imports are listed in DEVTOOLS_ALLOWED_IMPORTS and DEVTOOLS_TYPE_ONLY_IMPORTS, tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
-
-  if (hasError) process.exit(1);
+  if (failed) process.exit(1);
   console.log("✓ module boundaries ok");
 }
 
@@ -564,7 +514,6 @@ module.exports = {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
-  findPrivateDependencyViolations,
 };
 
 if (require.main === module) {
