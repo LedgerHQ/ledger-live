@@ -142,6 +142,7 @@ class FirebaseCapture:
             except TimeoutError:
                 flow.metadata[LEADER_KEY] = key
                 flow.request.headers.pop("If-None-Match", None)
+                stats.upstream += 1
                 stats.timed_out += 1
                 logger.warning(f"[firebase_capture] waited too long, going upstream: {key}")
                 return

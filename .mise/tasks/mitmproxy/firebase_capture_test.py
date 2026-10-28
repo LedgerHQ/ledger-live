@@ -166,7 +166,7 @@ def test_waiter_goes_upstream_after_the_wait_and_its_answer_is_stored():
         addon.response(late)
         assert addon.cache
         (stats,) = addon.stats.values()
-        assert stats.timed_out == 1
+        assert (stats.upstream, stats.timed_out) == (2, 1)
 
     run(test)
 
@@ -190,7 +190,8 @@ def test_wait_budget_is_not_reset_when_a_leader_is_replaced():
         assert loop.time() - started < 1.3
         assert still_waiting.response is None
         assert still_waiting.metadata["firebase_capture_key"]
-        assert next(iter(addon.stats.values())).timed_out == 1
+        (stats,) = addon.stats.values()
+        assert (stats.upstream, stats.timed_out) == (3, 1)
 
     run(test)
 
