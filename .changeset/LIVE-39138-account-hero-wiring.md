@@ -1,6 +1,6 @@
 ---
 "live-mobile": minor
-"@features/flow-account-detail": patch
+"@features/flow-account-detail": minor
 "@features/platform-quick-actions": minor
 ---
 

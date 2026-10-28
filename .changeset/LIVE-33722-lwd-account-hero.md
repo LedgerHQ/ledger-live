@@ -1,6 +1,6 @@
 ---
 "ledger-live-desktop": minor
-"live-mobile": patch
+"live-mobile": minor
 "@features/flow-account-detail-hero": minor
 "@features/platform-quick-actions": minor
 ---

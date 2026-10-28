@@ -242,20 +242,4 @@
 
 - [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
 
-## 0.6.0
-
-### Minor Changes
-
-- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-crypto`: `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByTicker`, and `findCryptoCurrencyByKeyword`. These match the legacy `@ledgerhq/cryptoassets` accessor semantics (including the keyword-tiebreak ticker disambiguation) and are built once at module load over the static `CRYPTO_CURRENCIES_REGISTRY`.
-
-- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
-
-## 0.6.0-next.0
-
-### Minor Changes
-
-- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-crypto`: `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByTicker`, and `findCryptoCurrencyByKeyword`. These match the legacy `@ledgerhq/cryptoassets` accessor semantics (including the keyword-tiebreak ticker disambiguation) and are built once at module load over the static `CRYPTO_CURRENCIES_REGISTRY`.
-
-- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

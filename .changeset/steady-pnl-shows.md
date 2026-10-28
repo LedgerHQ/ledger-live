@@ -1,7 +1,7 @@
 ---
 "@shared/feature-flags": minor
-"@features/platform-feature-flags": patch
-"@ledgerhq/live-common": patch
+"@features/platform-feature-flags": minor
+"@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

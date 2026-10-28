@@ -1,6 +1,6 @@
 ---
 "live-mobile": minor
-"@devtools/bindings": patch
+"@devtools/bindings": minor
 ---
 
 Wait in the onboarding machine for a new session before resuming after an OS update

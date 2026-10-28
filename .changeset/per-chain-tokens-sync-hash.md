@@ -1,7 +1,7 @@
 ---
 "@domain/api-currency-token": minor
-"@features/platform-currencies": patch
-"@ledgerhq/coin-tester-evm": patch
+"@features/platform-currencies": minor
+"@ledgerhq/coin-tester-evm": minor
 "ledger-live-desktop": minor
 "live-mobile": minor
 ---

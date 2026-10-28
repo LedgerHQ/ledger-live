@@ -211,22 +211,4 @@
   - @ledgerhq/ledger-wallet-framework@3.0.0-next.0
   - @ledgerhq/hw-app-eth@7.8.15-next.0
 
-## 0.22.2
-
-### Patch Changes
-
-- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/ledger-wallet-framework@2.8.0
-  - @ledgerhq/live-dmk-shared@0.30.0
-  - @ledgerhq/hw-app-eth@7.8.14
-
-## 0.22.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
-  - @ledgerhq/live-dmk-shared@0.30.0-next.0
-  - @ledgerhq/hw-app-eth@7.8.14-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

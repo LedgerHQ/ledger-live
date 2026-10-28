@@ -1,7 +1,7 @@
 ---
 "@domain/entity-account-descriptor": minor
 "@ledgerhq/wallet-cli": major
-"@ledgerhq/live-common": patch
+"@ledgerhq/live-common": minor
 ---
 
 feat(account-descriptor): identify the network by its CAL network_id

@@ -1,5 +1,5 @@
 ---
-"@devtools/device-onboarding": patch
+"@devtools/device-onboarding": minor
 ---
 
 Show each onboarding state in the devtool log with an icon and a color for its kind

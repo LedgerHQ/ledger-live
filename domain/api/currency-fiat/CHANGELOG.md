@@ -238,18 +238,4 @@
 - Updated dependencies [[`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e)]:
   - @shared/api-services@0.2.0-next.0
 
-## 0.2.1
-
-### Patch Changes
-
-- Updated dependencies [[`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7)]:
-  - @domain/entity-currency-fiat@0.3.0
-
-## 0.2.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7)]:
-  - @domain/entity-currency-fiat@0.3.0-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

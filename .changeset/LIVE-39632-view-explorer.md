@@ -1,6 +1,6 @@
 ---
 "@features/flow-account-detail-settings": minor
-"@domain/entity-currency-crypto": patch
+"@domain/entity-currency-crypto": minor
 "@shared/linking": minor
 "live-mobile": minor
 "ledger-live-desktop": minor
