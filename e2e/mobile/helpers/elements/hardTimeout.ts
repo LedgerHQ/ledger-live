@@ -5,6 +5,10 @@ import { TIMEOUT } from "@e2e/utils/timeouts";
 const HARD_TIMEOUT_MARKER = "possible bridge hang";
 const CONCURRENT_INTERACTION_MARKER = "multiple interactions taking place";
 
+/** A wait answers by itself at its own timeout, so the hard timeout must outlast it. */
+export const waitHardTimeout = (timeout: number) =>
+  Math.max(TIMEOUT.xxxlarge, timeout + TIMEOUT.xlarge);
+
 /**
  * Bounds a single Detox action so a stuck bridge call fails the step instead of the whole test.
  * Never retries: a Detox action cannot be cancelled, so a retry could tap twice.

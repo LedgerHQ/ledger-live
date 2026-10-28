@@ -3,7 +3,7 @@ import type { WebElement } from "detox/detox";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
-import { withHardTimeout } from "./hardTimeout";
+import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 /**
  * An element inside a webview (Live App), declared once by its `data-testid`.
@@ -24,7 +24,10 @@ export class WebHandle implements ElementHandle {
 
   /** Waits until the element exists in the webview and its text can be read (webviews have no visibility check). */
   async waitVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await retryUntilTimeout(() => this.raw.runScript(el => el.innerText), timeout, INTERVAL.long);
+    await withHardTimeout(
+      retryUntilTimeout(() => this.raw.runScript(el => el.innerText), timeout, INTERVAL.long),
+      waitHardTimeout(timeout),
+    );
   }
 
   /** Waits for the element, then taps it. */
@@ -56,8 +59,11 @@ export class WebHandle implements ElementHandle {
   /** Waits for the element, then returns its trimmed text. */
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
-    await detoxExpect(this.raw).toExist();
-    return this.raw.runScript(el => (el.innerText || el.textContent || "").trim());
+    await withHardTimeout(detoxExpect(this.raw).toExist(), TIMEOUT.medium);
+    return withHardTimeout(
+      this.raw.runScript(el => (el.innerText || el.textContent || "").trim()),
+      TIMEOUT.medium,
+    );
   }
 }
 

@@ -8,12 +8,9 @@ import type {
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
-import { withHardTimeout } from "./hardTimeout";
+import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
 type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
-
-/** A wait answers by itself at its own timeout, so the hard timeout must outlast it. */
-const waitHardTimeout = (timeout: number) => Math.max(TIMEOUT.xxxlarge, timeout + TIMEOUT.xlarge);
 
 /**
  * A native (React Native) element, declared once with its match strategy.
@@ -87,7 +84,10 @@ export class NativeHandle implements ElementHandle {
   /** Waits for visibility, then returns the element's attributes (`enabled`, `label`…). */
   async getAttributes(timeout = TIMEOUT.xxlarge): Promise<ElementAttributes> {
     await this.waitVisible(timeout);
-    const attributes = await retryUntilTimeout(() => this.raw.getAttributes());
+    const attributes = await withHardTimeout(
+      retryUntilTimeout(() => this.raw.getAttributes(), timeout),
+      waitHardTimeout(timeout),
+    );
     return "elements" in attributes ? attributes.elements[0] : attributes;
   }
 

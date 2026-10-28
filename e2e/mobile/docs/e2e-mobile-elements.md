@@ -41,7 +41,7 @@ Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](
 - Override the timeout with a bucket: `await this.signaturePrompt.waitVisible(TIMEOUT.xxxlarge)`.
 - Opt out with `.raw`, the Detox element with no wait. Use it only for an action the handle does not wrap. There is no `wait: false` flag: no call site needed one.
 
-The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout, and the waits and retries match the globals, so behaviour and Allure steps stay the same.
+The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout, and the waits and retries match the globals, so Allure steps stay the same. Unlike the globals, the hard timeout also bounds `getAttributes()` and every web call, so a hung bridge fails the step instead of the whole test.
 
 ## Migrate a page object
 
