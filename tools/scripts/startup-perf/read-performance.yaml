@@ -3,6 +3,11 @@
 # Debug is visible without the 7 taps because the builds use .env.mock.prerelease (FORCE_DEBUG_VISIBLE=1).
 appId: com.ledger.live
 ---
+# A confirmation left on screen by a failed quick read (read-performance-quick.yaml) would hide this
+# flow's own one.
+- tapOn:
+    text: "Open"
+    optional: true
 - openLink: ledgerlive://settings
 # iOS may ask to confirm opening the link; system permission prompts can also be on screen.
 - tapOn:

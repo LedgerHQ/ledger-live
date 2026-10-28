@@ -21,6 +21,8 @@ import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 import { startBridge } from "./bridge.mjs";
 
+const DEFAULT_FLOW = path.join(import.meta.dirname, "read-performance.yaml");
+
 const { values: opts } = parseArgs({
   options: {
     platform: { type: "string" },
@@ -41,7 +43,7 @@ const { values: opts } = parseArgs({
     "settle-ms": { type: "string", default: "5000" },
     // Read every startup event row; by default only the first screen and the last rows are read.
     "all-events": { type: "boolean", default: false },
-    flow: { type: "string", default: path.join(import.meta.dirname, "read-performance.yaml") },
+    flow: { type: "string", default: DEFAULT_FLOW },
     maestro: { type: "string", default: "maestro" },
     "bridge-port": { type: "string", default: "8099" },
     "pause-idle": { type: "string", default: "true" },
@@ -92,6 +94,10 @@ const GUEST_PCAP_DIR = path.join(OUT_DIR, "guest-network");
 const TRACE_DIR = path.join(OUT_DIR, "traces");
 const PERFETTO_CONFIG = path.join(import.meta.dirname, "perfetto-startup.pbtx");
 const DEVICE_PERFETTO_CONFIG = "/data/local/tmp/startup-perf.pbtx";
+// The flow without the optional taps, for measured reads: when their prompts are absent, they wait
+// up to ~7 s in all. Warm-ups keep the full flow (iOS asks to confirm a simulator's first openLink),
+// and it is the retry when this one fails.
+const QUICK_FLOW = path.join(import.meta.dirname, "read-performance-quick.yaml");
 const SCROLL_FLOW = path.join(import.meta.dirname, "scroll-performance.yaml");
 const SCROLL_TO_END_FLOW = path.join(import.meta.dirname, "scroll-performance-to-end.yaml");
 // "App startup time" is the later of these two; a read before both exist would under-report it.
@@ -133,22 +139,54 @@ process.env.MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED = "true";
 // By default Maestro uninstalls and reinstalls its driver apps on every call (about 50 s per read
 // in run 40006507791), which also keeps the host busy right before the next launch. Without the
 // reinstall it installs them once, when missing.
-function maestro(device, command, args, { timeoutMs }) {
-  return run(opts.maestro, ["--device", device, command, "--no-reinstall-driver", ...args], {
-    timeoutMs,
-    allowFail: true,
+// No wait for the update check at exit and no analytics upload; on iOS, no Android device listing.
+const MAESTRO_ENV = Object.fromEntries(
+  Object.entries({
+    ...process.env,
+    MAESTRO_DISABLE_UPDATE_CHECK: "true",
+    MAESTRO_CLI_NO_ANALYTICS: "1",
+  }).filter(([key]) => PLATFORM !== "ios" || !(key === "ANDROID" || key.startsWith("ANDROID_"))),
+);
+// iOS: one driver port per simulator, so the calls of a read reuse the driver the first one started
+// (a `test` otherwise picks a random port and starts its own). The driver is still stopped before
+// every launch.
+const IOS_DRIVER_PORT = 22087;
+// Every Maestro call of the current launch, with its duration, recorded in the sample.
+let maestroCalls = [];
+
+async function maestro(device, command, args, { timeoutMs }) {
+  const port = PLATFORM === "ios" ? IOS_DRIVER_PORT + DEVICES.indexOf(device) : null;
+  const startedAt = Date.now();
+  const result = await run(
+    opts.maestro,
+    [
+      ...(port === null ? [] : ["--driver-host-port", String(port)]),
+      "--device",
+      device,
+      command,
+      "--no-reinstall-driver",
+      ...args,
+    ],
+    { timeoutMs, allowFail: true, env: MAESTRO_ENV },
+  );
+  maestroCalls.push({
+    command,
+    flow: args[0] ? path.basename(args[0]) : null,
+    ms: Date.now() - startedAt,
+    ...(result.failed ? { error: `${result.stdout}\n${result.stderr}`.trim().slice(-400) } : {}),
   });
+  return result;
 }
 
 const log = message => console.log(`[${new Date().toISOString().slice(11, 19)}] ${message}`);
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-function run(cmd, args, { timeoutMs = 120_000, allowFail = false } = {}) {
+function run(cmd, args, { timeoutMs = 120_000, allowFail = false, env } = {}) {
   return new Promise((resolve, reject) => {
     execFile(
       cmd,
       args,
-      { timeout: timeoutMs, maxBuffer: 64 * 1024 * 1024 },
+      { timeout: timeoutMs, maxBuffer: 64 * 1024 * 1024, ...(env ? { env } : {}) },
       (error, stdout, stderr) => {
         const result = { failed: !!error, stdout: String(stdout), stderr: String(stderr) };
         if (error && !allowFail) {
@@ -199,7 +237,11 @@ const android = {
     return this.components.get(device);
   },
   async stop(device) {
-    for (const pkg of [APP_ID, "dev.mobile.maestro", "dev.mobile.maestro.test"]) {
+    await run("adb", ["-s", device, "shell", "am", "force-stop", APP_ID], { allowFail: true });
+    await this.stopDriver(device);
+  },
+  async stopDriver(device) {
+    for (const pkg of ["dev.mobile.maestro", "dev.mobile.maestro.test"]) {
       await run("adb", ["-s", device, "shell", "am", "force-stop", pkg], { allowFail: true });
     }
   },
@@ -585,9 +627,25 @@ const ios = {
     await run("xcrun", ["simctl", "install", device, app], { timeoutMs: 600_000 });
   },
   async stop(device) {
-    for (const bundleId of [APP_ID, "dev.mobile.maestro-driver-iosUITests.xctrunner"]) {
-      await run("xcrun", ["simctl", "terminate", device, bundleId], { allowFail: true });
+    await run("xcrun", ["simctl", "terminate", device, APP_ID], { allowFail: true });
+    await this.stopDriver(device);
+  },
+  // The `xcodebuild test-without-building` running Maestro's driver outlives the Maestro call that
+  // started it and would react to the driver's end during the next launch: end it first.
+  async stopDriver(device) {
+    const xcodebuild = `test-without-building.*id=${device}`;
+    await run("pkill", ["-f", xcodebuild], { allowFail: true });
+    for (let i = 0; i < 30; i++) {
+      if ((await run("pgrep", ["-f", xcodebuild], { allowFail: true })).failed) break;
+      await sleep(500);
     }
+    await run(
+      "xcrun",
+      ["simctl", "terminate", device, "dev.mobile.maestro-driver-iosUITests.xctrunner"],
+      {
+        allowFail: true,
+      },
+    );
   },
   async launch(device, launchArgs) {
     // react-native-launch-arguments reads "-key value" pairs from the process arguments.
@@ -760,12 +818,15 @@ async function readRemainingEvents(device, events) {
   return FINAL_EVENTS.every(name => name in all) ? all : readAllEvents(device, all);
 }
 
-async function readPerformance(device, debugName) {
+async function readPerformance(device, debugName, { quick }) {
   let lastTexts = [];
   let lastFlow = null;
   for (let attempt = 1; attempt <= 2; attempt++) {
+    const flow = quick && attempt === 1 && opts.flow === DEFAULT_FLOW ? QUICK_FLOW : opts.flow;
+    // A driver stuck on an abandoned call would otherwise serve the retry too.
+    if (attempt === 2) await P.stopDriver(device);
     // The first call on a device also installs Maestro's driver apps.
-    lastFlow = await maestro(device, "test", [opts.flow], { timeoutMs: 120_000 });
+    lastFlow = await maestro(device, "test", [flow], { timeoutMs: 120_000 });
     for (let i = 0; i < 3; i++) {
       const hierarchy = await maestro(device, "hierarchy", [], { timeoutMs: 60_000 });
       lastTexts = hierarchyTexts(hierarchy.stdout);
@@ -972,6 +1033,8 @@ async function sample(meta) {
   };
   const name = `${meta.scenario}-p${meta.phase}-r${meta.round}-${meta.side}`;
   const other = DEVICES.find(d => d !== meta.device);
+  maestroCalls = [];
+  let readStart = null;
   let paused = false;
   let capturing = false;
   let trace = null;
@@ -1078,7 +1141,9 @@ async function sample(meta) {
         shots: shots.map(f => path.relative(OUT_DIR, f)),
       };
     }
-    const perf = await readPerformance(meta.device, name);
+    // With a home dump just before, the read reuses the driver that dump started.
+    readStart = Date.now();
+    const perf = await readPerformance(meta.device, name, { quick: !meta.warmup });
     // A crash or restart between the launch and the read would show another launch's value.
     const pidAtRead = record.pid === null ? null : await P.pid(meta.device);
     if (record.pid !== null && pidAtRead !== record.pid) {
@@ -1096,6 +1161,8 @@ async function sample(meta) {
     if (capturing) await P.stopCapture(meta.device);
     if (trace) await P.stopTrace(meta.device, trace, null).catch(() => {});
   }
+  if (readStart !== null) record.readMs = Date.now() - readStart;
+  record.maestroCalls = maestroCalls;
   await appendFile(SAMPLES_FILE, JSON.stringify(record) + "\n");
   const what = record.ok
     ? `${record.appStartupTime} ms${record.amStart?.totalTime ? ` (am start ${record.amStart.totalTime} ms)` : ""}`
