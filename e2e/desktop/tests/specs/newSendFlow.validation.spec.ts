@@ -103,19 +103,28 @@ test.describe("Send - new flow - max amount", () => {
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
     featureFlags: newSendFlowFeatureFlags,
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) max amount`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) max amount then device lost during signature`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-6124" },
+      annotation: { type: "TMS", description: "B2CQA-6124, B2CQA-6028, B2CQA-115" },
     },
-    async ({ app }) => {
+    async ({ app, speculos }) => {
       await reachAmountStep(app, tx);
+      await app.newSendFlow.clickQuickAction("quarter");
+      await app.newSendFlow.expectAmountFilled();
       await app.newSendFlow.selectMaxAmount();
       await app.newSendFlow.expectReviewEnabled();
+
+      await app.newSendFlow.clickReview();
+      await app.newSendFlow.waitForSignature();
+      await app.speculos.waitForSendReview(tx);
+      await speculos.stop();
+      await app.newSendFlow.expectConfirmationError();
     },
   );
 });
@@ -364,37 +373,6 @@ test.describe("Send - new flow - ENS address", () => {
       await app.newSendFlow.waitForSuccessConfirmation();
       await app.newSendFlow.clickViewDetails();
       await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
-    },
-  );
-});
-
-test.describe("Send - new flow - device error", () => {
-  const tx = new Transaction(Account.ETH_1, Account.ETH_3, "0.0001", Fee.MEDIUM);
-
-  test.use({
-    teamOwner: Team.COIN_INTEGRATION,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
-    env: { DISABLE_TRANSACTION_BROADCAST: "1" },
-    featureFlags: newSendFlowFeatureFlags,
-  });
-
-  test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) device lost during signature`,
-    {
-      tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-115" },
-    },
-    async ({ app, speculos }) => {
-      await reachAmountStep(app, tx);
-      await app.newSendFlow.fillCryptoAmount(tx.amount);
-      await app.newSendFlow.clickReview();
-      await app.newSendFlow.waitForSignature();
-      await app.speculos.waitForSendReview(tx);
-
-      await speculos.stop();
-      await app.newSendFlow.expectConfirmationError();
     },
   );
 });
