@@ -147,6 +147,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const screenState = toChecksScreenState(
     onboarding.state,
     onboarding.context?.checksPaused === true,
+    onboarding.context?.onboardedOnEntry === true,
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
