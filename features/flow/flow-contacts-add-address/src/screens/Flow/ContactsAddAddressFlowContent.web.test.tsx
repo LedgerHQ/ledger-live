@@ -9,12 +9,36 @@ import {
 import { I18nTestProvider } from "@shared/i18n/testing";
 import type { AddAddressFlowState } from "../../state/types";
 import {
-  ContactsAddAddressFlowContent,
-  type ContactsAddAddressFlowContentProps,
   resolveAddAddressWebFlowStep,
   shouldUseAddAddressFlowBackNavigation,
   type AddAddressWebFlowStep,
-} from "./ContactsAddAddressFlowContent";
+} from "./addAddressWebFlowStep";
+import { ContactsAddAddressFlowContent } from "./ContactsAddAddressFlowContent";
+import type { ContactsAddAddressFlowContentProps } from "./ContactsAddAddressFlowContent.types";
+
+jest.mock("@ledgerhq/lumen-ui-react", () => {
+  const lumen = jest.requireActual("@ledgerhq/lumen-ui-react");
+  function AddressInput({
+    onQrCodeClick,
+    ...props
+  }: Readonly<{ onQrCodeClick?: () => void }>): React.JSX.Element {
+    return React.createElement(
+      React.Fragment,
+      null,
+      React.createElement(lumen.AddressInput, props),
+      onQrCodeClick
+        ? React.createElement("button", {
+            type: "button",
+            "aria-label": "Scan QR code",
+            onClick: onQrCodeClick,
+          })
+        : null,
+    );
+  }
+  return new Proxy(lumen, {
+    get: (target, prop) => (prop === "AddressInput" ? AddressInput : target[prop]),
+  });
+});
 
 type OpenAddAddressFlowState = Exclude<AddAddressFlowState, { status: "closed" }>;
 
@@ -139,5 +163,20 @@ describe("ContactsAddAddressFlowContent", () => {
     rerender(<ContactsAddAddressFlowContent {...successProps} />);
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("should show the QR code scanner only when the host can scan", () => {
+    const withoutScanProps = createContentProps(createContentState("enteringAddress"));
+    const { rerender } = render(<ContactsAddAddressFlowContent {...withoutScanProps} />, {
+      wrapper: I18nTestProvider,
+    });
+
+    expect(screen.queryByRole("button", { name: "Scan QR code" })).not.toBeInTheDocument();
+
+    const onScanQrCode = jest.fn();
+    rerender(<ContactsAddAddressFlowContent {...withoutScanProps} onScanQrCode={onScanQrCode} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Scan QR code" }));
+    expect(onScanQrCode).toHaveBeenCalledTimes(1);
   });
 });
