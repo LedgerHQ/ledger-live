@@ -53,9 +53,6 @@
   "boba": {
     "icon": "BOBA.png"
   },
-  "blast": {
-    "icon": "BLAST.png"
-  },
   "celo": {
     "icon": "CELO.png"
   },
@@ -627,9 +624,6 @@
     "icon": "WETH.png"
   },
   "neon_evm/erc20/wrapped_eth": {
-    "icon": "WETH.png"
-  },
-  "blast/erc20/weth": {
     "icon": "WETH.png"
   },
   "polygon/erc20/wrapped_ether": {

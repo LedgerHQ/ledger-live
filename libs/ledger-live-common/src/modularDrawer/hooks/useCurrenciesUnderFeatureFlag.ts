@@ -52,8 +52,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
   const lineaSepolia = useFeature("currencyLineaSepolia");
-  const blast = useFeature("currencyBlast");
-  const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
@@ -152,8 +150,6 @@ export function useCurrenciesUnderFeatureFlag() {
       linea,
       ton,
       linea_sepolia: lineaSepolia,
-      blast,
-      blast_sepolia: blastSepolia,
       scroll,
       shape,
       story,
@@ -245,8 +241,6 @@ export function useCurrenciesUnderFeatureFlag() {
       linea,
       ton,
       lineaSepolia,
-      blast,
-      blastSepolia,
       scroll,
       shape,
       story,
