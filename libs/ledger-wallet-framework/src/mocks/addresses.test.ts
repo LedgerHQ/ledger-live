@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { CryptoCurrency } from "../types";
 import { genAccount } from "./account";
 import { isEd25519CurvePoint } from "./helpers";
 
@@ -36,7 +37,9 @@ const cases: Array<[string, RegExp]> = [
 ];
 
 test.each(cases)("generates a plausible %s address", (id, expected) => {
-  const currency = getCryptoCurrencyById(id);
+  // The domain currency type is structurally close to the framework's but not identical, so
+  // every sibling test bridges it the same way.
+  const currency = getCryptoCurrencyById(id) as unknown as CryptoCurrency;
   const account = genAccount("demo-seed", { currency });
   expect(account.freshAddress).toMatch(expected);
 });
@@ -46,11 +49,11 @@ test.each(cases)("generates a plausible %s address", (id, expected) => {
  * RFC 8032, and answers 400 for anything that is not a point on the curve (~half of random strings).
  */
 test("generates a valid ed25519 public key for concordium", () => {
-  const currency = getCryptoCurrencyById("concordium");
+  const currency = getCryptoCurrencyById("concordium") as unknown as CryptoCurrency;
   const littleEndian = (hex: string) => BigInt(`0x${hex.match(/../g)!.reverse().join("")}`);
   for (let i = 0; i < 25; i++) {
     const { xpub } = genAccount(`pubkey-seed-${i}`, { currency });
     expect(xpub).toMatch(/^[0-9A-F]{64}$/);
-    expect(isEd25519CurvePoint(littleEndian(xpub) & ((1n << 255n) - 1n))).toBe(true);
+    expect(isEd25519CurvePoint(littleEndian(xpub!) & ((1n << 255n) - 1n))).toBe(true);
   }
 });
