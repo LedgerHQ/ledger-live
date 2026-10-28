@@ -1,4 +1,5 @@
 const {
+  checkPresetOverrides,
   createDualJestConfig,
   jestSonarReporter,
   lcovCoverageReporters,
@@ -66,6 +67,9 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
  * lcov `projectRoot` is the option when given, else derived from `overrides.rootDir` when set, else
  * `../../` (a package two levels below the repository root).
  *
+ * A key the preset owns (`transform`, `testEnvironment`, `reporters`, ...) throws unless
+ * `support/jest/core/preset-overrides.js` lists it for the package of `overrides.rootDir`.
+ *
  *   module.exports = createSharedJestConfig();
  *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
  *
@@ -73,10 +77,20 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
  * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedJestConfig(
-  overrides = {},
-  { esm = false, extraEsmDeps = [], projectRoot } = {},
-) {
+function createSharedJestConfig(overrides = {}, options) {
+  checkPresetOverrides("createSharedJestConfig", { "": overrides }, overrides.rootDir);
+  return sharedNodeConfig(overrides, options);
+}
+
+/**
+ * createSharedJestConfig() without the check of its overrides, for the presets built on it, which
+ * set some of the keys the preset owns. A package calls createSharedJestConfig().
+ *
+ * @param {import('@jest/types').Config.InitialOptions} [overrides]
+ * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
+ * @returns {import('@jest/types').Config.InitialOptions}
+ */
+function sharedNodeConfig(overrides = {}, { esm = false, extraEsmDeps = [], projectRoot } = {}) {
   const config = {
     testEnvironment: "node",
     roots: ["<rootDir>/src"],
@@ -117,6 +131,7 @@ function createSharedUiJestConfig(options) {
   return createDualJestConfig(
     { depth: "../../", web: lumenTransform, native: lumenTransform },
     options,
+    "createSharedUiJestConfig",
   );
 }
 
@@ -131,7 +146,8 @@ function createSharedUiJestConfig(options) {
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createSharedUiNativeJestConfig(overrides = {}) {
-  return createSharedJestConfig(
+  checkPresetOverrides("createSharedUiNativeJestConfig", { "": overrides }, overrides.rootDir);
+  return sharedNodeConfig(
     withProjectOverrides(
       {
         collectCoverage: true,
@@ -150,6 +166,7 @@ module.exports = {
   createSharedUiJestConfig,
   createSharedUiNativeJestConfig,
   jestSonarReporter,
+  sharedNodeConfig,
   sharedReporters,
   withEsmDeps,
 };

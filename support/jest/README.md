@@ -102,7 +102,13 @@ module.exports = require("@support/jest/features-flow").createFlowJestConfig();
 
 What the package needs on top of the preset goes through the factory's overrides argument. The
 `jest` rule of `pnpm lint:tool-config` checks that every jest config of a consumer exports a
-`create*Config` call from `@support/jest/*`; what the overrides contain is the package's call.
+`create*Config` call from `@support/jest/*`. The factories check the overrides themselves: a key
+the preset owns (`transform`, `transformIgnorePatterns`, `testEnvironment`, `globals`, `reporters`,
+`coverageReporters`), at the top level or in `webOverrides` / `nativeOverrides`, throws with the fix
+to use instead, such as `extraEsmDeps` for a dependency jest must transform. The packages that still
+override one are listed, by package path and factory and with their reason, in
+[`core/preset-overrides.js`](./core/preset-overrides.js); the factory finds the entry from
+`rootDir`, and a listed key the config no longer sets throws, so the list only shrinks.
 
 Unlike the lint, format and TypeScript presets, consumers keep the dependency: the presets carry
 code and peer dependencies, and the dependency tells nx which test targets a preset change

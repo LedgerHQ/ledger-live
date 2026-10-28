@@ -1,5 +1,6 @@
 const { createSharedJestConfig } = require("@support/jest/shared");
 module.exports = createSharedJestConfig({
+  rootDir: __dirname,
   testEnvironment: "jsdom",
   testMatch: ["**/*.test.ts", "**/*.test.tsx"],
   globals: {

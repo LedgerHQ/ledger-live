@@ -46,7 +46,7 @@ const flowLayer = {
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createFlowJestConfig(options) {
-  return createDualJestConfig(flowLayer, options);
+  return createDualJestConfig(flowLayer, options, "createFlowJestConfig");
 }
 
 /**
@@ -58,7 +58,11 @@ function createFlowJestConfig(options) {
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createFlowNativeJestConfig(options) {
-  return createDualJestConfig({ ...flowLayer, web: undefined }, options);
+  return createDualJestConfig(
+    { ...flowLayer, web: undefined },
+    options,
+    "createFlowNativeJestConfig",
+  );
 }
 
 module.exports = { createFlowJestConfig, createFlowNativeJestConfig };

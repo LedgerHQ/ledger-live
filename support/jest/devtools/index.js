@@ -6,6 +6,7 @@
 // — its node_modules, its jest/ folder — deliberately keep `<rootDir>`.
 
 const path = require("path");
+const { checkPresetOverrides } = require("../core");
 
 const here = relative => path.join(__dirname, relative);
 
@@ -50,6 +51,7 @@ const TEST_TIMEOUT = 30_000;
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
+  checkPresetOverrides("createWebJestConfig", { "": overrides }, overrides.rootDir);
   return {
     testEnvironment: "jsdom",
     roots: ["<rootDir>/src"],
@@ -89,6 +91,7 @@ function createWebJestConfig({ moduleNameMapper, ...overrides } = {}) {
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createNativeJestConfig({ moduleNameMapper, ...overrides } = {}) {
+  checkPresetOverrides("createNativeJestConfig", { "": overrides }, overrides.rootDir);
   return {
     preset: "react-native",
     roots: ["<rootDir>/src"],

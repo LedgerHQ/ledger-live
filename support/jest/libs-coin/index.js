@@ -1,4 +1,5 @@
-const { createSharedJestConfig, withEsmDeps } = require("../shared");
+const { checkPresetOverrides } = require("../core");
+const { sharedNodeConfig, withEsmDeps } = require("../shared");
 
 // Integration suites hit live networks; the unit config leaves them to the integration config.
 const integrationTests = ".*\\.(integ|integration)\\.test\\.[tj]s";
@@ -39,7 +40,7 @@ const libsCoinDefaults = Object.freeze({
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
-  return createSharedJestConfig(config, {
+  return sharedNodeConfig(config, {
     esm,
     extraEsmDeps,
     projectRoot: projectRoot ?? (config.rootDir === undefined ? "../../../" : undefined),
@@ -51,7 +52,8 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  * quarantine retries), integration suites left out, coverage of `src/**` minus the tests.
  *
  * Every key of `overrides` replaces the preset's; `libsCoinDefaults` holds the lists a package
- * extends by spreading them.
+ * extends by spreading them. A key the preset owns throws unless
+ * `support/jest/core/preset-overrides.js` lists it for the package of `overrides.rootDir`.
  *
  *   module.exports = createLibsCoinJestConfig({ rootDir: __dirname });
  *
@@ -60,6 +62,7 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createLibsCoinJestConfig(overrides = {}, options) {
+  checkPresetOverrides("createLibsCoinJestConfig", { "": overrides }, overrides.rootDir);
   return sharedConfig(
     {
       passWithNoTests: true,
@@ -88,7 +91,8 @@ function createLibsCoinJestConfig(overrides = {}, options) {
  * @returns {import('@jest/types').Config.InitialProjectOptions}
  */
 function createLibsCoinJestProject(overrides = {}, { esm = true, extraEsmDeps = [] } = {}) {
-  const { testEnvironment, roots, testMatch, transform } = createSharedJestConfig();
+  checkPresetOverrides("createLibsCoinJestProject", { "": overrides }, overrides.rootDir);
+  const { testEnvironment, roots, testMatch, transform } = sharedNodeConfig();
   const project = {
     testEnvironment,
     roots,
@@ -113,6 +117,7 @@ function createLibsCoinJestProject(overrides = {}, { esm = true, extraEsmDeps = 
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createLibsCoinIntegJestConfig(overrides = {}, options) {
+  checkPresetOverrides("createLibsCoinIntegJestConfig", { "": overrides }, overrides.rootDir);
   return sharedConfig(
     {
       testMatch: undefined,

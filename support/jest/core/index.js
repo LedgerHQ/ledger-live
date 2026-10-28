@@ -2,6 +2,7 @@
 // native projects that `shared` and `features-flow` build on. A layer adds only its own mocks, test
 // matching, resolver and transform allowlist.
 const path = require("path");
+const PRESET_OVERRIDES = require("./preset-overrides");
 
 const swcTransform = {
   "^.+\\.(t|j)sx?$": [
@@ -148,6 +149,55 @@ function layerProject(project, layer, overrides) {
  *   native project, by the override rule
  */
 
+// Keys a preset sets for every package of its layer, with what a package uses instead.
+const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
+const PRESET_KEYS = {
+  transform: ESM_FIX,
+  transformIgnorePatterns: ESM_FIX,
+  testEnvironment: "pick the preset of the environment the tests need",
+  globals: "set the global in a setup file",
+  reporters: "every preset reports the same way",
+  coverageReporters: "every preset reports coverage the same way",
+};
+const OVERRIDES_FILE = "support/jest/core/preset-overrides.js";
+
+/**
+ * Throws when a package overrides a key its preset owns and `preset-overrides.js` does not list
+ * that key for the package and the factory, and when it lists a key no override sets, so the
+ * list only shrinks. The package is found from `rootDir`.
+ *
+ * @param {string} factory the factory the config calls
+ * @param {Record<string, object | undefined>} overrides the overrides objects, by label
+ * @param {string | undefined} rootDir
+ */
+function checkPresetOverrides(factory, overrides, rootDir) {
+  const pkg =
+    rootDir === undefined
+      ? undefined
+      : path.relative(repositoryRoot, rootDir).split(path.sep).join("/");
+  const allowed = (pkg && PRESET_OVERRIDES[pkg]?.overrides[factory]) ?? [];
+  const set = new Set();
+  for (const [label, object] of Object.entries(overrides)) {
+    for (const key of Object.keys(object ?? {})) {
+      if (!Object.hasOwn(PRESET_KEYS, key)) continue;
+      set.add(key);
+      if (!allowed.includes(key)) {
+        throw new Error(
+          `${factory}(): ${label}${key} belongs to the preset: ${PRESET_KEYS[key]}. A package that ` +
+            `must still override it is listed, with its reason, in ${OVERRIDES_FILE} (found from rootDir).`,
+        );
+      }
+    }
+  }
+  for (const key of allowed) {
+    if (!set.has(key)) {
+      throw new Error(
+        `${factory}(): ${OVERRIDES_FILE} lists ${key} for ${pkg}, which no override sets; remove it.`,
+      );
+    }
+  }
+}
+
 /**
  * Projects config of a dual web/native preset: jsdom web project (*.web.test.ts(x) and unsuffixed
  * tests), node native project (*.native.test.ts(x)), test quarantine, sonar and, on CI, the
@@ -158,12 +208,19 @@ function layerProject(project, layer, overrides) {
  *
  * @param {DualLayer} layer
  * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {string} [factory] the factory the config calls, for checkPresetOverrides
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createDualJestConfig(
   { depth, web, native },
   { webOverrides = {}, nativeOverrides = {}, ...overrides } = {},
+  factory = "createDualJestConfig",
 ) {
+  checkPresetOverrides(
+    factory,
+    { "": overrides, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
+    overrides.rootDir,
+  );
   return {
     collectCoverage: true,
     coverageDirectory: "./coverage/",
@@ -184,6 +241,7 @@ function createDualJestConfig(
 }
 
 module.exports = {
+  checkPresetOverrides,
   createDualJestConfig,
   jestSonarReporter,
   lcovCoverageReporters,

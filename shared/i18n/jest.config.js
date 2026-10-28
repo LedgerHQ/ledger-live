@@ -2,6 +2,7 @@ const { createSharedJestConfig } = require("@support/jest/shared");
 
 // React package: jsdom + tsx tests, unlike the node/`*.test.ts` default.
 module.exports = createSharedJestConfig({
+  rootDir: __dirname,
   testEnvironment: "jsdom",
   testMatch: ["**/*.test.ts?(x)"],
   transform: {
