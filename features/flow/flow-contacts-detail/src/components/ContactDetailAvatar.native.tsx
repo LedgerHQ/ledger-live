@@ -13,7 +13,7 @@ export function ContactDetailAvatar({ contact }: ContactDetailAvatarProps): Reac
       name={contact.name}
       isMe={contact.isMe}
       size="xl"
-      testId={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
+      testID={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
     />
   );
 }

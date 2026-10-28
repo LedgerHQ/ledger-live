@@ -1,5 +1,5 @@
 import type { ClipboardEvent } from "react";
-import { getPastedValue } from "./getPastedValue.web";
+import { getPastedValue } from "./getPastedValue";
 
 function createClipboardEvent({
   pastedText,
