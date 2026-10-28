@@ -102,6 +102,12 @@ on:
         type: choice
         options: ["4", "3", "2"]
         default: "4"
+      skip_bridge:
+        description: "Builds whose measured launches skip the E2E bridge (socket + network logging); b-only measures its cost (custom preset)"
+        required: false
+        type: choice
+        options: ["both", "b-only", "none"]
+        default: "both"
 
 permissions:
   contents: read
@@ -144,6 +150,7 @@ jobs:
           SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
           READ_ROWS: ${{ inputs.read_all_events && 'every event row read' || 'first screen and last event rows read' }}
+          SKIP_BRIDGE: ${{ inputs.skip_bridge }}
         run: |
           set -euo pipefail
           if ! [[ "$PAIRS" =~ ^[0-9]+$ ]] || (( PAIRS < 2 || PAIRS % 2 )); then
@@ -179,7 +186,23 @@ jobs:
             echo "- B: \`$LABEL_B\` → \`$B\`"
             echo "- $PAIRS pairs per scenario, value read ${SETTLE}s after each launch, ${READ_ROWS}"
             echo "- Android: one job (runner) per scenario, cellular network like E2E, $PERF_AVD_CORES cores per emulator"
+            case "$SKIP_BRIDGE" in
+              both) echo "- E2E bridge skipped on measured launches in both builds" ;;
+              b-only) echo "- E2E bridge skipped on measured launches in build B only" ;;
+              *) echo "- E2E bridge still runs on measured launches (as before 2026-10-28)" ;;
+            esac
           } >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$SKIP_BRIDGE" == b-only ]]; then
+            if [[ "$SIDES" == '["a"]' ]]; then
+              warning="$PRESET builds once, so neither build skips the bridge"
+            elif [[ "$A" != "$B" ]]; then
+              warning="A and B are different commits, so B − A also includes the bridge's cost"
+            fi
+            if [[ -n "${warning:-}" ]]; then
+              echo "::warning::skip_bridge=b-only: $warning"
+              echo "- **skip_bridge=b-only: $warning**" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi
 
   build-android:
     name: "Android build ${{ matrix.side }}"
@@ -270,6 +293,35 @@ jobs:
           fi
           grep '^SWAP_API_BASE=' .env.mock.prerelease || echo "No SWAP_API_BASE in .env.mock.prerelease: the app default applies"
 
+      # .env.mock.prerelease sets DETOX=1, so every launch runs the E2E bridge's init() once the store
+      # is ready: it hooks fetch and axios to log requests and opens a WebSocket to the bridge, retried
+      # 5 times over ~30 s. Only the injection launch passes a bridge port, so the other launches now
+      # leave init() right after its mock reset (mock=0 still turns MOCK off).
+      - name: Skip the E2E bridge on measured launches
+        if: ${{ inputs.skip_bridge != 'none' && (inputs.skip_bridge != 'b-only' || matrix.side == 'b') }}
+        working-directory: apps/ledger-live-mobile
+        env:
+          SIDE: ${{ matrix.side }}
+        run: |
+          set -euo pipefail
+          file=src/e2e/bridge/client.ts
+          guard='  if (!LaunchArguments.value()["wsPort"]) return; // startup-perf: measured launch, no bridge'
+          awk --version 2>&1 | head -1 || true
+          # Before the network logging (from July 2026), or before the socket on older commits.
+          awk -v guard="$guard" '
+            /^export function init[(][)] [{]/ { in_init = 1 }
+            in_init && !done && /^  (initAppNetworkLogging[(][)];|if [(]ws[)] [{])$/ { print guard; done = 1 }
+            /^}/ { in_init = 0 }
+            { print }
+            END { exit done ? 0 : 3 }
+          ' "$file" > "$file.patched" || {
+            echo "::error::No network logging or socket found in init() of $file: the bridge cannot be skipped in this build"
+            exit 1
+          }
+          mv "$file.patched" "$file"
+          grep -n -B2 'startup-perf: measured launch' "$file"
+          echo "- Build ${SIDE}: measured launches skip the E2E bridge" >> "$GITHUB_STEP_SUMMARY"
+
       # Same build type and env file as the E2E "production Firebase" build, but without
       # SKIP_JS_BUNDLING, so Gradle bundles the JS into the APK like a store build.
       - name: Build detoxPreRelease APK (x86_64, JS bundled)
@@ -290,6 +342,11 @@ jobs:
           [[ -n "$APK" ]] || { echo "::error::no x86_64 detoxPreRelease APK found"; exit 1; }
           cp "$APK" out/app.apk
           git rev-parse HEAD > out/sha.txt
+          if grep -q 'startup-perf: measured launch' apps/ledger-live-mobile/src/e2e/bridge/client.ts; then
+            echo skipped > out/bridge.txt
+          else
+            echo runs > out/bridge.txt
+          fi
           ls -la out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -381,6 +438,35 @@ jobs:
           fi
           grep '^SWAP_API_BASE=' .env.mock.prerelease || echo "No SWAP_API_BASE in .env.mock.prerelease: the app default applies"
 
+      # .env.mock.prerelease sets DETOX=1, so every launch runs the E2E bridge's init() once the store
+      # is ready: it hooks fetch and axios to log requests and opens a WebSocket to the bridge, retried
+      # 5 times over ~30 s. Only the injection launch passes a bridge port, so the other launches now
+      # leave init() right after its mock reset (mock=0 still turns MOCK off).
+      - name: Skip the E2E bridge on measured launches
+        if: ${{ inputs.skip_bridge != 'none' && (inputs.skip_bridge != 'b-only' || matrix.side == 'b') }}
+        working-directory: apps/ledger-live-mobile
+        env:
+          SIDE: ${{ matrix.side }}
+        run: |
+          set -euo pipefail
+          file=src/e2e/bridge/client.ts
+          guard='  if (!LaunchArguments.value()["wsPort"]) return; // startup-perf: measured launch, no bridge'
+          awk --version 2>&1 | head -1 || true
+          # Before the network logging (from July 2026), or before the socket on older commits.
+          awk -v guard="$guard" '
+            /^export function init[(][)] [{]/ { in_init = 1 }
+            in_init && !done && /^  (initAppNetworkLogging[(][)];|if [(]ws[)] [{])$/ { print guard; done = 1 }
+            /^}/ { in_init = 0 }
+            { print }
+            END { exit done ? 0 : 3 }
+          ' "$file" > "$file.patched" || {
+            echo "::error::No network logging or socket found in init() of $file: the bridge cannot be skipped in this build"
+            exit 1
+          }
+          mv "$file.patched" "$file"
+          grep -n -B2 'startup-perf: measured launch' "$file"
+          echo "- Build ${SIDE}: measured launches skip the E2E bridge" >> "$GITHUB_STEP_SUMMARY"
+
       # Release configuration for the simulator with .env.mock.prerelease (production Firebase),
       # with the JS bundled by Xcode.
       - name: Build Release simulator app (JS bundled)
@@ -400,6 +486,11 @@ jobs:
           [[ -f "$APP/main.jsbundle" ]] || { echo "::error::$APP has no main.jsbundle"; exit 1; }
           ditto -c -k --keepParent "$APP" out/app.zip
           git rev-parse HEAD > out/sha.txt
+          if grep -q 'startup-perf: measured launch' apps/ledger-live-mobile/src/e2e/bridge/client.ts; then
+            echo skipped > out/bridge.txt
+          else
+            echo runs > out/bridge.txt
+          fi
           ls -la out
 
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -533,12 +624,13 @@ jobs:
         run: |
           set -euo pipefail
           BT=/usr/local/lib/android/sdk/build-tools/34.0.0
+          mkdir -p "$RESULTS_DIR/android"
           for dir in builds/a builds/b; do
             [[ -f "$dir/app.apk" ]] || continue
             "$BT/zipalign" -f -p 4 "$dir/app.apk" "$dir/aligned.apk"
             # shellcheck disable=SC2086
             "$BT/apksigner" sign --v4-signing-enabled false --ks "$KS_PATH" --ks-pass $KS_PASS --ks-key-alias staging --key-pass $KS_PASS --out "$dir/signed.apk" "$dir/aligned.apk"
-            echo "$dir: $(cat "$dir/sha.txt")"
+            echo "$dir: $(cat "$dir/sha.txt"), E2E bridge on measured launches: $(cat "$dir/bridge.txt" 2>/dev/null || echo unknown)" | tee -a "$RESULTS_DIR/android/builds.txt"
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
@@ -753,10 +845,11 @@ jobs:
       - name: Unpack apps
         run: |
           set -euo pipefail
+          mkdir -p "$RESULTS_DIR/ios"
           for dir in builds/a builds/b; do
             [[ -f "$dir/app.zip" ]] || continue
             ditto -x -k "$dir/app.zip" "$dir"
-            echo "$dir: $(cat "$dir/sha.txt")"
+            echo "$dir: $(cat "$dir/sha.txt"), E2E bridge on measured launches: $(cat "$dir/bridge.txt" 2>/dev/null || echo unknown)" | tee -a "$RESULTS_DIR/ios/builds.txt"
           done
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
