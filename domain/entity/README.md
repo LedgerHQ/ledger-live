@@ -18,8 +18,8 @@ For the standard package checklist (private flag, tsconfig, naming…) see [docs
 Entity-specific:
 - One entity per package — `domain/entity/<name>/`
 - Use `zod` for schema definition, `@reduxjs/toolkit` for the slice
-- Barrel export via `src/index.ts`, `export *` only (see [package-public-api](../../.agents/skills/package-public-api/SKILL.md))
-- With a slice, `slice.ts` exports its complete initial state and `export default <name>Slice.reducer`; the barrel re-exports it with `export { default } from "./slice"`
+- Barrel export via `src/index.ts`, `export *` only, plus `export { default } from "./slice"` for a package with a slice (see [package-public-api](../../.agents/skills/package-public-api/SKILL.md))
+- With a slice, `slice.ts` exports its complete initial state and `export default <name>Slice.reducer`
 - No React: RTK Query hooks belong to `domain/api`, UI to `features/`
 - Mock and test files are not re-exported from the barrel; mocks are `package.json#exports` subpaths (`./schema.mock`, `./slice.mock`)
 
