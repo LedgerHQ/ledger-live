@@ -147,8 +147,10 @@ export function RemoteLiveAppProvider({
     allowExperimentalApps && branches.push("experimental");
     allowDebugApps && branches.push("debug");
 
+    // Without platform and llVersion the API skips manifest overrides, and private apps
+    // only come from this request.
     const result = await api
-      .fetchLiveAppManifests(providerURL)
+      .fetchLiveAppManifests(providerURL, { platform, llVersion, lang: lang ? lang : "en" })
       .then(allManifests =>
         api
           .fetchLiveAppManifests(providerURL, {
@@ -205,7 +207,7 @@ export function RemoteLiveAppProvider({
       return true;
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowDebugApps, allowExperimentalApps, providerURL, lang, isMounted]);
+  }, [allowDebugApps, allowExperimentalApps, providerURL, platform, llVersion, lang, isMounted]);
 
   const value: LiveAppContextType = useMemo(
     () => ({
