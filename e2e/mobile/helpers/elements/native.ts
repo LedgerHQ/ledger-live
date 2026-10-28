@@ -15,7 +15,7 @@ type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
- * Build one with {@link byId} or {@link byText}.
+ * Build one with {@link byId}.
  */
 export class NativeHandle implements ElementHandle {
   private readonly createMatcher: () => NativeMatcher;
@@ -34,31 +34,25 @@ export class NativeHandle implements ElementHandle {
 
   /** Waits until at least 75% of the element is visible. */
   async waitVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await withHardTimeout(
-      waitFor(this.raw).toBeVisible().withTimeout(timeout),
-      waitHardTimeout(timeout),
-    );
+    await this.waitUntil(waitFor(this.raw).toBeVisible().withTimeout(timeout), timeout, "visible");
   }
 
   /** Waits until 100% of the element is visible. Use it for bottom sheets: they pass 75% while still sliding. */
   async waitFullyVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
-    await withHardTimeout(
+    await this.waitUntil(
       waitFor(this.raw).toBeVisible(100).withTimeout(timeout),
-      waitHardTimeout(timeout),
+      timeout,
+      "fully visible",
     );
   }
 
   /** Waits until the element is no longer visible. Throws if it is still visible after the timeout. */
   async waitGone(timeout = TIMEOUT.xxlarge): Promise<void> {
-    try {
-      await withHardTimeout(
-        waitFor(this.raw).not.toBeVisible().withTimeout(timeout),
-        waitHardTimeout(timeout),
-      );
-    } catch (error) {
-      const details = error instanceof Error ? error.message : String(error);
-      throw new Error(`${this.description} did not become hidden: ${details}`, { cause: error });
-    }
+    await this.waitUntil(
+      waitFor(this.raw).not.toBeVisible().withTimeout(timeout),
+      timeout,
+      "hidden",
+    );
   }
 
   /** Waits for visibility, then taps. */
@@ -96,12 +90,18 @@ export class NativeHandle implements ElementHandle {
     const { text } = await this.getAttributes(timeout);
     return text ?? "";
   }
+
+  /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */
+  private async waitUntil(wait: Promise<unknown>, timeout: number, state: string): Promise<void> {
+    try {
+      await withHardTimeout(wait, waitHardTimeout(timeout));
+    } catch (error) {
+      const details = error instanceof Error ? error.message : String(error);
+      throw new Error(`${this.description} did not become ${state}: ${details}`, { cause: error });
+    }
+  }
 }
 
 /** Matches by React Native `testID` (Detox `by.id`). */
 export const byId = (id: string | RegExp): NativeHandle =>
   new NativeHandle(() => by.id(id), `#${id}`);
-
-/** Matches by visible text (Detox `by.text`). */
-export const byText = (text: string | RegExp): NativeHandle =>
-  new NativeHandle(() => by.text(text), `text "${text}"`);
