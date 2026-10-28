@@ -54,31 +54,54 @@ for (const [name, create] of flat) {
   });
 }
 
-// A transform override's fix names extraEsmDeps only where the factory reads that option.
-for (const [name, create, overrides] of [
-  ...flat.map(([n, c]) => [n, c, { transform: {} }]),
-  ...dual.map(([n, c]) => [n, c, { nativeOverrides: { transformIgnorePatterns: [] } }]),
+// A transform override's fix names extraEsmDeps only where the factory reads that option, and
+// the transform allowlist elsewhere.
+const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
+const ALLOWLIST_FIX = "add the dependency to the preset's transform allowlist in support/jest";
+const TRANSFORM_FIXES = {
+  createSharedJestConfig: ESM_FIX,
+  createSharedUiNativeJestConfig: ALLOWLIST_FIX,
+  createLibsCoinJestConfig: ESM_FIX,
+  createLibsCoinIntegJestConfig: ESM_FIX,
+  createLibsCoinJestProject: ESM_FIX,
+  createWebJestConfig: ALLOWLIST_FIX,
+  createNativeJestConfig: ALLOWLIST_FIX,
+  createSharedUiJestConfig: ALLOWLIST_FIX,
+  createFlowJestConfig: ALLOWLIST_FIX,
+  createFlowNativeJestConfig: ALLOWLIST_FIX,
+};
+
+for (const [name, create, overrides, label] of [
+  ...flat.map(([n, c]) => [n, c, { transform: {} }, "transform"]),
+  ...dual.map(([n, c]) => [
+    n,
+    c,
+    { nativeOverrides: { transformIgnorePatterns: [] } },
+    "nativeOverrides.transformIgnorePatterns",
+  ]),
 ]) {
-  test(`${name}: the fix for a transform override is one the factory takes`, () => {
-    let message = "";
-    try {
-      create(overrides);
-    } catch (error) {
-      message = error.message;
-    }
-    if (message.includes("extraEsmDeps")) {
+  test(`${name}: a transform override names the fix the factory takes`, () => {
+    const message = `${name}(): ${label} belongs to the preset: ${TRANSFORM_FIXES[name]}.`;
+    assert.throws(() => create(overrides), { message: new RegExp(`^${escape(message)}`) });
+  });
+}
+
+test("the extraEsmDeps fix is named only by the factories that read the option", () => {
+  for (const [name, create] of [...flat, ...dual]) {
+    if (TRANSFORM_FIXES[name] === ESM_FIX) {
       assert.doesNotThrow(() => create({}, { extraEsmDeps: ["x"] }), name);
     } else {
-      assert.match(
-        message,
-        /add the dependency to the preset's transform allowlist in support\/jest/,
-      );
-      assert.throws(
-        () => create({}, { extraEsmDeps: ["x"] }),
-        /does not read the option "extraEsmDeps"/,
-      );
+      assert.throws(() => create({}, { extraEsmDeps: ["x"] }), /does not read the option/, name);
     }
-  });
+  }
+});
+
+/**
+ * @param {string} text
+ * @returns {string} the text, escaped for a regular expression
+ */
+function escape(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 for (const [name, create] of dual) {

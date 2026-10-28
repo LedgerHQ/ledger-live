@@ -42,19 +42,26 @@ const flowLayer = {
  * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
+ * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
+ * @returns {import('@jest/types').Config.InitialOptions}
  */
-const createFlowJestConfig = presetFactory("createFlowJestConfig", [], overrides =>
-  createDualJestConfig(flowLayer, overrides),
-);
+function flowJestConfig(overrides) {
+  return createDualJestConfig(flowLayer, overrides);
+}
 
 /**
  * Jest config for a features/flow package with native-only tests: the native project of
  * createFlowJestConfig(), without the web one. Requires no web-only dependencies
  * (jest-environment-jsdom, @testing-library/jest-dom).
  *
+ * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
+ * @returns {import('@jest/types').Config.InitialOptions}
  */
-const createFlowNativeJestConfig = presetFactory("createFlowNativeJestConfig", [], overrides =>
-  createDualJestConfig({ ...flowLayer, web: undefined }, overrides),
-);
+function flowNativeJestConfig(overrides) {
+  return createDualJestConfig({ ...flowLayer, web: undefined }, overrides);
+}
 
-module.exports = { createFlowJestConfig, createFlowNativeJestConfig };
+module.exports = {
+  createFlowJestConfig: presetFactory("createFlowJestConfig", [], flowJestConfig),
+  createFlowNativeJestConfig: presetFactory("createFlowNativeJestConfig", [], flowNativeJestConfig),
+};

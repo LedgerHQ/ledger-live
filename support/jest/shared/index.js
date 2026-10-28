@@ -53,10 +53,15 @@ const lumenTransform = {
  * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
+ * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
+ * @returns {import('@jest/types').Config.InitialOptions}
  */
-const createSharedUiJestConfig = presetFactory("createSharedUiJestConfig", [], overrides =>
-  createDualJestConfig({ depth: "../../", web: lumenTransform, native: lumenTransform }, overrides),
-);
+function sharedUiJestConfig(overrides) {
+  return createDualJestConfig(
+    { depth: "../../", web: lumenTransform, native: lumenTransform },
+    overrides,
+  );
+}
 
 /**
  * Jest config for a shared/ui-* package with native-only tests (*.native.test.ts).
@@ -65,29 +70,32 @@ const createSharedUiJestConfig = presetFactory("createSharedUiJestConfig", [], o
  * `moduleNameMapper` and `setupFilesAfterEnv` overrides add to the preset's (an entry with the
  * same pattern replaces that mock); any other key replaces it. Requires no web-only dependencies (jest-environment-jsdom, @testing-library/jest-dom).
  *
+ * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]
+ * @returns {import('@jest/types').Config.InitialOptions}
  */
-const createSharedUiNativeJestConfig = presetFactory(
-  "createSharedUiNativeJestConfig",
-  [],
-  overrides =>
-    sharedNodeConfig(
-      withProjectOverrides(
-        {
-          collectCoverage: true,
-          testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-          moduleFileExtensions: platformExtensions("native"),
-          moduleNameMapper: { ...nativeMocks },
-          setupFilesAfterEnv: [quarantineRetries],
-        },
-        overrides,
-      ),
+function sharedUiNativeJestConfig(overrides = {}) {
+  return sharedNodeConfig(
+    withProjectOverrides(
+      {
+        collectCoverage: true,
+        testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
+        moduleFileExtensions: platformExtensions("native"),
+        moduleNameMapper: { ...nativeMocks },
+        setupFilesAfterEnv: [quarantineRetries],
+      },
+      overrides,
     ),
-);
+  );
+}
 
 module.exports = {
   createSharedJestConfig,
-  createSharedUiJestConfig,
-  createSharedUiNativeJestConfig,
+  createSharedUiJestConfig: presetFactory("createSharedUiJestConfig", [], sharedUiJestConfig),
+  createSharedUiNativeJestConfig: presetFactory(
+    "createSharedUiNativeJestConfig",
+    [],
+    sharedUiNativeJestConfig,
+  ),
   jestSonarReporter,
   sharedReporters,
   withEsmDeps,

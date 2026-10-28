@@ -226,24 +226,26 @@ function checkOptions(factory, options, accepted) {
  * An exported preset factory: it checks the options and the overrides it gets, then returns what
  * `build` makes of them. Every preset factory is built here, so none can skip the checks.
  *
- * @template {object} Config
+ * @template {(overrides?: any, options?: any) => any} Build
  * @param {string} name the factory name, for the messages and preset-overrides.js
  * @param {string[]} options the options the factory reads
- * @param {(overrides: Record<string, any>, options?: Record<string, any>) => Config} build
- * @returns {(overrides?: Record<string, any>, options?: Record<string, any>) => Config}
+ * @param {Build} build
+ * @returns {Build} a factory with the signature of `build`
  */
 function presetFactory(name, options, build) {
-  return (overrides = {}, presetOptions) => {
-    checkOptions(name, presetOptions, options);
-    const { webOverrides, nativeOverrides, ...topLevel } = overrides;
-    checkPresetOverrides(
-      name,
-      { "": topLevel, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
-      overrides.rootDir,
-      options,
-    );
-    return build(overrides, presetOptions);
-  };
+  return /** @type {Build} */ (
+    (overrides = {}, presetOptions) => {
+      checkOptions(name, presetOptions, options);
+      const { webOverrides, nativeOverrides, ...topLevel } = overrides;
+      checkPresetOverrides(
+        name,
+        { "": topLevel, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
+        overrides.rootDir,
+        options,
+      );
+      return build(overrides, presetOptions);
+    }
+  );
 }
 
 /**
