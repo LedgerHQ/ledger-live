@@ -1,3 +1,4 @@
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
@@ -154,7 +155,142 @@ describe("mobile store", () => {
       expect(setupRateLookups).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("thunk extraArgument", () => {
+    const ACCOUNT_DATA = { router: {}, inflight: new Map() };
+
+    beforeEach(() => {
+      jest.resetModules();
+      jest.doMock("@domain/api-account-data", () => ({
+        ...jest.requireActual("@domain/api-account-data"),
+        accountDataExtra: () => ({ accountData: ACCOUNT_DATA }),
+      }));
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    afterEach(() => {
+      jest.dontMock("@domain/api-account-data");
+    });
+
+    it("equals the per-service spread it replaces", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { getEnv } = require("@shared/env") as typeof import("@shared/env");
+      const services = require("@shared/api-services") as typeof import("@shared/api-services");
+      const card = require("@features/platform-card") as typeof import("@features/platform-card");
+      const Config = require("react-native-config").default;
+
+      const previousSpread = {
+        accountData: ACCOUNT_DATA,
+        ...services.calApiExtra({
+          calServiceUrl: getEnv("CAL_SERVICE_URL"),
+          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+        }),
+        ...services.cvsApiExtra({
+          getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
+        }),
+        ...services.coinMarketCapApiExtra({
+          coinMarketCapApiUrl: getEnv("CMC_API_URL"),
+        }),
+        ...services.cardApiExtra({
+          getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
+          getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
+          isCardUsEnv: () => card.isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
+          readCardSession: card.readCardSession,
+          isCardSessionCurrent: card.isCardSessionCurrent,
+          refreshCardSession: card.refreshCardSession,
+        }),
+        ...services.pushDevicesApiExtra({
+          pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
+          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+        }),
+        ...services.swapApiExtra({
+          getSwapApiBaseUrl: () => Config.SWAP_API_BASE || "https://swap.ledger.com/v5",
+          ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
+        }),
+      };
+
+      expect(resolveGetters(readExtra(store))).toStrictEqual(resolveGetters(previousSpread));
+    });
+
+    it("resolves the swap base url through Config, not @shared/env", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      const Config = require("react-native-config").default;
+      const { getSwapApiBaseUrl } = resolveSwapExtra(readExtra(store));
+
+      expect(getSwapApiBaseUrl()).toBe("https://swap.ledger.com/v5");
+
+      setEnv("SWAP_API_BASE", "https://swap.env.example/v5");
+      expect(getSwapApiBaseUrl()).toBe("https://swap.ledger.com/v5");
+
+      Config.SWAP_API_BASE = "https://swap.config.example/v5";
+      try {
+        expect(getSwapApiBaseUrl()).toBe("https://swap.config.example/v5");
+      } finally {
+        delete Config.SWAP_API_BASE;
+      }
+    });
+
+    it("reads the client version when the store is created", () => {
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "set-before-store-creation");
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+
+      expect(readExtra(store)).toEqual(
+        expect.objectContaining({ ledgerClientVersion: "set-before-store-creation" }),
+      );
+    });
+  });
 });
+
+const GETTER_KEYS = new Set([
+  "getCardApiBaseUrl",
+  "getCardBaanxClientKey",
+  "getCountervaluesServiceUrl",
+  "getSwapApiBaseUrl",
+  "isCardUsEnv",
+]);
+
+// The store's `dispatch` type drops the thunk overload, though the thunk middleware runs.
+function isThunkDispatch(
+  dispatch: unknown,
+): dispatch is ThunkDispatch<unknown, unknown, UnknownAction> {
+  return typeof dispatch === "function";
+}
+
+function readExtra({ dispatch }: { dispatch: unknown }): unknown {
+  if (!isThunkDispatch(dispatch)) throw new Error("store.dispatch is not a function");
+  let extra: unknown;
+  dispatch((_dispatch, _getState, extraArgument) => {
+    extra = extraArgument;
+  });
+  return extra;
+}
+
+/** Inline getters differ by identity on each side, so they are compared by what they return. */
+function resolveGetters(extra: unknown): unknown {
+  if (typeof extra !== "object" || extra === null) return extra;
+  return Object.fromEntries(
+    Object.entries(extra).map(([key, value]) => [
+      key,
+      GETTER_KEYS.has(key) && typeof value === "function" ? value() : value,
+    ]),
+  );
+}
+
+function resolveSwapExtra(extra: unknown): { getSwapApiBaseUrl: () => unknown } {
+  if (
+    typeof extra !== "object" ||
+    extra === null ||
+    !("getSwapApiBaseUrl" in extra) ||
+    typeof extra.getSwapApiBaseUrl !== "function"
+  ) {
+    throw new Error("extraArgument has no getSwapApiBaseUrl");
+  }
+  const { getSwapApiBaseUrl } = extra;
+  return { getSwapApiBaseUrl: () => getSwapApiBaseUrl() };
+}
 
 function makeJwt(payload: Record<string, unknown>): string {
   const prefix = Buffer.from(JSON.stringify({ alg: "none", typ: "JWT" })).toString("base64url");
