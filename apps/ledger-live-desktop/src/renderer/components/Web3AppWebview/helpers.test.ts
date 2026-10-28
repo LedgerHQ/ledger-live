@@ -33,6 +33,7 @@ const { resolveInitialURL: actualResolveInitialURL } = jest.requireActual<
 >("@ledgerhq/live-common/wallet-api/helpers");
 
 jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/manifestDomainUtils"),
   isUrlAllowedByManifestDomains: jest.fn(() => true),
 }));
 
@@ -219,6 +220,24 @@ describe("useWebviewState", () => {
       expect(result.current.webviewProps.src).toBe("https://example.com/");
       expect(reportGoToURLFallback).toHaveBeenCalledWith("test-app", "https://evil.com/swap");
       expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+    });
+
+    it("does not report a goToURL on the manifest domain", () => {
+      jest.mocked(resolveInitialURL).mockImplementation(actualResolveInitialURL);
+
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: mockManifest,
+            inputs: { goToURL: "https://example.com/swap" },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.src).toBe("https://example.com/swap");
+      expect(reportGoToURLFallback).not.toHaveBeenCalled();
     });
 
     it("reports a loadURL the domain check rejects", async () => {
