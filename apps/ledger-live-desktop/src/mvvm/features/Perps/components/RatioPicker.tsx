@@ -10,6 +10,7 @@ type RatioPickerProps = Readonly<{
   decimalPlaces: number;
   onChange: (value: number) => void;
   onMax: () => void;
+  testIdPrefix: string;
   className?: string;
 }>;
 
@@ -20,6 +21,7 @@ export function RatioPicker({
   decimalPlaces,
   onChange,
   onMax,
+  testIdPrefix,
   className,
 }: RatioPickerProps) {
   const ratioOptions = [
@@ -39,7 +41,7 @@ export function RatioPicker({
           key={option.label}
           disabled={maxValue === 0 || value === option.value}
           onClick={() => onChange(option.value)}
-          data-testid={`perps-deposit-ratio-${option.label}`}
+          data-testid={`${testIdPrefix}-ratio-${option.label}`}
         >
           {option.label}
         </Button>
@@ -48,7 +50,7 @@ export function RatioPicker({
         appearance="gray"
         disabled={maxValue === 0 || value === maxOption}
         onClick={onMax}
-        data-testid="perps-deposit-ratio-MAX"
+        data-testid={`${testIdPrefix}-ratio-MAX`}
       >
         MAX
       </Button>

@@ -167,6 +167,38 @@ describe("fetchPerpsWithdrawQuote", () => {
     await expect(fetchPerpsWithdrawQuote(request)).rejects.toBeInstanceOf(WithdrawApiError);
   });
 
+  it("quotes towards a token account the user never held, which the wallet API has not listed", async () => {
+    mockedFetchQuotes.mockResolvedValue({ rawQuotes: [rawQuote], providerErrors: [] });
+    const newParent = {
+      type: "Account",
+      id: "js:2:ethereum:0xnewparent:",
+      currency: { id: "ethereum" },
+      freshAddress: "0xnewparent",
+    } as unknown as Account;
+    const emptyToken = {
+      type: "TokenAccount",
+      id: "js:2:ethereum:0xnewparent:+ethereum%2Ferc20%2Fusd__coin",
+      parentId: newParent.id,
+      token: { id: "ethereum/erc20/usd__coin" },
+    } as unknown as AccountLike;
+
+    await fetchPerpsWithdrawQuote({
+      ...request,
+      destinationAccount: emptyToken,
+      accounts: [...accounts, emptyToken, newParent],
+    });
+
+    expect(mockedFetchQuotes).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          receiveCurrencyId: "ethereum/erc20/usd__coin",
+          receiveAddress: "0xnewparent",
+        }),
+      }),
+      "USD",
+    );
+  });
+
   it("fails without calling the provider when the accounts cannot be resolved", async () => {
     await expect(fetchPerpsWithdrawQuote({ ...request, accounts: [] })).rejects.toBeInstanceOf(
       WithdrawApiError,

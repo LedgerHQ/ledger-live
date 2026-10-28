@@ -9,15 +9,10 @@ import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reduc
 import { openPerpsDeposit } from "../PerpsDeposit/PerpsDepositDialog";
 import type { PerpsDepositDraft } from "../PerpsDeposit/usePerpsDepositViewModel";
 import { openPerpsDepositSign } from "../PerpsDepositSign/PerpsDepositSignDialog";
+import type { PerpsReviewDetailItem } from "LLD/features/Perps/components/PerpsReviewSection";
 export type PerpsReviewData = PerpsDepositReviewParams & {
   draft?: PerpsDepositDraft;
 };
-
-export type PerpsReviewDetailItem = Readonly<{
-  labelKey: string;
-  value: string;
-  testID?: string;
-}>;
 
 export type PerpsReviewViewModel = Readonly<{
   swapDetails: readonly PerpsReviewDetailItem[];
