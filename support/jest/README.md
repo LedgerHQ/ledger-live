@@ -106,7 +106,8 @@ What the package needs on top of the preset goes through the factory's overrides
 option a factory does not read throws, naming the ones it reads. A key the preset owns (`transform`,
 `transformIgnorePatterns`, `testEnvironment`, `globals`, `reporters`, `coverageReporters`: the source
 of truth is `PRESET_KEYS` in [`core/index.js`](./core/index.js)), at the top level or in
-`webOverrides` / `nativeOverrides`, throws with the fix to use instead, such as `extraEsmDeps` for a dependency jest must transform. The packages that still
+`webOverrides` / `nativeOverrides`, throws with the fix to use instead, such as `extraEsmDeps` for a dependency jest must transform in
+the node presets, or the preset's transform allowlist in the others. The packages that still
 override one are listed, by package path and factory and with their reason, in
 [`core/preset-overrides.js`](./core/preset-overrides.js); the factory finds the entry from
 `rootDir`, and a listed key the config no longer sets throws, so the list only shrinks.

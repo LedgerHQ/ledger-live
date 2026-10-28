@@ -48,12 +48,36 @@ for (const [name, create] of flat) {
     assert.doesNotThrow(() => create({ rootDir: at("shared/thing"), testMatch: ["**/*.spec.ts"] }));
     assert.throws(
       () => create({ transformIgnorePatterns: ["node_modules/(?!x)"] }),
-      new RegExp(
-        `^Error: ${name}\\(\\): transformIgnorePatterns belongs to the preset: keep a dependency ` +
-          "transformed with the extraEsmDeps option",
-      ),
+      new RegExp(`^Error: ${name}\\(\\): transformIgnorePatterns belongs to the preset: `),
     );
     assert.throws(() => create({ reporters: ["default"] }), /reporters belongs to the preset/);
+  });
+}
+
+// A transform override's fix names extraEsmDeps only where the factory reads that option.
+for (const [name, create, overrides] of [
+  ...flat.map(([n, c]) => [n, c, { transform: {} }]),
+  ...dual.map(([n, c]) => [n, c, { nativeOverrides: { transformIgnorePatterns: [] } }]),
+]) {
+  test(`${name}: the fix for a transform override is one the factory takes`, () => {
+    let message = "";
+    try {
+      create(overrides);
+    } catch (error) {
+      message = error.message;
+    }
+    if (message.includes("extraEsmDeps")) {
+      assert.doesNotThrow(() => create({}, { extraEsmDeps: ["x"] }), name);
+    } else {
+      assert.match(
+        message,
+        /add the dependency to the preset's transform allowlist in support\/jest/,
+      );
+      assert.throws(
+        () => create({}, { extraEsmDeps: ["x"] }),
+        /does not read the option "extraEsmDeps"/,
+      );
+    }
   });
 }
 

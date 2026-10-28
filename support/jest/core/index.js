@@ -159,6 +159,9 @@ const PRESET_KEYS = {
   reporters: "every preset reports the same way",
   coverageReporters: "every preset reports coverage the same way",
 };
+// A factory without the extraEsmDeps option keeps its layer's ESM dependencies in its allowlist.
+const ALLOWLIST_FIX = "add the dependency to the preset's transform allowlist in support/jest";
+const TRANSFORM_KEYS = new Set(["transform", "transformIgnorePatterns"]);
 const OVERRIDES_FILE = "support/jest/core/preset-overrides.js";
 
 /**
@@ -169,8 +172,9 @@ const OVERRIDES_FILE = "support/jest/core/preset-overrides.js";
  * @param {string} factory the factory the config calls
  * @param {Record<string, object | undefined>} overrides the overrides objects, by label
  * @param {string | undefined} rootDir
+ * @param {string[]} [options] the options the factory reads, which pick the fix a message names
  */
-function checkPresetOverrides(factory, overrides, rootDir) {
+function checkPresetOverrides(factory, overrides, rootDir, options = []) {
   const pkg =
     rootDir === undefined
       ? undefined
@@ -182,8 +186,12 @@ function checkPresetOverrides(factory, overrides, rootDir) {
       if (!Object.hasOwn(PRESET_KEYS, key)) continue;
       set.add(key);
       if (!allowed.includes(key)) {
+        const fix =
+          TRANSFORM_KEYS.has(key) && !options.includes("extraEsmDeps")
+            ? ALLOWLIST_FIX
+            : PRESET_KEYS[key];
         throw new Error(
-          `${factory}(): ${label}${key} belongs to the preset: ${PRESET_KEYS[key]}. A package that ` +
+          `${factory}(): ${label}${key} belongs to the preset: ${fix}. A package that ` +
             `must still override it is listed, with its reason, in ${OVERRIDES_FILE} (found from rootDir).`,
         );
       }

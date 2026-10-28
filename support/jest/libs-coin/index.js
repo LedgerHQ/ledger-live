@@ -1,6 +1,7 @@
 const { checkOptions, checkPresetOverrides } = require("../core");
 
 const SHARED_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
+const PROJECT_OPTIONS = ["esm", "extraEsmDeps"];
 const { sharedNodeConfig, withEsmDeps } = require("../shared/node");
 
 // Integration suites hit live networks; the unit config leaves them to the integration config.
@@ -65,7 +66,12 @@ function sharedConfig(config, { esm = true, extraEsmDeps, projectRoot } = {}) {
  */
 function createLibsCoinJestConfig(overrides = {}, options) {
   checkOptions("createLibsCoinJestConfig", options, SHARED_OPTIONS);
-  checkPresetOverrides("createLibsCoinJestConfig", { "": overrides }, overrides.rootDir);
+  checkPresetOverrides(
+    "createLibsCoinJestConfig",
+    { "": overrides },
+    overrides.rootDir,
+    SHARED_OPTIONS,
+  );
   return sharedConfig(
     {
       passWithNoTests: true,
@@ -94,9 +100,14 @@ function createLibsCoinJestConfig(overrides = {}, options) {
  * @returns {import('@jest/types').Config.InitialProjectOptions}
  */
 function createLibsCoinJestProject(overrides = {}, options = {}) {
-  checkOptions("createLibsCoinJestProject", options, ["esm", "extraEsmDeps"]);
+  checkOptions("createLibsCoinJestProject", options, PROJECT_OPTIONS);
   const { esm = true, extraEsmDeps = [] } = options;
-  checkPresetOverrides("createLibsCoinJestProject", { "": overrides }, overrides.rootDir);
+  checkPresetOverrides(
+    "createLibsCoinJestProject",
+    { "": overrides },
+    overrides.rootDir,
+    PROJECT_OPTIONS,
+  );
   const { testEnvironment, roots, testMatch, transform } = sharedNodeConfig();
   const project = {
     testEnvironment,
@@ -123,7 +134,12 @@ function createLibsCoinJestProject(overrides = {}, options = {}) {
  */
 function createLibsCoinIntegJestConfig(overrides = {}, options) {
   checkOptions("createLibsCoinIntegJestConfig", options, SHARED_OPTIONS);
-  checkPresetOverrides("createLibsCoinIntegJestConfig", { "": overrides }, overrides.rootDir);
+  checkPresetOverrides(
+    "createLibsCoinIntegJestConfig",
+    { "": overrides },
+    overrides.rootDir,
+    SHARED_OPTIONS,
+  );
   return sharedConfig(
     {
       testMatch: undefined,

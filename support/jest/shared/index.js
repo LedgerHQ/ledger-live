@@ -10,6 +10,8 @@ const {
 } = require("../core");
 const { sharedNodeConfig, sharedReporters, withEsmDeps } = require("./node");
 
+const NODE_OPTIONS = ["esm", "extraEsmDeps", "projectRoot"];
+
 // ─── shared/* and libs/* (node packages) ────────────────────────────────────
 
 /**
@@ -30,8 +32,13 @@ const { sharedNodeConfig, sharedReporters, withEsmDeps } = require("./node");
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function createSharedJestConfig(overrides = {}, options) {
-  checkOptions("createSharedJestConfig", options, ["esm", "extraEsmDeps", "projectRoot"]);
-  checkPresetOverrides("createSharedJestConfig", { "": overrides }, overrides.rootDir);
+  checkOptions("createSharedJestConfig", options, NODE_OPTIONS);
+  checkPresetOverrides(
+    "createSharedJestConfig",
+    { "": overrides },
+    overrides.rootDir,
+    NODE_OPTIONS,
+  );
   return sharedNodeConfig(overrides, options);
 }
 
