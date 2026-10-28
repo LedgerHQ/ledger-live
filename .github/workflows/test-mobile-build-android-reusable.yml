@@ -114,7 +114,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: ledger-wallet-8cpu-aws-public-cached
+    runs-on: ledger-wallet-16cpu-aws-public-cached
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
     steps:
@@ -132,7 +132,8 @@ jobs:
           while true; do
             cpu=$(awk '{printf "%s=%s ", $1, $2}' "$CG/cpu.stat" 2>/dev/null)
             mem=$(cat "$CG/memory.current" 2>/dev/null)
-            echo "$(date +%s) $cpu memory.current=$mem"
+            anon=$(awk '$1=="anon"{print $2}' "$CG/memory.stat" 2>/dev/null)
+            echo "$(date +%s) $cpu memory.current=$mem memory.anon=$anon"
             sleep 5
           done
           SH
