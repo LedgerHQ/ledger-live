@@ -96,9 +96,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsAddContactDialog: componentWaiver("R1"),
     ContactsAddContactFooter: componentWaiver("R1", "R5"),
   },
-  "features/flow/flow-contacts-delete-address": {
-    ContactsDeleteAddressDialog: componentWaiver("R2"),
-  },
   "features/flow/flow-contacts-delete-contact": {
     ContactsDeleteContactDialog: componentWaiver("R2"),
   },
