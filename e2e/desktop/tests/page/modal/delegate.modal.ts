@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import BigNumber from "bignumber.js";
 import { Modal } from "tests/component/modal.component";
 import { step } from "tests/misc/reporters/step";
 
@@ -36,6 +37,25 @@ export class DelegateModal extends Modal {
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
+  private spendableBanner = this.page.getByTestId("modal-spendable-banner");
+
+  private async readCryptoAmount(): Promise<string> {
+    return (await this.cryptoAmountField.inputValue()).replaceAll(/[\s,]/g, "");
+  }
+
+  private async readSpendableBalance(): Promise<{
+    value: BigNumber;
+    precision: BigNumber;
+  } | null> {
+    const match = /[\d.,]+/.exec((await this.spendableBanner.textContent()) ?? "");
+    if (!match) return null;
+    const value = match[0].replaceAll(",", "");
+    const decimals = value.split(".")[1]?.length ?? 0;
+    return {
+      value: new BigNumber(value),
+      precision: new BigNumber(10).pow(-decimals),
+    };
+  }
 
   @step("Open the $0 redelegate flow from the staking-section manage menu")
   async openRedelegateFromManageMenu(currencyId: string) {
@@ -156,6 +176,24 @@ export class DelegateModal extends Modal {
     } else {
       await this.cryptoAmountField.fill(amount);
     }
+  }
+
+  @step("Verify the max amount matches the spendable balance")
+  async expectMaxAmountMatchesSpendable() {
+    await expect(this.spendableBanner).toBeVisible();
+    await expect
+      .poll(async () => {
+        const spendable = await this.readSpendableBalance();
+        const amount = new BigNumber(await this.readCryptoAmount());
+        if (!spendable || !amount.isGreaterThan(0)) return false;
+        return amount.minus(spendable.value).abs().isLessThanOrEqualTo(spendable.precision);
+      })
+      .toBe(true);
+  }
+
+  @step("Read the amount to delegate")
+  async getCryptoAmount(): Promise<string> {
+    return this.readCryptoAmount();
   }
 
   @step("Verify success message")
