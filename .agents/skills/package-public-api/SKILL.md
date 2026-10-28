@@ -120,35 +120,9 @@ Two import paths for the same symbol, and a reader who cannot tell who provides 
 import the original provider, and declare the dependency themselves. This holds for `@shared/*`,
 `@domain/*`, `@features/*`, `@support/*` and `@ledgerhq/*` alike.
 
-## Universal components
-
-A React component exported from an entry that resolves per platform (a `react-native` condition,
-or no condition but different modules on web and native) is universal: it takes one props
-contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
-the full rules and authoring steps. `lint:structure` checks them as each rule lands; until then,
-review checks them.
-
-- **R1 Parity.** Exported on both platforms under the same name.
-- **R2 One contract.** `X.web.tsx` and `X.native.tsx` annotate their props with the same type,
-  declared in an unsuffixed `X.types.ts` with no `.web` / `.native` sibling.
-- **R3 Neutral contract.** No `react-native*`, `@ledgerhq/lumen-ui-*` or `react-dom` import, no DOM
-  or native type, no `className` / `style`. Callbacks name the intent (`onOpenContacts`, never
-  `onPress` or `onClick`) and receive values, not events. The test id is `testID`. A platform-only
-  prop is optional, primitive and tagged `@platform native` or `@platform web`.
-- **R4 Types in the contract only.** A `.web` / `.native` module exports its component, nothing else.
-- **R5 One entry per component.** A component that cannot be universal goes behind a `./web` or
-  `./native` subpath that points at a suffixed module of its own, and is never also exported from a
-  universal entry. Only code of that platform imports it.
-
-Scaffold a new one instead of writing it by hand:
-`pnpm exec nx g @ledgerhq/generators:universal-component <Name> --project <package root> [--directory <dir under src>]`
-writes the contract, both implementations, a test per platform and the barrel lines, without a new
-barrel. `--platform-entry web` or `--platform-entry native` writes a platform component behind
-`./web` or `./native` instead. See "Authoring a universal component" in the ADR.
-
 **Facade is not proxy.** Wrapping a legacy lib behind a typed API — as `shared/env` does over
 `@ledgerhq/live-env` — is legitimate: it owns real code and holds a declared
-[`BOUNDARY_EXCEPTION`](../../../tools/nx-plugins/enforce-boundaries/constraints.js). Keeping that
+[`BOUNDARY_EXCEPTIONS`](../../../tools/nx-plugins/enforce-boundaries/constraints.js) entry. Keeping that
 wrapping in a named file rather than the barrel is the cheapest way to stay conformant; `shared/env`
 instead carries a **temporary** `skip` in
 [`exceptions.js`](../../../tools/nx-plugins/enforce-package-structure/exceptions.js). Entries there
@@ -156,6 +130,14 @@ are team decisions with an exit condition, not a way around a failing check — 
 your own package pass. Its `FILE_EXCEPTIONS` lists the reached modules that held violations when
 the rule started following `export *`. That list only shrinks: a test fails on an entry whose file
 is gone or clean, so fixing a file means deleting its entry.
+
+## Universal components
+
+A React component exported from an entry that resolves per platform takes one props contract,
+`X.types.ts`, on both platforms, or sits behind a `./web` or `./native` subpath. `lint:structure`
+checks this as rules R1 to R5, next to the barrel rules above. The shapes, the rules and their
+codes, the review-only checks and how to clear a waiver are in
+[universal-components](../universal-components/SKILL.md).
 
 ## Traps
 
