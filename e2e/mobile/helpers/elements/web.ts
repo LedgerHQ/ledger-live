@@ -111,13 +111,10 @@ export class WebHandle implements ElementHandle {
   }
 
   private async isEnabled(): Promise<boolean> {
-    const state = await withHardTimeout(
-      this.raw.runScript(
-        (el: HTMLButtonElement | HTMLInputElement, android: boolean) =>
-          android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString(),
-        [isAndroid()],
-      ),
-      TIMEOUT.medium,
+    const state = await this.raw.runScript(
+      (el: HTMLButtonElement | HTMLInputElement, android: boolean) =>
+        android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString(),
+      [isAndroid()],
     );
     return typeof state === "string" ? !state.includes("disabled") : Boolean(state);
   }
