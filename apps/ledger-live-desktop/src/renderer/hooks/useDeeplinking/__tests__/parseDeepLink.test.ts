@@ -280,6 +280,26 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates predictions route", () => {
+      const parsed = parseDeepLink("ledgerwallet://predictions");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "predictions",
+        query: {},
+      });
+    });
+
+    it("creates predictions route with an event slug", () => {
+      const parsed = parseDeepLink("ledgerwallet://predictions?eventSlug=will-btc-hit-100k");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "predictions",
+        query: { eventSlug: "will-btc-hit-100k" },
+      });
+    });
+
     it("creates wc route", () => {
       const parsed = parseDeepLink("ledgerwallet://wc?uri=wc:test123");
       const route = createRoute(parsed);
