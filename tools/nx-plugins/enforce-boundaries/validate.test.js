@@ -932,6 +932,24 @@ test("devtools: @devtools/bindings importing a tool's values is forbidden", t =>
   );
 });
 
+test("devtools: @devtools/bindings importing a tool's values by relative path is forbidden", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [["devtools/bindings", "devtools/env"]],
+    {
+      "devtools/bindings/src/types.ts": 'import type { EnvDevToolProps } from "../../env/src";',
+      "devtools/bindings/src/useEnv.ts": 'import EnvDevTool from "../../env/src/index";',
+      "devtools/bindings/src/local.ts": 'import { useEnv } from "./useEnv";',
+      "devtools/bindings/src/sibling.ts": 'import { x } from "../../environment/src";',
+    },
+  );
+  assert.deepEqual(
+    devtoolsViolations(graph, root).map(v => v.file),
+    [path.join("devtools/bindings/src/useEnv.ts")],
+  );
+});
+
 test("devtools: @devtools/shell importing a tool's types is forbidden", t => {
   const { root, graph } = manifestWorkspace(
     t,

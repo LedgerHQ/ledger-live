@@ -96,16 +96,24 @@ function importSpecifiers(content) {
 }
 
 /**
- * Specifiers of a source file that load `pkg` at runtime: every import of it but the type-only
- * forms `DEVTOOLS_TYPE_ONLY_RULE` allows, which the build erases.
+ * Specifiers of a source file that load `pkg` at runtime, by name or by a relative path into
+ * `pkgRoot`: every import of it but the type-only forms `DEVTOOLS_TYPE_ONLY_RULE` allows, which
+ * the build erases.
  *
  * @param {string} file
  * @param {string} content
  * @param {string} pkg
+ * @param {string} pkgRoot absolute root of `pkg`
  * @returns {string[]}
  */
-function valueImportsOf(file, content, pkg) {
+function valueImportsOf(file, content, pkg, pkgRoot) {
   const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
+  /** @param {string} spec */
+  const loadsPkg = spec => {
+    if (!spec.startsWith(".")) return packageNameOf(spec) === pkg;
+    const resolved = path.resolve(path.dirname(file), spec);
+    return resolved === pkgRoot || resolved.startsWith(pkgRoot + path.sep);
+  };
   const specifiers = [];
   /** @param {import("typescript").Node} node */
   const visit = node => {
@@ -125,7 +133,7 @@ function valueImportsOf(file, content, pkg) {
     ) {
       spec = node.arguments[0];
     }
-    if (spec && ts.isStringLiteralLike(spec) && packageNameOf(spec.text) === pkg) {
+    if (spec && ts.isStringLiteralLike(spec) && loadsPkg(spec.text)) {
       specifiers.push(spec.text);
     }
     ts.forEachChild(node, visit);
@@ -358,9 +366,10 @@ function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, type
         byEdge.set(`${source}\n${target}`, { source, target });
         continue;
       }
+      const targetRoot = path.join(workspaceRoot, graph.nodes[edge.target].data.root);
       walkSourceFiles(path.join(workspaceRoot, graph.nodes[sourceNode].data.root), file => {
         const content = fs.readFileSync(file, "utf8");
-        if (valueImportsOf(file, content, target).length === 0) return;
+        if (valueImportsOf(file, content, target, targetRoot).length === 0) return;
         const rel = path.relative(workspaceRoot, file);
         byEdge.set(`${source}\n${target}\n${rel}`, { source, target, file: rel });
       });
