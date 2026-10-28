@@ -12,6 +12,8 @@ const path = require("node:path");
 const ts = require("typescript");
 
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
+/** @typedef {{ line: number, reason: string }} ChainBreak why a module breaks a pure chain */
+/** @typedef {ChainBreak & { file: string }} ChainBreaker the module that breaks it */
 
 // `index.ts`, and the platform variants beside it: `index.native.ts`, `index.web.tsx`, …
 const BARREL_BASENAME = /^index(?:\.[A-Za-z0-9-]+)*\.[cm]?[jt]sx?$/;
@@ -339,7 +341,7 @@ const CHAIN_BREAKS = {
  *
  * @param {string} source raw file contents
  * @param {string} [file]
- * @returns {{ line: number, reason: string } | undefined}
+ * @returns {ChainBreak | undefined}
  */
 function chainBreak(source, file = "module.tsx") {
   const sourceFile = parse(source, file);
@@ -406,7 +408,7 @@ const BARREL_LOCATION = {
  * @param {string} file posix-style path of the `index.*`, from the repo root
  * @param {number | undefined} depth barrels from its nearest entry to it, itself included: 0 for
  *   an entry, undefined when no entry reaches it
- * @param {{ file: string, line: number, reason: string }} [breaker] for a barrel more than one
+ * @param {ChainBreaker} [breaker] for a barrel more than one
  *   level deep, a module that breaks a chain to it; undefined when every chain to it is pure
  * @returns {Violation[]}
  */

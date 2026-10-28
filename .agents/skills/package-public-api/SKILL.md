@@ -79,11 +79,11 @@ the folders lead to.
 - **No**: delete the barrel and import the files directly, or move the folder under `internals/`.
   Expose only code another package imports.
 
-**Fix a nested barrel** (`nested-barrel`) at the module the violation names. A chain breaks on a
-named export (`export { a } from "./a"`, a default re-export included), a rename
-(`export * as ns from "./a"`), code (a declaration, an import, `export default`), or a path outside
-the module's folder (`../`, another package). Make that module pure `export *` down its folder, or
-re-export the files from a barrel nearer the entry. An `index.tsx` that holds code is a module,
+**Fix a nested barrel** (`nested-barrel`) at the module the violation names, file and line: any
+statement other than an `export * from "./x"` inside the module's own folder breaks the chain, and
+the violation gives the reason from `CHAIN_BREAKS` in
+[`rules.js`](../../../tools/nx-plugins/enforce-package-structure/rules.js). Make that module pure
+`export *` down its folder, or re-export the files from a barrel nearer the entry. An `index.tsx` that holds code is a module,
 not a barrel: rename it after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
 
 Purity of what a barrel reaches stays with the rules above. The debt found when the check landed

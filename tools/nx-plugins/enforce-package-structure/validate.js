@@ -25,6 +25,9 @@ const { checkComponents, isIgnoredEntry, resolveRelative } = require("./componen
 const { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
 const { INTERMEDIATE_BARREL_WAIVERS } = require("./intermediate-barrels");
 
+/** @typedef {import("./rules").ChainBreak} ChainBreak */
+/** @typedef {import("./rules").ChainBreaker} ChainBreaker */
+
 const EXCEPTIONS_FILE = "tools/nx-plugins/enforce-package-structure/exceptions.js";
 
 const LAYER_ROOTS = ["domain", "shared", "features"];
@@ -182,96 +185,139 @@ function indexVariants(file) {
 }
 
 /**
- * @param {string} file absolute path
- * @returns {string | undefined}
- */
-function readSource(file) {
-  try {
-    return fs.readFileSync(file, "utf8");
-  } catch {
-    return undefined;
-  }
-}
-
-/**
- * The modules a file's relative `export *` loads, platform variants of a barrel included.
+ * Each module of a package check, read, parsed and resolved once however many passes walk it.
  *
- * @param {string} file absolute path
- * @param {string} source
- * @returns {string[]} absolute paths
+ * @returns {{ sourceOf: (file: string) => string | undefined, targetsOf: (file: string) => string[], breakOf: (file: string) => ChainBreak | undefined }}
+ *   keyed by absolute path; targetsOf lists the modules a file's relative `export *` loads,
+ *   platform variants of a barrel included
  */
-function starReexportedModules(file, source) {
-  return starReexportTargets(source, file).flatMap(specifier =>
-    resolveModule(file, specifier).flatMap(indexVariants),
-  );
-}
-
-/**
- * How each file sits below its nearest entry, following relative `export *` the way the bundlers
- * resolve it. Its depth counts barrels: an entry is 0, so an entry reached from another entry
- * counts from itself; a barrel an entry reaches, directly or through plain modules, is 1. Below
- * that, its breaker is a module, the entry excluded and itself included, that is not pure
- * `export *` down its folder (see chainBreak) on some chain to it.
- *
- * @param {string[]} entries absolute paths
- * @returns {Map<string, { depth: number, breaker?: { file: string, line: number, reason: string } }>}
- *   absolute path to its place, for the files an entry reaches
- */
-function barrelReach(entries) {
-  const entrySet = new Set(entries.flatMap(indexVariants));
-  /** @type {Map<string, { line: number, reason: string } | undefined>} */
+function moduleGraph() {
+  /** @type {Map<string, string | undefined>} */
+  const sources = new Map();
+  /** @type {Map<string, string[]>} */
+  const targets = new Map();
+  /** @type {Map<string, ChainBreak | undefined>} */
   const breaks = new Map();
+
   /**
-   * @param {string} file absolute path
-   * @returns {{ line: number, reason: string } | undefined}
+   * @param {string} file
+   * @returns {string | undefined}
+   */
+  function sourceOf(file) {
+    if (!sources.has(file)) {
+      try {
+        sources.set(file, fs.readFileSync(file, "utf8"));
+      } catch {
+        sources.set(file, undefined);
+      }
+    }
+    return sources.get(file);
+  }
+
+  /**
+   * @param {string} file
+   * @returns {string[]}
+   */
+  function targetsOf(file) {
+    if (!targets.has(file)) {
+      const source = sourceOf(file);
+      const specifiers = source === undefined ? [] : starReexportTargets(source, file);
+      targets.set(
+        file,
+        specifiers.flatMap(specifier => resolveModule(file, specifier).flatMap(indexVariants)),
+      );
+    }
+    return targets.get(file);
+  }
+
+  /**
+   * @param {string} file
+   * @returns {ChainBreak | undefined}
    */
   function breakOf(file) {
     if (!breaks.has(file)) {
-      const source = readSource(file);
+      const source = sourceOf(file);
       breaks.set(file, source === undefined ? undefined : chainBreak(source, file));
     }
     return breaks.get(file);
   }
 
-  const depths = new Map([...entrySet].map(file => [file, 0]));
-  const queue = [...entrySet];
+  return { sourceOf, targetsOf, breakOf };
+}
+
+/**
+ * How many barrels each file sits below its nearest entry. An entry is 0, so an entry reached
+ * from another entry counts from itself; a barrel an entry reaches, directly or through plain
+ * modules, is 1.
+ *
+ * @param {Set<string>} entries
+ * @param {(file: string) => string[]} targetsOf
+ * @param {(file: string) => boolean} isBarrel
+ * @returns {Map<string, number>} for the files an entry reaches
+ */
+function barrelDepths(entries, targetsOf, isBarrel) {
+  const depths = new Map([...entries].map(file => [file, 0]));
+  const queue = [...entries];
   while (queue.length > 0) {
     const file = queue.shift();
-    const source = readSource(file);
-    if (source === undefined) continue;
-    for (const target of starReexportedModules(file, source)) {
-      if (entrySet.has(target)) continue;
-      const depth = depths.get(file) + (isBarrelFile(path.basename(target)) ? 1 : 0);
+    for (const target of targetsOf(file)) {
+      if (entries.has(target)) continue;
+      const depth = depths.get(file) + (isBarrel(target) ? 1 : 0);
       if (depth >= (depths.get(target) ?? Infinity)) continue;
       depths.set(target, depth);
       queue.push(target);
     }
   }
+  return depths;
+}
 
-  // A module that breaks the chain taints every module it leads to, which pass it on. An entry
-  // breaks nothing. A module is walked once clean and at most once more when tainted.
+/**
+ * For each module below a module that breaks the chain (see chainBreak), that breaker. It taints
+ * every module it leads to, which pass it on; an entry breaks nothing. A module is walked once
+ * clean and at most once more when tainted.
+ *
+ * @param {Set<string>} entries
+ * @param {(file: string) => string[]} targetsOf
+ * @param {(file: string) => unknown} breaks truthy for a module that breaks the chain
+ * @returns {Map<string, string>} module to the breaker above it
+ */
+function chainBreakers(entries, targetsOf, breaks) {
   const tainted = new Map();
-  const seen = new Set(entrySet);
-  const chainQueue = [...entrySet];
-  while (chainQueue.length > 0) {
-    const file = chainQueue.shift();
-    const source = readSource(file);
-    if (source === undefined) continue;
-    const passed = entrySet.has(file) ? undefined : (tainted.get(file) ?? (breakOf(file) && file));
-    for (const target of starReexportedModules(file, source)) {
-      if (entrySet.has(target)) continue;
+  const seen = new Set(entries);
+  const queue = [...entries];
+  while (queue.length > 0) {
+    const file = queue.shift();
+    const passed = entries.has(file) ? undefined : (tainted.get(file) ?? (breaks(file) && file));
+    for (const target of targetsOf(file)) {
+      if (entries.has(target)) continue;
       const taints = passed && !tainted.has(target);
       if (taints) tainted.set(target, passed);
       if (!taints && seen.has(target)) continue;
       seen.add(target);
-      chainQueue.push(target);
+      queue.push(target);
     }
   }
+  return tainted;
+}
 
+/**
+ * How each file sits below its nearest entry, following relative `export *` the way the bundlers
+ * resolve it: its depth (see barrelDepths) and, below the first level, its breaker: a module, the
+ * entry excluded and itself included, that breaks a chain to it.
+ *
+ * @param {string[]} entries absolute paths
+ * @param {ReturnType<typeof moduleGraph>} graph
+ * @returns {Map<string, { depth: number, breaker?: ChainBreaker }>} absolute path to its place,
+ *   for the files an entry reaches
+ */
+function barrelReach(entries, graph) {
+  const entrySet = new Set(entries.flatMap(indexVariants));
+  const depths = barrelDepths(entrySet, graph.targetsOf, file => isBarrelFile(path.basename(file)));
+  const tainted = chainBreakers(entrySet, graph.targetsOf, graph.breakOf);
   const reach = new Map();
   for (const [file, depth] of depths) {
-    const at = depth > 1 ? (tainted.get(file) ?? (breakOf(file) && file)) : undefined;
-    reach.set(file, { depth, breaker: at ? { file: at, ...breakOf(at) } : undefined });
+    const at = depth > 1 ? (tainted.get(file) ?? (graph.breakOf(file) && file)) : undefined;
+    reach.set(file, { depth, breaker: at ? { file: at, ...graph.breakOf(at) } : undefined });
   }
   return reach;
 }
@@ -301,17 +347,14 @@ function checkPackage(
   const options = PACKAGE_EXCEPTIONS[projectRoot] ?? {};
   const packageDir = path.join(workspaceRoot, projectRoot);
   const visited = new Set();
+  const graph = moduleGraph();
 
   // Each file is checked once, so an `export *` cycle terminates.
   function visit(file) {
     if (visited.has(file)) return;
     visited.add(file);
-    let source;
-    try {
-      source = fs.readFileSync(file, "utf8");
-    } catch {
-      return;
-    }
+    const source = graph.sourceOf(file);
+    if (source === undefined) return;
     const relative = path.relative(workspaceRoot, file).split(path.sep).join("/");
     if (!Object.hasOwn(fileExceptions, relative)) {
       const violations = isBarrelFile(relative)
@@ -353,10 +396,13 @@ function checkPackage(
     function toRelative(file) {
       return path.relative(workspaceRoot, file).split(path.sep).join("/");
     }
-    const reach = barrelReach([
-      ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
-      ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
-    ]);
+    const reach = barrelReach(
+      [
+        ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
+        ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
+      ],
+      graph,
+    );
     for (const barrel of barrels) {
       const relative = toRelative(barrel);
       if (Object.hasOwn(intermediateBarrelWaivers, relative)) continue;
@@ -497,6 +543,8 @@ function main() {
 module.exports = {
   auditFileExceptions,
   auditIntermediateBarrelWaivers,
+  barrelDepths,
+  chainBreakers,
   checkPackage,
   findPackageRoots,
 };
