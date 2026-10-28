@@ -5246,6 +5246,25 @@
   },
   "send": {
     "newSendFlow": {
+      "balanceType": {
+        "title": "Select balance",
+        "transparent": {
+          "title": "Public balance",
+          "subtitle": "Transparent"
+        },
+        "shielded": {
+          "title": "Private balance",
+          "subtitle": "Shielded",
+          "pendingNoticeTitle": "Funds maturing",
+          "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+        },
+        "zeroBalance": {
+          "warning": "No available balance"
+        },
+        "requiresSync": {
+          "notice": "Sync required"
+        }
+      },
       "title": "Send {{currency}}",
       "selectAddress": "Select address",
       "available": "Available {{amount}}",

@@ -75,7 +75,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
   return [
     {
       id: PUBLIC,
-      translationKey: "balanceType.aleoPublic",
+      translationKey: "balanceType.transparent",
       balance: balances.transparentBalance,
       hasPendingBalance: false,
       icon: "check",
@@ -83,7 +83,7 @@ function getOptions({ account }: { account: AccountLike }): readonly BalanceType
     },
     {
       id: PRIVATE,
-      translationKey: "balanceType.aleoPrivate",
+      translationKey: "balanceType.shielded",
       balance: balances.privateBalance,
       hasPendingBalance: false,
       icon: "lock",
