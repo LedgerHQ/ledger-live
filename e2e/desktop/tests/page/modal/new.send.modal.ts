@@ -92,6 +92,8 @@ export class NewSendModal extends Modal {
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
 
+  private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
+
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
     // Return null when the element isn't populated yet so callers can retry.
@@ -226,6 +228,12 @@ export class NewSendModal extends Modal {
   @step("Confirm sending without memo")
   async confirmSkipMemo() {
     await this.skipMemoConfirmButton.click();
+  }
+
+  @step("Verify the recent history warning is shown")
+  async expectRecentHistoryWarning() {
+    await expect(this.recipientStep).toHaveAttribute("data-recipient-validation", "settled");
+    await expect(this.recentHistoryWarning).toBeVisible();
   }
 
   @step("Click View details")
