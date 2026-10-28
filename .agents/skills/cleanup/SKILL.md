@@ -1,38 +1,11 @@
 ---
 name: cleanup
-description: Run lint, format, and typecheck on modified files
+description: "Manual entry point: format and lint the current changes with the validate-changes skill. Use when the user types /cleanup."
 disable-model-invocation: true
 ---
 
 # Cleanup
 
-Run lint, format, and typecheck on modified files.
-
-## Process
-
-1. **Identify apps**: `git diff --name-only develop..HEAD`
-   - `apps/ledger-live-desktop/` → desktop
-   - `apps/ledger-live-mobile/` → mobile
-   - `libs/` → both
-
-2. **Run commands** (from repo root):
-   ```bash
-   pnpm <app> lint --quiet --fix
-   pnpm <app> prettier
-   pnpm <app> typecheck
-   ```
-
-3. **Commit fixes** (if any):
-   ```bash
-   git add -A && git commit -m "chore: fix lint and format issues"
-   ```
-
-## Summary Template
-
-```markdown
-## Cleanup Summary
-
-- **Lint**: ✅ / ⚠️ Fixed (X files)
-- **Format**: ✅ / ⚠️ Fixed (X files)
-- **TypeScript**: ✅ / ❌ X errors
-```
+Run the [Format](../validate-changes/SKILL.md#1-format) and [Lint](../validate-changes/SKILL.md#2-lint)
+steps of the [`validate-changes`](../validate-changes/SKILL.md) skill on the current changes, after
+setting `BASE` as its introduction shows, then report them as that skill describes.
