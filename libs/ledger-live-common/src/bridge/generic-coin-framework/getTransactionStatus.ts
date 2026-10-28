@@ -1,4 +1,5 @@
 import { AccountBridge } from "@ledgerhq/types-live";
+import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
@@ -100,6 +101,18 @@ export function genericGetTransactionStatus(
         ),
         { customFees },
       );
+
+    // `prepareTransaction` swallowed a failed estimation so `validateIntent` could name its cause.
+    // When it names none, the failure was not a refusal of this input (a network error, or one that
+    // has since cleared): reject, so `useBridgeTransaction` retries `prepareTransaction` instead of
+    // resolving a status with no fees to sign. `estimation` is the key a coin module uses for
+    // "could not estimate" (Tezos), a convention rather than a typed framework contract.
+    if (
+      transaction.feesEstimationFailed &&
+      Object.keys(errors).every(key => key === "estimation")
+    ) {
+      throw errors.estimation ?? new FeeNotLoaded();
+    }
 
     return {
       errors: addAccountToBuyLinks(errors, account.id),

@@ -16,7 +16,6 @@ function waiver(code) {
 }
 
 const ORPHAN = waiver("orphan-barrel");
-const NESTED = waiver("nested-barrel");
 
 /** @type {Record<string, string>} */
 const INTERMEDIATE_BARREL_WAIVERS = {
@@ -24,7 +23,6 @@ const INTERMEDIATE_BARREL_WAIVERS = {
   "domain/api/currency-token/src/fixtures/index.ts": ORPHAN,
   "domain/entity/currency-crypto/src/currencies/index.ts": ORPHAN,
   "domain/entity/currency-fiat/src/currencies/index.ts": ORPHAN,
-  "features/flow/contacts/src/components/ContactsButton/index.ts": NESTED,
   "features/flow/fear-and-greed/src/components/Card/index.ts": ORPHAN,
   "features/flow/fear-and-greed/src/components/Definition/index.ts": ORPHAN,
   "features/flow/fear-and-greed/src/components/ExpandedCard/index.ts": ORPHAN,
@@ -37,13 +35,6 @@ const INTERMEDIATE_BARREL_WAIVERS = {
   "features/flow/pay-card-transactions/src/CardTransactions/components/DetailRow/index.ts": ORPHAN,
   "features/flow/pay-card-transactions/src/CardTransactions/components/List/index.ts": ORPHAN,
   "features/platform/currencies/src/fixtures/index.ts": ORPHAN,
-  "shared/api-services/src/services/cal/index.ts": NESTED,
-  "shared/api-services/src/services/card/index.ts": NESTED,
-  "shared/api-services/src/services/coinmarketcap/index.ts": NESTED,
-  "shared/api-services/src/services/countervalues/index.ts": NESTED,
-  "shared/api-services/src/services/dada/index.ts": NESTED,
-  "shared/api-services/src/services/push-devices/index.ts": NESTED,
-  "shared/api-services/src/services/swap/index.ts": NESTED,
   "shared/feature-flags/src/flags/index.ts": ORPHAN,
   "shared/feature-flags/src/flags/team-coin-integration/index.ts": ORPHAN,
   "shared/feature-flags/src/flags/team-engagement/index.ts": ORPHAN,
@@ -52,12 +43,6 @@ const INTERMEDIATE_BARREL_WAIVERS = {
   "shared/feature-flags/src/flags/team-ptx/index.ts": ORPHAN,
   "shared/feature-flags/src/flags/team-recover-software/index.ts": ORPHAN,
   "shared/feature-flags/src/flags/team-wallet-xp/index.ts": ORPHAN,
-  "shared/ui-queued-bottom-sheet/src/components/QueuedBottomSheet/index.ts": NESTED,
-  "shared/ui-queued-bottom-sheet/src/components/QueuedBottomSheetsProvider/index.ts": NESTED,
-  "shared/ui-queued-bottom-sheet/src/contexts/BottomSheetBackgroundContext/index.ts": NESTED,
-  "shared/ui-queued-bottom-sheet/src/contexts/BottomSheetBottomInsetContext/index.ts": NESTED,
-  "shared/ui-queued-bottom-sheet/src/contexts/BottomSheetFooterInsetContext/index.ts": NESTED,
-  "shared/ui-queued-bottom-sheet/src/contexts/IsInBottomSheetContext/index.ts": NESTED,
 };
 
 module.exports = { INTERMEDIATE_BARREL_WAIVERS };

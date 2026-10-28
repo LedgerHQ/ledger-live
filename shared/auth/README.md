@@ -65,44 +65,41 @@ Supplying `refreshAndRetryWhen` replaces the default predicate.
 Only match responses that definitively indicate an authentication failure. Retried
 mutations must be idempotent or use idempotency keys to avoid duplicate side effects.
 
-Use `authApiExtra` to provide a stable `authProvider` through RTK Query's
-[`api.extra`](https://redux-toolkit.js.org/rtk-query/api/fetchBaseQuery#prepareheaders)
-([Redux thunk `extraArgument`](https://redux-toolkit.js.org/api/getDefaultMiddleware#customizing-the-included-middleware)):
+Register `createAuthMiddleware` in the store to provide the `authProvider`. The base
+query gets it by dispatching an action that the middleware answers, the way RTK's
+`dispatch(addListener(...))` returns an unsubscribe function, so the thunk
+`extraArgument` keeps only config:
 
 ```ts
 const store = configureStore({
   reducer,
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({
-      thunk: {
-        extraArgument: {
-          ...authApiExtra({
-            isFeatureEnabled: () => selectFeature(store.getState(), "lwdAuth").enabled,
-            authProvider: new AuthSDK(
-              {
-                ...authConfig,
-                keycloakBaseUrl: () => resolveKeycloakBaseUrl(store.getState()),
-              },
-              { provider: identityProvider },
-            ),
+    getDefaultMiddleware().concat(
+      createAuthMiddleware<State>({
+        isFeatureEnabled: state => selectFeature(state, "lwdAuth").enabled ?? false,
+        createAuthProvider: getState =>
+          new AuthSDK(authConfig, {
+            provider: new LkrpIdentityProvider(() => getState().trustchain),
           }),
-        },
-      },
-    }),
+      }),
+    ),
 });
 ```
 
-The facade evaluates `isFeatureEnabled` for every request. It calls queries without a
-token while authentication is disabled and delegates to the same injected
-`AuthProvider` while enabled. Provider creation, feature selection, and environment
-availability remain app-owned. `AuthSDK` from `@ledgerhq/auth` is one concrete
-implementation behind this thunk contract.
+Its place in the chain does not matter, but adding it before the app's own middlewares
+keeps the provider request, dispatched before every authenticated request, out of
+them. `createAuthProvider` runs once, when the store is created. `isFeatureEnabled` is
+read before every request: while it returns `false`, queries are called without a
+token. Without the middleware, authenticated endpoints fall back to unauthenticated
+requests.
+
+A thunk reads the provider with `getAuthProvider(dispatch)`.
 
 ## Scope
 
-This package owns the RTK Query adapter. Concrete provider
-construction, feature selection, credentials, and platform cryptography remain in each
-app's composition root.
+This package owns the RTK Query adapter and the middleware that holds the provider.
+Concrete provider construction, feature selection, credentials, and platform
+cryptography remain in each app's composition root.
 
 ## Validation
 

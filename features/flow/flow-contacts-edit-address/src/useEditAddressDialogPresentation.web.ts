@@ -1,5 +1,6 @@
 import { useCallback, useMemo, type ChangeEvent, type ClipboardEvent } from "react";
-import { getPastedValue, resolveAddressInputPresentation } from "@features/platform-contacts";
+import { resolveAddressInputPresentation } from "@features/platform-contacts";
+import { getPastedValue } from "@features/platform-contacts/web";
 import type {
   ContactsAddressEntryState,
   ContactsAddressInputSource,

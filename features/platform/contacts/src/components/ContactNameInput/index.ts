@@ -1,1 +1,2 @@
-export * from "./ContactNameInput.web";
+export * from "./ContactNameInput";
+export type * from "./ContactNameInput.types";

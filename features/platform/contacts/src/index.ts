@@ -20,7 +20,6 @@ export * from "./addressEntry/state";
 export * from "./addressEntry/presentation";
 export * from "./addressEntry/classifyNativeAddressInputMethod";
 export * from "./addressEntry/getInsertedCharacterCount";
-export * from "./addressEntry/getPastedValue.web";
 export * from "./addressEntry/wait";
 export * from "./addressEntry/nativeInputProps";
 export * from "./contactEdit/ports";

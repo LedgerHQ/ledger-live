@@ -6,6 +6,10 @@ import {
   getDepositRequestId,
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import {
+  getWithdrawRequestId,
+  settleWithdrawRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({
@@ -15,9 +19,12 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
 }));
 
 const mockNavigate = jest.fn();
+const mockRemoveFocusListener = jest.fn();
+const mockAddListener = jest.fn((_event: string, _listener: () => void) => mockRemoveFocusListener);
+const mockNavigation = { navigate: mockNavigate, addListener: mockAddListener };
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: mockNavigate }),
+  useNavigation: () => mockNavigation,
 }));
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
@@ -35,6 +42,8 @@ describe("usePerpsHandlers", () => {
       uiHooks: {
         "signing.execute": expect.any(Function),
         "deposit.execute": expect.any(Function),
+        "withdraw.execute": expect.any(Function),
+        "migration.execute": expect.any(Function),
       },
     });
   });
@@ -90,5 +99,116 @@ describe("usePerpsHandlers", () => {
     unmount();
 
     await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  it("should open the withdraw screen and resolve once the withdrawal settles", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const params = { sourceAccount: { id: "hl-1" } } as never;
+    renderHook(() => usePerpsHandlers(accounts));
+
+    const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
+    const request = withdrawExecute?.(params);
+    settleWithdrawRequest(getWithdrawRequestId(), { swapId: "swap-1" });
+
+    expect(mockNavigate).toHaveBeenCalledWith("PerpsWithdraw", params);
+    await expect(request).resolves.toEqual({ swapId: "swap-1" });
+  });
+
+  it("should reject an in-flight withdrawal when the live app unmounts", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const { unmount } = renderHook(() => usePerpsHandlers(accounts));
+
+    const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
+    const request = withdrawExecute?.({ sourceAccount: { id: "hl-1" } } as never);
+    unmount();
+
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  describe("migration.execute", () => {
+    const hypercoreAccount = { id: "hc-1", type: "Account" } as never;
+
+    const startMigration = () => {
+      const view = renderHook(() => usePerpsHandlers([]));
+      const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
+      const request = migrationExecute?.();
+      const [navigator, { params: flowParams }] = mockNavigate.mock.calls.at(-1);
+      return { ...view, migrationExecute, request, navigator, flowParams };
+    };
+
+    it("should open the inline Hyperliquid add account flow", () => {
+      const { request, navigator, flowParams } = startMigration();
+      request?.catch(() => {});
+
+      expect(navigator).toBe("DeviceSelection");
+      expect(flowParams).toEqual(
+        expect.objectContaining({
+          currency: expect.objectContaining({ id: "hypercore" }),
+          context: "addAccounts",
+          inline: true,
+          navigationDepth: 2,
+        }),
+      );
+    });
+
+    it("should resolve with every account the user added", async () => {
+      const { request, flowParams } = startMigration();
+      const otherAccount = { id: "hc-2", type: "Account" };
+
+      flowParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount, otherAccount] });
+
+      await expect(request).resolves.toEqual([hypercoreAccount, otherAccount]);
+    });
+
+    it("should reject when the user closes the add account flow", async () => {
+      const { request, flowParams } = startMigration();
+
+      flowParams.onCloseNavigation();
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("should reject when the user comes back to Perps without adding an account", async () => {
+      const { request } = startMigration();
+
+      const [event, onFocus] = mockAddListener.mock.calls[0];
+      expect(event).toBe("focus");
+      // React Navigation hands the listener an event object.
+      (onFocus as (e: unknown) => void)({ type: "focus" });
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("should stay a success when Perps regains focus after the accounts are added", async () => {
+      const { request, flowParams } = startMigration();
+
+      flowParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount] });
+      mockAddListener.mock.calls[0][1]();
+
+      await expect(request).resolves.toEqual([hypercoreAccount]);
+    });
+
+    it("should ignore callbacks from an abandoned attempt", async () => {
+      const { request: first, flowParams: firstParams, migrationExecute } = startMigration();
+      mockAddListener.mock.calls[0][1]();
+      await expect(first).rejects.toBeInstanceOf(UserRefusedOnDevice);
+
+      const second = migrationExecute?.();
+      const [, { params: secondParams }] = mockNavigate.mock.calls.at(-1);
+      firstParams.onSuccess({ scannedAccounts: [], selected: [hypercoreAccount] });
+      firstParams.onCloseNavigation();
+      secondParams.onSuccess({ scannedAccounts: [], selected: [{ id: "hc-2" }] });
+
+      await expect(second).resolves.toEqual([{ id: "hc-2" }]);
+    });
+
+    it("should reject an in-flight migration when the live app unmounts", async () => {
+      const { request, unmount } = startMigration();
+
+      unmount();
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+      expect(mockRemoveFocusListener).toHaveBeenCalled();
+    });
   });
 });

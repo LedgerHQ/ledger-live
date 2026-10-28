@@ -1,61 +1,18 @@
 const {
   createDualJestConfig,
   jestSonarReporter,
-  lcovCoverageReporters,
-  lcovRoot,
   nativeMocks,
   platformExtensions,
-  quarantineReporter,
+  presetFactory,
   quarantineRetries,
-  swcTransform,
   withProjectOverrides,
 } = require("../core");
-
-/**
- * Tail reporters shared by every config. Exported so callers that need to insert an extra
- * reporter (e.g. github-actions) can spread this after their insertion:
- *
- *   reporters: ["default", ...(CI ? ["github-actions"] : []), ...sharedReporters]
- */
-const sharedReporters = [jestSonarReporter, quarantineReporter];
-
-// ─── ESM-only dependencies ──────────────────────────────────────────────────
-
-/**
- * ESM-only packages that CJS code reaches through `require`, and that jest has to transform.
- * Matched against pnpm's store directory name, where a scope separator becomes a `+`
- * (`@noble+hashes@2.4.0`), hence the escaped `\\+`.
- */
-const esmDeps = ["@noble\\+"];
-
-/**
- * Makes jest transform ESM-only dependencies instead of failing with
- * `Must use import to load ES Module` when a CJS package `require`s them (e.g. `@noble/hashes` 2.x).
- *
- * Everything else in node_modules/.pnpm stays ignored. Merges into `config.transform` and replaces
- * `config.transformIgnorePatterns`.
- *
- *   module.exports = withEsmDeps({ testEnvironment: "node" });
- *   module.exports = withEsmDeps(config, { extraDeps: ["@ledgerhq\\+"] }); // also keep these transformed
- *
- * @param {import('@jest/types').Config.InitialOptions} config
- * @param {{ extraDeps?: string[] }} [options]
- * @returns {import('@jest/types').Config.InitialOptions}
- */
-function withEsmDeps(config, { extraDeps = [] } = {}) {
-  const deps = [...esmDeps, ...extraDeps].join("|");
-  return {
-    ...config,
-    transform: {
-      ...config.transform,
-      [`node_modules[\\\\/]\\.pnpm[\\\\/](${esmDeps.join("|")}).+\\.(js|mjs)$`]: [
-        "@swc/jest",
-        { jsc: { target: "esnext" } },
-      ],
-    },
-    transformIgnorePatterns: [`node_modules[\\\\/]\\.pnpm[\\\\/](?!(${deps}))`],
-  };
-}
+const {
+  NODE_OPTIONS,
+  sharedNodeConfig,
+  sharedReporters,
+  withEsmDeps,
+} = require("../internals/node");
 
 // ─── shared/* and libs/* (node packages) ────────────────────────────────────
 
@@ -66,31 +23,17 @@ function withEsmDeps(config, { extraDeps = [] } = {}) {
  * lcov `projectRoot` is the option when given, else derived from `overrides.rootDir` when set, else
  * `../../` (a package two levels below the repository root).
  *
+ * A key the preset owns (`transform`, `testEnvironment`, `reporters`, ...) throws unless
+ * `support/jest/core/preset-overrides.js` lists it for the package of `overrides.rootDir`.
+ *
  *   module.exports = createSharedJestConfig();
  *   module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
- *
- * @param {import('@jest/types').Config.InitialOptions} [overrides]
- * @param {{ esm?: boolean, extraEsmDeps?: string[], projectRoot?: string }} [options]
- * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedJestConfig(
-  overrides = {},
-  { esm = false, extraEsmDeps = [], projectRoot } = {},
-) {
-  const config = {
-    testEnvironment: "node",
-    roots: ["<rootDir>/src"],
-    testMatch: ["**/*.test.ts"],
-    testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/"],
-    transform: swcTransform,
-    coverageDirectory: "./coverage/",
-    coverageReporters: lcovCoverageReporters(projectRoot ?? lcovRoot(overrides.rootDir, "../../")),
-    reporters: ["default", ...(process.env.CI ? ["github-actions"] : []), ...sharedReporters],
-    setupFilesAfterEnv: [quarantineRetries],
-    ...overrides,
-  };
-  return esm ? withEsmDeps(config, { extraDeps: extraEsmDeps }) : config;
-}
+const createSharedJestConfig = presetFactory(
+  "createSharedJestConfig",
+  NODE_OPTIONS,
+  sharedNodeConfig,
+);
 
 // ─── shared/ui-* (UI packages) ──────────────────────────────────────────────
 
@@ -110,13 +53,13 @@ const lumenTransform = {
  * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
- * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedUiJestConfig(options) {
+function sharedUiJestConfig(overrides) {
   return createDualJestConfig(
     { depth: "../../", web: lumenTransform, native: lumenTransform },
-    options,
+    overrides,
   );
 }
 
@@ -130,8 +73,8 @@ function createSharedUiJestConfig(options) {
  * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createSharedUiNativeJestConfig(overrides = {}) {
-  return createSharedJestConfig(
+function sharedUiNativeJestConfig(overrides = {}) {
+  return sharedNodeConfig(
     withProjectOverrides(
       {
         collectCoverage: true,
@@ -147,8 +90,12 @@ function createSharedUiNativeJestConfig(overrides = {}) {
 
 module.exports = {
   createSharedJestConfig,
-  createSharedUiJestConfig,
-  createSharedUiNativeJestConfig,
+  createSharedUiJestConfig: presetFactory("createSharedUiJestConfig", [], sharedUiJestConfig),
+  createSharedUiNativeJestConfig: presetFactory(
+    "createSharedUiNativeJestConfig",
+    [],
+    sharedUiNativeJestConfig,
+  ),
   jestSonarReporter,
   sharedReporters,
   withEsmDeps,

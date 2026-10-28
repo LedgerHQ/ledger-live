@@ -1,7 +1,9 @@
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
+import { getNeuronStakeSubAccountIdentifier } from "./buildNeuronTransaction";
 import { combine, type DecodedCallContent, type DecodedReadStateContent } from "./combine";
 import { craftTransaction } from "./craftTransaction";
 import { deriveAddressFromPubkey, derivePrincipalFromPubkey, pubkeyToDer } from "./crypto";
+import type { IcpStakingIntent } from "./intent";
 import { craftNeuronCommand } from "./neuronCommand";
 
 const PUBKEY =
@@ -140,5 +142,47 @@ describe("combine a neuron command", () => {
     expect(() => combine(tx, [CALL_SIGNATURE + READ_STATE_SIGNATURE], PUBKEY)).toThrow(
       /another sender/,
     );
+  });
+});
+
+describe("combine a stake transfer", () => {
+  const NONCE = 42n;
+  const intent: IcpStakingIntent = {
+    intentType: "staking",
+    type: "create_neuron",
+    mode: "delegate",
+    valAddress: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+    sender: deriveAddressFromPubkey(PUBKEY),
+    senderPublicKey: PUBKEY,
+    recipient: getNeuronStakeSubAccountIdentifier(derivePrincipalFromPubkey(PUBKEY), NONCE),
+    amount: 100_000_000n,
+    asset: { type: "native" },
+    data: { type: "neuron", stakeNonce: String(NONCE) },
+  };
+  const stakeTransfer = () => craftTransaction(intent).transaction;
+
+  it("keeps the nonce beside the signed envelope", () => {
+    const tx = stakeTransfer();
+    const { content: original } = Cbor.decode<{ content: DecodedCallContent }>(
+      Buffer.from(tx, "hex"),
+    );
+
+    const { transfer, stake_nonce } = Cbor.decode<{
+      transfer: { content: DecodedCallContent; sender_sig: Uint8Array };
+      stake_nonce: string;
+    }>(Buffer.from(combine(tx, [SIGNATURE], PUBKEY), "hex"));
+
+    expect(stake_nonce).toBe(String(NONCE));
+    expect(Buffer.from(transfer.sender_sig).toString("hex")).toBe(SIGNATURE);
+    expect(Buffer.from(requestIdOf(transfer.content))).toEqual(Buffer.from(requestIdOf(original)));
+  });
+
+  it("refuses a nonce that is not a string", () => {
+    const { content } = Cbor.decode<{ content: DecodedCallContent }>(
+      Buffer.from(stakeTransfer(), "hex"),
+    );
+    const tx = Buffer.from(Cbor.encode({ content, stake_nonce: NONCE })).toString("hex");
+
+    expect(() => combine(tx, [SIGNATURE], PUBKEY)).toThrow(/stake nonce/);
   });
 });

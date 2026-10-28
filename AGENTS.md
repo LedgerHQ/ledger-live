@@ -30,9 +30,7 @@ When a task involves GitHub â€” pull requests, issues, CI checks, or releases â€
 
 ## Validate Before Finishing
 
-Always follow the [validate-before-finishing](/docs/validate-before-finishing.md) instructions before completing code changes.
-
-Before pushing a change under `shared/`, `domain/`, `features/`, `support/` or `devtools/`, run `pnpm lint:arch`. It runs the boundary, package-structure, tool-config and i18n-key checks that CI's required module-boundaries job blocks on.
+Before completing or pushing code changes, run the [validate-changes](./.agents/skills/validate-changes/SKILL.md) skill.
 
 ## CI runners
 

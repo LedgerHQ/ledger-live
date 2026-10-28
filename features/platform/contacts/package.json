@@ -4,15 +4,10 @@
   "private": true,
   "description": "Contacts domain selectors for flow packages",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
-    "./native": "./src/index.native.ts",
-    "./web": "./src/web.ts",
+    ".": "./src/index.ts",
+    "./web": "./src/web/index.web.ts",
     "./device": "./src/device/index.ts",
     "./device/intents": "./src/device/intents/index.ts",
     "./test": "./src/contactDeviceIntentsPort.mock.ts",
@@ -23,6 +18,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -86,6 +82,7 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

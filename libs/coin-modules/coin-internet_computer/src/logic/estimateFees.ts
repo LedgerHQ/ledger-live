@@ -3,7 +3,10 @@ import { TRANSFER_FEE } from "../consts";
 import type { IcpIntent } from "./intent";
 import { isNeuronCommandIntent } from "./neuronCommand";
 
-/** The ledger's fixed transfer fee. Governance charges nothing for a neuron command. */
+/**
+ * The ledger's fixed transfer fee, for a send or a stake transfer. A neuron command charges nothing
+ * to the account.
+ */
 export function estimateFees(intent: IcpIntent): FeeEstimation {
   return { value: isNeuronCommandIntent(intent) ? 0n : TRANSFER_FEE };
 }

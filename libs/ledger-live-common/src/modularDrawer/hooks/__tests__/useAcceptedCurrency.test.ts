@@ -201,6 +201,14 @@ describe("useAcceptedCurrency", () => {
       expect(result.current(hypercore)).toBe(false);
     });
 
+    it("should reject a family that cannot receive, in the perps withdraw flow (hypercore)", () => {
+      const { result } = renderHook(() =>
+        useAcceptedCurrency({ flow: PERPS_UI_USE_CASE.withdraw }),
+      );
+
+      expect(result.current(hypercore)).toBe(false);
+    });
+
     it("should reject a family that cannot receive, in the receive flow", () => {
       const { result } = renderHook(() =>
         useAcceptedCurrency({ flow: ModularDrawerLocation.RECEIVE_FLOW }),

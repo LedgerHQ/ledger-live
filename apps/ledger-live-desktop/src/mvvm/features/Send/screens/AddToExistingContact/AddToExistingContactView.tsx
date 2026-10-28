@@ -55,7 +55,7 @@ function ContactRow({
           isMe={contact.isMe}
           size="md"
           ariaHidden
-          testId={
+          testID={
             contact.isMe ? "contacts-me-avatar" : `contacts-saved-avatar-${contact.contactId}`
           }
         />
