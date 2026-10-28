@@ -1,44 +1,46 @@
 # R1 to R5: what `lint:structure` reports
 
 The rule lives in
-[components.js](../../../../tools/nx-plugins/enforce-package-structure/components.js), its
-settings in
+[components.js](../../../../tools/nx-plugins/enforce-package-structure/components.js) and the
+waiver check in
+[validate.js](../../../../tools/nx-plugins/enforce-package-structure/validate.js); each code's
+message is written there. Its settings are in
 [components.config.json](../../../../tools/nx-plugins/enforce-package-structure/components.config.json),
-and every case below has a test in
+and every code has a test in
 [components.test.js](../../../../tools/nx-plugins/enforce-package-structure/components.test.js).
-The printed line gives the rule and a message; the code is what the tests and this table use.
+The printed line gives the rule and the message; the code is what the tests and this table use.
 
-## Codes
+## Codes and fixes
 
-| Rule | Code | Reported when |
+| Rule | Code | Fix |
 | --- | --- | --- |
-| R1 | `universal-parity` | A component is exported from a universal entry on one platform only, or under another name on each |
-| R2 | `props-unnamed` | An implementation's first parameter is not annotated with a props type name (inline type or none) |
-| R2 | `props-unreadable` | `memo(…)` or `forwardRef(…)` wraps a function declared in another module, so its props cannot be read |
-| R2 | `props-parameter-mismatch` | One implementation takes props, the other takes none |
-| R2 | `props-name-mismatch` | The two implementations annotate with different type names |
-| R2 | `contract-not-found` | The props type is neither declared in nor imported by the implementation |
-| R2 | `contract-outside-package` | The props type comes from another package |
-| R2 | `contract-reexported` | The module the type is imported from re-exports it instead of declaring it |
-| R2 | `contract-mismatch` | The two implementations import the type from different modules |
-| R2 | `contract-suffixed` | The contract module carries a platform suffix (`X.types.web.ts`) |
-| R2 | `contract-shadowed` | The unsuffixed contract has a `.web`, `.native`, `.ios` or `.android` sibling |
-| R3 | `contract-platform-import` | The contract imports a `bannedImportPrefixes` package, other than a type-only `neutralImportTypes` name |
-| R3 | `contract-react-type` | It references a `react` type outside `neutralReactTypes` (`ChangeEvent`, `CSSProperties`) |
-| R3 | `contract-global-type` | It references a global the ECMAScript library does not declare (`HTMLElement`, `typeof document`) |
-| R3 | `contract-platform-prop` | It declares a `className` or `style` prop |
-| R3 | `contract-gesture-callback` | A callback name holds a `gestureWords` word (`onPress`, `onEditPress`) or matches `bannedCallbackNames` (`onChange`, `onSubmit`, `onKey*`) |
-| R3 | `platform-prop-tag` | A `@platform` tag names neither `web` nor `native` |
-| R3 | `platform-prop-shape` | A `@platform` prop is required or not a primitive or string-literal union |
-| R4 | `platform-module-export` | A platform module that declares a universal component also exports a type, a hook or a constant |
-| R5 | `component-in-both-entries` | A component is exported from a universal entry and from a platform entry |
-| R5 | `platform-entry-shared-module` | A platform entry resolves to a module a universal entry resolves to |
-| R5 | `platform-entry-unsuffixed` | A platform entry resolves to a module without its platform's suffix |
-| any | `stale-waiver` | A `COMPONENT_EXCEPTIONS` waiver no longer matches a violation |
+| R1 | `universal-parity` | Export the component on both platforms under one name, or move it to a platform entry |
+| R2 | `props-unnamed` | Annotate the first parameter with a named props type from the contract |
+| R2 | `props-unreadable` | Declare the function wrapped by `memo` or `forwardRef` in the same module |
+| R2 | `props-parameter-mismatch` | Give both implementations props, or neither |
+| R2 | `props-name-mismatch` | Annotate both implementations with the same type name |
+| R2 | `contract-not-found` | Import the props type from the contract module |
+| R2 | `contract-outside-package` | Declare the contract in the package itself |
+| R2 | `contract-reexported` | Import the type from the module that declares it |
+| R2 | `contract-mismatch` | Import the type from one contract module on both platforms |
+| R2 | `contract-suffixed` | Rename the contract to `X.types.ts` |
+| R2 | `contract-shadowed` | Delete the platform-suffixed sibling and merge it into `X.types.ts` |
+| R3 | `contract-platform-import` | Replace the platform import with a neutral type |
+| R3 | `contract-react-type` | Pass the value instead of the event, the style or the element |
+| R3 | `contract-global-type` | Replace the DOM type with a value or a handle type |
+| R3 | `contract-platform-prop` | Drop `className` or `style`; expose a variant prop instead |
+| R3 | `contract-gesture-callback` | Rename the callback after the intent (`onOpenContacts`) |
+| R3 | `platform-prop-tag` | Tag the prop `@platform web` or `@platform native` |
+| R3 | `platform-prop-shape` | Make the `@platform` prop optional and a primitive or string-literal union |
+| R4 | `platform-module-export` | Move the type, hook or constant to the contract or another module |
+| R5 | `component-in-both-entries` | Keep the component in universal entries or in platform entries, not both |
+| R5 | `platform-entry-shared-module` | Point the platform entry at a module of its own |
+| R5 | `platform-entry-unsuffixed` | Give the platform entry's module its platform suffix |
+| any | `stale-waiver` | Remove the waiver the fix made unnecessary ([clearing a waiver](../SKILL.md#clearing-a-waiver)) |
 
 R2 reports the first miss per component, in table order. Components of platform entries skip R1
-to R4. The gesture words match whole camelCase words, so
-`onPressure` or `onTapestry` would pass; whether a name states an intent stays a review question.
+to R4. The gesture check matches whole camelCase words, so `onPressure` or `onTapestry` would
+pass; whether a name states an intent stays a review question.
 
 ## What R3 follows
 

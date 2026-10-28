@@ -76,33 +76,20 @@ in [ldls-web](../ldls-web/SKILL.md) and [ldls-native](../ldls-native/SKILL.md).
 ## R1 to R5, linted
 
 `pnpm exec nx run <project>:lint:structure` checks all five on every package under `shared/`,
-`domain/` and `features/`, and CI blocks on it. Each failure prints the rule and a message; the
-codes behind each rule are in [references/rules.md](references/rules.md).
+`domain/` and `features/`, and CI blocks on it. The rules are stated in the
+[ADR's decision](../../../docs/adr/universal-components.md#decision); in short:
 
-- **R1 Parity.** Exported on both platforms under the same name. A component one platform does
-  not need leaves the universal entry.
-- **R2 One contract.** Both implementations annotate their first parameter with the same type
-  name, imported from one unsuffixed module that declares it (no re-export) and has no `.web`,
-  `.native`, `.ios` or `.android` sibling. `Readonly<X>` around it is accepted. A component
-  without props takes no parameter on either platform.
-- **R3 Neutral contract.** No `react-native*`, `@ledgerhq/lumen-ui-*`,
-  `@ledgerhq/lumen-utils-shared` or `react-dom` import, except a type-only import of a name in
-  `neutralImportTypes`. No DOM, host or React type outside `neutralReactTypes`. No `className` or
-  `style` prop. Callbacks name the intent (`onOpenContacts`, `onSearchQueryChange(query)`), never
-  a gesture or DOM event, and receive values, not events. A `@platform web` or `@platform native`
-  prop is optional and typed `boolean`, `number`, `string` or a union of string literals.
-  Imperative access goes through a handle type and `ref?: Ref<XHandle>`, never an element ref.
-- **R4 Types in the contract only.** A `.web` / `.native` module that declares a universal
-  component exports components and nothing else.
-- **R5 One entry per component.** Exported from universal entries or from platform entries, never
-  both. A platform entry points at a suffixed module of its own (`nativeExports.native.ts`),
-  never at a module a universal entry resolves to. The import side, platform code only, is the
-  `suffix-imports/no-platform-suffix` rule of [`@support/lint`](../../../support/lint/README.md).
+- **R1 Parity.** Exported on both platforms under the same name.
+- **R2 One contract.** Both implementations take the same props type from one `X.types.ts`.
+- **R3 Neutral contract.** The contract names no platform type, prop or gesture.
+- **R4 Types in the contract only.** A `.web` / `.native` module exports its component alone.
+- **R5 One entry per component.** Universal entries or platform entries, never both. The import
+  side is the `suffix-imports/no-platform-suffix` rule of
+  [`@support/lint`](../../../support/lint/README.md).
 
-R3 reads the whole contract module, not only the props type: every local type a prop holds, at
-any depth, behind a local alias (`type Tiles = Tile[]`, `ReadonlyArray<…>`) or a local generic,
-where its body places the argument (`Box<T> = { value: T }`). See
-[what R3 follows](references/rules.md#what-r3-follows) for the parts it leaves to review.
+Each failure prints the rule and a message. [references/rules.md](references/rules.md) maps each
+code to its fix and lists [what R3 follows](references/rules.md#what-r3-follows) and what it
+leaves to review.
 
 ## Review-only checks
 
@@ -122,14 +109,14 @@ The linter reads names and modules, not intent. A reviewer checks these four:
 
 ## Clearing a waiver
 
-Existing violations sit in `COMPONENT_EXCEPTIONS` of
-[exceptions.js](../../../tools/nx-plugins/enforce-package-structure/exceptions.js), keyed by
-package root, then by component name or, for an R5 entry check, by subpath (`"./native"`). The
-list only shrinks.
+Existing violations are waived in
+[exceptions.js](../../../tools/nx-plugins/enforce-package-structure/exceptions.js), per package
+root, then per component name or, for an R5 entry check, per subpath (`"./native"`), each with the
+rules it waives. The list only shrinks.
 
 1. Fix the component until it meets the waived rule.
-2. In the same change, remove that rule from its `componentWaiver(...)` call; delete the entry
-   when no rule is left, and the package key when it is empty.
+2. In the same change, remove that rule from the component's waiver; delete the component when
+   no rule is left, and the package when it has no component left.
 3. Run `lint:structure` on the package. A waiver that matches no violation fails as
    `stale-waiver`, so a fix that leaves its waiver behind does not pass.
 
