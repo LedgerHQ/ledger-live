@@ -572,9 +572,12 @@ catalogs:
     babel-jest:
       specifier: 30.5.0
       version: 30.5.0
+    bip39:
+      specifier: 3.1.2
+      version: 3.1.2
     bitcoinjs-lib:
-      specifier: 7.0.4
-      version: 7.0.4
+      specifier: 7.0.5
+      version: 7.0.5
     bs58:
       specifier: ^4.0.1
       version: 4.0.1
@@ -793,6 +796,8 @@ overrides:
   '@types/react-dom': 19.0.0
   csstype: 3.2.3
   stellar-base>sodium-native: ^3.2.1
+  ed25519-hd-key>bip39: 3.1.2
+  near-hd-key>bip39: 3.1.2
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
   '@ledgerhq/devices': 8.18.1
@@ -11883,7 +11888,7 @@ importers:
         version: 9.1.2
       bitcoinjs-lib:
         specifier: 'catalog:'
-        version: 7.0.4(@typescript/typescript6@6.0.2)
+        version: 7.0.5(@typescript/typescript6@6.0.2)
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -11970,8 +11975,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       bip39:
-        specifier: ^3.0.4
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       ecpair:
         specifier: 3.0.2
         version: 3.0.2(@typescript/typescript6@6.0.2)
@@ -14269,14 +14274,14 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       bitcoin-core:
         specifier: ^5.0.0
         version: 5.0.0
       bitcoinjs-lib:
         specifier: 'catalog:'
-        version: 7.0.4(@typescript/typescript6@6.0.2)
+        version: 7.0.5(@typescript/typescript6@6.0.2)
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -14351,8 +14356,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -14573,8 +14578,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
@@ -14658,8 +14663,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
@@ -14725,8 +14730,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       chalk:
         specifier: ^4
         version: 4.1.2
@@ -14926,8 +14931,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       ed25519-hd-key:
         specifier: ^1.3.0
         version: 1.3.0
@@ -15133,8 +15138,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -15434,8 +15439,8 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -16256,8 +16261,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       bip39:
-        specifier: ^3.0.4
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -16849,7 +16854,7 @@ importers:
         version: 0.4.2
       bitcoinjs-lib:
         specifier: 'catalog:'
-        version: 7.0.4(@typescript/typescript6@6.0.2)
+        version: 7.0.5(@typescript/typescript6@6.0.2)
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -19738,7 +19743,7 @@ importers:
         version: 9.1.2
       bitcoinjs-lib:
         specifier: 'catalog:'
-        version: 7.0.4(@typescript/typescript6@6.0.2)
+        version: 7.0.5(@typescript/typescript6@6.0.2)
       bs58:
         specifier: 'catalog:'
         version: 4.0.1
@@ -19810,8 +19815,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0
       bip39:
-        specifier: ^3.0.4
-        version: 3.1.0
+        specifier: 'catalog:'
+        version: 3.1.2
       ecpair:
         specifier: 3.0.2
         version: 3.0.2(@typescript/typescript6@6.0.2)
@@ -29003,9 +29008,6 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@11.11.6':
-    resolution: {integrity: sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==}
-
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
 
@@ -30293,11 +30295,11 @@ packages:
   bip39-light@1.0.7:
     resolution: {integrity: sha512-WDTmLRQUsiioBdTs9BmSEmkJza+8xfJmptsNJjxnoq3EydSa/ZBXT6rm66KoT3PJIRYMnhSKNR7S9YL1l7R40Q==}
 
-  bip39@3.0.2:
-    resolution: {integrity: sha512-J4E1r2N0tUylTKt07ibXvhpT2c5pyAFgvuA5q1H9uDy6dEGpjV8jmymh3MTYJDLCNbIVClSB9FbND49I6N24MQ==}
-
   bip39@3.1.0:
     resolution: {integrity: sha512-c9kiwdk45Do5GL0vJMe7tS95VjCii65mYAH7DfWl3uW8AVzXKQVUm64i3hzVybBDMp9r7j9iNxR85+ul8MdN/A==}
+
+  bip39@3.1.2:
+    resolution: {integrity: sha512-inxKLEH+Weos8f5rBYNKuOrpOIcNWtKnrLur9x72s4Cb8w4Mm0jJktUPkev7+1pQuivxFqkiut9+AcrwunLHxA==}
 
   bip66@1.1.5:
     resolution: {integrity: sha512-nemMHz95EmS38a26XbbdxIYj5csHd3RMP3H5bwQknX0WYHF01qhpufP42mLOwVICuH2JmhIhXiWs89MfUGL7Xw==}
@@ -30306,8 +30308,8 @@ packages:
     resolution: {integrity: sha512-XqHsD5LjtshN8yWzRrq2kof57e1eXCGDx3i5+sFKBRi9MktSlXOR4SRLyXLkfzfBmPEs5q/76RotQJuaWg75DQ==}
     engines: {node: '>=7'}
 
-  bitcoinjs-lib@7.0.4:
-    resolution: {integrity: sha512-aAPVW36PHKDodJbLMdKQiuPAmXt50BQPBQUvyZWZRYFI8lkdg8EqcklmT1t8X6izAJ74rhaHuOOqkbVlDtJrPg==}
+  bitcoinjs-lib@7.0.5:
+    resolution: {integrity: sha512-xH24P1ile3QtyChzX1ITitcgpfZgDzG986gy1glbGXFsvcSnRX0P6p4m3nuTQfJ+j97va8py0leEK7xG8oxMqQ==}
     engines: {node: '>=18.0.0'}
 
   bl@4.1.0:
@@ -43430,7 +43432,7 @@ snapshots:
 
   '@ledgerhq/psbtv2@0.6.2(@typescript/typescript6@6.0.2)':
     dependencies:
-      bitcoinjs-lib: 7.0.4(@typescript/typescript6@6.0.2)
+      bitcoinjs-lib: 7.0.5(@typescript/typescript6@6.0.2)
       varuint-bitcoin: 2.0.1
     transitivePeerDependencies:
       - typescript
@@ -48628,8 +48630,6 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@11.11.6': {}
-
   '@types/node@12.20.55': {}
 
   '@types/node@18.19.26':
@@ -50202,14 +50202,12 @@ snapshots:
       create-hash: 1.2.0
       pbkdf2: 3.1.2
 
-  bip39@3.0.2:
-    dependencies:
-      '@types/node': 11.11.6
-      create-hash: 1.2.0
-      pbkdf2: 3.1.2
-      randombytes: 2.1.0
-
   bip39@3.1.0:
+    dependencies:
+      '@noble/hashes': 1.8.0
+    optional: true
+
+  bip39@3.1.2:
     dependencies:
       '@noble/hashes': 1.8.0
 
@@ -50227,7 +50225,7 @@ snapshots:
       semver: 5.7.2
       standard-error: 1.1.0
 
-  bitcoinjs-lib@7.0.4(@typescript/typescript6@6.0.2):
+  bitcoinjs-lib@7.0.5(@typescript/typescript6@6.0.2):
     dependencies:
       '@noble/hashes': 1.8.0
       bech32: 2.0.0
@@ -51653,7 +51651,7 @@ snapshots:
 
   ed25519-hd-key@1.1.2:
     dependencies:
-      bip39: 3.0.2
+      bip39: 3.1.2
       create-hmac: 1.1.7
       tweetnacl: 1.0.3
 
@@ -55570,7 +55568,7 @@ snapshots:
 
   near-hd-key@1.2.1:
     dependencies:
-      bip39: 3.0.2
+      bip39: 3.1.2
       create-hmac: 1.1.7
       tweetnacl: 1.0.3
 

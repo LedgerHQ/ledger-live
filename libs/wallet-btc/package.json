@@ -81,7 +81,7 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "bip32": "^4.0.0",
-    "bip39": "^3.0.4",
+    "bip39": "catalog:",
     "ecpair": "3.0.2",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
