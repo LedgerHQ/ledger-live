@@ -60,6 +60,11 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      disable-nx-cache:
+        description: Skip Nx cache for nx-step runs
+        required: false
+        type: boolean
+        default: false
       ref:
         description: |
           If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
@@ -109,7 +114,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: [ledger-live-linux-8CPU-32RAM]
+    runs-on: ledger-wallet-8cpu-aws-public-cached
     if: ${{ inputs.build-android-native == true }}
     timeout-minutes: 40
     steps:
@@ -153,6 +158,7 @@ jobs:
         # https://github.blog/changelog/2023-02-23-hardware-accelerated-android-virtualization-on-actions-windows-and-linux-larger-hosted-runners/
       - name: Enable KVM group perms
         run: |
+          if [ ! -e /dev/kvm ]; then echo "no /dev/kvm, skipping"; exit 0; fi
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
