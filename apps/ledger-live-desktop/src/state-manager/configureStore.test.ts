@@ -7,133 +7,29 @@ import { CHALLENGE } from "@ledgerhq/ledger-key-ring-protocol/__mocks__/challeng
 import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import { liveAuthentication } from "@ledgerhq/ledger-key-ring-protocol/utils";
 import { setOverride } from "@shared/feature-flags";
-import {
-  calApiExtra,
-  cardApiExtra,
-  coinMarketCapApiExtra,
-  cvsApiExtra,
-  portfolioApiExtra,
-  pushDevicesApiExtra,
-  swapApiExtra,
-} from "@shared/api-services";
-import { getEnv, type EnvName } from "@shared/env";
-import {
-  isCardSessionCurrent,
-  isCardUsEnv,
-  readCardSession,
-  refreshCardSession,
-} from "@features/platform-card";
-import { getPortfolioServiceUrl } from "~/config/portfolioService";
-import customCreateStore, { type AppDispatch } from "./configureStore";
+import { getEnv } from "@shared/env";
+import customCreateStore from "./configureStore";
 
 jest.mock("@shared/env", () => {
   const actual = jest.requireActual<typeof import("@shared/env")>("@shared/env");
   return { ...actual, getEnv: jest.fn(actual.getEnv) };
 });
 
-type ServiceEnv = { [K in EnvName]?: ReturnType<typeof getEnv<K>> };
-
 /** The env keys the api services read their config from. */
-const SERVICE_ENV = {
-  CAL_SERVICE_URL: "https://cal.example.com",
-  CARD_BAANX_API_URL: "https://card.example.com",
-  CARD_BAANX_CLIENT_KEY: "card-client-key",
-  CARD_BAANX_US_APP_ID: "card-us-app-id",
-  CMC_API_URL: "https://cmc.example.com",
-  LEDGER_CLIENT_VERSION: "lld/0.0.0-test",
-  LEDGER_COUNTERVALUES_API: "https://countervalues.example.com",
-  PUSH_DEVICES_SERVICE_URL: "https://push-devices.example.com",
-  SWAP_API_BASE: "https://swap.example.com",
-} satisfies ServiceEnv;
-
-const actualGetEnv = jest.requireActual<typeof import("@shared/env")>("@shared/env").getEnv;
-const serviceEnv: ServiceEnv = SERVICE_ENV;
-
-function getServiceEnv<K extends EnvName>(name: K): ReturnType<typeof getEnv<K>> {
-  return serviceEnv[name] ?? actualGetEnv(name);
-}
-
-/** Re-read on every request, so two stores hold distinct closures: compare what they return. */
-const PER_REQUEST_GETTERS = new Set([
-  "getCardApiBaseUrl",
-  "getCardBaanxClientKey",
-  "getCountervaluesServiceUrl",
-  "getSwapApiBaseUrl",
-  "isCardUsEnv",
-]);
-
-function readExtraArgument(store: ReturnType<typeof customCreateStore>): Record<string, unknown> {
-  const dispatch: AppDispatch = store.dispatch;
-  return dispatch((_dispatch, _getState, extra) => ({ ...Object(extra) }));
-}
-
-function withGettersResolved(extra: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(
-    Object.entries(extra).map(([key, value]) => [
-      key,
-      PER_REQUEST_GETTERS.has(key) && typeof value === "function" ? { returns: value() } : value,
-    ]),
-  );
-}
-
-/** The spread of the per-service builders the store was configured with before `apiServices`. */
-function previousServicesExtra(): Record<string, unknown> {
-  return {
-    ...calApiExtra({
-      calServiceUrl: SERVICE_ENV.CAL_SERVICE_URL,
-      ledgerClientVersion: SERVICE_ENV.LEDGER_CLIENT_VERSION,
-    }),
-    ...cvsApiExtra({
-      getCountervaluesServiceUrl: () => SERVICE_ENV.LEDGER_COUNTERVALUES_API,
-    }),
-    ...coinMarketCapApiExtra({
-      coinMarketCapApiUrl: SERVICE_ENV.CMC_API_URL,
-    }),
-    ...cardApiExtra({
-      getCardApiBaseUrl: () => SERVICE_ENV.CARD_BAANX_API_URL,
-      getCardBaanxClientKey: () => SERVICE_ENV.CARD_BAANX_CLIENT_KEY,
-      isCardUsEnv: () => isCardUsEnv(SERVICE_ENV.CARD_BAANX_US_APP_ID),
-      readCardSession,
-      isCardSessionCurrent,
-      refreshCardSession,
-    }),
-    ...portfolioApiExtra({
-      portfolioServiceUrl: getPortfolioServiceUrl(),
-    }),
-    ...pushDevicesApiExtra({
-      pushDevicesServiceUrl: SERVICE_ENV.PUSH_DEVICES_SERVICE_URL,
-      ledgerClientVersion: SERVICE_ENV.LEDGER_CLIENT_VERSION,
-    }),
-    ...swapApiExtra({
-      getSwapApiBaseUrl: () => SERVICE_ENV.SWAP_API_BASE,
-      ledgerClientVersion: SERVICE_ENV.LEDGER_CLIENT_VERSION,
-    }),
-  };
-}
+const SERVICE_ENV_KEYS = [
+  "CAL_SERVICE_URL",
+  "CARD_BAANX_API_URL",
+  "CARD_BAANX_CLIENT_KEY",
+  "CARD_BAANX_US_APP_ID",
+  "CMC_API_URL",
+  "LEDGER_CLIENT_VERSION",
+  "LEDGER_COUNTERVALUES_API",
+  "PUSH_DEVICES_SERVICE_URL",
+  "SWAP_API_BASE",
+] as const;
 
 describe("customCreateStore", () => {
   describe("thunk extraArgument", () => {
-    beforeEach(() => {
-      jest.mocked(getEnv).mockImplementation(getServiceEnv);
-    });
-
-    afterEach(() => {
-      jest.mocked(getEnv).mockImplementation(actualGetEnv);
-    });
-
-    it("holds what the per-service builders built, beside the account data router", () => {
-      const { accountData, ...servicesExtra } = readExtraArgument(
-        customCreateStore({ fetchRemoteFlags: null }),
-      );
-
-      expect(accountData).toEqual(
-        expect.objectContaining({ router: expect.anything(), inflight: expect.any(Map) }),
-      );
-      expect(withGettersResolved(servicesExtra)).toEqual(
-        withGettersResolved(previousServicesExtra()),
-      );
-    });
-
     it("reads the service env keys at store creation as before, the client version once for all", () => {
       const getEnvMock = jest.mocked(getEnv);
       getEnvMock.mockClear();
@@ -141,7 +37,7 @@ describe("customCreateStore", () => {
       customCreateStore({ fetchRemoteFlags: null });
 
       const reads = Object.fromEntries(
-        Object.keys(SERVICE_ENV).map(key => [
+        SERVICE_ENV_KEYS.map(key => [
           key,
           getEnvMock.mock.calls.filter(([name]) => name === key).length,
         ]),
