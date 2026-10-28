@@ -429,20 +429,118 @@ test("a barrel in an internals location is allowed", () => {
   );
 });
 
-test("a barrel two levels below its entry is nested, on every platform", () => {
+test("a pure `export *` chain down the folders is allowed two levels deep, on every platform", () => {
+  assert.deepEqual(
+    barrelLocations({
+      "shared/thing/src/index.ts": 'export * from "./services";\nexport const version = 1;\n',
+      "shared/thing/src/services/index.ts": '// Each service.\nexport * from "./portfolio";\n',
+      "shared/thing/src/services/portfolio/index.ts": 'export * from "./api";\n',
+      "shared/thing/src/services/portfolio/index.native.ts": 'export * from "./api";\n',
+      "shared/thing/src/services/portfolio/index.web.ts": 'export * from "./api";\n',
+      "shared/thing/src/services/portfolio/api.ts": "export const api = 1;\n",
+    }),
+    [],
+  );
+});
+
+test("a pure `export *` chain down the folders is allowed three levels deep, through variants", () => {
   assert.deepEqual(
     barrelLocations({
       "shared/thing/src/index.ts": 'export * from "./components";\n',
-      "shared/thing/src/components/index.ts": 'export * from "./Card";\n',
-      "shared/thing/src/components/Card/index.ts": 'export * from "./Card";\n',
-      "shared/thing/src/components/Card/index.native.ts": 'export * from "./Card";\n',
-      "shared/thing/src/components/Card/index.web.ts": 'export * from "./Card";\n',
-      "shared/thing/src/components/Card/Card.ts": "export const Card = 1;\n",
+      "shared/thing/src/components/index.ts": 'export * from "./cards";\n',
+      "shared/thing/src/components/index.native.ts": 'export * from "./cards";\n',
+      "shared/thing/src/components/cards/index.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/cards/Card/index.native.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/cards/Card/index.web.ts": 'export * from "./Card";\n',
+      "shared/thing/src/components/cards/Card/Card.ts": "export const Card = 1;\n",
+    }),
+    [],
+  );
+});
+
+/**
+ * @param {Record<string, string>} files
+ * @returns {string[][]} each nested barrel, as [file, the module that breaks its chain]
+ */
+function brokenChains(files) {
+  return checkPackage(workspace(files), "shared/thing", {}, {}, {})
+    .filter(v => v.code === "nested-barrel")
+    .map(v => [v.file, /\((`[^)]*)\)/.exec(v.message)?.[1]]);
+}
+
+test("a middle module that is not pure `export *` down its folder breaks the chain", () => {
+  const card = {
+    "shared/thing/src/index.ts": 'export * from "./components";\n',
+    "shared/thing/src/components/Card/index.ts": 'export * from "./Card";\n',
+    "shared/thing/src/components/Card/index.native.ts": 'export * from "./Card";\n',
+    "shared/thing/src/components/Card/Card.ts": "export const Card = 1;\n",
+    "shared/thing/src/components/Row.ts": "export const Row = 1;\n",
+    "shared/thing/src/shared.ts": "export const shared = 1;\n",
+  };
+  const middle = "shared/thing/src/components/index.ts";
+  for (const [statement, reason] of [
+    ['export { Row } from "./Row";', "has a named export"],
+    ['export * as rows from "./Row";', "renames with `export * as`"],
+    ["export const Row = 1;", "holds code"],
+    ['export * from "../shared";', "re-exports `../shared`, outside its folder"],
+  ]) {
+    const breaker = `\`${middle}\` line 2 ${reason}`;
+    assert.deepEqual(
+      brokenChains({ ...card, [middle]: `export * from "./Card";\n${statement}\n` }),
+      [
+        ["shared/thing/src/components/Card/index.native.ts", breaker],
+        ["shared/thing/src/components/Card/index.ts", breaker],
+      ],
+      statement,
+    );
+  }
+});
+
+test("a plain module with code breaks the chain, and the first breaker is named", () => {
+  assert.deepEqual(
+    brokenChains({
+      "shared/thing/src/index.ts": 'export * from "./api";\n',
+      "shared/thing/src/api.ts": 'export * from "./client";\nexport const api = 1;\n',
+      "shared/thing/src/client/index.ts": 'export * from "./http";\nexport const c = 1;\n',
+      "shared/thing/src/client/http/index.ts": 'export * from "./http";\n',
+      "shared/thing/src/client/http/http.ts": "export const http = 1;\n",
+    }),
+    [["shared/thing/src/client/http/index.ts", "`shared/thing/src/api.ts` line 2 holds code"]],
+  );
+});
+
+test("a deep barrel that breaks its own chain names itself", () => {
+  assert.deepEqual(
+    brokenChains({
+      "shared/thing/src/index.ts": 'export * from "./services";\n',
+      "shared/thing/src/services/index.ts": 'export * from "./portfolio";\n',
+      "shared/thing/src/services/portfolio/index.ts": 'export * from "../../shared";\n',
+      "shared/thing/src/shared.ts": "export const shared = 1;\n",
     }),
     [
-      ["shared/thing/src/components/Card/index.native.ts", "nested-barrel"],
-      ["shared/thing/src/components/Card/index.ts", "nested-barrel"],
-      ["shared/thing/src/components/Card/index.web.ts", "nested-barrel"],
+      [
+        "shared/thing/src/services/portfolio/index.ts",
+        "`shared/thing/src/services/portfolio/index.ts` line 1 re-exports `../../shared`, outside its folder",
+      ],
+    ],
+  );
+});
+
+test("a pure chain does not excuse another, broken chain to the same barrel", () => {
+  assert.deepEqual(
+    brokenChains({
+      "shared/thing/src/index.ts": 'export * from "./services";\n',
+      "shared/thing/src/services/index.ts": 'export * from "./portfolio";\n',
+      "shared/thing/src/services/index.native.ts":
+        'export * from "./portfolio";\nexport const native = 1;\n',
+      "shared/thing/src/services/portfolio/index.ts": 'export * from "./api";\n',
+      "shared/thing/src/services/portfolio/api.ts": "export const api = 1;\n",
+    }),
+    [
+      [
+        "shared/thing/src/services/portfolio/index.ts",
+        "`shared/thing/src/services/index.native.ts` line 2 holds code",
+      ],
     ],
   );
 });
@@ -450,7 +548,9 @@ test("a barrel two levels below its entry is nested, on every platform", () => {
 test("an entry reached from another entry counts from itself", () => {
   const files = {
     "shared/thing/src/index.ts": 'export * from "./legacy";\n',
-    "shared/thing/src/legacy/index.ts": 'export * from "./store";\n',
+    // A named export breaks the chain, so only the `./legacy` entry allows `store/index.ts`.
+    "shared/thing/src/legacy/index.ts": 'export * from "./store";\nexport { a } from "./a";\n',
+    "shared/thing/src/legacy/a.ts": "export const a = 1;\n",
     "shared/thing/src/legacy/store/index.ts": 'export * from "./slice";\n',
     "shared/thing/src/legacy/store/slice.ts": "export const slice = 1;\n",
   };

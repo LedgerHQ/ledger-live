@@ -3,6 +3,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
+  chainBreak,
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
@@ -352,6 +353,39 @@ test("a `.ts` module is parsed without JSX, so a type assertion is not a tag", (
   );
 });
 
+test("chainBreak allows `export *` lines down the folder, and comments", () => {
+  const source = [
+    "// The portfolio face.",
+    'export * from "./api";',
+    'export type * from "./schema/types";',
+    'export * from "./a/../b";',
+    "/* trailing */",
+  ].join("\n");
+  assert.equal(chainBreak(source), undefined);
+  assert.equal(chainBreak(""), undefined);
+});
+
+test("chainBreak names a named export, a rename, code and a path outside the folder", () => {
+  for (const [statement, reason] of [
+    ['export { a } from "./a";', "has a named export"],
+    ['export { default } from "./a";', "has a named export"],
+    ["export { a };", "has a named export"],
+    ['export * as ns from "./a";', "renames with `export * as`"],
+    ["export const a = 1;", "holds code"],
+    ['import { a } from "./a";', "holds code"],
+    ["export default 1;", "holds code"],
+    ['export * from "../shared";', "re-exports `../shared`, outside its folder"],
+    ['export * from "./a/../../b";', "re-exports `./a/../../b`, outside its folder"],
+    ['export * from "@shared/thing";', "re-exports `@shared/thing`, outside its folder"],
+  ]) {
+    assert.deepEqual(
+      chainBreak(['export * from "./ok";', statement].join("\n")),
+      { line: 2, reason },
+      statement,
+    );
+  }
+});
+
 test("checkBarrelLocation allows an entry, a first-level barrel and an internals barrel", () => {
   for (const [file, depth] of [
     ["shared/thing/src/index.ts", 0],
@@ -364,16 +398,40 @@ test("checkBarrelLocation allows an entry, a first-level barrel and an internals
   }
 });
 
+test("checkBarrelLocation allows a deeper barrel no module breaks the chain to", () => {
+  for (const depth of [2, 3]) {
+    assert.deepEqual(
+      checkBarrelLocation("shared/thing", "shared/thing/src/services/portfolio/index.ts", depth),
+      [],
+    );
+  }
+});
+
 test("checkBarrelLocation reports an orphan and a nested barrel, with the package root", () => {
+  const breaker = { file: "shared/thing/src/hooks/index.ts", line: 2, reason: "holds code" };
   for (const [depth, code] of [
     [undefined, "orphan-barrel"],
     [2, "nested-barrel"],
   ]) {
-    const found = checkBarrelLocation("shared/thing", "shared/thing/src/hooks/index.ts", depth);
+    const found = checkBarrelLocation(
+      "shared/thing",
+      "shared/thing/src/hooks/useThing/index.ts",
+      depth,
+      breaker,
+    );
     assert.deepEqual(
       found.map(v => v.code),
       [code],
     );
     assert.match(found[0].message, /^shared\/thing: /);
   }
+});
+
+test("a nested barrel names the module that breaks its chain", () => {
+  const [found] = checkBarrelLocation("shared/thing", "shared/thing/src/a/b/index.ts", 2, {
+    file: "shared/thing/src/a/index.ts",
+    line: 3,
+    reason: "has a named export",
+  });
+  assert.match(found.message, /\(`shared\/thing\/src\/a\/index\.ts` line 3 has a named export\)/);
 });

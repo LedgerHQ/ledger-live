@@ -223,6 +223,16 @@ function checkBarrel(source, options = {}) {
 }
 
 /**
+ * @param {string} source raw file contents
+ * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
+ * @returns {ts.SourceFile}
+ */
+function parse(source, file) {
+  const scriptKind = /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  return ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, scriptKind);
+}
+
+/**
  * Every top-level re-export declaration of a module, read with the TypeScript parser alone, so
  * export-looking text in a string, a template, a pattern or JSX is never taken for a statement.
  *
@@ -231,8 +241,7 @@ function checkBarrel(source, options = {}) {
  * @returns {Array<{ line: number, kind: "star" | "namespace" | "named", isDefault: boolean, specifier: string, text: string }>}
  */
 function reexportsOf(source, file) {
-  const scriptKind = /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
-  const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, scriptKind);
+  const sourceFile = parse(source, file);
   const lines = source.split("\n");
   const found = [];
   for (const statement of sourceFile.statements) {
@@ -316,9 +325,45 @@ function checkReachedModule(source, options = {}, file = "module.tsx") {
   return violations;
 }
 
+/**
+ * Why a module cannot sit in a pure `export *` chain down the folder tree, or undefined when it
+ * holds `export * from "./x"` lines alone, each naming a path inside its own folder.
+ *
+ * @param {string} source raw file contents
+ * @param {string} [file]
+ * @returns {{ line: number, reason: string } | undefined}
+ */
+function chainBreak(source, file = "module.tsx") {
+  const sourceFile = parse(source, file);
+  for (const statement of sourceFile.statements) {
+    if (ts.isEmptyStatement(statement)) continue;
+    const reason = chainBreakReason(statement);
+    if (!reason) continue;
+    const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
+    return { line, reason };
+  }
+  return undefined;
+}
+
+/**
+ * @param {ts.Statement} statement
+ * @returns {string | undefined}
+ */
+function chainBreakReason(statement) {
+  if (!ts.isExportDeclaration(statement)) return "holds code";
+  const clause = statement.exportClause;
+  if (clause && ts.isNamespaceExport(clause)) return "renames with `export * as`";
+  if (clause || !statement.moduleSpecifier) return "has a named export";
+  const specifier = ts.isStringLiteral(statement.moduleSpecifier)
+    ? statement.moduleSpecifier.text
+    : "";
+  const inside = specifier.startsWith("./") && !path.posix.normalize(specifier).startsWith("..");
+  return inside ? undefined : `re-exports \`${specifier}\`, outside its folder`;
+}
+
 // Where an `index.*` under src/ may sit: as an entry (src/index.* or a package.json#exports
-// target), one `export *` level below an entry, or in an internals location. Each code is worded
-// once for the violation, the CLI hint and the waivers.
+// target), below an entry through a pure `export *` chain down the folders, or in an internals
+// location. Each code is worded once for the violation, the CLI hint and the waivers.
 const BARREL_LOCATION = {
   "orphan-barrel": {
     rule: "No entry reaches this barrel through `export *`",
@@ -328,8 +373,13 @@ const BARREL_LOCATION = {
       "or move the folder under internals/. Expose only code another package imports",
   },
   "nested-barrel": {
-    rule: "This barrel is reached more than one `export *` level below its entry",
-    fix: "re-export the files from the first-level barrel instead of chaining barrels",
+    rule:
+      "This barrel is reached more than one `export *` level below its entry, through a chain " +
+      "that is not pure `export *` down the folders",
+    fix:
+      'make every module from below the entry to this barrel hold only `export * from "./x"` ' +
+      "lines naming paths inside its own folder (a named export, an `export * as`, code or a " +
+      "`../` path breaks the chain), or re-export the files from a barrel nearer the entry",
   },
 };
 
@@ -340,18 +390,22 @@ const BARREL_LOCATION = {
  * @param {string} file posix-style path of the `index.*`, from the repo root
  * @param {number | undefined} depth barrels from its nearest entry to it, itself included: 0 for
  *   an entry, undefined when no entry reaches it
+ * @param {{ file: string, line: number, reason: string }} [breaker] for a barrel more than one
+ *   level deep, a module that breaks a chain to it; undefined when every chain to it is pure
  * @returns {Violation[]}
  */
-function checkBarrelLocation(projectRoot, file, depth) {
+function checkBarrelLocation(projectRoot, file, depth, breaker) {
   if (isInternalSpecifier(path.posix.dirname(file.slice(projectRoot.length + 1)))) return [];
-  if (depth !== undefined && depth <= 1) return [];
+  if (depth !== undefined && (depth <= 1 || !breaker)) return [];
   const code = depth === undefined ? "orphan-barrel" : "nested-barrel";
   const { rule, fix } = BARREL_LOCATION[code];
-  return [{ line: 1, code, message: `${projectRoot}: ${rule}. Fix: ${fix}`, text: "" }];
+  const brokenAt = breaker ? ` (\`${breaker.file}\` line ${breaker.line} ${breaker.reason})` : "";
+  return [{ line: 1, code, message: `${projectRoot}: ${rule}${brokenAt}. Fix: ${fix}`, text: "" }];
 }
 
 module.exports = {
   BARREL_LOCATION,
+  chainBreak,
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,

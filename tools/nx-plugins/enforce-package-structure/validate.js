@@ -14,6 +14,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const {
   BARREL_LOCATION,
+  chainBreak,
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
@@ -181,36 +182,93 @@ function indexVariants(file) {
 }
 
 /**
- * How many barrels each file sits below its nearest entry, following relative `export *` the way
- * the bundlers resolve it. An entry is 0, so an entry reached from another entry counts from
- * itself; a barrel an entry reaches, directly or through plain modules, is 1.
+ * @param {string} file absolute path
+ * @returns {string | undefined}
+ */
+function readSource(file) {
+  try {
+    return fs.readFileSync(file, "utf8");
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * The modules a file's relative `export *` loads, platform variants of a barrel included.
+ *
+ * @param {string} file absolute path
+ * @param {string} source
+ * @returns {string[]} absolute paths
+ */
+function starReexportedModules(file, source) {
+  return starReexportTargets(source, file).flatMap(specifier =>
+    resolveModule(file, specifier).flatMap(indexVariants),
+  );
+}
+
+/**
+ * How each file sits below its nearest entry, following relative `export *` the way the bundlers
+ * resolve it. Its depth counts barrels: an entry is 0, so an entry reached from another entry
+ * counts from itself; a barrel an entry reaches, directly or through plain modules, is 1. Below
+ * that, its breaker is a module, the entry excluded and itself included, that is not pure
+ * `export *` down its folder (see chainBreak) on some chain to it.
  *
  * @param {string[]} entries absolute paths
- * @returns {Map<string, number>} absolute path to depth, for the files an entry reaches
+ * @returns {Map<string, { depth: number, breaker?: { file: string, line: number, reason: string } }>}
+ *   absolute path to its place, for the files an entry reaches
  */
-function barrelDepths(entries) {
+function barrelReach(entries) {
   const entrySet = new Set(entries.flatMap(indexVariants));
+  const breaks = new Map();
+  const breakOf = file => {
+    if (!breaks.has(file)) {
+      const source = readSource(file);
+      breaks.set(file, source === undefined ? undefined : chainBreak(source, file));
+    }
+    return breaks.get(file);
+  };
+
   const depths = new Map([...entrySet].map(file => [file, 0]));
   const queue = [...entrySet];
   while (queue.length > 0) {
     const file = queue.shift();
-    let source;
-    try {
-      source = fs.readFileSync(file, "utf8");
-    } catch {
-      continue;
-    }
-    for (const specifier of starReexportTargets(source, file)) {
-      for (const target of resolveModule(file, specifier).flatMap(indexVariants)) {
-        if (entrySet.has(target)) continue;
-        const depth = depths.get(file) + (isBarrelFile(path.basename(target)) ? 1 : 0);
-        if (depth >= (depths.get(target) ?? Infinity)) continue;
-        depths.set(target, depth);
-        queue.push(target);
-      }
+    const source = readSource(file);
+    if (source === undefined) continue;
+    for (const target of starReexportedModules(file, source)) {
+      if (entrySet.has(target)) continue;
+      const depth = depths.get(file) + (isBarrelFile(path.basename(target)) ? 1 : 0);
+      if (depth >= (depths.get(target) ?? Infinity)) continue;
+      depths.set(target, depth);
+      queue.push(target);
     }
   }
-  return depths;
+
+  // A module that breaks the chain taints every module it leads to, which pass it on. An entry
+  // breaks nothing. A module is walked once clean and at most once more when tainted.
+  const tainted = new Map();
+  const seen = new Set(entrySet);
+  const chainQueue = [...entrySet];
+  while (chainQueue.length > 0) {
+    const file = chainQueue.shift();
+    const source = readSource(file);
+    if (source === undefined) continue;
+    const passed = entrySet.has(file) ? undefined : (tainted.get(file) ?? (breakOf(file) && file));
+    for (const target of starReexportedModules(file, source)) {
+      if (entrySet.has(target)) continue;
+      const taints = passed && !tainted.has(target);
+      if (taints) tainted.set(target, passed);
+      if (!taints && seen.has(target)) continue;
+      seen.add(target);
+      chainQueue.push(target);
+    }
+  }
+
+  const reach = new Map();
+  for (const [file, depth] of depths) {
+    const at = depth > 1 ? (tainted.get(file) ?? (breakOf(file) && file)) : undefined;
+    reach.set(file, { depth, breaker: at ? { file: at, ...breakOf(at) } : undefined });
+  }
+  return reach;
 }
 
 /**
@@ -283,14 +341,17 @@ function checkPackage(
     }
 
     const sourceRoot = path.join(packageDir, "src");
-    const depths = barrelDepths([
+    const toRelative = file => path.relative(workspaceRoot, file).split(path.sep).join("/");
+    const reach = barrelReach([
       ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
       ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
     ]);
     for (const barrel of barrels) {
-      const relative = path.relative(workspaceRoot, barrel).split(path.sep).join("/");
+      const relative = toRelative(barrel);
       if (Object.hasOwn(intermediateBarrelWaivers, relative)) continue;
-      for (const violation of checkBarrelLocation(projectRoot, relative, depths.get(barrel))) {
+      const { depth, breaker } = reach.get(barrel) ?? {};
+      const at = breaker && { ...breaker, file: toRelative(breaker.file) };
+      for (const violation of checkBarrelLocation(projectRoot, relative, depth, at)) {
         found.push({ file: relative, ...violation });
       }
     }

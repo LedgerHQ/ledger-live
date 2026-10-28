@@ -46,24 +46,32 @@ Under `src/`, an `index.*` (platform variants included) is allowed in three plac
 
 1. **An entry**: `src/index.*`, or the target of a `package.json#exports` entry. Test support
    entries count.
-2. **One level below an entry**: an entry reaches it through `export * from "./dir"`, directly or
-   through plain modules. An entry reached from another entry counts from itself, so
-   `jest.native.ts` re-exporting `index.native.ts` adds no level.
+2. **Below an entry through a pure `export *` chain down the folders**: an entry reaches it through
+   `export * from "./dir"`. One level below the entry, directly or through plain modules, any
+   chain is fine. Deeper, every module of every chain to it, from below the entry to the barrel
+   itself, holds only `export * from "./x"` lines naming paths inside its own folder. An entry
+   reached from another entry counts from itself, so `jest.native.ts` re-exporting
+   `index.native.ts` adds no level, and the entry may hold whatever the barrel rules allow it.
 3. **An internals location**: `internals/`, as defined below.
 
 ```text
 src/
-├── index.ts                    # ✅ entry: export * from "./hooks";
-├── hooks/index.ts              # ✅ one level below the entry
-├── hooks/useThing/index.ts     # ❌ nested-barrel: entry → hooks → hooks/useThing
-├── internals/index.ts          # ✅ internals location
-└── Row/index.ts                # ❌ orphan-barrel: imported by view.ts, re-exported by no entry
+├── index.ts                        # ✅ entry: export * from "./services"; export * from "./hooks";
+├── services/index.ts               # ✅ one level below: export * from "./portfolio";
+├── services/portfolio/index.ts     # ✅ pure chain: entry → services → services/portfolio
+├── hooks/index.ts                  # ✅ one level below, but breaks the chain:
+│                                   #    export * from "./useThing"; export { a } from "./a";
+├── hooks/useThing/index.ts         # ❌ nested-barrel: hooks/index.ts has a named export
+├── internals/index.ts              # ✅ internals location
+└── Row/index.ts                    # ❌ orphan-barrel: imported by view.ts, re-exported by no entry
 ```
 
 **Why.** A barrel only earns its place as the public face of a package or of one part of it. An
 orphan is an indirection no consumer sees, and it outlives its entry: drop `"./state"` from
-`exports` and `state/index.ts` stays behind as an orphan, so the same check catches it. A chain of
-barrels hides where a name comes from.
+`exports` and `state/index.ts` stays behind as an orphan, so the same check catches it. Depth alone
+hides nothing when each sub-domain has its own face and the folders show the chain. A middle
+barrel that filters, renames or adds code does: the name a consumer imports is no longer the name
+the folders lead to.
 
 **Fix an orphan** (`orphan-barrel`) by asking whether another package uses what it groups:
 
@@ -71,9 +79,12 @@ barrels hides where a name comes from.
 - **No**: delete the barrel and import the files directly, or move the folder under `internals/`.
   Expose only code another package imports.
 
-**Fix a nested barrel** (`nested-barrel`) by re-exporting its files from the first-level barrel
-instead of chaining barrels. An `index.tsx` that holds code is a module, not a barrel: rename it
-after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
+**Fix a nested barrel** (`nested-barrel`) at the module the violation names. A chain breaks on a
+named export (`export { a } from "./a"`, a default re-export included), a rename
+(`export * as ns from "./a"`), code (a declaration, an import, `export default`), or a path outside
+the module's folder (`../`, another package). Make that module pure `export *` down its folder, or
+re-export the files from a barrel nearer the entry. An `index.tsx` that holds code is a module,
+not a barrel: rename it after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
 
 Purity of what a barrel reaches stays with the rules above. The debt found when the check landed
 sits in
