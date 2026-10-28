@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-near
 
+## 0.4.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`5b7bcf7`](https://github.com/LedgerHQ/ledger-live/commit/5b7bcf7b75d380d098eb990220383a02103e4319)]:
+  - @ledgerhq/live-common@38.5.0-next.1
+
 ## 0.4.2-next.0
 
 ### Patch Changes

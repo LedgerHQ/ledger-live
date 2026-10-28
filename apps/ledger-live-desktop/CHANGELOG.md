@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 4.26.0-next.1
+
+### Minor Changes
+
+- [#24014](https://github.com/LedgerHQ/ledger-live/pull/24014) [`5b7bcf7`](https://github.com/LedgerHQ/ledger-live/commit/5b7bcf7b75d380d098eb990220383a02103e4319) Thanks [@Justkant](https://github.com/Justkant)! - Log manifest domain check violations, rejected `goToURL` fallbacks and rejected `loadURL` calls to the exported logs, once per distinct violation. Add `resolveInitialURL`, which returns the initial URL along with the `goToURL` it rejected
+
+### Patch Changes
+
+- Updated dependencies [[`5b7bcf7`](https://github.com/LedgerHQ/ledger-live/commit/5b7bcf7b75d380d098eb990220383a02103e4319)]:
+  - @ledgerhq/live-common@38.5.0-next.1
+  - @ledgerhq/asset-detail@0.12.2-next.1
+  - @ledgerhq/live-dmk-desktop@0.26.0-next.1
+  - @ledgerhq/live-send@0.1.5-next.1
+
 ## 4.26.0-next.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # live-mobile
 
+## 4.26.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-send@0.1.5-next.1
+
 ## 4.26.0-next.0
 
 ### Minor Changes
