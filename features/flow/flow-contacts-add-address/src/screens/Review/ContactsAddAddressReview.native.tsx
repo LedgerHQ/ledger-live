@@ -2,6 +2,7 @@ import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useAddAddressReviewLabels } from "../../copy/useAddAddressReviewLabels";
+import type { ContactsAddAddressReviewProps } from "./types";
 
 function ReviewRow({
   label,
@@ -24,20 +25,15 @@ function ReviewRow({
   );
 }
 
-export type ContactsAddAddressReviewNativeProps = Readonly<{
-  address: string;
-  currency: string;
-  network: string;
-  name: string;
-  bottomOffset?: number;
-  onContinue: () => void;
-}>;
+type ContactsAddAddressReviewNativeProps = ContactsAddAddressReviewProps &
+  Readonly<{
+    bottomOffset?: number;
+  }>;
 
 export function ContactsAddAddressReview({
-  address,
-  currency,
-  network,
-  name,
+  addressEntry,
+  addressLabel,
+  displayContext,
   bottomOffset = 0,
   onContinue,
 }: ContactsAddAddressReviewNativeProps): React.JSX.Element {
@@ -54,22 +50,22 @@ export function ContactsAddAddressReview({
           <ReviewRow
             label={labels.addressLabel}
             testID="contacts-add-address-review-address"
-            value={address}
+            value={addressEntry.resolvedAddress}
           />
           <ReviewRow
             label={labels.currencyLabel}
             testID="contacts-add-address-review-currency"
-            value={currency}
+            value={displayContext.assetDisplayName}
           />
           <ReviewRow
             label={labels.networkLabel}
             testID="contacts-add-address-review-network"
-            value={network}
+            value={displayContext.network.displayName}
           />
           <ReviewRow
             label={labels.nameLabel}
             testID="contacts-add-address-review-name"
-            value={name}
+            value={addressLabel.label}
           />
         </Box>
         <Button
