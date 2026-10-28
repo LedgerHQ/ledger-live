@@ -1,14 +1,13 @@
 import { by, expect as detoxExpect, web } from "detox";
 import type { WebElement, WebMatcher } from "detox/detox";
-import { isAndroid } from "@e2e/helpers/commonHelpers";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
 import type { ElementHandle } from "./elementHandle";
 import { waitHardTimeout, withHardTimeout } from "./hardTimeout";
 
-/** Android returns some script results wrapped as `{ result }`. */
-const unwrapScriptResult = (value: unknown): unknown =>
-  value != null && typeof value === "object" && "result" in value ? value.result : value;
+/** Reads a `runScript` result as text: Android returns some results wrapped as `{ result }`. */
+const scriptText = (value: unknown): string =>
+  String(value != null && typeof value === "object" && "result" in value ? value.result : value);
 
 /**
  * An element inside a webview (Live App), declared once with its match strategy.
@@ -49,7 +48,7 @@ export class WebHandle implements ElementHandle {
     );
   }
 
-  /** Waits for the element, then until it is enabled (`aria-disabled` on Android, `disabled` on iOS). */
+  /** Waits for the element, then until it has neither `disabled` nor `aria-disabled="true"`. */
   async waitEnabled(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
     await withHardTimeout(
@@ -94,10 +93,11 @@ export class WebHandle implements ElementHandle {
   /** Waits for the element, then returns its trimmed text. */
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
-    return withHardTimeout(
+    const text = await withHardTimeout(
       this.raw.runScript(el => (el.innerText || el.textContent || "").trim()),
       TIMEOUT.medium,
     );
+    return scriptText(text);
   }
 
   /** Waits for the input, then returns its `value`. */
@@ -107,16 +107,15 @@ export class WebHandle implements ElementHandle {
       this.raw.runScript((el: HTMLInputElement) => el.value),
       TIMEOUT.medium,
     );
-    return String(unwrapScriptResult(value));
+    return scriptText(value);
   }
 
   private async isEnabled(): Promise<boolean> {
-    const state = await this.raw.runScript(
-      (el: HTMLButtonElement | HTMLInputElement, android: boolean) =>
-        android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString(),
-      [isAndroid()],
+    // Returned as a string: the same check and result type on both platforms.
+    const disabled = await this.raw.runScript((el: HTMLButtonElement | HTMLInputElement) =>
+      String(el.disabled === true || el.getAttribute("aria-disabled") === "true"),
     );
-    return typeof state === "string" ? !state.includes("disabled") : Boolean(state);
+    return scriptText(disabled) !== "true";
   }
 }
 
@@ -138,7 +137,7 @@ export async function waitForWebviewUrl(
   return withHardTimeout(
     retryUntilTimeout(
       async () => {
-        const url = String(await readUrl("body").catch(() => readUrl("html")));
+        const url = scriptText(await readUrl("body").catch(() => readUrl("html")));
         if (!url.toLowerCase().includes(fragment.toLowerCase())) {
           throw new Error(`Webview URL ${url} does not contain "${fragment}"`);
         }
