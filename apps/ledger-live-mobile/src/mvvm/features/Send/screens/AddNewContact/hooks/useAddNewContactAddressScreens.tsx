@@ -24,8 +24,9 @@ export type AddNewContactAddressScreens = Readonly<{
   review: QueuedDrawerFlowScreen;
 }>;
 
-// Send prefills the address, so the flow never shows the address entry step.
-function ignoreAddressEntry(): void {}
+function ignoreAddressEntry(): void {
+  // Send prefills the address, so the flow never shows the address entry step.
+}
 
 export function useAddNewContactAddressScreens({
   addressPhase,

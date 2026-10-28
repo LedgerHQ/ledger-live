@@ -27,8 +27,9 @@ function resolveDrawerStep(
   }
 }
 
-// The contact detail drawer adds addresses manually, so the flow never reaches the review step.
-function ignoreReview(): void {}
+function ignoreReview(): void {
+  // The contact detail drawer adds addresses manually, so the flow never reaches the review step.
+}
 
 export function useContactsAddAddressFlowDrawerViewModel({
   state,
