@@ -173,7 +173,7 @@ describe("mobile store", () => {
       jest.dontMock("@domain/api-account-data");
     });
 
-    it("equals the per-service spread it replaces", () => {
+    it("equals the per-service spread it replaces, for env values without whitespace", () => {
       const { store } = require("./configureStore") as typeof import("./configureStore");
       const { getEnv } = require("@shared/env") as typeof import("@shared/env");
       const services = require("@shared/api-services") as typeof import("@shared/api-services");
@@ -242,7 +242,72 @@ describe("mobile store", () => {
       );
     });
   });
+
+  describe("env reads at store creation", () => {
+    let recording = false;
+    const reads: string[] = [];
+
+    beforeEach(() => {
+      jest.resetModules();
+      reads.length = 0;
+      jest.doMock("@shared/env", () => {
+        const actual = jest.requireActual<typeof import("@shared/env")>("@shared/env");
+        return {
+          ...actual,
+          getEnv: (name: Parameters<typeof actual.getEnv>[0]) => {
+            if (recording) reads.push(name);
+            return actual.getEnv(name);
+          },
+        };
+      });
+      jest.doMock("@reduxjs/toolkit", () => {
+        const actual = jest.requireActual<typeof import("@reduxjs/toolkit")>("@reduxjs/toolkit");
+        return {
+          ...actual,
+          configureStore: (options: Parameters<typeof actual.configureStore>[0]) => {
+            recording = options.reducer === require("~/reducers").default;
+            try {
+              return actual.configureStore(options);
+            } finally {
+              recording = false;
+            }
+          },
+        };
+      });
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    afterEach(() => {
+      jest.dontMock("@shared/env");
+      jest.dontMock("@reduxjs/toolkit");
+    });
+
+    it("reads each env var as the per-service spread did, and the client version once", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+
+      expect(store).toBeDefined();
+      expect(countBy(reads)).toEqual(ENV_READS_AT_STORE_CREATION);
+    });
+  });
 });
+
+/** The per-service spread read `LEDGER_CLIENT_VERSION` three times; `CommonConfig` reads it once. */
+const ENV_READS_AT_STORE_CREATION = {
+  CAL_SERVICE_URL: 1,
+  CMC_API_URL: 1,
+  FEATURE_FLAGS: 1,
+  LEDGER_CLIENT_VERSION: 1,
+  LEDGER_COUNTERVALUES_API: 1,
+  PUSH_DEVICES_SERVICE_URL: 2,
+  SYNC_MAX_CONCURRENT: 1,
+};
+
+function countBy(names: readonly string[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const name of names) counts[name] = (counts[name] ?? 0) + 1;
+  return counts;
+}
 
 const GETTER_KEYS = new Set([
   "getCardApiBaseUrl",
