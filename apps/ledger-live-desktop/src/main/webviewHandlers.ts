@@ -162,11 +162,34 @@ export function setupWebviewHandlers(supportedSchemes: string[]) {
   // We attach on session-creation (rather than on `webview-dom-ready`) so the
   // handler is in place BEFORE the guest's first navigation request returns,
   // which is when the top-level document's CSP is parsed by Chromium.
+  // The dev renderer is served from localhost while the coin APIs are not, so
+  // every call is cross-origin and Chromium enforces CORS. Some APIs reject our
+  // extra request headers in the preflight (`x-grpc-web` on the Sui gRPC-web
+  // proxy, `x-ledger-client-version` on the Desmos LCD), which fails the whole
+  // sync. Electron keeps a single handler per webRequest event per session, so
+  // relax the preflight here rather than in a second registration.
+  const relaxPreflightResponse = (
+    responseHeaders: Record<string, string[]> | undefined,
+  ): Record<string, string[]> => {
+    const headers: Record<string, string[]> = { ...responseHeaders };
+    const existingKey = Object.keys(headers).find(
+      key => key.toLowerCase() === "access-control-allow-headers",
+    );
+    if (existingKey) delete headers[existingKey];
+    headers["Access-Control-Allow-Headers"] = ["*"];
+    return headers;
+  };
+
   const hardenWebviewSession = (s: Electron.Session) => {
     if (hardenedSessions.has(s)) return;
     hardenedSessions.add(s);
 
     s.webRequest.onHeadersReceived((details, callback) => {
+      if (details.method === "OPTIONS") {
+        callback({ responseHeaders: relaxPreflightResponse(details.responseHeaders) });
+        return;
+      }
+
       // Only harden responses loaded by a guest <webview> to avoid affecting
       // the host renderer or unrelated BrowserViews. `getType()` returns
       // "webview" for guest WebContents.
