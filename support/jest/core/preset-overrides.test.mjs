@@ -3,6 +3,7 @@
 // key the overrides no longer set throws too.
 
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -11,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const PRESET_OVERRIDES = require("./preset-overrides");
-const { ALLOWLIST_FIX, ESM_FIX, PRESET_KEYS, presetFactories } = require(".");
+const { ALLOWLIST_FIX, ESM_FIX, PRESET_KEYS, PROJECT_FACTORIES, presetFactories } = require(".");
 // Loading the presets registers their factories.
 const PRESETS = ["shared", "features-flow", "libs-coin", "devtools"].map(name => [
   name,
@@ -163,7 +164,8 @@ test("projects accept only what a preset project factory returned", () => {
   assert.doesNotThrow(() => createLibsCoinJestConfig({ projects: [unit] }));
 
   const notBuilt =
-    "projects[1] is not built by a preset project factory: use createLibsCoinJestProject().";
+    "projects[1] is not built by a preset project factory: " +
+    "use createLibsCoinJestProject() from @support/jest/libs-coin.";
   assert.throws(() => createLibsCoinJestConfig({ projects: [unit, { displayName: "raw" }] }), {
     message: `createLibsCoinJestConfig(): ${notBuilt}`,
   });
@@ -177,7 +179,32 @@ test("projects accept only what a preset project factory returned", () => {
   });
 });
 
-test("the registry marks the project factories", () => {
-  const projectFactories = FACTORIES.filter(({ project }) => project).map(({ name }) => name);
-  assert.deepEqual(projectFactories, ["createLibsCoinJestProject"]);
+// A fresh node process loads one preset only, so no other preset registered its factories.
+for (const [preset, factory] of [
+  ["shared", "createSharedJestConfig"],
+  ["features-flow", "createFlowJestConfig"],
+  ["devtools", "createWebJestConfig"],
+]) {
+  test(`a projects error names the project factory and its module when only ${preset} loaded`, () => {
+    const script = `
+      try { require(${JSON.stringify(path.join(repository, "support/jest", preset))})
+        .${factory}({ projects: [{ displayName: "raw" }] }); }
+      catch (error) { process.stdout.write(error.message); }`;
+    assert.equal(
+      execFileSync(process.execPath, ["-e", script], { encoding: "utf8" }),
+      `${factory}(): projects[0] is not built by a preset project factory: ` +
+        "use createLibsCoinJestProject() from @support/jest/libs-coin.",
+    );
+  });
+}
+
+test("the registry marks the project factories, each exported by the module its errors name", () => {
+  const projectFactories = FACTORIES.filter(({ project }) => project);
+  assert.deepEqual(
+    projectFactories.map(({ name }) => name),
+    Object.keys(PROJECT_FACTORIES),
+  );
+  for (const { name, factory } of projectFactories) {
+    assert.equal(require(PROJECT_FACTORIES[name])[name], factory, name);
+  }
 });

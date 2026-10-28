@@ -142,7 +142,6 @@ module.exports = {
     "createLibsCoinJestProject",
     ["esm", "extraEsmDeps"],
     projectJestConfig,
-    { project: true },
   ),
   libsCoinDefaults,
 };

@@ -227,6 +227,9 @@ function checkOptions(factory, options, accepted) {
 const PRESET_FACTORIES = new Map();
 // The projects a project factory returned: the only entries a config's `projects` may hold.
 const PRESET_PROJECTS = new WeakSet();
+// The factories of `projects` entries, by the module that exports each. Listed here, not taken from
+// the registry, which holds only the presets loaded so far.
+const PROJECT_FACTORIES = deepFreeze({ createLibsCoinJestProject: "@support/jest/libs-coin" });
 
 /**
  * Throws when `projects` holds an entry no preset project factory returned. Why a project needs one:
@@ -237,9 +240,8 @@ const PRESET_PROJECTS = new WeakSet();
  */
 function checkProjects(factory, projects) {
   if (projects === undefined) return;
-  const builders = [...PRESET_FACTORIES]
-    .filter(([, entry]) => entry.project)
-    .map(([name]) => `${name}()`)
+  const builders = Object.entries(PROJECT_FACTORIES)
+    .map(([name, specifier]) => `${name}() from ${specifier}`)
     .join(", ");
   const entries = Array.isArray(projects) ? projects : [projects];
   entries.forEach((entry, index) => {
@@ -259,10 +261,11 @@ function checkProjects(factory, projects) {
  * @param {string} name the factory name, for the messages and preset-overrides.js
  * @param {string[]} options the options the factory reads
  * @param {Build} build
- * @param {{ project?: boolean }} [kind] `project: true` for a factory of `projects` entries
- * @returns {Build} a factory with the signature of `build`
+ * @returns {Build} a factory with the signature of `build`; a factory of `projects` entries when
+ *   `PROJECT_FACTORIES` lists the name
  */
-function presetFactory(name, options, build, { project = false } = {}) {
+function presetFactory(name, options, build) {
+  const project = Object.hasOwn(PROJECT_FACTORIES, name);
   /**
    * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
    * @param {Record<string, unknown>} [presetOptions] the options `build` reads
@@ -337,6 +340,7 @@ module.exports = {
   ALLOWLIST_FIX,
   ESM_FIX,
   PRESET_KEYS,
+  PROJECT_FACTORIES,
   createDualJestConfig,
   jestSonarReporter,
   lcovCoverageReporters,
