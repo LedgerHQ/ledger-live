@@ -93,11 +93,20 @@ export class NewSendModal extends Modal {
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
 
+  private readonly backButton = this.dialog
+    .getByTestId("send-dialog-header")
+    .getByRole("button", { name: "Go back" });
   // Menu items render in a portal, outside the dialog subtree.
   private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
   private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
   private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
   private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
+  private readonly coinControlStrategySelect = this.dialog.getByTestId(
+    "send-coin-control-strategy-select",
+  );
+  private readonly coinControlAmountInput = this.dialog.getByLabel(/amount to send/i);
+  private readonly coinControlChangeToReturn = this.dialog.getByTestId("send-change-to-return-row");
+  private readonly coinControlFooter = this.dialog.getByTestId("send-coin-control-footer");
 
   private async readAmount(): Promise<string> {
     return (await this.amountInput.inputValue()).replaceAll(/\s/g, "");
@@ -277,6 +286,11 @@ export class NewSendModal extends Modal {
     await expect.poll(async () => new BigNumber(await this.readAmount()).lt(reference)).toBe(true);
   }
 
+  @step("Verify the amount step is shown")
+  async expectAmountStepVisible() {
+    await expect(this.amountInput).toBeVisible();
+  }
+
   @step("Verify crypto amount round-trips exactly: $0")
   async expectCryptoAmount(amount: string) {
     await expect(this.amountInput).toHaveValue(amount);
@@ -360,6 +374,29 @@ export class NewSendModal extends Modal {
   async expectCustomFeePerByteScreen() {
     await expect(this.customFeePerByteInput).toBeVisible();
     await expect(this.customFeesConfirmButton).toBeVisible();
+  }
+
+  @step("Open coin control from the fees menu")
+  async selectCoinControlFromMenu() {
+    await expect(this.coinControlMenuItem).toBeVisible();
+    await this.coinControlMenuItem.click();
+  }
+
+  @step("Verify the coin control screen")
+  async expectCoinControlScreen() {
+    await expect(this.coinControlStrategySelect).toBeVisible();
+    await expect(this.coinControlAmountInput).toBeVisible();
+    await expect(this.coinControlChangeToReturn).toBeVisible();
+    await expect(this.coinControlFooter.getByTestId("send-review-button")).toBeVisible();
+    await expect(
+      this.coinControlFooter.getByTestId("send-network-fees-menu-trigger"),
+    ).toBeVisible();
+  }
+
+  @step("Go back to the previous step")
+  async goBack() {
+    await expect(this.backButton).toBeVisible();
+    await this.backButton.click();
   }
 
   @step("Verify the sponsored fee offer is shown")

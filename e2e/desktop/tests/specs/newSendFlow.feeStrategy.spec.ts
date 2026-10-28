@@ -29,7 +29,7 @@ test.describe("Send - new flow - fee strategy", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) fee presets, custom fees and coin control`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-2368" },
+      annotation: { type: "TMS", description: "B2CQA-2368, B2CQA-6036" },
     },
     async ({ app }) => {
       await reachAmountStep(app, tx);
@@ -41,8 +41,15 @@ test.describe("Send - new flow - fee strategy", () => {
       await app.newSendFlow.selectFeePreset(Fee.FAST);
       await app.newSendFlow.expectCryptoAmountLowerThan(maxAmountWithSlowFee);
 
+      await app.newSendFlow.fillCryptoAmount("0.00001");
       await app.newSendFlow.openFeesMenu();
       await app.newSendFlow.expectBitcoinFeesMenuOptions();
+      await app.newSendFlow.selectCoinControlFromMenu();
+      await app.newSendFlow.expectCoinControlScreen();
+      await app.newSendFlow.goBack();
+      await app.newSendFlow.expectAmountStepVisible();
+
+      await app.newSendFlow.openFeesMenu();
       await app.newSendFlow.selectCustomFeesFromMenu();
       await app.newSendFlow.expectCustomFeePerByteScreen();
     },
