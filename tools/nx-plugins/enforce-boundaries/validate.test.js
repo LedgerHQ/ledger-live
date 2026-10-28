@@ -641,28 +641,54 @@ test("findBannedDependencyViolations ignores unrelated dependencies and missing 
   assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
 });
 
-test("every manifest check fails on a malformed or unreadable manifest", t => {
+test("every manifest check fails on a malformed or unreadable manifest in its scope", t => {
   const root = makeTmpWorkspace({
     "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
+    "devtools/broken/package.json": '{ "name": "@devtools/broken",',
     // a directory where the manifest should be: present, but not readable as a file
     "libs/unreadable/package.json/.keep": "",
+    "devtools/unreadable/package.json/.keep": "",
   });
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const tags = ["scope:libs", "type:domain-entity"];
   const checks = [
-    graph => collectLegacyPackageNames(graph, root),
-    graph => findBannedDependencyViolations(graph, root, BANNED),
-    graph =>
-      findBannedExternalViolations(graph, root, [{ sourceTag: tags[1], packages: ["react"] }]),
-    graph => findDevtoolsImportViolations(graph, root, {}),
+    { scope: "libs", check: graph => collectLegacyPackageNames(graph, root) },
+    { scope: "libs", check: graph => findBannedDependencyViolations(graph, root, BANNED) },
+    {
+      scope: "libs",
+      check: graph =>
+        findBannedExternalViolations(graph, root, [{ sourceTag: tags[1], packages: ["react"] }]),
+    },
+    { scope: "devtools", check: graph => findDevtoolsImportViolations(graph, root, {}) },
   ];
-  for (const [projectRoot, error] of [
-    ["libs/broken", /libs\/broken\/package\.json/],
-    ["libs/unreadable", { code: "EISDIR" }],
-  ]) {
-    const graph = { nodes: { p: { data: { root: projectRoot, tags } } }, dependencies: {} };
-    for (const check of checks) assert.throws(() => check(graph), error);
+  for (const { scope, check } of checks) {
+    for (const [name, error] of [
+      ["broken", new RegExp(`${scope}/broken/package\\.json`)],
+      ["unreadable", { code: "EISDIR" }],
+    ]) {
+      const graph = {
+        nodes: { p: { data: { root: `${scope}/${name}`, tags } } },
+        dependencies: {},
+      };
+      assert.throws(() => check(graph), error);
+    }
   }
+});
+
+test("devtools: manifests outside devtools/ are not read", t => {
+  const root = makeTmpWorkspace({
+    "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
+    "apps/unreadable/package.json/.keep": "",
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const graph = {
+    nodes: {
+      broken: { data: { root: "libs/broken" } },
+      unreadable: { data: { root: "apps/unreadable" } },
+    },
+    dependencies: { broken: [{ target: "unreadable" }] },
+  };
+  assert.deepEqual(findDevtoolsImportViolations(graph, root, {}), []);
 });
 
 // --- LEGACY_PACKAGES / BANNED_EXTERNALS_BY_TAG (real constraints) ---
@@ -812,34 +838,6 @@ function devtoolsViolations(graph, root) {
     DEVTOOLS_TYPE_ONLY_IMPORTS,
   );
 }
-
-/**
- * The rules table of the devtools-import-boundary skill, read back into the shape of
- * `DEVTOOLS_ALLOWED_IMPORTS` and `DEVTOOLS_TYPE_ONLY_IMPORTS`.
- */
-function skillDevtoolsTables() {
-  const skill = fs.readFileSync(
-    path.join(__dirname, "../../../.agents/skills/devtools-import-boundary/SKILL.md"),
-    "utf8",
-  );
-  const allowed = {};
-  const typeOnly = {};
-  for (const [, pkg, cell] of skill.matchAll(/^\| `(@devtools\/[\w-]+)` \| (.+) \|$/gm)) {
-    for (const part of cell.split(";").map(p => p.trim())) {
-      const table = part.endsWith("through `import type` only") ? typeOnly : allowed;
-      table[pkg] = part.startsWith("any `@devtools/<tool>`")
-        ? "*"
-        : [...part.matchAll(/`(@devtools\/[\w-]+)`/g)].map(m => m[1]);
-    }
-  }
-  return { allowed, typeOnly };
-}
-
-test("devtools: the skill's rules table matches constraints.js", () => {
-  const { allowed, typeOnly } = skillDevtoolsTables();
-  assert.deepEqual(allowed, DEVTOOLS_ALLOWED_IMPORTS);
-  assert.deepEqual(typeOnly, DEVTOOLS_TYPE_ONLY_IMPORTS);
-});
 
 const DEVTOOLS_MANIFESTS = {
   "devtools/shell": { name: "@devtools/shell", private: true },

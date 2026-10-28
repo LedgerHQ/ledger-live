@@ -7,24 +7,12 @@ description: |
 
 # DevTools import boundaries
 
-Every `@devtools/*` package is **self-contained**. The only permitted cross-package imports within the devtools scope are listed in the table below; all others are forbidden.
+Every `@devtools/*` package is **self-contained**. A `@devtools/*` package may import another one only where [`tools/nx-plugins/enforce-boundaries/constraints.js`](../../../tools/nx-plugins/enforce-boundaries/constraints.js) allows it, and `pnpm lint:boundaries` enforces it:
 
-`pnpm lint:boundaries` enforces the table. Its source of truth is `DEVTOOLS_ALLOWED_IMPORTS` and `DEVTOOLS_TYPE_ONLY_IMPORTS` in [`tools/nx-plugins/enforce-boundaries/constraints.js`](../../../tools/nx-plugins/enforce-boundaries/constraints.js): change them there, then update this table.
+- `DEVTOOLS_ALLOWED_IMPORTS` lists the imports each package may make.
+- `DEVTOOLS_TYPE_ONLY_IMPORTS` lists the packages each one may reach under `DEVTOOLS_TYPE_ONLY_RULE`.
 
-## Rules
-
-| Package | May import from `@devtools/*` |
-|---|---|
-| `@devtools/registry` | any `@devtools/<tool>` |
-| `@devtools/shell` | `@devtools/transport`, `@devtools/registry` |
-| `@devtools/bindings` | `@devtools/registry`; any `@devtools/<tool>` through `import type` only |
-| `@devtools/wire` | `@devtools/transport`, `@devtools/protocols` |
-| `@devtools/protocols` | `@devtools/transport` only |
-| `@devtools/relay` | `@devtools/transport`, `@devtools/protocols` |
-| `@devtools/transport-panel` | `@devtools/transport` only |
-| `@devtools/<tool>` | *none* |
-
-All other `@devtools/*` → `@devtools/*` imports are forbidden.
+To change what a package may import, edit those tables.
 
 ## Why
 
@@ -34,7 +22,7 @@ The devtools architecture decouples tools from the shell through the registry. T
 - A circular dependency becomes likely (tool → shell → registry → tool).
 - The tool can no longer be rendered standalone, outside the shell.
 
-`bindings` builds each tool's props, so it may name a tool's props type with `import type`: the build erases it, and the tool stays lazily loaded. Any other import of a tool from `bindings` (a value import, `import { type X }`, `import()` or `require()`) loads the tool at runtime and fails the check.
+`bindings` builds each tool's props, so it needs a tool's props types without loading the tool. That is what `DEVTOOLS_TYPE_ONLY_IMPORTS` grants it.
 
 If `bindings` or `shell` import a tool package's values directly (instead of through the registry):
 
@@ -56,5 +44,5 @@ App state and wiring for a tool arrive as **props**, built in `@devtools/binding
 ## Documentation
 
 When adding a new package under `devtools/`, its `README.md` must state:
-- Which `@devtools/*` packages it may import, per the table above.
+- Which `@devtools/*` packages it may import, per `DEVTOOLS_ALLOWED_IMPORTS`.
 - That all other `@devtools/*` imports are forbidden, with a pointer to this rule.

@@ -116,12 +116,15 @@ const DEVTOOLS_ALLOWED_IMPORTS = {
 };
 
 /**
- * The `@devtools/*` packages each `@devtools/*` package may reach through `import type` only;
- * "*" allows them all. The import is erased at build, so the tool stays lazily loaded.
+ * The `@devtools/*` packages each `@devtools/*` package may reach under `DEVTOOLS_TYPE_ONLY_RULE`;
+ * "*" allows them all.
  */
 const DEVTOOLS_TYPE_ONLY_IMPORTS = {
   "@devtools/bindings": "*",
 };
+
+const DEVTOOLS_TYPE_ONLY_RULE =
+  'A DEVTOOLS_TYPE_ONLY_IMPORTS target may only be reached through `import type`, `export type … from` or `typeof import("…")`: the build erases them, so the target stays lazily loaded. A value import, `import { type X }`, `import()` or `require()` loads it at runtime.';
 
 module.exports = {
   DEP_CONSTRAINTS,
@@ -133,4 +136,5 @@ module.exports = {
   BANNED_DEPENDENCIES,
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_RULE,
 };

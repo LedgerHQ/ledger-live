@@ -11,6 +11,7 @@ const {
   BANNED_DEPENDENCIES,
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_RULE,
 } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -273,14 +274,13 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
       if (!tags.includes(sourceTag)) continue;
       const banned = new Set(packages);
 
-      const { manifest, pkg } = readManifest(workspaceRoot, root) ?? {
-        manifest: path.join(root, "package.json"),
-        pkg: {},
-      };
-      for (const field of DEPENDENCY_FIELDS) {
-        for (const dependency of Object.keys(pkg[field] ?? {})) {
-          if (banned.has(dependency)) {
-            violations.push({ file: manifest, specifier: dependency, field, sourceTag });
+      const read = readManifest(workspaceRoot, root);
+      if (read) {
+        for (const field of DEPENDENCY_FIELDS) {
+          for (const dependency of Object.keys(read.pkg[field] ?? {})) {
+            if (banned.has(dependency)) {
+              violations.push({ file: read.manifest, specifier: dependency, field, sourceTag });
+            }
           }
         }
       }
@@ -304,21 +304,22 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
 }
 
 /**
- * Manifest of every graph node that has one, keyed by node name.
+ * `@devtools/*` package name of every graph node under `devtools/`, keyed by node name.
+ * Manifests elsewhere are not read.
  *
  * @param {ProjectGraphLike} graph
  * @param {string} workspaceRoot
- * @returns {Map<string, { manifest: string, pkg: Record<string, any> }>}
+ * @returns {Map<string, string>}
  */
-function readManifests(graph, workspaceRoot) {
-  const manifests = new Map();
+function devtoolsPackageNames(graph, workspaceRoot) {
+  const names = new Map();
   for (const [nodeName, node] of Object.entries(graph.nodes)) {
     const root = node.data?.root;
-    if (!root) continue;
-    const read = readManifest(workspaceRoot, root);
-    if (read) manifests.set(nodeName, read);
+    if (!root?.startsWith("devtools/")) continue;
+    const name = readManifest(workspaceRoot, root)?.pkg.name;
+    if (name?.startsWith("@devtools/")) names.set(nodeName, name);
   }
-  return manifests;
+  return names;
 }
 
 /**
@@ -341,16 +342,16 @@ function allows(allowed, target) {
  * @returns {DevtoolsImportViolation[]}
  */
 function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
-  const manifests = readManifests(graph, workspaceRoot);
+  const names = devtoolsPackageNames(graph, workspaceRoot);
   const byEdge = new Map();
 
   for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
-    const source = manifests.get(sourceNode)?.pkg.name;
-    if (!source?.startsWith("@devtools/")) continue;
+    const source = names.get(sourceNode);
+    if (!source) continue;
 
     for (const edge of edges) {
-      const target = manifests.get(edge.target)?.pkg.name;
-      if (!target?.startsWith("@devtools/")) continue;
+      const target = names.get(edge.target);
+      if (!target) continue;
       if (allows(allowedImports[source], target)) continue;
 
       if (!allows(typeOnlyImports[source], target)) {
@@ -496,13 +497,9 @@ async function main() {
         DEVTOOLS_ALLOWED_IMPORTS,
         DEVTOOLS_TYPE_ONLY_IMPORTS,
       ),
-      v => {
-        const where = v.file
-          ? `  (value import in ${v.file}; only \`import type\` is allowed)`
-          : "";
-        return `${v.source}  →  ${v.target}${where}`;
-      },
+      v => `${v.source}  →  ${v.target}${v.file ? `  (value import in ${v.file})` : ""}`,
       "Allowed @devtools/* imports (DEVTOOLS_ALLOWED_IMPORTS, DEVTOOLS_TYPE_ONLY_IMPORTS)",
+      [DEVTOOLS_TYPE_ONLY_RULE],
     ),
   ].includes(true);
 
