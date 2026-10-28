@@ -1,4 +1,4 @@
-import { by, expect as detoxExpect, web } from "detox";
+import { by, web } from "detox";
 import type { WebElement } from "detox/detox";
 import { retryUntilTimeout } from "@e2e/utils/retry";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
@@ -59,7 +59,6 @@ export class WebHandle implements ElementHandle {
   /** Waits for the element, then returns its trimmed text. */
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     await this.waitVisible(timeout);
-    await withHardTimeout(detoxExpect(this.raw).toExist(), TIMEOUT.medium);
     return withHardTimeout(
       this.raw.runScript(el => (el.innerText || el.textContent || "").trim()),
       TIMEOUT.medium,
