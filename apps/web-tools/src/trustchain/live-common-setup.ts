@@ -38,14 +38,30 @@ const MOCK_SERVER_DEVICE = {
   ],
 };
 
+const GET_APP_AND_VERSION_APDU = new Uint8Array([0xb0, 0x01, 0x00, 0x00, 0x00]);
+const OPEN_APP_POLL_INTERVAL_MS = 500;
+const OPEN_APP_POLL_ATTEMPTS = 30;
+
+// Answer layout: format byte, name length, name, then the version.
+async function runningAppName(dmk: DeviceManagementKit, sessionId: string): Promise<string | null> {
+  const { data } = await dmk.sendApdu({ sessionId, apdu: GET_APP_AND_VERSION_APDU });
+  return data.length > 1 ? new TextDecoder().decode(data.slice(2, 2 + data[1])) : null;
+}
+
 // The emulated device boots on the dashboard, whereas on a real device the user opens the
-// app by hand: send the "open application" APDU (E0 D8 00 00 <name>) ourselves.
-function openLedgerSyncApp(dmk: DeviceManagementKit, sessionId: string) {
+// app by hand: send the "open application" APDU (E0 D8 00 00 <name>) ourselves. It answers
+// before the app is running, and a command sent meanwhile fails (0x6901), so wait for the app.
+async function openLedgerSyncApp(dmk: DeviceManagementKit, sessionId: string) {
   const name = new TextEncoder().encode(LEDGER_SYNC_APP_NAME);
-  return dmk.sendApdu({
+  await dmk.sendApdu({
     sessionId,
     apdu: new Uint8Array([0xe0, 0xd8, 0x00, 0x00, name.length, ...name]),
   });
+  for (let attempt = 0; attempt < OPEN_APP_POLL_ATTEMPTS; attempt++) {
+    const running = await runningAppName(dmk, sessionId).catch(() => null);
+    if (running === LEDGER_SYNC_APP_NAME) return;
+    await new Promise(resolve => setTimeout(resolve, OPEN_APP_POLL_INTERVAL_MS));
+  }
 }
 
 function transportFactoryOf(
