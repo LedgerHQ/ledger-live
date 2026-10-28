@@ -516,15 +516,8 @@ test.describe("Delegate from market", () => {
     },
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
-      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
-      // reached by opening the asset detail page. Both entry points open the same stake flow.
-      if (await app.market.isLegacyMarketList()) {
-        await app.market.search(currency.ticker);
-        await app.market.stakeButtonClick(currency.ticker);
-      } else {
-        await app.market.openCoinPage(currency.ticker);
-        await app.assetDetail(currency.id).startEarnFlow();
-      }
+      await app.market.openCoinPage(currency.ticker);
+      await app.assetDetail(currency.id).startEarnFlow();
 
       const selector = await getModularSelector(app, "ACCOUNT");
       if (selector) {

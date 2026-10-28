@@ -32,17 +32,6 @@ test.describe("Wallet assets", () => {
       teamOwner: Team.WALLET_XP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: Currency.BTC.speculosApp,
-      featureFlags: {
-        // `aggregatedAssets` redirects the legacy market coin route (`/market/:id`) to the asset detail route
-        // TODO: remove the override and update test flow linking to up to date test plan.
-        lwdWallet40: {
-          enabled: true,
-          params: {
-            ...FF_LWD_WALLET_40_Q2.lwdWallet40.params,
-            aggregatedAssets: false,
-          },
-        },
-      },
     });
 
     test(

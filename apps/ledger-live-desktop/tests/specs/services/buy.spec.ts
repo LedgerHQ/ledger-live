@@ -8,6 +8,7 @@ import { AccountPage } from "../../page/account.page";
 import { SettingsPage } from "../../page/settings.page";
 import { MarketPage } from "../../page/market.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
+import { Drawer } from "../../component/drawer.component";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
 test.use({
@@ -49,6 +50,7 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
   const portfolioPage = new PortfolioPage(page);
   const liveAppWebview = new LiveAppWebview(page, electronApp);
   const assetPage = new AssetPage(page);
+  const drawer = new Drawer(page);
   const accountPage = new AccountPage(page);
   const accountsPage = new AccountsPage(page);
   // const settingsPage = new SettingsPage(page);
@@ -85,6 +87,14 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
     await layout.goToPortfolio();
     await portfolioPage.navigateToAsset("ethereum");
     await assetPage.startBuyFlow();
+    await drawer.waitForAssetAccountSelectorVisible();
+    const ethereumNetwork = page.getByTestId("network-item-name-Ethereum");
+    const ethereumAccount = drawer.getAccountButton("Ethereum 1");
+    await expect(ethereumNetwork.or(ethereumAccount)).toBeVisible();
+    if (await ethereumNetwork.isVisible()) {
+      await drawer.selectNetwork("Ethereum");
+    }
+    await drawer.selectAccount("Ethereum 1");
     await liveAppWebview.waitForText("theme: dark");
     await liveAppWebview.waitForText("lang: en");
     await liveAppWebview.waitForText("locale: en-US");

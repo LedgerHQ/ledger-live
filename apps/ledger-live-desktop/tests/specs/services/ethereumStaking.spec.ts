@@ -151,7 +151,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("start stake flow via Asset page", async () => {
     await layout.goToPortfolio();
     await portfolioPage.navigateToAsset("ethereum");
-    await page.getByTestId("asset-page-stake-button").waitFor({ state: "visible" });
+    await assetPage.waitForStakeEntry();
     await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png");
   });
 
