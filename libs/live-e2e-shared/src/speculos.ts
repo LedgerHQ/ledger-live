@@ -34,7 +34,7 @@ import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { sendKaspa } from "./families/kaspa";
 import { delegateSolana, sendSolana } from "./families/solana";
-import { delegateTezos } from "./families/tezos";
+import { delegateTezos, sendTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
 import { Transaction } from "./models/Transaction";
@@ -1312,6 +1312,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.MINA.id:
       await sendMina(tx);
+      break;
+    case Currency.XTZ.id:
+      await sendTezos(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);
