@@ -36,6 +36,7 @@ export function AppGetOrCreateTrustchain({
   return (
     <Actionable
       buttonTitle="sdk.getOrCreateTrustchain"
+      primary={!trustchain}
       inputs={memberCredentials ? [memberCredentials] : null}
       action={action}
       valueDisplay={valueDisplay}

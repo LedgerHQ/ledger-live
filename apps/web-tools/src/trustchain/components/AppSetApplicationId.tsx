@@ -31,6 +31,7 @@ export function AppSetApplicationId({
   return (
     <Actionable
       buttonTitle="Set ApplicationId"
+      label="Application ID"
       inputs={String(applicationId) !== local ? [local] : null}
       action={action}
       value={applicationId}
@@ -38,7 +39,7 @@ export function AppSetApplicationId({
       valueDisplay={v => `m/0'/${v}'/…`}
     >
       <select
-        className="flex-1 bg-base border border-base rounded-md px-8 py-6 body-2 text-base"
+        className="flex-1 bg-muted rounded-md px-8 py-6 body-2 text-base"
         value={local}
         onChange={e => setLocal(e.target.value)}
       >

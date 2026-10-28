@@ -21,6 +21,7 @@ export function AppInitLiveCredentials({
   return (
     <Actionable
       buttonTitle="sdk.initMemberCredentials"
+      primary={!memberCredentials}
       inputs={[]}
       action={action}
       setValue={setMemberCredentials}

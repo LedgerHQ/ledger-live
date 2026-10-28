@@ -29,17 +29,28 @@ export function AppSetTrustchainAPIEnv() {
   return (
     <Actionable
       buttonTitle="Set Trustchain API"
-      inputs={[]}
+      label="Trustchain API"
+      inputs={localValue !== env ? [] : null}
       action={action}
       value={env}
       setValue={v => setEnv("TRUSTCHAIN_API_STAGING", v || getEnvDefault("TRUSTCHAIN_API_STAGING"))}
       valueDisplay={() => (
-        <div className="flex min-w-0 flex-1 items-center gap-8">
-          <ApiUrlPresets onStaging={applyStaging} onProd={applyProd} />
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-8">
+          <ApiUrlPresets
+            active={
+              localValue === getEnvDefault("TRUSTCHAIN_API_STAGING")
+                ? "staging"
+                : localValue === getEnvDefault("TRUSTCHAIN_API_PROD")
+                  ? "prod"
+                  : null
+            }
+            onStaging={applyStaging}
+            onProd={applyProd}
+          />
           <TextInput
             value={localValue}
             onChange={e => setLocalValue(e.target.value)}
-            className="min-w-0 flex-1"
+            className="min-w-[180px] flex-1"
           />
         </div>
       )}

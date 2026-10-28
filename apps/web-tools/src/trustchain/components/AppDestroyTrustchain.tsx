@@ -24,6 +24,7 @@ export function AppDestroyTrustchain({
   return (
     <Actionable
       buttonTitle="sdk.destroyTrustchain"
+      destructive
       inputs={trustchain && memberCredentials ? [trustchain, memberCredentials] : null}
       action={action}
     />

@@ -29,17 +29,28 @@ export function AppSetCloudSyncAPIEnv() {
   return (
     <Actionable
       buttonTitle="Set Cloud Sync API"
-      inputs={[]}
+      label="Cloud Sync API"
+      inputs={localValue !== env ? [] : null}
       action={action}
       value={env}
       setValue={v => setEnv("CLOUD_SYNC_API_STAGING", v || getEnvDefault("CLOUD_SYNC_API_STAGING"))}
       valueDisplay={() => (
-        <div className="flex min-w-0 flex-1 items-center gap-8">
-          <ApiUrlPresets onStaging={applyStaging} onProd={applyProd} />
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-8">
+          <ApiUrlPresets
+            active={
+              localValue === getEnvDefault("CLOUD_SYNC_API_STAGING")
+                ? "staging"
+                : localValue === getEnvDefault("CLOUD_SYNC_API_PROD")
+                  ? "prod"
+                  : null
+            }
+            onStaging={applyStaging}
+            onProd={applyProd}
+          />
           <TextInput
             value={localValue}
             onChange={e => setLocalValue(e.target.value)}
-            className="min-w-0 flex-1"
+            className="min-w-[180px] flex-1"
           />
         </div>
       )}

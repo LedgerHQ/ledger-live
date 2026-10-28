@@ -11,11 +11,15 @@ export function AppMockEnv() {
   return (
     <Actionable
       buttonTitle="Toggle Mock Env"
+      label="Mock environment"
+      actionLabel="Toggle"
       inputs={[mockEnv]}
       action={action}
       value={mockEnv}
       setValue={v => setEnv("MOCK", v || "")}
-      valueDisplay={v => <Tag size="sm" label={v ? "MOCK ON" : "MOCK OFF"} />}
+      valueDisplay={v => (
+        <Tag size="sm" appearance={v ? "warning" : "gray"} label={v ? "MOCK ON" : "MOCK OFF"} />
+      )}
     />
   );
 }

@@ -15,6 +15,7 @@ import {
 import { getInitialStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import useEnv from "../useEnv";
 import Expand from "./Expand";
+import { StackedActionables } from "./Actionable";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol";
 import { DisplayName, IdentityManager } from "./IdentityManager";
 import { AppSetDeviceId } from "./AppSetDeviceId";
@@ -164,191 +165,206 @@ const App = () => {
     <ThemeProvider colorScheme="system">
       <TrustchainSDKContext.Provider value={sdk}>
         <DeviceInteractionVisibleContext.Provider value={deviceInteractionVisible}>
-          <div className="mx-auto flex min-h-screen w-full max-w-960 flex-col bg-canvas px-16 pb-48 body-2 text-base">
-            <DeviceInteractionLayer visible={deviceInteractionVisible} />
+          <div className="min-h-screen w-full bg-canvas">
+            <div className="mx-auto flex w-full max-w-[1280px] flex-col px-16 pb-48 body-2 text-base">
+              <DeviceInteractionLayer visible={deviceInteractionVisible} />
 
-            <h2 className="heading-3 my-24 text-base">Wallet Sync Trustchain Playground</h2>
+              <h2 className="heading-2 mb-8 mt-32 text-base">Wallet Sync Trustchain Playground</h2>
 
-            <Expand
-              title={
-                <>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <span>Identities</span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      Simulates different Live instances. Persisted states shared between browser
-                      tabs.
-                    </TooltipContent>
-                  </Tooltip>{" "}
-                  <span className="body-2 text-muted">
-                    <DisplayName pubkey={memberCredentials?.pubkey} />
-                  </span>
-                </>
-              }
-            >
-              <IdentityManager
-                state={trustchainState}
-                setState={setTrustchainState}
-                defaultContext={defaultContext}
-                setContext={setContext}
-              />
-            </Expand>
+              <div className="flex flex-col gap-24 md:flex-row md:items-start">
+                <aside className="w-full shrink-0 md:sticky md:top-16 md:max-h-[calc(100vh-32px)] md:w-[300px] md:overflow-y-auto">
+                  <StackedActionables>
+                    <Expand
+                      title={
+                        <>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <span>Identities</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              Simulates different Live instances. Persisted states shared between
+                              browser tabs.
+                            </TooltipContent>
+                          </Tooltip>{" "}
+                          <span className="body-2 text-muted">
+                            <DisplayName pubkey={memberCredentials?.pubkey} />
+                          </span>
+                        </>
+                      }
+                    >
+                      <IdentityManager
+                        state={trustchainState}
+                        setState={setTrustchainState}
+                        defaultContext={defaultContext}
+                        setContext={setContext}
+                      />
+                    </Expand>
 
-            <Expand
-              title={
-                <>
-                  <span>Environment</span> <Tag size="sm" label={envSummary} />{" "}
-                  <Tag size="sm" label={`app ${applicationId}`} />
-                </>
-              }
-            >
-              <AppSetTrustchainAPIEnv />
-              <AppSetCloudSyncAPIEnv />
-              <AppMockEnv />
-              <AppSetApplicationId
-                applicationId={applicationId}
-                setApplicationId={setApplicationId}
-              />
-              <AppSetDeviceId deviceId={deviceId} setDeviceId={setDeviceId} />
-            </Expand>
+                    <Expand
+                      title={
+                        <>
+                          <span>Environment</span>
+                          <Tag size="sm" appearance="gray" label={envSummary} />
+                          <Tag size="sm" appearance="gray" label={`app ${applicationId}`} />
+                        </>
+                      }
+                      expanded
+                    >
+                      <AppSetTrustchainAPIEnv />
+                      <AppSetCloudSyncAPIEnv />
+                      <AppMockEnv />
+                      <AppSetApplicationId
+                        applicationId={applicationId}
+                        setApplicationId={setApplicationId}
+                      />
+                      <AppSetDeviceId deviceId={deviceId} setDeviceId={setDeviceId} />
+                    </Expand>
+                  </StackedActionables>
+                </aside>
 
-            <Expand
-              title={
-                <>
-                  <span>Trustchain SDK</span>{" "}
-                  {trustchain ? (
-                    <code className="body-3 text-muted">
-                      {trustchain.rootId.slice(0, 6)}..{trustchain.rootId.slice(-6)} at{" "}
-                      {trustchain.applicationPath}
-                    </code>
-                  ) : null}
-                </>
-              }
-              expanded={!trustchain}
-            >
-              <AppInitLiveCredentials
-                memberCredentials={memberCredentials}
-                setMemberCredentials={setMemberCredentials}
-              />
+                <main className="min-w-0 flex-1">
+                  <Expand
+                    title={
+                      <>
+                        <span>Trustchain SDK</span>{" "}
+                        {trustchain ? (
+                          <code className="body-3 text-muted">
+                            {trustchain.rootId.slice(0, 6)}..{trustchain.rootId.slice(-6)} at{" "}
+                            {trustchain.applicationPath}
+                          </code>
+                        ) : null}
+                      </>
+                    }
+                    expanded={!trustchain}
+                  >
+                    <AppInitLiveCredentials
+                      memberCredentials={memberCredentials}
+                      setMemberCredentials={setMemberCredentials}
+                    />
 
-              <AppGetOrCreateTrustchain
-                deviceId={deviceId}
-                memberCredentials={memberCredentials}
-                trustchain={trustchain}
-                setTrustchain={setTrustchain}
-                callbacks={callbacks}
-              />
-
-              <AppRestoreTrustchain
-                memberCredentials={memberCredentials}
-                trustchain={trustchain}
-                setTrustchain={setTrustchain}
-              />
-
-              <AppGetMembers
-                memberCredentials={memberCredentials}
-                trustchain={trustchain}
-                members={members}
-                setMembers={setMembers}
-              />
-
-              {members?.map(member => (
-                <AppMemberRow
-                  key={member.id}
-                  deviceId={deviceId}
-                  trustchain={trustchain}
-                  memberCredentials={memberCredentials}
-                  member={member}
-                  setTrustchain={setTrustchain}
-                  setMembers={setMembers}
-                  callbacks={callbacks}
-                />
-              ))}
-
-              <AppEncryptUserData trustchain={trustchain} />
-
-              <AppDecryptUserData trustchain={trustchain} />
-
-              <AppDestroyApplication
-                trustchain={trustchain}
-                setTrustchain={setTrustchain}
-                memberCredentials={memberCredentials}
-              />
-
-              <AppDestroyTrustchain
-                trustchain={trustchain}
-                setTrustchain={setTrustchain}
-                memberCredentials={memberCredentials}
-              />
-
-              <Expand title="QR Code Host">
-                <AppQRCodeHost trustchain={trustchain} memberCredentials={memberCredentials} />
-              </Expand>
-
-              <Expand title="QR Code Candidate">
-                <AppQRCodeCandidate
-                  memberCredentials={memberCredentials}
-                  setTrustchain={setTrustchain}
-                  trustchain={trustchain}
-                />
-              </Expand>
-            </Expand>
-
-            {isLedgerSync ? (
-              <>
-                <Expand
-                  title={
-                    <>
-                      <span>Cloud Sync SDK</span>{" "}
-                      {version ? (
-                        <code className="body-3 text-muted">Version: {version}</code>
-                      ) : null}
-                    </>
-                  }
-                >
-                  {trustchain && memberCredentials ? (
-                    <AppWalletSync
+                    <AppGetOrCreateTrustchain
+                      deviceId={deviceId}
+                      memberCredentials={memberCredentials}
                       trustchain={trustchain}
                       setTrustchain={setTrustchain}
-                      memberCredentials={memberCredentials}
-                      version={version}
-                      data={data}
-                      setVersion={setWssdkHandledVersion}
-                      setData={setWssdkHandledData}
-                      forceReadOnlyData={state.walletState.walletSyncState.data}
-                      readOnly={accountsSync}
-                      takeControl={takeControl}
+                      callbacks={callbacks}
                     />
-                  ) : (
-                    <p className="body-2 text-muted">Please create a trustchain first</p>
-                  )}
-                </Expand>
 
-                <Expand title="Accounts Sync" dynamicControl={accountsSyncControl}>
-                  {trustchain && memberCredentials ? (
-                    <Suspense fallback={<Loading />}>
-                      <AppAccountsSync
+                    <AppRestoreTrustchain
+                      memberCredentials={memberCredentials}
+                      trustchain={trustchain}
+                      setTrustchain={setTrustchain}
+                    />
+
+                    <AppGetMembers
+                      memberCredentials={memberCredentials}
+                      trustchain={trustchain}
+                      members={members}
+                      setMembers={setMembers}
+                    />
+
+                    {members?.map(member => (
+                      <AppMemberRow
+                        key={member.id}
                         deviceId={deviceId}
                         trustchain={trustchain}
                         memberCredentials={memberCredentials}
-                        state={state}
-                        setState={setState}
+                        member={member}
                         setTrustchain={setTrustchain}
+                        setMembers={setMembers}
+                        callbacks={callbacks}
                       />
-                    </Suspense>
+                    ))}
+
+                    <AppEncryptUserData trustchain={trustchain} />
+
+                    <AppDecryptUserData trustchain={trustchain} />
+
+                    <AppDestroyApplication
+                      trustchain={trustchain}
+                      setTrustchain={setTrustchain}
+                      memberCredentials={memberCredentials}
+                    />
+
+                    <AppDestroyTrustchain
+                      trustchain={trustchain}
+                      setTrustchain={setTrustchain}
+                      memberCredentials={memberCredentials}
+                    />
+
+                    <Expand title="QR Code Host">
+                      <AppQRCodeHost
+                        trustchain={trustchain}
+                        memberCredentials={memberCredentials}
+                      />
+                    </Expand>
+
+                    <Expand title="QR Code Candidate">
+                      <AppQRCodeCandidate
+                        memberCredentials={memberCredentials}
+                        setTrustchain={setTrustchain}
+                        trustchain={trustchain}
+                      />
+                    </Expand>
+                  </Expand>
+
+                  {isLedgerSync ? (
+                    <>
+                      <Expand
+                        title={
+                          <>
+                            <span>Cloud Sync SDK</span>{" "}
+                            {version ? (
+                              <code className="body-3 text-muted">Version: {version}</code>
+                            ) : null}
+                          </>
+                        }
+                      >
+                        {trustchain && memberCredentials ? (
+                          <AppWalletSync
+                            trustchain={trustchain}
+                            setTrustchain={setTrustchain}
+                            memberCredentials={memberCredentials}
+                            version={version}
+                            data={data}
+                            setVersion={setWssdkHandledVersion}
+                            setData={setWssdkHandledData}
+                            forceReadOnlyData={state.walletState.walletSyncState.data}
+                            readOnly={accountsSync}
+                            takeControl={takeControl}
+                          />
+                        ) : (
+                          <p className="body-2 text-muted">Please create a trustchain first</p>
+                        )}
+                      </Expand>
+
+                      <Expand title="Accounts Sync" dynamicControl={accountsSyncControl}>
+                        {trustchain && memberCredentials ? (
+                          <Suspense fallback={<Loading />}>
+                            <AppAccountsSync
+                              deviceId={deviceId}
+                              trustchain={trustchain}
+                              memberCredentials={memberCredentials}
+                              state={state}
+                              setState={setState}
+                              setTrustchain={setTrustchain}
+                            />
+                          </Suspense>
+                        ) : (
+                          <p className="body-2 text-muted">Please create a trustchain first</p>
+                        )}
+                      </Expand>
+                    </>
                   ) : (
-                    <p className="body-2 text-muted">Please create a trustchain first</p>
+                    <p className="body-2 my-12 text-muted">
+                      Cloud Sync SDK and Accounts Sync are Ledger Sync (application{" "}
+                      {defaultContext.applicationId}) features. Switch the application back to{" "}
+                      {defaultContext.applicationId} in the Environment section to use them.
+                    </p>
                   )}
-                </Expand>
-              </>
-            ) : (
-              <p className="body-2 my-12 text-muted">
-                Cloud Sync SDK and Accounts Sync are Ledger Sync (application{" "}
-                {defaultContext.applicationId}) features. Switch the application back to{" "}
-                {defaultContext.applicationId} in the Environment section to use them.
-              </p>
-            )}
+                </main>
+              </div>
+            </div>
           </div>
         </DeviceInteractionVisibleContext.Provider>
       </TrustchainSDKContext.Provider>
