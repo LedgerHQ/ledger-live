@@ -159,12 +159,11 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
-      - name: setup JDK 17
-        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
-        with:
-          distribution: "zulu"
-          java-version: "17"
-          cache: "gradle"
+      - name: Probe preinstalled JDK (eval only)
+        run: |
+          echo "JAVA_HOME=${JAVA_HOME:-<unset>}"
+          command -v java && java -version 2>&1 || echo "no java on PATH"
+          ls -d /usr/lib/jvm/* 2>/dev/null || echo "no /usr/lib/jvm"
 
       - name: setup Android SDK
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
