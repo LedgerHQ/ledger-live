@@ -1,0 +1,142 @@
+name: coin-tester-ton
+
+x-indexer-postgres: &indexer-postgres
+  POSTGRES_HOST: index-postgres
+  POSTGRES_PORT: 5432
+  POSTGRES_DB: ton_index
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+services:
+  # MyLocalTon: a single genesis validator with its lite-server.
+  genesis:
+    image: ghcr.io/neodix42/mylocalton-docker:v4.3.0@sha256:d1fbed5c9cde7e5b79817246d5ef2fc663203b052eed332766e79781e6f38f3b
+    volumes:
+      - shared-data:/usr/share/data
+      - ton-db:/var/ton-work/db
+    environment:
+      - GENESIS=true
+      - NAME=genesis
+    healthcheck:
+      test: /usr/local/bin/lite-client -a 127.0.0.1:40004 -p /var/ton-work/db/liteserver.pub -t 3 -c last
+      interval: 2s
+      timeout: 5s
+      retries: 150
+    networks:
+      ton:
+        # The lite-server address that genesis writes into global.config.json.
+        ipv4_address: 172.28.1.10
+
+  # toncenter's v2 API over that lite-server: the faucet sends through it, and the indexer API
+  # forwards `/message` and `/estimateFee` to it. v2.1.7, the version MyLocalTon pins, fails every
+  # account and block read against this genesis ("Wrong constructor found"). Its arm64 build dies
+  # with SIGILL on Apple silicon, hence amd64.
+  ton-http-api:
+    image: toncenter/ton-http-api-cpp:v2.1.17@sha256:8a3c03133d58f0d03e4968aae27d7c8ed6534333480291ac6fb80ee54024b53c
+    platform: linux/amd64
+    ports:
+      - "127.0.0.1:18082:8081"
+    volumes:
+      - shared-data:/usr/share/data
+    environment:
+      - THACPP_TONLIB_CONFIG_PATH=/usr/share/data/global.config.json
+      - THACPP_TONLIB_KEYSTORE_PATH=/tmp/keystore/
+      - THACPP_TONLIB_BOC_ENDPOINTS=[]
+      - THACPP_LOG_PATH=@stdout
+      - THACPP_STATIC_CONTENT_DIR=/static
+    depends_on:
+      genesis:
+        condition: service_healthy
+    # Healthy once tonlib reads an account: getMasterchainInfo answers before it can.
+    healthcheck:
+      test: curl -fsS "http://127.0.0.1:8081/api/v2/getWalletInformation?address=-1:22f53b7d9aba2cef44755f7078b01614cd4dde2388a1729c2c386cf8f9898afe"
+      interval: 2s
+      timeout: 10s
+      retries: 90
+    networks:
+      ton:
+        ipv4_address: 172.28.1.105
+
+  # toncenter's v3 API, which coin-ton reads, as MyLocalTon's `indexer-minimal` profile runs it: the
+  # worker reads the node's database into Postgres and the API serves it. Both v1.2.8 arm64 builds
+  # die with SIGILL on Apple silicon, hence amd64.
+  index-postgres:
+    image: postgres:17-alpine@sha256:eee6c6e1b0894fa4fe0075eb054af9fd1cf39a35321c2d4110626cfe506411fb
+    environment: *indexer-postgres
+    command: postgres -c max_connections=256 -c shared_buffers=256MB
+    shm_size: 256m
+    # Over TCP: the server that creates the database at first boot listens on the Unix socket only,
+    # then restarts.
+    healthcheck:
+      test: pg_isready -h 127.0.0.1 -d ton_index -U postgres
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    networks:
+      - ton
+
+  index-migrate:
+    image: toncenter/ton-indexer-worker:v1.2.8@sha256:b9234f7dacd604f829927a553021fee9da0e8ecaf0bcc364ac0782f2e30a11d5
+    platform: linux/amd64
+    # The image's entrypoint runs `ulimit -n 1000000` under `set -e`.
+    ulimits:
+      nofile: 1000000
+    environment:
+      <<: *indexer-postgres
+      TON_WORKER_BINARY: ton-index-postgres-migrate
+    command: --pg postgresql://postgres:postgres@index-postgres:5432/ton_index
+    depends_on:
+      index-postgres:
+        condition: service_healthy
+    networks:
+      - ton
+
+  index-worker:
+    image: toncenter/ton-indexer-worker:v1.2.8@sha256:b9234f7dacd604f829927a553021fee9da0e8ecaf0bcc364ac0782f2e30a11d5
+    platform: linux/amd64
+    ulimits:
+      nofile: 1000000
+    volumes:
+      - ton-db:/tondb
+      - index-workdir:/ton_index_workdir
+    environment:
+      <<: *indexer-postgres
+      TON_WORKER_BINARY: ton-index-postgres
+    command: --pg postgresql://postgres:postgres@index-postgres:5432/ton_index --db /tondb --working-dir /ton_index_workdir --from 1
+    depends_on:
+      genesis:
+        condition: service_healthy
+      index-migrate:
+        condition: service_completed_successfully
+    networks:
+      - ton
+
+  # No healthcheck: the image has no HTTP client. The scenario waits for its funding to be indexed.
+  index-api:
+    image: toncenter/ton-indexer-api:v1.2.8@sha256:7ee65a9c80a77b4f6761ed7c3e877d216ed4f1ebd8f4137135008a83e84089e8
+    platform: linux/amd64
+    command: -prefork -threads 2
+    ports:
+      - "127.0.0.1:18083:8081"
+    environment:
+      <<: *indexer-postgres
+      # MyLocalTon points this at the indexer API itself, which has no v2 routes.
+      TON_INDEXER_TON_HTTP_API_ENDPOINT: http://ton-http-api:8081/api/v2/
+    depends_on:
+      index-worker:
+        condition: service_started
+      ton-http-api:
+        condition: service_healthy
+    networks:
+      - ton
+
+volumes:
+  shared-data:
+  ton-db:
+  index-workdir:
+
+networks:
+  ton:
+    ipam:
+      config:
+        - subnet: 172.28.1.0/24

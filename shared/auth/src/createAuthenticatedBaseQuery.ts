@@ -5,11 +5,8 @@ import {
   type FetchBaseQueryArgs,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
-import { AuthProviderMissingError } from "./errors";
-import {
-  AuthenticatedBaseQueryExtraSchema,
-  type AuthenticatedBaseQueryExtraOptions,
-} from "./types";
+import { getAuthProvider } from "./middleware";
+import type { AuthenticatedBaseQueryExtraOptions } from "./types";
 
 type FetchBaseQuery = BaseQueryFn<
   string | FetchArgs,
@@ -24,7 +21,7 @@ export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs):
   return async (args, api, extraOptions) => {
     if (extraOptions?.authenticated !== false) {
       try {
-        return await getAuthProvider(api.extra).withToken({
+        return await getAuthProvider(api.dispatch).withToken({
           async queryFn(token) {
             if (!token) {
               return fetchBaseQuery(baseQueryArgs)(args, api, extraOptions);
@@ -64,12 +61,4 @@ export function createAuthenticatedBaseQuery(baseQueryArgs: FetchBaseQueryArgs):
 
     return fetchBaseQuery(baseQueryArgs)(args, api, extraOptions);
   };
-}
-
-function getAuthProvider(extra: unknown) {
-  try {
-    return AuthenticatedBaseQueryExtraSchema.parse(extra).authProvider;
-  } catch {
-    throw new AuthProviderMissingError();
-  }
 }

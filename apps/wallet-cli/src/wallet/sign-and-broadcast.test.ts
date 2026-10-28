@@ -4,6 +4,7 @@ import type { AccountDescriptor, SendEvent } from "./models";
 import type { CommandOutput } from "../output";
 import type { WalletAdapter } from "./index";
 import type { TransactionIntent } from "./intents";
+import { createGatedModuleMock } from "../testing/gated-module-mock";
 
 // Capture the args `signAndBroadcastIntent` forwards to the device-session helper. The mock invokes
 // the callback so the inner sign+broadcast block runs without touching a real device.
@@ -24,58 +25,33 @@ const runObservable = mock(async ({ onNext }: { onNext?: (value: SendEvent) => v
   onNext?.({ type: "broadcasted", txHash: broadcastTxHash });
 });
 
-// `mock.module` is global for the whole bun process — it is installed during the collection phase
-// (before any test runs) and `mock.restore()` does not revert it. To avoid bleeding these device-layer
-// fakes into the send / genuine-check / device suites, every override delegates to the REAL export
-// unless `mockActive` is set, which only happens while this file's own tests run (see beforeAll/afterAll).
-// We snapshot the real exports into plain objects BEFORE installing the mocks: bun re-binds the live
-// module namespace to the mock once mock.module runs, so reading the namespace at call time would
-// re-enter the mock (and recurse forever). The snapshot keeps real function references.
-let mockActive = false;
-const realBridge = { ...(await import("../session/bridge-device-session")) };
-const realRegisterDmk = { ...(await import("../device/register-dmk-transport")) };
-const realRunObservable = { ...(await import("../commands/run-observable")) };
-
-mock.module("../session/bridge-device-session", () => ({
-  ...realBridge,
-  withCurrencyDeviceSession: ((...args: Parameters<typeof realBridge.withCurrencyDeviceSession>) =>
-    mockActive
-      ? withCurrencyDeviceSession(...args)
-      : realBridge.withCurrencyDeviceSession(
-          ...args,
-        )) as typeof realBridge.withCurrencyDeviceSession,
-}));
-
-mock.module("../device/register-dmk-transport", () => ({
-  ...realRegisterDmk,
-  getWalletCliDeviceModelId: ((
-    ...args: Parameters<typeof realRegisterDmk.getWalletCliDeviceModelId>
-  ) =>
-    mockActive
-      ? Promise.resolve("nanoX")
-      : realRegisterDmk.getWalletCliDeviceModelId(
-          ...args,
-        )) as typeof realRegisterDmk.getWalletCliDeviceModelId,
-}));
-
-mock.module("../commands/run-observable", () => ({
-  ...realRunObservable,
-  runObservable: ((...args: Parameters<typeof realRunObservable.runObservable>) =>
-    mockActive
-      ? runObservable(...(args as [{ onNext?: (value: SendEvent) => void }]))
-      : realRunObservable.runObservable(...args)) as typeof realRunObservable.runObservable,
-}));
+// The send / genuine-check / device suites load these device-layer modules too, so the fakes are
+// gated to this file's tests.
+const bridgeMock = await createGatedModuleMock(
+  require.resolve("../session/bridge-device-session"),
+  ["withCurrencyDeviceSession"],
+);
+const registerDmkMock = await createGatedModuleMock(
+  require.resolve("../device/register-dmk-transport"),
+  ["getWalletCliDeviceModelId"],
+);
+const runObservableMock = await createGatedModuleMock(
+  require.resolve("../commands/run-observable"),
+  ["runObservable"],
+);
 
 const { signAndBroadcastIntent, prepareIntentDryRun } = await import("./sign-and-broadcast");
 
 beforeAll(() => {
-  mockActive = true;
+  bridgeMock.activate({ withCurrencyDeviceSession });
+  registerDmkMock.activate({ getWalletCliDeviceModelId: async () => "nanoX" });
+  runObservableMock.activate({ runObservable });
 });
 
 afterAll(() => {
-  // Scope the fakes to this file only, then drop the spies, so nothing bleeds into other test files.
-  mockActive = false;
-  mock.restore();
+  bridgeMock.deactivate();
+  registerDmkMock.deactivate();
+  runObservableMock.deactivate();
 });
 
 const descriptor = {

@@ -34,10 +34,7 @@ import { groupCurrenciesByAsset } from "@ledgerhq/live-common/modularDrawer/util
 import { useAvailabilityRows } from "@ledgerhq/live-common/modularDrawer/hooks/useAvailabilityRows";
 import type { AvailabilityRow } from "@ledgerhq/live-common/modularDrawer/utils/buildAvailabilityRows";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import {
-  getPerpsUiUseCase,
-  PERPS_UI_USE_CASE,
-} from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
+import { getPerpsDrawerHeading } from "../../utils/getPerpsDrawerHeading";
 import type { DisabledItemExplanation, DisabledItemsExplanation } from "../../types";
 import { UnavailableSectionHeader } from "../../components/UnavailableSectionHeader";
 
@@ -82,14 +79,10 @@ const AssetSelection = ({
   const { t } = useTranslation();
   const { isInternetReachable } = useNetworkState();
 
-  const isPerpsFund = getPerpsUiUseCase(uiUseCase) === PERPS_UI_USE_CASE.fund;
-
-  const headerTitle = isPerpsFund
-    ? t("modularDrawer.selectDepositCurrencyTitle")
-    : t("modularDrawer.selectAsset");
-
-  const headerDescription = isPerpsFund
-    ? t("modularDrawer.selectDepositCurrencyDescription")
+  const perpsHeading = getPerpsDrawerHeading("asset", uiUseCase, true);
+  const headerTitle = t(perpsHeading?.titleKey ?? "modularDrawer.selectAsset");
+  const headerDescription = perpsHeading?.descriptionKey
+    ? t(perpsHeading.descriptionKey)
     : undefined;
 
   const flow = useSelector(modularDrawerFlowSelector);

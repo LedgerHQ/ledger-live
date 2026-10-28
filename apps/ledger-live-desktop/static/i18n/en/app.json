@@ -328,7 +328,7 @@
     "remove": {
       "title": "Remove account?",
       "description": "The assets linked to this account will no longer be visible in your portfolio. Your assets on the blockchain remain unaffected.",
-      "confirm": "Yes, remove.",
+      "confirm": "Yes, remove",
       "cancel": "Keep"
     }
   },
@@ -716,18 +716,6 @@
     "buttonTitle": "Test"
   },
   "account": {
-    "subHeader": {
-      "moreInfo": "More info",
-      "cardTitle": "Powered by {{team}}",
-      "drawer": {
-        "title": "{{family}} integration",
-        "subTitle": "The {{family}} integration has been done by the {{team}} team",
-        "description": "Ledger Wallet is an open-source platform.",
-        "description2": "Developers from anywhere in the world can integrate with our Ledger Wallet",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
-        "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
-      }
-    },
     "migrationBanner": {
       "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
       "contactSupport": "Contact support"
@@ -3094,12 +3082,6 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
-      "aleoPublic": {
-        "title": "Public balance"
-      },
-      "aleoPrivate": {
-        "title": "Private balance"
-      },
       "zeroBalance": {
         "warning": "No available balance"
       },
@@ -3206,18 +3188,6 @@
       "delegatedAssets": "Delegated assets",
       "undelegatingTooltip": "Undelegated assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
       "undelegating": "Pending Withdrawals"
-    },
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by MultiversX",
-        "moreInfo": "More info",
-        "drawerTitle": "MultiversX integration",
-        "title": "MultiversX eGold (EGLD) token is now available on Ledger Wallet",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Wallet.",
-        "description2": "The MultiversX eGold (EGLD) Token is native to the MultiversX Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the MultiversX team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
-      }
     },
     "delegation": {
       "emptyState": {
@@ -3575,17 +3545,6 @@
     }
   },
   "celo": {
-    "account": {
-      "subHeader": {
-        "cardTitle": "Powered by Figment",
-        "moreInfo": "More info",
-        "drawerTitle": "Powered by Figment",
-        "title": "The CELO  token is now available on Ledger Wallet",
-        "description": "You can now start to manage your CELO tokens and secure them through Ledger Wallet.",
-        "description2": "The Celo token is native to the Celo chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Powered by Figment"
-      }
-    },
     "lockedBalance": "Locked balance",
     "lockedTooltip": "Assets must be locked and voted for validator groups before earning rewards.",
     "nonvotingLockedBalance": "Non-voting locked balance",
@@ -4999,16 +4958,7 @@
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
       "storageUsageBalance": "Minimum balance",
-      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
-      "subHeader": {
-        "cardTitle": "Powered by Figment",
-        "moreInfo": "More info",
-        "drawerTitle": "Powered by Figment",
-        "title": "The NEAR token is now available on Ledger Wallet",
-        "description": "You can now start to manage your NEAR tokens and secure them through Ledger Wallet.",
-        "description2": "The NEAR token is native to the NEAR chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
     },
     "operationDetails": {
       "extra": {
@@ -5138,16 +5088,7 @@
       "pendingBalance": "Pending balance",
       "pendingBalanceTooltip": "This amount has been unstaked and is currently pending availability.",
       "storageUsageBalance": "Minimum balance",
-      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active.",
-      "subHeader": {
-        "cardTitle": "Powered by Figment",
-        "moreInfo": "More info",
-        "drawerTitle": "Powered by Figment",
-        "title": "The SUI token is now available on Ledger Wallet",
-        "description": "You can now start to manage your SUI tokens and secure them through Ledger Wallet.",
-        "description2": "The SUI token is native to the SUI chain and is used for everything from transactions, staking and many upcoming features.",
-        "website": "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip": "This amount is reserved for storage and transactions, and is the minimum balance that your account must maintain to remain active."
     },
     "operationDetails": {
       "extra": {
@@ -9677,6 +9618,8 @@
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
     "selectDepositCurrencyTitle": "Select asset to deposit",
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
+    "selectWithdrawCurrencyTitle": "Select asset to withdraw to",
+    "selectWithdrawCurrencyDescription": "Your USDC will be swapped automatically into the asset you choose.",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
     "accountsAdded": {
@@ -10721,6 +10664,27 @@
       "earn": "Earn"
     }
   },
+  "accountDetailNotices": {
+    "actions": {
+      "learnMore": "Learn more",
+      "openPerps": "Open Perps"
+    },
+    "migration": {
+      "title": "{{from}} is migrating to {{to}}",
+      "description": "Learn more about the migration, or contact support if you need assistance."
+    },
+    "willBeDeprecated": {
+      "title": "{{currencyName}} will not be supported as of {{date}}",
+      "description": "It will still be secured by your Ledger device. Learn more in the Help Center."
+    },
+    "robinhoodDisclaimer": {
+      "title": "Total balance does not include dividends or stock splits."
+    },
+    "perps": {
+      "title": "About Hyperliquid account",
+      "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account"
+    }
+  },
   "accountDetail": {
     "header": {
       "settings": "Account settings"
@@ -11270,6 +11234,24 @@
   },
   "actionMenuDialog": {
     "a11yTitle": "Choose an action"
+  },
+  "perpsWithdraw": {
+    "title": "Withdraw",
+    "review": "Review",
+    "estimatedAmount": "Withdraw ~{{value}}",
+    "inputSubText": "Swap and withdraw via {{provider}}",
+    "selectCurrencyTitle": "Withdraw to {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount": "No account",
+    "formErrors": {
+      "insufficientBalance": "Insufficient balance",
+      "minimumAmount": "The minimum withdrawal is {{minAmount}} USDC.",
+      "minimumAmountUnknown": "This amount is too low to withdraw.",
+      "lowLiquidity": "This asset is temporarily unavailable. Try again later or choose another asset.",
+      "addressScreening": "This withdrawal can’t be processed to this account.",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
+      "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
+    }
   },
   "perpsDepositSign": {
     "a11yTitle": "Deposit signing",

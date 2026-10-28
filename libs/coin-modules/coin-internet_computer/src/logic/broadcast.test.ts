@@ -5,9 +5,15 @@ import {
   ICPCallRejected,
   ICPCallUnconfirmed,
   ICPGovernanceRejected,
+  ICPStakeNotRefreshed,
   ICPTransactionExpired,
 } from "../errors";
-import { broadcastTxn, readReplyFromCanister, readTransferOutcome } from "../network/api";
+import {
+  broadcastTxn,
+  claimOrRefreshNeuronFromAccount,
+  readReplyFromCanister,
+  readTransferOutcome,
+} from "../network/api";
 import {
   decodeCanisterIdlArgs,
   encodeCanisterIdlFunc,
@@ -16,11 +22,13 @@ import {
   ledgerIdlFactory,
 } from "../network/candid";
 import { broadcast } from "./broadcast";
+import { getNeuronStakeSubAccountIdentifier } from "./buildNeuronTransaction";
 import { createUnsignedTransfer, type TransferRawRequest } from "./buildTransaction";
 import { combine, type DecodedCallContent, type DecodedReadStateContent } from "./combine";
 import { craftTransaction } from "./craftTransaction";
-import { deriveAddressFromPubkey } from "./crypto";
+import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "./crypto";
 import { hashTransaction } from "./hashTransaction";
+import type { IcpStakingIntent } from "./intent";
 import { craftNeuronCommand } from "./neuronCommand";
 
 jest.mock("../network/api", () => ({
@@ -29,6 +37,7 @@ jest.mock("../network/api", () => ({
   readReplyFromCanister: jest.fn(),
   throwIfLedgerTransferRefused: jest.requireActual("../network/api").throwIfLedgerTransferRefused,
   decodeManageNeuronReply: jest.requireActual("../network/api").decodeManageNeuronReply,
+  claimOrRefreshNeuronFromAccount: jest.fn(),
 }));
 
 const mockBroadcastTxn = jest.mocked(broadcastTxn);
@@ -292,5 +301,140 @@ describe("broadcast a neuron command", () => {
 
     await expect(broadcast(tx)).rejects.toThrow(/Not a neuron command/);
     expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
+  });
+});
+
+/** The signed stake transfer with its nonce replaced. */
+const withNonce = (tx: string, stake_nonce: unknown) => {
+  const { transfer } = Cbor.decode<{ transfer: unknown }>(Buffer.from(tx, "hex"));
+  return Buffer.from(Cbor.encode({ transfer, stake_nonce })).toString("hex");
+};
+
+describe("broadcast a stake transfer", () => {
+  const mockClaim = jest.mocked(claimOrRefreshNeuronFromAccount);
+  const NONCE = 42n;
+  const CONTROLLER = derivePrincipalFromPubkey(PUBKEY);
+  const STAKE_ACCOUNT = getNeuronStakeSubAccountIdentifier(CONTROLLER, NONCE);
+
+  const signedStake = () => {
+    const intent: IcpStakingIntent = {
+      intentType: "staking",
+      type: "create_neuron",
+      mode: "delegate",
+      valAddress: "rrkah-fqaaa-aaaaa-aaaaq-cai",
+      sender: SENDER,
+      senderPublicKey: PUBKEY,
+      recipient: STAKE_ACCOUNT,
+      amount: 100_000_000n,
+      asset: { type: "native" },
+      data: { type: "neuron", stakeNonce: String(NONCE) },
+    };
+    return combine(craftTransaction(intent).transaction, ["ab".repeat(64)], PUBKEY);
+  };
+
+  const HASH = hashTransaction({
+    from: SENDER,
+    to: STAKE_ACCOUNT,
+    amount: 100_000_000n,
+    fee: 10_000n,
+    memo: NONCE,
+    created_at_time: BigInt(NOW) * 1_000_000n,
+  });
+  const SETTLED = { transactionHash: HASH, stakeNonce: String(NONCE) };
+
+  beforeEach(() => mockClaim.mockResolvedValue(123n));
+
+  it("submits the transfer alone, claims its neuron and returns the transfer hash", async () => {
+    const tx = signedStake();
+    const { transfer } = Cbor.decode<{ transfer: unknown }>(Buffer.from(tx, "hex"));
+
+    await expect(broadcast(tx)).resolves.toBe(HASH);
+    expect(mockBroadcastTxn).toHaveBeenCalledWith(
+      Buffer.from(Cbor.encode(transfer)),
+      "ryjl3-tyaaa-aaaaa-aaaba-cai",
+      "call",
+    );
+    expect(mockClaim).toHaveBeenCalledWith(CONTROLLER, NONCE);
+  });
+
+  it.each([
+    ["another account", String(NONCE + 1n), /does not name/],
+    ["no Nat64", "x", /Not a stake nonce/],
+  ])("refuses a nonce that names %s without submitting it", async (_, nonce, error) => {
+    await expect(broadcast(withNonce(signedStake(), nonce))).rejects.toThrow(error);
+    expect(mockBroadcastTxn).not.toHaveBeenCalled();
+  });
+
+  it("fails when the ledger refuses the transfer, without claiming", async () => {
+    mockReadTransferOutcome.mockResolvedValue({
+      Err: { InsufficientFunds: { balance: { e8s: 1n } } },
+    });
+
+    await expect(broadcast(signedStake())).rejects.toThrow(/InsufficientFunds/);
+    expect(mockClaim).not.toHaveBeenCalled();
+  });
+
+  // An earlier delivery of the same signed transfer settled, and its answer was lost.
+  it("claims the neuron of a transfer the ledger already holds", async () => {
+    mockReadTransferOutcome.mockResolvedValue({ Err: { TxDuplicate: { duplicate_of: 1n } } });
+
+    await expect(broadcast(signedStake())).resolves.toBe(HASH);
+    expect(mockClaim).toHaveBeenCalledWith(CONTROLLER, NONCE);
+  });
+
+  it("keeps the replica's rejection: the transfer never ran", async () => {
+    mockReadTransferOutcome.mockRejectedValue(new ICPCallRejected());
+
+    await expect(broadcast(signedStake())).rejects.toBeInstanceOf(ICPCallRejected);
+    expect(mockClaim).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["no certificate", () => mockBroadcastTxn.mockResolvedValue(null)],
+    [
+      "an outcome it cannot read",
+      () => mockReadTransferOutcome.mockRejectedValue(new Error("Decoding failed")),
+    ],
+  ])("reports a transfer with %s as unconfirmed, with its hash", async (_, arrange) => {
+    arrange();
+
+    const error = await broadcast(signedStake()).catch(e => e);
+
+    expect(error).toBeInstanceOf(ICPCallUnconfirmed);
+    expect(error).toMatchObject(SETTLED);
+    expect(mockClaim).not.toHaveBeenCalled();
+  });
+
+  it("reports a refused claim with the settled transfer", async () => {
+    mockClaim.mockRejectedValue(new ICPStakeNotRefreshed("refused", { reason: "refused" }));
+
+    const error = await broadcast(signedStake()).catch(e => e);
+
+    expect(error).toBeInstanceOf(ICPStakeNotRefreshed);
+    expect(error).toMatchObject({ ...SETTLED, reason: "refused" });
+  });
+
+  it.each([
+    ["no answer settles", () => mockClaim.mockResolvedValue(undefined)],
+    ["fails on the way", () => mockClaim.mockRejectedValue(new Error("network down"))],
+  ])("reports a claim that %s as unconfirmed, with the settled transfer", async (_, arrange) => {
+    arrange();
+
+    const error = await broadcast(signedStake()).catch(e => e);
+
+    expect(error).toBeInstanceOf(ICPCallUnconfirmed);
+    expect(error).toMatchObject(SETTLED);
+  });
+
+  // It may have settled before its answer was lost, so the refusal carries what a claim needs.
+  it("refuses a transfer past its ingress expiry without submitting it, with its hash", async () => {
+    const tx = signedStake();
+    jest.setSystemTime(NOW + 10 * 60 * 1000);
+
+    const error = await broadcast(tx).catch(e => e);
+
+    expect(error).toBeInstanceOf(ICPTransactionExpired);
+    expect(error).toMatchObject(SETTLED);
+    expect(mockBroadcastTxn).not.toHaveBeenCalled();
   });
 });

@@ -70,17 +70,17 @@ describe("CardTransactions (native)", () => {
 
   it("returns the selected transaction item", async () => {
     const page = mockPayCardTransactions();
-    const onTransactionPress = jest.fn();
+    const onOpenTransaction = jest.fn();
     const user = userEvent.setup();
     server.use(http.get(CARD_TRANSACTIONS_URL, () => HttpResponse.json(page)));
 
-    render(<CardTransactions onTransactionPress={onTransactionPress} />, {
+    render(<CardTransactions onOpenTransaction={onOpenTransaction} />, {
       wrapper: cardApiWrapper({ signedIn: true }),
     });
 
     await user.press(await screen.findByText("NETFLIX.COM"));
 
-    expect(onTransactionPress).toHaveBeenCalledWith(
+    expect(onOpenTransaction).toHaveBeenCalledWith(
       expect.objectContaining({
         transaction: expect.objectContaining({ id: page[0]?.id }),
       }),

@@ -6,6 +6,10 @@ import {
   getDepositRequestId,
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import {
+  getWithdrawRequestId,
+  settleWithdrawRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({
@@ -38,6 +42,7 @@ describe("usePerpsHandlers", () => {
       uiHooks: {
         "signing.execute": expect.any(Function),
         "deposit.execute": expect.any(Function),
+        "withdraw.execute": expect.any(Function),
         "migration.execute": expect.any(Function),
       },
     });
@@ -91,6 +96,30 @@ describe("usePerpsHandlers", () => {
 
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
     const request = depositExecute?.({ receiverAccount });
+    unmount();
+
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  it("should open the withdraw screen and resolve once the withdrawal settles", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const params = { sourceAccount: { id: "hl-1" } } as never;
+    renderHook(() => usePerpsHandlers(accounts));
+
+    const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
+    const request = withdrawExecute?.(params);
+    settleWithdrawRequest(getWithdrawRequestId(), { swapId: "swap-1" });
+
+    expect(mockNavigate).toHaveBeenCalledWith("PerpsWithdraw", params);
+    await expect(request).resolves.toEqual({ swapId: "swap-1" });
+  });
+
+  it("should reject an in-flight withdrawal when the live app unmounts", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const { unmount } = renderHook(() => usePerpsHandlers(accounts));
+
+    const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
+    const request = withdrawExecute?.({ sourceAccount: { id: "hl-1" } } as never);
     unmount();
 
     await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);

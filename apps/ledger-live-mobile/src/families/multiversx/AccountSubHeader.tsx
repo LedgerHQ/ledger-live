@@ -1,21 +1,13 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Trans } from "~/context/Locale";
-
-import AccountSubHeader from "~/components/AccountSubHeader";
 import Alert from "~/components/Alert";
 
-/*
- * Handle the component declaration.
- */
-
-const MultiversXAccountSubHeader = () => (
-  <Fragment>
-    <AccountSubHeader family="MultiversX" team="MultiversX" />
-
+function MultiversXAccountSubHeader() {
+  return (
     <Alert type="warning">
-      <Trans i18nKey={`elrond.guardedAccountWarning`} />
+      <Trans i18nKey="elrond.guardedAccountWarning" />
     </Alert>
-  </Fragment>
-);
+  );
+}
 
 export default MultiversXAccountSubHeader;

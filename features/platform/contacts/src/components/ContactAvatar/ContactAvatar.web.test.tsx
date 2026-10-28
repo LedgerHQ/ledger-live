@@ -30,7 +30,7 @@ describe("ContactAvatar", () => {
         contactId={contactId}
         name="Benoit Jean"
         size="xl"
-        testId="contacts-detail-avatar"
+        testID="contacts-detail-avatar"
       />,
     );
 
@@ -61,7 +61,7 @@ describe("ContactAvatar", () => {
         contactId={contactId}
         name="My Wallet"
         size="xl"
-        testId="contacts-detail-me-avatar"
+        testID="contacts-detail-me-avatar"
       />,
     );
 
@@ -80,7 +80,7 @@ describe("ContactAvatar", () => {
         contactId={contactId}
         name="Benoit"
         ariaHidden
-        testId="contacts-detail-avatar"
+        testID="contacts-detail-avatar"
       />,
     );
 
@@ -94,7 +94,7 @@ describe("ContactAvatar", () => {
     const contactId = ContactIdSchema.parse("contact-empty");
 
     render(
-      <ContactAvatar isMe={false} contactId={contactId} name="" testId="contacts-empty-avatar" />,
+      <ContactAvatar isMe={false} contactId={contactId} name="" testID="contacts-empty-avatar" />,
     );
 
     const avatar = screen.getByTestId("contacts-empty-avatar");

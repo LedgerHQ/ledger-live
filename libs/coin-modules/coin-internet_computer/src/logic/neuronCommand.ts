@@ -34,12 +34,14 @@ import {
   createUnsignedNeuronCommandTransaction,
   type NeuronCommand,
 } from "./buildNeuronTransaction";
-import { derivePrincipalFromPubkey } from "./crypto";
 import {
+  fieldError,
   type IcpIntent,
   type IcpNeuronCommandData,
   type IcpStakingIntent,
+  neuronDataOf,
   senderPublicKeyOf,
+  signerPrincipalOf,
 } from "./intent";
 
 const NANOS_PER_MILLI = 1_000_000n;
@@ -63,20 +65,6 @@ type CommandBuilder = (
     signer: string | undefined;
   },
 ) => CommandFields;
-
-/** The intent field an error concerns, when it is not the transaction as a whole. */
-type ErrorField = "amount" | "recipient";
-
-const errorFields = new WeakMap<Error, ErrorField>();
-
-const fieldError = (field: ErrorField, error: Error): Error => {
-  errorFields.set(error, field);
-  return error;
-};
-
-/** The intent field a `neuronCommandOf` error concerns, or `transaction`. */
-export const errorFieldOf = (error: Error): ErrorField | "transaction" =>
-  errorFields.get(error) ?? "transaction";
 
 // The bounds are protocol seconds; each error carries whole days too, and `count` repeats them for
 // the plural form the apps select. A minimum rounds up and a maximum rounds down.
@@ -119,7 +107,7 @@ const maturityShare =
   };
 
 const isFollowableTopic = (topic: string): topic is keyof typeof FOLLOWABLE_TOPICS =>
-  Object.prototype.hasOwnProperty.call(FOLLOWABLE_TOPICS, topic);
+  Object.hasOwn(FOLLOWABLE_TOPICS, topic);
 
 // Excluded topics spend a signature for nothing: the canister refuses a retired one, and the device
 // refuses one past the Ledger ICP app's cap.
@@ -229,21 +217,6 @@ const isCommandType = (type: string): type is CommandType => COMMAND_TYPES.has(t
 export const isNeuronCommandIntent = (intent: IcpIntent): intent is IcpStakingIntent =>
   intent.intentType === "staking" && isCommandType(intent.type);
 
-const commandDataOf = (intent: IcpStakingIntent): IcpNeuronCommandData | undefined => {
-  const data = "data" in intent ? intent.data : undefined;
-  return data?.type === "neuron" ? data : undefined;
-};
-
-// Absent when the intent carries no usable public key: the checks that need it are then skipped.
-const signerOf = ({ senderPublicKey }: IcpStakingIntent): string | undefined => {
-  if (!senderPublicKey) return undefined;
-  try {
-    return derivePrincipalFromPubkey(senderPublicKey).toText();
-  } catch {
-    return undefined;
-  }
-};
-
 /**
  * The command the intent asks for, or the error that says why it cannot be built. Only checks that
  * need no neuron state run here. `errorFieldOf` names the intent field an error concerns.
@@ -257,12 +230,13 @@ export function neuronCommandOf(intent: IcpStakingIntent): NeuronCommand | Error
   if (neuronId === undefined) return new InvalidTransactionError(`Not a neuron id: ${valAddress}`);
   if (!isCommandType(type)) return new InvalidTransactionError(`${type} is not a neuron command`);
 
-  const fields = BUILDERS[type](commandDataOf(intent), {
+  // Without a usable public key, the checks that need the signer are skipped; crafting requires one.
+  const fields = BUILDERS[type](neuronDataOf(intent), {
     neuronId,
     amount,
     recipient,
     sender,
-    signer: signerOf(intent),
+    signer: signerPrincipalOf(intent)?.toText(),
   });
   if (fields instanceof Error) return fields;
   return { type, neuronId, amount: new BigNumber(0), ...fields };

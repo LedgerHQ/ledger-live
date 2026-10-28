@@ -6,6 +6,7 @@ jest.mock("~/datadog/renderer", () => ({
   initDatadog: jest.fn().mockResolvedValue(true),
   setTags: jest.fn(),
   isDatadogAvailable: jest.fn().mockReturnValue(true),
+  setDatadogActionsEnabled: jest.fn(),
 }));
 
 jest.mock("~/datadog/logs", () => ({
@@ -14,6 +15,9 @@ jest.mock("~/datadog/logs", () => ({
 
 const initDatadog = jest.mocked(jest.requireMock("~/datadog/renderer").initDatadog);
 const isDatadogAvailable = jest.mocked(jest.requireMock("~/datadog/renderer").isDatadogAvailable);
+const setDatadogActionsEnabled = jest.mocked(
+  jest.requireMock("~/datadog/renderer").setDatadogActionsEnabled,
+);
 const initDatadogLogs = jest.mocked(jest.requireMock("~/datadog/logs").initDatadogLogs);
 
 describe("ConnectEnvsToDatadog", () => {
@@ -27,6 +31,16 @@ describe("ConnectEnvsToDatadog", () => {
       initialState: { settings: { crashReporting: false } },
     });
     expect(container.firstChild).toBeNull();
+  });
+
+  it.each([true, false])("should follow the lldDatadog flag (%s) for custom actions", enabled => {
+    render(<ConnectEnvsToDatadog />, {
+      initialState: {
+        ...withFlagOverrides({ lldDatadog: { enabled, params: {} } }),
+        settings: { crashReporting: true },
+      },
+    });
+    expect(setDatadogActionsEnabled).toHaveBeenLastCalledWith(enabled);
   });
 
   it("should not call initDatadog when crashReporting is false", async () => {

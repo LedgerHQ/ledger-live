@@ -9,8 +9,13 @@ import {
   useState,
 } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { resolveInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
 import {
   SetCurrentAccountHistDb,
   useDAppManifestCurrencyIds,
@@ -18,6 +23,11 @@ import {
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "@shared/analytics";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import {
+  reportBlockedInitialLoad,
+  reportGoToURLFallback,
+  reportRejectedLoadURL,
+} from "./domainCheckReport";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -38,7 +48,10 @@ export const initialWebviewState: WebviewState = {
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | boolean | undefined>;
-  /** When true, loadURL only allows URLs matching manifest.domains (same as lldWebviewManifestDomainCheck) */
+  /**
+   * When true, the main process only lets the main frame load origins from manifest.domains,
+   * and loadURL rejects other URLs (lldWebviewManifestDomainCheck)
+   */
   manifestDomainCheckEnabled?: boolean;
 };
 
@@ -73,6 +86,8 @@ type UseWebviewStateReturn = {
   webviewState: WebviewState;
   webviewProps: {
     src: string;
+    /** Carries the allowed main-frame origins and the domain check report context to main */
+    webpreferences: string;
   };
   webviewRef: RefObject<WebviewTag | null>;
   setWebviewRef: (node: WebviewTag) => () => void;
@@ -87,7 +102,11 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs, manifestDomainCheckEnabled } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const { url: initialURL, rejectedGoToURL } = useMemo(
+    () =>
+      resolveInitialURL(inputs, manifest, { enforceManifestDomains: manifestDomainCheckEnabled }),
+    [manifest, inputs, manifestDomainCheckEnabled],
+  );
 
   // Mirror mobile's originWhitelist: if the feature flag is on, only load URLs that pass
   // the manifest.domains whitelist. Fall back to manifest.url if initialURL is rejected,
@@ -127,6 +146,7 @@ export function useWebviewState(
           manifestDomainCheckEnabled &&
           !isUrlAllowedByManifestDomains(url, manifest.domains ?? [])
         ) {
+          reportRejectedLoadURL(manifest.id, url);
           return Promise.reject(new Error("URL not allowed by manifest domains"));
         }
         const webview = getAttachedWebview(webviewRef);
@@ -145,7 +165,7 @@ export function useWebviewState(
         serverRef?.current?.sendMessage(method, params);
       },
     };
-  }, [manifest.domains, manifestDomainCheckEnabled, serverRef]);
+  }, [manifest.id, manifest.domains, manifestDomainCheckEnabled, serverRef]);
 
   // Track the actual webview DOM node via a callback ref. Unlike a plain ref,
   // a state update re-triggers the listener-attach effect exactly when the
@@ -205,6 +225,14 @@ export function useWebviewState(
   );
 
   const isBlockedByDomainCheck = manifestDomainCheckEnabled && webviewSrc === "about:blank";
+
+  useEffect(() => {
+    if (isBlockedByDomainCheck) reportBlockedInitialLoad(manifest, initialURL);
+  }, [isBlockedByDomainCheck, manifest, initialURL]);
+
+  useEffect(() => {
+    if (rejectedGoToURL !== undefined) reportGoToURLFallback(manifest.id, rejectedGoToURL);
+  }, [manifest.id, rejectedGoToURL]);
 
   const handleDidStartLoading = useCallback(() => {
     setState(oldState => ({
@@ -314,8 +342,20 @@ export function useWebviewState(
     webviewNode,
   ]);
 
+  const webpreferences = useMemo(
+    () =>
+      [
+        serializeAllowedOrigins(
+          manifestDomainCheckEnabled ? (manifest.domains ?? []) : UNRESTRICTED_ORIGINS,
+        ),
+        serializeDomainCheckReport({ manifestId: manifest.id, domains: manifest.domains ?? [] }),
+      ].join(","),
+    [manifest.domains, manifest.id, manifestDomainCheckEnabled],
+  );
+
   const props = {
     src: webviewSrc,
+    webpreferences,
   };
 
   const webviewPartition = useMemo(() => {

@@ -3881,18 +3881,6 @@
     "subaccountCount_other": "+{{count}} subaccounts"
   },
   "account": {
-    "subHeader": {
-      "moreInfo": "More info",
-      "cardTitle": "Powered by {{team}}",
-      "drawer": {
-        "title": "{{family}} integration",
-        "subTitle": "The {{family}} integration has been done by the {{team}} team",
-        "description": "Ledger Wallet is an open-source platform.",
-        "description2": "Developers from anywhere in the world can integrate with our Ledger Wallet",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
-        "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
-      }
-    },
     "migrationBanner": {
       "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
       "contactSupport": "Contact support"
@@ -5258,6 +5246,25 @@
   },
   "send": {
     "newSendFlow": {
+      "balanceType": {
+        "title": "Select balance",
+        "transparent": {
+          "title": "Public balance",
+          "subtitle": "Transparent"
+        },
+        "shielded": {
+          "title": "Private balance",
+          "subtitle": "Shielded",
+          "pendingNoticeTitle": "Funds maturing",
+          "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+        },
+        "zeroBalance": {
+          "warning": "No available balance"
+        },
+        "requiresSync": {
+          "notice": "Sync required"
+        }
+      },
       "title": "Send {{currency}}",
       "selectAddress": "Select address",
       "available": "Available {{amount}}",
@@ -10507,6 +10514,27 @@
       "more": "More"
     }
   },
+  "accountDetailNotices": {
+    "actions": {
+      "learnMore": "Learn more",
+      "openPerps": "Open Perps"
+    },
+    "migration": {
+      "title": "{{from}} is migrating to {{to}}",
+      "description": "Learn more about the migration, or contact support if you need assistance."
+    },
+    "willBeDeprecated": {
+      "title": "{{currencyName}} will not be supported as of {{date}}",
+      "description": "It will still be secured by your Ledger device. Learn more in the Help Center."
+    },
+    "robinhoodDisclaimer": {
+      "title": "Total balance does not include dividends or stock splits."
+    },
+    "perps": {
+      "title": "About Hyperliquid account",
+      "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account"
+    }
+  },
   "accountDetail": {
     "assets": {
       "title": "Assets"
@@ -10778,6 +10806,10 @@
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
     "selectDepositCurrencyTitle": "Select asset to deposit",
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
+    "selectWithdrawCurrencyTitle": "Select asset to withdraw to",
+    "selectWithdrawCurrencyDescription": "Your USDC will be swapped automatically into the asset you choose.",
+    "selectAccountPerpsWithdrawFromDescription": "Select the account you want to withdraw funds from",
+    "selectAccountPerpsWithdrawFromEmptyDescription": "To withdraw, you need a Hyperliquid account. Add one to continue.",
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "notAvailableYet": "Not available yet",
@@ -10837,6 +10869,25 @@
     "formErrors": {
       "amountExceedsBalance": "Insufficient balance",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    }
+  },
+  "perpsWithdraw": {
+    "title": "Withdraw",
+    "review": "Review",
+    "keypadDelete": "Delete last digit",
+    "estimatedAmount": "Withdraw ~{{value}}",
+    "inputSubText": "Swap and withdraw via {{provider}}",
+    "selectCurrencyTitle": "Withdraw to {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount": "No account",
+    "formErrors": {
+      "insufficientBalance": "Insufficient balance",
+      "minimumAmount": "The minimum withdrawal is {{minAmount}} USDC.",
+      "minimumAmountUnknown": "This amount is too low to withdraw.",
+      "lowLiquidity": "This asset is temporarily unavailable. Try again later or choose another asset.",
+      "addressScreening": "This withdrawal can’t be processed to this account.",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
+      "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
     }
   },
   "swapErrors": {

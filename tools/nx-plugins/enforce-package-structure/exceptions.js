@@ -140,29 +140,9 @@ const COMPONENT_EXCEPTIONS = {
     CardPrimaryActionButton: componentWaiver("R1"),
     CardTopUpButton: componentWaiver("R1"),
   },
-  "features/flow/pay-card-transactions": {
-    CardTransactionDetail: componentWaiver("R2"),
-    CardTransactions: componentWaiver("R3"),
-    CategoryIcon: componentWaiver("R4"),
-    ListItem: componentWaiver("R3"),
-  },
   "features/flow/pay-contact": {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),
-  },
-  "features/platform/contacts": {
-    "./native": entryWaiver(),
-    "./web": entryWaiver(),
-    ContactAvatar: componentWaiver("R2", "R4", "R5"),
-    ContactConfirmationBottomSheet: componentWaiver("R1", "R4", "R5"),
-    ContactConfirmationDialog: componentWaiver("R1"),
-    ContactNameDisclaimer: componentWaiver("R1", "R5"),
-    ContactNameInput: componentWaiver("R2", "R5"),
-  },
-  "shared/ui-info-state": {
-    DialogBackgroundGradient: componentWaiver("R1"),
-    DialogBackgroundToneProvider: componentWaiver("R1"),
-    InfoState: componentWaiver("R2"),
   },
 };
 

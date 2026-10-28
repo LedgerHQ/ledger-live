@@ -15,7 +15,7 @@ jest.mock("@features/platform-contacts", () => ({
   useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).useContactDisplayName,
-  ContactAvatar: ({ testId }: { testId?: string }) => <span data-testid={testId} />,
+  ContactAvatar: ({ testID }: { testID?: string }) => <span data-testid={testID} />,
 }));
 
 const FIXED_NOW = new Date("2026-07-31T10:00:00.000Z");

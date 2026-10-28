@@ -2,9 +2,9 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Search } from "@ledgerhq/lumen-ui-react/symbols";
-import { DialogBackgroundContext } from "./background/DialogBackgroundContext.web";
-import { InfoState } from "./InfoState.web";
-import type { InfoStatePreset } from "./types.web";
+import { DialogBackgroundContext } from "./background/DialogBackgroundContext";
+import { InfoState } from "./InfoState";
+import type { InfoStatePreset } from "./sharedTypes";
 
 type VisualInfoStatePreset = Exclude<InfoStatePreset, "text">;
 

@@ -71,7 +71,7 @@ export function RecipientCard({
               isMe={contact.isMe}
               size="md"
               ariaHidden
-              testId="send-recipient-card-avatar"
+              testID="send-recipient-card-avatar"
             />
           ) : (
             <Spot icon={Wallet} />

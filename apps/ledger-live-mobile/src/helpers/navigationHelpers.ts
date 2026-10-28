@@ -39,20 +39,24 @@ const findStepStack = (
   );
 };
 
-const syncTransactionToEarlierSteps = (
+// The summary gets its params directly too: @react-navigation/core 7.17+ drops the nested
+// params of popTo when the step stack changes in the same update, which these setParams calls do.
+const syncTransactionToSendSteps = (
   navigation: StackNavigation,
   navigatorName: string,
   transaction: unknown,
+  summaryParams: object,
 ): void => {
   const stack = findStepStack(navigation.getState(), navigatorName);
   const target = stack?.key;
   if (!target) return;
 
   for (const route of stack.routes) {
-    if (!route.key || !stepsKeepingTransactionCopy.has(route.name)) continue;
+    const isSummary = route.name === ScreenName.SendSummary;
+    if (!route.key || (!isSummary && !stepsKeepingTransactionCopy.has(route.name))) continue;
 
     navigation.dispatch({
-      ...CommonActions.setParams({ transaction }),
+      ...CommonActions.setParams(isSummary ? summaryParams : { transaction }),
       source: route.key,
       target,
     });
@@ -64,14 +68,14 @@ export const popToScreen = <T extends MappedScreen>(
     popTo: (navigator: ScreenToNavigatorMap[T], params: unknown) => void;
   },
   screen: T,
-  params: unknown,
+  params: object,
 ): void => {
   const navigator = screenToNavigatorMap[screen];
-  const transaction = (params as { transaction?: unknown } | undefined)?.transaction;
+  const transaction = "transaction" in params ? params.transaction : undefined;
 
   // Mirror before popping: once popTo runs, the dispatch no longer reaches the earlier steps.
   if (screen === ScreenName.SendSummary && transaction) {
-    syncTransactionToEarlierSteps(navigation, navigator, transaction);
+    syncTransactionToSendSteps(navigation, navigator, transaction, params);
   }
 
   navigation.popTo(navigator, { screen, params });

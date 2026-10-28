@@ -8,7 +8,7 @@ import {
   ListItemTrailing,
 } from "@ledgerhq/lumen-ui-rnative";
 import { CategoryIcon } from "../CategoryIcon";
-import type { ListItemViewProps } from "./types";
+import type { ListItemViewProps } from "./ListItem.types";
 
 export function ListItemView({
   id,
@@ -18,10 +18,10 @@ export function ListItemView({
   fiatAmount,
   assetAmount,
   dateLabel,
-  onPress,
+  onOpenTransaction,
 }: ListItemViewProps) {
   return (
-    <LumenListItem onPress={onPress} testID={`card-transactions-item-${id}`}>
+    <LumenListItem onPress={onOpenTransaction} testID={`card-transactions-item-${id}`}>
       <ListItemLeading>
         <CategoryIcon category={category} categoryLabel={categoryLabel} />
         <ListItemContent>

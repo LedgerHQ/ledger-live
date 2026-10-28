@@ -9,7 +9,7 @@ import type { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { getSharedAnalytics } from "../../analytics/getSharedAnalytics";
 import { OsUpdateButton, OsUpdatePage } from "../../analytics/types";
-import { hasBackupSelector, hasOsUpdatesSelector, setHasBackup } from "../../state/osUpdateSlice";
+import { hasBackupSelector, setHasBackup } from "../../state/osUpdateSlice";
 import { deviceBackupStorage } from "../../storage/deviceBackupStorage";
 
 export type BackupBannerConfirmation = "restore" | "delete";
@@ -23,10 +23,9 @@ export function useBackupBannerViewModel(device: Device) {
   const navigation = useNavigation<BaseNavigation>();
   const dispatch = useDispatch();
   const hasBackup = useSelector(hasBackupSelector);
-  const hasOsUpdates = useSelector(hasOsUpdatesSelector);
   const [confirmation, setConfirmation] = useState<BackupBannerConfirmation | null>(null);
 
-  const isVisible = hasBackup && !hasOsUpdates;
+  const isVisible = hasBackup;
 
   // Not `device` itself: callers rebuild it on every render, which would resend the pages.
   const { deviceModelId, transport } = device;

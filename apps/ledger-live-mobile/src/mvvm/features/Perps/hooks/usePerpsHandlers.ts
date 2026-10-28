@@ -6,6 +6,7 @@ import {
   handlers as perpsHandlers,
   type PerpsDepositUiParams,
   type PerpsSignResult,
+  type PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -24,6 +25,10 @@ import {
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
 import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/constants";
+import {
+  beginWithdrawRequest,
+  cancelWithdrawRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -69,7 +74,17 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
     [navigation],
   );
 
+  const uiWithdrawExecute = useCallback(
+    (params: PerpsWithdrawUiParams) => {
+      const request = beginWithdrawRequest();
+      navigation.navigate(ScreenName.PerpsWithdraw, params);
+      return request;
+    },
+    [navigation],
+  );
+
   useEffect(() => cancelDepositRequest, []);
+  useEffect(() => cancelWithdrawRequest, []);
 
   // Only called when the wallet has no Hyperliquid account at the legacy address: runs the standard
   // add account flow inline and hands back every added account, the server picks the matching one.
@@ -106,9 +121,10 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
         uiHooks: {
           "signing.execute": uiSigningExecute,
           "deposit.execute": uiDepositExecute,
+          "withdraw.execute": uiWithdrawExecute,
           "migration.execute": uiMigrationExecute,
         },
       }),
-    [accounts, uiSigningExecute, uiDepositExecute, uiMigrationExecute],
+    [accounts, uiSigningExecute, uiDepositExecute, uiWithdrawExecute, uiMigrationExecute],
   );
 }

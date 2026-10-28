@@ -1,1 +1,2 @@
-export * from "./ContactAvatar.web";
+export * from "./ContactAvatar";
+export type * from "./ContactAvatar.types";

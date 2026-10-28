@@ -46,8 +46,8 @@ describe("useBackupBannerViewModel", () => {
 
   it.each([
     ["a backup and no OS update", true, [], true],
+    ["a backup and an OS update available", true, [osUpdate], true],
     ["no backup", false, [], false],
-    ["an OS update available", true, [osUpdate], false],
   ])("visibility with %s", (_label, hasBackup, osUpdates, expected) => {
     const { result } = renderHook(
       () => useBackupBannerViewModel(device),

@@ -69,6 +69,7 @@ import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import PerpsSign from "LLM/features/Perps/screens/PerpsSign/PerpsSignScreen";
 import PerpsDeposit from "LLM/features/Perps/screens/PerpsDeposit/PerpsDepositScreen";
+import PerpsWithdraw from "LLM/features/Perps/screens/PerpsWithdraw/PerpsWithdrawScreen";
 import PerpsTransactionSigned from "LLM/features/Perps/screens/PerpsTransactionSigned/PerpsTransactionSignedScreen";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
@@ -586,6 +587,15 @@ export default function BaseNavigator() {
           component={PerpsDeposit}
           options={{
             title: t("perpsDeposit.title"),
+            headerStyle: { backgroundColor: lumenBaseColor },
+            contentStyle: { backgroundColor: lumenBaseColor },
+          }}
+        />
+        <Stack.Screen
+          name={ScreenName.PerpsWithdraw}
+          component={PerpsWithdraw}
+          options={{
+            title: t("perpsWithdraw.title"),
             headerStyle: { backgroundColor: lumenBaseColor },
             contentStyle: { backgroundColor: lumenBaseColor },
           }}

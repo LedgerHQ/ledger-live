@@ -9,6 +9,10 @@ import {
   getDepositRequestId,
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import {
+  getWithdrawRequestId,
+  settleWithdrawRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/server", () => ({
   handlers: jest.fn().mockReturnValue({ "custom.perps.signActions": jest.fn() }),
@@ -28,6 +32,10 @@ const mockOpenAddAccountFlow = jest.fn();
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
   useOpenAssetFlow: () => ({ openAddAccountFlow: mockOpenAddAccountFlow }),
 }));
+const mockOpenPerpsWithdraw = jest.fn();
+jest.mock("../../screens/PerpsWithdraw/PerpsWithdrawDialog", () => ({
+  openPerpsWithdraw: (...args: unknown[]) => mockOpenPerpsWithdraw(...args),
+}));
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
 
@@ -46,6 +54,7 @@ describe("usePerpsHandlers", () => {
       uiHooks: {
         "signing.execute": expect.any(Function),
         "deposit.execute": expect.any(Function),
+        "withdraw.execute": expect.any(Function),
         "migration.execute": expect.any(Function),
       },
     });
@@ -94,6 +103,33 @@ describe("usePerpsHandlers", () => {
 
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
     const request = depositExecute?.({ receiverAccount });
+    unmount();
+
+    await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  it("should open the withdraw dialog and resolve once the withdrawal settles", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const params = { sourceAccount: { id: "hl-1" } } as never;
+
+    renderHook(() => usePerpsHandlers(accounts));
+
+    const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
+    const request = withdrawExecute?.(params);
+    settleWithdrawRequest(getWithdrawRequestId(), { swapId: "swap-1" });
+
+    expect(mockOpenPerpsWithdraw).toHaveBeenCalledWith(params);
+    await expect(request).resolves.toEqual({ swapId: "swap-1" });
+  });
+
+  it("should reject an in-flight withdrawal when the live app unmounts", async () => {
+    const accounts = [{ id: "acc-1" }] as never[];
+    const params = { sourceAccount: { id: "hl-1" } } as never;
+
+    const { unmount } = renderHook(() => usePerpsHandlers(accounts));
+
+    const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
+    const request = withdrawExecute?.(params);
     unmount();
 
     await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);

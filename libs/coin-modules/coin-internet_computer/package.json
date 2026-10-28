@@ -117,6 +117,7 @@
     "@types/semver": "catalog:",
     "axios": "catalog:",
     "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },

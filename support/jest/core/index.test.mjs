@@ -195,6 +195,22 @@ for (const [name, create] of [
   });
 }
 
+for (const [name, create, depth] of [
+  ["createSharedUiJestConfig", createSharedUiJestConfig, "../../"],
+  ["createFlowJestConfig", createFlowJestConfig, "../../../"],
+  ["createFlowNativeJestConfig", createFlowNativeJestConfig, "../../../"],
+]) {
+  test(`${name}: coverage reporters at the top level, lcov rooted at the repository`, () => {
+    const lcov = config => config.coverageReporters?.find(r => Array.isArray(r) && r[0] === "lcov");
+    const config = create();
+    assert.deepEqual(lcov(config), ["lcov", { file: "lcov.info", projectRoot: depth }]);
+    for (const p of config.projects)
+      assert.equal(p.coverageReporters, undefined, `${p.displayName} has coverageReporters`);
+    const rootDir = path.resolve(root, "../../features/platform/some-package");
+    assert.equal(lcov(create({ rootDir }))[1].projectRoot, "../../../");
+  });
+}
+
 test("createSharedUiJestConfig: no flow resolver or transform allowlist", () => {
   for (const side of ["web", "native"]) {
     const config = project(createSharedUiJestConfig(), side);

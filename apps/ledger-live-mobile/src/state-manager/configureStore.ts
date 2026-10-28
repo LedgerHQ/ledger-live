@@ -2,11 +2,7 @@ import Config from "react-native-config";
 import RNRestart from "react-native-restart";
 import { configureStore, type StoreEnhancer } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
-import { authApiExtra } from "@shared/auth";
 import { createAppConfigMiddleware } from "@shared/app-config";
-import { AuthSDK } from "@ledgerhq/auth";
-import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
-import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import reducers from "~/reducers";
 import { subscribeToNetworkState } from "@shared/network-status";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
@@ -44,12 +40,11 @@ import {
   refreshCardSession,
 } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
-import { selectFeature } from "@shared/feature-flags";
 import { appConfig, appConfigSession } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
-import { createPkcePairWithExpoCrypto } from "~/helpers/pkce";
+import { createMobileAuthMiddleware } from "./middleware/auth";
 
 /** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
 const SWAP_API_BASE_DEFAULT = "https://swap.ledger.com/v5";
@@ -101,28 +96,11 @@ export const store = configureStore({
               getSwapApiBaseUrl: () => Config.SWAP_API_BASE || SWAP_API_BASE_DEFAULT,
               ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
             }),
-            ...authApiExtra({
-              isFeatureEnabled: (): boolean =>
-                selectFeature(store.getState(), "lwmAuth").enabled ?? false,
-              authProvider: new AuthSDK(
-                {
-                  clientId: appConfig.keycloakClientId,
-                  keycloakBaseUrl: appConfig.keycloakBaseUrl,
-                  keycloakRealm: appConfig.keycloakRealm,
-                  disablePkce: true,
-                },
-                {
-                  provider: new LkrpIdentityProvider(
-                    (): TrustchainStore => store.getState().trustchain,
-                  ),
-                  createPkcePair: createPkcePairWithExpoCrypto,
-                },
-              ),
-            }),
           },
         },
       }),
     )
+      .concat(createMobileAuthMiddleware(appConfig))
       .concat(rebootMiddleware)
       .concat(
         createIdentitiesSyncMiddleware({

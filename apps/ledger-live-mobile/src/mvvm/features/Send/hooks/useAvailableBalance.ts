@@ -13,6 +13,7 @@ import type { SendAmountDisplayMode } from "@ledgerhq/live-common/flows/send/amo
 export function useAvailableBalance(
   account?: AccountLike | null,
   displayMode: SendAmountDisplayMode = "fiat",
+  balance: BigNumber | undefined = account?.spendableBalance,
 ) {
   const { locale } = useLocale();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -27,19 +28,19 @@ export function useAvailableBalance(
   const counterValue = useCalculate({
     from: accountCurrency ?? counterValueCurrency,
     to: counterValueCurrency,
-    value: account?.spendableBalance.toNumber() ?? 0,
+    value: balance?.toNumber() ?? 0,
     disableRounding: true,
   });
 
   const availableBalanceFormatted = useMemo(() => {
-    if (!account || !unit) return "";
-    return formatCurrencyUnit(unit, account.spendableBalance, {
+    if (!account || !unit || !balance) return "";
+    return formatCurrencyUnit(unit, balance, {
       showCode: true,
       disableRounding: false,
       locale,
       discreet,
     });
-  }, [account, unit, locale, discreet]);
+  }, [account, unit, balance, locale, discreet]);
 
   const counterValueFormatted = useMemo(() => {
     if (typeof counterValue !== "number" || !counterValueCurrency) return "";

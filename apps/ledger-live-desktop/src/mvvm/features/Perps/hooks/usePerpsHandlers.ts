@@ -2,6 +2,7 @@ import {
   handlers as perpsHandlers,
   type PerpsDepositUiParams,
   type PerpsSignResult,
+  type PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -15,6 +16,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
+import { openPerpsWithdraw } from "../screens/PerpsWithdraw/PerpsWithdrawDialog";
 import {
   beginDepositRequest,
   cancelDepositRequest,
@@ -26,6 +28,10 @@ import {
   settleMigrationRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/migrationRequest";
 import { HYPERCORE_CURRENCY_ID } from "@ledgerhq/live-common/wallet-api/Perps/constants";
+import {
+  beginWithdrawRequest,
+  cancelWithdrawRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(
@@ -59,7 +65,14 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
     return request;
   }, []);
 
+  const uiWithdrawExecute = useCallback((params: PerpsWithdrawUiParams) => {
+    const request = beginWithdrawRequest();
+    openPerpsWithdraw(params);
+    return request;
+  }, []);
+
   useEffect(() => cancelDepositRequest, []);
+  useEffect(() => cancelWithdrawRequest, []);
 
   const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
@@ -107,8 +120,9 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
       uiHooks: {
         "signing.execute": uiSigningExecute,
         "deposit.execute": uiDepositExecute,
+        "withdraw.execute": uiWithdrawExecute,
         "migration.execute": uiMigrationExecute,
       },
     });
-  }, [accounts, uiSigningExecute, uiDepositExecute, uiMigrationExecute]);
+  }, [accounts, uiSigningExecute, uiDepositExecute, uiWithdrawExecute, uiMigrationExecute]);
 }
