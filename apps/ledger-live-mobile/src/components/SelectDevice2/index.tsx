@@ -96,6 +96,8 @@ type Props = {
    *    - "Connect an existing Ledger" switches to the "pairing state" where all scanned BLE devices are shown.
    */
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
+  /** Replaces the add device drawer and pairing. */
+  onAddDevice?: () => void;
   withMyLedgerTracking?: boolean;
   /**
    * If provided, this component will only display devices of the given model ID.
@@ -130,6 +132,7 @@ export default function SelectDevice({
   onSelect,
   requestToSetHeaderOptions,
   isChoiceDrawerDisplayedOnAddDevice = true,
+  onAddDevice,
   withMyLedgerTracking,
   filterByDeviceModelId,
   children,
@@ -456,6 +459,12 @@ export default function SelectDevice({
     setIsPairingDevices(true);
   }, [dispatch]);
 
+  const onAddDevicePress = useCallback(() => {
+    if (onAddDevice) onAddDevice();
+    else if (isChoiceDrawerDisplayedOnAddDevice) onAddNewPress();
+    else openBlePairingFlow();
+  }, [onAddDevice, isChoiceDrawerDisplayedOnAddDevice, onAddNewPress, openBlePairingFlow]);
+
   // Makes sure that on go back/unmount the visibility of the bottom tab bar is reset
   useEffect(() => {
     return () => {
@@ -593,12 +602,7 @@ export default function SelectDevice({
                     {t("manager.selectDevice.title")}
                   </Text>
                   {deviceList.length > 0 && (
-                    <Touchable
-                      onPress={
-                        isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow
-                      }
-                      {...addNewButtonEventProps}
-                    >
+                    <Touchable onPress={onAddDevicePress} {...addNewButtonEventProps}>
                       <Flex flexDirection="row" alignItems="center">
                         <Text color="primary.c90" mr={3} fontWeight="semiBold">
                           {t(
@@ -621,9 +625,7 @@ export default function SelectDevice({
                   ) : (
                     <Touchable
                       touchableTestID="connect-with-bluetooth"
-                      onPress={
-                        isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow
-                      }
+                      onPress={onAddDevicePress}
                       {...addNewButtonEventProps}
                     >
                       <Flex
