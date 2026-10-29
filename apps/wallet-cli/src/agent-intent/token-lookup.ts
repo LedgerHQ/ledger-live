@@ -70,24 +70,45 @@ export function sameTicker(a: string, b: string): boolean {
   return a.toUpperCase() === b.toUpperCase();
 }
 
-export type TokenCandidate = { ticker: string; name: string; address: string };
+function isMixedCase(ticker: string): boolean {
+  return ticker !== ticker.toUpperCase() && ticker !== ticker.toLowerCase();
+}
+
+export function tokensWithTicker<T extends { ticker: string }>(tokens: T[], ticker: string): T[] {
+  const matches = tokens.filter(token => sameTicker(token.ticker, ticker));
+  if (!isMixedCase(ticker)) return matches;
+  const exact = matches.filter(token => token.ticker === ticker);
+  return exact.length > 0 ? exact : matches;
+}
+
+export type TokenCandidate = { id: string; ticker: string; name: string; address: string };
 
 const TOKEN_STANDARD = { ethereum: "erc20", solana: "spl" } as const;
 export const MAX_CANDIDATES = 20;
+const SEARCH_LIMIT = 1000;
 const CAL_TIMEOUT_MS = 10_000;
 
 const CalTokensSchema = z.array(
-  z.object({ name: z.string(), ticker: z.string(), contract_address: z.string() }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    ticker: z.string(),
+    contract_address: z.string(),
+  }),
 );
 
-async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: string) {
+async function fetchCalTokens(
+  network: keyof typeof TOKEN_STANDARD,
+  filter: "ticker" | "search",
+  ticker: string,
+) {
   const url = new URL(`${calApiConfig.calServiceUrl}/v1/tokens`);
   url.searchParams.set("network", network);
-  url.searchParams.set("ticker", ticker);
+  url.searchParams.set(filter, ticker);
   url.searchParams.set("standard", TOKEN_STANDARD[network]);
   url.searchParams.set("delisted", "false");
-  url.searchParams.set("output", "name,ticker,contract_address");
-  url.searchParams.set("limit", String(MAX_CANDIDATES));
+  url.searchParams.set("output", "id,name,ticker,contract_address");
+  url.searchParams.set("limit", String(filter === "search" ? SEARCH_LIMIT : MAX_CANDIDATES));
   const response = await fetch(url, {
     headers: {
       Accept: "application/json",
@@ -108,17 +129,20 @@ async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: stri
   return tokens.data;
 }
 
-/** CAL matches tickers case-sensitively, so this looks up the ticker as typed and uppercase. */
+/** CAL's `ticker` filter is case-sensitive and its `search` is fuzzy, so this looks up the ticker as
+ * typed and uppercase, and searches for its other spellings (`mETH` for `METH`). */
 export async function findTokensByTicker(
   network: keyof typeof TOKEN_STANDARD,
   ticker: string,
 ): Promise<TokenCandidate[]> {
   const spellings = [...new Set([ticker, ticker.toUpperCase()])];
-  const tokens = (await Promise.all(spellings.map(t => fetchCalTokens(network, t)))).flat();
+  const lookups = spellings.map(spelling => fetchCalTokens(network, "ticker", spelling));
+  if (ticker.trim()) lookups.push(fetchCalTokens(network, "search", ticker));
+  const tokens = (await Promise.all(lookups)).flat();
   const candidates = new Map<string, TokenCandidate>();
-  for (const token of tokens) {
-    if (!sameTicker(token.ticker, ticker)) continue;
+  for (const token of tokensWithTicker(tokens, ticker)) {
     candidates.set(token.contract_address, {
+      id: token.id,
       ticker: token.ticker,
       name: token.name,
       address: token.contract_address,
@@ -139,7 +163,7 @@ export async function findAccountTokens(account: AccountDescriptorV1): Promise<T
   );
   return tokens.flatMap(token =>
     token && !token.delisted
-      ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }]
+      ? [{ id: token.id, ticker: token.ticker, name: token.name, address: token.contractAddress }]
       : [],
   );
 }
