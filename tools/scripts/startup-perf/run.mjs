@@ -12,7 +12,7 @@
 // difference between the two devices cancels out of B − A (analyze.mjs reports it as "device bias").
 // On Android the other emulator is paused from the launch until the read, so it takes no host CPU,
 // and each sample records the CPU load on the host and in the device before and after the launch.
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { appendFile, copyFile, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -61,6 +61,9 @@ const { values: opts } = parseArgs({
     // Diagnostics: dump the home screen's view hierarchy (testIDs on screen) ~5 s after the first N
     // measured launches of each scenario, after the launch window.
     "dump-home": { type: "string", default: "0" },
+    // Android: screen-record N extra launches per side after the measured rounds of each phase,
+    // to see what users see (status bar, splash). Recording adds load, so they are left out.
+    "record-launches": { type: "string", default: "0" },
     // How each build was patched (apply-build-env.sh): prod-like | no-bridge | e2e. A prod-like build
     // gets no mock=0 launch argument (it has no MOCK to reset) and must report MOCK and DETOX off.
     "build-env-a": { type: "string", default: "" },
@@ -88,6 +91,7 @@ const PAUSE_IDLE = opts["pause-idle"] === "true";
 const GUEST_CAPTURE = opts["guest-capture"] === "true";
 const TRACE_LAUNCHES = Number(opts["trace-launches"]);
 const DUMP_HOME = Number(opts["dump-home"]);
+const RECORD_LAUNCHES = Number(opts["record-launches"]);
 const NET_BASELINE = opts["net-baseline"]
   .split(",")
   .map(s => s.trim())
@@ -99,6 +103,9 @@ const SAMPLES_FILE = path.join(OUT_DIR, "samples.jsonl");
 const DEBUG_DIR = path.join(OUT_DIR, "debug");
 const GUEST_PCAP_DIR = path.join(OUT_DIR, "guest-network");
 const TRACE_DIR = path.join(OUT_DIR, "traces");
+const RECORD_DIR = path.join(OUT_DIR, "recordings");
+// Covers the splash, the app's first screens and the status bar appearing.
+const RECORDING_S = 8;
 const PERFETTO_CONFIG = path.join(import.meta.dirname, "perfetto-startup.pbtx");
 const DEVICE_PERFETTO_CONFIG = "/data/local/tmp/startup-perf.pbtx";
 // The flow without the optional taps, for measured reads: when their prompts are absent, they wait
@@ -122,6 +129,12 @@ function validateOptions() {
   }
   if (!Number.isInteger(PAIRS) || PAIRS < 2 || PAIRS % 2) {
     throw new Error("--pairs must be an even number ≥ 2");
+  }
+  if (!Number.isInteger(RECORD_LAUNCHES) || RECORD_LAUNCHES < 0) {
+    throw new Error("--record-launches must be a whole number ≥ 0");
+  }
+  if (RECORD_LAUNCHES > 0 && PLATFORM !== "android") {
+    throw new Error("--record-launches is Android only");
   }
   if (!Number.isInteger(DUMP_HOME) || DUMP_HOME < 0) {
     throw new Error("--dump-home must be a whole number ≥ 0");
@@ -417,6 +430,22 @@ const android = {
     });
     const pid = Number(stdout.trim());
     return failed || !Number.isInteger(pid) || pid <= 0 ? null : pid;
+  },
+  // Screen recording of a launch: screenrecord stops by itself after RECORDING_S seconds.
+  startRecording(device, name) {
+    const remote = `/data/local/tmp/${name}.mp4`;
+    const child = spawn(
+      "adb",
+      ["-s", device, "shell", "screenrecord", "--time-limit", String(RECORDING_S), remote],
+      { stdio: "ignore" },
+    );
+    const exited = new Promise(resolve => child.once("exit", resolve));
+    return { remote, exited };
+  },
+  async stopRecording(device, recording, dest) {
+    await Promise.race([recording.exited, sleep((RECORDING_S + 10) * 1000)]);
+    await run("adb", ["-s", device, "pull", recording.remote, dest], { timeoutMs: 60_000 });
+    await run("adb", ["-s", device, "shell", "rm", "-f", recording.remote], { allowFail: true });
   },
   // Starts the emulator's own capture (console "network capture"), which only accepts a bare
   // file name and writes it under the AVD folder; returns the full path it reports.
@@ -1186,6 +1215,13 @@ async function sample(meta) {
       host: hostCpuTimes(),
       throttledUs: await cgroupThrottledUs(),
     };
+    let recording = null;
+    if (meta.recorded) {
+      record.recorded = true;
+      recording = P.startRecording(meta.device, name);
+      // screenrecord takes a moment to start capturing.
+      await sleep(1000);
+    }
     // Epoch ms of the launch command, to line the launch up with a network capture.
     record.launchAt = Date.now();
     const launch = await P.launch(meta.device, launchArgs(meta.side));
@@ -1223,6 +1259,15 @@ async function sample(meta) {
       record.guestPcap = await keepCapture(captureFile);
     }
     await sleep(Math.max(0, SETTLE_MS - LOAD_WINDOW_MS));
+    if (recording) {
+      const dest = path.join(RECORD_DIR, `${name}.mp4`);
+      try {
+        await P.stopRecording(meta.device, recording, dest);
+        record.recording = path.relative(OUT_DIR, dest);
+      } catch (error) {
+        log(`  recording lost: ${error.message}`);
+      }
+    }
     if (paused) {
       paused = false;
       await P.resume(other);
@@ -1283,6 +1328,7 @@ async function main() {
   await mkdir(DEBUG_DIR, { recursive: true });
   if (GUEST_CAPTURE) await mkdir(GUEST_PCAP_DIR, { recursive: true });
   if (TRACE_LAUNCHES > 0) await mkdir(TRACE_DIR, { recursive: true });
+  if (RECORD_LAUNCHES > 0) await mkdir(RECORD_DIR, { recursive: true });
   await writeFile(SAMPLES_FILE, "");
   await writeFile(
     path.join(OUT_DIR, "meta.json"),
@@ -1300,6 +1346,7 @@ async function main() {
         pauseIdle: PAUSE_IDLE && PLATFORM === "android",
         guestCapture: GUEST_CAPTURE && PLATFORM === "android",
         traceLaunches: TRACE_LAUNCHES,
+        recordLaunches: RECORD_LAUNCHES,
         hostCpus: os.cpus().length,
         deviceCpus: Object.fromEntries(
           await Promise.all(DEVICES.map(async d => [d, await P.cpuCount(d)])),
@@ -1342,6 +1389,21 @@ async function main() {
       for (let round = 0; round < PAIRS / 2; round++) {
         for (const side of order) {
           await sample({ scenario, phase, round, side, device: placement[side], warmup: false });
+        }
+      }
+      // Screen-recorded launches after the measured ones, left out of the analysis.
+      for (let r = 0; r < RECORD_LAUNCHES; r++) {
+        for (const side of order) {
+          const round = PAIRS / 2 + r;
+          await sample({
+            scenario,
+            phase,
+            round,
+            side,
+            device: placement[side],
+            warmup: false,
+            recorded: true,
+          });
         }
       }
     }
