@@ -21,8 +21,7 @@ test.describe(`Onboarding an initialised Nano (mock server)`, () => {
     `Initialised Nano connects without being asked to set up or restore a seed`,
     {
       tag: ONBOARDING_TAGS,
-      // TODO: find correct Xray id
-      annotation: { type: "TMS", description: "B2CQA-XXX" },
+      annotation: { type: "TMS", description: "B2CQA-6737" },
     },
     async ({ app, mockDevice }) => {
       await app.onboarding.waitForLaunch();
