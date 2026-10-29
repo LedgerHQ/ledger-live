@@ -6,6 +6,7 @@ import { Button } from "@ledgerhq/lumen-ui-react";
 import MockAccountGenerator from "./MockAccountGenerator";
 import CustomMockAccountGenerator from "./CustomMockAccountGenerator";
 import EmptyAccountGenerator from "./EmptyAccountGenerator";
+import AddMockOperationsGenerator from "./AddMockOperationsGenerator";
 import StablecoinMockAccountGenerator from "./StablecoinMockAccountGenerator";
 import StocksMockAccountGenerator from "./StocksMockAccountGenerator";
 
@@ -39,6 +40,11 @@ export const MockAccountGeneratorSectionContent = ({
           <StablecoinMockAccountGenerator
             title={t("settings.developer.mockAccounts.stablecoinGenerate.title")}
             desc={t("settings.developer.mockAccounts.stablecoinGenerate.desc")}
+          />
+          <AddMockOperationsGenerator
+            count={10}
+            title={t("settings.developer.mockAccounts.addOperations.title")}
+            desc={t("settings.developer.mockAccounts.addOperations.desc")}
           />
           <StocksMockAccountGenerator
             title={t("settings.developer.mockAccounts.stocksGenerate.title")}
