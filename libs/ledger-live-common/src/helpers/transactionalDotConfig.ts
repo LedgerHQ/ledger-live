@@ -67,6 +67,7 @@ export function getTransactionalDotConfig(
     case "LEGACY_UNFREEZE":
       return { symbol: "Snow", appearance: "muted" };
     case "VOTE":
+    case "DELEGATE_VOTE":
       return { symbol: "Mailbox", appearance: "muted" };
     default:
       return null;

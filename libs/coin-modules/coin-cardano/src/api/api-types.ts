@@ -42,12 +42,11 @@ export type StakeDeRegConway = {
   deposit: string;
 };
 
-export type TransactionCertificate =
-  | StakeKeyRegistrationCertificate
-  | StakeKeyDeRegistrationCertificate
-  | StakeDelegationCertificate
-  | StakeRegConway
-  | StakeDeRegConway;
+export type VoteDelegationCert = {
+  index: number;
+  stakeHex: string;
+  dRepHex: string;
+};
 
 export type TransactionCertificates = {
   stakeRegistrations: Array<StakeKeyRegistrationCertificate>;
@@ -55,6 +54,7 @@ export type TransactionCertificates = {
   stakeDelegations: Array<StakeDelegationCertificate>;
   stakeRegsConway?: Array<StakeRegConway>;
   stakeDeRegsConway?: Array<StakeDeRegConway>;
+  voteDelegations?: Array<VoteDelegationCert> | undefined;
 };
 
 export type APITransaction = {
@@ -113,6 +113,7 @@ export type APIDelegation = {
   dRepInfo:
     | {
         hex: string;
+        givenName: string | undefined;
       }
     | undefined;
 };
@@ -171,4 +172,32 @@ export type APIEpochParams = {
       activeStake_aggregate?: { aggregate: { sum: { amount: number | null } } };
     };
   }>;
+};
+
+export type DRep = {
+  active: string;
+  anchor: { url: string; hash: string };
+  deposit: string;
+  eActive: number;
+  hex: string;
+  meta: {
+    givenName: string;
+    hash: string;
+    motivations: string;
+    objectives: string;
+    paymentAddress: string;
+    qualifications: string;
+    references: Array<{ url: string }>;
+  } | null;
+  pub: string;
+  registered: string;
+  retired: string | null;
+  votes: number;
+};
+
+export type APIGetDRepList = {
+  pageNo: number;
+  limit: number;
+  count: number;
+  dRepList: Array<DRep>;
 };
