@@ -125,10 +125,13 @@ const jsStartEpoch = s => {
   const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
   return name ? Number(name.split(" ").pop()) : NaN;
 };
-// From the process start: the native start the Debug value leaves out, plus fromJsStart. iOS takes
-// the process start from the host kernel, whose clock the simulator app shares; Android's is the
-// runner's estimate of the emulator's process start, against the emulator's clock.
-export const fromProcessStart = s => jsStartEpoch(s) - (s.processStartAt ?? NaN) + fromJsStart(s);
+// From the process start: the native start the Debug value leaves out, plus fromJsStart. Needs the
+// process start on the app's clock: the host kernel's on iOS (the simulator app shares it), the
+// emulator's own on Android. Runs before processStartAppClockAt only have it on iOS.
+const appClockProcessStart = s =>
+  s.processStartAppClockAt ?? (s.platform === "ios" ? s.processStartAt : NaN);
+export const fromProcessStart = s =>
+  jsStartEpoch(s) - (appClockProcessStart(s) ?? NaN) + fromJsStart(s);
 
 // B − A of one measure over the pairs of a platform and scenario.
 function difference(group, metric) {
