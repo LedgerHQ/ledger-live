@@ -21,7 +21,7 @@ export default function StepDRep({
   status,
   error,
   setSelectedDRep,
-}: StepProps) {
+}: Readonly<StepProps>) {
   invariant(account, "account and transaction required");
   const { cardanoResources } = account;
   invariant(cardanoResources, "cardanoResources required");
@@ -68,7 +68,7 @@ export function StepDRepFooter({
   bridgePending,
   transaction,
   onClose,
-}: StepProps) {
+}: Readonly<StepProps>) {
   invariant(account, "account required");
   const { errors } = status;
   const canNext = !bridgePending && Object.keys(errors).length === 0 && transaction;

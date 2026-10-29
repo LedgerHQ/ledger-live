@@ -597,7 +597,7 @@ type FieldType = {
   Component: ReactNode;
 };
 
-function DataField({ label, Component }: FieldType) {
+function DataField({ label, Component }: Readonly<FieldType>) {
   return (
     <View style={styles.row}>
       <View>
