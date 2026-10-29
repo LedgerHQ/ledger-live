@@ -25,6 +25,7 @@
     "@devtools/cloud-sync": "workspace:*",
     "@devtools/device-onboarding": "workspace:*",
     "@devtools/account-balance": "workspace:*",
+    "@devtools/account-operation": "workspace:*",
     "@devtools/account-portfolio": "workspace:*",
     "@devtools/account-descriptor": "workspace:*",
     "@devtools/account-data": "workspace:*",
