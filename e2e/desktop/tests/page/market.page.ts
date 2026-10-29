@@ -8,7 +8,6 @@ export class MarketPage extends AppPage {
   private readonly pageHeader = new PageHeader(this.page);
   private readonly coinRow = (ticker: string) =>
     this.page.getByTestId(`market-${ticker}-row`).first();
-  private loadingPlaceholder = this.page.getByTestId("loading-placeholder");
   private readonly coinPageContainer = this.page.getByTestId("asset-detail-header");
   private readonly swapButton = (ticker: string) =>
     this.coinRow(ticker).getByTestId(`market-${ticker}-swap-button`);
@@ -71,11 +70,6 @@ export class MarketPage extends AppPage {
     await this.actionsMenu(ticker.toLowerCase()).click();
   }
 
-  @step("Search for $0")
-  async search(query: string) {
-    await this.ensureCoinRowVisible(query);
-  }
-
   @step("Validate Market List")
   async validateMarketList() {
     await expect(this.pageHeader.title).toHaveText("Market");
@@ -87,8 +81,7 @@ export class MarketPage extends AppPage {
   async openCoinPage(ticker: string) {
     await this.ensureCoinRowVisible(ticker);
     await this.coinRow(ticker.toLowerCase()).click();
-    await this.coinPageContainer.waitFor({ state: "attached" });
-    await this.loadingPlaceholder.first().waitFor({ state: "detached" });
+    await this.coinPageContainer.waitFor({ state: "visible" });
   }
 
   @step("Click coin row $0")
@@ -107,16 +100,6 @@ export class MarketPage extends AppPage {
     const lowerTicker = ticker.toLowerCase();
     await this.ensureCoinRowVisible(lowerTicker);
     await this.swapButton(lowerTicker).click();
-  }
-
-  @step("Expect starred filter control to be visible")
-  async expectFilterDropdownToBeVisible() {
-    await expect(this.starredCategoryTab).toBeVisible();
-  }
-
-  @step("Filter the list to starred assets only")
-  async selectStarredAssetsFilter() {
-    await this.selectStarredCategory();
   }
 
   @step("Select the Favorites (starred) market category")

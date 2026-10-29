@@ -23,8 +23,7 @@ test.describe("Market", () => {
       await app.market.validateMarketList();
 
       await app.market.starCoin(Account.BTC_NATIVE_SEGWIT_1.currency.ticker);
-      await app.market.expectFilterDropdownToBeVisible();
-      await app.market.selectStarredAssetsFilter();
+      await app.market.selectStarredCategory();
       await app.market.expectCoinToBeVisible(Account.BTC_NATIVE_SEGWIT_1.currency.ticker);
       await app.market.expectCoinToNotBeVisible(Account.ETH_1.currency.ticker);
     },
