@@ -61,6 +61,16 @@ export class NativeHandle implements ElementHandle {
     await withHardTimeout(this.raw.tap());
   }
 
+  /**
+   * Waits until the element exists, then taps, leaving the visibility check to Detox's tap. Only for a
+   * control whose parent's layout box clips it on Android: `waitVisible` never passes, yet it is fully
+   * drawn and tappable. Say why at the call site.
+   */
+  async tapClipped(timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitUntil(waitFor(this.raw).toExist().withTimeout(timeout), timeout, "present");
+    await withHardTimeout(this.raw.tap());
+  }
+
   /** Waits for visibility, then focuses the field, replaces its content and presses Enter. */
   async replaceText(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.replaceTextKeepKeyboard(text, timeout);
