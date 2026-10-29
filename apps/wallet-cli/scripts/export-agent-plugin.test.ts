@@ -11,6 +11,7 @@ const root = path.resolve(import.meta.dir, "..");
 const { version } = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
 
 const TOP_LEVEL_VERSIONED = [
+  "package.json",
   "plugin.json",
   "openclaw.plugin.json",
   ".claude-plugin/plugin.json",
@@ -48,14 +49,19 @@ describe("export-agent-plugin", () => {
     for (const plugin of plugins) expect(plugin.version).toBe(version);
   });
 
-  it("names the plugin agent-skills everywhere", () => {
-    for (const rel of ["plugin.json", ".claude-plugin/plugin.json", ".cursor-plugin/plugin.json"]) {
+  it("names the plugin agent-skills in the marketplace named ledger", () => {
+    for (const rel of [
+      "package.json",
+      "plugin.json",
+      ".claude-plugin/plugin.json",
+      ".cursor-plugin/plugin.json",
+    ]) {
       expect(readJson(rel).name, rel).toBe("agent-skills");
     }
     expect(readJson("openclaw.plugin.json").id).toBe("agent-skills");
     for (const rel of MARKETPLACES) {
       const { name, plugins } = readJson(rel) as { name: string; plugins: { name: string }[] };
-      expect(name, rel).toBe("agent-skills");
+      expect(name, rel).toBe("ledger");
       expect(
         plugins.map(plugin => plugin.name),
         rel,
@@ -71,9 +77,23 @@ describe("export-agent-plugin", () => {
     expect(existsSync(path.join(skillDir, "references", "agent-intent.md"))).toBe(true);
   });
 
-  it("copies the README and the smoke test", () => {
-    expect(existsSync(path.join(target, "README.md"))).toBe(true);
-    expect(existsSync(path.join(target, "tests", "grokbot-smoke.md"))).toBe(true);
+  it("lists only wallet-cli-usage as the OpenClaw skill root", () => {
+    expect(readJson("openclaw.plugin.json").skills).toEqual(["./skills/wallet-cli-usage"]);
+  });
+
+  it("points OpenClaw's git install at the shipped runtime entry", () => {
+    const { openclaw } = readJson("package.json") as { openclaw: { extensions: string[] } };
+    for (const entry of openclaw.extensions)
+      expect(existsSync(path.join(target, entry))).toBe(true);
+  });
+
+  it("copies the changelog", () => {
+    expect(existsSync(path.join(target, "CHANGELOG.md"))).toBe(true);
+  });
+
+  it("keeps the README and the smoke test out of the export", () => {
+    expect(existsSync(path.join(target, "README.md"))).toBe(false);
+    expect(existsSync(path.join(target, "tests"))).toBe(false);
   });
 });
 

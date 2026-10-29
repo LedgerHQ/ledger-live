@@ -3,7 +3,9 @@
 // skills/ as export-standalone-skill.mjs writes it, so the plugin and the copy
 // published to LedgerHQ/agent-skills go through the same transform.
 //
-// Nothing publishes the result yet: point it at the directory to install from.
+// The sync-wallet-cli-skill workflow runs it against the root of a LedgerHQ/agent-skills
+// checkout. That repository owns its README.md, so the export leaves out
+// agent-plugin/README.md, along with the internal tests/ (see NOT_EXPORTED).
 //
 // Usage:
 //   node ./scripts/export-agent-plugin.mjs <target-dir>
@@ -23,12 +25,16 @@ const skillDir = path.resolve(root, "../../.agents/skills/ledger-wallet-cli");
 // Manifests whose own version is the plugin version. The Claude Code marketplace
 // versions each plugin entry instead, and the Codex marketplace has no version.
 const TOP_LEVEL_VERSIONED = new Set([
+  "package.json",
   "plugin.json",
   "openclaw.plugin.json",
   ".claude-plugin/plugin.json",
   ".cursor-plugin/plugin.json",
 ]);
 const PER_PLUGIN_VERSIONED = new Set([".claude-plugin/marketplace.json"]);
+// Top-level entries that stay in the monorepo: the install guide, mirrored by hand into
+// agent-skills' README, and the manual smoke checklist, which is internal.
+const NOT_EXPORTED = new Set(["README.md", "tests"]);
 
 // The sources carry no version, so a release can never leave a stale one behind.
 function withVersion(manifest, version, rel) {
@@ -64,7 +70,9 @@ async function main() {
   }
 
   const { version } = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
-  const files = await collectSkillFiles(pluginDir, { boundary: pluginDir, label: "agent-plugin" });
+  const files = (
+    await collectSkillFiles(pluginDir, { boundary: pluginDir, label: "agent-plugin" })
+  ).filter(rel => !NOT_EXPORTED.has(rel.split("/")[0]));
 
   // todo: a file removed from agent-plugin/ stays in an existing target; replace the target
   // once a publish workflow owns it.
