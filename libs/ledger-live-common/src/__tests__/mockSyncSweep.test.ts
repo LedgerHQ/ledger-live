@@ -18,6 +18,18 @@ const PER_CURRENCY_TIMEOUT = Number(process.env.SWEEP_TIMEOUT ?? 90000);
 /** SWEEP_ONLY=concordium_testnet,filecoin narrows the sweep while debugging. */
 const SWEEP_ONLY = process.env.SWEEP_ONLY?.split(",").filter(Boolean);
 
+/**
+ * Currencies whose sync fails for environmental reasons rather than a generator bug: they are
+ * skipped by default so the sweep can gate, and kept visible as SKIP lines. `SWEEP_INCLUDE_FLAKY=1`
+ * (or `SWEEP_ONLY`) runs them anyway.
+ */
+const ENV_ONLY: Record<string, string> = {
+  aptos_testnet: "upstream 502",
+  hypercore: "perps proxy answers 405 from this region",
+  sui_testnet: "pruned old checkpoints",
+  vechain: "VTHO token missing in this environment",
+};
+
 /** Flatten whatever shape an error has (axios/grpc/wrapped) into one readable line. */
 function fmtErr(e: unknown): string {
   const err = e as any;
@@ -49,11 +61,17 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, label: string): P
 }
 
 test("mock accounts sync on every supported currency", async () => {
-  const currencies = listSupportedCurrencies().filter(
-    c => !SWEEP_ONLY || SWEEP_ONLY.includes(c.id),
-  );
+  const selected = listSupportedCurrencies().filter(c => !SWEEP_ONLY || SWEEP_ONLY.includes(c.id));
+  const includeFlaky = process.env.SWEEP_INCLUDE_FLAKY === "1" || Boolean(SWEEP_ONLY);
+  const skipped = includeFlaky ? [] : selected.filter(c => ENV_ONLY[c.id]);
+  const currencies = selected.filter(c => !skipped.includes(c));
   const failures: string[] = [];
   let ok = 0;
+
+  for (const currency of skipped) {
+    // eslint-disable-next-line no-console
+    console.log(`SKIP ${currency.id} :: ${ENV_ONLY[currency.id]}`);
+  }
 
   for (const currency of currencies) {
     try {
@@ -83,4 +101,8 @@ test("mock accounts sync on every supported currency", async () => {
   console.log(`\nSWEEP ${currencies.length} currencies, ${failures.length} failures, ${ok} ok\n`);
   // eslint-disable-next-line no-console
   console.log(failures.map(f => `SWEEPFAIL ${f}`).join("\n"));
+
+  // Gates, so this can be wired to CI. Failures on an ENV_ONLY currency are tolerated (they are
+  // environmental); any other failure means the generator produces data a family cannot sync.
+  expect(failures.filter(f => !ENV_ONLY[f.split(" :: ")[0]])).toEqual([]);
 });
