@@ -59,7 +59,7 @@ export default class LedgerSyncPage {
   async tapTurnOnSync() {
     // On Android its container's layout box ends above it, so Detox measures it ~61% visible
     // although the whole button is drawn on screen.
-    await this.activationButton.tapClipped();
+    await this.activationButton.tapExisting();
   }
 
   @Step("Tap on the use my ledger device button")

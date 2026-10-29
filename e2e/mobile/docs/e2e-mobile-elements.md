@@ -33,7 +33,7 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 | `replaceText(text)` | waits, then replaces the field content |
 | `getText()` | waits, then returns the text |
 
-Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `replaceTextKeepKeyboard()` (types without pressing Enter) and `tapClipped()` (only for a control its parent clips on Android; say why at the call site).
+Native handles also have `waitFullyVisible()` (bottom sheets, see [sheet waits](e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)), `clearText()`, `getAttributes()`, `replaceTextKeepKeyboard()` (types without pressing Enter) and `tapExisting()` (waits for the element to exist, not to be visible; only when `waitVisible` never passes for an element on screen, say why at the call site).
 
 Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use `waitForWebviewUrl(fragment)` from the same file, not the `*WebviewUrl*` globals.
 
