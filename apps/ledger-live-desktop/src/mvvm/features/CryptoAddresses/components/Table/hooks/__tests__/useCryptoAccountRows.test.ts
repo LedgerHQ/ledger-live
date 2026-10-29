@@ -5,7 +5,6 @@ import {
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
 } from "LLD/features/__mocks__/accounts.mock";
-import { aggregatedAssetsFlags } from "../../../../testUtils/aggregatedAssetsFlags";
 import { createWalletState } from "../../../../testUtils/createWalletState";
 import { useCryptoAccountRows } from "../useCryptoAccountRows";
 
@@ -91,27 +90,27 @@ describe("useCryptoAccountRows", () => {
     expect(result.current.rows).toHaveLength(0);
   });
 
-  it("should match token accounts by parent address", () => {
+  it("should return only main accounts, not token sub-accounts", () => {
     const parent = ETH_ACCOUNT_WITH_USDC;
     const token = parent.subAccounts![0];
 
-    const addressFragment = parent.freshAddress.slice(0, 8);
-    const { result } = renderHook(() => useCryptoAccountRows(addressFragment), {
+    const { result } = renderHook(() => useCryptoAccountRows(""), {
       initialState: {
         accounts: [parent],
         ...createWalletState(
           new Map([
-            [parent.id, "Parent"],
+            [parent.id, "Ethereum main"],
             [token.id, "USDC token"],
           ]),
         ),
       },
     });
 
-    expect(result.current.rows.some(r => r.id === token.id)).toBe(true);
+    expect(result.current.rows.some(r => r.id === parent.id)).toBe(true);
+    expect(result.current.rows.some(r => r.id === token.id)).toBe(false);
   });
 
-  it("should include token sub-accounts in rows when they match search", () => {
+  it("should match parent account when searching by token name (subMatch)", () => {
     const parent = ETH_ACCOUNT_WITH_USDC;
     const token = parent.subAccounts![0];
 
@@ -120,56 +119,13 @@ describe("useCryptoAccountRows", () => {
         accounts: [parent],
         ...createWalletState(
           new Map([
-            [parent.id, "Parent"],
+            [parent.id, "Ethereum main"],
             [token.id, "USDC token"],
           ]),
         ),
       },
     });
 
-    expect(result.current.rows.some(r => r.id === token.id)).toBe(true);
-  });
-
-  describe("when shouldDisplayAggregatedAssets is ON", () => {
-    it("should return only main accounts, not token sub-accounts", () => {
-      const parent = ETH_ACCOUNT_WITH_USDC;
-      const token = parent.subAccounts![0];
-
-      const { result } = renderHook(() => useCryptoAccountRows(""), {
-        initialState: {
-          accounts: [parent],
-          ...aggregatedAssetsFlags,
-          ...createWalletState(
-            new Map([
-              [parent.id, "Ethereum main"],
-              [token.id, "USDC token"],
-            ]),
-          ),
-        },
-      });
-
-      expect(result.current.rows.some(r => r.id === parent.id)).toBe(true);
-      expect(result.current.rows.some(r => r.id === token.id)).toBe(false);
-    });
-
-    it("should match parent account when searching by token name (subMatch)", () => {
-      const parent = ETH_ACCOUNT_WITH_USDC;
-      const token = parent.subAccounts![0];
-
-      const { result } = renderHook(() => useCryptoAccountRows("usdc"), {
-        initialState: {
-          accounts: [parent],
-          ...aggregatedAssetsFlags,
-          ...createWalletState(
-            new Map([
-              [parent.id, "Ethereum main"],
-              [token.id, "USDC token"],
-            ]),
-          ),
-        },
-      });
-
-      expect(result.current.rows.some(r => r.id === parent.id)).toBe(true);
-    });
+    expect(result.current.rows.some(r => r.id === parent.id)).toBe(true);
   });
 });

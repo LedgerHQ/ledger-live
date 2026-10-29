@@ -74,15 +74,12 @@ const mockSupportedCounterCurrencies = (supportedCounterCurrencies?: string[]) =
     data: supportedCounterCurrencies,
   } as unknown as ReturnType<typeof useSupportedCounterCurrencies>);
 
-const createMarketState = (starred: string[] = []) => ({
+const createMarketState = () => ({
   marketParams: {
-    starred,
     range: "24h",
     limit: 50,
     order: Order.MarketCapDesc,
     search: "",
-    liveCompatible: false,
-    counterCurrency: "USD",
   },
   currentPage: 1,
 });
@@ -102,40 +99,45 @@ describe("useMarket", () => {
   });
 
   describe("starred filter", () => {
-    it("uses starredMarketCoins when filter is active", () => {
+    it("uses starredMarketCoins when the starred category is selected", () => {
       const initialState = {
         ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin", "ethereum"]),
-        market: createMarketState(["bitcoin", "ethereum"]),
+        market: { ...createMarketState(), category: "starred" as const },
       };
 
-      const { result } = renderHook(() => useMarket(), {
+      renderHook(() => useMarket(), {
         initialState,
       });
 
-      expect(result.current.starFilterOn).toBe(true);
-      expect(result.current.starredMarketCoins).toEqual(["bitcoin", "ethereum"]);
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ starred: ["bitcoin", "ethereum"] }),
+        expect.anything(),
+      );
     });
 
-    it("starFilterOn is false when marketParams.starred is empty", () => {
+    it("does not filter by favorites outside the starred category", () => {
       const initialState = {
         ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin"]),
-        market: createMarketState([]),
+        market: createMarketState(),
       };
 
-      const { result } = renderHook(() => useMarket(), {
+      renderHook(() => useMarket(), {
         initialState,
       });
 
-      expect(result.current.starFilterOn).toBe(false);
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ starred: [] }),
+        expect.anything(),
+      );
     });
 
     it("updates starredMarketCoins when a coin is added", async () => {
       const initialState = {
         ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin"]),
-        market: createMarketState(["bitcoin"]),
+        market: createMarketState(),
       };
 
       const { result, store } = renderHook(() => useMarket(), {
@@ -155,45 +157,11 @@ describe("useMarket", () => {
       expect(result.current.starredMarketCoins).toEqual(["bitcoin", "ethereum"]);
     });
 
-    it("toggles starred filter on and off correctly", async () => {
-      const initialState = {
-        ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
-        settings: createSettingsState(["bitcoin", "ethereum"]),
-        market: createMarketState([]),
-      };
-
-      const { result } = renderHook(() => useMarket(), {
-        initialState,
-      });
-
-      expect(result.current.starFilterOn).toBe(false);
-
-      await act(async () => {
-        result.current.toggleFilterByStarredAccounts();
-      });
-
-      await waitFor(() => {
-        expect(result.current.starFilterOn).toBe(true);
-      });
-
-      expect(result.current.marketParams.starred).toEqual(["bitcoin", "ethereum"]);
-
-      await act(async () => {
-        result.current.toggleFilterByStarredAccounts();
-      });
-
-      await waitFor(() => {
-        expect(result.current.starFilterOn).toBe(false);
-      });
-
-      expect(result.current.marketParams.starred).toEqual([]);
-    });
-
     it("toggleStar adds and removes coins from starredMarketCoins", async () => {
       const initialState = {
         ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
         settings: createSettingsState(["bitcoin"]),
-        market: createMarketState([]),
+        market: createMarketState(),
       };
 
       const { result } = renderHook(() => useMarket(), {
@@ -222,7 +190,7 @@ describe("useMarket", () => {
         initialState: {
           ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
           settings: createSettingsState([]),
-          market: createMarketState([]),
+          market: createMarketState(),
         },
       });
 
@@ -257,7 +225,7 @@ describe("useMarket", () => {
     });
 
     const marketStateWithCategory = (category: "all" | "starred" | "stocks") => ({
-      ...createMarketState([]),
+      ...createMarketState(),
       category,
     });
 
@@ -270,7 +238,6 @@ describe("useMarket", () => {
         },
       });
 
-      expect(result.current.starFilterOn).toBe(true);
       expect(result.current.emptyState).toBe("favorites");
       expect(result.current.marketData).toEqual([]);
     });
@@ -284,7 +251,10 @@ describe("useMarket", () => {
         },
       });
 
-      expect(result.current.starFilterOn).toBe(true);
+      expect(mockedUseMarketData).toHaveBeenLastCalledWith(
+        expect.objectContaining({ starred: ["bitcoin"] }),
+        expect.anything(),
+      );
       expect(result.current.emptyState).toBeUndefined();
     });
 
@@ -306,14 +276,14 @@ describe("useMarket", () => {
     const scrolledState = () => ({
       ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
       settings: createSettingsState([]),
-      market: { ...createMarketState([]), currentPage: 3 },
+      market: { ...createMarketState(), currentPage: 3 },
     });
 
     it("resets currentPage when sort order changes", async () => {
       const { result } = renderHook(() => useMarket(), { initialState: scrolledState() });
 
       await act(async () => {
-        result.current.toggleSortBy();
+        result.current.refresh({ order: Order.MarketCapAsc });
       });
 
       expect(result.current.marketCurrentPage).toBe(1);
@@ -352,7 +322,7 @@ describe("useMarket", () => {
         initialState: {
           ...withFlagOverrides({ lldRefreshMarketData: { enabled: false } }),
           settings: createSettingsState([]),
-          market: createMarketState([]),
+          market: createMarketState(),
         },
       });
 
@@ -383,7 +353,7 @@ describe("useMarket", () => {
             lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
           }),
           settings: { ...SETTINGS_INITIAL_STATE, counterValue, starredMarketCoins: [] },
-          market: createMarketState([]),
+          market: createMarketState(),
         },
       });
     const renderWithCop = () => renderWithCounterValue("COP");

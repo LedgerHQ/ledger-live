@@ -22,7 +22,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 }));
 
 const accountPageFlags = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { assetSection: false, aggregatedAssets: false } },
+  lwdWallet40: { enabled: true, params: { assetSection: false } },
 });
 
 jest.mock("./hooks/useAccountBackNavigation", () => ({

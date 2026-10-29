@@ -29,7 +29,6 @@ describe("TopBarView", () => {
     slots: defaultSlots,
     isInformationCenterOpen: false,
     onInformationCenterClose: jest.fn(),
-    shouldDisplayAggregatedAssets: false,
     shouldDisplayAssetDiscoverability: false,
   };
 

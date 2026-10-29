@@ -6,7 +6,6 @@ import {
   blacklistedTokenIdsSelector,
 } from "~/renderer/reducers/settings";
 import { useDistribution } from "~/renderer/actions/general";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource } from "@shared/analytics";
 import type { AllocationTableItem, AllocationViewProps } from "../types";
 
@@ -14,13 +13,12 @@ const PAGE_SIZE = 6;
 
 export function useAllocationData(): AllocationViewProps {
   const navigate = useNavigate();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const distribution = useDistribution({
     hideEmptyTokenAccount,
-    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
+    groupBy: "asset",
   });
 
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);

@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router";
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { ViewAllTile } from "./ViewAllTile";
 import { TrendingAssetTile } from "./TrendingAssetTile";
 import SkeletonList from "./SkeletonList";
@@ -12,7 +11,7 @@ import { ArcGaugeIndicator } from "LLD/components/ArcGaugeIndicator";
 import { getParsedSystemDeviceLocale } from "~/helpers/systemLocale";
 import { HorizontalScroll } from "LLD/components/HorizontalScroll";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
-import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { MARKET_BANNER_TRACKING_SOURCE } from "../utils/constants";
 
 type TrendingAssetsListProps = {
@@ -23,7 +22,6 @@ type TrendingAssetsListProps = {
 
 export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssetsListProps) => {
   const navigate = useNavigate();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { region } = getParsedSystemDeviceLocale();
 
   const onAssetClick = useCallback(
@@ -34,11 +32,11 @@ export const TrendingAssetsList = ({ items, isLoading, isError }: TrendingAssets
         page: PORTFOLIO_TRACKING_PAGE_NAME,
       });
       setTrackingSource(MARKET_BANNER_TRACKING_SOURCE);
-      navigate(getMarketOrAssetDetailPath(item.id, shouldDisplayAggregatedAssets), {
+      navigate(getAssetDetailPath(item.id), {
         state: { id: item.id, ledgerIds: item.ledgerIds },
       });
     },
-    [navigate, shouldDisplayAggregatedAssets],
+    [navigate],
   );
 
   let assets: React.ReactNode = null;
