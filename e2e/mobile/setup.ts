@@ -4,6 +4,7 @@ import { launchApp, setupEnvironment } from "@e2e/helpers/commonHelpers";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { close as closeBridge, getRemoteConfigStatus } from "@e2e/bridge/server";
 import { setAllureDescription } from "@e2e/helpers/allure/allure-helper";
+import { allure } from "jest-allure2-reporter/api";
 import { deleteSpeculos } from "@e2e/utils/speculosUtils";
 import {
   EXCLUSIVE_LOCK_ACQUIRE_HOOK_TIMEOUT,
@@ -17,10 +18,12 @@ const TEARDOWN_TIMEOUT = 60_000;
 const REMOTE_CONFIG_STATUS_TIMEOUT = 5_000;
 
 // A throttled first fetch leaves the fresh install on compiled-default flags, and no captured log shows it.
+// The attachment is kept on every run; Detox only prints warnings and keeps detox.log for failures.
 async function logRemoteConfigStatus() {
   try {
     const raw = await getRemoteConfigStatus(REMOTE_CONFIG_STATUS_TIMEOUT);
     if (!raw) return;
+    await allure.attachment("Remote Config status", raw, "application/json");
     const { lastFetchStatus, remoteValues }: { lastFetchStatus: string; remoteValues: number } =
       JSON.parse(raw);
     const line = `[E2E] Remote Config: lastFetchStatus=${lastFetchStatus} remoteValues=${remoteValues}`;
