@@ -20,5 +20,6 @@
         <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen_logo</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
         <item name="android:windowSplashScreenBehavior">icon_preferred</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>
