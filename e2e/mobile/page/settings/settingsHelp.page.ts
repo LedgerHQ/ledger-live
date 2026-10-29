@@ -1,7 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import * as path from "path";
 import { FileUtils } from "@e2e/utils/fileUtils";
-import { urls } from "~/utils/urls";
 
 export default class SettingsHelpPage {
   exportLogsRowId = "export-logs-row";
@@ -12,7 +11,7 @@ export default class SettingsHelpPage {
 
   @Step("expect Ledger Support URL to be correct")
   async expectLedgerSupportUrlToBeCorrect() {
-    const id = this.ledgerSupportRowId(urls.faq);
+    const id = this.ledgerSupportRowId("https://support.ledger.com/");
     await detoxExpect(getElementById(id)).toBeVisible();
   }
 
