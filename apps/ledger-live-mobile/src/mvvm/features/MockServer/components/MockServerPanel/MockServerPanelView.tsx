@@ -52,7 +52,7 @@ export function MockServerPanelView({
   return (
     <Box
       testID="mock-server-panel"
-      style={[StyleSheet.absoluteFill, styles.panel, { paddingTop: top, paddingBottom: bottom }]}
+      style={[StyleSheet.absoluteFill, { paddingTop: top, paddingBottom: bottom }]}
       lx={{ backgroundColor: "canvas" }}
     >
       <Box lx={{ padding: "s16", gap: "s12" }}>
@@ -145,10 +145,6 @@ export function MockServerPanelView({
   );
 }
 
-// Above bottom sheets, and just under the floating button (zIndex 999) so it can close the panel.
-const PANEL_Z_INDEX = 998;
-
 const styles = StyleSheet.create({
-  panel: { zIndex: PANEL_Z_INDEX },
   webview: { flex: 1 },
 });

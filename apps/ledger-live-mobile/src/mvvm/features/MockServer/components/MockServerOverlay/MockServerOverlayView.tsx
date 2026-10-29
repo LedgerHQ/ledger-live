@@ -1,4 +1,5 @@
 import React from "react";
+import { StyleSheet, View } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import FloatingDebugButton from "~/components/FloatingDebugButton";
 import type { MockServerStatus } from "../../types";
@@ -15,6 +16,13 @@ const BUTTON_BACKGROUNDS: Record<MockServerStatus, string> = {
 
 const BUTTON_SIZE = 40;
 
+// Above bottom sheets, and just under the floating button (zIndex 999) so it can close the panel.
+const PANEL_LAYER_Z_INDEX = 998;
+
+const styles = StyleSheet.create({
+  panelLayer: { ...StyleSheet.absoluteFillObject, zIndex: PANEL_LAYER_Z_INDEX },
+});
+
 export function MockServerOverlayView({
   connection,
   status,
@@ -27,9 +35,13 @@ export function MockServerOverlayView({
 
   return (
     <MockServerOverlayContainer>
-      {isPanelOpen ? (
-        <MockServerPanel connection={connection} status={status} sessionId={sessionId} />
-      ) : null}
+      {/* Permanent first child: the iOS overlay appends each new child on top, so a panel
+      mounted directly would cover the button */}
+      <View style={styles.panelLayer} pointerEvents="box-none" collapsable={false}>
+        {isPanelOpen ? (
+          <MockServerPanel connection={connection} status={status} sessionId={sessionId} />
+        ) : null}
+      </View>
       {isFloatingButtonVisible ? (
         <FloatingDebugButton
           onPress={onToggleOpenPanel}
