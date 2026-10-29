@@ -62,7 +62,11 @@ export function useAmountInput({
     to: counterValueCurrency,
   });
 
-  const { displayMode: inputMode, setDisplayMode: setInputMode } = useSendAmountDisplayMode();
+  const {
+    displayMode: inputMode,
+    setDisplayMode: setInputMode,
+    isFiatModeAvailable,
+  } = useSendAmountDisplayMode();
   const [fiatInputValue, setFiatInputValue] = useState<string>("");
   const [cryptoInputValue, setCryptoInputValue] = useState<string>("");
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -255,6 +259,7 @@ export function useAmountInput({
     currencyPosition,
     secondaryValue,
     inputMode,
+    isFiatModeAvailable,
     amountInputMaxDecimalLength,
     onAmountChange: handleAmountChange,
     onToggleInputMode: handleToggleMode,

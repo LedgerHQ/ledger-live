@@ -14,6 +14,7 @@ type AmountInputSectionProps = Readonly<{
   onAmountChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onToggleInputMode: () => void;
   toggleLabel: string;
+  isFiatModeAvailable: boolean;
   secondaryValue: string;
   amountMessage: AmountScreenMessage | null | undefined;
   onMessageLinkPress?: (link: string) => void;
@@ -28,6 +29,7 @@ export function AmountInputSection({
   onAmountChange,
   onToggleInputMode,
   toggleLabel,
+  isFiatModeAvailable,
   secondaryValue,
   amountMessage,
   onMessageLinkPress,
@@ -52,19 +54,23 @@ export function AmountInputSection({
             amountMessage?.type === "error" && "text-error",
           )}
         />
-        <IconButton
-          icon={TransferVertical}
-          size="xs"
-          appearance="gray"
-          aria-label={toggleLabel}
-          data-testid="send-toggle-input-mode-button"
-          className="absolute top-12 right-8"
-          onClick={onToggleInputMode}
-        />
+        {isFiatModeAvailable && (
+          <IconButton
+            icon={TransferVertical}
+            size="xs"
+            appearance="gray"
+            aria-label={toggleLabel}
+            data-testid="send-toggle-input-mode-button"
+            className="absolute top-12 right-8"
+            onClick={onToggleInputMode}
+          />
+        )}
       </div>
-      <p className="mt-8 body-2 text-muted" data-testid="send-amount-secondary-value">
-        {secondaryValue}
-      </p>
+      {isFiatModeAvailable && (
+        <p className="mt-8 body-2 text-muted" data-testid="send-amount-secondary-value">
+          {secondaryValue}
+        </p>
+      )}
       {amountMessage && (
         <div className="mt-8">
           <AmountMessageText message={amountMessage} onLinkPress={onMessageLinkPress} />

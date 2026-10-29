@@ -102,6 +102,7 @@ describe("useSendHeaderViewModel", () => {
     mockedUseSendAmountDisplayMode.mockReturnValue({
       displayMode: "fiat",
       setDisplayMode: jest.fn(),
+      isFiatModeAvailable: true,
     });
     mockedUseAvailableBalance.mockReturnValue("$5,969.83");
     mockedUseCurrentSendFlowStep.mockReturnValue([
@@ -277,6 +278,7 @@ describe("useSendHeaderViewModel", () => {
     mockedUseSendAmountDisplayMode.mockReturnValue({
       displayMode: "crypto",
       setDisplayMode: jest.fn(),
+      isFiatModeAvailable: true,
     });
     mockedUseAvailableBalance.mockReturnValue("0.0596983 ETH");
 
@@ -290,6 +292,7 @@ describe("useSendHeaderViewModel", () => {
     mockedUseSendAmountDisplayMode.mockReturnValue({
       displayMode: "fiat",
       setDisplayMode: jest.fn(),
+      isFiatModeAvailable: true,
     });
     mockedUseCurrentSendFlowStep.mockReturnValue([
       SEND_FLOW_STEP.COIN_CONTROL,

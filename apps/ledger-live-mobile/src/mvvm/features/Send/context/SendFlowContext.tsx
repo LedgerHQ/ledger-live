@@ -77,7 +77,7 @@ export function SendFlowProvider({ value, onClose, children }: SendFlowProviderP
   );
 
   return (
-    <SendAmountDisplayModeProvider>
+    <SendAmountDisplayModeProvider isFiatModeAvailable={value.uiConfig.hasFiatAmountInput}>
       <SendFlowDataContext.Provider value={dataValue}>
         <SendFlowActionsContext.Provider value={actionsValue}>
           {children}
