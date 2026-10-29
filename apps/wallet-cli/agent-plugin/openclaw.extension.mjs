@@ -2,8 +2,8 @@
 // openclaw.extensions. This plugin ships skills only (openclaw.plugin.json lists them), so the
 // entry registers nothing.
 export default {
-  id: "agent-skills",
-  name: "Ledger Agent Skills",
+  id: "ledger-wallet-cli",
+  name: "Ledger Wallet CLI",
   description: "Skills-only plugin; no runtime capabilities.",
   register() {},
 };

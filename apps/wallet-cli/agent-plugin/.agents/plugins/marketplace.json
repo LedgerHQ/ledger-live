@@ -1,11 +1,11 @@
 {
   "name": "ledger",
   "interface": {
-    "displayName": "Ledger Agent Skills"
+    "displayName": "Ledger Wallet CLI"
   },
   "plugins": [
     {
-      "name": "agent-skills",
+      "name": "ledger-wallet-cli",
       "source": {
         "source": "url",
         "url": "https://github.com/LedgerHQ/agent-skills.git"
