@@ -9,6 +9,9 @@ const {
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_RULE,
 } = require("./constraints");
 const fs = require("node:fs");
 const path = require("node:path");
@@ -22,6 +25,7 @@ const ts = require("typescript");
  * @typedef {{ file: string, specifier: string }} SourceViolation
  * @typedef {{ manifest: string, dependency: string, field: string, reason: string }} BannedDepViolation
  * @typedef {{ file: string, specifier: string, field?: string, sourceTag: string }} BannedExternalViolation
+ * @typedef {{ source: string, target: string, file?: string }} DevtoolsImportViolation
  */
 
 const DEPENDENCY_FIELDS = [
@@ -42,8 +46,9 @@ function walkSourceFiles(dir, callback) {
   let entries;
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true });
-  } catch {
-    return;
+  } catch (error) {
+    if (error.code === "ENOENT") return;
+    throw error;
   }
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
@@ -56,6 +61,30 @@ function walkSourceFiles(dir, callback) {
 }
 
 /**
+ * Manifest of a project root, or `undefined` when it has none. An unreadable or malformed
+ * manifest throws: skipping it would hide its dependencies from every check.
+ *
+ * @param {string} workspaceRoot
+ * @param {string} root
+ * @returns {{ manifest: string, pkg: Record<string, any> } | undefined}
+ */
+function readManifest(workspaceRoot, root) {
+  const manifest = path.join(root, "package.json");
+  let content;
+  try {
+    content = fs.readFileSync(path.join(workspaceRoot, manifest), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return undefined;
+    throw error;
+  }
+  try {
+    return { manifest, pkg: JSON.parse(content) };
+  } catch (error) {
+    throw new Error(`${manifest}: ${error.message}`, { cause: error });
+  }
+}
+
+/**
  * Specifiers of the imports, re-exports, `require()` and `import()` calls of a source file.
  * The TypeScript scanner skips comments and string contents.
  *
@@ -64,6 +93,53 @@ function walkSourceFiles(dir, callback) {
  */
 function importSpecifiers(content) {
   return ts.preProcessFile(content, true, true).importedFiles.map(f => f.fileName);
+}
+
+/**
+ * Specifiers of a source file that load `pkg` at runtime, by name or by a relative path into
+ * `pkgRoot`: every import of it but the type-only forms `DEVTOOLS_TYPE_ONLY_RULE` allows, which
+ * the build erases.
+ *
+ * @param {string} file
+ * @param {string} content
+ * @param {string} pkg
+ * @param {string} pkgRoot absolute root of `pkg`
+ * @returns {string[]}
+ */
+function valueImportsOf(file, content, pkg, pkgRoot) {
+  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
+  /** @param {string} spec */
+  const loadsPkg = spec => {
+    if (!spec.startsWith(".")) return packageNameOf(spec) === pkg;
+    const resolved = path.resolve(path.dirname(file), spec);
+    return resolved === pkgRoot || resolved.startsWith(pkgRoot + path.sep);
+  };
+  const specifiers = [];
+  /** @param {import("typescript").Node} node */
+  const visit = node => {
+    let spec;
+    if (ts.isImportDeclaration(node) && !node.importClause?.isTypeOnly) {
+      spec = node.moduleSpecifier;
+    } else if (ts.isExportDeclaration(node) && !node.isTypeOnly) {
+      spec = node.moduleSpecifier;
+    } else if (ts.isImportEqualsDeclaration(node) && !node.isTypeOnly) {
+      spec = ts.isExternalModuleReference(node.moduleReference)
+        ? node.moduleReference.expression
+        : undefined;
+    } else if (
+      ts.isCallExpression(node) &&
+      (node.expression.kind === ts.SyntaxKind.ImportKeyword ||
+        (ts.isIdentifier(node.expression) && node.expression.text === "require"))
+    ) {
+      spec = node.arguments[0];
+    }
+    if (spec && ts.isStringLiteralLike(spec) && loadsPkg(spec.text)) {
+      specifiers.push(spec.text);
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  return specifiers;
 }
 
 /**
@@ -98,14 +174,10 @@ function collectLegacyPackageNames(graph, workspaceRoot) {
     if (!tags.includes("scope:libs")) continue;
     const root = node.data?.root;
     if (!root) continue;
-    try {
-      const pkg = JSON.parse(
-        fs.readFileSync(path.join(workspaceRoot, root, "package.json"), "utf8"),
-      );
-      if (typeof pkg.name === "string" && pkg.name.startsWith("@ledgerhq/")) {
-        names.add(pkg.name);
-      }
-    } catch {}
+    const name = readManifest(workspaceRoot, root)?.pkg.name;
+    if (typeof name === "string" && name.startsWith("@ledgerhq/")) {
+      names.add(name);
+    }
   }
   return names;
 }
@@ -125,12 +197,7 @@ function findSourceImportViolations(workspaceRoot, legacyPackages, exceptions = 
 
   for (const root of roots) {
     walkSourceFiles(root, file => {
-      let content;
-      try {
-        content = fs.readFileSync(file, "utf8");
-      } catch {
-        return;
-      }
+      const content = fs.readFileSync(file, "utf8");
 
       for (const spec of importSpecifiers(content)) {
         if (spec.startsWith("@ledgerhq/")) {
@@ -176,13 +243,9 @@ function findBannedDependencyViolations(graph, workspaceRoot, bannedDependencies
   for (const node of Object.values(graph.nodes)) {
     const root = node.data?.root;
     if (!root) continue;
-    const manifest = path.join(root, "package.json");
-    let pkg;
-    try {
-      pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
-    } catch {
-      continue;
-    }
+    const read = readManifest(workspaceRoot, root);
+    if (!read) continue;
+    const { manifest, pkg } = read;
     if (banned.has(pkg.name)) continue; // the banned package itself
 
     for (const field of DEPENDENCY_FIELDS) {
@@ -219,26 +282,19 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
       if (!tags.includes(sourceTag)) continue;
       const banned = new Set(packages);
 
-      const manifest = path.join(root, "package.json");
-      let pkg = {};
-      try {
-        pkg = JSON.parse(fs.readFileSync(path.join(workspaceRoot, manifest), "utf8"));
-      } catch {}
-      for (const field of DEPENDENCY_FIELDS) {
-        for (const dependency of Object.keys(pkg[field] ?? {})) {
-          if (banned.has(dependency)) {
-            violations.push({ file: manifest, specifier: dependency, field, sourceTag });
+      const read = readManifest(workspaceRoot, root);
+      if (read) {
+        for (const field of DEPENDENCY_FIELDS) {
+          for (const dependency of Object.keys(read.pkg[field] ?? {})) {
+            if (banned.has(dependency)) {
+              violations.push({ file: read.manifest, specifier: dependency, field, sourceTag });
+            }
           }
         }
       }
 
       walkSourceFiles(path.join(workspaceRoot, root), file => {
-        let content;
-        try {
-          content = fs.readFileSync(file, "utf8");
-        } catch {
-          return;
-        }
+        const content = fs.readFileSync(file, "utf8");
         for (const spec of importSpecifiers(content)) {
           if (banned.has(packageNameOf(spec))) {
             violations.push({
@@ -253,6 +309,74 @@ function findBannedExternalViolations(graph, workspaceRoot, rules = []) {
   }
 
   return violations;
+}
+
+/**
+ * `@devtools/*` package name of every graph node under `devtools/`, keyed by node name.
+ * Manifests elsewhere are not read.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @returns {Map<string, string>}
+ */
+function devtoolsPackageNames(graph, workspaceRoot) {
+  const names = new Map();
+  for (const [nodeName, node] of Object.entries(graph.nodes)) {
+    const root = node.data?.root;
+    if (!root?.startsWith("devtools/")) continue;
+    const name = readManifest(workspaceRoot, root)?.pkg.name;
+    if (name?.startsWith("@devtools/")) names.set(nodeName, name);
+  }
+  return names;
+}
+
+/**
+ * @param {string[] | "*" | undefined} allowed
+ * @param {string} target
+ */
+function allows(allowed, target) {
+  return allowed === "*" || (allowed?.includes(target) ?? false);
+}
+
+/**
+ * Collect every `@devtools/*` → `@devtools/*` graph edge the allowed-imports table does not list.
+ * An edge the type-only table lists passes when no source file under the package root loads the
+ * target at runtime; each file that does is reported.
+ *
+ * @param {ProjectGraphLike} graph
+ * @param {string} workspaceRoot
+ * @param {Record<string, string[] | "*">} allowedImports
+ * @param {Record<string, string[] | "*">} typeOnlyImports
+ * @returns {DevtoolsImportViolation[]}
+ */
+function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
+  const names = devtoolsPackageNames(graph, workspaceRoot);
+  const byEdge = new Map();
+
+  for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
+    const source = names.get(sourceNode);
+    if (!source) continue;
+
+    for (const edge of edges) {
+      const target = names.get(edge.target);
+      if (!target) continue;
+      if (allows(allowedImports[source], target)) continue;
+
+      if (!allows(typeOnlyImports[source], target)) {
+        byEdge.set(`${source}\n${target}`, { source, target });
+        continue;
+      }
+      const targetRoot = path.join(workspaceRoot, graph.nodes[edge.target].data.root);
+      walkSourceFiles(path.join(workspaceRoot, graph.nodes[sourceNode].data.root), file => {
+        const content = fs.readFileSync(file, "utf8");
+        if (valueImportsOf(file, content, target, targetRoot).length === 0) return;
+        const rel = path.relative(workspaceRoot, file);
+        byEdge.set(`${source}\n${target}\n${rel}`, { source, target, file: rel });
+      });
+    }
+  }
+
+  return [...byEdge.values()];
 }
 
 /**
@@ -307,84 +431,88 @@ ${edge.target}`;
   return [...byEdge.values()];
 }
 
+const CONSTRAINTS_FILE = "tools/nx-plugins/enforce-boundaries/constraints.js";
+
+/**
+ * Print a check's violations, one per line, then its notes and where its rules are listed.
+ *
+ * @template V
+ * @param {string} label  the kind of violation, e.g. "module-boundary"
+ * @param {V[]} violations
+ * @param {(violation: V) => string} format
+ * @param {string} rules  what constraints.js lists for the check, e.g. "Allowed edges"
+ * @param {string[]} [notes]
+ * @returns {boolean} whether the check found violations
+ */
+function reportViolations(label, violations, format, rules, notes = []) {
+  if (violations.length === 0) return false;
+  console.error(`\n✗ ${violations.length} ${label} violation(s):\n`);
+  for (const v of violations) console.error(`  ${format(v)}`);
+  for (const note of notes) console.error(`\n${note}`);
+  console.error(`\n${rules} are listed in ${CONSTRAINTS_FILE}\n`);
+  return true;
+}
+
 async function main() {
-  let hasError = false;
-
   const graph = await createProjectGraphAsync({ exitOnError: true });
-  const graphViolations = findViolations(graph, BOUNDARY_EXCEPTIONS);
-
-  if (graphViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${graphViolations.length} module-boundary violation(s):\n`);
-    for (const v of graphViolations) {
-      const tgtTags = v.targetTags.length > 0 ? v.targetTags.join(", ") : "untagged";
-      console.error(`  ${v.sourceName} [${v.sourceTags.join(", ")}] → ${v.target} [${tgtTags}]`);
-    }
-    console.error(
-      "\nAllowed edges are defined in tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
-
   const workspaceRoot = process.cwd();
   const legacyPackages = new Set([
     ...collectLegacyPackageNames(graph, workspaceRoot),
     ...LEGACY_PACKAGES,
   ]);
-  const sourceViolations = findSourceImportViolations(
-    workspaceRoot,
-    legacyPackages,
-    BOUNDARY_EXCEPTIONS,
-  );
-
-  if (sourceViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${sourceViolations.length} legacy source-import violation(s):\n`);
-    for (const v of sourceViolations) {
-      console.error(`  ${v.file}  →  ${v.specifier}`);
-    }
-    console.error(`\n${LEGACY_IMPORT_RULE}\n`);
-  }
-
-  const bannedExternalViolations = findBannedExternalViolations(
-    graph,
-    workspaceRoot,
-    BANNED_EXTERNALS_BY_TAG,
-  );
-
-  if (bannedExternalViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${bannedExternalViolations.length} banned-external violation(s):\n`);
-    for (const v of bannedExternalViolations) {
-      const where = v.field ? ` (${v.field})` : "";
-      console.error(`  ${v.file}  →  ${v.specifier}${where}  [${v.sourceTag}]`);
-    }
-    console.error(
-      "\nPackages banned per source tag are listed in tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
-
   const bannedDepViolations = findBannedDependencyViolations(
     graph,
     workspaceRoot,
     BANNED_DEPENDENCIES,
   );
 
-  if (bannedDepViolations.length > 0) {
-    hasError = true;
-    console.error(`\n✗ ${bannedDepViolations.length} banned-dependency violation(s):\n`);
-    for (const v of bannedDepViolations) {
-      console.error(`  ${v.manifest}  →  ${v.dependency}  (${v.field})`);
-    }
-    const reasons = new Map(bannedDepViolations.map(v => [v.dependency, v.reason]));
-    for (const [dependency, reason] of reasons) {
-      console.error(`\n${dependency} is banned: ${reason}`);
-    }
-    console.error(
-      "\nBanned packages are listed in tools/nx-plugins/enforce-boundaries/constraints.js\n",
-    );
-  }
+  const failed = [
+    reportViolations(
+      "module-boundary",
+      findViolations(graph, BOUNDARY_EXCEPTIONS),
+      v => {
+        const tgtTags = v.targetTags.length > 0 ? v.targetTags.join(", ") : "untagged";
+        return `${v.sourceName} [${v.sourceTags.join(", ")}] → ${v.target} [${tgtTags}]`;
+      },
+      "Allowed edges",
+    ),
+    reportViolations(
+      "legacy source-import",
+      findSourceImportViolations(workspaceRoot, legacyPackages, BOUNDARY_EXCEPTIONS),
+      v => `${v.file}  →  ${v.specifier}`,
+      "Legacy source roots and packages",
+      [LEGACY_IMPORT_RULE],
+    ),
+    reportViolations(
+      "banned-external",
+      findBannedExternalViolations(graph, workspaceRoot, BANNED_EXTERNALS_BY_TAG),
+      v => `${v.file}  →  ${v.specifier}${v.field ? ` (${v.field})` : ""}  [${v.sourceTag}]`,
+      "Packages banned per source tag",
+    ),
+    reportViolations(
+      "banned-dependency",
+      bannedDepViolations,
+      v => `${v.manifest}  →  ${v.dependency}  (${v.field})`,
+      "Banned packages",
+      [...new Map(bannedDepViolations.map(v => [v.dependency, v.reason]))].map(
+        ([dependency, reason]) => `${dependency} is banned: ${reason}`,
+      ),
+    ),
+    reportViolations(
+      "devtools import",
+      findDevtoolsImportViolations(
+        graph,
+        workspaceRoot,
+        DEVTOOLS_ALLOWED_IMPORTS,
+        DEVTOOLS_TYPE_ONLY_IMPORTS,
+      ),
+      v => `${v.source}  →  ${v.target}${v.file ? `  (value import in ${v.file})` : ""}`,
+      "Allowed @devtools/* imports (DEVTOOLS_ALLOWED_IMPORTS, DEVTOOLS_TYPE_ONLY_IMPORTS)",
+      [DEVTOOLS_TYPE_ONLY_RULE],
+    ),
+  ].includes(true);
 
-  if (hasError) process.exit(1);
+  if (failed) process.exit(1);
   console.log("✓ module boundaries ok");
 }
 
@@ -394,6 +522,7 @@ module.exports = {
   collectLegacyPackageNames,
   findBannedDependencyViolations,
   findBannedExternalViolations,
+  findDevtoolsImportViolations,
 };
 
 if (require.main === module) {

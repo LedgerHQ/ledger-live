@@ -101,6 +101,31 @@ const BANNED_EXTERNALS_BY_TAG = [
  */
 const BANNED_DEPENDENCIES = [];
 
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may depend on; "*" allows them all.
+ * A package missing from the table, such as a tool, may depend on none.
+ */
+const DEVTOOLS_ALLOWED_IMPORTS = {
+  "@devtools/registry": "*",
+  "@devtools/shell": ["@devtools/transport", "@devtools/registry"],
+  "@devtools/bindings": ["@devtools/registry"],
+  "@devtools/wire": ["@devtools/transport", "@devtools/protocols"],
+  "@devtools/protocols": ["@devtools/transport"],
+  "@devtools/relay": ["@devtools/transport", "@devtools/protocols"],
+  "@devtools/transport-panel": ["@devtools/transport"],
+};
+
+/**
+ * The `@devtools/*` packages each `@devtools/*` package may reach under `DEVTOOLS_TYPE_ONLY_RULE`;
+ * "*" allows them all.
+ */
+const DEVTOOLS_TYPE_ONLY_IMPORTS = {
+  "@devtools/bindings": "*",
+};
+
+const DEVTOOLS_TYPE_ONLY_RULE =
+  'A DEVTOOLS_TYPE_ONLY_IMPORTS target may only be reached through `import type`, `export type … from` or `typeof import("…")`: the build erases them, so the target stays lazily loaded. A value import, `import { type X }`, `import()` or `require()` loads it at runtime.';
+
 module.exports = {
   DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
@@ -109,4 +134,7 @@ module.exports = {
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   BANNED_DEPENDENCIES,
+  DEVTOOLS_ALLOWED_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_IMPORTS,
+  DEVTOOLS_TYPE_ONLY_RULE,
 };

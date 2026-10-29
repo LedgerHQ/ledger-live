@@ -56,7 +56,7 @@ Workspace packages get **inferred tags** from their path (and a few well-known p
 
 Packages without these tags (`libs/`, `apps/`, `e2e/`, `tools/`) are unconstrained. Two more rules apply:
 
-- **Legacy packages by name.** Source files in `shared/`, `domain/` and `features/` may not import a legacy `@ledgerhq/*` package: every `scope:libs` package, plus the ones in `LEGACY_PACKAGES` that moved from `libs/` to npm (`@ledgerhq/live-config`, `@ledgerhq/live-env`, `@ledgerhq/live-currency-format`, `@ledgerhq/domain-service`, `@ledgerhq/evm-tools`). The only exception is `shared/env` importing `@ledgerhq/live-env`.
+- **No legacy imports.** `LEGACY_IMPORT_RULE` in [`constraints.js`](../tools/nx-plugins/enforce-boundaries/constraints.js) states the rule. The same file lists the roots it covers (`LEGACY_SOURCE_ROOTS`), the legacy packages on top of every `scope:libs` package (`LEGACY_PACKAGES`) and its exceptions (`BOUNDARY_EXCEPTIONS`).
 - **No React in `domain/entity`.** `BANNED_EXTERNALS_BY_TAG` keeps `react` and `react-native` out of `type:domain-entity` packages, in their manifest and in their source imports. `domain/api` may expose RTK Query hooks, so it is not concerned.
 
 ## Example commands

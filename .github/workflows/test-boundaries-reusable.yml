@@ -66,6 +66,10 @@ jobs:
       - name: Enforce module boundaries
         run: pnpm exec nx run enforce-boundaries:lint:boundaries
 
+      - name: Test the module-boundary rules
+        # run-many is a no-op when the target is absent: older branches (e.g. release) call this workflow from develop.
+        run: pnpm exec nx run-many -t test -p enforce-boundaries
+
       - name: Test the package-structure rules
         run: pnpm exec nx run enforce-package-structure:test
 
