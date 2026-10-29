@@ -24,7 +24,7 @@ export const MONOREPO_SKILL_NAME = "ledger-wallet-cli";
 /**
  * Skill name every standalone artifact uses: the embedded manifest, `skill list`,
  * install directories, sidecars, and the agent-skills publication path
- * (skills/wallet-cli/wallet-cli-usage). `MONOREPO_SKILL_NAME` survives only as a
+ * (skills/wallet-cli-usage). `MONOREPO_SKILL_NAME` survives only as a
  * lookup alias — see LEGACY_SKILL_NAMES in src/skills/registry.ts.
  */
 export const STANDALONE_SKILL_NAME = "wallet-cli-usage";
