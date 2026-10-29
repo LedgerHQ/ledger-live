@@ -1,4 +1,4 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
+import type { AssetInfo, Unit } from "@ledgerhq/coin-module-framework/api/index";
 import { BigNumber } from "bignumber.js";
 
 export const SUN_PER_TRX = 1_000_000;
@@ -54,17 +54,20 @@ export const DEFAULT_TRONIFY_MAX_RENT_AMOUNT = 10;
 // Tronify's price can move between the Review quote and the order.
 export const DEFAULT_TRONIFY_RENT_PRICE_MARGIN = 0.05;
 
+/** The asset a sponsored fee is paid in, with the unit the Send flow displays it in.
+ * The framework's `AssetInfo` only identifies an asset, so the sponsored seam carries the unit itself. */
+export type SponsoredFeeAsset = AssetInfo & { unit: Unit };
+
 /** What Tronify rent is paid in: coin-tron always sends `extraTrxNum`, which selects Tronify's USDT
  * payment ("Flow 2"). */
 export const TRONIFY_PAY_ASSET = {
   type: "trc20",
   assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-  name: "Tether USD",
   unit: { name: "USDT", code: "USDT", magnitude: 6 },
 } as const;
 
 /** A fresh copy per call, so a caller mutating the result never leaks into the shared constant. */
-export function tronifyPayAsset(): AssetInfo {
+export function tronifyPayAsset(): SponsoredFeeAsset {
   return { ...TRONIFY_PAY_ASSET, unit: { ...TRONIFY_PAY_ASSET.unit } };
 }
 

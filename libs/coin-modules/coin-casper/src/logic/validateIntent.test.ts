@@ -234,7 +234,7 @@ describe("validateIntent", () => {
     ["recipient", sendCase({ recipient: TEST_ADDRESSES.INVALID })],
     ["sender", sendCase({ sender: TEST_ADDRESSES.INVALID })],
   ] as const)("names Casper in an invalid %s error regardless of the asset name", (field, c) => {
-    const intent = { ...buildIntent(c), asset: { type: "native", name: "Not Casper" } } as const;
+    const intent = { ...buildIntent(c), asset: { type: "native" } } as const;
 
     const { errors } = validateIntent(CONFIG, intent, buildBalances(c), { value: FEES });
 

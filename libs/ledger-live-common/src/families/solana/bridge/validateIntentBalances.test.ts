@@ -26,7 +26,7 @@ const undelegate: StakingTransactionIntent = {
   recipient: STAKE_ACCOUNT,
   valAddress: "",
   amount: 0n,
-  asset: { type: "native", name: "Solana" },
+  asset: { type: "native" },
 };
 
 function accountHoldingLamports(systemLamports: number): Account {

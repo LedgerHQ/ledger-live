@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import type { SponsoredFeeAsset } from "../../../bridge/generic-coin-framework/sponsored";
 import { IDLE_SPONSORED_STATE } from "./fixtures/state";
 import { USDT_FEE_ASSET, USDT_RENT_PAYMENT } from "./fixtures/usdt";
 import {
@@ -188,7 +189,10 @@ describe("getSponsoredSendTrackingProperties", () => {
       getSponsoredSendTrackingProperties(SPONSORED_SEND_EVENT.ORDER_CREATED, {
         ...input,
         state: withOrder(SPONSORED_PHASE.RENT_SIGNING, {
-          rentPayment: { asset: { type: "trc20" }, amount: 3_200_000n },
+          rentPayment: {
+            asset: { type: "trc20" } as unknown as SponsoredFeeAsset,
+            amount: 3_200_000n,
+          },
         }),
       }),
     ).toMatchObject({ fee_amount: null, fee_currency: null });
