@@ -15,13 +15,10 @@ import { ModalData } from "~/renderer/modals/types";
 type Props<Name extends keyof ModalData> = {
   name: Name;
   onNext: (option: "dRep" | "noConfidence" | "abstain") => void;
-  nextLabel?: React.ReactNode;
   description: string;
   bullets: string[];
   additional: React.ReactNode;
-  footerLeft?: React.ReactNode;
   currency: string;
-  hideFooterButtons?: boolean;
 };
 
 export default function VoteDelegationInfoModal<Name extends keyof ModalData>({

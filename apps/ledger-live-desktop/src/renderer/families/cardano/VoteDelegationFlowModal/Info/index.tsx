@@ -37,7 +37,6 @@ export default function CardanoVoteDelegationInfoModal({ account }: VoteDelegati
       ]}
       currency="cardano"
       additional={null}
-      hideFooterButtons={true}
     />
   );
 }

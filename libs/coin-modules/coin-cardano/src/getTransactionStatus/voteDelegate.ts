@@ -19,7 +19,7 @@ export async function getVoteDelegateTransactionStatus(
 
   const estimatedFees = transaction.fees || new BigNumber(0);
 
-  // should must have exactly one of them defined
+  // exactly one of abstain, no-confidence or a DRep must be set
   const dRepCount =
     Number(transaction.dRepAbstain === true) +
     Number(transaction.dRepNoConfidence === true) +

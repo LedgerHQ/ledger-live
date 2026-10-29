@@ -550,6 +550,27 @@ describe("buildTransaction", () => {
       expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("aacc");
     });
 
+    it("should build a script-hash DRep certificate for a 0x23 header", async () => {
+      const account = getCardanoAccountFixture({});
+      const transaction = await buildTransaction(account, {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepHex: "23ddeeff",
+        protocolParams: getProtocolParamsFixture(),
+      });
+
+      const voteDelegateCertificate = transaction
+        .getCertificates()
+        .find(c => c.type === TyphonTypes.CertificateType.VOTE_DELEGATION) as
+        | TyphonTypes.VoteDelegationCertificate
+        | undefined;
+      expect(voteDelegateCertificate?.cert.dRep.type).toBe(TyphonTypes.DRepType.SCRIPT);
+      expect(voteDelegateCertificate?.cert.dRep.key?.toString("hex")).toBe("ddeeff");
+    });
+
     it("should add an abstain vote certificate", async () => {
       const account = getCardanoAccountFixture({});
       const txPayloadVoteDelegate: Transaction = {
