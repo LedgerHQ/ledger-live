@@ -5,7 +5,10 @@ import { useDeviceOnboardingFeatureFlag } from "./useDeviceOnboardingFeatureFlag
 describe("useDeviceOnboardingFeatureFlag", () => {
   it("overrides the app flag when the devtool switches a param", () => {
     const { result } = renderHook(
-      () => ({ tool: useDeviceOnboardingFeatureFlag(), flag: useFeature("deviceOnboarding") }),
+      () => ({
+        tool: useDeviceOnboardingFeatureFlag(),
+        flag: useFeature("deviceOnboarding"),
+      }),
       {
         overrideInitialState: withFlagOverrides({
           deviceOnboarding: {
@@ -14,6 +17,7 @@ describe("useDeviceOnboardingFeatureFlag", () => {
               offerLedgerSync: false,
               connectSeededDevice: false,
               connectUnseededDevice: false,
+              unifiedEntryPoints: false,
             },
           },
         }),
@@ -23,28 +27,49 @@ describe("useDeviceOnboardingFeatureFlag", () => {
     expect(result.current.tool.isFeatureFlagOverridden).toBe(true);
     expect(result.current.tool.featureFlag).toEqual({
       enabled: true,
-      params: { offerLedgerSync: false, connectSeededDevice: false, connectUnseededDevice: false },
+      params: {
+        offerLedgerSync: false,
+        connectSeededDevice: false,
+        connectUnseededDevice: false,
+        unifiedEntryPoints: false,
+      },
     });
 
     act(() =>
       result.current.tool.setFeatureFlag?.({
         enabled: false,
-        params: { offerLedgerSync: true, connectSeededDevice: true, connectUnseededDevice: true },
+        params: {
+          offerLedgerSync: true,
+          connectSeededDevice: true,
+          connectUnseededDevice: true,
+          unifiedEntryPoints: true,
+        },
       }),
     );
 
     expect(result.current.flag).toMatchObject({
       enabled: false,
-      params: { offerLedgerSync: true, connectSeededDevice: true, connectUnseededDevice: true },
+      params: {
+        offerLedgerSync: true,
+        connectSeededDevice: true,
+        connectUnseededDevice: true,
+        unifiedEntryPoints: true,
+      },
     });
   });
 
   it("drops the local mock and shows the feature flag again", () => {
     const { result } = renderHook(
-      () => ({ tool: useDeviceOnboardingFeatureFlag(), flag: useFeature("deviceOnboarding") }),
+      () => ({
+        tool: useDeviceOnboardingFeatureFlag(),
+        flag: useFeature("deviceOnboarding"),
+      }),
       {
         overrideInitialState: withFlagOverrides({
-          deviceOnboarding: { enabled: true, params: { connectUnseededDevice: true } },
+          deviceOnboarding: {
+            enabled: true,
+            params: { connectUnseededDevice: true },
+          },
         }),
       },
     );
@@ -71,6 +96,7 @@ describe("useDeviceOnboardingFeatureFlag", () => {
       offerLedgerSync: true,
       connectSeededDevice: false,
       connectUnseededDevice: false,
+      unifiedEntryPoints: false,
     });
   });
 });
