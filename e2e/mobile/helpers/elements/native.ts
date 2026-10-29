@@ -63,10 +63,15 @@ export class NativeHandle implements ElementHandle {
 
   /** Waits for visibility, then focuses the field, replaces its content and presses Enter. */
   async replaceText(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.replaceTextKeepKeyboard(text, timeout);
+    await withHardTimeout(this.raw.typeText("\n"));
+  }
+
+  /** Like {@link replaceText} without pressing Enter, so the keyboard stays open and the form is not submitted. */
+  async replaceTextKeepKeyboard(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
     await withHardTimeout(this.raw.tap());
     await withHardTimeout(this.raw.replaceText(text));
-    await withHardTimeout(this.raw.typeText("\n"));
   }
 
   /** Waits for visibility, then clears the field. */

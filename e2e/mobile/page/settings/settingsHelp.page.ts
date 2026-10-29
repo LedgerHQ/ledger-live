@@ -2,24 +2,22 @@ import { Step } from "jest-allure2-reporter/api";
 import * as path from "path";
 import { FileUtils } from "@e2e/utils/fileUtils";
 import { urls } from "~/utils/urls";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class SettingsHelpPage {
-  exportLogsRowId = "export-logs-row";
-  clearCacheRowId = "clear-cache-row";
-  clearCacheButtonId = "clear-cache-button";
-
-  ledgerSupportRowId = (url: string) => `ledger-support-row-${url}`;
+  private readonly exportLogsRow = byId("export-logs-row");
+  private readonly clearCacheRow = byId("clear-cache-row");
+  private readonly clearCacheButton = byId("clear-cache-button");
+  private readonly ledgerSupportRow = (url: string) => byId(`ledger-support-row-${url}`);
 
   @Step("expect Ledger Support URL to be correct")
   async expectLedgerSupportUrlToBeCorrect() {
-    const id = this.ledgerSupportRowId(urls.faq);
-    await detoxExpect(getElementById(id)).toBeVisible();
+    await this.ledgerSupportRow(urls.faq).waitVisible();
   }
 
   @Step("Click on Export Logs Row")
   async clickOnExportLogsRow() {
-    await waitForElementById(this.exportLogsRowId);
-    await tapById(this.exportLogsRowId);
+    await this.exportLogsRow.tap();
   }
 
   @Step("Verify logs are exported")
@@ -36,17 +34,16 @@ export default class SettingsHelpPage {
 
   @Step("Click on Clear Cache Row")
   async clickOnClearCacheRow() {
-    await waitForElementById(this.clearCacheRowId);
-    await tapById(this.clearCacheRowId);
+    await this.clearCacheRow.tap();
   }
 
   @Step("Check Clear Cache Modal is displayed")
   async checkClearCacheModalIsDisplayed() {
-    await detoxExpect(getElementById(this.clearCacheButtonId)).toBeVisible();
+    await this.clearCacheButton.waitVisible();
   }
 
   @Step("Click on Clear Cache Button")
   async clickOnClearCacheButton() {
-    await tapById(this.clearCacheButtonId);
+    await this.clearCacheButton.tap();
   }
 }
