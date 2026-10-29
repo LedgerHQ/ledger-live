@@ -1,4 +1,4 @@
-# @domain/entity-account-operations
+# @domain/entity-account-operation
 
 > [!CAUTION]
 > **Status: UNSTABLE** — New package, API still being designed.

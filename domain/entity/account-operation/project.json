@@ -1,5 +1,5 @@
 {
-  "name": "@domain/entity-account-operations",
+  "name": "@domain/entity-account-operation",
   "targets": {
     "build": {
       "executor": "nx:noop"

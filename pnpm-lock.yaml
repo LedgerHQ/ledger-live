@@ -5969,7 +5969,7 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  domain/entity/account-operations:
+  domain/entity/account-operation:
     dependencies:
       '@domain/entity-account-balance':
         specifier: workspace:*

@@ -20,3 +20,5 @@ export const accountOperationsSlice = createSlice({
     });
   },
 });
+
+export default accountOperationsSlice.reducer;
