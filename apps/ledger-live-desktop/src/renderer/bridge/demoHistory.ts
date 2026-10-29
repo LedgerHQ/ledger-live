@@ -4,3 +4,7 @@
  * what the chain really has (usually nothing).
  */
 export const DEMO_HISTORY_SEED = "demo-history";
+
+/** The accounts the sync loop should run on: demo-history ones would lose their operations. */
+export const syncableAccounts = <T extends { seedIdentifier: string }>(accounts: T[]): T[] =>
+  accounts.filter(account => account.seedIdentifier !== DEMO_HISTORY_SEED);
