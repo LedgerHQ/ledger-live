@@ -33,9 +33,10 @@ const { values: opts } = parseArgs({
     scenarios: { type: "string", default: "no-accounts,accounts" },
     "userdata-dir": { type: "string", default: "e2e/mobile/userdata" },
     "no-accounts-userdata": { type: "string", default: "skip-onboarding" },
+    // Real BTC, ETH (with tokens) and SOL accounts; settings come from the first file.
     "accounts-userdata": {
       type: "string",
-      default: "1AccountBTC1AccountETHReadOnlyFalse,speculos-x-other-account",
+      default: "speculos-x-other-account,swap-history",
     },
     pairs: { type: "string", default: "20" },
     warmups: { type: "string", default: "1" },
@@ -632,6 +633,23 @@ export function parseBlockingDialog(dumpsysWindow) {
   );
 }
 
+// Start time of a host process in epoch ms (µs precision): sysctl KERN_PROC_PID, whose kinfo_proc
+// opens with p_starttime, a timeval.
+const PROCESS_START_PY = `
+import ctypes, sys
+libc = ctypes.CDLL("/usr/lib/libc.dylib")
+mib = (ctypes.c_int * 4)(1, 14, 1, int(sys.argv[1]))
+size = ctypes.c_size_t(0)
+if libc.sysctl(mib, 4, None, ctypes.byref(size), None, 0) != 0 or size.value < 16:
+    sys.exit(1)
+buf = ctypes.create_string_buffer(size.value)
+if libc.sysctl(mib, 4, buf, ctypes.byref(size), None, 0) != 0 or size.value < 16:
+    sys.exit(1)
+sec = int.from_bytes(buf.raw[0:8], "little", signed=True)
+usec = int.from_bytes(buf.raw[8:12], "little", signed=True)
+print(sec * 1000 + usec / 1000)
+`;
+
 const ios = {
   async install(device, app) {
     await run("xcrun", ["simctl", "uninstall", device, APP_ID], { allowFail: true });
@@ -658,11 +676,32 @@ const ios = {
       },
     );
   },
+  pids: new Map(),
   async launch(device, launchArgs) {
     // react-native-launch-arguments reads "-key value" pairs from the process arguments.
     const args = Object.entries(launchArgs).flatMap(([k, v]) => [`-${k}`, String(v)]);
-    await run("xcrun", ["simctl", "launch", device, APP_ID, ...args]);
+    const { stdout } = await run("xcrun", ["simctl", "launch", device, APP_ID, ...args]);
+    // "com.ledger.live: 12345": a simulator app is a process of the host.
+    const pid = Number(stdout.match(/:\s*(\d+)\s*$/m)?.[1]);
+    this.pids.set(device, Number.isInteger(pid) && pid > 0 ? pid : null);
     return {};
+  },
+  // The host kernel's start time of the launched process, on the clock the app's Date.now() uses.
+  async processStart(device) {
+    const pid = this.pids.get(device);
+    if (!pid) return null;
+    const { stdout, failed } = await run("python3", ["-c", PROCESS_START_PY, String(pid)], {
+      allowFail: true,
+      timeoutMs: 20_000,
+    });
+    const at = Number(stdout.trim());
+    return failed || !Number.isFinite(at) ? null : { at, pid };
+  },
+  // The launched process while it runs (a crash or a restart ends it), else null.
+  async pid(device) {
+    const pid = this.pids.get(device);
+    if (!pid) return null;
+    return (await run("kill", ["-0", String(pid)], { allowFail: true })).failed ? null : pid;
   },
   async blockingDialog() {
     return null;
@@ -679,12 +718,6 @@ const ios = {
   },
   async resume() {},
   async cpuStat() {
-    return null;
-  },
-  async processStart() {
-    return null;
-  },
-  async pid() {
     return null;
   },
   async threadStats() {

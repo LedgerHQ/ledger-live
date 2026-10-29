@@ -114,6 +114,50 @@ export function bootstrapMean(diffs, resamples = 4000) {
   };
 }
 
+// Where the Debug value starts, relative to the first JS import: 0 since develop b3700d9164b
+// (2026-10-26, react-native-startup-time removed), ~0.5–1.3 s on emulators before, when it started
+// at the library's native mark.
+const jsStartOffset = s => s.events?.["Before js imports"]?.time;
+// The Debug value from the first JS import, whichever start the build's Debug value uses.
+export const fromJsStart = s => s.appStartupTime - (jsStartOffset(s) ?? NaN);
+// Wall clock of the first JS import, from the "JS start epoch <ms>" event apply-build-env.sh adds.
+const jsStartEpoch = s => {
+  const name = Object.keys(s.events ?? {}).find(n => /^JS start epoch \d+$/.test(n));
+  return name ? Number(name.split(" ").pop()) : NaN;
+};
+// From the process start: the native start the Debug value leaves out, plus fromJsStart. iOS takes
+// the process start from the host kernel, whose clock the simulator app shares; Android's is the
+// runner's estimate of the emulator's process start, against the emulator's clock.
+export const fromProcessStart = s => jsStartEpoch(s) - (s.processStartAt ?? NaN) + fromJsStart(s);
+
+// B − A of one measure over the pairs of a platform and scenario.
+function difference(group, metric) {
+  const pairs = pairUp(group, metric);
+  const phase = n => hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate;
+  const phase0 = phase(0);
+  const phase1 = phase(1);
+  // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device effect.
+  const instanceBias =
+    Number.isFinite(phase0) && Number.isFinite(phase1) ? (phase0 - phase1) / 2 : null;
+  // Take the device effect out of each pair before estimating B − A and its interval.
+  const adjusted = pairs.map(p => p.B - p.A - (instanceBias ?? 0) * (p.phase === 0 ? 1 : -1));
+  // Spread within each half, so the device bias does not inflate it.
+  const centred = [0, 1].flatMap(n => {
+    const d = pairs.filter(p => p.phase === n).map(p => p.B - p.A);
+    const m = median(d);
+    return d.map(v => v - m);
+  });
+  return {
+    pairs: pairs.length,
+    medianA: median(pairs.map(p => p.A)),
+    medianB: median(pairs.map(p => p.B)),
+    hl: hodgesLehmann(adjusted),
+    spread: robustSd(centred),
+    instanceBias,
+    mean: bootstrapMean(adjusted),
+  };
+}
+
 export function summarise(samples, { preset, thresholdMs }) {
   const groups = new Map();
   for (const s of samples) {
@@ -123,23 +167,23 @@ export function summarise(samples, { preset, thresholdMs }) {
   }
   return [...groups.entries()].map(([key, group]) => {
     const [platform, scenario] = key.split("|");
-    const pairs = pairUp(group, s => s.appStartupTime);
-    const phase = n =>
-      hodgesLehmann(pairs.filter(p => p.phase === n).map(p => p.B - p.A))?.estimate;
-    const phase0 = phase(0);
-    const phase1 = phase(1);
-    // Phase 0 puts B on the second device, phase 1 on the first: half their gap is the device effect.
-    const instanceBias =
-      Number.isFinite(phase0) && Number.isFinite(phase1) ? (phase0 - phase1) / 2 : null;
-    // Take the device effect out of each pair before estimating B − A and its interval.
-    const adjusted = pairs.map(p => p.B - p.A - (instanceBias ?? 0) * (p.phase === 0 ? 1 : -1));
-    const hl = hodgesLehmann(adjusted);
-    // Spread within each half, so the device bias does not inflate it.
-    const centred = [0, 1].flatMap(n => {
-      const d = pairs.filter(p => p.phase === n).map(p => p.B - p.A);
-      const m = median(d);
-      return d.map(v => v - m);
-    });
+    const debugValue = difference(group, s => s.appStartupTime);
+    const jsStart = difference(group, fromJsStart);
+    const processStart = difference(group, fromProcessStart);
+    // Builds on both sides of b3700d9164b: their Debug values start at different points, so the
+    // verdict uses the time from the first JS import, which means the same in both.
+    const offset = side =>
+      median(
+        group
+          .filter(s => s.ok && !s.warmup && !s.traced && s.side === side)
+          .map(jsStartOffset)
+          .filter(Number.isFinite),
+      );
+    const offsetA = offset("A");
+    const offsetB = offset("B");
+    const startsDiffer =
+      Number.isFinite(offsetA) && Number.isFinite(offsetB) && Math.abs(offsetA - offsetB) > 100;
+    const gated = startsDiffer && jsStart.pairs ? jsStart : debugValue;
     const amStart = hodgesLehmann(
       pairUp(group, s => s.amStart?.totalTime ?? NaN).map(p => p.B - p.A),
     );
@@ -147,19 +191,17 @@ export function summarise(samples, { preset, thresholdMs }) {
     return {
       platform,
       scenario,
-      pairs: pairs.length,
+      measure: gated === jsStart ? "from JS start" : "Debug value",
+      startsDiffer,
+      ...gated,
       failed: measured.filter(s => !s.ok).length,
       traced: measured.filter(s => s.traced).length,
       launches: measured.length,
-      medianA: median(pairs.map(p => p.A)),
-      medianB: median(pairs.map(p => p.B)),
-      hl,
-      spread: robustSd(centred),
-      instanceBias,
       amStart,
-      mean: bootstrapMean(adjusted),
-      detectable: detectableAt80(hl, thresholdMs),
-      verdict: verdictFor(preset, hl, thresholdMs),
+      jsStart,
+      processStart,
+      detectable: detectableAt80(gated.hl, thresholdMs),
+      verdict: verdictFor(preset, gated.hl, thresholdMs),
     };
   });
 }
@@ -301,6 +343,26 @@ export function toMarkdown(rows, { preset, labelA, labelB, thresholdMs }) {
           `${r.platform} ${r.scenario}: ${r.traced} traced launches left out (the tracer adds load).`,
       ),
     `The mean (with a bootstrap 95% interval) is what the manual test compares. "Flags a slowdown of" is the true B − A the ${thresholdMs} ms gate catches 80% of the time at this noise; a true ${thresholdMs} ms is caught half the time.`,
+    ...rows
+      .filter(r => r.startsDiffer)
+      .map(
+        r =>
+          `**${r.platform} ${r.scenario}: A's and B's Debug values start at different points (develop changed it on 2026-10-26, b3700d9164b), so this row compares the time from the first JS import.**`,
+      ),
+    "",
+    "#### Same start for every build",
+    "",
+    'From the first JS import: the Debug value minus its "Before js imports" time. From the process start: that plus the native start, from the "JS start epoch" event and the process start time (iOS: exact, same clock; Android: the runner\'s estimate against the emulator\'s clock).',
+    "",
+    "| Platform | Scenario | From JS start: median A / B (ms) | B − A (ms) | 95% interval (ms) | From process start: median A / B (ms) | B − A (ms) | 95% interval (ms) |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    ...rows.map(r => {
+      const cells = d =>
+        d.pairs
+          ? `${fmt(d.medianA)} / ${fmt(d.medianB)} | ${signed(d.hl?.estimate)} | ${d.hl?.low == null ? "–" : `${signed(d.hl.low)} to ${signed(d.hl.high)}`}`
+          : "– | – | –";
+      return `| ${r.platform} | ${r.scenario} | ${cells(r.jsStart)} | ${cells(r.processStart)} |`;
+    }),
     "",
   );
   return lines.filter((l, i) => l !== "" || lines[i - 1] !== "").join("\n");

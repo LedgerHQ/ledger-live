@@ -4,7 +4,9 @@
 #
 #   apply-build-env.sh <prod-like|no-bridge|e2e> [app_dir]
 #
-# e2e        nothing changes: MOCK=1 and DETOX=1, the bridge runs on every launch.
+# Every mode also logs a "JS start epoch <ms>" startup event (see the end of this script).
+#
+# e2e        MOCK=1 and DETOX=1, the bridge runs on every launch.
 # no-bridge  MOCK=1 and DETOX=1, but launches without wsPort (measured ones) leave init() before
 #            the network logging and the socket.
 # prod-like  MOCK and DETOX are off at build time; the bridge starts only on a launch that passes
@@ -59,7 +61,8 @@ esac
 for f in $needed; do
   [ -f "$f" ] || fail "$f not found"
 done
-if grep -qs 'startup-perf' "$index_file" "$client_file" "$rspack_file"; then
+if grep -qs 'startup-perf' "$index_file" "$client_file" "$rspack_file" \
+  "$app/src/mvvm/utils/logStartup/beforeJSImports.ts"; then
   fail "a startup-perf patch is already applied: one mode per checkout"
 fi
 
@@ -195,3 +198,23 @@ case "$mode" in
     fail "unknown build_env '$mode' (prod-like | no-bridge | e2e)"
     ;;
 esac
+
+# Every mode: a startup event named after the wall clock of the JS start, which lets the harness add
+# the native start (process start → JS start) that the Debug value leaves out since 2026-10-26.
+# Measurement only, so a missing anchor is a warning.
+js_start_file="$app/src/mvvm/utils/logStartup/beforeJSImports.ts"
+js_start_line='logStartupEvent("Before js imports");'
+if [ -f "$js_start_file" ] && [ "$(LINE="$js_start_line" count_exact "$js_start_file")" = 1 ]; then
+  LINE="$js_start_line" awk_in_place '
+    BEGIN { t = ENVIRON["LINE"] }
+    $0 == t {
+      print "const startupPerfJsStart = logStartupEvent(\"Before js imports\");"
+      print "logStartupEvent(`JS start epoch ${startupPerfJsStart.time}`); // startup-perf: JS start wall clock"
+      next
+    }
+    { print }
+  ' "$js_start_file"
+  summary "build_env=$mode: startup events include \"JS start epoch <ms>\""
+else
+  echo "::warning::startup-perf: no '$js_start_line' in $js_start_file: no JS start epoch, native start not measured"
+fi

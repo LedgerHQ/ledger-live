@@ -57,10 +57,10 @@ on:
         type: string
         default: "5"
       accounts_userdata:
-        description: "Userdata files (e2e/mobile/userdata, comma-separated) merged for the accounts scenario"
+        description: "Userdata files (e2e/mobile/userdata, comma-separated) merged for the accounts scenario; settings come from the first. Default: real BTC, ETH (tokens) and SOL accounts (until 2026-10-29: 1AccountBTC1AccountETHReadOnlyFalse,speculos-x-other-account, 6 of them mock accounts)"
         required: true
         type: string
-        default: "1AccountBTC1AccountETHReadOnlyFalse,speculos-x-other-account"
+        default: "speculos-x-other-account,swap-history"
       threshold_ms:
         description: "custom: B fails when it is slower than A by more than this"
         required: true
@@ -103,17 +103,17 @@ on:
         options: ["4", "3", "2"]
         default: "4"
       build_env_a:
-        description: "Build A: no-bridge (MOCK+DETOX, E2E bridge skipped on measured launches) | prod-like (no MOCK/DETOX, bridge only for the injection) | e2e (as before 2026-10-28)"
+        description: "Build A: prod-like (no MOCK/DETOX, E2E bridge only for the injection) | no-bridge (MOCK+DETOX, bridge skipped on measured launches; default until 2026-10-29) | e2e (as before 2026-10-28)"
         required: false
         type: choice
-        options: ["no-bridge", "prod-like", "e2e"]
-        default: "no-bridge"
+        options: ["prod-like", "no-bridge", "e2e"]
+        default: "prod-like"
       build_env_b:
         description: "Build B, same choices. With aa-noise, a mode other than A's builds the same commit twice"
         required: false
         type: choice
-        options: ["no-bridge", "prod-like", "e2e"]
-        default: "no-bridge"
+        options: ["prod-like", "no-bridge", "e2e"]
+        default: "prod-like"
 
 permissions:
   contents: read
@@ -159,8 +159,8 @@ jobs:
           SCENARIOS: ${{ inputs.scenarios }}
           BRANCH_SHA: ${{ github.sha }}
           READ_ROWS: ${{ inputs.read_all_events && 'every event row read' || 'first screen and last event rows read' }}
-          ENV_A: ${{ inputs.build_env_a || 'no-bridge' }}
-          ENV_B: ${{ inputs.build_env_b || 'no-bridge' }}
+          ENV_A: ${{ inputs.build_env_a || 'prod-like' }}
+          ENV_B: ${{ inputs.build_env_b || 'prod-like' }}
           E2E_BABEL: ${{ inputs.e2e_babel_plugin }}
         run: |
           set -euo pipefail
