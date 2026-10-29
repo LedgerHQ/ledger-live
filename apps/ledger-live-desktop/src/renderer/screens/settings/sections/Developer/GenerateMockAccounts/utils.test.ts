@@ -1,6 +1,8 @@
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
+import { getOperationAmountNumber } from "@ledgerhq/ledger-wallet-framework/operation";
+import BigNumber from "bignumber.js";
 
 jest.mock("~/renderer/storage", () => ({
   getKey: jest.fn(async () => []),
@@ -68,6 +70,16 @@ describe("addMockOperationsToAllAccounts", () => {
     expect(persistedDevice.id).toBe(device.id);
     expect(persistedDevice.freshAddress).toBe(device.freshAddress);
     expect(persistedDevice.operations.length).toBe(3);
+
+    // Balance and history follow the operations: an account whose stored balance was stale
+    // (an earlier sync zeroed it) must not keep a zero balance next to a full history.
+    const fromOperations = persistedDevice.operations.reduce(
+      (total: BigNumber, op) => total.plus(getOperationAmountNumber(op)),
+      new BigNumber(0),
+    );
+    expect(persistedDevice.balance.isEqualTo(fromOperations)).toBe(true);
+    expect(persistedDevice.spendableBalance.isEqualTo(fromOperations)).toBe(true);
+    expect(persistedDevice.balanceHistoryCache.DAY.balances.some(Boolean)).toBe(true);
   });
 
   it("generates new operations on a second run instead of repeating the first batch", async () => {

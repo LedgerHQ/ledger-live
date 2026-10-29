@@ -1,5 +1,6 @@
 import { genAccount, genAddingOperationsInAccount } from "@ledgerhq/live-common/mock/account";
-import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genTokenAccount, ensureNoNegative } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { generateHistoryFromOperations } from "@ledgerhq/ledger-wallet-framework/account/balanceHistoryCache";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
@@ -188,6 +189,12 @@ export const addMockOperationsToAllAccounts = async (count = 10): Promise<number
         count,
         `${account.id}|${account.operations.length}`,
       );
+      // Recompute from the account's own operations: for some families the account comes back
+      // with a stale balance (an earlier sync zeroed it) even though the operations are there.
+      withOperations.balance = withOperations.spendableBalance = ensureNoNegative(
+        withOperations.operations,
+      );
+      withOperations.balanceHistoryCache = generateHistoryFromOperations(withOperations);
       // Tagged so the sync loop skips this account: a sync would replace the
       // invented operations with the chain's real (usually empty) history.
       withOperations.seedIdentifier = DEMO_HISTORY_SEED;
