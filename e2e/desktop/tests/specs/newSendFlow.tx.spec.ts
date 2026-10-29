@@ -1,7 +1,11 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
-import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
+import {
+  NewSendFlowEntry,
+  checkStellarMemoTypes,
+  registerNewSendFlowTests,
+} from "tests/utils/newSendFlowUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 
@@ -129,6 +133,7 @@ const memoSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.XLM_1, Account.XLM_2, "0.0001", undefined, "memoText"),
     xrayTicket: "B2CQA-6038",
+    recipientStepHook: checkStellarMemoTypes,
   },
   {
     transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "memo123"),

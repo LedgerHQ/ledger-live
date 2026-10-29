@@ -288,11 +288,6 @@ export class NewSendModal extends Modal {
     await this.amountInput.fill(amount);
   }
 
-  @step("Verify the amount step is shown")
-  async expectAmountStepVisible() {
-    await expect(this.amountInput).toBeVisible();
-  }
-
   @step("Verify crypto amount round-trips exactly: $0")
   async expectCryptoAmount(amount: string) {
     await expect(this.amountInput).toHaveValue(amount);
