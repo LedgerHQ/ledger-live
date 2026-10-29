@@ -14,17 +14,17 @@ export default defineConfig({
     cleanDistPath: true,
     externals: ["bigint-buffer", /^readable-stream/],
     minify: false,
+    autoExternal: {
+      dependencies: false,
+      peerDependencies: true,
+      devDependencies: true,
+      optionalDependencies: true,
+    },
   },
   lib: [
     {
       format: "cjs",
       bundle: true,
-      autoExternal: {
-        dependencies: false,
-        peerDependencies: true,
-        devDependencies: true,
-        optionalDependencies: true,
-      },
     },
   ],
   tools: {
