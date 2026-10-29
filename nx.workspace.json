@@ -348,7 +348,7 @@
         "{projectRoot}/lib-es/**",
         "{projectRoot}/build/**"
       ],
-      "inputs": ["default", "^default", "tsConfig"],
+      "inputs": ["default", "^default", "tsConfig", { "externalDependencies": ["@typescript/native"] }],
       "cache": true
     },
     "lint": {

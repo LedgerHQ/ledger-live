@@ -1,0 +1,7 @@
+{
+  "targets": {
+    "build": {
+      "inputs": ["default", "^default", "tsConfig", { "externalDependencies": ["zx"] }]
+    }
+  }
+}
