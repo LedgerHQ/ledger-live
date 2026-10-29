@@ -6,11 +6,18 @@ const mockSetConfigSettings = jest.fn();
 const mockSetDefaults = jest.fn();
 const mockFetchAndActivate = jest.fn();
 const mockGetAll = jest.fn();
+const mockFetchState = { lastFetchStatus: "no_fetch_yet", fetchTimeMillis: -1 };
 const mockGetRemoteConfig = jest.fn(() => ({
   setConfigSettings: (...args: unknown[]) => mockSetConfigSettings(...(args as [])),
   setDefaults: (...args: unknown[]) => mockSetDefaults(...(args as [])),
   fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
   getAll: (...args: unknown[]) => mockGetAll(...(args as [])),
+  get lastFetchStatus() {
+    return mockFetchState.lastFetchStatus;
+  },
+  get fetchTimeMillis() {
+    return mockFetchState.fetchTimeMillis;
+  },
 }));
 
 jest.mock("@react-native-firebase/remote-config", () => ({
@@ -37,6 +44,8 @@ beforeEach(() => {
   mockFetchAndActivate.mockReset().mockResolvedValue(true);
   mockGetAll.mockReset().mockReturnValue({});
   mockGetRemoteConfig.mockClear();
+  mockFetchState.lastFetchStatus = "no_fetch_yet";
+  mockFetchState.fetchTimeMillis = -1;
 });
 
 describe("fetchRemoteFlags", () => {
@@ -208,5 +217,40 @@ describe("subscribeToRemoteFlags", () => {
     unsubscribe();
     await fetchRemoteFlags();
     expect(cb).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("getRemoteConfigStatus", () => {
+  it("reports the last fetch and how many values came from Firebase", async () => {
+    mockFetchState.lastFetchStatus = "success";
+    mockFetchState.fetchTimeMillis = 1_793_000_000_000;
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: true })),
+      feature_lwm_wallet_40: value(JSON.stringify({ enabled: false })),
+      feature_mock_feature: value(JSON.stringify({ enabled: false }), "default"),
+    });
+
+    const { getRemoteConfigStatus } = await loadModule();
+
+    expect(getRemoteConfigStatus()).toEqual({
+      lastFetchStatus: "success",
+      fetchTimeMillis: 1_793_000_000_000,
+      remoteValues: 2,
+    });
+  });
+
+  it("reports no remote values after a throttled first fetch", async () => {
+    mockFetchState.lastFetchStatus = "throttled";
+    mockGetAll.mockReturnValue({
+      feature_mock_feature: value(JSON.stringify({ enabled: false }), "default"),
+    });
+
+    const { getRemoteConfigStatus } = await loadModule();
+
+    expect(getRemoteConfigStatus()).toEqual({
+      lastFetchStatus: "throttled",
+      fetchTimeMillis: -1,
+      remoteValues: 0,
+    });
   });
 });

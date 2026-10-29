@@ -398,6 +398,11 @@ jest.mock("~/firebase/remoteConfig", () => ({
   readCachedFlags: jest.fn().mockResolvedValue({}),
   fetchRemoteFlags: jest.fn().mockResolvedValue({}),
   subscribeToRemoteFlags: jest.fn(() => () => {}),
+  getRemoteConfigStatus: jest.fn(() => ({
+    lastFetchStatus: "no_fetch_yet",
+    fetchTimeMillis: -1,
+    remoteValues: 0,
+  })),
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({

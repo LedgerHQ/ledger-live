@@ -32,6 +32,7 @@ import { LaunchArguments } from "react-native-launch-arguments";
 import logReport from "~/log-report";
 import { webviewLogStore } from "~/e2e/webviewLogStore";
 import { ptxHandoffStore } from "~/e2e/ptxHandoffStore";
+import { getRemoteConfigStatus } from "~/firebase/remoteConfig";
 import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 import { getAllEnvs, setEnv } from "@shared/env";
 import Config from "react-native-config";
@@ -313,6 +314,14 @@ async function onMessage(event: WebSocketMessageEvent) {
           type: "appEnvs",
           id: msg.id,
           payload,
+        });
+        break;
+      }
+      case "getRemoteConfigStatus": {
+        postMessage({
+          type: "remoteConfigStatus",
+          id: msg.id,
+          payload: JSON.stringify(getRemoteConfigStatus()),
         });
         break;
       }
