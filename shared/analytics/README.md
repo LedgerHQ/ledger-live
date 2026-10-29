@@ -77,6 +77,26 @@ await closeAndFlush();
 
 `publishAnalyticsEvent` is deprecated. It exists for unmigrated `updateIdentify` behaviour. New events come from the pipeline.
 
+## Personal data guard
+
+`deliver` scrubs the event name and props before the client, `log` or `analyticsEvents$` sees them. Apps cannot turn it off.
+
+It finds:
+
+- values under a sensitive key, such as `address`, `xpub`, `signature`, `txHash` or `email`
+- value shapes: EVM addresses and hashes, extended public keys, bech32 addresses, Ledger account ids, emails, and ids in links: a path segment or query value of 20 or more letters and digits, a TON address, a Hedera id or a NEAR account name
+- the same shapes in property names
+- objects more than 8 levels deep, which it does not inspect (`max_depth`)
+
+What happens depends on `NODE_ENV`:
+
+- `development` or `test`: the event is not sent, `analyticsEvents$` gets `blocked_pii`, and `track` rejects with `AnalyticsPiiError`. The error names the paths and kinds, never the values.
+- any other value: the event is sent with `[REDACTED:<kind>]` in place of each value, and the published event carries `piiFindings`.
+
+E2E tests can subscribe to `analyticsEvents$` and fail on any event with `piiFindings`.
+
+Do not work around the guard. Send a category, a currency id or a boolean instead of the value.
+
 ## Host registration (apps only)
 
 Desktop and mobile register their Segment clients, consent, extra props, and filters in their app `segment.ts`; other hosts such as wallet-cli may register only the callbacks relevant to their runtime.

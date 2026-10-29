@@ -1,4 +1,5 @@
 export * from "./analyticsEvents";
+export * from "./errors";
 export * from "./flush";
 export * from "./registry";
 export * from "./screenRefs";

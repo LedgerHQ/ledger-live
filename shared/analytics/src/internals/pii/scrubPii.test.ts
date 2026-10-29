@@ -1,0 +1,300 @@
+import { scrubPii, scrubPiiString } from "./scrubPii";
+
+const EVM_ADDRESS = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+const EVM_HASH = "0x5c504ed432cb51138bcf09aa5e8a410dd4a1e204ef84bfed1be16dfba1b22060";
+const XPUB =
+  "xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8";
+const BTC_BECH32 = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq";
+const COSMOS_ADDRESS = "cosmos1hsk6jryyqjfhp5dhc55tc9jtckygx0eph6dd02";
+const CARDANO_ADDRESS =
+  "addr1qx2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer3n0d3vllmyqwsx5wktcd8cc3sq835lu7drv2xwl2wywfgse35a3x";
+const CARDANO_TESTNET_ADDRESS =
+  "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4";
+const LEDGER_ACCOUNT_ID = `js:2:ethereum:${EVM_ADDRESS}:`;
+
+describe("scrubPiiString", () => {
+  it.each([
+    ["an EVM address", `sent to ${EVM_ADDRESS}`, "evm_address"],
+    ["an EVM transaction hash", EVM_HASH, "evm_hash"],
+    ["an extended public key", XPUB, "extended_public_key"],
+    [
+      "a Litecoin extended public key",
+      "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF",
+      "extended_public_key",
+    ],
+    ["a Bitcoin bech32 address", BTC_BECH32, "bech32_address"],
+    ["an upper-case Bitcoin bech32 address", BTC_BECH32.toUpperCase(), "bech32_address"],
+    ["a Cosmos address", COSMOS_ADDRESS, "bech32_address"],
+    ["a Cardano address", CARDANO_ADDRESS, "bech32_address"],
+    ["a Cardano testnet address", CARDANO_TESTNET_ADDRESS, "bech32_address"],
+    ["an email address", "contact me at satoshi@example.com", "email"],
+    [
+      "an address in a path that looks like a token id",
+      `account/address/${EVM_ADDRESS}`,
+      "evm_address",
+    ],
+    ["an email in a path that looks like a token id", "contact/email/satoshi@example.com", "email"],
+    ["a Ledger account id", `/account/${LEDGER_ACCOUNT_ID}`, "ledger_account_id"],
+    [
+      "an explorer link to a Bitcoin transaction",
+      "https://mempool.space/tx/4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+      "explorer_url",
+    ],
+    [
+      "an explorer link to a Solana account",
+      "https://solscan.io/account/9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+      "explorer_url",
+    ],
+  ])("redacts %s", (_label, input, kind) => {
+    const { value, kinds } = scrubPiiString(input);
+
+    expect(kinds).toContain(kind);
+    expect(value).toContain(`[REDACTED:${kind}]`);
+  });
+
+  it.each([
+    ["a Hedera account", "https://hashscan.io/mainnet/account/", "0.0.1040977", ""],
+    ["a Hedera transaction", "https://hashscan.io/mainnet/transaction/", "0.0.1234567-123-123", ""],
+    ["a NEAR account", "https://nearblocks.io/address/", "unknown.near", ""],
+    [
+      "a NEAR transaction",
+      "https://nearblocks.io/txns/",
+      "GgQ6xTuNhTNGVsRAhLFGRUBB1cUv9kmvhBZBrLPZbNSJ",
+      "",
+    ],
+    ["an XRP account", "https://bithomp.com/explorer/", "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe", ""],
+    [
+      "a TON address",
+      "https://tonscan.org/address/",
+      "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+      "",
+    ],
+    [
+      "a TON address with a query",
+      "https://tonviewer.com/",
+      "EQAHTHGU1k6CGPLPqrjnmzQgGtvtD4-n8nc-YE3TmWm1_1JZ",
+      "?section=history",
+    ],
+    [
+      "a query value",
+      "https://ccdscan.io/accounts?daddress=",
+      "3ZFGxLtnUUSJGW2WqjMh1DDjxyq5rnytCwkSqxFTpsWSFdQnNn",
+      "",
+    ],
+    [
+      "an id in a sentence",
+      "see (https://solscan.io/account/",
+      "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+      ").",
+    ],
+  ])("redacts %s in a link", (_label, before, id, after) => {
+    expect(scrubPiiString(`${before}${id}${after}`).value).toBe(
+      `${before}[REDACTED:explorer_url]${after}`,
+    );
+  });
+
+  it("keeps the explorer host and route so the event stays useful", () => {
+    expect(scrubPiiString(`https://etherscan.io/tx/${EVM_HASH}`).value).toBe(
+      "https://etherscan.io/tx/[REDACTED:explorer_url]",
+    );
+  });
+
+  it("keeps the currency of a Ledger account id", () => {
+    expect(scrubPiiString(LEDGER_ACCOUNT_ID).value).toBe(
+      "js:2:ethereum:[REDACTED:ledger_account_id]:",
+    );
+  });
+
+  it("redacts each Ledger account id when ids are joined", () => {
+    const solana = "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM";
+
+    expect(scrubPiiString(`js:2:solana:${solana}:solanaMain|js:2:solana:${solana}:`).value).toBe(
+      "js:2:solana:[REDACTED:ledger_account_id]:solanaMain|js:2:solana:[REDACTED:ledger_account_id]:",
+    );
+  });
+
+  it("keeps the token of a Ledger token account id", () => {
+    expect(scrubPiiString(`${LEDGER_ACCOUNT_ID}+ethereum%2Ferc20%2Fusdt`).value).toBe(
+      "js:2:ethereum:[REDACTED:ledger_account_id]:+ethereum%2Ferc20%2Fusdt",
+    );
+  });
+
+  it("redacts a Ledger account id with a short address", () => {
+    expect(scrubPiiString("js:2:hedera:0.0.1040977:hederaBip44").value).toBe(
+      "js:2:hedera:[REDACTED:ledger_account_id]:hederaBip44",
+    );
+  });
+
+  it.each([
+    ["a short hex value", "0x1234"],
+    ["a version", "3.105.0"],
+    ["an event name", "button_clicked2"],
+    ["a token id", "ethereum/erc20/usd_tether__erc20_"],
+    ["a token id that contains a contract address", `sui/coin/0x${"a".repeat(64)}::usdc::USDC`],
+    ["a time", "time:10:30:00:12"],
+    ["an account id that the app already redacted", "js:2:ethereum:[redacted]:"],
+    ["a UUID", "3f2b8c1e-9d4a-4e6b-8f1a-2c3d4e5f6a7b"],
+    [
+      "a firmware hash without a prefix",
+      "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ],
+    ["a support link", "https://support.ledger.com/article/360017582793"],
+    ["a short explorer path", "https://etherscan.io/address/"],
+    ["an app route under account", "https://ledger.com/account/settings"],
+    [
+      "a link with a slug",
+      "https://support.ledger.com/hc/en-us/articles/4404389606417-Download-Ledger-Live",
+    ],
+    [
+      "a link to an asset",
+      "https://cdn.example.com/static/9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM.js",
+    ],
+    ["a link with a version", "https://cdn.live.ledger.com/apps/3.105.0/index.html"],
+    [
+      "a link with campaign values",
+      "https://www.ledger.com/?utm_source=ledger_live&utm_medium=self_referral",
+    ],
+  ])("keeps %s", (_label, input) => {
+    expect(scrubPiiString(input)).toEqual({ value: input, kinds: [] });
+  });
+
+  it.each([
+    ["a long word", "a".repeat(50_000)],
+    ["a long run of punctuation", "a.".repeat(25_000)],
+    ["a long run of link starts", "https://".repeat(6_250)],
+    ["a long run of TON address starts", `https://${"/EQ-".repeat(8_000)}`],
+  ])("scans %s in linear time", (_label, input) => {
+    const start = Date.now();
+
+    scrubPiiString(input);
+
+    expect(Date.now() - start).toBeLessThan(100);
+  });
+});
+
+describe("scrubPii", () => {
+  it("reports the path and kind of each finding without the value", () => {
+    const { findings } = scrubPii({ flow: "send", details: { to: EVM_ADDRESS } }, "properties");
+
+    expect(findings).toEqual([{ path: "properties.details.to", kind: "evm_address" }]);
+  });
+
+  it("redacts values inside arrays", () => {
+    const { value, findings } = scrubPii({ recipients: ["ok", BTC_BECH32] });
+
+    expect(value).toEqual({ recipients: ["ok", "[REDACTED:bech32_address]"] });
+    expect(findings).toEqual([{ path: "recipients[1]", kind: "bech32_address" }]);
+  });
+
+  it("redacts any value under a sensitive key, whatever its shape", () => {
+    const { value, findings } = scrubPii({
+      freshAddress: "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+      txPayload: { signature: "deadbeef", rawData: { fee: 1 } },
+    });
+
+    expect(value).toEqual({
+      freshAddress: "[REDACTED:sensitive_key]",
+      txPayload: { signature: "[REDACTED:sensitive_key]", rawData: "[REDACTED:sensitive_key]" },
+    });
+    expect(findings.map(finding => finding.path)).toEqual([
+      "freshAddress",
+      "txPayload.signature",
+      "txPayload.rawData",
+    ]);
+  });
+
+  it("redacts property names", () => {
+    const { value, findings } = scrubPii({ "satoshi@example.com": EVM_ADDRESS });
+
+    expect(value).toEqual({ "[REDACTED:email]": "[REDACTED:evm_address]" });
+    expect(findings).toEqual([
+      { path: "[REDACTED:email]", kind: "email" },
+      { path: "[REDACTED:email]", kind: "evm_address" },
+    ]);
+  });
+
+  it("keeps empty and boolean values under a sensitive key", () => {
+    const props = { address: "", email: false, signature: null };
+
+    expect(scrubPii(props)).toEqual({ value: props, findings: [] });
+  });
+
+  it("returns the same object when nothing is redacted", () => {
+    const props = { flow: "send", nested: { count: 2 }, list: ["a"] };
+
+    expect(scrubPii(props).value).toBe(props);
+  });
+
+  it("does not mutate the input", () => {
+    const props = { nested: { to: EVM_ADDRESS } };
+
+    scrubPii(props);
+
+    expect(props.nested.to).toBe(EVM_ADDRESS);
+  });
+
+  it("keeps class instances without personal data as they are", () => {
+    const date = new Date(0);
+
+    expect(scrubPii({ date }).value.date).toBe(date);
+  });
+
+  it("redacts what an object serializes to", () => {
+    const link = { toJSON: () => `https://etherscan.io/address/${EVM_ADDRESS}` };
+
+    const { value, findings } = scrubPii({ link });
+
+    expect(value).toEqual({ link: "https://etherscan.io/address/[REDACTED:explorer_url]" });
+    expect(findings).toEqual([{ path: "link", kind: "explorer_url" }]);
+  });
+
+  it("redacts the fields of an object that serializes to a clean value", () => {
+    const recipient = { address: EVM_ADDRESS, toJSON: () => "safe" };
+
+    const { value, findings } = scrubPii({ recipient });
+
+    expect(value).toEqual({
+      recipient: { address: "[REDACTED:sensitive_key]", toJSON: expect.any(Function) },
+    });
+    expect(findings).toEqual([{ path: "recipient.address", kind: "sensitive_key" }]);
+  });
+
+  it("redacts bytes under a sensitive key", () => {
+    const { value, findings } = scrubPii({ signature: new Uint8Array([222, 173, 190, 239]) });
+
+    expect(value).toEqual({ signature: "[REDACTED:sensitive_key]" });
+    expect(findings).toEqual([{ path: "signature", kind: "sensitive_key" }]);
+  });
+
+  it("redacts the fields of class instances", () => {
+    class Recipient {
+      constructor(readonly to: string) {}
+    }
+
+    const { value, findings } = scrubPii({ recipient: new Recipient(EVM_ADDRESS) });
+
+    expect(value).toEqual({ recipient: { to: "[REDACTED:evm_address]" } });
+    expect(findings).toEqual([{ path: "recipient.to", kind: "evm_address" }]);
+  });
+
+  it("redacts what is below the maximum depth", () => {
+    let nested: Record<string, unknown> = { address: EVM_ADDRESS };
+    for (let level = 0; level < 8; level++) nested = { nested };
+
+    const { value, findings } = scrubPii(nested);
+
+    expect(JSON.stringify(value)).not.toContain(EVM_ADDRESS);
+    expect(findings).toEqual([
+      { path: "nested.nested.nested.nested.nested.nested.nested.nested", kind: "max_depth" },
+    ]);
+  });
+
+  it("stops at the maximum depth so that circular objects do not loop", () => {
+    const circular: Record<string, unknown> = { name: "loop" };
+    circular.self = circular;
+
+    expect(scrubPii(circular).findings).toEqual([
+      { path: "self.self.self.self.self.self.self.self", kind: "max_depth" },
+    ]);
+  });
+});

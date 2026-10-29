@@ -163,6 +163,30 @@ describe("trackEvent", () => {
     });
   });
 
+  describe("personal data in failed events", () => {
+    const ADDRESS = "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045";
+
+    it("blocks a failed_enrichment event with personal data", async () => {
+      setExtraPropsFn(() => Promise.reject(new Error("permission read failed")));
+
+      await expect(
+        trackEvent({ kind: "track", eventName: "Unenrichable", props: { recipient: ADDRESS } }),
+      ).rejects.toThrow("eventProperties.recipient (evm_address)");
+      expect(events[0].deliveryStatus).toBe("blocked_pii");
+    });
+
+    it("blocks a failed_filter event with personal data in its name", async () => {
+      setPropsFilter(() => {
+        throw new Error("filter failed");
+      });
+
+      await expect(
+        trackEvent({ kind: "track", eventName: `Sent to ${ADDRESS}`, props: {} }),
+      ).rejects.toThrow("eventName (evm_address)");
+      expect(JSON.stringify(events)).not.toContain(ADDRESS);
+    });
+  });
+
   describe("property filter", () => {
     it("filters caller props before sending", async () => {
       const analyticsClient = createAnalyticsClient();

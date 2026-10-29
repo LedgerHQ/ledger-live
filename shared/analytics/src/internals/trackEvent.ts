@@ -1,7 +1,6 @@
 import { applyPropsFilter, resolveExtraProps } from "../registry";
 import type { EventType, Props } from "../types";
 import { deliver } from "./deliver";
-import { publishEvent } from "./eventLog";
 
 type TrackEvent = {
   kind: EventType;
@@ -16,8 +15,13 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   try {
     filteredProps = applyPropsFilter(props);
   } catch {
-    publishEvent({ eventName, deliveryStatus: "failed_filter" });
-    return;
+    return deliver({
+      type: kind,
+      eventName,
+      eventProperties: {},
+      eventPropertiesWithoutExtra: {},
+      failure: "failed_filter",
+    });
   }
 
   let extraProps: Props;
@@ -25,13 +29,13 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   try {
     extraProps = (await resolveExtraProps(mandatory)) ?? {};
   } catch {
-    publishEvent({
+    return deliver({
+      type: kind,
       eventName,
       eventProperties: filteredProps,
       eventPropertiesWithoutExtra: filteredProps,
-      deliveryStatus: "failed_enrichment",
+      failure: "failed_enrichment",
     });
-    return;
   }
 
   let filteredExtras: Props;
@@ -39,8 +43,13 @@ export async function trackEvent({ kind, eventName, props, mandatory = false }: 
   try {
     filteredExtras = applyPropsFilter({ ...props, ...extraProps });
   } catch {
-    publishEvent({ eventName, deliveryStatus: "failed_filter" });
-    return;
+    return deliver({
+      type: kind,
+      eventName,
+      eventProperties: {},
+      eventPropertiesWithoutExtra: {},
+      failure: "failed_filter",
+    });
   }
 
   await deliver({
