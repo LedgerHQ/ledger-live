@@ -76,6 +76,57 @@ describe("ChainwatchAccountManager", () => {
     await expect(accountManager.registerNewAddresses(["0x01"])).rejects.toBe(error);
   });
 
+  it("should register addresses in batches of 100", async () => {
+    const addresses = Array.from({ length: 250 }, (_, index) => `bc1q${index}`);
+    mockedNetwork.mockResolvedValue(networkOk(undefined));
+
+    await accountManager.registerNewAddresses(addresses);
+
+    expect(mockedNetwork.mock.calls.map(([request]) => request.data)).toEqual([
+      addresses.slice(0, 100),
+      addresses.slice(100, 200),
+      addresses.slice(200),
+    ]);
+  });
+
+  it("should stop registering at the first failed batch", async () => {
+    const error = new LedgerAPI5xx("unavailable", {
+      status: 500,
+      url: undefined,
+      method: "PUT",
+    });
+    mockedNetwork.mockRejectedValueOnce(error);
+
+    await expect(
+      accountManager.registerNewAddresses(
+        Array.from({ length: 150 }, (_, index) => `bc1q${index}`),
+      ),
+    ).rejects.toBe(error);
+    expect(mockedNetwork).toHaveBeenCalledTimes(1);
+  });
+
+  it("should remove addresses in batches and forget the suffixes of removed batches only", async () => {
+    const addresses = Array.from(
+      { length: 150 },
+      (_, index) => `bc1q${String(index).padStart(4, "0")}`,
+    );
+    accountManager.suffixes = addresses.map(address => address.slice(-4));
+    const error = new LedgerAPI5xx("unavailable", {
+      status: 500,
+      url: undefined,
+      method: "DELETE",
+    });
+    mockedNetwork.mockResolvedValueOnce(networkOk(undefined)).mockRejectedValueOnce(error);
+
+    await expect(accountManager.removeAddresses(addresses)).rejects.toBe(error);
+
+    expect(mockedNetwork.mock.calls.map(([request]) => request.data)).toEqual([
+      addresses.slice(0, 100),
+      addresses.slice(100),
+    ]);
+    expect(accountManager.suffixes).toEqual(addresses.slice(100).map(address => address.slice(-4)));
+  });
+
   it("should register only missing addresses", async () => {
     accountManager.suffixes = ["0x01"];
     mockedNetwork.mockResolvedValueOnce(networkOk(undefined));

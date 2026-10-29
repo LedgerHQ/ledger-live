@@ -8,6 +8,16 @@ import type {
 
 const hexAddressPattern = /^0x[0-9a-f]+$/i;
 
+const addressRequestBatchSize = 100;
+
+const addressRequestBatches = (addresses: readonly string[]) => {
+  const batches: string[][] = [];
+  for (let start = 0; start < addresses.length; start += addressRequestBatchSize) {
+    batches.push(addresses.slice(start, start + addressRequestBatchSize));
+  }
+  return batches;
+};
+
 const isNotFoundError = (error: unknown) =>
   typeof error === "object" && error !== null && "status" in error && error.status === 404;
 
@@ -89,11 +99,11 @@ class ChainwatchAccountManager {
   async registerNewAddresses(addressesToRegister: string[]) {
     const isSubscribed = makeSubscriptionMatcher(this.suffixes);
     const addresses = addressesToRegister.filter(address => address && !isSubscribed(address));
-    if (addresses.length > 0) {
+    for (const batch of addressRequestBatches(addresses)) {
       await network({
         method: "PUT",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-        data: addresses,
+        data: batch,
       });
     }
   }
@@ -101,13 +111,13 @@ class ChainwatchAccountManager {
   async removeAddresses(addressesToRemove: string[]) {
     const isSubscribed = makeSubscriptionMatcher(this.suffixes);
     const addresses = addressesToRemove.filter(address => isSubscribed(address));
-    if (addresses.length > 0) {
+    for (const batch of addressRequestBatches(addresses)) {
       await network({
         method: "DELETE",
         url: `${this.chainwatchBaseUrl}/${this.network.chainwatchId}/account/${this.userId}/addresses/`,
-        data: addresses,
+        data: batch,
       });
-      const removedKeys = tailKeys(addresses, new Set(this.suffixes.map(suffix => suffix.length)));
+      const removedKeys = tailKeys(batch, new Set(this.suffixes.map(suffix => suffix.length)));
       this.suffixes = this.suffixes.filter(
         suffix => !suffixKeys(suffix).some(key => removedKeys.has(key)),
       );
