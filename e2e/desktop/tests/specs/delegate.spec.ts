@@ -106,7 +106,7 @@ const delegateScenarios: DelegateScenario[] = [
     requiresExpertMode: true,
   },
   {
-    delegate: new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment"),
+    delegate: new Delegate(Account.OSMO_1, "0.0001", "polkachu.com"),
     xrayTicket: "B2CQA-3022",
     transactionType: "Delegated",
     providerStep: "search",
@@ -414,7 +414,7 @@ const validatorSelectionScenarios: ValidatorSelectionScenario[] = [
     supportsLNS: false,
   },
   {
-    delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
+    delegate: new Delegate(Account.OSMO_2, "1", "polkachu.com"),
     xrayTicket: "B2CQA-2768",
     selection: "searchable",
   },
