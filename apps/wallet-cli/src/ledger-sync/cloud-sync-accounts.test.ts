@@ -5,6 +5,7 @@ import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud
 import {
   mergeSyncedAccounts,
   pullSyncedAccounts,
+  supportFingerprint,
   type CreateCloudSyncSdk,
 } from "./cloud-sync-accounts";
 import { parseV1 } from "../shared/accountDescriptor";
@@ -332,6 +333,32 @@ function namedError(name: string): Error {
   err.name = name;
   return err;
 }
+
+describe("supportFingerprint", () => {
+  const support = {
+    families: ["evm", "bitcoin"],
+    currencies: ["ethereum", "bitcoin"],
+    derivationModes: ["", "segwit"],
+  };
+
+  it("ignores the order of each list", () => {
+    const reordered = {
+      families: ["bitcoin", "evm"],
+      currencies: ["bitcoin", "ethereum"],
+      derivationModes: ["segwit", ""],
+    };
+
+    expect(supportFingerprint(reordered)).toBe(supportFingerprint(support));
+  });
+
+  it.each([
+    ["family", { families: [...support.families, "solana"] }],
+    ["currency", { currencies: [...support.currencies, "base"] }],
+    ["derivation mode", { derivationModes: [...support.derivationModes, "taproot"] }],
+  ])("changes when a %s is added", (_kind, added) => {
+    expect(supportFingerprint({ ...support, ...added })).not.toBe(supportFingerprint(support));
+  });
+});
 
 describe("pullSyncedAccounts", () => {
   const trustchain = { rootId: "root-abc" } as unknown as Trustchain;

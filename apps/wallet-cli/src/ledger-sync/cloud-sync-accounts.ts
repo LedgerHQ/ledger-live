@@ -1,4 +1,5 @@
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { createHash } from "node:crypto";
+import { getCryptoCurrencyById, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import { getAllDerivationModes } from "@ledgerhq/ledger-wallet-framework/derivation";
 import {
@@ -135,6 +136,42 @@ const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 
 // Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
 const KNOWN_DERIVATION_MODES = new Set<string>(getAllDerivationModes());
+
+type ImportSupport = {
+  families: Iterable<string>;
+  currencies: Iterable<string>;
+  derivationModes: Iterable<string>;
+};
+
+function sorted(values: Iterable<string>): string[] {
+  return [...values].sort((a, b) => {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  });
+}
+
+export function supportFingerprint({
+  families,
+  currencies,
+  derivationModes,
+}: ImportSupport): string {
+  return createHash("sha256")
+    .update(JSON.stringify([sorted(families), sorted(currencies), sorted(derivationModes)]))
+    .digest("hex")
+    .slice(0, 16);
+}
+
+/** What this build can import from Ledger Sync: `agent-intent sync` re-pulls when it changes. */
+export function ledgerSyncSupport(): string {
+  return supportFingerprint({
+    families: SUPPORTED_FAMILIES,
+    currencies: listCryptoCurrencies(true)
+      .filter(currency => SUPPORTED_FAMILIES.has(currency.family))
+      .map(currency => currency.id),
+    derivationModes: KNOWN_DERIVATION_MODES,
+  });
+}
 
 function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
   return error.issues.map(i => i.message).join("; ");
