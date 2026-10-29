@@ -1,14 +1,14 @@
 import { useCallback } from "react";
 import RNRestart from "react-native-restart";
 import { getEnv } from "@shared/env";
+import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
 import {
   createMockServerSession,
+  dmkToLedgerDeviceIdMap,
   getMockServerSession,
-  mockserverIdentifier,
   parseMockServerSessionImport,
   type MockServerDevice,
-} from "@ledgerhq/live-dmk-mobile";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+} from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
 import { useStore } from "~/context/hooks";
 import { saveKnownDevices, saveSettings } from "~/db";

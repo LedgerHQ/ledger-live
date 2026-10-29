@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { copyToClipboard } from "@shared/clipboard";
-import { getMockServerFrontendUrl } from "@ledgerhq/live-dmk-mobile";
+import { getMockServerFrontendUrl, stripTrailingSlashes } from "@ledgerhq/live-dmk-shared";
 import { useMockServerSessionActions } from "../../hooks/useMockServerSessionActions";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setMockServerFloatingButtonHidden, setMockServerPanelOpen } from "~/actions/appstate";
@@ -35,7 +35,7 @@ export type MockServerPanelViewModel = {
   onClose: () => void;
 };
 
-const normalizeUrl = (url: string) => url.trim().replace(/\/+$/, "");
+const normalizeUrl = (url: string) => stripTrailingSlashes(url.trim());
 
 export function useMockServerPanelViewModel({
   connection,

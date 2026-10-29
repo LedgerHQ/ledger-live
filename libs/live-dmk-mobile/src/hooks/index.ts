@@ -14,9 +14,7 @@ export {
 } from "./useDeviceManagementKit";
 export {
   configureMockServerTransport,
-  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
   getConfiguredMockServerTransport,
-  getMockScriptRunnerBaseUrl,
   isMockServerTransportEnabled,
   resetMockServerTransport,
 } from "../mockServerTransportConfig";

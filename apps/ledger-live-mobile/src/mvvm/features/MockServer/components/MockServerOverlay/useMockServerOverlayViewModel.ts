@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import Config from "react-native-config";
-import {
-  getConfiguredMockServerTransport,
-  getMockServerSession,
-  isMockServerReachable,
-} from "@ledgerhq/live-dmk-mobile";
+import { getConfiguredMockServerTransport } from "@ledgerhq/live-dmk-mobile";
+import { getMockServerStatus } from "@ledgerhq/live-dmk-shared";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { setMockServerPanelOpen } from "~/actions/appstate";
 import {
@@ -24,19 +21,6 @@ export type MockServerOverlayViewModel = {
   onToggleOpenPanel: () => void;
 };
 
-const readStatus = async ({
-  url,
-  token,
-}: MockServerConnection): Promise<{ status: MockServerStatus; sessionId: string | null }> => {
-  if (!(await isMockServerReachable(url))) return { status: "unreachable", sessionId: null };
-  try {
-    const session = await getMockServerSession({ url, token });
-    return { status: "connected", sessionId: session.id };
-  } catch {
-    return { status: "sessionExpired", sessionId: null };
-  }
-};
-
 export function useMockServerOverlayViewModel(): MockServerOverlayViewModel {
   const [connection] = useState(() => (Config.DETOX ? null : getConfiguredMockServerTransport()));
   const dispatch = useDispatch();
@@ -49,7 +33,7 @@ export function useMockServerOverlayViewModel(): MockServerOverlayViewModel {
     if (!connection) return;
     let isActive = true;
     const poll = async () => {
-      const next = await readStatus(connection);
+      const next = await getMockServerStatus(connection);
       if (!isActive) return;
       setStatus(next.status);
       setSessionId(next.sessionId);

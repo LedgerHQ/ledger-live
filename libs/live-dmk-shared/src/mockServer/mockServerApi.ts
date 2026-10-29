@@ -59,6 +59,7 @@ export const createMockServerSession = async ({
   const client = new MockClient(url);
   const token = await client.authenticate();
 
+  // Seeded before the import: the endpoint rejects a bad mnemonic before the session has devices.
   if (seed) {
     await request(url, "sessions/current/seed", { method: "PUT", token, body: { seed } });
   }
@@ -92,5 +93,21 @@ export const isMockServerReachable = async (url: string): Promise<boolean> => {
   }
 };
 
-export const getMockServerFrontendUrl = (url: string, token: string): string =>
-  `${url}/#token=${encodeURIComponent(token)}`;
+export type MockServerStatus = "connected" | "unreachable" | "sessionExpired";
+
+/** A reachable server that rejects the session reads as `sessionExpired`. */
+export const getMockServerStatus = async ({
+  url,
+  token,
+}: {
+  url: string;
+  token: string;
+}): Promise<{ status: MockServerStatus; sessionId: string | null }> => {
+  if (!(await isMockServerReachable(url))) return { status: "unreachable", sessionId: null };
+  try {
+    const session = await getMockServerSession({ url, token });
+    return { status: "connected", sessionId: session.id };
+  } catch {
+    return { status: "sessionExpired", sessionId: null };
+  }
+};

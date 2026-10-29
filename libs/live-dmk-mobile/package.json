@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
-    "@ledgerhq/device-mockserver-client": "catalog:",
     "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
@@ -58,7 +57,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "msw": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

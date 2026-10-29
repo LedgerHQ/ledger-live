@@ -6,8 +6,8 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import {
   createMockServerSession,
-  getMockServerFrontendUrl,
   getMockServerSession,
+  getMockServerStatus,
   isMockServerReachable,
   parseMockServerSessionImport,
 } from "./mockServerApi";
@@ -106,7 +106,33 @@ describe("mockServerApi", () => {
     );
   });
 
-  it("should pass the token to the frontend in the url hash", () => {
-    expect(getMockServerFrontendUrl(URL, "a b")).toBe(`${URL}/#token=a%20b`);
+  it("should report a connected session with its id", async () => {
+    endpoints.session.mockImplementation(() =>
+      HttpResponse.json({ id: "session-1", created_at: 0, expires_at: 0, devices: [] }),
+    );
+
+    await expect(getMockServerStatus({ url: URL, token: "token-1" })).resolves.toEqual({
+      status: "connected",
+      sessionId: "session-1",
+    });
+  });
+
+  it("should report an expired session when the server is up but rejects the token", async () => {
+    endpoints.session.mockImplementation(() => HttpResponse.json({}, { status: 401 }));
+
+    await expect(getMockServerStatus({ url: URL, token: "expired" })).resolves.toEqual({
+      status: "sessionExpired",
+      sessionId: null,
+    });
+  });
+
+  it("should report an unreachable server without checking the session", async () => {
+    endpoints.health.mockImplementation(() => HttpResponse.error());
+
+    await expect(getMockServerStatus({ url: URL, token: "token-1" })).resolves.toEqual({
+      status: "unreachable",
+      sessionId: null,
+    });
+    expect(endpoints.session).not.toHaveBeenCalled();
   });
 });

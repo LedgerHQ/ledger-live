@@ -1,16 +1,16 @@
 import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
-import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
 import { firstValueFrom } from "rxjs";
 import { first, map, tap, timeout } from "rxjs/operators";
-import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { getMockServerDeviceIdFromCompatId } from "../mockServer/mockServerCompatDeviceId";
+import { DmkCompatTransport } from "./DmkCompatTransport";
 
+/** Opens a `mockserver|<deviceId>` legacy device id on the DMK mock server transport. */
 export class DeviceManagementKitMockServerTransport {
   static async open(
     compatDeviceId: string,
+    dmk: DeviceManagementKit,
     timeoutMs?: number,
-    dmk: DeviceManagementKit = getDeviceManagementKit(),
   ): Promise<DmkCompatTransport> {
     const deviceId = getMockServerDeviceIdFromCompatId(compatDeviceId);
 

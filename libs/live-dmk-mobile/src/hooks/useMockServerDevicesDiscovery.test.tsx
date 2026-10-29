@@ -4,10 +4,11 @@ import {
   configureMockServerTransport,
   resetMockServerTransport,
 } from "../mockServerTransportConfig";
-import { listMockServerDevices, type MockServerDevice } from "../mockServer/mockServerApi";
+import { listMockServerDevices, type MockServerDevice } from "@ledgerhq/live-dmk-shared";
 import { useMockServerDevicesDiscovery } from "./useMockServerDevicesDiscovery";
 
-jest.mock("../mockServer/mockServerApi", () => ({
+jest.mock("@ledgerhq/live-dmk-shared", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-shared"),
   listMockServerDevices: jest.fn(),
 }));
 

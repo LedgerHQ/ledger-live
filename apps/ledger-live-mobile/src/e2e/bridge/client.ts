@@ -40,14 +40,16 @@ import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import {
   buildSpeculosLegacyDeviceId,
-  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
   getDeviceManagementKit,
   isSpeculosLegacyDeviceId,
   mockserverIdentifier,
   speculosIdentifier,
   speculosTargetSubject,
 } from "@ledgerhq/live-dmk-mobile";
-import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import {
+  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
+  ledgerToDmkDeviceIdMap,
+} from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";

@@ -7,6 +7,7 @@ import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver"
 import { speculosIdentifier } from "@ledgerhq/device-transport-kit-speculos";
 import type { ConnectedDevice, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
+  buildMockServerCompatDeviceId,
   dmkToLedgerDeviceIdMap,
   type KnownDevice,
   type MatchedDevice,
@@ -18,7 +19,6 @@ import {
   type MobileConnectionError,
 } from "../deviceConnectivity/types";
 import { findMatchingNewDevice } from "../utils/matchDevicesByNameOrId";
-import { buildMockServerCompatDeviceId } from "../mockServer/mockServerCompatDeviceId";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 import {
   buildSpeculosLegacyDeviceId,

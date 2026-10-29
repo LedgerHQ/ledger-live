@@ -38,13 +38,13 @@ import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import {
   filterScannedDevice,
   findMatchingNewDevice,
-  isMockServerCompatDeviceId,
   isMockServerTransportEnabled,
   ScannedDevice,
   useBleDevicesScanning,
   useHidDevicesDiscovery,
   useMockServerDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
+import { isMockServerCompatDeviceId } from "@ledgerhq/live-dmk-shared";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";

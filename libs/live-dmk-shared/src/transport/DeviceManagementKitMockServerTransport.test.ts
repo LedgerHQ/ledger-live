@@ -6,7 +6,7 @@ import {
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
-import { DmkCompatTransport } from "@ledgerhq/live-dmk-shared";
+import { DmkCompatTransport } from "./DmkCompatTransport";
 import { DeviceManagementKitMockServerTransport } from "./DeviceManagementKitMockServerTransport";
 
 const makeDiscoveredDevice = (id: string): DiscoveredDevice => ({
@@ -38,11 +38,7 @@ describe("DeviceManagementKitMockServerTransport", () => {
       ],
     });
 
-    const transport = await DeviceManagementKitMockServerTransport.open(
-      "mockserver|device-1",
-      undefined,
-      dmk,
-    );
+    const transport = await DeviceManagementKitMockServerTransport.open("mockserver|device-1", dmk);
 
     expect(transport).toBeInstanceOf(DmkCompatTransport);
     expect(transport.sessionId).toBe("mock-session");
@@ -55,8 +51,8 @@ describe("DeviceManagementKitMockServerTransport", () => {
 
     const transport = await DeviceManagementKitMockServerTransport.open(
       "mockserver|device-2",
-      1000,
       dmk,
+      1000,
     );
 
     expect(dmk.listenToAvailableDevices).toHaveBeenCalledWith({ transport: mockserverIdentifier });

@@ -1,12 +1,7 @@
 import { setEnv } from "@shared/env";
-import network from "@ledgerhq/live-network";
 import { renderHook, waitFor } from "tests/testSetup";
+import { HttpResponse, http, server } from "tests/server";
 import { useMockServerStatus } from "../useMockServerStatus";
-
-jest.mock("@ledgerhq/live-network", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
 
 let storedSessionToken: string | undefined;
 
@@ -15,14 +10,15 @@ jest.mock("@ledgerhq/live-dmk-desktop", () => ({
   getMockServerSessionToken: () => storedSessionToken,
 }));
 
-const mockedNetwork = jest.mocked(network);
+const endpoints = { health: jest.fn<Response, [{ request: Request }]>() };
 
 describe("useMockServerStatus", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     storedSessionToken = undefined;
     setEnv("MOCK_SERVER_TRANSPORT", true);
-    mockedNetwork.mockResolvedValue({} as never);
+    endpoints.health.mockReset().mockImplementation(() => HttpResponse.json({ status: "ok" }));
+    server.use(http.get("https://mock.example/health", endpoints.health));
   });
 
   afterEach(() => {
@@ -35,24 +31,22 @@ describe("useMockServerStatus", () => {
     const { result } = renderHook(() => useMockServerStatus());
 
     expect(result.current).toEqual({ enabled: false, connected: false, sessionToken: undefined });
-    expect(mockedNetwork).not.toHaveBeenCalled();
+    expect(endpoints.health).not.toHaveBeenCalled();
   });
 
   it("polls /health and reports connected", async () => {
     const { result } = renderHook(() => useMockServerStatus());
 
     await waitFor(() => expect(result.current.connected).toBe(true));
-    expect(mockedNetwork).toHaveBeenCalledWith(
-      expect.objectContaining({ url: "https://mock.example/health" }),
-    );
+    expect(endpoints.health).toHaveBeenCalled();
   });
 
   it("reports disconnected while the mock server is unreachable", async () => {
-    mockedNetwork.mockRejectedValue(new Error("unreachable"));
+    endpoints.health.mockImplementation(() => HttpResponse.error());
 
     const { result } = renderHook(() => useMockServerStatus());
 
-    await waitFor(() => expect(mockedNetwork).toHaveBeenCalled());
+    await waitFor(() => expect(endpoints.health).toHaveBeenCalled());
     expect(result.current.connected).toBe(false);
   });
 });

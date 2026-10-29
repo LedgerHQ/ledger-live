@@ -6,11 +6,14 @@ import type {
   DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import {
+  buildMockServerCompatDeviceId,
+  dmkToLedgerDeviceIdMap,
+  listMockServerDevices,
+  type MockServerDevice,
+} from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { getConfiguredMockServerTransport } from "../mockServerTransportConfig";
-import { listMockServerDevices, type MockServerDevice } from "../mockServer/mockServerApi";
-import { buildMockServerCompatDeviceId } from "../mockServer/mockServerCompatDeviceId";
 
 const POLL_INTERVAL_MS = 2000;
 const NO_DEVICES: MockServerDiscoveredDevice[] = [];

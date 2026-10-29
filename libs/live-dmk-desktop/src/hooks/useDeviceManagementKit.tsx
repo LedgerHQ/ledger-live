@@ -7,7 +7,11 @@ import {
 import { webHidTransportFactory } from "@ledgerhq/device-transport-kit-web-hid";
 import { speculosDmkTransportFactory } from "../transport/SpeculosDmkTransport";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
-import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
+import {
+  getMockScriptRunnerBaseUrl,
+  LedgerLiveLogger,
+  stripTrailingSlashes,
+} from "@ledgerhq/live-dmk-shared";
 import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 
@@ -22,15 +26,6 @@ const tracer = new LocalTracer("live-dmk-tracer", { function: "useDeviceManageme
  * Read through a function rather than captured in a constant because the flag
  * is pushed to all threads at boot, after this module is first imported.
  */
-// Scanned rather than matched with /\/+$/, whose backtracking CodeQL flags as
-// polynomial on attacker-influenced input.
-// See: https://github.com/LedgerHQ/ledger-live/security/code-scanning/358
-const stripTrailingSlashes = (value: string): string => {
-  let end = value.length;
-  while (end > 0 && value[end - 1] === "/") end--;
-  return value.slice(0, end);
-};
-
 export const getMockServerTransportUrl = (): string =>
   stripTrailingSlashes(getEnv("MOCK_SERVER_TRANSPORT_URL"));
 
@@ -53,24 +48,6 @@ export const getMockServerSessionToken = (): string | undefined => mockServerSes
  * The app sets it whenever the user ID is known or changes, via {@link setFirmwareDistributionSalt}.
  */
 let firmwareDistributionSalt: string | undefined;
-
-/**
- * Compute the mock server's secure-channel (ScriptRunner) WebSocket base URL.
- * The session token is carried in the path because the secure-channel WebSocket
- * has no bearer header. Shared by the DMK secure-channel config and the legacy
- * `createDeviceSocket` flows (via a `BASE_SOCKET_URL` override at boot), so both
- * hit the same mock endpoint. Returns `undefined` when no token is available.
- */
-export const getMockScriptRunnerBaseUrl = (
-  mockServerUrl: string,
-  sessionToken?: string,
-): string | undefined => {
-  if (!sessionToken) return undefined;
-  const wsBase = stripTrailingSlashes(mockServerUrl)
-    .replace(/^https:/, "wss:")
-    .replace(/^http:/, "ws:");
-  return `${wsBase}/secure-channel/${sessionToken}`;
-};
 
 export const getDeviceManagementKit = (): DeviceManagementKit => {
   if (!instance) {

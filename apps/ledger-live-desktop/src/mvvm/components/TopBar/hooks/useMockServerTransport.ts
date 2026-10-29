@@ -2,17 +2,10 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Devices } from "@ledgerhq/lumen-ui-react/symbols";
 import { getMockServerTransportUrl } from "@ledgerhq/live-dmk-desktop";
+import { getMockServerFrontendUrl } from "@ledgerhq/live-dmk-shared";
 import { openURL } from "~/renderer/linking";
 import { useMockServerStatus } from "./useMockServerStatus";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";
-
-/**
- * The mock server's configuration UI, served from the server root, takes over a
- * session handed to it as `#token=…`. A fragment never reaches the server, so
- * the token stays out of its logs.
- */
-const configurationUiUrl = (token: string): string =>
-  `${getMockServerTransportUrl()}/#${new URLSearchParams({ token }).toString()}`;
 
 /**
  * Drives the developer top bar indicator for the Device Management Kit mock
@@ -34,7 +27,8 @@ export const useMockServerTransport = () => {
   // No event name: `openURL` reports the URL it opened, and this one carries the
   // session token.
   const handleOpenConfigurationUi = useCallback(() => {
-    if (sessionToken) openURL(configurationUiUrl(sessionToken), "");
+    if (sessionToken)
+      openURL(getMockServerFrontendUrl(getMockServerTransportUrl(), sessionToken), "");
   }, [sessionToken]);
 
   return {

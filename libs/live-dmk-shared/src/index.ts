@@ -101,6 +101,31 @@ export {
 } from "./services/LiveBlindSigningReporter";
 export type { LiveBlindSigningContext } from "./services/LiveBlindSigningReporter";
 export { DmkCompatTransport } from "./transport/DmkCompatTransport";
+export { DeviceManagementKitMockServerTransport } from "./transport/DeviceManagementKitMockServerTransport";
+export {
+  MOCK_SERVER_COMPAT_DEVICE_ID_PREFIX,
+  buildMockServerCompatDeviceId,
+  getMockServerDeviceIdFromCompatId,
+  isMockServerCompatDeviceId,
+} from "./mockServer/mockServerCompatDeviceId";
+export {
+  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
+  getMockScriptRunnerBaseUrl,
+  getMockServerFrontendUrl,
+  stripTrailingSlashes,
+} from "./mockServer/mockServerUrls";
+export {
+  createMockServerSession,
+  getMockServerSession,
+  getMockServerStatus,
+  isMockServerReachable,
+  listMockServerDevices,
+  parseMockServerSessionImport,
+  type MockServerDevice,
+  type MockServerSession,
+  type MockServerSessionImport,
+  type MockServerStatus,
+} from "./mockServer/mockServerApi";
 
 export { ConnectAppDeviceAction } from "./device-action/ConnectApp/ConnectAppDeviceAction";
 export {

@@ -2,23 +2,6 @@ export { DeviceManagementKitBLETransport } from "./transport/DeviceManagementKit
 export { DeviceManagementKitHIDTransport } from "./transport/DeviceManagementKitHIDTransport";
 export { activeDeviceSessionSubject as activeHidDeviceSessionSubject } from "./transport/DeviceManagementKitHIDTransport";
 export { DeviceManagementKitHTTPProxyTransport } from "./transport/DeviceManagementKitHTTPProxyTransport";
-export { DeviceManagementKitMockServerTransport } from "./transport/DeviceManagementKitMockServerTransport";
-export {
-  MOCK_SERVER_COMPAT_DEVICE_ID_PREFIX,
-  buildMockServerCompatDeviceId,
-  isMockServerCompatDeviceId,
-} from "./mockServer/mockServerCompatDeviceId";
-export {
-  createMockServerSession,
-  getMockServerFrontendUrl,
-  getMockServerSession,
-  isMockServerReachable,
-  listMockServerDevices,
-  parseMockServerSessionImport,
-  type MockServerDevice,
-  type MockServerSession,
-  type MockServerSessionImport,
-} from "./mockServer/mockServerApi";
 export {
   SPECULOS_LEGACY_DEVICE_ID_PREFIX,
   buildSpeculosLegacyDeviceId,

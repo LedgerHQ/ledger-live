@@ -10,13 +10,16 @@ import getBLETransport from "~/transport/bleTransport";
 import {
   DeviceManagementKitHIDTransport,
   DeviceManagementKitHTTPProxyTransport,
-  DeviceManagementKitMockServerTransport,
-  isMockServerCompatDeviceId,
+  getDeviceManagementKit,
   isMockServerTransportEnabled,
   isUsbCompatDeviceId,
 } from "@ledgerhq/live-dmk-mobile";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import {
+  DeviceManagementKitMockServerTransport,
+  isMockServerCompatDeviceId,
+  ledgerToDmkDeviceIdMap,
+} from "@ledgerhq/live-dmk-shared";
 import { retry } from "@ledgerhq/live-common/promise";
 
 const SPECULOS_PREFIX = "speculos|";
@@ -113,7 +116,7 @@ export const registerTransports = () => {
     id: "mockserver",
     open: (id, timeoutMs) =>
       isMockServerCompatDeviceId(id) && isMockServerTransportEnabled()
-        ? DeviceManagementKitMockServerTransport.open(id, timeoutMs)
+        ? DeviceManagementKitMockServerTransport.open(id, getDeviceManagementKit(), timeoutMs)
         : null,
     disconnect: id => (isMockServerCompatDeviceId(id) ? Promise.resolve() : null),
   });
