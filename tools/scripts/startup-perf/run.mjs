@@ -393,13 +393,22 @@ const android = {
     const before = Date.now();
     const { stdout, failed } = await run(
       "adb",
-      ["-s", device, "shell", `cat /proc/uptime; cat /proc/$(pidof -s ${APP_ID})/stat`],
+      [
+        "-s",
+        device,
+        "shell",
+        `echo "epoch \${EPOCHREALTIME:-$(date +%s.%N)}"; cat /proc/uptime; cat /proc/$(pidof -s ${APP_ID})/stat`,
+      ],
       { allowFail: true, timeoutMs: 20_000 },
     );
     const after = Date.now();
     if (failed) return null;
     const at = parseProcessStart(stdout, (before + after) / 2);
-    return at === null ? null : { at, pid: parseStatPid(stdout) };
+    // The same start on the emulator's clock, which the app's Date.now() uses: the runner's and
+    // the emulator's clocks differed by ~67 s in run 40847012543.
+    const guestEpoch = Number(stdout.match(/^epoch (\d+\.\d+)/m)?.[1]) * 1000;
+    const appClockAt = Number.isFinite(guestEpoch) ? parseProcessStart(stdout, guestEpoch) : null;
+    return at === null ? null : { at, appClockAt, pid: parseStatPid(stdout) };
   },
   async pid(device) {
     const { stdout, failed } = await run("adb", ["-s", device, "shell", "pidof", "-s", APP_ID], {
@@ -695,7 +704,7 @@ const ios = {
       timeoutMs: 20_000,
     });
     const at = Number(stdout.trim());
-    return failed || !Number.isFinite(at) ? null : { at, pid };
+    return failed || !Number.isFinite(at) ? null : { at, appClockAt: at, pid };
   },
   // The launched process while it runs (a crash or a restart ends it), else null.
   async pid(device) {
@@ -1189,6 +1198,8 @@ async function sample(meta) {
     };
     const processStart = await P.processStart(meta.device);
     record.processStartAt = processStart?.at ?? null;
+    // The process start on the clock of the app's events ("JS start epoch").
+    record.processStartAppClockAt = processStart?.appClockAt ?? null;
     record.pid = processStart?.pid ?? null;
     const threadStats = await P.threadStats(meta.device, record.pid);
     record.threads = threadStats?.threads ?? null;
