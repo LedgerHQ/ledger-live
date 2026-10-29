@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";
-import { parseEvmAddress } from "../../agent-intent/evm";
+import { isEvmAddress, parseEvmAddress } from "../../agent-intent/evm";
 import {
   AGENT_INTENT_SWAP_PROVIDERS,
   parseSwapAmount,
@@ -15,11 +15,17 @@ import {
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
-import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
+import {
+  findEthereumSwapAsset,
+  findEthereumSwapAssetByContract,
+  type SwapAsset,
+} from "../../agent-intent/token-lookup";
+import { resolveSwapTicker } from "../../agent-intent/token-by-ticker";
 import {
   parseSenderInput,
   resolveSenderAccount,
   senderFromAccount,
+  type SenderAccount,
 } from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
@@ -29,12 +35,40 @@ import {
 import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
-async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
-  const asset = await findEthereumSwapAsset(id);
+async function resolveSwapSender(
+  senderInput: { account: string } | { address: string },
+): Promise<{ sender: string; account: SenderAccount | undefined }> {
+  if ("address" in senderInput) {
+    return { sender: parseEvmAddress(senderInput.address, "sender"), account: undefined };
+  }
+  const account = await resolveSenderAccount(senderInput.account);
+  return { sender: senderFromAccount(account, "swap", "ethereum"), account };
+}
+
+async function findSwapAsset(
+  value: string,
+  flag: "from" | "to",
+  holder: SenderAccount | undefined,
+  out: Pick<CommandOutput, "withActivity">,
+): Promise<SwapAsset | null> {
+  if (isEvmAddress(value)) return findEthereumSwapAssetByContract(parseEvmAddress(value, flag));
+  if (value.includes("/")) return findEthereumSwapAsset(value);
+  const resolved = await resolveSwapTicker(value, holder, out, flag);
+  return findEthereumSwapAsset(resolved === "native" ? "ethereum" : resolved.id);
+}
+
+async function resolveSwapAsset(
+  value: string,
+  flag: "from" | "to",
+  holder: SenderAccount | undefined,
+  out: Pick<CommandOutput, "withActivity">,
+): Promise<SwapAsset> {
+  const asset = await findSwapAsset(value, flag, holder, out);
   if (!asset) {
     throw new Error(
-      `--${flag} "${id}" is not ethereum or an ERC-20 token on Ethereum mainnet. Use a Ledger ` +
-        "currency id such as ethereum or ethereum/erc20/usd__coin.",
+      `--${flag} "${value}" is not ethereum or an ERC-20 token on Ethereum mainnet. Use a ticker ` +
+        "such as ETH or USDC, a Ledger currency id such as ethereum/erc20/usd__coin, or the " +
+        "token's contract address.",
     );
   }
   return asset;
@@ -119,11 +153,17 @@ export default defineCommand({
     }),
     from: option(z.string().min(1), {
       description:
-        "Currency id to sell: ethereum or an ERC-20 id such as ethereum/erc20/usd__coin.",
+        "Asset to sell: a ticker such as ETH or USDC, a Ledger currency id such as ethereum or " +
+        "ethereum/erc20/usd__coin, or an ERC-20 contract address. A token ticker picks the one " +
+        "the --account holds, else the only one CAL lists on Ethereum mainnet, and fails if " +
+        "several match. Another chain's coin (bitcoin, BTC, Solana) is refused unless the " +
+        "--account holds a token with that ticker. Check the name and contract stderr prints.",
       short: "f",
     }),
     to: option(z.string().min(1), {
-      description: "Currency id to buy, in the same form as --from.",
+      description:
+        "Asset to buy, in the same form as --from. A token ticker picks the only one CAL lists on " +
+        "Ethereum mainnet, whatever the --account holds, and fails if several match.",
       short: "t",
     }),
     amount: option(z.string().min(1), {
@@ -156,12 +196,9 @@ export default defineCommand({
       );
       const provider = flags.provider ? resolveAgentSwapProvider(flags.provider) : undefined;
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
-      const sender =
-        "address" in senderInput
-          ? parseEvmAddress(senderInput.address, "sender")
-          : senderFromAccount(await resolveSenderAccount(senderInput.account), "swap", "ethereum");
-      const from = await resolveSwapAsset(flags.from, "from");
-      const to = await resolveSwapAsset(flags.to, "to");
+      const { sender, account } = await resolveSwapSender(senderInput);
+      const from = await resolveSwapAsset(flags.from, "from", account, out);
+      const to = await resolveSwapAsset(flags.to, "to", undefined, out);
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");
       const fromAmount = parseSwapAmount(flags.amount, from, "amount");
       const receive = await expectedReceive({

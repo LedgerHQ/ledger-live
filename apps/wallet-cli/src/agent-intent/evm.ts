@@ -5,6 +5,10 @@ const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
 const DECIMAL_RE = /^(\d+)(?:\.(\d+))?$/;
 const UINT256_MAX = (1n << 256n) - 1n;
 
+export function isEvmAddress(value: string): boolean {
+  return ADDRESS_RE.test(value);
+}
+
 /** EIP-55 mixed-case checksum encoding of a 40-hex-char address (with or without `0x`). */
 export function toChecksumAddress(address: string): string {
   const lower = address.toLowerCase().replace(/^0x/, "");
