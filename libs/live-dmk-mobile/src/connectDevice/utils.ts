@@ -18,6 +18,7 @@ import {
   type MobileConnectionError,
 } from "../deviceConnectivity/types";
 import { findMatchingNewDevice } from "../utils/matchDevicesByNameOrId";
+import { buildMockServerCompatDeviceId } from "../mockServer/mockServerCompatDeviceId";
 import { buildUsbCompatDeviceId } from "../transport/usbCompatDeviceId";
 import {
   buildSpeculosLegacyDeviceId,
@@ -33,6 +34,12 @@ export const filterMatchedDevices = (
       const matchedDevice = knownDevices.find(knownDevice => {
         if (device.transport !== knownDevice.transport) {
           return false;
+        }
+
+        const isMockServerDeviceWithStableId =
+          knownDevice.transport === mockserverIdentifier && knownDevice.id !== "";
+        if (isMockServerDeviceWithStableId) {
+          return knownDevice.id === device.id;
         }
 
         const matchesByModelOnly =
@@ -74,7 +81,7 @@ export const buildMobileCompatDeviceId = (device: ConnectedDevice): string => {
   }
 
   if (device.transport === mockserverIdentifier) {
-    return device.id;
+    return buildMockServerCompatDeviceId(device.id);
   }
 
   if (device.type === "USB") {

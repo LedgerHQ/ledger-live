@@ -29,6 +29,7 @@ import {
   reportErrorsEnabledSelector,
   isOnboardingFlowSelector,
   isPostOnboardingFlowSelector,
+  mockServerSettingsSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -54,6 +55,7 @@ import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import { BrazeContentCardsProvider } from "LLM/features/DynamicContent/components/BrazeContentCardsProvider";
 import { ModalSystemPrimer } from "LLM/components/ModalSystemPrimer";
 import { JsThreadMonitor } from "LLM/components/JsThreadMonitor";
+import { applyMockServerConfig, MockServerOverlay } from "LLM/features/MockServer";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
@@ -325,6 +327,7 @@ function App() {
       )}
 
       <AnalyticsConsole />
+      <MockServerOverlay />
 
       <DebugTheme />
       <JsThreadMonitor />
@@ -415,6 +418,10 @@ export default class Root extends Component {
   }
 
   onInitFinished = () => {
+    const mockServer = mockServerSettingsSelector(store.getState());
+    if (mockServer.enabled) {
+      applyMockServerConfig(mockServer);
+    }
     if (Config.DETOX) {
       init();
     }

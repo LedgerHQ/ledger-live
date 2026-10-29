@@ -40,10 +40,8 @@ import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import {
   buildSpeculosLegacyDeviceId,
-  configureMockServerTransport,
   DEFAULT_MOCK_SERVER_TRANSPORT_URL,
   getDeviceManagementKit,
-  getMockScriptRunnerBaseUrl,
   isSpeculosLegacyDeviceId,
   mockserverIdentifier,
   speculosIdentifier,
@@ -55,6 +53,7 @@ import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculo
 import { setSpeculosDeviceModel, setSpeculosSessionToken } from "~/services/registerTransports";
 import { appNetworkLogStore, initAppNetworkLogging } from "../appNetworkLogStore";
 import { readLaunchForceProvider } from "~/launchForceProvider";
+import { applyMockServerConfig } from "LLM/features/MockServer";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
@@ -117,11 +116,7 @@ function applyMockServerLaunchArgs() {
   const launchUrl = args["mockServerUrl"];
   const url =
     typeof launchUrl === "string" && launchUrl ? launchUrl : DEFAULT_MOCK_SERVER_TRANSPORT_URL;
-  configureMockServerTransport({ url, token });
-  const scriptRunnerUrl = getMockScriptRunnerBaseUrl(url, token);
-  if (scriptRunnerUrl) {
-    setEnv("BASE_SOCKET_URL", scriptRunnerUrl);
-  }
+  applyMockServerConfig({ url, token });
 
   seedMockServerKnownDevice(model as DeviceModelId);
 }
