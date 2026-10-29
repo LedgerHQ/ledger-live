@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall": {
       "title": "This amount is too small to stake"
     },
+    "TezosDelegateRefusesStaking": {
+      "title": "Your validator doesn't accept staking. Change validator to stake."
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },

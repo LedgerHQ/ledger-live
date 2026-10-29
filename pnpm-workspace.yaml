@@ -252,7 +252,7 @@ catalog:
   "@ledgerhq/coin-hypercore": 4.0.2
   "@ledgerhq/coin-module-framework": 11.0.0
   "@ledgerhq/coin-stellar": 12.1.0
-  "@ledgerhq/coin-tezos": 13.2.0
+  "@ledgerhq/coin-tezos": 14.0.0
   "@ledgerhq/coin-xrp": 12.4.0
 
 minimumReleaseAge: 3000
