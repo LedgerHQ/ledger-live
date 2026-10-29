@@ -5980,12 +5980,6 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../account-descriptor
-      '@domain/entity-currency-crypto':
-        specifier: workspace:*
-        version: link:../currency-crypto
-      '@domain/entity-currency-token':
-        specifier: workspace:*
-        version: link:../currency-token
       '@reduxjs/toolkit':
         specifier: 'catalog:'
         version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)

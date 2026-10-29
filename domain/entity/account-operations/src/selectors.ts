@@ -1,24 +1,12 @@
 import type { AccountUUID } from "@domain/entity-account-descriptor";
-import type {
-  AccountOperation,
-  AccountOperationsState,
-  BalanceAssetId,
-  OperationId,
-} from "./schema";
+import type { AccountOperation, AccountOperationsState, OperationId } from "./schema";
 
 export type WithAccountOperations = { accountOperations: AccountOperationsState };
 
-/** With `filterAsset`, only that asset's rows: a window read for another asset is never shown whole. */
 export const selectAccountOperations = (
   state: WithAccountOperations,
   accountUUID: AccountUUID,
-  { filterAsset }: { filterAsset?: BalanceAssetId } = {},
-): AccountOperation[] | undefined => {
-  const operations = state.accountOperations[accountUUID];
-  return filterAsset === undefined
-    ? operations
-    : operations?.filter(operation => operation.assetId === filterAsset);
-};
+): AccountOperation[] | undefined => state.accountOperations[accountUUID];
 
 export const selectAccountOperation = (
   state: WithAccountOperations,

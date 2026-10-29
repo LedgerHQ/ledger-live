@@ -1,11 +1,7 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import {
-  AmountStrSchema,
-  BalanceAssetIdSchema,
-  type BalanceAssetId,
-} from "@domain/entity-account-balance";
+import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
@@ -102,8 +98,6 @@ export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 /** What a read asks for; the cursor is not part of it, the framework carries it. */
 export type AccountOperationsQuery = {
   limit?: number;
-  /** Only the operations in this asset: a screen about one asset. */
-  filterAsset?: BalanceAssetId;
 };
 
 export type AccountOperationsPage = {

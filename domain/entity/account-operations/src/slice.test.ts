@@ -65,6 +65,12 @@ describe("accountOperationsSlice", () => {
     expect(state[accountUUID]).toEqual([op1, op2, op3]);
   });
 
+  it("should keep one row when a page repeats an id", () => {
+    expect(reduce(receive([op1, op1]))[accountUUID]).toEqual([op1]);
+    const state = reduce(receive([op1]), receive([op2, op2], { append: true }));
+    expect(state[accountUUID]).toEqual([op1, op2]);
+  });
+
   it("should replace the window when a head read arrives", () => {
     const state = reduce(receive([op1, op2]), receive([op3]));
     expect(state[accountUUID]).toEqual([op3]);

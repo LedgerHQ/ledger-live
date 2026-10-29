@@ -11,10 +11,12 @@ export const accountOperationsSlice = createSlice({
       const { accountUUID, data, append } = payload;
       const stored = append ? (state[accountUUID] ?? []) : [];
       const known = new Set(stored.map(operation => operation.id));
-      state[accountUUID] = [
-        ...stored,
-        ...data.operations.filter(operation => !known.has(operation.id)),
-      ];
+      const incoming = data.operations.filter(operation => {
+        if (known.has(operation.id)) return false;
+        known.add(operation.id);
+        return true;
+      });
+      state[accountUUID] = [...stored, ...incoming];
     });
   },
 });

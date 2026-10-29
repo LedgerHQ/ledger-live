@@ -22,12 +22,6 @@ describe("account operations selectors", () => {
     expect(selectAccountOperations({ accountOperations: {} }, accountUUID)).toBeUndefined();
   });
 
-  it("should return only the rows of the filtered asset", () => {
-    expect(selectAccountOperations(state, accountUUID, { filterAsset: usdt.assetId })).toEqual([
-      usdt,
-    ]);
-  });
-
   it("should return one operation by id", () => {
     expect(
       selectAccountOperation(state, accountUUID, OperationIdSchema.parse("op-1-usdt")),

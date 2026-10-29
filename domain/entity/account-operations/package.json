@@ -25,8 +25,6 @@
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
-    "@domain/entity-currency-crypto": "workspace:*",
-    "@domain/entity-currency-token": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
     "@shared/schema-primitives": "workspace:*",
     "zod": "catalog:"
