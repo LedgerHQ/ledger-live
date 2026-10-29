@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "tests/testSetup";
 import DRepField from ".";
 import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
-import { CardanoAccount, TransactionStatus } from "@ledgerhq/live-common/families/cardano/types";
+import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 
 jest.mock("@ledgerhq/live-common/families/cardano/react", () => ({
   useCardanoFamilyDReps: jest.fn(),
@@ -60,8 +60,6 @@ describe("DRepField", () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const mockAccount = { currency: { id: "cardano" } } as CardanoAccount;
   const mockOnChangeDRep = jest.fn();
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const mockStatus = { errors: {}, warnings: {} } as TransactionStatus;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -77,14 +75,7 @@ describe("DRepField", () => {
       isPaginating: false,
     });
 
-    render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex=""
-      />,
-    );
+    render(<DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="" />);
 
     expect(screen.getByTestId("search-input")).toBeInTheDocument();
     expect(screen.queryByTestId("dRep-list-header")).not.toBeInTheDocument();
@@ -102,14 +93,7 @@ describe("DRepField", () => {
       isPaginating: false,
     });
 
-    render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex=""
-      />,
-    );
+    render(<DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="" />);
 
     expect(screen.getByTestId("dRep-list-header")).toBeInTheDocument();
     expect(screen.getByText("dRep1")).toBeInTheDocument();
@@ -126,14 +110,7 @@ describe("DRepField", () => {
       isPaginating: false,
     });
 
-    render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex=""
-      />,
-    );
+    render(<DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="" />);
 
     expect(screen.getByTestId("no-result")).toBeInTheDocument();
   });
@@ -150,14 +127,7 @@ describe("DRepField", () => {
       isPaginating: false,
     });
 
-    render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex=""
-      />,
-    );
+    render(<DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="" />);
 
     fireEvent.change(screen.getByTestId("search-input"), { target: { value: "test" } });
     expect(setSearchQueryMock).toHaveBeenCalledWith("test");
@@ -175,14 +145,7 @@ describe("DRepField", () => {
       isPaginating: false,
     });
 
-    render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex=""
-      />,
-    );
+    render(<DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="" />);
 
     const searchInput = screen.getByTestId("search-input");
 
@@ -211,14 +174,7 @@ describe("DRepField", () => {
       isPaginating: false,
     });
 
-    render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex=""
-      />,
-    );
+    render(<DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="" />);
 
     fireEvent.click(screen.getByText("dRep1"));
     expect(mockOnChangeDRep).toHaveBeenCalledWith(mockDRep);
@@ -237,12 +193,7 @@ describe("DRepField", () => {
     });
 
     render(
-      <DRepField
-        account={mockAccount}
-        status={mockStatus}
-        onChangeDRep={mockOnChangeDRep}
-        selectedDRepHex="drep2"
-      />,
+      <DRepField account={mockAccount} onChangeDRep={mockOnChangeDRep} selectedDRepHex="drep2" />,
     );
 
     const rows = screen.getAllByTestId("dRep-row");

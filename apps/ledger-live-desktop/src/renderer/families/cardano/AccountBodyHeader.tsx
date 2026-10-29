@@ -7,7 +7,7 @@ type Props = {
   account: AccountLike;
 };
 
-export default function AccountBodyHeader({ account }: Props) {
+export default function AccountBodyHeader({ account }: Readonly<Props>) {
   return (
     <>
       <Delegation account={account} />

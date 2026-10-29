@@ -9,7 +9,9 @@ export type VoteDelegationInfoModalProps = {
   account: CardanoAccount;
 };
 
-export default function CardanoVoteDelegationInfoModal({ account }: VoteDelegationInfoModalProps) {
+export default function CardanoVoteDelegationInfoModal({
+  account,
+}: Readonly<VoteDelegationInfoModalProps>) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(

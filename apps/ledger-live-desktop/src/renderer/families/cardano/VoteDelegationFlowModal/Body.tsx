@@ -115,10 +115,7 @@ const Body = ({
     bridgePending,
   } = useBridgeTransaction(bridge, () => {
     const { account } = params;
-    invariant(
-      account && account.cardanoResources,
-      "cardano: account and cardano resources required",
-    );
+    invariant(account?.cardanoResources, "cardano: account and cardano resources required");
     let transaction = bridge.createTransaction(account);
 
     transaction = bridge.updateTransaction(transaction, { mode: "voteDelegate" });
@@ -203,7 +200,7 @@ const Body = ({
     return steps;
   }, [params.option]);
 
-  const activeStepId = activeSteps.find(s => s.id === stepId) ? stepId : activeSteps[0].id;
+  const activeStepId = activeSteps.some(s => s.id === stepId) ? stepId : activeSteps[0].id;
 
   const stepperProps = {
     title: t("voteDelegation.header"),

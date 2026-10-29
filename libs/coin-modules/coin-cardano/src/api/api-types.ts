@@ -54,7 +54,7 @@ export type TransactionCertificates = {
   stakeDelegations: Array<StakeDelegationCertificate>;
   stakeRegsConway?: Array<StakeRegConway>;
   stakeDeRegsConway?: Array<StakeDeRegConway>;
-  voteDelegations?: Array<VoteDelegationCert> | undefined;
+  voteDelegations?: Array<VoteDelegationCert>;
 };
 
 export type APITransaction = {

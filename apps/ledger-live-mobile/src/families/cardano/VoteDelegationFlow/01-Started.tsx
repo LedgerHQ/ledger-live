@@ -58,12 +58,12 @@ export default function VoteDelegationStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans key="0" i18nKey="cardano.voteDelegation.flow.steps.starter.bullet.0" />,
-            <Trans key="1" i18nKey="cardano.voteDelegation.flow.steps.starter.bullet.1" />,
-            <Trans key="2" i18nKey="cardano.voteDelegation.flow.steps.starter.bullet.2" />,
-          ].map((wording, index) => (
-            <LText semiBold key={index}>
-              {wording}
+            "cardano.voteDelegation.flow.steps.starter.bullet.0",
+            "cardano.voteDelegation.flow.steps.starter.bullet.1",
+            "cardano.voteDelegation.flow.steps.starter.bullet.2",
+          ].map(i18nKey => (
+            <LText semiBold key={i18nKey}>
+              <Trans i18nKey={i18nKey} />
             </LText>
           ))}
         />

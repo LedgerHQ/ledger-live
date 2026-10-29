@@ -17,6 +17,20 @@ import { useDateFormatter, dayAndHourFormat } from "~/renderer/hooks/useDateForm
 import StepProgress from "~/renderer/components/StepProgress";
 import LedgerDRepIcon from "../LedgerDRepIcon";
 
+function getDRepName(
+  transaction: StepProps["transaction"],
+  selectedDRep: StepProps["selectedDRep"],
+  currencyId: string,
+): React.ReactNode {
+  if (transaction?.dRepAbstain) {
+    return <Trans i18nKey="voteDelegation.options.alwaysAbstain" />;
+  }
+  if (transaction?.dRepNoConfidence) {
+    return <Trans i18nKey="voteDelegation.options.alwaysNoConfidence" />;
+  }
+  return selectedDRep?.meta?.givenName || getBech32DRepId(selectedDRep!.hex, currencyId);
+}
+
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
   height: 1px;
@@ -40,7 +54,7 @@ const DRepNameAndHexContainer = styled(Box).attrs(() => ({
   }
 `;
 
-function StepSummary(props: StepProps) {
+function StepSummary(props: Readonly<StepProps>) {
   const { account, transaction, status, selectedDRep, bridgePending } = props;
 
   const feesUnit = useMaybeAccountUnit(account);
@@ -94,14 +108,7 @@ function StepSummary(props: StepProps) {
                       wordBreak: "break-word",
                     }}
                   >
-                    {transaction.dRepAbstain ? (
-                      <Trans i18nKey="voteDelegation.options.alwaysAbstain" />
-                    ) : transaction.dRepNoConfidence ? (
-                      <Trans i18nKey="voteDelegation.options.alwaysNoConfidence" />
-                    ) : (
-                      selectedDRep?.meta?.givenName ||
-                      getBech32DRepId(selectedDRep!.hex, account.currency.id)
-                    )}
+                    {getDRepName(transaction, selectedDRep, account.currency.id)}
                   </Text>
                 </DRepNameAndHexContainer>
               </Box>
@@ -194,33 +201,31 @@ export function StepSummaryFooter({
   status,
   bridgePending,
   onClose,
-}: StepProps) {
+}: Readonly<StepProps>) {
   const { errors } = status;
   const canNext = !bridgePending && Object.keys(errors).length === 0 && transaction;
   const isDirectMode = transaction?.dRepAbstain || transaction?.dRepNoConfidence;
 
   return (
-    <>
-      <Box horizontal>
-        {isDirectMode ? (
-          <Button mr={1} onClick={onClose}>
-            <Trans i18nKey="common.cancel" />
-          </Button>
-        ) : (
-          <Button mr={1} onClick={() => transitionTo("dRep")}>
-            <Trans i18nKey="common.back" />
-          </Button>
-        )}
-        <Button
-          id="vote-delegate-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("connectDevice")}
-        >
-          <Trans i18nKey="common.continue" />
+    <Box horizontal>
+      {isDirectMode ? (
+        <Button mr={1} onClick={onClose}>
+          <Trans i18nKey="common.cancel" />
         </Button>
-      </Box>
-    </>
+      ) : (
+        <Button mr={1} onClick={() => transitionTo("dRep")}>
+          <Trans i18nKey="common.back" />
+        </Button>
+      )}
+      <Button
+        id="vote-delegate-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("connectDevice")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
+    </Box>
   );
 }
 

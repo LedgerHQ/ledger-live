@@ -22,12 +22,12 @@ export default function VoteDelegationRow({
   currencyId,
   onPress,
   isLast = false,
-}: Props) {
+}: Readonly<Props>) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
   let name = "";
-  if (delegation && delegation.dRepHex) {
+  if (delegation?.dRepHex) {
     if (delegation.dRepName) {
       name = delegation.dRepName;
     } else if (delegation.dRepHex === "2") {

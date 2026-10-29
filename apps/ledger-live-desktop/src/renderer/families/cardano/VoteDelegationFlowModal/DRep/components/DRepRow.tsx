@@ -152,7 +152,7 @@ export type DRepRowProps = {
   onClick: (v: DRep) => void;
 };
 
-function DRepRow({ dRep, active, onClick, currency }: DRepRowProps) {
+function DRepRow({ dRep, active, onClick, currency }: Readonly<DRepRowProps>) {
   const explorerView = getDefaultExplorerView(currency);
   const formatDate = useDateFormatter(dayAndHourFormat);
   const bech32DRepId = useMemo(

@@ -49,7 +49,6 @@ export default function StepDRep({
       {error && <ErrorBanner error={error} />}
       <DRepContainer
         account={account}
-        status={status}
         onChangeDRep={selectDRep}
         selectedDRepHex={selectedDRepHex || ""}
       />

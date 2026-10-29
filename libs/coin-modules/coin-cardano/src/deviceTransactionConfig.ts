@@ -4,7 +4,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/ledger-wallet-framework/transaction/common";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import BigNumber from "bignumber.js";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
@@ -16,7 +16,66 @@ import {
   getBech32PoolId,
   getBipPathString,
 } from "./logic";
-import { CardanoAccount, Transaction, TransactionStatus } from "./types";
+import { CardanoAccount, CardanoResources, Transaction, TransactionStatus } from "./types";
+
+function getTokenSendFields(
+  account: TokenAccount,
+  mainAccount: Account,
+  transaction: Transaction,
+  cardanoResources: CardanoResources,
+): DeviceTransactionField[] {
+  const { assetId } = decodeTokenCurrencyId(account.token.id);
+  const { policyId, assetName } = decodeTokenAssetId(assetId);
+  const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
+
+  const tokensToSend = [
+    {
+      policyId,
+      assetName,
+      amount: transactionAmount,
+    },
+  ];
+
+  const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
+  const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
+    {
+      address: recipient,
+      amount: new BigNumber(CARDANO_MAX_SUPPLY),
+      tokens: tokensToSend,
+    },
+    new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
+  );
+  return [
+    {
+      type: "text",
+      label: "ADA",
+      value: formatCurrencyUnit(getAccountCurrency(mainAccount).units[0], requiredMinAdaForTokens, {
+        showCode: true,
+        disableRounding: true,
+      }),
+    },
+    {
+      type: "text",
+      label: "Token Name",
+      value: decodeTokenName(assetName),
+    },
+    {
+      type: "amount",
+      label: "Amount",
+      value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
+        showCode: true,
+        disableRounding: true,
+      }),
+    },
+  ];
+}
+
+function getDRepLabel(transaction: Transaction, currencyId: string): string {
+  if (transaction.dRepAbstain) return "Always abstain";
+  if (transaction.dRepNoConfidence) return "Always no confidence";
+  // getTransactionStatus guarantees exactly one vote option is set
+  return getBech32DRepId(transaction.dRepHex!, currencyId);
+}
 
 async function getDeviceTransactionConfig({
   account,
@@ -47,52 +106,7 @@ async function getDeviceTransactionConfig({
 
   if (mode === "send") {
     if (account.type === "TokenAccount") {
-      const { assetId } = decodeTokenCurrencyId(account.token.id);
-      const { policyId, assetName } = decodeTokenAssetId(assetId);
-      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
-
-      const tokensToSend = [
-        {
-          policyId,
-          assetName,
-          amount: transactionAmount,
-        },
-      ];
-
-      const recipient = TyphonUtils.getAddressFromString(transaction.recipient);
-      const requiredMinAdaForTokens = TyphonUtils.calculateMinUtxoAmountBabbage(
-        {
-          address: recipient,
-          amount: new BigNumber(CARDANO_MAX_SUPPLY),
-          tokens: tokensToSend,
-        },
-        new BigNumber(cardanoResources.protocolParams.utxoCostPerByte),
-      );
-      fields.push({
-        type: "text",
-        label: "ADA",
-        value: formatCurrencyUnit(
-          getAccountCurrency(mainAccount).units[0],
-          requiredMinAdaForTokens,
-          {
-            showCode: true,
-            disableRounding: true,
-          },
-        ),
-      });
-      fields.push({
-        type: "text",
-        label: "Token Name",
-        value: decodeTokenName(assetName),
-      });
-      fields.push({
-        type: "amount",
-        label: "Amount",
-        value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
-          showCode: true,
-          disableRounding: true,
-        }),
-      });
+      fields.push(...getTokenSendFields(account, mainAccount, transaction, cardanoResources));
     } else if (account.type === "Account") {
       fields.push({
         type: "amount",
@@ -132,24 +146,22 @@ async function getDeviceTransactionConfig({
     });
   } else if (mode === "voteDelegate" && account.type === "Account") {
     const stakeCredential = getAccountStakeCredential(account.xpub as string, account.index);
-    fields.push({
-      type: "text",
-      label: "Staking key",
-      value: getBipPathString({
-        account: stakeCredential.path.account,
-        chain: stakeCredential.path.chain,
-        index: stakeCredential.path.index,
-      }),
-    });
-    fields.push({
-      type: "text",
-      label: "DRep",
-      value: transaction.dRepAbstain
-        ? "Always abstain"
-        : transaction.dRepNoConfidence
-          ? "Always no confidence"
-          : getBech32DRepId(transaction.dRepHex!, account.currency.id), // either one will always be present
-    });
+    fields.push(
+      {
+        type: "text",
+        label: "Staking key",
+        value: getBipPathString({
+          account: stakeCredential.path.account,
+          chain: stakeCredential.path.chain,
+          index: stakeCredential.path.index,
+        }),
+      },
+      {
+        type: "text",
+        label: "DRep",
+        value: getDRepLabel(transaction, account.currency.id),
+      },
+    );
   }
 
   return fields;

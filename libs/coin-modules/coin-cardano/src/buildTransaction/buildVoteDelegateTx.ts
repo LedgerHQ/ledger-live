@@ -36,7 +36,7 @@ function getDRepFromHex(dRepHex: string): TyphonTypes.DRep {
   throw new Error("Invalid dRepHex");
 }
 
-export const buildVoteDelegationTransaction = async ({
+export const buildVoteDelegationTransaction = ({
   account,
   transaction,
   typhonTx,
@@ -46,7 +46,7 @@ export const buildVoteDelegationTransaction = async ({
   transaction: Transaction;
   typhonTx: TyphonTransaction;
   changeAddress: TyphonTypes.CardanoAddress;
-}): Promise<TyphonTransaction> => {
+}): TyphonTransaction => {
   const protocolParams = transaction.protocolParams;
 
   // protocolParams will always be present

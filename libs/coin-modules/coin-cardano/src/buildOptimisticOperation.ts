@@ -15,6 +15,22 @@ import {
   Transaction,
 } from "./types";
 
+/** Maps a vote certificate's DRep to the `extra.vote` value: a label, or the CIP-129 hex id. */
+function getVoteFromDRep(dRep: TyphonTypes.DRep): string | undefined {
+  switch (dRep.type) {
+    case TyphonTypes.DRepType.ABSTAIN:
+      return "ABSTAIN";
+    case TyphonTypes.DRepType.NO_CONFIDENCE:
+      return "NO CONFIDENCE";
+    case TyphonTypes.DRepType.ADDRESS:
+      return dRep.key ? `22${dRep.key.toString("hex")}` : undefined;
+    case TyphonTypes.DRepType.SCRIPT:
+      return dRep.key ? `23${dRep.key.toString("hex")}` : undefined;
+    default:
+      return undefined;
+  }
+}
+
 export const buildOptimisticOperation = (
   account: CardanoAccount,
   unsignedTransaction: TyphonTransaction,
@@ -176,20 +192,7 @@ export const buildOptimisticOperation = (
       c.cert.stakeCredential.hash.toString("hex") === stakeCredential.key,
   );
   if (walletVoteDelegation) {
-    const isAbstain = walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.ABSTAIN;
-    const isNoConfidence =
-      walletVoteDelegation.cert.dRep.type === TyphonTypes.DRepType.NO_CONFIDENCE;
-
-    const dRep = walletVoteDelegation.cert.dRep;
-    extra.vote = isAbstain
-      ? "ABSTAIN"
-      : isNoConfidence
-        ? "NO CONFIDENCE"
-        : dRep.type === TyphonTypes.DRepType.ADDRESS && dRep.key
-          ? `22${dRep.key.toString("hex")}`
-          : dRep.type === TyphonTypes.DRepType.SCRIPT && dRep.key
-            ? `23${dRep.key.toString("hex")}`
-            : undefined;
+    extra.vote = getVoteFromDRep(walletVoteDelegation.cert.dRep);
   }
 
   if (txWithdrawals && txWithdrawals.length) {

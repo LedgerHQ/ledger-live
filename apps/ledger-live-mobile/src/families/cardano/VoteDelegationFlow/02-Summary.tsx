@@ -65,13 +65,7 @@ export default function VoteDelegationSummary({ navigation, route }: Props) {
     return undefined;
   }, [drep]);
 
-  const effectiveDRepHex = chosenDRep
-    ? chosenDRep.hex
-    : route.params.option === "abstain"
-      ? "2"
-      : route.params.option === "noConfidence"
-        ? "3"
-        : undefined;
+  const effectiveDRepHex = chosenDRep ? chosenDRep.hex : getOptionDRepHex(route.params.option);
 
   let tx = bridge.createTransaction(account);
   tx = bridge.updateTransaction(tx, { mode: "voteDelegate" });
@@ -167,7 +161,7 @@ export default function VoteDelegationSummary({ navigation, route }: Props) {
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
 
-  const onContinue = useCallback(async () => {
+  const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.CardanoVoteDelegationSelectDevice, {
       accountId: account.id,
       parentId: parentAccount?.id || undefined,
@@ -361,6 +355,13 @@ const styles = StyleSheet.create({
   },
 });
 
+/** Pseudo-DRep hex for the predefined voting options: "2" = always abstain, "3" = always no confidence. */
+function getOptionDRepHex(option?: string): string | undefined {
+  if (option === "abstain") return "2";
+  if (option === "noConfidence") return "3";
+  return undefined;
+}
+
 function SummaryWords({
   chosenDRep,
   account,
@@ -369,7 +370,7 @@ function SummaryWords({
   status,
   transaction,
   option,
-}: {
+}: Readonly<{
   chosenDRep?: DRep;
   account: AccountLike;
   currentDelegation?: CardanoDelegation;
@@ -377,7 +378,7 @@ function SummaryWords({
   status: TransactionStatus;
   transaction: Transaction;
   option?: string;
-}) {
+}>) {
   const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -397,6 +398,27 @@ function SummaryWords({
     return t("cardano.delegation.select");
   }, [option, chosenDRep, t, account]);
 
+  const currencyId = getAccountCurrency(account).id;
+  const currentDRepHex = currentDelegation?.dRepHex;
+  let currentDRepText = "";
+  if (currentDRepHex === "2") {
+    currentDRepText = t("cardano.voteDelegation.options.alwaysAbstain");
+  } else if (currentDRepHex === "3") {
+    currentDRepText = t("cardano.voteDelegation.options.alwaysNoConfidence");
+  } else if (currentDRepHex) {
+    currentDRepText = getBech32DRepId(currentDRepHex, currencyId);
+  }
+
+  let chosenDRepAvatarName: string;
+  if (!chosenDRep) {
+    chosenDRepAvatarName = getOptionDRepHex(option) ?? " ";
+  } else if (chosenDRep.hex === "2" || chosenDRep.hex === "3") {
+    chosenDRepAvatarName = chosenDRep.hex;
+  } else {
+    chosenDRepAvatarName =
+      chosenDRep.meta?.givenName || getBech32DRepId(chosenDRep.hex, currencyId);
+  }
+
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -404,176 +426,156 @@ function SummaryWords({
   };
 
   return (
-    <>
-      <View style={styles.summarySection}>
-        {currentDelegation && currentDelegation.dRepHex && (
-          <View style={[{ flexDirection: "column", marginBottom: 30 }]}>
-            <View>
-              <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"smoke"}>
-                {t("cardano.voteDelegation.currentlyVotingFor")}
-              </Text>
-            </View>
-            <View
-              style={[
-                {
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 15,
-                  minWidth: "100%",
-                },
-              ]}
-            >
-              <Circle
-                size={50}
-                style={[styles.poolCircle, { borderColor: colors.primary, borderStyle: "solid" }]}
-              >
-                <DRepImage
-                  size={50}
-                  name={
-                    currentDelegation.dRepHex === "2" || currentDelegation.dRepHex === "3"
-                      ? currentDelegation.dRepHex
-                      : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)
-                  }
-                />
-              </Circle>
-              <Text
-                style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
-                numberOfLines={1}
-                fontWeight={"semiBold"}
-                ellipsizeMode="tail"
-                fontSize={18}
-              >
-                {currentDelegation.dRepHex === "2"
-                  ? t("cardano.voteDelegation.options.alwaysAbstain")
-                  : currentDelegation.dRepHex === "3"
-                    ? t("cardano.voteDelegation.options.alwaysNoConfidence")
-                    : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)}
-              </Text>
-            </View>
-          </View>
-        )}
-        <View style={[{ flexDirection: "column", marginBottom: 10 }]}>
+    <View style={styles.summarySection}>
+      {currentDelegation?.dRepHex && (
+        <View style={[{ flexDirection: "column", marginBottom: 30 }]}>
           <View>
             <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"smoke"}>
-              {t("cardano.voteDelegation.delegatingTo")}
+              {t("cardano.voteDelegation.currentlyVotingFor")}
             </Text>
           </View>
-
-          <Touchable event="VoteDelegationFlowSummaryChangeCircleBtn" onPress={onChangeDRep}>
-            <View
-              style={[
-                {
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginTop: 15,
-                  minWidth: "100%",
-                },
-              ]}
+          <View
+            style={[
+              {
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 15,
+                minWidth: "100%",
+              },
+            ]}
+          >
+            <Circle
+              size={50}
+              style={[styles.poolCircle, { borderColor: colors.primary, borderStyle: "solid" }]}
             >
-              <Circle size={50} style={[styles.poolCircle, { borderColor: colors.primary }]}>
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        rotate,
-                      },
-                    ],
-                  }}
-                >
-                  <DRepImage
-                    size={50}
-                    name={
-                      chosenDRep
-                        ? chosenDRep.hex === "2" || chosenDRep.hex === "3"
-                          ? chosenDRep.hex
-                          : chosenDRep.meta?.givenName ||
-                            getBech32DRepId(chosenDRep.hex, getAccountCurrency(account).id)
-                        : option === "abstain"
-                          ? "2"
-                          : option === "noConfidence"
-                            ? "3"
-                            : " "
-                    }
-                  />
-                </Animated.View>
-                <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
-                  <Icons.PenEdit size="XS" color="neutral.c100" />
-                </Circle>
-              </Circle>
-              <Text
-                style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                fontWeight={"semiBold"}
-                fontSize={18}
-                testID="cardano-vote-delegation-summary-drep"
-              >
-                {optionText}
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  marginLeft: 10,
-                }}
-              >
-                <LText style={{ fontSize: 14 }} color="live">
-                  {chosenDRep || option
-                    ? t("cardano.delegation.change")
-                    : t("cardano.delegation.select")}
-                </LText>
-                <ArrowRight color={colors.live} size={14} />
-              </View>
-            </View>
-          </Touchable>
+              <DRepImage
+                size={50}
+                name={
+                  currentDelegation.dRepHex === "2" || currentDelegation.dRepHex === "3"
+                    ? currentDelegation.dRepHex
+                    : getBech32DRepId(currentDelegation.dRepHex, getAccountCurrency(account).id)
+                }
+              />
+            </Circle>
+            <Text
+              style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
+              numberOfLines={1}
+              fontWeight={"semiBold"}
+              ellipsizeMode="tail"
+              fontSize={18}
+            >
+              {currentDRepText}
+            </Text>
+          </View>
+        </View>
+      )}
+      <View style={[{ flexDirection: "column", marginBottom: 10 }]}>
+        <View>
+          <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"smoke"}>
+            {t("cardano.voteDelegation.delegatingTo")}
+          </Text>
         </View>
 
-        <View
-          style={[
-            {
-              borderBottomWidth: 1,
-              borderBottomColor: colors.lightFog,
-              width: "100%",
-              marginVertical: 10,
-            },
-          ]}
-        />
-        <DataField
-          label={t("cardano.delegation.networkFees")}
-          Component={
-            <LText
+        <Touchable event="VoteDelegationFlowSummaryChangeCircleBtn" onPress={onChangeDRep}>
+          <View
+            style={[
+              {
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 15,
+                minWidth: "100%",
+              },
+            ]}
+          >
+            <Circle size={50} style={[styles.poolCircle, { borderColor: colors.primary }]}>
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate,
+                    },
+                  ],
+                }}
+              >
+                <DRepImage size={50} name={chosenDRepAvatarName} />
+              </Animated.View>
+              <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
+                <Icons.PenEdit size="XS" color="neutral.c100" />
+              </Circle>
+            </Circle>
+            <Text
+              style={[{ marginLeft: 15, flex: 1, flexGrow: 1 }]}
               numberOfLines={1}
-              semiBold
-              ellipsizeMode="middle"
-              style={[styles.valueText]}
-              testID="cardano-vote-delegation-summary-fees"
+              ellipsizeMode="tail"
+              fontWeight={"semiBold"}
+              fontSize={18}
+              testID="cardano-vote-delegation-summary-drep"
             >
-              {formatCurrencyUnit(unit, new BigNumber(status.estimatedFees), formatConfig)}
+              {optionText}
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginLeft: 10,
+              }}
+            >
+              <LText style={{ fontSize: 14 }} color="live">
+                {chosenDRep || option
+                  ? t("cardano.delegation.change")
+                  : t("cardano.delegation.select")}
+              </LText>
+              <ArrowRight color={colors.live} size={14} />
+            </View>
+          </View>
+        </Touchable>
+      </View>
+
+      <View
+        style={[
+          {
+            borderBottomWidth: 1,
+            borderBottomColor: colors.lightFog,
+            width: "100%",
+            marginVertical: 10,
+          },
+        ]}
+      />
+      <DataField
+        label={t("cardano.delegation.networkFees")}
+        Component={
+          <LText
+            numberOfLines={1}
+            semiBold
+            ellipsizeMode="middle"
+            style={[styles.valueText]}
+            testID="cardano-vote-delegation-summary-fees"
+          >
+            {formatCurrencyUnit(unit, new BigNumber(status.estimatedFees), formatConfig)}
+          </LText>
+        }
+      />
+      {!(currentDelegation && (currentDelegation.poolId || currentDelegation.dRepHex)) ? (
+        <DataField
+          label={t("cardano.delegation.stakeKeyRegistrationDeposit")}
+          Component={
+            <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
+              {formatCurrencyUnit(
+                unit,
+                new BigNumber(transaction.protocolParams?.stakeKeyDeposit ?? "0"),
+                formatConfig,
+              )}
             </LText>
           }
         />
-        {!(currentDelegation && (currentDelegation.poolId || currentDelegation.dRepHex)) ? (
-          <DataField
-            label={t("cardano.delegation.stakeKeyRegistrationDeposit")}
-            Component={
-              <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-                {formatCurrencyUnit(
-                  unit,
-                  new BigNumber(transaction.protocolParams?.stakeKeyDeposit ?? "0"),
-                  formatConfig,
-                )}
-              </LText>
-            }
-          />
-        ) : (
-          <></>
-        )}
-      </View>
-    </>
+      ) : (
+        <></>
+      )}
+    </View>
   );
 }
 
-const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
+const AccountBalanceTag = ({ account }: Readonly<{ account: AccountLike }>) => {
   const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (

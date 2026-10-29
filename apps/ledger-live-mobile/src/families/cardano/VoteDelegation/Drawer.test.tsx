@@ -17,7 +17,7 @@ const mockAccount = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as any;
 
-const MockValidatorImage = () => <Text>Validator Image</Text>;
+const renderMockValidatorImage = () => <Text>Validator Image</Text>;
 const MockIcon = () => <Text>Action Icon</Text>;
 
 const mockOnClose = jest.fn();
@@ -49,7 +49,7 @@ describe("VoteDelegationDrawer", () => {
         isOpen={false}
         onClose={mockOnClose}
         account={mockAccount}
-        ValidatorImage={MockValidatorImage}
+        renderValidatorImage={renderMockValidatorImage}
         formattedAmount={<Text>1000 ADA</Text>}
         formattedCounterValue={<Text>$500</Text>}
         data={mockData}
@@ -66,7 +66,7 @@ describe("VoteDelegationDrawer", () => {
         isOpen={true}
         onClose={mockOnClose}
         account={mockAccount}
-        ValidatorImage={MockValidatorImage}
+        renderValidatorImage={renderMockValidatorImage}
         formattedAmount={<Text>1000 ADA</Text>}
         formattedCounterValue={<Text>$500</Text>}
         data={mockData}
@@ -86,7 +86,7 @@ describe("VoteDelegationDrawer", () => {
         isOpen={true}
         onClose={mockOnClose}
         account={mockAccount}
-        ValidatorImage={MockValidatorImage}
+        renderValidatorImage={renderMockValidatorImage}
         formattedAmount={<Text>1000 ADA</Text>}
         formattedCounterValue={<Text>$500</Text>}
         data={mockData}

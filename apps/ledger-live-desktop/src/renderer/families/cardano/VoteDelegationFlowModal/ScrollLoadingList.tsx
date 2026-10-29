@@ -35,7 +35,7 @@ const ScrollLoadingList = ({
   fetchPoolsFromNextPage,
   search,
   isPaginating,
-}: ScrollLoadingListProps) => {
+}: Readonly<ScrollLoadingListProps>) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   // Number of rows rendered. Grows by `bufferSize` on each scroll-end and is reset only when the
   // search changes, so pages appended by pagination (or a parent re-render) don't collapse the list.
@@ -65,9 +65,9 @@ const ScrollLoadingList = ({
 
   return (
     <ScrollContainer ref={scrollRef} onScroll={debouncedHandleScroll} style={style}>
-      {data.length > bufferSize
-        ? data.slice(0, scrollOffset).map(renderItem)
-        : data.map(renderItem)}
+      {(data.length > bufferSize ? data.slice(0, scrollOffset) : data).map((item, index) =>
+        renderItem(item, index),
+      )}
       {isPaginating ? (
         <Box flex={1} py={4} alignItems="center" justifyContent="center">
           <BigSpinner size={30} />

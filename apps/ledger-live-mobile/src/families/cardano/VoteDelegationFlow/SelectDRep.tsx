@@ -30,7 +30,7 @@ export default function SelectDRep({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useAccountScreen(route);
   const currency: CryptoCurrency | undefined =
-    account && account.type === "Account" ? account.currency : undefined;
+    account?.type === "Account" ? account.currency : undefined;
 
   const { dReps, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =
     useCardanoFamilyDReps(currency);

@@ -28,7 +28,7 @@ export default function VoteDelegationInfoModal<Name extends keyof ModalData>({
   bullets,
   additional,
   currency,
-}: Props<Name>) {
+}: Readonly<Props<Name>>) {
   const dispatch = useDispatch();
   const onNextFn = useCallback(
     (option: "dRep" | "noConfidence" | "abstain") => () => {

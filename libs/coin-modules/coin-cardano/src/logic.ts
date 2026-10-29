@@ -571,9 +571,9 @@ export function findVoteDelegation(
   const stakeAddress = getRewardAddress(stakeKey, networkId);
   const match = tx.certificate.voteDelegations.find(w => stakeAddress.getHex() === w.stakeHex);
   if (match) {
-    const isAbstain = match.dRepHex === "2";
-    const isNoConfidence = match.dRepHex === "3";
-    return isAbstain ? "ABSTAIN" : isNoConfidence ? "NO CONFIDENCE" : match.dRepHex;
+    if (match.dRepHex === "2") return "ABSTAIN";
+    if (match.dRepHex === "3") return "NO CONFIDENCE";
+    return match.dRepHex;
   }
 
   return undefined;
@@ -638,10 +638,7 @@ export function selectMinimumUtxos(
 
   // sorting utxo from higher to lower ADA value
   // to minimize the number of utxo use in transaction
-  const sortedUtxos = [...utxos].sort((a, b) => {
-    const diff = b.amount.minus(a.amount);
-    return diff.eq(0) ? 0 : diff.lt(0) ? -1 : 1;
-  });
+  const sortedUtxos = [...utxos].sort((a, b) => b.amount.comparedTo(a.amount));
 
   for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lt(requiredAmount); i++) {
     const utxo = sortedUtxos[i];

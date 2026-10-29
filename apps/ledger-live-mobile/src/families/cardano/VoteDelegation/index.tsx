@@ -32,8 +32,16 @@ type Props = {
 type DelegationDrawerProps = React.ComponentProps<typeof VoteDelegationDrawer>;
 type DelegationDrawerActions = DelegationDrawerProps["actions"];
 
-function VoteDelegation({ account }: Props) {
+function RedelegateActionIcon(props: Readonly<IconProps>) {
   const { colors } = useTheme();
+  return (
+    <Circle {...props} bg={colors.fog}>
+      <RedelegateIcon color={undefined} />
+    </Circle>
+  );
+}
+
+function VoteDelegation({ account }: Readonly<Props>) {
   const { t } = useTranslation();
 
   const navigation = useNavigation();
@@ -102,66 +110,65 @@ function VoteDelegation({ account }: Props) {
   );
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
-    return dRepHex
-      ? [
-          {
-            label: t("cardano.voteDelegation.drepId"),
-            Component: (
-              <Touchable
-                onPress={
-                  dRepHex === "2" || dRepHex === "3" ? undefined : () => onOpenExplorer(dRepHex)
-                }
-                event="VoteDelegationOpenExplorer"
-              >
-                <LText
-                  numberOfLines={1}
-                  semiBold
-                  ellipsizeMode="middle"
-                  style={[styles.valueText]}
-                  color="live"
-                >
-                  {dRepHex === "2"
-                    ? t("cardano.voteDelegation.options.alwaysAbstain")
-                    : dRepHex === "3"
-                      ? t("cardano.voteDelegation.options.alwaysNoConfidence")
-                      : d?.dRepName || getBech32DRepId(dRepHex, account.currency.id)}
-                </LText>
-              </Touchable>
-            ),
-          },
-          {
-            label: t("delegation.delegatedAccount"),
-            Component: (
-              <LText
-                numberOfLines={1}
-                semiBold
-                ellipsizeMode="middle"
-                style={[styles.valueText]}
-                color="live"
-              >
-                {accountName}{" "}
-              </LText>
-            ),
-          },
-        ]
-      : [];
+    if (!dRepHex) return [];
+
+    let dRepLabel: string;
+    if (dRepHex === "2") {
+      dRepLabel = t("cardano.voteDelegation.options.alwaysAbstain");
+    } else if (dRepHex === "3") {
+      dRepLabel = t("cardano.voteDelegation.options.alwaysNoConfidence");
+    } else {
+      dRepLabel = d?.dRepName || getBech32DRepId(dRepHex, account.currency.id);
+    }
+
+    return [
+      {
+        label: t("cardano.voteDelegation.drepId"),
+        Component: (
+          <Touchable
+            onPress={dRepHex === "2" || dRepHex === "3" ? undefined : () => onOpenExplorer(dRepHex)}
+            event="VoteDelegationOpenExplorer"
+          >
+            <LText
+              numberOfLines={1}
+              semiBold
+              ellipsizeMode="middle"
+              style={[styles.valueText]}
+              color="live"
+            >
+              {dRepLabel}
+            </LText>
+          </Touchable>
+        ),
+      },
+      {
+        label: t("delegation.delegatedAccount"),
+        Component: (
+          <LText
+            numberOfLines={1}
+            semiBold
+            ellipsizeMode="middle"
+            style={[styles.valueText]}
+            color="live"
+          >
+            {accountName}{" "}
+          </LText>
+        ),
+      },
+    ];
   }, [dRepHex, d?.dRepName, t, accountName, onOpenExplorer, account.currency.id]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     return [
       {
         label: t("cardano.voteDelegation.changeVoteDelegation"),
-        Icon: (props: IconProps) => (
-          <Circle {...props} bg={colors.fog}>
-            <RedelegateIcon color={undefined} />
-          </Circle>
-        ),
+        Icon: RedelegateActionIcon,
         disabled: false,
         onPress: onRedelegate,
         event: "VoteDelegationActionRedelegate",
       },
     ];
-  }, [t, onRedelegate, colors.fog]);
+  }, [t, onRedelegate]);
 
   return (
     <View style={styles.root}>
@@ -169,7 +176,7 @@ function VoteDelegation({ account }: Props) {
         isOpen={data && data.length > 0}
         onClose={onCloseDrawer}
         account={account}
-        ValidatorImage={({ size }) => <DRepImage name={dRepAvatarLabel} size={size} />}
+        renderValidatorImage={size => <DRepImage name={dRepAvatarLabel} size={size} />}
         formattedAmount={<CurrencyUnitValue showCode unit={unit} value={account.balance} />}
         formattedCounterValue={
           <CounterValue
@@ -184,7 +191,7 @@ function VoteDelegation({ account }: Props) {
         actions={actions}
       />
 
-      {d && d.dRepHex ? (
+      {d?.dRepHex ? (
         <View style={styles.wrapper}>
           <AccountSectionLabel name={t("cardano.voteDelegation.header")} />
           <View key={d.dRepHex} style={[styles.delegationsWrapper]}>
@@ -209,7 +216,7 @@ function VoteDelegation({ account }: Props) {
   );
 }
 
-export default function CardanoVoteDelegation({ account }: { account: AccountLike }) {
+export default function CardanoVoteDelegation({ account }: Readonly<{ account: AccountLike }>) {
   if (!(account as CardanoAccount).cardanoResources) return null;
   return <VoteDelegation account={account as CardanoAccount} />;
 }

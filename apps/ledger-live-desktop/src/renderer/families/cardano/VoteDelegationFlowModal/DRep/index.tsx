@@ -1,7 +1,6 @@
 import { useCardanoFamilyDReps } from "@ledgerhq/live-common/families/cardano/react";
 import { DRep } from "@ledgerhq/coin-cardano/api/api-types";
 
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
@@ -13,7 +12,6 @@ import DRepRow from "./components/DRepRow";
 import DRepListHeader from "./components/DRepListHeader";
 type Props = {
   account: Account;
-  status: TransactionStatus;
   onChangeDRep: (a: DRep) => void;
   selectedDRepHex: string;
 };
@@ -32,7 +30,7 @@ export function putUserDRepAtFirstPositionInDReps(dReps: DRep[], firstDRepHex: s
   return [dRep, ...dReps.filter((_, i) => i !== index)];
 }
 
-const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Props) => {
+const DRepField = ({ account, onChangeDRep, selectedDRepHex }: Readonly<Props>) => {
   const [userAndLedgerDReps, setUserAndLedgerDReps] = useState<Array<DRep>>([]);
   const [userAndLedgerDRepsLoading, setUserAndLedgerDRepsLoading] = useState(false);
   const { dReps, searchQuery, setSearchQuery, onScrollEndReached, isSearching, isPaginating } =

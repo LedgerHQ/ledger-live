@@ -25,7 +25,7 @@ const Wrapper = styled.div`
   }
 `;
 
-const CTA = styled.div`
+const MenuContainer = styled.div`
   flex: 0.5;
   display: flex;
   justify-content: flex-end;
@@ -44,7 +44,7 @@ const Row = ({ account, delegation }: Props) => {
   const { t } = useTranslation();
   let name = "";
 
-  if (delegation && delegation.dRepHex) {
+  if (delegation?.dRepHex) {
     if (delegation.dRepName) {
       name = delegation.dRepName;
     } else if (delegation.dRepHex === "2") {
@@ -63,9 +63,9 @@ const Row = ({ account, delegation }: Props) => {
         </Ellipsis>
       </Value>
 
-      <CTA>
+      <MenuContainer>
         <ContextMenu account={account} />
-      </CTA>
+      </MenuContainer>
     </Wrapper>
   );
 };

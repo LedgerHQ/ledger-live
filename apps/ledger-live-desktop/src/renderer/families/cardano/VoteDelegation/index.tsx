@@ -44,7 +44,7 @@ const VoteDelegation = ({ account }: Props) => {
           "data-e2e": "title_Delegation",
         }}
       />
-      {delegation && delegation.dRepHex ? (
+      {delegation?.dRepHex ? (
         <>
           <Header />
           <Row delegation={delegation} account={account as CardanoAccount} />

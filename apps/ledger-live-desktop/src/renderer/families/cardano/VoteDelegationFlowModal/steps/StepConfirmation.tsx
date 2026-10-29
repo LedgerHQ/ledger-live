@@ -23,7 +23,7 @@ const Container = styled(Box).attrs<{
   justify-content: ${p => (p.$shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
+function StepConfirmation({ optimisticOperation, error, signed }: Readonly<StepProps>) {
   if (optimisticOperation) {
     return (
       <Container>
@@ -56,7 +56,7 @@ function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
   return null;
 }
 
-export function StepConfirmationFooter({ onRetry, error, onClose }: StepProps) {
+export function StepConfirmationFooter({ onRetry, error, onClose }: Readonly<StepProps>) {
   return (
     <Box horizontal alignItems="right">
       <Button data-testid="modal-close-button" ml={2} onClick={onClose}>

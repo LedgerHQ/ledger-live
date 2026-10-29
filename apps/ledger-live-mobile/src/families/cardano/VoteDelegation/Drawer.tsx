@@ -23,9 +23,7 @@ type Props = {
   onClose: () => void;
   account: AccountLike;
   icon?: React.ReactNode;
-  ValidatorImage: ComponentType<{
-    size: number;
-  }>;
+  renderValidatorImage: (size: number) => React.ReactNode;
   formattedAmount: React.ReactNode;
   formattedCounterValue?: React.ReactNode;
   data: FieldType[];
@@ -36,14 +34,14 @@ export default function VoteDelegationDrawer({
   isOpen,
   onClose,
   account,
-  ValidatorImage,
+  renderValidatorImage,
   formattedAmount,
   formattedCounterValue,
   data,
   actions,
   undelegation,
   icon,
-}: Props) {
+}: Readonly<Props>) {
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
   const iconWidth = normalize(64);
@@ -61,7 +59,7 @@ export default function VoteDelegationDrawer({
             )
           }
           undelegation={undelegation}
-          right={<ValidatorImage size={iconWidth} />}
+          right={renderValidatorImage(iconWidth)}
         />
 
         <View style={styles.subHeader}>
@@ -93,8 +91,8 @@ export default function VoteDelegationDrawer({
             { paddingBottom: Math.max(16, insets.bottom) },
           ]}
         >
-          {actions.map((props, i) => (
-            <ActionButton key={`actions-${i}`} {...props} isSingle={actions.length === 1} />
+          {actions.map(props => (
+            <ActionButton key={props.event} {...props} isSingle={actions.length === 1} />
           ))}
         </View>
       </View>

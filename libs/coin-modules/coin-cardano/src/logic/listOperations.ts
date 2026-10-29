@@ -153,6 +153,42 @@ function determineOperationType(
   });
 }
 
+// Records this account's staking details (deposit, refund, rewards, vote) and returns the
+// lovelace that came from the protocol rather than the payment address (refund + rewards).
+function applyStakingDetails(
+  tx: APITransaction,
+  stakeKey: string,
+  networkId: number,
+  stakeKeyDeposit: string,
+  details: Record<string, unknown>,
+): bigint {
+  let nonPaymentInflow = 0n;
+
+  const registration = findStakeRegistration(tx, stakeKey, networkId, stakeKeyDeposit);
+  if (registration) {
+    details.deposit = registration;
+  }
+
+  const deRegistration = findStakeDeRegistration(tx, stakeKey, networkId, stakeKeyDeposit);
+  if (deRegistration) {
+    nonPaymentInflow += safeBigInt(deRegistration);
+    details.refund = deRegistration;
+  }
+
+  const withdrawal = findWithdrawal(tx, stakeKey);
+  if (withdrawal) {
+    nonPaymentInflow += safeBigInt(withdrawal);
+    details.rewards = withdrawal;
+  }
+
+  const vote = findVoteDelegation(tx, stakeKey, networkId);
+  if (vote) {
+    details.vote = vote;
+  }
+
+  return nonPaymentInflow;
+}
+
 function toNativeOperation(
   currencyId: string,
   paymentKey: string,
@@ -174,39 +210,13 @@ function toNativeOperation(
   let operationValue = computeValue(tx, paymentKey);
 
   if (stakeKey) {
-    const registration = findStakeRegistration(
+    operationValue -= applyStakingDetails(
       tx,
       stakeKey,
       networkParams.networkId,
       stakeKeyDeposit,
+      details,
     );
-    if (registration) {
-      details.deposit = registration;
-    }
-
-    const deRegistration = findStakeDeRegistration(
-      tx,
-      stakeKey,
-      networkParams.networkId,
-      stakeKeyDeposit,
-    );
-    if (deRegistration) {
-      const refundAmount = safeBigInt(deRegistration);
-      operationValue = operationValue - refundAmount;
-      details.refund = deRegistration;
-    }
-
-    const withdrawal = findWithdrawal(tx, stakeKey);
-    if (withdrawal) {
-      const withdrawalAmount = safeBigInt(withdrawal);
-      operationValue = operationValue - withdrawalAmount;
-      details.rewards = withdrawal;
-    }
-
-    const vote = findVoteDelegation(tx, stakeKey, networkParams.networkId);
-    if (vote) {
-      details.vote = vote;
-    }
   }
 
   const ownedDelegation = stakeKey ? findOwnedStakeDelegation(tx, stakeKey) : undefined;

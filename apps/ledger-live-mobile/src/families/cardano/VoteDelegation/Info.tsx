@@ -20,7 +20,7 @@ export default function VoteDelegationInfo({
   disabled,
   onPress,
   ctaTitle,
-}: Props) {
+}: Readonly<Props>) {
   const { colors } = useTheme();
   return (
     <View>

@@ -6,7 +6,7 @@ import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/type
 import CardanoDelegations from "./Delegations";
 import CardanoVoteDelegation from "./VoteDelegation";
 
-export default function CardanoAccountBodyHeader({ account }: { account: AccountLike }) {
+export default function CardanoAccountBodyHeader({ account }: Readonly<{ account: AccountLike }>) {
   if (account.type !== "Account" || !(account as CardanoAccount).cardanoResources) return null;
 
   return (
