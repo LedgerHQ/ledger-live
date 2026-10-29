@@ -12,6 +12,10 @@ Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox elem
 
 Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers.
 
+## A page object that imports element handles MUST use them for every element
+
+This rule replaces the previous one for a page object that imports from `@e2e/helpers/elements/*`. Such a page object MUST declare and act on every element through [element handles](e2e-mobile-elements.md) and MUST NOT call an element global. [`helpers/elements`](../helpers/elements) calls the Detox matchers itself and MUST NOT import `elementHelpers.ts`, so the globals can be deleted once every page object is migrated.
+
 ## A shared Live App test id SHOULD match the desktop test id
 
 When a Live App element already has a test id on desktop, the mobile selector SHOULD use that same id.
@@ -76,7 +80,7 @@ The method MUST live on the page that owns its parameter. `deleteContact(rowId)`
 
 A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### Selector helpers MUST be private readonly arrow functions
+### In a page object that uses globals, selector helpers MUST be private readonly arrow functions
 
 Element getters and parameterized locator builders MUST be private readonly arrow-function class properties. Static IDs passed to waits MUST be private readonly strings. Dynamic IDs MUST use private readonly builder functions. A step MUST NOT build a matcher or ID inline.
 
@@ -84,6 +88,15 @@ Element getters and parameterized locator builders MUST be private readonly arro
 private readonly contactsContent = () => getElementById("contacts-content");
 private readonly savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
 private readonly addContactContentId = "contacts-add-contact-content";
+```
+
+### A handle locator MUST be a private readonly property
+
+In a page object that imports element handles, a static locator MUST be a private readonly handle, and a dynamic one a private readonly builder that returns a handle. A step MUST NOT build a handle inline.
+
+```ts
+private readonly recipientInput = byId("recipient-input");
+private readonly contactCompactRow = (contactId: string) => byId(`contacts-compact-row-${contactId}`);
 ```
 
 ### Every public method MUST use @Step
