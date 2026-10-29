@@ -85,6 +85,7 @@
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-name": "workspace:^",
+    "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-analytics-consent": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:^",
     "@domain/entity-client-identity": "workspace:*",

@@ -32,6 +32,7 @@
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-account-name": "workspace:*",
+    "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-card-asset-mapping": "workspace:*",
     "@domain/entity-currency": "workspace:^",
     "@domain/entity-currency-crypto": "workspace:*",

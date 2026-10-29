@@ -12,6 +12,7 @@ export { useDeviceOnboardingActor } from "./useDeviceOnboardingActor";
 export type { OnboardingActorSnapshot } from "./useDeviceOnboardingActor";
 export type { DeviceOnboardingPorts, DeviceOnboardingSession } from "./ports";
 export { useAccountBalanceToolProps } from "./useAccountBalanceToolProps";
+export { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 export { useAccountDescriptorToolProps } from "./useAccountDescriptorToolProps";
 export { useAccountNameToolProps } from "./useAccountNameToolProps";
 export { useAccountDataToolProps } from "./useAccountDataToolProps";
