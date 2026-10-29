@@ -13,7 +13,7 @@ import {
   type ExitOutput,
 } from "./context";
 import { EarlyCheckToggle } from "./device/toggleEarlyCheckCommand";
-import { isTouchscreen, requiresLegacyFlow } from "./rules";
+import { firmwareSettled, isTouchscreen, requiresLegacyFlow } from "./rules";
 import {
   isOnRecoveryKeyScreen,
   isRecoveryKeyBackupFinished,
@@ -87,11 +87,11 @@ export const deviceOnboardingMachine = setup({
     shouldRunFirmwareCheck: ({ context }) =>
       !context.checksPaused &&
       currentVerdict(context)?.isGenuine === true &&
-      context.firmware?.kind !== "checked",
+      !firmwareSettled(context.firmware),
     updateAwaitingAnswer: ({ context }) =>
       !context.checksPaused && context.firmware?.kind === "offered",
     checksAlreadyPassed: ({ context }) =>
-      currentVerdict(context)?.isGenuine === true && context.firmware?.kind === "checked",
+      currentVerdict(context)?.isGenuine === true && firmwareSettled(context.firmware),
     successAlreadyAcknowledged: ({ context }) =>
       context.successAcknowledgedOnSession === context.sessionId,
     acknowledgedSeededDevice: ({ context }) =>
@@ -241,7 +241,7 @@ export const deviceOnboardingMachine = setup({
             }),
           },
           on: {
-            FIRMWARE_UP_TO_DATE: { target: "checksDone", actions: "rememberFirmwareChecked" },
+            FIRMWARE_UP_TO_DATE: { target: "checksDone", actions: "rememberFirmwareUpToDate" },
             FIRMWARE_UPDATE_AVAILABLE: {
               target: "firmwareUpdateOffered",
               actions: "rememberAvailableUpdate",
@@ -253,7 +253,7 @@ export const deviceOnboardingMachine = setup({
         firmwareCheckFailed: {
           on: {
             RETRY: "firmwareCheck",
-            SKIP: { target: "checksDone", actions: "rememberFirmwareChecked" },
+            SKIP: { target: "checksDone", actions: "rememberFirmwareSkipped" },
             CLOSE: { target: "checksIdle", actions: "pauseChecks" },
           },
         },
@@ -261,7 +261,7 @@ export const deviceOnboardingMachine = setup({
         firmwareUpdateOffered: {
           on: {
             USER_ACCEPT: "firmwareUpdateDelegated",
-            USER_DECLINE: { target: "checksDone", actions: "rememberFirmwareChecked" },
+            USER_DECLINE: { target: "checksDone", actions: "rememberFirmwareDeclined" },
           },
         },
 

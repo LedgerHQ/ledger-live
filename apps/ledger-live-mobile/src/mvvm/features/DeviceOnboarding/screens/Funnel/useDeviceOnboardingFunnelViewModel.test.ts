@@ -542,6 +542,26 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(result.current.status).toBe("connecting");
   });
 
+  it.each([
+    [true, true],
+    [false, false],
+    [undefined, false],
+  ] as const)(
+    "should tell the success screen the firmware is current only when the machine says so (%s)",
+    (firmwareUpToDate, expected) => {
+      useSession.mockReturnValue(
+        session({
+          state: "checks.checksSucceeded",
+          context: { firmwareUpToDate, checksPaused: false } as DeviceOnboardingSession["context"],
+        }),
+      );
+
+      const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+      expect(checksOf(result.current).firmwareUpToDate).toBe(expected);
+    },
+  );
+
   it("should leave the success screen when the user continues", () => {
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded" }));
 

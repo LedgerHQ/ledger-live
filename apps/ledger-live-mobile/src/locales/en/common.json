@@ -2586,6 +2586,7 @@
       },
       "succeeded": {
         "title": "Device genuine and up-to-date",
+        "genuineTitle": "Device genuine",
         "cta": "Continue"
       }
     },
