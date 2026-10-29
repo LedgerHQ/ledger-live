@@ -396,7 +396,7 @@ describe("network utils", () => {
       expect(apiClient.findTransactionByContractCallV2).toHaveBeenCalledWith({
         configOrCurrencyId: mockCurrency.id,
         timestamp: "1704067200.000000000",
-        payerAddress: `0.0.${payerAccountId}`,
+        transactionHash: mockERC20Transfer.transaction_hash,
       });
     });
 
@@ -456,7 +456,7 @@ describe("network utils", () => {
       expect(apiClient.findTransactionByContractCallV2).toHaveBeenCalledWith({
         configOrCurrencyId: mockCurrency.id,
         timestamp: "1768092990.000000000",
-        payerAddress: `0.0.${payerAccountId}`,
+        transactionHash: mockERC20Transfer.transaction_hash,
       });
     });
 

@@ -446,120 +446,130 @@ describe("apiClient", () => {
   });
 
   describe("findTransactionByContractCallV2", () => {
-    it("should call the correct endpoint and return transaction details", async () => {
-      const mockConsensusTimestamp = "1758733200.632122898";
-      const mockPayerAddress = "0.0.1234";
-      const mockedResults: HederaMirrorTransaction = {
-        transfers: [],
-        token_transfers: [],
-        staking_reward_transfers: [],
-        charged_tx_fee: 100,
-        transaction_hash: "",
-        result: "",
-        consensus_timestamp: mockConsensusTimestamp,
-        entity_id: "0.0.1",
-        transaction_id: `${mockPayerAddress}-${mockConsensusTimestamp}`,
-        name: "CONTRACTCALL",
-        node: null,
-        nonce: 0,
-        parent_consensus_timestamp: null,
-      };
+    // two contract calls of payer 0.0.10176974 on mainnet, 1 microsecond apart:
+    // https://mainnet-public.mirrornode.hedera.com/api/v1/transactions/0.0.10176974-1792796027-593000226
+    // https://mainnet-public.mirrornode.hedera.com/api/v1/transactions/0.0.10176974-1792796027-593000227
+    const firstCall = {
+      timestamp: "1792796029.662426420",
+      transactionId: "0.0.10176974-1792796027-593000226",
+      mirrorHash: "al5ul1vRzLr44JNZBllf4VmBu5qoWuyl7XQbsOMQ+yGH926dBhc14/y7jx4f9AIK",
+      evmHash: "0x6a5e6e975bd1ccbaf8e0935906595fe15981bb9aa85aeca5ed741bb0e310fb21",
+    };
+    const secondCall = {
+      timestamp: "1792796029.662427420",
+      transactionId: "0.0.10176974-1792796027-593000227",
+      mirrorHash: "Vq0wilksdZy1XJBnvTofaNXCVxWxsSIBr7s3/tvzEUUx5CTjt4xM5mGbarObmJ+a",
+      evmHash: "0x56ad308a592c759cb55c9067bd3a1f68d5c25715b1b12201afbb37fedbf31145",
+    };
 
-      mockedNetwork.mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [mockedResults],
-        }),
-      );
+    const getMirrorTransaction = (
+      call: typeof firstCall,
+      overrides: Partial<HederaMirrorTransaction> = {},
+    ): HederaMirrorTransaction => ({
+      transfers: [],
+      token_transfers: [],
+      staking_reward_transfers: [],
+      charged_tx_fee: 100,
+      transaction_hash: call.mirrorHash,
+      result: "SUCCESS",
+      consensus_timestamp: call.timestamp,
+      entity_id: "0.0.10888630",
+      transaction_id: call.transactionId,
+      name: "CONTRACTCALL",
+      node: null,
+      nonce: 0,
+      parent_consensus_timestamp: null,
+      ...overrides,
+    });
+
+    it("should call the correct endpoint and return transaction details", async () => {
+      const transaction = getMirrorTransaction(firstCall);
+      mockedNetwork.mockResolvedValueOnce(getMockResponse({ transactions: [transaction] }));
 
       const result = await apiClient.findTransactionByContractCallV2({
         configOrCurrencyId: mockConfig,
-        timestamp: mockConsensusTimestamp,
-        payerAddress: mockPayerAddress,
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
       });
       const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
-      expect(result).toEqual(mockedResults);
+      expect(result).toEqual(transaction);
       expect(requestUrl).toContain("/api/v1/transactions?limit=100&order=desc");
       expect(requestUrl).toContain("timestamp=gte");
       expect(requestUrl).toContain("timestamp=lte");
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
 
-    it("should return null for non existing contract calls", async () => {
-      const mockConsensusTimestamp1 = "1758733200.632122898";
-      const mockConsensusTimestamp2 = "1758733300.632122898";
-      const mockPayerAddress1 = "0.0.1234";
-      const mockPayerAddress2 = "0.0.4321";
+    it("returns the contract call with the given hash, not another call of the same payer in the range", async () => {
+      // order=desc: the later call comes first
       mockedNetwork.mockResolvedValueOnce(
         getMockResponse({
-          transactions: [
-            {
-              transfers: [],
-              token_transfers: [],
-              staking_reward_transfers: [],
-              charged_tx_fee: 100,
-              transaction_hash: "zzz",
-              transaction_id: `${mockPayerAddress1}-${mockConsensusTimestamp1}`,
-              consensus_timestamp: mockConsensusTimestamp1,
-              result: "",
-              entity_id: "0.0.1",
-              name: "NOT_CONTRACTCALL",
-            },
-            {
-              transfers: [],
-              token_transfers: [],
-              staking_reward_transfers: [],
-              charged_tx_fee: 100,
-              transaction_hash: "yyy",
-              transaction_id: `${mockPayerAddress2}-${mockConsensusTimestamp2}`,
-              consensus_timestamp: mockConsensusTimestamp2,
-              result: "",
-              entity_id: "0.0.2",
-              name: "CONTRACTCALL",
-            },
-          ] satisfies Partial<HederaMirrorTransaction>[],
+          transactions: [getMirrorTransaction(secondCall), getMirrorTransaction(firstCall)],
         }),
       );
 
       const result = await apiClient.findTransactionByContractCallV2({
         configOrCurrencyId: mockConfig,
-        timestamp: mockConsensusTimestamp1,
-        payerAddress: mockPayerAddress1,
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
+      });
+
+      expect(result?.transaction_id).toEqual(firstCall.transactionId);
+    });
+
+    it("matches the hash case-insensitively", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({ transactions: [getMirrorTransaction(secondCall)] }),
+      );
+
+      const result = await apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId: mockConfig,
+        timestamp: secondCall.timestamp,
+        transactionHash: secondCall.evmHash.toUpperCase().replace("0X", "0x"),
+      });
+
+      expect(result?.transaction_id).toEqual(secondCall.transactionId);
+    });
+
+    it("should return null when no parent contract call has the given hash", async () => {
+      mockedNetwork.mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [
+            getMirrorTransaction(firstCall, { name: "CRYPTOTRANSFER" }),
+            getMirrorTransaction(firstCall, { parent_consensus_timestamp: secondCall.timestamp }),
+            getMirrorTransaction(secondCall),
+          ],
+        }),
+      );
+
+      const result = await apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId: mockConfig,
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
       });
 
       expect(result).toEqual(null);
     });
 
     it("should call the correct endpoint and return null for empty transactions list", async () => {
-      const mockConsensusTimestamp = "1758733200.632122898";
-      const mockPayerAddress = "0.0.1234";
-
-      mockedNetwork.mockResolvedValueOnce(
-        getMockResponse({
-          transactions: [],
-        }),
-      );
+      mockedNetwork.mockResolvedValueOnce(getMockResponse({ transactions: [] }));
 
       const result = await apiClient.findTransactionByContractCallV2({
         configOrCurrencyId: mockConfig,
-        timestamp: mockConsensusTimestamp,
-        payerAddress: mockPayerAddress,
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
       });
 
       expect(result).toEqual(null);
     });
 
     it("fetches a found transaction only once", async () => {
-      const transaction = {
-        name: "CONTRACTCALL",
-        transaction_id: "0.0.1234-1758733200-632122898",
-        parent_consensus_timestamp: null,
-      };
+      const transaction = getMirrorTransaction(firstCall);
       mockedNetwork.mockResolvedValue(getMockResponse({ transactions: [transaction] }));
       const params = {
         configOrCurrencyId: mockConfig,
-        timestamp: "1758733200.632122898",
-        payerAddress: "0.0.1234",
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
       };
 
       await apiClient.findTransactionByContractCallV2(params);
@@ -569,12 +579,34 @@ describe("apiClient", () => {
       expect(mockedNetwork).toHaveBeenCalledTimes(1);
     });
 
+    it("caches each transaction hash separately", async () => {
+      mockedNetwork.mockResolvedValue(
+        getMockResponse({
+          transactions: [getMirrorTransaction(secondCall), getMirrorTransaction(firstCall)],
+        }),
+      );
+
+      const first = await apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId: mockConfig,
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
+      });
+      const second = await apiClient.findTransactionByContractCallV2({
+        configOrCurrencyId: mockConfig,
+        timestamp: secondCall.timestamp,
+        transactionHash: secondCall.evmHash,
+      });
+
+      expect(first?.transaction_id).toEqual(firstCall.transactionId);
+      expect(second?.transaction_id).toEqual(secondCall.transactionId);
+    });
+
     it("asks again for a transaction the mirror node has not indexed yet", async () => {
       mockedNetwork.mockResolvedValue(getMockResponse({ transactions: [] }));
       const params = {
         configOrCurrencyId: mockConfig,
-        timestamp: "1758733200.632122898",
-        payerAddress: "0.0.1234",
+        timestamp: firstCall.timestamp,
+        transactionHash: firstCall.evmHash,
       };
 
       await apiClient.findTransactionByContractCallV2(params);
