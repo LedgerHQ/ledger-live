@@ -5,12 +5,13 @@ import {
   getMockServerSession,
   isMockServerReachable,
 } from "@ledgerhq/live-dmk-mobile";
-import type { MockServerConnection, MockServerStatus } from "../../types";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { setMockServerPanelOpen } from "~/actions/appstate";
 import {
-  closeMockServerPanel,
-  openMockServerPanel,
-  useMockServerPanelState,
-} from "../../utils/mockServerPanelStore";
+  isMockServerFloatingButtonHiddenSelector,
+  isMockServerPanelOpenSelector,
+} from "~/reducers/appstate";
+import type { MockServerConnection, MockServerStatus } from "../../types";
 
 const STATUS_POLL_INTERVAL_MS = 5000;
 
@@ -38,7 +39,9 @@ const readStatus = async ({
 
 export function useMockServerOverlayViewModel(): MockServerOverlayViewModel {
   const [connection] = useState(() => (Config.DETOX ? null : getConfiguredMockServerTransport()));
-  const { isPanelOpen, isFloatingButtonHidden } = useMockServerPanelState();
+  const dispatch = useDispatch();
+  const isPanelOpen = useSelector(isMockServerPanelOpenSelector);
+  const isFloatingButtonHidden = useSelector(isMockServerFloatingButtonHiddenSelector);
   const [status, setStatus] = useState<MockServerStatus>("checking");
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -60,9 +63,8 @@ export function useMockServerOverlayViewModel(): MockServerOverlayViewModel {
   }, [connection]);
 
   const onToggleOpenPanel = useCallback(() => {
-    if (isPanelOpen) closeMockServerPanel();
-    else openMockServerPanel();
-  }, [isPanelOpen]);
+    dispatch(setMockServerPanelOpen(!isPanelOpen));
+  }, [dispatch, isPanelOpen]);
 
   return {
     connection: connection ?? null,

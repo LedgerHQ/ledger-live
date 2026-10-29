@@ -66,6 +66,8 @@ export enum AppStateActionTypes {
   DEBUG_MENU_VISIBLE = "DEBUG_MENU_VISIBLE",
   HAS_CONNECTED_DEVICE = "HAS_CONNECTED_DEVICE",
   SET_MODAL_LOCK = "SET_MODAL_LOCK",
+  SET_MOCK_SERVER_PANEL_OPEN = "SET_MOCK_SERVER_PANEL_OPEN",
+  SET_MOCK_SERVER_FLOATING_BUTTON_HIDDEN = "SET_MOCK_SERVER_FLOATING_BUTTON_HIDDEN",
   QUEUE_BACKGROUND_EVENT = "QUEUE_BACKGROUND_EVENT",
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
@@ -78,6 +80,9 @@ export enum AppStateActionTypes {
 
 export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
+export type AppStateSetMockServerPanelOpenPayload = AppState["isMockServerPanelOpen"];
+export type AppStateSetMockServerFloatingButtonHiddenPayload =
+  AppState["isMockServerFloatingButtonHidden"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
@@ -87,6 +92,8 @@ export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavig
 export type AppStatePayload =
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
+  | AppStateSetMockServerPanelOpenPayload
+  | AppStateSetMockServerFloatingButtonHiddenPayload
   | AppStateAddBackgroundEventPayload
   | AppStateUpdateMainNavigatorVisibilityPayload
   | AppStateBlockPasswordLockPayload;

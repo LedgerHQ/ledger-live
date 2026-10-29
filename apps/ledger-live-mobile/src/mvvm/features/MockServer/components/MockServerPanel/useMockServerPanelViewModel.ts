@@ -2,12 +2,10 @@ import { useCallback, useState } from "react";
 import { copyToClipboard } from "@shared/clipboard";
 import { getMockServerFrontendUrl } from "@ledgerhq/live-dmk-mobile";
 import { useMockServerSessionActions } from "../../hooks/useMockServerSessionActions";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { setMockServerFloatingButtonHidden, setMockServerPanelOpen } from "~/actions/appstate";
+import { isMockServerFloatingButtonHiddenSelector } from "~/reducers/appstate";
 import type { MockServerConnection, MockServerStatus } from "../../types";
-import {
-  closeMockServerPanel,
-  setMockServerFloatingButtonHidden,
-  useMockServerPanelState,
-} from "../../utils/mockServerPanelStore";
 
 export type MockServerPanelProps = {
   connection: MockServerConnection;
@@ -45,7 +43,8 @@ export function useMockServerPanelViewModel({
   sessionId,
 }: MockServerPanelProps): MockServerPanelViewModel {
   const { startNewSession, joinSession } = useMockServerSessionActions();
-  const { isFloatingButtonHidden } = useMockServerPanelState();
+  const dispatch = useDispatch();
+  const isFloatingButtonHidden = useSelector(isMockServerFloatingButtonHiddenSelector);
   const [urlDraft, setUrlDraft] = useState(connection.url);
   const [tokenDraft, setTokenDraft] = useState(connection.token);
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
@@ -77,6 +76,13 @@ export function useMockServerPanelViewModel({
     run("newSession", () => startNewSession(draftUrl));
   }, [draftUrl, run, startNewSession]);
 
+  const onSetFloatingButtonHidden = useCallback(
+    (hidden: boolean) => dispatch(setMockServerFloatingButtonHidden(hidden)),
+    [dispatch],
+  );
+
+  const onClose = useCallback(() => dispatch(setMockServerPanelOpen(false)), [dispatch]);
+
   const onCopyToken = useCallback(() => {
     copyToClipboard(connection.token);
   }, [connection.token]);
@@ -97,7 +103,7 @@ export function useMockServerPanelViewModel({
     onApply,
     onNewSession,
     onCopyToken,
-    onSetFloatingButtonHidden: setMockServerFloatingButtonHidden,
-    onClose: closeMockServerPanel,
+    onSetFloatingButtonHidden,
+    onClose,
   };
 }

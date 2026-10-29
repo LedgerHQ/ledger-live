@@ -114,6 +114,8 @@ export type AppState = {
   rebootId: number;
   /** Incremented when `ledgerlive://product-tour` is handled so the Product Tour subtree can open after navigation to Portfolio. */
   productTourDeeplinkNonce: number;
+  isMockServerPanelOpen: boolean;
+  isMockServerFloatingButtonHidden: boolean;
 };
 
 // === AUTH STATE ===

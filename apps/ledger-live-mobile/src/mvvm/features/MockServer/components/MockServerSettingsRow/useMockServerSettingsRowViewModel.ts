@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import { getEnv } from "@shared/env";
-import { useSelector } from "~/context/hooks";
+import { useDispatch, useSelector } from "~/context/hooks";
+import { setMockServerPanelOpen } from "~/actions/appstate";
 import { mockServerSettingsSelector } from "~/reducers/settings";
 import { useMockServerSessionActions } from "../../hooks/useMockServerSessionActions";
-import { openMockServerPanel } from "../../utils/mockServerPanelStore";
 
 export type MockServerSettingsRowViewModel = {
   isEnabled: boolean;
@@ -14,6 +14,7 @@ export type MockServerSettingsRowViewModel = {
 };
 
 export function useMockServerSettingsRowViewModel(): MockServerSettingsRowViewModel {
+  const dispatch = useDispatch();
   const { enabled, url } = useSelector(mockServerSettingsSelector);
   const { startNewSession, disable } = useMockServerSessionActions();
   const [isPending, setIsPending] = useState(false);
@@ -46,5 +47,7 @@ export function useMockServerSettingsRowViewModel(): MockServerSettingsRowViewMo
     [applyToggle],
   );
 
-  return { isEnabled: enabled, isPending, onToggle, onOpenPanel: openMockServerPanel };
+  const onOpenPanel = useCallback(() => dispatch(setMockServerPanelOpen(true)), [dispatch]);
+
+  return { isEnabled: enabled, isPending, onToggle, onOpenPanel };
 }

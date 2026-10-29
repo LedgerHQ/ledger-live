@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, Platform, Text } from "react-native";
 import RNRestart from "react-native-restart";
-import { act, fireEvent, render, screen, waitFor } from "@tests/test-renderer";
+import { fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { HttpResponse, http, server } from "@tests/server";
 import {
   configureMockServerTransport,
@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { MockServerOverlay, MockServerSettingsRow } from "..";
-import { openMockServerPanel, resetMockServerPanelState } from "../utils/mockServerPanelStore";
+import type { State } from "~/reducers/types";
 
 jest.mock("react-native-restart", () => ({ __esModule: true, default: { restart: jest.fn() } }));
 
@@ -22,6 +22,11 @@ const staxDevice = {
   device_type: "stax",
   connectivity_type: "USB",
 };
+
+const withOpenPanel = (state: State): State => ({
+  ...state,
+  appstate: { ...state.appstate, isMockServerPanelOpen: true },
+});
 
 const endpoints = {
   health: jest.fn<Response, [{ request: Request }]>(),
@@ -51,7 +56,6 @@ describe("MockServer", () => {
 
   afterEach(() => {
     resetMockServerTransport();
-    act(() => resetMockServerPanelState());
   });
 
   describe("panel", () => {
@@ -61,15 +65,13 @@ describe("MockServer", () => {
 
     it("should render nothing when the mock server transport is not configured", () => {
       resetMockServerTransport();
-      render(<MockServerOverlay />);
-      act(() => openMockServerPanel());
+      render(<MockServerOverlay />, { overrideInitialState: withOpenPanel });
 
       expect(screen.queryByTestId("mock-server-panel")).toBeNull();
     });
 
     it("should show the connected session when the panel opens", async () => {
-      render(<MockServerOverlay />);
-      act(() => openMockServerPanel());
+      render(<MockServerOverlay />, { overrideInitialState: withOpenPanel });
 
       expect(await screen.findByText("Connected · session session-1")).toBeVisible();
       expect(endpoints.session.mock.calls[0][0].request.headers.get("Authorization")).toBe(
@@ -77,10 +79,20 @@ describe("MockServer", () => {
       );
     });
 
+    it("should close the panel when the floating button is pressed", async () => {
+      const { store, user } = render(<MockServerOverlay />, {
+        overrideInitialState: withOpenPanel,
+      });
+
+      await user.press(await screen.findByTestId("mock-server-floating-button"));
+
+      expect(screen.queryByTestId("mock-server-panel")).toBeNull();
+      expect(store.getState().appstate.isMockServerPanelOpen).toBe(false);
+    });
+
     it("should warn that the session expired when the server rejects the token", async () => {
       endpoints.session.mockImplementation(() => HttpResponse.json({}, { status: 401 }));
-      render(<MockServerOverlay />);
-      act(() => openMockServerPanel());
+      render(<MockServerOverlay />, { overrideInitialState: withOpenPanel });
 
       expect(
         await screen.findByText("Start a new session to keep using the mock server."),
@@ -88,8 +100,9 @@ describe("MockServer", () => {
     });
 
     it("should record the session devices and restart when starting a new session", async () => {
-      const { store, user } = render(<MockServerOverlay />);
-      act(() => openMockServerPanel());
+      const { store, user } = render(<MockServerOverlay />, {
+        overrideInitialState: withOpenPanel,
+      });
 
       await user.press(await screen.findByText("New session"));
 
@@ -108,8 +121,9 @@ describe("MockServer", () => {
     });
 
     it("should join the pasted session without creating one when applying a new token", async () => {
-      const { store, user } = render(<MockServerOverlay />);
-      act(() => openMockServerPanel());
+      const { store, user } = render(<MockServerOverlay />, {
+        overrideInitialState: withOpenPanel,
+      });
 
       const tokenInput = await screen.findByDisplayValue("token-1");
       await user.clear(tokenInput);

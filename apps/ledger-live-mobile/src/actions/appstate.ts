@@ -2,6 +2,8 @@ import { createAction } from "redux-actions";
 import type {
   AppStateAddBackgroundEventPayload,
   AppStateSetHasConnectedDevicePayload,
+  AppStateSetMockServerFloatingButtonHiddenPayload,
+  AppStateSetMockServerPanelOpenPayload,
   AppStateSetModalLockPayload,
   AppStateUpdateMainNavigatorVisibilityPayload,
 } from "./types";
@@ -11,6 +13,13 @@ export const openDebugMenu = createAction(AppStateActionTypes.DEBUG_MENU_VISIBLE
 export const setHasConnectedDevice = createAction<AppStateSetHasConnectedDevicePayload>(
   AppStateActionTypes.HAS_CONNECTED_DEVICE,
 );
+export const setMockServerPanelOpen = createAction<AppStateSetMockServerPanelOpenPayload>(
+  AppStateActionTypes.SET_MOCK_SERVER_PANEL_OPEN,
+);
+export const setMockServerFloatingButtonHidden =
+  createAction<AppStateSetMockServerFloatingButtonHiddenPayload>(
+    AppStateActionTypes.SET_MOCK_SERVER_FLOATING_BUTTON_HIDDEN,
+  );
 export const setModalLock = createAction<AppStateSetModalLockPayload>(
   AppStateActionTypes.SET_MODAL_LOCK,
 );
