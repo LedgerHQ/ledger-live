@@ -23,6 +23,30 @@ const USDC = toChecksumAddress("0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 const UNKNOWN_TOKEN = toChecksumAddress("0x1111111111111111111111111111111111111111");
 const BASE58_CURSOR = "3vQB7B6MrGQZaxCuFg4oh";
 
+const SWAP_INTENT = {
+  type: "swap",
+  network: "ethereum",
+  sender: SENDER,
+  fromAsset: "ethereum",
+  toAsset: "ethereum/erc20/usd__coin",
+  fromAmount: "0.5",
+  toAmount: "1250",
+  provider: "velora",
+};
+// The 0x11 × 32 and 0x22 × 32 keys of agent-intent-service ADR-0002's Solana vectors.
+const SOL_SENDER = "29d2S7vB453rNYFdR5Ycwt7y9haRT5fwVwL9zTmBhfV2";
+const SOL_RECIPIENT = "3JF3sEqM796hk5WFqA6EtmEwJQ9quALszsfJyvXNQKy3";
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const SOLANA_SEND = {
+  type: "send",
+  network: "solana",
+  sender: SOL_SENDER,
+  recipient: SOL_RECIPIENT,
+  amount: "2500000",
+  asset: { type: "spl-token", assetReference: USDC_MINT },
+  memo: "Invoice 42",
+};
+
 const enrolledProfile = {
   profileId: "bot",
   displayName: "Bot",
@@ -93,6 +117,13 @@ beforeAll(() =>
         contract.toLowerCase() === USDC.toLowerCase()
           ? { ticker: "USDC", decimals: 6, contract: USDC }
           : null,
+      findEthereumSwapAsset: async (id: string) =>
+        ({
+          ethereum: { id, ticker: "ETH", decimals: 18 },
+          "ethereum/erc20/usd__coin": { id, ticker: "USDC", decimals: 6 },
+        })[id] ?? null,
+      findSolanaToken: async (mint: string) =>
+        mint === USDC_MINT ? { ticker: "USDC", decimals: 6, mint: USDC_MINT } : null,
     },
   }),
 );
@@ -256,6 +287,64 @@ describe("agent-intent intents", () => {
     expect(
       (jsonResult().intents as Array<Record<string, unknown>>).map(i => i.displayAmount),
     ).toEqual(["2.5 USDC", null]);
+  });
+
+  it("lists a swap with its pair and provider, and a Solana send with its token and memo", async () => {
+    listImpl = async () => ({
+      intents: [
+        { ...record({ id: "swap" }), intent: SWAP_INTENT },
+        { ...record({ id: "sol" }), intent: SOLANA_SEND },
+      ] as AgentIntentRecord[],
+    });
+
+    await runIntents({ output: "json" });
+
+    expect(jsonResult().intents).toEqual([
+      expect.objectContaining({
+        id: "swap",
+        type: "swap",
+        amount: null,
+        displayAmount: "0.5 ETH → 1250 USDC",
+        swap: {
+          fromAsset: "ethereum",
+          toAsset: "ethereum/erc20/usd__coin",
+          fromAmount: "0.5",
+          toAmount: "1250",
+          provider: "velora",
+        },
+        memo: null,
+      }),
+      expect.objectContaining({
+        id: "sol",
+        network: "solana",
+        amount: "2500000",
+        displayAmount: "2.5 USDC",
+        memo: "Invoice 42",
+        swap: null,
+      }),
+    ]);
+
+    stdout = [];
+    await runIntents();
+    expect(stdout.join("")).toContain("0.5 ETH → 1250 USDC via velora");
+    expect(stdout.join("")).toContain("2.5 USDC");
+  });
+
+  it("still lists an intent type this version doesn't know", async () => {
+    listImpl = async () => ({
+      intents: [
+        {
+          ...record({ id: "stake" }),
+          intent: { type: "stake", network: "ethereum", sender: SENDER },
+        },
+      ] as AgentIntentRecord[],
+    });
+
+    await runIntents({ output: "json" });
+
+    expect(jsonResult().intents).toEqual([
+      expect.objectContaining({ id: "stake", type: "stake", displayAmount: null, swap: null }),
+    ]);
   });
 
   it("prints a human table and the command for the next page", async () => {
