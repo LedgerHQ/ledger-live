@@ -587,6 +587,9 @@ catalogs:
     buffer:
       specifier: 6.0.3
       version: 6.0.3
+    chalk:
+      specifier: 4.1.2
+      version: 4.1.2
     class-variance-authority:
       specifier: 0.7.1
       version: 0.7.1
@@ -14710,6 +14713,9 @@ importers:
       bip39:
         specifier: 'catalog:'
         version: 3.1.2
+      chalk:
+        specifier: 'catalog:'
+        version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
         version: 1.1.0
