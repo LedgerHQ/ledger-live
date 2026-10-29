@@ -1,0 +1,265 @@
+import path from "node:path";
+import { git, readBlobs } from "./git.js";
+import { join } from "./text.js";
+
+/**
+ * @import { CompilerOptions, ModuleResolutionHost, ParseConfigHost } from "typescript"
+ * @import { Revision } from "./types.js"
+ */
+
+/**
+ * A commit's files, read from git objects, with a TypeScript resolution host over them. Workspace
+ * packages are mapped from node_modules to their folders, so resolution never reads the disk and
+ * the same commit always resolves the same way.
+ * @param {{ repo: string, rev: string, ts: typeof import("typescript"), stripScope: string }} options
+ * @returns {Revision}
+ */
+export function createRevision({ repo, rev, ts, stripScope }) {
+  const files = new Set(
+    git(["ls-tree", "-r", "-z", "--name-only", rev], repo).split("\0").filter(Boolean),
+  );
+  const dirs = new Set([""]);
+  for (const file of files) {
+    for (
+      let dir = path.posix.dirname(file);
+      dir !== "." && !dirs.has(dir);
+      dir = path.posix.dirname(dir)
+    ) {
+      dirs.add(dir);
+    }
+  }
+  /** @type {Map<string, string | undefined>} */
+  const contents = new Map();
+  /** @param {string} rel */
+  const read = rel => {
+    if (!files.has(rel)) return undefined;
+    if (!contents.has(rel)) contents.set(rel, git(["cat-file", "blob", `${rev}:${rel}`], repo));
+    return contents.get(rel);
+  };
+
+  const packageDirs = workspacePackageDirs(
+    workspaceGlobs(read("pnpm-workspace.yaml") ?? ""),
+    dirs,
+    files,
+  );
+  prefetch(packageDirs.map(dir => `${dir}/package.json`));
+  /** @type {Map<string, string>} */
+  const workspace = new Map();
+  const packages = new Map([["", { dir: "", label: "workspace root" }]]);
+  for (const dir of packageDirs) {
+    const name = JSON.parse(/** @type {string} */ (read(`${dir}/package.json`))).name;
+    const label = name?.startsWith(stripScope) ? name.slice(stripScope.length) : (name ?? dir);
+    packages.set(dir, { dir, label });
+    if (name && !workspace.has(name)) workspace.set(name, dir);
+  }
+  const scopes = new Set(
+    [...workspace.keys()].filter(n => n.startsWith("@")).map(n => n.split("/")[0]),
+  );
+
+  /** @type {ModuleResolutionHost & ParseConfigHost} */
+  const host = {
+    useCaseSensitiveFileNames: true,
+    getCurrentDirectory: () => repo,
+    getDirectories: () => [],
+    readDirectory: () => [],
+    fileExists: p => {
+      const rel = toRepoPath(p);
+      return rel !== null && files.has(rel);
+    },
+    readFile: p => {
+      const rel = toRepoPath(p);
+      return rel === null ? undefined : read(rel);
+    },
+    directoryExists: p => {
+      const rel = relativeToRepo(p);
+      if (rel === null) return false;
+      const mapped = mapNodeModules(rel);
+      if (!mapped) return dirs.has(rel);
+      if (mapped.kind === "node_modules") return true;
+      if (mapped.kind === "scope") return scopes.has(mapped.scope);
+      return mapped.kind === "workspace" && dirs.has(mapped.rel);
+    },
+    realpath: p => {
+      const rel = toRepoPath(p);
+      return rel === null ? p : absolute(rel);
+    },
+  };
+  /** @type {Map<string | null, CompilerOptions>} */
+  const configs = new Map();
+
+  return {
+    workspace,
+    read,
+    packageOf: rel => packageInfo(nearest(path.posix.dirname(rel), dir => packages.has(dir)) ?? ""),
+    packageInfo,
+    importsOf: rel =>
+      ts.preProcessFile(read(rel) ?? "", true, true).importedFiles.map(f => f.fileName),
+    resolve: (fromRel, specifier) => {
+      const { resolvedModule } = ts.resolveModuleName(
+        specifier,
+        absolute(fromRel),
+        optionsFor(fromRel),
+        host,
+      );
+      const rel = resolvedModule ? toRepoPath(resolvedModule.resolvedFileName) : null;
+      if (rel !== null) return { kind: "file", rel };
+      // A bare specifier left unresolved names a package: an external one, or a workspace package whose
+      // entry point is a build output absent from git.
+      const bare = !specifier.startsWith(".") && !specifier.startsWith("/");
+      return { kind: bare ? "package" : "unresolved" };
+    },
+  };
+
+  /** @param {string} dir */
+  function packageInfo(dir) {
+    return packages.get(dir) ?? { dir, label: dir };
+  }
+
+  /** @param {string[]} rels */
+  function prefetch(rels) {
+    const missing = rels.filter(rel => files.has(rel) && !contents.has(rel));
+    readBlobs(
+      repo,
+      missing.map(rel => `${rev}:${rel}`),
+    ).forEach((text, i) => contents.set(missing[i], text));
+  }
+
+  /** @param {string} p */
+  function relativeToRepo(p) {
+    const normalized = path.posix.normalize(p);
+    if (normalized === repo) return "";
+    return normalized.startsWith(`${repo}/`) ? normalized.slice(repo.length + 1) : null;
+  }
+
+  /** @param {string} rel */
+  function absolute(rel) {
+    return rel ? `${repo}/${rel}` : repo;
+  }
+
+  /**
+   * Repository path of a file, following workspace packages through node_modules.
+   * @param {string} p
+   */
+  function toRepoPath(p) {
+    const rel = relativeToRepo(p);
+    if (rel === null) return null;
+    const mapped = mapNodeModules(rel);
+    if (!mapped) return rel;
+    return mapped.kind === "workspace" ? mapped.rel : null;
+  }
+
+  /**
+   * @param {string} rel
+   * @returns {(
+   *   | { kind: "node_modules" | "external" }
+   *   | { kind: "scope", scope: string }
+   *   | { kind: "workspace", rel: string }
+   *   | null
+   * )}
+   */
+  function mapNodeModules(rel) {
+    const parts = rel.split("/");
+    const at = parts.lastIndexOf("node_modules");
+    if (at === -1) return null;
+    const rest = parts.slice(at + 1);
+    if (rest.length === 0) return { kind: "node_modules" };
+    const scoped = rest[0].startsWith("@");
+    if (scoped && rest.length === 1) return { kind: "scope", scope: rest[0] };
+    const dir = workspace.get(scoped ? `${rest[0]}/${rest[1]}` : rest[0]);
+    if (dir === undefined) return { kind: "external" };
+    return { kind: "workspace", rel: [dir, ...rest.slice(scoped ? 2 : 1)].join("/") };
+  }
+
+  /** @param {string} fromRel */
+  function optionsFor(fromRel) {
+    const configDir = nearest(path.posix.dirname(fromRel), dir =>
+      files.has(join(dir, "tsconfig.json")),
+    );
+    const configRel = configDir === undefined ? null : join(configDir, "tsconfig.json");
+    if (!configs.has(configRel)) configs.set(configRel, parseConfig(configRel));
+    return /** @type {CompilerOptions} */ (configs.get(configRel));
+  }
+
+  /** @param {string | null} configRel */
+  function parseConfig(configRel) {
+    /** @type {CompilerOptions} */
+    const options = { allowJs: true, resolveJsonModule: true };
+    if (configRel !== null) {
+      const { config } = ts.readConfigFile(absolute(configRel), host.readFile);
+      const dir = absolute(path.posix.dirname(configRel));
+      const parsed = ts.parseJsonConfigFileContent(
+        config ?? {},
+        host,
+        dir,
+        undefined,
+        absolute(configRel),
+      );
+      Object.assign(options, parsed.options, { allowJs: true, resolveJsonModule: true });
+    }
+    if (options.moduleResolution === undefined) {
+      options.moduleResolution = ts.ModuleResolutionKind.Bundler;
+      options.module = ts.ModuleKind.ESNext;
+    }
+    return options;
+  }
+
+  /**
+   * @param {string} startDir
+   * @param {(dir: string) => boolean} matches
+   */
+  function nearest(startDir, matches) {
+    for (let dir = startDir === "." ? "" : startDir; ; dir = path.posix.dirname(dir)) {
+      if (dir === ".") dir = "";
+      if (matches(dir)) return dir;
+      if (dir === "") return undefined;
+    }
+  }
+}
+
+/**
+ * Globs listed under `packages:` in a pnpm-workspace.yaml.
+ * @param {string} yaml
+ */
+export function workspaceGlobs(yaml) {
+  const globs = [];
+  let inPackages = false;
+  for (const line of yaml.split("\n")) {
+    if (/^packages:\s*$/.test(line)) inPackages = true;
+    else if (inPackages && /^\S/.test(line)) inPackages = false;
+    else if (inPackages) {
+      const match = line.match(/^\s+-\s+["']?([^"'#\s]+)["']?/);
+      if (match) globs.push(match[1]);
+    }
+  }
+  return globs;
+}
+
+/**
+ * `*` matches inside a folder name, `**` across folders.
+ * @param {string} glob
+ */
+export function globToRegExp(glob) {
+  const pattern = glob
+    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*\*/g, "\0")
+    .replace(/\*/g, "[^/]*")
+    .replace(/\0/g, ".*");
+  return new RegExp(`^${pattern}$`);
+}
+
+/**
+ * Folders holding a package.json that the globs include and no `!` glob excludes, sorted.
+ * @param {string[]} globs
+ * @param {Set<string>} dirs
+ * @param {Set<string>} files
+ */
+export function workspacePackageDirs(globs, dirs, files) {
+  const include = globs.filter(glob => !glob.startsWith("!")).map(globToRegExp);
+  const exclude = globs
+    .filter(glob => glob.startsWith("!"))
+    .map(glob => globToRegExp(glob.slice(1)));
+  return [...dirs]
+    .filter(dir => files.has(join(dir, "package.json")))
+    .filter(dir => include.some(r => r.test(dir)) && !exclude.some(r => r.test(dir)))
+    .sort();
+}
