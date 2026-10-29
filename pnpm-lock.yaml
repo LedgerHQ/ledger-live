@@ -18426,6 +18426,9 @@ importers:
       '@ledgerhq/devices':
         specifier: 8.18.1
         version: 8.18.1
+      '@ledgerhq/hw-transport':
+        specifier: 6.36.1
+        version: 6.36.1
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
         version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
