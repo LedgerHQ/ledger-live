@@ -32,9 +32,8 @@ import {
   assertSdkAcceptsIntent,
   proposalOptions,
   submitAgentIntent,
-  warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
-import { createCommandOutput, type CommandOutput } from "../../output";
+import { createCommandOutput, warnIfReviewLinkUnusable, type CommandOutput } from "../../output";
 import { mainnetOf } from "../../shared/accountDescriptor";
 
 const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
