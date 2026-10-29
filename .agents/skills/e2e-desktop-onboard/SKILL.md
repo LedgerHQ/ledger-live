@@ -162,13 +162,9 @@ pnpm i --filter="ledger-live-desktop..." --filter="live-cli..." --filter="ledger
 pnpm build:lld:deps
 ```
 
-### 4c. Build CLI
+This also builds the CLI, a desktop dev dependency.
 
-```bash
-pnpm build:cli
-```
-
-### 4d. Build desktop app for testing
+### 4c. Build desktop app for testing
 
 ```bash
 pnpm desktop build:testing
@@ -176,7 +172,7 @@ pnpm desktop build:testing
 
 This creates a production-like Electron build with `TESTING=1` (uses `.env.testing` Firebase config).
 
-### 4e. Install Playwright browser
+### 4d. Install Playwright browser
 
 ```bash
 pnpm e2e:desktop test:playwright:setup
@@ -189,7 +185,7 @@ If any step fails, report the error and help the user fix it before continuing.
 **Common build failures:**
 
 - OOM: prefix command with `NODE_OPTIONS="--max-old-space-size=10240"`
-- Stale build artifacts: `rm -rf apps/ledger-live-desktop/dist` then retry `pnpm desktop build:testing`
+- Stale build artifacts: `rm -rf apps/ledger-live-desktop/.webpack` then retry `pnpm desktop build:testing`
 - Chromium download fails: check network/proxy, retry `pnpm e2e:desktop test:playwright:setup`
 - Dependency conflicts after branch switch: `pnpm clean` then start from step 4a again
 
@@ -229,7 +225,7 @@ Your E2E environment is fully set up. To validate, paste this command in your Cu
 
 **Common smoke test failures (real setup issues):**
 
-- "Timeout waiting for selector": app didn't load -- check that `pnpm desktop build:testing` ran successfully, check that the built app exists under `apps/ledger-live-desktop/dist/`
+- "Timeout waiting for selector": app didn't load -- check that `pnpm desktop build:testing` ran successfully, check that `apps/ledger-live-desktop/.webpack/main.bundle.js` exists
 - Docker errors / Speculos container failed to start: check Docker is running (`docker info`), check `COINAPPS` path is correct, check image tag matches a pulled image
 - `TypeError: Invalid Version: DS_Store`: `.DS_Store` files in the coin-apps repo are causing semver lookup failures. Fix with: `find $COINAPPS -name ".DS_Store" -type f -delete`
 - Speculos app version mismatch / missing nano app: the `coin-apps` repo may be outdated. Pull latest: `cd $COINAPPS && git pull origin master`

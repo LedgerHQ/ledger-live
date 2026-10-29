@@ -8,7 +8,6 @@ const TopBar = () => {
     inManager,
     isInformationCenterOpen,
     onInformationCenterClose,
-    shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
   } = useTopBarViewModel();
 
@@ -18,7 +17,6 @@ const TopBar = () => {
       shouldShowFirmwareUpdateBanner={!inManager}
       isInformationCenterOpen={isInformationCenterOpen}
       onInformationCenterClose={onInformationCenterClose}
-      shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
       shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
     />
   );

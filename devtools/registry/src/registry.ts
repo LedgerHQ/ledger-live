@@ -10,6 +10,7 @@ export const tools = {
   "cloud-sync": platform.cloudSync,
   "device-onboarding": engagement.deviceOnboarding,
   "account-balance": walletXp.accountBalance,
+  "account-operation": walletXp.accountOperation,
   "account-portfolio": platform.accountPortfolio,
   "account-descriptor": platform.accountDescriptor,
   "account-data": platform.accountData,
@@ -40,6 +41,7 @@ export type DevToolConfig =
   | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps }
   | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps }
   | { id: "account-balance"; config: walletXp.AccountBalanceToolProps }
+  | { id: "account-operation"; config: walletXp.AccountOperationToolProps }
   | { id: "account-portfolio"; config: platform.AccountPortfolioToolProps }
   | { id: "account-descriptor"; config: platform.AccountDescriptorToolProps }
   | { id: "account-data"; config: platform.AccountDataToolProps }

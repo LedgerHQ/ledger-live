@@ -39,7 +39,7 @@
     "build:coin:deps": "nx run-many -t build -p \"@ledgerhq/coin-*\"",
     "build:llc": "nx run-many -t build -p @ledgerhq/live-common",
     "build:lld": "nx run-many -t build -p ledger-live-desktop",
-    "build:lld:deps": "nx run-many -t build -p ledger-live-desktop",
+    "build:lld:deps": "nx run ledger-live-desktop:build-lib-deps",
     "build:llm:android": "nx run-many -t android:apk:local -p live-mobile",
     "build:llm:ios": "nx run-many -t ios:local:ipa -p live-mobile",
     "build:llm:deps": "nx run-many -t build -p live-mobile",

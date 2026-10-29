@@ -29,7 +29,8 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
-      shouldDisplayAggregatedAssets: isEnabled && Boolean(params?.aggregatedAssets),
+      shouldDisplayAggregatedAssets:
+        platform === "desktop" ? true : isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayMyWallet: platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
       shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),

@@ -1,7 +1,6 @@
 import { Step } from "jest-allure2-reporter/api";
 import * as path from "path";
 import { FileUtils } from "@e2e/utils/fileUtils";
-import { urls } from "~/utils/urls";
 import { byId } from "@e2e/helpers/elements/native";
 
 export default class SettingsHelpPage {
@@ -12,7 +11,7 @@ export default class SettingsHelpPage {
 
   @Step("expect Ledger Support URL to be correct")
   async expectLedgerSupportUrlToBeCorrect() {
-    await this.ledgerSupportRow(urls.faq).waitVisible();
+    await this.ledgerSupportRow("https://support.ledger.com/").waitVisible();
   }
 
   @Step("Click on Export Logs Row")

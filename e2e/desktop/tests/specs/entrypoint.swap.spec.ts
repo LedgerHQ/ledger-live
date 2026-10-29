@@ -15,7 +15,6 @@ import { overrideNetworkPayload } from "tests/utils/networkUtils";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
-import { isAggregatedAssetsEnabled } from "tests/utils/featureFlagUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
@@ -61,13 +60,9 @@ test.describe("Swap - entry points", () => {
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
-      if (await isAggregatedAssetsEnabled(app.getPage())) {
-        await app
-          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
-          .swapContainer.expectSwapContainerVisible();
-      } else {
-        await app.swap.goAndWaitForSwapToBeReady(() => app.assetPage.startSwapFlow());
-      }
+      await app
+        .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
+        .swapContainer.expectSwapContainerVisible();
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );
@@ -107,16 +102,9 @@ test.describe("Swap - entry points", () => {
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
       await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      if (await isAggregatedAssetsEnabled(app.getPage())) {
-        await app
-          .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
-          .swapContainer.expectSwapContainerVisible();
-      } else {
-        await app.marketCoin.expectMarketCoinPageToBeVisible(
-          swapEntryPoint.swap.accountToDebit.currency.id,
-        );
-        await app.swap.goAndWaitForSwapToBeReady(() => app.marketCoin.clickSwapButton());
-      }
+      await app
+        .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
+        .swapContainer.expectSwapContainerVisible();
       await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
     },
   );

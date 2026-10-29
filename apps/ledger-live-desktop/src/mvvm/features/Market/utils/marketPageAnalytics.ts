@@ -90,14 +90,11 @@ export function getMarketDiscoverabilityPageAnalytics({
 }
 
 export function useTrackMarketDiscoverabilityPage(
-  enabled: boolean,
   params: MarketDiscoverabilityPageAnalyticsParams,
 ) {
   const { order, range, category } = params;
 
   useEffect(() => {
-    if (!enabled) return;
-
     trackPage(
       {
         category: "Market",
@@ -105,5 +102,5 @@ export function useTrackMarketDiscoverabilityPage(
       },
       { updateRoutes: true, refreshSource: true },
     );
-  }, [enabled, order, range, category]);
+  }, [order, range, category]);
 }

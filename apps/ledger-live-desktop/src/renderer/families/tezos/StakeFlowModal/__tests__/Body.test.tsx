@@ -11,19 +11,19 @@ type StakingInfo = ReturnType<
 >;
 
 const stakingInfoMock = jest.fn<StakingInfo, []>();
-const bakersMock = jest.fn<unknown[], []>(() => [
-  {
-    address: "tz1baker",
-    name: "Baker A",
-    logoURL: "",
-    nominalYield: "5 %",
-    capacityStatus: "normal",
-  },
-]);
+const ledgerBaker = {
+  address: "tz1ledger",
+  name: "Ledger by Kiln",
+  logoURL: "",
+  nominalYield: "5 %",
+  capacityStatus: "normal",
+  stakingEnabled: true,
+};
+const ledgerBakerMock = jest.fn<typeof ledgerBaker | undefined, [unknown]>();
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   __esModule: true,
-  useBakers: () => bakersMock(),
+  useLedgerBaker: (options: unknown) => ledgerBakerMock(options),
   useTezosStakingInfo: () => stakingInfoMock(),
   useDelegation: () => null,
   useBaker: () => undefined,
@@ -35,7 +35,9 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
 
 jest.mock("../steps/StepValidator", () => ({
   __esModule: true,
-  default: () => <div data-testid="step-validator">validator</div>,
+  default: (props: { transaction?: { recipient?: string } }) => (
+    <div data-testid="step-validator">{props.transaction?.recipient}</div>
+  ),
 }));
 
 const makeOp = (accountId: string | undefined) => ({
@@ -137,6 +139,7 @@ const defaultStakingInfo: StakingInfo = {
 
 beforeEach(() => {
   stakingInfoMock.mockReturnValue(defaultStakingInfo);
+  ledgerBakerMock.mockReset().mockReturnValue(ledgerBaker);
 });
 
 const ControlledBody = ({
@@ -172,6 +175,36 @@ describe("StakeFlowModal/Body", () => {
       );
     });
     expect(screen.getByTestId("step-validator")).toBeInTheDocument();
+  });
+
+  it("preselects Ledger's baker among the bakers that accept staking", async () => {
+    await act(async () => {
+      render(
+        <Body
+          stepId="validator"
+          onClose={jest.fn()}
+          onChangeStepId={jest.fn()}
+          params={{ account: makeAccount(), skipDelegation: false }}
+        />,
+      );
+    });
+    expect(ledgerBakerMock).toHaveBeenCalledWith({ forStaking: true });
+    expect(screen.getByTestId("step-validator")).toHaveTextContent(ledgerBaker.address);
+  });
+
+  it("preselects no baker when Ledger's baker is not among those that accept staking", async () => {
+    ledgerBakerMock.mockReturnValue(undefined);
+    await act(async () => {
+      render(
+        <Body
+          stepId="validator"
+          onClose={jest.fn()}
+          onChangeStepId={jest.fn()}
+          params={{ account: makeAccount(), skipDelegation: false }}
+        />,
+      );
+    });
+    expect(screen.getByTestId("step-validator")).toBeEmptyDOMElement();
   });
 
   it("starts on the amount step when skipDelegation is true", async () => {

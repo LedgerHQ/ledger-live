@@ -15,12 +15,11 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import {
   useDelegation,
   useBaker,
-  useBakers,
+  useLedgerBaker,
   useStakingPositions,
   useTezosStakingInfo,
   isUnstakingPosition,
 } from "@ledgerhq/live-common/families/tezos/react";
-import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Icons } from "@ledgerhq/native-ui";
@@ -112,7 +111,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useAccountScreen(route);
   const { t } = useTranslation();
-  const [defaultBaker] = useBakers(whitelist);
+  const defaultBaker = useLedgerBaker({ forStaking: !!route.params?.stakeAfter });
 
   invariant(account, "account must be defined");
 
@@ -142,7 +141,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
       mode: (route.params?.mode ?? "delegate") as TezosOperationMode,
     };
 
-    // make sure that in delegate mode, a transaction recipient is set (random pick)
     if (patch.mode === "delegate" && !transaction.recipient && defaultBaker) {
       patch.recipient = defaultBaker.address;
     }
@@ -193,6 +191,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const notEnoughBalance = status.errors.amount?.name === "NotEnoughBalanceToDelegate";
   const isUndelagating = route.params?.mode === "undelegate";
   const hasNotEnoughBalanceWhenUndelegating = notEnoughBalance && isUndelagating;
+  const validatorMissing = transaction.mode === "delegate" && !transaction.recipient;
 
   // Staking with the newly selected validator is blocked by the protocol while an unfinalizable
   // unstake to a different validator is still pending; warn before the user commits to the change.
@@ -338,6 +337,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           disabled={
             bridgePending ||
             !!bridgeError ||
+            validatorMissing ||
             hasNotEnoughBalanceWhenUndelegating ||
             status.errors.amount !== undefined ||
             status.errors.sender !== undefined

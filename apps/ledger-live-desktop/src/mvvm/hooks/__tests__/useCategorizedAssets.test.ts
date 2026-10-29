@@ -45,12 +45,14 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     expect(result.current.categorizedAssets.stablecoins).toHaveLength(0);
   });
 
-  it("should include currency info in categorized items", () => {
+  it("should include currency info in categorized items", async () => {
     const { result } = renderHook(() => useCategorizedAssetsFromPortfolio(), {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT] },
     });
 
-    expect(result.current.categorizedAssets.cryptos[0].currency.id).toBe("bitcoin");
+    await waitFor(() => {
+      expect(result.current.categorizedAssets.cryptos[0]?.currency.id).toBe("bitcoin");
+    });
   });
 
   it.each([

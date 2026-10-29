@@ -8,7 +8,7 @@
     "lint:fix": "oxfmt . && oxlint . --fix",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
-    "typecheck": "node ./scripts/typecheck.js",
+    "typecheck": "tsc --noEmit --project tsconfig.json --customConditions node",
     "test:detox": "pnpm detox test",
     "test:ios": "pnpm test:detox --configuration ios.sim.release",
     "test:android": "pnpm test:detox --configuration android.emu.release",

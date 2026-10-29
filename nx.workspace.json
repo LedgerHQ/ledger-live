@@ -331,7 +331,8 @@
   },
   "pluginsConfig": {
     "@nx/js": {
-      "projectsAffectedByDependencyUpdates": "auto"
+      "projectsAffectedByDependencyUpdates": "auto",
+      "analyzeSourceFiles": false
     }
   },
   "plugins": [

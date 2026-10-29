@@ -241,8 +241,8 @@ catalog:
   playwright: 1.63.0
   allure-playwright: 3.13.0
   allure-js-commons: 3.13.0
-  nx: 22.7.12
-  "@nx/devkit": 22.7.12
+  nx: 24.0.2
+  "@nx/devkit": 24.0.2
   detox: 20.51.3
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
@@ -252,13 +252,12 @@ catalog:
   "@ledgerhq/coin-hypercore": 4.0.2
   "@ledgerhq/coin-module-framework": 11.0.0
   "@ledgerhq/coin-stellar": 12.1.0
-  "@ledgerhq/coin-tezos": 13.2.0
+  "@ledgerhq/coin-tezos": 14.0.0
   "@ledgerhq/coin-xrp": 12.4.0
 
 minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
-  - "bitcoinjs-lib@7.0.5"
 
 autoInstallPeers: false
 enablePrePostScripts: true
