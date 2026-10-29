@@ -8,6 +8,13 @@ import { NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
 import { MyLedgerSection } from "../views/MyLedgerSection";
 
+// Jest has no USB transport: this is the only way to show a plugged device.
+const mockHidDevices = jest.fn(() => [] as unknown[]);
+jest.mock("@ledgerhq/live-dmk-mobile", () => ({
+  ...jest.requireActual("@ledgerhq/live-dmk-mobile"),
+  useHidDevicesDiscovery: () => ({ hidDevices: mockHidDevices(), error: null }),
+}));
+
 const Stack = createNativeStackNavigator();
 
 const knownDevice = { id: "stax-id", name: "Stax 4CE9", modelId: DeviceModelId.stax };
@@ -49,6 +56,7 @@ async function expectGetStartedFrom(source: string) {
 describe("MyLedgerSection add device", () => {
   afterEach(() => {
     jest.mocked(trackPage).mockClear();
+    mockHidDevices.mockReturnValue([]);
   });
 
   it("should open the add device choice when unified entry points is off", async () => {
@@ -70,6 +78,23 @@ describe("MyLedgerSection add device", () => {
 
   it("should open Get Started when a device is already there", async () => {
     const { user } = renderSection({ unifiedEntryPoints: true, withDevice: true });
+
+    await user.press(screen.getByText(/Add new|Add with Bluetooth/));
+
+    await expectGetStartedFrom("my_wallet_add");
+  });
+
+  it("should open Get Started with my_wallet_add when only a USB device is plugged", async () => {
+    mockHidDevices.mockReturnValue([
+      {
+        deviceId: "usb|stax",
+        deviceName: "Ledger Stax",
+        wired: true,
+        modelId: DeviceModelId.stax,
+        discoveredDevice: {},
+      },
+    ]);
+    const { user } = renderSection({ unifiedEntryPoints: true, withDevice: false });
 
     await user.press(screen.getByText(/Add new|Add with Bluetooth/));
 

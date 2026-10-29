@@ -96,8 +96,8 @@ type Props = {
    *    - "Connect an existing Ledger" switches to the "pairing state" where all scanned BLE devices are shown.
    */
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
-  /** Replaces the add device drawer and pairing. */
-  onAddDevice?: () => void;
+  /** Replaces the add device drawer and pairing. `hasDevices`: the displayed list is not empty. */
+  onAddDevice?: (hasDevices: boolean) => void;
   withMyLedgerTracking?: boolean;
   /**
    * If provided, this component will only display devices of the given model ID.
@@ -459,11 +459,18 @@ export default function SelectDevice({
     setIsPairingDevices(true);
   }, [dispatch]);
 
+  const hasDevices = deviceList.length > 0;
   const onAddDevicePress = useCallback(() => {
-    if (onAddDevice) onAddDevice();
+    if (onAddDevice) onAddDevice(hasDevices);
     else if (isChoiceDrawerDisplayedOnAddDevice) onAddNewPress();
     else openBlePairingFlow();
-  }, [onAddDevice, isChoiceDrawerDisplayedOnAddDevice, onAddNewPress, openBlePairingFlow]);
+  }, [
+    onAddDevice,
+    hasDevices,
+    isChoiceDrawerDisplayedOnAddDevice,
+    onAddNewPress,
+    openBlePairingFlow,
+  ]);
 
   // Makes sure that on go back/unmount the visibility of the bottom tab bar is reset
   useEffect(() => {
