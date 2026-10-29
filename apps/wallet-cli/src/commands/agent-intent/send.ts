@@ -202,12 +202,15 @@ async function resolveNetworkAsset(
   }
   const address =
     token ??
-    (await resolveTokenByTicker(
-      network,
-      ticker,
-      "account" in senderInput ? senderInput.account : undefined,
-      out,
-    ));
+    (
+      await resolveTokenByTicker(
+        network,
+        ticker,
+        "account" in senderInput ? senderInput.account : undefined,
+        out,
+        "token",
+      )
+    ).address;
   const fromTokenFlag = token !== undefined;
   if (network === "ethereum") {
     return { network, asset: await resolveErc20(ticker, address, fromTokenFlag) };

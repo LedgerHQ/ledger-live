@@ -70,14 +70,19 @@ export function sameTicker(a: string, b: string): boolean {
   return a.toUpperCase() === b.toUpperCase();
 }
 
-export type TokenCandidate = { ticker: string; name: string; address: string };
+export type TokenCandidate = { id: string; ticker: string; name: string; address: string };
 
 const TOKEN_STANDARD = { ethereum: "erc20", solana: "spl" } as const;
 export const MAX_CANDIDATES = 20;
 const CAL_TIMEOUT_MS = 10_000;
 
 const CalTokensSchema = z.array(
-  z.object({ name: z.string(), ticker: z.string(), contract_address: z.string() }),
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    ticker: z.string(),
+    contract_address: z.string(),
+  }),
 );
 
 async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: string) {
@@ -86,7 +91,7 @@ async function fetchCalTokens(network: keyof typeof TOKEN_STANDARD, ticker: stri
   url.searchParams.set("ticker", ticker);
   url.searchParams.set("standard", TOKEN_STANDARD[network]);
   url.searchParams.set("delisted", "false");
-  url.searchParams.set("output", "name,ticker,contract_address");
+  url.searchParams.set("output", "id,name,ticker,contract_address");
   url.searchParams.set("limit", String(MAX_CANDIDATES));
   const response = await fetch(url, {
     headers: {
@@ -119,6 +124,7 @@ export async function findTokensByTicker(
   for (const token of tokens) {
     if (!sameTicker(token.ticker, ticker)) continue;
     candidates.set(token.contract_address, {
+      id: token.id,
       ticker: token.ticker,
       name: token.name,
       address: token.contract_address,
@@ -139,7 +145,7 @@ export async function findAccountTokens(account: AccountDescriptorV1): Promise<T
   );
   return tokens.flatMap(token =>
     token && !token.delisted
-      ? [{ ticker: token.ticker, name: token.name, address: token.contractAddress }]
+      ? [{ id: token.id, ticker: token.ticker, name: token.name, address: token.contractAddress }]
       : [],
   );
 }

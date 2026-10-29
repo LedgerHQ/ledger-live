@@ -85,21 +85,48 @@ let accountTokens: Record<string, TokenCandidate[]>;
 let accountTokensError: Error | undefined;
 let accountLookups: number;
 
-const usdc = { ticker: "USDC", name: "USD Coin", address: USDC.toLowerCase() };
-const usdcMint = { ticker: "USDC", name: "USD Coin", address: USDC_MINT };
-const pyusdMint = { ticker: "PYUSD", name: "PayPal USD", address: PYUSD_MINT };
+const usdc = {
+  id: "ethereum/erc20/usd__coin",
+  ticker: "USDC",
+  name: "USD Coin",
+  address: USDC.toLowerCase(),
+};
+const usdcMint = {
+  id: `solana/spl/${USDC_MINT.toLowerCase()}`,
+  ticker: "USDC",
+  name: "USD Coin",
+  address: USDC_MINT,
+};
+const pyusdMint = {
+  id: `solana/spl/${PYUSD_MINT.toLowerCase()}`,
+  ticker: "PYUSD",
+  name: "PayPal USD",
+  address: PYUSD_MINT,
+};
 const token2022UsdcMint = {
+  id: `solana/spl/${TOKEN_2022_USDC_MINT.toLowerCase()}`,
   ticker: "USDC",
   name: "USD Coin (Token-2022)",
   address: TOKEN_2022_USDC_MINT,
 };
 const token2022UsdcCopyMint = {
+  id: `solana/spl/${TOKEN_2022_USDC_COPY_MINT.toLowerCase()}`,
   ticker: "USDC",
   name: "USD Coin copy (Token-2022)",
   address: TOKEN_2022_USDC_COPY_MINT,
 };
-const pepe = { ticker: "PEPE", name: "Pepe", address: PEPE.toLowerCase() };
-const pepeCopy = { ticker: "PEPE", name: "Pepe_0xbe042e", address: PEPE_COPY.toLowerCase() };
+const pepe = {
+  id: "ethereum/erc20/pepe",
+  ticker: "PEPE",
+  name: "Pepe",
+  address: PEPE.toLowerCase(),
+};
+const pepeCopy = {
+  id: "ethereum/erc20/pepe_0xbe042e",
+  ticker: "PEPE",
+  name: "Pepe_0xbe042e",
+  address: PEPE_COPY.toLowerCase(),
+};
 
 beforeAll(() =>
   activateAgentIntentMocks({
