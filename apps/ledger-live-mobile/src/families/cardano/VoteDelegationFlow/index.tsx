@@ -15,6 +15,7 @@ import SelectDRep from "./SelectDRep";
 import VoteDelegationValidationError from "./04-ValidationError";
 import VoteDelegationValidationSuccess from "./04-ValidationSuccess";
 import { CardanoVoteDelegationFlowParamList } from "./types";
+import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 
 const totalSteps = "3";
 
@@ -23,6 +24,7 @@ const Stack = createNativeStackNavigator<CardanoVoteDelegationFlowParamList>();
 function VoteDelegationFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { notifyFlowCompleted } = useNotificationsPrompt();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
@@ -114,6 +116,11 @@ function VoteDelegationFlow() {
           headerRight: undefined,
           headerTitle: "",
           gestureEnabled: false,
+        }}
+        listeners={{
+          beforeRemove: () => {
+            notifyFlowCompleted("stake");
+          },
         }}
       />
     </Stack.Navigator>
