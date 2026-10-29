@@ -18,6 +18,7 @@
     },
     "build-lib-deps": {
       "executor": "nx:noop",
+      "cache": true,
       "dependsOn": [
         "^build"
       ]
