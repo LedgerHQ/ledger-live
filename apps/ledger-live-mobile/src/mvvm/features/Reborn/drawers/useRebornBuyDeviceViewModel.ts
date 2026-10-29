@@ -1,7 +1,10 @@
 import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import { useRebornBuyDeviceDrawerController } from "../hooks/useRebornBuyDeviceDrawerController";
+import {
+  takeRebornBuyDeviceNext,
+  useRebornBuyDeviceDrawerController,
+} from "../hooks/useRebornBuyDeviceDrawerController";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -50,6 +53,8 @@ function useRebornBuyDeviceViewModel() {
 
   const setupDevice = useCallback(() => {
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
+    // Runs before onboarding opens, so a flow waiting for a device sits under it.
+    takeRebornBuyDeviceNext()?.onConnect();
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: unifiedEntryPoints
