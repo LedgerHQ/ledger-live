@@ -512,7 +512,7 @@ test.describe("Delegate from market", () => {
     `[${currency.testLabel}] - Delegate from market entry point`,
     {
       tag: buildTags({ currencyId: currency.id }),
-      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771" }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771, B2CQA-1552" }),
     },
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
@@ -528,6 +528,9 @@ test.describe("Delegate from market", () => {
 
       await app.delegate.verifyFirstProviderName(delegation.provider);
       await app.delegate.continue();
+
+      await app.delegate.toggleMaxAmount();
+      await app.delegate.verifyMaxAmountMatchesSpendable();
     },
   );
 });
