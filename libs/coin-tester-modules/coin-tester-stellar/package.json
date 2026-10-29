@@ -66,7 +66,7 @@
     "@noble/hashes": "catalog:",
     "@stellar/stellar-sdk": "^14.0.0",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },

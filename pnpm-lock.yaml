@@ -919,7 +919,7 @@ importers:
         specifier: 'catalog:'
         version: typescript@7.0.2
       chalk:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       eslint:
         specifier: 8.57.0
@@ -1852,7 +1852,7 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       chalk:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       cross-env:
         specifier: 7.0.3
@@ -14258,7 +14258,7 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       lodash:
         specifier: 4.18.1
@@ -14319,7 +14319,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1
@@ -14492,7 +14492,7 @@ importers:
         specifier: 'catalog:'
         version: 3.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -14556,7 +14556,7 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(debug@4.4.3)
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -14638,7 +14638,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -14869,7 +14869,7 @@ importers:
         specifier: 'catalog:'
         version: 3.1.2
       chalk:
-        specifier: ^4
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1
@@ -15134,7 +15134,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       msw:
         specifier: 'catalog:'
@@ -15201,7 +15201,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -15280,7 +15280,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -15356,7 +15356,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -15429,7 +15429,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       tronweb:
         specifier: 6.5.1
@@ -15496,7 +15496,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1
@@ -15557,7 +15557,7 @@ importers:
         specifier: 9.1.2
         version: 9.1.2
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0
@@ -15654,7 +15654,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.1
       chalk:
-        specifier: ^4.1.2
+        specifier: 'catalog:'
         version: 4.1.2
       docker-compose:
         specifier: ^1.1.0

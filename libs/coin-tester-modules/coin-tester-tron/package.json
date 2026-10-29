@@ -66,7 +66,7 @@
     "@noble/hashes": "catalog:",
     "bignumber.js": "^9",
     "bs58": "catalog:",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "tronweb": "6.5.1"
   },
   "devDependencies": {

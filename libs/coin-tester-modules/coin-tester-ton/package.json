@@ -48,7 +48,7 @@
     "@ton/crypto": "^3.3.0",
     "@ton/ton": "^15.4.0",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "rxjs": "catalog:"
   },

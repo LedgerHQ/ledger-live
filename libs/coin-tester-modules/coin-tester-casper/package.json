@@ -65,7 +65,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "casper-js-sdk": "5.1.1",
-    "chalk": "^4.1.2",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "msw": "catalog:",
     "rxjs": "catalog:"
