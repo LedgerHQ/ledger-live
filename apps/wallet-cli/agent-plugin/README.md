@@ -1,4 +1,4 @@
-<!-- Source of the README in the exported plugin (apps/wallet-cli/scripts/export-agent-plugin.mjs): its links resolve in the export. -->
+<!-- Install guide kept in the monorepo: apps/wallet-cli/scripts/export-agent-plugin.mjs does not export it, since LedgerHQ/agent-skills owns its README. Mirror changes into that README by hand; links are relative to the agent-skills root. -->
 
 # Ledger Agent Skills
 
@@ -42,16 +42,15 @@ Grok Bot reads the same files as Cursor. How to load them into Grok Bot is not d
 
 ```bash
 claude plugin marketplace add LedgerHQ/agent-skills
-claude plugin install agent-skills@agent-skills
+claude plugin install agent-skills@ledger
 ```
 
 ### Codex
 
 ```bash
 codex plugin marketplace add LedgerHQ/agent-skills
+codex plugin add agent-skills@ledger
 ```
-
-Then install the `agent-skills` plugin from the `agent-skills` marketplace. The install command has not been checked against a Codex CLI, so look it up with `codex plugin --help`.
 
 ### Other agents
 

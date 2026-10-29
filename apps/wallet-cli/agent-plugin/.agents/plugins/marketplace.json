@@ -1,5 +1,5 @@
 {
-  "name": "agent-skills",
+  "name": "ledger",
   "interface": {
     "displayName": "Ledger Agent Skills"
   },
