@@ -9,6 +9,7 @@ import type { AccountUUID } from "@domain/entity-account-descriptor";
 import { getEnv } from "@shared/env";
 import { FullSyncAccountNotFoundError } from "./errors";
 import { toAccountBalances } from "./balance";
+import { toAccountOperations } from "./operations";
 import { isFullSyncSupported } from "./supports";
 import { syncLegacyAccount, type SyncLegacyAccountOptions } from "./syncLegacyAccount";
 
@@ -52,9 +53,10 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
     id: AccountDataSourceIdSchema.parse("full-sync"),
     concurrency: getEnv("SYNC_MAX_CONCURRENT"),
     supports: isFullSyncSupported,
-    // One line per kind, mapping the synced account with its own file (LIVE-39359).
+    // One line per kind, mapping the synced account with its own file.
     read: {
       balance: target => sync(target).then(toAccountBalances),
+      operations: target => sync(target).then(toAccountOperations),
     },
     sync,
   };
