@@ -8,6 +8,8 @@ import {
   SUPPORTED_AGENT_SOURCES,
   AGENT_ENROLLMENT_CHANNEL_VERSION,
   AGENT_INTENT_FRONTEND_URLS,
+  AGENT_NAME_MAX_LENGTH,
+  AGENT_DESCRIPTION_MAX_LENGTH,
 } from "@ledgerhq/agent-intent-sdk";
 import {
   Session,
@@ -210,6 +212,13 @@ async function saveSecretKey(
   }
 }
 
+function reviewerText(maxLength: number) {
+  return z
+    .string()
+    .max(maxLength)
+    .refine(value => value.trim().length > 0, "Must not be blank.");
+}
+
 // Verified against agent-intent-frontend's argocd/{stg,prd}/values.yaml BFF_BASE_URL (2026-09-22).
 // The SDK has no default of its own for bffBaseUrl, so this stays local.
 const DEFAULT_BFF_BASE_URLS = {
@@ -226,12 +235,16 @@ export default defineCommand({
     profile: option(z.string().regex(PROFILE_ID_RE, PROFILE_ID_MESSAGE), {
       description: "Local profile id used to store and reference this agent's credentials.",
     }),
-    name: option(z.string().min(1).max(80), {
-      description: "Agent display name shown to the human reviewer, 1-80 characters.",
+    name: option(reviewerText(AGENT_NAME_MAX_LENGTH), {
+      description: `Agent display name shown to the human reviewer, 1-${AGENT_NAME_MAX_LENGTH} characters.`,
     }),
     description: option(
-      z.string().min(1).max(280).default("Remote agent that proposes intents for review."),
-      { description: "Agent description shown to the human reviewer, 1-280 characters." },
+      reviewerText(AGENT_DESCRIPTION_MAX_LENGTH).default(
+        "Remote agent that proposes intents for review.",
+      ),
+      {
+        description: `Agent description shown to the human reviewer, 1-${AGENT_DESCRIPTION_MAX_LENGTH} characters.`,
+      },
     ),
     source: option(z.enum(SUPPORTED_AGENT_SOURCES).default("other"), {
       description:
