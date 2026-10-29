@@ -8,6 +8,8 @@ import {
   type RouteProp,
 } from "@react-navigation/native";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { useCompleteSeededOnboarding } from "LLM/features/DeviceOnboarding/hooks/useCompleteSeededOnboarding";
+import { closeOnboarding } from "LLM/features/DeviceOnboarding/utils/exitActions";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { NavigatorName, ScreenName } from "~/const";
@@ -15,8 +17,6 @@ import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
-import { closeOnboarding } from "../../utils/exitActions";
 import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
 
 const LEDGER_SYNC_LEARN_MORE_URL =
