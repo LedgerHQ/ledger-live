@@ -43,7 +43,7 @@ export function pairUp(samples, metric) {
   const byKey = new Map();
   for (const s of samples) {
     // Traced launches carry the tracer's load.
-    if (!s.ok || s.warmup || s.traced) continue;
+    if (!s.ok || s.warmup || s.traced || s.recorded) continue;
     const value = metric(s);
     if (!Number.isFinite(value)) continue;
     const key = `${s.platform}|${s.scenario}|${s.phase}|${s.round}`;
@@ -178,7 +178,7 @@ export function summarise(samples, { preset, thresholdMs }) {
     const offset = side =>
       median(
         group
-          .filter(s => s.ok && !s.warmup && !s.traced && s.side === side)
+          .filter(s => s.ok && !s.warmup && !s.traced && !s.recorded && s.side === side)
           .map(jsStartOffset)
           .filter(Number.isFinite),
       );
@@ -254,7 +254,15 @@ const LOAD_MEASURES = [
 export function loadSummary(samples) {
   const groups = new Map();
   for (const s of samples) {
-    if (!s.ok || s.warmup || s.traced || !s.load || !Number.isFinite(s.appStartupTime)) continue;
+    if (
+      !s.ok ||
+      s.warmup ||
+      s.traced ||
+      s.recorded ||
+      !s.load ||
+      !Number.isFinite(s.appStartupTime)
+    )
+      continue;
     const key = `${s.platform}|${s.scenario}`;
     if (!groups.has(key)) groups.set(key, []);
     groups.get(key).push(s);

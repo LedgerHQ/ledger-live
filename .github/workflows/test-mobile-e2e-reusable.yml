@@ -96,6 +96,11 @@ on:
         required: false
         type: string
         default: "0"
+      record_launches:
+        description: "Android: screen-record N extra launches per side and phase, after the measured ones (left out of the verdict)"
+        required: false
+        type: string
+        default: "0"
       emulator_cores:
         description: "Android: CPU cores per emulator (two share the 8-CPU runner, the idle one paused during each launch; the E2E AVD has 2)"
         required: false
@@ -758,6 +763,7 @@ jobs:
           ALL_EVENTS: ${{ inputs.read_all_events && '--all-events' || '' }}
           TRACE_LAUNCHES: ${{ inputs.trace_launches || '0' }}
           DUMP_HOME: ${{ inputs.dump_home_screen || '0' }}
+          RECORD_LAUNCHES: ${{ inputs.record_launches || '0' }}
           BUILD_ENV_A: ${{ needs.plan.outputs.env_a }}
           BUILD_ENV_B: ${{ needs.plan.outputs.env_b }}
         run: |
@@ -777,6 +783,7 @@ jobs:
             --guest-capture "$GUEST_CAPTURE" \
             --trace-launches "$TRACE_LAUNCHES" \
             --dump-home "$DUMP_HOME" \
+            --record-launches "$RECORD_LAUNCHES" \
             --build-env-a "$BUILD_ENV_A" --build-env-b "$BUILD_ENV_B" \
             --out-dir "$RESULTS_DIR/android"
 
