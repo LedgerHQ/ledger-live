@@ -2,7 +2,13 @@ import BigNumber from "bignumber.js";
 import { Transaction as TyphonTransaction, types as TyphonTypes } from "@stricahq/typhonjs";
 
 import { CardanoAccount, CardanoResources, Transaction } from "../types";
-import { getAccountStakeCredential, getTyphonInputFromUtxo, selectMinimumUtxos } from "../logic";
+import {
+  calculateMinAdaForTokens,
+  getAccountStakeCredential,
+  getTyphonInputFromUtxo,
+  mergeTokens,
+  selectMinimumUtxos,
+} from "../logic";
 
 function getDRepFromHex(dRepHex: string): TyphonTypes.DRep {
   const header = dRepHex.slice(0, 2);
@@ -59,7 +65,8 @@ export const buildVoteDelegationTransaction = async ({
    * stake registration is required before delegating to a DRep
    * if the account is not already registered, add a stake registration certificate
    */
-  if (!cardanoResources.delegation || !cardanoResources.delegation.status) {
+  const needsStakeRegistration = !cardanoResources.delegation?.status;
+  if (needsStakeRegistration) {
     const stakeRegistrationCert: TyphonTypes.StakeKeyRegistrationCertificate = {
       type: TyphonTypes.CertificateType.STAKE_KEY_REGISTRATION,
       cert: {
@@ -104,8 +111,17 @@ export const buildVoteDelegationTransaction = async ({
   }
   typhonTx.addCertificate(voteDelegationCert);
 
-  // select utxos and set transaction inputs
-  const selectedUtxos = selectMinimumUtxos(cardanoResources.utxos, new BigNumber(0));
+  // The selected inputs must also fund the registration deposit and the min-ADA that
+  // token change outputs lock, on top of the fee buffer that selectMinimumUtxos adds.
+  const minAdaForTokens = calculateMinAdaForTokens(
+    changeAddress.getBech32(),
+    mergeTokens(cardanoResources.utxos.flatMap(u => u.tokens)),
+    protocolParams.utxoCostPerByte,
+  );
+  const requiredAmount = needsStakeRegistration
+    ? minAdaForTokens.plus(protocolParams.stakeKeyDeposit)
+    : minAdaForTokens;
+  const selectedUtxos = selectMinimumUtxos(cardanoResources.utxos, requiredAmount);
   const transactionInputs = selectedUtxos.map(getTyphonInputFromUtxo);
 
   return typhonTx.prepareTransaction({

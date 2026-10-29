@@ -10,7 +10,7 @@ import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.webp";
 import EarnDark from "~/images/illustration/Dark/_003.webp";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoVoteDelegationFlowParamList } from "./types";
 

@@ -30,7 +30,7 @@ import LText from "~/components/LText";
 import DRepImage from "./DRepImage";
 import { ScreenName } from "~/const";
 import ArrowRight from "~/icons/ArrowRight";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoVoteDelegationFlowParamList } from "./types";

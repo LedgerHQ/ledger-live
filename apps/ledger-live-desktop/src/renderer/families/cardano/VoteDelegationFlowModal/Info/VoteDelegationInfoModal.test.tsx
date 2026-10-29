@@ -19,7 +19,10 @@ jest.mock("~/renderer/components/Modal", () => ({
   ),
 }));
 
-jest.mock("~/renderer/analytics/TrackPage", () => () => null);
+jest.mock("@shared/analytics-react", () => ({
+  ...jest.requireActual("@shared/analytics-react"),
+  TrackScreen: () => null,
+}));
 
 describe("VoteDelegationInfoModal", () => {
   const mockOnNext = jest.fn();

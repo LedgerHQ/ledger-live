@@ -600,6 +600,28 @@ describe("mapTxToAccountOperation", () => {
 
         expect(op.type).not.toBe("DELEGATE");
       });
+
+      it("should map own vote delegation as DELEGATE_VOTE when tx has a foreign de-registration", async () => {
+        const op = mapTxToAccountOperation(
+          {
+            ...mockTxResult,
+            certificate: {
+              ...mockTxResult.certificate,
+              stakeDeRegistrations: [{ index: 0, stakeCredential: { key: "9999", type: 0 } }],
+              voteDelegations: [{ index: 1, stakeHex: stakeCredHex, dRepHex: "mockDrepHex" }],
+            },
+          },
+          "accountId",
+          accountCredentialMap,
+          { key: stakeCredKey } as any,
+          [],
+          accountShapeInfo,
+          { stakeKeyDeposit: "1" } as any,
+        );
+
+        expect(op.type).toBe("DELEGATE_VOTE");
+        expect(op.extra.refund).toBeUndefined();
+      });
     });
   });
 });

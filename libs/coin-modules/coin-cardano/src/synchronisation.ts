@@ -271,10 +271,7 @@ export function mapTxToAccountOperation(
   let mainOperationType: OperationType;
   if (findOwnedStakeDelegation(tx, stakeCredential.key)) {
     mainOperationType = "DELEGATE";
-  } else if (
-    tx.certificate.stakeDeRegistrations.length ||
-    tx.certificate.stakeDeRegsConway?.length
-  ) {
+  } else if (refund) {
     mainOperationType = "UNDELEGATE";
   } else if (vote) {
     mainOperationType = "DELEGATE_VOTE";

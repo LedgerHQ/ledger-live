@@ -4,7 +4,7 @@ import { useTranslation, Trans } from "~/context/Locale";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import { TrackScreen } from "~/analytics";
+import { TrackScreen } from "@shared/analytics-react";
 import KeyboardView from "~/components/KeyboardView";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SearchInput, Box, InfiniteLoader, Flex, Text } from "@ledgerhq/native-ui";

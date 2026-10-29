@@ -3,7 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { Transaction as CardanoTransaction } from "@ledgerhq/live-common/families/cardano/types";
@@ -45,7 +45,7 @@ export default function StepDRep({
 
   return (
     <Box flow={1}>
-      <TrackPage category="dRep Flow" name="Step dRep" />
+      <TrackScreen category="dRep Flow" name="Step dRep" />
       {error && <ErrorBanner error={error} />}
       <DRepContainer
         account={account}

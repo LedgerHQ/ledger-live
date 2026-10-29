@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Check from "~/renderer/icons/CheckFull";
-import TrackPage from "~/renderer/analytics/TrackPage";
+import { TrackScreen } from "@shared/analytics-react";
 import { closeModal } from "~/renderer/actions/modals";
 import Votes from "~/renderer/images/votes.svg";
 import Text from "~/renderer/components/Text";
@@ -50,7 +50,7 @@ export default function VoteDelegationInfoModal<Name extends keyof ModalData>({
           onClose={onClose}
           render={() => (
             <Box flow={4} mx={4}>
-              <TrackPage
+              <TrackScreen
                 category="Vote Delegation Flow"
                 name="Step Starter"
                 type="modal"

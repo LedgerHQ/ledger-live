@@ -115,4 +115,22 @@ describe("getVoteDelegateTransactionStatus", () => {
     const result = await getVoteDelegateTransactionStatus(poorAccount, mockTransaction);
     expect(result.errors.amount).toBeInstanceOf(CardanoStakeKeyDepositError);
   });
+
+  it("should report only fees as totalSpent when the stake key is registered", async () => {
+    const result = await getVoteDelegateTransactionStatus(mockAccount, mockTransaction);
+    expect(result.totalSpent.toString()).toBe("1");
+  });
+
+  it("should include the registration deposit in totalSpent when the stake key is not registered", async () => {
+    const unregisteredAccount = {
+      ...mockAccount,
+      cardanoResources: {
+        ...mockAccount.cardanoResources,
+        delegation: { status: false },
+      },
+    } as unknown as CardanoAccount;
+
+    const result = await getVoteDelegateTransactionStatus(unregisteredAccount, mockTransaction);
+    expect(result.totalSpent.toString()).toBe("2000001");
+  });
 });

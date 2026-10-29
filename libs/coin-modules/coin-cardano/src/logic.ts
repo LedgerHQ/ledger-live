@@ -411,14 +411,20 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
 }
 
 /**
- * Encodes a DRep id as bech32 using the 28-byte credential hash.
- * A leading header byte (29-byte input) is dropped so the result matches the Ledger device.
+ * Encodes a DRep id as CIP-105 bech32 over the 28-byte credential hash, as the Ledger device
+ * displays it. A CIP-129 header byte (29-byte input) is dropped; header 0x23 marks a script hash
+ * and selects the `drep_script` prefix. Headerless input is treated as a key hash.
  */
 export function getBech32DRepId(dRepHex: string, networkName: string): string {
   const networkParams = getNetworkParameters(networkName);
-  const hash = dRepHex.length === 58 ? dRepHex.slice(2) : dRepHex;
+  const hasHeader = dRepHex.length === 58;
+  const hash = hasHeader ? dRepHex.slice(2) : dRepHex;
+  const prefix =
+    hasHeader && dRepHex.startsWith("23")
+      ? networkParams.dRepScriptIdPrefix
+      : networkParams.dRepIdPrefix;
   const words = bech32.toWords(Buffer.from(hash, "hex"));
-  return bech32.encode(networkParams.dRepIdPrefix, words, 1000);
+  return bech32.encode(prefix, words, 1000);
 }
 
 export function isValidNumString(value: unknown): boolean {

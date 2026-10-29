@@ -1,20 +1,15 @@
 import { fetchDRepList } from "./getDRepList";
 import network from "@ledgerhq/live-network/network";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
-import { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
+import type { CardanoCoinConfig } from "../config";
 import { APIGetDRepList } from "./api-types";
 
 jest.mock("@ledgerhq/live-network/network");
 
 const mockNetwork = network as jest.Mock;
 
-const mockMainnetCurrency = {
-  id: "cardano",
-} as CryptoCurrency;
-
-const mockTestnetCurrency = {
-  id: "cardano_testnet",
-} as CryptoCurrency;
+const mainnetConfig = { testnet: false } as CardanoCoinConfig;
+const testnetConfig = { testnet: true } as CardanoCoinConfig;
 
 const mockDRepList: APIGetDRepList = {
   pageNo: 1,
@@ -49,10 +44,10 @@ describe("fetchDRepList", () => {
     jest.clearAllMocks();
   });
 
-  it("calls the mainnet endpoint for a mainnet currency", async () => {
+  it("calls the mainnet endpoint for a mainnet config", async () => {
     mockNetwork.mockResolvedValueOnce({ data: mockDRepList });
 
-    await fetchDRepList(mockMainnetCurrency, "test", 1, 10);
+    await fetchDRepList(mainnetConfig, "test", 1, 10);
 
     expect(mockNetwork).toHaveBeenCalledWith({
       method: "GET",
@@ -61,10 +56,10 @@ describe("fetchDRepList", () => {
     });
   });
 
-  it("calls the testnet endpoint for a testnet currency", async () => {
+  it("calls the testnet endpoint for a testnet config", async () => {
     mockNetwork.mockResolvedValueOnce({ data: mockDRepList });
 
-    await fetchDRepList(mockTestnetCurrency, "", 1, 20);
+    await fetchDRepList(testnetConfig, "", 1, 20);
 
     expect(mockNetwork).toHaveBeenCalledWith({
       method: "GET",
@@ -76,7 +71,7 @@ describe("fetchDRepList", () => {
   it("forwards search, pageNo, and limit as query parameters", async () => {
     mockNetwork.mockResolvedValueOnce({ data: mockDRepList });
 
-    await fetchDRepList(mockMainnetCurrency, "myDRep", 3, 50);
+    await fetchDRepList(mainnetConfig, "myDRep", 3, 50);
 
     expect(mockNetwork).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -88,7 +83,7 @@ describe("fetchDRepList", () => {
   it("returns the data from the network response", async () => {
     mockNetwork.mockResolvedValueOnce({ data: mockDRepList });
 
-    const result = await fetchDRepList(mockMainnetCurrency, "", 1, 10);
+    const result = await fetchDRepList(mainnetConfig, "", 1, 10);
 
     expect(result).toEqual(mockDRepList);
   });

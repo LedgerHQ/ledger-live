@@ -618,5 +618,41 @@ describe("buildTransaction", () => {
         "Invalid dRepHex",
       );
     });
+
+    it("selects enough UTXOs to fund the deposit and the min-ADA of token change", async () => {
+      const utxo = (hash: string, amount: number, tokenCount: number) => ({
+        hash,
+        index: 0,
+        address:
+          "00bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07db5e8ece0982acc4883de67c2e3411cc26bd56686a162074998c02bc",
+        amount: new BigNumber(amount),
+        tokens: Array.from({ length: tokenCount }, (_, i) => ({
+          policyId: i.toString(16).padStart(56, "0"),
+          assetName: "746f6b656e",
+          amount: new BigNumber(1),
+        })),
+        paymentCredential: {
+          key: "bd2717d482fa89b20f7ba1299344d203d14cfa231d8da9847aa51e07", // gitleaks:allow
+          path: { account: 0, chain: 0, coin: 1815, index: 0, purpose: 1852 },
+        },
+      });
+      // The 10 ADA UTXO alone covers the fee buffer but not its own token change plus the deposit.
+      const account = getCardanoAccountFixture({
+        delegation: undefined,
+        utxos: [utxo("aa".repeat(32), 10e6, 45), utxo("bb".repeat(32), 9e6, 0)],
+      });
+
+      const transaction = await buildTransaction(account, {
+        family: "cardano",
+        recipient: "",
+        amount: new BigNumber(0),
+        mode: "voteDelegate",
+        poolId: undefined,
+        dRepAbstain: true,
+        protocolParams: getProtocolParamsFixture(),
+      });
+
+      expect(transaction.getInputs()).toHaveLength(2);
+    });
   });
 });

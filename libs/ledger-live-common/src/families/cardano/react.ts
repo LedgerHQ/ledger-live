@@ -114,7 +114,12 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency | undefined): {
 
     const delayDebounceFn = setTimeout(
       () => {
-        fetchDRepList(currency, searchQuery, pageNo.current, limit)
+        fetchDRepList(
+          getCurrencyConfiguration<CardanoCoinConfig>(currency.id),
+          searchQuery,
+          pageNo.current,
+          limit,
+        )
           .then((apiRes: APIGetDRepList) => {
             if (generation !== requestGeneration.current) return;
             setDReps([...apiRes.dRepList]);
@@ -143,7 +148,12 @@ export function useCardanoFamilyDReps(currency: CryptoCurrency | undefined): {
     const nextPage = pageNo.current + 1;
     setIsPaginating(true);
 
-    fetchDRepList(currency, searchQuery, nextPage, limit)
+    fetchDRepList(
+      getCurrencyConfiguration<CardanoCoinConfig>(currency.id),
+      searchQuery,
+      nextPage,
+      limit,
+    )
       .then((apiRes: APIGetDRepList) => {
         if (generation !== requestGeneration.current) return;
         pageNo.current = nextPage;

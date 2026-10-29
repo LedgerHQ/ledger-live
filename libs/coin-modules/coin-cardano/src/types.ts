@@ -220,6 +220,7 @@ export type CardanoLikeNetworkParameters = {
   addressPrefix: string;
   poolIdPrefix: string;
   dRepIdPrefix: string;
+  dRepScriptIdPrefix: string;
 };
 
 /**

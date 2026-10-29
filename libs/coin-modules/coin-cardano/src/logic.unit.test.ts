@@ -252,6 +252,12 @@ describe("getBech32DRepId", () => {
     expect(getBech32DRepId(`22${hash}`, "cardano_testnet")).toBe(expectedKeyHash);
   });
 
+  it("should use the drep_script prefix for a script-hash header", () => {
+    expect(getBech32DRepId(`23${hash}`, "cardano")).toBe(
+      "drep_script1ymjjfjtmcgrnvtwull96vtrt7hc77mpswe379uhqdf5gwvnxnp2", // gitleaks:allow
+    );
+  });
+
   it("should encode a 28-byte hash without header as-is", () => {
     expect(getBech32DRepId(hash, "cardano")).toBe(expectedKeyHash);
   });

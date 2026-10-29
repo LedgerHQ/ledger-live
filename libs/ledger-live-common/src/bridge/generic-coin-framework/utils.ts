@@ -832,6 +832,7 @@ function computeOperationValue(
       "DELEGATE",
       "UNDELEGATE",
       "REDELEGATE",
+      "DELEGATE_VOTE",
       "CONTRACT_CALL",
       "UPDATE_ACCOUNT",
     ].includes(opType)

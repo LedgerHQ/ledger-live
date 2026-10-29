@@ -66,15 +66,13 @@ export async function getVoteDelegateTransactionStatus(
   const stakeKeyRegisterDeposit = new BigNumber(
     account.cardanoResources.protocolParams.stakeKeyDeposit,
   );
+  const needsStakeRegistration = !account.cardanoResources.delegation?.status;
 
   /**
    * vote delegation requires stake key to be registered
    * if it is not registered and spendable balance is less than registration deposit then show error
    */
-  if (
-    !account.cardanoResources.delegation?.status &&
-    account.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
-  ) {
+  if (needsStakeRegistration && account.spendableBalance.isLessThan(stakeKeyRegisterDeposit)) {
     errors.amount = new CardanoStakeKeyDepositError("", {
       depositAmount: stakeKeyRegisterDeposit.div(1e6).toString(),
     });
@@ -85,6 +83,8 @@ export async function getVoteDelegateTransactionStatus(
     warnings,
     estimatedFees,
     amount: new BigNumber(0),
-    totalSpent: estimatedFees,
+    totalSpent: needsStakeRegistration
+      ? estimatedFees.plus(stakeKeyRegisterDeposit)
+      : estimatedFees,
   };
 }

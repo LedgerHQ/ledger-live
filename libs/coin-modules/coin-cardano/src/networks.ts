@@ -14,6 +14,7 @@ export const getNetworkParameters = (networkName: string): CardanoLikeNetworkPar
       addressPrefix: "addr",
       poolIdPrefix: "pool",
       dRepIdPrefix: "drep",
+      dRepScriptIdPrefix: "drep_script",
     };
   } else if (networkName === "cardano_testnet") {
     return {
@@ -28,6 +29,7 @@ export const getNetworkParameters = (networkName: string): CardanoLikeNetworkPar
       addressPrefix: "addr_test",
       poolIdPrefix: "pool",
       dRepIdPrefix: "drep",
+      dRepScriptIdPrefix: "drep_script",
     };
   }
 

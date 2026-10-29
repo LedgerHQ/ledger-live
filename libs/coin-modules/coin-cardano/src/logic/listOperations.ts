@@ -22,6 +22,7 @@ import {
   findStakeRegistration,
   findOwnedStakeDelegation,
   findStakeDeRegistration,
+  findVoteDelegation,
   findWithdrawal,
   getOperationType,
 } from "../logic";
@@ -121,7 +122,7 @@ function computeValue(tx: APITransaction, paymentKey: string): bigint {
   return totalReceived - totalSpent;
 }
 
-// Staking types (DELEGATE/UNDELEGATE) are only assigned when the certificate
+// Staking types (DELEGATE/UNDELEGATE/DELEGATE_VOTE) are only assigned when the certificate
 // belongs to this account's stake key. Certificates for other accounts present
 // in the same transaction must not reclassify our operation.
 function determineOperationType(
@@ -139,6 +140,10 @@ function determineOperationType(
 
     if (findStakeDeRegistration(tx, stakeKey, networkId, stakeKeyDeposit) !== undefined) {
       return "UNDELEGATE";
+    }
+
+    if (findVoteDelegation(tx, stakeKey, networkId) !== undefined) {
+      return "DELEGATE_VOTE";
     }
   }
 
@@ -197,6 +202,11 @@ function toNativeOperation(
       operationValue = operationValue - withdrawalAmount;
       details.rewards = withdrawal;
     }
+
+    const vote = findVoteDelegation(tx, stakeKey, networkParams.networkId);
+    if (vote) {
+      details.vote = vote;
+    }
   }
 
   const ownedDelegation = stakeKey ? findOwnedStakeDelegation(tx, stakeKey) : undefined;
@@ -219,13 +229,17 @@ function toNativeOperation(
   );
 
   // The generic-coin-framework adapter re-adds tx.fees to native OUT/FEES/DELEGATE/
-  // UNDELEGATE operations (libs/ledger-live-common/src/bridge/generic-coin-framework/utils.ts),
+  // UNDELEGATE/DELEGATE_VOTE operations (libs/ledger-live-common/src/bridge/generic-coin-framework/utils.ts),
   // so Operation.value must EXCLUDE the fee for those types to avoid double-counting.
   // IN/NONE are passed through as-is by the adapter. A pure-fee self-transfer (FEES)
   // therefore carries value 0 — the adapter surfaces the fee.
   const magnitude = operationValue >= 0n ? operationValue : -operationValue;
   const adapterReaddsFee =
-    type === "OUT" || type === "FEES" || type === "DELEGATE" || type === "UNDELEGATE";
+    type === "OUT" ||
+    type === "FEES" ||
+    type === "DELEGATE" ||
+    type === "UNDELEGATE" ||
+    type === "DELEGATE_VOTE";
   const value = adapterReaddsFee ? (magnitude > fees ? magnitude - fees : 0n) : magnitude;
 
   const assetInfo: AssetInfo = { type: "native" };
