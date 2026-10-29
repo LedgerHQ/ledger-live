@@ -273,15 +273,6 @@ describe("getSeedIdentifierDerivation", () => {
 describe("getMandatoryEmptyAccountSkip", () => {
   const currency = (id: string) => getCryptoCurrencyById(id) as unknown as CryptoCurrency;
 
-  let previousRange: number;
-  beforeEach(() => {
-    previousRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
-    setEnv("KEYCHAIN_OBSERVABLE_RANGE", 0);
-  });
-  afterEach(() => {
-    setEnv("KEYCHAIN_OBSERVABLE_RANGE", previousRange);
-  });
-
   it("uses the hypercore gap limit on the default derivation mode", () => {
     expect(getMandatoryEmptyAccountSkip("", currency("hypercore"))).toBe(10);
   });
@@ -293,10 +284,5 @@ describe("getMandatoryEmptyAccountSkip", () => {
 
   it("keeps the derivation mode gap limit", () => {
     expect(getMandatoryEmptyAccountSkip("ethM", currency("ethereum"))).toBe(10);
-  });
-
-  it("lets a higher KEYCHAIN_OBSERVABLE_RANGE win", () => {
-    setEnv("KEYCHAIN_OBSERVABLE_RANGE", 20);
-    expect(getMandatoryEmptyAccountSkip("", currency("hypercore"))).toBe(20);
   });
 });

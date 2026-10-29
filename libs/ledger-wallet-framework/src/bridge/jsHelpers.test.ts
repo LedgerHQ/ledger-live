@@ -1048,15 +1048,6 @@ describe("makeScanAccounts", () => {
     const range = (from: number, to: number) =>
       Array.from({ length: to - from + 1 }, (_, i) => from + i);
 
-    let previousRange: number;
-    beforeEach(() => {
-      previousRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
-      setEnv("KEYCHAIN_OBSERVABLE_RANGE", 0);
-    });
-    afterEach(() => {
-      setEnv("KEYCHAIN_OBSERVABLE_RANGE", previousRange);
-    });
-
     it("finds a hypercore account after exactly 10 empty indexes", async () => {
       const result = await scan("hypercore", new Set([10]));
 
