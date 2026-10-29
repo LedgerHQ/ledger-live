@@ -20,8 +20,6 @@ import { openModal } from "~/renderer/actions/modals";
 import { setTrackingSource, track } from "@shared/analytics";
 import { RECEIVE_SOURCE_PAGE } from "LLD/features/Receive/types";
 import Box, { Tabbable } from "~/renderer/components/Box";
-import Star from "~/renderer/components/Stars/Star";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import Tooltip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
@@ -143,7 +141,6 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
   const navigate = useNavigate();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const onWalletConnectLiveApp = useCallback(() => {
     setTrackingSource("account header actions");
     const params = {
@@ -158,11 +155,6 @@ const AccountHeaderSettingsButtonComponent = ({ account, parentAccount, openModa
 
   return (
     <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
-      {!shouldDisplayAssetDiscoverability && (
-        <Tooltip content={t("stars.tooltip")}>
-          <Star accountId={account.id} yellow rounded />
-        </Tooltip>
-      )}
       {isWalletConnectActionDisplayable ? (
         <Tooltip content={t("walletconnect.titleAccount")}>
           <ButtonSettings onClick={onWalletConnectLiveApp}>

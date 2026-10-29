@@ -167,7 +167,6 @@ describe("PortfolioView", () => {
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
     shouldDisplayAssetSection: true,
-    shouldDisplayAssetDiscoverability: false,
     shouldDisplayBorrowSection: false,
     shouldDisplayPerpsEntryPoint: true,
     shouldDisplayServicesEntryPoints: false,
@@ -656,10 +655,10 @@ describe("PortfolioView", () => {
   });
 
   describe("AssetDiscoverability", () => {
-    it("should render Stocks discovery section when shouldDisplayAssetDiscoverability is true and user holds no stocks", async () => {
+    it("should render Stocks discovery section when the user holds no stocks", async () => {
       server.use(http.get(DADA_API_ENDPOINT, () => HttpResponse.json(mockStocksResponse)));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("stock-item-ticker-aaplx")).toBeVisible();
@@ -686,7 +685,7 @@ describe("PortfolioView", () => {
         }),
       });
 
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("w40-asset-row-apple-xstock-solanasplapplex")).toBeVisible();
@@ -694,12 +693,6 @@ describe("PortfolioView", () => {
 
       expect(screen.getByTestId("stocks-section")).toBeVisible();
       expect(screen.queryByTestId("stocks-explore")).toBeNull();
-    });
-
-    it("should not render Stocks section when shouldDisplayAssetDiscoverability is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={false} />);
-
-      expect(screen.queryByTestId("stocks-section")).toBeNull();
     });
   });
 });

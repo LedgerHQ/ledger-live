@@ -15,13 +15,7 @@ const TopBarView = ({
   shouldShowFirmwareUpdateBanner,
   isInformationCenterOpen,
   onInformationCenterClose,
-  shouldDisplayAssetDiscoverability,
 }: TopBarViewProps) => {
-  const renderTitle = () => {
-    if (shouldDisplayAssetDiscoverability) return <TopBarSearch />;
-    return null;
-  };
-
   return (
     <>
       <InformationDrawer
@@ -29,7 +23,7 @@ const TopBarView = ({
         onRequestClose={onInformationCenterClose}
       />
       <NavBar className="w-full min-w-0 items-center px-32 pt-32 pb-24">
-        {renderTitle()}
+        <TopBarSearch />
         <NavBarTrailing className="h-48 min-w-0 shrink gap-12">
           <LiveAppDrawer />
           {shouldShowFirmwareUpdateBanner && <FirmwareUpdateBanner />}

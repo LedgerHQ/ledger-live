@@ -218,10 +218,9 @@ describe("useMarket", () => {
     });
   });
 
-  describe("category (asset discoverability)", () => {
-    const withAssetDiscoverability = withFlagOverrides({
+  describe("category", () => {
+    const marketFlags = withFlagOverrides({
       lldRefreshMarketData: { enabled: false },
-      lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
     });
 
     const marketStateWithCategory = (category: "all" | "starred" | "stocks") => ({
@@ -232,7 +231,7 @@ describe("useMarket", () => {
     it("shows the favorites empty state when the starred category has no coins", () => {
       const { result } = renderHook(() => useMarket(), {
         initialState: {
-          ...withAssetDiscoverability,
+          ...marketFlags,
           settings: createSettingsState([]),
           market: marketStateWithCategory("starred"),
         },
@@ -245,7 +244,7 @@ describe("useMarket", () => {
     it("enables the starred filter without an empty state when favorites exist", () => {
       const { result } = renderHook(() => useMarket(), {
         initialState: {
-          ...withAssetDiscoverability,
+          ...marketFlags,
           settings: createSettingsState(["bitcoin"]),
           market: marketStateWithCategory("starred"),
         },
@@ -261,7 +260,7 @@ describe("useMarket", () => {
     it("does not flag an empty state for the stocks category", () => {
       const { result } = renderHook(() => useMarket(), {
         initialState: {
-          ...withAssetDiscoverability,
+          ...marketFlags,
           settings: createSettingsState([]),
           market: marketStateWithCategory("stocks"),
         },
@@ -350,7 +349,6 @@ describe("useMarket", () => {
         initialState: {
           ...withFlagOverrides({
             lldRefreshMarketData: { enabled: false },
-            lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
           }),
           settings: { ...SETTINGS_INITIAL_STATE, counterValue, starredMarketCoins: [] },
           market: createMarketState(),

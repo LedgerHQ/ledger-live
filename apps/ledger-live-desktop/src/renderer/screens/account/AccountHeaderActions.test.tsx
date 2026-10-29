@@ -4,17 +4,10 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { useLLDCoinFamily } from "~/renderer/families";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 
 jest.mock("~/renderer/families");
 const mockFamily = jest.mocked(useLLDCoinFamily);
-
-jest.mock("@features/platform-feature-flags", () => ({
-  ...jest.requireActual("@features/platform-feature-flags"),
-  useWalletFeaturesConfig: jest.fn(),
-}));
-const mockWalletConfig = jest.mocked(useWalletFeaturesConfig);
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({
@@ -87,29 +80,11 @@ const account = genAccount("test-btc-account", { currency: btc }) as Account;
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mockWalletConfig.mockReturnValue({
-    shouldDisplayAssetDiscoverability: false,
-  } as ReturnType<typeof useWalletFeaturesConfig>);
 });
 
-describe("AccountHeaderSettingsButton — legacy star visibility", () => {
-  it("renders the legacy star when asset discoverability is off", async () => {
+describe("AccountHeaderSettingsButton", () => {
+  it("does not render the legacy star", async () => {
     mockFamily.mockReturnValue({} as never);
-
-    const { container } = render(
-      <AccountHeaderSettingsButton account={account} parentAccount={undefined} />,
-    );
-
-    await waitFor(() =>
-      expect(container.querySelector("#account-star-button")).toBeInTheDocument(),
-    );
-  });
-
-  it("hides the legacy star when asset discoverability is on", async () => {
-    mockFamily.mockReturnValue({} as never);
-    mockWalletConfig.mockReturnValue({
-      shouldDisplayAssetDiscoverability: true,
-    } as ReturnType<typeof useWalletFeaturesConfig>);
 
     const { container } = render(
       <AccountHeaderSettingsButton account={account} parentAccount={undefined} />,

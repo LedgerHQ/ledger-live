@@ -7,8 +7,6 @@ import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
 import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
 import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
-import Star from "~/renderer/components/Stars/Star";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TableRow } from "./TableContainer";
 import { useAccountUnit } from "../hooks/useAccountUnit";
 
@@ -43,7 +41,6 @@ function TokenRow(props: Props) {
   const onClickRow = () => onClick(account, parentAccount);
   const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const Row = nested ? NestedRow : TableRow;
   return (
     <Row
@@ -55,7 +52,6 @@ function TokenRow(props: Props) {
       <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
       <Countervalue account={account} currency={currency} range={range} />
       <Delta account={account} range={range} />
-      {!shouldDisplayAssetDiscoverability && <Star accountId={account.id} />}
     </Row>
   );
 }

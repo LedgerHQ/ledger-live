@@ -55,7 +55,6 @@ type TopBarViewProps = {
   shouldShowFirmwareUpdateBanner: boolean;
   isInformationCenterOpen: boolean;
   onInformationCenterClose: () => void;
-  shouldDisplayAssetDiscoverability: boolean;
 };
 
 export type { TopBarAction, TopBarActionAppearance, TopBarSlot, TopBarViewProps };

@@ -1,6 +1,5 @@
 import { KeyboardEvent, useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import type { AssetNavigationMarketState } from "LLD/features/Assets/types";
 import { getAssetDetailPath, isAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { setMarketCategory } from "~/renderer/actions/market";
@@ -13,7 +12,6 @@ export function useSearchOverlayViewModel() {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const { query, onChangeQuery, isOpen, open, close, mode, suggestions, results } =
     useAssetSearchBar();
 
@@ -121,6 +119,5 @@ export function useSearchOverlayViewModel() {
     onKeyDown,
     mode: displayedMode,
     contextValue,
-    animatedTitle: shouldDisplayAssetDiscoverability,
   };
 }

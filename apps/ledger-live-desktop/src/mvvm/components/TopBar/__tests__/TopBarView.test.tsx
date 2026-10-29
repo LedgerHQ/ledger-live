@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import { getBrazeWebSdkJestMock as mockGetBrazeWebSdkJestMock } from "tests/mocks/brazeWebSdk";
 import TopBarView from "../TopBarView";
 import { TopBarSlot } from "../types";
@@ -29,7 +29,6 @@ describe("TopBarView", () => {
     slots: defaultSlots,
     isInformationCenterOpen: false,
     onInformationCenterClose: jest.fn(),
-    shouldDisplayAssetDiscoverability: false,
   };
 
   it("should render updater when not in manager", () => {
@@ -50,41 +49,19 @@ describe("TopBarView", () => {
     expect(screen.getByTestId("my-wallet-avatar")).toBeInTheDocument();
   });
 
-  describe("search input with asset discoverability", () => {
-    const assetDiscoverabilityState = withFlagOverrides({
-      lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
+  describe("search input", () => {
+    it.each(["/", "/market"])("should render the global search input on %s", route => {
+      render(<TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />, {
+        initialRoute: route,
+      });
+
+      expect(screen.getByTestId("topbar-search-input")).toBeInTheDocument();
     });
-
-    it("should not render the search input when the flag is off", () => {
-      render(<TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />);
-
-      expect(screen.queryByTestId("topbar-search-input")).not.toBeInTheDocument();
-    });
-
-    it.each(["/", "/market"])(
-      "should render the global search input on %s when the flag is on",
-      route => {
-        render(
-          <TopBarView
-            {...defaultProps}
-            shouldShowFirmwareUpdateBanner={false}
-            shouldDisplayAssetDiscoverability
-          />,
-          { initialState: assetDiscoverabilityState, initialRoute: route },
-        );
-
-        expect(screen.getByTestId("topbar-search-input")).toBeInTheDocument();
-      },
-    );
 
     it("should open the popover when the search input is clicked", async () => {
       const { user } = render(
-        <TopBarView
-          {...defaultProps}
-          shouldShowFirmwareUpdateBanner={false}
-          shouldDisplayAssetDiscoverability
-        />,
-        { initialState: assetDiscoverabilityState, initialRoute: "/" },
+        <TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />,
+        { initialRoute: "/" },
       );
 
       expect(screen.queryByTestId("topbar-search-popover")).not.toBeInTheDocument();
@@ -95,12 +72,8 @@ describe("TopBarView", () => {
 
     it("should reset the query on Escape", async () => {
       const { user } = render(
-        <TopBarView
-          {...defaultProps}
-          shouldShowFirmwareUpdateBanner={false}
-          shouldDisplayAssetDiscoverability
-        />,
-        { initialState: assetDiscoverabilityState, initialRoute: "/" },
+        <TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />,
+        { initialRoute: "/" },
       );
 
       const input = screen.getByRole("textbox");
@@ -113,12 +86,8 @@ describe("TopBarView", () => {
 
     it("should keep the popover open and preserve the query when the search input is re-clicked", async () => {
       const { user } = render(
-        <TopBarView
-          {...defaultProps}
-          shouldShowFirmwareUpdateBanner={false}
-          shouldDisplayAssetDiscoverability
-        />,
-        { initialState: assetDiscoverabilityState, initialRoute: "/" },
+        <TopBarView {...defaultProps} shouldShowFirmwareUpdateBanner={false} />,
+        { initialRoute: "/" },
       );
 
       const input = screen.getByRole("textbox");
