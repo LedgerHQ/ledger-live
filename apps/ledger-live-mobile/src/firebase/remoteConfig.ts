@@ -118,6 +118,22 @@ export async function fetchRemoteFlags(): Promise<PartialFeatures> {
   return flags;
 }
 
+/**
+ * Where this session's Remote Config stands, read by E2E runs through the bridge. `remoteValues`
+ * counts the values Firebase sent: 0 means the app runs on compiled defaults, as it does when the
+ * first fetch on a fresh install is throttled.
+ */
+export function getRemoteConfigStatus() {
+  const remoteValues = Object.values(rc.getAll()).filter(
+    value => value.getSource() === "remote",
+  ).length;
+  return {
+    lastFetchStatus: rc.lastFetchStatus,
+    fetchTimeMillis: rc.fetchTimeMillis,
+    remoteValues,
+  };
+}
+
 // One `getAll()` payload, two readers: the flag decoder and the copy experiments,
 // which are `feature_copy_*` keys in the same Remote Config template.
 function hydrateRemoteConfigValues(all: ReturnType<typeof rc.getAll>): PartialFeatures {

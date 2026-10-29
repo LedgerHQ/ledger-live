@@ -222,6 +222,11 @@ export async function getEnvs() {
   return fetchData({ type: "getEnvs", id: uniqueId() });
 }
 
+/** JSON of the app's `lastFetchStatus`, `fetchTimeMillis` and `remoteValues`, or "" on timeout. */
+export async function getRemoteConfigStatus(timeout?: number) {
+  return fetchData({ type: "getRemoteConfigStatus", id: uniqueId() }, timeout);
+}
+
 /** Last Buy/Sell handoff URL (`goToManifest` + `goToURL`) seen by the app, or "" if none yet. */
 export async function getPtxHandoff() {
   return fetchData({ type: "getPtxHandoff", id: uniqueId() });
@@ -291,6 +296,7 @@ function onMessage(messageStr: string) {
     case "ptxHandoff":
     case "appFlags":
     case "appEnvs":
+    case "remoteConfigStatus":
     case "contactsImported":
       resolvePending(msg.id, msg.payload);
       break;
