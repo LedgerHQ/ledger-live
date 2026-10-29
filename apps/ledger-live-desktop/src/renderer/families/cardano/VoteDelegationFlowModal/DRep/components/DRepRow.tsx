@@ -1,6 +1,9 @@
-import { getDefaultExplorerView, getDRepExplorer } from "@domain/entity-currency-crypto";
+import {
+  CryptoCurrency,
+  getDefaultExplorerView,
+  getDRepExplorer,
+} from "@domain/entity-currency-crypto";
 import { getBech32DRepId } from "@ledgerhq/live-common/families/cardano/logic";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import React, { useCallback, useMemo } from "react";
 import styled, { css } from "styled-components";
 import Box from "~/renderer/components/Box";
