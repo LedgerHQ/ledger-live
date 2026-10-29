@@ -57,7 +57,7 @@ export function MockServerPanelView({
     >
       <Box lx={{ padding: "s16", gap: "s12" }}>
         <Box lx={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <Box>
+          <Box lx={{ flex: 1, marginRight: "s8" }}>
             <Text typography="heading5SemiBold" lx={{ color: "base" }}>
               Mock server
             </Text>
@@ -98,6 +98,7 @@ export function MockServerPanelView({
           onChangeText={onChangeTokenDraft}
           autoCapitalize="none"
           autoCorrect={false}
+          hideClearButton
           suffix={
             <IconButton
               appearance="no-background"
