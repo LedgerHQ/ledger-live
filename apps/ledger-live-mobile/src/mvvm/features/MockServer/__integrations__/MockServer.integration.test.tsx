@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, Platform, Text } from "react-native";
 import RNRestart from "react-native-restart";
 import { act, fireEvent, render, screen, waitFor } from "@tests/test-renderer";
 import { HttpResponse, http, server } from "@tests/server";
@@ -8,6 +8,7 @@ import {
   mockserverIdentifier,
   resetMockServerTransport,
 } from "@ledgerhq/live-dmk-mobile";
+import QueuedDrawer from "LLM/components/QueuedDrawer";
 import { MockServerOverlay, MockServerSettingsRow } from "..";
 import { openMockServerPanel, resetMockServerPanelState } from "../utils/mockServerPanelStore";
 
@@ -118,6 +119,23 @@ describe("MockServer", () => {
       await waitFor(() => expect(RNRestart.restart).toHaveBeenCalledTimes(1));
       expect(endpoints.auth).not.toHaveBeenCalled();
       expect(store.getState().settings.mockServer.token).toBe("shared-token");
+    });
+  });
+
+  describe("inside a native modal drawer", () => {
+    beforeEach(() => {
+      configureMockServerTransport({ url: MOCK_SERVER_URL, token: "token-1" });
+    });
+
+    it("should show the floating button inside an open drawer on Android", async () => {
+      jest.replaceProperty(Platform, "OS", "android");
+      render(
+        <QueuedDrawer isRequestingToBeOpened>
+          <Text>Drawer content</Text>
+        </QueuedDrawer>,
+      );
+
+      expect(await screen.findByTestId("mock-server-floating-button")).toBeVisible();
     });
   });
 

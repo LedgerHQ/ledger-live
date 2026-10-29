@@ -3,6 +3,7 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import FloatingDebugButton from "~/components/FloatingDebugButton";
 import type { MockServerStatus } from "../../types";
 import { MockServerPanel } from "../MockServerPanel";
+import { MockServerOverlayContainer } from "./MockServerOverlayContainer";
 import type { MockServerOverlayViewModel } from "./useMockServerOverlayViewModel";
 
 const BUTTON_BACKGROUNDS: Record<MockServerStatus, string> = {
@@ -25,7 +26,7 @@ export function MockServerOverlayView({
   if (!connection) return null;
 
   return (
-    <>
+    <MockServerOverlayContainer>
       {isPanelOpen ? (
         <MockServerPanel connection={connection} status={status} sessionId={sessionId} />
       ) : null}
@@ -34,10 +35,11 @@ export function MockServerOverlayView({
           onPress={onToggleOpenPanel}
           Icon={IconsLegacy.ServerMedium}
           iconContainerProps={{ bg: BUTTON_BACKGROUNDS[status] }}
+          testID="mock-server-floating-button"
           boxWidth={BUTTON_SIZE}
           boxHeight={BUTTON_SIZE}
         />
       ) : null}
-    </>
+    </MockServerOverlayContainer>
   );
 }
