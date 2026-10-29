@@ -537,7 +537,7 @@ test.describe("Delegate from market", () => {
       await app.delegate.continue();
 
       await app.delegate.toggleMaxAmount();
-      await app.delegate.expectMaxAmountMatchesSpendable();
+      await app.delegate.verifyMaxAmountMatchesSpendable();
     },
   );
 });

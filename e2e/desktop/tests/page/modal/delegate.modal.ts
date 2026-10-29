@@ -37,7 +37,7 @@ export class DelegateModal extends Modal {
     .getByTestId("check-icon")
     .locator('path[fill]:not([fill="transparent"])');
   readonly cryptoAmountField = this.page.getByTestId("modal-amount-field");
-  private spendableBanner = this.page.getByTestId("modal-spendable-banner");
+  private readonly spendableBanner = this.page.getByTestId("modal-spendable-banner");
 
   private async readCryptoAmount(): Promise<string> {
     return (await this.cryptoAmountField.inputValue()).replaceAll(/[\s,]/g, "");
@@ -179,16 +179,22 @@ export class DelegateModal extends Modal {
   }
 
   @step("Verify the max amount matches the spendable balance")
-  async expectMaxAmountMatchesSpendable() {
+  async verifyMaxAmountMatchesSpendable() {
     await expect(this.spendableBanner).toBeVisible();
     await expect
       .poll(async () => {
         const spendable = await this.readSpendableBalance();
         const amount = new BigNumber(await this.readCryptoAmount());
-        if (!spendable || !amount.isGreaterThan(0)) return false;
-        return amount.minus(spendable.value).abs().isLessThanOrEqualTo(spendable.precision);
+        return {
+          amount: amount.toFixed(),
+          spendable: spendable?.value.toFixed(),
+          withinPrecision:
+            !!spendable &&
+            amount.isGreaterThan(0) &&
+            amount.minus(spendable.value).abs().isLessThanOrEqualTo(spendable.precision),
+        };
       })
-      .toBe(true);
+      .toMatchObject({ withinPrecision: true });
   }
 
   @step("Verify success message")
