@@ -764,6 +764,7 @@ describe("HumanCommandOutput", () => {
         enrollmentUrl: "https://example.com/enroll?x=1",
         fingerprint: "Ez4f ubY2 TD8k Ve",
         expiresAt: "2026-09-22T11:28:46.999Z",
+        keyStore: "os-keychain",
       });
       const out = writes.join("");
       expect(out).toContain("https://example.com/enroll?x=1");

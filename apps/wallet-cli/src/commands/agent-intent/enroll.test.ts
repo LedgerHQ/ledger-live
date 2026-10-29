@@ -1,8 +1,23 @@
 import "../../live-common-setup";
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "bun:test";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  setSystemTime,
+} from "bun:test";
+import { createCLI, defineCommand, defineGroup } from "@bunli/core";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { installOutputCapture } from "../../shared/ui";
 import { KeychainUnavailableError } from "../../key-ring/keychain-unavailable-error";
 import { failingKeychainProbe, overridePlatform } from "../../testing/os-keychain";
+import { readLiveLockHolderPid } from "../../shared/file-lock";
+import bunliConfig from "../../../bunli.config";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -39,6 +54,8 @@ let writeImpl: () => void;
 let sessionReadCalls: number;
 let deleteSecretKeySucceeds: boolean;
 let saveSecretKeyError: Error | undefined;
+/** How far the clock moves while the keychain write runs, e.g. at an unlock prompt. */
+let saveSecretKeyTakesMs: number;
 let enrollmentUrlError: Error | undefined;
 let requestInputs: Array<Record<string, unknown>>;
 let hostOptions: Record<string, unknown> | undefined;
@@ -50,6 +67,11 @@ let authenticateInputs: Array<Record<string, unknown>>;
 let keychainProbe: () => unknown;
 let keyFileExists: boolean;
 let deleteKeyFileSucceeds: boolean;
+
+type FakeChild = { pid: number; kill: () => void };
+let spawnedCommands: string[][];
+let firstLogLine: () => Promise<Record<string, unknown> | undefined>;
+let childKilled: boolean;
 
 const savedSecretKeys = new Set<string>();
 const deletedSecretKeyCalls: string[] = [];
@@ -115,6 +137,7 @@ beforeAll(() =>
       hasAgentIntentSecretKey: (_profileId: string) => hasSecretKeyImpl(),
       saveAgentIntentSecretKey: async (profileId: string, _secretKeyHex: string) => {
         if (saveSecretKeyError) throw saveSecretKeyError;
+        if (saveSecretKeyTakesMs > 0) setSystemTime(Date.now() + saveSecretKeyTakesMs);
         savedSecretKeys.add(profileId);
       },
       deleteAgentIntentSecretKey: (profileId: string) => {
@@ -167,11 +190,38 @@ beforeAll(() =>
         return authenticateOverride;
       },
     },
+    detach: {
+      spawnDetached: (command: string[], _logPath: string): FakeChild => {
+        spawnedCommands.push(command);
+        return {
+          pid: 4242,
+          kill: () => {
+            childKilled = true;
+          },
+        };
+      },
+      readFirstLogJsonLine: (_child: FakeChild, _logPath: string) => firstLogLine(),
+    },
   }),
 );
 afterAll(() => deactivateAgentIntentMocks());
 
+// The listener lock is a real file lock: keep it out of the real state dir.
+let stateHome: string;
+let savedStateHome: string | undefined;
+beforeAll(() => {
+  savedStateHome = process.env.XDG_STATE_HOME;
+  stateHome = mkdtempSync(join(tmpdir(), "wallet-cli-enroll-test-"));
+  process.env.XDG_STATE_HOME = stateHome;
+});
+afterAll(() => {
+  if (savedStateHome === undefined) delete process.env.XDG_STATE_HOME;
+  else process.env.XDG_STATE_HOME = savedStateHome;
+  rmSync(stateHome, { recursive: true, force: true });
+});
+
 const { default: enrollCommand } = await import("./enroll");
+const { enrollListenerPaths, withEnrollListenerLock } = await import("../../agent-intent/detach");
 
 type EnrollFlags = {
   profile: string;
@@ -184,6 +234,7 @@ type EnrollFlags = {
   "expires-in": string;
   environment: "staging" | "production";
   "allow-plaintext-key": boolean;
+  detach?: boolean;
   output?: "human" | "json";
 };
 
@@ -223,6 +274,7 @@ describe("agent-intent enroll", () => {
     invalidProfileIds = [];
     deleteSecretKeySucceeds = true;
     saveSecretKeyError = undefined;
+    saveSecretKeyTakesMs = 0;
     enrollmentUrlError = undefined;
     requestInputs = [];
     hostOptions = undefined;
@@ -238,6 +290,9 @@ describe("agent-intent enroll", () => {
     deletedSecretKeyCalls.length = 0;
     addAgentIntentProfileImpl = () => {};
     writeImpl = () => {};
+    spawnedCommands = [];
+    firstLogLine = async () => ({});
+    childKilled = false;
     stdout = [];
     stderr = [];
     restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
@@ -246,6 +301,7 @@ describe("agent-intent enroll", () => {
   afterEach(() => {
     restore();
     restorePlatform();
+    setSystemTime();
   });
 
   describe("pre-checks and local persistence", () => {
@@ -390,6 +446,10 @@ describe("agent-intent enroll", () => {
       expect(storedProfile).toMatchObject({
         keyStore: "plaintext-file",
         trustchainId: "app18-root",
+      });
+      expect(JSON.parse(stdout.join("").trim().split("\n")[0])).toMatchObject({
+        type: "enrollment-pending",
+        keyStore: "plaintext-file",
       });
       expect(JSON.parse(stdout.join("").trim().split("\n")[1])).toMatchObject({
         keyStore: "plaintext-file",
@@ -644,6 +704,44 @@ describe("agent-intent enroll", () => {
       expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
     });
 
+    it("removes the key and saves nothing when the keychain write returns near wait's stuck limit", async () => {
+      saveSecretKeyTakesMs = 9 * 60_000 + 1_000;
+
+      const run = runEnroll();
+
+      await expect(run).rejects.toMatchObject({
+        code: "listener_stuck",
+        message: expect.stringContaining("the key was removed and nothing was saved"),
+      });
+      expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+      expect(savedSecretKeys.has("test-agent")).toBe(false);
+      expect(storedProfile).toBeUndefined();
+      expect(stdout.join("")).not.toContain("#request=");
+    });
+
+    it("keeps the key when the keychain write returns just before wait's stuck limit margin", async () => {
+      saveSecretKeyTakesMs = 9 * 60_000 - 1_000;
+
+      await runEnroll();
+
+      expect(deletedSecretKeyCalls).toEqual([]);
+      expect(storedProfile).toMatchObject({ profileId: "test-agent" });
+    });
+
+    it("removes the key and saves nothing when the link expired during the keychain write", async () => {
+      saveSecretKeyTakesMs = 60_000;
+
+      const run = runEnroll({ "expires-in": "45s" });
+
+      await expect(run).rejects.toMatchObject({
+        code: "enrollment_expired",
+        message: expect.stringContaining("expired while the OS keychain was storing the agent key"),
+      });
+      expect(deletedSecretKeyCalls).toEqual(["test-agent"]);
+      expect(savedSecretKeys.has("test-agent")).toBe(false);
+      expect(storedProfile).toBeUndefined();
+    });
+
     it("catches a same-profile race at the locked recheck even though the precheck passed", async () => {
       profileOnLockedRecheck = { profileId: "test-agent" };
 
@@ -725,6 +823,20 @@ describe("agent-intent enroll", () => {
       });
     });
 
+    it("holds the profile's listener lock while waiting for approval, and releases it after", async () => {
+      const { lockPath } = enrollListenerPaths("test-agent");
+      let holderWhileWaiting: number | undefined;
+      hostWait = input => {
+        holderWhileWaiting = readLiveLockHolderPid(lockPath);
+        return relayDelivers(input);
+      };
+
+      await runEnroll();
+
+      expect(holderWhileWaiting).toBe(process.pid);
+      expect(readLiveLockHolderPid(lockPath)).toBeUndefined();
+    });
+
     it("persists the trustchain id and account access once the completion is authenticated", async () => {
       await runEnroll();
 
@@ -759,6 +871,7 @@ describe("agent-intent enroll", () => {
         profileId: "test-agent",
         enrollmentUrl: expect.stringContaining("#request=opaque"),
         fingerprint: expect.any(String),
+        keyStore: "os-keychain",
       });
       expect(lines[1]).toMatchObject({
         status: "success",
@@ -902,6 +1015,342 @@ describe("agent-intent enroll", () => {
       expect(storedProfile).toMatchObject({ trustchainId: "app18-root" });
       expect(stdout.join("")).toContain('Agent Intent profile "test-agent" enrolled');
     });
+  });
+});
+
+/** Runs `agent-intent <argv>` through the real bunli CLI, with `enroll` as the given command. */
+async function runWithBunli(enroll: unknown, argv: string[]): Promise<void> {
+  const cli = await createCLI(bunliConfig as unknown as Parameters<typeof createCLI>[0]);
+  cli.command(
+    defineGroup({
+      name: "agent-intent",
+      description: "test",
+      commands: [enroll as Parameters<typeof defineGroup>[0]["commands"][number]],
+    }),
+  );
+  expect((await cli.run(["agent-intent", ...argv], { noExit: true })) ?? 0).toBe(0);
+}
+
+/** The flags bunli hands enroll's handler for `argv`, parsed against enroll's own options. */
+async function parseEnrollFlags(argv: string[]): Promise<Record<string, unknown>> {
+  let parsed: Record<string, unknown> = {};
+  const capture = defineCommand({
+    name: "enroll",
+    description: "test",
+    options: enrollCommand.options,
+    handler: async ({ flags }) => {
+      parsed = { ...flags };
+    },
+  });
+  await runWithBunli(capture, ["enroll", ...argv]);
+  return parsed;
+}
+
+describe("agent-intent enroll --detach", () => {
+  let restore: () => void;
+  let stdout: string[];
+  let stderr: string[];
+  const pendingLine = {
+    type: "enrollment-pending",
+    command: "agent-intent enroll",
+    network: "all",
+    profileId: "test-agent",
+    enrollmentUrl: "https://agent.example.com#request=opaque",
+    fingerprint: "AB12 CD34",
+    expiresAt: "2026-10-21T12:30:00.000Z",
+    keyStore: "plaintext-file",
+  };
+
+  beforeEach(() => {
+    spawnedCommands = [];
+    firstLogLine = async () => pendingLine;
+    childKilled = false;
+    storedProfile = undefined;
+    profileOnLockedRecheck = "same-as-stored";
+    invalidProfileIds = [];
+    hasSecretKeyImpl = () => false;
+    sessionReadCalls = 0;
+    savedSecretKeys.clear();
+    rmSync(enrollListenerPaths("test-agent").logPath, { force: true });
+    stdout = [];
+    stderr = [];
+    restore = installOutputCapture({ stdout: s => stdout.push(s), stderr: s => stderr.push(s) });
+  });
+
+  afterEach(() => restore());
+
+  it("re-runs enroll in the background with the parsed flags not at their default, minus --detach and --output", async () => {
+    await runEnroll({ detach: true, output: "human", "app-url": "https://agent.example.com" });
+
+    expect(spawnedCommands).toHaveLength(1);
+    const command = spawnedCommands[0];
+    const args = command.slice(command.indexOf("agent-intent"));
+    expect(args).toEqual([
+      "agent-intent",
+      "enroll",
+      "--profile=test-agent",
+      "--name=Test Agent",
+      "--source=openclaw",
+      "--app-url=https://agent.example.com",
+      "--output=json",
+    ]);
+    expect(command[0]).toBe(process.execPath);
+    // The parent only checks the profile id is free; the listener creates the profile.
+    expect(sessionReadCalls).toBe(1);
+    expect(savedSecretKeys.size).toBe(0);
+  });
+
+  it("passes every flag on so the real parser reads them back unchanged, without bunli's global flags", async () => {
+    const parentArgv = [
+      "enroll",
+      "--detach",
+      "--profile",
+      "test-agent",
+      "--name",
+      "Test Agent",
+      "--description=-dash = and spaces",
+      "--source",
+      "codex",
+      "--expires-in",
+      "2h",
+      "--environment",
+      "staging",
+      "--keycloak-url=https://keycloak.example.com/",
+      "--allow-plaintext-key",
+      "--output",
+      "json",
+    ];
+
+    await runWithBunli(enrollCommand, parentArgv);
+
+    expect(spawnedCommands).toHaveLength(1);
+    const command = spawnedCommands[0];
+    const childArgv = command.slice(command.indexOf("agent-intent") + 1);
+    expect(childArgv[0]).toBe("enroll");
+    expect(childArgv.filter(arg => /^--(help|version|llms|detach)/.test(arg))).toEqual([]);
+    expect(childArgv).not.toContain("--allow-plaintext-key=false");
+    expect(await parseEnrollFlags(childArgv.slice(1))).toEqual({
+      ...(await parseEnrollFlags(parentArgv.slice(1))),
+      detach: false,
+      output: "json",
+    });
+  });
+
+  it("refuses to pass on a non-scalar flag value", async () => {
+    await expect(
+      runEnroll({ detach: true, name: ["a", "b"] as unknown as string }),
+    ).rejects.toThrow("--name has a value --detach cannot pass on to the listener.");
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("prints the listener's pending line with its pid and log path in json mode, then returns", async () => {
+    await runEnroll({ detach: true, output: "json" });
+
+    const lines = stdout
+      .join("")
+      .trim()
+      .split("\n")
+      .map(l => JSON.parse(l));
+    expect(lines).toEqual([
+      {
+        ...pendingLine,
+        listenerPid: 4242,
+        logPath: enrollListenerPaths("test-agent").logPath,
+      },
+    ]);
+  });
+
+  it("relays what the listener wrote to stderr before its pending line", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    firstLogLine = async () => {
+      writeFileSync(
+        enrollListenerPaths("test-agent").logPath,
+        warning + JSON.stringify(pendingLine) + "\nlater\n",
+      );
+      return pendingLine;
+    };
+
+    await runEnroll({ detach: true, output: "json" });
+
+    expect(stderr.join("")).toBe(warning);
+    expect(stdout.join("").trim().split("\n")).toHaveLength(1);
+  });
+
+  it("tells the human to run agent-intent wait instead of keeping the process running", async () => {
+    await runEnroll({ detach: true });
+
+    const text = stdout.join("");
+    expect(text).toContain(pendingLine.enrollmentUrl);
+    expect(text).toContain("Public key fingerprint: AB12 CD34");
+    expect(text).toContain("background listener (pid 4242");
+    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent`");
+    expect(text).not.toContain("keep this process running");
+  });
+
+  it("hands a listener with no first line by the startup timeout over to wait, without stopping it", async () => {
+    firstLogLine = async () => undefined;
+
+    await runEnroll({ detach: true, output: "json" });
+
+    const lines = stdout
+      .join("")
+      .trim()
+      .split("\n")
+      .map(l => JSON.parse(l));
+    expect(lines).toEqual([
+      {
+        type: "enrollment-waiting",
+        command: "agent-intent enroll",
+        network: "all",
+        profileId: "test-agent",
+        listenerPid: 4242,
+        logPath: enrollListenerPaths("test-agent").logPath,
+      },
+    ]);
+    expect(childKilled).toBe(false);
+  });
+
+  it("tells the human a listener still starting may be waiting for a keychain unlock prompt", async () => {
+    firstLogLine = async () => undefined;
+
+    await runEnroll({ detach: true });
+
+    const text = stdout.join("");
+    expect(text).toContain("is not saved yet");
+    expect(text).toContain("OS keychain unlock prompt");
+    expect(text).toContain("`wallet-cli agent-intent wait --profile test-agent` to check on it");
+    expect(text).not.toContain("again");
+  });
+
+  it("keeps the code of the listener's error in its own json error envelope", async () => {
+    firstLogLine = async () => ({
+      ok: false,
+      error: { command: "agent-intent enroll", code: "some_code", message: "boom" },
+    });
+
+    await expect(runEnroll({ detach: true, output: "json" })).rejects.toMatchObject({ code: 1 });
+    expect(JSON.parse(stdout.join("").trim())).toEqual({
+      ok: false,
+      error: { command: "agent-intent enroll", code: "some_code", message: "boom" },
+    });
+  });
+
+  it("fails with the listener's own error when it prints an error envelope", async () => {
+    firstLogLine = async () => ({
+      ok: false,
+      error: {
+        command: "agent-intent enroll",
+        message: 'Agent Intent profile "x" already exists.',
+      },
+    });
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(
+      'Agent Intent profile "x" already exists.',
+    );
+  });
+
+  it("relays the listener's stderr before failing with its error envelope", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    const envelope = { ok: false, error: { command: "agent-intent enroll", message: "boom" } };
+    firstLogLine = async () => {
+      writeFileSync(
+        enrollListenerPaths("test-agent").logPath,
+        warning + JSON.stringify(envelope) + "\n",
+      );
+      return envelope;
+    };
+
+    await expect(runEnroll({ detach: true, output: "json" })).rejects.toMatchObject({ code: 1 });
+    expect(stderr.join("")).toBe(warning);
+  });
+
+  it("fails when the listener exits before printing its first event", async () => {
+    firstLogLine = () =>
+      Promise.reject(
+        new Error("The enrollment listener exited with code 1 before printing its first event"),
+      );
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(/exited with code 1/);
+  });
+
+  it("relays the listener's stderr once when it exits before printing its first event", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    firstLogLine = async () => {
+      writeFileSync(enrollListenerPaths("test-agent").logPath, `${warning}crashed\n`);
+      throw new Error("The enrollment listener exited with code 1 before printing its first event");
+    };
+
+    await expect(runEnroll({ detach: true, output: "json" })).rejects.toMatchObject({ code: 1 });
+    expect(stderr.join("")).toBe(`${warning}crashed\n`);
+  });
+
+  it("stops the listener and fails when its first line is neither pending nor an error", async () => {
+    const warning = "⚠ No OS keychain is available (x); the key is stored in a plaintext file.\n";
+    firstLogLine = async () => {
+      writeFileSync(enrollListenerPaths("test-agent").logPath, `${warning}{"status":"success"}\n`);
+      return { status: "success" };
+    };
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(/unexpected first line/);
+    expect(childKilled).toBe(true);
+    expect(stderr.join("")).toBe(warning);
+  });
+
+  it("refuses to start a second listener while one is running for the profile", async () => {
+    await withEnrollListenerLock("test-agent", async () => {
+      await expect(runEnroll({ detach: true })).rejects.toThrow(
+        `An enrollment listener for profile "test-agent" is already running (pid ${process.pid}).`,
+      );
+    });
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("refuses a profile id already recorded in the session before the spawn truncates its log", async () => {
+    storedProfile = { profileId: "test-agent" };
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(
+      'Agent Intent profile "test-agent" already exists.',
+    );
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("refuses a profile id that matches an invalid session record", async () => {
+    invalidProfileIds = ["test-agent"];
+
+    await expect(runEnroll({ detach: true })).rejects.toThrow(/invalid Agent Intent record/);
+    expect(spawnedCommands).toEqual([]);
+  });
+
+  it("starts a second --detach for the profile only after the first one's startup ends", async () => {
+    let releaseFirst = () => {};
+    firstLogLine = () =>
+      new Promise(resolve => {
+        releaseFirst = () => resolve(pendingLine);
+      });
+    const first = runEnroll({ detach: true });
+    while (spawnedCommands.length === 0) await Bun.sleep(10);
+    firstLogLine = async () => pendingLine;
+
+    const second = runEnroll({ detach: true });
+    await Bun.sleep(300);
+    expect(spawnedCommands).toHaveLength(1);
+
+    releaseFirst();
+    await Promise.all([first, second]);
+    expect(spawnedCommands).toHaveLength(2);
+  });
+
+  it("is not supported on Windows", async () => {
+    const platform = Object.getOwnPropertyDescriptor(process, "platform");
+    Object.defineProperty(process, "platform", { value: "win32" });
+    try {
+      await expect(runEnroll({ detach: true })).rejects.toThrow(
+        /--detach is not supported on Windows/,
+      );
+    } finally {
+      if (platform) Object.defineProperty(process, "platform", platform);
+    }
+    expect(spawnedCommands).toEqual([]);
   });
 });
 
