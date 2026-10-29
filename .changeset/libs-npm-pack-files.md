@@ -11,7 +11,6 @@
 "@ledgerhq/coin-cosmos": patch
 "@ledgerhq/coin-filecoin": patch
 "@ledgerhq/coin-hedera": patch
-"@ledgerhq/coin-icon": patch
 "@ledgerhq/coin-internet_computer": patch
 "@ledgerhq/coin-kaspa": patch
 "@ledgerhq/coin-mina": patch
@@ -36,7 +35,6 @@
 "@ledgerhq/hw-app-eth": patch
 "@ledgerhq/hw-app-exchange": patch
 "@ledgerhq/hw-app-hedera": patch
-"@ledgerhq/hw-app-icon": patch
 "@ledgerhq/hw-app-kaspa": patch
 "@ledgerhq/hw-app-multiversx": patch
 "@ledgerhq/hw-app-near": patch

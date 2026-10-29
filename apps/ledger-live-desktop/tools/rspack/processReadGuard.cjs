@@ -187,14 +187,6 @@ const ALLOWED = new Map(
       reason: "vendored process/browser, module-local",
       max: 1,
     },
-    "icon-sdk-js/build/icon-sdk-js.web.min.js :: binding": {
-      reason: "vendored process/browser, module-local",
-      max: 1,
-    },
-    "icon-sdk-js/build/icon-sdk-js.web.min.js :: chdir": {
-      reason: "vendored process/browser, module-local",
-      max: 1,
-    },
     "async/internal/setImmediate.js :: nextTick": {
       reason: "guarded by hasNextTick, computed via `typeof process` too far above",
       max: 1,

@@ -1,7 +1,0 @@
-{
-  "extends": "@support/tsconfig/coin",
-  "compilerOptions": {
-    "exactOptionalPropertyTypes": false,
-    "types": ["node", "jest"]
-  }
-}

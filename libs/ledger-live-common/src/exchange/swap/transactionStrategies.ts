@@ -306,7 +306,6 @@ export const transactionStrategy: {
   evm: evmTransaction,
   filecoin: defaultTransaction,
   hedera: hederaTransaction,
-  icon: defaultTransaction,
   internet_computer: defaultTransaction,
   mina: defaultTransaction,
   multiversx: elrondTransaction,

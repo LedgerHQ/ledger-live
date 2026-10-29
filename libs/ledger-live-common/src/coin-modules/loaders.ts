@@ -286,17 +286,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     loadSigner: () => import("../families/hypercore/signer").then(m => m.default),
   },
   {
-    family: "icon",
-    supportedCoins: ["icon", "icon_berlin_testnet"],
-    accountDescriptorType: "address",
-    loadSetup: () => import("../families/icon/setup"),
-    loadTransaction: () => import("@ledgerhq/coin-icon/transaction").then(m => m.default),
-    loadDeviceTxConfig: () =>
-      import("@ledgerhq/coin-icon/deviceTransactionConfig").then(m => m.default),
-    loadAccount: () => import("@ledgerhq/coin-icon/account").then(m => m.default),
-    loadMockBridge: () => import("../families/icon/bridge/mock").then(m => m.default),
-  },
-  {
     family: "internet_computer",
     supportedCoins: ["internet_computer"],
     accountDescriptorType: "address",

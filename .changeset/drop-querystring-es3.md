@@ -1,7 +1,6 @@
 ---
 "@ledgerhq/ledger-wallet-framework": patch
 "@ledgerhq/coin-polkadot": patch
-"@ledgerhq/coin-icon": patch
 "ledger-live-desktop": patch
 ---
 

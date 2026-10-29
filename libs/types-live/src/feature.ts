@@ -128,7 +128,6 @@ export type CurrencyFeatures = {
   currencyScroll: DefaultFeature;
   currencyShape: DefaultFeature;
   currencyStory: DefaultFeature;
-  currencyIcon: DefaultFeature;
   currencyTon: DefaultFeature;
   currencyEtherlink: DefaultFeature;
   currencyZkSync: DefaultFeature;
