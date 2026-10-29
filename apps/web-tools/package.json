@@ -31,7 +31,6 @@
     "@devtools/shell": "workspace:*",
     "@devtools/transport-panel": "workspace:*",
     "@devtools/wire": "workspace:*",
-    "@domain/api-currency-token": "workspace:*",
     "@domain/api-market-countervalues": "workspace:*",
     "@domain/entity-account": "workspace:^",
     "@domain/entity-account-name": "workspace:^",
