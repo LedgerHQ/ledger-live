@@ -16964,6 +16964,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17010,6 +17013,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17077,6 +17083,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../../live-dmk-speculos
@@ -17129,6 +17138,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../../live-dmk-speculos
@@ -17187,6 +17199,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -17227,6 +17242,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17306,6 +17324,9 @@ importers:
       '@ethersproject/units':
         specifier: ^5.7.0
         version: 5.7.0
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17370,6 +17391,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../../live-dmk-speculos
@@ -17413,6 +17437,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17453,6 +17480,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17499,6 +17529,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17548,6 +17581,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17588,6 +17624,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17634,6 +17673,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17677,6 +17719,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/live-dmk-speculos':
         specifier: workspace:^
         version: link:../../../live-dmk-speculos
@@ -17723,6 +17768,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17772,6 +17820,9 @@ importers:
       '@ledgerhq/ledger-cal-service':
         specifier: workspace:^
         version: link:../../../ledger-services/cal
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -17818,6 +17869,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17858,6 +17912,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17904,6 +17961,9 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6)(zod@4.6.7)
     devDependencies:
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17941,6 +18001,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../../support/test-quarantine
@@ -17981,6 +18044,9 @@ importers:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
         version: 6.35.1
+      '@ledgerhq/ledger-libs':
+        specifier: workspace:*
+        version: link:../..
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
@@ -19987,6 +20053,9 @@ importers:
       '@support/jest':
         specifier: workspace:*
         version: link:../../support/jest
+      '@support/lint':
+        specifier: workspace:*
+        version: link:../../support/lint
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)
