@@ -376,7 +376,6 @@ allowBuilds:
   "msw": true
   "nx": true
   "protobufjs": true
-  "secp256k1": false
   "sqlite3": true
   "unrs-resolver": false
   "usb": true

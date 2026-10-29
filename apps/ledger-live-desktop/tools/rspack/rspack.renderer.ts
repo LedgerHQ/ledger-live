@@ -259,7 +259,7 @@ export function createRendererConfig(
         {
           test: /\.js$/,
           include:
-            /[\\/]node_modules[\\/](assert|vfile|path-browserify|randombytes|randomfill|eventsource|icon-sdk-js|util)[\\/]/,
+            /[\\/]node_modules[\\/](assert|vfile|path-browserify|randombytes|randomfill|eventsource|util)[\\/]/,
           use: [path.resolve(__dirname, "processShimLoader.cjs")],
         },
       ],

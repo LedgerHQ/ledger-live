@@ -149,11 +149,6 @@
           "reason": "Legacy pure-JS curve library reached only through third-party SDKs, and the fallback secp256k1 uses when its bindings are missing. Pinned to 6.6.1 by a root pnpm override.",
           "exit": "LIVE-37448 the SDKs stop pinning it, or we stop shipping them."
         },
-        "secp256k1": {
-          "tolerated": true,
-          "reason": "Native bindings, reached only through icon-sdk-js.",
-          "exit": "LIVE-37372 coin-icon drops icon-sdk-js, or the SDK stops depending on it."
-        },
         "@noble/secp256k1": {
           "tolerated": true,
           "reason": "Standalone noble package superseded by @noble/curves. Pinned exactly by every SDK.",

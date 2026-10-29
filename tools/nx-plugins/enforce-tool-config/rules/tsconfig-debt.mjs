@@ -19,7 +19,6 @@ export const RELAXATIONS = {
 /** @type {Record<string, string[]>} repo-relative config path to the relaxations it may set */
 export const TSCONFIG_DEBT = {
   "libs/coin-modules/coin-cardano/tsconfig.json": ["exactOptionalPropertyTypes"],
-  "libs/coin-modules/coin-icon/tsconfig.json": ["exactOptionalPropertyTypes"],
   "libs/coin-modules/coin-kaspa/tsconfig.json": ["exactOptionalPropertyTypes"],
   "libs/coin-modules/coin-stacks/tsconfig.json": ["exactOptionalPropertyTypes", "noImplicitAny"],
   "libs/coin-modules/coin-ton/tsconfig.json": ["exactOptionalPropertyTypes"],

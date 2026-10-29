@@ -22,7 +22,6 @@ export const lldFamilyLoaders: LLDFamilyLoader[] = [
   { family: "evm", importFamily: () => import("./evm/index") },
   { family: "filecoin", importFamily: () => import("./filecoin/index") },
   { family: "hedera", importFamily: () => import("./hedera/index") },
-  { family: "icon", importFamily: () => import("./icon/index") },
   { family: "internet_computer", importFamily: () => import("./internet_computer/index") },
   { family: "kaspa", importFamily: () => import("./kaspa/index") },
   { family: "mina", importFamily: () => import("./mina/index") },

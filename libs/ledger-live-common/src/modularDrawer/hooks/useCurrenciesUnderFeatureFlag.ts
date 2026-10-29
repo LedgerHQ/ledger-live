@@ -57,7 +57,6 @@ export function useCurrenciesUnderFeatureFlag() {
   const scroll = useFeature("currencyScroll");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
-  const icon = useFeature("currencyIcon");
   const ton = useFeature("currencyTon");
   const etherlink = useFeature("currencyEtherlink");
   const zksync = useFeature("currencyZkSync");
@@ -157,7 +156,6 @@ export function useCurrenciesUnderFeatureFlag() {
       scroll,
       shape,
       story,
-      icon,
       etherlink,
       zksync,
       zksync_sepolia: zksyncSepolia,
@@ -250,7 +248,6 @@ export function useCurrenciesUnderFeatureFlag() {
       scroll,
       shape,
       story,
-      icon,
       etherlink,
       zksync,
       zksyncSepolia,

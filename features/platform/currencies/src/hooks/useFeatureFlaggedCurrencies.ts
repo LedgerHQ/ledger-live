@@ -78,7 +78,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const scroll = useFeature("currencyScroll");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
-  const icon = useFeature("currencyIcon");
   const ton = useFeature("currencyTon");
   const etherlink = useFeature("currencyEtherlink");
   const zksync = useFeature("currencyZkSync");
@@ -177,7 +176,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       scroll,
       shape,
       story,
-      icon,
       etherlink,
       zksync,
       zksync_sepolia: zksyncSepolia,
@@ -270,7 +268,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       scroll,
       shape,
       story,
-      icon,
       etherlink,
       zksync,
       zksyncSepolia,

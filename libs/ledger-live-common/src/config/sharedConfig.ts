@@ -24,7 +24,6 @@ import { tezosConfig } from "../families/tezos/config";
 import { tonConfig } from "../families/ton/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
-import { iconConfig } from "../families/icon/config";
 import { suiConfig } from "../families/sui/config";
 import { cantonConfig } from "../families/canton/config";
 import { aleoConfig } from "../families/aleo/config";
@@ -75,7 +74,6 @@ export const liveConfig: ConfigSchema = {
   ...tezosConfig,
   ...tronConfig,
   ...vechainConfig,
-  ...iconConfig,
   ...tonConfig,
   ...suiConfig,
   ...cantonConfig,

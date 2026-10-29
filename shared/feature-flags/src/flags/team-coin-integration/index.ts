@@ -42,7 +42,6 @@ export * from "./currencyEtherlink";
 export * from "./currencyGonka";
 export * from "./currencyHypercore";
 export * from "./currencyHyperevm";
-export * from "./currencyIcon";
 export * from "./currencyInjective";
 export * from "./currencyInternetComputer";
 export * from "./currencyKaspa";

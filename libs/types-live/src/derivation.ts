@@ -32,7 +32,6 @@ export type DerivationMode =
   | "vechain"
   | "internet_computer"
   | "stacks_wallet"
-  | "icon"
   | "ton"
   | "sui"
   | "aptos"

@@ -15,7 +15,6 @@ import { descriptor as cosmosDescriptor } from "../../families/cosmos/descriptor
 import { descriptor as evmDescriptor } from "../../families/evm/descriptor";
 import { descriptor as filecoinDescriptor } from "../../families/filecoin/descriptor";
 import { descriptor as hederaDescriptor } from "../../families/hedera/descriptor";
-import { descriptor as iconDescriptor } from "../../families/icon/descriptor";
 import { descriptor as internetComputerDescriptor } from "../../families/internet_computer/descriptor";
 import { descriptor as kaspaDescriptor } from "../../families/kaspa/descriptor";
 import { descriptor as minaDescriptor } from "../../families/mina/descriptor";
@@ -50,7 +49,6 @@ const descriptorRegistry: Record<string, CoinDescriptor> = {
   evm: evmDescriptor,
   filecoin: filecoinDescriptor,
   hedera: hederaDescriptor,
-  icon: iconDescriptor,
   internet_computer: internetComputerDescriptor,
   kaspa: kaspaDescriptor,
   mina: minaDescriptor,
