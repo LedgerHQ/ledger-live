@@ -1610,9 +1610,9 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
 export function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
   if (!summary.needsTokenApproval) return;
   writeStderr(
-    `⚠ The ${summary.provider} quote needs a ${summary.from.ticker} approval first. The reviewer ` +
-      "approves it in Agent Intent, in a separate transaction with its own network fee, then " +
-      "reviews the swap.\n",
+    `⚠ Swapping ${summary.from.ticker} through ${summary.provider} needs an approval first. The ` +
+      "reviewer approves it in Agent Intent, in a separate transaction with its own network fee, " +
+      "then reviews the swap.\n",
   );
 }
 

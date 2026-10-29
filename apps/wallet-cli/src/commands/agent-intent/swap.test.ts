@@ -225,8 +225,8 @@ describe("agent-intent swap", () => {
       expect(submittedIntents).toEqual([expect.objectContaining({ provider: "okx" })]);
       expect(jsonResult()).toMatchObject({ provider: "okx", needsTokenApproval: true });
       expect(stderr.join("")).toContain(
-        "⚠ The okx quote needs a USDC approval first. The reviewer approves it in Agent Intent, " +
-          "in a separate transaction with its own network fee, then reviews the swap.\n",
+        "⚠ Swapping USDC through okx needs an approval first. The reviewer approves it in " +
+          "Agent Intent, in a separate transaction with its own network fee, then reviews the swap.\n",
       );
     });
 
@@ -310,6 +310,15 @@ describe("agent-intent swap", () => {
       ]);
       expect(jsonResult()).toMatchObject({ toAmount: "1250.50", quoted: false });
       expect(stderr.join("")).not.toContain("--to-amount");
+    });
+
+    it("says the sold token needs an approval without calling the typed amount a quote", async () => {
+      quoteImpl = async () => ({ provider: "okx", receiveAmount: 0.03, needsTokenApproval: true });
+
+      await runSwap({ from: USDC.id, to: ETH.id, amount: "100", "to-amount": "0.03" });
+
+      expect(stderr.join("")).toContain("⚠ Swapping USDC through okx needs an approval first.");
+      expect(stderr.join("")).not.toContain("quote needs");
     });
 
     it("warns on stderr, and still submits, when the amount is more than 5% above the quote", async () => {
@@ -430,7 +439,7 @@ describe("agent-intent swap", () => {
       await runSwap({ from: USDC.id, to: ETH.id, amount: "100", "dry-run": true });
 
       expect(stdout.join("")).toContain("Dry run — intent validated, nothing was submitted.");
-      expect(stderr.join("")).toContain("⚠ The okx quote needs a USDC approval first.");
+      expect(stderr.join("")).toContain("⚠ Swapping USDC through okx needs an approval first.");
     });
   });
 
