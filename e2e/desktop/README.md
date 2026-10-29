@@ -53,7 +53,6 @@ Before running tests, build the app and dependencies:
 ```bash
 pnpm i --filter="ledger-live-desktop..."  --filter="live-cli..." --filter="ledger-live" --filter="ledger-live-desktop-e2e-tests" --unsafe-perm
 pnpm build:lld:deps
-pnpm build:cli
 pnpm desktop build:testing
 ```
 
