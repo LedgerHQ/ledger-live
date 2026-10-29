@@ -26,6 +26,7 @@ export class NewSendModal extends Modal {
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
+  private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
@@ -226,6 +227,12 @@ export class NewSendModal extends Modal {
   @step("Confirm sending without memo")
   async confirmSkipMemo() {
     await this.skipMemoConfirmButton.click();
+  }
+
+  @step("Verify the recent history warning is shown")
+  async expectRecentHistoryWarning() {
+    await expect(this.recipientStep).toHaveAttribute("data-recipient-validation", "settled");
+    await expect(this.recentHistoryWarning).toBeVisible();
   }
 
   @step("Click View details")
