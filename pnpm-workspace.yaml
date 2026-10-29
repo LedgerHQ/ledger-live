@@ -127,14 +127,14 @@ catalog:
   "@jest/reporters": 30.5.0
   "@jest/test-result": 30.5.0
   "@reduxjs/toolkit": 2.11.2
-  "@rsbuild/core": 2.1.13
+  "@rsbuild/core": 2.3.0
   "@rsbuild/plugin-node-polyfill": 1.4.6
-  "@rsbuild/plugin-react": 2.1.0
-  "@rsbuild/plugin-styled-components": 1.6.2
+  "@rsbuild/plugin-react": 2.1.1
+  "@rsbuild/plugin-styled-components": 1.7.0
   "@rsdoctor/core": 2.0.0
-  "@rspack/cli": 2.1.10
-  "@rspack/core": 2.1.10
-  "@rspack/dev-server": 2.1.0
+  "@rspack/cli": 2.3.0
+  "@rspack/core": 2.3.0
+  "@rspack/dev-server": 2.2.2
   "@rspack/plugin-react-refresh": 2.0.2
   "@rslib/core": 0.23.2
   react-refresh: 0.18.0
@@ -259,6 +259,8 @@ minimumReleaseAge: 3000
 minimumReleaseAgeExclude:
   - "@ledgerhq/*"
   - "bitcoinjs-lib@7.0.5"
+  - "@rspack/*"
+  - "@rsbuild/core"
 
 autoInstallPeers: false
 enablePrePostScripts: true
