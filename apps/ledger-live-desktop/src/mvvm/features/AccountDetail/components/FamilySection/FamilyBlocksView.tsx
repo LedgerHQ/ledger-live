@@ -28,7 +28,10 @@ export const FamilyBlocksView = ({
           })
         : null}
       {showBodyBlocks
-        ? renderFamilyBlock(family.AccountBodyHeader, { account, parentAccount: undefined })
+        ? renderFamilyBlock(family.AccountDetailDelegations ?? family.AccountBodyHeader, {
+            account,
+            parentAccount: undefined,
+          })
         : null}
     </>
   );

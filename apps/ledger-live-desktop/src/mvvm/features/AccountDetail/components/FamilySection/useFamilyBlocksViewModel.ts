@@ -12,6 +12,7 @@ type FamilyComponents = Pick<
   | "AccountSubHeader"
   | "PendingTransferProposals"
   | "AccountBodyHeader"
+  | "AccountDetailDelegations"
   | "AccountBalanceSummaryFooter"
 >;
 
