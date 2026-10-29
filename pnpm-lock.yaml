@@ -1175,6 +1175,9 @@ importers:
       '@features/flow-account-detail':
         specifier: workspace:^
         version: link:../../features/flow/account-detail
+      '@features/flow-account-detail-delegations':
+        specifier: workspace:^
+        version: link:../../features/flow/account-detail-delegations
       '@features/flow-account-detail-hero':
         specifier: workspace:^
         version: link:../../features/flow/account-detail-hero
@@ -2049,6 +2052,9 @@ importers:
       '@features/flow-account-detail':
         specifier: workspace:^
         version: link:../../features/flow/account-detail
+      '@features/flow-account-detail-delegations':
+        specifier: workspace:^
+        version: link:../../features/flow/account-detail-delegations
       '@features/flow-account-detail-hero':
         specifier: workspace:^
         version: link:../../features/flow/account-detail-hero
