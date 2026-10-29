@@ -1,8 +1,8 @@
 import React from "react";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { ContactsListItem, ContactsListViewLabels } from "../../types";
-import { ContactsAddContactListItem } from "../ContactsList/ListItems/ContactsAddContactListItem.native";
-import { ContactsMeListItem } from "../ContactsList/ListItems/ContactsMeListItem.native";
+import { ContactsAddContactListItem } from "../ContactsList/ListItems/ContactsAddContactListItem";
+import { ContactsMeListItem } from "../ContactsList/ListItems/ContactsMeListItem";
 
 type ContactsListHeaderProps = Readonly<{
   me?: ContactsListItem;

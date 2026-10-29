@@ -19,7 +19,7 @@ export function RecipientContactsList({ contacts, onContactSelect }: RecipientCo
           <SubheaderTitle>{t("contacts.title")}</SubheaderTitle>
         </SubheaderRow>
       </Subheader>
-      <ContactsCompactList contacts={contacts} onContactSelect={onContactSelect} />
+      <ContactsCompactList contacts={contacts} onSelectContact={onContactSelect} />
     </Box>
   );
 }

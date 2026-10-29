@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsListView as ContactsListFlowView } from "@features/flow-contacts-list";
+import { ContactsListView as ContactsListFlowView } from "@features/flow-contacts-list/web";
 import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
 import {
   ContactsFeatureIntroductionDialog,

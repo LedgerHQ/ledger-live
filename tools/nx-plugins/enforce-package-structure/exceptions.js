@@ -119,14 +119,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsRenameContactDrawer: componentWaiver("R1", "R5"),
     ContactsRenameContactFooter: componentWaiver("R1", "R5"),
   },
-  "features/flow/flow-contacts-list": {
-    "./native": entryWaiver(),
-    ContactsAddContactHeaderButton: componentWaiver("R1", "R4", "R5"),
-    ContactsCompactList: componentWaiver("R3", "R5"),
-    ContactsCompactRow: componentWaiver("R1", "R3", "R5"),
-    ContactsListView: componentWaiver("R2", "R3", "R5"),
-    ContactsSearchNoResults: componentWaiver("R1", "R5"),
-  },
   "features/flow/pay-card-assets": {
     CardAssetDetailsDrawer: componentWaiver("R1"),
     CardAssetDetailsWithdrawDrawer: componentWaiver("R1"),
