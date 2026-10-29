@@ -1,34 +1,31 @@
+import {
+  MockClient,
+  sessionExportCodec,
+  type Device,
+  type Session,
+  type SessionExport,
+} from "@ledgerhq/device-mockserver-client";
+
 const REQUEST_TIMEOUT_MS = 4000;
 
-export type MockServerDevice = {
-  id: string;
-  name: string;
-  device_type: string;
-  connectivity_type: string;
-  connected?: boolean;
-};
+export type MockServerDevice = Device;
+export type MockServerSession = Session;
+export type MockServerSessionImport = SessionExport;
 
-export type MockServerSession = {
-  id: string;
-  expires_at: number;
-  devices: MockServerDevice[];
-};
+export const parseMockServerSessionImport = (value: unknown): MockServerSessionImport =>
+  sessionExportCodec.decode(value).caseOf({
+    Left: error => {
+      throw new Error(`Invalid mock server session import: ${error}`);
+    },
+    Right: sessionImport => sessionImport,
+  });
 
-export type MockServerSessionImport = {
-  devices: unknown[];
-};
-
-type RequestOptions = {
-  method?: "GET" | "POST" | "PUT";
-  token?: string;
-  body?: unknown;
-};
-
-const request = async <T>(
+/** For the two endpoints `MockClient` does not cover: the session seed and the health check. */
+const request = async (
   url: string,
   path: string,
-  { method = "GET", token, body }: RequestOptions = {},
-): Promise<T> => {
+  { method = "GET", token, body }: { method?: "GET" | "PUT"; token?: string; body?: unknown } = {},
+): Promise<void> => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
@@ -44,8 +41,6 @@ const request = async <T>(
     if (!response.ok) {
       throw new Error(`Mock server ${method} /${path} failed with status ${response.status}`);
     }
-    const text = await response.text();
-    return (text ? JSON.parse(text) : undefined) as T;
   } finally {
     clearTimeout(timeoutId);
   }
@@ -61,13 +56,13 @@ export const createMockServerSession = async ({
   sessionImport: MockServerSessionImport;
   seed?: string;
 }): Promise<string> => {
-  const { token } = await request<{ token?: string }>(url, "auth", { method: "POST", body: {} });
-  if (!token) throw new Error("Mock server returned no session token");
+  const client = new MockClient(url);
+  const token = await client.authenticate();
 
   if (seed) {
     await request(url, "sessions/current/seed", { method: "PUT", token, body: { seed } });
   }
-  await request(url, "import", { method: "POST", token, body: sessionImport });
+  await client.importSession(sessionImport);
 
   return token;
 };
@@ -78,7 +73,7 @@ export const getMockServerSession = ({
 }: {
   url: string;
   token: string;
-}): Promise<MockServerSession> => request(url, "sessions/current", { token });
+}): Promise<MockServerSession> => new MockClient(url, { token }).getSession();
 
 export const listMockServerDevices = ({
   url,
@@ -86,7 +81,7 @@ export const listMockServerDevices = ({
 }: {
   url: string;
   token: string;
-}): Promise<MockServerDevice[]> => request(url, "devices", { token });
+}): Promise<MockServerDevice[]> => new MockClient(url, { token }).listDevices();
 
 export const isMockServerReachable = async (url: string): Promise<boolean> => {
   try {

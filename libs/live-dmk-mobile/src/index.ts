@@ -14,6 +14,7 @@ export {
   getMockServerSession,
   isMockServerReachable,
   listMockServerDevices,
+  parseMockServerSessionImport,
   type MockServerDevice,
   type MockServerSession,
   type MockServerSessionImport,

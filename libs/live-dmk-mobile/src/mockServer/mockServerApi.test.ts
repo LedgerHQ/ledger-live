@@ -1,6 +1,7 @@
 /**
  * @jest-environment node
  */
+import { DmkNetworkClientError } from "@ledgerhq/device-management-kit";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import {
@@ -8,6 +9,7 @@ import {
   getMockServerFrontendUrl,
   getMockServerSession,
   isMockServerReachable,
+  parseMockServerSessionImport,
 } from "./mockServerApi";
 
 const URL = "https://mock.example";
@@ -33,9 +35,11 @@ describe("mockServerApi", () => {
   afterAll(() => server.close());
 
   beforeEach(() => {
-    endpoints.auth.mockReset().mockImplementation(() => HttpResponse.json({ token: "token-1" }));
+    endpoints.auth
+      .mockReset()
+      .mockImplementation(() => HttpResponse.json({ token: "token-1", expires_at: 0 }));
     endpoints.seed.mockReset().mockImplementation(() => HttpResponse.json({}));
-    endpoints.import.mockReset().mockImplementation(() => HttpResponse.json({}));
+    endpoints.import.mockReset().mockImplementation(() => HttpResponse.json({ devices: [] }));
     endpoints.session.mockReset();
     endpoints.health.mockReset().mockImplementation(() => HttpResponse.json({ status: "ok" }));
   });
@@ -66,12 +70,12 @@ describe("mockServerApi", () => {
 
     await expect(
       createMockServerSession({ url: URL, sessionImport: { devices: [] } }),
-    ).rejects.toThrow("no session token");
+    ).rejects.toThrow("invalid server response");
   });
 
   it("should return the current session when the token is valid", async () => {
     endpoints.session.mockImplementation(() =>
-      HttpResponse.json({ id: "session-1", expires_at: 0, devices: [] }),
+      HttpResponse.json({ id: "session-1", created_at: 0, expires_at: 0, devices: [] }),
     );
 
     await expect(getMockServerSession({ url: URL, token: "token-1" })).resolves.toMatchObject({
@@ -85,13 +89,21 @@ describe("mockServerApi", () => {
   it("should reject when the session token has expired", async () => {
     endpoints.session.mockImplementation(() => HttpResponse.json({}, { status: 401 }));
 
-    await expect(getMockServerSession({ url: URL, token: "expired" })).rejects.toThrow("401");
+    await expect(getMockServerSession({ url: URL, token: "expired" })).rejects.toThrow(
+      DmkNetworkClientError,
+    );
   });
 
   it("should report the server as unreachable when the health check fails", async () => {
     endpoints.health.mockImplementation(() => HttpResponse.error());
 
     await expect(isMockServerReachable(URL)).resolves.toBe(false);
+  });
+
+  it("should reject a session import without a devices list", () => {
+    expect(() => parseMockServerSessionImport({ device: [] })).toThrow(
+      "Invalid mock server session import",
+    );
   });
 
   it("should pass the token to the frontend in the url hash", () => {

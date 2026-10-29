@@ -5,8 +5,8 @@ import {
   createMockServerSession,
   getMockServerSession,
   mockserverIdentifier,
+  parseMockServerSessionImport,
   type MockServerDevice,
-  type MockServerSessionImport,
 } from "@ledgerhq/live-dmk-mobile";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId as DmkDeviceModelId } from "@ledgerhq/device-management-kit";
@@ -76,7 +76,7 @@ export function useMockServerSessionActions(): MockServerSessionActions {
       const seed = getEnv("MOCK_SERVER_SEED").trim();
       const token = await createMockServerSession({
         url,
-        sessionImport: getEnv("MOCK_SERVER_SESSION") as MockServerSessionImport,
+        sessionImport: parseMockServerSessionImport(getEnv("MOCK_SERVER_SESSION")),
         seed: seed || undefined,
       });
       await joinSession(url, token);

@@ -42,10 +42,12 @@ describe("MockServer", () => {
     endpoints.session
       .mockReset()
       .mockImplementation(() =>
-        HttpResponse.json({ id: "session-1", expires_at: 0, devices: [staxDevice] }),
+        HttpResponse.json({ id: "session-1", created_at: 0, expires_at: 0, devices: [staxDevice] }),
       );
-    endpoints.auth.mockReset().mockImplementation(() => HttpResponse.json({ token: "token-2" }));
-    endpoints.import.mockReset().mockImplementation(() => HttpResponse.json({}));
+    endpoints.auth
+      .mockReset()
+      .mockImplementation(() => HttpResponse.json({ token: "token-2", expires_at: 0 }));
+    endpoints.import.mockReset().mockImplementation(() => HttpResponse.json({ devices: [] }));
     server.use(
       http.get(`${MOCK_SERVER_URL}/health`, endpoints.health),
       http.get(`${MOCK_SERVER_URL}/sessions/current`, endpoints.session),
