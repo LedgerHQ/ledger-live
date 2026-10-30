@@ -9,6 +9,7 @@ import { setReadOnlyMode } from "~/actions/settings";
 import { NavigatorName } from "~/const";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import RebornBuyDeviceDrawer from "LLM/features/Reborn/drawers/RebornBuyDeviceDrawer";
+import { RebornBuyDeviceProvider } from "LLM/features/Reborn/drawers/RebornBuyDeviceProvider";
 import DeviceSelectionNavigator from "../Navigator";
 import { useOpenSelectDevice } from "../hooks/useOpenSelectDevice";
 
@@ -51,14 +52,14 @@ function Earn() {
 
 async function openAddAccount({ readOnly = true } = {}) {
   const view = render(
-    <>
+    <RebornBuyDeviceProvider>
       <Stack.Navigator>
         <Stack.Screen name="Earn" component={Earn} />
         <Stack.Screen name={NavigatorName.DeviceSelection} component={DeviceSelectionNavigator} />
         <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingTestScreens} />
       </Stack.Navigator>
       <GlobalAddAccount />
-    </>,
+    </RebornBuyDeviceProvider>,
     {
       overrideInitialState: withFlagOverrides({
         deviceOnboarding: { enabled: true, params: { unifiedEntryPoints: true } },

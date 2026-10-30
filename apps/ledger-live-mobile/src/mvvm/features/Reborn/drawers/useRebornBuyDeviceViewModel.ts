@@ -1,10 +1,7 @@
 import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import { useFeature } from "@features/platform-feature-flags";
-import {
-  takeRebornBuyDeviceNext,
-  useRebornBuyDeviceDrawerController,
-} from "../hooks/useRebornBuyDeviceDrawerController";
+import { useRebornBuyDeviceDrawerController } from "../hooks/useRebornBuyDeviceDrawerController";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector, useDispatch } from "~/context/hooks";
@@ -39,7 +36,7 @@ const getIsBaseOnboarding = (navigation: NavigationProp) => {
 };
 
 function useRebornBuyDeviceViewModel() {
-  const { isOpen, closeDrawer } = useRebornBuyDeviceDrawerController();
+  const { isOpen, closeDrawer, connect } = useRebornBuyDeviceDrawerController();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -53,8 +50,14 @@ function useRebornBuyDeviceViewModel() {
 
   const setupDevice = useCallback(() => {
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
-    // Runs before onboarding opens, so a flow waiting for a device sits under it.
-    takeRebornBuyDeviceNext()?.onConnect();
+    if (readOnlyModeEnabled) {
+      track("button_clicked", {
+        button: "Connect",
+        page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
+      });
+    }
+    // Before onboarding opens, so a flow waiting for a device sits under it.
+    connect();
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: unifiedEntryPoints
@@ -64,15 +67,7 @@ function useRebornBuyDeviceViewModel() {
           }
         : { screen: ScreenName.OnboardingDeviceSelection },
     });
-
-    if (readOnlyModeEnabled) {
-      track("button_clicked", {
-        button: "Connect",
-        page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
-      });
-    }
-    closeDrawer();
-  }, [isInOnboarding, dispatch, navigation, unifiedEntryPoints, readOnlyModeEnabled, closeDrawer]);
+  }, [isInOnboarding, dispatch, navigation, unifiedEntryPoints, readOnlyModeEnabled, connect]);
 
   const buyLedger = useCallback(() => {
     track("button_clicked", {
