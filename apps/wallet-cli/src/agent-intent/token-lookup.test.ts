@@ -10,8 +10,15 @@ const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 const USDE = "0x4c9EDD5852cd905f086C759E8383e09bff1E68B3";
 const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
 
-const usdc = { name: "USD Coin", ticker: "USDC", contract_address: USDC };
-const usde = { name: "USDe", ticker: "USDe", contract_address: USDE };
+const usdc = {
+  id: "ethereum/erc20/usd__coin",
+  name: "USD Coin",
+  ticker: "USDC",
+  contract_address: USDC,
+};
+const usde = { id: "ethereum/erc20/usde", name: "USDe", ticker: "USDe", contract_address: USDE };
+
+const usdcCandidate = { id: usdc.id, ticker: "USDC", name: "USD Coin", address: USDC };
 
 describe("findTokensByTicker", () => {
   let requests: URL[];
@@ -36,15 +43,13 @@ describe("findTokensByTicker", () => {
   });
 
   it("has CAL filter the network, ticker, standard and listing before it applies the limit", async () => {
-    expect(await findTokensByTicker("ethereum", "USDC")).toEqual([
-      { ticker: "USDC", name: "USD Coin", address: USDC },
-    ]);
+    expect(await findTokensByTicker("ethereum", "USDC")).toEqual([usdcCandidate]);
     expect(
       requests.map(url => [url.pathname.endsWith("/v1/tokens"), url.searchParams.toString()]),
     ).toEqual([
       [
         true,
-        "network=ethereum&ticker=USDC&standard=erc20&delisted=false&output=name%2Cticker%2Ccontract_address&limit=20",
+        "network=ethereum&ticker=USDC&standard=erc20&delisted=false&output=id%2Cname%2Cticker%2Ccontract_address&limit=20",
       ],
     ]);
   });
@@ -56,25 +61,21 @@ describe("findTokensByTicker", () => {
   });
 
   it("finds a lowercase ticker under its uppercase spelling", async () => {
-    expect(await findTokensByTicker("ethereum", "usdc")).toEqual([
-      { ticker: "USDC", name: "USD Coin", address: USDC },
-    ]);
+    expect(await findTokensByTicker("ethereum", "usdc")).toEqual([usdcCandidate]);
     expect(requests.map(url => url.searchParams.get("ticker"))).toEqual(["usdc", "USDC"]);
   });
 
   it("finds a mixed-case ticker only as CAL spells it", async () => {
     expect(await findTokensByTicker("ethereum", "usde")).toEqual([]);
     expect(await findTokensByTicker("ethereum", "USDe")).toEqual([
-      { ticker: "USDe", name: "USDe", address: USDE },
+      { id: usde.id, ticker: "USDe", name: "USDe", address: USDE },
     ]);
   });
 
   it("keeps one entry for a token both spellings return, and drops other tickers", async () => {
     respond = () => Response.json([usdc, { ...usdc, ticker: "USDC.e", contract_address: "0x2" }]);
 
-    expect(await findTokensByTicker("ethereum", "usdc")).toEqual([
-      { ticker: "USDC", name: "USD Coin", address: USDC },
-    ]);
+    expect(await findTokensByTicker("ethereum", "usdc")).toEqual([usdcCandidate]);
   });
 
   it.each([
@@ -114,10 +115,21 @@ describe("findAccountTokens", () => {
     const tokens = spyOn(getCryptoAssetsStore(), "findTokenById").mockImplementation(
       async id =>
         ({
-          ethereum: { ticker: "ETH", name: "Ethereum", contractAddress: "0x0" },
-          "ethereum/erc20/usd__coin": { ticker: "USDC", name: "USD Coin", contractAddress: USDC },
-          "ethereum/erc20/pepe": { ticker: "PEPE", name: "Pepe", contractAddress: "0x2" },
+          ethereum: { id: "ethereum", ticker: "ETH", name: "Ethereum", contractAddress: "0x0" },
+          "ethereum/erc20/usd__coin": {
+            id: "ethereum/erc20/usd__coin",
+            ticker: "USDC",
+            name: "USD Coin",
+            contractAddress: USDC,
+          },
+          "ethereum/erc20/pepe": {
+            id: "ethereum/erc20/pepe",
+            ticker: "PEPE",
+            name: "Pepe",
+            contractAddress: "0x2",
+          },
           "ethereum/erc20/delisted": {
+            id: "ethereum/erc20/delisted",
             ticker: "USDC",
             name: "Old USDC",
             contractAddress: "0x1",
@@ -127,9 +139,7 @@ describe("findAccountTokens", () => {
     );
 
     try {
-      expect(await findAccountTokens(account)).toEqual([
-        { ticker: "USDC", name: "USD Coin", address: USDC },
-      ]);
+      expect(await findAccountTokens(account)).toEqual([usdcCandidate]);
       expect(balances).toHaveBeenCalledWith(expect.objectContaining({ currencyId: "ethereum" }));
     } finally {
       balances.mockRestore();

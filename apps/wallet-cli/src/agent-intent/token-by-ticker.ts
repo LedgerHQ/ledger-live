@@ -16,9 +16,32 @@ import {
 const TOKEN_KIND = { ethereum: "ERC-20 token", solana: "SPL token" } as const;
 const MAINNET = { ethereum: "Ethereum mainnet", solana: "Solana mainnet" } as const;
 
-function listCandidates(tokens: TokenCandidate[]): string {
+export type TokenFlag = "token" | "from" | "to";
+
+const ASK_FOR_TOKEN = {
+  token: {
+    pickOne: "Pass the one to send with --token.",
+    passIt: "pass the token's address with --token",
+  },
+  from: {
+    pickOne: "Pass the currency id of the one to sell with --from.",
+    passIt: "pass the token's currency id with --from",
+  },
+  to: {
+    pickOne: "Pass the currency id of the one to buy with --to.",
+    passIt: "pass the token's currency id with --to",
+  },
+} as const;
+
+function describeToken(token: TokenCandidate, flag: TokenFlag): string {
+  return flag === "token"
+    ? `${token.address} (${token.name})`
+    : `${token.id} (${token.name}, ${token.address})`;
+}
+
+function listCandidates(tokens: TokenCandidate[], flag: TokenFlag): string {
   const more = tokens.length >= MAX_CANDIDATES ? "\n  … and maybe more" : "";
-  return tokens.map(token => `\n  ${token.address} (${token.name})`).join("") + more;
+  return tokens.map(token => `\n  ${describeToken(token, flag)}`).join("") + more;
 }
 
 function checksummed(network: IntentNetwork, tokens: TokenCandidate[]): TokenCandidate[] {
@@ -60,22 +83,21 @@ export async function resolveTokenByTicker(
   ticker: string,
   account: SenderAccount | undefined,
   out: Pick<CommandOutput, "withActivity">,
-): Promise<string> {
+  flag: TokenFlag,
+): Promise<TokenCandidate> {
   const kind = TOKEN_KIND[network];
   if (account) {
     const held = checksummed(network, await heldTokens(network, account, ticker, out));
     if (held.length > 1) {
       throw new Error(
         `Account "${account.label}" holds several ${kind}s with the ticker ${ticker}:` +
-          `${listCandidates(held)}\nPass the one to send with --token.`,
+          `${listCandidates(held, flag)}\n${ASK_FOR_TOKEN[flag].pickOne}`,
       );
     }
     if (held.length === 1) {
       const [only] = held;
-      writeStderr(
-        `${only.ticker} is ${only.address} (${only.name}), held by "${account.label}".\n`,
-      );
-      return only.address;
+      writeStderr(`${only.ticker} is ${describeToken(only, flag)}, held by "${account.label}".\n`);
+      return only;
     }
   }
 
@@ -83,20 +105,20 @@ export async function resolveTokenByTicker(
   if (listed.length === 0) {
     throw new Error(
       `No ${kind} on ${MAINNET[network]} has the ticker ${ticker} in the Crypto Assets List, ` +
-        "which matches tickers case-sensitively (e.g. USDe, stETH). Check the ticker, or pass the " +
-        "token's address with --token.",
+        "which matches tickers case-sensitively (e.g. USDe, stETH). Check the ticker, or " +
+        `${ASK_FOR_TOKEN[flag].passIt}.`,
     );
   }
   if (listed.length > 1) {
     throw new Error(
       `Several ${kind}s on ${MAINNET[network]} have the ticker ${ticker}:` +
-        `${listCandidates(listed)}\nPass the one to send with --token.`,
+        `${listCandidates(listed, flag)}\n${ASK_FOR_TOKEN[flag].pickOne}`,
     );
   }
   const [only] = listed;
   writeStderr(
-    `${only.ticker} is ${only.address} (${only.name}), the only ${kind} with that ticker on ` +
+    `${only.ticker} is ${describeToken(only, flag)}, the only ${kind} with that ticker on ` +
       `${MAINNET[network]}.\n`,
   );
-  return only.address;
+  return only;
 }

@@ -52,7 +52,7 @@ Map informal phrasings to commands. Account references use a session label (e.g.
 | "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
 | "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
 | "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
-| "have the agent propose a swap", "propose swapping X ETH to USDC for approval"        | `agent-intent swap --profile <id> --account <label> --from ethereum --to <currency id> --amount <amount>` (no device, never broadcasts) |
+| "have the agent propose a swap", "propose swapping X ETH to USDC for approval"        | `agent-intent swap --profile <id> --account <label> --from ETH --to <ticker or currency id> --amount <amount>` (no device, never broadcasts) |
 | "what did the agent propose", "list the agent's intents"                           | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
 | "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; poll JSON `intent.status` for one state, `terminal` for a final one) |
 | "cancel intent X", "withdraw the proposal", "the agent changed its mind"            | `agent-intent cancel --profile <id> --intent <id> --yes` (no device; only before the user signs; irreversible) |
@@ -570,22 +570,33 @@ best quote the Agent Intent frontend can prepare. When the human opens the link,
 fetches a fresh quote and builds the transaction.
 
 ```bash
-# Sell 0.5 ETH for USDC at the best quote (currency ids, as in `swap quote`):
+# Sell 0.5 ETH for USDC at the best quote:
 pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
-  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --description "Rebalance"
+  --from ETH --to USDC --amount 0.5 --description "Rebalance"
 
-# Quote one provider only:
+# Currency ids (as in `swap quote`) work too; quote one provider only:
 pnpm --silent wallet-cli start agent-intent swap --profile my-bot --sender 0xSender \
   --from ethereum/erc20/usd__coin --to ethereum --amount 1000 --provider oneinch
 
 # Quote and validate without submitting (doesn't read the agent key or sign in):
 pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
-  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --dry-run
+  --from ETH --to USDC --amount 0.5 --dry-run
 ```
 
 - **Enrolled profile only**, as for `agent-intent send`. **Ethereum mainnet only**: `--from` and
-  `--to` are `ethereum` or an Ethereum ERC-20 currency id (`assets token ethereum <contract>`
-  prints it), and the sender is a `--account` label or a `--sender` address.
+  `--to` are ETH or an Ethereum ERC-20, and the sender is a `--account` label or a `--sender`
+  address.
+- **Assets** are a ticker (`ETH`, `USDC`) or a Ledger currency id (`ethereum`,
+  `ethereum/erc20/usd__coin`; `assets token ethereum <contract>` prints it). `ETH` is always native
+  ether. Another chain's currency id (`bitcoin`, `dydx`) is refused, never read as a ticker: type
+  the ticker in uppercase (`DYDX`) to swap an ERC-20 token with it. A `--from` token ticker
+  resolves as in `agent-intent send`: to the one listed token of that ticker the `--account` holds
+  a balance of, else, or with `--sender`, to the one listed CAL token with it on Ethereum mainnet.
+  A `--to` token ticker always resolves through CAL, so a copy the account was sent can't stand in
+  for the token to buy. stderr names the currency id and contract picked. Several matches is an
+  error listing the candidates' currency ids (pass the one you mean instead of the ticker), and so
+  is a ticker CAL doesn't list. CAL matches tickers case-sensitively: type mixed-case ones as
+  listed (`USDe`, `stETH`).
 - **Amounts are human units** (`0.5` ETH, `1000` USDC), never rounded. More decimals than the
   asset has, zero, a sign or an exponent is an error. The quoted amount to receive is rounded
   **down** to the bought asset's precision. JSON output gives `fromAmount` and `toAmount` as strings.

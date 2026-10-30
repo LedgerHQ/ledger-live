@@ -7,7 +7,8 @@ import {
 } from "@ledgerhq/agent-intent-sdk";
 import { installOutputCapture } from "../../shared/ui";
 import type { AgentSwapQuote } from "../../agent-intent/swap-quote";
-import type { SwapAsset } from "../../agent-intent/token-lookup";
+import { toChecksumAddress } from "../../agent-intent/evm";
+import type { SwapAsset, TokenCandidate } from "../../agent-intent/token-lookup";
 import {
   activateAgentIntentMocks,
   deactivateAgentIntentMocks,
@@ -27,6 +28,63 @@ const USDC: SwapAsset = {
   ticker: "USDC",
   decimals: 6,
   contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+};
+const DAI: SwapAsset = {
+  id: "ethereum/erc20/dai_stablecoin_v2_0",
+  ticker: "DAI",
+  decimals: 18,
+  contract: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+};
+const DYDX: SwapAsset = {
+  id: "ethereum/erc20/dydx",
+  ticker: "DYDX",
+  decimals: 18,
+  contract: toChecksumAddress("0x92d6c1e31e14520e676a687f0a93788b716beff5"),
+};
+const PEPE = toChecksumAddress("0x6982508145454ce325ddbe47a25d4ec3d2311933");
+const PEPE_COPY = toChecksumAddress("0xbe042e9d09cb588331ff911c2b46fd833a3e5bd6");
+
+const usdc = {
+  id: USDC.id,
+  ticker: "USDC",
+  name: "USD Coin",
+  address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+};
+const dai = {
+  id: DAI.id,
+  ticker: "DAI",
+  name: "Dai Stablecoin v2.0",
+  address: "0x6b175474e89094c44da98b954eedeac495271d0f",
+};
+const pepe = {
+  id: "ethereum/erc20/pepe",
+  ticker: "PEPE",
+  name: "Pepe",
+  address: PEPE.toLowerCase(),
+};
+const pepeCopy = {
+  id: "ethereum/erc20/pepe_0xbe042e",
+  ticker: "PEPE",
+  name: "Pepe_0xbe042e",
+  address: PEPE_COPY.toLowerCase(),
+};
+const dydx = {
+  id: DYDX.id,
+  ticker: "DYDX",
+  name: "ethdYdX",
+  address: "0x92d6c1e31e14520e676a687f0a93788b716beff5",
+};
+const etherToken = {
+  id: "ethereum/erc20/ether_token",
+  ticker: "ETH",
+  name: "Ether Token",
+  address: "0xc0829421c1d260bd3cb3e0f06cfe2d52db2ce315",
+};
+const bitcoinMeme = {
+  id: "ethereum/erc20/harrypotterobamasonic10inu",
+  ticker: "BITCOIN",
+  name: "HarryPotterObamaSonic10Inu",
+  address: "0x72e4f9f808c49a2a61de9c5896298920dc4eeea9",
 };
 
 const enrolledProfile = {
@@ -70,6 +128,11 @@ let clientOptions: Array<Record<string, unknown>>;
 let makeClient: ((options: Record<string, unknown>) => unknown) | undefined;
 let stdout: string[];
 let stderr: string[];
+let calTokens: TokenCandidate[];
+let tickerLookups: string[];
+let accountTokens: TokenCandidate[];
+let accountTokensError: Error | undefined;
+let accountReads: number;
 
 beforeAll(() =>
   activateAgentIntentMocks({
@@ -97,7 +160,19 @@ beforeAll(() =>
       },
     },
     tokenLookup: {
-      findEthereumSwapAsset: async (id: string) => [ETH, USDC].find(a => a.id === id) ?? null,
+      findEthereumSwapAsset: async (id: string) =>
+        [ETH, USDC, DAI, DYDX].find(asset => asset.id === id) ?? null,
+      findTokensByTicker: async (network: string, ticker: string) => {
+        tickerLookups.push(`${network} ${ticker}`);
+        return calTokens.filter(
+          token => token.ticker === ticker || token.ticker === ticker.toUpperCase(),
+        );
+      },
+      findAccountTokens: async () => {
+        accountReads++;
+        if (accountTokensError) throw accountTokensError;
+        return accountTokens;
+      },
     },
     swapQuote: {
       fetchAgentSwapQuote: async (request: QuoteRequest) => {
@@ -162,6 +237,11 @@ describe("agent-intent swap", () => {
     makeClient = undefined;
     stdout = [];
     stderr = [];
+    calTokens = [usdc, dai, dydx, pepe, pepeCopy, etherToken, bitcoinMeme];
+    tickerLookups = [];
+    accountTokens = [];
+    accountTokensError = undefined;
+    accountReads = 0;
     restore = installOutputCapture({
       stdout: chunk => stdout.push(chunk),
       stderr: chunk => stderr.push(chunk),
@@ -453,11 +533,27 @@ describe("agent-intent swap", () => {
       await expect(runSwap({ account: "ethereum-1" })).rejects.toThrow(message);
     });
 
-    it("rejects an asset that isn't ETH or an Ethereum ERC-20", async () => {
-      await expect(runSwap({ to: "bitcoin" })).rejects.toThrow(
-        /--to "bitcoin" is not ethereum or an ERC-20 token on Ethereum mainnet/,
+    it("rejects a token id that isn't an Ethereum ERC-20", async () => {
+      await expect(runSwap({ to: "polygon/erc20/usd__coin" })).rejects.toThrow(
+        /--to "polygon\/erc20\/usd__coin" is not ethereum or an ERC-20 token on Ethereum mainnet/,
       );
       expect(quoteRequests).toEqual([]);
+    });
+
+    it("reads another chain's currency id as that id, never as the ticker of a token CAL lists", async () => {
+      await expect(runSwap({ to: "bitcoin" })).rejects.toThrow(
+        '--to "bitcoin" is the Bitcoin currency id, not an asset on Ethereum mainnet. A ticker ' +
+          "typed in uppercase is looked up as an ERC-20 token instead.",
+      );
+      expect(tickerLookups).toEqual([]);
+      expect(quoteRequests).toEqual([]);
+    });
+
+    it("looks up the uppercase spelling of another chain's currency id as an ERC-20 ticker", async () => {
+      await runSwap({ to: "DYDX" });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ toAsset: DYDX.id })]);
+      expect(tickerLookups).toEqual(["ethereum DYDX"]);
     });
 
     it("rejects selling an asset for itself", async () => {
@@ -476,6 +572,142 @@ describe("agent-intent swap", () => {
       profiles = { bot: { ...enrolledProfile, trustchainId: undefined } };
 
       await expect(runSwap()).rejects.toThrow(/is not enrolled yet/);
+    });
+  });
+
+  describe("tickers", () => {
+    const stderrLines = () => stderr.join("").split("\n");
+
+    it("takes the token the --account holds for a --from ticker, naming its currency id", async () => {
+      accountTokens = [usdc];
+
+      await runSwap({
+        sender: undefined,
+        account: "ethereum-1",
+        from: "usdc",
+        to: "ETH",
+        amount: "100",
+        output: "json",
+      });
+
+      expect(quoteRequests).toEqual([
+        expect.objectContaining({ from: USDC.id, fromContract: USDC.contract, to: ETH.id }),
+      ]);
+      expect(submittedIntents).toEqual([
+        expect.objectContaining({ fromAsset: USDC.id, toAsset: ETH.id, fromAmount: "100" }),
+      ]);
+      expect(jsonResult()).toMatchObject({ from: USDC, to: ETH });
+      expect(tickerLookups).toEqual([]);
+      expect(stderrLines()).toContain(
+        `USDC is ${USDC.id} (USD Coin, ${USDC.contract}), held by "ethereum-1".`,
+      );
+    });
+
+    it("takes the only ERC-20 CAL lists under a --to ticker for a --sender", async () => {
+      await runSwap({ to: "USDC" });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ toAsset: USDC.id })]);
+      expect(tickerLookups).toEqual(["ethereum USDC"]);
+      expect(stderrLines()).toContain(
+        `USDC is ${USDC.id} (USD Coin, ${USDC.contract}), the only ERC-20 token with that ticker ` +
+          "on Ethereum mainnet.",
+      );
+    });
+
+    it("takes a --from ticker from the --account's tokens and a --to ticker from CAL", async () => {
+      accountTokens = [usdc, dai];
+
+      await runSwap({
+        sender: undefined,
+        account: "ethereum-1",
+        from: "USDC",
+        to: "DAI",
+        amount: "100",
+      });
+
+      expect(submittedIntents).toEqual([
+        expect.objectContaining({ fromAsset: USDC.id, toAsset: DAI.id }),
+      ]);
+      expect(accountReads).toBe(1);
+      expect(tickerLookups).toEqual(["ethereum DAI"]);
+    });
+
+    it("never takes a --to token from the --account, so a copy it holds can't stand in", async () => {
+      accountTokens = [pepeCopy];
+
+      await expect(
+        runSwap({ sender: undefined, account: "ethereum-1", to: "PEPE" }),
+      ).rejects.toThrow("Several ERC-20 tokens on Ethereum mainnet have the ticker PEPE:");
+      expect(accountReads).toBe(0);
+      expect(quoteRequests).toEqual([]);
+    });
+
+    it("keeps ETH native, although CAL lists ERC-20 tokens with that ticker", async () => {
+      await runSwap({ sender: undefined, account: "ethereum-1", from: "eth", to: USDC.id });
+
+      expect(submittedIntents).toEqual([
+        expect.objectContaining({ fromAsset: ETH.id, toAsset: USDC.id }),
+      ]);
+      expect(tickerLookups).toEqual([]);
+      expect(accountReads).toBe(0);
+    });
+
+    it("falls back to CAL, saying why on stderr, when it can't read the --account's tokens", async () => {
+      accountTokensError = new Error("RPC unreachable");
+
+      await runSwap({
+        sender: undefined,
+        account: "ethereum-1",
+        from: "USDC",
+        to: "ETH",
+        amount: "1",
+      });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ fromAsset: USDC.id })]);
+      expect(tickerLookups).toEqual(["ethereum USDC"]);
+      expect(stderrLines()).toContain(
+        'Couldn\'t read the tokens account "ethereum-1" holds (RPC unreachable), so USDC is ' +
+          "looked up in the Crypto Assets List instead.",
+      );
+    });
+
+    it("lists the currency ids of the tokens the --account holds with a --from ticker", async () => {
+      accountTokens = [pepe, pepeCopy];
+
+      await expect(
+        runSwap({ sender: undefined, account: "ethereum-1", from: "PEPE", to: "ETH", amount: "1" }),
+      ).rejects.toThrow(
+        'Account "ethereum-1" holds several ERC-20 tokens with the ticker PEPE:\n' +
+          `  ethereum/erc20/pepe (Pepe, ${PEPE})\n` +
+          `  ethereum/erc20/pepe_0xbe042e (Pepe_0xbe042e, ${PEPE_COPY})\n` +
+          "Pass the currency id of the one to sell with --from.",
+      );
+      expect(quoteRequests).toEqual([]);
+    });
+
+    it("lists the currency ids when CAL has several tokens with a --to ticker", async () => {
+      await expect(runSwap({ to: "PEPE" })).rejects.toThrow(
+        "Several ERC-20 tokens on Ethereum mainnet have the ticker PEPE:\n" +
+          `  ethereum/erc20/pepe (Pepe, ${PEPE})\n` +
+          `  ethereum/erc20/pepe_0xbe042e (Pepe_0xbe042e, ${PEPE_COPY})\n` +
+          "Pass the currency id of the one to buy with --to.",
+      );
+      expect(quoteRequests).toEqual([]);
+    });
+
+    it("refuses a ticker CAL doesn't list, pointing to the currency id", async () => {
+      await expect(runSwap({ from: "XYZ" })).rejects.toThrow(
+        "No ERC-20 token on Ethereum mainnet has the ticker XYZ in the Crypto Assets List, which " +
+          "matches tickers case-sensitively (e.g. USDe, stETH). Check the ticker, or pass the " +
+          "token's currency id with --from.",
+      );
+      expect(quoteRequests).toEqual([]);
+    });
+
+    it("rejects selling a token for itself, named once by ticker and once by currency id", async () => {
+      await expect(runSwap({ from: "USDC", to: USDC.id, amount: "100" })).rejects.toThrow(
+        "--from and --to are the same asset.",
+      );
     });
   });
 
