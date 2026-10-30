@@ -5,8 +5,6 @@ import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { MyWalletPage } from "tests/page/myWallet.page";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
-
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
   readonly selector: Locator;
@@ -48,18 +46,13 @@ export class MainNavigationPage extends AppPage {
     });
   }
 
-  private async getSidebarTargets(): Promise<
-    Readonly<Record<SidebarTargetName, NavigationTarget>>
-  > {
+  private getSidebarTargets(): Readonly<Record<SidebarTargetName, NavigationTarget>> {
     return {
       home: {
         selector: this.homeSideBarButton,
       },
       accounts: {
-        // Asset Section ON routes to /cryptos; OFF redirects to the legacy /accounts page.
-        expectedPath: (await isAssetSectionEnabled(this.page))
-          ? /^\/cryptos(?:\/|$|\?)/
-          : /^\/accounts(?:\/|$|\?)/,
+        expectedPath: /^\/cryptos(?:\/|$|\?)/,
         selector: this.accountsSideBarButton,
       },
       swap: {

@@ -118,21 +118,8 @@ describe("SideBar", () => {
   });
 
   describe("Navigation", () => {
-    it("should navigate to accounts when clicking Accounts item", async () => {
+    it("should navigate to cryptos when clicking Accounts item", async () => {
       const { user } = renderSideBarWithRoute("/");
-
-      await user.click(screen.getByText("Accounts"));
-
-      expect(mockNavigate).toHaveBeenCalledWith("/accounts");
-    });
-
-    it("should navigate to cryptos when clicking Accounts item when asset section is enabled", async () => {
-      const { user } = renderSideBarWithRoute(
-        "/",
-        withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { assetSection: true } },
-        }),
-      );
 
       await user.click(screen.getByText("Accounts"));
 
@@ -209,13 +196,8 @@ describe("SideBar", () => {
       expect(accountsButton).toHaveAttribute("aria-current", "page");
     });
 
-    it("should set accounts as active when on cryptos path and asset section is enabled", () => {
-      renderSideBarWithRoute(
-        "/cryptos",
-        withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { assetSection: true } },
-        }),
-      );
+    it("should set accounts as active when on cryptos path", () => {
+      renderSideBarWithRoute("/cryptos");
 
       const accountsButton = screen.getByText("Accounts").closest("button");
       expect(accountsButton).toHaveAttribute("aria-current", "page");

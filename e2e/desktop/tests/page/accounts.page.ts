@@ -2,65 +2,38 @@ import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+
+const CRYPTO_ACCOUNT_ROW_PREFIX = "crypto-account-row-";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
+  private addAccountButton = this.page.getByTestId("crypto-add-address-button");
 
-  private async getAddAccountButton() {
-    // Accounts-page add-account button differs per Asset Section variant:
-    //   ON  → Cryptos page header button (`crypto-add-address-button`)
-    //   OFF → legacy Accounts page header button (`accounts-add-account-button`)
-    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
-    return assetSectionEnabled
-      ? this.page.getByTestId("crypto-add-address-button")
-      : this.page.getByTestId("accounts-add-account-button");
-  }
-
-  private async getAccountRowTestIdPrefix() {
-    // Account-list row test ids differ per Asset Section variant:
-    //   ON  → CryptoAddresses rows: `crypto-account-row-<sanitized name>`
-    //   OFF → legacy Accounts rows: `account-component-<raw name>`
-    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
-    return assetSectionEnabled ? "crypto-account-row-" : "account-component-";
-  }
-
-  private async getVisibleAccountsList() {
-    const rowPrefix = await this.getAccountRowTestIdPrefix();
-
-    return this.page.locator(`[data-testid^="${rowPrefix}"]`).filter({ visible: true });
+  private getVisibleAccountsList() {
+    return this.page.locator(`[data-testid^="${CRYPTO_ACCOUNT_ROW_PREFIX}"]`).filter({
+      visible: true,
+    });
   }
 
   private readonly getSanitizedAccountName = (accountName: string) =>
     accountName.replaceAll(/\s+/g, "-");
 
-  private cryptoAccountRow(accountName: string) {
-    return this.page.getByTestId(`crypto-account-row-${this.getSanitizedAccountName(accountName)}`);
-  }
-
-  // Legacy accounts page (Asset Section OFF) row, identified by the raw (unsanitized) account name.
-  private legacyAccountRow(accountName: string) {
-    return this.page.getByTestId(`account-component-${accountName}`);
-  }
-
-  // Account-list row matching the active Asset Section variant (crypto vs legacy).
-  private async getAccountRow(accountName: string) {
-    return (await isAssetSectionEnabled(this.page))
-      ? this.cryptoAccountRow(accountName)
-      : this.legacyAccountRow(accountName);
+  private getAccountRow(accountName: string) {
+    return this.page.getByTestId(
+      `${CRYPTO_ACCOUNT_ROW_PREFIX}${this.getSanitizedAccountName(accountName)}`,
+    );
   }
 
   private readonly tokenRow = (childCurrency: Currency) =>
     this.page.getByTestId(`token-row-${childCurrency.ticker}`);
 
   private syncAccountButton = (accountName: string) =>
-    this.cryptoAccountRow(accountName).getByTestId("sync-button").locator("div").first();
+    this.getAccountRow(accountName).getByTestId("sync-button").locator("div").first();
 
   @step("Click add account button from accounts page")
   async clickAddAccountButtonFromAccountsPage() {
-    const addAccountButton = await this.getAddAccountButton();
-    await addAccountButton.click();
+    await this.addAccountButton.click();
   }
 
   @step("Wait for Accounts title to be visible")
@@ -189,18 +162,14 @@ export class AccountsPage extends AppPage {
   }
 
   private async getAccountsName() {
-    const visibleAccountsList = await this.getVisibleAccountsList();
+    const visibleAccountsList = this.getVisibleAccountsList();
     const accountElements = await visibleAccountsList.all();
-    const testIdPrefix = await this.getAccountRowTestIdPrefix();
-    const assetSectionEnabled = await isAssetSectionEnabled(this.page);
     const accountNames = [];
     for (const element of accountElements) {
       const testId = await element.getAttribute("data-testid");
       if (testId) {
-        const rawName = testId.replace(testIdPrefix, "");
-        // Asset Section ON sanitizes spaces to dashes in the test id; OFF keeps the raw account name.
-        const accountName = assetSectionEnabled ? rawName.replaceAll("-", " ") : rawName;
-        accountNames.push(accountName);
+        const rawName = testId.replace(CRYPTO_ACCOUNT_ROW_PREFIX, "");
+        accountNames.push(rawName.replaceAll("-", " "));
       }
     }
     return accountNames;

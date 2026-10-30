@@ -38,11 +38,7 @@ import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import { updateIdentify } from "./analytics/segment";
-import {
-  useFeature,
-  FeatureToggle,
-  useWalletFeaturesConfig,
-} from "@features/platform-feature-flags";
+import { useFeature, FeatureToggle } from "@features/platform-feature-flags";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
@@ -194,12 +190,7 @@ const RecoverPlayerWithFeatureToggle = () => {
   );
 };
 
-// Shared content for the main app layout
-type MainAppContentProps = Readonly<{
-  shouldDisplayAssetSection: boolean;
-}>;
-
-function MainAppContent({ shouldDisplayAssetSection }: MainAppContentProps) {
+function MainAppContent() {
   const { pathname } = useLocation();
   const hideMainShell = isFullscreenOverlayRoute(pathname);
 
@@ -219,26 +210,8 @@ function MainAppContent({ shouldDisplayAssetSection }: MainAppContentProps) {
               <Route path="/settings/*" element={withSuspense(Settings)({})} />
               <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
               <Route path="/accounts" element={withSuspense(Accounts)({})} />
-              <Route
-                path="/cryptos"
-                element={
-                  shouldDisplayAssetSection ? (
-                    withSuspense(CryptoAddresses)({})
-                  ) : (
-                    <Navigate to="/accounts" replace />
-                  )
-                }
-              />
-              <Route
-                path="/assets"
-                element={
-                  shouldDisplayAssetSection ? (
-                    withSuspense(CryptoAssets)({})
-                  ) : (
-                    <Navigate to="/accounts" replace />
-                  )
-                }
-              />
+              <Route path="/cryptos" element={withSuspense(CryptoAddresses)({})} />
+              <Route path="/assets" element={withSuspense(CryptoAssets)({})} />
               <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
               <Route path="/card/:appId?" element={withSuspense(Card)({})} />
               <Route path="/paytab" element={withSuspense(PayTab)({})} />
@@ -278,7 +251,6 @@ export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const styledComponentsTheme = useTheme();
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
   const backgroundImage = getPageBackground(pathname, theme);
@@ -322,7 +294,7 @@ export const MainAppLayout = () => {
               }
         }
       >
-        <MainAppContent shouldDisplayAssetSection={shouldDisplayAssetSection} />
+        <MainAppContent />
       </div>
 
       <NightlyLayer />

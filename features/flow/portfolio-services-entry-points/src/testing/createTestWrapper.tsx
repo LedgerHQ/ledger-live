@@ -23,10 +23,7 @@ export function createTestWrapper(flags: PartialFeatures, { isAssetSectionDispla
         ...FEATURE_FLAGS_INITIAL_STATE,
         resolved: {
           ...FEATURE_FLAGS_DEFAULTS,
-          lwdWallet40: withAssetSection(
-            FEATURE_FLAGS_DEFAULTS.lwdWallet40,
-            isAssetSectionDisplayed,
-          ),
+          lwdWallet40: FEATURE_FLAGS_DEFAULTS.lwdWallet40,
           lwmWallet40: withAssetSection(
             FEATURE_FLAGS_DEFAULTS.lwmWallet40,
             isAssetSectionDisplayed,

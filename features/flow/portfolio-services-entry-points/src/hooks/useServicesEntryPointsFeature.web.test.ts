@@ -8,9 +8,9 @@ const AVAILABLE_SERVICES: PartialFeatures = {
   ptxBorrowLiveApp: { enabled: true },
 };
 
-function renderFeature(flags: PartialFeatures, options?: { isAssetSectionDisplayed: boolean }) {
+function renderFeature(flags: PartialFeatures) {
   return renderHook(useServicesEntryPointsFeature, {
-    wrapper: createTestWrapper({ ...AVAILABLE_SERVICES, ...flags }, options),
+    wrapper: createTestWrapper({ ...AVAILABLE_SERVICES, ...flags }),
   });
 }
 
@@ -42,15 +42,6 @@ describe("useServicesEntryPointsFeature", () => {
     const { result } = renderFeature({
       entryPointsServices: { enabled: false, params: { services: ["perps"] } },
     });
-
-    expect(result.current).toEqual({ isEnabled: false, services: [] });
-  });
-
-  it("should be disabled when the asset section is hidden", () => {
-    const { result } = renderFeature(
-      { entryPointsServices: { enabled: true, params: { services: ["perps"] } } },
-      { isAssetSectionDisplayed: false },
-    );
 
     expect(result.current).toEqual({ isEnabled: false, services: [] });
   });
