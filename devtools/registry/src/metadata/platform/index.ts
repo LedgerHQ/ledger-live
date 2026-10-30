@@ -5,5 +5,6 @@ export * from "./cloud-sync";
 export * from "./account-descriptor";
 export * from "./account-data";
 export * from "./account-portfolio";
+export * from "./account-source-portfolio";
 export * from "./app-config";
 export * from "./account-name";
