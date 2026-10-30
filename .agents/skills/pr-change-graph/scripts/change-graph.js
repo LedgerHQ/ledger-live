@@ -27,7 +27,7 @@ try {
 }
 
 /**
- * The diagram, or the usage with --help. Fails on a diagram over the characters GitHub renders.
+ * The diagram, or the usage with --help. Fails on an empty diagram, or one over the characters GitHub renders.
  * @param {string[]} args
  */
 function run(args) {
@@ -49,6 +49,12 @@ function run(args) {
 
   const branch = readBranch({ cwd: process.cwd(), baseBranch, head: values.head });
   const graph = filterGraph(buildGraph(branch), { codeOnly: values["code-only"] });
+  if (graph.nodes.length === 0) {
+    throw new Error(
+      "Nothing to draw: the branch only changes files the diagram leaves out, such as tests, package.json files " +
+        "and files outside workspace packages",
+    );
+  }
   const mermaid = renderMermaid(layoutGraph(graph), {
     ...branch.commits,
     link: rel => diffUrl(pullRequest, rel),
