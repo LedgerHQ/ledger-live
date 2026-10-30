@@ -6,7 +6,7 @@ import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache } from "../account";
 import { generateHistoryFromOperations } from "../account/balanceHistoryCache";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
-import { genHex, genAddress } from "./helpers";
+import { genHex, genAddress, genEd25519PublicKey } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 import { inferSubOperations } from "../serialization";
@@ -162,8 +162,8 @@ const hardcodedMarketcap = [
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
 const currencyIdApproxMarketPrice: Record<string, number> = {
   bitcoin: 0.0073059,
-  ethereum: 5.7033e-14,
-  ethereum_classic: 1.4857e-15,
+  ethereum: 2.4e-14,
+  ethereum_classic: 6.3e-16,
   bitcoin_cash: 0.0011739,
   bitcoin_gold: 0.00005004,
   litecoin: 0.00011728,
@@ -171,9 +171,30 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   dogecoin: 4.9e-9,
   dash: 0.0003367,
   zcash: 0.000205798,
-  polygon: 1.0e-15,
-  bsc: 5.0e-14,
-  optimism: 2.0e-15,
+  polygon: 4.2e-16,
+  bsc: 2.1e-14,
+  optimism: 2.4e-14,
+  arbitrum: 2.4e-14,
+  arbitrum_sepolia: 2.4e-14,
+  optimism_sepolia: 2.4e-14,
+  base: 2.4e-14,
+  base_sepolia: 2.4e-14,
+  linea: 2.4e-14,
+  linea_sepolia: 2.4e-14,
+  blast: 2.4e-14,
+  blast_sepolia: 2.4e-14,
+  ethereum_sepolia: 2.4e-14,
+  ethereum_hoodi: 2.4e-14,
+  scroll_sepolia: 2.4e-14,
+  unichain_sepolia: 2.4e-14,
+  mantle_sepolia: 2.4e-14,
+  polygon_zk_evm_testnet: 2.4e-14,
+  solana: 2.5e-7,
+  aleo: 1e-4,
+  aleo_testnet: 1e-4,
+  concordium: 1e-4,
+  hypercore: 1e-4,
+  flare: 1.67e-18,
 };
 // TODO fix the mock to never generate negative balance...
 
@@ -189,13 +210,20 @@ export function genOperation(
   const ticker = account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
-    (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 100000000 * rng.next() * rng.next()),
+    (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 5000000000 * rng.next() * rng.next()),
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "OUT" : "IN";
-  const divider =
-    (account.type === "Account" && currencyIdApproxMarketPrice[account.currency.id]) ||
-    currencyIdApproxMarketPrice.bitcoin;
+  // Currencies with no approximated market price still need a plausible
+  // magnitude: target roughly 1000 units per operation so balances never
+  // collapse to zero for the long tail of supported currencies.
+  const dividerCurrency = account.type === "TokenAccount" ? account.token : account.currency;
+  const knownDivider = dividerCurrency
+    ? currencyIdApproxMarketPrice[dividerCurrency.id]
+    : undefined;
+  const magnitude =
+    dividerCurrency?.units?.[0]?.magnitude ?? superAccount?.currency?.units?.[0]?.magnitude ?? 8;
+  const divider = knownDivider ?? 100000 / (1000 * Math.pow(10, magnitude));
   const value = new BigNumber(
     Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider),
   );
@@ -267,7 +295,7 @@ export function genTokenAccount(
     swapHistory: [],
     balanceHistoryCache: emptyHistoryCache,
   };
-  const operationsSize = rng.nextInt(1, 200);
+  const operationsSize = rng.nextInt(10, 30);
   tokenAccount.operations = Array(operationsSize)
     .fill(null)
     .reduce((ops: Operation[]) => {
@@ -305,7 +333,7 @@ export function genAccount(
         .listCryptoCurrencies()
         .filter(c => currencyIdApproxMarketPrice[c.id]),
     );
-  const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
+  const operationsSize = opts.operationsSize ?? rng.nextInt(10, 30);
   const swapHistorySize = opts.swapHistorySize || 0;
   const withNft = opts.withNft ?? false;
   const address = genAddress(currency, rng);
@@ -318,8 +346,21 @@ export function genAccount(
   );
   // nb Make the third (ethereum_classic, dogecoin) account originally migratable
   const outdated = ["ethereum_classic", "dogecoin"].includes(currency.id) && `${id}`.endsWith("_2");
-  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
-  const xpub = genHex(64, rng);
+  // Aleo reads the view key from the account id customData (see coin-aleo extractViewKey).
+  const viewKey = currency.family === "aleo" ? `AViewKey1${genHex(48, rng)}` : "";
+  // kaspa parses the xpub as a 99-byte extended public key, i.e. 198 hex chars.
+  // concordium sends the xpub as its public key, which its proxy decodes as an ed25519 point.
+  const xpub =
+    currency.family === "kaspa"
+      ? genHex(198, rng)
+      : currency.family === "concordium"
+        ? genEd25519PublicKey(rng)
+        : genHex(64, rng);
+  // kaspa reads its xpub back from the account id xpubOrAddress field.
+  const accountIdAddress = currency.family === "kaspa" ? xpub : id;
+  const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${accountIdAddress}:${
+    viewKey ? `:${viewKey}` : ""
+  }`;
   rng.nextString(rng.nextInt(4, 34)); // to not break the determinism, we will still run this code that used to generate fake account names. remove it when we allow ourself a breaking change.
   const blockHeight = rng.nextInt(100000, 200000);
   rng.nextArrayItem(currency.units); // to not break the determinism, we still run this code. remove it when we allow ourself a breaking change.
