@@ -48,103 +48,79 @@ test.describe("Swap - entry points", () => {
     ],
   });
 
+  test.beforeEach(async () => {
+    setExchangeDependencies(
+      [accountToDebit, accountToCredit].map(acc => ({
+        name: acc.currency.speculosApp.name.replace(/ /g, "_"),
+      })),
+    );
+  });
+
   test(
-    `[${accountToDebit.currency.testLabel}] - Swap entry point from asset allocation`,
+    `[${accountToDebit.currency.testLabel}] - Swap entry points and blacklisted address`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2986",
+        description:
+          "B2CQA-2986, B2CQA-2987, B2CQA-2988, B2CQA-2989, B2CQA-2990, B2CQA-523, B2CQA-3655",
       },
     },
     async ({ app }) => {
+      const { currency, accountName } = accountToDebit;
+      // Registered first: the app caches the sanctioned list on its first fetch.
+      await overrideNetworkPayload(
+        app,
+        getEnv("SANCTIONED_ADDRESSES_URL"),
+        (json: Record<string, string[]>) => ({
+          ...json,
+          bannedAddresses: [accountToCredit.address],
+        }),
+      );
+
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.portfolio.clickAsset(swapEntryPoint.swap.accountToDebit.currency);
-      await app
-        .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
-        .swapContainer.expectSwapContainerVisible();
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-    },
-  );
+      await app.portfolio.clickAsset(currency);
+      await app.assetDetail(currency.id).swapContainer.expectSwapContainerVisible();
+      await app.swap.checkAssetToContains(currency.ticker);
+      await app.swap.clearSwapState();
 
-  test(
-    `[${accountToDebit.currency.testLabel}] - Swap entry point from market page`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2987",
-      },
-    },
-    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.marketBanner.clickExploreMarketHeader();
-      await app.swap.goAndWaitForSwapToBeReady(async () => {
-        await app.market.startSwapForSelectedTicker(
-          swapEntryPoint.swap.accountToDebit.currency.ticker,
-        );
-      });
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(
-        swapEntryPoint.swap.accountToDebit.accountName,
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.market.startSwapForSelectedTicker(currency.ticker),
       );
-    },
-  );
+      await app.swap.checkAssetToContains(currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(accountName);
+      await app.swap.clearSwapState();
 
-  test(
-    `[${accountToDebit.currency.testLabel}] - Swap entry point from market page with several accounts`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2988",
-      },
-    },
-    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.marketBanner.clickExploreMarketHeader();
-      await app.market.clickCoinRow(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app
-        .assetDetail(swapEntryPoint.swap.accountToDebit.currency.id)
-        .swapContainer.expectSwapContainerVisible();
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-    },
-  );
+      await app.market.clickCoinRow(currency.ticker);
+      await app.assetDetail(currency.id).swapContainer.expectSwapContainerVisible();
+      await app.swap.checkAssetToContains(currency.ticker);
+      await app.swap.clearSwapState();
 
-  test(
-    `[${accountToDebit.currency.testLabel}] - Swap entry point from account page`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2989",
-      },
-    },
-    async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.navigateToAccountByName(
-        getParentAccountName(swapEntryPoint.swap.accountToDebit),
-      );
+      await app.accounts.navigateToAccountByName(getParentAccountName(accountToDebit));
       await app.swap.goAndWaitForSwapToBeReady(() => app.account.navigateToSwap());
-      await app.swap.checkAssetToContains(swapEntryPoint.swap.accountToDebit.currency.ticker);
-      await app.swap.checkAssetToAccountNameContains(
-        swapEntryPoint.swap.accountToDebit.accountName,
-      );
-    },
-  );
+      await app.swap.checkAssetToContains(currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(accountName);
+      await app.swap.clearSwapState();
 
-  test(
-    `[${accountToDebit.currency.testLabel}] - Swap entry point from left menu`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2990, B2CQA-523",
-      },
-    },
-    async ({ app }) => {
+      await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
       await app.swap.expectSelectedAssetDisplayed("BTC");
+
+      const minAmount = await app.swap.getMinimumAmount(accountToCredit, accountToDebit);
+      const blacklistedSwap = new Swap(accountToCredit, accountToDebit, minAmount);
+      await performSwapUntilQuoteSelectionStep({ app, swap: blacklistedSwap, minAmount });
+      const provider = await app.swap.selectExchangeWithoutKyc();
+      await app.swap.clickExchangeButton(provider.name);
+      await app.swapDrawer.checkErrorMessage(
+        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${accountToCredit.address}`,
+      );
     },
   );
 });
@@ -281,10 +257,10 @@ test.describe("Swap - history", () => {
   });
 
   test(
-    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Export swap history operations`,
+    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Swap history details and export`,
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-604" },
+      annotation: { type: "TMS", description: "B2CQA-602, B2CQA-604" },
     },
     async ({ app }) => {
       swapHistory.swap.accountToDebit.address = swapHistory.addressFrom;
@@ -294,6 +270,7 @@ test.describe("Swap - history", () => {
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
       await app.swap.goToSwapHistory();
+      await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
 
       await app.swap.clickExportOperations();
       await app.swap.checkExportedFileContents(
@@ -301,86 +278,12 @@ test.describe("Swap - history", () => {
         swapHistory.provider,
         swapHistory.swapId,
       );
-    },
-  );
 
-  test(
-    `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Swap history is visible from the swap history page`,
-    {
-      tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-602" },
-    },
-    async ({ app }) => {
-      await app.mainNavigation.openTargetFromMainNavigation("swap");
-      await app.swap.goToSwapHistory();
-      await app.swap.checkSwapOperation(swapHistory.swapId, swapHistory.provider, swapHistory.swap);
       await app.swap.openSelectedOperation(swapHistory.swapId);
       await app.swapTransactionStatusDialog.expectSwapTransactionStatusDialogInfos(
         swapHistory.swapId.slice(0, 6),
         swapHistory.provider,
         swapHistory.details,
-      );
-    },
-  );
-});
-
-test.describe("Swap - blacklisted address", () => {
-  const fromAccount = Account.ETH_1;
-  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
-  setupEnv(true);
-
-  test.beforeEach(async () => {
-    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
-    );
-    setExchangeDependencies(accountPair.map(name => ({ name })));
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(fromAccount),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(toAccount),
-        },
-      ],
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap blocked for a blacklisted address`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-3655",
-      },
-    },
-    async ({ app }) => {
-      const sanctionedAddressUrl = getEnv("SANCTIONED_ADDRESSES_URL");
-      await overrideNetworkPayload(app, sanctionedAddressUrl, (json: any) => {
-        json.bannedAddresses = [fromAccount.address];
-        return json;
-      });
-
-      const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const swap = new Swap(fromAccount, toAccount, minAmount);
-
-      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
-      const provider = await app.swap.selectExchangeWithoutKyc();
-      await app.swap.clickExchangeButton(provider.name);
-
-      await app.swapDrawer.checkErrorMessage(
-        `This transaction involves a sanctioned wallet address and cannot be processed.\n-- ${fromAccount.address}`,
       );
     },
   );

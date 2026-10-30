@@ -5,7 +5,6 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { expectFormattedAmount } from "tests/utils/amountUtils";
 import { getExpectedSeparators } from "@ledgerhq/live-e2e-shared/data/numberFormat";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
@@ -49,52 +48,28 @@ test.describe("Swap - amount formatting by language", () => {
     ],
   });
 
-  for (const { languageId, label } of languageCases) {
-    test(
-      `Swap amounts are formatted correctly for language: ${label}`,
-      {
-        tag: [...DEVICE_TAGS],
-        annotation: { type: "TMS", description: "B2CQA-4014" },
-      },
-      async ({ app }) => {
+  test(
+    `Swap amounts are formatted correctly for languages: ${languageCases.map(({ label }) => label).join(", ")}`,
+    {
+      tag: [...DEVICE_TAGS],
+      annotation: { type: "TMS", description: "B2CQA-4014" },
+    },
+    async ({ app }) => {
+      const swap = new Swap(fromAccount, toAccount, TEST_AMOUNT);
+      for (const { languageId, label } of languageCases) {
         // The userdata fixture already boots in English; only switch away from it.
         if (languageId !== "en") {
           await app.mainNavigation.openSettings();
           await app.settings.changeLanguage(label);
         }
 
-        const swap = new Swap(fromAccount, toAccount, TEST_AMOUNT);
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: TEST_AMOUNT });
-        // TEST_AMOUNT exceeds the balance, so the amount step can settle on the balance error
-        // before the quotes are in; the amounts below are read once.
-        await app.swap.checkQuotes();
-
         const separators = getExpectedSeparators(languageId);
-
-        const sentAmount = await app.swap.getAmountToSend();
-        await expectFormattedAmount(
-          sentAmount,
-          { decimal: separators.decimal, thousands: SEND_INPUT_THOUSANDS },
-          "send amount input",
-        );
-
-        const countervalue = await app.swap.getSendCountervalueText();
-        await expectFormattedAmount(countervalue, separators, "send amount countervalue");
-
-        const receivedAmount = await app.swap.getAmountToReceive();
-        await expectFormattedAmount(receivedAmount, separators, "receive amount");
-
-        // Provider list is sorted best-first, so the first entry is the "Best Offer" card.
-        const providerList = await app.swap.getProviderList();
-        const bestQuoteProvider = providerList[0];
-        const { amount, fiatAmount } = await app.swap.getQuoteAmountTexts(bestQuoteProvider);
-        await expectFormattedAmount(amount, separators, `best quote (${bestQuoteProvider}) amount`);
-        await expectFormattedAmount(
-          fiatAmount,
-          separators,
-          `best quote (${bestQuoteProvider}) fiat amount`,
-        );
-      },
-    );
-  }
+        await app.swap.checkAmountsFormatting(separators, {
+          decimal: separators.decimal,
+          thousands: SEND_INPUT_THOUSANDS,
+        });
+      }
+    },
+  );
 });

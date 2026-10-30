@@ -18,7 +18,7 @@ import { DEVICE_TAGS, buildSwapTags } from "tests/utils/tagsUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
-test.describe("Swap - default currency", () => {
+test.describe("Swap - default currency, switch and rejection", () => {
   const fromAccount = Account.ETH_1;
   const toAccount = Account.BTC_NATIVE_SEGWIT_1;
   setupEnv(true);
@@ -51,88 +51,44 @@ test.describe("Swap - default currency", () => {
   });
 
   test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap with default currency and previous setup`,
+    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap default currency, previous setup, switch and refusal on device`,
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: { type: "TMS", description: "B2CQA-3079, B2CQA-3080" },
+      annotation: { type: "TMS", description: "B2CQA-3079, B2CQA-3080, B2CQA-2136, B2CQA-2212" },
     },
     async ({ app }) => {
-      await test.step("Default currency is set when landing on swap", async () => {
-        await app.swap.goAndWaitForSwapToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("swap"),
-        );
-        await app.swap.checkAssetFromContains("BTC");
-        await app.swap.checkAssetToContains("Choose asset");
-      });
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
+      await app.swap.checkAssetFromContains("BTC");
+      await app.swap.checkAssetToContains("Choose asset");
 
-      await test.step("Currencies persist after leaving and returning to swap", async () => {
-        const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-        if (!minAmount) {
-          throw new Error("Test failed: No quotes retrieved from swap API.");
-        }
-        const swap = new Swap(fromAccount, toAccount, minAmount);
-
-        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.expectAccountsTitleVisibility();
-        await app.swap.goAndWaitForSwapToBeReady(() =>
-          app.mainNavigation.openTargetFromMainNavigation("swap"),
-        );
-        await app.swap.checkAssetFromContains(swap.accountToDebit.currency.ticker);
-        await app.swap.checkAssetToContains(swap.accountToCredit.currency.ticker);
-      });
-    },
-  );
-});
-
-test.describe("Swap - rejected on device", () => {
-  const fromAccount = Account.ETH_1;
-  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
-
-  setupEnv(true);
-
-  test.beforeEach(async () => {
-    const accountPair: string[] = [fromAccount, toAccount].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
-    );
-    setExchangeDependencies(accountPair.map(name => ({ name })));
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-
-    cliCommandsOnApp: [
-      [
-        {
-          app: fromAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(fromAccount),
-        },
-        {
-          app: toAccount.currency.speculosApp,
-          cmd: liveDataWithAddressCommand(toAccount),
-        },
-      ],
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap refused on device`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: { type: "TMS", description: "B2CQA-2212" },
-    },
-    async ({ app }) => {
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
-      const rejectedSwap = new Swap(fromAccount, toAccount, minAmount);
+      if (!minAmount) {
+        throw new Error("Test failed: No quotes retrieved from swap API.");
+      }
+      const swap = new Swap(fromAccount, toAccount, minAmount);
 
-      await performSwapUntilQuoteSelectionStep({ app, swap: rejectedSwap, minAmount });
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
+      await app.mainNavigation.openTargetFromMainNavigation("accounts");
+      await app.accounts.expectAccountsTitleVisibility();
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
+      await app.swap.checkAssetFromContains(fromAccount.currency.ticker);
+      await app.swap.checkAssetToContains(toAccount.currency.ticker);
+
+      await app.swap.switchYouSendAndYouReceive();
+      await app.swap.checkAssetFromContains(toAccount.currency.ticker);
+      await app.swap.checkAssetToContains(fromAccount.currency.ticker);
+      await app.swap.switchYouSendAndYouReceive();
+      await app.swap.checkAssetFromContains(fromAccount.currency.ticker);
+      await app.swap.checkAssetToContains(toAccount.currency.ticker);
+
+      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
       const provider = await app.swap.selectExchangeWithoutKyc();
-
       await app.swap.clickExchangeButton(provider.name);
-      await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
+      await app.speculos.verifyAmountsAndRejectSwap(swap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
   );
@@ -407,46 +363,6 @@ test.describe("Swap - account not present", () => {
         await app.swap.checkAssetFromContains(account1.currency.ticker);
         await app.swap.checkAssetToContains(account2.currency.ticker);
       }
-    },
-  );
-});
-
-test.describe("Swap - switch currencies", () => {
-  const swap = new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03");
-  setupEnv(true);
-
-  const accPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
-    acc.currency.speculosApp.name.replace(/ /g, "_"),
-  );
-
-  test.beforeEach(async () => {
-    setExchangeDependencies(
-      accPair.map(appName => ({
-        name: appName,
-      })),
-    );
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "speculos-tests-app",
-    speculosApp: app,
-  });
-
-  test(
-    `[${swap.accountToDebit.currency.testLabel}-${swap.accountToCredit.currency.testLabel}] - Switch you send and you receive currency`,
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-      annotation: {
-        type: "TMS",
-        description: "B2CQA-2136",
-      },
-    },
-    async ({ app }) => {
-      await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: swap.amount ?? "0" });
-      await app.swap.switchYouSendAndYouReceive();
-      await app.swap.checkAssetFromContains(swap.accountToCredit.currency.ticker);
-      await app.swap.checkAssetToContains(swap.accountToDebit.currency.ticker);
     },
   );
 });

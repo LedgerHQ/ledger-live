@@ -5,8 +5,6 @@ import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
-import { parseBalanceAmount } from "tests/utils/amountUtils";
-import { expect } from "@playwright/test";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import {
@@ -34,6 +32,8 @@ const app: AppInfos = AppInfos.EXCHANGE;
 
 const maxBalanceTags = [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"];
 
+const percentages = ["25%", "50%", "75%"] as const;
+
 const swapMaxBalancePairs = [
   {
     fromAccount: Account.ETH_3,
@@ -55,10 +55,29 @@ const swapMaxBalancePairs = [
   },
 ];
 
+const insufficientBalanceSwaps = [
+  {
+    swap: new Swap(Account.ETH_2, Account.BTC_NATIVE_SEGWIT_1, ""),
+    percentageButtonsEnabled: true,
+  },
+  {
+    swap: new Swap(TokenAccount.ETH_USDC_2, Account.BTC_NATIVE_SEGWIT_1, ""),
+    percentageButtonsEnabled: false,
+  },
+];
+
 test.describe("Swap - quick amount buttons", () => {
   setupEnv(true);
 
-  const uniqueAccounts = [Account.ETH_3, Account.BTC_NATIVE_SEGWIT_2, TokenAccount.ETH_USDT_1];
+  const uniqueAccounts = [
+    ...new Set([
+      ...swapMaxBalancePairs.flatMap(({ fromAccount, toAccount }) => [fromAccount, toAccount]),
+      ...insufficientBalanceSwaps.flatMap(({ swap }) => [
+        swap.accountToDebit,
+        swap.accountToCredit,
+      ]),
+    ]),
+  ];
   const uniqueAppNames = Array.from(
     new Set(uniqueAccounts.map(acc => acc.currency.speculosApp.name.replace(/ /g, "_"))),
   );
@@ -81,46 +100,7 @@ test.describe("Swap - quick amount buttons", () => {
   });
 
   test(
-    "Swap balance is visible and max/percentage buttons are enabled",
-    {
-      tag: maxBalanceTags,
-      annotation: { type: "TMS", description: "B2CQA-5582" },
-    },
-    async ({ app }) => {
-      for (const { fromAccount, fromAccountId, toAccountId } of swapMaxBalancePairs) {
-        await test.step(`Currency: ${fromAccount.currency.name}`, async () => {
-          await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
-
-          const balanceText = await app.swap.getFromAccountBalanceText();
-          expect(balanceText).toBeTruthy();
-
-          expect(await app.swap.isMaxToggleEnabled()).toBe(true);
-          await app.swap.checkPercentageButtonsEnabled(true);
-
-          await app.swap.checkMaxTooltip("Max amount includes network fees");
-        });
-      }
-    },
-  );
-
-  test(
-    `[${swapMaxBalancePairs[0].fromAccount.currency.testLabel}-${swapMaxBalancePairs[0].toAccount.currency.testLabel}] - Swap percentage buttons show the correct tooltip`,
-    {
-      tag: maxBalanceTags,
-      annotation: { type: "TMS", description: "B2CQA-5582" },
-    },
-    async ({ app }) => {
-      const { fromAccountId, toAccountId } = swapMaxBalancePairs[0];
-      await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
-
-      for (const percent of ["25%", "50%", "75%"] as const) {
-        await app.swap.checkPercentageTooltip(percent, `${percent} of your available balance`);
-      }
-    },
-  );
-
-  test(
-    "Swap percentage buttons fill the proportional amount of the balance",
+    "Swap max and percentage buttons follow the from-account balance",
     {
       tag: maxBalanceTags,
       annotation: { type: "TMS", description: "B2CQA-5582" },
@@ -128,110 +108,25 @@ test.describe("Swap - quick amount buttons", () => {
     async ({ app }) => {
       for (const { fromAccountId, toAccountId } of swapMaxBalancePairs) {
         await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
-
-        const balanceText = await app.swap.getFromAccountBalanceText();
-        const balance = parseBalanceAmount(balanceText);
-
-        for (const percent of ["25%", "50%", "75%"] as const) {
+        const balance = await app.swap.getFromAccountBalance();
+        await app.swap.checkMaxToggleEnabled(true);
+        await app.swap.checkPercentageButtonsEnabled(true);
+        await app.swap.checkMaxTooltip("Max amount includes network fees");
+        for (const percent of percentages) {
           await app.swap.checkPercentageFillsBalance(percent, balance);
         }
       }
-    },
-  );
-});
 
-test.describe("Swap - quick amount buttons", () => {
-  setupEnv(true);
+      for (const percent of percentages) {
+        await app.swap.checkPercentageTooltip(percent, `${percent} of your available balance`);
+      }
 
-  const fromAccount = Account.ETH_2;
-  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
-
-  test.beforeEach(async () => {
-    setExchangeDependencies(
-      [fromAccount, toAccount].map(acc => ({
-        name: acc.currency.speculosApp.name.replace(/ /g, "_"),
-      })),
-    );
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-    cliCommandsOnApp: [
-      [fromAccount, toAccount].map(account => ({
-        app: account.currency.speculosApp,
-        cmd: liveDataWithAddressCommand(account),
-      })),
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max is disabled while percentage buttons stay enabled`,
-    {
-      tag: maxBalanceTags,
-      annotation: { type: "TMS", description: "B2CQA-5582" },
-    },
-    async ({ app }) => {
-      await performSwapUntilQuoteSelectionStep({
-        app,
-        swap: new Swap(fromAccount, toAccount, ""),
-        minAmount: "",
-      });
-
-      expect(await app.swap.isMaxToggleEnabled()).toBe(false);
-      await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
-
-      await app.swap.checkPercentageButtonsEnabled(true);
-    },
-  );
-});
-
-test.describe("Swap - quick amount buttons", () => {
-  setupEnv(true);
-
-  const fromAccount = TokenAccount.ETH_USDC_2;
-  const toAccount = Account.BTC_NATIVE_SEGWIT_1;
-
-  test.beforeEach(async () => {
-    setExchangeDependencies(
-      [fromAccount, toAccount].map(acc => ({
-        name: acc.currency.speculosApp.name.replace(/ /g, "_"),
-      })),
-    );
-  });
-
-  test.use({
-    teamOwner: Team.SWAP,
-    userdata: "skip-onboarding-with-last-seen-device",
-    speculosApp: app,
-    cliCommandsOnApp: [
-      [fromAccount, toAccount].map(account => ({
-        app: account.currency.speculosApp,
-        cmd: liveDataWithAddressCommand(account),
-      })),
-      { scope: "test" },
-    ],
-  });
-
-  test(
-    `[${fromAccount.currency.testLabel}-${toAccount.currency.testLabel}] - Swap max and percentage buttons are disabled on a zero-balance token account`,
-    {
-      tag: maxBalanceTags,
-      annotation: { type: "TMS", description: "B2CQA-5582" },
-    },
-    async ({ app }) => {
-      await performSwapUntilQuoteSelectionStep({
-        app,
-        swap: new Swap(fromAccount, toAccount, ""),
-        minAmount: "",
-      });
-
-      expect(await app.swap.isMaxToggleEnabled()).toBe(false);
-      await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
-
-      await app.swap.checkPercentageButtonsEnabled(false);
+      for (const { swap, percentageButtonsEnabled } of insufficientBalanceSwaps) {
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: "" });
+        await app.swap.checkMaxToggleEnabled(false);
+        await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
+        await app.swap.checkPercentageButtonsEnabled(percentageButtonsEnabled);
+      }
     },
   );
 });

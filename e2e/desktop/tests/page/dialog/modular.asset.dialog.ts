@@ -52,8 +52,10 @@ export class ModularAssetDialog extends Dialog {
 
     const row = this.assetItemRow(ticker).first();
     await expect(row).toBeVisible();
-    await expect(row).toContainText("$***");
-    await expect(row).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
+    await this.softExpect(async soft => {
+      await soft(row).toContainText("$***");
+      await soft(row).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
+    });
   }
 
   @step("Check listed asset amounts are masked in discreet mode")
