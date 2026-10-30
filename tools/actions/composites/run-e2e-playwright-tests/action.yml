@@ -25,6 +25,10 @@ inputs:
   workers:
     description: "Number of Playwright workers (omit to use the config default)"
     required: false
+  step_summary:
+    description: "Write the results table to the job summary ('false' when another job summarizes the run)"
+    required: false
+    default: "true"
 outputs:
   passed:
     description: "Number of passed tests"
@@ -168,31 +172,33 @@ runs:
         echo "========================================"
         echo ""
 
-        STATUS_ICON="✅"
-        STATUS_TEXT="All tests passed"
-        if [ "${FAILED}" -gt 0 ]; then
-          STATUS_ICON="⚠️"
-          STATUS_TEXT="${FAILED} tests failed -- see Allure report for details"
-        fi
-        if [ "${TOTAL}" -eq 0 ]; then
-          STATUS_ICON="❌"
-          STATUS_TEXT="No tests executed -- possible infrastructure issue"
-        fi
+        if [ "${INPUTS_STEP_SUMMARY}" != "false" ]; then
+          STATUS_ICON="✅"
+          STATUS_TEXT="All tests passed"
+          if [ "${FAILED}" -gt 0 ]; then
+            STATUS_ICON="⚠️"
+            STATUS_TEXT="${FAILED} tests failed -- see Allure report for details"
+          fi
+          if [ "${TOTAL}" -eq 0 ]; then
+            STATUS_ICON="❌"
+            STATUS_TEXT="No tests executed -- possible infrastructure issue"
+          fi
 
-        {
-          echo "## ${STATUS_ICON} Playwright Test Results"
-          echo ""
-          echo "| Metric | Count |"
-          echo "|--------|-------|"
-          echo "| Total | ${TOTAL} |"
-          echo "| Passed | ${PASSED} |"
-          echo "| Failed | ${FAILED} |"
-          echo "| Flaky | ${FLAKY} |"
-          echo "| Skipped | ${SKIPPED} |"
-          echo "| **Pass rate** | **${PASS_RATE}%** |"
-          echo ""
-          echo "> ${STATUS_TEXT}"
-        } >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## ${STATUS_ICON} Playwright Test Results"
+            echo ""
+            echo "| Metric | Count |"
+            echo "|--------|-------|"
+            echo "| Total | ${TOTAL} |"
+            echo "| Passed | ${PASSED} |"
+            echo "| Failed | ${FAILED} |"
+            echo "| Flaky | ${FLAKY} |"
+            echo "| Skipped | ${SKIPPED} |"
+            echo "| **Pass rate** | **${PASS_RATE}%** |"
+            echo ""
+            echo "> ${STATUS_TEXT}"
+          } >> $GITHUB_STEP_SUMMARY
+        fi
 
         # Note: TOTAL=0 case already exits at line 124, so we only reach here when TOTAL > 0
         exit ${TEST_EXIT_CODE}
@@ -207,3 +213,4 @@ runs:
         INPUTS_REPEAT_EACH: ${{ inputs.repeat_each }}
         INPUTS_FEATURE_FLAGS: ${{ inputs.feature_flags }}
         INPUTS_WORKERS: ${{ inputs.workers }}
+        INPUTS_STEP_SUMMARY: ${{ inputs.step_summary }}

@@ -171,6 +171,6 @@ if [ -n "${GITHUB_OUTPUT:-}" ]; then
   } >> "${GITHUB_OUTPUT}"
 fi
 
-if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+if [ "${QAA_ALLURE_STEP_SUMMARY:-true}" != "false" ] && [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
   echo "[Open report](${report_url})" >> "${GITHUB_STEP_SUMMARY}"
 fi
