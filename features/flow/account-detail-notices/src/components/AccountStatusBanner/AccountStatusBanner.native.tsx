@@ -1,5 +1,5 @@
 import React from "react";
-import { Banner, Button } from "@ledgerhq/lumen-ui-rnative";
+import { Banner, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { ExternalLink } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "@shared/i18n";
 import type { AccountStatusBannerProps } from "./AccountStatusBanner.types";
@@ -17,7 +17,13 @@ export function AccountStatusBanner({
     <Banner
       appearance="info"
       title={title}
-      description={description}
+      description={
+        description ? (
+          <Text typography="body2" lx={{ color: "base" }}>
+            {description}
+          </Text>
+        ) : undefined
+      }
       primaryAction={
         action && onAction ? (
           <Button

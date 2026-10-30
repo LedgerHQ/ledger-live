@@ -18,6 +18,7 @@ export function AccountStatusBanner({
       appearance="info"
       title={title}
       description={description}
+      className="[&_.line-clamp-5]:line-clamp-none"
       primaryAction={
         action && onAction ? (
           <Button
