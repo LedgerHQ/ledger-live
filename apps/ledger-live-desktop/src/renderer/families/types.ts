@@ -278,6 +278,15 @@ export type LLDCoinFamily<
   }>;
 
   /**
+   * Replaces AccountBodyHeader on the new Account Detail page (flag `accountDetail`).
+   * The legacy account page keeps AccountBodyHeader.
+   */
+  AccountDetailDelegations?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount: A | null | undefined;
+  }>;
+
+  /**
    * Allow to add component below account body header
    */
   AccountSubHeader?: React.ComponentType<{

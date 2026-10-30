@@ -5,7 +5,7 @@ import {
   type AccountAssetBalance,
 } from "@domain/entity-account-balance";
 
-const toAmount = (value: BigNumber) => BigNumber.max(0, value).toFixed(0);
+export const toAmount = (value: BigNumber) => BigNumber.max(0, value).toFixed(0);
 
 const toRow = (
   assetId: string,
