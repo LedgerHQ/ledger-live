@@ -1,3 +1,4 @@
+import { isAndroid } from "@e2e/helpers/commonHelpers";
 import { Step } from "jest-allure2-reporter/api";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
@@ -17,7 +18,6 @@ export default class PayTabPage {
   depositOptionsId = "pay-card-deposit-options";
   bankTransferContentId = "pay-bank-transfer-intro-content";
   bankTransferCreateAccountId = "pay-bank-transfer-intro-create-account";
-  bankTransferCloseId = "bottom-sheet-header-close-button";
   requestScreenId = "pay-request-receive";
   requestCloseId = "pay-request-receive-close";
   payTileId = "pay-contacts-pay-tile";
@@ -99,7 +99,15 @@ export default class PayTabPage {
 
   @Step("Close the bank transfer intro")
   async closeBankTransferIntro() {
-    await tapById(this.bankTransferCloseId);
+    if (isAndroid()) {
+      // QAA-1631: Android fails to close when tapping the close button (CI only); swipe to close instead
+      // See: https://gorhom.dev/react-native-bottom-sheet/troubleshooting
+      await waitForFullyVisibleById(this.bankTransferContentId);
+      await waitForElementById(this.sheetCloseId);
+      await getElementById(this.sheetCloseId).swipe("down");
+    } else {
+      await tapById(this.sheetCloseId);
+    }
     if (!(await waitForElementNotVisible(this.bankTransferContentId))) {
       throw new Error(`${this.bankTransferContentId} stayed visible`);
     }
