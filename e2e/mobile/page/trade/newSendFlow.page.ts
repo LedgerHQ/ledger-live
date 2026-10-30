@@ -1,8 +1,9 @@
 import { Step } from "jest-allure2-reporter/api";
-import escapeRegExp from "lodash/escapeRegExp";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { escapeRegExp } from "@e2e/helpers/commonHelpers";
 import { byId, byIdAndText, byIdWithDescendantText } from "@e2e/helpers/elements/native";
 import { retryUntilTimeout } from "@e2e/utils/retry";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 
 const wholeTextContaining = (text: string) =>
   new RegExp(String.raw`^[\s\S]*${escapeRegExp(text)}[\s\S]*$`);
@@ -247,11 +248,14 @@ export default class NewSendFlowPage {
     await this.sponsoredFailureMessageShowing(message).waitVisible();
   }
 
-  // Detox can't read a disabled button on iOS, so check that pressing Retry changes nothing.
+  // A working Retry always leaves the failure screen, so a locked one must keep it up.
   @Step("Verify Retry is locked while the paid rent may still land")
   async expectRetryLocked() {
     await this.retryBlockedBanner.waitVisible();
     await this.sponsoredFailureRetry.tap();
+    await jestExpect(this.sponsoredFailure.waitGone(TIMEOUT.small)).rejects.toThrow(
+      "did not become hidden",
+    );
     await this.retryBlockedBanner.waitVisible();
   }
 
