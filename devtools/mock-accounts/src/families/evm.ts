@@ -23,6 +23,7 @@ export const evm: MockFamily = {
     address: checksumAddress(randomBytes(random, 20)),
     path: `m/44h/${currency.coinType}h/${index}h/0/0`,
   }),
+  address: (_currency, random) => checksumAddress(randomBytes(random, 20)),
   read: {
     balance: ({ currency, random }) => {
       const native =

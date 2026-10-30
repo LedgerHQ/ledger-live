@@ -10,4 +10,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource
+Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations

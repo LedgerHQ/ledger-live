@@ -1,11 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { serializeAccountDescriptor } from "@domain/entity-account-descriptor";
+import { computeAccountUUID, serializeAccountDescriptor } from "@domain/entity-account-descriptor";
 import { CRYPTO_CURRENCIES_IDS } from "@domain/entity-currency-crypto";
 import { mockDescriptors } from "../generate";
 import { mockSource } from "../mockSource";
+import { setOperationCount } from "../operationCounts";
 import type { MockAccountsToolProps } from "../types";
 
 const MAX_COUNT = 100;
+const MAX_OPERATIONS = 10_000;
+
+/** The integer typed, clamped to [min, max]; `undefined` when the field is empty or not a number. */
+function parseBounded(value: string, min: number, max: number): number | undefined {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? undefined : Math.min(max, Math.max(min, parsed));
+}
 
 /** The families with their own mock first, then every network. */
 const FEATURED = new Set(["bitcoin", "ethereum"]);
@@ -17,12 +25,22 @@ const NETWORKS = [
 function MockAccounts({ accounts, onAdd, onRemove, addSource }: MockAccountsToolProps) {
   const [network, setNetwork] = useState("ethereum");
   const [count, setCount] = useState("1");
+  const [operationCountInput, setOperationCountInput] = useState("");
 
   useEffect(() => {
     addSource(mockSource);
   }, [addSource]);
 
   const descriptors = useMemo(() => accounts.map(({ descriptor }) => descriptor), [accounts]);
+
+  const generate = () => {
+    const generated = mockDescriptors(network, parseBounded(count, 1, MAX_COUNT) ?? 1, descriptors);
+    setOperationCount(
+      generated.map(descriptor => computeAccountUUID(descriptor)),
+      parseBounded(operationCountInput, 1, MAX_OPERATIONS),
+    );
+    onAdd(generated);
+  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
@@ -48,19 +66,17 @@ function MockAccounts({ accounts, onAdd, onRemove, addSource }: MockAccountsTool
           onChange={event => setCount(event.target.value)}
           className="w-64 font-mono"
         />
-        <button
-          type="button"
-          onClick={() =>
-            onAdd(
-              mockDescriptors(
-                network,
-                Math.min(MAX_COUNT, Math.max(1, Number.parseInt(count, 10) || 1)),
-                descriptors,
-              ),
-            )
-          }
-          className="body-3-semi-bold text-base"
-        >
+        <input
+          aria-label="Operations per account"
+          type="number"
+          min={1}
+          max={MAX_OPERATIONS}
+          placeholder="ops: random"
+          value={operationCountInput}
+          onChange={event => setOperationCountInput(event.target.value)}
+          className="w-112 font-mono"
+        />
+        <button type="button" onClick={generate} className="body-3-semi-bold text-base">
           Generate
         </button>
         <span className="flex-1 text-muted">

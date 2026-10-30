@@ -6,6 +6,8 @@ import type { MockFamily } from "./types";
 const XPUB_VERSION = [0x04, 0x88, 0xb2, 0x1e];
 const TPUB_VERSION = [0x04, 0x35, 0x87, 0xcf];
 const HARDENED = 0x80000000;
+const P2PKH_VERSION = 0x00;
+const TESTNET_P2PKH_VERSION = 0x6f;
 
 /** The secp256k1 field prime. */
 const P = 2n ** 256n - 2n ** 32n - 977n;
@@ -64,6 +66,13 @@ export const bitcoin: MockFamily = {
     xpub: xpub(currency.isTestnetFor !== undefined, index, random),
     path: `m/${SEGWIT.has(currency.id) ? 84 : 44}h/${currency.coinType}h/${index}h`,
   }),
+  address: (currency, random) =>
+    base58check(
+      Uint8Array.from([
+        currency.isTestnetFor === undefined ? P2PKH_VERSION : TESTNET_P2PKH_VERSION,
+        ...randomBytes(random, 20),
+      ]),
+    ),
   read: {
     balance: ({ currency, random }) => {
       const amount =
