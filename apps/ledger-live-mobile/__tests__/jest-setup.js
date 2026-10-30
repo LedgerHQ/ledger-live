@@ -149,6 +149,10 @@ jest.mock("@rozenite/redux-devtools-plugin", () => ({
   rozeniteDevToolsEnhancer: () => next => next,
 }));
 
+NativeModules.AppStartupModule = {
+  getProcessStartTime: () => null,
+};
+
 NativeModules.AppVisibilityModule = {
   isInForeground: () => true,
   addListener: () => {},

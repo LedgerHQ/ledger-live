@@ -29,6 +29,7 @@ class AppDelegate: RCTAppDelegate, UNUserNotificationCenterDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    AppStartupModule.recordLaunch(application)
     self.moduleName = "ledgerlivemobile"
     self.dependencyProvider = RCTAppDependencyProvider()
 

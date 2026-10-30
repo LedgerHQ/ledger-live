@@ -55,6 +55,7 @@ class MainApplication : Application(), ReactApplication, ShareApplication {
   }
 
     override fun onCreate() {
+    AppStartupModule.recordLaunch()
     super.onCreate()
 
     loadReactNative(this)

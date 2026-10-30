@@ -78,7 +78,11 @@ import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
-import { resolveStartupEvents, STARTUP_EVENTS } from "LLM/utils/resolveStartupEvents";
+import {
+  getStartupTimeBase,
+  resolveStartupEvents,
+  STARTUP_EVENTS,
+} from "LLM/utils/resolveStartupEvents";
 import { getTotalStakeableAssets } from "@ledgerhq/live-common/domain/getTotalStakeableAssets";
 import { getOnboardingCounterfeitWarningAttributes } from "@ledgerhq/live-common/analytics/featureFlagHelpers/onboardingCounterfeitWarning";
 import { getRecoverV2Attribute } from "@ledgerhq/live-common/analytics/featureFlagHelpers/recoverV2";
@@ -541,6 +545,7 @@ const extraProperties = async (store: AppStore) => {
     ContactsAttributes: contactsFeature,
     ...contactsAttributes,
     appTimeToInteractiveMilliseconds: legacyStartupTime, // WARNING: this is not accurate in practice the splash is still blocking the user at this point
+    appTimeToInteractiveBase: getStartupTimeBase(),
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",

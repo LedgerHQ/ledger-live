@@ -18,6 +18,7 @@ class NativeModulesPackage : ReactPackage {
     override fun createNativeModules(
         reactContext: ReactApplicationContext
     ): MutableList<NativeModule> = listOf(
+        AppStartupModule(reactContext),
         AppVisibilityModule(reactContext),
         BluetoothHelperModule(reactContext),
         GoogleWalletModule(reactContext),
