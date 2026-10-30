@@ -40,6 +40,8 @@
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
 		RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */; };
 		RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */; };
+		A5715B0E2F0C3A1100E1B2C1 /* AppStartupModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */; };
+		A5715A0E2F0C3A1100E1B2C1 /* AppStartupModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -95,6 +97,8 @@
 		F837348622721A48009D747A /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReduceTransparencyModule.m; sourceTree = "<group>"; };
 		RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceTransparencyModule.swift; sourceTree = "<group>"; };
+		A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStartupModule.m; sourceTree = "<group>"; };
+		A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartupModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +137,8 @@
 				CA0B38072EDF3E62005A0FAA /* BluetoothHelperModule.m */,
 				RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */,
 				RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */,
+				A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */,
+				A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */,
 				2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */,
 				CA33C2502ED88BBB003C128E /* AppDelegate.swift */,
 				CA3D2EB52EDDA670008E836E /* FirebaseConfigurator.swift */,
@@ -558,6 +564,8 @@
 				CA3D2EC22EDE0D9B008E836E /* BluetoothHelperModule.swift in Sources */,
 				RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */,
 				RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */,
+				A5715B0E2F0C3A1100E1B2C1 /* AppStartupModule.m in Sources */,
+				A5715A0E2F0C3A1100E1B2C1 /* AppStartupModule.swift in Sources */,
 				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
