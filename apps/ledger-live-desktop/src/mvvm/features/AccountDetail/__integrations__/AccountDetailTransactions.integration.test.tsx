@@ -5,12 +5,25 @@ import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currenc
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "tests/testSetup";
+import { connectAccounts } from "~/config/account-data-setup";
+import dbMiddleware from "~/renderer/middlewares/db";
+import type { State } from "~/renderer/reducers";
+import createStore from "~/state-manager/configureStore";
 import { getAccountUrl } from "~/renderer/utils";
 import AccountDetailRoute from "../AccountDetailRoute";
 
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   ...jest.requireActual("@ledgerhq/live-common/bridge/react/index"),
   SyncOneAccountOnMount: () => null,
+}));
+
+jest.mock("@ledgerhq/live-common/account-data/full-sync/syncLegacyAccount", () => ({
+  syncLegacyAccount: () => Promise.resolve(),
+}));
+
+jest.mock("LLD/features/History/constants", () => ({
+  ...jest.requireActual("LLD/features/History/constants"),
+  USE_ACCOUNT_DATA_OPERATIONS: true,
 }));
 
 const ethRoot = genAccount("account-detail-transactions-eth", {
@@ -36,31 +49,43 @@ function HistoryPage() {
 }
 
 function renderAccount(account: Account) {
+  const store = createStore({
+    state: {
+      ...withFlagOverrides({ accountDetail: { enabled: true } }),
+      accounts: [ethAccount, otherEthAccount, emptyBtcAccount],
+    } as State,
+    dbMiddleware,
+    fetchRemoteFlags: null,
+  });
+  connectAccounts(store);
+
   return render(
     <Routes>
       <Route path="/account/:id/*" element={<AccountDetailRoute />} />
       <Route path="/history" element={<HistoryPage />} />
     </Routes>,
     {
+      store,
       initialRoute: getAccountUrl(account.id),
-      initialState: {
-        ...withFlagOverrides({ accountDetail: { enabled: true } }),
-        accounts: [ethAccount, otherEthAccount, emptyBtcAccount],
-      },
     },
   );
 }
 
 describe("AccountDetail transactions", () => {
   it("lists the 3 latest operations of the account and its tokens", async () => {
-    renderAccount(ethAccount);
+    const { store } = renderAccount(ethAccount);
 
     const section = await screen.findByTestId("account-detail-transactions-section");
+    expect(
+      Object.values(store.getState().accountOperations).some(rows => (rows?.length ?? 0) > 0),
+    ).toBe(true);
     const rows = within(section).getAllByTestId(/^history-operation-row-/);
 
     expect(rows).toHaveLength(3);
     for (const row of rows) {
-      expect(row.dataset.testid).toContain(ethAccount.id);
+      expect(row).toBeVisible();
+      expect(within(row).getByTestId("history-operation-type")).toBeVisible();
+      expect(within(row).getByTestId("history-operation-amount")).toBeVisible();
     }
   });
 

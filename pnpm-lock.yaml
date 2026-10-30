@@ -1289,6 +1289,9 @@ importers:
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
+      '@features/platform-account-data':
+        specifier: workspace:*
+        version: link:../../features/platform/account-data
       '@features/platform-account-source-coin-module':
         specifier: workspace:^
         version: link:../../features/platform/account-source-coin-module
