@@ -208,6 +208,7 @@ describe("Perps handlers", () => {
         mockDeviceData,
         new Uint8Array(Buffer.from(baseParams.metadataWithSignature, "hex")),
         [{ type: "cancel", cancels: [{ a: 1, o: 42 }], nonce: 1 }],
+        undefined,
       );
     });
 
@@ -258,6 +259,71 @@ describe("Perps handlers", () => {
       await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toThrow(
         "Not DMK transport",
       );
+    });
+
+    describe("signOnSession", () => {
+      const session = { dmk: {}, sessionId: "die-session", deviceModelId: "europa" };
+
+      beforeEach(() => {
+        mockUiSigningExecute.mockImplementation(async ({ signOnSession, onSuccess, onError }) => {
+          try {
+            onSuccess(await signOnSession(session));
+          } catch (err) {
+            onError(err);
+          }
+        });
+      });
+
+      it("should return signatures without opening a device", async () => {
+        // GIVEN
+        const expectedSignatures = [{ r: "0xr", s: "0xs", v: 27 }];
+        mockSignActions.mockResolvedValue(expectedSignatures);
+
+        // WHEN
+        const result = await serverHandlers["custom.perps.signActions"](baseParams);
+
+        // THEN
+        expect(result).toEqual({ signatures: expectedSignatures });
+        expect(withDevice).not.toHaveBeenCalled();
+        expect(DmkSignerHyperliquid).toHaveBeenCalledWith(session.dmk, "die-session");
+      });
+
+      it("should fetch the certificate for the session's device model", async () => {
+        // GIVEN
+        mockSignActions.mockResolvedValue([]);
+
+        // WHEN
+        await serverHandlers["custom.perps.signActions"](baseParams);
+
+        // THEN
+        expect(calService.getCertificate).toHaveBeenCalledWith("europa", "perps_data");
+      });
+
+      it("should sign without opening the app again", async () => {
+        // GIVEN
+        mockSignActions.mockResolvedValue([]);
+
+        // WHEN
+        await serverHandlers["custom.perps.signActions"](baseParams);
+
+        // THEN
+        expect(mockSignActions).toHaveBeenCalledWith(
+          DERIVATION_PATH,
+          mockDeviceData,
+          new Uint8Array(Buffer.from(baseParams.metadataWithSignature, "hex")),
+          [{ type: "cancel", cancels: [{ a: 1, o: 42 }], nonce: 1 }],
+          { skipOpenApp: true },
+        );
+      });
+
+      it("should reject with the signer's error", async () => {
+        // GIVEN
+        const refusal = new UserRefusedOnDevice();
+        mockSignActions.mockRejectedValue(refusal);
+
+        // WHEN & THEN
+        await expect(serverHandlers["custom.perps.signActions"](baseParams)).rejects.toBe(refusal);
+      });
     });
   });
 

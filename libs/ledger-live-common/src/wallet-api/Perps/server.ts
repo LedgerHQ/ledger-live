@@ -1,5 +1,7 @@
+import type { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
-import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
+import { DmkSignerHyperliquid, type SignActionsOptions } from "@ledgerhq/live-signer-hyperliquid";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { convertAction, type ActionWithNonce } from "./types";
@@ -72,15 +74,26 @@ const PerpsWithdrawParamsSchema = z.object({
   sourceAccountId: z.string().min(1),
 });
 
+export type PerpsSignSession = {
+  dmk: DeviceManagementKit;
+  sessionId: string;
+  /** Ledger Wallet model id, not the DMK one: it selects the CAL certificate. */
+  deviceModelId: DeviceModelId;
+};
+
+export type PerpsSignRequest = {
+  appName: string | undefined;
+  appOptions?: AppOption;
+  signFactory: (device: Device) => Promise<PerpsSignResult>;
+  /** Signs on a session where the caller already opened the Hyperliquid app. */
+  signOnSession: (session: PerpsSignSession) => Promise<PerpsSignResult>;
+  onSuccess: (result: PerpsSignResult) => void;
+  onError: (error: Error) => void;
+  onCancel: () => void;
+};
+
 export type PerpsUiHooks = {
-  "signing.execute": (params: {
-    appName: string | undefined;
-    appOptions?: AppOption;
-    signFactory: (device: Device) => Promise<PerpsSignResult>;
-    onSuccess: (result: PerpsSignResult) => void;
-    onError: (error: Error) => void;
-    onCancel: () => void;
-  }) => void;
+  "signing.execute": (params: PerpsSignRequest) => void;
   "deposit.execute"?: (params: PerpsDepositUiParams) => Promise<PerpsDepositResult> | void;
   /**
    * Runs the add account flow for Hyperliquid and resolves with the accounts the user added; other
@@ -111,7 +124,26 @@ const PERPS_APP_NAME = "Hyperliquid";
 /** Legacy Perps accounts are identified by their Arbitrum account. */
 const LEGACY_CURRENCY_ID = "arbitrum";
 
-async function signActionsOnDevice(
+export async function signActionsOnSession(
+  { dmk, sessionId, deviceModelId }: PerpsSignSession,
+  derivationPath: string,
+  params: PerpsSignParams,
+  options?: SignActionsOptions,
+): Promise<PerpsSignResult> {
+  const certificate = await calService.getCertificate(deviceModelId, "perps_data");
+  const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
+  const signatures = await hyperliquidSigner.signActions(
+    derivationPath,
+    convertCertificateToDeviceData(certificate),
+    new Uint8Array(Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex")),
+    params.actions.map(convertAction),
+    options,
+  );
+
+  return { signatures };
+}
+
+function signActionsOnDevice(
   transport: Transport,
   device: Device,
   derivationPath: string,
@@ -122,16 +154,11 @@ async function signActionsOnDevice(
   }
   const { dmk, sessionId } = transport;
 
-  const certificate = await calService.getCertificate(device.modelId, "perps_data");
-  const hyperliquidSigner = new DmkSignerHyperliquid(dmk, sessionId);
-  const signatures = await hyperliquidSigner.signActions(
+  return signActionsOnSession(
+    { dmk, sessionId, deviceModelId: device.modelId },
     derivationPath,
-    convertCertificateToDeviceData(certificate),
-    new Uint8Array(Buffer.from(stripHexPrefix(params.metadataWithSignature), "hex")),
-    params.actions.map(convertAction),
+    params,
   );
-
-  return { signatures };
 }
 
 function createSignFactory(derivationPath: string, params: PerpsSignParams) {
@@ -142,6 +169,11 @@ function createSignFactory(derivationPath: string, params: PerpsSignParams) {
         device.deviceName ? { matchDeviceByName: device.deviceName } : undefined,
       )(transport => from(signActionsOnDevice(transport, device, derivationPath, params))),
     );
+}
+
+function createSignOnSession(derivationPath: string, params: PerpsSignParams) {
+  return (session: PerpsSignSession): Promise<PerpsSignResult> =>
+    signActionsOnSession(session, derivationPath, params, { skipOpenApp: true });
 }
 
 export const handlers = ({
@@ -188,6 +220,7 @@ export const handlers = ({
           appName: PERPS_APP_NAME,
           appOptions: params.options,
           signFactory: createSignFactory(derivationPath, params),
+          signOnSession: createSignOnSession(derivationPath, params),
           onSuccess: resolve,
           onError: reject,
           onCancel: () => reject(new Error("User cancelled signing")),

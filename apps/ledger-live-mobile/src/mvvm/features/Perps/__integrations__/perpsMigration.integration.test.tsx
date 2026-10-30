@@ -45,7 +45,7 @@ type AddAccountFlowParams = {
 
 /** Stands in for the Perps live app. */
 function PerpsScreen({ accounts }: Readonly<{ accounts: Account[] }>) {
-  const handlers = usePerpsHandlers(accounts);
+  const { handlers } = usePerpsHandlers(accounts);
   const [outcome, setOutcome] = useState("pending");
 
   const migrate = () => {

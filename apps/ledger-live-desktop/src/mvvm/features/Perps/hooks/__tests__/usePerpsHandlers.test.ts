@@ -69,6 +69,7 @@ describe("usePerpsHandlers", () => {
       appName: "Hyperliquid",
       appOptions: undefined,
       signFactory: jest.fn(),
+      signOnSession: jest.fn(),
       onSuccess: jest.fn(),
       onError: jest.fn(),
       onCancel: jest.fn(),

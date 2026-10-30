@@ -297,6 +297,7 @@ libs/transaction-observability/                                           @ledge
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/flow/predictions/                                               @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
+features/platform/hyperliquid-sign-intent/                               @ledgerhq/ptx
 features/platform/predictions/                                           @ledgerhq/ptx
 domain/entity/predictions/                                               @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx

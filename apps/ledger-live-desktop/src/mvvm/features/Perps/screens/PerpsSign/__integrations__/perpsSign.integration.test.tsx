@@ -23,6 +23,7 @@ jest.mock("LLD/features/Send/screens/Signature/components/SimplifiedTransactionC
 const perpsSignData = {
   appName: "Hyperliquid",
   signFactory: jest.fn().mockResolvedValue({ signatures: [] }),
+  signOnSession: jest.fn().mockResolvedValue({ signatures: [] }),
   onSuccess: jest.fn(),
   onError: jest.fn(),
   onCancel: jest.fn(),
