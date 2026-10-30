@@ -5,13 +5,15 @@
 //
 // The sync-wallet-cli-skill workflow runs it against the root of a LedgerHQ/agent-skills
 // checkout. That repository owns its README.md, so the export leaves out
-// agent-plugin/README.md, along with the internal tests/ (see NOT_EXPORTED).
+// agent-plugin/README.md, along with the internal tests/ (see NOT_EXPORTED). It lists
+// what it wrote in .ledger-plugin-files and deletes what the previous export listed but
+// this one no longer writes, so a file removed from agent-plugin/ leaves agent-skills too.
 //
 // Usage:
 //   node ./scripts/export-agent-plugin.mjs <target-dir>
 
 import { execFileSync } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { collectSkillFiles } from "./collect-skill-files.mjs";
@@ -35,6 +37,7 @@ const PER_PLUGIN_VERSIONED = new Set([".claude-plugin/marketplace.json"]);
 // Top-level entries that stay in the monorepo: the install guide, mirrored by hand into
 // agent-skills' README, and the manual smoke checklist, which is internal.
 const NOT_EXPORTED = new Set(["README.md", "tests"]);
+const EXPORTED_LIST = ".ledger-plugin-files";
 
 // The sources carry no version, so a release can never leave a stale one behind.
 function withVersion(manifest, version, rel) {
@@ -63,6 +66,24 @@ function stamp(rel, content, version) {
   return content;
 }
 
+// The list is read from the target repository, so an entry must stay inside it.
+async function previousExport(targetDir) {
+  let list;
+  try {
+    list = await readFile(path.join(targetDir, EXPORTED_LIST), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return [];
+    throw error;
+  }
+  const entries = list.split("\n").filter(Boolean);
+  for (const rel of entries) {
+    if (path.isAbsolute(rel) || path.normalize(rel).split(path.sep).includes("..")) {
+      throw new Error(`${EXPORTED_LIST} lists "${rel}", which is outside the target.`);
+    }
+  }
+  return entries;
+}
+
 async function main() {
   const [targetDir] = process.argv.slice(2);
   if (!targetDir) {
@@ -74,14 +95,17 @@ async function main() {
     await collectSkillFiles(pluginDir, { boundary: pluginDir, label: "agent-plugin" })
   ).filter(rel => !NOT_EXPORTED.has(rel.split("/")[0]));
 
-  // todo: a file removed from agent-plugin/ stays in an existing target; replace the target
-  // once a publish workflow owns it.
+  const exported = new Set(files);
+  for (const rel of await previousExport(targetDir)) {
+    if (!exported.has(rel)) await rm(path.join(targetDir, rel), { force: true });
+  }
   for (const rel of files) {
     const content = await readFile(path.join(pluginDir, rel), "utf8");
     const target = path.join(targetDir, rel);
     await mkdir(path.dirname(target), { recursive: true });
     await writeFile(target, stamp(rel, content, version), "utf8");
   }
+  await writeFile(path.join(targetDir, EXPORTED_LIST), [...files].sort().join("\n") + "\n", "utf8");
 
   execFileSync(
     process.execPath,

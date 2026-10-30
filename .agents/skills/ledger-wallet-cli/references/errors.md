@@ -7,6 +7,7 @@ Device errors print `[✖] <message>` (or a `device-state` object with `--output
 | Message | Exit | Cause | Action |
 |---|---|---|---|
 | `Ledger not detected. Plug in, unlock, retry.` | 3 | no device on this machine, or it is off or unplugged | follow SKILL.md, [No USB on this machine](../SKILL.md#no-usb-on-this-machine) |
+| any other failure of `send`, `earn deposit` / `withdraw` or `swap execute` after the human approved on the device (e.g. a network error or a timeout) | 1 | the transaction may have been broadcast anyway | never re-run on your own: run `operations <label> --limit 5 --output json` and look for an operation with that recipient and amount since the run; if one is there, give the human its `hash`; if not, tell them it may still land and re-run only on their explicit yes |
 | `Rejected on device. No action taken.` | 2 | the human rejected a signature | a deliberate choice: ask whether to retry or abort, never retry on your own; on retry, have them check amount, recipient and fees on the device |
 | `Rejected on device. App was not opened.` | 2 | the human rejected the app-open prompt | ask them to confirm the prompt, then re-run |
 | `Rejected on device. Address not confirmed.` | 2 | the human rejected the address on `receive` | ask whether the addresses matched; on a mismatch apply the receive rule in SKILL.md, Core commands |

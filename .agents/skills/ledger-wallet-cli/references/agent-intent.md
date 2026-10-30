@@ -12,7 +12,7 @@ pnpm --silent wallet-cli start agent-intent list --output json
 
 Read `profiles[].profileStatus` (also `profileId`, `environment`, `source`, `accountAccess`):
 
-- no profiles, or only `expired` ones: go to step 2;
+- no profiles, or only `expired` ones: if the human asked to enroll or to use Agent Intent, go to step 2. Otherwise enrolling adds this agent to their Ledger Sync, so ask first, word for word: "This machine has no Ledger. Do you want to connect your Ledger to this agent with Agent Intent, so I can propose payments you approve on it?" Go to step 2 only on yes;
 - `pending`: go to step 5 and run `wait`: it tells a listener that still waits from a lost one;
 - `recovering`: if its `recover` job is still running in your terminal tool, go to step 10 and finish the handoff; otherwise use it as `enrolled`: it reads `enrolled` again once its recovery link expires;
 - one `enrolled` profile: go to the step the request needs (6 sync, 7 payment, 8 swap, 9 follow up, 10 recover). For an enroll request, or the human saying they approved, report that profile (id, environment, and `fingerprint` from `show`), and enroll another only when the human asks for a second one;
@@ -135,7 +135,7 @@ Done when you have reported every imported and unchanged label with its network,
 
 `agent-intent send` proposes a transfer on Ethereum mainnet (ETH or an ERC-20 token) or Solana mainnet (SOL or an SPL token). A staging profile also proposes a mainnet transfer. The asset picks the network: a `0x` contract in `--token` is an ERC-20 on Ethereum, a base58 mint in `--token` an SPL token on Solana; without `--token`, `ETH` and `SOL` are native sends, and any other ticker is a token on the sender's network (`0x` → Ethereum, base58 → Solana).
 
-- **Sender:** pass `--from <address>` on the asset's network.
+- **Sender:** on the asset's network, pass `--account <label>` for a candidate below, or `--from <address>` for an address the human named. With a label, a ticker-only token is looked up in what the account holds first.
   1. The human named an address: use it. Otherwise run `pnpm --silent wallet-cli start session view --output json`; a candidate is an `accounts` entry whose `descriptor` starts with `account:2:address:ethereum:` followed by `0x` plus 40 hex characters (Ethereum), or with `account:2:address:solana:` followed by a base58 address (Solana). A label the human named counts only if it is a candidate.
   2. No candidate and the profile is enrolled: run only `pnpm --silent wallet-cli start agent-intent sync --profile <id> --output json` (no step 6 report), then list again.
   3. Show each candidate's label and address and ask which to send from; with one candidate, take it: the dry run shows it to the human.
@@ -152,7 +152,7 @@ Done when you have reported every imported and unchanged label with its network,
 **Dry run when you built the transaction** (SKILL.md, Safety rules). When the rule applies, run the command with `--dry-run` first: it validates everything and submits nothing (no agent key, no sign-in; only the token lookup goes to the network).
 
 ```bash
-pnpm --silent wallet-cli start agent-intent send --profile <id> --from <sender> --to <recipient> --amount '<n> <TICKER>' --dry-run --output json
+pnpm --silent wallet-cli start agent-intent send --profile <id> --account <label> --to <recipient> --amount '<n> <TICKER>' --dry-run --output json
 ```
 
 Show the human the summary (`sender`, `recipient`, `displayAmount`, `asset`, and `feeStrategy` on Ethereum or `memo` on Solana) and get their confirmation, then run the same command without `--dry-run`. When the rule does not apply, run it without `--dry-run` directly. Before every run without `--dry-run`, note the time with `date -u +%Y-%m-%dT%H:%M:%SZ` in its own call: step 11, No blind retry, matches on it.
