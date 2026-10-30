@@ -10,10 +10,16 @@ import getBLETransport from "~/transport/bleTransport";
 import {
   DeviceManagementKitHIDTransport,
   DeviceManagementKitHTTPProxyTransport,
+  getDeviceManagementKit,
+  isMockServerTransportEnabled,
   isUsbCompatDeviceId,
 } from "@ledgerhq/live-dmk-mobile";
 import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
-import { ledgerToDmkDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import {
+  DeviceManagementKitMockServerTransport,
+  isMockServerCompatDeviceId,
+  ledgerToDmkDeviceIdMap,
+} from "@ledgerhq/live-dmk-shared";
 import { retry } from "@ledgerhq/live-common/promise";
 
 const SPECULOS_PREFIX = "speculos|";
@@ -34,7 +40,7 @@ export function setSpeculosSessionToken(token?: string) {
 }
 
 /**
- * Registers transport modules for different connection types (BLE, HID, HTTP Debug, Speculos).
+ * Registers transport modules for different connection types (BLE, HID, HTTP Debug, Speculos, mock server).
  *
  */
 export const registerTransports = () => {
@@ -105,6 +111,15 @@ export const registerTransports = () => {
     }
     registerTransportModule(httpdebug);
   }
+
+  registerTransportModule({
+    id: "mockserver",
+    open: (id, timeoutMs) =>
+      isMockServerCompatDeviceId(id) && isMockServerTransportEnabled()
+        ? DeviceManagementKitMockServerTransport.open(id, getDeviceManagementKit(), timeoutMs)
+        : null,
+    disconnect: id => (isMockServerCompatDeviceId(id) ? Promise.resolve() : null),
+  });
 
   // BLE is always the fallback choice because we always keep raw id in it
   registerTransportModule({

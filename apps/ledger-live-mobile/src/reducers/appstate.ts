@@ -7,6 +7,8 @@ import type {
   AppStateBlockPasswordLockPayload,
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
+  AppStateSetMockServerFloatingButtonHiddenPayload,
+  AppStateSetMockServerPanelOpenPayload,
   AppStateSetModalLockPayload,
   AppStateUpdateMainNavigatorVisibilityPayload,
   DangerouslyOverrideStatePayload,
@@ -23,6 +25,8 @@ export const INITIAL_STATE: AppState = {
   isPasswordLockBlocked: false,
   rebootId: 0,
   productTourDeeplinkNonce: 0,
+  isMockServerPanelOpen: false,
+  isMockServerFloatingButtonHidden: false,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -34,6 +38,18 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
   [AppStateActionTypes.HAS_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
     hasConnectedDevice: (action as Action<AppStateSetHasConnectedDevicePayload>).payload,
+  }),
+
+  [AppStateActionTypes.SET_MOCK_SERVER_PANEL_OPEN]: (state, action) => ({
+    ...state,
+    isMockServerPanelOpen: (action as Action<AppStateSetMockServerPanelOpenPayload>).payload,
+  }),
+
+  [AppStateActionTypes.SET_MOCK_SERVER_FLOATING_BUTTON_HIDDEN]: (state, action) => ({
+    ...state,
+    isMockServerFloatingButtonHidden: (
+      action as Action<AppStateSetMockServerFloatingButtonHiddenPayload>
+    ).payload,
   }),
 
   [AppStateActionTypes.SET_MODAL_LOCK]: (state, action) => ({
@@ -99,6 +115,9 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
 
 export const isDebugMenuVisible = (state: State) => state.appstate.debugMenuVisible;
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
+export const isMockServerPanelOpenSelector = (state: State) => state.appstate.isMockServerPanelOpen;
+export const isMockServerFloatingButtonHiddenSelector = (state: State) =>
+  state.appstate.isMockServerFloatingButtonHidden;
 export const hasConnectedDeviceSelector = (state: State) => state.appstate.hasConnectedDevice;
 
 export const backgroundEventsSelector = (state: State) => state.appstate.backgroundEvents;

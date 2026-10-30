@@ -1,17 +1,18 @@
-import network from "@ledgerhq/live-network";
 import { getEnv, getEnvDefault, isEnvDefault } from "@shared/env";
 import {
   mockserverIdentifier,
   setMockServerSessionToken,
   getMockServerSessionToken,
-  getMockScriptRunnerBaseUrl,
   getMockServerTransportUrl,
 } from "@ledgerhq/live-dmk-desktop";
-import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import {
+  createMockServerSession,
+  getMockScriptRunnerBaseUrl,
+  parseMockServerSessionImport,
+  type KnownDevice,
+} from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setEnvOnAllThreads } from "~/helpers/env";
-
-const REQUEST_TIMEOUT_MS = 4000;
 
 /** Path segment that marks a `BASE_SOCKET_URL` as the mock server's secure channel. */
 const MOCK_SCRIPT_RUNNER_PATH = "/secure-channel/";
@@ -98,36 +99,10 @@ export async function bootstrapMockServerTransport(): Promise<KnownDevice | null
 
   const baseUrl = getMockServerTransportUrl();
   try {
-    const { data } = await network<{ token?: string }>({
-      method: "POST",
-      url: `${baseUrl}/auth`,
-      data: {},
-      timeout: REQUEST_TIMEOUT_MS,
-    });
-    const token = data?.token;
-    if (!token) throw new Error("no token returned by /auth");
-
-    const auth = { Authorization: `Bearer ${token}` };
-
-    // Pushed before the devices land: the endpoint rejects an empty seed, so a
-    // bad mnemonic fails before the session is half-provisioned.
-    const seedOverride = getEnv("MOCK_SERVER_SEED").trim();
-    if (seedOverride) {
-      await network({
-        method: "PUT",
-        url: `${baseUrl}/sessions/current/seed`,
-        data: { seed: seedOverride },
-        headers: auth,
-        timeout: REQUEST_TIMEOUT_MS,
-      });
-    }
-
-    await network({
-      method: "POST",
-      url: `${baseUrl}/import`,
-      data: getEnv("MOCK_SERVER_SESSION"),
-      headers: auth,
-      timeout: REQUEST_TIMEOUT_MS,
+    const token = await createMockServerSession({
+      url: baseUrl,
+      sessionImport: parseMockServerSessionImport(getEnv("MOCK_SERVER_SESSION")),
+      seed: getEnv("MOCK_SERVER_SEED").trim() || undefined,
     });
 
     setMockServerSessionToken(token);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import network from "@ledgerhq/live-network";
 import { getEnv } from "@shared/env";
 import { getMockServerSessionToken, getMockServerTransportUrl } from "@ledgerhq/live-dmk-desktop";
+import { isMockServerReachable } from "@ledgerhq/live-dmk-shared";
 
 export type MockServerStatus = {
   enabled: boolean;
@@ -37,12 +37,8 @@ export const useMockServerStatus = (): MockServerStatus => {
       // render, and nothing else re-renders this hook, so it is re-read on
       // every poll rather than at render time.
       if (!cancelled) setSessionToken(getMockServerSessionToken());
-      try {
-        await network({ method: "GET", url: `${baseUrl}/health`, timeout: 4000 });
-        if (!cancelled) setConnected(true);
-      } catch {
-        if (!cancelled) setConnected(false);
-      }
+      const reachable = await isMockServerReachable(baseUrl);
+      if (!cancelled) setConnected(reachable);
     };
 
     check();

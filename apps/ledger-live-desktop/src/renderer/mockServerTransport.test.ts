@@ -1,17 +1,12 @@
 import { getEnv, getEnvDefault, setEnv, setEnvUnsafe } from "@shared/env";
 import { mockserverIdentifier } from "@ledgerhq/live-dmk-desktop";
-import network from "@ledgerhq/live-network";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { HttpResponse, http, server } from "tests/server";
 import {
   bootstrapMockServerTransport,
   mockServerKnownDevice,
   MOCK_SERVER_TRANSPORT_STORAGE_KEY,
 } from "./mockServerTransport";
-
-jest.mock("@ledgerhq/live-network", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
 
 const mockSetMockServerSessionToken = jest.fn();
 let storedSessionToken: string | undefined;
@@ -21,7 +16,6 @@ jest.mock("@ledgerhq/live-dmk-desktop", () => ({
   getMockServerTransportUrl: () => "https://mock.example",
   getMockServerSessionToken: () => storedSessionToken,
   setMockServerSessionToken: (token: string) => mockSetMockServerSessionToken(token),
-  getMockScriptRunnerBaseUrl: () => undefined,
 }));
 
 const mockSetEnvOnAllThreads = jest.fn();
@@ -32,10 +26,15 @@ jest.mock("~/helpers/env", () => ({
   setEnvOnAllThreads: (name: string, value: unknown) => mockSetEnvOnAllThreads(name, value),
 }));
 
-const mockedNetwork = jest.mocked(network);
+const MOCK_SERVER_URL = "https://mock.example";
 
-const requestsTo = (path: string) =>
-  mockedNetwork.mock.calls.map(([config]) => config).filter(config => config.url?.endsWith(path));
+const endpoints = {
+  auth: jest.fn<Response, [{ request: Request }]>(),
+  seed: jest.fn<Response, [{ request: Request }]>(),
+  import: jest.fn<Response, [{ request: Request }]>(),
+};
+
+const requestOf = (endpoint: jest.Mock) => endpoint.mock.calls[0][0].request as Request;
 
 describe("mockServerKnownDevice", () => {
   it("maps the mock server Nano Gen5 type apexp to the apex model", () => {
@@ -58,7 +57,16 @@ describe("bootstrapMockServerTransport", () => {
     window.localStorage.setItem(MOCK_SERVER_TRANSPORT_STORAGE_KEY, "1");
     setEnv("MOCK_SERVER_SEED", "");
     setEnv("MOCK_SERVER_SESSION", defaultSession);
-    mockedNetwork.mockResolvedValue({ data: { token: "a-token" } } as never);
+    endpoints.auth
+      .mockReset()
+      .mockImplementation(() => HttpResponse.json({ token: "a-token", expires_at: 0 }));
+    endpoints.seed.mockReset().mockImplementation(() => HttpResponse.json({}));
+    endpoints.import.mockReset().mockImplementation(() => HttpResponse.json({ devices: [] }));
+    server.use(
+      http.post(`${MOCK_SERVER_URL}/auth`, endpoints.auth),
+      http.put(`${MOCK_SERVER_URL}/sessions/current/seed`, endpoints.seed),
+      http.post(`${MOCK_SERVER_URL}/import`, endpoints.import),
+    );
   });
 
   afterEach(() => {
@@ -74,7 +82,7 @@ describe("bootstrapMockServerTransport", () => {
 
     await bootstrapMockServerTransport();
 
-    expect(mockedNetwork).not.toHaveBeenCalled();
+    expect(endpoints.auth).not.toHaveBeenCalled();
   });
 
   it("provisions a session when the transport is enabled at launch only", async () => {
@@ -83,7 +91,7 @@ describe("bootstrapMockServerTransport", () => {
 
     await bootstrapMockServerTransport();
 
-    expect(requestsTo("/auth")).toHaveLength(1);
+    expect(endpoints.auth).toHaveBeenCalledTimes(1);
     expect(mockSetEnvOnAllThreads).toHaveBeenCalledWith("MOCK_SERVER_TRANSPORT", true);
   });
 
@@ -93,27 +101,32 @@ describe("bootstrapMockServerTransport", () => {
 
     await bootstrapMockServerTransport();
 
-    expect(requestsTo("/auth")).toHaveLength(1);
+    expect(endpoints.auth).toHaveBeenCalledTimes(1);
   });
 
   it("imports the default session and publishes the token", async () => {
     await bootstrapMockServerTransport();
 
-    expect(requestsTo("/import")).toEqual([
-      expect.objectContaining({
-        method: "POST",
-        url: "https://mock.example/import",
-        data: defaultSession,
-        headers: { Authorization: "Bearer a-token" },
-      }),
-    ]);
+    expect(endpoints.import).toHaveBeenCalledTimes(1);
+    const importRequest = requestOf(endpoints.import);
+    expect(importRequest.headers.get("Authorization")).toBe("Bearer a-token");
+    expect(await importRequest.json()).toEqual(defaultSession);
     expect(mockSetMockServerSessionToken).toHaveBeenCalledWith("a-token");
+  });
+
+  it("routes the secure channel at the mock server session", async () => {
+    await bootstrapMockServerTransport();
+
+    expect(mockSetEnvOnAllThreads).toHaveBeenCalledWith(
+      "BASE_SOCKET_URL",
+      "wss://mock.example/secure-channel/a-token",
+    );
   });
 
   it("skips the seed request when no seed is configured", async () => {
     await bootstrapMockServerTransport();
 
-    expect(requestsTo("/sessions/current/seed")).toHaveLength(0);
+    expect(endpoints.seed).not.toHaveBeenCalled();
   });
 
   it("pushes a configured seed before importing the session", async () => {
@@ -121,18 +134,11 @@ describe("bootstrapMockServerTransport", () => {
 
     await bootstrapMockServerTransport();
 
-    expect(requestsTo("/sessions/current/seed")).toEqual([
-      expect.objectContaining({
-        method: "PUT",
-        url: "https://mock.example/sessions/current/seed",
-        data: { seed: "a test mnemonic" },
-        headers: { Authorization: "Bearer a-token" },
-      }),
-    ]);
-
-    const paths = mockedNetwork.mock.calls.map(([config]) => config.url);
-    expect(paths.indexOf("https://mock.example/sessions/current/seed")).toBeLessThan(
-      paths.indexOf("https://mock.example/import"),
+    const seedRequest = requestOf(endpoints.seed);
+    expect(seedRequest.headers.get("Authorization")).toBe("Bearer a-token");
+    expect(await seedRequest.json()).toEqual({ seed: "a test mnemonic" });
+    expect(endpoints.seed.mock.invocationCallOrder[0]).toBeLessThan(
+      endpoints.import.mock.invocationCallOrder[0],
     );
   });
 
@@ -144,7 +150,7 @@ describe("bootstrapMockServerTransport", () => {
 
     await bootstrapMockServerTransport();
 
-    expect(requestsTo("/import")[0]).toEqual(expect.objectContaining({ data: override }));
+    expect(await requestOf(endpoints.import).json()).toEqual(override);
   });
 
   it("resets a mock BASE_SOCKET_URL once the transport is disabled", async () => {
@@ -166,7 +172,7 @@ describe("bootstrapMockServerTransport", () => {
   });
 
   it("leaves the token unpublished when provisioning fails", async () => {
-    mockedNetwork.mockRejectedValue(new Error("unreachable"));
+    endpoints.auth.mockImplementation(() => HttpResponse.error());
     jest.spyOn(console, "warn").mockImplementation(() => {});
 
     await expect(bootstrapMockServerTransport()).resolves.toBeNull();

@@ -18,7 +18,7 @@ export type KnownDevicesState = {
   knownDevices: KnownDevice[];
 };
 
-export type PersistedKnownDeviceTransport = "rnble" | "rnhid";
+export type PersistedKnownDeviceTransport = "rnble" | "rnhid" | "mockserver";
 
 export type PersistedKnownDevice = Omit<KnownDevice, "transport"> & {
   transport: PersistedKnownDeviceTransport;
@@ -84,6 +84,13 @@ export function mapKnownDeviceToPersistedKnownDevice(
     };
   }
 
+  if (device.transport === mockserverIdentifier) {
+    return {
+      ...device,
+      transport: "mockserver",
+    };
+  }
+
   return null;
 }
 
@@ -101,6 +108,13 @@ export function mapPersistedKnownDeviceToKnownDevice(
     return {
       ...device,
       transport: rnHidTransportIdentifier,
+    };
+  }
+
+  if (device.transport === "mockserver") {
+    return {
+      ...device,
+      transport: mockserverIdentifier,
     };
   }
 
@@ -125,6 +139,16 @@ function findMatchingKnownDevice(
   const oldDevicesForTransport = knownDevices.filter(
     device => device.transport === newDevice.transport,
   );
+
+  if (newDevice.transport === mockserverIdentifier && newDevice.id !== "") {
+    return (
+      oldDevicesForTransport.find(device => device.id === newDevice.id) ??
+      oldDevicesForTransport.find(
+        device => device.id === "" && device.deviceModelId === newDevice.deviceModelId,
+      ) ??
+      null
+    );
+  }
 
   const transportReportsUnstableDeviceId =
     newDevice.transport === rnHidTransportIdentifier ||

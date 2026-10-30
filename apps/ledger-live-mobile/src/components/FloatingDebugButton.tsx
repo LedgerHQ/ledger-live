@@ -13,6 +13,7 @@ type Props = {
   iconContainerProps?: FlexBoxProps;
   boxWidth?: number;
   boxHeight?: number;
+  testID?: string;
 };
 
 const FloatingDebugButton: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const FloatingDebugButton: React.FC<Props> = ({
   iconContainerProps,
   boxWidth = 30,
   boxHeight = 30,
+  testID,
 }) => {
   const { screen } = useSystem();
   const { top, left, right, bottom } = useSafeAreaInsets();
@@ -69,6 +71,7 @@ const FloatingDebugButton: React.FC<Props> = ({
     >
       <TouchableWithoutFeedback onPress={onPress} onLongPress={onLongPress}>
         <Flex
+          testID={testID}
           height={boxHeight}
           width={boxWidth}
           borderRadius={12}

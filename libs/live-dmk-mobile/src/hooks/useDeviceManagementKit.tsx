@@ -6,12 +6,11 @@ import {
 } from "@ledgerhq/device-management-kit";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
-import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
+import { getMockScriptRunnerBaseUrl, LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
 import {
   getConfiguredMockServerTransport,
-  getMockScriptRunnerBaseUrl,
   isMockServerTransportEnabled,
 } from "../mockServerTransportConfig";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";

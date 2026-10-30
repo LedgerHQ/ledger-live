@@ -1,4 +1,8 @@
-import { HIDDiscoveredDevice, ScannedDevice } from "@ledgerhq/live-dmk-mobile";
+import {
+  HIDDiscoveredDevice,
+  MockServerDiscoveredDevice,
+  ScannedDevice,
+} from "@ledgerhq/live-dmk-mobile";
 import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";
 import { DeviceLike } from "~/reducers/types";
 
@@ -29,6 +33,21 @@ export function mapHidDeviceToDisplayedAvailableDevice(
     },
     available: true,
     discoveredDevice: hidDevice.discoveredDevice,
+  };
+}
+
+export function mapMockServerDeviceToDisplayedAvailableDevice(
+  mockServerDevice: MockServerDiscoveredDevice,
+): DisplayedAvailableDevice {
+  return {
+    device: {
+      deviceId: mockServerDevice.deviceId,
+      deviceName: mockServerDevice.deviceName,
+      modelId: mockServerDevice.modelId,
+      wired: mockServerDevice.wired,
+    },
+    available: true,
+    discoveredDevice: mockServerDevice.discoveredDevice,
   };
 }
 

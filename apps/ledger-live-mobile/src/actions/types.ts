@@ -66,6 +66,8 @@ export enum AppStateActionTypes {
   DEBUG_MENU_VISIBLE = "DEBUG_MENU_VISIBLE",
   HAS_CONNECTED_DEVICE = "HAS_CONNECTED_DEVICE",
   SET_MODAL_LOCK = "SET_MODAL_LOCK",
+  SET_MOCK_SERVER_PANEL_OPEN = "SET_MOCK_SERVER_PANEL_OPEN",
+  SET_MOCK_SERVER_FLOATING_BUTTON_HIDDEN = "SET_MOCK_SERVER_FLOATING_BUTTON_HIDDEN",
   QUEUE_BACKGROUND_EVENT = "QUEUE_BACKGROUND_EVENT",
   DEQUEUE_BACKGROUND_EVENT = "DEQUEUE_BACKGROUND_EVENT",
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
@@ -78,6 +80,9 @@ export enum AppStateActionTypes {
 
 export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
 export type AppStateSetModalLockPayload = AppState["modalLock"];
+export type AppStateSetMockServerPanelOpenPayload = AppState["isMockServerPanelOpen"];
+export type AppStateSetMockServerFloatingButtonHiddenPayload =
+  AppState["isMockServerFloatingButtonHidden"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
@@ -87,6 +92,8 @@ export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavig
 export type AppStatePayload =
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
+  | AppStateSetMockServerPanelOpenPayload
+  | AppStateSetMockServerFloatingButtonHiddenPayload
   | AppStateAddBackgroundEventPayload
   | AppStateUpdateMainNavigatorVisibilityPayload
   | AppStateBlockPasswordLockPayload;
@@ -279,6 +286,7 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DEBUG_OS_UPDATE_BANNER_MODE = "SET_DEBUG_OS_UPDATE_BANNER_MODE",
+  SET_MOCK_SERVER = "SET_MOCK_SERVER",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
@@ -373,6 +381,7 @@ export type SettingsIsPostOnboardingFlowPayload = void | SettingsState["isPostOn
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 export type SettingsSetDebugOsUpdateBannerMode = SettingsState["debugOsUpdateBannerMode"];
+export type SettingsSetMockServerPayload = SettingsState["mockServer"];
 export type SettingsSetAnalyticsConsentInfoPayload = SettingsState["analyticsConsentInfo"];
 export type SettingsSetHasDismissedContactsFeatureIntroductionPayload =
   SettingsState["hasDismissedContactsFeatureIntroduction"];
@@ -438,6 +447,7 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDebugOsUpdateBannerMode
+  | SettingsSetMockServerPayload
   | SettingsSetAnalyticsConsentInfoPayload
   | SettingsSetDismissedContentCardsPayload
   | SettingsClearDismissedContentCardsPayload
