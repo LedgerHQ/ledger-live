@@ -1,4 +1,4 @@
-import { by, element, waitFor } from "detox";
+import { by, element, expect as detoxExpect, waitFor } from "detox";
 import type {
   AndroidElementAttributes,
   IosElementAttributes,
@@ -61,12 +61,27 @@ export class NativeHandle implements ElementHandle {
     await withHardTimeout(this.raw.tap());
   }
 
+  /**
+   * Waits until the element exists, then taps, leaving the visibility check to Detox's tap. Only for a
+   * control `waitVisible` never accepts although it is on screen (e.g. its parent's layout box clips it
+   * on Android). Say why at the call site.
+   */
+  async tapExisting(timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.waitUntil(waitFor(this.raw).toExist().withTimeout(timeout), timeout, "present");
+    await withHardTimeout(this.raw.tap());
+  }
+
   /** Waits for visibility, then focuses the field, replaces its content and presses Enter. */
   async replaceText(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
+    await this.replaceTextKeepKeyboard(text, timeout);
+    await withHardTimeout(this.raw.typeText("\n"));
+  }
+
+  /** Like {@link replaceText} without pressing Enter, so the keyboard stays open and the form is not submitted. */
+  async replaceTextKeepKeyboard(text: string, timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitVisible(timeout);
     await withHardTimeout(this.raw.tap());
     await withHardTimeout(this.raw.replaceText(text));
-    await withHardTimeout(this.raw.typeText("\n"));
   }
 
   /** Waits for visibility, then clears the field. */
@@ -89,6 +104,21 @@ export class NativeHandle implements ElementHandle {
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     const { text } = await this.getAttributes(timeout);
     return text ?? "";
+  }
+
+  /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
+  async expectVisible(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).toBeVisible());
+  }
+
+  /** Asserts the element is not visible now. A Detox expect: synchronised with the app, it does not wait. */
+  async expectNotVisible(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).not.toBeVisible());
+  }
+
+  /** Asserts the element's text now. A Detox expect: synchronised with the app, it does not wait. */
+  async expectText(text: string): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
   }
 
   /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */

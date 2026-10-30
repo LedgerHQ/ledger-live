@@ -4,6 +4,7 @@ import { LedgerSyncCliHelper } from "@ledgerhq/live-e2e-shared/ledgerSync/helper
 import * as ledgerSyncSetup from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import type { LedgerSyncContactGroupDescriptor } from "@ledgerhq/live-e2e-shared/contacts";
 import type { LedgerSyncAccountDescriptor } from "@ledgerhq/live-e2e-shared/ledgerSync/testData";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class LedgerSyncPage {
   /** The CLI member: the instance a test can remove, since the app is seeded as the other one. */
@@ -15,25 +16,24 @@ export default class LedgerSyncPage {
     return LedgerSyncCliHelper.ledgerSyncPushDataArgs;
   }
 
-  private readonly successPage = "walletsync-success";
-  private readonly confirmDeleteSyncId = "delete-trustchain";
-  private readonly deleteSyncId = "walletSync-manage-backup";
-  private readonly backupDeletionSuccessTextId = "walletsync-delete-backup-success-title";
-  private readonly instanceRemovalSuccessTextId = "walletsync-remove-instance-success-title";
-  private readonly useMyLedgerDeviceButtonId = "walletsync-choose-sync-method-connect-device";
-  private readonly manageInstancesId = "walletSync-manage-instances";
-
-  private readonly activationTitleId = "walletsync-activation-title";
-  private readonly activationDescriptionId = "walletsync-activation-description";
-
-  private readonly activationButton = () => getElementById("walletsync-activation-button");
-  private readonly activationSuccessCloseButton = () =>
-    getElementById("walletsync-activation-success-close");
+  private readonly successPage = byId("walletsync-success");
+  private readonly confirmDeleteSyncButton = byId("delete-trustchain");
+  private readonly deleteSyncButton = byId("walletSync-manage-backup");
+  private readonly backupDeletionSuccessText = byId("walletsync-delete-backup-success-title");
+  private readonly instanceRemovalSuccessText = byId("walletsync-remove-instance-success-title");
+  private readonly useMyLedgerDeviceButton = byId("walletsync-choose-sync-method-connect-device");
+  private readonly manageInstancesButton = byId("walletSync-manage-instances");
+  private readonly activationTitle = byId("walletsync-activation-title");
+  private readonly activationDescription = byId("walletsync-activation-description");
+  private readonly activationButton = byId("walletsync-activation-button");
+  private readonly activationSuccessCloseButton = byId("walletsync-activation-success-close");
 
   /** Instance rows are keyed by the member public key, which is what the CLI holds. */
-  private instanceRowId(memberPubKey: string) {
-    return `walletSync-manage-instance-${memberPubKey}`;
-  }
+  private readonly instanceRow = (memberPubKey: string) =>
+    byId(`walletSync-manage-instance-${memberPubKey}`);
+  /** The row itself is not touchable — only the Remove CTA inside it is. */
+  private readonly instanceRemoveCta = (memberPubKey: string) =>
+    byId(`walletSync-manage-instance-${memberPubKey}-cta`);
 
   @Step("Activate Ledger Sync on Speculos")
   async activateLedgerSyncOnSpeculos() {
@@ -51,84 +51,80 @@ export default class LedgerSyncPage {
    */
   @Step("Expect Ledger Sync activation page is displayed")
   async expectLedgerSyncPageIsDisplayed() {
-    await waitForElementById(this.activationTitleId);
-    await waitForElementById(this.activationDescriptionId);
+    await this.activationTitle.waitVisible();
+    await this.activationDescription.waitVisible();
   }
 
   @Step("Tap on the activation button")
   async tapTurnOnSync() {
-    await tapByElement(this.activationButton());
+    // On Android its container's layout box ends above it, so Detox measures it ~61% visible
+    // although the whole button is drawn on screen.
+    await this.activationButton.tapExisting();
   }
 
   @Step("Tap on the use my ledger device button")
   async tapUseMyLedgerDevice() {
-    await tapById(this.useMyLedgerDeviceButtonId);
+    await this.useMyLedgerDeviceButton.tap();
   }
 
   @Step("Expect Ledger Sync success page")
   async expectLedgerSyncSuccessPage() {
-    await waitForElementById(this.successPage);
+    await this.successPage.waitVisible();
   }
 
   @Step("Close the activation success page")
   async closeActivationSuccessPage() {
-    await tapByElement(this.activationSuccessCloseButton());
+    await this.activationSuccessCloseButton.tap();
   }
 
   @Step("Expect Ledger Sync management screen is displayed")
   async expectLedgerSyncManagementVisible() {
-    await waitForElementById(this.manageInstancesId);
-    await detoxExpect(getElementById(this.deleteSyncId)).toBeVisible();
+    await this.manageInstancesButton.waitVisible();
+    await this.deleteSyncButton.expectVisible();
   }
 
   @Step("Expect instance {{{0}}} removal to be successful")
   async expectMemberRemoval(memberName: string) {
-    await waitForElementById(this.instanceRemovalSuccessTextId);
-    await detoxExpect(getElementById(this.instanceRemovalSuccessTextId)).toHaveText(
+    await this.instanceRemovalSuccessText.waitVisible();
+    await this.instanceRemovalSuccessText.expectText(
       `Your Ledger Wallet app on ${memberName} is no longer connected to Ledger Sync`,
     );
   }
 
   @Step("Open the synchronized instances list")
   async openManageInstances() {
-    await waitForElementById(this.manageInstancesId);
-    await tapById(this.manageInstancesId);
+    await this.manageInstancesButton.tap();
   }
 
   @Step("Expect instance {{{0}}} to be listed")
   async expectInstanceVisible(memberPubKey: string) {
-    await waitForElementById(this.instanceRowId(memberPubKey));
+    await this.instanceRow(memberPubKey).waitVisible();
   }
 
   @Step("Expect instance {{{0}}} to be gone")
   async expectInstanceRemoved(memberPubKey: string) {
-    await waitForElementNotVisible(this.instanceRowId(memberPubKey));
+    await this.instanceRow(memberPubKey).waitGone();
   }
 
-  /** The row itself is not touchable — only the Remove CTA inside it is. */
   @Step("Remove instance {{{0}}}")
   async removeInstance(memberPubKey: string) {
-    await tapById(`${this.instanceRowId(memberPubKey)}-cta`);
+    await this.instanceRemoveCta(memberPubKey).tap();
   }
 
   @Step("Select delete sync")
   async openDeleteSync() {
-    await waitForElementById(this.deleteSyncId);
-    await tapById(this.deleteSyncId);
+    await this.deleteSyncButton.tap();
   }
 
   @Step("Confirm deletion of sync")
   async confirmDeleteSync() {
-    await waitForElementById(this.confirmDeleteSyncId);
-    await tapById(this.confirmDeleteSyncId);
+    await this.confirmDeleteSyncButton.tap();
   }
 
   @Step("Expect deletion success page")
   async expectBackupDeletion() {
-    await waitForElementById(this.backupDeletionSuccessTextId);
-    await detoxExpect(getElementById(this.backupDeletionSuccessTextId)).toHaveText(
-      "Your Ledger Wallet apps are no longer synced",
-    );
+    await this.backupDeletionSuccessText.waitVisible();
+    await this.backupDeletionSuccessText.expectText("Your Ledger Wallet apps are no longer synced");
   }
 
   /**
