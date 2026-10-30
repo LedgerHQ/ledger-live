@@ -4,7 +4,29 @@ import { join } from "./text.js";
 
 /**
  * @import { CompilerOptions, ModuleResolutionHost, ParseConfigHost } from "typescript"
- * @import { Revision } from "./types.js"
+ * @import { Revision, Target } from "./types.js"
+ */
+
+/**
+ * A tsconfig file's options, the files its include, exclude and files fields give, and the configs it references,
+ * as repository paths.
+ * @typedef {{ options: CompilerOptions, fileNames: Set<string>, references: string[] }} Config
+ */
+
+/**
+ * TypeScript's matching of a config's include and exclude globs against folder entries: internal, but with this
+ * signature since TypeScript 2.
+ * @typedef {(
+ *   path: string,
+ *   extensions: readonly string[] | undefined,
+ *   excludes: readonly string[] | undefined,
+ *   includes: readonly string[] | undefined,
+ *   useCaseSensitiveFileNames: boolean,
+ *   currentDirectory: string,
+ *   depth: number | undefined,
+ *   getFileSystemEntries: (path: string) => { files: string[], directories: string[] },
+ *   realpath: (path: string) => string,
+ * ) => string[]} MatchFiles
  */
 
 /**
@@ -55,13 +77,19 @@ export function createRevision({ repo, rev, ts, stripScope }) {
   const scopes = new Set(
     [...workspace.keys()].filter(n => n.startsWith("@")).map(n => n.split("/")[0]),
   );
+  const matchFiles = /** @type {{ matchFiles: MatchFiles }} */ (/** @type {unknown} */ (ts))
+    .matchFiles;
+  /** @type {Map<string, { files: string[], directories: string[] }> | undefined} */
+  let entries;
 
   /** @type {ModuleResolutionHost & ParseConfigHost} */
   const host = {
     useCaseSensitiveFileNames: true,
     getCurrentDirectory: () => repo,
     getDirectories: () => [],
-    readDirectory: () => [],
+    // The files a config includes, matched as TypeScript matches them on disk.
+    readDirectory: (root, extensions, excludes, includes, depth) =>
+      matchFiles(root, extensions, excludes, includes, true, repo, depth, entriesOf, p => p),
     fileExists: p => {
       const rel = toRepoPath(p);
       return rel !== null && files.has(rel);
@@ -84,7 +112,7 @@ export function createRevision({ repo, rev, ts, stripScope }) {
       return rel === null ? p : absolute(rel);
     },
   };
-  /** @type {Map<string | null, CompilerOptions>} */
+  /** @type {Map<string | null, Config>} */
   const configs = new Map();
 
   return {
@@ -95,18 +123,23 @@ export function createRevision({ repo, rev, ts, stripScope }) {
     importsOf: rel =>
       ts.preProcessFile(read(rel) ?? "", true, true).importedFiles.map(f => f.fileName),
     resolve: (fromRel, specifier) => {
-      const { resolvedModule } = ts.resolveModuleName(
-        specifier,
-        absolute(fromRel),
-        optionsFor(fromRel),
-        host,
-      );
-      const rel = resolvedModule ? toRepoPath(resolvedModule.resolvedFileName) : null;
-      if (rel !== null) return { kind: "file", rel };
+      /** @type {Set<string>} */
+      const rels = new Set();
+      for (const options of optionsFor(fromRel)) {
+        const { resolvedModule } = ts.resolveModuleName(
+          specifier,
+          absolute(fromRel),
+          options,
+          host,
+        );
+        const rel = resolvedModule ? toRepoPath(resolvedModule.resolvedFileName) : null;
+        if (rel !== null) rels.add(rel);
+      }
+      if (rels.size > 0) return [...rels].map(rel => /** @type {Target} */ ({ kind: "file", rel }));
       // A bare specifier left unresolved names a package: an external one, or a workspace package whose
       // entry point is a build output absent from git.
       const bare = !specifier.startsWith(".") && !specifier.startsWith("/");
-      return { kind: bare ? "package" : "unresolved" };
+      return [{ kind: bare ? "package" : "unresolved" }];
     },
   };
 
@@ -126,7 +159,8 @@ export function createRevision({ repo, rev, ts, stripScope }) {
 
   /** @param {string} p */
   function relativeToRepo(p) {
-    const normalized = path.posix.normalize(p);
+    // Without a trailing slash, which TypeScript adds to the folder an import of "." names.
+    const normalized = path.posix.normalize(p).replace(/\/+$/, "");
     if (normalized === repo) return "";
     return normalized.startsWith(`${repo}/`) ? normalized.slice(repo.length + 1) : null;
   }
@@ -170,20 +204,42 @@ export function createRevision({ repo, rev, ts, stripScope }) {
     return { kind: "workspace", rel: [dir, ...rest.slice(scoped ? 2 : 1)].join("/") };
   }
 
-  /** @param {string} fromRel */
+  /**
+   * Options of the configs building the file: its nearest tsconfig.json when it includes the file, otherwise
+   * each config it references that does, such as the tsconfig.web.json and tsconfig.native.json of a package
+   * built for both; the nearest tsconfig.json when none does.
+   * @param {string} fromRel
+   */
   function optionsFor(fromRel) {
     const configDir = nearest(path.posix.dirname(fromRel), dir =>
       files.has(join(dir, "tsconfig.json")),
     );
-    const configRel = configDir === undefined ? null : join(configDir, "tsconfig.json");
-    if (!configs.has(configRel)) configs.set(configRel, parseConfig(configRel));
-    return /** @type {CompilerOptions} */ (configs.get(configRel));
+    const config = configFor(configDir === undefined ? null : join(configDir, "tsconfig.json"));
+    if (config.fileNames.has(fromRel)) return [config.options];
+    prefetch(config.references);
+    const building = config.references
+      .map(configFor)
+      .filter(reference => reference.fileNames.has(fromRel));
+    return (building.length > 0 ? building : [config]).map(({ options }) => options);
   }
 
   /** @param {string | null} configRel */
+  function configFor(configRel) {
+    if (!configs.has(configRel)) configs.set(configRel, parseConfig(configRel));
+    return /** @type {Config} */ (configs.get(configRel));
+  }
+
+  /**
+   * @param {string | null} configRel
+   * @returns {Config}
+   */
   function parseConfig(configRel) {
     /** @type {CompilerOptions} */
     const options = { allowJs: true, resolveJsonModule: true };
+    /** @type {string[]} */
+    let fileNames = [];
+    /** @type {string[]} */
+    let references = [];
     if (configRel !== null) {
       const { config } = ts.readConfigFile(absolute(configRel), host.readFile);
       const dir = absolute(path.posix.dirname(configRel));
@@ -195,12 +251,44 @@ export function createRevision({ repo, rev, ts, stripScope }) {
         absolute(configRel),
       );
       Object.assign(options, parsed.options, { allowJs: true, resolveJsonModule: true });
+      fileNames = parsed.fileNames;
+      references = (parsed.projectReferences ?? []).map(reference =>
+        ts.resolveProjectReferencePath(reference),
+      );
     }
     if (options.moduleResolution === undefined) {
       options.moduleResolution = ts.ModuleResolutionKind.Bundler;
       options.module = ts.ModuleKind.ESNext;
     }
-    return options;
+    return {
+      options,
+      fileNames: new Set(fileNames.flatMap(p => toRepoPath(p) ?? [])),
+      references: references.flatMap(p => toRepoPath(p) ?? []).filter(rel => files.has(rel)),
+    };
+  }
+
+  /**
+   * Names of the files and folders in a folder of the commit, none for one outside it.
+   * @param {string} p
+   */
+  function entriesOf(p) {
+    if (!entries) {
+      entries = new Map([...dirs].map(dir => [dir, { files: [], directories: [] }]));
+      for (const file of files) entries.get(parentOf(file))?.files.push(path.posix.basename(file));
+      for (const dir of dirs)
+        if (dir) entries.get(parentOf(dir))?.directories.push(path.posix.basename(dir));
+    }
+    const rel = relativeToRepo(p);
+    return (rel !== null && entries.get(rel)) || { files: [], directories: [] };
+  }
+
+  /**
+   * Folder holding a file or folder, the repository root being "".
+   * @param {string} rel
+   */
+  function parentOf(rel) {
+    const dir = path.posix.dirname(rel);
+    return dir === "." ? "" : dir;
   }
 
   /**

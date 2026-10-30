@@ -71,28 +71,32 @@ export function buildGraph({ changes, revisions }) {
     for (const side of sidesHolding(change)) {
       const revision = revisions[side];
       const pkg = packageNode(revision.packageOf(change.rel), "unchanged");
+      // A file built for several platforms, such as web and native, imports a file for each.
       for (const specifier of revision.importsOf(change.rel)) {
-        const target = revision.resolve(change.rel, specifier);
-        if (target.kind === "unresolved") {
-          unresolved.add(`${change.rel} → ${specifier}`);
-        } else if (
-          target.kind === "file" &&
-          target.rel !== change.rel &&
-          revision.packageOf(target.rel).dir === pkg.dir
-        ) {
-          /** @type {FileNode} */
-          const to = files.get(target.rel) ?? {
-            kind: "file",
-            key: target.rel,
-            status: "unchanged",
-            rel: target.rel,
-            pkg,
-          };
-          files.set(target.rel, to);
-          markEdge(from, to, side, false);
-        } else if (target.kind !== "file" || target.rel !== change.rel) {
-          // An import out of the package is no edge, but tells the dependencies the file uses.
-          (from.packageImports ??= new Set()).add(importedPackageKey(revision, target, specifier));
+        for (const target of revision.resolve(change.rel, specifier)) {
+          if (target.kind === "unresolved") {
+            unresolved.add(`${change.rel} → ${specifier}`);
+          } else if (
+            target.kind === "file" &&
+            target.rel !== change.rel &&
+            revision.packageOf(target.rel).dir === pkg.dir
+          ) {
+            /** @type {FileNode} */
+            const to = files.get(target.rel) ?? {
+              kind: "file",
+              key: target.rel,
+              status: "unchanged",
+              rel: target.rel,
+              pkg,
+            };
+            files.set(target.rel, to);
+            markEdge(from, to, side, false);
+          } else if (target.kind !== "file" || target.rel !== change.rel) {
+            // An import out of the package is no edge, but tells the dependencies the file uses.
+            (from.packageImports ??= new Set()).add(
+              importedPackageKey(revision, target, specifier),
+            );
+          }
         }
       }
     }
