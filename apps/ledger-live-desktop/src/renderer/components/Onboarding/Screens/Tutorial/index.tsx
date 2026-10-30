@@ -126,6 +126,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
           <Flex justifyContent={handleBack ? "space-between" : "flex-end"}>
             {handleBack && (
               <Button
+                data-testid={`v3-tutorial-back-${screenId}`}
                 iconPosition="left"
                 onClick={handleBack}
                 disabled={disableBack}

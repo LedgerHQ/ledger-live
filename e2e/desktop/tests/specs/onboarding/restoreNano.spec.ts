@@ -33,7 +33,26 @@ test.describe("Restoring a Nano from a recovery phrase (mock server)", () => {
 
       await app.onboarding.restoreWithRecoveryPhrase();
       await app.onboarding.continuePastCounterfeitWarning();
-      await app.onboarding.completeRestoreTutorialSteps();
+
+      await app.onboarding.continueTutorial("import-your-recovery-phrase");
+      await app.onboarding.goBackAndContinue("device-how-to-2", "import-your-recovery-phrase");
+      await app.onboarding.continueTutorial("device-how-to-2");
+
+      await app.onboarding.expectTutorialContinueDisabled("pin-code");
+      await app.onboarding.acceptPrivatePinCode();
+      await app.onboarding.continueTutorial("pin-code");
+      await app.onboarding.goBackAndContinue("pin-code-how-to", "pin-code");
+      await app.onboarding.continueTutorial("pin-code-how-to");
+      await app.onboarding.continuePinDrawer();
+
+      await app.onboarding.expectTutorialContinueDisabled("existing-recovery-phrase");
+      await app.onboarding.acceptRecoveryPhraseLoss();
+      await app.onboarding.continueTutorial("existing-recovery-phrase");
+      await app.onboarding.continueTutorial("recovery-how-to");
+      await app.onboarding.goBackAndContinue("recovery-how-to-2", "recovery-how-to");
+      await app.onboarding.continueTutorial("recovery-how-to-2");
+      await app.onboarding.continueRecoverySeedDrawer();
+
       await app.onboarding.runGenuineCheck();
       await app.onboarding.continueTutorial("genuine-check");
 

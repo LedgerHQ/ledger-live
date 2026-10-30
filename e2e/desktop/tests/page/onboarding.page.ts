@@ -57,6 +57,8 @@ export class OnboardingPage extends AppPage {
     this.page.getByTestId(`v3-tutorial-continue-${screen}`);
   private readonly tutorialContinueSecondaryOn = (screen: TutorialScreen) =>
     this.page.getByTestId(`v3-tutorial-continue-secondary-${screen}`);
+  private readonly tutorialBackOn = (screen: TutorialScreen) =>
+    this.page.getByTestId(`v3-tutorial-back-${screen}`);
   private readonly pinCodeCheckbox = this.page.getByTestId("v3-private-pin-code-checkbox");
   private readonly pinCodeDrawerNext = this.page.getByTestId("v3-pin-code-drawer");
   private readonly recoveryPhraseCheckbox = this.page.getByTestId("v3-recovery-phrase-checkbox");
@@ -153,6 +155,24 @@ export class OnboardingPage extends AppPage {
     await this.tutorialContinueOn(screen).click();
   }
 
+  @step("Expect the tutorial screen $0")
+  async expectTutorialScreen(screen: TutorialScreen) {
+    await expect(this.page).toHaveURL(new RegExp(`/${screen}$`));
+  }
+
+  @step("Expect Continue to be disabled on $0")
+  async expectTutorialContinueDisabled(screen: TutorialScreen) {
+    await expect(this.tutorialContinueOn(screen)).toBeDisabled();
+  }
+
+  @step("Go back from $0 to $1, then continue again")
+  async goBackAndContinue(screen: TutorialScreen, previousScreen: TutorialScreen) {
+    await this.tutorialBackOn(screen).click();
+    await this.expectTutorialScreen(previousScreen);
+    await this.continueTutorial(previousScreen);
+    await this.expectTutorialScreen(screen);
+  }
+
   @step("Acknowledge keeping the PIN private")
   async acceptPrivatePinCode() {
     await this.pinCodeCheckbox.click();
@@ -221,23 +241,6 @@ export class OnboardingPage extends AppPage {
     await this.continueRecoverySeedDrawer();
     await this.continueTutorial("hide-recovery-phrase");
     await this.continueHideSeedDrawer();
-  }
-
-  @step("Work through the PIN and existing recovery phrase guides")
-  async completeRestoreTutorialSteps() {
-    await this.continueTutorial("import-your-recovery-phrase");
-    await this.continueTutorial("device-how-to-2");
-
-    await this.acceptPrivatePinCode();
-    await this.continueTutorial("pin-code");
-    await this.continueTutorial("pin-code-how-to");
-    await this.continuePinDrawer();
-
-    await this.acceptRecoveryPhraseLoss();
-    await this.continueTutorial("existing-recovery-phrase");
-    await this.continueTutorial("recovery-how-to");
-    await this.continueTutorial("recovery-how-to-2");
-    await this.continueRecoverySeedDrawer();
   }
 
   @step("Run the genuine check")
