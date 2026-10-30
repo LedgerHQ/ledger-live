@@ -203,6 +203,18 @@ describe("toAccountOperations", () => {
     expect(row).toEqual(expect.objectContaining({ assetId: tokenId, value: "10", fee: "0" }));
   });
 
+  it("leaves the fee of an internal operation to its parent, which pays it once", () => {
+    const internal = op(base.id, "0xa", "IN", "2026-01-02T00:00:00.000Z");
+    const parent = op(base.id, "0xa", "OUT", "2026-01-02T00:00:00.000Z", {
+      internalOperations: [internal],
+    });
+    const rows = toAccountOperations(account([parent])).operations;
+    expect(rows.map(({ id, fee }) => ({ id, fee }))).toEqual([
+      { id: "ethereum-0xa-OUT", fee: "1" },
+      { id: "ethereum-0xa-IN-i0", fee: "0" },
+    ]);
+  });
+
   it("keeps the sub and internal operations after their parent whatever their date", () => {
     const internal = op(base.id, "0xa", "IN", "2026-01-05T00:00:00.000Z", {
       id: `${base.id}-0xa-IN-i0`,

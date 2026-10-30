@@ -34,8 +34,8 @@ const toRow = (
     type: op.type,
     assetId,
     value: toAmount(op.value),
-    // A token operation's legacy fee is the parent's, in the native coin: the parent row carries it.
-    fee: assetId === nativeId ? toAmount(op.fee) : "0",
+    // Token and internal operations repeat the parent's legacy fee: only the parent row carries it.
+    fee: assetId === nativeId && internalIndex === undefined ? toAmount(op.fee) : "0",
     senders: op.senders.filter(Boolean),
     recipients: op.recipients.filter(Boolean),
     blockHeight: pending ? null : (op.blockHeight ?? null),
