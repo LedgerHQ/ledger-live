@@ -27,8 +27,8 @@ const toRow = (
   pending: boolean,
   parentId?: OperationId,
   internalIndex?: number,
-): AccountOperation | undefined =>
-  AccountOperationSchema.safeParse({
+): AccountOperation | undefined => {
+  const parsed = AccountOperationSchema.safeParse({
     id: toOperationId(assetId, op, internalIndex),
     hash: op.hash,
     type: op.type,
@@ -43,7 +43,9 @@ const toRow = (
     date: Number.isNaN(op.date.getTime()) ? "" : op.date.toISOString(),
     hasFailed: op.hasFailed,
     parentId,
-  }).data;
+  });
+  return parsed.success ? parsed.data : undefined;
+};
 
 /** An operation and its sub and internal ones, which stay right after it. */
 type Group = { pending: boolean; date: string; rows: AccountOperation[] };
@@ -66,8 +68,10 @@ export function toAccountOperations(account: Account): AccountOperationsPage {
   const stale = new Set<Operation>();
   for (const { operations, pendingOperations } of [account, ...(account.subAccounts ?? [])]) {
     const confirmed = new Set(operations.map(op => op.hash));
-    const stillPending = pendingOperations.filter(op => !operations.includes(op));
-    for (const op of stillPending) if (confirmed.has(op.hash)) stale.add(op);
+    const confirmedOperations = new Set(operations);
+    for (const op of pendingOperations) {
+      if (!confirmedOperations.has(op) && confirmed.has(op.hash)) stale.add(op);
+    }
   }
 
   const groups: Group[] = [];
@@ -104,13 +108,15 @@ export function toAccountOperations(account: Account): AccountOperationsPage {
     groups.push({ pending: parent.blockHeight === null, date: parent.date, rows });
   };
 
-  account.operations.forEach(op => pushGroup(nativeId, op, false));
+  const pushOperations = (assetId: string, operations: Operation[], pending: boolean) => {
+    operations.forEach(op => pushGroup(assetId, op, pending));
+  };
+
+  pushOperations(nativeId, account.operations, false);
+  pushOperations(nativeId, account.pendingOperations, true);
   for (const token of account.subAccounts ?? []) {
-    token.operations.forEach(op => pushGroup(token.token.id, op, false));
-  }
-  account.pendingOperations.forEach(op => pushGroup(nativeId, op, true));
-  for (const token of account.subAccounts ?? []) {
-    token.pendingOperations.forEach(op => pushGroup(token.token.id, op, true));
+    pushOperations(token.token.id, token.operations, false);
+    pushOperations(token.token.id, token.pendingOperations, true);
   }
 
   groups.sort(byPendingThenNewest);
