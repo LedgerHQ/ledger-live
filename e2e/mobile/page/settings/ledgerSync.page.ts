@@ -80,13 +80,13 @@ export default class LedgerSyncPage {
   @Step("Expect Ledger Sync management screen is displayed")
   async expectLedgerSyncManagementVisible() {
     await this.manageInstancesButton.waitVisible();
-    await this.deleteSyncButton.waitVisible();
+    await this.deleteSyncButton.expectVisible();
   }
 
   @Step("Expect instance {{{0}}} removal to be successful")
   async expectMemberRemoval(memberName: string) {
-    const text = await this.instanceRemovalSuccessText.getText();
-    jestExpect(text).toBe(
+    await this.instanceRemovalSuccessText.waitVisible();
+    await this.instanceRemovalSuccessText.expectText(
       `Your Ledger Wallet app on ${memberName} is no longer connected to Ledger Sync`,
     );
   }
@@ -123,8 +123,8 @@ export default class LedgerSyncPage {
 
   @Step("Expect deletion success page")
   async expectBackupDeletion() {
-    const text = await this.backupDeletionSuccessText.getText();
-    jestExpect(text).toBe("Your Ledger Wallet apps are no longer synced");
+    await this.backupDeletionSuccessText.waitVisible();
+    await this.backupDeletionSuccessText.expectText("Your Ledger Wallet apps are no longer synced");
   }
 
   /**

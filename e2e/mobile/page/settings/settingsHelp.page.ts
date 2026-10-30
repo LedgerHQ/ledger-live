@@ -11,7 +11,7 @@ export default class SettingsHelpPage {
 
   @Step("expect Ledger Support URL to be correct")
   async expectLedgerSupportUrlToBeCorrect() {
-    await this.ledgerSupportRow("https://support.ledger.com/").waitVisible();
+    await this.ledgerSupportRow("https://support.ledger.com/").expectVisible();
   }
 
   @Step("Click on Export Logs Row")
@@ -38,7 +38,7 @@ export default class SettingsHelpPage {
 
   @Step("Check Clear Cache Modal is displayed")
   async checkClearCacheModalIsDisplayed() {
-    await this.clearCacheButton.waitVisible();
+    await this.clearCacheButton.expectVisible();
   }
 
   @Step("Click on Clear Cache Button")

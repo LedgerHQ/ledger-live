@@ -25,8 +25,8 @@ export default class AppLockPage {
 
   @Step("Expect the password to be refused as too short")
   async expectPasswordTooShort() {
-    await this.setupPasswordField.waitVisible();
-    await this.confirmPasswordField.waitGone();
+    await this.setupPasswordField.expectVisible();
+    await this.confirmPasswordField.expectNotVisible();
   }
 
   @Step("Enter unlock password")
@@ -41,11 +41,12 @@ export default class AppLockPage {
 
   @Step("Expect lock")
   async expectLock() {
-    await this.unlockScreen.waitVisible();
+    await this.unlockScreen.expectVisible();
   }
 
   @Step("Expect no lock")
   async expectNoLock() {
     await this.unlockScreen.waitGone(TIMEOUT.medium);
+    await this.unlockScreen.expectNotVisible();
   }
 }

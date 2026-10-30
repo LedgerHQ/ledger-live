@@ -1,4 +1,4 @@
-import { by, element, waitFor } from "detox";
+import { by, element, expect as detoxExpect, waitFor } from "detox";
 import type {
   AndroidElementAttributes,
   IosElementAttributes,
@@ -104,6 +104,21 @@ export class NativeHandle implements ElementHandle {
   async getText(timeout = TIMEOUT.xxlarge): Promise<string> {
     const { text } = await this.getAttributes(timeout);
     return text ?? "";
+  }
+
+  /** Asserts the element is visible now. A Detox expect: synchronised with the app, it does not wait. */
+  async expectVisible(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).toBeVisible());
+  }
+
+  /** Asserts the element is not visible now. A Detox expect: synchronised with the app, it does not wait. */
+  async expectNotVisible(): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).not.toBeVisible());
+  }
+
+  /** Asserts the element's text now. A Detox expect: synchronised with the app, it does not wait. */
+  async expectText(text: string): Promise<void> {
+    await withHardTimeout(detoxExpect(this.raw).toHaveText(text));
   }
 
   /** Names the element in the failure and keeps the Detox message, hard timeout marker included. */

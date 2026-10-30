@@ -44,6 +44,18 @@ Web handles also have `waitEnabled()` and `getValue()`. For the webview URL, use
 - Override the timeout with a bucket: `await this.signaturePrompt.waitVisible(TIMEOUT.xxxlarge)`.
 - There is no opt-out: a page object cannot reach the Detox element behind a handle. When it needs an action the handle does not wrap, add that action as a handle method.
 
+## Assertions
+
+A wait is not an assertion. To check the current state, a native handle runs a Detox `expect` on its element: synchronised with the app, it does not wait. Wait first when the element may still be appearing. `jestExpect` stays for plain values (counts, URLs, amounts).
+
+| Was | Now |
+|---|---|
+| `detoxExpect(getElementById(id)).toBeVisible()` | `handle.expectVisible()` |
+| `detoxExpect(getElementById(id)).not.toBeVisible()` | `handle.expectNotVisible()` |
+| `detoxExpect(getElementById(id)).toHaveText(text)` | `handle.expectText(text)` |
+
+Add another matcher as a handle method with the first page object that needs it.
+
 The handles do not import `elementHelpers.ts`: [`hardTimeout.ts`](../helpers/elements/hardTimeout.ts) keeps the same hard timeout and failure text. Unlike the globals, every action waits for its element, and the hard timeout also bounds `getAttributes()` and every web call, so a hung bridge fails the step instead of the whole test.
 
 ## Migrate a page object
