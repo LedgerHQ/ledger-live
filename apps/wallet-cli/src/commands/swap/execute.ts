@@ -305,8 +305,8 @@ export async function executeSwapCommand({
       toAccount,
       fromParentAccount,
       toParentAccount,
-      getAccountBridge: getBridge,
       flowId,
+      deps: { getAccountBridge: getBridge },
     });
 
     out.swapExecuteFullResult({

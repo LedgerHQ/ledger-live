@@ -7,6 +7,7 @@ import type {
 import { BalanceSelectionScreen, BalanceSelectionHeaderTitle } from "./Send/BalanceSelectionScreen";
 import { MandatoryPrivateSyncScreen } from "./Send/MandatoryPrivateSyncScreen";
 import { QuickAmountSelector } from "./Send/QuickAmountSelector";
+import { SendAmountFooterRow } from "./Send/SendAmountFooterRow";
 import { SummaryFromBadge } from "./Send/SummaryFromBadge";
 import { SummaryToBadge } from "./Send/SummaryToBadge";
 import { SummaryToSection } from "./Send/SummaryToSection";
@@ -30,6 +31,7 @@ const aleoSendFlow = {
   SummaryToBadge,
   SummaryToSection,
   AfterAmountInput: QuickAmountSelector,
+  AmountFooterRow: SendAmountFooterRow,
   hideSummaryTotalSection: true,
   showAllDigits: true,
   buildSendEntrypoint: ({ account, parentAccount, recipient, skipRecipientStep }) => ({

@@ -65,7 +65,11 @@ export function useAmountInputController({
     to: counterValueCurrency,
   });
 
-  const { displayMode: inputMode, setDisplayMode: setInputMode } = useSendAmountDisplayMode();
+  const {
+    displayMode: inputMode,
+    setDisplayMode: setInputMode,
+    isFiatModeAvailable,
+  } = useSendAmountDisplayMode();
   const [fiatInputValue, setFiatInputValue] = useState<string>("");
   const [cryptoInputValue, setCryptoInputValue] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
@@ -265,6 +269,7 @@ export function useAmountInputController({
       currencyPosition,
       secondaryValue,
       inputMode,
+      isFiatModeAvailable,
       maxDecimalLength: amountInputMaxDecimalLength,
       isTyping,
       onChangeText: handleAmountChange,
@@ -278,6 +283,7 @@ export function useAmountInputController({
       currencyPosition,
       secondaryValue,
       inputMode,
+      isFiatModeAvailable,
       amountInputMaxDecimalLength,
       isTyping,
       handleAmountChange,

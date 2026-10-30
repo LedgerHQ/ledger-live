@@ -3,6 +3,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
+  BARREL_LOCATION,
+  CHAIN_BREAKS,
+  chainBreak,
   checkBarrel,
   checkBarrelLocation,
   checkReachedModule,
@@ -10,10 +13,10 @@ const {
   isInternalSpecifier,
   isInRepoSpecifier,
   starReexportTargets,
-  stripComments,
 } = require("./rules");
 
-const codes = source => checkBarrel(source).map(v => v.code);
+const barrel = (source, options = {}) => checkBarrel(source, options, "index.ts");
+const codes = source => barrel(source).map(v => v.code);
 
 test("isBarrelFile matches index.* and skips its tests", () => {
   assert.ok(isBarrelFile("domain/entity/contact/src/index.ts"));
@@ -54,7 +57,7 @@ test("a pure barrel produces no violation", () => {
     'export * from "./registry";',
     'export type * from "./types";',
   ].join("\n");
-  assert.deepEqual(checkBarrel(source), []);
+  assert.deepEqual(barrel(source), []);
 });
 
 test("comments and blank lines are ignored", () => {
@@ -65,15 +68,15 @@ test("comments and blank lines are ignored", () => {
     "   comment */",
     'export * from "./schema"; // trailing',
   ].join("\n");
-  assert.deepEqual(checkBarrel(source), []);
+  assert.deepEqual(barrel(source), []);
 });
 
 test("a default re-export is tolerated in both forms", () => {
-  assert.deepEqual(checkBarrel('export { default } from "./useEnv";'), []);
-  assert.deepEqual(checkBarrel('export { featureFlagsReducer as default } from "./data";'), []);
+  assert.deepEqual(barrel('export { default } from "./useEnv";'), []);
+  assert.deepEqual(barrel('export { featureFlagsReducer as default } from "./data";'), []);
   // Real shape of features/platform/env once the hook moves out of the index.
   const source = ['export * from "./useEnv";', 'export { default } from "./useEnv";'].join("\n");
-  assert.deepEqual(checkBarrel(source), []);
+  assert.deepEqual(barrel(source), []);
 });
 
 test("named re-export is a violation — the target file mixes public and private", () => {
@@ -85,7 +88,7 @@ test("named re-export is a violation — the target file mixes public and privat
 
 test("a multi-line named re-export is reported once, at its first line", () => {
   const source = ["export {", "  a,", "  b,", '} from "./x";'].join("\n");
-  const found = checkBarrel(source);
+  const found = barrel(source);
   assert.equal(found.length, 1);
   assert.equal(found[0].code, "not-a-barrel");
   assert.equal(found[0].line, 1);
@@ -121,7 +124,7 @@ test("re-exporting a workspace package is a proxy", () => {
   assert.deepEqual(codes('export * from "@features/flow-contacts-add-contact";'), [
     "cross-package-reexport",
   ]);
-  const found = checkBarrel('export * from "@ledgerhq/live-env";');
+  const found = barrel('export * from "@ledgerhq/live-env";');
   assert.equal(found[0].code, "cross-package-reexport");
   assert.match(found[0].message, /original provider/);
 });
@@ -133,11 +136,11 @@ test("re-exporting a third-party package is reported separately", () => {
 test("allowNonRelative lifts the proxy rule for a sanctioned facade", () => {
   // shared/env wraps the legacy @ledgerhq/live-env behind the repo's only boundary exception.
   const source = 'export * from "@ledgerhq/live-env";';
-  assert.deepEqual(checkBarrel(source, { allowNonRelative: true }), []);
+  assert.deepEqual(barrel(source, { allowNonRelative: true }), []);
   // The exception does not weaken the other rules.
   assert.deepEqual(codes('export { changes } from "@ledgerhq/live-env";'), ["not-a-barrel"]);
   assert.deepEqual(
-    checkBarrel('export * from "./internals";', { allowNonRelative: true }).map(v => v.code),
+    barrel('export * from "./internals";', { allowNonRelative: true }).map(v => v.code),
     ["internals-reexport"],
   );
 });
@@ -148,21 +151,31 @@ test("each offending statement is reported once, with its line", () => {
     'export { a } from "./a";',
     'export { b } from "./b";',
   ].join("\n");
-  const found = checkBarrel(source);
+  const found = barrel(source);
   assert.deepEqual(
     found.map(v => v.line),
     [2, 3],
   );
 });
 
-test("stripComments preserves line numbers", () => {
-  const source = ["/* a", "   b */", 'export * from "./x";'].join("\n");
-  assert.equal(stripComments(source).split("\n").length, 3);
-  assert.equal(checkBarrel(source).length, 0);
+test("a block comment keeps the line numbers of the statements below it", () => {
+  const source = ["/* a", "   b */", 'export * from "./x";', 'export { a } from "./a";'].join("\n");
+  assert.deepEqual(
+    barrel(source).map(v => [v.code, v.line]),
+    [["not-a-barrel", 4]],
+  );
+});
+
+test("an `index.tsx` holding JSX is parsed with JSX", () => {
+  const source = "export const Card = () => <div title=\"export * from 'zod'\" />;";
+  assert.deepEqual(
+    checkBarrel(source, {}, "Card/index.tsx").map(v => [v.code, v.line]),
+    [["not-a-barrel", 1]],
+  );
 });
 
 test("a `//` inside a specifier is not treated as a comment", () => {
-  const found = checkBarrel('export * from "https://example.com/mod";');
+  const found = barrel('export * from "https://example.com/mod";');
   assert.equal(found.length, 1);
   assert.equal(found[0].code, "external-reexport");
 });
@@ -352,6 +365,39 @@ test("a `.ts` module is parsed without JSX, so a type assertion is not a tag", (
   );
 });
 
+test("chainBreak allows `export *` lines down the folder, and comments", () => {
+  const source = [
+    "// The portfolio face.",
+    'export * from "./api";',
+    'export type * from "./schema/types";',
+    'export * from "./a/../b";',
+    "/* trailing */",
+  ].join("\n");
+  assert.equal(chainBreak(source, "index.ts"), undefined);
+  assert.equal(chainBreak("", "index.ts"), undefined);
+});
+
+test("chainBreak names a named export, a rename, code and a path outside the folder", () => {
+  for (const [statement, reason] of [
+    ['export { a } from "./a";', CHAIN_BREAKS.named],
+    ['export { default } from "./a";', CHAIN_BREAKS.named],
+    ["export { a };", CHAIN_BREAKS.named],
+    ['export * as ns from "./a";', CHAIN_BREAKS.namespace],
+    ["export const a = 1;", CHAIN_BREAKS.code],
+    ['import { a } from "./a";', CHAIN_BREAKS.code],
+    ["export default 1;", CHAIN_BREAKS.code],
+    ['export * from "../shared";', CHAIN_BREAKS.outside],
+    ['export * from "./a/../../b";', CHAIN_BREAKS.outside],
+    ['export * from "@shared/thing";', CHAIN_BREAKS.outside],
+  ]) {
+    assert.deepEqual(
+      chainBreak(['export * from "./ok";', statement].join("\n"), "index.ts"),
+      { line: 2, reason },
+      statement,
+    );
+  }
+});
+
 test("checkBarrelLocation allows an entry, a first-level barrel and an internals barrel", () => {
   for (const [file, depth] of [
     ["shared/thing/src/index.ts", 0],
@@ -364,16 +410,44 @@ test("checkBarrelLocation allows an entry, a first-level barrel and an internals
   }
 });
 
+test("checkBarrelLocation allows a deeper barrel no module breaks the chain to", () => {
+  for (const depth of [2, 3]) {
+    assert.deepEqual(
+      checkBarrelLocation("shared/thing", "shared/thing/src/services/portfolio/index.ts", depth),
+      [],
+    );
+  }
+});
+
 test("checkBarrelLocation reports an orphan and a nested barrel, with the package root", () => {
+  const breaker = { file: "shared/thing/src/hooks/index.ts", line: 2, reason: CHAIN_BREAKS.code };
   for (const [depth, code] of [
     [undefined, "orphan-barrel"],
     [2, "nested-barrel"],
   ]) {
-    const found = checkBarrelLocation("shared/thing", "shared/thing/src/hooks/index.ts", depth);
+    const found = checkBarrelLocation(
+      "shared/thing",
+      "shared/thing/src/hooks/useThing/index.ts",
+      depth,
+      breaker,
+    );
     assert.deepEqual(
       found.map(v => v.code),
       [code],
     );
     assert.match(found[0].message, /^shared\/thing: /);
+  }
+});
+
+test("a nested barrel carries the module that breaks its chain, and names it", () => {
+  const breaker = { file: "shared/thing/src/a/index.ts", line: 3, reason: CHAIN_BREAKS.named };
+  const [found] = checkBarrelLocation("shared/thing", "shared/thing/src/a/b/index.ts", 2, breaker);
+  assert.deepEqual(found.breaker, breaker);
+  assert.ok(found.message.includes(breaker.file), found.message);
+});
+
+test("the nested-barrel fix names every chain break", () => {
+  for (const reason of Object.values(CHAIN_BREAKS)) {
+    assert.ok(BARREL_LOCATION["nested-barrel"].fix.includes(reason), reason);
   }
 });

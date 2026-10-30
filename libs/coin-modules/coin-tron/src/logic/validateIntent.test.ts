@@ -73,7 +73,7 @@ function makeIntent(
     senderPublicKey: "",
     recipient: RECIPIENT,
     amount: 1_000_000n,
-    asset: { type: "native", name: "Tron", unit: { name: "TRX", code: "TRX", magnitude: 6 } },
+    asset: { type: "native" },
     useAllAmount: false,
     sequence: 0n,
     memo: { type: "none" },
@@ -321,8 +321,6 @@ describe("validateIntent", () => {
       asset: {
         type: "trc20",
         assetReference: TRC20_ADDRESS,
-        name: "USDT",
-        unit: { name: "USDT", code: "USDT", magnitude: 6 },
         assetOwner: SENDER,
       },
     });

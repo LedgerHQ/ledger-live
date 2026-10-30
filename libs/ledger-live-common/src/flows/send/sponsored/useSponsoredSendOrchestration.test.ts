@@ -35,7 +35,6 @@ const rentRequest: EnergyRentRequest = {
 const USDT_ASSET = {
   type: "trc20",
   assetReference: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
-  name: "Tether USD",
   unit: { name: "USDT", code: "USDT", magnitude: 6 },
 };
 const RENT_PAYMENT: RentPayment = { asset: USDT_ASSET, amount: 3_200_000n };

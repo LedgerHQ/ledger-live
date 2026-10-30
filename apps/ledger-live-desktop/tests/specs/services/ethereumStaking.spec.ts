@@ -11,7 +11,6 @@ import { AccountsPage } from "../../page/accounts.page";
 import { AccountPage } from "../../page/account.page";
 // import { delegateModal } from "../../page/modal/delegate.modal";
 // import { MarketPage } from "../../page/market.page";
-// import { MarketCoinPage } from "../../page/market.coin.page";
 
 test.use({
   env: {
@@ -84,7 +83,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const accountPage = new AccountPage(page);
   const layout = new Layout(page);
   // const marketPage = new MarketPage(page);
-  // const marketCoinPage = new MarketCoinPage(page);
   // const analytics = new Analytics(page);
   // const delegate = new delegateModal(page);
 
@@ -153,8 +151,13 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("start stake flow via Asset page", async () => {
     await layout.goToPortfolio();
     await portfolioPage.navigateToAsset("ethereum");
-    await page.getByTestId("asset-page-stake-button").waitFor({ state: "visible" });
-    await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png");
+    await assetPage.waitForStakeEntry();
+    await expect.soft(page).toHaveScreenshot("asset-page-with-stake-available.png", {
+      mask: [
+        page.getByTestId("asset-detail-market-price-section"),
+        page.getByTestId("asset-detail-chart-section"),
+      ],
+    });
   });
 
   await test.step("choose to stake Ethereum", async () => {

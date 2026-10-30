@@ -1,7 +1,10 @@
-import { renderHook } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDepositRequestId,
   settleDepositRequest,
@@ -25,12 +28,18 @@ jest.mock("../../screens/PerpsDeposit/PerpsDepositDialog", () => ({
   openPerpsDeposit: (...args: unknown[]) => mockOpenPerpsDeposit(...args),
 }));
 
+const mockOpenAddAccountFlow = jest.fn();
+jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow", () => ({
+  useOpenAssetFlow: () => ({ openAddAccountFlow: mockOpenAddAccountFlow }),
+}));
 const mockOpenPerpsWithdraw = jest.fn();
 jest.mock("../../screens/PerpsWithdraw/PerpsWithdrawDialog", () => ({
   openPerpsWithdraw: (...args: unknown[]) => mockOpenPerpsWithdraw(...args),
 }));
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
+
+const AddAccountFlow = () => null;
 
 describe("usePerpsHandlers", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -46,6 +55,7 @@ describe("usePerpsHandlers", () => {
         "signing.execute": expect.any(Function),
         "deposit.execute": expect.any(Function),
         "withdraw.execute": expect.any(Function),
+        "migration.execute": expect.any(Function),
       },
     });
   });
@@ -123,5 +133,76 @@ describe("usePerpsHandlers", () => {
     unmount();
 
     await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  describe("migration.execute", () => {
+    const hypercoreAccount = { id: "hc-1", type: "Account" } as never;
+
+    const startMigration = (walletAccounts: never[] = []) => {
+      // Not minimal: the drawer provider tells the hook when the add account drawer closes.
+      const view = renderHook(() => usePerpsHandlers([]), {
+        minimal: false,
+        initialState: { accounts: walletAccounts },
+      });
+      const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
+      const request = migrationExecute?.();
+      const [currency, onAccountSelected] = mockOpenAddAccountFlow.mock.calls.at(-1);
+      return { ...view, request, currency, onAccountSelected };
+    };
+
+    // What openAddAccountFlow does: opens the add account drawer.
+    const openAddAccountDrawer = () => act(() => setDrawer(AddAccountFlow, {}));
+
+    it("should open the add account flow for Hyperliquid", () => {
+      const { request, currency } = startMigration();
+      request?.catch(() => {});
+
+      expect(currency).toEqual(expect.objectContaining({ id: "hypercore" }));
+    });
+
+    it("should resolve with the account the user continues with", async () => {
+      const { request, onAccountSelected } = startMigration();
+
+      openAddAccountDrawer();
+      act(() => onAccountSelected(hypercoreAccount));
+
+      await expect(request).resolves.toEqual([hypercoreAccount]);
+    });
+
+    it("should hand the wallet accounts back too, in case the user continued with another one", async () => {
+      const addedAtLegacyAddress = genAccount("hc-0", {
+        currency: getCryptoCurrencyById("hypercore"),
+      }) as never;
+      const { request, onAccountSelected } = startMigration([addedAtLegacyAddress]);
+
+      act(() => onAccountSelected(hypercoreAccount));
+
+      await expect(request).resolves.toEqual([hypercoreAccount, addedAtLegacyAddress]);
+    });
+
+    it("should reject when the user closes the add account drawer without an account", async () => {
+      const { request } = startMigration();
+
+      openAddAccountDrawer();
+      act(() => setDrawer());
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("should reject when the flow hands back a token account", async () => {
+      const { request, onAccountSelected } = startMigration();
+
+      act(() => onAccountSelected({ id: "token", type: "TokenAccount" }));
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
+
+    it("should reject an in-flight migration when the live app unmounts", async () => {
+      const { request, unmount } = startMigration();
+
+      unmount();
+
+      await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
+    });
   });
 });

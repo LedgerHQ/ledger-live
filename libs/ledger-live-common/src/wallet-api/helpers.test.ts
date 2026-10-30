@@ -1,4 +1,4 @@
-import { getInitialURL } from "./helpers";
+import { getInitialURL, resolveInitialURL } from "./helpers";
 
 describe("wallet-api helpers", () => {
   describe("isWhitelistedDomain (via getInitialURL)", () => {
@@ -593,6 +593,47 @@ describe("wallet-api helpers", () => {
       const resultUrl = new URL(result);
       expect(resultUrl.searchParams.get("params")).toBe(JSON.stringify({ foo: "bar" }));
       expect(result).not.toContain("other");
+    });
+  });
+
+  describe("resolveInitialURL", () => {
+    const manifest = {
+      url: "https://example.com/",
+      domains: ["https://example.com"],
+    };
+
+    it("returns the rejected goToURL with the manifest URL it falls back to", () => {
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      const result = resolveInitialURL({ goToURL: "https://evil.com/swap" }, manifest);
+
+      expect(result).toEqual({
+        url: "https://example.com/",
+        rejectedGoToURL: "https://evil.com/swap",
+      });
+    });
+
+    it("returns a goToURL the manifest domains reject when they are enforced", () => {
+      const goToURL = "https://app.example.com/swap";
+
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      const result = resolveInitialURL({ goToURL }, manifest, { enforceManifestDomains: true });
+
+      expect(result).toEqual({ url: "https://example.com/", rejectedGoToURL: goToURL });
+    });
+
+    it("reports an empty goToURL as rejected", () => {
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      expect(resolveInitialURL({ goToURL: "" }, manifest).rejectedGoToURL).toBe("");
+    });
+
+    it("rejects nothing when goToURL is allowed or absent", () => {
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      expect(resolveInitialURL({ goToURL: "https://example.com/swap" }, manifest)).toEqual({
+        url: "https://example.com/swap",
+        rejectedGoToURL: undefined,
+      });
+      // @ts-expect-error - test mock object doesn't have all LiveAppManifest properties
+      expect(resolveInitialURL({}, manifest).rejectedGoToURL).toBeUndefined();
     });
   });
 });

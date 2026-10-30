@@ -11,6 +11,7 @@ import { BottomFadeGradient, GRADIENT_HEIGHT } from "LLM/components/BottomFadeGr
 import type { Account } from "@ledgerhq/types-live";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../testIds";
 import { AssetsSection } from "./components/AssetsSection";
+import { FamilySection } from "./components/FamilySection";
 import { Hero } from "./components/Hero";
 import { AccountRefreshStatus } from "./components/RefreshStatus";
 import { Transactions } from "./components/Transactions";
@@ -53,7 +54,7 @@ export function AccountDetailView({ account, refresh }: Props) {
         <Box lx={contentStyle}>
           <AccountDetailLayout
             hero={<Hero {...hero} />}
-            customPlace={<Box testID={ACCOUNT_DETAIL_TEST_IDS.customPlace} lx={customPlaceStyle} />}
+            customPlace={<FamilySection account={account} />}
             assets={
               emptyState.isVisible ? (
                 <AccountEmptyState
@@ -75,9 +76,3 @@ export function AccountDetailView({ account, refresh }: Props) {
 
 const screenStyle: LumenViewStyle = { flex: 1, backgroundColor: "canvas" };
 const contentStyle: LumenViewStyle = { paddingHorizontal: "s16", paddingTop: "s4" };
-const sectionStyle: LumenViewStyle = { borderRadius: "md", padding: "s48" };
-const customPlaceStyle: LumenViewStyle = {
-  ...sectionStyle,
-  padding: "s32",
-  backgroundColor: "warning",
-};

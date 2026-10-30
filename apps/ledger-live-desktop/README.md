@@ -47,7 +47,7 @@ After pulling latest changes:
 
 ```bash
 pnpm install
-pnpm build:lld
+pnpm build:lld:deps
 ```
 
 Run the app:

@@ -380,7 +380,7 @@
                     section: "Asset",
                     title: "Asset Page",
                     url: "ledgerlive://asset/:currencyId",
-                    description: "Opens the asset page for a specific currency. When the Wallet 4.0 aggregated assets flag is enabled, navigates to Asset Detail with the raw path (resolution happens on the page). Otherwise validates the currency id and opens the legacy asset screen; an unrecognized currencyId falls back to the portfolio.",
+                    description: "Opens Asset Detail for a coin (ledgerlive://asset/bitcoin) or a token path (ledgerlive://asset/ethereum/erc20/usd_tether__erc20_). An unrecognized path falls back to the portfolio.",
                     parameters: [
                         { name: "currencyId", required: true, description: "The currency ID (e.g., bitcoin, ethereum)" }
                     ],
@@ -482,6 +482,16 @@
                     ]
                 },
                 {
+                    section: "Contacts",
+                    title: "Contacts",
+                    url: "ledgerlive://contacts",
+                    description: "Opens the Contacts page when lwdContacts is enabled. Falls back to the home screen when the flag is off.",
+                    examples: [
+                        "ledgerwallet://contacts",
+                        "ledgerlive://contacts"
+                    ]
+                },
+                {
                     section: "MyLedger",
                     title: "Device Management Flow",
                     url: "ledgerwallet://myledger",
@@ -544,9 +554,9 @@
                 },
                 {
                     section: "Market",
-                    title: "Market Detail Page",
+                    title: "Market currency",
                     url: "ledgerlive://market/:currencyId",
-                    description: "Opens the market detail page for a specific cryptocurrency. When the Wallet 4.0 aggregated assets flag is enabled, opens Asset Detail instead of Market Detail. An unrecognized currencyId falls back to the market list when the flag is off.",
+                    description: "Opens Asset Detail for a coin (ledgerlive://market/bitcoin) or a token path. An unrecognized id falls back to the market list. A direct in-app URL /market/:currencyId redirects to /asset/:currencyId.",
                     parameters: [
                         { name: "currencyId", required: true, description: "The ID of the cryptocurrency (e.g., bitcoin, ethereum)" }
                     ],

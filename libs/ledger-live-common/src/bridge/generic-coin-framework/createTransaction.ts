@@ -172,6 +172,14 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         memoValue: null,
         nonce: new BigNumber(0),
       };
+    case "ton":
+      // No nonce, as for stacks: the wallet's seqno is fetched, and its first transfer (seqno 0)
+      // carries the wallet's deployment.
+      return {
+        ...sendDefaults(currency.family),
+        memoType: null,
+        memoValue: null,
+      };
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

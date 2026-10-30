@@ -13,23 +13,30 @@ export type SendAmountDisplayMode = "fiat" | "crypto";
 type SendAmountDisplayModeContextValue = Readonly<{
   displayMode: SendAmountDisplayMode;
   setDisplayMode: Dispatch<SetStateAction<SendAmountDisplayMode>>;
+  isFiatModeAvailable: boolean;
 }>;
 
 const SendAmountDisplayModeContext = createContext<SendAmountDisplayModeContextValue | null>(null);
 
 type SendAmountDisplayModeProviderProps = Readonly<{
   children: ReactNode;
+  isFiatModeAvailable?: boolean;
 }>;
 
-export function SendAmountDisplayModeProvider({ children }: SendAmountDisplayModeProviderProps) {
-  const [displayMode, setDisplayMode] = useState<SendAmountDisplayMode>("fiat");
+export function SendAmountDisplayModeProvider({
+  children,
+  isFiatModeAvailable = true,
+}: SendAmountDisplayModeProviderProps) {
+  const [selectedDisplayMode, setDisplayMode] = useState<SendAmountDisplayMode>("fiat");
+  const displayMode = isFiatModeAvailable ? selectedDisplayMode : "crypto";
 
   const value = useMemo(
     () => ({
       displayMode,
       setDisplayMode,
+      isFiatModeAvailable,
     }),
-    [displayMode],
+    [displayMode, isFiatModeAvailable],
   );
 
   return (

@@ -1,11 +1,14 @@
 import { renderHook } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
+import { NavigatorName, ScreenName } from "~/const";
 import { useQuickActionsCtasViewModel } from "../useQuickActionsCtasViewModel";
 import { QUICK_ACTIONS_TEST_IDS } from "../../../testIds";
 
+const mockNavigate = jest.fn();
+
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
-  useNavigation: () => ({ navigate: jest.fn() }),
+  useNavigation: () => ({ navigate: mockNavigate }),
   useRoute: () => ({ name: "Portfolio", key: "portfolio-key", params: {} }),
 }));
 
@@ -42,6 +45,22 @@ describe("useQuickActionsCtasViewModel", () => {
 
     const ids = result.current.quickActions.map(a => a.id);
     expect(ids).toEqual(["connect", "buy_ledger"]);
+  });
+
+  it("opens Get Started with the portfolio source when Connect is pressed", () => {
+    const { result } = renderHook(() => useQuickActionsCtasViewModel(), {
+      overrideInitialState: withReadOnly(true),
+    });
+
+    result.current.quickActions.find(a => a.id === "connect")?.onPress();
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: {
+        screen: ScreenName.OnboardingPostWelcomeSelection,
+        params: { userHasDevice: true, source: "portfolio" },
+      },
+    });
   });
 
   it("returns the standard CTAs (transfer + swap + buy) when not in read-only mode", () => {

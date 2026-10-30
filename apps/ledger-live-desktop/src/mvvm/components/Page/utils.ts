@@ -3,13 +3,7 @@
 // =============================================================================
 
 export interface IsWallet40PageOptions {
-  readonly shouldDisplayAggregatedAssets?: boolean;
   readonly isAccountDetailPage?: boolean;
-}
-
-interface ConditionalPrefix {
-  readonly prefix: string;
-  readonly isEnabled: (options: IsWallet40PageOptions) => boolean;
 }
 
 /**
@@ -36,28 +30,14 @@ const WALLET_40_PAGES = new Set<string>([
 /**
  * Path prefixes that always belong to Wallet 4.0 (e.g. `/swap/foo`).
  */
-const WALLET_40_PREFIXES: readonly string[] = ["/card", "/swap", "/exchange"];
-
-/**
- * Path prefixes that belong to Wallet 4.0 only when their associated
- * feature flag is enabled.
- */
-const CONDITIONAL_WALLET_40_PREFIXES: readonly ConditionalPrefix[] = [
-  {
-    prefix: "/asset",
-    isEnabled: ({ shouldDisplayAggregatedAssets }) => !!shouldDisplayAggregatedAssets,
-  },
-];
+const WALLET_40_PREFIXES: readonly string[] = ["/asset", "/card", "/swap", "/exchange"];
 
 /**
  * Check if a pathname uses the Wallet 4.0 layout.
  */
-export const isWallet40Page = (pathname: string, options: IsWallet40PageOptions = {}): boolean => {
+export const isWallet40Page = (pathname: string): boolean => {
   if (WALLET_40_PAGES.has(pathname)) return true;
-  if (WALLET_40_PREFIXES.some(prefix => pathname.startsWith(prefix))) return true;
-  return CONDITIONAL_WALLET_40_PREFIXES.some(
-    ({ prefix, isEnabled }) => isEnabled(options) && pathname.startsWith(prefix),
-  );
+  return WALLET_40_PREFIXES.some(prefix => pathname.startsWith(prefix));
 };
 
 // =============================================================================
@@ -109,9 +89,7 @@ export const shouldDisplayRightPanel = (
   options: IsWallet40PageOptions = {},
 ): boolean => {
   if (RIGHT_PANEL_PAGES.has(pathname)) return true;
-  if (isAggregatedAssetDetailPath(pathname)) {
-    return !!options.shouldDisplayAggregatedAssets;
-  }
+  if (isAggregatedAssetDetailPath(pathname)) return true;
   if (isAccountDetailPath(pathname)) {
     return !!options.isAccountDetailPage;
   }

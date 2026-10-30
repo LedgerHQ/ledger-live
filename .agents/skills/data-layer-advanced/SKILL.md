@@ -5,7 +5,7 @@ description: Structure a Ledger Wallet data layer where one API response serves 
 
 # Data Layer: Multiple Entities
 
-Apply only when one API response maps to several autonomous entities. Use `types-state-mocks` for the rules inside each entity package.
+Apply only when one API response maps to several autonomous entities. Use [`domain-data`](../domain-data/SKILL.md) for the rules inside each entity and api package.
 
 Source: [Data Layer Advanced Use Case](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6112641121)
 

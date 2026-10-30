@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from "react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import { isBuiltInMarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { track } from "@shared/analytics";
@@ -37,11 +36,8 @@ function trackCategoryTap(category: MarketListCategory) {
 export function useMarketCategories(): MarketCategories {
   const dispatch = useDispatch();
   const persistedCategory = useSelector(marketCategorySelector);
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
 
-  const { data: trendingCategories } = useGetTrendingCategoriesQuery(undefined, {
-    skip: !shouldDisplayAssetDiscoverability,
-  });
+  const { data: trendingCategories } = useGetTrendingCategoriesQuery();
 
   const tabs = useMemo<MarketCategoryTab[]>(
     () => [

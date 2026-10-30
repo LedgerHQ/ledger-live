@@ -94,7 +94,8 @@ export function useSponsoredFeeQuote({
 
       const sponsoredOption = options.find(option => option.id === seam.feeOptionId);
       setAvailable(!!sponsoredOption);
-      setFeeAsset(sponsoredOption?.feeAsset ?? null);
+      // The seam's sponsored option always pays in a SponsoredFeeAsset; FeeOptionMeta types it as AssetInfo.
+      setFeeAsset((sponsoredOption?.feeAsset as SponsoredFeeAsset | undefined) ?? null);
 
       if (!sponsoredOption) {
         setQuote(null);

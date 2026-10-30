@@ -78,6 +78,7 @@ function buildParams(overrides?: {
     hasCoinControl: false,
     hasDefaultStrategy: false,
     hasBalanceTypeStep: false,
+    hasFiatAmountInput: true,
     ...overrides?.uiConfig,
   };
   const transactionActions: SendFlowTransactionActions = {

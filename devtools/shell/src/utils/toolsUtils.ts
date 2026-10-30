@@ -6,11 +6,13 @@ export function filterToolsByPlatform(tools: Tool[], platform: ToolPlatform): To
   return tools.filter(t => !t.platform || t.platform === platform);
 }
 
+const normalize = (text: string) => text.toLowerCase().replaceAll("-", " ");
+
 export function filterTools(tools: Tool[], query: string): Tool[] {
-  const q = query.trim().toLowerCase();
+  const q = normalize(query.trim());
   if (!q) return tools;
-  return tools.filter(
-    t => t.label.toLowerCase().includes(q) || (t.owner ?? "").toLowerCase().includes(q),
+  return tools.filter(t =>
+    [t.label, t.owner, t.kind].some(field => field && normalize(field).includes(q)),
   );
 }
 

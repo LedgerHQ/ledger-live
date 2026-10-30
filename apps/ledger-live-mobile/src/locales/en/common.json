@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall": {
       "title": "This amount is too small to stake"
     },
+    "TezosDelegateRefusesStaking": {
+      "title": "Your validator doesn't accept staking. Change validator to stake."
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -5246,6 +5249,25 @@
   },
   "send": {
     "newSendFlow": {
+      "balanceType": {
+        "title": "Select balance",
+        "transparent": {
+          "title": "Public balance",
+          "subtitle": "Transparent"
+        },
+        "shielded": {
+          "title": "Private balance",
+          "subtitle": "Shielded",
+          "pendingNoticeTitle": "Funds maturing",
+          "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+        },
+        "zeroBalance": {
+          "warning": "No available balance"
+        },
+        "requiresSync": {
+          "notice": "Sync required"
+        }
+      },
       "title": "Send {{currency}}",
       "selectAddress": "Select address",
       "available": "Available {{amount}}",
@@ -11908,6 +11930,15 @@
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
         "recordsUsed": "Records used",
         "signingTime": "Signing time"
+      },
+      "amount": {
+        "estimatedTime": {
+          "label": "Est. time",
+          "info": {
+            "title": "How estimated time works",
+            "description": "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm."
+          }
+        }
       }
     },
     "balancesSection": "Balances",

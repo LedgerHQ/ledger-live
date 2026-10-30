@@ -1,4 +1,4 @@
-import { renderHook, waitFor, withFlagOverrides } from "tests/testSetup";
+import { renderHook, waitFor } from "tests/testSetup";
 import { useStockAssetIds } from "@features/platform-aggregated-assets";
 import { useCategorizedAssetsFromPortfolio } from "../useCategorizedAssets";
 import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
@@ -45,12 +45,14 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     expect(result.current.categorizedAssets.stablecoins).toHaveLength(0);
   });
 
-  it("should include currency info in categorized items", () => {
+  it("should include currency info in categorized items", async () => {
     const { result } = renderHook(() => useCategorizedAssetsFromPortfolio(), {
       initialState: { ...initialState, accounts: [BTC_ACCOUNT] },
     });
 
-    expect(result.current.categorizedAssets.cryptos[0].currency.id).toBe("bitcoin");
+    await waitFor(() => {
+      expect(result.current.categorizedAssets.cryptos[0]?.currency.id).toBe("bitcoin");
+    });
   });
 
   it.each([
@@ -98,16 +100,10 @@ describe("useCategorizedAssetsFromPortfolio", () => {
     );
   });
 
-  describe("stocks bucketing (assetDiscoverability on)", () => {
-    const renderWithStocks = ({
-      blacklistedTokenIds,
-      discoverability = true,
-    }: { blacklistedTokenIds?: string[]; discoverability?: boolean } = {}) =>
+  describe("stocks bucketing", () => {
+    const renderWithStocks = ({ blacklistedTokenIds }: { blacklistedTokenIds?: string[] } = {}) =>
       renderHook(() => useCategorizedAssetsFromPortfolio(), {
         initialState: {
-          ...withFlagOverrides({
-            lwdWallet40: { enabled: true, params: { assetDiscoverability: discoverability } },
-          }),
           settings: {
             counterValue: "USD",
             ...(blacklistedTokenIds ? { blacklistedTokenIds } : {}),
@@ -132,17 +128,6 @@ describe("useCategorizedAssetsFromPortfolio", () => {
       mockStockAssetIds({ ids: ["ETH"] });
 
       const { result } = renderWithStocks();
-
-      await waitFor(() => {
-        expect(result.current.categorizedAssets.cryptos).toHaveLength(2);
-      });
-      expect(result.current.categorizedAssets.stocks).toEqual([]);
-    });
-
-    it("keeps stocks under cryptos when assetDiscoverability is off", async () => {
-      mockStockAssetIds({ ids: ["ethereum"] });
-
-      const { result } = renderWithStocks({ discoverability: false });
 
       await waitFor(() => {
         expect(result.current.categorizedAssets.cryptos).toHaveLength(2);

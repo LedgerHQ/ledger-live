@@ -27,6 +27,7 @@ export class NewSendModal extends Modal {
   readonly validationStatusMessage = this.dialog.getByTestId("address-validation-status");
   readonly recipientErrorBanner = this.dialog.getByTestId("recipient-error-banner");
   readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
+  private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
   private readonly memoTypeSelect = this.dialog.getByTestId("send-memo-options-select");
   // Select options render in a portal, outside the dialog subtree.
@@ -270,6 +271,12 @@ export class NewSendModal extends Modal {
   @step("Verify the selected memo type is $0")
   async expectMemoType(memoType: StellarMemoType) {
     await expect(this.memoTypeSelect).toHaveText(STELLAR_MEMO_TYPE_LABELS[memoType]);
+  }
+
+  @step("Verify the recent history warning is shown")
+  async expectRecentHistoryWarning() {
+    await expect(this.recipientStep).toHaveAttribute("data-recipient-validation", "settled");
+    await expect(this.recentHistoryWarning).toBeVisible();
   }
 
   @step("Click View details")

@@ -1,10 +1,9 @@
-import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/index";
 import { TronifyApiError } from "../../types/errors";
-import { payAssetBaseUnits, tronifyPayAsset } from "../constants";
+import { payAssetBaseUnits, tronifyPayAsset, type SponsoredFeeAsset } from "../constants";
 
 export type RentOrderRejection =
   | { reason: "insufficientBalance" }
-  | { reason: "priceAboveApproved"; offered: { asset: AssetInfo; amount: bigint } };
+  | { reason: "priceAboveApproved"; offered: { asset: SponsoredFeeAsset; amount: bigint } };
 
 export function classifyRentOrderError(error: unknown): RentOrderRejection | null {
   if (error instanceof Error && error.name === "EnergyRentInsufficientBalance") {

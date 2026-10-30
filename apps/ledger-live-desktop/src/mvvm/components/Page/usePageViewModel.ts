@@ -1,6 +1,5 @@
 import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_TO_TOP_EVENT } from "./constants";
 import {
   getPageTestId,
@@ -24,7 +23,6 @@ export interface PageViewModelResult {
 export const usePageViewModel = (): PageViewModelResult => {
   const [scrollerElement, setScrollerElement] = useState<HTMLDivElement | null>(null);
   const { pathname } = useLocation();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const isSwapEnabled = useSwapVisibility();
   const isSwapAvailableForRoute = useSwapAvailability(pathname);
   const isCardEnabled = useCardVisibility();
@@ -32,7 +30,6 @@ export const usePageViewModel = (): PageViewModelResult => {
   const isAccountDetailPage = useIsAccountDetailPage(pathname);
 
   const variant = getRightPanelVariant(pathname, {
-    shouldDisplayAggregatedAssets,
     isAccountDetailPage,
   });
   const isSwapConsoleHidden = isAggregatedAssetDetailPath(pathname) && !isConsoleEnabled;

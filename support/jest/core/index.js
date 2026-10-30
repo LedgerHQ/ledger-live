@@ -2,6 +2,8 @@
 // native projects that `shared` and `features-flow` build on. A layer adds only its own mocks, test
 // matching, resolver and transform allowlist.
 const path = require("path");
+const { deepFreeze } = require("../internals/freeze");
+const PRESET_OVERRIDES = require("./preset-overrides");
 
 const swcTransform = {
   "^.+\\.(t|j)sx?$": [
@@ -10,14 +12,25 @@ const swcTransform = {
   ],
 };
 
-const jestSonarReporter = [
+const jestSonarReporter = deepFreeze([
   "jest-sonar",
   { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-];
+]);
 
 // Bare strings, so jest resolves them from the consumer, which declares the dependency.
 const quarantineReporter = "@ledgerhq/test-quarantine/jest";
 const quarantineRetries = "@ledgerhq/test-quarantine/jest-retries";
+
+/**
+ * Unfrozen copies of reporter entries, for a config's `reporters`: jest's normalization writes the
+ * resolved module path into each reporter tuple it gets.
+ *
+ * @param {import('@jest/types').Config.InitialOptions["reporters"] & unknown[]} reporters
+ * @returns {import('@jest/types').Config.InitialOptions["reporters"]}
+ */
+function freshReporters(reporters) {
+  return structuredClone(reporters);
+}
 
 const repositoryRoot = path.resolve(__dirname, "../../..");
 
@@ -148,6 +161,157 @@ function layerProject(project, layer, overrides) {
  *   native project, by the override rule
  */
 
+// Keys a preset sets for every package of its layer, with what a package uses instead.
+const ESM_FIX = "keep a dependency transformed with the extraEsmDeps option";
+const PRESET_KEYS = deepFreeze({
+  transform: ESM_FIX,
+  transformIgnorePatterns: ESM_FIX,
+  testEnvironment: "pick the preset of the environment the tests need",
+  globals: "set the global in a setup file",
+  reporters: "every preset reports the same way",
+  coverageReporters: "every preset reports coverage the same way",
+});
+// A factory without the extraEsmDeps option keeps its layer's ESM dependencies in its allowlist.
+const ALLOWLIST_FIX = "add the dependency to the preset's transform allowlist in support/jest";
+const TRANSFORM_KEYS = new Set(["transform", "transformIgnorePatterns"]);
+const OVERRIDES_FILE = "support/jest/core/preset-overrides.js";
+
+/**
+ * Throws when a package overrides a key its preset owns and `preset-overrides.js` does not list
+ * that key for the package and the factory, and when it lists a key no override sets, so the
+ * list only shrinks. The package is found from `rootDir`.
+ *
+ * @param {string} factory the factory the config calls
+ * @param {Record<string, object | undefined>} overrides the overrides objects, by label
+ * @param {string | undefined} rootDir
+ * @param {string[]} [options] the options the factory reads, which pick the fix a message names
+ */
+function checkPresetOverrides(factory, overrides, rootDir, options = []) {
+  const pkg =
+    rootDir === undefined
+      ? undefined
+      : path.relative(repositoryRoot, rootDir).split(path.sep).join("/");
+  const allowed = (pkg && PRESET_OVERRIDES[pkg]?.overrides[factory]) ?? [];
+  const set = new Set();
+  for (const [label, object] of Object.entries(overrides)) {
+    for (const key of Object.keys(object ?? {})) {
+      if (!Object.hasOwn(PRESET_KEYS, key)) continue;
+      set.add(key);
+      if (!allowed.includes(key)) {
+        const fix =
+          TRANSFORM_KEYS.has(key) && !options.includes("extraEsmDeps")
+            ? ALLOWLIST_FIX
+            : PRESET_KEYS[key];
+        throw new Error(
+          `${factory}(): ${label}${key} belongs to the preset: ${fix}. A package that ` +
+            `must still override it is listed, with its reason, in ${OVERRIDES_FILE} (found from rootDir).`,
+        );
+      }
+    }
+  }
+  for (const key of allowed) {
+    if (!set.has(key)) {
+      throw new Error(
+        `${factory}(): ${OVERRIDES_FILE} lists ${key} for ${pkg}, which no override sets; remove it.`,
+      );
+    }
+  }
+}
+
+/**
+ * Throws on an option the factory does not read, naming the ones it does.
+ *
+ * @param {string} factory
+ * @param {object | undefined} options the factory's options argument
+ * @param {string[]} accepted
+ */
+function checkOptions(factory, options, accepted) {
+  for (const key of Object.keys(options ?? {})) {
+    if (!accepted.includes(key)) {
+      const reads = accepted.length ? accepted.map(name => `\`${name}\``).join(", ") : "none";
+      throw new Error(`${factory}(): it does not read the option "${key}"; its options: ${reads}.`);
+    }
+  }
+}
+
+/** @type {Map<string, { factory: Function, options: readonly string[], project: boolean }>} */
+const PRESET_FACTORIES = new Map();
+// The projects a project factory returned: the only entries a config's `projects` may hold.
+const PRESET_PROJECTS = new WeakSet();
+// The factories of `projects` entries, by the module that exports each. Listed here, not taken from
+// the registry, which holds only the presets loaded so far.
+const PROJECT_FACTORIES = deepFreeze({ createLibsCoinJestProject: "@support/jest/libs-coin" });
+
+/**
+ * Throws when `projects` holds an entry no preset project factory returned. Why a project needs one:
+ * `createLibsCoinJestProject` in support/jest/README.md.
+ *
+ * @param {string} factory
+ * @param {unknown} projects
+ */
+function checkProjects(factory, projects) {
+  if (projects === undefined) return;
+  const builders = Object.entries(PROJECT_FACTORIES)
+    .map(([name, specifier]) => `${name}() from ${specifier}`)
+    .join(", ");
+  const entries = Array.isArray(projects) ? projects : [projects];
+  entries.forEach((entry, index) => {
+    if (!PRESET_PROJECTS.has(entry)) {
+      throw new Error(
+        `${factory}(): projects[${index}] is not built by a preset project factory: use ${builders}.`,
+      );
+    }
+  });
+}
+
+/**
+ * An exported preset factory: it checks the options and the overrides it gets, then returns what
+ * `build` makes of them. Every preset factory is built here, so none can skip the checks.
+ *
+ * @template {(overrides?: any, options?: any) => any} Build
+ * @param {string} name the factory name, for the messages and preset-overrides.js
+ * @param {string[]} options the options the factory reads
+ * @param {Build} build
+ * @returns {Build} a factory with the signature of `build`; a factory of `projects` entries when
+ *   `PROJECT_FACTORIES` lists the name
+ */
+function presetFactory(name, options, build) {
+  const project = Object.hasOwn(PROJECT_FACTORIES, name);
+  /**
+   * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
+   * @param {Record<string, unknown>} [presetOptions] the options `build` reads
+   * @returns {ReturnType<Build>}
+   */
+  function checkedFactory(overrides = {}, presetOptions) {
+    checkOptions(name, presetOptions, options);
+    const { webOverrides, nativeOverrides, ...topLevel } = overrides;
+    checkPresetOverrides(
+      name,
+      { "": topLevel, "webOverrides.": webOverrides, "nativeOverrides.": nativeOverrides },
+      overrides.rootDir,
+      options,
+    );
+    checkProjects(name, overrides.projects);
+    const config = build(overrides, presetOptions);
+    if (project) PRESET_PROJECTS.add(config);
+    return config;
+  }
+  // The checks take any factory's arguments; the export keeps the signature of its builder.
+  const factory = /** @type {Build} */ (/** @type {unknown} */ (checkedFactory));
+  PRESET_FACTORIES.set(name, { factory, options: deepFreeze([...options]), project });
+  return factory;
+}
+
+/**
+ * The factories presetFactory() built so far, with the options each reads: the presets register
+ * theirs when they load.
+ *
+ * @returns {{ name: string, factory: Function, options: readonly string[], project: boolean }[]}
+ */
+function presetFactories() {
+  return [...PRESET_FACTORIES].map(([name, entry]) => ({ name, ...entry }));
+}
+
 /**
  * Projects config of a dual web/native preset: jsdom web project (*.web.test.ts(x) and unsuffixed
  * tests), node native project (*.native.test.ts(x)), test quarantine, sonar and, on CI, the
@@ -169,12 +333,12 @@ function createDualJestConfig(
     coverageDirectory: "./coverage/",
     // Top level: jest ignores coverageReporters inside a project.
     coverageReporters: lcovCoverageReporters(lcovRoot(overrides.rootDir, depth)),
-    reporters: [
+    reporters: freshReporters([
       "default",
       ...(process.env.CI ? ["github-actions"] : []),
       jestSonarReporter,
       quarantineReporter,
-    ],
+    ]),
     projects: [
       ...(web ? [layerProject(webProject(), web, webOverrides)] : []),
       layerProject(nativeProject(), native, nativeOverrides),
@@ -184,12 +348,19 @@ function createDualJestConfig(
 }
 
 module.exports = {
+  ALLOWLIST_FIX,
+  ESM_FIX,
+  PRESET_KEYS,
+  PROJECT_FACTORIES,
   createDualJestConfig,
+  freshReporters,
   jestSonarReporter,
   lcovCoverageReporters,
   lcovRoot,
   nativeMocks,
   platformExtensions,
+  presetFactories,
+  presetFactory,
   quarantineReporter,
   quarantineRetries,
   swcTransform,
