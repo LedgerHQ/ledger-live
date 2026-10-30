@@ -6,6 +6,7 @@ import {
   getParentAccountName,
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { SwapProvider } from "@ledgerhq/live-e2e-shared/enum/Provider";
@@ -81,7 +82,7 @@ test.describe("Swap - entry points", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
-      await app.swap.expectSelectedAssetDisplayed("BTC");
+      await app.swap.expectSelectedAssetDisplayed(Currency.BTC.ticker);
       await app.swap.clearSwapState();
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
@@ -226,7 +227,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
 test.describe("Swap - history", () => {
   const swapHistory = {
     swap: new Swap(Account.SOL_1, Account.ETH_1, "0.07"),
-    xrayTicket: "B2CQA-604",
+    xrayTicket: "B2CQA-602, B2CQA-604",
     provider: SwapProvider.EXODUS,
     swapId: "wQ90NrWdvJz5dA4",
     addressFrom: Addresses.SWAP_HISTORY_SOL_FROM,
@@ -261,7 +262,7 @@ test.describe("Swap - history", () => {
     `[${swapHistory.swap.accountToDebit.currency.testLabel}-${swapHistory.swap.accountToCredit.currency.testLabel}] - Swap history details and export`,
     {
       tag: [...DEVICE_TAGS, "@solana", "@family-solana", "@ethereum", "@family-evm"],
-      annotation: { type: "TMS", description: "B2CQA-602, B2CQA-604" },
+      annotation: { type: "TMS", description: swapHistory.xrayTicket },
     },
     async ({ app }) => {
       swapHistory.swap.accountToDebit.address = swapHistory.addressFrom;
