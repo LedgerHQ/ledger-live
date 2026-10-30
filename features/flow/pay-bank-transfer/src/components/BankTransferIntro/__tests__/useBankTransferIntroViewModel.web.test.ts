@@ -35,6 +35,7 @@ describe("useBankTransferIntroViewModel", () => {
     );
     expect(result.current.createAccountLabel).toBe("Create an account");
     expect(result.current.logInLabel).toBe("Log in to Noah");
+    expect(result.current.closeLabel).toBe("Close");
     expect(result.current.providedBy).toBe("Provided by Noah");
     expect(result.current.rows).toEqual([
       {

@@ -29,7 +29,8 @@
   "dependencies": {
     "@features/platform-pay-analytics": "workspace:^",
     "@shared/i18n": "workspace:*",
-    "@shared/ui-queued-bottom-sheet": "workspace:*"
+    "@shared/ui-queued-bottom-sheet": "workspace:*",
+    "react-native-gesture-handler": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
@@ -63,7 +64,8 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": "catalog:",
-    "react-native": "catalog:"
+    "react-native": "catalog:",
+    "react-native-gesture-handler": "catalog:"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -76,6 +78,9 @@
       "optional": true
     },
     "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
       "optional": true
     }
   }
