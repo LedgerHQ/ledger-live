@@ -2,12 +2,11 @@ import type { Portfolio } from "@domain/api-account-portfolio";
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
 import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
 import { serverAccountId } from "../../evm";
+import { unservedAccount, type Unserved } from "../serviceAccount";
 import { toAccountBalances } from "./map";
 import type { BalanceRead } from "./read";
 
-export type Verdict =
-  | { status: "served"; rows: AccountAssetBalance[]; detail?: string }
-  | { status: "waiting" | "failed"; detail: string };
+export type Verdict = { status: "served"; rows: AccountAssetBalance[]; detail?: string } | Unserved;
 
 export function verdictOf(
   descriptor: AddressAccountDescriptor,
@@ -29,17 +28,8 @@ export function verdictOf(
     const detail = unmapped > 0 ? `${unmapped} tokens without a CAL id left out` : undefined;
     return { status: "served", rows, detail };
   }
-  const accounts = portfolio.accounts ?? [];
-  const account = accounts.find(each => each.id === id);
-  if (!account) {
-    const address = descriptor.address.toLowerCase();
-    return accounts.some(each => each.id.endsWith(`:${address}`))
-      ? { status: "failed", detail: `The fan-out tracks no ${descriptor.network} account` }
-      : { status: "waiting", detail: "Service account not created yet" };
-  }
-  if (account.status !== "synchronized") {
-    return { status: "waiting", detail: `Service account ${account.status}` };
-  }
+  const unserved = unservedAccount(descriptor, portfolio);
+  if (unserved) return unserved;
   if (truncated) return { status: "failed", detail: "The balance scan stopped before it" };
   return { status: "waiting", detail: "No balance for it yet" };
 }

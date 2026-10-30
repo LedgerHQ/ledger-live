@@ -2,7 +2,7 @@
   "name": "@features/platform-account-source-portfolio",
   "version": "0.0.0",
   "private": true,
-  "description": "The Portfolio service as an account data source for EVM balances, reconciling its registrations with the local accounts",
+  "description": "The Portfolio service as an account data source for EVM balances and operations, reconciling its registrations with the local accounts",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -26,6 +26,7 @@
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-client-identity": "workspace:*",
     "@reduxjs/toolkit": "catalog:"
   },

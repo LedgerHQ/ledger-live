@@ -1,16 +1,18 @@
 import type { AccountDataSource } from "@domain/api-account-data";
-import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
+import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import { portfolioClientOf, type PortfolioClient, type PortfolioDispatch } from "./client";
 import { isEvmAccount } from "./evm";
 import { balanceReader } from "./internals/balance/reader";
+import { operationsReader } from "./internals/operations/reader";
 import { reconcile, refresh, type PortfolioDeps } from "./internals/portfolio";
 import { createSerialQueue } from "./internals/queue";
 import { createPortfolioStore } from "./internals/snapshot";
 import type { PortfolioSourceSnapshot } from "./types";
 
 const PORTFOLIO_SOURCE_ID = AccountDataSourceIdSchema.parse("portfolio");
+const KINDS: ReadonlySet<AccountDataKind> = new Set(["balance", "operations"]);
 
 export type PortfolioSourceOptions = {
   readonly dispatch: PortfolioDispatch;
@@ -29,7 +31,7 @@ export type PortfolioSource = {
   getSnapshot(): PortfolioSourceSnapshot;
 };
 
-/** Balances from the Portfolio service; an account it cannot answer goes to the next ranked source. */
+/** Balances and operations from the Portfolio service; an account it cannot answer goes to the next ranked source. */
 export function createPortfolioSource({
   dispatch,
   portfolioId,
@@ -40,11 +42,12 @@ export function createPortfolioSource({
   return {
     source: {
       id: PORTFOLIO_SOURCE_ID,
-      supports: (descriptor, kind) => kind === "balance" && isEvmAccount(descriptor),
+      supports: (descriptor, kind) => KINDS.has(kind) && isEvmAccount(descriptor),
       maxBatchSize: 100,
       concurrency: 1,
       readBatch: {
         balance: balanceReader(deps),
+        operations: operationsReader(deps),
       },
     },
     refresh: () => refresh(deps),

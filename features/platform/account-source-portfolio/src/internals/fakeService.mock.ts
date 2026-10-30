@@ -3,6 +3,7 @@ import type {
   BalanceGroup,
   Portfolio,
   PortfolioAccount,
+  UpdateView,
 } from "@domain/api-account-portfolio";
 import type { AccountTarget } from "@domain/api-account-data";
 import {
@@ -62,6 +63,21 @@ export const group = (
   items,
 });
 
+export const update = (
+  descriptor: AddressAccountDescriptor,
+  overrides: Partial<UpdateView> = {},
+): UpdateView => ({
+  network: descriptor.network,
+  account_id: serverAccountId(descriptor),
+  time: "2026-10-01T00:00:00Z",
+  block: { height: 100 },
+  tx: { hash: "0xabc" },
+  failed: false,
+  deltas: [{ asset: "native", amount: "10" }],
+  fee: { asset: "native", amount: "1" },
+  ...overrides,
+});
+
 /** A portfolio registering and tracking every descriptor, synchronized. */
 export const synced = (
   descriptors: AddressAccountDescriptor[],
@@ -77,12 +93,18 @@ export const synced = (
   ...extra,
 });
 
-/** An in-memory Portfolio service; a scan pages through `groups`, `pageSize` at a time. */
+/** An in-memory Portfolio service; a scan pages through `groups`, `pageSize` at a time, updates `size` at a time. */
 export function fakeService({
   portfolio,
   groups = [],
+  updates = [],
   pageSize = 100,
-}: { portfolio?: Portfolio; groups?: BalanceGroup[]; pageSize?: number } = {}) {
+}: {
+  portfolio?: Portfolio;
+  groups?: BalanceGroup[];
+  updates?: UpdateView[];
+  pageSize?: number;
+} = {}) {
   const state = { portfolio };
   let nextId = 0;
   const current = () => state.portfolio ?? { id: "p" };
@@ -119,6 +141,15 @@ export function fakeService({
       return {
         items: groups.slice(start, end),
         nextToken: end < groups.length ? String(end) : undefined,
+      };
+    }),
+    getUpdates: jest.fn(async (_id, { account, size, token }) => {
+      const items = updates.filter(each => each.account_id === account);
+      const start = token ? Number(token) : 0;
+      const end = start + size;
+      return {
+        items: items.slice(start, end),
+        nextToken: end < items.length ? String(end) : undefined,
       };
     }),
   } satisfies PortfolioClient;
