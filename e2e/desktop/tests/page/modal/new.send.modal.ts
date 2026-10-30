@@ -417,7 +417,6 @@ export class NewSendModal extends Modal {
 
   @step("Open custom fees from the fees menu")
   async selectCustomFeesFromMenu() {
-    await expect(this.customFeesMenuItem).toBeVisible();
     await this.customFeesMenuItem.click();
   }
 
@@ -429,7 +428,6 @@ export class NewSendModal extends Modal {
 
   @step("Open coin control from the fees menu")
   async selectCoinControlFromMenu() {
-    await expect(this.coinControlMenuItem).toBeVisible();
     await this.coinControlMenuItem.click();
   }
 
@@ -444,7 +442,6 @@ export class NewSendModal extends Modal {
 
   @step("Go back to the previous step")
   async goBack() {
-    await expect(this.backButton).toBeVisible();
     await this.backButton.click();
   }
 
