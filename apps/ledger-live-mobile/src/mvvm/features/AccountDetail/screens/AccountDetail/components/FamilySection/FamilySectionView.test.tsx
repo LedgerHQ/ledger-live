@@ -25,9 +25,13 @@ jest.mock("~/generated/AccountBodyHeader", () => ({
 jest.mock("~/generated/AccountDetailDelegations", () => ({
   solana: mockBlock("detail-delegations"),
 }));
+jest.mock("~/generated/AccountDetailBalances", () => ({
+  tron: mockBlock("detail-balances"),
+}));
 jest.mock("~/generated/AccountBalanceSummaryFooter", () => ({
   solana: mockBlock("balance-summary-footer"),
   cosmos: mockBlock("cosmos-balance-summary-footer"),
+  tron: mockBlock("tron-balance-summary-footer"),
 }));
 
 const viewModel = (family: string): FamilySectionViewModel => ({
@@ -64,5 +68,18 @@ describe("FamilySectionView", () => {
       "cosmos-balance-summary-footer",
       "cosmos-body-header",
     ]);
+  });
+
+  it("renders the Account Detail balances in place of the legacy balance summary footer", () => {
+    render(<FamilySectionView {...viewModel("tron")} />);
+
+    expect(screen.getAllByTestId(/.+/).map(node => node.props.testID)).toEqual(["detail-balances"]);
+  });
+
+  it("keeps the legacy balance summary footer for a family without Account Detail balances", () => {
+    render(<FamilySectionView {...viewModel("cosmos")} />);
+
+    expect(screen.queryByTestId("detail-balances")).toBeNull();
+    expect(screen.getByTestId("cosmos-balance-summary-footer")).toBeVisible();
   });
 });

@@ -115,6 +115,7 @@
     "@domain/entity-starred-account": "workspace:^",
     "@domain/entity-wallet-sync": "workspace:^",
     "@features/flow-account-detail": "workspace:^",
+    "@features/flow-account-detail-balances": "workspace:^",
     "@features/flow-account-detail-delegations": "workspace:^",
     "@features/flow-account-detail-hero": "workspace:^",
     "@features/flow-account-detail-notices": "workspace:^",

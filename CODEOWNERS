@@ -141,6 +141,7 @@ features/platform/pay-analytics/                         @ledgerhq/wallet-xp
 
 # Wallet — Account Detail
 features/flow/account-detail/                            @ledgerhq/wallet-xp
+features/flow/account-detail-balances/                   @ledgerhq/wallet-xp
 features/flow/account-detail-delegations/                @ledgerhq/wallet-xp
 features/flow/account-detail-hero/                       @ledgerhq/wallet-xp
 features/flow/account-detail-notices/                    @ledgerhq/wallet-xp
