@@ -3,7 +3,7 @@ import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/
 import { mockAccountOperation } from "./schema.mock";
 import { OperationIdSchema } from "./schema";
 import { selectAccountOperation, selectAccountOperations } from "./selectors";
-import { mockAccountOperationsState } from "./slice.mock";
+import { mockAccountOperationsEntry, mockAccountOperationsState } from "./slice.mock";
 
 const accountUUID = computeAccountUUID(mockAddressAccountDescriptor());
 const otherAccountUUID = computeAccountUUID(
@@ -31,6 +31,29 @@ describe("account operations selectors", () => {
         otherAccountUUID,
       ),
     ).toBeUndefined();
+  });
+
+  it("should return the window of the query asked, without filtering it", () => {
+    const usdtQuery = { filterAsset: usdt.assetId };
+    const filtered = {
+      accountOperations: {
+        [accountUUID]: {
+          byId: { [eth.id]: eth, [usdt.id]: usdt },
+          windows: {
+            ...mockAccountOperationsEntry([eth, usdt]).windows,
+            ...mockAccountOperationsEntry([eth], usdtQuery).windows,
+          },
+        },
+      },
+    };
+    expect(selectAccountOperations(filtered, accountUUID, usdtQuery)).toEqual([eth]);
+    expect(selectAccountOperations(filtered, accountUUID, { limit: 1 })).toBeUndefined();
+  });
+
+  it("should return the same list while the window and its rows are unchanged", () => {
+    expect(selectAccountOperations(state, accountUUID, {})).toBe(
+      selectAccountOperations({ ...state }, accountUUID, {}),
+    );
   });
 
   it("should return one operation by id", () => {

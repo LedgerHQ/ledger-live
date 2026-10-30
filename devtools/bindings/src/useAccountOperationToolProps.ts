@@ -4,9 +4,13 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import type { AccountDataRootState } from "@domain/entity-account-data";
+import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import type { AccountOperation, WithAccountOperations } from "@domain/entity-account-operation";
+import {
+  selectAccountOperations,
+  type AccountOperation,
+  type WithAccountOperations,
+} from "@domain/entity-account-operation";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountOperationToolProps = Extract<
@@ -29,7 +33,11 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
 
   const assetIds = useMemo(
     () => [
-      ...new Set(Object.values(operations).flatMap(rows => rows?.map(row => row.assetId) ?? [])),
+      ...new Set(
+        Object.values(operations).flatMap(entry =>
+          Object.values(entry?.byId ?? {}).flatMap(row => (row ? [row.assetId] : [])),
+        ),
+      ),
     ],
     [operations],
   );
@@ -81,7 +89,7 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID];
+      const status = statuses?.[accountUUID]?.[accountDataQueryKey(undefined)];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),
@@ -90,7 +98,7 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
         sourceId: status?.sourceId,
         readAt: status?.readAt,
         hasMore: status?.nextCursor !== undefined,
-        rows: operations[accountUUID]?.map(toRow),
+        rows: selectAccountOperations({ accountOperations: operations }, accountUUID)?.map(toRow),
       };
     });
   }, [entries, statuses, operations, unitOf]);

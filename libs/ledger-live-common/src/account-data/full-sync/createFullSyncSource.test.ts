@@ -1,5 +1,6 @@
 import type { Account } from "@ledgerhq/types-live";
 import { DEFAULT_ACCOUNT_DATA_MAX_AGE } from "@domain/api-account-data";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { BigNumber } from "bignumber.js";
@@ -71,6 +72,13 @@ describe("createFullSyncSource", () => {
     expect(page?.nextCursor).toBeUndefined();
     expect(page?.operations).toHaveLength(synced.operations.length);
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
+  it("applies the asset filter of the query to the operations", async () => {
+    const synced = { ...account, pendingOperations: [], subAccounts: [] };
+    const filterAsset = BalanceAssetIdSchema.parse("ethereum/erc20/usd_tether__erc20_");
+    const page = await source(account, synced).read?.operations?.(target, { filterAsset });
+    expect(page?.operations).toEqual([]);
   });
 
   it("fails when no legacy account backs the account", async () => {

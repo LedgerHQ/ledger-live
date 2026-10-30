@@ -6,6 +6,7 @@ import {
 } from "@domain/api-account-data";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
+import type { CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import { getEnv } from "@shared/env";
 import { FullSyncAccountNotFoundError } from "./errors";
 import { toAccountBalances } from "./balance";
@@ -20,6 +21,8 @@ export type FullSyncHost = Pick<
   /** The legacy account behind an account, if the legacy store holds one. */
   findAccount(accountUUID: AccountUUID): Account | undefined;
   blacklistedTokenIds?(): string[];
+  /** The rates the app holds, to value operations in the fiat a query asks for. */
+  countervalues?(): CounterValuesCacheView;
 };
 
 export type FullSyncSource = AccountDataSource & {
@@ -56,7 +59,8 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
     // One line per kind, mapping the synced account with its own file.
     read: {
       balance: target => sync(target).then(toAccountBalances),
-      operations: target => sync(target).then(toAccountOperations),
+      operations: (target, query) =>
+        sync(target).then(account => toAccountOperations(account, query, host.countervalues?.())),
     },
     sync,
   };

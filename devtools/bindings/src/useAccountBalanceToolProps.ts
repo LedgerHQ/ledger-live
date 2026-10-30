@@ -5,7 +5,7 @@ import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountAssetBalance, WithAccountBalances } from "@domain/entity-account-balance";
-import type { AccountDataRootState } from "@domain/entity-account-data";
+import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
@@ -65,7 +65,7 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID];
+      const status = statuses?.[accountUUID]?.[accountDataQueryKey(undefined)];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),

@@ -1,6 +1,7 @@
 import { nanoid } from "@reduxjs/toolkit";
 import {
   accountDataFailed,
+  accountDataQueryKey,
   accountDataReceived,
   accountDataRequested,
   selectAccountDataStatus,
@@ -15,7 +16,6 @@ import {
   type AccountUUID,
 } from "@domain/entity-account-descriptor";
 import { getAccountDataRuntime, type AccountDataRuntime } from "./extra";
-import { accountDataQueryKey } from "./queryKey";
 import type { AccountDataReadOptions } from "./router";
 
 export const DEFAULT_ACCOUNT_DATA_MAX_AGE = 30_000;
@@ -50,7 +50,7 @@ const nextCursorOf = (data: unknown): string | undefined =>
     ? data.nextCursor
     : undefined;
 
-/** Reads through the router into the slices, unless a newer read of the account started meanwhile. */
+/** Reads through the router into the slices, unless a newer read of the same account and query started meanwhile. */
 async function read<K extends AccountDataKind>(
   dispatch: Dispatch,
   getState: GetState,
@@ -60,9 +60,10 @@ async function read<K extends AccountDataKind>(
   options: AccountDataReadOptions<K>,
 ): Promise<void> {
   const requestId = nanoid();
-  const queryKey = accountDataQueryKey(options.query);
+  const target = { kind, accountUUID, queryKey: accountDataQueryKey(options.query), requestId };
   const current = () =>
-    selectAccountDataStatus(getState(), kind, accountUUID)?.request?.id === requestId;
+    selectAccountDataStatus(getState(), kind, accountUUID, options.query)?.request?.id ===
+    requestId;
   // Starts after the request is published, and is registered before it, so what reacts to it can wait.
   const done = Promise.resolve().then(async () => {
     try {
@@ -70,49 +71,38 @@ async function read<K extends AccountDataKind>(
       if (!current()) return;
       const readAt = Date.now();
       const nextCursor = nextCursorOf(data);
-      dispatch(
-        accountDataReceived({
-          kind,
-          accountUUID,
-          requestId,
-          data,
-          sourceId,
-          append,
-          readAt,
-          nextCursor,
-        }),
-      );
+      dispatch(accountDataReceived({ ...target, data, sourceId, append, readAt, nextCursor }));
     } catch (error) {
-      if (current())
-        dispatch(accountDataFailed({ kind, accountUUID, requestId, error: errorOf(error) }));
+      if (current()) dispatch(accountDataFailed({ ...target, error: errorOf(error) }));
     }
   });
   inflight.set(requestId, done);
   try {
-    dispatch(accountDataRequested({ kind, accountUUID, requestId, queryKey, append }));
+    dispatch(accountDataRequested({ ...target, append }));
     await done;
   } finally {
     inflight.delete(requestId);
   }
 }
 
-/** Waits for the head reads of `queryKey` in flight, including the ones started meanwhile. */
-async function settled(
+/** Waits for the head reads of `query` in flight, including the ones started meanwhile. */
+async function settled<K extends AccountDataKind>(
   getState: GetState,
   runtime: AccountDataRuntime,
-  account: Account,
-  queryKey: string,
+  account: Account<K>,
+  query: AccountDataQuery<K> | undefined,
   awaited?: string,
 ): Promise<void> {
-  const request = selectAccountDataStatus(getState(), account.kind, account.accountUUID)?.request;
-  if (!request || request.append || request.queryKey !== queryKey || request.id === awaited) return;
+  const { kind, accountUUID } = account;
+  const request = selectAccountDataStatus(getState(), kind, accountUUID, query)?.request;
+  if (!request || request.append || request.id === awaited) return;
   const done = runtime.inflight.get(request.id);
   if (!done) return;
   await done;
-  return settled(getState, runtime, account, queryKey, request.id);
+  return settled(getState, runtime, account, query, request.id);
 }
 
-/** Reads the head of one kind of data of one account, unless fresh or already in flight. */
+/** Reads the head of one kind of data of one account for one query, unless fresh or already in flight. */
 export function fetchAccountData<K extends AccountDataKind>(
   kind: K,
   descriptor: AccountDescriptor,
@@ -121,22 +111,19 @@ export function fetchAccountData<K extends AccountDataKind>(
   return async (dispatch: Dispatch, getState: GetState, extra: unknown): Promise<void> => {
     const runtime = getAccountDataRuntime(extra);
     const account = { kind, descriptor, accountUUID: computeAccountUUID(descriptor) };
-    const queryKey = accountDataQueryKey(query);
-    const status = selectAccountDataStatus(getState(), kind, account.accountUUID);
+    const status = selectAccountDataStatus(getState(), kind, account.accountUUID, query);
     const head = status?.request?.append === false ? status.request : undefined;
-    if (maxAge > 0 && head?.queryKey === queryKey) {
-      return settled(getState, runtime, account, queryKey);
-    }
+    if (maxAge > 0 && head) return settled(getState, runtime, account, query);
     // A stamp from the future is a clock that moved, not a fresh read.
     const age = status?.readAt === undefined ? undefined : Date.now() - status.readAt;
     const fresh = age !== undefined && age >= 0 && age < maxAge;
-    if (!head && status?.queryKey === queryKey && fresh) return;
+    if (!head && fresh) return;
     await read(dispatch, getState, runtime, account, false, { query });
-    return settled(getState, runtime, account, queryKey);
+    return settled(getState, runtime, account, query);
   };
 }
 
-/** Reads the page after the stored one, from the source that answered it, for the stored head's query only. */
+/** Reads the page after the stored one of `query`, from the source that answered it. */
 export function fetchMoreAccountData<K extends AccountDataKind>(
   kind: K,
   descriptor: AccountDescriptor,
@@ -145,12 +132,11 @@ export function fetchMoreAccountData<K extends AccountDataKind>(
   return async (dispatch: Dispatch, getState: GetState, extra: unknown): Promise<void> => {
     const runtime = getAccountDataRuntime(extra);
     const accountUUID = computeAccountUUID(descriptor);
-    const status = selectAccountDataStatus(getState(), kind, accountUUID);
-    const { sourceId, nextCursor: cursor } = status ?? {};
+    const status = selectAccountDataStatus(getState(), kind, accountUUID, query);
     // A page already on its way is awaited, so a caller can wait for it before asking the next.
     if (status?.request) return runtime.inflight.get(status.request.id);
-    if (!status || sourceId === undefined || cursor === undefined) return;
-    if (status.queryKey !== accountDataQueryKey(query)) return;
+    const { sourceId, nextCursor: cursor } = status ?? {};
+    if (sourceId === undefined || cursor === undefined) return;
     await read(dispatch, getState, runtime, { kind, descriptor, accountUUID }, true, {
       query,
       sourceId,

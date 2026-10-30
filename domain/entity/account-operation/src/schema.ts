@@ -1,12 +1,18 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import {
+  AmountStrSchema,
+  BalanceAssetIdSchema,
+  type BalanceAssetId,
+} from "@domain/entity-account-balance";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
 /** A sender or recipient: branded so analytics can refuse it. */
 export const AddressSchema = z.string().min(1).brand<"Address">();
+/** The ISO 4217 ticker of the fiat a countervalue is in, e.g. `USD`. */
+export const CountervalueTickerSchema = z.string().min(1).brand<"CountervalueTicker">();
 
 /** Mirrors the operation types of `@ledgerhq/types-live`, for backward compatibility. */
 export const OPERATION_TYPES = [
@@ -87,17 +93,24 @@ export const AccountOperationSchema = z.object({
   date: DateTimeIsoSchema,
   hasFailed: z.boolean().optional(),
   parentId: OperationIdSchema.optional(),
+  /** What `value` was worth at `date`, in the fiat's smallest unit, for each fiat a read asked for. */
+  countervalues: z.partialRecord(CountervalueTickerSchema, AmountStrSchema).optional(),
 });
 
 export type OperationId = z.infer<typeof OperationIdSchema>;
 export type TransactionHash = z.infer<typeof TransactionHashSchema>;
 export type Address = z.infer<typeof AddressSchema>;
+export type CountervalueTicker = z.infer<typeof CountervalueTickerSchema>;
 export type OperationType = z.infer<typeof OperationTypeSchema>;
 export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 
-/** What a read asks for; the cursor is not part of it, the framework carries it. */
+/** What a read asks for; the cursor is not part of it, the framework carries it. Each query has its own window. */
 export type AccountOperationsQuery = {
   limit?: number;
+  /** Only the operations of this asset of the account, e.g. one of its tokens. */
+  filterAsset?: BalanceAssetId;
+  /** The fiat each operation is valued in, at its date, into `countervalues`. */
+  countervalue?: CountervalueTicker;
 };
 
 export type AccountOperationsPage = {
@@ -106,11 +119,20 @@ export type AccountOperationsPage = {
   nextCursor?: string;
 };
 
-/** The loaded window of each account, newest first. */
+/** The operations of one account: each row once, and the loaded window of each query. */
+export const AccountOperationsEntrySchema = z.object({
+  /** Every row a window lists, whatever query read it. */
+  byId: z.partialRecord(OperationIdSchema, AccountOperationSchema),
+  /** By query, as `accountDataQueryKey` writes it: its loaded window, newest first. */
+  windows: z.partialRecord(z.string(), z.array(OperationIdSchema)),
+});
+
 export const AccountOperationsStateSchema = z.partialRecord(
   AccountUUIDSchema,
-  z.array(AccountOperationSchema),
+  AccountOperationsEntrySchema,
 );
+
+export type AccountOperationsEntry = z.infer<typeof AccountOperationsEntrySchema>;
 
 export type AccountOperationsState = z.infer<typeof AccountOperationsStateSchema>;
 

@@ -31,6 +31,7 @@ const receive = (data: (typeof eth)[], uuid = accountUUID) =>
   accountDataReceived({
     kind: "balance",
     accountUUID: uuid,
+    queryKey: "",
     requestId: "r",
     data,
     sourceId,
@@ -62,6 +63,7 @@ describe("accountBalancesSlice", () => {
       accountDataReceived({
         kind: "staking",
         accountUUID,
+        queryKey: "",
         requestId: "r",
         data: { staked: "1" },
         sourceId,

@@ -31,8 +31,8 @@ const sourceId = AccountDataSourceIdSchema.parse("s");
 const reduce = (...actions: Parameters<typeof accountDataSlice.reducer>[1][]) =>
   actions.reduce<AccountDataState>(accountDataSlice.reducer, {});
 
-const status = (state: AccountDataState, kind: "pages" | "total" = "pages") =>
-  selectAccountDataStatus({ accountData: state }, kind, uuid);
+const status = (state: AccountDataState, query: { limit: number } = { limit: 1 }) =>
+  selectAccountDataStatus({ accountData: state }, "pages", uuid, query);
 
 const requested = (requestId: string, append = false, queryKey = '{"limit":1}') =>
   accountDataRequested({ kind: "pages", accountUUID: uuid, requestId, queryKey, append });
@@ -41,6 +41,7 @@ const received = (requestId: string, append = false, nextCursor?: string) =>
   accountDataReceived({
     kind: "pages",
     accountUUID: uuid,
+    queryKey: '{"limit":1}',
     requestId,
     data: { items: ["a"], nextCursor },
     sourceId,
@@ -51,14 +52,9 @@ const received = (requestId: string, append = false, nextCursor?: string) =>
 
 describe("accountDataSlice", () => {
   it("records the read in flight, then what the head answer was read from", () => {
-    expect(status(reduce(requested("r1")))?.request).toEqual({
-      id: "r1",
-      queryKey: '{"limit":1}',
-      append: false,
-    });
+    expect(status(reduce(requested("r1")))?.request).toEqual({ id: "r1", append: false });
     expect(status(reduce(requested("r1"), received("r1", false, "c1")))).toEqual({
       sourceId,
-      queryKey: '{"limit":1}',
       readAt: 1000,
       nextCursor: "c1",
     });
@@ -71,24 +67,24 @@ describe("accountDataSlice", () => {
       requested("r2", true, '{"limit":1}'),
       { ...received("r2", true), payload: { ...received("r2", true).payload, readAt: 2000 } },
     );
-    expect(status(state)).toEqual({ sourceId: "s", queryKey: '{"limit":1}', readAt: 1000 });
+    expect(status(state)).toEqual({ sourceId: "s", readAt: 1000 });
   });
 
-  it("keeps the stored data's query, time and cursor on a failure", () => {
+  it("keeps the stored data's time and cursor on a failure", () => {
     const state = reduce(
       requested("r1"),
       received("r1", false, "c1"),
-      requested("r2", false, '{"limit":2}'),
+      requested("r2"),
       accountDataFailed({
         kind: "pages",
         accountUUID: uuid,
+        queryKey: '{"limit":1}',
         requestId: "r2",
         error: { name: "Error", message: "down" },
       }),
     );
     expect(status(state)).toEqual({
       sourceId,
-      queryKey: '{"limit":1}',
       readAt: 1000,
       nextCursor: "c1",
       error: { name: "Error", message: "down" },
@@ -101,6 +97,7 @@ describe("accountDataSlice", () => {
       accountDataFailed({
         kind: "pages",
         accountUUID: uuid,
+        queryKey: '{"limit":1}',
         requestId: "r1",
         error: { name: "Error", message: "down" },
       }),
@@ -117,17 +114,27 @@ describe("accountDataSlice", () => {
       accountDataFailed({
         kind: "pages",
         accountUUID: uuid,
+        queryKey: '{"limit":1}',
         requestId: "r1",
         error: { name: "Error", message: "late" },
       }),
     );
-    expect(status(state)).toEqual({
-      request: { id: "r2", queryKey: '{"limit":1}', append: false },
-    });
+    expect(status(state)).toEqual({ request: { id: "r2", append: false } });
+  });
+
+  it("keeps the reads of each query apart", () => {
+    const state = reduce(
+      requested("r1"),
+      requested("r2", false, '{"limit":2}'),
+      received("r1", false, "c1"),
+    );
+    expect(status(state)).toEqual({ sourceId, readAt: 1000, nextCursor: "c1" });
+    expect(status(state, { limit: 2 })?.request).toEqual({ id: "r2", append: false });
   });
 
   it("keeps kinds apart", () => {
-    expect(status(reduce(requested("r1")), "total")).toBeUndefined();
+    const accountData = reduce(requested("r1"));
+    expect(selectAccountDataStatus({ accountData }, "total", uuid)).toBeUndefined();
   });
 });
 
@@ -136,6 +143,7 @@ describe("isAccountDataReceived", () => {
     const total = accountDataReceived({
       kind: "total",
       accountUUID: uuid,
+      queryKey: "",
       requestId: "r",
       data: 3,
       sourceId,
