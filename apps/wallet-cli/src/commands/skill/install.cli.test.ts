@@ -1,5 +1,14 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { access, appendFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  appendFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../testing/cli-runner";
@@ -137,6 +146,18 @@ describe("skill install", () => {
 
     expect(update.exitCode).toBe(1);
     expect(await readFile(skillMd, "utf8")).toBe(olderSkillMd);
+  });
+
+  it("doesn't write through a dangling link where the new skill adds a file", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+    const outsideTheSkill = path.join(tmpDir, "outside.md");
+    await symlink(outsideTheSkill, reference);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode).toBe(1);
+    expect(await exists(outsideTheSkill)).toBe(false);
   });
 
   it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {

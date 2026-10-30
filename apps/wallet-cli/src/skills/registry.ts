@@ -2,7 +2,7 @@
 // Content is inlined into the binary at build time, so these helpers work
 // identically in dev, tests, and the compiled standalone binary.
 
-import { mkdir, readFile, writeFile, access, stat } from "node:fs/promises";
+import { mkdir, readFile, writeFile, access, lstat, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { CLI_VERSION, SKILLS, type SkillFile, type SkillManifest } from "./manifest.gen";
@@ -323,8 +323,18 @@ async function readTrackedFile(
 }
 
 async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
+  const target = path.join(skillRoot, file.path);
   try {
-    return (await readFile(path.join(skillRoot, file.path), "utf8")) !== file.content;
+    return (await readFile(target, "utf8")) !== file.content;
+  } catch {
+    return holdsAnything(target);
+  }
+}
+
+async function holdsAnything(p: string): Promise<boolean> {
+  try {
+    await lstat(p);
+    return true;
   } catch (e) {
     return (e as { code?: string } | null)?.code !== "ENOENT";
   }
