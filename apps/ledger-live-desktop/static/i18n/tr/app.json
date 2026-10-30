@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "Adı değiştir",
       "viewAdvancedLogs" : "Kapsamlı log'ları görüntüle",
+      "viewExplorer" : "Tarayıcıda görüntüle",
       "removeAccount" : "Hesabı portföyden kaldır"
     },
     "changeName" : {
@@ -327,7 +328,7 @@
     "remove" : {
       "title" : "Hesap kaldırılsın mı?",
       "description" : "Bu hesaba bağlı varlıklar artık portföyünüzde görünmeyecek. Blok zincirindeki varlıklarınız bu durumdan etkilenmez.",
-      "confirm" : "Evet, kaldır.",
+      "confirm" : "Evet, kaldır",
       "cancel" : "Tut"
     }
   },
@@ -715,18 +716,6 @@
     "buttonTitle" : "Test"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Daha fazla bilgi",
-      "cardTitle" : "{{team}} desteğiyle",
-      "drawer" : {
-        "title" : "{{family}} entegrasyonu",
-        "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
-        "description" : "Ledger Wallet, açık kaynaklı bir platformdur.",
-        "description2" : "Dünyanın her yerinden geliştiriciler, Ledger Wallet ile entegre olabilir",
-        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
-        "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}}, şuraya taşınıyor: {{to}}. Daha fazla bilgi edinmek için bu <0>bağlantıyı</0> takip edin veya yardıma ihtiyacınız varsa destek ekibiyle iletişime geçin.",
       "contactSupport" : "Destek al"
@@ -3024,6 +3013,7 @@
       "paidIn" : "{{currency}} ile ödendi",
       "nudge" : "{{provider}} ile {{amount}} tasarruf edebilirsiniz",
       "saved" : "{{provider}} ile tasarruf edildi",
+      "rentArriving" : "Enerji kiralama işleminiz henüz tamamlanmadı. İşlem tamamlandığında ağ ücretleri güncellenecek.",
       "confirm" : "Onayla",
       "disclaimer" : "Üçüncü taraf bir enerji sağlayıcısı olan {{provider}} ile ücretler {{feeCurrency}} olarak ödenir.",
       "insufficientFunds" : "Tutarı ve {{provider}} enerji kiralama ücretini karşılamak için yeterli {{feeCurrency}} bakiyeniz yok."
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "Yetkisi devredilen varlıklar",
       "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar 10 günlük bir çözülme dönemine tabidir ve sadece bu süre sona erdikten sonra çekilebilir.",
       "undelegating" : "Bekleyen Çekim İşlemleri"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "MultiversX teknolojisiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "MultiversX entegrasyonu",
-        "title" : "MultiversX eGold (EGLD) token'ı artık Ledger Wallet'ta kullanılabilir",
-        "description" : "eGold (EGLD) token'larınızı artık Ledger Wallet üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
-        "description2" : "MultiversX Network'e özgü olan MultiversX eGold (EGLD) Token'ı, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
-        "description3" : "MultiversX ekibiyle aktif şekilde çalışarak staking işlemlerini, dahili ESDT (Elrond Standart Dijital Token) desteğini ve diğer birçok işlevi eklemek için çalışıyoruz.",
-        "website" : "İnternet Ölçeğinde Blok Zinciri"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Figment desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Figment desteğiyle",
-        "title" : "CELO token artık Ledger Wallet’ta",
-        "description" : "Artık CELO token'larınızı yönetmeye başlayabilir ve Ledger Wallet ile güvenceye alabilirsiniz.",
-        "description2" : "Celo token, Celo zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
-        "website" : "Figment desteğiyle"
-      }
-    },
     "lockedBalance" : "Kilitli bakiye",
     "lockedTooltip" : "Ödül kazanmak için öncelikle varlıkların kilitlenmesi ve doğrulayıcı gruplarına oylanması gerekir.",
     "nonvotingLockedBalance" : "Oylamayan kilitli bakiye",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "Bekleyen bakiye",
       "pendingBalanceTooltip" : "Stake’i iptal edilmiş ve müsait olması beklenen güncel miktar.",
       "storageUsageBalance" : "Minimum bakiye",
-      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiye.",
-      "subHeader" : {
-        "cardTitle" : "Figment desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Figment desteğiyle",
-        "title" : "NEAR token artık Ledger Wallet’ta",
-        "description" : "NEAR token’larınızı yönetmeye başlayabilir ve Ledger Wallet ile güvenceye alabilirsiniz.",
-        "description2" : "NEAR token, NEAR zincirinin native token'ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
-        "website" : "Figment desteğiyle"
-      }
+      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiye."
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "Bekleyen bakiye",
       "pendingBalanceTooltip" : "Stake’i durdurulmuş ve müsait olması beklenen güncel miktar.",
       "storageUsageBalance" : "Minimum bakiye",
-      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; bu, hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiyedir.",
-      "subHeader" : {
-        "cardTitle" : "Figment desteğiyle",
-        "moreInfo" : "Daha fazla bilgi",
-        "drawerTitle" : "Figment desteğiyle",
-        "title" : "SUI token artık Ledger Wallet’ta",
-        "description" : "Artık SUI token’larınızı yönetmeye başlayabilir ve Ledger Wallet ile güvenceye alabilirsiniz.",
-        "description2" : "SUI token, SUI zincirinin native token’ıdır ve ağ üzerinde işlem yapmak, stake etmek ve yakında çıkacak pek çok özellikten yararlanmak için kullanılır.",
-        "website" : "Figment desteğiyle"
-      }
+      "storageUsageBalanceTooltip" : "Saklama ve işlemler için rezerv edilen miktar; bu, hesabınızın aktif kalması için hesabınızda bulunması gereken minimum bakiyedir."
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "Concordium uygulaması işlemi gerçekleştiremedi. Sorun devam ederse lütfen Ledger Destek ile iletişime geçin."
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "{{min}} ile {{max}} arasında bir tam sayı girin."
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "address.contract-name biçiminde geçerli bir havuz sözleşmesi adresi girin."
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo çok fazla uzun"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "Talep gönderilmedi",
       "description" : "Internet Computer talebi almadı, bu yüzden hiçbir şey gönderilmedi ve hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "İşlemin süresi doldu",
+      "description" : "İmzalanan işlem zamanında iletilmediği için hiçbir şey gönderilmedi ve herhangi bir değişiklik olmadı. Lütfen işlemi tekrar imzalayın."
     },
     "ICPInvalidPercentage" : {
       "title" : "Yüzde aralık dışında",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
             "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
-            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Karekodu göster</0> adımlarını izleyin",
+            "step3" : "Sırasıyla <0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Karekodu göster</0> adımlarını izleyin",
             "step4" : "Karekodu okutun."
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
             "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
-            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
+            "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
             "step4" : "Ledger cihazınızı bağlayın."
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
     "selectDepositCurrencyTitle" : "Yatırılacak varlığı seçin",
     "selectDepositCurrencyDescription" : "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
+    "selectWithdrawCurrencyTitle" : "Çekimin aktarılacağı varlığı seçin",
+    "selectWithdrawCurrencyDescription" : "USDC’niz, seçtiğiniz varlığa otomatik olarak takas edilecektir.",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "Güvenli kripto cüzdanınız"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Sürekli vadeli işlemler",
+      "description" : "Kaldıraçlı yatırım yapın"
+    },
+    "borrow" : {
+      "title" : "Krediler",
+      "description" : "Stabil coin kredisi alın"
+    }
+  },
   "marketBanner" : {
     "title" : "Piyasa",
     "genericError" : "Bağlantı başarısız oldu",
@@ -9736,6 +9707,7 @@
     "receive" : "Al",
     "buy" : "Satın al",
     "sell" : "Sat",
+    "swap" : "Takas et",
     "connect" : "Bağlan",
     "buyALedger" : "Ledger satın alın"
   },
@@ -9941,7 +9913,8 @@
               "label" : "Doğum günü yüksekliği",
               "tooltip" : "Varsayılan: bugünün tarihi. Sadece geçmişte gizli (korumalı) etkinliği olan mevcut hesaplar için değiştirin.",
               "syncFromZero" : "Bu hesap geçmişte korumalı ZEC almış, ancak doğum yüksekliğine erişemiyorum. 0. bloktan itibaren tara (bu işlem uzun sürebilir).",
-              "error" : "Geçersiz tarih"
+              "error" : "Geçersiz tarih",
+              "height" : "Blok yüksekliği: {{height}}"
             },
             "ufvk" : {
               "text" : "Başlamak için \"Unified Full Viewing Key\" (UFVK, Birleşik Tam İzleme Anahtarı) bilginizi dışa aktarmalısınız. Bu eylem, Ledger cihazınız üzerinden onayınızı gerektirir."
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 Özel (Sapling)",
       "shieldedOrchardTx" : "🛡 Özel (Orchard)",
       "shieldedIronwoodTx" : "🛡 Gizli (Ironwood)",
-      "memo" : "Memo"
+      "memo" : "Memo",
+      "blockHeight" : "Blok yüksekliği",
+      "confirmations_one" : "{{count}} onay",
+      "confirmations_other" : "{{count}} onay"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Henüz işlem yok",
+      "description" : {
+        "receive" : "Al seçeneği üzerinden bakiye ekleyerek başlayın.",
+        "receiveSwap" : "Al veya Takas et seçenekleri aracılığıyla bakiye ekleyerek başlayın.",
+        "receiveBuy" : "Al veya Satın Al seçenekleri aracılığıyla bakiye ekleyerek başlayın.",
+        "receiveSwapBuy" : "Al, Takas et veya Satın Al seçenekleri aracılığıyla bakiye ekleyerek başlayın.",
+        "swap" : "Takas et seçeneği aracılığıyla bakiye ekleyerek başlayın.",
+        "buy" : "Satın Al seçeneği aracılığıyla bakiye ekleyerek başlayın.",
+        "swapBuy" : "Takas et veya Satın Al seçeneği aracılığıyla bakiye ekleyerek başlayın."
+      }
+    },
+    "assetPicker" : {
+      "title" : "Bir varlık seçin"
+    },
+    "actions" : {
+      "receive" : "Al",
+      "send" : "Gönder",
+      "buy" : "Satın al",
+      "sell" : "Sat",
+      "earn" : "Kazan"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "Daha fazla bilgi",
+      "openPerps" : "Perpetual işlemleri aç"
+    },
+    "migration" : {
+      "title" : "{{from}}, {{to}} ağına taşınıyor.",
+      "description" : "Taşınma hakkında daha fazla bilgi edinebilir veya yardıma ihtiyacınız olursa destek ekibiyle iletişime geçebilirsiniz."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}}, {{date}} tarihinden itibaren desteklenmeyecektir",
+      "description" : "Bununla birlikte, Ledger cihazınız tarafından güvence altına alınmaya devam eder. Daha fazla bilgi için Yardım Merkezi’ni ziyaret edin."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "Temettüler veya hisse bölünmeleri toplam bakiyeye dahil edilmez."
+    },
+    "perps" : {
+      "title" : "Hyperliquid hesabı hakkında",
+      "description" : "Bu hesap sürekli vadeli (perpetual) alım satım işlemleriyle bağlantılıdır. Bu hesap üzerinde standart transfer eylemleri desteklenmemektedir"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "Hesap ayarları"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "Bir eylem seçin"
+  },
+  "perpsWithdraw" : {
+    "title" : "Çek",
+    "review" : "İncele",
+    "estimatedAmount" : "~{{value}} çek",
+    "inputSubText" : "{{provider}} ile takas edin ve çekin",
+    "selectCurrencyTitle" : "{{currencyTicker}} adresine çek",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Hesap yok",
+    "formErrors" : {
+      "insufficientBalance" : "Yetersiz bakiye",
+      "minimumAmount" : "Minimum çekim tutarı {{minAmount}} USDC'dir.",
+      "minimumAmountUnknown" : "Bu tutar çekim için çok düşük.",
+      "lowLiquidity" : "Bu varlık geçici olarak kullanılamıyor. Daha sonra tekrar deneyin veya başka bir varlık seçin.",
+      "addressScreening" : "Bu çekim bu hesaba gerçekleştirilemiyor.",
+      "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin.",
+      "currenciesUnavailable" : "Çekim yapabileceğiniz varlıkları yükleyemiyoruz. Daha sonra tekrar deneyin."
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Yatırma işlemini imzalayın",
