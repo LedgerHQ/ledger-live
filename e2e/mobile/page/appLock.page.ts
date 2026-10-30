@@ -46,7 +46,7 @@ export default class AppLockPage {
 
   @Step("Expect no lock")
   async expectNoLock() {
-    await this.unlockScreen.waitGone(TIMEOUT.medium);
+    await this.unlockScreen.waitNotVisible(TIMEOUT.medium);
     await this.unlockScreen.expectNotVisible();
   }
 }

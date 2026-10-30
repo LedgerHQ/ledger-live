@@ -28,7 +28,7 @@ Native and web handles share these methods ([`ElementHandle`](../helpers/element
 | Method | Does |
 |---|---|
 | `waitVisible()` | waits for the element |
-| `waitGone()` | waits until the element is hidden (native) or no longer exists (webview) |
+| `waitNotVisible()` | waits until the element is not visible (native) or no longer exists (webview) |
 | `tap()` | waits, then taps |
 | `replaceText(text)` | waits, then replaces the field content |
 | `getText()` | waits, then returns the text |
