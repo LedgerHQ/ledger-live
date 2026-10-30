@@ -14,8 +14,7 @@ import {
 } from "../../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../../analytics/useAddAccountAnalytics";
 import { IconContainer } from "./IconContainer";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
 const ActionItem = styled(Flex)`
   cursor: pointer;
@@ -50,8 +49,7 @@ const ActionsContainer = ({ account, currencyId }: Props) => {
   const dispatch = useDispatch();
   const { isCurrencyAvailable } = useRampCatalog();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
-  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
+  const accountsPath = ACCOUNTS_SIDEBAR_PATH;
 
   const handleReceive = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {

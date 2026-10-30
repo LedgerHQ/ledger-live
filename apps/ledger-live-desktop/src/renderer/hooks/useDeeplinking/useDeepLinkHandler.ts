@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -21,7 +21,7 @@ import { trackDeeplinkingEvent } from "./utils";
 import { parseDeepLink, createRoute } from "./parseDeepLink";
 import { executeHandler } from "./registry";
 import { DeeplinkHandlerContext, NavigateFn } from "./types";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -53,8 +53,7 @@ export function useDeepLinkHandler() {
   const isPayTabEnabled = !!lwdPayTab?.enabled;
   const lwdContacts = useFeature("lwdContacts");
   const isContactsEnabled = !!lwdContacts?.enabled;
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
-  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
+  const accountsPath = ACCOUNTS_SIDEBAR_PATH;
 
   const navigate: NavigateFn = useCallback(
     (pathname: string, state?: Parameters<NavigateFn>[1], search?: string) => {

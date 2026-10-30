@@ -21,20 +21,16 @@ describe("pathnameToActive", () => {
     expect(pathnameToActive(pathname)).toBe(expected);
   });
 
-  it('should return "accounts" for /cryptos when asset section is enabled', () => {
-    expect(pathnameToActive("/cryptos", true)).toBe("accounts");
-  });
-
-  it("should return empty string for /cryptos when asset section is disabled", () => {
-    expect(pathnameToActive("/cryptos", false)).toBe("");
+  it('should return "accounts" for /cryptos', () => {
+    expect(pathnameToActive("/cryptos")).toBe("accounts");
   });
 
   it('should return "paytab" for a live app opened from the Pay tab', () => {
-    expect(pathnameToActive("/platform/some-app", false, "?returnTo=%2Fpaytab")).toBe("paytab");
+    expect(pathnameToActive("/platform/some-app", "?returnTo=%2Fpaytab")).toBe("paytab");
   });
 
   it('should return "discover" for a live app with another returnTo', () => {
-    expect(pathnameToActive("/platform/some-app", false, "?returnTo=%2Fswap")).toBe("discover");
+    expect(pathnameToActive("/platform/some-app", "?returnTo=%2Fswap")).toBe("discover");
   });
 
   it.each(["/settings", "/manager", "/refer"])(

@@ -12,10 +12,8 @@ export const SIDEBAR_VALUE_TO_PATH = {
   paytab: "/paytab",
 } as const;
 
-/** Sidebar "Accounts" entry navigates to CryptoAddresses (Cryptos page) when asset section FF is on, else legacy accounts page. */
-export function getAccountsSidebarPath(shouldDisplayAssetSection: boolean): string {
-  return shouldDisplayAssetSection ? SIDEBAR_VALUE_TO_PATH.cryptos : SIDEBAR_VALUE_TO_PATH.accounts;
-}
+/** Sidebar "Accounts" entry opens the Cryptos page. */
+export const ACCOUNTS_SIDEBAR_PATH = SIDEBAR_VALUE_TO_PATH.cryptos;
 
 export type SideBarNavValue = keyof typeof SIDEBAR_VALUE_TO_PATH;
 

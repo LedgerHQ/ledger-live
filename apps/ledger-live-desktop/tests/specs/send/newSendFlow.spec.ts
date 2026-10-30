@@ -177,7 +177,9 @@ test.describe("New Send Flow", () => {
     const accountPage = new AccountPage(page);
 
     await goToAccountsDismissingBlockingModals(page);
-    await expect(page.getByTestId(`account-component-${accountName}`)).toBeVisible({
+    await expect(
+      page.getByTestId(`crypto-account-row-${accountName.replaceAll(/\s+/g, "-")}`),
+    ).toBeVisible({
       timeout: 20000,
     });
 

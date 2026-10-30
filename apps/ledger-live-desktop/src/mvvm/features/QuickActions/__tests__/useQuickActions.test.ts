@@ -11,6 +11,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
 jest.mock("LLD/features/Send/hooks/useOpenSendFlow");
 jest.mock("LLD/features/ModularDialog/hooks/useOpenAssetFlow");
@@ -271,7 +272,7 @@ describe("useQuickActions", () => {
         result.current.actionsList[0].onAction();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith("/accounts");
+      expect(mockNavigate).toHaveBeenCalledWith(ACCOUNTS_SIDEBAR_PATH);
     });
   });
 
@@ -361,7 +362,7 @@ describe("useQuickActions", () => {
         result.current.actionsList[3].onAction();
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith("/accounts");
+      expect(mockNavigate).toHaveBeenCalledWith(ACCOUNTS_SIDEBAR_PATH);
       expect(mockOpenSendFlow).toHaveBeenCalledTimes(1);
     });
 

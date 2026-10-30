@@ -26,7 +26,8 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
     return {
       isEnabled,
       shouldUseLazyOnboarding: isEnabled && Boolean(params?.lazyOnboarding),
-      shouldDisplayAssetSection: isEnabled && Boolean(params?.assetSection),
+      shouldDisplayAssetSection:
+        platform === "desktop" ? true : isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets:

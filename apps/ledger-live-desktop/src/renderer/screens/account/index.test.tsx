@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useLLDCoinFamily } from "~/renderer/families";
@@ -20,10 +20,6 @@ const { useParams } = jest.requireMock("react-router");
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridgeOrNull: jest.fn(() => ({ isAccountEmpty: () => false })),
 }));
-
-const accountPageFlags = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { assetSection: false } },
-});
 
 jest.mock("./hooks/useAccountBackNavigation", () => ({
   useAccountBackNavigation: () => ({ showBackButton: false, navigateBack: jest.fn() }),
@@ -70,7 +66,7 @@ describe("AccountPage — useLLDCoinFamily slots", () => {
     } as never);
 
     render(<AccountPageWrapper />, {
-      initialState: { ...accountPageFlags, accounts: [account] },
+      initialState: { accounts: [account] },
     });
 
     expect(screen.getByTestId("body-header")).toBeInTheDocument();
@@ -81,7 +77,7 @@ describe("AccountPage — useLLDCoinFamily slots", () => {
     mockFamily.mockReturnValue({} as never);
 
     render(<AccountPageWrapper />, {
-      initialState: { ...accountPageFlags, accounts: [account] },
+      initialState: { accounts: [account] },
     });
 
     expect(screen.queryByTestId("body-header")).not.toBeInTheDocument();
@@ -102,7 +98,7 @@ describe("AccountPage — aliased route params", () => {
     });
 
     render(<AccountPageWrapper />, {
-      initialState: { ...accountPageFlags, accounts: [account] },
+      initialState: { accounts: [account] },
     });
 
     expect(screen.getByTestId("balance-summary")).toBeInTheDocument();
@@ -120,7 +116,7 @@ describe("AccountPage — aliased route params", () => {
     });
 
     render(<AccountPageWrapper />, {
-      initialState: { ...accountPageFlags, accounts: [account] },
+      initialState: { accounts: [account] },
     });
 
     expect(screen.queryByTestId("balance-summary")).not.toBeInTheDocument();

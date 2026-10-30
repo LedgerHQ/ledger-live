@@ -2,7 +2,6 @@ import { test } from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { getModularSelector } from "tests/utils/modularSelectorUtils";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { buildTags } from "tests/utils/tagsUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
@@ -93,22 +92,17 @@ for (const currency of currencies) {
 
         await app.portfolio.checkOperationHistory();
         await app.portfolio.expectBalanceVisibility();
-        if (await isAssetSectionEnabled(app.getPage())) {
-          await app.portfolio.assetsView.waitForAssetsToLoad();
-          if (currency.portfolioAssetName) {
-            await app.portfolio.assetsView.expectSingleAggregatedRow(
-              "cryptos",
-              currency.portfolioAssetName,
-            );
-          } else {
-            await app.portfolio.assetsView.expectAssetVisibleInSection(
-              "cryptos",
-              currency.currency,
-            );
-          }
-          await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
-          await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
+        await app.portfolio.assetsView.waitForAssetsToLoad();
+        if (currency.portfolioAssetName) {
+          await app.portfolio.assetsView.expectSingleAggregatedRow(
+            "cryptos",
+            currency.portfolioAssetName,
+          );
+        } else {
+          await app.portfolio.assetsView.expectAssetVisibleInSection("cryptos", currency.currency);
         }
+        await app.portfolio.cryptoAddressesBanner.expectBannerVisible();
+        await app.portfolio.cryptoAddressesBanner.expectAddAccountCTANotVisible();
         await app.portfolio.expectAccountsPersistedInAppJson(userdataFile, 1, TIMEOUT.small);
 
         await app.mainNavigation.openTargetFromMainNavigation("accounts");

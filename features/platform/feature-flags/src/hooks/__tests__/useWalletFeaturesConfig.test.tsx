@@ -35,7 +35,12 @@ function withDesktopGraduatedFlags(
   config: WalletFeaturesConfig,
 ): WalletFeaturesConfig {
   return platform === "desktop"
-    ? { ...config, shouldDisplayMyWallet: true, shouldDisplayAggregatedAssets: true }
+    ? {
+        ...config,
+        shouldDisplayAssetSection: true,
+        shouldDisplayMyWallet: true,
+        shouldDisplayAggregatedAssets: true,
+      }
     : config;
 }
 

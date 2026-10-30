@@ -43,7 +43,7 @@ export interface DeeplinkHandlerContext {
   currentSearch: string;
   /** Current React Router location state (used to preserve fields when forcing Recover navigation). */
   currentLocationState: unknown;
-  /** Feature-flag-aware path to the accounts list screen (`/cryptos` or `/accounts`). */
+  /** Path to the accounts list screen (`/cryptos`). */
   accountsPath: string;
   /** Default Ledger Recover app id (from feature flag) for recover deeplink when no path is given */
   recoverAppId?: string;
