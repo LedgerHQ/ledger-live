@@ -22,7 +22,6 @@ import { parseDeepLink, createRoute } from "./parseDeepLink";
 import { executeHandler } from "./registry";
 import { DeeplinkHandlerContext, NavigateFn } from "./types";
 import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
-import { getAssetsDetailPathPrefix } from "LLD/utils/marketAssetNavigation";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -54,10 +53,8 @@ export function useDeepLinkHandler() {
   const isPayTabEnabled = !!lwdPayTab?.enabled;
   const lwdContacts = useFeature("lwdContacts");
   const isContactsEnabled = !!lwdContacts?.enabled;
-  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
-  const assetsPath = getAssetsDetailPathPrefix(shouldDisplayAggregatedAssets);
 
   const navigate: NavigateFn = useCallback(
     (pathname: string, state?: Parameters<NavigateFn>[1], search?: string) => {
@@ -92,7 +89,6 @@ export function useDeepLinkHandler() {
       currentSearch: location.search,
       currentLocationState: location.state,
       accountsPath,
-      assetsPath,
       recoverAppId,
       isProductTourEnabled,
       isGenericAwarenessModalEnabled,
@@ -113,7 +109,6 @@ export function useDeepLinkHandler() {
       location.search,
       location.state,
       accountsPath,
-      assetsPath,
       recoverAppId,
       isProductTourEnabled,
       isGenericAwarenessModalEnabled,

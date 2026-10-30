@@ -24,6 +24,7 @@
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-mockserver-client": "catalog:",
     "@ledgerhq/devices": "catalog:",
+    "@ledgerhq/hw-transport": "catalog:",
     "@ledgerhq/ledger-key-ring-protocol": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

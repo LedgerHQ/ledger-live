@@ -1,12 +1,16 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { FeatureId } from "@shared/feature-flags";
 import {
+  cosmosTransaction,
   hederaTransaction,
   solanaTransaction,
   TransactionWithCustomFee,
 } from "./transactionStrategies";
 import BigNumber from "bignumber.js";
 import type { GetFeatureFn } from "../../wallet-api/FeatureFlags/resolver";
+import type { Account } from "@ledgerhq/types-live";
+import { transactionToIntent } from "../../bridge/generic-coin-framework/utils";
+import type { GenericTransaction } from "../../bridge/generic-coin-framework/types";
 
 function makeGetFeature(enabled: boolean = true): GetFeatureFn {
   return (featureId: FeatureId) => {
@@ -80,6 +84,47 @@ describe("transactionStrategies", () => {
         recipient: transaction.recipient,
         memoType: "string",
         memoValue: "payin-42",
+      });
+    });
+  });
+
+  describe("cosmosTransaction", () => {
+    const transaction: TransactionWithCustomFee = {
+      family: "cosmos",
+      amount: BigNumber(1),
+      recipient: "cosmos1recipient",
+      customFeeConfig: {},
+      payinExtraId: "payin-42",
+    };
+
+    it("should carry the payin memo in the legacy and generic memo fields", () => {
+      expect(cosmosTransaction(transaction)).toMatchObject({
+        family: "cosmos",
+        mode: "send",
+        memo: "payin-42",
+        memoType: "text",
+        memoValue: "payin-42",
+      });
+    });
+
+    it("should craft the generic intent with the payin memo", () => {
+      const account = { currency: { name: "cosmos", units: [{}] } } as Account;
+
+      const intent = transactionToIntent(
+        account,
+        cosmosTransaction(transaction) as GenericTransaction,
+      );
+
+      expect(intent.memo).toEqual({ type: "string", kind: "text", value: "payin-42" });
+    });
+
+    it("should leave the memo empty without a payin extra id", () => {
+      const { payinExtraId: _payinExtraId, ...withoutMemo } = transaction;
+
+      expect(cosmosTransaction(withoutMemo)).toMatchObject({
+        memo: undefined,
+        memoType: null,
+        memoValue: undefined,
       });
     });
   });

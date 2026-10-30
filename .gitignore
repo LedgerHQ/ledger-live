@@ -26,6 +26,7 @@ libs/ui/packages/react/rsbuild.config.js.map
 .nx/cache
 .nx/workspace-data
 .nx/key
+.nx/migrate-runs
 nx.cache-config.json
 rsdoctor/
 

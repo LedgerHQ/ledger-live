@@ -506,6 +506,42 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
   });
 
+  it("should keep the success screen up while a seeded device leaves for Ledger Sync", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "syncOffer",
+        status: "exited",
+        context: {
+          onboardedOnEntry: true,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+    const checks = checksOf(result.current);
+
+    expect(checks.state).toBe("succeeded");
+    expect(checks.onContinue).toBeUndefined();
+  });
+
+  it("should show connecting when an unseeded device leaves for Ledger Sync", () => {
+    useSession.mockReturnValue(
+      session({
+        state: "syncOffer",
+        status: "exited",
+        context: {
+          onboardedOnEntry: false,
+          checksPaused: false,
+        } as DeviceOnboardingSession["context"],
+      }),
+    );
+
+    const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
+
+    expect(result.current.status).toBe("connecting");
+  });
+
   it("should leave the success screen when the user continues", () => {
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded" }));
 

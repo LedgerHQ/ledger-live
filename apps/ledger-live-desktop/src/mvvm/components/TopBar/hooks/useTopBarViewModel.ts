@@ -9,8 +9,7 @@ import { useMockServerTransport } from "./useMockServerTransport";
 import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
     useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
@@ -129,7 +128,6 @@ const useTopBarViewModel = () => {
     inManager,
     isInformationCenterOpen,
     onInformationCenterClose,
-    shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
   };
 };

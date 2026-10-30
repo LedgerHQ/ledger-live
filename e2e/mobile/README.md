@@ -139,6 +139,10 @@ See the `ffPresetMap` in `utils/featureFlagUtils.ts` for available presets.
 
 To keep a spec out of CI, use a `.skip.spec.ts` suffix. See [Known failures and skips](docs/e2e-mobile-conventions.md#a-tracked-failure-must-use-knownfailure).
 
+## Typecheck
+
+Run `pnpm nx typecheck ledger-live-mobile-e2e-tests` to typecheck building workspace libraries first. `pnpm typecheck` in this directory checks the built `lib/` and reports false errors when `libs/live-e2e-shared/src` is newer than that build.
+
 ## Before committing a test change
 
 CI runs on a slower, software-rendered emulator, so a wait that is only just long enough passes

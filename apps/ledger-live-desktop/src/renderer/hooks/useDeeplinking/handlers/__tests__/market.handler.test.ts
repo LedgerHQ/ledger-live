@@ -50,64 +50,40 @@ describe("marketHandler", () => {
     expect(context.navigate).toHaveBeenCalledWith("/market");
   });
 
-  it("navigates to market detail when path is valid and aggregated assets are off", () => {
-    const context = createMockContext({ assetsPath: "/market" });
-
-    marketHandler({ type: "market", path: "ethereum" }, context);
-
-    expect(context.navigate).toHaveBeenCalledWith("/market/ethereum");
-  });
-
-  it("normalizes case when aggregated assets are off", () => {
-    const context = createMockContext({ assetsPath: "/market" });
-
-    marketHandler({ type: "market", path: "BiTcOiN" }, context);
-
-    expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
-  });
-
-  it("uses the canonical parsed coin id when aggregated assets are off", () => {
-    const context = createMockContext({ assetsPath: "/market" });
-
-    marketHandler({ type: "market", path: "bit%63oin" }, context);
-
-    expect(context.navigate).toHaveBeenCalledWith("/market/bitcoin");
-  });
-
-  it("falls back to market list for an unresolvable path when aggregated assets are on", () => {
-    const context = createMockContext({ assetsPath: "/asset" });
+  it("falls back to market list for an unresolvable path", () => {
+    const context = createMockContext();
 
     marketHandler({ type: "market", path: "unknown_coin" }, context);
 
     expect(context.navigate).toHaveBeenCalledWith("/market");
   });
 
-  it("falls back to market list for unknown currency when aggregated assets are off", () => {
-    const context = createMockContext({ assetsPath: "/market" });
-
-    marketHandler({ type: "market", path: "unknown_coin" }, context);
-
-    expect(context.navigate).toHaveBeenCalledWith("/market");
-  });
-
-  it("navigates to asset detail when path is provided and aggregated assets are on", () => {
-    const context = createMockContext({ assetsPath: "/asset" });
+  it("navigates to asset detail when path is provided", () => {
+    const context = createMockContext();
 
     marketHandler({ type: "market", path: "ethereum" }, context);
 
     expect(context.navigate).toHaveBeenCalledWith("/asset/ethereum");
   });
 
-  it("normalizes a coin path when aggregated assets are on", () => {
-    const context = createMockContext({ assetsPath: "/asset" });
+  it("normalizes a coin path", () => {
+    const context = createMockContext();
 
     marketHandler({ type: "market", path: "BiTcOiN" }, context);
 
     expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
   });
 
-  it("navigates to asset detail with market state for a Ledger token id when aggregated assets are on", () => {
-    const context = createMockContext({ assetsPath: "/asset" });
+  it("uses the canonical parsed coin id", () => {
+    const context = createMockContext();
+
+    marketHandler({ type: "market", path: "bit%63oin" }, context);
+
+    expect(context.navigate).toHaveBeenCalledWith("/asset/bitcoin");
+  });
+
+  it("navigates to asset detail with market state for a Ledger token id", () => {
+    const context = createMockContext();
 
     marketHandler({ type: "market", path: "ethereum/erc20/usd_tether__erc20_" }, context);
 
@@ -115,13 +91,5 @@ describe("marketHandler", () => {
       id: "ethereum/erc20/usd_tether__erc20_",
       ledgerIds: ["ethereum/erc20/usd_tether__erc20_"],
     });
-  });
-
-  it("falls back to market list for a token path when aggregated assets are off", () => {
-    const context = createMockContext({ assetsPath: "/market" });
-
-    marketHandler({ type: "market", path: "ethereum/erc20/usd_tether__erc20_" }, context);
-
-    expect(context.navigate).toHaveBeenCalledWith("/market");
   });
 });

@@ -13,15 +13,14 @@ import {
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useCategorizedAssetsFromPortfolio() {
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const distribution = useDistribution({
     showEmptyAccounts: true,
     hideEmptyTokenAccount,
-    groupBy: shouldDisplayAggregatedAssets ? "asset" : undefined,
+    groupBy: "asset",
   });
 
   const {

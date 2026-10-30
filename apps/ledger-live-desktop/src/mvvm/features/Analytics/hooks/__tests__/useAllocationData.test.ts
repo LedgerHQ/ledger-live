@@ -122,7 +122,10 @@ describe("useAllocationData", () => {
       },
     });
 
-    expect(mockUseDistribution).toHaveBeenCalledWith({ hideEmptyTokenAccount: true });
+    expect(mockUseDistribution).toHaveBeenCalledWith({
+      hideEmptyTokenAccount: true,
+      groupBy: "asset",
+    });
   });
 
   it("should show at most 6 items initially and expose hasMore when there are more", () => {
