@@ -382,7 +382,9 @@ jobs:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
+      # Once per run: the first shard of the first device writes the context for every leg.
       - name: Write workflow context to GitHub Summary
+        if: ${{ matrix.is_primary && matrix.shard == 1 }}
         env:
           FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
           BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
@@ -395,8 +397,10 @@ jobs:
           TEAM_INPUT: ${{ inputs.team || 'all' }}
           SPECULOS_MODE: ${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
           EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
+          DEVICES: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('{0} + {1}', needs.prepare-devices.outputs.device_1, needs.prepare-devices.outputs.device_2) || needs.prepare-devices.outputs.device_1 }}
+          SHARD_TOTAL: ${{ matrix.shard_total }}
+          RUN_ON_MACOS: ${{ inputs.run_on_macos || false }}
         run: |
-          DEVICE="$SPECULOS_DEVICE"
           EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
 
           if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
@@ -413,7 +417,9 @@ jobs:
             echo "- **Workflow source branch:** $WORKFLOW_REF"
             echo "- **Triggered branch:** $TRIGGERED_BRANCH"
             echo "- **Commit SHA:** $COMMIT_SHA"
-            echo "- **Device selected:** $DEVICE"
+            echo "- **Device selected:** $DEVICES"
+            echo "- **Shards per device:** $SHARD_TOTAL"
+            echo "- **Also on macOS:** $RUN_ON_MACOS"
             echo "- **Speculos:** $SPECULOS_MODE"
             echo "- **Team:** $TEAM_INPUT"
             echo "$FILTER_SUMMARY"
@@ -468,10 +474,11 @@ jobs:
       # Every app launch fetches Firebase Remote Config, and overlapping runs share a 60 fetches/min
       # quota per IP. The proxy makes one fetch per run and replays it to every launch.
       # Refs dispatched from develop that predate the addon run without it.
+      # The Shard diagnostics job reports its stats from the uploaded logs, so it skips this job's summary.
       - name: Start Remote Config capture proxy
         if: ${{ hashFiles('.mise/tasks/mitmproxy/firebase_capture.py') != '' }}
         continue-on-error: true
-        run: mise run mitmproxy:capture-start
+        run: GITHUB_STEP_SUMMARY=/dev/null mise run mitmproxy:capture-start
         shell: bash
 
       - name: Run Playwright E2E tests
@@ -488,6 +495,7 @@ jobs:
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           shard_index: ${{ matrix.shard }}
           shard_total: ${{ matrix.shard_total }}
+          step_summary: false
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -509,7 +517,7 @@ jobs:
         id: capture-proxy
         if: ${{ !cancelled() && hashFiles('.mise/tasks/mitmproxy/firebase_capture.py') != '' }}
         continue-on-error: true
-        run: mise run mitmproxy:capture-stop
+        run: GITHUB_STEP_SUMMARY=/dev/null mise run mitmproxy:capture-stop
         shell: bash
 
       - name: Add workflow inputs to Allure environment
@@ -545,6 +553,15 @@ jobs:
         with:
           name: firebase-capture-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: ${{ runner.temp }}/firebase-capture*
+          retention-days: 7
+
+      - name: Upload Playwright log for the shard diagnostics
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: playwright-log${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
+          path: ${{ runner.temp }}/playwright-output.log
+          if-no-files-found: ignore
           retention-days: 7
 
   e2e-tests-macos:
@@ -638,49 +655,6 @@ jobs:
           enable_broadcast: ${{ env.E2E_BROADCAST_ENABLED }}
           build_type: ${{ inputs.build_type }}
 
-      - name: Write workflow context to GitHub Summary
-        env:
-          FILTER_PATTERN: ${{ steps.test-filter.outputs.filter }}
-          BUILD_TYPE: ${{ inputs.build_type || 'testing' }}
-          BROADCAST_ENABLED: ${{ env.E2E_BROADCAST_ENABLED }}
-          REPEAT_EACH: ${{ inputs.repeat_each }}
-          WORKFLOW_REF: ${{ github.workflow_ref }}
-          TRIGGERED_BRANCH: ${{ inputs.ref || github.ref_name }}
-          COMMIT_SHA: ${{ github.sha }}
-          FEATURE_FLAGS: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
-          TEAM_INPUT: ${{ inputs.team || 'all' }}
-          EXCLUSIVE_LOCK: ${{ inputs.exclusive_lock || 'remote' }}
-        run: |
-          DEVICE="$SPECULOS_DEVICE"
-          EXTRA_FEATURE_FLAGS="$E2E_FEATURE_FLAGS_JSON"
-
-          if [ -z "$EXTRA_FEATURE_FLAGS" ]; then
-            EXTRA_FEATURE_FLAGS="(none)"
-          fi
-          if [ -z "$REPEAT_EACH" ]; then
-            REPEAT_EACH="(none)"
-          fi
-
-          FILTER_SUMMARY="$(node e2e/tooling/filter/format-summary.mjs "$FILTER_PATTERN")"
-          {
-            echo "## Workflow Context"
-            echo ""
-            echo "- **Workflow source branch:** $WORKFLOW_REF"
-            echo "- **Triggered branch:** $TRIGGERED_BRANCH"
-            echo "- **Commit SHA:** $COMMIT_SHA"
-            echo "- **OS:** macOS"
-            echo "- **Device selected:** $DEVICE"
-            echo "- **Speculos:** Speculinho (remote)"
-            echo "- **Team:** $TEAM_INPUT"
-            echo "$FILTER_SUMMARY"
-            echo "- **Firebase env to target:** $BUILD_TYPE"
-            echo "- **Broadcast enabled:** $BROADCAST_ENABLED"
-            echo "- **Exclusive lock:** $EXCLUSIVE_LOCK"
-            echo "- **Feature Flags:** $FEATURE_FLAGS"
-            echo "- **JSON override feature flags:** $EXTRA_FEATURE_FLAGS"
-            echo "- **Repeat each:** $REPEAT_EACH"
-          } >> "$GITHUB_STEP_SUMMARY"
-
       - name: Validate feature flags JSON input
         shell: bash
         run: |
@@ -732,6 +706,7 @@ jobs:
           repeat_each: ${{ inputs.repeat_each }}
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           workers: "6"
+          step_summary: false
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -774,6 +749,15 @@ jobs:
           name: allure-results-macos
           path: "e2e/desktop/allure-results"
 
+      - name: Upload Playwright log for the shard diagnostics
+        if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: playwright-log-macos
+          path: ${{ runner.temp }}/playwright-output.log
+          if-no-files-found: ignore
+          retention-days: 7
+
   report-to-allure:
     name: "Create Allure Report - ${{ needs.prepare-devices.outputs.device_1 }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
@@ -782,6 +766,7 @@ jobs:
       status: ${{ steps.summary.outputs.status }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
+      qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     if: ${{ !cancelled() }}
     env:
       ALLURE_RESULTS: "allure-results"
@@ -792,6 +777,11 @@ jobs:
           pattern: allure-results-shard-*
           merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
+
+      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      - name: Keep the raw results for qaa-allure
+        run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
+        shell: bash
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
@@ -812,6 +802,28 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
 
+      - name: Upload to qaa-allure (Experimental)
+        id: qaa-allure-upload
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}-qaa
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          step_summary: false
+
+      - name: Link the qaa-allure report
+        if: ${{ steps.qaa-allure-upload.outputs.report_url != '' }}
+        env:
+          REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+        run: echo "[Open QAA report (experimental)](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
@@ -820,7 +832,7 @@ jobs:
           runner: playwright
 
   report-to-allure-device2:
-    name: "Create Allure Report - device 2"
+    name: "Create Allure Report - ${{ needs.prepare-devices.outputs.is_dual == 'true' && needs.prepare-devices.outputs.device_2 || 'device 2' }}"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
@@ -828,6 +840,7 @@ jobs:
       status: ${{ steps.summary.outputs.status }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
+      qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results-device2"
     steps:
@@ -837,6 +850,11 @@ jobs:
           pattern: allure-results-${{ needs.prepare-devices.outputs.device_2 }}-shard-*
           merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
+
+      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      - name: Keep the raw results for qaa-allure
+        run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
+        shell: bash
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
@@ -857,6 +875,28 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
 
+      - name: Upload to qaa-allure (Experimental)
+        id: qaa-allure-upload
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}-qaa
+          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
+          branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
+          step_summary: false
+
+      - name: Link the qaa-allure report
+        if: ${{ steps.qaa-allure-upload.outputs.report_url != '' }}
+        env:
+          REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+        run: echo "[Open QAA report (experimental)](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
@@ -867,12 +907,13 @@ jobs:
   report-to-allure-macos:
     name: "Create Allure Report - macOS"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [e2e-tests-macos]
+    needs: [prepare-devices, e2e-tests-macos]
     if: ${{ !cancelled() && inputs.run_on_macos }}
     outputs:
       status: ${{ steps.summary.outputs.status }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
+      qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
     env:
       ALLURE_RESULTS: "allure-results-macos"
     steps:
@@ -881,6 +922,11 @@ jobs:
         with:
           name: allure-results-macos
           path: ${{ env.ALLURE_RESULTS }}
+
+      # The Allure steps below generate a report and recompress screenshots inside the results directory.
+      - name: Keep the raw results for qaa-allure
+        run: cp -R "$ALLURE_RESULTS" "$ALLURE_RESULTS-qaa"
+        shell: bash
 
       - name: Extract test summary for Slack notification
         if: ${{ !cancelled() }}
@@ -901,6 +947,28 @@ jobs:
           path: ${{ env.ALLURE_RESULTS }}
           summary_message: ${{ steps.summary.outputs.summary_message }}
 
+      - name: Upload to qaa-allure (Experimental)
+        id: qaa-allure-upload
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        timeout-minutes: 15
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        with:
+          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
+          path: ${{ env.ALLURE_RESULTS }}-qaa
+          name: "desktop-e2e-macos-${{ needs.prepare-devices.outputs.device_1 }}-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
+          tags: ${{ format('["desktop","speculos","macos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(inputs.smoke_tests && 'smoke' || 'manual')) }}
+          branch: ${{ inputs.ref || github.ref_name }}
+          history_key: "desktop-e2e-macos-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
+          step_summary: false
+
+      - name: Link the qaa-allure report
+        if: ${{ steps.qaa-allure-upload.outputs.report_url != '' }}
+        env:
+          REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
+        run: echo "[Open QAA report (experimental)](${REPORT_URL})" >> "$GITHUB_STEP_SUMMARY"
+        shell: bash
+
       - name: Write failed tests summary
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/composites/get-failed-tests-summary@develop
@@ -908,99 +976,183 @@ jobs:
           results-path: ${{ env.ALLURE_RESULTS }}
           runner: playwright
 
-  qaa-allure-upload:
-    name: "QAA Allure Upload - ${{ needs.prepare-devices.outputs.device_1 }} (Experimental)"
+  # Debug details of every test leg, collapsed, after the per-device reports.
+  shard-diagnostics:
+    name: "Shard diagnostics"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos]
     if: ${{ !cancelled() }}
     continue-on-error: true
     timeout-minutes: 15
-    outputs:
-      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    env:
-      ALLURE_RESULTS: "allure-results"
     steps:
-      - name: Download Allure results from test job
+      - name: Download Allure results of every leg
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: allure-results-shard-*
-          merge-multiple: true
-          path: ${{ env.ALLURE_RESULTS }}
+          pattern: allure-results*
+          path: diagnostics/allure
 
-      - name: Upload to qaa-allure (sandbox)
-        id: qaa-allure-upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
-        with:
-          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
-          path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_1 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
-          branch: ${{ inputs.ref || github.ref_name }}
-          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-
-  qaa-allure-upload-device2:
-    name: "QAA Allure Upload - device 2 (Experimental)"
-    runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests]
-    if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
-    continue-on-error: true
-    timeout-minutes: 15
-    outputs:
-      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    env:
-      ALLURE_RESULTS: "allure-results-device2"
-    steps:
-      - name: Download Allure results from device2 test job
+      - name: Download Playwright logs of every leg
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          pattern: allure-results-${{ needs.prepare-devices.outputs.device_2 }}-shard-*
-          merge-multiple: true
-          path: ${{ env.ALLURE_RESULTS }}
+          pattern: playwright-log*
+          path: diagnostics/playwright-log
 
-      - name: Upload to qaa-allure (sandbox)
-        id: qaa-allure-upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
-        with:
-          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
-          path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-${{ needs.prepare-devices.outputs.device_2 }}-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-          tags: ${{ format('["desktop","speculos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_2), toJSON(github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual'))) }}
-          branch: ${{ inputs.ref || github.ref_name }}
-          history_key: "desktop-e2e-${{ github.event_name == 'schedule' && 'nightly' || (inputs.smoke_tests && 'smoke' || 'manual') }}"
-
-  qaa-allure-upload-macos:
-    name: "QAA Allure Upload - macOS (Experimental)"
-    runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, e2e-tests-macos]
-    if: ${{ !cancelled() && inputs.run_on_macos }}
-    continue-on-error: true
-    timeout-minutes: 15
-    outputs:
-      report_url: ${{ steps.qaa-allure-upload.outputs.report_url }}
-    env:
-      ALLURE_RESULTS: "allure-results-macos"
-    steps:
-      - name: Download Allure results from macOS test job
+      - name: Download Remote Config capture proxy logs of every leg
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results-macos
-          path: ${{ env.ALLURE_RESULTS }}
+          pattern: firebase-capture-logs*
+          path: diagnostics/proxy
 
-      - name: Upload to qaa-allure (sandbox)
-        id: qaa-allure-upload
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+      - name: Write shard diagnostics
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          DEVICE_1: ${{ needs.prepare-devices.outputs.device_1 }}
         with:
-          api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
-          path: ${{ env.ALLURE_RESULTS }}
-          name: "desktop-e2e-macos-${{ needs.prepare-devices.outputs.device_1 }}-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
-          tags: ${{ format('["desktop","speculos","macos",{0},{1}]', toJSON(needs.prepare-devices.outputs.device_1), toJSON(inputs.smoke_tests && 'smoke' || 'manual')) }}
-          branch: ${{ inputs.ref || github.ref_name }}
-          history_key: "desktop-e2e-macos-${{ inputs.smoke_tests && 'smoke' || 'manual' }}"
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            const ROOT = "diagnostics";
+            const DEVICE_1 = process.env.DEVICE_1;
+
+            const listDir = dir => (fs.existsSync(dir) ? fs.readdirSync(dir) : []);
+            const readJson = file => JSON.parse(fs.readFileSync(file, "utf8"));
+            const escapeHtml = text => String(text).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const formatDuration = ms => `${Math.floor(ms / 60000)}m ${String(Math.round((ms % 60000) / 1000)).padStart(2, "0")}s`;
+
+            // Every artifact of a leg ends with the same suffix: "-shard-2", "-stax-shard-2" or "-macos".
+            const legSuffixes = listDir(path.join(ROOT, "allure"))
+              .filter(name => name.startsWith("allure-results"))
+              .map(name => name.slice("allure-results".length));
+
+            const describeLeg = suffix => {
+              const shard = /^(?:-(.+))?-shard-(\d+)$/.exec(suffix);
+              return shard
+                ? { device: shard[1] ?? DEVICE_1, shard: Number(shard[2]) }
+                : { device: `${DEVICE_1} (${suffix.slice(1)})`, shard: 0 };
+            };
+
+            const allureStats = dir => {
+              const attempts = listDir(dir)
+                .filter(file => file.endsWith("-result.json"))
+                .map(file => readJson(path.join(dir, file)));
+              const attemptsByTest = new Map();
+              for (const attempt of attempts) {
+                const id = attempt.historyId ?? attempt.fullName ?? attempt.name;
+                attemptsByTest.set(id, [...(attemptsByTest.get(id) ?? []), attempt]);
+              }
+              // Same rule as get-failed-tests-summary: failed means it never passed, retries included.
+              const outcomes = { passed: 0, failed: 0, flaky: 0, skipped: 0 };
+              const flakyTests = [];
+              for (const tries of attemptsByTest.values()) {
+                const passed = tries.some(t => t.status === "passed");
+                const failed = tries.some(t => t.status === "failed" || t.status === "broken");
+                const outcome = passed && failed ? "flaky" : passed ? "passed" : failed ? "failed" : "skipped";
+                outcomes[outcome] += 1;
+                if (outcome === "flaky") flakyTests.push(tries[0].name);
+              }
+              // Speculinho errors read "Timeout: <url>/status/<app>-lw-ci-<id> did not become ready within <ms>ms".
+              const notReadyApps = attempts
+                .map(t => t.statusDetails?.message ?? "")
+                .filter(message => message.includes("did not become ready"))
+                .map(message => /\/status\/(.+?)-lw-ci-/.exec(message)?.[1] ?? "unknown");
+              const starts = attempts.map(t => t.start).filter(Boolean);
+              const stops = attempts.map(t => t.stop).filter(Boolean);
+              const testTimeMs = starts.length && stops.length ? Math.max(...stops) - Math.min(...starts) : 0;
+              return { tests: attemptsByTest.size, ...outcomes, flakyTests, notReadyApps, testTimeMs };
+            };
+
+            // scripts/playwrightWithDeferrals.mjs prints "Pass <n>: <count> test(s) whose exclusive locks were busy".
+            const lockDeferrals = file =>
+              fs.existsSync(file)
+                ? [...fs.readFileSync(file, "utf8").matchAll(/Pass \d+: (\d+) test\(s\) whose exclusive locks were busy/g)]
+                    .reduce((sum, match) => sum + Number(match[1]), 0)
+                : null;
+
+            const remoteConfigFetches = file => {
+              if (!fs.existsSync(file)) return "off";
+              const stats = Object.values(readJson(file));
+              const sum = key => stats.reduce((total, entry) => total + (entry[key] ?? 0), 0);
+              const problems = [["timed out", sum("timedOut")], ["failed", sum("failed")]].filter(([, count]) => count > 0);
+              return `${sum("upstream")} / ${sum("replayed")}${problems.map(([label, count]) => `, ${count} ${label}`).join("")}`;
+            };
+
+            const legs = legSuffixes
+              .map(suffix => ({
+                ...describeLeg(suffix),
+                ...allureStats(path.join(ROOT, "allure", `allure-results${suffix}`)),
+                lockDeferrals: lockDeferrals(path.join(ROOT, "playwright-log", `playwright-log${suffix}`, "playwright-output.log")),
+                remoteConfig: remoteConfigFetches(path.join(ROOT, "proxy", `firebase-capture-logs${suffix}`, "firebase-capture-summary.json")),
+              }))
+              // Device 1, then device 2, then the unsharded macOS leg.
+              .sort(
+                (a, b) =>
+                  (a.shard === 0) - (b.shard === 0) ||
+                  (a.device !== DEVICE_1) - (b.device !== DEVICE_1) ||
+                  a.shard - b.shard,
+              );
+
+            if (legs.length === 0) {
+              await core.summary.addRaw("No shard uploaded Allure results.").write();
+              return;
+            }
+
+            const total = key => legs.reduce((sum, leg) => sum + (leg[key] ?? 0), 0);
+            const notReadyApps = legs.flatMap(leg => leg.notReadyApps);
+            const notReadyByApp = Object.entries(
+              notReadyApps.reduce((counts, app) => ({ ...counts, [app]: (counts[app] ?? 0) + 1 }), {}),
+            ).sort(([, a], [, b]) => b - a);
+            const headline = [
+              `${legs.length} legs`,
+              `longest test time ${formatDuration(Math.max(...legs.map(leg => leg.testTimeMs)))}`,
+              `${total("flaky")} flaky`,
+              `${notReadyApps.length} Speculinho not ready`,
+              `${total("lockDeferrals")} lock deferrals`,
+            ].join(" · ");
+
+            const rows = legs.map(leg =>
+              [
+                leg.device,
+                leg.shard || "—",
+                leg.tests,
+                leg.passed,
+                leg.failed,
+                leg.flaky,
+                leg.skipped,
+                formatDuration(leg.testTimeMs),
+                leg.notReadyApps.length,
+                leg.lockDeferrals ?? "—",
+                leg.remoteConfig,
+              ].join(" | "),
+            );
+            const flakyList = legs.flatMap(leg =>
+              leg.flakyTests.map(name => `- ${leg.device}${leg.shard ? ` · shard ${leg.shard}` : ""}: ${escapeHtml(name)}`),
+            );
+
+            await core.summary
+              .addRaw(
+                [
+                  `<details><summary>Shard diagnostics: ${headline}</summary>`,
+                  "",
+                  "| Device | Shard | Tests | Passed | Failed | Flaky | Skipped | Test time | Speculinho not ready | Lock deferrals | Remote Config upstream / replayed |",
+                  "| --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --- |",
+                  ...rows.map(row => `| ${row} |`),
+                  "",
+                  notReadyByApp.length
+                    ? `**Speculinho not ready, by app:** ${notReadyByApp.map(([app, count]) => `${app} ×${count}`).join(", ")}`
+                    : "",
+                  "",
+                  flakyList.length ? `**Flaky, passed on retry (${flakyList.length}):**\n\n${flakyList.join("\n")}` : "",
+                  "",
+                  "</details>",
+                ].join("\n"),
+              )
+              .write();
 
   notify-to-slack:
     name: "Notify to Slack"
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
-    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos, qaa-allure-upload, qaa-allure-upload-device2, qaa-allure-upload-macos]
+    needs: [prepare-devices, report-to-allure, report-to-allure-device2, report-to-allure-macos]
     if: ${{ always() && (inputs.slack_notif || github.event_name == 'schedule') }}
     env:
       IS_DUAL: ${{ needs.prepare-devices.outputs.is_dual }}
@@ -1026,7 +1178,7 @@ jobs:
           row1_summary: ${{ needs.report-to-allure.outputs.summary_message }}
           row1_report_url: ${{ needs.report-to-allure.outputs.report-url }}
           row1_status: ${{ needs.report-to-allure.outputs.status }}
-          row1_qaa_url: ${{ needs.qaa-allure-upload.outputs.report_url }}
+          row1_qaa_url: ${{ needs.report-to-allure.outputs.qaa-report-url }}
           # Row 2 only renders on dual-device runs (empty label = dropped).
           row2_emoji: "🐧"
           row2_label: ${{ env.IS_DUAL == 'true' && format('linux ({0})', env.DEVICE_2) || '' }}
@@ -1034,7 +1186,7 @@ jobs:
           row2_summary: ${{ needs.report-to-allure-device2.outputs.summary_message }}
           row2_report_url: ${{ needs.report-to-allure-device2.outputs.report-url }}
           row2_status: ${{ needs.report-to-allure-device2.outputs.status }}
-          row2_qaa_url: ${{ needs.qaa-allure-upload-device2.outputs.report_url }}
+          row2_qaa_url: ${{ needs.report-to-allure-device2.outputs.qaa-report-url }}
           # Row 3 only renders when the run also ran on macOS.
           row3_emoji: "🍎"
           row3_label: ${{ inputs.run_on_macos && 'macos' || '' }}
@@ -1042,4 +1194,4 @@ jobs:
           row3_summary: ${{ needs.report-to-allure-macos.outputs.summary_message }}
           row3_report_url: ${{ needs.report-to-allure-macos.outputs.report-url }}
           row3_status: ${{ needs.report-to-allure-macos.outputs.status }}
-          row3_qaa_url: ${{ needs.qaa-allure-upload-macos.outputs.report_url }}
+          row3_qaa_url: ${{ needs.report-to-allure-macos.outputs.qaa-report-url }}
