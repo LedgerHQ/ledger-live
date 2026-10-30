@@ -65,6 +65,23 @@ describe("FamilyBlocksView", () => {
     expect(screen.queryByTestId("balance-summary-footer")).toBeNull();
   });
 
+  it("renders the Account Detail delegations last, instead of the legacy body header", () => {
+    const { container } = renderView({
+      family: { ...family, AccountDetailDelegations: block("detail-delegations") },
+    });
+
+    expect(
+      Array.from(container.children, child => {
+        return child.getAttribute("data-testid");
+      }),
+    ).toEqual([
+      "pending-transfer-proposals",
+      "sub-header",
+      "balance-summary-footer",
+      "detail-delegations",
+    ]);
+  });
+
   it("renders nothing for a family without blocks", () => {
     const { container } = renderView({ family: {} });
 
