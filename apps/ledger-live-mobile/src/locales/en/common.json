@@ -5960,7 +5960,7 @@
       "start": "Start update"
     },
     "preparing": {
-      "title": "Preparing for install"
+      "title": "Preparing update..."
     },
     "progress": {
       "updatingTitle": "Update {{index}}/{{count}}",
