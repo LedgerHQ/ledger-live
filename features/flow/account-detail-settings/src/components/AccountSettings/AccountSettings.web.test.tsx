@@ -4,8 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { advancedLogsInput } from "../../__tests__/fixtures";
 import { buildAdvancedLogs } from "../../logic/buildAdvancedLogs";
-import { AccountSettings } from "./AccountSettings.web";
-import type { AccountSettingsAccount, AccountSettingsAdapter } from "./types.web";
+import { AccountSettings } from "./AccountSettings";
+import type { AccountSettingsAccount, AccountSettingsAdapter } from "./types";
 
 jest.mock("@shared/clipboard", () => ({ copyToClipboard: jest.fn() }));
 

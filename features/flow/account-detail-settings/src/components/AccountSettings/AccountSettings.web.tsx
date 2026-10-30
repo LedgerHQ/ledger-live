@@ -1,7 +1,7 @@
 import React from "react";
-import { AccountSettingsDialog } from "../AccountSettingsDialog/AccountSettingsDialog.web";
-import type { AccountSettingsAccount, AccountSettingsProps } from "./types.web";
-import { useAccountSettingsViewModel } from "./useAccountSettingsViewModel.web";
+import { AccountSettingsDialog } from "../AccountSettingsDialog/AccountSettingsDialog";
+import type { AccountSettingsAccount, AccountSettingsProps } from "./types";
+import { useAccountSettingsViewModel } from "./useAccountSettingsViewModel";
 
 export function AccountSettings<TAccount extends AccountSettingsAccount>({
   account,

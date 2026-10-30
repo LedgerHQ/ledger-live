@@ -5,8 +5,8 @@ import { copyToClipboard } from "@shared/clipboard";
 import { advancedLogsInput } from "../../__tests__/fixtures";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
 import { buildAdvancedLogs } from "../../logic/buildAdvancedLogs";
-import { AccountSettingsDialog } from "./AccountSettingsDialog.web";
-import type { AccountSettingsDialogProps } from "./types.web";
+import { AccountSettingsDialog } from "./AccountSettingsDialog";
+import type { AccountSettingsDialogProps } from "./types";
 
 jest.mock("@shared/clipboard", () => ({ copyToClipboard: jest.fn() }));
 
