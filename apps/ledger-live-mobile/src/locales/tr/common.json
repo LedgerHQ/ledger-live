@@ -10354,7 +10354,7 @@
             "steps" : {
               "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
               "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
-              "step3" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Karekodu göster/0> adımlarını izleyin",
+              "step3" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
           }

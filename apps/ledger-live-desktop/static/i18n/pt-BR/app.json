@@ -328,7 +328,7 @@
     "remove" : {
       "title" : "Remover conta?",
       "description" : "Os ativos vinculados a esta conta não estarão mais visíveis em seu portfólio. Seus ativos na blockchain permanecem inalterados.",
-      "confirm" : "Yes, remove",
+      "confirm" : "Sim, remover",
       "cancel" : "Manter"
     }
   },
