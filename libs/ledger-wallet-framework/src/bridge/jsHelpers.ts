@@ -586,7 +586,10 @@ export const makeScanAccounts =
             // available. Intermediate empty accounts sitting inside a gap before a
             // later used account must not be offered as creatable.
             let firstEmptyAccountEmitted = false;
-            const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(derivationMode);
+            const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(
+              derivationMode,
+              currency,
+            );
             const derivationScheme = getDerivationScheme({
               derivationMode,
               currency,

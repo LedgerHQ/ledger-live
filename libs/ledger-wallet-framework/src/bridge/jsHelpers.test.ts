@@ -999,6 +999,87 @@ describe("makeScanAccounts", () => {
     }
   });
 
+  describe("per-currency gap limit", () => {
+    // Scans the default derivation mode and returns the discovered accounts and every
+    // index the scan fetched, to assert where it stopped.
+    const scan = async (currencyId: string, usedIndexes: Set<number>) => {
+      const currency = getCryptoCurrencyById(currencyId) as unknown as CryptoCurrency;
+      const getAddressFn = (_deviceId: string, opts: { path: string }) =>
+        Promise.resolve({
+          address: `0x${opts.path}`,
+          path: opts.path,
+          publicKey: `pk-${opts.path}`,
+        });
+      const scannedIndexes: number[] = [];
+      const scanAccounts = makeScanAccounts({
+        getAccountShape: info => {
+          const isDefaultMode = info.derivationMode === "";
+          if (isDefaultMode) scannedIndexes.push(Number(info.index));
+          return Promise.resolve({
+            id: `${currencyId}-${info.derivationMode || "default"}-${info.index}`,
+            used: isDefaultMode && usedIndexes.has(Number(info.index)),
+            balanceHistoryCache: createEmptyHistoryCache(),
+          });
+        },
+        getAddressFn,
+      });
+      const events: Array<{ type: string; account?: Account }> = [];
+      await new Promise<void>((resolve, reject) => {
+        scanAccounts({
+          currency,
+          deviceId: "deviceId",
+          syncConfig: { paginationConfig: {} },
+        }).subscribe({
+          next: e => events.push(e),
+          complete: () => resolve(),
+          error: reject,
+        });
+      });
+      const discovered = events
+        .filter(e => e.type === "discovered")
+        .map(e => e.account!)
+        .filter(a => a.id.startsWith(`${currencyId}-default-`));
+      return {
+        used: discovered.filter(a => a.used).map(a => a.id),
+        empty: discovered.filter(a => !a.used).map(a => a.id),
+        scannedIndexes,
+      };
+    };
+    const range = (from: number, to: number) =>
+      Array.from({ length: to - from + 1 }, (_, i) => from + i);
+
+    it("finds a hypercore account after exactly 10 empty indexes", async () => {
+      const result = await scan("hypercore", new Set([10]));
+
+      expect(result.used).toEqual(["hypercore-default-10"]);
+      expect(result.empty).toEqual(["hypercore-default-0"]);
+      expect(result.scannedIndexes).toEqual(range(0, 21));
+    });
+
+    it("crosses several hypercore gaps of up to 10 empty indexes", async () => {
+      const result = await scan("hypercore", new Set([3, 14]));
+
+      expect(result.used).toEqual(["hypercore-default-3", "hypercore-default-14"]);
+      expect(result.empty).toEqual(["hypercore-default-0"]);
+    });
+
+    it("stops the hypercore scan after 10 empty indexes", async () => {
+      const result = await scan("hypercore", new Set([11]));
+
+      expect(result.used).toEqual([]);
+      expect(result.empty).toEqual(["hypercore-default-0"]);
+      expect(result.scannedIndexes).toEqual(range(0, 10));
+    });
+
+    it("keeps stopping at the first empty index for other currencies", async () => {
+      const result = await scan("arbitrum", new Set([1]));
+
+      expect(result.used).toEqual([]);
+      expect(result.empty).toEqual(["arbitrum-default-0"]);
+      expect(result.scannedIndexes).toEqual([0]);
+    });
+  });
+
   it("does not call complete when subscription is unsubscribed before scan finishes", async () => {
     const addressResolver = {
       address: "address",
