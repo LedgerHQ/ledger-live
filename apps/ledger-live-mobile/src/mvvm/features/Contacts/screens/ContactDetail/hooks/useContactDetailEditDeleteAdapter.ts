@@ -9,7 +9,7 @@ import {
   createContactDetailEditDeleteUiState,
   useContactDetailEditDeleteFlowBindings,
 } from "@features/flow-contacts-detail";
-import type { ContactsDeleteContactDrawerProps } from "@features/flow-contacts-delete-contact";
+import type { ContactsDeleteContactDialogProps } from "@features/flow-contacts-delete-contact";
 import type { ContactsRenameContactDrawerProps } from "@features/flow-contacts-edit-contact";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { useMemo } from "react";
@@ -24,7 +24,7 @@ export type ContactDetailEditDeleteFlowProps = Readonly<{
     onClose: () => void;
   }>;
   renameDrawer: ContactsRenameContactDrawerProps;
-  deleteDrawer: ContactsDeleteContactDrawerProps;
+  deleteDrawer: ContactsDeleteContactDialogProps;
   signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
   onOpenActionsMenu: () => void;
 }>;

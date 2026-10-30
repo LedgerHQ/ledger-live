@@ -99,9 +99,6 @@ const COMPONENT_EXCEPTIONS = {
   "features/flow/flow-contacts-delete-address": {
     ContactsDeleteAddressDialog: componentWaiver("R2"),
   },
-  "features/flow/flow-contacts-delete-contact": {
-    ContactsDeleteContactDialog: componentWaiver("R2"),
-  },
   "features/flow/flow-contacts-detail": {
     "./native": entryWaiver(),
     ContactAddressDetailDialog: componentWaiver("R2", "R4", "R5"),

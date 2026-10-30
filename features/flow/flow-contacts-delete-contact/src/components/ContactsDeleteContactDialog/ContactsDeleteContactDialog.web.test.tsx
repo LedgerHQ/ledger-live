@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { ContactsDeleteContactDialog } from "./ContactsDeleteContactDialog.web";
+import { ContactsDeleteContactDialog } from "./ContactsDeleteContactDialog";
 
 describe("ContactsDeleteContactDialog", () => {
   it("resolves the confirmation copy", () => {

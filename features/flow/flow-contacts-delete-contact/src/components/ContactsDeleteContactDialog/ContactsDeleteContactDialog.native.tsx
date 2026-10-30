@@ -1,14 +1,14 @@
 import React from "react";
 import { ContactConfirmationDialog } from "@features/platform-contacts";
 import { useDeleteContactLabels } from "../../copy/useDeleteContactLabels";
-import type { ContactsDeleteContactDrawerProps } from "./types";
+import type { ContactsDeleteContactDialogProps } from "./ContactsDeleteContactDialog.types";
 
 export function ContactsDeleteContactDialog({
   isOpen,
   isDeleting,
   onConfirm,
   onCancel,
-}: ContactsDeleteContactDrawerProps): React.JSX.Element {
+}: ContactsDeleteContactDialogProps): React.JSX.Element {
   const labels = useDeleteContactLabels();
 
   return (
