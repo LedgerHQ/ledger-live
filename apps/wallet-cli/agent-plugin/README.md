@@ -6,7 +6,7 @@ A plugin that gives AI agents one skill, `wallet-cli-usage`, for driving the Led
 
 ## Install
 
-Every platform installs from this git repository. The plugin is called `ledger-wallet-cli` and its skill `wallet-cli-usage`.
+Every platform installs from this git repository. The plugin is called `ledger` and its skill `wallet-cli-usage`.
 
 ### OpenClaw
 
@@ -24,7 +24,7 @@ hermes plugins install LedgerHQ/agent-skills --enable
 hermes plugins list
 ```
 
-Hermes exposes the skill as `ledger-wallet-cli:wallet-cli-usage`.
+Hermes exposes the skill as `ledger:wallet-cli-usage`.
 
 ### Cursor
 
@@ -42,14 +42,14 @@ Grok Bot reads the same files as Cursor. How to load them into Grok Bot is not d
 
 ```bash
 claude plugin marketplace add LedgerHQ/agent-skills
-claude plugin install ledger-wallet-cli@ledger
+claude plugin install ledger@ledger
 ```
 
 ### Codex
 
 ```bash
 codex plugin marketplace add LedgerHQ/agent-skills
-codex plugin add ledger-wallet-cli@ledger
+codex plugin add ledger@ledger
 ```
 
 ### Other agents
@@ -105,11 +105,11 @@ The plugin is Markdown instructions and JSON manifests only, with no hooks, MCP 
 
 Hermes loads the plugin from the root `plugin.json` (Agent Plugins v1). Do not add a `plugin.yaml`: Hermes would treat the plugin as a native one, which takes precedence, and the skill would no longer load.
 
-To list a release, open a PR to [`NousResearch/hermes-agent`](https://github.com/NousResearch/hermes-agent) that adds `plugin-catalog/ledger-wallet-cli.yaml` with the content below, following the [catalog submission guide](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins/catalog-submission). Set `sha` to the full SHA of the release commit on `main` and `version` to the version in `plugin.json`, then check that commit with `hermes plugins validate <checkout> --install-deps`. Copy the [Disclosure](#disclosure) list into the PR description.
+To list a release, open a PR to [`NousResearch/hermes-agent`](https://github.com/NousResearch/hermes-agent) that adds `plugin-catalog/ledger.yaml` with the content below, following the [catalog submission guide](https://hermes-agent.nousresearch.com/docs/developer-guide/plugins/catalog-submission). Set `sha` to the full SHA of the release commit on `main` and `version` to the version in `plugin.json`, then check that commit with `hermes plugins validate <checkout> --install-deps`. Copy the [Disclosure](#disclosure) list into the PR description.
 
 ```yaml
-name: ledger-wallet-cli
-title: Ledger Wallet CLI
+name: ledger
+title: Ledger
 repo: https://github.com/LedgerHQ/agent-skills
 sha: <full SHA of the release commit>
 description: "Ledger wallet-cli skill: send, swap and stake from a Ledger hardware wallet, and propose Ethereum and Solana payments and Ethereum swaps through Agent Intents that a human approves on their Ledger. Disclosure — Markdown skill and JSON manifests only (no hooks, MCP servers or code); it has the agent run wallet-cli shell commands (and install @ledgerhq/wallet-cli when missing), which call Ledger services; enroll/recover wait in the background until the human approves; wallet-cli stores the agent key in the OS keychain (or, only with the human's consent, an unencrypted 0600 file), a Ledger API auth key for swap quotes in the OS keychain, and state in ~/.local/state/ledger-wallet-cli (Windows: %LOCALAPPDATA%\\ledger-wallet-cli\\State)."
