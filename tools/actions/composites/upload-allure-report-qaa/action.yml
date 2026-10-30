@@ -38,6 +38,10 @@ inputs:
       telemetry CSVs). Every file found under it is sent on the qaa-allure
       `reportAttachments` field and rendered in the report's Global Attachments
       tab. Missing/empty directory is a no-op.
+  step_summary:
+    required: false
+    default: "true"
+    description: "Write the report link to the job summary ('false' when the caller writes it)."
 outputs:
   report_id:
     description: "ID of the uploaded report."
@@ -65,4 +69,5 @@ runs:
         QAA_ALLURE_BRANCH: ${{ inputs.branch }}
         QAA_ALLURE_HISTORY_KEY: ${{ inputs.history_key }}
         QAA_ALLURE_REPORT_ATTACHMENTS: ${{ inputs.report_attachments }}
+        QAA_ALLURE_STEP_SUMMARY: ${{ inputs.step_summary }}
       run: ${{ github.action_path }}/upload.sh
