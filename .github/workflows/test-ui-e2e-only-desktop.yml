@@ -486,7 +486,7 @@ jobs:
         # Every run can also wait up to 30 minutes for a busy exclusive lock: without broadcast, tests
         # still lock the Pay card and the accounts CLI token approvals broadcast from.
         timeout-minutes: 70
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@ci/e2e-composite-step-summary
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.runner_filter }}
@@ -698,7 +698,7 @@ jobs:
       - name: Run Playwright E2E tests
         id: run-playwright
         timeout-minutes: 70
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@ci/e2e-composite-step-summary
         with:
           speculos_device: ${{ env.SPECULOS_DEVICE }}
           test_filter: ${{ steps.test-filter.outputs.runner_filter }}
@@ -807,7 +807,7 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci/e2e-composite-step-summary
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}-qaa
@@ -880,7 +880,7 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci/e2e-composite-step-summary
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}-qaa
@@ -952,7 +952,7 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         timeout-minutes: 15
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report-qaa@ci/e2e-composite-step-summary
         with:
           api_key: ${{ secrets.QAA_ALLURE_API_KEY }}
           path: ${{ env.ALLURE_RESULTS }}-qaa
