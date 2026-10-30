@@ -1,27 +1,21 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 
-export const RENAME_CONTACT_PREFIX = "contacts-rename-contact";
-
-export type ContactNameDrawerPrefix = typeof RENAME_CONTACT_PREFIX;
-
-/** The shared `ContactsContactNameDrawerContent`, namespaced by its host's test id prefix. */
+/** The bottom sheet that renames a contact. */
 export default class ContactNameDrawer {
-  constructor(private readonly testIDPrefix: ContactNameDrawerPrefix) {}
-
-  private readonly contentId = () => `${this.testIDPrefix}-content`;
-
-  private readonly nameInput = () => getElementById(`${this.testIDPrefix}-name-input`);
-  private readonly confirmButton = () => getElementById(`${this.testIDPrefix}-confirm`);
+  private readonly content = byId("contacts-rename-contact-content");
+  private readonly nameInput = byId("contacts-rename-contact-name-input");
+  private readonly confirmButton = byId("contacts-rename-contact-confirm");
 
   @Step("Expect the contact name drawer visible")
   async expectVisible() {
-    await waitForFullyVisibleById(this.contentId());
+    await this.content.waitFullyVisible();
   }
 
   @Step("Type contact name: {{0}} and confirm")
   async typeAndConfirm(name: string) {
     // LIVE-37168 - confirm button should remain interactable when the keyboard is open
-    await typeTextByElement(this.nameInput(), name, false);
-    await tapByElement(this.confirmButton());
+    await this.nameInput.replaceTextKeepKeyboard(name);
+    await this.confirmButton.tap();
   }
 }
