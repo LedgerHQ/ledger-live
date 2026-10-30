@@ -3,5 +3,5 @@ import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 export default createDualPlatformKnipConfig({
   packagePath: "features/flow/pay-card-assets",
   platform: "native",
-  additionalProjectExcludes: ["src/index.ts"],
+  entry: ["src/index.ts", "src/native/index.native.ts"],
 });

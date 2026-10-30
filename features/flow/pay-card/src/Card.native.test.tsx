@@ -104,7 +104,6 @@ jest.mock("@features/flow-pay-card-widget/onboarding-status", () => ({
 }));
 
 jest.mock("@features/flow-pay-card-assets", () => ({
-  CardAssets: () => <View testID="card-assets" />,
   useCardWalletsTotal: () => mockUseWalletsTotal(),
 }));
 

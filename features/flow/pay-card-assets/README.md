@@ -9,25 +9,36 @@ crypto amount, and countervalue.
 Data comes from [`@features/flow-pay-card-wallets`](../pay-card-wallets/README.md). The section hides
 while nobody is signed in (`useIsCardSignedIn` from
 [`@features/flow-pay-card-auth`](../pay-card-auth/README.md)). Pricing stays with the host: rates live
-in each app, so callers pass `currencies`, `priceWallet`, and `formatCountervalue`.
+in each app, so callers pass `currencies`, `getCounterValue`, and `formatCountervalue`.
 
 ## Usage
 
 ```tsx
-import { CardAssets } from "@features/flow-pay-card-assets";
+import { CardAssets } from "@features/flow-pay-card-assets/web";
 
 <CardAssets
   currencies={currencies}
-  priceWallet={priceWallet}
+  getCounterValue={getCounterValue}
   formatCountervalue={formatCountervalue}
 />;
 ```
 
-Public API is the container, `CardAssetsProps`, and `useCardWalletsTotal`. The orchestrator
-([`@features/flow-pay-card`](../pay-card/README.md)) mounts this when the host passes `assets`, and
-reads `useCardWalletsTotal(assets, isSignedIn)` for the balance on the card face: the provider
-answers no total, so it sums what the same wallets query already carries. A wallet nothing could
-price adds nothing to it.
+## Public API
+
+| Entry | Exports |
+| --- | --- |
+| `.` | `useCardAssetsViewModel`, `useCardWalletsTotal`, `selectCardWalletsTotal`, and the types (`CardAssetsProps`, `CardAssetRow`, `CardAssetsViewModel`, ...) |
+| `./web` | `CardAssets`, the container that renders the list and its dialogs |
+| `./native` | `CardAssetsView` (takes a `CardAssetsViewModel`), `CardAssetDetailsDrawer`, `CardAssetDetailsWithdrawDrawer`, `CardAssetTransactionDetailDrawer`, `CardAssetsManageDrawer`, each with its props type |
+
+On web, the orchestrator ([`@features/flow-pay-card`](../pay-card/README.md)) mounts `CardAssets`
+when the host passes `assets`. On native, the native view renders the list only: the host calls
+`useCardAssetsViewModel`, renders `CardAssetsView`, and mounts the drawers in its own sheet
+([`@features/flow-pay-card-details`](../pay-card-details/README.md)).
+
+The orchestrator reads `useCardWalletsTotal(assets, isSignedIn)` for the balance on the card face:
+the provider answers no total, so it sums what the same wallets query already carries. A wallet
+nothing could price adds nothing to it.
 
 ## Dialogs and history
 
@@ -49,9 +60,10 @@ which the `asset` param scopes to one asset. There is no asset-specific history 
 
 ## MVVM
 
-- `useCardAssetsViewModel` (private) reads linked wallets and builds rows.
-- `CardAssetsView.web.tsx` / `CardAssetsView.native.tsx` are the presentational views.
-- `CardAssets` wires the hook to the platform view.
+- `useCardAssetsViewModel` (public, in `.`) reads linked wallets and builds rows.
+- `CardAssetsView.web.tsx` / `CardAssetsView.native.tsx` are the presentational views. The web view
+  renders its dialogs itself; the native one renders the list only.
+- `CardAssets` (web only) wires the hook to the web view.
 
 ## Structure
 
@@ -61,11 +73,16 @@ Every `index.*` is a pure barrel (`export *` only).
 pay-card-assets/
 ├── package.json
 └── src/
-    ├── CardAssets.tsx
+    ├── index.ts                  # `.`: hooks, selector, types
+    ├── web/index.web.ts          # `./web`: CardAssets
+    ├── native/index.native.ts    # `./native`: native view and drawers
+    ├── CardAssets.web.tsx
     ├── CardAssetsView.web.tsx
     ├── CardAssetsView.native.tsx
+    ├── CardAsset*Dialog.web.tsx  # internal web dialogs
+    ├── CardAsset*Drawer.native.tsx
     ├── useCardAssetsViewModel.ts
-    ├── types.ts
-    ├── index.ts
-    └── index.native.ts
+    ├── useCardWalletsTotal.ts
+    ├── selectors/
+    └── types.ts
 ```

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { CardAssetsEmptyState } from "../CardAssetsEmptyState.native";
+import { CardAssetsEmptyState } from "../CardAssetsEmptyState";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 
 describe("CardAssetsEmptyState (native)", () => {

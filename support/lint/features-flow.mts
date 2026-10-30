@@ -42,7 +42,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "large-screen-upsell",
   "market-banner",
   "pay-bank-transfer",
-  "pay-card-assets",
   "pay-card-auth",
   "pay-card-details",
   "pay-card-widget",
