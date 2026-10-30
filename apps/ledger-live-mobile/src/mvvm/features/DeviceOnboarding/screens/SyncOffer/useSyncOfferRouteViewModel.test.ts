@@ -1,9 +1,16 @@
+import { track, trackPage } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
+
+jest.mock("@shared/analytics", () => ({
+  track: jest.fn(),
+  trackPage: jest.fn(),
+  getPreviousTrackingPage: jest.fn(() => "Ledger Sync"),
+}));
 
 const device = {
   deviceId: "device-id",
@@ -45,6 +52,12 @@ jest.mock("@react-navigation/native", () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
+      seededOutcome: {
+        deviceType: "stax",
+        ledgerSyncEligible: true,
+        firmwareUpdateAvailability: "no",
+        firmwareUpdateDone: false,
+      },
     },
   }),
 }));
@@ -168,5 +181,46 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(openURL).toHaveBeenCalledWith(
       "https://www.ledger.com/fr/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
     );
+  });
+
+  it("should track the offer as the seeded device", () => {
+    const { result } = renderOffer(false);
+
+    expect(result.current.seededDeviceType).toBe("stax");
+  });
+
+  it("should not complete when activation starts without a trustchain", () => {
+    const { result } = renderOffer(false);
+
+    act(() => result.current.onActivate());
+
+    expect(track).not.toHaveBeenCalledWith("onboarding_done", expect.anything());
+  });
+
+  it("should track sync success and completion when the trustchain lands", () => {
+    const { result } = renderOffer(true);
+
+    act(() => result.current.onActivate());
+
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Ledger Sync Success" }),
+      expect.anything(),
+    );
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "yes", firmware_update_done: "no" }),
+    );
+  });
+
+  it("should complete without sync when the offer is skipped", () => {
+    const { result } = renderOffer(false);
+
+    act(() => result.current.onSkip());
+
+    expect(track).toHaveBeenCalledWith(
+      "onboarding_done",
+      expect.objectContaining({ ledger_sync_done: "no" }),
+    );
+    expect(trackPage).not.toHaveBeenCalled();
   });
 });

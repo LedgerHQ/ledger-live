@@ -5,6 +5,8 @@ import {
   stateValueToString,
   useDeviceOnboardingActor,
   type DeviceOnboardingActorSession,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
   type OnboardingEvent,
   type OnboardingInspectionEvent,
   type SessionEvent,
@@ -34,8 +36,10 @@ type UseDeviceOnboardingInput = {
   offerSync: boolean;
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
+  /** Whether the user accepted a firmware update during this onboarding. */
+  firmwareUpdateDone?: boolean;
   /** Runs right before the exit navigates, so the host can stop blocking back. */
-  onLeave?: () => void;
+  onLeave?: (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => void;
   /** Watches every machine update from the actor's creation. The funnel passes none. */
   inspect?: (event: OnboardingInspectionEvent) => void;
 };
@@ -90,6 +94,7 @@ export function useDeviceOnboarding({
   offerSync,
   navigateOnExit = true,
   wasReadOnlyAtEntry = false,
+  firmwareUpdateDone = false,
   onLeave,
   inspect,
 }: UseDeviceOnboardingInput): DeviceOnboardingSession {
@@ -106,6 +111,7 @@ export function useDeviceOnboarding({
     device: liveDevice,
     navigateOnExit,
     wasReadOnlyAtEntry,
+    firmwareUpdateDone,
   });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);
@@ -149,7 +155,7 @@ export function useDeviceOnboarding({
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
     leaveOnboarding: (reason, context) => {
-      onLeave?.();
+      onLeave?.(reason, context);
       leaveOnboarding(reason, context);
     },
   });
