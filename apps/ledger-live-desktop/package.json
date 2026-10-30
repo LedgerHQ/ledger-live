@@ -329,7 +329,7 @@
     "allure-playwright": "catalog:",
     "autoprefixer": "10.4.22",
     "axios": "catalog:",
-    "chalk": "4.1.2",
+    "chalk": "catalog:",
     "cross-env": "7.0.3",
     "dmg-builder": "26.15.3",
     "electron": "catalog:",

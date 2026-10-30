@@ -1,7 +1,13 @@
 {
   "targets": {
     "build": {
-      "outputs": ["{projectRoot}/lib/**", "{projectRoot}/lib-es/**"]
+      "outputs": ["{projectRoot}/lib/**", "{projectRoot}/lib-es/**"],
+      "inputs": [
+        "default",
+        "^default",
+        "tsConfig",
+        { "externalDependencies": ["@typescript/native", "rimraf"] }
+      ]
     },
     "typecheck": {
       "dependsOn": ["build"],

@@ -1,0 +1,13 @@
+{
+  "targets": {
+    "build": {
+      "inputs": [
+        "default",
+        "^default",
+        "tsConfig",
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        { "externalDependencies": ["zx"] }
+      ]
+    }
+  }
+}

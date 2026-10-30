@@ -1,0 +1,12 @@
+{
+  "targets": {
+    "build": {
+      "inputs": [
+        "default",
+        "^default",
+        "tsConfig",
+        { "externalDependencies": ["@typescript/native", "rimraf"] }
+      ]
+    }
+  }
+}

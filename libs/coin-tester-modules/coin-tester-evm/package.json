@@ -68,6 +68,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "bignumber.js": "^9.1.2",
     "bip39": "catalog:",
+    "chalk": "catalog:",
     "docker-compose": "^1.1.0",
     "ethers": "catalog:",
     "msw": "catalog:"

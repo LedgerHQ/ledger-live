@@ -61,7 +61,7 @@
     "@multiversx/sdk-core": "^13.7.0",
     "bignumber.js": "^9",
     "bip39": "catalog:",
-    "chalk": "^4",
+    "chalk": "catalog:",
     "docker-compose": "^1",
     "msw": "catalog:"
   },

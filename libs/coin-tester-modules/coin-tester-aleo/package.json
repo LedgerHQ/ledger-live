@@ -44,7 +44,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@provablehq/sdk": "0.10.2",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4",
+    "chalk": "catalog:",
     "docker-compose": "^1",
     "msw": "catalog:",
     "rxjs": "catalog:"

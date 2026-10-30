@@ -7,8 +7,6 @@
       "{workspaceRoot}/sonar-project.properties",
       "{workspaceRoot}/tsconfig.base.json",
       "{workspaceRoot}/support/tsconfig/base.json",
-      "{workspaceRoot}/package.json",
-      "{workspaceRoot}/pnpm-workspace.yaml",
       "{workspaceRoot}/patches/**/*"
     ],
     "default": [
@@ -349,7 +347,7 @@
         "{projectRoot}/lib-es/**",
         "{projectRoot}/build/**"
       ],
-      "inputs": ["default", "^default", "tsConfig"],
+      "inputs": ["default", "^default", "tsConfig", { "externalDependencies": ["@typescript/native"] }],
       "cache": true
     },
     "lint": {
