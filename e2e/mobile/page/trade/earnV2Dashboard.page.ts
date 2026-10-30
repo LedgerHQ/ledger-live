@@ -39,8 +39,8 @@ export default class EarnV2DashboardPage {
   @Step("Wait for and verify ice cold start page")
   async verifyIceColdStartPage() {
     await this.footerDisclaimer.waitVisible();
-    await this.maxPotentialRewards.waitGone();
-    await this.walletHeaderAmount.waitGone();
+    await this.maxPotentialRewards.waitNotVisible();
+    await this.walletHeaderAmount.waitNotVisible();
   }
 
   @Step("Click simulate investment CTA")

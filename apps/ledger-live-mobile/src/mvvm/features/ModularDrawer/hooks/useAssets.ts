@@ -41,7 +41,17 @@ export function useAssets({
 
   const resolvedCategories = categories?.length ? categories : undefined;
 
-  const { data, isStale, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
+  const {
+    data,
+    isStale,
+    isLoading,
+    isSuccess,
+    isError,
+    isCurrentResultReady,
+    error,
+    refetch,
+    loadNext,
+  } = useAssetsData({
     search: searchedValue,
     currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
     networkIds: resolvedNetworkIds,
@@ -75,6 +85,7 @@ export function useAssets({
     isLoading,
     isSuccess,
     isError,
+    isCurrentResultReady,
     error,
     loadingStatus,
     assetsSorted,

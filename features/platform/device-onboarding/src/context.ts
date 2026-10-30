@@ -116,7 +116,9 @@ export const contextActions = {
     };
   }),
   forgetGenuineFailure: update({ lastGenuineFailure: null }),
-  rememberFirmwareChecked: update({ firmware: { kind: "checked" } }),
+  rememberFirmwareUpToDate: update({ firmware: { kind: "upToDate" } }),
+  rememberFirmwareDeclined: update({ firmware: { kind: "declined" } }),
+  rememberFirmwareSkipped: update({ firmware: { kind: "skipped" } }),
   rememberAvailableUpdate: update(({ event }) => {
     if (event.type !== "FIRMWARE_UPDATE_AVAILABLE") {
       return {};

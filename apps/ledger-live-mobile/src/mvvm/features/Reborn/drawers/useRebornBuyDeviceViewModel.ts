@@ -50,6 +50,14 @@ function useRebornBuyDeviceViewModel() {
 
   const setupDevice = useCallback(() => {
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
+    if (readOnlyModeEnabled) {
+      track("button_clicked", {
+        button: "Connect",
+        page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
+      });
+    }
+    // Before onboarding opens, so the flow that asked for a device sits under it.
+    closeDrawer("connect");
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: unifiedEntryPoints
@@ -59,14 +67,6 @@ function useRebornBuyDeviceViewModel() {
           }
         : { screen: ScreenName.OnboardingDeviceSelection },
     });
-
-    if (readOnlyModeEnabled) {
-      track("button_clicked", {
-        button: "Connect",
-        page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
-      });
-    }
-    closeDrawer();
   }, [isInOnboarding, dispatch, navigation, unifiedEntryPoints, readOnlyModeEnabled, closeDrawer]);
 
   const buyLedger = useCallback(() => {

@@ -5,6 +5,7 @@ import perFamilyAccountHeader from "~/generated/AccountHeader";
 import perFamilyAccountSubHeader from "~/generated/AccountSubHeader";
 import perFamilyAccountBalanceHeader from "~/generated/AccountBalanceHeader";
 import perFamilyAccountBodyHeader from "~/generated/AccountBodyHeader";
+import perFamilyAccountDetailDelegations from "~/generated/AccountDetailDelegations";
 import perFamilyAccountBalanceSummaryFooter from "~/generated/AccountBalanceSummaryFooter";
 import perFamilyPendingTransferProposals from "~/generated/PendingTransferProposals";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../../../testIds";
@@ -45,14 +46,20 @@ export const FamilySectionView = ({
         account,
         parentAccount: account,
       })}
-      {showBodyBlocks ? (
-        <React.Suspense fallback={null}>
-          {renderFamilyBlock(perFamilyAccountBodyHeader, family, blockProps)}
-        </React.Suspense>
-      ) : null}
       {showEarnBlocks
         ? renderFamilyBlock(perFamilyAccountBalanceSummaryFooter, family, blockProps)
         : null}
+      {showBodyBlocks ? (
+        <React.Suspense fallback={null}>
+          {renderFamilyBlock(
+            family in perFamilyAccountDetailDelegations
+              ? perFamilyAccountDetailDelegations
+              : perFamilyAccountBodyHeader,
+            family,
+            blockProps,
+          )}
+        </React.Suspense>
+      ) : null}
     </>
   );
 };

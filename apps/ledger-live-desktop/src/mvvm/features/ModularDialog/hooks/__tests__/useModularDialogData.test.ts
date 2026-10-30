@@ -77,6 +77,7 @@ describe("useModularDialogData filters", () => {
       isFetchingNextPage: false,
       isSuccess: true,
       isError: false,
+      isCurrentResultReady: false,
       error: undefined,
       errorInfo: {
         hasError: false,

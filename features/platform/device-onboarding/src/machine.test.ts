@@ -504,7 +504,7 @@ describe("the firmware check", () => {
     await settle();
 
     await expectChecksPassed(actor);
-    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "checked" });
+    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "declined" });
   });
 
   it("keeps the offer standing when the user closes the drawer over it", async () => {
@@ -591,6 +591,7 @@ describe("the firmware check", () => {
     await settle();
 
     await expectChecksPassed(actor);
+    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "skipped" });
   });
 
   it("runs again on the device that came back on another session", async () => {
@@ -641,7 +642,7 @@ describe("the firmware check", () => {
     await settle();
 
     await expectChecksPassed(actor);
-    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "checked" });
+    expect(actor.getSnapshot().context.firmware).toEqual({ kind: "upToDate" });
   });
 });
 

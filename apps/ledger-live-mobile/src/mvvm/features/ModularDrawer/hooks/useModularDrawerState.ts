@@ -28,6 +28,7 @@ type ModularDrawerStateProps = {
   onAccountSelected: ModularDrawerProps["onAccountSelected"];
   onCurrencySelected?: NonNullable<ModularDrawerProps["onCurrencySelected"]>;
   hasSearchedValue?: boolean;
+  isCurrentCatalogReady?: boolean;
   selectableNetworkIds?: readonly string[];
 };
 
@@ -39,6 +40,7 @@ export function useModularDrawerState({
   onClose,
   onSilentClose,
   hasSearchedValue,
+  isCurrentCatalogReady = true,
   onAccountSelected,
   onCurrencySelected,
   selectableNetworkIds,
@@ -78,6 +80,35 @@ export function useModularDrawerState({
   );
 
   const hasOneCurrency = useMemo(() => currencyIds.length === 1, [currencyIds.length]);
+
+  const canAutoResolveSingleAsset = useMemo(() => {
+    if (
+      !isCurrentCatalogReady ||
+      hasSearchedValue ||
+      enableAccountSelection ||
+      assetsSorted?.length !== 1
+    ) {
+      return false;
+    }
+
+    const selected = assetsSorted[0].networks[0];
+    if (!selected) return false;
+
+    const acceptedNetworks = getNetworksForAsset(assetsSorted, selected.id, isAcceptedCurrency);
+    if (selectableNetworkIds !== undefined && !acceptedNetworks.some(isSelectableNetwork)) {
+      return false;
+    }
+
+    return acceptedNetworks.length <= 1;
+  }, [
+    assetsSorted,
+    enableAccountSelection,
+    hasSearchedValue,
+    isCurrentCatalogReady,
+    isAcceptedCurrency,
+    isSelectableNetwork,
+    selectableNetworkIds,
+  ]);
 
   const clearNetwork = () => setNetwork(undefined);
 
@@ -188,10 +219,18 @@ export function useModularDrawerState({
 
   // Auto-select single currency if drawer is open and only one is available
   useEffect(() => {
-    if (hasSearchedValue || !isDrawerOpen || !singleCurrency || autoSelectRef.current) return;
+    if (
+      !isCurrentCatalogReady ||
+      hasSearchedValue ||
+      !isDrawerOpen ||
+      !singleCurrency ||
+      autoSelectRef.current
+    ) {
+      return;
+    }
     autoSelectRef.current = true;
     handleAsset(singleCurrency);
-  }, [isDrawerOpen, singleCurrency, handleAsset, hasSearchedValue]);
+  }, [isCurrentCatalogReady, isDrawerOpen, singleCurrency, handleAsset, hasSearchedValue]);
 
   // Reset state when drawer closes
   useEffect(() => {
@@ -218,6 +257,7 @@ export function useModularDrawerState({
     availableNetworks,
     shouldShowBackButton,
     hasOneCurrency,
+    canAutoResolveSingleAsset,
     onAddNewAccount,
     handleAsset,
     handleNetwork,

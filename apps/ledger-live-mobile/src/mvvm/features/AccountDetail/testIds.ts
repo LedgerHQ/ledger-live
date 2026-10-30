@@ -6,6 +6,7 @@ export const ACCOUNT_DETAIL_TEST_IDS = {
   assetPicker: "account-detail-asset-picker",
   customPlace: "account-detail-custom-place",
   emptyState: "account-detail-empty-state",
+  emptyStateSlot: "account-detail-empty-state-slot",
   notices: "account-detail-notices",
   assets: "account-detail-assets",
   transactions: "account-detail-transactions",

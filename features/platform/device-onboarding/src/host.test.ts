@@ -73,6 +73,7 @@ describe("flattenDeviceOnboardingContext", () => {
     expect(flattened.verdictMatchesSession).toBeNull();
     expect(flattened.availableFirmwareVersion).toBeNull();
     expect(flattened.firmwareChecked).toBe(false);
+    expect(flattened.firmwareUpToDate).toBeNull();
     expect(flattened.secureConnectionRequested).toBe(false);
   });
 
@@ -96,8 +97,20 @@ describe("flattenDeviceOnboardingContext", () => {
 
     expect(flattened.availableFirmwareVersion).toBe("2.3.0");
     expect(flattened.firmwareChecked).toBe(false);
+    expect(flattened.firmwareUpToDate).toBeNull();
     expect(flattened.secureConnectionRequested).toBe(true);
   });
+
+  it.each(["upToDate", "declined", "skipped"] as const)(
+    "should report a settled firmware check of %s",
+    kind => {
+      const flattened = flattenDeviceOnboardingContext(snapshot({ firmware: { kind } }));
+
+      expect(flattened.firmwareChecked).toBe(true);
+      expect(flattened.firmwareUpToDate).toBe(kind === "upToDate");
+      expect(flattened.availableFirmwareVersion).toBeNull();
+    },
+  );
 });
 
 describe("toolContext", () => {

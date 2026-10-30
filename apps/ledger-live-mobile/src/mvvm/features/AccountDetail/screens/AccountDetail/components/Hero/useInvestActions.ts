@@ -1,4 +1,5 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
 import { makeEmptyTokenAccount } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
@@ -6,6 +7,8 @@ import { useOpenBuySell } from "LLM/features/Buy";
 import { useModularDrawerController } from "LLM/features/ModularDrawer";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenSwap } from "LLM/features/Swap";
+import { useSelector } from "~/context/hooks";
+import { modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import type { useAccountAssetPicker } from "LLM/components/AccountAssetPickerSheet/useAccountAssetPicker";
 import type { AssetActionId } from "@features/platform-quick-actions";
 import type { AccountAsset, AccountAssetsByAction } from "LLM/utils/accountAssets";
@@ -23,13 +26,42 @@ type HeldAssetAction = "sell" | "earn";
 const isHeldAssetAction = (id: AssetActionId): id is HeldAssetAction =>
   id === "sell" || id === "earn";
 
+function useClosePendingAccountCurrencyDrawerOnBlur(drawer: {
+  isOpen: boolean;
+  completionMode: ReturnType<typeof useModularDrawerController>["completionMode"];
+  closeDrawer: () => void;
+}) {
+  const source = useSelector(modularDrawerSourceSelector);
+  const pendingDrawer = useRef({ ...drawer, source });
+
+  useEffect(() => {
+    pendingDrawer.current = { ...drawer, source };
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        const drawer = pendingDrawer.current;
+        if (
+          drawer.isOpen &&
+          drawer.completionMode === "currency" &&
+          drawer.source === ACCOUNT_DETAIL_PAGE
+        ) {
+          drawer.closeDrawer();
+        }
+      };
+    }, []),
+  );
+}
+
 export function useInvestActions(
   account: Account,
   assets: readonly AccountAsset[],
   byAction: AccountAssetsByAction,
   pickAsset: PickAsset,
 ): (id: AssetActionId) => void {
-  const { openDrawer } = useModularDrawerController();
+  const { openDrawer, isOpen, completionMode, closeDrawer } = useModularDrawerController();
+  useClosePendingAccountCurrencyDrawerOnBlur({ isOpen, completionMode, closeDrawer });
   const { openSwapForAccount } = useOpenSwap({
     currency: account.currency,
     sourceScreenName: ACCOUNT_DETAIL_PAGE,

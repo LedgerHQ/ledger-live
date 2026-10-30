@@ -18,7 +18,6 @@ import {
   FF_PAY_TAB,
 } from "@e2e/utils/featureFlagUtils";
 import type { PartialFeatures } from "@shared/feature-flags";
-import { isIos } from "@e2e/helpers/commonHelpers";
 import { declareBroadcastAccounts, declareSharedResources } from "@e2e/helpers/exclusiveLock";
 
 const ALL_STABLECOINS = "All stablecoins";
@@ -89,15 +88,12 @@ export function runPayBalanceAndDepositTest(tmsLinks: string[], tags: string[]) 
       await app.payTab.filterBalance("all");
       await app.payTab.expectFilterPill(ALL_STABLECOINS);
 
-      if (isIos()) {
-        // TODO: QAA-1631 - bank transfer not closing for android (CI only)
-        await app.payTab.openDepositOptions();
-        await app.payTab.expectDepositOptions();
-        await app.payTab.selectDepositOption("bankTransfer");
-        await app.payTab.expectBankTransferIntro(BANK_TRANSFER_CREATE_ACCOUNT);
-        await app.payTab.closeBankTransferIntro();
-        await app.payTab.expectScreenVisible();
-      }
+      await app.payTab.openDepositOptions();
+      await app.payTab.expectDepositOptions();
+      await app.payTab.selectDepositOption("bankTransfer");
+      await app.payTab.expectBankTransferIntro(BANK_TRANSFER_CREATE_ACCOUNT);
+      await app.payTab.closeBankTransferIntro();
+      await app.payTab.expectScreenVisible();
 
       await app.payTab.openDepositOptions();
       await app.payTab.selectDepositOption("swap");
