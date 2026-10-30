@@ -10,6 +10,9 @@ import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
 
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
+  private readonly backButton = this.dialog
+    .getByTestId("send-dialog-header")
+    .getByRole("button", { name: "Go back" });
 
   readonly recipientInput = this.dialog.getByTestId("send-recipient-input");
   readonly matchedAddressButtons = this.dialog
@@ -237,7 +240,6 @@ export class NewSendModal extends Modal {
 
   @step("Refuse to send without memo")
   async cancelSkipMemo() {
-    await expect(this.skipMemoCancelButton).toBeVisible();
     await this.skipMemoCancelButton.click();
   }
 
@@ -250,7 +252,6 @@ export class NewSendModal extends Modal {
 
   @step("Open the memo type selector")
   async openMemoTypes() {
-    await expect(this.memoTypeSelect).toBeVisible();
     await this.memoTypeSelect.click();
   }
 
@@ -263,9 +264,7 @@ export class NewSendModal extends Modal {
 
   @step("Select memo type $0")
   async selectMemoType(memoType: StellarMemoType) {
-    const option = this.memoTypeOption(memoType);
-    await expect(option).toBeVisible();
-    await option.click();
+    await this.memoTypeOption(memoType).click();
   }
 
   @step("Verify the selected memo type is $0")
@@ -293,6 +292,11 @@ export class NewSendModal extends Modal {
       await expect.poll(() => this.isCryptoInputMode()).toBe(true);
     }
     await this.amountInput.fill(amount);
+  }
+
+  @step("Verify the amount step is shown")
+  async expectAmountStepVisible() {
+    await expect(this.amountInput).toBeVisible();
   }
 
   @step("Verify crypto amount round-trips exactly: $0")
@@ -360,6 +364,11 @@ export class NewSendModal extends Modal {
     const item = this.getFeePreset(preset);
     await item.click();
     await item.waitFor({ state: "hidden" });
+  }
+
+  @step("Go back to the previous step")
+  async goBack() {
+    await this.backButton.click();
   }
 
   @step("Verify the sponsored fee offer is shown")

@@ -149,6 +149,9 @@ export async function checkStellarMemoTypes(app: Application, tx: Transaction) {
   await app.newSendFlow.expectMemoTypeOptions(Object.values(StellarMemoType));
   await app.newSendFlow.selectMemoType(StellarMemoType.NO_MEMO);
   await app.newSendFlow.expectMemoType(StellarMemoType.NO_MEMO);
+  await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
+  await app.newSendFlow.expectAmountStepVisible();
+  await app.newSendFlow.goBack();
 
   await app.newSendFlow.openMemoTypes();
   await app.newSendFlow.selectMemoType(StellarMemoType.MEMO_TEXT);
