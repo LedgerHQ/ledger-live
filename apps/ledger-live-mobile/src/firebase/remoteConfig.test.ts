@@ -40,6 +40,28 @@ beforeEach(() => {
 });
 
 describe("fetchRemoteFlags", () => {
+  it("logs a startup event when the boot fetch settles, and not for later fetches", async () => {
+    const { fetchRemoteFlags } = await loadModule();
+    const { startupEvents } = await import("LLM/utils/logStartupTime");
+    startupEvents.splice(0);
+
+    await fetchRemoteFlags();
+    await fetchRemoteFlags();
+
+    expect(startupEvents.map(e => e.event)).toEqual(["Remote flags fetched"]);
+  });
+
+  it("logs a failed boot fetch and still rejects with its error", async () => {
+    mockFetchAndActivate.mockRejectedValue(new Error("network"));
+    const { fetchRemoteFlags } = await loadModule();
+    const { startupEvents } = await import("LLM/utils/logStartupTime");
+    startupEvents.splice(0);
+
+    await expect(fetchRemoteFlags()).rejects.toThrow("network");
+
+    expect(startupEvents.map(e => e.event)).toEqual(["Remote flags fetch failed"]);
+  });
+
   it("maps known Firebase keys to FeatureIds, drops unknown keys", async () => {
     mockGetAll.mockReturnValue({
       feature_counter_value: value(JSON.stringify({ enabled: true })),

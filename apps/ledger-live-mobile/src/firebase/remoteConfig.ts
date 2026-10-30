@@ -8,6 +8,7 @@ import {
 import { setContentAbTestCopy } from "@features/platform-content-ab-tests";
 import { FEATURE_FLAGS_DEFAULTS } from "@shared/feature-flags";
 import type { PartialFeatures } from "@shared/feature-flags";
+import { logStartupEvent } from "LLM/utils/logStartupTime";
 
 type Subscriber = (event: { fetchedAt: number }) => void;
 
@@ -23,7 +24,14 @@ LiveConfig.setProvider(
 
 let setupPromise: Promise<void> | null = null;
 let lastFetchedAt: number | null = null;
+let bootFetchLogged = false;
 const subscribers = new Set<Subscriber>();
+
+function logBootFetchSettled(event: string) {
+  if (bootFetchLogged) return;
+  bootFetchLogged = true;
+  logStartupEvent(event);
+}
 
 /**
  * One-shot setup: applies `minimumFetchIntervalMillis: 0` and seeds defaults
@@ -109,8 +117,14 @@ export async function readCachedFlags(): Promise<PartialFeatures> {
  * already served whatever this device knew.
  */
 export async function fetchRemoteFlags(): Promise<PartialFeatures> {
-  await setup();
-  await rc.fetchAndActivate();
+  try {
+    await setup();
+    await rc.fetchAndActivate();
+  } catch (error) {
+    logBootFetchSettled("Remote flags fetch failed");
+    throw error;
+  }
+  logBootFetchSettled("Remote flags fetched");
   const flags = hydrateRemoteConfigValues(rc.getAll());
   const fetchedAt = Date.now();
   lastFetchedAt = fetchedAt;
