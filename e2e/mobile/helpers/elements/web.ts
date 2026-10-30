@@ -38,8 +38,8 @@ export class WebHandle implements ElementHandle {
     );
   }
 
-  /** Waits until the element no longer exists in the webview. */
-  async waitGone(timeout = TIMEOUT.xxlarge): Promise<void> {
+  /** Waits until the element no longer exists in the webview (webviews have no visibility check). */
+  async waitNotVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
     await withHardTimeout(
       retryUntilTimeout(() => detoxExpect(this.raw).not.toExist(), timeout, INTERVAL.long, {
         messageOnError: `${this.description} still exists after ${timeout}ms`,

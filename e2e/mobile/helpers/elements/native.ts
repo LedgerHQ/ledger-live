@@ -47,7 +47,7 @@ export class NativeHandle implements ElementHandle {
   }
 
   /** Waits until the element is no longer visible. Throws if it is still visible after the timeout. */
-  async waitGone(timeout = TIMEOUT.xxlarge): Promise<void> {
+  async waitNotVisible(timeout = TIMEOUT.xxlarge): Promise<void> {
     await this.waitUntil(
       waitFor(this.raw).not.toBeVisible().withTimeout(timeout),
       timeout,

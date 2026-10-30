@@ -50,7 +50,7 @@ export default class NewSendFlowPage {
     if (memoTag === "noTag") {
       await this.skipMemoContent.waitFullyVisible();
       await this.skipMemoConfirm.tap();
-      await this.skipMemoContent.waitGone();
+      await this.skipMemoContent.waitNotVisible();
     }
   }
 

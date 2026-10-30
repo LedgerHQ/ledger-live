@@ -103,7 +103,7 @@ export default class LedgerSyncPage {
 
   @Step("Expect instance {{{0}}} to be gone")
   async expectInstanceRemoved(memberPubKey: string) {
-    await this.instanceRow(memberPubKey).waitGone();
+    await this.instanceRow(memberPubKey).waitNotVisible();
   }
 
   @Step("Remove instance {{{0}}}")
