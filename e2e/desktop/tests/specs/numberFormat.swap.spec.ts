@@ -51,7 +51,7 @@ test.describe("Swap - amount formatting by language", () => {
   test(
     `Swap amounts are formatted correctly for languages: ${languageCases.map(({ label }) => label).join(", ")}`,
     {
-      tag: [...DEVICE_TAGS],
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: { type: "TMS", description: "B2CQA-4014" },
     },
     async ({ app }) => {

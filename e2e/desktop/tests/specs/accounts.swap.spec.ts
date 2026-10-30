@@ -2,6 +2,7 @@ import test from "tests/fixtures/common";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
+import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import {
@@ -60,7 +61,7 @@ test.describe("Swap - default currency, switch and rejection", () => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );
-      await app.swap.checkAssetFromContains("BTC");
+      await app.swap.checkAssetFromContains(Currency.BTC.ticker);
       await app.swap.checkAssetToContains("Choose asset");
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);

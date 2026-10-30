@@ -8,12 +8,8 @@ import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
-const dexProviders = [
-  SwapProvider.ONE_INCH,
-  SwapProvider.VELORA,
-  SwapProvider.UNISWAP,
-  SwapProvider.OKX,
-];
+// Uniswap is temporarily excluded from the cross-account check.
+const dexProviders = [SwapProvider.ONE_INCH, SwapProvider.VELORA, SwapProvider.OKX];
 const fromAccount = TokenAccount.ETH_USDT_1;
 const toAccount = Account.ETH_3;
 
@@ -51,11 +47,7 @@ test.describe("Swap - cross account warning", () => {
       ],
     },
     async ({ app }) => {
-      const healthyProviders = await keepRunningProviders(
-        dexProviders.filter(provider => provider !== SwapProvider.UNISWAP),
-        fromAccount,
-        toAccount,
-      );
+      const healthyProviders = await keepRunningProviders(dexProviders, fromAccount, toAccount);
       test.skip(
         healthyProviders.length === 0,
         "All DEX providers are currently down — skipping cross-account warning check",

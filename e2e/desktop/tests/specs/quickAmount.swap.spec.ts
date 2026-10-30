@@ -106,6 +106,13 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
+      for (const { swap, percentageButtonsEnabled } of insufficientBalanceSwaps) {
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: "" });
+        await app.swap.checkMaxToggleEnabled(false);
+        await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
+        await app.swap.checkPercentageButtonsEnabled(percentageButtonsEnabled);
+      }
+
       for (const { fromAccountId, toAccountId } of swapMaxBalancePairs) {
         await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
         const balance = await app.swap.getFromAccountBalance();
@@ -119,15 +126,6 @@ test.describe("Swap - quick amount buttons", () => {
 
       for (const percent of percentages) {
         await app.swap.checkPercentageTooltip(percent, `${percent} of your available balance`);
-      }
-
-      for (const { swap, percentageButtonsEnabled } of insufficientBalanceSwaps) {
-        await app.swap.clearSwapState();
-        await app.mainNavigation.openTargetFromMainNavigation("home");
-        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: "" });
-        await app.swap.checkMaxToggleEnabled(false);
-        await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
-        await app.swap.checkPercentageButtonsEnabled(percentageButtonsEnabled);
       }
     },
   );
