@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -25,11 +25,15 @@ function readJson(rel: string): Record<string, unknown> {
   return JSON.parse(readFileSync(path.join(target, rel), "utf8"));
 }
 
-beforeAll(async () => {
-  target = await mkdtemp(path.join(tmpdir(), "export-agent-plugin-"));
-  execFileSync(process.execPath, [path.join(root, "scripts/export-agent-plugin.mjs"), target], {
+function exportTo(dir: string): void {
+  execFileSync(process.execPath, [path.join(root, "scripts/export-agent-plugin.mjs"), dir], {
     stdio: "pipe",
   });
+}
+
+beforeAll(async () => {
+  target = await mkdtemp(path.join(tmpdir(), "export-agent-plugin-"));
+  exportTo(target);
 });
 
 afterAll(async () => {
@@ -94,6 +98,46 @@ describe("export-agent-plugin", () => {
   it("keeps the README and the smoke test out of the export", () => {
     expect(existsSync(path.join(target, "README.md"))).toBe(false);
     expect(existsSync(path.join(target, "tests"))).toBe(false);
+  });
+
+  it("lists the files it wrote", () => {
+    const listed = readFileSync(path.join(target, ".ledger-plugin-files"), "utf8").split("\n");
+    expect(listed).toContain(".claude-plugin/marketplace.json");
+    expect(listed).not.toContain("README.md");
+  });
+});
+
+describe("export-agent-plugin over a previous export", () => {
+  let dir = "";
+
+  beforeAll(async () => {
+    dir = await mkdtemp(path.join(tmpdir(), "export-agent-plugin-rerun-"));
+    await writeFile(path.join(dir, ".ledger-plugin-files"), "plugin.yaml\n");
+    await writeFile(path.join(dir, "plugin.yaml"), "name: stale\n");
+    await writeFile(path.join(dir, "LICENSE"), "kept\n");
+    exportTo(dir);
+  });
+
+  afterAll(async () => {
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it("deletes a file the previous export wrote and this one does not", () => {
+    expect(existsSync(path.join(dir, "plugin.yaml"))).toBe(false);
+  });
+
+  it("keeps files it never wrote", () => {
+    expect(readFileSync(path.join(dir, "LICENSE"), "utf8")).toBe("kept\n");
+  });
+
+  it("refuses a listed path outside the target", async () => {
+    const escape = await mkdtemp(path.join(tmpdir(), "export-agent-plugin-escape-"));
+    try {
+      await writeFile(path.join(escape, ".ledger-plugin-files"), "../outside\n");
+      expect(() => exportTo(escape)).toThrow();
+    } finally {
+      await rm(escape, { recursive: true, force: true });
+    }
   });
 });
 

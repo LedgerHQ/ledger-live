@@ -15,7 +15,8 @@ When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`
 
 | Command | Device (USB) | OS keychain | Network | Human step |
 |---|---|---|---|---|
-| `session view` / `reset` | no | no | no | no |
+| `session view` | no | no | no | no |
+| `session reset` | no | yes (writes the state dir, may check the ring credential) | no | no |
 | `account discover` | yes | no | yes | approve app on device |
 | `receive` | yes (no with `--no-verify`) | no | no | compare address on device |
 | `balances`, `operations` | no | no | yes | no |
@@ -67,7 +68,7 @@ On a remote box or container (a cloud agent such as Grok Bot, a VPS, CI), the Le
 
 For any other Device = yes row, **hand the human a command**: the exact `wallet-cli ...` line to run on their own computer with the Ledger plugged in, and ask them to report the result. Labels are per machine: use the label their own `pnpm --silent wallet-cli start session view` shows (ask them for it, or have them run `session view` first). When the dry-run rule applies, hand over the `--dry-run` line first.
 
-`[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3) means this machine has no usable Ledger: tell the human the device was not detected, apply **Payments and swaps go through Agent Intent** first, and hand them the command only for what it does not cover. Re-run the device command yourself only after the human confirms the Ledger is plugged into this machine and unlocked. Leave USB discovery to wallet-cli; the exit code already answers whether a device is attached.
+`[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3) means this machine has no usable Ledger: tell the human the device was not detected, apply **Payments and swaps go through Agent Intent** first, and hand them the command only for what it does not cover. Re-run the device command yourself only after the human confirms the Ledger is plugged into this machine and unlocked, and after any intent you proposed for the same payment reads `cancelled` (agent-intent.md step 9): otherwise the human can approve both and pay twice. Leave USB discovery to wallet-cli; the exit code already answers whether a device is attached.
 
 Commands that set up the machine they run on are the exception: `account discover` stores labels in that machine's session, and `ring init` stores a credential in that machine's keychain. Handing them over sets up the human's computer, not yours. On a remote box, skip them: for a proposal, agent-intent.md steps 7 and 8 find the sender. When any other command needs an account or address the human did not give, offer their accounts to pick from (`session view` labels, and on an enrolled profile the Ledger Sync import, agent-intent.md step 6) before asking them to type an address. Tell them the Ledger Key Ring cannot be set up on this machine.
 
