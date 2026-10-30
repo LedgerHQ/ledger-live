@@ -122,6 +122,8 @@ test.describe("Swap - quick amount buttons", () => {
       }
 
       for (const { swap, percentageButtonsEnabled } of insufficientBalanceSwaps) {
+        await app.swap.clearSwapState();
+        await app.mainNavigation.openTargetFromMainNavigation("home");
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: "" });
         await app.swap.checkMaxToggleEnabled(false);
         await app.swap.checkMaxTooltip("You don't have enough balance including network fees");

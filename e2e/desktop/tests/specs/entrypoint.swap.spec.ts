@@ -78,6 +78,12 @@ test.describe("Swap - entry points", () => {
         }),
       );
 
+      await app.swap.goAndWaitForSwapToBeReady(() =>
+        app.mainNavigation.openTargetFromMainNavigation("swap"),
+      );
+      await app.swap.expectSelectedAssetDisplayed("BTC");
+      await app.swap.clearSwapState();
+
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.clickAsset(currency);
       await app.assetDetail(currency.id).swapContainer.expectSwapContainerVisible();
@@ -108,11 +114,6 @@ test.describe("Swap - entry points", () => {
       await app.swap.clearSwapState();
 
       await app.mainNavigation.openTargetFromMainNavigation("home");
-      await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.mainNavigation.openTargetFromMainNavigation("swap"),
-      );
-      await app.swap.expectSelectedAssetDisplayed("BTC");
-
       const minAmount = await app.swap.getMinimumAmount(accountToCredit, accountToDebit);
       const blacklistedSwap = new Swap(accountToCredit, accountToDebit, minAmount);
       await performSwapUntilQuoteSelectionStep({ app, swap: blacklistedSwap, minAmount });
