@@ -10,12 +10,10 @@ import { MarketBannerRankingSelect } from "../MarketBannerRankingSelect";
 
 type MarketBannerHeaderViewProps = {
   readonly onNavigate: () => void;
-  readonly shouldDisplayAssetDiscoverability: boolean;
 };
 
 export const MarketBannerHeaderView = memo(function MarketBannerHeaderView({
   onNavigate,
-  shouldDisplayAssetDiscoverability,
 }: MarketBannerHeaderViewProps) {
   const { t } = useTranslation();
 
@@ -27,7 +25,7 @@ export const MarketBannerHeaderView = memo(function MarketBannerHeaderView({
           <SubheaderShowMore />
         </SubheaderRow>
       </Subheader>
-      {shouldDisplayAssetDiscoverability && <MarketBannerRankingSelect />}
+      <MarketBannerRankingSelect />
     </div>
   );
 });

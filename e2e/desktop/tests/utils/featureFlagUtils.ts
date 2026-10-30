@@ -29,7 +29,6 @@ const FF_LWD_WALLET_40_Q1 = {
       brazePlacement: true,
       earnUpselling: false,
       earnSimulator: false,
-      assetDiscoverability: false,
     },
   },
 } satisfies PartialFeatures;
@@ -43,7 +42,6 @@ export const FF_LWD_WALLET_40_Q2 = {
       brazePlacement: true,
       earnUpselling: true,
       earnSimulator: true,
-      assetDiscoverability: true,
     },
   },
 } satisfies PartialFeatures;

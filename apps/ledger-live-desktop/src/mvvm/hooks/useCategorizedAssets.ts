@@ -10,10 +10,8 @@ import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 
 export function useCategorizedAssetsFromPortfolio() {
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("desktop");
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
@@ -33,7 +31,7 @@ export function useCategorizedAssetsFromPortfolio() {
     ids: stockAssetIds,
     isLoading: isLoadingStockIds,
     isError: isStockIdsError,
-  } = useStockAssetIds("lld", __APP_VERSION__, !shouldDisplayAssetDiscoverability);
+  } = useStockAssetIds("lld", __APP_VERSION__);
 
   const rawCategorizedAssets = useCategorizedAssets(distribution, stablecoinTickers);
 
@@ -50,7 +48,7 @@ export function useCategorizedAssetsFromPortfolio() {
       if (blacklistedTokenIdsSet.has(item.currency.id)) {
         continue;
       }
-      if (shouldDisplayAssetDiscoverability && stockAssetIds.has(item.currency.id)) {
+      if (stockAssetIds.has(item.currency.id)) {
         stocks.push(item);
       } else {
         cryptos.push(item);
@@ -62,12 +60,7 @@ export function useCategorizedAssetsFromPortfolio() {
     );
 
     return { cryptos, stablecoins, stocks };
-  }, [
-    rawCategorizedAssets,
-    blacklistedTokenIdsSet,
-    stockAssetIds,
-    shouldDisplayAssetDiscoverability,
-  ]);
+  }, [rawCategorizedAssets, blacklistedTokenIdsSet, stockAssetIds]);
 
   return {
     categorizedAssets,

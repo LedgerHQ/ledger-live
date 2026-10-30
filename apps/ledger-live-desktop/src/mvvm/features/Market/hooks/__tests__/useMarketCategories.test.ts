@@ -1,4 +1,4 @@
-import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
 import { useGetTrendingCategoriesQuery } from "@ledgerhq/live-common/market/state-manager/api";
 import type { MarketListCategory, MarketState } from "~/renderer/reducers/market";
@@ -11,10 +11,6 @@ jest.mock("@ledgerhq/live-common/market/state-manager/api", () => ({
 }));
 
 const mockedUseTrending = useGetTrendingCategoriesQuery as jest.Mock;
-
-const assetDiscoverabilityOn = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
-});
 
 const createMarketState = (
   category: MarketListCategory = "all",
@@ -39,12 +35,10 @@ const createMarketState = (
 
 const renderCategories = (
   category: MarketListCategory = "all",
-  flags = assetDiscoverabilityOn,
   marketOverrides: Partial<MarketState> = {},
 ) =>
   renderHook(() => useMarketCategories(), {
     initialState: {
-      ...flags,
       market: createMarketState(category, marketOverrides),
     },
   });
@@ -76,7 +70,7 @@ describe("useMarketCategories", () => {
   });
 
   it("resets pagination when switching categories", () => {
-    const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
+    const { result, store } = renderCategories("all", {
       currentPage: 3,
     });
 
@@ -86,7 +80,7 @@ describe("useMarketCategories", () => {
   });
 
   it("resets sort to default when switching categories", () => {
-    const { result, store } = renderCategories("all", assetDiscoverabilityOn, {
+    const { result, store } = renderCategories("all", {
       marketParams: { order: Order.VolumeDesc },
     });
 

@@ -70,16 +70,6 @@ const createSettingsState = (starredMarketCoins: string[] = []) => ({
 
 const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
 
-const marketWithTopCardsOn = withFlagOverrides({
-  lldRefreshMarketData: { enabled: false },
-  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
-});
-
-const marketWithTopCardsOff = withFlagOverrides({
-  lldRefreshMarketData: { enabled: false },
-  lwdWallet40: { enabled: false },
-});
-
 const jsonMarkets = (body: JsonBodyType = MOCK_MARKET_CURRENCY_DATA) => HttpResponse.json(body);
 
 function renderMarket({
@@ -125,8 +115,8 @@ describe("Market Integration", () => {
     server.use(http.get(MARKET_API_ENDPOINT, () => jsonMarkets()));
   });
 
-  it("should render top cards section when assetDiscoverability is enabled", async () => {
-    renderMarket({ flags: marketWithTopCardsOn });
+  it("should render the top cards section", async () => {
+    renderMarket();
 
     await waitFor(() => {
       expect(screen.getByRole("region", { name: /market top cards/i })).toBeVisible();
@@ -134,16 +124,6 @@ describe("Market Integration", () => {
       expect(screen.getByTestId("market-top-card-2")).toBeVisible();
       expect(screen.getByTestId("market-top-card-3")).toBeVisible();
     });
-  });
-
-  it("should not render top cards section when assetDiscoverability is disabled", async () => {
-    renderMarket({ flags: marketWithTopCardsOff });
-
-    await waitFor(() => {
-      expect(screen.getByText("Market")).toBeVisible();
-    });
-
-    expect(screen.queryByRole("region", { name: /market top cards/i })).toBeNull();
   });
 
   it("should render market page with header", async () => {
@@ -215,7 +195,7 @@ describe("Market Integration", () => {
   it("should reset sort to default when switching category tab", async () => {
     server.use(http.get(TRENDING_CATEGORIES_ENDPOINT, () => jsonMarkets([])));
     const marketRequests = recordMarketRequests();
-    const { user } = renderMarket({ flags: marketWithTopCardsOn });
+    const { user } = renderMarket();
 
     await waitFor(() => {
       expect(screen.getByTestId("market-sort-volume")).toBeVisible();
@@ -263,7 +243,6 @@ describe("Market Integration", () => {
       return jsonMarkets(MOCK_MARKET_CURRENCY_DATA.slice(start, start + pageSize));
     });
     const { user } = renderMarket({
-      flags: marketWithTopCardsOn,
       market: { ...createMarketState(), currentPage: 3 },
     });
 
@@ -295,7 +274,7 @@ describe("Market Integration", () => {
       ),
     );
     const marketRequests = recordMarketRequests();
-    const { user } = renderMarket({ flags: marketWithTopCardsOn });
+    const { user } = renderMarket();
 
     const trendingChip = await screen.findByTestId("market-category-switcher-infrastructure");
     expect(trendingChip).toHaveTextContent("Infrastructure");
