@@ -12,7 +12,6 @@ import {
   quotedReceiveAmount,
   resolveAgentSwapProvider,
   toSdkSwapIntent,
-  warnIfTokenApprovalNeeded,
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
 import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
@@ -26,9 +25,13 @@ import {
   assertSdkAcceptsIntent,
   proposalOptions,
   submitAgentIntent,
-  warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
-import { createCommandOutput, type CommandOutput } from "../../output";
+import {
+  createCommandOutput,
+  warnIfReviewLinkUnusable,
+  warnIfTokenApprovalNeeded,
+  type CommandOutput,
+} from "../../output";
 import { writeStderr } from "../../shared/ui";
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {

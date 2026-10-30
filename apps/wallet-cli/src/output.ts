@@ -45,6 +45,7 @@ import { redactUrlCredentials, agentIntentProfileStatus } from "./agent-intent/p
 import { NETWORK_LABELS, type SendIntentSummary } from "./agent-intent/send-intent";
 import { isTerminalIntentStatus, type IntentListEntry } from "./agent-intent/intent-list";
 import type { SwapIntentSummary } from "./agent-intent/swap-intent";
+import type { SubmittedIntent } from "./agent-intent/propose-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
@@ -1675,6 +1676,34 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
     ...(summary.network === "solana" && summary.memo ? { memo: summary.memo } : {}),
     ...(summary.description ? { description: summary.description } : {}),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Proposal warnings (stderr, in both formats, after the result)
+// ---------------------------------------------------------------------------
+
+export function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
+  if (!summary.needsTokenApproval) return;
+  writeStderr(
+    `⚠ Swapping ${summary.from.ticker} through ${summary.provider} needs an approval first. The ` +
+      "reviewer approves it in Agent Intent, in a separate transaction with its own network fee, " +
+      "then reviews the swap.\n",
+  );
+}
+
+/** Warns, after the result is printed, when the created intent can't be found from it. */
+export function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent): void {
+  if (!deeplink) {
+    writeStderr(
+      "⚠ The Agent Intent service accepted the intent but returned no readable review link. " +
+        "Find it in the Agent Intent frontend — don't re-run, or you'll propose a duplicate.\n",
+    );
+  } else if (!intentId) {
+    writeStderr(
+      "⚠ The review link has an unexpected shape, so no intent id could be extracted. " +
+        "The intent was created — use the review link to find it.\n",
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
