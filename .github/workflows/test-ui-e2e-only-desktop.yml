@@ -210,6 +210,19 @@ jobs:
             [4]=stax                # Thursday   - Stax
             [5]=nanoS               # Friday     - LNS
           )
+          SHARD_TOTAL=4
+          # Prints e2e_matrix with one entry per shard of each "<device>:<is_primary>:<artifact_suffix>".
+          e2e_matrix() {
+            local entries=() spec device is_primary artifact_suffix shard
+            for spec in "$@"; do
+              IFS=: read -r device is_primary artifact_suffix <<< "$spec"
+              for shard in $(seq 1 "$SHARD_TOTAL"); do
+                entries+=("$(printf '{"device":"%s","is_primary":%s,"artifact_suffix":"%s","shard":%d,"shard_total":%d}' \
+                  "$device" "$is_primary" "$artifact_suffix" "$shard" "$SHARD_TOTAL")")
+              done
+            done
+            (IFS=,; echo "e2e_matrix={\"include\":[${entries[*]}]}")
+          }
           if [ "$EVENT_NAME" = "schedule" ]; then
             DOW=$(date -u +%u)
             DEVICE="${WEEKDAY_DEVICE[$DOW]:-nanoSP}"
@@ -217,14 +230,14 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":""}]}\n' "$DEVICE"
+              e2e_matrix "$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           elif [ "$SPECULOS_DEVICE_INPUT" = "nanoSP and stax" ]; then
             {
               echo "device_1=nanoSP"
               echo "device_2=stax"
               echo "is_dual=true"
-              echo 'e2e_matrix={"include":[{"device":"nanoSP","is_primary":true,"artifact_suffix":""},{"device":"stax","is_primary":false,"artifact_suffix":"-stax"}]}'
+              e2e_matrix "nanoSP:true:" "stax:false:-stax"
             } >> "$GITHUB_OUTPUT"
           else
             DEVICE="$SPECULOS_DEVICE_INPUT"
@@ -232,13 +245,13 @@ jobs:
               echo "device_1=$DEVICE"
               echo "device_2=skipped"
               echo "is_dual=false"
-              printf 'e2e_matrix={"include":[{"device":"%s","is_primary":true,"artifact_suffix":"","shard":1},{"device":"%s","is_primary":true,"artifact_suffix":"","shard":2},{"device":"%s","is_primary":true,"artifact_suffix":"","shard":3},{"device":"%s","is_primary":true,"artifact_suffix":"","shard":4}]}\n' "$DEVICE" "$DEVICE" "$DEVICE" "$DEVICE"
+              e2e_matrix "$DEVICE:true:"
             } >> "$GITHUB_OUTPUT"
           fi
         shell: bash
 
   e2e-tests:
-    name: "Desktop E2E (${{ matrix.device }}, shard ${{ matrix.shard }}/4)"
+    name: "Desktop E2E (${{ matrix.device }}, shard ${{ matrix.shard }}/${{ matrix.shard_total }})"
     needs: [prepare-devices]
     runs-on: [ledger-wallet-8cpu-aws-public-cached]
     permissions:
@@ -258,7 +271,7 @@ jobs:
       pnpm_config_loglevel: warn
       DO_NOT_TRACK: 1
       SPECULOS_DEVICE: ${{ matrix.device }}
-      # The 16cpu runner image has no Docker daemon, so Speculos runs remotely on Speculinho.
+      # The runner has no Docker daemon, so Speculos runs remotely on Speculinho.
       REMOTE_SPECULOS: "true"
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
@@ -474,7 +487,7 @@ jobs:
           repeat_each: ${{ inputs.repeat_each }}
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           shard_index: ${{ matrix.shard }}
-          shard_total: 4
+          shard_total: ${{ matrix.shard_total }}
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
           SPECULINHO_URL: ${{ secrets.SPECULINHO_URL }}
@@ -530,7 +543,7 @@ jobs:
         if: ${{ !cancelled() && steps.capture-proxy.outputs.status == 'on' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: firebase-capture-logs${{ matrix.artifact_suffix }}
+          name: firebase-capture-logs${{ matrix.artifact_suffix }}-shard-${{ matrix.shard }}
           path: ${{ runner.temp }}/firebase-capture*
           retention-days: 7
 
@@ -821,7 +834,8 @@ jobs:
       - name: Download Allure results from device2 test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
+          pattern: allure-results-${{ needs.prepare-devices.outputs.device_2 }}-shard-*
+          merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Extract test summary for Slack notification
@@ -939,7 +953,8 @@ jobs:
       - name: Download Allure results from device2 test job
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: allure-results-${{ needs.prepare-devices.outputs.device_2 }}
+          pattern: allure-results-${{ needs.prepare-devices.outputs.device_2 }}-shard-*
+          merge-multiple: true
           path: ${{ env.ALLURE_RESULTS }}
 
       - name: Upload to qaa-allure (sandbox)
