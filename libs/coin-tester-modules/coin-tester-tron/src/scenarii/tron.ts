@@ -417,8 +417,8 @@ export const scenarioTron: Scenario<GenericTransaction, Account> = {
     sandbox = await startSandbox(
       { family: "tron", network: "tron" },
       {
-        node: { provider: "java-tron", version: "4.7.2" },
-        indexer: { provider: "internal" },
+        node: { implementation: "java-tron", version: "4.7.2" },
+        indexer: { implementation: "trongrid-stub" },
       },
     );
     // The indexer serves the TronGrid API and forwards the rest to the node: one URL for everything

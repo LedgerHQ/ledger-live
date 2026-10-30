@@ -98,8 +98,8 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
     sandbox = await startSandbox(
       { family: "evm", network: "polygon" },
       {
-        node: { provider: "bor", version: "2.10.2" },
-        indexer: { provider: "atlas", version: "2.38.16" },
+        node: { implementation: "bor", version: "2.10.2" },
+        indexer: { implementation: "atlas", version: "2.38.16" },
       },
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;

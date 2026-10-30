@@ -557,7 +557,7 @@ export const scenarioSolana: Scenario<GenericTransaction, Account> = {
   setup: async () => {
     sandbox = await startSandbox(
       { family: "solana", network: "solana" },
-      { node: { provider: "agave", version: "4.3.0" } },
+      { node: { implementation: "agave", version: "4.3.0" } },
     );
     const rpc = sandbox.endpoints.node;
     if (rpc === undefined) throw new Error("the sandbox instance has no node endpoint");
