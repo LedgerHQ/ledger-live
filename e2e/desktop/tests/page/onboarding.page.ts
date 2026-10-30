@@ -13,6 +13,13 @@ const SELECTABLE_DEVICES = [
   DeviceModelId.apex,
 ];
 
+// Written out rather than imported from the app, so a change to which devices use sync onboarding fails here.
+const SYNC_ONBOARDING_DEVICES = new Set([
+  DeviceModelId.stax,
+  DeviceModelId.europa,
+  DeviceModelId.apex,
+]);
+
 type TutorialScreen =
   | "how-to-get-started"
   | "device-how-to"
@@ -89,6 +96,16 @@ export class OnboardingPage extends AppPage {
     await Promise.all(
       SELECTABLE_DEVICES.map(device => expect(this.deviceContainer(device)).toBeVisible()),
     );
+  }
+
+  @step("Expect the setup entry screen for $0")
+  async expectSetupEntryScreen(device: DeviceModelId) {
+    if (SYNC_ONBOARDING_DEVICES.has(device)) {
+      await expect(this.page).toHaveURL(new RegExp(`/sync-onboarding/${device}$`));
+    } else {
+      await this.expectDeviceSelectionScreen();
+      await this.expectDeviceCards();
+    }
   }
 
   @step("Expect the use case screen")
