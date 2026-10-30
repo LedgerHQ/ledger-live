@@ -11,6 +11,7 @@ Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`
 | [`@domain/entity-account-data`](../domain/entity/account-data) | `AccountDataRegistry`, the open map of kinds; the `accountData` status slice and the `accountDataReceived` action entities store from |
 | [`@domain/api-account-data`](../domain/api/account-data) | `AccountDataSource`, `createAccountDataRouter`, `fetchAccountData`, `fetchMoreAccountData`; `./testing` holds two toy kinds |
 | [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData` |
+| [`@features/platform-account-source-coin-module`](../features/platform/account-source-coin-module) | the `coin-module` source, reading coin modules directly (`balance`) |
 | `@domain/entity-account-<kind>` | one kind: its models, its data slice, and the `declare module` adding the kind |
 | apps, `src/config/account-data-setup.ts` | the ranked sources, spread into the thunk `extraArgument` |
 
@@ -111,6 +112,6 @@ export const portfolioSource: AccountDataSource = {
 - `purposes` lists the descriptor purposes a source serves, `["account"]` by default: a `mock` descriptor (a generated account) only reaches the mock source of [`@devtools/mock-accounts`](../devtools/mock-accounts), which that tool adds at runtime with `addAccountDataSource`.
 - On a next page, each target carries the `cursor` the source wrote in the previous page's `nextCursor`.
 - A source with both readers for a kind is always read through `readBatch`: its `read` is never called.
-- Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order.
+- Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order: `coin-module` first, then `full-sync`.
 
 Without React or Redux, `createAccountDataRouter(sources).read(kind, descriptor)` answers the same.
