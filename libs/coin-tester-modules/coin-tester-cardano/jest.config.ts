@@ -35,6 +35,7 @@ const config: Config = {
         "<rootDir>/src/getValidators.test.ts",
         "<rootDir>/src/signer.test.ts",
         "<rootDir>/src/yaciAdapter.test.ts",
+        "<rootDir>/src/yaci.test.ts",
       ],
     },
     {
