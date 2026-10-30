@@ -24,6 +24,10 @@ export type AddNewContactAddressScreens = Readonly<{
   review: QueuedDrawerFlowScreen;
 }>;
 
+function ignoreAddressEntry(): void {
+  // Send prefills the address, so the flow never shows the address entry step.
+}
+
 export function useAddNewContactAddressScreens({
   addressPhase,
   bottomOffset,
@@ -35,42 +39,21 @@ export function useAddNewContactAddressScreens({
     };
   }
 
-  const { state } = addressPhase;
+  const content = (
+    <ContactsAddAddressFlowContent
+      state={addressPhase.state}
+      supportsDomain={false}
+      onAddressChange={ignoreAddressEntry}
+      onContinueFromAddressDetails={ignoreAddressEntry}
+      onAddressLabelChange={addressPhase.onAddressLabelChange}
+      onContinueFromName={addressPhase.onContinueFromName}
+      onContinueFromReview={addressPhase.onContinueFromReview}
+      bottomOffset={bottomOffset}
+    />
+  );
 
   return {
-    name: {
-      content: (
-        <ContactsAddAddressFlowContent
-          addressEntryProps={null}
-          addressNameProps={{
-            addressLabel: state.addressLabel,
-            bottomOffset,
-            onChangeText: addressPhase.onAddressLabelChange,
-            onContinue: addressPhase.onContinueFromName,
-          }}
-          addressReviewProps={null}
-          step="name"
-        />
-      ),
-      options: LOCKED_STEP_OPTIONS,
-    },
-    review: {
-      content: (
-        <ContactsAddAddressFlowContent
-          addressEntryProps={null}
-          addressNameProps={null}
-          addressReviewProps={{
-            address: state.addressEntry.resolvedAddress,
-            currency: state.displayContext.assetDisplayName,
-            network: state.displayContext.network.displayName,
-            name: state.addressLabel.label ?? state.addressLabel.value,
-            bottomOffset,
-            onContinue: addressPhase.onContinueFromReview,
-          }}
-          step="review"
-        />
-      ),
-      options: LOCKED_STEP_OPTIONS,
-    },
+    name: { content, options: LOCKED_STEP_OPTIONS },
+    review: { content, options: LOCKED_STEP_OPTIONS },
   };
 }

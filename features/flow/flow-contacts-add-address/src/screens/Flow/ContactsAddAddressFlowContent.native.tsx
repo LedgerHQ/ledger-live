@@ -1,24 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { ContactsAddAddressEntry } from "../AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry";
-import type { ContactsAddAddressEntryProps } from "../AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types";
 import { ContactsAddAddressName } from "../AddressName/ContactsAddAddressName";
-import type { ContactsAddAddressNameProps } from "../AddressName/ContactsAddAddressName";
-import {
-  ContactsAddAddressReview,
-  type ContactsAddAddressReviewNativeProps,
-} from "../Review/ContactsAddAddressReview.native";
+import { ContactsAddAddressReview } from "../Review/ContactsAddAddressReview";
+import type { ContactsAddAddressFlowContentProps } from "./ContactsAddAddressFlowContent.types";
 
 const STEP_FRAME_HEIGHT = "100%";
-
-export type ContactsAddAddressNativeFlowStep = "address" | "name" | "review";
-
-export type ContactsAddAddressFlowContentProps = Readonly<{
-  step: ContactsAddAddressNativeFlowStep;
-  addressEntryProps: ContactsAddAddressEntryProps | null;
-  addressNameProps: ContactsAddAddressNameProps | null;
-  addressReviewProps?: ContactsAddAddressReviewNativeProps | null;
-}>;
 
 function ContactsAddAddressStepFrame({ children }: React.PropsWithChildren): React.JSX.Element {
   return (
@@ -29,29 +16,61 @@ function ContactsAddAddressStepFrame({ children }: React.PropsWithChildren): Rea
 }
 
 export function ContactsAddAddressFlowContent({
-  step,
-  addressEntryProps,
-  addressNameProps,
-  addressReviewProps = null,
+  state,
+  supportsDomain,
+  onSanctionedAddressLearnMore,
+  onAddressChange,
+  onScanQrCode,
+  onContinueFromAddressDetails,
+  onAddressLabelChange,
+  onContinueFromName,
+  onContinueFromReview,
+  bottomOffset,
 }: ContactsAddAddressFlowContentProps): React.JSX.Element | null {
-  switch (step) {
-    case "address":
-      return addressEntryProps ? (
+  switch (state.status) {
+    case "enteringAddress":
+      return (
         <ContactsAddAddressStepFrame>
-          <ContactsAddAddressEntry {...addressEntryProps} />
+          <ContactsAddAddressEntry
+            addressEntry={state.addressEntry}
+            supportsDomain={supportsDomain}
+            onSanctionedAddressLearnMore={onSanctionedAddressLearnMore}
+            bottomOffset={bottomOffset}
+            onChangeText={onAddressChange}
+            onConfirm={onContinueFromAddressDetails}
+            onQrCodeClick={onScanQrCode}
+          />
         </ContactsAddAddressStepFrame>
-      ) : null;
-    case "name":
-      return addressNameProps ? (
+      );
+    case "namingAddress":
+    case "confirmationRequired":
+      return (
         <ContactsAddAddressStepFrame>
-          <ContactsAddAddressName {...addressNameProps} />
+          <ContactsAddAddressName
+            addressLabel={state.addressLabel}
+            nextStep={state.entryMode === "mad" ? "confirmation" : "review"}
+            bottomOffset={bottomOffset}
+            onChangeText={onAddressLabelChange}
+            onContinue={onContinueFromName}
+          />
         </ContactsAddAddressStepFrame>
-      ) : null;
-    case "review":
-      return addressReviewProps ? (
-        <ContactsAddAddressStepFrame>
-          <ContactsAddAddressReview {...addressReviewProps} />
-        </ContactsAddAddressStepFrame>
-      ) : null;
+      );
+    case "reviewingAddress":
+      if (state.entryMode === "prefilled" && state.displayContext !== null) {
+        return (
+          <ContactsAddAddressStepFrame>
+            <ContactsAddAddressReview
+              addressEntry={state.addressEntry}
+              addressLabel={state.addressLabel}
+              displayContext={state.displayContext}
+              bottomOffset={bottomOffset}
+              onContinue={onContinueFromReview}
+            />
+          </ContactsAddAddressStepFrame>
+        );
+      }
+      return null;
+    case "success":
+      return null;
   }
 }

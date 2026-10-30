@@ -5,10 +5,8 @@ import {
   resolveAddAddressEntryPresentation,
   shouldShowSanctionedAddressBanner,
 } from "../../../state/addAddressEntryPresentation";
-import type {
-  ContactsAddAddressEntryProps,
-  ContactsAddAddressEntryViewProps,
-} from "../components/ContactsAddAddressEntry/ContactsAddAddressEntry.types";
+import type { ContactsAddAddressEntryProps } from "../components/ContactsAddAddressEntry/ContactsAddAddressEntry";
+import type { ContactsAddAddressEntryViewProps } from "../components/ContactsAddAddressEntryView/ContactsAddAddressEntryView";
 
 export function useContactsAddAddressEntryViewModel({
   addressEntry,

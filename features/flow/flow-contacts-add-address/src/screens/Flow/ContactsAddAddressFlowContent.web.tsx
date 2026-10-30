@@ -1,57 +1,15 @@
 import React from "react";
 import { ContactsAddAddressEntry } from "../AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry";
 import { ContactsAddAddressNameInput } from "../AddressName/components/Input/ContactsAddAddressNameInput";
-import { ContactsAddAddressReview } from "../Review";
-import type { AddAddressFlowState, AddAddressInputSource } from "../../state/types";
-
-export type AddAddressWebFlowStep = "currency" | "address" | "name" | "review" | "success";
-
-type OpenAddAddressFlowState = Exclude<AddAddressFlowState, { status: "closed" }>;
-type AddAddressFlowContentState = Exclude<OpenAddAddressFlowState, { status: "selectingCurrency" }>;
-
-export type ContactsAddAddressFlowContentProps = Readonly<{
-  state: AddAddressFlowContentState;
-  supportsDomain: boolean;
-  onSanctionedAddressLearnMore?: () => void;
-  onAddressChange: (address: string, inputMethod: AddAddressInputSource) => void;
-  onContinueFromAddressDetails: () => void;
-  onAddressLabelChange: (value: string) => void;
-  onContinueFromName: () => void;
-  onContinueFromReview: () => void;
-}>;
-
-export function resolveAddAddressWebFlowStep(
-  state: OpenAddAddressFlowState,
-): AddAddressWebFlowStep {
-  switch (state.status) {
-    case "selectingCurrency":
-      return "currency";
-    case "enteringAddress":
-      return "address";
-    case "namingAddress":
-      return "name";
-    case "confirmationRequired":
-    case "reviewingAddress":
-      return "review";
-    case "success":
-      return "success";
-  }
-}
-
-export function shouldUseAddAddressFlowBackNavigation(state: OpenAddAddressFlowState): boolean {
-  return (
-    state.status === "enteringAddress" ||
-    state.status === "namingAddress" ||
-    state.status === "reviewingAddress" ||
-    state.status === "confirmationRequired"
-  );
-}
+import { ContactsAddAddressReview } from "../Review/ContactsAddAddressReview";
+import type { ContactsAddAddressFlowContentProps } from "./ContactsAddAddressFlowContent.types";
 
 export function ContactsAddAddressFlowContent({
   state,
   supportsDomain,
   onSanctionedAddressLearnMore,
   onAddressChange,
+  onScanQrCode,
   onContinueFromAddressDetails,
   onAddressLabelChange,
   onContinueFromName,
@@ -68,6 +26,7 @@ export function ContactsAddAddressFlowContent({
           onAddressChange={onAddressChange}
           onAddressLabelChange={onAddressLabelChange}
           onConfirm={onContinueFromAddressDetails}
+          onQrCodeClick={onScanQrCode}
         />
       );
     case "namingAddress":

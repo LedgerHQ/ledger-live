@@ -9,8 +9,8 @@ import {
 import type {
   AddressLabelConfiguration,
   ContactsAddAddressEntryWebProps,
-  ContactsAddAddressEntryWebViewProps,
-} from "../components/ContactsAddAddressEntry/ContactsAddAddressEntry.types";
+} from "../components/ContactsAddAddressEntry/ContactsAddAddressEntry";
+import type { ContactsAddAddressEntryWebViewProps } from "../components/ContactsAddAddressEntryView/ContactsAddAddressEntryView";
 
 function getAddressLabelConfiguration({
   addressLabel,
@@ -25,6 +25,7 @@ export function useContactsAddAddressEntryViewModel({
   onSanctionedAddressLearnMore,
   onAddressChange,
   onConfirm,
+  onQrCodeClick,
   ...addressLabelProps
 }: ContactsAddAddressEntryWebProps): ContactsAddAddressEntryWebViewProps {
   const { labels, sanctionedDescription, sanctionedLearnMore } =
@@ -92,5 +93,6 @@ export function useContactsAddAddressEntryViewModel({
     onChange,
     onPaste,
     onConfirm,
+    onQrCodeClick,
   };
 }

@@ -82,14 +82,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsButton: componentWaiver("R2", "R4"),
     ContactsView: componentWaiver("R2", "R3"),
   },
-  "features/flow/flow-contacts-add-address": {
-    "./native": entryWaiver(),
-    ContactsAddAddressEntry: componentWaiver("R2", "R3", "R4", "R5"),
-    ContactsAddAddressFlowContent: componentWaiver("R2", "R4", "R5"),
-    ContactsAddAddressName: componentWaiver("R2", "R3", "R4", "R5"),
-    ContactsAddAddressNameInput: componentWaiver("R1", "R3", "R4"),
-    ContactsAddAddressReview: componentWaiver("R2", "R4", "R5"),
-  },
   "features/flow/flow-contacts-add-contact": {
     "./native": entryWaiver(),
     ContactsAddContactContent: componentWaiver("R2", "R5"),
@@ -179,14 +171,6 @@ const FILE_EXCEPTIONS = {
   "features/flow/contacts/src/contactsViewFacade.native.ts": NAMED_REEXPORT,
   "features/flow/contacts/src/contactsViewFacade.web.ts": NAMED_REEXPORT,
   "features/flow/contacts/src/hooks/contactsHooks.ts": WORKSPACE_PROXY,
-  "features/flow/flow-contacts-add-address/src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types.ts":
-    NAMED_REEXPORT,
-  "features/flow/flow-contacts-add-address/src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.types.web.ts":
-    NAMED_REEXPORT,
-  "features/flow/flow-contacts-add-address/src/screens/AddressEntry/components/ContactsAddAddressEntry/ContactsAddAddressEntry.web.tsx":
-    NAMED_REEXPORT,
-  "features/flow/flow-contacts-add-address/src/screens/AddressName/components/Input/ContactsAddAddressNameInput.web.tsx":
-    NAMED_REEXPORT,
   "features/flow/flow-contacts-detail/src/native.ts": NAMED_REEXPORT,
   "features/flow/flow-contacts-detail/src/web.ts": NAMED_REEXPORT,
   "features/platform/contacts/src/contactDeviceIntentsPort.ts": NAMED_REEXPORT,

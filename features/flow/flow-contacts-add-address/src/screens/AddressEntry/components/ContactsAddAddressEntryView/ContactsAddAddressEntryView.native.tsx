@@ -9,8 +9,24 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { CONTACTS_NATIVE_ADDRESS_INPUT_PROPS } from "@features/platform-contacts";
-import type { ContactsAddAddressEntryViewProps } from "../ContactsAddAddressEntry/ContactsAddAddressEntry.types";
 import { SanctionedAddressBanner } from "../../../../components/SanctionedAddressBanner/SanctionedAddressBanner";
+import type { SanctionedAddressBannerProps } from "../../../../components/SanctionedAddressBanner/types";
+import type { AddAddressEntryLabels } from "../../../../copy/addAddressEntryLabels";
+
+export type ContactsAddAddressEntryViewProps = Readonly<{
+  value: string;
+  labels: AddAddressEntryLabels;
+  bottomOffset: number;
+  bottomPadding: number;
+  inputStatus?: "error" | "success";
+  helperText?: string;
+  sanctionedAddressBanner?: SanctionedAddressBannerProps;
+  showEnsDisclaimer: boolean;
+  isConfirmEnabled: boolean;
+  onAddressChange: (value: string) => void;
+  onConfirm: () => void;
+  onQrCodeClick?: () => void;
+}>;
 
 export function ContactsAddAddressEntryView({
   value,

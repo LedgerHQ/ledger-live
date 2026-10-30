@@ -4,7 +4,7 @@ import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboard
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
-import type { ContactsAddAddressNameProps } from "@features/flow-contacts-add-address";
+import type { ContactsAddAddressFlowContentProps } from "@features/flow-contacts-add-address";
 import { resolveContactAddressSupportsDomain } from "@features/flow-contacts-detail";
 import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { ContactsAddAddressDrawerStep, ContactsAddAddressFlowDrawerProps } from "./types";
@@ -25,6 +25,10 @@ function resolveDrawerStep(
     case "success":
       return "name";
   }
+}
+
+function ignoreReview(): void {
+  // The contact detail drawer adds addresses manually, so the flow never reaches the review step.
 }
 
 export function useContactsAddAddressFlowDrawerViewModel({
@@ -57,34 +61,27 @@ export function useContactsAddAddressFlowDrawerViewModel({
     onCurrencySelected,
     onSelectionCancelled: onClose,
   });
-  const addressNameProps: ContactsAddAddressNameProps | null =
-    state.status === "namingAddress" || state.status === "confirmationRequired"
-      ? {
-          addressLabel: state.addressLabel,
-          nextStep: "confirmation",
+  const flowContentProps: ContactsAddAddressFlowContentProps | null =
+    state.status === "closed" || state.status === "selectingCurrency"
+      ? null
+      : {
+          state,
+          supportsDomain: resolveContactAddressSupportsDomain(
+            state.selectedCurrencyId,
+            sendFeatures.supportsDomain,
+          ),
+          onSanctionedAddressLearnMore: handleSanctionedAddressLearnMore,
+          onAddressChange,
+          onScanQrCode: onQrCodeClick,
+          onContinueFromAddressDetails: onAddressConfirm,
+          onAddressLabelChange: onAddressNameChange,
+          onContinueFromName,
+          onContinueFromReview: ignoreReview,
           bottomOffset,
-          onChangeText: onAddressNameChange,
-          onContinue: onContinueFromName,
-        }
-      : null;
+        };
 
   return {
-    addressEntryProps:
-      state.status === "enteringAddress"
-        ? {
-            addressEntry: state.addressEntry,
-            supportsDomain: resolveContactAddressSupportsDomain(
-              state.selectedCurrencyId,
-              sendFeatures.supportsDomain,
-            ),
-            onSanctionedAddressLearnMore: handleSanctionedAddressLearnMore,
-            bottomOffset,
-            onChangeText: onAddressChange,
-            onConfirm: onAddressConfirm,
-            onQrCodeClick,
-          }
-        : null,
-    addressNameProps,
+    flowContentProps,
     currencySelection,
     currentStep: resolveDrawerStep(state.status),
     isOpen: state.status !== "closed" && state.status !== "success",
