@@ -930,40 +930,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_blast: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 81457,
-      name: "Blast",
-      unit: { name: "ETH", code: "ETH", magnitude: 18 },
-      node: { type: "external", uri: "https://blast.coin.ledger.com" },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/81457",
-      },
-    },
-  },
-  config_currency_blast_sepolia: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 168587773,
-      name: "Blast Sepolia",
-      unit: { name: "ETH", code: "ETH", magnitude: 18 },
-      node: { type: "external", uri: "https://blast-sepolia.coin.ledger.com" },
-      explorer: {
-        type: "etherscan",
-        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/168587773",
-      },
-    },
-  },
   config_currency_scroll: {
     type: "object",
     default: {

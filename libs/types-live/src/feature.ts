@@ -123,8 +123,6 @@ export type CurrencyFeatures = {
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
   currencyLineaSepolia: DefaultFeature;
-  currencyBlast: DefaultFeature;
-  currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
   currencyShape: DefaultFeature;
   currencyStory: DefaultFeature;
