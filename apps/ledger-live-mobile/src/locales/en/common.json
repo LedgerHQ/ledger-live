@@ -5963,10 +5963,10 @@
       "title": "Preparing for install"
     },
     "progress": {
-      "updatingTitle": "Updating your {{productName}}",
-      "restoringTitle": "Restoring your apps and settings",
-      "updateCount": "Update {{index}} of {{count}}",
-      "description": "Keep your device connected and nearby until the update is complete."
+      "updatingTitle": "Update {{index}}/{{count}}",
+      "restoringTitle": "Reinstalling your settings...",
+      "updatingDescription": "Your {{productName}} will restart automatically multiple times and you will be asked to unlock it with your PIN during installation.",
+      "restoringDescription": "Almost done. Your settings are being reinstalled on your {{productName}}."
     },
     "applied": {
       "title": "Update complete",

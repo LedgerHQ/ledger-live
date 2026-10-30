@@ -45,7 +45,7 @@ describe("RestoreBackup step", () => {
   it("shows the restore progress", () => {
     renderView({ type: RestoreBackupStateType.RESTORING, progress: 0.4 });
 
-    expect(screen.getByText("Restoring your apps and settings")).toBeVisible();
+    expect(screen.getByText("Reinstalling your settings...")).toBeVisible();
     expect(screen.getByTestId("os-update-progress-bar").props.accessibilityValue).toMatchObject({
       now: 40,
     });
