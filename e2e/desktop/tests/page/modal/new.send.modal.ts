@@ -285,7 +285,6 @@ export class NewSendModal extends Modal {
 
   @step("Refuse to send without memo")
   async cancelSkipMemo() {
-    await expect(this.skipMemoCancelButton).toBeVisible();
     await this.skipMemoCancelButton.click();
   }
 
@@ -298,7 +297,6 @@ export class NewSendModal extends Modal {
 
   @step("Open the memo type selector")
   async openMemoTypes() {
-    await expect(this.memoTypeSelect).toBeVisible();
     await this.memoTypeSelect.click();
   }
 
@@ -311,9 +309,7 @@ export class NewSendModal extends Modal {
 
   @step("Select memo type $0")
   async selectMemoType(memoType: StellarMemoType) {
-    const option = this.memoTypeOption(memoType);
-    await expect(option).toBeVisible();
-    await option.click();
+    await this.memoTypeOption(memoType).click();
   }
 
   @step("Verify the selected memo type is $0")
