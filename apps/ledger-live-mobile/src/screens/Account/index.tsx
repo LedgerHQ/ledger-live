@@ -43,6 +43,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-module-framework/config";
+import { GRADIENT_HEIGHT } from "LLM/components/BottomFadeGradient";
 import { renderItem } from "LLM/utils/renderItem";
 
 type Props =
@@ -178,7 +179,7 @@ const AccountScreenInner = ({
         ]
       : [
           <Flex key={"section-container-empty"} px={6}>
-            <EmptyAccountCard currencyTicker={currency.ticker} />
+            <EmptyAccountCard currencyTicker={currency.ticker} plain />
           </Flex>,
         ]),
   ];
@@ -196,6 +197,7 @@ const AccountScreenInner = ({
         style={{ flex: 1 }}
         contentContainerStyle={{
           paddingTop: 48, //CurrencyHeader height
+          ...(isEmpty ? { paddingBottom: GRADIENT_HEIGHT } : {}),
         }}
         data={data}
         renderItem={renderItem<React.JSX.Element>}

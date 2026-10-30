@@ -84,6 +84,21 @@ describe("AccountDetail empty state", () => {
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.transactions)).toBeNull();
   });
 
+  it("centers the empty state in the space under the quick actions", async () => {
+    renderAccount(neverUsedAccount);
+
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeVisible();
+
+    const scrollView = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.scrollView);
+    expect(scrollView.props.contentContainerStyle).toEqual(
+      expect.objectContaining({ flexGrow: 1 }),
+    );
+    expect(scrollView.props.refreshControl).toBeTruthy();
+    expect(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyStateSlot).props.style).toEqual(
+      expect.objectContaining({ flexGrow: 1, justifyContent: "center" }),
+    );
+  });
+
   it("offers Transfer, Swap and Buy above the empty state", async () => {
     renderAccount(neverUsedAccount);
 
@@ -97,6 +112,10 @@ describe("AccountDetail empty state", () => {
 
     expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.assets)).toBeVisible();
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeNull();
+    expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyStateSlot)).toBeNull();
+    expect(
+      screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.scrollView).props.contentContainerStyle,
+    ).not.toEqual(expect.objectContaining({ flexGrow: 1 }));
   });
 
   it("leaves the empty state once a first transaction is pending", async () => {
