@@ -1,4 +1,4 @@
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import type { AssetTableItem } from "@features/platform-assets-table";
 
 export function padItems(
   realItems: AssetTableItem[],
