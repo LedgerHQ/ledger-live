@@ -2,7 +2,7 @@
 // Content is inlined into the binary at build time, so these helpers work
 // identically in dev, tests, and the compiled standalone binary.
 
-import { mkdir, readFile, writeFile, access, stat } from "node:fs/promises";
+import { mkdir, readFile, writeFile, access, lstat, stat } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { CLI_VERSION, SKILLS, type SkillFile, type SkillManifest } from "./manifest.gen";
@@ -310,36 +310,72 @@ export function resolveScanRoots({ global, dir }: ScanOptions): string[] {
   return roots;
 }
 
+async function readTrackedFile(
+  skillRoot: string,
+  filePath: string,
+): Promise<{ path: string; content: string } | undefined> {
+  try {
+    return { path: filePath, content: await readFile(path.join(skillRoot, filePath), "utf8") };
+  } catch {
+    // Tracked file missing on disk — counts as local modification (hash drifts).
+    return undefined;
+  }
+}
+
+async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
+  const target = path.join(skillRoot, file.path);
+  try {
+    return (await readFile(target, "utf8")) !== file.content;
+  } catch {
+    return holdsAnything(target);
+  }
+}
+
+async function holdsAnything(p: string): Promise<boolean> {
+  try {
+    await lstat(p);
+    return true;
+  } catch (e) {
+    return (e as { code?: string } | null)?.code !== "ENOENT";
+  }
+}
+
 /**
  * Diagnose one shipped `skill` at `root` (which must contain `<root>/<name>`).
- * Recomputes the disk hash over the manifest-tracked files and classifies the
- * install:
+ * Recomputes the disk hash over the files the sidecar recorded (so a file a newer
+ * skill dropped still counts), or over the manifest's files without a sidecar,
+ * and classifies the install:
  * - No sidecar (legacy/manual install): `up-to-date` if the disk hash matches
  *   what this binary ships, otherwise `modified-locally` — without provenance we
  *   can't tell an old version from local edits, so we don't let `--fix` overwrite
  *   it unless the caller also passes `--force`.
- * - Sidecar present: disk hash disagrees with the sidecar → `modified-locally`;
- *   else sidecar matches the shipped hash → `up-to-date`; else → `outdated`.
+ * - Sidecar present: disk hash disagrees with the sidecar, or a path the sidecar
+ *   didn't record already holds anything but the shipped file →
+ *   `modified-locally`; else sidecar matches the shipped hash → `up-to-date`;
+ *   else → `outdated`.
  */
 export async function diagnoseSkill(skill: SkillManifest, root: string): Promise<SkillDiagnosis> {
   const skillRoot = path.join(root, skill.name);
   const sidecar = await readSidecar(skillRoot);
+  const recordedFiles = sidecar?.files ?? {};
 
-  const onDisk: { path: string; content: string }[] = [];
-  for (const file of skill.files) {
-    try {
-      const content = await readFile(path.join(skillRoot, file.path), "utf8");
-      onDisk.push({ path: file.path, content });
-    } catch {
-      // Tracked file missing on disk — counts as local modification (hash drifts).
-    }
-  }
+  const trackedPaths = sidecar ? Object.keys(recordedFiles) : skill.files.map(f => f.path);
+  const onDisk = (
+    await Promise.all(trackedPaths.map(filePath => readTrackedFile(skillRoot, filePath)))
+  ).filter(file => file !== undefined);
   const diskHash = hashSkillFiles(onDisk);
+
+  const newlyShipped = sidecar
+    ? skill.files.filter(f => !Object.hasOwn(recordedFiles, f.path))
+    : [];
+  const userFileAtNewlyShippedPath = (
+    await Promise.all(newlyShipped.map(file => differsOnDisk(skillRoot, file)))
+  ).includes(true);
 
   let status: DiagnosisStatus;
   if (!sidecar) {
     status = diskHash === skill.contentHash ? "up-to-date" : "modified-locally";
-  } else if (diskHash !== sidecar.contentHash) {
+  } else if (diskHash !== sidecar.contentHash || userFileAtNewlyShippedPath) {
     status = "modified-locally";
   } else if (sidecar.contentHash === skill.contentHash) {
     status = "up-to-date";

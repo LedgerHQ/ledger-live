@@ -5,6 +5,7 @@ import {
   CLI_VERSION,
   DEFAULT_AGENT,
   SUPPORTED_AGENTS,
+  diagnoseSkill,
   getAllSkills,
   getSkill,
   getSoleSkill,
@@ -37,7 +38,7 @@ export default defineCommand({
       argumentKind: "flag",
     }),
     force: option(z.boolean().default(false), {
-      description: "Overwrite existing skill files if they already exist.",
+      description: "Also overwrite skill files edited since wallet-cli installed them.",
       argumentKind: "flag",
     }),
     output: outputOption,
@@ -69,10 +70,15 @@ export default defineCommand({
         skillsToInstall.push(skill);
       }
 
-      const installed: string[] = [];
-      for (const skill of skillsToInstall) {
-        installed.push(...(await writeSkill(skill, root, { force: flags.force })));
-      }
+      const installed = (
+        await Promise.all(
+          skillsToInstall.map(async skill => {
+            const { status } = await diagnoseSkill(skill, root);
+            const unedited = status === "up-to-date" || status === "outdated";
+            return writeSkill(skill, root, { force: flags.force || unedited });
+          }),
+        )
+      ).flat();
 
       if (format === "json") {
         emitJson(

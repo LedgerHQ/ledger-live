@@ -1,8 +1,18 @@
 import { describe, it, expect, afterEach } from "bun:test";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import {
+  access,
+  appendFile,
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../testing/cli-runner";
+import { readTrackedFromDisk, stampSidecar } from "../../testing/skill-fixtures";
 import { SIDECAR_FILENAME } from "../../skills/registry";
 
 const SKILL_NAME = "wallet-cli-usage";
@@ -25,6 +35,21 @@ afterEach(async () => {
   }
 });
 
+async function installOlderSkillWithoutTheReference(
+  dir: string,
+): Promise<{ reference: string; shippedReference: string }> {
+  const first = await runCli(["skill", "install", SKILL_NAME, "--dir", dir]);
+  expect(first.exitCode).toBe(0);
+  const skillRoot = path.join(dir, SKILL_NAME);
+  const reference = path.join(skillRoot, "references", "business-logic.md");
+  const shippedReference = await readFile(reference, "utf8");
+  await appendFile(path.join(skillRoot, "SKILL.md"), "\n<!-- shipped by older wallet-cli -->\n");
+  const olderFiles = (await readTrackedFromDisk(skillRoot)).filter(f => f.path === "SKILL.md");
+  await stampSidecar(skillRoot, "0.0.1", olderFiles);
+  await rm(reference);
+  return { reference, shippedReference };
+}
+
 describe("skill install", () => {
   it("writes SKILL.md and reference files under --dir", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
@@ -45,11 +70,104 @@ describe("skill install", () => {
     expect(stdout).toContain(skillMd);
   });
 
-  it("refuses to overwrite existing files without --force, then succeeds with --force", async () => {
+  it("reinstalls an unedited skill without --force", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
 
     const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
     expect(first.exitCode).toBe(0);
+
+    const second = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(second.exitCode, `stderr: ${second.stderr}`).toBe(0);
+  });
+
+  it("replaces a skill an older wallet-cli installed without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const skillRoot = path.join(tmpDir, SKILL_NAME);
+    const skillMd = path.join(skillRoot, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
+    await stampSidecar(skillRoot, "0.0.1");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
+  });
+
+  it("replaces an older skill that had a file this one dropped, without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const skillRoot = path.join(tmpDir, SKILL_NAME);
+    const skillMd = path.join(skillRoot, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
+    const dropped = { path: "references/dropped.md", content: "a reference since removed\n" };
+    await writeFile(path.join(skillRoot, dropped.path), dropped.content, "utf8");
+    await stampSidecar(skillRoot, "0.0.1", [...(await readTrackedFromDisk(skillRoot)), dropped]);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
+  });
+
+  it("adds a file an older skill lacked without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference, shippedReference } = await installOlderSkillWithoutTheReference(tmpDir);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(reference, "utf8")).toBe(shippedReference);
+  });
+
+  it("keeps the user's own file where the new skill adds one, without --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+    await writeFile(reference, "my own notes\n", "utf8");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode).toBe(1);
+    expect(await readFile(reference, "utf8")).toBe("my own notes\n");
+  });
+
+  it("keeps the older skill when a directory sits where the new skill adds a file", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+    await mkdir(reference);
+    const skillMd = path.join(tmpDir, SKILL_NAME, "SKILL.md");
+    const olderSkillMd = await readFile(skillMd, "utf8");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode).toBe(1);
+    expect(await readFile(skillMd, "utf8")).toBe(olderSkillMd);
+  });
+
+  it("doesn't write through a dangling link where the new skill adds a file", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+    const outsideTheSkill = path.join(tmpDir, "outside.md");
+    await symlink(outsideTheSkill, reference);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode).toBe(1);
+    expect(await exists(outsideTheSkill)).toBe(false);
+  });
+
+  it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const skillMd = path.join(tmpDir, SKILL_NAME, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\nlocal hand edit\n");
 
     const second = await runCli([
       "skill",
@@ -64,9 +182,11 @@ describe("skill install", () => {
     const err = JSON.parse(second.stdout);
     expect(err.ok).toBe(false);
     expect(err.error.message).toMatch(/overwrite/i);
+    expect(await readFile(skillMd, "utf8")).toBe(`${shipped}\nlocal hand edit\n`);
 
     const forced = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
     expect(forced.exitCode).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
   });
 
   it("returns a json envelope listing installed paths and root", async () => {

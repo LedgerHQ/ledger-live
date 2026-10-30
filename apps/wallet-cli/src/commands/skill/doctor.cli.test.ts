@@ -12,7 +12,8 @@ import {
 import os from "node:os";
 import path from "node:path";
 import { runCli } from "../../testing/cli-runner";
-import { getSkill, SIDECAR_FILENAME } from "../../skills/registry";
+import { readTrackedFromDisk, stampSidecar } from "../../testing/skill-fixtures";
+import { SIDECAR_FILENAME } from "../../skills/registry";
 import { hashOne, hashSkillFiles } from "../../skills/hash";
 
 const SKILL_NAME = "wallet-cli-usage";
@@ -43,35 +44,6 @@ async function makeTmpDir(): Promise<string> {
 async function install(dir: string): Promise<void> {
   const res = await runCli(["skill", "install", SKILL_NAME, "--dir", dir]);
   expect(res.exitCode, `install stderr: ${res.stderr}`).toBe(0);
-}
-
-/** Read the manifest-tracked files as they currently exist on disk. */
-async function readTrackedFromDisk(
-  skillRoot: string,
-): Promise<{ path: string; content: string }[]> {
-  const skill = getSkill(SKILL_NAME)!;
-  const files: { path: string; content: string }[] = [];
-  for (const f of skill.files) {
-    files.push({ path: f.path, content: await readFile(path.join(skillRoot, f.path), "utf8") });
-  }
-  return files;
-}
-
-/** Rewrite the sidecar so its hashes match the current on-disk files (with a chosen version). */
-async function stampSidecar(skillRoot: string, cliVersion: string): Promise<void> {
-  const files = await readTrackedFromDisk(skillRoot);
-  const sidecar = {
-    name: SKILL_NAME,
-    cliVersion,
-    contentHash: hashSkillFiles(files),
-    files: Object.fromEntries(files.map(f => [f.path, hashOne(f.content)])),
-    installedAt: new Date().toISOString(),
-  };
-  await writeFile(
-    path.join(skillRoot, SIDECAR_FILENAME),
-    `${JSON.stringify(sidecar, null, 2)}\n`,
-    "utf8",
-  );
 }
 
 describe("skill doctor", () => {
