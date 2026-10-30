@@ -9,53 +9,46 @@ import {
 } from "~/reducers/rebornBuyDeviceDrawer";
 import { REBORN_BUY_DRAWER_ANALYTICS_PAGE } from "../consts/analytics";
 import {
-  RebornBuyDeviceNextContext,
-  type RebornBuyDeviceNext,
-} from "../drawers/RebornBuyDeviceProvider";
+  ConnectDeviceRequestContext,
+  type ConnectDeviceRequest,
+} from "../drawers/ConnectDeviceRequestProvider";
 /**
  * Hook to manage the global state of the Reborn Buy Device Drawer.
  *
  * This hook provides a centralized way to:
  * - Open/close the reborn buy device drawer
  * - Handle drawer state through Redux
- * - Resume or cancel the flow that opened it (`RebornBuyDeviceProvider`)
+ * - Answer the flow that asked for a device (`ConnectDeviceRequestProvider`)
  */
 export const useRebornBuyDeviceDrawerController = () => {
   const dispatch = useDispatch();
-  const nextState = useContext(RebornBuyDeviceNextContext);
+  const requestState = useContext(ConnectDeviceRequestContext);
 
   const { isOpen } = useSelector(rebornBuyDeviceDrawerStateSelector);
 
   const openDrawer = useCallback(
-    (next?: RebornBuyDeviceNext) => {
-      nextState?.setNext(next);
+    (request?: ConnectDeviceRequest) => {
+      requestState?.setRequest(request);
       dispatch(openRebornBuyDeviceDrawer());
       track("drawer_opened", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
     },
-    [nextState, dispatch],
+    [requestState, dispatch],
   );
 
-  const hide = useCallback(() => {
-    nextState?.setNext(undefined);
-    dispatch(closeRebornBuyDeviceDrawer());
-    track("drawer_closed", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
-  }, [nextState, dispatch]);
-
-  const closeDrawer = useCallback(() => {
-    nextState?.next?.onCancel?.();
-    hide();
-  }, [nextState, hide]);
-
-  /** Connect resumes the waiting flow instead of cancelling it. */
-  const connect = useCallback(() => {
-    nextState?.next?.onConnect();
-    hide();
-  }, [nextState, hide]);
+  const closeDrawer = useCallback(
+    (reason?: "connect") => {
+      if (reason === "connect") requestState?.request?.onConnect();
+      else requestState?.request?.onDismiss?.();
+      requestState?.setRequest(undefined);
+      dispatch(closeRebornBuyDeviceDrawer());
+      track("drawer_closed", { page: REBORN_BUY_DRAWER_ANALYTICS_PAGE, flow: "reborn" });
+    },
+    [requestState, dispatch],
+  );
 
   return {
     isOpen,
     openDrawer,
     closeDrawer,
-    connect,
   };
 };

@@ -38,7 +38,7 @@ export function useOpenSelectDevice() {
       openDrawer({
         // Under onboarding: the device list shows when onboarding closes.
         onConnect: () => navigateToSelectDevice(params),
-        onCancel: params.onCloseNavigation,
+        onDismiss: params.onCloseNavigation,
       });
     },
     [readOnlyModeEnabled, navigateToSelectDevice, openDrawer],

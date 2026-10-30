@@ -36,7 +36,7 @@ const getIsBaseOnboarding = (navigation: NavigationProp) => {
 };
 
 function useRebornBuyDeviceViewModel() {
-  const { isOpen, closeDrawer, connect } = useRebornBuyDeviceDrawerController();
+  const { isOpen, closeDrawer } = useRebornBuyDeviceDrawerController();
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -56,8 +56,8 @@ function useRebornBuyDeviceViewModel() {
         page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
       });
     }
-    // Before onboarding opens, so a flow waiting for a device sits under it.
-    connect();
+    // Before onboarding opens, so the flow that asked for a device sits under it.
+    closeDrawer("connect");
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: unifiedEntryPoints
@@ -67,7 +67,7 @@ function useRebornBuyDeviceViewModel() {
           }
         : { screen: ScreenName.OnboardingDeviceSelection },
     });
-  }, [isInOnboarding, dispatch, navigation, unifiedEntryPoints, readOnlyModeEnabled, connect]);
+  }, [isInOnboarding, dispatch, navigation, unifiedEntryPoints, readOnlyModeEnabled, closeDrawer]);
 
   const buyLedger = useCallback(() => {
     track("button_clicked", {
