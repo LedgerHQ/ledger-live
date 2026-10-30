@@ -67,7 +67,7 @@ describe("ApplyUpdates finishing progress", () => {
 
     rerender(element(applied));
 
-    expect(screen.getByText("Update 2 of 3")).toBeVisible();
+    expect(screen.getByText("Update 2/3")).toBeVisible();
   });
 
   it("still fills the bar when a prompt came between the last progress and the end", () => {
