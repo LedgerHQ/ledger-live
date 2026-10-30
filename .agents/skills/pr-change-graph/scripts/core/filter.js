@@ -5,9 +5,9 @@ import { CODE_FILE, TEST_FILE } from "./graph.js";
 
 /**
  * The part of the graph the diagram draws: the changed files the filter shows, the imports and dependencies
- * the branch adds or removes between what it shows, the unchanged ones to changed files and, but for dev
- * dependencies, between packages with changed files, the files and packages these link, and the packages of the
- * files.
+ * the branch adds or removes between what it shows, the unchanged ones to changed files and between packages
+ * with changed files, a dev dependency only when one of these files imports it, the files and packages these
+ * link, and the packages of the files.
  * @param {Graph} graph
  * @param {Filter} filter
  * @returns {Graph}
@@ -21,15 +21,21 @@ export function filterGraph(graph, filter) {
   );
   /** @type {Set<GraphNode>} */
   const boxes = new Set(changed.map(node => node.pkg));
+  // `<package key>\0<imported package key>` for each package a changed file shown imports.
+  const imported = new Set(
+    changed.flatMap(node => [...(node.packageImports ?? [])].map(key => `${node.pkg.key}\0${key}`)),
+  );
   const edges = graph.edges.filter(({ from, to, status, dev }) => {
     if (!shown(from) || !shown(to)) return false;
     // The workspace root's dependencies show with its files, and none with --code-only.
     if (from.kind === "package" && (filter.codeOnly || (!filter.root && from.dir === "")))
       return false;
     if (to.kind === "external" && !filter.externals) return false;
-    // A kept import matters when it points at a changed file, a kept dependency between two boxes, unless a dev one.
+    // A kept import matters when it points at a changed file, a kept dependency between two boxes: a dev one
+    // only when a changed file imports it, as most are tools, but a bundled app's are its code's dependencies.
+    const used = !dev || imported.has(`${from.key}\0${to.key}`);
     const changedTarget =
-      to.kind === "file" ? to.status !== "unchanged" : !dev && boxes.has(from) && boxes.has(to);
+      to.kind === "file" ? to.status !== "unchanged" : used && boxes.has(from) && boxes.has(to);
     return changedTarget || status !== "kept" || filter.context;
   });
 

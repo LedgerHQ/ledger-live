@@ -2,7 +2,7 @@ import { join } from "./text.js";
 
 /**
  * @import { Branch, Change, Edge, ExternalNode, FileNode, Graph, GraphNode } from "./types.js"
- * @import { PackageInfo, PackageNode, Side, Status } from "./types.js"
+ * @import { PackageInfo, PackageNode, Revision, Side, Status, Target } from "./types.js"
  */
 
 export const CODE_FILE = /\.(?:[cm]?[jt]sx?)$/;
@@ -90,6 +90,9 @@ export function buildGraph({ changes, revisions }) {
           };
           files.set(target.rel, to);
           markEdge(from, to, side, false);
+        } else if (target.kind !== "file" || target.rel !== change.rel) {
+          // An import out of the package is no edge, but tells the dependencies the file uses.
+          (from.packageImports ??= new Set()).add(importedPackageKey(revision, target, specifier));
         }
       }
     }
@@ -152,6 +155,21 @@ export function buildGraph({ changes, revisions }) {
     edge.dev &&= dev;
     edges.set(key, edge);
   }
+}
+
+/**
+ * The key of the package an import out of the file's package lands in: the workspace package holding the
+ * file it resolves to, or the package its bare specifier names.
+ * @param {Revision} revision
+ * @param {Target} target
+ * @param {string} specifier
+ */
+function importedPackageKey(revision, target, specifier) {
+  if (target.kind === "file") return `pkg:${revision.packageOf(target.rel).dir}`;
+  const parts = specifier.split("/");
+  const name = parts.slice(0, specifier.startsWith("@") ? 2 : 1).join("/");
+  const dir = revision.workspace.get(name);
+  return dir === undefined ? `ext:${name}` : `pkg:${dir}`;
 }
 
 /**
