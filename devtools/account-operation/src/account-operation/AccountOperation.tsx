@@ -9,14 +9,32 @@ import type {
 
 type OnWindow = (accountUUID: string, queryKey: string) => void;
 
+const FIATS = ["USD", "EUR", "GBP", "JPY", "CHF"];
+
 /** The form's options, the empty ones left out. */
-function queryOf(limit: string): AccountOperationToolQuery {
+function queryOf(
+  limit: string,
+  filterAsset: string,
+  countervalue: string,
+): AccountOperationToolQuery {
   const count = Number.parseInt(limit, 10);
-  return count > 0 ? { limit: count } : {};
+  return {
+    ...(count > 0 ? { limit: count } : {}),
+    ...(filterAsset.trim() ? { filterAsset: filterAsset.trim() } : {}),
+    ...(countervalue.trim() ? { countervalue: countervalue.trim().toUpperCase() } : {}),
+  };
 }
 
-function AccountOperation({ accounts, onRead, onReadMore, onReadAll }: AccountOperationToolProps) {
+function AccountOperation({
+  accounts,
+  assetIds,
+  onRead,
+  onReadMore,
+  onReadAll,
+}: AccountOperationToolProps) {
   const [limit, setLimit] = useState("");
+  const [filterAsset, setFilterAsset] = useState("");
+  const [countervalue, setCountervalue] = useState("");
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
       <div className="px-16 py-8 border-b border-base flex items-center gap-8 flex-shrink-0">
@@ -32,9 +50,39 @@ function AccountOperation({ accounts, onRead, onReadMore, onReadAll }: AccountOp
           onChange={event => setLimit(event.target.value)}
           className="w-64 font-mono"
         />
+        <input
+          aria-label="Filter asset"
+          list="account-operation-assets"
+          placeholder="filter asset"
+          value={filterAsset}
+          onChange={event => setFilterAsset(event.target.value)}
+          className="w-176 font-mono"
+        />
+        <datalist id="account-operation-assets">
+          {assetIds.map(assetId => (
+            <option key={assetId} value={assetId}>
+              {assetId}
+            </option>
+          ))}
+        </datalist>
+        <input
+          aria-label="Countervalue"
+          list="account-operation-fiats"
+          placeholder="countervalue"
+          value={countervalue}
+          onChange={event => setCountervalue(event.target.value)}
+          className="w-96 font-mono"
+        />
+        <datalist id="account-operation-fiats">
+          {FIATS.map(fiat => (
+            <option key={fiat} value={fiat}>
+              {fiat}
+            </option>
+          ))}
+        </datalist>
         <button
           type="button"
-          onClick={() => onReadAll(queryOf(limit))}
+          onClick={() => onReadAll(queryOf(limit, filterAsset, countervalue))}
           className="body-3-semi-bold text-base"
         >
           Read all
@@ -157,6 +205,9 @@ function OperationRow({ row }: Readonly<{ row: AccountOperationToolRow }>) {
         <span className={row.failed ? "text-muted" : "body-3-semi-bold text-base"}>
           {row.value}
         </span>
+        {row.countervalues?.length ? (
+          <span className="body-3-semi-bold text-success">{row.countervalues.join(" · ")}</span>
+        ) : null}
       </summary>
       <div className="pl-16 text-muted break-all">
         <div>id {row.id}</div>

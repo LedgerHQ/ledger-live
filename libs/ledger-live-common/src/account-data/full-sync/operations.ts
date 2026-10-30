@@ -1,10 +1,17 @@
+import { BigNumber } from "bignumber.js";
 import type { Account, Operation } from "@ledgerhq/types-live";
+import { AmountStrSchema } from "@domain/entity-account-balance";
+import type { Currency } from "@domain/entity-currency";
+import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import {
   AccountOperationSchema,
   type AccountOperation,
   type AccountOperationsPage,
+  type AccountOperationsQuery,
+  type CountervalueTicker,
   type OperationId,
 } from "@domain/entity-account-operation";
+import { calculate, type CounterValuesCacheView } from "@domain/entity-market-countervalues";
 import { toAmount } from "./balance";
 
 /** The legacy id without its legacy account id, which the new entities never carry. */
@@ -58,11 +65,39 @@ const newestFirst = (a: string, b: string) => {
 const byPendingThenNewest = (a: Group, b: Group) =>
   Number(b.pending) - Number(a.pending) || newestFirst(a.date, b.date);
 
-/** The `operations` kind of a synced account in one page, token, sub and internal operations included. */
-export function toAccountOperations(account: Account): AccountOperationsPage {
+/** Each row valued in `ticker` at its date, from the rates the app holds; a row without a rate has none. */
+function withCountervalues(
+  rows: AccountOperation[],
+  currencyOf: Map<string, Currency>,
+  rates: CounterValuesCacheView,
+  ticker: CountervalueTicker,
+): AccountOperation[] {
+  const to = findFiatCurrencyByTicker(ticker);
+  if (!to) return rows;
+  return rows.map(row => {
+    const from = currencyOf.get(row.assetId);
+    const value = from
+      ? calculate(rates, { from, to, value: Number(row.value), date: new Date(row.date) })
+      : undefined;
+    if (typeof value !== "number") return row;
+    const countervalue = AmountStrSchema.parse(toAmount(new BigNumber(value)));
+    return { ...row, countervalues: { [ticker]: countervalue } };
+  });
+}
+
+/** The `operations` kind of a synced account in one page, filtered and valued in memory. */
+export function toAccountOperations(
+  account: Account,
+  query?: AccountOperationsQuery,
+  rates?: CounterValuesCacheView,
+): AccountOperationsPage {
   const nativeId = account.currency.id;
   const assetIdOf = new Map<string, string>([[account.id, nativeId]]);
-  for (const token of account.subAccounts ?? []) assetIdOf.set(token.id, token.token.id);
+  const currencyOf = new Map<string, Currency>([[nativeId, account.currency]]);
+  for (const token of account.subAccounts ?? []) {
+    assetIdOf.set(token.id, token.token.id);
+    currencyOf.set(token.token.id, token.token);
+  }
 
   // A pending operation already confirmed may carry another id: matched by hash, as the legacy lists do.
   const stale = new Set<Operation>();
@@ -120,5 +155,11 @@ export function toAccountOperations(account: Account): AccountOperationsPage {
   }
 
   groups.sort(byPendingThenNewest);
-  return { operations: groups.flatMap(group => group.rows) };
+  const rows = groups
+    .flatMap(group => group.rows)
+    .filter(row => query?.filterAsset === undefined || row.assetId === query.filterAsset);
+  const ticker = query?.countervalue;
+  return {
+    operations: ticker && rates ? withCountervalues(rows, currencyOf, rates, ticker) : rows,
+  };
 }

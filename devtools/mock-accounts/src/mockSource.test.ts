@@ -1,6 +1,12 @@
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
-import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import {
+  CountervalueTickerSchema,
+  type AccountOperation,
+  type AccountOperationsPage,
+  type AccountOperationsQuery,
+} from "@domain/entity-account-operation";
 import { MockCursorError } from "./errors";
 import { mockDescriptors } from "./generate";
 import { mockSource } from "./mockSource";
@@ -12,12 +18,17 @@ const readBalance = (descriptor: AccountDescriptor) => {
   return read({ accountUUID: computeAccountUUID(descriptor), descriptor }, undefined);
 };
 
-const readOperations = (descriptor: AccountDescriptor, cursor?: string, limit?: number) => {
+const readOperations = (
+  descriptor: AccountDescriptor,
+  cursor?: string,
+  limit?: number,
+  query?: Omit<AccountOperationsQuery, "limit">,
+) => {
   const read = mockSource.read?.operations;
   if (!read) throw new Error("no operations reader");
   return read(
     { accountUUID: computeAccountUUID(descriptor), descriptor, cursor },
-    limit === undefined ? undefined : { limit },
+    limit === undefined && query === undefined ? undefined : { ...query, limit },
   );
 };
 
@@ -217,6 +228,40 @@ describe("mockSource", () => {
     const tokens = operations.filter(op => op.assetId !== "ethereum");
     expect(tokens.length).toBeGreaterThan(0);
     for (const op of tokens) expect(op.fee).toBe("0");
+  });
+
+  it("keeps only the asset filtered on, paging over its rows", async () => {
+    const usdc = BalanceAssetIdSchema.parse("ethereum/erc20/usd__coin");
+    let kept = 0;
+    for (const account of mockDescriptors("ethereum", 40, [])) {
+      const all = await allOperationsOf(account);
+      const filtered = await readOperations(account, undefined, ALL, { filterAsset: usdc });
+      expect(filtered.operations).toEqual(all.filter(op => op.assetId === usdc));
+      kept += filtered.operations.length;
+    }
+    expect(kept).toBeGreaterThan(0);
+  });
+
+  it("values each operation in the fiat asked, at its date, the same for the same row", async () => {
+    const usd = CountervalueTickerSchema.parse("USD");
+    const valued = [];
+    for (const account of mockDescriptors("ethereum", 40, [])) {
+      const plain = await allOperationsOf(account);
+      const { operations } = await readOperations(account, undefined, ALL, { countervalue: usd });
+      expect(operations.map(op => ({ ...op, countervalues: undefined }))).toEqual(plain);
+      valued.push(...operations);
+    }
+    expect(valued.length).toBeGreaterThan(0);
+    for (const op of valued) expect(op.countervalues?.[usd]).toMatch(/^\d+$/);
+    expect(valued.some(op => op.assetId !== "ethereum")).toBe(true);
+  });
+
+  it("leaves the countervalue out for an unknown fiat", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const { operations } = await readOperations(account, undefined, ALL, {
+      countervalue: CountervalueTickerSchema.parse("XXX_UNKNOWN"),
+    });
+    for (const op of operations) expect(op.countervalues).toBeUndefined();
   });
 });
 

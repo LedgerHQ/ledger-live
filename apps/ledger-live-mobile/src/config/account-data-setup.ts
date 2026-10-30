@@ -4,6 +4,7 @@ import {
   connectAccountsStore,
   type AccountsReduxStore,
 } from "@domain/entity-account";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { createFullSyncSource } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
 import { updateAccountWithUpdater } from "~/actions/accounts";
@@ -32,6 +33,7 @@ export function accountDataSources(
       updateAccountWithUpdater: (accountId, updater) =>
         dispatch(updateAccountWithUpdater({ accountId, updater })),
       blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()),
+      countervalues: () => countervaluesStateSelector(getState()),
     }),
   ];
 }

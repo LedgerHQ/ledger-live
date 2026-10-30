@@ -1,6 +1,7 @@
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
 import { AccountOperationSchema, type AccountOperation } from "@domain/entity-account-operation";
 import { MockCursorError } from "../errors";
+import { withMockCountervalues } from "./countervalues";
 import { randomAmount, randomBytes, type Random } from "../random";
 import type { MockReader } from "../families/types";
 
@@ -119,7 +120,7 @@ function pageOf(rows: AccountOperation[], cursor: string | undefined, limit: num
  * Operations adding up to the account's balances, `limit` (20 by default) per page: native and
  * token ones, the fees paid in the native coin, the count asked in the tool split across the
  * funded assets, else one account in five busy with a long history; one in ten with its newest
- * operation pending.
+ * operation pending. `filterAsset` keeps one asset's rows before paging, `countervalue` values the page.
  */
 export const operations: MockReader<"operations"> = (
   { target: { descriptor, cursor }, currency, family, random, balances, operationCount },
@@ -166,7 +167,17 @@ export const operations: MockReader<"operations"> = (
       date: new Date(isPending ? NEWEST + HOUR : date).toISOString(),
     });
   });
+  const filtered = query?.filterAsset
+    ? rows.filter(row => row.assetId === query.filterAsset)
+    : rows;
   const requested = query?.limit ?? DEFAULT_LIMIT;
   const limit = Number.isInteger(requested) && requested > 0 ? requested : DEFAULT_LIMIT;
-  return pageOf(rows, cursor, limit);
+  const page = pageOf(filtered, cursor, limit);
+  if (!query?.countervalue) return page;
+  const magnitudeOf = (assetId: string) =>
+    assetId === currency.id ? currency.units[0].magnitude : family.tokenMagnitude?.(assetId);
+  return {
+    ...page,
+    operations: withMockCountervalues(page.operations, query.countervalue, magnitudeOf),
+  };
 };

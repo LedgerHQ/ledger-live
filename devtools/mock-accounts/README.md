@@ -26,4 +26,6 @@ Every family uses the generic `operations` reader: receives and sends adding up 
 
 It is paginated, to test the next pages: `limit` rows per page (20 when the query has none), pending first then newest first. By default most accounts have a few operations and one in five has a long history (50 to 200 per asset) spanning several pages. To control it, fill "Operations per account" before Generate (up to 10 000): each generated account gets that many operations, split evenly across its funded assets (at least one per funded asset). The count lives in memory with the tool, like the accounts. `nextCursor` is the id of the page's last row, absent on the last page; a cursor naming no row of the account fails the read with `MockCursorError`.
 
+It honours the whole operations query, as FullSync does: `filterAsset` keeps one asset's rows before paging, so each filter pages on its own; `countervalue` values each row of the page at its date into `countervalues`, from a seeded price per asset and fiat that swings over a 90-day cycle (no row is valued for an unknown fiat, or a token whose magnitude the family does not give through `tokenMagnitude`).
+
 Imports no `@devtools/*` package, as any tool ([import boundaries](../../.claude/skills/devtools-import-boundary/SKILL.md)). Its props come from `useMockAccountsToolProps` in `@devtools/bindings`.

@@ -16,9 +16,11 @@ import {
 } from "@domain/entity-account-descriptor/schema.mock";
 import {
   accountOperationsSlice,
+  CountervalueTickerSchema,
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 
@@ -175,15 +177,18 @@ describe("useAccountOperationToolProps", () => {
 
   it("lists the window of each query read, reading it again and paging it with its query", async () => {
     const { result, reads } = setup();
-    const query = { limit: 50 };
+    const query = {
+      filterAsset: BalanceAssetIdSchema.parse("ethereum"),
+      countervalue: CountervalueTickerSchema.parse("USD"),
+    };
     const queryKey = accountDataQueryKey(query);
-    act(() => result.current.onReadAll(query));
+    act(() => result.current.onReadAll({ filterAsset: "ethereum", countervalue: "USD" }));
     await waitFor(() => expect(reads).toHaveLength(2));
     expect(reads.map(r => r.query)).toEqual([query, query]);
     const ethereumRead = reads.find(r => r.accountUUID === ethereumUUID);
     await act(async () =>
       ethereumRead?.call.resolve({
-        operations: [mockAccountOperation()],
+        operations: [mockAccountOperation({ countervalues: { [query.countervalue]: "1234" } })],
         nextCursor: "page-2",
       }),
     );
@@ -193,9 +198,9 @@ describe("useAccountOperationToolProps", () => {
       result.current.accounts[0].windows.map(({ queryKey: key, label }) => [key, label]),
     ).toEqual([
       ["", "default"],
-      [queryKey, "limit 50"],
+      [queryKey, "filter ethereum · USD"],
     ]);
-    expect(filtered().rows).toEqual([expect.objectContaining({ id: "op-1" })]);
+    expect(filtered().rows).toEqual([expect.objectContaining({ countervalues: ["$12.34"] })]);
 
     act(() => result.current.onReadMore(ethereumUUID, queryKey));
     await waitFor(() => expect(reads).toHaveLength(3));

@@ -24,4 +24,6 @@ export interface AccountBalanceToolProps {
   /** Reads the account's balance again, whatever its age. */
   readonly onRead: (accountUUID: string) => void;
   readonly onReadAll: () => void;
+  /** Reads the account's operations of this asset only, valued in fiat: a window the operations tool lists. */
+  readonly onReadOperations: (accountUUID: string, assetId: string) => void;
 }

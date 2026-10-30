@@ -24,6 +24,10 @@ export const evm: MockFamily = {
     path: `m/44h/${currency.coinType}h/${index}h/0/0`,
   }),
   address: (_currency, random) => checksumAddress(randomBytes(random, 20)),
+  tokenMagnitude: assetId =>
+    Object.values(TOKENS)
+      .flatMap(tokens => tokens ?? [])
+      .find(token => token.id === assetId)?.magnitude,
   read: {
     balance: ({ currency, random }) => {
       const native =

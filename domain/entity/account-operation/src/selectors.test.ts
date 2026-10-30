@@ -33,22 +33,23 @@ describe("account operations selectors", () => {
     ).toBeUndefined();
   });
 
-  it("should return the window of the query asked", () => {
-    const pageQuery = { limit: 1 };
+  it("should return the window of the query asked, without filtering it", () => {
+    const usdtQuery = { filterAsset: usdt.assetId };
     const filtered = {
       accountOperations: {
         [accountUUID]: {
           byId: { [eth.id]: eth, [usdt.id]: usdt },
           windows: {
             ...mockAccountOperationsEntry([eth, usdt]).windows,
-            ...mockAccountOperationsEntry([eth], pageQuery).windows,
+            ...mockAccountOperationsEntry([eth], usdtQuery).windows,
           },
+          countervalues: {},
           revisionById: {},
         },
       },
     };
-    expect(selectAccountOperations(filtered, accountUUID, pageQuery)).toEqual([eth]);
-    expect(selectAccountOperations(filtered, accountUUID, { limit: 2 })).toBeUndefined();
+    expect(selectAccountOperations(filtered, accountUUID, usdtQuery)).toEqual([eth]);
+    expect(selectAccountOperations(filtered, accountUUID, { limit: 1 })).toBeUndefined();
   });
 
   it("should return the same list while the window and its rows are unchanged", () => {

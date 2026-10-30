@@ -14,9 +14,17 @@ export function mockAccountOperationsEntry(
   operations: AccountOperation[],
   query?: AccountOperationsQuery,
 ): AccountOperationsEntry {
+  const queryKey = accountDataQueryKey(query);
+  const byId: AccountOperationsEntry["byId"] = {};
+  const countervalues: NonNullable<AccountOperationsEntry["countervalues"][string]> = {};
+  for (const { countervalues: valued, ...row } of operations) {
+    byId[row.id] = row;
+    if (valued) countervalues[row.id] = valued;
+  }
   return {
-    byId: Object.fromEntries(operations.map(operation => [operation.id, operation])),
-    windows: { [accountDataQueryKey(query)]: operations.map(operation => operation.id) },
+    byId,
+    windows: { [queryKey]: operations.map(operation => operation.id) },
+    countervalues: Object.keys(countervalues).length > 0 ? { [queryKey]: countervalues } : {},
     revisionById: Object.fromEntries(operations.map(operation => [operation.id, 0])),
   };
 }

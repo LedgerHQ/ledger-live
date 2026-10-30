@@ -38,6 +38,7 @@ function renderTool(accounts: AccountOperationToolAccount[]) {
   render(
     <AccountOperation
       accounts={accounts}
+      assetIds={["ethereum", "ethereum/erc20/usd__coin"]}
       onRead={onRead}
       onReadMore={onReadMore}
       onReadAll={onReadAll}
@@ -94,22 +95,23 @@ describe("AccountOperation", () => {
     expect(onReadMore).toHaveBeenCalledWith("uuid-1", "");
   });
 
-  it("shows each query's window, and reads it by its key", async () => {
-    const queryKey = '{"limit":50}';
+  it("shows each query's window with its countervalues, and reads it by its key", async () => {
+    const queryKey = '{"countervalue":"USD","filterAsset":"ethereum"}';
     const { onRead } = renderTool([
       makeAccount({}, [
         {
           queryKey,
-          label: "limit 50",
+          label: "filter ethereum · USD",
           reading: false,
           hasMore: false,
           readAt: 0,
-          rows: [row],
+          rows: [{ ...row, countervalues: ["$12.34"] }],
         },
       ]),
     ]);
     expect(screen.getByText("default")).toBeVisible();
-    expect(screen.getByText("limit 50")).toBeVisible();
+    expect(screen.getByText("filter ethereum · USD")).toBeVisible();
+    expect(screen.getByText("$12.34")).toBeVisible();
     await userEvent.click(screen.getAllByRole("button", { name: "Read" })[1]);
     expect(onRead).toHaveBeenCalledWith("uuid-1", queryKey);
   });
@@ -127,10 +129,16 @@ describe("AccountOperation", () => {
     expect(onReadAll).toHaveBeenCalledWith({});
   });
 
-  it("reads every account with the limit filled in the header", async () => {
+  it("reads every account with the options filled in the header", async () => {
     const { onReadAll } = renderTool([makeAccount()]);
     await userEvent.type(screen.getByLabelText("Limit"), "50");
+    await userEvent.type(screen.getByLabelText("Filter asset"), "ethereum/erc20/usd__coin");
+    await userEvent.type(screen.getByLabelText("Countervalue"), "eur");
     await userEvent.click(screen.getByRole("button", { name: "Read all" }));
-    expect(onReadAll).toHaveBeenCalledWith({ limit: 50 });
+    expect(onReadAll).toHaveBeenCalledWith({
+      limit: 50,
+      filterAsset: "ethereum/erc20/usd__coin",
+      countervalue: "EUR",
+    });
   });
 });

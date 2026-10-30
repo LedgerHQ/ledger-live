@@ -4,15 +4,23 @@ import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import type { DevToolsConfig } from "@devtools/registry";
 import { fetchAccountData } from "@domain/api-account-data";
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
-import type { AccountAssetBalance, WithAccountBalances } from "@domain/entity-account-balance";
+import {
+  BalanceAssetIdSchema,
+  type AccountAssetBalance,
+  type WithAccountBalances,
+} from "@domain/entity-account-balance";
 import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { CountervalueTickerSchema } from "@domain/entity-account-operation";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountBalanceToolProps = Extract<DevToolsConfig[number], { id: "account-balance" }>["config"];
 
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = AccountDataRootState & WithAccountBalances & { accountEntries: AccountsState };
+
+/** The fiat the operations read from an asset row are valued in. */
+const COUNTERVALUE = CountervalueTickerSchema.parse("USD");
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
@@ -53,6 +61,16 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
 
   const onReadAll = useCallback(() => descriptors.forEach(read), [descriptors, read]);
 
+  const onReadOperations = useCallback(
+    (accountUUID: string, assetId: string) => {
+      const descriptor = descriptors.get(accountUUID);
+      const filterAsset = BalanceAssetIdSchema.parse(assetId);
+      const query = { filterAsset, countervalue: COUNTERVALUE };
+      if (descriptor) dispatch(fetchAccountData("operations", descriptor, { query, maxAge: 0 }));
+    },
+    [descriptors, dispatch],
+  );
+
   const accounts = useMemo(() => {
     const toRow = ({ assetId, balance, spendableBalance }: AccountAssetBalance) => {
       const unit = unitOf(assetId);
@@ -78,5 +96,5 @@ export function useAccountBalanceToolProps(): AccountBalanceToolProps {
     });
   }, [entries, statuses, balances, unitOf]);
 
-  return { accounts, onRead, onReadAll };
+  return { accounts, onRead, onReadAll, onReadOperations };
 }
