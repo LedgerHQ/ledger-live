@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-account-detail-hero",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "Account Detail hero (balance, quick actions, empty state) for Ledger Wallet",
   "main": "src/index.ts",
@@ -11,6 +11,8 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./native": "./src/nativeExports.native.ts",
+    "./web": "./src/webExports.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -21,16 +23,30 @@
     "lint:ci": "oxlint src --quiet",
     "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage --passWithNoTests",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.web.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-hero/knip.native.config.mjs -W features/flow/account-detail-hero --tsConfig tsconfig.native.json"
   },
+  "dependencies": {
+    "@features/platform-quick-actions": "workspace:*",
+    "@ledgerhq/crypto-icons": "catalog:",
+    "@shared/i18n": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
+  },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -40,9 +56,25 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:"
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
   }
 }

@@ -31,6 +31,7 @@ export default defineConfig({
     "**/skills/manifest.gen.ts",
     "apps/ledger-live-mobile/src/generated/**",
     "apps/wallet-cli/dist/**",
+    "libs/coin-modules/coin-internet_computer/src/network/idl/**",
     "libs/ledger-live-common/src/load/tokens/**",
     "libs/ledger-live-common/src/crypto/sha256.js",
     "libs/ledger-live-common/src/data/icons/**",

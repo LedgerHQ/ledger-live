@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-polkadot
 
+## 7.3.0-next.0
+
+### Minor Changes
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359)]:
+  - @ledgerhq/hw-app-eth@7.12.0-next.0
+
 ## 7.2.3
 
 ### Patch Changes
@@ -147,19 +158,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-app-eth@7.8.14
-
-## 7.1.11-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.14-next.0
-
-## 7.1.10
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@7.8.13
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

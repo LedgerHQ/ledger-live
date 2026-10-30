@@ -2592,6 +2592,8 @@ describe("network/utils", () => {
           EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
           EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+          EXPLORER_TRANSFER_TYPES.JOIN,
+          EXPLORER_TRANSFER_TYPES.SPLIT,
         ],
       });
       expect(result).toEqual(records);
@@ -2621,6 +2623,8 @@ describe("network/utils", () => {
           EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
           EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+          EXPLORER_TRANSFER_TYPES.JOIN,
+          EXPLORER_TRANSFER_TYPES.SPLIT,
         ],
       });
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(2, {
@@ -2634,6 +2638,8 @@ describe("network/utils", () => {
           EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
           EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
           EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+          EXPLORER_TRANSFER_TYPES.JOIN,
+          EXPLORER_TRANSFER_TYPES.SPLIT,
         ],
       });
       expect(result).toEqual([...page0, ...page1]);
@@ -2797,6 +2803,8 @@ describe("network/utils", () => {
         EXPLORER_TRANSFER_TYPES.PUBLIC_TO_PRIVATE,
         EXPLORER_TRANSFER_TYPES.PRIVATE_TO_PUBLIC,
         EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+        EXPLORER_TRANSFER_TYPES.JOIN,
+        EXPLORER_TRANSFER_TYPES.SPLIT,
       ];
       expect(mockGetAccountOwnedRecords).toHaveBeenCalledTimes(2);
       expect(mockGetAccountOwnedRecords).toHaveBeenNthCalledWith(

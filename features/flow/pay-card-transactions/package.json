@@ -1,16 +1,13 @@
 {
   "name": "@features/flow-pay-card-transactions",
-  "version": "0.6.0",
+  "version": "0.7.0-next.0",
   "private": true,
   "description": "Pay Card Transactions flow: displays card transaction history for Ledger Wallet",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./src/index.ts",
+    "./web": "./src/web/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -18,10 +15,9 @@
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
-    "lint": "oxlint src && pnpm lint:tailwind",
-    "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
-    "lint:tailwind": "eslint --no-eslintrc --no-error-on-unmatched-pattern -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
@@ -37,8 +33,9 @@
     "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
-    "@support/msw-features-flow-pay-card": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@swc/core": "catalog:",
@@ -51,9 +48,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
-    "eslint": "8.57.0",
-    "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "msw": "catalog:",

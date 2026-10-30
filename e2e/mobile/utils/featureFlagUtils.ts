@@ -13,7 +13,6 @@ const FF_LWM_WALLET_40_Q1 = {
       operationsList: false,
       aggregatedAssets: false,
       myWallet: false,
-      pnl: false,
       earnUpselling: false,
       earnSimulator: false,
       assetDiscoverability: false,
@@ -31,7 +30,6 @@ export const FF_LWM_WALLET_40_Q2 = {
       operationsList: true,
       aggregatedAssets: true,
       myWallet: true,
-      pnl: true,
       earnUpselling: true,
       earnSimulator: true,
       assetDiscoverability: true,
@@ -50,13 +48,6 @@ export const FF_BORROW_ENABLED = {
     params: { manifest_id: "borrow" },
   },
   largeScreenUpsell: { enabled: false },
-  lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
-    params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
-      pnl: true,
-    },
-  },
 } satisfies PartialFeatures;
 
 export const FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED = {
@@ -130,7 +121,6 @@ export const FF_PAY_TAB = {
       card_native: true,
       card_live_app: false,
       card_disclaimer: false,
-      legacyTopUp: false,
     },
   },
 } satisfies PartialFeatures;

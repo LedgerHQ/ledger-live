@@ -9,7 +9,6 @@ import { setEnv } from "@shared/env";
 
 import { Application } from "tests/page";
 import { safeAppendFile, NANO_APP_CATALOG_PATH } from "tests/utils/fileUtils";
-import { PAYTAB_SPECS_DIR } from "tests/reporters/cardSessionReporter";
 import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
@@ -18,11 +17,17 @@ import {
   attachMergedFeatureFlags,
   attachSpeculinhoLogs,
 } from "tests/utils/allureUtils";
-import { isLastRetry } from "tests/utils/testInfoUtils";
+import { isLastRetry, isPaytabTest } from "tests/utils/testInfoUtils";
 import { PageLogCollector } from "tests/utils/pageLogCollector";
 import { randomUUID } from "crypto";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import {
+  EXCLUSIVE_LOCK_FIXTURE_TIMEOUT,
+  lockDeclaredTargets,
+  type LockDeclaration,
+} from "tests/utils/exclusiveLock";
+import type { Lease } from "@ledgerhq/live-e2e-shared/exclusiveLock";
 import { launchSpeculos, cleanSpeculos } from "tests/utils/speculosUtils";
 import {
   canSkipSpeculosLaunch,
@@ -36,6 +41,7 @@ import { attachNetworkLogging } from "tests/utils/networkLogging";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
 import { getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import {
   CARD_SESSION_BOOTSTRAP_ENV,
   resolveCardSessionBootstrap,
@@ -63,6 +69,8 @@ type TestFixtures = {
   env: Record<string, string>;
   electronApp: ElectronApplication;
   page: Page;
+  /** Webview (e.g. swap live app) console and network logs, attached to Allure on failure. */
+  webviewCollector: PageLogCollector;
   featureFlags: PartialFeatures;
   simulateCamera: string;
   app: Application;
@@ -72,11 +80,15 @@ type TestFixtures = {
     cmd: CliCommand;
   }[];
   localManifestOverride?: LiveAppManifest[];
+  /** Coin-config keys merged over the default and remote config, as Developer settings would. */
+  coinConfigOverrides?: Record<string, unknown>;
   teamOwner?: Team;
   teamOwnerLabel: void;
   annotationLinks: void;
   speculos: SpeculosFixtureHandle;
   speculosForSetupOnly?: boolean;
+  lockDeclaration: LockDeclaration;
+  exclusiveLock: Lease;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
@@ -99,8 +111,29 @@ export const test = base.extend<TestFixtures>({
   cliCommands: [],
   cliCommandsOnApp: [],
   localManifestOverride: undefined,
+  coinConfigOverrides: undefined,
   teamOwner: undefined,
   speculosForSetupOnly: false,
+  lockDeclaration: {},
+
+  // Automatic fixtures are set up before the others, so the lock is held before Speculos and the
+  // app start, and released after they stop, unless the test releases it sooner. The Allure labels
+  // and links come first, so a test whose lock fails still reports them.
+  exclusiveLock: [
+    async (
+      { teamOwnerLabel: _teamOwnerLabel, annotationLinks: _annotationLinks, lockDeclaration, env },
+      use,
+      testInfo,
+    ) => {
+      const lease = await lockDeclaredTargets(lockDeclaration, env, testInfo);
+      try {
+        await use({ release: () => lease?.release() ?? Promise.resolve() });
+      } finally {
+        await lease?.release();
+      }
+    },
+    { auto: true, timeout: EXCLUSIVE_LOCK_FIXTURE_TIMEOUT },
+  ],
 
   teamOwnerLabel: [
     async ({ teamOwner }, use) => {
@@ -120,13 +153,13 @@ export const test = base.extend<TestFixtures>({
     { auto: true },
   ],
 
-  app: async ({ page, electronApp }, use) => {
-    const app = new Application(page, electronApp);
+  app: async ({ page, electronApp, webviewCollector }, use) => {
+    const app = new Application({ page, electronApp, webviewCollector });
     await use(app);
   },
 
   userdataDestinationPath: async (
-    { userdataOriginalFile, settings, localManifestOverride },
+    { userdataOriginalFile, settings, localManifestOverride, coinConfigOverrides },
     use,
   ) => {
     const userdataDestinationPath = path.join(__dirname, "../artifacts/userdata", randomUUID());
@@ -149,6 +182,10 @@ export const test = base.extend<TestFixtures>({
       userData.data = userData.data || {};
       userData.data.discover = userData.data.discover || {};
       userData.data.discover.localLiveApp = localManifestOverride;
+    }
+    if (coinConfigOverrides) {
+      // Over any overrides the userdata file already carries, not in place of them.
+      merge(userData, { data: { coinConfigOverrides: { overrides: coinConfigOverrides } } });
     }
     await writeFile(`${userdataDestinationPath}/app.json`, JSON.stringify(userData));
     await use(userdataDestinationPath);
@@ -254,7 +291,7 @@ export const test = base.extend<TestFixtures>({
     );
     delete env[CARD_SESSION_BOOTSTRAP_ENV];
 
-    if (testInfo.file.replaceAll("\\", "/").includes(`/${PAYTAB_SPECS_DIR}/`)) {
+    if (isPaytabTest(testInfo)) {
       const { BAANX_TEST_API_URL, BAANX_TEST_CLIENT_KEY } = process.env;
       env["CARD_BAANX_API_URL"] = BAANX_TEST_API_URL || "https://dev.api.baanx.com";
       env["CARD_BAANX_CLIENT_KEY"] =
@@ -295,12 +332,15 @@ export const test = base.extend<TestFixtures>({
       // No lingering process (only Reset App reboots the main process into a new instance)
     }
   },
-  page: async ({ electronApp, speculos, cliCommandsOnApp }, use, testInfo) => {
+  webviewCollector: async ({ electronApp }, use) => {
+    const webviewCollector = new PageLogCollector();
+    webviewCollector.attachWebview(electronApp, await electronApp.firstWindow());
+    await use(webviewCollector);
+  },
+  page: async ({ electronApp, speculos, cliCommandsOnApp, webviewCollector }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
-
-    // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
-    page.setDefaultTimeout(120000);
+    page.setDefaultTimeout(TIMEOUT.xlarge);
 
     attachNetworkLogging(page, testInfo);
     // capture main app (Ledger Wallet) network logs, attached to Allure on failure
@@ -328,13 +368,9 @@ export const test = base.extend<TestFixtures>({
       safeAppendFile(logFile, `${txt}\n`);
     });
 
-    // capture webview console and network logs for debugging (e.g. swap live app)
-    const webviewCollector = new PageLogCollector();
-    webviewCollector.attachWebview(electronApp);
-
-    // app is loaded
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForSelector("#loader-container", { state: "hidden" });
+    // app is loaded: on a slow CI runner, start-up takes longer than 30s
+    await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });
+    await page.waitForSelector("#loader-container", { state: "hidden", timeout: TIMEOUT.xxxlarge });
 
     // A relaunched remote Speculos is a new session, on its own URL and token.
     // A local one keeps its port, so the app needs no update.

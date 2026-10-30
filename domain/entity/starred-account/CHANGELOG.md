@@ -1,5 +1,12 @@
 # @domain/entity-starred-account
 
+## 0.0.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.1.1-next.0
+
 ## 0.0.2
 
 ### Patch Changes

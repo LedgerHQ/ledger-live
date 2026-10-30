@@ -1,5 +1,29 @@
 # @shared/feature-flags
 
+## 0.28.0-next.0
+
+### Minor Changes
+
+- [#23628](https://github.com/LedgerHQ/ledger-live/pull/23628) [`bf9665d`](https://github.com/LedgerHQ/ledger-live/commit/bf9665df5c5cbd287d740afb4d51933943d99284) Thanks [@LucasWerey](https://github.com/LucasWerey)! - feat(asset-detail): A/B test the swap console and a swap quick action on the LWD asset page
+
+  `lwdSwapConsoleAbtest` params `console` and `quickAction` toggle the swap right panel and a highlighted Swap CTA placed before Receive. Flag state and params are reported to Mixpanel as `lwdSwapConsoleAbtest`.
+
+- [#23611](https://github.com/LedgerHQ/ledger-live/pull/23611) [`0c04ab2`](https://github.com/LedgerHQ/ledger-live/commit/0c04ab223b387417a27eebbf64459bcd17ea3dc2) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report coin-module calls and every broadcast outcome to Datadog logs behind the new `coinObservability` flag: `withMetrics` wraps the resolved coin-module API and reports each call to registered observers, sampled on the sync path and capped on failures, and the bridge seam's broadcast events are forwarded as `tx_broadcast` for every family and route.
+
+- [#23816](https://github.com/LedgerHQ/ledger-live/pull/23816) [`a405f99`](https://github.com/LedgerHQ/ledger-live/commit/a405f99bb6bf9b2c88a4f28f7f0ef3339bac63cd) Thanks [@LucasWerey](https://github.com/LucasWerey)! - feat(portfolio): A/B test services entry points cards between Crypto and Stablecoins
+
+  `entryPointsServices` replaces the Perps and Borrow banners with a Services cards section on the LWD and LWM portfolio asset section. `params.services` sets which services show and their order. Flag state and order are reported to Mixpanel as `entryPointsServices`.
+
+- [#23526](https://github.com/LedgerHQ/ledger-live/pull/23526) [`e8f69f6`](https://github.com/LedgerHQ/ledger-live/commit/e8f69f6cecfb104cddd8438ca6fcbd8995f1d488) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove the desktop `operationsList` flag and always show transaction history
+
+- [#23596](https://github.com/LedgerHQ/ledger-live/pull/23596) [`dbaf56d`](https://github.com/LedgerHQ/ledger-live/commit/dbaf56ddb47f5a43221feba193700cf40f4a46df) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show desktop My Wallet and drop the lwdWallet40 myWallet param
+
+- [#23560](https://github.com/LedgerHQ/ledger-live/pull/23560) [`16c5384`](https://github.com/LedgerHQ/ledger-live/commit/16c53841ba22597fa03608205c7ccac9c121e844) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Remove the legacyTopUp param of lwmPayTab; mobile top-up always opens the Baanx hosted page.
+
+- [#23588](https://github.com/LedgerHQ/ledger-live/pull/23588) [`ffd02a9`](https://github.com/LedgerHQ/ledger-live/commit/ffd02a95c452560d606ad30588f15ff5d2182763) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show Wallet 4.0 PnL and drop the `pnl` feature flag param
+
+- [#23638](https://github.com/LedgerHQ/ledger-live/pull/23638) [`4031174`](https://github.com/LedgerHQ/ledger-live/commit/40311746f2633cf914b42999781266e64d54dc7c) Thanks [@dilaouid](https://github.com/dilaouid)! - Enforce manifest origins on the Live App bridges: the Wallet API and Platform API are served on a bridge session bound to the main-frame origin, desktop bridge messages go through main, mobile WebViews answer only the main frame on a manifest origin, manifest domains are enforced on every main-frame load (mobile check on by default), and violations are reported to Datadog
+
 ## 0.27.0
 
 ### Minor Changes
@@ -445,52 +469,5 @@
 ### Minor Changes
 
 - [#20907](https://github.com/LedgerHQ/ledger-live/pull/20907) [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8) Thanks [@fAnselmi-Ledger](https://github.com/fAnselmi-Ledger)! - Add Solana TXC flag
-
-## 0.19.0-next.0
-
-### Minor Changes
-
-- [#20848](https://github.com/LedgerHQ/ledger-live/pull/20848) [`e4e8d08`](https://github.com/LedgerHQ/ledger-live/commit/e4e8d086fc5672e4ce96c30c9a9af3f2022f863a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the `lwmPasswordRevamp` feature flag, gating the User App Authentication epic on Ledger Wallet Mobile. Boolean gate with no params, disabled by default; its Remote Config key is derived as `feature_lwm_password_revamp`. Nothing reads it yet.
-
-- [#20719](https://github.com/LedgerHQ/ledger-live/pull/20719) [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15) Thanks [@sarneijim](https://github.com/sarneijim)! - Drive desktop LNS upsell banners from `largeScreenUpsell` and remove the legacy `lldNanoSUpsellBanners` flag (LIVE-35487).
-
-- [#20630](https://github.com/LedgerHQ/ledger-live/pull/20630) [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c) Thanks [@sarneijim](https://github.com/sarneijim)! - Enable LNS upsell portfolio banner for opted-in users (LIVE-32086).
-
-## 0.18.0
-
-### Minor Changes
-
-- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
-
-  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
-  lines, plus an optional default re-export. Having to sort in the export
-  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
-  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
-  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
-  private `internals` location, and it may not re-export another workspace package.
-
-  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
-  import paths and hid who actually provided it. Consumers now import the original provider and
-  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
-  desktop app gains `@features/platform-contacts`.
-
-  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
-  noted:
-
-  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
-    `bulkSetAccountNames`, the name the slice actually defines.
-  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
-    re-exporting a default under a different name.
-
-  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
-
-  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
-    barrel.
-  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
-    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
-    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
-    before being reverted, so the work is deferred rather than open.
-
-- [#20290](https://github.com/LedgerHQ/ledger-live/pull/20290) [`9708010`](https://github.com/LedgerHQ/ledger-live/commit/970801044529fe978ccbb8c562cc64c00277d1de) Thanks [@sarneijim](https://github.com/sarneijim)! - Add the shared lazy onboarding banner flow, its Mobile portfolio view and configurable Shop link feature flag.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

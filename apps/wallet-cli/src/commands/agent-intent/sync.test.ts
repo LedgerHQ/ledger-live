@@ -6,6 +6,7 @@ import {
   deactivateAgentIntentMocks,
 } from "./__test-helpers__/agent-intent-mocks";
 import { Session, type AgentIntentProfileMeta } from "../../session/session-store";
+import { walletCliVersion } from "../../shared/client-version";
 
 const PROFILE_ID = "my-agent";
 const AGENT_PUBLIC_KEY = "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076";
@@ -28,9 +29,11 @@ function makeProfile(patch: Partial<AgentIntentProfileMeta> = {}): AgentIntentPr
     environment: "staging",
     bffBaseUrl: "https://bff.example",
     publicKey: AGENT_PUBLIC_KEY,
+    keyStore: "os-keychain",
     trustchainId: "app18-root",
     accountAccess: { ...accountAccess },
     ledgerSyncVersion: 5,
+    ledgerSyncCliVersion: walletCliVersion,
     enrollmentExpiresAt: "2026-01-01T00:00:00.000Z",
     createdAt: "2025-12-31T00:00:00.000Z",
     ...patch,
@@ -301,14 +304,33 @@ describe("agent-intent sync", () => {
     pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 42 });
     mergeSyncedAccountsImpl = () => ({
       ...emptyReport,
-      imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
+      imported: [{ status: "imported", label: "eth-1", network: "ethereum" }],
     });
 
     await runSync();
 
     expect(storedProfile?.ledgerSyncVersion).toBe(42);
+    expect(storedProfile?.ledgerSyncCliVersion).toBe(walletCliVersion);
     expect(writeCalls).toBe(1);
   });
+
+  it.each([
+    ["by an older wallet-cli", "0.0.1"],
+    ["before the wallet-cli version was recorded", undefined],
+  ])(
+    "should pull everything once when the version was cached %s, then cache it for this one",
+    async (_case, cachedBy) => {
+      storedProfile = makeProfile({ ledgerSyncCliVersion: cachedBy });
+      pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 6 });
+
+      await runSync();
+
+      expect(pullCalls).toEqual([{ environment: "staging", currentVersion: undefined }]);
+      expect(mergedInto).toHaveLength(1);
+      expect(storedProfile?.ledgerSyncVersion).toBe(6);
+      expect(storedProfile?.ledgerSyncCliVersion).toBe(walletCliVersion);
+    },
+  );
 
   it("should not cache the pulled version when an entry is invalid", async () => {
     pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 42 });
@@ -341,6 +363,30 @@ describe("agent-intent sync", () => {
 
     expect(writeCalls).toBe(0);
     expect(storedProfile?.ledgerSyncVersion).toBe(5);
+  });
+
+  it("should clear the cached version when a forced pull after an upgrade finds no document", async () => {
+    storedProfile = makeProfile({ ledgerSyncCliVersion: "0.0.1" });
+
+    await runSync();
+
+    expect(pullCalls).toEqual([{ environment: "staging", currentVersion: undefined }]);
+    expect(storedProfile?.ledgerSyncVersion).toBeUndefined();
+    expect(mergedInto).toEqual([]);
+    expect(writeCalls).toBe(1);
+  });
+
+  it("should keep a newer version and its wallet-cli version cached by a concurrent sync during a forced pull", async () => {
+    storedProfile = makeProfile({ ledgerSyncCliVersion: "0.0.1" });
+    pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 6 });
+    profileAfterFirstRead = makeProfile({ ledgerSyncVersion: 8, ledgerSyncCliVersion: "9.9.9" });
+
+    await runSync();
+
+    expect(pullCalls).toEqual([{ environment: "staging", currentVersion: undefined }]);
+    expect(mergedInto).toHaveLength(1);
+    expect(storedProfile?.ledgerSyncVersion).toBe(8);
+    expect(storedProfile?.ledgerSyncCliVersion).toBe("9.9.9");
   });
 
   it("should merge into a fresh read taken under the lock", async () => {

@@ -14,10 +14,11 @@ pair; the container lives in the app, which owns the verifier, the biometrics pr
 - `steps/Unlock/components/ForgotPasswordSheet` — explains what forgetting the password means and
   leads to the reset.
 
-`PasswordField`, the protection state and the biometrics types come from
-[`@features/platform-app-lock`](../../platform/app-lock/README.md).
+The protection state and the biometrics types come from
+[`@features/platform-app-lock`](../../platform/app-lock/README.md), `PasswordField` from its native
+entry, `@features/platform-app-lock/native`.
 
 ## Native only
 
 The epic is mobile only, so the package ships no `.web` variants. Tests use the native project of
-`@support/jest-features-flow` (`*.native.test.ts(x)`).
+`@support/jest/features-flow` (`*.native.test.ts(x)`).

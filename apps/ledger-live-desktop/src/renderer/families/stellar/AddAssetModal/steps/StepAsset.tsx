@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -40,7 +40,7 @@ export default function StepAsset({
   );
   return (
     <Box flow={1}>
-      <TrackPage category="Stellar add asset" name="Step 1" />
+      <TrackScreen category="Stellar add asset" name="Step 1" />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <AssetSelector transaction={transaction} account={account} t={t} onChange={onUpdateAsset} />

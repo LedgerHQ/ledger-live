@@ -1,6 +1,6 @@
 import React from "react";
 import { View, ViewStyle, StyleProp, Image } from "react-native";
-import { Lottie as SharedLottie } from "@shared/lottie";
+import { Lottie as SharedLottie } from "@shared/lottie/native";
 import Config from "react-native-config";
 
 export type LottieSource = { uri: string } | number | null;
@@ -35,7 +35,7 @@ function hasValidSource(source: LottieSource): source is { uri: string } | numbe
 
 /**
  * Shared Lottie wrapper that handles Detox bypass (empty view in E2E)
- * and invalid source. Use this instead of @shared/lottie directly
+ * and invalid source. Use this instead of @shared/lottie/native directly
  * so Detox logic is consistent across the app.
  */
 export function Lottie({

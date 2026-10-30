@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-hedera",
-  "version": "1.7.0",
+  "version": "1.8.0-next.0",
   "description": "Ledger Hardware Wallet Hedera Application API",
   "keywords": [
     "Ledger",
@@ -40,6 +40,12 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

@@ -5,7 +5,7 @@ import { useTranslation } from "~/context/Locale";
 import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotValidator, Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { useTheme } from "@react-navigation/native";
 import LText from "~/components/LText";
 import { DataRow, HeaderRow } from "~/components/ValidateOnDeviceDataRow";

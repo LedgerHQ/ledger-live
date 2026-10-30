@@ -3,6 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { expect } from "@playwright/test";
 import { isAssetDiscoverabilityEnabled } from "tests/utils/featureFlagUtils";
 import { PageHeader } from "tests/component/pageHeader.component";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class MarketPage extends AppPage {
   private readonly pageHeader = new PageHeader(this.page);
@@ -78,8 +79,8 @@ export class MarketPage extends AppPage {
           return false;
         },
         {
-          timeout: 30_000,
-          intervals: [150],
+          timeout: TIMEOUT.xlarge,
+          intervals: [INTERVAL.tick],
           message: `Market row "${ticker}" never mounted while scrolling the list.`,
         },
       )

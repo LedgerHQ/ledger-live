@@ -43,7 +43,7 @@ function renderAccountDetail() {
 
 async function openEditName() {
   const view = renderAccountDetail();
-  await view.user.press(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
+  await view.user.press(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
   await view.user.press(screen.getByTestId("account-settings-change-name"));
   return view;
 }

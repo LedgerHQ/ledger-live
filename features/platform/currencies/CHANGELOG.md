@@ -1,5 +1,24 @@
 # @features/platform-currencies
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#23612](https://github.com/LedgerHQ/ledger-live/pull/23612) [`6ea25da`](https://github.com/LedgerHQ/ledger-live/commit/6ea25da0c6060df6aa5056eceacaeedf3d76d2ba) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - The account sync hash is now the CAL token list hash of the account's network (`token_list_hash` from `/v1/networks`, new `getTokenListHash` endpoint) instead of the `X-Ledger-Commit` header. The commit header changed on every CAL deployment, so an update to any chain's tokens made every account of every network resync from scratch. A network the CAL lists no token for gets a fixed `no-tokens` hash.
+
+  The token cache is still validated against the commit (`getTokensSyncHash` endpoint), so a metadata-only token correction still evicts it.
+
+  Stored sync hashes were built from the commit, so each account resyncs from scratch once after this update.
+
+### Patch Changes
+
+- Updated dependencies [[`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8), [`3a1e006`](https://github.com/LedgerHQ/ledger-live/commit/3a1e0066dfdeaa93e5b087396ee84100a607098a), [`5e2a324`](https://github.com/LedgerHQ/ledger-live/commit/5e2a3245cc163b6cc13ef5fd2b7faa85c84ca153), [`dbaf56d`](https://github.com/LedgerHQ/ledger-live/commit/dbaf56ddb47f5a43221feba193700cf40f4a46df), [`6ea25da`](https://github.com/LedgerHQ/ledger-live/commit/6ea25da0c6060df6aa5056eceacaeedf3d76d2ba), [`ffd02a9`](https://github.com/LedgerHQ/ledger-live/commit/ffd02a95c452560d606ad30588f15ff5d2182763), [`0953772`](https://github.com/LedgerHQ/ledger-live/commit/0953772eafec52773cf7a19c08295c72a2e296a2)]:
+  - @domain/entity-currency-crypto@0.17.0-next.0
+  - @domain/api-currency-token@0.7.0-next.0
+  - @shared/api-services@0.11.0-next.0
+  - @features/platform-feature-flags@0.10.0-next.0
+  - @domain/entity-currency-token@0.5.7-next.0
+
 ## 0.10.0
 
 ### Minor Changes
@@ -246,59 +265,5 @@
 
 - Updated dependencies []:
   - @features/platform-feature-flags@0.6.6-next.1
-
-## 0.6.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2)]:
-  - @shared/api-services@0.4.0-next.0
-  - @domain/entity-currency-token@0.5.0-next.0
-  - @domain/api-currency-token@0.5.0-next.0
-  - @features/platform-feature-flags@0.6.6-next.0
-
-## 0.6.0
-
-### Minor Changes
-
-- [#20595](https://github.com/LedgerHQ/ledger-live/pull/20595) [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf) Thanks [@ysitbon](https://github.com/ysitbon)! - Make every new-architecture barrel a pure regrouping point, and enforce it.
-
-  An `index.*` under `shared/`, `domain/` or `features/` may now contain only `export * from "./x"`
-  lines, plus an optional default re-export. Having to sort in the export
-  (`export { a, b } from "./x"`) proved the target file mixed public and private code; an `index.*`
-  holding actual code proved it more loudly. A new nx plugin infers a `lint:structure` target on each
-  of the 49 packages and fails on both, along with two related rules: a barrel may not re-export a
-  private `internals` location, and it may not re-export another workspace package.
-
-  That last rule removes the proxies. A package that re-exported a neighbour gave the same symbol two
-  import paths and hid who actually provided it. Consumers now import the original provider and
-  declare the dependency, which is why the two apps gain `@features/flow-contacts-add-contact` and the
-  desktop app gains `@features/platform-contacts`.
-
-  Renamed or relocated, with the import specifier unchanged for consumers in every case except where
-  noted:
-
-  - `@domain/entity-account-name` no longer exports the `setAccountNames` alias; use
-    `bulkSetAccountNames`, the name the slice actually defines.
-  - `@shared/cloud-sync` exports `getCloudSyncApi` as a named export from its api module instead of
-    re-exporting a default under a different name.
-
-  Five packages are left untouched behind temporary exclusions, each recording how to remove it:
-
-  - `@shared/env`, the facade over the legacy `@ledgerhq/live-env`, which carries the wrapping in its
-    barrel.
-  - the `@ledgerhq/engagement` and `@ledgerhq/ptx` packages (`flow-analytics-consent`,
-    `flow-large-screen-upsell`, `flow-lazy-onboarding-banner`, `flow-pay-card-auth`), so each owning
-    team lands the change on its own schedule. Conformant barrels were prepared and verified for them
-    before being reverted, so the work is deferred rather than open.
-
-### Patch Changes
-
-- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf)]:
-  - @domain/entity-currency-crypto@0.10.0
-  - @domain/entity-currency-token@0.4.0
-  - @domain/api-currency-token@0.4.0
-  - @shared/api-services@0.3.0
-  - @features/platform-feature-flags@0.6.5
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

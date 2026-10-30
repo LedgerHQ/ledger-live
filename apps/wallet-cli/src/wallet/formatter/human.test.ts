@@ -12,9 +12,9 @@ const stubStore = {} as CryptoAssetsStore;
 const btcDiscovered: DiscoveredAccount = {
   descriptor: {
     purpose: "account",
-    version: "1",
+    version: "2",
     type: "utxo",
-    network: { name: "bitcoin", env: "main" },
+    network: "bitcoin",
     xpub: XPUB,
     path: "m/84h/0h/0h",
   },
@@ -25,9 +25,9 @@ const btcDiscovered: DiscoveredAccount = {
 const ethDiscovered: DiscoveredAccount = {
   descriptor: {
     purpose: "account",
-    version: "1",
+    version: "2",
     type: "address",
-    network: { name: "ethereum", env: "main" },
+    network: "ethereum",
     address: ETH_ADDR,
     path: "m/44h/60h/0h/0/0",
   },
@@ -113,7 +113,7 @@ describe("HumanFormatter.formatDiscoveredAccount", () => {
 
   it("does not leak the serialized V1 descriptor", () => {
     const out = formatter.formatDiscoveredAccount(btcDiscovered);
-    expect(out).not.toContain(`account:1:utxo:bitcoin:main:${XPUB}:m/84h/0h/0h`);
+    expect(out).not.toContain(`account:2:utxo:bitcoin:${XPUB}:m/84h/0h/0h`);
   });
 
   it("works for address-type (ethereum)", () => {

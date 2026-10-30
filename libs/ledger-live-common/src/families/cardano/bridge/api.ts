@@ -22,7 +22,7 @@ export async function getTokenFromAsset(
     return undefined;
   }
   const { policyId, assetName } = decodeTokenAssetId(asset.assetReference);
-  return getCryptoAssetsStore().findTokenByAddressInCurrency(
+  return await getCryptoAssetsStore().findTokenByAddressInCurrency(
     policyId,
     currency.id,
     assetName || undefined,

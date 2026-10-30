@@ -8,6 +8,10 @@ import { useAddressListViewModel } from "../useAddressListViewModel";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { MAX_ADDRESSES_PREVIEW } from "../../constants";
+import { BigNumber } from "bignumber.js";
+import { buildCV } from "@domain/entity-market-countervalues/mock";
+import { getFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { countervaluesInitialState } from "@features/platform-market-countervalues";
 
 const mockNavigate = jest.fn();
 
@@ -56,7 +60,7 @@ describe("useAddressListViewModel", () => {
     expect(result.current.previewAccounts).toEqual([]);
   });
 
-  it("limits preview accounts and exposes see all when there are more than five addresses", () => {
+  it("previews only 5 accounts and offers See all when there are more than 5", () => {
     const accounts = Array.from({ length: MAX_ADDRESSES_PREVIEW + 1 }, (_, index) =>
       genAccount(`asset-detail-address-preview-${index}`, { currency: btc }),
     );
@@ -78,6 +82,33 @@ describe("useAddressListViewModel", () => {
     });
 
     expect(result.current.allAddressesDialog.open).toBe(true);
+  });
+
+  it("shows the 5 highest-balance accounts first, even when the setting orders by name", () => {
+    const usd = getFiatCurrencyByTicker("USD");
+    const oneBtc = new BigNumber(10).pow(btc.units[0].magnitude);
+    const btcBalances = [2, 6, 1, 5, 3, 4];
+    const accounts = btcBalances.map(amount => ({
+      ...genAccount(`account-holding-${amount}-btc`, { currency: btc }),
+      balance: oneBtc.times(amount),
+    }));
+
+    const { result } = renderHook(
+      () => useAddressListViewModel(buildDistributionItem({ currency: btc, accounts })),
+      {
+        initialState: {
+          settings: { orderAccounts: "name|asc", counterValue: usd.ticker },
+          countervalues: {
+            ...countervaluesInitialState,
+            rates: buildCV({ pair: { from: btc, to: usd }, latest: 30_000 }),
+          },
+        },
+      },
+    );
+
+    const previewBtc = result.current.previewAccounts.map(a => a.balance.div(oneBtc).toNumber());
+    // Preview: 6, 5, 4, 3, 2 BTC. The 1 BTC account is the only one left out.
+    expect(previewBtc).toEqual([6, 5, 4, 3, 2]);
   });
 
   it("navigates to the token account URL when a parent account is provided", () => {

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { OFAC_FIAT_TICKERS } from "./constants";
+import { OFAC_FIAT_TICKERS } from "./constants.internals";
 import { setFiats, setFiatsReady, supportedFiatsSlice } from "./slice";
 import { selectSupportedFiats, selectSupportedFiatsReady } from "./selector";
 import { mockFiatCurrency } from "./schema.mock";
@@ -9,17 +9,6 @@ function makeStore() {
     reducer: { supportedFiats: supportedFiatsSlice.reducer },
   });
 }
-
-describe("OFAC_FIAT_TICKERS", () => {
-  it("contains RUB", () => {
-    expect(OFAC_FIAT_TICKERS.has("RUB")).toBe(true);
-  });
-
-  it("does not contain USD or EUR", () => {
-    expect(OFAC_FIAT_TICKERS.has("USD")).toBe(false);
-    expect(OFAC_FIAT_TICKERS.has("EUR")).toBe(false);
-  });
-});
 
 describe("supportedFiatsSlice initial state", () => {
   it("is non-empty", () => {

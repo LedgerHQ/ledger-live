@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.31.0-next.0
+
+### Minor Changes
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
 ## 0.30.0
 
 ### Minor Changes
@@ -159,19 +165,5 @@
 - Updated dependencies [[`8c0f5f2`](https://github.com/LedgerHQ/ledger-live/commit/8c0f5f22e66aa6a34a3363a256d3da2d98d07dc9)]:
   - @ledgerhq/errors@6.36.0-next.0
   - @ledgerhq/hw-transport@6.35.4-next.0
-
-## 0.22.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.3
-
-## 0.22.3-next.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.3-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

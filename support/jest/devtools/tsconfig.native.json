@@ -1,0 +1,7 @@
+{
+  "extends": ["./tsconfig.json", "@support/tsconfig/native"],
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  },
+  "include": ["src/**/*", "mocks/**/*.ts", "mocks/**/*.tsx", "**/*.d.ts"]
+}

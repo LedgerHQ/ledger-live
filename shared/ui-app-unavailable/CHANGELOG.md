@@ -1,5 +1,11 @@
 # @shared/ui-app-unavailable
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23919](https://github.com/LedgerHQ/ledger-live/pull/23919) [`15727e0`](https://github.com/LedgerHQ/ledger-live/commit/15727e019193711acc999fa4e08fde1c3898dea6) Thanks [@ysitbon](https://github.com/ysitbon)! - `AppUnavailableAction` names its callback `onOpenLearnMore` instead of `onPress`, so the contract names the intent rather than a platform gesture.
+
 ## 0.2.0
 
 ### Minor Changes

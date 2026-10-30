@@ -11,7 +11,13 @@ import {
   resolveTransactionAmount,
   toBlockDate,
 } from "../logic/utils";
-import type { AleoOperation, AleoPublicTransaction, EnrichedPrivateRecord } from "../types";
+import type {
+  AleoOperation,
+  AleoPrivateRecord,
+  AleoPublicTransaction,
+  AleoPublicTransactionDetailsResponse,
+  EnrichedPrivateRecord,
+} from "../types";
 
 export const toBridgeOperation = (
   ledgerAccountId: string,
@@ -87,6 +93,35 @@ export const toPrivateBridgeOperation = (
     date: timestamp,
     extra: {
       functionId: enrichedRecord.rawRecord.function_name,
+      transactionType: "private",
+    },
+  };
+};
+
+export const toPrivateFeeBridgeOperation = (
+  ledgerAccountId: string,
+  feeRecord: AleoPrivateRecord,
+  details: AleoPublicTransactionDetailsResponse,
+  address: string,
+): AleoOperation => {
+  const transactionId = feeRecord.transaction_id.trim();
+  const fee = new BigNumber(details.fee_value);
+
+  return {
+    id: encodeOperationId(ledgerAccountId, transactionId, "FEES"),
+    senders: [address],
+    recipients: [],
+    value: fee,
+    type: "FEES",
+    hasFailed: details.status !== "Accepted",
+    hash: transactionId,
+    fee,
+    blockHeight: feeRecord.block_height,
+    blockHash: details.block_hash,
+    accountId: ledgerAccountId,
+    date: toBlockDate(feeRecord.block_timestamp),
+    extra: {
+      functionId: feeRecord.function_name,
       transactionType: "private",
     },
   };

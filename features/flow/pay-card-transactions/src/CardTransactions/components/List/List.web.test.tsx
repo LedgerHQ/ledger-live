@@ -36,9 +36,9 @@ describe("List", () => {
 
   it("reports the selected transaction", () => {
     const transactions = itemsFromMock();
-    const onTransactionPress = jest.fn();
+    const onOpenTransaction = jest.fn();
 
-    render(<List transactions={transactions} onTransactionPress={onTransactionPress} />, {
+    render(<List transactions={transactions} onOpenTransaction={onOpenTransaction} />, {
       wrapper: cardApiWrapper(),
     });
 
@@ -46,6 +46,6 @@ describe("List", () => {
       screen.getByTestId(`card-transactions-item-${transactions[0]?.transaction.id}`),
     );
 
-    expect(onTransactionPress).toHaveBeenCalledWith(transactions[0]);
+    expect(onOpenTransaction).toHaveBeenCalledWith(transactions[0]);
   });
 });

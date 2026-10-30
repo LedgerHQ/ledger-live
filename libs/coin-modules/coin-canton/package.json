@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-canton",
-  "version": "1.5.0",
+  "version": "1.6.0-next.0",
   "description": "Canton coin integration",
   "keywords": [
     "Ledger",
@@ -131,6 +131,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",
@@ -144,6 +145,12 @@
     "protobufjs-cli": "2.4.1",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "generate-proto": "node scripts/generate.js",

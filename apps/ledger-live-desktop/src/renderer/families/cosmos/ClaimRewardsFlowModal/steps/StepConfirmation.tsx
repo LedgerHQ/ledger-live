@@ -1,11 +1,12 @@
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -28,14 +29,13 @@ const Container = styled(Box).attrs(() => ({
 `;
 
 function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
-  const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
+  const validators = accountValidators(account);
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const validator = transaction?.valAddress
-      ? { address: transaction.valAddress, amount: transaction.amount }
-      : null;
+    const valAddress = transaction ? getValAddress(transaction) : "";
+    const validator =
+      transaction && valAddress ? { address: valAddress, amount: transaction.amount } : null;
     const v =
       validator &&
       validators.find(({ validatorAddress }) => validatorAddress === validator.address);
@@ -50,7 +50,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
     const textKey = transaction?.mode === "claimReward" ? "text" : "textCompound";
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="ClaimRewards Cosmos Flow"
           name="Step Confirmed"
           flow="stake"
@@ -86,7 +86,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="ClaimRewards Cosmos Flow"
           name="Step Confirmation Error"
           flow="stake"

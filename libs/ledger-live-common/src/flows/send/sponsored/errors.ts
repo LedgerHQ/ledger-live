@@ -21,3 +21,11 @@ export class SponsoredFeeNotApprovedError extends Error {
     super("No sponsored fee was approved on Review");
   }
 }
+
+/** A rent paid for this account hasn't landed yet, so a second order would pay twice. */
+export class SponsoredRentPendingError extends Error {
+  override name = "SponsoredRentPendingError";
+  constructor() {
+    super("A rent paid for this account is still arriving");
+  }
+}

@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getAccountBridge } from "../bridge";
 import { getLoadedMockAccountForFamily, loadMockAccountForFamily } from "../coin-modules/registry";
-import { CosmosAccount } from "../families/cosmos/types";
+
 import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
 import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import type { TezosAccount } from "../families/tezos/types";
@@ -65,17 +65,18 @@ export function genAccountLegacy(id: number | string, opts: GenAccountOptions = 
           };
           break;
         case "cosmos":
-          (account as CosmosAccount).cosmosResources = {
-            // TODO variation in these
-            delegations: [],
-            redelegations: [],
-            unbondings: [],
-            delegatedBalance: new BigNumber(0),
-            pendingRewardsBalance: new BigNumber(0),
-            unbondingBalance: new BigNumber(0),
+          Object.assign(account, {
             sequence: 0,
-            publicKey: "",
-          };
+            // TODO variation in these
+            stakingResources: {
+              delegations: [],
+              redelegations: [],
+              unbondings: [],
+              delegatedBalance: new BigNumber(0),
+              pendingRewardsBalance: new BigNumber(0),
+              unbondingBalance: new BigNumber(0),
+            },
+          });
           break;
         case "bitcoin":
           (account as BitcoinAccount).bitcoinResources = {

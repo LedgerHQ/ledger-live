@@ -1,7 +1,7 @@
 import { Box, Button } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import React from "react";
-import { PasswordField } from "@features/platform-app-lock";
+import { PasswordField } from "@features/platform-app-lock/native";
 import type { SetupPasswordViewProps } from "./types";
 
 export function SetupPasswordView({

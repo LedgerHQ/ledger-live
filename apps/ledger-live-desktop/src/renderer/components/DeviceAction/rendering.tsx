@@ -50,7 +50,7 @@ import { closeAllModal } from "~/renderer/actions/modals";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { setShouldResumeAddAccountAfterOnboarding } from "~/renderer/reducers/onboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track, setTrackingSource } from "@shared/analytics";
 import Animation from "~/renderer/animations";
 import Button, { Base as ButtonBase } from "~/renderer/components/Button";
@@ -646,9 +646,11 @@ export const renderAllowOpeningApp = ({
 export const renderWarningOutdated = ({
   passWarning,
   appName,
+  onOpenManager,
 }: {
   passWarning: () => void;
   appName: string;
+  onOpenManager?: () => void;
 }) => (
   <Wrapper id={`warning-outdated-app`}>
     <Logo warning>
@@ -664,7 +666,7 @@ export const renderWarningOutdated = ({
       <Button onClick={passWarning}>
         <Trans i18nKey="common.continue" />
       </Button>
-      <OpenManagerButton ml={4} mt={0} appName={appName} updateApp />
+      <OpenManagerButton ml={4} mt={0} appName={appName} updateApp onOpenManager={onOpenManager} />
     </ButtonContainer>
   </Wrapper>
 );
@@ -763,15 +765,11 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
       }
       dispatch(closeAllModal());
       setDrawer(undefined);
-      if (!device?.modelId) {
-        navigate("/onboarding");
-      } else {
-        navigate(
-          isSyncOnboardingSupported(device.modelId)
-            ? `/sync-onboarding/${device.modelId}`
-            : "/onboarding",
-        );
+      let onboardingRoute = "/onboarding/select-device";
+      if (device?.modelId && isSyncOnboardingSupported(device.modelId)) {
+        onboardingRoute = `/sync-onboarding/${device.modelId}`;
       }
+      navigate(onboardingRoute);
     }, [device?.modelId, dispatch, location, navigate, setDrawer]);
 
     return (
@@ -874,6 +872,7 @@ export const renderError = ({
   error,
   t,
   withOpenManager,
+  onOpenManager,
   onRetry,
   withExportLogs,
   list,
@@ -896,6 +895,7 @@ export const renderError = ({
   error: Error | ErrorConstructor | DmkError;
   t: TFunction;
   withOpenManager?: boolean;
+  onOpenManager?: () => void;
   onRetry?: (() => void) | null | undefined;
   withExportLogs?: boolean;
   list?: boolean;
@@ -971,7 +971,7 @@ export const renderError = ({
   return (
     <Wrapper id={`error-${isDmkError(error) ? error._tag : error.name}`}>
       {requireFirmwareUpdate ? (
-        <TrackPage category="Firmware Update" name="Error: App Unavailable Update Firmware" />
+        <TrackScreen category="Firmware Update" name="Error: App Unavailable Update Firmware" />
       ) : null}
       <ErrorBody
         Icon={
@@ -1007,6 +1007,7 @@ export const renderError = ({
             appName={managerAppName}
             updateApp={eName === "UpdateYourApp"}
             firmwareUpdate={eName === "LatestFirmwareVersionRequired"}
+            onOpenManager={onOpenManager}
           />
         ) : (
           <>
@@ -1178,7 +1179,7 @@ export const HardwareUpdate = ({
   targetCurrency?: string;
 }) => (
   <Wrapper>
-    <TrackPage
+    <TrackScreen
       category={SWAP_NANO_S_INCOMPATIBILITY_PAGE}
       refreshSource={false}
       {...getSwapNanoSIncompatibilityTrackingProperties(
@@ -1475,7 +1476,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
   return (
     <>
       <ConfirmWrapper>
-        <TrackPage
+        <TrackScreen
           category="Swap"
           name={`ModalStep-summary`}
           sourcecurrency={sourceAccountCurrency?.name}

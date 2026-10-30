@@ -19,7 +19,19 @@ import { ScreenName } from "./const";
 import type { ViewNamePredicate } from "@datadog/mobile-react-navigation";
 import { EXCLUDED_ERROR_DESCRIPTION, EXCLUDED_LOGS_ERROR_NAME } from "./utils/constants";
 import { buildFeatureFlagTags } from "./utils/datadogUtils";
-import { extractErrorContext } from "@ledgerhq/live-common/errors/helpers";
+import {
+  toBroadcastFailureLog,
+  toBroadcastLogEvent,
+} from "@ledgerhq/live-common/hooks/broadcastLog";
+import {
+  createCoinModuleCallTransmitter,
+  readCoinObservabilityConfig,
+  type CoinModuleCallEvent,
+} from "@features/platform-coin-observability";
+import {
+  toDatadogBroadcastLog,
+  type LogEvent as TransactionLogEvent,
+} from "@ledgerhq/transaction-observability";
 
 type DatadogRemoteParams = NonNullable<Features["llmDatadog"]["params"]>;
 type ErrorEventMapper = NonNullable<RumConfigurationOptions["errorEventMapper"]>;
@@ -33,6 +45,22 @@ const clientToken = process.env[`${clientTokenVar}`] || Config[`${clientTokenVar
 const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicationIdVar}`] || "";
 
 export const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
+
+let recording = false;
+/** Identifies the latest initialization: an older one finishing late must not open the gate. */
+let initialization = 0;
+
+/**
+ * Whether an event sent now is recorded: the provider is initialized and the user granted
+ * tracking consent. Unlike `isDatadogEnabled`, this follows the feature flag and the consent.
+ */
+export const isDatadogRecording = (): boolean => recording;
+
+/** Closes the recording gate (feature flag off, ...) and discards the initialization in flight. */
+export const stopDatadogRecording = (): void => {
+  initialization++;
+  recording = false;
+};
 
 const baseConfig = {
   clientToken,
@@ -60,6 +88,8 @@ export const initializeDatadogProvider = async (
   if (!isDatadogEnabled) {
     return;
   }
+  const current = ++initialization;
+  recording = false;
 
   const {
     serviceName,
@@ -119,6 +149,8 @@ export const initializeDatadogProvider = async (
   };
 
   await DatadogProvider.initialize(config);
+  if (current !== initialization) return;
+  recording = trackingConsent === TrackingConsent.GRANTED;
 };
 
 /**
@@ -208,16 +240,47 @@ export function broadcastLogger(event: LogEvent): void {
   if (!isDatadogEnabled) return;
 
   if (event.status === "success") {
-    DdLogs.info("broadcast_success", { event });
+    DdLogs.info("broadcast_success", { event: toBroadcastLogEvent(event) });
   } else {
-    const { error, ...rest } = event;
-    const errorContext = extractErrorContext(error);
+    const { event: loggedEvent, errorContext, error } = toBroadcastFailureLog(event);
     DdLogs.error("broadcast_failure", error.name, error.message, error.stack ?? "", {
-      event: {
-        ...rest,
-      },
-      errorContext: errorContext,
+      event: loggedEvent,
+      errorContext,
     });
+  }
+}
+
+const transmitCoinModuleCall = createCoinModuleCallTransmitter(readCoinObservabilityConfig);
+
+/**
+ * Coin-module call sink, gated on the `coinObservability` flag. Sampling and the failure cap are
+ * applied before the SDK, so a dropped event never crosses the native bridge.
+ */
+export function coinModuleCallLogger(event: CoinModuleCallEvent): void {
+  if (!isDatadogEnabled || !transmitCoinModuleCall(event)) return;
+
+  if (event.status === "failure") {
+    DdLogs.error("coin_module_call", { coinModule: event });
+  } else {
+    DdLogs.info("coin_module_call", { coinModule: event });
+  }
+}
+
+/**
+ * Broadcast outcomes seen at the bridge seam, for every family and every route. Gated on the
+ * `coinObservability` flag too; never sampled, since there are a few per user action.
+ */
+export function transactionBroadcastLogger(event: TransactionLogEvent): void {
+  if (!isDatadogEnabled || !readCoinObservabilityConfig()) return;
+
+  const log = toDatadogBroadcastLog(event);
+  if (!log) return;
+
+  if (log.status === "success") {
+    DdLogs.info(log.message, { broadcast: log.attributes });
+  } else {
+    // No error kind, message or stack: the mapper keeps only the error's name and category.
+    DdLogs.error(log.message, { broadcast: log.attributes });
   }
 }
 

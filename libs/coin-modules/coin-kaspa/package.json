@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-kaspa",
-  "version": "2.5.1",
+  "version": "2.6.0-next.0",
   "description": "Ledger Kaspa Coin integration",
   "keywords": [
     "Ledger",
@@ -92,7 +92,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@bitcoinerlab/secp256k1": "^1.1.1",
+    "@bitcoinerlab/secp256k1": "catalog:",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -115,6 +115,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
@@ -131,6 +132,12 @@
     "timemachine": "^0.3.2",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

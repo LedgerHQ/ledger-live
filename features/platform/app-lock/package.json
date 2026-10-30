@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-app-lock",
-  "version": "0.6.0",
+  "version": "0.7.0-next.0",
   "private": true,
   "description": "App lock protection state, verifier and biometrics, plus the UI shared by the app lock flows",
   "main": "src/index.ts",
@@ -11,17 +11,21 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -W features/platform/app-lock"
+    "unimported": "pnpm knip --directory ../../.. -c features/platform/app-lock/knip.web.config.mjs -W features/platform/app-lock --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/app-lock/knip.native.config.mjs -W features/platform/app-lock --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:",
@@ -50,14 +54,16 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",

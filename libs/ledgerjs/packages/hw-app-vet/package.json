@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-vet",
-  "version": "0.14.0",
+  "version": "0.15.0-next.0",
   "description": "Ledger Hardware Wallet VeChain Application API",
   "keywords": [
     "Ledger",
@@ -31,6 +31,12 @@
     "@ledgerhq/logs": "catalog:",
     "@vechain/sdk-core": "2.0.0"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

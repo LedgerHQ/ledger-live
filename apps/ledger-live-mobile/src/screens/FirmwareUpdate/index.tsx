@@ -89,10 +89,10 @@ export type FirmwareUpdateProps = {
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
   /**
-   * To adapt the firmware update in case the device is starting its onboarding and it's normal it is not yet seeded.
-   * If set to true, short-circuit some steps that are unnecessary
+   * Keeps the onboarding exit guard. Backup is skipped only when the device is not seeded yet.
    */
   isBeforeOnboarding?: boolean;
+  isDeviceOnboarded?: boolean;
   /**
    * Called when the user leaves the firmware update screen
    *
@@ -176,6 +176,7 @@ export const FirmwareUpdate = ({
   onBackFromUpdate,
   updateFirmwareAction,
   isBeforeOnboarding = false,
+  isDeviceOnboarded = false,
 }: FirmwareUpdateProps) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -184,6 +185,7 @@ export const FirmwareUpdate = ({
   const dispatch = useDispatch();
 
   const productName = getDeviceModel(device.modelId).productName;
+  const skipsAppsAndSettingsBackup = isBeforeOnboarding && !isDeviceOnboarded;
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
@@ -225,7 +227,7 @@ export const FirmwareUpdate = ({
     updateFirmwareAction,
     device,
     deviceInfo,
-    isBeforeOnboarding,
+    skipsAppsAndSettingsBackup,
   });
   useKeepScreenAwake(keepScreenAwake);
 
@@ -357,14 +359,14 @@ export const FirmwareUpdate = ({
     () => ({
       prepareUpdate: {
         status: ItemStatus.inactive,
-        title: isBeforeOnboarding
+        title: skipsAppsAndSettingsBackup
           ? t("FirmwareUpdate.steps.prepareUpdate.earlySecurityCheck.titlePreparingUpdate")
           : t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
             <TrackScreen category={"Update device - Step 1: preparing updates for install"} />
             <Text variant="bodyLineHeight" color="neutral.c80">
-              {isBeforeOnboarding
+              {skipsAppsAndSettingsBackup
                 ? t("FirmwareUpdate.steps.prepareUpdate.earlySecurityCheck.description", {
                     deviceName: productName,
                   })
@@ -395,14 +397,14 @@ export const FirmwareUpdate = ({
       },
       restoreAppsAndSettings: {
         status: ItemStatus.inactive,
-        title: isBeforeOnboarding
+        title: skipsAppsAndSettingsBackup
           ? t("FirmwareUpdate.steps.restoreSettings.earlySecurityCheck.titleInactive")
           : t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
             <TrackScreen category={"Update device - Step 3: restore apps and settings"} />
             <Text variant="bodyLineHeight" color="neutral.c80">
-              {isBeforeOnboarding
+              {skipsAppsAndSettingsBackup
                 ? t("FirmwareUpdate.steps.restoreSettings.earlySecurityCheck.description")
                 : t("FirmwareUpdate.steps.restoreSettings.description")}
             </Text>
@@ -411,7 +413,7 @@ export const FirmwareUpdate = ({
         ),
       },
     }),
-    [isBeforeOnboarding, t, productName, restoreSteps, device.wired, device.modelId],
+    [skipsAppsAndSettingsBackup, t, productName, restoreSteps, device.wired, device.modelId],
   );
 
   useEffect(() => {
@@ -778,13 +780,13 @@ export const FirmwareUpdate = ({
         );
       case "installOsuDevicePermissionGranted":
         // If the device is not yet onboarded, there is no PIN code: no need to display this content
-        if (!firmwareUpdateContext.shouldFlashMCU && !isBeforeOnboarding) {
+        if (!firmwareUpdateContext.shouldFlashMCU && !skipsAppsAndSettingsBackup) {
           return <FinishFirmwareUpdate device={device} />;
         }
         break;
       case "flashingMcu":
         // If the device is not yet onboarded, there is no PIN code: no need to display this content
-        if (updateActionState.progress === 1 && !isBeforeOnboarding) {
+        if (updateActionState.progress === 1 && !skipsAppsAndSettingsBackup) {
           return <FinishFirmwareUpdate device={device} />;
         }
         break;
@@ -817,7 +819,7 @@ export const FirmwareUpdate = ({
     skipCurrentRestoreStep,
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
-    isBeforeOnboarding,
+    skipsAppsAndSettingsBackup,
     deviceInfo.version,
   ]);
 
@@ -940,6 +942,7 @@ export default function FirmwareUpdateScreen({ route: { params } }: NavigationPr
         firmwareUpdateContext={params.firmwareUpdateContext}
         onBackFromUpdate={params.onBackFromUpdate}
         isBeforeOnboarding={params.isBeforeOnboarding}
+        isDeviceOnboarded={params.isDeviceOnboarded}
       />
     </SafeAreaViewFixed>
   );

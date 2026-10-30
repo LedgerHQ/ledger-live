@@ -75,14 +75,14 @@ describe("getBlock", () => {
             type: "transfer",
             address: "0xsender",
             peer: "0xrecipient",
-            asset: { type: "native", name: "VET" },
+            asset: { type: "native" },
             amount: -BigInt("0x64"),
           },
           {
             type: "transfer",
             address: "0xrecipient",
             peer: "0xsender",
-            asset: { type: "native", name: "VET" },
+            asset: { type: "native" },
             amount: BigInt("0x64"),
           },
         ],
@@ -109,7 +109,7 @@ describe("getBlock", () => {
 
     const block = await getBlock(context, 16407374);
 
-    const asset = { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" };
+    const asset = { type: "token", assetReference: VTHO_ADDRESS };
     expect(block.transactions[0].operations).toEqual([
       {
         type: "transfer",

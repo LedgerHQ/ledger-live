@@ -1,19 +1,32 @@
-import { Expiry, requestIdOf, SubmitRequestType } from "@dfinity/agent";
-import { IDL } from "@dfinity/candid";
-import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
+import { ReadRequestType, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
+import { IDL } from "@icp-sdk/core/candid";
+import { Principal } from "@icp-sdk/core/principal";
 import { sha256 } from "@noble/hashes/sha256";
-import {
-  DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
-  KNOWN_TOPICS,
-  MAINNET_GOVERNANCE_CANISTER_ID,
-} from "../consts";
+import { KNOWN_TOPICS, MAINNET_GOVERNANCE_CANISTER_ID } from "../consts";
 import { encodeCanisterIdlFunc, getCanisterIdlFunc, governanceIdlFactory } from "../network/candid";
 import { ICPNeuron, InternetComputerOperation, Transaction } from "../types";
-import { UnsignedTransaction } from "./buildTransaction";
+import { AccountIdentifier, SubAccount } from "./accountIdentifier";
+import { createIngressExpiry, UnsignedTransaction } from "./buildTransaction";
 import { derivePrincipalFromPubkey } from "./crypto";
 
 const governanceCanisterId = () => Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID);
+
+/** The fields of a neuron operation that its `manage_neuron` command reads. */
+export type NeuronCommand = Pick<
+  Transaction,
+  | "type"
+  | "neuronId"
+  | "amount"
+  | "dissolveDelay"
+  | "additionalDissolveDelay"
+  | "hotKeyToAdd"
+  | "hotKeyToRemove"
+  | "autoStakeMaturity"
+  | "percentageToSpawn"
+  | "percentageToStake"
+  | "followTopic"
+  | "followeesIds"
+>;
 
 const NeuronIdArg = IDL.Record({ id: IDL.Nat64 });
 
@@ -35,20 +48,20 @@ const SPLIT_ARG_TYPE = IDL.Record({
 
 const buildGovernanceCall = (
   methodName: string,
-  arg: ArrayBuffer,
+  arg: Uint8Array,
   pubKey: string,
 ): UnsignedTransaction => ({
-  request_type: SubmitRequestType.Call,
-  canister_id: governanceCanisterId(),
-  method_name: methodName,
   arg,
+  canister_id: governanceCanisterId(),
+  ingress_expiry: createIngressExpiry(),
+  method_name: methodName,
+  request_type: SubmitRequestType.Call,
   sender: derivePrincipalFromPubkey(pubKey),
-  ingress_expiry: new Expiry(DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS),
 });
 
 // `manage_neuron` command variant per op (vendored ManageNeuronCommandRequest, bar Split — see
 // SPLIT_ARG_TYPE). Candid `opt` = `[]` | `[value]`.
-const buildManageNeuronCommand = (transaction: Transaction, nowSeconds: number): unknown => {
+const buildManageNeuronCommand = (transaction: NeuronCommand, nowSeconds: number): unknown => {
   switch (transaction.type) {
     case "start_dissolving":
       return { Configure: { operation: [{ StartDissolving: {} }] } };
@@ -177,7 +190,7 @@ const buildManageNeuronCommand = (transaction: Transaction, nowSeconds: number):
 
 /** ManageNeuronRequest for a neuron operation, targeting the neuron by id. */
 export const buildManageNeuronArg = (
-  transaction: Transaction,
+  transaction: NeuronCommand,
   nowSeconds: number = Math.floor(Date.now() / 1000),
 ): unknown => {
   if (!transaction.neuronId) {
@@ -191,14 +204,14 @@ export const buildManageNeuronArg = (
 };
 
 /** Every command but Split encodes against the canister's own interface. */
-const manageNeuronArgTypes = (transaction: Transaction): IDL.Type[] =>
+const manageNeuronArgTypes = (transaction: NeuronCommand): IDL.Type[] =>
   transaction.type === "split_neuron"
     ? [SPLIT_ARG_TYPE]
     : getCanisterIdlFunc(governanceIdlFactory, "manage_neuron").argTypes;
 
 /** Unsigned `manage_neuron` update call for a neuron operation. */
 export const createUnsignedNeuronCommandTransaction = (
-  transaction: Transaction,
+  transaction: NeuronCommand,
   pubKey: string,
 ): UnsignedTransaction => {
   const arg = IDL.encode(manageNeuronArgTypes(transaction), [buildManageNeuronArg(transaction)]);
@@ -223,18 +236,17 @@ export const createUnsignedListNeuronsTransaction = (pubKey: string): UnsignedTr
 };
 
 /**
- * Read-state request that polls an update call's status. Per @dfinity/agent, the path is
- * `["request_status", requestId]` where requestId is the hash of the CALL content; sender and
- * ingress_expiry are reused from the call.
+ * Read-state request that polls an update call's status. The path is `["request_status",
+ * requestId]` where requestId is the hash of the CALL content; sender and ingress_expiry are reused
+ * from the call. Keys in sorted order, as for UnsignedTransaction.
  */
 export const createReadStateRequest = (unsignedTxn: UnsignedTransaction) => {
   const requestId = requestIdOf(unsignedTxn);
   const readStateContent = {
-    // @dfinity/agent's ReadRequestType.ReadState — the enum has no runtime export, so use its value.
-    request_type: "read_state",
-    paths: [[new TextEncoder().encode("request_status"), new Uint8Array(requestId)]],
-    sender: unsignedTxn.sender,
     ingress_expiry: unsignedTxn.ingress_expiry,
+    paths: [[new TextEncoder().encode("request_status"), new Uint8Array(requestId)]],
+    request_type: ReadRequestType.ReadState,
+    sender: unsignedTxn.sender,
   };
   return { readStateContent, requestId };
 };
@@ -251,22 +263,31 @@ const nonceToBytes = (nonce: bigint): Uint8Array => {
 };
 
 /**
- * The ledger account a neuron stake is transferred to: a governance-canister subaccount derived as
- * SHA-256( 0x0c ‖ "neuron-stake" ‖ controller ‖ nonce_be ). The same `nonce` is the transfer memo,
- * which the governance canister recomputes to claim the neuron.
+ * The governance-canister subaccount a neuron's stake sits in, derived as
+ * SHA-256( 0x0c ‖ "neuron-stake" ‖ controller ‖ nonce_be ). Governance looks a neuron up by it.
+ */
+export const getNeuronStakeSubAccount = (controller: Principal, nonce: bigint): Uint8Array => {
+  const padding = new TextEncoder().encode("neuron-stake");
+  return sha256(
+    new Uint8Array([
+      padding.length,
+      ...padding,
+      ...controller.toUint8Array(),
+      ...nonceToBytes(nonce),
+    ]),
+  );
+};
+
+/**
+ * The ledger account a neuron stake is transferred to: the governance canister's account at
+ * {@link getNeuronStakeSubAccount}. The same `nonce` is the transfer memo, which the governance
+ * canister recomputes to claim the neuron.
  */
 export const getNeuronStakeSubAccountIdentifier = (
   controller: Principal,
   nonce: bigint,
 ): string => {
-  const padding = new TextEncoder().encode("neuron-stake");
-  const data = new Uint8Array([
-    padding.length,
-    ...padding,
-    ...controller.toUint8Array(),
-    ...nonceToBytes(nonce),
-  ]);
-  const subAccount = SubAccount.fromBytes(sha256(data));
+  const subAccount = SubAccount.fromBytes(getNeuronStakeSubAccount(controller, nonce));
   if (subAccount instanceof Error) throw subAccount;
   return AccountIdentifier.fromPrincipal({ principal: governanceCanisterId(), subAccount }).toHex();
 };

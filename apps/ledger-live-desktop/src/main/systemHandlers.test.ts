@@ -49,18 +49,16 @@ describe("system handlers", () => {
   it.each([
     ["0xabc", true],
     ["0xdef", false],
-  ])("should compare the clipboard with the expected text (%s)", (clipboardText, matches) => {
-    jest.mocked(clipboard.readText).mockReturnValue(clipboardText);
+  ])("should compare the clipboard with the expected text (%s)", async (clipboardText, matches) => {
+    jest.mocked(clipboard.readText).mockResolvedValue(clipboardText);
 
-    expect(emit(CHANNELS.clipboardMatchesText, "0xabc")).toBe(matches);
+    await expect(emit(CHANNELS.clipboardMatchesText, "0xabc")).resolves.toBe(matches);
   });
 
-  it("should return null when the clipboard cannot be read", () => {
-    jest.mocked(clipboard.readText).mockImplementation(() => {
-      throw new Error("unavailable");
-    });
+  it("should return null when the clipboard cannot be read", async () => {
+    jest.mocked(clipboard.readText).mockRejectedValue(new Error("unavailable"));
 
-    expect(emit(CHANNELS.clipboardMatchesText, "0xabc")).toBeNull();
+    await expect(emit(CHANNELS.clipboardMatchesText, "0xabc")).resolves.toBeNull();
   });
 
   it("should keep the screen awake and return the blocker id", () => {

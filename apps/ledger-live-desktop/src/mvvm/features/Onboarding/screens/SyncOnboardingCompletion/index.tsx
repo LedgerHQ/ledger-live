@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { analyticsFlowName } from "../SyncOnboardingCompanion/utils/constants/analytics";
 import ApexCompletionView from "./components/ApexCompletionView";
 import EuropaCompletionView from "./components/EuropaCompletionView";
@@ -24,7 +24,7 @@ function OnboardingSuccessView({ deviceModelId }: Readonly<{ deviceModelId: Devi
 function View({ seedConfiguration, deviceModelId }: Readonly<ViewProps>) {
   return (
     <Flex alignItems="center" justifyContent="center" width="100%">
-      <TrackPage
+      <TrackScreen
         category={`End of onboarding`}
         flow={analyticsFlowName}
         seedConfiguration={seedConfiguration}

@@ -11,9 +11,9 @@ export function mockUtxoAccountDescriptor(
 ): UtxoAccountDescriptor {
   return UtxoAccountDescriptorSchema.parse({
     purpose: "account",
-    version: "1",
+    version: "2",
     type: "utxo",
-    network: { name: "bitcoin", env: "main" },
+    network: "bitcoin",
     xpub: XPUB,
     path: "m/84h/0h/0h",
     ...overrides,
@@ -25,9 +25,9 @@ export function mockAddressAccountDescriptor(
 ): AddressAccountDescriptor {
   return AddressAccountDescriptorSchema.parse({
     purpose: "account",
-    version: "1",
+    version: "2",
     type: "address",
-    network: { name: "ethereum", env: "main" },
+    network: "ethereum",
     address: ETH_ADDR,
     path: "m/44h/60h/0h/0/0",
     ...overrides,

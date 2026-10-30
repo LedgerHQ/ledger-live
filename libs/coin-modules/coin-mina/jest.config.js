@@ -1,3 +1,5 @@
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+
 const sharedConfig = {
   testEnvironment: "node",
   transform: {
@@ -15,24 +17,9 @@ const sharedConfig = {
   workerThreads: true,
 };
 
-module.exports = {
-  passWithNoTests: true,
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.test.ts",
-    "!src/**/*.msw.test.ts",
-    "!src/**/*.integ.test.ts",
-    "!src/test/**",
-    "!src/index.ts",
-  ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  coverageDirectory: "coverage",
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
+  collectCoverageFrom: ["!src/test/**", "!src/index.ts"],
   projects: [
     {
       ...sharedConfig,
@@ -55,4 +42,4 @@ module.exports = {
       setupFiles: ["./src/test/helpers/msw-setup.ts"],
     },
   ],
-};
+});

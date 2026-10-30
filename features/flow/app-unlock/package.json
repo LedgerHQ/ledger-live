@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-unlock",
-  "version": "0.1.1",
+  "version": "0.2.0-next.0",
   "private": true,
   "description": "App unlock flow for Ledger Wallet Mobile: the unlock screen and the forgotten password sheet",
   "main": "src/index.ts",
@@ -47,11 +47,13 @@
   "devDependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/react-native": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",

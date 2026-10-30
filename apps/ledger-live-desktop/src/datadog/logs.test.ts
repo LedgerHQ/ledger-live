@@ -1,8 +1,17 @@
 import {
+  TransactionDataSource,
+  TransactionPathway,
+  TransactionStage,
+  ErrorCategory,
+} from "@ledgerhq/transaction-observability";
+import { setCoinObservabilityConfigReader } from "@features/platform-coin-observability";
+import {
   __resetDatadogLogsForTesting,
   broadcastLogger,
+  coinModuleCallLogger,
   initDatadogLogs,
   isDatadogLogsAvailable,
+  transactionBroadcastLogger,
 } from "./logs";
 
 jest.mock("./config", () => ({
@@ -20,6 +29,7 @@ jest.mock("@datadog/browser-logs", () => ({
     setGlobalContext: jest.fn(),
     logger: {
       info: jest.fn(),
+      warn: jest.fn(),
       error: jest.fn(),
     },
   },
@@ -30,6 +40,7 @@ const getOperatingSystemSupportStatus = jest.mocked(
   jest.requireMock("~/support/os").getOperatingSystemSupportStatus,
 );
 const datadogLogs = jest.requireMock("@datadog/browser-logs").datadogLogs;
+const observabilityOn = { includeSyncPath: true, syncPathSampleRate: 0.1, maxFailuresPerKey: 5 };
 
 describe("datadog logs", () => {
   beforeEach(() => {
@@ -204,23 +215,25 @@ describe("datadog logs", () => {
       });
     });
 
-    it("calls datadogLogs.logger.error with correct parameters on failure event", () => {
-      const error = Object.assign(new Error("tx broadcast failed"), {
-        stack: "Error: tx broadcast failed\n  at test:1:1",
+    it("sends only allowlisted, sanitized attributes on failure event", () => {
+      const error = Object.assign(new Error("tx broadcast failed for 0xdeadbeef"), {
+        stack: "Error: tx broadcast failed for 0xdeadbeef\n    at test:1:1",
         transactionId: 0,
         payload: "0x123456789",
+        transaction: { data: "0x123456789" },
       });
 
       broadcastLogger({
         status: "failure",
         error,
-        txPayload: { signature: "signature" },
         appVersion: "1.0.0",
         currencyId: "ethereum",
         family: "evm",
         isTestnet: false,
         isSendMax: false,
         source: { type: "coin-module", name: "ledger-live-desktop", flags: { newSendFlow: false } },
+        // @ts-expect-error a field outside the allowlist must not reach Datadog
+        txPayload: { signature: "signature" },
       });
 
       expect(datadogLogs.logger.error).toHaveBeenCalledWith(
@@ -228,7 +241,6 @@ describe("datadog logs", () => {
         {
           event: {
             status: "failure",
-            txPayload: { signature: "signature" },
             appVersion: "1.0.0",
             currencyId: "ethereum",
             family: "evm",
@@ -242,11 +254,163 @@ describe("datadog logs", () => {
           },
           errorContext: {
             transactionId: 0,
-            payload: "0x123456789",
+            payload: "[id]",
           },
         },
-        error,
+        expect.objectContaining({
+          name: "Error",
+          message: "tx broadcast failed for [id]",
+          stack: "Error: tx broadcast failed for [id]\n    at test:1:1",
+        }),
       );
+      expect(datadogLogs.logger.error.mock.calls[0][1]).not.toHaveProperty("event.txPayload");
+    });
+  });
+
+  describe("coinModuleCallLogger", () => {
+    const call = {
+      method: "broadcast",
+      network: "ripple",
+      family: "xrp",
+      durationMs: 12,
+      status: "success" as const,
+    };
+
+    beforeEach(() => setCoinObservabilityConfigReader(() => observabilityOn));
+    afterEach(() => setCoinObservabilityConfigReader(null));
+
+    it("does nothing while the coinObservability flag is off", () => {
+      getDatadogBuildConfig.mockReturnValue({
+        applicationId: null,
+        clientToken: "token",
+        site: "datadoghq.eu",
+        env: "production",
+      });
+      initDatadogLogs(() => true);
+      setCoinObservabilityConfigReader(null);
+      coinModuleCallLogger(call);
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+    });
+
+    it("does nothing before Datadog logs are initialised", () => {
+      coinModuleCallLogger(call);
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+    });
+
+    describe("once initialised", () => {
+      beforeEach(() => {
+        getDatadogBuildConfig.mockReturnValue({
+          applicationId: null,
+          clientToken: "token",
+          site: "datadoghq.eu",
+          env: "production",
+        });
+        initDatadogLogs(() => true);
+      });
+
+      it("logs a transaction-path call as info", () => {
+        coinModuleCallLogger(call);
+        expect(datadogLogs.logger.info).toHaveBeenCalledWith("coin_module_call", {
+          coinModule: call,
+        });
+      });
+
+      it("logs a failure as error, even on the sync path", () => {
+        const failure = { ...call, method: "getBalance", status: "failure" as const };
+        coinModuleCallLogger(failure);
+        expect(datadogLogs.logger.error).toHaveBeenCalledWith("coin_module_call", {
+          coinModule: failure,
+        });
+      });
+
+      it("drops a sync-path success outside the sample", () => {
+        const random = jest.spyOn(Math, "random").mockReturnValue(0.99);
+        coinModuleCallLogger({ ...call, method: "getBalance" });
+        expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+        random.mockRestore();
+      });
+    });
+  });
+
+  describe("transactionBroadcastLogger", () => {
+    const common = {
+      appVersion: "1.0.0",
+      pathway: TransactionPathway.WalletApiSignAndBroadcast,
+      manifestId: "some-live-app",
+      currencyId: "ethereum",
+      family: "evm",
+      currencyTicker: "ETH",
+      isTestnet: false,
+      isSendMax: false,
+      dataSource: TransactionDataSource.Broadcast,
+    };
+
+    beforeEach(() => {
+      getDatadogBuildConfig.mockReturnValue({
+        applicationId: null,
+        clientToken: "token",
+        site: "datadoghq.eu",
+        env: "production",
+      });
+      initDatadogLogs(() => true);
+      setCoinObservabilityConfigReader(() => observabilityOn);
+    });
+    afterEach(() => setCoinObservabilityConfigReader(null));
+
+    it("does nothing while the coinObservability flag is off", () => {
+      setCoinObservabilityConfigReader(null);
+      transactionBroadcastLogger({
+        status: "success",
+        stage: TransactionStage.Broadcast,
+        ...common,
+      });
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
+    });
+
+    it("logs a broadcast success from any route", () => {
+      transactionBroadcastLogger({
+        status: "success",
+        stage: TransactionStage.Broadcast,
+        ...common,
+      });
+      expect(datadogLogs.logger.info).toHaveBeenCalledWith(
+        "tx_broadcast",
+        expect.objectContaining({
+          broadcast: expect.objectContaining({ family: "evm", manifest_id: "some-live-app" }),
+        }),
+      );
+    });
+
+    it("logs a broadcast failure with its sanitized message, never the signed payload", () => {
+      const rawTx = "0x02f8b1" + "ab".repeat(120);
+      const error = Object.assign(new Error(`rejected ${rawTx}: nonce too low`), {
+        name: "NonceTooLow",
+      });
+      transactionBroadcastLogger({
+        status: "failure",
+        stage: TransactionStage.Broadcast,
+        error,
+        errorCategory: ErrorCategory.Blockchain,
+        txPayload: { signature: "0xSIGNED" },
+        ...common,
+      });
+      expect(datadogLogs.logger.error).toHaveBeenCalledWith("tx_broadcast", {
+        broadcast: expect.objectContaining({
+          error_name: "NonceTooLow",
+          error_message: "rejected [id]: nonce too low",
+          error_category: ErrorCategory.Blockchain,
+        }),
+      });
+      // Every argument handed to the SDK: no `Error` object, so no raw message or stack.
+      const sent = datadogLogs.logger.error.mock.calls[0];
+      expect(sent).toHaveLength(2);
+      expect(JSON.stringify(sent)).not.toContain(rawTx);
+      expect(JSON.stringify(sent)).not.toContain("0xSIGNED");
+    });
+
+    it("ignores sign-stage events", () => {
+      transactionBroadcastLogger({ status: "intent", stage: TransactionStage.Sign, ...common });
+      expect(datadogLogs.logger.info).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,7 +1,7 @@
 import type { Balance } from "@ledgerhq/coin-module-framework/api/index";
 import { getBalancesForAddresses } from "../../network";
 
-const NATIVE_ASSET = { type: "native", name: "KAS" } as const;
+const NATIVE_ASSET = { type: "native" } as const;
 
 /**
  * Native KAS balance for a single Kaspa address. Kaspa has no in-module token standard

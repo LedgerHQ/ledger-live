@@ -77,7 +77,7 @@ describe("makeSync", () => {
     // When
     const accountUpdater = makeSync({
       getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
-      postSync: (initial: Account, acc: Account) => ({
+      postSync: (_initial: Account, acc: Account) => ({
         ...acc,
         lastSyncDate: new Date("2024-05-12T17:04:42"),
       }),

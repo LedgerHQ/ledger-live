@@ -7,7 +7,7 @@ import {
 import { ledgerLiveThemes } from "@ledgerhq/lumen-design-core";
 import type { DefaultTheme } from "styled-components/native";
 
-type StyleProviderProps = Readonly<{
+export type StyleProviderProps = Readonly<{
   /** Pre-merged theme object (app is responsible for merging via @ledgerhq/native-ui tokens). */
   theme: DefaultTheme;
   selectedPalette: "light" | "dark";

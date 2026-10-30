@@ -1,4 +1,4 @@
-import { renderHook, act } from "@support/jest-devtools/native";
+import { renderHook, act } from "@support/jest/devtools/native";
 import { useTrustchainViewModel } from "./useTrustchainViewModel";
 import type { TrustchainDevToolProps, TrustchainSDK } from "../types";
 

@@ -2,7 +2,7 @@ import { cardManagementApi } from "@domain/api-card-management";
 import { cardSession, getCardSessionToken } from "@features/platform-card";
 import { createCardLoginPorts, type CardLoginDispatch } from "../createCardLoginPorts";
 import { markPayCardLoginIntroSeen } from "../loginIntroSlice";
-import type { OpenHostedLogin } from "../types";
+import type { OpenHostedLogin } from "../hostTypes";
 
 jest.mock("@features/platform-card", () => ({
   cardSession: {

@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 declare global {
   interface Window {
@@ -50,7 +51,7 @@ export class Redux {
     });
   };
 
-  public async waitForReduxAction(actionType: string, timeout: number = 10000) {
+  public async waitForReduxAction(actionType: string, timeout: number = TIMEOUT.medium) {
     return new Promise((resolve, reject) => {
       const checkAction = () => {
         const action = this.actions.find(action => action.type === actionType);
@@ -61,7 +62,7 @@ export class Redux {
         }
       };
 
-      const intervalId = setInterval(checkAction, 100);
+      const intervalId = setInterval(checkAction, INTERVAL.instant);
       const timeoutId = setTimeout(() => {
         clearInterval(intervalId);
         reject(new Error(`Timeout waiting for action: ${actionType}`));

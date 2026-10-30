@@ -8,8 +8,11 @@
     "./base": "./base.mts",
     "./devtools": "./devtools.mts",
     "./features-flow": "./features-flow.mts",
+    "./features-platform": "./features-platform.mts",
     "./libs": "./libs.mts",
+    "./libs-coin": "./libs-coin.mts",
     "./libs-coin-tester": "./libs-coin-tester.mts",
+    "./shared": "./shared.mts",
     "./support": "./support.mts",
     "./tools": "./tools.mts",
     "./package.json": "./package.json"
@@ -21,6 +24,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@ledgerhq/lumen-lint-plugin": "catalog:",
+    "@types/node": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   }

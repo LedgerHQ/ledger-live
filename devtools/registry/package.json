@@ -1,6 +1,6 @@
 {
   "name": "@devtools/registry",
-  "version": "0.5.3",
+  "version": "0.6.0-next.0",
   "private": true,
   "description": "Static registry of lazy-loaded DevTools modules",
   "main": "src/index.ts",
@@ -23,7 +23,12 @@
     "@devtools/pay-card": "workspace:*",
     "@devtools/trustchain": "workspace:*",
     "@devtools/cloud-sync": "workspace:*",
-    "@devtools/device-onboarding": "workspace:*"
+    "@devtools/device-onboarding": "workspace:*",
+    "@devtools/account-balance": "workspace:*",
+    "@devtools/account-descriptor": "workspace:*",
+    "@devtools/account-data": "workspace:*",
+    "@devtools/app-config": "workspace:*",
+    "@devtools/account-name": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

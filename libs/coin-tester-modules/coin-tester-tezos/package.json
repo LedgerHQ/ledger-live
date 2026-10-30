@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-tezos",
-  "version": "1.7.0",
+  "version": "1.7.1-next.1",
   "private": true,
   "description": "Ledger Tezos Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -65,7 +65,7 @@
     "@noble/hashes": "catalog:",
     "@shared/env": "workspace:*",
     "bignumber.js": "^9.1.2",
-    "bip39": "^3.1.0",
+    "bip39": "catalog:",
     "bs58": "catalog:",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",

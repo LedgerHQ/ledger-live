@@ -22,7 +22,12 @@ const SENDER = "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed";
 const DEEPLINK = "https://app.agents.ledger-test.com/intents/intent-456";
 
 const ETH: SwapAsset = { id: "ethereum", ticker: "ETH", decimals: 18 };
-const USDC: SwapAsset = { id: "ethereum/erc20/usd__coin", ticker: "USDC", decimals: 6 };
+const USDC: SwapAsset = {
+  id: "ethereum/erc20/usd__coin",
+  ticker: "USDC",
+  decimals: 6,
+  contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+};
 
 const enrolledProfile = {
   profileId: "bot",
@@ -38,16 +43,17 @@ const enrolledProfile = {
 };
 
 const accounts = [
-  { label: "ethereum-1", descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0` },
+  { label: "ethereum-1", descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0` },
   {
     label: "bitcoin-native-1",
     descriptor:
-      "account:1:utxo:bitcoin:main:xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz:m/84h/0h/0h",
+      "account:2:utxo:bitcoin:xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz:m/84h/0h/0h",
   },
 ];
 
 type QuoteRequest = {
   from: string;
+  fromContract?: string;
   to: string;
   amount: string;
   sender: string;
@@ -144,7 +150,11 @@ describe("agent-intent swap", () => {
   beforeEach(() => {
     profiles = { bot: enrolledProfile };
     secretKeyReads = 0;
-    quoteImpl = async () => ({ provider: "oneinch", receiveAmount: 1234.5678919 });
+    quoteImpl = async () => ({
+      provider: "oneinch",
+      receiveAmount: 1234.5678919,
+      needsTokenApproval: false,
+    });
     quoteRequests = [];
     createSwapIntentImpl = async () => DEEPLINK;
     submittedIntents = [];
@@ -198,8 +208,26 @@ describe("agent-intent swap", () => {
         toAmount: "1234.567891",
         provider: "oneinch",
         quoted: true,
+        needsTokenApproval: false,
         submitted: true,
       });
+      expect(stderr.join("")).not.toContain("approval");
+    });
+
+    it("quotes a token sale with its contract and proposes a quote that needs its approval", async () => {
+      quoteImpl = async () => ({ provider: "okx", receiveAmount: 0.03, needsTokenApproval: true });
+
+      await runSwap({ from: USDC.id, to: ETH.id, amount: "100", output: "json" });
+
+      expect(quoteRequests).toEqual([
+        expect.objectContaining({ from: USDC.id, fromContract: USDC.contract, to: ETH.id }),
+      ]);
+      expect(submittedIntents).toEqual([expect.objectContaining({ provider: "okx" })]);
+      expect(jsonResult()).toMatchObject({ provider: "okx", needsTokenApproval: true });
+      expect(stderr.join("")).toContain(
+        "⚠ The okx quote needs a USDC approval first. The reviewer approves it in Agent Intent, " +
+          "in a separate transaction with its own network fee, then reviews the swap.\n",
+      );
     });
 
     it("authenticates with the profile's own identity, trustchain, BFF and environment", async () => {
@@ -229,7 +257,11 @@ describe("agent-intent swap", () => {
     });
 
     it("fails without proposing when the quote rounds to nothing", async () => {
-      quoteImpl = async () => ({ provider: "lifi", receiveAmount: 0.0000001 });
+      quoteImpl = async () => ({
+        provider: "lifi",
+        receiveAmount: 0.0000001,
+        needsTokenApproval: false,
+      });
 
       await expect(runSwap()).rejects.toThrow(
         "The lifi quote receives less than the smallest unit of USDC. Sell a larger --amount.",
@@ -262,7 +294,11 @@ describe("agent-intent swap", () => {
 
   describe("--to-amount", () => {
     it("signs the typed amount with the provider of a quote the frontend can prepare", async () => {
-      quoteImpl = async () => ({ provider: "velora", receiveAmount: 1234.5 });
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1234.5,
+        needsTokenApproval: false,
+      });
 
       await runSwap({ "to-amount": "1250.50", output: "json" });
 
@@ -273,15 +309,92 @@ describe("agent-intent swap", () => {
         expect.objectContaining({ toAmount: "1250.50", provider: "velora" }),
       ]);
       expect(jsonResult()).toMatchObject({ toAmount: "1250.50", quoted: false });
+      expect(stderr.join("")).not.toContain("--to-amount");
+    });
+
+    it("warns on stderr, and still submits, when the amount is more than 5% above the quote", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050.01", output: "json" });
+
+      expect(submittedIntents).toEqual([expect.objectContaining({ toAmount: "1050.01" })]);
+      // stdout stays the one JSON envelope; the warning is on stderr only.
+      const lines = stdout.join("").trim().split("\n");
+      expect(lines).toHaveLength(1);
+      expect(JSON.parse(lines[0]!)).toMatchObject({ toAmount: "1050.01", submitted: true });
+      expect(stderr.join("")).toContain(
+        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see a fresh quote, with your amount shown only as the proposal it replaced.\n",
+      );
+    });
+
+    it("doesn't warn at exactly 5% above the quote", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050" });
+
+      expect(stderr.join("")).not.toContain("--to-amount");
+    });
+
+    it("compares with the unrounded quote, not one rounded to the asset's precision", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000.000000999,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050.000001" });
+
+      expect(stderr.join("")).not.toContain("--to-amount");
+    });
+
+    it("says so when the quote rounds to nothing in the bought asset", async () => {
+      quoteImpl = async () => ({
+        provider: "lifi",
+        receiveAmount: 0.0000001,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1" });
+
+      expect(stderr.join("")).toContain(
+        "⚠ --to-amount 1 USDC is above the lifi quote, which rounds to nothing in USDC; the " +
+          "reviewer will see a fresh quote, with your amount shown only as the proposal it replaced.\n",
+      );
+    });
+
+    it("warns under --dry-run too", async () => {
+      quoteImpl = async () => ({
+        provider: "velora",
+        receiveAmount: 1000,
+        needsTokenApproval: false,
+      });
+
+      await runSwap({ "to-amount": "1050.01", "dry-run": true });
+
+      expect(stderr.join("")).toContain(
+        "⚠ --to-amount 1050.01 USDC is more than 5% above the velora quote (1000 USDC); the reviewer will see a fresh quote, with your amount shown only as the proposal it replaced.\n",
+      );
+      expect(submittedIntents).toEqual([]);
     });
 
     it("still refuses when no quote can be prepared", async () => {
       quoteImpl = async () => {
-        throw new Error("Every quote needs a token approval or Permit2 signature first.");
+        throw new Error(
+          "Every quote needs a Permit2 signature or a token approval the Agent Intent frontend " +
+            "can't send.",
+        );
       };
 
       await expect(runSwap({ "to-amount": "1250", provider: "okx" })).rejects.toThrow(
-        /needs a token approval/,
+        /a token approval the Agent Intent frontend can't send/,
       );
       expect(quoteRequests).toEqual([expect.objectContaining({ providers: ["okx"] })]);
       expect(submittedIntents).toEqual([]);
@@ -310,6 +423,15 @@ describe("agent-intent swap", () => {
         dryRun: true,
       });
     });
+
+    it("says a dry run's quote needs a token approval, in human output too", async () => {
+      quoteImpl = async () => ({ provider: "okx", receiveAmount: 0.03, needsTokenApproval: true });
+
+      await runSwap({ from: USDC.id, to: ETH.id, amount: "100", "dry-run": true });
+
+      expect(stdout.join("")).toContain("Dry run — intent validated, nothing was submitted.");
+      expect(stderr.join("")).toContain("⚠ The okx quote needs a USDC approval first.");
+    });
   });
 
   describe("inputs", () => {
@@ -326,8 +448,9 @@ describe("agent-intent swap", () => {
     });
 
     it("requires exactly one of --account and --sender", async () => {
-      await expect(runSwap({ sender: undefined })).rejects.toThrow(/exactly one sender/);
-      await expect(runSwap({ account: "ethereum-1" })).rejects.toThrow(/exactly one sender/);
+      const message = "Pass exactly one sender: --account <session-label> or --sender <address>.";
+      await expect(runSwap({ sender: undefined })).rejects.toThrow(message);
+      await expect(runSwap({ account: "ethereum-1" })).rejects.toThrow(message);
     });
 
     it("rejects an asset that isn't ETH or an Ethereum ERC-20", async () => {

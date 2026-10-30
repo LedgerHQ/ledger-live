@@ -2,34 +2,48 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { SyncOfferScreen } from "./index";
 
-jest.mock("LLM/components/QueuedDrawer", () => {
+function QueuedBottomSheetMock({
+  isRequestingToBeOpened,
+  onClose,
+  children,
+}: {
+  isRequestingToBeOpened?: boolean;
+  onClose?: () => void;
+  children?: React.ReactNode;
+}) {
   const { Pressable, Text, View } = jest.requireActual("react-native");
 
-  return function QueuedDrawerMock({
-    isRequestingToBeOpened,
-    onClose,
-    noCloseButton,
-    children,
-  }: {
-    isRequestingToBeOpened?: boolean;
-    onClose?: () => void;
-    noCloseButton?: boolean;
-    children?: React.ReactNode;
-  }) {
-    if (!isRequestingToBeOpened) return null;
+  if (!isRequestingToBeOpened) return null;
 
-    return (
-      <View>
-        {!noCloseButton && onClose ? (
-          <Pressable testID="modal-close-button" onPress={onClose}>
-            <Text>Close drawer</Text>
-          </Pressable>
-        ) : null}
-        {children}
-      </View>
-    );
+  return (
+    <View>
+      {onClose ? (
+        <Pressable testID="modal-close-button" onPress={onClose}>
+          <Text>Close drawer</Text>
+        </Pressable>
+      ) : null}
+      {children}
+    </View>
+  );
+}
+
+jest.mock("@ledgerhq/lumen-ui-rnative", () => {
+  const actual = jest.requireActual("@ledgerhq/lumen-ui-rnative");
+  const RN = jest.requireActual("react-native");
+
+  return {
+    ...actual,
+    BottomSheetHeader: () => null,
+    BottomSheetView: ({ children }: { children?: React.ReactNode }) => (
+      <RN.View>{children}</RN.View>
+    ),
   };
 });
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  ...jest.requireActual("@shared/ui-queued-bottom-sheet"),
+  QueuedBottomSheet: QueuedBottomSheetMock,
+}));
 
 function renderSyncOffer() {
   const onActivate = jest.fn();
@@ -86,7 +100,7 @@ describe("SyncOfferView", () => {
     const { user, onSkip, onActivate } = renderSyncOffer();
 
     await user.press(screen.getByRole("button", { name: "Skip for now" }));
-    await user.press(screen.getByRole("button", { name: "Yes, skip" }));
+    await user.press(screen.getByRole("button", { name: "Yes skip" }));
 
     expect(onSkip).toHaveBeenCalledTimes(1);
     expect(onActivate).not.toHaveBeenCalled();
@@ -96,7 +110,7 @@ describe("SyncOfferView", () => {
     const { user, onSkip, onActivate } = renderSyncOffer();
 
     await user.press(screen.getByRole("button", { name: "Skip for now" }));
-    await user.press(screen.getByRole("button", { name: "No, sync my wallet" }));
+    await user.press(screen.getByRole("button", { name: "No, enable sync" }));
 
     expect(onActivate).toHaveBeenCalledTimes(1);
     expect(onSkip).not.toHaveBeenCalled();

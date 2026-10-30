@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "9.0.0",
+  "version": "9.1.0-next.0",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -119,6 +119,12 @@
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
@@ -158,6 +164,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@polkadot/rpc-provider": "catalog:",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

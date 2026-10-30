@@ -1,8 +1,14 @@
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
-import React, { useCallback, memo, useMemo } from "react";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useCallback, memo, useMemo, useState } from "react";
+import type { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { dmkToLedgerDeviceIdMap, type DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
+import { ConnectNewDevice } from "LLM/components/ConnectNewDevice";
+import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Flex, Icons, SlideIndicator } from "@ledgerhq/native-ui";
+import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { useTranslation } from "~/context/Locale";
+import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
@@ -25,9 +31,14 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import styled from "styled-components/native";
 import SafeAreaView from "~/components/SafeAreaView";
 import Button from "~/components/PreventDoubleClickButton";
-import { hasCompletedOnboardingSelector, onboardingTypeSelector } from "~/reducers/settings";
+import {
+  hasCompletedOnboardingSelector,
+  onboardingTypeSelector,
+  readOnlyModeEnabledSelector,
+} from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
 import { useFeature } from "@features/platform-feature-flags";
+import { isSeededDeviceFunnelOn } from "LLM/features/DeviceOnboarding/utils/seededFunnel";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;
@@ -79,17 +90,31 @@ const ImageHeader = ({ showSlideIndicator }: { showSlideIndicator: boolean }) =>
 export default memo(function () {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
+  const isFocused = useIsFocused();
+  const { t } = useTranslation();
 
   const dispatch = useDispatch();
   const { notifyFlowCompleted } = useNotificationsPrompt();
 
-  const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet, isRestoreSeed } =
-    route.params;
+  const {
+    deviceModelId,
+    showSeedWarning,
+    isProtectFlow,
+    fromAccessExistingWallet,
+    isRestoreSeed,
+    connectSeededDevice,
+  } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
 
   const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
+  const seededFunnel = isSeededDeviceFunnelOn(
+    Boolean(useFeature("deviceOnboarding")?.enabled),
+    connectSeededDevice === true,
+  );
   const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const [wasReadOnlyAtEntry] = useState(readOnlyModeEnabled);
 
   const seedConfiguration = useMemo(() => {
     let config = fromAccessExistingWallet ? "" : "new_seed";
@@ -101,58 +126,112 @@ export default memo(function () {
     return config;
   }, [isProtectFlow, fromAccessExistingWallet, isRestoreSeed]);
 
-  const onFinish = useCallback(() => {
-    if (isProtectFlow && deviceModelId) {
-      // only used for protect for now
-      navigation.navigate(ScreenName.OnboardingProtectFlow, {
-        deviceModelId,
-      });
-      return;
-    }
-    dispatch(setIsReborn(false));
-    if (!hasCompletedOnboarding) {
-      dispatch(setOnboardingHasDevice(true));
-    }
-    dispatch(completeOnboarding());
-
-    const parentNav =
-      navigation.getParent<
-        StackNavigatorNavigation<BaseOnboardingNavigatorParamList, NavigatorName.Onboarding>
-      >();
-    if (parentNav) {
-      parentNav.popToTop();
-    }
-
-    if (isFundWalletNewSetup) {
-      navigation.navigate(ScreenName.OnboardingSecureYourCrypto, {
-        deviceModelId,
-      });
-    } else {
-      if (!fromAccessExistingWallet) {
-        track("Onboarding - End", { seedConfiguration, deviceModelId, flow: "onboarding" });
+  const onFinish = useCallback(
+    (pairedDevice?: Device) => {
+      if (isProtectFlow && deviceModelId) {
+        // only used for protect for now
+        navigation.navigate(ScreenName.OnboardingProtectFlow, {
+          deviceModelId,
+        });
+        return;
       }
-      navigation.replace(NavigatorName.Base, {
-        screen: NavigatorName.Main,
+      if (seededFunnel) {
+        navigation.navigate(ScreenName.DeviceOnboardingFunnel, {
+          pairedDeviceId: pairedDevice?.deviceId,
+          wasReadOnlyAtEntry,
+        });
+        return;
+      }
+      dispatch(setIsReborn(false));
+      if (!hasCompletedOnboarding) {
+        dispatch(setOnboardingHasDevice(true));
+      }
+      dispatch(completeOnboarding());
+
+      const parentNav =
+        navigation.getParent<
+          StackNavigatorNavigation<BaseOnboardingNavigatorParamList, NavigatorName.Onboarding>
+        >();
+      if (parentNav) {
+        parentNav.popToTop();
+      }
+
+      if (isFundWalletNewSetup) {
+        navigation.navigate(ScreenName.OnboardingSecureYourCrypto, {
+          deviceModelId,
+        });
+      } else {
+        if (!fromAccessExistingWallet) {
+          track("Onboarding - End", { seedConfiguration, deviceModelId, flow: "onboarding" });
+        }
+        navigation.replace(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+        });
+      }
+
+      dispatch(setHasBeenUpsoldProtect(false));
+      if (!fromAccessExistingWallet) {
+        dispatch(setHasBeenRedirectedToPostOnboarding(false));
+      }
+
+      notifyFlowCompleted("onboarding");
+    },
+    [
+      isProtectFlow,
+      deviceModelId,
+      dispatch,
+      hasCompletedOnboarding,
+      navigation,
+      fromAccessExistingWallet,
+      notifyFlowCompleted,
+      isFundWalletNewSetup,
+      seedConfiguration,
+      seededFunnel,
+      wasReadOnlyAtEntry,
+    ],
+  );
+
+  const onNewDeviceConnected = useCallback(
+    (result: DeviceConnectionResult) => {
+      onFinish({
+        deviceId: result.compatDeviceId,
+        deviceName: result.compatDeviceName,
+        modelId: dmkToLedgerDeviceIdMap[result.connectedDevice.modelId],
+        wired: result.compatDeviceWired,
       });
-    }
+    },
+    [onFinish],
+  );
 
-    dispatch(setHasBeenUpsoldProtect(false));
-    if (!fromAccessExistingWallet) {
-      dispatch(setHasBeenRedirectedToPostOnboarding(false));
-    }
+  const closeNewDevice = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
-    notifyFlowCompleted("onboarding");
-  }, [
-    isProtectFlow,
-    deviceModelId,
-    dispatch,
-    hasCompletedOnboarding,
-    navigation,
-    fromAccessExistingWallet,
-    notifyFlowCompleted,
-    isFundWalletNewSetup,
-    seedConfiguration,
-  ]);
+  const openDeviceSelection = useCallback(() => {
+    // The device list then helps the user set up, without a new Bluetooth pairing.
+    navigation.navigate(ScreenName.OnboardingDeviceSelection, { missingDevice: true });
+  }, [navigation]);
+
+  if (seededFunnel) {
+    return (
+      <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
+        <DeviceOnboardingCloseBar
+          label={t("common.close")}
+          testID="onboarding-connect-close"
+          onPress={closeNewDevice}
+        />
+        <Box lx={{ flex: 1 }}>
+          {isFocused ? (
+            <ConnectNewDevice
+              onConnected={onNewDeviceConnected}
+              onClose={closeNewDevice}
+              onDeviceNotFound={openDeviceSelection}
+            />
+          ) : null}
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <StyledSafeAreaView>
@@ -164,7 +243,7 @@ export default memo(function () {
       />
       <ImageHeader showSlideIndicator={isFundWalletNewSetup} />
       <StyledContainerView>
-        <ConnectDevice onSuccess={onFinish} />
+        <ConnectDevice onSuccess={onFinish} keepReadOnlyMode={seededFunnel} />
       </StyledContainerView>
       {showSeedWarning && deviceModelId ? <SeedWarning deviceModelId={deviceModelId} /> : null}
     </StyledSafeAreaView>

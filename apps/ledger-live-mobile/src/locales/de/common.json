@@ -1857,6 +1857,10 @@
       "title" : "Anfrage nicht gesendet",
       "description" : "Der Internet Computer hat die Anfrage nicht angenommen, sodass nichts gesendet wurde und sich nichts geändert hat. Bitte versuche es noch einmal. {{reason}}"
     },
+    "ICPTransactionExpired" : {
+      "title" : "Transaktion abgelaufen",
+      "description" : "Die signierte Transaktion wurde nicht rechtzeitig gesendet, sodass nichts gesendet wurde und sich nichts geändert hat. Bitte signiere sie erneut."
+    },
     "ICPCreateNeuronWarning" : {
       "title" : "Dies sperrt dein ICP in einem neuen Neuron",
       "description" : "Das Neuron startet mit dem kürzesten Dissolve Delay (Auflöseverzögerung), das zu kurz ist, um abzustimmen oder Rewards zu erhalten. Erhöhe es unter „Neuronen verwalten“ und stelle dich darauf ein, die Verzögerung abzuwarten, bevor der Stake-Betrag wieder ausgegeben werden kann."
@@ -1871,6 +1875,7 @@
     "menu" : {
       "changeName" : "Name ändern",
       "viewAdvancedLogs" : "Erweiterte Logs anzeigen",
+      "viewExplorer" : "Im Explorer ansehen",
       "removeAccount" : "Konto aus Portfolio entfernen"
     },
     "advancedLogs" : {
@@ -2587,6 +2592,10 @@
       "learnMore" : "Weitere Informationen",
       "activate" : "Aktivieren",
       "skip" : "Vorerst überspringen"
+    },
+    "connection" : {
+      "connecting" : "Verbindung mit deinem Gerät wird hergestellt",
+      "failed" : "Verbindung fehlgeschlagen"
     }
   },
   "onboarding" : {
@@ -3437,10 +3446,10 @@
       "skipCta" : "Ich erledige das später",
       "skip" : {
         "title" : "Bist du sicher?",
-        "description" : "Wenn du diesen Schritt überspringst, musst du alle deine Konten, Salden und Verlaufsdaten manuell neu hinzufügen, wenn du zu einem neuen Handy oder Computer wechselst.",
-        "descriptionEmphasis" : "Du kannst die Option jederzeit in deinen Einstellungen deaktivieren.",
+        "description" : "Wenn du dein Telefon wechselst oder Ledger Wallet auf einem anderen Telefon oder Computer verwendest, musst du deine Konten manuell synchronisieren.",
+        "descriptionEmphasis" : "Bitte beachte, dass du dies jederzeit in deinen Einstellungen aktivieren oder deaktivieren kannst.",
         "skipCTA" : "Ja, überspringen",
-        "syncCTA" : "Nein, meine Wallet synchronisieren"
+        "syncCTA" : "Nein, Synchronisierung aktivieren"
       }
     },
     "seedStep" : {
@@ -3625,6 +3634,16 @@
       "upToDate" : "Portfolio aktuell",
       "syncError" : "Einige Kontodaten konnten nicht geladen werden",
       "offline" : "Du bist offline. Bitte überprüfe deine Verbindung"
+    }
+  },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Perps",
+      "description" : "Mit Hebel investieren"
+    },
+    "borrow" : {
+      "title" : "Darlehen",
+      "description" : "Stablecoins ausleihen"
     }
   },
   "addAccountsModal" : {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other" : "+{{count}} Unterkonten"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Mehr Infos",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "{{family}}-Integration",
-        "subTitle" : "Die {{family}}-Integration wurde vom {{team}}-Team durchgeführt",
-        "description" : "Ledger Wallet ist eine Open-Source-Plattform.",
-        "description2" : "Entwickler aus aller Welt können sich mit unserem Ledger Wallet integrieren",
-        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
-        "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} migriert zu {{to}}. Folge diesem <0>Link</0>, um mehr zu erfahren, oder wende dich an den Kundenservice, falls du Hilfe benötigst.",
       "contactSupport" : "Support kontaktieren"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment" : {
+        "title" : "Gebührenzahlung auswählen",
+        "regular" : "Regulärer Transfer",
+        "sponsored" : "Mit {{provider}} bezahlen",
+        "payIn" : "Netzwerkgebühr in {{feeCurrency}} bezahlen",
+        "paidIn" : "Bezahlt in {{currency}}",
+        "nudge" : "Du könntest {{amount}} mit {{provider}} sparen",
+        "saved" : "Gespart mit {{provider}}",
+        "confirm" : "Bestätigen",
+        "disclaimer" : "Mit {{provider}}, einem Drittanbieter für Energie, werden Gebühren in {{feeCurrency}} bezahlt.",
         "insufficientFunds" : "Du hast nicht genügend {{feeCurrency}}, um den Betrag und die Energiemietgebühr von {{provider}} zu decken."
       },
       "sponsoredRentSignature" : {
@@ -5871,6 +5887,39 @@
     }
   },
   "osUpdates" : {
+    "backupBanner" : {
+      "title" : "Backup gefunden",
+      "description" : "Apps und Einstellungen wurden auf deinem Gerät nicht vollständig wiederhergestellt.",
+      "restore" : "Wiederherstellen",
+      "delete" : "Backup löschen"
+    },
+    "bootloaderDiscovered" : {
+      "title" : "Gerät im Bootloader-Modus.",
+      "description" : "Klicke auf „Weiter“, um das Update zu starten.",
+      "continue" : "Weiter"
+    },
+    "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OS-Update verfügbar",
+          "manager" : "Update für Ledger OS verfügbar"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Aktualisieren"
+      }
+    },
+    "restoreConfirmation" : {
+      "title" : "Deine vorherige Konfiguration wiederherstellen?",
+      "description" : "Ich bestätige, dass ich Apps & Einstellungen aus meiner vorherigen Konfiguration wiederherstellen möchte und alle seitdem erstellten Apps & Daten verloren gehen.",
+      "confirm" : "Wiederherstellen",
+      "cancel" : "Abbrechen"
+    },
+    "deleteConfirmation" : {
+      "title" : "Backup löschen",
+      "description" : "Mir ist bewusst, dass die vorherige Konfiguration sowie App & Daten aus meinem letzten Backup, einschließlich der Zugangsdaten für den Security Key, verloren gehen.",
+      "confirm" : "Backup löschen",
+      "cancel" : "Abbrechen"
+    },
     "actions" : {
       "retry" : "Wiederholen",
       "cancel" : "Abbrechen",
@@ -10292,7 +10341,7 @@
             "steps" : {
               "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
               "step2" : "Öffne die Ledger Wallet-App, die du synchronisieren möchtest.",
-              "step3" : "Gehe zu <0>Settings</0> (Einstellungen) <1>></1> <0>General</0> (Allgemein) <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> (Ich habe Sync schon aktiviert) <1>></1> <0>Scan QR code</0> (QR-Code scannen).",
+              "step3" : "Gehe zu <0>Settings</0> (Einstellungen) <1>></1> <0>General</0> (Allgemein) <1>></1> <0>Ledger Sync</0> <1>></1> <0>Scan QR code</0> (QR-Code scannen)",
               "step4" : "Scanne den QR-Code."
             }
           }
@@ -10305,7 +10354,7 @@
             "steps" : {
               "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
               "step2" : "Öffne die Ledger Wallet-Instanz, mit der du synchronisieren möchtest.",
-              "step3" : "Gehe zu <0>Settings</0> (Einstellungen) <1>></1> <0>General</0> (Allgemein) <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> (Ich habe Sync schon aktiviert) <1>></1> <0>Show QR</0> (QR-Code anzeigen).",
+              "step3" : "Gehe zu <0>Settings</0> (Einstellungen) <1>></1> <0>General</0> (Allgemein) <1>></1> <0>Ledger Sync</0> <1>></1> <0>Show QR</0> (QR-Code anzeigen)",
               "step4" : "Scanne den QR-Code."
             }
           }
@@ -10416,9 +10465,58 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Noch keine Aktivität",
+      "description" : {
+        "receive" : "Füge zuerst Guthaben über „Empfangen“ hinzu.",
+        "receiveSwap" : "Füge zuerst Guthaben über „Empfangen“ oder „Swap“ hinzu.",
+        "receiveBuy" : "Füge zuerst Guthaben über „Empfangen“ oder „Kaufen“ hinzu.",
+        "receiveSwapBuy" : "Füge zuerst Guthaben über „Empfangen“, „Swap“ oder „Kaufen“ hinzu.",
+        "swap" : "Füge zuerst Guthaben über „Swap“ hinzu.",
+        "buy" : "Füge zuerst Guthaben über „Kaufen“ hinzu.",
+        "swapBuy" : "Füge zuerst Guthaben über „Swap“ oder „Kaufen“ hinzu."
+      }
+    },
+    "actions" : {
+      "transfer" : "Übertragen",
+      "receive" : "Empfangen",
+      "send" : "Senden",
+      "swap" : "Swappen",
+      "buy" : "Kaufen",
+      "sell" : "Verkaufen",
+      "earn" : "Verdienen",
+      "more" : "Mehr"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "Weitere Informationen",
+      "openPerps" : "Perps öffnen"
+    },
+    "migration" : {
+      "title" : "{{from}} migriert zu {{to}}.",
+      "description" : "Erfahre mehr über die Migration oder kontaktiere den Support, wenn du Hilfe benötigst."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}} wird ab dem {{date}} nicht mehr unterstützt",
+      "description" : "Es wird weiterhin durch dein Ledger-Gerät gesichert. Erfahre mehr im Hilfe-Center."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "Der Gesamtkontostand enthält keine Dividenden oder Aktiensplits."
+    },
+    "perps" : {
+      "title" : "Über das Hyperliquid-Konto",
+      "description" : "Dieses Konto steht im Zusammenhang mit dem Perpetual-Handel. Transaktionsaktionen werden für dieses Konto nicht unterstützt"
+    }
+  },
   "accountDetail" : {
     "assets" : {
       "title" : "Assets"
+    },
+    "refreshStatus" : {
+      "upToDate" : "Konto aktuell",
+      "syncError" : "Kontodaten konnten nicht geladen werden"
     },
     "transactions" : {
       "title" : "Transaktionen"
@@ -10429,6 +10527,9 @@
       "label" : "Adressname",
       "submit" : "Namen ändern"
     }
+  },
+  "accountAssetPicker" : {
+    "title" : "Asset auswählen"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10680,6 +10781,10 @@
     "selectAccountPerpsEmptyDescription" : "Um deine Perps mit Guthaben aufzuladen, benötigst du ein Hyperliquid-Konto. Füge eines hinzu, um fortzufahren.",
     "selectDepositCurrencyTitle" : "Einzuzahlendes Asset auswählen",
     "selectDepositCurrencyDescription" : "Jedes unterstützte Asset funktioniert. Es wird bei Bedarf automatisch geswappt.",
+    "selectWithdrawCurrencyTitle" : "Wähle das Asset aus, auf das du abheben möchtest",
+    "selectWithdrawCurrencyDescription" : "Deine USDC werden automatisch in das von dir gewählte Asset geswappt.",
+    "selectAccountPerpsWithdrawFromDescription" : "Wähle das Konto aus, von dem du Guthaben abheben möchtest",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "Um abzuheben, benötigst du ein Hyperliquid-Konto. Füge eines hinzu, um fortzufahren.",
     "searchPlaceholder" : "Nach Name oder Adresse suchen",
     "emptyAssetList" : "Keine Assets gefunden",
     "notAvailableYet" : "Noch nicht verfügbar",
@@ -10739,6 +10844,25 @@
     "formErrors" : {
       "amountExceedsBalance" : "Unzureichendes Guthaben",
       "quoteUnavailable" : "Wir können kein Angebot von {{provider}} SwapKit erhalten. Versuche es mit einem anderen Asset oder komm später wieder."
+    }
+  },
+  "perpsWithdraw" : {
+    "title" : "Abheben",
+    "review" : "Prüfen",
+    "keypadDelete" : "Letzte Ziffer löschen",
+    "estimatedAmount" : "~{{value}} abheben",
+    "inputSubText" : "Swappen und Abheben via {{provider}}",
+    "selectCurrencyTitle" : "Auf {{currencyTicker}} abheben",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "Kein Konto",
+    "formErrors" : {
+      "insufficientBalance" : "Unzureichendes Guthaben",
+      "minimumAmount" : "Die Mindestabhebung beträgt {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Dieser Betrag ist zu niedrig zum Abheben.",
+      "lowLiquidity" : "Dieses Asset ist vorübergehend nicht verfügbar. Versuche es später erneut oder wähle ein anderes Asset.",
+      "addressScreening" : "Diese Abhebung kann für dieses Konto nicht verarbeitet werden.",
+      "quoteUnavailable" : "Wir können kein Angebot von {{provider}} erhalten. Versuche es mit einem anderen Asset oder komm später wieder.",
+      "currenciesUnavailable" : "Wir können die Assets, auf die du auszahlen kannst, nicht laden. Versuche es später noch einmal."
     }
   },
   "swapErrors" : {

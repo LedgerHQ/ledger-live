@@ -7,6 +7,7 @@ import { withTemporarySpeculos } from "@e2e/utils/speculosUtils";
 import { revokeAllowance } from "@e2e/utils/allowanceUtils";
 import { QUOTES_FETCH_TIMEOUT } from "@e2e/utils/constants";
 import { escapeHtml } from "@e2e/helpers/allure/allure-helper";
+import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 /**
  * Mirrors swap-live-app's remote-config decimal cap (currently defaults to 8, see
@@ -73,14 +74,16 @@ export async function ensureTokenApproval(
   provider: SwapProvider,
   minAmount: string,
 ) {
+  if (!needsTokenAllowance(fromAccount, provider)) return;
   const approvalNeeded = await isTokenApprovalExpected(fromAccount, provider, minAmount);
   if (!approvalNeeded) return;
 
+  // A short allowance is revoked first, as USDT rejects a change from one non-zero allowance to another.
+  await revokeTokenApproval(fromAccount, provider);
   await withTemporarySpeculos(fromAccount.currency.speculosApp.name, async () => {
     const result = await approveTokenCommand(
       fromAccount,
-      // approvalNeeded is only true when isTokenApprovalExpected confirmed contractAddress is set.
-      provider.contractAddress!,
+      provider.contractAddress,
       new BigNumber(minAmount).times(12).div(10).toFixed(),
     );
     allure.descriptionHtml(
@@ -89,14 +92,12 @@ export async function ensureTokenApproval(
   });
 }
 
-// Mirrors swap-live-app's approval check: no contractAddress (native asset or a
-// deposit-based provider, e.g. NEAR Intents/MoonPay) means nothing to approve.
 export async function isTokenApprovalExpected(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,
   amount: string,
 ): Promise<boolean> {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return false;
+  if (!needsTokenAllowance(fromAccount, provider)) return false;
 
   const sufficientAllowance = await isTokenAllowanceSufficientCommand(
     fromAccount,
@@ -110,7 +111,7 @@ export async function revokeTokenApproval(
   fromAccount: Account | TokenAccount,
   provider: SwapProvider,
 ) {
-  if (!provider.contractAddress || !fromAccount.parentAccount) return;
+  if (!needsTokenAllowance(fromAccount, provider)) return;
 
   await revokeAllowance(fromAccount, provider.contractAddress, provider.uiName);
 }

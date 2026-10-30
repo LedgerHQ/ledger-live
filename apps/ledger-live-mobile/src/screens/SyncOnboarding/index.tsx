@@ -335,6 +335,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         device={device}
         isAlreadyGenuine={isAlreadyGenuine}
         isPreviousUpdateCancelled={isPreviousUpdateCancelled}
+        isDeviceOnboarded={deviceDetectedOnboarded}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
         onCancelOnboarding={onCancelEarlySecurityCheck}

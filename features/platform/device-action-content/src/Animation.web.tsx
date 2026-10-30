@@ -1,5 +1,5 @@
 import React from "react";
-import { Lottie, type LottieProps } from "@shared/lottie";
+import { Lottie, type LottieProps } from "@shared/lottie/web";
 
 // Read straight from the environment rather than through `@shared/env`: that pulls in the legacy
 // `@ledgerhq/live-env`, which only resolves once `libs/` has been built, so any package testing a

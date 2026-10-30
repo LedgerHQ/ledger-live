@@ -39,19 +39,6 @@ const HAIRLINE =
  */
 const MICRO = "body-4 uppercase tracking-wider";
 
-/*
- * Lumen checks a box with bg-active, the Ledger purple — the only saturated colour on the
- * page, spent on a secondary control. Checked becomes an ink tick in an ink-bordered box,
- * the language the device chips use. Lumen merges className with tailwind-merge, so these
- * replace its own.
- */
-const CHECKBOX_INK = [
-  "data-[state=checked]:border data-[state=checked]:border-base",
-  "data-[state=checked]:bg-base data-[state=checked]:text-base",
-  "data-[state=checked]:hover:bg-base-hover",
-  "data-[state=checked]:active:bg-base-pressed",
-].join(" ");
-
 // A stable identity, so a null matrix does not defeat AppRow's memoisation.
 const EMPTY_COLUMNS: Record<string, MatrixColumn[]> = {};
 
@@ -262,7 +249,6 @@ export const FirmwareAppDeploymentsView = ({
             <div key={device.key} className="flex items-center gap-8">
               <Checkbox
                 id={`device-${device.key}`}
-                className={CHECKBOX_INK}
                 checked={device.selected}
                 disabled={device.disabled}
                 onCheckedChange={() => onToggleDevice(device.key)}

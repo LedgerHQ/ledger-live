@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import type { Expect, Page } from "@playwright/test";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export type SoftExpectMatcher = Expect["soft"];
 
@@ -36,7 +37,7 @@ type SoftExpectParams = {
  * // In page objects extending `PageHolder` with a custom timeout:
  * await this.softExpect(async soft => {
  *   await soft(this.header).toContainText("My Header");
- * }, { timeout: 10_000 });
+ * }, { timeout: TIMEOUT.medium });
  *
  * @example
  * // Direct import (two-arg: params, options):
@@ -47,12 +48,12 @@ type SoftExpectParams = {
  *       await soft(page.getByTestId("chart")).toContainText("My Chart");
  *     },
  *   },
- *   { timeout: 10_000 },
+ *   { timeout: TIMEOUT.medium },
  * );
  */
 export async function softExpect(
   { page, assertion }: SoftExpectParams,
-  { timeout = 5_000 }: SoftExpectOptions = {},
+  { timeout = TIMEOUT.small }: SoftExpectOptions = {},
 ): Promise<void> {
   const testInfo = test.info();
   const errorCountBefore = testInfo.errors.length;

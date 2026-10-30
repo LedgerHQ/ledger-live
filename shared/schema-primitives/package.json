@@ -28,6 +28,6 @@
     "@types/jest": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:",
-    "@support/jest-shared": "workspace:*"
+    "@support/jest": "workspace:*"
   }
 }

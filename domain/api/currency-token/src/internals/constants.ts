@@ -9,8 +9,17 @@ export const DEFAULT_PAGE_SIZE = 1000;
 /** Response header holding the CAL commit hash, used for token-cache invalidation. */
 export const HEADER_X_LEDGER_COMMIT = "X-Ledger-Commit";
 
+/** Token list hash reported for a network the CAL lists no token for. */
+export const EMPTY_TOKEN_LIST_HASH = "no-tokens";
+
 /** Response header carrying the pagination cursor for the next page. */
 export const HEADER_X_LEDGER_NEXT = "x-ledger-next";
+
+/**
+ * Age after which a persisted token is not restored when its currency has no stored hash: no hash
+ * check can find such a token stale. A token with a stored hash is restored whatever its age.
+ */
+export const UNCHECKED_TOKEN_TTL = 24 * 60 * 60 * 1000;
 
 /** Persisted-cache format version. Bump to invalidate older blobs (pinned via `z.literal`). */
 export const PERSISTENCE_VERSION = 2;

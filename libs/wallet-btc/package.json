@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-btc",
-  "version": "1.0.0",
+  "version": "1.1.0-next.0",
   "description": "Ledger shared UTXO wallet engine (Bitcoin & forks): xpub scanning, coin-selection, storage, address crypto",
   "keywords": [
     "Ledger",
@@ -55,7 +55,7 @@
     "bchaddrjs": "^0.5.2",
     "bech32": "^1.1.3",
     "bignumber.js": "^9.1.2",
-    "bitcoinjs-lib": "^7.0.2",
+    "bitcoinjs-lib": "catalog:",
     "bs58": "catalog:",
     "bs58check": "catalog:",
     "coininfo": "^5.1.0",
@@ -65,11 +65,11 @@
     "varuint-bitcoin": "^2.0.1"
   },
   "devDependencies": {
-    "@bitcoinerlab/secp256k1": "2.0.0",
+    "@bitcoinerlab/secp256k1": "catalog:",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bchaddrjs": "^0.4.3",
@@ -81,7 +81,7 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "bip32": "^4.0.0",
-    "bip39": "^3.0.4",
+    "bip39": "catalog:",
     "ecpair": "3.0.2",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
@@ -89,6 +89,13 @@
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "types",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

@@ -1,5 +1,12 @@
 # @domain/entity-account-alias
 
+## 0.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-account@0.1.1-next.0
+
 ## 0.1.1
 
 ### Patch Changes

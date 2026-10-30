@@ -1,9 +1,9 @@
 import React from "react";
 import { Banner, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useBottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
-import type { InfoStateProps } from "./types.native";
-import { InfoStateButton } from "./components/InfoStateButton.native";
-import { PresetVisual } from "./components/PresetVisual.native";
+import type { InfoStateProps } from "./InfoState.types";
+import { InfoStateButton } from "./components/InfoStateButton";
+import { PresetVisual } from "./components/PresetVisual";
 import {
   actionsStyle,
   contentStyle,
@@ -11,8 +11,8 @@ import {
   infoStateStyle,
   rootStyle,
   titleDescriptionStyle,
-} from "./styles.native";
-import { getInfoStateSheetTone } from "./utils/getInfoStateSheetTone.native";
+} from "./styles";
+import { getInfoStateSheetTone } from "./utils/getInfoStateSheetTone";
 
 /**
  * Shared native state layout for informational, success, and error screens.
@@ -30,7 +30,7 @@ export function InfoState(props: InfoStateProps) {
   } = props;
   const isTextPreset = props.preset === "text";
   const isFullHeight = size === "full-height";
-  useBottomSheetBackgroundTone(getInfoStateSheetTone(props.preset));
+  useBottomSheetBackgroundTone(getInfoStateSheetTone(props));
 
   return (
     <Box lx={rootStyle(isFullHeight)} testID={testID}>
@@ -61,6 +61,7 @@ export function InfoState(props: InfoStateProps) {
               appearance={banner.appearance ?? "info"}
               title={banner.title}
               description={banner.description}
+              testID={banner.testID}
             />
           </Box>
         ) : null}

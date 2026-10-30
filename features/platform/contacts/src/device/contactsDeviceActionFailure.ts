@@ -1,3 +1,6 @@
+import { isDeviceDisconnectedError } from "@features/platform-device-intent";
+import { Observable, of, throwError } from "rxjs";
+
 export type ContactDeviceIntentFailureJobState =
   /**
    * The kit's version guard refused the device. Which version it refused
@@ -70,4 +73,24 @@ export function mapDeviceActionErrorToFailureJobState(
     return { type: "failed", error: mappedError };
   }
   return { type: "failed", error: mappedError };
+}
+
+export function throwIfDeviceDisconnected(error: unknown): void {
+  if (isDeviceDisconnectedError(error)) {
+    throw error;
+  }
+}
+
+export function handleContactDeviceActionTransportError<JobState>(
+  error: unknown,
+  report: (error: Error) => void,
+): Observable<JobState> {
+  const mapped = mapDmkErrorToError(error);
+  report(mapped);
+
+  if (isDeviceDisconnectedError(error)) {
+    return throwError(() => error);
+  }
+
+  return of({ type: "failed", error: mapped } as JobState);
 }

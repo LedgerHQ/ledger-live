@@ -1,5 +1,13 @@
 # @domain/entity-currency-crypto
 
+## 0.17.0-next.0
+
+### Minor Changes
+
+- [#23681](https://github.com/LedgerHQ/ledger-live/pull/23681) [`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Move the explorer URL helpers (`getDefaultExplorerView`, `getTransactionExplorer`, `getAddressExplorer`, `getTokenExplorer`, `getStakePoolExplorer`) from `@ledgerhq/live-common/explorers` to `@domain/entity-currency-crypto`. `getAccountContractExplorer` becomes `getTokenExplorer(view, contractAddress, ownerAddress)` and takes plain strings. All usages are migrated and `@ledgerhq/live-common/explorers` is removed.
+
+- [#23713](https://github.com/LedgerHQ/ledger-live/pull/23713) [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Account settings (LWM bottom sheet, LWD dialog) show a **View in explorer** entry under Advanced logs that opens the account's address in the currency's block explorer, hidden when the currency has none. The package builds the URL from the account's currency and address with `@domain/entity-currency-crypto` and opens it through `@shared/linking` as a sensitive link: `openLink(url, { sensitive: true })` still opens the full URL but only reports its origin to `onLinkOpened`, so the address never reaches analytics; `getDefaultExplorerView` accepts any object carrying `explorerViews`.
+
 ## 0.16.0
 
 ### Minor Changes
@@ -241,21 +249,5 @@
 - [#19702](https://github.com/LedgerHQ/ledger-live/pull/19702) [`6935fe0`](https://github.com/LedgerHQ/ledger-live/commit/6935fe04a6304e046fd217350399446194e96d47) Thanks [@YazhuEth](https://github.com/YazhuEth)! - Add HyperCore support by plugging `@ledgerhq/coin-hypercore` into the generic coin framework: register the `hypercore` native currency (USDC, magnitude 6), route the family through the generic bridge, reuse the EVM signer for address derivation (HyperCore shares the Ethereum address), and add the `currencyHypercore` feature flag. HyperCore accounts can be discovered and serve their balance and operations from the coin module. In the history, HyperCore operations are labelled "Deposit"/"Withdraw" instead of "Received"/"Sent" (deposits/withdrawals go through bridging, not a plain transfer).
 
 - [#19734](https://github.com/LedgerHQ/ledger-live/pull/19734) [`bb2d2d2`](https://github.com/LedgerHQ/ledger-live/commit/bb2d2d250a1d5b8cde43ba963795d28b10b48be6) Thanks [@ishaba](https://github.com/ishaba)! - remove umee chain related code
-
-## 0.6.0
-
-### Minor Changes
-
-- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-crypto`: `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByTicker`, and `findCryptoCurrencyByKeyword`. These match the legacy `@ledgerhq/cryptoassets` accessor semantics (including the keyword-tiebreak ticker disambiguation) and are built once at module load over the static `CRYPTO_CURRENCIES_REGISTRY`.
-
-- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
-
-## 0.6.0-next.0
-
-### Minor Changes
-
-- [#19403](https://github.com/LedgerHQ/ledger-live/pull/19403) [`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7) Thanks [@ysitbon](https://github.com/ysitbon)! - Add list and search accessors to `@domain/entity-currency-crypto`: `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `findCryptoCurrencyByTicker`, and `findCryptoCurrencyByKeyword`. These match the legacy `@ledgerhq/cryptoassets` accessor semantics (including the keyword-tiebreak ticker disambiguation) and are built once at module load over the static `CRYPTO_CURRENCIES_REGISTRY`.
-
-- [#19425](https://github.com/LedgerHQ/ledger-live/pull/19425) [`35f0138`](https://github.com/LedgerHQ/ledger-live/commit/35f0138542fbd98f664b24ee786fc662d7223e10) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(xion): rebrand Xion to Verona (display name/ticker XION -> VERONA, main unit code XION -> VERONA, base denom uxion unchanged) and backport the coin-cosmos default LCD to verona-api.polkachu.com
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

@@ -32,6 +32,56 @@ Enforced by `nx run <project>:lint:structure`
 ([the plugin](../../../tools/nx-plugins/enforce-package-structure/)), on every `index.*` under
 `src/`, at any depth.
 
+The rule follows a file's role, not its name. It follows every relative `export *` from a barrel,
+through any number of files, resolved as the web and native bundlers do, and it reads every
+source file named in `package.json#exports`, under any condition. Test support entries (a subpath
+segment starting with `test` or `mock`) are left out. Such a module may declare
+anything, but it re-exports like a barrel: `export *` from a relative file and an optional default
+re-export only. So `export * from "./exports"` in the index with the sorting or the proxy in
+`exports.ts` fails the same way (`hidden-barrel`, `cross-package-reexport`, …).
+
+## Where a barrel may sit
+
+Under `src/`, an `index.*` (platform variants included) is allowed in three places:
+
+1. **An entry**: `src/index.*`, or the target of a `package.json#exports` entry. Test support
+   entries count.
+2. **One level below an entry**: an entry reaches it through `export * from "./dir"`, directly or
+   through plain modules. An entry reached from another entry counts from itself, so
+   `jest.native.ts` re-exporting `index.native.ts` adds no level.
+3. **An internals location**: `internals/`, as defined below.
+
+```text
+src/
+├── index.ts                    # ✅ entry: export * from "./hooks";
+├── hooks/index.ts              # ✅ one level below the entry
+├── hooks/useThing/index.ts     # ❌ nested-barrel: entry → hooks → hooks/useThing
+├── internals/index.ts          # ✅ internals location
+└── Row/index.ts                # ❌ orphan-barrel: imported by view.ts, re-exported by no entry
+```
+
+**Why.** A barrel only earns its place as the public face of a package or of one part of it. An
+orphan is an indirection no consumer sees, and it outlives its entry: drop `"./state"` from
+`exports` and `state/index.ts` stays behind as an orphan, so the same check catches it. A chain of
+barrels hides where a name comes from.
+
+**Fix an orphan** (`orphan-barrel`) by asking whether another package uses what it groups:
+
+- **Yes**: expose it with one `export * from "./dir"` line in the root barrel.
+- **No**: delete the barrel and import the files directly, or move the folder under `internals/`.
+  Expose only code another package imports.
+
+**Fix a nested barrel** (`nested-barrel`) by re-exporting its files from the first-level barrel
+instead of chaining barrels. An `index.tsx` that holds code is a module, not a barrel: rename it
+after what it declares (`Card/index.tsx` becomes `Card/Card.tsx`).
+
+Purity of what a barrel reaches stays with the rules above. The debt found when the check landed
+sits in
+[`intermediate-barrels.js`](../../../tools/nx-plugins/enforce-package-structure/intermediate-barrels.js).
+It only shrinks: fixing a listed barrel means deleting its entry, and a test fails on an entry
+whose file is gone or allowed. Never add one. Packages with `skip` in `exceptions.js` are not
+checked.
+
 ## Where private code goes
 
 Three recognised forms, usable at any depth:
@@ -60,8 +110,9 @@ import the original provider, and declare the dependency themselves. This holds 
 
 ## Universal components
 
-A React component exported from an entry with a `react-native` condition is universal: it takes
-one props contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
+A React component exported from an entry that resolves per platform (a `react-native` condition,
+or no condition but different modules on web and native) is universal: it takes one props
+contract on both platforms. The [ADR](../../../docs/adr/universal-components.md) holds
 the full rules and authoring steps. `lint:structure` checks them as each rule lands; until then,
 review checks them.
 
@@ -77,6 +128,12 @@ review checks them.
   `./native` subpath that points at a suffixed module of its own, and is never also exported from a
   universal entry. Only code of that platform imports it.
 
+Scaffold a new one instead of writing it by hand:
+`pnpm exec nx g @ledgerhq/generators:universal-component <Name> --project <package root> [--directory <dir under src>]`
+writes the contract, both implementations, a test per platform and the barrel lines, without a new
+barrel. `--platform-entry web` or `--platform-entry native` writes a platform component behind
+`./web` or `./native` instead. See "Authoring a universal component" in the ADR.
+
 **Facade is not proxy.** Wrapping a legacy lib behind a typed API — as `shared/env` does over
 `@ledgerhq/live-env` — is legitimate: it owns real code and holds a declared
 [`BOUNDARY_EXCEPTION`](../../../tools/nx-plugins/enforce-boundaries/constraints.js). Keeping that
@@ -84,7 +141,9 @@ wrapping in a named file rather than the barrel is the cheapest way to stay conf
 instead carries a **temporary** `skip` in
 [`exceptions.js`](../../../tools/nx-plugins/enforce-package-structure/exceptions.js). Entries there
 are team decisions with an exit condition, not a way around a failing check — never add one to make
-your own package pass.
+your own package pass. Its `FILE_EXCEPTIONS` lists the reached modules that held violations when
+the rule started following `export *`. That list only shrinks: a test fails on an entry whose file
+is gone or clean, so fixing a file means deleting its entry.
 
 ## Traps
 
@@ -119,7 +178,9 @@ See [structure-flow](../structure-flow/SKILL.md) for where the package itself be
 
 Refuse and point here when you see:
 
-- a named re-export (`export { a, b } from "./x"`) in any `index.*`
+- a named re-export (`export { a, b } from "./x"`) in any `index.*`, or in a file it reaches
+  through `export *`, or in a file named in `package.json#exports`
 - an `import`, a declaration or a local `export default` in any `index.*`
 - `export * as ns from` — namespacing is still sorting
 - a barrel re-exporting `internals`, or re-exporting another workspace package
+- a new `index.*` below `src/` that no entry re-exports, or that a barrel below an entry re-exports

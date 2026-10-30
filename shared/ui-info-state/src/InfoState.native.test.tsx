@@ -3,8 +3,8 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import { Box, Spot } from "@ledgerhq/lumen-ui-rnative";
 import { Search } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { BottomSheetBackgroundContext } from "@shared/ui-queued-bottom-sheet";
-import { InfoState } from "./InfoState.native";
-import type { InfoStatePreset } from "./types.native";
+import { InfoState } from "./InfoState";
+import type { InfoStatePreset } from "./sharedTypes";
 
 type VisualInfoStatePreset = Exclude<InfoStatePreset, "text">;
 
@@ -35,6 +35,12 @@ describe("InfoState", () => {
     expect(screen.getByText("State description")).toBeVisible();
     expect(screen.getByText("Banner title")).toBeVisible();
     expect(screen.getByText("Banner description")).toBeVisible();
+  });
+
+  it("should put the banner's testID on the banner when one is given", () => {
+    render(<InfoState preset="error" banner={{ title: "Banner title", testID: "info-banner" }} />);
+
+    expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner title");
   });
 
   it("GIVEN a rendered InfoState with primary and secondary CTAs WHEN the user presses each CTA THEN the matching onPress handler is invoked", () => {
@@ -158,6 +164,21 @@ describe("InfoState", () => {
       expect(cleanup).toHaveBeenCalledTimes(1);
     },
   );
+
+  it("GIVEN the spot preset with a background tone WHEN the InfoState mounts THEN it requests that tone", () => {
+    // GIVEN
+    const requestBackgroundTone = jest.fn(() => jest.fn());
+
+    // WHEN
+    render(
+      <BottomSheetBackgroundContext.Provider value={{ requestBackgroundTone }}>
+        <InfoState preset="spot" spotProps={{ icon: Search, size: 72 }} backgroundTone="info" />
+      </BottomSheetBackgroundContext.Provider>,
+    );
+
+    // THEN
+    expect(requestBackgroundTone).toHaveBeenCalledWith("info");
+  });
 
   it.each(["illustration", "spot", "text"] as const)(
     "GIVEN the non-status %s preset inside a BottomSheetBackgroundContext provider WHEN the InfoState renders THEN it does not request a background tone",

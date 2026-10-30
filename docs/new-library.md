@@ -38,20 +38,18 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 
 ```json
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/tsconfig/logic",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "lib"]
+    "types": ["jest"]
+  }
 }
 ```
 
-`ES2022` not `ESNext`: our app runtimes (Electron, React Native) only guarantee ES2022. Apps can use `esnext` because their bundler controls the final output; packages do not have that safety net.
+`logic` fits a package consumed as source with no DOM. Pick another archetype from
+[`support/tsconfig`](../support/tsconfig/README.md) when the package needs the DOM, JSX, a platform
+split or a build.
+
+The presets target `ES2022`, not `ESNext`: our app runtimes (Electron, React Native) only guarantee ES2022. Apps can use `esnext` because their bundler controls the final output; packages do not have that safety net.
 
 ## Naming
 
@@ -62,7 +60,7 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 | `domain/api/` | `@domain/api-<name>` | `@domain/api-crypto-asset` |
 | `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
 | `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
-| `support/` | `@support/<name>` | `@support/jest-devtools` |
+| `support/` | `@support/<name>` | `@support/jest` |
 | `libs/` (legacy) | `@ledgerhq/<name>` | `@ledgerhq/coin-evm` |
 
 Keep names short and self-describing. No cross-package relative imports — always use the npm package name.

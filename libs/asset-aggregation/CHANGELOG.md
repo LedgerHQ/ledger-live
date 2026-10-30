@@ -1,5 +1,17 @@
 # @ledgerhq/asset-aggregation
 
+## 0.18.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8), [`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @domain/entity-currency-crypto@0.17.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+  - @domain/entity-currency@0.4.8-next.0
+  - @domain/api-aggregated-assets@0.6.2-next.0
+  - @domain/entity-currency-token@0.5.7-next.0
+
 ## 0.18.1
 
 ### Patch Changes
@@ -291,33 +303,5 @@
 - Updated dependencies [[`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8)]:
   - @ledgerhq/types-live@6.120.0-next.1
   - @ledgerhq/live-countervalues@0.24.3-next.1
-
-## 0.13.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`14cf5b8`](https://github.com/LedgerHQ/ledger-live/commit/14cf5b8fad43788bdd7c682f53ab9d4fe03f9a8f), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`e72d6ff`](https://github.com/LedgerHQ/ledger-live/commit/e72d6ffbd8b1a1ac79d272e1823ecfdfd06ed0ee), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2), [`5a96e09`](https://github.com/LedgerHQ/ledger-live/commit/5a96e096169e44731117becf9c204666c4509364)]:
-  - @domain/api-aggregated-assets@0.4.0-next.0
-  - @ledgerhq/types-live@6.120.0-next.0
-  - @domain/entity-currency-token@0.5.0-next.0
-  - @ledgerhq/live-countervalues@0.24.3-next.0
-  - @domain/entity-currency@0.4.1-next.0
-
-## 0.13.0
-
-### Minor Changes
-
-- [#20631](https://github.com/LedgerHQ/ledger-live/pull/20631) [`5171877`](https://github.com/LedgerHQ/ledger-live/commit/5171877faeb78ab9efbbf8c20b9fa6697e61872f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Derive assetDistribution's DADA views from the domain types instead of hand-declaring them
-
-### Patch Changes
-
-- Updated dependencies [[`cc8b5b9`](https://github.com/LedgerHQ/ledger-live/commit/cc8b5b9af4a2ec488b6912d3fcb08bcc8f4b72c3), [`43bf6d8`](https://github.com/LedgerHQ/ledger-live/commit/43bf6d8f6600f70b7c2a85615660e7e150e798bf), [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`64bb8cf`](https://github.com/LedgerHQ/ledger-live/commit/64bb8cfa5bffde5a1e2c24615f1dd11b864094d2), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`bbfc8cf`](https://github.com/LedgerHQ/ledger-live/commit/bbfc8cf7929d9bffc1aa1b9a5e3b9593e3016436), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @domain/entity-currency-crypto@0.10.0
-  - @domain/entity-currency-token@0.4.0
-  - @domain/entity-currency@0.4.0
-  - @ledgerhq/types-live@6.119.0
-  - @domain/api-aggregated-assets@0.3.0
-  - @domain/entity-aggregated-asset@0.3.0
-  - @ledgerhq/live-countervalues@0.24.2
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

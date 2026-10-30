@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-contacts-edit-contact",
-  "version": "0.7.0",
+  "version": "0.8.0-next.0",
   "private": true,
   "description": "Shared Edit contact flow for Desktop and Mobile",
   "main": "src/index.ts",
@@ -50,7 +50,8 @@
     }
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

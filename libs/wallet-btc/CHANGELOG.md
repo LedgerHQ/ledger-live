@@ -1,5 +1,19 @@
 # @ledgerhq/wallet-btc
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#23988](https://github.com/LedgerHQ/ledger-live/pull/23988) [`d37d80e`](https://github.com/LedgerHQ/ledger-live/commit/d37d80e128d89fcd80630fd4ef13c66587e3bebe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Bump `bitcoinjs-lib` to 7.0.5 and `bip39` to 3.1.2
+
+- [#23708](https://github.com/LedgerHQ/ledger-live/pull/23708) [`dd056b8`](https://github.com/LedgerHQ/ledger-live/commit/dd056b8a4c6c7c28879cfb1c44139b2479281987) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/auth` 0.1.1, `@ledgerhq/devices` 8.18.1, `@ledgerhq/hw-transport` 6.36.1, `@ledgerhq/hw-transport-mocker` 6.35.1, `@ledgerhq/hw-ledger-key-ring-protocol` 1.0.1, `@ledgerhq/ledger-key-ring-protocol` 1.1.0, `@ledgerhq/live-config` 3.9.1, `@ledgerhq/psbtv2` 0.6.2), `zod` 4.6.7, `semver` 7.8.5, `lodash` 4.18.1, and catalog `bitcoinjs-lib` 7.0.4.
+
+- [#23465](https://github.com/LedgerHQ/ledger-live/pull/23465) [`c4b7982`](https://github.com/LedgerHQ/ledger-live/commit/c4b79825af9468fbb8f5325e77e47536d6b392e9) Thanks [@ysitbon](https://github.com/ysitbon)! - chore(coin): prefix unused parameters with an underscore
+
+  The packages now build with `noUnusedLocals` and `noUnusedParameters`. The parameters they never read are renamed with a leading underscore; signatures and behaviour are unchanged.
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
 ## 1.0.0
 
 ### Major Changes

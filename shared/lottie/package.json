@@ -1,16 +1,11 @@
 {
   "name": "@shared/lottie",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Cross-platform Lottie player: dotlottie on web, lottie-react-native on mobile",
-  "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
-  "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    "./web": "./src/index.web.ts",
+    "./native": "./src/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -25,12 +20,12 @@
     "format:check": "oxfmt --check src"
   },
   "dependencies": {
-    "@lottiefiles/dotlottie-react": "0.17.13"
+    "@lottiefiles/dotlottie-react": "0.20.0"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.70.0",
-    "lottie-react-native": "7.3.6"
+    "lottie-react-native": "7.3.8"
   },
   "peerDependenciesMeta": {
     "react-native": {
@@ -42,7 +37,7 @@
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",
@@ -54,7 +49,7 @@
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "lottie-react-native": "7.3.6",
+    "lottie-react-native": "7.3.8",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",

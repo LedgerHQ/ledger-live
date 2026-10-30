@@ -3,8 +3,6 @@ import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useCategoryVisual } from "./ListItem/useCategoryVisual";
 import type { CategoryIconProps } from "./CategoryIcon.types";
 
-export type { CategoryIconProps };
-
 export function CategoryIcon({ category, categoryLabel, size = 48 }: CategoryIconProps) {
   const { Icon, backgroundColor, iconColor } = useCategoryVisual(category);
   const iconSize = size === 40 ? 20 : 24;

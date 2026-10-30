@@ -12,6 +12,7 @@ import type {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import type { AccountDetailNavigatorParamsList } from "../../types";
+import { useAccountRefresh, type AccountRefresh } from "./useAccountRefresh";
 import { useDeferredAccountRemoval } from "./useDeferredAccountRemoval";
 
 export type AccountDetailHeader = Readonly<{
@@ -25,6 +26,7 @@ export type AccountDetailViewModel = Readonly<{
   account: Account | undefined;
   accountName: string;
   header: AccountDetailHeader | undefined;
+  refresh: AccountRefresh;
   onOpenSettings: () => void;
   isSettingsOpen: boolean;
   onCloseSettings: () => void;
@@ -53,6 +55,7 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
   const mainAccount = account?.type === "Account" ? account : undefined;
 
   const removeAccount = useDeferredAccountRemoval(mainAccount);
+  const refresh = useAccountRefresh(mainAccount?.id);
 
   useEffect(() => {
     if (mainAccount) return;
@@ -108,6 +111,7 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     account: mainAccount,
     accountName: accountName ?? "",
     header,
+    refresh,
     onOpenSettings,
     isSettingsOpen,
     onCloseSettings,

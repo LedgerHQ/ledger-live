@@ -35,14 +35,13 @@ describe("getBalance via MSW", () => {
     const balances = await getBalance(ADDRESS);
 
     expect(balances).toEqual([
-      { value: 1000000n, asset: { type: "native", name: "STX" } },
+      { value: 1000000n, asset: { type: "native" } },
       {
         value: 5000n,
         asset: {
           type: "token",
           assetReference: "sp_contract.token-x::token-x",
           assetOwner: ADDRESS,
-          name: "sp_contract.token-x::token-x",
         },
       },
     ]);

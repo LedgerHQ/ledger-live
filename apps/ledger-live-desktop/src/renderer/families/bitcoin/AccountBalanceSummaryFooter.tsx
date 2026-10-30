@@ -1,3 +1,4 @@
+import { track } from "@shared/analytics";
 import React from "react";
 import styled from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
@@ -250,6 +251,12 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
     switch (syncState) {
       case "disabled":
+        track("button_clicked2", {
+          button: "Enable private balance",
+          page: "Page Account",
+          flow: "exportUfvk",
+          currency: "zcash",
+        });
         // Open modal to import UFVK
         dispatch(openModal("MODAL_ZCASH_EXPORT_KEY", { account: account as ZcashAccount }));
         break;

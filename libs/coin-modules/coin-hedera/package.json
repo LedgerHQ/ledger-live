@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-hedera",
-  "version": "3.0.0",
+  "version": "3.1.0-next.0",
   "description": "Ledger Hedera Coin integration",
   "keywords": [
     "Ledger",
@@ -88,7 +88,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@hiero-ledger/sdk": "2.84.0",
+    "@hiero-ledger/sdk": "2.90.1",
     "@ledgerhq/coin-module-framework": "catalog:",
     "@ledgerhq/devices": "catalog:",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
@@ -109,6 +109,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
@@ -120,6 +121,12 @@
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

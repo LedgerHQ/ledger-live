@@ -9,7 +9,7 @@ import {
   onboardingSyncSkipDrawerVisibilitySelector,
   setSkipDrawerVisibility,
 } from "~/renderer/reducers/onboarding";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track, trackPage } from "@shared/analytics";
 import { analyticsFlowName } from "../../utils/constants/analytics";
 
@@ -71,7 +71,7 @@ const SkipSyncDrawer: React.FC<SkipSyncDrawerProps> = ({
         background: colors.background.card,
       }}
     >
-      <TrackPage
+      <TrackScreen
         category={"Drawer: Skip Ledger sync confirmation"}
         flow={analyticsFlowName}
         seedConfiguration={seedConfiguration}

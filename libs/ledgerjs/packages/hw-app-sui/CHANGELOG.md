@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-sui
 
+## 1.13.0-next.0
+
+### Minor Changes
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+- [#23925](https://github.com/LedgerHQ/ledger-live/pull/23925) [`ee87c0b`](https://github.com/LedgerHQ/ledger-live/commit/ee87c0b14321eddf15dba99423d71aed4bc74986) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Replace @mysten/signers with @mysten/ledger-signer and bump @mysten/ledgerjs-hw-app-sui to 0.9.1
+
 ## 1.12.0
 
 ### Minor Changes

@@ -1,5 +1,5 @@
 import type { LongerPasswordStep } from "@features/flow-app-longer-password";
-import { usePasswordDraft } from "@features/platform-app-lock";
+import { usePasswordDraft } from "@features/platform-app-lock/native";
 import { useEffect } from "react";
 
 // Drops the stored password from the draft, which the provider would otherwise keep: it outlives

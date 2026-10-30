@@ -60,9 +60,9 @@ describe("fromLegacyAccount", () => {
   it("builds a utxo descriptor with a hardened-only path", () => {
     expect(fromLegacyAccount(account("bitcoin", "native_segwit", 2, { xpub: XPUB }))).toEqual({
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
-      network: { name: "bitcoin", env: "main" },
+      network: "bitcoin",
       xpub: XPUB,
       path: "m/84h/0h/2h",
     });
@@ -71,19 +71,19 @@ describe("fromLegacyAccount", () => {
   it("builds an address descriptor with the full path", () => {
     expect(fromLegacyAccount(account("ethereum", "", 1, { freshAddress: ETH_ADDR }))).toEqual({
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "address",
-      network: { name: "ethereum", env: "main" },
+      network: "ethereum",
       address: ETH_ADDR,
       path: "m/44h/60h/1h/0/0",
     });
   });
 
-  it("maps a testnet currency to its network env", () => {
+  it("maps a testnet currency to its CAL network id", () => {
     const descriptor = fromLegacyAccount(
       account("bitcoin_testnet", "native_segwit", 0, { xpub: XPUB }),
     );
-    expect(descriptor.network).toEqual({ name: "bitcoin", env: "testnet" });
+    expect(descriptor.network).toBe("bitcoin_testnet");
   });
 });
 
@@ -197,7 +197,7 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
           const descriptor: AccountDescriptor = isUtxo
             ? {
                 purpose: "account",
-                version: "1",
+                version: "2",
                 type: "utxo",
                 network,
                 xpub: XPUB,
@@ -205,7 +205,7 @@ describe("descriptor -> legacy -> descriptor over generated descriptors", () => 
               }
             : {
                 purpose: "account",
-                version: "1",
+                version: "2",
                 type: "address",
                 network,
                 address: ETH_ADDR,
@@ -310,9 +310,9 @@ describe("toLegacyAccount", () => {
   it("reads an uppercase hardened marker", () => {
     const back = toLegacyAccount({
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "address",
-      network: { name: "ethereum", env: "main" },
+      network: "ethereum",
       address: ETH_ADDR,
       path: "m/44H/60H/2H/0/0",
     });
@@ -323,9 +323,9 @@ describe("toLegacyAccount", () => {
     expect(() =>
       toLegacyAccount({
         purpose: "account",
-        version: "1",
+        version: "2",
         type: "address",
-        network: { name: "bitcoin", env: "main" },
+        network: "bitcoin",
         address: BTC_ADDR,
         path: "m/84h/0h/0h/0/0",
       }),
@@ -336,9 +336,9 @@ describe("toLegacyAccount", () => {
     expect(() =>
       toLegacyAccount({
         purpose: "account",
-        version: "1",
+        version: "2",
         type: "utxo",
-        network: { name: "tezos", env: "main" },
+        network: "tezos",
         xpub: XPUB,
         path: "m/44h/1729h/0h",
       }),
@@ -349,9 +349,9 @@ describe("toLegacyAccount", () => {
     expect(() =>
       toLegacyAccount({
         purpose: "account",
-        version: "1",
+        version: "2",
         type: "address",
-        network: { name: "ethereum", env: "main" },
+        network: "ethereum",
         address: ETH_ADDR,
         path: "m/44h/60h/0h",
       }),
@@ -365,9 +365,9 @@ describe("toLegacyAccount", () => {
     expect(() =>
       toLegacyAccount({
         purpose: "account",
-        version: "1",
+        version: "2",
         type: "utxo",
-        network: { name: "bitcoin", env: "main" },
+        network: "bitcoin",
         xpub: XPUB,
         path,
       }),
@@ -381,9 +381,9 @@ describe("toLegacyAccount", () => {
     expect(() =>
       toLegacyAccount({
         purpose: "account",
-        version: "1",
+        version: "2",
         type: "utxo",
-        network: { name: "bitcoin", env: "main" },
+        network: "bitcoin",
         xpub: XPUB,
         path,
       }),

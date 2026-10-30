@@ -6,7 +6,7 @@ import {
   getAddressExplorer,
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
 import { isFinalizablePosition, useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import type { StakingPosition, TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
@@ -120,7 +120,7 @@ const UnstakingRow = ({ position, account }: RowProps) => {
   const openTx = useCallback(() => {
     if (!txHash) return;
     const url = getTransactionExplorer(getDefaultExplorerView(account.currency), txHash);
-    if (url) openURL(url);
+    if (url) openURL(url, "OpenURL", {}, { sensitive: true });
   }, [txHash, account.currency]);
 
   const bakerName = baker ? baker.name : shortAddressPreview(position.delegate ?? "");

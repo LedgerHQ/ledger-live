@@ -12,7 +12,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: function MockTrackPage() {
+  TrackScreen: function MockTrackScreen() {
     return null;
   },
 }));

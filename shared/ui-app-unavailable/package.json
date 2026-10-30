@@ -1,6 +1,6 @@
 {
   "name": "@shared/ui-app-unavailable",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "Full-screen app unavailable view for web (Desktop) and React Native (Mobile)",
   "main": "src/index.web.ts",
@@ -45,7 +45,7 @@
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

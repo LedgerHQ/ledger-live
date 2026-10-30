@@ -177,6 +177,7 @@ export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]
   const CORRECT_PASSWORD = "passWORD$123!";
   const TOO_SHORT_PASSWORD = "pass1";
 
+  setTeamOwner(Team.WALLET_XP);
   describe("Settings", () => {
     beforeAll(async () => {
       await initPasswordTest(FF_PASSWORD_REVAMP);
@@ -186,7 +187,6 @@ export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]
       await app.settingsGeneral.togglePassword();
     });
 
-    setTeamOwner(Team.WALLET_XP);
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it("Refuses a password shorter than 6 characters", async () => {
@@ -194,6 +194,7 @@ export function runRevampedPasswordUnlockTest(tmsLinks: string[], tags: string[]
       await app.appLock.expectPasswordTooShort();
     });
 
+    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     it(`[${Account.ETH_1.currency.testLabel}] - Unlock the app with the correct password`, async () => {
       await app.settingsGeneral.setupRevampedPasswordAndLock(CORRECT_PASSWORD);
       await app.appLock.expectLock();

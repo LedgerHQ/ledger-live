@@ -3,6 +3,7 @@ import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { NewSendFlowEntry, registerNewSendFlowTests } from "tests/utils/newSendFlowUtils";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 
 const nativeSendTransactions: NewSendFlowEntry[] = [
   {
@@ -109,6 +110,13 @@ const nativeSendTransactions: NewSendFlowEntry[] = [
   {
     transaction: new Transaction(Account.OSMO_1, Account.OSMO_2, "0.00001"),
     xrayTicket: "B2CQA-6112",
+  },
+  {
+    transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
+    xrayTicket: "B2CQA-6267",
+    teamOwner: Team.BST,
+    balanceType: "public",
+    postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
 ];
 

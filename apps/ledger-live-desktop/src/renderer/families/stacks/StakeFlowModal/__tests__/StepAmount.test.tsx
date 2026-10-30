@@ -162,6 +162,13 @@ describe("StakeFlowModal/StepAmountFooter", () => {
     expect(button).toBeDisabled();
   });
 
+  it("stops the loading state on Continue when the bridge fails while still pending a retry", () => {
+    const props = makeProps({ bridgePending: true, error: new Error("fee estimation failed") });
+    render(<StepAmountFooter {...props} />);
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
+    expect(screen.queryByTestId("loading-spinner")).not.toBeInTheDocument();
+  });
+
   it("disables Continue when the transaction status carries errors", () => {
     const props = makeProps({ status: makeStatus({ amount: new Error("not enough balance") }) });
     const { container } = render(<StepAmountFooter {...props} />);

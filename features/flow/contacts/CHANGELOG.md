@@ -1,5 +1,28 @@
 # @features/flow-contacts
 
+## 0.16.0-next.0
+
+### Minor Changes
+
+- [#23888](https://github.com/LedgerHQ/ledger-live/pull/23888) [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065) Thanks [@zel-kass](https://github.com/zel-kass)! - Bump Lumen to lumen-design-core 0.1.34, lumen-ui-react 0.1.67, lumen-ui-rnative 0.1.70, lumen-utils-shared 0.1.18 and lumen-lint-plugin 0.1.1. `cn` now comes from `@ledgerhq/lumen-design-core/cn` (the local helpers re-export it), the `Apex` icon is renamed `NanoGen5`, the removed `BellNotification` and `ShieldCheckNotification` icons are replaced by the plain icon inside a red `DotIndicator`, `FormattedValue` is imported from `@ledgerhq/lumen-ui-react` instead of `@ledgerhq/lumen-utils-shared`, Tailwind font classes that produce no CSS under the Lumen preset are dropped, and the `clsx`, `tailwind-merge`, `@radix-ui/react-switch` and `@radix-ui/react-checkbox` declarations Lumen no longer needs are removed.
+
+- [#23918](https://github.com/LedgerHQ/ledger-live/pull/23918) [`42e9955`](https://github.com/LedgerHQ/ledger-live/commit/42e99552b343d4e6be8865807b80f01816af80cd) Thanks [@ysitbon](https://github.com/ysitbon)! - refactor(contacts-introduction): split the platform components into web and native entries
+
+  The dialogs move to `@features/flow-contacts-introduction/web` and the bottom-sheet contents to `@features/flow-contacts-introduction/native`, with their props types. The root entry keeps the state, resolvers, preference port and hooks, and is the same on both platforms.
+
+- [#23875](https://github.com/LedgerHQ/ledger-live/pull/23875) [`f717fa9`](https://github.com/LedgerHQ/ledger-live/commit/f717fa924ea60f0e650b01cceb555be46bca510b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Align @tanstack/react-table catalog on 8.21.3 to drop the duplicate 8.5.11 install
+
+### Patch Changes
+
+- Updated dependencies [[`9a1198f`](https://github.com/LedgerHQ/ledger-live/commit/9a1198fd10a67e2893163985b884c7437b4d036a), [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065), [`42e9955`](https://github.com/LedgerHQ/ledger-live/commit/42e99552b343d4e6be8865807b80f01816af80cd), [`57c72ac`](https://github.com/LedgerHQ/ledger-live/commit/57c72ac92d3c9352b751b21bb96d64f19a2b6cb1), [`067b492`](https://github.com/LedgerHQ/ledger-live/commit/067b492cafa20166ce080344b7cb2d6c71f43301)]:
+  - @features/platform-contacts@0.12.0-next.0
+  - @features/flow-contacts-add-contact@0.9.0-next.0
+  - @features/flow-contacts-introduction@1.6.0-next.0
+  - @features/flow-contacts-list@0.11.0-next.0
+  - @features/flow-contacts-delete-contact@0.4.0-next.0
+  - @features/flow-contacts-detail@0.3.0-next.0
+  - @domain/entity-contact@0.12.2-next.0
+
 ## 0.15.0
 
 ### Minor Changes
@@ -507,89 +530,5 @@
   - @features/flow-contacts-edit-contact@0.2.0
   - @shared/ui-qr-code@0.3.0
   - @features/flow-contacts-introduction@0.3.0
-
-## 0.8.0-next.0
-
-### Minor Changes
-
-- [#21025](https://github.com/LedgerHQ/ledger-live/pull/21025) [`de982e6`](https://github.com/LedgerHQ/ledger-live/commit/de982e6a9ef6e2a27789212bee2729c7141193ad) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Fix Contacts edit flow so the device connection prompt appears after saving a contact name or address, not before opening the edit form.
-
-- [#20899](https://github.com/LedgerHQ/ledger-live/pull/20899) [`5a30d71`](https://github.com/LedgerHQ/ledger-live/commit/5a30d71a0910bcfeb75a9cface524d7f942f1a7c) Thanks [@deepyjr](https://github.com/deepyjr)! - Allow Contacts address groups to be resolved from a contact ID.
-
-- [#20726](https://github.com/LedgerHQ/ledger-live/pull/20726) [`6560883`](https://github.com/LedgerHQ/ledger-live/commit/6560883682ff7af5f8e61ae79e29f8560ac3f8e2) Thanks [@deepyjr](https://github.com/deepyjr)! - Keep mobile Add Address actions anchored above the keyboard
-
-- [#21021](https://github.com/LedgerHQ/ledger-live/pull/21021) [`e998478`](https://github.com/LedgerHQ/ledger-live/commit/e9984787e3352a399b107fc3d4e889ffb02d4fc2) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the mobile Me contact detail name after it is customized
-
-- [#20954](https://github.com/LedgerHQ/ledger-live/pull/20954) [`5a630b2`](https://github.com/LedgerHQ/ledger-live/commit/5a630b2cb982168094177d9a3c21fdf163454ef8) Thanks [@deepyjr](https://github.com/deepyjr)! - Expose ContactAvatar through the platform root API.
-
-- [#20934](https://github.com/LedgerHQ/ledger-live/pull/20934) [`d8c04dd`](https://github.com/LedgerHQ/ledger-live/commit/d8c04ddf5e8bc7a6994d59475e12381dd28f403a) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix Contacts entry point styling and return navigation to Ledger Wallet addresses.
-
-- [#20872](https://github.com/LedgerHQ/ledger-live/pull/20872) [`d4bb463`](https://github.com/LedgerHQ/ledger-live/commit/d4bb46367e40a98a454c72e71ccc73b2dc75b417) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix Contact sharing and align empty address copy
-
-- [#20748](https://github.com/LedgerHQ/ledger-live/pull/20748) [`b6bb5b5`](https://github.com/LedgerHQ/ledger-live/commit/b6bb5b537c4536890ca1959357cad1ea2ad5f5d5) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Allow editing the saved wallet address in Contacts Edit Address flow, with the same validation as Add Address.
-
-- [#20927](https://github.com/LedgerHQ/ledger-live/pull/20927) [`fec3bc8`](https://github.com/LedgerHQ/ledger-live/commit/fec3bc88bacd2705da38c5c5bf5e68e7d734c3b3) Thanks [@deepyjr](https://github.com/deepyjr)! - Expose embeddable Add contact content for Desktop and Mobile consumers.
-
-- [#20673](https://github.com/LedgerHQ/ledger-live/pull/20673) [`f0f10ca`](https://github.com/LedgerHQ/ledger-live/commit/f0f10cae65f1e2015afbac540ecdcd01548356a8) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Contacts Add address flow and centralize shared Contacts configuration in Platform Contacts.
-
-- [#20963](https://github.com/LedgerHQ/ledger-live/pull/20963) [`55b7e6d`](https://github.com/LedgerHQ/ledger-live/commit/55b7e6d50aa1e97da3b1ae3405263e99b5fe5bde) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Edit contact journey, share contact-name input primitives through Platform Contacts, and
-  own the contact-name length limit in the Contact entity.
-
-- [#20937](https://github.com/LedgerHQ/ledger-live/pull/20937) [`dd64855`](https://github.com/LedgerHQ/ledger-live/commit/dd648554ba49b37a69888d7cd87354ebdd22db20) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add `@shared/ui-qr-code` (renamed from `@shared/qr-code`) with a web export of `QrCode` so it renders on both web and native from a single API. Web draws via `qrcode` on a canvas, native keeps `react-native-qrcode-svg`, and both accept a free `centerContent` slot for a centered icon or logo (LIVE-36118).
-
-- [#20505](https://github.com/LedgerHQ/ledger-live/pull/20505) [`f4ed19f`](https://github.com/LedgerHQ/ledger-live/commit/f4ed19f310eeb9cfad9e56665b9c2f2b40097925) Thanks [@deepyjr](https://github.com/deepyjr)! - Connect Contacts mutations to Ledger Sync availability and activation on Desktop and Mobile.
-
-- [#21022](https://github.com/LedgerHQ/ledger-live/pull/21022) [`d6f0c7d`](https://github.com/LedgerHQ/ledger-live/commit/d6f0c7dc9f85002d17f1fa8156b4dc4c2d94e36d) Thanks [@deepyjr](https://github.com/deepyjr)! - Prevent address lists from bouncing when their content fits on screen.
-
-### Patch Changes
-
-- Updated dependencies [[`f427599`](https://github.com/LedgerHQ/ledger-live/commit/f42759916771b6445544255700082ccdaa3466c4), [`5a630b2`](https://github.com/LedgerHQ/ledger-live/commit/5a630b2cb982168094177d9a3c21fdf163454ef8), [`9470502`](https://github.com/LedgerHQ/ledger-live/commit/947050267c2733e7d0087865d2e9b29edf7f6413), [`6084fcd`](https://github.com/LedgerHQ/ledger-live/commit/6084fcd6b848049b5240abf32b9ac940603576c0), [`b6bb5b5`](https://github.com/LedgerHQ/ledger-live/commit/b6bb5b537c4536890ca1959357cad1ea2ad5f5d5), [`fec3bc8`](https://github.com/LedgerHQ/ledger-live/commit/fec3bc88bacd2705da38c5c5bf5e68e7d734c3b3), [`f0f10ca`](https://github.com/LedgerHQ/ledger-live/commit/f0f10cae65f1e2015afbac540ecdcd01548356a8), [`55b7e6d`](https://github.com/LedgerHQ/ledger-live/commit/55b7e6d50aa1e97da3b1ae3405263e99b5fe5bde), [`46a0d30`](https://github.com/LedgerHQ/ledger-live/commit/46a0d30f0134786a0be5d1c1b671a9c7955a81e1), [`8003387`](https://github.com/LedgerHQ/ledger-live/commit/80033873ea4628cbf9af189c313f73d54b422fb2), [`dd64855`](https://github.com/LedgerHQ/ledger-live/commit/dd648554ba49b37a69888d7cd87354ebdd22db20), [`79ee882`](https://github.com/LedgerHQ/ledger-live/commit/79ee882545ea85c8a17027bd685f4b99f1ec84cd), [`4c333ad`](https://github.com/LedgerHQ/ledger-live/commit/4c333ad80187596319d6e0042af331770fc1858e)]:
-  - @domain/entity-contact@0.8.0-next.0
-  - @features/flow-contacts-list@0.4.0-next.0
-  - @features/platform-contacts@0.4.0-next.0
-  - @features/flow-contacts-add-contact@0.4.0-next.0
-  - @features/flow-contacts-edit-contact@0.2.0-next.0
-  - @shared/ui-qr-code@0.3.0-next.0
-  - @features/flow-contacts-introduction@0.3.0-next.0
-
-## 0.7.0
-
-### Minor Changes
-
-- [#20570](https://github.com/LedgerHQ/ledger-live/pull/20570) [`8605089`](https://github.com/LedgerHQ/ledger-live/commit/8605089242fd91da0ee4c6a7e8ea2f5a9f58962a) Thanks [@deepyjr](https://github.com/deepyjr)! - Add typed Device Intent data and a Cloud Sync document for Contacts.
-
-- [#20851](https://github.com/LedgerHQ/ledger-live/pull/20851) [`55768ad`](https://github.com/LedgerHQ/ledger-live/commit/55768ad9f20ee24b2de8bbbe743b62b3b2e53355) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the pressed-state spacing of the mobile Contacts entry point.
-
-- [#20571](https://github.com/LedgerHQ/ledger-live/pull/20571) [`7c8d5df`](https://github.com/LedgerHQ/ledger-live/commit/7c8d5dfa862a2e9c3a35251b5d06a3cd4f905d2a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Thread the coin-module `Context` (ADR-019) explicitly through the coin-evm, coin-vechain and coin-near api and logic layers instead of resolving configuration from the module-level `getCoinConfig` singleton. Exported logic functions now take the context as their first argument, resolve `config` from it (`await context.config(currencyId)`), and pass an explicit, required `config` down to the network layer — no `config?` optionals and no singleton reads on the data path. `getCoinConfig`/`setCoinConfig` remain only as the compatibility surface for the classic account bridge. Ledger Live consumers (live-common, desktop, mobile and coin-celo) are updated to resolve and pass config/context explicitly. Also fixes a coin-polkadot type-inference issue where `getTransactionMaterialWithMetadata`'s cache-key extractor narrowed the cached signature and dropped the `config` argument.
-
-- [#20682](https://github.com/LedgerHQ/ledger-live/pull/20682) [`f2f3ec9`](https://github.com/LedgerHQ/ledger-live/commit/f2f3ec9ef1f2869c44190e2f6aa16dc362f2891f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared Contacts analytics global properties in platform-contacts and the typed tracking contract helper in flow-contacts.
-
-- [#20759](https://github.com/LedgerHQ/ledger-live/pull/20759) [`526ca7b`](https://github.com/LedgerHQ/ledger-live/commit/526ca7be272a78b5cbd48481b6c5120989c0731b) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Extract shared Contacts tracking hooks and move currency analytics resolution to platform-contacts.
-
-- [#20696](https://github.com/LedgerHQ/ledger-live/pull/20696) [`d43f03d`](https://github.com/LedgerHQ/ledger-live/commit/d43f03d2ab01e821677227cc2a76ee4ff5d0d7e7) Thanks [@deepyjr](https://github.com/deepyjr)! - Fix the address-name input focus state in Contacts.
-
-- [#20697](https://github.com/LedgerHQ/ledger-live/pull/20697) [`21323c6`](https://github.com/LedgerHQ/ledger-live/commit/21323c66d04a25979a09b317014c6007d1c6b368) Thanks [@deepyjr](https://github.com/deepyjr)! - Truncate long contact names in the Contacts detail pane.
-
-- [#20676](https://github.com/LedgerHQ/ledger-live/pull/20676) [`f040998`](https://github.com/LedgerHQ/ledger-live/commit/f04099812f60fc328ee101b5f4f0457b1d1c4bfa) Thanks [@deepyjr](https://github.com/deepyjr)! - Expose the reusable Contacts avatar renderer from Platform Contacts, including the Me profile image.
-
-- [#20853](https://github.com/LedgerHQ/ledger-live/pull/20853) [`a781abe`](https://github.com/LedgerHQ/ledger-live/commit/a781abec59454ec3bd1cbd4b74b67666aef73aab) Thanks [@deepyjr](https://github.com/deepyjr)! - Allow Contacts addresses to be deleted without a device connection.
-
-- [#20729](https://github.com/LedgerHQ/ledger-live/pull/20729) [`68448cd`](https://github.com/LedgerHQ/ledger-live/commit/68448cdf5c1fd5a2b6d912f4034d170dbabfc93f) Thanks [@deepyjr](https://github.com/deepyjr)! - Move the ENS resolution disclaimer below the address name field.
-
-- [#20652](https://github.com/LedgerHQ/ledger-live/pull/20652) [`ca74f9d`](https://github.com/LedgerHQ/ledger-live/commit/ca74f9d50026c4a14657692de9c74c8f1c32f130) Thanks [@deepyjr](https://github.com/deepyjr)! - Extract the Contacts Feature and Ledger Sync introduction journeys into a dedicated flow package.
-
-- [#20645](https://github.com/LedgerHQ/ledger-live/pull/20645) [`dd3baf3`](https://github.com/LedgerHQ/ledger-live/commit/dd3baf39e2fab7d30d0064e9a10e3e58df2dd6e1) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Add shared edit contact signer validation state with mocked signer mismatch handling and wire Desktop and Mobile contact edit flows.
-
-### Patch Changes
-
-- Updated dependencies [[`e4e8d08`](https://github.com/LedgerHQ/ledger-live/commit/e4e8d086fc5672e4ce96c30c9a9af3f2022f863a), [`0dc2509`](https://github.com/LedgerHQ/ledger-live/commit/0dc2509c9646374755fce5aebc3d07bba17a8feb), [`8605089`](https://github.com/LedgerHQ/ledger-live/commit/8605089242fd91da0ee4c6a7e8ea2f5a9f58962a), [`45dc82e`](https://github.com/LedgerHQ/ledger-live/commit/45dc82e7aaf3dbc70a6fb89c673a342b28b3b12c), [`f2f3ec9`](https://github.com/LedgerHQ/ledger-live/commit/f2f3ec9ef1f2869c44190e2f6aa16dc362f2891f), [`526ca7b`](https://github.com/LedgerHQ/ledger-live/commit/526ca7be272a78b5cbd48481b6c5120989c0731b), [`46eb674`](https://github.com/LedgerHQ/ledger-live/commit/46eb6748e96782f28499d74cfc930abfbc99a5e4), [`da0a5ce`](https://github.com/LedgerHQ/ledger-live/commit/da0a5ceb8f889f1bace45ed2d3d4c640cdf24ca8), [`f040998`](https://github.com/LedgerHQ/ledger-live/commit/f04099812f60fc328ee101b5f4f0457b1d1c4bfa), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`ca74f9d`](https://github.com/LedgerHQ/ledger-live/commit/ca74f9d50026c4a14657692de9c74c8f1c32f130), [`3dd9308`](https://github.com/LedgerHQ/ledger-live/commit/3dd9308f1a670a56588acbe70f2cbb4eb39d3432), [`fae92bf`](https://github.com/LedgerHQ/ledger-live/commit/fae92bf68e8ac167644aefa9e9d981a7b12cb23a), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2)]:
-  - @shared/feature-flags@0.19.0
-  - @features/platform-contacts@0.3.0
-  - @features/flow-contacts-list@0.3.0
-  - @domain/entity-contact@0.7.0
-  - @features/flow-contacts-add-contact@0.3.0
-  - @features/flow-contacts-introduction@0.2.0
-  - @domain/entity-currency-token@0.5.0
-  - @features/platform-feature-flags@0.6.6
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

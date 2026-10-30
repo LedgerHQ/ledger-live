@@ -8,12 +8,12 @@ import { makeSessionDir } from "../../testing/session-fixture";
 const SAMPLE_ENTRIES = [
   {
     label: "bitcoin-native-1",
-    descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h",
+    descriptor: "account:2:utxo:bitcoin:xpub6BosfCnifzxcA:m/84h/0h/0h",
   },
   {
     label: "ethereum-1",
     descriptor:
-      "account:1:address:ethereum:main:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44h/60h/0h/0/0",
+      "account:2:address:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44h/60h/0h/0/0",
   },
 ];
 
@@ -115,6 +115,7 @@ describe("session reset — corrupt file recovery", () => {
     const err = JSON.parse(stdout);
     expect(err.ok).toBe(false);
     expect(err.error.message).toMatch(/Agent Intent profiles.*cannot be recovered/is);
+    expect(err.error.message).toMatch(/plaintext key files in .*agent-intent-keys/);
     expect(err.error.message).toMatch(/--force/);
     expect(await Bun.file(path).text()).toBe(": : :\n\t- [");
   });

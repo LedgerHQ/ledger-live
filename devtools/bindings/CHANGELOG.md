@@ -1,5 +1,51 @@
 # @devtools/bindings
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#23614](https://github.com/LedgerHQ/ledger-live/pull/23614) [`3bc8d98`](https://github.com/LedgerHQ/ledger-live/commit/3bc8d98b404d2f0c65cb7845025f316a5a8d2b18) Thanks [@thesan](https://github.com/thesan)! - Add the App config devtool: it shows the default option of the build, then lists each app config switch with its options and their values, the option the session runs on and the one saved for the next. Selecting an option saves its id, and selecting the default removes it so the switch follows the default again; neither reloads. The Reload button (Restart on mobile) only appears while a saved option differs from the current one, and applies every saved change at once: a renderer reload on desktop, an app restart on mobile. A search bar and an All / Switched filter narrow the list. `resolveAppConfig` now returns `{ config, session }`: `session` is what it resolved the session from, which both stores pass to `createAppConfigMiddleware` with their reload. The middleware sets the new `appConfig` slice, saves the `selectAppConfigOption` and `resetAppConfigSwitch` actions to the storage and reloads on `reloadAppConfig`. `ConfigStorage` gains `remove`.
+
+- [#23788](https://github.com/LedgerHQ/ledger-live/pull/23788) [`2925816`](https://github.com/LedgerHQ/ledger-live/commit/29258167ffa59d7ad3337cdf2ed9ba5e37a1e86c) Thanks [@thesan](https://github.com/thesan)! - Add dev values to the app config on staging-default builds: each switch offers Dev | Staging | Prod and each fixed value Dev | Fixed in the App config devtool, which now also lists the fixed values. On Dev the values are text fields; a switch on Dev runs on its default option's values with its dev values on top, and a fixed value on its dev value. The schema of each value parses its dev value when the devtool saves it and again at boot, which ignores an invalid one. Dev values stay stored when another option is picked. Prod-default builds ignore Dev: they never offer it, never read the dev values, and ignore the selections holding `dev` without clearing them. The desktop build now defines `CONFIG_PROFILE` in every mode (`prod` outside development). `resolveAppConfig` now takes an `AppConfigStorage` (`selections` and `devValues`), `resetAppConfigSwitch` becomes `resetAppConfigSelection`, and `selectAppConfigOption` takes `{ id, selectionId }`. Playwright and Detox runs can pass dev values with `appConfigDevValues`.
+
+- [#23589](https://github.com/LedgerHQ/ledger-live/pull/23589) [`5b2d7d9`](https://github.com/LedgerHQ/ledger-live/commit/5b2d7d9b4369e56196c8c70889b701df7225da7a) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add an Accounts section to DevTools with Account data, Descriptors and Balance pages
+
+- [#23763](https://github.com/LedgerHQ/ledger-live/pull/23763) [`8fd06da`](https://github.com/LedgerHQ/ledger-live/commit/8fd06da45f7c15ed712e8e1f15719e3165fa6f94) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Read an account name by AccountUUID, and add a Names page to the DevTools Accounts section
+
+- [#23604](https://github.com/LedgerHQ/ledger-live/pull/23604) [`cc184a6`](https://github.com/LedgerHQ/ledger-live/commit/cc184a681ef7716368e8df7bab1a05abb9cb576d) Thanks [@sarneijim](https://github.com/sarneijim)! - Reset the device onboarding like a quit, and leave the genuine check screen even when quit comes before the device answered
+
+- [#23560](https://github.com/LedgerHQ/ledger-live/pull/23560) [`16c5384`](https://github.com/LedgerHQ/ledger-live/commit/16c53841ba22597fa03608205c7ccac9c121e844) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Remove the legacyTopUp param of lwmPayTab; mobile top-up always opens the Baanx hosted page.
+
+- [#23693](https://github.com/LedgerHQ/ledger-live/pull/23693) [`bfaac14`](https://github.com/LedgerHQ/ledger-live/commit/bfaac14201bb12b1f4b6e6a6d68ab4a0daa55b5c) Thanks [@sarneijim](https://github.com/sarneijim)! - Wait in the onboarding machine for a new session before resuming after an OS update
+
+### Patch Changes
+
+- Updated dependencies [[`3bc8d98`](https://github.com/LedgerHQ/ledger-live/commit/3bc8d98b404d2f0c65cb7845025f316a5a8d2b18), [`bf9665d`](https://github.com/LedgerHQ/ledger-live/commit/bf9665df5c5cbd287d740afb4d51933943d99284), [`0c04ab2`](https://github.com/LedgerHQ/ledger-live/commit/0c04ab223b387417a27eebbf64459bcd17ea3dc2), [`a405f99`](https://github.com/LedgerHQ/ledger-live/commit/a405f99bb6bf9b2c88a4f28f7f0ef3339bac63cd), [`2925816`](https://github.com/LedgerHQ/ledger-live/commit/29258167ffa59d7ad3337cdf2ed9ba5e37a1e86c), [`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8), [`20102d3`](https://github.com/LedgerHQ/ledger-live/commit/20102d3d6f99cdfa8e8e14f9c3b86f960adef64c), [`f51f724`](https://github.com/LedgerHQ/ledger-live/commit/f51f72470d118331f3c3219ed28f13039df309cb), [`fd6a3a3`](https://github.com/LedgerHQ/ledger-live/commit/fd6a3a341b07baa2849a9e79e3a05b73863034b7), [`e8f69f6`](https://github.com/LedgerHQ/ledger-live/commit/e8f69f6cecfb104cddd8438ca6fcbd8995f1d488), [`3a1e006`](https://github.com/LedgerHQ/ledger-live/commit/3a1e0066dfdeaa93e5b087396ee84100a607098a), [`5e2a324`](https://github.com/LedgerHQ/ledger-live/commit/5e2a3245cc163b6cc13ef5fd2b7faa85c84ca153), [`d316d23`](https://github.com/LedgerHQ/ledger-live/commit/d316d23562d9fc50834d308bf978f548aa032c57), [`dbaf56d`](https://github.com/LedgerHQ/ledger-live/commit/dbaf56ddb47f5a43221feba193700cf40f4a46df), [`5b2d7d9`](https://github.com/LedgerHQ/ledger-live/commit/5b2d7d9b4369e56196c8c70889b701df7225da7a), [`8fd06da`](https://github.com/LedgerHQ/ledger-live/commit/8fd06da45f7c15ed712e8e1f15719e3165fa6f94), [`cc184a6`](https://github.com/LedgerHQ/ledger-live/commit/cc184a681ef7716368e8df7bab1a05abb9cb576d), [`2dc1bee`](https://github.com/LedgerHQ/ledger-live/commit/2dc1beef8479530302204a9563b541ba9f7dbc2c), [`4216add`](https://github.com/LedgerHQ/ledger-live/commit/4216addd84f49f073e5bd7c0ae7019f40799955f), [`16c5384`](https://github.com/LedgerHQ/ledger-live/commit/16c53841ba22597fa03608205c7ccac9c121e844), [`6ea25da`](https://github.com/LedgerHQ/ledger-live/commit/6ea25da0c6060df6aa5056eceacaeedf3d76d2ba), [`c742800`](https://github.com/LedgerHQ/ledger-live/commit/c742800474dca6346e83690f414c31a747b0755f), [`8d462cb`](https://github.com/LedgerHQ/ledger-live/commit/8d462cbfd64fec0e533396e7b7316a17550733bc), [`ffd02a9`](https://github.com/LedgerHQ/ledger-live/commit/ffd02a95c452560d606ad30588f15ff5d2182763), [`0953772`](https://github.com/LedgerHQ/ledger-live/commit/0953772eafec52773cf7a19c08295c72a2e296a2), [`4031174`](https://github.com/LedgerHQ/ledger-live/commit/40311746f2633cf914b42999781266e64d54dc7c)]:
+  - @shared/app-config@0.2.0-next.0
+  - @devtools/registry@0.6.0-next.0
+  - @shared/feature-flags@0.28.0-next.0
+  - @domain/entity-currency-crypto@0.17.0-next.0
+  - @domain/api-account-data@0.3.0-next.0
+  - @domain/entity-account-descriptor@0.3.0-next.0
+  - @domain/api-currency-token@0.7.0-next.0
+  - @shared/api-services@0.11.0-next.0
+  - @features/platform-device-onboarding@0.3.0-next.0
+  - @features/platform-feature-flags@0.10.0-next.0
+  - @domain/entity-account-data@0.3.0-next.0
+  - @domain/entity-account-name@0.3.0-next.0
+  - @features/flow-pay-card-auth@0.11.0-next.0
+  - @domain/entity-currency@0.4.8-next.0
+  - @features/flow-pay-feature-tour@0.8.2-next.0
+  - @domain/entity-account-balance@0.2.1-next.0
+  - @devtools/env@0.2.0
+  - @features/flow-pay-card-wallets@0.6.2-next.0
+  - @features/flow-pay-card-widget@0.6.1-next.0
+  - @features/flow-pay-request@0.9.1-next.0
+  - @shared/env@0.11.0
+  - @domain/entity-account@0.1.1-next.0
+  - @domain/api-card-management@0.8.3-next.0
+  - @features/platform-card@0.8.2-next.0
+
 ## 0.12.0
 
 ### Minor Changes
@@ -587,31 +633,5 @@
   - @features/flow-pay-feature-tour@0.4.0-next.0
   - @devtools/registry@0.4.1-next.0
   - @features/platform-feature-flags@0.6.8-next.0
-
-## 0.5.0
-
-### Minor Changes
-
-- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
-
-### Patch Changes
-
-- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4), [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e), [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5), [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d), [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
-  - @devtools/registry@0.4.0
-  - @shared/feature-flags@0.20.0
-  - @features/platform-feature-flags@0.6.7
-
-## 0.5.0-next.0
-
-### Minor Changes
-
-- [#21033](https://github.com/LedgerHQ/ledger-live/pull/21033) [`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4) Thanks [@Sebastien-Dav1d](https://github.com/Sebastien-Dav1d)! - All devtools packages now enforce the `suffix-imports/no-platform-suffix` oxlint rule via a shared `.oxlintrc.json` at the `devtools/` root. Each package gains a `lint` script. Existing `.native` suffix imports in shell test files are fixed.
-
-### Patch Changes
-
-- Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4), [`aa39333`](https://github.com/LedgerHQ/ledger-live/commit/aa393339789242783b168398cb5122a7f1e3f620), [`01c088d`](https://github.com/LedgerHQ/ledger-live/commit/01c088db6a0597a479f6371c3a3db81157ead41e), [`91dbf02`](https://github.com/LedgerHQ/ledger-live/commit/91dbf023257961c3f15725f57abf273d2190e3c5), [`d6c7592`](https://github.com/LedgerHQ/ledger-live/commit/d6c7592278f2eed430c0451dd1b0a99fdf5b377d), [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4), [`fbc8036`](https://github.com/LedgerHQ/ledger-live/commit/fbc8036d9bd4e1cc30eea4233f05e8b0498c0e5e)]:
-  - @devtools/registry@0.4.0-next.0
-  - @shared/feature-flags@0.20.0-next.0
-  - @features/platform-feature-flags@0.6.7-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

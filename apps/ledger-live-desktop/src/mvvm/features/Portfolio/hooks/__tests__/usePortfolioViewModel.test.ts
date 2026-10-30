@@ -1,8 +1,6 @@
 import { renderHook, withFlagOverrides } from "tests/testSetup";
-import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-import { BigNumber } from "bignumber.js";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { usePortfolioViewModel } from "../usePortfolioViewModel";
 
@@ -27,24 +25,6 @@ const wallet40AndExchangeFeatureFlags = withFlagOverrides({
 const wallet40AndExchangeSettings = {
   ...INITIAL_STATE,
 };
-
-const addressPoisoningFlags = withFlagOverrides({
-  addressPoisoningOperationsFilter: {
-    enabled: true,
-    params: { families: ["evm"] },
-  },
-});
-
-function createPoisonedTokenAccount() {
-  const parentAccount = genAccount("eth-poison-parent", {
-    currency: ethereumCurrency,
-    operationsSize: 0,
-  });
-  const tokenAccount = genTokenAccount(0, parentAccount, usdcToken);
-  const poisonedOp = { ...tokenAccount.operations[0], value: new BigNumber(0) };
-  parentAccount.subAccounts = [tokenAccount];
-  return { parentAccount, tokenAccount, poisonedOp };
-}
 
 describe("usePortfolioViewModel", () => {
   it("should compute account and portfolio totals when accounts are provided", () => {
@@ -91,6 +71,57 @@ describe("usePortfolioViewModel", () => {
     expect(result.current.hasExchangeBannerCTA).toBe(true);
   });
 
+  it("should replace the perps and borrow entry points when services entry points are enabled", () => {
+    const { result } = renderHook(usePortfolioViewModel, {
+      initialState: {
+        settings: INITIAL_STATE,
+        ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+          entryPointsServices: { enabled: true },
+          ptxBorrowLiveApp: { enabled: true },
+        }),
+      },
+    });
+
+    expect(result.current.shouldDisplayServicesEntryPoints).toBe(true);
+    expect(result.current.shouldDisplayPerpsEntryPoint).toBe(false);
+    expect(result.current.shouldDisplayBorrowSection).toBe(false);
+  });
+
+  it("should keep the perps and borrow entry points when services entry points are disabled", () => {
+    const { result } = renderHook(usePortfolioViewModel, {
+      initialState: {
+        settings: INITIAL_STATE,
+        ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { assetSection: true } },
+          entryPointsServices: { enabled: false },
+          ptxBorrowLiveApp: { enabled: true },
+        }),
+      },
+    });
+
+    expect(result.current.shouldDisplayServicesEntryPoints).toBe(false);
+    expect(result.current.shouldDisplayPerpsEntryPoint).toBe(true);
+    expect(result.current.shouldDisplayBorrowSection).toBe(true);
+  });
+
+  it("should keep the perps and borrow entry points when the asset section is hidden", () => {
+    const { result } = renderHook(usePortfolioViewModel, {
+      initialState: {
+        settings: INITIAL_STATE,
+        ...withFlagOverrides({
+          lwdWallet40: { enabled: true, params: { assetSection: false } },
+          entryPointsServices: { enabled: true },
+          ptxBorrowLiveApp: { enabled: true },
+        }),
+      },
+    });
+
+    expect(result.current.shouldDisplayServicesEntryPoints).toBe(false);
+    expect(result.current.shouldDisplayPerpsEntryPoint).toBe(true);
+    expect(result.current.shouldDisplayBorrowSection).toBe(true);
+  });
+
   it("should expose clear cache banner visibility when enabled in settings", () => {
     const { result } = renderHook(() => usePortfolioViewModel(), {
       initialState: {
@@ -102,38 +133,5 @@ describe("usePortfolioViewModel", () => {
     });
 
     expect(result.current.isClearCacheBannerVisible).toBe(true);
-  });
-
-  it("should filter poisoned operations when zero amount filtering is enabled", () => {
-    const { parentAccount, tokenAccount, poisonedOp } = createPoisonedTokenAccount();
-
-    const { result } = renderHook(() => usePortfolioViewModel(), {
-      initialState: {
-        accounts: [parentAccount],
-        settings: {
-          ...INITIAL_STATE,
-          filterTokenOperationsZeroAmount: true,
-        },
-        ...addressPoisoningFlags,
-      },
-    });
-
-    expect(result.current.filterOperations(poisonedOp, tokenAccount)).toBe(false);
-  });
-
-  it("should keep poisoned operations when zero amount filtering is disabled", () => {
-    const { parentAccount, tokenAccount, poisonedOp } = createPoisonedTokenAccount();
-
-    const { result } = renderHook(() => usePortfolioViewModel(), {
-      initialState: {
-        accounts: [parentAccount],
-        settings: {
-          ...INITIAL_STATE,
-          filterTokenOperationsZeroAmount: false,
-        },
-      },
-    });
-
-    expect(result.current.filterOperations(poisonedOp, tokenAccount)).toBe(true);
   });
 });

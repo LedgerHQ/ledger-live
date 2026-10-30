@@ -1,8 +1,8 @@
 {
   "name": "@shared/app-config",
-  "version": "0.1.0",
+  "version": "0.2.0-next.0",
   "private": true,
-  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values and the thunk extraArgument contracts they feed",
+  "description": "Resolves an app's configuration once at boot: build-declared switches, fixed values, dev values on staging-default builds, and the middleware and slice that save changes for the next session",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -21,12 +21,13 @@
     "format:check": "oxfmt --check src"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

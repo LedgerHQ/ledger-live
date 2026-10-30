@@ -1,11 +1,11 @@
 import React from "react";
 import { Banner } from "@ledgerhq/lumen-ui-react";
-import { cn } from "./internals/cn.web";
-import type { InfoStateProps } from "./types.web";
-import { InfoStateButton } from "./components/InfoStateButton.web";
-import { PresetVisual } from "./components/PresetVisual.web";
-import { getInfoStateDialogTone } from "./utils/getInfoStateDialogTone.web";
-import { useDialogBackgroundTone } from "./background/useDialogBackgroundTone.web";
+import { cn } from "./internals/cn";
+import type { InfoStateProps } from "./InfoState.types";
+import { InfoStateButton } from "./components/InfoStateButton";
+import { PresetVisual } from "./components/PresetVisual";
+import { getInfoStateDialogTone } from "./utils/getInfoStateDialogTone";
+import { useDialogBackgroundTone } from "./background/useDialogBackgroundTone";
 
 /**
  * Shared web state layout for informational, success, and error screens.
@@ -57,6 +57,7 @@ export function InfoState(props: InfoStateProps) {
               appearance={banner.appearance ?? "info"}
               title={banner.title}
               description={banner.description}
+              data-testid={banner.testID}
             />
           </div>
         ) : null}

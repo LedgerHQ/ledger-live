@@ -1,19 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { token, type TokenCurrency } from "@domain/entity-currency-token";
-import { calApiExtra } from "@shared/api-services";
+import { calApi, calApiExtra } from "@shared/api-services";
+import { HttpResponse, http } from "msw";
+import { setupServer } from "msw/node";
 import { cryptoAssetsApi } from "./api";
-import { PERSISTENCE_VERSION } from "./internals";
+import { PERSISTENCE_VERSION, UNCHECKED_TOKEN_TTL } from "./internals";
 import {
   extractTokensFromState,
   extractHashesFromState,
   extractPersistedCALFromState,
   persistedCALContentEqual,
-  filterExpiredTokens,
   restoreTokensToCache,
   parsePersistedCAL,
   type WithCryptoAssetsApi,
 } from "./persistence";
-import { type PersistedCAL, type PersistedTokenEntry } from "./types";
+import { type PersistedCAL } from "./types";
 
 const mockToken: TokenCurrency = token({
   type: "TokenCurrency",
@@ -27,6 +28,48 @@ const mockToken: TokenCurrency = token({
   disableCountervalue: false,
   units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
 });
+
+/** A store wired the way the apps wire it: the CAL service api, with the CAL configuration. */
+function makeCalStore() {
+  return configureStore({
+    reducer: { [calApi.reducerPath]: calApi.reducer },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware({
+        serializableCheck: false,
+        thunk: {
+          extraArgument: calApiExtra({
+            calServiceUrl: "https://cal.test",
+            ledgerClientVersion: "1.0.0",
+          }),
+        },
+      }).concat(calApi.middleware),
+  });
+}
+
+type CalStore = ReturnType<typeof makeCalStore>;
+
+function persistedToken(timestamp: number, hashes?: Record<string, string>): PersistedCAL {
+  return {
+    version: PERSISTENCE_VERSION,
+    tokens: [{ data: mockToken, timestamp }],
+    ...(hashes && { hashes }),
+  };
+}
+
+/** A CAL `/v1/currencies` answer for ethereum, carrying `commit` as the sync hash. */
+function commitResponse(commit: string) {
+  return HttpResponse.json([{ id: "ethereum" }], { headers: { "X-Ledger-Commit": commit } });
+}
+
+function hashCheckStatus(store: CalStore) {
+  return store.getState()[calApi.reducerPath].queries['getTokensSyncHash("ethereum")']?.status;
+}
+
+/** Waits for the background hash check of ethereum, then for the eviction it can start. */
+async function settleHashCheck(store: CalStore) {
+  await store.dispatch(cryptoAssetsApi.endpoints.getTokensSyncHash.initiate("ethereum"));
+  await new Promise(resolve => setTimeout(resolve, 0));
+}
 
 describe("Token Persistence", () => {
   describe("parsePersistedCAL", () => {
@@ -214,61 +257,117 @@ describe("Token Persistence", () => {
     });
   });
 
-  describe("filterExpiredTokens", () => {
-    const baseData = mockToken;
-
-    it("should keep tokens within TTL", () => {
-      const now = Date.now();
-      const ttl = 24 * 60 * 60 * 1000;
-      const tokens: PersistedTokenEntry[] = [
-        { data: baseData, timestamp: now - 1000 },
-        { data: baseData, timestamp: now - 12 * 60 * 60 * 1000 },
-      ];
-
-      expect(filterExpiredTokens(tokens, ttl)).toHaveLength(2);
-    });
-
-    it("should filter out expired tokens", () => {
-      const now = Date.now();
-      const ttl = 24 * 60 * 60 * 1000;
-      const tokens: PersistedTokenEntry[] = [
-        { data: baseData, timestamp: now - 1000 },
-        { data: baseData, timestamp: now - 25 * 60 * 60 * 1000 },
-      ];
-
-      expect(filterExpiredTokens(tokens, ttl)).toHaveLength(1);
-    });
-  });
-
   describe("restoreTokensToCache", () => {
-    const ttl = 24 * 60 * 60 * 1000;
+    const storedHash = "commit-before";
+    const currencies = jest.fn();
+    const server = setupServer(http.get("https://cal.test/v1/currencies", currencies));
 
-    it("should restore valid tokens to RTK Query cache", async () => {
-      const mockDispatch = jest.fn();
-      const persistedData: PersistedCAL = {
-        version: PERSISTENCE_VERSION,
-        tokens: [{ data: mockToken, timestamp: Date.now() }],
-      };
-
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
-
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
+    beforeAll(() => {
+      server.listen({ onUnhandledRequest: "error" });
+    });
+    beforeEach(() => {
+      currencies.mockReset();
+    });
+    afterEach(() => {
+      jest.useRealTimers();
+      server.resetHandlers();
+    });
+    afterAll(() => {
+      server.close();
     });
 
-    it("should skip expired tokens", async () => {
-      const mockDispatch = jest.fn();
-      const persistedData: PersistedCAL = {
-        version: PERSISTENCE_VERSION,
-        tokens: [{ data: mockToken, timestamp: Date.now() - 25 * 60 * 60 * 1000 }],
-      };
+    it("should restore the tokens and the stored hash before the hash check answers", async () => {
+      let answer: ((commit: string) => void) | undefined;
+      const answered = new Promise<string>(resolve => {
+        answer = resolve;
+      });
+      currencies.mockImplementation(async () => commitResponse(await answered));
+      const store = makeCalStore();
 
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
+      restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
 
-      expect(mockDispatch).not.toHaveBeenCalled();
+      expect(hashCheckStatus(store)).toBe("pending");
+      const saved = extractPersistedCALFromState(store.getState());
+      expect(saved.tokens.map(entry => entry.data.id)).toEqual([mockToken.id]);
+      expect(saved.hashes).toEqual({ ethereum: storedHash });
+
+      answer?.(storedHash);
+      await settleHashCheck(store);
     });
 
-    it("should restore tokens even when the parent currency is unknown (guard moved to the converter)", async () => {
-      const mockDispatch = jest.fn();
+    it("should keep the tokens when the hash is unchanged", async () => {
+      currencies.mockImplementation(() => commitResponse(storedHash));
+      const store = makeCalStore();
+
+      restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
+      await settleHashCheck(store);
+
+      const saved = extractPersistedCALFromState(store.getState());
+      expect(saved.tokens).toHaveLength(1);
+      expect(saved.hashes).toEqual({ ethereum: storedHash });
+    });
+
+    it("should evict the tokens and keep the new hash when the hash changed", async () => {
+      currencies.mockImplementation(() => commitResponse("commit-after"));
+      const store = makeCalStore();
+
+      restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
+      await settleHashCheck(store);
+
+      const saved = extractPersistedCALFromState(store.getState());
+      expect(saved.tokens).toHaveLength(0);
+      expect(saved.hashes).toEqual({ ethereum: "commit-after" });
+    });
+
+    it("should keep the tokens and the stored hash when the hash check fails", async () => {
+      jest.useFakeTimers();
+      currencies.mockImplementation(() => HttpResponse.json({}, { status: 503 }));
+      const store = makeCalStore();
+
+      restoreTokensToCache(store.dispatch, persistedToken(Date.now(), { ethereum: storedHash }));
+      // Long enough for the retries, shorter than the 60 s after which RTK drops unused entries.
+      await jest.advanceTimersByTimeAsync(10_000);
+
+      expect(hashCheckStatus(store)).toBe("rejected");
+      const saved = extractPersistedCALFromState(store.getState());
+      expect(saved.tokens).toHaveLength(1);
+      expect(saved.hashes).toEqual({ ethereum: storedHash });
+    });
+
+    it("should restore a token of any age when its currency has a stored hash", async () => {
+      currencies.mockImplementation(() => commitResponse(storedHash));
+      const store = makeCalStore();
+
+      restoreTokensToCache(
+        store.dispatch,
+        persistedToken(Date.now() - 2 * UNCHECKED_TOKEN_TTL, { ethereum: storedHash }),
+      );
+      await settleHashCheck(store);
+
+      expect(extractTokensFromState(store.getState())).toHaveLength(1);
+    });
+
+    it("should skip a token older than UNCHECKED_TOKEN_TTL when its currency has no stored hash", () => {
+      const store = makeCalStore();
+
+      restoreTokensToCache(store.dispatch, persistedToken(Date.now() - 2 * UNCHECKED_TOKEN_TTL));
+
+      expect(extractTokensFromState(store.getState())).toHaveLength(0);
+      expect(hashCheckStatus(store)).toBeUndefined();
+    });
+
+    it("should restore a recent token without a stored hash, with no hash check", () => {
+      const store = makeCalStore();
+
+      restoreTokensToCache(store.dispatch, persistedToken(Date.now()));
+
+      const saved = extractPersistedCALFromState(store.getState());
+      expect(saved.tokens).toHaveLength(1);
+      expect(saved.hashes).toBeUndefined();
+      expect(hashCheckStatus(store)).toBeUndefined();
+    });
+
+    it("should restore tokens even when the parent currency is unknown (guard moved to the converter)", () => {
       const orphanToken = token({
         type: "TokenCurrency",
         id: "ethereum/erc20/orphan",
@@ -279,98 +378,14 @@ describe("Token Persistence", () => {
         ticker: "ORPH",
         units: [{ name: "Orphan", code: "ORPH", magnitude: 18 }],
       });
-      const persistedData: PersistedCAL = {
+      const store = makeCalStore();
+
+      restoreTokensToCache(store.dispatch, {
         version: PERSISTENCE_VERSION,
         tokens: [{ data: orphanToken, timestamp: Date.now() }],
-      };
-
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
-
-      expect(mockDispatch).toHaveBeenCalledTimes(1);
-    });
-
-    it("should restore tokens when hash matches", async () => {
-      const storedHash = "hash123";
-      const mockDispatch = jest.fn(async action => {
-        if (typeof action === "function") {
-          return { data: storedHash, error: undefined };
-        }
-        return action;
       });
 
-      const persistedData: PersistedCAL = {
-        version: PERSISTENCE_VERSION,
-        tokens: [{ data: mockToken, timestamp: Date.now() }],
-        hashes: { ethereum: storedHash },
-      };
-
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
-
-      const invalidateCalls = mockDispatch.mock.calls.filter(call =>
-        String(call[0]).includes("invalidateTags"),
-      );
-      expect(invalidateCalls).toHaveLength(0);
-      expect(mockDispatch).toHaveBeenCalled();
-    });
-
-    it("should skip restore when hash changed", async () => {
-      const upsertActions: unknown[] = [];
-      const mockDispatch = jest.fn(async action => {
-        if (typeof action === "function") {
-          return { data: "hash456", error: undefined };
-        }
-        const actionType = (action as { type?: string })?.type || "";
-        if (actionType.includes("upsert")) upsertActions.push(action);
-        return action;
-      });
-
-      const persistedData: PersistedCAL = {
-        version: PERSISTENCE_VERSION,
-        tokens: [{ data: mockToken, timestamp: Date.now() }],
-        hashes: { ethereum: "hash123" },
-      };
-
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
-
-      expect(upsertActions).toHaveLength(0);
-    });
-
-    it("should skip restore when hash fetch fails", async () => {
-      const upsertActions: unknown[] = [];
-      const mockDispatch = jest.fn(async action => {
-        if (typeof action === "function") {
-          throw new Error("Network error");
-        }
-        const actionType = (action as { type?: string })?.type || "";
-        if (actionType.includes("upsert")) upsertActions.push(action);
-        return action;
-      });
-
-      const persistedData: PersistedCAL = {
-        version: PERSISTENCE_VERSION,
-        tokens: [{ data: mockToken, timestamp: Date.now() }],
-        hashes: { ethereum: "hash123" },
-      };
-
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
-
-      expect(upsertActions).toHaveLength(0);
-    });
-
-    it("should restore tokens without hash (backward compatibility)", async () => {
-      const mockDispatch = jest.fn();
-      const persistedData: PersistedCAL = {
-        version: PERSISTENCE_VERSION,
-        tokens: [{ data: mockToken, timestamp: Date.now() }],
-      };
-
-      await restoreTokensToCache(mockDispatch, persistedData, ttl);
-
-      const invalidateCalls = mockDispatch.mock.calls.filter(call =>
-        String(call[0]).includes("invalidateTags"),
-      );
-      expect(invalidateCalls).toHaveLength(0);
-      expect(mockDispatch).toHaveBeenCalled();
+      expect(extractTokensFromState(store.getState())).toHaveLength(1);
     });
   });
 
@@ -387,6 +402,34 @@ describe("Token Persistence", () => {
             'getTokensSyncHash("polygon")': {
               status: "fulfilled",
               data: "hash456",
+              endpointName: "getTokensSyncHash",
+            },
+          },
+        },
+      } as unknown as WithCryptoAssetsApi;
+
+      expect(extractHashesFromState(mockState)).toEqual({
+        ethereum: "hash123",
+        polygon: "hash456",
+      });
+    });
+
+    it("should keep the last hash of a check that is pending or failed", () => {
+      const mockState = {
+        [cryptoAssetsApi.reducerPath]: {
+          queries: {
+            'getTokensSyncHash("ethereum")': {
+              status: "pending",
+              data: "hash123",
+              endpointName: "getTokensSyncHash",
+            },
+            'getTokensSyncHash("polygon")': {
+              status: "rejected",
+              data: "hash456",
+              endpointName: "getTokensSyncHash",
+            },
+            'getTokensSyncHash("tron")': {
+              status: "rejected",
               endpointName: "getTokensSyncHash",
             },
           },
@@ -471,8 +514,6 @@ describe("Token Persistence", () => {
   });
 
   describe("integration: token_identifier round-trip", () => {
-    const ttl = 24 * 60 * 60 * 1000;
-
     function makeStore() {
       return configureStore({
         reducer: { [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer },
@@ -513,8 +554,7 @@ describe("Token Persistence", () => {
       expect(persisted.tokens[0].token_identifier).toBe("MYTOKEN-abc123");
 
       const newStore = makeStore();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await restoreTokensToCache(newStore.dispatch as any, persisted, ttl);
+      restoreTokensToCache(newStore.dispatch, persisted);
 
       const newQueries = newStore.getState()[cryptoAssetsApi.reducerPath].queries;
       const restoredEntry = Object.values(newQueries).find(
@@ -546,8 +586,7 @@ describe("Token Persistence", () => {
       expect(persisted.tokens[0].token_identifier).toBeUndefined();
 
       const newStore = makeStore();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await restoreTokensToCache(newStore.dispatch as any, persisted, ttl);
+      restoreTokensToCache(newStore.dispatch, persisted);
 
       const newQueries = newStore.getState()[cryptoAssetsApi.reducerPath].queries;
       const addressEntry = Object.values(newQueries).find(

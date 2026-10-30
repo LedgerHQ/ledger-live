@@ -214,13 +214,17 @@ describe("calculateFees", () => {
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 
-  it("should estimate fees again if transaction sourceValidator changed", async () => {
+  it("should estimate fees again if redelegation source validator changed", async () => {
     const acc = createAccount();
-    const tx = createTransaction();
+    const tx: Transaction = {
+      ...createTransaction(),
+      mode: "redelegate",
+      valAddress: "source",
+      dstValAddress: "destination",
+    };
     await calculateFees({ account: acc, transaction: tx });
     const callsAfterFirst = networkMock.mock.calls.length;
-    tx.sourceValidator = "source";
-    await calculateFees({ account: acc, transaction: tx });
+    await calculateFees({ account: acc, transaction: { ...tx, valAddress: "other source" } });
     expect(networkMock.mock.calls.length).toBeGreaterThan(callsAfterFirst);
   });
 

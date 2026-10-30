@@ -5,13 +5,22 @@ import {
   ExchangeType,
   UiHook,
   useConfig,
+  useDappSessionUiHook,
   useWalletAPIServer,
 } from "@ledgerhq/live-common/wallet-api/react";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
 import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation } from "@ledgerhq/types-live";
-import React, { type RefObject, forwardRef, useCallback, useEffect, useMemo, useRef } from "react";
+import React, {
+  type RefObject,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { userIdSelector } from "@domain/entity-client-identity";
@@ -30,6 +39,8 @@ import BigSpinner from "../BigSpinner";
 import { NetworkErrorScreen } from "./NetworkError";
 import { DappAccountGate } from "./DappAccountGate";
 import { getAttachedWebview, useWebviewState } from "./helpers";
+import { useWebviewBridgeMessages, useWebviewBridgeSession } from "./bridge";
+import type { WebviewBridgeMessage } from "~/bridge/contract";
 import { Loader as StyledLoader } from "./styled";
 import { WebviewAPI, WebviewProps, WebviewTag } from "./types";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -292,10 +303,10 @@ function useWebView(
     "manifest" | "customHandlers" | "currentAccountHistDb" | "setCurrentAccountHistDb" | "inputs"
   >,
   webviewRef: RefObject<WebviewTag | null>,
+  mainFrameUrl: string,
   tracking: TrackingAPI,
   serverRef: RefObject<WalletAPIServer | undefined>,
   customWebviewStyle?: React.CSSProperties,
-  manifestDomainCheckEnabled?: boolean,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
   const mevProtected = useSelector(mevProtectionSelector);
@@ -314,21 +325,15 @@ function useWebView(
   const webviewHook = useMemo(() => {
     return {
       reload: () => getAttachedWebview(webviewRef)?.reloadIgnoringCache(),
-      postMessage: (message: string) => {
-        const webview = webviewRef.current;
-        if (webview) {
-          const origin = new URL(webview.src).origin;
-          if (origin === "null") return;
-          webview.contentWindow?.postMessage(message, origin);
-        }
-      },
     };
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const bridge = useWebviewBridgeSession(webviewRef, mainFrameUrl);
+
   const walletState = useSelector(walletSelector);
 
-  const { widgetLoaded, onLoad, onReload, onMessage, server } = useWalletAPIServer({
+  const { widgetLoaded, onLoad, onReload, server } = useWalletAPIServer({
     accountNames: walletState.accountNames,
     manifest,
     accounts,
@@ -337,6 +342,7 @@ function useWebView(
     webviewHook,
     uiHook,
     customHandlers,
+    bridgeSession: bridge.session,
   });
 
   useEffect(() => {
@@ -345,64 +351,61 @@ function useWebView(
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  // A dapp request opens its UI, and is broadcast, only while the session it came from is open.
+  const dappUiHook = useDappSessionUiHook(bridge.session, uiHook);
   const { onDappMessage, noAccounts, isLoadingAccounts } = useDappLogic({
     manifest,
     accounts,
-    uiHook,
-    postMessage: webviewHook.postMessage,
+    uiHook: dappUiHook,
+    postMessage: bridge.session.send,
     currentAccountHistDb: currentAccountHistDb,
     setCurrentAccountHistDb: setCurrentAccountHistDb,
     tracking,
     initialAccountId: inputs?.accountId?.toString(),
     referrer: inputs?.referrer?.toString(),
     mevProtected,
+    session: bridge.session,
   });
 
-  const handleMessage = useCallback(
-    (event: Electron.IpcMessageEvent) => {
-      if (event.channel === "webviewToParent") {
-        onMessage(event.args[0]);
+  // A queued dapp message runs once its session is active, with the handler of that session.
+  const onDappMessageRef = useRef(onDappMessage);
+  useLayoutEffect(() => {
+    onDappMessageRef.current = onDappMessage;
+  }, [onDappMessage]);
+
+  const { accept } = bridge;
+  const handleBridgeMessage = useCallback(
+    ({ origin, channel, message }: WebviewBridgeMessage) => {
+      const session = accept(origin);
+      if (!session) return;
+      if (channel === "webviewToParent" && typeof message === "string") {
+        session.receive(message);
       }
-      if (event.channel === "dappToParent") {
-        onDappMessage(event.args[0]);
+      if (channel === "dappToParent" && typeof message === "object" && message !== null) {
+        session.deliver(() =>
+          onDappMessageRef.current(message as Parameters<typeof onDappMessage>[0]),
+        );
       }
     },
-    [onDappMessage, onMessage],
+    [accept],
   );
 
-  const handleDomReady = useCallback(() => {
-    const webview = webviewRef.current;
-    if (!webview) {
-      return;
-    }
-
-    const id = webview.getWebContentsId();
-
-    // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-    // When lldWebviewManifestDomainCheck is on, pass manifest.domains so main process enforces origin whitelist
-    globalThis.api?.openWindow(
-      id,
-      manifestDomainCheckEnabled ? (manifest.domains ?? []) : undefined,
-    );
-  }, [manifest.domains, manifestDomainCheckEnabled, webviewRef]);
+  useWebviewBridgeMessages(webviewRef, handleBridgeMessage);
 
   useEffect(() => {
     const webview = webviewRef.current;
 
     if (webview) {
       webview.addEventListener("did-finish-load", onLoad);
-      webview.addEventListener("ipc-message", handleMessage);
-      webview.addEventListener("dom-ready", handleDomReady);
     }
 
     return () => {
       if (webview) {
         webview.removeEventListener("did-finish-load", onLoad);
-        webview.removeEventListener("ipc-message", handleMessage);
-        webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
-  }, [handleDomReady, handleMessage, onLoad, webviewRef]);
+    // noAccounts: the webview only mounts once DappAccountGate is gone.
+  }, [onLoad, webviewRef, noAccounts]);
 
   const webviewStyle = useMemo(() => {
     return {
@@ -490,10 +493,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         inputs,
       },
       webviewRef,
+      webviewState.url,
       tracking,
       serverRef,
       customWebviewStyle,
-      manifestDomainCheckEnabled,
     );
     const isNetworkErrorVisible = !webviewState.loading && webviewState.isAppUnavailable;
     const displayedWebviewStyle = useMemo(
@@ -537,8 +540,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           // @ts-expect-error: see above comment
           allowpopups="true"
-          webpreferences="nativeWindowOpen=no"
           {...webviewProps}
+          webpreferences={`nativeWindowOpen=no,${webviewProps.webpreferences}`}
           {...webviewPartition}
         />
         {!hideLoader ? <Loader manifest={manifest} isLoading={!widgetLoaded} /> : null}

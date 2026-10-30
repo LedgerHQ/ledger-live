@@ -30,6 +30,7 @@ import { assignToAccountRaw, makeAssignFromAccountRaw } from "./serialization";
 import formatters from "./transaction";
 import { ZcashShieldedNotSupportedOnDevice } from "../types/errors";
 import { getZCashClient } from "../logic/engineClient";
+import { birthdayTimestamp } from "../logic/birthday";
 import {
   buildLegacyBroadcast,
   buildLegacyEstimateMaxSpendable,
@@ -50,6 +51,7 @@ export type ZcashAccountBridge = AccountBridge<Transaction, ZcashAccount, Transa
     options: { deviceId: string; path?: string },
   ) => Promise<GetFullViewingKeyResult>;
   deriveShieldedAddress: (ufvk: string) => Promise<string>;
+  findBlockHeightAtDate: (account: ZcashAccount, birthday: string) => Promise<number>;
   getShieldedAddress: (
     account: ZcashAccount,
     options: { deviceId: string; path?: string; display?: boolean },
@@ -164,6 +166,14 @@ export function createBridges(
         zainoEndpoint((await context.config("zcash")).zaino.url, "zcash"),
       );
       return client.deriveShieldedAddress(ufvk);
+    },
+    // Resolves a birthday to the block height a scan from that date starts at.
+    findBlockHeightAtDate: async (account, birthday) => {
+      const currencyId = account.currency.id;
+      const client = await getZCashClient(
+        zainoEndpoint((await context.config(currencyId)).zaino.url, currencyId),
+      );
+      return client.findBlockHeight(birthdayTimestamp(birthday));
     },
     getShieldedAddress: (account, { deviceId, path, display }) =>
       getShieldedAddressFn(deviceId, {

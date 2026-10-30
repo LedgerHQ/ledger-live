@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-zcash",
-  "version": "0.3.0",
+  "version": "0.3.1-next.1",
   "private": true,
   "sideEffects": false,
   "description": "Ledger Zcash Coin Tester",
@@ -69,7 +69,7 @@
     "@noble/curves": "catalog:",
     "@noble/hashes": "catalog:",
     "bignumber.js": "^9.1.2",
-    "bip39": "^3.1.0",
+    "bip39": "catalog:",
     "bs58": "catalog:",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",

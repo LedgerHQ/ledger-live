@@ -1,5 +1,6 @@
-import { AccountIdentifier } from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
+import { Principal } from "@icp-sdk/core/principal";
+import { MAX_NAT64 } from "../consts";
+import { AccountIdentifier } from "./accountIdentifier";
 
 type ValidationResult = { isValid: boolean; error?: string };
 
@@ -13,27 +14,18 @@ export const validatePrincipal = (principal: string): ValidationResult => {
   }
 };
 
-export const validateAddress = (address: string): ValidationResult => {
-  const defaultError = "Invalid address, account identifier could not be created.";
-  try {
-    const accId = AccountIdentifier.fromHex(address);
-    if (!accId?.toHex()) {
-      return { isValid: false, error: defaultError };
-    }
-    return { isValid: true };
-  } catch (e) {
-    return { isValid: false, error: e instanceof Error ? e.message || defaultError : defaultError };
-  }
-};
+// The checksum catches a mistyped identifier before funds go to an account nobody controls.
+export const validateAddress = (address: string): ValidationResult =>
+  AccountIdentifier.isValid(address)
+    ? { isValid: true }
+    : { isValid: false, error: "Invalid address, expected a 64-character account identifier." };
 
 // The ledger transfer memo is a Nat64; reject negative or out-of-range values up front rather
 // than letting Candid encoding fail at signing time.
-const MAX_MEMO = 2n ** 64n - 1n;
-
 export const validateMemo = (memo?: string): ValidationResult => {
   try {
     const value = BigInt(memo ?? 0);
-    if (value < 0n || value > MAX_MEMO) {
+    if (value < 0n || value > MAX_NAT64) {
       return { isValid: false };
     }
     return { isValid: true };

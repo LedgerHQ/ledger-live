@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-pay-feature-tour",
-  "version": "0.8.1",
+  "version": "0.8.2-next.0",
   "private": true,
   "description": "First-time Pay tab feature tour for Ledger Wallet (native bottom sheet, web dialog)",
   "main": "src/index.ts",
@@ -18,10 +18,9 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
-    "lint": "oxlint src && pnpm lint:tailwind",
-    "lint:ci": "oxlint src --quiet && pnpm lint:tailwind",
-    "lint:fix": "oxfmt src && oxlint src --fix --quiet && pnpm lint:tailwind",
-    "lint:tailwind": "eslint --no-eslintrc -c .eslintrc.tailwind.js --ext .ts,.tsx 'src/**/*.web.{ts,tsx}'",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -36,8 +35,9 @@
     "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
     "@shared/feature-flags": "workspace:^",
-    "@support/jest-features-flow": "workspace:*",
+    "@support/jest": "workspace:*",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
@@ -50,9 +50,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
-    "@typescript-eslint/parser": "catalog:",
-    "eslint": "8.57.0",
-    "eslint-plugin-better-tailwindcss": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",

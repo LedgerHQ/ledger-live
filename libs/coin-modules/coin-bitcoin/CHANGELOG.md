@@ -1,5 +1,26 @@
 # @ledgerhq/coin-bitcoin
 
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#23988](https://github.com/LedgerHQ/ledger-live/pull/23988) [`d37d80e`](https://github.com/LedgerHQ/ledger-live/commit/d37d80e128d89fcd80630fd4ef13c66587e3bebe) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - Bump `bitcoinjs-lib` to 7.0.5 and `bip39` to 3.1.2
+
+- [#23708](https://github.com/LedgerHQ/ledger-live/pull/23708) [`dd056b8`](https://github.com/LedgerHQ/ledger-live/commit/dd056b8a4c6c7c28879cfb1c44139b2479281987) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Bump ts-libs packages (`@ledgerhq/auth` 0.1.1, `@ledgerhq/devices` 8.18.1, `@ledgerhq/hw-transport` 6.36.1, `@ledgerhq/hw-transport-mocker` 6.35.1, `@ledgerhq/hw-ledger-key-ring-protocol` 1.0.1, `@ledgerhq/ledger-key-ring-protocol` 1.1.0, `@ledgerhq/live-config` 3.9.1, `@ledgerhq/psbtv2` 0.6.2), `zod` 4.6.7, `semver` 7.8.5, `lodash` 4.18.1, and catalog `bitcoinjs-lib` 7.0.4.
+
+- [#23465](https://github.com/LedgerHQ/ledger-live/pull/23465) [`c4b7982`](https://github.com/LedgerHQ/ledger-live/commit/c4b79825af9468fbb8f5325e77e47536d6b392e9) Thanks [@ysitbon](https://github.com/ysitbon)! - chore(coin): prefix unused parameters with an underscore
+
+  The packages now build with `noUnusedLocals` and `noUnusedParameters`. The parameters they never read are renamed with a leading underscore; signatures and behaviour are unchanged.
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`d37d80e`](https://github.com/LedgerHQ/ledger-live/commit/d37d80e128d89fcd80630fd4ef13c66587e3bebe), [`dd056b8`](https://github.com/LedgerHQ/ledger-live/commit/dd056b8a4c6c7c28879cfb1c44139b2479281987), [`c4b7982`](https://github.com/LedgerHQ/ledger-live/commit/c4b79825af9468fbb8f5325e77e47536d6b392e9), [`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/wallet-btc@1.1.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.0.0
 
 ### Major Changes
@@ -362,70 +383,6 @@
   - @ledgerhq/live-signer-zcash@0.10.0-next.0
   - @ledgerhq/ledger-wallet-framework@3.0.0-next.0
   - @ledgerhq/types-live@6.120.0-next.0
-  - @ledgerhq/wallet-btc@0.3.0
-
-## 0.51.0
-
-### Minor Changes
-
-- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
-
-  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
-
-  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
-
-- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
-
-  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
-
-  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
-
-- [#20477](https://github.com/LedgerHQ/ledger-live/pull/20477) [`8559d54`](https://github.com/LedgerHQ/ledger-live/commit/8559d54293b7854ea2dc900625bdb746720a4a85) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Remove the legacy Zcash shielded/PCZT chain-adapter (LIVE-35524).
-
-  Its shielded path is superseded by the standalone `@ledgerhq/coin-zcash` module, which now carries all Zcash traffic when the `zcashShielded` feature flag is on; the toggle inside `coin-bitcoin` has been hardcoded off for a while, so the PCZT build/sign/broadcast, the shielded balance/status/sync and the native Halo2/IPC engine were dead code exercised only by this package's own tests. Removed along with the now-unreachable Zcash-specific branches in `getTransactionStatus`/`updateTransaction`/`errors` and the `@ledgerhq/zcash-utils` dependency.
-
-  The transparent PSBT path used when the flag is off is unchanged: `createSigner`, `getAddress`, `getWalletXpub`, `getFullViewingKey` and the ZIP-317 fee pricer still back it exactly as before.
-
-- [#20615](https://github.com/LedgerHQ/ledger-live/pull/20615) [`4d27e41`](https://github.com/LedgerHQ/ledger-live/commit/4d27e41c217cfae16526357a1a78db15c6980950) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash shielded state (the unified full viewing key) being dropped on every restart.
-
-### Patch Changes
-
-- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`ec0be9c`](https://github.com/LedgerHQ/ledger-live/commit/ec0be9c545259dd0dc2d2578dfabef3211f72e76), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/types-live@6.119.0
-  - @ledgerhq/ledger-wallet-framework@2.8.0
-  - @ledgerhq/live-signer-zcash@0.9.0
-  - @ledgerhq/wallet-btc@0.3.0
-
-## 0.51.0-next.0
-
-### Minor Changes
-
-- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
-
-  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
-
-  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
-
-- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
-
-  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
-
-  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
-
-- [#20477](https://github.com/LedgerHQ/ledger-live/pull/20477) [`8559d54`](https://github.com/LedgerHQ/ledger-live/commit/8559d54293b7854ea2dc900625bdb746720a4a85) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Remove the legacy Zcash shielded/PCZT chain-adapter (LIVE-35524).
-
-  Its shielded path is superseded by the standalone `@ledgerhq/coin-zcash` module, which now carries all Zcash traffic when the `zcashShielded` feature flag is on; the toggle inside `coin-bitcoin` has been hardcoded off for a while, so the PCZT build/sign/broadcast, the shielded balance/status/sync and the native Halo2/IPC engine were dead code exercised only by this package's own tests. Removed along with the now-unreachable Zcash-specific branches in `getTransactionStatus`/`updateTransaction`/`errors` and the `@ledgerhq/zcash-utils` dependency.
-
-  The transparent PSBT path used when the flag is off is unchanged: `createSigner`, `getAddress`, `getWalletXpub`, `getFullViewingKey` and the ZIP-317 fee pricer still back it exactly as before.
-
-- [#20615](https://github.com/LedgerHQ/ledger-live/pull/20615) [`4d27e41`](https://github.com/LedgerHQ/ledger-live/commit/4d27e41c217cfae16526357a1a78db15c6980950) Thanks [@semeano](https://github.com/semeano)! - Fix Zcash shielded state (the unified full viewing key) being dropped on every restart.
-
-### Patch Changes
-
-- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`ec0be9c`](https://github.com/LedgerHQ/ledger-live/commit/ec0be9c545259dd0dc2d2578dfabef3211f72e76), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/types-live@6.119.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
-  - @ledgerhq/live-signer-zcash@0.9.0-next.0
   - @ledgerhq/wallet-btc@0.3.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

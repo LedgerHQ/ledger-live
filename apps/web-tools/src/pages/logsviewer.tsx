@@ -34,13 +34,13 @@ import {
   decodeAccountId,
   shortAddressPreview,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
+  findCryptoCurrencyById,
   getAddressExplorer,
   getDefaultExplorerView,
   getTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { syncAccount } from "../logic/syncAccount";
 
 type App = {
@@ -545,7 +545,7 @@ const RawLogsTable = ({ logs }: { logs: Log[] }) => {
       <div className="sticky top-0 z-10 border-b border-base bg-canvas">
         <div className="grid" style={{ gridTemplateColumns }}>
           {table.getFlatHeaders().map(header => (
-            <div key={header.id} className="px-8 py-4 body-4 font-medium text-muted">
+            <div key={header.id} className="px-8 py-4 body-4 text-muted">
               {String(header.column.columnDef.header)}
             </div>
           ))}
@@ -818,7 +818,7 @@ function LogsDashboard({
               {deviceLog ? (
                 <Section title="Device">
                   <div className="body-2 text-base">
-                    Last connected: <span className="font-medium">{deviceModel}</span>
+                    Last connected: <span>{deviceModel}</span>
                     {deviceVersion ? <span className="text-muted"> · {deviceVersion}</span> : null}
                   </div>
                   {deviceLog.modelIdList && deviceLog.modelIdList.length > 0 ? (

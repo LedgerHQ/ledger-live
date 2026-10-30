@@ -3,6 +3,7 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class AccountsPage extends AppPage {
   private accountsTitle = this.page.getByRole("heading", { name: "Accounts" });
@@ -123,7 +124,7 @@ export class AccountsPage extends AppPage {
   }
 
   @step("Expect number of accounts to be $0")
-  async expectAccountsCount(count: number, timeout = 30_000) {
+  async expectAccountsCount(count: number, timeout = TIMEOUT.xlarge) {
     const visibleAccountsList = await this.getVisibleAccountsList();
     await expect(visibleAccountsList).toHaveCount(count, { timeout });
   }
@@ -152,7 +153,7 @@ export class AccountsPage extends AppPage {
   async expectReduxAccountsLength(count: number) {
     await expect
       .poll(async () => (await this.getReduxAccountIds()).length, {
-        timeout: 60_000,
+        timeout: TIMEOUT.xxlarge,
       })
       .toBe(count);
   }
@@ -168,7 +169,7 @@ export class AccountsPage extends AppPage {
             expectedAccountIds.every(accountId => accountIds.includes(accountId))
           );
         },
-        { timeout: 60_000 },
+        { timeout: TIMEOUT.xxlarge },
       )
       .toBe(true);
   }
@@ -176,9 +177,9 @@ export class AccountsPage extends AppPage {
   @step("Expect account row for $0 to be visible")
   async expectCryptoAccountRowVisible(accountName: string) {
     const row = await this.getAccountRow(accountName);
-    await row.waitFor({ state: "attached", timeout: 120_000 });
+    await row.waitFor({ state: "attached", timeout: TIMEOUT.xxxlarge });
     await row.scrollIntoViewIfNeeded();
-    await expect(row).toBeVisible({ timeout: 60_000 });
+    await expect(row).toBeVisible({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Expect at least one visible account in the list")

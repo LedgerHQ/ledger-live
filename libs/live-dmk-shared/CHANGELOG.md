@@ -1,5 +1,32 @@
 # @ledgerhq/live-dmk
 
+## 0.37.0-next.0
+
+### Minor Changes
+
+- [#22763](https://github.com/LedgerHQ/ledger-live/pull/22763) [`6b445da`](https://github.com/LedgerHQ/ledger-live/commit/6b445da2f92d7c630424faa7cc31a01bc67db0b9) Thanks [@michalmisiejuk-ext-collab](https://github.com/michalmisiejuk-ext-collab)! - Run device commands against Speculos when `SPECULOS_API_PORT` is set, with stable exit codes when the emulator is unreachable. `live-dmk-shared` now owns the Speculos target parsing and transport factory shared with `live-dmk-desktop`
+
+- [#23693](https://github.com/LedgerHQ/ledger-live/pull/23693) [`bfaac14`](https://github.com/LedgerHQ/ledger-live/commit/bfaac14201bb12b1f4b6e6a6d68ab4a0daa55b5c) Thanks [@sarneijim](https://github.com/sarneijim)! - Close a device session that connects after the connection attempt is cancelled
+
+- [#23288](https://github.com/LedgerHQ/ledger-live/pull/23288) [`6ea7918`](https://github.com/LedgerHQ/ledger-live/commit/6ea791860eef5b92cc6041ba171e8846e88ef2c8) Thanks [@benruseau](https://github.com/benruseau)! - Plug the OS Update Orchestrator into My Ledger on mobile, behind the `ldmkOsUpdates` feature flag.
+
+  - Connecting to My Ledger resolves the OS update path and stores the updates in a new `osUpdate` slice, while the connect bottom sheet stays in its loading state. A resolve failure still lands on My Ledger.
+  - The OS update banner (portfolio and My Ledger) is driven by that slice and gated by device model, firmware version and USB/BLE connection. From the portfolio, it redirects to My Ledger, which reconnects the device and opens the What's new page through the `firmwareUpdate` param.
+  - Confirming What's new starts the orchestrator. Once the updates are applied the slice is cleared, and a cancel or a crash reconnects through My Ledger, which resolves the path again.
+  - `@ledgerhq/live-dmk-mobile` adds `getActiveConnectedDevice`, which returns the connected device of the session the transports are using, as the DMK can hold several sessions at once.
+  - `@ledgerhq/live-dmk-shared` exports the `OsUpdate` type.
+  - `@ledgerhq/live-common` adds an optional `onCompleted` callback to `OsUpdatesOrchestratorComponent`.
+
+- [#23313](https://github.com/LedgerHQ/ledger-live/pull/23313) [`b977dbb`](https://github.com/LedgerHQ/ledger-live/commit/b977dbb2d8d6459295210b491b33af6e8bace1da) Thanks [@benruseau](https://github.com/benruseau)! - OS updates on mobile (`ldmkOsUpdates`): run the orchestrator from the bootloader sheet in My Ledger, and show a "Backup found" banner to restore or delete the backup left by an interrupted update. `live-dmk-shared` now exports `hasAnythingToRestore`.
+
+- [#23375](https://github.com/LedgerHQ/ledger-live/pull/23375) [`77bc92f`](https://github.com/LedgerHQ/ledger-live/commit/77bc92ff77d029d570f7b2553919222ee0e598ca) Thanks [@benruseau](https://github.com/benruseau)! - Add logs to the OS updates state machines
+
+### Patch Changes
+
+- Updated dependencies [[`6ba7d71`](https://github.com/LedgerHQ/ledger-live/commit/6ba7d7194f8f8e3c96303537ccdf944ac7bf53a7), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359)]:
+  - @domain/entity-client-identity@0.4.0-next.0
+  - @ledgerhq/types-devices@7.2.0-next.0
+
 ## 0.36.0
 
 ### Minor Changes
@@ -261,27 +288,5 @@
 
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.35.6-next.0
-
-## 0.27.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.5
-
-## 0.27.0-next.0
-
-### Minor Changes
-
-- [#18627](https://github.com/LedgerHQ/ledger-live/pull/18627) [`7fcf623`](https://github.com/LedgerHQ/ledger-live/commit/7fcf62387e642e10b23503a786e230b11d051cb6) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump Device Management Kit to 1.7.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.35.5-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

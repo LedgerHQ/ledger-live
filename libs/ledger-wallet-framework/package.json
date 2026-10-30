@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/ledger-wallet-framework",
-  "version": "3.8.0",
+  "version": "3.9.0-next.0",
   "description": "Framework for Ledger Wallet",
   "keywords": [
     "Ledger",
@@ -136,6 +136,13 @@
     "oxlint": "catalog:",
     "timemachine": "^0.3.2"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "types",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rm -rf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

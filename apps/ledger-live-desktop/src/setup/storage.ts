@@ -1,15 +1,14 @@
-import type { ConfigStorage } from "@shared/app-config";
+import { jsonConfigStorage, type AppConfigStorage, type StorageKey } from "@shared/app-config";
 
-const STORAGE_KEY = "appConfigSelections";
-export const appConfigStorage: ConfigStorage = {
-  getAll: () => JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}"),
-  clear: () => localStorage.removeItem(STORAGE_KEY),
-  set: (key, value) =>
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        ...JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}"),
-        [key]: value,
-      }),
-    ),
+export const appConfigStorage: AppConfigStorage = {
+  selections: jsonConfigStorage(localStorageKey("appConfigSelections")),
+  devValues: jsonConfigStorage(localStorageKey("appConfigDevValues")),
 };
+
+function localStorageKey(key: string): StorageKey {
+  return {
+    get: () => localStorage.getItem(key),
+    set: (value: string) => localStorage.setItem(key, value),
+    remove: () => localStorage.removeItem(key),
+  };
+}

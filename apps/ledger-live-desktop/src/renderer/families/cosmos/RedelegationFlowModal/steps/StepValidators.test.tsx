@@ -7,13 +7,14 @@ import type {
   CosmosMappedDelegation,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import StepValidators from "./StepValidators";
+import StepValidators, { StepValidatorsFooter } from "./StepValidators";
 import type { StepProps } from "../types";
 
+const mockUpdateTransaction = jest.fn((tx: object, patch: object) => ({ ...tx, ...patch }));
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: () => ({
     createTransaction: () => ({}),
-    updateTransaction: (tx: object, patch: object) => ({ ...tx, ...patch }),
+    updateTransaction: mockUpdateTransaction,
   }),
 }));
 jest.mock("~/renderer/hooks/useAccountUnit", () => ({
@@ -25,15 +26,11 @@ jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 const VALIDATOR_B = { validatorAddress: "validatorB", name: "Validator B" };
-
-jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
-  useCosmosFamilyPreloadData: () => ({ validators: [VALIDATOR_A, VALIDATOR_B] }),
-}));
 
 let selectorOnChange: ((delegation?: CosmosMappedDelegation | null) => void) | null = null;
 jest.mock("../fields/RedelegationSelectorField", () => ({
@@ -62,7 +59,15 @@ const buildAccount = (): CosmosAccount =>
       delegations: [
         { validatorAddress: "validatorA", amount: BigNumber(100), pendingRewards: BigNumber(0) },
       ],
+      validators: [VALIDATOR_A, VALIDATOR_B],
     },
+  }) as unknown as CosmosAccount;
+
+const noStakingAccount = () =>
+  ({
+    type: "Account",
+    freshAddress: "cosmos1test",
+    currency: getCryptoCurrencyById("cosmos"),
   }) as unknown as CosmosAccount;
 
 const buildProps = (transaction: Partial<Transaction>): StepProps =>
@@ -121,6 +126,10 @@ describe("Cosmos Redelegation StepValidators", () => {
     const result = updater(props.transaction as Transaction);
     expect(result.valAddress).toBe("validatorA");
     expect(result.amount).toEqual(BigNumber(100));
+    expect(mockUpdateTransaction).toHaveBeenCalledWith(props.transaction, {
+      valAddress: "validatorA",
+      amount: BigNumber(100),
+    });
   });
 
   it("defaults the amount to zero when the selected source validator has no matching delegation", () => {
@@ -156,5 +165,25 @@ describe("Cosmos Redelegation StepValidators", () => {
     const { user } = render(<StepValidators {...props} />);
     await user.click(screen.getByText("cosmos.redelegation.flow.steps.validators.chooseValidator"));
     expect(props.transitionTo).toHaveBeenCalledWith("destinationValidators");
+  });
+
+  describe("without staking resources", () => {
+    beforeEach(() => {
+      jest.spyOn(console, "error").mockImplementation(() => undefined);
+    });
+
+    it("throws from the step", () => {
+      const props = { ...buildProps({ valAddress: "validatorA" }), account: noStakingAccount() };
+      expect(() => render(<StepValidators {...props} />)).toThrow(
+        "cosmos staking account required",
+      );
+    });
+
+    it("throws from the footer", () => {
+      const props = { ...buildProps({ valAddress: "validatorA" }), account: noStakingAccount() };
+      expect(() => render(<StepValidatorsFooter {...props} />)).toThrow(
+        "cosmos staking account required",
+      );
+    });
   });
 });

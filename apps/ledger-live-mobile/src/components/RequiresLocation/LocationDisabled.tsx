@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
+import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
-import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
 import NoLocationImage from "~/icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
@@ -10,6 +10,13 @@ import { IsInBottomSheetContext } from "@shared/ui-queued-bottom-sheet";
 type Props = {
   onRetry?: (() => void) | null;
   forceOpenSettings?: boolean;
+};
+
+// Only handles android
+const openNativeLocationServicesSetting = () => {
+  Linking.sendIntent("android.settings.LOCATION_SOURCE_SETTINGS")
+    .catch(() => Linking.openSettings())
+    .catch(console.error);
 };
 
 /**
@@ -26,19 +33,6 @@ type Props = {
 const LocationDisabled: React.FC<Props> = ({ onRetry, forceOpenSettings = false }) => {
   const { t } = useTranslation();
   const { isInBottomSheet } = useContext(IsInBottomSheetContext);
-
-  // Only handles android
-  const openNativeLocationServicesSetting = () => {
-    LocationServicesDialogBox.checkLocationServicesIsEnabled({
-      enableHighAccuracy: false,
-      showDialog: false,
-      openLocationServices: true,
-    })
-      .then()
-      .catch(() => {
-        // Nothing to do: location is still disabled
-      });
-  };
 
   let onButtonPress;
   let buttonLabel;

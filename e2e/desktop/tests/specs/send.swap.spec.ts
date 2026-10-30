@@ -12,6 +12,8 @@ import {
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 
@@ -35,8 +37,8 @@ const swaps = [
     tag: [...DEVICE_TAGS, "@swapSmoke", "@ethereum", "@family-evm"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: Account.ETH_1,
+    fromAccount: TokenAccount.ETH_USDT_5,
+    toAccount: Account.ETH_5,
     xrayTicket: "B2CQA-2752, B2CQA-2048",
     tag: [...DEVICE_TAGS, "@swapSmoke", "@ethereum", "@family-evm"],
   },
@@ -47,13 +49,13 @@ const swaps = [
     tag: [...DEVICE_TAGS, "@bitcoin", "@family-bitcoin", "@ethereum", "@family-evm"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_5,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2753",
     tag: [...DEVICE_TAGS, "@swapSmoke", "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
+    fromAccount: TokenAccount.ETH_USDT_5,
     toAccount: Account.SOL_1,
     xrayTicket: "B2CQA-2751",
     tag: [...DEVICE_TAGS, "@swapSmoke", "@ethereum", "@family-evm", "@solana", "@family-solana"],
@@ -109,14 +111,14 @@ const swaps = [
     ],
   },
   {
-    fromAccount: TokenAccount.ETH_USDC_1,
+    fromAccount: TokenAccount.ETH_USDC_5,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2832, B2CQA-3281",
     tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@family-bitcoin", "@bitcoin"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.ETH_1,
+    fromAccount: TokenAccount.ETH_USDC_5,
+    toAccount: Account.ETH_5,
     xrayTicket: "B2CQA-2830, B2CQA-3281",
     tag: [...DEVICE_TAGS, "@swapSmoke", "@ethereum", "@family-evm"],
   },
@@ -180,7 +182,12 @@ const swaps = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason } of swaps) {
-  test.describe("Swap - accepted", () => {
+  // The provider is picked as the test runs, so any token account may need an approval.
+  const approvalLock = exclusiveLockFor({
+    cliBroadcastAccounts: fromAccount.parentAccount ? [fromAccount] : [],
+  });
+
+  test.describe("Swap - accepted", { lock: approvalLock.names }, () => {
     test.skip(!!skipReason, skipReason);
 
     setupEnv(true);
@@ -201,6 +208,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: exchangeApp,
+      ...approvalLock.fixtures,
 
       cliCommandsOnApp: [
         [
@@ -226,13 +234,14 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
           description: xrayTicket,
         },
       },
-      async ({ app, speculos }) => {
+      async ({ app, speculos, exclusiveLock }) => {
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
+        if (!needsTokenAllowance(fromAccount, provider)) await exclusiveLock.release();
         await ensureTokenApproval(fromAccount, provider, minAmount);
         await app.swap.checkQuoteCardCtaPresence(provider.uiName);
 

@@ -9,7 +9,12 @@ import type { Dispatch } from "redux";
 import { useCallback } from "react";
 import { useDispatch } from "LLD/hooks/redux";
 
-import { openDialog, closeDialog as closeDialogAction } from "~/renderer/reducers/modularDialog";
+import {
+  openDialog,
+  closeDialog as closeDialogAction,
+  setFlowValue,
+  setSourceValue,
+} from "~/renderer/reducers/modularDialog";
 
 export type AssetAndAccountResult = {
   account: AccountLike;
@@ -22,6 +27,8 @@ type DrawerParams = {
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   useCase?: string;
   uiUseCase?: string;
+  flow?: string;
+  source?: string;
   areCurrenciesFiltered?: boolean;
   onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
   onCancel?: () => void;
@@ -34,6 +41,8 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
     drawerConfiguration,
     useCase,
     uiUseCase,
+    flow,
+    source,
     areCurrenciesFiltered,
     onSuccess,
     onCancel,
@@ -50,6 +59,11 @@ function openAssetAndAccountDialog(params: DrawerParams, dispatch: Dispatch) {
     dispatch(closeDialogAction());
     onCancel?.();
   };
+
+  if (flow !== undefined) {
+    dispatch(setFlowValue(flow));
+    dispatch(setSourceValue(source ?? ""));
+  }
 
   dispatch(
     openDialog({

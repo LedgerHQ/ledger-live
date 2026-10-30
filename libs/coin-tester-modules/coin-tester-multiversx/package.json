@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-multiversx",
-  "version": "0.4.8",
+  "version": "0.4.9-next.1",
   "private": true,
   "description": "Ledger MultiversX Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -60,7 +60,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@multiversx/sdk-core": "^13.7.0",
     "bignumber.js": "^9",
-    "bip39": "^3.1.0",
+    "bip39": "catalog:",
     "chalk": "^4",
     "docker-compose": "^1",
     "msw": "catalog:"

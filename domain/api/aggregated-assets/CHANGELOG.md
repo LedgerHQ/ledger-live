@@ -1,5 +1,17 @@
 # @domain/api-aggregated-assets
 
+## 0.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8), [`3a1e006`](https://github.com/LedgerHQ/ledger-live/commit/3a1e0066dfdeaa93e5b087396ee84100a607098a), [`5e2a324`](https://github.com/LedgerHQ/ledger-live/commit/5e2a3245cc163b6cc13ef5fd2b7faa85c84ca153), [`6ea25da`](https://github.com/LedgerHQ/ledger-live/commit/6ea25da0c6060df6aa5056eceacaeedf3d76d2ba), [`0953772`](https://github.com/LedgerHQ/ledger-live/commit/0953772eafec52773cf7a19c08295c72a2e296a2)]:
+  - @domain/entity-currency-crypto@0.17.0-next.0
+  - @domain/api-currency-token@0.7.0-next.0
+  - @shared/api-services@0.11.0-next.0
+  - @domain/entity-currency@0.4.8-next.0
+  - @domain/entity-currency-token@0.5.7-next.0
+  - @shared/env@0.11.0
+
 ## 0.6.1
 
 ### Patch Changes
@@ -276,14 +288,4 @@
   - @domain/entity-interest-rate@0.3.0-next.0
   - @domain/entity-aggregated-asset@0.3.0-next.0
 
-## 0.2.0
-
-### Minor Changes
-
-- [#20285](https://github.com/LedgerHQ/ledger-live/pull/20285) [`d96324e`](https://github.com/LedgerHQ/ledger-live/commit/d96324e53bb42cf6ca645a71d242ee2d6d49e0b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Scaffold the DDD packages that will receive the dada-client code: the aggregated-asset and interest-rate entities, the aggregated-assets API client and its app-facing platform layer
-
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20285](https://github.com/LedgerHQ/ledger-live/pull/20285) [`d96324e`](https://github.com/LedgerHQ/ledger-live/commit/d96324e53bb42cf6ca645a71d242ee2d6d49e0b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Scaffold the DDD packages that will receive the dada-client code: the aggregated-asset and interest-rate entities, the aggregated-assets API client and its app-facing platform layer
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

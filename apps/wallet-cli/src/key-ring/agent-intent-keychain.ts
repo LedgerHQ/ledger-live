@@ -1,10 +1,4 @@
-import {
-  keychainEntry,
-  deleteKeychainEntry,
-  hasKeychainEntry,
-  wrapSecret,
-  unwrapSecret,
-} from "./keychain-entry";
+import { keychainEntry, deleteKeychainEntry, wrapSecret, unwrapSecret } from "./keychain-entry";
 
 /**
  * Thrown when a stored Agent Intent secret key is password-protected (`ENC:`) but no wrapping key
@@ -66,8 +60,9 @@ export async function loadAgentIntentSecretKey(
 
 // "Deleted" and "already absent" both satisfy the postcondition (no key remains).
 export const deleteAgentIntentSecretKey = (profileId: string): boolean =>
-  deleteKeychainEntry(getEntry(profileId));
+  deleteKeychainEntry(() => getEntry(profileId));
 
-/** Whether a secret key is present in the OS keychain for this Agent Intent profile id. */
+/** Whether a secret key is present in the OS keychain for this Agent Intent profile id. Throws when
+ * the entry can't be read (e.g. a locked collection), which is no proof that it is absent. */
 export const hasAgentIntentSecretKey = (profileId: string): boolean =>
-  hasKeychainEntry(getEntry(profileId));
+  getEntry(profileId).getPassword() != null;

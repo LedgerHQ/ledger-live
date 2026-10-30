@@ -2,9 +2,9 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Search } from "@ledgerhq/lumen-ui-react/symbols";
-import { DialogBackgroundContext } from "./background/DialogBackgroundContext.web";
-import { InfoState } from "./InfoState.web";
-import type { InfoStatePreset } from "./types.web";
+import { DialogBackgroundContext } from "./background/DialogBackgroundContext";
+import { InfoState } from "./InfoState";
+import type { InfoStatePreset } from "./sharedTypes";
 
 type VisualInfoStatePreset = Exclude<InfoStatePreset, "text">;
 
@@ -35,6 +35,12 @@ describe("InfoState", () => {
     expect(screen.getByText("State description")).toBeVisible();
     expect(screen.getByText("Banner title")).toBeVisible();
     expect(screen.getByText("Banner description")).toBeVisible();
+  });
+
+  it("should put the banner's testID on the banner when one is given", () => {
+    render(<InfoState preset="error" banner={{ title: "Banner title", testID: "info-banner" }} />);
+
+    expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner title");
   });
 
   it("GIVEN a rendered InfoState with primary and secondary CTAs WHEN the user clicks each CTA THEN the matching onPress handler is invoked", async () => {

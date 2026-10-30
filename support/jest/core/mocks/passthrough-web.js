@@ -1,0 +1,197 @@
+const React = require("react");
+const TooltipOpenContext = React.createContext();
+const DialogOpenContext = React.createContext();
+const PopoverOpenContext = React.createContext();
+
+function resolveAvatarColor(identifier) {
+  return `avatar-color:${identifier}`;
+}
+
+// The real Dialog keeps its content out of the DOM while closed, so consumers can assert on
+// `queryByTestId(...)` being absent. `Dialog` only publishes `open` (no DOM node of its own) and
+// `DialogContent` opts out of rendering when closed, mirroring the Tooltip stubs below.
+function Dialog({ children, open }) {
+  return React.createElement(DialogOpenContext.Provider, { value: open }, children);
+}
+
+function DialogContent({ children, ...props }) {
+  if (React.useContext(DialogOpenContext) === false) return null;
+
+  return React.createElement("div", props, children);
+}
+
+// Render the header's back and close buttons so tests can query them by their real Lumen labels.
+function DialogHeader({ title, description, onBack, onClose }) {
+  return React.createElement(
+    "div",
+    undefined,
+    onBack === undefined
+      ? null
+      : React.createElement("button", { type: "button", "aria-label": "Go back", onClick: onBack }),
+    title === undefined ? null : React.createElement("h2", undefined, title),
+    description === undefined ? null : React.createElement("p", undefined, description),
+    React.createElement("button", { type: "button", "aria-label": "Close", onClick: onClose }),
+  );
+}
+
+function Avatar(avatarProps) {
+  const { alt, fallbackColor, fallbackText, size = "md", ...props } = avatarProps;
+  const hasAriaLabel = Object.hasOwn(avatarProps, "aria-label");
+  const hasRole = Object.hasOwn(avatarProps, "role");
+
+  return React.createElement(
+    "div",
+    {
+      ...props,
+      role: hasRole ? avatarProps.role : "img",
+      "aria-label": hasAriaLabel ? avatarProps["aria-label"] : alt,
+      "data-fallback-color": fallbackColor,
+      "data-size": size,
+    },
+    fallbackText,
+  );
+}
+
+function InteractiveIcon({ icon: _icon, iconType: _iconType, size: _size, ...props }) {
+  return React.createElement("button", { type: "button", ...props });
+}
+
+function IconButton({ icon: _icon, size: _size, ...props }) {
+  return React.createElement("button", { type: "button", ...props });
+}
+
+// Text passed through props (Banner's title/description, Tag's label) has to be rendered as
+// children to be queryable, but the props must stay on the node too: consumer tests assert on
+// them (e.g. `toHaveAttribute("label", …)`), which the generic stub below supported.
+// Banner actions are elements: they are rendered, like in the native stub, not set as attributes.
+function Banner({ children, title, description, primaryAction, secondaryAction, ...props }) {
+  return React.createElement(
+    "div",
+    { ...props, title, description },
+    title === undefined ? null : React.createElement("span", undefined, title),
+    description === undefined ? null : React.createElement("span", undefined, description),
+    children,
+    primaryAction,
+    secondaryAction,
+  );
+}
+
+function Tag({ label, children, ...props }) {
+  return React.createElement("span", { ...props, label }, label, children);
+}
+
+// `MenuTrigger` takes its trigger element through `render`, not through children, so the generic
+// stub would drop it and the consumer's button would never reach the DOM.
+function MenuTrigger({ render, children, ...props }) {
+  if (React.isValidElement(render)) return React.cloneElement(render, props);
+
+  return React.createElement("button", { type: "button", ...props }, children);
+}
+
+function Tooltip({ children, onOpenChange, open }) {
+  return React.createElement(
+    TooltipOpenContext.Provider,
+    { value: open },
+    React.createElement(
+      "div",
+      {
+        "data-open": String(open),
+        onMouseEnter: () => onOpenChange?.(true),
+        onMouseLeave: () => onOpenChange?.(false),
+        onFocus: () => onOpenChange?.(true),
+        onBlur: () => onOpenChange?.(false),
+      },
+      children,
+    ),
+  );
+}
+
+function TooltipTrigger({ children }) {
+  return React.createElement(React.Fragment, undefined, children);
+}
+
+function Popover({ children, open }) {
+  return React.createElement(PopoverOpenContext.Provider, { value: open }, children);
+}
+
+function PopoverTrigger({ render, children }) {
+  if (typeof render === "function") {
+    return render({});
+  }
+  if (React.isValidElement(render)) {
+    return render;
+  }
+  return React.createElement(React.Fragment, undefined, children);
+}
+
+function PopoverContent({ children, ...props }) {
+  if (React.useContext(PopoverOpenContext) === false) return null;
+
+  return React.createElement("div", props, children);
+}
+
+function TooltipContent({ children, ...props }) {
+  if (React.useContext(TooltipOpenContext) === false) return null;
+
+  return React.createElement("div", { ...props, role: "tooltip" }, children);
+}
+
+function createPassthroughComponent() {
+  return function LumenStub({ children, ...props }) {
+    if (props.onChange !== undefined && props.value !== undefined) {
+      return React.createElement("input", props);
+    }
+
+    if (props.onClick !== undefined) {
+      return React.createElement("button", { type: "button", ...props }, children);
+    }
+
+    return React.createElement("div", props, children);
+  };
+}
+
+// One component per export name: the CJS interop re-reads `exports.TextInput` on every render, so
+// handing back a fresh function each time would change the element type and remount the DOM node —
+// controlled inputs would then lose focus and drop every keystroke but the first.
+const passthroughComponents = new Map();
+
+function getPassthroughComponent(name) {
+  const cached = passthroughComponents.get(name);
+  if (cached !== undefined) return cached;
+
+  const component = createPassthroughComponent();
+  component.displayName = name;
+  passthroughComponents.set(name, component);
+  return component;
+}
+
+// Generic Lumen (web) stub: every named export becomes a component that forwards props
+// to a minimal DOM node so tests can query data-testid and fire events.
+module.exports = new Proxy(
+  {
+    __esModule: true,
+    Avatar,
+    Banner,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    IconButton,
+    InteractiveIcon,
+    MenuTrigger,
+    Tag,
+    resolveAvatarColor,
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+  },
+  {
+    get(target, prop) {
+      if (prop in target) return target[prop];
+      if (typeof prop !== "string") return undefined;
+      return getPassthroughComponent(prop);
+    },
+  },
+);

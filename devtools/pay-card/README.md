@@ -46,13 +46,11 @@ interface PayCardToolProps {
     cardNativeParam: boolean;
     cardLiveAppParam: boolean;
     cardDisclaimerParam: boolean;
-    legacyTopUpParam: boolean;
     ptxCardEnabled: boolean;
     setPayTabEnabled: (value: boolean) => void;
     setCardNativeParam: (value: boolean) => void;
     setCardLiveAppParam: (value: boolean) => void;
     setCardDisclaimerParam: (value: boolean) => void;
-    setLegacyTopUpParam: (value: boolean) => void;
     setPtxCardEnabled: (value: boolean) => void;
   };
   // The real, derived onboarding status — signals read from getUser/getCardStatus/
@@ -119,12 +117,12 @@ DevTools packages rely on the host app's Tailwind build (web) and Lumen `ThemePr
 
 ## Tests
 
-Two jest projects, via `@support/jest-devtools`:
+Two jest projects, via `@support/jest/devtools`:
 
 - `pnpm test:web` (`jest.config.js`) — jsdom + `@testing-library/react`. Runs `*.web.test.tsx` and platform-agnostic specs; ignores `*.native.test.*`.
 - `pnpm test:native` (`jest.native.config.js`) — `react-native` preset + `@testing-library/react-native`. Runs `*.native.test.{ts,tsx}` only.
 
-Component / themed tests import `@support/jest-devtools/web` or `@support/jest-devtools/native`. Web hook tests that only need `renderHook` keep `@testing-library/react` (no ThemeProvider); native hook tests use `@support/jest-devtools/native`.
+Component / themed tests import `@support/jest/devtools/web` or `@support/jest/devtools/native`. Web hook tests that only need `renderHook` keep `@testing-library/react` (no ThemeProvider); native hook tests use `@support/jest/devtools/native`.
 
 `pnpm test` runs both.
 

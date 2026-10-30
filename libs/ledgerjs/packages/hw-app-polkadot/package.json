@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-polkadot",
-  "version": "6.39.0",
+  "version": "6.40.0-next.0",
   "description": "Ledger Hardware Wallet Polkadot Application API",
   "keywords": [
     "Ledger",
@@ -44,6 +44,12 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

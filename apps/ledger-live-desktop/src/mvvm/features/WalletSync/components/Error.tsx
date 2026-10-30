@@ -3,7 +3,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { AnalyticsPage } from "../hooks/useLedgerSyncAnalytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -39,7 +39,7 @@ export const Error = ({
   const { t } = useTranslation();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" rowGap="24px">
-      <TrackPage category={String(analyticsPage)} />
+      <TrackScreen category={String(analyticsPage)} />
       <Container>
         <Icons.DeleteCircleFill size={"L"} color={colors.error.c60} />
       </Container>

@@ -1,5 +1,11 @@
 # @features/flow-lazy-onboarding-banner
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#23917](https://github.com/LedgerHQ/ledger-live/pull/23917) [`72fd3dd`](https://github.com/LedgerHQ/ledger-live/commit/72fd3dddac556dc16955d27b0a61ba7dad85cd5d) Thanks [@ysitbon](https://github.com/ysitbon)! - Move `LazyOnboardingBannerView` to the `./native` platform entry, add an optional `testID` prop and collapse `.` into one unconditioned entry
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # @features/flow-pay-feature-tour
 
+## 0.8.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234), [`dbaf56d`](https://github.com/LedgerHQ/ledger-live/commit/dbaf56ddb47f5a43221feba193700cf40f4a46df), [`00badce`](https://github.com/LedgerHQ/ledger-live/commit/00badce303d15692c8ff9a91658803da1253af0c), [`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645), [`ffd02a9`](https://github.com/LedgerHQ/ledger-live/commit/ffd02a95c452560d606ad30588f15ff5d2182763), [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e)]:
+  - @features/platform-pay-analytics@0.4.0-next.0
+  - @features/platform-feature-flags@0.10.0-next.0
+  - @shared/ui-queued-bottom-sheet@0.8.0-next.0
+  - @shared/i18n@0.2.0
+
 ## 0.8.1
 
 ### Patch Changes
@@ -261,14 +271,4 @@
   - @domain/entity-pay-card@0.3.0
   - @shared/ui-queued-bottom-sheet@0.1.0
 
-## 0.2.0-next.0
-
-### Minor Changes
-
-- [#20591](https://github.com/LedgerHQ/ledger-live/pull/20591) [`d6b78ab`](https://github.com/LedgerHQ/ledger-live/commit/d6b78ab3fbb995a523ba10454006654ea5c801ce) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add the first-time Pay tab FeatureTour flow: shared view-model driving visibility from the payCard slice, native QueuedBottomSheet UI and web Dialog UI with a hero image, subtitle, and three Lumen ListItem feature rows, plus injected analytics (onTrackScreen / onTrackEvent).
-
-### Patch Changes
-
-- Updated dependencies [[`a61f702`](https://github.com/LedgerHQ/ledger-live/commit/a61f702a6e41f2bf84d5602930e261a708507efa), [`2edf614`](https://github.com/LedgerHQ/ledger-live/commit/2edf614eed7608714821ee54574d8c4d2b6f7d98), [`9e45705`](https://github.com/LedgerHQ/ledger-live/commit/9e45705b649513c3f9797c2add485a0ba3ea7a6c)]:
-  - @domain/entity-pay-card@0.3.0-next.0
-  - @shared/ui-queued-bottom-sheet@0.1.0
+<!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

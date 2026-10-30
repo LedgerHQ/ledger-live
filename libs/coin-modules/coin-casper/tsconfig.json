@@ -1,23 +1,6 @@
 {
-  "extends": "../../../tsconfig.base",
+  "extends": "@support/tsconfig/coin",
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "declaration": true,
-    "declarationMap": true,
-    "lib": [
-      "es2020",
-      "dom"
-    ],
-    "types": ["node", "jest"],
-    "outDir": "lib",
-    "rootDir": "src",
-    "exactOptionalPropertyTypes": true
-  },
-  "include": [
-    "src/**/*",
-    "deviceTransactionConfig.ts",
-    "transaction.ts"
-  ],
-  "exclude": []
+    "types": ["node", "jest"]
+  }
 }

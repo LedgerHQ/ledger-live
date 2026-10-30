@@ -16,7 +16,7 @@ import type {
 } from "@ledgerhq/coin-module-framework/api/index";
 import { capabilityReport } from "@ledgerhq/coin-module-framework/test-utils";
 import { createApi } from "./index";
-import { getCoinConfig, setCoinConfig, type VechainCurrencyConfig } from "../config";
+import { getCoinConfig, setCoinConfig } from "../config";
 import { createMockVechainContext } from "../test/context";
 import { broadcast } from "../logic/transaction/broadcast";
 import { combine } from "../logic/transaction/combine";

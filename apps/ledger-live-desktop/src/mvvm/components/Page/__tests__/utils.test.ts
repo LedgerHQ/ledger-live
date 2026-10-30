@@ -113,6 +113,24 @@ describe("Page utils", () => {
         );
       });
     });
+
+    describe("/account routes (conditional on isAccountDetailPage)", () => {
+      it("returns false for account routes when the account detail page is off", () => {
+        expect(shouldDisplayRightPanel("/account/abc")).toBe(false);
+        expect(shouldDisplayRightPanel("/account/abc", { isAccountDetailPage: false })).toBe(false);
+      });
+
+      it("returns true for account routes when the account detail page is on", () => {
+        expect(shouldDisplayRightPanel("/account/abc", { isAccountDetailPage: true })).toBe(true);
+        expect(shouldDisplayRightPanel("/account/parent/abc", { isAccountDetailPage: true })).toBe(
+          true,
+        );
+      });
+
+      it("does not treat /accounts as an account detail route", () => {
+        expect(shouldDisplayRightPanel("/accounts", { isAccountDetailPage: true })).toBe(false);
+      });
+    });
   });
 
   describe("getRightPanelVariant", () => {
@@ -126,12 +144,14 @@ describe("Page utils", () => {
       expect(getRightPanelVariant("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(
         "swap",
       );
+      expect(getRightPanelVariant("/account/abc", { isAccountDetailPage: true })).toBe("swap");
     });
 
     it("returns undefined on routes without a right panel", () => {
       expect(getRightPanelVariant("/market")).toBeUndefined();
       expect(getRightPanelVariant("/asset/btc")).toBeUndefined();
       expect(getRightPanelVariant("/accounts")).toBeUndefined();
+      expect(getRightPanelVariant("/account/abc")).toBeUndefined();
     });
   });
 });

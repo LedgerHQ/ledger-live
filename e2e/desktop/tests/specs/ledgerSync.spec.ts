@@ -14,6 +14,7 @@ import {
   pushAccountsToTrustchain,
 } from "@ledgerhq/live-e2e-shared/ledgerSync/setup";
 import { deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const APP_INSTANCE_NAME = "LWD";
 
@@ -104,7 +105,7 @@ test.describe("Ledger Sync - add account", () => {
       const [addedAccountId] = await app.accounts.getReduxAccountIds();
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCount(1, 60_000);
+      await app.accounts.expectAccountsCount(1, TIMEOUT.xxlarge);
       await app.accounts.expectCryptoAccountRowVisible(`${addedCurrency.name} 1`);
 
       await app.layout.syncAccountsIfAvailable();
@@ -137,7 +138,7 @@ test.describe("Ledger Sync - rename account", () => {
       await app.trustchain.expectAccountToHaveDefaultName(ethAccount.id);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCount(1, 60_000);
+      await app.accounts.expectAccountsCount(1, TIMEOUT.xxlarge);
       await app.accounts.expectCryptoAccountRowVisible(defaultAccountName);
 
       await app.accounts.navigateToAccountByName(defaultAccountName);
@@ -175,7 +176,7 @@ test.describe("Ledger Sync - delete account", () => {
       await app.trustchain.expectAccountIds([ethAccount.id, secondEthAccount.id]);
 
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
-      await app.accounts.expectAccountsCount(2, 60_000);
+      await app.accounts.expectAccountsCount(2, TIMEOUT.xxlarge);
       await app.accounts.expectCryptoAccountRowVisible(deletedAccountName);
       await app.accounts.expectCryptoAccountRowVisible(remainingAccountName);
 

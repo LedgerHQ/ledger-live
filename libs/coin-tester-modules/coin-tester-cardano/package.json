@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-cardano",
-  "version": "0.8.0",
+  "version": "0.8.1-next.1",
   "private": true,
   "description": "Ledger Cardano Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -67,7 +67,7 @@
     "@stricahq/cbors": "^1.0.2",
     "@stricahq/typhonjs": "^3.0.0",
     "bignumber.js": "^9",
-    "bip39": "^3.1.0",
+    "bip39": "catalog:",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"

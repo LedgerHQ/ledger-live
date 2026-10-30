@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-algorand",
-  "version": "2.3.2",
+  "version": "2.4.0-next.0",
   "description": "Ledger Algorand Coin integration",
   "keywords": [
     "Ledger",
@@ -100,6 +100,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
@@ -110,6 +111,12 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

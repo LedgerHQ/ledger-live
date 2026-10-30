@@ -2,6 +2,7 @@ import { access, appendFile, mkdir, rename } from "fs/promises";
 import * as path from "path";
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export const NANO_APP_CATALOG_PATH = "tests/artifacts/appVersion/nano-app-catalog.json";
 
@@ -22,7 +23,7 @@ export class FileUtils {
         await access(filePath);
         return true;
       } catch {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, INTERVAL.instant));
       }
     }
 
@@ -35,7 +36,7 @@ export class FileUtils {
     while (Date.now() - startTime < timeout) {
       try {
         await access(filePath);
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, INTERVAL.instant));
       } catch {
         return true;
       }
@@ -48,7 +49,7 @@ export class FileUtils {
   static async waitForFileAndMove(
     sourcePath: string,
     targetPath: string,
-    timeout: number = 10000,
+    timeout: number = TIMEOUT.medium,
   ): Promise<void> {
     const fileExists = await FileUtils.waitForFileToExist(sourcePath, timeout);
     expect(

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-bitcoin",
-  "version": "1.14.0",
+  "version": "1.15.0-next.1",
   "private": true,
   "description": "Ledger BTC Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -61,6 +61,7 @@
     "@ledgerhq/coin-tester": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
     "@ledgerhq/ledger-wallet-framework": "workspace:^",
+    "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "catalog:",
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/psbtv2": "catalog:",
@@ -68,10 +69,9 @@
     "@noble/curves": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32": "^4.0.0",
-    "bip39": "^3.1.0",
+    "bip39": "catalog:",
     "bitcoin-core": "^5.0.0",
-    "bitcoinjs-lib": "^7.0.2",
-    "docker-compose": "^1.1.0",
+    "bitcoinjs-lib": "catalog:",
     "msw": "catalog:"
   },
   "devDependencies": {

@@ -98,7 +98,7 @@ describe("HumanCommandOutput", () => {
   it("uses the canonical device-state text for signature requests", () => {
     const out = createCommandOutput("human", {
       command: "send",
-      network: "ethereum:main",
+      network: "ethereum",
       account: "js:2:ethereum:0x123",
     });
     const spin = out.spin("Preparing transaction…") as unknown as MockSpinner;
@@ -120,7 +120,7 @@ describe("HumanCommandOutput", () => {
     try {
       const out = createCommandOutput("human", {
         command: "send",
-        network: "ethereum:main",
+        network: "ethereum",
         account: "js:2:ethereum:0x123",
       });
       out.spin("Broadcasting…");
@@ -403,11 +403,11 @@ describe("HumanCommandOutput", () => {
     const writes: string[] = [];
     const restore = installOutputCapture({ stdout: chunk => writes.push(chunk) });
     try {
-      const out = createCommandOutput("human", { command: "earn deposit", network: "solana:main" });
+      const out = createCommandOutput("human", { command: "earn deposit", network: "solana" });
       out.earnDepositResult({
         family: "solana",
         account: "acc",
-        network: "solana:main",
+        network: "solana",
         amount: "1 SOL",
         product: "VoteAcct1",
         validator: "VoteAcct1",
@@ -428,12 +428,12 @@ describe("HumanCommandOutput", () => {
     try {
       const out = createCommandOutput("human", {
         command: "earn deposit",
-        network: "ethereum:main",
+        network: "ethereum",
       });
       out.earnDepositResult({
         family: "evm",
         account: "0xabc",
-        network: "ethereum:main",
+        network: "ethereum",
         amount: "0.5 ETH",
         product: "vault_kiln_eth",
         dryRun: true,
@@ -481,16 +481,16 @@ describe("HumanCommandOutput", () => {
     });
     const descriptor = {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
-      network: { name: "bitcoin", env: "main" },
+      network: "bitcoin",
       xpub: "xpub6BosfCnifzxcA",
       path: "m/84h/0h/0h",
     } as const;
     try {
       const out = createCommandOutput("human", {
         command: "account discover",
-        network: "bitcoin:main",
+        network: "bitcoin",
       });
       out.discoveredAccount({ descriptor, freshAddress: "bc1qfirst", label: "bitcoin-native-1" });
       out.discoveredAccount({ descriptor, freshAddress: "bc1qsecond", label: "bitcoin-native-2" });
@@ -691,6 +691,7 @@ describe("HumanCommandOutput", () => {
       environment: "staging" as const,
       bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
       publicKey: "0236cb7ebc1a324bd02abac533f7904f9579cc581c772285fecc6f5157a960b076",
+      keyStore: "os-keychain" as const,
       enrollmentExpiresAt: "2026-09-22T11:28:46.999Z",
       createdAt: "2026-09-22T10:58:47.007Z",
     };
@@ -728,6 +729,15 @@ describe("HumanCommandOutput", () => {
       expect(writes.join("")).toContain("expired");
     });
 
+    it("agentIntentProfiles shows each profile's key store", () => {
+      createCommandOutput("human", ctx).agentIntentProfiles([
+        { ...baseProfile, keyStore: "plaintext-file" },
+      ]);
+      const out = writes.join("");
+      expect(out).toContain("KEY STORE");
+      expect(out).toContain("plaintext-file");
+    });
+
     it("agentIntentProfiles renders dim message when there are no profiles", () => {
       createCommandOutput("human", ctx).agentIntentProfiles([]);
       expect(writes.join("")).toContain("No Agent Intent profiles");
@@ -741,6 +751,14 @@ describe("HumanCommandOutput", () => {
       const out = writes.join("");
       expect(out).toContain("Fingerprint:");
       expect(out).toContain(baseProfile.publicKey);
+    });
+
+    it("agentIntentProfileShow shows the profile's key store", () => {
+      createCommandOutput("human", ctx).agentIntentProfileShow({
+        ...baseProfile,
+        keyStore: "plaintext-file",
+      });
+      expect(writes.join("")).toMatch(/Key store:\s+plaintext-file/);
     });
 
     it("agentIntentProfileShow redacts credentials embedded in the BFF URL", () => {
@@ -796,11 +814,13 @@ describe("HumanCommandOutput", () => {
         profileId: "test-agent",
         trustchainId: "tc-1",
         accountAccessEnvironment: "staging",
+        keyStore: "plaintext-file",
       });
       const out = writes.join("");
       expect(out).toContain("test-agent");
       expect(out).toContain("tc-1");
       expect(out).toContain("staging");
+      expect(out).toContain("key store: plaintext-file");
     });
 
     it("agentIntentRecoveryPending prints the URL, fingerprint and the keep-running hint", () => {
@@ -828,8 +848,8 @@ describe("HumanCommandOutput", () => {
 
     it("agentIntentSync reports imported, unchanged, skipped, and invalid entries", () => {
       createCommandOutput("human", ctx).agentIntentSync({
-        imported: [{ status: "imported", label: "eth-1", network: "ethereum:main" }],
-        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum:main" }],
+        imported: [{ status: "imported", label: "eth-1", network: "ethereum" }],
+        unchanged: [{ status: "unchanged", label: "eth-2", network: "ethereum" }],
         skipped: [
           { status: "skipped", id: "js:2:polkadot:x:default", reason: "family unsupported" },
         ],

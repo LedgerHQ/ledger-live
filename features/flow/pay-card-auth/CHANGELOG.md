@@ -1,5 +1,21 @@
 # @features/flow-pay-card-auth
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- [#23965](https://github.com/LedgerHQ/ledger-live/pull/23965) [`4216add`](https://github.com/LedgerHQ/ledger-live/commit/4216addd84f49f073e5bd7c0ae7019f40799955f) Thanks [@ysitbon](https://github.com/ysitbon)! - `InfoState` takes one props contract, `InfoStateProps` from `InfoState.types.ts`, on web and native, and the native `spot` preset now honors `backgroundTone` on its bottom sheet. `DialogBackgroundToneProvider` moves to the web platform entry `@shared/ui-info-state/web`; the gradient, context and tone hooks become internal. The universal entry is one unconditioned `src/index.ts`, imports carry no platform suffix, and the package gets a `lint` script.
+
+### Patch Changes
+
+- Updated dependencies [[`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234), [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065), [`4216add`](https://github.com/LedgerHQ/ledger-live/commit/4216addd84f49f073e5bd7c0ae7019f40799955f), [`d4be6b6`](https://github.com/LedgerHQ/ledger-live/commit/d4be6b620102f2c9f65201935646d32cb365f6ac), [`00badce`](https://github.com/LedgerHQ/ledger-live/commit/00badce303d15692c8ff9a91658803da1253af0c), [`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645), [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e), [`efc2a52`](https://github.com/LedgerHQ/ledger-live/commit/efc2a525b2416bf7126945361a280ba34a966766)]:
+  - @features/platform-pay-analytics@0.4.0-next.0
+  - @shared/ui-info-state@0.6.0-next.0
+  - @shared/ui-queued-bottom-sheet@0.8.0-next.0
+  - @shared/i18n@0.2.0
+  - @domain/api-card-management@0.8.3-next.0
+  - @features/platform-card@0.8.2-next.0
+
 ## 0.10.1
 
 ### Patch Changes
@@ -775,65 +791,5 @@
 - Updated dependencies [[`e732d3e`](https://github.com/LedgerHQ/ledger-live/commit/e732d3e258c653fc83e1474434f3bb02c136ae62), [`f64ceec`](https://github.com/LedgerHQ/ledger-live/commit/f64ceecbdaccec2c56ace4cc459d670db5920b68), [`d5ea888`](https://github.com/LedgerHQ/ledger-live/commit/d5ea888d3a154feeb29b452841749d358629b8c1), [`0ad6182`](https://github.com/LedgerHQ/ledger-live/commit/0ad6182ac7fa955c01a8fd679182f7fe3b83cace), [`eba4d17`](https://github.com/LedgerHQ/ledger-live/commit/eba4d175ad10f1431a222a4fa98481ea4285e891)]:
   - @features/platform-card@0.3.0-next.0
   - @domain/api-card-management@0.3.0-next.0
-
-## 0.3.0
-
-### Minor Changes
-
-- [#20784](https://github.com/LedgerHQ/ledger-live/pull/20784) [`19e578a`](https://github.com/LedgerHQ/ledger-live/commit/19e578a92209e96cabe400661757689e73b43005) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the Pay Card UI Redux state out of the removed `@domain/entity-pay-card` package into the owning feature flows: the balance filter goes to `@features/flow-pay-card-balance` and the feature-tour seen flag to `@features/flow-pay-card-feature-tour`. The apps keep persisting it under the existing `payCard` key (no data migration). Both flows expose a UI-free `./state` entry so store, persistence and test setup can use the slice without pulling in the flow UI.
-
-- [#20096](https://github.com/LedgerHQ/ledger-live/pull/20096) [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Integrate the Card API and give its endpoints a domain owner
-
-  `@domain/api-card-management` gains the Card Auth contract: authorize initiation, authorization-code
-  exchange, session refresh, logout and the user read, with their zod wire schemas and inferred types.
-  They inject into the shared `cardApi` service, so one reducer, one middleware and one cache serve the
-  Card backend, and the base query supplies the base URL, `x-client-key` and the `Authorization: Bearer`
-  header from the `@features/platform-card` session.
-
-  `@features/flow-pay-card-auth` owns no network contract any more. It keeps the auth-only `payCardAuth`
-  slice and the `CardLogin` component; `useCardLoginViewModel` imports its hook from
-  `@domain/api-card-management`, and that import is what triggers the injection. `@domain/api-pay-card`
-  and its in-process mock transport are removed, along with the Pay Card mocks.
-
-  Pay Card UI Redux state is owned by the feature flows that use it: the balance filter by
-  `@features/flow-pay-card-balance` and the feature-tour flag by `@features/flow-pay-card-feature-tour`.
-
-  Only the login step ships here. The callback code exchange and the card status read stay behind until
-  the session has an owner that can store and refresh it.
-
-### Patch Changes
-
-- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc), [`19e578a`](https://github.com/LedgerHQ/ledger-live/commit/19e578a92209e96cabe400661757689e73b43005), [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd)]:
-  - @domain/api-card-management@0.2.0
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#20784](https://github.com/LedgerHQ/ledger-live/pull/20784) [`19e578a`](https://github.com/LedgerHQ/ledger-live/commit/19e578a92209e96cabe400661757689e73b43005) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Move the Pay Card UI Redux state out of the removed `@domain/entity-pay-card` package into the owning feature flows: the balance filter goes to `@features/flow-pay-card-balance` and the feature-tour seen flag to `@features/flow-pay-card-feature-tour`. The apps keep persisting it under the existing `payCard` key (no data migration). Both flows expose a UI-free `./state` entry so store, persistence and test setup can use the slice without pulling in the flow UI.
-
-- [#20096](https://github.com/LedgerHQ/ledger-live/pull/20096) [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Integrate the Card API and give its endpoints a domain owner
-
-  `@domain/api-card-management` gains the Card Auth contract: authorize initiation, authorization-code
-  exchange, session refresh, logout and the user read, with their zod wire schemas and inferred types.
-  They inject into the shared `cardApi` service, so one reducer, one middleware and one cache serve the
-  Card backend, and the base query supplies the base URL, `x-client-key` and the `Authorization: Bearer`
-  header from the `@features/platform-card` session.
-
-  `@features/flow-pay-card-auth` owns no network contract any more. It keeps the auth-only `payCardAuth`
-  slice and the `CardLogin` component; `useCardLoginViewModel` imports its hook from
-  `@domain/api-card-management`, and that import is what triggers the injection. `@domain/api-pay-card`
-  and its in-process mock transport are removed, along with the Pay Card mocks.
-
-  Pay Card UI Redux state is owned by the feature flows that use it: the balance filter by
-  `@features/flow-pay-card-balance` and the feature-tour flag by `@features/flow-pay-card-feature-tour`.
-
-  Only the login step ships here. The callback code exchange and the card status read stay behind until
-  the session has an owner that can store and refresh it.
-
-### Patch Changes
-
-- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc), [`19e578a`](https://github.com/LedgerHQ/ledger-live/commit/19e578a92209e96cabe400661757689e73b43005), [`e54d98b`](https://github.com/LedgerHQ/ledger-live/commit/e54d98b123ad8814be57c2f0e0f26689902ab4fd)]:
-  - @domain/api-card-management@0.2.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

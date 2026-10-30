@@ -6,15 +6,16 @@ import {
 } from "@ledgerhq/live-e2e-shared/borrow/borrowSetup";
 import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "tests/page/webViewApp.page";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const FUNDING_HINT =
   "Ensure the test account holds enough wBTC collateral and ETH for mainnet gas.";
 
-const EXECUTION_TIMEOUT_MS = 240_000;
-const APPROVAL_TIMEOUT_MS = 60_000;
-const SCREEN_TIMEOUT_MS = 60_000;
+const EXECUTION_TIMEOUT_MS = TIMEOUT.xxxxlarge;
+const APPROVAL_TIMEOUT_MS = TIMEOUT.xxlarge;
+const SCREEN_TIMEOUT_MS = TIMEOUT.xxlarge;
 /** The partner prepares each transaction server-side, which outlasts the global expect timeout. */
-const DEVICE_SIGNATURE_TIMEOUT_MS = 120_000;
+const DEVICE_SIGNATURE_TIMEOUT_MS = TIMEOUT.xxxlarge;
 
 export class BorrowPage extends WebViewAppPage {
   protected readonly webviewIdentifier = "borrow";
@@ -62,6 +63,8 @@ export class BorrowPage extends WebViewAppPage {
   private readonly withdrawExecutionScreen = "borrow-withdraw-execution-screen";
   private readonly authorizeWithdraw = "borrow-authorize-withdraw-button";
   private readonly withdrawStepDone = "borrow-withdraw-step-done";
+  private readonly deauthorizeBorrowing = "borrow-deauthorize-borrowing-button";
+  private readonly deauthorizeBorrowingStepDone = "borrow-deauthorize-borrowing-step-done";
   private readonly withdrawCompletionCard = "borrow-withdraw-completion-card";
   private readonly backToMyLoans = "borrow-back-to-my-loans-button";
   private readonly hostSignModalTextPattern = /Approve token|Sign transaction/i;
@@ -463,7 +466,7 @@ export class BorrowPage extends WebViewAppPage {
     for (let attempt = 0; attempt < 4; attempt++) {
       await rows.first().click();
       try {
-        await expect(webview).toHaveURL(this.loanOverviewRoutePattern, { timeout: 20_000 });
+        await expect(webview).toHaveURL(this.loanOverviewRoutePattern, { timeout: TIMEOUT.large });
         await expect(webview.getByTestId(this.loanOverviewScreen)).toBeVisible();
         await expect(webview.getByTestId(this.repayButton)).toBeEnabled();
         return;
@@ -517,7 +520,7 @@ export class BorrowPage extends WebViewAppPage {
     await this.clickWhenEnabled(this.repayInFull);
 
     const continueButton = webview.getByTestId(this.repayContinue);
-    await expect(continueButton).toBeEnabled({ timeout: 30_000 });
+    await expect(continueButton).toBeEnabled({ timeout: TIMEOUT.xlarge });
     await continueButton.click();
 
     await expect(webview.getByTestId(this.repayModal)).toBeHidden();
@@ -568,17 +571,34 @@ export class BorrowPage extends WebViewAppPage {
     await expect(webview.getByTestId(this.withdrawExecutionScreen)).toBeVisible();
   }
 
-  @step("Wait for withdraw execution to complete")
-  async expectWithdrawExecutionCompleted() {
+  @step("Wait for withdraw step to complete")
+  async expectWithdrawStepCompleted() {
+    const webview = await this.getWebView();
+    await this.expectFlowComplete(
+      webview,
+      [webview.getByTestId(this.withdrawStepDone)],
+      "Withdraw step",
+    );
+    await expect(webview.getByTestId(this.deauthorizeBorrowing)).toBeEnabled();
+    await waitForChainNonceSettled();
+  }
+
+  @step("Click Deauthorize borrowing")
+  async clickDeauthorizeBorrowing() {
+    await this.clickWhenEnabled(this.deauthorizeBorrowing);
+  }
+
+  @step("Wait for deauthorize borrowing step to complete")
+  async expectDeauthorizeBorrowingStepCompleted() {
     const webview = await this.getWebView();
     await this.expectFlowComplete(
       webview,
       [
-        webview.getByTestId(this.withdrawStepDone),
+        webview.getByTestId(this.deauthorizeBorrowingStepDone),
         webview.getByTestId(this.withdrawCompletionCard),
         webview.getByTestId(this.backToMyLoans),
       ],
-      "Withdraw execution",
+      "Deauthorize borrowing step",
     );
   }
 

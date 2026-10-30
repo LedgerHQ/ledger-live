@@ -20,7 +20,7 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
 jest.mock("~/renderer/hooks/useAccountUnit");
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/components/ErrorBanner", () => ({
   __esModule: true,

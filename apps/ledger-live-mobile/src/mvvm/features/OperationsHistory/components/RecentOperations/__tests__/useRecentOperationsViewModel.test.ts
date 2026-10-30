@@ -33,10 +33,36 @@ function withState(activeAccounts: Account[]) {
   };
 }
 
+function withSixBtcConfirmations(account: Account) {
+  return {
+    overrideInitialState: function withSixConfirmations(state: State): State {
+      return {
+        ...state,
+        accounts: { ...state.accounts, active: [account] },
+        settings: {
+          ...state.settings,
+          currenciesSettings: {
+            BTC: { confirmationsNb: 6, unit: mockBtcCryptoCurrency.units[0] },
+          },
+        },
+      };
+    },
+  };
+}
+
 function genBitcoinAccounts(count: number, operationsSize = 0): Account[] {
   return Array.from({ length: count }, (_, i) =>
     genAccount(`bitcoin-${i}`, { currency: mockBtcCryptoCurrency, operationsSize }),
   );
+}
+
+function confirmOperations(account: Account): Account {
+  return {
+    ...account,
+    operations: account.operations.map(function confirm(op) {
+      return { ...op, blockHeight: account.blockHeight - 100 };
+    }),
+  };
 }
 
 function params(overrides: Partial<RecentOperationsParams>): RecentOperationsParams {
@@ -91,6 +117,90 @@ describe("useRecentOperationsViewModel", () => {
       );
 
       expect(result.current.operations).toEqual([]);
+    });
+  });
+
+  describe("pendingOperationIds", () => {
+    it("flags an operation with a block height but not enough confirmations as pending", () => {
+      const confirmed = confirmOperations(genBitcoinAccounts(1, 3)[0]);
+      const [newest, ...older] = confirmed.operations;
+      const account: Account = {
+        ...confirmed,
+        operations: [{ ...newest, blockHeight: confirmed.blockHeight }, ...older],
+      };
+
+      const { result } = renderHook(function useScopedViewModel() {
+        return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+      }, withSixBtcConfirmations(account));
+
+      expect([...result.current.pendingOperationIds]).toEqual([newest.id]);
+    });
+
+    it("lists a pending operation older than the preview window first", () => {
+      const confirmed = confirmOperations(genBitcoinAccounts(1, 6)[0]);
+      const oldest = confirmed.operations[confirmed.operations.length - 1];
+      const account: Account = {
+        ...confirmed,
+        operations: [
+          ...confirmed.operations.slice(0, -1),
+          { ...oldest, blockHeight: confirmed.blockHeight },
+        ],
+      };
+
+      const { result } = renderHook(function useScopedViewModel() {
+        return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+      }, withSixBtcConfirmations(account));
+
+      expect(result.current.operations).toHaveLength(MAX_PREVIEW_OPERATIONS);
+      expect(result.current.operations[0].id).toBe(oldest.id);
+      expect([...result.current.pendingOperationIds]).toEqual([oldest.id]);
+    });
+
+    it("lists a broadcast operation the explorer has not returned yet as pending", () => {
+      const confirmed = confirmOperations(genBitcoinAccounts(1, 3)[0]);
+      const broadcast = {
+        ...confirmed.operations[0],
+        id: "broadcast-op",
+        hash: "broadcast-hash",
+        blockHeight: null,
+      };
+      const account: Account = { ...confirmed, pendingOperations: [broadcast] };
+
+      const { result } = renderHook(function useScopedViewModel() {
+        return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+      }, withSixBtcConfirmations(account));
+
+      expect(result.current.operations[0].id).toBe(broadcast.id);
+      expect([...result.current.pendingOperationIds]).toEqual([broadcast.id]);
+    });
+
+    it("drops a broadcast operation once the explorer returns it confirmed", () => {
+      const confirmed = confirmOperations(genBitcoinAccounts(1, 3)[0]);
+      const [newest] = confirmed.operations;
+      const account: Account = {
+        ...confirmed,
+        pendingOperations: [{ ...newest, id: "broadcast-op", blockHeight: null }],
+      };
+
+      const { result } = renderHook(function useScopedViewModel() {
+        return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+      }, withSixBtcConfirmations(account));
+
+      expect(result.current.operations.map(op => op.id)).not.toContain("broadcast-op");
+      expect(result.current.pendingOperationIds.size).toBe(0);
+    });
+
+    it("returns no pending operations when all are confirmed", () => {
+      const account = confirmOperations(genBitcoinAccounts(1, 3)[0]);
+
+      const { result } = renderHook(
+        function useScopedViewModel() {
+          return useRecentOperationsViewModel(params({ accountIds: [account.id] }));
+        },
+        withState([account]),
+      );
+
+      expect(result.current.pendingOperationIds.size).toBe(0);
     });
   });
 

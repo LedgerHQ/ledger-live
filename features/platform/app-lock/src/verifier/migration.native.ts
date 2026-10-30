@@ -4,14 +4,14 @@ import {
   APP_LOCK_SCRYPT_PARAMS,
   derivePasswordDigest,
   serialiseDerivation,
-} from "./internals/digest.native";
+} from "./internals/digest";
 import {
   clearLegacyPassword,
   hasLegacyPassword,
   readLegacyPassword,
-} from "./internals/legacyPassword.native";
-import { hasStoredVerifier, writePasswordVerifier } from "./internals/store.native";
-import { verifyPassword } from "./internals/verify.native";
+} from "./internals/legacyPassword";
+import { hasStoredVerifier, writePasswordVerifier } from "./internals/store";
+import { verifyPassword } from "./internals/verify";
 import type { MigrationResult } from "./types";
 
 export function migrateLegacyPassword(

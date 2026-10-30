@@ -1,6 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createNonce, encodeSwapIntentTlv } from "@ledgerhq/agent-intent-sdk";
+import { BigNumber } from "bignumber.js";
 import { Session } from "../../session/session-store";
 import { requireEnrolledProfile } from "../../agent-intent/enrolled-profile";
 import { resolveOutputFormat } from "../inputs";
@@ -11,11 +12,16 @@ import {
   quotedReceiveAmount,
   resolveAgentSwapProvider,
   toSdkSwapIntent,
+  warnIfTokenApprovalNeeded,
   type SwapIntentSummary,
 } from "../../agent-intent/swap-intent";
-import { fetchAgentSwapQuote } from "../../agent-intent/swap-quote";
+import { fetchAgentSwapQuote, type AgentSwapQuote } from "../../agent-intent/swap-quote";
 import { findEthereumSwapAsset, type SwapAsset } from "../../agent-intent/token-lookup";
-import { resolveSenderFromAccount } from "../../agent-intent/sender";
+import {
+  parseSenderInput,
+  resolveSenderAccount,
+  senderFromAccount,
+} from "../../agent-intent/sender";
 import {
   assertSdkAcceptsIntent,
   proposalOptions,
@@ -23,15 +29,7 @@ import {
   warnIfReviewLinkUnusable,
 } from "../../agent-intent/propose-intent";
 import { createCommandOutput, type CommandOutput } from "../../output";
-
-function parseSenderInput(flags: {
-  account?: string;
-  sender?: string;
-}): { account: string } | { sender: string } {
-  if (flags.account && !flags.sender) return { account: flags.account };
-  if (flags.sender && !flags.account) return { sender: flags.sender };
-  throw new Error("Pass exactly one sender: --account <session-label> or --sender <address>.");
-}
+import { writeStderr } from "../../shared/ui";
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
   const asset = await findEthereumSwapAsset(id);
@@ -42,6 +40,27 @@ async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAs
     );
   }
   return asset;
+}
+
+const TO_AMOUNT_WARNING_PERCENT = 5;
+
+/** A warning, not an error: the agent may know better than the quote. Compared with the unrounded
+ * quote, so rounding it to the asset's precision can't trigger it. */
+function warnIfAboveQuote(
+  typed: string,
+  { provider, receiveAmount }: AgentSwapQuote,
+  quoted: string | null,
+  to: SwapAsset,
+): void {
+  const limit = new BigNumber(receiveAmount).times(1 + TO_AMOUNT_WARNING_PERCENT / 100);
+  if (limit.isFinite() && new BigNumber(typed).lte(limit)) return;
+  const quote = quoted
+    ? `more than ${TO_AMOUNT_WARNING_PERCENT}% above the ${provider} quote (${quoted} ${to.ticker})`
+    : `above the ${provider} quote, which rounds to nothing in ${to.ticker}`;
+  writeStderr(
+    `⚠ --to-amount ${typed} ${to.ticker} is ${quote}; the reviewer will see a fresh quote, ` +
+      "with your amount shown only as the proposal it replaced.\n",
+  );
 }
 
 /** The provider and amount the intent signs: the best quote the frontend can prepare, with
@@ -55,29 +74,39 @@ async function expectedReceive(input: {
   fromAmount: string;
   sender: string;
   out: Pick<CommandOutput, "spin">;
-}): Promise<{ toAmount: string; provider: string; quoted: boolean }> {
+}): Promise<{
+  toAmount: string;
+  provider: string;
+  quoted: boolean;
+  needsTokenApproval: boolean;
+}> {
   const { to, provider } = input;
   const typed =
     input.toAmount === undefined ? undefined : parseSwapAmount(input.toAmount, to, "to-amount");
   const spinner = input.out.spin("Fetching swap quotes…");
   const quote = await fetchAgentSwapQuote({
     from: input.from.id,
+    ...(input.from.contract ? { fromContract: input.from.contract } : {}),
     to: to.id,
     amount: input.fromAmount,
     sender: input.sender,
     providers: provider ? [provider] : AGENT_INTENT_SWAP_PROVIDERS,
   });
   spinner?.success(`Quoted by ${quote.provider}`);
-  if (typed) return { toAmount: typed, provider: quote.provider, quoted: false };
-
+  const { needsTokenApproval } = quote;
   const quoted = quotedReceiveAmount(quote.receiveAmount, to);
+  if (typed) {
+    warnIfAboveQuote(typed, quote, quoted, to);
+    return { toAmount: typed, provider: quote.provider, quoted: false, needsTokenApproval };
+  }
+
   if (!quoted) {
     throw new Error(
       `The ${quote.provider} quote receives less than the smallest unit of ${to.ticker}. ` +
         "Sell a larger --amount.",
     );
   }
-  return { toAmount: quoted, provider: quote.provider, quoted: true };
+  return { toAmount: quoted, provider: quote.provider, quoted: true, needsTokenApproval };
 }
 
 export default defineCommand({
@@ -120,16 +149,19 @@ export default defineCommand({
   handler: async ({ flags }) => {
     const out = createCommandOutput(resolveOutputFormat(flags.output), {
       command: "agent-intent swap",
-      network: "ethereum:main",
+      network: "ethereum",
     });
     await out.run(async () => {
-      const senderInput = parseSenderInput(flags);
+      const senderInput = parseSenderInput(
+        { account: flags.account, address: flags.sender },
+        "sender",
+      );
       const provider = flags.provider ? resolveAgentSwapProvider(flags.provider) : undefined;
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const sender =
-        "sender" in senderInput
-          ? parseEvmAddress(senderInput.sender, "sender")
-          : await resolveSenderFromAccount(senderInput.account, "swap", "ethereum");
+        "address" in senderInput
+          ? parseEvmAddress(senderInput.address, "sender")
+          : senderFromAccount(await resolveSenderAccount(senderInput.account), "swap", "ethereum");
       const from = await resolveSwapAsset(flags.from, "from");
       const to = await resolveSwapAsset(flags.to, "to");
       if (from.id === to.id) throw new Error("--from and --to are the same asset.");
@@ -160,11 +192,13 @@ export default defineCommand({
 
       if (flags["dry-run"]) {
         out.agentIntentSwapDryRun(summary);
+        warnIfTokenApprovalNeeded(summary);
         return;
       }
 
       const submitted = await submitAgentIntent(profile, client => client.createSwapIntent(intent));
       out.agentIntentSwap({ ...summary, ...submitted });
+      warnIfTokenApprovalNeeded(summary);
       warnIfReviewLinkUnusable(submitted);
     });
   },

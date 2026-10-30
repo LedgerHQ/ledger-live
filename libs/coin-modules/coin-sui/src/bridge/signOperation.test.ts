@@ -1,6 +1,6 @@
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
-import { LedgerSigner } from "@mysten/signers/ledger";
+import { LedgerSigner } from "@mysten/ledger-signer";
 import { messageWithIntent as mockMessageWithIntent } from "@mysten/sui/cryptography";
 import { toSerializedSignature as mockToSerializedSignature } from "@mysten/sui/cryptography";
 import { verifyTransactionSignature as mockVerifyTransactionSignature } from "@mysten/sui/verify";
@@ -70,7 +70,7 @@ jest.mock("@mysten/sui/verify", () => ({
   verifyTransactionSignature: jest.fn(),
 }));
 
-jest.mock("@mysten/signers/ledger", () => ({
+jest.mock("@mysten/ledger-signer", () => ({
   LedgerSigner: {
     fromDerivationPath: jest.fn(),
   },

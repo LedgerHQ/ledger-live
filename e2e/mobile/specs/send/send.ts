@@ -7,6 +7,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import type { InitOptions } from "@e2e/utils/initUtil";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
@@ -138,6 +139,7 @@ export function runSendTest(
   tags: string[],
   options?: SendTestOptions,
 ) {
+  declareBroadcastAccounts(transaction.accountToDebit);
   setTeamOwner(
     BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
       ? Team.BST
@@ -167,14 +169,17 @@ export function runSendTest(
   });
 }
 
-export function runSendInvalidAddressTest(
-  transaction: TransactionType,
-  expectedErrorMessage: string,
-  address: string | undefined,
-  tmsLinks: string[],
-  tags: string[],
-  accountName?: string,
-) {
+type RunSendInvalidAddressTestOptions = {
+  transaction: TransactionType;
+  expectedErrorMessage: string;
+  address?: string;
+  tmsLinks: string[];
+  tags: string[];
+  accountName?: string;
+};
+
+export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOptions) {
+  const { transaction, expectedErrorMessage, address, tmsLinks, tags, accountName } = options;
   setTeamOwner(
     BST_SEND_INVALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
       ? Team.BST
@@ -188,7 +193,7 @@ export function runSendInvalidAddressTest(
       await beforeAllInvalidAddressFunction(transaction, address);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid address error: ${expectedErrorMessage ?? "no error message"}`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid address error: ${expectedErrorMessage || "no error message"}`, async () => {
       const recipientAddress = address ?? transaction.accountToCredit.address ?? "";
       await app.send.navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(recipientAddress, transaction.memoTag);

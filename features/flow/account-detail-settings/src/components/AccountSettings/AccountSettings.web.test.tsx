@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { I18nWrapper } from "../../__tests__/i18nWrapper";
+import { I18nWrapper, onLinkOpened, openExternal } from "../../__tests__/i18nWrapper";
 import { advancedLogsInput } from "../../__tests__/fixtures";
 import { buildAdvancedLogs } from "../../logic/buildAdvancedLogs";
 import { AccountSettings } from "./AccountSettings.web";
@@ -12,7 +12,8 @@ jest.mock("@shared/clipboard", () => ({ copyToClipboard: jest.fn() }));
 const account: AccountSettingsAccount = {
   ...advancedLogsInput,
   type: "Account",
-  currency: { name: "Bitcoin", ticker: "BTC" },
+  freshAddress: "bc1qaddress",
+  currency: { name: "Bitcoin", ticker: "BTC", explorerViews: [] },
 };
 
 function renderSettings(
@@ -25,6 +26,7 @@ function renderSettings(
     getAccountName: jest.fn(() => "Bitcoin 1"),
     getDerivationTag: jest.fn(() => "native segwit"),
     renameAccount: jest.fn(),
+    removeAccount: jest.fn(),
     ...overrides,
   };
   const onClose = jest.fn();
@@ -89,5 +91,50 @@ describe("AccountSettings (Web)", () => {
 
     const logs = screen.getByTestId("account-settings-advanced-logs-json").textContent;
     expect(JSON.parse(logs ?? "{}")).not.toHaveProperty("xpub");
+  });
+
+  it("opens the account address in the currency explorer", async () => {
+    const { user } = renderSettings(
+      {},
+      {
+        ...account,
+        currency: {
+          ...account.currency,
+          explorerViews: [{ address: "https://explorer.test/address/$address" }],
+        },
+      },
+    );
+
+    await user.click(screen.getByTestId("account-settings-view-explorer"));
+
+    expect(openExternal).toHaveBeenCalledWith("https://explorer.test/address/bc1qaddress");
+    expect(onLinkOpened).toHaveBeenCalledWith("https://explorer.test");
+    expect(onLinkOpened).not.toHaveBeenCalledWith(expect.stringContaining("bc1qaddress"));
+  });
+
+  it("removes the account, then closes", async () => {
+    const { adapter, onClose, user } = renderSettings();
+
+    await user.click(screen.getByTestId("account-settings-remove-account"));
+    await user.click(screen.getByRole("button", { name: "Yes, remove" }));
+
+    expect(adapter.removeAccount).toHaveBeenCalledWith(account);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes without removing the account when the user keeps it", async () => {
+    const { adapter, onClose, user } = renderSettings();
+
+    await user.click(screen.getByTestId("account-settings-remove-account"));
+    await user.click(screen.getByRole("button", { name: "Keep" }));
+
+    expect(adapter.removeAccount).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides View in explorer when the account currency has no explorer", () => {
+    renderSettings();
+
+    expect(screen.queryByTestId("account-settings-view-explorer")).toBeNull();
   });
 });

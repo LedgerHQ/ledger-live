@@ -26,6 +26,7 @@ export function initialContext(input: DeviceOnboardingInput): DeviceOnboardingCo
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
+    successAcknowledgedOnSession: null,
     firmware: null,
     currentSetupStep: null,
     recoveryKeyBackupOpen: false,
@@ -126,6 +127,13 @@ export const contextActions = {
     };
   }),
   forgetFirmwareCheck: update({ firmware: null }),
+  // Cleared before the rebooted session id is known, so a reused id still repeats the genuine check.
+  clearGenuineVerdict: update({
+    genuineVerdict: null,
+    lastGenuineFailure: null,
+    checksPaused: false,
+    successAcknowledgedOnSession: null,
+  }),
   // A new session starts the checks over: the old firmware answer and failure belong to the old one.
   startNewSession: update(({ event }) => {
     if (event.type !== "SESSION_READY" && event.type !== "SESSION_CHANGED") {
@@ -145,8 +153,15 @@ export const contextActions = {
       return {};
     }
 
-    return { sessionId: event.sessionId, genuineVerdict: null };
+    return {
+      sessionId: event.sessionId,
+      genuineVerdict: null,
+      successAcknowledgedOnSession: null,
+    };
   }),
+  acknowledgeSuccess: update(({ context }) => ({
+    successAcknowledgedOnSession: context.sessionId,
+  })),
   pauseChecks: update({ checksPaused: true }),
   resumeChecks: update({ checksPaused: false }),
   rememberSetupStep: update(({ context, event }) => {

@@ -11,7 +11,7 @@ export function CardTransactionHistory(props: CardTransactionHistoryProps) {
   const detail = useCardTransactionDetailDialog({ page: "History" });
   const viewModel = useCardTransactionHistoryViewModel({
     ...props,
-    onRowClick: detail.onTransactionPress,
+    onRowClick: detail.onOpenTransaction,
   });
 
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "LLD/hooks/redux";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import CounterValueSelect from "./CounterValueSelect";
 import LanguageSelect from "./LanguageSelect";
@@ -33,7 +33,7 @@ const SectionGeneral = () => {
 
   return (
     <>
-      <TrackPage category="Settings" name="Display" />
+      <TrackScreen category="Settings" name="Display" />
       <Body>
         {!ledgerSyncOptimisationFlag?.enabled && (
           <LedgerSyncEntryPoint entryPoint={EntryPoint.settings} />

@@ -1,8 +1,11 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";

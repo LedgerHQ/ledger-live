@@ -1,0 +1,14 @@
+import React from "react";
+import { View } from "react-native";
+<% if (universal) { -%>
+import type { <%= className %>Props } from "./<%= className %>.types";
+<% } else { -%>
+
+export type <%= className %>Props = Readonly<{
+  testID?: string;
+}>;
+<% } -%>
+
+export function <%= className %>({ testID }: <%= className %>Props) {
+  return <View testID={testID} />;
+}

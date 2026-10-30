@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "2.1.1",
+  "version": "2.2.0-next.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -133,6 +133,12 @@
     "./package.json": "./package.json"
   },
   "license": "Apache-2.0",
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",
@@ -160,7 +166,7 @@
     "@ledgerhq/live-network": "catalog:",
     "@ledgerhq/logs": "catalog:",
     "@ledgerhq/types-live": "workspace:^",
-    "@mysten/signers": "1.0.1",
+    "@mysten/ledger-signer": "0.2.12",
     "@mysten/sui": "2.23.1",
     "@protobuf-ts/grpcweb-transport": "2.11.1",
     "axios": "catalog:",
@@ -174,6 +180,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",

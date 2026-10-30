@@ -1,6 +1,6 @@
 {
   "name": "@features/flow-app-availability",
-  "version": "0.2.0",
+  "version": "0.3.0-next.0",
   "private": true,
   "description": "App availability flow: geo-block and service-unavailable gate for Ledger Wallet Desktop and Mobile",
   "main": "src/index.ts",
@@ -14,7 +14,7 @@
     "format": "oxfmt src",
     "format:check": "oxfmt --check src",
     "lint": "oxlint ./src",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
@@ -31,7 +31,8 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
-    "@support/jest-features-flow": "workspace:*",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

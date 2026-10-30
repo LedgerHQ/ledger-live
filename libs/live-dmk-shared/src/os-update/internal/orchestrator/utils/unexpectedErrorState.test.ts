@@ -8,15 +8,19 @@ const cancel = () => undefined;
 describe("unexpectedErrorState", () => {
   describe("success", () => {
     it("should return the pre-checks unexpected error state", () => {
-      expect(unexpectedErrorState(OsUpdatesSteps.PRE_CHECKS, cancel)).toEqual({
+      const error = new Error("pre-checks crashed");
+      expect(unexpectedErrorState(OsUpdatesSteps.PRE_CHECKS, cancel, error)).toEqual({
         type: PreChecksStateType.UNEXPECTED_ERROR,
+        error,
         cancel,
       });
     });
 
     it("should return the create-backup unexpected error state", () => {
-      expect(unexpectedErrorState(OsUpdatesSteps.CREATE_BACKUP, cancel)).toEqual({
+      const error = new Error("create-backup crashed");
+      expect(unexpectedErrorState(OsUpdatesSteps.CREATE_BACKUP, cancel, error)).toEqual({
         type: CreateBackupStateType.UNEXPECTED_ERROR,
+        error,
         cancel,
       });
     });

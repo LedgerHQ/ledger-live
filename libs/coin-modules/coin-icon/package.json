@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-icon",
-  "version": "0.31.2",
+  "version": "0.32.0-next.0",
   "description": "Ledger Icon Coin integration",
   "keywords": [
     "Ledger",
@@ -61,6 +61,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.2",
@@ -70,6 +71,12 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "coverage": "jest --coverage --passWithNoTests",
     "clean": "rimraf lib lib-es",

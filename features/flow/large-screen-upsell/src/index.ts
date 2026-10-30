@@ -1,4 +1,7 @@
-export * from "./state";
+export * from "./state/constants";
+export * from "./state/schema";
+export * from "./state/types";
+export * from "./state/slice";
 export * from "./types";
 export * from "./decision/getLargeScreenUpsellDecision";
 export * from "./decision/getLargeScreenUpsellEligibility";
@@ -10,14 +13,8 @@ export * from "./utils/mapDevicesModelListToUpsellInputs";
 export * from "./utils/getNanoOnlyDeviceModel";
 export * from "./utils/isNanoSOnlyWallet";
 export * from "./utils/isLargeScreenUpsellBannerEnabled";
-export { LARGE_SCREEN_UPSELL_IMAGES } from "./assets";
-export { LargeScreenUpsellModal } from "./screens/LargeScreenUpsellModal";
-export { LargeScreenUpsellModalView } from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView.web";
-export type { LargeScreenUpsellModalProps } from "./screens/LargeScreenUpsellModal";
-export type { LargeScreenUpsellModalViewModel } from "./screens/LargeScreenUpsellModal/types";
-export type { UseLargeScreenUpsellModalViewModelInput } from "./screens/LargeScreenUpsellModal/useLargeScreenUpsellModalViewModel";
-export type {
-  LargeScreenUpsellDismissMethod,
-  LargeScreenUpsellModalAnalyticsPorts,
-  LargeScreenUpsellModalViewedContext,
-} from "./screens/LargeScreenUpsellModal/analyticsPorts";
+export * from "./assets";
+export * from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModal";
+export * from "./screens/LargeScreenUpsellModal/LargeScreenUpsellModalView.web";
+export * from "./screens/LargeScreenUpsellModal/types";
+export * from "./screens/LargeScreenUpsellModal/analyticsPorts";

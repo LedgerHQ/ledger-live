@@ -1,6 +1,6 @@
 {
   "name": "@devtools/feature-flags",
-  "version": "0.10.3",
+  "version": "0.11.0-next.0",
   "private": true,
   "description": "Ledger Live feature flags' Devtools",
   "main": "src/index.ts",
@@ -25,7 +25,7 @@
     "@shared/feature-flags": "workspace:^"
   },
   "devDependencies": {
-    "@support/jest-devtools": "workspace:*",
+    "@support/jest": "workspace:*",
     "expo-document-picker": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/react-native": "catalog:",
@@ -33,6 +33,7 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "react": "catalog:",
@@ -58,16 +59,12 @@
     "@ledgerhq/lumen-utils-shared": "catalog:",
     "expo-file-system": "catalog:",
     "expo-modules-core": "catalog:",
-    "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:",
     "react-test-renderer": "catalog:"
   },
   "peerDependencies": {
@@ -76,16 +73,12 @@
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "@radix-ui/react-switch": "catalog:",
     "@radix-ui/react-slot": "catalog:",
-    "@radix-ui/react-checkbox": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-dropdown-menu": "catalog:",
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
-    "class-variance-authority": "catalog:",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
+    "class-variance-authority": "catalog:"
   },
   "peerDependenciesMeta": {
     "expo-document-picker": {

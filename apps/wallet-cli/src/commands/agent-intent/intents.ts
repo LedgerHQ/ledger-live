@@ -18,7 +18,15 @@ import { parseStatusFilter, toIntentListEntries } from "../../agent-intent/inten
 import { findEthereumToken } from "../../agent-intent/token-lookup";
 import { createCommandOutput } from "../../output";
 
-const PAGE_SIZES = AGENT_INTENT_PAGE_SIZES.map(String) as [string, ...string[]];
+// Checked in the handler rather than by a zod enum, so that `--cursor` refuses it like `--status`.
+function parsePageSize(value: string | undefined): AgentIntentPageSize | undefined {
+  if (value === undefined) return undefined;
+  const size = AGENT_INTENT_PAGE_SIZES.find(candidate => String(candidate) === value);
+  if (size === undefined) {
+    throw new Error(`--page-size must be one of ${AGENT_INTENT_PAGE_SIZES.join(", ")}.`);
+  }
+  return size;
+}
 
 export default defineCommand({
   name: "intents",
@@ -32,12 +40,13 @@ export default defineCommand({
     status: option(z.string().min(1).optional(), {
       description: `Only intents in these states, comma-separated: ${AGENT_INTENT_STATUSES.join(", ")}.`,
     }),
-    "page-size": option(z.enum(PAGE_SIZES).optional(), {
-      description: `Intents per page: ${PAGE_SIZES.join(", ")} (default: the service's, 10).`,
+    "page-size": option(z.string().min(1).optional(), {
+      description: `Intents per page: ${AGENT_INTENT_PAGE_SIZES.join(", ")} (default: the service's, 10).`,
     }),
     cursor: option(z.string().min(1).optional(), {
       description:
-        "Continue from a previous page's next cursor; --status and --page-size are then ignored.",
+        "Continue from a previous page's next cursor, with that listing's filters and page size " +
+        "(--status and --page-size are refused).",
     }),
     output: outputOption,
   },
@@ -48,7 +57,18 @@ export default defineCommand({
       account: flags.profile,
     });
     await out.run(async () => {
+      // The service applies the cursor's own filters, so new ones would be silently dropped.
+      const conflictingFlags = (["status", "page-size"] as const).filter(
+        flag => flags[flag] !== undefined,
+      );
+      if (flags.cursor && conflictingFlags.length > 0) {
+        throw new Error(
+          "--cursor continues with the filters and page size of the listing that returned it: " +
+            `drop ${conflictingFlags.map(flag => `--${flag}`).join(" and ")}.`,
+        );
+      }
       const status = parseStatusFilter(flags.status);
+      const pageSize = parsePageSize(flags["page-size"]);
       const profile = requireEnrolledProfile(await Session.read(), flags.profile);
       const client = createAgentIntentClient({
         bffBaseUrl: profile.bffBaseUrl,
@@ -60,13 +80,7 @@ export default defineCommand({
 
       let page: AgentIntentPage;
       try {
-        page = await client.listIntents({
-          status,
-          pageSize: flags["page-size"]
-            ? (Number(flags["page-size"]) as AgentIntentPageSize)
-            : undefined,
-          cursor: flags.cursor,
-        });
+        page = await client.listIntents({ status, pageSize, cursor: flags.cursor });
       } catch (e) {
         throw describeAgentIntentListError(e, profile.profileId);
       }

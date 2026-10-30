@@ -14,7 +14,7 @@ import { toBlockInfo } from "./getBlockInfo";
 
 // `assetOwner` is deliberately omitted: it identifies the account holding the token sub-account and
 // is only meaningful when listing operations for one address, which a block is not scoped to.
-const VTHO_ASSET: AssetInfo = { type: "token", assetReference: VTHO_ADDRESS, name: "VTHO" };
+const VTHO_ASSET: AssetInfo = { type: "token", assetReference: VTHO_ADDRESS };
 
 // Full expanded block; block info is derived from it (no separate fetch). Both native VET transfers
 // (`output.transfers`) and VTHO (VIP-180) movements (`output.events`) map to operations.

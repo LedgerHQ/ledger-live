@@ -5,7 +5,7 @@ import {
   DeleteCircleFill,
   InformationFill,
 } from "@ledgerhq/lumen-ui-react/symbols";
-import type { InfoStateProps } from "../types.web";
+import type { InfoStateProps } from "../InfoState.types";
 
 const SPOT_SIZE = 72;
 

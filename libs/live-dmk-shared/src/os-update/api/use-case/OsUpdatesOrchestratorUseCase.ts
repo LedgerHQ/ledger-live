@@ -29,12 +29,12 @@ export class OsUpdatesOrchestratorUseCase {
             listener(toProgress(snapshot.context));
           },
           // The errored snapshot keeps the context, so the step reached so far is preserved.
-          error: () => {
+          error: error => {
             const { currentStep } = actor.getSnapshot().context;
             listener(
               toProgress({
                 currentStep,
-                currentState: unexpectedErrorState(currentStep, stop),
+                currentState: unexpectedErrorState(currentStep, stop, error),
               }),
             );
           },

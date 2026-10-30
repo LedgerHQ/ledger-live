@@ -5,5 +5,5 @@ export default createDualPlatformKnipConfig({
   platform: "native",
   entry: ["src/index.native.ts"],
   additionalProjectExcludes: ["src/index.ts"],
-  additionalIgnoreDependencies: ["class-variance-authority", "clsx", "tailwind-merge"],
+  additionalIgnoreDependencies: ["@ledgerhq/lumen-design-core", "class-variance-authority"],
 });

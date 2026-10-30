@@ -1,0 +1,58 @@
+{
+  "$schema": "./components.config.schema.json",
+  "ignoredEntryPrefixes": ["test", "mock"],
+  "platformEntries": {
+    "./web": "web",
+    "./native": "native"
+  },
+  "conditions": {
+    "web": ["default"],
+    "native": ["react-native", "default"]
+  },
+  "extensions": {
+    "web": [".web.tsx", ".web.ts", ".tsx", ".ts", ".js", ".jsx"],
+    "native": [
+      ".ios.js",
+      ".android.js",
+      ".native.js",
+      ".js",
+      ".ios.jsx",
+      ".android.jsx",
+      ".native.jsx",
+      ".jsx",
+      ".ios.ts",
+      ".android.ts",
+      ".native.ts",
+      ".ts",
+      ".ios.tsx",
+      ".android.tsx",
+      ".native.tsx",
+      ".tsx"
+    ]
+  },
+  "componentWrappers": ["memo", "forwardRef"],
+  "bannedImportPrefixes": [
+    "react-native",
+    "@ledgerhq/lumen-ui-",
+    "@ledgerhq/lumen-utils-shared",
+    "react-dom"
+  ],
+  "neutralImportTypes": {
+    "@ledgerhq/lumen-ui-react": ["FormattedValue"],
+    "@ledgerhq/lumen-ui-rnative": ["FormattedValue"]
+  },
+  "neutralReactTypes": [
+    "ReactNode",
+    "ReactElement",
+    "Ref",
+    "RefObject",
+    "ComponentType",
+    "PropsWithChildren",
+    "Key",
+    "JSX"
+  ],
+  "sharedGlobals": ["setTimeout", "clearTimeout", "setInterval", "clearInterval"],
+  "bannedPropNames": ["className", "style"],
+  "gestureWords": ["Click", "Press", "Tap", "Touch", "Mouse", "Pointer"],
+  "bannedCallbackNames": ["onChange", "onChangeText", "onSubmit", "onFocus", "onBlur", "onKey*"]
+}

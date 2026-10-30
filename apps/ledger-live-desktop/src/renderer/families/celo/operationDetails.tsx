@@ -1,4 +1,8 @@
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import {
   FEE_CURRENCY_BY_ADAPTER,
   NATIVE_FEE_CURRENCY_MARKER,
@@ -7,7 +11,6 @@ import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logi
 import { getCeloTransactionFeeCurrency } from "@ledgerhq/live-common/families/celo/network";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useFindTokenByAddressInCurrencyQuery } from "@domain/api-currency-token";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +34,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 
 const OperationDetailsExtra = ({

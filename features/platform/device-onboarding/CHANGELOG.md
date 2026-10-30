@@ -1,5 +1,17 @@
 # @features/platform-device-onboarding
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23704](https://github.com/LedgerHQ/ledger-live/pull/23704) [`d316d23`](https://github.com/LedgerHQ/ledger-live/commit/d316d23562d9fc50834d308bf978f548aa032c57) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Close any open app before reading the device state, so the onboarding no longer falls back to the legacy flow
+
+- [#23604](https://github.com/LedgerHQ/ledger-live/pull/23604) [`cc184a6`](https://github.com/LedgerHQ/ledger-live/commit/cc184a681ef7716368e8df7bab1a05abb9cb576d) Thanks [@sarneijim](https://github.com/sarneijim)! - Reset the device onboarding like a quit, and leave the genuine check screen even when quit comes before the device answered
+
+- [#23699](https://github.com/LedgerHQ/ledger-live/pull/23699) [`c742800`](https://github.com/LedgerHQ/ledger-live/commit/c742800474dca6346e83690f414c31a747b0755f) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Offer Ledger Sync after the checks on a device that already has a seed, when the app passes offerSync
+
+- [#23776](https://github.com/LedgerHQ/ledger-live/pull/23776) [`8d462cb`](https://github.com/LedgerHQ/ledger-live/commit/8d462cbfd64fec0e533396e7b7316a17550733bc) Thanks [@sarneijim](https://github.com/sarneijim)! - Keep the checks success screen up until the user continues
+
 ## 0.2.0
 
 ### Minor Changes

@@ -11,9 +11,11 @@ import type { NavigatorScreenParams } from "@react-navigation/native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import type { Device as DmkDevice } from "@ledgerhq/live-dmk-shared";
 import type {
   PerpsDepositUiParams,
   PerpsSignResult,
+  PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { SendFlowInitParams } from "@ledgerhq/live-common/flows/send/types";
 import type { DecodedURISchemePayment } from "@ledgerhq/live-common/flows/send/utils/uriScheme";
@@ -112,6 +114,7 @@ import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 import type { MyWalletNavigatorStackParamList } from "LLM/features/MyWallet/types";
 import type { BackupHubNavigatorParamList } from "LLM/features/BackupHub/types";
+import type { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -383,6 +386,7 @@ export type BaseNavigatorStackParamList = {
     onCancel: () => void;
   };
   [ScreenName.PerpsDeposit]: PerpsDepositUiParams;
+  [ScreenName.PerpsWithdraw]: PerpsWithdrawUiParams;
   [ScreenName.PerpsTransactionSigned]: PerpsTransactionSignedParams;
   [ScreenName.DeeplinkInstallAppDeviceSelection]: {
     appKey: string;
@@ -408,6 +412,11 @@ export type BaseNavigatorStackParamList = {
     device?: Device | null;
     onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
     isBeforeOnboarding?: boolean;
+    isDeviceOnboarded?: boolean;
+  };
+  [ScreenName.OsUpdate]: {
+    device: DmkDevice;
+    mode?: OsUpdateFlowMode;
   };
   [NavigatorName.LandingPages]: NavigatorScreenParams<LandingPagesNavigatorParamList>;
   [ScreenName.Portfolio]: undefined;

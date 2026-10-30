@@ -30,6 +30,13 @@ function expectConfig(result: { current: WalletFeaturesConfig }, expected: Walle
   expect(result.current).toEqual(expected);
 }
 
+function withDesktopMyWallet(
+  platform: WalletPlatform,
+  config: WalletFeaturesConfig,
+): WalletFeaturesConfig {
+  return platform === "desktop" ? { ...config, shouldDisplayMyWallet: true } : config;
+}
+
 const makeConfig = (
   value: boolean,
   overrides?: Partial<WalletFeaturesConfig>,
@@ -41,7 +48,6 @@ const makeConfig = (
   shouldDisplayOperationsList: value,
   shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
-  shouldDisplayPnl: value,
   shouldDisplayAssetDiscoverability: value,
   shouldDisplayEarnUpselling: value,
   shouldDisplayEarnSimulator: value,
@@ -55,7 +61,6 @@ const makeParams = (value: boolean): Wallet40Params => ({
   operationsList: value,
   aggregatedAssets: value,
   myWallet: value,
-  pnl: value,
   assetDiscoverability: value,
   earnUpselling: value,
   earnSimulator: value,
@@ -75,7 +80,7 @@ describe("useWalletFeaturesConfig hook", () => {
           enabled: false,
           params: ALL_PARAMS_ENABLED,
         });
-        expectConfig(result, DISABLED_CONFIG);
+        expectConfig(result, withDesktopMyWallet(platform, DISABLED_CONFIG));
       },
     );
 
@@ -83,7 +88,7 @@ describe("useWalletFeaturesConfig hook", () => {
       "returns DISABLED_CONFIG for %s when the flag is disabled (default)",
       platform => {
         const { result } = renderWalletFeaturesConfig(platform);
-        expectConfig(result, DISABLED_CONFIG);
+        expectConfig(result, withDesktopMyWallet(platform, DISABLED_CONFIG));
       },
     );
   });
@@ -94,7 +99,7 @@ describe("useWalletFeaturesConfig hook", () => {
         enabled: true,
         params: ALL_PARAMS_ENABLED,
       });
-      expectConfig(result, ALL_CONFIG_ENABLED);
+      expectConfig(result, withDesktopMyWallet(platform, ALL_CONFIG_ENABLED));
     });
 
     describe.each(PLATFORMS)("on %s platform", platform => {
@@ -105,17 +110,19 @@ describe("useWalletFeaturesConfig hook", () => {
         ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
         ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
-        ["pnl", { pnl: true }, { shouldDisplayPnl: true }],
         ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],
         ["earnSimulator", { earnSimulator: true }, { shouldDisplayEarnSimulator: true }],
       ])("returns the correct config when only %s is enabled", (_, params, expectedOverrides) => {
         const { result } = renderWalletFeaturesConfig(platform, { enabled: true, params });
-        expectConfig(result, { ...ENABLED_NO_PARAMS_CONFIG, ...expectedOverrides });
+        expectConfig(
+          result,
+          withDesktopMyWallet(platform, { ...ENABLED_NO_PARAMS_CONFIG, ...expectedOverrides }),
+        );
       });
 
       it("handles missing params gracefully", () => {
         const { result } = renderWalletFeaturesConfig(platform, { enabled: true });
-        expectConfig(result, ENABLED_NO_PARAMS_CONFIG);
+        expectConfig(result, withDesktopMyWallet(platform, ENABLED_NO_PARAMS_CONFIG));
       });
 
       it("handles partial params", () => {
@@ -123,7 +130,13 @@ describe("useWalletFeaturesConfig hook", () => {
           enabled: true,
           params: { lazyOnboarding: true },
         });
-        expectConfig(result, { ...ENABLED_NO_PARAMS_CONFIG, shouldUseLazyOnboarding: true });
+        expectConfig(
+          result,
+          withDesktopMyWallet(platform, {
+            ...ENABLED_NO_PARAMS_CONFIG,
+            shouldUseLazyOnboarding: true,
+          }),
+        );
       });
     });
   });

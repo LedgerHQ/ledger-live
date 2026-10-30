@@ -1,8 +1,8 @@
 {
   "name": "@shared/analytics-react",
-  "version": "0.4.0",
+  "version": "0.5.0-next.0",
   "private": true,
-  "description": "React components tracking through the @shared/analytics pipeline: <Track>, <TrackPage> (web), <TrackScreen> (native)",
+  "description": "React components tracking through the @shared/analytics pipeline: <Track>, <TrackScreen>",
   "main": "src/index.ts",
   "react-native": "src/index.native.ts",
   "types": "src/index.ts",
@@ -23,7 +23,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../.. -W shared/analytics-react"
+    "unimported": "pnpm knip --directory ../.. -c shared/analytics-react/knip.web.config.mjs -W shared/analytics-react --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c shared/analytics-react/knip.native.config.mjs -W shared/analytics-react --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@shared/analytics": "workspace:*",
@@ -45,7 +45,7 @@
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
     "@react-navigation/native": "catalog:",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@testing-library/dom": "catalog:",

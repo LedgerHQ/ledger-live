@@ -1,23 +1,21 @@
 {
   "name": "@features/platform-style",
-  "version": "0.4.0",
+  "version": "0.5.0-next.0",
   "private": true,
   "description": "Single source of truth for StyleProvider across Ledger Live apps — SC ThemeProvider + Lumen integration, layer-boundary-clean",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
-    "./hooks": {
-      "react-native": "./src/hooks/index.native.ts",
-      "default": "./src/hooks/index.ts"
-    },
+    ".": "./src/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./web": "./src/web/index.web.ts",
+    "./native": "./src/native/index.native.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -26,9 +24,7 @@
   "dependencies": {
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
-    "@ledgerhq/lumen-ui-rnative": "catalog:",
-    "clsx": "catalog:",
-    "tailwind-merge": "catalog:"
+    "@ledgerhq/lumen-ui-rnative": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19.0.0",
@@ -42,9 +38,11 @@
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "styled-components": "catalog:",

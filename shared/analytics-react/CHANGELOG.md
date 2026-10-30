@@ -1,5 +1,16 @@
 # @shared/analytics-react
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#23906](https://github.com/LedgerHQ/ledger-live/pull/23906) [`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234) Thanks [@ysitbon](https://github.com/ysitbon)! - Make `TrackScreen` one universal component with a shared `TrackScreenProps` contract and remove the web-only `TrackPage`, which desktop now renders as `TrackScreen`
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @shared/analytics@0.4.0
+
 ## 0.4.0
 
 ### Minor Changes

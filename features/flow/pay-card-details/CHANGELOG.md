@@ -1,5 +1,28 @@
 # @features/flow-pay-card-details
 
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#23888](https://github.com/LedgerHQ/ledger-live/pull/23888) [`7ce8446`](https://github.com/LedgerHQ/ledger-live/commit/7ce8446db105f07bf142ab3bba9627875178f065) Thanks [@zel-kass](https://github.com/zel-kass)! - Bump Lumen to lumen-design-core 0.1.34, lumen-ui-react 0.1.67, lumen-ui-rnative 0.1.70, lumen-utils-shared 0.1.18 and lumen-lint-plugin 0.1.1. `cn` now comes from `@ledgerhq/lumen-design-core/cn` (the local helpers re-export it), the `Apex` icon is renamed `NanoGen5`, the removed `BellNotification` and `ShieldCheckNotification` icons are replaced by the plain icon inside a red `DotIndicator`, `FormattedValue` is imported from `@ledgerhq/lumen-ui-react` instead of `@ledgerhq/lumen-utils-shared`, Tailwind font classes that produce no CSS under the Lumen preset are dropped, and the `clsx`, `tailwind-merge`, `@radix-ui/react-switch` and `@radix-ui/react-checkbox` declarations Lumen no longer needs are removed.
+
+- [#23963](https://github.com/LedgerHQ/ledger-live/pull/23963) [`6c1779a`](https://github.com/LedgerHQ/ledger-live/commit/6c1779af32758f7d6542032888be19c6aa740d59) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the card transaction components universal: `CardTransactions` takes `onOpenTransaction` and `ListItem` takes `onOpenTransaction`, `CardTransactionDetail` is the detail content on both platforms, and the web dialog moves to `CardTransactionDetailDialog` in the `./web` entry. `CategoryIcon` is no longer exported.
+
+### Patch Changes
+
+- Updated dependencies [[`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8), [`25baf72`](https://github.com/LedgerHQ/ledger-live/commit/25baf72ba4d19425dae6973af5438040e453c234), [`4216add`](https://github.com/LedgerHQ/ledger-live/commit/4216addd84f49f073e5bd7c0ae7019f40799955f), [`2a7ae74`](https://github.com/LedgerHQ/ledger-live/commit/2a7ae7400258f13f2daa1b6fe63149ae7748aaaa), [`00badce`](https://github.com/LedgerHQ/ledger-live/commit/00badce303d15692c8ff9a91658803da1253af0c), [`6c1779a`](https://github.com/LedgerHQ/ledger-live/commit/6c1779af32758f7d6542032888be19c6aa740d59), [`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645), [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e)]:
+  - @shared/linking@0.4.0-next.0
+  - @features/platform-pay-analytics@0.4.0-next.0
+  - @features/flow-pay-card-auth@0.11.0-next.0
+  - @features/flow-pay-card-transactions@0.7.0-next.0
+  - @features/flow-pay-card-assets@0.5.0-next.0
+  - @shared/ui-queued-bottom-sheet@0.8.0-next.0
+  - @domain/entity-currency@0.4.8-next.0
+  - @features/flow-pay-card-wallets@0.6.2-next.0
+  - @features/flow-pay-card-widget@0.6.1-next.0
+  - @shared/i18n@0.2.0
+  - @domain/api-card-management@0.8.3-next.0
+
 ## 0.8.0
 
 ### Minor Changes

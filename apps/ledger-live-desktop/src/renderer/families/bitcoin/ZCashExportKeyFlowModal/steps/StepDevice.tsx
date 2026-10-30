@@ -13,7 +13,7 @@ import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import useTheme from "~/renderer/hooks/useTheme";
 import Box from "~/renderer/components/Box";
 import { renderVerifyUnwrapped, Title } from "~/renderer/components/DeviceAction/rendering";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
 import type { StepProps } from "../types";
@@ -21,7 +21,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { Container } from "../shared/Container";
 
 export default function StepDevice(props: StepProps) {
-  const { account } = props;
+  const { account, onConnectionFailed } = props;
   const [deviceIsReady, setDeviceIsReady] = useState(false);
   const mainAccount = account ? getMainAccount(account) : null;
   const action = useConnectAppAction();
@@ -40,6 +40,7 @@ export default function StepDevice(props: StepProps) {
       action={action}
       request={request}
       onResult={() => setDeviceIsReady(true)}
+      onError={onConnectionFailed}
       analyticsPropertyFlow="exportUfvk"
       location={HOOKS_TRACKING_LOCATIONS.receiveModal}
     />
@@ -89,7 +90,7 @@ const StepExport = (props: StepProps) => {
   if (ufvkExportError) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Export ZCash key"
           name="Step Confirmation Error"
           flow="exportUfvk"
@@ -102,7 +103,7 @@ const StepExport = (props: StepProps) => {
 
   return (
     <Box px={2}>
-      <TrackPage
+      <TrackScreen
         category="Export ZCash key"
         name="Step device"
         flow="exportUfvk"

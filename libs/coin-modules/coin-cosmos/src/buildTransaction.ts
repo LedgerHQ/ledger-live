@@ -1,14 +1,8 @@
 import { AminoMsgSend, AminoMsgWithdrawDelegatorReward } from "@cosmjs/stargate";
-import {
-  MsgWrappedBeginRedelegate,
-  MsgWrappedDelegate,
-  MsgWrappedUndelegate,
-} from "@keplr-wallet/proto-types/babylon/epoching/v1/tx";
-import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
-import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import type { Account } from "@ledgerhq/types-live";
 import type BigNumber from "bignumber.js";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
+import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
   MsgBeginRedelegate,
@@ -16,8 +10,13 @@ import {
   MsgUndelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
-import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
+import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import CosmosBase, { StakingMessageType } from "./chain/cosmosBase";
+import {
+  MsgWrappedBeginRedelegate,
+  MsgWrappedDelegate,
+  MsgWrappedUndelegate,
+} from "./proto/babylonEpoching";
 import {
   CosmosDelegationInfo,
   CosmosLikeTransaction,
@@ -284,23 +283,32 @@ export const txToMessages = (
 export function resolveTransactionValidators(
   transaction: CosmosLikeTransaction,
 ): CosmosDelegationInfo[] {
-  if (transaction.mode === "redelegate") {
-    return transaction.dstValAddress
-      ? [{ address: transaction.dstValAddress, amount: transaction.amount }]
-      : (transaction.validators ?? []);
-  }
-  return transaction.valAddress
-    ? [{ address: transaction.valAddress, amount: transaction.amount }]
-    : (transaction.validators ?? []);
+  if (transaction.mode === "send") return [];
+  const modeAddress =
+    transaction.mode === "redelegate" ? transaction.dstValAddress : transaction.valAddress;
+  if (!modeAddress && transaction.validators?.length) return transaction.validators;
+  const address =
+    transaction.mode === "redelegate" ? getDstValAddress(transaction) : getValAddress(transaction);
+  return address ? [{ address, amount: transaction.amount }] : [];
 }
 
-export function resolveSourceValidator(
-  transaction: CosmosLikeTransaction,
-): string | null | undefined {
-  if (transaction.mode === "redelegate" && (transaction.valAddress || transaction.dstValAddress)) {
-    return transaction.valAddress;
+/** Validator the transaction acts on (the source validator when redelegating), "" when it has none. */
+export function getValAddress(transaction: CosmosLikeTransaction): string {
+  if (transaction.mode === "send") return "";
+  if (transaction.mode === "redelegate") {
+    return transaction.valAddress || transaction.sourceValidator || "";
   }
-  return transaction.sourceValidator;
+  return transaction.valAddress || transaction.validators?.[0]?.address || "";
+}
+
+/** Destination validator of a redelegation, "" for any other mode. */
+export function getDstValAddress(transaction: CosmosLikeTransaction): string {
+  if (transaction.mode !== "redelegate") return "";
+  return transaction.dstValAddress || transaction.validators?.[0]?.address || "";
+}
+
+export function resolveSourceValidator(transaction: CosmosLikeTransaction): string | undefined {
+  return transaction.mode === "redelegate" ? getValAddress(transaction) || undefined : undefined;
 }
 
 export function normalizeCosmosOperationMode(mode: CosmosOperationMode): CosmosOperationMode {
@@ -330,6 +338,15 @@ export function messageParamsFromTransaction(
   };
 }
 
+// Malformed sequences (e.g. NaN from a bad LCD response) encode as 0, as the former protobufjs Long did.
+const toSequence = (sequence: string | number): bigint => {
+  try {
+    return BigInt(sequence);
+  } catch {
+    return 0n;
+  }
+};
+
 export const buildTransaction = ({
   protoMsgs,
   memo,
@@ -344,7 +361,7 @@ export const buildTransaction = ({
   memo: string;
   pubKeyType: string;
   pubKey: string;
-  feeAmount: { amount: string; denom: string }[] | undefined;
+  feeAmount: readonly { amount: string; denom: string }[] | undefined;
   gasLimit: string | undefined;
   sequence: string | number;
   signature: Uint8Array;
@@ -371,14 +388,13 @@ export const buildTransaction = ({
             single: {
               mode: SignMode.SIGN_MODE_LEGACY_AMINO_JSON,
             },
-            multi: undefined,
           },
-          sequence: sequence.toString(),
+          sequence: toSequence(sequence),
         },
       ],
       fee: Fee.fromPartial({
-        amount: feeAmount,
-        gasLimit: gasLimit,
+        amount: feeAmount ? [...feeAmount] : undefined,
+        gasLimit: gasLimit === undefined ? undefined : BigInt(gasLimit),
       }),
     }).finish(),
     signatures: [signature],

@@ -1,5 +1,5 @@
 import React from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import { StepProps } from "../types";
 
@@ -14,7 +14,7 @@ const StepConnectDevice = ({
   setSigned,
 }: StepProps) => (
   <>
-    <TrackPage
+    <TrackScreen
       category="Unstake Flow"
       name="Step ConnectDevice"
       flow="stake"

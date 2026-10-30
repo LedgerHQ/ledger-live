@@ -1,6 +1,6 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import {
   solanaActivationState,
   stakeActions,

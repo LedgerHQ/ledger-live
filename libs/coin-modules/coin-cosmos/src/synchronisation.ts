@@ -5,6 +5,7 @@ import { BigNumber } from "bignumber.js";
 import { isAccountEmpty } from "./helpers";
 import { txToOps } from "./logic/history/txToOps";
 import { CosmosAPI } from "./network/Cosmos";
+import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { CosmosAccount } from "./types";
 
 export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any) => {
@@ -46,21 +47,11 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     spendableBalance = new BigNumber(0);
   }
 
-  const carriedPublicKey =
-    rest?.publicKey ||
-    initialAccount?.cosmosResources?.publicKey ||
-    (initialAccount?.xpub && initialAccount.xpub !== address ? initialAccount.xpub : "");
-
-  const cosmosResources = {
-    delegations,
-    redelegations,
-    unbondings,
-    delegatedBalance,
-    pendingRewardsBalance,
-    unbondingBalance,
-    sequence: accountInfo.sequence,
-    publicKey: carriedPublicKey,
-  };
+  const preloadedValidators = getCurrentCosmosPreloadData()[currency.id]?.validators ?? [];
+  const validators =
+    preloadedValidators.length > 0
+      ? preloadedValidators
+      : (initialAccount?.stakingResources?.validators ?? []);
 
   const stakingResources: StakingResources = {
     delegations,
@@ -69,19 +60,21 @@ export const getAccountShape: GetAccountShape<CosmosAccount> = async (info: any)
     delegatedBalance,
     pendingRewardsBalance,
     unbondingBalance,
+    ...(validators.length > 0 ? { validators } : {}),
   };
 
   const shape = {
     id: accountId,
-    xpub: carriedPublicKey || address,
+    // Captured from the device at scan (hw-getAddress); plain re-syncs have no device,
+    // so carry the previously-persisted value forward.
+    xpub: rest?.publicKey || initialAccount?.xpub || address,
     balance: balance,
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
     sequence: accountInfo.sequence,
-    cosmosResources,
     stakingResources,
-    used: !isAccountEmpty({ balance, cosmosResources }),
+    used: !isAccountEmpty({ balance, sequence: accountInfo.sequence }),
   };
 
   if (shape.spendableBalance && shape.spendableBalance.lt(0)) {

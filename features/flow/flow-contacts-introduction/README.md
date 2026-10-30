@@ -22,8 +22,15 @@ reserved for components genuinely shared by both introduction screens.
 
 ## Public API
 
-Apps that mount an introduction directly import this package for its hooks, types, helpers, and
-native content. The package resolves its own copy with `@shared/i18n`. `ContactsView` from
+- `@features/flow-contacts-introduction`: state, resolvers, preference port, hooks, and shared
+  types, on both platforms.
+- `@features/flow-contacts-introduction/web`: `ContactsFeatureIntroductionDialog`,
+  `ContactsLedgerSyncIntroductionDialog`, and their props types.
+- `@features/flow-contacts-introduction/native`: `ContactsFeatureIntroductionContent`,
+  `ContactsLedgerSyncIntroductionContent`, and their props types.
+
+Import a platform entry only from code of that platform. The package resolves its own copy with
+`@shared/i18n`. `ContactsView` from
 `@features/flow-contacts` remains the aggregate API for the complete Contacts experience and
 composes these introductions on Web.
 

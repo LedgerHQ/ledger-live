@@ -24,7 +24,7 @@ export function ContactsAddContactContent({
         placeholder={labels.namePlaceholder}
         errorMessage={nameValidationError}
         isEditable={!isSaving}
-        onChange={onDraftNameChange}
+        onChangeName={onDraftNameChange}
       />
       <ContactNameDisclaimer disclaimerId={namingDisclaimerId} text={labels.namingDisclaimer} />
       <Button

@@ -1,5 +1,6 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { getCurrencyBridge } from "../impl";
 import { isZcashShieldedEnabled, resolveFamily } from "../zcashRouting";
 import { descriptor as aleoDescriptor } from "../../families/aleo/descriptor";
@@ -116,4 +117,33 @@ export function getStakeDescriptor(
 ): StakeDescriptor | null {
   const descriptor = getDescriptor(currency);
   return descriptor?.stake ?? null;
+}
+
+const noAccountTrackingAttributes: Readonly<Record<string, string | boolean>> = Object.freeze({});
+
+/**
+ * Get the account-level tracking attributes declared by the coin of a given account.
+ * Empty for a coin that declares none.
+ */
+export function getAccountTrackingAttributes(
+  account: AccountLike,
+): Record<string, string | boolean> {
+  const currency = account.type === "TokenAccount" ? account.token : account.currency;
+  const descriptor = getDescriptor(currency);
+  return descriptor?.getAccountTrackingAttributes?.(account) ?? noAccountTrackingAttributes;
+}
+
+/**
+ * Get the user-level tracking attributes declared by every coin, over all the user's
+ * accounts. Empty when no coin declares any.
+ */
+export function getUserTrackingAttributes(
+  accounts: AccountLike[] | undefined,
+): Record<string, number> {
+  const userAccounts = accounts ?? [];
+  const attributes: Record<string, number> = {};
+  for (const descriptor of Object.values(descriptorRegistry)) {
+    Object.assign(attributes, descriptor.getUserTrackingAttributes?.(userAccounts));
+  }
+  return attributes;
 }

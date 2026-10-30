@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-module-boilerplate",
-  "version": "6.0.1",
+  "version": "6.0.2-next.0",
   "private": true,
   "description": "Boilerplate coin integration",
   "keywords": [
@@ -113,6 +113,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/invariant": "^2.2.37",
@@ -126,6 +127,12 @@
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

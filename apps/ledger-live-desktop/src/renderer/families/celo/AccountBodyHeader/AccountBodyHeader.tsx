@@ -1,4 +1,4 @@
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";

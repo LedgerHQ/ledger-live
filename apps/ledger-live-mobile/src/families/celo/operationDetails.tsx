@@ -3,7 +3,11 @@ import { Linking } from "react-native";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { BigNumber } from "bignumber.js";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getAddressExplorer,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
@@ -11,7 +15,6 @@ import {
   CeloOperation,
   isCeloOperationExtra,
 } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import {
   FEE_CURRENCY_BY_ADAPTER,

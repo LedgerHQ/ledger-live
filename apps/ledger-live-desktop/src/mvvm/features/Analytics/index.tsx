@@ -1,6 +1,6 @@
 import React from "react";
 import PageHeader from "LLD/components/PageHeader";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import PortfolioBalanceSummary from "~/renderer/screens/dashboard/GlobalSummary";
 import { colors } from "~/renderer/styles/theme";
 import useAnalyticsViewModel from "./useAnalyticsViewModel";
@@ -32,7 +32,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
 
   return (
     <div className="flex flex-col gap-32 pb-32">
-      <TrackPage category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
+      <TrackScreen category="Analytics" range={selectedTimeRange} countervalue={counterValue} />
       <PageHeader title={t("analytics.title")} onBack={navigateToDashboard} />
 
       <div

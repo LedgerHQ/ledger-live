@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-evm",
-  "version": "0.24.2",
+  "version": "0.24.3-next.0",
   "private": true,
   "description": "Ledger Hardware Wallet Ethereum Application API",
   "keywords": [
@@ -49,7 +49,7 @@
     "coverage": "jest --coverage"
   },
   "devDependencies": {
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@types/react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/types-live": "workspace:^",

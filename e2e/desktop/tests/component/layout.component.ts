@@ -1,10 +1,11 @@
 import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 // For currencies whose backend is slow to answer: mina's rosetta node takes 35s or so on
 // /search/transactions, well past the default expect timeout.
-const SLOW_SYNC_TIMEOUT = 120_000;
+const SLOW_SYNC_TIMEOUT = TIMEOUT.xxxlarge;
 
 /**
  * `slowSync` buys the budget above, which covers one slow account. A spec seeding several pays it
@@ -34,13 +35,6 @@ export class Layout extends Component {
   readonly topbarSynchronizeButton = this.topbarActionButton("synchronize").or(
     this.page.getByTestId("topbar-synchronize-button"),
   );
-  readonly topbarNotificationButton = this.topbarActionButton("notifications").or(
-    this.page.getByTestId("topbar-notification-button"),
-  );
-  readonly topbarSettingsButton = this.topbarActionButton("settings").or(
-    this.page.getByTestId("topbar-settings-button"),
-  );
-  readonly topbarMyLedgerButton = this.topbarActionButton("my-ledger");
 
   @step("synchronize accounts")
   async syncAccounts() {

@@ -6,7 +6,7 @@ import { useTranslation } from "~/context/Locale";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../../../testIds";
 import type { AssetsSectionViewModel } from "./useAssetsSectionViewModel";
 
-type Props = Omit<AssetsSectionViewModel, "isVisible">;
+type Props = AssetsSectionViewModel;
 
 export function AssetsSectionView({ assets, precomputed }: Props) {
   const { t } = useTranslation();

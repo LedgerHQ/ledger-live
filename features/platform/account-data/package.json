@@ -1,6 +1,6 @@
 {
   "name": "@features/platform-account-data",
-  "version": "0.2.0",
+  "version": "0.2.1-next.0",
   "private": true,
   "description": "useAccountData: the React hook that keeps one kind of account data read while a screen shows it",
   "main": "src/index.ts",

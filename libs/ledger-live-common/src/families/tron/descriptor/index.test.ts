@@ -1,7 +1,13 @@
 import { BigNumber } from "bignumber.js";
+import type { TokenCurrency } from "@domain/entity-currency-token";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { descriptor } from "./index";
 
 const getNetworkFeesInfo = descriptor.send.fees.getNetworkFeesInfo;
+
+// Only the fields the descriptor and the registry read.
+const tronToken = (tokenType: string) =>
+  ({ type: "TokenCurrency", tokenType, parentCurrencyId: "tron" }) as TokenCurrency;
 
 /**
  * The resource amounts arrive on the *transaction*, propagated from `FeeEstimation.parameters` onto
@@ -135,5 +141,20 @@ describe("tron descriptor - getNetworkFeesInfo", () => {
         errors: { recipient: new Error("bad") },
       }),
     ).toBeNull();
+  });
+
+  describe("rentChangesFee", () => {
+    const rentChangesFee = descriptor.send.fees.rentChangesFee;
+
+    it("holds for a TRC-20 send, which burns energy", () => {
+      expect(rentChangesFee?.(tronToken("trc20"))).toBe(true);
+    });
+
+    it.each([
+      ["TRX", getCryptoCurrencyById("tron")],
+      ["a TRC-10 token", tronToken("trc10")],
+    ])("does not hold for %s, which burns no energy", (_label, currency) => {
+      expect(rentChangesFee?.(currency)).toBe(false);
+    });
   });
 });

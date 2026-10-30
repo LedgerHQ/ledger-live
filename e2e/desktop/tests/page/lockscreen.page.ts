@@ -1,5 +1,6 @@
 import { AppPage } from "tests/page/abstractClasses";
 import { step } from "tests/misc/reporters/step";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class LockscreenPage extends AppPage {
   readonly container = this.page.getByTestId("lockscreen-container");
@@ -10,7 +11,7 @@ export class LockscreenPage extends AppPage {
 
   @step("Submit password")
   async login(password: string) {
-    await this.container.waitFor({ state: "visible" });
+    await this.container.waitFor({ state: "visible", timeout: TIMEOUT.xxxlarge });
     await this.passwordInput.fill(password);
     await this.loginButton.click();
   }

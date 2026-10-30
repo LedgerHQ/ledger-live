@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "12.0.0",
+  "version": "12.1.0-next.0",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -69,7 +69,7 @@
     "@noble/curves": "catalog:",
     "@noble/hashes": "catalog:",
     "bip32-path": "^0.4.2",
-    "bitcoinjs-lib": "^7.0.2",
+    "bitcoinjs-lib": "catalog:",
     "bs58": "catalog:",
     "bs58check": "catalog:",
     "invariant": "^2.2.4",
@@ -90,6 +90,12 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "coverage": "jest --coverage --testPathIgnorePatterns='/.test.ts.disabled|node_modules|lib-es|lib/' --passWithNoTests",

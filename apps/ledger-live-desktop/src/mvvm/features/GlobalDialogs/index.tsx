@@ -8,6 +8,9 @@ const PerpsSignRoot = lazy(() => import("LLD/features/Perps/screens/PerpsSign/Pe
 const PerpsDepositRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsDeposit/PerpsDepositDialog"),
 );
+const PerpsWithdrawRoot = lazy(
+  () => import("LLD/features/Perps/screens/PerpsWithdraw/PerpsWithdrawDialog"),
+);
 const PerpsReviewRoot = lazy(
   () => import("LLD/features/Perps/screens/PerpsReview/PerpsReviewDialog"),
 );
@@ -45,6 +48,9 @@ const GlobalDialogs = () => (
     </Suspense>
     <Suspense fallback={null}>
       <PerpsDepositRoot />
+    </Suspense>
+    <Suspense fallback={null}>
+      <PerpsWithdrawRoot />
     </Suspense>
     <Suspense fallback={null}>
       <PerpsReviewRoot />

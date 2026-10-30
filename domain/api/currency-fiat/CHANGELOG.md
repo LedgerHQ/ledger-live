@@ -1,5 +1,17 @@
 # @domain/api-currency-fiat
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#23863](https://github.com/LedgerHQ/ledger-live/pull/23863) [`4883e43`](https://github.com/LedgerHQ/ledger-live/commit/4883e4316f186755d65348e6648cbc846c62f2bf) Thanks [@LL782](https://github.com/LL782)! - The OFAC-sanctioned fiat list now has one owner, `@domain/entity-currency-fiat`, behind `isSanctionedFiatTicker(ticker)`. The package no longer exports `OFAC_FIAT_TICKERS`, and `@ledgerhq/live-common/currencies` no longer exports `OFAC_CURRENCIES`. Both apps and `@domain/api-currency-fiat` call the new function.
+
+### Patch Changes
+
+- Updated dependencies [[`4883e43`](https://github.com/LedgerHQ/ledger-live/commit/4883e4316f186755d65348e6648cbc846c62f2bf), [`5e2a324`](https://github.com/LedgerHQ/ledger-live/commit/5e2a3245cc163b6cc13ef5fd2b7faa85c84ca153), [`0953772`](https://github.com/LedgerHQ/ledger-live/commit/0953772eafec52773cf7a19c08295c72a2e296a2)]:
+  - @domain/entity-currency-fiat@0.5.0-next.0
+  - @shared/api-services@0.11.0-next.0
+
 ## 0.4.8
 
 ### Patch Changes
@@ -237,19 +249,5 @@
 
 - Updated dependencies [[`c016a95`](https://github.com/LedgerHQ/ledger-live/commit/c016a95538dfef2d7ddf1a17914d8cb3e55b644e)]:
   - @shared/api-services@0.2.0-next.0
-
-## 0.2.1
-
-### Patch Changes
-
-- Updated dependencies [[`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7)]:
-  - @domain/entity-currency-fiat@0.3.0
-
-## 0.2.1-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`47b8889`](https://github.com/LedgerHQ/ledger-live/commit/47b8889b362204d565b0ad06c8862cdb9bf048b7)]:
-  - @domain/entity-currency-fiat@0.3.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

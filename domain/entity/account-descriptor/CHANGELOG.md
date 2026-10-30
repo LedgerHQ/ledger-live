@@ -1,5 +1,23 @@
 # @domain/entity-account-descriptor
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23710](https://github.com/LedgerHQ/ledger-live/pull/23710) [`fd6a3a3`](https://github.com/LedgerHQ/ledger-live/commit/fd6a3a341b07baa2849a9e79e3a05b73863034b7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(account-descriptor): identify the network by its CAL network_id
+
+  The descriptor becomes `account:2:<type>:<network_id>:<key>:<path>` and the entity only reads version 2.
+
+  wallet-cli, breaking:
+
+  - The upgrade is one-way: `session.yaml` is rewritten to version 2 on the next write (e.g. `account discover`), and an older wallet-cli can no longer read it. Don't roll back, pin an older install or run two versions on the same session.
+  - `network` in the JSON envelope and in analytics events is now the network id (`ethereum`, `bitcoin_testnet`), no longer `<name>:<env>` (`ethereum:main`).
+
+### Patch Changes
+
+- Updated dependencies [[`e3e0f3a`](https://github.com/LedgerHQ/ledger-live/commit/e3e0f3a5fefbdcf08c8c16d7dc2a3d9f6a6922e0), [`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8)]:
+  - @domain/entity-currency-crypto@0.17.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

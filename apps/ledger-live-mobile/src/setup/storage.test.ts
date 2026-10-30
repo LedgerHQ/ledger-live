@@ -2,31 +2,38 @@ import { createMMKV } from "react-native-mmkv";
 import { appConfigStorage } from "./storage";
 
 describe("appConfigStorage", () => {
+  const mmkv = jest.mocked(createMMKV).mock.results[0].value;
+
   afterEach(() => {
-    appConfigStorage.clear();
+    appConfigStorage.selections.clear();
+    appConfigStorage.devValues.clear();
   });
 
-  it("persists the selections in the dedicated app-config MMKV instance", () => {
+  it("persists the selections and the dev values as JSON under their own key of the app-config MMKV instance", () => {
+    appConfigStorage.selections.set("ledgerKeyRing", "dev");
+    appConfigStorage.devValues.set("keycloakBaseUrl", "http://localhost:8080");
+
+    expect(createMMKV).toHaveBeenCalledTimes(1);
     expect(createMMKV).toHaveBeenCalledWith({ id: "app-config" });
+    expect(mmkv.getString("appConfigSelections")).toBe(JSON.stringify({ ledgerKeyRing: "dev" }));
+    expect(mmkv.getString("appConfigDevValues")).toBe(
+      JSON.stringify({ keycloakBaseUrl: "http://localhost:8080" }),
+    );
+    expect(appConfigStorage.selections.getAll()).toEqual({ ledgerKeyRing: "dev" });
+    expect(appConfigStorage.devValues.getAll()).toEqual({
+      keycloakBaseUrl: "http://localhost:8080",
+    });
   });
 
-  it("holds no selections by default", () => {
-    expect(appConfigStorage.getAll()).toEqual({});
-  });
+  it("clears one storage, keeping the other", () => {
+    appConfigStorage.selections.set("ledgerKeyRing", "dev");
+    appConfigStorage.devValues.set("keycloakBaseUrl", "http://localhost:8080");
 
-  it("persists one key per switch", () => {
-    appConfigStorage.set("ledgerKeyRing", "prod");
-    appConfigStorage.set("otherSwitch", "prod");
-    appConfigStorage.set("ledgerKeyRing", "staging");
+    appConfigStorage.selections.clear();
 
-    expect(appConfigStorage.getAll()).toEqual({ ledgerKeyRing: "staging", otherSwitch: "prod" });
-  });
-
-  it("clears the selections", () => {
-    appConfigStorage.set("ledgerKeyRing", "staging");
-
-    appConfigStorage.clear();
-
-    expect(appConfigStorage.getAll()).toEqual({});
+    expect(mmkv.contains("appConfigSelections")).toBe(false);
+    expect(appConfigStorage.devValues.getAll()).toEqual({
+      keycloakBaseUrl: "http://localhost:8080",
+    });
   });
 });

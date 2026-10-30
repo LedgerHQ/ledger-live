@@ -8,6 +8,9 @@
 // location. Re-exporting another package turns the barrel into a proxy: two import paths for the
 // same symbol, and no obvious original provider.
 
+const path = require("node:path");
+const ts = require("typescript");
+
 /** @typedef {{ line: number, code: string, message: string, text: string }} Violation */
 
 // `index.ts`, and the platform variants beside it: `index.native.ts`, `index.web.tsx`, …
@@ -219,10 +222,142 @@ function checkBarrel(source, options = {}) {
   return violations;
 }
 
+/**
+ * Every top-level re-export declaration of a module, read with the TypeScript parser alone, so
+ * export-looking text in a string, a template, a pattern or JSX is never taken for a statement.
+ *
+ * @param {string} source raw file contents
+ * @param {string} file parses a `.tsx` or `.jsx` file with JSX, and the rest without
+ * @returns {Array<{ line: number, kind: "star" | "namespace" | "named", isDefault: boolean, specifier: string, text: string }>}
+ */
+function reexportsOf(source, file) {
+  const scriptKind = /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const sourceFile = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, scriptKind);
+  const lines = source.split("\n");
+  const found = [];
+  for (const statement of sourceFile.statements) {
+    if (!ts.isExportDeclaration(statement)) continue;
+    if (!statement.moduleSpecifier || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+    const clause = statement.exportClause;
+    const line = sourceFile.getLineAndCharacterOfPosition(statement.getStart(sourceFile)).line + 1;
+    found.push({
+      line,
+      kind: !clause ? "star" : ts.isNamespaceExport(clause) ? "namespace" : "named",
+      // `export { default } from "./x"` and `export { X as default } from "./x"`.
+      isDefault:
+        !!clause &&
+        ts.isNamedExports(clause) &&
+        clause.elements.length === 1 &&
+        clause.elements[0].name.text === "default",
+      specifier: statement.moduleSpecifier.text,
+      text: lines[line - 1]?.trim() ?? "",
+    });
+  }
+  return found;
+}
+
+/**
+ * The relative, non-internal `export *` specifiers of a module: the files it makes public as a
+ * whole, which the check follows.
+ *
+ * @param {string} source raw file contents
+ * @param {string} [file]
+ * @returns {string[]}
+ */
+function starReexportTargets(source, file = "module.tsx") {
+  return reexportsOf(source, file)
+    .filter(({ kind, specifier }) => kind === "star" && specifier.startsWith("."))
+    .map(({ specifier }) => specifier)
+    .filter(specifier => !isInternalSpecifier(specifier));
+}
+
+/**
+ * Report the re-exports of a module reached through a barrel's `export *` or named as a package
+ * entry point. Its declarations are its own business, but its re-exports are public API: they
+ * follow the barrel rules, so moving a named re-export or a proxy out of `index.*` hides nothing.
+ *
+ * @param {string} source raw file contents
+ * @param {{ allowNonRelative?: boolean }} [options]
+ * @param {string} [file]
+ * @returns {Violation[]}
+ */
+function checkReachedModule(source, options = {}, file = "module.tsx") {
+  const violations = [];
+
+  for (const { line, kind, isDefault, specifier, text } of reexportsOf(source, file)) {
+    if (isInternalSpecifier(specifier)) {
+      violations.push({
+        line,
+        code: "internals-reexport",
+        message: `\`${specifier}\` is a private location; internals must stay out of the public API`,
+        text,
+      });
+    } else if (!specifier.startsWith(".") && !options.allowNonRelative) {
+      const inRepo = isInRepoSpecifier(specifier);
+      violations.push({
+        line,
+        code: inRepo ? "cross-package-reexport" : "external-reexport",
+        message: inRepo
+          ? `re-exporting \`${specifier}\` makes this package a proxy; consumers must import the original provider`
+          : `re-exporting the third-party \`${specifier}\` makes this package a proxy`,
+        text,
+      });
+    } else if (kind !== "star" && !isDefault) {
+      violations.push({
+        line,
+        code: "hidden-barrel",
+        message:
+          "this module is public API, so it re-exports like a barrel: `export * from` and an optional default re-export only",
+        text,
+      });
+    }
+  }
+
+  return violations;
+}
+
+// Where an `index.*` under src/ may sit: as an entry (src/index.* or a package.json#exports
+// target), one `export *` level below an entry, or in an internals location. Each code is worded
+// once for the violation, the CLI hint and the waivers.
+const BARREL_LOCATION = {
+  "orphan-barrel": {
+    rule: "No entry reaches this barrel through `export *`",
+    fix:
+      "if another package uses what it groups, re-export it from the root with one " +
+      '`export * from "./dir"` line; otherwise delete the barrel and import the files directly, ' +
+      "or move the folder under internals/. Expose only code another package imports",
+  },
+  "nested-barrel": {
+    rule: "This barrel is reached more than one `export *` level below its entry",
+    fix: "re-export the files from the first-level barrel instead of chaining barrels",
+  },
+};
+
+/**
+ * Report an `index.*` that BARREL_LOCATION does not allow.
+ *
+ * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
+ * @param {string} file posix-style path of the `index.*`, from the repo root
+ * @param {number | undefined} depth barrels from its nearest entry to it, itself included: 0 for
+ *   an entry, undefined when no entry reaches it
+ * @returns {Violation[]}
+ */
+function checkBarrelLocation(projectRoot, file, depth) {
+  if (isInternalSpecifier(path.posix.dirname(file.slice(projectRoot.length + 1)))) return [];
+  if (depth !== undefined && depth <= 1) return [];
+  const code = depth === undefined ? "orphan-barrel" : "nested-barrel";
+  const { rule, fix } = BARREL_LOCATION[code];
+  return [{ line: 1, code, message: `${projectRoot}: ${rule}. Fix: ${fix}`, text: "" }];
+}
+
 module.exports = {
+  BARREL_LOCATION,
   checkBarrel,
+  checkBarrelLocation,
+  checkReachedModule,
   isBarrelFile,
   isInternalSpecifier,
   isInRepoSpecifier,
+  starReexportTargets,
   stripComments,
 };

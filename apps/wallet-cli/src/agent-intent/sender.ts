@@ -1,4 +1,5 @@
 import { resolveAccountDescriptorV1 } from "../commands/inputs";
+import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 import { parseEvmAddress } from "./evm";
 
 const MAINNET_ACCOUNT = {
@@ -6,18 +7,33 @@ const MAINNET_ACCOUNT = {
   solana: "a Solana mainnet account",
 };
 
+export type SenderAccount = { label: string; descriptor: AccountDescriptorV1 };
+
+/** Exactly one sender: `--account` or the command's own address flag. */
+export function parseSenderInput(
+  flags: { account?: string; address?: string },
+  addressFlag: "from" | "sender",
+): { account: string } | { address: string } {
+  if (flags.account && !flags.address) return { account: flags.account };
+  if (flags.address && !flags.account) return { address: flags.address };
+  throw new Error(
+    `Pass exactly one sender: --account <session-label> or --${addressFlag} <address>.`,
+  );
+}
+
+export async function resolveSenderAccount(label: string): Promise<SenderAccount> {
+  return { label, descriptor: await resolveAccountDescriptorV1(label) };
+}
+
 /** Only a mainnet address account on the intent's network can propose it. */
-export async function resolveSenderFromAccount(
-  label: string,
+export function senderFromAccount(
+  { label, descriptor }: SenderAccount,
   intentType: "send" | "swap",
   network: keyof typeof MAINNET_ACCOUNT,
-): Promise<string> {
-  const descriptor = await resolveAccountDescriptorV1(label);
-  const { name, env } = descriptor.network;
-  if (name !== network || env !== "main" || descriptor.type !== "address") {
-    const actual = env === "main" ? name : `${name} ${env}`;
+): string {
+  if (descriptor.network !== network || descriptor.type !== "address") {
     throw new Error(
-      `Account "${label}" is on ${actual}; this Agent Intent ${intentType} needs ` +
+      `Account "${label}" is on ${descriptor.network}; this Agent Intent ${intentType} needs ` +
         `${MAINNET_ACCOUNT[network]}.`,
     );
   }

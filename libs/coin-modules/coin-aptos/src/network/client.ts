@@ -2,6 +2,7 @@ import { ApolloClient, InMemoryCache } from "@apollo/client";
 import {
   type AccountData,
   Aptos,
+  AptosApiError,
   AptosConfig,
   Ed25519PublicKey,
   type GasEstimation,
@@ -293,10 +294,35 @@ export class AptosAPI {
 
   async listOperations(rawAddress: string, minHeight: number): Promise<Page<Operation>> {
     const address = normalizeAddress(rawAddress);
-    const transactions = await this.getAccountInfo(address, minHeight.toString());
+
+    // The indexer filters on transaction versions, not block heights: start from the first
+    // version of the minHeight block (inclusive).
+    let afterVersion: string | undefined;
+    if (minHeight > 0) {
+      const firstVersion = await this.getFirstVersionAtHeight(minHeight);
+      if (firstVersion === undefined) {
+        return { items: [], next: undefined };
+      }
+      afterVersion = (BigInt(firstVersion) - 1n).toString();
+    }
+
+    const transactions = await this.getAccountInfo(address, afterVersion);
     const newOperations = transactionsToOperations(address, transactions.transactions);
 
     return { items: newOperations, next: undefined };
+  }
+
+  /** First transaction version of the block at `height`, or undefined if that block doesn't exist yet. */
+  private async getFirstVersionAtHeight(height: number): Promise<string | undefined> {
+    try {
+      const block = await this.aptosClient.getBlockByHeight({ blockHeight: height });
+      return block.first_version;
+    } catch (error) {
+      if (error instanceof AptosApiError && error.status === 404) {
+        return undefined;
+      }
+      throw error;
+    }
   }
 
   private async getAllTransactions(address: string, gt?: string): Promise<TransactionVersion[]> {

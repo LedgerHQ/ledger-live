@@ -7,7 +7,7 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer,
   getAddressExplorer,
-} from "@ledgerhq/live-common/explorers";
+} from "@domain/entity-currency-crypto";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";

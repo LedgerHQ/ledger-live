@@ -1,5 +1,5 @@
 import { Divider, Button } from "@ledgerhq/lumen-ui-react";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { useState } from "react";
 import { DiffLine } from "../../utils";
 import { FlagDiffView } from "../flagDiffView/FlagDiffView";

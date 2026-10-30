@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-tester-polkadot",
-  "version": "1.21.1",
+  "version": "1.21.2-next.0",
   "private": true,
   "description": "Ledger Polkadot Coin Tester",
   "main": "src/scenarii.test.ts",
@@ -62,10 +62,7 @@
     "@polkadot/api": "catalog:",
     "@polkadot/util-crypto": "catalog:",
     "bignumber.js": "^9.1.2",
-    "chalk": "^4.1.2",
-    "docker-compose": "^1.1.0",
-    "expect": "catalog:",
-    "msw": "catalog:"
+    "expect": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",

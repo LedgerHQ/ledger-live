@@ -1,4 +1,4 @@
-import type { NetworkFeesViewModel } from "../../types";
+import type { NetworkFeesViewModel, SponsoredFeeEntryViewModel } from "../../types";
 
 export type AmountScreenMessage = Readonly<{
   type: "error" | "warning" | "info";
@@ -43,6 +43,8 @@ type AmountScreenViewModelReady = Readonly<{
   ready: true;
   amountInput: AmountInputViewModel;
   networkFees: NetworkFeesViewModel;
+  /** Set while the sponsored fee is offered for this send. */
+  sponsoredFee: SponsoredFeeEntryViewModel | null;
   quickActions: QuickActionsViewModel;
   reviewButton: ReviewButtonViewModel;
   message: AmountScreenMessage | null;

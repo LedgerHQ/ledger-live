@@ -3,6 +3,7 @@ import { writeFileSync } from "fs";
 import { ElectronApplication, expect } from "@playwright/test";
 import { launchApp } from "tests/utils/electronUtils";
 import { getFeatureFlags, getMergedFeatureFlags } from "tests/utils/featureFlagUtils";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const environmentFilePath = "allure-results/environment.properties";
 
@@ -21,11 +22,11 @@ export default async function globalTeardown() {
       windowSize: { width: 1024, height: 768 },
     });
     const page = await electronApp.firstWindow();
-    page.setDefaultTimeout(99000);
+    page.setDefaultTimeout(TIMEOUT.xlarge);
 
-    // wait for app is loaded
-    await page.waitForLoadState("domcontentloaded");
-    await page.waitForSelector("#loader-container", { state: "hidden" });
+    // app is loaded: on a slow CI runner, start-up takes longer than 30s
+    await page.waitForLoadState("domcontentloaded", { timeout: TIMEOUT.xxxlarge });
+    await page.waitForSelector("#loader-container", { state: "hidden", timeout: TIMEOUT.xxxlarge });
 
     // wait for app envs to be available
     let appEnvsString = "";
@@ -41,7 +42,7 @@ export default async function globalTeardown() {
             }
             return appEnvsString.length;
           },
-          { timeout: 30_000, intervals: [1_000] },
+          { timeout: TIMEOUT.xlarge, intervals: [INTERVAL.medium] },
         )
         .toBeGreaterThan(0);
     } catch (error) {
@@ -60,7 +61,7 @@ export default async function globalTeardown() {
             }
             return featureFlagsString.length;
           },
-          { timeout: 30_000, intervals: [1_000] },
+          { timeout: TIMEOUT.xlarge, intervals: [INTERVAL.medium] },
         )
         .toBeGreaterThan(0);
     } catch (error) {

@@ -3,7 +3,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getDelegationVisibilityDelayMinutes } from "@ledgerhq/live-common/families/evm/staking/logic";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -31,7 +31,7 @@ const StepAmount = ({
   const visibilityDelayMinutes = getDelegationVisibilityDelayMinutes(account.currency.id);
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Delegation EVM"
         name="Step Amount"
         flow="stake"

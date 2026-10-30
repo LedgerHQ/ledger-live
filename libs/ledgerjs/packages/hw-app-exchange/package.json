@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.30.0",
+  "version": "0.31.0-next.0",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -45,6 +45,12 @@
     "jest": "catalog:",
     "ts-node": "^10.4.0"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "prebuild": "pnpm pbjs -t static-module -w es6 -r ledger_trade -o src/generate-protocol.js ./protocol.proto && pnpm pbts -o src/generate-protocol.d.ts src/generate-protocol.js && pnpm exec oxfmt src/generate-protocol.js src/generate-protocol.d.ts",

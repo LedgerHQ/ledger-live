@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "1.0.0",
+  "version": "1.1.0-next.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -60,7 +60,7 @@
     "@noble/hashes": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "^9.1.2",
-    "bitcoinjs-lib": "^7.0.2",
+    "bitcoinjs-lib": "catalog:",
     "bs58": "catalog:",
     "cashaddrjs": "^0.4.4",
     "invariant": "^2.2.2",
@@ -69,13 +69,13 @@
     "utility-types": "^3.10.0"
   },
   "devDependencies": {
-    "@bitcoinerlab/secp256k1": "2.0.0",
+    "@bitcoinerlab/secp256k1": "catalog:",
     "@domain/entity-currency-crypto": "workspace:^",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@noble/curves": "catalog:",
-    "@support/jest-shared": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bchaddrjs": "^0.4.3",
@@ -91,7 +91,7 @@
     "@types/ripemd160": "^2.0.3",
     "@types/sha.js": "^2.4.4",
     "bip32": "^4.0.0",
-    "bip39": "^3.0.4",
+    "bip39": "catalog:",
     "ecpair": "3.0.2",
     "jest": "catalog:",
     "jest-file-snapshot": "catalog:",
@@ -101,6 +101,13 @@
     "oxlint": "catalog:",
     "typescript": "catalog:"
   },
+  "files": [
+    "lib",
+    "lib-es",
+    "src",
+    "types",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc --project tsconfig.build.json && tsc --project tsconfig.build.json -m esnext --moduleResolution bundler --outDir lib-es",

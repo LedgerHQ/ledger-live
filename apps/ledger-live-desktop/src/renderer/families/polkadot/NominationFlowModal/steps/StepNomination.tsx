@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/polkadot/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ValidatorsField from "../fields/ValidatorsField";
@@ -42,7 +42,7 @@ function StepNominationContent({
   const nominations = polkadotResources.nominations || [];
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Nomination Flow"
         name="Step 1"
         flow="stake"

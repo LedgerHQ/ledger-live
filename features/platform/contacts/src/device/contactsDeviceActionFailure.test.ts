@@ -1,6 +1,9 @@
+import { firstValueFrom } from "rxjs";
 import {
+  handleContactDeviceActionTransportError,
   mapDeviceActionErrorToFailureJobState,
   mapDmkErrorToError,
+  throwIfDeviceDisconnected,
 } from "./contactsDeviceActionFailure";
 
 describe("mapDmkErrorToError", () => {
@@ -121,5 +124,48 @@ describe("mapDeviceActionErrorToFailureJobState", () => {
 
     // THEN
     expect(result.type).toBe("failed");
+  });
+});
+
+describe("throwIfDeviceDisconnected", () => {
+  it("GIVEN a device disconnect WHEN checked THEN it throws that error", () => {
+    const error = { _tag: "DeviceDisconnectedWhileSendingError" };
+
+    expect(() => throwIfDeviceDisconnected(error)).toThrow(expect.objectContaining(error));
+  });
+
+  it("GIVEN any other error WHEN checked THEN it does not throw", () => {
+    expect(() => throwIfDeviceDisconnected({ _tag: "UnknownDAError" })).not.toThrow();
+  });
+});
+
+describe("handleContactDeviceActionTransportError", () => {
+  it.each([
+    ["a send disconnect", { _tag: "DeviceDisconnectedWhileSendingError" }],
+    ["a WebHID send failure", { _tag: "WebHidSendReportError" }],
+    ["a wrapped WebHID send failure", { err: { _tag: "WebHidSendReportError" } }],
+  ] as const)(
+    "GIVEN %s WHEN handling THEN it reports the failure and rethrows",
+    async (_label, error) => {
+      const report = jest.fn();
+
+      await expect(
+        firstValueFrom(handleContactDeviceActionTransportError(error, report)),
+      ).rejects.toBe(error);
+      expect(report).toHaveBeenCalledWith(expect.any(Error));
+    },
+  );
+
+  it("GIVEN another transport error WHEN handling THEN it reports a terminal failed state", async () => {
+    const error = new Error("boom");
+    const report = jest.fn();
+
+    await expect(
+      firstValueFrom(handleContactDeviceActionTransportError(error, report)),
+    ).resolves.toEqual({
+      type: "failed",
+      error,
+    });
+    expect(report).toHaveBeenCalledWith(error);
   });
 });

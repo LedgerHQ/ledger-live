@@ -1,5 +1,17 @@
 # @ledgerhq/transaction-observability
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#23611](https://github.com/LedgerHQ/ledger-live/pull/23611) [`0c04ab2`](https://github.com/LedgerHQ/ledger-live/commit/0c04ab223b387417a27eebbf64459bcd17ea3dc2) Thanks [@cted-ledger](https://github.com/cted-ledger)! - Report coin-module calls and every broadcast outcome to Datadog logs behind the new `coinObservability` flag: `withMetrics` wraps the resolved coin-module API and reports each call to registered observers, sampled on the sync path and capped on failures, and the bridge seam's broadcast events are forwarded as `tx_broadcast` for every family and route.
+
+### Patch Changes
+
+- Updated dependencies [[`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359)]:
+  - @ledgerhq/types-live@6.129.0-next.0
+  - @shared/env@0.11.0
+
 ## 0.5.1
 
 ### Patch Changes

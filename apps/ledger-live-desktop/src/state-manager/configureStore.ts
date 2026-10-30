@@ -2,7 +2,9 @@ import { configureStore, type Middleware, type ThunkDispatch } from "@reduxjs/to
 import { UnknownAction } from "redux";
 import { AuthSDK } from "@ledgerhq/auth";
 import { getEnv } from "@shared/env";
+import { getPortfolioServiceUrl } from "~/config/portfolioService";
 import { authApiExtra } from "@shared/auth";
+import { createAppConfigMiddleware } from "@shared/app-config";
 import { LkrpIdentityProvider } from "@ledgerhq/ledger-key-ring-protocol";
 import type { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import {
@@ -11,9 +13,12 @@ import {
   cardApiExtra,
   coinMarketCapApiExtra,
   cvsApiExtra,
+  portfolioApiExtra,
   pushDevicesApiExtra,
   redactCardApiAction,
   redactCardApiState,
+  redactPortfolioApiAction,
+  redactPortfolioApiState,
   swapApiExtra,
 } from "@shared/api-services";
 import {
@@ -33,7 +38,7 @@ import reducers, { State } from "~/renderer/reducers";
 import { applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { accountDataSources } from "~/config/account-data-setup";
+import { accountDataRecorder, accountDataSources } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { selectFeature } from "@shared/feature-flags";
 import { loadAppConfig } from "~/setup";
@@ -63,7 +68,7 @@ const customCreateStore = ({
   fetchRemoteFlags,
   readCachedFlags,
   countervalues,
-  appConfig = loadAppConfig(),
+  appConfig: { config: appConfig, session: appConfigSession } = loadAppConfig(),
 }: Props) => {
   const store = configureStore({
     reducer: reducers,
@@ -75,7 +80,12 @@ const customCreateStore = ({
           immutableCheck: false,
           thunk: {
             extraArgument: {
-              ...accountDataExtra(accountDataSources((): State => store.getState())),
+              ...accountDataExtra(
+                accountDataSources(
+                  (): State => store.getState(),
+                  (action): unknown => store.dispatch(action),
+                ),
+              ),
               ...calApiExtra({
                 calServiceUrl: getEnv("CAL_SERVICE_URL"),
                 ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
@@ -94,6 +104,10 @@ const customCreateStore = ({
                 readCardSession,
                 isCardSessionCurrent,
                 refreshCardSession,
+              }),
+              ...portfolioApiExtra({
+                // POC, dev only: empty disables the service.
+                portfolioServiceUrl: getPortfolioServiceUrl(),
               }),
               ...pushDevicesApiExtra({
                 pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
@@ -136,11 +150,21 @@ const customCreateStore = ({
             getAnalyticsConsent: canPushDeviceIdsSelector,
           }),
         )
+        .concat(
+          createAppConfigMiddleware({
+            session: appConfigSession,
+            reload: () => window.api?.reloadRenderer(),
+          }),
+        )
         .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))
         .concat(sleepingListener.middleware)
-        .concat(createDesktopCountervaluesMiddleware(countervalues)),
+        .concat(createDesktopCountervaluesMiddleware(countervalues))
+        .concat(accountDataRecorder.middleware),
     devTools: __DEV__
-      ? { actionSanitizer: redactCardApiAction, stateSanitizer: redactCardApiState }
+      ? {
+          actionSanitizer: action => redactPortfolioApiAction(redactCardApiAction(action)),
+          stateSanitizer: state => redactPortfolioApiState(redactCardApiState(state)),
+        }
       : false,
   });
 

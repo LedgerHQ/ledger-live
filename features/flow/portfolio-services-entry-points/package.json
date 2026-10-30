@@ -1,0 +1,86 @@
+{
+  "name": "@features/flow-portfolio-services-entry-points",
+  "version": "0.1.0-next.0",
+  "private": true,
+  "description": "Portfolio services entry points (Perps, Borrow) shared across Ledger Wallet desktop and mobile",
+  "main": "src/index.ts",
+  "react-native": "src/index.native.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "react-native": "./src/index.native.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "lint:ci": "oxlint src --quiet",
+    "lint:fix": "oxfmt src && oxlint src --fix --quiet",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/portfolio-services-entry-points/knip.web.config.mjs -W features/flow/portfolio-services-entry-points --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/portfolio-services-entry-points/knip.native.config.mjs -W features/flow/portfolio-services-entry-points --tsConfig tsconfig.native.json"
+  },
+  "dependencies": {
+    "@features/platform-feature-flags": "workspace:*",
+    "@shared/analytics": "workspace:*",
+    "@shared/feature-flags": "workspace:^",
+    "@shared/i18n": "workspace:*"
+  },
+  "devDependencies": {
+    "@features/platform-style": "workspace:*",
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
+    "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@testing-library/user-event": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "jest": "catalog:",
+    "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-native": "catalog:",
+    "react-redux": "catalog:",
+    "react-test-renderer": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-rnative": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    }
+  }
+}

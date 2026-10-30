@@ -3,6 +3,7 @@ import {
   createMockOnboardingPrepareResponse,
   createMockPrepareTransferResponse,
 } from "../../test/fixtures";
+import type { TopologyTransactions } from "../../types/gateway";
 import type { CantonSigner } from "../../types/signer";
 import { signTransaction } from "./sign";
 
@@ -155,5 +156,57 @@ describe("signTransaction", () => {
       ],
       challenge: "181234567890abcdef000000006774857f",
     });
+  });
+
+  it.each([
+    { legacy: "absent", legacyTransactions: {} },
+    {
+      legacy: "null",
+      legacyTransactions: { namespace_transaction: null, party_to_key_transaction: null },
+    },
+  ])(
+    "should sign a single-transaction onboarding when legacy transactions are $legacy",
+    async ({ legacyTransactions }) => {
+      // GIVEN
+      const mockSignerSpy = jest.fn().mockResolvedValue({
+        signature: "a1b2c3d4e5f678901234567890abcdef1234567890abcdef1234567890abcdef12",
+      });
+      const mockSignerWithSpy = createMockSigner(mockSignerSpy);
+      const { party_to_participant_transaction, combined_hash } =
+        createMockOnboardingPrepareResponse().transactions;
+      const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse({
+        transactions: { party_to_participant_transaction, combined_hash, ...legacyTransactions },
+      });
+
+      // WHEN
+      await signTransaction(mockSignerWithSpy, mockDerivationPath, mockOnboardingPrepareResponse);
+
+      // THEN
+      expect(mockSignerSpy).toHaveBeenCalledWith(mockDerivationPath, {
+        transactions: ["party-to-participant-transaction-data"],
+        challenge: "181234567890abcdef000000006774857f",
+      });
+    },
+  );
+
+  it("should not call the signer when the party to participant transaction is missing", async () => {
+    // GIVEN
+    const mockSignerSpy = jest.fn();
+    const mockSignerWithSpy = createMockSigner(mockSignerSpy);
+    const { namespace_transaction, party_to_key_transaction, combined_hash } =
+      createMockOnboardingPrepareResponse().transactions;
+    const mockOnboardingPrepareResponse = createMockOnboardingPrepareResponse({
+      transactions: {
+        namespace_transaction,
+        party_to_key_transaction,
+        combined_hash,
+      } as TopologyTransactions,
+    });
+
+    // WHEN & THEN
+    await expect(
+      signTransaction(mockSignerWithSpy, mockDerivationPath, mockOnboardingPrepareResponse),
+    ).rejects.toThrow(TypeError);
+    expect(mockSignerSpy).not.toHaveBeenCalled();
   });
 });

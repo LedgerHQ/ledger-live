@@ -2,6 +2,7 @@ import { step } from "tests/misc/reporters/step";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { Dialog } from "tests/component/dialog.component";
 import { expect } from "@playwright/test";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class ModularNetworkDialog extends Dialog {
   private networkSelectorListContainer = this.page
@@ -27,7 +28,7 @@ export class ModularNetworkDialog extends Dialog {
           }
         },
         {
-          intervals: [500],
+          intervals: [INTERVAL.short],
           message: `Could not find '${networkName}' in the network selection dialog`,
         },
       )
@@ -42,7 +43,7 @@ export class ModularNetworkDialog extends Dialog {
   }
 
   @step("Wait for the network dialog to appear (returns false if it does not)")
-  async waitForNetworkDialogVisible(timeout = 5000): Promise<boolean> {
+  async waitForNetworkDialogVisible(timeout = TIMEOUT.small): Promise<boolean> {
     try {
       await this.networkSelectorListContainer.waitFor({ state: "visible", timeout });
       return true;

@@ -1,16 +1,16 @@
 import React, { memo } from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import MarketBanner from "LLD/features/MarketBanner";
 import PageHeader from "LLD/components/PageHeader";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
-import OperationsList from "~/renderer/components/OperationsList";
 import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
 import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
 import { AddAccount } from "./components/AddAccount";
 import { PerpsEntryPoint } from "./components/PerpsEntryPoint";
 import { BorrowEntryPoint } from "./components/BorrowEntryPoint";
+import { PortfolioServicesEntryPoints } from "./components/PortfolioServicesEntryPoints";
 import { PORTFOLIO_TRACKING_PAGE_NAME } from "LLD/utils/constants";
 import { Divider } from "@ledgerhq/lumen-ui-react";
 import BannerSection from "~/renderer/screens/dashboard/components/Banners/BannerSection";
@@ -28,22 +28,20 @@ export const PortfolioView = memo(function PortfolioView({
   shouldDisplayAssetSection,
   shouldDisplayAssetDiscoverability,
   shouldDisplayBorrowSection,
-  shouldDisplayOperationsList,
+  shouldDisplayPerpsEntryPoint,
+  shouldDisplayServicesEntryPoints,
   shouldDisplayBrazePlacement,
-  accounts,
-  filterOperations,
   t,
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
   const shouldDisplayAddAccountCta = totalAccounts === 0 && !shouldDisplayAssetSection;
-  const shouldRenderLegacyOperationsList = !shouldDisplayOperationsList && totalOperations > 0;
 
   return (
     <>
       <div className={isClearCacheBannerVisible ? "mb-32" : undefined}>
         <BannerSection topBannerAlerts={true} portfolioBannerContent={false} />
       </div>
-      <TrackPage
+      <TrackScreen
         category={PORTFOLIO_TRACKING_PAGE_NAME}
         totalAccounts={totalAccounts}
         totalOperations={totalOperations}
@@ -66,24 +64,22 @@ export const PortfolioView = memo(function PortfolioView({
 
           <MarketBanner />
 
-          <PerpsEntryPoint />
+          {shouldDisplayPerpsEntryPoint && <PerpsEntryPoint />}
 
-          {shouldDisplayAssetSection ? <Assets /> : <AssetDistribution />}
+          {shouldDisplayAssetSection ? (
+            <Assets
+              afterCryptosSection={
+                shouldDisplayServicesEntryPoints ? <PortfolioServicesEntryPoints /> : null
+              }
+            />
+          ) : (
+            <AssetDistribution />
+          )}
           {shouldDisplayAssetDiscoverability && <StocksSection />}
           {shouldDisplayBorrowSection && <BorrowEntryPoint />}
           {shouldDisplayAddAccountCta && <AddAccount />}
           {shouldDisplayAssetSection && <CryptoAddressesBanner />}
           {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}
-          {shouldRenderLegacyOperationsList && (
-            <OperationsList
-              accounts={accounts}
-              title={t("dashboard.recentActivity")}
-              withAccount
-              withSubAccounts
-              filterOperation={filterOperations}
-              t={t}
-            />
-          )}
         </div>
       </div>
     </>

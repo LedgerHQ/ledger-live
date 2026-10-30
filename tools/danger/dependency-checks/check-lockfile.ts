@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { parse } from "yaml";
+import { parseAllDocuments } from "yaml";
 import { assertDependencyChecks } from "./validate.js";
 
 function findLockfile(from: string): string {
@@ -11,8 +11,16 @@ function findLockfile(from: string): string {
   return findLockfile(parent);
 }
 
+export function loadLockfile(text: string) {
+  // pnpm 12 prepends an env document (packageManagerDependencies); the dependency graph is the last one.
+  const docs = Array.from(parseAllDocuments(text));
+  const [yamlError] = docs.flatMap(doc => doc.errors);
+  if (yamlError) throw yamlError;
+  return docs.at(-1)?.toJS();
+}
+
 export function checkLockfile(): string | null {
-  const lockfile = parse(fs.readFileSync(findLockfile(process.cwd()), "utf8"));
+  const lockfile = loadLockfile(fs.readFileSync(findLockfile(process.cwd()), "utf8"));
   try {
     assertDependencyChecks(lockfile);
     return null;

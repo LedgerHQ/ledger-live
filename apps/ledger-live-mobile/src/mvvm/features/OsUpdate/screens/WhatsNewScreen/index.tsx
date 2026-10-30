@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Banner, Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Trans, useTranslation } from "~/context/Locale";
 import { SafeMarkdown } from "LLM/components/SafeMarkdown";
 import { LedgerOsLogo } from "../../components/LedgerOsLogo";
+import { useOsUpdateTracking } from "../../analytics/TrackingProvider";
+import { OsUpdateButton, OsUpdatePage } from "../../analytics/types";
 
 type WhatsNewScreenProps = Readonly<{
   version: string;
@@ -16,11 +18,25 @@ type WhatsNewScreenProps = Readonly<{
 export function WhatsNewScreen({ version, notes, onStart, onClose }: WhatsNewScreenProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { trackPage, trackClick } = useOsUpdateTracking();
+
+  useEffect(() => {
+    trackPage({ page: OsUpdatePage.WHATS_NEW, osVersionTo: version });
+  }, [trackPage, version]);
+
+  const onPressStart = useCallback(() => {
+    trackClick(OsUpdateButton.START);
+    onStart();
+  }, [trackClick, onStart]);
+  const onPressBack = useCallback(() => {
+    trackClick(OsUpdateButton.BACK);
+    onClose();
+  }, [trackClick, onClose]);
 
   return (
     <Box lx={{ flex: 1 }} testID="os-update-whats-new-screen">
       <NavBar density="compact">
-        <NavBarBackButton onPress={onClose} testID="os-update-whats-new-back-button" />
+        <NavBarBackButton onPress={onPressBack} testID="os-update-whats-new-back-button" />
       </NavBar>
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 24 }}>
         <Box lx={{ alignItems: "center", gap: "s16", marginBottom: "s32" }}>
@@ -52,7 +68,7 @@ export function WhatsNewScreen({ version, notes, onStart, onClose }: WhatsNewScr
           size="lg"
           appearance="base"
           isFull
-          onPress={onStart}
+          onPress={onPressStart}
           testID="os-update-whats-new-start-button"
         >
           <Trans i18nKey="osUpdates.whatsNew.start" />

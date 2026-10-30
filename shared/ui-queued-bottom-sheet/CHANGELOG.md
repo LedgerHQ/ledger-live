@@ -1,5 +1,13 @@
 # @shared/ui-queued-bottom-sheet
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#23909](https://github.com/LedgerHQ/ledger-live/pull/23909) [`9092dc3`](https://github.com/LedgerHQ/ledger-live/commit/9092dc350ccb833de3bd9b4254408a98cd264645) Thanks [@ysitbon](https://github.com/ysitbon)! - Make the package native-only: `.` and `./keyboard` export one entry each, with no `react-native` condition, and the non-native keyboard stub is gone.
+
+- [#23545](https://github.com/LedgerHQ/ledger-live/pull/23545) [`5eed48e`](https://github.com/LedgerHQ/ledger-live/commit/5eed48ed200b672ba41afb663c6b648628ebaf3e) Thanks [@cunhabruno](https://github.com/cunhabruno)! - Fix lists inside bottom sheets not scrolling on Android by keeping the sheet open callback stable
+
 ## 0.7.0
 
 ### Minor Changes

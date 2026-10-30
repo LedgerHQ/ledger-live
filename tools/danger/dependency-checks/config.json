@@ -23,6 +23,62 @@
     "@solana/web3.js": {
       "why": "The Solana signer and coin module must share one web3.js.",
       "maxVersions": 1
+    },
+    "redux": {
+      "why": "Stores, middlewares and enhancers must come from one Redux.",
+      "maxVersions": 1
+    },
+    "@reduxjs/toolkit": {
+      "why": "Slices and RTK Query APIs must share one Redux Toolkit.",
+      "maxVersions": 1
+    },
+    "react-redux": {
+      "why": "A second copy has its own React context and cannot see the app store.",
+      "maxVersions": 1
+    },
+    "@tanstack/react-query": {
+      "why": "A second copy has its own React context and cannot see the QueryClient.",
+      "maxVersions": 1
+    },
+    "i18next": {
+      "why": "Translations are registered on one i18next instance.",
+      "maxVersions": 1
+    },
+    "react-i18next": {
+      "why": "A second copy has its own React context and cannot see the i18next instance.",
+      "maxVersions": 1
+    },
+    "@react-navigation/native": {
+      "why": "A second copy has its own navigation context.",
+      "maxVersions": 1
+    },
+    "@ledgerhq/device-management-kit": {
+      "why": "Signer kits and the app share DMK instances and errors; a second copy breaks instanceof checks.",
+      "maxVersions": 1
+    },
+    "react-native-reanimated": {
+      "why": "Native module: autolinking builds one copy, its JS must match.",
+      "maxVersions": 1
+    },
+    "react-native-worklets": {
+      "why": "Native module: autolinking builds one copy, its JS must match.",
+      "maxVersions": 1
+    },
+    "react-native-gesture-handler": {
+      "why": "Native module: autolinking builds one copy, its JS must match.",
+      "maxVersions": 1
+    },
+    "react-native-svg": {
+      "why": "Native module: autolinking builds one copy, its JS must match.",
+      "maxVersions": 1
+    },
+    "react-native-screens": {
+      "why": "Native module: autolinking builds one copy, its JS must match.",
+      "maxVersions": 1
+    },
+    "react-native-safe-area-context": {
+      "why": "Native module: autolinking builds one copy, its JS must match.",
+      "maxVersions": 1
     }
   },
   "denylists": {
@@ -87,9 +143,6 @@
         },
         "@bitcoinerlab/secp256k1": {
           "reason": "bitcoinjs `ecc` adapter. Depends on @noble/curves, no curve arithmetic of its own."
-        },
-        "@dfinity/identity-secp256k1": {
-          "reason": "@dfinity signing identity. Depends on @noble/curves, no curve arithmetic of its own."
         },
         "elliptic": {
           "tolerated": true,

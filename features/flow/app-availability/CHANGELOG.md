@@ -1,5 +1,19 @@
 # @features/flow-app-availability
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#23919](https://github.com/LedgerHQ/ledger-live/pull/23919) [`15727e0`](https://github.com/LedgerHQ/ledger-live/commit/15727e019193711acc999fa4e08fde1c3898dea6) Thanks [@ysitbon](https://github.com/ysitbon)! - `AppUnavailableAction` names its callback `onOpenLearnMore` instead of `onPress`, so the contract names the intent rather than a platform gesture.
+
+### Patch Changes
+
+- Updated dependencies [[`08730f5`](https://github.com/LedgerHQ/ledger-live/commit/08730f575a9ec7d9887f9b64ebf492a6d44ac6e8), [`15727e0`](https://github.com/LedgerHQ/ledger-live/commit/15727e019193711acc999fa4e08fde1c3898dea6), [`2a7ae74`](https://github.com/LedgerHQ/ledger-live/commit/2a7ae7400258f13f2daa1b6fe63149ae7748aaaa)]:
+  - @shared/linking@0.4.0-next.0
+  - @shared/ui-app-unavailable@0.3.0-next.0
+  - @shared/i18n@0.2.0
+  - @domain/api-ofac@0.1.2-next.0
+
 ## 0.2.0
 
 ### Minor Changes

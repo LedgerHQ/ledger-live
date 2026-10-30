@@ -1,0 +1,21 @@
+{
+  "name": "@support/jest",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/core/**/*",
+        "{projectRoot}/shared/**/*",
+        "{projectRoot}/features-flow/**/*"
+      ],
+      "options": {
+        "cwd": "{workspaceRoot}",
+        "command": "node --test support/jest/core/index.test.mjs"
+      }
+    }
+  }
+}

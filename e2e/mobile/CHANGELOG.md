@@ -1,5 +1,21 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.44.0-next.0
+
+### Minor Changes
+
+- [#23657](https://github.com/LedgerHQ/ledger-live/pull/23657) [`ccc2a93`](https://github.com/LedgerHQ/ledger-live/commit/ccc2a9331940444da253ac8b0c98d9c13a9b7772) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Use named parameters (options object) in runSendInvalidAddressTest, and show "no error message" in the empty address test title.
+
+- [#23747](https://github.com/LedgerHQ/ledger-live/pull/23747) [`aa1562e`](https://github.com/LedgerHQ/ledger-live/commit/aa1562e7e4982a5e1cf31d8f3297fcda82783d3a) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Use named parameters (options object) in verifyStakeOperationDetailsInfo and verifyAppValidationStakeInfo.
+
+- [#23694](https://github.com/LedgerHQ/ledger-live/pull/23694) [`1d1837f`](https://github.com/LedgerHQ/ledger-live/commit/1d1837f195badccf33f54a39ee82d91b883415cb) Thanks [@valeriiboiko-ext-ops](https://github.com/valeriiboiko-ext-ops)! - Wait for the earn asset row before asserting it exists in verifyAssetReadyToEarn, fixing flaky Earn v2 inline add account tests.
+
+- [#23286](https://github.com/LedgerHQ/ledger-live/pull/23286) [`b78e207`](https://github.com/LedgerHQ/ledger-live/commit/b78e207f1c45bd98b215bcd085e4e3af961a275f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Cover on-device contact rename in mobile E2E against the mock server, and let device intents discover that transport.
+
+- [#23720](https://github.com/LedgerHQ/ledger-live/pull/23720) [`10be9ea`](https://github.com/LedgerHQ/ledger-live/commit/10be9ea45ed5b42babf40a11a0277fce79620ae6) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Move the token approval swaps to Ethereum 5 and revoke a token allowance only when it is too small
+
+- [#23330](https://github.com/LedgerHQ/ledger-live/pull/23330) [`fcdd599`](https://github.com/LedgerHQ/ledger-live/commit/fcdd5998da0bb2b7d32015d1267e9ca50716a574) Thanks [@abdurrahman-ledger](https://github.com/abdurrahman-ledger)! - Serialize e2e broadcasts per on-chain account across CI machines with an R2-backed lock
+
 ## 0.43.0
 
 ### Minor Changes
@@ -323,8 +339,8 @@ match one or more of the following constraints` — or before the button had
 
   Each of the three sheet taps now waits for the sheet's own container
   (`transfer-drawer`) at 100% visibility, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed):
   anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
@@ -353,8 +369,8 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
   timeout or adding a retry, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -399,8 +415,8 @@ match one or more of the following constraints` — or before the button had
 
   Each of the three sheet taps now waits for the sheet's own container
   (`transfer-drawer`) at 100% visibility, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries):
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed):
   anchor on the state that proves the sheet is at rest rather than adding a
   retry or lengthening a timeout.
 
@@ -429,8 +445,8 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
   Each press now waits for the row's own container at 100% visibility, which proves
   the row is mounted and laid out. Anchoring the wait rather than lengthening a
   timeout or adding a retry, per
-  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#wait-for-a-sheets-own-content-anchor-at-100-visibility)
-  and [Fix the wait](docs/e2e-mobile-conventions.md#fix-the-wait---do-not-add-retries).
+  [Wait for a sheet's own content anchor at 100% visibility](docs/e2e-mobile-conventions.md#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)
+  and [Fix the wait](docs/e2e-mobile-conventions.md#a-failing-wait-must-be-fixed).
 
 - [#21412](https://github.com/LedgerHQ/ledger-live/pull/21412) [`3acaa6d`](https://github.com/LedgerHQ/ledger-live/commit/3acaa6d3038d086d0011100c8695724726bfa029) Thanks [@jeportie](https://github.com/jeportie)! - Make `CommonPage.successViewDetails()` fail on the app's error modal instead of waiting out its full
   60s budget on a success screen that can no longer appear. The step is shared by every mobile
@@ -611,33 +627,5 @@ matching ... quick-action-buy ... VISIBLE`, 3/5 nightlies.
 ### Minor Changes
 
 - [#20619](https://github.com/LedgerHQ/ledger-live/pull/20619) [`0175f1f`](https://github.com/LedgerHQ/ledger-live/commit/0175f1ffab7a31fe882b3538d5a87619c331bf54) Thanks [@qperrot](https://github.com/qperrot)! - Chore: add tests for memo on the new send flow
-
-## 0.33.0
-
-### Minor Changes
-
-- [#20232](https://github.com/LedgerHQ/ledger-live/pull/20232) [`d467088`](https://github.com/LedgerHQ/ledger-live/commit/d4670885d7eb77c035d09c225eff9dca0151abb3) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): a/b testing show recent banner
-
-- [#20273](https://github.com/LedgerHQ/ledger-live/pull/20273) [`6e1f9f3`](https://github.com/LedgerHQ/ledger-live/commit/6e1f9f3e5301d4e64dcde807e836924f9359dc5a) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test(e2e): harmonize LWD and LWM test names for Allure reports
-
-- [#20214](https://github.com/LedgerHQ/ledger-live/pull/20214) [`be5e007`](https://github.com/LedgerHQ/ledger-live/commit/be5e007ce64443de9a139e304f005d507dc34f0b) Thanks [@kentoforik](https://github.com/kentoforik)! - Revert temporary hardcoded HBAR to XRP swap amount workaround (LIVE-33611); provider-side minimum amount bug is now fixed.
-
-- [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) [`ba6e9c1`](https://github.com/LedgerHQ/ledger-live/commit/ba6e9c1e542ad28a59b0163e3b453e2f047a48b9) Thanks [@ysitbon](https://github.com/ysitbon)! - Import currency accessors from the domain layer instead of the `@ledgerhq/live-common/currencies` barrel.
-
-  Crypto accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByTicker`, `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `hasCryptoCurrencyId`) now come from `@domain/entity-currency-crypto`, and fiat accessors (`getFiatCurrencyByTicker`, `findFiatCurrencyByTicker`, `listFiatCurrencies`, `hasFiatCurrencyTicker`) from `@domain/entity-currency-fiat`. The re-exports that forwarded them through `@ledgerhq/live-common/currencies` are removed; the barrel keeps its formatting, colour, helper, marketcap, support and URI-scheme exports. Behaviour is unchanged — the barrel already delegated to these same domain functions.
-
-## 0.33.0-next.0
-
-### Minor Changes
-
-- [#20232](https://github.com/LedgerHQ/ledger-live/pull/20232) [`d467088`](https://github.com/LedgerHQ/ledger-live/commit/d4670885d7eb77c035d09c225eff9dca0151abb3) Thanks [@dilaouid](https://github.com/dilaouid)! - feat(lwdm): a/b testing show recent banner
-
-- [#20273](https://github.com/LedgerHQ/ledger-live/pull/20273) [`6e1f9f3`](https://github.com/LedgerHQ/ledger-live/commit/6e1f9f3e5301d4e64dcde807e836924f9359dc5a) Thanks [@VicAlbr](https://github.com/VicAlbr)! - test(e2e): harmonize LWD and LWM test names for Allure reports
-
-- [#20214](https://github.com/LedgerHQ/ledger-live/pull/20214) [`be5e007`](https://github.com/LedgerHQ/ledger-live/commit/be5e007ce64443de9a139e304f005d507dc34f0b) Thanks [@kentoforik](https://github.com/kentoforik)! - Revert temporary hardcoded HBAR to XRP swap amount workaround (LIVE-33611); provider-side minimum amount bug is now fixed.
-
-- [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) [`ba6e9c1`](https://github.com/LedgerHQ/ledger-live/commit/ba6e9c1e542ad28a59b0163e3b453e2f047a48b9) Thanks [@ysitbon](https://github.com/ysitbon)! - Import currency accessors from the domain layer instead of the `@ledgerhq/live-common/currencies` barrel.
-
-  Crypto accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByTicker`, `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `hasCryptoCurrencyId`) now come from `@domain/entity-currency-crypto`, and fiat accessors (`getFiatCurrencyByTicker`, `findFiatCurrencyByTicker`, `listFiatCurrencies`, `hasFiatCurrencyTicker`) from `@domain/entity-currency-fiat`. The re-exports that forwarded them through `@ledgerhq/live-common/currencies` are removed; the barrel keeps its formatting, colour, helper, marketcap, support and URI-scheme exports. Behaviour is unchanged — the barrel already delegated to these same domain functions.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

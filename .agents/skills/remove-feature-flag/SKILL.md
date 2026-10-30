@@ -59,10 +59,11 @@ Preserve the resolved production behavior whether `enabled` is `true` or
 Record the initial branch/ref and worktree state. If dirty, stash staged,
 unstaged, and untracked files with a unique descriptive message; do not ask.
 
-Fetch the latest remote base and always create a new branch:
+Fetch the latest remote base and always create a new branch, named per
+`git-conventions` (`chore`, never the legacy `support`):
 
 ```text
-support/remove-<feature-id>-flag-<YYYYMMDD-HHmm>
+chore/feature-flags-remove-<feature-id>-flag-<YYYYMMDD-HHmm>
 ```
 
 Create it directly from the freshly fetched `origin/develop`. If the name

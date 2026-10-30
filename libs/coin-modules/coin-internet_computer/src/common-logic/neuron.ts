@@ -1,5 +1,4 @@
-import { AccountIdentifier, SubAccount } from "@dfinity/ledger-icp";
-import { Principal } from "@dfinity/principal";
+import { Principal } from "@icp-sdk/core/principal";
 import {
   KNOWN_TOPICS,
   LAST_SYNC_THRESHOLD_IN_DAYS,
@@ -21,6 +20,8 @@ import {
   SECONDS_IN_MONTH,
   SECONDS_IN_YEAR,
 } from "../consts";
+import { AccountIdentifier, SubAccount } from "../logic/accountIdentifier";
+import { fromOpt } from "../network/candid";
 import type { ICPTransactionType, Transaction } from "../types/common";
 import {
   ICPNeuron,
@@ -33,8 +34,6 @@ import {
 } from "../types/neuron";
 
 // ---- raw candid decode → normalized ICPNeuron --------------------------------------------------
-
-const first = <T>(opt: [] | [T]): T | undefined => (opt.length ? opt[0] : undefined);
 
 /** Derive a neuron's ledger account identifier (hex) from its 32-byte governance subaccount. */
 export const neuronAccountIdentifier = (subaccount: Uint8Array | number[]): string => {
@@ -49,12 +48,12 @@ export const neuronAccountIdentifier = (subaccount: Uint8Array | number[]): stri
 // The voting-power fields appear on both the Neuron and the NeuronInfo record. NeuronInfo is the
 // canister's own computed view, so prefer it and fall back to the full neuron.
 const pick = <T>(fromInfo: ([] | [T]) | undefined, fromNeuron: [] | [T]): T | undefined =>
-  (fromInfo && first(fromInfo)) ?? first(fromNeuron);
+  (fromInfo && fromOpt(fromInfo)) ?? fromOpt(fromNeuron);
 
 const toICPNeuron = (raw: RawNeuron, info?: RawNeuronInfo): ICPNeuron => {
-  const id = first(raw.id)?.id;
-  const dissolveState = first(raw.dissolve_state);
-  const controller = first(raw.controller)?.toText();
+  const id = fromOpt(raw.id)?.id;
+  const dissolveState = fromOpt(raw.dissolve_state);
+  const controller = fromOpt(raw.controller)?.toText();
   const votingPowerRefreshedTimestampSeconds = pick(
     info?.voting_power_refreshed_timestamp_seconds,
     raw.voting_power_refreshed_timestamp_seconds,
@@ -69,14 +68,14 @@ const toICPNeuron = (raw: RawNeuron, info?: RawNeuronInfo): ICPNeuron => {
     cachedNeuronStakeE8s: raw.cached_neuron_stake_e8s,
     neuronFeesE8s: raw.neuron_fees_e8s,
     maturityE8sEquivalent: raw.maturity_e8s_equivalent,
-    stakedMaturityE8sEquivalent: first(raw.staked_maturity_e8s_equivalent) ?? 0n,
+    stakedMaturityE8sEquivalent: fromOpt(raw.staked_maturity_e8s_equivalent) ?? 0n,
     createdTimestampSeconds: raw.created_timestamp_seconds,
     hotKeys: raw.hot_keys.map(p => p.toText()),
     followees: raw.followees.map(([topic, { followees }]) => ({
       topic,
       followeeIds: followees.map(f => f.id),
     })),
-    autoStakeMaturity: first(raw.auto_stake_maturity) ?? false,
+    autoStakeMaturity: fromOpt(raw.auto_stake_maturity) ?? false,
     // Omitted when absent (not set to undefined) for exactOptionalPropertyTypes.
     ...(id !== undefined && { id }),
     ...(dissolveState !== undefined && { dissolveState }),
@@ -96,7 +95,7 @@ export const toNeuronsData = (
 ): NeuronsData => {
   const infoById = new Map<bigint, RawNeuronInfo>(response.neuron_infos);
   const neurons = response.full_neurons.map(raw =>
-    toICPNeuron(raw, first(raw.id) ? infoById.get(first(raw.id)!.id) : undefined),
+    toICPNeuron(raw, fromOpt(raw.id) ? infoById.get(fromOpt(raw.id)!.id) : undefined),
   );
   return new NeuronsData(neurons, lastUpdatedMSecs);
 };

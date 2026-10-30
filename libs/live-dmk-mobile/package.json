@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-dmk-mobile",
-  "version": "0.32.0",
+  "version": "0.33.0-next.0",
   "description": "Ledger Device Management Kit transport module for LLD",
   "private": true,
   "license": "Apache-2.0",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/devices": "catalog:",

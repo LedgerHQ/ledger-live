@@ -133,7 +133,7 @@ const dummySigner: BitcoinSigner = {
 };
 
 // SignerContext: (deviceId, currency, fn) => Promise<ReturnType<fn>>
-const makeSignerContext = (): SignerContext => (deviceId, currency, fn) => fn(dummySigner);
+const makeSignerContext = (): SignerContext => (_deviceId, _currency, fn) => fn(dummySigner);
 
 // -------------------------------------------------------------------------
 

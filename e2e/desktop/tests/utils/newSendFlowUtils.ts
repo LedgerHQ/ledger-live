@@ -7,7 +7,10 @@ import {
 } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
-import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
+import {
+  type LiveDataCommandOptions,
+  liveDataWithRecipientAddressCommand,
+} from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
   FF_NEW_SEND_FLOW_ENABLED,
   FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
@@ -15,6 +18,9 @@ import {
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+
+type BalanceType = "public" | "private";
 
 function getRequiredFamily(currencyId: string): string {
   const family = getFamilyByCurrencyId(currencyId);
@@ -58,6 +64,8 @@ export type NewSendFlowEntry = {
    */
   verifyOperationAmount?: boolean;
   disableBroadcast?: boolean;
+  balanceType?: BalanceType;
+  postSeedHook?: LiveDataCommandOptions["postSeedHook"];
 };
 
 function currencyRequiresMemoStep(currencyId: string): boolean {
@@ -76,7 +84,11 @@ export function requireRecipientAddress(tx: Transaction): string {
   return recipientAddress;
 }
 
-export async function openNewSendFromAccount(app: Application, tx: Transaction) {
+export async function openNewSendFromAccount(
+  app: Application,
+  tx: Transaction,
+  balanceType?: BalanceType,
+) {
   await app.mainNavigation.openTargetFromMainNavigation("accounts");
   await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToDebit));
   if (tx.accountToDebit instanceof TokenAccount) {
@@ -84,10 +96,28 @@ export async function openNewSendFromAccount(app: Application, tx: Transaction) 
   }
   await app.account.clickSend();
   await app.newSendFlow.waitForDialog();
+  if (balanceType) {
+    await app.newSendFlow.selectBalanceType(balanceType);
+  }
 }
 
-export async function reachAmountStep(app: Application, tx: Transaction) {
-  await openNewSendFromAccount(app, tx);
+export async function reachAmountStep(
+  app: Application,
+  tx: Transaction,
+  balanceType?: BalanceType,
+) {
+  await openNewSendFromAccount(app, tx, balanceType);
+  await passRecipientStep(app, tx);
+}
+
+/** Reaches the Amount step from the account page the app is already on. */
+export async function reachAmountStepFromCurrentAccount(app: Application, tx: Transaction) {
+  await app.account.clickSend();
+  await app.newSendFlow.waitForDialog();
+  await passRecipientStep(app, tx);
+}
+
+async function passRecipientStep(app: Application, tx: Transaction) {
   await app.newSendFlow.typeAddress(requireRecipientAddress(tx));
 
   const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
@@ -107,13 +137,22 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
     const validMemoTag = tx.memoTag !== "noTag" ? tx.memoTag : undefined;
     const currency = tx.accountToDebit.currency;
     const currencyLabel = currency.testLabel;
+    const sendLock = exclusiveLockFor({
+      broadcastAccounts: entry.disableBroadcast ? [] : [tx.accountToDebit],
+    });
 
-    test.describe("Send - new flow", () => {
+    test.describe("Send - new flow", { lock: sendLock.names }, () => {
       test.use({
         teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
-        cliCommands: [liveDataWithRecipientAddressCommand(tx, { useScheme: true })],
+        cliCommands: [
+          liveDataWithRecipientAddressCommand(tx, {
+            useScheme: true,
+            postSeedHook: entry.postSeedHook,
+          }),
+        ],
+        ...sendLock.fixtures,
         featureFlags: {
           ...FF_NEW_SEND_FLOW_FIRST_INTERACTION_BANNER_ENABLED,
           ...FF_NEW_SEND_FLOW_ENABLED,
@@ -137,7 +176,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
           ],
         },
         async ({ app }) => {
-          await reachAmountStep(app, tx);
+          await reachAmountStep(app, tx, entry.balanceType);
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
           if (entry.verifyAmountPrecision) {

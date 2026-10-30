@@ -1,6 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen, fireEvent } from "tests/testSetup";
+import { track } from "@shared/analytics";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import type {
   HederaGenericTransaction,
@@ -121,6 +122,27 @@ describe("MemoField", () => {
       expect(handleChange).toHaveBeenCalledWith(
         expect.objectContaining({ memoType: "string", memoValue: undefined }),
       );
+    });
+
+    it("tracks the input without the memo text", () => {
+      render(
+        <MemoField
+          account={HEDERA_ACCOUNT_1}
+          transaction={makeHederaTransaction()}
+          onChange={jest.fn()}
+          status={makeStatus()}
+          trackProperties={{ flow: "send" }}
+        />,
+        { initialState: defaultState },
+      );
+
+      fireEvent.change(screen.getByRole("textbox"), { target: { value: "payment ref" } });
+
+      expect(track).toHaveBeenCalledWith("button_clicked2", {
+        flow: "send",
+        button: "input",
+        hasMemo: true,
+      });
     });
 
     it("shows an inline error when status.errors.transaction is set", () => {

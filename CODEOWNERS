@@ -70,11 +70,11 @@ tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
 support/fmt/                                             @ledgerhq/platform
-support/jest-devtools/                                   @ledgerhq/platform
-support/jest-features-flow/                              @ledgerhq/platform
-support/jest-shared/                                     @ledgerhq/platform
+support/jest/                                            @ledgerhq/platform
 support/lint/                                            @ledgerhq/platform
-support/msw-features-flow-pay-card/                      @ledgerhq/wallet-xp
+support/tsconfig/                                        @ledgerhq/platform
+support/lint/libs-coin.mts                               @ledgerhq/coin-integration @ledgerhq/platform
+support/jest/libs-coin/                                  @ledgerhq/coin-integration @ledgerhq/platform
 
 # Wallet — libs
 libs/live-send/                                          @ledgerhq/wallet-xp
@@ -144,6 +144,10 @@ features/flow/account-detail/                            @ledgerhq/wallet-xp
 features/flow/account-detail-hero/                       @ledgerhq/wallet-xp
 features/flow/account-detail-settings/                   @ledgerhq/wallet-xp
 features/platform/account-analytics/                     @ledgerhq/wallet-xp
+features/platform/quick-actions/                         @ledgerhq/wallet-xp
+
+# Wallet — Portfolio
+features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp
@@ -195,6 +199,7 @@ libs/ledger-live-common/src/intents/                                @ledgerhq/co
 libs/ledger-live-common/src/transaction/                            @ledgerhq/coin-integration
 libs/ledger-live-common/src/walletConnect/                          @ledgerhq/coin-integration
 libs/ledger-services/                                               @ledgerhq/coin-integration
+features/platform/coin-observability/                               @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/mvvm/features/Send/                    @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/components/Transaction*/      @ledgerhq/coin-integration
 apps/ledger-live-desktop/src/renderer/components/SignMessage*/      @ledgerhq/coin-integration
@@ -232,6 +237,10 @@ domain/api/market-index-fear-and-greed/                  @ledgerhq/wallet-xp
 domain/api/market-index-altcoin-season/                  @ledgerhq/wallet-xp
 features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 
+### ... portfolio service => @ledgerhq/wallet-xp ... ###
+domain/api/account-portfolio/                            @ledgerhq/wallet-xp
+/shared/api-services/src/services/portfolio/             @ledgerhq/wallet-xp
+
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
@@ -244,6 +253,7 @@ tools/actions/composites/monitor/                        @ledgerhq/coin-integrat
 # Coin modules owned by Coin Integration
 # (libs/coin-*/ above already defaults to @ledgerhq/coin-integration; these make
 #  ownership explicit. New/unlisted modules still fall back to that wildcard.)
+/libs/coin-modules/oxlint.config.mts                                     @ledgerhq/coin-integration @ledgerhq/platform
 libs/coin-modules/coin-module-boilerplate/                               @ledgerhq/coin-integration
 libs/coin-modules/coin-bitcoin/                                          @ledgerhq/coin-integration
 libs/coin-modules/coin-cosmos/                                           @ledgerhq/coin-integration
@@ -283,6 +293,8 @@ libs/concordium-core/                                                    @ledger
 libs/transaction-observability/                                           @ledgerhq/ptx
 features/flow/pay-card-auth/                                             @ledgerhq/ptx
 features/platform/card/                                                  @ledgerhq/ptx
+features/platform/predictions/                                           @ledgerhq/ptx
+domain/entity/predictions/                                               @ledgerhq/ptx
 domain/api/card-management/                                              @ledgerhq/ptx
 /shared/api-services/src/services/card/                                  @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       					@ledgerhq/ptx
@@ -391,6 +403,7 @@ apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/Device
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/DeviceActionContentDevTool/  @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/mvvm/features/FirmwareUpdate/       @ledgerhq/live-devices
+apps/ledger-live-mobile/src/mvvm/features/OsUpdate/             @ledgerhq/live-devices
 apps/ledger-live-mobile/ios/BluetoothHelperModule.swift            @ledgerhq/live-devices
 libs/**/hw-transport-*/                                            @ledgerhq/live-devices
 libs/**/types-devices/                                             @ledgerhq/live-devices
@@ -400,6 +413,7 @@ libs/ledger-live-common/src/hw/                                    @ledgerhq/liv
 libs/ledger-live-common/src/manager/                               @ledgerhq/live-devices
 libs/ledger-live-common/src/device/                                @ledgerhq/live-devices
 libs/ledger-live-common/src/deviceSDK/                             @ledgerhq/live-devices
+libs/ledger-live-common/src/os-update/                             @ledgerhq/live-devices
 libs/device-core/                                                  @ledgerhq/live-devices
 features/platform/device-onboarding/                               @ledgerhq/engagement
 features/platform/device-intent/                                   @ledgerhq/live-devices
@@ -457,7 +471,6 @@ apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/productTour.
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/__tests__/productTour.handler.test.ts @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBuyDeviceIntercept.test.ts                      @ledgerhq/engagement
-apps/ledger-live-desktop/src/renderer/hooks/useNavigateToMyLedger.ts                           @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useActionCards.tsx                                 @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useNotifications.ts                                @ledgerhq/engagement
 apps/ledger-live-desktop/src/renderer/hooks/useBraze.ts                                        @ledgerhq/engagement
@@ -602,14 +615,13 @@ apps/ledger-live-mobile/e2e/                                                @led
 # codeowners-check: allow-override
 /oxfmt.config.mts                                     @ledgerhq/platform
 **/.eslintrc.*                                        @ledgerhq/platform
-**/tsconfig*                                          @ledgerhq/platform
-**/jest.config*                                       @ledgerhq/platform
 **/knip.json                                          @ledgerhq/platform
 mise.toml                                             @ledgerhq/platform
 /nx.json                                              @ledgerhq/platform
 /devtools/oxlint.config.mts                           @ledgerhq/platform
 /libs/oxlint.config.mts                               @ledgerhq/platform
 /support/oxlint.config.mts                            @ledgerhq/platform
+/tsconfig.base.json                                   @ledgerhq/platform
 
 # Platform — Agent files
 /.agents/                                      @ledgerhq/platform

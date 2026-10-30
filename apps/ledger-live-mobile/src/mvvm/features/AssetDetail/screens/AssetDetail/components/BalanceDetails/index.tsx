@@ -8,10 +8,11 @@ type Props = Readonly<{
   currency: AssetDetailCurrencyProps;
   distributionItem: DistributionItem | undefined;
   isLoading: boolean;
+  ledgerIds: string[];
 }>;
 
-export function BalanceDetails({ currency, distributionItem, isLoading }: Props) {
-  const viewModel = useBalanceDetailsViewModel(currency, distributionItem);
+export function BalanceDetails({ currency, distributionItem, isLoading, ledgerIds }: Props) {
+  const viewModel = useBalanceDetailsViewModel(currency, distributionItem, ledgerIds);
   return (
     <BalanceDetailsView {...viewModel} distributionItem={distributionItem} isLoading={isLoading} />
   );

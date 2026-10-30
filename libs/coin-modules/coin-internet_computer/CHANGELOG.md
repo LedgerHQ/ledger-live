@@ -1,5 +1,39 @@
 # @ledgerhq/coin-internet_computer
 
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#23629](https://github.com/LedgerHQ/ledger-live/pull/23629) [`48a4694`](https://github.com/LedgerHQ/ledger-live/commit/48a4694811129461a0992a571970138e2b42302a) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Replace the deprecated @dfinity/\* packages with @icp-sdk/core and derive account identifiers locally; signed payloads are unchanged.
+
+  Breaking: binary values use `Uint8Array` instead of `ArrayBuffer`: `UnsignedTransaction.arg`, the result of `pubkeyToDer`, the replies of `readReplyFromCanister`, and the input of `decodeManageNeuronReply` and `decodeListNeuronsReply`. `Principal` and the agent types come from `@icp-sdk/core`.
+
+### Minor Changes
+
+- [#23760](https://github.com/LedgerHQ/ledger-live/pull/23760) [`5049882`](https://github.com/LedgerHQ/ledger-live/commit/5049882121946e88e75f75536a6b206ea2e38e9f) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Reject an ICP recipient whose length or checksum is wrong, instead of accepting any hex string
+
+- [#23782](https://github.com/LedgerHQ/ledger-live/pull/23782) [`4493b36`](https://github.com/LedgerHQ/ledger-live/commit/4493b361834b7e0cec1e90fd543a53188648ad1e) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Decode a candid reply held in a view at a nonzero offset, which was read from the start of its underlying buffer.
+
+- [#23759](https://github.com/LedgerHQ/ledger-live/pull/23759) [`f048349`](https://github.com/LedgerHQ/ledger-live/commit/f048349f45a007200c4416b56c1b4f15194481be) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add the ICP read logic for the CoinModuleApi: blocks (archived ones included), balance and paginated history
+
+- [#23781](https://github.com/LedgerHQ/ledger-live/pull/23781) [`5039dc5`](https://github.com/LedgerHQ/ledger-live/commit/5039dc56c41865e705de7eca774a0fd9df8d01cc) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Expose the CoinModuleApi for native ICP through `createApi` on the `./api` entry point, which keeps exporting the network client.
+
+- [#23878](https://github.com/LedgerHQ/ledger-live/pull/23878) [`145efd9`](https://github.com/LedgerHQ/ledger-live/commit/145efd90c1b8deb7fd1d40c7c15bdc5d8183c02c) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft, combine and broadcast every neuron command through the CoinModuleApi, with the checks that need no neuron state.
+
+- [#23860](https://github.com/LedgerHQ/ledger-live/pull/23860) [`96aabc0`](https://github.com/LedgerHQ/ledger-live/commit/96aabc0b90a7e6996747c36adc3b2eb5df9ce41d) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft, combine and broadcast the start-dissolving and increase-dissolve-delay neuron commands through the CoinModuleApi.
+
+- [#23964](https://github.com/LedgerHQ/ledger-live/pull/23964) [`bee4751`](https://github.com/LedgerHQ/ledger-live/commit/bee47518fe1af95de18b32620e9db2d181cc0169) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Craft, combine and broadcast neuron stake transfers through the CoinModuleApi, checking the stake account before signing and claiming the neuron once the transfer settles; export `refreshNeuronStake` to retry a failed claim.
+
+- [#23762](https://github.com/LedgerHQ/ledger-live/pull/23762) [`d274455`](https://github.com/LedgerHQ/ledger-live/commit/d27445594da9f804cae72abe911624a58d2ee587) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Replace the constant-false transfer check in ICP history mapping with the intended guard
+
+- [#23846](https://github.com/LedgerHQ/ledger-live/pull/23846) [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359) Thanks [@gre-ledger](https://github.com/gre-ledger)! - fix: ship lib and lib-es in the npm tarballs again, which pnpm 11 dropped
+
+### Patch Changes
+
+- Updated dependencies [[`8c888c4`](https://github.com/LedgerHQ/ledger-live/commit/8c888c4cfd699dc24b8e0522818feaac98698eb1), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`9c7d59d`](https://github.com/LedgerHQ/ledger-live/commit/9c7d59d0ffcc72ba746bc20e9ff744db9730503b)]:
+  - @ledgerhq/ledger-wallet-framework@3.9.0-next.0
+  - @ledgerhq/types-live@6.129.0-next.0
+
 ## 1.32.2
 
 ### Patch Changes
@@ -210,57 +244,5 @@
 - Updated dependencies [[`eecf99a`](https://github.com/LedgerHQ/ledger-live/commit/eecf99af5c17ab63724843c31d5f3facc6352dad), [`030fc67`](https://github.com/LedgerHQ/ledger-live/commit/030fc677db03e8a411d3d33d2fa88e1ab04df80b), [`5b39a67`](https://github.com/LedgerHQ/ledger-live/commit/5b39a67dd93d4c541a77b0b146881073ca00ed15), [`0807eca`](https://github.com/LedgerHQ/ledger-live/commit/0807ecacfd06057811a3d6f8845b9f4bfc6f693c), [`b6da6b1`](https://github.com/LedgerHQ/ledger-live/commit/b6da6b1b1c98d022f30985c6103c239bffd0c7df), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2), [`a20805c`](https://github.com/LedgerHQ/ledger-live/commit/a20805cebd95f2f620d394c4d7598ec93506c83e), [`030b427`](https://github.com/LedgerHQ/ledger-live/commit/030b42707768af3f9c98a15fc6751f1d64b36fe6)]:
   - @ledgerhq/ledger-wallet-framework@3.0.0-next.0
   - @ledgerhq/types-live@6.120.0-next.0
-
-## 1.29.0
-
-### Minor Changes
-
-- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
-
-  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
-
-  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
-
-- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
-
-  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
-
-  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
-
-- [#20207](https://github.com/LedgerHQ/ledger-live/pull/20207) [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Internet Computer (ICP) neuron staking to the coin module: create and top up neurons, start/stop dissolving, disburse, set/increase dissolve delay, follow, split, spawn, stake maturity, and add/remove hot keys, plus neuron listing. Governance operations are routed through the NNS governance canister via the device's update-call signing, alongside the existing ledger transfer path, and account synchronization now carries neuron data. Adds the `STAKE_NEURON` and `TOP_UP_NEURON` operation types, with matching icons and labels in the desktop and mobile operation history. (LIVE-28469)
-
-- [#20527](https://github.com/LedgerHQ/ledger-live/pull/20527) [`28046d3`](https://github.com/LedgerHQ/ledger-live/commit/28046d31707d0290b56522c14b51623860b7a3f8) Thanks [@amaslakov](https://github.com/amaslakov)! - Add Internet Computer neuron staking hooks and narrow the ICP bridge account types
-
-### Patch Changes
-
-- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/types-live@6.119.0
-  - @ledgerhq/ledger-wallet-framework@2.8.0
-
-## 1.29.0-next.0
-
-### Minor Changes
-
-- [#20278](https://github.com/LedgerHQ/ledger-live/pull/20278) [`3d24a89`](https://github.com/LedgerHQ/ledger-live/commit/3d24a898d59de55364ec29de29eaecb7ca14425d) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Drop the `@ledgerhq/errors` dependency, completing the errors sunset (LIVE-32915).
-
-  The `@ledgerhq/errors` package is removed from the monorepo: no workspace source imported it anymore, every error class it held now lives in the package that owns it (`@ledgerhq/ledger-wallet-framework/errors` for the ones shared across coin modules). `createCustomErrorClass` and the `serializeError` / `deserializeError` stack are gone with it — define errors as native classes and branch on `error.name`.
-
-  `@ledgerhq/errors@6.37.0` stays on npm for external consumers, but is no longer published from this repo.
-
-- [#20280](https://github.com/LedgerHQ/ledger-live/pull/20280) [`9fcbe39`](https://github.com/LedgerHQ/ledger-live/commit/9fcbe39689ff122568ffb031a30dc3805ebb6add) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Stop depending on `@ledgerhq/errors` (LIVE-32915).
-
-  No workspace package declares it anymore, and none may again: `enforce-boundaries` now fails CI on any manifest that does. The classes it held live in the package that owns them, with `@ledgerhq/ledger-wallet-framework/errors` as the shared home below the coin layer.
-
-  The package itself stays in the repo so it keeps being published for external consumers, and is bridged to the external coin packages that still peer-depend on it via `pnpm.packageExtensions` using `workspace:*` (which reuses the single in-repo copy, so the dependency graph keeps exactly the physical copies it had before). [LedgerHQ/coin-modules#752](https://github.com/LedgerHQ/coin-modules/pull/752) removes that peerDependency upstream; once it is released the bridge can be dropped, but the package still needs publishing.
-
-- [#20207](https://github.com/LedgerHQ/ledger-live/pull/20207) [`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b) Thanks [@lysyi3m](https://github.com/lysyi3m)! - Add Internet Computer (ICP) neuron staking to the coin module: create and top up neurons, start/stop dissolving, disburse, set/increase dissolve delay, follow, split, spawn, stake maturity, and add/remove hot keys, plus neuron listing. Governance operations are routed through the NNS governance canister via the device's update-call signing, alongside the existing ledger transfer path, and account synchronization now carries neuron data. Adds the `STAKE_NEURON` and `TOP_UP_NEURON` operation types, with matching icons and labels in the desktop and mobile operation history. (LIVE-28469)
-
-- [#20527](https://github.com/LedgerHQ/ledger-live/pull/20527) [`28046d3`](https://github.com/LedgerHQ/ledger-live/commit/28046d31707d0290b56522c14b51623860b7a3f8) Thanks [@amaslakov](https://github.com/amaslakov)! - Add Internet Computer neuron staking hooks and narrow the ICP bridge account types
-
-### Patch Changes
-
-- Updated dependencies [[`aee0e64`](https://github.com/LedgerHQ/ledger-live/commit/aee0e64b491aafc1ca8fea16b1ef124cb183770b), [`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`647804e`](https://github.com/LedgerHQ/ledger-live/commit/647804ee755d54776e6b8cd96328bee89fb035e4), [`53c3431`](https://github.com/LedgerHQ/ledger-live/commit/53c3431e01b3139ef689cb589bab0adee4ed6152)]:
-  - @ledgerhq/types-live@6.119.0-next.0
-  - @ledgerhq/ledger-wallet-framework@2.8.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

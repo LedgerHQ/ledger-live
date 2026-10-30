@@ -1,4 +1,3 @@
-import querystring from "querystring";
 import network from "@ledgerhq/live-network/network";
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
 
@@ -13,7 +12,6 @@ jest.mock("@ledgerhq/live-network/network");
 jest.mock("@ledgerhq/ledger-wallet-framework/operation");
 jest.mock("../../logic");
 jest.mock("../../config");
-jest.mock("querystring");
 jest.mock("@ledgerhq/logs");
 
 // Mock constants with a mutable LIMIT
@@ -29,7 +27,6 @@ describe("ICON API", () => {
   const networkMock = network as jest.Mock;
   const isTestnetMock = isTestnet as jest.Mock;
   const getCoinConfigMock = getCoinConfig as jest.Mock;
-  const querystringMock = querystring.stringify as jest.Mock;
 
   isTestnetMock.mockReturnValue(true);
   getCoinConfigMock.mockReturnValue({
@@ -72,14 +69,13 @@ describe("ICON API", () => {
         value: "2000",
       } as IconTransactionType;
       const txHistory = [tx1, tx2];
-      querystringMock.mockReturnValue("address=hx123&skip=0&limit=10");
       networkMock.mockResolvedValue({ data: txHistory });
 
       const result = await fetchOperationList(accountId, addr, skip, network, maxLength);
       expect(result.length).toBe(2);
       expect(networkMock).toHaveBeenCalledWith({
         method: "GET",
-        url: `testnet-url/transactions/address/${addr}?address=${addr}&skip=${skip}&limit=${10}`,
+        url: `testnet-url/transactions/address/${addr}?skip=${skip}&limit=${10}`,
       });
     });
     it("should recursively fetch operation list correctly with pagination", async () => {
@@ -125,10 +121,6 @@ describe("ICON API", () => {
         .mockResolvedValueOnce({ data: [tx1, tx2] }) // First fetch returns two transactions
         .mockResolvedValueOnce({ data: [tx3] }); // Second fetch returns one transaction
 
-      querystringMock
-        .mockReturnValueOnce("address=hx123&skip=0&limit=2")
-        .mockReturnValueOnce("address=hx123&skip=2&limit=2");
-
       const result = await fetchOperationList(accountId, addr, skip, network, maxLength);
 
       // Verify that the function was called recursively
@@ -145,11 +137,11 @@ describe("ICON API", () => {
       // Verify the URLs used in the network calls
       expect(networkMock).toHaveBeenCalledWith({
         method: "GET",
-        url: `testnet-url/transactions/address/${addr}?address=${addr}&skip=${skip}&limit=${2}`,
+        url: `testnet-url/transactions/address/${addr}?skip=${skip}&limit=${2}`,
       });
       expect(networkMock).toHaveBeenCalledWith({
         method: "GET",
-        url: `testnet-url/transactions/address/${addr}?address=${addr}&skip=${skip + 2}&limit=${2}`,
+        url: `testnet-url/transactions/address/${addr}?skip=${skip + 2}&limit=${2}`,
       });
     });
   });

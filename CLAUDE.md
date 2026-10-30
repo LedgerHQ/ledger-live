@@ -1,1 +1,1 @@
-[Prefer](/AGENTS.md)
+@AGENTS.md

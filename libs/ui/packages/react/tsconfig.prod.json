@@ -1,10 +1,7 @@
 {
-  "extends": "./tsconfig",
+  "extends": ["./tsconfig", "@support/tsconfig/lib/build"],
   "compilerOptions": {
     "composite": false,
-    "incremental": false,
-    "declaration": true,
-    "customConditions": []
-  },
-  "exclude": ["node_modules", "./scripts", "./lib"]
+    "incremental": false
+  }
 }

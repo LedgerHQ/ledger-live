@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { AppUnavailable } from "./AppUnavailable.web";
+import { AppUnavailable } from "./AppUnavailable";
 
 const TITLE = "Ledger Wallet is currently unavailable";
 const DESCRIPTION = "This does not impact your assets. Please try again later.";
@@ -20,14 +20,14 @@ describe("AppUnavailable", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
-  it("should render the action and call onPress when pressed", () => {
-    const onPress = jest.fn();
+  it("should render the action and call onOpenLearnMore when selected", () => {
+    const onOpenLearnMore = jest.fn();
 
     render(
       <AppUnavailable
         title={TITLE}
         description={DESCRIPTION}
-        action={{ label: ACTION_LABEL, onPress, testID: "app-unavailable-action" }}
+        action={{ label: ACTION_LABEL, onOpenLearnMore, testID: "app-unavailable-action" }}
       />,
     );
 
@@ -37,6 +37,6 @@ describe("AppUnavailable", () => {
 
     fireEvent.click(button);
 
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenLearnMore).toHaveBeenCalledTimes(1);
   });
 });

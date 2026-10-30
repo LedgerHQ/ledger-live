@@ -2,6 +2,7 @@ import {
   handlers as perpsHandlers,
   type PerpsDepositUiParams,
   type PerpsSignResult,
+  type PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
@@ -9,10 +10,15 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useEffect, useMemo } from "react";
 import { openPerpsSign } from "../screens/PerpsSign/PerpsSignDialog";
 import { openPerpsDeposit } from "../screens/PerpsDeposit/PerpsDepositDialog";
+import { openPerpsWithdraw } from "../screens/PerpsWithdraw/PerpsWithdrawDialog";
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
+import {
+  beginWithdrawRequest,
+  cancelWithdrawRequest,
+} from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
   const uiSigningExecute = useCallback(
@@ -46,7 +52,14 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
     return request;
   }, []);
 
+  const uiWithdrawExecute = useCallback((params: PerpsWithdrawUiParams) => {
+    const request = beginWithdrawRequest();
+    openPerpsWithdraw(params);
+    return request;
+  }, []);
+
   useEffect(() => cancelDepositRequest, []);
+  useEffect(() => cancelWithdrawRequest, []);
 
   return useMemo<WalletAPICustomHandlers>(() => {
     return perpsHandlers({
@@ -54,7 +67,8 @@ export function usePerpsHandlers(accounts: AccountLike[]) {
       uiHooks: {
         "signing.execute": uiSigningExecute,
         "deposit.execute": uiDepositExecute,
+        "withdraw.execute": uiWithdrawExecute,
       },
     });
-  }, [accounts, uiSigningExecute, uiDepositExecute]);
+  }, [accounts, uiSigningExecute, uiDepositExecute, uiWithdrawExecute]);
 }

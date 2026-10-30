@@ -1,4 +1,5 @@
 export * from "./addressPoisoningOperationsFilter";
+export * from "./coinObservability";
 export * from "./concordiumIdAppLinks";
 export * from "./currencyAdi";
 export * from "./currencyAleo";
@@ -111,6 +112,7 @@ export * from "./llmTezosStaking";
 export * from "./llmWebviewManifestDomainCheck";
 export * from "./newSendFlow";
 export * from "./newSendFlowFirstInteractionBanner";
+export * from "./platformApiEnforcePermissions";
 export * from "./useDeviceActionSignatureSend";
 export * from "./web3hub";
 export * from "./zcashShielded";

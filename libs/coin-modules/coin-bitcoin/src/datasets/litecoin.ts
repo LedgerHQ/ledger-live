@@ -115,7 +115,7 @@ const dataset: CurrenciesData<Transaction> = {
               excludeUTXOs: [],
             },
           }),
-          expectedStatus: (account, tx, status) => {
+          expectedStatus: (account, _tx, status) => {
             return {
               amount: account.spendableBalance.minus(status.estimatedFees),
               warnings: {},

@@ -42,13 +42,13 @@ export function useDeviceOnboardingDebugViewModel() {
     device: previewDevice,
     state: checksStateForPreview(preview),
     error: isErrorPreview(preview) ? { kind: preview } : null,
-    update: null,
+    update: preview === "updating" ? { current: "1.0.0", available: "1.1.0" } : null,
     onStart: () => setPreview("checking"),
     onRetry: () => setPreview("checking"),
     onAcceptUpdate: () => setPreview("checking"),
     onDeclineUpdate: () => setPreview("checking"),
     onCloseSheet: () => setPreview("checking"),
-    onContinue: () => setPreview("idle"),
+    onContinue: () => setPreview("offer"),
     onQuit: closePreview,
   };
 

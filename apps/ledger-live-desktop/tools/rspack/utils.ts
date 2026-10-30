@@ -174,8 +174,9 @@ export function buildRendererEnv(mode: "development" | "production"): Record<str
     ),
     "process.env.NODE_ENV": JSON.stringify(mode),
     // No `.env` file is committed for dev builds. A local one can still set another profile: the
-    // `buildDotEnvDefine()` entries come after these.
-    ...(mode === "development" && { "process.env.CONFIG_PROFILE": JSON.stringify("staging") }),
+    // `buildDotEnvDefine()` entries come after these. Without one, a packaged build is prod: its
+    // profile never comes from the launch environment.
+    "process.env.CONFIG_PROFILE": JSON.stringify(mode === "development" ? "staging" : "prod"),
   };
 }
 
@@ -198,7 +199,7 @@ export const isRsdoctorEnabled = () =>
 export function getRsdoctorPlugin(bundleName: string): Plugins {
   if (isRsdoctorEnabled()) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+    const { RsdoctorRspackPlugin } = require("@rsdoctor/core");
     const isCI = process.env.CI === "true" || process.env.CI === "1";
     const repoRoot = path.resolve(lldRoot, "..", "..");
     const reportDir = path.join(repoRoot, "rsdoctor", `desktop-${bundleName}`);

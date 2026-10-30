@@ -1,5 +1,27 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.33.0-next.0
+
+### Minor Changes
+
+- [#23288](https://github.com/LedgerHQ/ledger-live/pull/23288) [`6ea7918`](https://github.com/LedgerHQ/ledger-live/commit/6ea791860eef5b92cc6041ba171e8846e88ef2c8) Thanks [@benruseau](https://github.com/benruseau)! - Plug the OS Update Orchestrator into My Ledger on mobile, behind the `ldmkOsUpdates` feature flag.
+
+  - Connecting to My Ledger resolves the OS update path and stores the updates in a new `osUpdate` slice, while the connect bottom sheet stays in its loading state. A resolve failure still lands on My Ledger.
+  - The OS update banner (portfolio and My Ledger) is driven by that slice and gated by device model, firmware version and USB/BLE connection. From the portfolio, it redirects to My Ledger, which reconnects the device and opens the What's new page through the `firmwareUpdate` param.
+  - Confirming What's new starts the orchestrator. Once the updates are applied the slice is cleared, and a cancel or a crash reconnects through My Ledger, which resolves the path again.
+  - `@ledgerhq/live-dmk-mobile` adds `getActiveConnectedDevice`, which returns the connected device of the session the transports are using, as the DMK can hold several sessions at once.
+  - `@ledgerhq/live-dmk-shared` exports the `OsUpdate` type.
+  - `@ledgerhq/live-common` adds an optional `onCompleted` callback to `OsUpdatesOrchestratorComponent`.
+
+- [#23286](https://github.com/LedgerHQ/ledger-live/pull/23286) [`b78e207`](https://github.com/LedgerHQ/ledger-live/commit/b78e207f1c45bd98b215bcd085e4e3af961a275f) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Cover on-device contact rename in mobile E2E against the mock server, and let device intents discover that transport.
+
+### Patch Changes
+
+- Updated dependencies [[`6b445da`](https://github.com/LedgerHQ/ledger-live/commit/6b445da2f92d7c630424faa7cc31a01bc67db0b9), [`bfaac14`](https://github.com/LedgerHQ/ledger-live/commit/bfaac14201bb12b1f4b6e6a6d68ab4a0daa55b5c), [`29ae68a`](https://github.com/LedgerHQ/ledger-live/commit/29ae68a1ad2429a224106f355f35d1190c0f7359), [`6ea7918`](https://github.com/LedgerHQ/ledger-live/commit/6ea791860eef5b92cc6041ba171e8846e88ef2c8), [`b977dbb`](https://github.com/LedgerHQ/ledger-live/commit/b977dbb2d8d6459295210b491b33af6e8bace1da), [`77bc92f`](https://github.com/LedgerHQ/ledger-live/commit/77bc92ff77d029d570f7b2553919222ee0e598ca)]:
+  - @ledgerhq/live-dmk-shared@0.37.0-next.0
+  - @ledgerhq/types-devices@7.2.0-next.0
+  - @shared/env@0.11.0
+
 ## 0.32.0
 
 ### Minor Changes
@@ -211,19 +233,5 @@
 - Updated dependencies [[`1e9db75`](https://github.com/LedgerHQ/ledger-live/commit/1e9db750a4882f9db7f95278e33c00262487b37b), [`8a3a0bb`](https://github.com/LedgerHQ/ledger-live/commit/8a3a0bbd8361706daac364d4c89894f56431fc57)]:
   - @ledgerhq/types-devices@6.32.0-next.0
   - @ledgerhq/live-dmk-shared@0.30.0-next.0
-
-## 0.29.2
-
-### Patch Changes
-
-- Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
-  - @shared/env@0.2.0
-
-## 0.29.2-next.0
-
-### Patch Changes
-
-- Updated dependencies [[`f60f9cb`](https://github.com/LedgerHQ/ledger-live/commit/f60f9cbc79557cfa815ea714b375ace11aea8754), [`4015ade`](https://github.com/LedgerHQ/ledger-live/commit/4015ade1f9744d4bb575282060fdb1beb9aafc89), [`e44d972`](https://github.com/LedgerHQ/ledger-live/commit/e44d97239af10b46ae3ef703e0c6181cc0c87712)]:
-  - @shared/env@0.2.0-next.0
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

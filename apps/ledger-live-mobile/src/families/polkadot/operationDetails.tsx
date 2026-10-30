@@ -5,7 +5,7 @@ import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { usePolkadotValidators } from "@ledgerhq/live-common/families/polkadot/react";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency } from "@domain/entity-currency";

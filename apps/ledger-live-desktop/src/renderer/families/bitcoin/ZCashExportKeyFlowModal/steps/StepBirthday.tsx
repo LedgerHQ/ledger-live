@@ -3,7 +3,7 @@ import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
 import { Checkbox } from "@ledgerhq/lumen-ui-react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import type { StepProps } from "../types";
 import { DatePicker } from "../shared/DatePicker";
@@ -13,6 +13,7 @@ import { Title, TitleWrapper } from "../../AccountBalanceSummaryFooter";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
+import { useBirthdayBlockHeight } from "../useBirthdayBlockHeight";
 
 // Placeholder support article; content owners plan to swap this for a dedicated one later.
 const BIRTHDAY_LEARN_MORE_URL = "https://support.ledger.com/article/115005177269-zd";
@@ -28,9 +29,11 @@ function StepBirthday({
 }: Readonly<StepProps>) {
   invariant(account, "account required");
 
+  const blockHeight = useBirthdayBlockHeight(account, birthday, !invalidBirthday && !syncFromZero);
+
   return (
     <Container alignItems="flex-start">
-      <TrackPage
+      <TrackScreen
         category="Export ZCash key"
         name="Step birthday"
         flow="exportUfvk"
@@ -71,6 +74,11 @@ function StepBirthday({
           onChange={handleBirthdayChange}
           data-testid="birthday-height"
         />
+        {blockHeight !== null && (
+          <Text variant="small" color="neutral.c70" data-testid="birthday-block-height">
+            {t("zcash.shielded.flows.export.steps.birthday.height", { height: blockHeight })}
+          </Text>
+        )}
       </Box>
       <Box horizontal fontSize={14}>
         <Checkbox

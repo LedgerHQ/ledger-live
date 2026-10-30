@@ -67,7 +67,8 @@ export function isAccountDataReceived<K extends AccountDataKind>(kind: K) {
     action.type === RECEIVED && hasKind(action.payload, kind);
 }
 
-const isAnyAccountDataReceived = (
+/** An answer of any kind, for observers of the whole layer. */
+export const isAnyAccountDataReceived = (
   action: UnknownAction,
 ): action is ReturnType<typeof accountDataReceived<AccountDataKind>> =>
   action.type === RECEIVED && hasKind(action.payload);

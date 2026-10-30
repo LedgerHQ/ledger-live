@@ -1,5 +1,5 @@
 import { trackPage } from "@shared/analytics";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import type { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
@@ -47,8 +47,13 @@ export function useConfirmationViewModel() {
     [transactionStatus],
   );
 
+  const trackedSuccessSessionIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (state.flowStatus === FLOW_STATUS.SUCCESS) {
+      // Account refreshes after the broadcast recreate the tracking props: send the event once per flow.
+      if (trackedSuccessSessionIdRef.current === flowSessionId) return;
+      trackedSuccessSessionIdRef.current = flowSessionId;
       void trackPage({
         category: "Modal send - transaction sent",
         props: {

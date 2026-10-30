@@ -1,5 +1,5 @@
-import { checkPassword } from "./check.native";
-import { isLegacyMigrationComplete, migrateLegacyPassword } from "./migration.native";
+import { checkPassword } from "./check";
+import { isLegacyMigrationComplete, migrateLegacyPassword } from "./migration";
 
 const SCRYPT = { cost: 16384, blockSize: 8, parallelization: 1, digestLength: 4 };
 const SALT = Uint8Array.from([1, 2, 3, 4]);
@@ -7,8 +7,8 @@ const SALT = Uint8Array.from([1, 2, 3, 4]);
 jest.mock("react-native-fast-crypto", () => ({ scrypt: jest.fn() }));
 
 // The real queue, as in check.native.test.ts: stubbing it out is what let the deadlock below ship.
-jest.mock("./internals/digest.native", () => ({
-  ...jest.requireActual("./internals/digest.native"),
+jest.mock("./internals/digest", () => ({
+  ...jest.requireActual("./internals/digest"),
   APP_LOCK_SCRYPT_PARAMS: { cost: 16384, blockSize: 8, parallelization: 1, digestLength: 4 },
   derivePasswordDigest: jest.fn(async (password: string) =>
     Uint8Array.from([password.length, 20, 30, 40]),
@@ -18,7 +18,7 @@ jest.mock("./internals/digest.native", () => ({
 const legacy = { password: null as string | null };
 const stored = { verifier: null as unknown, needsLongerPassword: false };
 
-jest.mock("./internals/legacyPassword.native", () => ({
+jest.mock("./internals/legacyPassword", () => ({
   readLegacyPassword: jest.fn(async () => legacy.password),
   hasLegacyPassword: jest.fn(async () => legacy.password !== null),
   clearLegacyPassword: jest.fn(async () => {
@@ -27,7 +27,7 @@ jest.mock("./internals/legacyPassword.native", () => ({
   }),
 }));
 
-jest.mock("./internals/store.native", () => ({
+jest.mock("./internals/store", () => ({
   hasStoredVerifier: jest.fn(async () => stored.verifier !== null),
   readStoredPassword: jest.fn(async () =>
     stored.verifier === null
@@ -45,8 +45,8 @@ jest.mock("./internals/store.native", () => ({
   }),
 }));
 
-const { clearLegacyPassword } = jest.requireMock("./internals/legacyPassword.native");
-const { writePasswordVerifier } = jest.requireMock("./internals/store.native");
+const { clearLegacyPassword } = jest.requireMock("./internals/legacyPassword");
+const { writePasswordVerifier } = jest.requireMock("./internals/store");
 
 beforeEach(() => {
   legacy.password = null;

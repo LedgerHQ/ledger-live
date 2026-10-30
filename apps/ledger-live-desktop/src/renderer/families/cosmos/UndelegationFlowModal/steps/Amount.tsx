@@ -1,11 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import { isStakingAccount } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
 import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
@@ -13,9 +14,12 @@ import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
 import NotEnoughFundsToUnstake from "~/renderer/components/NotEnoughFundsToUnstake";
-import { resolveTransactionValidators } from "@ledgerhq/coin-cosmos/buildTransaction";
+import {
+  getValAddress,
+  resolveTransactionValidators,
+} from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 
 export default function StepAmount({
   account,
@@ -44,8 +48,8 @@ export default function StepAmount({
     [onUpdateTransaction, bridge],
   );
   const validator = useMemo(
-    () => ({ address: transaction.valAddress ?? "", amount: transaction.amount }),
-    [transaction.valAddress, transaction.amount],
+    () => ({ address: getValAddress(transaction), amount: transaction.amount }),
+    [transaction],
   );
   const amount = transaction.amount;
   const crypto = cryptoFactory(account.currency.id);
@@ -53,7 +57,7 @@ export default function StepAmount({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Undelegation Flow"
         name="Step 1"
         flow="stake"
@@ -108,6 +112,7 @@ export function StepAmountFooter({
 }: StepProps) {
   const { t } = useTranslation();
   invariant(account && transaction, "account and transaction required");
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const requestedDelegation = resolveTransactionValidators(transaction)[0];
