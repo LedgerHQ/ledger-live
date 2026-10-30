@@ -47,6 +47,7 @@ import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
 import recoverState from "./recoverState";
 import liveAppModal from "./liveAppModal";
 import { identitiesSlice } from "@domain/entity-client-identity";
+import { predictionsSlice } from "@domain/entity-predictions";
 import { supportedFiatsSlice } from "@domain/entity-currency-fiat";
 import { payCardBalanceSlice } from "@features/flow-pay-balance/state";
 import { payCardFeatureTourSlice } from "@features/flow-pay-feature-tour/state";
@@ -98,6 +99,7 @@ const appReducer = combineReducers({
   largeScreenUpsellModal: largeScreenUpsellModalReducer,
   postOnboarding,
   postOnboardingHubDrawer,
+  predictions: predictionsSlice.reducer,
   protect,
   ratings,
   settings,

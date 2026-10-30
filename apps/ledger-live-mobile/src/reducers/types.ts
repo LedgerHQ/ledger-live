@@ -11,6 +11,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/type
 import type { MarketListCategory } from "@ledgerhq/live-common/market/utils/category";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import type { LargeScreenUpsellModalState } from "@ledgerhq/live-engagement/largeScreenUpsellModal";
+import type { PredictionsState } from "@domain/entity-predictions";
 import type { DataOfUser, NotificationPromptTarget } from "LLM/features/NotificationsPrompt/types";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
 import {
@@ -488,6 +489,7 @@ export type State = LLMRTKApiState & {
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   postOnboardingHubDrawer: PostOnboardingHubDrawerState;
+  predictions: PredictionsState;
   protect: ProtectState;
   ratings: RatingsState;
   sendFlow: SendFlowState;

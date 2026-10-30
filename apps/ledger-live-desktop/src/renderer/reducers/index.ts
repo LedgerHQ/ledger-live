@@ -29,6 +29,7 @@ import onboarding, { OnboardingState } from "./onboarding";
 import { lldRTKApiReducers, LLDRTKApiState } from "./rtkQueryApi";
 import { accountAliasSlice, type AccountAliasState } from "@domain/entity-account-alias";
 import { identitiesSlice, type IdentitiesState } from "@domain/entity-client-identity";
+import { predictionsSlice, type PredictionsState } from "@domain/entity-predictions";
 import { supportedFiatsSlice, type SupportedFiatsState } from "@domain/entity-currency-fiat";
 import { contactsSlice, type ContactsState } from "@domain/entity-contact";
 import { accountDataSlice, type AccountDataState } from "@domain/entity-account-data";
@@ -100,6 +101,7 @@ export type State = LLDRTKApiState & {
   sendFlow: SendFlowState;
   onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
+  predictions: PredictionsState;
   settings: SettingsState;
   trustchain: TrustchainStore;
   UI: UIState;
@@ -151,6 +153,7 @@ const appReducer = combineReducers({
   UI,
   onboarding,
   postOnboarding,
+  predictions: predictionsSlice.reducer,
   market,
   marketBanner,
   wallet,
