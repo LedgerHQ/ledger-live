@@ -6,6 +6,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { track } from "@shared/analytics";
 import {
+  useRecentTransactionItems,
   useRecentTransactionsViewModel,
   type RecentTransactionsParams,
 } from "../useRecentTransactionsViewModel";
@@ -36,6 +37,11 @@ function params(overrides: Partial<RecentTransactionsParams>): RecentTransaction
   };
 }
 
+function useLegacyRecent(hookParams: RecentTransactionsParams) {
+  const items = useRecentTransactionItems(hookParams.accountIds);
+  return useRecentTransactionsViewModel({ ...hookParams, items, pending: false });
+}
+
 describe("useRecentTransactionsViewModel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -43,12 +49,9 @@ describe("useRecentTransactionsViewModel", () => {
 
   it("returns not visible when no operations are available", () => {
     const account = genAccount("btc-root-empty", { currency: btc, operationsSize: 0 });
-    const { result } = renderHook(
-      () => useRecentTransactionsViewModel(params({ accountIds: [account.id] })),
-      {
-        initialState: { accounts: [account] },
-      },
-    );
+    const { result } = renderHook(() => useLegacyRecent(params({ accountIds: [account.id] })), {
+      initialState: { accounts: [account] },
+    });
 
     expect(result.current.visible).toBe(false);
     expect(result.current.table.getRowModel().rows).toHaveLength(0);
@@ -56,12 +59,9 @@ describe("useRecentTransactionsViewModel", () => {
 
   it("returns at most 3 recent rows and visible=true when operations exist", () => {
     const account = genAccount("btc-root-many", { currency: btc, operationsSize: 4 });
-    const { result } = renderHook(
-      () => useRecentTransactionsViewModel(params({ accountIds: [account.id] })),
-      {
-        initialState: { accounts: [account] },
-      },
-    );
+    const { result } = renderHook(() => useLegacyRecent(params({ accountIds: [account.id] })), {
+      initialState: { accounts: [account] },
+    });
 
     expect(result.current.visible).toBe(true);
     expect(result.current.table.getRowModel().rows).toHaveLength(3);
@@ -69,12 +69,9 @@ describe("useRecentTransactionsViewModel", () => {
 
   it("tracks and opens operation details when a row is clicked", () => {
     const account = genAccount("btc-root-click", { currency: btc, operationsSize: 2 });
-    const { result } = renderHook(
-      () => useRecentTransactionsViewModel(params({ accountIds: [account.id] })),
-      {
-        initialState: { accounts: [account] },
-      },
-    );
+    const { result } = renderHook(() => useLegacyRecent(params({ accountIds: [account.id] })), {
+      initialState: { accounts: [account] },
+    });
 
     const row = result.current.table.getRowModel().rows[0];
     const { operation } = row.original;
@@ -106,10 +103,7 @@ describe("useRecentTransactionsViewModel", () => {
     const ethTree = { ...ethRoot, subAccounts: [usdc, matic] };
 
     const { result } = renderHook(
-      () =>
-        useRecentTransactionsViewModel(
-          params({ accountIds: [usdc.id], trackingCurrencyId: usdcToken.id }),
-        ),
+      () => useLegacyRecent(params({ accountIds: [usdc.id], trackingCurrencyId: usdcToken.id })),
       { initialState: { accounts: [ethTree] } },
     );
 
@@ -123,7 +117,7 @@ describe("useRecentTransactionsViewModel", () => {
     const account1 = genAccount("btc-root-1", { currency: btc });
     const account2 = genAccount("btc-root-2", { currency: btc });
     const { result } = renderHook(
-      () => useRecentTransactionsViewModel(params({ accountIds: [account1.id, account2.id] })),
+      () => useLegacyRecent(params({ accountIds: [account1.id, account2.id] })),
       { initialState: { accounts: [account1, account2] } },
     );
 
@@ -158,7 +152,7 @@ describe("useRecentTransactionsViewModel", () => {
 
     const { result } = renderHook(
       () =>
-        useRecentTransactionsViewModel(
+        useLegacyRecent(
           params({ accountIds: [ethTree.id, usdc.id], trackingCurrencyId: "ethereum" }),
         ),
       { initialState: { accounts: [ethTree, otherEth] } },

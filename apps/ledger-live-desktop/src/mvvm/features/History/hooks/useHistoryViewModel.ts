@@ -4,7 +4,7 @@ import {
   formatSmallValueOperationsThreshold,
   SMALL_VALUE_OPERATIONS_THRESHOLD_REFERENCE_CURRENCY,
 } from "@ledgerhq/live-common/hideSmallValueTokenOperations/smallValueOperationsThreshold";
-import { ContactIdSchema, selectContactById, type Contact } from "@domain/entity-contact";
+import type { Contact } from "@domain/entity-contact";
 import { useFeature } from "@features/platform-feature-flags";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useHideSmallValueTokenOperations } from "~/renderer/actions/settings";
@@ -20,10 +20,10 @@ import type { Virtualizer } from "@tanstack/react-virtual";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useCardAssetName } from "./useCardAssetName";
-import { useHistoryOperations } from "./useHistoryOperations";
+import { useHistoryContact } from "./useHistoryContact";
 import { useHistoryTable } from "./useHistoryTable";
 import { useHistoryVirtualization } from "./useHistoryVirtualization";
-import type { HistoryTable, OperationRow, VirtualItem } from "../types";
+import type { HistoryTable, OperationRow, OperationTableItem, VirtualItem } from "../types";
 import { track } from "@shared/analytics";
 import { parseHistoryBackPath } from "../utils/historyLocationState";
 import { usePopNavigationBack } from "LLD/utils/usePopNavigationBack";
@@ -56,9 +56,13 @@ export type HistoryViewModel = {
   cardAsset?: string;
   cardAssetName?: string;
   onHistoryTabChange: (tab: HistoryTab) => void;
+  pending: boolean;
 };
 
-export function useHistoryViewModel(): HistoryViewModel {
+export function useHistoryViewModel(
+  operations: OperationTableItem[],
+  pending = false,
+): HistoryViewModel {
   const dispatch = useDispatch();
   const { showBackButton, navigateBack } = usePopNavigationBack(parseHistoryBackPath);
 
@@ -105,13 +109,7 @@ export function useHistoryViewModel(): HistoryViewModel {
     },
     [locationState, searchParams, setSearchParams],
   );
-  const contactIdResult = ContactIdSchema.safeParse(searchParams.get("contactId"));
-  const contactId = isPayTabEnabled && contactIdResult.success ? contactIdResult.data : undefined;
-  const contact = useSelector(state =>
-    contactId ? selectContactById(state, contactId) : undefined,
-  );
-
-  const operations = useHistoryOperations(contact);
+  const contact = useHistoryContact();
   const table = useHistoryTable(operations);
   const { parentRef, rowVirtualizer, flatItems } = useHistoryVirtualization(table);
 
@@ -196,5 +194,6 @@ export function useHistoryViewModel(): HistoryViewModel {
     cardAsset,
     cardAssetName,
     onHistoryTabChange,
+    pending,
   };
 }
