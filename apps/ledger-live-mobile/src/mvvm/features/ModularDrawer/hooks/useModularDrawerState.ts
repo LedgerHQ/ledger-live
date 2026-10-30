@@ -18,6 +18,8 @@ import type { ModularDrawerProps } from "../ModularDrawer";
 
 type ModularDrawerStateProps = {
   assetsSorted?: AssetData[];
+  /** `assetsSorted` belongs to a previous request and must not drive auto-selection */
+  isAssetsDataStale?: boolean;
   selectedStep?: ModularDrawerStep;
   currencyIds: string[];
   isDrawerOpen?: boolean;
@@ -31,6 +33,7 @@ type ModularDrawerStateProps = {
 
 export function useModularDrawerState({
   assetsSorted,
+  isAssetsDataStale,
   currencyIds,
   isDrawerOpen,
   onClose,
@@ -69,8 +72,9 @@ export function useModularDrawerState({
   );
 
   const singleCurrency = useMemo(
-    () => (assetsSorted?.length === 1 ? assetsSorted[0].networks[0] : undefined),
-    [assetsSorted],
+    () =>
+      !isAssetsDataStale && assetsSorted?.length === 1 ? assetsSorted[0].networks[0] : undefined,
+    [assetsSorted, isAssetsDataStale],
   );
 
   const hasOneCurrency = useMemo(() => currencyIds.length === 1, [currencyIds.length]);

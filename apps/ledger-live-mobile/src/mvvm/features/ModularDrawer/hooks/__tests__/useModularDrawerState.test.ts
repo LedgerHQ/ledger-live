@@ -237,6 +237,42 @@ describe("useModularDrawerState", () => {
     expect(store.getState().modularDrawer.step).not.toBe(ModularDrawerStep.Account);
   });
 
+  it("should not auto-select a single asset left over from a previous request", () => {
+    const previousRequestAsset: AssetData[] = [
+      {
+        asset: {
+          id: mockBtcCryptoCurrency.id,
+          ticker: mockBtcCryptoCurrency.ticker,
+          name: mockBtcCryptoCurrency.name,
+          assetsIds: { [mockBtcCryptoCurrency.id]: mockBtcCryptoCurrency.id },
+        },
+        networks: [mockBtcCryptoCurrency],
+        interestRates: undefined,
+        market: undefined,
+      },
+    ];
+
+    const { store } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [mockEthCryptoCurrency.id],
+          assetsSorted: previousRequestAsset,
+          isAssetsDataStale: true,
+          isDrawerOpen: true,
+          onAccountSelected: mockOnAccountSelected,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: { ...state.modularDrawer, enableAccountSelection: true },
+        }),
+      },
+    );
+
+    expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Asset);
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   it("should return a native currency without navigating to device in currency mode", () => {
     const onCurrencySelected = jest.fn();
     const { result } = renderHook(

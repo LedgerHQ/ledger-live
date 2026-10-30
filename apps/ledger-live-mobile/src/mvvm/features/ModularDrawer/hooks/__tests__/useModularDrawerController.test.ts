@@ -156,6 +156,32 @@ describe("useModularDrawerController", () => {
       expect(store.getState().modularDrawer.cancelCallbackId).toBe(cancelCallbackIdBefore);
     });
 
+    it("should clear the asset filters on hideDrawer so the next request starts unfiltered", () => {
+      const { result, store } = renderHook(() => useModularDrawerController());
+
+      act(() => {
+        result.current.openDrawer({
+          flow: "test_flow",
+          source: "test_source",
+          currencies: ["ripple"],
+          areCurrenciesFiltered: true,
+          onCancel: jest.fn(),
+        });
+      });
+
+      act(() => {
+        result.current.hideDrawer();
+      });
+
+      act(() => {
+        result.current.openDrawer({ flow: "other_flow", source: "other_source" });
+      });
+
+      const state = store.getState().modularDrawer;
+      expect(state.preselectedCurrencies).toEqual([]);
+      expect(state.areCurrenciesFiltered).toBeUndefined();
+    });
+
     it("should invoke onCancel via closeDrawer after hideDrawer was called", () => {
       const onCancel = jest.fn();
       const { result, store } = renderHook(() => useModularDrawerController());

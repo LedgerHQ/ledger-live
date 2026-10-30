@@ -28,6 +28,7 @@ export function useAssetsData({
 }) {
   const {
     data,
+    currentData,
     isLoading,
     error,
     fetchNextPage,
@@ -61,6 +62,8 @@ export function useAssetsData({
 
   return {
     data: joinedPages,
+    /** True when `data` was fetched for previous query arguments and kept while the current ones load. */
+    isStale: data !== undefined && currentData === undefined,
     isLoading: isInitialLoading,
     isFetchingNextPage,
     error,

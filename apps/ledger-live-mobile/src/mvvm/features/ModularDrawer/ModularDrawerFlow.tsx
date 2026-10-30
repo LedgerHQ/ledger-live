@@ -96,16 +96,22 @@ export function ModularDrawerFlow({
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
   const completionMode = useSelector(modularDrawerCompletionModeSelector);
-  const { sortedCryptoCurrencies, assetsSorted, isLoading, isError, refetch, loadNext } = useAssets(
-    {
-      currencyIds: completionMode === "currency" ? undefined : currencies,
-      networkIds: completionMode === "currency" ? currencies : undefined,
-      categories,
-      searchedValue: searchValue,
-      useCase,
-      areCurrenciesFiltered,
-    },
-  );
+  const {
+    sortedCryptoCurrencies,
+    assetsSorted,
+    isStale: isAssetsDataStale,
+    isLoading,
+    isError,
+    refetch,
+    loadNext,
+  } = useAssets({
+    currencyIds: completionMode === "currency" ? undefined : currencies,
+    networkIds: completionMode === "currency" ? currencies : undefined,
+    categories,
+    searchedValue: searchValue,
+    useCase,
+    areCurrenciesFiltered,
+  });
 
   const {
     accountCurrency,
@@ -120,6 +126,7 @@ export function ModularDrawerFlow({
     onAddNewAccount,
   } = useModularDrawerState({
     assetsSorted,
+    isAssetsDataStale,
     currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,

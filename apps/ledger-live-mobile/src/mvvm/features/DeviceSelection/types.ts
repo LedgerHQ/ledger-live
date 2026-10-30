@@ -12,6 +12,8 @@ type CommonParams = {
   context?: AddAccountContextType;
   onSuccess?: (res?: { scannedAccounts: Account[]; selected: Account[] }) => void;
   onCloseNavigation?: () => void;
+  /** Called when the device selection flow unmounts; no-op if it already ended through onSuccess or onCloseNavigation */
+  onAbandon?: () => void;
   navigationDepth?: number;
   sourceScreenName?: string;
 };

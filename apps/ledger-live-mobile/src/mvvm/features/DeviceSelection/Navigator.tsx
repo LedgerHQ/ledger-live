@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { Platform } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
@@ -9,7 +9,7 @@ import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import SelectDevice from "LLM/features/DeviceSelection/screens/SelectDevice";
 import StepHeader from "~/components/StepHeader";
-import { DeviceSelectionNavigatorParamsList } from "./types";
+import { DeviceSelectionNavigatorParamsList, SelectDeviceRouteParams } from "./types";
 import CloseWithConfirmation from "LLM/components/CloseWithConfirmation";
 
 export default function Navigator() {
@@ -18,15 +18,26 @@ export default function Navigator() {
   const route = useRoute();
   const navigation = useNavigation();
 
+  const flowParams = (
+    route.params as
+      | { params?: Pick<SelectDeviceRouteParams, "onCloseNavigation" | "onAbandon"> }
+      | undefined
+  )?.params;
+
+  const onAbandonRef = useRef(flowParams?.onAbandon);
+  useEffect(() => {
+    onAbandonRef.current = flowParams?.onAbandon;
+  }, [flowParams?.onAbandon]);
+  useEffect(() => () => onAbandonRef.current?.(), []);
+
   const onClose = useCallback(() => {
     track("button_clicked", {
       button: "Close",
       screen: route.name,
     });
-    const params = route.params as { params?: { onCloseNavigation?: () => void } } | undefined;
-    params?.params?.onCloseNavigation?.();
+    flowParams?.onCloseNavigation?.();
     navigation.getParent()?.goBack();
-  }, [route, navigation]);
+  }, [route.name, flowParams, navigation]);
 
   const renderHeaderRight = useCallback(
     () => <CloseWithConfirmation onClose={onClose} />,

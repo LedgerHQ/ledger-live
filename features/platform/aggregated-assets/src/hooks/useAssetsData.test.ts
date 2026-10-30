@@ -194,6 +194,33 @@ describe("useAssetsData", () => {
     expect(result.current.loadNext).toBeUndefined();
   });
 
+  it("should flag data kept from previous query arguments as stale", () => {
+    const previousData = { pages: [], pageParams: [] };
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: previousData,
+      currentData: undefined,
+      isFetching: true,
+    });
+
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+
+    expect(result.current.isStale).toBe(true);
+  });
+
+  it("should not flag data fetched for the current query arguments as stale", () => {
+    const currentData = { pages: [], pageParams: [] };
+    mockuseGetAssetsDataInfiniteQuery.mockReturnValue({
+      ...defaultMockValues,
+      data: currentData,
+      currentData,
+    });
+
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
+
+    expect(result.current.isStale).toBe(false);
+  });
+
   it("should forward polling options to the underlying query", () => {
     mockuseGetAssetsDataInfiniteQuery.mockReturnValue({ ...defaultMockValues });
 
