@@ -5,14 +5,13 @@ import { useCategorizedAssetsFromPortfolio } from "LLD/hooks/useCategorizedAsset
 import { useAssetsData } from "@features/platform-aggregated-assets";
 import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import type { AssetsViewModelResult } from "../types";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
 import { buildPlaceholderAssetItemsFromAssetsData } from "../utils/buildPlaceholderAssetItemsFromAssetsData";
 import { useSelector } from "LLD/hooks/redux";
 import {
   hasOnboardedDeviceSelector,
   counterValueCurrencySelector,
 } from "~/renderer/reducers/settings";
-import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
 import { setTrackingSource, track } from "@shared/analytics";

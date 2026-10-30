@@ -1,23 +1,23 @@
-import { sanitizeAssetNameForTestId } from "../sanitizeAssetNameForTestId";
+import { sanitizeAssetNameForTestId } from "./sanitizeAssetNameForTestId";
 
 describe("sanitizeAssetNameForTestId", () => {
-  it("lowercases and replaces spaces with hyphens", () => {
+  it("replaces spaces with hyphens and lowercases", () => {
     expect(sanitizeAssetNameForTestId("Bitcoin Cash")).toBe("bitcoin-cash");
   });
 
-  it("normalizes mixed casing to lowercase", () => {
+  it("lowercases mixed case", () => {
     expect(sanitizeAssetNameForTestId("EtHeReUm")).toBe("ethereum");
   });
 
-  it("strips punctuation", () => {
+  it("strips parentheses", () => {
     expect(sanitizeAssetNameForTestId("USD Coin (USDC)")).toBe("usd-coin-usdc");
   });
 
-  it("removes characters outside a-z, 0-9, hyphen", () => {
+  it("strips underscores", () => {
     expect(sanitizeAssetNameForTestId("Test_Coin")).toBe("testcoin");
   });
 
-  it("normalizes unicode / diacritics by removing non-alphanumeric segments", () => {
+  it("strips diacritics", () => {
     expect(sanitizeAssetNameForTestId("Café Token")).toBe("caf-token");
   });
 });

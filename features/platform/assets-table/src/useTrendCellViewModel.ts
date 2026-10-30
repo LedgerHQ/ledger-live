@@ -1,8 +1,7 @@
-import { useSelector } from "LLD/hooks/redux";
-import { discreetModeSelector } from "~/renderer/reducers/settings";
+import { useAssetsTablePorts } from "./assetsTablePorts";
 
 export function useTrendCellViewModel(trend: number | null | undefined) {
-  const discreet = useSelector(discreetModeSelector);
+  const { discreet } = useAssetsTablePorts();
   if (trend == null) {
     return { formattedTrend: "-", colorClass: "text-muted" };
   }

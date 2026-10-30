@@ -42,6 +42,7 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { initialCountervaluesMock } from "./mocks/countervalues.mock";
+import { DesktopAssetsTableProvider } from "LLD/components/AssetsTableProvider";
 
 config.disabled = true;
 
@@ -199,13 +200,15 @@ function Providers({
         <QueryClientProvider client={queryClient}>
           <LinkingProvider config={{ openExternal: () => {} }}>
             <Provider store={store}>
-              {skipRouter ? (
-                routerContent
-              ) : (
-                <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
-                  {routerContent}
-                </MemoryRouter>
-              )}
+              <DesktopAssetsTableProvider>
+                {skipRouter ? (
+                  routerContent
+                ) : (
+                  <MemoryRouter initialEntries={initialRoute ? [initialRoute] : undefined}>
+                    {routerContent}
+                  </MemoryRouter>
+                )}
+              </DesktopAssetsTableProvider>
             </Provider>
           </LinkingProvider>
         </QueryClientProvider>

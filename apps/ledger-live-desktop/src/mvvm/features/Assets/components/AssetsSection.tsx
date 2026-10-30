@@ -2,8 +2,7 @@ import React, { useCallback } from "react";
 import { DataTableRoot, DataTable } from "@ledgerhq/lumen-ui-react";
 import { Row } from "@tanstack/react-table";
 import { AssetsSectionHeader } from "./AssetsSectionHeader";
-import { useAssetsTable } from "LLD/components/AssetsTable/useAssetsTable";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import { useAssetsTable, type AssetTableItem } from "@features/platform-assets-table";
 import type { AssetSectionData } from "../types";
 
 export const AssetSection = ({

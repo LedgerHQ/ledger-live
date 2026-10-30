@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import type { AssetTableItem } from "@features/platform-assets-table";
 
 /** Router state hint so asset detail can resolve ledger id ≠ market id (e.g. xStocks). */
 export type AssetNavigationMarketState = Pick<MarketCurrencyData, "id" | "ledgerIds">;
