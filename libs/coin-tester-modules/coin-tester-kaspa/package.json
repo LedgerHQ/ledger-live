@@ -49,7 +49,7 @@
     "@noble/hashes": "catalog:",
     "bignumber.js": "^9.1.2",
     "bip32": "^4.0.0",
-    "bip39": "^3.1.0",
+    "bip39": "catalog:",
     "docker-compose": "^1.1.0",
     "msw": "catalog:"
   },

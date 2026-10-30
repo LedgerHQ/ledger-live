@@ -1,8 +1,7 @@
 import React from "react";
-import Breadcrumb from "~/renderer/components/Breadcrumb";
 
 import { LiveAppDrawer } from "~/renderer/components/LiveAppDrawer";
-import { NavBar, NavBarTrailing, NavBarTitle } from "@ledgerhq/lumen-ui-react";
+import { NavBar, NavBarTrailing } from "@ledgerhq/lumen-ui-react";
 import { TopBarViewProps } from "./types";
 import { TopBarActionsList } from "./components/ActionsList";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
@@ -16,20 +15,7 @@ const TopBarView = ({
   shouldShowFirmwareUpdateBanner,
   isInformationCenterOpen,
   onInformationCenterClose,
-  shouldDisplayAggregatedAssets,
-  shouldDisplayAssetDiscoverability,
 }: TopBarViewProps) => {
-  const renderTitle = () => {
-    if (shouldDisplayAssetDiscoverability) return <TopBarSearch />;
-    if (shouldDisplayAggregatedAssets) return null;
-
-    return (
-      <NavBarTitle className="h-48">
-        <Breadcrumb />
-      </NavBarTitle>
-    );
-  };
-
   return (
     <>
       <InformationDrawer
@@ -37,7 +23,7 @@ const TopBarView = ({
         onRequestClose={onInformationCenterClose}
       />
       <NavBar className="w-full min-w-0 items-center px-32 pt-32 pb-24">
-        {renderTitle()}
+        <TopBarSearch />
         <NavBarTrailing className="h-48 min-w-0 shrink gap-12">
           <LiveAppDrawer />
           {shouldShowFirmwareUpdateBanner && <FirmwareUpdateBanner />}

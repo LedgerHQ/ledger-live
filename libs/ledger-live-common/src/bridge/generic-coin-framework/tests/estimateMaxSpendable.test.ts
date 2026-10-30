@@ -94,6 +94,57 @@ describe("genericEstimateMaxSpendable", () => {
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
   });
 
+  it("rejects a failed estimation when the family does not opt in", async () => {
+    const refusal = new Error("estimation failed");
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock.mockRejectedValue(refusal),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    await expect(
+      estimate({ account: dummyAccount, parentAccount: null, transaction: {} as any }),
+    ).rejects.toBe(refusal);
+  });
+
+  it("returns 0 on a failed estimation when the family opts in", async () => {
+    getBridgeApiMock.mockResolvedValueOnce({ validatesRefusedEstimation: true });
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock.mockRejectedValue(new Error("estimation failed")),
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+    const result = await estimate({
+      account: dummyAccount,
+      parentAccount: null,
+      transaction: {} as any,
+    });
+
+    expect(result.toString()).toBe("0");
+  });
+
+  it("rejects an intent the family cannot build, even when it opts in", async () => {
+    getBridgeApiMock.mockResolvedValueOnce({
+      validatesRefusedEstimation: true,
+      computeIntentType: () => {
+        throw new Error("Unsupported transaction mode: bogus");
+      },
+    });
+    mockedGetCoinModuleApi.mockReturnValue({
+      craftTransactionData,
+      estimateFees: estimateFeesMock,
+    });
+
+    const estimate = genericEstimateMaxSpendable("testnet", "local");
+
+    await expect(
+      estimate({ account: dummyAccount, parentAccount: null, transaction: {} as any }),
+    ).rejects.toThrow("Unsupported transaction mode: bogus");
+    expect(estimateFeesMock).not.toHaveBeenCalled();
+  });
+
   it("prices the send-max against the family's own intent data", async () => {
     const buildIntentData = jest.fn().mockReturnValue({ type: "familyx" });
     getBridgeApiMock.mockResolvedValueOnce({ buildIntentData });

@@ -41,18 +41,19 @@ export function useAssets({
 
   const resolvedCategories = categories?.length ? categories : undefined;
 
-  const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
-    search: searchedValue,
-    currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
-    networkIds: resolvedNetworkIds,
-    categories: resolvedCategories,
-    product: "llm",
-    version: appVersion,
-    useCase,
-    areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
-    isStaging,
-    includeTestNetworks: devMode,
-  });
+  const { data, isLoading, isSuccess, isError, isCurrentResultReady, error, refetch, loadNext } =
+    useAssetsData({
+      search: searchedValue,
+      currencyIds: resolvedNetworkIds === undefined ? currencyIds : undefined,
+      networkIds: resolvedNetworkIds,
+      categories: resolvedCategories,
+      product: "llm",
+      version: appVersion,
+      useCase,
+      areCurrenciesFiltered: resolvedNetworkIds === undefined ? areCurrenciesFiltered : false,
+      isStaging,
+      includeTestNetworks: devMode,
+    });
 
   const assetsSorted = useMemo(
     () => (data ? buildAssetsSorted(data, { networkIds: resolvedNetworkIds }) : undefined),
@@ -74,6 +75,7 @@ export function useAssets({
     isLoading,
     isSuccess,
     isError,
+    isCurrentResultReady,
     error,
     loadingStatus,
     assetsSorted,

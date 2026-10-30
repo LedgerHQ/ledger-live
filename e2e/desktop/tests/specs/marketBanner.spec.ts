@@ -32,9 +32,7 @@ test.describe("Market banner", () => {
 
       const assetId = await app.marketBanner.clickFirstAssetTile();
 
-      await expect(app.layout.getPage()).toHaveURL(
-        await coinDetailUrlPattern(app.layout.getPage(), assetId),
-      );
+      await expect(app.layout.getPage()).toHaveURL(coinDetailUrlPattern(assetId));
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.marketBanner.clickExploreMarketHeader();
       await expect(app.layout.getPage()).toHaveURL(/\/market$/);

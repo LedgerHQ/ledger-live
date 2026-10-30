@@ -1,5 +1,6 @@
 import { track } from "@shared/analytics";
 import { useCallback } from "react";
+import { useFeature } from "@features/platform-feature-flags";
 import { useRebornBuyDeviceDrawerController } from "../hooks/useRebornBuyDeviceDrawerController";
 import { useTranslation } from "~/context/Locale";
 import { useNavigation } from "@react-navigation/native";
@@ -42,24 +43,31 @@ function useRebornBuyDeviceViewModel() {
   const dispatch = useDispatch();
   const isInOnboarding = getIsBaseOnboarding(navigation);
   const handleBuyAction = useBuyDeviceAction();
+  const deviceOnboarding = useFeature("deviceOnboarding");
+  const unifiedEntryPoints = Boolean(
+    deviceOnboarding?.enabled && deviceOnboarding.params?.unifiedEntryPoints,
+  );
 
   const setupDevice = useCallback(() => {
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
-    navigation.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.Onboarding,
-      params: {
-        screen: ScreenName.OnboardingDeviceSelection,
-      },
-    });
-
     if (readOnlyModeEnabled) {
       track("button_clicked", {
         button: "Connect",
         page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
       });
     }
-    closeDrawer();
-  }, [isInOnboarding, dispatch, navigation, readOnlyModeEnabled, closeDrawer]);
+    // Before onboarding opens, so the flow that asked for a device sits under it.
+    closeDrawer("connect");
+    navigation.navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: unifiedEntryPoints
+        ? {
+            screen: ScreenName.OnboardingPostWelcomeSelection,
+            params: { userHasDevice: true, source: "lazy_onboarding" },
+          }
+        : { screen: ScreenName.OnboardingDeviceSelection },
+    });
+  }, [isInOnboarding, dispatch, navigation, unifiedEntryPoints, readOnlyModeEnabled, closeDrawer]);
 
   const buyLedger = useCallback(() => {
     track("button_clicked", {

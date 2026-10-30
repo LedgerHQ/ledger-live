@@ -14,6 +14,7 @@ import { getSelectedBalanceTypeBalance } from "@ledgerhq/live-send";
 import { useFlowEffects } from "@ledgerhq/live-common/flows/send/effects/hooks/useFlowEffects";
 import { useAmountScreenViewModel } from "../hooks/useAmountScreenViewModel";
 import { AmountScreenView } from "./AmountScreenView";
+import { FamilyAmountFooterRow } from "./FamilyAmountFooterRow";
 import { useSendFlowMessageTracking } from "../../../hooks/useSendFlowMessageTracking";
 import { createTrackedMessage } from "../../../utils/messageTracking";
 
@@ -96,5 +97,16 @@ export function AmountScreenInner(props: AmountScreenInnerProps) {
     return null;
   }
 
-  return <AmountScreenView viewModel={viewModel} />;
+  return (
+    <AmountScreenView
+      viewModel={viewModel}
+      feesFooterRow={
+        <FamilyAmountFooterRow
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+        />
+      }
+    />
+  );
 }

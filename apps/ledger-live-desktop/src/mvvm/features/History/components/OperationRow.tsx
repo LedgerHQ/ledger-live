@@ -10,7 +10,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById, type CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import TransactionalIcon from "LLD/components/TransactionalIcon";
 import { SquaredCryptoIcon } from "LLD/components/SquaredCryptoIcon";
 import { BalanceCell } from "LLD/components/Cells/BalanceCell";
@@ -27,7 +26,6 @@ type OperationRowProps = {
 
 function OperationRow({ row, onRowClick }: OperationRowProps) {
   const { t } = useTranslation();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const handleClick = useCallback(() => onRowClick(row), [onRowClick, row]);
   const item = row.original;
   const { operation, currency, amount, address, type, isUnread } = item;
@@ -45,12 +43,9 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
 
   const direction = getAddressDirection(type);
   const addressPrefix = address ? t(`history.address.${direction}`) : undefined;
-  const iconCurrency =
-    isToken && shouldDisplayAggregatedAssets
-      ? getCryptoCurrencyById(cryptoCurrency.parentCurrencyId)
-      : cryptoCurrency;
-  const iconNetwork =
-    isToken && !shouldDisplayAggregatedAssets ? cryptoCurrency.parentCurrencyId : undefined;
+  const iconCurrency = isToken
+    ? getCryptoCurrencyById(cryptoCurrency.parentCurrencyId)
+    : cryptoCurrency;
 
   return (
     <TableRow clickable onClick={handleClick} data-testid={`history-operation-row-${operation.id}`}>
@@ -63,11 +58,6 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
               hasFailed={operation.hasFailed}
               currency={cryptoCurrency}
               mediaSize={40}
-              network={
-                !shouldDisplayAggregatedAssets && isToken
-                  ? cryptoCurrency.parentCurrencyId
-                  : undefined
-              }
             />
           ) : null}
           <TableCellContent>
@@ -90,7 +80,6 @@ function OperationRow({ row, onRowClick }: OperationRowProps) {
                 ledgerId={iconCurrency.id}
                 ticker={iconCurrency.ticker}
                 size={20}
-                network={iconNetwork}
               />
             ) : null}
           </OperationCounterpartyCell>

@@ -147,6 +147,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const screenState = toChecksScreenState(
     onboarding.state,
     onboarding.context?.checksPaused === true,
+    onboarding.context?.onboardedOnEntry === true,
   );
   const device = onboarding.liveDevice;
   const closeLabel = t("deviceOnboarding.checks.close");
@@ -210,6 +211,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         readString(onboarding.context?.firmwareVersion),
         readString(onboarding.context?.availableFirmwareVersion),
       ),
+      firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
       onStart: () =>
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
       onRetry: () => send({ type: "RETRY" }),

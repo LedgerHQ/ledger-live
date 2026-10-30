@@ -1,7 +1,33 @@
 import { Step } from "jest-allure2-reporter/api";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class NewSendFlowPage {
+  private readonly recipientInput = byId("recipient-input");
+  private readonly skipMemoContent = byId("send-skip-memo-content");
+  private readonly skipMemoConfirm = byId("send-skip-memo-confirm");
+  private readonly addressConfirm = byId("new-send-flow-address-confirm");
+  private readonly memoInput = byId("send-memo-input");
+  private readonly memoTypeSelect = byId("send-memo-type-select");
+  private readonly memoTypeOption = (value: string) => byId(`send-memo-type-option-${value}`);
+  private readonly amountModeToggle = byId("amount-mode-toggle");
+  private readonly keyboardKey = (char: string) =>
+    byId(char === "." ? "keyboard-key-decimal" : `keyboard-key-${char}`);
+  private readonly amountContinueButton = byId("enabled-amount-continue-button");
+  private readonly signaturePrompt = byId("send-signature-prompt");
+  private readonly successViewTransaction = byId("send-confirmation-success-view-transaction");
+
+  private readonly contactAddressPicker = byId("pay-contact-address-picker");
+  private readonly recipientCardAvatar = byId("send-recipient-card-avatar");
+  private readonly recipientCardTitle = byId("send-recipient-card-title");
+  private readonly recipientCardSend = byId("send-recipient-card-send");
+  private readonly recipientCardAddContact = byId("send-recipient-card-add-contact");
+  private readonly recipientContactName = byId("recipient-contact-name");
+  private readonly contactCompactRow = (contactId: string) =>
+    byId(`contacts-compact-row-${contactId}`);
+  private readonly contactAddressRow = (addressId: string) =>
+    byId(`pay-contact-address-row-${addressId}`);
+
   @Step("Navigate to token send screen")
   async navigateToTokenSendScreen(parentAccountName: string, tokenAccount: Account) {
     await app.account.openViaDeeplink();
@@ -10,76 +36,51 @@ export default class NewSendFlowPage {
     await app.account.tapSend();
   }
 
-  recipientInputId = "recipient-input";
-  skipMemoContentId = "send-skip-memo-content";
-  skipMemoConfirmId = "send-skip-memo-confirm";
-  addressConfirmId = "new-send-flow-address-confirm";
-  memoInputId = "send-memo-input";
-  memoTypeSelectId = "send-memo-type-select";
-  amountModeToggleId = "amount-mode-toggle";
-  amountContinueEnabledButtonId = "enabled-amount-continue-button";
-  signaturePromptId = "send-signature-prompt";
-  successViewTransactionId = "send-confirmation-success-view-transaction";
-
-  contactAddressPickerId = "pay-contact-address-picker";
-  recipientCardAvatarId = "send-recipient-card-avatar";
-  recipientCardTitleId = "send-recipient-card-title";
-  recipientCardSendId = "send-recipient-card-send";
-  recipientCardAddContactId = "send-recipient-card-add-contact";
-  recipientContactNameId = "recipient-contact-name";
-  contactCompactRowId = (contactId: string) => `contacts-compact-row-${contactId}`;
-  contactAddressRowId = (addressId: string) => `pay-contact-address-row-${addressId}`;
-
   @Step("Fill recipient address and continue: {{{0}}}")
   async setRecipientAndContinueNewFlow(address: string | undefined, memoTag?: string) {
     if (!address) throw new Error("Recipient address is not set");
-    await typeTextById(this.recipientInputId, address);
+    await this.recipientInput.replaceText(address);
 
     if (memoTag && memoTag !== "noTag") {
-      await waitForElementById(this.memoInputId);
-      await typeTextById(this.memoInputId, memoTag);
+      await this.memoInput.replaceText(memoTag);
     }
 
-    await tapById(this.addressConfirmId);
+    await this.addressConfirm.tap();
 
     if (memoTag === "noTag") {
-      await waitForFullyVisibleById(this.skipMemoContentId);
-      await tapById(this.skipMemoConfirmId);
-      const dismissed = await waitForElementNotVisible(this.skipMemoContentId);
-      jestExpect(dismissed).toBe(true);
+      await this.skipMemoContent.waitFullyVisible();
+      await this.skipMemoConfirm.tap();
+      await this.skipMemoContent.waitNotVisible();
     }
   }
 
   @Step("Type recipient address (stay on recipient step): {{{0}}}")
   async typeRecipientNewFlow(address: string | undefined) {
     if (!address) throw new Error("Recipient address is not set");
-    await typeTextById(this.recipientInputId, address);
+    await this.recipientInput.replaceText(address);
   }
 
   @Step("Open memo type dropdown and expect options: {{{0}}}")
   async expectMemoTypeOptions(optionValues: string[]) {
-    await waitForElementById(this.memoTypeSelectId);
-    await tapById(this.memoTypeSelectId);
+    await this.memoTypeSelect.tap();
     for (const optionValue of optionValues) {
-      await waitForElementById(`send-memo-type-option-${optionValue}`);
+      await this.memoTypeOption(optionValue).waitVisible();
     }
   }
 
   @Step("Expect memo field to reject non-numeric input: {{{0}}}")
   async expectMemoRejectsNonNumericInput(rawInput: string, expectedSanitizedValue = "") {
-    await waitForElementById(this.memoInputId);
-    await typeTextById(this.memoInputId, rawInput);
+    await this.memoInput.replaceText(rawInput);
     // XRP tags are numeric-only: non-digits are stripped by sanitizeMemoValue, so the
     // field never holds the rejected characters.
-    const actualValue = await getTextOfElement(this.memoInputId);
+    const actualValue = await this.memoInput.getText();
     jestExpect(actualValue).toEqual(expectedSanitizedValue);
   }
 
   @Step("Expect memo field to retain numeric input: {{{0}}}")
   async expectMemoRetainsNumericInput(numericInput: string) {
-    await waitForElementById(this.memoInputId);
-    await typeTextById(this.memoInputId, numericInput);
-    const actualValue = await getTextOfElement(this.memoInputId);
+    await this.memoInput.replaceText(numericInput);
+    const actualValue = await this.memoInput.getText();
     jestExpect(actualValue).toEqual(numericInput);
   }
 
@@ -87,72 +88,65 @@ export default class NewSendFlowPage {
   async setAmountNewFlow(amount: string) {
     // The amount step opens in fiat mode, so an untoggled "0.01" is $0.01, not 0.01 crypto —
     // the Speculos assertions compare against the crypto amount.
-    await tapById(this.amountModeToggleId);
+    await this.amountModeToggle.tap();
     for (const char of amount) {
-      const keyId = char === "." ? "keyboard-key-decimal" : `keyboard-key-${char}`;
-      await tapById(keyId);
+      await this.keyboardKey(char).tap();
     }
   }
 
   @Step("Click review to proceed to signature {{{0}}}")
   async setAmountAndReviewNewFlow(amount: string) {
     await this.setAmountNewFlow(amount);
-    await waitForElementById(this.amountContinueEnabledButtonId);
-    await tapById(this.amountContinueEnabledButtonId);
+    await this.amountContinueButton.tap();
   }
 
   @Step("Wait for signature screen or device action loader")
   async waitForSignature() {
-    await waitForElementById(this.signaturePromptId);
+    await this.signaturePrompt.waitVisible();
   }
 
   @Step("Clear the recipient input (stay on recipient step)")
   async clearRecipientNewFlow() {
-    await clearTextByElement(getElementById(this.recipientInputId));
+    await this.recipientInput.clearText();
   }
 
   @Step("Send to the matched recipient")
   async tapRecipientCardSend() {
-    await waitForElementById(this.recipientCardSendId);
-    await tapById(this.recipientCardSendId);
+    await this.recipientCardSend.tap();
   }
 
   @Step("Select contact {{{0}}} from the recipient search results")
   async selectContactFromSearchResults(contactId: string) {
-    await waitForElementById(this.contactCompactRowId(contactId));
-    await tapById(this.contactCompactRowId(contactId));
+    await this.contactCompactRow(contactId).tap();
   }
 
   @Step("Select address {{{0}}} from the contact address picker")
   async selectContactAddress(addressId: string) {
-    await waitForFullyVisibleById(this.contactAddressPickerId);
-    await tapById(this.contactAddressRowId(addressId));
+    await this.contactAddressPicker.waitFullyVisible();
+    await this.contactAddressRow(addressId).tap();
   }
 
   @Step("Expect the matched recipient card for contact: {{{0}}}")
   async expectMatchedContactCard(contactName: string) {
-    await waitForElementById(this.recipientCardAvatarId);
-    const actualTitle = await getTextOfElement(this.recipientCardTitleId);
+    await this.recipientCardAvatar.waitVisible();
+    const actualTitle = await this.recipientCardTitle.getText();
     jestExpect(actualTitle).toEqual(contactName);
   }
 
   @Step("Expect the Add contact action to be enabled")
   async expectAddContactEnabled() {
-    await waitForElementById(this.recipientCardAddContactId);
-    const { enabled } = await getAttributesOfElement(this.recipientCardAddContactId);
+    const { enabled } = await this.recipientCardAddContact.getAttributes();
     jestExpect(enabled).toBe(true);
   }
 
   @Step("Expect the amount step recipient is contact: {{{0}}}")
   async expectAmountStepContact(contactName: string) {
-    await waitForElementById(this.recipientContactNameId);
-    const actualName = await getTextOfElement(this.recipientContactNameId);
+    const actualName = await this.recipientContactName.getText();
     jestExpect(actualName).toEqual(contactName);
   }
 
   @Step("Wait for and tap success confirmation screen")
   async tapViewTransaction() {
-    await waitForElementById(this.successViewTransactionId);
-    await tapById(this.successViewTransactionId);
+    await this.successViewTransaction.tap();
   }
 }

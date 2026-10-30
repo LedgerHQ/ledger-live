@@ -28,6 +28,7 @@ export function useAssetsData({
 }) {
   const {
     data,
+    currentData,
     isLoading,
     error,
     fetchNextPage,
@@ -51,7 +52,8 @@ export function useAssetsData({
     { skip, pollingInterval, skipPollingIfUnfocused },
   );
 
-  const joinedPages = useMemo(() => mergeAssetsDataPages(data?.pages), [data]);
+  const pages = currentData?.pages ?? data?.pages;
+  const joinedPages = useMemo(() => mergeAssetsDataPages(pages), [pages]);
 
   const hasMore = Boolean(joinedPages?.pagination.nextCursor);
 
@@ -68,6 +70,7 @@ export function useAssetsData({
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
     isError,
+    isCurrentResultReady: currentData !== undefined,
     refetch,
   };
 }

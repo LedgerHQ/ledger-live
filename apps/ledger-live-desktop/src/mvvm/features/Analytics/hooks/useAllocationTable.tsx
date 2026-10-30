@@ -6,8 +6,6 @@ import {
   TableCellContentDescription,
   useLumenDataTable,
 } from "@ledgerhq/lumen-ui-react";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
 import { useTranslation } from "react-i18next";
@@ -20,7 +18,6 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import type { AllocationTableItem } from "../types";
 
 export const useAllocationTable = (items: AllocationTableItem[]) => {
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
@@ -32,15 +29,11 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
         enableSorting: false,
         cell: ({ row }) => (
           <TableCellItem>
-            {shouldDisplayAggregatedAssets ? (
-              <CryptoIcon
-                ledgerId={row.original.currency.id}
-                ticker={row.original.currency.ticker}
-                size={getValidCryptoIconSize(32)}
-              />
-            ) : (
-              <CryptoCurrencyIcon currency={row.original.currency} size={32} />
-            )}
+            <CryptoIcon
+              ledgerId={row.original.currency.id}
+              ticker={row.original.currency.ticker}
+              size={getValidCryptoIconSize(32)}
+            />
             <TableCellContent>
               <TableCellContentTitle>
                 <TruncatedText text={row.original.currency.name} />
@@ -92,7 +85,7 @@ export const useAllocationTable = (items: AllocationTableItem[]) => {
         meta: { align: "end" },
       },
     ],
-    [t, locale, shouldDisplayAggregatedAssets],
+    [t, locale],
   );
 
   return useLumenDataTable({

@@ -5,6 +5,7 @@ import { AccountEmptyState } from "@features/flow-account-detail-hero/web";
 import { AssetsSection } from "./components/AssetsSection";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
+import { FamilySection } from "./components/FamilySection";
 import { Transactions } from "./components/Transactions";
 import { useAccountDetailContentViewModel } from "./hooks/useAccountDetailContentViewModel";
 
@@ -18,12 +19,7 @@ export function AccountDetailView({ account }: Props) {
       <Header account={account} />
       <AccountDetailLayout
         hero={<Hero {...hero} />}
-        customPlace={
-          <section
-            className="rounded-md bg-warning p-32"
-            data-testid="account-detail-custom-place"
-          />
-        }
+        customPlace={<FamilySection account={account} />}
         assets={
           emptyState.isVisible ? (
             <AccountEmptyState

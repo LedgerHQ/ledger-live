@@ -28,6 +28,11 @@ describe("ToolRow", () => {
     expect(screen.queryByText("Platform")).not.toBeInTheDocument();
   });
 
+  it("renders the kind tag when provided", () => {
+    render(<ToolRow title="account-data" kind="api" owner="Platform" />);
+    expect(screen.getByText("api")).toBeInTheDocument();
+  });
+
   it("calls onClick when clicked", async () => {
     const user = userEvent.setup();
     const onClick = jest.fn();

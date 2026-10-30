@@ -16,7 +16,6 @@ export interface PortfolioViewModelResult {
   readonly totalCurrencies: number;
   readonly hasExchangeBannerCTA: boolean;
   readonly shouldDisplayAssetSection: boolean;
-  readonly shouldDisplayAssetDiscoverability: boolean;
   readonly shouldDisplayBorrowSection: boolean;
   readonly shouldDisplayPerpsEntryPoint: boolean;
   readonly shouldDisplayServicesEntryPoints: boolean;
@@ -32,11 +31,8 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   // Resume the Add Account flow that was interrupted to send the user through device onboarding.
   useResumeAddAccountAfterOnboarding();
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayAssetDiscoverability,
-    shouldDisplayBrazePlacement,
-  } = useWalletFeaturesConfig("desktop");
+  const { shouldDisplayAssetSection, shouldDisplayBrazePlacement } =
+    useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const shouldDisplayBorrowSection =
@@ -61,7 +57,6 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     totalCurrencies,
     hasExchangeBannerCTA,
     shouldDisplayAssetSection,
-    shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
     shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
     shouldDisplayServicesEntryPoints,

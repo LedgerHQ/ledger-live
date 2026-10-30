@@ -6,6 +6,14 @@ import { parseCommand } from "../shared/parse-command";
 
 const HELP = "Help";
 
+/** Set by `enroll --detach` on the background listener it spawns, so the listener's own lifecycle
+ * events are told apart from the user's command. */
+export const DETACHED_LISTENER_ENV = "WALLET_CLI_DETACHED_LISTENER";
+
+function detachedListenerProps(): { detachedListener?: true } {
+  return process.env[DETACHED_LISTENER_ENV] === "1" ? { detachedListener: true } : {};
+}
+
 // Exception: help_viewed is kept as a track event (not a Page event) because it is an
 // in-context impression rather than a new screen load. Documented exception to the *_viewed convention.
 function trackHelpViewed(p: { command?: string } = {}): void {
@@ -32,15 +40,21 @@ function trackCommandInvoked(command: string, argv: string[]): void {
     flagsUsed: argv
       .filter(a => a.startsWith("--") && a !== "--")
       .map(a => a.slice(2).split("=")[0]),
+    ...detachedListenerProps(),
   });
 }
 
 function trackCommandCompleted(command: string, durationMs: number): void {
-  track("command_completed", { page: command, durationMs });
+  track("command_completed", { page: command, durationMs, ...detachedListenerProps() });
 }
 
 function trackCommandFailed(command: string, durationMs: number, error: unknown): void {
-  track("command_failed", { page: command, durationMs, errorName: getErrorName(error) });
+  track("command_failed", {
+    page: command,
+    durationMs,
+    errorName: getErrorName(error),
+    ...detachedListenerProps(),
+  });
 }
 
 /**

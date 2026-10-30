@@ -99,7 +99,7 @@ describe("usePageViewModel", () => {
     mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
     const { result } = renderHook(() => usePageViewModel(), {
       initialState: withFlagOverrides({
-        lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+        lwdWallet40: { enabled: true },
         ptxSwapLiveAppOnPortfolio: { enabled: true },
       }),
     });
@@ -111,7 +111,7 @@ describe("usePageViewModel", () => {
     mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
     const { result } = renderHook(() => usePageViewModel(), {
       initialState: withFlagOverrides({
-        lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+        lwdWallet40: { enabled: true },
         ptxSwapLiveAppOnPortfolio: { enabled: true },
         lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
       }),
@@ -165,21 +165,6 @@ describe("usePageViewModel", () => {
 
       expect(renderOnAccount({ enabled: true }).result.current.shouldRenderRightPanel).toBe(false);
     });
-  });
-
-  it("hides the right panel on /asset routes when aggregated assets is disabled", () => {
-    mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
-    const { result } = renderHook(() => usePageViewModel(), {
-      initialState: withFlagOverrides({
-        lwdWallet40: {
-          enabled: true,
-          params: { aggregatedAssets: false },
-        },
-        ptxSwapLiveAppOnPortfolio: { enabled: true },
-      }),
-    });
-
-    expect(result.current.shouldRenderRightPanel).toBe(false);
   });
 
   it("scrolls to top with smooth behavior when SCROLL_TO_TOP_EVENT is dispatched", () => {

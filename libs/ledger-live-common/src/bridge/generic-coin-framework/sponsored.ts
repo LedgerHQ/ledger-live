@@ -1,6 +1,7 @@
 import { findCryptoCurrencyByNetwork } from "./utils";
 import { loadSponsoredApiForFamily } from "../../coin-modules/registry";
 import type { AssetInfo, FeeOptionMeta } from "@ledgerhq/coin-module-framework/api/index";
+import type { Unit } from "@domain/entity-currency-unit";
 
 export type EnergyRentStatus = "pending" | "paid" | "delivered" | "failed" | "unknown";
 
@@ -31,8 +32,9 @@ export type RentOrderRejection =
 
 export type EnergyRentOrderRef = { orderId: string; payerAddress: string };
 
-/** The asset a sponsored fee is paid in; re-exported so apps don't import the framework for it. */
-export type SponsoredFeeAsset = AssetInfo;
+/** The asset a sponsored fee is paid in, with the unit the Send flow displays it in: the framework's
+ * `AssetInfo` only identifies an asset, so the seam carries the unit itself. */
+export type SponsoredFeeAsset = AssetInfo & { unit: Unit };
 
 /** `value` is in `feeAsset` base units; `originalValue` is the standard fee it replaces, in the
  * network's native base units. No delta: the two can be in different units. */

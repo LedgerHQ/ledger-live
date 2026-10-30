@@ -16,10 +16,7 @@ const require = createRequire(import.meta.url);
 process.env.NX_LOAD_DOT_ENV_FILES = "true";
 const { createProjectGraphAsync } = require("nx/src/project-graph/project-graph");
 const { readNxJson } = require("nx/src/config/nx-json");
-const {
-  createTaskGraph,
-  mapTargetDefaultsToDependencies,
-} = require("nx/src/tasks-runner/create-task-graph");
+const { createTaskGraph } = require("nx/src/tasks-runner/create-task-graph");
 const { createTaskHasher } = require("nx/src/hasher/create-task-hasher");
 const { getTaskSpecificEnv } = require("nx/src/tasks-runner/task-env");
 
@@ -35,17 +32,9 @@ if (!project || !target || configurations.length === 0) {
 const projectGraph = await createProjectGraphAsync({ exitOnError: true });
 const nxJson = readNxJson();
 const hasher = createTaskHasher(projectGraph, nxJson);
-const extraTargetDependencies = mapTargetDefaultsToDependencies(nxJson.targetDefaults);
 
 for (const configuration of configurations) {
-  const taskGraph = createTaskGraph(
-    projectGraph,
-    extraTargetDependencies,
-    [project],
-    [target],
-    configuration,
-    {},
-  );
+  const taskGraph = createTaskGraph(projectGraph, {}, [project], [target], configuration, {});
   const task = taskGraph.tasks[`${project}:${target}:${configuration}`];
   if (!task) {
     console.error(`No task ${project}:${target}:${configuration} in the task graph`);

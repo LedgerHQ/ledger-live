@@ -28,6 +28,8 @@ function PostWelcomeSelection() {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
   const userHasDevice = route.params?.userHasDevice ?? false;
+  // An undefined source would override the automatic screen source.
+  const sourceProps = route.params?.source ? { source: route.params.source } : {};
   const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
   const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
   const localizedRebornUrl = useLocalizedUrl(urls.reborn);
@@ -71,6 +73,7 @@ function PostWelcomeSelection() {
         tracking: {
           category: "Onboarding",
           name: "Get Started",
+          ...sourceProps,
         },
       }}
       footer={
@@ -89,6 +92,7 @@ function PostWelcomeSelection() {
             event: "button_clicked",
             eventProperties: {
               button: "Setup your Ledger",
+              ...sourceProps,
             },
             testID: `onboarding-setupLedger`,
             onPress: setupLedger,
@@ -100,6 +104,7 @@ function PostWelcomeSelection() {
             event: "button_clicked",
             eventProperties: {
               button: "Access an existing wallet",
+              ...sourceProps,
             },
             testID: `onboarding-accessWallet`,
             onPress: accessExistingWallet,

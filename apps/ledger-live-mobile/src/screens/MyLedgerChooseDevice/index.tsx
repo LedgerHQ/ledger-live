@@ -7,6 +7,7 @@ import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import {
   BaseComposite,
@@ -44,6 +45,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const [device, setDevice] = useState<Device | null>();
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
+  const onAddDevice = useUnifiedAddDevice();
   const { params } = useRoute<NavigationProps["route"]>();
 
   /**
@@ -126,6 +128,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          onAddDevice={onAddDevice}
           withMyLedgerTracking
         >
           <ContentCardsLocation

@@ -1,9 +1,14 @@
 import calService, { convertCertificateToDeviceData } from "@ledgerhq/ledger-cal-service";
 import { DmkSignerHyperliquid } from "@ledgerhq/live-signer-hyperliquid";
-import { AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { convertAction, type ActionWithNonce } from "./types";
-import { getAccountIdFromWalletAccountId } from "../converters";
+import { getAccountIdFromWalletAccountId, getWalletApiIdFromAccountId } from "../converters";
+import {
+  findMigrationAccount,
+  type PerpsMigrationParams,
+  type PerpsMigrationResult,
+} from "./migration";
 import {
   createAccountNotFound,
   createNotImplementedByWallet,
@@ -77,6 +82,13 @@ export type PerpsUiHooks = {
     onCancel: () => void;
   }) => void;
   "deposit.execute"?: (params: PerpsDepositUiParams) => Promise<PerpsDepositResult> | void;
+  /**
+   * Runs the add account flow for Hyperliquid and resolves with the accounts the user added; other
+   * wallet accounts may come along, only the one at the legacy account's address is used.
+   * Only called when the wallet has no Hyperliquid account at that address.
+   * Reject with a `UserRefused*` error when the user abandons.
+   */
+  "migration.execute"?: () => Promise<Account[]>;
   "withdraw.execute"?: (params: PerpsWithdrawUiParams) => Promise<PerpsWithdrawResult> | void;
 };
 
@@ -96,6 +108,8 @@ export type PerpsSignResult = {
 };
 
 const PERPS_APP_NAME = "Hyperliquid";
+/** Legacy Perps accounts are identified by their Arbitrum account. */
+const LEGACY_CURRENCY_ID = "arbitrum";
 
 async function signActionsOnDevice(
   transport: Transport,
@@ -135,6 +149,7 @@ export const handlers = ({
   uiHooks: {
     "signing.execute": uiSigningExecute,
     "deposit.execute": uiDepositExecute,
+    "migration.execute": uiMigrationExecute,
     "withdraw.execute": uiWithdrawExecute,
   },
 }: {
@@ -199,6 +214,55 @@ export const handlers = ({
         throw error;
       }
     }),
+    "custom.perps.migrateAccount": customWrapper<PerpsMigrationParams, PerpsMigrationResult>(
+      async params => {
+        if (!params) {
+          throw new ServerError(createUnknownError({ message: "params is undefined" }));
+        }
+
+        if (!uiMigrationExecute) {
+          throw new ServerError(
+            createUnknownError({ message: "migration is not supported by this client" }),
+          );
+        }
+
+        const legacyAccount = findAccountOrThrow(params.legacyAccountId);
+        if (legacyAccount.type !== "Account" || legacyAccount.currency.id !== LEGACY_CURRENCY_ID) {
+          throw new ServerError(
+            createUnknownError({ message: "legacy Perps account must be a main Arbitrum account" }),
+          );
+        }
+
+        const existingAccount = findMigrationAccount(accounts, legacyAccount);
+        if (existingAccount) {
+          return {
+            accounts: [
+              { accountId: getWalletApiIdFromAccountId(existingAccount.id), created: false },
+            ],
+          };
+        }
+
+        let addedAccounts: Account[];
+        try {
+          addedAccounts = await uiMigrationExecute();
+        } catch (error) {
+          console.warn("[perps] Migration request rejected", error);
+          throw error;
+        }
+
+        const migratedAccount = findMigrationAccount(addedAccounts, legacyAccount);
+        if (!migratedAccount) {
+          throw new ServerError(
+            createUnknownError({
+              message: "no Hyperliquid account at the legacy Perps account address was added",
+            }),
+          );
+        }
+        return {
+          accounts: [{ accountId: getWalletApiIdFromAccountId(migratedAccount.id), created: true }],
+        };
+      },
+    ),
     "custom.perps.withdraw": customWrapper<PerpsWithdrawParams, PerpsWithdrawResult>(
       async params => {
         if (!uiWithdrawExecute) {

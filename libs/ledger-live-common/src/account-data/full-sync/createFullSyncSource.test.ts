@@ -65,6 +65,14 @@ describe("createFullSyncSource", () => {
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 
+  it("reads the operations of the synced account in one page", async () => {
+    const synced = { ...account, pendingOperations: [], subAccounts: [] };
+    const page = await source(account, synced).read?.operations?.(target, undefined);
+    expect(page?.nextCursor).toBeUndefined();
+    expect(page?.operations).toHaveLength(synced.operations.length);
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
   it("fails when no legacy account backs the account", async () => {
     await expect(source(undefined).sync(target)).rejects.toThrow(FullSyncAccountNotFoundError);
     expect(syncLegacyAccount).not.toHaveBeenCalled();

@@ -5,6 +5,7 @@ import { createTestStore } from "@tests/test-helpers/testUtils";
 import { makeQuotesInput } from "../fixtures/quotesInput";
 import { makeRawQuote } from "../fixtures/rawQuotes";
 import { swapApi } from "@shared/api-services";
+import { createAuthMiddleware, type AuthProvider } from "@shared/auth";
 
 import { swapQuotesApi } from "../state-manager/api";
 import { resetSwapQuotesStore, setSwapQuotesStore } from "../state-manager/store";
@@ -15,10 +16,9 @@ const API_EXTRA = {
   ledgerClientVersion: "test-1.0.0",
 };
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-const unauthenticatedProvider = {
-  withToken: ({ queryFn }: { queryFn: (token?: unknown) => unknown }) => queryFn(),
-} as never;
+const unauthenticatedProvider: AuthProvider = {
+  withToken: ({ queryFn }) => queryFn(),
+};
 
 // `fetchQuotes.test.ts` mocks the endpoint and the store, so it only proves
 // wiring; these run against real ones.
@@ -37,7 +37,13 @@ describe("fetchQuotes against a live store", () => {
   beforeEach(() => {
     hits = 0;
     store = createTestStore([swapApi], {
-      extra: { ...API_EXTRA, authProvider: unauthenticatedProvider },
+      extra: API_EXTRA,
+      middleware: [
+        createAuthMiddleware({
+          createAuthProvider: () => unauthenticatedProvider,
+          isFeatureEnabled: () => true,
+        }),
+      ],
     });
     setSwapQuotesStore(store.dispatch);
   });

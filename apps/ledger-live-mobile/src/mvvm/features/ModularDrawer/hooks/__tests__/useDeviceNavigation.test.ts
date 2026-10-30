@@ -30,6 +30,12 @@ jest.mock("@react-navigation/native", () => ({
   NavigationContainer: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+// A known device: add account opens the device list, not the read-only sheet.
+const withDevice = (state: State): State => ({
+  ...state,
+  settings: { ...state.settings, readOnlyModeEnabled: false },
+});
+
 describe("useDeviceNavigation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -39,8 +45,11 @@ describe("useDeviceNavigation", () => {
     const onClose = jest.fn();
     const resetSelection = jest.fn();
     const onAccountSelected = jest.fn();
-    const { result, store } = renderHook(() =>
-      useDeviceNavigation({ onClose, resetSelection, onAccountSelected }),
+    const { result, store } = renderHook(
+      () => useDeviceNavigation({ onClose, resetSelection, onAccountSelected }),
+      {
+        overrideInitialState: withDevice,
+      },
     );
 
     const crypto = mockBtcCryptoCurrency;
@@ -57,8 +66,11 @@ describe("useDeviceNavigation", () => {
     const onSilentClose = jest.fn();
     const resetSelection = jest.fn();
     const onAccountSelected = jest.fn();
-    const { result } = renderHook(() =>
-      useDeviceNavigation({ onClose, onSilentClose, resetSelection, onAccountSelected }),
+    const { result } = renderHook(
+      () => useDeviceNavigation({ onClose, onSilentClose, resetSelection, onAccountSelected }),
+      {
+        overrideInitialState: withDevice,
+      },
     );
 
     act(() => result.current.navigateToDeviceWithCurrency(mockBtcCryptoCurrency));
@@ -71,8 +83,11 @@ describe("useDeviceNavigation", () => {
     const onClose = jest.fn();
     const resetSelection = jest.fn();
     const onAccountSelected = jest.fn();
-    const { result } = renderHook(() =>
-      useDeviceNavigation({ onClose, resetSelection, onAccountSelected }),
+    const { result } = renderHook(
+      () => useDeviceNavigation({ onClose, resetSelection, onAccountSelected }),
+      {
+        overrideInitialState: withDevice,
+      },
     );
 
     const token = arbitrumToken;
@@ -89,7 +104,7 @@ describe("useDeviceNavigation", () => {
       () => useDeviceNavigation({ onClose, resetSelection, onAccountSelected }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withDevice(state),
           modularDrawer: { ...state.modularDrawer, flow: "receive" },
         }),
       },
@@ -110,7 +125,7 @@ describe("useDeviceNavigation", () => {
       () => useDeviceNavigation({ onClose, resetSelection, onAccountSelected }),
       {
         overrideInitialState: (state: State) => ({
-          ...state,
+          ...withDevice(state),
           modularDrawer: { ...state.modularDrawer, flow: "add_account" },
         }),
       },
@@ -150,8 +165,12 @@ describe("useDeviceNavigation - Aleo ARC-22 token with no sub-account", () => {
   /** Picks `token` in the drawer, then replays the device flow success with `aleoAccount`. */
   function selectTokenThenAddAccount(token: TokenCurrency) {
     const onAccountSelected = jest.fn();
-    const { result } = renderHook(() =>
-      useDeviceNavigation({ onClose: jest.fn(), resetSelection: jest.fn(), onAccountSelected }),
+    const { result } = renderHook(
+      () =>
+        useDeviceNavigation({ onClose: jest.fn(), resetSelection: jest.fn(), onAccountSelected }),
+      {
+        overrideInitialState: withDevice,
+      },
     );
 
     act(() => result.current.navigateToDeviceWithCurrency(token));

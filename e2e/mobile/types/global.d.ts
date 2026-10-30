@@ -3,8 +3,8 @@
 /// <reference path=".//global.d.ts" />
 import type { Subject } from "rxjs";
 import type { Server, WebSocket } from "ws";
-import type { Application } from "page";
-import type { MessageData, ServerData } from "@e2e/bridge/types";
+import type { Application } from "@e2e/page/index";
+import type { MessageData, ServerData } from "@ledgerhq/live-e2e-shared/bridge/types";
 import type expect from "expect";
 import type {
   $TmsLink as $TmsLinkType,

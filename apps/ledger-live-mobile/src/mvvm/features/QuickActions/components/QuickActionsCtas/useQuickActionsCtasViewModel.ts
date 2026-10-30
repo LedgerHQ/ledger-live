@@ -91,7 +91,7 @@ export const useQuickActionsCtasViewModel = ({
       screen: NavigatorName.Onboarding,
       params: {
         screen: ScreenName.OnboardingPostWelcomeSelection,
-        params: { userHasDevice: true },
+        params: { userHasDevice: true, source: "portfolio" },
       },
     });
   }, [trackPress, navigation]);

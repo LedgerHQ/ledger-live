@@ -52,6 +52,20 @@ const assetsSorted: AssetData[] = [
   },
 ];
 
+const singleNetworkAsset: AssetData[] = [
+  {
+    asset: {
+      id: mockBtcCryptoCurrency.id,
+      ticker: mockBtcCryptoCurrency.ticker,
+      name: mockBtcCryptoCurrency.name,
+      assetsIds: { [mockBtcCryptoCurrency.id]: mockBtcCryptoCurrency.id },
+    },
+    networks: [mockBtcCryptoCurrency],
+    interestRates: undefined,
+    market: undefined,
+  },
+];
+
 const mockNavigate = jest.fn();
 const mockNavigation: Partial<NavigationProp<Record<string, never>>> = {
   navigate: mockNavigate,
@@ -365,5 +379,96 @@ describe("useModularDrawerState", () => {
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);
+  });
+
+  it("should not auto-select a single asset before the current catalog is ready", () => {
+    const onCurrencySelected = jest.fn();
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [],
+          assetsSorted: singleNetworkAsset,
+          isDrawerOpen: true,
+          isCurrentCatalogReady: false,
+          onAccountSelected: mockOnAccountSelected,
+          onCurrencySelected,
+        }),
+      { overrideInitialState: withCurrencyCompletionMode },
+    );
+
+    expect(result.current.canAutoResolveSingleAsset).toBe(false);
+    expect(onCurrencySelected).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("should auto-resolve a single asset that has one accepted network", () => {
+    const { result } = renderHook(() =>
+      useModularDrawerState({
+        currencyIds: [],
+        assetsSorted: singleNetworkAsset,
+        onAccountSelected: mockOnAccountSelected,
+      }),
+    );
+
+    expect(result.current.canAutoResolveSingleAsset).toBe(true);
+  });
+
+  it("should keep a single asset that spans several networks in the drawer", () => {
+    const multiNetworkAsset: AssetData[] = [
+      {
+        ...singleNetworkAsset[0],
+        asset: {
+          id: mockEthCryptoCurrency.id,
+          ticker: mockEthCryptoCurrency.ticker,
+          name: mockEthCryptoCurrency.name,
+          assetsIds: { [mockEthCryptoCurrency.id]: mockEthCryptoCurrency.id },
+        },
+        networks: [mockEthCryptoCurrency, mockArbitrumCryptoCurrency],
+      },
+    ];
+    const { result } = renderHook(() =>
+      useModularDrawerState({
+        currencyIds: [],
+        assetsSorted: multiNetworkAsset,
+        onAccountSelected: mockOnAccountSelected,
+      }),
+    );
+
+    expect(result.current.canAutoResolveSingleAsset).toBe(false);
+  });
+
+  it("should not auto-resolve the only search result", () => {
+    const { result } = renderHook(() =>
+      useModularDrawerState({
+        currencyIds: [],
+        assetsSorted: singleNetworkAsset,
+        hasSearchedValue: true,
+        onAccountSelected: mockOnAccountSelected,
+      }),
+    );
+
+    expect(result.current.canAutoResolveSingleAsset).toBe(false);
+  });
+
+  it("should not auto-resolve a single asset when an account still has to be chosen", () => {
+    const { result } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [],
+          assetsSorted: singleNetworkAsset,
+          onAccountSelected: mockOnAccountSelected,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            enableAccountSelection: true,
+          },
+        }),
+      },
+    );
+
+    expect(result.current.canAutoResolveSingleAsset).toBe(false);
   });
 });

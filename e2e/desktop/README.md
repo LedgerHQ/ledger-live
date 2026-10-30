@@ -53,7 +53,6 @@ Before running tests, build the app and dependencies:
 ```bash
 pnpm i --filter="ledger-live-desktop..."  --filter="live-cli..." --filter="ledger-live" --filter="ledger-live-desktop-e2e-tests" --unsafe-perm
 pnpm build:lld:deps
-pnpm build:cli
 pnpm desktop build:testing
 ```
 
@@ -125,6 +124,10 @@ export E2E_DESKTOP_FEATURE_FLAGS="some-preset"
 Or use the "Choose a feature flag set" options dropdown on the GitHub workflow.
 
 See the `ffPresetMap` in `tests/utils/featureFlagUtils.ts` for available presets.
+
+## Typecheck
+
+Run `pnpm nx typecheck ledger-live-desktop-e2e-tests` to typecheck building workspace libraries first. `pnpm typecheck` in this directory checks the built `lib/` and reports false errors when `libs/live-e2e-shared/src` is newer than that build.
 
 ## Soft assertions
 

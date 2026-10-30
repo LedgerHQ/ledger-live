@@ -24,7 +24,9 @@ addition instead of a migration.
 A use-case package takes the shared api and adds to it:
 
 ```ts
-import { coinMarketCapApi, FIFTEEN_MINUTES_IN_SECONDS } from "@shared/api-services";
+import { coinMarketCapApi } from "@shared/api-services";
+
+const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
 
 /** Cache tags belong to the use case that owns the data — not to the shared service. */
 export const FEAR_AND_GREED_TAGS = ["FearAndGreedLatest"] as const;
@@ -93,12 +95,13 @@ Every backend goes through `@shared/api-services`, and any new one must.
 - Package name: `@domain/api-<name>` — directory name matches, e.g. `domain/api/<name>/`
 - `package.json` must have `"private": true`
 - Must depend on the corresponding `@domain/entity-<name>` package
-- Barrel export via `src/index.ts`
+- Barrel export via `src/index.ts`, `export *` only
+- Endpoints, schemas, tags and tests in detail: the [`domain-data`](../../.agents/skills/domain-data/SKILL.md) skill
 
 ## File Structure
 
 ```
-api.ts          # injectEndpoints on a service api, or createApi (required)
+api.ts          # enhanceEndpoints + injectEndpoints on a service api, never createApi (required)
 api.test.ts     # Endpoint/integration tests (required; MSW recommended if that's the project standard)
 index.ts        # Barrel exports (required)
 ```

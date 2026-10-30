@@ -1,5 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { BaseOnboardingTestScreens } from "@tests/OnboardingTestScreens";
+import { NavigatorName } from "~/const";
 import UpsellFlex from "../screens/UpsellFlex";
 import { Flex } from "@ledgerhq/native-ui";
 import { Button } from "@ledgerhq/lumen-ui-rnative";
@@ -29,5 +31,6 @@ const Setup = () => {
 export const MockDrawerComponent = () => (
   <Stack.Navigator>
     <Stack.Screen name="UpsellFlex" component={Setup} />
+    <Stack.Screen name={NavigatorName.BaseOnboarding} component={BaseOnboardingTestScreens} />
   </Stack.Navigator>
 );

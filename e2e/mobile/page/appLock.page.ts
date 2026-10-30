@@ -1,53 +1,52 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export default class AppLockPage {
-  private readonly unlockScreenId = "app-lock-unlock-screen";
-
-  getSetupPasswordField = () => getElementById("app-lock-setup-password-field");
-  getSetupPasswordContinue = () => getElementById("app-lock-setup-password-continue");
-  getConfirmPasswordField = () => getElementById("app-lock-confirm-password-field");
-  getConfirmPasswordButton = () => getElementById("app-lock-confirm-password-confirm");
-  getUnlockScreen = () => getElementById(this.unlockScreenId);
-  getUnlockField = () => getElementById("app-lock-unlock-field");
-  getUnlockSubmit = () => getElementById("app-lock-unlock-submit");
+  private readonly setupPasswordField = byId("app-lock-setup-password-field");
+  private readonly setupPasswordContinue = byId("app-lock-setup-password-continue");
+  private readonly confirmPasswordField = byId("app-lock-confirm-password-field");
+  private readonly confirmPasswordButton = byId("app-lock-confirm-password-confirm");
+  private readonly unlockScreen = byId("app-lock-unlock-screen");
+  private readonly unlockField = byId("app-lock-unlock-field");
+  private readonly unlockSubmit = byId("app-lock-unlock-submit");
 
   @Step("Choose password")
   async choosePassword(password: string) {
-    await typeTextByElement(this.getSetupPasswordField(), password, false);
-    await tapByElement(this.getSetupPasswordContinue());
+    await this.setupPasswordField.replaceTextKeepKeyboard(password);
+    await this.setupPasswordContinue.tap();
   }
 
   @Step("Confirm password")
   async confirmPassword(password: string) {
-    await typeTextByElement(this.getConfirmPasswordField(), password, false);
-    await tapByElement(this.getConfirmPasswordButton());
+    await this.confirmPasswordField.replaceTextKeepKeyboard(password);
+    await this.confirmPasswordButton.tap();
   }
 
   @Step("Expect the password to be refused as too short")
   async expectPasswordTooShort() {
-    await detoxExpect(this.getSetupPasswordField()).toBeVisible();
-    await detoxExpect(this.getConfirmPasswordField()).not.toBeVisible();
+    await this.setupPasswordField.expectVisible();
+    await this.confirmPasswordField.expectNotVisible();
   }
 
   @Step("Enter unlock password")
   async enterUnlockPassword(password: string) {
-    await typeTextByElement(this.getUnlockField(), password, false);
+    await this.unlockField.replaceTextKeepKeyboard(password);
   }
 
   @Step("Unlock")
   async unlock() {
-    await tapByElement(this.getUnlockSubmit());
+    await this.unlockSubmit.tap();
   }
 
   @Step("Expect lock")
   async expectLock() {
-    await detoxExpect(this.getUnlockScreen()).toBeVisible();
+    await this.unlockScreen.expectVisible();
   }
 
   @Step("Expect no lock")
   async expectNoLock() {
-    await waitForElementNotVisible(this.unlockScreenId, TIMEOUT.medium);
-    await detoxExpect(this.getUnlockScreen()).not.toBeVisible();
+    await this.unlockScreen.waitNotVisible(TIMEOUT.medium);
+    await this.unlockScreen.expectNotVisible();
   }
 }
