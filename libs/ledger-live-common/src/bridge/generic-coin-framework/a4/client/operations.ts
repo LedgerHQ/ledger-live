@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import {
   encodeOperationId,
   encodeSubOperationId,
+  OPERATION_TYPE_OUT_FAMILY,
 } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import type { AssetInfo } from "@ledgerhq/coin-module-framework/api/types";
@@ -163,6 +164,10 @@ function buildOpsFromParts(
       value = bnFees;
     } else if (part.asset === "native" && delta.isNegative()) {
       value = delta.abs().plus(bnFees);
+    } else if (part.asset === "native" && OPERATION_TYPE_OUT_FAMILY.includes(type)) {
+      // an outgoing-like operation that credited the account, e.g. a contract call paying back
+      // more than its fee: a negative value, which Live negates into a credit
+      value = bnFees.minus(delta);
     } else {
       value = delta.abs();
     }

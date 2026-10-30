@@ -437,6 +437,27 @@ describe("adaptA4OperationToLiveOperation", () => {
     ]);
   });
 
+  it("gives a negative value to a native credit of an outgoing-like operation", () => {
+    const op: A4OperationView = {
+      block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
+      tx: { hash: "0xtxhash", details: { ledgerOpType: "CONTRACT_CALL" } },
+      assets: {},
+      events: {},
+      failed: false,
+      fees: "21000",
+      feeAsset: "native",
+      senders: ["0xaddress"],
+      recipients: ["0xcontract"],
+      parts: [
+        { type: "transfer", address: "0xaddress", asset: "native", amount: "1000000" },
+        { type: "fee", address: "0xaddress", asset: "native", amount: "-21000" },
+      ],
+    };
+    const [result] = adaptA4OperationToLiveOperation("accountId", "0xaddress", op);
+    expect(result.type).toBe("CONTRACT_CALL");
+    expect(result.value).toEqual(new BigNumber(-979000));
+  });
+
   it("skips parts belonging to a different address", () => {
     const op: A4OperationView = {
       block: { hash: "0xblockhash", height: 1000, time: "2024-01-01T00:00:00Z" },
