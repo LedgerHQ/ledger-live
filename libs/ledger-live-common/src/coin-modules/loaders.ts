@@ -170,7 +170,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "ethereum_classic",
       "ethereum_sepolia",
       "ethereum_hoodi",
-      "fantom",
       "core",
       "cronos",
       "moonbeam",

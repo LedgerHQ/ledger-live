@@ -137,9 +137,6 @@
   "cronos/erc20/tether_usd": {
     "icon": "USDT.png"
   },
-  "fantom/erc20/tether_usd": {
-    "icon": "USDT.png"
-  },
   "linea/erc20/tether_usd": {
     "icon": "USDT.png"
   },
@@ -251,9 +248,6 @@
   "ethereum/erc20/link_chainlink": {
     "icon": "LINK.png"
   },
-  "fantom/erc20/chainlink": {
-    "icon": "LINK.png"
-  },
   "linea/erc20/chainlink_token": {
     "icon": "LINK.png"
   },
@@ -321,9 +315,6 @@
     "icon": "WBTC.png"
   },
   "ethereum/erc20/wrapped_bitcoin": {
-    "icon": "WBTC.png"
-  },
-  "fantom/erc20/bitcoin": {
     "icon": "WBTC.png"
   },
   "linea/erc20/wrapped_btc": {
@@ -461,9 +452,6 @@
   "ethereum/erc20/aave": {
     "icon": "AAVE.png"
   },
-  "fantom/erc20/aave": {
-    "icon": "AAVE.png"
-  },
   "optimism/erc20/aave_token": {
     "icon": "AAVE.png"
   },
@@ -586,9 +574,6 @@
   },
   "solana/spl/dezxaz8z7pnrnrjjz3wxborgixca6xjnb7yab1ppb263": {
     "icon": "BONK.png"
-  },
-  "fantom": {
-    "icon": "FTM.png"
   },
   "algorand": {
     "icon": "ALGO.png"
@@ -725,9 +710,6 @@
   "ethereum/erc20/frax": {
     "icon": "FRAX.png"
   },
-  "fantom/erc20/frax": {
-    "icon": "FRAX.png"
-  },
   "moonbeam/erc20/frax": {
     "icon": "FRAX.png"
   },
@@ -774,9 +756,6 @@
     "icon": "SAND.png"
   },
   "ethereum/erc20/nexo": {
-    "icon": "NEXO.png"
-  },
-  "fantom/erc20/nexo": {
     "icon": "NEXO.png"
   },
   "polygon/erc20/nexo": {
@@ -857,9 +836,6 @@
   "ethereum/erc20/frax_ether": {
     "icon": "FRXETH.png"
   },
-  "fantom/erc20/frax_ether": {
-    "icon": "FRXETH.png"
-  },
   "moonbeam/erc20/frax_ether": {
     "icon": "FRXETH.png"
   },
@@ -924,9 +900,6 @@
     "icon": "SNX.png"
   },
   "ethereum/erc20/synthetix_network_token": {
-    "icon": "SNX.png"
-  },
-  "fantom/erc20/synthetix_network": {
     "icon": "SNX.png"
   },
   "optimism/erc20/synthetix_network_token": {
@@ -1007,9 +980,6 @@
   "ethereum/erc20/curve_dao_token": {
     "icon": "CRV.png"
   },
-  "fantom/erc20/curve_dao": {
-    "icon": "CRV.png"
-  },
   "optimism/erc20/curve_dao_token": {
     "icon": "CRV.png"
   },
@@ -1071,9 +1041,6 @@
     "icon": "WOO.png"
   },
   "ethereum/erc20/wootrade_network": {
-    "icon": "WOO.png"
-  },
-  "fantom/erc20/wootrade_network": {
     "icon": "WOO.png"
   },
   "polygon/erc20/wootrade_network": {
@@ -1154,9 +1121,6 @@
   "ethereum/erc20/bandtoken": {
     "icon": "BAND.png"
   },
-  "fantom/erc20/band": {
-    "icon": "BAND.png"
-  },
   "arbitrum/erc20/biconomy_token": {
     "icon": "BICO.png"
   },
@@ -1183,9 +1147,6 @@
   },
   "ethereum/erc20/flux_(zel)": {
     "icon": "FLUX.png"
-  },
-  "fantom/erc20/frax_share": {
-    "icon": "FXS.png"
   },
   "arbitrum/erc20/frax_share": {
     "icon": "FXS.png"
@@ -1260,9 +1221,6 @@
     "icon": "KNC.png"
   },
   "ethereum/erc20/kyber_network_crystal_v2": {
-    "icon": "KNC.png"
-  },
-  "fantom/erc20/kyber_network_crystal_v2": {
     "icon": "KNC.png"
   },
   "linea/erc20/kyber_network_crystal_v2": {
@@ -1398,9 +1356,6 @@
     "icon": "SUSHI.png"
   },
   "ethereum/erc20/sushi": {
-    "icon": "SUSHI.png"
-  },
-  "fantom/erc20/sushi": {
     "icon": "SUSHI.png"
   },
   "polygon/erc20/sushitoken_(pos)": {

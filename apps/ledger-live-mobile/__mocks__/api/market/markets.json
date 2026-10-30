@@ -560,7 +560,6 @@
       "neon_evm/erc20/wrapped_bitcoin",
       "arbitrum/erc20/wrapped_btc",
       "syscoin/erc20/wrapped_bitcoin_(multichain)",
-      "fantom/erc20/bitcoin",
       "cronos/erc20/wrapped_btc",
       "polygon_zk_evm/erc20/wrapped_btc"
     ],
@@ -716,7 +715,6 @@
       "ethereum/erc20/link_chainlink",
       "linea/erc20/chainlink_token",
       "polygon/erc20/chainlink_token",
-      "fantom/erc20/chainlink",
       "polygon_zk_evm/erc20/chainlink_token",
       "bsc/bep20/binance-peg_chainlink_token",
       "arbitrum/erc20/chainlink_token",
