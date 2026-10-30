@@ -360,7 +360,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@ci/e2e-composite-step-summary
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
@@ -645,7 +645,7 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install dependencies and build LLD
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-test-desktop@ci/e2e-composite-step-summary
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
