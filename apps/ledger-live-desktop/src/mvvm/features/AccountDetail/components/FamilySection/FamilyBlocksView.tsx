@@ -21,11 +21,14 @@ export const FamilyBlocksView = ({
       {renderFamilyBlock(family.PendingTransferProposals, { account, parentAccount: account })}
       {renderFamilyBlock(family.AccountSubHeader, { account, parentAccount: undefined })}
       {showBalanceSummaryFooter
-        ? renderFamilyBlock(family.AccountBalanceSummaryFooter, {
-            account,
-            counterValue,
-            discreetMode,
-          })
+        ? renderFamilyBlock(
+            family.AccountDetailBalanceSummary ?? family.AccountBalanceSummaryFooter,
+            {
+              account,
+              counterValue,
+              discreetMode,
+            },
+          )
         : null}
       {showBodyBlocks
         ? renderFamilyBlock(family.AccountDetailDelegations ?? family.AccountBodyHeader, {
