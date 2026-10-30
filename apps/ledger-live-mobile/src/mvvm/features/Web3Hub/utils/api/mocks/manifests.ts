@@ -102,7 +102,6 @@ export const mocks: AppManifest[] = [
       "cardano/**",
       "filecoin",
       "osmo",
-      "fantom",
       "cronos",
       "moonbeam",
       "songbird",

@@ -290,25 +290,6 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       },
     },
   },
-  config_currency_fantom: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-        features: [{ id: "blockchain_txs", status: "active" }],
-      },
-      chainId: 250,
-      name: "Fantom",
-      unit: { name: "FTM", code: "FTM", magnitude: 18 },
-      node: {
-        type: "external",
-        uri: "https://fantom.coin.ledger.com",
-      },
-      explorer: {
-        type: "none",
-      },
-    },
-  },
   config_currency_flare: {
     type: "object",
     default: {
