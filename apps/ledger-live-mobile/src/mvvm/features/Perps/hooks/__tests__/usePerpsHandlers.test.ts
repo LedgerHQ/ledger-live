@@ -1,4 +1,4 @@
-import { renderHook } from "@tests/test-renderer";
+import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
@@ -36,6 +36,15 @@ const withDevice = (state: State): State => ({
   settings: { ...state.settings, readOnlyModeEnabled: false },
 });
 
+const renderWithFlag = () =>
+  renderHook(() => usePerpsHandlers([]), {
+    overrideInitialState: withFlagOverrides({
+      ptxPerpsDeviceIntentSignMobile: { enabled: true },
+    }),
+  });
+
+const signingExecute = () => mockedPerpsHandlers.mock.lastCall![0].uiHooks["signing.execute"];
+
 describe("usePerpsHandlers", () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -64,6 +73,7 @@ describe("usePerpsHandlers", () => {
       appName: "Hyperliquid",
       appOptions: undefined,
       signFactory: jest.fn(),
+      signOnSession: jest.fn(),
       onSuccess: jest.fn(),
       onError: jest.fn(),
       onCancel: jest.fn(),
@@ -78,6 +88,48 @@ describe("usePerpsHandlers", () => {
       onSuccess: params.onSuccess,
       onError: params.onError,
       onCancel: params.onCancel,
+    });
+  });
+
+  describe("with the device intent sign flag on", () => {
+    const signParams = {
+      appName: "Hyperliquid",
+      appOptions: undefined,
+      signFactory: jest.fn(),
+      signOnSession: jest.fn(),
+      onSuccess: jest.fn(),
+      onError: jest.fn(),
+      onCancel: jest.fn(),
+    };
+
+    it("should keep the request for the drawer instead of navigating", () => {
+      const { result } = renderWithFlag();
+
+      act(() => signingExecute()(signParams));
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(result.current.signRequest).toEqual({ id: 1, request: signParams });
+    });
+
+    it("should hand a newer request a new id", () => {
+      const { result } = renderWithFlag();
+
+      act(() => signingExecute()(signParams));
+      act(() => signingExecute()(signParams));
+
+      expect(result.current.signRequest?.id).toBe(2);
+    });
+
+    it("should clear only the request it is asked to clear", () => {
+      const { result } = renderWithFlag();
+      act(() => signingExecute()(signParams));
+      act(() => signingExecute()(signParams));
+
+      act(() => result.current.clearSignRequest(1));
+      expect(result.current.signRequest?.id).toBe(2);
+
+      act(() => result.current.clearSignRequest(2));
+      expect(result.current.signRequest).toBeNull();
     });
   });
 

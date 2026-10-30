@@ -1,10 +1,9 @@
 import {
   handlers as perpsHandlers,
   type PerpsDepositUiParams,
-  type PerpsSignResult,
+  type PerpsSignRequest,
   type PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { context as drawerContext, setDrawer } from "~/renderer/drawers/Provider";
@@ -34,30 +33,9 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
 export function usePerpsHandlers(accounts: AccountLike[]) {
-  const uiSigningExecute = useCallback(
-    ({
-      appName,
-      appOptions,
-      signFactory,
-      onSuccess,
-      onError,
-      onCancel,
-    }: {
-      appName: string | undefined;
-      appOptions?: {
-        requireLatestFirmware: boolean;
-        allowPartialDependencies: boolean;
-        skipAppInstallIfNotFound: boolean;
-      };
-      signFactory: (device: Device) => Promise<PerpsSignResult>;
-      onSuccess: (result: PerpsSignResult) => void;
-      onError: (error: Error) => void;
-      onCancel: () => void;
-    }) => {
-      openPerpsSign({ appName, appOptions, signFactory, onSuccess, onError, onCancel });
-    },
-    [],
-  );
+  const uiSigningExecute = useCallback((request: PerpsSignRequest) => {
+    openPerpsSign(request);
+  }, []);
 
   const uiDepositExecute = useCallback((params: PerpsDepositUiParams) => {
     const request = beginDepositRequest();

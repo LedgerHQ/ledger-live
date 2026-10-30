@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import {
   handlers as perpsHandlers,
   type PerpsDepositUiParams,
-  type PerpsSignResult,
+  type PerpsSignRequest,
   type PerpsWithdrawUiParams,
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { useFeature } from "@features/platform-feature-flags";
 import { ScreenName } from "~/const";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { useOpenSelectDevice } from "LLM/features/DeviceSelection/hooks/useOpenSelectDevice";
@@ -31,30 +31,36 @@ import {
   cancelWithdrawRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/request";
 
-export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
+/** A `custom.perps.signActions` request handled by the device intent drawer. */
+export type PerpsPendingSignRequest = Readonly<{
+  id: number;
+  request: PerpsSignRequest;
+}>;
+
+export type PerpsHandlers = Readonly<{
+  handlers: WalletAPICustomHandlers;
+  signRequest: PerpsPendingSignRequest | null;
+  clearSignRequest: (id: number) => void;
+}>;
+
+export function usePerpsHandlers(accounts: AccountLike[]): PerpsHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const openSelectDevice = useOpenSelectDevice();
+  const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSignMobile")?.enabled ?? false;
+  const [signRequest, setSignRequest] = useState<PerpsPendingSignRequest | null>(null);
+  const clearSignRequest = useCallback(
+    (id: number) => setSignRequest(current => (current?.id === id ? null : current)),
+    [],
+  );
 
   const uiSigningExecute = useCallback(
-    ({
-      appName,
-      appOptions,
-      signFactory,
-      onSuccess,
-      onError,
-      onCancel,
-    }: {
-      appName: string | undefined;
-      appOptions?: {
-        requireLatestFirmware: boolean;
-        allowPartialDependencies: boolean;
-        skipAppInstallIfNotFound: boolean;
-      };
-      signFactory: (device: Device) => Promise<PerpsSignResult>;
-      onSuccess: (result: PerpsSignResult) => void;
-      onError: (error: Error) => void;
-      onCancel: () => void;
-    }) => {
+    (request: PerpsSignRequest) => {
+      if (deviceIntentSignEnabled) {
+        setSignRequest(previous => ({ id: (previous?.id ?? 0) + 1, request }));
+        return;
+      }
+
+      const { appName, appOptions, signFactory, onSuccess, onError, onCancel } = request;
       navigation.navigate(ScreenName.PerpsSign, {
         appName,
         appOptions,
@@ -64,7 +70,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
         onCancel,
       });
     },
-    [navigation],
+    [navigation, deviceIntentSignEnabled],
   );
 
   const uiDepositExecute = useCallback(
@@ -113,7 +119,7 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
 
   useEffect(() => () => cancelMigrationRequest(), []);
 
-  return useMemo<WalletAPICustomHandlers>(
+  const handlers = useMemo<WalletAPICustomHandlers>(
     () =>
       perpsHandlers({
         accounts,
@@ -126,4 +132,6 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
       }),
     [accounts, uiSigningExecute, uiDepositExecute, uiWithdrawExecute, uiMigrationExecute],
   );
+
+  return { handlers, signRequest, clearSignRequest };
 }
