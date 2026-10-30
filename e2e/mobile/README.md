@@ -49,7 +49,7 @@ All build commands below are run from the **repo root** (`ledger-live/`).
 
 ```bash
 pnpm clean
-pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli..." --filter="ledger-live-mobile-e2e-tests..."
+pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..."
 pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 # Android release build
 pnpm mobile e2e:build -c android.emu.release
@@ -58,9 +58,8 @@ pnpm mobile pod
 pnpm mobile e2e:build -c ios.sim.debug
 ```
 
-> `build-e2e-deps` is an nx target that builds the mobile libs (`^build`) and
-> `@ledgerhq/live-cli` together. It replaces the separate `pnpm build:llm:deps`
-> and `pnpm build:cli` steps and is the same command CI runs before mobile E2E.
+> `build-e2e-deps` builds the libraries the mobile app
+> and the E2E suite depend on, including @ledgerhq/live-cli.
 
 > **Why release for Android?** Android debug builds are broken locally due to a known
 > Detox/Espresso reflection bug (`NoSuchFieldException: eventInjector`). Only release
