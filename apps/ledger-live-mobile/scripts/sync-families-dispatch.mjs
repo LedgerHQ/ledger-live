@@ -34,6 +34,7 @@ const targets = [
   "SendSelectRecipient",
   "AccountBalanceSummaryFooter",
   "SubAccountList",
+  "AddAssetAction",
   "Confirmation",
   "ReceiveConfirmationPostAlert",
   "ReceiveConfirmationTokenAlert",

@@ -10693,7 +10693,8 @@
       "settings": "Account settings"
     },
     "assets": {
-      "title": "Assets"
+      "title": "Assets",
+      "add": "Add"
     }
   },
   "assetDetails": {

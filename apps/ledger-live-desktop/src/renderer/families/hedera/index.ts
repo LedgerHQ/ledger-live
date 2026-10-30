@@ -12,11 +12,13 @@ import StepRecipientCustomAlert from "./StepRecipientCustomAlert";
 import StepReceiveFunds from "./StepReceiveFunds";
 import { HederaFamily } from "./types";
 import tokenList from "./TokenList";
+import addAssetAction from "./addAssetAction";
 import operationDetails from "./OperationDetails";
 
 const family: HederaFamily = {
   sendRecipientFields,
   tokenList,
+  addAssetAction,
   operationDetails,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,
