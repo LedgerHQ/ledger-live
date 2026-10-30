@@ -91,6 +91,17 @@ const createSignedOperation = (): SignedOperation =>
     operation: createOperation("signed-operation-id"),
   }) as SignedOperation;
 
+const createDeferred = <T>() => {
+  let resolve!: (value: T) => void;
+  let reject!: (reason: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  return { promise, resolve, reject };
+};
+
 const createParams = (overrides: ParamsOverrides = {}): UseSendFlowSignatureCoreParams => {
   const {
     operation: operationOverrides,
@@ -370,5 +381,78 @@ describe("useSendFlowSignatureCore", () => {
     expect(params.operation.onTransactionError).toHaveBeenCalledTimes(1);
     expect(params.operation.onOperationBroadcasted).toHaveBeenCalledWith(operation);
     expect(params.onFinish).toHaveBeenCalledTimes(2);
+  });
+
+  describe("when inputs change while a broadcast is pending", () => {
+    const startPendingBroadcast = (overrides: ParamsOverrides = {}) => {
+      const broadcastResult = createDeferred<Operation>();
+      const params = createParams({
+        ...overrides,
+        broadcast: jest.fn().mockReturnValue(broadcastResult.promise),
+      });
+      const { result, rerender } = renderHook(
+        ({ hookParams }: { hookParams: UseSendFlowSignatureCoreParams }) =>
+          useSendFlowSignatureCore(hookParams),
+        { initialProps: { hookParams: params } },
+      );
+
+      act(() => {
+        result.current.onDeviceActionResult({
+          signedOperation: createSignedOperation(),
+          device: {},
+        });
+      });
+
+      return { params, broadcastResult, rerender };
+    };
+
+    it("should finish with success when a same-id account refresh lands", async () => {
+      const account = createAccount();
+      const broadcastedOperation = createOperation("broadcasted-operation-id");
+      const { params, broadcastResult, rerender } = startPendingBroadcast({ account });
+
+      // A background sync hands down a new account object with the same id.
+      rerender({ hookParams: { ...params, account: { ...account, lastSyncDate: new Date() } } });
+      broadcastResult.resolve(broadcastedOperation);
+
+      await waitFor(() =>
+        expect(params.onFinish).toHaveBeenCalledWith(SEND_FLOW_COMPLETION.SUCCESS),
+      );
+      expect(params.operation.onOperationBroadcasted).toHaveBeenCalledWith(broadcastedOperation);
+    });
+
+    it("should finish with failure when a same-id account refresh lands", async () => {
+      const account = createAccount();
+      const { params, broadcastResult, rerender } = startPendingBroadcast({ account });
+
+      rerender({ hookParams: { ...params, account: { ...account, lastSyncDate: new Date() } } });
+      broadcastResult.reject(new Error("Broadcast failed"));
+
+      await waitFor(() =>
+        expect(params.onFinish).toHaveBeenCalledWith(
+          SEND_FLOW_COMPLETION.FAILURE,
+          expect.any(Error),
+        ),
+      );
+      expect(params.statusActions.setError).toHaveBeenCalledTimes(1);
+    });
+
+    it("should drop the outcome when the transaction is re-crafted", async () => {
+      const { params, broadcastResult, rerender } = startPendingBroadcast();
+
+      rerender({
+        hookParams: {
+          ...params,
+          transaction: createTransaction({ recipient: "bc1qnextrecipient" }),
+        },
+      });
+      await act(async () => {
+        broadcastResult.resolve(createOperation("broadcasted-operation-id"));
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
+
+      expect(params.operation.onOperationBroadcasted).not.toHaveBeenCalled();
+      expect(params.onFinish).not.toHaveBeenCalled();
+    });
   });
 });
