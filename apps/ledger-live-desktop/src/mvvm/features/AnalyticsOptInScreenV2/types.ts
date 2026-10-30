@@ -3,7 +3,7 @@ export type AnalyticsOptInScreenStep = "main" | "preferences";
 export const ANALYTICS_OPT_IN_SCREEN_FLOW = "consent onboarding";
 
 export const ANALYTICS_OPT_IN_SCREEN_PAGES = {
-  main: "Analytics opt-in screen main",
+  main: "Analytics opt-in prompt main",
   preferences: "Analytics opt-in screen preferences",
 } as const;
 

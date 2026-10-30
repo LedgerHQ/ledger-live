@@ -67,6 +67,13 @@ describe("AnalyticsOptInScreen on Welcome", () => {
     await user.click(screen.getByTestId("v3-onboarding-get-started-button"));
 
     expect(await screen.findByTestId("analytics-opt-in-screen")).toBeVisible();
+    await waitFor(() => {
+      expect(track).toHaveBeenCalledWith(
+        "Analytics opt-in prompt main",
+        { page: "Analytics opt-in prompt main" },
+        { mandatory: true },
+      );
+    });
 
     await user.click(screen.getByRole("button", { name: "Accept all" }));
 
