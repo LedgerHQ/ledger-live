@@ -24,6 +24,7 @@ export function AccountDetailView({ account, refresh }: Props) {
   const { bottom } = useSafeAreaInsets();
   const { colors, dark } = useTheme();
   const { hero, emptyState } = useAccountDetailContentViewModel(account);
+  const showsEmptyState = emptyState.isVisible;
 
   return (
     <Box testID={ACCOUNT_DETAIL_TEST_IDS.screen} lx={screenStyle}>
@@ -34,8 +35,12 @@ export function AccountDetailView({ account, refresh }: Props) {
       />
       <ScrollView
         testID={ACCOUNT_DETAIL_TEST_IDS.scrollView}
+        style={scrollStyle}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: GRADIENT_HEIGHT + bottom }}
+        contentContainerStyle={{
+          paddingBottom: GRADIENT_HEIGHT + bottom,
+          ...(showsEmptyState ? { flexGrow: 1 } : {}),
+        }}
         refreshControl={
           <RefreshControl
             progressBackgroundColor={dark ? colors.background : colors.card}
@@ -51,22 +56,21 @@ export function AccountDetailView({ account, refresh }: Props) {
           lastClickTimestamp={refresh.lastClickTimestamp}
           lastOfflineAttemptTimestamp={refresh.lastOfflineAttemptTimestamp}
         />
-        <Box lx={contentStyle}>
+        <Box lx={showsEmptyState ? filledContentStyle : contentStyle}>
           <AccountDetailLayout
             hero={<Hero {...hero} />}
             customPlace={<FamilySection account={account} />}
-            assets={
-              emptyState.isVisible ? (
-                <AccountEmptyState
-                  fundingActions={emptyState.fundingActions}
-                  testID={ACCOUNT_DETAIL_TEST_IDS.emptyState}
-                />
-              ) : (
-                <AssetsSection account={account} />
-              )
-            }
-            transactions={emptyState.isVisible ? null : <Transactions account={account} />}
+            assets={showsEmptyState ? null : <AssetsSection account={account} />}
+            transactions={showsEmptyState ? null : <Transactions account={account} />}
           />
+          {showsEmptyState ? (
+            <Box testID={ACCOUNT_DETAIL_TEST_IDS.emptyStateSlot} lx={emptyStateSlotStyle}>
+              <AccountEmptyState
+                fundingActions={emptyState.fundingActions}
+                testID={ACCOUNT_DETAIL_TEST_IDS.emptyState}
+              />
+            </Box>
+          ) : null}
         </Box>
       </ScrollView>
       <BottomFadeGradient />
@@ -75,4 +79,11 @@ export function AccountDetailView({ account, refresh }: Props) {
 }
 
 const screenStyle: LumenViewStyle = { flex: 1, backgroundColor: "canvas" };
+const scrollStyle = { flex: 1 };
 const contentStyle: LumenViewStyle = { paddingHorizontal: "s16", paddingTop: "s4" };
+const filledContentStyle: LumenViewStyle = {
+  ...contentStyle,
+  flexGrow: 1,
+  gap: "s24",
+};
+const emptyStateSlotStyle: LumenViewStyle = { flexGrow: 1, justifyContent: "center" };
