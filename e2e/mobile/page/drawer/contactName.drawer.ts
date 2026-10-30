@@ -16,6 +16,8 @@ export default class ContactNameDrawer {
   async typeAndConfirm(name: string) {
     // LIVE-37168 - confirm button should remain interactable when the keyboard is open
     await this.nameInput.replaceTextKeepKeyboard(name);
-    await this.confirmButton.tap();
+    // On Android the keyboard lifts the button out of its container's layout box, so Detox measures it
+    // as not visible although it is drawn above the keyboard.
+    await this.confirmButton.tapExisting();
   }
 }
