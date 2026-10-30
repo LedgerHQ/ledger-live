@@ -93,7 +93,8 @@ pnpm --silent wallet-cli start agent-intent wait --profile <id> --output json
 ```
 
 - `status` `"success"` with `enrolled: true`: final, see Done below.
-- `type` `"enrollment-waiting"` without `enrollmentUrl`: the listener has no link yet (e.g. an OS keychain prompt is still open). Keep calling `wait`, which returns as soon as the link appears, and do not end your turn: hand over the link as above once `wait` reports it with `fingerprint`, `expiresAt` and `keyStore`.
+- `type` `"enrollment-waiting"` without `enrollmentUrl` and without `expiresAt`: the listener has no link yet (e.g. an OS keychain prompt is still open). Keep calling `wait`, which returns as soon as the link appears, and do not end your turn: hand over the link as above once `wait` reports it with `fingerprint`, `expiresAt` and `keyStore`.
+- `type` `"enrollment-waiting"` with `expiresAt` but without `enrollmentUrl`: a background-job `enroll` (Windows), whose link is in the job's output, never in `wait`'s. Handle it as the next item.
 - `type` `"enrollment-waiting"` with `enrollmentUrl` (also `expiresAt`, `fingerprint`, `keyStore`, `listenerPid`): still pending. Run `wait` again for at most about 2 minutes in this turn, then end your turn and ask the human to reply once both approvals finish; run `wait` when they do. If it still reports `enrollment-waiting` after they say they approved, ask them what the page shows.
 - `ok: false` with `error.code` `listener_exited`, `listener_stuck`, `enrollment_expired` or `profile_not_found`: final, the enrollment is lost; error table.
 - `ok: false` with an error the listener logged before saving the profile (e.g. `keychain_unavailable` after the human denied a keychain prompt): handle it like the same error from `enroll`.
