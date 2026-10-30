@@ -38,6 +38,9 @@ export class OnboardingPage extends AppPage {
   private readonly deviceTile = (device: DeviceModelId) =>
     this.page.getByTestId(`v3-device-${device}`);
   private readonly setupNewDeviceOption = this.page.getByTestId("v3-onboarding-new-device");
+  private readonly connectInitializedDeviceOption = this.page.getByTestId(
+    "v3-onboarding-initialized-device",
+  );
   private readonly counterfeitWarningContinueButton = this.page.getByTestId(
     "counterfeit-warning-continue-button",
   );
@@ -109,6 +112,11 @@ export class OnboardingPage extends AppPage {
   @step("Choose to set up a new device")
   async setUpNewDevice() {
     await this.setupNewDeviceOption.click();
+  }
+
+  @step("Choose to connect a device that already has a recovery phrase")
+  async connectInitializedDevice() {
+    await this.connectInitializedDeviceOption.click();
   }
 
   /** Nano S, Nano S Plus and Nano X get a "Before you start" warning before any use case runs. */
