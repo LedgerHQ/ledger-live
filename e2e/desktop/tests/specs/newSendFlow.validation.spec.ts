@@ -383,7 +383,10 @@ test.describe("Send - new flow - ENS address", () => {
     teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
-    cliCommands: [liveDataWithRecipientAddressCommand(tx)],
+    cliCommands: [
+      liveDataWithRecipientAddressCommand(tx),
+      async () => getAccountAddress(tx.accountToDebit),
+    ],
     env: { DISABLE_TRANSACTION_BROADCAST: "1" },
     featureFlags: newSendFlowFeatureFlags,
   });
@@ -392,15 +395,26 @@ test.describe("Send - new flow - ENS address", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) to ENS address`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027" },
+      annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027, B2CQA-6034" },
     },
     async ({ app }) => {
       await openNewSendFromAccount(app, tx);
+      await app.newSendFlow.typeAddress(tx.accountToDebit.address ?? "");
+      await app.newSendFlow.expectAddressMatched(tx.accountToDebit.address ?? "");
+      await app.newSendFlow.clickOnSendToButton(tx.accountToDebit);
+      await app.newSendFlow.expectAmountStepVisible();
+      await app.newSendFlow.goBack();
+
       await app.newSendFlow.typeAddress(Addresses.VITALIK_ENS);
       await app.newSendFlow.expectRecentHistoryWarning();
       await app.newSendFlow.typeAddress(tx.accountToCredit.ensName ?? "");
       await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
       await app.newSendFlow.fillCryptoAmount(tx.amount);
+      await app.newSendFlow.openFeesMenu();
+      await app.newSendFlow.selectCustomFeesFromMenu();
+      await app.newSendFlow.fillEip1559CustomFees({ maxPriorityFee: "1", maxFee: "2" });
+      await app.newSendFlow.confirmCustomFees();
+      await app.newSendFlow.expectCustomFeesApplied();
       await app.newSendFlow.selectFeePreset(Fee.MEDIUM);
       await app.newSendFlow.clickReview();
       await app.newSendFlow.waitForSignature();

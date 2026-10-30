@@ -8,6 +8,11 @@ import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
 import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
 
+type Eip1559CustomFeesOptions = {
+  maxPriorityFee: string;
+  maxFee: string;
+};
+
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
   private readonly backButton = this.dialog
@@ -41,6 +46,8 @@ export class NewSendModal extends Modal {
   private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
   private readonly coinControlMenuItem = this.page.getByTestId("send-coin-control-fees-menu-item");
   private readonly customFeePerByteInput = this.dialog.getByLabel(/fees amount.*sat\/vbyte/i);
+  private readonly customMaxPriorityFeeInput = this.dialog.getByLabel(/max priority fee.*gwei/i);
+  private readonly customMaxFeeInput = this.dialog.getByLabel(/max fee.*gwei/i);
   private readonly customFeesConfirmButton = this.dialog.getByRole("button", { name: "Confirm" });
   private readonly coinControlStrategySelect = this.dialog.getByTestId(
     "send-coin-control-strategy-select",
@@ -385,6 +392,24 @@ export class NewSendModal extends Modal {
   async expectCustomFeePerByteScreen() {
     await expect(this.customFeePerByteInput).toBeVisible();
     await expect(this.customFeesConfirmButton).toBeVisible();
+  }
+
+  @step("Fill the EIP-1559 custom fees")
+  async fillEip1559CustomFees(options: Eip1559CustomFeesOptions) {
+    const { maxPriorityFee, maxFee } = options;
+    await this.customMaxPriorityFeeInput.fill(maxPriorityFee);
+    await this.customMaxFeeInput.fill(maxFee);
+  }
+
+  @step("Confirm the custom fees")
+  async confirmCustomFees() {
+    await this.customFeesConfirmButton.click();
+  }
+
+  @step("Verify the custom fees are applied")
+  async expectCustomFeesApplied() {
+    await this.expectAmountStepVisible();
+    await expect(this.feesMenuTrigger).toContainText(/custom/i);
   }
 
   @step("Open coin control from the fees menu")
