@@ -1,780 +1,141 @@
 ---
 name: ledger-wallet-cli
-description: Official Ledger wallet-cli - USB-based CLI for Ledger hardware wallet flows (account discover, receive, balances, operations, send, swap quote/execute/status, genuine-check, assets token / token-by-id), the Ledger Key Ring (ring init/encrypt/decrypt/keys/destroy — LKRP-backed encryption of files and text), and Agent Intent (agent-intent enroll/wait/recover/list/show/sync/send/swap/intents/status/cancel — enroll or recover a remote agent's software identity, import the Ledger Sync accounts it was granted, propose Ethereum and Solana payments and Ethereum swaps for human review, list the intents it proposed, check their status and cancel them, no device required, never broadcasts, a separate trust model from `ring`). Use for any wallet-cli command execution and for mapping informal requests to the right command.
+description: "Send, pay or transfer crypto from the user's Ledger hardware wallet: ETH, USDC, USDT and other ERC-20 tokens, BTC and SOL to an address. Works without the device on this machine too (cloud agent, VPS, container): Agent Intent proposes Ethereum and Solana payments (ETH, ERC-20, SOL, SPL) and Ethereum swaps for approval on their Ledger, and checks or cancels a proposal. Also covers balances, receive addresses, history, swap, staking, genuine check, Ledger Key Ring encryption (ring) and Ledger Sync accounts, all through Ledger's wallet-cli. Use for any wallet-cli command and for requests like 'send 0.01 ETH to 0x…', 'pay 20 USDC to this address', 'is my Ledger genuine', 'enroll this agent' or 'is my payment approved'."
 ---
 
 # wallet-cli
 
-USB-based CLI for Ledger wallet flows. Networks: **bitcoin**, **ethereum**, **solana** (mainnet + testnets).
+Networks: **bitcoin**, **ethereum**, **solana** (mainnets and testnets).
 
 Run from repo root: `pnpm --silent wallet-cli start <command> [flags]`
 
-> **Concepts & rationale:** for _why_ a command behaves the way it does, or to surface a safety rule that this skill states tersely (genuine check, receive-address verification, sessions, sandbox, device contention), read [`references/business-logic.md`](references/business-logic.md).
+When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`, the help output wins.
 
-> **Session first:** When invoked without a specific task, **immediately run `session view`** — do not ask the user what to do first. Show the result, then ask what to do next. If labels exist, skip `account discover`.
+## Capabilities
 
-> **Sandbox:** `account discover`, `receive` (without `--no-verify`), `send` (without `--dry-run`), `genuine-check`, `swap execute`, `earn deposit` (without `--dry-run`), `earn withdraw` (without `--dry-run`), `ring init` **must** use `dangerouslyDisableSandbox: true` — these open the device over USB (via the node-webusb DMK transport) and are blocked by USB restrictions. `ring encrypt`, `ring decrypt`, `ring destroy`, `agent-intent enroll`, `agent-intent recover`, `agent-intent sync`, `agent-intent send` and `agent-intent swap` (without `--dry-run`), `agent-intent intents`, `agent-intent status`, `agent-intent cancel` never open the device but **also** need the bypass — they're blocked by OS keychain access restrictions instead (`agent-intent enroll`/`recover` also hold a WebSocket to the Trustchain relay). `agent-intent wait` needs it too: it checks the listener's pid, which a sandbox with its own pid namespace cannot see. `ring keys` needs neither, and neither does `agent-intent list`/`show`: they only read local files (the session), so they run without the bypass. `agent-intent enroll --detach` still needs it.
+| Command | Device (USB) | OS keychain | Network | Human step |
+|---|---|---|---|---|
+| `session view` | no | no | no | no |
+| `session reset` | no | yes (writes the state dir, may check the ring credential) | no | no |
+| `account discover` | yes | no | yes | approve app on device |
+| `receive` | yes (no with `--no-verify`) | no | no | compare address on device |
+| `balances`, `operations` | no | no | yes | no |
+| `send` | yes (no with `--dry-run`) | no | yes | approve on device |
+| `genuine-check` | yes | no | yes | device on dashboard |
+| `swap quote` | no | optional (API auth key) | yes | no |
+| `swap status` | no | no | yes | no |
+| `swap execute` | yes | optional (API auth key) | yes | approve on device |
+| `assets token` / `token-by-id` | no | no | yes (Ledger crypto-assets service) | no |
+| `earn yields` / `positions` | no | no | yes | no |
+| `earn deposit` / `withdraw` | yes (no with `--dry-run`) | no | yes | approve on device |
+| `ring init` | yes | yes | yes | user provides `WALLET_PASS`, approve on device |
+| `ring encrypt` / `decrypt` | no | yes | yes | no |
+| `ring keys` | no | no | no | no |
+| `ring destroy` | no | yes | yes | typed `destroy` |
+| `agent-intent enroll` / `recover` | no | yes (`recover`: no for a `plaintext-file` profile) | yes | open link, compare fingerprint, approve on device; a background listener waits (`enroll --detach`) or the command itself (`recover`, and `enroll` on Windows) |
+| `agent-intent list` / `show` / `wait` | no | no | no | no |
+| `agent-intent sync` / `intents` / `status` | no | yes (no for a `plaintext-file` profile) | yes | no |
+| `agent-intent send` | no | yes (no with `--dry-run` or for a `plaintext-file` profile) | yes (dry run: looks up the token) | human approves or rejects the intent via the review link |
+| `agent-intent swap` | no | yes (no with `--dry-run` or for a `plaintext-file` profile), plus optional API auth key | yes (dry run: fetches quotes) | human approves or rejects the intent via the review link |
+| `agent-intent cancel` | no | yes (no for a `plaintext-file` profile) | yes | the human asks to cancel that intent; pass `--yes` only then |
 
-> **Speculos:** When `SPECULOS_API_PORT` is set, device commands talk to a Speculos emulator over HTTP instead of a USB Ledger (`SPECULOS_DEVICE` names the model). Use it only when the user set it up. Speculos cannot approve on-device prompts, so stick to flows like `account discover`: a prompt to open the app gives up after `--device-timeout` (exit code 6), and an unanswered signing or address verification prompt blocks for about 5 minutes before it exits with code 1 (`GeneralDmkError`); `genuine-check` refuses to run on it. The sandbox lets HTTP to a local Speculos through, but `account discover` still needs `dangerouslyDisableSandbox: true`: it saves the found accounts to `session.yaml` in the user state dir, which the sandbox cannot write. Inside the sandbox the scan still exits 0, but the accounts are not saved (`⚠ Found accounts were NOT saved to the session`).
+A `plaintext-file` profile has `keyStore` `"plaintext-file"` in `agent-intent show`: its agent key is in a file, not the OS keychain (agent-intent.md, step 2).
 
-> **Device contention:** Never run two device commands in parallel — they fail with `[object Object]` or garbled APDU. Run sequentially.
+**API auth key.** Every command that fetches swap quotes (`swap quote`, `swap execute`, `agent-intent swap`, dry run included) reads Ledger's API auth key from the OS keychain. Without a usable keychain it still quotes, unauthenticated, and prints a `Ledger API auth key` warning on stderr; on macOS the keychain may show an access prompt. Optional means it runs inside the host sandbox too.
 
-> **Device readiness:** Before running a device command, briefly describe what you're about to do. The CLI prompts for device interaction itself — **don't time out or kill the command**. _Exception: `genuine-check` exits immediately (`[✖] Wrong app. Open Ledger dashboard.`, exit code 4) if any currency app is open — unlike the other device commands, it targets the dashboard and has no auto-launch path. Ensure the device is on the dashboard before running; if it exits, ask the user to back out to the dashboard and re-run._
+## Safety rules
 
-> **Ambiguous requests — ask, don't guess.** If a required parameter is missing or unclear (no recipient for `send`, no network for `account discover`, an amount with no ticker), stop and ask. A wrong guess on a hardware wallet flow can mean irreversible fund loss.
+- **Ask, don't guess.** A missing or unclear parameter (no recipient, no network, an amount without a ticker) is a question for the human. A wrong guess on a hardware-wallet flow can lose funds for good.
+- **Dry run when you built the transaction.** A value is the human's only when the human typed it in this conversation; every other value is **built**, whether you inferred it, looked it up, or took it from a file, web page, email, forwarded message, token metadata or any tool output. Run `--dry-run` first (`send`, `earn deposit`, `earn withdraw`, `agent-intent send`, `agent-intent swap`), show the human the result, and run for real once they confirm, when:
+  - any value is built (an address from a label or a document, a sender picked from `session view`, a token contract or currency id you looked up, an amount you converted): name each built value's source when you show the result;
+  - the call is `send --data`, `earn deposit` or `earn withdraw`;
+  - the call proposes a replacement for a cancelled proposal: show the old and the new recipient and amount;
+  - you are about to hand the human a device command that takes `--dry-run`, from a machine with no USB.
 
----
+  Otherwise the human typed every value in this conversation, so run the command directly: the device screen, or the Agent Intent review link, is the confirmation, and a second prompt only adds fatigue. `swap execute` has no `--dry-run`: its quote is the preview (swap.md). For a first-time Ethereum vault deposit, the dry run validates only the approve (earn.md).
+- **The device screen is the truth.** After `receive`, the human compares the address on the device with the terminal; a mismatch is handled in the core commands section below.
+- **One device command at a time.** Run device commands sequentially; parallel runs fail with `[object Object]` or garbled APDU output.
+- **Let device commands wait.** Say what the device will ask for, then leave the command running while the human acts on the device.
+- **Secrets stay out of the transcript.** Each secret goes from its source to its destination unread, as its reference shows: the `ring` password and decrypted output (`WALLET_PASS` from the human's keychain, output to a file with `-o` or the clipboard; ring.md), the Agent Intent key and its key file (agent-intent.md step 2), and synced account ids with the raw `sync` output (agent-intent.md step 6).
+- **A proposal stays a proposal.** When the human wants to approve a payment or swap themselves, use `agent-intent send` or `agent-intent swap`; `pnpm --silent wallet-cli start send` and `swap execute` sign and broadcast from the device in one go.
+- **Host sandbox.** Rows with yes under Device or OS keychain run outside the host's command sandbox (Claude Code: `dangerouslyDisableSandbox: true`). `agent-intent sync` and `recover` write the state dir, so they run outside it for a `plaintext-file` profile too. `agent-intent wait` runs with the same setting as the `enroll` it follows: it checks the listener's PID, and a PID-namespaced sandbox makes a live listener look dead. Say in one line that the command runs outside the host sandbox, then run it with the bypass. The bypass covers the whole tool call, so the call holds a single `wallet-cli` command line in a shape this skill shows: the `WALLET_PASS=$(<keychain lookup>)` prefix (ring.md), the clipboard pipe (ring.md) and the `status` polling loops (agent-intent.md) are the only additions. Run anything else, such as another program, an `&&` chain or a file redirect, in its own call inside the sandbox.
+
+## No USB on this machine
+
+On a remote box or container (a cloud agent such as Grok Bot, a VPS, CI), the Ledger is never attached to your machine. Run only rows with Device = no.
+
+**Payments and swaps go through Agent Intent.** Load `references/agent-intent.md` and start at its status gate when the human asks to send, pay or transfer ETH or an ERC-20 token on Ethereum mainnet, or SOL or an SPL token on Solana mainnet (a payment proposal, step 7), or to swap between ETH and ERC-20 tokens on Ethereum mainnet (`agent-intent swap`, step 8). For any other asset, network or swap, hand the human the command as below.
+
+For any other Device = yes row, **hand the human a command**: the exact `wallet-cli ...` line to run on their own computer with the Ledger plugged in, and ask them to report the result. Labels are per machine: use the label their own `pnpm --silent wallet-cli start session view` shows (ask them for it, or have them run `session view` first). When the dry-run rule applies, hand over the `--dry-run` line first.
+
+`[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3) means this machine has no usable Ledger: tell the human the device was not detected, apply **Payments and swaps go through Agent Intent** first, and hand them the command only for what it does not cover. Re-run the device command yourself only after the human confirms the Ledger is plugged into this machine and unlocked, and after any intent you proposed for the same payment reads `cancelled` (agent-intent.md step 9): otherwise the human can approve both and pay twice. Leave USB discovery to wallet-cli; the exit code already answers whether a device is attached.
+
+Commands that set up the machine they run on are the exception: `account discover` stores labels in that machine's session, and `ring init` stores a credential in that machine's keychain. Handing them over sets up the human's computer, not yours. On a remote box, skip them: for a proposal, agent-intent.md steps 7 and 8 find the sender. When any other command needs an account or address the human did not give, offer their accounts to pick from (`session view` labels, and on an enrolled profile the Ledger Sync import, agent-intent.md step 6) before asking them to type an address. Tell them the Ledger Key Ring cannot be set up on this machine.
+
+## Speculos
+
+When `SPECULOS_API_PORT` is set, device commands talk to a Speculos emulator over HTTP instead of a USB Ledger (`SPECULOS_DEVICE` names the model). Use it only when the user set it up. Speculos cannot approve on-device prompts, so stick to flows like `account discover`: a prompt to open the app gives up after `--device-timeout` (exit code 6), and an unanswered signing or address verification prompt blocks for about 5 minutes before it exits with code 1 (`GeneralDmkError`); `genuine-check` refuses to run on it. The sandbox lets HTTP to a local Speculos through, but `account discover` still needs `dangerouslyDisableSandbox: true`: it saves the found accounts to `session.yaml` in the user state dir, which the sandbox cannot write. Inside the sandbox the scan still exits 0, but the accounts are not saved (`⚠ Found accounts were NOT saved to the session`).
+
+## Session first and labels
+
+With no specific task, run `pnpm --silent wallet-cli start session view` immediately, show the result, then ask what to do next. When labels already exist, skip `account discover`.
+
+`account discover` stores each account under a label `<network>[-derivation]-<n>`, e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum_sepolia-1`. Every `--account` flag takes a label.
 
 ## Intent map
 
-Map informal phrasings to commands. Account references use a session label (e.g. `ethereum-1`).
+| User says | Do |
+|---|---|
+| no specific task, "show me my wallet", "let's get started" | `session view`, immediately |
+| "find my accounts", "set up Ethereum/Bitcoin" | `account discover <network>` |
+| "give me my address", "deposit address" | `receive <label>` |
+| "what's my ETH balance" | `balances <label>` |
+| "transaction history", "recent activity" | `operations <label>` |
+| "send 0.1 BTC to ...", "transfer", "pay" from their own Ledger | `send <label> --to <address> --amount '<n> <TICKER>'`, dry run per [Safety rules](#safety-rules); on a machine with no USB, see [No USB on this machine](#no-usb-on-this-machine) |
+| "swap A to B", "convert", "trade" | `swap quote`, `swap execute`, `swap status`; load `references/swap.md`; on a machine with no USB, see [No USB on this machine](#no-usb-on-this-machine) |
+| "staking rates", "stake my SOL", "unstake", "my positions" | `earn yields`, `positions`, `deposit`, `withdraw`; load `references/earn.md` |
+| "is my Ledger genuine", "verify authenticity" | `genuine-check`, device on the dashboard |
+| "which token is this contract", token id for a swap | `assets token <network> <address>` or `assets token-by-id <id>` |
+| "encrypt this file with my Ledger", "my ring keys", "wipe my key ring" | `ring init`, `encrypt`, `decrypt`, `keys`, `destroy`; load `references/ring.md` |
+| "enroll this agent", "show my agent-intent profiles", "import my Ledger Wallet accounts", "propose a payment for my approval", "propose a swap for my approval", "recover this agent" | load `references/agent-intent.md` and start at its status gate |
+| "is my payment approved", "what did the agent propose", "cancel that proposal" | load `references/agent-intent.md`, pass its status gate, then step 9 |
+| "start over", "clear my session", "I switched devices" | `session reset` |
 
-| User says                                                                           | Command                                                      |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| "show me my wallet", "what do I have", "let's get started", no specific task        | `session view` (run _immediately_, before asking anything)   |
-| "find my accounts", "scan my wallet", "import my wallet", "set up Ethereum/Bitcoin" | `account discover <network>`                                 |
-| "where do I send funds to", "give me my address", "deposit address"                 | `receive <account>`                                          |
-| "how much do I have", "balance", "what's my ETH balance"                            | `balances <account>`                                         |
-| "what did I send", "transaction history", "recent activity"                         | `operations <account>`                                       |
-| "send X to Y", "transfer", "pay", "withdraw to an exchange"                         | `send <account> --to <address> --amount '<amount> <ticker>'` |
-| "swap A to B", "convert", "trade ETH for BTC", "exchange"                           | `swap quote` -> `swap execute` -> `swap status`              |
-| "where can I earn", "staking rates", "yield/APY", "best return on my ETH/SOL"        | `earn yields [-n <network>]`                                |
-| "what am I staking", "my staking positions", "earn balance"                         | `earn positions <account>`                                  |
-| "stake my SOL", "deposit into a vault", "earn yield on my USDC", "delegate"          | `earn deposit <account> --product <id> --amount '<amount>'` |
-| "unstake", "withdraw my stake", "redeem from vault", "stop earning"                 | `earn withdraw <account> …`                                 |
-| "is this Ledger real", "verify authenticity", "I bought this off eBay"              | `genuine-check`                                              |
-| "encrypt this file / these env vars / publish tokens", "GPG alternative", "secret manager", "decrypt anywhere with my Ledger" | `ring init` -> `ring encrypt --key <name>` / `ring decrypt --key <name>` |
-| "what keys do I have on my ring", "list domains/projects I've encrypted under"       | `ring keys`                                                  |
-| "wipe my key ring", "destroy the ring", "tear down LKRP membership"                 | `ring destroy`                                               |
-| "enroll this agent", "let an agent propose intents", "set up Agent Intent for a bot" | `agent-intent enroll --profile <id> --name <name> --source <runtime>` (no device; blocks until approved), or with `--detach`, then `agent-intent wait --profile <id>` |
-| "recover this agent", "re-enroll an agent into its trustchain"                       | `agent-intent recover --profile <id>` (no device; blocks until approved) |
-| "what agents are enrolled", "list agent profiles"                                    | `agent-intent list`                                            |
-| "show me that agent profile", "what's the fingerprint for this agent"                | `agent-intent show --profile <id>`                             |
-| "pull my synced accounts", "import from Ledger Sync", "sync the agent's accounts"   | `agent-intent sync --profile <id>` (no device)                 |
-| "have the agent request a payment", "propose sending X to Y for approval"            | `agent-intent send --profile <id> --account <label> --to <address> --amount '<amount> <ticker>'` (no device, never broadcasts) |
-| "have the agent propose a swap", "propose swapping X ETH to USDC for approval"        | `agent-intent swap --profile <id> --account <label> --from ethereum --to <currency id> --amount <amount>` (no device, never broadcasts) |
-| "what did the agent propose", "list the agent's intents"                           | `agent-intent intents --profile <id>` (no device; `--status signed,broadcast`, `--cursor` for the next page) |
-| "is my intent approved", "what's the status of intent X", "wait until it's signed"  | `agent-intent status --profile <id> --intent <id>` (no device; poll JSON `intent.status` for one state, `terminal` for a final one) |
-| "cancel intent X", "withdraw the proposal", "the agent changed its mind"            | `agent-intent cancel --profile <id> --intent <id> --yes` (no device; only before the user signs; irreversible) |
-| "start over", "clear my session", "I switched devices"                              | `session reset`                                              |
+## Out of scope
 
----
-
-## Out of scope — say no, don't improvise
-
-If the user asks for any of the following, surface that wallet-cli does not support it yet rather than constructing a command:
+When asked for any of these, tell the human wallet-cli does not support it yet:
 
 - NFTs (mint, transfer, view).
-- OpenPGP-compatible output or key-share / multi-recipient encryption (the `ring` commands encrypt with a per-user Ledger Key Ring, not a sharable key).
-- `send`, `receive`, `operations`, or `swap execute` on testnets and layer 2s (e.g. Base).
-- Custom chains not listed in the Networks line above.
+- OpenPGP-compatible output, key sharing or multi-recipient encryption (`ring` encrypts with a per-user Ledger Key Ring).
+- `send`, `receive`, `operations` or `swap execute` on testnets and layer 2s (e.g. Base).
+- Chains outside the Networks line above.
 
----
+## Core commands
 
-## Session & labels
-
-`account discover` persists accounts. Each gets a label: `<network>[-derivation]-<n>` (e.g. `ethereum-1`, `bitcoin-native-1`, `ethereum_sepolia-1`).
-
-All `--account` flags accept a session label (e.g. `ethereum-1`). Run `account discover` first to populate the session.
-
----
-
-## Commands
-
-| Command              | Device | Sandbox      | TTY†        | Network |
-| -------------------- | ------ | ------------ | ----------- | ------- |
-| `session view`       | No     | No           | No          | No      |
-| `session reset`      | No     | No           | No          | No      |
-| `account discover`   | Yes    | **Required** | No          | Yes     |
-| `receive`            | Yes\*  | **Required** | No          | No      |
-| `send`               | Yes\*  | **Required** | No          | Yes     |
-| `genuine-check`      | Yes    | **Required** | No          | Yes     |
-| `balances`           | No     | No           | No          | Yes     |
-| `operations`         | No     | No           | No          | Yes     |
-| `swap quote`         | No     | No           | No          | Yes     |
-| `swap execute`       | Yes    | **Required** | No          | Yes     |
-| `swap status`        | No     | No           | No          | Yes     |
-| `assets token`       | No     | No           | No          | No      |
-| `assets token-by-id` | No     | No           | No          | No      |
-| `earn yields`        | No     | No           | No          | Yes     |
-| `earn positions`     | No     | No           | No          | Yes     |
-| `earn deposit`       | Yes\*  | **Required** | No          | Yes     |
-| `earn withdraw`      | Yes\*  | **Required** | No          | Yes     |
-| `ring init`          | Yes    | **Required** | Required‡   | Yes     |
-| `ring encrypt`       | No     | **Required** | No          | Yes     |
-| `ring decrypt`       | No     | **Required** | No          | Yes     |
-| `ring keys`          | No     | No           | No          | No      |
-| `ring destroy`       | No     | **Required** | Required‡‡  | Yes     |
-| `agent-intent enroll` | No    | **Required** | No          | Yes     |
-| `agent-intent wait`  | No     | **Required** | No          | No      |
-| `agent-intent recover` | No   | **Required** | No          | Yes     |
-| `agent-intent list`  | No     | No           | No          | No      |
-| `agent-intent show`  | No     | No           | No          | No      |
-| `agent-intent sync`  | No     | **Required** | No          | Yes     |
-| `agent-intent intents` | No   | **Required** | No          | Yes     |
-| `agent-intent status` | No    | **Required** | No          | Yes     |
-| `agent-intent cancel` | No    | **Required** | No§§        | Yes     |
-
-\*`receive` with `--no-verify`, `send` with `--dry-run`, and `earn deposit`/`earn withdraw` with `--dry-run` need no device and no sandbox bypass.
-
-†TTY: whether the command requires an interactive terminal for user input.
-
-§§`agent-intent cancel` asks for confirmation on a terminal; without one (scripts, AI agents) it needs `--yes`.
-
-‡`ring init` requires a password to protect the ring. `WALLET_PASS` must already be provided in the environment by the developer/user before the command runs — the agent never sets or injects it (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)).
-
-‡‡`ring destroy` prompts for typed confirmation (`"destroy"`). Pipe it in non-interactive shells: `echo "destroy" | wallet-cli ring destroy`. If a password was set, `WALLET_PASS` must already be present in the environment (provided by the developer, not the agent).
-
-### session view / reset
+Exact flags: `pnpm --silent wallet-cli start <command> --help`. Add `--output json` when you parse the result.
 
 ```bash
 pnpm --silent wallet-cli start session view
-pnpm --silent wallet-cli start session reset
-```
-
-### account discover
-
-```bash
-pnpm --silent wallet-cli start account discover ethereum
-pnpm --silent wallet-cli start account discover bitcoin
-pnpm --silent wallet-cli start account discover ethereum_sepolia
-```
-
-Networks are CAL network ids: `bitcoin`, `ethereum`, `solana`, `ethereum_sepolia`, `bitcoin_testnet`, `solana_devnet` (the old `ethereum:sepolia` form is still accepted).
-
-### receive
-
-```bash
-pnpm --silent wallet-cli start receive ethereum-1
-pnpm --silent wallet-cli start receive ethereum-1 --no-verify  # skip device confirmation
-```
-
-**If the on-screen address differs from the terminal address:** do not share or use the address. Have the user disconnect the device and run `genuine-check` before retrying. See [`references/business-logic.md`](references/business-logic.md) § Receive-address verification for context.
-
-### genuine-check
-
-```bash
-pnpm --silent wallet-cli start genuine-check
-pnpm --silent wallet-cli start genuine-check --output json  # only if a downstream caller needs to parse the result
-```
-
-**Preconditions:** device unlocked and on the dashboard (exit any open app); host has internet access (the secure channel reaches Ledger's backend — offline runs fail).
-
-### balances
-
-```bash
-pnpm --silent wallet-cli start balances ethereum-1
+pnpm --silent wallet-cli start account discover ethereum      # also bitcoin, solana, ethereum_sepolia, bitcoin_testnet, solana_devnet
+pnpm --silent wallet-cli start receive ethereum-1             # --no-verify skips the device check
 pnpm --silent wallet-cli start balances ethereum-1 --output json
-```
-
-### operations
-
-```bash
-pnpm --silent wallet-cli start operations ethereum-1
 pnpm --silent wallet-cli start operations ethereum-1 --limit 20 --cursor <cursor>
-```
-
-Pagination: next cursor on stderr (human) or `nextCursor` in JSON.
-
-### send
-
-```bash
-pnpm --silent wallet-cli start send ethereum-1 --to 0xDEF... --amount '0.5 ETH'
-pnpm --silent wallet-cli start send ethereum-1 --to 0xDEF... --amount '100 USDT'  # ERC-20
-pnpm --silent wallet-cli start send bitcoin-native-1 --to bc1q... --amount '0.001 BTC' --fee-per-byte 15 --rbf
 pnpm --silent wallet-cli start send ethereum-1 --to 0xDEF... --amount '0.5 ETH' --dry-run
 ```
 
-Ticker is **mandatory** in `--amount`. No `--token` flag — ticker drives asset resolution.
-
-**Bitcoin flags:** `--fee-per-byte <sats>`, `--rbf`
-
-**Solana flags:** `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator <addr>`, `--stake-account <addr>`, `--memo <text>`
-
-**EVM flags:** `--data <hex>` — raw calldata for contract calls (0x-prefixed hex, even digit count). Use for contract interactions the CLI has no dedicated command for (e.g. WETH wrap/unwrap below). Omit for plain native/token transfers.
-
-#### Contract calls with --data (wrap/unwrap example)
-
-Canonical pattern: WETH wrap/unwrap. `deposit()` (wrap ETH → WETH, no args) is selector `0xd0e30db0`, sent with `--amount` as the ETH value. `withdraw(uint256)` (unwrap WETH → ETH, one `uint256` arg = amount in wei) is selector `0x2e1a7d4d` followed by the amount left-padded to 32 bytes.
-
-```bash
-# wrap 0.5 ETH into WETH
-pnpm --silent wallet-cli start send ethereum-1 --to <WETH_CONTRACT_ADDRESS> --amount '0.5 ETH' --data 0xd0e30db0
-
-# unwrap 0.5 WETH back to ETH (0.5 ETH = 500000000000000000 wei = 6f05b59d3b20000 hex, padded to 32 bytes)
-pnpm --silent wallet-cli start send ethereum-1 --to <WETH_CONTRACT_ADDRESS> --amount '0 ETH' --data 0x2e1a7d4d00000000000000000000000000000000000000000000000006f05b59d3b20000
-```
-
-Always run with `--dry-run` first to validate calldata before signing. The CLI cannot verify the semantic correctness of hand-supplied `--data` — the device screen is the last line of defense, so review the decoded call on-device before approving.
-
-### swap quote
-
-Fetches quotes in parallel from the built-in provider list (no device required; addresses are resolved from session accounts).
-
-**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** — native assets (e.g. `ethereum`, `bitcoin`, `solana`) **or token IDs** when the token’s parent chain is a supported native swap currency (same IDs the CLI allows for swap). They are **not** session account labels — use `--from-account` / `--to-account` for accounts.
-
-**Default providers queried by `swap quote` and usable by `swap execute`:** `changelly`, `changelly_v2`, `cic`, `cic_v2`, `exodus`, `lifi`, `nearintents`, `okx`, `oneinch`, `swapsxyz`, `uniswap`, `velora`. Some are CEX/aggregators run through the legacy Exchange-app pipeline; the DEX providers (`uniswap`, `oneinch`, `velora`, `okx`) execute in the partner's embedded coin app — see [swap execute — DEX providers](#swap-execute).
-
-**Accounts:** `--from-account` and `--to-account` accept a session label only; the CLI resolves a fresh receive address from the account like `receive`.
-
-```bash
-pnpm --silent wallet-cli start swap quote --from ethereum --to bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1
-pnpm --silent wallet-cli start swap quote -f ethereum -t bitcoin --amount 0.1 --from-account ethereum-1 --to-account bitcoin-native-1 --output json
-```
-
-Required: `--from`, `--to`, `--from-account`, `--to-account`, `--amount`.
-
-### swap execute
-
-**Currencies:** `--from` / `-f` and `--to` / `-t` are Ledger **currency IDs** (same as `swap quote`): native assets or **tokens** on an allowed parent chain. They must match the asset of the source `--account` and of `--to-account` respectively.
-
-**Providers:** Valid `--provider` values are `changelly`, `changelly_v2`, `cic`, `cic_v2`, `exodus`, `lifi`, `nearintents`, `okx`, `oneinch`, `swapsxyz`, `uniswap`, `velora`. Aliases: `changelly` → `changelly_v2`, `1inch` → `oneinch`. Use the provider id shown on the quote line you pick from `swap quote`.
-
-**DEX providers (`uniswap`, `oneinch`, `velora`, `okx`):** these run end-to-end **in the partner's embedded coin app** on the device (via the Device Intent Executor), not the legacy Exchange app. The flow re-fetches a quote for the chosen provider, then drives an on-device approval + swap sequence (`sign-approval` / `sign-permit2` / `sign-swap` / broadcast), switching device apps as needed — confirm each `Open <app>` and signing prompt on the device.
-
-- **EVM only.** DEX execution requires an **EVM source account** (e.g. `ethereum`); a non-EVM `--account` falls through to the legacy pipeline.
-- **RFQ quotes are not supported in the CLI.** If the picked quote resolves to an RFQ plan (`rfq-order` / `approval-then-rfq-order`), the embedded flow is skipped and execution **falls back to the legacy Exchange-app pipeline** (you'll see a `falling back to legacy Exchange-app pipeline` progress line).
-
-All other providers (`changelly`, `cic`, `exodus`, `nearintents`, `swapsxyz`, `lifi`, …) run the legacy Exchange-app pipeline (nonce → payload → complete exchange → sign/broadcast).
-
-**Fee strategy:** `--fee-strategy` accepts `slow`, `medium` (default), or `fast`. On the legacy pipeline it sets the refund-chain transaction fee.
-
-```bash
-pnpm --silent wallet-cli start swap execute --from ethereum --to bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1
-pnpm --silent wallet-cli start swap execute -f ethereum -t bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --fee-strategy fast
-pnpm --silent wallet-cli start swap execute --from ethereum --to bitcoin --account ethereum-1 --to-account bitcoin-native-1 --provider changelly --amount 0.1 --output json
-# DEX (embedded coin app): EVM-only, source and destination on an EVM chain
-pnpm --silent wallet-cli start swap execute --from ethereum --to ethereum/erc20/usd_tether__erc20_ --account ethereum-1 --to-account ethereum-1 --provider uniswap --amount 0.1
-```
-
-Required flags: `--from`, `--to`, `--account`, `--to-account`, `--provider`, `--amount`. Use a `--provider` value that matches the provider id on the quote line you pick from `swap quote`.
-
-### swap status
-
-```bash
-pnpm --silent wallet-cli start swap status --swap-id <swapId> --provider changelly
-pnpm --silent wallet-cli start swap status --swap-id <swapId> --provider changelly --output json
-```
-
-Required flags: `--swap-id`, `--provider`
-
-### assets token / token-by-id
-
-Resolve token metadata from the cryptoassets store. No device, no session.
-
-```bash
-pnpm --silent wallet-cli start assets token ethereum 0xdac17f958d2ee523a2206206994597c13d831ec7
-pnpm --silent wallet-cli start assets token-by-id ethereum/erc20/usd_tether__erc20_
-```
-
-Use `token` when you have the contract address; use `token-by-id` when you have the id. Exits non-zero if not found.
-
-For non-EVM chains pass `--identifier`.
-
-The `id` printed here is the same id accepted by `swap quote --from` / `--to` and `swap execute --from` / `--to`.
-
-### ring — Ledger Key Ring (LKRP)
-
-Trustless, hardware-rooted encryption for files and text. The key ring is provisioned once on your Ledger via the Ledger Sync app; afterwards `encrypt`/`decrypt` run **without** the device — keys derive deterministically via HKDF-SHA256 from the LKRP-shared root and never leave AES-256-GCM. `encrypt`/`decrypt` still call the LKRP backend to restore the trustchain on each invocation, so network access is required. The ring is recoverable from your seed on any new machine.
-
-```bash
-# One-time provisioning (device required). Password comes from WALLET_PASS in the environment (see below); name the machine with --name.
-pnpm --silent wallet-cli start ring init
-pnpm --silent wallet-cli start ring init --name my-laptop
-
-# File round-trip (no device after init):
-pnpm --silent wallet-cli start ring encrypt --key my-oss-project -i .publish-tokens -o .publish-tokens.enc
-pnpm --silent wallet-cli start ring decrypt --key my-oss-project -i .publish-tokens.enc -o .publish-tokens
-
-# Text via stdin/stdout (clipboard pattern):
-pbpaste | pnpm --silent wallet-cli start ring encrypt --key personal-notes | pbcopy
-pbpaste | pnpm --silent wallet-cli start ring decrypt --key personal-notes | pbcopy
-
-# List the keys this machine has used; tear down the ring:
-pnpm --silent wallet-cli start ring keys
-pnpm --silent wallet-cli start ring destroy
-```
-
-> **Always provision with a password.** The ring must be protected by a password. The user provides it via `WALLET_PASS` in the environment before running `ring init` (see [Non-TTY password injection](#ring--ledger-key-ring-lkrp)) — the agent never provisions a ring without one.
-
-> **Decrypted output is sensitive.** `ring decrypt` emits secrets — never print them to the terminal, `cat` a decrypted file, or otherwise surface the decrypted contents, since they land in the agent transcript, logs, and scrollback. Pipe `decrypt` straight to its destination (a file via `-o`, another process, or the clipboard as shown above) or capture it into an env var; avoid `--output`/logging sinks that could echo it back.
-
-`--key <name>` derives a per-name AES-256-GCM key; matching name at decrypt time is mandatory. Names are free-form (max 253 chars, no whitespace) — common patterns: project slugs (`my-oss-project`), env tags (`openClaw-prod`), notebooks (`personal-notes`).
-
-**Non-TTY (CI / agentic) password injection:** the `ring` commands read the password from the `WALLET_PASS` env var when there is no TTY. **The password itself must be provisioned by the developer/user (exported in the environment or stored in the OS keychain) — the agent never chooses, types, or otherwise handles the secret value; it only references what the user has already provisioned.**
-
-- **Never write the password literally** into a command (e.g. `WALLET_PASS=hunter2 wallet-cli …`, or via a flag). A literal leaks into shell history, `ps` output, CI logs, and — when an agent runs the command — the **agent transcript**. This applies to throwaway/test passwords too: make it a habit, because the same command shape is reused with a real secret.
-- **Always inject via command substitution** so the secret never appears in the command text you type:
-  - macOS : `WALLET_PASS=$(security find-generic-password -a default -s ledger-wallet-cli -w) wallet-cli ring encrypt …`
-  - Linux : `WALLET_PASS=$(secret-tool lookup service ledger-wallet-cli account default) wallet-cli ring encrypt …`
-- **Agents must not handle the secret at all.** Ask the user to store the password once in their OS keychain, then reference only the `$(…)` substitution. If a test or `ring init` needs a password, store a throwaway value in the keychain first (`security add-generic-password -a default -s ledger-wallet-cli -w`) and inject it the same way — never type the literal into a tool call.
-- Even via substitution the value lives in the child process environment (readable via `ps eww` by the same user) — acceptable, but prefer the keychain form and avoid `--output json` sinks or logs that could echo it back.
-
-**Rotation limitation:** the domain key derives from the ring's wallet-sync encryption key, which the LKRP protocol **rotates when a ring member is removed**. After a rotation, data encrypted before it can no longer be decrypted (decrypt fails with a "wrong key name, corrupted data, or the Ledger Key Ring rotated" error, and the CLI prints a `⚠ Ledger Key Ring rotated` warning). Re-encrypt the affected data under the new ring after a member is removed. `ring destroy` aborts (no changes) if you enter a wrong password, and also if `WALLET_PASS` is set but empty (a failed keychain lookup) — this is treated as a mistake, not a skip, so it never orphans the remote ring. To intentionally skip the remote teardown and wipe only local credentials, press Enter at the interactive password prompt.
-
----
-
-## Agent Intent
-
-> **Separate trust model from `ring`.** The agent is a software-only LKRP member: it joins its own
-> Agent Intent (App-18) Trustchain and is granted access to the user's Ledger Sync (App-16) stream,
-> but it never opens the device and never receives `ring`'s (App-17) domain keys.
-
-Agent Intent enrolls a remote agent (a bot proposing transaction intents for human review) as a
-software identity local to this machine — **no device required for enroll/recover/list/show/sync**. Each
-profile gets its own secp256k1 keypair; the private key never leaves the OS keychain (or a plaintext
-key file, only when the human explicitly allowed it — see **Keychain required**) and is never
-printed, logged, or included in any command's output (human or `--output json`).
-
-```bash
-# Create a pending profile, print its signed enrollment URL + fingerprint, then BLOCK until the
-# human approves in the Agent Intent frontend (default environment: production):
-pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code
-pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source other \
-  --environment staging --expires-in 2h
-
-# Same, but print the URL and exit, leaving a background listener; then poll it:
-pnpm --silent wallet-cli start agent-intent enroll --profile my-bot --name "My Bot" --source claude-code \
-  --detach --output json
-pnpm --silent wallet-cli start agent-intent wait --profile my-bot --output json
-
-# Re-enroll an enrolled profile's existing key into its previous Trustchain, then
-# BLOCK until approved (environment/keycloak come from the profile):
-pnpm --silent wallet-cli start agent-intent recover --profile my-bot
-
-# List/inspect local profiles (never reveals the secret key):
-pnpm --silent wallet-cli start agent-intent list
-pnpm --silent wallet-cli start agent-intent show --profile my-bot
-
-# Import the Ledger Sync accounts the agent was granted into the session (explicit, never automatic):
-pnpm --silent wallet-cli start agent-intent sync --profile my-bot
-pnpm --silent wallet-cli start agent-intent sync --profile my-bot --output json
-```
-
-**Always pass `--source`.** It is the runtime or harness the agent runs in (not its model provider):
-`openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot`, or `other` when none
-matches. Omitting it defaults to `other`. The frontend shows it as the agent's source; never pass a
-value outside this list.
-
-**One blocking command, no copy/paste.** `enroll` prints the URL first (with `--output json`: an
-`enrollment-pending` NDJSON event with `enrollmentUrl`, `fingerprint`, `expiresAt` and `keyStore`),
-then waits on an encrypted Trustchain relay channel bound into the signed request. When `keyStore`
-is `plaintext-file`, tell the human the agent key is stored unencrypted before handing over the link.
-The frontend delivers the completion over that channel; there is no `complete` command and no manual
-JSON fallback. **Keep the process running** until it prints the final
-`enrolled` result (json: `status: "success"`, `enrolled: true`, `trustchainId`,
-`accountAccessEnvironment`, `keyStore`). The wait is bounded by `--expires-in` (default 30m). The human should
-open the link once and keep the page open after clicking Review until the device approval finishes:
-leaving the page after Review closes the relay channel and the listener ends (`listener_exited`).
-
-**Can't keep a process running? Use `--detach`** (Linux/macOS only; Windows errors). `enroll
---detach` starts the same listener in the background, prints its `enrollment-pending` line plus
-`listenerPid` and `logPath`, and exits. That can take about 65 seconds (30 for the listener's
-first line, up to 35 more behind a concurrent `--detach` of the same id): set your tool-call timeout
-to at least 90 seconds. If the listener has no link by then (still starting, e.g. at an OS keychain
-unlock prompt), it prints `enrollment-waiting` instead (`profileId`, `listenerPid`, `logPath`, no
-link yet), exit 0, and leaves the listener running: if an OS keychain unlock prompt is showing, ask
-the human to answer it. While that prompt is open, other wallet-cli commands that change local state
-may fail with a lock timeout: answer the prompt first. Remember the profile id: a profile still
-waiting on a keychain prompt does not show in `agent-intent list`, so before starting a new id, run
-`wait` on the previous one. Either way, poll `agent-intent wait --profile <id> [--timeout 25s]`
-(also with the sandbox bypass), which reads local state only and reports one of:
-- `enrolled` (same result as `enroll`), exit 0 — done.
-- `enrollment-waiting` (`profileId`, `listenerPid`, `expiresAt`, `fingerprint` and `keyStore` once
-  the profile is saved, and `enrollmentUrl` while the log still has it), exit 0 — still pending:
-  call `wait` again. While it has no `enrollmentUrl`, do not end your turn: keep calling `wait`,
-  which returns as soon as the link appears.
-- an error with `error.code` `listener_exited`, `listener_stuck` (a live listener has not saved the
-  profile within 10 minutes) or `enrollment_expired`, exit 1 — the enrollment is lost: start a
-  fresh one with a new `--profile` id. A keychain unlock prompt answered too late also ends in
-  `listener_stuck` or `enrollment_expired` (from `enroll` or from `wait`): the key was removed and
-  nothing was saved.
-- the error a listener logged before saving the profile (e.g. `keychain_unavailable` once the
-  human denied a keychain prompt), exit 1 — handle it like the same error from `enroll`.
-- an error with `error.code` `profile_not_found` (no profile, no listener, no error in its log),
-  exit 1 — first check the id with `wallet-cli agent-intent list`, and start a fresh enrollment
-  only if the profile is really absent.
-
-If `enroll --detach` printed `enrollment-waiting` (or timed out in your tool before printing its
-line), hand the human the `enrollmentUrl`, `fingerprint` and `expiresAt` from `wait` once it reports
-them, telling them first when its `keyStore` is `plaintext-file`. End your turn only after the link
-was handed over.
-
-**Nothing is trusted from the relay alone.** Before saving, `enroll` proves the completion: the agent
-key must obtain an App-18 access token for the claimed Trustchain (Keycloak), and must authenticate
-to the claimed App-16 stream with exactly the expected permission. Only then are `trustchainId` and
-the (non-secret) `accountAccess` references written to the profile.
-
-**On timeout, Ctrl+C, or a failed check** the profile stays `pending` (and later `expired`) and
-cannot be resumed — start a fresh enrollment with a **new** `--profile` id.
-
-**Recovery reuses the same key.** `recover --profile <id>` signs a recovery request for the
-profile's existing key and Trustchain (no new key, `accountAccess` untouched), then waits on the relay
-exactly like `enroll` (json: a `recovery-pending` event, then `status: "success"`, `recovered: true`,
-`trustchainId`). Any enrolled profile whose agent key matches the recorded public key can be
-recovered, whatever its `--source`. The completion must name the same agent key, the same signed request
-and the same Trustchain, and the agent key must obtain an App-18 token for it (App-16 is not
-re-checked). While it waits, `list`/`show` report `recovering`; on timeout, Ctrl+C, or a failed
-check the marker is cleared and the profile stays `enrolled` with its previous data — re-run
-`recover` to retry.
-
-**Fingerprint is the safety check.** `enroll` prints a public-key fingerprint alongside the
-enrollment URL, and `show` prints the same fingerprint for any profile afterwards — compare it
-against what the Agent Intent frontend/device displays before approving. A mismatched fingerprint
-means the enrollment request was tampered with or sent to the wrong agent.
-
-**Duplicate protection:** `enroll` refuses to reuse a `--profile` id already recorded in the session,
-and separately refuses if a keychain entry or a stale key file for that id exists without a matching
-session record (an inconsistent state you must clear manually before re-enrolling under the same id).
-
-**Keychain required:** `enroll` needs a working OS keychain — macOS Keychain, Windows Credential
-Manager, or on Linux a running Secret Service provider (e.g. gnome-keyring or KeePassXC) with an
-unlocked collection. Without one (headless Linux, containers, some CI runners) `enroll`, and every
-command reading an `os-keychain` profile, fails with `keychain_unavailable` (json `error.code`) and
-saves nothing. Make sure it ran with the sandbox bypass first. If the message says the OS keychain
-refused to store the agent key or can't read the profile's entry (e.g. a locked collection), ask the
-human to unlock it and re-run the same `enroll`. If it still fails, or the human can't unlock it,
-**stop and ask the human, verbatim:**
-
-> My environment doesn't support keychain access. To use and persist my access credentials I need to save passwords in plaintext in my environment. I won't be able to perform actions without your approval on Ledger Agent Intent. Can I proceed?
-
-Only after an explicit yes **in the current conversation** re-run the same `enroll` with
-`--allow-plaintext-key`. On a no (or anything short of a clear yes), stop: don't enroll, and
-report that enrollment can't be completed in this environment. Never add the flag pre-emptively,
-and never on consent from an earlier or other session. The OS keychain still wins when it is
-available and accepts the write (a notice on stderr says the flag was ignored). Otherwise the key
-goes to `<stateDir>/agent-intent-keys/<profile>.key` (e.g. `~/.local/state/ledger-wallet-cli/…`),
-mode 0600 but **unencrypted**, and `enroll` names that file in a stderr notice; every
-command reading it warns on stderr, and `show` reports it (json `keyStore: "plaintext-file"`,
-human "Key store" line). A key file that group or others can access, that another user owns, or that
-is a symlink is refused; `chmod 600` fixes loose permissions. A `plaintext-file` profile
-needs a wallet-cli whose `agent-intent enroll --help` lists `--allow-plaintext-key`: an older one
-doesn't know the key file and drops `keyStore` when it rewrites the session file. An existing
-profile that fails with `keychain_unavailable` can't be read here: first ask the human whether it
-was enrolled from a session with a working keychain (e.g. a desktop session) and run from there, or
-make that Secret Service reachable. Only when the human confirms an older wallet-cli enrolled it
-here without one (its key went to the kernel keyring and is gone), re-enroll under a new
-`--profile` id (same consent rule).
-
-On macOS and Windows a refused write fails `enroll` with the generic `Could not store the agent's
-secret key in the OS keychain`, and an existing entry it can't read with `Could not read the OS
-keychain entry` (no `keychain_unavailable`). Make sure it ran with the sandbox bypass; if it still
-fails, stop and ask the human to unlock the keychain or allow access in the system prompt, then
-re-run the same `enroll`. If that's not possible, report that enrollment can't be completed in this
-environment. Never offer `--allow-plaintext-key` for these errors: the plaintext fallback is
-Linux-only.
-
-**Environment isolation:** each profile records the environment (`staging`/`production`) it was
-enrolled against. A completion whose `accountAccess.environment` doesn't match is rejected, so a
-profile enrolled for staging can never end up holding a production Trustchain ID. `--bff-url` and
-`--keycloak-url` override that environment's defaults (http(s) only, no `user:pass@`).
-
-**Status is derived, not stored:** `list`/`show` compute `pending` / `enrolled` / `recovering` /
-`expired` from `trustchainId`, `enrollmentExpiresAt` and any unexpired recovery marker, and show the granted account access (environment +
-App-16 application path) once enrolled.
-
-### Syncing Ledger Sync accounts
-
-`agent-intent sync --profile <id>` imports the accounts synchronized from your other Ledger Wallet
-instances (desktop, mobile) so they can be referenced by label. It authenticates with the **agent's
-own key** (keychain or key file), which the frontend added to the App-16 stream at enrollment — it
-never opens the device and there is no separate Ledger Sync enrollment. The environment comes from
-the profile's `accountAccess`.
-
-- **Requires an enrolled profile:** a `pending`/`expired` profile (no `accountAccess`) or a missing
-  agent key fails with a clear error.
-- **Lost access is reported, not repaired:** if the agent was removed from Ledger Sync, `sync`
-  reports "no longer has Ledger Sync access" and deletes nothing.
-- **Key rotation is followed:** if Ledger Sync rotated its key (a member was removed), the profile's
-  `accountAccess` is updated to the new application path and the sync proceeds.
-- **Additive and idempotent:** never deletes or re-labels a session account and never uploads
-  anything; a repeat run reports `unchanged` entries or "Up to date".
-- **Unsupported/malformed entries are isolated:** an account for a currency family wallet-cli
-  doesn't support (only bitcoin/evm/solana) is `skipped`, a malformed one is `invalid` — the rest of
-  the import still proceeds, and an `invalid` entry keeps the next sync from treating the data as
-  up to date. The first sync after the wallet-cli version changes pulls every account again, so a
-  `skipped` one the new version supports is imported then.
-
-### Proposing a payment (`agent-intent send`)
-
-`agent-intent send` **proposes** an Ethereum or Solana send for a human to review — it never signs or
-broadcasts anything and needs no device. It signs the proposal with the profile's key, submits it
-to the Agent Intent service, and prints a review link; the payment only happens if a human opens
-that link and approves it on their Ledger device.
-
-```bash
-# Native ETH, sender from a session label:
-pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
-  --to 0xRecipient --amount '0.01 ETH' --description "Invoice #42"
-
-# ERC-20: the ticker picks the token (see Tokens below):
-pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
-  --to 0xRecipient --amount '25 USDC'
-
-# ERC-20 named by its contract; the ticker in --amount must match it:
-pnpm --silent wallet-cli start agent-intent send --profile my-bot --from 0xSender \
-  --to 0xRecipient --amount '25 USDC' --token 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48
-
-# Native SOL: the 'SOL' ticker makes it a Solana send; base58 addresses, optional on-chain memo:
-pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
-  --to RecipientBase58 --amount '0.5 SOL' --memo "Invoice 42"
-
-# SPL token: a base58 --token is the mint, so the send is on Solana:
-pnpm --silent wallet-cli start agent-intent send --profile my-bot --account solana-1 \
-  --to RecipientBase58 --amount '25 USDC' --token EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
-
-# Validate everything and print the proposal without submitting (no keychain, no sign-in):
-pnpm --silent wallet-cli start agent-intent send --profile my-bot --account ethereum-1 \
-  --to 0xRecipient --amount '0.01 ETH' --dry-run
-```
-
-- **Enrolled profile only** (its `agent-intent enroll` approval went through). It uses the
-  profile's environment, the BFF and Keycloak URLs recorded at enroll time (so an enroll-time
-  `--bff-url`/`--keycloak-url` override carries over), and its agent key (OS keychain or key file).
-- **Mainnet only:** Ethereum for ETH and ERC-20, Solana for SOL and SPL tokens. `--token` picks
-  the network by its shape (a `0x` contract → Ethereum, a base58 mint → Solana, anything else is
-  an error); without it, `ETH` and `SOL` are native sends, and any other ticker is a token on the
-  sender's network (the `--account`'s; for `--from`, `0x` → Ethereum, base58 → Solana). A
-  `--account` label must be a mainnet account of that network. The Agent Intent SDK has no
-  testnet, so a staging profile also proposes a mainnet transfer.
-- **Addresses:** on Ethereum, `--from`, `--to` and `--token` must be `0x` + 40 hex characters, and
-  mixed-case input must pass its EIP-55 checksum, which catches a typo in a copied address. On
-  Solana, `--from` and `--to` must be canonical base58 32-byte addresses.
-- **Tokens** are looked up in CAL (`assets token ethereum|solana <address>`), and the `--amount`
-  ticker must match. Token-2022 mints are refused, because Agent Intent can't send them yet.
-  Without `--token`, the ticker resolves to the one listed token of that ticker the `--account`
-  holds a balance of (this syncs the account; among several, Token-2022 mints don't count), else,
-  or when the account can't be read (stderr says why), to the one listed CAL token with it, and
-  stderr names the address picked. Tickers aren't unique: several matches is an error listing the
-  candidates (pick one with `--token`), and so is a ticker CAL doesn't list on that network. CAL
-  matches tickers case-sensitively: type mixed-case ones as listed (`USDe`, `stETH`).
-- **Solana** takes no `--fee-strategy`, because the service sets the priority fee. `--memo` (1-280
-  characters, an emoji counts as two; Solana only) goes on chain with the transfer.
-- **Amounts are exact and never rounded.** More decimals than the asset has, zero, or an amount
-  above uint256 (u64 lamports on Solana) is an error. JSON output gives `amount` in base units
-  (wei, token units or lamports) as a string, and the envelope's `network` as `ethereum` or
-  `solana`.
-- **`--fee-strategy slow|medium|fast`** (Ethereum only, default `medium`) is the fee level the human
-  is asked to approve. wallet-cli doesn't check the sender's balance; the human reviewing the intent is
-  responsible for that.
-- **Don't retry blindly.** If the service accepted the request (a timeout, or an unreadable link),
-  the intent may already exist. Check the frontend before re-running, or you'll propose a duplicate.
-  A service rejection is explained with a next step (for example, re-enroll after an issuer mismatch).
-
-### Proposing a swap (`agent-intent swap`)
-
-`agent-intent swap` **proposes** an Ethereum swap for a human to review, in the same way as
-`agent-intent send`: it never signs or broadcasts, needs no device, and prints a review link.
-It first asks the Swap API for quotes, then signs the pair, the amounts and the provider of the
-best quote the Agent Intent frontend can prepare. When the human opens the link, the frontend
-fetches a fresh quote and builds the transaction.
-
-```bash
-# Sell 0.5 ETH for USDC at the best quote (currency ids, as in `swap quote`):
-pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
-  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --description "Rebalance"
-
-# Quote one provider only:
-pnpm --silent wallet-cli start agent-intent swap --profile my-bot --sender 0xSender \
-  --from ethereum/erc20/usd__coin --to ethereum --amount 1000 --provider oneinch
-
-# Quote and validate without submitting (doesn't read the agent key or sign in):
-pnpm --silent wallet-cli start agent-intent swap --profile my-bot --account ethereum-1 \
-  --from ethereum --to ethereum/erc20/usd__coin --amount 0.5 --dry-run
-```
-
-- **Enrolled profile only**, as for `agent-intent send`. **Ethereum mainnet only**: `--from` and
-  `--to` are `ethereum` or an Ethereum ERC-20 currency id (`assets token ethereum <contract>`
-  prints it), and the sender is a `--account` label or a `--sender` address.
-- **Amounts are human units** (`0.5` ETH, `1000` USDC), never rounded. More decimals than the
-  asset has, zero, a sign or an exponent is an error. The quoted amount to receive is rounded
-  **down** to the bought asset's precision. JSON output gives `fromAmount` and `toAmount` as strings.
-- **Providers:** only `oneinch`, `velora`, `okx` and `lifi`, the ones the frontend can turn into a
-  transaction today (`1inch` is accepted for `oneinch`). A quote that needs a Permit2 signature is
-  skipped, and so is one whose token approval the frontend can't send: an approval of another token
-  than the one sold, or USDT with an allowance left or not reported (its `approve` fails until the
-  allowance is reset to 0). The intent would stay stuck in review.
-- **Token approval:** the best quote is kept even when the sold token needs an approval first. The
-  reviewer approves it in the Agent Intent frontend, in a separate transaction with its own network
-  fee, then reviews the swap. The command says so on stderr, and JSON output has
-  `needsTokenApproval: true`.
-- **`--to-amount`** signs your own expected amount instead of the quoted one. The swap is still
-  quoted, so the provider is always one the frontend can prepare. More than 5% above the quote
-  prints a warning on stderr (with `--dry-run` too): the reviewer sees a fresh quote, with your
-  amount shown only as the proposal it replaced.
-- **Don't retry blindly**, as for `agent-intent send`: if the service accepted the request, the
-  intent may already exist.
-### Listing the agent's intents (`agent-intent intents`)
-
-`agent-intent intents` lists the intents an enrolled profile proposed, most recent first. It signs
-in with the profile's key like `send`, and the service only returns that agent's own intents, never
-another agent's, even on the same Trustchain.
-
-```bash
-pnpm --silent wallet-cli start agent-intent intents --profile my-bot
-pnpm --silent wallet-cli start agent-intent intents --profile my-bot --status signed,broadcast --page-size 50
-# Next page: pass the previous page's nextCursor (filters and page size carry over):
-pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <nextCursor> --output json
-```
-
-- **One page per run.** `--page-size` is 1, 5, 10, 50 or 100 (default 10). When more intents exist,
-  JSON has a `nextCursor` (human output prints the follow-up command); it is `null` on the last
-  page. `--cursor` keeps the first page's filters and page size, so it refuses `--status` and
-  `--page-size`. The human table shows the creation time in UTC.
-- **`--status`** takes comma-separated states: `created`, `crafted`, `signed`, `broadcast`,
-  `success`, `failed`, `rejected`, `cancelled`, `expired`. An unknown state is rejected before
-  signing in.
-- **JSON** (`--output json`): `profileId`, `count`, `nextCursor`, and `intents[]` with `id`,
-  `status`, `type`, `network`, `sender`, `recipient`, `amount` (exact base units, a string),
-  `displayAmount` (e.g. `"0.01 ETH"`, `null` when the asset is unknown), `asset`, `feeStrategy`,
-  `description`, `failureReason`, `createdAt` and `updatedAt`. An empty page is a success with
-  `count: 0`.
-- **Read-only:** it never creates, approves or cancels anything, so a failure is always safe to
-  re-run.
-
-### Checking one intent (`agent-intent status`)
-
-`agent-intent status` reads the current status and details of one intent the profile proposed, by
-the id `agent-intent send` printed (or `agent-intent intents` lists).
-
-```bash
-ID=0192f7a4-0000-7000-8000-000000000001
-pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID"
-
-# Poll while the intent is known to be in progress; stop on a final state (terminal: true),
-# an unknown one (terminal: null) or an error, then read the status:
-while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.terminal == false' >/dev/null; do sleep 30; done
-
-# To wait for one state, e.g. until the user signs, poll intent.status instead (signed is not final):
-while pnpm --silent wallet-cli start agent-intent status --profile my-bot --intent "$ID" --output json | jq -e '.intent.status == "created" or .intent.status == "crafted"' >/dev/null; do sleep 30; done
-```
-
-- **States:** `created`, `crafted`, `signed`, `broadcast` are in progress (`terminal: false`);
-  `success`, `failed`, `rejected`, `cancelled`, `expired` are final (`terminal: true`). A state this wallet-cli
-  version doesn't know is shown as-is with `terminal: null`: don't treat it as final or as an error.
-- **JSON** (`--output json`): `profileId`, `terminal`, and `intent` with the same fields as an
-  `agent-intent intents` entry (exact base-unit `amount` as a string, `displayAmount`,
-  `failureReason` for a failed intent, timestamps).
-- **Not found:** an unknown id and another agent's intent get the same answer, so the error can't
-  tell them apart. A malformed id is rejected before signing in.
-- Needs a service that lets agents read single intents; an older one says so and points to
-  `agent-intent intents`.
-
-### Cancelling an intent (`agent-intent cancel`)
-
-`agent-intent cancel` withdraws an intent the profile proposed, while the user has not signed it
-yet. An intent can't be edited: to change a proposal before the user signs it, cancel it and send
-a new one.
-
-```bash
-pnpm --silent wallet-cli start agent-intent cancel --profile my-bot --intent 0192f7a4-0000-7000-8000-000000000001 --yes
-```
-
-- **When:** only a `created` or `crafted` intent can be cancelled. A state this wallet-cli version
-  doesn't know goes to the service, which decides. Any other known state (`signed`
-  included, since its transaction may still land on-chain) fails with the current state and changes
-  nothing. Cancellation is **irreversible**.
-- **Confirmation:** on a terminal it shows the intent and asks `[y/N]` on stderr. Without a
-  terminal (scripts, AI agents, piped input) it refuses unless `--yes` is given, before signing in.
-  As an agent, only pass `--yes` when the user asked to cancel this intent.
-- **Repeats:** cancelling an already cancelled intent succeeds and reports
-  `alreadyCancelled: true`, also when another cancel gets there first. If the user signs it in the
-  meantime, the command fails and reports the new state.
-- **JSON** (`--output json`): `profileId`, `cancelled: true`, `alreadyCancelled`, `readBack` and
-  `intent` as the service reports it after the cancellation (same fields as `agent-intent status`).
-  `readBack: false` means that read failed: `intent` is the earlier read marked `cancelled`. A
-  declined prompt prints `cancelled: false` and `declined: true` with the `intentId` (unlike
-  `ring destroy`, where `cancelled: true` means the prompt was declined).
-- **Not found:** an unknown id and another agent's intent get the same answer, as for
-  `agent-intent status`.
-
----
-
-## earn (staking & DeFi yield)
-
-Earn covers two flows: **Ethereum** ERC-4626 DeFi vaults (deposit/redeem) and **Solana** native staking (delegate/undelegate). `yields` and `positions` are read-only (no device); `deposit` and `withdraw` sign on the device.
-
-> **Only ethereum & solana** support `deposit`/`withdraw`. Other networks appear in `earn yields` (informational) but cannot be deposited to via the CLI.
-
-### earn yields
-
-Lists yield opportunities (no device). Without `--network` it prints every network's headline rate. **With `-n ethereum` or `-n solana` it also prints the concrete deposit targets**, each ending with the exact `→ --product <id>` value to pass to `earn deposit`:
-
-- **ethereum** → ERC-4626 vault ids (e.g. `1_0x7daeba3f217614e409f85d3014d33923a6b03630`).
-- **solana** → validator vote accounts. The CLI surfaces the **Ledger-operated** validators ("Ledger by Figment", "Ledger by Bitwise") as the recommended targets; any other valid vote account also works as `--product`.
-
-```bash
-pnpm --silent wallet-cli start earn yields
-pnpm --silent wallet-cli start earn yields -n solana
-pnpm --silent wallet-cli start earn yields -n ethereum --output json
-```
-
-There is no separate "list validators / vaults" command — `earn yields -n <network>` **is** how you discover a valid `--product`. In JSON, the value is the `vaultId` (ETH) or `validator` (SOL) field on each row.
-
-### earn positions
-
-Lists active earn positions for an account (no device). Account-based networks only (solana, ethereum).
-
-```bash
-pnpm --silent wallet-cli start earn positions solana-1
-pnpm --silent wallet-cli start earn positions solana-1 --fresh   # request a background refresh
-```
-
-`--fresh` flags stale rows for an async backend refresh; the refreshed data shows up on a **re-run**, not in the same response. Watch for the `(stale)` marker.
-
-**Solana stake accounts:** for Solana accounts the command also reads on-chain stake accounts and prints each one's `→ --stake-account <address>`, its `state` (active / inactive / activating / deactivating), balance, and validator. **This is where you get the `--stake-account` value for `earn withdraw`.** In JSON they're a **top-level `stakes[]`** array alongside `positions` (each entry: `stakeAccount`, `validator`, `state`, `stakeBalance`, `withdrawable`); the `stakes` key is omitted entirely when there are none. Stake accounts show up here right after a deposit even if the backend snapshot is still empty. (Requires a chain sync; if it can't be reached the backend snapshot still prints, with a warning.)
-
-### earn deposit
-
-Stakes (Solana) or deposits into a vault (Ethereum). **Touches the device** to sign — bypass the sandbox. `--product` comes from `earn yields -n <network>` (see above). `--amount` requires a ticker.
-
-```bash
-# Solana: --product is a validator vote account
-pnpm --silent wallet-cli start earn deposit solana-1 --product 26pV97Ce83ZQ6Kz9XT4td8tdoUFPTng8Fb8gPyc53dJx --amount '1.5 SOL'
-# Ethereum: --product is a vault id
-pnpm --silent wallet-cli start earn deposit ethereum-1 --product 1_0x7daeba3f217614e409f85d3014d33923a6b03630 --amount '100 USDC'
-# Validate without signing (no device, no sandbox bypass)
-pnpm --silent wallet-cli start earn deposit solana-1 --product 26pV97… --amount '1.5 SOL' --dry-run
-```
-
-Solana `stake.createAccount` creates **and** delegates the stake account in one transaction. Ethereum deposits may run two transactions (ERC-20 `approve` then `deposit`).
-
-**First-time ETH vault deposit — dry-run can't validate the deposit leg.** A first deposit into a vault you've never used is `approve` → `deposit`, and the deposit can only be built once a non-zero allowance exists on-chain. In `--dry-run` nothing is broadcast, so when an approve is still required the CLI validates the approve and **skips** the deposit build (status `not-simulated …`, overall `dry-run: approve validated; deposit needs an on-chain allowance to simulate`) rather than surfacing the backend's opaque 500. This is expected — **not** a balance error. The only way to validate the deposit leg is the real run (broadcast `approve`, wait for confirmation, then `deposit`). Treat a clean dry-run here as "approve is fine"; **confirm with the user before the live run** since it's an irreversible on-device signature. Once the allowance exists, a re-run of `--dry-run` will simulate the deposit normally.
-
-### earn withdraw
-
-Unstakes (Solana) or redeems from a vault (Ethereum). **Touches the device** — bypass the sandbox.
-
-- **Ethereum:** `--product <vault-id>` required; `--amount` optional. The amount is in the vault's **asset** units (e.g. `'50 USDC'`); if a ticker is given it must match the vault asset. **Omit `--amount` for a full exit:** the CLI sends `amount:"max"` and the backend redeems the entire share balance, leaving no dust (don't compute the asset amount yourself for a full exit — the share→asset rate drifts).
-- **Solana:** `--stake-account <address>` (required). **Two-phase:** run once to `undelegate` (deactivate), wait for the deactivation epoch boundary (~2–3 days), then re-run with `--finalize` to withdraw the now-inactive lamports back to the main account. coin-solana computes the withdrawable amount on-chain, so `--amount` is ignored on finalize.
-
-```bash
-# Ethereum vault redeem
-pnpm --silent wallet-cli start earn withdraw ethereum-1 --product 1_0x7daeba3f… --amount '50 USDC'
-# Solana phase 1: deactivate
-pnpm --silent wallet-cli start earn withdraw solana-1 --stake-account <stakeAccountAddr>
-# Solana phase 2 (after ~2–3 days): withdraw
-pnpm --silent wallet-cli start earn withdraw solana-1 --stake-account <stakeAccountAddr> --finalize
-```
-
-Get the Solana `--stake-account` address from `earn positions <account>` (its `stakes[]` / `→ --stake-account` lines) — that's the stake account created by your earlier `earn deposit`.
-
----
-
-## Common errors
-
-| Error                                                                                                 | Cause                                                                                                                                                  | Fix                                                                                                                                                                                                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Amount must include a ticker`                                                                        | `--amount` missing ticker                                                                                                                              | **Ask the user which asset they mean** — do not guess. Then pass the ticker inline, e.g. `--amount '0.5 ETH'`.                                                                                                                                                                                                                                                                        |
-| `Ticker UNKN not found in account`                                                                    | ticker not in account balances                                                                                                                         | Run `balances <account>` and show the user the tickers held by this account. **Ask the user which ticker to use, or whether they meant a different account — do not silently substitute another ticker.**                                                                                                                                                                             |
-| `[✖] Wrong app. Open Ledger dashboard.` (exit code 4)                                                | `genuine-check` invoked while a currency app is open. Unlike other device commands, `genuine-check` targets the dashboard and has no auto-launch path. | Ask the user to exit the foreground app on the device (short-press both buttons on the app's main screen until `Quit` shows, then confirm), then re-run `genuine-check`. Other device commands (`account discover`, `receive`, `send`, `swap execute`) don't hit this — they auto-prompt the correct app launch.                                                                      |
-| `[✖] Rejected on device. No action taken.`                                                           | user rejected a sign request on device                                                                                                                 | The rejection was deliberate. **Ask the user whether to retry or abort** — do not auto-retry. If they retry, have them review amount, recipient, and fees on the device screen before approving.                                                                                                                                                                                      |
-| `[✖] Rejected on device. App was not opened.`                                                        | user rejected the app-open prompt on device                                                                                                            | Ask the user to confirm the app-open prompt on the device and re-run the command.                                                                                                                                                                                                                                                                                                     |
-| `[✖] Timed out talking to the Ledger over USB. The device may be busy or locked. Retry the command.` | sandbox blocking USB, or device busy/locked                                                                                                            | Surface to the user that the command needs `dangerouslyDisableSandbox: true` and **ask for confirmation before re-running with the bypass**. The bypass is expected for device commands (`account discover`, `receive`, `send`, `genuine-check`, `swap execute`, `earn deposit`, `earn withdraw`, `ring init`); if this error fires on any other command, investigate before bypassing rather than disabling the sandbox by reflex. |
-| `[object Object]` or garbled APDU output                                                              | two device commands running in parallel (contention)                                                                                                   | Run device-touching commands sequentially — never in parallel tool calls.                                                                                                                                                                                                                                                                                                             |
-| `[✖] Ledger not detected. Plug in, unlock, retry.` (exit code 3)                                     | device powered off or unplugged                                                                                                                        | Ask the user to power on the device, unlock it, and connect via USB, then re-run the command.                                                                                                                                                                                                                                                                                         |
-| `[✖] Speculos not reachable at <url>. …` (exit code 3)                                               | `SPECULOS_API_PORT` set, but no Speculos answers there, or the connect fails                                                                           | Ask the user to start Speculos, fix the variables, or unset them to use a USB Ledger.                                                                                                                                                                                                                                                                                                 |
-| `[✖] Timed out talking to Speculos at <url>. …` (exit code 6)                                        | the emulated app waits for a button press, no answer to the connect, or a different app than the command needs                                         | Tell the user the flow needs an on-device approval, or that Speculos is down or runs an app this command does not use.                                                                                                                                                                                                                                                                |
-| `device-state … awaiting_approval … reason: unlock` (JSON stream)                                     | device locked                                                                                                                                          | Keep the command running — the CLI resumes automatically once unlocked. Ask the user to unlock the device with their PIN.                                                                                                                                                                                                                                                             |
-| `keychain_unavailable` (json `error.code`) | `agent-intent enroll` (or `wait`, from its listener's log): no Secret Service on Linux, or the OS keychain refused to store the agent key or can't read the profile's entry (e.g. a locked collection). Other `agent-intent` commands: the profile's keychain can't be reached | Follow **Keychain required**: when the keychain refused the write or can't read the entry, ask the human to unlock it first; never add `--allow-plaintext-key` without the human's explicit yes. |
-| `Could not store the agent's secret key in the OS keychain` or `Could not read the OS keychain entry` | `agent-intent enroll` on macOS/Windows: the keychain refused the write, or the read of an existing entry (locked, or access denied) | Re-run with the sandbox bypass; if it still fails, ask the human to unlock the keychain or allow access, then re-run. Never offer `--allow-plaintext-key` (Linux-only). |
+- **receive:** when the address on the device differs from the terminal, keep the address unused and unshared; have the human disconnect the device and run `genuine-check` before retrying.
+- **assets:** `assets token <network> <contract>` when you have the contract address, `assets token-by-id <id>` when you have the id; non-EVM chains take `--identifier`. Both exit non-zero when the token is unknown, and the printed `id` is the currency id that `swap` takes in `--from` and `--to`.
+- **operations:** the next page cursor arrives on stderr (human output) or as `nextCursor` (JSON).
+- **send:** the ticker in `--amount` is mandatory and selects the asset, so a token transfer is just `--amount '100 USDT'`. Bitcoin: `--fee-per-byte <sats>`, `--rbf`. Solana: `--mode send|stake.createAccount|stake.delegate|stake.undelegate|stake.withdraw`, `--validator`, `--stake-account`, `--memo`.
+- **send `--data`** (EVM calldata, `0x` hex with an even digit count) covers contract calls with no dedicated command. Canonical pattern, WETH: wrap with `--data 0xd0e30db0` and the ETH value in `--amount`; unwrap with `--amount '0 ETH' --data 0x2e1a7d4d<amount in wei as hex, left-padded to 32 bytes>`. wallet-cli cannot check what hand-written calldata means, so every `--data` call takes the dry run ([Safety rules](#safety-rules)) and the human reads the decoded call on the device.
+
+## References: load when
+
+| Reference | Load when |
+|---|---|
+| [`references/agent-intent.md`](references/agent-intent.md) | the request is about enrolling or recovering an agent, agent-intent profiles, importing accounts from Ledger Sync, proposing a payment or swap for approval, or checking or cancelling a proposal; or you are about to run any `pnpm --silent wallet-cli start agent-intent` command |
+| [`references/ring.md`](references/ring.md) | before any `pnpm --silent wallet-cli start ring` command |
+| [`references/swap.md`](references/swap.md) | before any `pnpm --silent wallet-cli start swap` command |
+| [`references/earn.md`](references/earn.md) | before any `pnpm --silent wallet-cli start earn` command |
+| [`references/errors.md`](references/errors.md) | a command outside agent-intent exits non-zero or prints `[✖]`, before you retry it |
+| [`references/business-logic.md`](references/business-logic.md) | the human asks why something works the way it does, or you need to justify a safety rule |

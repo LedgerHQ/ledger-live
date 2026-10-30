@@ -1,0 +1,10 @@
+{
+  "name": "ledger",
+  "description": "Ledger wallet-cli skill for AI agents: run Ledger hardware-wallet flows from the terminal, and enroll as an Agent Intent agent that imports Ledger Sync accounts and proposes payments that a human approves on their Ledger device.",
+  "author": {
+    "name": "Ledger"
+  },
+  "homepage": "https://github.com/LedgerHQ/agent-skills",
+  "repository": "https://github.com/LedgerHQ/agent-skills",
+  "keywords": ["ledger", "wallet-cli", "hardware-wallet", "agent-intent", "ledger-sync", "ethereum"]
+}
