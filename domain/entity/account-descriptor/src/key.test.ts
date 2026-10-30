@@ -52,6 +52,12 @@ describe("accountDescriptorKey", () => {
       accountDescriptorKey(utxo("m/84h/0h/1h")),
     );
   });
+
+  it("separates a mock from the real account it mirrors", () => {
+    expect(accountDescriptorKey({ ...utxo("m/84h/0h/0h"), purpose: "mock" })).not.toBe(
+      accountDescriptorKey(utxo("m/84h/0h/0h")),
+    );
+  });
 });
 
 describe("computeAccountUUID", () => {

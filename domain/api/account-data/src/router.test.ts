@@ -579,12 +579,12 @@ describe("addSource", () => {
   });
 
   it("routes a descriptor only to the sources serving its purpose, account by default", async () => {
-    const router = createAccountDataRouter([{ ...constant("none", 0), purposes: [] }]);
-    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
-      NoAccountDataSourceError,
-    );
-    router.addSource(constant("real", 1));
-    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    const mock = { ...descriptor, purpose: "mock" as const };
+    const router = createAccountDataRouter([constant("real", 0)]);
+    await expect(router.read("counter", mock)).rejects.toBeInstanceOf(NoAccountDataSourceError);
+    router.addSource({ ...constant("mock", 1), purposes: ["mock"] });
+    await expect(router.read("counter", mock)).resolves.toMatchObject({ data: 1 });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
   });
 });
 

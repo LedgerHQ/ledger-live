@@ -24,6 +24,7 @@ import {
   useAccountDataToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
+  useMockAccountsToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
@@ -102,6 +103,7 @@ export function useDevToolsScreenViewModel() {
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
+  const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -118,6 +120,7 @@ export function useDevToolsScreenViewModel() {
       { id: "account-operation", config: accountOperationToolProps },
       { id: "account-name", config: accountNameToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
+      { id: "mock-accounts", config: mockAccountsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -133,6 +136,7 @@ export function useDevToolsScreenViewModel() {
       accountPortfolioToolProps,
       accountDataToolProps,
       accountNameToolProps,
+      mockAccountsToolProps,
     ],
   );
 
