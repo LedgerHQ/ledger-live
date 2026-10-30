@@ -211,6 +211,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
         readString(onboarding.context?.firmwareVersion),
         readString(onboarding.context?.availableFirmwareVersion),
       ),
+      firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
       onStart: () =>
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" }),
       onRetry: () => send({ type: "RETRY" }),
