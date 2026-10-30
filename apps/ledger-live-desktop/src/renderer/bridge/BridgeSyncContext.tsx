@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "LLD/hooks/redux";
 import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { syncableAccounts } from "~/renderer/bridge/demoHistory";
 import { recentlyChangedExperimental } from "~/renderer/experimental";
 import { track } from "@shared/analytics";
 import { prepareCurrency, hydrateCurrency } from "./cache";
@@ -28,7 +29,7 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
   }, []);
   return (
     <BridgeSync
-      accounts={accounts}
+      accounts={syncableAccounts(accounts)}
       updateAccountWithUpdater={updateAccount}
       recoverError={recoverError}
       trackAnalytics={trackAnalytics}

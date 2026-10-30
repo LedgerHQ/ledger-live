@@ -5637,6 +5637,10 @@
           "title": "Empty generation",
           "desc": "Generate an empty account"
         },
+        "addOperations": {
+          "title": "Add mock operations",
+          "desc": "Adds 10 mock operations to every existing account and recomputes its balance, keeping the account's own addresses. Use it to give a device account a populated history."
+        },
         "stablecoinGenerate": {
           "title": "Stablecoin preset",
           "desc": "Generate Ethereum, Arbitrum, Optimism, Base, Solana, Tron and Algorand accounts with top stablecoins (max 5 per network)"
@@ -5662,6 +5666,8 @@
           "generateAccounts_other": "Generate {{count}} accounts",
           "generateAccountsQuick": "Generate {{count}} accounts",
           "generateEmptyAccount": "Generate empty account",
+          "addMockOperations": "Add {{count}} operation",
+          "addMockOperations_other": "Add {{count}} operations",
           "generateStablecoinAccounts": "Generate {{count}} stablecoin account",
           "generateStablecoinAccounts_other": "Generate {{count}} stablecoin accounts",
           "generateStockAccounts": "Generate {{count}} stock account",
