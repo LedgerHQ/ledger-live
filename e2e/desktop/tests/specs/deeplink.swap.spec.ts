@@ -1,5 +1,4 @@
 import test from "tests/fixtures/common";
-import { expect } from "@playwright/test";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
   Account,
@@ -79,150 +78,121 @@ test.describe("Swap - deeplinks", () => {
 
       // ─── Token params only, no accountIds ────────────────────────────
 
-      await test.step("No params — both fields default to highest-cap asset", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap");
-        await app.swap.checkAssetFromContains(DEFAULT_FROM);
-        await app.swap.checkAssetToContains(DEFAULT_TO);
-        await reset();
-      });
+      await app.swap.openViaDeeplink("ledgerwallet://swap");
+      await app.swap.checkAssetFromContains(DEFAULT_FROM);
+      await app.swap.checkAssetToContains(DEFAULT_TO);
+      await reset();
 
-      await test.step("fromToken=ETH toToken=BTC", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin");
-        await selectAccountFromDeeplinkDrawer(app, ethAccount);
-        await selectAccountFromDeeplinkDrawer(app, btcAccount);
-        await app.swap.checkAssetFromContains("ETH");
-        await app.swap.checkAssetToContains("BTC");
-        await reset();
-      });
+      await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin");
+      await selectAccountFromDeeplinkDrawer(app, ethAccount);
+      await selectAccountFromDeeplinkDrawer(app, btcAccount);
+      await app.swap.checkAssetFromContains("ETH");
+      await app.swap.checkAssetToContains("BTC");
+      await reset();
 
-      await test.step("fromToken=USDT(ERC20) toToken=ETH", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=ethereum`,
-        );
-        await selectAccountFromDeeplinkDrawer(app, usdtAccount);
-        await selectAccountFromDeeplinkDrawer(app, ethAccount);
-        await app.swap.checkAssetFromContains("USDT");
-        await app.swap.checkAssetToContains("ETH");
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=ethereum`,
+      );
+      await selectAccountFromDeeplinkDrawer(app, usdtAccount);
+      await selectAccountFromDeeplinkDrawer(app, ethAccount);
+      await app.swap.checkAssetFromContains("USDT");
+      await app.swap.checkAssetToContains("ETH");
+      await reset();
 
-      await test.step("fromToken=ETH toToken=USDT(ERC20)", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?fromToken=ethereum&toToken=${USDT_TOKEN_ID}`,
-        );
-        await selectAccountFromDeeplinkDrawer(app, ethAccount);
-        await selectAccountFromDeeplinkDrawer(app, usdtAccount);
-        await app.swap.checkAssetFromContains("ETH");
-        await app.swap.checkAssetToContains("USDT");
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?fromToken=ethereum&toToken=${USDT_TOKEN_ID}`,
+      );
+      await selectAccountFromDeeplinkDrawer(app, ethAccount);
+      await selectAccountFromDeeplinkDrawer(app, usdtAccount);
+      await app.swap.checkAssetFromContains("ETH");
+      await app.swap.checkAssetToContains("USDT");
+      await reset();
 
       // The FDUSD/BSC case is manual-only — no E2E account available.
 
-      await test.step("fromToken=BTC only — receive defaults to highest-cap asset", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=bitcoin");
-        await selectAccountFromDeeplinkDrawer(app, btcAccount);
-        await app.swap.checkAssetFromContains("BTC");
-        await app.swap.checkAssetToContains(DEFAULT_TO);
-        await reset();
-      });
+      await app.swap.openViaDeeplink("ledgerwallet://swap?fromToken=bitcoin");
+      await selectAccountFromDeeplinkDrawer(app, btcAccount);
+      await app.swap.checkAssetFromContains("BTC");
+      await app.swap.checkAssetToContains(DEFAULT_TO);
+      await reset();
 
-      await test.step("toToken=ETH only — send defaults to highest-cap asset", async () => {
-        await app.swap.openViaDeeplink("ledgerwallet://swap?toToken=ethereum");
-        await selectAccountFromDeeplinkDrawer(app, ethAccount);
-        await app.swap.checkAssetFromContains(DEFAULT_FROM);
-        await app.swap.checkAssetToContains("ETH");
-        await reset();
-      });
+      await app.swap.openViaDeeplink("ledgerwallet://swap?toToken=ethereum");
+      await selectAccountFromDeeplinkDrawer(app, ethAccount);
+      await app.swap.checkAssetFromContains(DEFAULT_FROM);
+      await app.swap.checkAssetToContains("ETH");
+      await reset();
 
       // ─── With amount ──────────────────────────────────────────────────
 
-      await test.step("ETH→BTC with valid amountFrom=0.01", async () => {
-        await app.swap.openViaDeeplink(
-          "ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin&amountFrom=0.01",
-        );
-        await selectAccountFromDeeplinkDrawer(app, ethAccount);
-        await selectAccountFromDeeplinkDrawer(app, btcAccount);
-        await app.swap.checkAssetFromContains("ETH");
-        await app.swap.checkAssetToContains("BTC");
-        const amount = await app.swap.getAmountToSend();
-        expect(amount).toBe("0.01");
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        "ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin&amountFrom=0.01",
+      );
+      await selectAccountFromDeeplinkDrawer(app, ethAccount);
+      await selectAccountFromDeeplinkDrawer(app, btcAccount);
+      await app.swap.checkAssetFromContains("ETH");
+      await app.swap.checkAssetToContains("BTC");
+      await app.swap.checkAmountToSend("0.01");
+      await reset();
 
-      await test.step("ETH→BTC with invalid amountFrom=abc — amount field empty or zero", async () => {
-        await app.swap.openViaDeeplink(
-          "ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin&amountFrom=abc",
-        );
-        await selectAccountFromDeeplinkDrawer(app, ethAccount);
-        await selectAccountFromDeeplinkDrawer(app, btcAccount);
-        await app.swap.checkAssetFromContains("ETH");
-        await app.swap.checkAssetToContains("BTC");
-        const amount = await app.swap.getAmountToSend();
-        expect(amount).toMatch(/^(0\.?0*|)$/);
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        "ledgerwallet://swap?fromToken=ethereum&toToken=bitcoin&amountFrom=abc",
+      );
+      await selectAccountFromDeeplinkDrawer(app, ethAccount);
+      await selectAccountFromDeeplinkDrawer(app, btcAccount);
+      await app.swap.checkAssetFromContains("ETH");
+      await app.swap.checkAssetToContains("BTC");
+      await app.swap.checkAmountToSend(/^(0\.?0*|)$/);
+      await reset();
 
       // ─── With accountIds — no drawer expected ────────────────────────
 
-      await test.step("USDT+fromAccountId → BTC+toAccountId + amount=20, no drawer", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=bitcoin` +
-            `&fromAccountId=${USDT_ACCOUNT_ID}&toAccountId=${BTC_ACCOUNT_ID}&amountFrom=20`,
-        );
-        await app.swap.checkAssetFromContains(usdtAccount.currency.ticker);
-        await app.swap.checkAssetFromAccountNameContains(getParentAccountName(usdtAccount));
-        await app.swap.checkAssetToContains(btcAccount.currency.ticker);
-        await app.swap.checkAssetToAccountNameContains(getParentAccountName(btcAccount));
-        const amount = await app.swap.getAmountToSend();
-        expect(amount).toBe("20");
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&toToken=bitcoin` +
+          `&fromAccountId=${USDT_ACCOUNT_ID}&toAccountId=${BTC_ACCOUNT_ID}&amountFrom=20`,
+      );
+      await app.swap.checkAssetFromContains(usdtAccount.currency.ticker);
+      await app.swap.checkAssetFromAccountNameContains(getParentAccountName(usdtAccount));
+      await app.swap.checkAssetToContains(btcAccount.currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(getParentAccountName(btcAccount));
+      await app.swap.checkAmountToSend("20");
+      await reset();
 
-      await test.step("fromAccountId=BTC + toAccountId=USDT (no token params) — accountId resolves, no drawer", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
-        );
-        await app.swap.checkAssetFromContains(btcAccount.currency.ticker);
-        await app.swap.checkAssetFromAccountNameContains(getParentAccountName(btcAccount));
-        await app.swap.checkAssetToContains(usdtAccount.currency.ticker);
-        await app.swap.checkAssetToAccountNameContains(getParentAccountName(usdtAccount));
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?fromAccountId=${BTC_ACCOUNT_ID}&toAccountId=${USDT_ACCOUNT_ID}`,
+      );
+      await app.swap.checkAssetFromContains(btcAccount.currency.ticker);
+      await app.swap.checkAssetFromAccountNameContains(getParentAccountName(btcAccount));
+      await app.swap.checkAssetToContains(usdtAccount.currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(getParentAccountName(usdtAccount));
+      await reset();
 
-      await test.step("USDT+fromAccountId only — receive defaults, no drawer", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`,
-        );
-        await app.swap.checkAssetFromContains(usdtAccount.currency.ticker);
-        await app.swap.checkAssetFromAccountNameContains(getParentAccountName(usdtAccount));
-        await app.swap.checkAssetToContains(DEFAULT_TO);
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?fromToken=${USDT_TOKEN_ID}&fromAccountId=${USDT_ACCOUNT_ID}`,
+      );
+      await app.swap.checkAssetFromContains(usdtAccount.currency.ticker);
+      await app.swap.checkAssetFromAccountNameContains(getParentAccountName(usdtAccount));
+      await app.swap.checkAssetToContains(DEFAULT_TO);
+      await reset();
 
-      await test.step("toToken=ETH+toAccountId only — send defaults, no drawer", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?toToken=ethereum&toAccountId=${ETH_ACCOUNT_ID}`,
-        );
-        await app.swap.checkAssetFromContains(DEFAULT_FROM);
-        await app.swap.checkAssetToContains(ethAccount.currency.ticker);
-        await app.swap.checkAssetToAccountNameContains(getParentAccountName(ethAccount));
-        await reset();
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?toToken=ethereum&toAccountId=${ETH_ACCOUNT_ID}`,
+      );
+      await app.swap.checkAssetFromContains(DEFAULT_FROM);
+      await app.swap.checkAssetToContains(ethAccount.currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(getParentAccountName(ethAccount));
+      await reset();
 
-      await test.step("Mismatch (fromToken=ETH+fromAccountId=BTC, toToken=USDT+toAccountId=ETH) — fromAccountId wins, USDT on toAccountId", async () => {
-        await app.swap.openViaDeeplink(
-          `ledgerwallet://swap?fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
-            `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
-        );
-        // fromAccountId takes precedence over conflicting fromToken
-        await app.swap.checkAssetFromContains(btcAccount.currency.ticker);
-        await app.swap.checkAssetFromAccountNameContains(getParentAccountName(btcAccount));
-        // toToken on the toAccountId network is received on that account
-        await app.swap.checkAssetToContains(usdtOnEthAccount.currency.ticker);
-        await app.swap.checkAssetToAccountNameContains(getParentAccountName(usdtOnEthAccount));
-        // no reset needed after last step
-      });
+      await app.swap.openViaDeeplink(
+        `ledgerwallet://swap?fromToken=ethereum&fromAccountId=${BTC_ACCOUNT_ID}` +
+          `&toToken=${USDT_TOKEN_ID}&toAccountId=${ETH_ACCOUNT_ID}`,
+      );
+      // fromAccountId takes precedence over conflicting fromToken
+      await app.swap.checkAssetFromContains(btcAccount.currency.ticker);
+      await app.swap.checkAssetFromAccountNameContains(getParentAccountName(btcAccount));
+      // toToken on the toAccountId network is received on that account
+      await app.swap.checkAssetToContains(usdtOnEthAccount.currency.ticker);
+      await app.swap.checkAssetToAccountNameContains(getParentAccountName(usdtOnEthAccount));
+      // no reset needed after last step
     },
   );
 });

@@ -38,7 +38,7 @@ test.describe("Swap - discreet mode", () => {
   });
 
   test(
-    "Swap amount is hidden in the asset drawer in discreet mode",
+    "Swap amounts and balances are hidden in discreet mode",
     {
       tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
       annotation: [
@@ -53,42 +53,12 @@ test.describe("Swap - discreet mode", () => {
       await app.swap.selectFromAccountCoinSelector();
       await app.modularDialog.validateItems();
       await app.modularDialog.checkAssetAmountsAreDiscreet(fundedAssetTickers);
-    },
-  );
-
-  test(
-    "Swap balance is hidden in the swap widget in discreet mode",
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: [
-        {
-          type: "TMS",
-          description: xrayTicket,
-        },
-      ],
-    },
-    async ({ app }) => {
-      await app.swap.selectFromAccountCoinSelector();
       await app.modularDialog.selectAsset(balanceCheckAccount.currency);
       await app.modularDialog.selectNetwork(balanceCheckAccount.currency);
       await app.modularDialog.selectAccountByName(balanceCheckAccount);
       await app.swap.checkAssetFromContains(balanceCheckAccount.currency.ticker);
       await app.swap.checkFromAccountBalanceIsDiscreet(balanceCheckAccount.currency.ticker);
-    },
-  );
 
-  test(
-    "Swap balance is hidden in the swap main form in discreet mode",
-    {
-      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm"],
-      annotation: [
-        {
-          type: "TMS",
-          description: xrayTicket,
-        },
-      ],
-    },
-    async ({ app }) => {
       await app.swap.goAndWaitForSwapToBeReady(() =>
         app.mainNavigation.openTargetFromMainNavigation("swap"),
       );

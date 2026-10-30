@@ -51,69 +51,59 @@ const tooLowAmountForQuoteSwaps: TooLowAmountSwap[] = [
   },
 ];
 
-for (const swap of tooLowAmountForQuoteSwaps) {
-  test.describe("Swap - too low amount", () => {
-    setupEnv(true);
+test.describe("Swap - too low amount", () => {
+  setupEnv(true);
 
-    const accPair: string[] = [swap.swap.accountToDebit, swap.swap.accountToCredit].map(acc =>
-      acc.currency.speculosApp.name.replace(/ /g, "_"),
+  const tooLowAmountAccounts = [
+    ...new Set(
+      tooLowAmountForQuoteSwaps.flatMap(({ swap }) => [swap.accountToDebit, swap.accountToCredit]),
+    ),
+  ];
+
+  test.beforeEach(async () => {
+    setExchangeDependencies(
+      [...new Set(tooLowAmountAccounts.map(acc => acc.currency.speculosApp.name))].map(appName => ({
+        name: appName.replace(/ /g, "_"),
+      })),
     );
+  });
 
-    const { accountToDebit, accountToCredit } = swap.swap;
+  test.use({
+    teamOwner: Team.SWAP,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: app,
 
-    test.beforeEach(async () => {
-      setExchangeDependencies(
-        accPair.map(appName => ({
-          name: appName,
-        })),
-      );
-    });
+    cliCommandsOnApp: [
+      tooLowAmountAccounts.map(account => ({
+        app: account.currency.speculosApp,
+        cmd: liveDataWithAddressCommand(account),
+      })),
+      { scope: "test" },
+    ],
+  });
 
-    test.use({
-      teamOwner: Team.SWAP,
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: app,
-
-      cliCommandsOnApp: [
-        [
-          {
-            app: accountToDebit.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(accountToDebit),
-          },
-          {
-            app: accountToCredit.currency.speculosApp,
-            cmd: liveDataWithAddressCommand(accountToCredit),
-          },
-        ],
-        { scope: "test" },
-      ],
-    });
-
-    test(
-      `[${swap.swap.accountToDebit.currency.testLabel}-${swap.swap.accountToCredit.currency.testLabel}] - Swap too low quote amount (${swap.swap.amount}): ${swap.errorMessage}`,
-      {
-        tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
-        annotation: {
-          type: "TMS",
-          description: swap.xrayTicket,
-        },
+  test(
+    "Swap too low quote amounts show the matching error",
+    {
+      tag: [...DEVICE_TAGS, "@ethereum", "@family-evm", "@bitcoin", "@family-bitcoin"],
+      annotation: {
+        type: "TMS",
+        description: tooLowAmountForQuoteSwaps.map(({ xrayTicket }) => xrayTicket).join(", "),
       },
-      async ({ app }) => {
-        const swapAmount =
-          swap.swap.amount === "USE_MIN_AMOUNT"
-            ? await app.swap.getMinimumAmount(accountToDebit, accountToCredit)
-            : (swap.swap.amount ?? "0");
-
-        await performSwapUntilQuoteSelectionStep({ app, swap: swap.swap, minAmount: swapAmount });
-        if (swap.quotesVisible) {
+    },
+    async ({ app }) => {
+      for (const { swap, quotesVisible, errorMessage, errorDisplay } of tooLowAmountForQuoteSwaps) {
+        const swapAmount = swap.amount ?? "0";
+        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: swapAmount });
+        if (quotesVisible) {
           await app.swap.checkQuotes();
           await app.swap.selectExchange();
         }
-        await app.swap.verifySwapErrorMessageIsCorrect(swap.errorMessage, swap.errorDisplay);
-      },
-    );
-  });
-}
+        await app.swap.verifySwapErrorMessageIsCorrect(errorMessage, errorDisplay);
+      }
+    },
+  );
+});
 
 const swapNetworkFeesAboveAccountBalanceTestConfig = {
   swap: new Swap(TokenAccount.ETH_USDT_2, Account.BTC_NATIVE_SEGWIT_1, ""),
