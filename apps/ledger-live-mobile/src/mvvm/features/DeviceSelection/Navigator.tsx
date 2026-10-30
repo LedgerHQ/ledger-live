@@ -24,19 +24,19 @@ export default function Navigator() {
       | undefined
   )?.params;
 
-  const onAbandonRef = useRef(flowParams?.onAbandon);
-  const mountedGeneration = useRef(0);
+  const lifecycleRef = useRef({ generation: 0, onAbandon: flowParams?.onAbandon });
   useEffect(() => {
-    onAbandonRef.current = flowParams?.onAbandon;
+    lifecycleRef.current.onAbandon = flowParams?.onAbandon;
   }, [flowParams?.onAbandon]);
   // Unmount runs before the success callback, and React remounts effects once in dev.
   // Defer the abandon, and skip it when this instance mounted again or the flow already settled.
   useEffect(() => {
-    const generation = ++mountedGeneration.current;
+    const lifecycle = lifecycleRef.current;
+    const generation = ++lifecycle.generation;
     return () => {
       queueMicrotask(() => {
-        if (mountedGeneration.current !== generation) return;
-        onAbandonRef.current?.();
+        if (lifecycle.generation !== generation) return;
+        lifecycle.onAbandon?.();
       });
     };
   }, []);
