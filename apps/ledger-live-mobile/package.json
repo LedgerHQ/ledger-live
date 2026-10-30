@@ -152,6 +152,7 @@
     "@features/flow-pay-request": "workspace:^",
     "@features/flow-portfolio-services-entry-points": "workspace:^",
     "@features/platform-account-analytics": "workspace:^",
+    "@features/platform-account-source-coin-module": "workspace:^",
     "@features/platform-aggregated-assets": "workspace:*",
     "@features/platform-app-lock": "workspace:*",
     "@features/platform-card": "workspace:*",
