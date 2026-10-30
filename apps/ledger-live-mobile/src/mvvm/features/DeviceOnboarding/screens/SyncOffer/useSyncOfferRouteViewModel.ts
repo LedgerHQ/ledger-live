@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
-import { resetToPortfolio } from "../../utils/exitActions";
+import { closeOnboarding } from "../../utils/exitActions";
 import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
 
 const LEDGER_SYNC_LEARN_MORE_URL =
@@ -50,17 +50,13 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     allowLeave.current = true;
     complete();
     notifyFlowCompleted("onboarding");
-    resetToPortfolio(navigation);
+    closeOnboarding(navigation);
   }, [complete, navigation, notifyFlowCompleted]);
 
   useEffect(() => {
     if (!handoverStarted || !hasTrustchain) return;
     finishOnboarding();
   }, [finishOnboarding, handoverStarted, hasTrustchain]);
-
-  const leaveToPortfolio = useCallback(() => {
-    finishOnboarding();
-  }, [finishOnboarding]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
@@ -78,8 +74,8 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
 
   return {
     onActivate,
-    onSkip: leaveToPortfolio,
-    onQuit: leaveToPortfolio,
+    onSkip: finishOnboarding,
+    onQuit: finishOnboarding,
     onLearnMore,
   };
 }

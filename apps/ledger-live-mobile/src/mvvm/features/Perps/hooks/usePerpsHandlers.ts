@@ -10,8 +10,9 @@ import {
 } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { useOpenSelectDevice } from "LLM/features/DeviceSelection/hooks/useOpenSelectDevice";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {
@@ -32,6 +33,7 @@ import {
 
 export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandlers {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const openSelectDevice = useOpenSelectDevice();
 
   const uiSigningExecute = useCallback(
     ({
@@ -96,21 +98,18 @@ export function usePerpsHandlers(accounts: AccountLike[]): WalletAPICustomHandle
     const unsubscribe = navigation.addListener("focus", () => cancelMigrationRequest(id));
     request.then(unsubscribe, unsubscribe);
 
-    navigation.navigate(NavigatorName.DeviceSelection, {
-      screen: ScreenName.SelectDevice,
-      params: {
-        currency: getCryptoCurrencyById(HYPERCORE_CURRENCY_ID),
-        context: AddAccountContexts.AddAccounts,
-        inline: true,
-        // SelectDevice + the add account screens
-        navigationDepth: 2,
-        onCloseNavigation: () => cancelMigrationRequest(id),
-        onSuccess: res => settleMigrationRequest(id, res?.selected ?? []),
-      },
+    openSelectDevice({
+      currency: getCryptoCurrencyById(HYPERCORE_CURRENCY_ID),
+      context: AddAccountContexts.AddAccounts,
+      inline: true,
+      // SelectDevice + the add account screens
+      navigationDepth: 2,
+      onCloseNavigation: () => cancelMigrationRequest(id),
+      onSuccess: res => settleMigrationRequest(id, res?.selected ?? []),
     });
 
     return request;
-  }, [navigation]);
+  }, [navigation, openSelectDevice]);
 
   useEffect(() => () => cancelMigrationRequest(), []);
 
