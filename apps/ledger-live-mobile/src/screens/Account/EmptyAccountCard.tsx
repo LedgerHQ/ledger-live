@@ -1,25 +1,10 @@
 import React, { memo } from "react";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
-import { Coins } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useTranslation } from "~/context/Locale";
 import GradientContainer from "~/components/GradientContainer";
 
-function EmptyAccountCard({ currencyTicker, plain }: { currencyTicker: string; plain?: boolean }) {
+function EmptyAccountCard({ currencyTicker }: { currencyTicker: string }) {
   const { t } = useTranslation();
-
-  if (plain) {
-    return (
-      <Flex alignItems="center" pt={8}>
-        <Coins size={40} color="base" />
-        <Text variant="large" fontWeight="semiBold" color="neutral.c100" textAlign="center" mt={6}>
-          {t("accountDetailHero.emptyState.title")}
-        </Text>
-        <Text variant="small" fontWeight="medium" color="neutral.c70" textAlign="center" mt={2}>
-          {t("accountDetailHero.emptyState.description.receiveSwapBuy")}
-        </Text>
-      </Flex>
-    );
-  }
 
   return (
     <Box mt={8}>
