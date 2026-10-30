@@ -9,7 +9,7 @@ import {
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
-import type { ContactsDeleteAddressDrawerProps } from "@features/flow-contacts-delete-address";
+import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
 import {
   type ContactAddressDetailSendIntent,
   type ContactsEditSignerMismatchDrawerProps,
@@ -43,7 +43,7 @@ export type ContactAddressDetailActionsFlowProps = Readonly<{
     ContactAddressDetailDialogNativeProps,
     "onSend" | "onEdit" | "onDelete" | "canSend" | "canEdit" | "canDelete"
   >;
-  deleteSheet: ContactsDeleteAddressDrawerProps;
+  deleteSheet: ContactsDeleteAddressDialogProps;
   renameSheet: ContactsRenameAddressDrawerProps;
   signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
 }>;

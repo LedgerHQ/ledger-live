@@ -55,9 +55,9 @@ features/flow/flow-contacts-add-address/src/
 ```text
 features/flow/flow-contacts-delete-address/src/
 ├── components/ContactsDeleteAddressDialog/
+│   ├── ContactsDeleteAddressDialog.types.ts # the one props contract of both platforms
 │   ├── ContactsDeleteAddressDialog.web.tsx
-│   ├── ContactsDeleteAddressDialog.native.tsx
-│   └── types.ts
+│   └── ContactsDeleteAddressDialog.native.tsx
 ├── copy/useDeleteAddressLabels.ts
 ├── model/
 │   ├── addressDeleteController.ts   # takes the ports, returns the next lifecycle
@@ -67,8 +67,7 @@ features/flow/flow-contacts-delete-address/src/
 ├── useDeleteAddressFlowViewModel.ts # the ViewModel: the React hook over model/
 ├── types.ts
 ├── exports.ts
-├── index.ts                         # ./exports + the .web dialog
-└── index.native.ts                  # ./exports + the .native dialog
+└── index.ts                         # ./exports + the dialog and its contract, on both platforms
 ```
 
 ## Flow slice and logic: `@features/flow-pay-balance`

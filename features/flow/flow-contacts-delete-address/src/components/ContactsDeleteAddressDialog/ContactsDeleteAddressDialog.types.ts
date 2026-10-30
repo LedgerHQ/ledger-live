@@ -4,8 +4,3 @@ export type ContactsDeleteAddressDialogProps = Readonly<{
   onConfirm: () => Promise<void>;
   onCancel: () => void;
 }>;
-
-export type ContactsDeleteAddressDrawerProps = ContactsDeleteAddressDialogProps &
-  Readonly<{
-    bottomInset?: number;
-  }>;
