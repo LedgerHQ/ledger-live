@@ -7,6 +7,7 @@ import type {
   Transaction as BitcoinTransaction,
   TransactionStatus as BitcoinTransactionStatus,
 } from "@ledgerhq/coin-bitcoin/types";
+import { getAddressesToWatch } from "@ledgerhq/coin-bitcoin/addressesToWatch";
 import type { AccountBridgeExtensions, Account, AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { defaultClearAccount } from "../../bridge/defaultBridgeExtensions";
@@ -36,6 +37,7 @@ const extensions: AccountBridgeExtensions<BitcoinTransaction> = {
   isStrategyDisabled: ({ mainAccount, transaction, feeData }) =>
     isStrategyDisabled({ mainAccount, transaction, feesStrategy: feeData as BigNumber }),
   isTransactionConfirmed,
+  getAddressesToWatch,
 };
 
 export default extensions;

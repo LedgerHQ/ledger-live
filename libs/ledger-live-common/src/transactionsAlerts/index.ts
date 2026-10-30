@@ -1,4 +1,5 @@
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
+import { getAccountBridge } from "../bridge/index";
 import ChainwatchAccountManager from "./ChainwatchAccountManager";
 
 const hexAddressPattern = /^0x[0-9a-f]+$/i;
@@ -17,6 +18,10 @@ const getAddressKey = ({ currencyId, address }: TransactionsAlertsAddress) =>
 export const deduplicateTransactionsAlertsAddresses = (addresses: TransactionsAlertsAddress[]) =>
   Array.from(new Map(addresses.map(address => [getAddressKey(address), address])).values());
 
+/**
+ * @deprecated Only returns the fresh address of each account, which misses most addresses of UTXO
+ * accounts. Use `resolveTransactionsAlertsAddressesByAccount`.
+ */
 export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
   deduplicateTransactionsAlertsAddresses(
     accounts
@@ -26,6 +31,57 @@ export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
         address: account.freshAddress,
       })),
   );
+
+export type TransactionsAlertsAddressesByAccount = Record<string, TransactionsAlertsAddress[]>;
+
+export const resolveTransactionsAlertsAddressesByAccount = async (
+  accounts: Account[],
+): Promise<TransactionsAlertsAddressesByAccount> =>
+  Object.fromEntries(
+    await Promise.all(
+      accounts.map(async account => {
+        const bridge = await getAccountBridge(account);
+        const addresses = await bridge.getAddressesToWatch(account);
+        return [
+          account.id,
+          addresses.map(address => ({ currencyId: account.currency.id, address })),
+        ] as const;
+      }),
+    ),
+  );
+
+const maxRememberedAddressesPerAccount = 100;
+
+/**
+ * Adds the resolved addresses of each account to the ones already watched for it, so an address
+ * stays watched after the account stops returning it (e.g. once emptied by a pending send).
+ * Only the 100 addresses most recently returned are remembered per account; resolved addresses
+ * are always kept. Accounts missing from `resolved` were removed from the wallet: their addresses
+ * are dropped.
+ */
+export const mergeTransactionsAlertsAddresses = (
+  watched: TransactionsAlertsAddressesByAccount,
+  resolved: TransactionsAlertsAddressesByAccount,
+): TransactionsAlertsAddressesByAccount =>
+  Object.fromEntries(
+    Object.entries(resolved).map(([accountId, addresses]) => {
+      const resolvedKeys = new Set(addresses.map(getAddressKey));
+      const remembered = (watched[accountId] ?? []).filter(
+        address => !resolvedKeys.has(getAddressKey(address)),
+      );
+      return [
+        accountId,
+        deduplicateTransactionsAlertsAddresses([
+          ...remembered.slice(-maxRememberedAddressesPerAccount),
+          ...addresses,
+        ]),
+      ];
+    }),
+  );
+
+export const flattenTransactionsAlertsAddresses = (
+  addressesByAccount: TransactionsAlertsAddressesByAccount,
+) => deduplicateTransactionsAlertsAddresses(Object.values(addressesByAccount).flat());
 
 const formatAddressesByCurrencies = (
   newAddresses: TransactionsAlertsAddress[],

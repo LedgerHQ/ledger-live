@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "~/context/hooks";
 import { accountsSelector } from "~/reducers/accounts";
 import { userIdSelector, type UserId } from "@domain/entity-client-identity";
@@ -6,9 +6,12 @@ import { useFeature } from "@features/platform-feature-flags";
 import {
   reconcileTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,
-  getTransactionsAlertsAddresses,
+  flattenTransactionsAlertsAddresses,
+  mergeTransactionsAlertsAddresses,
+  resolveTransactionsAlertsAddressesByAccount,
   getTransactionsAlertsAddressKey,
   type TransactionsAlertsAddress,
+  type TransactionsAlertsAddressesByAccount,
 } from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork } from "@ledgerhq/types-live";
 import { notificationsSelector } from "~/reducers/settings";
@@ -37,9 +40,21 @@ const TransactionsAlerts = () => {
     () => accounts.filter(account => supportedChainsIds.has(account?.currency?.id)),
     [accounts, supportedChainsIds],
   );
+  const isActive = Boolean(
+    featureTransactionsAlerts?.enabled && notifications.transactionsAlertsCategory,
+  );
+  const [watchedAddressesByAccount, setWatchedAddressesByAccount] =
+    useState<TransactionsAlertsAddressesByAccount>({});
   const transactionsAlertsAddresses = useMemo(
-    () => getTransactionsAlertsAddresses(accountsFilteredBySupportedChains),
-    [accountsFilteredBySupportedChains],
+    () =>
+      flattenTransactionsAlertsAddresses(
+        Object.fromEntries(
+          accountsFilteredBySupportedChains
+            .filter(account => watchedAddressesByAccount[account.id])
+            .map(account => [account.id, watchedAddressesByAccount[account.id]]),
+        ),
+      ),
+    [accountsFilteredBySupportedChains, watchedAddressesByAccount],
   );
   const refActive = useRef(false);
   const refAddresses = useRef<TransactionsAlertsAddress[]>([]);
@@ -47,11 +62,27 @@ const TransactionsAlerts = () => {
   const refOperationQueue = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
+    if (!chainwatchBaseUrl || !isActive) return;
+
+    let cancelled = false;
+    resolveTransactionsAlertsAddressesByAccount(accountsFilteredBySupportedChains).then(
+      resolved => {
+        if (!cancelled) {
+          setWatchedAddressesByAccount(watched =>
+            mergeTransactionsAlertsAddresses(watched, resolved),
+          );
+        }
+      },
+      () => undefined,
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [accountsFilteredBySupportedChains, chainwatchBaseUrl, isActive]);
+
+  useEffect(() => {
     if (!chainwatchBaseUrl) return;
 
-    const isActive = Boolean(
-      featureTransactionsAlerts?.enabled && notifications.transactionsAlertsCategory,
-    );
     const shouldDelete = refActive.current && !isActive;
     if (!isActive && !shouldDelete) return;
     if (isActive) refActive.current = true;
@@ -112,14 +143,7 @@ const TransactionsAlerts = () => {
         refScheduledOperation.current = undefined;
       }
     });
-  }, [
-    featureTransactionsAlerts?.enabled,
-    chainwatchBaseUrl,
-    notifications.transactionsAlertsCategory,
-    supportedChains,
-    transactionsAlertsAddresses,
-    userId,
-  ]);
+  }, [isActive, chainwatchBaseUrl, supportedChains, transactionsAlertsAddresses, userId]);
 
   return null;
 };
