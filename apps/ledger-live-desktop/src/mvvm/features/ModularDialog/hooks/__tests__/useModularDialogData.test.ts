@@ -72,6 +72,7 @@ describe("useModularDialogData filters", () => {
     mockedUseAssetsData.mockClear();
     mockedUseAssetsData.mockReturnValue({
       data: undefined,
+      isStale: false,
       isLoading: false,
       isFetchingNextPage: false,
       isSuccess: true,
