@@ -1857,6 +1857,10 @@
       "title" : "リクエストは送信されませんでした",
       "description" : "Internet Computerはリクエストを受け付けなかったため、何も送信されず、何も変更されませんでした。もう一度お試しください。{{reason}}"
     },
+    "ICPTransactionExpired" : {
+      "title" : "トランザクションの有効期限が切れました",
+      "description" : "署名されたトランザクションが時間内に送信されなかったため、何も送信されず、何も変更されませんでした。もう一度署名してください。"
+    },
     "ICPCreateNeuronWarning" : {
       "title" : "これにより、ICPが新しいニューロンにロックされます",
       "description" : "ニューロンは最短のディゾルブ・ディレイから開始されますが、この期間は投票や報酬の獲得を行うには短すぎます。「Manage Neurons」からディレイを引き上げ、ステーキングが再び使用可能になるまで、ディレイが経過するのをお待ちください。"
@@ -1871,6 +1875,7 @@
     "menu" : {
       "changeName" : "名前を変更",
       "viewAdvancedLogs" : "詳細ログを表示",
+      "viewExplorer" : "エクスプローラーで表示",
       "removeAccount" : "ポートフォリオからアカウントを削除する"
     },
     "advancedLogs" : {
@@ -2587,6 +2592,10 @@
       "learnMore" : "詳細はこちら",
       "activate" : "有効化",
       "skip" : "今はしない"
+    },
+    "connection" : {
+      "connecting" : "デバイスに接続中",
+      "failed" : "接続に失敗しました。"
     }
   },
   "onboarding" : {
@@ -3437,10 +3446,10 @@
       "skipCta" : "あとで行う",
       "skip" : {
         "title" : "本当によろしいですか？",
-        "description" : "スキップした場合、新しいスマホやパソコンに切り替える際、すべてのアカウント、残高、履歴を手動で再度追加する必要があります。",
-        "descriptionEmphasis" : "設定からいつでも無効にできます。",
+        "description" : "スマートフォンを変更する場合、または別のスマートフォンやコンピューターでLedger Walletを使用する場合は、手動でアカウントを同期する必要があります。",
+        "descriptionEmphasis" : "なお、設定からいつでも有効または無効にできます。",
         "skipCTA" : "はい、スキップします",
-        "syncCTA" : "いいえ、ウォレットを同期します"
+        "syncCTA" : "いいえ、同期を有効にする"
       }
     },
     "seedStep" : {
@@ -3625,6 +3634,16 @@
       "upToDate" : "ポートフォリオは最新です",
       "syncError" : "一部のアカウントデータを読み込めませんでした",
       "offline" : "オフラインです。接続を確認してください。"
+    }
+  },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "無期限先物",
+      "description" : "レバレッジ投資"
+    },
+    "borrow" : {
+      "title" : "ローン",
+      "description" : "ステーブルコインを借りる"
     }
   },
   "addAccountsModal" : {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other" : "+{{count}}個のサブアカウント"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "詳細はこちら",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "{{family}}の統合",
-        "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
-        "description" : "Ledger Walletはオープンソースのプラットフォームです。",
-        "description2" : "世界中の開発者がLedger Walletと統合できます",
-        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
-        "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}}は{{to}}に移行しています。詳細については、こちらの<0>リンク</0>をご参照いただくか、サポートがご必要な場合はサポートにご連絡ください。",
       "contactSupport" : "サポートへお問い合わせ"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment" : {
+        "title" : "手数料の支払い方法を選択",
+        "regular" : "通常送金",
+        "sponsored" : "{{provider}}で支払う",
+        "payIn" : "{{feeCurrency}}でネットワーク手数料を支払う",
+        "paidIn" : "{{currency}}で支払い済み",
+        "nudge" : "{{provider}}で{{amount}}を節約できます",
+        "saved" : "{{provider}}で保存されました",
+        "confirm" : "確認",
+        "disclaimer" : "サードパーティのエネルギープロバイダーである{{provider}}では、手数料は{{feeCurrency}}で支払われます。",
         "insufficientFunds" : "数量と{{provider}}のエネルギーレンタル手数料を支払うのに必要な{{feeCurrency}}が不足しています。"
       },
       "sponsoredRentSignature" : {
@@ -5871,6 +5887,39 @@
     }
   },
   "osUpdates" : {
+    "backupBanner" : {
+      "title" : "バックアップが見つかりました",
+      "description" : "アプリと設定はデバイスに完全には復元されませんでした。",
+      "restore" : "復元",
+      "delete" : "バックアップを削除する"
+    },
+    "bootloaderDiscovered" : {
+      "title" : "デバイスはBootloaderモードです。",
+      "description" : "「続行」をクリックしてアップデートします。",
+      "continue" : "続行"
+    },
+    "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OSアップデートをご利用いただけます",
+          "manager" : "Ledger OSのアップデートをご利用いただけます"
+        },
+        "version" : "バージョン{{firmwareVersion}}",
+        "cta" : "アップデート"
+      }
+    },
+    "restoreConfirmation" : {
+      "title" : "前回の設定を復元しますか？",
+      "description" : "以前の構成からアプリと設定を復元すること、およびそれ以降に作成されたアプリとデータが失われることを確認します。",
+      "confirm" : "復元",
+      "cancel" : "キャンセル"
+    },
+    "deleteConfirmation" : {
+      "title" : "バックアップを削除しますか？",
+      "description" : "前回の設定、およびセキュリティーキーの認証情報を含む前回のバックアップのアプリ&データが失われることを理解しています。",
+      "confirm" : "バックアップを削除する",
+      "cancel" : "キャンセル"
+    },
     "actions" : {
       "retry" : "再試行",
       "cancel" : "キャンセル",
@@ -10292,7 +10341,7 @@
             "steps" : {
               "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
               "step2" : "同期したいLedger Walletアプリを開く。",
-              "step3" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>すでにオンにしました</0> <1>></1> <0>QRコードをスキャン</0>に移動する。",
+              "step3" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>QRコードをスキャン</0>に移動",
               "step4" : "QRコードをスキャンする。"
             }
           }
@@ -10305,7 +10354,7 @@
             "steps" : {
               "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
               "step2" : "同期したいLedger Walletを開く。",
-              "step3" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>すでにオンにしました</0> <1>></1> <0>QRを表示</0>に移動する。",
+              "step3" : "<0>設定</0> <1>></1> <0>一般</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>QRを表示</0>に移動",
               "step4" : "QRコードをスキャンする。"
             }
           }
@@ -10416,9 +10465,58 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "アクティビティはまだありません",
+      "description" : {
+        "receive" : "まずは「受け取る」から資金を追加して始めましょう。",
+        "receiveSwap" : "まずは「受け取る」または「スワップ」から資金を追加して始めましょう。",
+        "receiveBuy" : "まずは「受け取る」または「購入」から資金を追加して始めましょう。",
+        "receiveSwapBuy" : "まずは「受け取る」、「スワップ」、または「購入」から資金を追加してください。",
+        "swap" : "まずはスワップから資金を追加して開始してください。",
+        "buy" : "まずは購入から資金を追加して開始してください。",
+        "swapBuy" : "まずはスワップまたは購入から資金を追加してください。"
+      }
+    },
+    "actions" : {
+      "transfer" : "送金",
+      "receive" : "受け取る",
+      "send" : "送付",
+      "swap" : "スワップ",
+      "buy" : "購入",
+      "sell" : "売却",
+      "earn" : "報酬獲得",
+      "more" : "詳細"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "詳細はこちら",
+      "openPerps" : "無期限先物を開く"
+    },
+    "migration" : {
+      "title" : "{{from}}は{{to}}に移行しています。",
+      "description" : "移行の詳細をご確認いただくか、サポートが必要な場合はサポートにお問い合わせください。"
+    },
+    "willBeDeprecated" : {
+      "title" : "{{date}}以降、{{currencyName}}はサポートされなくなります。",
+      "description" : "引き続きLedgerデバイスによって安全に保護されます。詳細はヘルプセンターをご覧ください。"
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "合計残高には配当や株式分割は含まれません。"
+    },
+    "perps" : {
+      "title" : "Hyperliquidアカウントについて",
+      "description" : "このアカウントは無期限先物取引に関連しています。このアカウントではトランザクション操作はサポートされていません"
+    }
+  },
   "accountDetail" : {
     "assets" : {
       "title" : "資産"
+    },
+    "refreshStatus" : {
+      "upToDate" : "アカウントは最新の状態です",
+      "syncError" : "アカウントデータを読み込めませんでした"
     },
     "transactions" : {
       "title" : "トランザクション"
@@ -10429,6 +10527,9 @@
       "label" : "アドレス名",
       "submit" : "名前を変更"
     }
+  },
+  "accountAssetPicker" : {
+    "title" : "資産を選択"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10680,6 +10781,10 @@
     "selectAccountPerpsEmptyDescription" : "無期限先物に資金を入金するには、Hyperliquidアカウントが必要です。続行するには追加してください。",
     "selectDepositCurrencyTitle" : "入金する資産を選択",
     "selectDepositCurrencyDescription" : "対応しているどの資産でも利用可能です。必要に応じて、自動的にスワップされます。",
+    "selectWithdrawCurrencyTitle" : "出金先の資産を選択してください",
+    "selectWithdrawCurrencyDescription" : "お客様のUSDCは、選択した資産に自動的にスワップされます。",
+    "selectAccountPerpsWithdrawFromDescription" : "資金の出金元アカウントを選択してください",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "出金するには、Hyperliquidアカウントが必要です。続行するには追加してください。",
     "searchPlaceholder" : "名前またはアドレスで検索",
     "emptyAssetList" : "資産が見つかりません",
     "notAvailableYet" : "まだご利用いただけません",
@@ -10739,6 +10844,25 @@
     "formErrors" : {
       "amountExceedsBalance" : "残高不足",
       "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。"
+    }
+  },
+  "perpsWithdraw" : {
+    "title" : "出金",
+    "review" : "確認",
+    "keypadDelete" : "最後の数字を削除",
+    "estimatedAmount" : "約{{value}}を出金",
+    "inputSubText" : "{{provider}}経由でスワップして出金",
+    "selectCurrencyTitle" : "{{currencyTicker}}に出金",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "アカウントがありません",
+    "formErrors" : {
+      "insufficientBalance" : "残高不足",
+      "minimumAmount" : "最小出金額は{{minAmount}} USDCです。",
+      "minimumAmountUnknown" : "この数量は出金するには少なすぎます。",
+      "lowLiquidity" : "この資産は一時的にご利用いただけません。後ほどもう一度お試しいただくか、別の資産を選択してください。",
+      "addressScreening" : "このアカウントへの出金は処理できません。",
+      "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。",
+      "currenciesUnavailable" : "出金先となる資産を読み込めません。後ほどもう一度お試しください。"
     }
   },
   "swapErrors" : {
