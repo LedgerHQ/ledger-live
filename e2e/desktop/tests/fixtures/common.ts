@@ -55,6 +55,8 @@ type SpeculosFixtureHandle = {
   get device(): SpeculosDevice | undefined;
   relaunch: (appName: string) => Promise<SpeculosDevice>;
   onRelaunch?: (device: SpeculosDevice) => Promise<void>;
+  /** Stops the device mid-test, e.g. to simulate a lost connection. */
+  stop: () => Promise<void>;
 };
 
 type TestFixtures = {
@@ -220,6 +222,11 @@ export const test = base.extend<TestFixtures>({
         await showSpeculosScreen(currentDevice.id);
         await handle.onRelaunch?.(currentDevice);
         return currentDevice;
+      },
+      stop: async () => {
+        if (!currentDevice) return;
+        await cleanSpeculos(currentDevice);
+        currentDevice = undefined;
       },
     };
 

@@ -1,11 +1,15 @@
 import { expect } from "@playwright/test";
+import BigNumber from "bignumber.js";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
 import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
+
+export type AmountQuickAction = "quarter" | "half" | "threeQuarters";
 
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
@@ -32,6 +36,8 @@ export class NewSendModal extends Modal {
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly amountErrorMessage = this.dialog.getByTestId("send-amount-message");
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
+  private readonly quickAction = (action: AmountQuickAction) =>
+    this.dialog.getByTestId(`send-quick-actions-${action}`);
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   readonly reviewButton = this.dialog.getByTestId("send-review-button");
   readonly getFundsButton = this.dialog.getByTestId("send-get-funds-button");
@@ -41,6 +47,9 @@ export class NewSendModal extends Modal {
     "send-confirmation-success-content",
   );
   readonly confirmationErrorContent = this.dialog.getByTestId("send-confirmation-error-content");
+  private readonly confirmationErrorTitle = this.dialog.getByTestId(
+    "send-confirmation-error-title",
+  );
   readonly confirmationInfoContent = this.dialog.getByTestId("send-confirmation-info-content");
   /**
    * Any of the three terminal confirmation screens (success, error, or info).
@@ -92,6 +101,15 @@ export class NewSendModal extends Modal {
 
   private readonly balanceTypeOption = (optionId: string) =>
     this.dialog.getByTestId(`balance-type-${optionId}`);
+
+  private async readAmount(): Promise<string> {
+    return (await this.amountInput.inputValue()).replaceAll(/\s/g, "");
+  }
+
+  private async waitForSettledAmount() {
+    await expect(this.reviewButton).toBeEnabled();
+    await expect(this.reviewButton).not.toHaveAttribute("aria-busy", "true");
+  }
 
   private async isCryptoInputMode(): Promise<boolean | null> {
     const secondaryValue = (await this.amountSecondaryValue.textContent())?.trim() ?? "";
@@ -249,6 +267,21 @@ export class NewSendModal extends Modal {
       await expect.poll(() => this.isCryptoInputMode()).toBe(true);
     }
     await this.amountInput.fill(amount);
+  }
+
+  @step("Click the $0 amount quick action")
+  async clickQuickAction(action: AmountQuickAction) {
+    const button = this.quickAction(action);
+    await expect(button).toBeVisible();
+    await button.click();
+  }
+
+  @step("Verify the amount is filled with a positive value")
+  async expectAmountFilled() {
+    await expect
+      .poll(async () => new BigNumber(await this.readAmount()).isGreaterThan(0))
+      .toBe(true);
+    await this.waitForSettledAmount();
   }
 
   @step("Verify crypto amount round-trips exactly: $0")
@@ -427,6 +460,14 @@ export class NewSendModal extends Modal {
   @step("Wait for terminal confirmation screen")
   async waitForConfirmation() {
     await this.confirmationTerminalContent.waitFor({ state: "visible" });
+  }
+
+  @step("Verify the send ended on the error screen")
+  async expectConfirmationError() {
+    await expect(this.confirmationErrorContent).toBeVisible({
+      timeout: TIMEOUT.xxlarge,
+    });
+    await expect(this.confirmationErrorTitle).toHaveText(/\S/);
   }
 
   @step("Close the confirmation screen")
