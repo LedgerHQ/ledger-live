@@ -49,23 +49,23 @@ describe("export-agent-plugin", () => {
     for (const plugin of plugins) expect(plugin.version).toBe(version);
   });
 
-  it("names the plugin ledger-wallet-cli in the marketplace named ledger", () => {
+  it("names the plugin and its marketplace ledger", () => {
     for (const rel of [
       "package.json",
       "plugin.json",
       ".claude-plugin/plugin.json",
       ".cursor-plugin/plugin.json",
     ]) {
-      expect(readJson(rel).name, rel).toBe("ledger-wallet-cli");
+      expect(readJson(rel).name, rel).toBe("ledger");
     }
-    expect(readJson("openclaw.plugin.json").id).toBe("ledger-wallet-cli");
+    expect(readJson("openclaw.plugin.json").id).toBe("ledger");
     for (const rel of MARKETPLACES) {
       const { name, plugins } = readJson(rel) as { name: string; plugins: { name: string }[] };
       expect(name, rel).toBe("ledger");
       expect(
         plugins.map(plugin => plugin.name),
         rel,
-      ).toEqual(["ledger-wallet-cli"]);
+      ).toEqual(["ledger"]);
     }
   });
 
