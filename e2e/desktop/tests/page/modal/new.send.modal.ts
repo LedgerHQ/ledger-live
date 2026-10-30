@@ -2,6 +2,7 @@ import { expect } from "@playwright/test";
 import BigNumber from "bignumber.js";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { STELLAR_MEMO_TYPE_LABELS, StellarMemoType } from "@ledgerhq/live-e2e-shared/enum/MemoType";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
@@ -32,7 +33,12 @@ export class NewSendModal extends Modal {
   readonly recipientWarningBanner = this.dialog.getByTestId("recipient-warning-banner");
   private readonly recentHistoryWarning = this.dialog.getByTestId("send-recent-history-warning");
   readonly memoInput = this.dialog.getByTestId("send-memo-input");
+  private readonly memoTypeSelect = this.dialog.getByTestId("send-memo-options-select");
+  // Select options render in a portal, outside the dialog subtree.
+  private readonly memoTypeOption = (memoType: StellarMemoType) =>
+    this.page.getByTestId(`send-memo-select-option-${memoType}`);
   readonly skipMemoConfirmButton = this.dialog.getByTestId("send-skip-memo-confirm");
+  private readonly skipMemoCancelButton = this.dialog.getByTestId("send-skip-memo-cancel");
   readonly amountInput = this.dialog.getByTestId("send-amount-input");
   readonly amountErrorMessage = this.dialog.getByTestId("send-amount-message");
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
@@ -258,6 +264,40 @@ export class NewSendModal extends Modal {
     await this.skipMemoConfirmButton.click();
   }
 
+  @step("Refuse to send without memo")
+  async cancelSkipMemo() {
+    await this.skipMemoCancelButton.click();
+  }
+
+  @step("Verify the recipient step is shown again with the memo input")
+  async expectBackOnRecipientStepWithMemo() {
+    await expect(this.skipMemoConfirmButton).toBeHidden();
+    await expect(this.memoInput).toBeVisible();
+    await expect(this.amountInput).toBeHidden();
+  }
+
+  @step("Open the memo type selector")
+  async openMemoTypes() {
+    await this.memoTypeSelect.click();
+  }
+
+  @step("Verify the memo type selector lists $0")
+  async expectMemoTypeOptions(memoTypes: StellarMemoType[]) {
+    for (const memoType of memoTypes) {
+      await expect(this.memoTypeOption(memoType)).toBeVisible();
+    }
+  }
+
+  @step("Select memo type $0")
+  async selectMemoType(memoType: StellarMemoType) {
+    await this.memoTypeOption(memoType).click();
+  }
+
+  @step("Verify the selected memo type is $0")
+  async expectMemoType(memoType: StellarMemoType) {
+    await expect(this.memoTypeSelect).toHaveText(STELLAR_MEMO_TYPE_LABELS[memoType]);
+  }
+
   @step("Verify the recent history warning is shown")
   async expectRecentHistoryWarning() {
     await expect(this.recipientStep).toHaveAttribute("data-recipient-validation", "settled");
@@ -377,7 +417,6 @@ export class NewSendModal extends Modal {
 
   @step("Open custom fees from the fees menu")
   async selectCustomFeesFromMenu() {
-    await expect(this.customFeesMenuItem).toBeVisible();
     await this.customFeesMenuItem.click();
   }
 
@@ -389,7 +428,6 @@ export class NewSendModal extends Modal {
 
   @step("Open coin control from the fees menu")
   async selectCoinControlFromMenu() {
-    await expect(this.coinControlMenuItem).toBeVisible();
     await this.coinControlMenuItem.click();
   }
 
@@ -404,7 +442,6 @@ export class NewSendModal extends Modal {
 
   @step("Go back to the previous step")
   async goBack() {
-    await expect(this.backButton).toBeVisible();
     await this.backButton.click();
   }
 
