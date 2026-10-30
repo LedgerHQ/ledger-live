@@ -9,10 +9,41 @@ import {
   getSwapStepFromError,
   getIsSwapRetryPending,
   getIsSwapSignatureVerificationError,
+  toExchangeError,
   withSignatureRetryCode,
 } from "./error";
 
 describe("exchange/error", () => {
+  describe("toExchangeError", () => {
+    it("keeps an Error as it is", () => {
+      const error = new TransportStatusError(0x6a80);
+
+      expect(toExchangeError(error)).toBe(error);
+    });
+
+    it("names a DMK error after its tag, with the message of its original error", () => {
+      const dmkError = {
+        _tag: "DeviceDisconnectedWhileSendingError",
+        originalError: new Error("link lost"),
+      };
+
+      const error = toExchangeError(dmkError);
+
+      expect(error).toBeInstanceOf(Error);
+      expect(error.name).toBe("DeviceDisconnectedWhileSendingError");
+      expect(error.message).toBe("link lost");
+      expect(error.cause).toBe(dmkError);
+    });
+
+    it("uses the tag as the message of a DMK error that carries none", () => {
+      expect(toExchangeError({ _tag: "UnknownDeviceError" }).message).toBe("UnknownDeviceError");
+    });
+
+    it("wraps any other thrown value", () => {
+      expect(toExchangeError("boom")).toEqual(new Error("boom"));
+    });
+  });
+
   describe("getErrorName", () => {
     it("should return name from error object", () => {
       const error = { name: "ValidationError" };

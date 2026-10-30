@@ -20,20 +20,59 @@ import type {
   CompleteExchangeInputFund,
   CompleteExchangeInputSell,
   CompleteExchangeRequestEvent,
+  ConfirmExchangeCallbacks,
+  ConfirmExchangeSequence,
 } from "../types";
-import { CompleteExchangeError, CompleteExchangeStep, convertTransportError } from "../../error";
+import type Transport from "@ledgerhq/hw-transport";
+import type { Transaction } from "../../../coin-modules/transaction-types";
+import {
+  CompleteExchangeError,
+  CompleteExchangeStep,
+  convertTransportError,
+  toExchangeError,
+} from "../../error";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
-const completeExchange = (
-  input: CompleteExchangeInputFund | CompleteExchangeInputSell,
-): Observable<CompleteExchangeRequestEvent> => {
+export type ConfirmTransferExchangeInput = CompleteExchangeInputFund | CompleteExchangeInputSell;
+
+/**
+ * Has the Exchange app check the payout address, which is when it shows the review. `0x6a83`
+ * means the account does not belong to the connected device.
+ */
+async function validatePayoutAddress(
+  exchange: ReturnType<typeof createExchange>,
+  { config, signature }: Awaited<ReturnType<typeof getCurrencyExchangeConfig>>,
+  addressParameters: Buffer,
+): Promise<void> {
+  try {
+    await exchange.validatePayoutOrAsset(config, signature, addressParameters);
+  } catch (e) {
+    const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+    if (transportErr?.name === "TransportStatusError" && transportErr?.statusCode === 0x6a83) {
+      throw new WrongDeviceForAccount();
+    }
+
+    throw convertTransportError("CHECK_PAYOUT_ADDRESS", e);
+  }
+}
+
+/**
+ * Builds the Exchange app confirmation sequence for a sell or fund: partner key, payload,
+ * signature, payout address check, then `signCoinTransaction`.
+ *
+ * It runs against whatever {@link Transport} `run` is given, so the legacy `withDevice` path and
+ * the Device Intent job share it. It never closes the transport.
+ */
+export function createTransferConfirmSequence(
+  input: ConfirmTransferExchangeInput,
+  { isCancelled, onConfirmationRequested }: ConfirmExchangeCallbacks,
+): ConfirmExchangeSequence {
   let { transaction } = input; // TODO build a tx from the data
 
   const {
-    deviceId,
-    exchange,
+    exchange: transferExchange,
     provider,
     binaryPayload,
     signature,
@@ -41,155 +80,177 @@ const completeExchange = (
     rateType, // TODO Pass fixed/float for UI switch ?
   } = input;
 
-  const { fromAccount, fromParentAccount } = exchange;
+  const { fromAccount, fromParentAccount } = transferExchange;
+
+  let ignoreTransportError = false;
+  let currentStep: CompleteExchangeStep = "INIT";
+
+  const run = async (transport: Transport): Promise<void> => {
+    const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
+
+    if (!providerNameAndSignature)
+      throw new CompleteExchangeError(
+        "INIT",
+        "ProviderConfigError",
+        "Could not get provider infos",
+      );
+
+    const exchange = createExchange(
+      transport,
+      exchangeType,
+      rateType,
+      providerNameAndSignature.version,
+    );
+
+    const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+    const accountBridge = await getAccountBridge(mainAccount);
+    const mainPayoutCurrency = getAccountCurrency(mainAccount);
+    const payoutCurrency = getAccountCurrency(fromAccount);
+
+    if (mainPayoutCurrency.type !== "CryptoCurrency")
+      throw new CompleteExchangeError(
+        "INIT",
+        "InvalidCurrencyType",
+        `This should be a cryptocurrency, got ${mainPayoutCurrency.type}`,
+      );
+
+    transaction = await accountBridge.prepareTransaction(mainAccount, transaction);
+    if (isCancelled()) return;
+
+    const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
+      mainAccount,
+      transaction,
+    );
+    if (isCancelled()) return;
+
+    const errorsKeys = Object.keys(errors);
+    if (errorsKeys.length > 0) {
+      const firstKey = errorsKeys[0];
+      const validationError = errors[firstKey];
+      throw new CompleteExchangeError(
+        currentStep,
+        firstKey,
+        validationError.message ||
+          validationError.name ||
+          `Transaction validation failed: ${firstKey}`,
+      );
+    }
+
+    currentStep = "SET_PARTNER_KEY";
+    await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
+    if (isCancelled()) return;
+
+    currentStep = "CHECK_PARTNER";
+    await exchange.checkPartner(providerNameAndSignature.signature!);
+    if (isCancelled()) return;
+
+    currentStep = "PROCESS_TRANSACTION";
+
+    const { payload, format } = buildProcessTransactionPayload(
+      exchange.transactionType,
+      binaryPayload,
+    );
+
+    await exchange.processTransaction(payload, estimatedFees, format);
+    if (isCancelled()) return;
+
+    const goodSign = convertSignature(signature, exchange.transactionType);
+
+    currentStep = "CHECK_TRANSACTION_SIGNATURE";
+    await exchange.checkTransactionSignature(goodSign);
+    if (isCancelled()) return;
+
+    const payoutAddressParameters = accountBridge.getSerializedAddressParameters(mainAccount);
+    if (isCancelled()) return;
+    if (!payoutAddressParameters) {
+      throw new CompleteExchangeError(
+        currentStep,
+        "UnsupportedFamily",
+        `Family not supported: ${mainPayoutCurrency.family}`,
+      );
+    }
+
+    const payoutAddressConfig = await getCurrencyExchangeConfig(payoutCurrency);
+    if (isCancelled()) return;
+
+    onConfirmationRequested(estimatedFees.toString());
+    currentStep = "CHECK_PAYOUT_ADDRESS";
+    await validatePayoutAddress(exchange, payoutAddressConfig, payoutAddressParameters);
+
+    if (isCancelled()) return;
+    ignoreTransportError = true;
+    currentStep = "SIGN_COIN_TRANSACTION";
+    await exchange.signCoinTransaction();
+  };
+
+  // Maps what `run` threw, and swallows what a successful confirmation produces (see below).
+  const handleError = (rawError: unknown): void => {
+    // `signCoinTransaction` makes the Exchange app hand over to the coin app, which can drop the
+    // link before answering: that is the expected end of the confirmation, not a failure.
+    if (ignoreTransportError) return;
+
+    // Before wrapping it with the step, which would lose the name of an error that is no `Error`.
+    const e = toExchangeError(rawError);
+    const transportErr = e as { name?: string; statusCode?: number } | null | undefined;
+    if (
+      transportErr?.name === "TransportStatusError" &&
+      (transportErr?.statusCode === 0x6a84 || transportErr?.statusCode === 0x5501)
+    ) {
+      throw new TransactionRefusedOnDevice();
+    }
+
+    // Preserve known error types checked by .name downstream
+    const eName = (e as { name?: string })?.name;
+    if (eName === "CompleteExchangeError") throw e;
+    if (eName === "WrongDeviceForAccount" || eName === "TransactionRefusedOnDevice") throw e;
+    // Wrap any remaining unknown errors with the current step context
+    const unknownError = e as { name?: string; message?: string } | null | undefined;
+    throw new CompleteExchangeError(
+      currentStep,
+      unknownError?.name,
+      unknownError?.message || "Unknown exchange error",
+    );
+  };
+
+  return { run, handleError, getTransaction: () => transaction };
+}
+
+/**
+ * Runs the sell or fund confirmation on an already opened transport and resolves with the
+ * fee-prepared transaction to sign.
+ */
+export async function confirmTransferExchange(
+  input: ConfirmTransferExchangeInput,
+  { transport, ...callbacks }: ConfirmExchangeCallbacks & { transport: Transport },
+): Promise<Transaction> {
+  const sequence = createTransferConfirmSequence(input, callbacks);
+  await sequence.run(transport).catch(sequence.handleError);
+  return sequence.getTransaction();
+}
+
+const completeExchange = (
+  input: CompleteExchangeInputFund | CompleteExchangeInputSell,
+): Observable<CompleteExchangeRequestEvent> => {
+  const { deviceId } = input;
 
   return new Observable(o => {
     let unsubscribed = false;
-    let ignoreTransportError = false;
-    let currentStep: CompleteExchangeStep = "INIT";
+
+    const sequence = createTransferConfirmSequence(input, {
+      isCancelled: () => unsubscribed,
+      onConfirmationRequested: estimatedFees => {
+        o.next({ type: "complete-exchange-requested", estimatedFees });
+      },
+    });
 
     const confirmExchange = async () => {
-      await withDevicePromise(deviceId, async transport => {
-        const providerNameAndSignature = await getProviderConfig(exchangeType, provider);
-
-        if (!providerNameAndSignature)
-          throw new CompleteExchangeError(
-            "INIT",
-            "ProviderConfigError",
-            "Could not get provider infos",
-          );
-
-        const exchange = createExchange(
-          transport,
-          exchangeType,
-          rateType,
-          providerNameAndSignature.version,
-        );
-
-        const mainAccount = getMainAccount(fromAccount, fromParentAccount);
-        const accountBridge = await getAccountBridge(mainAccount);
-        const mainPayoutCurrency = getAccountCurrency(mainAccount);
-        const payoutCurrency = getAccountCurrency(fromAccount);
-
-        if (mainPayoutCurrency.type !== "CryptoCurrency")
-          throw new CompleteExchangeError(
-            "INIT",
-            "InvalidCurrencyType",
-            `This should be a cryptocurrency, got ${mainPayoutCurrency.type}`,
-          );
-
-        transaction = await accountBridge.prepareTransaction(mainAccount, transaction);
-        if (unsubscribed) return;
-
-        const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
-          mainAccount,
-          transaction,
-        );
-        if (unsubscribed) return;
-
-        const errorsKeys = Object.keys(errors);
-        if (errorsKeys.length > 0) {
-          const firstKey = errorsKeys[0];
-          const validationError = errors[firstKey];
-          throw new CompleteExchangeError(
-            currentStep,
-            firstKey,
-            validationError.message ||
-              validationError.name ||
-              `Transaction validation failed: ${firstKey}`,
-          );
-        }
-
-        currentStep = "SET_PARTNER_KEY";
-        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
-        if (unsubscribed) return;
-
-        currentStep = "CHECK_PARTNER";
-        await exchange.checkPartner(providerNameAndSignature.signature!);
-        if (unsubscribed) return;
-
-        currentStep = "PROCESS_TRANSACTION";
-
-        const { payload, format } = buildProcessTransactionPayload(
-          exchange.transactionType,
-          binaryPayload,
-        );
-
-        await exchange.processTransaction(payload, estimatedFees, format);
-        if (unsubscribed) return;
-
-        const goodSign = convertSignature(signature, exchange.transactionType);
-
-        currentStep = "CHECK_TRANSACTION_SIGNATURE";
-        await exchange.checkTransactionSignature(goodSign);
-        if (unsubscribed) return;
-
-        const payoutAddressParameters = accountBridge.getSerializedAddressParameters(mainAccount);
-        if (unsubscribed) return;
-        if (!payoutAddressParameters) {
-          throw new CompleteExchangeError(
-            currentStep,
-            "UnsupportedFamily",
-            `Family not supported: ${mainPayoutCurrency.family}`,
-          );
-        }
-
-        const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          await getCurrencyExchangeConfig(payoutCurrency);
-
-        try {
-          o.next({
-            type: "complete-exchange-requested",
-            estimatedFees: estimatedFees.toString(),
-          });
-          currentStep = "CHECK_PAYOUT_ADDRESS";
-          await exchange.validatePayoutOrAsset(
-            payoutAddressConfig,
-            payoutAddressConfigSignature,
-            payoutAddressParameters,
-          );
-        } catch (e) {
-          const transportErr = e as { name?: string; statusCode?: number };
-          if (
-            transportErr?.name === "TransportStatusError" &&
-            transportErr?.statusCode === 0x6a83
-          ) {
-            throw new WrongDeviceForAccount();
-          }
-
-          throw convertTransportError(currentStep, e);
-        }
-
-        if (unsubscribed) return;
-        ignoreTransportError = true;
-        currentStep = "SIGN_COIN_TRANSACTION";
-        await exchange.signCoinTransaction();
-      }).catch(e => {
-        if (ignoreTransportError) return;
-
-        const transportErr = e as { name?: string; statusCode?: number };
-        if (
-          transportErr?.name === "TransportStatusError" &&
-          (transportErr?.statusCode === 0x6a84 || transportErr?.statusCode === 0x5501)
-        ) {
-          throw new TransactionRefusedOnDevice();
-        }
-
-        // Preserve known error types checked by .name downstream
-        const eName = (e as { name?: string })?.name;
-        if (eName === "CompleteExchangeError") throw e;
-        if (eName === "WrongDeviceForAccount" || eName === "TransactionRefusedOnDevice") throw e;
-        // Wrap any remaining unknown errors with the current step context
-        throw new CompleteExchangeError(
-          currentStep,
-          e?.name,
-          e?.message || "Unknown exchange error",
-        );
-      });
+      await withDevicePromise(deviceId, transport => sequence.run(transport)).catch(
+        sequence.handleError,
+      );
       await delay(3000);
       o.next({
         type: "complete-exchange-result",
-        completeExchangeResult: transaction,
+        completeExchangeResult: sequence.getTransaction(),
       });
       if (unsubscribed) return;
     };
