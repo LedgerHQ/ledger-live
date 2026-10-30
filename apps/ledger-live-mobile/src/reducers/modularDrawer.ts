@@ -168,8 +168,16 @@ const modularDrawerSlice = createSlice({
     // Hides the drawer UI without clearing cancelCallbackId. Used when navigating
     // away inline (e.g. add-account device flow) so the account.request stays pending
     // and can still be cancelled via onCloseNavigation if the user abandons the flow.
+    // Asset filters are cleared because openModularDrawer keeps them when a later
+    // request omits them, which would leak this request's currencies into the next one.
     hideModularDrawer: state => {
       state.isOpen = false;
+      state.preselectedCurrencies = [];
+      state.categories = undefined;
+      state.areCurrenciesFiltered = undefined;
+      state.selectableNetworkIds = undefined;
+      state.searchValue = "";
+      state.step = ModularDrawerStep.Asset;
     },
 
     setCallbackId: (state, action: PayloadAction<string | undefined>) => {

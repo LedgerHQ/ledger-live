@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider } from "react-redux";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -52,14 +52,33 @@ type MockModularDrawerComponentProps = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   flow?: string;
   useDeviceSelectionState?: boolean;
+  currencies?: string[];
+  onCancel?: () => void;
+  onAccountSelected?: React.ComponentProps<typeof ModularDrawer>["onAccountSelected"];
 };
 
 const MockModularDrawerComponent = ({
   networksConfiguration,
   assetsConfiguration,
   flow = "integration_test",
+  currencies,
+  onCancel,
+  onAccountSelected,
 }: MockModularDrawerComponentProps) => {
-  const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
+  const { openDrawer, closeDrawer, hideDrawer, isOpen } = useModularDrawerController();
+  // Same guard as ModularDrawerWrapper: hiding for the device flow must not cancel the request.
+  const silentHideRef = useRef(false);
+  const onSilentClose = useCallback(() => {
+    silentHideRef.current = true;
+    hideDrawer();
+  }, [hideDrawer]);
+  const onDrawerClose = useCallback(() => {
+    if (silentHideRef.current) {
+      silentHideRef.current = false;
+      return;
+    }
+    closeDrawer();
+  }, [closeDrawer]);
 
   const handleOpenDrawer = useCallback(
     (withAccountSelection: boolean, flow: string) => {
@@ -67,9 +86,11 @@ const MockModularDrawerComponent = ({
         enableAccountSelection: withAccountSelection,
         flow,
         source: "modular_drawer_shared",
+        onCancel,
+        ...(currencies ? { currencies, areCurrenciesFiltered: true } : {}),
       });
     },
-    [openDrawer],
+    [openDrawer, onCancel, currencies],
   );
 
   return (
@@ -98,10 +119,11 @@ const MockModularDrawerComponent = ({
       </Button>
       <ModularDrawer
         isOpen={isOpen}
-        onClose={closeDrawer}
+        onClose={onCancel ? onDrawerClose : closeDrawer}
+        onSilentClose={onCancel ? onSilentClose : undefined}
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
-        onAccountSelected={() => {}}
+        onAccountSelected={onAccountSelected ?? (() => {})}
       />
     </>
   );

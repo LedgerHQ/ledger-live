@@ -79,6 +79,54 @@ describe("useDeviceNavigation", () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  describe("onAbandon", () => {
+    function navigateSilently() {
+      const onClose = jest.fn();
+      const onAccountSelected = jest.fn();
+      const { result } = renderHook(
+        () =>
+          useDeviceNavigation({
+            onClose,
+            onSilentClose: jest.fn(),
+            resetSelection: jest.fn(),
+            onAccountSelected,
+          }),
+        { overrideInitialState: withDevice },
+      );
+      act(() => result.current.navigateToDeviceWithCurrency(mockBtcCryptoCurrency));
+      const { params } = mockNavigate.mock.calls[0][1];
+      return { onClose, onAccountSelected, params };
+    }
+
+    it("closes the drawer when the device flow is left without completing", () => {
+      const { onClose, params } = navigateSilently();
+
+      act(() => params.onAbandon());
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not close the drawer again after an explicit close", () => {
+      const { onClose, params } = navigateSilently();
+
+      act(() => params.onCloseNavigation());
+      act(() => params.onAbandon());
+
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it("does not cancel the request after the device flow succeeded", () => {
+      const { onClose, onAccountSelected, params } = navigateSilently();
+      const account = genAccount("btc-1", { currency: getCryptoCurrencyById("bitcoin") });
+
+      act(() => params.onSuccess({ scannedAccounts: [account], selected: [account] }));
+      act(() => params.onAbandon());
+
+      expect(onAccountSelected).toHaveBeenCalledWith(account, undefined);
+      expect(onClose).not.toHaveBeenCalled();
+    });
+  });
+
   it("navigates to device with a token currency (uses parent)", () => {
     const onClose = jest.fn();
     const resetSelection = jest.fn();

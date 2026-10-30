@@ -74,14 +74,31 @@ export function useDeviceNavigation({
       // SelectDevice (1) + AddAccounts flow (1) = 2 screens to pop
       const navigationDepth = isInline ? 2 : undefined;
 
+      let isSettled = false;
+      const onCloseNavigation = () => {
+        isSettled = true;
+        onClose?.();
+      };
+      const onDeviceFlowSuccess: typeof onSuccess = res => {
+        isSettled = true;
+        onSuccess(res);
+      };
+      // Back navigation (hardware back, header arrow, iOS swipe) leaves without
+      // onCloseNavigation; without this the drawer keeps the previous request.
+      const onAbandon = () => {
+        if (isSettled) return;
+        onCloseNavigation();
+      };
+
       openSelectDevice({
         currency: selectedAsset,
         createTokenAccount,
         context: AddAccountContexts.AddAccounts,
         inline: isInline,
-        onCloseNavigation: onClose,
+        onCloseNavigation,
+        onAbandon,
         navigationDepth,
-        onSuccess,
+        onSuccess: onDeviceFlowSuccess,
       });
     },
     [onClose, onSilentClose, resetSelection, openSelectDevice, isInline, onSuccess],

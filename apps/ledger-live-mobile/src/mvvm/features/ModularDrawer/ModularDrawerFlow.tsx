@@ -100,6 +100,7 @@ export function ModularDrawerFlow({
   const {
     sortedCryptoCurrencies,
     assetsSorted,
+    isStale: isAssetsDataStale,
     isLoading,
     isError,
     isCurrentResultReady,
@@ -128,6 +129,7 @@ export function ModularDrawerFlow({
     onAddNewAccount,
   } = useModularDrawerState({
     assetsSorted,
+    isAssetsDataStale,
     currencyIds: completionMode === "currency" ? [] : (currencies ?? []),
     isDrawerOpen: isOpen,
     onClose,
