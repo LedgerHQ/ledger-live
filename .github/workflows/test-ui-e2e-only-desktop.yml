@@ -364,6 +364,7 @@ jobs:
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
+          step_summary: false
 
       - name: Verify Speculos Docker image is ready
         if: ${{ env.REMOTE_SPECULOS != 'true' }}
@@ -648,6 +649,7 @@ jobs:
         id: setup-test-desktop
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
+          step_summary: false
 
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
