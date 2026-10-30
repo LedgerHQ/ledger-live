@@ -21,6 +21,8 @@ type Props = {
   openSync: () => void;
   skipSync: () => void;
   seedConfiguration?: React.RefObject<SeedOriginType | undefined>;
+  /** Extra page properties, which override the defaults. */
+  trackingProps?: Readonly<Record<string, string>>;
 };
 
 function SkipLedgerSyncDrawer({
@@ -29,6 +31,7 @@ function SkipLedgerSyncDrawer({
   openSync,
   skipSync,
   seedConfiguration,
+  trackingProps,
 }: Props) {
   return (
     <QueuedBottomSheet
@@ -42,6 +45,7 @@ function SkipLedgerSyncDrawer({
         openSync={openSync}
         skipSync={skipSync}
         seedConfiguration={seedConfiguration}
+        trackingProps={trackingProps}
       />
     </QueuedBottomSheet>
   );
@@ -51,6 +55,7 @@ function SkipLedgerSyncDrawerContent({
   openSync,
   skipSync,
   seedConfiguration,
+  trackingProps,
 }: Readonly<Omit<Props, "isOpen" | "handleClose">>) {
   const { t } = useTranslation();
   const bottomInset = useBottomSheetBottomInset();
@@ -62,6 +67,7 @@ function SkipLedgerSyncDrawerContent({
         category="Drawer : Skip Ledger sync confirmation"
         flow="onboarding"
         seedConfiguration={seedConfiguration?.current}
+        {...trackingProps}
       />
       <Box
         lx={{

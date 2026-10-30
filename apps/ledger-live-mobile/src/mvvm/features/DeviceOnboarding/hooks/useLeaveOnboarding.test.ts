@@ -52,6 +52,37 @@ describe("useLeaveOnboarding", () => {
     },
   );
 
+  it("should hand the seeded outcome to the sync offer", () => {
+    const { result } = renderHook(() =>
+      useLeaveOnboarding({
+        device,
+        navigateOnExit: true,
+        wasReadOnlyAtEntry: false,
+        firmwareUpdateDone: true,
+      }),
+    );
+
+    act(() =>
+      result.current("offerLedgerSync", {
+        ...machineContext({ genuine: true, seeded: true }),
+        onboardedOnEntry: true,
+        offerSync: true,
+        firmware: null,
+      }),
+    );
+
+    expect(mockNavigate).toHaveBeenCalledWith(expect.any(String), {
+      device,
+      wasReadOnlyAtEntry: false,
+      seededOutcome: {
+        deviceType: DmkDeviceModelId.STAX,
+        ledgerSyncEligible: true,
+        firmwareUpdateAvailability: "yes",
+        firmwareUpdateDone: true,
+      },
+    });
+  });
+
   it("should leave without the notifications prompt when the device is not genuine", () => {
     leave("userQuit", false);
 
