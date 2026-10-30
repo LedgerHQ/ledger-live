@@ -5909,10 +5909,10 @@
   },
   "osUpdates": {
     "backupBanner": {
-      "title": "Backup found",
+      "title": "Saved settings found",
       "description": "Apps and settings were not fully restored on your device.",
-      "restore": "Restore",
-      "delete": "Delete backup"
+      "restore": "Reinstall",
+      "delete": "Discard"
     },
     "bootloaderDiscovered": {
       "title": "Device in Bootloader mode.",
@@ -5930,15 +5930,15 @@
       }
     },
     "restoreConfirmation": {
-      "title": "Restore your previous configuration?",
-      "description": "I confirm I want to restore apps & settings from my previous configuration and any app & data created since will be lost.",
-      "confirm": "Restore",
+      "title": "Reinstall your saved settings?",
+      "description": "The apps and settings saved during your OS update will be reinstalled on your device. Any app or data added since then will be removed.",
+      "confirm": "Reinstall",
       "cancel": "Cancel"
     },
     "deleteConfirmation": {
-      "title": "Delete your backup?",
-      "description": "I am aware previous configuration and app & data from my last backup, including Security Key credentials, will be lost.",
-      "confirm": "Delete backup",
+      "title": "Discard your saved settings?",
+      "description": "The settings saved during your OS update, including Security Key credentials, won't be available anymore. You can still reinstall your apps from My Ledger with their default settings.",
+      "confirm": "Discard",
       "cancel": "Cancel"
     },
     "actions": {
