@@ -19,13 +19,22 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import { registerAllCoins } from "@ledgerhq/live-common/coin-modules/load-all-coins";
+import { isGenericCoinFrameworkFamily } from "@ledgerhq/live-common/bridge/generic-coin-framework/genericCoinFrameworkFamilies";
 import currencies, { AccountInfo, AccountType } from "./currencies";
 import { LogEntry, submitLogs } from "./datadog";
-import { Dist, measureCalls } from "./measure";
+import { measureThroughput } from "./huge";
+import { Dist, computeStats, measureCalls } from "./measure";
 
 interface RunResult {
   entries: LogEntry[];
   failed: boolean;
+}
+
+function rates(operations: number, calls: number, durationMs: number) {
+  return {
+    opsPerSecond: durationMs ? operations / (durationMs / 1000) : 0,
+    callsPerOperation: operations ? calls / operations : 0,
+  };
 }
 
 function formatDist(dist: Dist, unit = "", decimals = 3) {
@@ -212,6 +221,57 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
       );
 
       try {
+        if (accountType === "huge") {
+          // Without a local coin module, the call would silently go to the coin service instead
+          if (!isGenericCoinFrameworkFamily(currency.family)) {
+            console.log(
+              `Skipping, family "${currency.family}" is not on the generic coin framework`,
+            );
+            continue;
+          }
+          const {
+            result: throughput,
+            totalCalls,
+            callsByDomain,
+            cpu,
+            memory,
+          } = await withTimeout(
+            measureCalls(() => measureThroughput(currency.id, currency.family, info.address)),
+            `${currencyId}/${accountType} throughput`,
+          );
+          // Only the pages are timed, not the lazy loading of the coin module
+          const duration = throughput.pageDurations.reduce((sum, d) => sum + d, 0);
+          const { opsPerSecond, callsPerOperation } = rates(
+            throughput.operations,
+            totalCalls,
+            duration,
+          );
+
+          console.log(
+            `\n[${i} / ${nbOfAccounts}] 📈 Throughput: ${throughput.operations} operations in ${formatDuration(duration)} (${opsPerSecond.toFixed(1)} ops/s, ${callsPerOperation.toFixed(2)} calls/op, ${throughput.pageDurations.length} pages, exhausted=${throughput.exhausted})`,
+          );
+
+          result.entries.push({
+            duration,
+            currencyName: currency.id,
+            coinModuleName: currency.family,
+            operationType: "throughput",
+            accountType,
+            transactions: throughput.operations,
+            accountAddressOrXpub: info.address,
+            totalNetworkCalls: totalCalls,
+            networkCallsByDomain: callsByDomain,
+            cpu,
+            memory,
+            opsPerSecond,
+            callsPerOperation,
+            pages: throughput.pageDurations.length,
+            pageDuration: computeStats(throughput.pageDurations),
+            exhausted: throughput.exhausted,
+          });
+          continue;
+        }
+
         const startScan = Date.now();
         const {
           result: initialAccount,
@@ -224,6 +284,24 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
           `${currencyId}/${accountType} scan`,
         );
         const endScan = Date.now();
+        const scanDuration = endScan - startScan;
+        const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+
+        // Pushed before the sync, so that a failing sync does not drop the scan measurements
+        result.entries.push({
+          duration: scanDuration,
+          currencyName: currency.id,
+          coinModuleName: currency.family,
+          operationType: "scan",
+          accountType: accountType as AccountType,
+          transactions: initialAccount.operationsCount,
+          accountAddressOrXpub: xpubOrAddress,
+          totalNetworkCalls: scanCalls,
+          networkCallsByDomain: scanRoutes,
+          cpu: scanCpu,
+          memory: scanMem,
+          ...rates(initialAccount.operationsCount, scanCalls, scanDuration),
+        });
 
         const startSync = Date.now();
         const {
@@ -237,10 +315,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         );
         const endSync = Date.now();
 
-        const scanDuration = endScan - startScan;
         const syncDuration = endSync - startSync;
-
-        const { xpubOrAddress } = decodeAccountId(initialAccount.id);
 
         prettyLog(
           i,
@@ -257,34 +332,19 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
           syncMem,
         );
 
-        result.entries.push(
-          {
-            duration: scanDuration,
-            currencyName: currency.id,
-            coinModuleName: currency.family,
-            operationType: "scan",
-            accountType: accountType as AccountType,
-            transactions: initialAccount.operationsCount,
-            accountAddressOrXpub: xpubOrAddress,
-            totalNetworkCalls: scanCalls,
-            networkCallsByDomain: scanRoutes,
-            cpu: scanCpu,
-            memory: scanMem,
-          },
-          {
-            duration: syncDuration,
-            currencyName: currency.id,
-            coinModuleName: currency.family,
-            operationType: "sync",
-            accountType: accountType as AccountType,
-            transactions: initialAccount.operationsCount,
-            accountAddressOrXpub: xpubOrAddress,
-            totalNetworkCalls: syncCalls,
-            networkCallsByDomain: syncRoutes,
-            cpu: syncCpu,
-            memory: syncMem,
-          },
-        );
+        result.entries.push({
+          duration: syncDuration,
+          currencyName: currency.id,
+          coinModuleName: currency.family,
+          operationType: "sync",
+          accountType: accountType as AccountType,
+          transactions: initialAccount.operationsCount,
+          accountAddressOrXpub: xpubOrAddress,
+          totalNetworkCalls: syncCalls,
+          networkCallsByDomain: syncRoutes,
+          cpu: syncCpu,
+          memory: syncMem,
+        });
       } catch (err) {
         console.error(
           `Skipping failing run. Error: ${err instanceof Error ? (err.stack ?? err.message) : err}`,
@@ -295,7 +355,10 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
         if (err instanceof Error) {
           logErrorProperties(err);
         }
-        result.failed = true;
+        // A huge account only reports its throughput, its failures do not fail the run
+        if (accountType !== "huge") {
+          result.failed = true;
+        }
       }
     }
   }

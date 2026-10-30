@@ -56,21 +56,29 @@ Run monitoring in `isolated` mode
 pnpm start monitor --currencies algorand --isolated
 ```
 
+Run isolated processes in parallel (each line of output is prefixed with its `[currency/accountType]`)
+
+```bash
+pnpm start monitor --account-types big,huge --isolated --concurrency 4
+```
+
 ### Command Options
 
-| Option                          | Description                                                                    | Default                   | Example                   |
-| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------- | ------------------------- |
-| `-c, --currencies <currencies>` | (Optional) Comma-separated list of currencies to monitor                       | `all`                     | `bitcoin,ethereum,solana` |
-| `-t, --account-types <types>`   | (Optional) Comma-separated account types to test                               | `pristine,average,big`    | `pristine,big`            |
-| `-i, --isolated`                | (Optional) Flag to run each currency/account combination in isolated processes | `false` (meaning no flag) | `--isolated` (for true)   |
+| Option                          | Description                                                                    | Default                       | Example                   |
+| ------------------------------- | ------------------------------------------------------------------------------ | ----------------------------- | ------------------------- |
+| `-c, --currencies <currencies>` | (Optional) Comma-separated list of currencies to monitor                       | `all`                         | `bitcoin,ethereum,solana` |
+| `-t, --account-types <types>`   | (Optional) Comma-separated account types to test                               | `pristine,average,big`        | `pristine,big`            |
+| `-i, --isolated`                | (Optional) Flag to run each currency/account combination in isolated processes | `false` (meaning no flag)     | `--isolated` (for true)   |
+| `-j, --concurrency <n>`         | (Optional) Number of isolated processes run in parallel, with `--isolated`     | `$MONITOR_CONCURRENCY` or `1` | `4`                       |
 
 ### Account Types
 
-The tool tests three different account types to measure performance across various scenarios:
+The tool tests four different account types to measure performance across various scenarios:
 
 - **`pristine`**: Accounts with a few transaction in history
 - **`average`**: Accounts with moderate transaction in history
-- **`big`**: Accounts with a lot of transactions in history
+- **`big`**: Accounts with a lot of transactions in history, as a real user may have (10,000 to 40,000 operations)
+- **`huge`**: Exchange-like accounts that cannot be scanned within the timeout. Instead of a scan and a sync, their `throughput` is measured: `listOperations` is walked page by page for 2 minutes. Only on generic coin framework families, and never fails the run. Not monitored by default
 
 ### Supported Currencies
 
@@ -119,12 +127,13 @@ The tool provides detailed performance metrics:
 
 ### Environment Variables
 
-| Variable      | Description                              | Required | Default        |
-| ------------- | ---------------------------------------- | -------- | -------------- |
-| `DD_API_KEY`  | Datadog API key for metrics submission   | No       | -              |
-| `DD_APP_KEY`  | Datadog application key                  | No       | -              |
-| `DD_DOMAIN`   | Datadog site domain                      | No       | `datadoghq.eu` |
-| `SUBMIT_LOGS` | Enable/disable log submission to Datadog | No       | -              |
+| Variable              | Description                              | Required | Default        |
+| --------------------- | ---------------------------------------- | -------- | -------------- |
+| `DD_API_KEY`          | Datadog API key for metrics submission   | No       | -              |
+| `DD_APP_KEY`          | Datadog application key                  | No       | -              |
+| `DD_DOMAIN`           | Datadog site domain                      | No       | `datadoghq.eu` |
+| `SUBMIT_LOGS`         | Enable/disable log submission to Datadog | No       | -              |
+| `MONITOR_CONCURRENCY` | Default value of `--concurrency`         | No       | `1`            |
 
 ### Datadog Integration
 
@@ -145,15 +154,20 @@ When `SUBMIT_LOGS` environment variable is set, the tool automatically submits p
     "api.coingecko.com": 1
   },
   "cpu": { "min": 0.1, "median": 0.2, "max": 0.5, "p90": 0.4, "p99": 0.5 },
-  "memory": { "min": 45.2, "median": 47.1, "max": 48.9, "p90": 48.5, "p99": 48.8 }
+  "memory": { "min": 45.2, "median": 47.1, "max": 48.9, "p90": 48.5, "p99": 48.8 },
+  "opsPerSecond": 34.0,
+  "callsPerOperation": 0.07
 }
 ```
+
+`opsPerSecond` and `callsPerOperation` are set on `scan` and `throughput` entries. `throughput` entries also have `pages`, `pageDuration` and `exhausted` (whether the history ended within the budget).
 
 ## 📈 Metrics Collected
 
 ### Performance Metrics
 
 - **Duration**: Execution time for scan and sync operations in milliseconds
+- **Throughput**: Operations read per second and network calls per operation
 - **CPU Usage**: CPU consumption statistics (min, median, max, p90, p99)
 - **Memory Usage**: Memory consumption in MB (min, median, max, p90, p99)
 
@@ -165,5 +179,5 @@ When `SUBMIT_LOGS` environment variable is set, the tool automatically submits p
 ### Account Metrics
 
 - **Transaction Count**: Number of transactions in the account
-- **Account Type**: Type of account being tested (pristine/average/big)
+- **Account Type**: Type of account being tested (pristine/average/big/huge)
 - **Currency**: Blockchain network being tested

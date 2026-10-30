@@ -1,6 +1,6 @@
 import { DerivationMode } from "@ledgerhq/types-live";
 
-export type AccountType = "big" | "average" | "pristine";
+export type AccountType = "huge" | "big" | "average" | "pristine";
 
 export interface AccountInfo {
   address: string;
@@ -45,7 +45,8 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     ethereum: {
       accounts: {
-        big: { address: "0x4a9a16755a6bf64291cd2c9eb027b39c129ff58d" },
+        huge: { address: "0x4a9a16755a6bf64291cd2c9eb027b39c129ff58d" },
+        big: { address: "0x400F854bFF90914A2891472D414924e97b2F2F39" },
         average: { address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3" },
         pristine: { address: "0x6895Df5ed013c85B3D9D2446c227C9AfC3813551" },
       },
@@ -87,7 +88,8 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     solana: {
       accounts: {
-        big: { address: "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S" },
+        huge: { address: "2ojv9BAiHUrvsm9gxDe7fJSzbNZSJcxZvf8dqmWGHG8S" },
+        big: { address: "3ot74WntJpc7mUQQyxi8zF2c21Hb2qM6K28Mb3epLc9U" },
         average: { address: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp" },
         pristine: { address: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv" },
       },
@@ -118,7 +120,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "f02901126" },
         average: { address: "f1dyqj5drgs4jjjkhddix2pptiwg2cjioyv4x4gli" },
-        big: { address: "f1khdd2v7il7lxn4zjzzrqwceh466mq5k333ktu7q" },
+        big: { address: "f1o4hydnuzkpe74uqtc2isdg3kuny653b6gppmafi" },
       },
     },
     mina: {
@@ -139,7 +141,7 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "0x404ccbd2acb6208effa69c100849feff040cec697d06f745152bdb3aa3a70614" },
         average: { address: "0x201cf09644cd5d88aa6db2d1670011325eea2c3198ddfd0c1aa549be0003bb24" },
-        big: { address: "0xc8670e8e67bc47117628b8a13d6d63cd7fc57212aa3c8cc7eaa8783099acb5f1" },
+        big: { address: "0x0d4aa8abe054f0ae50f3630a8e81eec842eb1069739c539b87bc3d974500f563" },
       },
     },
     celo: {
@@ -203,14 +205,16 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
       accounts: {
         pristine: { address: "tz1WMrppYADANWkNus4vs8xqKztacLETnKmT" },
         average: { address: "tz1faGczABYaoG4JaSexQ3J7Pf16ePyLjB6a" },
-        big: { address: "tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw" },
+        huge: { address: "tz1UBZUkXpKGhYsP5KtzDNqLLchwF4uHrGjw" },
+        big: { address: "tz1dVz3sQnuh8bACiVyE1kXgTtoKQyKZ582T" },
       },
     },
     tron: {
       accounts: {
         pristine: { address: "TDcjxTKqWmStKaobhwkqtknqX1GC6vVtXV" },
         average: { address: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7" },
-        big: { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH" },
+        huge: { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH" },
+        big: { address: "TBnzrtKnwhRkgcajWwWhGjktL7NF9MNNcC" },
       },
     },
     ripple: {
