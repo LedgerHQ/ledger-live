@@ -32,7 +32,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "contacts",
   "fear-and-greed",
   "flow-contacts-add-address",
-  "flow-contacts-add-contact",
   "flow-contacts-delete-address",
   "flow-contacts-delete-contact",
   "flow-contacts-detail",

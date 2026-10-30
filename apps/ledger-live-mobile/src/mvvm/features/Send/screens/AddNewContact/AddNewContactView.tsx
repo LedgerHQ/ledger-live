@@ -7,7 +7,7 @@ import {
   type QueuedDrawerFlowOptions,
   type QueuedDrawerFlowScreenRegistry,
 } from "LLM/components/QueuedDrawerFlow";
-import { ContactsAddContactFooter } from "@features/flow-contacts-add-contact";
+import { ContactsAddContactFooter } from "@features/flow-contacts-add-contact/native";
 import { AddContactView } from "LLM/features/Send/screens/AddContact/AddContactView";
 import { SelectContactStep } from "LLM/features/Send/screens/AddToExistingContact/SelectContactStep";
 import useLedgerSyncEntryPointViewModel from "LLM/features/LedgerSyncEntryPoint/useLedgerSyncEntryPointViewModel";

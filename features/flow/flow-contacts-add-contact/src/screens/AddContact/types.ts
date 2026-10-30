@@ -17,18 +17,6 @@ export type UseAddContactContentViewModelOptions = Readonly<{
   onSaveSuccess: (contact: Contact) => void;
 }>;
 
-export type ContactsAddContactContentProps = AddContactContentViewModel;
-
-export type ContactsAddContactContentNativeProps = ContactsAddContactContentProps &
-  Readonly<{
-    autoFocus?: boolean;
-  }>;
-
-export type ContactsAddContactFooterProps = Pick<
-  ContactsAddContactContentProps,
-  "isConfirmEnabled" | "isSaving" | "onConfirm"
->;
-
 export type AddContactDialogLifecycleCallbacks = Readonly<{
   onOpen?: () => void;
   onClose?: () => void;

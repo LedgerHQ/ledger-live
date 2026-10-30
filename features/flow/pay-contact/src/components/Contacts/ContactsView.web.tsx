@@ -1,5 +1,5 @@
 import React from "react";
-import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
+import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact/web";
 import { EmptyState } from "../EmptyState/EmptyState.web";
 import { ContactsTable } from "../ContactsTable/ContactsTable.web";
 import type { ContactsViewProps } from "../../types";

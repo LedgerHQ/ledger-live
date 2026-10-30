@@ -7,3 +7,5 @@ export * from "./useAddContactViewModel";
 export * from "./useAddContactContentViewModel";
 export * from "./useAddContactDialogViewModel";
 export * from "./types";
+export * from "./ContactsAddContactContent";
+export type * from "./ContactsAddContactContent.types";

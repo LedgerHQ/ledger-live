@@ -2,8 +2,7 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { ContactsAddContactContent } from "../..";
-import type { ContactsAddContactContentProps } from "./types";
+import { ContactsAddContactContent, type ContactsAddContactContentProps } from "../..";
 
 jest.mock("@features/platform-contacts", () => ({
   ...jest.requireActual("@features/platform-contacts"),

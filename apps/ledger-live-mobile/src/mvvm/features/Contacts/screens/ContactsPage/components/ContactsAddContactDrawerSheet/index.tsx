@@ -1,9 +1,7 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import {
-  ContactsAddContactContent,
-  ContactsAddContactFooter,
-} from "@features/flow-contacts-add-contact";
+import { ContactsAddContactContent } from "@features/flow-contacts-add-contact";
+import { ContactsAddContactFooter } from "@features/flow-contacts-add-contact/native";
 import type { AddContactAppAdapterResult } from "@features/flow-contacts";
 import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 
