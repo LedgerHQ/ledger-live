@@ -1,24 +1,15 @@
-import {
-  getCurrentTrackingPage,
-  getPreviousTrackingPage,
-  setTrackingSource,
-  track,
-  trackPage,
-} from "@shared/analytics";
-import type { DeviceOnboardingContext } from "@features/platform-device-onboarding";
+import { createFlowTracker } from "@shared/analytics";
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
+} from "@features/platform-device-onboarding";
 import { toChecksError, toChecksScreenState } from "../utils/checksPhase";
+import { isCurrentSessionGenuine } from "../utils/genuineSession";
+import { firmwareNeedsLegacyFlow } from "../utils/legacyFlow";
 
 type YesNo = "yes" | "no";
 
 export type FirmwareUpdateAvailability = YesNo | "unknown";
-
-/** What the seeded funnel knows about its outcome, carried from the checks to the Sync offer. */
-export type SeededOutcome = Readonly<{
-  deviceType: string;
-  ledgerSyncEligible: boolean;
-  firmwareUpdateAvailability: FirmwareUpdateAvailability;
-  firmwareUpdateDone: boolean;
-}>;
 
 export const seededPages = {
   genuineCheck: "Genuine Check",
@@ -48,49 +39,119 @@ export const seededButtons = {
   close: "close",
 } as const;
 
-export function seededProps(deviceType: string) {
-  return {
+/** What the funnel learns on the way, sent with its start and its end. */
+type SeededFacts = {
+  seeded: boolean;
+  deviceType: string;
+  ledgerSyncEligible: boolean;
+  firmwareUpdateAvailability: FirmwareUpdateAvailability;
+  firmwareUpdateDone: boolean;
+};
+
+const initialFacts = (): SeededFacts => ({
+  seeded: false,
+  deviceType: "",
+  ledgerSyncEligible: false,
+  firmwareUpdateAvailability: "unknown",
+  firmwareUpdateDone: false,
+});
+
+let facts = initialFacts();
+
+const flow = createFlowTracker({
+  props: () => ({
     sourceFlow: "onboarding",
     "onboarding type": "seeded device",
     seedConfiguration: "already_seeded",
-    deviceType,
-  } as const;
-}
+    deviceType: facts.deviceType,
+  }),
+});
 
 const yesNo = (value: boolean): YesNo => (value ? "yes" : "no");
 
-/** Fire and forget: the helpers return nothing, so call sites hold no promise. */
-function send(delivery: void | Promise<void>): void {
-  Promise.resolve(delivery).catch(() => undefined);
-}
+/**
+ * One funnel at a time: the checks screen resets it and the Sync offer can end it. Nothing is
+ * sent until the device is known to be seeded.
+ */
+export const seededFunnel = {
+  reset: () => {
+    flow.reset();
+    facts = initialFacts();
+  },
+  learn: (next: Partial<SeededFacts>) => {
+    facts = { ...facts, ...next };
+  },
+  isTracked: () => facts.seeded,
+  currentPage: () => flow.currentPage(),
+  page: (name: string, props?: Record<string, string>) => {
+    if (facts.seeded) flow.page(name, props);
+  },
+  openDrawer: (name: string, props?: Record<string, string>) => {
+    if (facts.seeded) flow.openDrawer(name, props);
+  },
+  closeDrawer: () => flow.closeDrawer(),
+  click: (button: string) => {
+    if (facts.seeded) flow.click(button);
+  },
+  start: () => {
+    if (!facts.seeded) return;
+    flow.start("onboarding_started", {
+      ledger_sync_eligibility: yesNo(facts.ledgerSyncEligible),
+      firmware_update_availability: facts.firmwareUpdateAvailability,
+    });
+  },
+  end: (result: "done" | "aborted", ledgerSyncDone = false) => {
+    if (!facts.seeded) return;
+    seededFunnel.start();
+    flow.end(`onboarding_${result}`, {
+      ledger_sync_done: yesNo(ledgerSyncDone),
+      firmware_update_done: yesNo(facts.firmwareUpdateDone),
+    });
+  },
+  /** Runs right before the exit actions navigate. */
+  exit: (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => {
+    if (context.onboardedOnEntry !== true) return;
+    switch (seededExitResult(reason, context)) {
+      case "done":
+        return seededFunnel.end("done");
+      case "aborted":
+        return seededFunnel.end("aborted");
+      case "syncOffer":
+        return seededFunnel.start();
+      case "legacyFlow":
+        return flow.cancel();
+    }
+  },
+};
 
-function withSource<T extends object>(props: T): T & { source?: string } {
-  const source = getPreviousTrackingPage();
-  return source ? { source, ...props } : props;
-}
+export type SeededExitResult = "done" | "aborted" | "syncOffer" | "legacyFlow";
 
-/** Null for an unseeded entry: only the seeded funnel is tracked. */
-export function toSeededOutcome(
+/** How each machine exit ends the funnel. It follows where `exitActions` sends the user. */
+export function seededExitResult(
+  reason: DeviceOnboardingExitReason,
   context: DeviceOnboardingContext,
-  firmwareUpdateDone: boolean,
-): SeededOutcome | null {
-  if (context.onboardedOnEntry !== true) return null;
-  return {
-    deviceType: context.deviceModelId,
-    ledgerSyncEligible: context.offerSync,
-    firmwareUpdateAvailability: toFirmwareUpdateAvailability(
-      context.firmware?.kind ?? null,
-      firmwareUpdateDone,
-    ),
-    firmwareUpdateDone,
-  };
+): SeededExitResult {
+  const genuine = isCurrentSessionGenuine(context);
+  switch (reason) {
+    case "completed":
+      return "done";
+    case "offerLedgerSync":
+      return "syncOffer";
+    case "resumeFirmwareUpdate":
+      return "aborted";
+    case "legacyFallback":
+      if (context.isOnboarded !== true) return "legacyFlow";
+      if (genuine) return "done";
+      return firmwareNeedsLegacyFlow(context) ? "legacyFlow" : "aborted";
+    case "userQuit":
+      return genuine ? "done" : "aborted";
+  }
 }
 
 export function toFirmwareUpdateAvailability(
   firmwareCheck: string | null,
-  firmwareUpdateDone: boolean,
 ): FirmwareUpdateAvailability {
-  if (firmwareUpdateDone || firmwareCheck === "offered") return "yes";
+  if (firmwareCheck === "offered") return "yes";
   if (firmwareCheck === "checked") return "no";
   return "unknown";
 }
@@ -123,73 +184,4 @@ export function seededChecksPage(
     default:
       return null;
   }
-}
-
-export function trackSeededPage(
-  page: string,
-  deviceType: string,
-  extraProps: Record<string, string> = {},
-): void {
-  send(
-    trackPage(
-      { category: page, props: { ...seededProps(deviceType), ...extraProps } },
-      { updateRoutes: true, refreshSource: true },
-    ),
-  );
-}
-
-/** The screen a click happens on, and that screen's own source. */
-export type SeededClickPage = Readonly<{ page: string; source: string }>;
-
-/** Takes the page explicitly: a drawer over the screen moves the shared page refs. */
-export function trackSeededClick(
-  button: string,
-  deviceType: string,
-  { page, source }: SeededClickPage,
-): void {
-  const props = { ...seededProps(deviceType), button, page };
-  send(track("button_clicked", source ? { source, ...props } : props));
-}
-
-/** Puts a screen back as the current page once a drawer over it is dismissed. */
-export function restoreSeededPage(drawerPage: string, page: string): void {
-  if (getCurrentTrackingPage() === drawerPage) setTrackingSource(page);
-}
-
-export function trackSeededStarted(outcome: SeededOutcome): void {
-  send(
-    track(
-      "onboarding_started",
-      withSource({
-        ...seededProps(outcome.deviceType),
-        ledger_sync_eligibility: yesNo(outcome.ledgerSyncEligible),
-        firmware_update_availability: outcome.firmwareUpdateAvailability,
-      }),
-    ),
-  );
-}
-
-function trackSeededEnd(
-  event: "onboarding_done" | "onboarding_aborted",
-  outcome: SeededOutcome,
-  ledgerSyncDone: boolean,
-): void {
-  send(
-    track(
-      event,
-      withSource({
-        ...seededProps(outcome.deviceType),
-        ledger_sync_done: yesNo(ledgerSyncDone),
-        firmware_update_done: yesNo(outcome.firmwareUpdateDone),
-      }),
-    ),
-  );
-}
-
-export function trackSeededDone(outcome: SeededOutcome, ledgerSyncDone = false): void {
-  trackSeededEnd("onboarding_done", outcome, ledgerSyncDone);
-}
-
-export function trackSeededAborted(outcome: SeededOutcome): void {
-  trackSeededEnd("onboarding_aborted", outcome, false);
 }

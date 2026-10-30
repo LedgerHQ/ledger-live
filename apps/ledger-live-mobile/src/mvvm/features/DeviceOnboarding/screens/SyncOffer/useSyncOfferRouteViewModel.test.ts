@@ -1,16 +1,13 @@
-import { track, trackPage } from "@shared/analytics";
 import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
+import { recordAnalytics } from "../../analytics/recordAnalytics.testUtils";
+import { seededFunnel } from "../../analytics/seededTracking";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  track: jest.fn(),
-  trackPage: jest.fn(),
-  getPreviousTrackingPage: jest.fn(() => "Ledger Sync"),
-}));
+const events = recordAnalytics();
 
 const device = {
   deviceId: "device-id",
@@ -52,12 +49,6 @@ jest.mock("@react-navigation/native", () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
-      seededOutcome: {
-        deviceType: "stax",
-        ledgerSyncEligible: true,
-        firmwareUpdateAvailability: "no",
-        firmwareUpdateDone: false,
-      },
     },
   }),
 }));
@@ -183,44 +174,36 @@ describe("useSyncOfferRouteViewModel", () => {
     );
   });
 
-  it("should track the offer as the seeded device", () => {
-    const { result } = renderOffer(false);
+  describe("seeded funnel", () => {
+    beforeEach(() => {
+      seededFunnel.reset();
+      seededFunnel.learn({ seeded: true, deviceType: "stax" });
+    });
 
-    expect(result.current.seededDeviceType).toBe("stax");
-  });
+    it("should end the funnel with Ledger Sync when the trustchain lands", async () => {
+      const { result } = renderOffer(true);
 
-  it("should not complete when activation starts without a trustchain", () => {
-    const { result } = renderOffer(false);
+      act(() => result.current.onActivate());
 
-    act(() => result.current.onActivate());
+      const sent = await events();
+      expect(sent.map(([event]) => event)).toEqual([
+        "Page Ledger Sync",
+        "Page Ledger Sync Success",
+        "onboarding_started",
+        "onboarding_done",
+      ]);
+      expect(sent.at(-1)?.[1]).toMatchObject({ ledger_sync_done: "yes" });
+    });
 
-    expect(track).not.toHaveBeenCalledWith("onboarding_done", expect.anything());
-  });
+    it("should end the funnel without Ledger Sync when the offer is skipped", async () => {
+      const { result } = renderOffer(false);
 
-  it("should track sync success and completion when the trustchain lands", () => {
-    const { result } = renderOffer(true);
+      act(() => result.current.onSkip());
 
-    act(() => result.current.onActivate());
-
-    expect(trackPage).toHaveBeenCalledWith(
-      expect.objectContaining({ category: "Ledger Sync Success" }),
-      expect.anything(),
-    );
-    expect(track).toHaveBeenCalledWith(
-      "onboarding_done",
-      expect.objectContaining({ ledger_sync_done: "yes", firmware_update_done: "no" }),
-    );
-  });
-
-  it("should complete without sync when the offer is skipped", () => {
-    const { result } = renderOffer(false);
-
-    act(() => result.current.onSkip());
-
-    expect(track).toHaveBeenCalledWith(
-      "onboarding_done",
-      expect.objectContaining({ ledger_sync_done: "no" }),
-    );
-    expect(trackPage).not.toHaveBeenCalled();
+      expect((await events()).at(-1)).toEqual([
+        "onboarding_done",
+        expect.objectContaining({ ledger_sync_done: "no", page: "Ledger Sync" }),
+      ]);
+    });
   });
 });

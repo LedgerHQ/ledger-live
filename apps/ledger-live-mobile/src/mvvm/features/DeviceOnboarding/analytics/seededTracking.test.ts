@@ -1,23 +1,12 @@
-import { track, trackPage } from "@shared/analytics";
 import type { DeviceOnboardingContext } from "@features/platform-device-onboarding";
+import { recordAnalytics } from "./recordAnalytics.testUtils";
 import {
   seededChecksPage,
+  seededExitResult,
+  seededFunnel,
   seededPages,
   toFirmwareUpdateAvailability,
-  toSeededOutcome,
-  trackSeededAborted,
-  trackSeededClick,
-  trackSeededDone,
-  trackSeededPage,
-  trackSeededStarted,
-  type SeededOutcome,
 } from "./seededTracking";
-
-jest.mock("@shared/analytics", () => ({
-  track: jest.fn(),
-  trackPage: jest.fn(),
-  getPreviousTrackingPage: jest.fn(() => "Pairing"),
-}));
 
 const shared = {
   sourceFlow: "onboarding",
@@ -26,15 +15,10 @@ const shared = {
   deviceType: "stax",
 };
 
-const outcome: SeededOutcome = {
-  deviceType: "stax",
-  ledgerSyncEligible: true,
-  firmwareUpdateAvailability: "no",
-  firmwareUpdateDone: false,
-};
+const events = recordAnalytics();
 
 beforeEach(() => {
-  jest.clearAllMocks();
+  seededFunnel.reset();
 });
 
 describe("seededChecksPage", () => {
@@ -67,107 +51,75 @@ describe("seededChecksPage", () => {
 
 describe("toFirmwareUpdateAvailability", () => {
   it.each([
-    [null, false, "unknown"],
-    ["checked", false, "no"],
-    ["offered", false, "yes"],
-    [null, true, "yes"],
-  ] as const)("reads %s with update done %s as %s", (check, done, expected) => {
-    expect(toFirmwareUpdateAvailability(check, done)).toBe(expected);
+    [null, "unknown"],
+    ["checked", "no"],
+    ["offered", "yes"],
+  ] as const)("reads %s as %s", (check, expected) => {
+    expect(toFirmwareUpdateAvailability(check)).toBe(expected);
   });
 });
 
-describe("toSeededOutcome", () => {
-  const context = (overrides: Partial<DeviceOnboardingContext>) =>
+describe("seededExitResult", () => {
+  const exit = (seeded: boolean, genuine: boolean, firmwareVersion: string | null = "1.0.0") =>
     ({
-      onboardedOnEntry: true,
+      isOnboarded: seeded,
       deviceModelId: "stax",
-      offerSync: true,
-      firmware: null,
-      ...overrides,
-    }) as DeviceOnboardingContext;
+      firmwareVersion,
+      sessionId: "s1",
+      genuineVerdict: genuine ? { sessionId: "s1", isGenuine: true } : null,
+    }) as unknown as DeviceOnboardingContext;
 
-  it("is null for a device that was not seeded on entry", () => {
-    expect(toSeededOutcome(context({ onboardedOnEntry: false }), false)).toBeNull();
-  });
-
-  it("reports an unknown update availability before the OS check answers", () => {
-    expect(toSeededOutcome(context({}), false)).toEqual({
-      deviceType: "stax",
-      ledgerSyncEligible: true,
-      firmwareUpdateAvailability: "unknown",
-      firmwareUpdateDone: false,
-    });
-  });
-
-  it("reports an accepted update once the machine forgot it", () => {
-    expect(toSeededOutcome(context({ firmware: null }), true)).toMatchObject({
-      firmwareUpdateAvailability: "yes",
-      firmwareUpdateDone: true,
-    });
+  it.each([
+    ["completed", exit(true, true), "done"],
+    ["offerLedgerSync", exit(true, true), "syncOffer"],
+    ["resumeFirmwareUpdate", exit(true, true), "aborted"],
+    ["userQuit", exit(true, true), "done"],
+    ["userQuit", exit(true, false), "aborted"],
+    ["legacyFallback", exit(false, false), "legacyFlow"],
+    ["legacyFallback", exit(true, true, null), "done"],
+    ["legacyFallback", exit(true, false, null), "legacyFlow"],
+    ["legacyFallback", exit(true, false), "aborted"],
+  ] as const)("ends %s as %s", (reason, context, result) => {
+    expect(seededExitResult(reason, context)).toBe(result);
   });
 });
 
-describe("events", () => {
-  it("tracks a page with the shared properties", () => {
-    trackSeededPage(seededPages.ledgerSync, "stax");
+describe("seededFunnel", () => {
+  it("sends nothing until the device is known to be seeded", async () => {
+    seededFunnel.page(seededPages.genuineCheck);
+    seededFunnel.click("close");
+    seededFunnel.end("aborted");
 
-    expect(trackPage).toHaveBeenCalledWith(
-      { category: "Ledger Sync", props: shared },
-      { updateRoutes: true, refreshSource: true },
-    );
+    expect(await events()).toEqual([]);
   });
 
-  it("tracks a click with the page it happens on and that page's source", () => {
-    trackSeededClick("Skip", "stax", { page: "Ledger Sync", source: "Pairing" });
+  it("sends the start before the end, with what the funnel learned", async () => {
+    seededFunnel.learn({ seeded: true, deviceType: "stax", ledgerSyncEligible: true });
+    seededFunnel.page(seededPages.genuineCheck);
+    seededFunnel.learn({ firmwareUpdateDone: true });
 
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      source: "Pairing",
-      ...shared,
-      button: "Skip",
-      page: "Ledger Sync",
-    });
-  });
+    seededFunnel.end("done", true);
+    seededFunnel.end("aborted");
 
-  it("leaves the source out when the page has none", () => {
-    trackSeededClick("Skip", "stax", { page: "Ledger Sync", source: "" });
-
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      ...shared,
-      button: "Skip",
-      page: "Ledger Sync",
-    });
-  });
-
-  it("tracks the start with the eligibility and update availability", () => {
-    trackSeededStarted({ ...outcome, firmwareUpdateAvailability: "unknown" });
-
-    expect(track).toHaveBeenCalledWith("onboarding_started", {
-      source: "Pairing",
-      ...shared,
-      ledger_sync_eligibility: "yes",
-      firmware_update_availability: "unknown",
-    });
-  });
-
-  it("tracks done with the Ledger Sync and update results", () => {
-    trackSeededDone({ ...outcome, firmwareUpdateDone: true }, true);
-
-    expect(track).toHaveBeenCalledWith("onboarding_done", {
-      source: "Pairing",
-      ...shared,
-      ledger_sync_done: "yes",
-      firmware_update_done: "yes",
-    });
-  });
-
-  it("tracks aborted without Ledger Sync", () => {
-    trackSeededAborted(outcome);
-
-    expect(track).toHaveBeenCalledWith("onboarding_aborted", {
-      source: "Pairing",
-      ...shared,
-      ledger_sync_done: "no",
-      firmware_update_done: "no",
-    });
+    expect((await events()).slice(1)).toEqual([
+      [
+        "onboarding_started",
+        {
+          ...shared,
+          page: seededPages.genuineCheck,
+          ledger_sync_eligibility: "yes",
+          firmware_update_availability: "unknown",
+        },
+      ],
+      [
+        "onboarding_done",
+        {
+          ...shared,
+          page: seededPages.genuineCheck,
+          ledger_sync_done: "yes",
+          firmware_update_done: "yes",
+        },
+      ],
+    ]);
   });
 });

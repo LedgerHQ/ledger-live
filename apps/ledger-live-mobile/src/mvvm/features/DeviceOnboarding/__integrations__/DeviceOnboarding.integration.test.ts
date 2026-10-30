@@ -197,7 +197,6 @@ describe("useDeviceOnboarding", () => {
     expect(leaveHook).toHaveBeenLastCalledWith({
       navigateOnExit: true,
       wasReadOnlyAtEntry: false,
-      firmwareUpdateDone: false,
       device: {
         deviceId: "device-id",
         deviceName: "Ledger Stax",

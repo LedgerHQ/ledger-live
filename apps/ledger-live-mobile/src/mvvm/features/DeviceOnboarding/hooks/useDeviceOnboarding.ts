@@ -34,8 +34,6 @@ type UseDeviceOnboardingInput = {
   offerSync: boolean;
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
-  /** Whether the user accepted a firmware update during this onboarding. */
-  firmwareUpdateDone?: boolean;
   /** Runs right before the exit navigates, so the host can stop blocking back. */
   onLeave?: (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => void;
 };
@@ -71,7 +69,6 @@ export function useDeviceOnboarding({
   offerSync,
   navigateOnExit = true,
   wasReadOnlyAtEntry = false,
-  firmwareUpdateDone = false,
   onLeave,
 }: UseDeviceOnboardingInput): DeviceOnboardingSession {
   const [status, setStatus] = useState<DeviceOnboardingToolProps["status"]>("idle");
@@ -85,7 +82,6 @@ export function useDeviceOnboarding({
     device: liveDevice,
     navigateOnExit,
     wasReadOnlyAtEntry,
-    firmwareUpdateDone,
   });
 
   const sessionActorRef = useRef<StoppableActor | null>(null);

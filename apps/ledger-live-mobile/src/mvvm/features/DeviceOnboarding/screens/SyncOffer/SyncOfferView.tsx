@@ -1,12 +1,10 @@
 import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
-import { TrackScreen } from "@shared/analytics-react";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
 import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
-import { seededPages } from "LLM/features/DeviceOnboarding/analytics/seededTracking";
 import type { SyncOfferViewProps } from "./useSyncOfferScreenViewModel";
 import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
 import lightCloudSyncAnimation from "./animations/light/cloud-sync.lottie";
@@ -29,7 +27,6 @@ export function SyncOfferView({
   onOpenSkip,
   onLearnMore,
   onQuit,
-  trackingProps,
   skipDrawer,
 }: SyncOfferViewProps) {
   const { colorScheme } = useTheme();
@@ -37,7 +34,6 @@ export function SyncOfferView({
 
   return (
     <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
-      {trackingProps ? <TrackScreen category={seededPages.ledgerSync} {...trackingProps} /> : null}
       <DeviceOnboardingCloseBar
         label={closeLabel}
         testID={syncOfferTestIds.quit}
@@ -97,7 +93,7 @@ export function SyncOfferView({
         handleClose={skipDrawer.onClose}
         openSync={skipDrawer.onActivate}
         skipSync={skipDrawer.onSkip}
-        trackingProps={trackingProps ?? undefined}
+        trackScreen={skipDrawer.trackScreen}
       />
     </Box>
   );

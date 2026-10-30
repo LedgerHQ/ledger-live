@@ -1,20 +1,14 @@
-import { useRef, useState } from "react";
-import { getPreviousTrackingPage } from "@shared/analytics";
+import { useState } from "react";
 import { useTranslation } from "~/context/Locale";
-import {
-  restoreSeededPage,
-  seededButtons,
-  seededPages,
-  seededProps,
-  trackSeededClick,
-  trackSeededPage,
-} from "../../analytics/seededTracking";
+import { seededButtons, seededFunnel, seededPages } from "../../analytics/seededTracking";
 
 type SkipDrawerProps = Readonly<{
   isOpen: boolean;
   onClose: () => void;
   onSkip: () => void;
   onActivate: () => void;
+  /** False when the seeded funnel tracks the drawer page. */
+  trackScreen: boolean;
 }>;
 
 export type SyncOfferViewProps = Readonly<{
@@ -28,8 +22,6 @@ export type SyncOfferViewProps = Readonly<{
   onOpenSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
-  /** Page properties of the seeded funnel, or null when this offer is not tracked. */
-  trackingProps: ReturnType<typeof seededProps> | null;
   skipDrawer: SkipDrawerProps;
 }>;
 
@@ -38,8 +30,6 @@ export type SyncOfferScreenProps = Readonly<{
   onSkip: () => void;
   onLearnMore: () => void;
   onQuit: () => void;
-  /** Set when the offer ends the seeded funnel, which is then tracked. */
-  seededDeviceType?: string | null;
 }>;
 
 export function useSyncOfferScreenViewModel({
@@ -47,20 +37,12 @@ export function useSyncOfferScreenViewModel({
   onSkip,
   onLearnMore,
   onQuit,
-  seededDeviceType,
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
-  // The offer's source, read on the first click: its page is tracked by then, no drawer yet.
-  const offerSource = useRef<string | null>(null);
-  const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
-  const trackClick = (button: string) => {
-    if (!seededDeviceType) return;
-    offerSource.current ??= getPreviousTrackingPage();
-    trackSeededClick(button, seededDeviceType, {
-      page: seededPages.ledgerSync,
-      source: offerSource.current,
-    });
+  const closeSkipDrawer = () => {
+    setIsSkipDrawerOpen(false);
+    seededFunnel.closeDrawer();
   };
 
   return {
@@ -71,39 +53,37 @@ export function useSyncOfferScreenViewModel({
     skipLabel: t("deviceOnboarding.syncOffer.skip"),
     closeLabel: t("deviceOnboarding.checks.close"),
     onActivate: () => {
-      trackClick(seededButtons.activateSync);
+      seededFunnel.click(seededButtons.activateSync);
       onActivate();
     },
     onOpenSkip: () => {
-      trackClick(seededButtons.skip);
+      seededFunnel.click(seededButtons.skip);
+      seededFunnel.openDrawer(seededPages.skipLedgerSyncDrawer);
       setIsSkipDrawerOpen(true);
     },
     onLearnMore: () => {
-      trackClick(seededButtons.learnMore);
+      seededFunnel.click(seededButtons.learnMore);
       onLearnMore();
     },
     onQuit: () => {
-      trackClick(seededButtons.close);
+      seededFunnel.click(seededButtons.close);
       onQuit();
     },
-    trackingProps: seededDeviceType ? seededProps(seededDeviceType) : null,
     skipDrawer: {
       isOpen: isSkipDrawerOpen,
-      onClose: () => {
-        closeSkipDrawer();
-        restoreSeededPage(seededPages.skipLedgerSyncDrawer, seededPages.ledgerSync);
-      },
+      onClose: closeSkipDrawer,
       onSkip: () => {
-        trackClick(seededButtons.yesSkip);
-        if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);
+        seededFunnel.click(seededButtons.yesSkip);
+        seededFunnel.page(seededPages.ledgerSyncRefused);
         closeSkipDrawer();
         onSkip();
       },
       onActivate: () => {
-        trackClick(seededButtons.enableSync);
+        seededFunnel.click(seededButtons.enableSync);
         closeSkipDrawer();
         onActivate();
       },
+      trackScreen: !seededFunnel.isTracked(),
     },
   };
 }

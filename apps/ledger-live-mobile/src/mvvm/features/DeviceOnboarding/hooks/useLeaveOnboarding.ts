@@ -8,15 +8,14 @@ import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { toSeededOutcome } from "../analytics/seededTracking";
-import { exitActions, firmwareNeedsLegacyFlow } from "../utils/exitActions";
+import { exitActions } from "../utils/exitActions";
 import { isCurrentSessionGenuine } from "../utils/genuineSession";
+import { firmwareNeedsLegacyFlow } from "../utils/legacyFlow";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
   navigateOnExit: boolean;
   wasReadOnlyAtEntry: boolean;
-  firmwareUpdateDone?: boolean;
 };
 
 /**
@@ -27,7 +26,6 @@ export function useLeaveOnboarding({
   device,
   navigateOnExit,
   wasReadOnlyAtEntry,
-  firmwareUpdateDone = false,
 }: UseLeaveOnboardingInput) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
@@ -47,7 +45,6 @@ export function useLeaveOnboarding({
       wasReadOnlyAtEntry,
       isGenuine: genuine,
       deviceWasSeeded: seeded,
-      seededOutcome: toSeededOutcome(context, firmwareUpdateDone),
       firmwareNeedsLegacyFlow: firmwareNeedsLegacyFlow(context),
       hasCompletedOnboarding,
     });

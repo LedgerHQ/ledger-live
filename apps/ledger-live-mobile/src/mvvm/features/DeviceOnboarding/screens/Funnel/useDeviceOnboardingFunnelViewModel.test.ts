@@ -1,17 +1,18 @@
-import { track, trackPage } from "@shared/analytics";
 import { renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
+import { setTrackingSource } from "@shared/analytics";
 import type { DeviceOnboardingContext } from "@features/platform-device-onboarding";
 import type { State } from "~/reducers/types";
 import { useDeviceOnboarding, type DeviceOnboardingSession } from "../../hooks/useDeviceOnboarding";
+import { recordAnalytics } from "../../analytics/recordAnalytics.testUtils";
 import { useDeviceOnboardingFunnelViewModel } from "./useDeviceOnboardingFunnelViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  track: jest.fn(),
-  trackPage: jest.fn(),
-  getPreviousTrackingPage: jest.fn(() => "Page Pairing"),
-}));
+const events = recordAnalytics();
+const pageNames = async () =>
+  (await events()).flatMap(([event]) => (event.startsWith("Page ") ? [event.slice(5)] : []));
+const trackedNames = async () =>
+  (await events()).flatMap(([event]) => (event.startsWith("Page ") ? [] : [event]));
 
 const goBack = jest.fn();
 const unseededExit = { onboardedOnEntry: false } as DeviceOnboardingContext;
@@ -232,7 +233,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(preventDefault).toHaveBeenCalledTimes(2);
   });
 
-  it("should wait for the device on the connecting screen after a completed update", () => {
+  it("should wait for the device on the connecting screen after a completed update", async () => {
     const abortFirmwareReconnect = jest.fn();
     const closeFirmwareHandover = jest.fn();
     useSession.mockReturnValue(
@@ -252,13 +253,13 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(goBack).not.toHaveBeenCalled();
     expect(closeFirmwareHandover).not.toHaveBeenCalled();
     expect(send).not.toHaveBeenCalled();
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "close" }),
-    );
+    ]);
   });
 
-  it("should track close when leaving the failed reconnect after an update", () => {
+  it("should track close when leaving the failed reconnect after an update", async () => {
     const abortFirmwareReconnect = jest.fn();
     useSession.mockReturnValue(
       session({
@@ -273,13 +274,13 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     result.current.onQuit();
 
     expect(abortFirmwareReconnect).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "close" }),
-    );
+    ]);
   });
 
-  it("should quit the machine when closing a lost session while it reconnects", () => {
+  it("should quit the machine when closing a lost session while it reconnects", async () => {
     const reset = jest.fn();
     useSession.mockReturnValue(
       session({
@@ -297,11 +298,11 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(send).toHaveBeenCalledWith({ type: "QUIT" });
     expect(reset).not.toHaveBeenCalled();
     expect(goBack).not.toHaveBeenCalled();
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "close" }),
-    );
-    expect(track).not.toHaveBeenCalledWith("onboarding_aborted", expect.anything());
+    ]);
+    expect(await events()).not.toContainEqual(["onboarding_aborted", expect.anything()]);
   });
 
   it("should retry without closing the handover when reconnecting after the update fails", () => {
@@ -621,7 +622,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     },
   );
 
-  it("should leave the success screen when the user continues", () => {
+  it("should leave the success screen when the user continues", async () => {
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded" }));
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
@@ -629,12 +630,12 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     checksOf(result.current).onContinue?.();
 
     expect(send).toHaveBeenCalledWith({ type: "CONTINUE" });
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({
         button: "Continue",
       }),
-    );
+    ]);
   });
 
   it("should withhold continue while the device is still leaving its check screen", () => {
@@ -647,7 +648,8 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     expect(checks.onContinue).toBeUndefined();
   });
 
-  it("should track the idle genuine check and its start", () => {
+  it("should track the idle genuine check and its start", async () => {
+    setTrackingSource("Pairing");
     useSession.mockReturnValue(
       session({
         state: "awaitingStart",
@@ -661,28 +663,26 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(trackPage).toHaveBeenCalledWith(
-      expect.objectContaining({ category: "Genuine Check" }),
-      expect.objectContaining({ updateRoutes: true, refreshSource: true }),
-    );
-    expect(track).toHaveBeenCalledWith(
+    expect(await pageNames()).toContain("Genuine Check");
+    expect(await events()).toContainEqual([
       "onboarding_started",
       expect.objectContaining({ firmware_update_availability: "no" }),
-    );
+    ]);
 
     checksOf(result.current).onStart();
 
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({
         button: "Initiate Genuine Check",
-        source: "Page Pairing",
+        page: "Genuine Check",
+        source: "Pairing",
       }),
-    );
+    ]);
     expect(send).toHaveBeenCalledWith({ type: "CONTINUE" });
   });
 
-  it("should track a refusal and the retry", () => {
+  it("should track a refusal and the retry", async () => {
     useSession.mockReturnValue(
       session({
         state: "checks.genuineFailed",
@@ -697,20 +697,17 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(trackPage).toHaveBeenCalledWith(
-      expect.objectContaining({ category: "Genuine Check refused on device" }),
-      expect.anything(),
-    );
+    expect(await pageNames()).toContain("Genuine Check refused on device");
 
     checksOf(result.current).onRetry();
 
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "Retry genuine check" }),
-    );
+    ]);
   });
 
-  it("should track the OS update sheet actions", () => {
+  it("should track the OS update sheet actions", async () => {
     useSession.mockReturnValue(
       session({
         state: "checks.firmwareUpdateOffered",
@@ -726,29 +723,26 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
     const checks = checksOf(result.current);
 
-    expect(jest.mocked(trackPage).mock.calls.map(([page]) => page.category)).toEqual([
-      "Genuine Check success",
-      "OS update required",
-    ]);
-    expect(track).toHaveBeenCalledWith(
+    expect(await pageNames()).toEqual(["Genuine Check success", "OS update required"]);
+    expect(await events()).toContainEqual([
       "onboarding_started",
       expect.objectContaining({ firmware_update_availability: "yes" }),
-    );
+    ]);
 
     checks.onAcceptUpdate();
     checks.onDeclineUpdate();
 
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "Continue" }),
-    );
-    expect(track).toHaveBeenCalledWith(
+    ]);
+    expect(await events()).toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "close" }),
-    );
+    ]);
   });
 
-  it("should leave an unseeded device untracked", () => {
+  it("should leave an unseeded device untracked", async () => {
     useSession.mockReturnValue(
       session({
         state: "checks.checksSucceeded",
@@ -758,35 +752,31 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(trackPage).not.toHaveBeenCalled();
-    expect(track).not.toHaveBeenCalled();
+    expect(await events()).toEqual([]);
     checksOf(result.current).onContinue?.();
     expect(send).toHaveBeenCalledWith({ type: "CONTINUE" });
   });
 
-  it("should track the success page without a continue click", () => {
+  it("should track the success page without a continue click", async () => {
     useSession.mockReturnValue(session({ state: "checks.checksSucceeded" }));
 
     renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(trackPage).toHaveBeenCalledWith(
-      expect.objectContaining({ category: "Genuine Check & OS success" }),
-      expect.anything(),
-    );
-    expect(track).not.toHaveBeenCalledWith(
+    expect(await pageNames()).toContain("Genuine Check & OS success");
+    expect(await events()).not.toContainEqual([
       "button_clicked",
       expect.objectContaining({ button: "Continue" }),
-    );
+    ]);
   });
 
-  it("should start again when the funnel is opened after an abort", () => {
+  it("should start again when the funnel is opened after an abort", async () => {
     useSession.mockReturnValue(session({ status: "connecting", state: null, liveDevice: null }));
     const first = renderHook(() => useDeviceOnboardingFunnelViewModel());
     if (first.result.current.status !== "connecting") throw new Error(first.result.current.status);
 
     first.result.current.onQuit();
     first.unmount();
-    jest.mocked(track).mockClear();
+    events.clear();
 
     useSession.mockReturnValue(
       session({
@@ -800,13 +790,13 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
     renderHook(() => useDeviceOnboardingFunnelViewModel());
 
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "onboarding_started",
       expect.objectContaining({ firmware_update_availability: "no" }),
-    );
+    ]);
   });
 
-  it("should leave before the device read without seeded analytics", () => {
+  it("should leave before the device read without seeded analytics", async () => {
     useSession.mockReturnValue(
       session({ status: "connecting", state: null, liveDevice: null, context: null }),
     );
@@ -816,11 +806,10 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
 
     result.current.onQuit();
 
-    expect(track).not.toHaveBeenCalled();
-    expect(trackPage).not.toHaveBeenCalled();
+    expect(await events()).toEqual([]);
   });
 
-  it("should start with an unknown update availability when leaving before the OS check", () => {
+  it("should start with an unknown update availability when leaving before the OS check", async () => {
     useSession.mockReturnValue(
       session({
         status: "connecting",
@@ -834,15 +823,15 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     if (result.current.status !== "connecting") throw new Error(result.current.status);
     result.current.onQuit();
 
-    expect(jest.mocked(track).mock.calls.map(([event]) => event)).toEqual([
+    expect(await trackedNames()).toEqual([
       "button_clicked",
       "onboarding_started",
       "onboarding_aborted",
     ]);
-    expect(track).toHaveBeenCalledWith(
+    expect(await events()).toContainEqual([
       "onboarding_started",
       expect.objectContaining({ firmware_update_availability: "unknown" }),
-    );
+    ]);
   });
 
   it.each([
@@ -852,7 +841,7 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       { sessionId: "s1", isGenuine: true },
       true,
     ],
-  ])("should %s", (_case, verdict, started) => {
+  ])("should %s", async (_case, verdict, started) => {
     useSession.mockReturnValue(
       session({
         state: "checks.genuineCheck.running",
@@ -875,12 +864,10 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
       firmware: null,
     } as unknown as DeviceOnboardingContext);
 
-    expect(jest.mocked(track).mock.calls.some(([event]) => event === "onboarding_started")).toBe(
-      started,
-    );
+    expect((await trackedNames()).includes("onboarding_started")).toBe(started);
   });
 
-  it("should track the drawer that explains why the update cannot run here", () => {
+  it("should track the drawer that explains why the update cannot run here", async () => {
     useSession.mockReturnValue(
       session({
         state: "checks.firmwareUpdateOffered",
@@ -894,14 +881,19 @@ describe("useDeviceOnboardingFunnelViewModel", () => {
     );
 
     const { result } = renderHook(() => useDeviceOnboardingFunnelViewModel());
-    checksOf(result.current).onUnsupportedUpdate?.(true);
+    const checks = checksOf(result.current);
+    checks.onUnsupportedUpdate?.(true);
+    checks.onUnsupportedUpdateClosed?.();
+    checks.onDeclineUpdate();
 
-    expect(trackPage).toHaveBeenCalledWith(
-      {
-        category: "Drawer : OS update unsupported",
-        props: expect.objectContaining({ deviceType: "stax", reason: "usb_required" }),
-      },
-      expect.anything(),
-    );
+    const sent = await events();
+    expect(sent).toContainEqual([
+      "Page Drawer : OS update unsupported",
+      expect.objectContaining({ deviceType: "stax", reason: "usb_required" }),
+    ]);
+    expect(sent.at(-1)).toEqual([
+      "button_clicked",
+      expect.objectContaining({ button: "close", page: "OS update required" }),
+    ]);
   });
 });

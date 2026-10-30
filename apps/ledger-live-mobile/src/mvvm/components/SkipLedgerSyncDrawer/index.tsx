@@ -21,8 +21,8 @@ type Props = {
   openSync: () => void;
   skipSync: () => void;
   seedConfiguration?: React.RefObject<SeedOriginType | undefined>;
-  /** Extra page properties, which override the defaults. */
-  trackingProps?: Readonly<Record<string, string>>;
+  /** False when the caller tracks this drawer's page itself. */
+  trackScreen?: boolean;
 };
 
 function SkipLedgerSyncDrawer({
@@ -31,7 +31,7 @@ function SkipLedgerSyncDrawer({
   openSync,
   skipSync,
   seedConfiguration,
-  trackingProps,
+  trackScreen = true,
 }: Props) {
   return (
     <QueuedBottomSheet
@@ -45,7 +45,7 @@ function SkipLedgerSyncDrawer({
         openSync={openSync}
         skipSync={skipSync}
         seedConfiguration={seedConfiguration}
-        trackingProps={trackingProps}
+        trackScreen={trackScreen}
       />
     </QueuedBottomSheet>
   );
@@ -55,7 +55,7 @@ function SkipLedgerSyncDrawerContent({
   openSync,
   skipSync,
   seedConfiguration,
-  trackingProps,
+  trackScreen,
 }: Readonly<Omit<Props, "isOpen" | "handleClose">>) {
   const { t } = useTranslation();
   const bottomInset = useBottomSheetBottomInset();
@@ -63,12 +63,13 @@ function SkipLedgerSyncDrawerContent({
   return (
     <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
       <BottomSheetHeader />
-      <TrackScreen
-        category="Drawer : Skip Ledger sync confirmation"
-        flow="onboarding"
-        seedConfiguration={seedConfiguration?.current}
-        {...trackingProps}
-      />
+      {trackScreen ? (
+        <TrackScreen
+          category="Drawer : Skip Ledger sync confirmation"
+          flow="onboarding"
+          seedConfiguration={seedConfiguration?.current}
+        />
+      ) : null}
       <Box
         lx={{
           width: "full",

@@ -1,19 +1,9 @@
 import { StackActions, type NavigationProp, type ParamListBase } from "@react-navigation/native";
-import {
-  requiresLegacyFlow,
-  type DeviceOnboardingContext,
-  type DeviceOnboardingExitReason,
-} from "@features/platform-device-onboarding";
+import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
-import {
-  trackSeededAborted,
-  trackSeededDone,
-  type SeededOutcome,
-} from "../analytics/seededTracking";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
-import { isCurrentSessionGenuine } from "./genuineSession";
 
 type ExitDeps = {
   dispatch: ReturnType<typeof useDispatch>;
@@ -23,34 +13,23 @@ type ExitDeps = {
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
-  /** Null when the device was not seeded on entry: only the seeded funnel is tracked. */
-  seededOutcome: SeededOutcome | null;
   firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
 
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
-  completed: ({
-    dispatch,
-    navigation,
-    wasReadOnlyAtEntry,
-    hasCompletedOnboarding,
-    seededOutcome,
-  }) => {
-    if (seededOutcome) trackSeededDone(seededOutcome);
+  completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
-  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededOutcome }) =>
+  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,
-      seededOutcome,
-    }),
-  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet, seededOutcome }) => {
-    if (seededOutcome) trackSeededAborted(seededOutcome);
-    resetToMyLedger(navigation, device, shouldDisplayMyWallet);
+    });
   },
+  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
+    resetToMyLedger(navigation, device, shouldDisplayMyWallet),
   legacyFallback: ({
     navigation,
     device,
@@ -58,7 +37,6 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     wasReadOnlyAtEntry,
     isGenuine,
     deviceWasSeeded,
-    seededOutcome,
     firmwareNeedsLegacyFlow,
     hasCompletedOnboarding,
   }) => {
@@ -71,53 +49,21 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
         resetToLegacySeededChecks(navigation, device);
         return;
       }
-      if (seededOutcome) trackSeededAborted(seededOutcome);
       navigation.goBack();
       return;
     }
-    if (seededOutcome) trackSeededDone(seededOutcome);
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
-  userQuit: ({
-    dispatch,
-    navigation,
-    wasReadOnlyAtEntry,
-    isGenuine,
-    hasCompletedOnboarding,
-    seededOutcome,
-  }) => {
+  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
     if (!isGenuine) {
-      if (seededOutcome) trackSeededAborted(seededOutcome);
       navigation.goBack();
       return;
     }
-    if (seededOutcome) trackSeededDone(seededOutcome);
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
 };
-
-export function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boolean {
-  return (
-    context.isOnboarded === true &&
-    (context.firmwareVersion === null ||
-      requiresLegacyFlow({
-        currentVersion: context.firmwareVersion,
-        deviceModelId: context.deviceModelId,
-      }))
-  );
-}
-
-/** The exits that hand the device to a legacy flow: the funnel has no outcome to track. */
-export function isLegacyHandoff(
-  reason: DeviceOnboardingExitReason,
-  context: DeviceOnboardingContext,
-): boolean {
-  if (reason !== "legacyFallback") return false;
-  if (context.isOnboarded !== true) return true;
-  return !isCurrentSessionGenuine(context) && firmwareNeedsLegacyFlow(context);
-}
 
 /** Back to the caller, or Portfolio on first launch. */
 export function closeOnboarding(navigation: NavigationProp<ParamListBase>) {

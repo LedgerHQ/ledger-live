@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   useNavigation,
   useRoute,
@@ -17,11 +17,7 @@ import { knownDevicesSelector } from "~/reducers/knownDevices";
 import type { ScreenName } from "~/const";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import type { ChecksScreenProps } from "LLM/features/DeviceOnboarding/types";
-import type {
-  DeviceOnboardingContext,
-  DeviceOnboardingExitReason,
-} from "@features/platform-device-onboarding";
-import { seededButtons, seededPages } from "../../analytics/seededTracking";
+import { seededButtons, seededFunnel, seededPages } from "../../analytics/seededTracking";
 import { useSeededFunnelTracking } from "../../analytics/useSeededFunnelTracking";
 import { useDeviceOnboarding } from "../../hooks/useDeviceOnboarding";
 import { useOfferSync } from "../../hooks/useOfferSync";
@@ -59,20 +55,15 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { t } = useTranslation();
   const allowLeave = useRef(false);
-  const [firmwareUpdateDone, setFirmwareUpdateDone] = useState(false);
-  const trackExitRef = useRef<
-    (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => void
-  >(() => undefined);
   const onboarding = useDeviceOnboarding({
     dmk,
     knownDevices,
     offerSync,
     navigateOnExit: true,
     wasReadOnlyAtEntry,
-    firmwareUpdateDone,
     onLeave: (reason, context) => {
       allowLeave.current = true;
-      trackExitRef.current(reason, context);
+      seededFunnel.exit(reason, context);
     },
   });
   const started = useRef(false);
@@ -93,23 +84,18 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
     send({ type: "SESSION_READY" });
   }, [send, sessionReady]);
 
-  const seededTracking = useSeededFunnelTracking({
+  useSeededFunnelTracking({
     machineState: onboarding.state,
     context: onboarding.context,
     offerSync,
-    firmwareUpdateDone,
   });
-  useEffect(() => {
-    trackExitRef.current = seededTracking.trackExit;
-  }, [seededTracking.trackExit]);
-  const { trackClick, trackAbort } = seededTracking;
 
   const leave = useCallback(() => {
     allowLeave.current = true;
-    trackAbort();
+    seededFunnel.end("aborted");
     onboarding.reset();
     navigation.goBack();
-  }, [navigation, onboarding, trackAbort]);
+  }, [navigation, onboarding]);
 
   const leaveFirmwareReconnect = useCallback(() => {
     allowLeave.current = true;
@@ -123,7 +109,7 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
   const closeFirmwareHandover = onboarding.closeFirmwareHandover;
 
   const closeFromHeader = useCallback(() => {
-    trackClick(seededButtons.close);
+    seededFunnel.click(seededButtons.close);
     if (onboarding.state === firmwareUpdateDelegatedState) {
       closeFirmwareHandover();
       return;
@@ -133,17 +119,17 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       return;
     }
     leave();
-  }, [closeFirmwareHandover, leave, onboarding.state, onboarding.status, quitMachine, trackClick]);
+  }, [closeFirmwareHandover, leave, onboarding.state, onboarding.status, quitMachine]);
 
   const closeLostSession = useCallback(() => {
-    trackClick(seededButtons.close);
+    seededFunnel.click(seededButtons.close);
     quitMachine();
-  }, [quitMachine, trackClick]);
+  }, [quitMachine]);
 
   const closeFirmwareReconnect = useCallback(() => {
-    trackClick(seededButtons.close);
+    seededFunnel.click(seededButtons.close);
     leaveFirmwareReconnect();
-  }, [leaveFirmwareReconnect, trackClick]);
+  }, [leaveFirmwareReconnect]);
 
   const retry = useCallback(() => {
     onboarding.reset();
@@ -252,34 +238,37 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
       ),
       firmwareUpToDate: onboarding.context?.firmwareUpToDate === true,
       onStart: () => {
-        trackClick(seededButtons.initiateGenuineCheck);
+        seededFunnel.click(seededButtons.initiateGenuineCheck);
         send({ type: onboarding.state === "checks.checksIdle" ? "RETRY" : "CONTINUE" });
       },
       onRetry: () => {
-        if (seededTracking.page === seededPages.genuineCheckRefused) {
-          trackClick(seededButtons.retryGenuineCheck);
+        if (seededFunnel.currentPage() === seededPages.genuineCheckRefused) {
+          seededFunnel.click(seededButtons.retryGenuineCheck);
         }
         send({ type: "RETRY" });
       },
       onCloseSheet: () => send({ type: "CLOSE" }),
       onAcceptUpdate: () => {
-        setFirmwareUpdateDone(true);
-        trackClick(seededButtons.continue);
+        seededFunnel.learn({ firmwareUpdateDone: true });
+        seededFunnel.click(seededButtons.continue);
         send({ type: "USER_ACCEPT" });
       },
       onDeclineUpdate: () => {
-        trackClick(seededButtons.close);
+        seededFunnel.click(seededButtons.close);
         send({ type: "USER_DECLINE" });
       },
       onContinue:
         onboarding.state === "checks.checksSucceeded"
           ? () => {
-              trackClick(seededButtons.continue);
+              seededFunnel.click(seededButtons.continue);
               send({ type: "CONTINUE" });
             }
           : undefined,
-      onUnsupportedUpdate: seededTracking.trackUnsupportedUpdate,
-      onUnsupportedUpdateClosed: seededTracking.trackUnsupportedUpdateClosed,
+      onUnsupportedUpdate: usbRequired =>
+        seededFunnel.openDrawer(seededPages.osUpdateUnsupported, {
+          reason: usbRequired ? "usb_required" : "not_eligible",
+        }),
+      onUnsupportedUpdateClosed: seededFunnel.closeDrawer,
       onQuit: closeFromHeader,
     },
   };

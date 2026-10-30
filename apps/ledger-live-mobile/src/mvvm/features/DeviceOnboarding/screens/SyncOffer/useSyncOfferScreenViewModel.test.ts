@@ -1,128 +1,84 @@
-import { track, trackPage } from "@shared/analytics";
 import { act, renderHook } from "@tests/test-renderer";
-import { seededPages } from "../../analytics/seededTracking";
+import { recordAnalytics } from "../../analytics/recordAnalytics.testUtils";
+import { seededFunnel, seededPages } from "../../analytics/seededTracking";
 import { useSyncOfferScreenViewModel } from "./useSyncOfferScreenViewModel";
 
-jest.mock("@shared/analytics", () => ({
-  track: jest.fn(),
-  trackPage: jest.fn(),
-  getPreviousTrackingPage: jest.fn(() => "Page Before"),
-}));
+const events = recordAnalytics();
 
-function renderScreen(seededDeviceType: string | null = "stax") {
-  const onActivate = jest.fn();
-  const onSkip = jest.fn();
-  const onLearnMore = jest.fn();
-  const onQuit = jest.fn();
-  const view = renderHook(() =>
-    useSyncOfferScreenViewModel({ onActivate, onSkip, onLearnMore, onQuit, seededDeviceType }),
-  );
-
-  return { ...view, onActivate, onSkip, onLearnMore, onQuit };
+function renderOffer({ seeded = true } = {}) {
+  seededFunnel.reset();
+  if (seeded) seededFunnel.learn({ seeded: true, deviceType: "stax" });
+  seededFunnel.page(seededPages.ledgerSync);
+  const actions = {
+    onActivate: jest.fn(),
+    onSkip: jest.fn(),
+    onLearnMore: jest.fn(),
+    onQuit: jest.fn(),
+  };
+  const view = renderHook(() => useSyncOfferScreenViewModel(actions));
+  return { ...view, ...actions };
 }
 
-function expectClick(button: string) {
-  expect(track).toHaveBeenCalledWith(
-    "button_clicked",
-    expect.objectContaining({
-      button,
-      source: "Page Before",
-      seedConfiguration: "already_seeded",
-      deviceType: "stax",
-    }),
-  );
+async function clicks() {
+  return (await events())
+    .filter(([event]) => event === "button_clicked")
+    .map(([, props]) => [props.button, props.page]);
 }
 
 describe("useSyncOfferScreenViewModel", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  it.each([
+    ["Activate sync", "onActivate", "onActivate"],
+    ["Learn more", "onLearnMore", "onLearnMore"],
+    ["close", "onQuit", "onQuit"],
+  ] as const)("should track %s on the offer", async (button, press, action) => {
+    const offer = renderOffer();
+
+    act(() => offer.result.current[press]());
+
+    expect(offer[action]).toHaveBeenCalledTimes(1);
+    expect(await clicks()).toEqual([[button, seededPages.ledgerSync]]);
   });
 
-  it("should track activate sync when the primary action is pressed", () => {
-    const { result, onActivate } = renderScreen();
+  it("should be back on the offer once the skip drawer is dismissed", async () => {
+    const { result } = renderOffer();
 
+    act(() => result.current.onOpenSkip());
+    act(() => result.current.skipDrawer.onClose());
     act(() => result.current.onActivate());
 
-    expectClick("Activate sync");
-    expect(onActivate).toHaveBeenCalledTimes(1);
+    expect(result.current.skipDrawer.trackScreen).toBe(false);
+    expect(await clicks()).toEqual([
+      ["Skip", seededPages.ledgerSync],
+      ["Activate sync", seededPages.ledgerSync],
+    ]);
   });
 
-  it("should track skip when the drawer opens", () => {
-    const { result, onSkip } = renderScreen();
-
-    act(() => result.current.onOpenSkip());
-
-    expect(result.current.skipDrawer.isOpen).toBe(true);
-    expectClick("Skip");
-    expect(onSkip).not.toHaveBeenCalled();
-  });
-
-  it("should track learn more without an OpenURL event", () => {
-    const { result, onLearnMore } = renderScreen();
-
-    act(() => result.current.onLearnMore());
-
-    expectClick("Learn more");
-    expect(track).not.toHaveBeenCalledWith("OpenURL", expect.anything());
-    expect(onLearnMore).toHaveBeenCalledTimes(1);
-  });
-
-  it("should track close from the offer header", () => {
-    const { result, onQuit } = renderScreen();
-
-    act(() => result.current.onQuit());
-
-    expectClick("close");
-    expect(onQuit).toHaveBeenCalledTimes(1);
-  });
-
-  it("should track the skip confirmation and the refused page", () => {
-    const { result, onSkip } = renderScreen();
+  it("should track Yes, skip in the drawer, then the refused page", async () => {
+    const { result, onSkip } = renderOffer();
 
     act(() => result.current.onOpenSkip());
     act(() => result.current.skipDrawer.onSkip());
 
-    expectClick("Yes, skip");
-    expect(trackPage).toHaveBeenCalledWith(
-      expect.objectContaining({ category: seededPages.ledgerSyncRefused }),
-      expect.anything(),
-    );
-    expect(result.current.skipDrawer.isOpen).toBe(false);
     expect(onSkip).toHaveBeenCalledTimes(1);
+    expect(result.current.skipDrawer.isOpen).toBe(false);
+    expect((await events()).map(([event]) => event)).toEqual([
+      "Page Ledger Sync",
+      "button_clicked",
+      "Page Drawer : Skip Ledger sync confirmation",
+      "button_clicked",
+      "Page Ledger Sync Refused",
+    ]);
   });
 
-  it("should track enable sync from the skip drawer", () => {
-    const { result, onActivate, onSkip } = renderScreen();
+  it("should send nothing and let the drawer track itself outside the seeded funnel", async () => {
+    const { result, onQuit } = renderOffer({ seeded: false });
 
-    act(() => result.current.onOpenSkip());
-    act(() => result.current.skipDrawer.onActivate());
-
-    expectClick("Enable sync");
-    expect(onActivate).toHaveBeenCalledTimes(1);
-    expect(onSkip).not.toHaveBeenCalled();
-  });
-
-  it("should omit seeded tracking when the offer is not a seeded entry", () => {
-    const { result, onQuit } = renderScreen(null);
-
-    expect(result.current.trackingProps).toBeNull();
-    act(() => result.current.onQuit());
     act(() => result.current.onOpenSkip());
     act(() => result.current.skipDrawer.onSkip());
+    act(() => result.current.onQuit());
 
     expect(onQuit).toHaveBeenCalledTimes(1);
-    expect(track).not.toHaveBeenCalled();
-    expect(trackPage).not.toHaveBeenCalled();
-  });
-
-  it("should pass the seeded props to the offer and skip drawer pages", () => {
-    const { result } = renderScreen();
-
-    expect(result.current.trackingProps).toEqual({
-      sourceFlow: "onboarding",
-      "onboarding type": "seeded device",
-      seedConfiguration: "already_seeded",
-      deviceType: "stax",
-    });
+    expect(result.current.skipDrawer.trackScreen).toBe(true);
+    expect(await events()).toEqual([]);
   });
 });

@@ -15,7 +15,7 @@ import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
-import { seededPages, trackSeededDone, trackSeededPage } from "../../analytics/seededTracking";
+import { seededFunnel, seededPages } from "../../analytics/seededTracking";
 import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "../../utils/exitActions";
 import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
@@ -28,7 +28,7 @@ type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboa
 export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry, seededOutcome } = useRoute<OfferRoute>().params;
+  const { device, wasReadOnlyAtEntry } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const [handoverStarted, setHandoverStarted] = useState(false);
   const completedOnSync = useRef(false);
@@ -45,20 +45,20 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     [navigation],
   );
 
+  useEffect(() => seededFunnel.page(seededPages.ledgerSync), []);
+
   const finishOnboarding = useCallback(
     (syncDone: boolean) => {
       if (completedOnSync.current) return;
       completedOnSync.current = true;
       allowLeave.current = true;
-      if (seededOutcome) {
-        if (syncDone) trackSeededPage(seededPages.ledgerSyncSuccess, seededOutcome.deviceType);
-        trackSeededDone(seededOutcome, syncDone);
-      }
+      if (syncDone) seededFunnel.page(seededPages.ledgerSyncSuccess);
+      seededFunnel.end("done", syncDone);
       complete();
       notifyFlowCompleted("onboarding");
       closeOnboarding(navigation);
     },
-    [complete, navigation, notifyFlowCompleted, seededOutcome],
+    [complete, navigation, notifyFlowCompleted],
   );
 
   useEffect(() => {
@@ -66,9 +66,7 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     finishOnboarding(true);
   }, [finishOnboarding, handoverStarted, hasTrustchain]);
 
-  const finishWithoutSync = useCallback(() => {
-    finishOnboarding(false);
-  }, [finishOnboarding]);
+  const finishWithoutSync = useCallback(() => finishOnboarding(false), [finishOnboarding]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
@@ -89,6 +87,5 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     onSkip: finishWithoutSync,
     onQuit: finishWithoutSync,
     onLearnMore,
-    seededDeviceType: seededOutcome?.deviceType ?? null,
   };
 }
