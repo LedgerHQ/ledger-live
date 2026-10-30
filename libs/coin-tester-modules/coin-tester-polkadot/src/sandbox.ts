@@ -10,8 +10,8 @@ export function startPolkadotSandbox(): Promise<Sandbox> {
   return startSandbox(
     { family: "polkadot", network: "polkadot" },
     {
-      node: { provider: "parity", version: "1.25.0" },
-      indexer: { provider: "atlas", version: "2.9.5" },
+      node: { implementation: "parity", version: "1.25.0" },
+      indexer: { implementation: "atlas", version: "2.9.5" },
     },
   );
 }
