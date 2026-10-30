@@ -1,6 +1,7 @@
+import type { DeviceSessionId } from "@ledgerhq/device-management-kit";
 import { getStateNodes, type SnapshotFrom } from "xstate";
 import { deviceOnboardingMachine } from "./machine";
-import type { DeviceSessionId } from "@ledgerhq/device-management-kit";
+import { firmwareSettled } from "./rules";
 import type {
   DeviceOnboardingContext,
   OnboardingEvent,
@@ -35,6 +36,7 @@ export type WatchedOnboardingContext = {
   firmwareVersion: string | null;
   availableFirmwareVersion: string | null;
   firmwareChecked: boolean;
+  firmwareUpToDate: boolean | null;
   onEarlyCheckScreen: boolean;
   secureConnectionRequested: boolean;
   isGenuine: boolean | null;
@@ -75,7 +77,8 @@ export function flattenDeviceOnboardingContext(
     firmwareVersion: context.firmwareVersion,
     availableFirmwareVersion:
       firmware?.kind === "offered" ? firmware.update.finalFirmware.version : null,
-    firmwareChecked: firmware?.kind === "checked",
+    firmwareChecked: firmwareSettled(firmware),
+    firmwareUpToDate: firmwareSettled(firmware) ? firmware.kind === "upToDate" : null,
     onEarlyCheckScreen: context.onEarlyCheckScreen,
     secureConnectionRequested: snapshot.matches({ checks: { genuineCheck: "awaitingApproval" } }),
     isGenuine: verdict?.isGenuine ?? null,

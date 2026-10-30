@@ -2,8 +2,7 @@ import { useCallback, useRef } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { type CryptoCurrency, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
+import { useOpenSelectDevice } from "LLM/features/DeviceSelection/hooks/useOpenSelectDevice";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import { useSelector } from "~/context/hooks";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -41,7 +40,7 @@ export function useDeviceNavigation({
   resetSelection,
   onAccountSelected,
 }: UseDeviceNavigationParams) {
-  const navigation = useNavigation();
+  const openSelectDevice = useOpenSelectDevice();
   const { flow } = useSelector(modularDrawerStateSelector);
   // Store the original token currency to return the correct account type after account creation
   const pendingTokenCurrencyRef = useRef<TokenCurrency | null>(null);
@@ -75,20 +74,17 @@ export function useDeviceNavigation({
       // SelectDevice (1) + AddAccounts flow (1) = 2 screens to pop
       const navigationDepth = isInline ? 2 : undefined;
 
-      navigation.navigate(NavigatorName.DeviceSelection, {
-        screen: ScreenName.SelectDevice,
-        params: {
-          currency: selectedAsset,
-          createTokenAccount,
-          context: AddAccountContexts.AddAccounts,
-          inline: isInline,
-          onCloseNavigation: onClose,
-          navigationDepth,
-          onSuccess,
-        },
+      openSelectDevice({
+        currency: selectedAsset,
+        createTokenAccount,
+        context: AddAccountContexts.AddAccounts,
+        inline: isInline,
+        onCloseNavigation: onClose,
+        navigationDepth,
+        onSuccess,
       });
     },
-    [onClose, onSilentClose, resetSelection, navigation, isInline, onSuccess],
+    [onClose, onSilentClose, resetSelection, openSelectDevice, isInline, onSuccess],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

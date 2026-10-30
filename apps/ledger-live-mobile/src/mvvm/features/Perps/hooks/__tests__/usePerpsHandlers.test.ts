@@ -1,4 +1,5 @@
 import { renderHook } from "@tests/test-renderer";
+import type { State } from "~/reducers/types";
 import { usePerpsHandlers } from "../usePerpsHandlers";
 import { handlers as perpsHandlers } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -29,13 +30,19 @@ jest.mock("@react-navigation/native", () => ({
 
 const mockedPerpsHandlers = jest.mocked(perpsHandlers);
 
+// A known device: the migration opens the device list, not the read-only sheet.
+const withDevice = (state: State): State => ({
+  ...state,
+  settings: { ...state.settings, readOnlyModeEnabled: false },
+});
+
 describe("usePerpsHandlers", () => {
   beforeEach(() => jest.clearAllMocks());
 
   it("should call perps handlers with signing.execute ui hook", () => {
     const accounts = [{ id: "acc-1" }] as never[];
 
-    renderHook(() => usePerpsHandlers(accounts));
+    renderHook(() => usePerpsHandlers(accounts), { overrideInitialState: withDevice });
 
     expect(mockedPerpsHandlers).toHaveBeenCalledWith({
       accounts,
@@ -50,7 +57,7 @@ describe("usePerpsHandlers", () => {
 
   it("should navigate to PerpsSign screen when signing.execute is called", () => {
     const accounts = [{ id: "acc-1" }] as never[];
-    renderHook(() => usePerpsHandlers(accounts));
+    renderHook(() => usePerpsHandlers(accounts), { overrideInitialState: withDevice });
 
     const signingExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["signing.execute"];
     const params = {
@@ -78,7 +85,7 @@ describe("usePerpsHandlers", () => {
     const accounts = [{ id: "acc-1" }] as never[];
     const receiverAccount = { id: "receiver-1", name: "HL Account" } as never;
 
-    renderHook(() => usePerpsHandlers(accounts));
+    renderHook(() => usePerpsHandlers(accounts), { overrideInitialState: withDevice });
 
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
     const request = depositExecute?.({ receiverAccount });
@@ -92,7 +99,9 @@ describe("usePerpsHandlers", () => {
     const accounts = [{ id: "acc-1" }] as never[];
     const receiverAccount = { id: "receiver-1", name: "HL Account" } as never;
 
-    const { unmount } = renderHook(() => usePerpsHandlers(accounts));
+    const { unmount } = renderHook(() => usePerpsHandlers(accounts), {
+      overrideInitialState: withDevice,
+    });
 
     const depositExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["deposit.execute"];
     const request = depositExecute?.({ receiverAccount });
@@ -104,7 +113,7 @@ describe("usePerpsHandlers", () => {
   it("should open the withdraw screen and resolve once the withdrawal settles", async () => {
     const accounts = [{ id: "acc-1" }] as never[];
     const params = { sourceAccount: { id: "hl-1" } } as never;
-    renderHook(() => usePerpsHandlers(accounts));
+    renderHook(() => usePerpsHandlers(accounts), { overrideInitialState: withDevice });
 
     const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
     const request = withdrawExecute?.(params);
@@ -116,7 +125,9 @@ describe("usePerpsHandlers", () => {
 
   it("should reject an in-flight withdrawal when the live app unmounts", async () => {
     const accounts = [{ id: "acc-1" }] as never[];
-    const { unmount } = renderHook(() => usePerpsHandlers(accounts));
+    const { unmount } = renderHook(() => usePerpsHandlers(accounts), {
+      overrideInitialState: withDevice,
+    });
 
     const withdrawExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["withdraw.execute"];
     const request = withdrawExecute?.({ sourceAccount: { id: "hl-1" } } as never);
@@ -129,7 +140,7 @@ describe("usePerpsHandlers", () => {
     const hypercoreAccount = { id: "hc-1", type: "Account" } as never;
 
     const startMigration = () => {
-      const view = renderHook(() => usePerpsHandlers([]));
+      const view = renderHook(() => usePerpsHandlers([]), { overrideInitialState: withDevice });
       const migrationExecute = mockedPerpsHandlers.mock.calls[0][0].uiHooks["migration.execute"];
       const request = migrationExecute?.();
       const [navigator, { params: flowParams }] = mockNavigate.mock.calls.at(-1);

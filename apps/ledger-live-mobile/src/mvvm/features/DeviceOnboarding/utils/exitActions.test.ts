@@ -9,6 +9,7 @@ import {
   setOnboardingHasDevice,
   setReadOnlyMode,
 } from "~/actions/settings";
+import { StackActions } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { exitActions } from "./exitActions";
 
@@ -55,6 +56,16 @@ describe("exitActions", () => {
       setHasBeenUpsoldProtect(false),
       setHasBeenRedirectedToPostOnboarding(false),
     ]);
+  });
+
+  it("should go back to the screen that opened onboarding", () => {
+    const { opened, popped } = leave("completed", { isGenuine: true }, [
+      NavigatorName.Base,
+      NavigatorName.BaseOnboarding,
+    ]);
+
+    expect(opened).toBeNull();
+    expect(popped).toEqual(StackActions.pop(1));
   });
 
   it("should leave the post-onboarding redirect untouched when the user was not read-only", () => {
@@ -192,9 +203,15 @@ describe("exitActions", () => {
   });
 });
 
-function leave(reason: DeviceOnboardingExitReason, overrides: Partial<ExitDeps> = {}) {
+function leave(
+  reason: DeviceOnboardingExitReason,
+  overrides: Partial<ExitDeps> = {},
+  rootRoutes: string[] = [NavigatorName.BaseOnboarding],
+) {
   const dispatch = jest.fn();
   const outer = {
+    getState: () => ({ routes: rootRoutes.map(name => ({ name })) }),
+    dispatch: jest.fn(),
     reset: jest.fn(),
     navigate: jest.fn(),
     goBack: jest.fn(),
@@ -231,6 +248,7 @@ function leave(reason: DeviceOnboardingExitReason, overrides: Partial<ExitDeps> 
       ? { name: inner.navigate.mock.calls[0][0], params: inner.navigate.mock.calls[0][1] }
       : null) as { name: string; params: unknown } | null,
     wentBack: inner.goBack.mock.calls.length > 0,
+    popped: outer.dispatch.mock.calls[0]?.[0] ?? null,
   };
 }
 

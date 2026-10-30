@@ -10,7 +10,7 @@ The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`co
 
 Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only where those globals are not available.
 
-Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers.
+Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers for them. When no installed global performs the operation, add that action to the [element handle](e2e-mobile-elements.md) and use the handle for that element.
 
 ## A page object that imports element handles MUST use them for every element
 
