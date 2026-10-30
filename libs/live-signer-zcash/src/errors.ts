@@ -36,3 +36,27 @@ export class UnsupportedV6SourceTransaction extends Error {
     );
   }
 }
+
+/**
+ * `errorCode` the Zcash signer kit reports when the device refuses an output that
+ * carries the receivers of the unified address the user entered. Not a device
+ * status word, and a string the kit does not export.
+ */
+export const USER_ADDRESS_REFUSED_ERROR_CODE = "user_address_refused";
+
+/** `_tag` of that same kit error, matched alongside the code like the V6 pair above. */
+export const USER_ADDRESS_REFUSED_ERROR_TAG = "UserAddressRefusedError";
+
+/**
+ * The device refused an output carrying the receivers of the address the user
+ * entered, so it could not display that address as typed.
+ */
+export class UserAddressRefusedOnDevice extends Error {
+  override name = "UserAddressRefusedOnDevice";
+  constructor(message?: string) {
+    super(
+      message ||
+        "The device refused the output that carried the receivers of the address you entered.",
+    );
+  }
+}
