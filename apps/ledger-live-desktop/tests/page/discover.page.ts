@@ -3,10 +3,13 @@ import { AppPage } from "tests/page/abstractClasses";
 export class DiscoverPage extends AppPage {
   private testAppCatalogItem = this.page.getByTestId("platform-catalog-app-dummy-live-app");
   private disclaimerTitle = this.page.getByTestId("live-app-disclaimer-drawer-title");
-  private discoverTitle = this.page.locator("#page-scroller").getByText("discover");
+  private catalogApp = this.page
+    .locator("[data-testid^='platform-catalog-app-'], [id^='platform-catalog-app-']")
+    .first();
 
   async waitForDiscoverVisible() {
-    await this.discoverTitle.waitFor({ state: "visible" });
+    await this.page.waitForURL(/\/platform(?:\/|$|\?|#)/);
+    await this.catalogApp.waitFor({ state: "visible" });
   }
 
   async openTestApp() {
