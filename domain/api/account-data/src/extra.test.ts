@@ -18,7 +18,7 @@ describe("addAccountDataSource", () => {
 
     remove();
     await store.dispatch(fetchAccountData("counter", descriptor, { maxAge: 0 }));
-    expect(store.getState().accountData.counter?.[accountUUID]?.error?.name).toBe(
+    expect(store.getState().accountData.counter?.[accountUUID]?.[""]?.error?.name).toBe(
       "NoAccountDataSourceError",
     );
   });

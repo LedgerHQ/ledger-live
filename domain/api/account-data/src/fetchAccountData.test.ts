@@ -1,4 +1,4 @@
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { selectAccountDataStatus } from "@domain/entity-account-data";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { fetchAccountData, fetchMoreAccountData } from "./fetchAccountData";
 import type { AccountDataSource, AccountTarget } from "./source";
@@ -8,6 +8,7 @@ import {
   descriptorOf,
   indexOf,
   makeStore,
+  selectFeed,
   sourceIdOf,
   type FeedPage,
   type FeedQuery,
@@ -49,9 +50,8 @@ describe("fetchAccountData", () => {
     const store = makeStore([counterSource(async () => 7)]);
     await store.dispatch(fetchAccountData("counter", descriptor));
     expect(store.getState().counter[accountUUID]).toBe(7);
-    expect(store.getState().accountData.counter?.[accountUUID]).toEqual({
+    expect(selectAccountDataStatus(store.getState(), "counter", accountUUID)).toEqual({
       sourceId: sourceIdOf("s"),
-      queryKey: "",
       readAt: expect.any(Number),
     });
   });
@@ -62,7 +62,7 @@ describe("fetchAccountData", () => {
     await store.dispatch(fetchAccountData("counter", descriptor));
     await store.dispatch(fetchAccountData("counter", descriptor, { maxAge: 0 }));
     expect(store.getState().counter[accountUUID]).toBe(1);
-    expect(store.getState().accountData.counter?.[accountUUID]?.error).toEqual({
+    expect(selectAccountDataStatus(store.getState(), "counter", accountUUID)?.error).toEqual({
       name: "TypeError",
       message: "down",
     });
@@ -71,7 +71,7 @@ describe("fetchAccountData", () => {
   it("names NoAccountDataSourceError when no source serves the account", async () => {
     const store = makeStore([{ id: sourceIdOf("nothing"), supports: () => false }]);
     await store.dispatch(fetchAccountData("counter", descriptor));
-    expect(store.getState().accountData.counter?.[accountUUID]?.error?.name).toBe(
+    expect(selectAccountDataStatus(store.getState(), "counter", accountUUID)?.error?.name).toBe(
       "NoAccountDataSourceError",
     );
   });
@@ -132,7 +132,7 @@ describe("fetchAccountData", () => {
     await store.dispatch(fetchAccountData("feed", descriptor, { query: { limit: 2 } }));
     await store.dispatch(fetchAccountData("feed", descriptor, { query: { limit: 2 } }));
     expect(feed).toHaveBeenCalledTimes(3);
-    expect(store.getState().feed[accountUUID]).toEqual(["b"]);
+    expect(selectFeed(store.getState(), accountUUID, { limit: 2 })).toEqual(["b"]);
   });
 
   it("joins a read in flight, and resolves only once its answer is stored", async () => {
@@ -196,19 +196,39 @@ describe("fetchAccountData", () => {
     expect(store.getState().counter[accountUUID]).toBe(2);
   });
 
-  it("reads a new query while the previous one is in flight, and drops the stale answer", async () => {
-    const old = deferred<FeedPage>();
+  it("keeps the answers of two queries of one account, each in its own window", async () => {
+    const all = deferred<FeedPage>();
     const feed = jest.fn((_target: AccountTarget, query?: FeedQuery) =>
-      query?.limit === 1 ? old.promise : Promise.resolve({ items: ["new"] }),
+      query?.filter === undefined ? all.promise : Promise.resolve({ items: ["usdt"] }),
     );
     const store = makeStore([feedSource(feed)]);
-    const stale = store.dispatch(fetchAccountData("feed", descriptor, { query: { limit: 1 } }));
+    const unfiltered = store.dispatch(fetchAccountData("feed", descriptor));
     await tick();
-    await store.dispatch(fetchAccountData("feed", descriptor, { query: { limit: 2 } }));
+    const filtered = { filter: "usdt" };
+    await store.dispatch(fetchAccountData("feed", descriptor, { query: filtered }));
+    all.resolve({ items: ["eth", "usdt"], nextCursor: "c1" });
+    await unfiltered;
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["eth", "usdt"]);
+    expect(selectFeed(store.getState(), accountUUID, filtered)).toEqual(["usdt"]);
+    expect(selectAccountDataStatus(store.getState(), "feed", accountUUID)?.nextCursor).toBe("c1");
+    expect(
+      selectAccountDataStatus(store.getState(), "feed", accountUUID, filtered)?.nextCursor,
+    ).toBeUndefined();
+  });
+
+  it("drops the answer of a query refreshed meanwhile", async () => {
+    const old = deferred<FeedPage>();
+    const feed = jest
+      .fn<Promise<FeedPage>, [AccountTarget, FeedQuery | undefined]>()
+      .mockReturnValueOnce(old.promise)
+      .mockResolvedValueOnce({ items: ["new"] });
+    const store = makeStore([feedSource(feed)]);
+    const stale = store.dispatch(fetchAccountData("feed", descriptor));
+    await tick();
+    await store.dispatch(fetchAccountData("feed", descriptor, { maxAge: 0 }));
     old.resolve({ items: ["old"] });
     await stale;
-    expect(store.getState().feed[accountUUID]).toEqual(["new"]);
-    expect(store.getState().accountData.feed?.[accountUUID]?.queryKey).toBe('{"limit":2}');
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["new"]);
   });
 
   it("does not leave the account pending when what reacts to the answer throws", async () => {
@@ -219,7 +239,9 @@ describe("fetchAccountData", () => {
     });
     await expect(store.dispatch(fetchAccountData("counter", descriptor))).resolves.toBeUndefined();
     unsubscribe();
-    expect(store.getState().accountData.counter?.[accountUUID]?.request).toBeUndefined();
+    expect(
+      selectAccountDataStatus(store.getState(), "counter", accountUUID)?.request,
+    ).toBeUndefined();
     await store.dispatch(fetchAccountData("counter", descriptor, { maxAge: 0 }));
     expect(counter).toHaveBeenCalledTimes(2);
   });
@@ -235,7 +257,7 @@ describe("fetchAccountData", () => {
     ]);
     const counter = store.dispatch(fetchAccountData("counter", descriptor));
     await store.dispatch(fetchAccountData("feed", descriptor));
-    expect(store.getState().feed[accountUUID]).toEqual(["a"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["a"]);
     gate.resolve(1);
     await counter;
     expect(store.getState().counter[accountUUID]).toBe(1);
@@ -264,7 +286,7 @@ describe("fetchAccountData", () => {
     await tick();
     expect(calls).toEqual([[0, 1], [2]]);
     expect(store.getState().counter[uuidOf(1)]).toBe(1);
-    expect(store.getState().accountData.counter?.[uuidOf(2)]?.request).toBeDefined();
+    expect(selectAccountDataStatus(store.getState(), "counter", uuidOf(2))?.request).toBeDefined();
     slow.resolve();
     await all;
     expect(store.getState().counter[uuidOf(2)]).toBe(2);
@@ -278,8 +300,10 @@ describe("fetchMoreAccountData", () => {
     await store.dispatch(fetchAccountData("feed", descriptor, { query: { limit: 1 } }));
     await store.dispatch(fetchMoreAccountData("feed", descriptor, { query: { limit: 1 } }));
     expect(feed).toHaveBeenLastCalledWith({ accountUUID, descriptor, cursor: "c1" }, { limit: 1 });
-    expect(store.getState().feed[accountUUID]).toEqual(["a", "b"]);
-    expect(store.getState().accountData.feed?.[accountUUID]?.nextCursor).toBe("c2");
+    expect(selectFeed(store.getState(), accountUUID, { limit: 1 })).toEqual(["a", "b"]);
+    expect(
+      selectAccountDataStatus(store.getState(), "feed", accountUUID, { limit: 1 })?.nextCursor,
+    ).toBe("c2");
   });
 
   it("does nothing at the end of the pages, nor on a kind without pages", async () => {
@@ -332,7 +356,7 @@ describe("fetchMoreAccountData", () => {
     next.resolve({ items: ["b"] });
     await Promise.all([first, second]);
     expect(feed).toHaveBeenCalledTimes(2);
-    expect(store.getState().feed[accountUUID]).toEqual(["a", "b"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["a", "b"]);
   });
 
   it("asks only the source that answered the head", async () => {
@@ -350,7 +374,7 @@ describe("fetchMoreAccountData", () => {
     await store.dispatch(fetchAccountData("feed", descriptor));
     await store.dispatch(fetchMoreAccountData("feed", descriptor));
     expect(preferred).not.toHaveBeenCalled();
-    expect(store.getState().feed[accountUUID]).toEqual(["a", "b"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["a", "b"]);
   });
 
   it("drops a next page answering after a newer head read started", async () => {
@@ -365,18 +389,18 @@ describe("fetchMoreAccountData", () => {
     await store.dispatch(fetchAccountData("feed", descriptor, { maxAge: 0 }));
     next.resolve({ items: ["late"] });
     await more;
-    expect(store.getState().feed[accountUUID]).toEqual(["head"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["head"]);
   });
 
   it("can be asked by what reacts to the head being stored", async () => {
     const store = makeStore([feedSource(pages(["a", "b"]))]);
     let paged: Promise<void> | undefined;
     store.subscribe(() => {
-      if (paged || !store.getState().feed[accountUUID]) return;
+      if (paged || !selectFeed(store.getState(), accountUUID)) return;
       paged = store.dispatch(fetchMoreAccountData("feed", descriptor));
     });
     await store.dispatch(fetchAccountData("feed", descriptor));
     await paged;
-    expect(store.getState().feed[accountUUID]).toEqual(["a", "b"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["a", "b"]);
   });
 });

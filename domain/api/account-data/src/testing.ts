@@ -1,6 +1,7 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 import {
   AccountDataSourceIdSchema,
+  accountDataQueryKey,
   accountDataSlice,
   isAccountDataReceived,
 } from "@domain/entity-account-data";
@@ -37,7 +38,10 @@ const counterSlice = createSlice({
   },
 });
 
-const feedInitialState: Partial<Record<AccountUUID, string[]>> = {};
+/** By account, then by query: each query has its own window. */
+type FeedState = Partial<Record<AccountUUID, Partial<Record<string, string[]>>>>;
+
+const feedInitialState: FeedState = {};
 
 const feedSlice = createSlice({
   name: "feed",
@@ -45,11 +49,20 @@ const feedSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addMatcher(isAccountDataReceived("feed"), (state, { payload }) => {
-      const stored = payload.append ? (state[payload.accountUUID] ?? []) : [];
-      state[payload.accountUUID] = [...stored, ...payload.data.items];
+      const byQuery = state[payload.accountUUID] ?? {};
+      const stored = payload.append ? (byQuery[payload.queryKey] ?? []) : [];
+      byQuery[payload.queryKey] = [...stored, ...payload.data.items];
+      state[payload.accountUUID] = byQuery;
     });
   },
 });
+
+/** The `feed` window of one account for one query. */
+export const selectFeed = (
+  state: { feed: FeedState },
+  accountUUID: AccountUUID,
+  query?: FeedQuery,
+): string[] | undefined => state.feed[accountUUID]?.[accountDataQueryKey(query)];
 
 /** A source id, for sources declared in tests. */
 export const sourceIdOf = (id: string) => AccountDataSourceIdSchema.parse(id);

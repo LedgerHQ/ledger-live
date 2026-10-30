@@ -1,12 +1,12 @@
-import type {
-  AccountDataKind,
-  AccountDataQuery,
-  AccountDataResult,
-  AccountDataSourceId,
+import {
+  accountDataQueryKey,
+  type AccountDataKind,
+  type AccountDataQuery,
+  type AccountDataResult,
+  type AccountDataSourceId,
 } from "@domain/entity-account-data";
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { NoAccountDataSourceError } from "../errors";
-import { accountDataQueryKey } from "../queryKey";
 import type {
   AccountDataAnswer,
   AccountDataReadOptions,

@@ -8,6 +8,7 @@ import {
   descriptorOf,
   indexOf,
   makeStore,
+  selectFeed,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
@@ -119,7 +120,7 @@ describe("useAccountData", () => {
     const { result } = renderHook(() => useAccountData("feed", descriptor), { wrapper });
     await waitFor(() => expect(result.current.hasMore).toBe(true));
     await act(() => result.current.loadMore());
-    expect(store.getState().feed[accountUUID]).toEqual(["a", "b"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["a", "b"]);
     expect(result.current.hasMore).toBe(false);
   });
 });

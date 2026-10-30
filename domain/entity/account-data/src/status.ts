@@ -1,44 +1,53 @@
 import { createSlice, type PayloadAction, type UnknownAction } from "@reduxjs/toolkit";
 import type { AccountUUID } from "@domain/entity-account-descriptor";
-import type { AccountDataKind, AccountDataResult } from "./registry";
+import { accountDataQueryKey } from "./queryKey";
+import type { AccountDataKind, AccountDataQuery, AccountDataResult } from "./registry";
 import type { AccountDataSourceId } from "./sourceId";
 
 export type AccountDataError = { name: string; message: string };
 
 /** The read in flight: a head read (`append: false`) or a next page. */
-export type AccountDataRequest = { id: string; queryKey: string; append: boolean };
+export type AccountDataRequest = { id: string; append: boolean };
 
-/** How the reads of one kind of one account went. The data itself lives in the entity's slice. */
+/** How the reads of one kind, account and query went. The data itself lives in the entity's slice. */
 export type AccountDataStatus = {
   request?: AccountDataRequest;
   /** Of the last read, cleared by the next answer. */
   error?: AccountDataError;
   /** The source that answered the stored data: only it can serve its next page. */
   sourceId?: AccountDataSourceId;
-  /** The query of the stored head, as `accountDataQueryKey` writes it. */
-  queryKey?: string;
   /** When the stored head was read, in ms since epoch. */
   readAt?: number;
   /** Where the stored data continues, at its source; absent at the end or on a kind without pages. */
   nextCursor?: string;
 };
 
-/** By kind, then by account. Keyed by string, so the shape holds whatever kinds the registry has. */
+/** By query, as `accountDataQueryKey` writes it: each query of an account is read and paged on its own. */
+export type AccountDataStatusByQuery = Partial<Record<string, AccountDataStatus>>;
+
+/** By kind, then by account, then by query. Keyed by string, so the shape holds whatever kinds the registry has. */
 export type AccountDataState = Partial<
-  Record<string, Partial<Record<AccountUUID, AccountDataStatus>>>
+  Record<string, Partial<Record<AccountUUID, AccountDataStatusByQuery>>>
 >;
 
 export type AccountDataRootState = { accountData: AccountDataState };
 
-type Target = { kind: AccountDataKind; accountUUID: AccountUUID; requestId: string };
+type Target = {
+  kind: AccountDataKind;
+  accountUUID: AccountUUID;
+  queryKey: string;
+  requestId: string;
+};
 
-export type AccountDataRequested = Target & { queryKey: string; append: boolean };
+export type AccountDataRequested = Target & { append: boolean };
 
 export type AccountDataFailed = Target & { error: AccountDataError };
 
 export type AccountDataReceived<K extends AccountDataKind> = {
   kind: K;
   accountUUID: AccountUUID;
+  /** The query `data` answers, as `accountDataQueryKey` writes it: the entity stores it under that key. */
+  queryKey: string;
   requestId: string;
   data: AccountDataResult<K>;
   sourceId: AccountDataSourceId;
@@ -73,13 +82,17 @@ export const isAnyAccountDataReceived = (
 ): action is ReturnType<typeof accountDataReceived<AccountDataKind>> =>
   action.type === RECEIVED && hasKind(action.payload);
 
-function statusOf(state: AccountDataState, kind: string, accountUUID: AccountUUID) {
+const isPrototypeKey = (key: string) => key === "__proto__" || key === "constructor";
+
+function statusOf(state: AccountDataState, { kind, accountUUID, queryKey }: Target) {
   // Keys come from actions: one naming a prototype key writes into a status nobody reads.
-  if (kind === "__proto__" || kind === "constructor" || accountUUID === "__proto__") return {};
+  if ([kind, accountUUID, queryKey].some(isPrototypeKey)) return {};
   const byAccount = state[kind] ?? {};
   state[kind] = byAccount;
-  const status = byAccount[accountUUID] ?? {};
-  byAccount[accountUUID] = status;
+  const byQuery = byAccount[accountUUID] ?? {};
+  byAccount[accountUUID] = byQuery;
+  const status = byQuery[queryKey] ?? {};
+  byQuery[queryKey] = status;
   return status;
 }
 
@@ -93,13 +106,12 @@ export const accountDataSlice = createSlice({
   initialState,
   reducers: {
     accountDataRequested: (state, { payload }: PayloadAction<AccountDataRequested>) => {
-      const { kind, accountUUID, requestId: id, queryKey, append } = payload;
-      const status = statusOf(state, kind, accountUUID);
-      status.request = { id, queryKey, append };
+      const status = statusOf(state, payload);
+      status.request = { id: payload.requestId, append: payload.append };
       status.error = undefined;
     },
     accountDataFailed: (state, { payload }: PayloadAction<AccountDataFailed>) => {
-      const status = statusOf(state, payload.kind, payload.accountUUID);
+      const status = statusOf(state, payload);
       if (!isCurrent(status, payload.requestId)) return;
       status.request = undefined;
       status.error = payload.error;
@@ -107,12 +119,9 @@ export const accountDataSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addMatcher(isAnyAccountDataReceived, (state, { payload }) => {
-      const status = statusOf(state, payload.kind, payload.accountUUID);
+      const status = statusOf(state, payload);
       if (!isCurrent(status, payload.requestId)) return;
-      if (!payload.append) {
-        status.queryKey = status.request?.queryKey;
-        status.readAt = payload.readAt;
-      }
+      if (!payload.append) status.readAt = payload.readAt;
       status.request = undefined;
       status.error = undefined;
       status.sourceId = payload.sourceId;
@@ -123,10 +132,11 @@ export const accountDataSlice = createSlice({
 
 export const { accountDataRequested, accountDataFailed } = accountDataSlice.actions;
 
-export function selectAccountDataStatus(
+export function selectAccountDataStatus<K extends AccountDataKind>(
   state: AccountDataRootState,
-  kind: AccountDataKind,
+  kind: K,
   accountUUID: AccountUUID,
+  query?: AccountDataQuery<K>,
 ): AccountDataStatus | undefined {
-  return state.accountData[kind]?.[accountUUID];
+  return state.accountData[kind]?.[accountUUID]?.[accountDataQueryKey(query)];
 }
