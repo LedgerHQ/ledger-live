@@ -492,6 +492,20 @@
                     ]
                 },
                 {
+                    section: "Predictions",
+                    title: "Predictions",
+                    url: "ledgerwallet://predictions",
+                    description: "Opens the Predictions live app. Query params are forwarded to the live app.",
+                    parameters: [
+                        { name: "eventSlug", required: false, description: "Slug of the event page to open" }
+                    ],
+                    examples: [
+                        "ledgerwallet://predictions",
+                        "ledgerlive://predictions",
+                        "ledgerlive://predictions?eventSlug=will-btc-hit-100k"
+                    ]
+                },
+                {
                     section: "MyLedger",
                     title: "Device Management Flow",
                     url: "ledgerwallet://myledger",

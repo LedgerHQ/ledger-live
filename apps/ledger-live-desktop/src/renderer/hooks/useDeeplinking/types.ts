@@ -55,6 +55,8 @@ export interface DeeplinkHandlerContext {
   isPayTabEnabled: boolean;
   /** `lwdContacts` — deeplink navigates to `/contacts` only when this flag is enabled; otherwise falls back to the default handler. */
   isContactsEnabled: boolean;
+  /** Predictions manifest found, or true until the live app catalog loads so a cold-start deeplink is not dropped. */
+  isPredictionsAvailable: boolean;
 }
 
 export interface ParsedDeeplink {
@@ -218,6 +220,11 @@ export interface PerpsRoute {
   type: "perps";
 }
 
+export interface PredictionsRoute {
+  type: "predictions";
+  query: Record<string, string>;
+}
+
 export interface PayTabRoute {
   type: "paytab";
   /**
@@ -280,6 +287,7 @@ export type DeeplinkRoute =
   | RecoverRoute
   | RecoverRestoreFlowRoute
   | PerpsRoute
+  | PredictionsRoute
   | PayTabRoute
   | ContactsRoute
   | PostOnboardingRoute
