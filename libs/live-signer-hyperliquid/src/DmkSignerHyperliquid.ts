@@ -16,6 +16,10 @@ export type Signature = {
 };
 export type Signatures = Signature[];
 export type DAError = SignActionsDAError;
+export type SignActionsOptions = {
+  /** Set when the caller already opened the Hyperliquid app on the session. */
+  skipOpenApp?: boolean;
+};
 
 /**
  * DMK-based Hyperliquid signer using DMK signer-kit
@@ -61,18 +65,21 @@ export class DmkSignerHyperliquid {
    * @param certificate - Partner certificate
    * @param signedMetadata - Partner signed metadata
    * @param actions - Actions to sign at once
+   * @param options - Signing options, see {@link SignActionsOptions}
    */
   async signActions(
     path: string,
     certificate: Uint8Array,
     signedMetadata: Uint8Array,
     actions: Action[],
+    options?: SignActionsOptions,
   ): Promise<Signatures> {
     const { observable } = this.dmkSigner.signActions({
       derivationPath: path,
       certificate,
       signedMetadata,
       actions,
+      skipOpenApp: options?.skipOpenApp,
     });
     return firstValueFrom(
       observable.pipe(

@@ -57,6 +57,22 @@ describe("DmkSignerHyperliquid", () => {
       });
     });
 
+    it.each([true, false])(
+      "should forward skipOpenApp=%s to the underlying signer",
+      async skipOpenApp => {
+        // GIVEN
+        mockSignActions.mockReturnValue({
+          observable: of({ status: DeviceActionStatus.Completed, output: [] }),
+        });
+
+        // WHEN
+        await signer.signActions(path, certificate, signedMetadata, actions, { skipOpenApp });
+
+        // THEN
+        expect(mockSignActions).toHaveBeenCalledWith(expect.objectContaining({ skipOpenApp }));
+      },
+    );
+
     it("should reject with a generic Error when the device action fails", async () => {
       // GIVEN
       mockSignActions.mockReturnValue({

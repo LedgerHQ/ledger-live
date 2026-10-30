@@ -1,19 +1,22 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
+import type { PerpsSignRequest } from "@ledgerhq/live-common/wallet-api/Perps/server";
+import { useFeature } from "@features/platform-feature-flags";
 import { usePerpsSignViewModel, type PerpsSignData } from "./usePerpsSignViewModel";
 import { PerpsSignView } from "./PerpsSignView";
+import { PerpsSignExecutor } from "./PerpsSignExecutor";
 
-let _opener: ((data: PerpsSignData) => void) | null = null;
+let _opener: ((request: PerpsSignRequest) => void) | null = null;
 
-function registerPerpsSignOpener(fn: (data: PerpsSignData) => void): () => void {
+function registerPerpsSignOpener(fn: (request: PerpsSignRequest) => void): () => void {
   _opener = fn;
   return () => {
     _opener = null;
   };
 }
 
-export function openPerpsSign(data: PerpsSignData) {
-  _opener?.(data);
+export function openPerpsSign(request: PerpsSignRequest) {
+  _opener?.(request);
 }
 
 function PerpsSignBody({ data, onClose }: Readonly<{ data: PerpsSignData; onClose: () => void }>) {
@@ -43,11 +46,28 @@ function PerpsSignInnerDialog({
   );
 }
 
+type PendingSignRequest = Readonly<{ id: number; request: PerpsSignRequest }>;
+
 export default function PerpsSignRoot() {
-  const [data, setData] = useState<PerpsSignData | null>(null);
-  const close = useCallback(() => setData(null), []);
+  const deviceIntentSignEnabled = useFeature("ptxPerpsDeviceIntentSign")?.enabled ?? false;
+  const [pending, setPending] = useState<PendingSignRequest | null>(null);
+  const lastIdRef = useRef(0);
+  const close = useCallback(() => setPending(null), []);
 
-  useEffect(() => registerPerpsSignOpener(setData), []);
+  useEffect(
+    () =>
+      registerPerpsSignOpener(request => {
+        lastIdRef.current += 1;
+        setPending({ id: lastIdRef.current, request });
+      }),
+    [],
+  );
 
-  return <PerpsSignInnerDialog data={data} onClose={close} />;
+  if (deviceIntentSignEnabled) {
+    return pending ? (
+      <PerpsSignExecutor key={pending.id} request={pending.request} onClose={close} />
+    ) : null;
+  }
+
+  return <PerpsSignInnerDialog data={pending?.request ?? null} onClose={close} />;
 }
