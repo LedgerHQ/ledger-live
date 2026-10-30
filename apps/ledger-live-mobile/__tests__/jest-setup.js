@@ -368,6 +368,9 @@ jest.mock("@react-native-firebase/messaging", () => ({
     requestPermission: jest.fn(() => Promise.resolve(true)),
     getToken: jest.fn(() => Promise.resolve("myMockToken")),
   })),
+  // Modular functions delegate to the instance so tests can keep mocking `getMessaging()`.
+  hasPermission: jest.fn(messaging => messaging.hasPermission()),
+  requestPermission: jest.fn((messaging, permissions) => messaging.requestPermission(permissions)),
   notifications: jest.fn(() => ({
     onNotification: jest.fn(),
     onNotificationDisplayed: jest.fn(),
