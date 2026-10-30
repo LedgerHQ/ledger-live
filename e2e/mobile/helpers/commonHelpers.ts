@@ -85,6 +85,7 @@ function mockServerDetoxUrlPattern(): string {
 function createDetoxURLBlacklistRegex(): string {
   const patterns = [
     ".*sdk.*.braze.*",
+    ".*dust.*.braze.*",
     ".*.googleapis.com/.*",
     ".*clients3.google.com.*",
     ".*tron.coin.ledger.com/wallet/getBrokerage.*",
