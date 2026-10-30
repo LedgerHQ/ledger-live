@@ -2,11 +2,13 @@ import operationDetails from "./operationDetails";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBodyHeader from "./AccountBodyHeader";
 import tokenList from "./TokenList";
+import addAssetAction from "./addAssetAction";
 import { AlgorandFamily } from "./types";
 
 const family: AlgorandFamily = {
   operationDetails,
   tokenList,
+  addAssetAction,
   accountHeaderManageActions,
   AccountBodyHeader,
   modalsToPreload: [

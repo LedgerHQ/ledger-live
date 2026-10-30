@@ -10540,7 +10540,8 @@
   },
   "accountDetail": {
     "assets": {
-      "title": "Assets"
+      "title": "Assets",
+      "add": "Add"
     },
     "refreshStatus": {
       "upToDate": "Account up to date",

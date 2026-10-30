@@ -29,6 +29,7 @@ import type { Features } from "@shared/feature-flags";
 import type { SplitAddressProps } from "../components/OperationsList/AddressCellShared";
 import type { Step } from "~/renderer/components/Stepper";
 import type { CoinModalKey } from "./modals-loaders";
+import type { AppDispatch } from "~/state-manager/configureStore";
 
 export type AddressCellProps<O extends Operation> = {
   operation: O;
@@ -490,6 +491,13 @@ export type LLDCoinFamily<
       onClick: () => void;
     }>;
   };
+
+  /**
+   * For a coin where an asset must be added to the account before it can be received (Algorand
+   * opt-in, Stellar add asset, Hedera association): opens that flow. The new Account Detail page
+   * shows its "Add asset" action only for a family that defines it.
+   */
+  addAssetAction?: (args: { account: A; dispatch: AppDispatch }) => void;
 
   /**
    * Allow to add component below the token select on Account step in Receive modal

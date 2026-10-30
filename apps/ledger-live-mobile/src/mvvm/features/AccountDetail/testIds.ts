@@ -8,6 +8,7 @@ export const ACCOUNT_DETAIL_TEST_IDS = {
   emptyState: "account-detail-empty-state",
   notices: "account-detail-notices",
   assets: "account-detail-assets",
+  addAsset: "account-detail-add-asset",
   transactions: "account-detail-transactions",
   transactionsHeader: "account-detail-transactions-header",
   navBarTitle: "account-detail-nav-bar-title",
