@@ -30,6 +30,7 @@ import {
   tokenProgramOfMint,
 } from "../helpers/token";
 import { UserInputType } from "../signer";
+import { validateMemo } from "./validateMemo";
 import type {
   SolanaTokenProgram,
   SolanaTransactionIntentData,
@@ -98,6 +99,7 @@ export async function estimateFees(
     mint ? tokenProgramOfMint(mint) : resolveTokenProgramFromAsset(intent.asset),
     // A Token-2022 transfer instruction reads the mint on chain, so the dummy needs the real one.
     "assetReference" in intent.asset ? intent.asset.assetReference : undefined,
+    pricedMemo(intent),
   );
 
   if (TOKEN_AUTHORITY_TYPES.has(intent.type)) {
@@ -259,8 +261,9 @@ export async function estimateTxFee(
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) {
-  const tx = await createDummyTx(address, kind, tokenProgram, mintAddress);
+  const tx = await createDummyTx(address, kind, tokenProgram, mintAddress, memo);
   const [onChainTx] = await buildVersionedTransaction(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
@@ -285,10 +288,11 @@ const createDummyTx = (
   kind: TransactionModel["kind"],
   tokenProgram?: SolanaTokenProgram,
   mintAddress?: string,
+  memo?: string,
 ) => {
   switch (kind) {
     case "transfer":
-      return createDummyTransferTx(address);
+      return createDummyTransferTx(address, memo);
     case "stake.createAccount":
       return createDummyStakeCreateAccountTx(address);
     case "stake.delegate":
@@ -314,7 +318,17 @@ const createDummyTx = (
   }
 };
 
-const createDummyTransferTx = (address: string): Transaction => {
+/**
+ * A memo costs compute units, which the compute-unit price charges: a send-all estimated without it
+ * leaves the account short of rent. An oversized one is for `validateIntent` to report, and would
+ * overflow the dummy.
+ */
+function pricedMemo(intent: TransactionIntent<StringMemo | MemoNotSupported>): string | undefined {
+  const memo = "memo" in intent && intent.memo.type === "string" ? intent.memo.value : undefined;
+  return memo !== undefined && validateMemo(memo) ? memo : undefined;
+}
+
+const createDummyTransferTx = (address: string, memo?: string): Transaction => {
   return {
     ...BASE_TRANSACTION,
     model: {
@@ -326,6 +340,7 @@ const createDummyTransferTx = (address: string): Transaction => {
           amount: 0,
           recipient: address,
           sender: address,
+          memo,
         },
         ...commandDescriptorCommons,
       },

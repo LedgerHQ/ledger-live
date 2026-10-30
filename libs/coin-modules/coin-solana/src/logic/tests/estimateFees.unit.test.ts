@@ -101,6 +101,27 @@ describe("estimateFees", () => {
     expect(result).toEqual({ value: 5000n });
   });
 
+  it.each([
+    ["prices the memo, whose compute units the priority fee charges", "invoice-42", "invoice-42"],
+    ["leaves out an oversized memo, which validateIntent reports", "x".repeat(501), undefined],
+  ])("%s", async (_name, value, priced) => {
+    const api = createMockApi([5000]);
+    setupBuildMock();
+
+    await estimateFees(api, {
+      intentType: "transaction",
+      type: "send",
+      sender: TEST_ADDRESS,
+      recipient: TEST_RECIPIENT,
+      amount: 1000000n,
+      asset: { type: "native" },
+      memo: { type: "string", kind: "text", value },
+    });
+
+    const tx = buildVersionedTransaction.mock.calls[0][1];
+    expect(tx.model.commandDescriptor.command.memo).toBe(priced);
+  });
+
   it("should map token intent to token.transfer kind", async () => {
     const api = createMockApi([5000]);
     setupBuildMock();

@@ -164,6 +164,8 @@ test("Wallet API methods: solana and xrp signing @smoke", async ({ page, electro
         indexToProgramIds: {},
         instructions: [
           { accounts: [], data: "Fyn5d1", programIdIndex: 2 },
+          // SetComputeUnitPrice at the 10,000 µL/CU floor.
+          { accounts: [], data: "3GAG5eogvTjV", programIdIndex: 2 },
           { accounts: [0, 1], data: "3Bxs4Bc3VYuGVB19", programIdIndex: 3 },
         ],
         recentBlockhash: "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3",
