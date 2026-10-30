@@ -6783,6 +6783,9 @@ importers:
       '@ledgerhq/ledger-key-ring-protocol':
         specifier: 'catalog:'
         version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      '@ledgerhq/live-cli':
+        specifier: workspace:^
+        version: link:../../apps/cli/dist
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common

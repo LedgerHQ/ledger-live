@@ -244,22 +244,16 @@ Run sequentially (check exit codes between each step):
 ### 4a. Install dependencies
 
 ```bash
-pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli..." --filter="ledger-live-mobile-e2e-tests"
+pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..."
 ```
 
-### 4b. Build lib dependencies
+### 4b. Build e2e dependencies
 
 ```bash
-pnpm build:llm:deps
+pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
 ```
 
-### 4c. Build CLI
-
-```bash
-pnpm build:cli
-```
-
-### 4d. Platform-specific build
+### 4c. Platform-specific build
 
 **iOS** (if selected in Phase 0) -- uses **debug** build:
 
