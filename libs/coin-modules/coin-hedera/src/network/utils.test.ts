@@ -361,7 +361,6 @@ describe("network utils", () => {
       token_id: Number(erc20Token.tokenId.split(".").pop()),
       token_evm_address: erc20Token.contractAddress,
       consensus_timestamp: Number(mockMirrorTransaction.consensus_timestamp) * 10 ** 9,
-      payer_account_id: payerAccountId,
       transaction_hash: mockMirrorTransaction.transaction_hash,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult({

@@ -22,7 +22,6 @@ export const getMockedERC20TokenTransfer = (
   receiver_account_id: 5678,
   sender_evm_address: "0x1234",
   receiver_evm_address: "0x5678",
-  payer_account_id: 1234,
   amount: 1000,
   transaction_hash: "hash123",
   transfer_type: "transfer",

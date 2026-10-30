@@ -591,9 +591,10 @@ describe("apiClient", () => {
         timestamp: firstCall.timestamp,
         transactionHash: firstCall.evmHash,
       });
+      // Hgraph loses the nanoseconds, so both lookups get the same timestamp: only the hash tells them apart
       const second = await apiClient.findTransactionByContractCallV2({
         configOrCurrencyId: mockConfig,
-        timestamp: secondCall.timestamp,
+        timestamp: firstCall.timestamp,
         transactionHash: secondCall.evmHash,
       });
 
