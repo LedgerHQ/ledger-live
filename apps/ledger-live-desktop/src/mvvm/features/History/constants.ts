@@ -1,5 +1,7 @@
 export const HISTORY_DUST_FILTER_THRESHOLD_USD = 0.01;
 
+export const USE_ACCOUNT_DATA_OPERATIONS = true;
+
 export const HISTORY_TAB_SEARCH_PARAM = "tab";
 export const HISTORY_TAB_CARD = "card";
 export const HISTORY_TAB_CRYPTO = "crypto";

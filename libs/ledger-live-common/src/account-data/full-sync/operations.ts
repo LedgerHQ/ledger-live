@@ -8,7 +8,7 @@ import {
 import { toAmount } from "./balance";
 
 /** The legacy id without its legacy account id, which the new entities never carry. */
-const toOperationId = (assetId: string, op: Operation, internalIndex?: number): string => {
+export const toOperationId = (assetId: string, op: Operation, internalIndex?: number): string => {
   // Internals can share a legacy id with each other or a top-level operation: the index tells them apart.
   if (internalIndex !== undefined) return `${assetId}-${op.hash}-${op.type}-i${internalIndex}`;
   const prefix = `${op.accountId}-`;
@@ -17,7 +17,7 @@ const toOperationId = (assetId: string, op: Operation, internalIndex?: number): 
 };
 
 /** A token transfer the framework also files as an internal operation: its token account has the row. */
-const isTokenInternal = ({ extra }: Operation) =>
+export const isTokenInternal = ({ extra }: Operation) =>
   typeof extra === "object" && extra !== null && "assetReference" in extra;
 
 const toRow = (
