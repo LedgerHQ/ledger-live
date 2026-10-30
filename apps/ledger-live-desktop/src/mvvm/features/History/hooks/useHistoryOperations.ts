@@ -1,47 +1,19 @@
 import { useMemo } from "react";
-import { useSearchParams } from "react-router";
 import type { Contact } from "@domain/entity-contact";
-import { useSelector } from "LLD/hooks/redux";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import type { OperationTableItem } from "../types";
-import {
-  expandRequestedAccountIdsForHistoryScope,
-  filterOperationTableItemsByAllowedAccountIds,
-  filterTopLevelAccountsByAllowedAccountIds,
-  parseAccountIdsSearchParam,
-} from "../utils/accountScopeForHistory";
-import { filterOperationTableItemsByContact } from "../utils/contactScopeForHistory";
+import { scopeHistoryOperationItems } from "../utils/scopeHistoryOperationItems";
+import { useHistoryAccountScope } from "./useHistoryAccountScope";
+import { useHistoryContact } from "./useHistoryContact";
 import { useHistoryOperationItemsForRootAccounts } from "./useHistoryOperationItemsForRootAccounts";
 
 export function useHistoryOperations(contact?: Contact): OperationTableItem[] {
-  const [searchParams] = useSearchParams();
-  const accountIdsQuery = searchParams.get("accountIds");
-  const allAccounts = useSelector(accountsSelector);
-
-  const rootAccounts = useMemo(() => {
-    const ids = parseAccountIdsSearchParam(accountIdsQuery);
-    if (!ids) return allAccounts;
-    return filterTopLevelAccountsByAllowedAccountIds(allAccounts, new Set(ids));
-  }, [accountIdsQuery, allAccounts]);
-
+  const routeContact = useHistoryContact();
+  const activeContact = contact ?? routeContact;
+  const { rootAccounts, operationAccountIds } = useHistoryAccountScope();
   const baseOperationItems = useHistoryOperationItemsForRootAccounts(rootAccounts);
 
-  const operationAccountIds = useMemo(() => {
-    const ids = parseAccountIdsSearchParam(accountIdsQuery);
-    if (!ids) return null;
-    return expandRequestedAccountIdsForHistoryScope(allAccounts, new Set(ids));
-  }, [accountIdsQuery, allAccounts]);
-
-  const accountScopedItems = useMemo(() => {
-    if (!operationAccountIds) return baseOperationItems;
-    return filterOperationTableItemsByAllowedAccountIds(baseOperationItems, operationAccountIds);
-  }, [baseOperationItems, operationAccountIds]);
-
   return useMemo(
-    () =>
-      contact
-        ? filterOperationTableItemsByContact(accountScopedItems, contact)
-        : accountScopedItems,
-    [accountScopedItems, contact],
+    () => scopeHistoryOperationItems(baseOperationItems, operationAccountIds, activeContact),
+    [activeContact, baseOperationItems, operationAccountIds],
   );
 }

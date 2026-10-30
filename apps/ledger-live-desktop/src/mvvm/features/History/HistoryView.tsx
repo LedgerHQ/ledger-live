@@ -32,6 +32,7 @@ export function HistoryView({
   cardAssetName,
   onHistoryTabChange,
   cardHistoryViewModel,
+  pending,
 }: HistoryViewProps) {
   const operationsCountRef = useRef(operationsCount);
   const hasPendingOperationsRef = useRef(hasPendingOperations);
@@ -71,6 +72,7 @@ export function HistoryView({
             rowVirtualizer={rowVirtualizer}
             flatItems={flatItems}
             onRowClick={onRowClick}
+            pending={pending}
           />
         )}
       </div>

@@ -9,10 +9,6 @@ jest.mock("react-router", () => ({
   useLocation: jest.fn(),
 }));
 
-jest.mock("../useHistoryOperations", () => ({
-  useHistoryOperations: () => [],
-}));
-
 jest.mock("../useHistoryTable", () => ({
   useHistoryTable: () => ({
     getRowModel: () => ({ rows: [] }),
@@ -54,7 +50,7 @@ describe("useHistoryViewModel navigateBack", () => {
       hash: "",
     });
 
-    const { result } = renderHook(() => useHistoryViewModel());
+    const { result } = renderHook(() => useHistoryViewModel([]));
 
     expect(result.current.showBackButton).toBe(true);
 
@@ -66,13 +62,13 @@ describe("useHistoryViewModel navigateBack", () => {
   });
 
   it("hides back button when historyBackPath is missing", () => {
-    const { result } = renderHook(() => useHistoryViewModel());
+    const { result } = renderHook(() => useHistoryViewModel([]));
 
     expect(result.current.showBackButton).toBe(false);
   });
 
   it("should format the dust filter threshold in USD without a reference conversion", () => {
-    const { result } = renderHook(() => useHistoryViewModel(), {
+    const { result } = renderHook(() => useHistoryViewModel([]), {
       initialState: {
         settings: { counterValue: "USD", locale: "en-US" },
         ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
@@ -83,7 +79,7 @@ describe("useHistoryViewModel navigateBack", () => {
   });
 
   it("should request USD countervalue tracking when the dust filter option is shown for a non-USD countervalue", async () => {
-    const { store } = renderHook(() => useHistoryViewModel(), {
+    const { store } = renderHook(() => useHistoryViewModel([]), {
       initialState: {
         settings: { counterValue: "EUR", locale: "en-US" },
         ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),
@@ -101,7 +97,7 @@ describe("useHistoryViewModel navigateBack", () => {
   });
 
   it("should not request USD countervalue tracking when the dust filter option is hidden", () => {
-    const { store } = renderHook(() => useHistoryViewModel(), {
+    const { store } = renderHook(() => useHistoryViewModel([]), {
       initialState: {
         settings: { counterValue: "EUR", locale: "en-US" },
         ...withFlagOverrides({ lwdDustFiltering: { enabled: false } }),
@@ -112,7 +108,7 @@ describe("useHistoryViewModel navigateBack", () => {
   });
 
   it("should track the target dust filter state when toggling dust filtering", () => {
-    const { result, store } = renderHook(() => useHistoryViewModel(), {
+    const { result, store } = renderHook(() => useHistoryViewModel([]), {
       initialState: {
         settings: { hideSmallValueTokenOperations: false },
         ...withFlagOverrides({ lwdDustFiltering: { enabled: true } }),

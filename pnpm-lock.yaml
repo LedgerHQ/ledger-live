@@ -1268,6 +1268,9 @@ importers:
       '@features/platform-account-analytics':
         specifier: workspace:^
         version: link:../../features/platform/account-analytics
+      '@features/platform-account-data':
+        specifier: workspace:*
+        version: link:../../features/platform/account-data
       '@features/platform-aggregated-assets':
         specifier: workspace:*
         version: link:../../features/platform/aggregated-assets
