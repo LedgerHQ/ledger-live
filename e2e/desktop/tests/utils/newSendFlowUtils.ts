@@ -110,21 +110,24 @@ export async function reachAmountStep(
   balanceType?: BalanceType,
 ) {
   await openNewSendFromAccount(app, tx, balanceType);
-  await passRecipientStep(app, tx);
+  await passRecipientStep({ app, tx });
 }
 
 /** Reaches the Amount step from the account page the app is already on. */
 export async function reachAmountStepFromCurrentAccount(app: Application, tx: Transaction) {
   await app.account.clickSend();
   await app.newSendFlow.waitForDialog();
-  await passRecipientStep(app, tx);
+  await passRecipientStep({ app, tx });
 }
 
-async function passRecipientStep(
-  app: Application,
-  tx: Transaction,
-  recipientStepHook?: NewSendFlowEntry["recipientStepHook"],
-) {
+type PassRecipientStepOptions = {
+  app: Application;
+  tx: Transaction;
+  recipientStepHook?: NewSendFlowEntry["recipientStepHook"];
+};
+
+async function passRecipientStep(options: PassRecipientStepOptions) {
+  const { app, tx, recipientStepHook } = options;
   await app.newSendFlow.typeAddress(requireRecipientAddress(tx));
   await recipientStepHook?.(app, tx);
 
@@ -204,7 +207,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
         },
         async ({ app }) => {
           await openNewSendFromAccount(app, tx, entry.balanceType);
-          await passRecipientStep(app, tx, entry.recipientStepHook);
+          await passRecipientStep({ app, tx, recipientStepHook: entry.recipientStepHook });
 
           await app.newSendFlow.fillCryptoAmount(tx.amount);
           if (entry.verifyAmountPrecision) {
