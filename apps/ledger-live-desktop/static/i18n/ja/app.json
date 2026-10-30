@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "名前を変更",
       "viewAdvancedLogs" : "詳細ログを表示",
+      "viewExplorer" : "エクスプローラーで表示",
       "removeAccount" : "ポートフォリオからアカウントを削除する"
     },
     "changeName" : {
@@ -715,18 +716,6 @@
     "buttonTitle" : "テスト"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "詳細はこちら",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "{{family}}の統合",
-        "subTitle" : "{{family}}の統合は{{team}}チームによって行われました",
-        "description" : "Ledger Walletはオープンソースのプラットフォームです。",
-        "description2" : "世界中の開発者がLedger Walletと統合できます",
-        "description3" : "この統合は、 {{team}}がLedgerと共同で実施しました",
-        "description3Link" : "この統合は、<1><0>{{team}}</0></1>がLedgerと共同で実施しました"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}}は{{to}}に移行しています。詳細については、こちらの<0>リンク</0>をご参照いただくか、必要に応じてサポートにお問い合わせください。",
       "contactSupport" : "サポートへお問い合わせ"
@@ -3024,6 +3013,7 @@
       "paidIn" : "{{currency}}で支払い済み",
       "nudge" : "{{provider}}で{{amount}}を節約できます",
       "saved" : "{{provider}}で保存されました",
+      "rentArriving" : "エネルギーのレンタルは現在処理中です。届き次第、ネットワーク手数料が更新されます。",
       "confirm" : "確認",
       "disclaimer" : "サードパーティのエネルギープロバイダーである{{provider}}では、手数料は{{feeCurrency}}で支払われます。",
       "insufficientFunds" : "数量と{{provider}}のエネルギーレンタル手数料を支払うのに必要な{{feeCurrency}}が不足しています。"
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "デリゲートされた資産",
       "undelegatingTooltip" : "デリゲートされていない資産は、10日間のボンド解除期間の対象となり、その後引き出しができるようになります。",
       "undelegating" : "保留中の引き出し"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by MultiversX",
-        "moreInfo" : "詳細はこちら",
-        "drawerTitle" : "MultiversX統合",
-        "title" : "Ledger Walletは、MultiversX eGold (EGLD) トークンに対応するようになりました。",
-        "description" : "Ledger Walletで、eGold（EGLD）トークンを安全に保管・管理できるようになりました。",
-        "description2" : "MultiversX eGold (EGLD) トークンは、MultiversX Networkのネイティブトークンであり、トランザクション、ステーキング、スマートコントラクト、ガバナンス、バリデーターの報酬など、さまざまな用途に使用されます。",
-        "description3" : "LedgerはMultiversXチームと積極的に協力し、ステーキングやESDT (Elrond Standard Digital Token) のネイティブサポートなどの機能を追加していく予定です。",
-        "website" : "The Internet Scale Blockchain"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "詳細はこちら",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "CELOトークンがLedger Walletでご利用可能になりました",
-        "description" : "CELOトークンを管理して、Ledger Walletで保護できるようになりました。",
-        "description2" : "CeloチェーンのネイティブトークンであるCeloトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
-        "website" : "Powered by Figment"
-      }
-    },
     "lockedBalance" : "ロックされた残高",
     "lockedTooltip" : "報酬を得るには、資産をロックし、バリデーターグループに投票する必要があります。",
     "nonvotingLockedBalance" : "非投票のロックされた残高",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "保留中残高",
       "pendingBalanceTooltip" : "この数s量はステーキング解除されており、現在利用可能待ちです。",
       "storageUsageBalance" : "最低残高",
-      "storageUsageBalanceTooltip" : "この量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "詳細はこちら",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "NEARトークンがLedger Walletでご利用可能になりました",
-        "description" : "NEARトークンを管理して、Ledger Walletで保護できるようになりました。",
-        "description2" : "NEARチェーンのネイティブトークンであるNEARトークンは、トランザクション、ステーキングに利用されています。今後さらに多くの機能へ対応予定です。",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "この量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。"
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "保留中残高",
       "pendingBalanceTooltip" : "この数量はステーキング解除されており、現在利用可能待ちです。",
       "storageUsageBalance" : "最低残高",
-      "storageUsageBalanceTooltip" : "この数量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "詳細はこちら",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "SUIトークンがLedger Walletでご利用可能になりました",
-        "description" : "SUIトークンを管理して、Ledger Walletで保護できるようになりました。",
-        "description2" : "SUIトークンはSUIチェーンのネイティブトークンで、トランザクションやステーキング、今後の新機能など、あらゆる用途に利用されます。",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "この数量は保管とトランザクション用に確保されており、アカウントを有効にしておくために維持する必要がある最低残高です。"
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "何か問題が発生しました。デバイスを再接続してください。",
       "description" : "Concordiumアプリはトランザクションを処理できませんでした。問題が解決しない場合は、Ledgerサポートにお問い合わせください。"
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "{{min}}から{{max}}までの整数を入力してください。"
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "address.contract-name形式の有効なプールコントラクトアドレスを入力してください。"
+    },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "リクエストは送信されませんでした",
       "description" : "Internet Computerはリクエストを受け付けなかったため、何も送信されず、何も変更されませんでした。もう一度お試しください。{{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "トランザクションの有効期限が切れました",
+      "description" : "署名されたトランザクションが時間内に送信されなかったため、何も送信されず、何も変更されませんでした。もう一度署名してください。"
     },
     "ICPInvalidPercentage" : {
       "title" : "パーセンテージが範囲外です",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
             "step2" : "同期したいLedger Walletアプリを開く。",
-            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>すでにオンにしました</0> > <0>QRを表示</0>に移動する。",
+            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>QRを表示</0>に移動",
             "step4" : "QRコードをスキャンする。"
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "アプリの1つでLedger Syncが有効になっていることを確認する。",
             "step2" : "同期したいLedger Walletアプリを開く。",
-            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>すでにオンにしました</0> > <0>Ledgerを使う</0>に移動する。",
+            "step3" : "<0>設定</0> > <0>一般</0> > <0>Ledger Sync</0> > <0>Ledgerを使用</0>に移動",
             "step4" : "Ledgerを接続する。"
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "無期限先物に資金を入金するには、Hyperliquidアカウントが必要です。続行するには追加してください。",
     "selectDepositCurrencyTitle" : "入金する資産を選択",
     "selectDepositCurrencyDescription" : "対応しているどの資産でも利用できます。必要に応じて自動的にスワップされます。",
+    "selectWithdrawCurrencyTitle" : "出金先の資産を選択",
+    "selectWithdrawCurrencyDescription" : "お客様のUSDCは、選択した資産に自動的にスワップされます。",
     "accountCount_one" : "{{count}}アカウント",
     "accountCount_other" : "{{count}}アカウント",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "安全な暗号資産ウォレット"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "無期限先物",
+      "description" : "レバレッジ投資"
+    },
+    "borrow" : {
+      "title" : "ローン",
+      "description" : "ステーブルコインを借りる"
+    }
+  },
   "marketBanner" : {
     "title" : "マーケット",
     "genericError" : "接続に失敗",
@@ -9736,6 +9707,7 @@
     "receive" : "受け取る",
     "buy" : "購入",
     "sell" : "売却",
+    "swap" : "スワップ",
     "connect" : "接続",
     "buyALedger" : "Ledgerを購入する"
   },
@@ -9941,7 +9913,8 @@
               "label" : "バースデーハイト",
               "tooltip" : "デフォルト：本日の日付。過去にプライベート（シールド）アクティビティがある既存アカウントの場合のみ変更してください。",
               "syncFromZero" : "このアカウントは過去にシールドZECを受け取っていますが、バースデーハイトを取得できませんでした。ブロック0からスキャンする（長い時間がかかる場合があります）。",
-              "error" : "無効な日付"
+              "error" : "無効な日付",
+              "height" : "ブロック高：{{height}}"
             },
             "ufvk" : {
               "text" : "開始するには、Unified Full Viewing Key (UFVK：統合閲覧キー) をエクスポートする必要があります。この操作にはLedgerデバイスでの承認が必要です。"
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 プライベート（Sapling）",
       "shieldedOrchardTx" : "🛡 プライベート（Orchard）",
       "shieldedIronwoodTx" : "🛡 プライベート（Ironwood）",
-      "memo" : "メモ"
+      "memo" : "メモ",
+      "blockHeight" : "ブロック高",
+      "confirmations_one" : "{{count}}件の承認",
+      "confirmations_other" : "{{count}}件の承認"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "まだアクティビティはありません",
+      "description" : {
+        "receive" : "まずは「受け取る」から資金を追加してください。",
+        "receiveSwap" : "「受け取る」または「スワップ」から資金を追加して始めましょう。",
+        "receiveBuy" : "「受け取る」または「購入」から資金を追加して始めましょう。",
+        "receiveSwapBuy" : "まずは「受け取る」、「スワップ」、または「購入」から資金を追加してください。",
+        "swap" : "まずは「スワップ」から資金を追加してください。",
+        "buy" : "まずは「購入」から資金を追加してください。",
+        "swapBuy" : "まずは「スワップ」または「購入」から資金を追加してください。"
+      }
+    },
+    "assetPicker" : {
+      "title" : "資産を選択"
+    },
+    "actions" : {
+      "receive" : "受け取る",
+      "send" : "送付",
+      "buy" : "購入",
+      "sell" : "売却",
+      "earn" : "報酬獲得"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "詳細はこちら",
+      "openPerps" : "無期限先物を開く"
+    },
+    "migration" : {
+      "title" : "{{from}}は{{to}}に移行しています。",
+      "description" : "移行の詳細についてご確認いただくか、サポートが必要な場合はサポートにお問い合わせください。"
+    },
+    "willBeDeprecated" : {
+      "title" : "{{date}}以降、{{currencyName}}はサポートされなくなります。",
+      "description" : "それでも、Ledgerデバイスで引き続き保護されます。詳細はヘルプセンターでご確認ください。"
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "合計残高には配当や株式分割は含まれません。"
+    },
+    "perps" : {
+      "title" : "Hyperliquidアカウントについて",
+      "description" : "このアカウントは無期限先物取引に関連しています。このアカウントではトランザクション操作はサポートされていません"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "アカウント設定"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "アクションを選択してください"
+  },
+  "perpsWithdraw" : {
+    "title" : "出金",
+    "review" : "確認",
+    "estimatedAmount" : "約{{value}}を出金する",
+    "inputSubText" : "{{provider}}経由でスワップして出金",
+    "selectCurrencyTitle" : "{{currencyTicker}}へ出金する",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "アカウントがありません",
+    "formErrors" : {
+      "insufficientBalance" : "残高不足",
+      "minimumAmount" : "最小出金額は{{minAmount}} USDCです。",
+      "minimumAmountUnknown" : "出金するには少なすぎる数量です。",
+      "lowLiquidity" : "この資産は一時的にご利用いただけません。後でもう一度お試しいただくか、別の資産を選択してください。",
+      "addressScreening" : "このアカウントへの出金は処理できません。",
+      "quoteUnavailable" : "{{provider}}から見積もりを取得できません。別の資産でお試しいただくか、しばらく経ってから再度お試しください。",
+      "currenciesUnavailable" : "引き出し先の資産を読み込むことができません。後でもう一度お試しください。"
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "入金の署名",

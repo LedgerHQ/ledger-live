@@ -1857,6 +1857,10 @@
       "title" : "Talep gönderilmedi",
       "description" : "Internet Computer talebi almadı, bu yüzden hiçbir şey gönderilmedi ve hiçbir şey değişmedi. Lütfen tekrar deneyin. {{reason}}"
     },
+    "ICPTransactionExpired" : {
+      "title" : "İşlemin süresi doldu",
+      "description" : "İmzalanan işlem zamanında iletilmediği için hiçbir şey gönderilmedi ve herhangi bir değişiklik olmadı. Lütfen işlemi tekrar imzalayın."
+    },
     "ICPCreateNeuronWarning" : {
       "title" : "Bu, ICP varlıklarınızı yeni bir nöronda kilitler.",
       "description" : "Nöron, oy kullanmak veya ödül kazanmak için çok kısa olan en düşük çözülme süresiyle başlatılır. Bu süreyi Nöronları Yönet menüsünden artırın ve stake edilen tutarın yeniden harcanabilir hâle gelmesi için bu sürenin dolmasını beklemeniz gerektiğini göz önünde bulundurun."
@@ -1871,6 +1875,7 @@
     "menu" : {
       "changeName" : "Adı değiştir",
       "viewAdvancedLogs" : "Kapsamlı log'ları görüntüle",
+      "viewExplorer" : "Tarayıcıda görüntüle",
       "removeAccount" : "Hesabı portföyden kaldır"
     },
     "advancedLogs" : {
@@ -2587,6 +2592,10 @@
       "learnMore" : "Daha fazla bilgi",
       "activate" : "Etkinleştir",
       "skip" : "Şimdilik atla"
+    },
+    "connection" : {
+      "connecting" : "Cihazınıza bağlanıyor",
+      "failed" : "Bağlantı başarısız oldu"
     }
   },
   "onboarding" : {
@@ -3437,10 +3446,10 @@
       "skipCta" : "Daha sonra yapacağım",
       "skip" : {
         "title" : "Emin misiniz?",
-        "description" : "Bu işlemi atlarsanız, yeni bir telefona veya bilgisayara geçtiğinizde tüm hesaplarınız, bakiyeleriniz ve geçmişinizi manuel olarak yeniden eklemeniz gerekecektir.",
-        "descriptionEmphasis" : "Bunu istediğiniz zaman ayarlardan devre dışı bırakabilirsiniz.",
+        "description" : "Telefonunuzu değiştirirseniz veya Ledger Wallet'ı başka bir telefonda ya da bilgisayarda kullanırsanız hesaplarınızı manuel olarak senkronize etmeniz gerekir.",
+        "descriptionEmphasis" : "Bunu ayarlarınızdan istediğiniz zaman etkinleştirebilir veya devre dışı bırakabilirsiniz.",
         "skipCTA" : "Evet, atla",
-        "syncCTA" : "Hayır, cüzdanımı senkronize et"
+        "syncCTA" : "Hayır, senkronizasyonu etkinleştir"
       }
     },
     "seedStep" : {
@@ -3625,6 +3634,16 @@
       "upToDate" : "Portföy güncel",
       "syncError" : "Bazı hesap verileri yüklenemedi",
       "offline" : "Çevrim dışısınız. Lütfen bağlantınızı kontrol edin."
+    }
+  },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Sürekli vadeli işlemler",
+      "description" : "Kaldıraçlı yatırım yapın"
+    },
+    "borrow" : {
+      "title" : "Krediler",
+      "description" : "Stabil coin kredisi alın"
     }
   },
   "addAccountsModal" : {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other" : "+{{count}} alt hesap"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Daha fazla bilgi",
-      "cardTitle" : "{{team}} desteğiyle",
-      "drawer" : {
-        "title" : "{{family}} entegrasyonu",
-        "subTitle" : "{{family}} entegrasyonu {{team}} ekibi tarafından yapıldı",
-        "description" : "Ledger Wallet, açık kaynaklı bir platformdur.",
-        "description2" : "Dünyanın her yerinden geliştiriciler, Ledger Wallet ile entegre olabilir",
-        "description3" : "Bu entegrasyon, {{team}} tarafından Ledger ile işbirliği içinde gerçekleştirilmiştir.",
-        "description3Link" : "Bu entegrasyon, <1><0>{{team}}</0></1> tarafından Ledger ile iş birliği yapılarak gerçekleştirilmiştir"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}}, şuraya taşınıyor: {{to}}. Daha fazla bilgi edinmek için bu <0>bağlantıyı</0> takip edin veya yardıma ihtiyacınız varsa destek ekibiyle iletişime geçin.",
       "contactSupport" : "Destek al"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment" : {
+        "title" : "Ücret ödeme yöntemini seçin",
+        "regular" : "Standart transfer",
+        "sponsored" : "{{provider}} ile öde",
+        "payIn" : "Ağ ücretini {{feeCurrency}} ile öde",
+        "paidIn" : "{{currency}} ile ödendi",
+        "nudge" : "{{provider}} ile {{amount}} tasarruf edebilirsiniz",
+        "saved" : "{{provider}} ile tasarruf edildi",
+        "confirm" : "Onayla",
+        "disclaimer" : "Üçüncü taraf bir enerji sağlayıcısı olan {{provider}} ile ücretler {{feeCurrency}} olarak ödenir.",
         "insufficientFunds" : "Tutarı ve {{provider}} enerji kiralama ücretini karşılamak için yeterli {{feeCurrency}} bakiyeniz yok."
       },
       "sponsoredRentSignature" : {
@@ -5871,6 +5887,39 @@
     }
   },
   "osUpdates" : {
+    "backupBanner" : {
+      "title" : "Yedekleme bulundu",
+      "description" : "Uygulamalar ve ayarlar cihazınızda tam olarak geri yüklenmedi.",
+      "restore" : "Geri yükle",
+      "delete" : "Yedeklemeyi sil"
+    },
+    "bootloaderDiscovered" : {
+      "title" : "Cihaz Bootloader (önyükleyici) modunda.",
+      "description" : "Güncellemek için \"Devam\" butonuna tıklayın.",
+      "continue" : "Devam"
+    },
+    "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "İşletim sistemi güncellemesi mevcut",
+          "manager" : "Ledger OS güncellemesi mevcut"
+        },
+        "version" : "Sürüm {{firmwareVersion}}",
+        "cta" : "Güncelle"
+      }
+    },
+    "restoreConfirmation" : {
+      "title" : "Önceki yapılandırmanızı geri yüklemek istiyor musunuz?",
+      "description" : "Uygulamaları ve ayarları önceki yapılandırmamdan geri yüklemek istediğimi ve o tarihten bu yana oluşturulan tüm uygulamaların ve verilerin silineceğini onaylıyorum.",
+      "confirm" : "Geri yükle",
+      "cancel" : "İptal et"
+    },
+    "deleteConfirmation" : {
+      "title" : "Yedeklemeniz silinsin mi?",
+      "description" : "Önceki yapılandırmanın ve Security Key kimlik bilgileri dahil olmak üzere son yedeğimdeki uygulamaların ve verilerin silineceğinin farkındayım.",
+      "confirm" : "Yedeklemeyi sil",
+      "cancel" : "İptal et"
+    },
     "actions" : {
       "retry" : "Tekrar dene",
       "cancel" : "İptal et",
@@ -10292,7 +10341,7 @@
             "steps" : {
               "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
               "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
-              "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
+              "step3" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Karekodu okutun</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
           }
@@ -10305,7 +10354,7 @@
             "steps" : {
               "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
               "step2" : "Senkronize edilecek Ledger Wallet'ı açın.",
-              "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
+              "step3" : "Sırasıyla <0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
           }
@@ -10416,9 +10465,58 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Henüz işlem yok",
+      "description" : {
+        "receive" : "Al seçeneği üzerinden bakiye ekleyerek başlayın.",
+        "receiveSwap" : "Al veya Takas et seçenekleri aracılığıyla bakiye ekleyerek başlayın.",
+        "receiveBuy" : "Al veya Satın Al seçenekleri aracılığıyla bakiye ekleyerek başlayın.",
+        "receiveSwapBuy" : "Al, Takas et veya Satın Al seçenekleri aracılığıyla bakiye ekleyerek başlayın.",
+        "swap" : "Takas et seçeneği aracılığıyla bakiye ekleyerek başlayın.",
+        "buy" : "Satın Al seçeneği aracılığıyla bakiye ekleyerek başlayın.",
+        "swapBuy" : "Takas et veya Satın Al seçeneği aracılığıyla bakiye ekleyerek başlayın."
+      }
+    },
+    "actions" : {
+      "transfer" : "Transfer",
+      "receive" : "Al",
+      "send" : "Gönder",
+      "swap" : "Takas et",
+      "buy" : "Satın al",
+      "sell" : "Sat",
+      "earn" : "Kazan",
+      "more" : "Daha fazlası"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "Daha fazla bilgi",
+      "openPerps" : "Perpetual işlemleri aç"
+    },
+    "migration" : {
+      "title" : "{{from}}, {{to}} ağına taşınıyor.",
+      "description" : "Taşınma hakkında daha fazla bilgi edinebilir veya yardıma ihtiyacınız olursa destek ekibiyle iletişime geçebilirsiniz."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}}, {{date}} tarihinden itibaren desteklenmeyecektir",
+      "description" : "Bununla birlikte, Ledger cihazınız tarafından güvence altına alınmaya devam eder. Daha fazla bilgi için Yardım Merkezi’ni ziyaret edin."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "Temettüler veya hisse bölünmeleri toplam bakiyeye dahil edilmez."
+    },
+    "perps" : {
+      "title" : "Hyperliquid hesabı hakkında",
+      "description" : "Bu hesap sürekli vadeli (perpetual) alım satım işlemleriyle bağlantılıdır. Bu hesap üzerinde standart transfer eylemleri desteklenmemektedir"
+    }
+  },
   "accountDetail" : {
     "assets" : {
       "title" : "Varlıklar"
+    },
+    "refreshStatus" : {
+      "upToDate" : "Hesap güncel",
+      "syncError" : "Hesap verileri yüklenemedi"
     },
     "transactions" : {
       "title" : "İşlemler"
@@ -10429,6 +10527,9 @@
       "label" : "Adres adı",
       "submit" : "Adı değiştir"
     }
+  },
+  "accountAssetPicker" : {
+    "title" : "Bir varlık seçin"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10680,6 +10781,10 @@
     "selectAccountPerpsEmptyDescription" : "Sürekli vadeli (perpetual) işlemlerinizi fonlamak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
     "selectDepositCurrencyTitle" : "Yatırılacak varlığı seçin",
     "selectDepositCurrencyDescription" : "Desteklenen herhangi bir varlık kullanılabilir. Gerekirse otomatik olarak takas edilecektir.",
+    "selectWithdrawCurrencyTitle" : "Çekimin aktarılacağı varlığı seçin",
+    "selectWithdrawCurrencyDescription" : "USDC’niz, seçtiğiniz varlığa otomatik olarak takas edilecektir.",
+    "selectAccountPerpsWithdrawFromDescription" : "Varlık çekmek istediğiniz hesabı seçin",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "Çekim yapmak için bir Hyperliquid hesabına ihtiyacınız var. Devam etmek için bir hesap ekleyin.",
     "searchPlaceholder" : "İsim veya adrese göre ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "notAvailableYet" : "Henüz mevcut değil",
@@ -10739,6 +10844,25 @@
     "formErrors" : {
       "amountExceedsBalance" : "Yetersiz bakiye",
       "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin."
+    }
+  },
+  "perpsWithdraw" : {
+    "title" : "Çek",
+    "review" : "İncele",
+    "keypadDelete" : "Son rakamı sil",
+    "estimatedAmount" : "~{{value}} çek",
+    "inputSubText" : "{{provider}} ile takas edin ve çekin",
+    "selectCurrencyTitle" : "{{currencyTicker}} adresine çek",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "Hesap yok",
+    "formErrors" : {
+      "insufficientBalance" : "Yetersiz bakiye",
+      "minimumAmount" : "Minimum çekim {{minAmount}} USDC'dir.",
+      "minimumAmountUnknown" : "Bu tutar çekim yapmak için çok düşük.",
+      "lowLiquidity" : "Bu varlık geçici olarak kullanılamıyor. Daha sonra tekrar deneyin veya başka bir varlık seçin.",
+      "addressScreening" : "Bu çekim bu hesaba gerçekleştirilemiyor.",
+      "quoteUnavailable" : "{{provider}} üzerinden fiyat teklifi alamıyoruz. Farklı bir varlıkla deneyin veya daha sonra tekrar deneyin.",
+      "currenciesUnavailable" : "Çekim yapabileceğiniz varlıklar yüklenemiyor. Daha sonra tekrar deneyin."
     }
   },
   "swapErrors" : {
