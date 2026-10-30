@@ -61,6 +61,7 @@ function TestRouter() {
 }
 
 const ANALYTICS_CONSENT_DIALOG_PAGE = "Analytics consent dialog";
+const ANALYTICS_OPT_IN_PROMPT_PAGE = "Analytics opt-in prompt main";
 const FRESH_CONSENT_TITLE = "Help us improve Ledger";
 const RECONFIRM_TITLE = "Continue improving Ledger?";
 const PRIVACY_UPDATE_TITLE = "We're updating our privacy policy";
@@ -75,6 +76,11 @@ function expectTrackedPhase(
       props: { phase, type: "modal" },
     },
     { mandatory: true, refreshSource: false, updateRoutes: true },
+  );
+  expect(track).toHaveBeenCalledWith(
+    ANALYTICS_OPT_IN_PROMPT_PAGE,
+    { page: ANALYTICS_OPT_IN_PROMPT_PAGE },
+    { mandatory: true },
   );
 }
 
