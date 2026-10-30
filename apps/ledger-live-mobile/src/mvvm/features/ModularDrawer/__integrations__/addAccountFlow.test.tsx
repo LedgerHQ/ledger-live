@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { Button } from "@ledgerhq/native-ui";
 import {
   act,
   render,
@@ -458,5 +459,88 @@ describe("AddAccountFlow with MAD", () => {
       expect(queryByText(/connect device/i)).not.toBeVisible();
       expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
     });
+  });
+
+  it("should cancel the account request once when leaving SelectDevice with the back arrow", async () => {
+    const onCancel = jest.fn();
+    const onAccountSelected = jest.fn();
+    function Harness() {
+      const [currencies, setCurrencies] = useState(["bitcoin"]);
+      return (
+        <>
+          <Button onPress={() => setCurrencies(["ethereum"])}>Switch to ethereum</Button>
+          <ModularDrawerSharedNavigator
+            flow="not_add_account"
+            currencies={currencies}
+            onCancel={onCancel}
+            onAccountSelected={onAccountSelected}
+          />
+        </>
+      );
+    }
+
+    const { getByText, getByTestId, store, user } = render(<Harness />, { overrideInitialState });
+
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+    await user.press(getByText(/bitcoin/i));
+    advanceTimers();
+    await user.press(getByText(/add account/i));
+    advanceTimers();
+    expect(getByText(/connect device/i)).toBeVisible();
+    expect(onCancel).not.toHaveBeenCalled();
+
+    await user.press(getByTestId("navigation-header-back-button"));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onAccountSelected).not.toHaveBeenCalled();
+    expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+
+    await user.press(getByText("Switch to ethereum"));
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+
+    expect(store.getState().modularDrawer.preselectedCurrencies).toEqual(["ethereum"]);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("should not cancel the account request when the device flow adds an account", async () => {
+    const onCancel = jest.fn();
+    const onAccountSelected = jest.fn();
+    const { getByText, queryByText, user } = render(
+      <ModularDrawerSharedNavigator
+        flow="not_add_account"
+        onCancel={onCancel}
+        onAccountSelected={onAccountSelected}
+      />,
+      { overrideInitialState },
+    );
+
+    await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
+    await user.press(getByText(/bitcoin/i));
+    advanceTimers();
+    await user.press(getByText(/add account/i));
+    advanceTimers();
+    await user.press(getByText(/ledger stax/i));
+    advanceTimers();
+    await waitFor(() => {
+      expect(getByText(/checking the blockchain/i)).toBeVisible();
+    });
+    await mockScanAccountsSubscription([BTC_ACCOUNT]);
+    await user.press(getByText(/confirm/i));
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    await waitFor(() => {
+      expect(queryByText(/connect device/i)).not.toBeVisible();
+      expect(getByText(WITH_ACCOUNT_SELECTION)).toBeVisible();
+    });
+    expect(onAccountSelected).toHaveBeenCalledTimes(1);
+    expect(onCancel).not.toHaveBeenCalled();
   });
 });
