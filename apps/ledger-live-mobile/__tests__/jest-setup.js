@@ -368,6 +368,9 @@ jest.mock("@react-native-firebase/messaging", () => ({
     requestPermission: jest.fn(() => Promise.resolve(true)),
     getToken: jest.fn(() => Promise.resolve("myMockToken")),
   })),
+  // Modular functions delegate to the instance so tests can keep mocking `getMessaging()`.
+  hasPermission: jest.fn(messaging => messaging.hasPermission()),
+  requestPermission: jest.fn((messaging, permissions) => messaging.requestPermission(permissions)),
   notifications: jest.fn(() => ({
     onNotification: jest.fn(),
     onNotificationDisplayed: jest.fn(),
@@ -383,13 +386,16 @@ jest.mock("@react-native-firebase/messaging", () => ({
  */
 jest.mock("@react-native-firebase/remote-config", () => {
   const rc = {
-    getValue: jest.fn().mockReturnValue(),
-    setConfigSettings: jest.fn().mockResolvedValue(null),
-    setDefaults: jest.fn().mockResolvedValue(null),
-    fetchAndActivate: jest.fn().mockResolvedValue(null),
-    getAll: jest.fn().mockReturnValue({}),
+    settings: { fetchTimeoutMillis: 60000, minimumFetchIntervalMillis: 43200000 },
+    defaultConfig: {},
   };
-  return { getRemoteConfig: jest.fn().mockReturnValue(rc) };
+  return {
+    getRemoteConfig: jest.fn().mockReturnValue(rc),
+    activate: jest.fn().mockResolvedValue(false),
+    fetchAndActivate: jest.fn().mockResolvedValue(true),
+    getAll: jest.fn().mockReturnValue({}),
+    getValue: jest.fn().mockReturnValue(),
+  };
 });
 
 // Inert mock — avoids the real module's `getRemoteConfig()` + `LiveConfig` import side

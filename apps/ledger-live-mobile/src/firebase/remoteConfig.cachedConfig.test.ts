@@ -11,21 +11,31 @@ jest.unmock("~/firebase/remoteConfig");
 // which has no top-level import/export and therefore lives in the global scope.
 export {};
 
-const mockSetConfigSettings = jest.fn();
-const mockSetDefaults = jest.fn();
+const mockSetSettings = jest.fn();
+const mockSetDefaultConfig = jest.fn();
+const mockActivate = jest.fn();
 const mockFetchAndActivate = jest.fn();
 const mockEnsureInitialized = jest.fn();
 const mockGetAll = jest.fn();
-const mockGetRemoteConfig = jest.fn(() => ({
-  setConfigSettings: (...args: unknown[]) => mockSetConfigSettings(...(args as [])),
-  setDefaults: (...args: unknown[]) => mockSetDefaults(...(args as [])),
-  fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
-  ensureInitialized: (...args: unknown[]) => mockEnsureInitialized(...(args as [])),
-  getAll: (...args: unknown[]) => mockGetAll(...(args as [])),
-}));
+const mockRemoteConfig = {
+  get settings() {
+    return { fetchTimeoutMillis: 60000, minimumFetchIntervalMillis: 43200000 };
+  },
+  set settings(settings: unknown) {
+    mockSetSettings(settings);
+  },
+  set defaultConfig(defaults: unknown) {
+    mockSetDefaultConfig(defaults);
+  },
+};
 
 jest.mock("@react-native-firebase/remote-config", () => ({
-  getRemoteConfig: () => mockGetRemoteConfig(),
+  getRemoteConfig: () => mockRemoteConfig,
+  activate: () => mockActivate(),
+  fetchAndActivate: () => mockFetchAndActivate(),
+  ensureInitialized: () => mockEnsureInitialized(),
+  getAll: () => mockGetAll(),
+  getValue: jest.fn(),
 }));
 jest.mock("@features/platform-feature-flags-firebase", () => ({
   ...jest.requireActual("@features/platform-feature-flags-firebase"),
@@ -43,12 +53,17 @@ async function loadModule() {
 
 beforeEach(() => {
   jest.resetModules();
-  mockSetConfigSettings.mockReset().mockResolvedValue(undefined);
-  mockSetDefaults.mockReset().mockResolvedValue(undefined);
+  mockSetSettings.mockReset();
+  mockSetDefaultConfig.mockReset();
+  mockActivate.mockReset().mockResolvedValue(false);
   mockFetchAndActivate.mockReset().mockResolvedValue(true);
   mockEnsureInitialized.mockReset().mockResolvedValue(undefined);
   mockGetAll.mockReset().mockReturnValue({});
-  mockGetRemoteConfig.mockClear();
+  jest.spyOn(console, "warn").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
 });
 
 describe("readCachedFlags", () => {
@@ -81,15 +96,34 @@ describe("readCachedFlags", () => {
 
   it("does not call ensureInitialized, which fetches over the network on Android", async () => {
     // RNFB's Android `ensureInitialized` runs a blocking `fetchAndActivate` internally, so using
-    // it as a barrier would put this read back on the network. `setup()` is the right barrier:
-    // both of its calls return native constants and hydrate the value map from disk.
+    // it as a barrier would put this read back on the network. `activate` is the right barrier:
+    // it waits for the queued setters, then hydrates the value map from disk.
     const { readCachedFlags } = await loadModule();
 
     await readCachedFlags();
 
     expect(mockEnsureInitialized).not.toHaveBeenCalled();
-    expect(mockSetConfigSettings).toHaveBeenCalled();
-    expect(mockSetDefaults).toHaveBeenCalled();
+    expect(mockSetSettings).toHaveBeenCalled();
+    expect(mockSetDefaultConfig).toHaveBeenCalled();
+    expect(mockActivate).toHaveBeenCalledTimes(1);
+  });
+
+  it("reads the value map only after the activate barrier resolves", async () => {
+    let releaseActivate: (changed: boolean) => void = () => {};
+    mockActivate.mockReturnValue(
+      new Promise<boolean>(resolve => {
+        releaseActivate = resolve;
+      }),
+    );
+
+    const { readCachedFlags } = await loadModule();
+    const pending = readCachedFlags();
+    await Promise.resolve();
+    expect(mockGetAll).not.toHaveBeenCalled();
+
+    releaseActivate(false);
+    await pending;
+    expect(mockGetAll).toHaveBeenCalledTimes(1);
   });
 
   it("excludes entries served from the compiled defaults", async () => {
@@ -104,19 +138,31 @@ describe("readCachedFlags", () => {
     await expect(readCachedFlags()).resolves.toEqual({ counterValue: { enabled: true } });
   });
 
+  it("still serves the config hydrated from disk when activate fails", async () => {
+    mockActivate.mockRejectedValue(new Error("Internal error activating config"));
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: true })),
+    });
+
+    const { readCachedFlags } = await loadModule();
+
+    await expect(readCachedFlags()).resolves.toEqual({ counterValue: { enabled: true } });
+    expect(mockFetchAndActivate).not.toHaveBeenCalled();
+    expect(console.warn).toHaveBeenCalledTimes(1);
+  });
+
   it("resolves empty when the native module cannot be reached", async () => {
-    mockSetDefaults.mockRejectedValue(new Error("native module unavailable"));
+    mockActivate.mockRejectedValue(new Error("native module unavailable"));
 
     const { readCachedFlags } = await loadModule();
 
     await expect(readCachedFlags()).resolves.toEqual({});
   });
 
-  it("does not strand the network fetch when the cache read fails", async () => {
-    // `setup` is memoised at module scope and both readers await it, so a rejection kept in that
-    // memo would be handed straight to `fetchRemoteFlags` and the documented fall-through to the
-    // network would never happen. The memo holds successes only.
-    mockSetDefaults.mockRejectedValueOnce(new Error("native module unavailable"));
+  it("does not strand the network fetch when activate keeps failing", async () => {
+    // Only the cache read activates, so an `activate` that fails on every call must still leave
+    // `fetchRemoteFlags` its documented fall-through to the network.
+    mockActivate.mockRejectedValue(new Error("Internal error activating config"));
 
     const { readCachedFlags, fetchRemoteFlags } = await loadModule();
     await expect(readCachedFlags()).resolves.toEqual({});
@@ -127,5 +173,18 @@ describe("readCachedFlags", () => {
 
     await expect(fetchRemoteFlags()).resolves.toEqual({ counterValue: { enabled: true } });
     expect(mockFetchAndActivate).toHaveBeenCalledTimes(1);
+    expect(mockActivate).toHaveBeenCalledTimes(1);
+  });
+
+  it("applies settings and defaults once across the cache read and later fetches", async () => {
+    const { readCachedFlags, fetchRemoteFlags } = await loadModule();
+
+    await readCachedFlags();
+    await fetchRemoteFlags();
+    await fetchRemoteFlags();
+
+    expect(mockSetSettings).toHaveBeenCalledTimes(1);
+    expect(mockSetDefaultConfig).toHaveBeenCalledTimes(1);
+    expect(mockActivate).toHaveBeenCalledTimes(1);
   });
 });
