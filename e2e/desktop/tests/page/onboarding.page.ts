@@ -34,6 +34,11 @@ type TutorialScreen =
   | "secure-your-crypto"
   | "welcome-to-wallet-without-funds";
 
+type GoBackAndContinueOptions = {
+  screen: TutorialScreen;
+  previousScreen: TutorialScreen;
+};
+
 export class OnboardingPage extends AppPage {
   private readonly getStartedButton = this.page.getByRole("button", { name: "Get Started" });
   private readonly welcomeTitle = this.page.getByTestId("onbording-welcome-title");
@@ -165,8 +170,9 @@ export class OnboardingPage extends AppPage {
     await expect(this.tutorialContinueOn(screen)).toBeDisabled();
   }
 
-  @step("Go back from $0 to $1, then continue again")
-  async goBackAndContinue(screen: TutorialScreen, previousScreen: TutorialScreen) {
+  @step("Go back to the previous tutorial screen, then continue again")
+  async goBackAndContinue(options: GoBackAndContinueOptions) {
+    const { screen, previousScreen } = options;
     await this.tutorialBackOn(screen).click();
     await this.expectTutorialScreen(previousScreen);
     await this.continueTutorial(previousScreen);
