@@ -14,6 +14,7 @@ export function AmountScreenView({
   onAmountChange,
   onToggleInputMode,
   toggleLabel,
+  isFiatModeAvailable,
   secondaryValue,
   feesRowLabel,
   feesRowValue,
@@ -48,6 +49,7 @@ export function AmountScreenView({
             onAmountChange={onAmountChange}
             onToggleInputMode={onToggleInputMode}
             toggleLabel={toggleLabel}
+            isFiatModeAvailable={isFiatModeAvailable}
             secondaryValue={secondaryValue}
             amountMessage={amountMessage}
             onMessageLinkPress={onMessageLinkPress}

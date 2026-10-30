@@ -26,7 +26,7 @@ jest.mock("@ledgerhq/live-common/flows/send/amount/SendAmountDisplayModeContext"
   return {
     useSendAmountDisplayMode: () => {
       const [displayMode, setDisplayMode] = React.useState<"fiat" | "crypto">("fiat");
-      return { displayMode, setDisplayMode };
+      return { displayMode, setDisplayMode, isFiatModeAvailable: true };
     },
   };
 });
@@ -173,6 +173,11 @@ describe("useAmountInputController", () => {
       const { result } = renderHook(() => useAmountInputController(defaultParams));
 
       expect(result.current.maxDecimalLength).toBe(8);
+    });
+
+    it("exposes whether the fiat mode is available", () => {
+      const { result } = renderHook(() => useAmountInputController(defaultParams));
+      expect(result.current.isFiatModeAvailable).toBe(true);
     });
 
     it("exposes required callbacks", () => {
