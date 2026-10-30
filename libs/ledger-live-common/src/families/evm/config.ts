@@ -1222,7 +1222,7 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       chainId: 5042002,
       name: "Arc Testnet",
       unit: { name: "USDC", code: "USDC", magnitude: 18 },
-      node: { type: "external", uri: "https://rpc.testnet.arc.network" },
+      node: { type: "external", uri: "https://rpc.testnet.arc.io" },
       explorer: {
         type: "blockscout",
         uri: "https://proxyblockscout.api.live.ledger.com/5042002/api",
