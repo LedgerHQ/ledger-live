@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require("path");
 const { flipFuses, FuseVersion, FuseV1Options } = require("@electron/fuses");
+const { default: checkZcashBinaries } = require("./checkZcashBinaries");
 
 exports.default = function (context) {
   const { appOutDir, electronPlatformName, packager } = context;
@@ -13,6 +14,8 @@ exports.default = function (context) {
         "overrides were not applied. Build it via `pnpm <release|pre|nightly>:lld:mas`.",
     );
   }
+
+  checkZcashBinaries(context);
 
   const ext = {
     darwin: ".app",

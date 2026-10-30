@@ -16,8 +16,15 @@ afterPack: scripts/afterPack.js
 mac:
   artifactName: ${name}-${version}-mac-${arch}.${ext}
   category: public.app-category.finance
-  # zcash-utils ships per-arch .node files, identical in both universal slices
-  x64ArchFiles: "**/node_modules/@ledgerhq/zcash-utils/*.node"
+  # zcash-utils ships one package per arch, identical in both universal slices
+  x64ArchFiles: "**/node_modules/@ledgerhq/zcash-utils-darwin-*/*.node"
+  files:
+    - from: "node_modules/@ledgerhq/zcash-utils-darwin-arm64"
+      to: "node_modules/@ledgerhq/zcash-utils-darwin-arm64"
+      filter: ["package.json", "*.node"]
+    - from: "node_modules/@ledgerhq/zcash-utils-darwin-x64"
+      to: "node_modules/@ledgerhq/zcash-utils-darwin-x64"
+      filter: ["package.json", "*.node"]
   hardenedRuntime: true
   target:
     - target: mas
@@ -38,7 +45,7 @@ files:
   # Explicit mapping: beforeBuild disables electron-builder's node_modules collection
   - from: "node_modules/@ledgerhq/zcash-utils"
     to: "node_modules/@ledgerhq/zcash-utils"
-    filter: ["package.json", "index.js", "*.node"]
+    filter: ["package.json", "index.js"]
   - from: "dist/node_modules"
     to: "node_modules"
     filter:
@@ -66,4 +73,4 @@ buildDependenciesFromSource: false
 beforeBuild: scripts/beforeBuild.js
 
 asarUnpack:
-  - "node_modules/@ledgerhq/zcash-utils/**/*"
+  - "node_modules/@ledgerhq/zcash-utils*/**/*"

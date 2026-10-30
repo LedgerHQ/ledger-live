@@ -12,7 +12,7 @@ export default defineConfig({
       root: "lib",
     },
     cleanDistPath: true,
-    externals: ["bigint-buffer", /^readable-stream/],
+    externals: ["bigint-buffer", /^readable-stream/, "@ledgerhq/zcash-utils"],
     minify: false,
   },
   lib: [

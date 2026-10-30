@@ -6,7 +6,13 @@ import { defineConfig } from "@rslib/core";
 // them at build time.
 export default defineConfig({
   source: { entry: { cli: "./src/cli.ts" } },
-  output: { target: "node", distPath: { root: "lib" }, minify: false },
+  output: {
+    target: "node",
+    distPath: { root: "lib" },
+    minify: false,
+    // napi addon: resolved at runtime so Node picks the platform package
+    externals: ["@ledgerhq/zcash-utils"],
+  },
   // autoExternal defaults to externalizing all deps; bundle the @ledgerhq ones in.
   lib: [{ format: "cjs", bundle: true, autoExternal: { dependencies: false } }],
 });
