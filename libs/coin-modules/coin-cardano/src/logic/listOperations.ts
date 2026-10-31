@@ -10,7 +10,7 @@ import { OperationType } from "@ledgerhq/types-live";
 import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
-import { APITransaction, HashType, StakeDelegationCertificate } from "../api/api-types";
+import { APITransaction } from "../api/api-types";
 import { fetchNetworkInfo } from "../api/getNetworkInfo";
 import { CARDANO_API_ENDPOINT, CARDANO_TESTNET_API_ENDPOINT } from "../constants";
 import {
@@ -20,7 +20,9 @@ import {
   decodeTokenName,
   getBech32PoolId,
   findStakeRegistration,
+  findOwnedStakeDelegation,
   findStakeDeRegistration,
+  findVoteDelegation,
   findWithdrawal,
   getOperationType,
 } from "../logic";
@@ -120,19 +122,7 @@ function computeValue(tx: APITransaction, paymentKey: string): bigint {
   return totalReceived - totalSpent;
 }
 
-// Finds a delegation certificate belonging to THIS account's stake key.
-// A transaction may carry certificates for several accounts, so matching on the
-// stake key is required before attributing the delegation (and its pool) to us.
-function findOwnedStakeDelegation(
-  tx: APITransaction,
-  stakeKey: string,
-): StakeDelegationCertificate | undefined {
-  return tx.certificate.stakeDelegations?.find(
-    cert => cert.stakeCredential.type === HashType.ADDRESS && cert.stakeCredential.key === stakeKey,
-  );
-}
-
-// Staking types (DELEGATE/UNDELEGATE) are only assigned when the certificate
+// Staking types (DELEGATE/UNDELEGATE/DELEGATE_VOTE) are only assigned when the certificate
 // belongs to this account's stake key. Certificates for other accounts present
 // in the same transaction must not reclassify our operation.
 function determineOperationType(
@@ -151,12 +141,52 @@ function determineOperationType(
     if (findStakeDeRegistration(tx, stakeKey, networkId, stakeKeyDeposit) !== undefined) {
       return "UNDELEGATE";
     }
+
+    if (findVoteDelegation(tx, stakeKey, networkId) !== undefined) {
+      return "DELEGATE_VOTE";
+    }
   }
 
   return getOperationType({
     valueChange: new BigNumber(operationValue.toString()),
     fees: new BigNumber(fees.toString()),
   });
+}
+
+// Records this account's staking details (deposit, refund, rewards, vote) and returns the
+// lovelace that came from the protocol rather than the payment address (refund + rewards).
+function applyStakingDetails(
+  tx: APITransaction,
+  stakeKey: string,
+  networkId: number,
+  stakeKeyDeposit: string,
+  details: Record<string, unknown>,
+): bigint {
+  let nonPaymentInflow = 0n;
+
+  const registration = findStakeRegistration(tx, stakeKey, networkId, stakeKeyDeposit);
+  if (registration) {
+    details.deposit = registration;
+  }
+
+  const deRegistration = findStakeDeRegistration(tx, stakeKey, networkId, stakeKeyDeposit);
+  if (deRegistration) {
+    nonPaymentInflow += safeBigInt(deRegistration);
+    details.refund = deRegistration;
+  }
+
+  const withdrawal = findWithdrawal(tx, stakeKey);
+  if (withdrawal) {
+    nonPaymentInflow += safeBigInt(withdrawal);
+    details.rewards = withdrawal;
+  }
+
+  const vote = findVoteDelegation(tx, stakeKey, networkId);
+  if (vote) {
+    details.vote = vote;
+  }
+
+  return nonPaymentInflow;
 }
 
 function toNativeOperation(
@@ -180,34 +210,13 @@ function toNativeOperation(
   let operationValue = computeValue(tx, paymentKey);
 
   if (stakeKey) {
-    const registration = findStakeRegistration(
+    operationValue -= applyStakingDetails(
       tx,
       stakeKey,
       networkParams.networkId,
       stakeKeyDeposit,
+      details,
     );
-    if (registration) {
-      details.deposit = registration;
-    }
-
-    const deRegistration = findStakeDeRegistration(
-      tx,
-      stakeKey,
-      networkParams.networkId,
-      stakeKeyDeposit,
-    );
-    if (deRegistration) {
-      const refundAmount = safeBigInt(deRegistration);
-      operationValue = operationValue - refundAmount;
-      details.refund = deRegistration;
-    }
-
-    const withdrawal = findWithdrawal(tx, stakeKey);
-    if (withdrawal) {
-      const withdrawalAmount = safeBigInt(withdrawal);
-      operationValue = operationValue - withdrawalAmount;
-      details.rewards = withdrawal;
-    }
   }
 
   const ownedDelegation = stakeKey ? findOwnedStakeDelegation(tx, stakeKey) : undefined;
@@ -230,13 +239,17 @@ function toNativeOperation(
   );
 
   // The generic-coin-framework adapter re-adds tx.fees to native OUT/FEES/DELEGATE/
-  // UNDELEGATE operations (libs/ledger-live-common/src/bridge/generic-coin-framework/utils.ts),
+  // UNDELEGATE/DELEGATE_VOTE operations (libs/ledger-live-common/src/bridge/generic-coin-framework/utils.ts),
   // so Operation.value must EXCLUDE the fee for those types to avoid double-counting.
   // IN/NONE are passed through as-is by the adapter. A pure-fee self-transfer (FEES)
   // therefore carries value 0 — the adapter surfaces the fee.
   const magnitude = operationValue >= 0n ? operationValue : -operationValue;
   const adapterReaddsFee =
-    type === "OUT" || type === "FEES" || type === "DELEGATE" || type === "UNDELEGATE";
+    type === "OUT" ||
+    type === "FEES" ||
+    type === "DELEGATE" ||
+    type === "UNDELEGATE" ||
+    type === "DELEGATE_VOTE";
   const value = adapterReaddsFee ? (magnitude > fees ? magnitude - fees : 0n) : magnitude;
 
   const assetInfo: AssetInfo = { type: "native" };

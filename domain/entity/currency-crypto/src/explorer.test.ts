@@ -3,6 +3,7 @@ import type { ExplorerView } from "./schema";
 import {
   getAddressExplorer,
   getDefaultExplorerView,
+  getDRepExplorer,
   getStakePoolExplorer,
   getTokenExplorer,
   getTransactionExplorer,
@@ -13,6 +14,7 @@ const view: ExplorerView = {
   address: "https://explorer.test/address/$address",
   token: "https://explorer.test/token/$contractAddress?a=$address",
   stakePool: "https://explorer.test/pool/$poolId",
+  dRep: "https://explorer.test/drep/$hex",
 };
 
 describe("getDefaultExplorerView", () => {
@@ -55,6 +57,7 @@ describe.each([
     () => getStakePoolExplorer(view, "pool1"),
     "https://explorer.test/pool/pool1",
   ],
+  ["getDRepExplorer", () => getDRepExplorer(view, "drep1"), "https://explorer.test/drep/drep1"],
 ])("%s", (_name, build, expected) => {
   it("fills the template", () => {
     expect(build()).toBe(expected);
@@ -67,6 +70,7 @@ describe("missing view or template", () => {
     expect(getAddressExplorer(undefined, "0xabc")).toBeUndefined();
     expect(getTokenExplorer(undefined, "0xcontract", "0xowner")).toBeUndefined();
     expect(getStakePoolExplorer(undefined, "pool1")).toBeUndefined();
+    expect(getDRepExplorer(undefined, "drep1")).toBeUndefined();
   });
 
   it("returns undefined when the view lacks the template", () => {
@@ -74,5 +78,6 @@ describe("missing view or template", () => {
     expect(getAddressExplorer({}, "0xabc")).toBeUndefined();
     expect(getTokenExplorer({}, "0xcontract", "0xowner")).toBeUndefined();
     expect(getStakePoolExplorer({}, "pool1")).toBeUndefined();
+    expect(getDRepExplorer({}, "drep1")).toBeUndefined();
   });
 });

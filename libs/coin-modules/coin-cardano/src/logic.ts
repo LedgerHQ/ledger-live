@@ -11,7 +11,7 @@ import ShelleyTypeAddress from "@stricahq/typhonjs/dist/address/ShelleyTypeAddre
 import bech32 from "bech32";
 import BigNumber from "bignumber.js";
 import groupBy from "lodash/groupBy";
-import { APITransaction, HashType } from "./api/api-types";
+import { APITransaction, HashType, StakeDelegationCertificate } from "./api/api-types";
 import {
   CARDANO_COIN_TYPE,
   CARDANO_MAX_SUPPLY,
@@ -30,6 +30,7 @@ import {
   StakeCredential,
   Token,
   ProtocolParams,
+  CardanoOutput,
 } from "./types";
 
 /**
@@ -409,6 +410,23 @@ export function getBech32PoolId(poolId: string, networkName: string): string {
   return encoded;
 }
 
+/**
+ * Encodes a DRep id as CIP-105 bech32 over the 28-byte credential hash, as the Ledger device
+ * displays it. A CIP-129 header byte (29-byte input) is dropped; header 0x23 marks a script hash
+ * and selects the `drep_script` prefix. Headerless input is treated as a key hash.
+ */
+export function getBech32DRepId(dRepHex: string, networkName: string): string {
+  const networkParams = getNetworkParameters(networkName);
+  const hasHeader = dRepHex.length === 58;
+  const hash = hasHeader ? dRepHex.slice(2) : dRepHex;
+  const prefix =
+    hasHeader && dRepHex.startsWith("23")
+      ? networkParams.dRepScriptIdPrefix
+      : networkParams.dRepIdPrefix;
+  const words = bech32.toWords(Buffer.from(hash, "hex"));
+  return bech32.encode(prefix, words, 1000);
+}
+
 export function isValidNumString(value: unknown): boolean {
   if (typeof value !== "string" && typeof value !== "number") return false;
   if (isNaN(Number(value))) return false;
@@ -457,6 +475,18 @@ export function getRewardAddress(stakeKey: string, networkId: number): TyphonAdd
     type: TyphonTypes.HashType.ADDRESS,
     hash: Buffer.from(stakeKey, "hex"),
   });
+}
+
+// Finds a delegation certificate belonging to THIS account's stake key.
+// A transaction may carry certificates for several accounts, so matching on the
+// stake key is required before attributing the delegation (and its pool) to us.
+export function findOwnedStakeDelegation(
+  tx: APITransaction,
+  stakeKey: string,
+): StakeDelegationCertificate | undefined {
+  return tx.certificate.stakeDelegations?.find(
+    cert => cert.stakeCredential.type === HashType.ADDRESS && cert.stakeCredential.key === stakeKey,
+  );
 }
 
 export function findStakeRegistration(
@@ -529,6 +559,26 @@ export function findWithdrawal(tx: APITransaction, stakeKey: string): string | u
   return match?.amount;
 }
 
+export function findVoteDelegation(
+  tx: APITransaction,
+  stakeKey: string,
+  networkId: number,
+): string | undefined {
+  if (!tx.certificate.voteDelegations?.length) {
+    return undefined;
+  }
+
+  const stakeAddress = getRewardAddress(stakeKey, networkId);
+  const match = tx.certificate.voteDelegations.find(w => stakeAddress.getHex() === w.stakeHex);
+  if (match) {
+    if (match.dRepHex === "2") return "ABSTAIN";
+    if (match.dRepHex === "3") return "NO CONFIDENCE";
+    return match.dRepHex;
+  }
+
+  return undefined;
+}
+
 /**
  * Minimum ADA that must back a UTXO carrying the given token bundle (Babbage per-byte rule).
  * Returns 0 when there are no tokens. `address` is only used to size the output; pass any
@@ -573,5 +623,44 @@ export function computeAdaBalance({
   return {
     total: utxosSum.plus(rewards),
     spendable: BigNumber.max(0, utxosSum.minus(minAdaForTokens)),
+  };
+}
+
+export function selectMinimumUtxos(
+  utxos: Array<CardanoOutput>,
+  amount: BigNumber,
+): Array<CardanoOutput> {
+  const selectedUtxos: Array<CardanoOutput> = [];
+
+  // Add 10 ADA as buffer amount for utxo selection to cover transaction fees.
+  const requiredAmount = amount.plus(10e6);
+  let usedUtxoAdaAmount = new BigNumber(0);
+
+  // sorting utxo from higher to lower ADA value
+  // to minimize the number of utxo use in transaction
+  const sortedUtxos = [...utxos].sort((a, b) => b.amount.comparedTo(a.amount));
+
+  for (let i = 0; i < sortedUtxos.length && usedUtxoAdaAmount.lt(requiredAmount); i++) {
+    const utxo = sortedUtxos[i];
+    selectedUtxos.push(utxo);
+    usedUtxoAdaAmount = usedUtxoAdaAmount.plus(utxo.amount);
+  }
+  return selectedUtxos;
+}
+
+export function getTyphonInputFromUtxo(utxo: CardanoOutput): TyphonTypes.Input {
+  const address = TyphonUtils.getAddressFromHex(
+    Buffer.from(utxo.address, "hex"),
+  ) as TyphonTypes.ShelleyAddress;
+  if (address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) {
+    address.paymentCredential.bipPath = utxo.paymentCredential.path;
+  }
+
+  return {
+    txId: utxo.hash,
+    index: utxo.index,
+    amount: new BigNumber(utxo.amount),
+    tokens: utxo.tokens,
+    address: address,
   };
 }

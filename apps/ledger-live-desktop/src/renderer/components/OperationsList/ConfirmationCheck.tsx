@@ -98,6 +98,7 @@ const iconsComponent = {
   UNDELEGATE_RESOURCE: IconUndelegate,
   WITHDRAW_EXPIRE_UNFREEZE: ClaimRewards,
   VOTE: Vote,
+  DELEGATE_VOTE: Vote,
   REWARD: ClaimRewards,
   FEES: IconFees,
   OPT_IN: IconPlus,
