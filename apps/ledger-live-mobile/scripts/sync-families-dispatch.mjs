@@ -33,6 +33,7 @@ const targets = [
   "SendRowsFee",
   "SendSelectRecipient",
   "AccountBalanceSummaryFooter",
+  "AccountDetailBalances",
   "SubAccountList",
   "AddAssetAction",
   "Confirmation",

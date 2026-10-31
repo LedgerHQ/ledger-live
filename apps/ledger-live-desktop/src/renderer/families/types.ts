@@ -491,6 +491,16 @@ export type LLDCoinFamily<
   }>;
 
   /**
+   * Replaces AccountBalanceSummaryFooter on the new Account Detail page (flag `accountDetail`).
+   * The legacy account page keeps AccountBalanceSummaryFooter.
+   */
+  AccountDetailBalances?: React.ComponentType<{
+    account: A | TokenAccount;
+    counterValue: Currency;
+    discreetMode: boolean;
+  }>;
+
+  /**
    * Opt-in or allow to add token for coin that need
    */
   tokenList?: {

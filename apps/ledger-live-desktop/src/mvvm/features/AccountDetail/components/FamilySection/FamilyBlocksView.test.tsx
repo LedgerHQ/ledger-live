@@ -82,6 +82,13 @@ describe("FamilyBlocksView", () => {
     ]);
   });
 
+  it("renders the Account Detail balances in place of the legacy balance summary footer", () => {
+    renderView({ family: { ...family, AccountDetailBalances: block("detail-balances") } });
+
+    expect(screen.getByTestId("detail-balances")).toBeInTheDocument();
+    expect(screen.queryByTestId("balance-summary-footer")).toBeNull();
+  });
+
   it("renders nothing for a family without blocks", () => {
     const { container } = renderView({ family: {} });
 

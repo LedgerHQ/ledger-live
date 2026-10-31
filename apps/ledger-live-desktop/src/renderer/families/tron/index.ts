@@ -11,6 +11,7 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountDetailDelegations from "./AccountDetailDelegations";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import AccountDetailBalances from "./AccountDetailBalances";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
 
 const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus, TronOperation> = {
@@ -20,6 +21,7 @@ const family: LLDCoinFamily<TronAccount, Transaction, TransactionStatus, TronOpe
   AccountBodyHeader,
   AccountDetailDelegations,
   AccountBalanceSummaryFooter,
+  AccountDetailBalances,
   StepReceiveFundsPostAlert,
 };
 
