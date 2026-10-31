@@ -17283,8 +17283,8 @@ importers:
         specifier: ^0.4.2
         version: 0.4.2
       protobufjs:
-        specifier: 8.4.1
-        version: 8.4.1
+        specifier: ^8.6.6
+        version: 8.6.6
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: 'catalog:'
@@ -17315,7 +17315,7 @@ importers:
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       protobufjs-cli:
         specifier: 2.4.1
-        version: 2.4.1(protobufjs@8.4.1)
+        version: 2.4.1(protobufjs@8.6.6)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
