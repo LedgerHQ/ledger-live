@@ -84,6 +84,15 @@ export function isCurrencySupported(currency: CryptoCurrency): boolean {
   return getSupportedIds().has(currency.id);
 }
 
+/** Whether the loader of the currency's family supports it and ships a local api, readable without the network coin service. */
+export function hasLocalApi(currency: CryptoCurrency): boolean {
+  const loader = loaders.get(currency.family);
+  return (
+    loader?.loadLocalApi !== undefined &&
+    loader.supportedCoins.some(id => getCryptoCurrencyById(id).id === currency.id)
+  );
+}
+
 export function listSupportedCurrencies(): CryptoCurrency[] {
   if (!supportedCurrencies) {
     supportedCurrencies = [...getSupportedIds()].map(id => getCryptoCurrencyById(id));
