@@ -50,6 +50,20 @@ static readonly NEWCOIN = new AppInfos("NewCoin");
 static readonly NEWCOIN = new Currency("NewCoin", "TICKER", "currency_id", AppInfos.NEWCOIN, [Network.NEWCOIN]);
 ```
 
+### Step 3b: Set the owning team
+
+[File](/libs/live-e2e-shared/src/data/coinTeamOwner.ts)
+
+Look up the coin module's owner in the CODEOWNERS of the repo that hosts it: this repo's [CODEOWNERS](/CODEOWNERS) for a module under `libs/coin-modules/`, otherwise [`LedgerHQ/coin-modules`](https://github.com/LedgerHQ/coin-modules/blob/main/.github/CODEOWNERS):
+
+```bash
+gh api repos/LedgerHQ/coin-modules/contents/.github/CODEOWNERS --jq .content | base64 -d
+```
+
+If a BST team owns it (the handles are listed in `coinTeamOwner.ts`), add the currency id to `BST_CURRENCY_IDS`. Otherwise nothing changes, because `coinTeamOwner` returns Coin-integration.
+
+**Ask user** only when no CODEOWNERS line covers the module.
+
 ### Step 4: Add Accounts
 
 [File](/libs/live-e2e-shared/src/enum/Account.ts)

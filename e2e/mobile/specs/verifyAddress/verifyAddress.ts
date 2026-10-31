@@ -1,17 +1,13 @@
 import { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoS, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
 import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 
 const LNS_DEPRECATION_ERROR_TITLE = "Ledger Nano S™ does not support this feature";
 
-export function runVerifyAddressTest(
-  account: AccountType,
-  tmsLinks: string[],
-  tags: string[],
-  teamOwner: Team = Team.COIN_INTEGRATION,
-) {
+export function runVerifyAddressTest(account: AccountType, tmsLinks: string[], tags: string[]) {
   const describeOnDevice = isReceiveBlockedOnLNS(account.currency.id)
     ? describeIfNotNanoS
     : describe;
@@ -24,7 +20,7 @@ export function runVerifyAddressTest(
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(teamOwner);
+    setTeamOwner(coinTeamOwner(account.currency.id), { folder: TestFolder.RECEIVE });
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
     it(`[${account.currency.testLabel}] - Verify address`, async () => {
@@ -44,11 +40,10 @@ type ReceiveBlockedOnLNSTestOptions = {
   account: AccountType;
   tmsLinks: string[];
   tags: string[];
-  teamOwner?: Team;
 };
 
 export function runReceiveBlockedOnLNSTest(options: ReceiveBlockedOnLNSTestOptions) {
-  const { account, tmsLinks, tags, teamOwner = Team.COIN_INTEGRATION } = options;
+  const { account, tmsLinks, tags } = options;
   describeIfNanoS("Receive", () => {
     beforeAll(async () => {
       await app.init({
@@ -58,10 +53,10 @@ export function runReceiveBlockedOnLNSTest(options: ReceiveBlockedOnLNSTestOptio
       await app.mainNavigation.waitForWallet40Ready();
     });
 
-    setTeamOwner(teamOwner);
+    setTeamOwner(coinTeamOwner(account.currency.id), { folder: TestFolder.RECEIVE });
     tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
     tags.forEach(tag => $Tag(tag));
-    it(`[${account.currency.testLabel}] - Receive blocked by device deprecation on Nano S`, async () => {
+    it(`[${account.currency.testLabel}] - Verify address - blocked on Nano S`, async () => {
       await app.account.openViaDeeplink();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapReceive();

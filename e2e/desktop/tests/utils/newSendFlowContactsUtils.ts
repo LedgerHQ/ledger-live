@@ -1,6 +1,8 @@
 import invariant from "invariant";
 import { getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Transaction } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { liveDataWithRecipientAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import {
@@ -69,7 +71,6 @@ function recipientAddress(tx: Transaction): string {
 function useSendFlowFixture(entry: ContactsEntry) {
   const tx = entry.transaction;
   test.use({
-    teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     settings: SETTINGS,
     speculosApp: tx.accountToDebit.currency.speculosApp,
@@ -92,8 +93,12 @@ export function registerSendViaContactTests(entries: ContactsEntry[]) {
     const sendLock = exclusiveLockFor({
       broadcastAccounts: entry.disableBroadcast ? [] : [tx.accountToDebit],
     });
+    const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+      folder: sendFolder(tx.accountToDebit),
+      scenario: SendScenario.ADDRESS_BOOK,
+    });
 
-    test.describe("Send - new flow - Address Book", () => {
+    test.describe("Send - new flow - Address Book", owner, () => {
       test.describe("Send via contact", { lock: sendLock.names }, () => {
         const contact = {
           id: "e2e-contact-multi-address",
@@ -126,7 +131,7 @@ export function registerSendViaContactTests(entries: ContactsEntry[]) {
         test.use(sendLock.fixtures);
 
         test(
-          `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) via contact`,
+          `[${tx.accountToDebit.currency.testLabel}] - Send - via contact`,
           testOptions(entry),
           async ({ app }) => {
             await seedContacts(app, seed());
@@ -158,8 +163,12 @@ export function registerSendViaContactTests(entries: ContactsEntry[]) {
 export function registerContactRetrievalTests(entries: ContactsEntry[]) {
   for (const entry of entries) {
     const tx = entry.transaction;
+    const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+      folder: sendFolder(tx.accountToDebit),
+      scenario: SendScenario.ADDRESS_BOOK,
+    });
 
-    test.describe("Send - new flow - Address Book", () => {
+    test.describe("Send - new flow - Address Book", owner, () => {
       test.describe("Contact retrieval", () => {
         const contact = {
           id: "e2e-contact-single-address",
@@ -183,7 +192,7 @@ export function registerContactRetrievalTests(entries: ContactsEntry[]) {
         useSendFlowFixture(entry);
 
         test(
-          `[${tx.accountToDebit.currency.testLabel}] - Contact retrieval and Add contact availability on the recipient step`,
+          `[${tx.accountToDebit.currency.testLabel}] - Send - contact retrieval and add contact availability`,
           testOptions(entry),
           async ({ app }) => {
             const ensName = tx.accountToCredit.ensName;

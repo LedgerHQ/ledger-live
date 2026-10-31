@@ -1,5 +1,7 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { SendScenario, TestFolder, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { ownedBy } from "tests/utils/allureUtils";
 import {
   Account,
   TokenAccount,
@@ -26,7 +28,6 @@ const subAccounts: Array<{
   xrayTicket1: string;
   xrayTicket2: string;
   notPreSeeded?: boolean;
-  teamOwner?: Team;
 }> = [
   {
     account: TokenAccount.ETH_USDT_1,
@@ -42,7 +43,6 @@ const subAccounts: Array<{
     account: TokenAccount.ALGO_USDT_1,
     xrayTicket1: "B2CQA-2575",
     xrayTicket2: "B2CQA-2581",
-    teamOwner: Team.BST,
   },
   {
     account: TokenAccount.TRX_USDT,
@@ -63,7 +63,6 @@ const subAccounts: Array<{
     account: TokenAccount.SUI_USDC_1,
     xrayTicket1: "B2CQA-3904",
     xrayTicket2: "B2CQA-3905",
-    teamOwner: Team.BST,
   },
   {
     account: TokenAccount.SOL_GIGA_1,
@@ -78,7 +77,6 @@ const subAccountReceive: Array<{
   xrayTicket: string;
   shouldSelectTokenOnReceiveFlow?: boolean;
   shouldSelectReceiveCryptoOption?: boolean;
-  teamOwner?: Team;
 }> = [
   {
     account: TokenAccount.ETH_USDT_1,
@@ -89,7 +87,7 @@ const subAccountReceive: Array<{
   { account: TokenAccount.BSC_BUSD_1, xrayTicket: "B2CQA-2489" },
   { account: TokenAccount.POL_DAI_1, xrayTicket: "B2CQA-2493" },
   { account: TokenAccount.POL_UNI, xrayTicket: "B2CQA-2494" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906", teamOwner: Team.BST },
+  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 
 const shouldSkipLNS = (account: TokenAccount): boolean => {
@@ -98,15 +96,17 @@ const shouldSkipLNS = (account: TokenAccount): boolean => {
 };
 
 for (const token of subAccounts) {
-  test.describe("Add sub-account", () => {
+  const owner = ownedBy(coinTeamOwner(token.account.currency.id), {
+    folder: TestFolder.SUBACCOUNTS,
+  });
+  test.describe("Add sub-account", owner, () => {
     test.use({
-      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: token.account.parentAccount?.currency.speculosApp,
     });
 
     test(
-      `[${token.account.currency.testLabel}] - Add sub-account without parent`,
+      `[${token.account.currency.testLabel}] - Add sub-account - without parent`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
@@ -148,15 +148,17 @@ for (const token of subAccounts) {
 }
 
 for (const token of subAccountReceive) {
-  test.describe("Add sub-account", () => {
+  const owner = ownedBy(coinTeamOwner(token.account.currency.id), {
+    folder: TestFolder.SUBACCOUNTS,
+  });
+  test.describe("Add sub-account", owner, () => {
     test.use({
-      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
       speculosApp: token.account.currency.speculosApp,
     });
 
     test(
-      `[${token.account.currency.testLabel}] - Add sub-account when parent exists`,
+      `[${token.account.currency.testLabel}] - Add sub-account - with parent`,
       {
         tag: buildTags({
           currencyId: token.account.currency.id,
@@ -195,9 +197,11 @@ for (const token of subAccountReceive) {
 }
 
 for (const token of subAccounts.filter(subAccount => !subAccount.notPreSeeded)) {
-  test.describe("Add sub-account", () => {
+  const owner = ownedBy(coinTeamOwner(token.account.currency.id), {
+    folder: TestFolder.SUBACCOUNTS,
+  });
+  test.describe("Add sub-account", owner, () => {
     test.use({
-      teamOwner: token.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "speculos-subAccount",
     });
 
@@ -229,52 +233,61 @@ const transactionsAddressInvalid: Array<{
   transaction: Transaction;
   recipient?: string;
   expectedErrorMessage: string;
+  scenario: string;
   xrayTicket: string;
-  teamOwner?: Team;
 }> = [
   {
     transaction: new Transaction(TokenAccount.ALGO_USDT_1, Account.ALGO_3, "0.1", Fee.MEDIUM),
     recipient: undefined,
     expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+    scenario: "recipient not opted in",
     xrayTicket: "B2CQA-2702",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(TokenAccount.SOL_GIGA_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
     recipient: Addresses.SOL_WIF_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
     expectedErrorMessage: "This associated token account holds another token",
+    scenario: "recipient holds another token",
     xrayTicket: "B2CQA-3083",
   },
   {
     transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
     recipient: Addresses.SOL_GIGA_2_ATA_ADDRESS, //CLI doesn't allow us to get ATA address
     expectedErrorMessage: "This is a token account. Input a regular wallet address",
+    scenario: "token account",
     xrayTicket: "B2CQA-3084",
   },
   {
     transaction: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
     recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
     expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    scenario: "token address",
     xrayTicket: "B2CQA-3085",
   },
   {
     transaction: new Transaction(TokenAccount.SOL_WIF_1, TokenAccount.SOL_GIGA_2, "0.1", undefined),
     recipient: TokenAccount.SOL_GIGA_2.currency.contractAddress,
     expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    scenario: "token address",
     xrayTicket: "B2CQA-3086",
   },
   {
     transaction: new Transaction(Account.SOL_1, TokenAccount.SOL_WIF_2, "0.1", undefined),
     recipient: TokenAccount.SOL_WIF_2.currency.contractAddress,
     expectedErrorMessage: "This is a token address. Input a regular wallet address",
+    scenario: "token address",
     xrayTicket: "B2CQA-3087",
   },
 ];
 
 for (const transaction of transactionsAddressInvalid) {
-  test.describe("Send - new flow - token invalid address", () => {
+  const { accountToDebit, accountToCredit } = transaction.transaction;
+  const owner = ownedBy(coinTeamOwner(accountToDebit.currency.id), {
+    folder: sendFolder(accountToDebit),
+    scenario: SendScenario.INVALID_ADDRESS,
+  });
+  test.describe("Send - new flow - token invalid address", owner, () => {
     test.use({
-      teamOwner: transaction.teamOwner ?? Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -296,7 +309,7 @@ for (const transaction of transactionsAddressInvalid) {
     });
 
     test(
-      `[${transaction.transaction.accountToDebit.currency.testLabel}-${transaction.transaction.accountToCredit.currency.testLabel}] - Send invalid address error: ${transaction.expectedErrorMessage}`,
+      `[${accountToDebit.currency.testLabel}-${accountToCredit.currency.testLabel}] - Send - invalid address - ${transaction.scenario}`,
       {
         tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
@@ -336,9 +349,12 @@ const transactionsAddressValid = [
 ];
 
 for (const transaction of transactionsAddressValid) {
-  test.describe("Send - new flow - token valid address", () => {
+  const owner = ownedBy(coinTeamOwner(transaction.transaction.accountToDebit.currency.id), {
+    folder: sendFolder(transaction.transaction.accountToDebit),
+    scenario: SendScenario.VALID_ADDRESS,
+  });
+  test.describe("Send - new flow - token valid address", owner, () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
       cliCommands: [liveDataCommand(transaction.transaction.accountToDebit)],
@@ -349,7 +365,7 @@ for (const transaction of transactionsAddressValid) {
     });
 
     test(
-      `[${transaction.transaction.accountToDebit.currency.testLabel}] - Send valid address input`,
+      `[${transaction.transaction.accountToDebit.currency.testLabel}] - Send - valid address`,
       {
         tag: buildTags({ currencyId: transaction.transaction.accountToDebit.currency.id }),
         annotation: {
@@ -417,9 +433,12 @@ const tokenTransactionInvalid: Array<{
 ];
 
 for (const transaction of tokenTransactionInvalid) {
-  test.describe("Send - new flow - token invalid amount", () => {
+  const owner = ownedBy(coinTeamOwner(transaction.tx.accountToDebit.currency.id), {
+    folder: sendFolder(transaction.tx.accountToDebit),
+    scenario: SendScenario.INVALID_AMOUNT,
+  });
+  test.describe("Send - new flow - token invalid amount", owner, () => {
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: transaction.tx.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -435,7 +454,7 @@ for (const transaction of tokenTransactionInvalid) {
     });
 
     test(
-      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send invalid amount error (${transaction.tx.amount})`,
+      `[${transaction.tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.tx.amount})`,
       {
         tag: buildTags({ currencyId: transaction.tx.accountToDebit.currency.id }),
         annotation: {

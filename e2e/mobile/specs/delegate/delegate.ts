@@ -2,7 +2,8 @@ import { setEnv } from "@shared/env";
 import { TEST_TIMEOUT } from "@e2e/utils/timeouts";
 import { DelegateType } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import type { Account as AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import {
   MINA_DELEGATION_PAIR,
   MINA_PAIR_SETTLE_TIMEOUT_MS,
@@ -46,7 +47,7 @@ export function runDelegateTest(
   options?: { skipLNS?: boolean },
 ) {
   declareBroadcastAccounts(delegation.account);
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   const describeOnDevice = options?.skipLNS
@@ -107,7 +108,7 @@ export function runDelegateTest(
 
 export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   declareBroadcastAccounts(delegation.account);
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describeIfNanoSSupports(delegation.account.currency.id)("Delegate", () => {
@@ -139,7 +140,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
 
 export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   declareBroadcastAccounts(delegation.account);
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describeIfNanoSSupports(delegation.account.currency.id)("Undelegate", () => {
@@ -192,7 +193,7 @@ const minaBeforeAll = (accounts: AccountType[]) => async () => {
  * building transactions on the same account and colliding on its nonce.
  */
 function startMinaSpec(_flow: BroadcastFlow, tmsLinks: string[], tags: string[]) {
-  setTeamOwner(delegateTeamOwner(Currency.MINA.id));
+  setTeamOwner(coinTeamOwner(Currency.MINA.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   // Tests are skipped while waiting for LIVE-37757 to be done
@@ -306,7 +307,7 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
 
 export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   declareBroadcastAccounts(delegation.account);
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describeIfNotNanoS("Delegate", () => {
@@ -339,7 +340,7 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 
 export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   declareBroadcastAccounts(delegation.account);
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describeIfNotNanoS("Delegate", () => {
@@ -381,7 +382,7 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
 
 export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
-  setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
+  setTeamOwner(coinTeamOwner(delegation.account.currency.id), { folder: TestFolder.DELEGATE });
   tags.forEach(tag => $Tag(tag));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   describe("Delegate", () => {

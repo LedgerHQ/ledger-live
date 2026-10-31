@@ -37,6 +37,24 @@ Assertions MUST be named methods on the relevant page object.
 
 `userdata`, `teamOwner`, `speculosApp`, `featureFlags`, and `cliCommands` MUST be declared with `test.use()` at the describe level. They MUST NOT be inlined inside the test body.
 
+### A describe MUST pass ownedBy() once its team is on the Allure layout
+
+The describe MUST pass `ownedBy(team, { folder, scenario? })` from `tests/utils/allureUtils.ts` as its details and MUST NOT also set `teamOwner`. Static annotations reach tests skipped before any fixture runs. It MUST be passed once, on the outermost describe that shares the owner: nested describes inherit it. Placement rules: [Allure tree](../../docs/e2e-conventions.md#tests-must-declare-their-place-in-the-allure-tree).
+
+```typescript
+const owner = ownedBy(coinTeamOwner(account.currency.id), { folder: TestFolder.RECEIVE });
+test.describe("Receive", owner, () => {
+  // ...
+});
+
+const sendOwner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+  folder: sendFolder(tx.accountToDebit),
+  scenario: SendScenario.INVALID_ADDRESS,
+});
+```
+
+New Send Flow entries get their owner from the registrar (`tests/utils/newSendFlowUtils.ts`): `SendScenario.MEMO` when the transaction has a memo, `SendScenario.TRANSACTION` otherwise. An entry declares no owner.
+
 ## Page objects
 
 ### Every public page-object method MUST use the @step decorator

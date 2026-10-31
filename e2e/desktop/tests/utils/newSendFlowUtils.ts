@@ -1,5 +1,6 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import {
   Account,
   TokenAccount,
@@ -19,6 +20,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import type { Application } from "tests/page";
 import { buildTags, shouldSkipLNSTag } from "tests/utils/tagsUtils";
 import { exclusiveLockFor } from "tests/utils/exclusiveLock";
+import { ownedBy } from "tests/utils/allureUtils";
 
 type BalanceType = "public" | "private";
 
@@ -47,7 +49,6 @@ export type NewSendFlowEntry = {
   transaction: Transaction;
   xrayTicket: string;
   bugTicket?: string;
-  teamOwner?: Team;
   /**
    * When set, the amount input is asserted to pin the currency's decimal magnitude: an exact
    * round-trip, plus one decimal deeper rejected. Only meaningful when the amount already
@@ -131,6 +132,14 @@ async function passRecipientStep(app: Application, tx: Transaction) {
   }
 }
 
+// Address types that make a send a different scenario; other derivation modes are the default.
+const ADDRESS_TYPE_QUALIFIERS = new Map([
+  ["segwit", "segwit"],
+  ["native_segwit", "native segwit"],
+  ["taproot", "taproot"],
+  ["cashaddr", "cashaddr"],
+]);
+
 export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
   for (const entry of entries) {
     const tx = entry.transaction;
@@ -140,10 +149,21 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
     const sendLock = exclusiveLockFor({
       broadcastAccounts: entry.disableBroadcast ? [] : [tx.accountToDebit],
     });
+    const derivationMode = tx.accountToDebit.derivationMode;
+    const qualifiers = [
+      derivationMode ? ADDRESS_TYPE_QUALIFIERS.get(derivationMode) : undefined,
+      validMemoTag ? "with memo" : undefined,
+    ]
+      .filter(Boolean)
+      .map(qualifier => ` - ${qualifier}`)
+      .join("");
+    const owner = ownedBy(coinTeamOwner(currency.id), {
+      folder: sendFolder(tx.accountToDebit),
+      scenario: validMemoTag ? SendScenario.MEMO : SendScenario.TRANSACTION,
+    });
 
-    test.describe("Send - new flow", { lock: sendLock.names }, () => {
+    test.describe("Send - new flow", { lock: sendLock.names, ...owner }, () => {
       test.use({
-        teamOwner: entry.teamOwner ?? Team.COIN_INTEGRATION,
         userdata: "skip-onboarding-with-last-seen-device",
         speculosApp: tx.accountToDebit.currency.speculosApp,
         cliCommands: [
@@ -161,9 +181,7 @@ export function registerNewSendFlowTests(entries: NewSendFlowEntry[]) {
       });
 
       test(
-        `[${currencyLabel}] - Send (new send flow)${
-          tx.accountToDebit.derivationMode ? ` - ${tx.accountToDebit.derivationMode}` : ""
-        }${validMemoTag ? " with memo" : ""}`,
+        `[${currencyLabel}] - Send${qualifiers}`,
         {
           tag: buildTags({
             currencyId: tx.accountToDebit.currency.id,
