@@ -1,3 +1,4 @@
+import { CosmosTooManyValidators } from "@ledgerhq/coin-cosmos/errors";
 import { Account } from "@ledgerhq/types-live";
 import { CosmosTransaction as WalletAPICosmosTransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
@@ -165,6 +166,43 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
       });
 
       expect(liveTx).toMatchObject({ valAddress: "cosmosvaloper1", amount: new BigNumber(0) });
+    });
+
+    it("maps the legacy claimRewardCompound mode to compoundReward", () => {
+      const { liveTx } = cosmos.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: {
+          family: "cosmos",
+          amount: new BigNumber(0),
+          recipient: "",
+          mode: "claimRewardCompound",
+          validators: [{ address: "cosmosvaloper1", amount: new BigNumber(100) }],
+        },
+        account: {} as Account,
+      });
+
+      expect(liveTx).toMatchObject({
+        mode: "compoundReward",
+        valAddress: "cosmosvaloper1",
+        amount: new BigNumber(100),
+      });
+    });
+
+    it("refuses a request on several validators", () => {
+      expect(() =>
+        cosmos.getWalletAPITransactionSignFlowInfos({
+          walletApiTransaction: {
+            family: "cosmos",
+            amount: new BigNumber(0),
+            recipient: "",
+            mode: "claimReward",
+            validators: [
+              { address: "cosmosvaloper1", amount: new BigNumber(100) },
+              { address: "cosmosvaloper2", amount: new BigNumber(100) },
+            ],
+          },
+          account: {} as Account,
+        }),
+      ).toThrow(CosmosTooManyValidators);
     });
 
     it("defaults redelegation validators to empty strings", () => {

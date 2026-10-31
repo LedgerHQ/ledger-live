@@ -3,12 +3,16 @@ import { getVotesCount } from "./getVotesCount";
 import type { StakingDelegation } from "@ledgerhq/types-live";
 
 it("returns delegations length", () => {
-  const account = { stakingResources: { delegations: [{}, {}] } } as CosmosAccount;
+  const account = {
+    stakingResources: { delegations: [{}, {}] },
+  } as unknown as CosmosAccount;
   expect(getVotesCount(account)).toBe(2);
 });
 
 it("returns 0 for empty delegations", () => {
-  const account = { stakingResources: { delegations: [] as StakingDelegation[] } } as CosmosAccount;
+  const account = {
+    stakingResources: { delegations: [] as StakingDelegation[] },
+  } as unknown as CosmosAccount;
   expect(getVotesCount(account)).toBe(0);
 });
 
