@@ -189,7 +189,6 @@ describe("hgraphClient", () => {
         sender_account_id: "0.0.1234",
         receiver_evm_address: "0x222",
         receiver_account_id: "0.0.5678",
-        payer_account_id: "0.0.1234",
         amount: "1000",
         transfer_type: "transfer",
         consensus_timestamp: "1234567890123456789",
@@ -206,7 +205,7 @@ describe("hgraphClient", () => {
 
       const result = await hgraphClient.getERC20Transfers({
         configOrCurrencyId: mockConfig,
-        address: mockTransfer.payer_account_id,
+        address: mockTransfer.sender_account_id,
         tokenEvmAddresses: [mockTransfer.token_evm_address],
         fetchAllPages: true,
       });

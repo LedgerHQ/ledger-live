@@ -361,7 +361,6 @@ describe("network utils", () => {
       token_id: Number(erc20Token.tokenId.split(".").pop()),
       token_evm_address: erc20Token.contractAddress,
       consensus_timestamp: Number(mockMirrorTransaction.consensus_timestamp) * 10 ** 9,
-      payer_account_id: payerAccountId,
       transaction_hash: mockMirrorTransaction.transaction_hash,
     });
     const mockContractCallResult = getMockedMirrorContractCallResult({
@@ -396,7 +395,7 @@ describe("network utils", () => {
       expect(apiClient.findTransactionByContractCallV2).toHaveBeenCalledWith({
         configOrCurrencyId: mockCurrency.id,
         timestamp: "1704067200.000000000",
-        payerAddress: `0.0.${payerAccountId}`,
+        transactionHash: mockERC20Transfer.transaction_hash,
       });
     });
 
@@ -456,7 +455,7 @@ describe("network utils", () => {
       expect(apiClient.findTransactionByContractCallV2).toHaveBeenCalledWith({
         configOrCurrencyId: mockCurrency.id,
         timestamp: "1768092990.000000000",
-        payerAddress: `0.0.${payerAccountId}`,
+        transactionHash: mockERC20Transfer.transaction_hash,
       });
     });
 
