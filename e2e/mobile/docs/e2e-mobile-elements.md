@@ -18,6 +18,8 @@ private readonly keyboardKey = (char: string) => byId(`keyboard-key-${char}`);
 | Factory | Matches |
 |---|---|
 | `byId(id)` | React Native `testID` |
+| `byIdAndText(id, text)` | `testID` and the element's own text |
+| `byIdWithDescendantText(id, text)` | `testID` and the text of a descendant, e.g. a button label |
 | `webById(id)` | webview `data-testid` equal to `id` (the `*WebTestId` globals match a prefix, so migrate with the full id) |
 | `webByXPath(xpath)` | webview XPath, for an element without a usable `data-testid` |
 

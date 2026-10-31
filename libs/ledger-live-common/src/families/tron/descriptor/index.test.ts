@@ -5,7 +5,6 @@ import { descriptor } from "./index";
 
 const getNetworkFeesInfo = descriptor.send.fees.getNetworkFeesInfo;
 
-// Only the fields the descriptor and the registry read.
 const tronToken = (tokenType: string) =>
   ({ type: "TokenCurrency", tokenType, parentCurrencyId: "tron" }) as TokenCurrency;
 
@@ -142,19 +141,19 @@ describe("tron descriptor - getNetworkFeesInfo", () => {
       }),
     ).toBeNull();
   });
+});
 
-  describe("rentChangesFee", () => {
-    const rentChangesFee = descriptor.send.fees.rentChangesFee;
+describe("tron descriptor - rentChangesFee", () => {
+  const rentChangesFee = descriptor.send.fees.rentChangesFee;
 
-    it("holds for a TRC-20 send, which burns energy", () => {
-      expect(rentChangesFee?.(tronToken("trc20"))).toBe(true);
-    });
+  it("holds for a TRC-20 send, which burns energy", () => {
+    expect(rentChangesFee?.(tronToken("trc20"))).toBe(true);
+  });
 
-    it.each([
-      ["TRX", getCryptoCurrencyById("tron")],
-      ["a TRC-10 token", tronToken("trc10")],
-    ])("does not hold for %s, which burns no energy", (_label, currency) => {
-      expect(rentChangesFee?.(currency)).toBe(false);
-    });
+  it.each([
+    ["TRX", getCryptoCurrencyById("tron")],
+    ["a TRC-10 token", tronToken("trc10")],
+  ])("does not hold for %s, which burns no energy", (_label, currency) => {
+    expect(rentChangesFee?.(currency)).toBe(false);
   });
 });

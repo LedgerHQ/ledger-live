@@ -15,7 +15,7 @@ type ElementAttributes = IosElementAttributes | AndroidElementAttributes;
 /**
  * A native (React Native) element, declared once with its match strategy.
  * Every action waits up to `timeout` (default 60s) for the element to be visible, then acts.
- * Build one with {@link byId}.
+ * Build one with {@link byId}, {@link byIdAndText} or {@link byIdWithDescendantText}.
  */
 export class NativeHandle implements ElementHandle {
   private readonly createMatcher: () => NativeMatcher;
@@ -135,3 +135,14 @@ export class NativeHandle implements ElementHandle {
 /** Matches by React Native `testID` (Detox `by.id`). */
 export const byId = (id: string | RegExp): NativeHandle =>
   new NativeHandle(() => by.id(id), `#${id}`);
+
+/** Matches by `testID` and the element's own text. */
+export const byIdAndText = (id: string, text: string | RegExp): NativeHandle =>
+  new NativeHandle(() => by.id(id).and(by.text(text)), `#${id} with text "${text}"`);
+
+/** Matches by `testID` and the text of a descendant, e.g. a label inside a button or card. */
+export const byIdWithDescendantText = (id: string, text: string | RegExp): NativeHandle =>
+  new NativeHandle(
+    () => by.id(id).withDescendant(by.text(text)),
+    `#${id} containing text "${text}"`,
+  );

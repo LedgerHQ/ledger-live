@@ -56,7 +56,7 @@ export type InfoStateBaseProps = Readonly<{
   /** Layout sizing mode. Full-height expands the content area. Defaults to full-height. */
   size?: "hug" | "full-height";
 
-  /** Optional test identifier applied to the root container. */
+  /** Optional test identifier applied to the root container, and as `${testID}-description` to the description. */
   testID?: string;
 
   /** Optional body below the title, used for structured content like next-step lists. */
