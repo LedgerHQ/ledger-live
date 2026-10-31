@@ -7,7 +7,7 @@ import reducers from "~/reducers";
 import { subscribeToNetworkState } from "@shared/network-status";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
-import { applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
+import { apiServices, applyLlmRTKApiMiddlewares } from "~/context/rtkQueryApi";
 import { setupCryptoAssetsStore, setupRateLookups } from "~/config/bridge-setup";
 import { setSwapQuotesStore } from "@ledgerhq/live-common/wallet-api/Exchange/quotes/state-manager/store";
 import { connectRecentAddressesStore } from "@domain/entity-recent-addresses";
@@ -21,33 +21,14 @@ import { accountDataSources, connectAccounts } from "~/config/account-data-setup
 import { State } from "~/reducers/types";
 import { canPushDeviceIdsSelector } from "~/reducers/settings";
 import { getEnv } from "@shared/env";
-import {
-  calApiExtra,
-  cardApi,
-  cardApiExtra,
-  coinMarketCapApiExtra,
-  cvsApiExtra,
-  pushDevicesApiExtra,
-  redactCardApiAction,
-  redactCardApiState,
-  swapApiExtra,
-} from "@shared/api-services";
-import {
-  configureCardSessionRenewal,
-  isCardSessionCurrent,
-  isCardUsEnv,
-  readCardSession,
-  refreshCardSession,
-} from "@features/platform-card";
+import { cardApi, redactCardApiAction, redactCardApiState } from "@shared/api-services";
+import { configureCardSessionRenewal } from "@features/platform-card";
 import { setSignedIn } from "@features/flow-pay-card-auth/state";
 import { appConfig, appConfigSession } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
 import { createMobileFeatureFlagsMiddleware } from "./middleware/feature-flags";
 import { createMobileCountervaluesMiddleware } from "./middleware/countervalues";
 import { createMobileAuthMiddleware } from "./middleware/auth";
-
-/** Matches the `SWAP_API_BASE` default in `shared/env`, kept here at the point of use. */
-const SWAP_API_BASE_DEFAULT = "https://swap.ledger.com/v5";
 
 export const store = configureStore({
   reducer: reducers,
@@ -67,35 +48,7 @@ export const store = configureStore({
                 (action): unknown => store.dispatch(action),
               ),
             ),
-            ...calApiExtra({
-              calServiceUrl: getEnv("CAL_SERVICE_URL"),
-              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-            }),
-            ...cvsApiExtra({
-              getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API"),
-            }),
-            ...coinMarketCapApiExtra({
-              coinMarketCapApiUrl: getEnv("CMC_API_URL"),
-            }),
-            ...cardApiExtra({
-              // Read on every request, so the debug settings can change them without a restart.
-              getCardApiBaseUrl: () => getEnv("CARD_BAANX_API_URL"),
-              getCardBaanxClientKey: () => getEnv("CARD_BAANX_CLIENT_KEY"),
-              isCardUsEnv: () => isCardUsEnv(getEnv("CARD_BAANX_US_APP_ID")),
-              readCardSession,
-              isCardSessionCurrent,
-              refreshCardSession,
-            }),
-            ...pushDevicesApiExtra({
-              pushDevicesServiceUrl: getEnv("PUSH_DEVICES_SERVICE_URL"),
-              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-            }),
-            ...swapApiExtra({
-              // `Config`, not `getEnv`: the `@shared/env` copy only lands after
-              // `experimental.ts` awaits the stored envs, long after this read.
-              getSwapApiBaseUrl: () => Config.SWAP_API_BASE || SWAP_API_BASE_DEFAULT,
-              ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION"),
-            }),
+            ...apiServices.createExtra({ ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }),
           },
         },
       }),

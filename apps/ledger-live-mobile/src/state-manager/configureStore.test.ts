@@ -1,3 +1,4 @@
+import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
 import { crypto } from "@ledgerhq/hw-ledger-key-ring-protocol";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
@@ -154,7 +155,137 @@ describe("mobile store", () => {
       expect(setupRateLookups).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe("thunk extraArgument", () => {
+    beforeEach(() => {
+      jest.resetModules();
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    it("resolves the swap base url through Config, not @shared/env", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      const Config = require("react-native-config").default;
+      const { getSwapApiBaseUrl } = resolveSwapExtra(readExtra(store));
+
+      expect(getSwapApiBaseUrl()).toBe("https://swap.ledger.com/v5");
+
+      setEnv("SWAP_API_BASE", "https://swap.env.example/v5");
+      expect(getSwapApiBaseUrl()).toBe("https://swap.ledger.com/v5");
+
+      Config.SWAP_API_BASE = "https://swap.config.example/v5";
+      try {
+        expect(getSwapApiBaseUrl()).toBe("https://swap.config.example/v5");
+      } finally {
+        delete Config.SWAP_API_BASE;
+      }
+    });
+
+    it("reads the client version when the store is created", () => {
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "set-before-store-creation");
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+
+      expect(readExtra(store)).toEqual(
+        expect.objectContaining({ ledgerClientVersion: "set-before-store-creation" }),
+      );
+    });
+  });
+
+  describe("env reads at store creation", () => {
+    let recording = false;
+    const reads: string[] = [];
+
+    beforeEach(() => {
+      jest.resetModules();
+      reads.length = 0;
+      jest.doMock("@shared/env", () => {
+        const actual = jest.requireActual<typeof import("@shared/env")>("@shared/env");
+        return {
+          ...actual,
+          getEnv: (name: Parameters<typeof actual.getEnv>[0]) => {
+            if (recording) reads.push(name);
+            return actual.getEnv(name);
+          },
+        };
+      });
+      jest.doMock("@reduxjs/toolkit", () => {
+        const actual = jest.requireActual<typeof import("@reduxjs/toolkit")>("@reduxjs/toolkit");
+        return {
+          ...actual,
+          configureStore: (options: Parameters<typeof actual.configureStore>[0]) => {
+            recording = options.reducer === require("~/reducers").default;
+            try {
+              return actual.configureStore(options);
+            } finally {
+              recording = false;
+            }
+          },
+        };
+      });
+      const { setEnv } = require("@shared/env") as typeof import("@shared/env");
+      setEnv("LEDGER_CLIENT_VERSION", "jest");
+    });
+
+    afterEach(() => {
+      jest.dontMock("@shared/env");
+      jest.dontMock("@reduxjs/toolkit");
+    });
+
+    it("reads each env var a fixed number of times, and the client version once", () => {
+      const { store } = require("./configureStore") as typeof import("./configureStore");
+
+      expect(store).toBeDefined();
+      expect(countBy(reads)).toEqual(ENV_READS_AT_STORE_CREATION);
+    });
+  });
 });
+
+const ENV_READS_AT_STORE_CREATION = {
+  CAL_SERVICE_URL: 1,
+  CMC_API_URL: 1,
+  FEATURE_FLAGS: 1,
+  LEDGER_CLIENT_VERSION: 1,
+  LEDGER_COUNTERVALUES_API: 1,
+  PUSH_DEVICES_SERVICE_URL: 2,
+  SYNC_MAX_CONCURRENT: 1,
+};
+
+function countBy(names: readonly string[]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const name of names) counts[name] = (counts[name] ?? 0) + 1;
+  return counts;
+}
+
+// The store's `dispatch` type drops the thunk overload, though the thunk middleware runs.
+function isThunkDispatch(
+  dispatch: unknown,
+): dispatch is ThunkDispatch<unknown, unknown, UnknownAction> {
+  return typeof dispatch === "function";
+}
+
+function readExtra({ dispatch }: { dispatch: unknown }): unknown {
+  if (!isThunkDispatch(dispatch)) throw new Error("store.dispatch is not a function");
+  let extra: unknown;
+  dispatch((_dispatch, _getState, extraArgument) => {
+    extra = extraArgument;
+  });
+  return extra;
+}
+
+function resolveSwapExtra(extra: unknown): { getSwapApiBaseUrl: () => unknown } {
+  if (
+    typeof extra !== "object" ||
+    extra === null ||
+    !("getSwapApiBaseUrl" in extra) ||
+    typeof extra.getSwapApiBaseUrl !== "function"
+  ) {
+    throw new Error("extraArgument has no getSwapApiBaseUrl");
+  }
+  const { getSwapApiBaseUrl } = extra;
+  return { getSwapApiBaseUrl: () => getSwapApiBaseUrl() };
+}
 
 function makeJwt(payload: Record<string, unknown>): string {
   const prefix = Buffer.from(JSON.stringify({ alg: "none", typ: "JWT" })).toString("base64url");
