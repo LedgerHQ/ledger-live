@@ -29,7 +29,7 @@ runs:
     - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
       if: ${{ !inputs.skip_ruby }}
       with:
-        ruby-version: 3.3.0
+        ruby-version: 3.4.11
     - name: Install node-gyp globally
       if: ${{ inputs.install_node_gyp }}
       run: |

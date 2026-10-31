@@ -76,7 +76,7 @@ runs:
 
     - name: Install mise and tools
       if: inputs.use-mise == 'true' && steps.mise-preinstalled.outputs.found != 'true'
-      uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+      uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
       with:
         # pinned: following latest mise once broke plugin installs (TSDINT-1644)
         version: "2026.10.17"
@@ -139,7 +139,7 @@ runs:
         INPUTS_NX_KEY: ${{ inputs.nx-key }}
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6
+      uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6
       if: steps.nx-remote-cache.conclusion == 'success'
       id: aws
       with:
