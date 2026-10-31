@@ -55,6 +55,29 @@ resetTrackingPages();
 
 Both getters return `""` when the page is unknown.
 
+## Track a flow
+
+A flow with several screens and drawers can use `createFlowTracker`. It keeps its own page stack, so a drawer or another screen of the app does not change the `page` and `source` of the flow's events.
+
+```ts
+import { createFlowTracker } from "@shared/analytics";
+
+const flow = createFlowTracker({ props: () => ({ sourceFlow: "onboarding" }) });
+
+flow.reset(); // a new attempt
+flow.page("Genuine Check"); // Page event, source = the app page before the flow
+flow.openDrawer("Drawer : Error"); // Page event over the current screen
+flow.closeDrawer(); // back on "Genuine Check", no event
+flow.click("Retry"); // button_clicked { page: "Genuine Check", source }
+flow.start("onboarding_started"); // once per attempt
+flow.end("onboarding_done"); // once per attempt
+flow.cancel(); // end the attempt with no event
+```
+
+- `props` is read on each event, so values learned later (a device model) are sent.
+- Events from `click`, `start` and `end` carry `page` (the current screen or drawer) and its `source`.
+- Showing the current screen again sends nothing.
+
 ## Delivery
 
 Register `Analytics.track` so it **awaits** the vendor SDK. Discarding that promise makes every call look `enqueued` and leaves SDK rejections unobserved.

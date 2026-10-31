@@ -93,6 +93,7 @@ export function SyncOfferView({
         handleClose={skipDrawer.onClose}
         openSync={skipDrawer.onActivate}
         skipSync={skipDrawer.onSkip}
+        trackScreen={skipDrawer.trackScreen}
       />
     </Box>
   );

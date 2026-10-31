@@ -3,7 +3,11 @@ import { act, renderHook } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingType, type State } from "~/reducers/types";
+import { recordAnalytics } from "../../analytics/recordAnalytics.testUtils";
+import { seededFunnel } from "../../analytics/seededTracking";
 import { useSyncOfferRouteViewModel } from "./useSyncOfferRouteViewModel";
+
+const events = recordAnalytics();
 
 const device = {
   deviceId: "device-id",
@@ -168,5 +172,38 @@ describe("useSyncOfferRouteViewModel", () => {
     expect(openURL).toHaveBeenCalledWith(
       "https://www.ledger.com/fr/academy/topics/ledgersolutions/ledger-sync-effortlessly-sync-your-accounts-in-ledger-live-safely-securely-and-with-complete-privacy",
     );
+  });
+
+  describe("seeded funnel", () => {
+    beforeEach(() => {
+      seededFunnel.reset();
+      seededFunnel.learn({ seeded: true, deviceType: "stax" });
+    });
+
+    it("should end the funnel with Ledger Sync when the trustchain lands", async () => {
+      const { result } = renderOffer(true);
+
+      act(() => result.current.onActivate());
+
+      const sent = await events();
+      expect(sent.map(([event]) => event)).toEqual([
+        "Page Ledger Sync",
+        "Page Ledger Sync Success",
+        "onboarding_started",
+        "onboarding_done",
+      ]);
+      expect(sent.at(-1)?.[1]).toMatchObject({ ledger_sync_done: "yes" });
+    });
+
+    it("should end the funnel without Ledger Sync when the offer is skipped", async () => {
+      const { result } = renderOffer(false);
+
+      act(() => result.current.onSkip());
+
+      expect((await events()).at(-1)).toEqual([
+        "onboarding_done",
+        expect.objectContaining({ ledger_sync_done: "no", page: "Ledger Sync" }),
+      ]);
+    });
   });
 });

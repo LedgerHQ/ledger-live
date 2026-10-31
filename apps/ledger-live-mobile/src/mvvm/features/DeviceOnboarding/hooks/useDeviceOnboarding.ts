@@ -4,6 +4,8 @@ import { useDeviceOnboardingActor } from "@devtools/bindings";
 import {
   createSessionEventsActor,
   stateValueToString,
+  type DeviceOnboardingContext,
+  type DeviceOnboardingExitReason,
   type OnboardingEvent,
   type SessionEvent,
 } from "@features/platform-device-onboarding";
@@ -33,7 +35,7 @@ type UseDeviceOnboardingInput = {
   navigateOnExit?: boolean;
   wasReadOnlyAtEntry?: boolean;
   /** Runs right before the exit navigates, so the host can stop blocking back. */
-  onLeave?: () => void;
+  onLeave?: (reason: DeviceOnboardingExitReason, context: DeviceOnboardingContext) => void;
 };
 
 type StoppableActor = { stop(): void };
@@ -124,7 +126,7 @@ export function useDeviceOnboarding({
     onEvent: event => onEventRef.current(event),
     onDone: handleDone,
     leaveOnboarding: (reason, context) => {
-      onLeave?.();
+      onLeave?.(reason, context);
       leaveOnboarding(reason, context);
     },
   });

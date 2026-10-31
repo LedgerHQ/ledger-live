@@ -15,6 +15,7 @@ import { setOnboardingType } from "~/actions/settings";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { OnboardingType } from "~/reducers/types";
 import type { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { seededFunnel, seededPages } from "../../analytics/seededTracking";
 import { useCompleteSeededOnboarding } from "../../hooks/useCompleteSeededOnboarding";
 import { closeOnboarding } from "../../utils/exitActions";
 import type { SyncOfferScreenProps } from "./useSyncOfferScreenViewModel";
@@ -44,19 +45,28 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     [navigation],
   );
 
-  const finishOnboarding = useCallback(() => {
-    if (completedOnSync.current) return;
-    completedOnSync.current = true;
-    allowLeave.current = true;
-    complete();
-    notifyFlowCompleted("onboarding");
-    closeOnboarding(navigation);
-  }, [complete, navigation, notifyFlowCompleted]);
+  useEffect(() => seededFunnel.page(seededPages.ledgerSync), []);
+
+  const finishOnboarding = useCallback(
+    (syncDone: boolean) => {
+      if (completedOnSync.current) return;
+      completedOnSync.current = true;
+      allowLeave.current = true;
+      if (syncDone) seededFunnel.page(seededPages.ledgerSyncSuccess);
+      seededFunnel.end("done", syncDone);
+      complete();
+      notifyFlowCompleted("onboarding");
+      closeOnboarding(navigation);
+    },
+    [complete, navigation, notifyFlowCompleted],
+  );
 
   useEffect(() => {
     if (!handoverStarted || !hasTrustchain) return;
-    finishOnboarding();
+    finishOnboarding(true);
   }, [finishOnboarding, handoverStarted, hasTrustchain]);
+
+  const finishWithoutSync = useCallback(() => finishOnboarding(false), [finishOnboarding]);
 
   const onActivate = useCallback(() => {
     setHandoverStarted(true);
@@ -74,8 +84,8 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
 
   return {
     onActivate,
-    onSkip: finishOnboarding,
-    onQuit: finishOnboarding,
+    onSkip: finishWithoutSync,
+    onQuit: finishWithoutSync,
     onLearnMore,
   };
 }

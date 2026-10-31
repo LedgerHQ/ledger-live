@@ -1,8 +1,7 @@
 import { useNavigation, type NavigationProp, type ParamListBase } from "@react-navigation/native";
-import {
-  requiresLegacyFlow,
-  type DeviceOnboardingContext,
-  type DeviceOnboardingExitReason,
+import type {
+  DeviceOnboardingContext,
+  DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
@@ -11,6 +10,7 @@ import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { exitActions } from "../utils/exitActions";
 import { isCurrentSessionGenuine } from "../utils/genuineSession";
+import { firmwareNeedsLegacyFlow } from "../utils/legacyFlow";
 
 type UseLeaveOnboardingInput = {
   device: Device | null;
@@ -37,13 +37,6 @@ export function useLeaveOnboarding({
     if (!navigateOnExit || !device) return;
     const genuine = isCurrentSessionGenuine(context);
     const seeded = context.isOnboarded === true;
-    const firmwareNeedsLegacyFlow =
-      seeded &&
-      (context.firmwareVersion === null ||
-        requiresLegacyFlow({
-          currentVersion: context.firmwareVersion,
-          deviceModelId: context.deviceModelId,
-        }));
     exitActions[reason]({
       navigation,
       dispatch,
@@ -52,7 +45,7 @@ export function useLeaveOnboarding({
       wasReadOnlyAtEntry,
       isGenuine: genuine,
       deviceWasSeeded: seeded,
-      firmwareNeedsLegacyFlow,
+      firmwareNeedsLegacyFlow: firmwareNeedsLegacyFlow(context),
       hasCompletedOnboarding,
     });
     if (
