@@ -58,7 +58,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         id: setup-caches
         with:
           use-mise: true
@@ -155,7 +155,7 @@ jobs:
       pull-requests: write
       packages: write
       id-token: write
-    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/release-final.yml@ci/mise-macos-preinstalled-tools
     with:
       # release from main if hotfixing the latest version, otherwise from the hotfix branch
       # For more info about why we do this, see this doc:

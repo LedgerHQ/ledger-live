@@ -362,7 +362,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         id: setup-caches
         with:
           use-mise: true
@@ -634,7 +634,7 @@ jobs:
     name: "iOS Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'Android Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-ios-reusable.yml@ci/mise-macos-preinstalled-tools
     permissions:
       id-token: write
       contents: read
@@ -664,7 +664,7 @@ jobs:
     name: "Android Build"
     needs: [determine-builds]
     if: ${{ inputs.tests_type != 'iOS Only' && needs.determine-builds.outputs.test_files_for_sharding != '' }}
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@develop
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-build-android-reusable.yml@ci/mise-macos-preinstalled-tools
     permissions:
       id-token: write
       contents: read
@@ -721,7 +721,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         with:
           skip-pod-cache: "true"
           skip-pnpm-cache: "true"
@@ -808,7 +808,7 @@ jobs:
 
       - name: setup caches
         id: setup-caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         with:
           use-mise: true
           gh-token: ${{ secrets.GITHUB_TOKEN }}
@@ -1069,7 +1069,7 @@ jobs:
           config_only: "true"
 
       - name: Setup the caches
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@ci/mise-macos-preinstalled-tools
         id: setup-caches
         with:
           use-mise: true
@@ -1779,7 +1779,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@ci/mise-macos-preinstalled-tools
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
@@ -1811,7 +1811,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@ci/mise-macos-preinstalled-tools
         with:
           artifacts_dir: ${{ env.MOBILE_ARTIFACTS_ROOT }}
           key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}

@@ -59,12 +59,30 @@ runs:
 
     # Self-hosted and custom GitHub-hosted runner images ship mise and every tool pinned in
     # mise.toml. Elsewhere mise is missing, so this reports found=false and mise-action runs.
-    - name: Detect preinstalled mise tools
-      id: mise-preinstalled
-      if: inputs.use-mise == 'true' && runner.os == 'Linux'
+    - name: "[DROP] Diagnose preinstalled mise"
+      if: inputs.use-mise == 'true' && runner.os == 'macOS'
+      continue-on-error: true
       shell: bash
       env:
         MISE_EXPERIMENTAL: "1"
+        MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
+      run: |
+        set +e
+        echo "PATH=$PATH"
+        ls -la "$HOME/.local/bin" "$HOME/.local/share/mise" 2>&1
+        command -v mise; echo "command -v exit=$?"
+        mise --version; echo "mise --version exit=$?"
+        mise ls --missing --local; echo "mise ls --missing exit=$?"
+        mise ls --local
+
+    - name: Detect preinstalled mise tools
+      id: mise-preinstalled
+      if: inputs.use-mise == 'true' && runner.os != 'Windows'
+      shell: bash
+      env:
+        MISE_EXPERIMENTAL: "1"
+        # mise refuses an untrusted mise.toml; mise-action sets this itself on the fallback path.
+        MISE_TRUSTED_CONFIG_PATHS: ${{ github.workspace }}
       run: |
         # Assigning in the condition keeps mise's exit status: a failing `mise ls` (e.g. a mise too
         # old for mise.toml) must fall back to mise-action, not look like "nothing missing".
