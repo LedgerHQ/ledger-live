@@ -132,6 +132,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   maxPriorityFeePerGas,
   balance,
   spendableBalance,
+  maxSpendable,
   pendingOperationsCount,
   ...rest
 }) => {
@@ -187,6 +188,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
         maxPriorityFeePerGas,
         balance,
         spendableBalance,
+        maxSpendable,
         pendingOperationsCount,
       }),
       ...rest,

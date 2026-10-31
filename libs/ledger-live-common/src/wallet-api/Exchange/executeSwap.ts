@@ -32,15 +32,16 @@ import {
   withSignatureRetryCode,
 } from "../../exchange/error";
 import {
-  readEvmNotEnoughGasDiagnostics,
-  readNotEnoughBalanceDiagnostics,
+  enrichInsufficientFundsError,
+  isInsufficientFundsError,
+  readInsufficientFundsDiagnostics,
 } from "../../exchange/swap/completeExchange";
 import { postSwapCancelled } from "../../exchange/swap";
 import { retrieveSwapPayload } from "../../exchange/swap/api/v5/actions";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
 import { transactionStrategy } from "../../exchange/swap/transactionStrategies";
 import { FeatureFlags } from "../../exchange/swap/types";
-import { getAccountIdFromWalletAccountId } from "../converters";
+import { getAccountIdFromWalletAccountId, resolveWalletApiMaxSpendable } from "../converters";
 import type { GetFeatureFn } from "../FeatureFlags/resolver";
 import { createAccounIdNotFound, createWrongSwapParams, ExchangeError } from "./error";
 import { handleErrors } from "./handleSwapErrors";
@@ -70,6 +71,23 @@ export type SwapDeps = {
 };
 
 const MAX_SIGNATURE_VERIFICATION_RETRIES = 2;
+const MAX_SPENDABLE_DIAGNOSTIC_TIMEOUT_MS = 2_000;
+
+function optionalWithin<T>(promise: Promise<T>, timeoutMs: number): Promise<T | undefined> {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => resolve(undefined), timeoutMs);
+    promise.then(
+      value => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      () => {
+        clearTimeout(timer);
+        resolve(undefined);
+      },
+    );
+  });
+}
 
 /**
  * Runs a swap end to end: nonce on device, provider payload, funding
@@ -393,34 +411,53 @@ async function executeSwapAttempt(
             retryCount,
           );
 
-          postSwapCancelled({
-            provider: provider,
-            swapId: swapId,
-            swapStep: getSwapStepFromError(completeExchangeError),
-            statusCode: completeExchangeError.title || completeExchangeError.name,
-            errorMessage: completeExchangeError.message || errorMessageWithCause,
-            sourceCurrencyId: fromCurrency.id,
-            targetCurrencyId: toCurrency?.id,
-            hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
-            swapType: quoteId ? "fixed" : "float",
-            swapAppVersion,
-            fromAccountAddress,
-            toAccountAddress,
-            refundAddress,
-            payoutAddress,
-            fromAmount,
-            exchangeAppVersion,
-            signingAppName,
-            signingAppVersion,
-            ...readEvmNotEnoughGasDiagnostics(error),
-            ...readNotEnoughBalanceDiagnostics(error),
-            seedIdFrom: mainFromAccount.seedIdentifier,
-            seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
-            data: (transaction as EvmTransaction).data
-              ? `0x${padHexString((transaction as EvmTransaction).data?.toString("hex") || "")}`
-              : "0x",
-            flags,
-          });
+          const reportCancelled = () =>
+            postSwapCancelled({
+              provider: provider,
+              swapId: swapId,
+              swapStep: getSwapStepFromError(completeExchangeError),
+              statusCode: completeExchangeError.title || completeExchangeError.name,
+              errorMessage: completeExchangeError.message || errorMessageWithCause,
+              sourceCurrencyId: fromCurrency.id,
+              targetCurrencyId: toCurrency?.id,
+              hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
+              swapType: quoteId ? "fixed" : "float",
+              swapAppVersion,
+              fromAccountAddress,
+              toAccountAddress,
+              refundAddress,
+              payoutAddress,
+              fromAmount,
+              exchangeAppVersion,
+              signingAppName,
+              signingAppVersion,
+              ...readInsufficientFundsDiagnostics(error),
+              seedIdFrom: mainFromAccount.seedIdentifier,
+              seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
+              data: (transaction as EvmTransaction).data
+                ? `0x${padHexString((transaction as EvmTransaction).data?.toString("hex") || "")}`
+                : "0x",
+              flags,
+            });
+
+          if (isInsufficientFundsError(error)) {
+            // Errors raised at broadcast reach this point without going through completeExchange.
+            optionalWithin(
+              resolveWalletApiMaxSpendable(fromAccount, fromParentAccount),
+              MAX_SPENDABLE_DIAGNOSTIC_TIMEOUT_MS,
+            )
+              .then(maxSpendable =>
+                enrichInsufficientFundsError(error, {
+                  account: fromAccount,
+                  parentAccount: fromParentAccount,
+                  maxSpendable,
+                }),
+              )
+              .catch(() => undefined)
+              .finally(reportCancelled);
+          } else {
+            reportCancelled();
+          }
 
           reject(completeExchangeError);
         },
