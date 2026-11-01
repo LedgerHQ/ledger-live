@@ -805,7 +805,7 @@ overrides:
   '@ledgerhq/context-module': 2.8.0
   lodash: 4.18.1
   tslib: 2.6.2
-  '@ethersproject/providers>ws': 7.5.10
+  '@ethersproject/providers>ws': 7.5.13
   utf-8-validate: 6.0.6
   elliptic: 6.6.1
   use-latest-callback: 0.1.9
@@ -24814,6 +24814,7 @@ packages:
 
   '@ledgerhq/errors@6.37.0':
     resolution: {integrity: sha512-T5yiKI5UX7ugeocdTF3TUsCIN2BH41Bio4ZeN410YFjFOf3es08n/5JyMzzKwzRgP0blG3HfBf7s7vJKqCSAeg==}
+    deprecated: This package is no longer maintained and will not receive updates. Published versions remain available.
 
   '@ledgerhq/evm-tools@2.0.0':
     resolution: {integrity: sha512-wkZQxYduOFNwnNloZQ35Dk8oKBVQ1ajNX09wazEVeLxzfWTDMvZwWWtaKK0WUdX53/OX4l2wr/5vaNCJs+IYow==}
@@ -27880,6 +27881,7 @@ packages:
   '@smithy/smithy-client@4.12.8':
     resolution: {integrity: sha512-aJaAX7vHe5i66smoSSID7t4rKY08PbD8EBU7DOloixvhOozfYWdcSYE4l6/tjkZ0vBZhGjheWzB2mh31sLgCMA==}
     engines: {node: '>=18.0.0'}
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/types@2.12.0':
     resolution: {integrity: sha512-QwYgloJ0sVNBeBuBs65cIkTbfzV/Q6ZNPCJ99EICFEdJYG50nGIY/uYXp+TbsdJReIuPr0a0kXmCvren3MbRRw==}
