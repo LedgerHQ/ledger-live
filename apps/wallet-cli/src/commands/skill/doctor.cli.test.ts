@@ -76,6 +76,45 @@ describe("skill doctor", () => {
     expect(fixed.stdout).toContain("up-to-date");
   });
 
+  it("reports outdated for an older skill with a file this one dropped, and heals with --fix", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+    const skillRoot = path.join(dir, SKILL_NAME);
+    const skillMd = path.join(skillRoot, "SKILL.md");
+    const shipped = await readFile(skillMd, "utf8");
+    await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
+    const dropped = { path: "references/dropped.md", content: "a reference since removed\n" };
+    await writeFile(path.join(skillRoot, dropped.path), dropped.content, "utf8");
+    await stampSidecar(skillRoot, "0.0.1", [...(await readTrackedFromDisk(skillRoot)), dropped]);
+
+    const outdated = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(outdated.exitCode).toBe(1);
+    expect(outdated.stdout).toContain("outdated");
+    expect(outdated.stdout).not.toContain("modified-locally");
+
+    const fixed = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
+    expect(await readFile(skillMd, "utf8")).toBe(shipped);
+  });
+
+  it("reports modified-locally for a user's file where a newer skill adds one", async () => {
+    const dir = await makeTmpDir();
+    await install(dir);
+    const skillRoot = path.join(dir, SKILL_NAME);
+    const olderFiles = (await readTrackedFromDisk(skillRoot)).filter(f => f.path === "SKILL.md");
+    await stampSidecar(skillRoot, "0.0.1", olderFiles);
+    const reference = path.join(skillRoot, "references", "business-logic.md");
+    await writeFile(reference, "my own notes\n", "utf8");
+
+    const diagnosis = await runCli(["skill", "doctor", "--dir", dir]);
+    expect(diagnosis.exitCode).toBe(1);
+    expect(diagnosis.stdout).toContain("modified-locally");
+
+    const fixNoForce = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
+    expect(fixNoForce.exitCode).toBe(1);
+    expect(await readFile(reference, "utf8")).toBe("my own notes\n");
+  });
+
   it("emits `fixed` as diagnosis objects carrying name and root, not bare names", async () => {
     const dir = await makeTmpDir();
     await install(dir);

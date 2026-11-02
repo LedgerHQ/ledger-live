@@ -112,6 +112,7 @@ describe("skill install", () => {
 
     expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
     expect(await readFile(skillMd, "utf8")).toBe(shipped);
+    expect(await readFile(path.join(skillRoot, dropped.path), "utf8")).toBe(dropped.content);
   });
 
   it("adds a file an older skill lacked without --force", async () => {
@@ -158,6 +159,32 @@ describe("skill install", () => {
 
     expect(update.exitCode).toBe(1);
     expect(await exists(outsideTheSkill)).toBe(false);
+  });
+
+  it("doesn't write through a dangling link in a skill without a sidecar", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference } = await installOlderSkillWithoutTheReference(tmpDir);
+    await rm(path.join(tmpDir, SKILL_NAME, SIDECAR_FILENAME));
+    const outsideTheSkill = path.join(tmpDir, "outside.md");
+    await symlink(outsideTheSkill, reference);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode).toBe(1);
+    expect(await exists(outsideTheSkill)).toBe(false);
+  });
+
+  it("replaces a dangling link instead of writing through it with --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { reference, shippedReference } = await installOlderSkillWithoutTheReference(tmpDir);
+    const outsideTheSkill = path.join(tmpDir, "outside.md");
+    await symlink(outsideTheSkill, reference);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await exists(outsideTheSkill)).toBe(false);
+    expect(await readFile(reference, "utf8")).toBe(shippedReference);
   });
 
   it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {

@@ -2,7 +2,7 @@
 // Content is inlined into the binary at build time, so these helpers work
 // identically in dev, tests, and the compiled standalone binary.
 
-import { mkdir, readFile, writeFile, access, lstat, stat } from "node:fs/promises";
+import { mkdir, readFile, writeFile, lstat, stat, unlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { CLI_VERSION, SKILLS, type SkillFile, type SkillManifest } from "./manifest.gen";
@@ -116,10 +116,18 @@ export function renderSkillMarkdown(skill: SkillManifest, file = "SKILL.md"): st
   return match.content;
 }
 
-async function pathExists(p: string): Promise<boolean> {
+async function holdsAnything(p: string): Promise<boolean> {
   try {
-    await access(p);
+    await lstat(p);
     return true;
+  } catch (e) {
+    return (e as { code?: string } | null)?.code !== "ENOENT";
+  }
+}
+
+async function isSymlink(p: string): Promise<boolean> {
+  try {
+    return (await lstat(p)).isSymbolicLink();
   } catch {
     return false;
   }
@@ -159,11 +167,9 @@ export async function writeSkill(
   }
 
   if (!force) {
-    const clashes: string[] = [];
-    for (const file of skill.files) {
-      const target = path.join(skillRoot, file.path);
-      if (await pathExists(target)) clashes.push(target);
-    }
+    const targets = skill.files.map(file => path.join(skillRoot, file.path));
+    const taken = await Promise.all(targets.map(holdsAnything));
+    const clashes = targets.filter((_, i) => taken[i]);
     if (clashes.length > 0) {
       throw new Error(
         `Refusing to overwrite existing file(s):\n  ${clashes.join("\n  ")}\nRe-run with --force to overwrite.`,
@@ -171,13 +177,15 @@ export async function writeSkill(
     }
   }
 
-  const written: string[] = [];
-  for (const file of skill.files) {
-    const target = path.join(skillRoot, file.path);
-    await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, file.content, "utf8");
-    written.push(target);
-  }
+  const written = await Promise.all(
+    skill.files.map(async file => {
+      const target = path.join(skillRoot, file.path);
+      await mkdir(path.dirname(target), { recursive: true });
+      if (await isSymlink(target)) await unlink(target);
+      await writeFile(target, file.content, "utf8");
+      return target;
+    }),
+  );
 
   // Always (re)write the sidecar — even under --force — so provenance stays
   // fresh. It is excluded from the clash check above, so it never blocks a
@@ -331,15 +339,6 @@ async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolea
   }
 }
 
-async function holdsAnything(p: string): Promise<boolean> {
-  try {
-    await lstat(p);
-    return true;
-  } catch (e) {
-    return (e as { code?: string } | null)?.code !== "ENOENT";
-  }
-}
-
 /**
  * Diagnose one shipped `skill` at `root` (which must contain `<root>/<name>`).
  * Recomputes the disk hash over the files the sidecar recorded (so a file a newer
@@ -433,8 +432,6 @@ export async function scanInstalledSkills(options: ScanOptions): Promise<SkillDi
     for (const root of roots) {
       const supersededRoots = await findSupersededRoots(skill, root);
       const skillRoot = path.join(root, skill.name);
-      // A regular file at this path is not an installed skill; `pathExists`
-      // (access-based) would treat it as one, so require an actual directory.
       if (await isDirectory(skillRoot)) {
         foundAnywhere = true;
         const diagnosis = await diagnoseSkill(skill, root);
