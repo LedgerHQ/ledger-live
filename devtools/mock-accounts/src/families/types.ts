@@ -34,6 +34,8 @@ export type MockFamily = {
   descriptor(currency: CryptoCurrency, index: number, random: Random): AccountDescriptor;
   /** An address of the currency: a sender or recipient of a mock operation. */
   address(currency: CryptoCurrency, random: Random): string;
+  /** The magnitude of a token its accounts may hold, to value its operations. */
+  tokenMagnitude?(assetId: string): number | undefined;
   /** The kinds this family answers its own way, instead of the generic readers of `kinds/`. */
   readonly read?: MockReaders;
 };

@@ -16,6 +16,7 @@ import {
 } from "@domain/entity-account-descriptor/schema.mock";
 import {
   accountOperationsSlice,
+  CountervalueTickerSchema,
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
@@ -85,7 +86,7 @@ function setup() {
   const wrapper = ({ children }: PropsWithChildren) => (
     <Provider store={store}>{children}</Provider>
   );
-  const { result } = renderHook(() => useAccountOperationToolProps(), { wrapper });
+  const { result } = renderHook(() => useAccountOperationToolProps("USD"), { wrapper });
   /** The no-query window of the `index`th account. */
   const head = (index: number) => result.current.accounts[index].windows[0];
   return { result, reads, head };
@@ -172,6 +173,25 @@ describe("useAccountOperationToolProps", () => {
     act(() => result.current.onReadAll({}));
     await waitFor(() => expect(reads).toHaveLength(2));
     expect(reads.map(r => r.accountUUID).sort()).toEqual([ethereumUUID, bitcoinUUID].sort());
+  });
+
+  it("reads a window valued in the app's fiat, labelled by it, with each row's countervalue", async () => {
+    const { result, reads } = setup();
+    const query = { countervalue: CountervalueTickerSchema.parse("USD") };
+    act(() => result.current.onReadAll({ countervalue: true }));
+    await waitFor(() => expect(reads).toHaveLength(2));
+    expect(reads.map(r => r.query)).toEqual([query, query]);
+    const ethereumRead = reads.find(r => r.accountUUID === ethereumUUID);
+    await act(async () =>
+      ethereumRead?.call.resolve({
+        operations: [mockAccountOperation({ countervalues: { USD: "1234" } })],
+      }),
+    );
+    const valued = () => result.current.accounts[0].windows[1];
+    await waitFor(() =>
+      expect(valued()?.rows).toEqual([expect.objectContaining({ countervalues: ["$12.34"] })]),
+    );
+    expect(valued().label).toBe("in USD");
   });
 
   it("lists the window of each query read, reading it again and paging it with its query", async () => {

@@ -8,11 +8,13 @@ import type { AccountDataRootState } from "@domain/entity-account-data";
 import { BalanceAssetIdSchema, type WithAccountBalances } from "@domain/entity-account-balance";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
+  CountervalueTickerSchema,
   selectAccountOperations,
   type AccountOperation,
   type AccountOperationsQuery,
   type WithAccountOperations,
 } from "@domain/entity-account-operation";
+import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountOperationToolProps = Extract<
@@ -32,16 +34,18 @@ type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
 
 /** The tool's options as a query, the invalid ones left out. */
-function toQuery(options: AccountOperationToolQuery): AccountOperationsQuery {
+function toQuery(options: AccountOperationToolQuery, fiat: string): AccountOperationsQuery {
   return {
     limit: options.limit,
     filterAsset: BalanceAssetIdSchema.optional().safeParse(options.filterAsset).data,
+    countervalue: options.countervalue ? CountervalueTickerSchema.safeParse(fiat).data : undefined,
   };
 }
 
 function labelOf(query: AccountOperationsQuery | undefined): string {
   const parts = [
     query?.filterAsset && `filter ${query.filterAsset}`,
+    query?.countervalue && `in ${query.countervalue}`,
     query?.limit !== undefined && `limit ${query.limit}`,
   ].filter(part => typeof part === "string");
   return parts.length ? parts.join(" · ") : "default";
@@ -55,13 +59,22 @@ function queryOf(queryKey: string): AccountOperationsQuery | undefined {
   const field = (name: string) => (name in parsed ? Reflect.get(parsed, name) : undefined);
   const limit = field("limit");
   const filterAsset = BalanceAssetIdSchema.optional().safeParse(field("filterAsset"));
+  const countervalue = CountervalueTickerSchema.optional().safeParse(field("countervalue"));
   return {
     limit: typeof limit === "number" ? limit : undefined,
     filterAsset: filterAsset.data,
+    countervalue: countervalue.data,
   };
 }
 
-export function useAccountOperationToolProps(): AccountOperationToolProps {
+const formatCountervalues = (countervalues: AccountOperation["countervalues"]) =>
+  Object.entries(countervalues ?? {}).flatMap(([ticker, amount]) => {
+    const unit = findFiatCurrencyByTicker(ticker)?.units[0];
+    return unit && amount ? [formatAmount(unit, amount)] : [];
+  });
+
+/** `fiat` is the app's countervalue setting, the one fiat its rates are loaded for. */
+export function useAccountOperationToolProps(fiat: string): AccountOperationToolProps {
   const dispatch = useDispatch<Dispatch>();
   const entries = useSelector(selectAccountEntries);
   const operations = useSelector((state: State) => state.accountOperations);
@@ -111,10 +124,10 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
 
   const onReadAll = useCallback(
     (options: AccountOperationToolQuery) => {
-      const query = toQuery(options);
+      const query = toQuery(options, fiat);
       descriptors.forEach(descriptor => read(descriptor, query));
     },
-    [descriptors, read],
+    [descriptors, read, fiat],
   );
 
   const accounts = useMemo(() => {
@@ -131,6 +144,7 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
         pending: operation.blockHeight === null,
         failed: operation.hasFailed === true,
         child: operation.parentId !== undefined,
+        countervalues: formatCountervalues(operation.countervalues),
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
@@ -162,5 +176,5 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
     });
   }, [entries, statuses, operations, unitOf]);
 
-  return { accounts, assetIds, onRead, onReadMore, onReadAll };
+  return { accounts, assetIds, fiat, onRead, onReadMore, onReadAll };
 }

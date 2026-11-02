@@ -4095,6 +4095,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-fiat
       '@domain/entity-currency-unit':
         specifier: workspace:*
         version: link:../../domain/entity/currency-unit
@@ -4630,6 +4633,9 @@ importers:
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../domain/entity/currency-crypto
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../domain/entity/currency-fiat
       '@noble/hashes':
         specifier: 'catalog:'
         version: 1.8.0
@@ -5660,9 +5666,21 @@ importers:
 
   domain/api/market-countervalues:
     dependencies:
+      '@domain/api-account-data':
+        specifier: workspace:*
+        version: link:../account-data
+      '@domain/entity-account-balance':
+        specifier: workspace:*
+        version: link:../../entity/account-balance
+      '@domain/entity-account-operation':
+        specifier: workspace:*
+        version: link:../../entity/account-operation
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../entity/currency
+      '@domain/entity-currency-fiat':
+        specifier: workspace:*
+        version: link:../../entity/currency-fiat
       '@domain/entity-market-countervalues':
         specifier: workspace:*
         version: link:../../entity/market-countervalues
@@ -5672,6 +5690,9 @@ importers:
       '@shared/api-services':
         specifier: workspace:*
         version: link:../../../shared/api-services
+      bignumber.js:
+        specifier: 9.1.2
+        version: 9.1.2
       prando:
         specifier: '6'
         version: 6.0.1
@@ -5679,12 +5700,12 @@ importers:
         specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
+      '@domain/entity-account-descriptor':
+        specifier: workspace:*
+        version: link:../../entity/account-descriptor
       '@domain/entity-currency-crypto':
         specifier: workspace:*
         version: link:../../entity/currency-crypto
-      '@domain/entity-currency-fiat':
-        specifier: workspace:*
-        version: link:../../entity/currency-fiat
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../entity/currency-token

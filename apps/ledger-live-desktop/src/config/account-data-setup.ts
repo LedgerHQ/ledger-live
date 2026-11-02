@@ -1,14 +1,24 @@
 import { createDynamicMiddleware, type Middleware } from "@reduxjs/toolkit";
 import type { AccountDataSource } from "@domain/api-account-data";
+import { findCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  withOperationCountervalues,
+  type OperationCountervaluesHost,
+} from "@domain/api-market-countervalues";
 import {
   accountsSlice,
   connectAccountsStore,
   type AccountsReduxStore,
 } from "@domain/entity-account";
 import { createCoinModuleSource } from "@features/platform-account-source-coin-module";
+import { countervaluesStateSelector } from "@features/platform-market-countervalues";
+import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
 import { createCoinModuleHost } from "@ledgerhq/live-common/account-data/coin-module/createCoinModuleHost";
-import { createFullSyncSource } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
+import {
+  createFullSyncSource,
+  type FullSyncHost,
+} from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import { accountsSelector, type AccountsState } from "~/renderer/reducers/accounts";
@@ -65,23 +75,31 @@ export function accountDataSources(
   getState: () => State,
   dispatch: (action: { type: string }) => unknown,
 ): readonly AccountDataSource[] {
+  const blacklistedTokenIds = () => blacklistedTokenIdsSelector(getState());
+  const countervalues: OperationCountervaluesHost = {
+    rates: () => countervaluesStateSelector(getState()),
+    findCurrency: assetId =>
+      findCryptoCurrencyById(assetId) ?? getCryptoAssetsStore().findTokenById(assetId),
+  };
+  const fullSyncHost: FullSyncHost = {
+    findAccount: accountUUID => {
+      const state = getState();
+      const legacyId = selectAccountEntry(state, accountUUID)?.legacyId;
+      return legacyId === undefined
+        ? undefined
+        : accountsSelector(state).find(account => account.id === legacyId);
+    },
+    prepareCurrency,
+    updateAccountWithUpdater: (accountId, updater) =>
+      dispatch(updateAccountWithUpdater(accountId, updater)),
+    blacklistedTokenIds,
+  };
   return tapped([
-    createCoinModuleSource(
-      createCoinModuleHost({ blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()) }),
+    withOperationCountervalues(
+      createCoinModuleSource(createCoinModuleHost({ blacklistedTokenIds })),
+      countervalues,
     ),
-    createFullSyncSource({
-      findAccount: accountUUID => {
-        const state = getState();
-        const legacyId = selectAccountEntry(state, accountUUID)?.legacyId;
-        return legacyId === undefined
-          ? undefined
-          : accountsSelector(state).find(account => account.id === legacyId);
-      },
-      prepareCurrency,
-      updateAccountWithUpdater: (accountId, updater) =>
-        dispatch(updateAccountWithUpdater(accountId, updater)),
-      blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()),
-    }),
+    withOperationCountervalues(createFullSyncSource(fullSyncHost), countervalues),
   ]);
 }
 

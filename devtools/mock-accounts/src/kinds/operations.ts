@@ -1,6 +1,7 @@
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
 import { AccountOperationSchema, type AccountOperation } from "@domain/entity-account-operation";
 import { MockCursorError } from "../errors";
+import { mockCountervalueOf } from "./countervalues";
 import { randomAmount, randomBytes, type Random } from "../random";
 import type { MockReader } from "../families/types";
 
@@ -142,6 +143,12 @@ export const operations: MockReader<"operations"> = (
     random,
   );
 
+  const countervalueOf = query?.countervalue
+    ? mockCountervalueOf(query.countervalue, assetId =>
+        assetId === currency.id ? currency.units[0].magnitude : family.tokenMagnitude?.(assetId),
+      )
+    : undefined;
+
   const pending = newestFirst.length > 0 && random() < 0.1;
   let date = NEWEST;
   let blockHeight = randomInt(random, 1_000_000, 20_000_000);
@@ -153,6 +160,8 @@ export const operations: MockReader<"operations"> = (
     }
     const counterparty = family.address(currency, random);
     const txHash = hash(random);
+    const at = new Date(isPending ? NEWEST + HOUR : date).toISOString();
+    const countervalues = countervalueOf?.(draft.assetId, draft.value, at);
     return AccountOperationSchema.parse({
       id: `${draft.assetId}-${txHash}-${draft.type}`,
       hash: txHash,
@@ -163,7 +172,8 @@ export const operations: MockReader<"operations"> = (
       senders: [draft.type === "IN" ? counterparty : own],
       recipients: [draft.type === "IN" ? own : counterparty],
       blockHeight: isPending ? null : blockHeight,
-      date: new Date(isPending ? NEWEST + HOUR : date).toISOString(),
+      date: at,
+      ...(countervalues && { countervalues }),
     });
   });
   const filtered = query?.filterAsset

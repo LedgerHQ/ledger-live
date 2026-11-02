@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useNavigate } from "react-router";
 import { getSdk } from "@ledgerhq/ledger-key-ring-protocol/index";
 import {
@@ -97,7 +98,8 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
   const deviceOnboardingProps = useDeviceOnboarding();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
-  const accountOperationToolProps = useAccountOperationToolProps();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const accountOperationToolProps = useAccountOperationToolProps(counterValueCurrency.ticker);
   const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),

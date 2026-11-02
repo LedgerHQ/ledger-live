@@ -1,7 +1,12 @@
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
-import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
+import {
+  CountervalueTickerSchema,
+  type AccountOperation,
+  type AccountOperationsPage,
+  type CountervalueTicker,
+} from "@domain/entity-account-operation";
 import { MockCursorError } from "./errors";
 import { mockDescriptors } from "./generate";
 import { mockSource } from "./mockSource";
@@ -348,5 +353,34 @@ describe("mockSource balanceHistory", () => {
       series.some(({ points }) => new Set(points.map(point => point.balance)).size > 1),
     );
     expect(moving.length).toBeGreaterThan(0);
+  });
+});
+
+describe("mockSource countervalues", () => {
+  const readValued = async (descriptor: AccountDescriptor, countervalue: CountervalueTicker) => {
+    const read = mockSource.read?.operations;
+    if (!read) throw new Error("no operations reader");
+    const target = { accountUUID: computeAccountUUID(descriptor), descriptor };
+    return read(target, { countervalue, limit: ALL });
+  };
+
+  it("values each operation in the fiat asked, at its date, the same for the same row", async () => {
+    const usd = CountervalueTickerSchema.parse("USD");
+    const valued = [];
+    for (const account of mockDescriptors("ethereum", 40, [])) {
+      const plain = await allOperationsOf(account);
+      const { operations } = await readValued(account, usd);
+      expect(operations.map(op => ({ ...op, countervalues: undefined }))).toEqual(plain);
+      valued.push(...operations);
+    }
+    expect(valued.length).toBeGreaterThan(0);
+    for (const op of valued) expect(op.countervalues?.[usd]).toMatch(/^\d+$/);
+    expect(valued.some(op => op.assetId !== "ethereum")).toBe(true);
+  });
+
+  it("leaves the countervalue out for an unknown fiat", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    const { operations } = await readValued(account, CountervalueTickerSchema.parse("XXX_UNKNOWN"));
+    for (const op of operations) expect(op.countervalues).toBeUndefined();
   });
 });
