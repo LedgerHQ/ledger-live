@@ -90,6 +90,11 @@ async function selectAccountTo(app: Application, swap: Swap) {
   }
 }
 
+export async function selectSwapAccounts(app: Application, swap: Swap) {
+  await selectAccountFrom(app, swap);
+  await selectAccountTo(app, swap);
+}
+
 export async function selectAccountMAD(selector: ModularDialog, account: Account) {
   await selector.selectAsset(account.currency);
   await selector.selectNetwork(account.currency);

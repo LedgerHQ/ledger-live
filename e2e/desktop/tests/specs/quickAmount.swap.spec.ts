@@ -4,7 +4,7 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
+import { setupEnv, selectSwapAccounts } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import {
@@ -106,13 +106,6 @@ test.describe("Swap - quick amount buttons", () => {
       annotation: { type: "TMS", description: "B2CQA-5582" },
     },
     async ({ app }) => {
-      for (const { swap, percentageButtonsEnabled } of insufficientBalanceSwaps) {
-        await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: "" });
-        await app.swap.checkMaxToggleEnabled(false);
-        await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
-        await app.swap.checkPercentageButtonsEnabled(percentageButtonsEnabled);
-      }
-
       for (const { fromAccountId, toAccountId } of swapMaxBalancePairs) {
         await openSwapPairViaDeeplink(app, fromAccountId, toAccountId);
         const balance = await app.swap.getFromAccountBalance();
@@ -126,6 +119,13 @@ test.describe("Swap - quick amount buttons", () => {
 
       for (const percent of percentages) {
         await app.swap.checkPercentageTooltip(percent, `${percent} of your available balance`);
+      }
+
+      for (const { swap, percentageButtonsEnabled } of insufficientBalanceSwaps) {
+        await selectSwapAccounts(app, swap);
+        await app.swap.checkMaxToggleEnabled(false);
+        await app.swap.checkMaxTooltip("You don't have enough balance including network fees");
+        await app.swap.checkPercentageButtonsEnabled(percentageButtonsEnabled);
       }
     },
   );
