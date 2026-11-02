@@ -490,6 +490,8 @@ jobs:
           feature_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           shard_index: ${{ matrix.shard }}
           shard_total: ${{ matrix.shard_total }}
+          # A --workers flag also caps refs whose Playwright config predates E2E_WORKERS.
+          workers: ${{ env.E2E_WORKERS }}
           step_summary: false
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
