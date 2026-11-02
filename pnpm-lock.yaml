@@ -468,8 +468,8 @@ catalogs:
       specifier: 1.7.0
       version: 1.7.0
     '@rsdoctor/core':
-      specifier: 2.0.0
-      version: 2.0.0
+      specifier: 2.0.1
+      version: 2.0.1
     '@rslib/core':
       specifier: 1.0.5
       version: 1.0.5
@@ -1769,7 +1769,7 @@ importers:
         version: 1.63.0
       '@rsdoctor/core':
         specifier: 'catalog:'
-        version: 2.0.0(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)
+        version: 2.0.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)
       '@rspack/cli':
         specifier: 'catalog:'
         version: 2.3.0(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@rspack/dev-server@2.2.2(@rspack/core@2.3.0(@swc/helpers@0.5.23)))
@@ -2856,7 +2856,7 @@ importers:
         version: 2.4.0(fbebb9c64fdf662bb0e7f4cf465f845f)
       '@rsdoctor/core':
         specifier: 'catalog:'
-        version: 2.0.0(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)
+        version: 2.0.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)
       '@rspack/core':
         specifier: 'catalog:'
         version: 2.3.0(@swc/helpers@0.5.23)
@@ -24896,6 +24896,7 @@ packages:
 
   '@ledgerhq/errors@6.37.0':
     resolution: {integrity: sha512-T5yiKI5UX7ugeocdTF3TUsCIN2BH41Bio4ZeN410YFjFOf3es08n/5JyMzzKwzRgP0blG3HfBf7s7vJKqCSAeg==}
+    deprecated: This package is no longer maintained and will not receive updates. Published versions remain available.
 
   '@ledgerhq/evm-tools@2.0.0':
     resolution: {integrity: sha512-wkZQxYduOFNwnNloZQ35Dk8oKBVQ1ajNX09wazEVeLxzfWTDMvZwWWtaKK0WUdX53/OX4l2wr/5vaNCJs+IYow==}
@@ -27351,12 +27352,12 @@ packages:
       '@rsbuild/core':
         optional: true
 
-  '@rsdoctor/client@2.0.0':
-    resolution: {integrity: sha512-gxtVkRkbJ+u/ZMlbac73cysgzqlA7cAQ8bwwHUqpfwu567Uzoe0JS4RGuZZt6eZjvM9VZkI9OLsmhlAuy4b3PQ==}
+  '@rsdoctor/client@2.0.1':
+    resolution: {integrity: sha512-v/KZwX9j1s2Vsni8KNVNCcxGDx7/UZeK+U+DkqgGT1akmTHq/Hr1bNAkzUknIne5Fy+UVVmJBx61KyLcA8he8w==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
-  '@rsdoctor/core@2.0.0':
-    resolution: {integrity: sha512-06W5FnBXZWMMDb6KY6N4RHmzF/hkV1h8dM2y5Sct4hqWGviZxsIcuiwcuK2GOcgEYIwo1jAd9GMgUPCOpOKSyw==}
+  '@rsdoctor/core@2.0.1':
+    resolution: {integrity: sha512-87C/flgxSz7EsuO+JF6ARfDVq7vFgbL/eC/FMxLxU2wT08geT/7TeHGNyTsRLSi9MQ1I2/yqKd7M/IcFdg7wVA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       '@rspack/core': ^2.0.0
@@ -27364,8 +27365,8 @@ packages:
       '@rspack/core':
         optional: true
 
-  '@rsdoctor/shared@2.0.0':
-    resolution: {integrity: sha512-QMTGTSX17aI83m+N8iwqWc4GAS7Q57m4Bmo7ShxQ3G2bKqJxCyiCd579idXwviKCXY0iQuagjPDv0P60K4rj+A==}
+  '@rsdoctor/shared@2.0.1':
+    resolution: {integrity: sha512-aTCgBg2cST1YErx+IM2GfKgCV3ej2VN5S/fAU2M8wnI7f86X6ZvPT32H+dN4AmdPD/uLkb2URB0N+lQ76xiHYw==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       '@rspack/core': ^2.0.0
@@ -46528,12 +46529,12 @@ snapshots:
     optionalDependencies:
       '@rsbuild/core': 2.3.0(core-js@3.47.0)
 
-  '@rsdoctor/client@2.0.0': {}
+  '@rsdoctor/client@2.0.1': {}
 
-  '@rsdoctor/core@2.0.0(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)':
+  '@rsdoctor/core@2.0.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)':
     dependencies:
-      '@rsdoctor/client': 2.0.0
-      '@rsdoctor/shared': 2.0.0(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)
+      '@rsdoctor/client': 2.0.1
+      '@rsdoctor/shared': 2.0.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)
       caniuse-lite: 1.0.30001817
       sirv: 3.0.2
       source-map: 0.8.0
@@ -46542,7 +46543,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@rsdoctor/shared@2.0.0(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)':
+  '@rsdoctor/shared@2.0.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@types/node@24.12.0)':
     dependencies:
       '@rspack/lite-tapable': 1.3.0
       '@types/estree': 1.0.5
