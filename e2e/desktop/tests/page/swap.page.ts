@@ -933,15 +933,18 @@ export class SwapPage extends WebViewAppPage {
   // trigger's tooltip open (data-state !== "closed") until the newly-hovered
   // trigger's tooltip finishes its open delay, so "read whichever tooltip is
   // open" returns the stale one when moving between the 25/50/75 buttons.
-  // Filtering the open tooltips on the expected text waits that transition out.
+  // Filtering the open tooltips on the expected text waits that transition out,
+  // and re-hovering covers a hover that did not stick (see hoverAmountField).
   // openTooltipSelector scopes to the visually-hidden [role="tooltip"] node(s)
   // that mirror the content, so the text comes back once.
   private async checkTooltipText(hoverTrigger: () => Promise<void>, expected: string) {
     const webview = await this.getWebView();
-    await hoverTrigger();
     const expectedTooltip = webview.locator(this.openTooltipSelector).filter({ hasText: expected });
     await this.softExpect(async soft => {
-      await soft(expectedTooltip).not.toHaveCount(0);
+      await soft(async () => {
+        await hoverTrigger();
+        await expect(expectedTooltip).not.toHaveCount(0, { timeout: TIMEOUT.small });
+      }).toPass({ timeout: TIMEOUT.large });
     });
   }
 
