@@ -29,6 +29,32 @@ async function freePort(): Promise<number> {
   });
 }
 
+// near-sandbox polls readiness with got 11, whose own retry on ECONNREFUSED rejects late
+// ("onCancel handler was attached after the promise settled") and fails the running test.
+const READY_ATTEMPTS = 40;
+const READY_INTERVAL_MS = 500;
+
+async function waitUntilReady(rpcUrl: string): Promise<void> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < READY_ATTEMPTS; attempt++) {
+    try {
+      const response = await fetch(`${rpcUrl}/status`);
+      if (response.ok) {
+        return;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+    await new Promise(resolve => setTimeout(resolve, READY_INTERVAL_MS));
+  }
+  throw new Error(`coin-tester-near: sandbox never became ready at ${rpcUrl}`, {
+    cause: lastError,
+  });
+}
+
+// `waitUntilReady` is a private static that `Sandbox.start` calls through `this`.
+Object.assign(Sandbox, { waitUntilReady });
+
 export async function startSandbox(): Promise<SandboxHandle> {
   // Genesis is left alone on purpose: shrinking `epoch_length` to speed the unstake lock up stops
   // the node from ever becoming ready. `fastForward` covers the same need without touching consensus.
