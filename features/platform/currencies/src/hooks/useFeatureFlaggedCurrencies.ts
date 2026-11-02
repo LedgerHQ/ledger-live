@@ -72,8 +72,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
   const lineaSepolia = useFeature("currencyLineaSepolia");
-  const blast = useFeature("currencyBlast");
-  const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
@@ -170,8 +168,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       linea,
       ton,
       linea_sepolia: lineaSepolia,
-      blast,
-      blast_sepolia: blastSepolia,
       scroll,
       shape,
       story,
@@ -262,8 +258,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       linea,
       ton,
       lineaSepolia,
-      blast,
-      blastSepolia,
       scroll,
       shape,
       story,
