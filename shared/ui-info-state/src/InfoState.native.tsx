@@ -45,7 +45,11 @@ export function InfoState(props: InfoStateProps) {
                 </Text>
               ) : null}
               {description ? (
-                <Text typography="body2" lx={{ color: "muted", textAlign: "center" }}>
+                <Text
+                  typography="body2"
+                  lx={{ color: "muted", textAlign: "center" }}
+                  testID={testID ? `${testID}-description` : undefined}
+                >
                   {description}
                 </Text>
               ) : null}

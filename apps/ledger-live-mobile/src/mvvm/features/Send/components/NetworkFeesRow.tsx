@@ -33,6 +33,7 @@ type NetworkFeesRowProps = Readonly<{
   viewModel: NetworkFeesViewModel;
   /** While set, the fee value opens the fee payment sheet instead of the strategy selector. */
   sponsored?: SponsoredFeeEntryViewModel | null;
+  sponsoredRentNotice?: string | null;
 }>;
 
 const STRUCK_THROUGH = { textDecorationLine: "line-through" } as const;
@@ -126,7 +127,7 @@ function SponsoredFeeEntry({ entry, standardFee, onPress }: SponsoredFeeEntryPro
   );
 }
 
-export function NetworkFeesRow({ viewModel, sponsored }: NetworkFeesRowProps) {
+export function NetworkFeesRow({ viewModel, sponsored, sponsoredRentNotice }: NetworkFeesRowProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const infoBottomSheetRef = useBottomSheetRef();
@@ -232,16 +233,18 @@ export function NetworkFeesRow({ viewModel, sponsored }: NetworkFeesRowProps) {
 
   const standardFeeValue = canOpenFeeSelector ? (
     <Pressable accessibilityRole="button" onPress={handleOpenSelector} style={styles.valueTrigger}>
-      <DescriptionItemValue>
+      <DescriptionItemValue testID="send-network-fees-value">
         {viewModel.value} • <RNText>{viewModel.strategyLabel}</RNText>
       </DescriptionItemValue>
       <ChevronDown size={16} lx={{ color: "muted" }} />
     </Pressable>
   ) : (
     <>
-      <DescriptionItemValue>{viewModel.value}</DescriptionItemValue>
+      <DescriptionItemValue testID="send-network-fees-value">
+        {viewModel.value}
+      </DescriptionItemValue>
       {viewModel.secondaryValue ? (
-        <Text typography="body3" lx={{ color: "muted" }}>
+        <Text typography="body3" lx={{ color: "muted" }} testID="send-network-fees-secondary-value">
           {viewModel.secondaryValue}
         </Text>
       ) : null}
@@ -273,6 +276,16 @@ export function NetworkFeesRow({ viewModel, sponsored }: NetworkFeesRowProps) {
       {sponsored?.error ? (
         <Text typography="body3" lx={{ color: "error" }} testID="send-sponsored-fee-error">
           {sponsored.error}
+        </Text>
+      ) : null}
+      {sponsoredRentNotice ? (
+        <Text
+          typography="body3"
+          lx={{ color: "muted" }}
+          testID="send-sponsored-rent-arriving"
+          accessibilityLiveRegion="polite"
+        >
+          {sponsoredRentNotice}
         </Text>
       ) : null}
 
