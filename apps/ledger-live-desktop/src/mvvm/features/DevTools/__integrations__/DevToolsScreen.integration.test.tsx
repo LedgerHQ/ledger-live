@@ -12,6 +12,7 @@ jest.mock("@devtools/transport-panel", () => ({
 }));
 
 const devToolsSpy = jest.fn();
+const mockRecordedAction = jest.fn();
 jest.mock("@devtools/shell", () => ({
   DevTools: (props: { config: unknown; onClose: () => void }) => {
     devToolsSpy(props);
@@ -45,7 +46,10 @@ jest.mock("@devtools/bindings", () => ({
   useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
-    middleware: () => (next: (action: unknown) => unknown) => next,
+    middleware: () => (next: (action: unknown) => unknown) => (action: unknown) => {
+      mockRecordedAction(action);
+      return next(action);
+    },
   }),
   useAppConfigToolProps: () => ({ marker: "app-config-props" }),
 }));
@@ -98,6 +102,14 @@ describe("DevToolsScreen", () => {
         ],
       }),
     );
+  });
+
+  it("plugs the account data recorder into the store when it opens", () => {
+    const { store } = render(<DevToolsScreen />);
+
+    store.dispatch({ type: "DEVTOOLS_TEST_ACTION" });
+
+    expect(mockRecordedAction).toHaveBeenCalledWith({ type: "DEVTOOLS_TEST_ACTION" });
   });
 
   it("navigates back when DevTools requests close", async () => {
