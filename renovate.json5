@@ -66,8 +66,7 @@
       "minimumReleaseAge": "2 days"
     },
     {
-      "description": "Electron linked updates",
-      "groupName": "electron",
+      "description": "Electron ecosystem ownership, one PR per package",
       "reviewers": ["team:live-hub"],
       "assignees": ["team:live-hub"],
       "matchPackageNames": [
