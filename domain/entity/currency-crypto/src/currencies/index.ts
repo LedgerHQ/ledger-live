@@ -109,8 +109,6 @@ export * from "./mina";
 export * from "./monad";
 export * from "./monad_testnet";
 export * from "./monero";
-export * from "./moonbeam";
-export * from "./moonriver";
 export * from "./nano";
 export * from "./near";
 export * from "./nem";

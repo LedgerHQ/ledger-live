@@ -611,15 +611,6 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
-    id: "moonbeam",
-    ticker: "GLMR",
-    name: "Moonbeam",
-    family: "ethereum",
-    color: "#958FDC",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
     id: "songbird",
     ticker: "SGB",
     name: "Songbird",
@@ -751,15 +742,6 @@ export const expectedCurrencyList = [
     name: "Boba",
     family: "ethereum",
     color: "#CBFF00",
-    decimals: 18,
-  },
-  {
-    type: "CryptoCurrency",
-    id: "moonriver",
-    ticker: "MOVR",
-    name: "Moonriver",
-    family: "ethereum",
-    color: "#95F921",
     decimals: 18,
   },
   {
