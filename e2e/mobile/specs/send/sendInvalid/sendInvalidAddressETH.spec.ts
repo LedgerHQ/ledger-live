@@ -11,6 +11,7 @@ const transaction = new Transaction(
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "This is not a valid Ethereum address",
+  scenario: "incorrect format",
   address: Addresses.BTC_NATIVE_SEGWIT_1,
   tmsLinks: ["B2CQA-2709"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@ethereum", "@family-evm"],

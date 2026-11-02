@@ -5,6 +5,7 @@ import {
   type ContactSeed,
 } from "@ledgerhq/live-e2e-shared/contacts";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
@@ -91,7 +92,10 @@ export function runNewSendFlowContactsTest(
   tags: string[],
 ) {
   declareBroadcastAccounts(transaction.accountToDebit);
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(Team.COIN_INTEGRATION, {
+    folder: sendFolder(transaction.accountToDebit),
+    scenario: SendScenario.ADDRESS_BOOK,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
 
@@ -103,7 +107,7 @@ export function runNewSendFlowContactsTest(
       contacts = await initApp(transaction, retrievalAccount);
     });
 
-    it(`[${label}] - Send (new send flow) via contact`, async () => {
+    it(`[${label}] - Send - via contact`, async () => {
       const { sendViaContact } = contacts;
 
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
@@ -123,7 +127,7 @@ export function runNewSendFlowContactsTest(
       await app.operationDetails.checkTransactionType("OUT");
     });
 
-    it(`[${label}] - Contact retrieval and Add contact availability on the recipient step`, async () => {
+    it(`[${label}] - Send - contact retrieval and add contact availability`, async () => {
       const { retrieval } = contacts;
       const retrievalAddress = retrieval.addresses[0]?.address;
       invariant(retrievalAddress, "Retrieval contact address is not set");

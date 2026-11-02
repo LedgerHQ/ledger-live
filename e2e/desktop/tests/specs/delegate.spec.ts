@@ -1,5 +1,7 @@
 import { test, type CliCommand } from "tests/fixtures/common";
-import { delegateTeamOwner } from "@ledgerhq/live-e2e-shared/data/delegateTeamOwner";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import {
@@ -33,6 +35,9 @@ const DISABLE_BROADCAST_ENV = { DISABLE_TRANSACTION_BROADCAST: "1" };
 // The app broadcasts only when the run sets "0" (see the electronApp fixture).
 const IS_BROADCAST_RUN = process.env.DISABLE_TRANSACTION_BROADCAST === "0";
 
+const delegateFolder = (currency: Currency) =>
+  ownedBy(coinTeamOwner(currency.id), { folder: TestFolder.DELEGATE });
+
 function useDelegateFixtures(
   currency: Currency,
   {
@@ -42,7 +47,6 @@ function useDelegateFixtures(
   }: { cliCommands: CliCommand[]; featureFlags?: PartialFeatures; disableBroadcast?: boolean },
 ) {
   test.use({
-    teamOwner: delegateTeamOwner(currency.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: currency.speculosApp,
     cliCommands,
@@ -166,7 +170,7 @@ for (const scenario of delegateScenarios) {
     broadcastAccounts: scenario.disableBroadcast ? [] : [delegate.account],
   });
 
-  test.describe("Delegate", { lock: delegateLock.names }, () => {
+  test.describe("Delegate", { lock: delegateLock.names, ...delegateFolder(currency) }, () => {
     useDelegateFixtures(currency, {
       cliCommands: [liveDataCommand(delegate.account)],
       featureFlags: scenario.featureFlags,
@@ -215,7 +219,7 @@ for (const scenario of delegateScenarios) {
   });
 }
 
-test.describe("Delegate", () => {
+test.describe("Delegate", delegateFolder(Account.ADA_1.currency), () => {
   const delegation = new Delegate(Account.ADA_1, "0.01", "Ledger by Figment 3");
   const { currency } = delegation.account;
   useDelegateFixtures(currency, {
@@ -249,8 +253,9 @@ test.describe("Delegate", () => {
 });
 
 const seiLock = exclusiveLockFor({ broadcastAccounts: [Account.SEI_EVM_1] });
+const seiDetails = { lock: seiLock.names, ...delegateFolder(Account.SEI_EVM_1.currency) };
 
-test.describe("Delegate", { lock: seiLock.names }, () => {
+test.describe("Delegate", seiDetails, () => {
   const seiDelegation = new Delegate(Account.SEI_EVM_1, "1", "first-available");
   const { currency } = seiDelegation.account;
   test.use(seiLock.fixtures);
@@ -304,7 +309,8 @@ const celoLock = exclusiveLockFor({ broadcastAccounts: [celoStaking.account] });
 
 // Lock and Vote spend from the same account, and the Celo bridge reads its nonce from the latest
 // block: run in parallel, the second transaction reuses the first one's nonce and is rejected.
-test.describe("Lock and vote - CELO", { lock: celoLock.names }, () => {
+const celoDetails = { lock: celoLock.names, ...delegateFolder(celoStaking.account.currency) };
+test.describe("Lock and vote - CELO", celoDetails, () => {
   const { currency } = celoStaking.account;
   useDelegateFixtures(currency, { cliCommands: [liveDataCommand(celoStaking.account)] });
   test.use(celoLock.fixtures);
@@ -470,7 +476,7 @@ for (const scenario of validatorSelectionScenarios) {
   const { delegate } = scenario;
   const { currency } = delegate.account;
 
-  test.describe("Select a validator", () => {
+  test.describe("Select a validator", delegateFolder(currency), () => {
     useDelegateFixtures(currency, {
       cliCommands: [liveDataCommand(delegate.account)],
       featureFlags: scenario.featureFlags,
@@ -503,13 +509,13 @@ for (const scenario of validatorSelectionScenarios) {
   });
 }
 
-test.describe("Delegate from market", () => {
+test.describe("Delegate from market", delegateFolder(Account.ATOM_1.currency), () => {
   const delegation = new Delegate(Account.ATOM_1, "0.001", "Ledger by Bitwise");
   const { currency } = delegation.account;
   useDelegateFixtures(currency, { cliCommands: [liveDataCommand(delegation.account)] });
 
   test(
-    `[${currency.testLabel}] - Delegate from market entry point`,
+    `[${currency.testLabel}] - Delegate - from market`,
     {
       tag: buildTags({ currencyId: currency.id }),
       annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771, B2CQA-1552" }),
@@ -550,7 +556,7 @@ for (const scenario of stakingLiveAppScenarios) {
   const { delegate } = scenario;
   const { currency } = delegate.account;
 
-  test.describe("Staking live app", () => {
+  test.describe("Staking live app", delegateFolder(currency), () => {
     useDelegateFixtures(currency, { cliCommands: [liveDataCommand(delegate.account)] });
 
     test(
@@ -572,7 +578,8 @@ for (const scenario of stakingLiveAppScenarios) {
 const minaPairLock = exclusiveLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
 
 // Tests are skipped while waiting for LIVE-37757 to be done
-test.describe.skip("Delegate - MINA", { lock: minaPairLock.names }, () => {
+const minaDelegateDetails = { lock: minaPairLock.names, ...delegateFolder(Currency.MINA) };
+test.describe.skip("Delegate - MINA", minaDelegateDetails, () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina delegate");
 
@@ -625,7 +632,11 @@ test.describe.skip("Delegate - MINA", { lock: minaPairLock.names }, () => {
 const minaRedelegationLock = exclusiveLockFor({ broadcastAccounts: [MINA_REDELEGATION_ACCOUNT] });
 
 // Tests are skipped while waiting for LIVE-37757 to be done
-test.describe.skip("Redelegate - MINA", { lock: minaRedelegationLock.names }, () => {
+const minaRedelegateDetails = {
+  lock: minaRedelegationLock.names,
+  ...delegateFolder(Currency.MINA),
+};
+test.describe.skip("Redelegate - MINA", minaRedelegateDetails, () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina redelegate");
 

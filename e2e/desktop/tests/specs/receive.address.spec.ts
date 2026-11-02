@@ -1,5 +1,7 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { ownedBy } from "tests/utils/allureUtils";
 import {
   Account,
   TokenAccount,
@@ -54,13 +56,13 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
 
 for (const receive of nativeAccounts) {
   const receiveBlockedOnLNS = isReceiveBlockedOnLNS(receive.account.currency.id);
-  test.describe("Receive", () => {
+  const owner = ownedBy(coinTeamOwner(receive.account.currency.id), { folder: TestFolder.RECEIVE });
+  test.describe("Receive", owner, () => {
     test.skip(
       receiveBlockedOnLNS && getSpeculosModel() === DeviceModelId.nanoS,
       "Receive is blocked on Nano S",
     );
     test.use({
-      teamOwner: Team.COIN_INTEGRATION,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: receive.account.currency.speculosApp,
       cliCommands: [liveDataCommand(receive.account)],
@@ -95,18 +97,18 @@ for (const receive of nativeAccounts) {
   });
 }
 
-test.describe("Receive", () => {
+const zecOwner = ownedBy(coinTeamOwner(Account.ZEC_1.currency.id), { folder: TestFolder.RECEIVE });
+test.describe("Receive", zecOwner, () => {
   const account = Account.ZEC_1;
   test.skip(getSpeculosModel() !== DeviceModelId.nanoS, "Nano S only");
   test.use({
-    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [liveDataCommand(account)],
   });
 
   test(
-    `[${account.currency.testLabel}] - Receive blocked by device deprecation on Nano S`,
+    `[${account.currency.testLabel}] - Verify address - blocked on Nano S`,
     {
       tag: buildTags({ currencyId: account.currency.id, onlyLNS: true }),
       annotation: {
@@ -125,17 +127,17 @@ test.describe("Receive", () => {
   );
 });
 
-test.describe("Receive", () => {
+const trxOwner = ownedBy(coinTeamOwner(Account.TRX_3.currency.id), { folder: TestFolder.RECEIVE });
+test.describe("Receive", trxOwner, () => {
   const account = Account.TRX_3;
   test.use({
-    teamOwner: Team.COIN_INTEGRATION,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: account.currency.speculosApp,
     cliCommands: [addEmptyAccountCommand(account)],
   });
 
   test(
-    `[${account.currency.testLabel}] - Verify address activation warning on empty account`,
+    `[${account.currency.testLabel}] - Verify address - activation warning on empty account`,
     {
       tag: buildTags({ currencyId: account.currency.id }),
       annotation: {
@@ -154,9 +156,11 @@ test.describe("Receive", () => {
   );
 });
 
-test.describe("Receive", () => {
+const tokenOwner = ownedBy(coinTeamOwner(tokenAccount.account.currency.id), {
+  folder: TestFolder.RECEIVE,
+});
+test.describe("Receive", tokenOwner, () => {
   test.use({
-    teamOwner: Team.COIN_INTEGRATION,
     userdata: "speculos-subAccount",
     speculosApp: tokenAccount.account.currency.speculosApp,
   });

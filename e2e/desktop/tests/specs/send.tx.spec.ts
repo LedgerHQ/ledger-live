@@ -1,5 +1,8 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { ownedBy } from "tests/utils/allureUtils";
 import {
   getAccountAddress,
   liveDataCommand,
@@ -16,34 +19,28 @@ import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 const legacySendTransactions: Array<{
   transaction: Transaction;
   xrayTicket: string;
-  teamOwner: Team;
   postSeedHook?: (userdataPath?: string) => Promise<void>;
   sharedAccountAcrossLegs?: boolean;
 }> = [
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "0.2"),
     xrayTicket: "B2CQA-3840",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ZEC_1, Account.ZEC_2, "0.001"),
     xrayTicket: "B2CQA-4299",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.HEDERA_1, Account.HEDERA_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-4284",
-    teamOwner: Team.BST,
   },
   {
     transaction: new Transaction(Account.ALEO_1, Account.ALEO_2, "0.000001"),
     xrayTicket: "B2CQA-6267",
-    teamOwner: Team.BST,
     postSeedHook: shareViewKeyCommand(Account.ALEO_1),
   },
   {
@@ -51,22 +48,25 @@ const legacySendTransactions: Array<{
     // transactions from one account. Mobile sends the other way around, to share the fees.
     transaction: new Transaction(Account.MINA_4, Account.MINA_5, "0.01"),
     xrayTicket: "B2CQA-4778",
-    teamOwner: Team.BST,
     sharedAccountAcrossLegs: true,
   },
 ];
 
+const legacyBst = ownedBy(Team.BST, { folder: TestFolder.LEGACY_TESTS });
+
 for (const entry of legacySendTransactions) {
   const tx = entry.transaction;
   const sendLock = exclusiveLockFor({ broadcastAccounts: [tx.accountToDebit] });
+  const owner = ownedBy(coinTeamOwner(tx.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
 
-  test.describe("Send - legacy families", { lock: sendLock.names }, () => {
+  test.describe("Send - legacy families", { lock: sendLock.names, ...owner }, () => {
     if (entry.sharedAccountAcrossLegs) {
       skipSharedAccountOnSecondaryLeg(`${tx.accountToDebit.currency.testLabel} send`);
     }
 
     test.use({
-      teamOwner: entry.teamOwner,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: tx.accountToDebit.currency.speculosApp,
       cliCommands: [
@@ -79,7 +79,7 @@ for (const entry of legacySendTransactions) {
     });
 
     test(
-      `[${tx.accountToDebit.currency.testLabel}] - Send (legacy flow)`,
+      `[${tx.accountToDebit.currency.testLabel}] - Send`,
       {
         tag: buildTags({
           currencyId: tx.accountToDebit.currency.id,
@@ -104,11 +104,10 @@ for (const entry of legacySendTransactions) {
   });
 }
 
-test.describe("Send - legacy families - invalid amount", () => {
+test.describe("Send - legacy families - invalid amount", legacyBst, () => {
   const tx = new Transaction(Account.HEDERA_1, Account.HEDERA_2, "100000", undefined, "noTag");
 
   test.use({
-    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [liveDataWithRecipientAddressCommand(tx)],
@@ -116,7 +115,7 @@ test.describe("Send - legacy families - invalid amount", () => {
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (legacy flow) invalid amount`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send - invalid amount (${tx.amount})`,
     {
       tag: buildTags({
         currencyId: tx.accountToDebit.currency.id,
@@ -135,12 +134,11 @@ test.describe("Send - legacy families - invalid amount", () => {
   );
 });
 
-test.describe("Send - legacy families - invalid address", () => {
+test.describe("Send - legacy families - invalid address", legacyBst, () => {
   const tx = new Transaction(Account.HEDERA_1, Account.HEDERA_1, "0.00001", undefined, "noTag");
   let recipientAddress: string | undefined;
 
   test.use({
-    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [
@@ -154,7 +152,7 @@ test.describe("Send - legacy families - invalid address", () => {
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (legacy flow) invalid address`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send - invalid address - same as sender`,
     {
       tag: buildTags({
         currencyId: tx.accountToDebit.currency.id,
@@ -177,12 +175,12 @@ test.describe("Send - legacy families - invalid address", () => {
 });
 
 const concordiumLock = exclusiveLockFor({ broadcastAccounts: [Account.CCD_TESTNET_1] });
+const concordiumDetails = { lock: concordiumLock.names, ...legacyBst };
 
-test.describe("Send - legacy families - Concordium testnet", { lock: concordiumLock.names }, () => {
+test.describe("Send - legacy families - Concordium testnet", concordiumDetails, () => {
   const tx = new Transaction(Account.CCD_TESTNET_1, Account.CCD_TESTNET_2, "0.000005", undefined);
 
   test.use({
-    teamOwner: Team.BST,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: tx.accountToDebit.currency.speculosApp,
     ...concordiumLock.fixtures,
@@ -205,7 +203,7 @@ test.describe("Send - legacy families - Concordium testnet", { lock: concordiumL
   });
 
   test(
-    `[${tx.accountToDebit.currency.testLabel}] - Send (legacy flow)`,
+    `[${tx.accountToDebit.currency.testLabel}] - Send`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id, skipLNS: true }),
       annotation: { type: "TMS", description: "B2CQA-6118" },

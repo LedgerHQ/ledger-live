@@ -13,6 +13,7 @@ import { launchApp } from "tests/utils/electronUtils";
 import {
   captureArtifacts,
   addTeamOwner,
+  TEAM_OWNER_ANNOTATION_TYPE,
   addAnnotationLinks,
   attachMergedFeatureFlags,
   attachSpeculinhoLogs,
@@ -136,8 +137,11 @@ export const test = base.extend<TestFixtures>({
   ],
 
   teamOwnerLabel: [
-    async ({ teamOwner }, use) => {
-      if (teamOwner !== undefined) {
+    async ({ teamOwner }, use, testInfo) => {
+      const hasStaticTeam = testInfo.annotations.some(
+        annotation => annotation.type === TEAM_OWNER_ANNOTATION_TYPE,
+      );
+      if (teamOwner !== undefined && !hasStaticTeam) {
         await addTeamOwner(teamOwner);
       }
       await use();
