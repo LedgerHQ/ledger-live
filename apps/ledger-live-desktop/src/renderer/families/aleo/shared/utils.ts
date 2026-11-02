@@ -5,26 +5,10 @@ import {
   type formatCurrencyUnitOptions,
 } from "@ledgerhq/live-common/currencies/index";
 import { PRIVATE_BALANCE_PLACEHOLDER } from "@ledgerhq/live-common/families/aleo/constants";
-import {
-  derivePrivateTransactionMode,
-  derivePublicTransactionMode,
-  isPrivateDestination,
-  isPrivateTransaction,
-  isSelfTransferTransaction,
-} from "@ledgerhq/live-common/families/aleo/utils";
-import type {
-  AleoCoinConfig,
-  Transaction as AleoTransaction,
-} from "@ledgerhq/live-common/families/aleo/types";
+import type { AleoCoinConfig } from "@ledgerhq/live-common/families/aleo/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { Unit } from "@domain/entity-currency-unit";
-
-export {
-  isAleoAccount,
-  isAleoTransaction,
-  getMaxPrivateRecordsForAccount,
-} from "@ledgerhq/live-common/families/aleo/utils";
 
 export const getAleoCurrencyConfig = (
   currency: CryptoCurrency | TokenCurrency,
@@ -32,42 +16,6 @@ export const getAleoCurrencyConfig = (
   getAleoCurrencyConfigById(
     currency.type === "CryptoCurrency" ? currency.id : currency.parentCurrencyId,
   );
-
-export function getAleoAddressBadgeI18nKey(
-  transaction: AleoTransaction,
-  direction: "from" | "to",
-): string {
-  const isPrivate =
-    direction === "from" ? isPrivateTransaction(transaction) : isPrivateDestination(transaction);
-
-  return isPrivate ? "aleo.operations.type.private" : "aleo.operations.type.public";
-}
-
-export function applyAleoBalanceSourceChange(
-  transaction: AleoTransaction,
-  source: "public" | "private",
-): AleoTransaction {
-  const isSelfTransfer = isSelfTransferTransaction(transaction);
-  const isTokenTx = !!transaction.subAccountId;
-
-  if (source === "public") {
-    const { properties: _ignoredProperties, ...txWithoutProperties } = transaction;
-
-    return {
-      ...txWithoutProperties,
-      mode: derivePublicTransactionMode({ isTokenTx, isSelfTransfer }),
-    };
-  }
-
-  return {
-    ...transaction,
-    mode: derivePrivateTransactionMode({ isTokenTx, isSelfTransfer }),
-    properties: {
-      amountRecordCommitments: [],
-      feeRecordCommitment: null,
-    },
-  };
-}
 
 export function formatAleoBalances({
   unit,

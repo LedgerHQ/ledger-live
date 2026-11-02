@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import { act } from "react";
 import BigNumber from "bignumber.js";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { renderHook, withFlagOverrides } from "tests/testSetup";
 import AccountHeaderActions from "./AccountHeaderManageActions";
 import { AleoCustomModal } from "./constants";
@@ -36,162 +35,6 @@ describe("AccountHeaderManageActions", () => {
   const hook = AccountHeaderActions;
   invariant(hook, "aleo: type guard AccountHeaderActions");
 
-  describe("when account has no balance (empty)", () => {
-    it("should return one action that is disabled", () => {
-      const { result } = renderHook(() => hook({ account: NEW_ALEO_ACCOUNT, parentAccount: null }));
-      const action = result.current?.[0];
-
-      expect(action).not.toBeUndefined();
-      expect(action?.disabled).toBe(true);
-    });
-
-    it("should include a tooltip when disabled", () => {
-      const { result } = renderHook(() => hook({ account: NEW_ALEO_ACCOUNT, parentAccount: null }));
-      const action = result.current?.[0];
-
-      expect(action?.tooltip).not.toBeUndefined();
-    });
-
-    it("should disable self-transfer for an empty token account", () => {
-      const emptyTokenAccount = {
-        ...ALEO_TOKEN_ACCOUNT,
-        balance: new BigNumber(0),
-        spendableBalance: new BigNumber(0),
-      };
-
-      const { result } = renderHook(() =>
-        hook({ account: emptyTokenAccount, parentAccount: ALEO_MAIN_ACCOUNT }),
-      );
-      const action = result.current?.[0];
-
-      expect(action?.disabled).toBe(true);
-    });
-  });
-
-  describe("when account has balance", () => {
-    it("should return one action that is enabled", () => {
-      const { result } = renderHook(() => hook({ account: ALEO_ACCOUNT_1, parentAccount: null }));
-      const action = result.current?.[0];
-
-      expect(action?.disabled).toBe(false);
-    });
-
-    it("should not include a tooltip when enabled", () => {
-      const { result } = renderHook(() => hook({ account: ALEO_ACCOUNT_1, parentAccount: null }));
-      const action = result.current?.[0];
-
-      expect(action?.tooltip).toBeUndefined();
-    });
-
-    it("should enable self-transfer for a token account with balance", () => {
-      const { result } = renderHook(() =>
-        hook({ account: ALEO_TOKEN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT }),
-      );
-      const action = result.current?.[0];
-
-      expect(action?.disabled).toBe(false);
-    });
-
-    it("should dispatch openModal with SELF_TRANSFER, account and parentAccount when onClick is called", () => {
-      const { result, store } = renderHook(() =>
-        hook({ account: ALEO_ACCOUNT_1, parentAccount: null }),
-      );
-      const action = result.current?.[0];
-
-      act(() => {
-        action?.onClick();
-      });
-
-      const modalState = store.getState().modals[AleoCustomModal.SELF_TRANSFER];
-
-      expect(modalState).toEqual({
-        isOpened: true,
-        data: { account: ALEO_ACCOUNT_1, parentAccount: null },
-      });
-    });
-
-    it("should dispatch openModal with parentAccount for token accounts", () => {
-      const { result, store } = renderHook(() =>
-        hook({ account: ALEO_TOKEN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT }),
-      );
-      const action = result.current?.[0];
-
-      act(() => {
-        action?.onClick();
-      });
-
-      const modalState = store.getState().modals[AleoCustomModal.SELF_TRANSFER];
-
-      expect(modalState).toEqual({
-        isOpened: true,
-        data: { account: ALEO_TOKEN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT },
-      });
-    });
-  });
-
-  describe("the Convert action and the newSendFlow flag", () => {
-    const findConvert = (
-      newSendFlow: { enabled: boolean; params: Record<string, string[]> } | undefined,
-      account: AccountLike = ALEO_ACCOUNT_1,
-      parentAccount: Account | null = null,
-    ) => {
-      const { result } = renderHook(() => hook({ account, parentAccount }), {
-        initialState: withFlagOverrides(newSendFlow ? { newSendFlow } : {}),
-      });
-      return result.current?.find(action => action.key === "Self transfer");
-    };
-
-    it("is present with the default flag configuration", () => {
-      expect(findConvert(undefined)).toBeDefined();
-    });
-
-    it("is present when the flag is on for other families only", () => {
-      expect(findConvert({ enabled: true, params: { families: ["bitcoin"] } })).toBeDefined();
-    });
-
-    it("is present when aleo is listed but the flag is disabled", () => {
-      expect(findConvert({ enabled: false, params: { families: ["aleo"] } })).toBeDefined();
-    });
-
-    it("is absent when the aleo currency is excluded but its balance-type step keeps the new flow", () => {
-      expect(
-        findConvert({
-          enabled: true,
-          params: { families: ["aleo"], excludedCurrencyIds: ["aleo"] },
-        }),
-      ).toBeUndefined();
-    });
-
-    it("is absent when the flag is on for aleo", () => {
-      expect(findConvert({ enabled: true, params: { families: ["aleo"] } })).toBeUndefined();
-    });
-
-    it("is absent on a token account when the flag is on for aleo", () => {
-      expect(
-        findConvert(
-          { enabled: true, params: { families: ["aleo"] } },
-          ALEO_TOKEN_ACCOUNT,
-          ALEO_MAIN_ACCOUNT,
-        ),
-      ).toBeUndefined();
-    });
-
-    it("keeps the Earn action when the flag is on for aleo", () => {
-      mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
-
-      const { result } = renderHook(
-        () => hook({ account: ALEO_MAIN_ACCOUNT, parentAccount: null }),
-        {
-          initialState: withFlagOverrides({
-            newSendFlow: { enabled: true, params: { families: ["aleo"] } },
-          }),
-        },
-      );
-
-      expect(result.current?.map(action => action.key)).toEqual(["AleoBond"]);
-    });
-  });
-
   // While enableStaking is off the entry point must be absent rather than merely disabled:
   // a disabled button still advertises a feature that cannot work.
   describe("the Earn action and the enableStaking flag", () => {
@@ -199,6 +42,21 @@ describe("AccountHeaderManageActions", () => {
       const { result } = renderHook(() => hook({ account, parentAccount }));
       return result.current?.find(action => action.key === "AleoBond");
     };
+
+    it("is the only action when aleo is not in the new send flow", () => {
+      mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
+
+      const { result } = renderHook(
+        () => hook({ account: ALEO_MAIN_ACCOUNT, parentAccount: null }),
+        {
+          initialState: withFlagOverrides({
+            newSendFlow: { enabled: true, params: { families: ["bitcoin"] } },
+          }),
+        },
+      );
+
+      expect(result.current?.map(action => action.key)).toEqual(["AleoBond"]);
+    });
 
     it("is absent when staking is disabled", () => {
       expect(findEarn()).toBeUndefined();
@@ -248,7 +106,6 @@ describe("AccountHeaderManageActions", () => {
       );
 
       expect(result.current?.find(item => item.key === "AleoBond")).toBeUndefined();
-      expect(result.current?.find(item => item.key === "Self transfer")).toBeDefined();
     });
 
     it("opens the bond flow directly when nothing is bonded", () => {

@@ -10015,47 +10015,8 @@
         }
       }
     },
-    "selfTransfer": {
-      "headerAction": "Convert",
-      "headerActionTooltip": "You don't have any funds to perform a self transfer",
-      "modal": {
-        "title": "Convert",
-        "stepRecipient": {
-          "selectLabel": "Transfer from"
-        }
-      }
-    },
     "shared": {
-      "quickAmountSelector": {
-        "strategies": {
-          "fast": "Fast",
-          "balanced": "Balanced",
-          "full": "Full"
-        },
-        "recordCount_one": "{{count}} record",
-        "recordCount_other": "{{count}} records",
-        "unavailable": "Unavailable",
-        "spendableBalance": "Max Spendable Balance:"
-      },
-      "infoBanner": {
-        "descPartOne": "Sender, amount and recipient hidden on-chain.",
-        "descPartTwo": "Up to {{max}} records per send."
-      },
-      "sponsoredByProvable": "Sponsored by Provable",
-      "balanceSelector": {
-        "private": "Private balance",
-        "public": "Public balance",
-        "lastUpdate": "Last updated: {{label}}",
-        "recently": "Recently",
-        "switchBalance": "Switch balance source"
-      },
-      "recordPicker": {
-        "label": "Available records",
-        "noRecords": "No records available",
-        "noRecordsAlert": "You don't have any records available. Perform self transfer or receive private funds to get started.",
-        "alert": "The maximum spendable amount depends on the maximum value of your selected record. Fees are sponsored by Provable for Ledger users.",
-        "recordsLimit": "Maximum {{max}} records are shown"
-      }
+      "sponsoredByProvable": "Sponsored by Provable"
     },
     "account": {
       "availableBalance": "Available balance",
@@ -10138,25 +10099,11 @@
       }
     },
     "send": {
-      "stepRecipient": {
-        "selectLabel": "Send from"
-      },
-      "summary": {
-        "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
-        "recordsUsed": "Records used",
-        "signingTime": "Signing time"
-      },
       "amount": {
         "signingTime": {
           "label": "Est. time",
           "description": "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm."
         }
-      },
-      "mandatoryPrivateSync": {
-        "title": "Syncing your private balance ({{percentage}}%)",
-        "desc": "Please wait",
-        "errorTitle": "Private sync failed",
-        "errorDesc": "Something went wrong, please try again"
       },
       "balanceTypeSync": {
         "title": "Refreshing your private balance",

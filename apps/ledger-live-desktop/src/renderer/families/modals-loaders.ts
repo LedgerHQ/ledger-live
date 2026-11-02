@@ -1,6 +1,5 @@
 import React, { use } from "react";
 
-import type { Data as AleoSendData } from "./aleo/modals/send/types";
 import type { Data as AleoBondPublicData } from "./aleo/BondPublicFlowModal/Body";
 import type { Data as AleoManageData } from "./aleo/ManageModal/ManageModal";
 import type { Data as AleoUnbondData } from "./aleo/UnbondFlowModal/Body";
@@ -86,7 +85,6 @@ import type { Data as TezosUnstakeData } from "./tezos/UnstakeFlowModal/Body";
 import type { Data as TezosUnstakeRequiredData } from "./tezos/UnstakeRequiredModal";
 
 export type CoinModalsData = {
-  MODAL_ALEO_SELF_TRANSFER: AleoSendData;
   MODAL_ALEO_BOND_PUBLIC: AleoBondPublicData;
   MODAL_ALEO_MANAGE: AleoManageData;
   MODAL_ALEO_UNBOND: AleoUnbondData;
@@ -181,7 +179,6 @@ type CoinModalImport = () => Promise<{ default: React.ComponentType<any> }>;
 // Raw import() per modal, kept separate from coinModalLoaders so chunks can be warmed via
 // preloadCoinModals() (the bundler dedupes, so React.lazy then resolves instantly).
 export const coinModalImports: Record<CoinModalKey, CoinModalImport> = {
-  MODAL_ALEO_SELF_TRANSFER: () => import("./aleo/SelfTransferModal"),
   MODAL_ALEO_BOND_PUBLIC: () => import("./aleo/BondPublicFlowModal"),
   MODAL_ALEO_MANAGE: () => import("./aleo/ManageModal/ManageModal"),
   MODAL_ALEO_UNBOND: () => import("./aleo/UnbondFlowModal"),

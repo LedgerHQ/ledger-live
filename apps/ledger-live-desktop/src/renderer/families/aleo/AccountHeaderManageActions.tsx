@@ -4,10 +4,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { isFirstBondPending } from "@ledgerhq/live-common/families/aleo/utils";
-import { getSendUiConfig } from "@ledgerhq/live-common/flows/send/uiConfig";
-import { useNewSendFlowFeature } from "LLD/features/Send/hooks/useNewSendFlowFeature";
 import { openModal } from "~/renderer/actions/modals";
-import IconTransfer from "~/renderer/icons/Transfer";
 import IconCoins from "~/renderer/icons/Coins";
 import type { AleoFamily } from "./types";
 import { AleoCustomModal } from "./constants";
@@ -20,24 +17,12 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const bridge = useAccountBridge(account, parentAccount);
-  const isSelfTransferDisabled = bridge.isAccountEmpty(account);
   const mainAccount = getMainAccount(account, parentAccount) as AleoAccount;
   const isStakingEnabled = !!getAleoCurrencyConfig(mainAccount.currency)?.enableStaking;
   const showStakingAction = isStakingEnabled && account.type === "Account";
-  const { isEnabledForFamily } = useNewSendFlowFeature();
-  // Same predicate as useOpenSendFlow: the new send flow offers self transfer itself, replacing Convert.
-  const { family, id: currencyId } = mainAccount.currency;
-  const isNewSendFlowActive =
-    isEnabledForFamily(family, currencyId) ||
-    (isEnabledForFamily(family) && getSendUiConfig(mainAccount.currency).hasBalanceTypeStep);
-  const showSelfTransferAction = !isNewSendFlowActive;
 
   const hasBondedPosition = !!mainAccount.aleoResources?.bondedValidator;
   const hasFirstBondPending = isFirstBondPending(mainAccount);
-
-  const onClick = () => {
-    dispatch(openModal(AleoCustomModal.SELF_TRANSFER, { account, parentAccount }));
-  };
 
   const onManage = () => {
     if (bridge.isAccountEmpty(mainAccount)) {
@@ -53,23 +38,6 @@ const AccountHeaderActions: AleoFamily["accountHeaderManageActions"] = ({
   };
 
   return [
-    ...(showSelfTransferAction
-      ? [
-          {
-            key: "Self transfer",
-            onClick: onClick,
-            icon: IconTransfer,
-            disabled: isSelfTransferDisabled,
-            tooltip: isSelfTransferDisabled
-              ? t("aleo.selfTransfer.headerActionTooltip")
-              : undefined,
-            label: t("aleo.selfTransfer.headerAction"),
-            event: "button_clicked2",
-            eventProperties: { button: "aleo-self-transfer" },
-            accountActionsTestId: "self-transfer-button",
-          },
-        ]
-      : []),
     ...(showStakingAction
       ? [
           {
