@@ -1045,11 +1045,12 @@ jobs:
           name: ${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}
           retention-days: 7
 
+      # A failed lock check skips the tests: report it as a failure, not as a missing shard.
       - name: Set job output based on detox result
         id: set-output
         if: ${{ !cancelled() }}
         run: |
-          echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
+          echo "status_${{ matrix.shard }}=${{ steps.exclusive-lock.outcome == 'failure' && 'failure' || steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
 
   detox-tests-android:
     name: Android E2E Tests (${{ matrix.shard }}, ${{ matrix.total }})
@@ -1564,11 +1565,12 @@ jobs:
           name: ${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}
           retention-days: 7
 
+      # A failed lock check skips the tests: report it as a failure, not as a missing shard.
       - name: Set job output based on detox result
         id: set-output
         if: ${{ !cancelled() }}
         run: |
-          echo "status_${{ matrix.shard }}=${{ steps.run-android.outcome }}" >> $GITHUB_OUTPUT
+          echo "status_${{ matrix.shard }}=${{ steps.exclusive-lock.outcome == 'failure' && 'failure' || steps.run-android.outcome }}" >> $GITHUB_OUTPUT
 
   allure-report-ios:
     name: Allure Report iOS
