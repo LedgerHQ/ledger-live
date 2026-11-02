@@ -8,15 +8,30 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Box, Spinner } from "@ledgerhq/lumen-ui-rnative";
 import { useContactsListCopy } from "./copy/useContactsListCopy";
-import type { ContactsListItem, ContactsListSection, ContactsListViewNativeProps } from "./types";
+import type { ContactsListItem, ContactsListSection, ContactsPageSharedProps } from "./types";
 import { createContactsListRowLayouts } from "./utils";
-import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader.native";
-import { ContactsSearchNoResults } from "./components/ContactsList/Search/ContactsSearchNoResults.native";
-import { ContactsSearchInput } from "./components/ContactsList/Search/ContactsSearchInput.native";
-import { ContactsSavedContactListItem } from "./components/ContactsList/ListItems/ContactsSavedContactListItem.native";
-import { ContactsSectionIndex } from "./components/ContactsList/Section/ContactsSectionIndex.native";
-import { ContactsSectionHeader } from "./components/ContactsList/Section/ContactsSectionHeader.native";
-import { useContactsSectionIndex } from "./components/ContactsList/Section/useContactsSectionIndex.native";
+import { ContactsListHeader } from "./components/ListHeader/ContactsListHeader";
+import { ContactsSearchNoResults } from "./components/ContactsList/Search/ContactsSearchNoResults";
+import { ContactsSearchInput } from "./components/ContactsList/Search/ContactsSearchInput";
+import { ContactsSavedContactListItem } from "./components/ContactsList/ListItems/ContactsSavedContactListItem";
+import { ContactsSectionIndex } from "./components/ContactsList/Section/ContactsSectionIndex";
+import { ContactsSectionHeader } from "./components/ContactsList/Section/ContactsSectionHeader";
+import { useContactsSectionIndex } from "./components/ContactsList/Section/useContactsSectionIndex";
+
+/**
+ * Surface the list is painted on. `base` is the app canvas (full page), `canvasSheet` the bottom
+ * sheet canvas. The list owns opaque backgrounds (root, pinned search bar, sticky section headers)
+ * that must match their host, otherwise two different blacks are visible. It also tells the list who
+ * owns the bottom safe area: `base` pads for it, `canvasSheet` leaves it to the sheet host.
+ */
+export type ContactsListSurface = "base" | "canvasSheet";
+
+export type ContactsListViewNativeProps = ContactsPageSharedProps &
+  Readonly<{
+    onSearchQueryChange: (query: string) => void;
+    surface?: ContactsListSurface;
+    titleContext?: "contacts" | "selectContact";
+  }>;
 
 const noContactsListSections: readonly never[] = [];
 const listContentPaddingBottom = 8;

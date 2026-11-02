@@ -1,6 +1,9 @@
 import React from "react";
 import { BottomSheetHeader, BottomSheetView, Box } from "@ledgerhq/lumen-ui-rnative";
-import { ContactsListView, type ContactsListViewNativeProps } from "@features/flow-contacts-list";
+import {
+  ContactsListView,
+  type ContactsListViewNativeProps,
+} from "@features/flow-contacts-list/native";
 import { useTranslation } from "~/context/Locale";
 
 export type SelectContactStepProps = Omit<

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Animated, PanResponder, View, type LayoutChangeEvent } from "react-native";
 import { Box, Pressable, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { SelectSectionOptions } from "./useContactsSectionIndex.native";
+import type { SelectSectionOptions } from "./useContactsSectionIndex";
 
 type ContactsSectionIndexProps = Readonly<{
   sections: readonly string[];

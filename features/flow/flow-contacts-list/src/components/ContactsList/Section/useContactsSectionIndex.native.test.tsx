@@ -1,9 +1,9 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react-native";
 import { ContactIdSchema } from "@domain/entity-contact";
 import type { RefObject } from "react";
 import type { SectionList } from "react-native";
 import type { ContactsListItem, ContactsListSection } from "../../../types";
-import { useContactsSectionIndex } from "./useContactsSectionIndex.native";
+import { useContactsSectionIndex } from "./useContactsSectionIndex";
 
 const sections: readonly ContactsListSection[] = [
   {
@@ -60,6 +60,21 @@ function flushAnimationFrame() {
     await new Promise(resolve => requestAnimationFrame(resolve));
   });
 }
+
+function requestNextFrame(callback: FrameRequestCallback): number {
+  return Number(setTimeout(() => callback(Date.now()), 0));
+}
+
+const originalRequestAnimationFrame = globalThis.requestAnimationFrame;
+
+// The node test environment has no frame scheduler; the React Native runtime provides one.
+beforeAll(() => {
+  globalThis.requestAnimationFrame = requestNextFrame;
+});
+
+afterAll(() => {
+  globalThis.requestAnimationFrame = originalRequestAnimationFrame;
+});
 
 describe("useContactsSectionIndex", () => {
   it("derives the interactive entries from the displayed sections", () => {
