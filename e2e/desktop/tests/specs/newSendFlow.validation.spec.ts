@@ -3,6 +3,7 @@ import { Addresses } from "@ledgerhq/live-e2e-shared/enum/Addresses";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import {
+  accountAddressCommand,
   getAccountAddress,
   liveDataCommand,
   liveDataWithRecipientAddressCommand,
@@ -385,7 +386,7 @@ test.describe("Send - new flow - ENS address", () => {
     speculosApp: tx.accountToDebit.currency.speculosApp,
     cliCommands: [
       liveDataWithRecipientAddressCommand(tx),
-      async () => getAccountAddress(tx.accountToDebit),
+      accountAddressCommand(tx.accountToDebit),
     ],
     env: { DISABLE_TRANSACTION_BROADCAST: "1" },
     featureFlags: newSendFlowFeatureFlags,
@@ -409,13 +410,13 @@ test.describe("Send - new flow - ENS address", () => {
       await app.newSendFlow.expectRecentHistoryWarning();
       await app.newSendFlow.typeAddress(tx.accountToCredit.ensName ?? "");
       await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
-      await app.newSendFlow.fillCryptoAmount(tx.amount);
       await app.newSendFlow.openFeesMenu();
       await app.newSendFlow.selectCustomFeesFromMenu();
       await app.newSendFlow.fillEip1559CustomFees({ maxPriorityFee: "1", maxFee: "2" });
       await app.newSendFlow.confirmCustomFees();
       await app.newSendFlow.expectCustomFeesApplied();
       await app.newSendFlow.selectFeePreset(Fee.MEDIUM);
+      await app.newSendFlow.fillCryptoAmount(tx.amount);
       await app.newSendFlow.clickReview();
       await app.newSendFlow.waitForSignature();
       await app.speculos.signSendTransaction(tx);

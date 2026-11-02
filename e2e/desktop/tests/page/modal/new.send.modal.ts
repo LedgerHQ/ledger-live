@@ -403,6 +403,7 @@ export class NewSendModal extends Modal {
 
   @step("Confirm the custom fees")
   async confirmCustomFees() {
+    await expect(this.customFeesConfirmButton).toBeEnabled();
     await this.customFeesConfirmButton.click();
   }
 
