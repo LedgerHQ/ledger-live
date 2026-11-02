@@ -68,20 +68,10 @@ const { data: currencies } = useGetSupportedCounterCurrenciesQuery();
 
 ### Direct API Functions
 
-For chart data, use the direct fetch helper (used by `useLargeMoverChartData`):
-
 ```typescript
-import {
-  supportedCounterCurrencies,
-  fetchCurrencyChartData,
-} from "@ledgerhq/live-common/cg-client/api";
+import { supportedCounterCurrencies } from "@ledgerhq/live-common/cg-client/api";
 
 const currencies = await supportedCounterCurrencies();
-const chartData = await fetchCurrencyChartData({
-  id: "bitcoin",
-  counterCurrency: "usd",
-  range: "7d",
-});
 ```
 
-For market coin detail charts, use `useAssetChartData` from `@ledgerhq/live-common/market/hooks/useAssetChartData` instead.
+For charts, use `useAssetChartData` from `@ledgerhq/live-common/market/hooks/useAssetChartData`.
