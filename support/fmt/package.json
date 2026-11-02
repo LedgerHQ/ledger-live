@@ -10,7 +10,8 @@
   },
   "scripts": {
     "format": "oxfmt oxfmt.config.mts",
-    "format:check": "oxfmt oxfmt.config.mts --check"
+    "format:check": "oxfmt oxfmt.config.mts --check",
+    "lint": "oxlint ./"
   },
   "devDependencies": {
     "oxfmt": "catalog:"

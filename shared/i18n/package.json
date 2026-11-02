@@ -14,6 +14,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
