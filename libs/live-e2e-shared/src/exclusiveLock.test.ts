@@ -376,45 +376,140 @@ test("refuses an unknown lock priority", async () => {
   });
 });
 
-const mockR2Responses = (respond: (call: number) => Response) => {
-  let calls = 0;
-  const fetchMock = mock.method(globalThis, "fetch", async () => respond(++calls));
-  return { calls: () => calls, restore: () => fetchMock.mock.restore() };
+type R2Request = {
+  readonly method: string;
+  readonly headers: Readonly<Record<string, string>>;
+};
+
+const mockR2Responses = (respond: (request: R2Request, call: number) => Response) => {
+  const requests: R2Request[] = [];
+  const fetchMock = mock.method(globalThis, "fetch", async (_url: URL, init: RequestInit) => {
+    const request = {
+      method: init.method ?? "GET",
+      headers: { ...(init.headers as Record<string, string>) },
+    };
+    requests.push(request);
+    return respond(request, requests.length);
+  });
+  return { requests, restore: () => fetchMock.mock.restore() };
 };
 
 const noSleep = async () => {};
 
-test("finds the lock store answering when its check key is missing", async () => {
-  const r2 = mockR2Responses(() => new Response(null, { status: 404 }));
+const written = () => new Response(null, { status: 200, headers: { etag: '"written"' } });
+
+/** R2 holding the check key another job wrote, then answering its replacement with `status`. */
+const checkKeyStored =
+  (replaceStatus: number) =>
+  ({ method, headers }: R2Request) => {
+    if (headers["if-none-match"] === "*")
+      return new Response("PreconditionFailed", { status: 412 });
+    if (method === "PUT")
+      return replaceStatus === 200 ? written() : new Response(null, { status: replaceStatus });
+    const now = new Date().toUTCString();
+    return new Response(
+      JSON.stringify({
+        holder: "android-runner",
+        label: "lock store check",
+        leaseMs: 0,
+        settleMs: 0,
+        released: true,
+      }),
+      { status: 200, headers: { etag: '"stored"', date: now, "last-modified": now } },
+    );
+  };
+
+const conditions = (requests: readonly R2Request[]) =>
+  requests.map(({ method, headers }) => [
+    method,
+    headers["if-none-match"] ?? headers["if-match"] ?? "",
+  ]);
+
+test("finds the lock store taking locks when it creates its check key", async () => {
+  const r2 = mockR2Responses(written);
   try {
     await withEnv(REMOTE_LOCK, async () => {
       assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
     });
-    assert.equal(r2.calls(), 1);
+    assert.deepEqual(conditions(r2.requests), [["PUT", "*"]]);
   } finally {
     r2.restore();
   }
 });
 
-test("finds the lock store answering once a retried request succeeds", async () => {
-  const r2 = mockR2Responses(call => new Response(null, { status: call === 1 ? 503 : 404 }));
+test("finds the lock store taking locks when it replaces its check key", async () => {
+  const r2 = mockR2Responses(checkKeyStored(200));
   try {
     await withEnv(REMOTE_LOCK, async () => {
       assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
     });
-    assert.equal(r2.calls(), 2);
+    assert.deepEqual(conditions(r2.requests), [
+      ["PUT", "*"],
+      ["GET", ""],
+      ["PUT", '"stored"'],
+    ]);
   } finally {
     r2.restore();
   }
 });
 
-test("reports a lock store failure that retrying cannot fix at once", async () => {
-  const r2 = mockR2Responses(() => new Response("AccessDenied", { status: 403 }));
+test("finds the lock store taking locks when another job's check replaced the key first", async () => {
+  const r2 = mockR2Responses(checkKeyStored(412));
   try {
     await withEnv(REMOTE_LOCK, async () => {
-      assert.match((await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "", /failed with 403/);
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
     });
-    assert.equal(r2.calls(), 1);
+    assert.equal(r2.requests.length, 3);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("finds the lock store taking locks once a retried request succeeds", async () => {
+  const r2 = mockR2Responses((_request, call) =>
+    call === 1 ? new Response(null, { status: 503 }) : written(),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.equal(r2.requests.length, 2);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports at once a lock store that reads but refuses writes", async () => {
+  const r2 = mockR2Responses(({ method }) =>
+    method === "GET"
+      ? checkKeyStored(200)({ method, headers: {} })
+      : new Response("AccessDenied", { status: 403 }),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /R2 PUT .* failed with 403/,
+      );
+    });
+    assert.equal(r2.requests.length, 1);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports at once a missing bucket, which R2 answers with a 404 like a missing key", async () => {
+  const r2 = mockR2Responses(
+    () => new Response("<Error><Code>NoSuchBucket</Code></Error>", { status: 404 }),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /failed with 404: .*NoSuchBucket/,
+      );
+    });
+    assert.equal(r2.requests.length, 1);
   } finally {
     r2.restore();
   }
@@ -434,7 +529,7 @@ test("reports why the lock store kept failing after retrying it", async () => {
       });
       assert.equal(failure, "fetch failed: connect ECONNREFUSED");
     });
-    assert.equal(r2.calls(), 4);
+    assert.equal(r2.requests.length, 4);
     assert.equal(sleeps.length, 3);
   } finally {
     r2.restore();

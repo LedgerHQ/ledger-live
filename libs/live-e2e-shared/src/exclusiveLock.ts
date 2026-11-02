@@ -6,7 +6,13 @@ import { acquireDistributedLock } from "./exclusiveLock/distributedLock";
 import { ExclusiveLockConfigError, ExclusiveLockRefusedError } from "./errors";
 import { createR2LockStore } from "./exclusiveLock/r2LockStore";
 import { acquireCrossProcessLock } from "./crossProcessLock";
-import type { AbandonableLease, Lease, LockLogger, LockStore } from "./exclusiveLock/types";
+import type {
+  AbandonableLease,
+  Lease,
+  LockLogger,
+  LockRecord,
+  LockStore,
+} from "./exclusiveLock/types";
 import type { Account } from "./enum/Account";
 
 export type { AbandonableLease, Lease } from "./exclusiveLock/types";
@@ -157,6 +163,7 @@ function r2LockStoreFromEnv(): LockStore | undefined {
   });
 }
 
+// No lock key looks like it: those are "<currency>:<path>" or a shared resource's.
 const STORE_CHECK_KEY = "store-check";
 const STORE_CHECK_ATTEMPTS = 4;
 
@@ -170,8 +177,26 @@ const storeErrorMessage = (error: unknown): string => {
 };
 
 /**
+ * Writes the check key the way a claim does, creating it and otherwise replacing it, so a bucket
+ * that is missing, read-only or failing writes fails too. Losing the race to another job's check
+ * still passes: R2 accepted the write and evaluated its condition.
+ */
+async function checkLockStore(store: LockStore): Promise<void> {
+  const record: LockRecord = {
+    holder: `${HOLDER_PREFIX}${randomUUID()}`,
+    label: "lock store check",
+    leaseMs: 0,
+    settleMs: 0,
+    released: true,
+  };
+  if (await store.create(STORE_CHECK_KEY, record)) return;
+  const current = await store.read(STORE_CHECK_KEY);
+  if (current) await store.replace(STORE_CHECK_KEY, record, current.etag);
+}
+
+/**
  * Why the R2 bucket E2E_EXCLUSIVE_LOCK_* points at cannot hold exclusive locks, or undefined when
- * it answers. CI checks it before the tests, which lock on their machine only while it fails.
+ * it takes them. CI checks it before the tests, which lock on their machine only while it fails.
  * Throws when E2E_EXCLUSIVE_LOCK_* is missing.
  */
 export async function exclusiveLockStoreFailure({
@@ -185,7 +210,7 @@ export async function exclusiveLockStoreFailure({
   }
   const check = async (attempt: number): Promise<string | undefined> => {
     try {
-      await store.read(STORE_CHECK_KEY);
+      await checkLockStore(store);
       return undefined;
     } catch (error) {
       if (attempt >= STORE_CHECK_ATTEMPTS || isFatalStoreError(error)) {
