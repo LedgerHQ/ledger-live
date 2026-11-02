@@ -48,7 +48,8 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
 7. **Nesting.** A CLI approval inside a test that already holds the account joins that hold instead
    of waiting for it. The test's release waits for the approval to finish.
 8. **Without R2.** If `E2E_EXCLUSIVE_LOCK_*` is unset, or `E2E_EXCLUSIVE_LOCK_MODE` is `local`, a
-   file lock under `$TMPDIR/ll-e2e-locks` serializes processes on this machine only. On CI (`CI`
+   file lock under `$TMPDIR/ll-e2e-locks` serializes processes on this machine only. It keeps the
+   settle window: the next holder takes the lock, then waits out what is left of it. On CI (`CI`
    set), only `local` allows it.
 
 If a mobile spec cannot get its lock, its tests fail. Its other hooks still run, so the app starts

@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import os from "node:os";
-import test, { mock } from "node:test";
+import path from "node:path";
+import test, { after, mock } from "node:test";
 import {
   accountLockKey,
   acquireExclusiveLock,
@@ -30,7 +32,14 @@ const REMOTE_LOCK: Env = {
   E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: "secret",
 };
 
-const withEnv = async (env: Env, fn: () => Promise<void>) => {
+const lockDirs = mkdtempSync(path.join(os.tmpdir(), "exclusive-lock-test-"));
+after(() => rmSync(lockDirs, { recursive: true, force: true }));
+let lockDirCount = 0;
+
+// Each run gets a machine-local lock directory of its own, so no settle window an earlier test
+// left delays it.
+const withEnv = async (runEnv: Env, fn: () => Promise<void>) => {
+  const env = { ...runEnv, TMPDIR: path.join(lockDirs, String(++lockDirCount)) };
   const previous = Object.fromEntries(Object.keys(env).map(name => [name, process.env[name]]));
   const apply = (values: Env) => {
     for (const [name, value] of Object.entries(values)) {
@@ -231,14 +240,14 @@ test("does not let a call join a lock whose release has started", { timeout: 10_
     const spec = await acquireExclusiveLock([Account.ETH_1], "ios approval.spec.ts", {
       allowNested: true,
     });
-    const specReleased = spec.release().then(() => steps.push("spec released"));
+    const specAbandoned = spec.abandon().then(() => steps.push("spec abandoned"));
     await runWithExclusiveLock([TokenAccount.ETH_USDT_1], "late approval", async () => {
       steps.push("late approval");
     });
-    await specReleased;
+    await specAbandoned;
   });
 
-  assert.deepEqual(steps, ["spec released", "late approval"]);
+  assert.deepEqual(steps, ["spec abandoned", "late approval"]);
 });
 
 test(
@@ -283,12 +292,12 @@ for (const allowNested of [false, true]) {
         });
 
         await new Promise(resolve => setTimeout(resolve, 300));
-        steps.push("earlier released");
-        await earlier.release();
-        await (await next).release();
+        steps.push("earlier abandoned");
+        await earlier.abandon();
+        await (await next).abandon();
       });
 
-      assert.deepEqual(steps, ["earlier released", "next spec acquired"]);
+      assert.deepEqual(steps, ["earlier abandoned", "next spec acquired"]);
     },
   );
 }
@@ -302,8 +311,8 @@ test(
       const earlier = await acquireExclusiveLock([Account.ETH_1], "earlier spec");
       const next = acquireExclusiveLock([Account.ETH_1], "next spec");
       await new Promise(resolve => setTimeout(resolve, 300));
-      await earlier.release();
-      await (await next).release();
+      await earlier.abandon();
+      await (await next).abandon();
     });
 
     assert.ok(takeExclusiveLockWaitedMs() >= 300);
@@ -317,8 +326,8 @@ test("locks each on-chain account once when several share it", { timeout: 10_000
       [TokenAccount.ETH_USDT_1, Account.ETH_1, Account.ATOM_1],
       "multi-account flow",
     );
-    await lease.release();
-    await lease.release();
+    await lease.abandon();
+    await lease.abandon();
 
     await runWithExclusiveLock([Account.ETH_1], "next flow", async () => {});
   });
@@ -357,6 +366,30 @@ test("locks on this machine only, even on CI, when told to", async () => {
   } finally {
     r2.restore();
   }
+});
+
+/** The settle windows machine-local releases left in this run's lock directory, by key. */
+const machineLocalSettleWindows = () => {
+  const lockRoot = path.join(os.tmpdir(), "ll-e2e-locks");
+  return readdirSync(lockRoot)
+    .filter(name => name.endsWith(".settled-until"))
+    .map(name => ({
+      key: Buffer.from(name.split(".")[0], "base64url").toString(),
+      leftMs: Number(readFileSync(path.join(lockRoot, name), "utf8")) - Date.now(),
+    }));
+};
+
+test("keeps the settle window on this machine only after a broadcast from an account", async () => {
+  await withEnv({ ...REMOTE_LOCK, CI: "true", E2E_EXCLUSIVE_LOCK_MODE: "local" }, async () => {
+    await (await acquireExclusiveLock([Account.ETH_1], "R2 down, broadcast")).release();
+    await (await acquireExclusiveLock([Account.SOL_1], "R2 down, nothing broadcast")).abandon();
+    await (await acquireExclusiveLock([PAY_CARD], "R2 down, card frozen")).release();
+
+    const [ethSettle, ...others] = machineLocalSettleWindows();
+    assert.equal(ethSettle?.key, accountLockKey(Account.ETH_1));
+    assert.ok(ethSettle.leftMs > 40_000 && ethSettle.leftMs <= 45_000);
+    assert.deepEqual(others, []);
+  });
 });
 
 test("refuses an unknown lock mode", async () => {

@@ -227,6 +227,7 @@ let warnedMachineLocal = false;
 
 async function acquireMachineLocalLock(
   key: string,
+  settleMs: number,
   acquireTimeoutMs: number,
 ): Promise<AbandonableLease> {
   const localMode = isMachineLocalMode();
@@ -245,7 +246,7 @@ async function acquireMachineLocalLock(
     );
   }
   const release = await acquireCrossProcessLock(key, { acquireTimeoutMs });
-  return { release, abandon: release };
+  return { release: () => release(settleMs), abandon: () => release() };
 }
 
 function joinHold(outer: LiveHold): AbandonableLease {
@@ -301,6 +302,7 @@ async function acquireKey(
     if (holds[key] === hold) Reflect.deleteProperty(holds, key);
   };
   const acquireTimeoutMs = Math.max(0, deadline - Date.now());
+  const settleMs = sharedResourceKeys.has(key) ? 0 : SETTLE_MS;
   const highPriority = isHighPriority();
   const store = remoteLockStoreFromEnv();
   const lease = store
@@ -308,7 +310,7 @@ async function acquireKey(
         holder: `${HOLDER_PREFIX}${randomUUID()}`,
         label,
         leaseMs: LEASE_MS,
-        settleMs: sharedResourceKeys.has(key) ? 0 : SETTLE_MS,
+        settleMs,
         heartbeatMs: HEARTBEAT_MS,
         pollMs: highPriority ? HIGH_PRIORITY_POLL_MS : POLL_MS,
         acquireTimeoutMs: giveUpIfHeld
@@ -322,7 +324,7 @@ async function acquireKey(
         log: consoleLogger,
         onLost: forget,
       })
-    : await acquireMachineLocalLock(key, acquireTimeoutMs);
+    : await acquireMachineLocalLock(key, settleMs, acquireTimeoutMs);
   if (allowNested) holds[key] = hold;
 
   // Calls made while nested ones still run can join, e.g. a nested call locking the account

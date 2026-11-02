@@ -56,6 +56,18 @@ function lockDirFor(key: string, rootDir: string = defaultRootDir()): string {
   return path.join(rootDir, sanitize(key));
 }
 
+const settleFileFor = (lockDir: string) => `${lockDir}.settled-until`;
+
+/** When the last release of the lock at `lockDir` stops keeping it closed, or 0 if none does. */
+async function settledUntil(lockDir: string): Promise<number> {
+  try {
+    return Number(await fs.promises.readFile(settleFileFor(lockDir), "utf8")) || 0;
+  } catch (err) {
+    if (isErrnoException(err) && err.code === "ENOENT") return 0;
+    throw err;
+  }
+}
+
 /**
  * Moves a stale lock aside before removing it. Renaming is atomic, so of two waiters that saw it
  * stale only one moves it; a slower one that moves the fresh lock the first just took puts it back.
@@ -78,11 +90,17 @@ async function waitForLockDir(lockDir: string, staleMs: number, backoffMs: numbe
   else await delay(backoffMs);
 }
 
+/**
+ * Releases a cross-process lock. Released with `settleMs`, the key stays closed that long: the
+ * next holder takes it and waits out the rest before it returns.
+ */
+export type ReleaseCrossProcessLock = (settleMs?: number) => Promise<void>;
+
 /** Holds `key` until the returned release function is called. */
 export async function acquireCrossProcessLock(
   key: string,
   options: CrossProcessLockOptions = {},
-): Promise<() => Promise<void>> {
+): Promise<ReleaseCrossProcessLock> {
   const rootDir = options.rootDir ?? defaultRootDir();
   const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
   const heartbeatMs = options.heartbeatMs ?? DEFAULT_HEARTBEAT_MS;
@@ -92,6 +110,10 @@ export async function acquireCrossProcessLock(
   const lockDir = lockDirFor(key, rootDir);
   await fs.promises.mkdir(rootDir, { recursive: true });
   const start = Date.now();
+  const timedOut = () =>
+    new Error(
+      `[crossProcessLock]: timed out after ${acquireTimeoutMs}ms acquiring lock for "${key}"`,
+    );
 
   const takeLockDir = async (): Promise<void> => {
     try {
@@ -100,11 +122,7 @@ export async function acquireCrossProcessLock(
     } catch (err) {
       if (!isErrnoException(err) || err.code !== "EEXIST") throw err;
     }
-    if (Date.now() - start > acquireTimeoutMs) {
-      throw new Error(
-        `[crossProcessLock]: timed out after ${acquireTimeoutMs}ms acquiring lock for "${key}"`,
-      );
-    }
+    if (Date.now() - start > acquireTimeoutMs) throw timedOut();
     await waitForLockDir(lockDir, staleMs, backoffMs).catch(() => {});
     return takeLockDir();
   };
@@ -118,14 +136,39 @@ export async function acquireCrossProcessLock(
   heartbeat.unref();
 
   let released = false;
-  return async () => {
+  const release: ReleaseCrossProcessLock = async (settleMs = 0) => {
     if (released) return;
     released = true;
     clearInterval(heartbeat);
+    if (settleMs > 0) {
+      await fs.promises
+        .writeFile(settleFileFor(lockDir), String(Date.now() + settleMs))
+        .catch(err =>
+          console.warn(`[crossProcessLock]: failed to keep "${key}" closed after its release`, err),
+        );
+    }
     try {
       await fs.promises.rm(lockDir, { recursive: true, force: true });
     } catch (err) {
       console.warn(`[crossProcessLock]: failed to release lock for "${key}"`, err);
     }
   };
+
+  // Held meanwhile, with its heartbeat, so the next waiters queue behind it.
+  const waitOutSettle = async () => {
+    const settleLeftMs = (await settledUntil(lockDir)) - Date.now();
+    if (settleLeftMs <= 0) return;
+    if (Date.now() - start + settleLeftMs > acquireTimeoutMs) throw timedOut();
+    console.warn(
+      `[crossProcessLock]: waiting ${settleLeftMs}ms for "${key}" to settle after its last release`,
+    );
+    await delay(settleLeftMs);
+  };
+  try {
+    await waitOutSettle();
+  } catch (err) {
+    await release();
+    throw err;
+  }
+  return release;
 }
