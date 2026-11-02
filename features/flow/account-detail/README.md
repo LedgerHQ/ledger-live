@@ -21,6 +21,14 @@ passed to the layout as slots.
 | `AccountDetailLayout` | Lays out the page in Figma order: hero → custom place → assets → transactions (`.web` / `.native`) |
 | `useAccountDetailFeature(currencyId)` | `true` when the `accountDetail` flag is on and the currency is not in `excludedCurrencyIds` |
 | `isAccountDetailEnabledFor(feature, currencyId)` | Pure version of the gate, for code that already holds the flag |
+| `hasConfirmedAccountHistory(account, isConfirmed)` | Detects native or token history using the host's confirmation rule; pending-only activity and operation counts alone are insufficient |
+| `shouldShowAccountAnalyticsIntroduction(status)` | Shows the introduction only with confirmed history and no installation-wide dismissal |
+| `./state` | Analytics introduction slice, validated restoration and persistence selectors |
+
+The Analytics introduction dismissal applies to every account on one installation. Apps register
+the reducer and persist its projection locally; desktop and mobile do not synchronize this flag.
+Reading eligibility does not consume the introduction. The host handles storage failures; durable
+dismissal across restarts requires a successful write.
 
 ## Feature flag
 

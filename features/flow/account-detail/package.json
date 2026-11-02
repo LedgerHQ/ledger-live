@@ -11,6 +11,7 @@
       "react-native": "./src/index.native.ts",
       "default": "./src/index.ts"
     },
+    "./state": "./src/state/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -30,7 +31,8 @@
     "@features/flow-account-detail-hero": "workspace:^",
     "@features/flow-account-detail-settings": "workspace:^",
     "@features/platform-feature-flags": "workspace:*",
-    "@shared/feature-flags": "workspace:^"
+    "@shared/feature-flags": "workspace:^",
+    "@reduxjs/toolkit": "catalog:"
   },
   "devDependencies": {
     "@features/platform-style": "workspace:*",
