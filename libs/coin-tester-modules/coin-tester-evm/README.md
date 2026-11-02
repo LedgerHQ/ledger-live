@@ -8,7 +8,7 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 ## Features
 
 - Deterministic testing scenarios for EVM-based coins
-- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic, Robinhood, Arc)
+- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic, Robinhood, Arc, Core)
 - Local signer written in Typescript
 - The Base and Sonic scenarios ask coin-sandbox for reth 2.5.2 (Base's build, 1.5.0) and sonic 2.2.5 (the versions of production) and their `etherscan-stub` indexer: the Etherscan API of
   the chain, served from the node, which Live reads as an `etherscan` explorer (as in production) and which needs no wait for indexing. USDC (USDC.e on Sonic) is preloaded
@@ -22,7 +22,9 @@ This package contains the deterministic testing infrastructure for EVM-based coi
   is preloaded at its mainnet address and the account is funded by airdrop (ETH and USDG): the scenario sends 1 ETH, 1 USDG, all its USDG and all its ETH. No Anvil, no mock, and any request that leaves the machine fails
 - The Arc scenario asks coin-sandbox for arc-node 0.8.1 (Arc's execution client, alone) and Blockscout 12.0.3 built for the `arc` chain type, which Live reads as a `blockscout` explorer. USDC is the native coin of the chain
   (the explorer also reports each native transfer as a transfer of the USDC token `0x36…`, which `nativeContracts` makes Live drop, and the scenario checks both); the account is funded by airdrop. No Anvil, no mock, and any request that leaves the machine fails
-- The other scenarios still use Anvil, a mainnet fork, and a mocked explorer
+- The Core scenario asks coin-sandbox for Core's own client, geth 1.0.27 (a fork of geth, the version of production), alone: Live has no explorer for Core
+  (`explorer: none`), so the node is the only source, and a sync waits for the block of each transaction. No token is preloaded and the account is funded by
+  airdrop: the scenario sends 1 CORE and all its CORE. No Anvil, no mock, and any request that leaves the machine fails
 
 ## Usage
 
@@ -36,10 +38,9 @@ await executeScenario(scenarioEthereum);
 
 ## Development
 
-Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB, Optimism, Scroll, Base, Sonic, Robinhood and Arc scenarios need coin-sandbox's server running (`deno task
+Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB, Optimism, Scroll, Base, Sonic, Robinhood, Arc and Core scenarios need coin-sandbox's server running (`deno task
 server` in its repository, port 8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon, and `docker login
-jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon; Optimism and Scroll have none, and Scroll's node image is amd64 only too). It takes about a minute. The
-others need Docker for Anvil and network access to their fork RPC. To run one scenario:
+jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon; Optimism and Scroll have none, and the node images of Scroll and Core are amd64 only too). It takes about a minute. To run one scenario:
 `pnpm coin:tester:evm start -t "scenario BNB"`.
 
 ## Dependencies

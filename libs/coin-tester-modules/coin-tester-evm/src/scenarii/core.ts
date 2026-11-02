@@ -6,9 +6,11 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
-import { killAnvil, spawnAnvil } from "../anvil";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import { VITALIK, core, expectAddressInList, getBridges } from "../helpers";
-import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
+import { swapTokens } from "../sandboxEvm";
 import { STCORE_ON_CORE } from "../tokenFixtures";
 import { buildSigner } from "../signer";
 import type { GenericTransaction } from "@ledgerhq/live-common/bridge/generic-coin-framework/types";
@@ -78,13 +80,30 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
   return [scenarioSendCoreTransaction, scenarioSendMaxCoreTransaction];
 };
 
+let sandbox: Sandbox | undefined;
+let closeGuard: (() => void) | null = null;
+// Puts the token store of the other scenarios of the run back
+let restoreTokens: (() => void) | null = null;
+let provider: ethers.JsonRpcProvider;
+
+/** Whole units airdropped to the scenario's account: the chain starts with the dealer only. */
+const CORE_AIRDROP = 10_000;
+
 export const scenarioCore: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://rpc.ankr.com/core", signer.exportMnemonic());
+    // The node alone: Live has no explorer for Core
+    sandbox = await startSandbox(
+      { family: "evm", network: "core" },
+      { node: { implementation: "geth", version: "1.0.27" } },
+    );
+    const { node: rpc } = sandbox.endpoints;
+    if (rpc === undefined) {
+      throw new Error("the sandbox instance has no node endpoint");
+    }
 
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    provider = new ethers.JsonRpcProvider(rpc);
 
     const info: EvmConfigInfo = {
       status: {
@@ -95,7 +114,7 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
       unit: { name: "CORE", code: "CORE", magnitude: 18 },
       node: {
         type: "external",
-        uri: "http://127.0.0.1:8545",
+        uri: rpc,
       },
       explorer: {
         type: "none",
@@ -109,7 +128,10 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
       },
     });
 
-    initMswHandlers(info);
+    // The chain preloads no token: an empty store, so that nothing asks the CAL
+    restoreTokens = swapTokens(core.id, []);
+
+    closeGuard = forbidRemoteRequests();
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
@@ -120,10 +142,8 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, core);
 
-    const lastBlockNumber = await provider.getBlockNumber();
-    // Anvil does not produce block if no transactions are sent.
-    // This is indeed the case for Core, since we do not top up tokens at the moment.
-    setBlock(lastBlockNumber);
+    // The chain starts with the dealer only: the account gets its CORE by airdrop
+    await sandbox.airdrop(address, CORE_AIRDROP);
 
     // Get STCORE
     // TODO: uncomment when explorer is ready
@@ -149,8 +169,10 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
     // );
   },
   getTransactions: address => makeScenarioTransactions({ address }),
-  beforeSync: async () => {
-    await indexBlocks(1116);
+  // No indexer: the node is the only source, so a sync must come after the block of the transaction
+  mockIndexer: async (_account, optimistic) => {
+    const receipt = await provider.waitForTransaction(optimistic.hash, 1, 60_000);
+    if (receipt === null) throw new Error(`${optimistic.hash} is not in a block after 60 s`);
   },
   afterAll: _account => {
     // TODO: uncomment when explorer is ready
@@ -160,7 +182,11 @@ export const scenarioCore: Scenario<GenericTransaction, Account> = {
     // );
   },
   teardown: async () => {
-    resetIndexer();
-    await killAnvil();
+    closeGuard?.();
+    closeGuard = null;
+    restoreTokens?.();
+    restoreTokens = null;
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };
