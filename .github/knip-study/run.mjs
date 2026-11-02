@@ -15,8 +15,12 @@ function readInvocations() {
   const files = execFileSync("git", ["ls-files", "*package.json"], { encoding: "utf8" })
     .trim()
     .split("\n");
+  const seen = new Set();
   return files.flatMap(file => {
-    const script = JSON.parse(readFileSync(file, "utf8")).scripts?.unimported ?? "";
+    const scripts = JSON.parse(readFileSync(file, "utf8")).scripts ?? {};
+    // What CI runs: `unimported` for packages, and `knip-check` only for the desktop and mobile apps.
+    const appKnipCheck = file.startsWith("apps/") ? scripts["knip-check"] : undefined;
+    const script = [scripts.unimported, appKnipCheck].filter(Boolean).join("&&");
     return script
       .split("&&")
       .filter(part => part.includes("pnpm knip"))
@@ -24,9 +28,19 @@ function readInvocations() {
         workspace: part.match(/-W\s+(\S+)/)[1],
         config: part.match(/-c\s+(\S+)/)?.[1] ?? null,
         tsConfig: part.match(/--tsConfig\s+(\S+)/)?.[1] ?? null,
-      }));
+      }))
+      .filter(inv => {
+        const key = JSON.stringify(inv);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
   });
 }
+
+// knip exits non-zero only for issue types whose rule is "error" (unset rules default to "error").
+const RULES = JSON.parse(readFileSync("knip.json", "utf8")).rules ?? {};
+const isErrorType = type => (RULES[type] ?? "error") === "error";
 
 function runKnip(args, env = {}) {
   return new Promise(resolve => {
@@ -49,20 +63,27 @@ function runKnip(args, env = {}) {
 }
 
 function flatten(issues, workspaces) {
-  const inScope = file => workspaces.some(ws => file.startsWith(`${ws}/`));
+  const byDepth = [...workspaces].sort((a, b) => b.length - a.length);
+  const workspaceOf = file => byDepth.find(ws => file.startsWith(`${ws}/`));
   const keys = new Set();
+  const failingWorkspaces = new Set();
   let outOfScope = 0;
   for (const entry of issues ?? []) {
+    const workspace = workspaceOf(entry.file);
     for (const [type, items] of Object.entries(entry)) {
       if (!Array.isArray(items)) continue;
       for (const item of items) {
         const name = Array.isArray(item) ? item.map(i => i.name).join("|") : item.name;
-        if (inScope(entry.file)) keys.add(`${type}\t${entry.file}\t${name}`);
-        else outOfScope++;
+        if (!workspace) {
+          outOfScope++;
+          continue;
+        }
+        keys.add(`${type}\t${entry.file}\t${name}`);
+        if (isErrorType(type)) failingWorkspaces.add(workspace);
       }
     }
   }
-  return { keys, outOfScope };
+  return { keys, failingWorkspaces, outOfScope };
 }
 
 async function pool(tasks, parallel) {
@@ -77,10 +98,12 @@ async function pool(tasks, parallel) {
 
 function record(mode, runs, totalSeconds) {
   const keys = new Set();
+  const failingWorkspaces = new Set();
   let outOfScope = 0;
   for (const run of runs) {
     const flat = flatten(run.issues, run.workspaces);
     flat.keys.forEach(key => keys.add(key));
+    flat.failingWorkspaces.forEach(ws => failingWorkspaces.add(ws));
     outOfScope += flat.outOfScope;
   }
   const report = {
@@ -95,6 +118,7 @@ function record(mode, runs, totalSeconds) {
       stderr: stderr.trim().split("\n").filter(Boolean).slice(0, 20),
     })),
     issueCount: keys.size,
+    failingWorkspaces: [...failingWorkspaces].sort(),
     outOfScope,
   };
   writeFileSync(`${OUT}/${mode}.json`, JSON.stringify(report, null, 2));
@@ -170,14 +194,81 @@ function compare() {
     "",
     `Issues only in grouped: **${onlyGrouped.length}**. Issues only in fan-out: **${onlyFanout.length}**.`,
     "",
+    `Failing workspaces (error-level issues), grouped: ${g.failingWorkspaces.join(", ") || "none"}`,
+    "",
+    `Failing workspaces (error-level issues), fan-out: ${f.failingWorkspaces.join(", ") || "none"}`,
+    "",
+    `Same failing workspaces: **${JSON.stringify(g.failingWorkspaces) === JSON.stringify(f.failingWorkspaces) ? "yes" : "no"}**`,
+    "",
     ...(onlyGrouped.length ? ["<details><summary>Only in grouped (first 50)</summary>", "", "```", ...onlyGrouped.slice(0, 50), "```", "</details>", ""] : []),
     ...(onlyFanout.length ? ["<details><summary>Only in fan-out (first 50)</summary>", "", "```", ...onlyFanout.slice(0, 50), "```", "</details>", ""] : []),
   ];
+  writeFileSync(
+    `${OUT}/verdict.json`,
+    JSON.stringify({
+      groupedSeconds: g.totalSeconds,
+      fanoutSeconds: f.totalSeconds,
+      groupedRuns: g.runs.length,
+      fanoutRuns: f.runs.length,
+      unparsedRuns: failed(g) + failed(f),
+      onlyGrouped: onlyGrouped.length,
+      onlyFanout: onlyFanout.length,
+      groupedFailing: g.failingWorkspaces,
+      fanoutFailing: f.failingWorkspaces,
+    }),
+  );
   console.log(lines.join("\n"));
+}
+
+// Replays one historical CI failure. REPLAY_EXPECT lists what CI reported failing, as package names
+// (nx project names) or workspace directories. Per-package invocations run only for those packages
+// and for any package the grouped run flags, so both directions of disagreement are checked.
+async function replay(parallel) {
+  const dirByName = new Map(
+    execFileSync("git", ["ls-files", "*package.json"], { encoding: "utf8" })
+      .trim()
+      .split("\n")
+      .map(file => [JSON.parse(readFileSync(file, "utf8")).name, file.replace(/\/?package\.json$/, "")]),
+  );
+  const expected = (process.env.REPLAY_EXPECT ?? "")
+    .split(",")
+    .filter(Boolean)
+    .map(entry => dirByName.get(entry) ?? entry);
+
+  await grouped();
+  const groupedFailing = JSON.parse(readFileSync(`${OUT}/grouped.json`, "utf8")).failingWorkspaces;
+  const targets = new Set([...expected, ...groupedFailing]);
+
+  const start = performance.now();
+  const tasks = readInvocations()
+    .filter(inv => targets.has(inv.workspace))
+    .map(inv => async () => {
+      const args = ["-W", inv.workspace];
+      if (inv.config) args.push("-c", inv.config);
+      if (inv.tsConfig) args.push("--tsConfig", inv.tsConfig);
+      return { label: inv.workspace, workspaces: [inv.workspace], ...(await runKnip(args)) };
+    });
+  console.error(`replay: ${tasks.length} per-package invocations for ${targets.size} target workspaces`);
+  record("fanout", await pool(tasks, parallel), (performance.now() - start) / 1000);
+  const fanoutFailing = JSON.parse(readFileSync(`${OUT}/fanout.json`, "utf8")).failingWorkspaces;
+
+  const verdict = {
+    expected,
+    groupedFailing,
+    fanoutFailing,
+    reproduced: expected.every(ws => fanoutFailing.includes(ws)),
+    groupedCatchesExpected: expected.every(ws => groupedFailing.includes(ws)),
+    groupedOnly: groupedFailing.filter(ws => !fanoutFailing.includes(ws)),
+    fanoutOnly: fanoutFailing.filter(ws => !groupedFailing.includes(ws)),
+    groupedOutsideExpected: groupedFailing.filter(ws => !expected.includes(ws)),
+  };
+  writeFileSync(`${OUT}/replay.json`, JSON.stringify(verdict, null, 2));
+  console.log(JSON.stringify(verdict, null, 2));
 }
 
 const [mode, arg] = process.argv.slice(2);
 if (mode === "grouped") await grouped();
 else if (mode === "fanout") await fanout(Number(arg ?? 3));
 else if (mode === "compare") compare();
+else if (mode === "replay") await replay(Number(arg ?? 3));
 else throw new Error(`unknown mode ${mode}`);

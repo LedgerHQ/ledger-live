@@ -1,0 +1,96 @@
+name: "[Study] - Knip replay of past failures"
+
+# Study branch only. Replays past knip CI failures at the exact commit CI checked out, and checks
+# whether the grouped root runs fail on the same packages as the per-package invocations.
+# `cases` is a JSON array of {"sha": "<checked-out sha>", "expect": "<comma-separated package names or dirs CI reported failing>"}.
+# Dispatch with:
+#   gh workflow run study-knip-replay.yml --ref ci/knip-root-study -f cases="$(cat cases.json)"
+# The push trigger only registers this workflow for dispatch from a non-default branch; its job is skipped.
+
+on:
+  push:
+    branches:
+      - ci/knip-root-study
+    paths:
+      - .github/workflows/study-knip-replay.yml
+  workflow_dispatch:
+    inputs:
+      cases:
+        description: 'JSON array of {"sha", "expect"}'
+        type: string
+        required: true
+      runner:
+        description: "Runner for each replay"
+        type: choice
+        options:
+          - ledger-wallet-2cpu-aws-public-cached
+          - ledger-wallet-4cpu-aws-public-cached
+        default: ledger-wallet-2cpu-aws-public-cached
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  replay:
+    name: Replay ${{ matrix.case.sha }}
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ${{ inputs.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        case: ${{ fromJSON(inputs.cases || '[]') }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=6144"
+      CI_OS: ubuntu-22.04
+      FORCE_COLOR: 0
+      REPLAY_SHA: ${{ matrix.case.sha }}
+      REPLAY_EXPECT: ${{ matrix.case.expect }}
+    steps:
+      - name: Checkout the replayed commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ matrix.case.sha }}
+          persist-credentials: false
+
+      - name: Checkout the study scripts
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          path: .knip-study-src
+          sparse-checkout: .github/knip-study
+          persist-credentials: false
+
+      - name: Add the study scripts to the replayed commit
+        run: |
+          mkdir -p .github/knip-study
+          cp .knip-study-src/.github/knip-study/* .github/knip-study/
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install all dependencies without lifecycle scripts
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Replay
+        run: |
+          node .github/knip-study/run.mjs replay 3
+          echo "{\"sha\":\"$REPLAY_SHA\"}" > knip-study-out/case.json
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: knip-replay-${{ matrix.case.sha }}
+          path: knip-study-out/
+          if-no-files-found: warn
