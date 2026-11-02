@@ -1,5 +1,5 @@
 {
-  "name": "@features/flow-account-detail-analytics-introduction",
+  "name": "@features/flow-account-detail-analytics-notice",
   "version": "0.1.0",
   "private": true,
   "description": "Analytics introduction eligibility and installation-wide dismissal for Account Detail",
@@ -21,7 +21,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
-    "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-analytics-introduction/knip.web.config.mjs -W features/flow/account-detail-analytics-introduction --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-analytics-introduction/knip.native.config.mjs -W features/flow/account-detail-analytics-introduction --tsConfig tsconfig.native.json"
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-analytics-notice/knip.web.config.mjs -W features/flow/account-detail-analytics-notice --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-analytics-notice/knip.native.config.mjs -W features/flow/account-detail-analytics-notice --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@reduxjs/toolkit": "catalog:"

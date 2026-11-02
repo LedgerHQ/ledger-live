@@ -1,4 +1,4 @@
-# @features/flow-account-detail-analytics-introduction
+# @features/flow-account-detail-analytics-notice
 
 > [!CAUTION]
 > **Status: UNSTABLE** — In active development; API may change.

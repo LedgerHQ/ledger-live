@@ -7238,7 +7238,7 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
-  features/flow/account-detail-analytics-introduction:
+  features/flow/account-detail-analytics-notice:
     dependencies:
       '@reduxjs/toolkit':
         specifier: 'catalog:'

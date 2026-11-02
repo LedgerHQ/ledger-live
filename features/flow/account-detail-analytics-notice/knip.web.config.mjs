@@ -1,7 +1,7 @@
 import { createDualPlatformKnipConfig } from "../../../knip.config.base.mjs";
 
 export default createDualPlatformKnipConfig({
-  packagePath: "features/flow/account-detail-analytics-introduction",
-  platform: "native",
+  packagePath: "features/flow/account-detail-analytics-notice",
+  platform: "web",
   entry: [],
 });

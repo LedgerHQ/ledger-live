@@ -10,7 +10,7 @@ Account Detail page (Wallet 4.0) shared by Ledger Wallet desktop and mobile. Lik
 | --- | --- |
 | `@features/flow-account-detail-hero` | Balance, quick actions, empty state |
 | `@features/flow-account-detail-settings` | Settings menu, advanced logs, remove account |
-| `@features/flow-account-detail-analytics-introduction` | Analytics introduction eligibility and dismissal |
+| `@features/flow-account-detail-analytics-notice` | Analytics introduction eligibility and dismissal |
 
 The sections that depend on `libs/` (custom place, assets, transactions) stay in the apps and are
 passed to the layout as slots.
