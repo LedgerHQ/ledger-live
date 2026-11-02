@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@domain/entity-currency";
-import { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
+import type { AssetsData, AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 
 export function selectCurrencyForMetaId(
   metaCurrencyId: string,
@@ -41,4 +41,14 @@ export function selectCurrency(
   const metaCurrencyId = result.currenciesOrder.metaCurrencyIds?.[0];
   if (!metaCurrencyId) return undefined;
   return selectCurrencyForMetaId(metaCurrencyId, result);
+}
+
+export function selectAssetCurrencyIds(data: AssetsData, currencyId: string): string[] {
+  const groupWithCurrency = Object.values(data.cryptoAssets).find(group =>
+    Object.values(group.assetsIds).includes(currencyId),
+  );
+  const firstMetaCurrencyId = data.currenciesOrder.metaCurrencyIds?.[0];
+  const assetGroup =
+    groupWithCurrency ?? (firstMetaCurrencyId ? data.cryptoAssets[firstMetaCurrencyId] : undefined);
+  return assetGroup ? Object.values(assetGroup.assetsIds) : [];
 }

@@ -14,6 +14,8 @@ import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/setti
 import { appVersion } from "LLM/utils/appVersion";
 import { selectCurrency } from "@features/platform-aggregated-assets";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { getSwapCurrencyIds } from "LLM/features/Market/utils/getSwapCurrencyIds";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -54,6 +56,13 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { name } = currency || {};
 
   const ledgerCurrency = data && selectCurrency(data);
+
+  const { data: swappableCurrencyIds } = useFetchCurrencyAll();
+  const swapCurrencyIds = useMemo(
+    () =>
+      data && ledgerCurrency && getSwapCurrencyIds(data, ledgerCurrency.id, swappableCurrencyIds),
+    [data, ledgerCurrency, swappableCurrencyIds],
+  );
 
   useEffect(() => {
     if (name) {
@@ -117,6 +126,7 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     loading: loading || isLoadingAsset,
     toggleStar,
     ledgerCurrency,
+    swapCurrencyIds,
   };
 }
 

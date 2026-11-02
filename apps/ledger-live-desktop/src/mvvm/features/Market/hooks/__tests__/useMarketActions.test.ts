@@ -128,7 +128,9 @@ describe("useMarketActions", () => {
     expect(mockEvent.preventDefault).toHaveBeenCalled();
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
-    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.objectContaining({ id: "bitcoin" }));
+    expect(mockNavigateToSwap).toHaveBeenCalledWith(expect.objectContaining({ id: "bitcoin" }), {
+      ledgerIds: mockCurrency.ledgerIds,
+    });
   });
 
   it("onSwap should return early if ledgerCurrency.id is falsy", async () => {
