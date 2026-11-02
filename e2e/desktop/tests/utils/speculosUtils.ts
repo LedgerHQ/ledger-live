@@ -56,9 +56,11 @@ export async function launchSpeculos(
   return device;
 }
 
-export async function cleanSpeculos(speculos: SpeculosDevice) {
-  await stopSpeculos(speculos.id);
+/** Resolves to whether the release was confirmed. */
+export async function cleanSpeculos(speculos: SpeculosDevice): Promise<boolean> {
+  const released = await stopSpeculos(speculos.id);
   unregisterTransportModule("speculos-http-" + speculos.id);
+  return released;
 }
 
 function restoreProcessEnv(name: string, value: string | undefined) {

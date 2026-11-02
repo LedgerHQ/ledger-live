@@ -2,14 +2,14 @@ import { expect } from "@playwright/test";
 import BigNumber from "bignumber.js";
 import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import type { AccountType } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { AmountQuickAction } from "@ledgerhq/live-e2e-shared/enum/AmountQuickAction";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { SEND_ADDRESS_FORMAT_OPTIONS } from "@ledgerhq/live-common/flows/send/utils";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { step } from "tests/misc/reporters/step";
 import { Modal } from "tests/component/modal.component";
 import { looksLikeFiatValue } from "tests/utils/looksLikeFiatValue";
-
-export type AmountQuickAction = "quarter" | "half" | "threeQuarters";
+import type { SavedBalance } from "tests/utils/userdata";
 
 export class NewSendModal extends Modal {
   readonly dialog = this.page.getByRole("dialog");
@@ -41,6 +41,11 @@ export class NewSendModal extends Modal {
   readonly quickActionMax = this.dialog.getByTestId("send-quick-actions-max");
   private readonly quickAction = (action: AmountQuickAction) =>
     this.dialog.getByTestId(`send-quick-actions-${action}`);
+  private readonly quickActionRatio: Record<AmountQuickAction, number> = {
+    [AmountQuickAction.QUARTER]: 0.25,
+    [AmountQuickAction.HALF]: 0.5,
+    [AmountQuickAction.THREE_QUARTERS]: 0.75,
+  };
   readonly feesMenuTrigger = this.dialog.getByTestId("send-network-fees-menu-trigger");
   // Menu items render in a portal, outside the dialog subtree.
   private readonly customFeesMenuItem = this.page.getByTestId("send-custom-fees-menu-item");
@@ -300,11 +305,33 @@ export class NewSendModal extends Modal {
     await button.click();
   }
 
-  @step("Verify the amount is filled with a positive value")
-  async expectAmountFilled() {
+  @step("Verify the $0 quick action fills its share of the spendable balance, rounded down")
+  async expectQuickActionAmount(action: AmountQuickAction, spendableBalance: SavedBalance) {
+    const expectedAmount = spendableBalance.amount
+      .times(this.quickActionRatio[action])
+      .integerValue(BigNumber.ROUND_DOWN)
+      .shiftedBy(-spendableBalance.magnitude);
+    await this.switchToCryptoInput();
     await expect
-      .poll(async () => new BigNumber(await this.readAmount()).isGreaterThan(0))
-      .toBe(true);
+      .poll(async () => new BigNumber(await this.readAmount()).toFixed())
+      .toBe(expectedAmount.toFixed());
+  }
+
+  @step("Verify the fiat/crypto toggle switches the input and keeps the crypto amount")
+  async expectInputModeToggleKeepsAmount() {
+    await this.switchToCryptoInput();
+    const cryptoAmount = await this.readAmount();
+    await this.toggleInputModeButton.click();
+    await expect.poll(() => this.isCryptoInputMode()).toBe(false);
+    await expect(this.amountSecondaryValue).toContainText(cryptoAmount);
+    await this.toggleInputModeButton.click();
+    await expect.poll(() => this.isCryptoInputMode()).toBe(true);
+    await expect.poll(() => this.readAmount()).toBe(cryptoAmount);
+  }
+
+  @step("Verify the crypto amount is greater than $0")
+  async expectCryptoAmountGreaterThan(reference: string) {
+    await expect.poll(async () => new BigNumber(await this.readAmount()).gt(reference)).toBe(true);
     await this.waitForSettledAmount();
   }
 
@@ -542,12 +569,14 @@ export class NewSendModal extends Modal {
     await this.confirmationTerminalContent.waitFor({ state: "visible" });
   }
 
-  @step("Verify the send ended on the error screen")
-  async expectConfirmationError() {
+  @step("Verify the send ended on the device disconnected error")
+  async expectDeviceDisconnectedError() {
     await expect(this.confirmationErrorContent).toBeVisible({
       timeout: TIMEOUT.xxlarge,
     });
-    await expect(this.confirmationErrorTitle).toHaveText(/\S/);
+    await expect(this.confirmationErrorTitle).toHaveText(
+      /^(GeneralDmkError|Device disconnected|Device connection lost)$/,
+    );
   }
 
   @step("Close the confirmation screen")

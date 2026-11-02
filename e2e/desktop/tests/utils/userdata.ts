@@ -1,10 +1,35 @@
 import { readFile } from "fs/promises";
+import BigNumber from "bignumber.js";
+import type { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { specs } from "@ledgerhq/live-e2e-shared/speculos";
 import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const getUserdata = async (userdataFile: string) => {
   const jsonFile = await readFile(userdataFile, "utf-8");
   return JSON.parse(jsonFile);
 };
+
+/** An amount in the currency's smallest unit, with the magnitude of its main unit. */
+export type SavedBalance = { amount: BigNumber; magnitude: number };
+
+type SavedAccount = { data?: { currencyId?: string; index?: number; spendableBalance?: string } };
+
+export async function getSavedSpendableBalance(
+  userdataFile: string,
+  account: Account,
+): Promise<SavedBalance> {
+  const userdata: { data?: { accounts?: unknown } } = await getUserdata(userdataFile);
+  const savedAccounts = userdata.data?.accounts;
+  const accounts: SavedAccount[] = Array.isArray(savedAccounts) ? savedAccounts : [];
+  const spendableBalance = accounts.find(
+    ({ data }) => data?.currencyId === account.currency.id && data?.index === account.index,
+  )?.data?.spendableBalance;
+  const unit = specs[account.currency.speculosApp.name.replace(/ /g, "_")]?.currency?.units[0];
+  if (!spendableBalance || !unit) {
+    throw new Error(`No spendable balance saved for ${account.accountName} in ${userdataFile}`);
+  }
+  return { amount: new BigNumber(spendableBalance), magnitude: unit.magnitude };
+}
 
 /** A fresh install has not seen the analytics opt-in screen, so Get started opens it. */
 export const FRESH_INSTALL_SETTINGS = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: false };

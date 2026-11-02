@@ -229,7 +229,9 @@ export const test = base.extend<TestFixtures>({
       },
       stop: async () => {
         if (!currentDevice) return;
-        await cleanSpeculos(currentDevice);
+        if (!(await cleanSpeculos(currentDevice))) {
+          throw new Error(`[E2E] Speculos ${currentDevice.id} was not released`);
+        }
         currentDevice = undefined;
       },
     };
