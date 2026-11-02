@@ -646,9 +646,10 @@ pnpm --silent wallet-cli start agent-intent intents --profile my-bot --cursor <n
 - **JSON** (`--output json`): `profileId`, `count`, `nextCursor`, and `intents[]` with `id`,
   `status`, `type`, `network`, `sender`, `recipient`, `amount` (a send's exact base units, a
   string), `displayAmount` (e.g. `"0.01 ETH"`, `"2.5 USDC"`; `null` when a send's asset is unknown;
-  for a swap always its pair, e.g. `"0.5 ETH → 1250 USDC"`, with the currency id for an asset CAL
+  for a swap always its pair, e.g. `"0.5 ETH → ~1250 USDC"`, with the currency id for an asset CAL
   doesn't know), `asset`, `feeStrategy`, `memo` (Solana), `swap` (`fromAsset`, `toAsset`,
-  `fromAmount`, `toAmount` in human units, and `provider`; `null` for any other type),
+  `fromAmount`, `toAmount` in human units as signed, and `provider`; `toAmount` is the quote the
+  agent saw, not a minimum or the amount received; `null` for any other type),
   `description`, `failureReason`, `createdAt` and `updatedAt`. An intent type this version doesn't
   know is still listed, with its common fields. An empty page is a success with `count: 0`.
 - **Read-only:** it never creates, approves or cancels anything, so a failure is always safe to

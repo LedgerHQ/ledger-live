@@ -1123,7 +1123,10 @@ function intentDetailLines(
 ): string[] {
   const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
   const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
-  const amount = i.displayAmount ?? baseUnits;
+  const tokenAddress = i.asset?.assetReference;
+  const tokenAmount =
+    i.displayAmount && tokenAddress ? `${i.displayAmount} (${tokenAddress})` : null;
+  const amount = tokenAmount ?? i.displayAmount ?? baseUnits;
   return [
     `Intent:  ${i.id}`,
     `Status:  ${state}${terminal ? " (final)" : ""}`,

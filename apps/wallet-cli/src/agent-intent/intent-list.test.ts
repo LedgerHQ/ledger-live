@@ -129,7 +129,7 @@ describe("toIntentListEntries", () => {
       type: "swap",
       network: "ethereum",
       sender: SENDER,
-      displayAmount: "0.5 ETH → 1250 USDC",
+      displayAmount: "0.5 ETH → ~1250 USDC",
       swap: {
         fromAsset: "ethereum",
         toAsset: USDC_ID,
@@ -148,7 +148,41 @@ describe("toIntentListEntries", () => {
       lookups,
     );
 
-    expect(entry?.displayAmount).toBe("0.5 ETH → 1250 ethereum/erc20/unknown");
+    expect(entry?.displayAmount).toBe("0.5 ETH → ~1250 ethereum/erc20/unknown");
+  });
+
+  it("looks ADR-0004's `ethereum/native` up as `ethereum`, like the frontend", async () => {
+    const looked: string[] = [];
+    const recording: AssetLookups = {
+      ...lookups,
+      swapAsset: async id => (looked.push(id), lookups.swapAsset(id)),
+    };
+
+    const [entry] = await toIntentListEntries(
+      [record({ ...swapIntent, fromAsset: "ethereum/native" })],
+      recording,
+    );
+
+    expect(entry?.displayAmount).toBe("0.5 ETH → ~1250 USDC");
+    expect(looked.sort()).toEqual(["ethereum", USDC_ID].sort());
+  });
+
+  it("shows a native Ethereum send in ETH", async () => {
+    const [entry] = await toIntentListEntries(
+      [
+        record({
+          type: "send",
+          network: "ethereum",
+          sender: SENDER,
+          recipient: SENDER,
+          amount: "10000000000000000",
+          asset: { type: "native" },
+        }),
+      ],
+      lookups,
+    );
+
+    expect(entry?.displayAmount).toBe("0.01 ETH");
   });
 
   it("shows a Solana send in SOL, with its memo", async () => {
@@ -259,7 +293,7 @@ describe("toIntentListEntries", () => {
     const entries = await toIntentListEntries([record(swapIntent), erc20, spl], failing);
 
     expect(entries.map(entry => entry.displayAmount)).toEqual([
-      `0.5 ethereum → 1250 ${USDC_ID}`,
+      `0.5 ethereum → ~1250 ${USDC_ID}`,
       null,
       null,
     ]);

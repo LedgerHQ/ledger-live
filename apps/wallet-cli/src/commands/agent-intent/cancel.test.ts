@@ -180,7 +180,7 @@ describe("agent-intent cancel", () => {
     };
     await runCancel();
     expect(stdout.join("")).toContain(
-      "Amount:  0.5 ethereum → 1250 ethereum/erc20/usd__coin via velora",
+      "Amount:  0.5 ethereum → ~1250 ethereum/erc20/usd__coin via velora",
     );
 
     stdout = [];

@@ -212,12 +212,12 @@ describe("agent-intent status", () => {
 
     await runStatus({ output: "json" });
     expect(jsonResult()).toMatchObject({
-      intent: { displayAmount: "0.5 ETH → 1250 USDC", swap: { provider: "velora" } },
+      intent: { displayAmount: "0.5 ETH → ~1250 USDC", swap: { provider: "velora" } },
     });
 
     stdout = [];
     await runStatus();
-    expect(stdout.join("")).toContain("Amount:  0.5 ETH → 1250 USDC via velora");
+    expect(stdout.join("")).toContain("Amount:  0.5 ETH → ~1250 USDC via velora");
   });
 
   it("shows a Solana SPL send in token units, with its memo", async () => {
@@ -237,7 +237,7 @@ describe("agent-intent status", () => {
     await runStatus();
 
     const text = stdout.join("");
-    expect(text).toContain("Amount:  2.5 USDC");
+    expect(text).toContain(`Amount:  2.5 USDC (${USDC_MINT})\n`);
     expect(text).toContain("Network: solana");
     expect(text).toContain("Memo:    Invoice 42");
   });

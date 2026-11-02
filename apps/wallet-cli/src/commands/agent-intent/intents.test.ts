@@ -304,7 +304,7 @@ describe("agent-intent intents", () => {
         id: "swap",
         type: "swap",
         amount: null,
-        displayAmount: "0.5 ETH → 1250 USDC",
+        displayAmount: "0.5 ETH → ~1250 USDC",
         swap: {
           fromAsset: "ethereum",
           toAsset: "ethereum/erc20/usd__coin",
@@ -326,7 +326,7 @@ describe("agent-intent intents", () => {
 
     stdout = [];
     await runIntents();
-    expect(stdout.join("")).toContain("0.5 ETH → 1250 USDC via velora");
+    expect(stdout.join("")).toContain("0.5 ETH → ~1250 USDC via velora");
     expect(stdout.join("")).toContain("2.5 USDC");
   });
 

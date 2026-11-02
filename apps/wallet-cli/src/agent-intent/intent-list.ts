@@ -8,16 +8,10 @@ import {
   type AgentIntentStatus,
   type AgentIntentSwapOperation,
 } from "@ledgerhq/agent-intent-sdk";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { stripControlChars } from "../shared/ui";
 import { formatBaseUnits } from "./evm";
-import {
-  findEthereumSwapAsset,
-  findEthereumToken,
-  findSolanaToken,
-  type EthereumToken,
-  type SolanaToken,
-  type SwapAsset,
-} from "./token-lookup";
+import type { EthereumToken, SolanaToken, SwapAsset } from "./token-lookup";
 
 /** One listed intent as `agent-intent intents` reports it. Field set and names are stable. */
 export type IntentListEntry = {
@@ -30,13 +24,14 @@ export type IntentListEntry = {
   /** A send's exact base-unit decimal string; `null` for other intent types. */
   amount: string | null;
   /** A send's `amount` in its asset's unit (e.g. "0.01 ETH") when the asset is known, or a swap's
-   * pair (e.g. "0.5 ETH → 1250 USDC"). */
+   * pair (e.g. "0.5 ETH → ~1250 USDC"). */
   displayAmount: string | null;
   asset: { type: string; assetReference: string | null } | null;
   feeStrategy: string | null;
   /** A Solana send's on-chain memo. */
   memo: string | null;
-  /** A swap as signed, with human-unit amounts; `null` for other intent types. */
+  /** A swap as signed, with human-unit amounts; `toAmount` is the quote the agent saw, not a minimum
+   * or the amount received. `null` for other intent types. */
   swap: {
     fromAsset: string;
     toAsset: string;
@@ -113,20 +108,27 @@ export type AssetLookups = {
   swapAsset: (id: string) => Promise<SwapAsset | null>;
 };
 
-// Read at call time, so a test's module mock of token-lookup applies.
+const tokenLookup = () => import("./token-lookup");
 const CAL_LOOKUPS: AssetLookups = {
-  ethereumToken: contract => findEthereumToken(contract),
-  solanaToken: mint => findSolanaToken(mint),
-  swapAsset: id => findEthereumSwapAsset(id),
+  ethereumToken: async contract => (await tokenLookup()).findEthereumToken(contract),
+  solanaToken: async mint => (await tokenLookup()).findSolanaToken(mint),
+  swapAsset: async id => (await tokenLookup()).findEthereumSwapAsset(id),
 };
 
 // CAL lists Token-2022 mints as SPL too, so both programs resolve the same way.
 const SOLANA_TOKEN_TYPES: ReadonlySet<string> = new Set(["spl-token", "spl-token-2022"]);
 
-const NATIVE_ASSETS = new Map<string, { ticker: string; decimals: number }>([
-  ["ethereum", { ticker: "ETH", decimals: 18 }],
-  ["solana", { ticker: "SOL", decimals: 9 }],
-]);
+const NETWORKS_WITH_NATIVE_CURRENCY: ReadonlySet<string> = new Set(["ethereum", "solana"]);
+
+function nativeUnit(network: string): { ticker: string; decimals: number } | null {
+  if (!NETWORKS_WITH_NATIVE_CURRENCY.has(network)) return null;
+  const currency = getCryptoCurrencyById(network);
+  return { ticker: currency.ticker, decimals: currency.units[0].magnitude };
+}
+
+function normalizeAssetId(assetId: string): string {
+  return assetId.endsWith("/native") ? assetId.slice(0, -"/native".length) : assetId;
+}
 
 /** Each asset is looked up once per call, and a failed lookup counts as unknown. */
 function lookupOnce<T>(
@@ -231,7 +233,7 @@ async function sendUnit(
   { network, asset }: AgentIntentSendOperation,
   lookups: AssetLookups,
 ): Promise<{ ticker: string; decimals: number } | null> {
-  if (asset.type === "native") return NATIVE_ASSETS.get(network) ?? null;
+  if (asset.type === "native") return nativeUnit(network);
   if (!asset.assetReference) return null;
   if (network === "ethereum") return lookups.ethereumToken(asset.assetReference);
   if (network === "solana" && SOLANA_TOKEN_TYPES.has(asset.type)) {
@@ -246,11 +248,11 @@ async function swapDisplayAmount(
   lookups: AssetLookups,
 ): Promise<string> {
   const [from, to] = await Promise.all([
-    lookups.swapAsset(swap.fromAsset),
-    lookups.swapAsset(swap.toAsset),
+    lookups.swapAsset(normalizeAssetId(swap.fromAsset)),
+    lookups.swapAsset(normalizeAssetId(swap.toAsset)),
   ]);
   return (
     `${swap.fromAmount} ${from?.ticker ?? swap.fromAsset} → ` +
-    `${swap.toAmount} ${to?.ticker ?? swap.toAsset}`
+    `~${swap.toAmount} ${to?.ticker ?? swap.toAsset}`
   );
 }
