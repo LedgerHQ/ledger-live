@@ -1,4 +1,5 @@
 import { AccountDataNotServedError } from "@domain/api-account-data";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { setEnv } from "@shared/env";
 import { notSupported } from "@ledgerhq/coin-module-framework/api/index";
 import { getCurrencyConfiguration } from "../../config";
@@ -9,6 +10,7 @@ import { createCoinModuleHost } from "./createCoinModuleHost";
 jest.mock("../../config", () => ({ getCurrencyConfiguration: jest.fn() }));
 
 const getBalance = jest.fn();
+const listOperations = jest.fn();
 const getTokenFromAsset = jest.fn();
 const createLocalApi = jest.fn();
 const balanceOptions = { includeAssets: async () => true };
@@ -54,14 +56,23 @@ const apiOf = async (currencyId: string) => {
   return api;
 };
 
+const operationsApiOf = async (currencyId: string) => {
+  const api = await createCoinModuleHost().getOperationsApi?.(currencyId);
+  if (!api) throw new Error(`No operations api for ${currencyId}`);
+  return api;
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
-  createLocalApi.mockReturnValue({ getBalance });
+  createLocalApi.mockReturnValue({ getBalance, listOperations });
   resetCoinModulesForTests();
   registerCoinModules(loaders);
 });
 
-afterEach(() => setEnv("MOCK", ""));
+afterEach(() => {
+  setEnv("MOCK", "");
+  jest.restoreAllMocks();
+});
 
 afterAll(() => resetCoinModulesForTests());
 
@@ -149,6 +160,89 @@ describe("createCoinModuleHost", () => {
 
       expect(api.getTokenId).toBeUndefined();
       expect(api.partitionsNativeBalance).toBeUndefined();
+    });
+  });
+
+  describe("paginatesOperations", () => {
+    const { paginatesOperations } = createCoinModuleHost({ servesOperations: true });
+
+    it("is true for a family the generic bridge sends a page size, false for one taking no limit", () => {
+      expect(paginatesOperations?.("ethereum")).toBe(true);
+      expect(paginatesOperations?.("bitcoin")).toBe(false);
+      expect(paginatesOperations?.("not_a_currency")).toBe(false);
+    });
+
+    it("serves no operations by default, leaving them to FullSync until pending operations are listed", () => {
+      expect(createCoinModuleHost().paginatesOperations?.("ethereum")).toBe(false);
+    });
+
+    it("is decided in the code: a remote page size neither adds nor drops a family", () => {
+      jest.spyOn(LiveConfig, "getValueByKey").mockReturnValue({
+        networks: { bitcoin: { pageSize: 50 }, ethereum: { pageSize: "hostile" } },
+      });
+
+      expect(paginatesOperations?.("bitcoin")).toBe(false);
+      expect(paginatesOperations?.("ethereum")).toBe(true);
+    });
+  });
+
+  describe("getOperationsApi", () => {
+    it("lists the operations newest first from the cursor, with the asked limit", async () => {
+      const page = { items: [], next: "page-3" };
+      listOperations.mockResolvedValueOnce(page);
+
+      const api = await operationsApiOf("ethereum");
+
+      await expect(api.listOperations("0xabc", { cursor: "page-2", limit: 20 })).resolves.toBe(
+        page,
+      );
+      expect(listOperations).toHaveBeenCalledWith(
+        expect.objectContaining({ config: expect.any(Function), logger: expect.any(Function) }),
+        "0xabc",
+        { minHeight: 0, cursor: "page-2", order: "desc", limit: 20 },
+      );
+    });
+
+    it("sends the family's page size when no limit is asked, and never more", async () => {
+      listOperations.mockResolvedValue({ items: [] });
+      const api = await operationsApiOf("ethereum");
+
+      await api.listOperations("0xabc", {});
+      await api.listOperations("0xabc", { limit: 1_000 });
+
+      expect(listOperations.mock.calls.map(([, , { limit }]) => limit)).toEqual([100, 100]);
+    });
+
+    it("takes the remote page size of the currency", async () => {
+      jest
+        .spyOn(LiveConfig, "getValueByKey")
+        .mockReturnValue({ networks: { ethereum: { pageSize: 20 } } });
+      listOperations.mockResolvedValue({ items: [] });
+
+      await (await operationsApiOf("ethereum")).listOperations("0xabc", {});
+
+      expect(listOperations.mock.calls[0][2]).toMatchObject({ limit: 20 });
+    });
+
+    it("resolves a token by the family's bridge api", async () => {
+      getTokenFromAsset.mockResolvedValueOnce({ id: "ethereum/erc20/usd_tether__erc20_" });
+
+      const api = await operationsApiOf("ethereum");
+
+      await expect(api.getTokenId?.({ type: "erc20", assetReference: "0x1" })).resolves.toBe(
+        "ethereum/erc20/usd_tether__erc20_",
+      );
+    });
+
+    it("is undefined for a family taking no limit, without loading its coin module", async () => {
+      await expect(createCoinModuleHost().getOperationsApi?.("bitcoin")).resolves.toBeUndefined();
+      expect(createLocalApi).not.toHaveBeenCalled();
+    });
+
+    it("is undefined for a coin module whose listOperations is a not-supported stub", async () => {
+      createLocalApi.mockReturnValueOnce({ listOperations: notSupported("listOperations") });
+
+      await expect(createCoinModuleHost().getOperationsApi?.("ethereum")).resolves.toBeUndefined();
     });
   });
 

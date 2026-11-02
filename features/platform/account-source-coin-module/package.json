@@ -25,6 +25,7 @@
     "@domain/entity-account-balance": "workspace:*",
     "@domain/entity-account-data": "workspace:*",
     "@domain/entity-account-descriptor": "workspace:*",
+    "@domain/entity-account-operation": "workspace:*",
     "@ledgerhq/coin-module-framework": "catalog:"
   },
   "devDependencies": {

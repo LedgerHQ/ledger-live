@@ -11,7 +11,7 @@ Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`
 | [`@domain/entity-account-data`](../domain/entity/account-data) | `AccountDataRegistry`, the open map of kinds; the `accountData` status slice and the `accountDataReceived` action entities store from |
 | [`@domain/api-account-data`](../domain/api/account-data) | `AccountDataSource`, `createAccountDataRouter`, `fetchAccountData`, `fetchMoreAccountData`; `./testing` holds two toy kinds |
 | [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData` |
-| [`@features/platform-account-source-coin-module`](../features/platform/account-source-coin-module) | the `coin-module` source, reading coin modules directly (`balance`) |
+| [`@features/platform-account-source-coin-module`](../features/platform/account-source-coin-module) | the `coin-module` source, reading coin modules directly (`balance`; `operations` once it lists pending operations) |
 | `@domain/entity-account-<kind>` | one kind: its models, its data slice, and the `declare module` adding the kind |
 | apps, `src/config/account-data-setup.ts` | the ranked sources, spread into the thunk `extraArgument` |
 
