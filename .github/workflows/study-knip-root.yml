@@ -31,13 +31,17 @@ on:
           - ledger-wallet-4cpu-aws-public-cached
           - ledger-wallet-2cpu-aws-public-cached
         default: ledger-wallet-8cpu-aws-public-cached
+      cold-install:
+        description: "Install into an empty pnpm store, ignoring the runner's pre-populated one"
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
   contents: read
 
 concurrency:
-  group: study-knip-root-${{ github.ref }}-${{ inputs.runner }}
+  group: study-knip-root-${{ github.ref }}-${{ inputs.runner }}-${{ inputs.cold-install }}
   cancel-in-progress: true
 
 jobs:
@@ -53,6 +57,7 @@ jobs:
       COMPARE_FANOUT: ${{ inputs.compare-fanout }}
       FANOUT_PARALLEL: ${{ inputs.fanout-parallel }}
       RUNNER: ${{ inputs.runner }}
+      COLD_INSTALL: ${{ inputs.cold-install }}
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -72,10 +77,27 @@ jobs:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
       - name: Install all dependencies without lifecycle scripts
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: |
+          store_args=()
+          if [ "$COLD_INSTALL" = "true" ]; then store_args=(--store-dir "$RUNNER_TEMP/pnpm-store-cold"); fi
+          start=$(date +%s)
+          pnpm install --frozen-lockfile --ignore-scripts "${store_args[@]}"
+          echo "INSTALL_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
 
       - name: Grouped knip runs from root
         run: node .github/knip-study/run.mjs grouped
+
+      - name: Install and grouped knip summary
+        run: |
+          grouped_seconds=$(node -p 'require("./knip-study-out/grouped.json").totalSeconds.toFixed(1)')
+          {
+            echo "## Install and grouped knip"
+            echo
+            echo "| Runner | Cold pnpm store | Install (s) | Grouped knip (s) |"
+            echo "| --- | --- | --- | --- |"
+            echo "| $RUNNER | $COLD_INSTALL | $INSTALL_SECONDS | $grouped_seconds |"
+            echo
+          } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Per-package fan-out
         if: env.COMPARE_FANOUT == 'true'
