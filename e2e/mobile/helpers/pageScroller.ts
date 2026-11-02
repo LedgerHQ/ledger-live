@@ -3,6 +3,7 @@ import { Direction, NativeElement, NativeMatcher } from "detox/detox";
 import { sanitizeError } from "@ledgerhq/live-e2e-shared/index";
 import { delay, isAndroid } from "@e2e/helpers/commonHelpers";
 import { INTERVAL, TIMEOUT } from "@e2e/utils/timeouts";
+import { isHardTimeout, waitHardTimeout, withHardTimeout } from "@e2e/helpers/elements/hardTimeout";
 
 const MAX_ATTEMPTS_PER_DIRECTION = 10;
 const SCROLL_STALL_THRESHOLD = 7;
@@ -25,7 +26,7 @@ const swipeDirectionFor = (direction: Direction): Direction => {
 export class PageScroller {
   async performScroll(
     matcher: NativeMatcher,
-    scrollViewId?: string | RegExp | NativeMatcher,
+    scrollView?: string | RegExp | NativeMatcher,
     pixels = 300,
     initialDirection: Direction = "down",
     timeout = TIMEOUT.xxxsmall,
@@ -34,7 +35,7 @@ export class PageScroller {
       return;
     }
 
-    const scrollContainer = await this.getScrollElement(scrollViewId);
+    const scrollContainer = await this.getScrollElement(scrollView);
 
     let direction = initialDirection;
     let stallCount = 0;
@@ -80,27 +81,32 @@ export class PageScroller {
 
   private async isVisible(matcher: NativeMatcher, timeout: number): Promise<boolean> {
     try {
-      await waitFor(element(matcher).atIndex(0)).toBeVisible().withTimeout(timeout);
+      await withHardTimeout(
+        waitFor(element(matcher).atIndex(0)).toBeVisible().withTimeout(timeout),
+        waitHardTimeout(timeout),
+      );
       return true;
-    } catch {
+    } catch (error) {
+      if (isHardTimeout(error)) throw error;
       return false;
     }
   }
 
   private async getScrollElement(
-    scrollViewId?: string | RegExp | NativeMatcher,
+    scrollView?: string | RegExp | NativeMatcher,
   ): Promise<Detox.IndexableNativeElement | NativeElement> {
-    if (scrollViewId) {
+    if (scrollView) {
       // string | RegExp serves the elementHelpers.ts globals: keep only NativeMatcher once that file is deleted.
       const scrollElement =
-        typeof scrollViewId === "string" || scrollViewId instanceof RegExp
-          ? by.id(scrollViewId)
-          : scrollViewId;
+        typeof scrollView === "string" || scrollView instanceof RegExp
+          ? by.id(scrollView)
+          : scrollView;
       if (await this.isVisible(scrollElement, TIMEOUT.xsmall)) {
         return element(scrollElement);
       } else {
-        const name = scrollElement === scrollViewId ? JSON.stringify(scrollViewId) : scrollViewId;
-        throw new Error(`Scroll view with id ${name} not found or not visible.`);
+        const name =
+          scrollElement === scrollView ? JSON.stringify(scrollView) : `with id ${scrollView}`;
+        throw new Error(`Scroll view ${name} not found or not visible.`);
       }
     }
     const type = isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView";
@@ -116,29 +122,30 @@ export class PageScroller {
     const swipeDirection = swipeDirectionFor(direction);
 
     if (isAndroid() && isHorizontal) {
-      return await scrollContainer.swipe(swipeDirection, "fast", 0.85);
+      return await withHardTimeout(scrollContainer.swipe(swipeDirection, "fast", 0.85));
     }
 
     try {
       switch (direction) {
         case "down":
-          return await scrollContainer.scroll(pixels, "down", NaN, 0.8);
+          return await withHardTimeout(scrollContainer.scroll(pixels, "down", NaN, 0.8));
         case "up":
-          return await scrollContainer.scroll(pixels, "up", NaN, 0.8);
+          return await withHardTimeout(scrollContainer.scroll(pixels, "up", NaN, 0.8));
         case "right":
-          return await scrollContainer.scroll(pixels, "right", NaN, 0.5);
+          return await withHardTimeout(scrollContainer.scroll(pixels, "right", NaN, 0.5));
         case "left":
-          return await scrollContainer.scroll(pixels, "left", NaN, 0.5);
+          return await withHardTimeout(scrollContainer.scroll(pixels, "left", NaN, 0.5));
         case "bottom":
-          return await scrollContainer.swipe(swipeDirection, "fast");
+          return await withHardTimeout(scrollContainer.swipe(swipeDirection, "fast"));
         default:
           throw new Error(`Unsupported scroll direction: ${direction}`);
       }
     } catch (error) {
+      if (isHardTimeout(error)) throw error;
       log.warn(
         `scroll ${direction} failed, falling back to swipe ${swipeDirection}: ${sanitizeError(error)}`,
       );
-      return await scrollContainer.swipe(swipeDirection, "slow");
+      return await withHardTimeout(scrollContainer.swipe(swipeDirection, "slow"));
     }
   }
 

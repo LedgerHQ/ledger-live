@@ -126,6 +126,7 @@ export default class OperationDetailsPage {
   @Step("Expect operation amount ticker {{{0}}}")
   async expectOperationAmountTicker(ticker: string) {
     await this.waitForOperationDetails();
+    await this.amount.scrollTo(this.scrollView);
     const amountText = await this.amount.getText();
     jestExpect(amountText).toContain(ticker);
   }
