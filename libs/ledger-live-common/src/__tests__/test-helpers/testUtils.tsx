@@ -13,11 +13,13 @@ interface CreateTestStoreOptions {
   disableSerializableCheck?: boolean;
   /** Thunk `extraArgument`, exposed to RTK Query endpoints as `api.extra` */
   extra?: unknown;
+  /** Extra middlewares, such as the auth middleware */
+  middleware?: Middleware[];
 }
 
 export function createTestStore(apis: ApiSlice[], options?: CreateTestStoreOptions) {
   const reducers: Record<string, Reducer> = {};
-  const middlewares: Middleware[] = [];
+  const middlewares: Middleware[] = [...(options?.middleware ?? [])];
 
   apis.forEach(api => {
     reducers[api.reducerPath] = api.reducer;

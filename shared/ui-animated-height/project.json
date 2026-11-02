@@ -1,0 +1,8 @@
+{
+  "name": "@shared/ui-animated-height",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

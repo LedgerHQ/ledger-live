@@ -1,8 +1,8 @@
 import React from "react";
 import { Box, Link, Subheader, SubheaderRow, SubheaderTitle } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetsBody } from "./CardAssetsBody.native";
-import { CardAssetsInfoTooltip } from "./CardAssetsInfoTooltip.native";
+import { CardAssetsBody } from "./CardAssetsBody";
+import { CardAssetsInfoTooltip } from "./CardAssetsInfoTooltip";
 import type { CardAssetsViewModel } from "./types";
 
 export function CardAssetsView({

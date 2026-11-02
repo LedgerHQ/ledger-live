@@ -141,10 +141,11 @@ families: [
 That list mirrors the production rollout. A currency whose family is missing, or whose id is in
 `excludedCurrencyIds`, must stay in the legacy spec until it is enabled in production.
 
-### Step 8: Rebuild dependencies
+### Step 8: Rebuild dependencies and the app
 
 ```bash
 pnpm build:lld:deps
+pnpm desktop build:testing
 ```
 
 ### Step 9: Test on all devices

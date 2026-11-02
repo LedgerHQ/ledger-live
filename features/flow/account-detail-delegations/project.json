@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-account-detail-delegations",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

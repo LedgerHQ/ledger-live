@@ -9,19 +9,18 @@ import {
 import type { StepId } from "../types";
 
 const stakingInfoMock = jest.fn<typeof defaultStakingInfo, []>();
-const bakersMock = jest.fn<unknown[], []>(() => [
-  {
-    address: "tz1baker",
-    name: "Baker A",
-    logoURL: "https://example.test/baker.png",
-    nominalYield: "5 %",
-    capacityStatus: "normal",
-  },
-]);
+const ledgerBakerMock = jest.fn(() => ({
+  address: "tz1baker",
+  name: "Baker A",
+  logoURL: "https://example.test/baker.png",
+  nominalYield: "5 %",
+  capacityStatus: "normal",
+  stakingEnabled: true,
+}));
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   __esModule: true,
-  useBakers: () => bakersMock(),
+  useLedgerBaker: () => ledgerBakerMock(),
   useTezosStakingInfo: () => stakingInfoMock(),
   useDelegation: () => null,
   useBaker: () => undefined,

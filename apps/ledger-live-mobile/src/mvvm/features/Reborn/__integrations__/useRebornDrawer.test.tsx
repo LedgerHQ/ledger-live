@@ -1,6 +1,6 @@
-import { track } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import React from "react";
-import { render } from "@tests/test-renderer";
+import { render, screen, withFlagOverrides } from "@tests/test-renderer";
 import { MockDrawerComponent } from "./shared";
 import { REBORN_BUY_DRAWER_ANALYTICS_PAGE } from "../consts/analytics";
 
@@ -44,5 +44,36 @@ describe("Reborn Buy Device Drawer", () => {
       button: "buy a ledger device",
       page: REBORN_BUY_DRAWER_ANALYTICS_PAGE,
     });
+  });
+
+  it("when connect button clicked should open the device list", async () => {
+    const { user } = render(<MockDrawerComponent />);
+
+    await user.press(screen.getByTestId("reborn-test-button"));
+    await user.press(screen.getByRole("button", { name: /Connect/i }));
+
+    expect(await screen.findByTestId("onboarding-device-selection-stax")).toBeVisible();
+    expect(screen.queryByTestId("onboarding-setupLedger")).toBeNull();
+  });
+
+  it("when connect button clicked with unified entry points should open Get Started", async () => {
+    const { user } = render(<MockDrawerComponent />, {
+      overrideInitialState: withFlagOverrides({
+        deviceOnboarding: { enabled: true, params: { unifiedEntryPoints: true } },
+      }),
+    });
+
+    await user.press(screen.getByTestId("reborn-test-button"));
+    await user.press(screen.getByRole("button", { name: /Connect/i }));
+
+    expect(await screen.findByTestId("onboarding-setupLedger")).toBeVisible();
+    expect(screen.getByTestId("onboarding-accessWallet")).toBeVisible();
+    expect(trackPage).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Get Started", props: { source: "lazy_onboarding" } }),
+      expect.anything(),
+    );
+
+    await user.press(screen.getByTestId("onboarding-setupLedger"));
+    expect(await screen.findByTestId("onboarding-device-selection-stax")).toBeVisible();
   });
 });

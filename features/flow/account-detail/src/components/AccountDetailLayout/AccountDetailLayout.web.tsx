@@ -10,9 +10,11 @@ export function AccountDetailLayout({
   return (
     <div className="flex flex-col gap-32" data-testid="account-detail-layout">
       {hero}
-      {customPlace}
-      {assets}
-      {transactions}
+      <div className="flex flex-col gap-24" data-testid="account-detail-layout-sections">
+        {customPlace}
+        {assets}
+        {transactions}
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { getSendUiConfig, DEFAULT_SEND_UI_CONFIG } from "../send/uiConfig";
 import { getSendDescriptor } from "../../bridge/descriptor/registry";
 import { sendFeatures } from "../../bridge/descriptor/send/features";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+import type { TokenCurrency } from "@domain/entity-currency-token";
 
 jest.mock("../../bridge/descriptor/registry", () => ({
   getSendDescriptor: jest.fn(),
@@ -101,6 +102,7 @@ describe("getSendUiConfig", () => {
         hasCoinControl: true,
         hasDefaultStrategy: false,
         hasBalanceTypeStep: false,
+        hasFiatAmountInput: true,
       });
     });
   });
@@ -136,6 +138,7 @@ describe("getSendUiConfig", () => {
         hasCoinControl: false,
         hasDefaultStrategy: false,
         hasBalanceTypeStep: false,
+        hasFiatAmountInput: true,
       });
     });
   });
@@ -173,12 +176,53 @@ describe("getSendUiConfig", () => {
         hasCoinControl: false,
         hasDefaultStrategy: true,
         hasBalanceTypeStep: false,
+        hasFiatAmountInput: true,
       });
     });
   });
 
+  describe("for a testnet currency", () => {
+    const mockTestnetCurrency: CryptoCurrency = {
+      ...mockEthereumCurrency,
+      id: "ethereum_sepolia",
+      isTestnetFor: "ethereum",
+    } as unknown as CryptoCurrency;
+
+    it("should disable the fiat amount input", () => {
+      mockedGetSendDescriptor.mockReturnValue({
+        inputs: {},
+        fees: { hasPresets: false, hasCustom: false },
+      });
+
+      expect(getSendUiConfig(mockTestnetCurrency).hasFiatAmountInput).toBe(false);
+    });
+
+    it("should disable the fiat amount input when no descriptor is available", () => {
+      mockedGetSendDescriptor.mockReturnValue(null);
+
+      expect(getSendUiConfig(mockTestnetCurrency)).toEqual({
+        ...DEFAULT_SEND_UI_CONFIG,
+        hasFiatAmountInput: false,
+      });
+    });
+
+    it("should disable the fiat amount input for a token of a testnet", () => {
+      mockedGetSendDescriptor.mockReturnValue({
+        inputs: {},
+        fees: { hasPresets: false, hasCustom: false },
+      });
+      const mockTestnetToken = {
+        type: "TokenCurrency",
+        id: "ethereum_sepolia/erc20/usdc",
+        parentCurrencyId: "ethereum_sepolia",
+      } as unknown as TokenCurrency;
+
+      expect(getSendUiConfig(mockTestnetToken).hasFiatAmountInput).toBe(false);
+    });
+  });
+
   describe("DEFAULT_SEND_UI_CONFIG", () => {
-    it("should have all features disabled by default", () => {
+    it("should have all features disabled and fiat input enabled by default", () => {
       expect(DEFAULT_SEND_UI_CONFIG).toEqual({
         hasMemo: false,
         memoType: undefined,
@@ -191,6 +235,7 @@ describe("getSendUiConfig", () => {
         hasCoinControl: false,
         hasDefaultStrategy: false,
         hasBalanceTypeStep: false,
+        hasFiatAmountInput: true,
       });
     });
   });

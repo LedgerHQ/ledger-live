@@ -2,7 +2,7 @@ import { waitFor } from "detox";
 import { Step } from "jest-allure2-reporter/api";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 import type { ContactAddressTestData } from "@ledgerhq/live-e2e-shared/contacts";
-import ContactNameDrawer, { RENAME_CONTACT_PREFIX } from "@e2e/page/drawer/contactName.drawer";
+import ContactNameDrawer from "@e2e/page/drawer/contactName.drawer";
 
 // i18n contacts.addAddressEntry.validAddress — no testID on the helper text.
 const VALID_ADDRESS_HELPER_TEXT = "Valid address";
@@ -11,7 +11,7 @@ const VALID_ADDRESS_HELPER_TEXT = "Valid address";
 const TRUNCATED_ADDRESS_VISIBLE_LENGTH = 8 + 3 + 8;
 
 export default class ContactDetailPage {
-  renameDrawer = new ContactNameDrawer(RENAME_CONTACT_PREFIX);
+  renameDrawer = new ContactNameDrawer();
 
   private readonly addressValueRegExp = /^contacts-detail-address-.+-value$/;
   private readonly addressDetailDialogId = "contacts-address-detail-dialog";

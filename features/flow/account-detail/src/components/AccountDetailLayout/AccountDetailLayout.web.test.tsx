@@ -3,9 +3,12 @@ import { render, screen } from "@testing-library/react";
 import { AccountDetailLayout } from "./AccountDetailLayout.web";
 
 const slotIds = () =>
-  Array.from(screen.getByTestId("account-detail-layout").children).map(child =>
-    child.getAttribute("data-testid"),
-  );
+  [
+    ...screen.getByTestId("account-detail-layout").children,
+    ...screen.getByTestId("account-detail-layout-sections").children,
+  ]
+    .map(child => child.getAttribute("data-testid"))
+    .filter(id => id !== "account-detail-layout-sections");
 
 describe("AccountDetailLayout (Web)", () => {
   it("renders the sections in page order", () => {

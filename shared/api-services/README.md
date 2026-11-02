@@ -57,6 +57,8 @@ src/services/<service>/
   constants.ts    # reducer path, retry count, protocol headers
   schema.ts       # extraArgument contract
   types.ts        # inferred extraArgument type
+  service.ts      # descriptor factory for defineApiServices
+  service.test.ts # descriptor builds what the extra builder builds
   index.ts        # public surface — keeps constants internal unless a consumer needs them
 ```
 
@@ -86,6 +88,36 @@ configureStore({
 });
 ```
 
+**Or list several services once with `defineApiServices`.** Each service has a descriptor factory
+(`calService`, `cardService`, `coinMarketCapService`, `cvsService`, `dadaService`, `portfolioService`,
+`pushDevicesService`, `swapService`) that takes the service's own config as a thunk. No thunk runs at
+import or at `defineApiServices`: `createExtra` reads and validates every config once, at store
+creation, and merges the results. `ledgerClientVersion` is passed once, as `CommonConfig`, and trimmed
+before it reaches every service that sends it. Two services giving different values for one `extraArgument` key throw.
+Two descriptors sharing a `reducerPath`, even the same service listed twice, throw at
+`defineApiServices`.
+
+```ts
+import { calService, cvsService, defineApiServices, type ApiServicesState } from "@shared/api-services";
+
+const services = defineApiServices([
+  calService(() => ({ calServiceUrl: getEnv("CAL_SERVICE_URL") })),
+  cvsService(() => ({ getCountervaluesServiceUrl: () => getEnv("LEDGER_COUNTERVALUES_API") })),
+]);
+
+type ServicesState = ApiServicesState<typeof services>;
+
+configureStore({
+  reducer: { ...services.reducers },
+  middleware: (gdm) =>
+    gdm({
+      thunk: {
+        extraArgument: services.createExtra({ ledgerClientVersion: getEnv("LEDGER_CLIENT_VERSION") }),
+      },
+    }).concat(services.middlewares),
+});
+```
+
 Injection is a module-level side effect: an endpoint only exists once its use-case module has been
 evaluated as a _value_ import. A type-only import will not trigger it, and the api exported from here
 is never typed with anyone's endpoints — only the injected reference is.
@@ -100,12 +132,18 @@ is never typed with anyone's endpoints — only the injected reference is.
 
 1. Add `src/services/<service>/` with the files above and
    `createApi({ ..., tagTypes: [], endpoints: () => ({}) })`.
-2. Re-export it from `src/services/index.ts`.
-3. Register it in the `rtkQueryApi.ts` of each app that calls it. A service one app never calls stays out of that app.
+2. Add `service.ts` with its descriptor factory: `api` plus a `buildExtra` that calls the service's
+   `extraArgument` builder. If the schema has a `CommonConfig` field, type the thunk as
+   `() => Omit<XApiExtra, keyof CommonConfig>` and merge `common` in. Prove in `service.test.ts` that
+   `buildExtra` builds what the builder builds, and, when the schema rejects a value its type accepts
+   (an empty string against `.min(1)`), that this value fails at `createExtra`.
+3. Re-export it from `src/services/index.ts`.
+4. Register it in the `rtkQueryApi.ts` of each app that calls it. A service one app never calls stays out of that app.
 
-Each service's `extraArgument` builder stays separate — there is deliberately no aggregate builder,
-because consumers like `apps/web-tools`, `apps/cli` and `buildStandaloneCryptoAssetsStore` configure
-one service only and must not be forced to supply config for services they never call.
+Each service's `extraArgument` builder stays exported on its own. `defineApiServices` composes only the
+services an app lists, so consumers like `apps/web-tools`, `apps/cli` and
+`buildStandaloneCryptoAssetsStore` that configure one service never supply config for services they
+never call.
 
 A base query added here must be **pure transport** — no endpoint URLs, no endpoint-name lookups, no wire
 schemas.

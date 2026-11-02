@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, withFlagOverrides } from "tests/testSetup";
+import { render, screen } from "tests/testSetup";
 import * as systemLocale from "~/helpers/systemLocale";
 import MarketTopCards from "../index";
 
@@ -17,21 +17,13 @@ const mockGetParsedSystemDeviceLocale =
     typeof systemLocale.getParsedSystemDeviceLocale
   >;
 
-const assetDiscoverabilityOn = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
-});
-
-const assetDiscoverabilityOff = withFlagOverrides({
-  lwdWallet40: { enabled: false },
-});
-
 describe("MarketTopCards", () => {
   beforeEach(() => {
     mockGetParsedSystemDeviceLocale.mockReturnValue({ language: "en", region: "US" });
   });
 
-  it("renders the section with the global market cap, mood index and altcoin season cards when assetDiscoverability is on", async () => {
-    render(<MarketTopCards />, { initialState: assetDiscoverabilityOn });
+  it("renders the section with the global market cap, mood index and altcoin season cards", async () => {
+    render(<MarketTopCards />);
 
     expect(screen.getByRole("region", { name: /market top cards/i })).toBeVisible();
 
@@ -40,16 +32,10 @@ describe("MarketTopCards", () => {
     expect(await screen.findByTestId("alt-season-index-card")).toBeVisible();
   });
 
-  it("renders nothing when assetDiscoverability is off", () => {
-    render(<MarketTopCards />, { initialState: assetDiscoverabilityOff });
-
-    expect(screen.queryByRole("region", { name: /market top cards/i })).toBeNull();
-  });
-
   it("hides the mood index card for UK users while keeping the other cards", async () => {
     mockGetParsedSystemDeviceLocale.mockReturnValue({ language: "en", region: "GB" });
 
-    render(<MarketTopCards />, { initialState: assetDiscoverabilityOn });
+    render(<MarketTopCards />);
 
     expect(await screen.findByTestId("global-market-cap-card")).toBeVisible();
     expect(await screen.findByTestId("alt-season-index-card")).toBeVisible();

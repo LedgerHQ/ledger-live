@@ -1,6 +1,7 @@
 import { track } from "@shared/analytics";
 import { TrackScreen } from "@shared/analytics-react";
 import React, { useCallback, memo, useMemo, useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { dmkToLedgerDeviceIdMap, type DeviceConnectionResult } from "@ledgerhq/live-dmk-shared";
 import { ConnectNewDevice } from "LLM/components/ConnectNewDevice";
@@ -91,6 +92,7 @@ export default memo(function () {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const route = useRoute<NavigationProps["route"]>();
   const isFocused = useIsFocused();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
@@ -214,7 +216,10 @@ export default memo(function () {
 
   if (seededFunnel) {
     return (
-      <Box lx={{ flex: 1, backgroundColor: "canvas" }}>
+      <Box
+        lx={{ flex: 1, backgroundColor: "canvas", paddingTop: "s8" }}
+        style={{ paddingBottom: bottomInset }}
+      >
         <DeviceOnboardingCloseBar
           label={t("common.close")}
           testID="onboarding-connect-close"

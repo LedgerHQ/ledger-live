@@ -126,7 +126,8 @@ describe("Transaction functions", () => {
           hash: out_msgs?.[0].hash,
           type: "OUT",
           value: BigNumber(out_msgs?.[0].value ?? 0),
-          fee: BigNumber(total_fees),
+          // total_fees plus the out message's fwd_fee
+          fee: BigNumber(total_fees).plus(266669),
           blockHeight: mc_block_seqno,
           blockHash: null,
           hasFailed: true,
@@ -186,7 +187,7 @@ describe("Transaction functions", () => {
           type: "OUT",
           // 37300000000 + 323750000
           value: BigNumber("37623750000"),
-          fee: BigNumber(total_fees),
+          fee: BigNumber(total_fees).plus(2 * 266669),
           blockHeight: mc_block_seqno,
           blockHash: null,
           hasFailed: true,
@@ -242,7 +243,8 @@ describe("Transaction functions", () => {
           hash: "valueHash",
           type: "OUT",
           value: BigNumber("5000000"),
-          fee: BigNumber(total_fees),
+          // the zero-value message is forwarded and paid for too
+          fee: BigNumber(total_fees).plus(2 * 266669),
           blockHeight: mc_block_seqno,
           blockHash: null,
           hasFailed: true,
@@ -294,7 +296,7 @@ describe("Transaction functions", () => {
           type: "OUT",
           // 1000000 + 2000000, summed across both messages
           value: BigNumber("3000000"),
-          fee: BigNumber(total_fees),
+          fee: BigNumber(total_fees).plus(2 * 266669),
           blockHeight: mc_block_seqno,
           blockHash: null,
           hasFailed: true,

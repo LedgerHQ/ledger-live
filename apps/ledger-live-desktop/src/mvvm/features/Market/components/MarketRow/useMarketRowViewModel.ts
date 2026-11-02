@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { roundFiatPrice } from "@ledgerhq/live-currency-format";
 import { getCurrentTrackingPage, setTrackingSource, track } from "@shared/analytics";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { MarketCurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
-import { getMarketOrAssetDetailPath } from "LLD/utils/marketAssetNavigation";
+import { getAssetDetailPath } from "LLD/utils/marketAssetNavigation";
 import { Page, useMarketActions } from "LLD/features/Market/hooks/useMarketActions";
 import { getMarketPageCategoryAnalytics } from "LLD/features/Market/utils/marketPageAnalytics";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
@@ -37,7 +36,6 @@ export function useMarketRowViewModel({
 }: UseMarketRowViewModelProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
 
   const selectedCategory = useSelector(marketCategorySelector);
   const category = getMarketPageCategoryAnalytics(selectedCategory);
@@ -70,10 +68,10 @@ export function useMarketRowViewModel({
       page: getCurrentTrackingPage(),
       category,
     });
-    navigate(getMarketOrAssetDetailPath(currency.id, shouldDisplayAggregatedAssets), {
+    navigate(getAssetDetailPath(currency.id), {
       state: currency,
     });
-  }, [category, currency, navigate, shouldDisplayAggregatedAssets]);
+  }, [category, currency, navigate]);
 
   const onToggleStar = useCallback(() => {
     toggleStar(currency.id, isStarred);

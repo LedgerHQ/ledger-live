@@ -1,4 +1,4 @@
-import { act, renderHook, withFlagOverrides } from "tests/testSetup";
+import { act, renderHook } from "tests/testSetup";
 import { MOCK_MARKET_CURRENCY_DATA } from "@ledgerhq/live-common/market/utils/fixtures";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useMarketRowViewModel } from "../useMarketRowViewModel";
@@ -25,14 +25,6 @@ jest.mock("~/renderer/hooks/useGetStakeLabelLocaleBased", () => ({
   useGetStakeLabelLocaleBased: () => "Earn",
 }));
 
-const aggregatedAssetsEnabled = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
-});
-
-const aggregatedAssetsDisabled = withFlagOverrides({
-  lwdWallet40: { enabled: true, params: { aggregatedAssets: false } },
-});
-
 const mockedUseMarketActions = jest.mocked(useMarketActions);
 
 const bitcoinCurrency = MOCK_MARKET_CURRENCY_DATA[0];
@@ -50,7 +42,7 @@ const allActionsAvailable = {
 
 function renderViewModel(
   overrides: Partial<Parameters<typeof useMarketRowViewModel>[0]> = {},
-  initialState = aggregatedAssetsEnabled,
+  initialState?: Record<string, unknown>,
 ) {
   return renderHook(
     () =>
@@ -119,22 +111,12 @@ describe("useMarketRowViewModel", () => {
     expect(result.current.formattedMarketCap).toMatch(/^\$/);
   });
 
-  it("should navigate to /asset/ when shouldDisplayAggregatedAssets is true", () => {
-    const { result } = renderViewModel({}, aggregatedAssetsEnabled);
+  it("should navigate to /asset/ when a currency row is clicked", () => {
+    const { result } = renderViewModel();
 
     act(() => result.current.onCurrencyClick());
 
     expect(mockNavigate).toHaveBeenCalledWith(`/asset/${bitcoinCurrency.id}`, {
-      state: bitcoinCurrency,
-    });
-  });
-
-  it("should navigate to /market/ when shouldDisplayAggregatedAssets is false", () => {
-    const { result } = renderViewModel({}, aggregatedAssetsDisabled);
-
-    act(() => result.current.onCurrencyClick());
-
-    expect(mockNavigate).toHaveBeenCalledWith(`/market/${bitcoinCurrency.id}`, {
       state: bitcoinCurrency,
     });
   });

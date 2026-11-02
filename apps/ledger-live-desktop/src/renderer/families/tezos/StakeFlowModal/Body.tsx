@@ -10,10 +10,9 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import {
   isAwaitingDelegation,
-  useBakers,
+  useLedgerBaker,
   useDelegation,
 } from "@ledgerhq/live-common/families/tezos/react";
-import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { TezosAccount, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import logger from "~/renderer/logger";
 import { Track } from "@shared/analytics-react";
@@ -90,7 +89,7 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const device = useSelector(getCurrentDevice);
-  const [defaultBaker] = useBakers(whitelist);
+  const defaultBaker = useLedgerBaker({ forStaking: true });
   const skipDelegation = !!params.skipDelegation;
 
   const bridge = useAccountBridge<Transaction>(params.account, params.parentAccount);

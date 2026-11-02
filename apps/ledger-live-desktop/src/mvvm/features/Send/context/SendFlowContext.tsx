@@ -101,7 +101,7 @@ export function SendFlowProvider({ value, children }: SendFlowProviderProps) {
 
   return (
     <FlowWizardProvider value={value}>
-      <SendAmountDisplayModeProvider>
+      <SendAmountDisplayModeProvider isFiatModeAvailable={value.uiConfig.hasFiatAmountInput}>
         <SendFlowDataContext.Provider value={dataValue}>
           <SendFlowActionsContext.Provider value={actionsValue}>
             {children}

@@ -442,6 +442,7 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     supportedCoins: ["ton"],
     accountDescriptorType: "address",
     loadSetup: () => import("../families/ton/setup"),
+    loadLocalApi: () => import("../families/ton/coinModuleApi").then(m => m.createLocalTonApi),
     loadTransaction: () => import("@ledgerhq/coin-ton/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-ton/deviceTransactionConfig").then(m => m.default),

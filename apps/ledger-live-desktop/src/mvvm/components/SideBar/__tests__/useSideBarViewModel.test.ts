@@ -69,29 +69,9 @@ describe("useSideBarViewModel", () => {
   });
 
   describe("handleActiveChange", () => {
-    it('should navigate to /accounts for value "accounts" when asset section is off', () => {
+    it('should navigate to /cryptos for value "accounts"', () => {
       const trackSpy = jest.spyOn(analytics, "track");
       const { result } = renderViewModel();
-
-      act(() => result.current.handleActiveChange("accounts"));
-
-      expect(mockNavigate).toHaveBeenCalledWith(SIDEBAR_VALUE_TO_PATH.accounts);
-      expect(trackSpy).toHaveBeenCalledWith("menuentry_clicked", {
-        entry: "accounts",
-        page: "/",
-        flagged: false,
-      });
-
-      trackSpy.mockRestore();
-    });
-
-    it('should navigate to /cryptos for value "accounts" when asset section is on', () => {
-      const trackSpy = jest.spyOn(analytics, "track");
-      const { result } = renderViewModel(
-        withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { assetSection: true } },
-        }),
-      );
 
       act(() => result.current.handleActiveChange("accounts"));
 

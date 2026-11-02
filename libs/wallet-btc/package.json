@@ -70,6 +70,7 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@ledgerhq/wallet-framework-test-setup": "workspace:^",
     "@support/jest": "workspace:*",
+    "@support/lint": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/bchaddrjs": "^0.4.3",

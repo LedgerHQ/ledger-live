@@ -74,13 +74,13 @@ Every test MUST include a TMS annotation with a valid `B2CQA-XXXX` id. See [Desk
 
 Tests MUST NOT add retry loops, manual polling, or a second tap to hide an interaction failure. An incorrect wait MUST be fixed. Otherwise the underlying product, environment, build, or test-flow issue MUST be diagnosed.
 
-### Tests MUST declare what they broadcast from or change
+### Tests MUST declare what they broadcast from or what state they change
 
 A test MUST declare the QAA account it broadcasts from, with the app or with a CLI command such as a token approval. It MUST also declare shared state it changes, such as the Pay card. No test on another worker or CI machine then uses them at the same time.
 
 It MUST declare the debited account, e.g. `accountToDebit` or `delegation.account`, not the credited one. A token account locks its parent, since both spend from the same address. A test that always disables app broadcast declares no app account.
 
-See [Desktop](../desktop/docs/e2e-desktop-conventions.md#exclusive-lock-implementation) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#exclusive-lock-implementation) for how each client declares them, and [Exclusive lock](exclusive-lock.md) for how the lock works and how to read its logs.
+See [Desktop](../desktop/docs/e2e-desktop-conventions.md#tests-that-broadcast-or-change-shared-state-must-lock-with-exclusivelockfor) and [Mobile](../mobile/docs/e2e-mobile-conventions.md#tests-that-broadcast-or-change-shared-state-must-declare-it-before-their-describe) for how each client declares them, and [Exclusive lock](exclusive-lock.md) for how the lock works and how to read its logs.
 
 ### Paytab specs MUST live under paytab
 

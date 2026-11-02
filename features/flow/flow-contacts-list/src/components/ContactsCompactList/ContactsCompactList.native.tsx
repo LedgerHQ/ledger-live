@@ -1,5 +1,7 @@
 import React from "react";
+import type { Contact } from "@domain/entity-contact";
 import {
+  Box,
   ListItem,
   ListItemContent,
   ListItemDescription,
@@ -8,23 +10,30 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { ContactAvatar, useContactDisplayName } from "@features/platform-contacts";
 import { useContactsCompactListCopy } from "../../copy/useContactsCompactListCopy";
-import type { ContactsCompactListProps, ContactsCompactRowProps } from "../../types";
+import type { ContactsCompactListLabels } from "../../types";
+import type { ContactsCompactListProps } from "./ContactsCompactList.types";
 import {
   getCompactContactAddressDescription,
   getDisplayedCompactContacts,
 } from "./utils/ContactsCompactList.utils";
 
-export function ContactsCompactRow({
+type ContactsCompactRowProps = Readonly<{
+  contact: Contact;
+  labels: ContactsCompactListLabels;
+  onSelectContact: (contact: Contact) => void;
+}>;
+
+function ContactsCompactRow({
   contact,
   labels,
-  onContactSelect,
+  onSelectContact,
 }: ContactsCompactRowProps): React.JSX.Element {
   const getDisplayName = useContactDisplayName();
 
   return (
     <ListItem
       testID={`contacts-compact-row-${contact.id}`}
-      onPress={() => onContactSelect(contact)}
+      onPress={() => onSelectContact(contact)}
       density="expanded"
       lx={{ marginHorizontal: "-s8" }}
     >
@@ -44,21 +53,22 @@ export function ContactsCompactRow({
 export function ContactsCompactList({
   contacts,
   maxContacts,
-  onContactSelect,
+  onSelectContact,
+  testID,
 }: ContactsCompactListProps): React.JSX.Element {
   const labels = useContactsCompactListCopy();
   const displayedContacts = getDisplayedCompactContacts(contacts, maxContacts);
 
   return (
-    <>
+    <Box testID={testID}>
       {displayedContacts.map(contact => (
         <ContactsCompactRow
           key={contact.id}
           contact={contact}
           labels={labels}
-          onContactSelect={onContactSelect}
+          onSelectContact={onSelectContact}
         />
       ))}
-    </>
+    </Box>
   );
 }

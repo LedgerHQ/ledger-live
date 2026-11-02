@@ -23,11 +23,17 @@ export function toChecksError(
   return null;
 }
 
+const successExitStates = new Set(["syncOffer", "done"]);
+
 export function toChecksScreenState(
   machineState: string | null,
   checksPaused: boolean,
+  onboardedOnEntry = false,
 ): ChecksScreenState | null {
   if (machineState === "awaitingStart") return "idle";
+  if (onboardedOnEntry && machineState !== null && successExitStates.has(machineState)) {
+    return "succeeded";
+  }
   if (!machineState?.startsWith("checks.")) return null;
 
   if (machineState === "checks.genuineCheck.awaitingApproval") return "awaitingAllow";

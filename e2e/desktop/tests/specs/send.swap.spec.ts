@@ -4,16 +4,10 @@ import { Account, TokenAccount } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { AppInfos } from "@ledgerhq/live-e2e-shared/enum/AppInfos";
 import { setExchangeDependencies } from "@ledgerhq/live-e2e-shared/speculos";
 import { Swap } from "@ledgerhq/live-e2e-shared/models/Swap";
-import {
-  setupEnv,
-  performSwapUntilQuoteSelectionStep,
-  ensureTokenApproval,
-} from "tests/utils/swapUtils";
+import { setupEnv, performSwapUntilQuoteSelectionStep } from "tests/utils/swapUtils";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
-import { exclusiveLockFor } from "tests/utils/exclusiveLock";
-import { needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 
 const exchangeApp: AppInfos = AppInfos.EXCHANGE;
 
@@ -182,12 +176,7 @@ const swaps = [
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason } of swaps) {
-  // The provider is picked as the test runs, so any token account may need an approval.
-  const approvalLock = exclusiveLockFor({
-    cliBroadcastAccounts: fromAccount.parentAccount ? [fromAccount] : [],
-  });
-
-  test.describe("Swap - accepted", { lock: approvalLock.names }, () => {
+  test.describe("Swap - accepted", () => {
     test.skip(!!skipReason, skipReason);
 
     setupEnv(true);
@@ -208,7 +197,6 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: exchangeApp,
-      ...approvalLock.fixtures,
 
       cliCommandsOnApp: [
         [
@@ -234,15 +222,13 @@ for (const { fromAccount, toAccount, xrayTicket, tag, postSeedHook, skipReason }
           description: xrayTicket,
         },
       },
-      async ({ app, speculos, exclusiveLock }) => {
+      async ({ app, speculos }) => {
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         const swap = new Swap(fromAccount, toAccount, minAmount);
 
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount });
         const provider = await app.swap.selectExchangeWithoutKyc(swap);
         swap.setProvider(provider);
-        if (!needsTokenAllowance(fromAccount, provider)) await exclusiveLock.release();
-        await ensureTokenApproval(fromAccount, provider, minAmount);
         await app.swap.checkQuoteCardCtaPresence(provider.uiName);
 
         if (provider.app) {

@@ -3,7 +3,7 @@ import { Box, Button, Spot, Text } from "@ledgerhq/lumen-ui-rnative";
 import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { CardAssetDialogCopy } from "./types";
 
-type CardAssetDetailsWithdrawDrawerProps = Readonly<{
+export type CardAssetDetailsWithdrawDrawerProps = Readonly<{
   copy: CardAssetDialogCopy;
   onContinue: () => void;
 }>;

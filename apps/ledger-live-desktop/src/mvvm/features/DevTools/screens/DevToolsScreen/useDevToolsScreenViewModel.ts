@@ -18,15 +18,19 @@ import {
   useTrustchainDevToolProps,
   useCloudSyncDevToolProps,
   useAccountBalanceToolProps,
+  useAccountOperationToolProps,
+  useAccountPortfolioToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
   useAppConfigToolProps,
   useAccountNameToolProps,
+  useMockAccountsToolProps,
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
 import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
 import { accountDataRecorder } from "~/config/account-data-setup";
+import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
 const APPLICATION_ID = 16;
 
@@ -92,9 +96,14 @@ export function useDevToolsScreenViewModel() {
   const deviceOnboardingProps = useDeviceOnboarding();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
+  const accountOperationToolProps = useAccountOperationToolProps();
+  const accountPortfolioToolProps = useAccountPortfolioToolProps({
+    serviceUrl: getPortfolioServiceUrl(),
+  });
   const accountDataToolProps = useAccountDataToolProps(accountDataRecorder);
   const legacyAccounts = useSelector(accountsSelector);
   const accountNameToolProps = useAccountNameToolProps(legacyAccounts);
+  const mockAccountsToolProps = useMockAccountsToolProps(accountDataRecorder);
 
   const config: DevToolsConfig = useMemo(
     () => [
@@ -108,7 +117,10 @@ export function useDevToolsScreenViewModel() {
       { id: "account-data", config: accountDataToolProps },
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
+      { id: "account-operation", config: accountOperationToolProps },
       { id: "account-name", config: accountNameToolProps },
+      { id: "account-portfolio", config: accountPortfolioToolProps },
+      { id: "mock-accounts", config: mockAccountsToolProps },
     ],
     [
       featureFlagsToolProps,
@@ -120,8 +132,11 @@ export function useDevToolsScreenViewModel() {
       deviceOnboardingProps,
       accountDescriptorToolProps,
       accountBalanceToolProps,
+      accountOperationToolProps,
+      accountPortfolioToolProps,
       accountDataToolProps,
       accountNameToolProps,
+      mockAccountsToolProps,
     ],
   );
 

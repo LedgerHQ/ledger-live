@@ -1,9 +1,10 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { expect } from "@playwright/test";
+import { sanitizeAssetNameForTestId } from "LLD/components/AssetsTable/utils/sanitizeAssetNameForTestId";
 
 export class PortfolioPage extends AppPage {
-  private addAccountButton = this.page.getByTestId("portfolio-add-account-button");
+  private addAccountButton = this.page.getByTestId("crypto-addresses-banner-add-account-cta");
   // private buySellEntryButton = this.page.getByTestId("buy-sell-entry-button");
   private buyQuickActionButton = this.page.getByTestId("quick-action-button-buy");
   private sellQuickActionButton = this.page.getByTestId("quick-action-button-sell");
@@ -14,8 +15,10 @@ export class PortfolioPage extends AppPage {
     .getByRole("button", { name: /^(earn|stake|yield)$/i })
     .or(this.page.getByTestId("drawer-earn-button"));
   private operationList = this.page.locator("#operation-list");
-  private showAllButton = this.page.getByText("Show all");
-  private assetRow = (asset: string) => this.page.getByTestId(`asset-row-${asset.toLowerCase()}`);
+  private assetRow = (asset: string) => {
+    const suffix = sanitizeAssetNameForTestId(asset);
+    return this.page.getByTestId(new RegExp(`^w40-asset-row-(?!value-).*${suffix}$`));
+  };
   private totalBalance = this.page.getByTestId("total-balance");
 
   @step("Open `Add account` modal")
@@ -60,18 +63,8 @@ export class PortfolioPage extends AppPage {
   @step("Navigate to asset $0")
   async navigateToAsset(asset: string) {
     const assetRowLocator = this.assetRow(asset);
-    // Wait for the asset distribution to render before interacting
-    const isVisible = await assetRowLocator.isVisible();
-    if (!isVisible) {
-      // Asset row not immediately visible - check if "Show all" button exists
-      const showAllVisible = await this.showAllButton.isVisible();
-      if (showAllVisible) {
-        await this.showAllButton.click();
-      } else {
-        // Neither visible yet - wait for the asset row to appear (distribution still loading)
-        await assetRowLocator.waitFor({ state: "visible" });
-      }
-    }
+    await assetRowLocator.waitFor({ state: "attached" });
+    await assetRowLocator.scrollIntoViewIfNeeded();
     await assetRowLocator.click();
   }
 

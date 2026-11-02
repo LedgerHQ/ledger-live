@@ -32,7 +32,6 @@ const ERC20_TRANSFERS_QUERY = `
       sender_account_id
       receiver_evm_address
       receiver_account_id
-      payer_account_id
       amount
       transfer_type
       consensus_timestamp

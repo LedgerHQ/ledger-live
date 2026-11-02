@@ -14,12 +14,6 @@ const PERMANENT_LEAF =
   "PERMANENT: a leaf config with one consumer, which a preset would only wrap. Exit condition: " +
   "revisit when a second package needs the same config.";
 
-// The jest rule: consumers of @support/jest whose config does not come out of a preset factory.
-const JEST_ESM_HELPER_ONLY =
-  "TEMPORARY. A hand-rolled jest config that only takes withEsmDeps from @support/jest/shared. " +
-  "Exit condition: the package builds its config with a preset factory, or stops depending on " +
-  "@support/jest.";
-
 /** @type {Record<string, { rules: string[], reason: string }>} */
 export const EXCLUSIONS = {
   apps: {

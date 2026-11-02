@@ -5,10 +5,17 @@ import { WhatsNewScreen } from ".";
 const setup = (notes: string | null = "## Ledger Recover\n\nAn **optional** service.") => {
   const onStart = jest.fn();
   const onClose = jest.fn();
+  const onOpenReleaseNotes = jest.fn();
   const utils = render(
-    <WhatsNewScreen version="5.4.3" notes={notes} onStart={onStart} onClose={onClose} />,
+    <WhatsNewScreen
+      version="5.4.3"
+      notes={notes}
+      onOpenReleaseNotes={onOpenReleaseNotes}
+      onStart={onStart}
+      onClose={onClose}
+    />,
   );
-  return { ...utils, onStart, onClose };
+  return { ...utils, onStart, onClose, onOpenReleaseNotes };
 };
 
 describe("WhatsNewScreen", () => {
@@ -41,6 +48,14 @@ describe("WhatsNewScreen", () => {
     await user.press(screen.getByText("Start update"));
 
     expect(onStart).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls onOpenReleaseNotes when pressing the release notes link", async () => {
+    const { user, onOpenReleaseNotes } = setup();
+
+    await user.press(screen.getByText("See full release notes"));
+
+    expect(onOpenReleaseNotes).toHaveBeenCalledTimes(1);
   });
 
   it("calls onClose when pressing back", async () => {

@@ -9,11 +9,14 @@ export const tools = {
   trustchain: platform.trustchain,
   "cloud-sync": platform.cloudSync,
   "device-onboarding": engagement.deviceOnboarding,
-  "account-balance": platform.accountBalance,
+  "account-balance": walletXp.accountBalance,
+  "account-operation": walletXp.accountOperation,
+  "account-portfolio": platform.accountPortfolio,
   "account-descriptor": platform.accountDescriptor,
   "account-data": platform.accountData,
   "app-config": platform.appConfig,
   "account-name": platform.accountName,
+  "mock-accounts": platform.mockAccounts,
 } as const;
 
 /**
@@ -38,8 +41,11 @@ export type DevToolConfig =
   | { id: "trustchain"; config: platform.TrustchainDevToolProps }
   | { id: "cloud-sync"; config: platform.CloudSyncDevToolProps }
   | { id: "device-onboarding"; config: engagement.DeviceOnboardingToolProps }
-  | { id: "account-balance"; config: platform.AccountBalanceToolProps }
+  | { id: "account-balance"; config: walletXp.AccountBalanceToolProps }
+  | { id: "account-operation"; config: walletXp.AccountOperationToolProps }
+  | { id: "account-portfolio"; config: platform.AccountPortfolioToolProps }
   | { id: "account-descriptor"; config: platform.AccountDescriptorToolProps }
   | { id: "account-data"; config: platform.AccountDataToolProps }
   | { id: "app-config"; config: platform.AppConfigToolProps }
-  | { id: "account-name"; config: platform.AccountNameToolProps };
+  | { id: "account-name"; config: platform.AccountNameToolProps }
+  | { id: "mock-accounts"; config: platform.MockAccountsToolProps };

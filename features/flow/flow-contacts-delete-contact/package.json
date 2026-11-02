@@ -4,19 +4,16 @@
   "private": true,
   "description": "Shared Contact Delete flow for Desktop and Mobile",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "coverage": "jest --coverage",
@@ -62,6 +59,7 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

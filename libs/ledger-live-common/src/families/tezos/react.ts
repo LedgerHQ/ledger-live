@@ -17,17 +17,33 @@ import { getAccountDelegationSync, loadAccountDelegation } from "./bakers";
 
 export { isDelegationPosition, isFinalizablePosition, isStakePosition, isUnstakingPosition };
 
-export function useBakers(whitelistAddresses: string[]): Baker[] {
-  const [whitelistedBakers, setWhitelistedBakers] = useState<Baker[]>(() =>
-    bakers.listBakersWithDefault(whitelistAddresses),
-  );
+export function useBakers({ forStaking = false }: { forStaking?: boolean } = {}): Baker[] {
+  const [allBakers, setAllBakers] = useState<Baker[]>(() => bakers.listBakersWithDefault());
   useEffect(() => {
+    let cancelled = false;
     bakers
-      .listBakers(buildContext<TezosCoinConfig>("tezos"), whitelistAddresses)
-      .then(setWhitelistedBakers);
-  }, [whitelistAddresses]);
+      .listBakers(buildContext<TezosCoinConfig>("tezos"))
+      .then(listed => {
+        if (cancelled) return;
+        setAllBakers(listed);
+      })
+      .catch(err => {
+        if (cancelled) return;
+        log("coin:tezos", "useBakers: listBakers failed", { error: err });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  return whitelistedBakers;
+  return useMemo(
+    () => (forStaking ? allBakers.filter(baker => baker.stakingEnabled) : allBakers),
+    [allBakers, forStaking],
+  );
+}
+
+export function useLedgerBaker(options?: { forStaking?: boolean }): Baker | undefined {
+  return useBakers(options).find(baker => baker.address === bakers.ledgerValidatorAddress);
 }
 
 export function useDelegation(account: AccountLike): Delegation | null | undefined {

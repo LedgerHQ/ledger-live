@@ -18,6 +18,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
+import { CONTACTS_DEEP_LINK_PATH } from "./deeplinks/contactsDeepLink";
 import { PAY_TAB_DEEP_LINK_PATH } from "./deeplinks/payTabDeepLink";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
@@ -363,6 +364,7 @@ export const DeeplinksProvider = ({
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
   const lwmPayTabFlag = useFeature("lwmPayTab");
+  const lwmContactsFlag = useFeature("lwmContacts");
 
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
@@ -429,6 +431,17 @@ export const DeeplinksProvider = ({
                           [ScreenName.PerpsTab]: "perps",
                         },
                       },
+                      ...(lwmContactsFlag?.enabled && {
+                        /**
+                         * ie: "ledgerlive://contacts" opens the Contacts screen
+                         */
+                        [NavigatorName.MyWallet]: {
+                          initialRouteName: ScreenName.MyWallet,
+                          screens: {
+                            [ScreenName.MyWalletContacts]: CONTACTS_DEEP_LINK_PATH,
+                          },
+                        },
+                      }),
                       /**
                        * ie: "ledgerlive://borrow" will open the borrow screen
                        */
@@ -731,6 +744,10 @@ export const DeeplinksProvider = ({
             return getStateFromPath("card", config);
           }
 
+          if (hostname === CONTACTS_DEEP_LINK_PATH && !lwmContactsFlag?.enabled) {
+            return getStateFromPath("portfolio", config);
+          }
+
           if (hostname === "earn") {
             const earnParamAction = searchParams.get("action");
             const validatedAction = validateEarnAction(earnParamAction);
@@ -937,6 +954,7 @@ export const DeeplinksProvider = ({
     lwmProductTourFlag?.enabled,
     lwmBackupHubFlag?.enabled,
     lwmPayTabFlag?.enabled,
+    lwmContactsFlag?.enabled,
   ]);
   const [isReady, setIsReady] = React.useState(false);
   const [isNavigationContainerReady, setIsNavigationContainerReady] = React.useState(false);

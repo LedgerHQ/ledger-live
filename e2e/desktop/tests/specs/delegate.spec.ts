@@ -106,7 +106,7 @@ const delegateScenarios: DelegateScenario[] = [
     requiresExpertMode: true,
   },
   {
-    delegate: new Delegate(Account.OSMO_1, "0.0001", "Ledger by Figment"),
+    delegate: new Delegate(Account.OSMO_1, "0.0001", "polkachu.com"),
     xrayTicket: "B2CQA-3022",
     transactionType: "Delegated",
     providerStep: "search",
@@ -414,7 +414,7 @@ const validatorSelectionScenarios: ValidatorSelectionScenario[] = [
     supportsLNS: false,
   },
   {
-    delegate: new Delegate(Account.OSMO_2, "1", "Ledger by Figment"),
+    delegate: new Delegate(Account.OSMO_2, "1", "polkachu.com"),
     xrayTicket: "B2CQA-2768",
     selection: "searchable",
   },
@@ -512,19 +512,12 @@ test.describe("Delegate from market", () => {
     `[${currency.testLabel}] - Delegate from market entry point`,
     {
       tag: buildTags({ currencyId: currency.id }),
-      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771" }),
+      annotation: ticketAnnotations({ xrayTicket: "B2CQA-2771, B2CQA-1552" }),
     },
     async ({ app }) => {
       await app.marketBanner.clickExploreMarketHeader();
-      // The asset-discoverability Market has no search input and no per-row stake CTA: staking is
-      // reached by opening the asset detail page. Both entry points open the same stake flow.
-      if (await app.market.isLegacyMarketList()) {
-        await app.market.search(currency.ticker);
-        await app.market.stakeButtonClick(currency.ticker);
-      } else {
-        await app.market.openCoinPage(currency.ticker);
-        await app.assetDetail(currency.id).startEarnFlow();
-      }
+      await app.market.openCoinPage(currency.ticker);
+      await app.assetDetail(currency.id).startEarnFlow();
 
       const selector = await getModularSelector(app, "ACCOUNT");
       if (selector) {
@@ -535,6 +528,9 @@ test.describe("Delegate from market", () => {
 
       await app.delegate.verifyFirstProviderName(delegation.provider);
       await app.delegate.continue();
+
+      await app.delegate.toggleMaxAmount();
+      await app.delegate.verifyMaxAmountMatchesSpendable();
     },
   );
 });

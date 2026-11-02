@@ -12,17 +12,15 @@ import {
   AccountAssetsCell,
   AccountNameCell,
   AccountRowActionCell,
-  AccountValueCell,
   AggregatedAccountNameCell,
   AggregatedAccountValueCell,
 } from "./Cell";
 
 export type CryptoTableCellData = {
   readonly walletState: WalletState;
-  readonly shouldDisplayAggregatedAssets: boolean;
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
   readonly blacklistedTokenIds: string[];
-  readonly aggregatedDataByAccountId: ReturnType<typeof computeAggregatedAccountsData> | null;
+  readonly aggregatedDataByAccountId: ReturnType<typeof computeAggregatedAccountsData>;
   readonly isSyncing: boolean;
   readonly onEditName: (account: AccountLike) => void;
   readonly hasAccountSettings: (account: AccountLike) => boolean;
@@ -44,10 +42,10 @@ function useCryptoTableCellData(): CryptoTableCellData {
 type CryptoCellProps = CellContext<AccountLike, unknown>;
 
 export function NameCell({ row }: CryptoCellProps) {
-  const { walletState, shouldDisplayAggregatedAssets } = useCryptoTableCellData();
+  const { walletState } = useCryptoTableCellData();
   const displayName = accountNameWithDefaultSelector(walletState, row.original);
 
-  return shouldDisplayAggregatedAssets && row.original.type === "Account" ? (
+  return row.original.type === "Account" ? (
     <AggregatedAccountNameCell account={row.original} displayName={displayName} />
   ) : (
     <AccountNameCell account={row.original} displayName={displayName} />
@@ -67,17 +65,11 @@ export function AssetsCell({ row }: CryptoCellProps) {
 }
 
 export function BalanceCell({ row }: CryptoCellProps) {
-  const { shouldDisplayAggregatedAssets, aggregatedDataByAccountId } = useCryptoTableCellData();
-
-  if (shouldDisplayAggregatedAssets && aggregatedDataByAccountId) {
-    const entry = aggregatedDataByAccountId.get(row.original.id);
-    return (
-      <AggregatedAccountValueCell
-        aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)}
-      />
-    );
-  }
-  return <AccountValueCell account={row.original} />;
+  const { aggregatedDataByAccountId } = useCryptoTableCellData();
+  const entry = aggregatedDataByAccountId.get(row.original.id);
+  return (
+    <AggregatedAccountValueCell aggregatedCountervalue={entry?.countervalue ?? new BigNumber(0)} />
+  );
 }
 
 export function ActionCell({ row }: CryptoCellProps) {

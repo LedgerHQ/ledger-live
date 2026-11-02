@@ -53,9 +53,9 @@ or Native drawer directly; the aggregate coordinates its invocation from Contact
 `@features/flow-contacts-delete-address` owns address deletion. Applications import its Web dialog
 or Native drawer directly; Contact Detail coordinates when the journey opens.
 
-Web and React Native export `ContactsView` through the root entry point. The native entry also
-exports `ContactsAddContactHeaderButton` via the List leaf flow. Contact Detail rendering lives in
-`@features/flow-contacts-detail`.
+Web and React Native export `ContactsView` through the root entry point. Mobile imports
+`ContactsAddContactHeaderButton` from `@features/flow-contacts-list/native`. Contact Detail
+rendering lives in `@features/flow-contacts-detail`.
 
 ## Testing
 

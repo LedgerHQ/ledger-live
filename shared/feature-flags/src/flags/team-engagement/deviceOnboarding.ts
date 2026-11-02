@@ -6,9 +6,15 @@ export const deviceOnboarding = flagWith(
     offerLedgerSync: z.boolean(),
     connectSeededDevice: z.boolean().default(false),
     connectUnseededDevice: z.boolean().default(false),
+    unifiedEntryPoints: z.boolean().default(false),
   },
   {
     enabled: false,
-    params: { offerLedgerSync: false, connectSeededDevice: false, connectUnseededDevice: false },
+    params: {
+      offerLedgerSync: false,
+      connectSeededDevice: false,
+      connectUnseededDevice: false,
+      unifiedEntryPoints: false,
+    },
   },
 );

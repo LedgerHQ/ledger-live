@@ -1,9 +1,9 @@
-import { renderHook, act, withFlagOverrides } from "tests/testSetup";
+import { renderHook, act } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 import { useAddressListViewModel } from "../useAddressListViewModel";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { ETH_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
@@ -132,30 +132,19 @@ describe("useAddressListViewModel", () => {
     );
   });
 
-  it.each([false, true] as const)(
-    "navigates to the accounts sidebar when a token has no parent (asset section %s)",
-    shouldDisplayAssetSection => {
-      const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
+  it("navigates to the cryptos page when a token has no parent", () => {
+    const tokenAccount = genTokenAccount(0, ETH_ACCOUNT, usdcToken);
 
-      const { result } = renderHook(
-        () =>
-          useAddressListViewModel(
-            buildDistributionItem({ currency: btc, accounts: [tokenAccount] }),
-          ),
-        {
-          initialState: withFlagOverrides({
-            lwdWallet40: { enabled: true, params: { assetSection: shouldDisplayAssetSection } },
-          }),
-        },
-      );
+    const { result } = renderHook(() =>
+      useAddressListViewModel(buildDistributionItem({ currency: btc, accounts: [tokenAccount] })),
+    );
 
-      act(() => {
-        result.current.onAccountClick(tokenAccount, null);
-      });
+    act(() => {
+      result.current.onAccountClick(tokenAccount, null);
+    });
 
-      expect(mockNavigate).toHaveBeenCalledWith(getAccountsSidebarPath(shouldDisplayAssetSection));
-    },
-  );
+    expect(mockNavigate).toHaveBeenCalledWith(ACCOUNTS_SIDEBAR_PATH);
+  });
 
   it("opens the network-aware asset flow with the resolved network ledger ids", () => {
     mockNetworkLedgerIds.mockReturnValue(["ethereum", "base", "arbitrum", "optimism"]);

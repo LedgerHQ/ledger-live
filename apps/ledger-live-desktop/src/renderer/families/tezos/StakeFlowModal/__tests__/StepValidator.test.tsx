@@ -9,7 +9,7 @@ import type { StepProps } from "../types";
 
 const updateTransactionMock = jest.fn((tx, patch) => ({ ...tx, ...patch }));
 
-const bakersMock = jest.fn(() => [
+const bakersMock = jest.fn((_options: unknown) => [
   {
     address: "tz1baker-a",
     name: "Baker A",
@@ -28,7 +28,7 @@ const bakersMock = jest.fn(() => [
 
 jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   __esModule: true,
-  useBakers: () => bakersMock(),
+  useBakers: (options: unknown) => bakersMock(options),
 }));
 
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
@@ -112,6 +112,13 @@ describe("StakeFlowModal/StepValidator", () => {
     });
     expect(screen.getByText("Baker A")).toBeInTheDocument();
     expect(screen.getByText("Baker B")).toBeInTheDocument();
+  });
+
+  it("asks for the bakers that accept staking", () => {
+    act(() => {
+      render(<StepValidator {...makeProps()} />);
+    });
+    expect(bakersMock).toHaveBeenCalledWith({ forStaking: true });
   });
 
   it("clicking a baker sets the recipient without advancing (the gate lives in the footer)", () => {

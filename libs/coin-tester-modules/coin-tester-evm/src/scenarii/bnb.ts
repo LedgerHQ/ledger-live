@@ -97,8 +97,8 @@ export const scenarioBnb: Scenario<GenericTransaction, Account> = {
     sandbox = await startSandbox(
       { family: "evm", network: "bsc" },
       {
-        node: { provider: "geth", version: "1.8.1" },
-        indexer: { provider: "atlas", version: "2.38.21" },
+        node: { implementation: "geth", version: "1.8.1" },
+        indexer: { implementation: "atlas", version: "2.38.21" },
       },
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;

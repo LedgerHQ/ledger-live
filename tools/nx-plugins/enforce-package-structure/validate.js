@@ -20,21 +20,17 @@ const {
   isBarrelFile,
   starReexportTargets,
 } = require("./rules");
-const { checkComponents, isIgnoredEntry, resolveRelative } = require("./components");
+const { barrelReach, moduleGraph, resolveModule } = require("./barrel-graph");
+const { checkComponents, isIgnoredEntry } = require("./components");
 const { COMPONENT_EXCEPTIONS, FILE_EXCEPTIONS, PACKAGE_EXCEPTIONS } = require("./exceptions");
 const { INTERMEDIATE_BARREL_WAIVERS } = require("./intermediate-barrels");
+
+/** @typedef {import("./rules").ChainBreaker} ChainBreaker */
 
 const EXCEPTIONS_FILE = "tools/nx-plugins/enforce-package-structure/exceptions.js";
 
 const LAYER_ROOTS = ["domain", "shared", "features"];
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "lib-es", "build", ".turbo", ".cache"]);
-const NATIVE_EXTENSIONS = require("./components.config.json").extensions.native;
-// Re.Pack builds iOS and Android apart, so a `.ios` file does not hide its `.android` sibling.
-const RESOLUTIONS = [
-  { platform: "web" },
-  { platform: "native", extensions: NATIVE_EXTENSIONS.filter(ext => !ext.startsWith(".android.")) },
-  { platform: "native", extensions: NATIVE_EXTENSIONS.filter(ext => !ext.startsWith(".ios.")) },
-];
 const SOURCE_FILE = /\.[cm]?[jt]sx?$/;
 
 /**
@@ -108,20 +104,6 @@ function applyComponentWaivers(projectRoot, violations, waivers) {
 }
 
 /**
- * The files a relative specifier loads, as the web, iOS and Android bundles resolve it.
- *
- * @param {string} fromFile absolute path of the importing file
- * @param {string} specifier relative specifier
- * @returns {string[]} absolute paths
- */
-function resolveModule(fromFile, specifier) {
-  const files = RESOLUTIONS.map(({ platform, extensions }) =>
-    resolveRelative(fromFile, specifier, platform, extensions),
-  );
-  return [...new Set(files.filter(file => file !== null))];
-}
-
-/**
  * Every relative source file a `package.json#exports` target names, under any condition and at
  * any depth. Wildcard targets are skipped: they name a pattern, not a file.
  *
@@ -161,66 +143,13 @@ function entryPointsOf(exportsField, withTestSupport = false) {
 }
 
 /**
- * A barrel and its platform variants, which the bundlers treat as one module; any other file
- * alone.
- *
- * @param {string} file absolute path
- * @returns {string[]}
- */
-function indexVariants(file) {
-  if (!isBarrelFile(path.basename(file))) return [file];
-  const directory = path.dirname(file);
-  try {
-    return fs
-      .readdirSync(directory)
-      .filter(isBarrelFile)
-      .map(name => path.join(directory, name));
-  } catch {
-    return [file];
-  }
-}
-
-/**
- * How many barrels each file sits below its nearest entry, following relative `export *` the way
- * the bundlers resolve it. An entry is 0, so an entry reached from another entry counts from
- * itself; a barrel an entry reaches, directly or through plain modules, is 1.
- *
- * @param {string[]} entries absolute paths
- * @returns {Map<string, number>} absolute path to depth, for the files an entry reaches
- */
-function barrelDepths(entries) {
-  const entrySet = new Set(entries.flatMap(indexVariants));
-  const depths = new Map([...entrySet].map(file => [file, 0]));
-  const queue = [...entrySet];
-  while (queue.length > 0) {
-    const file = queue.shift();
-    let source;
-    try {
-      source = fs.readFileSync(file, "utf8");
-    } catch {
-      continue;
-    }
-    for (const specifier of starReexportTargets(source, file)) {
-      for (const target of resolveModule(file, specifier).flatMap(indexVariants)) {
-        if (entrySet.has(target)) continue;
-        const depth = depths.get(file) + (isBarrelFile(path.basename(target)) ? 1 : 0);
-        if (depth >= (depths.get(target) ?? Infinity)) continue;
-        depths.set(target, depth);
-        queue.push(target);
-      }
-    }
-  }
-  return depths;
-}
-
-/**
  * @param {string} workspaceRoot
  * @param {string} projectRoot posix-style, e.g. "domain/entity/contact"
  * @param {Record<string, Record<string, { rules: string[] }>>} [componentExceptions]
  * @param {Record<string, string>} [fileExceptions] the exception audit passes `{}` to see what
  *   each entry hides
  * @param {Record<string, string>} [intermediateBarrelWaivers] likewise for its own audit
- * @returns {Array<{ file: string, line: number, code: string, message: string, text: string, rule?: string }>}
+ * @returns {Array<{ file: string, line: number, code: string, message: string, text: string, rule?: string, breaker?: ChainBreaker }>}
  */
 function checkPackage(
   workspaceRoot,
@@ -238,21 +167,26 @@ function checkPackage(
   const options = PACKAGE_EXCEPTIONS[projectRoot] ?? {};
   const packageDir = path.join(workspaceRoot, projectRoot);
   const visited = new Set();
+  const graph = moduleGraph();
+
+  /**
+   * @param {string} file absolute path
+   * @returns {string} posix-style path from the repo root
+   */
+  function toRelative(file) {
+    return path.relative(workspaceRoot, file).split(path.sep).join("/");
+  }
 
   // Each file is checked once, so an `export *` cycle terminates.
   function visit(file) {
     if (visited.has(file)) return;
     visited.add(file);
-    let source;
-    try {
-      source = fs.readFileSync(file, "utf8");
-    } catch {
-      return;
-    }
-    const relative = path.relative(workspaceRoot, file).split(path.sep).join("/");
+    const source = graph.sourceOf(file);
+    if (source === undefined) return;
+    const relative = toRelative(file);
     if (!Object.hasOwn(fileExceptions, relative)) {
       const violations = isBarrelFile(relative)
-        ? checkBarrel(source, options)
+        ? checkBarrel(source, options, relative)
         : checkReachedModule(source, options, relative);
       for (const violation of violations) {
         found.push({ file: relative, ...violation });
@@ -283,14 +217,19 @@ function checkPackage(
     }
 
     const sourceRoot = path.join(packageDir, "src");
-    const depths = barrelDepths([
-      ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
-      ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
-    ]);
+    const reach = barrelReach(
+      [
+        ...barrels.filter(barrel => path.dirname(barrel) === sourceRoot),
+        ...entryPointsOf(manifest.exports, true).map(entry => path.join(packageDir, entry)),
+      ],
+      graph,
+    );
     for (const barrel of barrels) {
-      const relative = path.relative(workspaceRoot, barrel).split(path.sep).join("/");
+      const relative = toRelative(barrel);
       if (Object.hasOwn(intermediateBarrelWaivers, relative)) continue;
-      for (const violation of checkBarrelLocation(projectRoot, relative, depths.get(barrel))) {
+      const { depth, breaker } = reach.get(barrel) ?? {};
+      const at = breaker && { ...breaker, file: toRelative(breaker.file) };
+      for (const violation of checkBarrelLocation(projectRoot, relative, depth, at)) {
         found.push({ file: relative, ...violation });
       }
     }

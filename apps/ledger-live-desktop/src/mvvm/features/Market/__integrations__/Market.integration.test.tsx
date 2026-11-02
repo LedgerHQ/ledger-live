@@ -54,13 +54,10 @@ jest.mock("LLD/features/Market/hooks/useMarketListVirtualization.ts", () => ({
 
 const createMarketState = (overrides = {}) => ({
   marketParams: {
-    starred: [],
     range: "24h",
     limit: 50,
     order: Order.MarketCapDesc,
     search: "",
-    liveCompatible: false,
-    counterCurrency: "usd",
     ...overrides,
   },
   currentPage: 1,
@@ -72,16 +69,6 @@ const createSettingsState = (starredMarketCoins: string[] = []) => ({
 });
 
 const marketFeatureFlagsState = withFlagOverrides({ lldRefreshMarketData: { enabled: false } });
-
-const marketWithTopCardsOn = withFlagOverrides({
-  lldRefreshMarketData: { enabled: false },
-  lwdWallet40: { enabled: true, params: { assetDiscoverability: true } },
-});
-
-const marketWithTopCardsOff = withFlagOverrides({
-  lldRefreshMarketData: { enabled: false },
-  lwdWallet40: { enabled: false },
-});
 
 const jsonMarkets = (body: JsonBodyType = MOCK_MARKET_CURRENCY_DATA) => HttpResponse.json(body);
 
@@ -128,8 +115,8 @@ describe("Market Integration", () => {
     server.use(http.get(MARKET_API_ENDPOINT, () => jsonMarkets()));
   });
 
-  it("should render top cards section when assetDiscoverability is enabled", async () => {
-    renderMarket({ flags: marketWithTopCardsOn });
+  it("should render the top cards section", async () => {
+    renderMarket();
 
     await waitFor(() => {
       expect(screen.getByRole("region", { name: /market top cards/i })).toBeVisible();
@@ -137,16 +124,6 @@ describe("Market Integration", () => {
       expect(screen.getByTestId("market-top-card-2")).toBeVisible();
       expect(screen.getByTestId("market-top-card-3")).toBeVisible();
     });
-  });
-
-  it("should not render top cards section when assetDiscoverability is disabled", async () => {
-    renderMarket({ flags: marketWithTopCardsOff });
-
-    await waitFor(() => {
-      expect(screen.getByText("Market")).toBeVisible();
-    });
-
-    expect(screen.queryByRole("region", { name: /market top cards/i })).toBeNull();
   });
 
   it("should render market page with header", async () => {
@@ -171,7 +148,7 @@ describe("Market Integration", () => {
 
     renderMarket();
 
-    expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
+    expect(screen.getByTestId("market-table-skeleton")).toBeVisible();
     expect(screen.queryByTestId("market-list-data")).toBeNull();
   });
 
@@ -185,7 +162,7 @@ describe("Market Integration", () => {
     renderMarket();
 
     await waitFor(() => {
-      expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
+      expect(screen.getByTestId("market-table-skeleton")).toBeVisible();
       expect(screen.queryByTestId("market-list-data")).toBeNull();
     });
   });
@@ -200,63 +177,25 @@ describe("Market Integration", () => {
     renderMarket();
 
     await waitFor(() => {
-      expect(screen.getByTestId("market-list-skeleton")).toBeVisible();
+      expect(screen.getByTestId("market-table-skeleton")).toBeVisible();
       expect(screen.queryByTestId("market-list-data")).toBeNull();
     });
   });
 
-  it("should handle search functionality", async () => {
-    server.use(
-      http.get(MARKET_API_ENDPOINT, ({ request }) => {
-        const url = new URL(request.url);
-        const search = url.searchParams.get("filter");
-
-        return jsonMarkets(
-          search === "bitcoin" ? [MOCK_MARKET_CURRENCY_DATA[0]] : MOCK_MARKET_CURRENCY_DATA,
-        );
-      }),
-    );
-
-    const { user } = renderMarket();
-
-    await waitFor(() => {
-      expect(screen.getByTestId("market-list-data")).toBeVisible();
-      expect(screen.queryByTestId("market-list-skeleton")).toBeNull();
-    });
-
-    const searchInput = screen.getByPlaceholderText(/search/i);
-    if (searchInput) {
-      await user.type(searchInput, "bitcoin");
-    }
-  });
-
-  it("should toggle starred filter", async () => {
-    const { user } = renderMarket({ settings: createSettingsState(["bitcoin"]) });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("market-star-button")).toBeInTheDocument();
-    });
-
-    const starButton = screen.getByTestId("market-star-button");
-    await user.click(starButton);
-  });
-
-  it("should show sell button when currency is available for selling", async () => {
+  it("should show row actions when the list is loaded", async () => {
     renderMarket();
 
     await waitFor(() => {
       expect(screen.getByTestId("market-list-data")).toBeVisible();
     });
 
-    const sellButton = screen.getByTestId("market-BTC-sell-button");
-    expect(sellButton).toBeInTheDocument();
-    expect(sellButton).toBeVisible();
+    expect(screen.getByTestId("market-BTC-actions-menu")).toBeVisible();
   });
 
   it("should reset sort to default when switching category tab", async () => {
     server.use(http.get(TRENDING_CATEGORIES_ENDPOINT, () => jsonMarkets([])));
     const marketRequests = recordMarketRequests();
-    const { user } = renderMarket({ flags: marketWithTopCardsOn });
+    const { user } = renderMarket();
 
     await waitFor(() => {
       expect(screen.getByTestId("market-sort-volume")).toBeVisible();
@@ -304,7 +243,6 @@ describe("Market Integration", () => {
       return jsonMarkets(MOCK_MARKET_CURRENCY_DATA.slice(start, start + pageSize));
     });
     const { user } = renderMarket({
-      flags: marketWithTopCardsOn,
       market: { ...createMarketState(), currentPage: 3 },
     });
 
@@ -336,7 +274,7 @@ describe("Market Integration", () => {
       ),
     );
     const marketRequests = recordMarketRequests();
-    const { user } = renderMarket({ flags: marketWithTopCardsOn });
+    const { user } = renderMarket();
 
     const trendingChip = await screen.findByTestId("market-category-switcher-infrastructure");
     expect(trendingChip).toHaveTextContent("Infrastructure");
@@ -350,26 +288,6 @@ describe("Market Integration", () => {
       expect(
         marketRequests.some(url => url.searchParams.get("categories") === "infrastructure"),
       ).toBe(true);
-    });
-  });
-
-  it("should navigate to exchange with sell state when sell button is clicked", async () => {
-    const { user } = renderMarket({ accounts: [] });
-
-    await waitFor(() => {
-      expect(screen.getByTestId("market-BTC-sell-button")).toBeVisible();
-    });
-
-    const sellButton = screen.getByTestId("market-BTC-sell-button");
-    await user.click(sellButton);
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith("/exchange", {
-        state: expect.objectContaining({
-          currency: "bitcoin",
-          mode: "sell",
-        }),
-      });
     });
   });
 });

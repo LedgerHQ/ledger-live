@@ -1,0 +1,9 @@
+name: "Check iOS simulators"
+description: "Wait for boot-ios-simulators-background, then fail if any simulator cannot launch an app, so Detox never runs on a dead simulator"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check iOS simulators
+      shell: bash
+      run: bash "${GITHUB_ACTION_PATH}/check-simulators.sh"

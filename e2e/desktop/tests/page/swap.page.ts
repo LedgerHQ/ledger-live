@@ -11,7 +11,7 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 import { readFile } from "fs/promises";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
-import { getMinimumSwapAmount } from "@ledgerhq/live-e2e-shared/swap";
+import { getMinimumSwapAmount, needsTokenAllowance } from "@ledgerhq/live-e2e-shared/swap";
 import { expectAmountCloseTo } from "tests/utils/amountUtils";
 import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
@@ -292,12 +292,15 @@ export class SwapPage extends WebViewAppPage {
           !!providerEntry &&
           !providerEntry.kyc &&
           !providerEntry.app &&
+          !(swap && needsTokenAllowance(swap.accountToDebit, providerEntry)) &&
           !(isEthSolPair && providerEntry.name === SwapProvider.LIFI.name) &&
           (!isLns || providerEntry.availableOnLns),
       );
 
     if (!provider) {
-      throw new Error(`No providers without KYC found: ${providersList.join(", ")}`);
+      throw new Error(
+        `No providers without KYC, app or token allowance found: ${providersList.join(", ")}`,
+      );
     }
 
     const prefix = SwapPage.QUOTE_CARD_PROVIDER_NAME_PREFIX;

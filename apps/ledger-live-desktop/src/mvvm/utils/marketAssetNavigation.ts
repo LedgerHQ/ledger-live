@@ -1,10 +1,3 @@
-/** `/asset` when Wallet 4.0 aggregated assets is on, else `/market` (market deeplinks). */
-export function getAssetsDetailPathPrefix(
-  shouldDisplayAggregatedAssets: boolean,
-): "/asset" | "/market" {
-  return shouldDisplayAggregatedAssets ? "/asset" : "/market";
-}
-
 function encodePathSegment(segment: string): string {
   try {
     return encodeURIComponent(decodeURIComponent(segment));
@@ -13,21 +6,11 @@ function encodePathSegment(segment: string): string {
   }
 }
 
-/** Wallet 4.0 market list row / trending tile → asset or legacy market detail. */
-export function getMarketOrAssetDetailPath(
-  currencyId: string,
-  shouldDisplayAggregatedAssets: boolean,
-): string {
-  const segment = encodePathSegment(currencyId);
-  return shouldDisplayAggregatedAssets ? `/asset/${segment}` : `/market/${segment}`;
-}
-
-/** Asset deeplink and legacy asset-centric routes. */
 export function getAssetDetailPath(currencyId: string): string {
   return `/asset/${encodePathSegment(currencyId)}`;
 }
 
-/** True for asset (`/asset/:id`) or legacy market (`/market/:id`) detail pages (not the `/market` list). */
-export function isAssetOrMarketDetailPath(pathname: string): boolean {
-  return /^\/(asset|market)\/[^/]+(?:\/|$)/.test(pathname);
+/** True for an asset detail page (`/asset/:id`), not the bare `/asset` path. */
+export function isAssetDetailPath(pathname: string): boolean {
+  return /^\/asset\/[^/]+(?:\/|$)/.test(pathname);
 }

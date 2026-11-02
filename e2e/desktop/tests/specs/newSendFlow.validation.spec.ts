@@ -120,6 +120,48 @@ test.describe("Send - new flow - max amount", () => {
   );
 });
 
+test.describe("Send - new flow - fee strategy", () => {
+  const tx = new Transaction(Account.BTC_NATIVE_SEGWIT_1, Account.BTC_NATIVE_SEGWIT_2, "0.00001");
+
+  test.use({
+    teamOwner: Team.COIN_INTEGRATION,
+    userdata: "skip-onboarding-with-last-seen-device",
+    speculosApp: tx.accountToDebit.currency.speculosApp,
+    cliCommands: [liveDataWithRecipientAddressCommand(tx, { useScheme: true })],
+    featureFlags: newSendFlowFeatureFlags,
+  });
+
+  test(
+    `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) fee presets, custom fees and coin control`,
+    {
+      tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
+      annotation: { type: "TMS", description: "B2CQA-2368, B2CQA-6036" },
+    },
+    async ({ app }) => {
+      await reachAmountStep(app, tx);
+      await app.newSendFlow.switchToCryptoInput();
+      await app.newSendFlow.selectMaxAmount();
+
+      await app.newSendFlow.selectFeePreset(Fee.SLOW);
+      const maxAmountWithSlowFee = await app.newSendFlow.getCryptoAmount();
+      await app.newSendFlow.selectFeePreset(Fee.FAST);
+      await app.newSendFlow.expectCryptoAmountLowerThan(maxAmountWithSlowFee);
+
+      await app.newSendFlow.fillCryptoAmount(tx.amount);
+      await app.newSendFlow.openFeesMenu();
+      await app.newSendFlow.expectBitcoinFeesMenuOptions();
+      await app.newSendFlow.selectCoinControlFromMenu();
+      await app.newSendFlow.expectCoinControlScreen();
+      await app.newSendFlow.goBack();
+      await app.newSendFlow.expectAmountStepVisible();
+
+      await app.newSendFlow.openFeesMenu();
+      await app.newSendFlow.selectCustomFeesFromMenu();
+      await app.newSendFlow.expectCustomFeePerByteScreen();
+    },
+  );
+});
+
 const validAddresses: Array<{
   transaction: Transaction;
   testName: string;
@@ -350,10 +392,12 @@ test.describe("Send - new flow - ENS address", () => {
     `[${tx.accountToDebit.currency.testLabel}] - Send (new send flow) to ENS address`,
     {
       tag: buildTags({ currencyId: tx.accountToDebit.currency.id }),
-      annotation: { type: "TMS", description: "B2CQA-2202" },
+      annotation: { type: "TMS", description: "B2CQA-2202, B2CQA-6027" },
     },
     async ({ app }) => {
       await openNewSendFromAccount(app, tx);
+      await app.newSendFlow.typeAddress(Addresses.VITALIK_ENS);
+      await app.newSendFlow.expectRecentHistoryWarning();
       await app.newSendFlow.typeAddress(tx.accountToCredit.ensName ?? "");
       await app.newSendFlow.clickOnSendToButton(tx.accountToCredit);
       await app.newSendFlow.fillCryptoAmount(tx.amount);

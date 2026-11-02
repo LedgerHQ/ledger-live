@@ -5,11 +5,8 @@ const initialState: MarketState = {
   marketParams: {
     range: "24h",
     limit: 50,
-    starred: [],
     order: Order.MarketCapDesc,
     search: "",
-    liveCompatible: false,
-    counterCurrency: "USD",
   },
   currentPage: 1,
   hideTransactionsOnChart: false,
@@ -53,15 +50,18 @@ describe("market reducer", () => {
     expect(nextState.currentPage).toBe(1);
   });
 
-  it("keeps currentPage when only the countervalue changes", () => {
-    const scrolledState: MarketState = { ...initialState, currentPage: 3 };
-
-    const nextState = marketReducer(scrolledState, {
-      type: "MARKET_SET_VALUES",
-      payload: { counterCurrency: "EUR" },
+  it("does not restore a persisted counter currency", () => {
+    const nextState = marketReducer(initialState, {
+      type: "MARKET_IMPORT_STATE",
+      payload: {
+        ...initialState,
+        marketParams: { ...initialState.marketParams, counterCurrency: "EUR" },
+      },
     });
 
-    expect(nextState.currentPage).toBe(3);
+    expect(nextState.marketParams.counterCurrency).toBeUndefined();
+    expect(nextState.marketParams.range).toBe("24h");
+    expect(nextState.marketParams.order).toBe(Order.MarketCapDesc);
   });
 
   it("does nothing when selecting the same category", () => {

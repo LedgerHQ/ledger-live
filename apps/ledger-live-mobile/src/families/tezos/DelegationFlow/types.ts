@@ -27,6 +27,7 @@ export type TezosDelegationFlowParamList = {
   [ScreenName.DelegationSelectValidator]: {
     accountId: string;
     parentId?: string;
+    stakeAfter?: boolean;
     transaction: Transaction;
     status: TransactionStatus;
     source?: RouteProp<ParamListBase, ScreenName>;

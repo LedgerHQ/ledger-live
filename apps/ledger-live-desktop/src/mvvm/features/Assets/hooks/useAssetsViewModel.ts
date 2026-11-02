@@ -28,14 +28,12 @@ import {
 import { buildAssetsPagePath } from "../utils/buildAssetsPagePath";
 import { padItems } from "../utils/assetTableHelpers";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ASSETS_TRACKING_PAGE_NAME,
   CRYPTO_TRACKING_PAGE_NAME,
 } from "../../CryptoAddresses/constants";
 
 export function useAssetsViewModel(): AssetsViewModelResult {
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const hasOnboardedDevice = useSelector(hasOnboardedDeviceSelector);
   const { hasAccount } = useAccountStatus();
   const isEmptyState = !hasOnboardedDevice || !hasAccount;
@@ -114,13 +112,11 @@ export function useAssetsViewModel(): AssetsViewModelResult {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? shouldDisplayAggregatedAssets
-            ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
-            : `/market/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );
     },
-    [navigate, shouldDisplayAggregatedAssets],
+    [navigate],
   );
 
   const resolvedDefaults = useMemo(

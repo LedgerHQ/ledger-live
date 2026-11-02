@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { UNSAFE_NavigationContext, useLocation, useNavigate } from "react-router";
 import type { Account } from "@ledgerhq/types-live";
-import type { AccountSettingsAdapter } from "@features/flow-account-detail-settings";
+import type { AccountSettingsAdapter } from "@features/flow-account-detail-settings/web";
 import { getAccountUrl } from "~/renderer/utils";
 import { useAccountSettingsAdapter } from "LLD/hooks/useAccountSettingsAdapter";
 

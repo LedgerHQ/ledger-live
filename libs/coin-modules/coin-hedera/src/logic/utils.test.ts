@@ -30,7 +30,7 @@ import {
   deserializeTransaction,
   extractInitiator,
   extractFeesPayer,
-  getOperationValue,
+  getOperationFields,
   getMemoFromBase64,
   sendRecipientCanNext,
   isValidExtra,
@@ -136,41 +136,83 @@ describe("logic utils", () => {
     });
   });
 
-  describe("getOperationValue", () => {
+  describe("getOperationFields", () => {
     const nativeAsset: AssetInfo = { type: "native" };
     const tokenAsset: AssetInfo = { type: "hts", assetReference: "0.0.1234" };
+    const account = "0.0.1234";
+    const peer = "0.0.5678";
 
     it("should return 0 for FEES operations", () => {
       const operation = getMockedOperation({
         type: "FEES",
-        value: BigNumber(0),
+        value: BigNumber(100),
         fee: BigNumber(100),
       });
 
-      expect(getOperationValue({ asset: nativeAsset, operation, accountAddress: "0.0.1234" })).toBe(
-        BigInt(0),
-      );
-      expect(getOperationValue({ asset: tokenAsset, operation, accountAddress: "0.0.1234" })).toBe(
-        BigInt(0),
-      );
+      expect(
+        getOperationFields({ asset: nativeAsset, operation, accountAddress: account }).value,
+      ).toBe(BigInt(0));
+      expect(
+        getOperationFields({ asset: tokenAsset, operation, accountAddress: account }).value,
+      ).toBe(BigInt(0));
     });
 
-    it("should subtract fee from self-paid native operations that exclude fees", () => {
+    it("should keep token and REWARD operations as they are", () => {
+      const tokenOperation = getMockedOperation({
+        type: "OUT",
+        value: BigNumber(500),
+        fee: BigNumber(20),
+        senders: [account],
+        recipients: [peer],
+      });
+      const reward = getMockedOperation({
+        type: "REWARD",
+        value: BigNumber(800),
+        senders: ["0.0.800"],
+        recipients: [account],
+      });
+
+      expect(
+        getOperationFields({
+          asset: tokenAsset,
+          operation: tokenOperation,
+          accountAddress: account,
+          feesPayer: account,
+        }),
+      ).toEqual({ type: "OUT", value: BigInt(500), senders: [account], recipients: [peer] });
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation: reward,
+          accountAddress: account,
+          feesPayer: account,
+        }),
+      ).toEqual({
+        type: "REWARD",
+        value: BigInt(800),
+        senders: ["0.0.800"],
+        recipients: [account],
+      });
+    });
+
+    it("should subtract the fee from self-paid native operations that exclude fees", () => {
       OP_TYPES_EXCLUDING_FEES.forEach(type => {
         const operation = getMockedOperation({
           type,
           value: BigNumber(1000),
           fee: BigNumber(100),
+          senders: [account],
+          recipients: [peer],
         });
 
         expect(
-          getOperationValue({
+          getOperationFields({
             asset: nativeAsset,
             operation,
-            accountAddress: "0.0.1234",
-            feesPayer: "0.0.1234",
+            accountAddress: account,
+            feesPayer: account,
           }),
-        ).toBe(BigInt(900));
+        ).toEqual({ type, value: BigInt(900), senders: [account], recipients: [peer] });
       });
     });
 
@@ -179,52 +221,149 @@ describe("logic utils", () => {
         type: "OUT",
         value: BigNumber(10000),
         fee: BigNumber(1056079),
+        senders: ["0.0.453351", "0.0.356354"],
       });
 
       expect(
-        getOperationValue({
+        getOperationFields({
           asset: nativeAsset,
           operation,
           accountAddress: "0.0.453351",
           feesPayer: "0.0.356354",
-        }),
+        }).value,
       ).toBe(BigInt(10000));
     });
 
-    it("should return value for other operations", () => {
-      const operationOut = getMockedOperation({
+    it("should return 0 for a failed self-paid native operation", () => {
+      const operation = getMockedOperation({
         type: "OUT",
-        value: BigNumber(500),
-        fee: BigNumber(20),
-      });
-
-      const operationIn = getMockedOperation({
-        type: "IN",
-        value: BigNumber(800),
-        fee: BigNumber(30),
+        value: BigNumber(100),
+        fee: BigNumber(100),
+        senders: [account],
+        hasFailed: true,
       });
 
       expect(
-        getOperationValue({
-          asset: tokenAsset,
-          operation: operationOut,
-          accountAddress: "0.0.1234",
-        }),
-      ).toBe(BigInt(500));
-      expect(
-        getOperationValue({
-          asset: tokenAsset,
-          operation: operationIn,
-          accountAddress: "0.0.1234",
-        }),
-      ).toBe(BigInt(800));
-      expect(
-        getOperationValue({
+        getOperationFields({
           asset: nativeAsset,
-          operation: operationIn,
-          accountAddress: "0.0.1234",
+          operation,
+          accountAddress: account,
+          feesPayer: account,
+        }).value,
+      ).toBe(BigInt(0));
+    });
+
+    it("should return a negative value when another account paid part of the fees of a contract call", () => {
+      // mirror node transaction 0.0.453351-1665468776-125049344: the account paid 34507603 of the 35040000 fees
+      const operation = getMockedOperation({
+        type: "CONTRACT_CALL",
+        value: BigNumber(34507603),
+        fee: BigNumber(35040000),
+        senders: ["0.0.1077627", "0.0.453351"],
+        recipients: ["0.0.98"],
+      });
+
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation,
+          accountAddress: "0.0.453351",
+          feesPayer: "0.0.453351",
         }),
-      ).toBe(BigInt(800));
+      ).toEqual({
+        type: "CONTRACT_CALL",
+        value: BigInt(-532397),
+        senders: ["0.0.1077627", "0.0.453351"],
+        recipients: ["0.0.98"],
+      });
+    });
+
+    it("should keep a self-paid contract call that credited the account outgoing, with a negative value", () => {
+      const operation = getMockedOperation({
+        type: "CONTRACT_CALL",
+        value: BigNumber(5000),
+        fee: BigNumber(100),
+        senders: [peer],
+        recipients: [account],
+      });
+
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation,
+          accountAddress: account,
+          feesPayer: account,
+        }),
+      ).toEqual({
+        type: "CONTRACT_CALL",
+        value: BigInt(-5100),
+        senders: [peer, account],
+        recipients: [account],
+      });
+    });
+
+    it("should map someone else's contract call that credited the account to an IN operation", () => {
+      const operation = getMockedOperation({
+        type: "CONTRACT_CALL",
+        value: BigNumber(5000),
+        fee: BigNumber(100),
+        senders: [peer],
+        recipients: [account],
+      });
+
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation,
+          accountAddress: account,
+          feesPayer: peer,
+        }),
+      ).toEqual({ type: "IN", value: BigInt(5000), senders: [peer], recipients: [account] });
+    });
+
+    it("should add the fee to a native IN operation the account paid for", () => {
+      const operation = getMockedOperation({
+        type: "IN",
+        value: BigNumber(5000),
+        fee: BigNumber(100),
+        senders: [peer],
+        recipients: [account],
+      });
+
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation,
+          accountAddress: account,
+          feesPayer: account,
+        }).value,
+      ).toBe(BigInt(5100));
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation,
+          accountAddress: account,
+          feesPayer: peer,
+        }).value,
+      ).toBe(BigInt(5000));
+    });
+
+    it("should keep the value of other native operations", () => {
+      const operation = getMockedOperation({
+        type: "ASSOCIATE_TOKEN",
+        value: BigNumber(100),
+        fee: BigNumber(100),
+        senders: [account],
+      });
+
+      expect(
+        getOperationFields({
+          asset: nativeAsset,
+          operation,
+          accountAddress: account,
+          feesPayer: account,
+        }).value,
+      ).toBe(BigInt(100));
     });
   });
 

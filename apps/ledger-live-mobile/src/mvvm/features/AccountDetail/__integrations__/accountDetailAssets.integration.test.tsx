@@ -32,6 +32,20 @@ const emptyBtcAccount = genAccount("account-detail-assets-empty", {
   currency: getCryptoCurrencyById("bitcoin"),
   operationsSize: 0,
 });
+const algorandAccount = withBalance(
+  genAccount("account-detail-assets-algorand", {
+    currency: getCryptoCurrencyById("algorand"),
+    operationsSize: 2,
+  }),
+  "5000000",
+);
+const stellarAccount = withBalance(
+  genAccount("account-detail-assets-stellar", {
+    currency: getCryptoCurrencyById("stellar"),
+    operationsSize: 2,
+  }),
+  "5000000",
+);
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
@@ -54,7 +68,10 @@ function renderAccount(
         const withFlag = withFlagOverrides({ accountDetail: { enabled: true } })(state);
         return {
           ...withFlag,
-          accounts: { ...withFlag.accounts, active: [ethAccount, emptyBtcAccount] },
+          accounts: {
+            ...withFlag.accounts,
+            active: [ethAccount, emptyBtcAccount, algorandAccount, stellarAccount],
+          },
           settings: { ...withFlag.settings, blacklistedTokenIds, hideEmptyTokenAccounts },
         };
       },
@@ -102,6 +119,24 @@ describe("AccountDetail assets", () => {
 
     const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
     expect(within(section).queryAllByRole("button")).toHaveLength(0);
+  });
+
+  it.each([
+    ["Algorand", algorandAccount],
+    ["Stellar", stellarAccount],
+  ])("offers to add an asset on a %s account", (_family, account) => {
+    renderAccount(account);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).getByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeVisible();
+    expect(within(section).getByText("Add")).toBeVisible();
+  });
+
+  it("does not offer to add an asset where nothing needs to be added, even with tokens", () => {
+    renderAccount(ethAccount);
+
+    const section = screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.assets);
+    expect(within(section).queryByTestId(ACCOUNT_DETAIL_TEST_IDS.addAsset)).toBeNull();
   });
 
   it("hides the section when the account has no activity", () => {

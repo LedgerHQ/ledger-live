@@ -1,3 +1,3 @@
 export * from "./exports";
-export * from "./ContactsListView.web";
-export * from "./components/ContactsCompactList/ContactsCompactList.web";
+export * from "./components/ContactsCompactList/ContactsCompactList";
+export type * from "./components/ContactsCompactList/ContactsCompactList.types";

@@ -1,6 +1,7 @@
 import { trackPage } from "@shared/analytics";
 import { act, renderHook } from "@testing-library/react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { useSendFlowActions, useSendFlowData } from "../../../../context/SendFlowContext";
@@ -144,6 +145,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: undefined,
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
@@ -164,6 +166,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: "name.eth",
       memo: undefined,
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(navigate).not.toHaveBeenCalled();
   });
@@ -187,6 +190,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: undefined,
       memo: { value: "", type: "NO_MEMO" },
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
     expect(navigate).toHaveBeenCalledWith(ScreenName.SendFlowAmount);
   });
@@ -225,6 +229,7 @@ describe("useRecipientScreenViewModel", () => {
       ensName: undefined,
       memo: { type: "MEMO", value: "123" },
       displayLabel: undefined,
+      isSelfTransfer: false,
     });
   });
 
@@ -245,5 +250,42 @@ describe("useRecipientScreenViewModel", () => {
 
     expect(goBack).toHaveBeenCalledTimes(1);
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  describe("with a self-transfer target", () => {
+    beforeEach(() => {
+      jest.spyOn(sendFeatures, "getBalanceTypeConfig").mockReturnValue({
+        getSelfTransferTarget: () => {
+          return {
+            address: "aleo1self",
+            translationKey: "recipient.selfTransfer.toPrivate",
+            isDestinationPublic: false,
+          };
+        },
+      } as never);
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it.each([
+      ["ALEO1SELF", true],
+      ["aleo1someoneelse", false],
+    ])("sets isSelfTransfer for %s to %s", (address, isSelfTransfer) => {
+      const { result } = renderHook(() => useRecipientScreenViewModel());
+      if (!result.current.ready) {
+        throw new Error("Expected a ready recipient screen");
+      }
+      const viewModel = result.current;
+
+      act(() => {
+        viewModel.onAddressSelected(address);
+      });
+
+      expect(setRecipient).toHaveBeenCalledWith(
+        expect.objectContaining({ address, isSelfTransfer }),
+      );
+    });
   });
 });

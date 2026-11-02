@@ -157,7 +157,7 @@ function makeIntent(overrides?: Partial<TransactionIntent>): TransactionIntent {
     sender: SENDER,
     recipient: RECIPIENT,
     amount: 1_000_000_000n,
-    asset: { type: "native", name: "Solana" },
+    asset: { type: "native" },
     ...overrides,
   };
 }
@@ -317,14 +317,13 @@ describe("validateIntent", () => {
       expect(result.errors.recipient).toBeInstanceOf(SolanaMintAccountNotAllowed);
     });
 
-    it("names Solana in an invalid delegate error regardless of the asset name", async () => {
+    it("names Solana in an invalid delegate error for a token asset", async () => {
       const result = await validateIntent(
         makeApproveIntent({
           recipient: "not-a-valid-address!!!",
           asset: {
             type: "spl-token",
             assetReference: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-            name: "USDC",
           },
         }),
         makeBalances(),
@@ -379,7 +378,7 @@ describe("validateIntent", () => {
           recipient: RECIPIENT,
           valAddress: RECIPIENT,
           amount: 1_000_000_000n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
           ...overrides,
         };
       }
@@ -450,7 +449,7 @@ describe("validateIntent", () => {
         const result = await validateIntent(
           makeStakeIntent({
             recipient: "not-valid!!!",
-            asset: { type: "native", name: "Not Solana" },
+            asset: { type: "native" },
           }),
           makeBalances(),
           { value: 5000n },
@@ -651,7 +650,7 @@ describe("validateIntent", () => {
           recipient: RECIPIENT,
           valAddress: RECIPIENT,
           amount: 0n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
           memo: { type: "string", kind: "text", value: RECIPIENT },
           ...overrides,
         } as StakingTransactionIntent;
@@ -693,7 +692,7 @@ describe("validateIntent", () => {
           recipient: RECIPIENT,
           valAddress: "",
           amount: 0n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
           ...overrides,
         };
       }
@@ -761,7 +760,7 @@ describe("validateIntent", () => {
           recipient: VOTE_ACC,
           valAddress: VOTE_ACC,
           amount: 0n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
           memo: { type: "string", kind: "text", value: RECIPIENT },
           ...overrides,
         }) as StakingTransactionIntent;
@@ -775,7 +774,7 @@ describe("validateIntent", () => {
           recipient: RECIPIENT,
           valAddress: "",
           amount: 0n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
         }) as StakingTransactionIntent;
 
       const withdrawIntent = () =>
@@ -894,7 +893,7 @@ describe("validateIntent", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: 2_000_000_000n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
           ...overrides,
         };
       }
@@ -958,7 +957,7 @@ describe("validateIntent", () => {
 
     function makeTokenIntent(overrides?: Partial<TransactionIntent>): TransactionIntent {
       return makeIntent({
-        asset: { type: "spl-token", assetReference: USDC_MINT, name: "USDC" },
+        asset: { type: "spl-token", assetReference: USDC_MINT },
         ...overrides,
       });
     }
@@ -1392,7 +1391,7 @@ describe("validateIntent", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: 0n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
         } as IntentArg,
         makeStakeBalances(),
         { value: 5000n },
@@ -1409,7 +1408,7 @@ describe("validateIntent", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: 100_000_000n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
         } as IntentArg,
         makeStakeBalances({
           details: {
@@ -1436,7 +1435,7 @@ describe("validateIntent", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: 100_000_000n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
         } as IntentArg,
         balances,
         { value: 5000n },
@@ -1452,7 +1451,7 @@ describe("validateIntent", () => {
       makeIntent({
         type,
         recipient,
-        asset: { type: "spl-token", name: "USDC", assetReference: SENDER },
+        asset: { type: "spl-token", assetReference: SENDER },
       } as never) as IntentArg;
 
     it("refuses to open a token account that already exists", async () => {
@@ -1519,7 +1518,7 @@ describe("validateIntent", () => {
           recipient: RECIPIENT,
           amount: 0n,
           useAllAmount: true,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
         } as IntentArg,
         [{ value: 3_000_000_000n, asset: { type: "native" }, locked: 3_000_000_000n }],
         { value: 5000n },
@@ -1536,7 +1535,7 @@ describe("validateIntent", () => {
           sender: SENDER,
           recipient: RECIPIENT,
           amount: 0n,
-          asset: { type: "native", name: "Solana" },
+          asset: { type: "native" },
         } as IntentArg,
         makeStakeBalances({}, 1_000_000_000n).map(b =>
           b.stake ? b : { ...b, locked: 1_000_000_000n },
@@ -1551,7 +1550,7 @@ describe("validateIntent", () => {
       const result = await validateIntent(
         makeIntent({
           type: "token.revoke",
-          asset: { type: "spl-token", name: "USDC", assetReference: RECIPIENT } as never,
+          asset: { type: "spl-token", assetReference: RECIPIENT } as never,
         }) as IntentArg,
         [{ value: 3_000_000_000n, asset: { type: "native" }, locked: 3_000_000_000n }],
         { value: 5000n },
@@ -1570,7 +1569,7 @@ describe("validateIntent", () => {
       const result = await validateIntent(
         makeIntent({
           type: "token.revoke",
-          asset: { type: "spl-token", name: "USDC", assetReference: RECIPIENT } as never,
+          asset: { type: "spl-token", assetReference: RECIPIENT } as never,
         }) as IntentArg,
         makeBalances(),
         { value: 5000n },
@@ -1597,7 +1596,7 @@ describe("validateIntent", () => {
 
       const result = await validateIntent(
         makeIntent({
-          asset: { type: "spl-token", name: "USDC", assetReference: SENDER } as never,
+          asset: { type: "spl-token", assetReference: SENDER } as never,
         }) as IntentArg,
         [...makeBalances(), { value: 100n, asset: { type: "spl-token" } as never }],
         { value: 5000n },
@@ -1608,7 +1607,7 @@ describe("validateIntent", () => {
     });
 
     it("counts a Token-2022 transfer fee against the token balance", async () => {
-      const asset = { type: "spl-token-2022", name: "TSLAx", assetReference: RECIPIENT } as never;
+      const asset = { type: "spl-token-2022", assetReference: RECIPIENT } as never;
       const balances: Balance[] = [...makeBalances(), { value: 100n, asset }];
 
       const result = await validateIntent(

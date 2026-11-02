@@ -57,5 +57,6 @@ export type OsUpdatesOrchestratorDebugScreenViewModel = {
   onRemoveBackup: () => void;
   onStart: () => void;
   onConfirmStart: () => void;
+  onOpenReleaseNotes: () => void;
   onStop: () => void;
 };

@@ -10,7 +10,11 @@ The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`co
 
 Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only where those globals are not available.
 
-Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers.
+Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers for them. When no installed global performs the operation, add that action to the [element handle](e2e-mobile-elements.md) and use the handle for that element.
+
+## A page object that imports element handles MUST use them for every element
+
+This rule replaces the previous one for a page object that imports from `@e2e/helpers/elements/*`. Such a page object MUST declare and act on every element through [element handles](e2e-mobile-elements.md) and MUST NOT call an element global. [`helpers/elements`](../helpers/elements) calls the Detox matchers itself and MUST NOT import `elementHelpers.ts`, so the globals can be deleted once every page object is migrated.
 
 ## A shared Live App test id SHOULD match the desktop test id
 
@@ -76,7 +80,7 @@ The method MUST live on the page that owns its parameter. `deleteContact(rowId)`
 
 A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### Selector helpers MUST be private readonly arrow functions
+### In a page object that uses globals, selector helpers MUST be private readonly arrow functions
 
 Element getters and parameterized locator builders MUST be private readonly arrow-function class properties. Static IDs passed to waits MUST be private readonly strings. Dynamic IDs MUST use private readonly builder functions. A step MUST NOT build a matcher or ID inline.
 
@@ -84,6 +88,15 @@ Element getters and parameterized locator builders MUST be private readonly arro
 private readonly contactsContent = () => getElementById("contacts-content");
 private readonly savedContactRowName = (rowId: string) => getElementById(`${rowId}-name`);
 private readonly addContactContentId = "contacts-add-contact-content";
+```
+
+### A handle locator MUST be a private readonly property
+
+In a page object that imports element handles, a static locator MUST be a private readonly handle, and a dynamic one a private readonly builder that returns a handle. A step MUST NOT build a handle inline.
+
+```ts
+private readonly recipientInput = byId("recipient-input");
+private readonly contactCompactRow = (contactId: string) => byId(`contacts-compact-row-${contactId}`);
 ```
 
 ### Every public method MUST use @Step
@@ -155,9 +168,9 @@ Builders are shared with desktop specs. The shape MUST be derived from the produ
 
 iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in a fixture fails on iOS only. Such characters MUST stay out of fixtures, and the test MUST say why.
 
-## Exclusive lock implementation
+## Tests that broadcast or change shared state MUST declare it before their `describe`
 
-What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
+The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
 
 ```ts
 export function runDelegateTest(delegation: DelegateType /* … */) {

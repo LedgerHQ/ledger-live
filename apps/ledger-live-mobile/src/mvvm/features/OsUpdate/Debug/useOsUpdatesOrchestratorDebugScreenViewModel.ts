@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Linking } from "react-native";
 import {
   DeviceStatus,
   GetOsVersionCommand,
@@ -7,6 +8,7 @@ import {
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
 import {
+  dmkToLedgerDeviceIdMap,
   ResolveOsUpdatePathUseCase,
   type DeviceBackupStorage,
   type OsUpdatesOrchestratorUseCaseInput,
@@ -17,6 +19,7 @@ import {
   useHidDevicesDiscovery,
 } from "@ledgerhq/live-dmk-mobile";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import { urls } from "~/utils/urls";
 import { deviceBackupStorage } from "../storage/deviceBackupStorage";
 import type {
   DebugDiscoveredDevice,
@@ -370,6 +373,13 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
       : null;
   }, [pendingRun]);
 
+  const onOpenReleaseNotes = useCallback(() => {
+    if (!pendingRun) {
+      return;
+    }
+    Linking.openURL(urls.fwUpdateReleaseNotes[dmkToLedgerDeviceIdMap[pendingRun.device.modelId]]);
+  }, [pendingRun]);
+
   const onStop = useCallback(() => {
     stopRun();
     setPhase("stopped");
@@ -412,6 +422,7 @@ export function useOsUpdatesOrchestratorDebugScreenViewModel(): OsUpdatesOrchest
     onRemoveBackup,
     onStart,
     onConfirmStart,
+    onOpenReleaseNotes,
     onStop,
   };
 }

@@ -23,6 +23,7 @@ import { RequestAccountNavigatorParamList } from "~/components/RootNavigator/typ
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { Flex } from "@ledgerhq/native-ui";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { useOpenSelectDevice } from "LLM/features/DeviceSelection/hooks/useOpenSelectDevice";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 const SEARCH_KEYS = [
@@ -99,6 +100,7 @@ function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currency, allowAddAccount, onSuccess } = route.params;
   const accounts = useAccountsByCryptoCurrency(currency);
+  const openSelectDevice = useOpenSelectDevice();
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
       const n =
@@ -151,20 +153,17 @@ function SelectAccount({ navigation, route }: Props) {
   }, [route.params, navigation]);
 
   const onAddAccount = useCallback(() => {
-    navigation.navigate(NavigatorName.DeviceSelection, {
-      screen: ScreenName.SelectDevice,
-      params: {
-        currency:
-          currency.type === "TokenCurrency"
-            ? getCryptoCurrencyById(currency.parentCurrencyId)
-            : (currency as CryptoCurrency),
-        context: AddAccountContexts.AddAccounts,
-        inline: true,
-        sourceScreenName: ScreenName.RequestAccountsSelectAccount,
-        onSuccess: navigateOnAddAccountSuccess,
-      },
+    openSelectDevice({
+      currency:
+        currency.type === "TokenCurrency"
+          ? getCryptoCurrencyById(currency.parentCurrencyId)
+          : (currency as CryptoCurrency),
+      context: AddAccountContexts.AddAccounts,
+      inline: true,
+      sourceScreenName: ScreenName.RequestAccountsSelectAccount,
+      onSuccess: navigateOnAddAccountSuccess,
     });
-  }, [currency, navigation, navigateOnAddAccountSuccess]);
+  }, [currency, openSelectDevice, navigateOnAddAccountSuccess]);
 
   const renderFooter = useCallback(
     () =>

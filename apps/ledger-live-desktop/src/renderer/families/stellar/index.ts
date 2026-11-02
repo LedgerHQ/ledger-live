@@ -3,6 +3,7 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
 import tokenList from "./TokenList";
+import addAssetAction from "./addAssetAction";
 import { StellarFamily } from "./types";
 
 const family: StellarFamily = {
@@ -11,6 +12,7 @@ const family: StellarFamily = {
   sendAmountFields,
   sendRecipientFields,
   tokenList,
+  addAssetAction,
   modalsToPreload: ["MODAL_STELLAR_ADD_ASSET"],
 };
 

@@ -8,7 +8,7 @@ import {
   mockContactWithMultipleAddresses,
 } from "@domain/entity-contact/schema.mock";
 import type { Contact } from "@domain/entity-contact";
-import { ContactsCompactList } from "../../index.native";
+import { ContactsCompactList } from "../../index";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });
@@ -27,7 +27,7 @@ function createContacts(): readonly Contact[] {
 
 describe("ContactsCompactList", () => {
   it("should render supplied contacts with the appropriate address descriptions", () => {
-    render(<ContactsCompactList contacts={createContacts()} onContactSelect={jest.fn()} />);
+    render(<ContactsCompactList contacts={createContacts()} onSelectContact={jest.fn()} />);
 
     expect(screen.getByText("Zero")).toBeVisible();
     expect(screen.getAllByText("contacts.addressCount")).toHaveLength(2);
@@ -52,7 +52,7 @@ describe("ContactsCompactList", () => {
           mockContact({ id: "contact-me", name: "Alice", isMe: true }),
           mockContact({ id: "contact-bob", name: "Bob" }),
         ]}
-        onContactSelect={jest.fn()}
+        onSelectContact={jest.fn()}
       />,
     );
 
@@ -66,7 +66,7 @@ describe("ContactsCompactList", () => {
       <ContactsCompactList
         contacts={createContacts()}
         maxContacts={2}
-        onContactSelect={jest.fn()}
+        onSelectContact={jest.fn()}
       />,
     );
 
@@ -76,7 +76,7 @@ describe("ContactsCompactList", () => {
   });
 
   it("should render no rows when contacts are empty or maxContacts is zero", () => {
-    const { rerender } = render(<ContactsCompactList contacts={[]} onContactSelect={jest.fn()} />);
+    const { rerender } = render(<ContactsCompactList contacts={[]} onSelectContact={jest.fn()} />);
 
     expect(screen.queryByTestId("contacts-compact-row-contact-zero")).toBeNull();
 
@@ -84,7 +84,7 @@ describe("ContactsCompactList", () => {
       <ContactsCompactList
         contacts={createContacts()}
         maxContacts={0}
-        onContactSelect={jest.fn()}
+        onSelectContact={jest.fn()}
       />,
     );
 
@@ -93,13 +93,13 @@ describe("ContactsCompactList", () => {
 
   it("should provide the selected contact to the consumer callback", async () => {
     const contacts = createContacts();
-    const onContactSelect = jest.fn();
+    const onSelectContact = jest.fn();
     const user = userEvent.setup();
 
-    render(<ContactsCompactList contacts={contacts} onContactSelect={onContactSelect} />);
+    render(<ContactsCompactList contacts={contacts} onSelectContact={onSelectContact} />);
 
     await user.press(screen.getByTestId("contacts-compact-row-contact-one"));
 
-    expect(onContactSelect).toHaveBeenCalledWith(contacts[1]);
+    expect(onSelectContact).toHaveBeenCalledWith(contacts[1]);
   });
 });

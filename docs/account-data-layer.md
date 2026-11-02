@@ -108,6 +108,7 @@ export const portfolioSource: AccountDataSource = {
 
 - `id` is an `AccountDataSourceId` (`AccountDataSourceIdSchema` in `@domain/entity-account-data`): the answering source is stored with the data, and only it serves the next page.
 - `supports` is pure and synchronous, decided from the descriptor alone.
+- `purposes` lists the descriptor purposes a source serves, `["account"]` by default: a `mock` descriptor (a generated account) only reaches the mock source of [`@devtools/mock-accounts`](../devtools/mock-accounts), which that tool adds at runtime with `addAccountDataSource`.
 - On a next page, each target carries the `cursor` the source wrote in the previous page's `nextCursor`.
 - A source with both readers for a kind is always read through `readBatch`: its `read` is never called.
 - Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order.

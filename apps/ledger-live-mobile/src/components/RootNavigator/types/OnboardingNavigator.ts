@@ -15,9 +15,18 @@ export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
 };
 
+export type OnboardingEntrySource =
+  | "portfolio"
+  | "lazy_onboarding"
+  | "my_wallet_empty"
+  | "my_wallet_add";
+
 export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
-  [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
+  [ScreenName.OnboardingPostWelcomeSelection]: {
+    userHasDevice: boolean;
+    source?: OnboardingEntrySource;
+  };
   [ScreenName.OnboardingNotificationsOptIn]: undefined;
   [ScreenName.OnboardingWelcomeBack]: undefined;
   [NavigatorName.DeviceSelection]?: Partial<

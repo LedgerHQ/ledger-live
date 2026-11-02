@@ -28,7 +28,6 @@ export interface ERC20TokenTransfer {
   sender_account_id: number | null;
   receiver_evm_address: string | null;
   receiver_account_id: number | null;
-  payer_account_id: number;
   amount: number;
   transfer_type: string;
   consensus_timestamp: number;

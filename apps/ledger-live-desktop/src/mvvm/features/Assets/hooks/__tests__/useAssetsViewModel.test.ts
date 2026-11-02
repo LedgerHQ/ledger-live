@@ -309,7 +309,7 @@ describe("useAssetsViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/asset/bitcoin");
   });
 
-  it("should navigate to /market using marketId when onItemClick is called with a placeholder item", () => {
+  it("should navigate to /asset using marketId when onItemClick is called with a placeholder item", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
@@ -321,10 +321,10 @@ describe("useAssetsViewModel", () => {
       result.current.sections[0].onItemClick(placeholderItem);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin");
+    expect(mockNavigate).toHaveBeenCalledWith("/asset/bitcoin");
   });
 
-  it("should resolve URN marketId to its last segment when navigating to /market", () => {
+  it("should resolve URN marketId to its last segment when navigating to /asset", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...BITCOIN_ASSET,
@@ -336,7 +336,7 @@ describe("useAssetsViewModel", () => {
       result.current.sections[0].onItemClick(placeholderItem);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/market/ethereum");
+    expect(mockNavigate).toHaveBeenCalledWith("/asset/ethereum");
   });
 
   it("should resolve URN marketId with underscores to hyphenated market slug", () => {
@@ -351,7 +351,7 @@ describe("useAssetsViewModel", () => {
       result.current.sections[0].onItemClick(placeholderItem);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/market/usd-coin");
+    expect(mockNavigate).toHaveBeenCalledWith("/asset/usd-coin");
   });
 
   it("should use encodeURIComponent on currency.id when marketId is missing on a placeholder", () => {
@@ -366,11 +366,11 @@ describe("useAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent(STABLECOIN_ASSET.currency.id)}`,
+      `/asset/${encodeURIComponent(STABLECOIN_ASSET.currency.id)}`,
     );
   });
 
-  it("should navigate to /market with marketId for token placeholder items instead of currency.id", () => {
+  it("should navigate to /asset with marketId for token placeholder items instead of currency.id", () => {
     const { result } = renderHook(() => useAssetsViewModel());
     const placeholderItem: AssetTableItem = {
       ...STABLECOIN_ASSET,
@@ -382,7 +382,7 @@ describe("useAssetsViewModel", () => {
       result.current.sections[0].onItemClick(placeholderItem);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith("/market/tether");
+    expect(mockNavigate).toHaveBeenCalledWith("/asset/tether");
   });
 
   it("should have pre-resolved titles in sections", () => {
@@ -664,7 +664,7 @@ describe("useCryptoAssetsViewModel", () => {
     expect(mockNavigate).toHaveBeenCalledWith(`/asset/${real!.currency.id}`);
   });
 
-  it("navigates to the market page when a placeholder row is activated", () => {
+  it("navigates to the asset page when a placeholder row is activated", () => {
     const usdc = STABLECOIN_ASSET.currency;
     mockUseAssetsData.mockReturnValue({
       data: buildMockAssetsData([{ id: usdc.id, ticker: "USDC", currencyObj: usdc }]),
@@ -688,7 +688,7 @@ describe("useCryptoAssetsViewModel", () => {
     });
 
     expect(mockNavigate).toHaveBeenCalledWith(
-      `/market/${encodeURIComponent(
+      `/asset/${encodeURIComponent(
         dadaIdToMarketId(placeholder!.marketId ?? placeholder!.currency.id),
       )}`,
     );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import type { AssetCategory } from "@domain/api-aggregated-assets";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -13,6 +13,7 @@ import {
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
+import { shouldRequestModularDrawer } from "./shouldRequestModularDrawer";
 import type { DisabledItemsExplanation } from "./types";
 
 export type ModularDrawerFlowRenderProps = Readonly<{
@@ -96,16 +97,22 @@ export function ModularDrawerFlow({
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
   const completionMode = useSelector(modularDrawerCompletionModeSelector);
-  const { sortedCryptoCurrencies, assetsSorted, isLoading, isError, refetch, loadNext } = useAssets(
-    {
-      currencyIds: completionMode === "currency" ? undefined : currencies,
-      networkIds: completionMode === "currency" ? currencies : undefined,
-      categories,
-      searchedValue: searchValue,
-      useCase,
-      areCurrenciesFiltered,
-    },
-  );
+  const {
+    sortedCryptoCurrencies,
+    assetsSorted,
+    isLoading,
+    isError,
+    isCurrentResultReady,
+    refetch,
+    loadNext,
+  } = useAssets({
+    currencyIds: completionMode === "currency" ? undefined : currencies,
+    networkIds: completionMode === "currency" ? currencies : undefined,
+    categories,
+    searchedValue: searchValue,
+    useCase,
+    areCurrenciesFiltered,
+  });
 
   const {
     accountCurrency,
@@ -117,6 +124,7 @@ export function ModularDrawerFlow({
     availableNetworks,
     shouldShowBackButton,
     hasOneCurrency,
+    canAutoResolveSingleAsset,
     onAddNewAccount,
   } = useModularDrawerState({
     assetsSorted,
@@ -128,7 +136,23 @@ export function ModularDrawerFlow({
     onAccountSelected,
     onCurrencySelected,
     selectableNetworkIds,
+    isCurrentCatalogReady: isCurrentResultReady,
   });
+
+  const [hasPresentedSheet, setHasPresentedSheet] = useState(false);
+  if (!isOpen && hasPresentedSheet) setHasPresentedSheet(false);
+  const isRequestingToBeOpened = shouldRequestModularDrawer({
+    isOpen,
+    hasSearchedValue: searchValue.length > 0,
+    hasOneCurrency,
+    enableAccountSelection: Boolean(enableAccountSelection),
+    completionMode,
+    isAssetsError: isError,
+    isCurrentCatalogReady: isCurrentResultReady,
+    hasPresentedSheet,
+    canAutoResolveSingleAsset,
+  });
+  if (isRequestingToBeOpened && !hasPresentedSheet) setHasPresentedSheet(true);
 
   const content = (
     <ModularDrawerFlowManager
@@ -170,7 +194,7 @@ export function ModularDrawerFlow({
       {children({
         content,
         hasBackButton: shouldShowBackButton,
-        isRequestingToBeOpened: (!hasOneCurrency || Boolean(enableAccountSelection)) && isOpen,
+        isRequestingToBeOpened,
         onBack: handleBackButton,
         onClose: handleCloseButton,
       })}

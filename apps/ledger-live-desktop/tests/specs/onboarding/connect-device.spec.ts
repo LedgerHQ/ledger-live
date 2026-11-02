@@ -8,6 +8,8 @@ test.use({
   },
   featureFlags: {
     noah: { enabled: false },
+    lwdAnalyticsOptInScreenV2: { enabled: false },
+    lldAnalyticsOptInPrompt: { enabled: false },
   },
 });
 

@@ -56,6 +56,8 @@ export const jettonSendTx = {
       source: OWNER_RAW,
       destination: OWNER_JETTON_WALLET_RAW,
       value: "100000000",
+      fwd_fee: "535471",
+      ihr_fee: "0",
       message_content: { decoded: { "@type": "jetton_transfer" } },
     },
   ],

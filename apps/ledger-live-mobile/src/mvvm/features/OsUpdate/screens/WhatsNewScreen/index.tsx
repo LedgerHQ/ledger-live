@@ -1,7 +1,15 @@
 import React, { useCallback, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Banner, Box, Button, NavBar, NavBarBackButton, Text } from "@ledgerhq/lumen-ui-rnative";
+import {
+  Banner,
+  Box,
+  Button,
+  Link,
+  NavBar,
+  NavBarBackButton,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
 import { Trans, useTranslation } from "~/context/Locale";
 import { SafeMarkdown } from "LLM/components/SafeMarkdown";
 import { LedgerOsLogo } from "../../components/LedgerOsLogo";
@@ -11,11 +19,18 @@ import { OsUpdateButton, OsUpdatePage } from "../../analytics/types";
 type WhatsNewScreenProps = Readonly<{
   version: string;
   notes: string | null;
+  onOpenReleaseNotes: () => void;
   onStart: () => void;
   onClose: () => void;
 }>;
 
-export function WhatsNewScreen({ version, notes, onStart, onClose }: WhatsNewScreenProps) {
+export function WhatsNewScreen({
+  version,
+  notes,
+  onOpenReleaseNotes,
+  onStart,
+  onClose,
+}: WhatsNewScreenProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { trackPage, trackClick } = useOsUpdateTracking();
@@ -32,6 +47,10 @@ export function WhatsNewScreen({ version, notes, onStart, onClose }: WhatsNewScr
     trackClick(OsUpdateButton.BACK);
     onClose();
   }, [trackClick, onClose]);
+  const onPressReleaseNotes = useCallback(() => {
+    trackClick(OsUpdateButton.RELEASE_NOTES);
+    onOpenReleaseNotes();
+  }, [trackClick, onOpenReleaseNotes]);
 
   return (
     <Box lx={{ flex: 1 }} testID="os-update-whats-new-screen">
@@ -59,6 +78,16 @@ export function WhatsNewScreen({ version, notes, onStart, onClose }: WhatsNewScr
           <Trans i18nKey="osUpdates.whatsNew.title" />
         </Text>
         {notes ? <SafeMarkdown markdown={notes} /> : null}
+        <Box lx={{ marginTop: "s16" }}>
+          <Link
+            appearance="base"
+            isExternal
+            onPress={onPressReleaseNotes}
+            testID="os-update-whats-new-release-notes-link"
+          >
+            <Trans i18nKey="osUpdates.whatsNew.releaseNotes" />
+          </Link>
+        </Box>
       </ScrollView>
       <Box
         lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}

@@ -310,6 +310,7 @@ export function useAmountScreenViewModel({
     onAmountChange: amountInput.onAmountChange,
     onToggleInputMode: amountInput.onToggleInputMode,
     toggleLabel: t("newSendFlow.switchInputMode"),
+    isFiatModeAvailable: amountInput.isFiatModeAvailable,
     secondaryValue: amountInput.secondaryValue,
     inputMode: amountInput.inputMode,
     quickActions: trackedQuickActions,

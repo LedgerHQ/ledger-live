@@ -153,9 +153,10 @@ export type DeviceOnboardingInput = {
 
 export type AvailableFirmwareUpdate = NonNullable<FirmwareUpdateContext["availableUpdate"]>;
 
-/** Null until the firmware check answers. "checked" once nothing is left to do with the firmware. */
 export type FirmwareCheck =
-  | { kind: "checked" }
+  | { kind: "upToDate" }
+  | { kind: "declined" }
+  | { kind: "skipped" }
   | { kind: "offered"; update: AvailableFirmwareUpdate };
 
 export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetup"> & {

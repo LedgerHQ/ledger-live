@@ -96,6 +96,11 @@
       "minimumReleaseAge": "2 days"
     },
     {
+      "description": "Polkadot linked updates",
+      "matchPackageNames": ["@polkadot/*"],
+      "groupName": "polkadot"
+    },
+    {
       "description": "Expo monorepo grouping",
       "extends": ["monorepo:expo"],
       "groupName": null

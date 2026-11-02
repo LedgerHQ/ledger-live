@@ -1,5 +1,4 @@
 import { useLocation } from "react-router";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TopBarSlot } from "../types";
 import { useActivityIndicator } from "./useActivityIndicator";
 import { useDiscreetMode } from "./useDiscreetMode";
@@ -9,8 +8,6 @@ import { useMockServerTransport } from "./useMockServerTransport";
 import { useInformationCenter } from "./useInformationCenter";
 
 const useTopBarViewModel = () => {
-  const { shouldDisplayAggregatedAssets, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("desktop");
   const { isOpen: isInformationCenterOpen, onRequestClose: onInformationCenterClose } =
     useInformationCenter();
   const { handleDiscreet, discreetIcon, tooltip: discreetTooltip } = useDiscreetMode();
@@ -129,8 +126,6 @@ const useTopBarViewModel = () => {
     inManager,
     isInformationCenterOpen,
     onInformationCenterClose,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
   };
 };
 

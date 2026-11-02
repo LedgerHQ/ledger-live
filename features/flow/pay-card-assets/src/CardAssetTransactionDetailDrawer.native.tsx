@@ -6,10 +6,10 @@ import {
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import type { CardAssetsViewModel } from "./types";
 
-type CardAssetTransactionDetailDrawerProps = Readonly<{
-  transaction: CardTransactionItem;
-  formatters?: CardAssetsViewModel["formatters"];
-}>;
+export type CardAssetTransactionDetailDrawerProps = Pick<CardAssetsViewModel, "formatters"> &
+  Readonly<{
+    transaction: CardTransactionItem;
+  }>;
 
 export function CardAssetTransactionDetailDrawer({
   transaction,
