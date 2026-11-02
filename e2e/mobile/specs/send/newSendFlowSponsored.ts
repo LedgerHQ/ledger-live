@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { allure } from "jest-allure2-reporter/api";
 import { formatFeeCurrencyAmount } from "@ledgerhq/live-common/flows/send/utils/networkFeesDisplay";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { SendScenario, sendFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import {
   FAKE_TRONIFY_RENT,
@@ -67,7 +68,10 @@ type SponsoredSuiteOptions = SponsoredTestOptions & {
 /** One scenario per spec file: each needs a fresh app, with no rent another scenario left pending. */
 function sponsoredSendSuite(options: SponsoredSuiteOptions) {
   const { transaction, tmsLinks, tags, suite, test, scenario, params, body } = options;
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(Team.COIN_INTEGRATION, {
+    folder: sendFolder(transaction.accountToDebit),
+    scenario: SendScenario.FEE_PAID_WITH_TRONIFY,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   allowBroadcastToFakeNodes();
