@@ -177,9 +177,9 @@ const storeErrorMessage = (error: unknown): string => {
 };
 
 /**
- * Writes the check key the way a claim does, creating it and otherwise replacing it, so a bucket
- * that is missing, read-only or failing writes fails too. Losing the race to another job's check
- * still passes: R2 accepted the write and evaluated its condition.
+ * Creates, reads and replaces the check key the way a claim does, so a bucket that is missing,
+ * cannot be read or written, or ignores If-Match fails too. A replacement rejected because another
+ * job's check moved the ETag first still passes.
  */
 async function checkLockStore(store: LockStore): Promise<void> {
   const record: LockRecord = {
@@ -189,9 +189,18 @@ async function checkLockStore(store: LockStore): Promise<void> {
     settleMs: 0,
     released: true,
   };
-  if (await store.create(STORE_CHECK_KEY, record)) return;
+  await store.create(STORE_CHECK_KEY, record);
   const current = await store.read(STORE_CHECK_KEY);
-  if (current) await store.replace(STORE_CHECK_KEY, record, current.etag);
+  if (!current) {
+    throw new Error(`[exclusiveLock] R2 lost "${STORE_CHECK_KEY}" right after writing it`);
+  }
+  if (await store.replace(STORE_CHECK_KEY, record, current.etag)) return;
+  const after = await store.read(STORE_CHECK_KEY);
+  if (after?.etag === current.etag) {
+    throw new Error(
+      `[exclusiveLock] R2 rejected If-Match ${current.etag} on "${STORE_CHECK_KEY}" although nothing rewrote it`,
+    );
+  }
 }
 
 /**
