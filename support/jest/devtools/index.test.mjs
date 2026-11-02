@@ -6,21 +6,31 @@ import { createRequire } from "node:module";
 import test from "node:test";
 
 const require = createRequire(import.meta.url);
-const devtools = require("./index.js");
+const {
+  createNativeJestConfig,
+  createWebJestConfig,
+  nativeModuleNameMapper,
+  nativeSetupFilesAfterEnv,
+  webModuleNameMapper,
+  webSetupFilesAfterEnv,
+} = require("./index.js");
 
 const factories = [
-  ["createWebJestConfig", "webModuleNameMapper", "webSetupFilesAfterEnv"],
-  ["createNativeJestConfig", "nativeModuleNameMapper", "nativeSetupFilesAfterEnv"],
+  ["createWebJestConfig", createWebJestConfig, webModuleNameMapper, webSetupFilesAfterEnv],
+  [
+    "createNativeJestConfig",
+    createNativeJestConfig,
+    nativeModuleNameMapper,
+    nativeSetupFilesAfterEnv,
+  ],
 ];
 
-for (const [name, mapper, setupFiles] of factories) {
-  const create = devtools[name];
-
+for (const [name, create, mapper, setupFiles] of factories) {
   test(`${name}: the exported mapper and setup files, as unfrozen copies`, () => {
     const { moduleNameMapper, setupFilesAfterEnv } = create();
-    assert.deepEqual(moduleNameMapper, devtools[mapper]);
-    assert.deepEqual(setupFilesAfterEnv, devtools[setupFiles]);
-    assert.ok(Object.isFrozen(devtools[mapper]) && Object.isFrozen(devtools[setupFiles]));
+    assert.deepEqual(moduleNameMapper, mapper);
+    assert.deepEqual(setupFilesAfterEnv, setupFiles);
+    assert.ok(Object.isFrozen(mapper) && Object.isFrozen(setupFiles));
     assert.ok(!Object.isFrozen(moduleNameMapper) && !Object.isFrozen(setupFilesAfterEnv));
   });
 
@@ -38,11 +48,8 @@ for (const [name, mapper, setupFiles] of factories) {
   });
 
   test(`${name}: own entries first, then the spread preset's, in their order`, () => {
-    const config = create({ moduleNameMapper: { "^extra$": "/extra.js", ...devtools[mapper] } });
-    assert.deepEqual(Object.keys(config.moduleNameMapper), [
-      "^extra$",
-      ...Object.keys(devtools[mapper]),
-    ]);
+    const config = create({ moduleNameMapper: { "^extra$": "/extra.js", ...mapper } });
+    assert.deepEqual(Object.keys(config.moduleNameMapper), ["^extra$", ...Object.keys(mapper)]);
   });
 
   test(`${name}: any other override key replaces the preset's`, () => {

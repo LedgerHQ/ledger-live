@@ -17,19 +17,32 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const quarantineReporter = "@ledgerhq/test-quarantine/jest";
 const quarantineRetries = "@ledgerhq/test-quarantine/jest-retries";
 
-// Each preset with the module exporting its project defaults.
+/**
+ * The project defaults a preset module exports, by side.
+ *
+ * @param {typeof shared | typeof flow} module
+ */
+const projectDefaults = module => ({
+  web: {
+    moduleNameMapper: module.webModuleNameMapper,
+    setupFilesAfterEnv: module.webSetupFilesAfterEnv,
+  },
+  native: {
+    moduleNameMapper: module.nativeModuleNameMapper,
+    setupFilesAfterEnv: module.nativeSetupFilesAfterEnv,
+  },
+});
+
+// Each preset with the project defaults its module exports.
 const dualPresets = [
-  ["createSharedUiJestConfig", createSharedUiJestConfig, shared],
-  ["createFlowJestConfig", createFlowJestConfig, flow],
+  ["createSharedUiJestConfig", createSharedUiJestConfig, projectDefaults(shared)],
+  ["createFlowJestConfig", createFlowJestConfig, projectDefaults(flow)],
 ];
 const nativeOnlyPresets = [
-  ["createSharedUiNativeJestConfig", createSharedUiNativeJestConfig, shared],
-  ["createFlowNativeJestConfig", createFlowNativeJestConfig, flow],
+  ["createSharedUiNativeJestConfig", createSharedUiNativeJestConfig, projectDefaults(shared)],
+  ["createFlowNativeJestConfig", createFlowNativeJestConfig, projectDefaults(flow)],
 ];
-const sides = [
-  ["web", "webModuleNameMapper", "webSetupFilesAfterEnv"],
-  ["native", "nativeModuleNameMapper", "nativeSetupFilesAfterEnv"],
-];
+const sides = ["web", "native"];
 
 /**
  * @param {{ projects?: object[] }} config
@@ -56,11 +69,15 @@ const nativeFiles = ["src/View.native.test.tsx", "src/View.native.spec.ts"];
 for (const [name, create, defaults] of dualPresets) {
   test(`${name}: the projects use the exported mappers and setup files, as unfrozen copies`, () => {
     const config = create();
-    for (const [side, mapper, setupFiles] of sides) {
+    for (const side of sides) {
       const { moduleNameMapper, setupFilesAfterEnv } = project(config, side);
-      assert.deepEqual(moduleNameMapper, defaults[mapper], side);
-      assert.deepEqual(setupFilesAfterEnv, defaults[setupFiles], side);
-      assert.ok(Object.isFrozen(defaults[mapper]) && Object.isFrozen(defaults[setupFiles]), side);
+      const exported = defaults[side];
+      assert.deepEqual(moduleNameMapper, exported.moduleNameMapper, side);
+      assert.deepEqual(setupFilesAfterEnv, exported.setupFilesAfterEnv, side);
+      assert.ok(
+        Object.isFrozen(exported.moduleNameMapper) && Object.isFrozen(exported.setupFilesAfterEnv),
+        side,
+      );
       assert.ok(!Object.isFrozen(moduleNameMapper) && !Object.isFrozen(setupFilesAfterEnv), side);
     }
   });
@@ -73,7 +90,7 @@ for (const [name, create, defaults] of dualPresets) {
         setupFilesAfterEnv: ["/native.js"],
       },
     });
-    for (const [side] of sides) {
+    for (const side of sides) {
       assert.deepEqual(project(config, side).moduleNameMapper, { [`^${side}$`]: `/${side}.js` });
       assert.deepEqual(project(config, side).setupFilesAfterEnv, [`/${side}.js`]);
     }
@@ -81,28 +98,26 @@ for (const [name, create, defaults] of dualPresets) {
 
   test(`${name}: spreading the exported defaults keeps them, in their order`, () => {
     const lumen = "^@ledgerhq/lumen-ui-rnative(/.*)?$";
+    const exported = defaults.native;
     const native = project(
       create({
         nativeOverrides: {
           moduleNameMapper: {
-            ...defaults.nativeModuleNameMapper,
+            ...exported.moduleNameMapper,
             [lumen]: "/own-lumen.js",
             "^extra$": "/extra.js",
           },
-          setupFilesAfterEnv: [...defaults.nativeSetupFilesAfterEnv, "/setup.js"],
+          setupFilesAfterEnv: [...exported.setupFilesAfterEnv, "/setup.js"],
         },
       }),
       "native",
     );
     assert.deepEqual(Object.keys(native.moduleNameMapper), [
-      ...Object.keys(defaults.nativeModuleNameMapper),
+      ...Object.keys(exported.moduleNameMapper),
       "^extra$",
     ]);
     assert.equal(native.moduleNameMapper[lumen], "/own-lumen.js");
-    assert.deepEqual(native.setupFilesAfterEnv, [
-      ...defaults.nativeSetupFilesAfterEnv,
-      "/setup.js",
-    ]);
+    assert.deepEqual(native.setupFilesAfterEnv, [...exported.setupFilesAfterEnv, "/setup.js"]);
   });
 
   test(`${name}: any other override key replaces the preset's`, () => {
@@ -162,6 +177,7 @@ for (const [name, create] of [
 ]) {
   test(`${name}: the native mocks are the core's, then the flow's`, () => {
     const entries = Object.entries(project(create(), "native").moduleNameMapper);
+    /** @param {[string, string]} entry */
     const at = ([key, value]) => entries.findIndex(([k, v]) => k === key && v === value);
     assert.ok(at(coreReactNative) >= 0, "no core react-native stub");
     assert.ok(at(flowReanimated) > at(coreReactNative), "no flow reanimated mock after it");
@@ -199,12 +215,12 @@ test("createSharedUiNativeJestConfig: a flat native config, no projects", () => 
 for (const [name, create, defaults] of nativeOnlyPresets) {
   /** @param {import('@jest/types').Config.InitialOptions} options */
   const withNative = options =>
-    create(name === "createFlowNativeJestConfig" ? { nativeOverrides: options } : options);
+    create(create === createFlowNativeJestConfig ? { nativeOverrides: options } : options);
 
   test(`${name}: the exported native mapper and setup files, as unfrozen copies`, () => {
     const { moduleNameMapper, setupFilesAfterEnv } = nativeConfig(create());
-    assert.deepEqual(moduleNameMapper, defaults.nativeModuleNameMapper);
-    assert.deepEqual(setupFilesAfterEnv, defaults.nativeSetupFilesAfterEnv);
+    assert.deepEqual(moduleNameMapper, defaults.native.moduleNameMapper);
+    assert.deepEqual(setupFilesAfterEnv, defaults.native.setupFilesAfterEnv);
     assert.ok(!Object.isFrozen(moduleNameMapper) && !Object.isFrozen(setupFilesAfterEnv));
   });
 
