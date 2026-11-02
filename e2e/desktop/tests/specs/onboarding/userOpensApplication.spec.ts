@@ -9,17 +9,19 @@ test.describe("User opens the application after installation", () => {
     teamOwner: Team.ENGAGEMENT,
     settings: FRESH_INSTALL_SETTINGS,
     featureFlags: FF_ANALYTICS_OPT_IN_SCREEN_V2,
+    env: { SEGMENT_TEST: "true" },
   });
 
   test(
     "Get started lands on an empty Wallet without a device",
     {
       tag: ["@onboarding", ...DEVICE_TAGS],
-      annotation: { type: "TMS", description: "B2CQA-508" },
+      annotation: { type: "TMS", description: "B2CQA-508, B2CQA-2215" },
     },
     async ({ app }) => {
       await app.onboarding.waitForLaunch();
       await app.onboarding.getStarted();
+      await app.segment.recordTrackedEvents();
       await app.onboarding.acceptAnalytics();
 
       await app.portfolio.expectNoDeviceWalletHome();
@@ -32,6 +34,7 @@ test.describe("User opens the application after installation", () => {
 
       await app.mainNavigation.openSettings();
       await app.settings.expectSettingsPageVisible();
+      await app.segment.expectEventTrackedWithUserId();
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.portfolio.expectNoDeviceWalletHome();
 

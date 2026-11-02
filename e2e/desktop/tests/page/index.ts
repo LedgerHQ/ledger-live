@@ -30,6 +30,7 @@ import { PostOnboardingPage } from "tests/page/postOnboarding.page";
 import { SyncOnboardingPage } from "tests/page/syncOnboarding.page";
 import { ReceiveModal } from "tests/page/modal/receive.modal";
 import { Redux } from "tests/utils/redux";
+import { SegmentTracking } from "tests/utils/segmentTracking";
 import { SendDrawer } from "tests/page/drawer/send.drawer";
 import { SendModal } from "tests/page/modal/send.modal";
 import { SettingsModal } from "tests/page/modal/settings.modal";
@@ -104,6 +105,7 @@ export class Application extends PageHolder {
   public receive = new ReceiveModal(this.page);
   public privateBalance = new PrivateBalanceModal(this.page);
   public redux = new Redux(this.page);
+  public segment = new SegmentTracking(this.page);
   public send = new SendModal(this.page);
   public newSendFlow = new NewSendModal(this.page);
   public sendDrawer = new SendDrawer(this.page);
