@@ -17,9 +17,9 @@
 
 # Platform & Wallet XP teams catchall
 CODEOWNERS                                               @ledgerhq/platform
-apps/cli/                                                @ledgerhq/platform
+/apps/cli/                                               @ledgerhq/platform
 apps/web-tools/                                          @ledgerhq/platform
-libs/ledger-live-common/                                 @ledgerhq/platform
+/libs/ledger-live-common/                                @ledgerhq/platform
 apps/ledger-live-desktop/                                @ledgerhq/platform
 apps/ledger-live-mobile/                                 @ledgerhq/platform
 apps/ledger-live-desktop/src/                            @ledgerhq/wallet-xp
@@ -178,6 +178,9 @@ apps/ledger-live-desktop/src/mvvm/features/LedgerSyncEntryPoints/ @ledgerhq/plat
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/FeatureFlagsSettings/ @ledgerhq/platform
 apps/ledger-live-desktop/src/renderer/screens/settings/sections/Developer/WalletFeaturesDevTool/ @ledgerhq/wallet-xp
 
+# Coin integration: ledgerjs (PTX re-owns hw-app-exchange below)
+/libs/ledgerjs/                                          @ledgerhq/coin-integration
+
 # Coin integration team
 .github/workflows/coin-monitoring-*.yml                             @ledgerhq/coin-integration
 .github/workflows/test-coin-tester.yml                              @ledgerhq/coin-integration
@@ -239,9 +242,6 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 domain/api/account-portfolio/                            @ledgerhq/wallet-xp
 /shared/api-services/src/services/portfolio/             @ledgerhq/wallet-xp
 
-libs/ledgerjs/                                           @ledgerhq/coin-integration
-libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
-libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
 libs/wallet-btc/                                         @ledgerhq/coin-integration
 libs/wallet-framework-test-setup/                        @ledgerhq/coin-integration
@@ -316,7 +316,7 @@ apps/ledger-live-mobile/src/screens/PTX/                             					@ledge
 apps/ledger-live-mobile/src/screens/Swap/                            					@ledgerhq/ptx
 libs/ledger-live-common/src/exchange/                                					@ledgerhq/ptx
 libs/exchange-module/                                                					@ledgerhq/ptx
-tests/dummy-ptx-app/                                                 					@ledgerhq/ptx
+/tests/dummy-ptx-app/                                                					@ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              					@ledgerhq/ptx
 libs/ledger-services/cal/src/partners/                                 					@ledgerhq/ptx
 libs/types-live/src/swap.ts                        					@ledgerhq/ptx
@@ -358,8 +358,8 @@ apps/ledger-live-mobile/src/screens/Platform/            @ledgerhq/coin-integrat
 libs/ledger-live-common/src/platform/                    @ledgerhq/coin-integration
 libs/ledger-live-common/src/wallet-api/                  @ledgerhq/coin-integration
 libs/deeplink-module/                                    @ledgerhq/coin-integration
-tests/dummy-live-app/                                    @ledgerhq/coin-integration
-tests/dummy-wallet-app/                                  @ledgerhq/coin-integration
+/tests/dummy-live-app/                                   @ledgerhq/coin-integration
+/tests/dummy-wallet-app/                                 @ledgerhq/coin-integration
 **/platformAdapter.ts                                    @ledgerhq/coin-integration
 **/walletApiAdapter.ts                                   @ledgerhq/coin-integration
 **/liveapp-sdk.spec.ts                                   @ledgerhq/coin-integration
