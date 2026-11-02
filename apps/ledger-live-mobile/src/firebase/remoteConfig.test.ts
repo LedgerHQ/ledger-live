@@ -7,6 +7,7 @@ const mockSetDefaultConfig = jest.fn();
 const mockActivate = jest.fn();
 const mockFetchAndActivate = jest.fn();
 const mockGetAll = jest.fn();
+const mockGetValue = jest.fn();
 const mockRemoteConfig = {
   get settings() {
     return { fetchTimeoutMillis: 60000, minimumFetchIntervalMillis: 43200000 };
@@ -24,7 +25,7 @@ jest.mock("@react-native-firebase/remote-config", () => ({
   activate: () => mockActivate(),
   fetchAndActivate: () => mockFetchAndActivate(),
   getAll: () => mockGetAll(),
-  getValue: jest.fn(),
+  getValue: (...args: unknown[]) => mockGetValue(...args),
 }));
 jest.mock("@features/platform-feature-flags-firebase", () => ({
   ...jest.requireActual("@features/platform-feature-flags-firebase"),
@@ -47,6 +48,19 @@ beforeEach(() => {
   mockActivate.mockReset().mockResolvedValue(false);
   mockFetchAndActivate.mockReset().mockResolvedValue(true);
   mockGetAll.mockReset().mockReturnValue({});
+  mockGetValue.mockReset();
+});
+
+describe("LiveConfig provider", () => {
+  it("reads non-feature config keys from Firebase remote config", async () => {
+    mockGetValue.mockReturnValue(value("remote-value"));
+    await loadModule();
+    const { LiveConfig } = await import("@ledgerhq/live-config/LiveConfig");
+    LiveConfig.setConfig({ config_test_key: { type: "string", default: "default-value" } });
+
+    expect(LiveConfig.getValueByKey("config_test_key")).toBe("remote-value");
+    expect(mockGetValue).toHaveBeenCalledWith(mockRemoteConfig, "config_test_key");
+  });
 });
 
 describe("fetchRemoteFlags", () => {
