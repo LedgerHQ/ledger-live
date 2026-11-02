@@ -8,7 +8,12 @@ export function AssetsSectionView({ viewModel, header }: Props) {
   return (
     <section className="flex flex-col gap-12" data-testid="account-detail-assets">
       {header}
-      <DataTableRoot table={viewModel.table} appearance="plain" stickyHeader={false}>
+      <DataTableRoot
+        table={viewModel.table}
+        appearance="plain"
+        stickyHeader={false}
+        onRowClick={viewModel.onRowClick}
+      >
         <DataTable />
       </DataTableRoot>
     </section>
