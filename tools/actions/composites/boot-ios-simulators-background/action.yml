@@ -1,5 +1,5 @@
 name: "Boot iOS simulators (background)"
-description: "Boot N named iOS simulators in the background (iOS Simulator, iOS Simulator 2, …) for Detox CI, rebooting any that cannot launch an app. Pair with check-ios-simulators before Detox runs."
+description: "Boot N named iOS simulators in the background (iOS Simulator, iOS Simulator 2, …) for Detox CI. Pair with check-ios-simulators, which makes sure each one can launch an app before Detox runs."
 
 inputs:
   worker_count:

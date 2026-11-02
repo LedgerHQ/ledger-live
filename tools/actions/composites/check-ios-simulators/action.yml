@@ -1,5 +1,5 @@
 name: "Check iOS simulators"
-description: "Wait for boot-ios-simulators-background, then fail if any simulator cannot launch an app, so Detox never runs on a dead simulator"
+description: "Wait for boot-ios-simulators-background, reboot any simulator that cannot launch an app, and fail if one still cannot, so Detox never runs on a dead simulator"
 
 runs:
   using: "composite"
