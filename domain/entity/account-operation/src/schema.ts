@@ -97,6 +97,7 @@ export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 
 /** What a read asks for; the cursor is not part of it, the framework carries it. */
 export type AccountOperationsQuery = {
+  /** Rows wished per page; a source may return more or fewer, only `nextCursor` says more exist. */
   limit?: number;
 };
 

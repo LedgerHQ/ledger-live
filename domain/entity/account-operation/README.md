@@ -9,6 +9,7 @@ The `operations` kind: the paginated operations of an account, newest first.
 - Amounts are non-negative integers in the asset's smallest unit; `assetId` says which. Fiat values come from `@domain/entity-market-countervalues`, joined where a screen shows them.
 - Ids, hashes and addresses are branded.
 - The query is `{ limit? }`; the cursor is a read option the framework carries. The result is `{ operations, nextCursor? }`: no `nextCursor` is the end. An asset filter belongs to the source, once status is stored per query.
+- `limit` is an intention, not a contract: a page may hold more rows (full sync returns them all at once, token rows come with their parent) or fewer. Only `nextCursor` tells whether more pages exist.
 - A head read replaces the loaded window; a next page (`append`) extends it, without duplicates.
 - `selectAccountOperations`, `selectAccountOperation`. Apps mount the slice at `accountOperations`.
 
