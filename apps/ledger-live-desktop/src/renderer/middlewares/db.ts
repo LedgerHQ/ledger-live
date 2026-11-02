@@ -35,6 +35,10 @@ import { knownDevicesStoreSelector } from "../reducers/knownDevices";
 import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { accountsPersistedStateChanged } from "@ledgerhq/live-common/account/index";
 import { isPayAction, persistPayCard } from "./payPersistence";
+import {
+  accountAnalyticsIntroductionPersistedSelector,
+  dismissAccountAnalyticsIntroduction,
+} from "@features/flow-account-detail/state";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
@@ -151,6 +155,17 @@ const DBMiddleware: Middleware<object, State> = store => next => action => {
   const oldState = store.getState();
   const res = next(action);
   const newState = store.getState();
+
+  if (
+    dismissAccountAnalyticsIntroduction.match(action) &&
+    oldState.accountAnalyticsIntroduction !== newState.accountAnalyticsIntroduction
+  ) {
+    setKey(
+      "app",
+      "accountAnalyticsIntroduction",
+      accountAnalyticsIntroductionPersistedSelector(newState),
+    );
+  }
 
   // NB Prevent write attempts when the app is locked.
   if (!oldState.application.isLocked || action.type === "APPLICATION_SET_DATA") {

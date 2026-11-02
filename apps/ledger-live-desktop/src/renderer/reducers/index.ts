@@ -48,6 +48,10 @@ import {
 } from "@features/flow-large-screen-upsell";
 import { payCardBalanceSlice, type PayCardBalanceState } from "@features/flow-pay-balance/state";
 import {
+  accountAnalyticsIntroductionSlice,
+  type AccountAnalyticsIntroductionState,
+} from "@features/flow-account-detail/state";
+import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,
 } from "@features/flow-pay-feature-tour/state";
@@ -131,6 +135,7 @@ export type State = LLDRTKApiState & {
   accountEntries: AccountEntriesState;
   largeScreenUpsellModal: LargeScreenUpsellModalState;
   payCardBalance: PayCardBalanceState;
+  accountAnalyticsIntroduction: AccountAnalyticsIntroductionState;
   payCardFeatureTour: PayCardFeatureTourState;
   payRequestVerifyHint: PayRequestVerifyHintState;
   payCardOnboardingWidget: PayCardOnboardingWidgetState;
@@ -183,6 +188,7 @@ const appReducer = combineReducers({
   accountEntries: accountsSlice.reducer,
   largeScreenUpsellModal: largeScreenUpsellModalSlice.reducer,
   payCardBalance: payCardBalanceSlice.reducer,
+  accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer,
   payCardFeatureTour: payCardFeatureTourSlice.reducer,
   payRequestVerifyHint: payRequestVerifyHintSlice.reducer,
   payCardOnboardingWidget: payCardOnboardingWidgetSlice.reducer,

@@ -7,6 +7,7 @@ import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { FamilySection } from "./components/FamilySection";
 import { Transactions } from "./components/Transactions";
+import { AnalyticsIntroduction } from "./components/AnalyticsIntroduction";
 import { useAccountDetailContentViewModel } from "./hooks/useAccountDetailContentViewModel";
 
 type Props = Readonly<{ account: Account }>;
@@ -21,14 +22,17 @@ export function AccountDetailView({ account }: Props) {
         hero={<Hero {...hero} />}
         customPlace={<FamilySection account={account} />}
         assets={
-          emptyState.isVisible ? (
-            <AccountEmptyState
-              fundingActions={emptyState.fundingActions}
-              testID="account-detail-empty-state"
-            />
-          ) : (
-            <AssetsSection account={account} />
-          )
+          <>
+            <AnalyticsIntroduction account={account} />
+            {emptyState.isVisible ? (
+              <AccountEmptyState
+                fundingActions={emptyState.fundingActions}
+                testID="account-detail-empty-state"
+              />
+            ) : (
+              <AssetsSection account={account} />
+            )}
+          </>
         }
         transactions={emptyState.isVisible ? null : <Transactions account={account} />}
       />

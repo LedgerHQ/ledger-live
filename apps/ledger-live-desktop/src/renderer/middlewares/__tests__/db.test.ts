@@ -10,6 +10,11 @@ import { usdcToken } from "LLD/features/__mocks__/useSelectAssetFlow.mock";
 import { setKey } from "~/renderer/storage";
 import type { State } from "../../reducers";
 import DBMiddleware from "../db";
+import {
+  accountAnalyticsIntroductionSlice,
+  dismissAccountAnalyticsIntroduction,
+  restoreAccountAnalyticsIntroduction,
+} from "@features/flow-account-detail/state";
 
 jest.mock("~/renderer/storage", () => ({
   setKey: jest.fn(),
@@ -82,6 +87,7 @@ jest.mock("@ledgerhq/live-common/account/index", () => ({
 const mockedSetKey = jest.mocked(setKey);
 
 type FakeState = {
+  accountAnalyticsIntroduction: { hasDismissed: boolean };
   settings: { loaded: boolean; starredMarketCoins: string[] };
   market: Record<string, unknown>;
   application: { isLocked: boolean };
@@ -119,6 +125,7 @@ type FakeState = {
 };
 
 const baseState = (): FakeState => ({
+  accountAnalyticsIntroduction: { hasDismissed: false },
   settings: { loaded: true, starredMarketCoins: [] },
   market: { currentPage: 1 },
   application: { isLocked: false },
@@ -441,6 +448,55 @@ describe("DBMiddleware - crypto assets cache branch", () => {
     const state = baseState();
 
     runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+});
+
+describe("DBMiddleware - Analytics introduction", () => {
+  beforeEach(() => mockedSetKey.mockReset());
+
+  it("should persist the installation-wide dismissal when the introduction is consumed", () => {
+    const before = baseState();
+    const action = dismissAccountAnalyticsIntroduction();
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
+
+    expect(mockedSetKey).toHaveBeenCalledWith("app", "accountAnalyticsIntroduction", {
+      hasDismissed: true,
+    });
+  });
+
+  it("should avoid rewriting storage when dismissal is already consumed", () => {
+    const state: FakeState = {
+      ...baseState(),
+      accountAnalyticsIntroduction: { hasDismissed: true },
+    };
+
+    runMiddleware([state, state], dismissAccountAnalyticsIntroduction());
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
+  });
+
+  it("should not write restored state back during startup", () => {
+    const before = baseState();
+    const action = restoreAccountAnalyticsIntroduction({ hasDismissed: true });
+    const after: FakeState = {
+      ...before,
+      accountAnalyticsIntroduction: accountAnalyticsIntroductionSlice.reducer(
+        before.accountAnalyticsIntroduction,
+        action,
+      ),
+    };
+
+    runMiddleware([before, after], action);
 
     expect(mockedSetKey).not.toHaveBeenCalled();
   });
