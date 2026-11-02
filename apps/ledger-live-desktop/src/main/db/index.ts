@@ -56,6 +56,7 @@ const saveTriggers: Map<string, Set<string>> = new Map();
 /** Allow list for app namespace: only these + keepLegacy keys are loaded and can be persisted. */
 const APP_NAMESPACE_ALLOWED_KEY_PATHS: ReadonlySet<string> = new Set([
   "accounts",
+  "accountAnalyticsIntroduction",
   "countervalues",
   "postOnboarding",
   "settings",
