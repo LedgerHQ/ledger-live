@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { useTranslation } from "@shared/i18n";
-import { shouldShowAccountAnalyticsIntroduction } from "../../logic/shouldShowAccountAnalyticsIntroduction";
+import { shouldShowAccountAnalyticsIntroduction } from "./logic/shouldShowAccountAnalyticsIntroduction";
 import type { AccountAnalyticsIntroductionProps } from "./AccountAnalyticsIntroduction.types";
-import type { AccountAnalyticsIntroductionViewModel } from "./types";
+import type { AccountAnalyticsIntroductionViewModel } from "./AccountAnalyticsIntroductionViewModel.types";
 
 export function useAccountAnalyticsIntroductionViewModel({
   hasConfirmedHistory,

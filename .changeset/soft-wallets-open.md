@@ -1,5 +1,5 @@
 ---
-"@features/flow-account-detail": minor
+"@features/flow-account-detail-analytics-notice": minor
 "ledger-live-desktop": minor
 ---
 

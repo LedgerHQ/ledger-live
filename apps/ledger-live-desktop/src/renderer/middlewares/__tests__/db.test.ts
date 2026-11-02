@@ -14,7 +14,7 @@ import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
   restoreAccountAnalyticsIntroduction,
-} from "@features/flow-account-detail/state";
+} from "@features/flow-account-detail-analytics-notice/state";
 
 jest.mock("~/renderer/storage", () => ({
   setKey: jest.fn(),

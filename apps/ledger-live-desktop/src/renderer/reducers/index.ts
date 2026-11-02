@@ -50,7 +50,7 @@ import { payCardBalanceSlice, type PayCardBalanceState } from "@features/flow-pa
 import {
   accountAnalyticsIntroductionSlice,
   type AccountAnalyticsIntroductionState,
-} from "@features/flow-account-detail/state";
+} from "@features/flow-account-detail-analytics-notice/state";
 import {
   payCardFeatureTourSlice,
   type PayCardFeatureTourState,

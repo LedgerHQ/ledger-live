@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import {
   accountAnalyticsIntroductionSlice,
   dismissAccountAnalyticsIntroduction,
-} from "@features/flow-account-detail/state";
+} from "@features/flow-account-detail-analytics-notice/state";
 import { getKey } from "~/renderer/storage";
 import { restoreAccountAnalyticsIntroductionFromStorage } from "../restoreAccountAnalyticsIntroduction";
 

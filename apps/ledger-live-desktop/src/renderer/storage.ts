@@ -25,7 +25,7 @@ import type { PersistedIdentities } from "@domain/entity-client-identity";
 import type { FeatureFlagsState } from "@shared/feature-flags";
 import type { RestorableLargeScreenUpsellModalState } from "@features/flow-large-screen-upsell";
 import type { PayCardBalanceState } from "@features/flow-pay-balance/state";
-import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail/state";
+import type { AccountAnalyticsIntroductionState } from "@features/flow-account-detail-analytics-notice/state";
 import type { PayCardFeatureTourState } from "@features/flow-pay-feature-tour/state";
 import type { PayRequestVerifyHintState } from "@features/flow-pay-request/state";
 import type { PayCardLoginIntroState } from "@features/flow-pay-card-auth/state";

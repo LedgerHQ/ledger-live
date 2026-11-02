@@ -1,11 +1,11 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
-import { hasConfirmedAccountHistory } from "@features/flow-account-detail";
-import type { AccountAnalyticsIntroductionProps } from "@features/flow-account-detail/web";
+import { hasConfirmedAccountHistory } from "@features/flow-account-detail-analytics-notice";
+import type { AccountAnalyticsIntroductionProps } from "@features/flow-account-detail-analytics-notice/web";
 import {
   dismissAccountAnalyticsIntroduction,
   selectAccountAnalyticsIntroductionDismissed,
-} from "@features/flow-account-detail/state";
+} from "@features/flow-account-detail-analytics-notice/state";
 import { isConfirmedOperation } from "@ledgerhq/ledger-wallet-framework/operation";
 import type { Account } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "LLD/hooks/redux";

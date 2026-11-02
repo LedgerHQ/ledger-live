@@ -1,6 +1,6 @@
 import React from "react";
 import { Banner, Button } from "@ledgerhq/lumen-ui-react";
-import type { AccountAnalyticsIntroductionViewModel } from "./types";
+import type { AccountAnalyticsIntroductionViewModel } from "./AccountAnalyticsIntroductionViewModel.types";
 
 export function AccountAnalyticsIntroductionView({
   isVisible,

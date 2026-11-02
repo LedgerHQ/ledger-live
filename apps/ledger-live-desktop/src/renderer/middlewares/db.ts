@@ -38,7 +38,7 @@ import { isPayAction, persistPayCard } from "./payPersistence";
 import {
   accountAnalyticsIntroductionPersistedSelector,
   dismissAccountAnalyticsIntroduction,
-} from "@features/flow-account-detail/state";
+} from "@features/flow-account-detail-analytics-notice/state";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
