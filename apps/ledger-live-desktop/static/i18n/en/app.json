@@ -3082,12 +3082,6 @@
         "pendingNoticeTitle": "Funds maturing",
         "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
       },
-      "aleoPublic": {
-        "title": "Public balance"
-      },
-      "aleoPrivate": {
-        "title": "Private balance"
-      },
       "zeroBalance": {
         "warning": "No available balance"
       },
@@ -7926,6 +7920,9 @@
     "TezosStakeAmountTooSmall": {
       "title": "This amount is too small to stake"
     },
+    "TezosDelegateRefusesStaking": {
+      "title": "Your validator doesn't accept staking. Change validator to stake."
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -10151,8 +10148,8 @@
       },
       "amount": {
         "signingTime": {
-          "label": "Signing time",
-          "description": "Your Ledger signer approves each record this transaction uses. Sending more from your private balance can use more records and take longer."
+          "label": "Est. time",
+          "description": "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm."
         }
       },
       "mandatoryPrivateSync": {
@@ -10696,7 +10693,8 @@
       "settings": "Account settings"
     },
     "assets": {
-      "title": "Assets"
+      "title": "Assets",
+      "add": "Add"
     }
   },
   "assetDetails": {

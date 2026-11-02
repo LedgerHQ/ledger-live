@@ -1,117 +1,97 @@
 ---
 name: structure-flow
-description: Place and organize Ledger Wallet code in the monorepo layers. Use when creating, moving, or reviewing code under apps, features, domain, shared, or support; deciding which layer owns a concern; structuring packages and flow steps; or checking package names, dependency boundaries, platform variants, and legacy imports.
+description: Decide where Ledger Wallet code goes in the monorepo layers (`support/`, `shared/`, `domain/`, `features/`, `apps/`, plus `devtools/`) with a first-yes-wins decision tree, and apply the placement rules behind it - entity versus flow state, one flow per journey, namespace-first naming, each package owning its view of an entity. Use when creating, moving or reviewing code or a package in any layer, deciding which layer owns a concern, splitting a flow, naming a package, or checking dependency boundaries.
 ---
 
-# Structure And Flow
+# Structure and flow
 
-Use the lowest layer that can own the concern without depending on a higher layer.
+Place each concern in the lowest layer that can own it. New code goes in the layers; `apps/*/src/mvvm`
+only holds app screens composing `@features/*` and app-only code. The layer model, the legacy `libs/`
+status and the import rules live in [the architecture guide](../../../docs/monorepo-architecture.md).
 
-Read [the canonical architecture guide](../../../docs/monorepo-architecture.md) and [the package creation checklist](../../../docs/new-library.md) before creating a package.
+## Decide the layer: first yes wins
 
-Upstream source: [Structure & Flow](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/6111232117)
+Ask in order and stop at the first yes.
 
-## Choose The Owner
+1. **Build or test tooling with no business knowledge?** `support/<name>`, taken as a devDependency.
+   Mocks and fixtures of a domain stay in that domain package.
+2. **Zero business meaning, would compile at any company?** `shared/<name>`.
+3. **The business noun itself: its schema, rules, reads?** `domain/entity/<name>`.
+   **Fetching or mutating it?** `domain/api/<name>`, injecting endpoints into a base of `@shared/api-services`.
+4. **Knows the business, serves several features, owns no journey?** `features/platform/<name>`.
+5. **The user sees it and walks through it, entry to exit?** `features/flow/<use-case>`.
+6. **None of the above:** `apps/<app>`, for final composition, screens, routes, store and telemetry.
 
-| Concern                                  | Location                      | Owns                                                                                             | Does not own                                       |
-| ---------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| Platform entry point                     | `apps/<app>`                  | Screens, global routing, store composition, analytics host wiring, observability, app glue                              | Reusable feature internals                         |
-| User-visible capability                  | `features/flow/<feature>`     | Business-aware UI, user journeys, local state, flow routing                                      | App-specific screen composition                    |
-| Capability shared across flows           | `features/platform/<feature>` | Hooks, selectors, NFR rules, React glue, and components shared by several flows or use cases     | Single-flow internals and fully generic components |
-| Business object                          | `domain/entity/<entity>`      | Runtime schema, inferred type, defaults, mocks, selectors, slice                                 | Network calls and feature state                    |
-| Network/data access                      | `domain/api/<name>`           | API contracts, calls, transformations, RTK Query, thunks                                         | UI and app composition                             |
-| Business-agnostic primitive or component | `shared/<name>`               | Generic schemas, utilities, Redux primitives, and components without domain or feature knowledge | Domain or app knowledge                            |
-| Development-only tooling                 | `support/<name>`              | Shared test, TypeScript, lint, and format configuration                                          | Runtime code                                       |
+Debug tooling embedded in the apps is a side scope, `devtools/`: see [devtools](#devtools-is-a-side-scope).
+Examples per question and the traps between neighbours: [references/layers.md](references/layers.md).
 
-Use these distinctions:
+## What each layer may hold
 
-- Keep feature-scoped state in its `features/flow` package; do not promote it to an entity.
-- Keep an element in `features/flow` when it belongs to one flow or use case.
-- Move a feature-level element to `features/platform` when several flows or use cases need it, especially when it connects them to the domain.
-- Keep fully generic, business-agnostic elements in `shared` or the existing design-system package.
-- Keep app screens in each app. Let them compose exported flow entry points.
-- Keep `.web` and `.native` variants beside each other inside the owning feature. A component exported from a universal entry takes one props contract on both platforms; one that cannot goes behind a `./web` or `./native` entry: see the [universal components ADR](../../../docs/adr/universal-components.md).
+| Layer               | Holds                                                              | Never                                                   |
+| ------------------- | ------------------------------------------------------------------ | ------------------------------------------------------- |
+| `apps/<app>`        | Screens, global routing, store, analytics host, observability, glue | Business logic, schemas, entities, slices              |
+| `features/flow`     | One journey: business-aware UI, flow state, local routing          | Another journey, app screen composition                 |
+| `features/platform` | Hooks, selectors, NFR rules, React glue, UI shared by several flows | Screens, global routing, single-flow internals, a flow  |
+| `domain/entity`     | Zod schema, inferred type, defaults, mocks, selectors, slice       | React, network calls, feature state                     |
+| `domain/api`        | Endpoints, wire schemas, transforms, cache tags, RTK Query hooks   | UI, app composition                                     |
+| `shared`            | Generic primitives, Redux tooling, generic UI in `shared/ui-*`     | Business vocabulary (wallet, account, coin), junk drawers |
+| `support`           | Test, TypeScript, lint and format configuration                    | Runtime code                                            |
 
-## Organize The Package
+There is no `domain/aggregate`: code that combines several entities follows
+[data-layer-advanced](../data-layer-advanced/SKILL.md) until a first aggregate package lands.
 
-Every unit is a private package with `package.json`, `src/`, explicit exports, and no cross-package relative imports.
+## Entity or flow state
 
-```text
-features/flow/<feature>/src/
-├── components/                # shared by several steps
-├── hooks/
-├── router/                    # flow-local routing only
-├── state/                     # feature-scoped state
-├── steps/<StepName>/
-│   ├── components/            # used only by this step
-│   ├── viewModel.ts           # state and orchestration
-│   ├── view.ts                # rendering and callbacks
-│   ├── view.test.ts
-│   └── index.ts
-├── utils/
-└── index.ts                   # minimal public API
+Entity state goes in `domain/entity`, flow state stays in the flow's `state/`, and flow state is never
+promoted to an entity to share it. The criteria that tell them apart:
+[references/heuristics.md](references/heuristics.md#entity-or-flow-state).
 
-domain/entity/<entity>/src/
-├── schema.ts
-├── schema.mock.ts
-├── selectors.ts
-├── slice.ts
-└── index.ts
+## One flow, one journey
 
-domain/api/<name>/src/
-├── api.ts
-└── index.ts
-```
+One flow is one use case, with one entry and one exit, split at its journey lines; shared pieces sink to
+`features/platform`, never into a `common/` folder. When to split and the contacts example:
+[references/heuristics.md](references/heuristics.md#one-flow-one-journey).
 
-Colocate tests with the files they cover. Add folders only when they group files that change together.
+Inside a flow package (flat `src/` or `screens/<Screen>/`, view models, flow state, local routing):
+[flow-package](../flow-package/SKILL.md).
 
-Every `index.ts` above is a **barrel**: only `export * from "./x"` lines, with private code kept in an
-`internals` location. See [package-public-api](../package-public-api/SKILL.md) for the rules and the
-`lint:structure` check that enforces them.
+## Each package owns its view
 
-## Respect Boundaries
+Two packages that need similar data do not share a type for it. Each declares the shape it needs and
+maps it explicitly from the entity; the entity is the only shared vocabulary. Accidental similarity is
+not intentional coupling. Example: [references/heuristics.md](references/heuristics.md#each-package-owns-its-view).
 
-Dependencies flow downward:
+## Dependencies point down
 
-```text
-apps → features/flow → features/platform → domain → shared
-```
+- Each layer depends only on the layers below it, checked by `pnpm lint:boundaries`:
+  [references/layers.md](references/layers.md#dependency-table).
+- `shared/`, `domain/` and `features/` never import `libs/`; only `apps/` imports both sides.
+- Import another package by its npm name, never a relative path; every `index.*` is a pure barrel:
+  [package-public-api](../package-public-api/SKILL.md).
+- A third-party runtime library is wrapped by its lowest valid owner:
+  [wrap-third-party-libs](../wrap-third-party-libs/SKILL.md).
 
-More precisely:
+## Name it namespace first
 
-| Source              | May depend on                                                  |
-| ------------------- | -------------------------------------------------------------- |
-| `shared`            | `shared`                                                       |
-| `domain/entity`     | `domain/entity`, `shared`                                      |
-| `domain/api`        | `domain/api`, `domain/entity`, `shared`                        |
-| `features/platform` | `features/platform`, `domain`, `shared`                        |
-| `features/flow`     | `features/flow`, `features/platform`, `domain`, `shared`       |
-| `apps`              | Any new-architecture layer                                     |
-| `support`           | Development tooling only; consume it through `devDependencies` |
+The folder path gives the package name, namespace first, and a package that breaks the rule is renamed
+when someone touches it: [references/layers.md](references/layers.md#naming).
 
-- Never import internal legacy `libs/*` packages from `shared`, `domain`, or `features`.
-- Let legacy code consume new architecture only as migration glue.
-- Inject private new-architecture packages into published legacy packages at the app composition root.
-- Import another package through its npm name, never through a relative path.
-- Let Nx infer tags from paths; do not add manual tags unless local tooling requires them.
+## Moving legacy code
 
-## Name Packages
+Code leaves `libs/` and `apps/*/src` in three PRs, addition, deprecation, deletion, and reaches what
+only legacy code has through injection: [legacy-migration](../legacy-migration/SKILL.md).
 
-| Location                   | Package name                |
-| -------------------------- | --------------------------- |
-| `shared/<name>`            | `@shared/<name>`            |
-| `domain/entity/<name>`     | `@domain/entity-<name>`     |
-| `domain/api/<name>`        | `@domain/api-<name>`        |
-| `features/platform/<name>` | `@features/platform-<name>` |
-| `features/flow/<name>`     | `@features/flow-<name>`     |
-| `support/<name>`           | `@support/<name>`           |
+## devtools is a side scope
+
+`devtools/` holds the debug tool platform the apps embed (`@devtools/<tool>`). It may depend on
+the layers; only `apps/` depends on it, never `shared/`, `domain/` or `features/`. App state reaches a tool as props built in `@devtools/bindings`.
+Imports between devtools packages: [devtools-import-boundary](../devtools-import-boundary/SKILL.md).
 
 ## Review
 
-- Confirm the concern sits in the lowest valid layer.
-- Confirm folders express ownership and colocation, not arbitrary categories.
-- Confirm apps only compose reusable flows and platform concerns.
-- Confirm feature, entity, API, and development-only state have distinct owners.
-- Confirm imports follow the dependency table and package public APIs.
-- Confirm every `index.*` is a pure barrel and no package re-exports another — see
-  [package-public-api](../package-public-api/SKILL.md).
+- The decision tree, asked in order, lands on the package's layer.
+- Entity data lives in `domain/entity`; flow state stays in its flow.
+- Each flow package is one journey; shared pieces sit in `features/platform`, not in a `common/` folder.
+- No package reuses another package's view type instead of mapping from the entity.
+- The folder path gives the package name, namespace first.
+- Imports follow the dependency table; apps only compose.

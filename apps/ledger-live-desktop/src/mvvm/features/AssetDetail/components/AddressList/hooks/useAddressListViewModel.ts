@@ -4,14 +4,13 @@ import { useTranslation } from "react-i18next";
 import type { Account, AccountLike, DistributionItem } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource, track } from "@shared/analytics";
 import { useSortByFiatValue } from "@features/platform-market-countervalues";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
@@ -29,7 +28,6 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname: assetDetailPath } = useLocation();
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const nestedAccounts = useSelector(accountsSelector);
 
@@ -107,7 +105,7 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
       page: ASSET_DETAIL_TRACKING_PAGE_NAME,
     });
     if (account.type === "TokenAccount" && !parentAccount) {
-      navigate(getAccountsSidebarPath(shouldDisplayAssetSection));
+      navigate(ACCOUNTS_SIDEBAR_PATH);
       return;
     }
     navigate(

@@ -2,7 +2,6 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted } from "tests/utils/userdata";
-import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
@@ -37,20 +36,7 @@ export class PortfolioPage extends AppPage {
   );
   public readonly cryptoAddressesBanner = new CryptoAddressesBanner(this.page);
   public readonly assetsView = new AssetsView(this.page);
-  // Legacy portfolio (Asset Section OFF) AssetDistribution row, keyed by the lowercased currency name.
-  private readonly legacyAssetRow = (currency: Currency) =>
-    this.page.getByTestId(`asset-row-${currency.name.toLowerCase()}`);
-  // Legacy Wallet (Asset Section OFF) add-account button.
-  private readonly portfolioAddAccountButton = this.page.getByTestId(
-    "portfolio-add-account-button",
-  );
-  /**
-   * Mode-tolerant add-account button: W40 banner CTA (Asset Section ON) or the legacy
-   * portfolio button (OFF). Both can coexist in the DOM; Playwright resolves the actionable match.
-   */
-  private readonly addAccountCta = this.cryptoAddressesBanner.addAccountCTA.or(
-    this.portfolioAddAccountButton,
-  );
+  private readonly addAccountCta = this.cryptoAddressesBanner.addAccountCTA;
   private readonly noDeviceTitle = this.page.getByTestId("no-device-title");
 
   private readonly stocksSection = this.page.getByTestId("stocks-section");
@@ -146,39 +132,14 @@ export class PortfolioPage extends AppPage {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
   }
 
-  /**
-   * Click an asset row on the portfolio, in either UI variant.
-   * Asset Section ON  → Wallet 4.0 {@link AssetsView} row.
-   * Asset Section OFF → legacy AssetDistribution row.
-   */
   @step("Click asset $0 on portfolio")
   async clickAsset(currency: Currency) {
-    if (await isAssetSectionEnabled(this.page)) {
-      await this.assetsView.clickAsset(currency);
-    } else {
-      await this.legacyAssetRow(currency).click();
-    }
+    await this.assetsView.clickAsset(currency);
   }
 
-  /**
-   * Assert an asset row's counter value, in either UI variant.
-   * Asset Section ON  → dedicated W40 value cell. OFF → legacy row (contains price + counter value).
-   */
   @step("Expect asset $0 counter value to contain $1")
   async expectAssetValueToBe(currency: Currency, counterValue: string) {
-    if (await isAssetSectionEnabled(this.page)) {
-      await this.assetsView.expectAssetValueToBe(currency, counterValue);
-      return;
-    }
-
-    const rowValue = this.legacyAssetRow(currency);
-    await expect(rowValue).toBeVisible();
-    // Countervalue cells can render symbol and/or code (e.g. "€" and/or "EUR").
-    if (counterValue === "€" || counterValue === "$") {
-      await expect(rowValue).toContainText(this.getExpectedCounterValuePattern(counterValue));
-    } else {
-      await expect(rowValue).toContainText(counterValue);
-    }
+    await this.assetsView.expectAssetValueToBe(currency, counterValue);
   }
 
   // Wallet 4.0 methods

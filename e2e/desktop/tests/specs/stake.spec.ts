@@ -1,5 +1,7 @@
 import { test } from "tests/fixtures/common";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
+import { ownedBy } from "tests/utils/allureUtils";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
@@ -10,7 +12,6 @@ import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 // default (CI never broadcasts); set it to "0" locally to broadcast + confirm the op on-chain.
 const tezosStakeUse = (account: Delegate) => ({
   env: { DISABLE_TRANSACTION_BROADCAST: process.env.DISABLE_TRANSACTION_BROADCAST || "1" },
-  teamOwner: Team.BST,
   userdata: "skip-onboarding-with-last-seen-device",
   speculosApp: account.account.currency.speculosApp,
   cliCommands: [liveDataCommand(account.account)],
@@ -18,11 +19,12 @@ const tezosStakeUse = (account: Delegate) => ({
 });
 
 const tags = buildTags({ currencyId: Account.XTZ_1.currency.id });
+const owner = ownedBy(coinTeamOwner(Account.XTZ_1.currency.id), { folder: TestFolder.DELEGATE });
 
 // Accounts: XTZ_4 (index 3) funded + UNDELEGATED for the earning-choice chooser; XTZ_2 (index 1)
 // DELEGATED + STAKED for the stake flow; XTZ_3 (index 2) same, dedicated to unstake to avoid a settlement
 // race. (idx0/XTZ_1 stays with the legacy Tezos delegation spec, which relies on it being undelegated.)
-test.describe("Staking - Tezos", () => {
+test.describe("Staking - Tezos", owner, () => {
   const account = new Delegate(Account.XTZ_4, "N/A", "Ledger by Kiln");
 
   // Force no broadcast: signing here would otherwise delegate XTZ_4 (idx3) on-chain.
@@ -59,7 +61,7 @@ test.describe("Staking - Tezos", () => {
 
 const stakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_2] });
 
-test.describe("Staking - Tezos", { lock: stakeLock.names }, () => {
+test.describe("Staking - Tezos", { lock: stakeLock.names, ...owner }, () => {
   const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
   test.use({ ...tezosStakeUse(account), ...stakeLock.fixtures });
@@ -89,7 +91,7 @@ test.describe("Staking - Tezos", { lock: stakeLock.names }, () => {
 
 const unstakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_3] });
 
-test.describe("Staking - Tezos", { lock: unstakeLock.names }, () => {
+test.describe("Staking - Tezos", { lock: unstakeLock.names, ...owner }, () => {
   const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
 
   test.use({ ...tezosStakeUse(account), ...unstakeLock.fixtures });
@@ -114,7 +116,7 @@ test.describe("Staking - Tezos", { lock: unstakeLock.names }, () => {
   );
 });
 
-test.describe("Staking - Tezos", () => {
+test.describe("Staking - Tezos", owner, () => {
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   // Assertion-only (never signs).
@@ -136,7 +138,7 @@ test.describe("Staking - Tezos", () => {
   );
 });
 
-test.describe("Staking - Tezos", () => {
+test.describe("Staking - Tezos", owner, () => {
   const account = new Delegate(Account.XTZ_2, "N/A", "Ledger by Kiln");
 
   // Assertion-only (never signs).

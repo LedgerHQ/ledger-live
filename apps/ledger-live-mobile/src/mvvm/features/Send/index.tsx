@@ -12,6 +12,7 @@ import type { StepRegistry } from "@ledgerhq/live-common/flows/wizard/types";
 import { SendFlowOrchestrator } from "./SendFlowOrchestrator";
 import { SEND_FLOW_CONFIG } from "./constants";
 
+import { BalanceTypeScreen } from "./screens/BalanceType";
 import { RecipientScreen } from "./screens/Recipient";
 import { AmountScreen } from "./screens/Amount";
 import { ConfirmationScreen } from "./screens/Confirmation";
@@ -21,6 +22,7 @@ import { CoinControlScreen } from "./screens/CoinControl";
 import { CustomFeesScreen } from "./screens/CustomFees";
 
 const stepRegistry: StepRegistry<SendFlowStep> = {
+  [SEND_FLOW_STEP.BALANCE_TYPE]: BalanceTypeScreen,
   [SEND_FLOW_STEP.RECIPIENT]: RecipientScreen,
   [SEND_FLOW_STEP.RECENT_HISTORY]: () => <></>,
   [SEND_FLOW_STEP.AMOUNT]: AmountScreen,

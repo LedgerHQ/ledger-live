@@ -7,6 +7,7 @@ import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { Address } from "@ton/core";
 import BigNumber from "bignumber.js";
+import { forwardFees } from "../../logic/forwardFees";
 import { decodeForwardPayload } from "../../logic/forwardPayload";
 import { TonOperation } from "../../types";
 import { addressesAreEqual, isAddressValid } from "../../utils";
@@ -194,7 +195,7 @@ export function mapTxToOps(
         hash: firstOutMsg.hash,
         type: "OUT",
         value: outValue,
-        fee: BigNumber(tx.total_fees),
+        fee: BigNumber(tx.total_fees).plus(forwardFees(tx).toString()),
         blockHeight: tx.mc_block_seqno ?? 1,
         blockHash: null,
         hasFailed,

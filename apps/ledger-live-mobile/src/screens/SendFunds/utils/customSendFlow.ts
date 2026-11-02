@@ -42,6 +42,11 @@ export type AfterAmountInputProps = {
   maxSpendable: BigNumber | null;
 };
 
+export type AmountFooterRowProps = {
+  account: Account;
+  transaction: Transaction;
+};
+
 type InitialScreenNavParams = {
   navigation: SendFundsNavigation;
   account: AccountLike;
@@ -72,6 +77,8 @@ export type CustomSendFlow = {
   SummaryToBadge?: ComponentType<{ transaction: Transaction }>;
   SummaryToSection?: ComponentType<SummaryToSectionProps>;
   AfterAmountInput?: ComponentType<AfterAmountInputProps>;
+  /** Extra row rendered on the new send flow's Amount step, right under the network fees. */
+  AmountFooterRow?: ComponentType<AmountFooterRowProps>;
   /** Suppresses the generic Amount + Fees "Total" row on the Summary screen (e.g. when the family renders its own inside SendRowsFee). */
   hideSummaryTotalSection?: boolean;
   /** Forces full, unrounded precision on amounts in the send flow instead of the default significant-digits rounding (e.g. the "total available" balance on the Amount screen). */

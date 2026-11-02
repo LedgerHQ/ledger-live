@@ -21,7 +21,6 @@ import type {
   Baker,
 } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
-import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import InfoModal from "~/components/InfoModal";
@@ -129,7 +128,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useAccountScreen(route);
-  const bakers = useBakers(whitelist);
+  const bakers = useBakers({ forStaking: !!route.params?.stakeAfter });
   const [editingCustom, setEditingCustom] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [showInfos, setShowInfos] = useState(false);

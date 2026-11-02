@@ -8,6 +8,7 @@ import type { ChainAPI } from "../../network";
 import type { StakeAccount } from "../../network/chain/stake-activation/rpc";
 import { getBalance } from "../getBalance";
 import { computeUnstakeReserve, getStakeAccounts } from "../getStakes";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 jest.mock("../getStakes", () => ({
   ...jest.requireActual("../getStakes"),
@@ -151,7 +152,7 @@ describe("getBalance", () => {
     mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result).toEqual([
       {
@@ -173,7 +174,7 @@ describe("getBalance", () => {
       value: [parsedTokenAccount(USDC_MINT, "5000000")],
     });
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result).toHaveLength(2);
     expect(result[1]).toEqual({
@@ -196,7 +197,7 @@ describe("getBalance", () => {
       ],
     });
 
-    const result = await getBalance(api, TEST_ADDRESS, { token2022Enabled: true });
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS, { token2022Enabled: true });
 
     expect(result).toHaveLength(2);
     expect(result[1]).toEqual({
@@ -214,7 +215,7 @@ describe("getBalance", () => {
       value: [parsedTokenAccount(USDC_MINT, "5000000", { state: "frozen" })],
     });
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result[1].locked).toBe(5_000_000n);
     expect(result[1].value).toBe(5_000_000n);
@@ -231,7 +232,7 @@ describe("getBalance", () => {
       ],
     });
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result).toHaveLength(2);
     expect(result[1].value).toBe(7_000_000n);
@@ -247,7 +248,7 @@ describe("getBalance", () => {
       ],
     });
 
-    expect(await getBalance(api, TEST_ADDRESS)).toHaveLength(1);
+    expect(await getBalance(api, TEST_CONFIG, TEST_ADDRESS)).toHaveLength(1);
   });
 
   it("does not lock a healthy token account", async () => {
@@ -258,7 +259,7 @@ describe("getBalance", () => {
       value: [parsedTokenAccount(USDC_MINT, "5000000")],
     });
 
-    const result = await getBalance(api, TEST_ADDRESS);
+    const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
     expect(result[1].locked).toBeUndefined();
   });
@@ -268,7 +269,7 @@ describe("getBalance", () => {
     mockGetMinimumBalanceForRentExemption.mockResolvedValue(890880);
     mockGetParsedTokenAccountsByOwner.mockResolvedValue({ value: [] });
 
-    await expect(getBalance(api, TEST_ADDRESS)).rejects.toThrow("RPC error");
+    await expect(getBalance(api, TEST_CONFIG, TEST_ADDRESS)).rejects.toThrow("RPC error");
   });
 
   describe("stakeAccounts", () => {
@@ -281,7 +282,7 @@ describe("getBalance", () => {
       ] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(0);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       expect(result[0]).toEqual({
         value: 1_000_000_000n,
@@ -316,7 +317,7 @@ describe("getBalance", () => {
       ] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(0);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       const stake = result[1].stake!;
       expect(stake.amount).toBe(BigInt(lamports));
@@ -336,7 +337,7 @@ describe("getBalance", () => {
       ] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(0);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       const stake = result[1].stake!;
       expect(stake.amount).toBe(BigInt(delegated));
@@ -355,7 +356,7 @@ describe("getBalance", () => {
       ] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(11000);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       expect(result[0]).toEqual({
         value: 1_000_000_000n,
@@ -371,7 +372,7 @@ describe("getBalance", () => {
       mockGetStakeAccounts.mockResolvedValue([makeStakeAccountStub(1000)] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(999_999);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       expect(result[0]).toEqual({
         value: 100n,
@@ -391,7 +392,7 @@ describe("getBalance", () => {
       stakeAccount.activation.active = active;
       mockGetStakeAccounts.mockResolvedValue([stakeAccount] as StakeAccount[]);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       const stake = result[1].stake!;
       expect(stake.actions).toEqual(["withdraw", "undelegate"]);
@@ -414,7 +415,7 @@ describe("getBalance", () => {
       stakeAccount.activation.inactive = 2_000_000_000;
       mockGetStakeAccounts.mockResolvedValue([stakeAccount] as StakeAccount[]);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       const stake = result[1].stake!;
       expect(stake.state).toBe("inactive");
@@ -432,7 +433,7 @@ describe("getBalance", () => {
       ] as StakeAccount[]);
       mockComputeUnstakeReserve.mockResolvedValue(0);
 
-      const result = await getBalance(api, TEST_ADDRESS);
+      const result = await getBalance(api, TEST_CONFIG, TEST_ADDRESS);
 
       expect(result[0]).toEqual({
         value: 500_000_000n,

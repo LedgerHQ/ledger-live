@@ -16,13 +16,22 @@ and Native:
 - `useAddContactDialogViewModel` — the shared open/close/reset/confirm lifecycle. It is free of any
   product analytics; hosts inject tracking through `callbacks` (`onOpen`, `onConfirm`, `onClose`,
   `onInvalidNameErrorDisplayed`) so Contacts and Pay report under their own flow.
-- `ContactsAddContactDialog` (web) — the shared Lumen dialog wrapper. Native hosts keep their own
-  drawer / bottom-sheet chrome and render `ContactsAddContactContent`.
+- `ContactsAddContactContent`: the universal form content. Native hosts pass `autoFocus` once
+  their sheet has settled; the web content renders its own save button.
 - `createContactCreationPort` — the default `ContactCreationPort` shared by every host; inject store
   `dispatch` and an id generator. It dispatches into `contactsSlice`, which is the Ledger Sync
   (Cloud Sync) source of truth, so creation both updates local state and syncs across devices.
 
 The successful creation callback receives the created `Contact`.
+
+Platform entries hold the components that exist on one platform only:
+
+- `@features/flow-contacts-add-contact/web`: `ContactsAddContactDialog`, the shared Lumen dialog
+  wrapper around `ContactsAddContactContent`.
+- `@features/flow-contacts-add-contact/native`: `ContactsAddContactFooter` and
+  `ContactsAddContactFooterProps`, the save button a native host passes to its sheet's `footer`
+  slot. Native hosts keep their own drawer / bottom-sheet chrome and render
+  `ContactsAddContactContent` inside it.
 
 Shared contact-name presentation primitives are provided by `@features/platform-contacts` so Add
 and Edit contact remain independent leaf flows. The contact-name validation contract, including its

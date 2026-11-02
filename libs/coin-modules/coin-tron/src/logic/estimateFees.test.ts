@@ -1147,7 +1147,6 @@ describe("estimateSponsoredFeeQuote", () => {
       feeAsset: {
         type: "trc20",
         assetReference: TRC20_CONTRACT,
-        name: "Tether USD",
         unit: { name: "USDT", code: "USDT", magnitude: 6 },
       },
       value: TRONIFY_VALUE,

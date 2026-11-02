@@ -1,0 +1,43 @@
+{
+  "name": "@domain/entity-account-operation",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Account operation entity: the paginated operations of an account, token operations included",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema.mock": "./src/schema.mock.ts",
+    "./slice.mock": "./src/slice.mock.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W domain/entity/account-operation"
+  },
+  "dependencies": {
+    "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-data": "workspace:*",
+    "@domain/entity-account-descriptor": "workspace:*",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/schema-primitives": "workspace:*",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

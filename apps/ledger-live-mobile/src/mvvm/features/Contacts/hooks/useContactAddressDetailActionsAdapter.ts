@@ -9,7 +9,7 @@ import {
   useContactsAddressDetailActionsPorts,
   trackContactAddressDetailQuickAction,
 } from "@features/flow-contacts";
-import type { ContactsDeleteAddressDrawerProps } from "@features/flow-contacts-delete-address";
+import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
 import {
   type ContactAddressDetailSendIntent,
   type ContactsEditSignerMismatchDrawerProps,
@@ -21,7 +21,7 @@ import {
 } from "@features/flow-contacts-detail";
 import type {
   ContactAddressEditSavePayload,
-  ContactsRenameAddressDrawerProps,
+  ContactsRenameAddressDialogProps,
 } from "@features/flow-contacts-edit-address";
 import type { ContactDeviceIntentsPort } from "@features/platform-contacts";
 import { resolveCurrencyConfig } from "@ledgerhq/live-common/flows/send/utils/resolveCurrencyConfig";
@@ -43,8 +43,8 @@ export type ContactAddressDetailActionsFlowProps = Readonly<{
     ContactAddressDetailDialogNativeProps,
     "onSend" | "onEdit" | "onDelete" | "canSend" | "canEdit" | "canDelete"
   >;
-  deleteSheet: ContactsDeleteAddressDrawerProps;
-  renameSheet: ContactsRenameAddressDrawerProps;
+  deleteSheet: ContactsDeleteAddressDialogProps;
+  renameSheet: ContactsRenameAddressDialogProps;
   signerMismatchSheet: ContactsEditSignerMismatchDrawerProps;
 }>;
 

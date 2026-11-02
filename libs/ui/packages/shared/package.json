@@ -33,7 +33,8 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json && node scripts/transpile",
     "prepublishOnly": "npm run build",
-    "clean": "rimraf lib"
+    "clean": "rimraf lib",
+    "lint": "oxlint ./"
   },
   "devDependencies": {
     "@rspack/core": "catalog:",

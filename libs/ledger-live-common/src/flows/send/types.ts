@@ -60,6 +60,8 @@ export type SendFlowUiConfig = Readonly<{
   hasDefaultStrategy: boolean;
   /** Whether the flow should start with a balance-type (pool) selection step. */
   hasBalanceTypeStep: boolean;
+  /** Whether the amount can be typed and shown in fiat. Testnets have no countervalue. */
+  hasFiatAmountInput: boolean;
 }>;
 
 export type Memo = { value: string; type?: string };

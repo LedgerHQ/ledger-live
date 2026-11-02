@@ -1,6 +1,6 @@
 const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
 
-// The @mysten packages ship `.mjs` files, which the preset's ESM transform does not cover.
+// Exception listed in support/jest/core/preset-overrides.js.
 const esmPackages = ["@mysten", "@scure", "@noble"];
 
 module.exports = createLibsCoinJestConfig(

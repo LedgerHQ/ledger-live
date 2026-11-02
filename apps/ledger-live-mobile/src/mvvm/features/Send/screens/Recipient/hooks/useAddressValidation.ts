@@ -30,6 +30,7 @@ import type {
   RecentAddress,
 } from "@ledgerhq/live-common/flows/send/recipient/types";
 import { normalizeLastUsedTimestamp } from "../utils/dateFormatter";
+import { applyRecipientSelfTransferState } from "../../../utils/selfTransferTarget";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
 
 function isDomainLoading(domain: DomainServiceStatus): boolean {
@@ -122,12 +123,23 @@ export function useAddressValidation({
   }, [ensResolution?.address, matchedContact?.address, searchValue]);
   const validationKey = `${sanctionCurrency?.id ?? ""}:${addressForBridgeValidation}`;
 
+  const transactionForBridgeValidation = useMemo(() => {
+    if (!account || !transaction) return transaction;
+
+    return applyRecipientSelfTransferState({
+      account,
+      transaction,
+      parentAccount,
+      recipient: addressForBridgeValidation,
+    });
+  }, [account, transaction, addressForBridgeValidation, parentAccount]);
+
   // Bridge validation for recipient/sender errors and warnings
   const bridgeValidation = useBridgeRecipientValidation({
     recipient: addressForBridgeValidation,
     account: account ?? null,
     parentAccount: parentAccount ?? null,
-    transaction,
+    transaction: transactionForBridgeValidation,
     enabled: Boolean(
       addressForBridgeValidation &&
       account &&

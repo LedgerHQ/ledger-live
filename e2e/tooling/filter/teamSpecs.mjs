@@ -2,9 +2,9 @@
 // into selectors the runners already understand — no new tag, no spec annotation, no stored
 // registry.
 //
-// Ownership is READ FROM THE SOURCE: desktop specs set the `teamOwner` fixture option and mobile
-// runners call `setTeamOwner()`, both through a `Team.<MEMBER>` reference. Coverage is 100% on
-// both suites.
+// Ownership is READ FROM THE SOURCE: desktop specs pass `ownedBy()` or set the `teamOwner` fixture
+// option and mobile runners call `setTeamOwner()`, through a `Team.<MEMBER>` reference or the
+// `coinTeamOwner` helper, which counts as both of its teams. Coverage is 100% on both suites.
 //
 // CI-only (see ./README.md): never imported by the test runtime.
 import fs from "node:fs";
@@ -41,8 +41,8 @@ const IMPORT_ALIASES = [
 // Helpers that pick the owner at collection time from the currency. A spec that reaches one can
 // belong to any team it returns, so it is attributed to ALL of them: a team filter must
 // over-select a shared spec, never silently drop it.
-// Keep in sync with libs/live-e2e-shared/src/data/delegateTeamOwner.ts.
-const TEAM_OWNER_HELPERS = new Map([["delegateTeamOwner", ["BST", "COIN_INTEGRATION"]]]);
+// Keep in sync with libs/live-e2e-shared/src/data/coinTeamOwner.ts.
+const TEAM_OWNER_HELPERS = new Map([["coinTeamOwner", ["BST", "COIN_INTEGRATION"]]]);
 
 const MAX_IMPORT_DEPTH = 3;
 
@@ -91,11 +91,10 @@ function resolveImport(fromFile, source) {
 
 // ADDITIVE, because ownership is per-TEST, not per-file: a spec can legitimately have several
 // owners and the filter must over-select rather than silently drop.
-// e2e/desktop/tests/specs/newSendFlow.tx.spec.ts is the case that proves it — only 11 of its 30
-// entries carry `teamOwner: Team.BST`; the rest get `entry.teamOwner ?? Team.COIN_INTEGRATION`
-// from the registrar (utils/newSendFlowUtils.ts), so Coin-integration really is their runtime
-// owner and what Allure reports. Attributing the file to BST alone would hide those tests from
-// `team=coin-integration` and turn a green run into missing coverage.
+// e2e/desktop/tests/specs/newSendFlow.tx.spec.ts is the case that proves it — its registrar
+// (utils/newSendFlowUtils.ts) picks each entry's owner with `coinTeamOwner`, so some entries are
+// BST and the rest Coin-integration, which is what Allure reports. Attributing the file to one team
+// alone would hide the other's tests from its `team=` run and turn a green run into missing coverage.
 // The spec's own `Team.*` references seed the set; imports are then walked to pick up the
 // fallbacks a shared registrar/runner supplies (which is also how mobile's thin shims get an
 // owner at all). The walk stops at the first depth that contributes something new.

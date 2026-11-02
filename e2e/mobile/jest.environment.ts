@@ -44,7 +44,6 @@ import {
 } from "@e2e/helpers/elementHelpers";
 import expect from "expect";
 import { Application } from "@e2e/page/index";
-import type { ServerData } from "~/e2e/bridge/types";
 
 // @ts-expect-error detox doesn't provide type declarations for this module
 import DetoxEnvironment from "detox/runners/jest/testEnvironment";
@@ -57,6 +56,8 @@ import {
   SPEC_EXCLUSIVE_LOCK,
   type SpecExclusiveLock,
 } from "@e2e/utils/lockDeferrals";
+
+import type { ServerData } from "@ledgerhq/live-e2e-shared/bridge/types";
 
 const FAST_DIAGNOSTIC_TIMEOUT_MS = 5_000;
 const SLOW_DIAGNOSTIC_TIMEOUT_MS = 15_000;

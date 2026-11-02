@@ -21,7 +21,8 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../.. -W shared/ui-qr-code",
     "format": "oxfmt src",
-    "format:check": "oxfmt --check src"
+    "format:check": "oxfmt --check src",
+    "lint": "oxlint ./src"
   },
   "dependencies": {
     "qrcode": "catalog:"

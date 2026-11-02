@@ -23,12 +23,12 @@ Platform-specific entry points: analytics host wiring, observability, routing, s
 ### `features/`
 Split into two sub-layers:
 
-- **`features/platform/`** — Non-Functional Requirements at feature level. Invisible to users (no screens, no global routing). Hooks, selectors, cross-feature domain-aware helpers, React glue, headless logic shared by both apps. _e.g. `@features/platform-feature-flags`, `@features/platform-coin-loader`._
-- **`features/flow/`** — User-facing features shared across both apps. UI components with business context, local state, user-facing logic. Each app composes these into its own screens.
+- **`features/platform/`**: business-aware code that serves several flows and owns no journey: no screens, no global routing. Hooks, selectors, NFR rules, cross-feature domain-aware helpers, React glue, and UI shared by several flows. _e.g. `@features/platform-feature-flags`, `@features/platform-contacts`._
+- **`features/flow/`**: one user journey per package, shared across both apps. UI components with business context, flow state, user-facing logic. Each app composes these into its own screens. _e.g. `@features/flow-contacts`._
 
 `features/platform/` is where the cross-cutting glue goes, rather than `libs/ledger-live-common`.
 
-See [features/README.md](../features/README.md) for details.
+See [features/README.md](../features/README.md) for details. To decide which layer owns a concern, follow the decision tree of the [structure-flow](../.agents/skills/structure-flow/SKILL.md) skill.
 
 ### `domain/`
 The semantic foundation of the app.
@@ -51,13 +51,10 @@ lets `features/*` and `domain/*` resolve their own copy without depending on an 
 
 ## Dependency rules (enforced by Nx)
 
-```
-apps  →  features/flow  →  features/platform  →  domain  →  shared
-```
-
-Each layer may only import from layers below it. `shared`, `domain`, and `features` must **not**
-import from `libs/` — the new-arch core stays legacy-free. Enforced by
-[`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
+Each layer may only import from layers below it: see the
+[dependency table](../.agents/skills/structure-flow/references/layers.md#dependency-table).
+`shared`, `domain`, and `features` must **not** import from `libs/`: the new-arch core stays
+legacy-free. Enforced by [`tools/nx-plugins/enforce-boundaries`](../tools/nx-plugins/enforce-boundaries).
 
 Third-party libraries follow the same direction (convention, not yet enforced by lint): apps do not declare new ones (framework singletons, the design system and tooling excepted), the lowest valid package
 wraps each one (e.g. `@shared/ui-qr-code`). See the
@@ -96,12 +93,8 @@ Never re-export a legacy type from a new-arch barrel.
 
 ## Naming
 
-| Layer | npm scope | Example |
-|---|---|---|
-| `shared/` | `@shared/<name>` | `@shared/feature-flags` |
-| `domain/entity/` | `@domain/entity-<name>` | `@domain/entity-crypto-asset` |
-| `domain/api/` | `@domain/api-<name>` | `@domain/api-crypto-asset` |
-| `features/platform/` | `@features/platform-<name>` | `@features/platform-feature-flags` |
-| `features/flow/` | `@features/flow-<name>` | `@features/flow-wallet` |
+The folder path gives the package name, namespace first: see the
+[naming rules](../.agents/skills/structure-flow/references/layers.md#naming), with the table per layer
+and the known deviations.
 
-No cross-package relative imports — always use the npm package name.
+No cross-package relative imports: always use the npm package name.

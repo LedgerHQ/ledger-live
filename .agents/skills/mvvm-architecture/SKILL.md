@@ -111,7 +111,8 @@ ServicesEntryPointsView.native.tsx    ← props only
 ## Data Fetching
 
 API calls and RTK Query endpoints live in a `domain/api` package such as `@domain/api-push-devices`.
-A ViewModel in `src/mvvm` calls their hooks; it does not define endpoints.
+A ViewModel in `src/mvvm` calls their hooks; it does not define endpoints. See
+[`domain-data`](../domain-data/SKILL.md).
 
 ## Design System
 

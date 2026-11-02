@@ -1,5 +1,5 @@
 name: "Boot iOS simulators (background)"
-description: "Boot N named iOS simulators in the background (iOS Simulator, iOS Simulator 2, …) for Detox CI"
+description: "Boot N named iOS simulators in the background (iOS Simulator, iOS Simulator 2, …) for Detox CI, rebooting any that cannot launch an app. Pair with check-ios-simulators before Detox runs."
 
 inputs:
   worker_count:
@@ -24,21 +24,18 @@ runs:
         ROOT="${INPUTS_ARTIFACTS_ROOT}"
         mkdir -p "$ROOT"
         LOG_FILE="$ROOT/simulator-boot.log"
-        nohup bash -c "
-        set -euo pipefail
-        N=$N
-        for ((i=1; i<=N; i++)); do
-          if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
-          xcrun simctl boot \"\$name\" || true
-        done
-        for ((i=1; i<=N; i++)); do
-          if [[ \$i -eq 1 ]]; then name='iOS Simulator'; else name=\"iOS Simulator \$i\"; fi
-          xcrun simctl bootstatus \"\$name\"
-        done
-        echo '✅ All simulators booted'
-        " > "$LOG_FILE" 2>&1 &
+        rm -f "$STATUS_FILE"
+        nohup bash "${GITHUB_ACTION_PATH}/boot-simulators.sh" "$N" "$STATUS_FILE" > "$LOG_FILE" 2>&1 &
         echo "ℹ️ Simulator boot started in background (log: $LOG_FILE)."
+        # check-ios-simulators reads these, so it needs no inputs.
+        {
+          echo "IOS_SIMULATOR_COUNT=$N"
+          echo "IOS_SIMULATOR_BOOT_STATUS=$STATUS_FILE"
+          echo "IOS_SIMULATOR_BOOT_LOG=$LOG_FILE"
+        } >> "$GITHUB_ENV"
 
       env:
         INPUTS_WORKER_COUNT: ${{ inputs.worker_count }}
         INPUTS_ARTIFACTS_ROOT: ${{ inputs.artifacts_root }}
+        # Written when the background boot exits.
+        STATUS_FILE: ${{ runner.temp }}/ios-simulators-boot.status

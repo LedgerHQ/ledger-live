@@ -120,6 +120,7 @@ export function useChecksScreenViewModel({
   state,
   error,
   update,
+  firmwareUpToDate,
   onStart,
   onRetry,
   onCloseSheet,
@@ -173,7 +174,11 @@ export function useChecksScreenViewModel({
     },
     succeeded: {
       illustration: "success",
-      title: t("deviceOnboarding.checks.succeeded.title"),
+      title: t(
+        firmwareUpToDate
+          ? "deviceOnboarding.checks.succeeded.title"
+          : "deviceOnboarding.checks.succeeded.genuineTitle",
+      ),
       primaryLabel: t("deviceOnboarding.checks.succeeded.cta"),
       primaryTestID: checksTestIds.continue,
       ...(onContinue ? { onPrimary: onContinue } : { primaryLoading: true }),

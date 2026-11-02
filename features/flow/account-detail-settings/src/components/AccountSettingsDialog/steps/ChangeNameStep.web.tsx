@@ -1,6 +1,6 @@
 import React from "react";
 import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { ChangeNameContent } from "../../ChangeNameContent/ChangeNameContent.web";
+import { ChangeNameContent } from "../../ChangeNameContent/ChangeNameContent";
 
 type Props = Readonly<{
   title: string;

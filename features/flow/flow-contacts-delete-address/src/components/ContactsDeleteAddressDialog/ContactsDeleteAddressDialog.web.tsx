@@ -1,7 +1,7 @@
 import React from "react";
 import { ContactConfirmationDialog } from "@features/platform-contacts";
 import { useDeleteAddressLabels } from "../../copy/useDeleteAddressLabels";
-import type { ContactsDeleteAddressDialogProps } from "./types";
+import type { ContactsDeleteAddressDialogProps } from "./ContactsDeleteAddressDialog.types";
 
 export function ContactsDeleteAddressDialog({
   isOpen,

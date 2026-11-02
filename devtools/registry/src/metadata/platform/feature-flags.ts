@@ -1,8 +1,9 @@
-import { Category, type ToolMetadata } from "../../types";
+import { Category, ToolKind, type ToolMetadata } from "../../types";
 export type { FeatureFlagsToolProps } from "@devtools/feature-flags";
 
 export const featureFlags: ToolMetadata = {
-  label: "Feature Flags",
+  label: "feature-flags",
+  kind: ToolKind.SHARED,
   category: Category.CONFIGURATION,
   owner: "Platform",
   desc: "Toggle feature flags at runtime.",

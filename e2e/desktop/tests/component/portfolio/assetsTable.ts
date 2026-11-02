@@ -1,6 +1,6 @@
 import { expect, Locator } from "@playwright/test";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
-import { sanitizeAssetNameForTestId } from "~/mvvm/components/AssetsTable/utils/sanitizeAssetNameForTestId";
+import { sanitizeAssetNameForTestId } from "@features/platform-assets-table/test-id";
 import { step } from "tests/misc/reporters/step";
 
 export class AssetsTable {

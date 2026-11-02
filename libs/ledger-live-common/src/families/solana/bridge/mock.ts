@@ -12,6 +12,8 @@ import { getSerializedAddressParameters } from "@ledgerhq/ledger-wallet-framewor
 import { SOLANA_DUMMY_ADDRESS } from "@ledgerhq/coin-solana/constants";
 import { craftTransaction } from "@ledgerhq/coin-solana/logic/craftTransaction";
 import { combine } from "@ledgerhq/coin-solana/logic/combine";
+import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { getCurrencyConfiguration } from "../../../config";
 import {
   broadcast,
   makeAccountBridgeReceive,
@@ -174,7 +176,11 @@ async function signWithMockedChain(
     undefined,
     buildIntentData as never,
   );
-  const { transaction: unsigned } = await craftTransaction(mockedAPI, intent as never);
+  const { transaction: unsigned } = await craftTransaction(
+    mockedAPI,
+    getCurrencyConfiguration<SolanaCoinConfig>(account.currency.id),
+    intent as never,
+  );
   return combine(unsigned, [Buffer.from(FAKE_SIGNATURE).toString("hex")]);
 }
 

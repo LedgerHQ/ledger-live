@@ -18,18 +18,18 @@ function isDurationUnit(value: string): value is keyof typeof DURATION_UNITS_MS 
   return value in DURATION_UNITS_MS;
 }
 
-/** Parses `--expires-in` (e.g. 45s, 30m, 2h, 1d) into milliseconds. Rejects `0` (an already-expired
- * link) and anything past 30 days (an unreasonable validity window, and large enough values overflow
- * `Date`/`toISOString()` with a cryptic `RangeError`). */
-export function parseDurationMs(value: string): number {
+/** Parses a duration flag such as `--expires-in` (e.g. 45s, 30m, 2h, 1d) into milliseconds. Rejects
+ * `0` (an already-expired link) and anything past 30 days (an unreasonable validity window, and
+ * large enough values overflow `Date`/`toISOString()` with a cryptic `RangeError`). */
+export function parseDurationMs(value: string, flagName = "expires-in"): number {
   const match = DURATION_RE.exec(value);
   const unit = match?.[2];
   if (!match || !unit || !isDurationUnit(unit)) {
-    throw new Error(`--expires-in "${value}" is invalid; use e.g. 45s, 30m, 2h, or 1d.`);
+    throw new Error(`--${flagName} "${value}" is invalid; use e.g. 45s, 30m, 2h, or 1d.`);
   }
   const ms = Number(match[1]) * DURATION_UNITS_MS[unit];
   if (ms > MAX_DURATION_MS) {
-    throw new Error(`--expires-in "${value}" is too long; the maximum is 30d.`);
+    throw new Error(`--${flagName} "${value}" is too long; the maximum is 30d.`);
   }
   return ms;
 }

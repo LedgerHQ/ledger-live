@@ -2,17 +2,15 @@ import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { Account, AnyMessage, TypedEvmMessage } from "@ledgerhq/types-live";
 import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
 import bs58 from "bs58";
-import coinConfig from "../../config";
+import type { SolanaContext } from "../../config";
+import { TEST_CONFIG } from "../../test/coinConfig";
 import { signMessage } from "../../hw-signMessage";
 import { PubKeyDisplayMode, SolanaSigner } from "../../signer";
 
-coinConfig.setCoinConfig(() => ({
-  legacyOCMSMaxVersion: "1.8.0",
-  token2022Enabled: false,
-  status: { type: "active" },
-  name: "Solana",
-  unit: { name: "SOL", code: "SOL", magnitude: 9 },
-}));
+const contextOf = (): SolanaContext => ({
+  config: async () => ({ ...TEST_CONFIG, legacyOCMSMaxVersion: "1.8.0" }),
+  logger: () => {},
+});
 
 describe("Testing call to hardware off-chain sign message on Solana", () => {
   it("should sign a message off-chain on hardware and return the generated signature", async () => {
@@ -49,9 +47,13 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
     const offchainMessage =
       "ff736f6c616e61206f6666636861696e01016b4a46c53959cac0eff146ab323053cfc503321adfd453a7c67c91a24be0323535343635373337343639364536373230364636453230353336463643363136453631";
 
-    const result = await signMessage(signerContext)(
+    const result = await signMessage(signerContext, contextOf)(
       "",
-      { freshAddressPath: accountFreshAddressPath, freshAddress } as Account,
+      {
+        freshAddressPath: accountFreshAddressPath,
+        freshAddress,
+        currency: { id: "solana" },
+      } as Account,
       { message: messageHex },
     );
 
@@ -95,9 +97,13 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
     const offchainMessage =
       "ff736f6c616e61206f6666636861696e0000220035343635373337343639364536373230364636453230353336463643363136453631";
 
-    const result = await signMessage(signerContext)(
+    const result = await signMessage(signerContext, contextOf)(
       "",
-      { freshAddressPath: accountFreshAddressPath, freshAddress } as Account,
+      {
+        freshAddressPath: accountFreshAddressPath,
+        freshAddress,
+        currency: { id: "solana" },
+      } as Account,
       { message: messageHex },
     );
 
@@ -144,9 +150,13 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
         .mockRejectedValueOnce(new Error("format not supported"))
         .mockResolvedValueOnce({ signature: Buffer.from(SIGNATURE) });
 
-      await signMessage(makeContext(signMessageMock))(
+      await signMessage(makeContext(signMessageMock), contextOf)(
         "",
-        { freshAddressPath: accountFreshAddressPath, freshAddress } as Account,
+        {
+          freshAddressPath: accountFreshAddressPath,
+          freshAddress,
+          currency: { id: "solana" },
+        } as Account,
         { message: messageHex },
       );
 
@@ -162,9 +172,13 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
         .mockRejectedValueOnce(new Error("format not supported"))
         .mockResolvedValueOnce({ signature: Buffer.from(SIGNATURE) });
 
-      await signMessage(makeContext(signMessageMock))(
+      await signMessage(makeContext(signMessageMock), contextOf)(
         "",
-        { freshAddressPath: accountFreshAddressPath, freshAddress } as Account,
+        {
+          freshAddressPath: accountFreshAddressPath,
+          freshAddress,
+          currency: { id: "solana" },
+        } as Account,
         { message: messageHex },
       );
 
@@ -184,9 +198,13 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
 
       let caught: unknown;
       try {
-        await signMessage(makeContext(signMessageMock))(
+        await signMessage(makeContext(signMessageMock), contextOf)(
           "",
-          { freshAddressPath: accountFreshAddressPath, freshAddress } as Account,
+          {
+            freshAddressPath: accountFreshAddressPath,
+            freshAddress,
+            currency: { id: "solana" },
+          } as Account,
           { message: messageHex },
         );
       } catch (e) {
@@ -209,7 +227,9 @@ describe("Testing call to hardware off-chain sign message on Solana", () => {
           signMessage: jest.fn(),
         });
 
-      await expect(signMessage(signerContext)("", {} as Account, messageOptions)).rejects.toThrow(
+      await expect(
+        signMessage(signerContext, contextOf)("", {} as Account, messageOptions),
+      ).rejects.toThrow(
         "Sign off-chain message on Solana must be only used with DefaultMessage type",
       );
     },

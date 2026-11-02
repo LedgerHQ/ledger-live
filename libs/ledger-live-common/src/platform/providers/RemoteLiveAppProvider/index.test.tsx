@@ -138,6 +138,45 @@ describe("RemoteLiveAppProvider", () => {
     expect(Object.prototype).not.toHaveProperty("id");
   });
 
+  // The API applies version/platform overrides only when platform or llVersion is sent,
+  // and private apps (deeplinks) only come from the unfiltered request.
+  it("sends platform, llVersion and lang without filters in the request for all apps", async () => {
+    jest.mocked(api.fetchLiveAppManifests).mockResolvedValue([manifest]);
+    render(<Probe />, { wrapper });
+
+    await waitFor(() => expect(api.fetchLiveAppManifests).toHaveBeenCalledTimes(2));
+
+    const [[allAppsUrl, allAppsParams], [catalogUrl, catalogParams]] = jest.mocked(
+      api.fetchLiveAppManifests,
+    ).mock.calls;
+    expect(allAppsUrl).toBe("https://live-app-catalog.test");
+    expect(allAppsParams).toStrictEqual({ platform: "desktop", llVersion: "1.0.0", lang: "en" });
+    expect(catalogUrl).toBe("https://live-app-catalog.test");
+    expect(catalogParams).toStrictEqual({
+      apiVersion: ["1.0.0", "2.0.0"],
+      branches: ["stable", "soon"],
+      platform: "desktop",
+      private: false,
+      llVersion: "1.0.0",
+      lang: "en",
+    });
+  });
+
+  it("resolves a private app returned only by the request for all apps", async () => {
+    const privateManifest = { ...manifest, id: "private-app", private: true };
+    jest
+      .mocked(api.fetchLiveAppManifests)
+      .mockImplementation(async (_url, params) =>
+        params?.private === false ? [manifest] : [manifest, privateManifest],
+      );
+
+    const { result } = renderHook(() => useRemoteLiveAppManifest(privateManifest.id), {
+      wrapper,
+    });
+
+    await waitFor(() => expect(result.current).toBe(privateManifest));
+  });
+
   it("exposes the manifests when the catalog loads", async () => {
     jest.mocked(api.fetchLiveAppManifests).mockResolvedValue([manifest]);
     render(<Probe />, { wrapper });

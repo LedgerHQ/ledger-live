@@ -34,7 +34,7 @@ import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
 import { sendKaspa } from "./families/kaspa";
 import { delegateSolana, sendSolana } from "./families/solana";
-import { delegateTezos } from "./families/tezos";
+import { delegateTezos, sendTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
 import { Transaction } from "./models/Transaction";
@@ -179,14 +179,6 @@ export const specs: Specs = {
       appName: "Ethereum",
       appVersion: CONTACTS_ETHEREUM_APP_VERSION,
       firmware: CONTACTS_OS_VERSION_BY_MODEL[getSpeculosModel()],
-    },
-    dependencies: [],
-  },
-  Ethereum_Sepolia: {
-    currency: getCryptoCurrencyById("ethereum_sepolia"),
-    appQuery: {
-      model: getSpeculosModel(),
-      appName: "Ethereum",
     },
     dependencies: [],
   },
@@ -1239,7 +1231,6 @@ export const expectValidAddressDevice = withDeviceController(
 export async function signSendTransaction(tx: Transaction) {
   const currencyId = tx.accountToDebit.currency.id;
   switch (currencyId) {
-    case Currency.sepETH.id:
     case Currency.BASE.id:
     case Currency.POL.id:
     case Currency.ETH.id:
@@ -1312,6 +1303,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.MINA.id:
       await sendMina(tx);
+      break;
+    case Currency.XTZ.id:
+      await sendTezos(tx);
       break;
     default:
       throw new Error(`Unsupported currency: ${tx.accountToDebit.currency.ticker}`);

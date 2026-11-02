@@ -9,14 +9,13 @@ import {
   counterValueCurrencySelector,
 } from "~/renderer/reducers/settings";
 import { useAccountStatus } from "LLD/hooks/useAccountStatus";
-import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
+import { useAllCurrencyTrends, type AssetTableItem } from "@features/platform-assets-table";
 import { useOnDemandCurrenciesCountervalues } from "~/renderer/hooks/useOnDemandCountervalues";
 import { setTrackingSource, track } from "@shared/analytics";
 import { buildPlaceholderAssetItemsFromAssetsData } from "LLD/features/Assets/utils/buildPlaceholderAssetItemsFromAssetsData";
 import { parseAssetsPageCategory } from "LLD/features/Assets/utils/buildAssetsPagePath";
 import { padItems } from "LLD/features/Assets/utils/assetTableHelpers";
 import { dadaIdToMarketId } from "@ledgerhq/live-common/market/utils/index";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   ASSETS_PAGE_CATEGORY_CRYPTOS,
   ASSETS_PAGE_CATEGORY_STABLECOINS,
@@ -26,7 +25,6 @@ import {
   EMPTY_STATE_STABLECOINS,
   type AssetsPageCategory,
 } from "LLD/features/Assets/constants";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
 import type { CryptoAssetsViewModel } from "../types";
 import { ASSETS_TRACKING_PAGE_NAME } from "../constants";
 
@@ -43,7 +41,6 @@ const TRACKING_TYPE_BY_CATEGORY: Record<AssetsPageCategory, "crypto" | "stable" 
 };
 
 export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
-  const { shouldDisplayAggregatedAssets } = useWalletFeaturesConfig("desktop");
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -145,13 +142,11 @@ export default function useCryptoAssetsViewModel(): CryptoAssetsViewModel {
       const rawId = item.marketId ?? item.currency.id;
       navigate(
         item.isPlaceholder
-          ? shouldDisplayAggregatedAssets
-            ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
-            : `/market/${encodeURIComponent(dadaIdToMarketId(rawId))}`
+          ? `/asset/${encodeURIComponent(dadaIdToMarketId(rawId))}`
           : `/asset/${item.currency.id}`,
       );
     },
-    [navigate, shouldDisplayAggregatedAssets],
+    [navigate],
   );
 
   return {

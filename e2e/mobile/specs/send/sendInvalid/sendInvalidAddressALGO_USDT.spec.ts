@@ -11,6 +11,7 @@ const transaction = new Transaction(
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "Recipient account has not opted in the selected ASA.",
+  scenario: "recipient not opted in",
   tmsLinks: ["B2CQA-2702"],
   tags: [
     "@NanoSP",

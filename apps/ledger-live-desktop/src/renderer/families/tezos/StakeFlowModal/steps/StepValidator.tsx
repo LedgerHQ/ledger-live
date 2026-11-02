@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker, Transaction } from "@ledgerhq/live-common/families/tezos/types";
-import { whitelist as bakersWhitelistDefault } from "@ledgerhq/live-common/families/tezos/staking";
 import { openURL } from "~/renderer/linking";
 import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
@@ -73,7 +72,7 @@ const BakerRow = ({
 const StepValidator = ({ account, parentAccount, transaction, onChangeTransaction }: StepProps) => {
   invariant(account, "account is required");
   const contentRef = useRef(null);
-  const bakers = useBakers(bakersWhitelistDefault);
+  const bakers = useBakers({ forStaking: true });
   const bridge = useAccountBridge<Transaction>(account, parentAccount);
 
   const onBakerClick = useCallback(

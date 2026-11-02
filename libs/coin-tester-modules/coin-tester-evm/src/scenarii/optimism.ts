@@ -101,8 +101,8 @@ export const scenarioOptimism: Scenario<GenericTransaction, Account> = {
     sandbox = await startSandbox(
       { family: "evm", network: "optimism" },
       {
-        node: { provider: "op-reth", version: "2.6.1" },
-        indexer: { provider: "blockscout", version: "12.0.3" },
+        node: { implementation: "op-reth", version: "2.6.1" },
+        indexer: { implementation: "blockscout", version: "12.0.3" },
       },
     );
     const { node: rpc, indexer: explorer } = sandbox.endpoints;

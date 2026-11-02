@@ -2,7 +2,7 @@ import React from "react";
 import { render as renderWithoutI18n, screen, userEvent } from "@testing-library/react-native";
 import { ContactsI18nTestProvider } from "@features/platform-contacts/testing";
 import { ContactIdSchema } from "@domain/entity-contact";
-import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem.native";
+import { ContactsSavedContactListItem } from "./ContactsSavedContactListItem";
 
 const render = (ui: React.ReactElement) =>
   renderWithoutI18n(ui, { wrapper: ContactsI18nTestProvider });

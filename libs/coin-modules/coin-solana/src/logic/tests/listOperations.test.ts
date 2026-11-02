@@ -8,6 +8,7 @@ import {
   createTestChainApi,
   TEST_ENDPOINT,
 } from "./helpers/msw-rpc.mock";
+import { TEST_CONFIG } from "../../test/coinConfig";
 
 const rpcHandler: typeof baseRpcHandler = handlers =>
   baseRpcHandler({
@@ -85,7 +86,10 @@ describe("listOperations (MSW integration)", () => {
       }),
     );
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toEqual([]);
     expect(result.next).toBeUndefined();
@@ -112,7 +116,10 @@ describe("listOperations (MSW integration)", () => {
       }),
     );
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result).toEqual({ items: [] });
   });
@@ -148,7 +155,10 @@ describe("listOperations (MSW integration)", () => {
       }),
     );
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     const op = result.items[0];
@@ -197,7 +207,10 @@ describe("listOperations (MSW integration)", () => {
       }),
     );
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 100, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 100,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(1);
     expect(result.items[0].tx.block.height).toBe(200);
@@ -284,7 +297,10 @@ describe("listOperations (MSW integration)", () => {
       }),
     );
 
-    const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+    const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+      minHeight: 0,
+      order: "desc",
+    });
 
     expect(result.items).toHaveLength(2);
     expect(result.items[0]).toMatchObject({
@@ -300,9 +316,9 @@ describe("listOperations (MSW integration)", () => {
   });
 
   it("should throw when order is asc", async () => {
-    await expect(listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "asc" })).rejects.toThrow(
-      "ascending order is not supported",
-    );
+    await expect(
+      listOperations(api, TEST_CONFIG, TEST_ADDRESS, { minHeight: 0, order: "asc" }),
+    ).rejects.toThrow("ascending order is not supported");
   });
 
   describe("SPL Token operations", () => {
@@ -384,7 +400,10 @@ describe("listOperations (MSW integration)", () => {
         }),
       );
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -494,7 +513,10 @@ describe("listOperations (MSW integration)", () => {
         }),
       );
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -618,7 +640,10 @@ describe("listOperations (MSW integration)", () => {
         }),
       );
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
       items = result.items;
     });
 
@@ -770,7 +795,10 @@ describe("listOperations (MSW integration)", () => {
         }),
       );
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);
@@ -837,7 +865,10 @@ describe("listOperations (MSW integration)", () => {
         }),
       );
 
-      const result = await listOperations(api, TEST_ADDRESS, { minHeight: 0, order: "desc" });
+      const result = await listOperations(api, TEST_CONFIG, TEST_ADDRESS, {
+        minHeight: 0,
+        order: "desc",
+      });
 
       const tokenOps = result.items.filter(op => op.asset.type !== "native");
       expect(tokenOps).toHaveLength(1);

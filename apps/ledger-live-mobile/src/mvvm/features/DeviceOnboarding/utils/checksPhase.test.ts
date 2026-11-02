@@ -31,6 +31,22 @@ describe("toChecksScreenState", () => {
     expect(toChecksScreenState("checks.checksIdle", true)).toBe("idle");
     expect(toChecksScreenState("checks.checksIdle", false)).toBe("checking");
   });
+
+  it("should keep the success screen while a seeded device leaves for sync", () => {
+    expect(toChecksScreenState("syncOffer", false, true)).toBe("succeeded");
+    expect(toChecksScreenState("done", false, true)).toBe("succeeded");
+  });
+
+  it("should hide the success screen when the device was not seeded", () => {
+    expect(toChecksScreenState("syncOffer", false, false)).toBeNull();
+    expect(toChecksScreenState("done", false)).toBeNull();
+  });
+
+  it("should hide the success screen when a seeded device leaves another way", () => {
+    expect(toChecksScreenState("exitOnboarding", false, true)).toBeNull();
+    expect(toChecksScreenState("legacyFallback", false, true)).toBeNull();
+    expect(toChecksScreenState("bootloaderRecovery", false, true)).toBeNull();
+  });
 });
 
 describe("toGenuineError", () => {

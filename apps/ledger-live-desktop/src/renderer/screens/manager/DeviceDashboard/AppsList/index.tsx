@@ -27,8 +27,7 @@ import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { getEnv } from "@shared/env";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -100,8 +99,7 @@ const AppsList = ({
     "manager",
   );
 
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
-  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
+  const accountsPath = ACCOUNTS_SIDEBAR_PATH;
 
   /** clear search field on tab change */
   useEffect(() => {

@@ -14,6 +14,17 @@ export const Category = {
   PERFORMANCE: "Performance",
   PLAYGROUND: "Playground",
   ACCOUNTS: "Accounts",
+  APIS: "APIs",
+} as const;
+
+/** Layer of the package a tool inspects, shown as a tag next to its label. */
+export const ToolKind = {
+  ENTITY: "entity",
+  API: "api",
+  FEATURE: "feature",
+  SHARED: "shared",
+  LIB: "lib",
+  TOOL: "tool",
 } as const;
 
 /** Utility: extracts the union of value types from an object type. */
@@ -21,6 +32,8 @@ export type ValueOf<T> = T[keyof T];
 
 /** A category label, narrowed to one of the values of {@link Category}. */
 export type Category = ValueOf<typeof Category>;
+
+export type ToolKind = ValueOf<typeof ToolKind>;
 
 /** Stable identifier for a registered tool (matches the key in `tools`). */
 export type ToolId = string;
@@ -34,6 +47,7 @@ export const ToolMetadataSchema = z.object({
   label: z.string().min(1),
   category: z.enum(Category),
   owner: z.string().optional(),
+  kind: z.enum(ToolKind).optional(),
   desc: z.string().optional(),
   platform: z.enum(["web", "native"]).optional(),
 });

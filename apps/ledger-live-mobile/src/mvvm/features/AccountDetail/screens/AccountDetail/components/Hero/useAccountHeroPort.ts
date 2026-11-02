@@ -10,6 +10,7 @@ import {
   type AccountHeroPort,
 } from "@features/flow-account-detail-hero";
 import { useSelector } from "~/context/hooks";
+import { getAccountTag } from "LLM/utils/getAccountTag";
 import { useLocale } from "~/context/Locale";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import {
@@ -58,6 +59,7 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
     port: {
       platform: "mobile",
       balance: { countervalue, formatter, discreet, isLoading: false },
+      tag: getAccountTag(account),
       ...status,
       onAction,
     },

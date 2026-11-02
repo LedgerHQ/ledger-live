@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, within } from "tests/testSetup";
 import { BITCOIN_ASSET } from "@ledgerhq/asset-aggregation/mocks/categorizedAssets.mock";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import type { AssetTableItem } from "@features/platform-assets-table";
 import CryptoAssets from "../CryptoAssets";
 import useCryptoAssetsViewModel from "../hooks/useCryptoAssetsViewModel";
 import type { CryptoAssetsViewModel } from "../types";

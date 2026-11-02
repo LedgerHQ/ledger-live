@@ -30,6 +30,7 @@ export function useAccountHeroViewModel({
   balance,
   availability,
   hasFunds,
+  tag,
   onAction,
 }: AccountHeroPort): AccountHeroViewModel {
   const [isMoreSheetOpen, setIsMoreSheetOpen] = useState(false);
@@ -90,6 +91,7 @@ export function useAccountHeroViewModel({
 
   return {
     balance,
+    tag,
     actions,
     tiles,
     moreActions,

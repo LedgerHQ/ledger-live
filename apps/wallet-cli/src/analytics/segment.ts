@@ -20,6 +20,11 @@ const extraProperties = () => ({
   osVersion,
 });
 
+/** The part of the Segment client wallet-cli uses. */
+type SegmentClient = Pick<Analytics, "identify" | "track" | "closeAndFlush">;
+
+const createSegmentClient = (writeKey: string): SegmentClient => new Analytics({ writeKey });
+
 let client: unknown | null = null;
 
 const unregisterAnalytics = (): void => {
@@ -28,11 +33,12 @@ const unregisterAnalytics = (): void => {
   setEnabledFn(undefined);
 };
 
-export const startAnalytics = (): void => {
+/** `createClient` lets tests record what reaches Segment instead of sending it. */
+export const startAnalytics = (createClient = createSegmentClient): void => {
   if (client) return;
 
   try {
-    const segmentClient = new Analytics({ writeKey: WALLET_CLI_WRITE_KEY });
+    const segmentClient = createClient(WALLET_CLI_WRITE_KEY);
     client = segmentClient;
     setEnabledFn(() => true);
     setAnalytics({

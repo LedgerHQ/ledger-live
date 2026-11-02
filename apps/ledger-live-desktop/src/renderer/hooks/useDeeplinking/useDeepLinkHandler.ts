@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "LLD/hooks/redux";
 import { useLocation, useNavigate } from "react-router";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
@@ -16,13 +16,15 @@ import { useRedirectToPostOnboardingCallback } from "../useAutoRedirectToPostOnb
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useOpenSendFlow } from "LLD/features/Send/hooks/useOpenSendFlow";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useLiveAppManifest } from "@ledgerhq/live-common/wallet-api/useLiveAppManifest";
+import { PREDICTIONS_LIVE_APP_ID } from "@features/platform-predictions";
 
 import { trackDeeplinkingEvent } from "./utils";
 import { parseDeepLink, createRoute } from "./parseDeepLink";
 import { executeHandler } from "./registry";
 import { DeeplinkHandlerContext, NavigateFn } from "./types";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
-import { getAssetsDetailPathPrefix } from "LLD/utils/marketAssetNavigation";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 
 export function useDeepLinkHandler() {
   const dispatch = useDispatch();
@@ -52,10 +54,13 @@ export function useDeepLinkHandler() {
   const isGenericAwarenessModalEnabled = lwdGenericAwarenessModal?.enabled === true;
   const lwdPayTab = useFeature("lwdPayTab");
   const isPayTabEnabled = !!lwdPayTab?.enabled;
-  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
-    useWalletFeaturesConfig("desktop");
-  const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
-  const assetsPath = getAssetsDetailPathPrefix(shouldDisplayAggregatedAssets);
+  const lwdContacts = useFeature("lwdContacts");
+  const isContactsEnabled = !!lwdContacts?.enabled;
+  const { state: liveAppCatalog } = useRemoteLiveAppContext();
+  const isLiveAppCatalogLoaded = !!liveAppCatalog.value || !!liveAppCatalog.error;
+  const predictionsManifest = useLiveAppManifest(PREDICTIONS_LIVE_APP_ID);
+  const isPredictionsAvailable = !!predictionsManifest || !isLiveAppCatalogLoaded;
+  const accountsPath = ACCOUNTS_SIDEBAR_PATH;
 
   const navigate: NavigateFn = useCallback(
     (pathname: string, state?: Parameters<NavigateFn>[1], search?: string) => {
@@ -90,11 +95,12 @@ export function useDeepLinkHandler() {
       currentSearch: location.search,
       currentLocationState: location.state,
       accountsPath,
-      assetsPath,
       recoverAppId,
       isProductTourEnabled,
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
+      isContactsEnabled,
+      isPredictionsAvailable,
     }),
     [
       dispatch,
@@ -110,11 +116,12 @@ export function useDeepLinkHandler() {
       location.search,
       location.state,
       accountsPath,
-      assetsPath,
       recoverAppId,
       isProductTourEnabled,
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
+      isContactsEnabled,
+      isPredictionsAvailable,
     ],
   );
 

@@ -37,17 +37,18 @@ features/flow/flow-contacts-add-address/src/
 │   │   ├── ContactsAddAddressReviewView.web.tsx
 │   │   ├── ContactsAddAddressReview.native.tsx    # deviation: one file, no ViewModel or View
 │   │   └── types.ts
-│   └── Flow/                        # ContactsAddAddressFlowContent.{web,native}.tsx: switch on the step
+│   └── Flow/
+│       ├── ContactsAddAddressFlowContent.types.ts   # the universal contract, driven by the flow state
+│       ├── ContactsAddAddressFlowContent.web.tsx    # switch on the state status
+│       ├── ContactsAddAddressFlowContent.native.tsx
+│       └── addAddressWebFlowStep.ts                 # step helpers the desktop dialog uses
 ├── state/
 │   ├── addAddressFlowReducer.ts     # current step and form state, used by React
 │   ├── useAddAddressFlowViewModel.ts
 │   ├── ports.ts
 │   └── types.ts
 ├── urls.ts
-├── exports.ts
-├── web.ts                           # default entry in package.json
-├── index.ts                         # export * from "./web"
-└── index.native.ts
+└── index.ts                         # the one entry, for both platforms
 ```
 
 ## Lifecycle model: `@features/flow-contacts-delete-address`
@@ -55,9 +56,9 @@ features/flow/flow-contacts-add-address/src/
 ```text
 features/flow/flow-contacts-delete-address/src/
 ├── components/ContactsDeleteAddressDialog/
+│   ├── ContactsDeleteAddressDialog.types.ts # the one props contract of both platforms
 │   ├── ContactsDeleteAddressDialog.web.tsx
-│   ├── ContactsDeleteAddressDialog.native.tsx
-│   └── types.ts
+│   └── ContactsDeleteAddressDialog.native.tsx
 ├── copy/useDeleteAddressLabels.ts
 ├── model/
 │   ├── addressDeleteController.ts   # takes the ports, returns the next lifecycle
@@ -67,8 +68,7 @@ features/flow/flow-contacts-delete-address/src/
 ├── useDeleteAddressFlowViewModel.ts # the ViewModel: the React hook over model/
 ├── types.ts
 ├── exports.ts
-├── index.ts                         # ./exports + the .web dialog
-└── index.native.ts                  # ./exports + the .native dialog
+└── index.ts                         # ./exports + the dialog and its contract, on both platforms
 ```
 
 ## Flow slice and logic: `@features/flow-pay-balance`

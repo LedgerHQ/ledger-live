@@ -6,7 +6,6 @@ import {
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { usePortfolioBalanceDisplayState } from "LLD/hooks/usePortfolioBalanceDisplayState";
 import { useCountervaluesCache } from "@features/platform-market-countervalues";
 import { resolveAnalyticsValueChange } from "@ledgerhq/wallet-analytics";
@@ -18,7 +17,6 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
   const selectedTimeRange = useSelector(selectedTimeRangeSelector);
   const accounts = useSelector(accountsSelector);
   const cvState = useCountervaluesCache();
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const {
     balanceInfo: syncBalanceInfo,
     portfolio,
@@ -59,7 +57,6 @@ export default function useAnalyticsViewModel(): AnalyticsViewModel {
     balanceInfo,
     portfolio,
     isLoading,
-    shouldDisplayAssetSection,
     shouldDisplayPnl,
   };
 }

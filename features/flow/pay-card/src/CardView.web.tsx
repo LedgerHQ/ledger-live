@@ -8,7 +8,7 @@ import {
 } from "@features/flow-pay-card-details";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
-import { CardAssets } from "@features/flow-pay-card-assets";
+import { CardAssets } from "@features/flow-pay-card-assets/web";
 import type { CardViewProps } from "./Card.types";
 
 export function CardView({

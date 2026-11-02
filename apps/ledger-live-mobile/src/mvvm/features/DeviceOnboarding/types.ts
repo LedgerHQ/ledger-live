@@ -15,6 +15,7 @@ export type ChecksScreenProps = {
   state: ChecksScreenState;
   error: { kind: GenuineErrorKind } | null;
   update: { current: string; available: string } | null;
+  firmwareUpToDate: boolean;
   onStart: () => void;
   onRetry: () => void;
   onAcceptUpdate: () => void;

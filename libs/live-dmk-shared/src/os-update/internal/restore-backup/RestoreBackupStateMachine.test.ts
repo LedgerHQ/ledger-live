@@ -9,11 +9,12 @@ import {
   type ConnectedDevice,
   type DeviceManagementKit,
 } from "@ledgerhq/device-management-kit";
-import type {
-  Backup,
-  RestoreBackupDAInput,
-  RestoreBackupDeviceAction,
-  RestoreBackupDAOutput,
+import {
+  RestoreBackupStatus,
+  type Backup,
+  type RestoreBackupDAInput,
+  type RestoreBackupDeviceAction,
+  type RestoreBackupDAOutput,
 } from "@ledgerhq/dmk-ledger-wallet";
 import { Subject } from "rxjs";
 import { createActor, fromCallback, type Actor, type AnyEventObject } from "xstate";
@@ -53,7 +54,15 @@ const BACKUP: Backup = {
   installedApps: [{ appName: "Bitcoin", data: undefined }],
 };
 
-const RESTORE_RESULT = { restoredApps: [] } as unknown as RestoreBackupDAOutput;
+const RESTORE_RESULT = {
+  restoreStatus: RestoreBackupStatus.FULL,
+  restoredApps: [],
+} as unknown as RestoreBackupDAOutput;
+
+const OUT_OF_MEMORY_RESULT = {
+  restoreStatus: RestoreBackupStatus.OUT_OF_MEMORY,
+  restoredApps: [],
+} as unknown as RestoreBackupDAOutput;
 
 const OUT_OF_MEMORY_ERROR = {
   _tag: "OutOfMemoryDAError",
@@ -415,6 +424,23 @@ describe("RestoreBackupStateMachine", () => {
       await start();
 
       await failDeviceAction(OUT_OF_MEMORY_ERROR);
+
+      expect(removeBackup).not.toHaveBeenCalled();
+    });
+
+    it("should emit OUT_OF_MEMORY when the restore completes with an out-of-memory status", async () => {
+      await start();
+
+      await completeDeviceAction(OUT_OF_MEMORY_RESULT);
+
+      expect(actor.getSnapshot().value).toBe("OutOfMemory");
+      expect(lastSentStateType()).toBe(RestoreBackupStateType.OUT_OF_MEMORY);
+    });
+
+    it("should keep the backup when the restore completes with an out-of-memory status", async () => {
+      await start();
+
+      await completeDeviceAction(OUT_OF_MEMORY_RESULT);
 
       expect(removeBackup).not.toHaveBeenCalled();
     });

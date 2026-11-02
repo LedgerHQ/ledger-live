@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { getAttachedWebview, useWebviewState } from "./helpers";
-import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { getInitialURL, resolveInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { track } from "@shared/analytics";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
@@ -11,17 +11,29 @@ import {
   serializeDomainCheckReport,
 } from "~/bridge/webviewAllowedOrigins";
 import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
-import { reportBlockedInitialLoad } from "./domainCheckReport";
+import {
+  reportBlockedInitialLoad,
+  reportGoToURLFallback,
+  reportRejectedLoadURL,
+} from "./domainCheckReport";
 
 jest.mock("./domainCheckReport", () => ({
   reportBlockedInitialLoad: jest.fn(),
+  reportGoToURLFallback: jest.fn(),
+  reportRejectedLoadURL: jest.fn(),
 }));
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
+  resolveInitialURL: jest.fn(),
 }));
 
+const { resolveInitialURL: actualResolveInitialURL } = jest.requireActual<
+  typeof import("@ledgerhq/live-common/wallet-api/helpers")
+>("@ledgerhq/live-common/wallet-api/helpers");
+
 jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/manifestDomainUtils"),
   isUrlAllowedByManifestDomains: jest.fn(() => true),
 }));
 
@@ -101,6 +113,9 @@ describe("useWebviewState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockTrack.mockClear();
+    jest
+      .mocked(resolveInitialURL)
+      .mockImplementation((...args) => ({ url: mockGetInitialURL(...args) }));
   });
 
   describe("webviewProps.src", () => {
@@ -185,6 +200,61 @@ describe("useWebviewState", () => {
       );
 
       expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+      expect(reportGoToURLFallback).not.toHaveBeenCalled();
+    });
+
+    it("reports a rejected goToURL that falls back to manifest.url", () => {
+      jest.mocked(resolveInitialURL).mockImplementation(actualResolveInitialURL);
+
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: mockManifest,
+            inputs: { goToURL: "https://evil.com/swap" },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.src).toBe("https://example.com/");
+      expect(reportGoToURLFallback).toHaveBeenCalledWith("test-app", "https://evil.com/swap");
+      expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+    });
+
+    it("does not report a goToURL on the manifest domain", () => {
+      jest.mocked(resolveInitialURL).mockImplementation(actualResolveInitialURL);
+
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: mockManifest,
+            inputs: { goToURL: "https://example.com/swap" },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.src).toBe("https://example.com/swap");
+      expect(reportGoToURLFallback).not.toHaveBeenCalled();
+    });
+
+    it("reports a loadURL the domain check rejects", async () => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+      const webviewAPIRef: RefObject<WebviewAPI | null> = { current: null };
+      renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          webviewAPIRef,
+        ),
+      );
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValueOnce(false);
+
+      await expect(webviewAPIRef.current?.loadURL("https://evil.com/x")).rejects.toThrow(
+        "URL not allowed by manifest domains",
+      );
+      expect(reportRejectedLoadURL).toHaveBeenCalledWith("test-app", "https://evil.com/x");
     });
   });
 

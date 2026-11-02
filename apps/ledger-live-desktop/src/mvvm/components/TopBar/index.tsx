@@ -3,14 +3,8 @@ import useTopBarViewModel from "./hooks/useTopBarViewModel";
 import TopBarView from "./TopBarView";
 
 const TopBar = () => {
-  const {
-    topBarSlots,
-    inManager,
-    isInformationCenterOpen,
-    onInformationCenterClose,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useTopBarViewModel();
+  const { topBarSlots, inManager, isInformationCenterOpen, onInformationCenterClose } =
+    useTopBarViewModel();
 
   return (
     <TopBarView
@@ -18,8 +12,6 @@ const TopBar = () => {
       shouldShowFirmwareUpdateBanner={!inManager}
       isInformationCenterOpen={isInformationCenterOpen}
       onInformationCenterClose={onInformationCenterClose}
-      shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
-      shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
     />
   );
 };

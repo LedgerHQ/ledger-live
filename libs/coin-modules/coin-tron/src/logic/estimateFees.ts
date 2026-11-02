@@ -1,9 +1,5 @@
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
-import type {
-  AssetInfo,
-  FeeEstimation,
-  TransactionIntent,
-} from "@ledgerhq/coin-module-framework/api/index";
+import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import BigNumber from "bignumber.js";
 import type { TronCoinConfig } from "../config";
 import {
@@ -30,6 +26,7 @@ import {
   TRONIFY_PAY_ASSET,
   payAssetBaseUnits,
   tronifyPayAsset,
+  type SponsoredFeeAsset,
 } from "./constants";
 import { getBalance } from "./getBalance";
 import { findBalance } from "./utils";
@@ -527,7 +524,7 @@ export async function estimateSponsoredFeeQuote(
   logger: Logger,
   config: TronCoinConfig,
   intent: TronIntent,
-): Promise<{ feeAsset: AssetInfo; value: bigint; originalValue: bigint }> {
+): Promise<{ feeAsset: SponsoredFeeAsset; value: bigint; originalValue: bigint }> {
   const { value, originalValue } = await quoteTronifyRent(logger, config, intent);
   return { feeAsset: tronifyPayAsset(), value, originalValue };
 }

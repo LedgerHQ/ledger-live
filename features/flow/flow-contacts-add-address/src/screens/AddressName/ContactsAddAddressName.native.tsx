@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import {
-  Banner,
   BottomSheetHeader,
   BottomSheetView,
   Box,
@@ -11,16 +10,19 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { LedgerLogo } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { CONTACT_ADDRESS_LABEL_MAX_LENGTH } from "@domain/entity-contact";
-import { CONTACTS_NATIVE_NAME_INPUT_PROPS } from "@features/platform-contacts";
+import {
+  CONTACTS_NATIVE_NAME_INPUT_PROPS,
+  ContactNameDisclaimer,
+} from "@features/platform-contacts";
 import { useTranslation } from "@shared/i18n";
 import { useLocalizedUrl, useOpenLink } from "@shared/linking";
 import { useAddAddressNameValidationErrors } from "../../copy/useAddAddressNameValidationErrors";
 import { urls } from "../../urls";
 import type { AddAddressLabelState } from "../../state/types";
 
-export type AddAddressNameNextStep = "review" | "confirmation";
+type AddAddressNameNextStep = "review" | "confirmation";
 
-export type ContactsAddAddressNameProps = Readonly<{
+type ContactsAddAddressNameProps = Readonly<{
   addressLabel: AddAddressLabelState;
   nextStep?: AddAddressNameNextStep;
   bottomOffset?: number;
@@ -85,10 +87,9 @@ export function ContactsAddAddressName({
               </Text>
             </Box>
           </Box>
-          <Banner
+          <ContactNameDisclaimer
             testID="contacts-add-address-name-disclaimer"
-            appearance="info"
-            description={namingDisclaimer}
+            text={namingDisclaimer}
           />
         </Box>
         <Box lx={{ gap: "s16", alignItems: "center" }}>

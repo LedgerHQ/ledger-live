@@ -3,7 +3,7 @@ import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledger
 import { LedgerLogo } from "@ledgerhq/lumen-ui-react/symbols";
 import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
 import { useEditContactLabels } from "./copy/useEditContactLabels";
-import type { ContactsRenameContactDialogProps } from "./types";
+import type { ContactsRenameContactDialogProps } from "./ContactsRenameContactDialog.types";
 
 const NAMING_DISCLAIMER_ID = "contacts-rename-contact-naming-disclaimer";
 

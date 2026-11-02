@@ -4,12 +4,12 @@ import {
   isContactsSearchNoResultsViewModel,
   isPopulatedContactsListViewModel,
   type ContactsListViewLabels,
-  type ContactsListViewProps,
 } from "../../types";
-import { ContactsAddContactListItem } from "./ListItems/ContactsAddContactListItem.web";
-import { ContactsMeListItem } from "./ListItems/ContactsMeListItem.web";
-import { ContactsSavedListItem } from "./ListItems/ContactsSavedListItem.web";
-import { ContactsSearchNoResults } from "./Search/ContactsSearchNoResults.web";
+import type { ContactsListViewProps } from "../../ContactsListView";
+import { ContactsAddContactListItem } from "./ListItems/ContactsAddContactListItem";
+import { ContactsMeListItem } from "./ListItems/ContactsMeListItem";
+import { ContactsSavedListItem } from "./ListItems/ContactsSavedListItem";
+import { ContactsSearchNoResults } from "./Search/ContactsSearchNoResults";
 
 type ContactsListProps = Pick<
   ContactsListViewProps,

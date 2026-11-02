@@ -1,4 +1,4 @@
-import { renderHook, act, withFlagOverrides } from "tests/testSetup";
+import { renderHook, act } from "tests/testSetup";
 import { useCryptoAddressesBannerViewModel } from "../useCryptoAddressesBannerViewModel";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
@@ -59,7 +59,7 @@ describe("useCryptoAddressesBannerViewModel", () => {
     expect(mockOpenAssetFlow).toHaveBeenCalledTimes(1);
   });
 
-  it("should track button_clicked and navigate to /accounts when onGoToAccounts is invoked and asset section is off", () => {
+  it("should track button_clicked and navigate to /cryptos when onGoToAccounts is invoked", () => {
     const { result } = renderHook(() => useCryptoAddressesBannerViewModel());
 
     act(() => {
@@ -72,21 +72,6 @@ describe("useCryptoAddressesBannerViewModel", () => {
       type: "view",
       page: PORTFOLIO_TRACKING_PAGE_NAME,
     });
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("/accounts");
-  });
-
-  it("should navigate to /cryptos when onGoToAccounts is invoked and asset section is on", () => {
-    const { result } = renderHook(() => useCryptoAddressesBannerViewModel(), {
-      initialState: withFlagOverrides({
-        lwdWallet40: { enabled: true, params: { assetSection: true } },
-      }),
-    });
-
-    act(() => {
-      result.current.onGoToAccounts();
-    });
-
     expect(mockNavigate).toHaveBeenCalledTimes(1);
     expect(mockNavigate).toHaveBeenCalledWith("/cryptos");
   });

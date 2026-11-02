@@ -54,6 +54,7 @@ type AmountInputProps = Readonly<{
   onAmountChange: (event: ChangeEvent<HTMLInputElement>) => void;
   onToggleInputMode: () => void;
   toggleLabel: string;
+  isFiatModeAvailable: boolean;
   secondaryValue: string;
   amountMessage?: AmountScreenMessage | null;
   onMessageLinkPress?: (link: string) => void;

@@ -2,7 +2,7 @@
   "name": "@features/platform-predictions",
   "version": "0.1.0",
   "private": true,
-  "description": "Wallet API custom handlers for the Predictions live app's onboarding sheet",
+  "description": "Predictions live app id and the Wallet API custom handlers for its onboarding sheet",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {

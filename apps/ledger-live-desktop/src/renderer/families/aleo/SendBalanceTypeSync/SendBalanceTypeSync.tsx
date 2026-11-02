@@ -33,8 +33,8 @@ function SendBalanceTypeSyncView({
     <>
       <DialogBody
         className={cn(
-          "flex flex-col items-center pb-32 text-center",
-          isSyncing ? "gap-16 pt-32" : "-mt-12 gap-24",
+          "flex flex-col items-center text-center",
+          isSyncing ? "gap-16 pt-20 pb-80" : "-mt-12 gap-24 pb-32",
         )}
         data-testid={`aleo-balance-type-sync-${viewModel.status}`}
       >
@@ -53,7 +53,7 @@ function SendBalanceTypeSyncView({
             <Spot {...STATUS_STYLE[viewModel.status].spot} size={72} />
           </>
         )}
-        <div className={cn("flex flex-col", isSyncing ? "gap-8" : "gap-12")}>
+        <div className={cn("flex flex-col", isSyncing ? "gap-8 px-12" : "gap-12")}>
           <h3 className="heading-4-semi-bold text-base">{viewModel.title}</h3>
           <p className="body-2 text-muted">
             {isSyncing ? viewModel.progressLabel : viewModel.description}

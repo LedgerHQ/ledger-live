@@ -9,7 +9,7 @@ import {
   ContactsEditSignerMismatchDialog,
   type ContactAddressDetailDialogProps,
 } from "@features/flow-contacts-detail";
-import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact";
+import { ContactsAddContactDialog } from "@features/flow-contacts-add-contact/web";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
 import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
 import { ContactsDeleteAddressDialog } from "@features/flow-contacts-delete-address";

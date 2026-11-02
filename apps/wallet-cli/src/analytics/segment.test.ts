@@ -1,4 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
+import { track } from "@shared/analytics";
+import { WALLET_CLI_USER_ID, disposeAnalytics, startAnalytics } from "./segment";
 
 const STATIC_IP = "0.0.0.0";
 
@@ -13,8 +15,7 @@ type AnalyticsCall = {
 const identifyCalls: AnalyticsCall[] = [];
 const trackCalls: AnalyticsCall[] = [];
 
-class MockAnalytics {
-  constructor(_options: { writeKey: string }) {}
+class FakeSegmentClient {
   identify(params: AnalyticsCall): void {
     identifyCalls.push(params);
   }
@@ -26,18 +27,11 @@ class MockAnalytics {
   }
 }
 
-mock.module("@segment/analytics-node", () => ({
-  Analytics: MockAnalytics,
-}));
-
-const { WALLET_CLI_USER_ID, startAnalytics, disposeAnalytics } = await import("./segment");
-const { track } = await import("@shared/analytics");
-
 describe("wallet-cli analytics privacy", () => {
   beforeEach(() => {
     identifyCalls.length = 0;
     trackCalls.length = 0;
-    startAnalytics();
+    startAnalytics(() => new FakeSegmentClient());
   });
 
   afterEach(async () => {

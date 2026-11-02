@@ -265,6 +265,21 @@ describe("index", () => {
         expect(result.map(({ pubkey }) => pubkey.toBase58())).toEqual([FIRST_STAKE_ACCOUNT]);
       });
 
+      it("surfaces a rate-limited call when the config allows no retry", async () => {
+        let calls = 0;
+        mockServer.use(
+          http.post(FAKE_CONFIG.endpoint, () => {
+            calls++;
+            return rpcJson({ error: { code: -32603, message: "Upstream returned 429" } });
+          }),
+        );
+
+        await expect(
+          getChainAPI({ ...FAKE_CONFIG, retries: 0 }).getStakeAccountsByWithdrawAuth(authAddr),
+        ).rejects.toThrow("Upstream returned 429");
+        expect(calls).toBe(1);
+      });
+
       it("follows getProgramAccountsV2 pagination", async () => {
         const cursors: unknown[] = [];
         mockServer.use(

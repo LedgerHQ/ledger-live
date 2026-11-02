@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { CardAssetsManageFooter } from "../CardAssetsManageFooter.native";
+import { CardAssetsManageFooter } from "../CardAssetsManageFooter";
 import { CARD_ASSETS_COPY, I18nWrapper } from "./i18nWrapper";
 
 describe("CardAssetsManageFooter", () => {

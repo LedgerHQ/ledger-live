@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, SectionHeader, SectionHeaderTitle } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactsListSurface } from "../../../types";
+import type { ContactsListSurface } from "../../../ContactsListView";
 
 type ContactsSectionHeaderProps = Readonly<{
   title: string;

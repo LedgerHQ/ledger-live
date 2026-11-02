@@ -88,7 +88,6 @@ for (const asset of assets) {
       },
       async ({ app }) => {
         await app.marketBanner.clickExploreMarketHeader();
-        await app.market.search(crypto.currency.ticker);
         await app.market.openBuyPage(crypto.currency.ticker);
         await app.buyAndSell.selectNetworkAndAccountIfShown(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);

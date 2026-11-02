@@ -6,6 +6,7 @@ export * from "./dada";
 export * from "./portfolio/api";
 export * from "./portfolio/redaction";
 export * from "./portfolio/schema";
+export * from "./portfolio/service";
 export * from "./portfolio/types";
 export * from "./push-devices";
 export * from "./swap";

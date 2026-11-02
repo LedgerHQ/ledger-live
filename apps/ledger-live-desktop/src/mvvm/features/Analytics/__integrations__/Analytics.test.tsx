@@ -89,22 +89,9 @@ describe("Analytics", () => {
     expect(mockNavigateToDashboard).toHaveBeenCalledTimes(1);
   });
 
-  it("should not render allocation section when shouldDisplayAssetSection is false", () => {
+  it("should render allocation table with asset details", () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
-      shouldDisplayAssetSection: false,
-    });
-
-    render(<Analytics />);
-
-    expect(screen.queryByText("Asset allocation")).not.toBeInTheDocument();
-    expect(mockedUseAllocationData).not.toHaveBeenCalled();
-  });
-
-  it("should render allocation table with asset details when shouldDisplayAssetSection is true", () => {
-    mockedUseAnalyticsViewModel.mockReturnValue({
-      ...defaultViewModel,
-      shouldDisplayAssetSection: true,
     });
     mockedUseAllocationData.mockReturnValue(populatedAllocation);
 
@@ -120,7 +107,6 @@ describe("Analytics", () => {
   it("should render column headers in allocation table", () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
-      shouldDisplayAssetSection: true,
     });
     mockedUseAllocationData.mockReturnValue(populatedAllocation);
 
@@ -135,7 +121,6 @@ describe("Analytics", () => {
   it("should render formatted distribution percentages", () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
-      shouldDisplayAssetSection: true,
     });
     mockedUseAllocationData.mockReturnValue(populatedAllocation);
 
@@ -148,7 +133,6 @@ describe("Analytics", () => {
   it("should render loader and call showMore when sentinel becomes visible", () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
-      shouldDisplayAssetSection: true,
     });
     mockedUseAllocationData.mockReturnValue({ ...populatedAllocation, hasMore: true });
 
@@ -170,7 +154,6 @@ describe("Analytics", () => {
   it("should not render loader when hasMore is false", () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
-      shouldDisplayAssetSection: true,
     });
     mockedUseAllocationData.mockReturnValue(populatedAllocation);
 
@@ -183,7 +166,6 @@ describe("Analytics", () => {
   it("should call onItemClick when a row is clicked", async () => {
     mockedUseAnalyticsViewModel.mockReturnValue({
       ...defaultViewModel,
-      shouldDisplayAssetSection: true,
     });
     mockedUseAllocationData.mockReturnValue(populatedAllocation);
 

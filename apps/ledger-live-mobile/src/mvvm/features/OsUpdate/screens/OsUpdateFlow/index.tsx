@@ -13,7 +13,7 @@ import { useOsUpdateFlowViewModel } from "./useOsUpdateFlowViewModel";
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.OsUpdate>;
 
 export default function OsUpdateFlow({ route }: Props) {
-  const { whatsNew, orchestratorRun, onConfirmStart, onClose, analytics } =
+  const { whatsNew, orchestratorRun, onConfirmStart, onOpenReleaseNotes, onClose, analytics } =
     useOsUpdateFlowViewModel(route.params.device, route.params.mode);
 
   const content = (() => {
@@ -34,6 +34,7 @@ export default function OsUpdateFlow({ route }: Props) {
         <WhatsNewScreen
           version={whatsNew.version}
           notes={whatsNew.notes}
+          onOpenReleaseNotes={onOpenReleaseNotes}
           onStart={onConfirmStart}
           onClose={onClose}
         />

@@ -7,6 +7,7 @@ import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNa
 // bottom sheet) is rendered as a co-located overlay from the focused screen
 // to avoid stacking a native modal over the Gorhom bottom sheet portal
 export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
+  SEND_FLOW_STEP.BALANCE_TYPE,
   SEND_FLOW_STEP.RECIPIENT,
   SEND_FLOW_STEP.AMOUNT,
   SEND_FLOW_STEP.CUSTOM_FEES,
@@ -16,13 +17,16 @@ export const SEND_FLOW_STEP_ORDER: readonly SendFlowStep[] = [
 ];
 
 export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
-  // Not registered yet (absent from SEND_FLOW_STEP_ORDER): the balance-type steps only exist
-  // on desktop so far. Kept to satisfy the Record<SendFlowStep, SendStepConfig> contract.
   [SEND_FLOW_STEP.BALANCE_TYPE]: {
     id: SEND_FLOW_STEP.BALANCE_TYPE,
-    canGoBack: false,
+    canGoBack: true,
+    screenName: ScreenName.SendFlowBalanceType,
     showHeaderRight: false,
     showTitle: true,
+    screenOptions: {
+      ...TransparentHeaderNavigationOptions,
+      title: "",
+    },
   },
   [SEND_FLOW_STEP.BALANCE_TYPE_SYNC]: {
     id: SEND_FLOW_STEP.BALANCE_TYPE_SYNC,
@@ -39,6 +43,7 @@ export const SEND_STEP_CONFIGS: Record<SendFlowStep, SendStepConfig> = {
     screenOptions: {
       ...TransparentHeaderNavigationOptions,
       title: "",
+      gestureEnabled: false,
     },
   },
   // Rendered as a bottomsheet overlay from the recipient screen, not a stack screen.

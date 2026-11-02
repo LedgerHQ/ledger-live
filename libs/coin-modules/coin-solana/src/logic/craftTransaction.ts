@@ -18,6 +18,7 @@ import {
 import { transferFeeForIntent, tokenProgramOfMint } from "../helpers/token";
 import { isValidBase58Address } from "../logic";
 import { SolanaTokenAccountHoldsAnotherToken } from "../errors";
+import type { SolanaCoinConfig } from "../config";
 import type { ChainAPI } from "../network";
 import type { TransferFeeConfigExt } from "../network/chain/account/tokenExtensions";
 import { PARSED_PROGRAMS } from "../network/chain/program/constants";
@@ -55,7 +56,7 @@ import type {
   SolanaTokenProgram,
   SolanaTransactionIntentData,
 } from "../types";
-import { assertUnreachable, DUMMY_SIGNATURE, ZERO_FILLED_DUMMY_SIGNATURE } from "../utils";
+import { assertUnreachable, DUMMY_SIGNATURE, feesOf, ZERO_FILLED_DUMMY_SIGNATURE } from "../utils";
 
 // ---------------------------------------------------------------------------
 // Coin Module API: craft a transaction from a TransactionIntent
@@ -63,6 +64,7 @@ import { assertUnreachable, DUMMY_SIGNATURE, ZERO_FILLED_DUMMY_SIGNATURE } from 
 
 export async function craftTransaction(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent:
     | TransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>
     | StakingTransactionIntent<StringMemo | MemoNotSupported, SolanaTransactionIntentData>,
@@ -73,32 +75,39 @@ export async function craftTransaction(
   }
 
   if ("data" in intent && intent.data.type === "buffer") {
-    return craftPrebuiltTransaction(api, intent.data.value, intent.sender, customFees);
+    return craftPrebuiltTransaction(api, config, intent.data.value, intent.sender, customFees);
   }
 
   if (intent.type === "stake.withdraw") {
-    return craftWithdrawTransaction(api, intent as StakingTransactionIntent, customFees);
+    return craftWithdrawTransaction(api, config, intent as StakingTransactionIntent, customFees);
   }
 
   if (intent.type === "stake.createAccount") {
-    return craftCreateStakeAccountFromIntent(api, intent as StakingTransactionIntent, customFees);
+    return craftCreateStakeAccountFromIntent(
+      api,
+      config,
+      intent as StakingTransactionIntent,
+      customFees,
+    );
   }
 
   if (intent.type === "stake.delegate") {
     return craftDelegateFromIntent(
       api,
+      config,
       intent as StakingTransactionIntent<StringMemo | MemoNotSupported>,
       customFees,
     );
   }
 
   if (intent.type === "stake.undelegate") {
-    return craftUndelegateFromIntent(api, intent as StakingTransactionIntent, customFees);
+    return craftUndelegateFromIntent(api, config, intent as StakingTransactionIntent, customFees);
   }
 
   if (intent.type === "stake.split") {
     return craftSplitStakeFromIntent(
       api,
+      config,
       intent as StakingTransactionIntent<StringMemo | MemoNotSupported>,
       customFees,
     );
@@ -109,14 +118,15 @@ export async function craftTransaction(
     intent.type === "token.approve" ||
     intent.type === "token.revoke"
   ) {
-    return craftTokenAuthorityFromIntent(api, intent, customFees);
+    return craftTokenAuthorityFromIntent(api, config, intent, customFees);
   }
 
-  return craftSendTransactionFromIntent(api, intent, customFees);
+  return craftSendTransactionFromIntent(api, config, intent, customFees);
 }
 
 async function craftPrebuiltTransaction(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   raw: Buffer,
   sender: string,
   customFees?: FeeEstimation,
@@ -144,7 +154,7 @@ async function craftPrebuiltTransaction(
 
   const fee = customFees
     ? customFees.value
-    : BigInt((await api.getFeeForMessage(transaction.message)) ?? 5000);
+    : BigInt((await api.getFeeForMessage(transaction.message)) ?? feesOf(config).defaultTxFee);
 
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
@@ -179,6 +189,7 @@ async function liveWithdrawable(
 
 async function craftWithdrawTransaction(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -197,7 +208,7 @@ async function craftWithdrawTransaction(
     toAccAddr: intent.sender,
     amount: withdrawable,
   };
-  const instructions = await buildInstructionsForCommand(api, command);
+  const instructions = await buildInstructionsForCommand(api, config, command);
   const recentBlockhash = await api.getLatestBlockhash();
 
   const message = new TransactionMessage({
@@ -213,7 +224,7 @@ async function craftWithdrawTransaction(
     fee = customFees.value;
   } else {
     const feeForMsg = await api.getFeeForMessage(transaction.message);
-    fee = BigInt(feeForMsg ?? 5000);
+    fee = BigInt(feeForMsg ?? feesOf(config).defaultTxFee);
   }
 
   return {
@@ -228,6 +239,7 @@ async function craftWithdrawTransaction(
 
 async function craftCreateStakeAccountFromIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -249,11 +261,12 @@ async function craftCreateStakeAccountFromIntent(
     stakeAccRentExemptAmount,
     delegate: { voteAccAddress: intent.recipient },
   };
-  return craftCommandToTransaction(api, command, intent.sender, customFees);
+  return craftCommandToTransaction(api, config, command, intent.sender, customFees);
 }
 
 async function craftDelegateFromIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: StakingTransactionIntent<StringMemo | MemoNotSupported>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -270,11 +283,12 @@ async function craftDelegateFromIntent(
     stakeAccAddr,
     voteAccAddr,
   };
-  return craftCommandToTransaction(api, command, intent.sender, customFees);
+  return craftCommandToTransaction(api, config, command, intent.sender, customFees);
 }
 
 async function craftUndelegateFromIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: StakingTransactionIntent,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -283,11 +297,12 @@ async function craftUndelegateFromIntent(
     authorizedAccAddr: intent.sender,
     stakeAccAddr: intent.recipient,
   };
-  return craftCommandToTransaction(api, command, intent.sender, customFees);
+  return craftCommandToTransaction(api, config, command, intent.sender, customFees);
 }
 
 async function craftSplitStakeFromIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: StakingTransactionIntent<StringMemo | MemoNotSupported>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -306,11 +321,12 @@ async function craftSplitStakeFromIntent(
     seed,
     splitStakeAccAddr: await getStakeAccountAddressWithSeed({ fromAddress: intent.sender, seed }),
   };
-  return craftCommandToTransaction(api, command, intent.sender, customFees);
+  return craftCommandToTransaction(api, config, command, intent.sender, customFees);
 }
 
 async function craftTokenAuthorityFromIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -360,11 +376,12 @@ async function craftTokenAuthorityFromIntent(
             tokenProgram,
           };
 
-  return craftCommandToTransaction(api, command, intent.sender, customFees);
+  return craftCommandToTransaction(api, config, command, intent.sender, customFees);
 }
 
 async function craftSendTransactionFromIntent(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   intent: TransactionIntent<StringMemo | MemoNotSupported>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
@@ -381,7 +398,7 @@ async function craftSendTransactionFromIntent(
   const recentBlockhash = await api.getLatestBlockhash();
   const memoValue = "memo" in intent ? (intent.memo as StringMemo).value : undefined;
   const command = await resolveCommandFromIntent(api, intent, memoValue);
-  const instructions = await buildInstructionsForCommand(api, command);
+  const instructions = await buildInstructionsForCommand(api, config, command);
 
   const message = new TransactionMessage({
     payerKey: new PublicKey(intent.sender),
@@ -395,7 +412,7 @@ async function craftSendTransactionFromIntent(
     fee = customFees.value;
   } else {
     const feeForMsg = await api.getFeeForMessage(transaction.message);
-    fee = BigInt(feeForMsg ?? 5000);
+    fee = BigInt(feeForMsg ?? feesOf(config).defaultTxFee);
   }
 
   return {
@@ -410,11 +427,12 @@ async function craftSendTransactionFromIntent(
 
 async function craftCommandToTransaction(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   command: Command,
   payerKey: string,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  const instructions = await buildInstructionsForCommand(api, command);
+  const instructions = await buildInstructionsForCommand(api, config, command);
   const recentBlockhash = await api.getLatestBlockhash();
   const message = new TransactionMessage({
     payerKey: new PublicKey(payerKey),
@@ -427,7 +445,7 @@ async function craftCommandToTransaction(
     fee = customFees.value;
   } else {
     const feeForMsg = await api.getFeeForMessage(transaction.message);
-    fee = BigInt(feeForMsg ?? 5000);
+    fee = BigInt(feeForMsg ?? feesOf(config).defaultTxFee);
   }
   return {
     transaction: Buffer.from(transaction.serialize()).toString("base64"),
@@ -447,6 +465,7 @@ export const buildVersionedTransaction = async (
   address: string,
   transaction: Transaction,
   api: ChainAPI,
+  config: SolanaCoinConfig,
 ): Promise<
   readonly [
     VersionedTransaction,
@@ -465,7 +484,7 @@ export const buildVersionedTransaction = async (
       web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
     }
   } else {
-    const instructions = await buildInstructionsFromTransaction(api, transaction);
+    const instructions = await buildInstructionsFromTransaction(api, config, transaction);
     const transactionMessage = new TransactionMessage({
       payerKey: new PublicKey(address),
       recentBlockhash: recentBlockhash.blockhash,
@@ -494,29 +513,31 @@ export const buildVersionedTransaction = async (
 
 export async function buildInstructionsForCommand(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   command: Command,
 ): Promise<TransactionInstruction[]> {
+  const { computeUnitMargin } = feesOf(config);
   switch (command.kind) {
     case "transfer":
-      return buildTransferInstructions(api, command);
+      return buildTransferInstructions(api, command, computeUnitMargin);
     case "token.transfer":
-      return buildTokenTransferInstructions(api, command);
+      return buildTokenTransferInstructions(api, command, computeUnitMargin);
     case "token.createATA":
-      return buildCreateAssociatedTokenAccountInstruction(api, command);
+      return buildCreateAssociatedTokenAccountInstruction(api, command, computeUnitMargin);
     case "token.approve":
-      return buildApproveTransactionInstructions(api, command);
+      return buildApproveTransactionInstructions(api, command, computeUnitMargin);
     case "token.revoke":
-      return buildRevokeTransactionInstructions(api, command);
+      return buildRevokeTransactionInstructions(api, command, computeUnitMargin);
     case "stake.createAccount":
-      return buildStakeCreateAccountInstructions(api, command);
+      return buildStakeCreateAccountInstructions(api, command, computeUnitMargin);
     case "stake.delegate":
-      return buildStakeDelegateInstructions(api, command);
+      return buildStakeDelegateInstructions(api, command, computeUnitMargin);
     case "stake.undelegate":
-      return buildStakeUndelegateInstructions(api, command);
+      return buildStakeUndelegateInstructions(api, command, computeUnitMargin);
     case "stake.withdraw":
-      return buildStakeWithdrawInstructions(api, command);
+      return buildStakeWithdrawInstructions(api, command, computeUnitMargin);
     case "stake.split":
-      return buildStakeSplitInstructions(api, command);
+      return buildStakeSplitInstructions(api, command, computeUnitMargin);
     case "raw":
       throw new Error("Raw transactions should not be built with this function");
     default:
@@ -530,6 +551,7 @@ export async function buildInstructionsForCommand(
 
 async function buildInstructionsFromTransaction(
   api: ChainAPI,
+  config: SolanaCoinConfig,
   tx: Transaction,
 ): Promise<TransactionInstruction[]> {
   const { commandDescriptor } = tx.model;
@@ -546,7 +568,7 @@ async function buildInstructionsFromTransaction(
     });
     throw new Error("can not build invalid command");
   }
-  return buildInstructionsForCommand(api, commandDescriptor.command);
+  return buildInstructionsForCommand(api, config, commandDescriptor.command);
 }
 
 async function resolveCommandFromIntent(

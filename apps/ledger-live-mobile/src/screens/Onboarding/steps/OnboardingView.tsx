@@ -14,6 +14,7 @@ type OnboardingViewProps = {
       category: string;
       name: string;
       deviceModelId?: string;
+      source?: string;
     };
   };
 

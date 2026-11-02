@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@ledgerhq/lumen-ui-rnative";
+import { Box, Tag } from "@ledgerhq/lumen-ui-rnative";
 import { AccountActions } from "../components/AccountActions/AccountActions.native";
 import { AccountBalance } from "../components/AccountBalance/AccountBalance.native";
 import { InvestSheet } from "../components/InvestSheet/InvestSheet.native";
@@ -11,6 +11,7 @@ type Props = AccountHeroPort & Readonly<{ testID?: string }>;
 export function AccountHero({ testID, ...port }: Props) {
   const {
     balance,
+    tag,
     tiles,
     moreActions,
     isMoreSheetOpen,
@@ -21,7 +22,10 @@ export function AccountHero({ testID, ...port }: Props) {
 
   return (
     <Box lx={{ gap: "s8" }} testID={testID}>
-      <Box lx={{ height: "s176", alignItems: "center", justifyContent: "center" }}>
+      <Box lx={{ height: "s176", alignItems: "center", justifyContent: "center", gap: "s8" }}>
+        {tag ? (
+          <Tag label={tag} size="sm" appearance="gray" testID={testID && `${testID}-tag`} />
+        ) : null}
         <AccountBalance balance={balance} testID={testID && `${testID}-balance`} />
       </Box>
       <AccountActions

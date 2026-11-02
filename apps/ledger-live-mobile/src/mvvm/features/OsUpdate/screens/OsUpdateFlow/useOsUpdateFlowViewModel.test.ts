@@ -3,6 +3,7 @@ import { rnBleTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
 import type { Device, OsUpdate } from "@ledgerhq/live-dmk-shared";
+import { Linking } from "react-native";
 import { act, renderHook } from "@tests/test-renderer";
 import type { State } from "~/reducers/types";
 import { useOsUpdateFlowViewModel } from "./useOsUpdateFlowViewModel";
@@ -67,6 +68,20 @@ describe("useOsUpdateFlowViewModel", () => {
       onStop: expect.any(Function),
     });
     expect(mockReset).not.toHaveBeenCalled();
+  });
+
+  it("opens the OS release notes of the device model", () => {
+    const openURL = jest.spyOn(Linking, "openURL").mockResolvedValue(undefined);
+    const { result } = renderHook(
+      () => useOsUpdateFlowViewModel(device),
+      withOsUpdates([osUpdate]),
+    );
+
+    act(() => result.current.onOpenReleaseNotes());
+
+    expect(openURL).toHaveBeenCalledWith(
+      "https://support.ledger.com/article/Ledger-Flex-OS-release",
+    );
   });
 
   it("clears the updates and the backup once completed, and keeps the run going", () => {

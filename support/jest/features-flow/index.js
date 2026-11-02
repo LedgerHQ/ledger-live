@@ -1,5 +1,5 @@
 const path = require("path");
-const { createDualJestConfig } = require("../core");
+const { createDualJestConfig, presetFactory } = require("../core");
 
 // Lumen's shared utils (`cn`, the amount formatters) and its design tokens ship as ESM and are
 // real values the views pass around, so SWC has to compile them instead of a stub standing in —
@@ -42,11 +42,11 @@ const flowLayer = {
  * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
  * `moduleNameMapper` add to the project's defaults, any other key replaces them.
  *
- * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowJestConfig(options) {
-  return createDualJestConfig(flowLayer, options);
+function flowJestConfig(overrides) {
+  return createDualJestConfig(flowLayer, overrides);
 }
 
 /**
@@ -54,11 +54,14 @@ function createFlowJestConfig(options) {
  * createFlowJestConfig(), without the web one. Requires no web-only dependencies
  * (jest-environment-jsdom, @testing-library/jest-dom).
  *
- * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [options]
+ * @param {{ nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
  */
-function createFlowNativeJestConfig(options) {
-  return createDualJestConfig({ ...flowLayer, web: undefined }, options);
+function flowNativeJestConfig(overrides) {
+  return createDualJestConfig({ ...flowLayer, web: undefined }, overrides);
 }
 
-module.exports = { createFlowJestConfig, createFlowNativeJestConfig };
+module.exports = {
+  createFlowJestConfig: presetFactory("createFlowJestConfig", [], flowJestConfig),
+  createFlowNativeJestConfig: presetFactory("createFlowNativeJestConfig", [], flowNativeJestConfig),
+};

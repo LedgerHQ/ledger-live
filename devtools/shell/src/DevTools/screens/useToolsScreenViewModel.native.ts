@@ -32,7 +32,7 @@ export function useToolsScreenViewModel({
       tools.map(tool => ({
         key: tool.id,
         title: tool.label,
-        description: tool.owner,
+        description: [tool.kind, tool.owner].filter(Boolean).join(" · ") || undefined,
         onPress: () => navigation.push("tool", { toolId: tool.id }),
       })),
     [tools, navigation],

@@ -5,6 +5,7 @@ const transaction = new Transaction(Account.HEDERA_1, Account.HEDERA_1, "1", und
 runSendInvalidAddressTest({
   transaction,
   expectedErrorMessage: "Destination and source accounts must not be the same.",
+  scenario: "same as sender",
   tmsLinks: ["B2CQA-4286"],
   tags: ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@hedera", "@family-hedera"],
 });
