@@ -260,7 +260,10 @@ test.describe("Delegate", seiDetails, () => {
   const { currency } = seiDelegation.account;
   test.use(seiLock.fixtures);
   useDelegateFixtures(currency, {
-    cliCommands: [liveDataWithAddressCommand(seiDelegation.account, { currency: "sei_evm" })],
+    cliCommands: [
+      liveDataWithAddressCommand(seiDelegation.account, { currency: "sei_evm" }),
+      liveDataCommand(Account.SEI_EVM_UNASSOCIATED, { currency: "sei_evm" }),
+    ],
     featureFlags: {
       evmNativeStaking: {
         enabled: true,
@@ -277,6 +280,11 @@ test.describe("Delegate", seiDetails, () => {
       annotation: ticketAnnotations({ xrayTicket: "B2CQA-5740" }),
     },
     async ({ app }) => {
+      await openAccount(app, Account.SEI_EVM_UNASSOCIATED);
+      await app.account.startStakingFlowFromMainStakeButton();
+      await app.evmDelegate.expectSeiActivationWarning();
+      await app.evmDelegate.close();
+
       await openAccount(app, seiDelegation.account);
 
       await app.account.startStakingFlowFromMainStakeButton();
