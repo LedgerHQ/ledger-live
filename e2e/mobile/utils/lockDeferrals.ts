@@ -1,7 +1,7 @@
 /**
  * A spec file whose broadcast accounts are busy when it starts is skipped and leaves a marker in
  * this directory (relative to e2e/mobile, see jest.environment.ts). jest.config.js keeps its
- * skipped results out of Allure, and apps/ledger-live-mobile/scripts/e2e-ci.mjs runs it again
+ * skipped results out of Allure, and e2e/mobile/scripts/run-ci.mjs runs it again
  * in a later pass.
  *
  * `jest.config.js` requires this file, so it must stay free of imports and of non-erasable
@@ -9,7 +9,7 @@
  */
 export const LOCK_DEFERRALS_DIR = "artifacts/lock-deferrals";
 
-/** Time each spec file waited for exclusive locks, which e2e-ci.mjs keeps out of the shard timings. */
+/** Time each spec file waited for exclusive locks, which run-ci.mjs keeps out of the shard timings. */
 export const EXCLUSIVE_LOCK_WAITS_DIR = "artifacts/exclusive-lock-waits";
 
 export const deferralMarkerName = (testFilePath: string) =>

@@ -1,10 +1,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const MOBILE_APP_DIR = path.resolve(__dirname, "../../../apps/ledger-live-mobile");
-const PACKAGE_JSON = path.join(MOBILE_APP_DIR, "package.json");
-const ANDROID_BUILD_GRADLE = path.join(MOBILE_APP_DIR, "android/app/build.gradle");
-const IOS_INFO_PLIST = path.join(MOBILE_APP_DIR, "ios/ledgerlivemobile/Info.plist");
+const APP_DIR = path.resolve(__dirname, "..");
+const PACKAGE_JSON = path.join(APP_DIR, "package.json");
+const ANDROID_BUILD_GRADLE = path.join(APP_DIR, "android/app/build.gradle");
+const IOS_INFO_PLIST = path.join(APP_DIR, "ios/ledgerlivemobile/Info.plist");
 
 function writeIfChanged(filePath, updated, original) {
   if (updated !== original) {

@@ -522,8 +522,8 @@ jobs:
           if [ "$REF_NAME" = "develop" ]; then
             PREFIX="develop/"
           fi
-          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
-          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
+          echo "ios_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/ios', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'apps/ledger-live-mobile/scripts/syncAppVersion.js', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-ios-${{ inputs.production_firebase == true && 'prod-3' || '4' }}" >> $GITHUB_OUTPUT
+          echo "android_native_key=${PREFIX}longterm-${{ hashFiles('apps/ledger-live-mobile/android', 'apps/ledger-live-mobile/package.json', 'apps/ledger-live-mobile/scripts/e2e-build.mjs', 'apps/ledger-live-mobile/scripts/e2e-binaries.cjs', 'apps/ledger-live-mobile/scripts/syncAppVersion.js', 'pnpm-workspace.yaml', 'e2e/mobile/detox.config.js', 'e2e/mobile/scripts/syncAppVersion.js') }}-detox-native-android-${{ inputs.production_firebase == true && 'prod-2' || '3' }}" >> $GITHUB_OUTPUT
           HEAD_SHA=$(git rev-parse HEAD)
           echo "ios_js_key=${PREFIX}${HEAD_SHA}-detox-js-ios" >> $GITHUB_OUTPUT
           echo "android_js_key=${PREFIX}${HEAD_SHA}-detox-js-android" >> $GITHUB_OUTPUT
@@ -833,14 +833,39 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      # TEMP: This workflow runs from @develop against older release and hotfix checkouts, which have no test:ci target.
+      # TODO: Remove this once release and hotfix checkouts have the e2e/mobile test:ci target.
+      - name: Detect e2e/mobile test:ci
+        id: e2e-test-ci
+        run: |
+          node -e '
+            const fs = require("fs");
+            let present = false;
+            try {
+              present = Boolean(require("./e2e/mobile/project.json").targets["test:ci"]);
+            } catch {}
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `present=${present}\n`);
+          '
+
+      # TODO: Use simple step here (no retry) once release and hotfix checkouts have the e2e/mobile test:ci target.
       - uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4.0.0
         name: install dependencies
         id: install-dependencies
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          command: |
+            if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
+              pnpm i --filter="ledger-live-mobile-e2e-tests..." --frozen-lockfile --unsafe-perm --ignore-scripts
+            else
+              pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+            fi
+          new_command_on_retry: |
+            if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
+              pnpm i --filter="ledger-live-mobile-e2e-tests..." --frozen-lockfile --unsafe-perm --ignore-scripts
+            else
+              rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+            fi
 
       - name: Boot iOS Simulator in Background
         uses: LedgerHQ/ledger-live/tools/actions/composites/boot-ios-simulators-background@develop
@@ -848,9 +873,15 @@ jobs:
           worker_count: 3
           artifacts_root: ${{ env.MOBILE_ARTIFACTS_ROOT }}
 
-      - name: Detox Post Install
-        run: node node_modules/detox/scripts/postinstall.js
-        working-directory: apps/ledger-live-mobile
+      # Build the Detox framework cache for iOS before running tests
+      # See https://wix.github.io/Detox/docs/cli/build-framework-cache
+      - name: Build Detox iOS Framework Cache
+        run: |
+          if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
+            pnpm exec nx run ledger-live-mobile-e2e-tests:build:ios:framework-cache
+          else
+            pnpm --filter ledger-live-mobile-e2e-tests exec detox build-framework-cache
+          fi
 
       - name: Download Native Build
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
@@ -890,7 +921,9 @@ jobs:
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_JSBUNDLE_PATH }}
           cp apps/ledger-live-mobile/main.jsbundle ${{ env.IOS_NATIVE_PATH }}/main.jsbundle
 
+      # Stays until release and hotfix have the test:ci target which builds the necessary dependencies.
       - name: Build e2e dependencies (CLI + libs)
+        if: steps.e2e-test-ci.outputs.present != 'true'
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
@@ -953,7 +986,6 @@ jobs:
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
           SHARD_INDEX: ${{ matrix.shard }}
           DEVICE_INFO: ${{ env.DEVICE_INFO }}
-          NX_SKIP_NX_CACHE: true
           SPECULOS_FIRMWARE_VERSION: ${{ inputs.ci_smoke && env.SMOKE_SPECULOS_FIRMWARE_VERSION || '' }}
           E2E_FEATURE_FLAGS_JSON: ${{ env.E2E_FEATURE_FLAGS_JSON }}
           E2E_MOBILE_FEATURE_FLAGS: ${{ env.IOS_FEATURE_FLAGS }}
@@ -964,7 +996,12 @@ jobs:
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
           E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
-        run: pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+        run: |
+          if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
+            pnpm exec nx run ledger-live-mobile-e2e-tests:test:ci -- -p ios $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+          else
+            pnpm run mobile e2e:ci -p ios -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_IOS }}-${{ matrix.shard }}.json
+          fi
 
       - name: Add workflow inputs to Allure environment
         if: (!cancelled() || steps.run-ios.outcome == 'cancelled') && matrix.shard == 1
@@ -1149,13 +1186,27 @@ jobs:
         with:
           registry: ${{ vars.ARTIFACTORY_URL }}
 
+      # TEMP: This workflow runs from @develop against older release and hotfix checkouts, which have no test:ci target.
+      # TODO: Remove this once release and hotfix checkouts have the e2e/mobile test:ci target.
+      - name: Detect e2e/mobile test:ci
+        id: e2e-test-ci
+        run: |
+          node -e '
+            const fs = require("fs");
+            let present = false;
+            try {
+              present = Boolean(require("./e2e/mobile/project.json").targets["test:ci"]);
+            } catch {}
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `present=${present}\n`);
+          '
+
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
-
-      - name: Detox Post Install
-        run: node node_modules/detox/scripts/postinstall.js
-        working-directory: apps/ledger-live-mobile
+          if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
+            pnpm i --filter="ledger-live-mobile-e2e-tests..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          else
+            pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="ledger-live-mobile-e2e-tests..." --filter="live-cli*..." --frozen-lockfile --unsafe-perm --ignore-scripts
+          fi
 
       # A runner image with this AVD baked in (setup-android-avd's stamp) skips the download.
       # Otherwise remove the image's AVD, so the R2 copy isn't extracted on top of it.
@@ -1246,7 +1297,9 @@ jobs:
           echo "ℹ️ Emulator liveness watchdog started."
         shell: bash
 
+      # Stays until release and hotfix have the test:ci target which builds the necessary dependencies.
       - name: Build e2e dependencies (CLI + libs)
+        if: steps.e2e-test-ci.outputs.present != 'true'
         uses: LedgerHQ/ledger-live/tools/actions/composites/nx-step@develop
         with:
           command: pnpm exec nx run ledger-live-mobile-e2e-tests:build-e2e-deps
@@ -1319,7 +1372,12 @@ jobs:
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
           E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
-        run: pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+        run: |
+          if [ "${{ steps.e2e-test-ci.outputs.present }}" = "true" ]; then
+            pnpm exec nx run ledger-live-mobile-e2e-tests:test:ci -- -p android $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+          else
+            pnpm run mobile e2e:ci -p android -t --e2e $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') $SHARD_TEST_FILES --outputFile=artifacts/${{ env.E2E_TEST_RESULTS_PREFIX_ANDROID }}-${{ matrix.shard }}.json
+          fi
 
       - name: Stop emulator watchdog
         if: always()
