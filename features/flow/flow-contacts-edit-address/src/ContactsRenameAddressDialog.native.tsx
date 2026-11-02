@@ -14,10 +14,11 @@ import {
   CONTACTS_NATIVE_ADDRESS_INPUT_PROPS,
   CONTACTS_NATIVE_NAME_INPUT_PROPS,
 } from "@features/platform-contacts";
+import { useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { useBottomSheetKeyboardAwareInput } from "@shared/ui-queued-bottom-sheet/keyboard";
 import { useEditAddressLabels } from "./copy/useEditAddressLabels";
-import type { ContactsRenameAddressDrawerProps } from "./types";
-import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
+import type { ContactsRenameAddressDialogProps } from "./ContactsRenameAddressDialog.types";
+import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation";
 
 export function ContactsRenameAddressDialog({
   isOpen,
@@ -27,13 +28,13 @@ export function ContactsRenameAddressDialog({
   invalidLabelError,
   isDeviceRequired,
   autoFocus = false,
-  bottomInset = 0,
   supportsDomain,
   onDraftLabelChange,
   onAddressChange,
   onConfirm,
   addressEntry,
-}: ContactsRenameAddressDrawerProps): React.JSX.Element {
+}: ContactsRenameAddressDialogProps): React.JSX.Element {
+  const bottomInset = useBottomSheetBottomInset();
   const addressInputRef = useRef<NativeTextInput>(null);
   const labelInputRef = useRef<NativeTextInput>(null);
   // Registers both fields with the sheet, so it knows the keyboard is up and the sheet closing

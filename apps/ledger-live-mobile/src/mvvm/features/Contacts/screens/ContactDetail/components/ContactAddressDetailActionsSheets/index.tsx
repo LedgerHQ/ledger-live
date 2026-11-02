@@ -53,7 +53,7 @@ export function ContactAddressDetailActionsSheets({
         // mid-animation. The two then animate up together.
         snapPoints="fullWithOffset"
       >
-        <ContactsRenameAddressDialog {...renameSheet} autoFocus bottomInset={bottomInset} />
+        <ContactsRenameAddressDialog {...renameSheet} autoFocus />
       </QueuedBottomSheet>
     </>
   );

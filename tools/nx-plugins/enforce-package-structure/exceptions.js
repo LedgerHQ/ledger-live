@@ -107,9 +107,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactDetailView: componentWaiver("R3", "R5"),
     ContactsEditSignerMismatchDialog: componentWaiver("R2", "R4", "R5"),
   },
-  "features/flow/flow-contacts-edit-address": {
-    ContactsRenameAddressDialog: componentWaiver("R2"),
-  },
   "features/flow/flow-contacts-edit-contact": {
     "./native": entryWaiver(),
     ContactsRenameContactDialog: componentWaiver("R1"),
