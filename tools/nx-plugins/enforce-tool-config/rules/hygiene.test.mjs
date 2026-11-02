@@ -162,7 +162,12 @@ test("side-effects: anything but false is reported", () => {
 });
 
 test("lint-script: both spellings of the sources pass", () => {
-  for (const lint of ["oxlint src", "oxlint ./src", "oxlint src -A no-console"]) {
+  for (const lint of [
+    "oxlint src",
+    "oxlint ./src",
+    "oxlint src -A no-console",
+    "pnpm exec oxlint src",
+  ]) {
     assert.deepEqual(violations({ manifest: { scripts: { ...MANIFEST.scripts, lint } } }), []);
   }
 });
@@ -172,15 +177,14 @@ test("lint-script: a missing lint script, or one that does not run oxlint, is re
   assert.deepEqual(violations({ manifest: { scripts: withoutLint } }), [
     { file: "shared/pkg/package.json", message: NO_LINT_SCRIPT },
   ]);
-  assert.deepEqual(
-    violations({ manifest: { scripts: { ...MANIFEST.scripts, lint: "eslint src" } } }),
-    [
+  for (const lint of ["eslint src", "echo oxlint src", "eslint src --plugin oxlint"]) {
+    assert.deepEqual(violations({ manifest: { scripts: { ...MANIFEST.scripts, lint } } }), [
       {
         file: "shared/pkg/package.json",
         message: 'a "lint" script runs oxlint; this one does not: make it "oxlint src"',
       },
-    ],
-  );
+    ]);
+  }
 });
 
 test("format-check-script: every spelling in use passes", () => {
@@ -199,15 +203,17 @@ test("format-check-script: a missing script, or one that does not check, is repo
   assert.deepEqual(violations({ manifest: { scripts: withoutCheck } }), [
     { file: "shared/pkg/package.json", message: NO_FORMAT_CHECK_SCRIPT },
   ]);
-  const scripts = { ...MANIFEST.scripts, "format:check": "oxfmt src" };
-  assert.deepEqual(violations({ manifest: { scripts } }), [
-    {
-      file: "shared/pkg/package.json",
-      message:
-        'a "format:check" script runs oxfmt --check; this one does not: make it ' +
-        '"oxfmt src --check"',
-    },
-  ]);
+  for (const formatCheck of ["oxfmt src", "echo oxfmt src --check", "prettier --check oxfmt"]) {
+    const scripts = { ...MANIFEST.scripts, "format:check": formatCheck };
+    assert.deepEqual(violations({ manifest: { scripts } }), [
+      {
+        file: "shared/pkg/package.json",
+        message:
+          'a "format:check" script runs oxfmt --check; this one does not: make it ' +
+          '"oxfmt src --check"',
+      },
+    ]);
+  }
 });
 
 test("tool-dependency: oxlint and oxfmt are reported in dependencies and devDependencies", () => {

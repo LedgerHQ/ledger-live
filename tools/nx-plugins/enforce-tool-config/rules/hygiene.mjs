@@ -61,13 +61,14 @@ function runs(script, predicate) {
   return (script ?? "").split(/&&|\|\||;|\|/).some(command => predicate(command.trim()));
 }
 
+const EXECUTABLE = /^(?:pnpm\s+exec\s+)?(\S+)/;
+
 /**
  * @param {string} tool
- * @returns {(command: string) => boolean}
+ * @returns {(command: string) => boolean} whether the command runs the tool, not only names it
  */
 function callsTool(tool) {
-  const word = new RegExp(`(^|\\s)${tool}(\\s|$)`);
-  return command => word.test(command);
+  return command => command.match(EXECUTABLE)?.[1] === tool;
 }
 
 /** @param {string} command */
