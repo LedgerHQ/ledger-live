@@ -10580,6 +10580,7 @@
       "copied": "Copied",
       "edit": "Edit",
       "delete": "Delete",
+      "share": "Share",
       "networkTag": "{{name}} Network"
     },
     "detailActions": {
