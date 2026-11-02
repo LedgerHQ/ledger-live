@@ -11,6 +11,7 @@ import type { VerifyAddressIntentJobState } from "@features/platform-verify-addr
 import { render, screen, waitFor, act, countervaluesTestUserSettings } from "@tests/test-renderer";
 import { buildDeviceInitializationInput } from "LLM/components/DeviceIntentExecutor";
 import { importCountervalues, pairId } from "@domain/entity-market-countervalues";
+import { updateAccount } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import { track, trackPage } from "@shared/analytics";
 import type { State } from "~/reducers/types";
@@ -336,6 +337,22 @@ describe("PayTab RequestReceive integration", () => {
       network: "ethereum",
       page: "Request Address Verification",
     });
+  });
+
+  it("should keep the same device intent when the account syncs during verification", async () => {
+    const { user, store } = renderRequestReceive();
+
+    await startVerify(user);
+    const intent = capturedExecutor?.intent;
+    const initCalls = mockedBuildInit.mock.calls.length;
+
+    act(() => {
+      store.dispatch(updateAccount({ id: payTabEthAccount.id, lastSyncDate: new Date() }));
+    });
+
+    expect(capturedExecutor?.intent).toBe(intent);
+    expect(mockedBuildInit).toHaveBeenCalledTimes(initCalls);
+    expect(screen.getByText(DIE_LABEL)).toBeVisible();
   });
 
   it("should keep the request card when the user dismisses the DIE before confirming", async () => {
