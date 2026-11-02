@@ -1,4 +1,4 @@
-import { ReadRequestType, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
+import { makeNonce, ReadRequestType, requestIdOf, SubmitRequestType } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { Principal } from "@icp-sdk/core/principal";
 import { sha256 } from "@noble/hashes/sha256";
@@ -46,6 +46,8 @@ const SPLIT_ARG_TYPE = IDL.Record({
   ),
 });
 
+// The expiry is rounded to the minute, so without a nonce a repeat of the same call within a minute
+// has the same request id: the IC answers it with the earlier reply and never runs it.
 const buildGovernanceCall = (
   methodName: string,
   arg: Uint8Array,
@@ -55,6 +57,7 @@ const buildGovernanceCall = (
   canister_id: governanceCanisterId(),
   ingress_expiry: createIngressExpiry(),
   method_name: methodName,
+  nonce: makeNonce(),
   request_type: SubmitRequestType.Call,
   sender: derivePrincipalFromPubkey(pubKey),
 });

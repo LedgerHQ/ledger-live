@@ -1,4 +1,11 @@
-import { Cbor } from "@icp-sdk/core/agent";
+// A pinned encoding needs a fixed nonce; every other call keeps the random one.
+const mockNonce: { fixed?: Uint8Array } = {};
+jest.mock("@icp-sdk/core/agent", () => {
+  const actual = jest.requireActual("@icp-sdk/core/agent");
+  return { ...actual, makeNonce: () => mockNonce.fixed ?? actual.makeNonce() };
+});
+
+import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { Principal } from "@icp-sdk/core/principal";
 import { sha256 } from "@noble/hashes/sha2";
@@ -161,6 +168,25 @@ describe("createUnsignedListNeuronsTransaction", () => {
   });
 });
 
+describe("governance call nonce", () => {
+  it.each([
+    ["list_neurons", () => createUnsignedListNeuronsTransaction(XPUB)],
+    ["manage_neuron", () => createUnsignedNeuronCommandTransaction(tx({}), XPUB)],
+  ])("gives two %s calls in the same minute distinct request ids", (_, build) => {
+    jest.useFakeTimers({ now: 1_700_000_000_000 });
+    try {
+      const [first, second] = [build(), build()];
+      expect(first.ingress_expiry.toBigInt()).toBe(second.ingress_expiry.toBigInt());
+      expect(first.nonce).toHaveLength(16);
+      expect(bytesToHex(new Uint8Array(requestIdOf(first)))).not.toBe(
+        bytesToHex(new Uint8Array(requestIdOf(second))),
+      );
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+});
+
 describe("createReadStateRequest", () => {
   it("builds a request_status read_state over the call's request id", () => {
     const unsigned = createUnsignedNeuronCommandTransaction(
@@ -188,21 +214,23 @@ describe("createReadStateRequest", () => {
   // canister's full manage_neuron type table (1907 bytes), so it is pinned by digest.
   it("encodes the exact call and read_state contents the device signs", () => {
     jest.useFakeTimers({ now: 1_700_000_000_000 });
+    mockNonce.fixed = new Uint8Array(16).fill(7);
     try {
       const unsigned = createUnsignedNeuronCommandTransaction(tx({}), XPUB);
       const { readStateContent, requestId } = createReadStateRequest(unsigned);
 
       expect(bytesToHex(sha256(Cbor.encode({ content: unsigned })))).toBe(
-        "c94323eb28492ddc3100f17c430216daa102c88fac3a7dc57a13db94d2009aac",
+        "a9c4eba9e6bba403fb49964306b601c83968c879a665d6afdf55592de2c30c07",
       );
       expect(bytesToHex(new Uint8Array(requestId))).toBe(
-        "f0526b02a4dedac8591df348ff4ff61b2572686bb092b3e265918a68cad361c5",
+        "0a9b0dea184df896f578bcc445f2641d49ac0acbe08ece7ec7f873c599581ea9",
       );
       expect(bytesToHex(Cbor.encode({ content: readStateContent }))).toBe(
-        "d9d9f7a167636f6e74656e74a46e696e67726573735f6578706972791b17979d316f2f980065706174687381824e726571756573745f7374617475735820f0526b02a4dedac8591df348ff4ff61b2572686bb092b3e265918a68cad361c56c726571756573745f747970656a726561645f73746174656673656e646572581d1f0c157211e5dade80b29c6808512eef175c880648ed91da077faa2c02",
+        "d9d9f7a167636f6e74656e74a46e696e67726573735f6578706972791b17979d316f2f980065706174687381824e726571756573745f73746174757358200a9b0dea184df896f578bcc445f2641d49ac0acbe08ece7ec7f873c599581ea96c726571756573745f747970656a726561645f73746174656673656e646572581d1f0c157211e5dade80b29c6808512eef175c880648ed91da077faa2c02",
       );
     } finally {
       jest.useRealTimers();
+      delete mockNonce.fixed;
     }
   });
 });
