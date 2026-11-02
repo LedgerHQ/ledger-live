@@ -131,7 +131,7 @@ catalog:
   "@rsbuild/plugin-node-polyfill": 1.4.6
   "@rsbuild/plugin-react": 2.1.1
   "@rsbuild/plugin-styled-components": 1.7.0
-  "@rsdoctor/core": 2.0.0
+  "@rsdoctor/core": 2.0.1
   "@rspack/cli": 2.3.0
   "@rspack/core": 2.3.0
   "@rspack/dev-server": 2.2.2
