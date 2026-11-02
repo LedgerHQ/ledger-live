@@ -1,8 +1,9 @@
-// Each call takes the next nonce of a sequence, or the fixed one a pinned encoding sets.
 const mockNonce: { fixed?: Uint8Array; count: number } = { count: 0 };
+const mockNextNonce = (): Uint8Array =>
+  mockNonce.fixed ?? new Uint8Array(16).fill(++mockNonce.count % 256);
 jest.mock("@icp-sdk/core/agent", () => ({
   ...jest.requireActual("@icp-sdk/core/agent"),
-  makeNonce: () => mockNonce.fixed ?? new Uint8Array(16).fill(++mockNonce.count % 256),
+  makeNonce: () => mockNextNonce(),
 }));
 
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";

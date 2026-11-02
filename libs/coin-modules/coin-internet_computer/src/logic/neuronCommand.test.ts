@@ -1,7 +1,7 @@
-// The bridge parity checks compare two crafts byte for byte, so both carry the same nonce.
+const mockParityNonce = new Uint8Array(16).fill(7);
 jest.mock("@icp-sdk/core/agent", () => ({
   ...jest.requireActual("@icp-sdk/core/agent"),
-  makeNonce: () => new Uint8Array(16).fill(7),
+  makeNonce: () => mockParityNonce,
 }));
 
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";

@@ -46,8 +46,7 @@ const SPLIT_ARG_TYPE = IDL.Record({
   ),
 });
 
-// The expiry is rounded to the minute, so without a nonce a repeat of the same call within a minute
-// has the same request id: the IC answers it with the earlier reply and never runs it.
+// Without a nonce, a same-minute repeat shares the earlier call's request id and gets its reply.
 const buildGovernanceCall = (
   methodName: string,
   arg: Uint8Array,
