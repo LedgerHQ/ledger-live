@@ -31,8 +31,9 @@ import { preventAutoHideAsync, setOptions } from "expo-splash-screen";
 import App from "./src";
 import logReport from "./src/log-report";
 import { initDevServerAutoReload } from "./src/hooks/useDevServerAutoReload";
+import { SPLASH_SCREEN_FADE_MS } from "./src/mvvm/features/LaunchScreen/splashScreenVisibility";
 preventAutoHideAsync();
-setOptions({ fade: true, duration: 250 });
+setOptions({ fade: true, duration: SPLASH_SCREEN_FADE_MS });
 logReport.logReportInit();
 initDevServerAutoReload();
 

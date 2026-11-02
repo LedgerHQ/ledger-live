@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import * as SplashScreen from "expo-splash-screen";
+import { hideSplashScreen } from "./splashScreenVisibility";
 
 /**
  * Hides the native splash screen for a screen that replaces the app, such as a blocked screen.
@@ -7,6 +7,6 @@ import * as SplashScreen from "expo-splash-screen";
  */
 export function useHideSplashScreen(shouldHide: boolean) {
   useEffect(() => {
-    if (shouldHide) SplashScreen.hide();
+    if (shouldHide) hideSplashScreen();
   }, [shouldHide]);
 }
