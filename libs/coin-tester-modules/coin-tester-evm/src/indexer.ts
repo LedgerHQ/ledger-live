@@ -776,8 +776,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "core":
         case "base":
         case "bsc":
-        case "robinhood":
-        case "robinhood_testnet":
           response.push({ id, type: "coin" });
       }
 
@@ -794,8 +792,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
         case "core":
         case "base":
         case "bsc":
-        case "robinhood":
-        case "robinhood_testnet":
           response.push({ id, token_list_hash: "hash" });
       }
 
