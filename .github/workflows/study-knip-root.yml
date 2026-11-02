@@ -29,6 +29,7 @@ on:
         options:
           - ledger-wallet-8cpu-aws-public-cached
           - ledger-wallet-4cpu-aws-public-cached
+          - ledger-wallet-2cpu-aws-public-cached
         default: ledger-wallet-8cpu-aws-public-cached
 
 permissions:
