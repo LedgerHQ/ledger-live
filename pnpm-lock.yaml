@@ -8898,6 +8898,9 @@ importers:
       '@shared/i18n':
         specifier: workspace:*
         version: link:../../../shared/i18n
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:^
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@ledgerhq/lumen-design-core':
         specifier: 'catalog:'
@@ -8947,6 +8950,9 @@ importers:
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.82.0
       react:
         specifier: 19.1.4
         version: 19.1.4

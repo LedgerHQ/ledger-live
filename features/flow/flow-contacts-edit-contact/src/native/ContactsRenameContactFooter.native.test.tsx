@@ -1,8 +1,10 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { ContactsRenameContactFooter } from ".";
-import type { ContactsRenameContactFooterProps } from "./types";
+import {
+  ContactsRenameContactFooter,
+  type ContactsRenameContactFooterProps,
+} from "./ContactsRenameContactFooter";
 
 function createProps(
   overrides: Partial<ContactsRenameContactFooterProps> = {},
