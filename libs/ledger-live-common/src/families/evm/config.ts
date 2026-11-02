@@ -39,6 +39,10 @@ function overridesDefaultsWithEnv(
             ? {
                 ...currencyConfiguration.default,
                 ...(isLedgerBased(currencyConfiguration) ? envBasedLedgerConfiguration() : {}),
+                // DRAFT ONLY, never merge: route Ethereum mainnet to Codex (Fresnel staging).
+                ...(currencyName === "config_currency_ethereum"
+                  ? { ledgerExplorerUri: "https://fresnel.api.live.ledger-test.com" }
+                  : {}),
                 ...(getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
                   ? { forceLegacyTransactions: getEnv("EVM_FORCE_LEGACY_TRANSACTIONS") }
                   : {}),
