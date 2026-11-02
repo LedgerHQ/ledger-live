@@ -12,10 +12,8 @@ import { useMarket } from "LLM/features/Market/hooks/useMarket";
 import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
 import { appVersion } from "LLM/utils/appVersion";
-import { selectCurrency } from "@features/platform-aggregated-assets";
+import { selectAssetCurrencyIds, selectCurrency } from "@features/platform-aggregated-assets";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getSwapCurrencyIds } from "LLM/features/Market/utils/getSwapCurrencyIds";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -57,12 +55,26 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
 
   const ledgerCurrency = data && selectCurrency(data);
 
-  const { data: swappableCurrencyIds } = useFetchCurrencyAll();
-  const swapCurrencyIds = useMemo(
-    () =>
-      data && ledgerCurrency && getSwapCurrencyIds(data, ledgerCurrency.id, swappableCurrencyIds),
-    [data, ledgerCurrency, swappableCurrencyIds],
-  );
+  const { data: swappableAssets, isLoading: isLoadingSwappableAssets } =
+    assetsDataApi.useGetAssetDataQuery(
+      {
+        currencyIds: currency?.ledgerIds,
+        useCase: "swap",
+        product: "llm",
+        version: appVersion,
+        isStaging: false,
+        includeTestNetworks: false,
+      },
+      {
+        skip: !currency?.ledgerIds?.length,
+      },
+    );
+
+  const swapCurrencyIds = useMemo(() => {
+    if (isLoadingSwappableAssets) return undefined;
+    if (!swappableAssets || !ledgerCurrency) return [];
+    return selectAssetCurrencyIds(swappableAssets, ledgerCurrency.id);
+  }, [isLoadingSwappableAssets, swappableAssets, ledgerCurrency]);
 
   useEffect(() => {
     if (name) {

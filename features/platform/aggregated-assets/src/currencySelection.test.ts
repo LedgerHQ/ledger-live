@@ -119,6 +119,14 @@ describe("currencySelection", () => {
       expect(selectAssetCurrencyIds(usdcData, "arc")).toEqual(["arc"]);
     });
 
+    it("drops a native coin whose ticker differs from the asset group", () => {
+      const arbitrumData = { ...mockArbitrumTokenAssetsData, pagination: {} };
+
+      expect(selectAssetCurrencyIds(arbitrumData, "ethereum/erc20/arbitrum")).toEqual([
+        "ethereum/erc20/arbitrum",
+      ]);
+    });
+
     it("falls back to the first asset group when no group holds the currency", () => {
       expect(selectAssetCurrencyIds(usdcData, "algorand/asa/31566704")).toEqual([
         usdcOnEthereum,

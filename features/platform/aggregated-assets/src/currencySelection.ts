@@ -50,5 +50,13 @@ export function selectAssetCurrencyIds(data: AssetsData, currencyId: string): st
   const firstMetaCurrencyId = data.currenciesOrder.metaCurrencyIds?.[0];
   const assetGroup =
     groupWithCurrency ?? (firstMetaCurrencyId ? data.cryptoAssets[firstMetaCurrencyId] : undefined);
-  return assetGroup ? Object.values(assetGroup.assetsIds) : [];
+  if (!assetGroup) return [];
+
+  const groupTicker = assetGroup.ticker?.toUpperCase();
+  return Object.values(assetGroup.assetsIds).filter(id => {
+    const currency = data.cryptoOrTokenCurrencies[id];
+    const isUnrelatedNativeCoin =
+      currency?.type === "CryptoCurrency" && currency.ticker?.toUpperCase() !== groupTicker;
+    return !isUnrelatedNativeCoin;
+  });
 }

@@ -149,7 +149,7 @@ function View({
           currency={ledgerCurrency}
         />
 
-        {ledgerCurrency && (
+        {ledgerCurrency && swapCurrencyIds && (
           <MarketQuickActions
             currency={ledgerCurrency}
             accounts={accounts}
