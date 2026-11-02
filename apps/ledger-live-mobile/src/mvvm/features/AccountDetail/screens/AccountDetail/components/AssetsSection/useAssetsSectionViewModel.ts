@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { ParamListBase } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
+import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAssetDetailNavigation";
 import { usePrecomputedAssetListData } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import type { AssetListItemViewModelResult } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import { useCalculateCountervalueCallback } from "~/actions/general";
@@ -25,10 +26,12 @@ export type AssetsSectionViewModel = Readonly<{
   precomputed: Map<string, AssetListItemViewModelResult>;
   /** Set only for a family where an asset must be added to the account before it can be received. */
   onAddAsset: (() => void) | undefined;
+  onAssetPress: (asset: Asset) => void;
 }>;
 
 export function useAssetsSectionViewModel(account: Account): AssetsSectionViewModel {
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const { openFromAsset } = useAssetDetailNavigation();
   const hideEmptyTokenAccounts = useSelector(hideEmptyTokenAccountsEnabledSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const calculateCountervalue = useCalculateCountervalueCallback();
@@ -50,9 +53,15 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
     addAssetAction?.(navigation, account.id);
   }, [account.id, addAssetAction, navigation]);
 
+  const onAssetPress = useCallback(
+    (asset: Asset) => openFromAsset({ currency: asset.currency, source: "account_detail" }),
+    [openFromAsset],
+  );
+
   return {
     assets,
     precomputed: usePrecomputedAssetListData(assets),
     onAddAsset: addAssetAction ? onAddAsset : undefined,
+    onAssetPress,
   };
 }

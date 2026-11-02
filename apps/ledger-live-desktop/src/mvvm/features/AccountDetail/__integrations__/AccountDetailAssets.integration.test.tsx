@@ -41,6 +41,7 @@ function renderAccount(account: Account) {
     <>
       <Routes>
         <Route path="/account/:id/*" element={<AccountDetailRoute />} />
+        <Route path="/asset/*" element={null} />
       </Routes>
       <CurrentPath />
     </>,
@@ -67,14 +68,23 @@ describe("AccountDetail assets section", () => {
     expect(within(section).queryByText("Price")).not.toBeInTheDocument();
   });
 
-  it("does not navigate when a row is clicked", async () => {
+  it("opens the asset detail of the coin when its row is clicked", async () => {
+    const { user } = renderAccount(ethAccountWithToken);
+
+    const section = await screen.findByTestId("account-detail-assets");
+    await user.click(within(section).getByText("Ethereum"));
+
+    expect(screen.getByTestId("current-path")).toHaveTextContent("/asset/ethereum");
+  });
+
+  it("opens the asset detail of the token when its row is clicked", async () => {
     const { user } = renderAccount(ethAccountWithToken);
 
     const section = await screen.findByTestId("account-detail-assets");
     await user.click(within(section).getByText("USD Coin"));
 
     expect(screen.getByTestId("current-path")).toHaveTextContent(
-      getAccountUrl(ethAccountWithToken.id),
+      `/asset/${encodeURIComponent(usdcToken.id)}`,
     );
   });
 
