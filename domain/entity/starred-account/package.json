@@ -13,6 +13,7 @@
     "./src/slice.ts"
   ],
   "scripts": {
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

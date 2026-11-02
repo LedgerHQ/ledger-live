@@ -98,6 +98,7 @@ export function stopDummyServer(): Promise<void> {
   dummyAppServer.close();
   return new Promise(resolve => {
     dummyAppServer.on("close", () => {
+      // oxlint-disable-next-line no-console -- e2e harness log; console.warn would move it to stderr
       console.info(`========> Live app stopped <=========`);
       resolve();
     });
