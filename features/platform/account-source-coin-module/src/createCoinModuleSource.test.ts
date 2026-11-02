@@ -1,4 +1,5 @@
 import { createAccountDataRouter, type AccountDataSource } from "@domain/api-account-data";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
@@ -438,6 +439,106 @@ describe("createCoinModuleSource", () => {
 
       expect(listOperations).toHaveBeenCalledTimes(MAX_PAGES_PER_READ);
       expect(data).toEqual({ operations: [], nextCursor: "+".repeat(MAX_PAGES_PER_READ) });
+    });
+
+    describe("filterAsset", () => {
+      const usdtOperation = (hash: string, date: string): CoinModuleOperation => ({
+        ...nativeOperation(hash, date),
+        id: `${hash}-usdt-IN`,
+        asset: USDT_ASSET,
+      });
+      const tokenHostOf = (tokenPages: Record<string, CoinModuleOperationsPage>) => {
+        const { host, listOperations } = operationsHostOf(tokenPages);
+        host.getOperationsApi = async () => ({
+          listOperations,
+          getTokenId: async asset =>
+            "assetReference" in asset && asset.assetReference
+              ? tokenIds[asset.assetReference]
+              : undefined,
+        });
+        return { host, listOperations };
+      };
+      const filterUsdt = { query: { limit: 2, filterAsset: BalanceAssetIdSchema.parse(USDT) } };
+
+      it("keeps the token's rows, pointing at their transaction's native operation", async () => {
+        const { host } = tokenHostOf({
+          "": {
+            items: [
+              nativeOperation("0x1", "2026-02-01T00:00:00.000Z"),
+              usdtOperation("0x1", "2026-02-01T00:00:00.000Z"),
+              nativeOperation("0x2", "2026-01-01T00:00:00.000Z"),
+              usdtOperation("0x3", "2025-12-01T00:00:00.000Z"),
+            ],
+          },
+        });
+        const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+        const { data } = await router.read("operations", ethereum, filterUsdt);
+
+        expect(data.operations).toEqual([
+          expect.objectContaining({ id: `${USDT}-0x1-usdt-IN`, parentId: "ethereum-0x1-IN" }),
+          expect.objectContaining({ id: `${USDT}-0x3-usdt-IN`, assetId: USDT }),
+        ]);
+        expect(data.nextCursor).toBeUndefined();
+      });
+
+      it("reads the next coin module pages until the token's rows fill the limit", async () => {
+        const { host, listOperations } = tokenHostOf({
+          "": {
+            items: [
+              nativeOperation("0x1", "2026-03-01T00:00:00.000Z"),
+              usdtOperation("0x2", "2026-02-01T00:00:00.000Z"),
+            ],
+            next: "page-2",
+          },
+          "page-2": { items: [nativeOperation("0x3", "2026-01-15T00:00:00.000Z")], next: "page-3" },
+          "page-3": { items: [usdtOperation("0x4", "2026-01-01T00:00:00.000Z")], next: "page-4" },
+        });
+        const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+        const { data } = await router.read("operations", ethereum, filterUsdt);
+
+        expect(listOperations).toHaveBeenCalledTimes(3);
+        expect(idsOf(data)).toEqual([`${USDT}-0x2-usdt-IN`, `${USDT}-0x4-usdt-IN`]);
+        expect(data.nextCursor).toBe("page-4");
+      });
+
+      it("keeps the native coin's rows when filtered on it", async () => {
+        const { host } = tokenHostOf({
+          "": {
+            items: [
+              nativeOperation("0x1", "2026-02-01T00:00:00.000Z"),
+              usdtOperation("0x1", "2026-02-01T00:00:00.000Z"),
+            ],
+          },
+        });
+        const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+        const { data } = await router.read("operations", ethereum, {
+          query: { filterAsset: BalanceAssetIdSchema.parse("ethereum") },
+        });
+
+        expect(idsOf(data)).toEqual(["ethereum-0x1-IN"]);
+      });
+
+      it("counts the fees row of a token-only transaction towards the native coin's limit", async () => {
+        const tokenOnly = usdtOperation("0x5", "2026-02-01T00:00:00.000Z");
+        const { host, listOperations } = tokenHostOf({
+          "": {
+            items: [{ ...tokenOnly, tx: { ...tokenOnly.tx, fees: 3n, feesPayer: "0xabc" } }],
+            next: "page-2",
+          },
+        });
+        const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+        const { data } = await router.read("operations", ethereum, {
+          query: { limit: 1, filterAsset: BalanceAssetIdSchema.parse("ethereum") },
+        });
+
+        expect(listOperations).toHaveBeenCalledTimes(1);
+        expect(idsOf(data)).toEqual(["ethereum-0x5-FEES"]);
+        expect(data.nextCursor).toBe("page-2");
+      });
     });
 
     it("ends the list on a cursor that does not advance", async () => {
