@@ -64,7 +64,7 @@ export function ContactDetailEditDeleteSheets({
         testID="contacts-delete-contact-sheet"
         enableDynamicSizing
       >
-        <ContactsDeleteContactDialog {...deleteDrawer} bottomInset={bottomInset} />
+        <ContactsDeleteContactDialog {...deleteDrawer} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerMismatchSheet.isOpen}
