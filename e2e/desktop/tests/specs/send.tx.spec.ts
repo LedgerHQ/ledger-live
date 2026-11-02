@@ -1,4 +1,5 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
+import { Fee } from "@ledgerhq/live-e2e-shared/enum/Fee";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
@@ -21,7 +22,13 @@ const legacySendTransactions: Array<{
   xrayTicket: string;
   postSeedHook?: (userdataPath?: string) => Promise<void>;
   sharedAccountAcrossLegs?: boolean;
+  extraTags?: string[];
 }> = [
+  {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.00001", Fee.SLOW),
+    xrayTicket: "B2CQA-3924",
+    extraTags: ["@smoke"],
+  },
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
@@ -84,6 +91,7 @@ for (const entry of legacySendTransactions) {
         tag: buildTags({
           currencyId: tx.accountToDebit.currency.id,
           skipLNS: shouldSkipLNSTag(tx.accountToDebit.currency.id),
+          extraTags: entry.extraTags,
         }),
         annotation: { type: "TMS", description: entry.xrayTicket },
       },
