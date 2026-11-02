@@ -92,7 +92,8 @@ export async function getBalance(
 /** The proxy's documented ceiling; anything larger is silently clamped to it. */
 const PAGE_SIZE = 1000;
 
-const TOKENS_OFF_SYNC_HASH = "tokens=off";
+const HISTORY_SYNC_HASH_VERSION = "history=v2";
+const TOKENS_OFF_SYNC_HASH = `${HISTORY_SYNC_HASH_VERSION}:tokens=off`;
 
 /**
  * Stored by a sync that fetched PLT transfers it could not attribute, so the
@@ -123,7 +124,7 @@ async function computeSyncHash(
   if (!enableTokens) return TOKENS_OFF_SYNC_HASH;
 
   try {
-    return `${await getSyncHash(currencyId, blacklistedTokenIds)}:tokens=on`;
+    return `${HISTORY_SYNC_HASH_VERSION}:${await getSyncHash(currencyId, blacklistedTokenIds)}:tokens=on`;
   } catch (error) {
     log("concordium-sync", "Could not read the CAL sync hash, keeping the stored one", { error });
     return previous ?? TOKENS_OFF_SYNC_HASH;
