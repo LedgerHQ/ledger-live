@@ -1,4 +1,5 @@
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
 import { MockCursorError } from "./errors";
 import { mockDescriptors } from "./generate";
@@ -17,6 +18,15 @@ const readOperations = (descriptor: AccountDescriptor, cursor?: string, limit?: 
   return read(
     { accountUUID: computeAccountUUID(descriptor), descriptor, cursor },
     limit === undefined ? undefined : { limit },
+  );
+};
+
+const readBalanceHistory = (descriptor: AccountDescriptor, range?: BalanceHistoryRange) => {
+  const read = mockSource.read?.balanceHistory;
+  if (!read) throw new Error("no balance history reader");
+  return read(
+    { accountUUID: computeAccountUUID(descriptor), descriptor },
+    range === undefined ? undefined : { range },
   );
 };
 
@@ -207,5 +217,90 @@ describe("mockSource", () => {
     const tokens = operations.filter(op => op.assetId !== "ethereum");
     expect(tokens.length).toBeGreaterThan(0);
     for (const op of tokens) expect(op.fee).toBe("0");
+  });
+});
+
+describe("mockSource balanceHistory", () => {
+  const now = Date.UTC(2026, 9, 20);
+  let nowSpy: jest.SpyInstance<number, []>;
+
+  beforeEach(() => {
+    nowSpy = jest.spyOn(Date, "now").mockReturnValue(now);
+  });
+  afterEach(() => nowSpy.mockRestore());
+
+  it.each([
+    ["day", 24],
+    ["week", 7 * 24],
+    ["month", 30],
+    ["year", 52],
+  ] as const)(
+    "answers %s with %i points per asset of the balance, ending now on it",
+    async (range, count) => {
+      const [account] = mockDescriptors("ethereum", 1, []);
+      const balances = await readBalance(account);
+      const history = await readBalanceHistory(account, range);
+      expect(history.range).toBe(range);
+      expect(history.series.map(({ assetId }) => assetId)).toEqual(
+        balances.map(row => row.assetId),
+      );
+      history.series.forEach(({ points }, index) => {
+        expect(points).toHaveLength(count);
+        expect(points.at(-1)).toEqual({
+          date: new Date(now).toISOString(),
+          balance: balances[index].balance,
+        });
+      });
+    },
+  );
+
+  it("answers the month when the read names no range", async () => {
+    const [account] = mockDescriptors("bitcoin", 1, []);
+    const history = await readBalanceHistory(account);
+    expect(history.range).toBe("month");
+    expect(history.series[0].points).toHaveLength(30);
+  });
+
+  it("answers the same series for the same account", async () => {
+    const [account] = mockDescriptors("ethereum", 1, []);
+    expect(await readBalanceHistory(account, "year")).toEqual(
+      await readBalanceHistory(account, "year"),
+    );
+  });
+
+  it.each(["bitcoin", "ethereum", "solana"])(
+    "replays the %s operations: zero before the oldest on all, each step moved by the operations in it",
+    async network => {
+      for (const account of mockDescriptors(network, 20, [])) {
+        const operations = await allOperationsOf(account);
+        const { series } = await readBalanceHistory(account, "all");
+        for (const { assetId, points } of series) {
+          expect(points[0].balance).toBe("0");
+          for (let index = 1; index < points.length; index++) {
+            const from = Date.parse(points[index - 1].date);
+            const to = Date.parse(points[index].date);
+            const moved = netOf(
+              operations.filter(
+                op =>
+                  op.assetId === assetId && Date.parse(op.date) > from && Date.parse(op.date) <= to,
+              ),
+            ).get(assetId);
+            expect(BigInt(points[index].balance) - BigInt(points[index - 1].balance)).toBe(
+              moved ?? 0n,
+            );
+          }
+        }
+      }
+    },
+  );
+
+  it("moves the balance over the month of some accounts", async () => {
+    const histories = await Promise.all(
+      mockDescriptors("ethereum", 40, []).map(account => readBalanceHistory(account, "month")),
+    );
+    const moving = histories.filter(({ series }) =>
+      series.some(({ points }) => new Set(points.map(point => point.balance)).size > 1),
+    );
+    expect(moving.length).toBeGreaterThan(0);
   });
 });

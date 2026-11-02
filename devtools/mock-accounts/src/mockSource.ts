@@ -29,6 +29,12 @@ function read<K extends AccountDataKind>(
       family,
       random: seededRandom(`${target.accountUUID}:${kind}`),
       balances: () => read("balance", target, undefined),
+      operations: () =>
+        read(
+          "operations",
+          { accountUUID: target.accountUUID, descriptor: target.descriptor },
+          { limit: Number.MAX_SAFE_INTEGER },
+        ).operations,
       operationCount: operationCountOf(target.accountUUID),
     },
     query,
@@ -49,5 +55,6 @@ export const mockSource: AccountDataSource = {
   read: {
     balance: (target, query) => answer("balance", target, query),
     operations: (target, query) => answer("operations", target, query),
+    balanceHistory: (target, query) => answer("balanceHistory", target, query),
   },
 };

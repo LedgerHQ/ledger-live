@@ -16,6 +16,8 @@ export type MockContext = {
   readonly random: Random;
   /** The account's `balance` kind, as the source answers it. */
   readonly balances: () => AccountDataResult<"balance">;
+  /** Every operation of the account, newest first, as the source answers them over all its pages. */
+  readonly operations: () => AccountDataResult<"operations">["operations"];
   /** The operation count asked in the tool for this account, if any. */
   readonly operationCount?: number;
 };

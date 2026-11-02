@@ -19,6 +19,7 @@ import {
   useCloudSyncDevToolProps,
   useAccountBalanceToolProps,
   useAccountOperationToolProps,
+  useAccountBalanceHistoryToolProps,
   useAccountPortfolioToolProps,
   useAccountDescriptorToolProps,
   useAccountDataToolProps,
@@ -97,6 +98,7 @@ export function useDevToolsScreenViewModel() {
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const accountOperationToolProps = useAccountOperationToolProps();
+  const accountBalanceHistoryToolProps = useAccountBalanceHistoryToolProps();
   const accountPortfolioToolProps = useAccountPortfolioToolProps({
     serviceUrl: getPortfolioServiceUrl(),
   });
@@ -118,6 +120,7 @@ export function useDevToolsScreenViewModel() {
       { id: "account-descriptor", config: accountDescriptorToolProps },
       { id: "account-balance", config: accountBalanceToolProps },
       { id: "account-operation", config: accountOperationToolProps },
+      { id: "account-balance-history", config: accountBalanceHistoryToolProps },
       { id: "account-name", config: accountNameToolProps },
       { id: "account-portfolio", config: accountPortfolioToolProps },
       { id: "mock-accounts", config: mockAccountsToolProps },
@@ -133,6 +136,7 @@ export function useDevToolsScreenViewModel() {
       accountDescriptorToolProps,
       accountBalanceToolProps,
       accountOperationToolProps,
+      accountBalanceHistoryToolProps,
       accountPortfolioToolProps,
       accountDataToolProps,
       accountNameToolProps,
