@@ -27,7 +27,7 @@ Prioritize these, but do not exclude others:
 - Sentry
 - Mixpanel
 
-Analytics also leave from the monorepo layers (`shared/`, `domain/`, `features/`, `devtools/`), not only the apps:
+Analytics also leave from the [monorepo layers](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) and `devtools/`, not only the apps:
 
 - `@shared/analytics` owns `track()` and `trackPage()`; `@shared/analytics-react` wraps them in `<Track>` and `<TrackScreen>` (universal, web and native). The apps plug their vendor (`setAnalytics`) and filters into this pipeline, so a layer call reaches the same vendor as an app call.
 - Feature packages send events either through those functions (`@features/flow-fear-and-greed`, and `@features/platform-pay-analytics`, which builds `createPayAnalyticsHelper` on `@shared/analytics`'s `track`) or through an adapter the app injects (`createContactsAnalyticsHelper` in `@features/flow-contacts`). For an injected adapter, read the app side that builds it: that is where the payload reaches the vendor.
@@ -46,7 +46,7 @@ Treat any of these as high-risk when found in added lines:
 2. In added lines, identify:
    - Assignments of high-risk variables (see above)
    - New calls to third-party sinks or wrappers: `track()`, `trackPage()`, `<Track>`, `<TrackScreen>`, analytics adapter methods (`adapter.track()`, `analytics.trackPage()`, `track*()` helpers), `logger.*()`, `captureException()`
-   - Added lines under `shared/`, `domain/`, `features/` and `devtools/` count as much as added lines under `apps/`
+   - Added lines in the layers and `devtools/` count as much as added lines under `apps/`
 
 3. In removed lines, identify:
    - Removed guards: `confidentialityFilter`, scrubbing calls, PII-stripping wrappers — flag each removal as a potential leak enabler.
@@ -66,7 +66,7 @@ Treat any of these as high-risk when found in added lines:
 
 # Grep helpers (investigation only)
 
-`SRC` covers the apps and the layers that ship runtime code; `support/` holds development-only presets and never sends data.
+`SRC` is the one list of folders this skill searches: the apps, every layer that ships runtime code and `devtools/`. It leaves out `support/`, which holds development-only presets and never sends data.
 
 ```bash
 SRC=(apps shared domain features devtools)

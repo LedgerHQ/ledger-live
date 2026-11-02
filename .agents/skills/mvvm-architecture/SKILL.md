@@ -24,7 +24,7 @@ The contacts journey itself lives in the flow package.
 
 The [ViewModel pattern](#viewmodel-pattern) is not apps-only: it is also mandatory in every
 `features/flow` package. The folder structure below is apps-only; the anatomy of a flow package
-belongs to the flow-package skill.
+belongs to the [`flow-package`](../flow-package/SKILL.md) skill.
 
 ## Folder Structure
 
@@ -73,15 +73,19 @@ One `use<Screen>ViewModel.ts` per screen produces data and handlers; `<Screen>Vi
 `<Screen>View.native.tsx` render its props only, with no store, navigation or query hooks. The
 container passes one to the other.
 
-Example: `@features/flow-portfolio-services-entry-points`, in
-`src/components/ServicesEntryPoints/`:
+Example: `@features/flow-portfolio-services-entry-points`, every file of
+[`src/components/ServicesEntryPoints/`](../../../features/flow/portfolio-services-entry-points/src/components/ServicesEntryPoints/):
 
 ```
+index.ts                              ← export * only
 ServicesEntryPoints.tsx               ← <ServicesEntryPointsView {...useServicesEntryPointsViewModel(props)} />
+ServicesEntryPoints.types.ts          ← the container's props
 useServicesEntryPointsViewModel.ts    ← feature flag, analytics, handlers
 ServicesEntryPointsView.types.ts      ← the props contract both views share
 ServicesEntryPointsView.web.tsx       ← props only
 ServicesEntryPointsView.native.tsx    ← props only
+ServicesEntryPoints.web.test.tsx
+ServicesEntryPoints.native.test.tsx
 ```
 
 ### Violation checklist: flag any View (`index.tsx` under `screens/` or `components/` in `src/mvvm/`, or `*View.web.tsx` / `*View.native.tsx` in `features/flow/`) that

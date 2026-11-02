@@ -1,7 +1,8 @@
 # Flow package examples
 
-Source trees of the packages [the skill](../SKILL.md) cites, tests and assets left out. Read the
-package itself before copying: these trees show the layout, not every file's role.
+Partial source trees of the packages [the skill](../SKILL.md) cites: tests and assets are left
+out, and some files and folder contents are too. Read the package itself before copying: these
+trees show the layout, not every file.
 
 ## One screen, flat: `@features/flow-pay-card`
 
@@ -16,6 +17,8 @@ features/flow/pay-card/src/
 ├── useCardStatusRefresh.native.ts
 ├── useCardLifecycleTracking.ts
 ├── derivePayCardAnalyticsMilestones.ts
+├── planPayCardMilestoneReports.ts
+├── isPayCardAccountRead.ts
 ├── index.ts
 └── index.native.ts
 ```

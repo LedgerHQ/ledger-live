@@ -21,7 +21,7 @@ Builds are slow and expensive (especially desktop = macOS + Linux + Windows). St
 |---|---|
 | `apps/ledger-live-desktop/**` | Desktop |
 | `apps/ledger-live-mobile/**` | Android + iOS |
-| a package under `shared/`, `domain/`, `features/`, `devtools/` | the app(s) that depend on it, see below |
+| a package of the [layers](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) or `devtools/`, `support/` aside | the app(s) that depend on it, see below |
 | `support/**` only (development-only presets) | nothing |
 | shared libs (`libs/**`, e.g. `ledger-live-common`, `coin-modules`) impacting both apps | Desktop + Android + iOS |
 
