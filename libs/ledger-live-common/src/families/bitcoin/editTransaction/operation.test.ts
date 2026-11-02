@@ -73,6 +73,12 @@ describe("isEditableOperation", () => {
       false,
     );
   });
+
+  it("returns false for an operation broadcast by a sell flow", () => {
+    const sellAccount = makeAccount({ sellOperationIds: ["op-1"] });
+    expect(isEditableOperation(sellAccount, makeOperation({ id: "op-1" }))).toBe(false);
+    expect(isEditableOperation(sellAccount, makeOperation({ id: "op-2" }))).toBe(true);
+  });
 });
 
 describe("isStuckOperation", () => {

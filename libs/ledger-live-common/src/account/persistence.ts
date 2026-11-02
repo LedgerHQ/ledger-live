@@ -26,6 +26,7 @@ export function accountPersistedStateChanged(prev: Account, next: Account): bool
 
   // swap history
   if ((prev.swapHistory?.length ?? 0) !== (next.swapHistory?.length ?? 0)) return true;
+  if ((prev.sellOperationIds?.length ?? 0) !== (next.sellOperationIds?.length ?? 0)) return true;
 
   // zcash private info (or any account with privateInfo)
   const prevPrivateInfo =

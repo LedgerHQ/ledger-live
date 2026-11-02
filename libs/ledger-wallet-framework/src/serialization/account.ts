@@ -81,6 +81,7 @@ export async function fromAccountRaw(
     spendableBalance,
     subAccounts: subAccountsRaw,
     swapHistory,
+    sellOperationIds,
     syncHash,
     nfts,
     readiness,
@@ -173,6 +174,10 @@ export async function fromAccountRaw(
     res.swapHistory = swapHistory.map(fromSwapOperationRaw);
   }
 
+  if (sellOperationIds) {
+    res.sellOperationIds = sellOperationIds;
+  }
+
   if (nfts) {
     res.nfts = nfts.map(n => fromNFTRaw(n));
   }
@@ -222,6 +227,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     spendableBalance,
     subAccounts,
     swapHistory,
+    sellOperationIds,
     syncHash,
     nfts,
     readiness,
@@ -282,6 +288,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (swapHistory) {
     res.swapHistory = swapHistory.map(toSwapOperationRaw);
+  }
+
+  if (sellOperationIds) {
+    res.sellOperationIds = sellOperationIds;
   }
 
   if (nfts) {

@@ -71,6 +71,12 @@ describe("account persistence predicates", () => {
       expect(accountPersistedStateChanged(account, withDifferentBlockHeight)).toBe(false);
     });
 
+    it("returns true when a sell operation was recorded", () => {
+      const account = genAccount("seed", { currency: Ethereum });
+      const withSellOperation = { ...account, sellOperationIds: ["op-1"] };
+      expect(accountPersistedStateChanged(account, withSellOperation)).toBe(true);
+    });
+
     it("returns true when subAccounts length changed", () => {
       const account = genAccount("seed", { currency: Ethereum, subAccountsCount: 0 });
       const withOneSub = { ...account, subAccounts: account.subAccounts ?? [] };

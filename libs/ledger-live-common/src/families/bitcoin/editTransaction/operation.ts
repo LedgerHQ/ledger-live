@@ -2,12 +2,17 @@ import { decodeAccountId, getMainAccount } from "@ledgerhq/ledger-wallet-framewo
 import { DEFAULT_STUCK_TRANSACTION_TIMEOUT_MS } from "@ledgerhq/coin-bitcoin/constants";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { isSellOperation } from "../../../exchange/sell/sellOperations";
 import { getBitcoinCoinConfig } from "../coinConfig";
 
 /**
  * Return whether an operation is editable or not for Bitcoin.
  */
-export const isEditableOperation = (_account: Account, operation: Operation): boolean => {
+export const isEditableOperation = (account: Account, operation: Operation): boolean => {
+  if (isSellOperation(account, operation)) {
+    return false;
+  }
+
   // Must be unconfirmed (no blockHeight)
   if (operation.blockHeight !== null && operation.blockHeight !== undefined) {
     return false;
