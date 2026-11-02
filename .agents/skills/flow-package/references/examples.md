@@ -37,17 +37,18 @@ features/flow/flow-contacts-add-address/src/
 │   │   ├── ContactsAddAddressReviewView.web.tsx
 │   │   ├── ContactsAddAddressReview.native.tsx    # deviation: one file, no ViewModel or View
 │   │   └── types.ts
-│   └── Flow/                        # ContactsAddAddressFlowContent.{web,native}.tsx: switch on the step
+│   └── Flow/
+│       ├── ContactsAddAddressFlowContent.types.ts   # the universal contract, driven by the flow state
+│       ├── ContactsAddAddressFlowContent.web.tsx    # switch on the state status
+│       ├── ContactsAddAddressFlowContent.native.tsx
+│       └── addAddressWebFlowStep.ts                 # step helpers the desktop dialog uses
 ├── state/
 │   ├── addAddressFlowReducer.ts     # current step and form state, used by React
 │   ├── useAddAddressFlowViewModel.ts
 │   ├── ports.ts
 │   └── types.ts
 ├── urls.ts
-├── exports.ts
-├── web.ts                           # default entry in package.json
-├── index.ts                         # export * from "./web"
-└── index.native.ts
+└── index.ts                         # the one entry, for both platforms
 ```
 
 ## Lifecycle model: `@features/flow-contacts-delete-address`

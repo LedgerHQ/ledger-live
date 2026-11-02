@@ -17,9 +17,12 @@ Shared Add address flow for Desktop and Mobile.
 
 ## Structure
 
-- `screens/` owns the Address Entry, Address Name, Review, and Flow UI. Each screen provides
-  explicit `index.ts` and, where required, `index.native.ts` entry points. Address Entry and
-  Address Name group their UI components separately from their view models.
+- `screens/` owns the Address Entry, Address Name, Review, and Flow UI. Only
+  `ContactsAddAddressFlowContent` is public: its contract in `ContactsAddAddressFlowContent.types.ts`
+  takes the flow state, and each platform picks the step to render from it. The other screens are
+  internal. Address Entry and Address Name group their UI components separately from their view
+  models.
+- `src/index.ts` is the one entry, for Desktop and Mobile.
 - `components/` owns UI shared by more than one Add address screen.
 - `state/` owns the Add address session, label validation, and currency-selection orchestration.
   Shared Contacts address-entry validation state and input behavior are consumed from
