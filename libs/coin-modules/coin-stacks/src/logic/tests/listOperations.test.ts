@@ -401,10 +401,44 @@ describe("listOperations", () => {
     expect(items.map(op => op.tx.hash)).toEqual(["0xtx-earlier", "0xtx-later"]);
   });
 
-  it("ignores transaction kinds it doesn't recognize (e.g. a contract deploy)", async () => {
+  it("maps a smart contract deploy to a FEES operation for its sender", async () => {
     (fetchAllTransactions as jest.Mock).mockResolvedValue([
-      // "smart_contract" is a real Stacks tx_type not modeled by TransactionResponse's narrower union.
-      baseTx({ tx_type: "smart_contract" as TransactionResponse["tx"]["tx_type"] }),
+      baseTx({
+        tx_type: "smart_contract",
+        fee_rate: "180",
+        smart_contract: {
+          clarity_version: 2,
+          contract_id: `${SENDER}.contract-name`,
+          source_code: "(define-public (foo) (ok true))",
+        },
+      }),
+    ]);
+
+    const { items } = await listOperations(SENDER, { minHeight: 0 });
+
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      id: "0xtx1-FEES",
+      type: "FEES",
+      senders: [SENDER],
+      recipients: [],
+      value: 0n,
+      asset: { type: "native" },
+    });
+    expect(items[0].tx.fees).toBe(180n);
+  });
+
+  it("does not map a smart contract deploy for another account", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([baseTx({ tx_type: "smart_contract" })]);
+
+    const { items } = await listOperations(RECIPIENT, { minHeight: 0 });
+
+    expect(items).toHaveLength(0);
+  });
+
+  it("ignores transaction kinds it doesn't recognize", async () => {
+    (fetchAllTransactions as jest.Mock).mockResolvedValue([
+      baseTx({ tx_type: "unknown" as TransactionResponse["tx"]["tx_type"] }),
     ]);
 
     const { items } = await listOperations(SENDER, { minHeight: 0 });
