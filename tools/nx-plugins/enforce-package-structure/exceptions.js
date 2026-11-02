@@ -73,11 +73,6 @@ function entryWaiver() {
 
 /** @type {Record<string, Record<string, { rules: string[], reason: string }>>} */
 const COMPONENT_EXCEPTIONS = {
-  "features/flow/account-detail-settings": {
-    AccountSettings: componentWaiver("R1"),
-    AccountSettingsDialog: componentWaiver("R1"),
-    AccountSettingsSheet: componentWaiver("R1"),
-  },
   "features/flow/contacts": {
     ContactsButton: componentWaiver("R2", "R4"),
     ContactsView: componentWaiver("R2", "R3"),
