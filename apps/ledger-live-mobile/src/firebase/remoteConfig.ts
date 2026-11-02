@@ -31,7 +31,7 @@ let configured = false;
 let lastFetchedAt: number | null = null;
 const subscribers = new Set<Subscriber>();
 
-// RNFB queues these setters natively; `activate` and `fetchAndActivate` both wait for that queue.
+// RNFB chains these setters in a JS queue; `activate` and `fetchAndActivate` both wait for it.
 // RNFB drops their promises, so a native setter failure is an unhandled rejection, not retried.
 function configure(): void {
   if (configured) return;
