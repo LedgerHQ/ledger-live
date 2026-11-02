@@ -4,8 +4,7 @@ import { byId } from "@e2e/helpers/elements/native";
 
 export default class ManagerPage {
   private readonly baseLink = "myledger";
-  // TODO - remove `or` statement when wallet40 is fully activated
-  private readonly managerTitle = byId(/manager-title|header-title/);
+  private readonly managerTitle = byId("header-title");
 
   @Step("Open manager via deeplink")
   async openViaDeeplink() {

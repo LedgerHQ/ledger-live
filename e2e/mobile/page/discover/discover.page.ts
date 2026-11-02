@@ -19,7 +19,6 @@ export type DiscoverAppName = (typeof discoverApps)[number]["name"];
 const randomPoolExcludedApps = new Set<DiscoverAppName>(["1inch", "Kiln-Widget"]);
 
 export default class DiscoverPage {
-  private readonly discoverApps = discoverApps;
   private readonly baseLink = "discover/";
   private readonly discoverPageHeader = byId("discover-banner");
   private readonly liveAppTitle = byId("live-app-title");
@@ -30,7 +29,7 @@ export default class DiscoverPage {
 
   @Step("Get live App")
   getRandomLiveApp(): DiscoverAppName {
-    const pool = this.discoverApps.filter(a => !randomPoolExcludedApps.has(a.name));
+    const pool = discoverApps.filter(a => !randomPoolExcludedApps.has(a.name));
     const app = pool[randomInt(0, pool.length)].name;
     log.info(`Selected Live app: ${app}`);
     return app;
@@ -42,7 +41,7 @@ export default class DiscoverPage {
   }
 
   private getAppUrl(name: DiscoverAppName) {
-    const app = this.discoverApps.find(app => app.name === name)!;
+    const app = discoverApps.find(a => a.name === name)!;
     return app.url;
   }
 
