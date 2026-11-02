@@ -5,8 +5,8 @@
  * Render the collapsed "Shard diagnostics" section of a desktop E2E device report.
  *
  * Reads one directory per downloaded artifact of the device's test legs, under <root>/allure,
- * <root>/playwright-log and <root>/proxy. Artifacts of a leg share a suffix: "-shard-2",
- * "-stax-shard-2" or "-macos" (an unsharded leg).
+ * <root>/logs and <root>/proxy. Artifacts of a leg share a suffix: "-shard-2", "-stax-shard-2"
+ * or "-macos" (an unsharded leg).
  *
  * Run locally: node shard-diagnostics.js <root>   (prints the Markdown)
  * From actions/github-script: require this file and append renderShardDiagnostics(root).
@@ -62,6 +62,15 @@ function lockDeferrals(file) {
   return [...passes].reduce((sum, match) => sum + Number(match[1]), 0);
 }
 
+// Nx's run report lists "- **Run duration:** 4m 12s" and "- **Cache:** 31/40 hit (78%)".
+function nxBuild(file) {
+  if (!fs.existsSync(file)) return "—";
+  const report = fs.readFileSync(file, "utf8");
+  const duration = /\*\*Run duration:\*\* (.+)/.exec(report)?.[1] ?? "?";
+  const cacheHits = /\*\*Cache:\*\* (\d+\/\d+) hit/.exec(report)?.[1];
+  return cacheHits ? `${duration}, ${cacheHits} cached` : duration;
+}
+
 function remoteConfigFetches(file) {
   if (!fs.existsSync(file)) return "off";
   const stats = Object.values(readJson(file));
@@ -80,8 +89,9 @@ function renderShardDiagnostics(root) {
     .map(suffix => ({
       shard: shardOf(suffix),
       ...allureStats(path.join(root, "allure", `allure-results${suffix}`)),
+      nxBuild: nxBuild(path.join(root, "logs", `e2e-logs${suffix}`, "nx-run-report.md")),
       lockDeferrals: lockDeferrals(
-        path.join(root, "playwright-log", `playwright-log${suffix}`, "playwright-output.log"),
+        path.join(root, "logs", `e2e-logs${suffix}`, "playwright-output.log"),
       ),
       remoteConfig: remoteConfigFetches(
         path.join(root, "proxy", `firebase-capture-logs${suffix}`, "firebase-capture-summary.json"),
@@ -110,6 +120,7 @@ function renderShardDiagnostics(root) {
       leg.failed,
       leg.flaky,
       leg.skipped,
+      leg.nxBuild,
       formatDuration(leg.testTimeMs),
       leg.notReadyApps.length,
       leg.lockDeferrals ?? "—",
@@ -123,8 +134,8 @@ function renderShardDiagnostics(root) {
   return [
     `<details><summary>Shard diagnostics: ${headline}</summary>`,
     "",
-    "| Shard | Tests | Passed | Failed | Flaky | Skipped | Test time | Speculinho not ready | Lock deferrals | Remote Config upstream / replayed |",
-    "| --: | --: | --: | --: | --: | --: | --: | --: | --: | --- |",
+    "| Shard | Tests | Passed | Failed | Flaky | Skipped | Nx build | Test time | Speculinho not ready | Lock deferrals | Remote Config upstream / replayed |",
+    "| --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --- |",
     ...rows.map(row => `| ${row} |`),
     ...(notReadyByApp.length
       ? [

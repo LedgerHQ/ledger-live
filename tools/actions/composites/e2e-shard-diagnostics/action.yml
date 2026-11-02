@@ -1,7 +1,7 @@
 name: "E2E Shard Diagnostics"
 description: >-
-  Append a collapsed per-shard debug section (outcomes, test time, Speculinho not ready, lock
-  deferrals, Remote Config proxy) of one desktop E2E device to the job summary.
+  Append a collapsed per-shard debug section (outcomes, Nx build, test time, Speculinho not
+  ready, lock deferrals, Remote Config proxy) of one desktop E2E device to the job summary.
 inputs:
   legs:
     description: "Artifact suffix glob of the device's test legs: '-shard-*', '-stax-shard-*' or '-macos'"
@@ -16,12 +16,12 @@ runs:
         pattern: allure-results${{ inputs.legs }}
         path: ${{ runner.temp }}/shard-diagnostics/allure
 
-    - name: Download Playwright logs per shard
+    - name: Download Playwright and Nx logs per shard
       continue-on-error: true
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
-        pattern: playwright-log${{ inputs.legs }}
-        path: ${{ runner.temp }}/shard-diagnostics/playwright-log
+        pattern: e2e-logs${{ inputs.legs }}
+        path: ${{ runner.temp }}/shard-diagnostics/logs
 
     - name: Download Remote Config capture proxy logs per shard
       continue-on-error: true
