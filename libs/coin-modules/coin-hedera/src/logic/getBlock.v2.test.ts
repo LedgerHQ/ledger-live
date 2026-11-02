@@ -261,7 +261,6 @@ describe("getBlockV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
 
@@ -356,7 +355,6 @@ describe("getBlockV2", () => {
       receiver_account_id: 67890,
       sender_evm_address: mockMirrorAccount.evm_address,
       receiver_evm_address: "0xrecipient",
-      payer_account_id: 12345,
       amount: 5000000,
     });
 
@@ -405,7 +403,6 @@ describe("getBlockV2", () => {
       receiver_account_id: null,
       sender_evm_address: "0x0000000000000000000000000000000000000999",
       receiver_evm_address: "0x0000000000000000000000000000000000001001",
-      payer_account_id: 12345,
       amount: 5000000,
     });
 

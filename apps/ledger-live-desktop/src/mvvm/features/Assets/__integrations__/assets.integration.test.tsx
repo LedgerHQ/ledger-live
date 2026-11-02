@@ -4,17 +4,7 @@ import { useNavigate } from "react-router";
 import { server } from "tests/server";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import Assets from "../index";
-import { MAX_ITEM_DISPLAYED } from "../constants";
-import {
-  BTC_ACCOUNT,
-  ETH_ACCOUNT,
-  SOL_ACCOUNT,
-  ARB_ACCOUNT,
-  BASE_ACCOUNT,
-  SCROLL_ACCOUNT,
-  HEDERA_ACCOUNT,
-  ETH_ACCOUNT_WITH_USDC,
-} from "LLD/features/__mocks__/accounts.mock";
+import { BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC } from "LLD/features/__mocks__/accounts.mock";
 
 const mockNavigate = jest.fn();
 
@@ -38,16 +28,6 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => {
 });
 
 const mockedUseNavigate = jest.mocked(useNavigate);
-
-const MANY_CRYPTO_ACCOUNTS = [
-  BTC_ACCOUNT,
-  ETH_ACCOUNT,
-  ARB_ACCOUNT,
-  BASE_ACCOUNT,
-  SCROLL_ACCOUNT,
-  HEDERA_ACCOUNT,
-  SOL_ACCOUNT,
-];
 
 const initialState = {
   settings: { counterValue: "USD" },
@@ -110,19 +90,6 @@ describe("Assets", () => {
     expect(mockNavigate).not.toHaveBeenCalledWith("/assets?category=cryptos");
   });
 
-  it(`should navigate to /assets with cryptos category when cryptos section has more than ${MAX_ITEM_DISPLAYED} items`, async () => {
-    const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
-      initialState: { ...onboardedState, accounts: MANY_CRYPTO_ACCOUNTS },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText("Bitcoin")).toBeVisible();
-    });
-
-    await user.click(screen.getByTestId("cryptos-section-header-button"));
-    expect(mockNavigate).toHaveBeenCalledWith("/assets?category=cryptos");
-  });
-
   it("should not navigate stablecoins section header when section has at most MAX_ITEM_DISPLAYED items", async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: { ...onboardedState, accounts: [BTC_ACCOUNT, ETH_ACCOUNT_WITH_USDC] },
@@ -149,7 +116,7 @@ describe("Assets", () => {
     expect(screen.getByText("Bitcoin")).toBeVisible();
   });
 
-  it("should navigate to /market when clicking a placeholder asset row", async () => {
+  it("should navigate to /asset when clicking a placeholder asset row", async () => {
     const { user } = renderWithMockedCounterValuesProvider(<Assets />, {
       initialState: initialState,
     });
@@ -159,6 +126,6 @@ describe("Assets", () => {
     });
 
     await user.click(screen.getByText("Bitcoin"));
-    expect(mockNavigate).toHaveBeenCalledWith("/market/bitcoin");
+    expect(mockNavigate).toHaveBeenCalledWith("/asset/bitcoin");
   });
 });

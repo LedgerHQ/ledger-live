@@ -86,6 +86,7 @@ describe("useAddressValidation", () => {
     });
     mockedUseMaybeAccountName.mockReturnValue("My Account");
     mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("impossible");
+    mockedSendFeatures.getBalanceTypeConfig.mockReturnValue(null);
     mockedFindMatchedContact.mockReturnValue(undefined);
   });
 
@@ -407,6 +408,44 @@ describe("useAddressValidation", () => {
 
     const matchedIds = result.current.result.matchedAccounts?.map(m => m.account.id) || [];
     expect(matchedIds).not.toContain(mockAccount.id);
+  });
+
+  it.each([
+    [mockAccount.freshAddress, "convert_public_to_private"],
+    ["other_address", "transfer_public"],
+  ])("validates %s with the %s transaction mode", (searchValue, expectedMode) => {
+    mockedSendFeatures.getSelfTransferPolicy.mockReturnValue("free");
+    mockedSendFeatures.getBalanceTypeConfig.mockReturnValue({
+      getSelfTransferTarget: () => {
+        return {
+          address: mockAccount.freshAddress,
+          translationKey: "recipient.selfTransfer.toPrivate",
+          isDestinationPublic: false,
+        };
+      },
+      buildSelfTransferPatch: ({ isSelfTransfer }: { isSelfTransfer: boolean }) => {
+        return { mode: isSelfTransfer ? "convert_public_to_private" : "transfer_public" };
+      },
+    } as never);
+
+    const transaction = { family: "aleo", mode: "transfer_public" } as unknown as Transaction;
+
+    renderHook(() =>
+      useAddressValidation({
+        searchValue,
+        transaction,
+        currency: mockAccount.currency,
+        account: mockAccount,
+        currentAccountId: mockAccount.id,
+      }),
+    );
+
+    expect(mockedUseBridgeRecipientValidation).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        recipient: searchValue,
+        transaction: { family: "aleo", mode: expectedMode },
+      }),
+    );
   });
 
   it("includes current account match when self-transfer is allowed", () => {

@@ -1,11 +1,12 @@
 {
   "name": "@ledgerhq/generators",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "main": "./generators.json",
   "generators": "./generators.json",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "oxlint ./"
   },
   "devDependencies": {
     "@types/node": "catalog:",

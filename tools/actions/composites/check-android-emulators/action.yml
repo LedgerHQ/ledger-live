@@ -1,0 +1,21 @@
+name: "Check Android emulators"
+description: "Check the E2E emulators are booted and their clocks are within 60 s of the runner's UTC time, correcting any that is off"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check Android emulators
+      shell: bash
+      run: |
+        for serial in emulator-5554 emulator-5556 emulator-5558; do
+          timeout 60 adb -s "$serial" wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != 1 ]; do sleep 1; done' \
+            || { echo "::error::${serial} did not boot within 60 s"; exit 1; }
+          guest=$(adb -s "$serial" shell date -u +%s)
+          offset=$((guest - $(date -u +%s)))
+          if ((${offset#-} > 60)); then
+            adb -s "$serial" shell su 0 date -u "$(date -u +%m%d%H%M%Y.%S)" > /dev/null || true
+            drift=$(($(adb -s "$serial" shell date -u +%s) - $(date -u +%s)))
+            ((${drift#-} <= 60)) || { echo "::error::Could not set the clock of ${serial}, still ${drift} s off"; exit 1; }
+            echo "::warning title=Emulator clock corrected::${serial} clock was $(date -u -d "@${guest}" +%FT%TZ) (${offset} s off), set to the runner's time"
+          fi
+        done

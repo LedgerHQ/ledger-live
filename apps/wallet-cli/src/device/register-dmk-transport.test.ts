@@ -12,33 +12,24 @@ import {
 import type { SpeculosTarget } from "@ledgerhq/live-dmk-shared/transport/speculosTarget";
 import { DeviceModelId as LedgerDeviceModelId } from "@ledgerhq/types-devices";
 import { of } from "rxjs";
-import { getActiveSpeculosTarget } from "./speculos-target";
-
-let createDeviceManagementKitImpl: (speculos: SpeculosTarget | null) => Promise<{
-  dmk: DeviceManagementKit;
-  destroyTransport: () => Promise<void>;
-}>;
-
-type Deferred<T = void> = {
-  promise: Promise<T>;
-  resolve: (value: T | PromiseLike<T>) => void;
-  reject: (reason?: unknown) => void;
-};
-
-mock.module("./dmk", () => ({
-  createDeviceManagementKit: (...args: Parameters<typeof createDeviceManagementKitImpl>) =>
-    createDeviceManagementKitImpl(...args),
-}));
-
-const {
+import {
   WALLET_CLI_DMK_DEVICE_ID,
+  _setTestDmk,
   _setTestDmkTransport,
   disposeWalletCliDmkTransportFully,
   ensureWalletCliDmkTransport,
   getWalletCliDeviceModelId,
   registerWalletCliDmkTransport,
   resetWalletCliDmkSession,
-} = await import("./register-dmk-transport");
+} from "./register-dmk-transport";
+import { getActiveSpeculosTarget } from "./speculos-target";
+import { resetTestSeams } from "../shared/test-seam";
+
+type Deferred<T = void> = {
+  promise: Promise<T>;
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason?: unknown) => void;
+};
 
 function deferred<T = void>(): Deferred<T> {
   let resolve!: Deferred<T>["resolve"];
@@ -119,17 +110,30 @@ function makeTestTransport(sessionState?: unknown) {
 beforeEach(async () => {
   _setTestDmkTransport(null);
   await disposeWalletCliDmkTransportFully();
+  // A test that installs no fake must fail here rather than load node-usb through `./dmk`.
+  _setTestDmk(async () => {
+    throw new Error("no fake DMK kit for this test");
+  });
 });
 
 afterEach(async () => {
   await disposeWalletCliDmkTransportFully();
-  _setTestDmkTransport(null);
+  resetTestSeams();
 });
 
 describe("ensureWalletCliDmkTransport", () => {
+  it("refuses a new kit factory while a kit is cached, so the cached one is never left open", async () => {
+    _setTestDmk(async () => makeDmk().kit);
+    await ensureWalletCliDmkTransport();
+
+    expect(() => _setTestDmk(null)).toThrow("Dispose the cached DMK kit");
+    await disposeWalletCliDmkTransportFully();
+    expect(() => _setTestDmk(null)).not.toThrow();
+  });
+
   it("reuses the same transport until the caller resets the session", async () => {
     const fake = makeDmk();
-    createDeviceManagementKitImpl = async () => fake.kit;
+    _setTestDmk(async () => fake.kit);
 
     const first = await ensureWalletCliDmkTransport();
     const second = await ensureWalletCliDmkTransport();
@@ -157,7 +161,7 @@ describe("ensureWalletCliDmkTransport", () => {
       }
       return second.kit;
     });
-    createDeviceManagementKitImpl = createDeviceManagementKit;
+    _setTestDmk(createDeviceManagementKit);
 
     await expect(ensureWalletCliDmkTransport()).rejects.toThrow(
       "No Ledger device found. Unlock the device and try again.",
@@ -179,7 +183,7 @@ describe("ensureWalletCliDmkTransport", () => {
       }
       return second.kit;
     });
-    createDeviceManagementKitImpl = createDeviceManagementKit;
+    _setTestDmk(createDeviceManagementKit);
 
     await expect(ensureWalletCliDmkTransport()).rejects.toThrow("failed to create DMK");
     await expect(ensureWalletCliDmkTransport()).resolves.toMatchObject({
@@ -205,7 +209,7 @@ describe("ensureWalletCliDmkTransport", () => {
       }
       return second.kit;
     });
-    createDeviceManagementKitImpl = createDeviceManagementKit;
+    _setTestDmk(createDeviceManagementKit);
 
     await expect(ensureWalletCliDmkTransport()).rejects.toThrow("USB connect failed");
     expect(destroyFirstTransport).toHaveBeenCalledTimes(1);
@@ -236,7 +240,7 @@ describe("ensureWalletCliDmkTransport", () => {
           throw connectError;
         },
       });
-      createDeviceManagementKitImpl = async () => fake.kit;
+      _setTestDmk(async () => fake.kit);
 
       await withSpeculosPort("40000", async () => {
         await expect(ensureWalletCliDmkTransport()).rejects.toMatchObject({
@@ -250,7 +254,7 @@ describe("ensureWalletCliDmkTransport", () => {
 
   it("times out a Speculos connect that never answers", async () => {
     const fake = makeDmk({ connect: () => new Promise<string>(() => {}) });
-    createDeviceManagementKitImpl = async () => fake.kit;
+    _setTestDmk(async () => fake.kit);
 
     // rxjs `timeout()` schedules through setInterval.
     const realSetInterval = globalThis.setInterval;
@@ -272,7 +276,7 @@ describe("ensureWalletCliDmkTransport", () => {
     let sessionState: unknown = { deviceStatus: DeviceStatus.BUSY };
     const disconnect = mock(async () => {});
     const fake = makeDmk({ disconnect, getSessionState: () => sessionState });
-    createDeviceManagementKitImpl = async () => fake.kit;
+    _setTestDmk(async () => fake.kit);
 
     await expect(ensureWalletCliDmkTransport()).rejects.toThrow(
       "The Ledger device did not respond to the initial ping",
@@ -295,7 +299,7 @@ describe("ensureWalletCliDmkTransport", () => {
     });
     const fake = makeDmk({ connect });
     const createDeviceManagementKit = mock(async () => fake.kit);
-    createDeviceManagementKitImpl = createDeviceManagementKit;
+    _setTestDmk(createDeviceManagementKit);
 
     const firstPromise = ensureWalletCliDmkTransport();
     const secondPromise = ensureWalletCliDmkTransport();
@@ -316,7 +320,7 @@ describe("teardown", () => {
       await finishDestroy.promise;
     });
     const fake = makeDmk({ destroyTransport });
-    createDeviceManagementKitImpl = async () => fake.kit;
+    _setTestDmk(async () => fake.kit);
     await ensureWalletCliDmkTransport();
 
     const realSetTimeout = globalThis.setTimeout;
@@ -343,7 +347,7 @@ describe("teardown", () => {
       await new Promise(() => {});
     });
     const fake = makeDmk({ destroyTransport });
-    createDeviceManagementKitImpl = async () => fake.kit;
+    _setTestDmk(async () => fake.kit);
     await ensureWalletCliDmkTransport();
 
     const realSetTimeout = globalThis.setTimeout;
@@ -426,7 +430,7 @@ describe("registerWalletCliDmkTransport", () => {
     const createDeviceManagementKit = mock(async (_speculos: SpeculosTarget | null) => {
       return makeDmk().kit;
     });
-    createDeviceManagementKitImpl = createDeviceManagementKit;
+    _setTestDmk(createDeviceManagementKit);
 
     await withSpeculosPort("40000", async () => {
       try {

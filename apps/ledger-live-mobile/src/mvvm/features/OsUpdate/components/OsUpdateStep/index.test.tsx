@@ -85,7 +85,7 @@ describe("OsUpdateStep", () => {
         />,
       );
 
-      expect(screen.getByText("Restoring your apps and settings")).toBeVisible();
+      expect(screen.getByText("Reinstalling your settings...")).toBeVisible();
     });
   });
 
@@ -102,7 +102,7 @@ describe("OsUpdateStep", () => {
         />,
       );
 
-      expect(screen.getByText("Updating your Ledger Stax")).toBeVisible();
+      expect(screen.getByText(/Your Ledger Stax will restart automatically/)).toBeVisible();
     });
 
     it("asks to unlock the connected device in a sheet", () => {

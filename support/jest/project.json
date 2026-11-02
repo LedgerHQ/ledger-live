@@ -9,12 +9,15 @@
       "cache": true,
       "inputs": [
         "{projectRoot}/core/**/*",
+        "{projectRoot}/devtools/**/*",
         "{projectRoot}/shared/**/*",
-        "{projectRoot}/features-flow/**/*"
+        "{projectRoot}/features-flow/**/*",
+        "{projectRoot}/internals/**/*",
+        "{projectRoot}/libs-coin/**/*"
       ],
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "node --test support/jest/core/index.test.mjs"
+        "command": "node --test support/jest/core/index.test.mjs support/jest/core/preset-overrides.test.mjs support/jest/libs-coin/index.test.mjs"
       }
     }
   }

@@ -1,16 +1,14 @@
 {
   "name": "@features/flow-pay-card-assets",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "description": "Pay Card linked-wallet assets list for Ledger Wallet",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
+    ".": "./src/index.ts",
+    "./native": "./src/native/index.native.ts",
+    "./web": "./src/web/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

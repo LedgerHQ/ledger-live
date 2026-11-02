@@ -95,7 +95,6 @@ export type CurrencyFeatures = {
   currencyMantle: DefaultFeature;
   currencyMantleSepolia: DefaultFeature;
   currencyBoba: DefaultFeature;
-  currencyMoonriver: DefaultFeature;
   currencySyscoin: DefaultFeature;
   currencyAptos: DefaultFeature;
   currencyAptosTestnet: DefaultFeature;
@@ -123,8 +122,6 @@ export type CurrencyFeatures = {
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
   currencyLineaSepolia: DefaultFeature;
-  currencyBlast: DefaultFeature;
-  currencyBlastSepolia: DefaultFeature;
   currencyScroll: DefaultFeature;
   currencyShape: DefaultFeature;
   currencyStory: DefaultFeature;

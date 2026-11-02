@@ -93,6 +93,7 @@ function renderChecks(state: ChecksScreenState, overrides: Partial<ChecksScreenP
     state,
     error: null,
     update: null,
+    firmwareUpToDate: true,
     onStart,
     onRetry,
     onAcceptUpdate,
@@ -206,6 +207,13 @@ describe("ChecksView", () => {
     expect(onAcceptUpdate).not.toHaveBeenCalled();
     expect(onDeclineUpdate).not.toHaveBeenCalled();
     expect(onQuit).not.toHaveBeenCalled();
+  });
+
+  it("should not claim the device is up to date when the firmware is not", () => {
+    renderChecks("succeeded", { firmwareUpToDate: false });
+
+    expect(screen.getByText("Device genuine")).toBeVisible();
+    expect(screen.queryByText("Device genuine and up-to-date")).toBeNull();
   });
 
   it("should hide the close button while the onboarding cannot be left", () => {

@@ -17,7 +17,7 @@ import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { getChainAPI } from "@ledgerhq/coin-solana/network/index";
 import {
-  endpointByCurrencyId,
+  chainConfigFrom,
   transactionHasNonPlaceholderSignatures,
 } from "@ledgerhq/coin-solana/utils";
 import { VersionedTransaction } from "@solana/web3.js";
@@ -122,7 +122,7 @@ export function describeOptimisticOperation(
 async function buildTokenAccountShapes(currency: CryptoCurrency, address: string) {
   try {
     const config = getCurrencyConfiguration<SolanaCoinConfig>(currency.id);
-    const api = getChainAPI({ endpoint: endpointByCurrencyId(config, currency.id) });
+    const api = getChainAPI(chainConfigFrom(config, currency.id));
     return await getTokenAccountShapes(api, address);
   } catch (error) {
     // Recoverable: the sync goes on without the frozen state and Token-2022 extensions.
@@ -211,10 +211,11 @@ export function getDeviceSignOptions(
     destination = { tokenAddress: recipientTokenAccount };
   }
 
-  const endpoint = endpointByCurrencyId(
+  const chainConfig = chainConfigFrom(
     getCurrencyConfiguration<SolanaCoinConfig>(account.currency.id),
     account.currency.id,
   );
+  const endpoint = chainConfig.endpoint;
 
   const options: Record<string, unknown> = {
     ...(templateId ? { templateId } : {}),
@@ -227,7 +228,7 @@ export function getDeviceSignOptions(
   if (!hasRealSignatures(raw)) {
     options.delayed = true;
     options.fetchBlockhash = async () => {
-      const { blockhash } = await getChainAPI({ endpoint }).getLatestBlockhash("confirmed");
+      const { blockhash } = await getChainAPI(chainConfig).getLatestBlockhash("confirmed");
       refreshedBlockhashes.set(options, blockhash);
       return bs58.decode(blockhash);
     };

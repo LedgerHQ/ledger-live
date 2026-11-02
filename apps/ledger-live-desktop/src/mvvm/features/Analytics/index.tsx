@@ -21,7 +21,6 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
     counterValue,
     selectedTimeRange,
     navigateToDashboard,
-    shouldDisplayAssetSection,
     shouldDisplayPnl,
     balanceInfo,
     portfolio,
@@ -54,7 +53,7 @@ function AnalyticsView({ viewModel }: { readonly viewModel: AnalyticsViewModel }
 
       <PnLSection />
 
-      {shouldDisplayAssetSection && <AllocationSection />}
+      <AllocationSection />
     </div>
   );
 }

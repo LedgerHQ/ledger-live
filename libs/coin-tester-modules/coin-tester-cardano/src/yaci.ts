@@ -57,55 +57,187 @@ const ADMIN_RETRY_DELAY_MS = 1_000;
 const ADMIN_TIMEOUT_MS = 10_000;
 
 // Wall-clock bound independent of AbortSignal: MSW's passthrough can silently swallow a request's
-// AbortSignal, so a stalled admin POST would otherwise hang forever. Race the fetch against a timer that
-// rejects regardless (the abandoned fetch settles on its own); the signal still cancels the socket when
-// it does fire.
-function adminFetch(path: string, init: RequestInit): Promise<Response> {
+// AbortSignal, so a stalled request would otherwise hang forever. Race the whole exchange, body
+// included, against a timer that rejects regardless (the abandoned work settles on its own); the signal
+// still cancels the socket when it does fire.
+async function withDeadline<T>(
+  label: string,
+  timeoutMs: number,
+  work: (signal: AbortSignal) => Promise<T>,
+): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(
-      () => reject(new Error(`Yaci admin POST ${path} timed out after ${ADMIN_TIMEOUT_MS}ms`)),
-      ADMIN_TIMEOUT_MS,
+      () => reject(new Error(`${label} timed out after ${timeoutMs}ms`)),
+      timeoutMs,
     );
   });
-  return Promise.race([fetch(`${YACI_ADMIN_API}${path}`, init), timeout]).finally(() =>
-    clearTimeout(timer),
-  );
+  try {
+    return await Promise.race([work(AbortSignal.timeout(timeoutMs)), timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
-async function adminPost(path: string, body?: unknown): Promise<void> {
+type AdminPostOptions = {
+  timeoutMs?: number;
+  attempts?: number;
+  // Off for a request that must not be re-sent while it may still be running server-side: after a
+  // timeout or transport error the first attempt can still be in flight. An HTTP 5xx means the server
+  // finished handling it, so that stays retryable.
+  retryTransportErrors?: boolean;
+};
+
+async function adminPost(
+  path: string,
+  body?: unknown,
+  {
+    timeoutMs = ADMIN_TIMEOUT_MS,
+    attempts = ADMIN_RETRY_LIMIT,
+    retryTransportErrors = true,
+  }: AdminPostOptions = {},
+): Promise<void> {
   for (let attempt = 1; ; attempt++) {
     let retryable = false;
     let error: Error;
     try {
-      const res = await adminFetch(path, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: body === undefined ? undefined : JSON.stringify(body),
-        signal: AbortSignal.timeout(ADMIN_TIMEOUT_MS),
+      const status = await withDeadline(`Yaci admin POST ${path}`, timeoutMs, async signal => {
+        const res = await fetch(`${YACI_ADMIN_API}${path}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: body === undefined ? undefined : JSON.stringify(body),
+          signal,
+        });
+        await res.body?.cancel(); // body is unused on every path; release the socket for reuse (undici)
+        return { ok: res.ok, code: res.status, text: res.statusText };
       });
-      await res.body?.cancel(); // body is unused on every path; release the socket for reuse (undici)
-      if (res.ok) return;
-      error = new Error(`Yaci admin POST ${path} failed: ${res.status} ${res.statusText}`);
-      retryable = res.status >= 500;
+      if (status.ok) return;
+      error = new Error(`Yaci admin POST ${path} failed: ${status.code} ${status.text}`);
+      retryable = status.code >= 500;
     } catch (e) {
       error = e instanceof Error ? e : new Error(String(e));
-      retryable = true;
+      retryable = retryTransportErrors;
     }
-    if (!retryable || attempt >= ADMIN_RETRY_LIMIT) throw error;
+    if (!retryable || attempt >= attempts) throw error;
     console.warn(`Yaci admin POST ${path} attempt ${attempt} failed (${error.message}); retrying`);
     await sleep(ADMIN_RETRY_DELAY_MS);
   }
 }
 
-/** Fund an address from the faucet; `adaAmount` is whole ADA (not lovelace). */
-export async function topup(address: string, adaAmount: number): Promise<void> {
-  await adminPost("/addresses/topup", { address, adaAmount });
+const STORE_TIMEOUT_MS = 2_000;
+const STORE_POLL_INTERVAL_MS = 500;
+
+/** GET a yaci-store JSON resource; `undefined` while the store is unreachable or answers non-2xx. */
+async function storeGet<T>(path: string, notFound?: T): Promise<T | undefined> {
+  try {
+    return await withDeadline(`Yaci store GET ${path}`, STORE_TIMEOUT_MS, async signal => {
+      const res = await fetch(`${YACI_STORE_API}${path}`, { signal });
+      if (res.status === 404 && notFound !== undefined) {
+        await res.body?.cancel();
+        return notFound;
+      }
+      if (!res.ok) {
+        await res.body?.cancel();
+        return undefined;
+      }
+      return (await res.json()) as T;
+    });
+  } catch {
+    return undefined; // store starting or restarting
+  }
 }
 
-/** Reset the devnet ledger to a clean state. */
+/** Poll `probe` until it returns a value, or throw `timeoutMessage(last)` after `timeoutMs`. */
+async function pollUntil<T>(
+  timeoutMs: number,
+  probe: () => Promise<T | undefined>,
+  timeoutMessage: () => string,
+): Promise<T> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const value = await probe();
+    if (value !== undefined) return value;
+    await sleep(STORE_POLL_INTERVAL_MS);
+  }
+  throw new Error(timeoutMessage());
+}
+
+type StoreUtxo = {
+  tx_hash: string;
+  output_index: number;
+  amount: { unit: string; quantity: string }[];
+};
+
+const utxoRef = (u: StoreUtxo) => `${u.tx_hash}#${u.output_index}`;
+
+// Suites call resetDevnet() then topup() inside one hook bounded by jest's 600 s ceiling, which also has
+// to fit their own sync (negativeCases allows 310 s). Worst cases below: reset ≈ 2×45 + 1 + 30 ≈ 124 s,
+// topup ≈ 15 + 54 (adminPost: 5×10 s + 4×1 s) + 45 ≈ 120 s. Measured needs are a fraction of that:
+// reset 7-15 s, first block ~2 s later, top-up confirmed in ~1 s.
+const TOPUP_SNAPSHOT_TIMEOUT_MS = 15_000;
+// The faucet answers "Topup successful" once the node accepts the tx, without waiting for it to land in
+// a block (yaci-devkit 0.10.6 `LocalNodeService.topUp` ignores its own `waitForTx` result). Confirm the
+// funding UTXO here so a lost top-up fails at its source rather than as a later sync/poll timeout.
+const TOPUP_CONFIRM_TIMEOUT_MS = 45_000;
+
+/** Fund an address from the faucet; `adaAmount` is whole ADA (not lovelace). Resolves once funded. */
+export async function topup(address: string, adaAmount: number): Promise<void> {
+  const utxosPath = `/addresses/${address}/utxos`;
+  const before = await pollUntil(
+    TOPUP_SNAPSHOT_TIMEOUT_MS,
+    () => storeGet<StoreUtxo[]>(utxosPath, []),
+    () => `Yaci store did not serve UTXOs for ${address}`,
+  );
+  const known = new Set(before.map(utxoRef));
+  const lovelace = String(Math.round(adaAmount * 1_000_000));
+
+  await adminPost("/addresses/topup", { address, adaAmount });
+
+  await pollUntil(
+    TOPUP_CONFIRM_TIMEOUT_MS,
+    async () => {
+      const utxos = await storeGet<StoreUtxo[]>(utxosPath, []);
+      return utxos?.find(
+        u =>
+          !known.has(utxoRef(u)) &&
+          u.amount.some(a => a.unit === "lovelace" && a.quantity === lovelace),
+      );
+    },
+    () =>
+      `Yaci top-up of ${adaAmount} ADA to ${address} not confirmed within ${TOPUP_CONFIRM_TIMEOUT_MS}ms`,
+  );
+}
+
+// Reset stops the node and store, drops their data and starts a new chain from genesis. It answers in
+// 7-15 s, past ADMIN_TIMEOUT_MS, so it gets its own bound and a single 5xx retry.
+const RESET_TIMEOUT_MS = 45_000;
+const RESET_ATTEMPTS = 2;
+// yaci-devkit 0.10.6 answers the reset without waiting for a block (`ClusterCommands.startLocalCluster`
+// skips `waitForNextBlocks` on a first run), so the store reports height -1 until the node forges. The
+// Cardano bridge rejects a non-positive tip (`lastBlock`), and a top-up sent before forging may not
+// land, so reset waits for a produced block.
+const BLOCK_WAIT_TIMEOUT_MS = 30_000;
+
+/** Reset the devnet ledger to a clean state; resolves once the reset chain produces blocks again. */
 export async function resetDevnet(): Promise<void> {
-  await adminPost("/admin/devnet/reset");
+  await adminPost("/admin/devnet/reset", undefined, {
+    timeoutMs: RESET_TIMEOUT_MS,
+    attempts: RESET_ATTEMPTS,
+    retryTransportErrors: false,
+  });
+
+  let height: number | undefined;
+  await pollUntil(
+    BLOCK_WAIT_TIMEOUT_MS,
+    async () => {
+      height = (await storeGet<{ height?: unknown }>("/blocks/latest"))?.height as
+        | number
+        | undefined;
+      return typeof height === "number" && height > 0 ? height : undefined;
+    },
+    () =>
+      `Yaci devnet produced no block within ${BLOCK_WAIT_TIMEOUT_MS}ms after reset (last height: ${height ?? "unavailable"})`,
+  );
 }
 
 export type Utxo = { amount: { unit: string; quantity: string }[] };

@@ -11,6 +11,7 @@ import {
   throwIfLedgerTransferRefused,
 } from "./api";
 import { getCanisterIdlFunc, governanceIdlFactory, ledgerIdlFactory } from "./candid";
+import { getAgent } from "./agent";
 
 // Encode a governance canister *reply* (return value) using the real vendored IDL, so the decode
 // functions run against genuine candid bytes rather than a hand-rolled buffer.
@@ -32,6 +33,7 @@ jest.mock("./agent", () => ({
   getAgent: jest.fn().mockResolvedValue({ rootKey: new Uint8Array(0) }),
 }));
 
+const LOCAL_NODE = "http://127.0.0.1:4943";
 const CANISTER = "rrkah-fqaaa-aaaaa-aaaaq-cai";
 const REQ_ID_HEX = "ab".repeat(32); // 32-byte request id
 
@@ -76,6 +78,7 @@ describe("readReplyFromCanister", () => {
     const fetchMock = respondingWith({ status: "replied", certificate: new Uint8Array([1, 2, 3]) });
 
     const out = await readReplyFromCanister(
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       undefined,
       CANISTER,
@@ -91,13 +94,14 @@ describe("readReplyFromCanister", () => {
     respondingWith({ status: "rejected", certificate: new Uint8Array([1]) });
 
     await expect(
-      readReplyFromCanister(Buffer.from("00", "hex"), undefined, CANISTER, REQ_ID_HEX),
+      readReplyFromCanister(LOCAL_NODE, Buffer.from("00", "hex"), undefined, CANISTER, REQ_ID_HEX),
     ).rejects.toThrow(/call rejected: boom/);
   });
 
   it("returns null (indeterminate) when there is no certificate and no read-state envelope", async () => {
     respondingWith({ status: "processing" }); // no certificate field
     const out = await readReplyFromCanister(
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       undefined,
       CANISTER,
@@ -120,6 +124,7 @@ describe("readReplyFromCanister", () => {
     (global as unknown as { fetch: unknown }).fetch = fetchMock;
 
     const out = await readReplyFromCanister(
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       Buffer.from("01", "hex"),
       CANISTER,
@@ -127,7 +132,9 @@ describe("readReplyFromCanister", () => {
     );
 
     expect(out && new TextDecoder().decode(out)).toBe("LATE");
-    expect(fetchMock.mock.calls[1][0]).toContain("read_state");
+    expect(fetchMock.mock.calls[0][0]).toBe(`${LOCAL_NODE}/api/v3/canister/${CANISTER}/call`);
+    expect(fetchMock.mock.calls[1][0]).toBe(`${LOCAL_NODE}/api/v2/canister/${CANISTER}/read_state`);
+    expect(getAgent).toHaveBeenCalledWith(LOCAL_NODE);
   }, 10000);
 
   it("polls the read-state envelope until a terminal reply arrives", async () => {
@@ -140,6 +147,7 @@ describe("readReplyFromCanister", () => {
     );
 
     const out = await readReplyFromCanister(
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       Buffer.from("01", "hex"),
       CANISTER,
@@ -160,6 +168,7 @@ describe("readReplyFromCanister", () => {
     });
 
     const attempt = readReplyFromCanister(
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       Buffer.from("01", "hex"),
       CANISTER,
@@ -186,6 +195,7 @@ describe("readReplyFromCanister", () => {
     (global as unknown as { fetch: unknown }).fetch = fetchMock;
 
     const out = await readReplyFromCanister(
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       Buffer.from("01", "hex"),
       CANISTER,
@@ -266,7 +276,7 @@ describe("claimOrRefreshNeuronFromAccount", () => {
     driveWith(
       encodeReply("claim_or_refresh_neuron_from_account", { result: [{ NeuronId: { id: 123n } }] }),
     );
-    const id = await claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+    const id = await claimOrRefreshNeuronFromAccount(LOCAL_NODE, Principal.anonymous(), 5n);
     expect(id).toBe(123n);
   });
 
@@ -278,7 +288,7 @@ describe("claimOrRefreshNeuronFromAccount", () => {
         result: [{ Error: { error_type: 0, error_message: "denied" } }],
       }),
     );
-    const attempt = claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+    const attempt = claimOrRefreshNeuronFromAccount(LOCAL_NODE, Principal.anonymous(), 5n);
     await expect(attempt).rejects.toThrow(ICPStakeNotRefreshed);
     await expect(attempt).rejects.toMatchObject({ reason: "denied" });
   });
@@ -290,7 +300,7 @@ describe("claimOrRefreshNeuronFromAccount", () => {
     (Certificate.create as jest.Mock).mockResolvedValue(certWith("rejected"));
     respondingWith({ status: "rejected", certificate: new Uint8Array([1]) });
 
-    const attempt = claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+    const attempt = claimOrRefreshNeuronFromAccount(LOCAL_NODE, Principal.anonymous(), 5n);
     await expect(attempt).rejects.toThrow(ICPStakeNotRefreshed);
     await expect(attempt).rejects.toMatchObject({ reason: "boom" });
   });
@@ -300,7 +310,7 @@ describe("claimOrRefreshNeuronFromAccount", () => {
     try {
       // Neither the sync /call nor any read-state poll ever yields a certificate → poll exhausts → null.
       respondingWith({ status: "processing" });
-      const promise = claimOrRefreshNeuronFromAccount(Principal.anonymous(), 5n);
+      const promise = claimOrRefreshNeuronFromAccount(LOCAL_NODE, Principal.anonymous(), 5n);
       // Fast-forward past all read-state poll attempts without waiting in real time.
       for (let i = 0; i < 21; i += 1) await jest.advanceTimersByTimeAsync(1000);
       await expect(promise).resolves.toBeUndefined();
@@ -321,14 +331,16 @@ describe("readTransferOutcome", () => {
     (Certificate.create as jest.Mock).mockResolvedValue(
       certWith("replied", encodeLedgerReply({ Ok: 42n })),
     );
-    await expect(readTransferOutcome(syncReplied(), REQ_ID_HEX)).resolves.toEqual({ Ok: 42n });
+    await expect(readTransferOutcome(LOCAL_NODE, syncReplied(), REQ_ID_HEX)).resolves.toEqual({
+      Ok: 42n,
+    });
   });
 
   it("returns a refusal the ledger replied with, for the caller to report", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(
       certWith("replied", encodeLedgerReply({ Err: { TxTooOld: { allowed_window_nanos: 1n } } })),
     );
-    await expect(readTransferOutcome(syncReplied(), REQ_ID_HEX)).resolves.toEqual({
+    await expect(readTransferOutcome(LOCAL_NODE, syncReplied(), REQ_ID_HEX)).resolves.toEqual({
       Err: { TxTooOld: { allowed_window_nanos: 1n } },
     });
   });
@@ -339,7 +351,7 @@ describe("readTransferOutcome", () => {
   it("reports a certified rejection as a rejected call", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(certWith("rejected"));
 
-    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+    const attempt = readTransferOutcome(LOCAL_NODE, syncReplied(), REQ_ID_HEX);
 
     await expect(attempt).rejects.toThrow(ICPCallRejected);
     await expect(attempt).rejects.toMatchObject({ reason: "boom" });
@@ -355,7 +367,7 @@ describe("readTransferOutcome", () => {
       }),
     );
 
-    const attempt = readTransferOutcome(refused, REQ_ID_HEX);
+    const attempt = readTransferOutcome(LOCAL_NODE, refused, REQ_ID_HEX);
 
     await expect(attempt).rejects.toThrow(ICPCallRejected);
     await expect(attempt).rejects.toMatchObject({ reason: "boom" });
@@ -367,7 +379,7 @@ describe("readTransferOutcome", () => {
   it("fails plainly when the certified status is not terminal", async () => {
     (Certificate.create as jest.Mock).mockResolvedValue(certWith("processing"));
 
-    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+    const attempt = readTransferOutcome(LOCAL_NODE, syncReplied(), REQ_ID_HEX);
 
     await expect(attempt).rejects.toThrow(/Reply status not found/);
     await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);
@@ -376,7 +388,7 @@ describe("readTransferOutcome", () => {
   it("fails plainly when the certificate does not verify", async () => {
     (Certificate.create as jest.Mock).mockRejectedValue(new Error("Invalid certificate"));
 
-    const attempt = readTransferOutcome(syncReplied(), REQ_ID_HEX);
+    const attempt = readTransferOutcome(LOCAL_NODE, syncReplied(), REQ_ID_HEX);
 
     await expect(attempt).rejects.toThrow(/Invalid certificate/);
     await expect(attempt).rejects.not.toBeInstanceOf(ICPCallRejected);

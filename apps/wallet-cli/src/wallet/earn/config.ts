@@ -14,9 +14,8 @@ const DEFAULT_EARN_API_BASE_URL = "https://earn.api.live.ledger.com";
 const DEFAULT_SOLANA_VALIDATORS_URL = `${DEFAULT_EARN_API_BASE_URL}/v0/network/solana/validator-details`;
 
 // Figment validators summary — APY keyed by vote account, merged into the validators list above.
-// Same payload coin-solana consumes, but hosts differ by default: coin-solana's
-// SOLANA_VALIDATORS_SUMMARY_BASE_URL points at earn-dashboard staging, whereas wallet-cli reads it
-// from the production earn API host. Override with the SOLANA_VALIDATOR_APY_URL env var.
+// Same payload and default host coin-solana reads from `staking.validatorsSummaryUrl` of
+// `config_currency_solana`. Override with the SOLANA_VALIDATOR_APY_URL env var.
 const DEFAULT_SOLANA_VALIDATOR_APY_URL = `${DEFAULT_EARN_API_BASE_URL}/figment/solana/validators_summary`;
 
 /** Resolved earn API base URL. Override with the EARN_API_BASE_URL env var. */

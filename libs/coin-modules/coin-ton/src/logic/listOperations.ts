@@ -27,6 +27,7 @@ import type {
 import type { TonComment, TonOperationExtra } from "../types";
 import { toFriendly, toJettonAsset, toOwnFriendly } from "./address";
 import { type HistoryOrder, cutPage, parseCursor } from "./cursor";
+import { forwardFees } from "./forwardFees";
 import { decodeForwardPayload } from "./forwardPayload";
 
 const DEFAULT_LIMIT = 256;
@@ -218,7 +219,7 @@ function nativeOperations(
     tx: {
       hash,
       block: { height, hash: "", time: date },
-      fees: BigInt(tx.total_fees),
+      fees: BigInt(tx.total_fees) + (type === "OUT" ? forwardFees(tx) : 0n),
       date,
       failed:
         tx.description.compute_ph.success === false && tx.description.compute_ph.exit_code !== 0,

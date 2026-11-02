@@ -156,13 +156,13 @@ describe("useSearchOverlayViewModel", () => {
   describe("navigation history", () => {
     beforeEach(() => mockSearchBar({ mode: "results", isOpen: true, query: "bit" }));
 
-    // Every search navigation shares the same decision: replace the current entry only when
-    // already on an asset/market detail page, so repeated searches don't stack in history.
+    // Replace the current entry only when already on an asset detail page, so repeated
+    // searches don't stack in history.
     it.each<[string, boolean]>([
       ["/", false],
       ["/market", false],
       ["/asset/bitcoin", true],
-      ["/market/bitcoin", true],
+      ["/market/bitcoin", false],
     ])("navigates from %s with replace=%s", (pathname, replace) => {
       const { result } = renderHook(() => useSearchOverlayViewModel(), { initialRoute: pathname });
 

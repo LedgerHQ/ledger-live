@@ -99,4 +99,5 @@ jobs:
       - name: Compute mobile JS bundle Nx hashes
         id: mobile-js-hash
         if: ${{ contains(steps.nx-affected.outputs.paths, 'ledger-live-mobile') }}
+        shell: bash
         run: node tools/nx/task-hash.mjs live-mobile e2e:bundle ios android | tee -a "$GITHUB_OUTPUT"

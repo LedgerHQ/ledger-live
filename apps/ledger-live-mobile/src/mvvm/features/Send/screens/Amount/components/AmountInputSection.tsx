@@ -66,20 +66,24 @@ export function AmountInputSection({ viewModel, message, toggleLabel }: AmountIn
           showSoftInputOnFocus={false}
           isInvalid={message?.type === "error"}
         />
-        <View style={styles.toggleButton}>
-          <IconButton
-            testID="amount-mode-toggle"
-            icon={TransferVertical}
-            size="xs"
-            appearance="gray"
-            accessibilityLabel={toggleLabel}
-            onPress={viewModel.onToggleMode}
-          />
-        </View>
+        {viewModel.isFiatModeAvailable && (
+          <View style={styles.toggleButton}>
+            <IconButton
+              testID="amount-mode-toggle"
+              icon={TransferVertical}
+              size="xs"
+              appearance="gray"
+              accessibilityLabel={toggleLabel}
+              onPress={viewModel.onToggleMode}
+            />
+          </View>
+        )}
       </View>
-      <Text typography="body2" lx={{ color: "muted" }} style={styles.secondaryValue}>
-        {viewModel.secondaryValue}
-      </Text>
+      {viewModel.isFiatModeAvailable && (
+        <Text typography="body2" lx={{ color: "muted" }} style={styles.secondaryValue}>
+          {viewModel.secondaryValue}
+        </Text>
+      )}
       <View style={styles.messageContainer}>
         {message ? (
           <Text typography="body3" lx={{ color: MESSAGE_COLORS[message.type] }}>

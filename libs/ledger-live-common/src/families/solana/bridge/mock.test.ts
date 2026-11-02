@@ -5,6 +5,10 @@ import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import mockBridge from "./mock";
 import type { Transaction } from "../types";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { solanaConfig } from "../config";
+
+LiveConfig.setConfig(solanaConfig);
 
 const SENDER = "4iWtrn54zi89sHQv6xHyYwDsrPJvqcSKRJGBLrbErCsx";
 const RECIPIENT = "63M7kPJvLsG46jbR2ZriEU8xwPqkMNKNoBBQ46pobbvo";
@@ -126,7 +130,8 @@ describe("solana mock bridge", () => {
       "ComputeBudget111111111111111111111111111111",
       "11111111111111111111111111111111",
     ]);
-    expect(signed.message.compiledInstructions).toHaveLength(2);
+    // Compute-unit limit, compute-unit price (always set, floored), transfer.
+    expect(signed.message.compiledInstructions).toHaveLength(3);
   });
 
   it("signs a partner-built transaction, keeping its instructions", async () => {

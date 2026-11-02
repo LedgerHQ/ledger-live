@@ -21,7 +21,9 @@ import {
   MarketRoute,
   AssetRoute,
   PerpsRoute,
+  PredictionsRoute,
   PayTabRoute,
+  ContactsRoute,
   RecoverRoute,
   RecoverRestoreFlowRoute,
   PostOnboardingRoute,
@@ -275,12 +277,27 @@ export function createRoute(parsed: ParsedDeeplink): DeeplinkRoute {
       return route;
     }
 
+    case "predictions": {
+      const route: PredictionsRoute = {
+        type: "predictions",
+        query,
+      };
+      return route;
+    }
+
     case "paytab": {
       const route: PayTabRoute = {
         type: "paytab",
         code: query.code,
         state: query.state,
         appId: query.app_id,
+      };
+      return route;
+    }
+
+    case "contacts": {
+      const route: ContactsRoute = {
+        type: "contacts",
       };
       return route;
     }

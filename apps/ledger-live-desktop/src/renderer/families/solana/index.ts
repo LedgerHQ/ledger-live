@@ -1,8 +1,10 @@
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBodyHeader from "./AccountBodyHeader";
+import AccountDetailDelegations from "./AccountDetailDelegations";
 import AccountSubHeader from "./AccountSubHeader";
 import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
+import AccountDetailBalanceSummary from "./AccountDetailBalanceSummary";
 import StakeBanner from "./StakeBanner";
 import StepSummaryAdditionalRows from "./StepSummaryAdditionalRows";
 import { SolanaFamily } from "./types";
@@ -13,9 +15,11 @@ import transactionConfirmFields from "./TransactionConfirmFields";
 const family: SolanaFamily = {
   accountHeaderManageActions,
   AccountBodyHeader,
+  AccountDetailDelegations,
   AccountSubHeader,
   sendRecipientFields,
   AccountBalanceSummaryFooter,
+  AccountDetailBalanceSummary,
   StepSummaryAdditionalRows,
   StakeBanner,
   operationDetails,

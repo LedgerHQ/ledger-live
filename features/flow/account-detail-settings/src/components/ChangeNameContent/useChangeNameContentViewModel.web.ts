@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "@shared/i18n";
-import type { ChangeNameContentProps, ChangeNameContentViewProps } from "./types.web";
+import type { ChangeNameContentProps, ChangeNameContentViewProps } from "./types";
 
 const normalize = (name: string) => name.replace(/\s+/g, " ").trim();
 

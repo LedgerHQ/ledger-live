@@ -11,13 +11,9 @@ export const isSideBarNavValue = (value: string): value is SideBarNavValue =>
  * Returns an empty string when the pathname doesn't match any sidebar entry,
  * keeping the Lumen SideBar component in controlled mode at all times.
  */
-export function pathnameToActive(
-  pathname: string,
-  shouldDisplayAssetSection = false,
-  search = "",
-): SideBarActiveValue {
+export function pathnameToActive(pathname: string, search = ""): SideBarActiveValue {
   if (pathname === "/") return "home";
-  if (shouldDisplayAssetSection && pathname === "/cryptos") return "accounts";
+  if (pathname === "/cryptos") return "accounts";
   if (pathname.startsWith("/account")) return "accounts";
   if (pathname.startsWith("/swap")) return "swap";
   if (pathname === "/earn") return "earn";

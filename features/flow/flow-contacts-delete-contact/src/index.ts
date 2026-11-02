@@ -1,3 +1,3 @@
 export * from "./exports";
-export * from "./components/ContactsDeleteContactDialog/ContactsDeleteContactDialog.web";
-export * from "./components/ContactsDeleteContactDialog/types";
+export * from "./components/ContactsDeleteContactDialog/ContactsDeleteContactDialog";
+export type * from "./components/ContactsDeleteContactDialog/ContactsDeleteContactDialog.types";

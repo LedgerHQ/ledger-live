@@ -1,5 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/device-management-kit";
-import { isTouchscreen, requiresLegacyFlow } from "./rules";
+import { firmwareSettled, isTouchscreen, requiresLegacyFlow } from "./rules";
+import type { AvailableFirmwareUpdate } from "./types";
 
 describe("requiresLegacyFlow", () => {
   it.each([
@@ -44,5 +45,21 @@ describe("isTouchscreen", () => {
   it("reads DMK's own model names, where the Flex is `flex` and the Apex `apexp`", () => {
     expect(DeviceModelId.FLEX).toBe("flex");
     expect(DeviceModelId.APEX).toBe("apexp");
+  });
+});
+
+describe("firmwareSettled", () => {
+  it.each(["upToDate", "declined", "skipped"] as const)("treats %s as finished", kind => {
+    expect(firmwareSettled({ kind })).toBe(true);
+  });
+
+  it("leaves an offer and a missing check unfinished", () => {
+    expect(firmwareSettled(null)).toBe(false);
+    expect(
+      firmwareSettled({
+        kind: "offered",
+        update: { finalFirmware: { version: "2.3.0" } } as AvailableFirmwareUpdate,
+      }),
+    ).toBe(false);
   });
 });

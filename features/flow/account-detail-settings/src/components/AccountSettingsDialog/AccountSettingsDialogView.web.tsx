@@ -1,11 +1,11 @@
 import React from "react";
 import { Dialog, DialogContent } from "@ledgerhq/lumen-ui-react";
 import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
-import { AdvancedLogsStep } from "./steps/AdvancedLogsStep.web";
-import { ChangeNameStep } from "./steps/ChangeNameStep.web";
-import { MenuStep } from "./steps/MenuStep.web";
-import { RemoveStep } from "./steps/RemoveStep.web";
-import type { AccountSettingsDialogViewProps } from "./types.web";
+import { AdvancedLogsStep } from "./steps/AdvancedLogsStep";
+import { ChangeNameStep } from "./steps/ChangeNameStep";
+import { MenuStep } from "./steps/MenuStep";
+import { RemoveStep } from "./steps/RemoveStep";
+import type { AccountSettingsDialogViewProps } from "./types";
 
 function getAriaLabel({
   step,

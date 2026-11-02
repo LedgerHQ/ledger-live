@@ -67,31 +67,6 @@ const teamCoinIntegration = {
     def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API",
   },
-  API_SOLANA_PROXY: {
-    parser: stringParser,
-    def: "https://solana.coin.ledger.com",
-    desc: "proxy url for solana API",
-  },
-  SOLANA_VALIDATORS_APP_BASE_URL: {
-    parser: stringParser,
-    def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
-    desc: "base url for validators.app validator list",
-  },
-  SOLANA_VALIDATORS_SUMMARY_BASE_URL: {
-    parser: stringParser,
-    def: "https://earn.api.live.ledger.com/figment/solana/validators_summary",
-    desc: "base url for validators.app validator summary",
-  },
-  SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
-    parser: stringParser,
-    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
-    desc: "base url for testnet validators.app validator list",
-  },
-  SOLANA_TX_CONFIRMATION_TIMEOUT: {
-    def: 100 * 1000,
-    parser: intParser,
-    desc: "solana transaction broadcast confirmation timeout",
-  },
   ICON_NODE_ENDPOINT: {
     parser: stringParser,
     def: "https://icon.coin.ledger.com/api/v3",

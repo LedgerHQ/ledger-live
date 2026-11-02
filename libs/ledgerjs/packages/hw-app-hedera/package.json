@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-hedera",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Ledger Hardware Wallet Hedera Application API",
   "keywords": [
     "Ledger",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
+    "@ledgerhq/ledger-libs": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

@@ -81,8 +81,8 @@ describe("aleo balance-type config", () => {
 
       expect(options.map(option => option.id)).toEqual(["public", "private"]);
       expect(options.map(option => option.translationKey)).toEqual([
-        "balanceType.aleoPublic",
-        "balanceType.aleoPrivate",
+        "balanceType.transparent",
+        "balanceType.shielded",
       ]);
       expect(options.map(option => option.icon)).toEqual(["check", "lock"]);
       expect(options.map(option => option.balance?.toNumber())).toEqual([100, 40]);

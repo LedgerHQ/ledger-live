@@ -1,4 +1,4 @@
-import { Category } from "@devtools/registry";
+import { Category, ToolKind } from "@devtools/registry";
 import { filterToolsByQuery, findCategoryForToolId } from "../utils/toolsUtils";
 import { makeTool } from "jest/fixtures";
 
@@ -6,7 +6,12 @@ const categories = [
   {
     category: Category.CONFIGURATION,
     tools: [
-      makeTool({ id: "feature-flags", label: "Feature Flags", category: Category.CONFIGURATION }),
+      makeTool({
+        id: "feature-flags",
+        label: "feature-flags",
+        category: Category.CONFIGURATION,
+        kind: ToolKind.SHARED,
+      }),
       makeTool({
         id: "env-switcher",
         label: "Env Switcher",
@@ -47,6 +52,16 @@ describe("filterToolsByQuery", () => {
     const result = filterToolsByQuery(categories, "wallet-api");
     expect(result).toHaveLength(1);
     expect(result[0].tools.map(t => t.id)).toEqual(["network-inspector"]);
+  });
+
+  it("matches a hyphenated label with spaced words", () => {
+    const result = filterToolsByQuery(categories, "feature flags");
+    expect(result[0].tools.map(t => t.id)).toEqual(["feature-flags"]);
+  });
+
+  it("filters tools by kind", () => {
+    const result = filterToolsByQuery(categories, "shared");
+    expect(result[0].tools.map(t => t.id)).toEqual(["feature-flags"]);
   });
 
   it("keeps the category when at least one tool matches", () => {

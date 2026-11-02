@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useFeature } from "@features/platform-feature-flags";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { sidebarCollapsedSelector } from "~/renderer/reducers/settings";
 import { setTrackingSource, track } from "@shared/analytics";
@@ -14,7 +14,7 @@ import {
   SIDEBAR_VALUE_TO_PATH,
   SIDEBAR_VALUE_TO_TRACK_ENTRY,
   isSideBarNavValue,
-  getAccountsSidebarPath,
+  ACCOUNTS_SIDEBAR_PATH,
 } from "./utils";
 import { SCROLL_TO_TOP_EVENT } from "LLD/components/Page/constants";
 import type { SideBarViewModel } from "./types";
@@ -32,9 +32,6 @@ export function useSideBarViewModel(): SideBarViewModel {
 
   const payTabFeature = useFeature("lwdPayTab");
   const isPayTabEnabled = !!payTabFeature?.enabled;
-
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
-  const accountsSidebarPath = getAccountsSidebarPath(shouldDisplayAssetSection);
 
   const navRef = useRef<HTMLElement>(null);
   const handleCollapsedChange = useSideBarAutoCollapse(collapsed);
@@ -76,8 +73,8 @@ export function useSideBarViewModel(): SideBarViewModel {
   }, []);
 
   const active = useMemo(
-    () => pathnameToActive(location.pathname, shouldDisplayAssetSection, location.search),
-    [location.pathname, shouldDisplayAssetSection, location.search],
+    () => pathnameToActive(location.pathname, location.search),
+    [location.pathname, location.search],
   );
 
   const handleActiveChange = useCallback(
@@ -87,11 +84,11 @@ export function useSideBarViewModel(): SideBarViewModel {
       if (value === "home" && location.pathname === SIDEBAR_VALUE_TO_PATH.home) {
         handleScrollToTop();
       }
-      const path = value === "accounts" ? accountsSidebarPath : SIDEBAR_VALUE_TO_PATH[value];
+      const path = value === "accounts" ? ACCOUNTS_SIDEBAR_PATH : SIDEBAR_VALUE_TO_PATH[value];
       push(path);
       trackEntry(SIDEBAR_VALUE_TO_TRACK_ENTRY[value]);
     },
-    [handleScrollToTop, push, trackEntry, location.pathname, accountsSidebarPath],
+    [handleScrollToTop, push, trackEntry, location.pathname],
   );
 
   return {

@@ -1,18 +1,17 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class SettingsPage {
-  settingsGeneralButtonId = "general-settings-card-title";
-  settingsHelpButtonId = "help-settings-card";
+  private readonly generalSettingsButton = byId("general-settings-card-title");
+  private readonly helpSettingsButton = byId("help-settings-card");
 
   @Step("Go to General Settings")
   async navigateToGeneralSettings() {
-    await waitForElementById(this.settingsGeneralButtonId);
-    await tapById(this.settingsGeneralButtonId);
+    await this.generalSettingsButton.tap();
   }
 
   @Step("Go to Help Settings")
   async navigateToHelpSettings() {
-    await waitForElementById(this.settingsHelpButtonId);
-    await tapById(this.settingsHelpButtonId);
+    await this.helpSettingsButton.tap();
   }
 }

@@ -34,16 +34,21 @@ export function genericEstimateMaxSpendable(
       useAllAmount: true,
     };
 
-    const estimated = await coinModuleApi.estimateFees(
-      context,
-      transactionToIntent(
-        mainAccount,
-        draftTransaction,
-        bridgeApi.computeIntentType,
-        intent => coinModuleApi.craftTransactionData(context, intent),
-        bridgeApi.buildIntentData,
-      ),
+    const intent = transactionToIntent(
+      mainAccount,
+      draftTransaction,
+      bridgeApi.computeIntentType,
+      intent => coinModuleApi.craftTransactionData(context, intent),
+      bridgeApi.buildIntentData,
     );
+    let estimated: FeeEstimation;
+    try {
+      estimated = await coinModuleApi.estimateFees(context, intent);
+    } catch (error) {
+      // The send-max cannot be broadcast, typically because the balance does not cover its fees.
+      if (!bridgeApi.validatesRefusedEstimation) throw error;
+      return new BigNumber(0);
+    }
     const estimation: FeeEstimation = {
       value: BigNumber.isBigNumber(transaction?.fees)
         ? BigInt(transaction.fees.toFixed())

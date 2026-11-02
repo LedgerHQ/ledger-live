@@ -191,7 +191,7 @@ export async function captureNativeViewHierarchy(
   } catch (error) {
     log.warn(`Could not capture native view hierarchy: ${sanitizeError(error)}`);
   } finally {
-    await app.common.enableSynchronization().catch(error => {
+    await app.common.enableSynchronization().catch((error: unknown) => {
       log.warn(`Could not re-enable synchronization: ${sanitizeError(error)}`);
     });
   }

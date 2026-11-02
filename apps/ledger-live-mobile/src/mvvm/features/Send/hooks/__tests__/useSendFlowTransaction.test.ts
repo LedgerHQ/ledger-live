@@ -3,6 +3,7 @@ import { useSendFlowTransaction } from "../useSendFlowTransaction";
 import * as bridgeModule from "@ledgerhq/live-common/bridge/index";
 import * as useBridgeTransactionModule from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import * as useAccountBridgeModule from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
@@ -13,10 +14,39 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
   useAccountBridgeOrNull: jest.fn(),
 }));
+jest.mock("@ledgerhq/live-common/bridge/descriptor/send/features", () => ({
+  sendFeatures: { getBalanceTypeConfig: jest.fn(() => null) },
+}));
+
+const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
+
+function stubBalanceTypeConfig(selfTransferAddress: string) {
+  const buildSelfTransferPatch = jest.fn(({ isSelfTransfer }: { isSelfTransfer: boolean }) => {
+    return { selfTransfer: isSelfTransfer };
+  });
+
+  mockedGetBalanceTypeConfig.mockReturnValue({
+    buildSelfTransferPatch,
+    getOptions: jest.fn(() => []),
+    getSelectedOptionId: jest.fn(() => null),
+    buildSelectionPatch: jest.fn(() => ({})),
+    getSelectableBalance: jest.fn(),
+    getSelfTransferTarget: jest.fn(() => {
+      return {
+        address: selfTransferAddress,
+        translationKey: "recipient.selfTransfer.toPrivate",
+        isDestinationPublic: false,
+      };
+    }),
+  });
+
+  return buildSelfTransferPatch;
+}
 
 describe("useSendFlowTransaction", () => {
   const mockAccount = {
     id: "mock-account-id",
+    type: "Account",
     currency: { family: "cosmos" },
   } as Account;
 
@@ -35,6 +65,7 @@ describe("useSendFlowTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedGetBalanceTypeConfig.mockReturnValue(null);
 
     mockBridge.updateTransaction = mockUpdateTransaction;
 
@@ -292,6 +323,37 @@ describe("useSendFlowTransaction", () => {
 
       expect(mockUpdateTransaction).not.toHaveBeenCalled();
     });
+
+    it.each([
+      { address: "aleo1self", isSelfTransfer: true },
+      { address: "aleo1someoneelse", isSelfTransfer: false },
+    ])(
+      "GIVEN a currency with balance pools WHEN the recipient's isSelfTransfer is $isSelfTransfer THEN the self-transfer patch is $isSelfTransfer",
+      ({ address, isSelfTransfer }) => {
+        const buildSelfTransferPatch = stubBalanceTypeConfig("aleo1self");
+
+        const { result } = renderHook(() =>
+          useSendFlowTransaction({
+            account: mockAccount,
+            parentAccount: null,
+          }),
+        );
+
+        act(() => {
+          result.current.actions.setRecipient({ address, isSelfTransfer });
+        });
+
+        expect(buildSelfTransferPatch).toHaveBeenCalledTimes(1);
+        expect(buildSelfTransferPatch).toHaveBeenCalledWith({
+          isSelfTransfer,
+          transaction: mockTransaction,
+        });
+        expect(mockUpdateTransaction).toHaveBeenCalledWith(mockTransaction, {
+          recipient: address,
+          selfTransfer: isSelfTransfer,
+        });
+      },
+    );
   });
 
   describe("setTransaction", () => {

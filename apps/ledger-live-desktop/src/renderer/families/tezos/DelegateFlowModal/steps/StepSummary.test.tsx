@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { render, screen } from "tests/testSetup";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import StepSummary from "./StepSummary";
+import StepSummary, { StepSummaryFooter } from "./StepSummary";
 
 const mockStakingInfo: { unstakingPositions: { uid: string; delegate?: string }[] } = {
   unstakingPositions: [],
@@ -29,6 +29,7 @@ jest.mock("@shared/analytics-react", () => ({
 // Body layout is irrelevant to the footer warning under test.
 jest.mock("../DelegationContainer", () => () => null);
 jest.mock("../../BakerImage", () => () => null);
+jest.mock("~/renderer/modals/Send/AccountFooter", () => () => null);
 
 const currency = getCryptoCurrencyById("tezos");
 
@@ -74,5 +75,26 @@ describe("Tezos delegate StepSummary — pending-unstake warning", () => {
     mockStakingInfo.unstakingPositions = [{ uid: "finalizable-1", delegate: "tz1OLD" }];
     render(<StepSummary {...makeProps({ recipient: "tz1NEW" })} />);
     expect(screen.queryByTestId("tezos-pending-unstake-warning")).not.toBeInTheDocument();
+  });
+});
+
+const makeFooterProps = (recipient: string) =>
+  ({
+    ...makeProps({ recipient }),
+    t: (key: string) => key,
+    bridgePending: false,
+    error: null,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  }) as unknown as React.ComponentProps<typeof StepSummaryFooter>;
+
+describe("Tezos delegate StepSummaryFooter", () => {
+  it("keeps Continue disabled until a validator is chosen", () => {
+    render(<StepSummaryFooter {...makeFooterProps("")} />);
+    expect(screen.getByRole("button", { name: "common.continue" })).toBeDisabled();
+  });
+
+  it("enables Continue once a validator is chosen", () => {
+    render(<StepSummaryFooter {...makeFooterProps("tz1NEW")} />);
+    expect(screen.getByRole("button", { name: "common.continue" })).toBeEnabled();
   });
 });

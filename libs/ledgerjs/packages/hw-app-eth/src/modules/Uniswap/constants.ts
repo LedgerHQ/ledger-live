@@ -22,8 +22,6 @@ export const WETH_PER_CHAIN_ID = {
   8453: "0x4200000000000000000000000000000000000006",
   // Base Goerli
   84531: "0x44D627f900da8AdaC7561bD73aA745F132450798",
-  // Blast
-  23888: "0x4300000000000000000000000000000000000004",
   // Celo
   42220: new Error("Celo isn't supporting wrapping Eth"),
   // Celo Alfajores

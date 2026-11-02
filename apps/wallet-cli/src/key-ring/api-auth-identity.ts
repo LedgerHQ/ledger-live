@@ -6,31 +6,14 @@ import { pubkeyFromPrivatekey } from "./crypto";
 import { profileKeychainAccount } from "./keychain";
 import { assertOsKeychainAvailable, osKeychainEntry } from "./keychain-entry";
 
-export type ApiAuthKeychain = {
-  getPassword(account: string): string | null;
-  setPassword(account: string, value: string): void;
-};
-
-const osKeychain: ApiAuthKeychain = {
-  getPassword: account => {
-    // On Linux the entry is pinned to the Secret Service, so a missing one throws instead of the key
-    // silently landing in the kernel keyring, which loses it on reboot.
-    assertOsKeychainAvailable("The Ledger API auth key can't be kept.");
-    return osKeychainEntry(account).getPassword();
-  },
-  setPassword: (account, value) => osKeychainEntry(account).setPassword(value),
-};
-
 type ApiAuthIdentity = { trustchain: null; memberCredentials: MemberCredentials | null };
 
-let keychain = osKeychain;
 // Loaded once per run, so re-authenticating after a 401 signs with the same key, and a missing
 // keychain is probed and reported once.
 let cachedIdentity: { account: string; identity: ApiAuthIdentity } | undefined;
 
-/** @internal Test seam — keeps tests off the OS keychain and starts a new run; `null` restores it. */
-export function _setTestApiAuthKeychain(k: ApiAuthKeychain | null): void {
-  keychain = k ?? osKeychain;
+/** @internal Test seam — starts a new run: the next call reads the keychain again. */
+export function _resetApiAuthIdentity(): void {
   cachedIdentity = undefined;
 }
 
@@ -59,7 +42,10 @@ export function loadApiAuthIdentity(): ApiAuthIdentity {
 function getOrCreateApiAuthCredentials(account: string): MemberCredentials | null {
   let stored: string | null;
   try {
-    stored = keychain.getPassword(account);
+    // On Linux the entry is pinned to the Secret Service, so a missing one throws instead of the key
+    // silently landing in the kernel keyring, which loses it on reboot.
+    assertOsKeychainAvailable("The Ledger API auth key can't be kept.");
+    stored = osKeychainEntry(account).getPassword();
   } catch (error) {
     // No usable keychain (e.g. headless Linux without a secret service): a key that can't be kept
     // would rotate silently, so requests go without a token instead.
@@ -76,7 +62,7 @@ function getOrCreateApiAuthCredentials(account: string): MemberCredentials | nul
 
   const created = initMemberCredentials();
   try {
-    keychain.setPassword(account, created.privatekey);
+    osKeychainEntry(account).setPassword(created.privatekey);
   } catch (error) {
     walletCliDebug("api auth: failed to store the key in the OS keychain", error);
     writeStderr(

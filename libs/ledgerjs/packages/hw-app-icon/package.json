@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-icon",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "description": "Ledger Hardware Wallet ICON Application API",
   "keywords": [
     "Ledger",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
+    "@ledgerhq/ledger-libs": "workspace:*",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

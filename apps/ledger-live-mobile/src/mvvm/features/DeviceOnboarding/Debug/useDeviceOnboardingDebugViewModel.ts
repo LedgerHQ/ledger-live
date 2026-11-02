@@ -43,6 +43,7 @@ export function useDeviceOnboardingDebugViewModel() {
     state: checksStateForPreview(preview),
     error: isErrorPreview(preview) ? { kind: preview } : null,
     update: preview === "updating" ? { current: "1.0.0", available: "1.1.0" } : null,
+    firmwareUpToDate: true,
     onStart: () => setPreview("checking"),
     onRetry: () => setPreview("checking"),
     onAcceptUpdate: () => setPreview("checking"),

@@ -8,7 +8,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "~/context/hooks";
 import { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "~/const";
+import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { EarnScreen } from "~/screens/PTX/Earn";
@@ -76,16 +76,13 @@ export const Earn = (props: NavigationProps) => {
     function deeplinkRouting() {
       switch (paramAction) {
         case "deposit": {
-          navigation.navigate(NavigatorName.Base, {
-            screen: NavigatorName.Earn,
+          (navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation).navigate(NavigatorName.Earn, {
+            screen: ScreenName.Earn,
             params: {
-              screen: ScreenName.Earn,
-              params: {
-                intent: "deposit",
-                cryptoAssetId: paramCryptoAssetId,
-                accountId: paramAccountId,
-                protocolId: paramProtocolId,
-              },
+              intent: "deposit",
+              cryptoAssetId: paramCryptoAssetId,
+              accountId: paramAccountId,
+              protocolId: paramProtocolId,
             },
           });
           break;
@@ -95,13 +92,10 @@ export const Earn = (props: NavigationProps) => {
           // The earn live app fires `ledgerlive://earn?action=simulate` and routes itself to the
           // simulator on load; intent="simulate" is handled by BaseNavigator (native header on the
           // live-app canvas) and EarnV2Webview (INTENT_FLOWS / return-to-tab).
-          navigation.navigate(NavigatorName.Base, {
-            screen: NavigatorName.Earn,
+          (navigation.getParent(BASE_NAVIGATOR_ID) ?? navigation).navigate(NavigatorName.Earn, {
+            screen: ScreenName.Earn,
             params: {
-              screen: ScreenName.Earn,
-              params: {
-                intent: "simulate",
-              },
+              intent: "simulate",
             },
           });
           break;

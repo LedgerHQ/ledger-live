@@ -1,0 +1,6 @@
+{
+  "extends": ["./tsconfig.json", "@support/tsconfig/web"],
+  "compilerOptions": {
+    "types": ["jest", "@testing-library/jest-dom"]
+  }
+}

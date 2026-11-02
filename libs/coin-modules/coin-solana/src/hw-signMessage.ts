@@ -3,7 +3,7 @@ import { Account, AnyMessage, DeviceId } from "@ledgerhq/types-live";
 import bs58 from "bs58";
 import invariant from "invariant";
 import semver from "semver";
-import coinConfig from "./config";
+import type { SolanaContext } from "./config";
 import { toOffChainMessage, toOffChainMessageV1 } from "./offchainMessage/format";
 import { SolanaSigner } from "./signer";
 
@@ -24,7 +24,7 @@ function isFormatRejection(err: unknown): boolean {
 }
 
 export const signMessage =
-  (signerContext: SignerContext<SolanaSigner>) =>
+  (signerContext: SignerContext<SolanaSigner>, contextOf: (currencyId: string) => SolanaContext) =>
   async (
     deviceId: DeviceId,
     account: Account,
@@ -40,10 +40,11 @@ export const signMessage =
     }
 
     let signedMessage: Buffer | undefined;
+    const config = await contextOf(account.currency.id).config();
 
     const result = await signerContext(deviceId, async signer => {
       const { version } = await signer.getAppConfiguration();
-      const isLegacy = semver.lt(version, coinConfig.getCoinConfig().legacyOCMSMaxVersion);
+      const isLegacy = semver.lt(version, config.legacyOCMSMaxVersion);
 
       if (isLegacy) {
         const ocm = toOffChainMessage(message, account.freshAddress, true);

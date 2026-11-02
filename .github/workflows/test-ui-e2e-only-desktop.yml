@@ -458,6 +458,15 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      # Every app launch fetches Firebase Remote Config, and overlapping runs share a 60 fetches/min
+      # quota per IP. The proxy makes one fetch per run and replays it to every launch.
+      # Refs dispatched from develop that predate the addon run without it.
+      - name: Start Remote Config capture proxy
+        if: ${{ hashFiles('.mise/tasks/mitmproxy/firebase_capture.py') != '' }}
+        continue-on-error: true
+        run: mise run mitmproxy:capture-start
+        shell: bash
+
       - name: Run Playwright E2E tests
         id: run-playwright
         # Every run can also wait up to 30 minutes for a busy exclusive lock: without broadcast, tests
@@ -485,6 +494,14 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
+
+      - name: Stop Remote Config capture proxy
+        id: capture-proxy
+        if: ${{ !cancelled() && hashFiles('.mise/tasks/mitmproxy/firebase_capture.py') != '' }}
+        continue-on-error: true
+        run: mise run mitmproxy:capture-stop
+        shell: bash
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}
@@ -503,6 +520,8 @@ jobs:
             invert_filter=${{ inputs.invert_filter || false }}
             smoke_tests=${{ inputs.smoke_tests || false }}
             repeat_each=${{ inputs.repeat_each }}
+            remote_config_proxy=${{ steps.capture-proxy.outputs.status || 'off' }}
+            remote_config_templates=${{ steps.capture-proxy.outputs.templates }}
 
       - name: Upload Allure test results artifact
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
@@ -510,6 +529,14 @@ jobs:
         with:
           name: allure-results${{ matrix.artifact_suffix }}
           path: "e2e/desktop/allure-results"
+
+      - name: Upload Remote Config capture proxy logs
+        if: ${{ !cancelled() && steps.capture-proxy.outputs.status == 'on' }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: firebase-capture-logs${{ matrix.artifact_suffix }}
+          path: ${{ runner.temp }}/firebase-capture*
+          retention-days: 7
 
   e2e-tests-macos:
     name: "Desktop E2E (${{ needs.prepare-devices.outputs.device_1 }}, macOS)"
@@ -711,6 +738,7 @@ jobs:
           E2E_EXCLUSIVE_LOCK_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES: ${{ inputs.lock_deferral_passes }}
           E2E_EXCLUSIVE_LOCK_MODE: ${{ inputs.exclusive_lock }}
+          E2E_EXCLUSIVE_LOCK_PRIORITY: ${{ contains(fromJSON('["release","hotfix"]'), inputs.ref || github.ref_name) && 'high' || 'normal' }}
 
       - name: Add workflow inputs to Allure environment
         if: ${{ !cancelled() }}

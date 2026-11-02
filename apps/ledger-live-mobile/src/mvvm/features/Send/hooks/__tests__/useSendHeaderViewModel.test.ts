@@ -3,6 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SEND_FLOW_STEP } from "@ledgerhq/live-common/flows/send/types";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { sendFeatures } from "@ledgerhq/live-common/bridge/descriptor/send/features";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { useMaybeAccountName } from "~/reducers/wallet";
@@ -101,6 +102,7 @@ describe("useSendHeaderViewModel", () => {
     mockedUseSendAmountDisplayMode.mockReturnValue({
       displayMode: "fiat",
       setDisplayMode: jest.fn(),
+      isFiatModeAvailable: true,
     });
     mockedUseAvailableBalance.mockReturnValue("$5,969.83");
     mockedUseCurrentSendFlowStep.mockReturnValue([
@@ -177,12 +179,69 @@ describe("useSendHeaderViewModel", () => {
     });
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("shows the account name and spendable balance below the send title", () => {
     const { result } = renderHook(() => useSendHeaderViewModel());
 
     expect(result.current.title).toBe("Send ETH");
     expect(result.current.descriptionText).toBe("Base 1 · $5,969.83");
-    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat", undefined);
+  });
+
+  it("GIVEN the balance type step WHEN rendered THEN only the balance selection title is shown", () => {
+    mockedUseCurrentSendFlowStep.mockReturnValue([
+      SEND_FLOW_STEP.BALANCE_TYPE,
+      {
+        id: SEND_FLOW_STEP.BALANCE_TYPE,
+        canGoBack: true,
+        showTitle: true,
+        showHeaderRight: false,
+      },
+    ]);
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    expect(result.current.title).toBe("send.newSendFlow.balanceType.title");
+    expect(result.current.descriptionText).toBe("");
+  });
+
+  it("GIVEN a selected balance pool WHEN rendered THEN the account summary names the pool and shows its balance", () => {
+    const poolBalance = new BigNumber(1234);
+    jest.spyOn(sendFeatures, "getBalanceTypeConfig").mockReturnValue({
+      getSelectedOptionId: () => "private",
+      buildSelectionPatch: () => ({}),
+      getSelfTransferTarget: () => null,
+      buildSelfTransferPatch: () => ({}),
+      getSelectableBalance: () => poolBalance,
+      getOptions: () => [
+        {
+          id: "private",
+          translationKey: "balanceType.shielded",
+          balance: poolBalance,
+          hasPendingBalance: false,
+          icon: "lock",
+        },
+      ],
+    });
+
+    const flowData = mockedUseSendFlowData();
+    mockedUseSendFlowData.mockReturnValue({
+      ...flowData,
+      state: {
+        ...flowData.state,
+        transaction: { ...flowData.state.transaction, transaction: { family: "aleo" } },
+      },
+    } as never);
+
+    const { result } = renderHook(() => useSendHeaderViewModel());
+
+    expect(result.current.descriptionText).toBe(
+      "Base 1 (send.newSendFlow.balanceType.shielded.title) · $5,969.83",
+    );
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "fiat", poolBalance);
   });
 
   it("shows address selection for a contact and returns to the recipient list", () => {
@@ -219,19 +278,21 @@ describe("useSendHeaderViewModel", () => {
     mockedUseSendAmountDisplayMode.mockReturnValue({
       displayMode: "crypto",
       setDisplayMode: jest.fn(),
+      isFiatModeAvailable: true,
     });
     mockedUseAvailableBalance.mockReturnValue("0.0596983 ETH");
 
     const { result } = renderHook(() => useSendHeaderViewModel());
 
     expect(result.current.descriptionText).toBe("Base 1 · 0.0596983 ETH");
-    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto", undefined);
   });
 
   it("forces the header balance to crypto on the coin control step, ignoring the fiat display mode", () => {
     mockedUseSendAmountDisplayMode.mockReturnValue({
       displayMode: "fiat",
       setDisplayMode: jest.fn(),
+      isFiatModeAvailable: true,
     });
     mockedUseCurrentSendFlowStep.mockReturnValue([
       SEND_FLOW_STEP.COIN_CONTROL,
@@ -245,7 +306,7 @@ describe("useSendHeaderViewModel", () => {
 
     renderHook(() => useSendHeaderViewModel());
 
-    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto");
+    expect(mockedUseAvailableBalance).toHaveBeenCalledWith(mockAccount, "crypto", undefined);
   });
 
   it("navigates to ScanRecipient and fills the search with the scanned address", () => {

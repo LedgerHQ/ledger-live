@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { AccountSettingsSheet } from "@features/flow-account-detail-settings";
+import { AccountSettingsSheet } from "@features/flow-account-detail-settings/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { ScreenName } from "~/const";

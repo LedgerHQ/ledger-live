@@ -1,11 +1,21 @@
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 
+const CRYPTO_ACCOUNT_ROW_PREFIX = "crypto-account-row-";
+
 export class AccountsPage extends AppPage {
-  private addAccountButton = this.page.getByTestId("accounts-add-account-button");
-  private accountComponent = (accountName: string) =>
-    this.page.getByTestId(`account-component-${accountName}`);
-  private firstAccount = this.page.getByTestId("accounts-account-row-item").locator("div").first();
+  private addAccountButton = this.page.getByTestId("crypto-add-address-button");
+  private readonly accountRows = this.page.locator(`[data-testid^="${CRYPTO_ACCOUNT_ROW_PREFIX}"]`);
+  private firstAccount = this.accountRows.first();
+
+  private readonly getSanitizedAccountName = (accountName: string) =>
+    accountName.replaceAll(/\s+/g, "-");
+
+  private getAccountRow(accountName: string) {
+    return this.page.getByTestId(
+      `${CRYPTO_ACCOUNT_ROW_PREFIX}${this.getSanitizedAccountName(accountName)}`,
+    );
+  }
   // Accounts context menu
   private contextMenuEdit = this.page.getByTestId("accounts-context-menu-edit");
   private settingsDeleteButton = this.page.getByTestId("account-settings-delete-button");
@@ -17,7 +27,7 @@ export class AccountsPage extends AppPage {
 
   @step("Open Account $0")
   async navigateToAccountByName(accountName: string) {
-    await this.accountComponent(accountName).click();
+    await this.getAccountRow(accountName).click();
   }
 
   /**
@@ -31,6 +41,6 @@ export class AccountsPage extends AppPage {
   }
 
   async countAccounts(): Promise<number> {
-    return await this.page.getByTestId("accounts-account-row-item").count();
+    return this.accountRows.count();
   }
 }

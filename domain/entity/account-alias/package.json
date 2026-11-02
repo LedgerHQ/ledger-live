@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-alias",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "AccountAlias entity: non-reversible aliases for account ids, reverse-lookup state and selectors",
   "main": "src/index.ts",
@@ -11,6 +11,7 @@
   },
   "sideEffects": false,
   "scripts": {
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

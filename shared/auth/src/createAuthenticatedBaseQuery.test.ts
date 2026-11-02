@@ -3,6 +3,7 @@ import { createApi } from "@reduxjs/toolkit/query";
 import { HttpResponse, http } from "msw";
 import { setupServer, type SetupServerApi } from "msw/node";
 import { createAuthenticatedBaseQuery } from "./createAuthenticatedBaseQuery";
+import { createAuthMiddleware } from "./middleware";
 import type { AuthProvider } from "./types";
 
 const API_BASE_URL = "https://api.ledger.test";
@@ -68,11 +69,14 @@ describe("createAuthenticatedBaseQuery", () => {
       [api.reducerPath]: api.reducer,
     },
     middleware: getDefaultMiddleware =>
-      getDefaultMiddleware({
-        thunk: {
-          extraArgument: { authProvider },
-        },
-      }).concat(api.middleware),
+      getDefaultMiddleware()
+        .concat(
+          createAuthMiddleware({
+            createAuthProvider: () => authProvider,
+            isFeatureEnabled: () => true,
+          }),
+        )
+        .concat(api.middleware),
   });
 
   // Setup mock server
@@ -271,15 +275,15 @@ describe("createAuthenticatedBaseQuery", () => {
     );
   });
 
-  it("falls back to an unauthenticated request when the auth provider is missing", async () => {
-    const storeWithoutAuthProvider = configureStore({
+  it("falls back to an unauthenticated request when the store has no auth middleware", async () => {
+    const storeWithoutAuthMiddleware = configureStore({
       reducer: {
         [api.reducerPath]: api.reducer,
       },
       middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware),
     });
 
-    const { status, data, error } = await storeWithoutAuthProvider.dispatch(
+    const { status, data, error } = await storeWithoutAuthMiddleware.dispatch(
       api.endpoints.gatedQuery.initiate(),
     );
 
@@ -294,7 +298,7 @@ describe("createAuthenticatedBaseQuery", () => {
       "AuthenticatedBaseQuery failed to authenticate:",
       expect.objectContaining({
         name: "AuthProviderMissingError",
-        message: "Authenticated base query requires api.extra.authProvider",
+        message: "The store has no auth middleware: add createAuthMiddleware",
       }),
     );
   });

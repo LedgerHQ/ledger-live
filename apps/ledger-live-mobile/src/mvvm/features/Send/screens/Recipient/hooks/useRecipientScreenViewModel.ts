@@ -17,6 +17,7 @@ import { ScreenName } from "~/const";
 import { useSendFlowTrackingProperties } from "../../../hooks/useSendFlowTrackingProperties";
 import { useSendFlowActions, useSendFlowData } from "../../../context/SendFlowContext";
 import type { SendFlowNavigationProp } from "../../../types";
+import { getAccountSelfTransferTarget } from "../../../utils/selfTransferTarget";
 
 type RecipientScreenViewModelBase = Readonly<{
   ready: false;
@@ -105,11 +106,18 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
 
   const onAddressSelected = useCallback(
     (address: string, ensName?: string, goToNextStep = true, memo?: Memo) => {
+      const selfTransferTarget = account
+        ? getAccountSelfTransferTarget(account, state.transaction.transaction, parentAccount)
+        : null;
+
       transaction.setRecipient({
         address,
         ensName,
         memo: memo ?? (state.recipient?.address === address ? state.recipient.memo : undefined),
         displayLabel: undefined,
+        isSelfTransfer:
+          selfTransferTarget !== null &&
+          selfTransferTarget.address.toLowerCase() === address.toLowerCase(),
       });
 
       if (goToNextStep) {
@@ -117,7 +125,15 @@ export function useRecipientScreenViewModel(): RecipientScreenViewModel {
         goToAmount();
       }
     },
-    [transaction, state.recipient, recipientSearch, goToAmount],
+    [
+      account,
+      parentAccount,
+      transaction,
+      state.transaction.transaction,
+      state.recipient,
+      recipientSearch,
+      goToAmount,
+    ],
   );
 
   if (!account || !currency) {

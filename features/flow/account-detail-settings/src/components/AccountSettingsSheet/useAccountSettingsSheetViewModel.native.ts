@@ -4,7 +4,7 @@ import {
   getAccountExplorerUrl,
   type AccountExplorerSource,
 } from "../../logic/getAccountExplorerUrl";
-import type { AccountSettingsSheetStep } from "./types.native";
+import type { AccountSettingsSheetStep } from "./types";
 
 export function useAccountSettingsSheetViewModel(account: AccountExplorerSource): Readonly<{
   step: AccountSettingsSheetStep;

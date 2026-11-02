@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-canton",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Ledger Hardware Wallet Canton Application API",
   "keywords": [
     "Ledger",
@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
+    "@ledgerhq/ledger-libs": "workspace:*",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

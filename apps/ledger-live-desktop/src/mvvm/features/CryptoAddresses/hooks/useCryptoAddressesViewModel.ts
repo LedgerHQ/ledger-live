@@ -2,13 +2,12 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource, track } from "@shared/analytics";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
 import { useOpenAssetFlow } from "LLD/features/ModularDialog/hooks/useOpenAssetFlow";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { MAD_SOURCE_PAGES } from "LLD/features/ModularDialog/analytics/modularDialog.types";
-import { getAccountsSidebarPath } from "LLD/components/SideBar/utils";
+import { ACCOUNTS_SIDEBAR_PATH } from "LLD/components/SideBar/utils";
 import type { CryptoAddressesViewModel } from "../types";
 import { CRYPTO_TRACKING_PAGE_NAME } from "../constants";
 import { useCryptoAccountRows } from "../components/Table/hooks/useCryptoAccountRows";
@@ -20,7 +19,6 @@ import { parseCryptoAddressesBackPath } from "../utils/cryptoAddressesLocationSt
 export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
   const [searchValue, setSearchValue] = useState("");
   const { rows, lookupParentAccount } = useCryptoAccountRows(searchValue);
   const { showBackButton, navigateBack } = usePopNavigationBack(parseCryptoAddressesBackPath);
@@ -60,14 +58,14 @@ export default function useCryptoAddressesViewModel(): CryptoAddressesViewModel 
         account: getDefaultAccountName(account),
       });
       if (account.type === "TokenAccount" && !parentAccount) {
-        navigate(getAccountsSidebarPath(shouldDisplayAssetSection));
+        navigate(ACCOUNTS_SIDEBAR_PATH);
         return;
       }
       navigate(
         getAccountUrl(account.id, account.type === "TokenAccount" ? parentAccount?.id : undefined),
       );
     },
-    [navigate, shouldDisplayAssetSection],
+    [navigate],
   );
 
   return {

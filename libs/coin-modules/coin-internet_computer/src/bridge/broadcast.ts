@@ -76,11 +76,12 @@ const isVerdict = (error: unknown): boolean =>
  * module's to change. A refusal settles it the other way — the node never took the message, the
  * replica did not run it, or the ledger itself refused the transfer — and stays a failure for both.
  */
-const submitTransfer = async (rawData: TransferRawData): Promise<void> => {
+const submitTransfer = async (host: string, rawData: TransferRawData): Promise<void> => {
   const neuronTransfer = NEURON_TRANSFER_TYPES.has(rawData.methodName);
   let outcome: LedgerTransferOutcome;
   try {
     const callResponse = await broadcastTxn(
+      host,
       Buffer.from(rawData.encodedSignedCallBlob, "hex"),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
@@ -89,7 +90,7 @@ const submitTransfer = async (rawData: TransferRawData): Promise<void> => {
       if (neuronTransfer) throw new ICPCallUnconfirmed();
       throw new Error("Failed to broadcast transaction: the node returned no certificate");
     }
-    outcome = await readTransferOutcome(callResponse, rawData.transferRequestIdHex);
+    outcome = await readTransferOutcome(host, callResponse, rawData.transferRequestIdHex);
   } catch (error) {
     if (!neuronTransfer || isVerdict(error)) throw error;
     throw new ICPCallUnconfirmed("ICPCallUnconfirmed", { cause: error });
@@ -108,6 +109,7 @@ const submitTransfer = async (rawData: TransferRawData): Promise<void> => {
  * generic, the app would take it for a transfer that never happened and offer the stake again.
  */
 const claimSettledTransfer = async (
+  host: string,
   xpub: string | undefined,
   stakeNonce: string | undefined,
 ): Promise<bigint> => {
@@ -115,7 +117,7 @@ const claimSettledTransfer = async (
     invariant(xpub, "[ICP](broadcast) Account xpub is required to claim the neuron");
     invariant(stakeNonce, "[ICP](broadcast) Stake nonce is required to claim the neuron");
     const controller = derivePrincipalFromPubkey(xpub);
-    const neuronId = await claimOrRefreshNeuronFromAccount(controller, BigInt(stakeNonce));
+    const neuronId = await claimOrRefreshNeuronFromAccount(host, controller, BigInt(stakeNonce));
     // The transfer settled but the claim couldn't be confirmed: don't report the composite staking
     // op as successful. The transfer is in history and the nonce is recoverable, so the neuron can
     // be claimed/refreshed later (idempotent) — but this attempt is unconfirmed, not done.
@@ -127,55 +129,57 @@ const claimSettledTransfer = async (
   }
 };
 
-export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
-  account,
-  signedOperation: { operation, rawData },
-}) => {
-  log("debug", "[broadcast] Internet Computer transaction broadcast initiated");
-  invariant(operation.extra, "[ICP](broadcast) Missing operation extra");
+/** The account bridge's broadcast, reaching the node `resolveHost` names; it is resolved once per call. */
+export const buildBroadcast =
+  (resolveHost: () => string): AccountBridge<Transaction>["broadcast"] =>
+  async ({ account, signedOperation: { operation, rawData } }) => {
+    log("debug", "[broadcast] Internet Computer transaction broadcast initiated");
+    invariant(operation.extra, "[ICP](broadcast) Missing operation extra");
+    const host = resolveHost();
 
-  // Ledger-canister transfer (plain send, neuron creation, neuron top-up).
-  if (isTransferRawData(rawData)) {
-    await submitTransfer(rawData);
+    // Ledger-canister transfer (plain send, neuron creation, neuron top-up).
+    if (isTransferRawData(rawData)) {
+      await submitTransfer(host, rawData);
 
-    // Creation and top-up complete by claiming/refreshing the neuron from the settled transfer.
-    if (NEURON_TRANSFER_TYPES.has(rawData.methodName)) {
-      const neuronId = await claimSettledTransfer(account.xpub, rawData.stakeNonce);
-      if (rawData.methodName === "create_neuron") {
-        return {
-          ...operation,
-          extra: { ...operation.extra, createdNeuronId: neuronId.toString() },
-        };
+      // Creation and top-up complete by claiming/refreshing the neuron from the settled transfer.
+      if (NEURON_TRANSFER_TYPES.has(rawData.methodName)) {
+        const neuronId = await claimSettledTransfer(host, account.xpub, rawData.stakeNonce);
+        if (rawData.methodName === "create_neuron") {
+          return {
+            ...operation,
+            extra: { ...operation.extra, createdNeuronId: neuronId.toString() },
+          };
+        }
       }
+      return operation;
     }
-    return operation;
-  }
 
-  // Governance update call (manage_neuron commands and list_neurons).
-  invariant(isGovernanceRawData(rawData), "[ICP](broadcast) Invalid rawData format");
-  const reply = await readReplyFromCanister(
-    Buffer.from(rawData.encodedSignedCallBlob, "hex"),
-    Buffer.from(rawData.encodedSignedReadStateBlob, "hex"),
-    MAINNET_GOVERNANCE_CANISTER_ID,
-    rawData.requestId,
-  );
+    // Governance update call (manage_neuron commands and list_neurons).
+    invariant(isGovernanceRawData(rawData), "[ICP](broadcast) Invalid rawData format");
+    const reply = await readReplyFromCanister(
+      host,
+      Buffer.from(rawData.encodedSignedCallBlob, "hex"),
+      Buffer.from(rawData.encodedSignedReadStateBlob, "hex"),
+      MAINNET_GOVERNANCE_CANISTER_ID,
+      rawData.requestId,
+    );
 
-  if (rawData.methodName === "list_neurons") {
-    // A read with no reply read nothing. Returning the operation would report the refresh as done
-    // while the snapshot is untouched, so the user spends a signature and is told their neurons are
-    // up to date. Nothing changed and the read is idempotent, so this one is safe to ask again.
-    if (!reply) throw new ICPNeuronsNotRead();
-    const neurons = toNeuronsData(decodeListNeuronsReply(reply)).fullNeurons;
-    return { ...operation, extra: { ...operation.extra, neurons } };
-  }
+    if (rawData.methodName === "list_neurons") {
+      // A read with no reply read nothing. Returning the operation would report the refresh as done
+      // while the snapshot is untouched, so the user spends a signature and is told their neurons are
+      // up to date. Nothing changed and the read is idempotent, so this one is safe to ask again.
+      if (!reply) throw new ICPNeuronsNotRead();
+      const neurons = toNeuronsData(decodeListNeuronsReply(reply)).fullNeurons;
+      return { ...operation, extra: { ...operation.extra, neurons } };
+    }
 
-  // A manage_neuron op is confirmed by its certified reply (or a subsequent neuron refresh), NOT by
-  // ledger sync — governance calls never appear in the account's transaction history. So an
-  // indeterminate result must not be reported as a successful broadcast: that could strand the op or
-  // invite a retry that double-executes a non-idempotent command (split/spawn/disburse).
-  if (!reply) throw new ICPCallUnconfirmed();
-  // A command that computed its own result says so in the reply; carrying it lets the neuron be
-  // brought up to date from figures the canister stated, instead of ones the app guessed at.
-  const outcome = decodeManageNeuronReply(reply);
-  return outcome ? { ...operation, extra: { ...operation.extra, outcome } } : operation;
-};
+    // A manage_neuron op is confirmed by its certified reply (or a subsequent neuron refresh), NOT by
+    // ledger sync — governance calls never appear in the account's transaction history. So an
+    // indeterminate result must not be reported as a successful broadcast: that could strand the op or
+    // invite a retry that double-executes a non-idempotent command (split/spawn/disburse).
+    if (!reply) throw new ICPCallUnconfirmed();
+    // A command that computed its own result says so in the reply; carrying it lets the neuron be
+    // brought up to date from figures the canister stated, instead of ones the app guessed at.
+    const outcome = decodeManageNeuronReply(reply);
+    return outcome ? { ...operation, extra: { ...operation.extra, outcome } } : operation;
+  };

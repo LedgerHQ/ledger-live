@@ -1,17 +1,9 @@
-import { getEnv } from "@ledgerhq/live-env";
 import * as network from "@ledgerhq/live-network";
 import { getValidators } from "../../network/validator-app";
 
-jest.spyOn({ getEnv }, "getEnv").mockImplementation((key: string) => {
-  const testUrls: Record<string, string> = {
-    SOLANA_VALIDATORS_APP_BASE_URL: "https://validators-solana.coin.ledger.com/api/v1/validators",
-    SOLANA_TESTNET_VALIDATORS_APP_BASE_URL:
-      "https://validators-solana.coin.ledger.com/api/v1/validators",
-    SOLANA_VALIDATORS_SUMMARY_BASE_URL:
-      "https://earn-dashboard.aws.stg.ldg-tech.com/figment/solana/validators_summary",
-  };
-  return testUrls[key] || "";
-});
+const MAINNET_VALIDATORS_URL = "https://validators.test.invalid/mainnet";
+const TESTNET_VALIDATORS_URL = "https://validators.test.invalid/testnet";
+const SUMMARY_URL = "https://validators-summary.test.invalid";
 
 const mockValidator = (overrides = {}) => ({
   active_stake: 1000000,
@@ -38,15 +30,15 @@ describe("validator-app", () => {
   });
 
   describe("APY integration", () => {
-    it("should work for testnet without APY", async () => {
+    it("skips the APY when no summary URL is given", async () => {
       jest.spyOn(network, "default").mockResolvedValue({ status: 200, data: [] });
 
-      const result = await getValidators("testnet");
+      const result = await getValidators(TESTNET_VALIDATORS_URL);
 
       expect(network.default).toHaveBeenCalledTimes(1);
       expect(network.default).toHaveBeenCalledWith({
         method: "GET",
-        url: "https://validators-solana.coin.ledger.com/api/v1/validators/testnet.json?order=score&limit=1000",
+        url: TESTNET_VALIDATORS_URL,
       });
       expect(result).toEqual([]);
     });
@@ -60,9 +52,10 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: [apyData] });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators(MAINNET_VALIDATORS_URL, SUMMARY_URL);
 
       expect(network.default).toHaveBeenCalledTimes(2);
+      expect(network.default).toHaveBeenCalledWith({ method: "GET", url: SUMMARY_URL });
       expect(result[0]).toMatchObject({
         activeStake: 1000000,
         voteAccount: "test-validator",
@@ -77,7 +70,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockRejectedValueOnce(new Error("Network error"));
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators(MAINNET_VALIDATORS_URL, SUMMARY_URL);
 
       expect(result[0]).toMatchObject({
         name: "Test Validator",
@@ -92,7 +85,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: "invalid" });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators(MAINNET_VALIDATORS_URL, SUMMARY_URL);
       expect(result[0]).toMatchObject({
         name: "Test Validator",
         apy: undefined,
@@ -112,7 +105,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: [validator] })
         .mockResolvedValueOnce({ status: 200, data: apyData });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators(MAINNET_VALIDATORS_URL, SUMMARY_URL);
       expect(result).toEqual([
         {
           activeStake: 1000000,
@@ -141,7 +134,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 200, data: validators })
         .mockResolvedValueOnce({ status: 200, data: [] });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators(MAINNET_VALIDATORS_URL, SUMMARY_URL);
 
       expect(result).toEqual([
         {
@@ -163,7 +156,7 @@ describe("validator-app", () => {
         .mockResolvedValueOnce({ status: 500, data: null })
         .mockResolvedValueOnce({ status: 200, data: [] });
 
-      const result = await getValidators("mainnet-beta");
+      const result = await getValidators(MAINNET_VALIDATORS_URL, SUMMARY_URL);
       expect(result).toHaveLength(0);
     });
   });

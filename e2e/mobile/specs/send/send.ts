@@ -4,7 +4,8 @@ import { verifyAppValidationSendInfo } from "@e2e/models/send";
 import invariant from "invariant";
 import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { BroadcastFlow, shouldRunSharedAccountFlow } from "@e2e/helpers/broadcastRotation";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
@@ -12,23 +13,6 @@ import type { LiveDataCommandOptions } from "@ledgerhq/live-e2e-shared/cliComman
 import type { InitOptions } from "@e2e/utils/initUtil";
 import { FF_DISABLE_NEW_SEND_FLOW } from "@e2e/utils/featureFlagUtils";
 import { describeIfNanoSSupports, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
-
-export const BST_SEND_CURRENCIES = new Set([
-  "aptos",
-  "sui",
-  "cardano",
-  "kaspa",
-  "vechain",
-  "zcash",
-  "algorand",
-  "hedera",
-  "ripple",
-  "concordium_testnet",
-  "internet_computer",
-]);
-const BST_SEND_INVALID_ADDRESS_CURRENCIES = new Set(["hedera", "ripple", "algorand"]);
-const BST_SEND_INVALID_AMOUNT_CURRENCIES = new Set(["hedera", "ripple"]);
-const BST_SEND_VALID_ADDRESS_CURRENCIES = new Set(["ripple"]);
 
 export type SendTestOptions = {
   featureFlags?: InitOptions["featureFlags"];
@@ -140,11 +124,9 @@ export function runSendTest(
   options?: SendTestOptions,
 ) {
   declareBroadcastAccounts(transaction.accountToDebit);
-  setTeamOwner(
-    BST_SEND_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   const flow = options?.sharedAccountFlow;
@@ -172,6 +154,8 @@ export function runSendTest(
 type RunSendInvalidAddressTestOptions = {
   transaction: TransactionType;
   expectedErrorMessage: string;
+  /** What the invalid recipient is, for the test name: e.g. "same as sender", "empty". */
+  scenario: string;
   address?: string;
   tmsLinks: string[];
   tags: string[];
@@ -179,12 +163,11 @@ type RunSendInvalidAddressTestOptions = {
 };
 
 export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOptions) {
-  const { transaction, expectedErrorMessage, address, tmsLinks, tags, accountName } = options;
-  setTeamOwner(
-    BST_SEND_INVALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  const { transaction, expectedErrorMessage, scenario, address, tmsLinks, tags, accountName } =
+    options;
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   const describeOnDevice = describeIfNanoSSupports(transaction.accountToDebit.currency.id);
@@ -193,7 +176,7 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
       await beforeAllInvalidAddressFunction(transaction, address);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid address error: ${expectedErrorMessage || "no error message"}`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid address - ${scenario}`, async () => {
       const recipientAddress = address ?? transaction.accountToCredit.address ?? "";
       await app.send.navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       await app.send.setRecipient(recipientAddress, transaction.memoTag);
@@ -205,16 +188,14 @@ export function runSendInvalidAddressTest(options: RunSendInvalidAddressTestOpti
 export function runSendValidAddressTest(
   transaction: TransactionType,
   tmsLinks: string[],
-  testName: string,
+  scenario: string,
   tags: string[],
   accountName?: string,
   expectedWarningMessage?: string,
 ) {
-  setTeamOwner(
-    BST_SEND_VALID_ADDRESS_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - valid address input", () => {
@@ -222,11 +203,11 @@ export function runSendValidAddressTest(
       await beforeAllLegacyFunction(transaction, { liveDataOptions: { useScheme: true } });
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send valid address input - ${testName}`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send - valid address - ${scenario}`, async () => {
       await app.send.navigateToSendScreen(accountName || transaction.accountToDebit.accountName);
       const shouldLowerCaseRecipientAddress =
         transaction.accountToCredit === Account.ETH_2_LOWER_CASE ||
-        testName.toLowerCase().includes("lower case");
+        scenario.toLowerCase().includes("lower case");
 
       const baseRecipientAddress = transaction.accountToCredit.address ?? "";
       const recipientAddress = shouldLowerCaseRecipientAddress
@@ -253,11 +234,9 @@ export function runSendInvalidAmountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  setTeamOwner(
-    BST_SEND_INVALID_AMOUNT_CURRENCIES.has(transaction.accountToDebit.currency.id)
-      ? Team.BST
-      : Team.COIN_INTEGRATION,
-  );
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   const describeOnDevice = describeIfNanoSSupports(transaction.accountToDebit.currency.id);
@@ -266,7 +245,7 @@ export function runSendInvalidAmountTest(
       await beforeAllLegacyFunction(transaction);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid amount error: ${expectedErrorMessage || "no error message"} (${transaction.amount || "empty amount"})`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.amount})`, async () => {
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
       await app.send.setRecipientAndContinue(
         transaction.accountToCredit.address,
@@ -284,7 +263,9 @@ export function runSendInvalidTokenAmountTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - token", () => {
@@ -292,7 +273,7 @@ export function runSendInvalidTokenAmountTest(
       await beforeAllLegacyFunction(transaction);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send invalid amount error (${transaction.amount})`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send - invalid amount (${transaction.amount})`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await app.send.navigateToSendScreen(transaction.accountToDebit.currency.name);
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
@@ -317,7 +298,9 @@ export function runSendInvalidTokenAmountTest(
 export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - max amount", () => {
@@ -325,7 +308,7 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
       await beforeAllLegacyFunction(transaction);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send max amount`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send - max amount`, async () => {
       const addressToCredit = transaction.accountToCredit.address;
       await app.send.navigateToSendScreen(transaction.accountToDebit.accountName);
       await app.send.setRecipientAndContinue(addressToCredit, transaction.memoTag);
@@ -343,7 +326,9 @@ export function runSendMaxTest(transaction: TransactionType, tmsLinks: string[],
 export function runSendENSTest(transaction: TransactionType, tmsLinks: string[], tags: string[]) {
   setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
-  setTeamOwner(Team.COIN_INTEGRATION);
+  setTeamOwner(coinTeamOwner(transaction.accountToDebit.currency.id), {
+    folder: TestFolder.LEGACY_TESTS,
+  });
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
   describe("Send - ENS address", () => {
@@ -351,7 +336,7 @@ export function runSendENSTest(transaction: TransactionType, tmsLinks: string[],
       await beforeAllLegacyFunction(transaction);
     });
 
-    it(`[${transaction.accountToDebit.currency.testLabel}] - Send to ENS address`, async () => {
+    it(`[${transaction.accountToDebit.currency.testLabel}] - Send - ENS address`, async () => {
       const ensName = transaction.accountToCredit.ensName;
       invariant(ensName, "ENS name is not provided");
 

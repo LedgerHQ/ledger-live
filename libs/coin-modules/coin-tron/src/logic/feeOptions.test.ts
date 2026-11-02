@@ -220,7 +220,6 @@ describe("listFeeOptions", () => {
         feeAsset: {
           type: "trc20",
           assetReference: TRC20_CONTRACT,
-          name: "Tether USD",
           unit: { name: "USDT", code: "USDT", magnitude: 6 },
         },
       },

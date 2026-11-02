@@ -40,6 +40,8 @@ describe("Page utils", () => {
     });
 
     it("returns true for wallet 4.0 prefix routes and nested paths", () => {
+      expect(isWallet40Page("/asset")).toBe(true);
+      expect(isWallet40Page("/asset/btc")).toBe(true);
       expect(isWallet40Page("/card")).toBe(true);
       expect(isWallet40Page("/card/foo")).toBe(true);
       expect(isWallet40Page("/swap")).toBe(true);
@@ -57,23 +59,6 @@ describe("Page utils", () => {
       expect(isWallet40Page("/market/trending")).toBe(false);
       expect(isWallet40Page("/cryptos/extra")).toBe(false);
     });
-
-    describe("/asset prefix (conditional on shouldDisplayAggregatedAssets)", () => {
-      it("returns false for /asset routes when shouldDisplayAggregatedAssets is not provided", () => {
-        expect(isWallet40Page("/asset")).toBe(false);
-        expect(isWallet40Page("/asset/btc")).toBe(false);
-      });
-
-      it("returns false for /asset routes when shouldDisplayAggregatedAssets is false", () => {
-        expect(isWallet40Page("/asset", { shouldDisplayAggregatedAssets: false })).toBe(false);
-        expect(isWallet40Page("/asset/btc", { shouldDisplayAggregatedAssets: false })).toBe(false);
-      });
-
-      it("returns true for /asset routes when shouldDisplayAggregatedAssets is true", () => {
-        expect(isWallet40Page("/asset", { shouldDisplayAggregatedAssets: true })).toBe(true);
-        expect(isWallet40Page("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(true);
-      });
-    });
   });
 
   describe("shouldDisplayRightPanel", () => {
@@ -89,28 +74,14 @@ describe("Page utils", () => {
       expect(shouldDisplayRightPanel("/earn")).toBe(false);
     });
 
-    describe("/asset routes (conditional on shouldDisplayAggregatedAssets)", () => {
-      it("returns false for /asset routes when shouldDisplayAggregatedAssets is not enabled", () => {
-        expect(shouldDisplayRightPanel("/asset")).toBe(false);
-        expect(shouldDisplayRightPanel("/asset/btc")).toBe(false);
-        expect(shouldDisplayRightPanel("/asset", { shouldDisplayAggregatedAssets: false })).toBe(
-          false,
-        );
-      });
-
-      it("returns true for /asset routes when shouldDisplayAggregatedAssets is true", () => {
-        expect(shouldDisplayRightPanel("/asset", { shouldDisplayAggregatedAssets: true })).toBe(
-          true,
-        );
-        expect(shouldDisplayRightPanel("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(
-          true,
-        );
+    describe("/asset routes", () => {
+      it("returns true for asset detail routes", () => {
+        expect(shouldDisplayRightPanel("/asset")).toBe(true);
+        expect(shouldDisplayRightPanel("/asset/btc")).toBe(true);
       });
 
       it("does not treat /assets as an aggregated asset detail route", () => {
-        expect(shouldDisplayRightPanel("/assets", { shouldDisplayAggregatedAssets: true })).toBe(
-          false,
-        );
+        expect(shouldDisplayRightPanel("/assets")).toBe(false);
       });
     });
 
@@ -141,15 +112,12 @@ describe("Page utils", () => {
     it("returns 'swap' on swap-enabled routes", () => {
       expect(getRightPanelVariant("/")).toBe("swap");
       expect(getRightPanelVariant("/analytics")).toBe("swap");
-      expect(getRightPanelVariant("/asset/btc", { shouldDisplayAggregatedAssets: true })).toBe(
-        "swap",
-      );
+      expect(getRightPanelVariant("/asset/btc")).toBe("swap");
       expect(getRightPanelVariant("/account/abc", { isAccountDetailPage: true })).toBe("swap");
     });
 
     it("returns undefined on routes without a right panel", () => {
       expect(getRightPanelVariant("/market")).toBeUndefined();
-      expect(getRightPanelVariant("/asset/btc")).toBeUndefined();
       expect(getRightPanelVariant("/accounts")).toBeUndefined();
       expect(getRightPanelVariant("/account/abc")).toBeUndefined();
     });

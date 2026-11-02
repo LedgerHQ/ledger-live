@@ -1,7 +1,7 @@
 import React from "react";
-import { AccountSettingsSheetView } from "./AccountSettingsSheetView.native";
-import type { AccountSettingsSheetProps } from "./types.native";
-import { useAccountSettingsSheetViewModel } from "./useAccountSettingsSheetViewModel.native";
+import { AccountSettingsSheetView } from "./AccountSettingsSheetView";
+import type { AccountSettingsSheetProps } from "./types";
+import { useAccountSettingsSheetViewModel } from "./useAccountSettingsSheetViewModel";
 
 export function AccountSettingsSheet(props: AccountSettingsSheetProps) {
   return (

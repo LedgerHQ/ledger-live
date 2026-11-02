@@ -30,6 +30,7 @@ export const COMMANDS: readonly CommandEntry[] = [
       "Enroll and manage Agent Intent profiles for AI agents proposing Ethereum and Solana payments and Ethereum swaps for human review, list the intents they proposed, check their status and cancel them, and sync their Ledger Sync accounts.",
     subcommands: [
       "enroll",
+      "wait",
       "recover",
       "list",
       "show",

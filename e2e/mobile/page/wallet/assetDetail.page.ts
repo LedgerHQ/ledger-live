@@ -207,7 +207,8 @@ export default class AssetDetailPage {
 
   @Step("Open holding address {{{0}}}")
   async openHoldingAddress(accountId: string) {
-    await this.scrollToAddressItem(accountId);
+    const scrollViewId = await this.getScrollViewId();
+    await revealForTap(this.addressItemNameId(accountId), { container: scrollViewId });
     await tapById(this.addressItemNameId(accountId));
   }
 

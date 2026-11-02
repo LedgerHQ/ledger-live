@@ -1,6 +1,6 @@
 {
   "name": "@shared/linking",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Cross-platform external link opening with URL safety, localization, and tracking",
   "main": "src/index.ts",
@@ -13,6 +13,7 @@
   "scripts": {
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
+    "lint": "oxlint ./src",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

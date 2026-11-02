@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-solana",
-  "version": "7.12.0",
+  "version": "7.13.0",
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
     "Ledger",
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "catalog:",
+    "@ledgerhq/ledger-libs": "workspace:*",
     "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@swc/core": "catalog:",

@@ -33,7 +33,7 @@ export function ContactAddressDetailActionsSheets({
         testID="contacts-delete-address-sheet"
         enableDynamicSizing
       >
-        <ContactsDeleteAddressDialog {...deleteSheet} bottomInset={bottomInset} />
+        <ContactsDeleteAddressDialog {...deleteSheet} />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={signerMismatchSheet.isOpen}
@@ -53,7 +53,7 @@ export function ContactAddressDetailActionsSheets({
         // mid-animation. The two then animate up together.
         snapPoints="fullWithOffset"
       >
-        <ContactsRenameAddressDialog {...renameSheet} autoFocus bottomInset={bottomInset} />
+        <ContactsRenameAddressDialog {...renameSheet} autoFocus />
       </QueuedBottomSheet>
     </>
   );

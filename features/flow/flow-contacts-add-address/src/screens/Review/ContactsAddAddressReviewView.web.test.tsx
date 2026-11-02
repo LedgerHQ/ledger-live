@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ContactAddressLabelSchema, ContactAddressValueSchema } from "@domain/entity-contact";
-import { ContactsAddAddressReviewView } from "./ContactsAddAddressReviewView.web";
+import { ContactsAddAddressReviewView } from "./ContactsAddAddressReviewView";
 
 const ADDRESS = ContactAddressValueSchema.parse("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
 const NAME = ContactAddressLabelSchema.parse("Exchange");

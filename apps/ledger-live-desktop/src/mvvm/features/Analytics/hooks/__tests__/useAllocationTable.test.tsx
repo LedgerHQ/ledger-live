@@ -15,11 +15,6 @@ jest.mock("LLD/components/Cells/CounterValueCell", () => ({
   CounterValueCell: () => <span data-testid="counter-value-cell">CV</span>,
 }));
 
-jest.mock("~/renderer/components/CryptoCurrencyIcon", () => ({
-  __esModule: true,
-  default: () => <span data-testid="crypto-icon" />,
-}));
-
 const items: AllocationTableItem[] = [
   allocationItems[0],
   { ...allocationItems[1], distribution: 30.55 },
@@ -56,7 +51,16 @@ describe("useAllocationTable", () => {
   it("should render a crypto icon for each row", () => {
     render(<TableWrapper data={items} />);
 
-    expect(screen.getAllByTestId("crypto-icon")).toHaveLength(2);
+    const icons = screen.getAllByRole("img");
+    expect(icons).toHaveLength(2);
+    expect(icons[0].querySelector("img")).toHaveAttribute(
+      "src",
+      expect.stringContaining("BTC.png"),
+    );
+    expect(icons[1].querySelector("img")).toHaveAttribute(
+      "src",
+      expect.stringContaining("ETH.png"),
+    );
   });
 
   it("should render BalanceCell for each row", () => {

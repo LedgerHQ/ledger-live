@@ -4,10 +4,8 @@ import MarketBanner from "LLD/features/MarketBanner";
 import PageHeader from "LLD/components/PageHeader";
 import { PortfolioViewModelResult } from "./hooks/usePortfolioViewModel";
 
-import AssetDistribution from "~/renderer/screens/dashboard/AssetDistribution";
 import { Balance } from "./components/Balance";
 import QuickActions from "LLD/features/QuickActions";
-import { AddAccount } from "./components/AddAccount";
 import { PerpsEntryPoint } from "./components/PerpsEntryPoint";
 import { BorrowEntryPoint } from "./components/BorrowEntryPoint";
 import { PortfolioServicesEntryPoints } from "./components/PortfolioServicesEntryPoints";
@@ -25,8 +23,6 @@ export const PortfolioView = memo(function PortfolioView({
   totalOperations,
   totalCurrencies,
   hasExchangeBannerCTA,
-  shouldDisplayAssetSection,
-  shouldDisplayAssetDiscoverability,
   shouldDisplayBorrowSection,
   shouldDisplayPerpsEntryPoint,
   shouldDisplayServicesEntryPoints,
@@ -34,8 +30,6 @@ export const PortfolioView = memo(function PortfolioView({
   t,
   isClearCacheBannerVisible,
 }: PortfolioViewModelResult) {
-  const shouldDisplayAddAccountCta = totalAccounts === 0 && !shouldDisplayAssetSection;
-
   return (
     <>
       <div className={isClearCacheBannerVisible ? "mb-32" : undefined}>
@@ -66,19 +60,14 @@ export const PortfolioView = memo(function PortfolioView({
 
           {shouldDisplayPerpsEntryPoint && <PerpsEntryPoint />}
 
-          {shouldDisplayAssetSection ? (
-            <Assets
-              afterCryptosSection={
-                shouldDisplayServicesEntryPoints ? <PortfolioServicesEntryPoints /> : null
-              }
-            />
-          ) : (
-            <AssetDistribution />
-          )}
-          {shouldDisplayAssetDiscoverability && <StocksSection />}
+          <Assets
+            afterCryptosSection={
+              shouldDisplayServicesEntryPoints ? <PortfolioServicesEntryPoints /> : null
+            }
+          />
+          <StocksSection />
           {shouldDisplayBorrowSection && <BorrowEntryPoint />}
-          {shouldDisplayAddAccountCta && <AddAccount />}
-          {shouldDisplayAssetSection && <CryptoAddressesBanner />}
+          <CryptoAddressesBanner />
           {shouldDisplayBrazePlacement && <BottomCarouselContentCards />}
         </div>
       </div>

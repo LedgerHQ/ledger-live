@@ -959,7 +959,7 @@ export function transactionToIntent(
     senderPublicKey: account.xpub,
     recipient: transaction.recipient,
     amount,
-    asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
+    asset: { type: "native" },
     useAllAmount,
     sequence:
       transaction.nonce !== null && transaction.nonce !== undefined
@@ -976,8 +976,6 @@ export function transactionToIntent(
     res.asset = {
       type: tokenAccount?.token.tokenType ?? "token",
       assetReference: transaction.assetReference,
-      name: tokenAccount?.token.name ?? transaction.assetReference, // NOTE: for stellar, assetReference = tokenAccount.name, this is futureproofing
-      unit: account.currency.units[0],
       assetOwner: transaction.assetOwner,
     };
   }

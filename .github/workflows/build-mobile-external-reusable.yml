@@ -89,11 +89,16 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: macos-14
+    runs-on: macos-26
     name: "iOS Build"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
+      # Same Xcode as the self-hosted Macs (LedgerHQ/mac-foundry, ledger-live-tahoe image)
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ inputs.ref }}

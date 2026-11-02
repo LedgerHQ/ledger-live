@@ -2,7 +2,7 @@ import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCryptoDataTable } from "./hooks/useCryptoDataTable";
 import { PlainCryptoTable } from "../PlainCryptoTable";
-import { AccountSettings } from "@features/flow-account-detail-settings";
+import { AccountSettings } from "@features/flow-account-detail-settings/web";
 import { useAccountSettingsAdapter } from "LLD/hooks/useAccountSettingsAdapter";
 import { EditName } from "../EditName";
 import { CryptoTableCellDataProvider } from "./CryptoTableCells";

@@ -166,8 +166,6 @@ describe("PortfolioView", () => {
     totalOperations: 10,
     totalCurrencies: 3,
     hasExchangeBannerCTA: true,
-    shouldDisplayAssetSection: true,
-    shouldDisplayAssetDiscoverability: false,
     shouldDisplayBorrowSection: false,
     shouldDisplayPerpsEntryPoint: true,
     shouldDisplayServicesEntryPoints: false,
@@ -536,7 +534,6 @@ describe("PortfolioView", () => {
               ...AFTER_ONBOARDING_STATE,
             },
             ...withFlagOverrides({
-              lwdWallet40: { enabled: true, params: { assetSection: true } },
               entryPointsServices: { enabled: true, params: { services: ["borrow", "perps"] } },
               ptxPerpsLiveApp: { enabled: true },
               ptxBorrowLiveApp: { enabled: true },
@@ -597,8 +594,8 @@ describe("PortfolioView", () => {
   });
 
   describe("AssetSection", () => {
-    it("should render Assets section when shouldDisplayAssetSection is true", async () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={true} />);
+    it("should render Assets section", async () => {
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByText("Bitcoin")).toBeVisible();
@@ -607,59 +604,37 @@ describe("PortfolioView", () => {
       expect(screen.queryByText("Crypto")).toBeVisible();
       expect(screen.queryByText("Stablecoins")).toBeVisible();
     });
-
-    it("should render AssetDistribution when shouldDisplayAssetSection is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
-
-      expect(screen.queryByText("Crypto")).not.toBeInTheDocument();
-    });
   });
 
   describe("AddAccount CTA", () => {
-    it("should render AddAccount CTA when user has zero accounts, Wallet 4.0 is enabled, and asset section is not displayed", () => {
-      render(
-        <PortfolioView {...defaultProps} totalAccounts={0} shouldDisplayAssetSection={false} />,
-      );
-
-      expect(screen.getByTestId("portfolio-add-account-button")).toBeVisible();
-    });
-
     it("should not render AddAccount CTA when user has accounts", () => {
       render(<PortfolioView {...defaultProps} totalAccounts={3} />);
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
 
-    it("should not render AddAccount CTA when asset section is displayed", () => {
-      render(
-        <PortfolioView {...defaultProps} totalAccounts={0} shouldDisplayAssetSection={true} />,
-      );
+    it("should not render AddAccount CTA when user has zero accounts", () => {
+      render(<PortfolioView {...defaultProps} totalAccounts={0} />);
 
       expect(screen.queryByTestId("portfolio-add-account-button")).toBeNull();
     });
   });
 
   describe("CryptoAddressesBanner", () => {
-    it("should render crypto-addresses-banner when asset section is displayed", async () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={true} />);
+    it("should render crypto-addresses-banner", async () => {
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("crypto-addresses-banner")).toBeVisible();
       });
     });
-
-    it("should not render crypto-addresses-banner when asset section is not displayed", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetSection={false} />);
-
-      expect(screen.queryByTestId("crypto-addresses-banner")).toBeNull();
-    });
   });
 
   describe("AssetDiscoverability", () => {
-    it("should render Stocks discovery section when shouldDisplayAssetDiscoverability is true and user holds no stocks", async () => {
+    it("should render Stocks discovery section when the user holds no stocks", async () => {
       server.use(http.get(DADA_API_ENDPOINT, () => HttpResponse.json(mockStocksResponse)));
 
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("stock-item-ticker-aaplx")).toBeVisible();
@@ -686,7 +661,7 @@ describe("PortfolioView", () => {
         }),
       });
 
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={true} />);
+      render(<PortfolioView {...defaultProps} />);
 
       await waitFor(() => {
         expect(screen.getByTestId("w40-asset-row-apple-xstock-solanasplapplex")).toBeVisible();
@@ -694,12 +669,6 @@ describe("PortfolioView", () => {
 
       expect(screen.getByTestId("stocks-section")).toBeVisible();
       expect(screen.queryByTestId("stocks-explore")).toBeNull();
-    });
-
-    it("should not render Stocks section when shouldDisplayAssetDiscoverability is false", () => {
-      render(<PortfolioView {...defaultProps} shouldDisplayAssetDiscoverability={false} />);
-
-      expect(screen.queryByTestId("stocks-section")).toBeNull();
     });
   });
 });

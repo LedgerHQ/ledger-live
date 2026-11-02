@@ -1,0 +1,11 @@
+import React from "react";
+import { TrendCellView } from "./TrendCellView";
+import { useTrendCellViewModel } from "./useTrendCellViewModel";
+
+type TrendCellProps = {
+  readonly trend?: number | null;
+};
+
+export function TrendCell({ trend }: TrendCellProps) {
+  return <TrendCellView {...useTrendCellViewModel(trend)} />;
+}

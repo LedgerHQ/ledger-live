@@ -9,7 +9,11 @@ jest.mock("../../network/api", () => ({
 import * as api from "../../network/api";
 import { deriveAddressFromPubkey } from "../../logic/crypto";
 import { ICPAccount, ICPNeuron, NeuronsData, NeuronState } from "../../types";
-import { getAccountShape, postSync } from "./account";
+import { buildGetAccountShape, postSync } from "./account";
+
+const LOCAL_NODE = "http://127.0.0.1:4943";
+
+const getAccountShape = buildGetAccountShape(() => LOCAL_NODE);
 
 const XPUB =
   "0484bf7562262bbd6940085748f3be6afa52ae317155181ece31b66351ccffa4b08cc43d63b2859d469fee15f31c9edb5324266e6fd0407e87382d60fc4511acd8";
@@ -174,6 +178,9 @@ describe("getAccountShape history", () => {
     const shape = await getAccountShape(infoWith(undefined), {} as any);
 
     expect(shape.operations?.map(op => [op.type, op.blockHeight])).toEqual([["IN", 4]]);
+    expect(api.fetchBlockHeight).toHaveBeenCalledWith(LOCAL_NODE);
+    expect(api.fetchBalance).toHaveBeenCalledWith(LOCAL_NODE, address);
+    expect(api.fetchTxns).toHaveBeenCalledWith(LOCAL_NODE, address, 100n, undefined);
   });
 });
 

@@ -8,6 +8,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
+import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import { NavigatorName, ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
@@ -57,6 +58,8 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
     track("button_clicked", { button: "ExploreDevices", page: MY_WALLET_TRACKING_PAGE_NAME });
     Linking.openURL(exploreDevicesUrl);
   }, [exploreDevicesUrl]);
+
+  const onAddDevice = useUnifiedAddDevice();
 
   const onSelectDevice = (selected?: Device) => {
     if (selected)
@@ -132,6 +135,7 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
+          onAddDevice={onAddDevice}
           withMyLedgerTracking
         >
           <Box lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}>

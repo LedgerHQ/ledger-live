@@ -1,8 +1,9 @@
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
-import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
+import { coinTeamOwner } from "@ledgerhq/live-e2e-shared/data/coinTeamOwner";
+import { TestFolder } from "@ledgerhq/live-e2e-shared/enum/TestFolder";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 
-setTeamOwner(Team.COIN_INTEGRATION);
+setTeamOwner(coinTeamOwner(Account.TRX_3.currency.id), { folder: TestFolder.RECEIVE });
 describe("Receive", () => {
   const account = Account.TRX_3;
 
@@ -26,7 +27,7 @@ describe("Receive", () => {
     "@family-tron",
   ];
   tags.forEach(tag => $Tag(tag));
-  it(`[${account.currency.testLabel}] - Verify address activation warning on empty account`, async () => {
+  it(`[${account.currency.testLabel}] - Verify address - activation warning on empty account`, async () => {
     await app.account.openViaDeeplink();
     await app.account.goToAccountByName(account.accountName);
     await app.account.tapReceive();

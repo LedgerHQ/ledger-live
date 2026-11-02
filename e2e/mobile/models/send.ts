@@ -2,7 +2,6 @@ import { TransactionType } from "@ledgerhq/live-e2e-shared/models/Transaction";
 
 export async function verifyAppValidationSendInfo(transaction: TransactionType, amount: string) {
   const currenciesForValidationAmount = [
-    Currency.sepETH,
     Currency.DOT,
     Currency.POL,
     Currency.ALGO,
@@ -16,7 +15,7 @@ export async function verifyAppValidationSendInfo(transaction: TransactionType, 
     Currency.BCH,
   ];
 
-  const currenciesForValidationRecipient = [Currency.sepETH, Currency.POL];
+  const currenciesForValidationRecipient = [Currency.POL];
   const currenciesForValidationSender = [Currency.ATOM];
 
   const currency = transaction.accountToCredit.currency;

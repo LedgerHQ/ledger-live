@@ -5,6 +5,7 @@ import yoctoSpinner from "yocto-spinner";
 import type { Spinner } from "yocto-spinner";
 import { colors, writeStdout as bunliWriteStdout } from "@bunli/utils";
 import { detectAgent } from "./agent-detection";
+import { createTestSeam } from "./test-seam";
 export { colors };
 
 type Writer = (chunk: string) => void;
@@ -40,6 +41,14 @@ export function writeStderr(message: string): void {
 }
 
 let activeSpinner: Spinner | null = null;
+
+type CreateSpinner = (text: string) => Spinner;
+
+const createYoctoSpinner: CreateSpinner = text => yoctoSpinner({ text, stream: process.stderr });
+const createSpinner = createTestSeam(createYoctoSpinner);
+
+/** @internal Test seam — creates spinners that draw nothing; `null` restores yocto-spinner. */
+export const _setTestSpinner = createSpinner.set;
 
 export function isAgentEnvironment(): boolean {
   return detectAgent().detected;
@@ -105,7 +114,7 @@ export function spinner(text: string): Spinner {
   if (activeSpinner?.isSpinning) {
     activeSpinner.stop();
   }
-  activeSpinner = yoctoSpinner({ text, stream: process.stderr }).start();
+  activeSpinner = createSpinner.get()(text).start();
   return activeSpinner;
 }
 

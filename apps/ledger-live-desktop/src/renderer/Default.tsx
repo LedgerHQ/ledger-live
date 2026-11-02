@@ -38,11 +38,7 @@ import ModalsLayer from "./ModalsLayer";
 import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import { updateIdentify } from "./analytics/segment";
-import {
-  useFeature,
-  FeatureToggle,
-  useWalletFeaturesConfig,
-} from "@features/platform-feature-flags";
+import { useFeature, FeatureToggle } from "@features/platform-feature-flags";
 import {
   useFetchCurrencyAll,
   useFetchCurrencyFrom,
@@ -100,7 +96,6 @@ const Perps = lazy(() => import("LLD/features/Perps"));
 const Borrow = lazy(() => import("LLD/features/Borrow"));
 const Market = lazy(() => import("LLD/features/Market"));
 
-const MarketCoin = lazy(() => import("~/renderer/screens/market/MarketCoin"));
 const WelcomeScreenSettings = lazy(
   () => import("~/renderer/screens/settings/WelcomeScreenSettings"),
 );
@@ -111,7 +106,6 @@ const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore")
 const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
 const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
 const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
-const Asset = lazy(() => import("~/renderer/screens/asset"));
 const AssetDetails = lazy(() => import("LLD/features/AssetDetail"));
 const AccountDetailRoute = lazy(() => import("LLD/features/AccountDetail/AccountDetailRoute"));
 const Analytics = lazy(() => import("LLD/features/Analytics"));
@@ -196,16 +190,7 @@ const RecoverPlayerWithFeatureToggle = () => {
   );
 };
 
-// Shared content for the main app layout
-type MainAppContentProps = Readonly<{
-  shouldDisplayAssetSection: boolean;
-  shouldDisplayAggregatedAssets: boolean;
-}>;
-
-function MainAppContent({
-  shouldDisplayAssetSection,
-  shouldDisplayAggregatedAssets,
-}: MainAppContentProps) {
+function MainAppContent() {
   const { pathname } = useLocation();
   const hideMainShell = isFullscreenOverlayRoute(pathname);
 
@@ -225,26 +210,8 @@ function MainAppContent({
               <Route path="/settings/*" element={withSuspense(Settings)({})} />
               <Route path="/devtools" element={withSuspense(DevToolsScreen)({})} />
               <Route path="/accounts" element={withSuspense(Accounts)({})} />
-              <Route
-                path="/cryptos"
-                element={
-                  shouldDisplayAssetSection ? (
-                    withSuspense(CryptoAddresses)({})
-                  ) : (
-                    <Navigate to="/accounts" replace />
-                  )
-                }
-              />
-              <Route
-                path="/assets"
-                element={
-                  shouldDisplayAssetSection ? (
-                    withSuspense(CryptoAssets)({})
-                  ) : (
-                    <Navigate to="/accounts" replace />
-                  )
-                }
-              />
+              <Route path="/cryptos" element={withSuspense(CryptoAddresses)({})} />
+              <Route path="/assets" element={withSuspense(CryptoAssets)({})} />
               <Route path="/card-new-wallet" element={withSuspense(CardW40)({})} />
               <Route path="/card/:appId?" element={withSuspense(Card)({})} />
               <Route path="/paytab" element={withSuspense(PayTab)({})} />
@@ -261,21 +228,9 @@ function MainAppContent({
                 element={withSuspense(AccountDetailRoute)({})}
               />
               <Route path="/account/:id/*" element={withSuspense(AccountDetailRoute)({})} />
-              <Route
-                path="/asset/*"
-                element={withSuspense(shouldDisplayAggregatedAssets ? AssetDetails : Asset)({})}
-              />
+              <Route path="/asset/*" element={withSuspense(AssetDetails)({})} />
               <Route path="/swap/*" element={withSuspense(Swap2)({})} />
-              <Route
-                path="/market/:currencyId"
-                element={
-                  shouldDisplayAggregatedAssets ? (
-                    <RedirectMarketToAsset />
-                  ) : (
-                    withSuspense(MarketCoin)({})
-                  )
-                }
-              />
+              <Route path="/market/:currencyId" element={<RedirectMarketToAsset />} />
               <Route path="/market" element={withSuspense(Market)({})} />
               <Route path="/bank/*" element={withSuspense(Bank)({})} />
               <Route path="/analytics" element={withSuspense(Analytics)({})} />
@@ -296,15 +251,12 @@ export const MainAppLayout = () => {
   const { pathname } = useLocation();
   const theme = useSelector(themeSelector);
   const styledComponentsTheme = useTheme();
-  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
-    useWalletFeaturesConfig("desktop");
   const shouldShowDeferredModals = useShouldShowDeferredModals();
 
   const backgroundImage = getPageBackground(pathname, theme);
 
   const isAccountDetailPage = useIsAccountDetailPage(pathname);
-  const useWallet40Layout =
-    isAccountDetailPage || isWallet40Page(pathname, { shouldDisplayAggregatedAssets });
+  const useWallet40Layout = isAccountDetailPage || isWallet40Page(pathname);
 
   useEffect(() => {
     preloadBackgrounds();
@@ -342,10 +294,7 @@ export const MainAppLayout = () => {
               }
         }
       >
-        <MainAppContent
-          shouldDisplayAssetSection={shouldDisplayAssetSection}
-          shouldDisplayAggregatedAssets={shouldDisplayAggregatedAssets}
-        />
+        <MainAppContent />
       </div>
 
       <NightlyLayer />

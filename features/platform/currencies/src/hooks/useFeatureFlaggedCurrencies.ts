@@ -53,7 +53,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const mantle = useFeature("currencyMantle");
   const mantleSepolia = useFeature("currencyMantleSepolia");
   const boba = useFeature("currencyBoba");
-  const moonriver = useFeature("currencyMoonriver");
   const syscoin = useFeature("currencySyscoin");
   const internetComputer = useFeature("currencyInternetComputer");
   const telosEvm = useFeature("currencyTelosEvm");
@@ -73,8 +72,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
   const lineaSepolia = useFeature("currencyLineaSepolia");
-  const blast = useFeature("currencyBlast");
-  const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const shape = useFeature("currencyShape");
   const story = useFeature("currencyStory");
@@ -147,7 +144,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       mantle,
       mantle_sepolia: mantleSepolia,
       boba,
-      moonriver,
       syscoin,
       internet_computer: internetComputer,
       telos_evm: telosEvm,
@@ -172,8 +168,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       linea,
       ton,
       linea_sepolia: lineaSepolia,
-      blast,
-      blast_sepolia: blastSepolia,
       scroll,
       shape,
       story,
@@ -240,7 +234,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       mantle,
       mantleSepolia,
       boba,
-      moonriver,
       syscoin,
       internetComputer,
       telosEvm,
@@ -265,8 +258,6 @@ export function useFeatureFlaggedCurrencies(mock = false): FeatureFlaggedCurrenc
       linea,
       ton,
       lineaSepolia,
-      blast,
-      blastSepolia,
       scroll,
       shape,
       story,

@@ -1,18 +1,17 @@
 import axios from "axios";
 import makeFetchCookie from "fetch-cookie";
 import type { FetchFn } from "@ledgerhq/auth";
+import { createTestSeam } from "../shared/test-seam";
 
 // A stalled token fetch must fail fast, so the shared base query can still send the quote.
 const AUTH_REQUEST_TIMEOUT_MS = 10_000;
-let authRequestTimeoutMs = AUTH_REQUEST_TIMEOUT_MS;
+const authRequestTimeoutMs = createTestSeam<number>(AUTH_REQUEST_TIMEOUT_MS);
 // Deadline of the current token fetch on the `performance.now()` clock, which system clock changes do
 // not move. Shared by the Keycloak and LKRP calls.
 let authDeadlineAt: number | undefined;
 
 /** @internal Test seam — shortens the auth timeout; `null` restores it. */
-export function _setTestAuthRequestTimeoutMs(ms: number | null): void {
-  authRequestTimeoutMs = ms ?? AUTH_REQUEST_TIMEOUT_MS;
-}
+export const _setTestAuthRequestTimeoutMs = authRequestTimeoutMs.set;
 
 function untilAuthDeadline(deadlineAt: number): AbortSignal {
   return AbortSignal.timeout(Math.max(0, deadlineAt - performance.now()));
@@ -58,7 +57,7 @@ export function createAuthFetch(): FetchFn {
   // Every token fetch starts with this challenge request, so its deadline also bounds the redirect
   // hops and the LKRP calls after it.
   return (input, init) => {
-    authDeadlineAt = performance.now() + authRequestTimeoutMs;
+    authDeadlineAt = performance.now() + authRequestTimeoutMs.get();
     return cookieFetch(input, { ...init, signal: untilAuthDeadline(authDeadlineAt) });
   };
 }

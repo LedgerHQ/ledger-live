@@ -84,12 +84,16 @@ describe("findFeeTokenAccount", () => {
   it.each<[string, Account | null, SponsoredFeeAsset | null]>([
     ["no main account", null, TRON_USDT_FEE_ASSET],
     ["no fee asset", tronParent([usdtWith(1)]), null],
-    ["a native fee asset", tronParent([usdtWith(1)]), { type: "native" }],
+    [
+      "a native fee asset",
+      tronParent([usdtWith(1)]),
+      { type: "native", unit: { name: "TRX", code: "TRX", magnitude: 6 } },
+    ],
     ["no matching sub-account", tronParent([]), TRON_USDT_FEE_ASSET],
     [
       "a contract that differs only in case",
       tronParent([usdtWith(1)]),
-      { type: "trc20", assetReference: TRON_USDT_CONTRACT.toLowerCase() },
+      { ...TRON_USDT_FEE_ASSET, assetReference: TRON_USDT_CONTRACT.toLowerCase() },
     ],
   ])("returns null for %s", (_label, mainAccount, feeAsset) => {
     expect(findFeeTokenAccount(mainAccount, feeAsset)).toBeNull();

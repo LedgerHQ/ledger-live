@@ -1,4 +1,4 @@
-import type { NavigationProp, ParamListBase } from "@react-navigation/native";
+import { StackActions, type NavigationProp, type ParamListBase } from "@react-navigation/native";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
@@ -20,7 +20,7 @@ type ExitDeps = {
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
   completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
-    resetToPortfolio(navigation);
+    closeOnboarding(navigation);
   },
   offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
@@ -53,7 +53,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       return;
     }
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
-    resetToPortfolio(navigation);
+    closeOnboarding(navigation);
   },
   userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
     if (!isGenuine) {
@@ -61,11 +61,20 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       return;
     }
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
-    resetToPortfolio(navigation);
+    closeOnboarding(navigation);
   },
 };
 
-export function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
+/** Back to the caller, or Portfolio on first launch. */
+export function closeOnboarding(navigation: NavigationProp<ParamListBase>) {
+  const root = getRootNavigation(navigation);
+  const { routes } = root.getState();
+  const index = routes.findIndex(route => route.name === NavigatorName.BaseOnboarding);
+  if (index > 0) root.dispatch(StackActions.pop(routes.length - index));
+  else resetToPortfolio(navigation);
+}
+
+function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [

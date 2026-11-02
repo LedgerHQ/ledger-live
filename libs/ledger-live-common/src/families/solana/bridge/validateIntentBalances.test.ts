@@ -16,6 +16,7 @@ const config: SolanaCoinConfig = {
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
+  rpcUrls: { solana: "https://solana.test.invalid" },
 };
 
 const undelegate: StakingTransactionIntent = {
@@ -26,7 +27,7 @@ const undelegate: StakingTransactionIntent = {
   recipient: STAKE_ACCOUNT,
   valAddress: "",
   amount: 0n,
-  asset: { type: "native", name: "Solana" },
+  asset: { type: "native" },
 };
 
 function accountHoldingLamports(systemLamports: number): Account {

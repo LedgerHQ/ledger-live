@@ -67,6 +67,7 @@ export default {
   getAssetFromToken,
   usesStakingPositions: true,
   partitionsNativeBalance: true,
+  validatesRefusedEstimation: true,
   computeIntentType,
   getAccountReadiness,
 } satisfies BridgeApi;

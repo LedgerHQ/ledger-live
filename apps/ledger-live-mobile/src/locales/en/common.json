@@ -1309,6 +1309,9 @@
     "TezosStakeAmountTooSmall": {
       "title": "This amount is too small to stake"
     },
+    "TezosDelegateRefusesStaking": {
+      "title": "Your validator doesn't accept staking. Change validator to stake."
+    },
     "RecommendSubAccountsToEmpty": {
       "title": "Please empty all subaccounts first"
     },
@@ -2583,6 +2586,7 @@
       },
       "succeeded": {
         "title": "Device genuine and up-to-date",
+        "genuineTitle": "Device genuine",
         "cta": "Continue"
       }
     },
@@ -5246,6 +5250,25 @@
   },
   "send": {
     "newSendFlow": {
+      "balanceType": {
+        "title": "Select balance",
+        "transparent": {
+          "title": "Public balance",
+          "subtitle": "Transparent"
+        },
+        "shielded": {
+          "title": "Private balance",
+          "subtitle": "Shielded",
+          "pendingNoticeTitle": "Funds maturing",
+          "pendingNotice": "Some shielded notes are still maturing and may not be spendable yet"
+        },
+        "zeroBalance": {
+          "warning": "No available balance"
+        },
+        "requiresSync": {
+          "notice": "Sync required"
+        }
+      },
       "title": "Send {{currency}}",
       "selectAddress": "Select address",
       "available": "Available {{amount}}",
@@ -5886,10 +5909,10 @@
   },
   "osUpdates": {
     "backupBanner": {
-      "title": "Backup found",
+      "title": "Saved settings found",
       "description": "Apps and settings were not fully restored on your device.",
-      "restore": "Restore",
-      "delete": "Delete backup"
+      "restore": "Reinstall",
+      "delete": "Discard"
     },
     "bootloaderDiscovered": {
       "title": "Device in Bootloader mode.",
@@ -5907,15 +5930,15 @@
       }
     },
     "restoreConfirmation": {
-      "title": "Restore your previous configuration?",
-      "description": "I confirm I want to restore apps & settings from my previous configuration and any app & data created since will be lost.",
-      "confirm": "Restore",
+      "title": "Reinstall your saved settings?",
+      "description": "The apps and settings saved during your OS update will be reinstalled on your device. Any app or data added since then will be removed.",
+      "confirm": "Reinstall",
       "cancel": "Cancel"
     },
     "deleteConfirmation": {
-      "title": "Delete your backup?",
-      "description": "I am aware previous configuration and app & data from my last backup, including Security Key credentials, will be lost.",
-      "confirm": "Delete backup",
+      "title": "Discard your saved settings?",
+      "description": "The settings saved during your OS update, including Security Key credentials, won't be available anymore. You can still reinstall your apps from My Ledger with their default settings.",
+      "confirm": "Discard",
       "cancel": "Cancel"
     },
     "actions": {
@@ -5934,16 +5957,17 @@
       "version": "Version {{version}}",
       "banner": "Ensure your 24 words Secret Recovery Phrase is written down on the recovery Sheet and is available, as a precaution.",
       "title": "What’s in this OS update?",
+      "releaseNotes": "See full release notes",
       "start": "Start update"
     },
     "preparing": {
-      "title": "Preparing for install"
+      "title": "Preparing update..."
     },
     "progress": {
-      "updatingTitle": "Updating your {{productName}}",
-      "restoringTitle": "Restoring your apps and settings",
-      "updateCount": "Update {{index}} of {{count}}",
-      "description": "Keep your device connected and nearby until the update is complete."
+      "updatingTitle": "Update {{index}}/{{count}}",
+      "restoringTitle": "Reinstalling your settings...",
+      "updatingDescription": "Your {{productName}} will restart automatically multiple times and you will be asked to unlock it with your PIN during installation.",
+      "restoringDescription": "Almost done. Your settings are being reinstalled on your {{productName}}."
     },
     "applied": {
       "title": "Update complete",
@@ -8504,6 +8528,10 @@
       "stakeActivePercent": "Active",
       "inactiveStake": "Withdrawable Rewards",
       "stakeAvailableBalance": "Available balance",
+      "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "withdrawableTitle": "Withdrawable",
+      "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "actions": {
         "activate": "Activate",
         "deactivate": "Deactivate",
@@ -10518,7 +10546,8 @@
   },
   "accountDetail": {
     "assets": {
-      "title": "Assets"
+      "title": "Assets",
+      "add": "Add"
     },
     "refreshStatus": {
       "upToDate": "Account up to date",
@@ -11908,6 +11937,15 @@
         "proofGenerationWarning": "Aleo transaction requires proof generation. This may take some time.",
         "recordsUsed": "Records used",
         "signingTime": "Signing time"
+      },
+      "amount": {
+        "estimatedTime": {
+          "label": "Est. time",
+          "info": {
+            "title": "How estimated time works",
+            "description": "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm."
+          }
+        }
       }
     },
     "balancesSection": "Balances",

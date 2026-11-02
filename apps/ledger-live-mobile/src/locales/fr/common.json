@@ -1857,6 +1857,10 @@
       "title" : "Demande non envoyée",
       "description" : "Internet Computer n’a pas accepté la demande. Aucun envoi ni modification n’ont donc eu lieu. Veuillez réessayer. {{reason}}"
     },
+    "ICPTransactionExpired" : {
+      "title" : "Transaction expirée",
+      "description" : "La transaction signée n’a pas été envoyée à temps. Aucun envoi ni modification n’ont donc eu lieu. Veuillez la signer à nouveau."
+    },
     "ICPCreateNeuronWarning" : {
       "title" : "Vos ICP vont être immobilisés dans un nouveau neurone",
       "description" : "Le neurone démarre avec le délai de dissolution le plus court. Il est trop bas pour voter ou obtenir des récompenses. Augmentez-le via l’option Gérer les neurones, et patientez pendant le délai pour que votre solde staké soit à nouveau disponible."
@@ -1871,6 +1875,7 @@
     "menu" : {
       "changeName" : "Modifier le nom",
       "viewAdvancedLogs" : "Voir les logs détaillés",
+      "viewExplorer" : "Voir dans l’explorateur",
       "removeAccount" : "Retirer ce compte du Portefeuille"
     },
     "advancedLogs" : {
@@ -2587,6 +2592,10 @@
       "learnMore" : "En savoir plus",
       "activate" : "Activer",
       "skip" : "Ignorer"
+    },
+    "connection" : {
+      "connecting" : "Connexion à votre appareil",
+      "failed" : "Échec de la connexion"
     }
   },
   "onboarding" : {
@@ -3437,10 +3446,10 @@
       "skipCta" : "Plus tard",
       "skip" : {
         "title" : "Êtes-vous sûr(e) ?",
-        "description" : "Si vous passez cette étape, vous devrez ajouter manuellement tous vos comptes si vous changez de téléphone ou d’ordinateur.",
-        "descriptionEmphasis" : "Vous pouvez toujours désactiver cette option dans les paramètres.",
+        "description" : "Si vous changez de téléphone ou utilisez Ledger Wallet sur un autre téléphone ou ordinateur, vous devrez synchroniser vos comptes manuellement.",
+        "descriptionEmphasis" : "Veuillez noter que vous pouvez toujours activer ou désactiver la synchronisation dans vos paramètres.",
         "skipCTA" : "Oui, ignorer",
-        "syncCTA" : "Non, synchroniser"
+        "syncCTA" : "Activer"
       }
     },
     "seedStep" : {
@@ -3565,7 +3574,7 @@
     "borrowEntry" : {
       "title" : "Prêts crypto",
       "cardTitle" : "Empruntez des stablecoins",
-      "cardDescription" : "Empruntez avec des taux avantageux.",
+      "cardDescription" : "Empruntez à des taux avantageux.",
       "cta" : "Explorer"
     },
     "balance" : {
@@ -3625,6 +3634,16 @@
       "upToDate" : "Portefeuille à jour",
       "syncError" : "Certaines données de compte n’ont pas pu être chargées",
       "offline" : "Vous êtes hors ligne. Veuillez vérifier votre connexion"
+    }
+  },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Perpétuels",
+      "description" : "Tradez avec effet de levier."
+    },
+    "borrow" : {
+      "title" : "Prêts",
+      "description" : "Empruntez des stablecoins."
     }
   },
   "addAccountsModal" : {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other" : "+{{count}} sous-comptes"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Plus d’informations",
-      "cardTitle" : "Propulsé par {{team}}",
-      "drawer" : {
-        "title" : "Intégration : {{family}}",
-        "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
-        "description" : "L’application Ledger Wallet est une plateforme open source.",
-        "description2" : "Les développeurs du monde entier peuvent intégrer et déployer leurs services sur Ledger Wallet.",
-        "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger.",
-        "description3Link" : "Cette intégration a été réalisée par <1><0>{{team}}</0></1> en collaboration avec Ledger."
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} migre vers {{to}}. Cliquez <0>ici</0> pour en savoir plus ou contactez l’Assistance si vous avez besoin d’aide.",
       "contactSupport" : "Contacter l’Assistance"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment" : {
+        "title" : "Sélectionner le paiement des frais",
+        "regular" : "Transfert standard",
+        "sponsored" : "Payer avec {{provider}}",
+        "payIn" : "Payer les frais de réseau en {{feeCurrency}}",
+        "paidIn" : "Payé en {{currency}}",
+        "nudge" : "Vous pourriez économiser {{amount}} avec {{provider}}",
+        "saved" : "Économies via {{provider}}",
+        "confirm" : "Confirmer",
+        "disclaimer" : "Avec {{provider}}, un prestataire d’énergie tiers, les frais sont payés en {{feeCurrency}}.",
         "insufficientFunds" : "Votre solde en {{feeCurrency}} est insuffisant pour couvrir le montant et les frais de location d’énergie de {{provider}}."
       },
       "sponsoredRentSignature" : {
@@ -5871,6 +5887,39 @@
     }
   },
   "osUpdates" : {
+    "backupBanner" : {
+      "title" : "Sauvegarde trouvée",
+      "description" : "Les apps et les paramètres n’ont pas été entièrement restaurés sur votre appareil.",
+      "restore" : "Restaurer",
+      "delete" : "Supprimer ma sauvegarde"
+    },
+    "bootloaderDiscovered" : {
+      "title" : "L’appareil est en mode Bootloader.",
+      "description" : "Cliquez sur Continuer pour le mettre à jour.",
+      "continue" : "Continuer"
+    },
+    "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "Mise à jour disponible",
+          "manager" : "Mise à jour de Ledger OS disponible"
+        },
+        "version" : "Version {{firmwareVersion}}",
+        "cta" : "Mettre à jour"
+      }
+    },
+    "restoreConfirmation" : {
+      "title" : "Restaurer votre configuration précédente ?",
+      "description" : "Je confirme vouloir restaurer les apps et paramètres de ma configuration précédente, et que toute app et donnée créée depuis sera perdue.",
+      "confirm" : "Restaurer",
+      "cancel" : "Annuler"
+    },
+    "deleteConfirmation" : {
+      "title" : "Supprimer votre sauvegarde ?",
+      "description" : "Je comprends que la configuration précédente, et les apps et données de ma dernière sauvegarde, y compris mes identifiants Security Key, seront perdues.",
+      "confirm" : "Supprimer ma sauvegarde",
+      "cancel" : "Annuler"
+    },
     "actions" : {
       "retry" : "Réessayer",
       "cancel" : "Annuler",
@@ -10292,7 +10341,7 @@
             "steps" : {
               "step1" : "Vérifiez que Ledger Sync est activé sur l’une de vos applications.",
               "step2" : "Ouvrez l’application Ledger Wallet à synchroniser.",
-              "step3" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Je l’ai déjà activé</0> <1>></1> <0>Scanner le code QR</0>.",
+              "step3" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Scanner le code QR</0>",
               "step4" : "Scannez le code QR."
             }
           }
@@ -10305,7 +10354,7 @@
             "steps" : {
               "step1" : "Vérifiez que Ledger Sync est activé sur l’une de vos applications.",
               "step2" : "Ouvrez l’application Ledger Wallet à synchroniser.",
-              "step3" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Je l’ai déjà activé</0> <1>></1> <0>Voir le code QR</0>.",
+              "step3" : "Accédez à <0>Paramètres</0> <1>></1> <0>Général</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Voir le code QR</0>.",
               "step4" : "Scannez le code QR."
             }
           }
@@ -10416,9 +10465,58 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Aucune activité",
+      "description" : {
+        "receive" : "Commencez par ajouter des actifs via Recevoir.",
+        "receiveSwap" : "Commencez par ajouter des actifs via Recevoir ou Échanger.",
+        "receiveBuy" : "Commencez par ajouter des actifs via Recevoir ou Acheter.",
+        "receiveSwapBuy" : "Commencez par ajouter des actifs via Recevoir, Échanger ou Acheter.",
+        "swap" : "Commencez par ajouter des actifs via Échanger.",
+        "buy" : "Commencez par ajouter des actifs via Acheter.",
+        "swapBuy" : "Commencez par ajouter des actifs via Échanger ou Acheter."
+      }
+    },
+    "actions" : {
+      "transfer" : "Transférer",
+      "receive" : "Recevoir",
+      "send" : "Envoyer",
+      "swap" : "Échanger",
+      "buy" : "Acheter",
+      "sell" : "Vendre",
+      "earn" : "Gagner",
+      "more" : "Plus"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "En savoir plus",
+      "openPerps" : "Ouvrir les Perpétuels"
+    },
+    "migration" : {
+      "title" : "{{from}} migre vers {{to}}",
+      "description" : "Découvrez les détails de la migration, ou contactez l’Assistance si vous avez besoin d’aide."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}} ne sera plus pris en charge à partir du {{date}}",
+      "description" : "Il sera toujours sécurisé par votre appareil Ledger. Pour en savoir plus, consultez le Centre d’aide."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "Le solde total ne comprend pas les dividendes ni les fractionnements d’actions."
+    },
+    "perps" : {
+      "title" : "À propos de ce compte Hyperliquid",
+      "description" : "Ce compte est associé au trading sur les marchés perpétuels. Les actions transactionnelles ne sont pas prises en charge pour ce compte."
+    }
+  },
   "accountDetail" : {
     "assets" : {
       "title" : "Actifs"
+    },
+    "refreshStatus" : {
+      "upToDate" : "Compte à jour",
+      "syncError" : "Les données de compte n’ont pas pu être chargées"
     },
     "transactions" : {
       "title" : "Transactions"
@@ -10429,6 +10527,9 @@
       "label" : "Nom de l’adresse",
       "submit" : "Modifier le nom"
     }
+  },
+  "accountAssetPicker" : {
+    "title" : "Sélectionner un actif"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10680,6 +10781,10 @@
     "selectAccountPerpsEmptyDescription" : "Pour accéder aux marchés perpétuels, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
     "selectDepositCurrencyTitle" : "Sélectionner l’actif à placer",
     "selectDepositCurrencyDescription" : "Choisissez l’actif pris en charge de votre choix. Un échange automatique s’exécute si nécessaire.",
+    "selectWithdrawCurrencyTitle" : "Sélectionner l’actif à retirer",
+    "selectWithdrawCurrencyDescription" : "Vos USDC seront automatiquement échangés contre l’actif que vous sélectionnez.",
+    "selectAccountPerpsWithdrawFromDescription" : "Sélectionnez le compte depuis lequel vous souhaitez retirer des actifs",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "Pour effectuer un retrait, vous avez besoin d’un compte Hyperliquid. Ajoutez-en un pour continuer.",
     "searchPlaceholder" : "Rechercher par nom ou adresse",
     "emptyAssetList" : "Aucun actif trouvé",
     "notAvailableYet" : "Pas encore disponible",
@@ -10739,6 +10844,25 @@
     "formErrors" : {
       "amountExceedsBalance" : "Solde insuffisant",
       "quoteUnavailable" : "Échec de la récupération de l’offre auprès de {{provider}}. Veuillez choisir un autre actif ou réessayer plus tard."
+    }
+  },
+  "perpsWithdraw" : {
+    "title" : "Retirer",
+    "review" : "Vérifier",
+    "keypadDelete" : "Effacer le dernier chiffre",
+    "estimatedAmount" : "Retirer ~{{value}}",
+    "inputSubText" : "Échanger et retirer via {{provider}}",
+    "selectCurrencyTitle" : "Retirer vers {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "Aucun compte",
+    "formErrors" : {
+      "insufficientBalance" : "Solde insuffisant",
+      "minimumAmount" : "Le retrait minimum est de {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Ce montant est trop faible pour effectuer un retrait.",
+      "lowLiquidity" : "Cet actif est temporairement indisponible. Veuillez réessayer plus tard ou choisir un autre actif.",
+      "addressScreening" : "Ce retrait ne peut pas être effectué vers ce compte.",
+      "quoteUnavailable" : "Échec de la récupération de l’offre auprès de {{provider}}. Veuillez choisir un autre actif ou réessayer plus tard.",
+      "currenciesUnavailable" : "Le chargement des actifs disponibles au retrait a échoué. Veuillez réessayer plus tard."
     }
   },
   "swapErrors" : {
@@ -11787,7 +11911,7 @@
       },
       "private" : {
         "title" : "Solde privé",
-        "description" : "Le solde masqué sur le réseau Aleo. Ce solde n’est visible que par vous et nécessite la génération d’une preuve pour réaliser des transactions privées."
+        "description" : "Le solde privé sur le réseau Aleo. Ce solde n’est visible que par vous et nécessite la génération d’une preuve pour réaliser des transactions privées."
       },
       "staked" : {
         "title" : "Staké",

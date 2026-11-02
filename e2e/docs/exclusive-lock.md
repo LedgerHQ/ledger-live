@@ -7,9 +7,9 @@ account at once reuse its nonce or UTXOs, and one is rejected. The lock lives in
 
 ## Declare what a test broadcasts from
 
-What to declare: [E2E conventions](e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). How:
-[Mobile](../mobile/docs/e2e-mobile-conventions.md#exclusive-lock-implementation) and
-[Desktop](../desktop/docs/e2e-desktop-conventions.md#exclusive-lock-implementation).
+What to declare: [E2E conventions](e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-what-state-they-change). How:
+[Mobile](../mobile/docs/e2e-mobile-conventions.md#tests-that-broadcast-or-change-shared-state-must-declare-it-before-their-describe)
+and [Desktop](../desktop/docs/e2e-desktop-conventions.md#tests-that-broadcast-or-change-shared-state-must-lock-with-exclusivelockfor).
 
 | Target | Mobile | Desktop | Locked |
 | --- | --- | --- | --- |
@@ -40,6 +40,11 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
 6. **Wait.** A waiter polls every 5–7.5 s for up to 30 min (`EXCLUSIVE_LOCK_ACQUIRE_TIMEOUT_MS`),
    then fails. When a settle window ends, the waiter that has waited longest claims first. If every
    R2 request fails for 2 min, it fails then with `ExclusiveLockStoreDownError`.
+   With `E2E_EXCLUSIVE_LOCK_PRIORITY=high` (release and hotfix runs), a waiter polls every 1–1.5 s
+   and claims within 1.5 s of a settle window's end, before the others, who claim 3.5–5 s after
+   it. Each group still goes longest-waiting first. The others' delay shrinks as they wait, so
+   after about 10 min they claim with high-priority waiters instead of after them. A
+   high-priority waiter still waits for the current holder.
 7. **Nesting.** A CLI approval inside a test that already holds the account joins that hold instead
    of waiting for it. The test's release waits for the approval to finish.
 8. **Without R2.** If `E2E_EXCLUSIVE_LOCK_*` is unset, or `E2E_EXCLUSIVE_LOCK_MODE` is `local`, a
@@ -75,6 +80,7 @@ passes (default 2), the next pass waits for busy locks.
 | `E2E_EXCLUSIVE_LOCK_DEFERRAL_PASSES` | The `lock_deferral_passes` workflow input |
 | `E2E_EXCLUSIVE_LOCK_DEFER` | The pass runners, on each pass. Do not set it |
 | `E2E_EXCLUSIVE_LOCK_MODE` | The `exclusive_lock` workflow input: `remote` (default) or `local` |
+| `E2E_EXCLUSIVE_LOCK_PRIORITY` | The workflows: `high` when the ref under test is `release` or `hotfix`, otherwise `normal` |
 
 While R2 is down, dispatch with `exclusive_lock: local`. Each machine still keeps its own tests
 apart, but CI machines no longer keep each other away.
@@ -92,7 +98,7 @@ hides `info`.
 
 | Line or error | Meaning |
 | --- | --- |
-| `waiting for "<key>", held by <holder> (<label>)` | Another test holds the key. The label names it |
+| `waiting for "<key>", held by <holder> (<label>) [ETag …]` | Another test holds the key. The label names it, and the brackets show the lock record as read: its ETag, age, and whether it was released |
 | `moved to a later pass` | Deferred. The test runs again in the next pass |
 | `took over "<key>" … its lease expired` | The previous holder died or stalled for over 120 s |
 | `ExclusiveLockLostError` | This holder stalled past its lease, so broadcasts may have overlapped |

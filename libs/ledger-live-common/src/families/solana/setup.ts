@@ -6,8 +6,8 @@ import solanaResolver from "@ledgerhq/coin-solana/hw-getAddress";
 import { createMessageSigner, createResolver } from "../../bridge/setup";
 import type { Resolver } from "../../hw/getAddress/types";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
-import coinConfig, { type SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
-import { getCurrencyConfiguration } from "../../config";
+import type { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
+import { buildContext } from "../../bridge/generic-coin-framework/api/context";
 import { LegacySignerSolana, DmkSignerSol } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
@@ -44,10 +44,10 @@ export function getSolanaSignerInstance(
 }
 
 // No `bridge` export: the generic coin framework builds it from the Coin Module API.
-// `hw-signMessage` still reads the module's config singleton, so install it here.
-coinConfig.setCoinConfig(() => getCurrencyConfiguration<SolanaCoinConfig>("solana"));
 const messageSigner = {
-  signMessage: createMessageSigner(getSolanaSignerInstance, signMessage),
+  signMessage: createMessageSigner(getSolanaSignerInstance, signerContext =>
+    signMessage(signerContext, currencyId => buildContext<SolanaCoinConfig>(currencyId)),
+  ),
 };
 
 const resolver: Resolver = createResolver(getSolanaSignerInstance, solanaResolver);

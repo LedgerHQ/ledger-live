@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "extends": "./nx.cache-config.json",
-  "analytics": false
+  "analytics": false,
+  "affected": {
+    "legacy": true
+  }
 }

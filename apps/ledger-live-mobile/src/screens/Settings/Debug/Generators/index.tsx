@@ -5,6 +5,7 @@ import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "~/context/hooks";
 import GenerateMockAccounts from "./GenerateMockAccounts";
+import GenerateEmptyAccount from "./GenerateEmptyAccount";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
@@ -83,6 +84,7 @@ export default function Generators() {
 
   return (
     <SettingsNavigationScrollView>
+      <GenerateEmptyAccount />
       <GenerateMockAccount
         title="Accounts by currency"
         desc="Select for which currencies you want to generate accounts"

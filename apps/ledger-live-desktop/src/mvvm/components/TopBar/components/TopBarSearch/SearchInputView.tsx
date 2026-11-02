@@ -15,13 +15,12 @@ type SearchInputViewProps = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
   isOpen: boolean;
-  animatedTitle: boolean;
   testId?: string;
 } & Omit<ComponentPropsWithoutRef<"div">, "onChange" | "onKeyDown">;
 
 export const SearchInputView = forwardRef<HTMLDivElement, SearchInputViewProps>(
   function SearchInputView(
-    { value, placeholder, onChange, onKeyDown, isOpen, animatedTitle, testId, className, ...rest },
+    { value, placeholder, onChange, onKeyDown, isOpen, testId, className, ...rest },
     ref,
   ) {
     // While the overlay is open, clicks inside the search field (the input itself or the clear
@@ -47,19 +46,17 @@ export const SearchInputView = forwardRef<HTMLDivElement, SearchInputViewProps>(
           <SearchInput
             appearance="transparent"
             value={value}
-            placeholder={animatedTitle ? "" : placeholder}
-            aria-label={animatedTitle ? placeholder : undefined}
+            placeholder=""
+            aria-label={placeholder}
             onChange={onChange}
             onKeyDown={onKeyDown}
             data-testid={testId}
           />
-          {animatedTitle && (
-            <AnimatedSearchPlaceholder
-              visible={value.length === 0}
-              cycling={!isOpen}
-              testId={testId ? `${testId}-animated-placeholder` : undefined}
-            />
-          )}
+          <AnimatedSearchPlaceholder
+            visible={value.length === 0}
+            cycling={!isOpen}
+            testId={testId ? `${testId}-animated-placeholder` : undefined}
+          />
         </div>
       </div>
     );

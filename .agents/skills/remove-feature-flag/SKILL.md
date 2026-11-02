@@ -102,11 +102,10 @@ manually.
 
 ## 5. Validate and publish
 
-Use `cleanup` and `run-tests` for the affected packages and files, including
-`@shared/feature-flags` checks when its registry changes. Follow
-`docs/validate-before-finishing.md`. When those skills do not map a `shared/`,
-`features/`, `domain/`, or nested package, read its README and `package.json`
-and run the equivalent scoped commands directly.
+Use `validate-changes` for the affected packages and files, including
+`@shared/feature-flags` checks when its registry changes. When a package has no
+`nx` target for a step, read its README and `package.json` and run the
+equivalent scoped command directly.
 
 Unless `no pr` is set, invoke `create-pr` end-to-end as the single source of
 truth for Git conventions, changesets, commits, push, draft PR content, browser

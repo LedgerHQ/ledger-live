@@ -3,7 +3,7 @@ import { BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { AccountSettingsMenu } from "../AccountSettingsMenu";
 import { RemoveAccountContent } from "../RemoveAccountContent";
-import type { AccountSettingsSheetViewProps } from "./types.native";
+import type { AccountSettingsSheetViewProps } from "./types";
 
 const CONTENT_BOTTOM_SPACING = 24;
 

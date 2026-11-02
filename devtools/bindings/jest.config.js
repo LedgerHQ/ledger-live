@@ -1,4 +1,5 @@
-module.exports = {
+const web = {
+  displayName: "web",
   testEnvironment: "jsdom",
   roots: ["<rootDir>/src"],
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js", "@ledgerhq/test-quarantine/jest-retries"],
@@ -19,6 +20,19 @@ module.exports = {
       },
     ],
   },
+};
+
+module.exports = {
+  projects: [
+    web,
+    {
+      ...web,
+      // The mobile app resolves `.native` variants first, and the lazy contract must hold there too.
+      displayName: "native-resolution",
+      testMatch: ["**/lazyContract.test.ts"],
+      moduleFileExtensions: ["native.tsx", "native.ts", "tsx", "ts", "js", "jsx", "json", "node"],
+    },
+  ],
   coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
   reporters: [
     "default",

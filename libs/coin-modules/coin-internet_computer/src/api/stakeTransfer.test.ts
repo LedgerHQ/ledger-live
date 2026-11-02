@@ -12,7 +12,12 @@ import { Principal } from "@icp-sdk/core/principal";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { IcpContext } from "../config";
-import { MAINNET_GOVERNANCE_CANISTER_ID, MIN_NEURON_STAKE, TRANSFER_FEE } from "../consts";
+import {
+  ICP_NETWORK_URL,
+  MAINNET_GOVERNANCE_CANISTER_ID,
+  MIN_NEURON_STAKE,
+  TRANSFER_FEE,
+} from "../consts";
 import { ICPStakeNotRefreshed } from "../errors";
 import { getNeuronStakeSubAccountIdentifier } from "../logic/buildNeuronTransaction";
 import { deriveAddressFromPubkey } from "../logic/crypto";
@@ -40,7 +45,7 @@ jest.mock("../network/agent", () => ({
 
 const mockCertificate = jest.mocked(Certificate.create);
 
-const context = {} as IcpContext;
+const context = { config: async () => ({}) } as unknown as IcpContext;
 const transferFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
 const claimFunc = getCanisterIdlFunc(governanceIdlFactory, "claim_or_refresh_neuron_from_account");
 const listNeuronsFunc = getCanisterIdlFunc(governanceIdlFactory, "list_neurons");
@@ -257,7 +262,9 @@ describe("a stake transfer through the API", () => {
     calls = [];
     mockCertificate.mockResolvedValueOnce(claimed({ NeuronId: { id: 123n } }));
 
-    await expect(refreshNeuronStake(CONTROLLER.toText(), error.stakeNonce)).resolves.toBe("123");
+    await expect(
+      refreshNeuronStake(ICP_NETWORK_URL, CONTROLLER.toText(), error.stakeNonce),
+    ).resolves.toBe("123");
     expect(calls).toHaveLength(1);
     expect(decodeCanisterIdlArgs(claimFunc, calls[0].content.arg)).toEqual([
       { controller: [CONTROLLER], memo: NONCE },

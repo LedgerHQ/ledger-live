@@ -1,8 +1,8 @@
-const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+const { createLibsCoinJestConfig, libsCoinDefaults } = require("@support/jest/libs-coin");
 
 module.exports = createLibsCoinJestConfig({
   rootDir: __dirname,
-  collectCoverageFrom: ["!src/index.ts"],
+  collectCoverageFrom: [...libsCoinDefaults.collectCoverageFrom, "!src/index.ts"],
   setupFilesAfterEnv: [
     "@ledgerhq/wallet-framework-test-setup",
     "jest-expect-message",

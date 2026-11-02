@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardLeading,
   CardTrailing,
+  Tag,
 } from "@ledgerhq/lumen-ui-rnative";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { useFormattedAccountBalance } from "LLM/hooks/useFormattedAccountBalance";
@@ -20,7 +21,7 @@ type Props = Readonly<{
 }>;
 
 export const AddressAccountItem = memo(function AddressAccountItem({ data, onPress }: Props) {
-  const { account, balanceAccount, name, truncatedAddress } = data;
+  const { account, balanceAccount, name, tag, truncatedAddress } = data;
   const { formattedBalance, formattedCounterValue } = useFormattedAccountBalance(balanceAccount);
 
   const handlePress = useCallback(() => onPress(data), [onPress, data]);
@@ -34,9 +35,19 @@ export const AddressAccountItem = memo(function AddressAccountItem({ data, onPre
       <CardHeader>
         <CardLeading>
           <CardContent>
-            <CardContentTitle testID={`${ASSET_DETAIL_TEST_IDS.addressItemName}-${account.id}`}>
-              {name}
-            </CardContentTitle>
+            <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s8" }}>
+              <CardContentTitle testID={`${ASSET_DETAIL_TEST_IDS.addressItemName}-${account.id}`}>
+                {name}
+              </CardContentTitle>
+              {tag ? (
+                <Tag
+                  label={tag}
+                  size="sm"
+                  appearance="gray"
+                  testID={`${ASSET_DETAIL_TEST_IDS.addressItemTag}-${account.id}`}
+                />
+              ) : null}
+            </Box>
             <Box lx={{ flexDirection: "row", alignItems: "center", gap: "s4" }}>
               <CardContentDescription
                 testID={`${ASSET_DETAIL_TEST_IDS.addressItemAddress}-${account.id}`}
