@@ -643,7 +643,8 @@ jobs:
           KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
           set -euo pipefail
-          BT=/usr/local/lib/android/sdk/build-tools/34.0.0
+          # Same build-tools as the E2E signing step.
+          BT="$ANDROID_HOME/build-tools/36.0.0"
           mkdir -p "$RESULTS_DIR/android"
           for dir in builds/a builds/b; do
             [[ -f "$dir/app.apk" ]] || continue
