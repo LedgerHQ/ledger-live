@@ -31,6 +31,8 @@ export type AccountDataRouter = {
     descriptor: AccountDescriptor,
     options?: AccountDataReadOptions<K>,
   ): Promise<AccountDataAnswer<K>>;
+  /** The sources in rank order, runtime ones included: what other capabilities of a source route on. */
+  sources(): readonly AccountDataSource[];
   /** Ranks a runtime source last, or first, or in place of the one sharing its id; returns its remover. */
   addSource(source: AccountDataSource, options?: AddAccountDataSourceOptions): () => void;
 };
@@ -66,6 +68,7 @@ export function createAccountDataRouter(
       if (own.status === "rejected") throw own.reason;
       return own.value;
     },
+    sources: () => context.ranked,
     addSource: (source, options) => addSource(context, source, options),
   };
 }

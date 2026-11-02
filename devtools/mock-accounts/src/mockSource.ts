@@ -1,4 +1,5 @@
-import type { AccountDataSource, AccountTarget } from "@domain/api-account-data";
+import type { AccountTarget } from "@domain/api-account-data";
+import type { AccountSendingSource } from "@domain/api-account-transaction";
 import {
   AccountDataSourceIdSchema,
   type AccountDataKind,
@@ -9,6 +10,7 @@ import { currencyIdFromNetwork } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { familyOf } from "./families";
 import { kinds } from "./kinds";
+import { mockSender } from "./mockSender";
 import { operationCountOf } from "./operationCounts";
 import { seededRandom } from "./random";
 
@@ -48,7 +50,7 @@ const answer = <K extends AccountDataKind>(
 ) => Promise.resolve().then(() => read(kind, target, query));
 
 /** Serves the `mock` descriptors only (real sources never see them), each kind derived from the descriptor alone. One line per kind. */
-export const mockSource: AccountDataSource = {
+export const mockSource: AccountSendingSource = {
   id: AccountDataSourceIdSchema.parse("mock"),
   purposes: ["mock"],
   supports: () => true,
@@ -57,4 +59,5 @@ export const mockSource: AccountDataSource = {
     operations: (target, query) => answer("operations", target, query),
     balanceHistory: (target, query) => answer("balanceHistory", target, query),
   },
+  send: mockSender,
 };
