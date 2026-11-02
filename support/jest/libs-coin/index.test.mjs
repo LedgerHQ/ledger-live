@@ -30,9 +30,10 @@ test("createLibsCoinJestConfig: the defaults are the unit lists, an override rep
   assert.notEqual(unit.setupFilesAfterEnv, libsCoinDefaults.setupFilesAfterEnv);
 });
 
-test("createLibsCoinIntegJestConfig: the wallet framework setup only, replaced by an override", () => {
+test("createLibsCoinIntegJestConfig: the wallet framework setup and CI retries, replaced by an override", () => {
   assert.deepEqual(createLibsCoinIntegJestConfig().setupFilesAfterEnv, [
     "@ledgerhq/wallet-framework-test-setup",
+    "@ledgerhq/test-quarantine/jest-retries",
   ]);
   assert.deepEqual(
     createLibsCoinIntegJestConfig({ setupFilesAfterEnv: [] }).setupFilesAfterEnv,
