@@ -15,6 +15,11 @@
   },
   "packageRules": [
     {
+      "description": "Pin PRs: rebase only on conflict, not on every develop merge (Renovate's pin default is behind-base-branch)",
+      "matchUpdateTypes": ["pin", "pinDigest"],
+      "rebaseWhen": "conflicted"
+    },
+    {
       "description": "Coin modules: update PRs are opened by the LedgerHQ/coin-modules release workflow",
       "matchManagers": ["npm"],
       "matchPackageNames": ["@ledgerhq/coin-*"],
