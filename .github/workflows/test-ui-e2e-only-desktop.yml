@@ -191,6 +191,7 @@ jobs:
       device_2: ${{ steps.parse.outputs.device_2 }}
       is_dual: ${{ steps.parse.outputs.is_dual }}
       e2e_matrix: ${{ steps.parse.outputs.e2e_matrix }}
+      shard_total: ${{ steps.parse.outputs.shard_total }}
       runner_filter: ${{ steps.test-filter.outputs.runner_filter }}
     steps:
       - name: Parse speculos device input
@@ -365,6 +366,15 @@ jobs:
       test_failed: ${{ steps.run-playwright.outputs.failed }}
       test_total: ${{ steps.run-playwright.outputs.total }}
       test_exit_code: ${{ steps.run-playwright.outputs.exit_code }}
+      # Each shard's Playwright outcome, for aggregate-shard-results. One per shard of SHARD_TOTAL.
+      status_1: ${{ steps.set-output.outputs.status_1 }}
+      status_2: ${{ steps.set-output.outputs.status_2 }}
+      status_3: ${{ steps.set-output.outputs.status_3 }}
+      status_4: ${{ steps.set-output.outputs.status_4 }}
+      device2_status_1: ${{ steps.set-output.outputs.device2_status_1 }}
+      device2_status_2: ${{ steps.set-output.outputs.device2_status_2 }}
+      device2_status_3: ${{ steps.set-output.outputs.device2_status_3 }}
+      device2_status_4: ${{ steps.set-output.outputs.device2_status_4 }}
     steps:
       - name: Generate GitHub App token
         id: generate-token
@@ -551,6 +561,15 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      - name: Set job output based on Playwright result
+        id: set-output
+        if: ${{ !cancelled() }}
+        env:
+          STATUS_KEY: ${{ !matrix.is_primary && 'device2_' || '' }}status_${{ matrix.shard }}
+          RUN_OUTCOME: ${{ steps.run-playwright.outcome }}
+        run: echo "${STATUS_KEY}=${RUN_OUTCOME}" >> "$GITHUB_OUTPUT"
+        shell: bash
+
   e2e-tests-macos:
     name: "Desktop E2E (${{ needs.prepare-devices.outputs.device_1 }}, macOS)"
     needs: [prepare-devices]
@@ -735,7 +754,9 @@ jobs:
     runs-on: [ledger-wallet-1cpu-aws-public-cached]
     needs: [prepare-devices, e2e-tests]
     outputs:
-      status: ${{ steps.summary.outputs.status }}
+      # Unlike mobile, a shard without results fails the device: part of its suite never ran.
+      finalStatus: ${{ steps.aggregate.outputs.missingShards != '' && 'failure' || steps.aggregate.outputs.finalStatus }}
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
       qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
@@ -762,6 +783,17 @@ jobs:
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: ${{ needs.prepare-devices.outputs.is_dual == 'true' && format('linux-{0}', needs.prepare-devices.outputs.device_1) || 'linux' }}
+
+      - name: Aggregate shard results
+        if: ${{ !cancelled() }}
+        id: aggregate
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: ${{ needs.prepare-devices.outputs.shard_total }}
+          status_1: ${{ needs.e2e-tests.outputs.status_1 }}
+          status_2: ${{ needs.e2e-tests.outputs.status_2 }}
+          status_3: ${{ needs.e2e-tests.outputs.status_3 }}
+          status_4: ${{ needs.e2e-tests.outputs.status_4 }}
 
       - name: Publish report to Allure Server
         id: allure-server
@@ -793,11 +825,13 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
+          MISSING_SHARDS: ${{ steps.aggregate.outputs.missingShards }}
           QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
           LEGACY_REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
         run: |
           {
             if [ -n "$SUMMARY_MESSAGE" ]; then printf '%s\n\n' "$SUMMARY_MESSAGE"; fi
+            if [ -n "$MISSING_SHARDS" ]; then printf '⚠️ Missing results for shard(s): %s.\n\n' "$MISSING_SHARDS"; fi
             if [ -n "$QAA_REPORT_URL" ]; then printf '[🆕 New QAA Allure report](%s)\n\n' "$QAA_REPORT_URL"; fi
             if [ -n "$LEGACY_REPORT_URL" ]; then printf '[Legacy Allure](%s)\n' "$LEGACY_REPORT_URL"; fi
           } >> "$GITHUB_STEP_SUMMARY"
@@ -822,7 +856,9 @@ jobs:
     needs: [prepare-devices, e2e-tests]
     if: ${{ !cancelled() && needs.prepare-devices.outputs.is_dual == 'true' }}
     outputs:
-      status: ${{ steps.summary.outputs.status }}
+      # Unlike mobile, a shard without results fails the device: part of its suite never ran.
+      finalStatus: ${{ steps.aggregate.outputs.missingShards != '' && 'failure' || steps.aggregate.outputs.finalStatus }}
+      missingShards: ${{ steps.aggregate.outputs.missingShards }}
       summary_message: ${{ steps.summary.outputs.summary_message }}
       report-url: ${{ steps.allure-server.outputs.report-url }}
       qaa-report-url: ${{ steps.qaa-allure-upload.outputs.report_url }}
@@ -848,6 +884,17 @@ jobs:
         with:
           allure-results-path: ${{ env.ALLURE_RESULTS }}
           platform: linux-${{ needs.prepare-devices.outputs.device_2 }}
+
+      - name: Aggregate shard results
+        if: ${{ !cancelled() }}
+        id: aggregate
+        uses: LedgerHQ/ledger-live/tools/actions/composites/aggregate-shard-results@develop
+        with:
+          total_shards: ${{ needs.prepare-devices.outputs.shard_total }}
+          status_1: ${{ needs.e2e-tests.outputs.device2_status_1 }}
+          status_2: ${{ needs.e2e-tests.outputs.device2_status_2 }}
+          status_3: ${{ needs.e2e-tests.outputs.device2_status_3 }}
+          status_4: ${{ needs.e2e-tests.outputs.device2_status_4 }}
 
       - name: Publish report to Allure Server
         id: allure-server
@@ -879,11 +926,13 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           SUMMARY_MESSAGE: ${{ steps.summary.outputs.summary_message }}
+          MISSING_SHARDS: ${{ steps.aggregate.outputs.missingShards }}
           QAA_REPORT_URL: ${{ steps.qaa-allure-upload.outputs.report_url }}
           LEGACY_REPORT_URL: ${{ steps.allure-server.outputs.report-url }}
         run: |
           {
             if [ -n "$SUMMARY_MESSAGE" ]; then printf '%s\n\n' "$SUMMARY_MESSAGE"; fi
+            if [ -n "$MISSING_SHARDS" ]; then printf '⚠️ Missing results for shard(s): %s.\n\n' "$MISSING_SHARDS"; fi
             if [ -n "$QAA_REPORT_URL" ]; then printf '[🆕 New QAA Allure report](%s)\n\n' "$QAA_REPORT_URL"; fi
             if [ -n "$LEGACY_REPORT_URL" ]; then printf '[Legacy Allure](%s)\n' "$LEGACY_REPORT_URL"; fi
           } >> "$GITHUB_STEP_SUMMARY"
@@ -1015,7 +1064,8 @@ jobs:
           row1_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row1_summary: ${{ needs.report-to-allure.outputs.summary_message }}
           row1_report_url: ${{ needs.report-to-allure.outputs.report-url }}
-          row1_status: ${{ needs.report-to-allure.outputs.status }}
+          row1_status: ${{ needs.report-to-allure.outputs.finalStatus }}
+          row1_missing_shards: ${{ needs.report-to-allure.outputs.missingShards }}
           row1_qaa_url: ${{ needs.report-to-allure.outputs.qaa-report-url }}
           # Row 2 only renders on dual-device runs (empty label = dropped).
           row2_emoji: "🐧"
@@ -1023,7 +1073,8 @@ jobs:
           row2_flags: ${{ env.E2E_DESKTOP_FEATURE_FLAGS }}
           row2_summary: ${{ needs.report-to-allure-device2.outputs.summary_message }}
           row2_report_url: ${{ needs.report-to-allure-device2.outputs.report-url }}
-          row2_status: ${{ needs.report-to-allure-device2.outputs.status }}
+          row2_status: ${{ needs.report-to-allure-device2.outputs.finalStatus }}
+          row2_missing_shards: ${{ needs.report-to-allure-device2.outputs.missingShards }}
           row2_qaa_url: ${{ needs.report-to-allure-device2.outputs.qaa-report-url }}
           # Row 3 only renders when the run also ran on macOS.
           row3_emoji: "🍎"
