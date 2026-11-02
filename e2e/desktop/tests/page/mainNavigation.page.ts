@@ -5,6 +5,7 @@ import { Layout } from "tests/component/layout.component";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { MyWalletPage } from "tests/page/myWallet.page";
+import { sendDeepLink } from "tests/utils/deeplink";
 type NavigationTarget = {
   readonly expectedPath?: RegExp;
   readonly selector: Locator;
@@ -88,6 +89,11 @@ export class MainNavigationPage extends AppPage {
     const { selector } = this.getSidebarTargets()[target];
     await expect(selector).toBeEnabled();
     await selector.click();
+  }
+
+  @step("Open deeplink: $0")
+  async openDeeplink(url: string) {
+    await sendDeepLink(this.page, url);
   }
 
   @step("Expect $0 to be disabled in main navigation")
