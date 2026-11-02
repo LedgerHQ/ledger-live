@@ -86,6 +86,8 @@ export class MyLedgerPage extends AppPage {
   private readonly appRow = (app: AppInfos) =>
     this.page.locator(`[id="managerAppsList-${app.name}"]`);
 
+  private readonly firmwareUpdateBanner = this.page.getByTestId("fw-update-banner");
+  private readonly offeredOsVersion = this.firmwareUpdateBanner.getByText(/^Version /);
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
   private readonly firmwareUpdateDrawer = this.page.getByTestId("firmware-update-container");
   private readonly installFirmwareUpdateButton =
@@ -366,6 +368,16 @@ export class MyLedgerPage extends AppPage {
   @step("Expect a firmware update to be offered")
   async expectFirmwareUpdateOffered() {
     await expect(this.updateFirmwareButton).toBeVisible();
+  }
+
+  @step("Read the OS version the update offers")
+  async readOfferedOsVersion(): Promise<string> {
+    return (await this.offeredOsVersion.innerText()).replace(/^Version /, "");
+  }
+
+  @step("Expect the device to run OS version $0")
+  async expectOsVersion(version: string) {
+    await expect(this.osVersion).toHaveText(`OS version ${version}`);
   }
 
   /** The banner opens the release notes first; the update only starts from their install button. */

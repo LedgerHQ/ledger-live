@@ -1,14 +1,12 @@
 import test from "tests/fixtures/mockServerDevice";
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
-import { OUTDATED_OS_VERSION_BY_MODEL } from "@ledgerhq/live-e2e-shared/enum/OsVersion";
-import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 
 test.describe("My Ledger (mock server)", () => {
   test.use({
     userdata: "skip-onboarding-with-last-seen-device",
     teamOwner: Team.MY_LEDGER_ONBOARDING,
-    mockDeviceParams: { firmware_version: OUTDATED_OS_VERSION_BY_MODEL[getSpeculosModel()] },
+    osUpdateAvailable: true,
   });
 
   test(
@@ -20,7 +18,9 @@ test.describe("My Ledger (mock server)", () => {
     async ({ app }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
+      const offeredOsVersion = await app.myLedger.readOfferedOsVersion();
       await app.myLedger.updateFirmware();
+      await app.myLedger.expectOsVersion(offeredOsVersion);
     },
   );
 });

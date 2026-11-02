@@ -78,7 +78,52 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
   if (cached) return cached;
 
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
+  const { firmwares } = await newestProviderFirmwares(repository, device);
 
+  // Highest id is not always bootable. A new OS can land on provider 1 before its app
+  // catalog does (Nano S Plus 1.7.0 shipped with only Solana), and this runs from desktop
+  // global setup, so every Speculos test would otherwise start on that catalog.
+  const firmware = await latestFirmwareWithBaselineApp(device, firmwares);
+
+  firmwareVersionCache.set(device, firmware);
+  process.env.SPECULOS_FIRMWARE_VERSION = firmware;
+
+  return firmware;
+}
+
+/**
+ * The newest provider OS the Manager API still offers an update from, so n-1 once the latest
+ * is published. Each version is looked up by name, as Ledger Wallet looks up the connected
+ * device, so a device booted on it is offered that update.
+ */
+export async function getPreviousFirmwareVersion(device: DeviceModelId): Promise<string> {
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
+  const { deviceVersionId, firmwares } = await newestProviderFirmwares(repository, device);
+
+  for (const { version } of firmwares) {
+    const current = await repository.getCurrentFirmware({
+      version,
+      deviceId: deviceVersionId,
+      providerId: nanoAppProviderId,
+    });
+    const update = await repository.fetchLatestFirmware({
+      current_se_firmware_final_version: current.id,
+      device_version: deviceVersionId,
+      providerId: nanoAppProviderId,
+      userId: "",
+    });
+    if (update) return version;
+  }
+
+  throw new Error(
+    `No provider ${nanoAppProviderId} firmware for ${device} is offered an OS update`,
+  );
+}
+
+async function newestProviderFirmwares(
+  repository: HttpManagerApiRepository,
+  device: DeviceModelId,
+) {
   const deviceVersion = await repository.getDeviceVersion({
     targetId: getDeviceTargetId(device),
     providerId: nanoAppProviderId,
@@ -102,23 +147,16 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
     );
   }
 
-  // Highest id is not always bootable. A new OS can land on provider 1 before its app
-  // catalog does (Nano S Plus 1.7.0 shipped with only Solana), and this runs from desktop
-  // global setup, so every Speculos test would otherwise start on that catalog.
-  const firmware = await latestFirmwareWithBaselineApp(device, providerFirmwares);
-
-  firmwareVersionCache.set(device, firmware);
-  process.env.SPECULOS_FIRMWARE_VERSION = firmware;
-
-  return firmware;
+  return {
+    deviceVersionId: deviceVersion.id,
+    firmwares: providerFirmwares.sort((left, right) => right.id - left.id),
+  };
 }
 
 async function latestFirmwareWithBaselineApp(
   device: DeviceModelId,
-  firmwares: readonly { id: number; version: string }[],
+  newestFirst: readonly { id: number; version: string }[],
 ): Promise<string> {
-  const newestFirst = [...firmwares].sort((left, right) => right.id - left.id);
-
   for (const firmware of newestFirst) {
     const catalog = await getNanoAppCatalog(device, firmware.version);
     const publishesBaseline = catalog.some(app => app.versionDisplayName === BASELINE_CATALOG_APP);
