@@ -11943,7 +11943,7 @@
           "label": "Est. time",
           "info": {
             "title": "How estimated time works",
-            "description": "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm."
+            "description": "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm."
           }
         }
       }
