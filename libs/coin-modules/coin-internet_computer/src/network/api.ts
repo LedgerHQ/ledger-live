@@ -2,6 +2,7 @@ import {
   Cbor,
   Certificate,
   lookupResultToBuffer,
+  makeNonce,
   ReadRequestType,
   requestIdOf,
   SubmitRequestType,
@@ -487,6 +488,10 @@ export const claimOrRefreshNeuronFromAccount = async (
     canister_id: Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID),
     ingress_expiry: createIngressExpiry(),
     method_name: "claim_or_refresh_neuron_from_account",
+    // The expiry is rounded to the minute, so without a nonce a refresh within a minute of an
+    // earlier claim of the same neuron has the same request id: the IC answers it with the earlier
+    // reply and never runs it, and the stake stays as it was.
+    nonce: makeNonce(),
     request_type: SubmitRequestType.Call,
     sender: Principal.anonymous(),
   };
