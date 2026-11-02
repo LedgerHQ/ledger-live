@@ -14,7 +14,6 @@ test.describe("Restoring a Nano from a recovery phrase (mock server)", () => {
       lwdOnboardingCounterfeitWarning: { enabled: true },
     },
     settings: FRESH_INSTALL_SETTINGS,
-    mockDeviceParams: { onboarded: true },
   });
 
   test(
