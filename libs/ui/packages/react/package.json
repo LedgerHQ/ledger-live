@@ -122,11 +122,6 @@
     "tiny-glob": "^0.2.9",
     "typescript": "catalog:"
   },
-  "dependenciesMeta": {
-    "@ledgerhq/icons-ui": {
-      "injected": true
-    }
-  },
   "peerDependenciesMeta": {
     "@types/react": {
       "optional": true

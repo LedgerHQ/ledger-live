@@ -1,7 +1,10 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";

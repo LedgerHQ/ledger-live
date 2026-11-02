@@ -14,8 +14,8 @@ import { trackButtonClicked, PayTrackPage } from "@features/platform-pay-analyti
 trackButtonClicked({ button: "verify", page: "Request complete", flow: "request" });
 ```
 
-`PayTrackPage` fires the page view for the mounted screen. It resolves per platform: `TrackPage` on
-web, `TrackScreen` on native (the same component LWM uses in drawers). Native sheets still have
+`PayTrackPage` fires the page view for the mounted screen through `TrackScreen` on both platforms
+(the same component LWM uses in drawers). Native sheets still have
 navigation context because `BottomSheetModalProvider` sits inside `NavigationContainer`.
 
 ```tsx

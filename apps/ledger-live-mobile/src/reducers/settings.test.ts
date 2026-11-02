@@ -718,7 +718,7 @@ describe("counterValueCurrencySelector", () => {
   });
 
   it("falls back to USD for OFAC-restricted tickers (read-time guard)", () => {
-    // RUB is in OFAC_FIAT_TICKERS; a persisted RUB must display as USD at read time
+    // RUB is OFAC-sanctioned; a persisted RUB must display as USD at read time
     // so the user never sees a blocked currency even if they had it stored.
     expect(counterValueCurrencySelector(buildState("RUB"))).toBe(getFiatCurrencyByTicker("USD"));
   });

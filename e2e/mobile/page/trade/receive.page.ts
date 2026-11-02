@@ -24,6 +24,10 @@ export default class ReceivePage {
   receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   private readonly receiveNetworkWarningId = "receive-network-warning";
+  private readonly deviceDeprecationTitleId = "warning-deprecation-title";
+  // Button prefixes its testID with enabled- or disabled-.
+  private readonly deviceDeprecationContinueButton = () =>
+    getElementById(/^(enabled|disabled)-warning-deprecation-continue$/);
 
   @Step("Open receive via deeplink")
   async openViaDeeplink(): Promise<void> {
@@ -72,6 +76,15 @@ export default class ReceivePage {
   async selectVerifyAddress(): Promise<void> {
     await waitForElementById(this.buttonVerifyAddressId);
     await tapById(this.buttonVerifyAddressId);
+  }
+
+  @Step("Expect the device deprecation error screen {{{0}}}")
+  async expectDeviceDeprecationError(expectedTitle: string): Promise<void> {
+    await waitForElementById(this.deviceDeprecationTitleId);
+    // The device name is rendered with non-breaking spaces, which \s also matches.
+    const title = (await getTextOfElement(this.deviceDeprecationTitleId)).replace(/\s/g, " ");
+    jestExpect(title).toBe(expectedTitle);
+    await detoxExpect(this.deviceDeprecationContinueButton()).not.toExist();
   }
 
   @Step("Get the fresh address displayed")

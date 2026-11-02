@@ -21,7 +21,7 @@ import {
   resolveAccountDescriptor,
   resolveOutputFormat,
 } from "../inputs";
-import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
+import { networkFromCurrencyId } from "../../shared/accountDescriptor";
 import { OutputFormatSchema } from "../../wallet/models";
 import { runFullSwapPipeline as runFullSwapPipelineDefault } from "./cli-swap-pipeline";
 import { runCliSwapDie as runCliSwapDiePipelineDefault } from "./cli-swap-die-pipeline";
@@ -202,7 +202,7 @@ export async function executeSwapCommand({
 
   const networkCurrencyId =
     fromCurrency.type === "TokenCurrency" ? fromCurrency.parentCurrencyId : fromCurrency.id;
-  const network = networkStringFromCurrencyId(networkCurrencyId);
+  const network = networkFromCurrencyId(networkCurrencyId);
 
   const out = createCommandOutput(resolveOutputFormat(flags.output), {
     command: "swap execute",

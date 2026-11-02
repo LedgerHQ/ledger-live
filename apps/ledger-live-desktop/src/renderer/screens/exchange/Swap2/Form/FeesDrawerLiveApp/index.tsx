@@ -8,7 +8,7 @@ import { t } from "~/renderer/i18n/init";
 import isEqual from "lodash/isEqual";
 import React, { useCallback, useRef, useState } from "react";
 import { track } from "@shared/analytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import LowGasAlertBuyMore from "~/renderer/components/LowGasAlertBuyMore";
@@ -148,7 +148,7 @@ export default function FeesDrawerLiveApp({
   return (
     <Box height="100%" display="flex" flexDirection="column">
       <Divider />
-      <TrackPage
+      <TrackScreen
         category="Swap"
         name="Form - Edit Fees"
         provider={provider}

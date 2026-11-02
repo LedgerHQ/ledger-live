@@ -1,5 +1,5 @@
 import React from "react";
-import { CardTransactionDetail } from "../CardTransactions/components/Detail";
+import { CardTransactionDetailDialog } from "../CardTransactions/components/Detail/CardTransactionDetailDialog";
 import { useCardTransactionDetailDialog } from "../CardTransactions/useCardTransactionDetailDialog";
 import { CardTransactionHistoryView } from "./CardTransactionHistoryView";
 import { useCardTransactionHistoryViewModel } from "./useCardTransactionHistoryViewModel";
@@ -9,14 +9,14 @@ export function CardTransactionHistory(props: CardTransactionHistoryProps) {
   const detail = useCardTransactionDetailDialog({ page: "History" });
   const viewModel = useCardTransactionHistoryViewModel({
     ...props,
-    onRowClick: detail.onTransactionPress,
+    onRowClick: detail.onOpenTransaction,
   });
 
   return (
     <>
       <CardTransactionHistoryView {...viewModel} />
       {detail.selectedTransaction ? (
-        <CardTransactionDetail
+        <CardTransactionDetailDialog
           isOpen
           transaction={detail.selectedTransaction}
           formatters={props.formatters}

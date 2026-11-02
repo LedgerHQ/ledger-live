@@ -1,8 +1,8 @@
 import React from "react";
 import { useDeviceIntentTracking } from "@ledgerhq/live-dmk-shared";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
-type TrackDIEScreenProps = React.ComponentProps<typeof TrackPage> & {
+type TrackDIEScreenProps = React.ComponentProps<typeof TrackScreen> & {
   sourceFlow?: never;
   deviceUxV2?: never;
 };
@@ -10,5 +10,5 @@ type TrackDIEScreenProps = React.ComponentProps<typeof TrackPage> & {
 export function TrackDIEScreen(props: TrackDIEScreenProps): React.ReactNode {
   const { sourceFlow, analyticsProperties } = useDeviceIntentTracking();
 
-  return <TrackPage {...analyticsProperties} {...props} sourceFlow={sourceFlow} deviceUxV2 />;
+  return <TrackScreen {...analyticsProperties} {...props} sourceFlow={sourceFlow} deviceUxV2 />;
 }

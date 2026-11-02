@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { BoxedIcon, Text } from "@ledgerhq/react-ui";
@@ -80,7 +80,7 @@ export default function WebviewErrorDrawer(error?: Error) {
 
   return (
     <ContentBox>
-      <TrackPage category="Swap" name="Webview error drawer" {...swapDefaultTrack} {...error} />
+      <TrackScreen category="Swap" name="Webview error drawer" {...swapDefaultTrack} {...error} />
       <Box mt={3} flow={4} mx={5}>
         <Logo>
           <Box alignSelf="center">
@@ -132,10 +132,10 @@ function ErrorBlock({
 
   return (
     <div className="flex flex-row justify-between">
-      <span className="text-sm text-muted basis-1/3 text-left">
+      <span className="text-muted basis-1/3 text-left">
         <Trans i18nKey={translationKey} />
       </span>
-      <span className="text-sm text-base basis-2/3 text-right">{value}</span>
+      <span className="text-base basis-2/3 text-right">{value}</span>
     </div>
   );
 }

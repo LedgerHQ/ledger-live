@@ -30,7 +30,7 @@ export function ContactDetailAvatar({
           isMe={contact.isMe}
           ariaHidden
           size="xl"
-          testId={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
+          testID={contact.isMe ? "contacts-detail-me-avatar" : "contacts-detail-avatar"}
         />
       </div>
     </div>

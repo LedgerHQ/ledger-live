@@ -1,2 +1,2 @@
 export * from "./CardTransactionDetail";
-export * from "./types";
+export * from "./CardTransactionDetail.types";

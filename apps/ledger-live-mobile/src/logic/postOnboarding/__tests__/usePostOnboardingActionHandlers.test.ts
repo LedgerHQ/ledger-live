@@ -27,6 +27,7 @@ describe("usePostOnboardingActionHandlers", () => {
     beforeEach(() => {
       mockUseOpenReceiveDrawer.mockReturnValue({
         handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+        openReceiveForAccount: jest.fn(),
       });
     });
 
@@ -52,6 +53,7 @@ describe("usePostOnboardingActionHandlers", () => {
   it("should initialize useOpenReceiveDrawer with the correct source screen name", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+      openReceiveForAccount: jest.fn(),
     });
 
     renderHook(() => usePostOnboardingActionHandlers());
@@ -64,6 +66,7 @@ describe("usePostOnboardingActionHandlers", () => {
   it("should not provide handlers for unimplemented action IDs", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+      openReceiveForAccount: jest.fn(),
     });
 
     const { result } = renderHook(() => usePostOnboardingActionHandlers());
@@ -75,6 +78,7 @@ describe("usePostOnboardingActionHandlers", () => {
   it("should provide a discoverWallet handler", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+      openReceiveForAccount: jest.fn(),
     });
 
     const { result } = renderHook(() => usePostOnboardingActionHandlers());
@@ -86,6 +90,7 @@ describe("usePostOnboardingActionHandlers", () => {
   it("should tick product tour deeplink and navigate to portfolio wallet tab when discoverWallet is invoked", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+      openReceiveForAccount: jest.fn(),
     });
 
     const { result, store } = renderHook(() => usePostOnboardingActionHandlers());

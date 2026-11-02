@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 
 export type PillVariant = "success" | "muted" | "active" | "black";
 export type PillSize = 1 | 2 | 3 | 4;

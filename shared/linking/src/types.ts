@@ -6,6 +6,10 @@ export type LocalizationConfig = {
   languages: Record<string, string>;
 };
 
+export type OpenLinkOptions = Readonly<{ sensitive?: boolean }>;
+
+export type OpenLink = (url: string, options?: OpenLinkOptions) => void;
+
 export type LinkingConfig = {
   openExternal: OpenExternal;
   onLinkOpened?: (url: string) => void;

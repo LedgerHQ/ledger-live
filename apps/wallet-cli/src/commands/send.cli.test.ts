@@ -115,7 +115,7 @@ describe("send --dry-run command", () => {
 
     const data = JSON.parse(stdout);
     expect(data.command).toBe("send");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(data.dry_run).toBe(true);
     expect(typeof data.recipient).toBe("string");
     expect(typeof data.amount).toBe("string");

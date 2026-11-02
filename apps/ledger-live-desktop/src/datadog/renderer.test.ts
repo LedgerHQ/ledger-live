@@ -6,6 +6,8 @@ import {
   initDatadog,
   captureException,
   addBreadcrumb,
+  addAction,
+  setDatadogActionsEnabled,
   setTags,
   setUser,
 } from "./renderer";
@@ -120,6 +122,13 @@ describe("datadog renderer", () => {
   describe("addBreadcrumb", () => {
     it("should not call datadogRum.addAction when not initialized", () => {
       addBreadcrumb({ message: "test", category: "track" });
+      expect(datadogRum.addAction).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("addAction", () => {
+    it("should not call datadogRum.addAction when not initialized", () => {
+      addAction("test", { foo: "bar" });
       expect(datadogRum.addAction).not.toHaveBeenCalled();
     });
   });
@@ -252,6 +261,47 @@ describe("datadog renderer", () => {
       expect(datadogRum.addAction).toHaveBeenCalledWith("click", {
         context: { sessionId: undefined, foo: "bar" },
       });
+    });
+
+    it("addAction should send its context as the action's top-level context", () => {
+      addAction("live_app_domain_check_violation", { origin: "https://evil.com" });
+      expect(datadogRum.addAction).toHaveBeenCalledWith("live_app_domain_check_violation", {
+        origin: "https://evil.com",
+      });
+    });
+
+    it("addAction should report whether the action was sent", () => {
+      expect(addAction("live_app_domain_check_violation", {})).toBe(true);
+
+      datadogRum.addAction.mockImplementationOnce(() => {
+        throw new Error("sdk failed");
+      });
+      expect(addAction("live_app_domain_check_violation", {})).toBe(false);
+    });
+
+    it("addAction should send nothing, and say so, while the user opted out", async () => {
+      let consent = true;
+      __resetDatadogForTesting();
+      await initDatadog(() => consent, undefined, createMockStore());
+      datadogRum.addAction.mockClear();
+
+      consent = false;
+      expect(addAction("live_app_domain_check_violation", {})).toBe(false);
+      expect(datadogRum.addAction).not.toHaveBeenCalled();
+
+      consent = true;
+      expect(addAction("live_app_domain_check_violation", {})).toBe(true);
+      expect(datadogRum.addAction).toHaveBeenCalledTimes(1);
+    });
+
+    it("addAction should send nothing, and say so, while the lldDatadog flag is off", () => {
+      setDatadogActionsEnabled(false);
+      expect(addAction("live_app_domain_check_violation", {})).toBe(false);
+      expect(datadogRum.addAction).not.toHaveBeenCalled();
+
+      setDatadogActionsEnabled(true);
+      expect(addAction("live_app_domain_check_violation", {})).toBe(true);
+      expect(datadogRum.addAction).toHaveBeenCalledTimes(1);
     });
 
     it("setTags should call setGlobalContextProperty for each tag when initialized", () => {

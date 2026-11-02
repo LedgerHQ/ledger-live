@@ -1,5 +1,8 @@
 import { ElectronApplication, Page, ConsoleMessage, Request, Response } from "@playwright/test";
-import { extractSwapInitError } from "@ledgerhq/live-e2e-shared/swapInitError";
+import {
+  describeSwapInitFailure,
+  extractSwapInitError,
+} from "@ledgerhq/live-e2e-shared/swapInitError";
 
 interface ConsoleLog {
   timestamp: string;
@@ -192,8 +195,7 @@ export class PageLogCollector {
     page.on("requestfailed", this.onRequestFailed);
   }
 
-  attachWebview(electronApp: ElectronApplication): void {
-    const [mainWindow] = electronApp.windows();
+  attachWebview(electronApp: ElectronApplication, mainWindow: Page): void {
     const attachIfWebview = (page: Page) => {
       if (page === mainWindow || this.attachedPages.has(page)) return;
       this.attachedPages.add(page);
@@ -220,6 +222,11 @@ export class PageLogCollector {
    */
   getSwapInitError(): string | null {
     return extractSwapInitError(this.consoleLogs);
+  }
+
+  /** One line naming the swap-init failure once the webview logged one, else null. */
+  getSwapInitFailure(): string | null {
+    return describeSwapInitFailure(this.consoleLogs);
   }
 
   getFormattedNetworkLogs(): string {

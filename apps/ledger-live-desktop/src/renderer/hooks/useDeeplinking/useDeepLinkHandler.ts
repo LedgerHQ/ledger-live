@@ -52,6 +52,8 @@ export function useDeepLinkHandler() {
   const isGenericAwarenessModalEnabled = lwdGenericAwarenessModal?.enabled === true;
   const lwdPayTab = useFeature("lwdPayTab");
   const isPayTabEnabled = !!lwdPayTab?.enabled;
+  const lwdContacts = useFeature("lwdContacts");
+  const isContactsEnabled = !!lwdContacts?.enabled;
   const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
     useWalletFeaturesConfig("desktop");
   const accountsPath = getAccountsSidebarPath(shouldDisplayAssetSection);
@@ -95,6 +97,7 @@ export function useDeepLinkHandler() {
       isProductTourEnabled,
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
+      isContactsEnabled,
     }),
     [
       dispatch,
@@ -115,6 +118,7 @@ export function useDeepLinkHandler() {
       isProductTourEnabled,
       isGenericAwarenessModalEnabled,
       isPayTabEnabled,
+      isContactsEnabled,
     ],
   );
 

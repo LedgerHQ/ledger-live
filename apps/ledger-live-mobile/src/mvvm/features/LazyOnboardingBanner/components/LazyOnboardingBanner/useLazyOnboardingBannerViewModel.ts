@@ -3,8 +3,8 @@ import { Linking } from "react-native";
 import {
   buildLazyOnboardingBannerLink,
   resolveLazyOnboardingBannerTapAction,
-  type LazyOnboardingBannerViewProps,
 } from "@features/flow-lazy-onboarding-banner";
+import type { LazyOnboardingBannerViewProps } from "@features/flow-lazy-onboarding-banner/native";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";

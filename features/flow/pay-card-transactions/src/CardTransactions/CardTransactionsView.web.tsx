@@ -7,14 +7,14 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { CARD_TRANSACTIONS_PREVIEW_LIMIT } from "../constants";
 import { List } from "./components/List";
-import type { CardTransactionsScreenViewProps } from "./types";
+import type { CardTransactionsScreenViewProps } from "./CardTransactions.types";
 
 export function CardTransactionsView({
   displayState,
   title,
   transactions,
   formatters,
-  onTransactionPress,
+  onOpenTransaction,
   onShowMore,
 }: CardTransactionsScreenViewProps) {
   if (displayState !== "ready") {
@@ -37,11 +37,7 @@ export function CardTransactionsView({
           {showMore ? <SubheaderShowMore /> : null}
         </SubheaderRow>
       </Subheader>
-      <List
-        transactions={preview}
-        formatters={formatters}
-        onTransactionPress={onTransactionPress}
-      />
+      <List transactions={preview} formatters={formatters} onOpenTransaction={onOpenTransaction} />
     </div>
   );
 }

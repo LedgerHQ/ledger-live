@@ -4,6 +4,7 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "tests/utils/fileUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class SettingsPage extends AppPage {
   private static readonly EXPORT_LOGS_SOURCE_PATH = path.resolve("./ledgerwallet-logs.txt");
@@ -33,7 +34,11 @@ export class SettingsPage extends AppPage {
   readonly languageSelector = this.page.locator(
     "[data-testid='setting-language-dropDown'] .select__value-container",
   );
-  readonly languageOptions = this.page.locator("div.select__option");
+  private readonly themeSelector = this.page.locator(
+    "[data-testid='setting-theme-dropDown'] .select__value-container",
+  );
+  private readonly selectOptions = this.page.locator("div.select__option");
+  private readonly rootElement = this.page.locator("html");
   readonly generalTab = this.page.getByTestId("settings-display-tab");
   readonly languageRow = this.page.getByTestId("setting-language-dropDown");
   readonly counterValueRow = this.page.getByTestId("setting-countervalue-dropDown");
@@ -74,13 +79,34 @@ export class SettingsPage extends AppPage {
 
   @step("Change language to $0")
   async changeLanguage(languageLabel: string) {
-    await this.languageSelector.click();
-    await this.languageOptions.filter({ hasText: languageLabel }).click();
+    await this.languageSelector.click({ timeout: TIMEOUT.xxxlarge });
+    await this.selectOptions
+      .filter({ hasText: languageLabel })
+      .click({ timeout: TIMEOUT.xxxlarge });
   }
 
   @step("Expect language to be selected: $0")
   async expectLanguageSelected(languageLabel: string) {
     await expect(this.languageSelector).toHaveText(languageLabel);
+  }
+
+  @step("Change theme to $0")
+  async changeTheme(themeLabel: string) {
+    await expect(this.themeSelector).toBeVisible();
+    await this.themeSelector.click();
+    const option = this.selectOptions.filter({ hasText: themeLabel });
+    await expect(option).toBeVisible();
+    await option.click();
+  }
+
+  @step("Expect theme to be selected: $0")
+  async expectThemeSelected(themeLabel: string) {
+    await expect(this.themeSelector).toHaveText(themeLabel);
+  }
+
+  @step("Expect the app to render the $0 color scheme")
+  async expectAppColorScheme(colorScheme: "light" | "dark") {
+    await expect(this.rootElement).toHaveClass(new RegExp(String.raw`\b${colorScheme}\b`));
   }
 
   @step("Expect General settings tab to show $0")
@@ -145,7 +171,7 @@ export class SettingsPage extends AppPage {
 
   @step("Expect Ledger Sync settings row to be visible")
   async expectLedgerSyncSettingsRow() {
-    await expect(this.walletSyncRow).toBeVisible();
+    await expect(this.walletSyncRow).toBeVisible({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Clear cache")
@@ -187,7 +213,7 @@ export class SettingsPage extends AppPage {
 
   @step("Expect exported logs file to be created")
   async expectExportLogsFileCreated() {
-    const timeout = 5000;
+    const timeout = TIMEOUT.small;
     const fileExists = await FileUtils.waitForFileToExist(
       SettingsPage.EXPORT_LOGS_SOURCE_PATH,
       timeout,

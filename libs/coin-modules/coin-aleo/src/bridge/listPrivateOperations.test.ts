@@ -6,16 +6,20 @@ import {
 } from "../__tests__/fixtures/api.fixture";
 import { getMockedOperation } from "../__tests__/fixtures/operation.fixture";
 import { EXPLORER_TRANSFER_TYPES, PROGRAM_ID } from "../constants";
+import { apiClient } from "../network/api";
 import { enrichPrivateRecords } from "../network/utils";
 import type { AleoTransition } from "../types";
-import { toPrivateBridgeOperation } from "./utils";
+import { toPrivateBridgeOperation, toPrivateFeeBridgeOperation } from "./utils";
 import { buildConsumedRecordTags, listPrivateOperations } from "./listPrivateOperations";
 
+jest.mock("../network/api");
 jest.mock("../network/utils");
 jest.mock("./utils");
 
 const mockEnrichPrivateRecords = jest.mocked(enrichPrivateRecords);
 const mockToPrivateBridgeOperation = jest.mocked(toPrivateBridgeOperation);
+const mockToPrivateFeeBridgeOperation = jest.mocked(toPrivateFeeBridgeOperation);
+const mockGetTransactionById = jest.mocked(apiClient.getTransactionById);
 
 const mockConfig = getMockedConfig("mainnet");
 const mockViewKey = "AViewKey1mockviewkey";
@@ -43,6 +47,7 @@ const run = (
     viewKey: mockViewKey,
     address: mockAddress,
     ledgerAccountId: mockLedgerAccountId,
+    knownTransactionIds: new Set(),
     ...overrides,
   });
 
@@ -128,6 +133,29 @@ describe("listPrivateOperations", () => {
 
     expect(operations).toEqual([op]);
   });
+
+  it.each([EXPLORER_TRANSFER_TYPES.JOIN, EXPLORER_TRANSFER_TYPES.SPLIT])(
+    "should not enrich %s records",
+    async functionName => {
+      const transferRecord = getMockedRecord({ tag: "transfer-tag" });
+      mockGetTransactionById.mockResolvedValueOnce(getMockedTransactionDetails("at1manage"));
+
+      const { operations } = await run({
+        privateRecords: [
+          transferRecord,
+          getMockedRecord({ transaction_id: "at1manage", function_name: functionName }),
+        ],
+        tokenRecords: [
+          getMockedRecord({ function_name: functionName, program_name: "arc20_eth.aleo" }),
+        ],
+      });
+
+      expect(mockEnrichPrivateRecords).toHaveBeenCalledWith(
+        expect.objectContaining({ records: [transferRecord] }),
+      );
+      expect(operations).toEqual([]);
+    },
+  );
 
   it("should forward onProgress and signal to the enrichment", async () => {
     const onProgress = jest.fn();
@@ -215,5 +243,267 @@ describe("buildConsumedRecordTags", () => {
 
   it("should ignore records the enrichment could not resolve", () => {
     expect(buildConsumedRecordTags([null], mockAddress)).toEqual(new Set());
+  });
+});
+
+const getFeeRecord = (transactionId: string) =>
+  getMockedRecord({
+    transaction_id: `${transactionId}  `,
+    function_name: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+  });
+
+const getCallDetails = (
+  transactionId: string,
+  program: string,
+  functionName: string,
+  status = "Accepted",
+) =>
+  getMockedTransactionDetails(transactionId, {
+    execution: { transitions: [{ ...getMockedTransition([]), program, function: functionName }] },
+    status,
+  });
+
+describe("listPrivateOperations fee-only transactions", () => {
+  const feeOperation = getMockedOperation({ type: "FEES" });
+
+  beforeEach(() => {
+    mockToPrivateFeeBridgeOperation.mockReturnValue(feeOperation);
+  });
+
+  it("should emit a FEES operation for a fee_private record whose transaction transfers nothing", async () => {
+    const feeRecord = getFeeRecord("at1join");
+    const details = getCallDetails("at1join", PROGRAM_ID.CREDITS, "join");
+    mockGetTransactionById.mockResolvedValueOnce(details);
+
+    const { operations } = await run({ privateRecords: [feeRecord] });
+
+    expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactionById).toHaveBeenCalledWith(mockConfig, "at1join");
+    expect(mockToPrivateFeeBridgeOperation).toHaveBeenCalledTimes(1);
+    expect(mockToPrivateFeeBridgeOperation).toHaveBeenCalledWith(
+      mockLedgerAccountId,
+      feeRecord,
+      details,
+      mockAddress,
+    );
+    expect(operations).toEqual([feeOperation]);
+  });
+
+  it("should list fee-only operations after the transfer operations", async () => {
+    const transferRecord = getMockedRecord({ transaction_id: "at1transfer" });
+    const transferOperation = getMockedOperation({ id: "transfer-op" });
+    mockEnrichPrivateRecords.mockResolvedValue([
+      getMockedEnrichedPrivateRecord({ rawRecord: transferRecord }),
+    ]);
+    mockToPrivateBridgeOperation.mockReturnValue(transferOperation);
+    mockGetTransactionById.mockResolvedValueOnce(
+      getCallDetails("at1join", PROGRAM_ID.CREDITS, "join"),
+    );
+
+    const { operations } = await run({ privateRecords: [transferRecord, getFeeRecord("at1join")] });
+
+    expect(operations).toEqual([transferOperation, feeOperation]);
+  });
+
+  it("should skip a transaction another operation already lists", async () => {
+    const { operations } = await run({
+      privateRecords: [getFeeRecord("at1public")],
+      knownTransactionIds: new Set(["at1public"]),
+    });
+
+    expect(mockGetTransactionById).not.toHaveBeenCalled();
+    expect(operations).toEqual([]);
+  });
+
+  it("should skip a transaction that also produced a transfer record", async () => {
+    const { operations } = await run({
+      privateRecords: [
+        getFeeRecord("at1transfer"),
+        getMockedRecord({
+          transaction_id: "at1transfer",
+          function_name: EXPLORER_TRANSFER_TYPES.PRIVATE,
+        }),
+      ],
+    });
+
+    expect(mockGetTransactionById).not.toHaveBeenCalled();
+    expect(operations).toEqual([]);
+  });
+
+  it.each([
+    ["a rejected private token transfer", "token_registry.aleo", "Rejected"],
+    ["an accepted transfer the account only paid the fee for", PROGRAM_ID.CREDITS, "Accepted"],
+  ])("should emit a FEES operation for %s", async (_, program, status) => {
+    const feeRecord = getFeeRecord("at1call");
+    const details = getCallDetails("at1call", program, EXPLORER_TRANSFER_TYPES.PRIVATE, status);
+    mockGetTransactionById.mockResolvedValueOnce(details);
+
+    const { operations } = await run({ privateRecords: [feeRecord] });
+
+    expect(mockToPrivateFeeBridgeOperation).toHaveBeenCalledTimes(1);
+    expect(mockToPrivateFeeBridgeOperation).toHaveBeenCalledWith(
+      mockLedgerAccountId,
+      feeRecord,
+      details,
+      mockAddress,
+    );
+    expect(operations).toEqual([feeOperation]);
+  });
+
+  it.each([
+    ["a staking call", "Accepted"],
+    ["a rejected staking call", "Rejected"],
+  ])("should skip %s", async (_, status) => {
+    mockGetTransactionById.mockResolvedValueOnce(
+      getCallDetails("at1call", PROGRAM_ID.CREDITS, "bond_public", status),
+    );
+
+    const { operations } = await run({ privateRecords: [getFeeRecord("at1call")] });
+
+    expect(mockToPrivateFeeBridgeOperation).not.toHaveBeenCalled();
+    expect(operations).toEqual([]);
+  });
+
+  it("should mark only the fee transition's record inputs of a rejected call as consumed", async () => {
+    mockGetTransactionById.mockResolvedValueOnce(
+      getMockedTransactionDetails("at1call", {
+        execution: {
+          transitions: [getMockedTransition([{ id: "in0", type: "record", tag: "rejected-tag" }])],
+        },
+        fee: {
+          transition: {
+            ...getMockedTransition([
+              { id: "in0", type: "record", tag: "fee-tag" },
+              { id: "in1", type: "public", value: "5000000u64" },
+            ]),
+            function: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+          },
+        },
+        status: "Rejected",
+      }),
+    );
+
+    const { consumedRecordTags } = await run({ privateRecords: [getFeeRecord("at1call")] });
+
+    expect(consumedRecordTags).toEqual(new Set(["fee-tag"]));
+  });
+
+  it("should reject when transaction details cannot be fetched", async () => {
+    mockGetTransactionById.mockRejectedValueOnce(new Error("explorer down"));
+
+    await expect(run({ privateRecords: [getFeeRecord("at1down")] })).rejects.toThrow(
+      "explorer down",
+    );
+  });
+});
+
+const getRecordManagementDetails = (functionName: string, status: string) =>
+  getMockedTransactionDetails("at1manage", {
+    execution: {
+      transitions: [
+        {
+          ...getMockedTransition([
+            { id: "in0", type: "record", tag: "input-tag-1" },
+            { id: "in1", type: "record", tag: "input-tag-2" },
+          ]),
+          function: functionName,
+        },
+      ],
+    },
+    fee: {
+      transition: {
+        ...getMockedTransition([{ id: "in0", type: "record", tag: "fee-tag" }]),
+        function: EXPLORER_TRANSFER_TYPES.FEE_PRIVATE,
+      },
+    },
+    status,
+  });
+
+describe("listPrivateOperations record management transactions", () => {
+  const feeOperation = getMockedOperation({ type: "FEES" });
+
+  beforeEach(() => {
+    mockToPrivateFeeBridgeOperation.mockReturnValue(feeOperation);
+  });
+
+  it("should mark the inputs of a fee-free split as consumed without listing an operation", async () => {
+    const { fee: _, ...details } = getRecordManagementDetails(
+      EXPLORER_TRANSFER_TYPES.SPLIT,
+      "Accepted",
+    );
+    mockGetTransactionById.mockResolvedValueOnce(details);
+
+    const { operations, consumedRecordTags } = await run({
+      privateRecords: [
+        getMockedRecord({
+          transaction_id: "at1manage",
+          function_name: EXPLORER_TRANSFER_TYPES.SPLIT,
+        }),
+      ],
+    });
+
+    expect(mockGetTransactionById).toHaveBeenCalledWith(mockConfig, "at1manage");
+    expect(mockToPrivateFeeBridgeOperation).not.toHaveBeenCalled();
+    expect(operations).toEqual([]);
+    expect(consumedRecordTags).toEqual(new Set(["input-tag-1", "input-tag-2"]));
+  });
+
+  it.each([
+    ["an accepted", "Accepted", ["input-tag-1", "input-tag-2", "fee-tag"]],
+    ["a rejected", "Rejected", ["fee-tag"]],
+  ])(
+    "should fetch %s join paid with a private fee once and list its fee",
+    async (_, status, expectedTags) => {
+      const feeRecord = getFeeRecord("at1manage");
+      const details = getRecordManagementDetails(EXPLORER_TRANSFER_TYPES.JOIN, status);
+      mockGetTransactionById.mockResolvedValueOnce(details);
+
+      const { operations, consumedRecordTags } = await run({
+        privateRecords: [
+          getMockedRecord({
+            transaction_id: "at1manage",
+            function_name: EXPLORER_TRANSFER_TYPES.JOIN,
+          }),
+          feeRecord,
+        ],
+      });
+
+      expect(mockGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockToPrivateFeeBridgeOperation).toHaveBeenCalledWith(
+        mockLedgerAccountId,
+        feeRecord,
+        details,
+        mockAddress,
+      );
+      expect(operations).toEqual([feeOperation]);
+      expect(consumedRecordTags).toEqual(new Set(expectedTags));
+    },
+  );
+
+  it("should mark the inputs of a join paid with a public fee as consumed without listing it again", async () => {
+    mockGetTransactionById.mockResolvedValueOnce({
+      ...getRecordManagementDetails(EXPLORER_TRANSFER_TYPES.JOIN, "Accepted"),
+      fee: {
+        transition: {
+          ...getMockedTransition([{ id: "in0", type: "public", value: "5000000u64" }]),
+          function: EXPLORER_TRANSFER_TYPES.FEE_PUBLIC,
+        },
+      },
+    });
+
+    const { operations, consumedRecordTags } = await run({
+      privateRecords: [
+        getMockedRecord({
+          transaction_id: "at1manage",
+          function_name: EXPLORER_TRANSFER_TYPES.JOIN,
+        }),
+      ],
+      knownTransactionIds: new Set(["at1manage"]),
+    });
+
+    expect(mockGetTransactionById).toHaveBeenCalledWith(mockConfig, "at1manage");
+    expect(mockToPrivateFeeBridgeOperation).not.toHaveBeenCalled();
+    expect(operations).toEqual([]);
+    expect(consumedRecordTags).toEqual(new Set(["input-tag-1", "input-tag-2"]));
   });
 });

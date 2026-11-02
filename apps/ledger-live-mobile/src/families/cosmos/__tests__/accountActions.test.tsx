@@ -109,4 +109,14 @@ describe("cosmos accountActions.getMainActions", () => {
     expect(warn).toHaveBeenCalled();
     warn.mockRestore();
   });
+
+  it("throws when the account has no staking resources", () => {
+    mockGetCurrencyConfiguration({});
+    const account = { ...makeAccount(), stakingResources: undefined } as unknown as CosmosAccount;
+    delete (account as { stakingResources?: unknown }).stakingResources;
+
+    expect(() =>
+      cosmosAccountActions.getMainActions({ account, parentAccount: undefined, parentRoute }),
+    ).toThrow("cosmos staking account required");
+  });
 });

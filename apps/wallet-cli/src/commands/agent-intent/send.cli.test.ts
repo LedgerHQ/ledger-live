@@ -115,11 +115,11 @@ describe("agent-intent send (CLI, --dry-run)", () => {
       accounts: [
         {
           label: "ethereum-1",
-          descriptor: `account:1:address:ethereum:main:${SENDER}:m/44h/60h/0h/0/0`,
+          descriptor: `account:2:address:ethereum:${SENDER}:m/44h/60h/0h/0/0`,
         },
         {
           label: "solana-1",
-          descriptor: `account:1:address:solana:main:${SOL_SENDER}:m/44h/501h/0h/0h`,
+          descriptor: `account:2:address:solana:${SOL_SENDER}:m/44h/501h/0h/0h`,
         },
       ],
       agentIntentProfiles: [profile],
@@ -242,7 +242,7 @@ describe("agent-intent send (CLI, --dry-run)", () => {
     expect(result).toMatchObject({
       status: "success",
       command: "agent-intent send",
-      network: "solana:main",
+      network: "solana",
       dryRun: true,
       sender: SOL_SENDER,
       recipient: SOL_RECIPIENT,
@@ -281,7 +281,7 @@ describe("agent-intent send (CLI, --dry-run)", () => {
     expect(exitCode, `stderr: ${stderr}`).toBe(0);
     expect(JSON.parse(stdout)).toMatchObject({
       status: "success",
-      network: "solana:main",
+      network: "solana",
       sender: SOL_SENDER,
       asset: { type: "spl-token", ticker: "USDC", decimals: 6, mint: USDC_MINT },
       amount: "25500000",

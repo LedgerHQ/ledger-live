@@ -9,7 +9,7 @@ import Button from "../ButtonV3";
 import { CircleWrapper } from "../CircleWrapper";
 import { ErrorBody } from "../ErrorBody";
 import ExportLogsButton from "../ExportLogsButton";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { Wrapper } from "./rendering";
 
 export function UnsupportedFeatureErrorComponent() {
@@ -23,7 +23,7 @@ export function UnsupportedFeatureErrorComponent() {
 
   return (
     <Wrapper>
-      <TrackPage category="Unsupported Feature" name="Error: App Unavailable" />
+      <TrackScreen category="Unsupported Feature" name="Error: App Unavailable" />
       <ErrorBody
         top={
           <CircleWrapper color={theme.colors.opacityDefault.c05} size={72}>

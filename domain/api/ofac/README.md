@@ -1,7 +1,7 @@
 # @domain/api-ofac
 
-> [!CAUTION]
-> **Status: UNSTABLE** — New package; API may change as the OFAC flow migrates onto it.
+> [!NOTE]
+> **Status: STABLE** — Production-ready; API is considered stable.
 
 Domain API client for the **OFAC geo-block check**, backed by the Ledger Countervalues Service
 (CVS). Injects a `checkOfacGeoBlock` RTK Query endpoint into the shared `countervaluesApi`

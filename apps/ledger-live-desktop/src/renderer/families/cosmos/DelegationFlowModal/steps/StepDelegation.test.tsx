@@ -13,7 +13,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 }));
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/modals/Send/AccountFooter", () => ({
   __esModule: true,
@@ -67,8 +67,8 @@ describe("Cosmos Delegation StepDelegation", () => {
     expect(chosenVoteAccAddrSeen).toBe("validatorA");
   });
 
-  it("defaults the chosen validator to an empty string when valAddress is unset", () => {
-    render(<StepDelegation {...buildProps({})} />);
+  it("passes an empty chosen validator when valAddress is empty", () => {
+    render(<StepDelegation {...buildProps({ valAddress: "" })} />);
     expect(chosenVoteAccAddrSeen).toBe("");
   });
 

@@ -18,12 +18,6 @@ const getLwdWallet40Params = async (page: Page) => {
 export const isAssetSectionEnabled = async (page: Page): Promise<boolean> =>
   Boolean((await getLwdWallet40Params(page))?.assetSection);
 
-export const isMyWalletEnabled = async (page: Page): Promise<boolean> =>
-  Boolean((await getLwdWallet40Params(page))?.myWallet);
-
-export const isOperationsListEnabled = async (page: Page): Promise<boolean> =>
-  Boolean((await getLwdWallet40Params(page))?.operationsList);
-
 export const isAggregatedAssetsEnabled = async (page: Page): Promise<boolean> =>
   Boolean((await getLwdWallet40Params(page))?.aggregatedAssets);
 
@@ -39,10 +33,7 @@ const FF_LWD_WALLET_40_Q1 = {
       lazyOnboarding: true,
       assetSection: false,
       brazePlacement: true,
-      operationsList: false,
       aggregatedAssets: false,
-      myWallet: false,
-      pnl: false,
       earnUpselling: false,
       earnSimulator: false,
       assetDiscoverability: false,
@@ -57,10 +48,7 @@ export const FF_LWD_WALLET_40_Q2 = {
       lazyOnboarding: true,
       assetSection: true,
       brazePlacement: true,
-      operationsList: true,
       aggregatedAssets: true,
-      myWallet: true,
-      pnl: true,
       earnUpselling: true,
       earnSimulator: true,
       assetDiscoverability: true,
@@ -225,6 +213,7 @@ export const FF_NEW_SEND_FLOW_ENABLED = {
         "ton",
         "internet_computer",
         "filecoin",
+        "aleo",
       ],
       excludedCurrencyIds: ["zcash", "dash"],
     },

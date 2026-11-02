@@ -1,57 +1,8 @@
-import type { ThunkDispatch } from "@reduxjs/toolkit";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { cryptoAssetsApi } from "../api";
 import type { PersistedTokenEntry } from "../types";
 
 // Package-private cache-restoration helpers for `restoreTokensToCache`. Imported directly by
 // `persistence.ts` (not via the internals barrel) so `api.ts` → internals never forms a cycle.
-
-/** Groups persisted token entries by their parent crypto-currency id. */
-export function groupTokensByCurrency(
-  tokens: PersistedTokenEntry[],
-): Map<string, PersistedTokenEntry[]> {
-  const byCurrency = new Map<string, PersistedTokenEntry[]>();
-  for (const entry of tokens) {
-    const currencyId = entry.data.parentCurrencyId;
-    const group = byCurrency.get(currencyId);
-    if (group) {
-      group.push(entry);
-    } else {
-      byCurrency.set(currencyId, [entry]);
-    }
-  }
-  return byCurrency;
-}
-
-/**
- * For each currency that has a stored hash, fetches the current server hash and returns the set of
- * currencies whose hash changed (or whose fetch failed) — those must not be restored from cache.
- * Currencies without a stored hash are never evicted.
- */
-export async function resolveCurrenciesToEvict(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  dispatch: ThunkDispatch<any, any, any>,
-  tokensByCurrency: Map<string, PersistedTokenEntry[]>,
-  hashes: Record<string, string>,
-): Promise<Set<string>> {
-  const toEvict = new Set<string>();
-  for (const currencyId of tokensByCurrency.keys()) {
-    const storedHash = hashes[currencyId];
-    if (!storedHash) continue;
-
-    try {
-      const { data: currentHash } = await dispatch(
-        cryptoAssetsApi.endpoints.getTokensSyncHash.initiate(currencyId, { forceRefetch: false }),
-      );
-      if (currentHash && currentHash !== storedHash) {
-        toEvict.add(currencyId);
-      }
-    } catch {
-      toEvict.add(currencyId);
-    }
-  }
-  return toEvict;
-}
 
 type RestoreCacheEntry =
   | { endpointName: "findTokenById"; arg: { id: string }; value: TokenCurrency | undefined }
@@ -59,7 +10,8 @@ type RestoreCacheEntry =
       endpointName: "findTokenByAddressInCurrency";
       arg: { contract_address: string; network: string; token_identifier?: string };
       value: TokenCurrency | undefined;
-    };
+    }
+  | { endpointName: "getTokensSyncHash"; arg: string; value: string };
 
 /**
  * Builds the RTK Query cache entries to upsert for the given persisted tokens: a `findTokenById`
@@ -91,4 +43,13 @@ export function buildRestoreCacheEntries(tokens: PersistedTokenEntry[]): Restore
 
     return entries;
   });
+}
+
+/** Builds a `getTokensSyncHash` cache entry per `currencyId → hash` pair. */
+export function buildSyncHashCacheEntries(hashes: Record<string, string>): RestoreCacheEntry[] {
+  return Object.entries(hashes).map(([currencyId, hash]) => ({
+    endpointName: "getTokensSyncHash",
+    arg: currencyId,
+    value: hash,
+  }));
 }

@@ -12,8 +12,8 @@ import { errMessage } from "../shared/error-message";
 import type { AgentIntentEnvironment } from "@ledgerhq/agent-intent-sdk";
 import { CLOUD_SYNC_API_URLS } from "../key-ring/constants";
 import {
+  toV0,
   toV1,
-  serializeNetwork,
   UnsupportedFamilyError,
   UnknownNetworkError,
   AccountDescriptorV1Schema,
@@ -200,8 +200,9 @@ function convertSyncedAccount(
     };
   }
 
-  // A newer Ledger Wallet may sync a derivation mode this version can't decode: skip it rather
-  // than report it as invalid, which would keep every later sync re-pulling it.
+  // A newer Ledger Wallet may sync a derivation mode this version can't decode (even with a
+  // malformed id): skip it rather than report it as invalid, which would keep every later sync
+  // re-pulling it.
   if (!KNOWN_DERIVATION_MODES.has(descriptor.derivationMode)) {
     return {
       status: "skipped",
@@ -229,6 +230,13 @@ function convertSyncedAccount(
   if (!validated.success) {
     return { status: "invalid", id: descriptor.id, reason: issues(validated.error) };
   }
+  // toV1() builds the path from any known mode, so a mode from another family (segwit on
+  // Ethereum) converts but can't round-trip through toV0(), which every label-based command uses.
+  try {
+    toV0(validated.data);
+  } catch (e) {
+    return { status: "invalid", id: descriptor.id, reason: errMessage(e) };
+  }
   return { status: "converted", descriptor: validated.data };
 }
 
@@ -255,7 +263,7 @@ export function mergeSyncedAccounts(
       report.invalid.push(converted);
     } else {
       const { label, added } = session.addDescriptor(converted.descriptor);
-      const network = serializeNetwork(converted.descriptor.network);
+      const network = converted.descriptor.network;
       if (added) report.imported.push({ status: "imported", label, network });
       else report.unchanged.push({ status: "unchanged", label, network });
     }

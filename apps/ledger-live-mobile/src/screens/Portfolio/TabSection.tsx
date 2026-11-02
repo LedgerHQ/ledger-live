@@ -9,7 +9,7 @@ import Animated, {
 import { AssetShortListView } from "LLM/features/Assets/components/AssetsShortListView";
 import { AccountsShortListView } from "LLM/features/Accounts/components/AccountShortListView";
 import { ScreenName } from "~/const";
-import { GestureResponderEvent } from "react-native/Libraries/Types/CoreEventTypes";
+import type { GestureResponderEvent } from "react-native";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
 import { useTranslation } from "~/context/Locale";
 

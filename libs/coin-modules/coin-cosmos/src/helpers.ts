@@ -21,9 +21,12 @@ export const getMainMessage = (messages: CosmosEventMessage[]): CosmosEventMessa
 };
 
 export function isAccountEmpty({
-  cosmosResources,
+  sequence,
   balance,
-}: Pick<CosmosAccount, "cosmosResources" | "balance">) {
-  if (!cosmosResources) return false;
-  return cosmosResources.sequence === 0 && balance.isZero();
+  cosmosResources,
+}: Pick<CosmosAccount, "balance"> & {
+  sequence?: number;
+  cosmosResources?: { sequence?: number };
+}) {
+  return (sequence ?? cosmosResources?.sequence) === 0 && balance.isZero();
 }

@@ -3,3 +3,4 @@
 [test]
 coverageReporter = ["lcov"]
 coverageDir = "coverage"
+preload = ["./src/testing/clear-speculos-env.ts"]

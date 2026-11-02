@@ -9,7 +9,7 @@ import type { StepProps } from "../types";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("@shared/analytics", () => ({
   ...jest.requireActual("@shared/analytics"),

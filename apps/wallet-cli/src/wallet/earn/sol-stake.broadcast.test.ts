@@ -60,7 +60,7 @@ describe("depositSolana live broadcast", () => {
   it("broadcasts a stake.createAccount and reports the hash + broadcasted status", async () => {
     const result = await depositSolana({
       descriptor,
-      network: "solana:main",
+      network: "solana",
       validator: "voteAcc123",
       amount: "1.5 SOL",
       dryRun: false,
@@ -81,7 +81,7 @@ describe("depositSolana live broadcast", () => {
     await expect(
       depositSolana({
         descriptor,
-        network: "solana:main",
+        network: "solana",
         validator: "voteAcc123",
         amount: "1.5 SOL",
         dryRun: false,
@@ -96,7 +96,7 @@ describe("depositSolana live broadcast", () => {
     await expect(
       depositSolana({
         descriptor,
-        network: "solana:main",
+        network: "solana",
         validator: "voteAcc123",
         amount: "1.5 SOL",
         dryRun: false,
@@ -113,7 +113,7 @@ describe("withdrawSolana live broadcast", () => {
     await expect(
       withdrawSolana({
         descriptor,
-        network: "solana:main",
+        network: "solana",
         stakeAccount: "stakeAcc456",
         finalize: false,
         dryRun: false,

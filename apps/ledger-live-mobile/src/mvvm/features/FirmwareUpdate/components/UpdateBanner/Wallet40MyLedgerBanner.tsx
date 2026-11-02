@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "~/context/Locale";
 import type { DrawerProps } from "./ViewProps";
-import UnsupportedUpdateDrawer from "./UnsupportedUpdateDrawer";
+import UnsupportedUpdateDrawer from "LLM/components/UnsupportedUpdateDrawer";
 
 type Wallet40MyLedgerBannerProps = {
   productName: string | undefined;

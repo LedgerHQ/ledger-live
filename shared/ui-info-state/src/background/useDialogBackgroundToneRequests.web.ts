@@ -1,8 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import type {
-  DialogBackgroundContextValue,
-  DialogBackgroundTone,
-} from "./DialogBackgroundContext.web";
+import type { DialogBackgroundContextValue, DialogBackgroundTone } from "./DialogBackgroundContext";
 
 type UseDialogBackgroundToneRequestsReturn = Readonly<{
   backgroundTone: DialogBackgroundTone | undefined;

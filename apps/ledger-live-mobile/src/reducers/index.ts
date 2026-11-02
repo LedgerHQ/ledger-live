@@ -4,6 +4,7 @@ import postOnboardingHubDrawer from "./postOnboardingHubDrawer";
 import { combineReducers, type Store } from "redux";
 import { llmRTKApiReducers } from "~/context/rtkQueryApi";
 import featureFlags from "@shared/feature-flags";
+import { appConfigReducer } from "@shared/app-config";
 import accounts from "./accounts";
 import appstate from "./appstate";
 import auth from "./auth";
@@ -39,6 +40,7 @@ import trustchain from "./trustchain";
 import type { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
+import osUpdate from "LLM/features/OsUpdate/state/osUpdateSlice";
 import walletSync from "./walletSync";
 import portfolioRefresh from "./portfolioRefresh";
 import portfolioBalanceDisplay from "./portfolioBalanceDisplay";
@@ -62,6 +64,7 @@ export type AppStore = Store<State>;
 
 const appReducer = combineReducers({
   accounts,
+  appConfig: appConfigReducer,
   appstate,
   auth,
   ble,
@@ -87,6 +90,7 @@ const appReducer = combineReducers({
   receiveOptionsDrawer,
   rebornBuyDeviceDrawer,
   transferDrawer,
+  osUpdate,
   swapTransactionStatusDrawer,
   currencyRegionRestrictedDrawer,
   notifications,

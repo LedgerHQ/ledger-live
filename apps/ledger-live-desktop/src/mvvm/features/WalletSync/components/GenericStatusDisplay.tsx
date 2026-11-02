@@ -7,7 +7,7 @@ import {
   AnalyticsPage,
   walletSyncEntryFlowProperties,
 } from "../hooks/useLedgerSyncAnalytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 
 export type GenericProps = {
@@ -76,7 +76,10 @@ export const GenericStatusDisplay = ({
   );
 
   const trackPage = (
-    <TrackPage category={String(analyticsPage)} {...walletSyncEntryFlowProperties(AnalyticsFlow)} />
+    <TrackScreen
+      category={String(analyticsPage)}
+      {...walletSyncEntryFlowProperties(AnalyticsFlow)}
+    />
   );
 
   const buttons = (withClose || withCta) && (

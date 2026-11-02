@@ -3,7 +3,7 @@ import React, { useEffect, useCallback, useRef, useState } from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { DisconnectedDevice } from "@ledgerhq/hw-transport/errors";
@@ -344,7 +344,7 @@ const StepReceiveFunds = (props: StepProps) => {
   return (
     <>
       <Box px={2}>
-        <TrackPage
+        <TrackScreen
           category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
           name="Step 3"
           currencyName={currencyName}

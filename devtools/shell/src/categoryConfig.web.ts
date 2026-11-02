@@ -7,6 +7,7 @@ import {
   Information,
   SpeedFast,
   Planet,
+  Wallet,
 } from "@ledgerhq/lumen-ui-react/symbols";
 import { Category, ValueOf } from "@devtools/registry";
 
@@ -24,4 +25,5 @@ export const CATEGORY_ICONS: Record<ValueOf<typeof Category>, IconComponent> = {
   [Category.INFORMATION]: Information,
   [Category.PERFORMANCE]: SpeedFast,
   [Category.PLAYGROUND]: Planet,
+  [Category.ACCOUNTS]: Wallet,
 };

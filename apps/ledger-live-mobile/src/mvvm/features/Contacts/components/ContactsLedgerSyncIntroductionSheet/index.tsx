@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import {
   ContactsLedgerSyncIntroductionContent,
   type ContactsLedgerSyncIntroductionContentProps,
-} from "@features/flow-contacts-introduction";
+} from "@features/flow-contacts-introduction/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 

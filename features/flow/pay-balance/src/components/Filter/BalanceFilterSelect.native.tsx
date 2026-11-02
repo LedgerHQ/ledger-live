@@ -1,6 +1,6 @@
 import React from "react";
 import type { BalanceFilterOption } from "../../types";
-import { BalanceFilterSelectView } from "./BalanceFilterSelectView.native";
+import { BalanceFilterSelectView } from "./BalanceFilterSelectView";
 import { useBalanceFilterSelectViewModel } from "./useBalanceFilterSelectViewModel";
 
 export type BalanceFilterSelectProps = Readonly<{

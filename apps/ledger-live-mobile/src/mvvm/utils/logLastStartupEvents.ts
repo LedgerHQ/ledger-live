@@ -37,7 +37,7 @@ export async function logLastStartupEvents(eventName: LastStartupEvent): Promise
         new Promise(resolve => setTimeout(resolve, LAST_EVENTS_BUFFER)), // Wait for potential events right after the last startup event to be logged
       ]);
 
-      const events = await resolveStartupEvents();
+      const events = resolveStartupEvents();
       const appStartupTime = events.find(e => e.event === eventName)?.time ?? 0;
       await track("app_startup_events", { appStartupTime, ...storageState, events });
     } catch (error) {

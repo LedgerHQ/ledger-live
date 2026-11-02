@@ -3,18 +3,18 @@ import { AccountUUIDSchema, accountDescriptorKey, computeAccountUUID } from "./k
 import { mockAddressAccountDescriptor } from "./schema.mock";
 import type { AccountDescriptor } from "./schema";
 
-const utxo = (path: string, env = "main", name = "bitcoin"): AccountDescriptor => ({
+const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name, env },
+  network,
   xpub: XPUB,
   path,
 });
 
-const address = (addr: string, network = { name: "ethereum", env: "main" }): AccountDescriptor => ({
+const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
   network,
   address: addr,
@@ -28,6 +28,12 @@ describe("accountDescriptorKey", () => {
     expect(accountDescriptorKey(utxo("m/84H/0H/0H"))).toBe(key);
   });
 
+  it("collapses the network case", () => {
+    expect(accountDescriptorKey(utxo("m/84h/0h/0h", "Bitcoin"))).toBe(
+      accountDescriptorKey(utxo("m/84h/0h/0h")),
+    );
+  });
+
   it("collapses EVM address case", () => {
     expect(accountDescriptorKey(address(ETH_ADDR.toLowerCase()))).toBe(
       accountDescriptorKey(address(ETH_ADDR)),
@@ -35,7 +41,7 @@ describe("accountDescriptorKey", () => {
   });
 
   it("keeps case-sensitive addresses distinct", () => {
-    const solana = { name: "solana", env: "main" };
+    const solana = "solana";
     expect(accountDescriptorKey(address(SOL_ADDR, solana))).not.toBe(
       accountDescriptorKey(address(SOL_ADDR.toLowerCase(), solana)),
     );
@@ -50,7 +56,7 @@ describe("accountDescriptorKey", () => {
 
 describe("computeAccountUUID", () => {
   it("is stable for a known descriptor", () => {
-    expect(computeAccountUUID(utxo("m/84h/0h/0h"))).toBe("31aacf2b-8158-5396-8b70-c653fedc4b23");
+    expect(computeAccountUUID(utxo("m/84h/0h/0h"))).toBe("0fd543d7-5125-5f32-95c7-937d6a169ed4");
   });
 
   it("carries neither xpub nor address", () => {

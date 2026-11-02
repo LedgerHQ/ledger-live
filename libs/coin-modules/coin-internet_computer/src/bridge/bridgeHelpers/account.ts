@@ -1,4 +1,3 @@
-import type { TransactionWithId } from "@dfinity/ledger-icp";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/ledger-wallet-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
@@ -6,7 +5,7 @@ import { Account, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../api";
+import { fetchBalance, fetchBlockHeight, fetchTxns } from "../../network/api";
 import {
   dedupeRetypedOperations,
   normalizeEpochTimestamp,
@@ -15,6 +14,7 @@ import {
 import { ICP_FEES } from "../../consts";
 import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "../../logic/crypto";
 import { hashTransaction } from "../../logic/hashTransaction";
+import type { TransactionWithId } from "../../network/idl/index.types";
 import {
   ICPAccount,
   ICPNeuron,
@@ -123,37 +123,29 @@ function reconciliatePublicKey(publicKey?: string, initialAccount?: Account): st
   throw new Error("publicKey wasn't properly restored");
 }
 
-const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
+export const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
   return (txInfo: TransactionWithId): InternetComputerOperation[] => {
     const { transaction: txn } = txInfo;
     const ops: InternetComputerOperation[] = [];
 
-    if (txn.operation === undefined) {
+    // Only transfers move funds between accounts; mints, burns and approvals yield no operation.
+    if (txn.operation === undefined || !("Transfer" in txn.operation)) {
       return [];
     }
 
-    if ("Transfer" in txn.operation === undefined) {
-      return [];
-    }
-
+    const { Transfer: transfer } = txn.operation;
     const timeStamp = txn.timestamp[0]?.timestamp_nanos ?? Date.now();
-    let amount = BigNumber(0);
-    let fromAccount = "";
-    let toAccount = "";
-    let hash = "";
-    if ("Transfer" in txn.operation) {
-      amount = BigNumber(txn.operation.Transfer.amount.e8s.toString());
-      fromAccount = txn.operation.Transfer.from;
-      toAccount = txn.operation.Transfer.to;
-      hash = hashTransaction({
-        from: fromAccount,
-        to: toAccount,
-        amount: txn.operation.Transfer.amount.e8s,
-        fee: txn.operation.Transfer.fee.e8s,
-        memo: txn.memo,
-        created_at_time: txn.created_at_time[0]?.timestamp_nanos ?? BigInt(0),
-      });
-    }
+    const amount = BigNumber(transfer.amount.e8s.toString());
+    const fromAccount = transfer.from;
+    const toAccount = transfer.to;
+    const hash = hashTransaction({
+      from: fromAccount,
+      to: toAccount,
+      amount: transfer.amount.e8s,
+      fee: transfer.fee.e8s,
+      memo: txn.memo,
+      created_at_time: txn.created_at_time[0]?.timestamp_nanos ?? BigInt(0),
+    });
 
     const blockHeight = Number(txInfo.id);
     const blockHash = "";

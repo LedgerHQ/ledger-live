@@ -1,17 +1,19 @@
 /* eslint-disable consistent-return */
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
-import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
+import { accountValidators, mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   CosmosAccount,
   CosmosOperation,
   CosmosDelegationInfo,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -63,7 +65,7 @@ function getURLWhatIsThis({
 
 export const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 
 type OperationDetailsDelegationProps = {
@@ -130,9 +132,8 @@ const OperationDetailsExtra = ({
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const currencyId = account.currency.id;
   const { extra } = operation;
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const cosmosValidators = accountValidators(account);
   const getValidatorName = (address: string): string => {
     return cosmosValidators.find(v => v.validatorAddress === address)?.name || address;
   };

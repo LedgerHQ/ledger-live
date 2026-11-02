@@ -17,7 +17,6 @@ const FF_WALLET_ASSETS = {
 
 setTeamOwner(Team.WALLET_XP);
 describe("Wallet assets", () => {
-  const tmsLinks = ["B2CQA-4839", "B2CQA-4840"];
   const currency = Account.INJ_1.currency;
 
   beforeAll(async () => {
@@ -30,9 +29,9 @@ describe("Wallet assets", () => {
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
-  tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
+  $TmsLink("B2CQA-4839");
   it(`[${currency.testLabel}] - Wallet assets empty state shows placeholders and add account CTA`, async () => {
     await app.portfolio.checkCryptosListSectionVisible(4, true);
     await app.portfolio.checkStablecoinsListSectionVisible(2, true);
@@ -40,6 +39,7 @@ describe("Wallet assets", () => {
     await app.portfolio.checkAddAccountCtaVisible();
   });
 
+  $TmsLink("B2CQA-4840");
   it(`[${currency.testLabel}] - Selecting an asset redirects to its market page`, async () => {
     await app.portfolio.tapFirstAssetItemW40();
     await app.market.expectAssetPageVisible();
@@ -74,8 +74,6 @@ describe("Wallet assets", () => {
 
 setTeamOwner(Team.WALLET_XP);
 describe("Wallet assets", () => {
-  const tmsLinks = ["B2CQA-4834", "B2CQA-4837", "B2CQA-4838"];
-
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
@@ -85,9 +83,9 @@ describe("Wallet assets", () => {
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
 
-  tmsLinks.forEach(link => $TmsLink(link));
   TAGS.forEach(tag => $Tag(tag));
 
+  ["B2CQA-4834", "B2CQA-4837"].forEach(link => $TmsLink(link));
   it("Wallet assets section caps cryptos at 6", async () => {
     await app.portfolio.checkCryptosListSectionVisible(6);
     await app.portfolio.checkCryptosSectionAssetItemCount(6);
@@ -99,6 +97,7 @@ describe("Wallet assets", () => {
     await app.mainNavigation.waitForWallet40Ready();
   });
 
+  $TmsLink("B2CQA-4838");
   it("Wallet assets section caps stablecoins at 6", async () => {
     await app.portfolio.checkStablecoinsListSectionVisible(6);
     await app.portfolio.checkStablecoinsSectionAssetItemCount(6);

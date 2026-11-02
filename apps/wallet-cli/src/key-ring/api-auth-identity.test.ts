@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { Entry } from "@napi-rs/keyring";
+import type { MemberCredentials } from "@ledgerhq/ledger-key-ring-protocol/types";
 import {
   _setTestApiAuthKeychain,
   apiAuthKeychainAccount,
@@ -6,9 +8,14 @@ import {
   type ApiAuthKeychain,
 } from "./api-auth-identity";
 import { pubkeyFromPrivatekey } from "./crypto";
+import { _setTestKeychainProbe } from "./keychain-entry";
+import { installOutputCapture } from "../shared/ui";
+import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 
 const origStateHome = process.env.XDG_STATE_HOME;
 let entries: Map<string, string>;
+let stderr: string[];
+let restoreOutput: () => void;
 
 function mapKeychain(): ApiAuthKeychain {
   return {
@@ -19,17 +26,26 @@ function mapKeychain(): ApiAuthKeychain {
   };
 }
 
+function loadCredentials(): MemberCredentials {
+  const { memberCredentials } = loadApiAuthIdentity();
+  if (!memberCredentials) throw new Error("expected API auth credentials");
+  return memberCredentials;
+}
+
 function useProfile(name: string): void {
   process.env.XDG_STATE_HOME = `/tmp/wallet-cli-api-auth-test/${name}`;
 }
 
 beforeEach(() => {
   entries = new Map();
+  stderr = [];
+  restoreOutput = installOutputCapture({ stderr: chunk => stderr.push(chunk) });
   _setTestApiAuthKeychain(mapKeychain());
   useProfile("a");
 });
 
 afterEach(() => {
+  restoreOutput();
   _setTestApiAuthKeychain(null);
   if (origStateHome === undefined) delete process.env.XDG_STATE_HOME;
   else process.env.XDG_STATE_HOME = origStateHome;
@@ -41,7 +57,7 @@ describe("loadApiAuthIdentity", () => {
   });
 
   it("creates a key on first use and stores it under the profile's api-auth account", () => {
-    const { memberCredentials } = loadApiAuthIdentity();
+    const memberCredentials = loadCredentials();
 
     expect(apiAuthKeychainAccount()).toStartWith("api-auth-key-");
     expect(entries.get(apiAuthKeychainAccount())).toBe(memberCredentials.privatekey);
@@ -49,18 +65,18 @@ describe("loadApiAuthIdentity", () => {
   });
 
   it("reuses the stored key on later runs", () => {
-    const first = loadApiAuthIdentity().memberCredentials;
+    const first = loadCredentials();
     _setTestApiAuthKeychain(mapKeychain());
-    const second = loadApiAuthIdentity().memberCredentials;
+    const second = loadCredentials();
 
     expect(second).toEqual(first);
     expect(entries.size).toBe(1);
   });
 
   it("keeps a separate key per profile", () => {
-    const keyA = loadApiAuthIdentity().memberCredentials;
+    const keyA = loadCredentials();
     useProfile("b");
-    const keyB = loadApiAuthIdentity().memberCredentials;
+    const keyB = loadCredentials();
 
     expect(keyB.privatekey).not.toBe(keyA.privatekey);
     expect(entries.size).toBe(2);
@@ -69,13 +85,13 @@ describe("loadApiAuthIdentity", () => {
   it("replaces a corrupt entry with a fresh key", () => {
     entries.set(apiAuthKeychainAccount(), "not-hex");
 
-    const { memberCredentials } = loadApiAuthIdentity();
+    const memberCredentials = loadCredentials();
 
     expect(memberCredentials.privatekey).not.toBe("not-hex");
     expect(entries.get(apiAuthKeychainAccount())).toBe(memberCredentials.privatekey);
   });
 
-  it("falls back to a one-off key when the keychain cannot be read", () => {
+  it("sends no credentials and warns once when the keychain cannot be read", () => {
     let writes = 0;
     _setTestApiAuthKeychain({
       getPassword: () => {
@@ -86,36 +102,51 @@ describe("loadApiAuthIdentity", () => {
       },
     });
 
-    const { memberCredentials } = loadApiAuthIdentity();
-
-    expect(memberCredentials.pubkey).toBe(pubkeyFromPrivatekey(memberCredentials.privatekey));
+    expect(loadApiAuthIdentity().memberCredentials).toBeNull();
+    expect(loadApiAuthIdentity().memberCredentials).toBeNull();
     expect(writes).toBe(0);
+    expect(stderr).toHaveLength(1);
+    expect(stderr[0]).toMatch(/No usable OS keychain/);
   });
 
-  it("keeps the one-off key for the rest of the run", () => {
-    _setTestApiAuthKeychain({
-      getPassword: () => {
-        throw new Error("no secret service");
-      },
-      setPassword: () => {},
-    });
-
-    const first = loadApiAuthIdentity().memberCredentials;
-    const second = loadApiAuthIdentity().memberCredentials;
-
-    expect(second).toEqual(first);
-  });
-
-  it("still returns the new key when the keychain cannot store it", () => {
+  it("sends no credentials and warns once when the keychain cannot store the new key", () => {
+    let writes = 0;
     _setTestApiAuthKeychain({
       getPassword: () => null,
       setPassword: () => {
+        writes++;
         throw new Error("keychain locked");
       },
     });
 
-    const { memberCredentials } = loadApiAuthIdentity();
+    expect(loadApiAuthIdentity().memberCredentials).toBeNull();
+    expect(loadApiAuthIdentity().memberCredentials).toBeNull();
+    expect(writes).toBe(1);
+    expect(stderr).toHaveLength(1);
+    expect(stderr[0]).toMatch(/Could not save the Ledger API auth key/);
+  });
 
-    expect(memberCredentials.pubkey).toBe(pubkeyFromPrivatekey(memberCredentials.privatekey));
+  it("probes for a Secret Service on Linux before reading the OS keychain", () => {
+    const restorePlatform = overridePlatform("linux");
+    _setTestKeychainProbe(failingKeychainProbe);
+    // Guards the real keychain: any read or write that slips past the probe throws here.
+    const read = spyOn(Entry.prototype, "getPassword").mockImplementation(() => {
+      throw new Error("real keychain read");
+    });
+    const write = spyOn(Entry.prototype, "setPassword").mockImplementation(() => {
+      throw new Error("real keychain write");
+    });
+    _setTestApiAuthKeychain(null);
+    try {
+      expect(loadApiAuthIdentity().memberCredentials).toBeNull();
+      expect(read).not.toHaveBeenCalled();
+      expect(write).not.toHaveBeenCalled();
+      expect(stderr).toEqual([expect.stringMatching(/No usable OS keychain/)]);
+    } finally {
+      read.mockRestore();
+      write.mockRestore();
+      _setTestKeychainProbe(null);
+      restorePlatform();
+    }
   });
 });

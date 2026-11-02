@@ -386,4 +386,28 @@ describe("genericSignOperation", () => {
     const { parameters } = craftTransaction.mock.calls.at(-1)[2].customFees;
     expect(parameters.feeLimit).toBeUndefined();
   });
+
+  it("hands the sponsoring context to craftTransaction so a sponsored send is crafted as sponsored", async () => {
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+
+    await lastValueFrom(
+      signOperation({
+        account,
+        transaction: { ...transaction, sponsored: true },
+        deviceId: "",
+      }).pipe(toArray()),
+    );
+
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
+    expect(craftTransaction.mock.calls[0][2].customFees.parameters.sponsored).toBe(true);
+  });
+
+  it("leaves the sponsored key out of the craft parameters when the transaction carries no sponsoring context", async () => {
+    const signOperation = genericSignOperation("mainnet", "xrp")(mockSignerContext);
+
+    await lastValueFrom(signOperation({ account, transaction, deviceId: "" }).pipe(toArray()));
+
+    expect(craftTransaction).toHaveBeenCalledTimes(1);
+    expect("sponsored" in craftTransaction.mock.calls[0][2].customFees.parameters).toBe(false);
+  });
 });

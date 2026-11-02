@@ -2,11 +2,19 @@
 // Node loads a worker_threads script itself, not through jest's transform.
 const fs = require("node:fs");
 const path = require("node:path");
-const { workerData } = require("node:worker_threads");
-const { captureStackTrace, getThreadsLastSeen } = require("@sentry/node-native-stacktrace");
+const { Session } = require("node:inspector");
+const { parentPort, workerData } = require("node:worker_threads");
 
-const { stallMs, threadName, reportDir } = workerData;
+const { stallMs, reportDir } = workerData;
 const CHECK_MS = Math.min(5_000, Math.max(250, Math.floor(stallMs / 10)));
+const PAUSE_TIMEOUT_MS = 5_000;
+
+let lastBeatAt = Date.now();
+let pollState;
+parentPort.on("message", next => {
+  lastBeatAt = Date.now();
+  pollState = next;
+});
 
 // Same encoding as @actions/core's escapeData.
 function escapeWorkflowCommandData(text) {
@@ -18,21 +26,32 @@ function frameLabel(frame) {
   return `${frame.function || "<anonymous>"} (${where})`;
 }
 
-const check = setInterval(() => {
-  const lastSeenMs = getThreadsLastSeen()[threadName];
-  if (lastSeenMs === undefined || lastSeenMs < stallMs) return;
-  clearInterval(check);
-
-  let frames = [];
-  let pollState;
+function captureFrozenFrames(onFrames) {
+  const timer = setTimeout(() => onFrames([]), PAUSE_TIMEOUT_MS);
   try {
-    const thread = captureStackTrace()[threadName];
-    frames = thread?.frames ?? [];
-    pollState = thread?.pollState;
+    const session = new Session();
+    session.connectToMainThread();
+    const urls = new Map();
+    session.on("Debugger.scriptParsed", ({ params }) => urls.set(params.scriptId, params.url));
+    session.once("Debugger.paused", ({ params }) => {
+      clearTimeout(timer);
+      onFrames(
+        params.callFrames.map(({ functionName, location }) => ({
+          function: functionName,
+          filename: urls.get(location.scriptId),
+          lineno: location.lineNumber + 1,
+        })),
+      );
+    });
+    // V8 delivers the pause as an interrupt, so it lands even in a busy JS loop, never in native code.
+    session.post("Debugger.enable", () => session.post("Debugger.pause"));
   } catch {
-    // the kill below must happen regardless
+    clearTimeout(timer);
+    onFrames([]);
   }
+}
 
+function reportAndKill(lastSeenMs, frames) {
   const spec = pollState?.spec ?? "<unknown spec>";
   const phase = pollState?.phase ?? "<unknown phase>";
   const stack = frames.slice(0, 10).map(frameLabel);
@@ -71,4 +90,11 @@ const check = setInterval(() => {
   }
 
   process.kill(process.pid, "SIGKILL");
+}
+
+const check = setInterval(() => {
+  const lastSeenMs = Date.now() - lastBeatAt;
+  if (lastSeenMs < stallMs) return;
+  clearInterval(check);
+  captureFrozenFrames(frames => reportAndKill(lastSeenMs, frames));
 }, CHECK_MS);

@@ -1,5 +1,5 @@
 import type { MessageMap, ConnectionStatus, TransportState } from "@devtools/transport";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 
 export interface TransportStateIndicatorProps<M extends MessageMap> {
   readonly transportState: TransportState<M>;

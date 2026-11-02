@@ -1,9 +1,9 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { BalanceView } from "../components/Hero/BalanceView.web";
+import { BalanceView } from "../components/Hero/BalanceView";
 import type { BalanceViewProps } from "../types";
 import { depositActionTiles, formatCountervalue, labels, options } from "./fixtures";
-import { renderWithStyle } from "./renderWithStyle.web";
+import { renderWithStyle } from "./renderWithStyle";
 
 function fundedProps(overrides: Partial<BalanceViewProps> = {}): BalanceViewProps {
   return {

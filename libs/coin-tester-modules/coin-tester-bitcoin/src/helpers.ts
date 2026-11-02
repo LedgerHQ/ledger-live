@@ -1,12 +1,27 @@
+import { setTimeout as sleep } from "node:timers/promises";
 import Client from "bitcoin-core";
 
-// fetched from bitcoin.conf
-const client: any = new Client({
-  version: "0.24.1",
-  username: "user",
-  password: "pass",
-  host: "http://localhost:18443",
-});
+// The wallet of the tester on the node. The coin-sandbox node has its own wallet loaded too, so
+// every wallet call names this one.
+export const WALLET = "coinTester";
+
+// The RPC of the coin-sandbox instance, known once it is up (credentials of coin-sandbox's node)
+let rpc: any;
+
+export function setBitcoinRpc(host: string): void {
+  rpc = new Client({ version: "0.24.1", username: "user", password: "pass", host, wallet: WALLET });
+}
+
+const client: any = new Proxy(
+  {},
+  {
+    get: (_, key) => {
+      if (rpc === undefined) throw new Error("the Bitcoin RPC is not set: is the sandbox up?");
+      const value = rpc[key];
+      return typeof value === "function" ? value.bind(rpc) : value;
+    },
+  },
+);
 
 export async function loadWallet(name: string): Promise<void> {
   try {
@@ -47,6 +62,10 @@ async function loadExistingWallet(name: string): Promise<void> {
   }
 }
 
+export async function getWalletAddress(): Promise<string> {
+  return await client.getNewAddress();
+}
+
 export async function mineToWalletAddress(param: string) {
   const address = await client.getNewAddress();
   const nbBlocks = parseInt(param);
@@ -68,6 +87,16 @@ export const mineBlock = async (address: string) => {
 export const getCurrentBlock = async () => {
   return await client.command("getblockcount");
 };
+
+// The client refuses `waitfornewblock` (not in its 0.24.1 method list): polls the height instead
+async function waitForNewBlock(timeoutMs: number): Promise<void> {
+  const start = await getCurrentBlock();
+  const deadline = Date.now() + timeoutMs;
+  while ((await getCurrentBlock()) === start) {
+    if (Date.now() > deadline) throw new Error(`no new block after ${timeoutMs}ms`);
+    await sleep(200);
+  }
+}
 
 /*
  * Note that it sets the input sequence to 4294967293, <=0xFFFFFFFD — Replace By Fee (RBF).
@@ -253,6 +282,10 @@ export async function sendTransaction(
   amount: number,
   rbf: boolean = true,
 ): Promise<string> {
+  // The sandbox node mines a block every 10 seconds: broadcasting right after one leaves the
+  // scenario a whole interval to find the transaction in the mempool and replace it
+  await waitForNewBlock(15000);
+
   // Send an RBF-enabled transaction
   const txid = await client.sendToAddress(recipientAddress, amount, "", "", rbf);
 

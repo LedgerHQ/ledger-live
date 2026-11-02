@@ -24,7 +24,7 @@ export default defineConfig({
       files: ["**/*.test.{ts,tsx}", "**/__tests__/**"],
       env: { jest: true },
       plugins: ["jest"],
-      rules: { "typescript/no-explicit-any": "warn", "eslint/no-console": "off" },
+      rules: { "typescript/no-explicit-any": "warn" },
     },
   ],
 });

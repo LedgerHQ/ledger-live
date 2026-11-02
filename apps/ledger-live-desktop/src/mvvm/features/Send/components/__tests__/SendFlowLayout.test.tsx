@@ -116,7 +116,7 @@ describe("SendFlowLayout", () => {
     );
   });
 
-  it("lets fit steps grow up to the viewport height so the footer is never clipped", () => {
+  it("keeps the Lumen dialog max height on fit steps", () => {
     (useFlowWizard as jest.Mock).mockReturnValue({
       currentStep: SEND_FLOW_STEP.AMOUNT,
       currentStepConfig: { height: "fit" },
@@ -125,7 +125,7 @@ describe("SendFlowLayout", () => {
 
     render(<SendFlowLayout isOpen onClose={onClose} />);
 
-    expect(screen.getByTestId("send-dialog-content")).toHaveClass("max-h-[calc(100vh-2rem)]");
+    expect(screen.getByTestId("send-dialog-content")).not.toHaveClass("max-h-[calc(100vh-2rem)]");
   });
 
   it("keeps the default height constraint on fixed steps", () => {

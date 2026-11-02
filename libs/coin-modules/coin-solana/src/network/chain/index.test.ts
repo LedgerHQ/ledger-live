@@ -94,6 +94,55 @@ describe("index", () => {
           expect(mockedConfirmTransaction).not.toHaveBeenCalled();
         }
       });
+
+      describe("when the RPC rejects the transaction at preflight", () => {
+        const mockServer = setupServer();
+
+        beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
+        afterEach(() => mockServer.resetHandlers());
+        afterAll(() => mockServer.close());
+
+        it.each([
+          ["with", ["Program 11111111111111111111111111111111 failed: insufficient lamports"]],
+          ["without", undefined],
+        ])(
+          "keeps the rejection reason %s logs, without a lookup by empty signature",
+          async (_n, logs) => {
+            const { Connection: RealConnection } = jest.requireActual("@solana/web3.js");
+            jest
+              .mocked(Connection)
+              .mockImplementation((...args) => new RealConnection(...args) as Connection);
+            const methods: string[] = [];
+            mockServer.use(
+              http.post(FAKE_CONFIG.endpoint, async ({ request }) => {
+                const { id, method } = (await request.json()) as { id: string; method: string };
+                methods.push(method);
+                return method === "sendTransaction"
+                  ? rpcJson({
+                      id,
+                      error: {
+                        code: -32002,
+                        message: "Transaction simulation failed: insufficient lamports",
+                        data: { logs },
+                      },
+                    })
+                  : rpcJson({ id, error: { code: -32602, message: "Invalid param: WrongSize" } });
+              }),
+            );
+
+            const error = await getChainAPI(FAKE_CONFIG)
+              .sendRawTransaction(Buffer.alloc(0))
+              .catch((e: unknown) => e);
+
+            expect(error).toBeInstanceOf(NetworkError);
+            expect(error).toMatchObject({
+              message: expect.stringContaining("insufficient lamports"),
+              logs,
+            });
+            expect(methods).toEqual(["sendTransaction"]);
+          },
+        );
+      });
     });
 
     it.each([
@@ -109,12 +158,65 @@ describe("index", () => {
               .fn()
               .mockResolvedValue({ blockhash: "b", lastValidBlockHeight: 1 }),
             confirmTransaction: jest.fn().mockRejectedValue(expiry),
+            getSignatureStatus: jest.fn().mockResolvedValue({ value: null }),
           }) as unknown as Connection,
       );
 
       await expect(getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0))).rejects.toBe(
         expiry,
       );
+    });
+
+    describe("on an exceeded block height", () => {
+      const mockConnection = (getSignatureStatus: jest.Mock) =>
+        jest.mocked(Connection).mockImplementation(
+          () =>
+            ({
+              sendRawTransaction: jest.fn().mockResolvedValue("sig"),
+              getLatestBlockhash: jest
+                .fn()
+                .mockResolvedValue({ blockhash: "b", lastValidBlockHeight: 1 }),
+              confirmTransaction: jest
+                .fn()
+                .mockRejectedValue(new TransactionExpiredBlockheightExceededError("sig")),
+              getSignatureStatus,
+            }) as unknown as Connection,
+        );
+
+      it.each(["confirmed", "finalized"])(
+        "returns the signature when the transaction landed successfully on-chain (%s)",
+        async confirmationStatus => {
+          const getSignatureStatus = jest.fn().mockResolvedValue({
+            value: { slot: 1, confirmations: null, err: null, confirmationStatus },
+          });
+          mockConnection(getSignatureStatus);
+
+          await expect(getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0))).resolves.toBe(
+            "sig",
+          );
+          expect(getSignatureStatus).toHaveBeenCalledWith("sig", {
+            searchTransactionHistory: true,
+          });
+        },
+      );
+
+      it.each([
+        ["failed on-chain", jest.fn().mockResolvedValue({ value: { slot: 1, err: "boom" } })],
+        ["did not land", jest.fn().mockResolvedValue({ value: null })],
+        [
+          "is only processed",
+          jest.fn().mockResolvedValue({
+            value: { slot: 1, err: null, confirmationStatus: "processed" },
+          }),
+        ],
+        ["cannot be looked up", jest.fn().mockRejectedValue(new Error("rpc down"))],
+      ])("keeps the expiry when the transaction %s", async (_n, getSignatureStatus) => {
+        mockConnection(getSignatureStatus);
+
+        await expect(
+          getChainAPI(FAKE_CONFIG).sendRawTransaction(Buffer.alloc(0)),
+        ).rejects.toBeInstanceOf(TransactionExpiredBlockheightExceededError);
+      });
     });
 
     describe("getSignaturesForAddressBatch", () => {

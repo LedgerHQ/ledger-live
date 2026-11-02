@@ -11,7 +11,7 @@ import { useSelector } from "LLD/hooks/redux";
 import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { analyticsDrawerName, analyticsFlowName, analyticsPageNames } from "./shared";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 type Props = StepProps & {
   result?: ProcessorResult;
@@ -83,7 +83,7 @@ const StepTransfer: React.FC<Props> = props => {
       {result ? (
         <Flex flex={1} px={12}>
           {error ? (
-            <TrackPage
+            <TrackScreen
               category={analyticsPageNames.error + error.name}
               type="drawer"
               flow={analyticsFlowName}

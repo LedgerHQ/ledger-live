@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import React, { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
@@ -14,7 +15,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import { type CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/network";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { isStakingAccount, TokenAccount } from "@ledgerhq/types-live";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
@@ -85,6 +86,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
 
   const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
+  invariant(isStakingAccount(account), "cosmos staking account required");
   const formatConfig = {
     disableRounding: false,
     alwaysShowSign: false,

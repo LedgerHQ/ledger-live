@@ -1,6 +1,13 @@
-import { describe, it, expect } from "bun:test";
+import { afterEach, describe, it, expect } from "bun:test";
 import { deriveDomainKey } from "./crypto";
-import { wrapSecret, unwrapSecret } from "./keychain-entry";
+import {
+  wrapSecret,
+  unwrapSecret,
+  assertOsKeychainAvailable,
+  _setTestKeychainProbe,
+} from "./keychain-entry";
+import { KeychainUnavailableError } from "./keychain-unavailable-error";
+import { failingKeychainProbe, overridePlatform } from "../testing/os-keychain";
 
 const KEY_HEX = "cafe".repeat(16);
 
@@ -56,5 +63,46 @@ describe("wrapSecret / unwrapSecret", () => {
     await expect(unwrapSecret(wrapped, otherKey, onPasswordRequired, onCorrupt)).rejects.toThrow(
       "Wrong password",
     );
+  });
+});
+
+describe("assertOsKeychainAvailable", () => {
+  let probes = 0;
+  const failingProbe = () => {
+    probes++;
+    failingKeychainProbe();
+  };
+  let restorePlatform: () => void;
+
+  afterEach(() => {
+    restorePlatform();
+    _setTestKeychainProbe(null);
+    probes = 0;
+  });
+
+  it("throws KeychainUnavailableError with the hint on Linux when the Secret Service probe fails", () => {
+    restorePlatform = overridePlatform("linux");
+    _setTestKeychainProbe(failingProbe);
+
+    expect(() => assertOsKeychainAvailable("Hint.")).toThrow(KeychainUnavailableError);
+    expect(() => assertOsKeychainAvailable("Hint.")).toThrow(
+      /no Secret Service provider.*\(Platform failure: DBus error: .*org\.freedesktop\.secrets.*\)\. Hint\./,
+    );
+    expect(probes).toBe(2);
+  });
+
+  it("passes on Linux when the probe returns", () => {
+    restorePlatform = overridePlatform("linux");
+    _setTestKeychainProbe(() => null);
+
+    expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
+  });
+
+  it.each(["darwin", "win32"] as const)("never probes on %s", platform => {
+    restorePlatform = overridePlatform(platform);
+    _setTestKeychainProbe(failingProbe);
+
+    expect(() => assertOsKeychainAvailable("Hint.")).not.toThrow();
+    expect(probes).toBe(0);
   });
 });

@@ -45,6 +45,9 @@ jest.mock("@domain/api-currency-token", () => ({
   persistedCALContentEqual: jest.fn(() => true),
 }));
 
+// The CAL save throttle lives at module level: let each test reach the save at once.
+jest.mock("lodash/throttle", () => (fn: unknown) => fn);
+
 jest.mock("../../reducers/market", () => ({
   marketStoreSelector: (state: FakeState) => state.market,
 }));
@@ -399,6 +402,7 @@ describe("DBMiddleware - trustchain branch", () => {
 describe("DBMiddleware - crypto assets cache branch", () => {
   beforeEach(() => {
     mockedSetKey.mockReset();
+    jest.mocked(persistedCALContentEqual).mockReset().mockReturnValue(false);
   });
 
   it("persists the CAL token cache on actions of the registered CAL api", () => {
@@ -410,5 +414,34 @@ describe("DBMiddleware - crypto assets cache branch", () => {
     runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
 
     expect(mockedSetKey).toHaveBeenCalledWith("app", "cryptoAssets", persisted);
+  });
+
+  it("replaces stale tokens on disk when a changed hash evicts every token", () => {
+    // A changed hash enters the cache before its eviction removes the tokens
+    const staleTokens: PersistedCAL = {
+      version: 2,
+      tokens: [{ data: usdcToken, timestamp: 0 }],
+      hashes: { ethereum: "new-hash" },
+    };
+    const evicted: PersistedCAL = { version: 2, tokens: [], hashes: { ethereum: "new-hash" } };
+    jest
+      .mocked(extractPersistedCALFromState)
+      .mockReturnValueOnce(staleTokens)
+      .mockReturnValueOnce(evicted);
+    const state = baseState();
+
+    runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
+    runMiddleware([state, state], cryptoAssetsApi.util.invalidateTags([]));
+
+    expect(mockedSetKey).toHaveBeenLastCalledWith("app", "cryptoAssets", evicted);
+  });
+
+  it("does not persist a CAL cache with neither tokens nor hashes", () => {
+    jest.mocked(extractPersistedCALFromState).mockReturnValueOnce({ version: 2, tokens: [] });
+    const state = baseState();
+
+    runMiddleware([state, state], cryptoAssetsApi.util.upsertQueryEntries([]));
+
+    expect(mockedSetKey).not.toHaveBeenCalled();
   });
 });

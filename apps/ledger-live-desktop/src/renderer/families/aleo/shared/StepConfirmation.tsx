@@ -5,7 +5,7 @@ import { TFunction } from "i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/aleo/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
@@ -89,7 +89,7 @@ export function createStepConfirmation({ flow, trackField }: StakingConfirmation
     if (optimisticOperation) {
       return (
         <Container>
-          <TrackPage
+          <TrackScreen
             category="Delegation Flow"
             name="Step Confirmed"
             flow={flow}
@@ -108,7 +108,7 @@ export function createStepConfirmation({ flow, trackField }: StakingConfirmation
     if (error) {
       return (
         <Container shouldSpace={signed}>
-          <TrackPage
+          <TrackScreen
             category={category}
             name="Step Confirmation Error"
             flow={flow}

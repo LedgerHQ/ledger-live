@@ -1,11 +1,46 @@
-import { Entry } from "@napi-rs/keyring";
+import { Entry, type EntryOptions } from "@napi-rs/keyring";
 import { createHash } from "node:crypto";
 import { stateDir } from "@bunli/utils";
 import { APP_NAME } from "../session/session-store";
+import { errMessage } from "../shared/error-message";
 import { encryptData, decryptData, hexToBytes } from "./crypto";
+import { KeychainUnavailableError } from "./keychain-unavailable-error";
 
 const SERVICE = APP_NAME;
 const ENC_PREFIX = "ENC:";
+// Only ever built, never read or written.
+const PROBE_SERVICE = `${APP_NAME}-probe`;
+// Without a pin, Linux `new Entry()` silently falls back to the kernel keyring, which loses the key
+// on reboot. Pinned, the constructor throws when no Secret Service is reachable.
+const SECRET_SERVICE_ONLY: EntryOptions = { linux: { store: "secret-service" } };
+
+// The pinned constructor is the whole check: a read would also report errors (a timeout, a locked
+// collection) that don't mean the Secret Service is missing.
+function probeSecretService(): Entry {
+  return new Entry(PROBE_SERVICE, "probe", SECRET_SERVICE_ONLY);
+}
+
+let probeKeychain: () => unknown = probeSecretService;
+
+// Test seam — keeps tests off the OS keychain; `null` restores it.
+export function _setTestKeychainProbe(probe: (() => unknown) | null): void {
+  probeKeychain = probe ?? probeSecretService;
+}
+
+// Reports a missing Secret Service up front, with a hint, instead of failing on the first pinned
+// entry. Not memoized: callers probe right before they read or write.
+export function assertOsKeychainAvailable(hint: string): void {
+  if (process.platform !== "linux") return;
+  try {
+    probeKeychain();
+  } catch (e) {
+    throw new KeychainUnavailableError(
+      `No OS keychain is available: no Secret Service provider (e.g. gnome-keyring or KeePassXC) ` +
+        `is reachable (${errMessage(e)}). ${hint}`,
+      { cause: e },
+    );
+  }
+}
 
 /**
  * A namespaced OS-keychain entry. `hashParts` are hashed together with the state dir so distinct
@@ -20,25 +55,23 @@ export function keychainEntry(accountPrefix: string, ...hashParts: string[]): En
     .update([stateDir(APP_NAME), ...hashParts].join(" "))
     .digest("hex")
     .slice(0, 16);
-  return new Entry(SERVICE, `${accountPrefix}-${digest}`);
+  return osKeychainEntry(`${accountPrefix}-${digest}`);
+}
+
+// Throws on Linux when no Secret Service is reachable.
+export function osKeychainEntry(account: string): Entry {
+  return new Entry(SERVICE, account, SECRET_SERVICE_ONLY);
 }
 
 /**
- * "Deleted" and "already absent" both satisfy the postcondition (no key remains), so both collapse
- * to `true`; only a thrown backend error (the key may still persist) returns `false`.
+ * "Deleted" (`true`) and "already absent" (`false` since @napi-rs/keyring 2.0) both satisfy the
+ * postcondition (no key remains), so both collapse to `true`; only a throw (the key may still
+ * persist, or the entry can't even be built) returns `false`.
  */
-export function deleteKeychainEntry(entry: Entry): boolean {
+export function deleteKeychainEntry(entry: () => Entry): boolean {
   try {
-    entry.deletePassword();
+    entry().deletePassword();
     return true;
-  } catch {
-    return false;
-  }
-}
-
-export function hasKeychainEntry(entry: Entry): boolean {
-  try {
-    return entry.getPassword() != null;
   } catch {
     return false;
   }

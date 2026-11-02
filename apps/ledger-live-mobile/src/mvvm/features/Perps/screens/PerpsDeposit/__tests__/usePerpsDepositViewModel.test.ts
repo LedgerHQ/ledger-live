@@ -4,7 +4,7 @@ import { type TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-curren
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 import { act, renderHook } from "@tests/test-renderer";
 import { ScreenName } from "~/const";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -13,7 +13,7 @@ import { usePerpsDepositViewModel } from "../usePerpsDepositViewModel";
 import {
   beginDepositRequest,
   cancelDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 const mockOpenDrawer = jest.fn();
 jest.mock("LLM/features/ModularDrawer", () => ({
@@ -547,7 +547,7 @@ describe("usePerpsDepositViewModel", () => {
       expect(replace).toHaveBeenCalledWith(ScreenName.PerpsTransactionSigned, {
         receiveCurrencyTicker: "ETH",
         swapId: "swap-1",
-        provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+        provider: PERPS_SWAPKIT_PROVIDER,
       });
     });
 

@@ -5,7 +5,7 @@ import { StepProps } from "../types";
 import { TokenCurrency } from "@domain/entity-currency-token";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/algorand/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -37,7 +37,7 @@ export default function StepAsset({
   );
   return (
     <Box flow={1}>
-      <TrackPage category="OptIn Flow" name="Step 1" />
+      <TrackScreen category="OptIn Flow" name="Step 1" />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <AsaSelector transaction={transaction} account={account} t={t} onChange={onUpdateAsset} />

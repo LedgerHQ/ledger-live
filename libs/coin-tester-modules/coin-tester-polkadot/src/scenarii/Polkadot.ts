@@ -1,20 +1,25 @@
-import BigNumber from "bignumber.js";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import type { PolkadotCoinConfig, PolkadotContext } from "@ledgerhq/coin-polkadot/config";
-import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeAccount } from "../fixtures";
-import { indexOperation } from "../indexer";
 import { polkadot } from "../helpers";
+import {
+  endpointOf,
+  fundFromAlice,
+  startPolkadotSandbox,
+  toWs,
+  atlasOf,
+  waitForInclusion,
+} from "../sandbox";
 import resolver from "@ledgerhq/coin-polkadot/signer/index";
 import {
   PolkadotAccount,
-  PolkadotOperationExtra,
   Transaction as PolkadotTransaction,
 } from "@ledgerhq/coin-polkadot/types/bridge";
 import { buildSigner } from "../signer";
@@ -79,29 +84,14 @@ const getTransactions = () => {
   return [send1DotTransaction, send100DotTransaction, sendAllDotTransaction];
 };
 
-const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
-const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
+/** DOT sent to the scenario's account, whole units. */
+const ACCOUNT_DOT = "100000";
 
-const wsProvider = new WsProvider(LOCAL_TESTNODE_WS_URL, false);
-let api: ApiPromise;
-let unsubscribeNewBlockListener: () => void;
-
-const coinConfig: PolkadotCoinConfig = {
-  status: {
-    type: "active",
-  },
-  name: "Polkadot",
-  unit: { name: "DOT", code: "DOT", magnitude: 10 },
-  node: {
-    url: LOCAL_TESTNODE_WS_URL,
-  },
-  indexer: {
-    url: "https://polkadot.coin.ledger.com",
-  },
-  sidecar: {
-    url: SIDECAR_BASE_URL,
-  },
-};
+let sandbox: Sandbox | undefined;
+let api: ApiPromise | undefined;
+let closeGuard: (() => void) | undefined;
+let coinConfig: PolkadotCoinConfig;
+let atlas: ReturnType<typeof atlasOf>;
 
 const context: PolkadotContext = {
   config: async () => coinConfig,
@@ -112,14 +102,31 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
   name: "Polkadot Ledger Live transactions",
 
   setup: async () => {
-    await spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/polkadot.yml");
+    closeGuard = forbidRemoteRequests();
+    sandbox = await startPolkadotSandbox();
+    const nodeUrl = endpointOf(sandbox, "relay");
+    const node = toWs(nodeUrl);
+
+    // Production's layout: the rest-api serves the relay chain under `/v1/rc`, Atlas under its own path
+    coinConfig = {
+      status: {
+        type: "active",
+      },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
+      // HTTP like production: a WebSocket would keep reconnecting after the teardown
+      node: { url: nodeUrl },
+      indexer: { url: `${endpointOf(sandbox, "relayIndexer")}/blockchain/dot` },
+      sidecar: { url: `${endpointOf(sandbox, "restApi")}/v1/rc` },
+    };
+
+    atlas = atlasOf(coinConfig.indexer.url);
 
     await cryptoWaitReady();
-    await wsProvider.connect();
-    api = await ApiPromise.create({ provider: wsProvider as ProviderInterface, noInitWarn: true });
-
-    const keyring = new Keyring({ type: "sr25519" });
-    keyring.setSS58Format(0);
+    api = await ApiPromise.create({
+      provider: new WsProvider(node) as ProviderInterface,
+      noInitWarn: true,
+    });
 
     const signer = await buildSigner();
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(signer);
@@ -133,23 +140,20 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       derivationMode: "polkadotbip44",
     });
 
+    const keyring = new Keyring({ type: "sr25519" });
+    keyring.setSS58Format(0);
     const polkadotScenarioAccountPair = keyring.addFromAddress(address, {
       name: "BASIC_SCENARIO_ACCOUNT",
     });
 
-    // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
-    const alice = keyring.addFromUri("//Alice");
+    // The sandbox's airdrop funds Asset Hub: the relay chain's account is funded by Alice
+    await fundFromAlice(
+      api,
+      polkadotScenarioAccountPair.address,
+      BigInt(parseCurrencyUnit(polkadot.units[0], ACCOUNT_DOT).toFixed()),
+    );
 
-    const unsub = await api.tx.balances
-      .transferAllowDeath(
-        polkadotScenarioAccountPair.address,
-        parseCurrencyUnit(polkadot.units[0], "100000").toNumber(),
-      )
-      .signAndSend(alice, result => {
-        if (result.status.isFinalized) {
-          unsub();
-        }
-      });
+    await atlas.waitForBlock((await api.rpc.chain.getHeader()).number.toNumber());
 
     const account = makeAccount(polkadotScenarioAccountPair.address, polkadot);
 
@@ -161,108 +165,22 @@ export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     };
   },
   getTransactions,
-  mockIndexer: async (account, optimistic) => {
-    unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async header => {
-      const blockHash = header.hash.toString();
-
-      const res = await fetch(`${SIDECAR_BASE_URL}/blocks/${blockHash}`);
-      const blockInfo = await res.json();
-
-      const extrinsic = blockInfo.extrinsics.find((extrinsic: any) => {
-        return extrinsic.hash === optimistic.hash;
-      });
-
-      // we only need the transactions made during the test
-      if (!extrinsic) {
-        return;
-      }
-
-      const { nonce } = (await api.query.system.account(account.freshAddress)) as any;
-
-      const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
-      let amount = new BigNumber(0);
-      let staking: ExplorerExtrinsic["staking"] = {} as ExplorerExtrinsic["staking"];
-      let validatorStash = "";
-
-      switch (polkadotExtra.palletMethod) {
-        case "balances.transfer":
-        case "balances.transferAll":
-        case "balances.transferAllowDeath":
-        case "balances.transferKeepAlive":
-          amount = new BigNumber(polkadotExtra.transferAmount!);
-          break;
-        case "staking.bond":
-        case "staking.rebond":
-          amount = new BigNumber(polkadotExtra.bondedAmount!);
-          break;
-        case "staking.unbond":
-          amount = new BigNumber(polkadotExtra.unbondedAmount!);
-          break;
-        case "staking.withdrawUnbonded":
-          staking = {
-            validators: polkadotExtra.validators?.map(address => ({ address })) ?? [],
-            eventStaking: [
-              {
-                section: "staking",
-                method: "Withdraw",
-                value: polkadotExtra.withdrawUnbondedAmount!.toNumber(),
-              },
-            ],
-          };
-          break;
-        case "staking.nominate":
-          staking = {
-            validators: polkadotExtra.validators?.map(address => ({ address })) ?? [],
-            eventStaking: [
-              {
-                section: "staking",
-                method: "Nominate",
-                value: 0,
-              },
-            ],
-          };
-          break;
-        case "staking.chill":
-          break;
-        case "staking.payoutStakers":
-          validatorStash = extrinsic.args.validator_stash!;
-          break;
-        default:
-          throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
-      }
-
-      indexOperation(account.freshAddress, {
-        blockNumber: blockInfo.number,
-        timestamp: optimistic.date.getTime(),
-        nonce,
-        hash: optimistic.hash,
-        signer: extrinsic.signature.signer.id,
-        affectedAddress1: optimistic.recipients[0],
-        method: extrinsic.method.method,
-        section: extrinsic.method.pallet,
-        isSuccess: extrinsic.success,
-        amount: amount.toNumber(),
-        partialFee: optimistic.fee.toNumber(),
-        staking: staking!,
-        validatorStash,
-        index: 2, // not used by coin-module
-        isBatch: false, // batch transactions are not supported in this coin module
-      });
-    });
-  },
   beforeAll: async account => {
     expect(formatCurrencyUnit(polkadot.units[0], account.balance, { useGrouping: false })).toBe(
-      "100000",
+      ACCOUNT_DOT,
     );
   },
-  beforeSync: async () => {
-    await wsProvider.send("dev_newBlock", [{ count: 1 }]);
-  },
-  afterEach: async () => {
-    unsubscribeNewBlockListener();
+  // Atlas has indexed the block of the transaction before the tester asserts on it
+  mockIndexer: async (_account, optimistic) => {
+    const block = await waitForInclusion(api!, optimistic.hash);
+    await atlas.waitForBlock(block);
   },
   teardown: async () => {
-    await wsProvider.disconnect();
-    await killChopsticksAndSidecar();
+    await api?.disconnect();
+    api = undefined;
+    closeGuard?.();
+    closeGuard = undefined;
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };

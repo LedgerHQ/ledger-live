@@ -3,7 +3,11 @@ import type {
   ZcashTransferType,
 } from "@ledgerhq/coin-zcash/types";
 import type { CoinDescriptor } from "../../../bridge/descriptor/types";
-import { zcashBalanceTypeConfig } from "./balanceType";
+import {
+  getShieldedAccountAttributes,
+  getShieldedUserAttributes,
+  zcashBalanceTypeConfig,
+} from "./balanceType";
 import { memo } from "./memo";
 
 type ZcashTransferFlow =
@@ -70,6 +74,8 @@ export const descriptor: CoinDescriptor = {
     balanceType: zcashBalanceTypeConfig,
     getTrackingAttributes: transaction => getPrivacyAttributes(transaction) ?? {},
   },
+  getAccountTrackingAttributes: getShieldedAccountAttributes,
+  getUserTrackingAttributes: getShieldedUserAttributes,
 };
 
 /**
@@ -84,4 +90,7 @@ export const transparentOnlyDescriptor: CoinDescriptor = {
     selfTransfer: descriptor.send.selfTransfer,
     getTrackingAttributes: descriptor.send.getTrackingAttributes,
   },
+  // Reported even without the shielded engine: the account's own state does not change.
+  getAccountTrackingAttributes: getShieldedAccountAttributes,
+  getUserTrackingAttributes: getShieldedUserAttributes,
 };

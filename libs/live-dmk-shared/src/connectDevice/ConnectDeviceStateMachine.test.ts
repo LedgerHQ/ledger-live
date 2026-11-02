@@ -438,6 +438,35 @@ describe("ConnectDeviceStateMachine", () => {
       });
     });
 
+    it("disconnects a session that connects after the machine stops", async () => {
+      let finishConnect: (sessionId: string) => void = () => undefined;
+      const connect = jest.fn(
+        () =>
+          new Promise<string>(resolve => {
+            finishConnect = resolve;
+          }),
+      );
+      const disconnect = jest.fn().mockResolvedValue(undefined);
+      const dmk = {
+        connect,
+        disconnect,
+        getConnectedDevice: jest.fn(),
+      } as unknown as DeviceManagementKit;
+      const { discoverDevices, machine, onConnected } = setupTest({ dmk });
+
+      machine.start();
+      discoverDevices([makeDiscoveredDeviceFromKnownDevice(knownDeviceA)]);
+      expect(connect).toHaveBeenCalledTimes(1);
+
+      machine.stop();
+      finishConnect("session-late");
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(disconnect).toHaveBeenCalledWith({ sessionId: "session-late" });
+      expect(onConnected).not.toHaveBeenCalled();
+    });
+
     it("emits Connected after a successful connection", async () => {
       // Arrange
       const { discoverDevices, machine, states, onConnected } = setupTest();

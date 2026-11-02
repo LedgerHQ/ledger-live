@@ -4,7 +4,7 @@ import { DeleteBackupStepProps } from "./types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ButtonV3 from "~/renderer/components/ButtonV3";
 import { useLedgerSyncAnalytics, AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { useDestroyTrustchain } from "../../hooks/useDestroyTrustchain";
 
 export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
@@ -26,7 +26,7 @@ export default function DeleteBackupStep({ cancel }: DeleteBackupStepProps) {
 
   return (
     <Flex flexDirection="column" rowGap="24px">
-      <TrackPage category={AnalyticsPage.ConfirmDeleteBackup} />
+      <TrackScreen category={AnalyticsPage.ConfirmDeleteBackup} />
       <Flex flexDirection="column" rowGap="8px">
         <Text fontSize={23} variant="large" color="neutral.c100">
           {t("walletSync.manageBackup.deleteBackup.title")}

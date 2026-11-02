@@ -1,9 +1,6 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": ["./tsconfig.json", "@support/tsconfig/lib/build"],
   "compilerOptions": {
-    "types": ["node"],
-    "customConditions": []
-  },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.*"]
+    "types": ["node"]
+  }
 }

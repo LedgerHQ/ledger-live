@@ -1,8 +1,9 @@
 import React from "react";
 import { View } from "react-native";
 import { render, screen } from "@testing-library/react-native";
-import { CardLogin } from "../index.native";
-import type { CardLoginProps, CardLoginViewModel } from "../types";
+import { CardLogin } from "../CardLogin.native";
+import type { CardLoginProps } from "../CardLogin.types";
+import type { CardLoginViewModel } from "../types";
 
 let viewModel: CardLoginViewModel = null;
 

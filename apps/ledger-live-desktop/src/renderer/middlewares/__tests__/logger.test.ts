@@ -1,5 +1,5 @@
 import type { Dispatch, MiddlewareAPI, UnknownAction } from "@reduxjs/toolkit";
-import { CARD_REDUCER_PATH } from "@shared/api-services";
+import { CARD_REDUCER_PATH, PORTFOLIO_REDUCER_PATH } from "@shared/api-services";
 import logger from "~/renderer/logger";
 import type { State } from "../../reducers";
 import loggerMiddleware from "../logger";
@@ -86,6 +86,31 @@ describe("loggerMiddleware", () => {
     runMiddleware(action);
 
     expect(onReduxAction).toHaveBeenCalledWith(action);
+  });
+
+  it("drops portfolio arguments, error bodies and the cache key before they are logged", () => {
+    const xpub = "sentinel-xpub";
+    const address = "sentinel-address";
+    runMiddleware({
+      type: `${PORTFOLIO_REDUCER_PATH}/executeQuery/rejected`,
+      payload: { status: 400, data: { address } },
+      error: { message: `bad ${xpub}` },
+      meta: {
+        arg: {
+          endpointName: "getBalance",
+          originalArgs: { xpub, address },
+          queryCacheKey: `getBalance({"account":"base:${address}","portfolioId":"p"})`,
+        },
+        requestId: "request-p",
+      },
+    });
+
+    const record = loggedRecord();
+    expect(record).not.toContain(xpub);
+    expect(record).not.toContain(address);
+    expect(record).not.toContain("portfolioId");
+    expect(record).toContain("getBalance");
+    expect(record).toContain("400");
   });
 
   it("passes the whole Card action on to the reducers", () => {

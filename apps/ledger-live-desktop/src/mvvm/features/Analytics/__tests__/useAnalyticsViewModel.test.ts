@@ -38,7 +38,7 @@ describe("useAnalyticsViewModel", () => {
     const { result } = renderHook(() => useAnalyticsViewModel(), {
       initialState: {
         ...withFlagOverrides({
-          lwdWallet40: { enabled: true, params: { pnl: true } },
+          lwdWallet40: { enabled: true },
         }),
         settings: {
           ...INITIAL_STATE,

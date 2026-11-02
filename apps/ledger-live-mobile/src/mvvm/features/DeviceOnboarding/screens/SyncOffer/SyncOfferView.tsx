@@ -1,9 +1,9 @@
 import React from "react";
-import { Box, Button, IconButton, NavBar, NavBarTrailing, Text } from "@ledgerhq/lumen-ui-rnative";
-import { Close } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTheme } from "@ledgerhq/lumen-ui-rnative/styles";
 import { Lottie, resolveLottieSource } from "LLM/components/Lottie";
 import SkipLedgerSyncDrawer from "LLM/components/SkipLedgerSyncDrawer";
+import { DeviceOnboardingCloseBar } from "LLM/features/DeviceOnboarding/components/CloseBar";
 import { syncOfferTestIds } from "LLM/features/DeviceOnboarding/testIds";
 import type { SyncOfferViewProps } from "./useSyncOfferScreenViewModel";
 import darkCloudSyncAnimation from "./animations/dark/cloud-sync.lottie";
@@ -34,18 +34,11 @@ export function SyncOfferView({
 
   return (
     <Box testID={syncOfferTestIds.screen} lx={{ flex: 1, gap: "s24", backgroundColor: "canvas" }}>
-      <NavBar density="compact">
-        <NavBarTrailing>
-          <IconButton
-            appearance="no-background"
-            size="md"
-            icon={Close}
-            accessibilityLabel={closeLabel}
-            testID={syncOfferTestIds.quit}
-            onPress={onQuit}
-          />
-        </NavBarTrailing>
-      </NavBar>
+      <DeviceOnboardingCloseBar
+        label={closeLabel}
+        testID={syncOfferTestIds.quit}
+        onPress={onQuit}
+      />
       <Box
         lx={{ alignItems: "center", justifyContent: "center", minHeight: "s72", flexShrink: 1 }}
         style={{ height: illustrationHeight }}

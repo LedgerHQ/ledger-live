@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react-native";
 import {
   FilterOptionAmounts,
   FilterOptionCard,
-} from "../components/Filter/BalanceFilterOptionParts.native";
+} from "../components/Filter/BalanceFilterOptionParts";
 import { USDC_ID } from "./fixtures";
 
 describe("BalanceFilterOptionParts (Native)", () => {

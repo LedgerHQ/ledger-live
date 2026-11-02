@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { Linking, StyleSheet, View } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import {
   canDelegate,
   canRedelegate,

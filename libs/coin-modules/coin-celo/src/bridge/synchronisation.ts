@@ -342,7 +342,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
 
   const evmCtx = buildEvmContext(currency.id);
   const nodeApi = getNodeApi(configEvm, evmCtx.logger);
-  const api = createApi(currency.id);
+  const api = createApi();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const blockInfo = await (api as any).lastBlock(evmCtx);
   const balance = await nodeApi.getCoinBalance(address);

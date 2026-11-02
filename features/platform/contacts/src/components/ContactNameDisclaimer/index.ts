@@ -1,1 +1,2 @@
-export * from "./ContactNameDisclaimer.web";
+export * from "./ContactNameDisclaimer";
+export type * from "./ContactNameDisclaimer.types";

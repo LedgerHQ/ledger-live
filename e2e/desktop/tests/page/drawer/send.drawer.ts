@@ -6,6 +6,7 @@ import { exactAmountPattern } from "@ledgerhq/live-e2e-shared/amountPattern";
 export class SendDrawer extends Drawer {
   private sendDrawer = this.page.getByTestId("drawer-content");
   private amountValue = this.sendDrawer.getByTestId("amountReceived-drawer").first();
+  private operationType = this.sendDrawer.getByTestId("operation-type");
   private addressValue = (address: string) => this.sendDrawer.filter({ hasText: address });
 
   @step("Verify address is visible")
@@ -14,6 +15,11 @@ export class SendDrawer extends Drawer {
       throw new Error("Recipient address is not set");
     }
     await expect(this.addressValue(address)).toBeVisible();
+  }
+
+  @step("Verify operation type in transaction details: $0")
+  async expectOperationType(operationType: string) {
+    await expect(this.operationType).toHaveText(operationType);
   }
 
   @step("Verify memo is visible in transaction details: $0")

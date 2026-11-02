@@ -4,4 +4,5 @@ export type LazyOnboardingBannerViewProps = Readonly<{
   description: string;
   onPress: () => void;
   onClose: () => void;
+  testID?: string;
 }>;

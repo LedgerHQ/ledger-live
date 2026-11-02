@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/formatCurrencyUnit";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import type { HederaValidator } from "@ledgerhq/live-common/families/hedera/types";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import type { Unit } from "@domain/entity-currency-unit";

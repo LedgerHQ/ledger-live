@@ -10,7 +10,12 @@ import {
 import { useFeature, useFeatureFlags } from "@features/platform-feature-flags";
 import { enabledExperimentalFeatures } from "~/renderer/experimental";
 import { crashReportingSelector } from "~/renderer/reducers/settings";
-import { initDatadog, setTags, isDatadogAvailable } from "~/datadog/renderer";
+import {
+  initDatadog,
+  setTags,
+  isDatadogAvailable,
+  setDatadogActionsEnabled,
+} from "~/datadog/renderer";
 import { initDatadogLogs } from "~/datadog/logs";
 
 const MAX_KEYLEN = 32;
@@ -41,6 +46,10 @@ export const ConnectEnvsToDatadog = () => {
   const lldDatadog = isLldDatadogFeature(rawLldDatadog) ? rawLldDatadog : null;
   const [datadogInitialized, setDatadogInitialized] = useState(false);
   const initInFlightRef = useRef(false);
+
+  useEffect(() => {
+    setDatadogActionsEnabled(!!lldDatadog?.enabled);
+  }, [lldDatadog?.enabled]);
 
   useEffect(() => {
     if (!lldDatadog?.enabled || !crashReporting || !isDatadogAvailable() || datadogInitialized)

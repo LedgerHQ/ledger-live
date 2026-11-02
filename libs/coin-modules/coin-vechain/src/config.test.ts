@@ -1,4 +1,3 @@
-import { MissingCoinConfig } from "@ledgerhq/coin-module-framework/errors";
 import { getChainTag, getCoinConfig, setCoinConfig } from "./config";
 import { MAINNET_CHAIN_TAG } from "./types";
 

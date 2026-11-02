@@ -3,7 +3,7 @@ import { VTHO_ADDRESS } from "@vechain/sdk-core";
 import type { VechainContext } from "../../config";
 import { getAccount } from "../../network";
 
-export const NATIVE_ASSET: AssetInfo = { type: "native", name: "VET" };
+export const NATIVE_ASSET: AssetInfo = { type: "native" };
 
 // `assetOwner` lets the generic coin-framework adapter attach the VTHO balance to its sub-account
 // (buildSubAccounts filters by `extra.assetReference` + `extra.assetOwner`). Mirrors coin-tron.
@@ -11,7 +11,6 @@ export const vthoAsset = (address: string): AssetInfo => ({
   type: "token",
   assetReference: VTHO_ADDRESS,
   assetOwner: address,
-  name: "VTHO",
 });
 
 // VET + VTHO balances from Thor's /accounts/{address} (both returned in one call); 0 if absent.

@@ -7,7 +7,7 @@ import styled, { useTheme } from "styled-components";
 import Box from "../Box";
 import { urls } from "~/config/urls";
 import { CircleWrapper } from "../CircleWrapper";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { openURL } from "~/renderer/linking";
 
@@ -72,7 +72,7 @@ const NoSuchAppOnProviderErrorComponent: React.FC<{
 
   return (
     <Wrapper id="error-NoSuchAppOnProvider">
-      <TrackPage category={PAGE_NAME} />
+      <TrackScreen category={PAGE_NAME} />
       <ErrorBody
         top={
           <CircleWrapper color={theme.colors.opacityDefault.c05} size={72}>

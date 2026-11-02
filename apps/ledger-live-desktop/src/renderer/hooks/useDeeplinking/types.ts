@@ -58,6 +58,8 @@ export interface DeeplinkHandlerContext {
   isGenericAwarenessModalEnabled: boolean;
   /** `lwdPayTab` — deeplink navigates to `/paytab` only when this flag is enabled; otherwise falls back to the default handler. */
   isPayTabEnabled: boolean;
+  /** `lwdContacts` — deeplink navigates to `/contacts` only when this flag is enabled; otherwise falls back to the default handler. */
+  isContactsEnabled: boolean;
 }
 
 export interface ParsedDeeplink {
@@ -240,6 +242,10 @@ export interface PayTabRoute {
   appId?: string;
 }
 
+export interface ContactsRoute {
+  type: "contacts";
+}
+
 export interface LedgerSyncRoute {
   type: "ledgersync";
 }
@@ -280,6 +286,7 @@ export type DeeplinkRoute =
   | RecoverRestoreFlowRoute
   | PerpsRoute
   | PayTabRoute
+  | ContactsRoute
   | PostOnboardingRoute
   | LedgerSyncRoute
   | ProductTourRoute

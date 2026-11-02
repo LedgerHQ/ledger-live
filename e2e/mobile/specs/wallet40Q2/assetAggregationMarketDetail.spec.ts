@@ -38,7 +38,6 @@ const ASSET_AGGREGATION_FEATURE_FLAGS = {
     params: {
       ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
       lazyOnboarding: false,
-      pnl: false,
     },
   },
 };

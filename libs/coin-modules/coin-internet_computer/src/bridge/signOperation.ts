@@ -1,4 +1,4 @@
-import { Cbor, requestIdOf } from "@dfinity/agent";
+import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { SignerContext } from "@ledgerhq/ledger-wallet-framework/signer";
 import { AccountBridge, DeviceId, OperationType } from "@ledgerhq/types-live";
 import invariant from "invariant";

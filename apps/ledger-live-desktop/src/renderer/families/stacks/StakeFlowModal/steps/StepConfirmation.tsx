@@ -5,7 +5,7 @@ import styled from "styled-components";
 import invariant from "invariant";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { setTrackingSource } from "@shared/analytics";
 import { getAccountUrl } from "~/renderer/utils";
 import Box from "~/renderer/components/Box";
@@ -44,7 +44,7 @@ const StepConfirmation = ({
 
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Stake Flow"
           name="Step Confirmed"
           flow="stake"
@@ -69,7 +69,7 @@ const StepConfirmation = ({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Stake Flow"
           name="Step Confirmation Error"
           flow="stake"

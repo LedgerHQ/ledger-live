@@ -31,8 +31,8 @@ the Ledger infra VPN.
 
 Prerequisites:
 
-1. An Agent Intent profile, enrolled end to end on this machine as above. Its secret key must be in
-   this machine's OS keychain.
+1. An Agent Intent profile, enrolled end to end on this machine as above. Its secret key must be on
+   this machine (OS keychain, or the key file when the human allowed it).
 2. An Ethereum address to use as sender (and, by default, recipient). Nothing is broadcast, so it
    doesn't need funds — but the frontend can only reject an intent it can craft, so an ERC-20 send
    from an address without that token balance stays pending until it expires.

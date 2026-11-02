@@ -8,7 +8,13 @@ import {
   ListItemTrailing,
   Text,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronRight, PenEditWriting, Shapes, Trash } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  ChevronRight,
+  Globe,
+  PenEditWriting,
+  Shapes,
+  Trash,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { AccountSettingsMenuViewProps } from "./types";
 
 export function AccountSettingsMenuView({
@@ -16,6 +22,7 @@ export function AccountSettingsMenuView({
   labels,
   onChangeName,
   onViewAdvancedLogs,
+  onViewExplorer,
   onRemoveAccount,
 }: AccountSettingsMenuViewProps) {
   return (
@@ -50,6 +57,19 @@ export function AccountSettingsMenuView({
           <ChevronRight size={16} color="muted" />
         </ListItemTrailing>
       </ListItem>
+      {onViewExplorer ? (
+        <ListItem onPress={onViewExplorer} testID="account-settings-view-explorer">
+          <ListItemLeading>
+            <Globe size={20} />
+            <ListItemContent>
+              <ListItemTitle>{labels.viewExplorer}</ListItemTitle>
+            </ListItemContent>
+          </ListItemLeading>
+          <ListItemTrailing>
+            <ChevronRight size={16} color="muted" />
+          </ListItemTrailing>
+        </ListItem>
+      ) : null}
       <ListItem onPress={onRemoveAccount} testID="account-settings-remove-account">
         <ListItemLeading>
           <Trash size={20} color="error" />

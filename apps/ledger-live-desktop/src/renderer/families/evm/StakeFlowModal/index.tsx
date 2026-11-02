@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components";
 import { urls } from "~/config/urls";
 import { track } from "@shared/analytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Modal from "~/renderer/components/Modal";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
@@ -186,7 +186,7 @@ const StakeModal = ({ account, source }: Props) => {
             width="100%"
           >
             <Box height={SHADOW_HEIGHT * 0.8} />
-            <TrackPage category="ETH Stake Modal" name="Main Modal" />
+            <TrackScreen category="ETH Stake Modal" name="Main Modal" />
             <EthStakingModalBody
               onClose={onClose}
               account={account}

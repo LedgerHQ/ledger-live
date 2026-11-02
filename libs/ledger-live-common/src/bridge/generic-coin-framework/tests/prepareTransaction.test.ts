@@ -569,6 +569,30 @@ describe("genericPrepareTransaction", () => {
     expect((result as any).fees.toString()).toBe("900");
   });
 
+  it("hands the sponsoring context to estimateFees so a sponsored send is estimated as sponsored", async () => {
+    const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(700) });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    await prepareTransaction(account, { ...baseTransaction, sponsored: true });
+
+    expect(estimateFees).toHaveBeenCalledTimes(1);
+    const { customFeesParameters } = estimateFees.mock.calls[0][2];
+    expect(customFeesParameters).toHaveProperty("sponsored", true);
+  });
+
+  it("leaves the sponsored key out of the fee parameters when the transaction carries no sponsoring context", async () => {
+    const estimateFees = jest.fn().mockResolvedValue({ value: new BigNumber(700) });
+    (getCoinModuleApi as jest.Mock).mockReturnValue({ estimateFees });
+
+    const prepareTransaction = genericPrepareTransaction("testnet", "local");
+    await prepareTransaction(account, { ...baseTransaction });
+
+    expect(estimateFees).toHaveBeenCalledTimes(1);
+    const { customFeesParameters } = estimateFees.mock.calls[0][2];
+    expect(customFeesParameters).not.toHaveProperty("sponsored");
+  });
+
   it("keeps the custom fee value but still fetches coin parameters on send-max", async () => {
     // a custom total fee overrides only the value; additionalFees still come from estimateFees
     const estimateFees = jest

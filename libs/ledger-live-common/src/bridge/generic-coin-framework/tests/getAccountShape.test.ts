@@ -3816,6 +3816,190 @@ describe("genericGetAccountShape", () => {
     });
   });
 
+  describe("balanceListsEveryToken", () => {
+    const network = "mainnet";
+    const currency = { id: "solana", name: "Solana" };
+    const storedOperation = {
+      id: "accId-h1-OUT",
+      accountId: "accId",
+      hash: "h1",
+      type: "OUT",
+      blockHeight: 500,
+      extra: {},
+    };
+    const heldToken = { id: "solana/spl/held" };
+    const newToken = { id: "solana/spl/new" };
+    const tokenBalance = (mint: string) => ({
+      asset: { type: "spl", assetReference: mint, assetOwner: "solAddress" },
+      value: 1n,
+    });
+
+    beforeEach(() => {
+      buildSubAccountsMock.mockReturnValue([]);
+    });
+
+    afterEach(() => {
+      getBridgeApiMock.mockImplementation(defaultBridgeApi);
+    });
+
+    const syncWith = ({
+      storedSyncHash,
+      tokenBalances = [],
+      blacklistedTokenIds,
+      bridgeApi = { balanceListsEveryToken: true },
+    }: {
+      storedSyncHash: string | undefined;
+      tokenBalances?: ReturnType<typeof tokenBalance>[];
+      blacklistedTokenIds?: string[];
+      bridgeApi?: Record<string, unknown>;
+    }) => {
+      getSyncHashMock.mockReturnValue("0x2e3");
+      getBridgeApiMock.mockImplementation(() => ({ ...defaultBridgeApi(), ...bridgeApi }));
+      extractBalanceMock.mockReturnValue({ value: 0n, locked: 0n });
+      getBalanceMock.mockResolvedValue([
+        { asset: { type: "native" }, value: 0n, locked: 0n },
+        ...tokenBalances,
+      ]);
+      listOperationsMock.mockResolvedValue({ items: [], next: undefined });
+      lastBlockMock.mockResolvedValue({ height: 900 });
+      mergeOpsMock.mockImplementation((oldOps: any[], newOps: any[]) => [...oldOps, ...newOps]);
+
+      return genericGetAccountShape(network, currency.id)(
+        {
+          address: "solAddress",
+          currency,
+          derivationMode: "",
+          initialAccount: {
+            operations: [storedOperation],
+            pendingOperations: [],
+            subAccounts: [{ token: heldToken }],
+            blockHeight: 800,
+            syncHash: storedSyncHash,
+          },
+        } as any,
+        { paginationConfig: {} as any, ...(blacklistedTokenIds ? { blacklistedTokenIds } : {}) },
+      );
+    };
+
+    const expectIncremental = () => {
+      expect(mergeOpsMock).toHaveBeenCalledWith([storedOperation], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "solAddress",
+        expect.objectContaining({ minHeight: storedOperation.blockHeight + 1 }),
+      );
+    };
+
+    const expectFromScratch = () => {
+      expect(mergeOpsMock).toHaveBeenCalledWith([], expect.anything());
+      expect(listOperationsMock).toHaveBeenCalledWith(
+        expect.anything(),
+        "solAddress",
+        expect.objectContaining({ minHeight: 0 }),
+      );
+    };
+
+    test("resumes from the watermark when no held token became listed", async () => {
+      getTokenFromAssetMock.mockImplementation(async (asset: any) =>
+        asset.assetReference === "heldMint" ? heldToken : undefined,
+      );
+
+      const shape = await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint"), tokenBalance("unlistedMint")],
+      });
+
+      expectIncremental();
+      expect(shape.syncHash).toBe("0x2e3");
+    });
+
+    test("resyncs from scratch when a held token became listed", async () => {
+      getTokenFromAssetMock.mockImplementation(async (asset: any) =>
+        asset.assetReference === "newMint" ? newToken : heldToken,
+      );
+
+      const shape = await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint"), tokenBalance("newMint")],
+      });
+
+      expectFromScratch();
+      expect(shape.syncHash).toBe("0x2e3");
+    });
+
+    test("resumes from the watermark when the newly listed token is blacklisted", async () => {
+      getTokenFromAssetMock.mockResolvedValue(newToken);
+
+      await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("newMint")],
+        blacklistedTokenIds: [newToken.id],
+      });
+
+      expectIncremental();
+    });
+
+    test("resumes from the watermark and drops the sub-account of a held token that became blacklisted", async () => {
+      const { buildSubAccounts: realBuildSubAccounts, mergeSubAccounts: realMergeSubAccounts } =
+        jest.requireActual("../buildSubAccounts");
+      buildSubAccountsMock.mockImplementation(realBuildSubAccounts);
+      mergeSubAccountsMock.mockImplementation(realMergeSubAccounts);
+      getTokenFromAssetMock.mockResolvedValue(heldToken);
+
+      const shape = await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint")],
+        blacklistedTokenIds: [heldToken.id],
+      });
+
+      expectIncremental();
+      expect(shape.subAccounts).toEqual([]);
+    });
+
+    test("resyncs from scratch when a token lookup fails", async () => {
+      getTokenFromAssetMock.mockRejectedValue(new Error("CAL down"));
+
+      await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint")],
+      });
+
+      expectFromScratch();
+    });
+
+    test("resyncs from scratch when the sync version changed", async () => {
+      getTokenFromAssetMock.mockResolvedValue(heldToken);
+
+      await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint")],
+        bridgeApi: { balanceListsEveryToken: true, syncVersion: "2" },
+      });
+
+      expectFromScratch();
+    });
+
+    test("resyncs from scratch an account stored without a sync hash", async () => {
+      getTokenFromAssetMock.mockResolvedValue(heldToken);
+
+      await syncWith({ storedSyncHash: undefined, tokenBalances: [tokenBalance("heldMint")] });
+
+      expectFromScratch();
+    });
+
+    test("resyncs from scratch on a token list change for a family that does not opt in", async () => {
+      getTokenFromAssetMock.mockResolvedValue(heldToken);
+
+      await syncWith({
+        storedSyncHash: "0x01d",
+        tokenBalances: [tokenBalance("heldMint")],
+        bridgeApi: {},
+      });
+
+      expectFromScratch();
+    });
+  });
+
   describe("cosmos", () => {
     const network = "cosmos";
     const currency = { id: "cosmos", name: "Cosmos" };

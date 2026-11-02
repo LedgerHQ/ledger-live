@@ -2,8 +2,11 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import BigNumber from "bignumber.js";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
@@ -26,7 +29,7 @@ import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 
 function useFormatAmount() {

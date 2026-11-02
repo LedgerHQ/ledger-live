@@ -35,7 +35,7 @@ export function ContactsSavedListItem({
           isMe={contact.isMe}
           size="md"
           ariaHidden
-          testId={`contacts-saved-avatar-${contact.contactId}`}
+          testID={`contacts-saved-avatar-${contact.contactId}`}
         />
         <ListItemContent>
           <ListItemTitle data-testid={`contacts-saved-contact-${contact.contactId}-name`}>

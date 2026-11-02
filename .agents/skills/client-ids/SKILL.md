@@ -1,6 +1,6 @@
 ---
 name: client-ids
-description: Privacy-protected ID management with @domain/entity-client-identity — DeviceId, UserId, DatadogId, export-rules.json
+description: Handle device, user and Datadog identifiers through the redacted `DeviceId`, `UserId` and `DatadogId` classes of `@domain/entity-client-identity`, reading a raw value only through an export method allowlisted in `export-rules.json`. Use when reading, storing or sending a device id, user id or Datadog id, adding an `export*For*()` method or a new id class, editing `domain/entity/client-identity/**`, or when the `check-export-rules` CI target fails.
 ---
 
 # Client Identity Domain (`@domain/entity-client-identity`)
@@ -44,7 +44,7 @@ Sensitive identifiers (DeviceId, UserId, DatadogId) must always use the domain e
 - Every ID usage must be **explicitly declared** through a dedicated export method (e.g., `exportUserIdForSomethingSomething()`)
 - Export methods represent **specific, documented use cases** and can only be called from allowlisted files
 - The `export-rules.json` file in `domain/entity/client-identity/` serves as a **registry of all allowed use cases**
-- The `check-export-rules.mjs` script enforces the allowlist at build time
+- The `check-export-rules` target (`scripts/check-export-rules.mjs`) enforces the allowlist in CI
 
 ## Usage Requirements
 

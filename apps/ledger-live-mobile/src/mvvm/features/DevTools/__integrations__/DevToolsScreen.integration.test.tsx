@@ -1,6 +1,7 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { render } from "@tests/test-renderer";
+import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import DevToolsScreen from "../screens/DevToolsScreen";
 
 const devToolsSpy = jest.fn();
@@ -20,6 +21,7 @@ jest.mock(
     useFeatureFlagsToolProps: () => ({ marker: "ff-props" }),
     usePayCardToolProps: () => ({ marker: "pay-card-props" }),
     useEnvDevToolProps: () => ({ marker: "env-props" }),
+    useAppConfigToolProps: () => ({ marker: "app-config-props" }),
     useDeviceOnboardingActor: () => ({
       state: null,
       context: null,
@@ -33,7 +35,7 @@ jest.mock(
       sendToActor: jest.fn(),
       startActor: jest.fn(),
       discardActor: jest.fn(),
-      resetActor: jest.fn(),
+      resetActor: jest.fn(() => Promise.resolve()),
       stopActor: jest.fn(),
     }),
   }),
@@ -77,7 +79,13 @@ function withBottomInset(children: React.ReactNode) {
 
 describe("DevToolsScreen", () => {
   it("mounts DevTools with the configured tools and stack screen options padded by the bottom inset", () => {
-    render(withBottomInset(<DevToolsScreen />));
+    render(
+      withBottomInset(
+        <NotificationsPromptProvider>
+          <DevToolsScreen />
+        </NotificationsPromptProvider>,
+      ),
+    );
 
     expect(devToolsSpy).toHaveBeenCalled();
     const props = devToolsSpy.mock.lastCall![0];
@@ -85,6 +93,7 @@ describe("DevToolsScreen", () => {
     expect(props.config).toEqual([
       { id: "feature-flags", config: { marker: "ff-props" } },
       { id: "env", config: { marker: "env-props" } },
+      { id: "app-config", config: { marker: "app-config-props" } },
       {
         id: "pay-card",
         config: {

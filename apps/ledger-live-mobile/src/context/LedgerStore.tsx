@@ -172,8 +172,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       // parsePersistedCAL validates version + schema; returns null for missing/corrupt/legacy blobs.
       const persistedCryptoAssets = parsePersistedCAL(cryptoAssetsCache);
       if (persistedCryptoAssets) {
-        const TOKEN_CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
-        await restoreTokensToCache(store.dispatch, persistedCryptoAssets, TOKEN_CACHE_TTL);
+        restoreTokensToCache(store.dispatch, persistedCryptoAssets);
       }
 
       // Handle account import with error recovery for async issues

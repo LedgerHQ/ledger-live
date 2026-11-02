@@ -16,6 +16,19 @@ describe("getModularDialogStepHeading", () => {
     });
   });
 
+  it("should return withdraw copy on asset selection for perps withdraw", () => {
+    expect(
+      getModularDialogStepHeading(
+        MODULAR_DIALOG_STEP.ASSET_SELECTION,
+        PERPS_UI_USE_CASE.withdraw,
+        true,
+      ),
+    ).toEqual({
+      titleKey: "modularAssetDrawer.selectWithdrawCurrencyTitle",
+      descriptionKey: "modularAssetDrawer.selectWithdrawCurrencyDescription",
+    });
+  });
+
   it("should return perps receive copy on account selection when accounts exist", () => {
     expect(
       getModularDialogStepHeading(

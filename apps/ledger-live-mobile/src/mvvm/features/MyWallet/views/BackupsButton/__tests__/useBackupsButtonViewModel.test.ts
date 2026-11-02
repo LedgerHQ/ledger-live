@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { State } from "~/reducers/types";
 import { NavigatorName, ScreenName } from "~/const";
@@ -86,7 +86,7 @@ describe("useBackupsButtonViewModel", () => {
   it("should show notification icon when recover has not been clicked yet", () => {
     const { result } = renderHook(() => useBackupsButtonViewModel());
 
-    expect(result.current.icon).toBe(ShieldCheckNotification);
+    expect(result.current.icon).toBe(ShieldCheckNotificationIcon);
   });
 
   it("should show plain icon when recover has already been clicked", () => {

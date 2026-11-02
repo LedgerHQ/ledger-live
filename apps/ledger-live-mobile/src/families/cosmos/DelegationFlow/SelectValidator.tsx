@@ -1,6 +1,7 @@
 import { TrackScreen } from "@shared/analytics-react";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
+import { isStakingAccount } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import invariant from "invariant";
@@ -27,10 +28,15 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   invariant(account, "account must be defined");
   invariant(account.type === "Account", "account must be of type Account");
+  invariant(isStakingAccount(account), "cosmos staking account required");
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(account.currency.id, searchQuery);
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(
+    account.currency.id,
+    account.stakingResources.validators,
+    searchQuery,
+  );
 
   const onItemPress = useCallback(
     (validator: CosmosValidatorItem) => {

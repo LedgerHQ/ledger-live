@@ -2,7 +2,8 @@ import React from "react";
 import { Title as DialogTitle } from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { DialogBody, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
+import { InfoState } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { renderLoading } from "~/renderer/components/DeviceAction/rendering";
 import TranslatedError from "~/renderer/components/TranslatedError";
@@ -16,6 +17,7 @@ export function PerpsDepositSignView({
   retry,
   onDismiss,
   onDeviceError,
+  onOpenManager,
 }: PerpsDepositSignViewProps) {
   const { t } = useTranslation();
 
@@ -54,6 +56,7 @@ export function PerpsDepositSignView({
             request={request}
             onResult={onResult}
             onError={onDeviceError}
+            onOpenManager={onOpenManager}
             renderExchangeConfirmation={
               deviceStep.stepId === "confirm" ? () => <PerpsDepositConfirmation /> : undefined
             }

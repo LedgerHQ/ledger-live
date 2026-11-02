@@ -8,6 +8,7 @@ import { useAppVersionBlockCheck } from "@ledgerhq/live-common/hooks/useAppVersi
 import { appVersion } from "LLM/utils/appVersion";
 import { useTranslation } from "~/context/Locale";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useHideSplashScreen } from "LLM/features/LaunchScreen/useHideSplashScreen";
 
 const AppVersionBlocker: React.FC<React.PropsWithChildren> = ({ children }) => {
   const { colors } = useTheme();
@@ -20,6 +21,7 @@ const AppVersionBlocker: React.FC<React.PropsWithChildren> = ({ children }) => {
     appVersion: appVersion,
     osVersion: `${Platform.Version}`,
   });
+  useHideSplashScreen(shouldUpdate);
 
   const storeUrl = Platform.OS === "ios" ? urls.applestore : urls.playstore;
   const handleOpenStore = () => {

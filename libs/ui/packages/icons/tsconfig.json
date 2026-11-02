@@ -1,22 +1,23 @@
 {
-  "extends": "../../../../tsconfig.base",
+  "extends": "@support/tsconfig/logic",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
     "jsx": "react",
     "rootDir": "./src",
     "outDir": ".",
-    "noEmit": true,
-    "moduleResolution": "bundler",
-    "module": "esnext",
-    "target": "ES2022",
-    "skipLibCheck": true,
     "paths": {
       "*": ["./*"],
       "react": ["../../../../node_modules/@types/react"],
       "@types/react": ["../../../../node_modules/@types/react"]
-    }
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "react", "native"]
+    },
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable",
+      "DOM.AsyncIterable",
+      "ScriptHost",
+      "WebWorker.ImportScripts"
+    ]
+  }
 }

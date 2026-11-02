@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
 import Animated from "react-native-reanimated";
-import { Lottie } from "@shared/lottie";
+import { Lottie } from "@shared/lottie/native";
 import { useSlideItemViewModel } from "../hooks/useSlideItemViewModel";
 
 type SlideItemProps = {

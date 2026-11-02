@@ -2,7 +2,7 @@ import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index"
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -28,7 +28,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cardano" name="Step Confirmed" />
+        <TrackScreen category="Delegation Cardano" name="Step Confirmed" />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="cardano.delegation.flow.steps.confirmation.success.title" />}
@@ -40,7 +40,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Cardano" name="Step Confirmation Error" />
+        <TrackScreen category="Delegation Cardano" name="Step Confirmation Error" />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cardano.delegation.flow.steps.confirmation.broadcastError" />}

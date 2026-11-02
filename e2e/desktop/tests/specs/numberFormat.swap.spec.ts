@@ -65,6 +65,9 @@ test.describe("Swap - amount formatting by language", () => {
 
         const swap = new Swap(fromAccount, toAccount, TEST_AMOUNT);
         await performSwapUntilQuoteSelectionStep({ app, swap, minAmount: TEST_AMOUNT });
+        // TEST_AMOUNT exceeds the balance, so the amount step can settle on the balance error
+        // before the quotes are in; the amounts below are read once.
+        await app.swap.checkQuotes();
 
         const separators = getExpectedSeparators(languageId);
 

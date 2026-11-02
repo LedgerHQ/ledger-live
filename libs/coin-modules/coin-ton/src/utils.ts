@@ -28,34 +28,7 @@ import {
   Transaction,
 } from "./types";
 
-/**
- * Checks if the given recipient address is valid.
- */
-export const isAddressValid = (recipient: string) => {
-  try {
-    return Boolean(
-      (TonAddress.isRaw(recipient) || TonAddress.isFriendly(recipient)) &&
-      TonAddress.parse(recipient),
-    );
-  } catch {
-    return false;
-  }
-};
-
-/**
- * Compares two addresses to check if they are equal.
- */
-export const addressesAreEqual = (addr1: string, addr2: string) => {
-  try {
-    return (
-      isAddressValid(addr1) &&
-      isAddressValid(addr2) &&
-      TonAddress.parse(addr1).equals(TonAddress.parse(addr2))
-    );
-  } catch {
-    return false;
-  }
-};
+export { addressesAreEqual, isAddressValid } from "./logic/address";
 
 /**
  * Returns the known jetton ID and workchain for a given token address.

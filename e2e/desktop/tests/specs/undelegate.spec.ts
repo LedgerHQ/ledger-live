@@ -15,15 +15,18 @@ import {
 } from "@ledgerhq/live-e2e-shared/families/minaStakingState";
 import { buildTags } from "tests/utils/tagsUtils";
 import { skipSharedAccountOnSecondaryLeg } from "tests/utils/sharedAccountUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const suiAccount = new Delegate(Account.SUI_1, "1", "Ledger by P2P.ORG");
+const suiLock = exclusiveLockFor({ broadcastAccounts: [suiAccount.account] });
 
-test.describe("Undelegate", () => {
+test.describe("Undelegate", { lock: suiLock.names }, () => {
   test.use({
     teamOwner: Team.EARN,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: suiAccount.account.currency.speculosApp,
     cliCommands: [liveDataCommand(suiAccount.account)],
+    ...suiLock.fixtures,
   });
 
   test(
@@ -56,8 +59,10 @@ test.describe("Undelegate", () => {
   );
 });
 
+const minaPairLock = exclusiveLockFor({ broadcastAccounts: MINA_DELEGATION_PAIR });
+
 // Tests are skipped while waiting for LIVE-37757 to be done
-test.describe.skip("Undelegate - MINA", () => {
+test.describe.skip("Undelegate - MINA", { lock: minaPairLock.names }, () => {
   test.slow();
   skipSharedAccountOnSecondaryLeg("Mina undelegate");
 
@@ -67,6 +72,7 @@ test.describe.skip("Undelegate - MINA", () => {
     teamOwner: delegateTeamOwner(Currency.MINA.id),
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: Currency.MINA.speculosApp,
+    ...minaPairLock.fixtures,
     // Either account of the pair can be the delegated one, so both are seeded. Seeding also
     // resolves their address, which the picker reads back and the device renders when signing.
     cliCommands: MINA_DELEGATION_PAIR.map(account => liveDataWithAddressCommand(account)),

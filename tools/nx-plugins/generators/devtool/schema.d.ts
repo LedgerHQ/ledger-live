@@ -10,7 +10,8 @@ export interface devtoolGeneratorSchema {
     | "INFORMATION"
     | "PERFORMANCE"
     | "PLAYGROUND"
-    | "GENERATORS";
+    | "GENERATORS"
+    | "ACCOUNTS";
   description?: string;
   platform: "both" | "web" | "native";
   hasProps: boolean;

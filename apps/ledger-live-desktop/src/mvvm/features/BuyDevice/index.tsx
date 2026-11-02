@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import {
   Button,
   Dialog,
@@ -46,7 +46,7 @@ const View = ({ isOpen, onClose, handleConnect, handleBuy }: BuyDeviceViewProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      {isOpen && <TrackPage category="Modal" name="BuyDevice" />}
+      {isOpen && <TrackScreen category="Modal" name="BuyDevice" />}
 
       <DialogContent className="max-h-[90vh] rounded-xl">
         <DialogHeader onClose={onClose} />

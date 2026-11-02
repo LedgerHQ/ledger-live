@@ -44,7 +44,7 @@ const receive = makeAccountBridgeReceive();
 const context = buildContext<ZcashCoinConfig>("zcash");
 
 // Stand-ins for what the device (getFullViewingKey/getShieldedAddress) and the
-// Zaino client (deriveShieldedAddress) answer on the real bridge.
+// Zaino client (deriveShieldedAddress/findBlockHeightAtDate) answer on the real bridge.
 //
 // The UA is the Orchard-only test vector the device app derives for account 0
 // of its own test seed (firmware/app-zcash REF_ORCHARD_ADDRESS_ACC_0, also used
@@ -54,16 +54,21 @@ const context = buildContext<ZcashCoinConfig>("zcash");
 // be rejected as an invalid recipient the moment a mock self-transfer targets
 // the account's own shielded address.
 const MOCK_UFVK = "uview1mock";
+// Fixed height standing in for the Zaino lookup.
+const MOCK_BIRTHDAY_BLOCK_HEIGHT = 3_428_143;
 const MOCK_SHIELDED_ADDRESS =
   "u1u2h4ce7e2cn3z4nzur95muq2dl4da9x8h8kdp2l80gm9nl9raj8zzpx79ycjnfvar4v5exea5pqr5y9qsnlp0cdunwf9yjjx5c4q7ar9";
 
-// `getFullViewingKey`, `deriveShieldedAddress` and `getShieldedAddress` are not
+// `getFullViewingKey`, `deriveShieldedAddress`, `findBlockHeightAtDate` and `getShieldedAddress` are not
 // part of `AccountBridge`: the UFVK export and shielded-receive flows reach them
 // by casting to `ZcashAccountBridge` and calling them unconditionally (LLD's
 // ZCashExportKeyFlowModal, ZcashShieldedReceiveBlock). Omitting them here is
 // therefore a TypeError under MOCK=true, not a flow that degrades gracefully.
 type ZcashMockAccountBridge = AccountBridge<Transaction, any, TransactionStatus> &
-  Pick<ZcashAccountBridge, "getFullViewingKey" | "deriveShieldedAddress" | "getShieldedAddress">;
+  Pick<
+    ZcashAccountBridge,
+    "getFullViewingKey" | "deriveShieldedAddress" | "findBlockHeightAtDate" | "getShieldedAddress"
+  >;
 
 // The second generic is widened to `any` (mirroring families/algorand/bridge/mock.ts):
 // `sync`/`receive` below come from the generic mockHelpers, typed over the base
@@ -99,6 +104,7 @@ const accountBridge: ZcashMockAccountBridge = {
     };
   },
   deriveShieldedAddress: async () => MOCK_SHIELDED_ADDRESS,
+  findBlockHeightAtDate: () => Promise.resolve(MOCK_BIRTHDAY_BLOCK_HEIGHT),
   // Echoes the account's own shielded address rather than deriving one, so the
   // receive flow's device/host comparison matches whatever the account holds --
   // the seeded fixture value as well as the one the export flow just wrote.

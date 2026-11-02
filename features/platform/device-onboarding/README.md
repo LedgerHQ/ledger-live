@@ -57,11 +57,16 @@ const actor = createActor(
 ```
 
 Screens show the current state and send the user's events: `CONTINUE`, `RETRY`, `SKIP`, `CLOSE`,
-`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. `CONTINUE` is only for `awaitingStart`, right after the
-first device read.
+`QUIT`, `USER_ACCEPT`, `USER_DECLINE`. `CONTINUE` starts the flow after the first device read, and
+leaves the success screen once both checks have passed. That screen stays up until the user
+continues, so Ledger Sync is not opened before they can see it. A session change while it is up
+runs the checks again. A firmware update shows the screen again, even when the device keeps the
+same session id.
 
 The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOST` from
-`sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its firmware update flow returns.
+`sessionListener`, and `FIRMWARE_UPDATE_FLOW_CLOSED` when its firmware update flow returns on a
+session that can still be read. `FIRMWARE_UPDATE_RECONNECT_REQUIRED` means that flow returned after
+the device rebooted: the machine waits, and the host opens the next session.
 
 ### The session
 
@@ -69,9 +74,9 @@ The app also sends what only it can see: `LOCKED`, `UNLOCKED` and `TRANSPORT_LOS
 
 | Event | When the app sends it |
 |---|---|
-| `SESSION_READY` | After a `TRANSPORT_LOST`, when the new session is open and watched. Only this event leaves `awaitingSession`. |
+| `SESSION_READY` | When the new session is open. It leaves `awaitingSession` and `awaitingSessionAfterFirmwareUpdate`. Watch the session after sending it on the post-update wait: a lock reported before the transition would be ignored. |
 | `SESSION_CHANGED` | When the app moves to a new session in the middle of a run. |
-| `FIRMWARE_UPDATE_FLOW_CLOSED` | When the firmware update returns. The device rebooted onto a new session. |
+| `FIRMWARE_UPDATE_FLOW_CLOSED` | When the firmware update returns on a session that can still be read. |
 
 The app sends these events without the id. `stampSession(event, currentSessionId)` adds it,
 because only the app knows the live session.
@@ -99,8 +104,8 @@ The machine output also carries the session id, the device and the reason.
 
 | Reason | Meaning |
 |---|---|
-| `completed` | The setup is done, or the device was already set up and there is nothing to offer. |
-| `offerLedgerSync` | The device was already set up when the flow started, and the app passed `offerSync`. |
+| `completed` | The setup is done, or the device was already set up, and the app did not pass `offerSync`. |
+| `offerLedgerSync` | The device is set up (just now or before), and the app passed `offerSync`. |
 | `legacyFallback` | The device needs the old onboarding flow. |
 | `resumeFirmwareUpdate` | The device is in bootloader or OSU mode: a firmware update was interrupted. |
 | `userQuit` | The user quit. |
@@ -113,8 +118,8 @@ The session stays open after the exit, so the app can keep using it.
 - `stampSession` — adds the live session id to the session events. The app calls it, not the machine
 - `OnboardingEvent`, `DeviceOnboardingInput`, `DeviceOnboardingContext`, `DeviceOnboardingOutput` —
   the language the machine and the screens speak
-- `rules.ts` — the pure decisions the transitions ask. Only the Nano SP and Nano X have a firmware
-  floor; every other model takes the flow whatever it runs
+- `rules.ts` — the pure decisions the transitions ask. Every model takes the flow on any firmware
+  version that can be read
 - `actors/` — the only code that talks to the device: `readDeviceState`, `genuineCheck`,
   `firmwareCheck`, `toggleEarlyCheck`, `seedPolling`, `unlockPolling`. Each gets the session id as
   input and reports through events only

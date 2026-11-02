@@ -9,7 +9,7 @@ jest.mock("react-native-config", () => ({
   default: { DETOX: false },
 }));
 
-jest.mock("@shared/lottie", () => {
+jest.mock("@shared/lottie/native", () => {
   const React = require("react");
   const { View } = require("react-native");
   return {

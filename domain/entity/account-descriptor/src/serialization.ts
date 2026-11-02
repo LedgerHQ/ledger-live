@@ -18,54 +18,38 @@ function validate<T>(schema: ZodType<T>, value: unknown): T {
   return result.data;
 }
 
-/** `account:1:<type>:<name>:<env>:<xpub or address>:<path>` */
+/** `account:2:<type>:<network_id>:<xpub or address>:<path>` */
 export function serializeAccountDescriptor(descriptor: AccountDescriptor): string {
   const { purpose, version, type, network, path } = descriptor;
   const subject = descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
-  return [purpose, version, type, network.name, network.env, subject, path].join(SEP);
+  return [purpose, version, type, network, subject, path].join(SEP);
 }
 
 export function parseAccountDescriptor(input: string): AccountDescriptor {
-  const parts = input.split(SEP);
-  if (parts.length < 7) {
-    throw new InvalidAccountDescriptorError(
-      `Invalid AccountDescriptor: expected at least 7 colon-separated fields, got ${parts.length}`,
-    );
-  }
-
-  const [purpose, version, type, name, env, ...rest] = parts;
+  const [purpose, version, type, network, ...rest] = input.split(SEP);
   if (purpose !== "account") {
     throw new InvalidAccountDescriptorError(
       `Invalid AccountDescriptor: expected purpose "account"`,
     );
   }
-  if (version !== "1") {
-    throw new InvalidAccountDescriptorError(`Invalid AccountDescriptor: expected version "1"`);
+  if (version !== "2") {
+    throw new InvalidAccountDescriptorError(`Invalid AccountDescriptor: expected version "2"`);
+  }
+  if (rest.length < 2) {
+    throw new InvalidAccountDescriptorError(
+      `Invalid AccountDescriptor: expected at least 6 colon-separated fields`,
+    );
   }
 
   const path = rest.at(-1);
   const subject = rest.slice(0, -1).join(SEP);
-  const network = { name, env };
+  const common = { purpose, version, type, network, path };
 
   if (type === "utxo") {
-    return validate(UtxoAccountDescriptorSchema, {
-      purpose,
-      version,
-      type,
-      network,
-      xpub: subject,
-      path,
-    });
+    return validate(UtxoAccountDescriptorSchema, { ...common, xpub: subject });
   }
   if (type === "address") {
-    return validate(AddressAccountDescriptorSchema, {
-      purpose,
-      version,
-      type,
-      network,
-      address: subject,
-      path,
-    });
+    return validate(AddressAccountDescriptorSchema, { ...common, address: subject });
   }
   throw new InvalidAccountDescriptorError(
     `Invalid AccountDescriptor type (expected "utxo" or "address")`,

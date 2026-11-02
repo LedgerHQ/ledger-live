@@ -1,5 +1,5 @@
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
-import { networkStringFromCurrencyId } from "../../shared/accountDescriptor";
+import { networkFromCurrencyId } from "../../shared/accountDescriptor";
 import { buildEarnDeviceContext } from "../../wallet/earn/device-context";
 import {
   getEarnFamilyAdapter,
@@ -39,7 +39,7 @@ export async function resolveEarnCommand(params: {
   const { action, account, positional, ctx, dryRun, deviceTimeoutMs } = params;
 
   const descriptor = await resolveAccountDescriptor(resolveAccountArg(account, positional));
-  const network = networkStringFromCurrencyId(descriptor.currencyId);
+  const network = networkFromCurrencyId(descriptor.currencyId);
   ctx.network = network;
   ctx.account = descriptor.id;
 

@@ -37,6 +37,22 @@ disable_ui_animations() {
   adb -s "$serial" shell settings put global animator_duration_scale 0
 }
 
+# The emulated Wi-Fi delays every packet the guest receives by 100–300 ms; cellular does not.
+use_cellular_network() {
+  local serial=$1 dump net
+  adb -s "$serial" shell svc wifi disable
+  for _ in $(seq 30); do
+    dump=$(adb -s "$serial" shell dumpsys connectivity)
+    net=$(sed -n 's/.*Active default network: \([0-9]*\).*/\1/p' <<<"$dump")
+    if [[ -n "$net" && "$(grep -F "NetworkAgentInfo{network{$net}" <<<"$dump")" == *"Transports: CELLULAR"* ]]; then
+      log "📶 $serial is on cellular"
+      return 0
+    fi
+    sleep 2
+  done
+  log "⚠️ $serial is not on cellular after 60 s"
+}
+
 : "${AVD_NAME:?AVD_NAME is required}"
 : "${ANDROID_HOME:?ANDROID_HOME is required}"
 
@@ -65,6 +81,7 @@ log "✅ $_EXPECTED_EMULATOR_COUNT emulators connected"
 log "⏳ Waiting for all emulators to finish booting..."
 for serial in "${SERIALS[@]}"; do
   wait_boot_completed "$serial"
+  use_cellular_network "$serial"
   log "✅ $serial booted"
 done
 log "✅ All $_EXPECTED_EMULATOR_COUNT emulators are fully booted"

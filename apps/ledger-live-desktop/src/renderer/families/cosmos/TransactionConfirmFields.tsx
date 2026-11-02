@@ -7,13 +7,12 @@ import TransactionConfirmField from "~/renderer/components/TransactionConfirm/Tr
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
+import { accountValidators, mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import {
   resolveSourceValidator,
   resolveTransactionValidators,
-} from "@ledgerhq/coin-cosmos/buildTransaction";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+} from "@ledgerhq/live-common/families/cosmos/buildTransaction";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { openURL } from "~/renderer/linking";
 import {
   OpDetailsData,
@@ -75,8 +74,7 @@ export const CosmosDelegateValidatorsField = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = useAccountUnit(mainAccount);
   const validators = resolveTransactionValidators(transaction);
-  const currencyId = mainAccount.currency.id;
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const cosmosValidators = accountValidators(mainAccount);
   const mappedValidators = mapDelegationInfo(validators || [], cosmosValidators, unit, transaction);
   return mappedValidators && mappedValidators.length > 0 ? (
     <Box justifyContent="space-between" mb={2}>
@@ -117,8 +115,7 @@ export const CosmosValidatorNameField = ({
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const validators = resolveTransactionValidators(transaction);
-  const currencyId = mainAccount.currency.id;
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const cosmosValidators = accountValidators(mainAccount);
   const address = validators && validators.length > 0 ? validators[0].address : null;
   const formattedValidator = useMemo(
     () => (address ? cosmosValidators.find(v => v.validatorAddress === address) : null),
@@ -175,8 +172,7 @@ export const CosmosSourceValidatorField = ({
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
   const mainAccount = getMainAccount(account, parentAccount);
   const sourceValidator = resolveSourceValidator(transaction);
-  const currencyId = mainAccount.currency.id;
-  const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
+  const cosmosValidators = accountValidators(mainAccount);
   const formattedValidator = useMemo(
     () => cosmosValidators.find(v => v.validatorAddress === sourceValidator),
     [cosmosValidators, sourceValidator],

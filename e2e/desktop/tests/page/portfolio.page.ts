@@ -2,7 +2,8 @@ import { step } from "tests/misc/reporters/step";
 import { AppPage } from "tests/page/abstractClasses";
 import { expect, Locator } from "@playwright/test";
 import { waitForAccountsPersisted } from "tests/utils/userdata";
-import { isAssetSectionEnabled, isOperationsListEnabled } from "tests/utils/featureFlagUtils";
+import { isAssetSectionEnabled } from "tests/utils/featureFlagUtils";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { CryptoAddressesBanner } from "tests/component/portfolio/cryptoAddressesBanner";
 import { AssetsView } from "tests/component/portfolio/assetsView";
 import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
@@ -10,7 +11,6 @@ import { Currency } from "@ledgerhq/live-e2e-shared/enum/Currency";
 type QuickActionButton = "receive" | "buy" | "sell" | "send";
 
 export class PortfolioPage extends AppPage {
-  private readonly operationList = this.page.locator("#operation-list");
   private readonly historyButton = this.page.getByTestId("topbar-action-button-history");
   private readonly historyTable = this.page.getByTestId("history-table");
   private readonly historyOperationRows = this.page.locator(
@@ -20,9 +20,6 @@ export class PortfolioPage extends AppPage {
   private readonly homeSideBarButton = this.page
     .getByTestId("sidebar-navigation")
     .getByRole("button", { name: "home" });
-  private readonly showMoreButton = this.page.getByText("Show more");
-  private readonly operationRows = this.page.getByTestId(/operation-row-.*/);
-
   // Wallet 4.0 elements
   private readonly portfolioBalance = this.page.getByTestId("portfolio-balance");
   private readonly portfolioTotalBalance = this.page.getByTestId("portfolio-total-balance");
@@ -96,23 +93,10 @@ export class PortfolioPage extends AppPage {
 
   @step("check operation history")
   async checkOperationHistory() {
-    if (await isOperationsListEnabled(this.page)) {
-      await this.openHistoryPage();
-      await expect(this.historyOperationRows.first()).toBeVisible();
-      await this.homeSideBarButton.click();
-      await this.checkVisibility(this.portfolioTotalBalance);
-    } else {
-      await this.operationList.scrollIntoViewIfNeeded();
-      await this.checkVisibility(this.operationList);
-
-      const numberOfOperationsBefore = await this.operationRows.count();
-
-      if (await this.showMoreButton.isVisible()) {
-        await this.showMoreButton.click();
-        const numberOfOperationsAfter = await this.operationRows.count();
-        expect(numberOfOperationsAfter).toBeGreaterThan(numberOfOperationsBefore);
-      }
-    }
+    await this.openHistoryPage();
+    await expect(this.historyOperationRows.first()).toBeVisible();
+    await this.homeSideBarButton.click();
+    await this.checkVisibility(this.portfolioTotalBalance);
   }
 
   @step("Expect total balance to display the correct counter value $0")
@@ -140,28 +124,12 @@ export class PortfolioPage extends AppPage {
     }
   }
 
-  @step("Expect operation row to be visible")
-  private async expectOperationRowToBeVisible() {
-    if (await isOperationsListEnabled(this.page)) {
-      await this.openHistoryPage();
-      await this.checkVisibility(this.historyOperationRows.first());
-    } else {
-      await this.checkVisibility(this.operationRows.first());
-    }
-  }
-
   @step("Expect operation to contain counter value $0")
   async expectOperationCounterValue(counterValue: string) {
-    if (await isOperationsListEnabled(this.page)) {
-      await this.openHistoryPage();
-      const valueCell = this.historyOperationValue.first();
-      await this.checkVisibility(valueCell);
-      await expect(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
-    } else {
-      await this.expectOperationRowToBeVisible();
-      const operationRow = this.operationRows.first();
-      await expect(operationRow).toContainText(counterValue);
-    }
+    await this.openHistoryPage();
+    const valueCell = this.historyOperationValue.first();
+    await this.checkVisibility(valueCell);
+    await expect(valueCell).toContainText(this.getExpectedCounterValuePattern(counterValue));
   }
 
   @step("Wait for balance to be visible")
@@ -173,7 +141,7 @@ export class PortfolioPage extends AppPage {
   async expectAccountsPersistedInAppJson(
     userdataFile: string,
     minCount: number = 1,
-    timeoutMs: number = 5000,
+    timeoutMs: number = TIMEOUT.small,
   ) {
     await waitForAccountsPersisted(userdataFile, minCount, timeoutMs);
   }
@@ -241,7 +209,7 @@ export class PortfolioPage extends AppPage {
    */
   @step("Expect the portfolio empty state")
   async expectPortfolioEmptyState() {
-    await expect(this.noBalanceTitle).toBeVisible();
+    await expect(this.noBalanceTitle).toBeVisible({ timeout: TIMEOUT.xxlarge });
   }
 
   @step("Expect portfolio total balance to not be visible")

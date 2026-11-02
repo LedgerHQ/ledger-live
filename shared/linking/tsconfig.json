@@ -1,14 +1,6 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "@support/tsconfig/client-react",
   "compilerOptions": {
-    "lib": ["ES2022", "DOM"],
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx",
-    "types": ["jest"],
-    "noEmit": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+    "types": ["jest"]
+  }
 }

@@ -7,6 +7,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DmkError } from "@ledgerhq/live-dmk-desktop";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { LatestFirmwareVersionRequired, UpdateYourApp } from "@ledgerhq/live-common/errors";
 
 jest.mock("~/renderer/hooks/useBuyDeviceIntercept", () => ({
   useBuyDeviceIntercept: () => true,
@@ -258,6 +259,44 @@ describe("DeviceAction - Deprecation", () => {
 
     expect(onOpenManager).toHaveBeenCalledTimes(1);
     expect(onError).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [
+      "the firmware update screen",
+      { error: new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired") },
+    ],
+    [
+      "the app update screen",
+      { error: new UpdateYourApp(undefined, { managerAppName: "Hyperliquid" }) },
+    ],
+    [
+      "the outdated app warning",
+      {
+        displayUpgradeWarning: true,
+        appAndVersion: { name: "Hyperliquid", version: "1.0.0", flags: 0 },
+        passWarning: jest.fn(),
+      },
+    ],
+  ])("should call onOpenManager when clicking 'Open My Ledger' on %s", (_case, hookState) => {
+    const mockAction = {
+      useHook: jest.fn(() => ({ deviceDeprecationRules: null, ...hookState })),
+      mapResult: jest.fn(),
+    };
+    const onOpenManager = jest.fn();
+
+    render(
+      <DeviceAction
+        action={mockAction}
+        request={{ account: ETH_ACCOUNT }}
+        location={HOOKS_TRACKING_LOCATIONS.sendModal}
+        onOpenManager={onOpenManager}
+      />,
+    );
+
+    fireEvent.click(screen.getByText("Open My Ledger"));
+
+    expect(onOpenManager).toHaveBeenCalledTimes(1);
   });
 
   it("should display Error Screen", () => {

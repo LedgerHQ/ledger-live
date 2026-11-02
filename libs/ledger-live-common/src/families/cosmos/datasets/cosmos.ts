@@ -7,8 +7,8 @@ import {
 } from "@ledgerhq/ledger-wallet-framework/errors";
 import { RecommendUndelegation } from "../../../errors";
 import invariant from "invariant";
-import type { CosmosAccount, Transaction } from "@ledgerhq/coin-cosmos/types/index";
-import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/coin-cosmos/types/index";
+import { AccountRaw, CurrenciesData, isStakingAccount } from "@ledgerhq/types-live";
 import { fromTransactionRaw } from "@ledgerhq/coin-cosmos/transaction";
 import { CosmosTooManyRedelegations } from "@ledgerhq/coin-cosmos/errors";
 import { COSMOS_MAX_REDELEGATIONS } from "@ledgerhq/coin-cosmos/logic";
@@ -108,11 +108,11 @@ const dataset: CurrenciesData<Transaction> = {
             mode: "send",
           }),
           expectedStatus: (account, t) => {
-            const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources) throw new Error("Should exist because it's cosmos");
+            if (!isStakingAccount(account)) throw new Error("Should exist because it's cosmos");
+            const { stakingResources } = account;
             const estimatedFees = t.fees || new BigNumber(0);
             const spendableBalance = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
+              stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance),
             );
             const amount = BigNumber.max(0, spendableBalance.minus(estimatedFees));
             const totalSpent = amount.plus(estimatedFees);
@@ -121,7 +121,7 @@ const dataset: CurrenciesData<Transaction> = {
             if (amount.lte(0)) {
               errors.amount = new NotEnoughBalance();
             }
-            if (cosmosResources.delegations.length > 0) {
+            if (stakingResources.delegations.length > 0) {
               warnings.amount = new RecommendUndelegation();
             }
             return {
@@ -147,12 +147,12 @@ const dataset: CurrenciesData<Transaction> = {
             mode: "send",
           }),
           expectedStatus: (account, t) => {
-            const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources) throw new Error("Should exist because it's cosmos");
+            if (!isStakingAccount(account)) throw new Error("Should exist because it's cosmos");
+            const { stakingResources } = account;
             invariant(t.memo === "test", "Should have a memo");
             const estimatedFees = t.fees || new BigNumber(0);
             const spendableBalance = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
+              stakingResources.unbondingBalance.plus(stakingResources.delegatedBalance),
             );
             const amount = BigNumber.max(0, spendableBalance.minus(estimatedFees));
             const totalSpent = amount.plus(estimatedFees);
@@ -161,7 +161,7 @@ const dataset: CurrenciesData<Transaction> = {
             if (amount.lte(0)) {
               errors.amount = new NotEnoughBalance();
             }
-            if (cosmosResources.delegations.length > 0) {
+            if (stakingResources.delegations.length > 0) {
               warnings.amount = new RecommendUndelegation();
             }
             return {
@@ -201,11 +201,10 @@ const dataset: CurrenciesData<Transaction> = {
           }),
           expectedStatus: (a, t) => {
             invariant(t.memo === "Ledger Live", "Should have a memo");
-            const { cosmosResources } = a as CosmosAccount;
             const errors: Record<string, Error> = {};
             if (
-              cosmosResources &&
-              cosmosResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
+              isStakingAccount(a) &&
+              a.stakingResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
             ) {
               errors.redelegation = new CosmosTooManyRedelegations();
             }
@@ -229,11 +228,10 @@ const dataset: CurrenciesData<Transaction> = {
             sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: a => {
-            const { cosmosResources } = a as CosmosAccount;
             const errors: Record<string, Error> = {};
             if (
-              cosmosResources &&
-              cosmosResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
+              isStakingAccount(a) &&
+              a.stakingResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
             ) {
               errors.redelegation = new CosmosTooManyRedelegations();
             } else {
@@ -259,11 +257,10 @@ const dataset: CurrenciesData<Transaction> = {
             sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: a => {
-            const { cosmosResources } = a as CosmosAccount;
             const errors: Record<string, Error> = {};
             if (
-              cosmosResources &&
-              cosmosResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
+              isStakingAccount(a) &&
+              a.stakingResources.redelegations.length >= COSMOS_MAX_REDELEGATIONS
             ) {
               errors.redelegation = new CosmosTooManyRedelegations();
             } else {

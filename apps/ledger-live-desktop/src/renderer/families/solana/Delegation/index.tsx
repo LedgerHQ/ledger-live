@@ -1,4 +1,4 @@
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
 import { SolanaAccount, SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
 import { Account, TokenAccount } from "@ledgerhq/types-live";

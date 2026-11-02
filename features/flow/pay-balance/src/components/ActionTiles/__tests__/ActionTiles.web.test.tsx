@@ -2,7 +2,7 @@ import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
 import { ActionTiles } from "../ActionTiles";
 import type { ActionTilesProps } from "../types";
-import { renderWithStyle } from "../../../__tests__/renderWithStyle.web";
+import { renderWithStyle } from "../../../__tests__/renderWithStyle";
 import { trackButtonClicked } from "@features/platform-pay-analytics/testing/module-mock";
 
 jest.mock("@features/platform-pay-analytics", () =>
@@ -12,8 +12,8 @@ jest.mock("@features/platform-pay-analytics", () =>
 function buildProps(overrides: Partial<ActionTilesProps> = {}): ActionTilesProps {
   return {
     tiles: [
-      { id: "deposit", onPress: jest.fn(), appearance: "base" },
-      { id: "request", onPress: jest.fn(), appearance: "transparent" },
+      { id: "deposit", onOpenFlow: jest.fn(), appearance: "base" },
+      { id: "request", onOpenFlow: jest.fn(), appearance: "transparent" },
     ],
     page: "Pay",
     ...overrides,
@@ -29,11 +29,11 @@ describe("ActionTiles (Web)", () => {
   });
 
   it("should fire tracking then the tile handler on press", () => {
-    const onPress = jest.fn();
+    const onOpenFlow = jest.fn();
     renderWithStyle(
       <ActionTiles
         {...buildProps({
-          tiles: [{ id: "deposit", onPress, appearance: "base" }],
+          tiles: [{ id: "deposit", onOpenFlow, appearance: "base" }],
         })}
       />,
     );
@@ -45,6 +45,6 @@ describe("ActionTiles (Web)", () => {
       buttonLocation: "quick action",
       page: "Pay",
     });
-    expect(onPress).toHaveBeenCalledTimes(1);
+    expect(onOpenFlow).toHaveBeenCalledTimes(1);
   });
 });

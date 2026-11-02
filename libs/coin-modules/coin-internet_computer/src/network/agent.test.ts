@@ -1,7 +1,7 @@
-import { HttpAgent } from "@dfinity/agent";
+import { HttpAgent } from "@icp-sdk/core/agent";
 import { getAgent } from "./agent";
 
-jest.mock("@dfinity/agent", () => ({
+jest.mock("@icp-sdk/core/agent", () => ({
   HttpAgent: { create: jest.fn().mockResolvedValue({ marker: "agent" }) },
 }));
 

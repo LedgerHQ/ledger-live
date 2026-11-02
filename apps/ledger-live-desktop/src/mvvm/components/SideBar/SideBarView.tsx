@@ -13,15 +13,12 @@ import {
   Wallet,
   Exchange,
   ExchangeFill,
-  Gift,
-  ShieldCheck,
   Chart5,
   Chart5Fill,
   Compass,
   DollarFill,
   Dollar,
 } from "@ledgerhq/lumen-ui-react/symbols";
-import { FeatureToggle } from "@features/platform-feature-flags";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { SideBarViewModel } from "./types";
@@ -100,26 +97,6 @@ export function SideBarView({ viewModel }: SideBarViewProps) {
             )}
           </SideBarLeading>
           <SideBarTrailing>
-            {viewModel.isMyWalletEnabled ? null : (
-              <>
-                <FeatureToggle featureId="referralProgramDesktopSidebar">
-                  <SideBarItem
-                    value="refer"
-                    icon={Gift}
-                    activeIcon={Gift}
-                    label={t("sidebar.refer")}
-                  />
-                </FeatureToggle>
-                <FeatureToggle featureId="protectServicesDesktop">
-                  <SideBarItem
-                    value="recover"
-                    icon={ShieldCheck}
-                    activeIcon={ShieldCheck}
-                    label={t("sidebar.recover")}
-                  />
-                </FeatureToggle>
-              </>
-            )}
             <SideBarCollapseToggle />
           </SideBarTrailing>
         </SideBar>

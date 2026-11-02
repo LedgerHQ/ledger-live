@@ -19,7 +19,7 @@ export function CategoryCard({ category, tools, onSelect }: CategoryCardProps) {
     >
       <IconSquare category={category} />
       <div className="flex-1 min-w-0">
-        <div className="body-2 font-semibold truncate">{category}</div>
+        <div className="body-2 truncate">{category}</div>
         <div className="body-3 text-muted">
           {tools.length} tool{tools.length !== 1 ? "s" : ""}
         </div>

@@ -28,7 +28,9 @@ export function FooterSection({ explorerUrl, isLoading }: FooterSectionProps) {
       icon={ExternalLink}
       data-testid="swap-transaction-view-explorer-btn"
       data-href={explorerUrl}
-      onClick={() => openURL(explorerUrl, "SwapTransactionStatus_ViewExplorer")}
+      onClick={() =>
+        openURL(explorerUrl, "SwapTransactionStatus_ViewExplorer", {}, { sensitive: true })
+      }
     >
       {t("swap2.modals.transactionStatus.actions.viewInExplorer")}
     </Button>

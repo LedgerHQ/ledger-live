@@ -184,6 +184,12 @@ export type LLDCoinFamily<
     getURLFeesInfo?: (_: { op: O; currencyId: string }) => string | null | undefined;
 
     /**
+     * i18n key for the confirmation count shown after the status in the details drawer
+     * (rendered with `{ count }`); return null to keep the bare "(N)".
+     */
+    getConfirmationsI18nKey?: (_: { currencyId: string }) => string | null | undefined;
+
+    /**
      * Add custom component after the Account section in operation details drawer
      */
     OperationDetailsPostAccountSection?: React.ComponentType<

@@ -1,18 +1,18 @@
-import { serialiseDerivation } from "./internals/digest.native";
+import { serialiseDerivation } from "./internals/digest";
 import {
   checkPassword,
   clearPasswordIfCorrect,
   needsLongerStoredPassword,
   storeNewPassword,
-} from "./check.native";
+} from "./check";
 
 const SCRYPT = { cost: 16384, blockSize: 8, parallelization: 1, digestLength: 4 };
 
 jest.mock("react-native-fast-crypto", () => ({ scrypt: jest.fn() }));
 
 // Only the derivation is faked: with the queue stubbed out, the ordering tests observe nothing.
-jest.mock("./internals/digest.native", () => ({
-  ...jest.requireActual("./internals/digest.native"),
+jest.mock("./internals/digest", () => ({
+  ...jest.requireActual("./internals/digest"),
   // "right" and "rightlong" both open the verifier; only the second is long enough to keep.
   derivePasswordDigest: jest.fn(async (password: string) =>
     password.startsWith("right")
@@ -21,16 +21,15 @@ jest.mock("./internals/digest.native", () => ({
   ),
 }));
 
-jest.mock("./internals/store.native", () => ({
+jest.mock("./internals/store", () => ({
   readStoredPassword: jest.fn(),
   writePasswordVerifier: jest.fn(async () => undefined),
   clearPasswordVerifier: jest.fn(async () => undefined),
 }));
 
-const { derivePasswordDigest } = jest.requireMock("./internals/digest.native");
-const { readStoredPassword, writePasswordVerifier, clearPasswordVerifier } = jest.requireMock(
-  "./internals/store.native",
-);
+const { derivePasswordDigest } = jest.requireMock("./internals/digest");
+const { readStoredPassword, writePasswordVerifier, clearPasswordVerifier } =
+  jest.requireMock("./internals/store");
 
 const verifier = {
   version: 1,

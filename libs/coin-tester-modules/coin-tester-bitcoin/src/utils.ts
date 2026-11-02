@@ -16,10 +16,16 @@ export async function waitForTxInMempool(txId: string, timeout = 10000) {
   throw new Error(`Transaction ${txId} not found in mempool after ${timeout}ms`);
 }
 
-export async function waitForExplorerSync(
-  url: string = "http://localhost:9876/blockchain/v4/btc_regtest/block/current",
-  pollInterval: number = 2000,
-): Promise<void> {
+// The explorer (Atlas) of the coin-sandbox instance, known once it is up
+let explorerUrl: string | undefined;
+
+export function setExplorerUrl(url: string): void {
+  explorerUrl = url;
+}
+
+export async function waitForExplorerSync(pollInterval: number = 2000): Promise<void> {
+  if (explorerUrl === undefined) throw new Error("the explorer is not set: is the sandbox up?");
+  const url = `${explorerUrl}/blockchain/v4/btc_regtest/block/current`;
   let explorerBlock = 0;
   let nodeBlock = await getCurrentBlock();
   let i = 0;

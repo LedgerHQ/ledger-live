@@ -21,6 +21,7 @@ export default function AccountDetail() {
     account,
     accountName,
     header,
+    refresh,
     onOpenSettings,
     isSettingsOpen,
     onCloseSettings,
@@ -55,13 +56,14 @@ export default function AccountDetail() {
 
   return (
     <>
-      <AccountDetailView account={account} />
+      <AccountDetailView account={account} refresh={refresh} />
       <AccountSettingsSheet
         isOpen={isSettingsOpen}
         accountName={accountName}
         onClose={onCloseSettings}
         onChangeName={onChangeName}
         onViewAdvancedLogs={onViewAdvancedLogs}
+        account={account}
         onConfirmRemove={onConfirmRemove}
         onHidden={onSettingsHidden}
         testID={ACCOUNT_DETAIL_TEST_IDS.settingsSheet}

@@ -1,7 +1,8 @@
 import React, { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
-import type { LinkingConfig } from "./types";
+import type { LinkingConfig, OpenLink } from "./types";
 import { assertSafeUrl } from "./assertSafeUrl";
 import { localizeUrl } from "./localizeUrl";
+import { redactUrl } from "./redactUrl";
 
 const LinkingContext = createContext<LinkingConfig | null>(null);
 
@@ -15,7 +16,7 @@ export function LinkingProvider({
   return <LinkingContext.Provider value={config}>{children}</LinkingContext.Provider>;
 }
 
-export function useOpenLink(): (url: string) => void {
+export function useOpenLink(): OpenLink {
   const config = useContext(LinkingContext);
   if (!config) {
     throw new Error("useOpenLink must be used within a <LinkingProvider>");
@@ -23,9 +24,9 @@ export function useOpenLink(): (url: string) => void {
   const { openExternal, onLinkOpened } = config;
 
   return useCallback(
-    (url: string) => {
+    (url, options) => {
       assertSafeUrl(url);
-      onLinkOpened?.(url);
+      onLinkOpened?.(options?.sensitive ? redactUrl(url) : url);
       Promise.resolve(openExternal(url)).catch(() => {});
     },
     [openExternal, onLinkOpened],

@@ -27,8 +27,10 @@ import {
   takeWhile,
 } from "rxjs";
 import {
+  handleContactDeviceActionTransportError,
   mapDeviceActionErrorToFailureJobState,
   mapDmkErrorToError,
+  throwIfDeviceDisconnected,
 } from "../../contactsDeviceActionFailure";
 import {
   mapBytesToProof,
@@ -114,6 +116,7 @@ function createStepOutcomeMapper(
       }
 
       case DeviceActionStatus.Error: {
+        throwIfDeviceDisconnected(state.error);
         const jobState = mapDeviceActionErrorToFailureJobState(state.error);
         const isReplayableByTheUser = jobState.type === "device-rejected";
 
@@ -298,14 +301,11 @@ export const editExternalAddressIntentJob: Job<
     map(jobState =>
       jobState.type === "device-rejected" ? { ...jobState, retry: () => retries.next() } : jobState,
     ),
-    // Jobs report failures as a terminal JobState rather than erroring the
-    // observable, which would drop the executor into its generic fallback
-    // instead of this intent's own InfoState.
-    catchError((error: unknown) => {
-      const mapped = mapDmkErrorToError(error);
-      reporter.report({ type: "failure", error: mapped });
-      return of<EditExternalAddressJobState>({ type: "failed", error: mapped });
-    }),
+    catchError((error: unknown) =>
+      handleContactDeviceActionTransportError<EditExternalAddressJobState>(error, mapped =>
+        reporter.report({ type: "failure", error: mapped }),
+      ),
+    ),
     reporter.cancelOnUnsubscribe(),
   );
 };

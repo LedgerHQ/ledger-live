@@ -101,7 +101,7 @@ describe("createDevtoolsConfigArrayString", () => {
   it("falls back to never when the list is empty to avoid a syntax error", () => {
     const result = createDevtoolsConfigArrayString([]);
     expect(result).toContain("never;");
-    expect(result).not.toMatch(/=\s*$/m);
+    expect(result).not.toMatch(/=\s*$/);
   });
 
   it("includes one union member per tool", () => {

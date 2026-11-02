@@ -12,10 +12,12 @@
  *
  * `scope:support` is allowed as a target everywhere: support packages are development tooling,
  * taken as devDependencies, and the Nx graph does not distinguish those from runtime dependencies.
- * It has no rule as a *source* for the same reason — one would constrain a support package's own
- * test-tooling dependencies (lumen, react-native) for no benefit.
+ * As a source, it may only reach `scope:support` and `scope:shared`: tooling carries no domain or
+ * feature knowledge, so a test harness that needs a domain's mocks lives in that domain package.
+ * Third-party test tooling (lumen, react-native) is not a graph node and stays unconstrained.
  */
 const DEP_CONSTRAINTS = [
+  { sourceTag: "scope:support", onlyDependOnLibsWithTags: ["scope:support", "scope:shared"] },
   { sourceTag: "scope:shared", onlyDependOnLibsWithTags: ["scope:shared", "scope:support"] },
   {
     sourceTag: "scope:domain",
@@ -59,9 +61,36 @@ const DEP_CONSTRAINTS = [
   },
 ];
 
-/** Per-package exceptions: { sourceRoot, targetRoot, allowedImport }. Remove when @ledgerhq/live-env moves to ts-libs. */
-const BOUNDARY_EXCEPTIONS = [
-  { sourceRoot: "shared/env", targetRoot: "libs/env", allowedImport: "@ledgerhq/live-env" },
+/**
+ * Per-package exceptions: { sourceRoot, targetRoot?, allowedImport }. `targetRoot` scopes an
+ * exception to a graph edge; without it the exception only allows the source import.
+ * `shared/env` wraps `@ledgerhq/live-env` and is the one package allowed to import it.
+ */
+const BOUNDARY_EXCEPTIONS = [{ sourceRoot: "shared/env", allowedImport: "@ledgerhq/live-env" }];
+
+/** Workspace roots checked by `LEGACY_IMPORT_RULE`. */
+const LEGACY_SOURCE_ROOTS = ["shared", "domain", "features"];
+
+const LEGACY_IMPORT_RULE = `Legacy @ledgerhq/* imports and relative paths into libs/ are forbidden in ${LEGACY_SOURCE_ROOTS.map(r => `${r}/`).join(", ")} source files.`;
+
+/**
+ * Legacy packages for `LEGACY_IMPORT_RULE`, on top of every `scope:libs` node of the graph.
+ * These left `libs/` for npm, so the graph no longer tags them.
+ */
+const LEGACY_PACKAGES = [
+  "@ledgerhq/live-config",
+  "@ledgerhq/live-env",
+  "@ledgerhq/live-currency-format",
+  "@ledgerhq/domain-service",
+  "@ledgerhq/evm-tools",
+];
+
+/**
+ * Third-party packages a tagged source may neither declare in its manifest nor import.
+ * Entities hold schemas, types and state: no UI framework.
+ */
+const BANNED_EXTERNALS_BY_TAG = [
+  { sourceTag: "type:domain-entity", packages: ["react", "react-native"] },
 ];
 
 /**
@@ -72,4 +101,12 @@ const BOUNDARY_EXCEPTIONS = [
  */
 const BANNED_DEPENDENCIES = [];
 
-module.exports = { DEP_CONSTRAINTS, BOUNDARY_EXCEPTIONS, BANNED_DEPENDENCIES };
+module.exports = {
+  DEP_CONSTRAINTS,
+  BOUNDARY_EXCEPTIONS,
+  LEGACY_SOURCE_ROOTS,
+  LEGACY_IMPORT_RULE,
+  LEGACY_PACKAGES,
+  BANNED_EXTERNALS_BY_TAG,
+  BANNED_DEPENDENCIES,
+};

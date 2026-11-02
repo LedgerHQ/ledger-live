@@ -1,8 +1,4 @@
 {
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "outDir": null,
-    "types": ["node", "jest"]
-  },
+  "extends": ["../tsconfig.json", "@support/tsconfig/lib/tests"],
   "include": ["."]
 }

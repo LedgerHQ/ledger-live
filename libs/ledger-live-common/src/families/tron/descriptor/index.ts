@@ -73,6 +73,9 @@ export const descriptor: CoinDescriptor = {
       hasPresets: false,
       hasCustom: false,
       getNetworkFeesInfo,
+      // Only a TRC-20 transfer burns energy: the landed rent won't change a TRX or TRC-10 send's fee.
+      rentChangesFee: currency =>
+        currency.type === "TokenCurrency" && currency.tokenType === "trc20",
     },
   },
 };

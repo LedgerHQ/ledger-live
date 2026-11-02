@@ -393,6 +393,15 @@ describe("parseDeepLink", () => {
       });
     });
 
+    it("creates contacts route", () => {
+      const parsed = parseDeepLink("ledgerlive://contacts");
+      const route = createRoute(parsed);
+
+      expect(route).toEqual({
+        type: "contacts",
+      });
+    });
+
     it("creates product tour route", () => {
       const parsed = parseDeepLink("ledgerlive://product-tour");
       const route = createRoute(parsed);

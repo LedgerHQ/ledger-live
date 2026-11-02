@@ -4,7 +4,7 @@ import { render } from "@testing-library/react";
 import { Provider } from "react-redux";
 import { addContact, contact, contactsSlice, type Contact } from "@domain/entity-contact";
 import type { AddContactDialogViewModel } from "@features/flow-contacts-add-contact";
-import { StyleProvider } from "@features/platform-style";
+import { StyleProvider } from "@features/platform-style/web";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import type {
   ContactsProps,

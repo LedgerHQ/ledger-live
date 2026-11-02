@@ -14,8 +14,10 @@ import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommand
 import { DEVICE_TAGS } from "tests/utils/tagsUtils";
 import BigNumber from "bignumber.js";
 import { pickRotatingProvider } from "@ledgerhq/live-e2e-shared/swap";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 const fromAccount = TokenAccount.ETH_USDT_3;
+const reapprovalLock = exclusiveLockFor({ broadcastAccounts: [fromAccount] });
 const toAccount = Account.ETH_3;
 const eligibleProviders = [
   SwapProvider.THORCHAIN,
@@ -24,8 +26,11 @@ const eligibleProviders = [
   SwapProvider.ONE_INCH,
   SwapProvider.VELORA,
 ];
+// Reapproval broadcasts revoke + approve and waits for each to confirm on mainnet; extend beyond
+// the 400s CI default.
+const REAPPROVAL_TEST_TIMEOUT_MS = 600_000;
 
-test.describe("Swap - token reapproval", () => {
+test.describe("Swap - token reapproval", { lock: reapprovalLock.names }, () => {
   test.skip(
     process.env.DISABLE_TRANSACTION_BROADCAST !== "0",
     "Token re-approval (bigger amount) flow requires broadcast to be enabled — runs on Monday nightly only",
@@ -37,6 +42,7 @@ test.describe("Swap - token reapproval", () => {
     teamOwner: Team.SWAP,
     userdata: "skip-onboarding-with-last-seen-device",
     speculosApp: fromAccount.currency.speculosApp ?? AppInfos.ETHEREUM,
+    ...reapprovalLock.fixtures,
 
     cliCommandsOnApp: [
       [
@@ -66,8 +72,7 @@ test.describe("Swap - token reapproval", () => {
     },
     async ({ app }) => {
       const provider = await pickRotatingProvider(eligibleProviders, fromAccount, toAccount);
-      // Reapproval broadcasts revoke + approve and waits for each to confirm on mainnet; extend beyond the 400s CI default.
-      test.setTimeout(600_000);
+      test.setTimeout(REAPPROVAL_TEST_TIMEOUT_MS);
       await app.swap.logSelectedProvider(provider.uiName);
       await app.speculos.enableBlindSigningOnNanoS();
       await revokeTokenApproval(fromAccount, provider);

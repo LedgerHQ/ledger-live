@@ -8,8 +8,9 @@ import {
 import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
-} from "@ledgerhq/live-common/explorers";
-import { getCryptoCurrencyById, CryptoCurrency } from "@domain/entity-currency-crypto";
+  getCryptoCurrencyById,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import {
   findOperationInAccount,
@@ -32,7 +33,7 @@ import styled from "styled-components";
 import { urls } from "~/config/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { setTrackingSource } from "@shared/analytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -178,6 +179,14 @@ const OperationD = (props: Props) => {
     : null;
 
   const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
+  const confirmationsI18nKey = specific?.operationDetails?.getConfirmationsI18nKey?.({
+    currencyId: mainAccount.currency.id,
+  });
+  const confirmationsLabel =
+    confirmationsI18nKey && confirmationsString
+      ? t(confirmationsI18nKey, { count: Number(confirmationsString) })
+      : confirmationsString;
+  const confirmationsSuffix = confirmationsLabel ? ` (${confirmationsLabel})` : "";
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
@@ -390,7 +399,7 @@ const OperationD = (props: Props) => {
 
   return (
     <Box flow={3} px={20} mt={20}>
-      <TrackPage
+      <TrackScreen
         category={location.pathname !== "/" ? "Account" : "Portfolio"}
         name="Operation Details"
         currencyName={currency.name}
@@ -482,9 +491,12 @@ const OperationD = (props: Props) => {
             fontSize={4}
             onClick={() =>
               url &&
-              openURL(url, "viewOperationInExplorer", {
-                currencyId: currencyName,
-              })
+              openURL(
+                url,
+                "viewOperationInExplorer",
+                { currencyId: currencyName },
+                { sensitive: true },
+              )
             }
             label={t("operationDetails.viewOperation")}
           />
@@ -621,11 +633,7 @@ const OperationD = (props: Props) => {
               : isConfirmed
                 ? t("operationDetails.confirmed")
                 : t("operationDetails.notConfirmed")}
-            {getEnv("PLAYWRIGHT_RUN")
-              ? ""
-              : hasFailed
-                ? null
-                : `${confirmationsString ? ` (${confirmationsString})` : ``}`}
+            {getEnv("PLAYWRIGHT_RUN") || hasFailed ? null : confirmationsSuffix}
           </Box>
         </OpDetailsData>
       </OpDetailsSection>

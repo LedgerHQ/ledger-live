@@ -9,7 +9,13 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import { Refresh } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useLedgerSyncIntroductionCopy } from "../../copy/useLedgerSyncIntroductionCopy";
-import type { ContactsLedgerSyncIntroductionContentProps } from "./types";
+
+export type ContactsLedgerSyncIntroductionContentProps = Readonly<{
+  isOpen: boolean;
+  bottomInset: number;
+  onActivate: () => void;
+  onDismiss: () => void;
+}>;
 
 export function ContactsLedgerSyncIntroductionContent({
   isOpen,

@@ -1,2 +1,2 @@
-export * from "./AppUnavailable.native";
-export type * from "./types";
+export * from "./AppUnavailable";
+export type * from "./AppUnavailable.types";

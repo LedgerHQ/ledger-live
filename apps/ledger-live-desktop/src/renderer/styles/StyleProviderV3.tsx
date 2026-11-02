@@ -7,7 +7,7 @@ import {
   defaultTheme as v3DefaultTheme,
   palettes as v3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
-import { StyleProvider as PlatformStyleProvider } from "@features/platform-style";
+import { StyleProvider as PlatformStyleProvider } from "@features/platform-style/web";
 
 type Props = {
   children: React.ReactNode;

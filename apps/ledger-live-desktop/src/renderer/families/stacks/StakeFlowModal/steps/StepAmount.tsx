@@ -73,7 +73,8 @@ export const StepAmountFooter = ({
       ) : null}
       <Button
         id="stacks-stake-amount-continue-button"
-        isLoading={bridgePending}
+        // useBridgeTransaction keeps a failed preparation pending while it retries.
+        isLoading={bridgePending && !error}
         primary
         disabled={!canNext}
         onClick={() => transitionTo("connectDevice")}

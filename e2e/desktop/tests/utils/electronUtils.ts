@@ -1,5 +1,7 @@
 import { ElectronApplication, _electron as electron } from "@playwright/test";
 import * as path from "path";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
+import { withoutExclusiveLockEnv } from "tests/utils/exclusiveLock";
 
 export async function launchApp({
   env,
@@ -26,6 +28,7 @@ export async function launchApp({
       "--disable-dev-shm-usage",
       "--no-sandbox",
       "--enable-logging",
+      ...(process.platform === "darwin" ? ["--use-mock-keychain"] : []),
 
       ...(simulateCamera
         ? [
@@ -40,10 +43,10 @@ export async function launchApp({
         size: windowSize,
       },
     }),
-    env,
+    env: withoutExclusiveLockEnv(env),
     colorScheme: theme,
     locale: lang,
     executablePath: require("electron/index.js"),
-    timeout: 120000,
+    timeout: TIMEOUT.xxxlarge,
   });
 }

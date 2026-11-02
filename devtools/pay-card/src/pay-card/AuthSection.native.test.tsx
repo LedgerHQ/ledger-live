@@ -1,4 +1,4 @@
-import { render, screen, userEvent } from "@support/jest-devtools/native";
+import { render, screen, userEvent } from "@support/jest/devtools/native";
 import { AuthSection } from "./AuthSection";
 import type {
   PayCardAuthProps,

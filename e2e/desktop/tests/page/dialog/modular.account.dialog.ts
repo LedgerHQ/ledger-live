@@ -1,6 +1,7 @@
 import { step } from "tests/misc/reporters/step";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Dialog } from "tests/component/dialog.component";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 export class ModularAccountDialog extends Dialog {
   private dialogContent = this.page.getByTestId("modular-dialog-screen-ACCOUNT_SELECTION");
@@ -17,7 +18,7 @@ export class ModularAccountDialog extends Dialog {
   }
 
   @step("Wait for the account selection screen to appear (returns false if it does not)")
-  async waitForAccountSelectionVisible(timeout = 3000): Promise<boolean> {
+  async waitForAccountSelectionVisible(timeout = TIMEOUT.small): Promise<boolean> {
     try {
       await this.dialogContent.waitFor({ state: "visible", timeout });
       return true;

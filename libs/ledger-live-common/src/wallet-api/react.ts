@@ -4,7 +4,7 @@ import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
-import { Transport, Permission } from "@ledgerhq/wallet-api-core";
+import { Permission, RpcRequest } from "@ledgerhq/wallet-api-core";
 import { first } from "rxjs/operators";
 import { getEnv } from "@shared/env";
 import { UserRefusedOnDevice } from "@ledgerhq/ledger-wallet-framework/errors";
@@ -70,6 +70,7 @@ import {
 import { LiveAppManifest } from "../platform/types";
 import { ModularDrawerConfiguration } from "./ModularDrawer/types";
 import { useCurrenciesUnderFeatureFlag } from "../modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { bindUiFlowToSession, type BridgeSession } from "./bridgeSession";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -188,13 +189,58 @@ export function usePermission(manifest: AppManifest): Omit<Permission, "currency
   );
 }
 
-function useTransport(postMessage: (message: string) => void | undefined): Transport {
+/** A server per bridge session: closing the session rejects its pending requests. */
+class BridgeSessionWalletAPIServer extends WalletAPIServer {
+  constructor(
+    private readonly session: BridgeSession,
+    config: ServerConfig,
+    customHandlers: WalletAPICustomHandlers,
+  ) {
+    super(session, config, undefined, customHandlers);
+  }
+
+  protected onRequest(request: RpcRequest): Promise<unknown> {
+    return this.session.cancelOnClose(super.onRequest(request));
+  }
+}
+
+/**
+ * The promise of a UI flow opened for a request: it also rejects once the session is closed, as
+ * the callbacks of the flow are dropped then (`bindUiFlowToSession`). A signing flow awaits it
+ * in `withLiveAppContext`, which can then restore the previous signing attribution.
+ */
+function sessionPromise<T>(
+  session: BridgeSession,
+  executor: (resolve: (value: T) => void, reject: (reason?: unknown) => void) => void,
+): Promise<T> {
+  return session.cancelOnClose(new Promise<T>(executor));
+}
+
+function useSessionUiFlow<P extends object, R>(
+  session: BridgeSession,
+  open: ((params: P) => R) | undefined,
+): ((params: P) => R | undefined) | undefined {
+  return useMemo(() => open && bindUiFlowToSession(session, open), [session, open]);
+}
+
+/**
+ * The UI hooks of the dapp logic, bound to the session of the request: a request still preparing
+ * when its session is closed (e.g. personal_sign) opens no UI, and its callbacks are dropped.
+ */
+export function useDappSessionUiHook(session: BridgeSession, uiHook: UiHook): UiHook {
   return useMemo(() => {
+    const bind =
+      <P extends object>(open: (params: P) => void) =>
+      (params: P): void => {
+        bindUiFlowToSession(session, open)(params);
+      };
     return {
-      onMessage: undefined,
-      send: postMessage,
+      ...uiHook,
+      "account.request": bind(uiHook["account.request"]),
+      "message.sign": bind(uiHook["message.sign"]),
+      "transaction.sign": bind(uiHook["transaction.sign"]),
     };
-  }, [postMessage]);
+  }, [session, uiHook]);
 }
 
 export function useConfig({
@@ -284,8 +330,12 @@ export type useWalletAPIServerOptions = {
   config: ServerConfig;
   webviewHook: {
     reload: () => void;
-    postMessage: (message: string) => void;
   };
+  /**
+   * Transport of the server: one server runs per session, i.e. per main-frame origin.
+   * The webview host feeds it the messages it accepted (see `useBridgeSession`).
+   */
+  bridgeSession: BridgeSession;
   uiHook: Partial<UiHook>;
   customHandlers?: WalletAPICustomHandlers;
 };
@@ -323,30 +373,35 @@ export function useWalletAPIServer({
   tracking,
   config,
   webviewHook,
-  uiHook: {
-    "account.request": uiAccountRequest,
-    "account.receive": uiAccountReceive,
-    "account.publicKeyUnavailable": uiAccountPublicKeyUnavailable,
-    "message.sign": uiMessageSign,
-    "storage.get": uiStorageGet,
-    "storage.set": uiStorageSet,
-    "transaction.sign": uiTxSign,
-    "transaction.signRaw": uiTxSignRaw,
-    "transaction.broadcast": uiTxBroadcast,
-    "device.transport": uiDeviceTransport,
-    "device.select": uiDeviceSelect,
-    "exchange.start": uiExchangeStart,
-    "exchange.complete": uiExchangeComplete,
-  },
+  uiHook,
   customHandlers,
+  bridgeSession,
 }: useWalletAPIServerOptions): {
-  onMessage: (event: string) => void;
   server: WalletAPIServer;
   onLoad: () => void;
   onReload: () => void;
   onLoadError: () => void;
   widgetLoaded: boolean;
 } {
+  const {
+    "storage.get": uiStorageGet,
+    "storage.set": uiStorageSet,
+    "transaction.broadcast": uiTxBroadcast,
+  } = uiHook;
+  const uiAccountRequest = useSessionUiFlow(bridgeSession, uiHook["account.request"]);
+  const uiAccountReceive = useSessionUiFlow(bridgeSession, uiHook["account.receive"]);
+  const uiAccountPublicKeyUnavailable = useSessionUiFlow(
+    bridgeSession,
+    uiHook["account.publicKeyUnavailable"],
+  );
+  const uiMessageSign = useSessionUiFlow(bridgeSession, uiHook["message.sign"]);
+  const uiTxSign = useSessionUiFlow(bridgeSession, uiHook["transaction.sign"]);
+  const uiTxSignRaw = useSessionUiFlow(bridgeSession, uiHook["transaction.signRaw"]);
+  const uiDeviceTransport = useSessionUiFlow(bridgeSession, uiHook["device.transport"]);
+  const uiDeviceSelect = useSessionUiFlow(bridgeSession, uiHook["device.select"]);
+  const uiExchangeStart = useSessionUiFlow(bridgeSession, uiHook["exchange.start"]);
+  const uiExchangeComplete = useSessionUiFlow(bridgeSession, uiHook["exchange.complete"]);
+
   // Enables the proper typing on dispatch with RTK
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dispatch = useDispatch<ThunkDispatch<any, any, UnknownAction>>();
@@ -354,7 +409,6 @@ export function useWalletAPIServer({
   const flags = useFeatureFlags();
   const getFeature = useCallback((id: FeatureId): Feature | null => flags[id] ?? null, [flags]);
   const permission = usePermission(manifest);
-  const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
   // We need to set the wallet API account IDs mapping upfront
@@ -371,13 +425,13 @@ export function useWalletAPIServer({
     };
   }, [manifest, customHandlers, getFeature]);
 
-  const serverRef = useRef<WalletAPIServer | undefined>(undefined);
-  // Lazily initialize WalletAPIServer once to avoid re-creation on re-renders
-  // https://react.dev/reference/react/useRef#avoiding-recreating-the-ref-contents
-  if (serverRef.current === undefined) {
-    serverRef.current = new WalletAPIServer(transport, config, undefined, mergedCustomHandlers);
-  }
-  const server = serverRef.current;
+  // A new server for each session: the effects below register its handlers, config and
+  // permissions again. Config and custom handlers are kept up to date by those effects.
+  const server = useMemo<WalletAPIServer>(
+    () => new BridgeSessionWalletAPIServer(bridgeSession, config, mergedCustomHandlers),
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    [bridgeSession],
+  );
 
   useEffect(() => {
     if (mergedCustomHandlers) {
@@ -393,12 +447,6 @@ export function useWalletAPIServer({
     server.setPermissions(permission);
   }, [permission, server]);
 
-  const onMessage = useCallback(
-    (event: string) => {
-      transport.onMessage?.(event);
-    },
-    [transport],
-  );
   useEffect(() => {
     tracking.load(manifest);
   }, [tracking, manifest.id]);
@@ -723,7 +771,7 @@ export function useWalletAPIServer({
         accountId,
         message.toString("hex"),
         (account: AccountLike, message: AnyMessage) =>
-          new Promise((resolve, reject) => {
+          sessionPromise(bridgeSession, (resolve, reject) => {
             let done = false;
             return uiMessageSign({
               account,
@@ -755,7 +803,7 @@ export function useWalletAPIServer({
           }),
       ),
     );
-  }, [accounts, manifest, server, tracking, uiMessageSign]);
+  }, [bridgeSession, accounts, manifest, server, tracking, uiMessageSign]);
 
   useEffect(() => {
     if (!uiStorageGet) return;
@@ -778,7 +826,7 @@ export function useWalletAPIServer({
         accountId,
         psbt,
         (account, parentAccount, tx) =>
-          new Promise((resolve, reject) => {
+          sessionPromise(bridgeSession, (resolve, reject) => {
             let done = false;
             return uiTxSignRaw({
               account,
@@ -815,6 +863,8 @@ export function useWalletAPIServer({
           signedOperation,
           async (account, parentAccount, signedOperation) => {
             const bridge = await getAccountBridge(account, parentAccount);
+            // The main frame may have moved to another origin while the bridge was prepared.
+            bridgeSession.assertOpen();
             const mainAccount = getMainAccount(account, parentAccount);
 
             let optimisticOperation: Operation = signedOperation.operation;
@@ -856,7 +906,16 @@ export function useWalletAPIServer({
 
       return { psbtSigned };
     });
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+  }, [
+    bridgeSession,
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSignRaw,
+  ]);
 
   useEffect(() => {
     if (!uiTxSign) return;
@@ -871,7 +930,7 @@ export function useWalletAPIServer({
           transaction,
           (account, parentAccount, signFlowInfos) => {
             family = getMainAccount(account, parentAccount).currency.family;
-            return new Promise((resolve, reject) => {
+            return sessionPromise(bridgeSession, (resolve, reject) => {
               let done = false;
               return uiTxSign({
                 account,
@@ -901,7 +960,7 @@ export function useWalletAPIServer({
           : Buffer.from(signedOperation.signature);
       },
     );
-  }, [accounts, manifest, server, tracking, uiTxSign]);
+  }, [bridgeSession, accounts, manifest, server, tracking, uiTxSign]);
 
   useEffect(() => {
     if (!uiTxSignRaw) return;
@@ -915,7 +974,7 @@ export function useWalletAPIServer({
           accountId,
           transaction,
           (account, parentAccount, tx) =>
-            new Promise((resolve, reject) => {
+            sessionPromise(bridgeSession, (resolve, reject) => {
               family = getMainAccount(account, parentAccount).currency.family;
               let done = false;
               return uiTxSignRaw({
@@ -948,6 +1007,8 @@ export function useWalletAPIServer({
             signedOperation,
             async (account, parentAccount, signedOperation) => {
               const bridge = await getAccountBridge(account, parentAccount);
+              // The main frame may have moved to another origin while the bridge was prepared.
+              bridgeSession.assertOpen();
               const mainAccount = getMainAccount(account, parentAccount);
 
               const networkId =
@@ -998,7 +1059,16 @@ export function useWalletAPIServer({
         };
       },
     );
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+  }, [
+    bridgeSession,
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSignRaw,
+  ]);
 
   useEffect(() => {
     if (!uiTxSign) return;
@@ -1017,7 +1087,7 @@ export function useWalletAPIServer({
           accountId,
           transaction,
           (account, parentAccount, signFlowInfos) =>
-            new Promise((resolve, reject) => {
+            sessionPromise(bridgeSession, (resolve, reject) => {
               let done = false;
               return uiTxSign({
                 account,
@@ -1055,6 +1125,8 @@ export function useWalletAPIServer({
           signedTransaction,
           async (account, parentAccount, signedOperation) => {
             const bridge = await getAccountBridge(account, parentAccount);
+            // The main frame may have moved to another origin while the bridge was prepared.
+            bridgeSession.assertOpen();
             const mainAccount = getMainAccount(account, parentAccount);
 
             const networkId =
@@ -1100,7 +1172,16 @@ export function useWalletAPIServer({
         );
       },
     );
-  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
+  }, [
+    bridgeSession,
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiTxBroadcast,
+    uiTxSign,
+  ]);
 
   const onLoad = useCallback(() => {
     tracking.loadSuccess(manifest);
@@ -1119,6 +1200,11 @@ export function useWalletAPIServer({
   }, [manifest, tracking]);
 
   const device = useDeviceTransport({ manifest, tracking });
+
+  // A device opened by the previous origin is not handed over to the next one. `close` is stable:
+  // a manifest or tracking update (new `device`) keeps the transport of the same session.
+  const { close: closeDevice } = device;
+  useEffect(() => () => closeDevice(), [closeDevice, server]);
 
   useEffect(() => {
     if (!uiDeviceTransport) return;
@@ -1437,9 +1523,21 @@ export function useWalletAPIServer({
     });
   }, [uiExchangeComplete, accounts, manifest, server, tracking]);
 
+  // The session receives messages once every handler above is registered, and once the hooks the
+  // host calls after this one (e.g. `useDappLogic` and its websocket) have run their effects for
+  // this session: the microtask runs after every effect of the current commit.
+  useEffect(() => {
+    let isCurrent = true;
+    queueMicrotask(() => {
+      if (isCurrent) bridgeSession.activate();
+    });
+    return () => {
+      isCurrent = false;
+    };
+  }, [bridgeSession, server]);
+
   return {
     widgetLoaded: widgetLoaded,
-    onMessage,
     onLoad,
     onReload,
     onLoadError,

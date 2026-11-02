@@ -25,7 +25,7 @@ export class CoinFrameworkAdapter {
   async getBalances(descriptor: AccountDescriptor): Promise<Balance[]> {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
-    const api = createLocalEvmApi(currency.id);
+    const api = createLocalEvmApi();
     const context = buildContext(currency.id);
     // Pending better bridge API — evmBridge used as interim token resolver
     const bridgeApi = evmBridge(currency);
@@ -54,7 +54,7 @@ export class CoinFrameworkAdapter {
   ): Promise<OperationsPage> {
     const { xpubOrAddress: address } = decodeAccountId(descriptor.id);
     const currency = getCryptoCurrencyById(descriptor.currencyId);
-    const api = createLocalEvmApi(currency.id);
+    const api = createLocalEvmApi();
     const context = buildContext(currency.id);
 
     const page = await api.listOperations(context, address, {

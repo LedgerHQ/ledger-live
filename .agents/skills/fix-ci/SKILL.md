@@ -1,6 +1,6 @@
 ---
 name: fix-ci
-description: Find failing CI jobs, inspect logs, and apply focused fixes
+description: Bring a branch's failing GitHub Actions checks to green one error at a time, finding the latest run with `gh`, reading the failed job logs, applying the smallest fix and rerunning. Use when CI fails on the current branch or its pull request, when `gh pr checks` shows a red check, or when asked to fix CI.
 ---
 
 # Fix CI

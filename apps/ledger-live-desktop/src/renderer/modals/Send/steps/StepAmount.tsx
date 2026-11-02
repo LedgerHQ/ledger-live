@@ -2,7 +2,7 @@ import React, { Fragment, PureComponent } from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -47,7 +47,7 @@ export const DefaultStepAmount = (props: StepProps) => {
 
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Send Flow"
         name="Step Amount"
         currencyName={currencyName}

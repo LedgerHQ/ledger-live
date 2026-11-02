@@ -149,7 +149,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
     const path = toV1Path(runAccountDerivationScheme(scheme, currency, { account: v0.index }));
     return {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
       network,
       xpub: v0.seedIdentifier,
@@ -162,7 +162,7 @@ export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
   );
   return {
     purpose: "account",
-    version: "1",
+    version: "2",
     type: "address",
     network,
     address: v0.seedIdentifier,

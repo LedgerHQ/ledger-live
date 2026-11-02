@@ -1,7 +1,7 @@
 import { track } from "@shared/analytics";
 import { useCallback } from "react";
 import type { SpotProps } from "@ledgerhq/lumen-ui-rnative";
-import { ShieldCheck, ShieldCheckNotification } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { ShieldCheck } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useFeature } from "@features/platform-feature-flags";
@@ -49,7 +49,7 @@ export const useBackupsButtonViewModel = (): BackupsButtonViewModel => {
   if (isBackupHubEnabled) {
     icon = hasCompletedBackup ? ShieldCheck : ShieldCheckNotificationIcon;
   } else {
-    icon = hasClickedRecover ? ShieldCheck : ShieldCheckNotification;
+    icon = hasClickedRecover ? ShieldCheck : ShieldCheckNotificationIcon;
   }
 
   const onPress = useCallback(() => {

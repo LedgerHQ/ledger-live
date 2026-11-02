@@ -1,11 +1,13 @@
 import type { SessionTypes } from "@walletconnect/types";
 import { CONCORDIUM_CHAIN_IDS } from "../constants";
-import {
-  ConcordiumWalletConnect,
-  setWalletConnect,
-  clearWalletConnect,
-  getWalletConnect,
-} from "./walletConnect";
+
+type WalletConnectModule = typeof import("./walletConnect");
+
+// The SignClient is process-wide, so each test loads a fresh module.
+let ConcordiumWalletConnect: WalletConnectModule["ConcordiumWalletConnect"];
+let setWalletConnect: WalletConnectModule["setWalletConnect"];
+let clearWalletConnect: WalletConnectModule["clearWalletConnect"];
+let getWalletConnect: WalletConnectModule["getWalletConnect"];
 
 // Mock SignClient
 const mockSignClientInit = jest.fn();
@@ -42,10 +44,25 @@ const createMockSession = (overrides: Partial<SessionTypes.Struct> = {}): Sessio
     ...overrides,
   }) as SessionTypes.Struct;
 
+// Pairs once per session, so that getSession treats each one as approved by `wc`.
+const approveSessions = async (
+  wc: InstanceType<WalletConnectModule["ConcordiumWalletConnect"]>,
+  ...sessions: SessionTypes.Struct[]
+) => {
+  for (const session of sessions) {
+    mockConnect.mockResolvedValueOnce({ uri: "wc:test", approval: () => Promise.resolve(session) });
+    const { approval } = await wc.initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet);
+    await approval();
+  }
+};
+
 describe("walletConnect", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    clearWalletConnect();
+    jest.isolateModules(() => {
+      ({ ConcordiumWalletConnect, setWalletConnect, clearWalletConnect, getWalletConnect } =
+        jest.requireActual<WalletConnectModule>("./walletConnect"));
+    });
 
     // Default mock implementations
     mockSignClientInit.mockResolvedValue({
@@ -83,6 +100,61 @@ describe("walletConnect", () => {
 
         await expect(wc.getClient()).rejects.toThrow("Init failed");
         expect(wc.client).toBeNull();
+      });
+
+      it("should retry initialization after a failure", async () => {
+        mockSignClientInit.mockRejectedValueOnce(new Error("Init failed"));
+        const wc = new ConcordiumWalletConnect();
+
+        await expect(wc.getClient()).rejects.toThrow("Init failed");
+        await expect(wc.getClient()).resolves.toBeDefined();
+        expect(mockSignClientInit).toHaveBeenCalledTimes(2);
+      });
+
+      it("should share one SignClient across instances", async () => {
+        const [client1, client2] = await Promise.all([
+          new ConcordiumWalletConnect().getClient(),
+          new ConcordiumWalletConnect().getClient(),
+        ]);
+
+        expect(client1).toBe(client2);
+        expect(mockSignClientInit).toHaveBeenCalledTimes(1);
+      });
+
+      it("should keep the SignClient when onboarding reopens", async () => {
+        const client1 = await setWalletConnect().getClient();
+        clearWalletConnect();
+        const client2 = await setWalletConnect().getClient();
+
+        expect(client2).toBe(client1);
+        expect(mockSignClientInit).toHaveBeenCalledTimes(1);
+      });
+
+      it("should not pick a session that an abandoned attempt approves late", async () => {
+        const abandoned = createMockSession({
+          topic: "abandoned",
+          expiry: Math.floor(Date.now() / 1000) + 7200,
+        });
+        const current = createMockSession({ topic: "current" });
+        let approveAbandoned: ((session: SessionTypes.Struct) => void) | undefined;
+        mockConnect.mockResolvedValueOnce({
+          uri: "wc:abandoned",
+          approval: () => new Promise(resolve => (approveAbandoned = resolve)),
+        });
+        const pendingAbandoned = (
+          await setWalletConnect().initiatePairing("mainnet", CONCORDIUM_CHAIN_IDS.mainnet)
+        ).approval();
+        clearWalletConnect();
+
+        const wc = setWalletConnect();
+        await approveSessions(wc, current);
+        approveAbandoned?.(abandoned);
+        await pendingAbandoned;
+        mockSessionGetAll.mockReturnValue([abandoned, current]);
+
+        const session = await wc.getSession("mainnet");
+
+        expect(session?.topic).toBe("current");
       });
     });
 
@@ -130,10 +202,20 @@ describe("walletConnect", () => {
         });
         mockSessionGetAll.mockReturnValue([mainnetSession]);
         const wc = new ConcordiumWalletConnect();
+        await approveSessions(wc, mainnetSession);
 
         const session = await wc.getSession("mainnet");
 
         expect(session?.topic).toBe("mainnet-session");
+      });
+
+      it("should ignore sessions not approved through this instance", async () => {
+        mockSessionGetAll.mockReturnValue([createMockSession({ topic: "foreign" })]);
+        const wc = new ConcordiumWalletConnect();
+
+        const session = await wc.getSession("mainnet");
+
+        expect(session).toBeNull();
       });
 
       it("should return null when no session matches network", async () => {
@@ -150,6 +232,7 @@ describe("walletConnect", () => {
         });
         mockSessionGetAll.mockReturnValue([testnetSession]);
         const wc = new ConcordiumWalletConnect();
+        await approveSessions(wc, testnetSession);
 
         const session = await wc.getSession("mainnet");
 
@@ -167,6 +250,7 @@ describe("walletConnect", () => {
         });
         mockSessionGetAll.mockReturnValue([expiredSession, validSession]);
         const wc = new ConcordiumWalletConnect();
+        await approveSessions(wc, expiredSession, validSession);
 
         const session = await wc.getSession("mainnet");
 
@@ -184,6 +268,7 @@ describe("walletConnect", () => {
         });
         mockSessionGetAll.mockReturnValue([olderSession, newerSession]);
         const wc = new ConcordiumWalletConnect();
+        await approveSessions(wc, olderSession, newerSession);
 
         const session = await wc.getSession("mainnet");
 
@@ -204,6 +289,7 @@ describe("walletConnect", () => {
         });
         mockSessionGetAll.mockReturnValue([testnetSession]);
         const wc = new ConcordiumWalletConnect();
+        await approveSessions(wc, testnetSession);
 
         const session = await wc.getSession("testnet");
 

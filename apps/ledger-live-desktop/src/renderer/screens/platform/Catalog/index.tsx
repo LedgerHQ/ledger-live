@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { dismissedBannersSelector } from "~/renderer/reducers/settings";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import { openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
 import { AppCard } from "~/renderer/components/Platform/AppCard";
@@ -73,7 +73,7 @@ export function Catalog() {
 
   return (
     <>
-      <TrackPage category="Platform" name="Catalog" />
+      <TrackScreen category="Platform" name="Catalog" />
       <Header>
         <Title data-testid="discover-title">{t("platform.catalog.title")}</Title>
       </Header>

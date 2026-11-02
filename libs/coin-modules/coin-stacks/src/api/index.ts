@@ -9,7 +9,6 @@ import type {
   CraftedTransaction,
   FeeEstimation,
   ListOperationsOptions,
-  MemoNotSupported,
   Operation,
   Page,
   Stake,
@@ -17,7 +16,7 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
 import type { StacksContext, StacksCurrencyConfig } from "../config";
-import type { StacksTxData } from "../types";
+import type { StacksMemo, StacksTxData } from "../types";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
 import { craftTransaction } from "../logic/craftTransaction";
@@ -70,12 +69,12 @@ export function createApi() {
     ): Promise<Page<Operation>> => listOperations(address, options),
     craftTransaction: (
       _context: StacksContext,
-      transactionIntent: TransactionIntent<MemoNotSupported, StacksTxData>,
+      transactionIntent: TransactionIntent<StacksMemo, StacksTxData>,
       options?: { customFees?: FeeEstimation },
     ): Promise<CraftedTransaction> => craftTransaction(transactionIntent, options?.customFees),
     estimateFees: (
       _context: StacksContext,
-      transactionIntent: TransactionIntent<MemoNotSupported, StacksTxData>,
+      transactionIntent: TransactionIntent<StacksMemo, StacksTxData>,
       options?: { customFeesParameters?: FeeEstimation["parameters"] },
     ): Promise<FeeEstimation> => estimateFees(transactionIntent, options?.customFeesParameters),
     // Stacks is single-signature: the framework requires throwing if more/fewer than one
@@ -89,7 +88,7 @@ export function createApi() {
     broadcast: (_context: StacksContext, tx: string, _options?): Promise<string> => broadcast(tx),
     validateIntent: (
       _context: StacksContext,
-      transactionIntent: TransactionIntent<MemoNotSupported, StacksTxData>,
+      transactionIntent: TransactionIntent<StacksMemo, StacksTxData>,
       balances: Balance[],
       options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> =>
@@ -103,9 +102,9 @@ export function createApi() {
     ): Promise<boolean> => validateAddress(address, parameters),
     craftTransactionData: (
       _context: StacksContext,
-      intent: TransactionIntent<MemoNotSupported, StacksTxData>,
+      intent: TransactionIntent<StacksMemo, StacksTxData>,
     ): StacksTxData => craftTransactionData(intent),
     getStakes: (_context: StacksContext, address: string, _options?): Promise<Page<Stake>> =>
       getStakes(address),
-  } satisfies CoinModuleImpl<StacksCurrencyConfig, MemoNotSupported, StacksTxData>;
+  } satisfies CoinModuleImpl<StacksCurrencyConfig, StacksMemo, StacksTxData>;
 }

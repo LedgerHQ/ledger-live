@@ -1,5 +1,5 @@
 import { LongerPasswordView } from "@features/flow-app-longer-password";
-import { PasswordDraftProvider } from "@features/platform-app-lock";
+import { PasswordDraftProvider } from "@features/platform-app-lock/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { DraftLifetime } from "./internals/DraftLifetime";

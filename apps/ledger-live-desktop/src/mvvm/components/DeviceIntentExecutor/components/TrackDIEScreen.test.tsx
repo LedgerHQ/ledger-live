@@ -1,15 +1,15 @@
 import React from "react";
 import { render } from "tests/testSetup";
 import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { TrackDIEScreen } from "./TrackDIEScreen";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: jest.fn(() => null),
+  TrackScreen: jest.fn(() => null),
 }));
 
-const mockedTrackPage = jest.mocked(TrackPage);
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 describe("TrackDIEScreen", () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe("TrackDIEScreen", () => {
       </DeviceIntentTrackingProvider>,
     );
 
-    expect(mockedTrackPage).toHaveBeenCalledWith(
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
       {
         category: "Device Action - Disconnected",
         deviceUxV2: true,

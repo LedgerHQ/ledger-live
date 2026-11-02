@@ -16,8 +16,10 @@ type RenameContactComponentLWMProps = Readonly<{
  * Mobile renderer for the rename-contact intent.
  *
  * A rejection leaves the job open, so that screen can replay the device action.
- * Every other failure is terminal — the job completes right after emitting one —
- * so those screens only offer a way out.
+ * A wrong device does too: the device returns 0x6982 before showing a
+ * confirmation, and this screen is the message the user gets. Every other
+ * failure is terminal — the job completes right after emitting one — so those
+ * screens only offer a way out.
  */
 export function RenameContactComponentLWM({ jobState, onClose }: RenameContactComponentLWMProps) {
   const closeCta = {

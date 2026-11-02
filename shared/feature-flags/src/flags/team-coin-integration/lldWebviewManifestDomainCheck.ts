@@ -1,2 +1,2 @@
 import { flag } from "../../define";
-export const lldWebviewManifestDomainCheck = flag();
+export const lldWebviewManifestDomainCheck = flag({ enabled: true });

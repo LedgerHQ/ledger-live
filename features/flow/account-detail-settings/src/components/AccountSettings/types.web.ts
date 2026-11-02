@@ -1,8 +1,11 @@
+import type { CryptoCurrency } from "@domain/entity-currency-crypto";
+
 export type AccountSettingsAccount = Readonly<{
   id: string;
   type: string;
   index: number;
-  currency: Readonly<{ name: string; ticker: string }>;
+  currency: Readonly<{ name: string; ticker: string }> & Pick<CryptoCurrency, "explorerViews">;
+  freshAddress: string;
   xpub?: string;
   freshAddressPath: string;
   blockHeight: number;
@@ -15,6 +18,7 @@ export type AccountSettingsAdapter<TAccount extends AccountSettingsAccount> = Re
   getAccountName: (account: TAccount) => string;
   getDerivationTag: (account: TAccount) => string | undefined;
   renameAccount: (account: TAccount, name: string) => void;
+  removeAccount: (account: TAccount) => void;
 }>;
 
 export type AccountSettingsProps<TAccount extends AccountSettingsAccount> = Readonly<{

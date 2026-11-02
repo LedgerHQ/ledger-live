@@ -126,7 +126,7 @@ describe("fetchAgentSwapQuote", () => {
       }),
     );
 
-    expect(result).toEqual({ provider: "oneinch", receiveAmount: 1270 });
+    expect(result).toEqual({ provider: "oneinch", receiveAmount: 1270, needsTokenApproval: false });
   });
 
   it("keeps a Velora quote whose permit data is only its price route, not a permit", async () => {
@@ -141,15 +141,135 @@ describe("fetchAgentSwapQuote", () => {
       }),
     );
 
-    expect(result).toEqual({ provider: "velora", receiveAmount: 1290 });
+    expect(result).toEqual({ provider: "velora", receiveAmount: 1290, needsTokenApproval: false });
   });
 
-  it("explains when every quote needs an approval or a permit", async () => {
+  it("explains when every quote needs a permit or an approval the frontend can't send", async () => {
     await expect(
       fetchAgentSwapQuote(request, async () =>
         response({ quotes: [quote("okx", { tokenAllowance: { isApproved: false } })] }),
       ),
-    ).rejects.toThrow(/needs a token approval or Permit2 signature/);
+    ).rejects.toThrow(
+      "Every quote needs a Permit2 signature or a token approval the Agent Intent frontend can't " +
+        "send (for example a USDT allowance that must first be reset to 0). Approve or reset the " +
+        "allowance outside Agent Intent (for example from Ledger Wallet), or pick another provider " +
+        "with --provider.",
+    );
+  });
+
+  describe("selling a token that needs an approval", () => {
+    const USDC_CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+    const USDT_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+    const ROUTER = "111111125421ca6dc452d289314280a0f8842a65";
+    const approveCalldata = `0x095ea7b3${ROUTER.padStart(64, "0")}${"5f5e100".padStart(64, "0")}`;
+    const sellUsdc = { ...request, from: USDC.id, fromContract: USDC_CONTRACT, to: ETH.id };
+    const approved = quote("oneinch", {
+      receiveAmount: 1270,
+      tokenAllowance: { isApproved: true },
+    });
+
+    function needingApproval(
+      allowance: { to?: string; calldata?: string; approvedAmount?: string } = {},
+    ): Quote {
+      const {
+        to = USDC_CONTRACT.toLowerCase(),
+        calldata = approveCalldata,
+        approvedAmount,
+      } = allowance;
+      return quote("okx", {
+        receiveAmount: 1300,
+        tokenAllowance: {
+          isApproved: false,
+          ...(approvedAmount === undefined ? {} : { approvedAmount }),
+          approvalTransaction: { to, calldata, from: "", gasLimit: 0, gasPrice: 1, value: "0" },
+        },
+      });
+    }
+
+    it("keeps the best quote when the frontend can send its approval, and says so", async () => {
+      const result = await fetchAgentSwapQuote(sellUsdc, async () =>
+        response({ quotes: [needingApproval(), approved] }),
+      );
+
+      expect(result).toEqual({ provider: "okx", receiveAmount: 1300, needsTokenApproval: true });
+    });
+
+    it("accepts a USDT approval only when the quote says no allowance is left", async () => {
+      const sellUsdt = { ...sellUsdc, fromContract: USDT_CONTRACT };
+      const usdtApproval = (approvedAmount?: string) =>
+        needingApproval({ to: USDT_CONTRACT.toLowerCase(), approvedAmount });
+
+      const noneLeft = await fetchAgentSwapQuote(sellUsdt, async () =>
+        response({ quotes: [usdtApproval("0"), approved] }),
+      );
+      const someLeft = await fetchAgentSwapQuote(sellUsdt, async () =>
+        response({ quotes: [usdtApproval("5"), approved] }),
+      );
+      const unknown = await fetchAgentSwapQuote(sellUsdt, async () =>
+        response({ quotes: [usdtApproval(), approved] }),
+      );
+
+      expect(noneLeft.provider).toBe("okx");
+      expect(someLeft.provider).toBe("oneinch");
+      expect(unknown.provider).toBe("oneinch");
+    });
+
+    it.each([
+      [
+        "an approval of another token",
+        needingApproval({ to: "0x6b175474e89094c44da98b954eedeac495271d0f" }),
+      ],
+      [
+        "an approval that isn't an ERC-20 approve call",
+        needingApproval({ calldata: "0x12345678" }),
+      ],
+      [
+        "an approval with no transaction to send",
+        quote("okx", { receiveAmount: 1300, tokenAllowance: { isApproved: false } }),
+      ],
+      [
+        "an approval that names no token or calldata",
+        quote("okx", {
+          receiveAmount: 1300,
+          tokenAllowance: { isApproved: false, approvalTransaction: {} },
+        } as unknown as Partial<Quote["quoteDetails"]>),
+      ],
+      [
+        "an approval flagged only by its tags",
+        quote("okx", {
+          receiveAmount: 1300,
+          tags: { isTokenApprovalRequired: true, isRegistrationRequired: false },
+        }),
+      ],
+      [
+        "an approval with a Permit2 signature",
+        {
+          ...needingApproval(),
+          quoteDetails: {
+            ...needingApproval().quoteDetails,
+            permitData: { typedData: { primaryType: "x" } },
+          },
+        } as unknown as Quote,
+      ],
+    ])("skips a quote that needs %s", async (_case, blocked) => {
+      const result = await fetchAgentSwapQuote(sellUsdc, async () =>
+        response({ quotes: [blocked, approved] }),
+      );
+
+      expect(result).toEqual({
+        provider: "oneinch",
+        receiveAmount: 1270,
+        needsTokenApproval: false,
+      });
+    });
+
+    it("skips an approval when the sold asset has no contract", async () => {
+      const result = await fetchAgentSwapQuote(request, async () =>
+        response({ quotes: [needingApproval(), approved] }),
+      );
+
+      expect(result.provider).toBe("oneinch");
+    });
   });
 
   it("reports why no quote came back", async () => {

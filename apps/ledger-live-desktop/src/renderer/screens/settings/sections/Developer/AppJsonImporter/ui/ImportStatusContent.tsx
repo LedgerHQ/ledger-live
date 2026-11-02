@@ -27,9 +27,7 @@ export const ImportStatusContent = ({ status }: Props) => {
         <div className="w-full text-left">
           <div className="flex items-center justify-center gap-2 mb-3 text-success">
             <Check size={16} />
-            <span className="body-3 font-medium">
-              {t("settings.developer.appJsonImporter.successLabel")}
-            </span>
+            <span className="body-3">{t("settings.developer.appJsonImporter.successLabel")}</span>
           </div>
           <dl className="grid body-3 gap-y-1" style={{ gridTemplateColumns: "auto 1fr" }}>
             <dt className={statusTextStyles({ className: "pr-6 whitespace-nowrap" })}>

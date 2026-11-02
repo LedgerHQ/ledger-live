@@ -10,6 +10,11 @@
       "factory": "./devtool/generator.ts#reformatGenerator",
       "schema": "./reformat-devtool-registry/schema.json",
       "description": "Rebuild the registry from existing metadata — removes orphans, rewrites barrel files, no new tool added"
+    },
+    "universal-component": {
+      "factory": "./universal-component/generator.ts",
+      "schema": "./universal-component/schema.json",
+      "description": "Scaffold a universal component (contract, web and native implementations, tests, barrel lines) in a dual-platform package, or a platform component behind ./web or ./native"
     }
   }
 }

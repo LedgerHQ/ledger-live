@@ -74,12 +74,11 @@ describe("accountModel migrations", () => {
         ...extra,
       }) as AccountRaw;
 
-    it("initialises stakingResources and rebuilds cosmosResources when missing", async () => {
+    it("initialises stakingResources when missing", async () => {
       const [account] = await decodeStored(cryptoOrgRaw());
       expect(isStakingAccount(account)).toBe(true);
       expect(isStakingAccount(account) && account.stakingResources.delegations).toEqual([]);
-      expect(account).toHaveProperty("cosmosResources.delegations", []);
-      expect(account).toHaveProperty("cosmosResources.sequence", 0);
+      expect(account).not.toHaveProperty("cosmosResources");
     });
 
     it("round-trips legacy Cosmos resources through the current persisted shape", async () => {
@@ -120,7 +119,7 @@ describe("accountModel migrations", () => {
       ).toBe("10");
       expect(roundTrippedAccount).toHaveProperty("sequence", 7);
       expect(roundTrippedAccount).toHaveProperty("xpub", "02legacy");
-      expect(roundTrippedAccount).toHaveProperty("cosmosResources.delegatedBalance");
+      expect(roundTrippedAccount).not.toHaveProperty("cosmosResources");
     });
   });
 

@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { useAccountBridgeOrNull } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Trans } from "react-i18next";
 import { getMainAccount, isSendDisabledForFamily } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -266,7 +266,7 @@ export const DefaultStepRecipient = ({
 
   return (
     <Box flow={4}>
-      <TrackPage category="Send Flow" name="Step Recipient" currencyName={currencyName} />
+      <TrackScreen category="Send Flow" name="Step Recipient" currencyName={currencyName} />
       {isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
         <MemoTagSendInfo />
       ) : (

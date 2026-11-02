@@ -31,7 +31,7 @@ const MemoValueField = ({
       track("button_clicked2", {
         ...trackProperties,
         button: "input",
-        memo,
+        hasMemo: memo.length > 0,
       });
       onChange(
         bridge.updateTransaction(transaction, {

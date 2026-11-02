@@ -1,5 +1,8 @@
+import { fileURLToPath } from "node:url";
+import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
+import { platformSuffixWaivers } from "./src/suffix-imports.js";
 
 const CLIPBOARD_MESSAGE = "Use copyToClipboard / readClipboard from @shared/clipboard instead of";
 
@@ -17,8 +20,50 @@ const FATAL_REACT_COMPILER = [
   "pay-deposit",
 ];
 
+// Packages that linted with `react/no-children-prop` off before this preset. Their test wrappers
+// pass `children` in the props of `createElement(Provider, ...)`, which react-redux's types
+// require. The rest of the layer had the rule fatal and keeps it.
+const CHILDREN_PROP_IN_TESTS = ["flow-contacts-delete-contact", "flow-contacts-detail"];
+
+const PLATFORM_SUFFIX_WAIVERS = [
+  "account-detail",
+  "account-detail-hero",
+  "account-detail-settings",
+  "contacts",
+  "fear-and-greed",
+  "flow-contacts-add-address",
+  "flow-contacts-add-contact",
+  "flow-contacts-delete-address",
+  "flow-contacts-delete-contact",
+  "flow-contacts-detail",
+  "flow-contacts-edit-address",
+  "flow-contacts-edit-contact",
+  "flow-contacts-list",
+  "large-screen-upsell",
+  "market-banner",
+  "pay-bank-transfer",
+  "pay-card-assets",
+  "pay-card-auth",
+  "pay-card-details",
+  "pay-card-widget",
+  "pay-contact",
+  "pay-deposit",
+  "pay-feature-tour",
+  "pay-request",
+];
+
+const PLATFORM_STYLE = new URL("../../features/platform/style/", import.meta.url);
+
 export default defineConfig({
   extends: [base],
+  settings: {
+    // better-tailwindcss resolves `tailwindcss` from `cwd`, which is wherever oxlint runs unless
+    // set. The style package owns both the entry point and that dependency.
+    "better-tailwindcss": {
+      cwd: fileURLToPath(PLATFORM_STYLE),
+      entryPoint: fileURLToPath(new URL("tailwind.css", PLATFORM_STYLE)),
+    },
+  },
   rules: {
     // features/flow is the strictest layer in the repo and wants `any` to be fatal.
     "typescript/no-explicit-any": "error",
@@ -58,6 +103,7 @@ export default defineConfig({
     "jest/no-standalone-expect": "error",
     "jest/valid-describe-callback": "error",
     "jest/valid-expect": "error",
+    "suffix-imports/no-platform-suffix": "error",
   },
   overrides: [
     {
@@ -73,6 +119,24 @@ export default defineConfig({
         "react/set-state-in-render": "error",
         "react/static-components": "error",
         "react/use-memo": "error",
+      },
+    },
+    {
+      files: CHILDREN_PROP_IN_TESTS.flatMap(pkg => [
+        `${pkg}/**/*.test.{ts,tsx}`,
+        `${pkg}/**/__tests__/**`,
+      ]),
+      rules: { "react/no-children-prop": "off" },
+    },
+    platformSuffixWaivers(PLATFORM_SUFFIX_WAIVERS),
+    {
+      // Tailwind only runs on web; native styles go through Lumen's RN components.
+      files: ["**/*.web.{ts,tsx}"],
+      jsPlugins: lumen.configs.recommended.jsPlugins,
+      rules: {
+        ...lumen.configs.recommended.rules,
+        // `dark` is the Lumen color-scheme class toggled on <html> by ThemeProvider, not a utility.
+        "better-tailwindcss/no-unknown-classes": ["error", { ignore: ["^dark$"] }],
       },
     },
   ],

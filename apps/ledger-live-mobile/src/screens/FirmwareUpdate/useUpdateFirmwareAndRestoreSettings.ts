@@ -43,7 +43,7 @@ export type FirmwareUpdateParams = {
   device: Device;
   deviceInfo: DeviceInfo;
   updateFirmwareAction?(args: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState>;
-  isBeforeOnboarding?: boolean;
+  skipsAppsAndSettingsBackup?: boolean;
 };
 
 export type UpdateStep =
@@ -60,14 +60,14 @@ export type UpdateStep =
 /**
  * Handles the full logic of a firmware update + restoring settings like the locked screen image or apps
  *
- * @param isBeforeOnboarding: to adapt the firmware update in case the device is starting
- *   its onboarding and it's normal it is not yet seeded. If set to true, short-circuit some steps that are unnecessary
+ * @param skipsAppsAndSettingsBackup: an unseeded device has nothing to restore, so the update
+ *   goes straight to the firmware flash and finishes after the language step.
  */
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
   device,
   deviceInfo,
-  isBeforeOnboarding = false,
+  skipsAppsAndSettingsBackup = false,
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
   const [installedApps, setInstalledApps] = useState<string[]>([]);
@@ -261,7 +261,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
           }
 
-          if (isBeforeOnboarding) {
+          if (skipsAppsAndSettingsBackup) {
             proceedToUpdateCompleted();
           } else {
             proceedToImageRestore();
@@ -324,17 +324,17 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     restoreAppsState.opened,
     proceedToAppsBackup,
     connectManagerState.error,
-    isBeforeOnboarding,
+    skipsAppsAndSettingsBackup,
   ]);
 
   const startUpdate = useCallback(() => {
     // The backup of the language package is actually done using the input device info `languageId`
-    if (isBeforeOnboarding) {
+    if (skipsAppsAndSettingsBackup) {
       proceedToFirmwareUpdate();
     } else {
       proceedToAppsBackup();
     }
-  }, [isBeforeOnboarding, proceedToAppsBackup, proceedToFirmwareUpdate]);
+  }, [skipsAppsAndSettingsBackup, proceedToAppsBackup, proceedToFirmwareUpdate]);
 
   const hasReconnectErrors = useMemo(
     () =>

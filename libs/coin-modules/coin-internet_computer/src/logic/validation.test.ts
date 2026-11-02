@@ -8,9 +8,13 @@ describe("validateAddress", () => {
     expect(validateAddress(VALID_ADDRESS).isValid).toBe(true);
   });
 
-  // Mirrors AccountIdentifier.fromHex: only non-hex or empty input is rejected. The CRC32
-  // checksum is not verified, so any well-formed hex is accepted.
-  it.each(["nothex", "zz", ""])("rejects non-hex address %p", address => {
+  it.each([
+    ["non-hex", "nothex"],
+    ["empty", ""],
+    ["short", VALID_ADDRESS.slice(0, 62)],
+    ["wrong-checksum", "00" + VALID_ADDRESS.slice(2)],
+    ["principal", VALID_PRINCIPAL],
+  ])("rejects a %s address", (_, address) => {
     const result = validateAddress(address);
     expect(result.isValid).toBe(false);
     expect(typeof result.error).toBe("string");

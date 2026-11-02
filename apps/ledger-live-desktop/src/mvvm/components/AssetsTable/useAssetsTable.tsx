@@ -67,10 +67,10 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
                 <CryptoIcon
                   ledgerId={row.original.currency.id}
                   ticker={row.original.currency.ticker}
-                  size={getValidCryptoIconSize(32)}
+                  size={getValidCryptoIconSize(40)}
                 />
               ) : (
-                <CryptoCurrencyIcon currency={row.original.currency} size={32} />
+                <CryptoCurrencyIcon currency={row.original.currency} size={40} />
               )}
               <TableCellContent>
                 <TableCellContentTitle>

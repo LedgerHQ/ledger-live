@@ -11,6 +11,7 @@ import { doubleDecodeGoToURL } from "tests/utils/urlUtils";
 import { getAccountAddressesFromAppJson } from "tests/utils/getAccountAddressesUtils";
 import { ModularDialog } from "tests/page/dialog/modular.dialog";
 import { getModularSelectorFromInstance } from "tests/utils/modularSelectorUtils";
+import { INTERVAL, TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 interface ProviderConfig {
   buyParams: Record<string, (buySell: BuySell) => string | number>;
@@ -114,11 +115,13 @@ export class BuyAndSellPage extends WebViewAppPage {
    */
   @step("Wait for the Buy/Sell web app to finish loading")
   private async waitForWebviewReady(testId: string) {
-    const attemptTimeouts = [90_000, 60_000];
+    // The first attempt outlasts a slow boot (over 50s on a loaded runner): reloading mid-boot
+    // would only restart it.
+    const attemptTimeouts = [TIMEOUT.xxxlarge, TIMEOUT.xxlarge];
     // Kept short and independent of the attempt budget: the reload is best-effort (its failure
-    // is ignored), so letting it inherit a 90s deadline would only make the worst case
+    // is ignored), so letting it inherit an attempt's deadline would only make the worst case
     // unpredictable without improving recovery.
-    const reloadTimeout = 15_000;
+    const reloadTimeout = TIMEOUT.medium;
 
     for (const [attempt, readyTimeout] of attemptTimeouts.entries()) {
       // Re-fetch the webview on every attempt: it can be torn down and recreated
@@ -259,7 +262,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     let balanceTooLow = false;
     if (operation === OperationType.Sell) {
       try {
-        await this.verifyElementIsVisible(this.amountInputError, 2000);
+        await this.verifyElementIsVisible(this.amountInputError, TIMEOUT.xsmall);
         balanceTooLow = true;
       } catch {
         // No error shown — balance covers the requested amount.
@@ -368,8 +371,8 @@ export class BuyAndSellPage extends WebViewAppPage {
           return false;
         },
         {
-          timeout: 10_000,
-          intervals: [200],
+          timeout: TIMEOUT.medium,
+          intervals: [INTERVAL.tick],
           message: "No settled GoTo URL found in webviewUrlHistory after waiting.",
         },
       )

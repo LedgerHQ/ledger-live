@@ -1,9 +1,10 @@
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -11,7 +12,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import RetryButton from "~/renderer/components/RetryButton";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { StepProps } from "../types";
-import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
+import { accountValidators } from "@ledgerhq/live-common/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
@@ -26,13 +27,13 @@ export default function StepConfirmation({
 }: StepProps) {
   const { t } = useTranslation();
   const currencyId = account.currency.id;
-  const { validators } = useCosmosFamilyPreloadData(currencyId);
+  const validators = accountValidators(account);
   const locale = useSelector(localeSelector);
   const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const validator = transaction?.valAddress
-      ? { address: transaction.valAddress, amount: transaction.amount }
-      : null;
+    const valAddress = transaction ? getValAddress(transaction) : "";
+    const validator =
+      transaction && valAddress ? { address: valAddress, amount: transaction.amount } : null;
     const v =
       validator &&
       validators.find(({ validatorAddress }) => validatorAddress === validator.address);
@@ -45,7 +46,7 @@ export default function StepConfirmation({
       });
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Undelegation Cosmos Flow"
           name="Step Confirmed"
           flow="stake"
@@ -79,7 +80,7 @@ export default function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Undelegation Cosmos Flow"
           name="Step Confirmation Error"
           flow="stake"

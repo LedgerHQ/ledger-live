@@ -9,7 +9,7 @@ import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/Cust
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSelector } from "LLD/hooks/redux";
 import { reconstructImage } from "~/renderer/components/CustomImage/TestImage";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 type Props = Partial<StepProps> & {
   onDone: () => void;
@@ -49,7 +49,7 @@ const CustomLockScreen = ({ onDone, setError, CLSBackup, deviceModelId }: Props)
         onTryAnotherImage={onVoid}
         blockNavigation={onVoid}
       />
-      <TrackPage category="Allow lock screen picture restoration on the device" />
+      <TrackScreen category="Allow lock screen picture restoration on the device" />
     </>
   ) : null;
 };

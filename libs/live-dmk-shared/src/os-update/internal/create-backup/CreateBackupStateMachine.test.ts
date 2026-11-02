@@ -401,6 +401,9 @@ describe("CreateBackupStateMachine", () => {
 
       expect(actor.getSnapshot().value).toBe("UnrecoverableError");
       expect(lastSentStateType()).toBe(CreateBackupStateType.UNEXPECTED_ERROR);
+      expect(sentStatesOfType(CreateBackupStateType.UNEXPECTED_ERROR)[0].error).toEqual(
+        new UnknownDAError("boom"),
+      );
     });
   });
 });

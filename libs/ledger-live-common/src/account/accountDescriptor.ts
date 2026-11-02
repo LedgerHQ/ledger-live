@@ -92,7 +92,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
     }
     return {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "utxo",
       network,
       xpub: account.xpub,
@@ -103,7 +103,7 @@ function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   }
   return {
     purpose: "account",
-    version: "1",
+    version: "2",
     type: "address",
     network,
     address: account.freshAddress,

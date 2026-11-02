@@ -8,7 +8,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import type { HederaAccount, HederaDelegation } from "@ledgerhq/live-common/families/hedera/types";
 import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/live-common/families/hedera/constants";
 import { useHederaEnrichedDelegation } from "@ledgerhq/live-common/families/hedera/react";

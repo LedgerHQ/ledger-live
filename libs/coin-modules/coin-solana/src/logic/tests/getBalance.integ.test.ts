@@ -14,7 +14,7 @@ const config: SolanaCoinConfig = {
 };
 const api = getChainAPI({ endpoint: endpointByCurrencyId(config, "solana") });
 
-const FUNDED_ADDRESS = "7V4CBuNyQaAhZVHf3fgsNxpk32bR61XRVZuAdR7isRu9";
+const FUNDED_ADDRESS = "248UcgYhsiuWZRRWodL6dH8FqLZQxWkqexMWZjUmUPjL";
 const UNFUNDED_ADDRESS = Keypair.generate().publicKey.toBase58();
 
 function expectStakeBalance(balance: Balance) {

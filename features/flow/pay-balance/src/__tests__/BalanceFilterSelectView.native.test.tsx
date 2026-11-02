@@ -1,6 +1,6 @@
 import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
-import { BalanceFilterSelectView } from "../components/Filter/BalanceFilterSelectView.native";
+import { BalanceFilterSelectView } from "../components/Filter/BalanceFilterSelectView";
 import { usdcOption } from "./fixtures";
 
 describe("BalanceFilterSelectView (Native)", () => {

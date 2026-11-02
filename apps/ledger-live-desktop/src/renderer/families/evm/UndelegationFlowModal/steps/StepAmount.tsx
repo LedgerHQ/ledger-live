@@ -9,7 +9,7 @@ import {
   getUnbondingPeriodDays,
   hasUnbondingPeriod,
 } from "@ledgerhq/live-common/families/evm/staking/logic";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
@@ -80,7 +80,7 @@ export default function StepAmount({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Undelegation Flow EVM"
         name="Step 1"
         flow="stake"

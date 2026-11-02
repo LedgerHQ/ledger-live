@@ -1,31 +1,31 @@
+const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");
+
+// The @mysten packages ship `.mjs` files, which the preset's ESM transform does not cover.
 const esmPackages = ["@mysten", "@scure", "@noble"];
 
-/** @type {import('jest').Config} */
-module.exports = {
-  testEnvironment: "node",
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
-  testRegex: ".integ.test.ts$",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
-  testTimeout: 90_000,
-  forceExit: true,
-  passWithNoTests: true,
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
+module.exports = createLibsCoinIntegJestConfig(
+  {
+    rootDir: __dirname,
+    testTimeout: 90_000,
+    transform: {
+      "^.+\\.(t|j)sx?$": [
+        "@swc/jest",
+        {
+          jsc: {
+            target: "esnext",
+          },
         },
-      },
-    ],
-    [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
+      ],
+      [`node_modules/.pnpm/(${esmPackages.join("|")}).+\\.(js|mjs)?$`]: [
+        "@swc/jest",
+        {
+          jsc: {
+            target: "esnext",
+          },
         },
-      },
-    ],
+      ],
+    },
+    transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
   },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
-};
+  { esm: false },
+);

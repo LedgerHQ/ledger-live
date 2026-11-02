@@ -9,7 +9,6 @@ const windowApi = {
   appDirname: "",
   appLoaded: jest.fn(),
   reloadRenderer: jest.fn(),
-  openWindow: jest.fn(),
 };
 
 describe("LiftSplashOnAppAvailability", () => {

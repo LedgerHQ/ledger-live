@@ -1,26 +1,23 @@
 import console from "console";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { scenarioBitcoin } from "./scenarii/bitcoin";
-import { killAtlas } from "./atlas";
+import { scenarioBitcoinGeneric } from "./scenarii/bitcoinGeneric";
 
 global.console = console;
 jest.setTimeout(1_000_000);
 
-describe("Bitcoin Deterministic Tester", () => {
-  it("scenario Bitcoin", async () => {
-    try {
-      await executeScenario(scenarioBitcoin);
-    } catch (e) {
-      if (e != "done") {
-        await killAtlas();
-        throw e;
-      }
-    }
-  });
-});
+async function run(execute: () => Promise<void>) {
+  try {
+    await execute();
+  } catch (e) {
+    if (e != "done") throw e;
+  }
+}
 
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
-  process.on(e as any, () => {
-    killAtlas().catch(() => {});
-  }),
-);
+describe("Bitcoin Deterministic Tester", () => {
+  it("scenario Bitcoin (legacy bridge)", () =>
+    run(() => executeScenario(scenarioBitcoin, "legacy")));
+
+  it("scenario Bitcoin (generic adapter, single address)", () =>
+    run(() => executeScenario(scenarioBitcoinGeneric, "generic-adapter")));
+});

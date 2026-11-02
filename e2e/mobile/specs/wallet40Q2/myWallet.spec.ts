@@ -3,7 +3,6 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const testConfig = {
-  tmsLinks: ["B2CQA-5405", "B2CQA-5426", "B2CQA-5427"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
 };
 
@@ -21,9 +20,9 @@ describe("My Wallet", () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
   });
 
-  testConfig.tmsLinks.forEach(link => $TmsLink(link));
   testConfig.tags.forEach(tag => $Tag(tag));
 
+  $TmsLink("B2CQA-5405");
   it("Open My Wallet from portfolio and earn", async () => {
     await app.mainNavigation.expectPortfolioPageVisible();
     await app.mainNavigation.openMyWallet();
@@ -36,6 +35,7 @@ describe("My Wallet", () => {
     await app.mainNavigation.openMyWallet();
   });
 
+  $TmsLink("B2CQA-5426");
   it("Access help from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.mainNavigation.openMyWallet();
@@ -43,6 +43,7 @@ describe("My Wallet", () => {
     await app.myWallet.expectHelpScreenVisible();
   });
 
+  $TmsLink("B2CQA-5427");
   it("Access settings from My Wallet", async () => {
     await app.mainNavigation.openPortfolioViaDeeplink();
     await app.mainNavigation.openMyWallet();

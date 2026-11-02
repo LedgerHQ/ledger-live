@@ -7,7 +7,7 @@ import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { Baker, Transaction } from "@ledgerhq/live-common/families/tezos/types";
 import { whitelist as bakersWhitelistDefault } from "@ledgerhq/live-common/families/tezos/staking";
 import { openURL } from "~/renderer/linking";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -90,7 +90,7 @@ const StepValidator = ({ account, parentAccount, transaction, onChangeTransactio
 
   return (
     <Box flow={4} mx={20}>
-      <TrackPage
+      <TrackScreen
         category="Stake Flow"
         name="Step Validator"
         flow="stake"

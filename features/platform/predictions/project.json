@@ -1,0 +1,8 @@
+{
+  "name": "@features/platform-predictions",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

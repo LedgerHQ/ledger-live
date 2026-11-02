@@ -2,7 +2,7 @@ name: "Setup Ledger Live Desktop e2e Tests"
 description: "Composite job to setup the CI for Ledger Live Desktop e2e tests"
 inputs:
   skip_builds:
-    description: "skip the steps to build the desktop and dummy-live-app"
+    description: "skip the step to build the desktop app"
     required: false
   build_type:
     description: "whether to use the ':testing' suffix for the build command"
@@ -23,7 +23,7 @@ runs:
     - name: Install App dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --filter="ledger-live-desktop-e2e-tests..." --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="ledger-live-desktop-e2e-tests..." --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       run: pnpm e2e:desktop test:playwright:setup
@@ -38,9 +38,4 @@ runs:
       if: ${{ !inputs.skip_builds }}
       run: |
         pnpm desktop build:${INPUTS_BUILD_TYPE:-testing}
-      shell: bash
-    - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
-      if: ${{ !inputs.skip_builds }}
-      run: |
-        pnpm exec nx run-many -t build --projects=@ledgerhq/dummy-live-app,@ledgerhq/dummy-wallet-app,@ledgerhq/dummy-ptx-app
       shell: bash

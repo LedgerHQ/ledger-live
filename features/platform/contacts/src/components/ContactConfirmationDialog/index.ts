@@ -1,2 +1,2 @@
-export * from "./ContactConfirmationDialog.web";
-export * from "./types";
+export * from "./ContactConfirmationDialog";
+export type * from "./ContactConfirmationDialog.types";

@@ -2,17 +2,17 @@ import React from "react";
 import { DeviceIntentTrackingProvider } from "@ledgerhq/live-dmk-shared";
 import { act, screen } from "@testing-library/react";
 import { render } from "tests/testSetup";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { initializerDevice } from "../testUtils";
 import { PAGE_CONNECT_APP } from "../../utils/trackDeviceIntent";
 import { LoadingState } from "./LoadingState";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: jest.fn(() => null),
+  TrackScreen: jest.fn(() => null),
 }));
 
-const mockedTrackPage = jest.mocked(TrackPage);
+const mockedTrackScreen = jest.mocked(TrackScreen);
 
 describe("LoadingState", () => {
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe("LoadingState", () => {
       jest.advanceTimersByTime(249);
     });
 
-    expect(mockedTrackPage).not.toHaveBeenCalled();
+    expect(mockedTrackScreen).not.toHaveBeenCalled();
   });
 
   it("should track the loading page event after the dwell threshold", () => {
@@ -54,7 +54,7 @@ describe("LoadingState", () => {
       jest.advanceTimersByTime(250);
     });
 
-    expect(mockedTrackPage).toHaveBeenCalledWith(
+    expect(mockedTrackScreen).toHaveBeenCalledWith(
       expect.objectContaining({
         category: PAGE_CONNECT_APP.Loading,
         sourceFlow: "my_ledger",

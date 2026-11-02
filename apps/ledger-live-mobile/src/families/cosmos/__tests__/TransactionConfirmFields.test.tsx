@@ -14,21 +14,20 @@ jest.mock("@react-navigation/native", () => ({
 jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ATOM", name: "Cosmos", magnitude: 6 }),
 }));
-jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
-  useCosmosFamilyPreloadData: () => ({
-    validators: [
-      { validatorAddress: "cosmosvaloper1src", name: "Source Val" },
-      { validatorAddress: "cosmosvaloper1dst", name: "Dest Val" },
-    ],
-  }),
-}));
-
 const { fieldComponents } = TransactionConfirmFields;
 const DelegateValidatorsField = fieldComponents["cosmos.delegateValidators"];
 const ValidatorNameField = fieldComponents["cosmos.validatorName"];
 const SourceValidatorNameField = fieldComponents["cosmos.sourceValidatorName"];
 
-const account = { currency: getCryptoCurrencyById("cosmos") } as unknown as Account;
+const account = {
+  currency: getCryptoCurrencyById("cosmos"),
+  stakingResources: {
+    validators: [
+      { validatorAddress: "cosmosvaloper1src", name: "Source Val" },
+      { validatorAddress: "cosmosvaloper1dst", name: "Dest Val" },
+    ],
+  },
+} as unknown as Account;
 const field = { type: "cosmos.validatorName", label: "Validator" };
 
 const baseTx = {
@@ -78,21 +77,6 @@ describe("cosmos TransactionConfirmFields", () => {
       );
       expect(screen.getByText("Dest Val")).toBeVisible();
       expect(screen.queryByText("Source Val")).toBeNull();
-    });
-
-    it("still renders a legacy validators[] transaction", () => {
-      render(
-        <DelegateValidatorsField
-          account={account}
-          transaction={tx({
-            mode: "delegate",
-            amount: new BigNumber(0),
-            validators: [{ address: "cosmosvaloper1dst", amount: new BigNumber(3_000_000) }],
-          })}
-          field={field}
-        />,
-      );
-      expect(screen.getByText("Dest Val")).toBeVisible();
     });
 
     it("renders nothing, without crashing, when no validator is set", () => {
@@ -156,17 +140,6 @@ describe("cosmos TransactionConfirmFields", () => {
         />,
       );
       expect(screen.getByText("Source Val")).toBeVisible();
-    });
-
-    it("falls back to the legacy sourceValidator", () => {
-      render(
-        <SourceValidatorNameField
-          account={account}
-          transaction={tx({ mode: "redelegate", sourceValidator: "cosmosvaloper1dst" })}
-          field={field}
-        />,
-      );
-      expect(screen.getByText("Dest Val")).toBeVisible();
     });
 
     it("renders nothing when there is no source validator", () => {

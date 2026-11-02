@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
+import { InfoState } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import type { AccountPublicKeyUnavailableDialogViewProps } from "./useAccountPublicKeyUnavailableDialogViewModel";
 
 const AccountPublicKeyUnavailableDialogView = ({

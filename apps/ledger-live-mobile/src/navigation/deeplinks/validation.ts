@@ -71,6 +71,18 @@ function sanitizeString(input: string, maxLength: number): string {
 }
 
 /**
+ * The host of a link, for security events: its path and query can carry user data, and the deeplink
+ * text is sent to Datadog.
+ */
+function hostOf(link: string): string | undefined {
+  try {
+    return new URL(link).host || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
  * Safely parses JSON with validation
  */
 function safeJsonParse<T>(jsonString: string, validator: (obj: unknown) => obj is T): T | null {
@@ -87,14 +99,14 @@ function safeJsonParse<T>(jsonString: string, validator: (obj: unknown) => obj i
 
     logSecurityEvent("invalid_json", {
       reason: "validation_failed",
-      json: jsonString.length > 200 ? jsonString.substring(0, 200) + "..." : jsonString,
+      json_length: jsonString.length,
     });
     return null;
   } catch (error) {
     logSecurityEvent("invalid_json", {
       reason: "parse_error",
-      json: jsonString.length > 200 ? jsonString.substring(0, 200) + "..." : jsonString,
-      error: String(error),
+      json_length: jsonString.length,
+      error_name: error instanceof Error ? error.name : typeof error,
     });
     return null;
   }
@@ -166,7 +178,7 @@ function isValidMetadata(obj: unknown): obj is OptionMetadata {
       if (!validatedLink) {
         logSecurityEvent("validation_failed", {
           reason: "invalid_metadata_link",
-          link: link,
+          link_host: hostOf(link),
         });
         return false;
       }

@@ -12,9 +12,10 @@ describe("AccountDescriptorSchema", () => {
   it.each([
     ["an empty address", { address: "" }],
     ["a purpose other than account", { purpose: "contact" }],
-    ["an unknown version", { version: "2" }],
+    ["an unknown version", { version: "1" }],
     ["an unknown type", { type: "multisig" }],
-    ["an empty network name", { network: { name: "", env: "main" } }],
+    ["an empty network", { network: "" }],
+    ["a network with whitespace", { network: "bitcoin testnet" }],
   ])("rejects %s", (_, overrides) => {
     expect(
       AccountDescriptorSchema.safeParse({ ...mockAddressAccountDescriptor(), ...overrides })

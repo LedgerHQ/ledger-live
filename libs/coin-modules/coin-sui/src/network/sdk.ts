@@ -12,7 +12,7 @@ import type {
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { getInputObjects } from "@mysten/signers/ledger";
+import { getInputObjects } from "@mysten/ledger-signer";
 import type { ClientWithCoreApi } from "@mysten/sui/client";
 import type { SuiGrpcClient } from "@mysten/sui/grpc";
 import { coinWithBalance, Transaction } from "@mysten/sui/transactions";

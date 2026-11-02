@@ -121,6 +121,10 @@ export const sendFeatures = {
     const d = getSendDescriptor(currency);
     return d?.fees.getNetworkFeesInfo?.(ctx) ?? null;
   },
+  rentChangesFee: (currency: CryptoOrTokenCurrency | undefined): boolean => {
+    if (!currency) return false;
+    return getSendDescriptor(currency)?.fees.rentChangesFee?.(currency) ?? false;
+  },
   hasDefaultStrategy: fromDescriptor(d => d.fees.defaultStrategy != null, false),
   hasBalanceTypeStep: fromDescriptor(d => d.balanceType != null, false),
   getBalanceTypeConfig: fromDescriptor(d => d.balanceType, noBalanceTypeConfig),

@@ -9,18 +9,20 @@ export const PERPS_UI_USE_CASE = {
   receive: "perpetuals:receive",
   /** Account a deposit is funded from. */
   fund: "perpetuals:fund",
+  /** Account a withdrawal lands in. */
+  withdraw: "perpetuals:withdraw",
+  /** HyperCore account a withdrawal leaves from. */
+  withdrawFrom: "perpetuals:withdrawFrom",
 } as const;
 
 export type PerpsUiUseCase = (typeof PERPS_UI_USE_CASE)[keyof typeof PERPS_UI_USE_CASE];
 
+const KNOWN_PERPS_UI_USE_CASES: readonly PerpsUiUseCase[] = Object.values(PERPS_UI_USE_CASE);
+
 export function getPerpsUiUseCase(uiUseCase?: string): PerpsUiUseCase | undefined {
-  switch (uiUseCase) {
-    case PERPS_UI_USE_CASE.receive:
-    case PERPS_UI_USE_CASE.fund:
-      return uiUseCase;
-    default:
-      return uiUseCase?.split(":")[0] === PERPS_UI_USE_CASE.legacy
-        ? PERPS_UI_USE_CASE.legacy
-        : undefined;
-  }
+  const known = KNOWN_PERPS_UI_USE_CASES.find(useCase => useCase === uiUseCase);
+  if (known) return known;
+  return uiUseCase?.split(":")[0] === PERPS_UI_USE_CASE.legacy
+    ? PERPS_UI_USE_CASE.legacy
+    : undefined;
 }

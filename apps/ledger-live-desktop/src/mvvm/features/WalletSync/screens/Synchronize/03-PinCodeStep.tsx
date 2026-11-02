@@ -4,7 +4,7 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { useSelector } from "LLD/hooks/redux";
 import { walletSyncQrCodePinCodeSelector } from "~/renderer/reducers/walletSync";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { AnalyticsPage } from "../../hooks/useLedgerSyncAnalytics";
 
 export default function PinCodeStep() {
@@ -14,7 +14,7 @@ export default function PinCodeStep() {
 
   return (
     <Flex flexDirection="column" rowGap="16px" justifyContent="center" flex={1}>
-      <TrackPage category={AnalyticsPage.PinCode} />
+      <TrackScreen category={AnalyticsPage.PinCode} />
       <Text
         fontSize={24}
         variant="large"

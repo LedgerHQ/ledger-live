@@ -2,10 +2,17 @@ import { useCallback, useLayoutEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { SCROLL_TO_TOP_EVENT } from "./constants";
-import { getPageTestId, getRightPanelVariant, type RightPanelVariant } from "./utils";
+import {
+  getPageTestId,
+  getRightPanelVariant,
+  isAggregatedAssetDetailPath,
+  type RightPanelVariant,
+} from "./utils";
 import { useSwapVisibility } from "LLD/components/RightPanel/Swap/useSwapVisibility";
 import { useSwapAvailability } from "LLD/components/RightPanel/Swap/useSwapAvailability";
 import { useCardVisibility } from "LLD/components/RightPanel/Card/useCardVisibility";
+import { useSwapConsoleAbtest } from "LLD/features/AssetDetail/hooks/useSwapConsoleAbtest";
+import { useIsAccountDetailPage } from "LLD/features/AccountDetail/hooks/useIsAccountDetailPage";
 
 export interface PageViewModelResult {
   readonly pageScrollerRef: (node: HTMLDivElement | null) => void;
@@ -21,9 +28,15 @@ export const usePageViewModel = (): PageViewModelResult => {
   const isSwapEnabled = useSwapVisibility();
   const isSwapAvailableForRoute = useSwapAvailability(pathname);
   const isCardEnabled = useCardVisibility();
+  const { isConsoleEnabled } = useSwapConsoleAbtest();
+  const isAccountDetailPage = useIsAccountDetailPage(pathname);
 
-  const variant = getRightPanelVariant(pathname, { shouldDisplayAggregatedAssets });
-  const isSwapUsable = isSwapEnabled && isSwapAvailableForRoute;
+  const variant = getRightPanelVariant(pathname, {
+    shouldDisplayAggregatedAssets,
+    isAccountDetailPage,
+  });
+  const isSwapConsoleHidden = isAggregatedAssetDetailPath(pathname) && !isConsoleEnabled;
+  const isSwapUsable = isSwapEnabled && isSwapAvailableForRoute && !isSwapConsoleHidden;
 
   // Per-variant visibility gating. Exhaustive Record: adding a variant requires an entry here.
   const rightPanelVariantEnabled: Record<RightPanelVariant, boolean> = {

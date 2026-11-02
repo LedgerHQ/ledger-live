@@ -25,7 +25,7 @@ export function CategoryRow({
   return (
     <li className="flex flex-col">
       <button
-        className="w-full flex items-center gap-8 px-8 py-8 body-3 font-semibold uppercase tracking-wider text-muted rounded-lg hover:bg-surface-hover cursor-pointer border-none bg-transparent"
+        className="w-full flex items-center gap-8 px-8 py-8 body-3 uppercase tracking-wider text-muted rounded-lg hover:bg-surface-hover cursor-pointer border-none bg-transparent"
         aria-label={category}
         aria-expanded={isExpanded}
         onClick={onToggle}
@@ -37,7 +37,7 @@ export function CategoryRow({
           <Icon size={16} />
         </span>
         <span className="flex-1 text-left">{category}</span>
-        <span className="body-3 font-medium normal-case tracking-normal">{tools.length}</span>
+        <span className="body-3 normal-case tracking-normal">{tools.length}</span>
       </button>
       {isExpanded && (
         <ul className="flex flex-col list-none mt-4 mb-4">

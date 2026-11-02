@@ -88,6 +88,9 @@ export const test = base.extend<TestFixtures>({
       lastAnalyticsConsentDate: new Date().toISOString(),
       // YYYYMMDD format. Let's use a very large number to ensure policy version is always up to date.
       privacyPolicyVersion: 99999999,
+      // The Q2/Q3 release tour auto-opens on Portfolio and blocks every click until dismissed.
+      hasSeenQ2Tour: true,
+      hasSeenQ3Tour: true,
       ...settings,
     };
 

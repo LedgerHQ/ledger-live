@@ -40,7 +40,7 @@ describe("ContactAvatar", () => {
         contactId={contactId}
         name="Benoit Jean"
         size="xl"
-        testId="contacts-detail-avatar"
+        testID="contacts-detail-avatar"
       />,
     );
 
@@ -70,7 +70,7 @@ describe("ContactAvatar", () => {
         contactId={contactId}
         name="My Wallet"
         size="xl"
-        testId="contacts-detail-me-avatar"
+        testID="contacts-detail-me-avatar"
       />,
     );
 

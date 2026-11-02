@@ -22,7 +22,7 @@ export type { EarnDeviceContext } from "../device-context";
 export type EarnDepositArgs = {
   /** Resolved source account. */
   descriptor: AccountDescriptor;
-  /** Canonical network string, e.g. "ethereum:main". */
+  /** Network id, e.g. "ethereum". */
   network: string;
   /** `--product`: ETH vault id or Solana validator vote account (required by the deposit command). */
   product: string;
@@ -42,7 +42,7 @@ export type EarnDepositArgs = {
 export type EarnWithdrawArgs = {
   /** Resolved source account. */
   descriptor: AccountDescriptor;
-  /** Canonical network string, e.g. "ethereum:main". */
+  /** Network id, e.g. "ethereum". */
   network: string;
   /** `--product`: ETH vault id (required by the EVM adapter). */
   product?: string;

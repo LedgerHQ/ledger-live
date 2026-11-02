@@ -51,6 +51,8 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
     ],
     accountDescriptorType: "utxo",
     loadSetup: () => import("../families/bitcoin/setup"),
+    loadLocalApi: () =>
+      import("../families/bitcoin/coinModuleApi").then(m => m.createLocalBitcoinApi),
     loadTransaction: () => import("@ledgerhq/coin-bitcoin/transaction").then(m => m.default),
     loadDeviceTxConfig: () =>
       import("@ledgerhq/coin-bitcoin/deviceTransactionConfig").then(m => m.default),

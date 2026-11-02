@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "Alterar nome",
       "viewAdvancedLogs" : "Visualizar registros avançados",
+      "viewExplorer" : "Ver no explorer",
       "removeAccount" : "Remover conta do portfólio"
     },
     "changeName" : {
@@ -715,18 +716,6 @@
     "buttonTitle" : "Testar"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Mais Informações",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "Integração {{family}}",
-        "subTitle" : "A integração {{family}} foi feita pelo time {{team}}",
-        "description" : "A Ledger Wallet é uma plataforma de código aberto.",
-        "description2" : "Desenvolvedores de qualquer lugar do mundo podem integrar com a nossa Ledger Wallet",
-        "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger",
-        "description3Link" : "Esta integração foi realizada por <1><0>{{team}}</0></1> em colaboração com a Ledger"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} está migrando para {{to}}. Siga este <0>link</0> para saber mais ou entre em contato com o suporte se precisar de ajuda.",
       "contactSupport" : "Falar com o suporte"
@@ -3024,6 +3013,7 @@
       "paidIn" : "Pago em {{currency}}",
       "nudge" : "Você pode economizar {{amount}} com {{provider}}",
       "saved" : "Economizado com {{provider}}",
+      "rentArriving" : "Seu aluguel de energia ainda está a caminho. A taxa de rede será atualizada assim que chegar.",
       "confirm" : "Confirmar",
       "disclaimer" : "Com {{provider}}, um provedor de energia externo, as taxas são pagas em {{feeCurrency}}.",
       "insufficientFunds" : "Você não tem {{feeCurrency}} suficiente para cobrir a quantia e a taxa de aluguel de energia da {{provider}}."
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "Ativos Delegados",
       "undelegatingTooltip" : "Os ativos não delegados ficam sujeitos a um período de desvinculação de 10 dias antes de poderem ser sacados.",
       "undelegating" : "Saques Pendentes"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Desenvolvido por MultiversX",
-        "moreInfo" : "Mais Informações",
-        "drawerTitle" : "Integração com MultiversX",
-        "title" : "O token MultiversX eGold (EGLD) agora está disponível na Ledger Wallet",
-        "description" : "Agora você pode proteger seus tokens eGold (EGLD) e gerenciá-los com segurança através da Ledger Wallet.",
-        "description2" : "O token MultiversX eGold (EGLD) é nativo da rede MultiversX e será usado para tudo, desde transações, staking, contratos inteligentes, governança e recompensas de validadores.",
-        "description3" : "Estamos trabalhando ativamente com a equipe da MultiversX para adicionar mais funcionalidades, como staking, suporte nativo ao ESDT (Elrond Standard Digital Token) e mais.",
-        "website" : "A Internet Scale Blockchain"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mais Informações",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "O token CELO já está disponível na Ledger Wallet",
-        "description" : "Agora você pode gerenciar e proteger seus tokens CELO na Ledger Wallet.",
-        "description2" : "O token Celo é nativo da Celo Chain e é usado para tudo, desde transações, staking e vários recursos por vir.",
-        "website" : "Powered by Figment"
-      }
-    },
     "lockedBalance" : "Saldo Bloqueado",
     "lockedTooltip" : "Antes de gerar recompensas, ativos devem ser bloqueados e usados para votar em grupos de validadores.",
     "nonvotingLockedBalance" : "Saldo bloqueado sem direito a voto",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "Saldo pendente",
       "pendingBalanceTooltip" : "Esta quantia foi desaplicada e está atualmente com disponibilidade pendente.",
       "storageUsageBalance" : "Saldo mínimo",
-      "storageUsageBalanceTooltip" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa.",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mais informações",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "O token NEAR já está disponível na Ledger Wallet",
-        "description" : "Agora você pode gerenciar e proteger seus tokens NEAR na Ledger Wallet.",
-        "description2" : "O token NEAR é nativo da NEAR Chain e é usado para tudo, desde transações, staking e vários recursos por vir.",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa."
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "Saldo pendente",
       "pendingBalanceTooltip" : "Esta quantia foi desaplicada e sua disponibilidade está pendente no momento.",
       "storageUsageBalance" : "Saldo mínimo",
-      "storageUsageBalanceTooltip" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa.",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mais informações",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "O token SUI já está disponível na Ledger Wallet",
-        "description" : "Agora você pode começar a gerenciar seus tokens SUI e protegê-los pela Ledger Wallet.",
-        "description2" : "O token SUI é nativo da cadeia SUI e é usado para tudo, desde transações, staking e muitos recursos por vir.",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "Esta quantia é reservada para armazenamento e transações, e é o saldo mínimo que sua conta deve manter para permanecer ativa."
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "Algo deu errado. Reconecte seu dispositivo",
       "description" : "O aplicativo Concordium não pôde processar a transação. Se o problema persistir, entre em contato com o Suporte Ledger."
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "Digite um número inteiro entre {{min}} e {{max}}."
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "Insira um endereço de contrato de pool válido no formato endereço.nome-do-contrato ."
+    },
     "StacksMemoTooLong" : {
       "title" : "O memo é muito longo"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "Solicitação não enviada",
       "description" : "O Internet Computer não aceitou a solicitação, portanto nada foi enviado e nada mudou. Tente Novamente. {{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "A transação expirou",
+      "description" : "A transação assinada não foi enviada a tempo, portanto nada foi enviado e nada mudou. Por favor, assine novamente."
     },
     "ICPInvalidPercentage" : {
       "title" : "Porcentagem fora do intervalo",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "Verifique se o Ledger Sync foi ativado em um de seus aplicativos.",
             "step2" : "Abra o aplicativo Ledger Wallet que deseja sincronizar.",
-            "step3" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Já ativei</0> > <0>Mostrar QR</0>",
+            "step3" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Mostrar QR</0>",
             "step4" : "Escaneie o QR code."
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "Verifique se o Ledger Sync foi ativado em um de seus aplicativos.",
             "step2" : "Abra o aplicativo Ledger Wallet que deseja sincronizar.",
-            "step3" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Já ativei</0> > <0>Use sua Ledger</0>",
+            "step3" : "Vá para <0>Configurações</0> > <0>Geral</0> > <0>Ledger Sync</0> > <0>Usar sua Ledger</0>",
             "step4" : "Conecte sua Ledger."
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
     "selectDepositCurrencyTitle" : "Selecionar ativo para depositar",
     "selectDepositCurrencyDescription" : "Qualquer ativo compatível funciona. Será trocado automaticamente se necessário.",
+    "selectWithdrawCurrencyTitle" : "Select asset to withdraw to",
+    "selectWithdrawCurrencyDescription" : "Your USDC will be swapped automatically into the asset you choose.",
     "accountCount_one" : "{{count}} conta",
     "accountCount_other" : "{{count}} contas",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "Sua carteira de criptomoedas segura"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Perpétuos",
+      "description" : "Invista com alavancagem"
+    },
+    "borrow" : {
+      "title" : "Empréstimos",
+      "description" : "Pegar stablecoin emprestado"
+    }
+  },
   "marketBanner" : {
     "title" : "Mercado",
     "genericError" : "Falha de conexão",
@@ -9736,6 +9707,7 @@
     "receive" : "Receber",
     "buy" : "Comprar",
     "sell" : "Vender",
+    "swap" : "Trocar",
     "connect" : "Conectar",
     "buyALedger" : "Comprar uma Ledger"
   },
@@ -9941,7 +9913,8 @@
               "label" : "Altura de nascimento",
               "tooltip" : "Padrão: data de hoje. Mude essa opção somente para contas que já tiveram atividade privada (shielded) no passado.",
               "syncFromZero" : "Esta conta recebeu ZEC protegido no passado, mas não consigo recuperar a data de nascimento. Escanear a partir do bloco 0 (isso pode levar muito tempo).",
-              "error" : "Data inválida"
+              "error" : "Data inválida",
+              "height" : "Altura do bloco: {{height}}"
             },
             "ufvk" : {
               "text" : "Para começar, você deve exportar a sua UFVK (Unified Full Viewing Key, ou “chave de visualização completa unificada”). Essa ação requer que você dê sua confirmação no dispositivo Ledger."
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 Privado (Sapling)",
       "shieldedOrchardTx" : "🛡 Privado (Orchard)",
       "shieldedIronwoodTx" : "🛡 Privado (Ironwood)",
-      "memo" : "Memo"
+      "memo" : "Memo",
+      "blockHeight" : "Altura do bloco",
+      "confirmations_one" : "{{count}} confirmação",
+      "confirmations_other" : "{{count}} confirmações"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Nenhuma atividade ainda",
+      "description" : {
+        "receive" : "Comece adicionando fundos por meio de Receber.",
+        "receiveSwap" : "Comece adicionando fundos por meio de Receber ou Trocar.",
+        "receiveBuy" : "Comece adicionando fundos por meio de Receber ou Comprar.",
+        "receiveSwapBuy" : "Comece adicionando fundos por meio de Receber, Trocar ou Comprar.",
+        "swap" : "Comece adicionando fundos por meio do trocar.",
+        "buy" : "Comece adicionando fundos por meio do Comprar.",
+        "swapBuy" : "Comece adicionando fundos por meio de trocar ou comprar."
+      }
+    },
+    "assetPicker" : {
+      "title" : "Selecionar um ativo"
+    },
+    "actions" : {
+      "receive" : "Receber",
+      "send" : "Enviar",
+      "buy" : "Comprar",
+      "sell" : "Vender",
+      "earn" : "Ganhar"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "Saiba mais",
+      "openPerps" : "Abrir perpétuos"
+    },
+    "migration" : {
+      "title" : "{{from}} está migrando para {{to}}.",
+      "description" : "Saiba mais sobre a migração ou entre em contato com o suporte caso precise de assistência."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}} não será compatível a partir de {{date}}",
+      "description" : "Ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "O saldo total não inclui dividendos ou desdobramentos de ações."
+    },
+    "perps" : {
+      "title" : "Sobre a conta Hyperliquid",
+      "description" : "Esta conta está associada ao trading de perpétuos. Esta conta não é compatível com ações transacionais"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "Configurações de conta"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "Selecione uma ação"
+  },
+  "perpsWithdraw" : {
+    "title" : "Withdraw",
+    "review" : "Review",
+    "estimatedAmount" : "Withdraw ~{{value}}",
+    "inputSubText" : "Swap and withdraw via {{provider}}",
+    "selectCurrencyTitle" : "Withdraw to {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "No account",
+    "formErrors" : {
+      "insufficientBalance" : "Insufficient balance",
+      "minimumAmount" : "The minimum withdrawal is {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "This amount is too low to withdraw.",
+      "lowLiquidity" : "This asset is temporarily unavailable. Try again later or choose another asset.",
+      "addressScreening" : "This withdrawal can’t be processed to this account.",
+      "quoteUnavailable" : "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
+      "currenciesUnavailable" : "We can’t load the assets you can withdraw to. Try again later."
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Assinatura de depósito",

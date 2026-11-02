@@ -54,10 +54,78 @@ export interface SendableRow {
   readonly event: HostOnboardingEvent;
 }
 
+export const StateKind = {
+  Progress: "progress",
+  Genuine: "genuine",
+  Firmware: "firmware",
+  Setup: "setup",
+  Locked: "locked",
+  Session: "session",
+  Failed: "failed",
+  Succeeded: "succeeded",
+  Quit: "quit",
+} as const;
+
+export type StateKind = (typeof StateKind)[keyof typeof StateKind];
+
 export interface StateStep {
   readonly key: string;
   readonly label: string;
+  readonly kind: StateKind;
   readonly isCurrent: boolean;
+}
+
+const MachineState = {
+  GenuineFailed: "checks.genuineFailed",
+  FirmwareCheckFailed: "checks.firmwareCheckFailed",
+  NotGenuineSupport: "checks.notGenuineSupport",
+  LegacyFallback: "legacyFallback",
+  BootloaderRecovery: "bootloaderRecovery",
+  ChecksDone: "checks.checksDone",
+  ChecksSucceeded: "checks.checksSucceeded",
+  OnboardedExit: "onboardedExit",
+  SyncOffer: "syncOffer",
+  Done: "done",
+  Quitting: "quitting",
+  LeavingOnQuit: "leavingOnQuit",
+  ExitOnboarding: "exitOnboarding",
+  DeviceLocked: "deviceLocked",
+  AwaitingSession: "awaitingSession",
+  DeviceSetupPrefix: "deviceSetup.",
+} as const;
+
+const failedStates = new Set<string>([
+  MachineState.GenuineFailed,
+  MachineState.FirmwareCheckFailed,
+  MachineState.NotGenuineSupport,
+  MachineState.LegacyFallback,
+  MachineState.BootloaderRecovery,
+]);
+const succeededStates = new Set<string>([
+  MachineState.ChecksDone,
+  MachineState.ChecksSucceeded,
+  MachineState.OnboardedExit,
+  MachineState.SyncOffer,
+  MachineState.Done,
+]);
+const quitStates = new Set<string>([
+  MachineState.Quitting,
+  MachineState.LeavingOnQuit,
+  MachineState.ExitOnboarding,
+]);
+const firmwarePattern = /firmware/i;
+const genuinePattern = /genuine|earlycheck/i;
+
+export function stateKind(state: string): StateKind {
+  if (failedStates.has(state)) return StateKind.Failed;
+  if (succeededStates.has(state)) return StateKind.Succeeded;
+  if (quitStates.has(state)) return StateKind.Quit;
+  if (state === MachineState.DeviceLocked) return StateKind.Locked;
+  if (state === MachineState.AwaitingSession) return StateKind.Session;
+  if (state.startsWith(MachineState.DeviceSetupPrefix)) return StateKind.Setup;
+  if (firmwarePattern.test(state)) return StateKind.Firmware;
+  if (genuinePattern.test(state)) return StateKind.Genuine;
+  return StateKind.Progress;
 }
 
 export type LogLine =
@@ -289,6 +357,7 @@ function logLinesOf(rows: readonly DeviceOnboardingLogRow[]): LogLine[] {
         line: "state",
         key: `${index}-${row.state}`,
         label: row.state,
+        kind: stateKind(row.state),
         isCurrent: newer === undefined,
       });
     }

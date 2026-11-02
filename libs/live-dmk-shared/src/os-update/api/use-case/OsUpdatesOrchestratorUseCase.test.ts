@@ -180,6 +180,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
         step: OsUpdatesSteps.PRE_CHECKS,
         state: {
           type: PreChecksStateType.UNEXPECTED_ERROR,
+          error: new Error("actor crashed"),
           cancel: expect.any(Function),
         },
       });
@@ -198,6 +199,7 @@ describe("OsUpdatesOrchestratorUseCase", () => {
         step: OsUpdatesSteps.CREATE_BACKUP,
         state: {
           type: CreateBackupStateType.UNEXPECTED_ERROR,
+          error: new Error("actor crashed"),
           cancel: expect.any(Function),
         },
       });

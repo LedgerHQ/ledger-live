@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { Text, Alert } from "@ledgerhq/react-ui";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -17,7 +17,7 @@ const UFVK_LEARN_MORE_URL = "https://support.ledger.com/article/115005177269-zd"
 function StepConfirmation({ t }: Readonly<StepProps>) {
   return (
     <Container>
-      <TrackPage
+      <TrackScreen
         category="Export ZCash key"
         name="Step Confirmation Success"
         flow="exportUfvk"

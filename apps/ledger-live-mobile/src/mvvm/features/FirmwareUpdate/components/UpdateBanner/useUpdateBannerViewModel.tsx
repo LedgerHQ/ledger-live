@@ -30,15 +30,14 @@ export function useUpdateBannerViewModel({
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
+
   const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
 
-  // Debug override (Settings > Debug > Features): force-show a banner variant.
   const debugBannerMode = useSelector(debugOsUpdateBannerModeSelector);
 
   const bannerVisible =
     debugBannerMode !== "off" ||
     (Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice);
-  // Mock version for the debug-forced banner.
   const version = latestFirmware?.final?.name ?? (debugBannerMode !== "off" ? "1.1.1" : "");
   const connectionType = lastConnectedDevice?.wired ? "usb" : "bluetooth";
 

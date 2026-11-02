@@ -19,9 +19,9 @@ declare module "./registry" {
 
 const uuid = computeAccountUUID({
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
-  network: { name: "ethereum", env: "main" },
+  network: "ethereum",
   address: "0x0",
   path: "m/44h/60h/0h/0/0",
 });

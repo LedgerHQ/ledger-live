@@ -8,8 +8,8 @@ export function usePayTabActionTiles(
   return useMemo(
     () => ({
       tiles: [
-        { id: "deposit", onPress: onDeposit },
-        { id: "request", onPress: onRequest },
+        { id: "deposit", onOpenFlow: onDeposit },
+        { id: "request", onOpenFlow: onRequest },
       ],
       page: "Pay",
     }),

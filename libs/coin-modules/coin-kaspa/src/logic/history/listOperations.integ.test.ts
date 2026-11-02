@@ -57,7 +57,7 @@ describe("listOperations (integration)", () => {
         expect(["IN", "OUT"]).toContain(op.type);
         expect(typeof op.value).toBe("bigint");
         expect(op.tx.hash).toEqual(expect.any(String));
-        expect(op.asset).toEqual({ type: "native", name: "KAS" });
+        expect(op.asset).toEqual({ type: "native" });
       }
     });
   });

@@ -1,6 +1,6 @@
 ---
 name: create-pr
-description: Create a pull request with a valid title, description, changeset, and all required elements
+description: Push the current branch and open a draft pull request with a conventional title, a body from the repo PR template, a changeset and a Slack announcement. Use when the user runs `/create-pr` or asks to open a pull request for the current branch.
 disable-model-invocation: true
 ---
 
@@ -126,7 +126,7 @@ Use the `slack-pr-message` skill (`.agents/skills/slack-pr-message/SKILL.md`) to
    - If "no", omit the section entirely
 
 4. **CONTEXT**: Link to issues and references:
-   - `**JIRA issue**: [LIVE-1234](https://ledgerhq.atlassian.net/browse/LIVE-1234)`
+   - `**JIRA / GitHub issue**: [LIVE-XXXX](https://ledgerhq.atlassian.net/browse/LIVE-XXXX)`
    - `**ADR** (if any): https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/1234`
 
 ## Example Output
@@ -151,9 +151,9 @@ This PR introduces a new analytics dashboard to the portfolio feature, providing
 - Key metrics summary (gains, losses, total value)
 - Export functionality for data
 
-### ❓ Context
+### 🔗 Context
 
-- **JIRA issue**: [LIVE-5678](https://ledgerhq.atlassian.net/browse/LIVE-5678)
+- **JIRA / GitHub issue**: [LIVE-XXXX](https://ledgerhq.atlassian.net/browse/LIVE-XXXX)
 ```
 
 **Slack Message**: Generated via the `slack-pr-message` skill.

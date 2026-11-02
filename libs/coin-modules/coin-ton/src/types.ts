@@ -1,3 +1,4 @@
+import type { MemoNotSupported, StringMemo } from "@ledgerhq/coin-module-framework/api/index";
 import {
   Account,
   Operation,
@@ -332,6 +333,8 @@ export interface TonTransaction {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface TonCell extends Cell {}
+
+export type TonMemo = MemoNotSupported | StringMemo<"comment">;
 
 export type TonOperationExtra = {
   comment: TonComment;

@@ -1,6 +1,6 @@
 import React, { type ReactElement } from "react";
 import { render } from "@testing-library/react";
-import { StyleProvider } from "@features/platform-style";
+import { StyleProvider } from "@features/platform-style/web";
 import { I18nTestProvider, type I18nTestProviderProps } from "@shared/i18n/testing";
 
 export const PAY_SUCCESS_RESOURCES: I18nTestProviderProps["resources"] = {

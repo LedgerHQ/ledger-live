@@ -206,7 +206,6 @@ export async function validateTransaction(
   if (transaction.from) {
     const currentNonce = await getNextSequence(
       buildContext<EvmConfigInfo>(currency.id),
-      currency.id,
       transaction.from,
     );
     if (typeof transaction.nonce === "number") {

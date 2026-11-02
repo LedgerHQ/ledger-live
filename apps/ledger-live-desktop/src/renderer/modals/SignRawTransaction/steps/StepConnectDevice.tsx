@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import GenericStepConnectDevice from "./GenericStepConnectDevice";
 import { StepProps } from "../types";
@@ -31,7 +31,7 @@ export default function StepConnectDevice({
 
   return (
     <>
-      <TrackPage category="Sign Raw Transaction Flow" name="Step ConnectDevice" />
+      <TrackScreen category="Sign Raw Transaction Flow" name="Step ConnectDevice" />
       <GenericStepConnectDevice
         account={account}
         useApp={useApp}

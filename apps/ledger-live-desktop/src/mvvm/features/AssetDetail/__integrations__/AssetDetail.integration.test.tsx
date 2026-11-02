@@ -50,6 +50,7 @@ const TEST_ID = {
   ACTION_RECEIVE: "asset-detail-action-receive",
   ACTION_SELL: "asset-detail-action-sell",
   ACTION_SEND: "asset-detail-action-send",
+  ACTION_SWAP: "asset-detail-action-swap",
   HEADER_OPTIONS: "asset-detail-header-options-trigger",
   STAKING_SECTION: "asset-detail-staking-section",
   EARN_BANNER: "asset-detail-earn-banner",
@@ -1071,6 +1072,66 @@ describe("AssetDetail integration", () => {
     });
   });
 
+  describe("swap console A/B test", () => {
+    const actionTestIds = () =>
+      within(screen.getByTestId(TEST_ID.ACTION_BAR))
+        .getAllByRole("button")
+        .map(button => button.dataset.testid);
+
+    it("does not show the swap action when the A/B test is disabled", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.ACTION_SWAP)).not.toBeInTheDocument();
+    });
+
+    it("shows the swap action first when the quick action param is on", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />, {
+        initialState: withFlagOverrides({
+          lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+        }),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_SWAP)).toBeEnabled();
+      });
+
+      expect(actionTestIds()).toEqual([
+        TEST_ID.ACTION_SWAP,
+        TEST_ID.ACTION_RECEIVE,
+        TEST_ID.ACTION_BUY,
+        TEST_ID.ACTION_SELL,
+        TEST_ID.ACTION_SEND,
+      ]);
+    });
+
+    it("does not show the swap action when the quick action param is off", async () => {
+      mockMarket.withData(MarketMockedResponse.bitcoinDetail);
+      setupRoute("bitcoin", { list: [] });
+
+      render(<AssetDetail />, {
+        initialState: withFlagOverrides({
+          lwdSwapConsoleAbtest: { enabled: true, params: { console: true, quickAction: false } },
+        }),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId(TEST_ID.ACTION_BUY)).toBeEnabled();
+      });
+
+      expect(screen.queryByTestId(TEST_ID.ACTION_SWAP)).not.toBeInTheDocument();
+    });
+  });
+
   describe("route params", () => {
     it("resolves a token when route id is URL-encoded", async () => {
       mockMarket.withData(MarketMockedResponse.bitcoinDetail);
@@ -1092,8 +1153,8 @@ describe("AssetDetail integration", () => {
   });
 
   describe("PnL section", () => {
-    const pnlEnabled = withFlagOverrides({
-      lwdWallet40: { enabled: true, params: { pnl: true } },
+    const wallet40Enabled = withFlagOverrides({
+      lwdWallet40: { enabled: true },
     });
 
     const setupBitcoinAsset = (accountId: string) => {
@@ -1104,23 +1165,11 @@ describe("AssetDetail integration", () => {
       return { account };
     };
 
-    it("does not render the PnL cards when the feature flag is off", async () => {
-      const { account } = setupBitcoinAsset("asset-detail-pnl-flag-off");
-
-      renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { accounts: [account], settings: AFTER_ONBOARDING_STATE },
-      });
-
-      await waitFor(() => expectHeader());
-      expect(screen.queryByRole("button", { name: /unrealised return/i })).not.toBeInTheDocument();
-      expect(screen.queryByText("Average entry price")).not.toBeInTheDocument();
-    });
-
-    it("renders both the unrealised return and average entry price cards when the feature flag is on", async () => {
+    it("renders both the unrealised return and average entry price cards", async () => {
       const { account } = setupBitcoinAsset("asset-detail-pnl-flag-on");
 
       renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+        initialState: { ...wallet40Enabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
       });
 
       await waitFor(() => {
@@ -1133,7 +1182,7 @@ describe("AssetDetail integration", () => {
       const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-open");
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+        initialState: { ...wallet40Enabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
       });
 
       expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -1152,7 +1201,7 @@ describe("AssetDetail integration", () => {
       const { account } = setupBitcoinAsset("asset-detail-pnl-dialog-close");
 
       const { user } = renderWithMockedCounterValuesProvider(<AssetDetail />, {
-        initialState: { ...pnlEnabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
+        initialState: { ...wallet40Enabled, accounts: [account], settings: AFTER_ONBOARDING_STATE },
       });
 
       const card = await screen.findByRole("button", { name: /unrealised return/i });

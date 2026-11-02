@@ -1,11 +1,7 @@
 ---
 name: e2e-mobile-onboard
-description: Interactive setup wizard for running mobile E2E (Detox) tests locally
+description: Interactive setup wizard for running mobile E2E (Detox) tests locally. Use when a developer sets up their machine to run mobile E2E tests for the first time.
 disable-model-invocation: true
----
-
----
-description: Interactive setup wizard for running mobile E2E (Detox) tests locally
 ---
 
 # Mobile E2E Onboarding

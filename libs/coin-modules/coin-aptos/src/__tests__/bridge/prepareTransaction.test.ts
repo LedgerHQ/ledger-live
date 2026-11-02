@@ -85,6 +85,36 @@ describe("Aptos prepareTransaction", () => {
       expect(result.errors).toEqual({});
     });
 
+    it("should use the simulated gas when it exceeds the default budget if useAllAmount is true", async () => {
+      // e.g. a transfer that creates the recipient's primary store
+      transaction.recipient = "test-recipient";
+      transaction.useAllAmount = true;
+      const simulatedGas = new BigNumber(6289);
+      const simulatedGasPrice = new BigNumber(150);
+      (getMaxSendBalance as jest.Mock).mockReturnValue(new BigNumber(900));
+      (getEstimatedGas as jest.Mock).mockResolvedValue({
+        fees: simulatedGas.multipliedBy(simulatedGasPrice),
+        estimate: {
+          maxGasAmount: simulatedGas.toString(),
+          gasUnitPrice: simulatedGasPrice.toString(),
+        },
+        errors: {},
+      });
+
+      const result = await prepareTransaction(account, transaction);
+
+      expect(getMaxSendBalance).toHaveBeenCalledWith(
+        account,
+        undefined,
+        simulatedGas,
+        simulatedGasPrice,
+      );
+      expect(result.amount.isEqualTo(new BigNumber(900))).toBe(true);
+      expect(result.fees?.isEqualTo(simulatedGas.multipliedBy(simulatedGasPrice))).toBe(true);
+      expect(new BigNumber(result.options.maxGasAmount).isEqualTo(simulatedGas)).toBe(true);
+      expect(new BigNumber(result.options.gasUnitPrice).isEqualTo(simulatedGasPrice)).toBe(true);
+    });
+
     it("should estimate gas against a zeroed amount when useAllAmount is true", async () => {
       transaction.recipient = "test-recipient";
       transaction.useAllAmount = true;

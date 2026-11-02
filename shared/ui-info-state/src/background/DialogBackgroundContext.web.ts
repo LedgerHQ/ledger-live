@@ -1,6 +1,7 @@
 import React from "react";
+import type { InfoStateBackgroundTone } from "../InfoState.types";
 
-export type DialogBackgroundTone = "error" | "info" | "success";
+export type DialogBackgroundTone = InfoStateBackgroundTone;
 
 type CleanupDialogBackgroundTone = () => void;
 

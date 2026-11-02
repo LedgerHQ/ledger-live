@@ -20,7 +20,7 @@
   "sideEffects": false,
   "license": "Apache-2.0",
   "scripts": {
-    "token": "tsx src/cli.ts",
+    "baanx-token": "tsx src/cli.ts",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

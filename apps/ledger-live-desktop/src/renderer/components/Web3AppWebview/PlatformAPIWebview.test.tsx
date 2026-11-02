@@ -3,6 +3,8 @@ import { render } from "@testing-library/react";
 import { PlatformAPIWebview } from "./PlatformAPIWebview";
 import { useWebviewState } from "./helpers";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useJSONRPCServer } from "@ledgerhq/live-common/platform/JSONRPCServer";
+import type { WebviewBridgeMessage } from "~/bridge/contract";
 
 jest.mock("./helpers", () => ({
   useWebviewState: jest.fn(),
@@ -45,7 +47,22 @@ jest.mock("@ledgerhq/live-common/platform/react", () => ({
 }));
 
 jest.mock("@ledgerhq/live-common/platform/JSONRPCServer", () => ({
-  useJSONRPCServer: () => [jest.fn()],
+  useJSONRPCServer: jest.fn(),
+}));
+
+const mockSession = { receive: jest.fn() };
+const mockAccept = jest.fn();
+let mockOnBridgeMessage: ((message: WebviewBridgeMessage) => void) | undefined;
+
+jest.mock("./bridge", () => ({
+  useWebviewBridgeSession: () => ({
+    session: mockSession,
+    accept: mockAccept,
+    onMainFrameNavigation: jest.fn(),
+  }),
+  useWebviewBridgeMessages: (_ref: unknown, onBridgeMessage: (m: WebviewBridgeMessage) => void) => {
+    mockOnBridgeMessage = onBridgeMessage;
+  },
 }));
 
 jest.mock("@ledgerhq/live-common/platform/logic", () => ({
@@ -176,7 +193,7 @@ const mockUseWebviewState = jest.mocked(useWebviewState);
 describe("PlatformAPIWebview", () => {
   beforeAll(() => {
     Object.defineProperty(global, "api", {
-      value: { appDirname: "/fake/path", openWindow: jest.fn() },
+      value: { appDirname: "/fake/path" },
       writable: true,
     });
   });
@@ -202,6 +219,34 @@ describe("PlatformAPIWebview", () => {
     const { queryByTestId } = render(<PlatformAPIWebview manifest={mockManifest} />);
 
     expect(queryByTestId("network-error-screen")).not.toBeInTheDocument();
+  });
+
+  it("serves the Platform API on the bridge session", () => {
+    render(<PlatformAPIWebview manifest={mockManifest} />);
+
+    expect(useJSONRPCServer).toHaveBeenCalledWith(expect.any(Object), mockSession);
+  });
+
+  it("hands Platform API messages to the session of their origin", () => {
+    mockAccept.mockReturnValue(mockSession);
+    render(<PlatformAPIWebview manifest={mockManifest} />);
+
+    mockOnBridgeMessage?.({
+      guestId: 1,
+      origin: "https://example.com",
+      channel: "webviewToParent",
+      message: '{"id":1}',
+    });
+    mockOnBridgeMessage?.({
+      guestId: 1,
+      origin: "https://example.com",
+      channel: "dappToParent",
+      message: '{"id":2}',
+    });
+
+    expect(mockAccept).toHaveBeenCalledTimes(1);
+    expect(mockSession.receive).toHaveBeenCalledTimes(1);
+    expect(mockSession.receive).toHaveBeenCalledWith('{"id":1}');
   });
 
   it("shows Loader while widget is loading and no error", () => {

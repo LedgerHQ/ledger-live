@@ -1,18 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useIsFocused } from "@react-navigation/native";
 import { trackPage } from "@shared/analytics";
-
-export type TrackScreenProps = {
-  category?: string;
-  name?: string;
-  /** Should the full screen name become the `source` of further screen events. */
-  refreshSource?: boolean;
-  /** Drop the event when the last screen event emitted was this same one. */
-  avoidDuplicates?: boolean;
-  /** Send the screen event even when standard analytics tracking is disabled. */
-  mandatory?: boolean;
-  [key: string]: unknown;
-};
+import type { TrackScreenProps } from "./TrackScreen.types";
 
 /**
  * On focus, tracks an event named `Page ${category}${name ? " " + name : ""}`. A screen that is

@@ -1,4 +1,3 @@
-import querystring from "querystring";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import network from "@ledgerhq/live-network/network";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
@@ -45,10 +44,10 @@ const getAccountOperationUrl = (
   startAt: number,
   limit: number,
 ): string =>
-  `${getBaseApiUrl(config)}/accounts/${addr}/operations?${querystring.stringify({
-    limit,
-    offset,
-    startAt,
+  `${getBaseApiUrl(config)}/accounts/${addr}/operations?${new URLSearchParams({
+    limit: String(limit),
+    offset: String(offset),
+    startAt: String(startAt),
   })}`;
 
 const getWithdrawUnbondedAmount = (extrinsic: any) => {

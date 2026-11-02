@@ -10,6 +10,7 @@ import useCryptoAddressesViewModel from "LLM/features/CryptoAddresses/screens/Cr
 import { ScreenName } from "~/const";
 import { useTranslation } from "~/context/Locale";
 import { ASSET_DETAIL_TEST_IDS } from "LLM/features/AssetDetail/testIds";
+import { orderAccountsByIds } from "./orderAccountsByIds";
 
 type Props = Readonly<{
   isOpen: boolean;
@@ -23,6 +24,10 @@ export function AllAddressesDrawer({ isOpen, onClose, accountIds }: Props) {
     ScreenName.AssetDetail,
     accountIds,
     true,
+  );
+  const accountsInFiatOrder = useMemo(
+    () => orderAccountsByIds(accounts, accountIds),
+    [accounts, accountIds],
   );
 
   const handleAccountPress = useCallback(
@@ -63,7 +68,7 @@ export function AllAddressesDrawer({ isOpen, onClose, accountIds }: Props) {
     >
       <BottomSheetHeader spacing density="expanded" title={headerTitle} />
       <BottomSheetFlatList
-        data={accounts}
+        data={accountsInFiatOrder}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}

@@ -3,11 +3,13 @@ import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/ledger-wallet-framework/account/index";
-import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import { startSandbox } from "@ledgerhq/coin-tester/sandbox";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import type { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "../fixtures";
-import { callMyDealer, expectAddressInList, getBridges, polygon, VITALIK } from "../helpers";
-import { killAnvil, spawnAnvil } from "../anvil";
+import { atlasOf, swapTokens } from "../sandboxEvm";
+import { expectAddressInList, getBridges, polygon, VITALIK } from "../helpers";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { USDC_ON_POLYGON } from "../tokenFixtures";
 import { buildSigner } from "../signer";
@@ -78,17 +80,33 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
   ];
 };
 
+let sandbox: Sandbox | undefined;
+let closeGuard: (() => void) | null = null;
+// Puts the token store of the other scenarios of the run back
+let restoreTokens: (() => void) | null = null;
+let provider: ethers.JsonRpcProvider;
+let atlas: ReturnType<typeof atlasOf>;
+
+/** Whole units airdropped to the scenario's account: the chain starts with the dealer only. */
+const POL_AIRDROP = 10_000;
+const USDC_AIRDROP = 100;
+
 export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const signer = await buildSigner();
-    await spawnAnvil("https://polygon-bor-rpc.publicnode.com", signer.exportMnemonic());
-
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-
-    const lastBlockNumber = await provider.getBlockNumber();
-    // start indexing at next block
-    setBlock(lastBlockNumber + 1);
+    sandbox = await startSandbox(
+      { family: "evm", network: "polygon" },
+      {
+        node: { provider: "bor", version: "2.10.2" },
+        indexer: { provider: "atlas", version: "2.38.16" },
+      },
+    );
+    const { node: rpc, indexer: explorer } = sandbox.endpoints;
+    if (rpc === undefined || explorer === undefined) {
+      throw new Error("the sandbox instance has no node or indexer endpoint");
+    }
+    atlas = atlasOf(explorer, "matic");
 
     const info: EvmConfigInfo = {
       status: {
@@ -99,7 +117,7 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
       unit: { name: "POL", code: "POL", magnitude: 18 },
       node: {
         type: "external",
-        uri: "http://127.0.0.1:8545",
+        uri: rpc,
       },
       gasTracker: {
         type: "ledger",
@@ -109,6 +127,8 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
         type: "ledger",
         explorerId: "matic",
       },
+      // The `ledger` explorer and gas tracker are the sandbox's Atlas
+      ledgerExplorerUri: explorer,
       supportedTokens: ["erc721", "erc1155"],
     };
     LiveConfig.setConfig({
@@ -117,7 +137,11 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
         default: info,
       },
     });
-    initMswHandlers(info);
+
+    // USDC (PoS), the bridged one, is a mainnet token the sandbox preloads at its address
+    restoreTokens = swapTokens(polygon.id, [USDC_ON_POLYGON]);
+
+    closeGuard = forbidRemoteRequests();
 
     const { currencyBridge, accountBridge, getAddress } = await getBridges(signer);
     const { address } = await getAddress("", {
@@ -128,21 +152,22 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, polygon);
 
-    setBlock(lastBlockNumber + 1);
+    provider = new ethers.JsonRpcProvider(rpc);
 
-    // Send 100 USDC to the scenario account
-    await callMyDealer({
-      provider,
-      drug: USDC_ON_POLYGON,
-      junkie: address,
-      dose: ethers.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude),
-    });
+    // The chain starts with the dealer only: the account gets its POL and its USDC by airdrop
+    await sandbox.airdrop(address, POL_AIRDROP);
+    await sandbox.airdrop(address, USDC_AIRDROP, USDC_ON_POLYGON.contractAddress);
+    // The first sync must see both airdrops, and the first transaction a gas tracker that has seen them
+    await atlas.waitForBlock(await provider.getBlockNumber());
+    await atlas.waitForGasTracker();
 
     return { currencyBridge, accountBridge, account: scenarioAccount };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
-  beforeSync: async () => {
-    await indexBlocks(137);
+  mockIndexer: async (_account, optimistic) => {
+    const receipt = await provider.waitForTransaction(optimistic.hash, 1, 60_000);
+    if (receipt === null) throw new Error(`${optimistic.hash} is not in a block after 60 s`);
+    await atlas.waitForBlock(receipt.blockNumber);
   },
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
@@ -158,10 +183,15 @@ export const scenarioPolygon: Scenario<GenericTransaction, Account> = {
       ethers.parseUnits("20", USDC_ON_POLYGON.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
-    expect(account.operations.length).toBe(4);
+    // The POL airdrop (IN), the USDC airdrop (NONE on the parent account), then the three sends
+    expect(account.operations.length).toBe(5);
   },
   teardown: async () => {
-    resetIndexer();
-    await killAnvil();
+    closeGuard?.();
+    closeGuard = null;
+    restoreTokens?.();
+    restoreTokens = null;
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };

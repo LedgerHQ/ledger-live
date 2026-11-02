@@ -73,7 +73,7 @@ export type { EarnDeviceContext } from "./device-context";
 export type DepositEvmParams = {
   /** Resolved source account (the EVM account funding the deposit). */
   descriptor: AccountDescriptor;
-  /** Canonical network string, e.g. "ethereum:main". */
+  /** Network id, e.g. "ethereum". */
   network: string;
   /** Vault id from GET /v1/defi/products (the trusted-vault allowlist key). */
   productId: string;
@@ -93,7 +93,7 @@ export type DepositEvmParams = {
 export type WithdrawEvmParams = {
   /** Resolved source account (the EVM account that owns the vault shares). */
   descriptor: AccountDescriptor;
-  /** Canonical network string, e.g. "ethereum:main". */
+  /** Network id, e.g. "ethereum". */
   network: string;
   /** Vault id from GET /v1/defi/products. */
   productId: string;

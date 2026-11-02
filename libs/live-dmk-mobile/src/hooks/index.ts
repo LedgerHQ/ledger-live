@@ -11,3 +11,9 @@ export {
   useDeviceManagementKit,
   setFirmwareDistributionSalt,
 } from "./useDeviceManagementKit";
+export {
+  configureMockServerTransport,
+  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
+  getMockScriptRunnerBaseUrl,
+  isMockServerTransportEnabled,
+} from "../mockServerTransportConfig";

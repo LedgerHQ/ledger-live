@@ -1,5 +1,5 @@
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import { NoAccountDataSourceError } from "./errors";
+import { AccountDataNotServedError, NoAccountDataSourceError } from "./errors";
 import {
   createAccountDataRouter,
   type AccountDataReadOptions,
@@ -134,7 +134,7 @@ describe("createAccountDataRouter", () => {
     it("splits the accounts between the sources first for each", async () => {
       const { source: evm, calls } = batchSource({
         id: sourceIdOf("evm"),
-        supports: account => account.network.name === "ethereum",
+        supports: account => account.network === "ethereum",
       });
       const fallback = singleSource("fallback");
       fallback.release();
@@ -154,7 +154,7 @@ describe("createAccountDataRouter", () => {
     it("fails only the account whose routing threw, not the reads of its tick", async () => {
       const { source } = batchSource({
         supports: account => {
-          if (account.network.name === "bitcoin") throw new Error("unknown network");
+          if (account.network === "bitcoin") throw new Error("unknown network");
           return true;
         },
       });
@@ -165,7 +165,7 @@ describe("createAccountDataRouter", () => {
     });
 
     it("rejects only the accounts no source can answer", async () => {
-      const { source } = batchSource({ supports: account => account.network.name === "ethereum" });
+      const { source } = batchSource({ supports: account => account.network === "ethereum" });
       const router = createAccountDataRouter([source]);
       const [served, orphan] = await readAll(router, [descriptorOf(0), descriptorOf(1, "bitcoin")]);
       expect(served.status).toBe("fulfilled");
@@ -201,7 +201,7 @@ describe("createAccountDataRouter", () => {
   describe("coalescing single reads", () => {
     it("answers each caller as soon as its own source answers", async () => {
       const slow = singleSource("slow", {
-        supports: account => account.network.name === "bitcoin",
+        supports: account => account.network === "bitcoin",
       });
       const router = createAccountDataRouter([
         slow.source,
@@ -452,5 +452,217 @@ describe("createAccountDataRouter", () => {
       expect(head.data.items).toEqual(["head"]);
       expect(next.data.items).toEqual(["c1"]);
     });
+  });
+});
+
+describe("addSource", () => {
+  const constant = (id: string, value: number): AccountDataSource => ({
+    id: sourceIdOf(id),
+    supports: () => true,
+    read: { counter: async () => value },
+  });
+
+  it("serves from the next read, after the sources ranked at creation", async () => {
+    const router = createAccountDataRouter([]);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
+      NoAccountDataSourceError,
+    );
+    router.addSource(constant("late", 1));
+    await expect(router.read("counter", descriptor)).resolves.toEqual({
+      data: 1,
+      sourceId: "late",
+    });
+
+    const ranked = createAccountDataRouter([constant("first", 0)]);
+    ranked.addSource(constant("late", 1));
+    await expect(ranked.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("ranks a source added first ahead of the app's, until removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    const remove = router.addSource(constant("takeover", 1), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("moves a source added first ahead, even in place of one sharing its id", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    router.addSource(constant("dev", 2), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+  });
+
+  it("puts a source replaced by one added first back at its rank once removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const remove = router.addSource(constant("dev", 2), { first: true });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("puts back a runtime source a first one replaced at its own rank", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    router.addSource(constant("dev", 1));
+    const removeReplacement = router.addSource(constant("dev", 2), { first: true });
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+    removeReplacement();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("leaves the ranking alone when removing a registration that no longer answers", async () => {
+    const router = createAccountDataRouter([constant("app", 0)]);
+    const removeShadowed = router.addSource(constant("a", 1), { first: true });
+    router.addSource(constant("a", 2), { first: true });
+    router.addSource(constant("b", 3), { first: true });
+    removeShadowed();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 3 });
+  });
+
+  it("keeps the app's order once first replacements of two of its sources are removed", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const removeDev = router.addSource(constant("dev", 2), { first: true });
+    const removeApp = router.addSource(constant("app", 3), { first: true });
+    removeDev();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 3 });
+    removeApp();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("restores the app's order whatever order the first sources are removed in", async () => {
+    const router = createAccountDataRouter([constant("app", 0), constant("dev", 1)]);
+    const removeReplacement = router.addSource(constant("dev", 2), { first: true });
+    const removeOverlay = router.addSource(constant("overlay", 3), { first: true });
+    removeReplacement();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 3 });
+    removeOverlay();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("replaces the source sharing its id, and its remover puts it back", async () => {
+    const router = createAccountDataRouter([constant("dev", 0)]);
+    const remove = router.addSource(constant("dev", 1));
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+    remove();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+  });
+
+  it("ranks the latest source still registered when removers run out of order", async () => {
+    const router = createAccountDataRouter([constant("dev", 0)]);
+    const removeA = router.addSource(constant("dev", 1));
+    const removeB = router.addSource(constant("dev", 2));
+    removeA();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 2 });
+    removeB();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 0 });
+
+    const added = createAccountDataRouter([]);
+    const removeC = added.addSource(constant("dev", 1));
+    const removeD = added.addSource(constant("dev", 2));
+    removeC();
+    removeD();
+    await expect(added.read("counter", descriptor)).rejects.toBeInstanceOf(
+      NoAccountDataSourceError,
+    );
+  });
+
+  it("removes a registration, not the latest one of the same source", async () => {
+    const router = createAccountDataRouter([]);
+    const a = constant("dev", 1);
+    const removeFirstA = router.addSource(a);
+    const removeB = router.addSource(constant("dev", 2));
+    router.addSource(a);
+    removeFirstA();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+    removeB();
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+  });
+
+  it("routes a descriptor only to the sources serving its purpose, account by default", async () => {
+    const router = createAccountDataRouter([{ ...constant("none", 0), purposes: [] }]);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
+      NoAccountDataSourceError,
+    );
+    router.addSource(constant("real", 1));
+    await expect(router.read("counter", descriptor)).resolves.toMatchObject({ data: 1 });
+  });
+});
+
+describe("fall-through", () => {
+  const notServed = () => new AccountDataNotServedError("not here");
+  const fallback = (value: number): AccountDataSource => ({
+    id: sourceIdOf("fallback"),
+    supports: () => true,
+    read: { counter: async () => value },
+  });
+  /** Serves even accounts, hands the odd ones to the next source. */
+  const evenOnly: AccountDataSource = {
+    id: sourceIdOf("even"),
+    supports: () => true,
+    readBatch: {
+      counter: async targets =>
+        targets.map(target =>
+          indexOf(target) % 2 === 0
+            ? { status: "fulfilled", value: indexOf(target) }
+            : { status: "rejected", reason: notServed() },
+        ),
+    },
+  };
+
+  it("hands an account a source did not serve to the next ranked source", async () => {
+    const router = createAccountDataRouter([evenOnly, fallback(-1)]);
+    const [even, odd] = await readAll(router, descriptors(2));
+    expect(even).toMatchObject({ status: "fulfilled", value: { data: 0, sourceId: "even" } });
+    expect(odd).toMatchObject({ status: "fulfilled", value: { data: -1, sourceId: "fallback" } });
+  });
+
+  it("rejects with the last refusal when no source is left", async () => {
+    const router = createAccountDataRouter([evenOnly]);
+    await expect(router.read("counter", descriptorOf(1))).rejects.toMatchObject({
+      name: "AccountDataNotServedError",
+    });
+  });
+
+  it("asks each source once, however many refuse", async () => {
+    const refusing = (id: string): AccountDataSource => ({
+      id: sourceIdOf(id),
+      supports: () => true,
+      read: { counter: jest.fn(async () => Promise.reject(notServed())) },
+    });
+    const first = refusing("first");
+    const second = refusing("second");
+    const router = createAccountDataRouter([first, second]);
+    await expect(router.read("counter", descriptor)).rejects.toBeInstanceOf(
+      AccountDataNotServedError,
+    );
+    expect(first.read?.counter).toHaveBeenCalledTimes(1);
+    expect(second.read?.counter).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a next page on the source that handed out its cursor", async () => {
+    const router = createAccountDataRouter([evenOnly, fallback(-1)]);
+    await expect(
+      router.read("counter", descriptorOf(1), { sourceId: sourceIdOf("even"), cursor: "c" }),
+    ).rejects.toBeInstanceOf(AccountDataNotServedError);
+  });
+
+  it.each(["c", ""])(
+    "keeps a cursor %p on its source even when no source is pinned",
+    async cursor => {
+      const router = createAccountDataRouter([evenOnly, fallback(-1)]);
+      await expect(router.read("counter", descriptorOf(1), { cursor })).rejects.toBeInstanceOf(
+        AccountDataNotServedError,
+      );
+    },
+  );
+
+  it("does not fall through on any other failure", async () => {
+    const failing: AccountDataSource = {
+      id: sourceIdOf("failing"),
+      supports: () => true,
+      read: { counter: async () => Promise.reject(new Error("down")) },
+    };
+    const router = createAccountDataRouter([failing, fallback(-1)]);
+    await expect(router.read("counter", descriptor)).rejects.toThrow("down");
   });
 });

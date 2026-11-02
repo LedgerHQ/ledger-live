@@ -1,6 +1,5 @@
 import console from "console";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
-import { killChopsticksAndSidecar } from "./chopsticks-sidecar";
 import { AssetHubScenario } from "./scenarii/AssetHub";
 import { PolkadotScenario } from "./scenarii/Polkadot";
 
@@ -12,10 +11,7 @@ describe("Polkadot Deterministic Tester", () => {
     try {
       await executeScenario(AssetHubScenario);
     } catch (e) {
-      if (e != "done") {
-        await killChopsticksAndSidecar();
-        throw e;
-      }
+      if (e != "done") throw e;
     }
   });
 
@@ -23,16 +19,7 @@ describe("Polkadot Deterministic Tester", () => {
     try {
       await executeScenario(PolkadotScenario);
     } catch (e) {
-      if (e != "done") {
-        await killChopsticksAndSidecar();
-        throw e;
-      }
+      if (e != "done") throw e;
     }
   });
 });
-
-["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(e =>
-  process.on(e, () => {
-    killChopsticksAndSidecar().catch(() => {});
-  }),
-);

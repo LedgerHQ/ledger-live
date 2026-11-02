@@ -140,19 +140,19 @@ describe("AccountSettingsDialog (Web)", () => {
     expect(screen.getByTestId("dialog-status-gradient-error")).toBeInTheDocument();
     expect(screen.queryByTestId("account-settings-menu")).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Yes, remove." }));
+    await user.click(screen.getByRole("button", { name: "Yes, remove" }));
     await user.click(screen.getByRole("button", { name: "Keep" }));
 
     expect(props.onConfirmRemove).toHaveBeenCalledTimes(1);
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("goes back to the menu from the remove confirmation", async () => {
+  it("has no back button on the remove confirmation", async () => {
     const { user } = renderDialog();
 
     await user.click(screen.getByTestId("account-settings-remove-account"));
-    await user.click(screen.getByRole("button", { name: "Go back" }));
 
-    expect(screen.getByTestId("account-settings-menu")).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Go back" })).not.toBeInTheDocument();
+    expect(screen.getByText("Remove account?")).toBeVisible();
   });
 });

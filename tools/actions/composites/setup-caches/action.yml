@@ -57,10 +57,11 @@ runs:
       shell: bash
       run: echo "NX_SKIP_NX_CACHE=true" >> "$GITHUB_ENV"
 
-    # Self-hosted runner images ship mise and every tool pinned in mise.toml - only run when not applicable
+    # Self-hosted and custom GitHub-hosted runner images ship mise and every tool pinned in
+    # mise.toml. Elsewhere mise is missing, so this reports found=false and mise-action runs.
     - name: Detect preinstalled mise tools
       id: mise-preinstalled
-      if: inputs.use-mise == 'true' && runner.environment == 'self-hosted' && runner.os == 'Linux'
+      if: inputs.use-mise == 'true' && runner.os == 'Linux'
       shell: bash
       env:
         MISE_EXPERIMENTAL: "1"
@@ -78,7 +79,7 @@ runs:
       uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
         # pinned: following latest mise once broke plugin installs (TSDINT-1644)
-        version: "2026.9.1"
+        version: "2026.10.17"
         install: true
         cache: true
         reshim: true
@@ -102,6 +103,18 @@ runs:
       shell: bash
       run: |
         echo "store-path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+        # pnpm 10 prints its help for `pnpm cache path` (release branches still on pnpm 10 load this action @develop)
+        if [ "$(pnpm --version | cut -d. -f1)" -ge 11 ]; then
+          echo "cache-path=$(pnpm cache path)" >> $GITHUB_OUTPUT
+        fi
+
+    # pnpm 11 checks every lockfile entry against the registry (supply-chain policies) unless this record matches
+    - name: Cache pnpm lockfile verification
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      if: steps.get-store-path.outputs.cache-path != ''
+      with:
+        path: ${{ steps.get-store-path.outputs.cache-path }}/lockfile-verified.jsonl
+        key: pnpm-lockfile-verified-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml') }}
 
     - name: Resolve Nx remote cache profile and apply S3 prefix
       id: nx-remote-cache

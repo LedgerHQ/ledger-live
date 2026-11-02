@@ -1,13 +1,12 @@
-import type {
-  MemoNotSupported,
-  TransactionIntent,
-} from "@ledgerhq/coin-module-framework/api/index";
+import type { TransactionIntent } from "@ledgerhq/coin-module-framework/api/index";
 import { setEnv } from "@ledgerhq/live-env";
 import { createStxTransferTransaction, createTokenTransferTransaction } from "../../common-logic";
 import { STACKS_DUMMY_PUBLIC_KEY } from "../../constants";
-import type { StacksTxData } from "../../types";
+import { StacksMemoTooLong } from "../../errors";
+import type { StacksMemo, StacksTxData } from "../../types";
 import { getBalance } from "../getBalance";
 import { buildUnsignedTx } from "../buildUnsignedTx";
+import { validateIntent } from "../validateIntent";
 
 jest.mock("../../common-logic", () => ({
   ...jest.requireActual("../../common-logic"),
@@ -22,8 +21,8 @@ const PUBLIC_KEY = "02" + "ab".repeat(32);
 const FAKE_TX = { payload: {} };
 
 function transferIntent(
-  overrides: Partial<TransactionIntent<MemoNotSupported, StacksTxData>> = {},
-): TransactionIntent<MemoNotSupported, StacksTxData> {
+  overrides: Partial<TransactionIntent<StacksMemo, StacksTxData>> = {},
+): TransactionIntent<StacksMemo, StacksTxData> {
   return {
     intentType: "transaction",
     type: "send",
@@ -105,6 +104,81 @@ describe("buildUnsignedTx", () => {
       await expect(
         buildUnsignedTx(transferIntent({ senderPublicKey: SENDER }), 300n, 5n),
       ).rejects.toThrow("senderPublicKey is required");
+    });
+  });
+
+  describe("memo", () => {
+    const memo: StacksMemo = { type: "string", kind: "memo", value: "1234" };
+    const TOKEN = "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.age000-governance-token::alex";
+
+    it("puts the intent's memo on an STX transfer", async () => {
+      await buildUnsignedTx(transferIntent({ memo }), 300n, 5n);
+
+      const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
+      expect(call[5]).toEqual(expect.objectContaining({ memo: "1234" }));
+    });
+
+    it("puts the intent's memo on a SIP-010 transfer", async () => {
+      await buildUnsignedTx(
+        transferIntent({
+          memo,
+          asset: { type: "token", assetReference: TOKEN, assetOwner: SENDER },
+        }),
+        300n,
+        5n,
+      );
+
+      expect(createTokenTransferTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({ memo: "1234" }),
+      );
+    });
+
+    it("leaves the memo out when the intent carries none", async () => {
+      await buildUnsignedTx(transferIntent(), 300n, 5n);
+
+      const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
+      expect(call[5].memo).toBeUndefined();
+    });
+
+    it("leaves an STX transfer's memo out of a fee estimate, its width being fixed", async () => {
+      await buildUnsignedTx(transferIntent({ memo }), 0n, 5n, { forEstimation: true });
+
+      const call = (createStxTransferTransaction as jest.Mock).mock.calls[0];
+      expect(call[5].memo).toBeUndefined();
+    });
+
+    it("keeps a SIP-010 transfer's memo in a fee estimate, since it changes the size", async () => {
+      await buildUnsignedTx(
+        transferIntent({
+          memo,
+          asset: { type: "token", assetReference: TOKEN, assetOwner: SENDER },
+        }),
+        0n,
+        5n,
+        { forEstimation: true },
+      );
+
+      expect(createTokenTransferTransaction).toHaveBeenCalledWith(
+        expect.objectContaining({ memo: "1234" }),
+      );
+    });
+
+    it("estimates an oversized STX memo so validateIntent can report it", async () => {
+      const { createStxTransferTransaction: actualCreateStxTransferTransaction } =
+        jest.requireActual("../../common-logic");
+      (createStxTransferTransaction as jest.Mock).mockImplementation(
+        actualCreateStxTransferTransaction,
+      );
+      const intent = transferIntent({
+        memo: { type: "string", kind: "memo", value: "x".repeat(35) },
+      });
+
+      await expect(buildUnsignedTx(intent, 0n, 5n, { forEstimation: true })).resolves.toBeDefined();
+
+      const { errors } = await validateIntent(intent, [
+        { value: 10000n, asset: { type: "native" } },
+      ]);
+      expect(errors.transaction).toBeInstanceOf(StacksMemoTooLong);
     });
   });
 

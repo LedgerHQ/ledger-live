@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { CardTransactionsView } from "./CardTransactionsView";
-import type { CardTransactionsScreenViewProps } from "./types";
+import type { CardTransactionsScreenViewProps } from "./CardTransactions.types";
 
 const defaultProps: CardTransactionsScreenViewProps = {
   displayState: "empty",

@@ -1,0 +1,316 @@
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
+index 80c6803..81a6ea2 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebView.java
+@@ -95,6 +95,10 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+         mRNCWebViewClient.setBasicAuthCredential(credential);
+     }
+ 
++    public void setAllowsUnsecureHttps(boolean allowsUnsecureHttps) {
++        mRNCWebViewClient.setAllowsUnsecureHttps(allowsUnsecureHttps);
++    }
++
+     public void setSendContentSizeChangeEvents(boolean sendContentSizeChangeEvents) {
+         this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
+     }
+@@ -253,7 +257,7 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+             this.bridgeListener = new WebViewCompat.WebMessageListener() {
+               @Override
+               public void onPostMessage(@NonNull WebView view, @NonNull WebMessageCompat message, @NonNull Uri sourceOrigin, boolean isMainFrame, @NonNull JavaScriptReplyProxy replyProxy) {
+-                RNCWebView.this.onMessage(message.getData(), sourceOrigin.toString());
++                RNCWebView.this.onMessage(message.getData(), sourceOrigin.toString(), isMainFrame);
+               }
+             };
+             WebViewCompat.addWebMessageListener(
+@@ -325,6 +329,12 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+     }
+ 
+     public void onMessage(String message, String sourceUrl) {
++        onMessage(message, sourceUrl, null);
++    }
++
++    // Ledger Live patch (LIVE-39616): reports whether the sender is the main frame, when known.
++    // Remove once react-native-webview forwards isMainFrame upstream.
++    public void onMessage(String message, String sourceUrl, @Nullable Boolean isMainFrame) {
+         ThemedReactContext reactContext = getThemedReactContext();
+         RNCWebView mWebView = this;
+ 
+@@ -338,6 +348,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+                     }
+                     WritableMap data = mRNCWebViewClient.createWebViewEvent(webView, sourceUrl);
+                     data.putString("data", message);
++                    if (isMainFrame != null) {
++                        data.putBoolean("isMainFrame", isMainFrame);
++                    }
+ 
+                     if (mMessagingJSModule != null) {
+                         dispatchDirectMessage(data);
+@@ -349,6 +362,9 @@ public class RNCWebView extends WebView implements LifecycleEventListener {
+         } else {
+             WritableMap eventData = Arguments.createMap();
+             eventData.putString("data", message);
++            if (isMainFrame != null) {
++                eventData.putBoolean("isMainFrame", isMainFrame);
++            }
+ 
+             if (mMessagingJSModule != null) {
+                 dispatchDirectMessage(eventData);
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
+index 0287e1c..4efe38d 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewClient.java
+@@ -42,6 +42,7 @@ public class RNCWebViewClient extends WebViewClient {
+     protected static final int SHOULD_OVERRIDE_URL_LOADING_TIMEOUT = 250;
+ 
+     protected boolean mLastLoadFailed = false;
++    protected boolean mAllowsUnsecureHttps = false;
+     protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
+     protected @Nullable RNCBasicAuthCredential basicAuthCredential = null;
+ 
+@@ -49,6 +50,10 @@ public class RNCWebViewClient extends WebViewClient {
+         basicAuthCredential = credential;
+     }
+ 
++    public void setAllowsUnsecureHttps(boolean allowsUnsecureHttps) {
++        mAllowsUnsecureHttps = allowsUnsecureHttps;
++    }
++
+     @Override
+     public void onPageFinished(WebView webView, String url) {
+         super.onPageFinished(webView, url);
+@@ -92,6 +97,10 @@ public class RNCWebViewClient extends WebViewClient {
+ 
+     @Override
+     public boolean shouldOverrideUrlLoading(WebView view, String url) {
++        return this.shouldOverrideUrlLoading(view, url, true);
++    }
++
++    protected boolean shouldOverrideUrlLoading(WebView view, String url, boolean isMainFrame) {
+         final RNCWebView rncWebView = (RNCWebView) view;
+         final boolean isJsDebugging = rncWebView.getReactApplicationContext().getJavaScriptContextHolder().get() == 0;
+ 
+@@ -102,6 +111,9 @@ public class RNCWebViewClient extends WebViewClient {
+ 
+             final WritableMap event = createWebViewEvent(view, url);
+             event.putDouble("lockIdentifier", lockIdentifier);
++            // Ledger Live patch (LIVE-39616): forward the real frame instead of leaving isTopFrame
++            // unset. Remove once react-native-webview sets isTopFrame on Android upstream.
++            event.putBoolean("isTopFrame", isMainFrame);
+             rncWebView.dispatchDirectShouldStartLoadWithRequest(event);
+ 
+             try {
+@@ -143,7 +155,7 @@ public class RNCWebViewClient extends WebViewClient {
+     @Override
+     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+         final String url = request.getUrl().toString();
+-        return this.shouldOverrideUrlLoading(view, url);
++        return this.shouldOverrideUrlLoading(view, url, request.isForMainFrame());
+     }
+ 
+     @Override
+@@ -167,7 +179,12 @@ public class RNCWebViewClient extends WebViewClient {
+         // Cancel request after obtaining top-level URL.
+         // If request is cancelled before obtaining top-level URL, undesired behavior may occur.
+         // Undesired behavior: Return value of WebView.getUrl() may be the current URL instead of the failing URL.
+-        handler.cancel();
++
++        if (mAllowsUnsecureHttps) {
++            handler.proceed();
++        } else {
++            handler.cancel();
++        }
+ 
+         int code = error.getPrimaryError();
+         String description = "";
+diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
+index f83033b..4d546d2 100644
+--- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
++++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt
+@@ -563,6 +563,10 @@ class RNCWebViewManagerImpl(private val newArch: Boolean = false) {
+         setupWebChromeClient(view)
+     }
+ 
++    fun setAllowsUnsecureHttps(viewWrapper: RNCWebViewWrapper, value: Boolean) {
++        viewWrapper.webView.setAllowsUnsecureHttps(value)
++    }
++
+     fun setAndroidLayerType(viewWrapper: RNCWebViewWrapper, layerTypeString: String?) {
+         val view = viewWrapper.webView
+         val layerType = when (layerTypeString) {
+diff --git a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+index 4709e28..723fcc9 100644
+--- a/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
++++ b/android/src/newarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+@@ -88,6 +88,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper>
+         mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
+     }
+ 
++    @ReactProp(name = "allowsUnsecureHttps")
++    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
++        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
++    }
++
+     @Override
+     @ReactProp(name = "allowsProtectedMedia")
+     public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
+diff --git a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+index 974337f..f721441 100644
+--- a/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
++++ b/android/src/oldarch/com/reactnativecommunity/webview/RNCWebViewManager.java
+@@ -67,6 +67,11 @@ public class RNCWebViewManager extends ViewGroupManager<RNCWebViewWrapper> {
+         mRNCWebViewManagerImpl.setAllowsFullscreenVideo(view, value);
+     }
+ 
++    @ReactProp(name = "allowsUnsecureHttps")
++    public void setAllowsUnsecureHttps(RNCWebViewWrapper view, boolean value) {
++        mRNCWebViewManagerImpl.setAllowsUnsecureHttps(view, value);
++    }
++
+     @ReactProp(name = "allowsProtectedMedia")
+     public void setAllowsProtectedMedia(RNCWebViewWrapper view, boolean value) {
+         mRNCWebViewManagerImpl.setAllowsProtectedMedia(view, value);
+diff --git a/apple/RNCWebView.mm b/apple/RNCWebView.mm
+index c0816b6..476c545 100644
+--- a/apple/RNCWebView.mm
++++ b/apple/RNCWebView.mm
+@@ -154,7 +154,8 @@ - (instancetype)initWithFrame:(CGRect)frame
+                     .canGoBack = static_cast<bool>([[dictionary valueForKey:@"canGoBack"] boolValue]),
+                     .canGoForward = static_cast<bool>([[dictionary valueForKey:@"canGoForward"] boolValue]),
+                     .loading = static_cast<bool>([[dictionary valueForKey:@"loading"] boolValue]),
+-                    .data = nullSafeString([dictionary valueForKey:@"data"])
++                    .data = nullSafeString([dictionary valueForKey:@"data"]),
++                    .isMainFrame = static_cast<bool>([[dictionary valueForKey:@"isMainFrame"] boolValue])
+                 };
+                 webViewEventEmitter->onMessage(data);
+             }
+diff --git a/apple/RNCWebViewImpl.h b/apple/RNCWebViewImpl.h
+index 1f6bbfd..c854638 100644
+--- a/apple/RNCWebViewImpl.h
++++ b/apple/RNCWebViewImpl.h
+@@ -82,6 +82,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *)request
+ @property (nonatomic, assign) BOOL allowsInlineMediaPlayback;
+ @property (nonatomic, assign) BOOL allowsPictureInPictureMediaPlayback;
+ @property (nonatomic, assign) BOOL webviewDebuggingEnabled;
++@property (nonatomic, assign) BOOL allowsUnsecureHttps;
+ @property (nonatomic, assign) BOOL allowsAirPlayForMediaPlayback;
+ @property (nonatomic, assign) BOOL bounces;
+ @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
+diff --git a/apple/RNCWebViewImpl.m b/apple/RNCWebViewImpl.m
+index 7f5c24d..c257917 100644
+--- a/apple/RNCWebViewImpl.m
++++ b/apple/RNCWebViewImpl.m
+@@ -786,6 +786,9 @@ - (void)userContentController:(WKUserContentController *)userContentController
+       NSMutableDictionary<NSString *, id> *event = [self baseEvent];
+       [event addEntriesFromDictionary: @{@"data": message.body}];
+       [event addEntriesFromDictionary: @{@"url": message.frameInfo.request.URL.absoluteString}];
++      // Ledger Live patch (LIVE-39616): whether the sender is the main frame. Remove once
++      // react-native-webview forwards isMainFrame upstream.
++      [event addEntriesFromDictionary: @{@"isMainFrame": @(message.frameInfo.isMainFrame)}];
+       _onMessage(event);
+     }
+   }
+@@ -1161,6 +1164,12 @@ - (void)                    webView:(WKWebView *)webView
+     completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
+     return;
+   }
++  if (_allowsUnsecureHttps == true) {
++    SecTrustRef trust = [[challenge protectionSpace] serverTrust];
++    NSURLCredential *useCredential = [NSURLCredential credentialForTrust:trust];
++    completionHandler(NSURLSessionAuthChallengeUseCredential, useCredential);
++    return;
++  }
+   if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
+     SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
+     if (localCertificate != nil) {
+@@ -1345,8 +1354,13 @@ - (void)                  webView:(WKWebView *)webView
+ 
+     WKNavigationType navigationType = navigationAction.navigationType;
+     NSURLRequest *request = navigationAction.request;
+-    BOOL isTopFrame = [request.URL isEqual:request.mainDocumentURL];
+     BOOL hasTargetFrame = navigationAction.targetFrame != nil;
++    // Ledger Live patch (LIVE-39616): use the target frame when WebKit provides it; comparing the
++    // request URL with mainDocumentURL mislabels an iframe that loads the top document URL.
++    // Remove once react-native-webview uses targetFrame.isMainFrame upstream.
++    BOOL isTopFrame = hasTargetFrame
++      ? navigationAction.targetFrame.isMainFrame
++      : [request.URL isEqual:request.mainDocumentURL];
+ 
+     if (_onOpenWindow && !hasTargetFrame) {
+       // When OnOpenWindow should be called, we want to prevent the navigation
+diff --git a/apple/RNCWebViewManager.mm b/apple/RNCWebViewManager.mm
+index f8f375f..a6103fc 100644
+--- a/apple/RNCWebViewManager.mm
++++ b/apple/RNCWebViewManager.mm
+@@ -64,6 +64,7 @@ - (RNCView *)view
+ RCT_EXPORT_VIEW_PROPERTY(allowsInlineMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsPictureInPictureMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(webviewDebuggingEnabled, BOOL)
++RCT_EXPORT_VIEW_PROPERTY(allowsUnsecureHttps, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsAirPlayForMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(mediaPlaybackRequiresUserAction, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
+diff --git a/lib/WebViewTypes.d.ts b/lib/WebViewTypes.d.ts
+index 998cc88..9f0233f 100644
+--- a/lib/WebViewTypes.d.ts
++++ b/lib/WebViewTypes.d.ts
+@@ -68,6 +68,10 @@ export interface FileDownload {
+ export type DecelerationRateConstant = 'normal' | 'fast';
+ export interface WebViewMessage extends WebViewNativeEvent {
+     data: string;
++    /**
++     * Whether the sender is the main frame. Unset when the platform cannot tell.
++     */
++    isMainFrame?: boolean;
+ }
+ export interface WebViewError extends WebViewNativeEvent {
+     /**
+@@ -475,6 +479,11 @@ export interface IOSWebViewProps extends WebViewSharedProps {
+      * @platform ios
+      */
+     allowUniversalAccessFromFileURLs?: boolean;
++    /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform ios
++     */
++    allowsUnsecureHttps?: boolean;
+     /**
+      * Function that is invoked when the WebKit WebView content process gets terminated.
+      * @platform ios
+@@ -757,6 +766,11 @@ export interface MacOSWebViewProps extends WebViewSharedProps {
+      * @platform macos
+      */
+     allowUniversalAccessFromFileURLs?: boolean;
++    /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform macos
++     */
++    allowsUnsecureHttps?: boolean;
+     /**
+      * Function that is invoked when the WebKit WebView content process gets terminated.
+      * @platform macos
+@@ -893,6 +907,11 @@ export interface AndroidWebViewProps extends WebViewSharedProps {
+      * Sets ability to open fullscreen videos on Android devices.
+      */
+     allowsFullscreenVideo?: boolean;
++    /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform android
++     */
++    allowsUnsecureHttps?: boolean;
+     /**
+      * Configuring Dark Theme
+      *
+diff --git a/src/RNCWebViewNativeComponent.ts b/src/RNCWebViewNativeComponent.ts
+index 7f4e6c4..0e33237 100644
+--- a/src/RNCWebViewNativeComponent.ts
++++ b/src/RNCWebViewNativeComponent.ts
+@@ -29,6 +29,9 @@ export type WebViewMessageEvent = Readonly<{
+   canGoForward: boolean;
+   lockIdentifier: Double;
+   data: string;
++  // Ledger Live patch (LIVE-39616): whether the sender is the main frame. Remove once
++  // react-native-webview forwards isMainFrame upstream.
++  isMainFrame: boolean;
+ }>;
+ export type WebViewOpenWindowEvent = Readonly<{
+   targetUrl: string;

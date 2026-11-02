@@ -1,37 +1,21 @@
 import React from "react";
-import {
-  Avatar,
-  resolveAvatarColor,
-  type AvatarProps as LumenAvatarProps,
-} from "@ledgerhq/lumen-ui-react";
-import type { ContactId } from "@domain/entity-contact";
+import { Avatar, resolveAvatarColor } from "@ledgerhq/lumen-ui-react";
 import { getContactAvatarInitials } from "../../utils/getContactAvatarInitials";
 import { useContactDisplayName } from "../../hooks/useContactDisplayName";
-import { MeAvatar } from "../MeAvatar/MeAvatar.web";
-
-export type ContactAvatarProps = Readonly<{
-  contactId: ContactId;
-  /** Raw contact name: the avatar formats it for Me. */
-  name: string;
-  isMe: boolean;
-  ariaHidden?: boolean;
-  ariaLabel?: string;
-  size?: LumenAvatarProps["size"];
-  testId?: string;
-}>;
+import { MeAvatar } from "../MeAvatar/MeAvatar";
+import type { ContactAvatarProps } from "./ContactAvatar.types";
 
 export function ContactAvatar({
   contactId,
   name,
   isMe,
   ariaHidden = false,
-  ariaLabel,
   size = "sm",
-  testId,
+  testID,
 }: ContactAvatarProps): React.JSX.Element {
-  const resolvedTestId = testId ?? `contacts-avatar-${contactId}`;
+  const resolvedTestId = testID ?? `contacts-avatar-${contactId}`;
   const getDisplayName = useContactDisplayName();
-  const resolvedAriaLabel = ariaLabel ?? getDisplayName({ name, isMe });
+  const resolvedAriaLabel = getDisplayName({ name, isMe });
   let accessibilityProps: {
     "aria-hidden"?: true;
     "aria-label"?: string;

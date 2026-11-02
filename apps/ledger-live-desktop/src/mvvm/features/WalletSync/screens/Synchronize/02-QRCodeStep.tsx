@@ -6,7 +6,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import QRCode from "~/renderer/components/QRCode";
 import { useQRCode } from "../../hooks/useQRCode";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import {
   AnalyticsFlow,
   AnalyticsPage,
@@ -61,14 +61,14 @@ export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: Analy
       case Options.MOBILE:
         return (
           <>
-            <TrackPage category={AnalyticsPage.MobileSync} />
+            <TrackScreen category={AnalyticsPage.MobileSync} />
             <QRCodeComponent url={url} />
           </>
         );
       case Options.DESKTOP:
         return (
           <>
-            <TrackPage category={AnalyticsPage.DesktopSync} />
+            <TrackScreen category={AnalyticsPage.DesktopSync} />
             <DesktopComponent />
           </>
         );
@@ -87,7 +87,7 @@ export default function SynchWithQRCodeStep({ sourcePage }: { sourcePage?: Analy
 
   return (
     <Flex flexDirection="column" rowGap="24px" alignItems="center" flex={1}>
-      <TrackPage category={AnalyticsPage.SyncWithQR} />
+      <TrackScreen category={AnalyticsPage.SyncWithQR} />
       <Text
         fontSize={23}
         variant="large"

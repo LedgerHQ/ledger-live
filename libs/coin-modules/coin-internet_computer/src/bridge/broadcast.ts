@@ -9,8 +9,8 @@ import {
   readReplyFromCanister,
   readTransferOutcome,
   throwIfLedgerTransferRefused,
-} from "../api";
-import type { LedgerTransferOutcome } from "../api";
+} from "../network/api";
+import type { LedgerTransferOutcome } from "../network/api";
 import { toNeuronsData } from "../common-logic/neuron";
 import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import {

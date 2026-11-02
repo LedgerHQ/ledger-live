@@ -13,6 +13,7 @@ import {
   testnetBondedMicrocredits,
   testnetBondedValidator,
   testnetIncomingPrivateRecord1,
+  testnetRejectedFeePrivateRecord,
   testnetSelfConversionTx,
   testnetSponsorAddress,
   testnetViewKey,
@@ -412,6 +413,14 @@ describe("createApi", () => {
 
         expect(op.tx.feesPayer).toBe(testnetAddress);
         expect(op.tx.fees).toBe(fees);
+      });
+
+      it("lists a call rejected at finalize and paid with fee_private as a failed FEES operation", () => {
+        const op = getOperation(testnetRejectedFeePrivateRecord.transaction_id.trim());
+
+        expect(op.type).toBe("FEES");
+        expect(op.value).toBe(0n);
+        expect(op.tx).toMatchObject({ fees: 2776n, feesPayer: testnetAddress, failed: true });
       });
 
       it("sets a bond's value to its fee and puts the bond in details.stake", () => {

@@ -4,7 +4,7 @@ import {
   hasStoredVerifier,
   serialisePasswordVerifier,
   writePasswordVerifier,
-} from "./store.native";
+} from "./store";
 
 const keychain = jest.requireMock("react-native-keychain");
 

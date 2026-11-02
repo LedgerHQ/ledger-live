@@ -4,7 +4,14 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { customWrapper } from "@ledgerhq/wallet-api-server";
 import { convertAction, type ActionWithNonce } from "./types";
 import { getAccountIdFromWalletAccountId } from "../converters";
-import { createAccountNotFound, createUnknownError, ServerError } from "@ledgerhq/wallet-api-core";
+import {
+  createAccountNotFound,
+  createNotImplementedByWallet,
+  createUnknownError,
+  ServerError,
+} from "@ledgerhq/wallet-api-core";
+import { z } from "zod";
+import { HYPERCORE_CURRENCY_ID } from "./constants";
 import { getMainAccount, getParentAccount } from "../../account";
 import { firstValueFrom, from } from "rxjs";
 import type Transport from "@ledgerhq/hw-transport";
@@ -41,6 +48,25 @@ export type PerpsDepositReviewParams = PerpsDepositUiParams & {
   quoteId?: string;
 };
 
+export type PerpsWithdrawParams = {
+  sourceAccountId: string;
+};
+
+export type PerpsWithdrawResult = {
+  swapId?: string;
+  amountFrom?: string;
+  amountTo?: string;
+  toCurrencyId?: string;
+};
+
+export type PerpsWithdrawUiParams = {
+  sourceAccount: AccountLike;
+};
+
+const PerpsWithdrawParamsSchema = z.object({
+  sourceAccountId: z.string().min(1),
+});
+
 export type PerpsUiHooks = {
   "signing.execute": (params: {
     appName: string | undefined;
@@ -50,11 +76,8 @@ export type PerpsUiHooks = {
     onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
-  /**
-   * Returning a promise holds the live app's request open until the deposit settles.
-   * A rejection is forwarded as is, so reject with a `UserRefused*` error when the user abandons.
-   */
   "deposit.execute"?: (params: PerpsDepositUiParams) => Promise<PerpsDepositResult> | void;
+  "withdraw.execute"?: (params: PerpsWithdrawUiParams) => Promise<PerpsWithdrawResult> | void;
 };
 
 export type PerpsSignParams = {
@@ -109,7 +132,11 @@ function createSignFactory(derivationPath: string, params: PerpsSignParams) {
 
 export const handlers = ({
   accounts,
-  uiHooks: { "signing.execute": uiSigningExecute, "deposit.execute": uiDepositExecute },
+  uiHooks: {
+    "signing.execute": uiSigningExecute,
+    "deposit.execute": uiDepositExecute,
+    "withdraw.execute": uiWithdrawExecute,
+  },
 }: {
   accounts: AccountLike[];
   uiHooks: PerpsUiHooks;
@@ -172,5 +199,34 @@ export const handlers = ({
         throw error;
       }
     }),
+    "custom.perps.withdraw": customWrapper<PerpsWithdrawParams, PerpsWithdrawResult>(
+      async params => {
+        if (!uiWithdrawExecute) {
+          throw new ServerError(createNotImplementedByWallet("custom.perps.withdraw"));
+        }
+
+        const parsed = PerpsWithdrawParamsSchema.safeParse(params);
+        if (!parsed.success) {
+          throw new ServerError(createUnknownError({ message: "invalid withdraw params" }));
+        }
+
+        const sourceAccount = findAccountOrThrow(parsed.data.sourceAccountId);
+        if (
+          sourceAccount.type !== "Account" ||
+          sourceAccount.currency.id !== HYPERCORE_CURRENCY_ID
+        ) {
+          throw new ServerError(
+            createUnknownError({ message: "withdraw source must be a HyperCore account" }),
+          );
+        }
+
+        try {
+          return (await uiWithdrawExecute({ sourceAccount })) ?? {};
+        } catch (error) {
+          console.warn("[perps] Withdraw request rejected", error);
+          throw error;
+        }
+      },
+    ),
   };
 };

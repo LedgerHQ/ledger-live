@@ -49,7 +49,7 @@ describe("signMessage", () => {
     jest.clearAllMocks();
     mockedVechainSDKTransaction.of.mockReturnValue(mockUnsignedTransaction as any);
     (mockSigner.signTransaction as jest.Mock).mockResolvedValue(Buffer.from("signature123", "hex"));
-    (mockSignerContext as jest.Mock).mockImplementation((deviceId, callback) =>
+    (mockSignerContext as jest.Mock).mockImplementation((_deviceId, callback) =>
       callback(mockSigner),
     );
   });

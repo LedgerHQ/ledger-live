@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import Text from "~/renderer/components/Text";
@@ -43,7 +43,7 @@ export default function StepWithdraw({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Withdraw Flow EVM"
         name="Step 1"
         flow="stake"

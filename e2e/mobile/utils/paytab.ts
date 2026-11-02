@@ -1,6 +1,7 @@
 import { readdirSync } from "node:fs";
 import path from "node:path";
 import type { Config } from "@jest/types";
+import { resolveCardSessionBootstrap } from "@ledgerhq/baanx-test-client";
 
 export const PAYTAB_SPECS_DIR = "paytab";
 
@@ -11,6 +12,17 @@ export function isPaytabSpec(): boolean {
     specPath = expect.getState().testPath ?? "";
   }
   return specPath.replaceAll("\\", "/").toLowerCase().includes(`/${PAYTAB_SPECS_DIR}/`);
+}
+
+let cardSession: Promise<string> | undefined;
+
+/**
+ * The Pay tab spec's card session. Baanx is asked once per spec file, so a launch after a failed
+ * login does not log in again.
+ */
+export function paytabCardSession(): Promise<string> {
+  cardSession ??= resolveCardSessionBootstrap();
+  return cardSession;
 }
 
 /* tests if the current test run includes any Pay tab specs based on testPathPatterns */

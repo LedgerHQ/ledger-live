@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -21,7 +21,7 @@ const StepAmount = ({ t, account, parentAccount, transaction, error, status }: S
 
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Delegation Flow"
         name="Step Amount"
         flow="stake"

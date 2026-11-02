@@ -43,7 +43,7 @@ export function ContactsRenameContactDialog({
               value={draftName}
               placeholder={labels.namePlaceholder}
               errorMessage={nameValidationError}
-              onChange={onDraftNameChange}
+              onChangeName={onDraftNameChange}
             />
             <ContactNameDisclaimer
               disclaimerId={NAMING_DISCLAIMER_ID}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Lottie, type LottieProps } from "@shared/lottie";
+import { Lottie, type LottieProps } from "@shared/lottie/native";
 import Config from "react-native-config";
 import { StyleSheet, View } from "react-native";
 

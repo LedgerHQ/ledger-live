@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import type { Table } from "@tanstack/react-table";
 import type { Account } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
 import { useAssetsTable } from "LLD/components/AssetsTable/useAssetsTable";
 import type { AssetTableItem } from "LLD/components/AssetsTable/types";
@@ -14,7 +13,6 @@ import {
 import { buildAccountAssetItems } from "../../utils/buildAccountAssetItems";
 
 export type AssetsSectionViewModel = Readonly<{
-  isVisible: boolean;
   table: Table<AssetTableItem>;
 }>;
 
@@ -40,7 +38,6 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
   );
 
   return {
-    isVisible: !isAccountEmpty(account),
     table: useAssetsTable(items, { showPriceColumn: false }),
   };
 }

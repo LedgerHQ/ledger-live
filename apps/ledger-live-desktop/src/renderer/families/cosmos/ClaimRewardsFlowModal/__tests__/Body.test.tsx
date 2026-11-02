@@ -156,4 +156,23 @@ describe("ClaimRewardsFlowModal/Body", () => {
       }),
     );
   });
+
+  it("throws when the account has no staking resources", () => {
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const noStaking = {
+      type: "Account",
+      freshAddress: "cosmos1test",
+      currency,
+    } as unknown as CosmosAccount;
+    expect(() =>
+      render(
+        <Body
+          stepId="claimRewards"
+          onClose={jest.fn()}
+          onChangeStepId={jest.fn()}
+          params={{ account: noStaking }}
+        />,
+      ),
+    ).toThrow("cosmos staking account required");
+  });
 });

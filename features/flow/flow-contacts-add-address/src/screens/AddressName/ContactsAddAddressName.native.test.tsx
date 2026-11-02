@@ -171,7 +171,7 @@ describe("ContactsAddAddressName", () => {
     expect(screen.getByTestId("contacts-add-address-name-continue").props.disabled).toBe(true);
   });
 
-  it("should not render the privacy policy link when label is absent", () => {
+  it("should render and open the privacy policy link", () => {
     renderName(
       <ContactsAddAddressName
         addressLabel={{
@@ -180,24 +180,6 @@ describe("ContactsAddAddressName", () => {
           label: ContactAddressLabelSchema.parse("Ethereum"),
           validationError: null,
         }}
-        onChangeText={jest.fn()}
-        onContinue={jest.fn()}
-      />,
-    );
-
-    expect(screen.queryByTestId("contacts-add-address-name-privacy-policy")).toBeNull();
-  });
-
-  it("should render and open the privacy policy link for MeContact", () => {
-    renderName(
-      <ContactsAddAddressName
-        addressLabel={{
-          status: "valid",
-          value: "Ethereum",
-          label: ContactAddressLabelSchema.parse("Ethereum"),
-          validationError: null,
-        }}
-        showPrivacyPolicy
         onChangeText={jest.fn()}
         onContinue={jest.fn()}
       />,

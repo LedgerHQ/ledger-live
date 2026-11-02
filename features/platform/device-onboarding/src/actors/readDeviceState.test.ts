@@ -1,12 +1,14 @@
 import {
+  CloseAppCommand,
   CommandResultFactory,
+  GetAppAndVersionCommand,
   InvalidStatusWordError,
   type DeviceManagementKit,
   type GetOsVersionResponse,
 } from "@ledgerhq/device-management-kit";
-import { ReadOnboardingVersionCommand } from "../device/onboardingVersionCommand";
 import { createRetryPolicy } from "../retry";
 import { runActor, settle } from "../tests/actorHarness";
+import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import {
   createOsVersionResponse,
@@ -130,18 +132,75 @@ describe("mapDeviceState", () => {
 });
 
 describe("readDeviceState", () => {
-  it("reports the state read from the OS version command", async () => {
+  it("reads the state on the dashboard without closing anything", async () => {
     const { dmk, sendCommand } = createFakeCommandDmk([success(onboardedDevice)]);
     const { received, stop } = start(dmk);
 
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledWith({
-      sessionId: "session",
-      command: expect.any(ReadOnboardingVersionCommand),
-    });
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
     expect(received).toEqual([readEvent]);
     stop();
+  });
+
+  it("closes an open app, then reads the state on the dashboard", async () => {
+    const { dmk, sendCommand } = fakeDevice({ app: () => running("Bitcoin") });
+    const { received, stop } = start(dmk);
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp", "getOsVersion"]);
+    expect(received).toEqual([readEvent]);
+    stop();
+  });
+
+  it("still reads the state when the device does not tell its app", async () => {
+    const { dmk, sendCommand } = fakeDevice({
+      app: () =>
+        Promise.resolve(CommandResultFactory({ error: new InvalidStatusWordError("6e00") })),
+    });
+    const { received, stop } = start(dmk);
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "getOsVersion"]);
+    expect(received).toEqual([readEvent]);
+    stop();
+  });
+
+  it("does not close the app once stopped during the app check", async () => {
+    let stopActor: (() => void) | undefined;
+    const { dmk, sendCommand } = fakeDevice({
+      app: () => {
+        stopActor?.();
+        return running("Bitcoin");
+      },
+    });
+    const { received, stop } = start(dmk);
+    stopActor = stop;
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion"]);
+    expect(received).toEqual([]);
+  });
+
+  it("does not read the state once stopped while the app is closing", async () => {
+    let stopActor: (() => void) | undefined;
+    const { dmk, sendCommand } = fakeDevice({
+      app: () => running("Bitcoin"),
+      closeApp: () => {
+        stopActor?.();
+        return Promise.resolve(appClosed);
+      },
+    });
+    const { received, stop } = start(dmk);
+    stopActor = stop;
+
+    await settle();
+
+    expect(sentCommands(sendCommand)).toEqual(["getAppAndVersion", "closeApp"]);
+    expect(received).toEqual([]);
   });
 
   it("retries a failed command until it answers", async () => {
@@ -153,7 +212,7 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledTimes(2);
+    expect(stateReads(sendCommand)).toBe(2);
     expect(received).toEqual([readEvent]);
     stop();
   });
@@ -165,19 +224,25 @@ describe("readDeviceState", () => {
 
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledTimes(3);
+    expect(stateReads(sendCommand)).toBe(3);
     expect(received).toEqual([{ type: "DEVICE_STATE_FAILED", output: error }]);
     stop();
   });
 
   it("does not send the command again when it is stopped during a retry delay", async () => {
-    const { dmk, sendCommand } = createFakeCommandDmk([{ throws: new Error("transport failed") }]);
+    let stopActor: (() => void) | undefined;
+    const { dmk, sendCommand } = fakeDevice({
+      read: () => {
+        stopActor?.();
+        return Promise.reject(new Error("transport failed"));
+      },
+    });
     const { received, stop } = start(dmk);
+    stopActor = stop;
 
-    stop();
     await settle();
 
-    expect(sendCommand).toHaveBeenCalledTimes(1);
+    expect(stateReads(sendCommand)).toBe(1);
     expect(received).toEqual([]);
   });
 
@@ -207,6 +272,45 @@ function success(
   options: Parameters<typeof createOsVersionResponse>[0],
 ): ScriptedCommand<GetOsVersionResponse> {
   return CommandResultFactory({ data: createOsVersionResponse(options) });
+}
+
+const appClosed = CommandResultFactory({ data: undefined });
+
+function running(name: string) {
+  return Promise.resolve(CommandResultFactory({ data: { name, version: "1.0.0" } }));
+}
+
+type DeviceAnswers = {
+  app?(): Promise<unknown>;
+  closeApp?(): Promise<unknown>;
+  read?(): Promise<unknown>;
+};
+
+/**
+ * A device on the dashboard that reads `onboardedDevice`, unless the test answers otherwise. Like a
+ * real device, it answers after the command is sent, never during the call.
+ */
+function fakeDevice({
+  app = () => running("BOLOS"),
+  closeApp = () => Promise.resolve(appClosed),
+  read = () => Promise.resolve(success(onboardedDevice)),
+}: DeviceAnswers) {
+  const answer = (command: object) => {
+    if (command instanceof GetAppAndVersionCommand) return app();
+    if (command instanceof CloseAppCommand) return closeApp();
+    return read();
+  };
+  const sendCommand = jest.fn(({ command }) => Promise.resolve().then(() => answer(command)));
+
+  return { dmk: createDeviceManagementKit({ sendCommand }), sendCommand };
+}
+
+function sentCommands(sendCommand: jest.Mock): string[] {
+  return sendCommand.mock.calls.map(([{ command }]) => command.name);
+}
+
+function stateReads(sendCommand: jest.Mock): number {
+  return sentCommands(sendCommand).filter(name => name === "getOsVersion").length;
 }
 
 function start(dmk: DeviceManagementKit) {

@@ -548,7 +548,7 @@ describe("Contacts integration", () => {
     expect(dialog.querySelector('[data-slot="dialog-body"]')).toHaveClass("px-24");
   });
 
-  it("should render the address and its prefilled name together before review", async () => {
+  it("should render the address, prefilled name, and privacy policy for a saved contact", async () => {
     const { store, user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
         <Routes>
@@ -557,11 +557,15 @@ describe("Contacts integration", () => {
       </MemoryRouter>,
       {
         skipRouter: true,
-        initialState: contactsPageInitialState(),
+        initialState: contactsPageInitialState({
+          contacts: {
+            contacts: [mockMeContact(), mockContact({ id: "contact-ada", name: "Ada" })],
+          },
+        }),
       },
     );
 
-    await user.click(screen.getByTestId("contacts-me-row"));
+    await user.click(screen.getByTestId("contacts-saved-row-contact-ada"));
     await user.click(screen.getByTestId("contacts-detail-add-address"));
 
     const dialog = screen.getByRole("dialog");
@@ -585,6 +589,7 @@ describe("Contacts integration", () => {
     expect(await screen.findByRole("tooltip")).toHaveTextContent(
       "This name appears on your Ledger device when you send to this address. Give it a name that makes it easy to find.",
     );
+    expect(screen.getByTestId("contacts-add-address-privacy-policy")).toBeVisible();
     expect(addressNameInput).toHaveValue("Ethereum");
 
     fireEvent.change(addressInput, {

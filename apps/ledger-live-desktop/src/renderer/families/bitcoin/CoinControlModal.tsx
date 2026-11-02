@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -60,7 +60,7 @@ const CoinControlModal = ({
   const returning = (status.txOutputs || []).find(output => !!output.isChange);
   return (
     <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
-      <TrackPage category="Modal" name="BitcoinCoinControl" />
+      <TrackScreen category="Modal" name="BitcoinCoinControl" />
       <ModalBody
         title={<Trans i18nKey="bitcoin.modalTitle" />}
         onClose={onClose}

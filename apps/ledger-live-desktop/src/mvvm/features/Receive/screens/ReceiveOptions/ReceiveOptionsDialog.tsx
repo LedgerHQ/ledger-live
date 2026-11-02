@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { useReceiveOptionsViewModel } from "../../hooks/useReceiveOptionsViewModel";
 import { ReceiveOptionsView } from "./ReceiveOptionsView";
 import type { ReceiveOptionsDialogProps } from "../../types";
@@ -21,7 +21,7 @@ export function ReceiveOptionsDialog({
   return (
     <Dialog open onOpenChange={open => !open && onClose()}>
       <DialogContent>
-        <TrackPage category="receive_drawer" type="drawer" />
+        <TrackScreen category="receive_drawer" type="drawer" />
         <DialogHeader density="expanded" title={t("receive.title")} />
         <DialogBody className="px-16! pt-12">
           <ReceiveOptionsView onGoToBank={handleGoToBank} onGoToCrypto={handleGoToCrypto} />

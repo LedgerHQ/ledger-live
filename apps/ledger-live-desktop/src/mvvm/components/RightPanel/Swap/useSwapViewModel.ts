@@ -16,7 +16,7 @@ import type { SwapViewModel } from "./types";
 const ASSET_PATH_PREFIX = "/asset/";
 const WEBVIEW_KEY_PLACEHOLDER = "none";
 
-const buildSwapWebViewKey = (assetId?: string, accountId?: string): string =>
+export const buildSwapWebViewKey = (assetId?: string, accountId?: string): string =>
   [assetId, accountId].map(part => part || WEBVIEW_KEY_PLACEHOLDER).join("::");
 
 export const DEFAULT_SWAP_VIEW_MODEL: SwapViewModel = {

@@ -4,6 +4,7 @@
 
 export interface IsWallet40PageOptions {
   readonly shouldDisplayAggregatedAssets?: boolean;
+  readonly isAccountDetailPage?: boolean;
 }
 
 interface ConditionalPrefix {
@@ -95,8 +96,10 @@ const RIGHT_PANEL_PAGES = new Set<string>(["/", "/analytics"]);
  */
 const CARD_RIGHT_PANEL_PAGES = new Set<string>(["/paytab"]);
 
-const isAggregatedAssetDetailPath = (pathname: string): boolean =>
+export const isAggregatedAssetDetailPath = (pathname: string): boolean =>
   pathname === "/asset" || pathname.startsWith("/asset/");
+
+export const isAccountDetailPath = (pathname: string): boolean => pathname.startsWith("/account/");
 
 /**
  * Check if a pathname should display the right panel (swap sidebar).
@@ -108,6 +111,9 @@ export const shouldDisplayRightPanel = (
   if (RIGHT_PANEL_PAGES.has(pathname)) return true;
   if (isAggregatedAssetDetailPath(pathname)) {
     return !!options.shouldDisplayAggregatedAssets;
+  }
+  if (isAccountDetailPath(pathname)) {
+    return !!options.isAccountDetailPage;
   }
   return false;
 };

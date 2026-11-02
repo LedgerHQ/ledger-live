@@ -3,7 +3,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
 import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -36,7 +36,7 @@ export default function StepConfirmation({
       });
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Withdraw NEAR Flow"
           name="Step Confirmed"
           flow="stake"
@@ -66,7 +66,7 @@ export default function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Withdraw NEAR Flow"
           name="Step Confirmation Error"
           flow="stake"

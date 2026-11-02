@@ -4,7 +4,7 @@ import { MIN_DELEGATOR_STAKE_MICROCREDITS } from "@ledgerhq/live-common/families
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -33,7 +33,7 @@ const StepAmount = ({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Delegation Flow"
         name="Step Amount"
         flow="unbond"

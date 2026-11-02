@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
 import { Currency } from "@domain/entity-currency";
 import { OperationType } from "@ledgerhq/types-live";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { openURL } from "~/renderer/linking";
 import {
   OpDetailsTitle,
@@ -48,13 +48,16 @@ function getURLWhatIsThis({
 }
 function formatPalletMethod(palletMethod?: string | null): string {
   if (!palletMethod) return "";
-  return palletMethod.split(".").map(startCase).join(" - ");
+  return palletMethod
+    .split(".")
+    .map(part => startCase(part))
+    .join(" - ");
 }
 const redirectAddress = (currency: Currency, address: string) => () => {
   const url =
     currency.type === "CryptoCurrency" &&
     getAddressExplorer(getDefaultExplorerView(currency), address);
-  if (url) openURL(url);
+  if (url) openURL(url, "OpenURL", {}, { sensitive: true });
 };
 type OperationDetailsValidatorsProps = {
   validators: string[];

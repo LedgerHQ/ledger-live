@@ -6,7 +6,7 @@ import { useSelector } from "LLD/hooks/redux";
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import Button from "~/renderer/components/Button";
@@ -51,7 +51,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
       });
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="ClaimRewards EVM Flow"
           name="Step Confirmed"
           flow="stake"
@@ -85,7 +85,7 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="ClaimRewards EVM Flow"
           name="Step Confirmation Error"
           flow="stake"

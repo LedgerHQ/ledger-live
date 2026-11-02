@@ -12,7 +12,7 @@ export type CliArgs =
   | { kind: "unknown"; argument: string };
 
 /**
- * `pnpm run token -- --json` forwards the `--` separator through to us, so it
+ * `pnpm run baanx-token -- --json` forwards the `--` separator through to us, so it
  * is dropped rather than treated as an unrecognised argument.
  */
 export function parseCliArgs(argv: string[]): CliArgs {

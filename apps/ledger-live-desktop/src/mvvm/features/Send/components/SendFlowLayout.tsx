@@ -29,12 +29,7 @@ function SendFlowAnimatedStep({ StepComponent }: { StepComponent: StepRenderer }
   const isCapped = useAnimatedHeightCapped();
 
   return (
-    <div
-      className={cn(
-        "flex animate-fade-in flex-col",
-        isCapped && "scrollbar-custom min-h-0 flex-1 overflow-y-auto",
-      )}
-    >
+    <div className={cn("flex animate-fade-in flex-col", isCapped && "min-h-0 flex-1")}>
       <StepComponent />
     </div>
   );
@@ -82,7 +77,7 @@ export function SendFlowLayout({ isOpen, onClose }: SendFlowLayoutProps) {
 
   return (
     <Dialog height={dialogHeight} open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent className={cn("text-base", shouldAnimateHeight && "max-h-[calc(100vh-2rem)]")}>
+      <DialogContent className="text-base">
         {shouldShowStatusGradient && (
           <div
             className={cn("pointer-events-none absolute inset-x-0 top-0 h-full", {

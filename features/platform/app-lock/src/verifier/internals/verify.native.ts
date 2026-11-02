@@ -1,8 +1,8 @@
 import { matchesPasswordVerifier } from "@shared/password-verifier";
 import { isPasswordLongEnough } from "../../password";
 import type { PasswordCheck } from "../types";
-import { derivePasswordDigest } from "./digest.native";
-import { readStoredPassword, writePasswordVerifier, type StoredPassword } from "./store.native";
+import { derivePasswordDigest } from "./digest";
+import { readStoredPassword, writePasswordVerifier, type StoredPassword } from "./store";
 
 // Unserialised on purpose: callers hold a turn of the derivation queue and this must not ask for a
 // second one, which would wait on the turn it is already inside.

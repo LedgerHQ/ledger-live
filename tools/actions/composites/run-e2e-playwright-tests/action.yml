@@ -1,5 +1,5 @@
 name: "Run Playwright Tests"
-description: "Run Playwright tests with xvfb-run and custom filters"
+description: "Run Playwright tests (under xvfb-run on Linux) with custom filters"
 inputs:
   speculos_device:
     description: "Device to be used (nanoS, nanoSP, nanoX, stax, flex, nanoGen5)"
@@ -21,6 +21,9 @@ inputs:
     required: false
   feature_flags:
     description: "Choose a feature flag set for the run"
+    required: false
+  workers:
+    description: "Number of Playwright workers (omit to use the config default)"
     required: false
 outputs:
   passed:
@@ -99,25 +102,36 @@ runs:
           REPEAT_ARG="--repeat-each=${INPUTS_REPEAT_EACH}"
         fi
 
+        WORKERS_ARG=""
+        if [ -n "${INPUTS_WORKERS}" ]; then
+          WORKERS_ARG="--workers=${INPUTS_WORKERS}"
+        fi
+
         if [ -n "${INPUTS_FEATURE_FLAGS}" ]; then
           export E2E_DESKTOP_FEATURE_FLAGS="${INPUTS_FEATURE_FLAGS}"
           echo "Running with feature flags set '${E2E_DESKTOP_FEATURE_FLAGS}'"
         fi
 
+        XVFB_PREFIX=()
+        if [ "${RUNNER_OS}" = "Linux" ]; then
+          XVFB_PREFIX=(xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" --)
+        fi
+        LOG_FILE="${RUNNER_TEMP:-/tmp}/playwright-output.log"
+
         set +e
-        xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" \
-          -- pnpm e2e:desktop test:playwright \
+        "${XVFB_PREFIX[@]}" pnpm e2e:desktop test:playwright \
           --max-failures 50 \
           $grep_option "$grep_filter" \
           $SHARD_ARG \
-          $REPEAT_ARG 2>&1 | tee /tmp/playwright-output.log
+          $REPEAT_ARG \
+          $WORKERS_ARG 2>&1 | tee "$LOG_FILE"
         TEST_EXIT_CODE=${PIPESTATUS[0]}
         set -e
 
-        PASSED=$(grep -oP '\d+ passed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
-        FAILED=$(grep -oP '\d+ failed' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
-        SKIPPED=$(grep -oP '\d+ skipped' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
-        FLAKY=$(grep -oP '\d+ flaky' /tmp/playwright-output.log | grep -oP '\d+' | tail -1 || echo "0")
+        PASSED=$(grep -oE '[0-9]+ passed' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
+        FAILED=$(grep -oE '[0-9]+ failed' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
+        SKIPPED=$(grep -oE '[0-9]+ skipped' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
+        FLAKY=$(grep -oE '[0-9]+ flaky' "$LOG_FILE" | grep -oE '[0-9]+' | tail -1 || echo "0")
         TOTAL=$((PASSED + FAILED + SKIPPED + FLAKY))
 
         echo "passed=${PASSED}" >> $GITHUB_OUTPUT
@@ -192,3 +206,4 @@ runs:
         INPUTS_SHARD_TOTAL: ${{ inputs.shard_total }}
         INPUTS_REPEAT_EACH: ${{ inputs.repeat_each }}
         INPUTS_FEATURE_FLAGS: ${{ inputs.feature_flags }}
+        INPUTS_WORKERS: ${{ inputs.workers }}

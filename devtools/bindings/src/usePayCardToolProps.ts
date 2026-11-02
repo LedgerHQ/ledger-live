@@ -143,7 +143,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const cardNativeParam = !!payTab?.params?.card_native;
   const cardLiveAppParam = !!payTab?.params?.card_live_app;
   const cardDisclaimerParam = !!payTab?.params?.card_disclaimer;
-  const legacyTopUpParam = !!payTab?.params?.legacyTopUp;
   const ptxCardEnabled = !!ptxCard?.enabled;
 
   const setPayTabEnabled = useCallback(
@@ -154,35 +153,30 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
           value: {
             enabled,
             params: {
+              ...payTab?.params,
               card_native: cardNativeParam,
               card_live_app: cardLiveAppParam,
               card_disclaimer: cardDisclaimerParam,
-              legacyTopUp: legacyTopUpParam,
             },
           },
         }),
       );
     },
-    [cardDisclaimerParam, cardLiveAppParam, cardNativeParam, dispatch, legacyTopUpParam, payTabKey],
+    [cardDisclaimerParam, cardLiveAppParam, cardNativeParam, dispatch, payTab?.params, payTabKey],
   );
 
   const setPayTabParam = useCallback(
-    (patch: {
-      card_native?: boolean;
-      card_live_app?: boolean;
-      card_disclaimer?: boolean;
-      legacyTopUp?: boolean;
-    }) => {
+    (patch: { card_native?: boolean; card_live_app?: boolean; card_disclaimer?: boolean }) => {
       dispatch(
         setOverride({
           key: payTabKey,
           value: {
             enabled: payTabEnabled,
             params: {
+              ...payTab?.params,
               card_native: cardNativeParam,
               card_live_app: cardLiveAppParam,
               card_disclaimer: cardDisclaimerParam,
-              legacyTopUp: legacyTopUpParam,
               ...patch,
             },
           },
@@ -194,7 +188,7 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardLiveAppParam,
       cardNativeParam,
       dispatch,
-      legacyTopUpParam,
+      payTab?.params,
       payTabEnabled,
       payTabKey,
     ],
@@ -217,10 +211,6 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
   const setCardDisclaimerParam = useCallback(
     (on: boolean) => setCardFace("card_disclaimer", on),
     [setCardFace],
-  );
-  const setLegacyTopUpParam = useCallback(
-    (legacyTopUp: boolean) => setPayTabParam({ legacyTopUp }),
-    [setPayTabParam],
   );
 
   const setPtxCardEnabled = useCallback(
@@ -258,13 +248,11 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardNativeParam,
       cardLiveAppParam,
       cardDisclaimerParam,
-      legacyTopUpParam,
       ptxCardEnabled,
       setPayTabEnabled,
       setCardNativeParam,
       setCardLiveAppParam,
       setCardDisclaimerParam,
-      setLegacyTopUpParam,
       setPtxCardEnabled,
     }),
     [
@@ -272,13 +260,11 @@ export function usePayCardToolProps(options: UsePayCardToolPropsOptions = {}): P
       cardNativeParam,
       cardLiveAppParam,
       cardDisclaimerParam,
-      legacyTopUpParam,
       ptxCardEnabled,
       setPayTabEnabled,
       setCardNativeParam,
       setCardLiveAppParam,
       setCardDisclaimerParam,
-      setLegacyTopUpParam,
       setPtxCardEnabled,
     ],
   );

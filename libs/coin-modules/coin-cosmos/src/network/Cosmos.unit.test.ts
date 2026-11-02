@@ -469,12 +469,51 @@ describe("CosmosApi", () => {
         });
       });
 
-      const { txs, hasMore } = await cosmosApi.getTransactionsPage("address", 10);
-      expect(txs.length).toEqual(20);
-      expect(hasMore).toBe(true);
+      const { streams } = await cosmosApi.getTransactionsPage("address", 10);
+      expect(streams.map(stream => stream.txs.length)).toEqual([10, 10, 10]);
+      expect(streams.map(stream => stream.hasMore)).toEqual([true, true, true]);
     });
 
-    it("reports hasMore=false when both streams fit within count", async () => {
+    it("queries the sender, recipient and fee payer streams", async () => {
+      const requestedUrls: string[] = [];
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.44.0" } },
+          });
+        }
+        requestedUrls.push(decodeURIComponent(networkOptions.url));
+        return Promise.resolve({ data: { pagination: { total: 0 }, tx_responses: [] } });
+      });
+
+      await cosmosApi.getTransactionsPage("address", 10);
+
+      expect(requestedUrls).toEqual([
+        expect.stringContaining("message.sender='address'"),
+        expect.stringContaining("transfer.recipient='address'"),
+        expect.stringContaining("tx.fee_payer='address'"),
+      ]);
+    });
+
+    it("reports hasMore per stream when only the fee payer stream exceeds count", async () => {
+      // @ts-expect-error method is mocked
+      network.mockImplementation((networkOptions: { url: string }) => {
+        if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: { application_version: { cosmos_sdk_version: "0.44.0" } },
+          });
+        }
+        const total = decodeURIComponent(networkOptions.url).includes("tx.fee_payer") ? 500 : 2;
+        return Promise.resolve({ data: { pagination: { total }, tx_responses: [] } });
+      });
+
+      const { streams } = await cosmosApi.getTransactionsPage("address", 10);
+
+      expect(streams.map(stream => stream.hasMore)).toEqual([false, false, true]);
+    });
+
+    it("reports hasMore=false when all streams fit within count", async () => {
       // @ts-expect-error method is mocked
       network.mockImplementation((networkOptions: { url: string }) => {
         if (networkOptions.url.includes("node_info")) {
@@ -487,9 +526,9 @@ describe("CosmosApi", () => {
         });
       });
 
-      const { txs, hasMore } = await cosmosApi.getTransactionsPage("address", 10);
-      expect(txs.length).toEqual(4);
-      expect(hasMore).toBe(false);
+      const { streams } = await cosmosApi.getTransactionsPage("address", 10);
+      expect(streams.map(stream => stream.txs.length)).toEqual([2, 2, 2]);
+      expect(streams.map(stream => stream.hasMore)).toEqual([false, false, false]);
     });
 
     it("falls back to legacy params when the node version is unparseable", async () => {
@@ -513,8 +552,8 @@ describe("CosmosApi", () => {
       });
 
       // Old behaviour: semver.gte throws on "unknown" → catch → empty page. Fixed: legacy params.
-      const { txs } = await cosmosApi.getTransactionsPage("address", 5);
-      expect(txs.length).toEqual(10);
+      const { streams } = await cosmosApi.getTransactionsPage("address", 5);
+      expect(streams.map(stream => stream.txs.length)).toEqual([5, 5, 5]);
     });
   });
 

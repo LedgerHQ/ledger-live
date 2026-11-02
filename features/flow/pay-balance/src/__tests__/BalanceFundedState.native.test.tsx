@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, userEvent } from "@testing-library/react-native";
-import { BalanceFundedState } from "../components/Hero/BalanceFundedState.native";
+import { BalanceFundedState } from "../components/Hero/BalanceFundedState";
 import { fundedStateProps } from "./fixtures";
 
 describe("BalanceFundedState (Native)", () => {

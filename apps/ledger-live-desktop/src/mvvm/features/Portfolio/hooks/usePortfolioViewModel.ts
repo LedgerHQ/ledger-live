@@ -1,15 +1,12 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useFeature, useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import uniq from "lodash/uniq";
 import { useTranslation } from "react-i18next";
-import { isAddressPoisoningOperation } from "@ledgerhq/ledger-wallet-framework/operation";
-import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
-import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { showClearCacheBannerSelector } from "~/renderer/reducers/settings";
-import { useAddressPoisoningOperationsFamilies } from "@ledgerhq/live-common/hooks/useAddressPoisoningOperationsFamilies";
+import { useServicesEntryPointsFeature } from "@features/flow-portfolio-services-entry-points";
 import { useBorrowLiveConfig } from "LLD/features/Borrow/hooks/useBorrowLiveConfig";
 import { useResumeAddAccountAfterOnboarding } from "./useResumeAddAccountAfterOnboarding";
 
@@ -21,10 +18,9 @@ export interface PortfolioViewModelResult {
   readonly shouldDisplayAssetSection: boolean;
   readonly shouldDisplayAssetDiscoverability: boolean;
   readonly shouldDisplayBorrowSection: boolean;
-  readonly shouldDisplayOperationsList: boolean;
+  readonly shouldDisplayPerpsEntryPoint: boolean;
+  readonly shouldDisplayServicesEntryPoints: boolean;
   readonly shouldDisplayBrazePlacement: boolean;
-  readonly filterOperations: (operation: Operation, account: AccountLike) => boolean;
-  readonly accounts: AccountLike[];
   readonly t: TFunction;
   readonly isClearCacheBannerVisible: boolean;
 }
@@ -39,31 +35,13 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
   const {
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
-    shouldDisplayOperationsList,
     shouldDisplayBrazePlacement,
   } = useWalletFeaturesConfig("desktop");
   const borrowConfig = useBorrowLiveConfig();
-  const shouldDisplayBorrowSection = borrowConfig?.enabled ?? false;
+  const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
+  const shouldDisplayBorrowSection =
+    (borrowConfig?.enabled ?? false) && !shouldDisplayServicesEntryPoints;
   const { t } = useTranslation();
-  const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const addressPoisoningFamilies = useAddressPoisoningOperationsFamilies({
-    shouldFilter: shouldFilterTokenOpsZeroAmount,
-  });
-
-  const filterOperations = useCallback(
-    (operation: Operation, account: AccountLike) => {
-      const isOperationPoisoned = isAddressPoisoningOperation(
-        operation,
-        account,
-        addressPoisoningFamilies ? { families: addressPoisoningFamilies } : undefined,
-      );
-
-      const shouldFilterOperation = !(shouldFilterTokenOpsZeroAmount && isOperationPoisoned);
-
-      return shouldFilterOperation;
-    },
-    [shouldFilterTokenOpsZeroAmount, addressPoisoningFamilies],
-  );
 
   const totalAccounts = accounts.length;
 
@@ -85,10 +63,9 @@ export const usePortfolioViewModel = (): PortfolioViewModelResult => {
     shouldDisplayAssetSection,
     shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
-    shouldDisplayOperationsList,
+    shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
+    shouldDisplayServicesEntryPoints,
     shouldDisplayBrazePlacement,
-    filterOperations,
-    accounts,
     t,
     isClearCacheBannerVisible,
   };

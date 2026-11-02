@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { Transaction } from "@ledgerhq/live-common/families/tezos/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import RecipientField from "~/renderer/modals/Send/fields/RecipientField";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -35,7 +35,7 @@ const StepCustom = ({
   const mainAccount = getMainAccount(account, parentAccount);
   return (
     <Box flow={4} mx={40}>
-      <TrackPage
+      <TrackScreen
         category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step Custom"
         flow="stake"

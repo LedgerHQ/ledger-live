@@ -169,7 +169,7 @@ const setup = (state?: Partial<State>) => {
   return render(<ModularDrawerAddAccountFlowManager currency={aleoCurrency} />, { initialState });
 };
 
-function expectTrackPage(
+function expectTrackScreen(
   n: number,
   page: string,
   props: { flow?: string; reason?: string } = {},
@@ -196,9 +196,9 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   it("should render warning step", async () => {
     setup();
 
-    expectTrackPage(1, "device connection", { flow: "Add account" });
+    expectTrackScreen(1, "device connection", { flow: "Add account" });
 
-    expectTrackPage(2, "confirm view key warning", { flow: "Add account" });
+    expectTrackScreen(2, "confirm view key warning", { flow: "Add account" });
     expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Allow" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
@@ -213,21 +213,21 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   it("should find and add Aleo accounts", async () => {
     setup();
 
-    expectTrackPage(1, "device connection", { flow: "Add account" });
+    expectTrackScreen(1, "device connection", { flow: "Add account" });
 
     expect(screen.getByText(/set up aleo private balance/i)).toBeInTheDocument();
-    expectTrackPage(2, "confirm view key warning", { flow: "Add account" });
+    expectTrackScreen(2, "confirm view key warning", { flow: "Add account" });
     await userEvent.click(screen.getByRole("button", { name: "Allow" }));
 
     expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
-    expectTrackPage(3, "looking for accounts", { flow: "Add account" });
+    expectTrackScreen(3, "looking for accounts", { flow: "Add account" });
     await mockScanAccountsSubscription([ALEO_ACCOUNT_1, ALEO_ACCOUNT_2, ALEO_ACCOUNT_3]);
 
     expect(screen.getByText(/we found 3 accounts/i)).toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: "Share view keys" }));
 
     expect(screen.getByText(/approve on your Ledger/i)).toBeInTheDocument();
-    expectTrackPage(4, "approve view key share", { flow: "Add account" });
+    expectTrackScreen(4, "approve view key share", { flow: "Add account" });
     expect(screen.getAllByTestId("confirmation-account-row").length).toEqual(3);
 
     await mockViewKeyProgressSubscription([
@@ -237,7 +237,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     ]);
 
     expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
-    expectTrackPage(5, "add account success");
+    expectTrackScreen(5, "add account success");
   });
 
   it("should create an account", async () => {
@@ -318,7 +318,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/checking the blockchain/i)).toBeInTheDocument();
     await mockScanAccountsSubscription([ALEO_ACCOUNT_1, NEW_ALEO_ACCOUNT]);
 
-    expectTrackPage(4, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
+    expectTrackScreen(4, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
     expect(
       screen.getByText(
         "A new account cannot be added before you receive assets on your Aleo 4 account",
@@ -370,7 +370,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
       { accountId: ALEO_ACCOUNT_2.id, viewKey: null },
     ]);
 
-    expectTrackPage(5, "cant add new account", { reason: "NO_ACCOUNTS_ADDED" });
+    expectTrackScreen(5, "cant add new account", { reason: "NO_ACCOUNTS_ADDED" });
     expect(screen.getByText("No Aleo accounts were added")).toBeInTheDocument();
   });
 });

@@ -1,3 +1,4 @@
+diff --git a/dist/listener.js b/dist/listener.js
 --- a/dist/listener.js
 +++ b/dist/listener.js
 @@ -25,10 +25,18 @@

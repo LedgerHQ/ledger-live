@@ -41,7 +41,12 @@ export class LiveAppWebview {
         console.info(`========> Live app successfully running on port ${port}! <=========`);
 
         process.env.MOCK_REMOTE_LIVE_MANIFEST = JSON.stringify(
-          getLiveAppManifest({ ...liveAppManifest, url: url }),
+          // The manifest domain check only lets the main frame load origins listed in `domains`.
+          getLiveAppManifest({
+            ...liveAppManifest,
+            url: url,
+            domains: [url, ...(liveAppManifest.domains ?? [])],
+          }),
         );
         return true;
       } else {

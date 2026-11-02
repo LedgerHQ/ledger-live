@@ -14,7 +14,7 @@ jest.mock("../../../shared/utils", () => ({
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/components/CurrencyDownStatusAlert", () => ({
   __esModule: true,

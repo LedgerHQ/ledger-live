@@ -195,7 +195,7 @@ const setup = (currency = arbitrumCurrency, state?: Partial<State>) => {
   });
 };
 
-function expectTrackPage(
+function expectTrackScreen(
   n: number,
   page: string,
   props: { flow?: string; reason?: string } = {},
@@ -218,10 +218,10 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     setup();
 
     expect(screen.getByText(/Checking the blockchain/i)).toBeInTheDocument();
-    expectTrackPage(1, "device connection", { flow: "Add account" });
+    expectTrackScreen(1, "device connection", { flow: "Add account" });
 
     await mockScanAccountsSubscription([ARB_ACCOUNT]);
-    expectTrackPage(2, "looking for accounts", { flow: "Add account" });
+    expectTrackScreen(2, "looking for accounts", { flow: "Add account" });
     expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
@@ -235,7 +235,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
       currency: "Arbitrum",
     });
 
-    expectTrackPage(3, "add account success");
+    expectTrackScreen(3, "add account success");
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 
@@ -367,7 +367,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
         "A new account cannot be added before you receive assets on your Arbitrum 2 account",
       ),
     ).toBeInTheDocument();
-    expectTrackPage(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
+    expectTrackScreen(3, "cant add new account", { reason: "ALREADY_EMPTY_ACCOUNT" });
   });
 
   it("should let the user create other BTC address types when the existing account is empty", async () => {
@@ -439,7 +439,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     await mockScanAccountsSubscription([]);
 
     expect(screen.getByText("We couldn't add a new Hedera account")).toBeInTheDocument();
-    expectTrackPage(3, "cant add new account", { reason: "NO_ASSOCIATED_ACCOUNTS" });
+    expectTrackScreen(3, "cant add new account", { reason: "NO_ASSOCIATED_ACCOUNTS" });
   });
 
   it("should add a Hedera account when one is scanned", async () => {
@@ -450,7 +450,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/we found 1 account/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Confirm" }));
-    expectTrackPage(3, "add account success");
+    expectTrackScreen(3, "add account success");
     expect(screen.getByText(/account added to your portfolio/i)).toBeInTheDocument();
   });
 });

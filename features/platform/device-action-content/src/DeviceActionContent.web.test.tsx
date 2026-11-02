@@ -4,7 +4,7 @@ import { ThemeProvider } from "styled-components";
 import * as animationModule from "./getDeviceActionAnimation.web";
 import { DeviceActionContent } from "./DeviceActionContent.web";
 
-jest.mock("@shared/lottie", () => ({
+jest.mock("@shared/lottie/web", () => ({
   Lottie: () => <div data-testid="device-action-lottie" />,
 }));
 

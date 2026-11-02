@@ -75,6 +75,10 @@
           {
             "value": "GENERATORS",
             "label": "Generators — data factories, mocks"
+          },
+          {
+            "value": "ACCOUNTS",
+            "label": "Accounts — one page per account data entity"
           }
         ]
       }

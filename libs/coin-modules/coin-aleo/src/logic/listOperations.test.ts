@@ -648,6 +648,76 @@ describe("listOperations", () => {
       ]);
     });
 
+    it("should emit a FEES operation for a fee_private record whose transaction transfers nothing", async () => {
+      mockFeePrivateDetails("at1join");
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({ transaction_id: "at1join  ", block_height: 500, function_name: "join" }),
+        getMockedRecord({
+          transaction_id: "at1join  ",
+          block_height: 500,
+          function_name: "fee_private",
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(mockedGetTransactionById).toHaveBeenCalledTimes(1);
+      expect(mockedGetTransactionById).toHaveBeenCalledWith(config, "at1join");
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: "at1join",
+          type: "FEES",
+          value: 0n,
+          tx: expect.objectContaining({
+            fees: mockedFeePrivateBase,
+            feesPayer: address,
+            failed: false,
+          }),
+        }),
+      ]);
+    });
+
+    it("should emit a failed FEES operation for a rejected private call", async () => {
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({
+          transaction_id: "at1rejected",
+          block_height: 500,
+          function_name: "fee_private",
+        }),
+      ]);
+      mockedGetTransactionById.mockResolvedValue(
+        getMockedTransactionDetails("at1rejected", {
+          fee: { transition: getMockedFeePrivateTransition() },
+          status: "Rejected",
+        }),
+      );
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(items).toEqual([
+        expect.objectContaining({
+          id: "at1rejected",
+          type: "FEES",
+          tx: expect.objectContaining({ fees: mockedFeePrivateBase, failed: true }),
+        }),
+      ]);
+    });
+
+    it("should not emit a FEES operation for a fee_private record outside the page's block window", async () => {
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({
+          transaction_id: "at1join",
+          block_height: 950,
+          function_name: "fee_private",
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(mockedGetTransactionById).not.toHaveBeenCalled();
+      expect(items).toEqual([]);
+    });
+
     it("should reject when transaction details cannot be fetched", async () => {
       mockedFetchTransitionPage.mockResolvedValue({ transitions: [unshield], next: null });
       mockedGetTransactionById.mockRejectedValue(new Error("explorer down"));
@@ -686,6 +756,21 @@ describe("listOperations", () => {
     it("should omit staking operations while staking is disabled", async () => {
       const { items } = await run({ minHeight: 0 });
 
+      expect(items.map(op => op.id)).toEqual(["at1transfer"]);
+    });
+
+    it("should not turn a hidden staking call paid with fee_private into a FEES operation", async () => {
+      mockedFetchAllOwnedRecords.mockResolvedValue([
+        getMockedRecord({
+          transaction_id: "at1bond",
+          block_height: 600,
+          function_name: "fee_private",
+        }),
+      ]);
+
+      const { items } = await run({ minHeight: 0 });
+
+      expect(mockedGetTransactionById).not.toHaveBeenCalledWith(config, "at1bond");
       expect(items.map(op => op.id)).toEqual(["at1transfer"]);
     });
 

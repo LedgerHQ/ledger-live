@@ -20,6 +20,7 @@ import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRem
 import connectManagerFactory from "@ledgerhq/live-common/hw/connectManager";
 import connectAppFactory from "@ledgerhq/live-common/hw/connectApp";
 import useEnv from "@features/platform-env";
+import { withOsUpdatesResolution } from "LLM/features/OsUpdate/hooks/useResolveOsUpdates/withOsUpdatesResolution";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import {
@@ -65,12 +66,19 @@ export function useRawTransactionDeviceAction() {
   );
 }
 
-export function useManagerDeviceAction() {
+type ManagerDeviceActionOptions = {
+  /** Resolve the OS update path before emitting the result (only when `ldmkOsUpdates` is enabled). */
+  resolveOsUpdates?: boolean;
+};
+
+export function useManagerDeviceAction({
+  resolveOsUpdates = false,
+}: ManagerDeviceActionOptions = {}) {
   const mock = useEnv("MOCK");
-  return useMemo(
-    () => managerCreateAction(mock ? connectManagerExecMock : connectManagerFactory()),
-    [mock],
-  );
+  return useMemo(() => {
+    const action = managerCreateAction(mock ? connectManagerExecMock : connectManagerFactory());
+    return resolveOsUpdates ? withOsUpdatesResolution(action) : action;
+  }, [mock, resolveOsUpdates]);
 }
 
 export function useSignMessageDeviceAction() {

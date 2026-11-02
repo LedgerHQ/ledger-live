@@ -99,7 +99,7 @@ export function AmountScreenView({ viewModel }: AmountScreenViewProps) {
 
         <View style={styles.feesBlock}>
           <View onLayout={onFeesLayout}>
-            <NetworkFeesRow viewModel={viewModel.networkFees} />
+            <NetworkFeesRow viewModel={viewModel.networkFees} sponsored={viewModel.sponsoredFee} />
             <Divider />
           </View>
 

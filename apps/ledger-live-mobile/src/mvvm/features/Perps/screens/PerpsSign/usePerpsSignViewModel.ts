@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Edge } from "react-native-safe-area-context";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -16,9 +17,15 @@ type NavigationProps = RootComposite<
 
 type AppDeviceAction = ReturnType<typeof useAppDeviceAction>;
 
+// The screen has no navigation header by default, so it owns the top inset until SelectDevice2
+// shows a header (BLE pairing flow).
+const EDGES_WITHOUT_HEADER: Edge[] = ["top", "bottom"];
+const EDGES_WITH_HEADER: Edge[] = ["bottom"];
+
 export type PerpsSignViewModel = {
   t: ReturnType<typeof useTranslation>["t"];
   backgroundColor: string;
+  safeAreaEdges: Edge[];
   theme: "dark" | "light";
   selectedDevice: Device | null | undefined;
   connectedDevice: Device | null;
@@ -46,6 +53,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
 
   const [selectedDevice, setSelectedDevice] = useState<Device | null | undefined>();
   const [connectedDevice, setConnectedDevice] = useState<Device | null>(null);
+  const [isHeaderShown, setIsHeaderShown] = useState(false);
   const completedRef = useRef(false);
   const navigatingToManagerRef = useRef(false);
 
@@ -83,6 +91,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
 
   const requestToSetHeaderOptions = useCallback(
     (req: SetHeaderOptionsRequest) => {
+      setIsHeaderShown(req.type === "set");
       if (req.type === "set") {
         navigation.setOptions({
           headerShown: true,
@@ -145,6 +154,7 @@ export function usePerpsSignViewModel({ navigation, route }: NavigationProps): P
   return {
     t,
     backgroundColor: colors.background,
+    safeAreaEdges: isHeaderShown ? EDGES_WITH_HEADER : EDGES_WITHOUT_HEADER,
     theme,
     selectedDevice,
     connectedDevice,

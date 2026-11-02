@@ -34,17 +34,11 @@ const reloadRenderer = () => ipcRenderer.invoke(CHANNELS.reloadRenderer);
 
 const params = new URLSearchParams(window.location.search);
 
-// cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
-// When domains is provided (and non-empty), main process will enforce manifest domain whitelist on webview navigation
-const openWindow = (id: number, domains?: string[]) =>
-  ipcRenderer.send(CHANNELS.webviewDomReady, id, domains);
-
 // Not `window.api = …`: that would land in the preload's own world.
 expose("api", {
   appDirname: params.get("appDirname") || "",
   appLoaded,
   reloadRenderer,
-  openWindow,
 });
 
 /**

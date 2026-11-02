@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { HISTORY_TAB_CARD } from "./constants";
 import HistoryPageHeader from "./components/HistoryPageHeader";
 import { HistoryTypeSwitcher } from "./components/HistoryTypeSwitcher";
@@ -40,9 +40,9 @@ export function HistoryView({
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-24" data-testid="history-page">
       {isCardTab ? (
-        <TrackPage category="Card History" />
+        <TrackScreen category="Card History" />
       ) : (
-        <TrackPage
+        <TrackScreen
           category="OperationList"
           operationsCount={operationsCountRef.current}
           has_pending_operations={hasPendingOperationsRef.current}

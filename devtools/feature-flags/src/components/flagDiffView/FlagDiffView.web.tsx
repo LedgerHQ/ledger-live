@@ -1,4 +1,4 @@
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import type { DiffLine, DiffState } from "../../utils";
 
 interface FlagDiffViewProps {

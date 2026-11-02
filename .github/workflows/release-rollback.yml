@@ -85,7 +85,7 @@ jobs:
       - name: Override base version
         env:
           NEW_VERSION: ${{ inputs.replacement-version-number }}
-        run: pnpm version --new-version "$NEW_VERSION" --no-git-tag-version
+        run: npm pkg set version="$NEW_VERSION"
         working-directory: ${{ inputs.application == 'live-desktop' && 'apps/ledger-live-desktop' || 'apps/ledger-live-mobile' }}
 
       - name: Create version bump changeset

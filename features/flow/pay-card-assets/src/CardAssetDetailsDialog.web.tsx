@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import {
-  CardTransactionDetail,
   ListItem as CardTransactionListItem,
   type CardTransactionFormatters,
   type CardTransactionItem,
 } from "@features/flow-pay-card-transactions";
+import { CardTransactionDetailDialog } from "@features/flow-pay-card-transactions/web";
 import {
   AmountDisplay,
   Dialog,
@@ -120,7 +120,7 @@ export function CardAssetDetailsDialog({
                           key={item.transaction.id}
                           item={item}
                           formatters={formatters}
-                          onPress={() => setSelectedTransaction(item)}
+                          onOpenTransaction={() => setSelectedTransaction(item)}
                         />
                       ))}
                     </div>
@@ -142,7 +142,7 @@ export function CardAssetDetailsDialog({
         </DialogContent>
       </Dialog>
       {selectedTransaction ? (
-        <CardTransactionDetail
+        <CardTransactionDetailDialog
           isOpen
           transaction={selectedTransaction.transaction}
           formatters={formatters}

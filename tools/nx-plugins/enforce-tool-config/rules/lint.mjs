@@ -1,8 +1,10 @@
 // oxlint: one preset per layer, in support/lint, which each layer root re-exports from a one-line
-// oxlint.config.mts. oxlint uses the config nearest to each file, so a config in a package, below it
-// or in a directory between it and its layer root overrides the preset for that subtree. A `-c` flag
-// replaces it for one script. A package that needs one rule of its own passes it on its `lint`
-// script, from the allowlist below.
+// oxlint.config.mts; a layer root can be a package of its own, as libs/wallet-btc is. oxlint uses
+// the config nearest to each file, so a config in a package, below it, in a directory between it
+// and its layer root or at the workspace root overrides the preset for that subtree, and a missing
+// layer config leaves its packages on whatever config is found next. A `-c` flag replaces it for
+// one script. A package that needs one rule of its own passes it on its `lint` script, from the
+// allowlist below.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -14,10 +16,12 @@ const LAYER_CONFIGS = new Map([
   ["devtools/oxlint.config.mts", "devtools"],
   ["domain/oxlint.config.mts", "base"],
   ["features/flow/oxlint.config.mts", "features-flow"],
-  ["features/platform/oxlint.config.mts", "base"],
+  ["features/platform/oxlint.config.mts", "features-platform"],
   ["libs/oxlint.config.mts", "libs"],
+  ["libs/coin-modules/oxlint.config.mts", "libs-coin"],
   ["libs/coin-tester-modules/oxlint.config.mts", "libs-coin-tester"],
-  ["shared/oxlint.config.mts", "base"],
+  ["libs/wallet-btc/oxlint.config.mts", "libs-coin"],
+  ["shared/oxlint.config.mts", "shared"],
   ["support/oxlint.config.mts", "support"],
   ["tools/oxlint.config.mts", "tools"],
 ]);
@@ -52,7 +56,9 @@ function configsIn(workspaceRoot, dir) {
   } catch {
     return [];
   }
-  return names.filter(name => CONFIG_FILE.test(name)).map(name => `${dir}/${name}`);
+  return names
+    .filter(name => CONFIG_FILE.test(name))
+    .map(name => (dir === "." ? name : `${dir}/${name}`));
 }
 
 /**
@@ -73,14 +79,45 @@ function configsBelow(workspaceRoot, dir) {
 
 /**
  * @param {string} projectRoot posix-style, e.g. "libs/coin-modules/coin-evm"
- * @returns {string[]} the directories between the project and the workspace root, both excluded
+ * @returns {string[]} the directories above the project, nearest first, up to and including the
+ *   workspace root (".")
  */
 function ancestors(projectRoot) {
   const dirs = [];
-  for (let dir = path.posix.dirname(projectRoot); dir !== "."; dir = path.posix.dirname(dir)) {
+  let dir = projectRoot;
+  do {
+    dir = path.posix.dirname(dir);
     dirs.push(dir);
-  }
+  } while (dir !== ".");
   return dirs;
+}
+
+/**
+ * @param {string} projectRoot
+ * @returns {string[]} the directories a layer config of the project can sit in, nearest first: the
+ *   project itself, then the directories above it
+ */
+function layerDirs(projectRoot) {
+  return [projectRoot, ...ancestors(projectRoot)];
+}
+
+/**
+ * @param {string} file an oxlint config, posix-style, relative to the workspace root
+ * @param {string} projectRoot
+ * @returns {boolean} whether the file is a layer config the project may sit under
+ */
+function isLayerConfig(file, projectRoot) {
+  return LAYER_CONFIGS.has(file) && layerDirs(projectRoot).includes(path.posix.dirname(file));
+}
+
+/**
+ * @param {string} projectRoot
+ * @returns {string | undefined} the layer config that applies to the project, if it is in a layer
+ */
+function requiredLayerConfig(projectRoot) {
+  return layerDirs(projectRoot)
+    .map(dir => `${dir}/oxlint.config.mts`)
+    .find(file => LAYER_CONFIGS.has(file));
 }
 
 /**
@@ -154,18 +191,33 @@ export default {
     "{workspaceRoot}/**/oxlint.config.*",
   ],
   check({ workspaceRoot, projectRoot }) {
-    const inPackage = configsBelow(workspaceRoot, projectRoot);
-    const above = ancestors(projectRoot).flatMap(dir => configsIn(workspaceRoot, dir));
+    const found = [
+      ...configsBelow(workspaceRoot, projectRoot),
+      ...ancestors(projectRoot).flatMap(dir => configsIn(workspaceRoot, dir)),
+    ];
+    const required = requiredLayerConfig(projectRoot);
 
     return [
-      ...[...inPackage, ...above.filter(file => !LAYER_CONFIGS.has(file))].map(file => ({
-        file,
-        message:
-          "oxlint config outside a layer root: delete it, and set what this package needs in " +
-          "its layer's support/lint preset",
-      })),
-      ...above
-        .filter(file => LAYER_CONFIGS.has(file))
+      ...(required && !found.includes(required)
+        ? [
+            {
+              file: required,
+              message:
+                "layer config missing: without it the package falls back to another config. " +
+                `Restore it as \`export { default } from "@support/lint/${LAYER_CONFIGS.get(required)}";\``,
+            },
+          ]
+        : []),
+      ...found
+        .filter(file => !isLayerConfig(file, projectRoot))
+        .map(file => ({
+          file,
+          message:
+            "oxlint config outside a layer root: delete it, and set what this package needs in " +
+            "its layer's support/lint preset",
+        })),
+      ...found
+        .filter(file => isLayerConfig(file, projectRoot))
         .flatMap(file => layerConfig(workspaceRoot, file)),
       ...scriptFlags(workspaceRoot, projectRoot),
     ];

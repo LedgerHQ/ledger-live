@@ -1,1 +1,1 @@
-export * from "./hooks/useBottomSheetKeyboardAwareInputStub";
+export * from "./hooks/useBottomSheetKeyboardAwareInput";

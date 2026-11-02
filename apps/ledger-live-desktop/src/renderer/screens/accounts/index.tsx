@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import { setTrackingSource } from "@shared/analytics";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
@@ -45,7 +45,7 @@ export default function AccountsPage() {
   }
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category="Accounts"
         accountsLength={accounts.length}
         starredAccountsLength={starredAccounts.length}

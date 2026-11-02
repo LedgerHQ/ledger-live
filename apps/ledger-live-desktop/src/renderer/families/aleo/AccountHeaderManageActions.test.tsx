@@ -1,7 +1,8 @@
 import invariant from "invariant";
 import { act } from "react";
 import BigNumber from "bignumber.js";
-import { renderHook } from "tests/testSetup";
+import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { renderHook, withFlagOverrides } from "tests/testSetup";
 import AccountHeaderActions from "./AccountHeaderManageActions";
 import { AleoCustomModal } from "./constants";
 import {
@@ -125,6 +126,69 @@ describe("AccountHeaderManageActions", () => {
         isOpened: true,
         data: { account: ALEO_TOKEN_ACCOUNT, parentAccount: ALEO_MAIN_ACCOUNT },
       });
+    });
+  });
+
+  describe("the Convert action and the newSendFlow flag", () => {
+    const findConvert = (
+      newSendFlow: { enabled: boolean; params: Record<string, string[]> } | undefined,
+      account: AccountLike = ALEO_ACCOUNT_1,
+      parentAccount: Account | null = null,
+    ) => {
+      const { result } = renderHook(() => hook({ account, parentAccount }), {
+        initialState: withFlagOverrides(newSendFlow ? { newSendFlow } : {}),
+      });
+      return result.current?.find(action => action.key === "Self transfer");
+    };
+
+    it("is present with the default flag configuration", () => {
+      expect(findConvert(undefined)).toBeDefined();
+    });
+
+    it("is present when the flag is on for other families only", () => {
+      expect(findConvert({ enabled: true, params: { families: ["bitcoin"] } })).toBeDefined();
+    });
+
+    it("is present when aleo is listed but the flag is disabled", () => {
+      expect(findConvert({ enabled: false, params: { families: ["aleo"] } })).toBeDefined();
+    });
+
+    it("is absent when the aleo currency is excluded but its balance-type step keeps the new flow", () => {
+      expect(
+        findConvert({
+          enabled: true,
+          params: { families: ["aleo"], excludedCurrencyIds: ["aleo"] },
+        }),
+      ).toBeUndefined();
+    });
+
+    it("is absent when the flag is on for aleo", () => {
+      expect(findConvert({ enabled: true, params: { families: ["aleo"] } })).toBeUndefined();
+    });
+
+    it("is absent on a token account when the flag is on for aleo", () => {
+      expect(
+        findConvert(
+          { enabled: true, params: { families: ["aleo"] } },
+          ALEO_TOKEN_ACCOUNT,
+          ALEO_MAIN_ACCOUNT,
+        ),
+      ).toBeUndefined();
+    });
+
+    it("keeps the Earn action when the flag is on for aleo", () => {
+      mockGetAleoCurrencyConfig.mockReturnValue({ ...mockAleoCoinConfig, enableStaking: true });
+
+      const { result } = renderHook(
+        () => hook({ account: ALEO_MAIN_ACCOUNT, parentAccount: null }),
+        {
+          initialState: withFlagOverrides({
+            newSendFlow: { enabled: true, params: { families: ["aleo"] } },
+          }),
+        },
+      );
+
+      expect(result.current?.map(action => action.key)).toEqual(["AleoBond"]);
     });
   });
 

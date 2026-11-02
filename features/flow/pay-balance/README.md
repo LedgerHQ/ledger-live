@@ -78,11 +78,10 @@ platform-agnostic and import without a suffix; TypeScript `moduleSuffixes`, the 
 | TypeScript (IDE) | Solution-style `tsconfig.json` → `tsconfig.web.json` / `tsconfig.native.json` |
 | Desktop (Rspack) | `.web` / unsuffixed                                                        |
 | Mobile (Metro)   | `.native` / unsuffixed                                                     |
-| Jest             | Tests import `.web` / `.native` files explicitly                          |
+| Jest             | One project per platform, `.web` / `.native` first, then unsuffixed        |
 
-Each view also has a test importing it through its full platform filename. Dead-code analysis
-(knip) reads only the solution `tsconfig.json`, which declares no `moduleSuffixes`, so a suffixed
-file it can reach through no other path would be reported as dead.
+Dead-code analysis (knip) runs one pass per platform, each with its own tsconfig, so an unsuffixed
+import reaches the platform file on each side.
 
 ## Structure
 
@@ -125,11 +124,10 @@ pay-balance/
     ├── state/                                # UI-free Redux slice (`./state` export)
     ├── types.ts                              # Component + port contracts
     ├── exports.ts                            # Public surface (Hero container, hook, model, types)
-    ├── index.ts                              # Public API barrel → ./exports
-    └── index.native.ts                       # Native public API barrel → ./exports
+    └── index.ts                              # Public API barrel → ./exports
 ```
 
 ## Tracking
 
 The hero itself does not emit analytics. The host is responsible for tracking `Page Pay` with the
-active `balance_filter` when the tab is viewed (Desktop `TrackPage`, Mobile `TrackScreen`).
+active `balance_filter` when the tab is viewed (`TrackScreen` on Desktop and Mobile).

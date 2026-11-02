@@ -13,7 +13,7 @@ export async function getTokenFromAsset(
     typeof asset.assetReference === "string" &&
     "assetOwner" in asset &&
     typeof asset.assetOwner === "string"
-      ? getCryptoAssetsStore().findTokenByAddressInCurrency(
+      ? await getCryptoAssetsStore().findTokenByAddressInCurrency(
           asset.assetOwner,
           currency.id,
           asset.assetReference,

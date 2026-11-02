@@ -7,7 +7,7 @@ import type { StepProps } from "../types";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("@ledgerhq/live-common/families/cosmos/chain", () => ({
   __esModule: true,

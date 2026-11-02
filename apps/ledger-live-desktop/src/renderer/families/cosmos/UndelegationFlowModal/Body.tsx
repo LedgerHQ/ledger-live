@@ -1,3 +1,4 @@
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState } from "react";
 import { withTranslation } from "react-i18next";
@@ -10,7 +11,7 @@ import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, isStakingAccount, Operation } from "@ledgerhq/types-live";
 import { StepId, St } from "./types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import logger from "~/renderer/logger";
@@ -60,6 +61,7 @@ function Body({
   device,
   validatorAddress,
 }: Props) {
+  invariant(isStakingAccount(accountProp), "cosmos staking account required");
   const dispatch = useDispatch();
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);

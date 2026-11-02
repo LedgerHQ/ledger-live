@@ -1,9 +1,19 @@
 import { TrackScreen } from "@shared/analytics-react";
 import React from "react";
-import QueuedDrawer from "LLM/components/QueuedDrawer";
+import {
+  BottomSheetHeader,
+  BottomSheetView,
+  Box,
+  Button,
+  Spot,
+  Text,
+} from "@ledgerhq/lumen-ui-rnative";
+import { InformationFill } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
 import { useTranslation } from "~/context/Locale";
 import { SeedOriginType } from "@ledgerhq/types-live";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
+
+const CONTENT_BOTTOM_SPACING = 24;
 
 type Props = {
   isOpen: boolean;
@@ -20,75 +30,88 @@ function SkipLedgerSyncDrawer({
   skipSync,
   seedConfiguration,
 }: Props) {
+  return (
+    <QueuedBottomSheet
+      isRequestingToBeOpened={isOpen}
+      onClose={handleClose}
+      enableDynamicSizing
+      contentHasBottomSpace
+      testID="sync-onboarding-drawer-skip"
+    >
+      <SkipLedgerSyncDrawerContent
+        openSync={openSync}
+        skipSync={skipSync}
+        seedConfiguration={seedConfiguration}
+      />
+    </QueuedBottomSheet>
+  );
+}
+
+function SkipLedgerSyncDrawerContent({
+  openSync,
+  skipSync,
+  seedConfiguration,
+}: Readonly<Omit<Props, "isOpen" | "handleClose">>) {
   const { t } = useTranslation();
+  const bottomInset = useBottomSheetBottomInset();
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={handleClose}>
+    <BottomSheetView style={{ paddingBottom: bottomInset + CONTENT_BOTTOM_SPACING }}>
+      <BottomSheetHeader />
       <TrackScreen
         category="Drawer : Skip Ledger sync confirmation"
         flow="onboarding"
         seedConfiguration={seedConfiguration?.current}
       />
-      <Flex maxHeight={"90%"}>
-        <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={22}>
-          <Flex justifyContent="center" alignItems="center" flexDirection="column" rowGap={6}>
-            <Text
-              variant="h4"
-              textAlign="center"
-              lineHeight="32.4px"
-              testID="sync-onboarding-drawer-skip-title"
-              style={{ letterSpacing: -0.72, fontWeight: 600 }}
-              color="neutral.c100"
-            >
-              {t("syncOnboarding.syncStep.skip.title")}
-            </Text>
-            <Text
-              variant="bodyLineHeight"
-              textAlign="center"
-              color="neutral.c80"
-              alignSelf={"center"}
-              maxWidth={330}
-              numberOfLines={4}
-              testID="sync-onboarding-drawer-skip-description"
-              style={{ letterSpacing: 0 }}
-            >
-              {t("syncOnboarding.syncStep.skip.description")}{" "}
-              <Text variant="bodyLineHeight" style={{ fontStyle: "italic" }} color="neutral.c80">
-                {t("syncOnboarding.syncStep.skip.descriptionEmphasis")}
-              </Text>
-            </Text>
-          </Flex>
-          <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={32}>
-            <Flex flexDirection="column" justifyContent="center" alignItems="center" rowGap={16}>
-              <Button
-                type="main"
-                alignSelf={"stretch"}
-                minWidth={"100%"}
-                size="large"
-                onPress={skipSync}
-                accessibilityRole="button"
-                testID="sync-onboarding-drawer-skipCTA"
-              >
-                {t("syncOnboarding.syncStep.skip.skipCTA")}
-              </Button>
-              <Button
-                type={"default"}
-                border={"1px solid"}
-                borderColor={"neutral.c50"}
-                alignSelf={"stretch"}
-                minWidth={"100%"}
-                size="large"
-                onPress={openSync}
-                accessibilityRole="button"
-                testID="sync-onboarding-drawer-syncCTA"
-              >
-                {t("syncOnboarding.syncStep.skip.syncCTA")}
-              </Button>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Flex>
-    </QueuedDrawer>
+      <Box
+        lx={{
+          width: "full",
+          gap: "s24",
+          paddingHorizontal: "s16",
+          paddingTop: "s8",
+          alignItems: "center",
+        }}
+      >
+        <Spot appearance="muted" icon={InformationFill} size={72} />
+        <Box lx={{ width: "full", gap: "s12", alignItems: "center" }}>
+          <Text
+            typography="heading4SemiBold"
+            lx={{ color: "base", textAlign: "center", width: "full" }}
+            testID="sync-onboarding-drawer-skip-title"
+          >
+            {t("syncOnboarding.syncStep.skip.title")}
+          </Text>
+          <Text
+            typography="body2"
+            lx={{ color: "muted", textAlign: "center", width: "full" }}
+            testID="sync-onboarding-drawer-skip-description"
+          >
+            {t("syncOnboarding.syncStep.skip.description")}{" "}
+            {t("syncOnboarding.syncStep.skip.descriptionEmphasis")}
+          </Text>
+        </Box>
+        <Box lx={{ width: "full", gap: "s16" }}>
+          <Button
+            appearance="base"
+            size="lg"
+            lx={{ width: "full" }}
+            onPress={skipSync}
+            testID="sync-onboarding-drawer-skipCTA"
+          >
+            {t("syncOnboarding.syncStep.skip.skipCTA")}
+          </Button>
+          <Button
+            appearance="gray"
+            size="lg"
+            lx={{ width: "full" }}
+            onPress={openSync}
+            testID="sync-onboarding-drawer-syncCTA"
+          >
+            {t("syncOnboarding.syncStep.skip.syncCTA")}
+          </Button>
+        </Box>
+      </Box>
+    </BottomSheetView>
   );
 }
 

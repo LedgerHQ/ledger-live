@@ -6,7 +6,8 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { setTrackingSource, track } from "@shared/analytics";
-import { useSortAccountsComparator } from "~/renderer/actions/general";
+import { useSortByFiatValue } from "@features/platform-market-countervalues";
+import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { useSelector } from "LLD/hooks/redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountUrl } from "~/renderer/utils/accountUrl";
@@ -19,12 +20,17 @@ import { buildNavigationBackState } from "LLD/utils/navigationBackPath";
 import { useReceiveNetworkLedgerIds } from "LLD/features/AssetDetail/hooks/useReceiveNetworkLedgerIds";
 import { MAX_ADDRESSES_PREVIEW } from "../constants";
 
+const getAccountFiatEntry = (account: AccountLike) => ({
+  currency: getAccountCurrency(account),
+  value: account.balance,
+});
+
 export function useAddressListViewModel(distributionItem: DistributionItem) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { pathname: assetDetailPath } = useLocation();
   const { shouldDisplayAssetSection } = useWalletFeaturesConfig("desktop");
-  const comparator = useSortAccountsComparator();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const nestedAccounts = useSelector(accountsSelector);
 
   const accountById = useMemo(() => buildMainAccountByIdMap(nestedAccounts), [nestedAccounts]);
@@ -32,9 +38,11 @@ export function useAddressListViewModel(distributionItem: DistributionItem) {
   const lookupParentAccount = (id: string): Account | undefined | null =>
     accountById.get(id) ?? null;
 
-  const sortedAccounts = useMemo(() => {
-    return [...distributionItem.accounts].sort(comparator);
-  }, [distributionItem.accounts, comparator]);
+  const sortedAccounts = useSortByFiatValue(
+    distributionItem.accounts,
+    getAccountFiatEntry,
+    counterValueCurrency,
+  );
 
   const addressCount = sortedAccounts.length;
   const shouldShowSeeAll = addressCount > MAX_ADDRESSES_PREVIEW;

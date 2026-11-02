@@ -1,2 +1,3 @@
 export * from "./Track";
-export * from "./TrackPage.web";
+export * from "./TrackScreen";
+export type * from "./TrackScreen.types";

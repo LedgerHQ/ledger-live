@@ -1,4 +1,4 @@
-import type { PayCardAuthCallback } from "./types";
+import type { PayCardAuthCallback } from "./hostTypes";
 
 /**
  * Reads the redirect the secure browser reports back. The mobile app hands the flow an already

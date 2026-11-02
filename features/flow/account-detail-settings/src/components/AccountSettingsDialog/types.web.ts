@@ -12,6 +12,7 @@ export type AccountSettingsDialogProps = Readonly<{
   onClose: () => void;
   onConfirmName: (name: string) => void;
   onConfirmRemove: () => void;
+  explorerUrl?: string;
   testID?: string;
 }>;
 

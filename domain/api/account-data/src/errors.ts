@@ -24,3 +24,8 @@ export class AccountDataRouterMissingError extends Error {
     super("No account data router in the thunk extraArgument (`accountData`)");
   }
 }
+
+/** A source rejects one account with it to hand the account to the next ranked source. */
+export class AccountDataNotServedError extends Error {
+  override name = "AccountDataNotServedError";
+}

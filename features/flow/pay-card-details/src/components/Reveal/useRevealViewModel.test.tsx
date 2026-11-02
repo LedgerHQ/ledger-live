@@ -6,12 +6,11 @@ import {
   CARD_DETAILS_IMAGE_URL,
   CARD_DETAILS_TOKEN,
   CARD_DETAILS_TOKEN_URL,
-  CardApiStoreProvider,
   listenToCardApi,
-  makeCardApiStore,
   revealCardDetailsFailureHandler,
   revealCardDetailsHandler,
-} from "@support/msw-features-flow-pay-card";
+} from "@domain/api-card-management/mock/card-api";
+import { CardApiStoreProvider, makeCardApiStore } from "../../__tests__/cardApiStore";
 import { useRevealViewModel } from "./useRevealViewModel";
 
 const server = listenToCardApi();

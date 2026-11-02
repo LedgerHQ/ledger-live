@@ -3,7 +3,7 @@ import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "LLD/hooks/redux";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Markdown, { Notes } from "~/renderer/components/Markdown";
 import { hasOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 
@@ -27,7 +27,7 @@ export default function Disclaimer({ firmware, onContinue }: Props) {
         px={23}
         my={12}
       >
-        <TrackPage category="Manager" name="DisclaimerModal" />
+        <TrackScreen category="Manager" name="DisclaimerModal" />
         {hasOnboardedDevice && (
           <Alert
             type="info"

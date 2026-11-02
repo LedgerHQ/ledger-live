@@ -305,15 +305,10 @@ export function useContactsViewModel(): ContactsPageViewModel {
       : undefined,
     sendFeatures.supportsDomain,
   );
-  const showAddAddressPrivacyPolicy =
-    addAddressFlowState.status !== "closed" &&
-    meContact !== undefined &&
-    addAddressFlowState.selectedContactId === meContact.id;
   const addAddressFlowDialog = useMemo<ContactsAddAddressFlowDialogProps>(
     () => ({
       state: addAddressFlowState,
       supportsDomain: addAddressSupportsDomain,
-      showPrivacyPolicy: showAddAddressPrivacyPolicy,
       onSanctionedAddressLearnMore: handleSanctionedAddressLearnMore,
       onAddressChange: (address, inputMethod) => {
         void updateAddress(address, inputMethod);
@@ -328,7 +323,6 @@ export function useContactsViewModel(): ContactsPageViewModel {
     [
       addAddressFlowState,
       addAddressSupportsDomain,
-      showAddAddressPrivacyPolicy,
       handleSanctionedAddressLearnMore,
       onBackAddAddress,
       onCloseAddAddress,

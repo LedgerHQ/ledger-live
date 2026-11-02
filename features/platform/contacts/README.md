@@ -15,8 +15,7 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
 - `identityFormatMeDisplayName()` and `resolveMeContactDisplayName()`: resolve the shared display
   name rules used by Contacts List and Detail.
 - `ContactAvatar`: renders the Me profile image when `isMe` is set, otherwise a deterministic
-  color and Unicode initial. Import it from the package root; the consumer's platform
-  configuration resolves the target implementation.
+  color and Unicode initial.
 - `ContactDeviceIntentsPort`: defines the typed boundary for Contacts device interactions.
 - `@features/platform-contacts/test`: exposes deterministic device intent results for tests.
 - Contacts analytics building blocks: `ContactsGlobalProperties`,
@@ -30,15 +29,20 @@ ports, address-entry primitives, and shared analytics building blocks used by fl
   operation, including device credentials for external contacts.
 - `ContactAddressEditPort` and `createContactAddressEditPort()`: define and implement the shared
   Contact address update operation, including device credentials for external addresses.
-- `ContactNameInput`: a cross-platform primitive resolved from the package root and shared by Add
-  and Edit contact without coupling their leaf flows.
-- `ContactNameDisclaimer`: a Web-only primitive shared by the Add and Edit contact dialogs.
+- `ContactNameInput`: the contact name field shared by Add and Edit contact without coupling
+  their leaf flows.
+- `ContactNameDisclaimer`: the naming disclaimer shown under that field.
   Contact-name validation and its length limit are owned by `@domain/entity-contact`.
 - Address-entry primitives: validation types, entry-state transitions, presentation resolution,
   and input helpers shared by Add address and Edit address. Flow-specific UI decisions remain in
   their respective leaf flows.
-- `ContactConfirmationDialog` and `ContactConfirmationBottomSheet`: shared confirmation
-  presentation primitives used by Contacts deletion and signer-confirmation journeys.
+- `ContactConfirmationDialog`: the confirmation step of Contacts deletion and signer-confirmation
+  journeys, a dialog on Web and a bottom sheet on mobile. Its `tone` is `destructive` or `neutral`.
+- `@features/platform-contacts/web`: `getPastedValue(value, event)`, which reads a DOM clipboard
+  event and so has no mobile counterpart.
+
+Each component has one props contract in its `X.types.ts`, and the package root resolves the Web
+or mobile implementation per platform.
 
 ## Device Intent Executor scaffold
 

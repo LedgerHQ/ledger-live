@@ -43,9 +43,9 @@ describe("a kind added from outside the framework packages", () => {
   it("is routed, read into its slice and driven by the generic hook", async () => {
     const descriptor: AccountDescriptor = {
       purpose: "account",
-      version: "1",
+      version: "2",
       type: "address",
-      network: { name: "cosmos", env: "main" },
+      network: "cosmos",
       address: "cosmos1abc",
       path: "m/44h/118h/0h/0/0",
     };

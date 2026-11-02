@@ -28,6 +28,8 @@ import {
   SimulateTransactionConfig,
   RpcResponseAndContext,
   SimulatedTransactionResponse,
+  SignatureResult,
+  TransactionConfirmationStatus,
 } from "@solana/web3.js";
 import ky from "ky";
 import { getTokenAccountProgramId } from "../../helpers/token";
@@ -136,6 +138,28 @@ const remapErrors = (e: unknown) => {
   }
 
   throw new NetworkError(e instanceof Error ? e.message : "Unknown Solana error");
+};
+
+// Same bar as the regular confirmation path: a "processed" transaction can still be dropped by a fork.
+const LANDED_CONFIRMATION_STATUSES: ReadonlySet<TransactionConfirmationStatus> = new Set([
+  "confirmed",
+  "finalized",
+]);
+
+const hasLandedSuccessfully = async (connection: Connection, signature: string) => {
+  try {
+    const { value } = await connection.getSignatureStatus(signature, {
+      searchTransactionHistory: true,
+    });
+    return (
+      value !== null &&
+      value.err === null &&
+      value.confirmationStatus !== undefined &&
+      LANDED_CONFIRMATION_STATUSES.has(value.confirmationStatus)
+    );
+  } catch {
+    return false;
+  }
 };
 
 const RETRY_ATTEMPTS = 3;
@@ -347,8 +371,13 @@ export function getChainAPI(
           });
         } catch (error: unknown) {
           if (error instanceof SendTransactionError) {
-            const logs = await error.getLogs(connection);
-            throw new NetworkError(error.message, { logs });
+            // web3.js types `signature` as private; it is '' for preflight rejections.
+            const { signature } = error as unknown as { signature?: string };
+            if (signature) {
+              const logs = await error.getLogs(connection);
+              throw new NetworkError(error.message, { logs });
+            }
+            throw new NetworkError(error.message, { logs: error.logs });
           }
 
           throw error;
@@ -357,14 +386,27 @@ export function getChainAPI(
         if (!recentBlockhash) {
           recentBlockhash = await connection.getLatestBlockhash(commitment);
         }
-        const { value: status } = await connection.confirmTransaction(
-          {
-            blockhash: recentBlockhash.blockhash,
-            lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
-            signature,
-          },
-          commitment,
-        );
+        let status: SignatureResult;
+        try {
+          ({ value: status } = await connection.confirmTransaction(
+            {
+              blockhash: recentBlockhash.blockhash,
+              lastValidBlockHeight: recentBlockhash.lastValidBlockHeight,
+              signature,
+            },
+            commitment,
+          ));
+        } catch (error: unknown) {
+          // confirmTransaction races a WebSocket subscription against a block-height poller: when
+          // the subscription never fires, the poller throws even if the transaction landed.
+          if (
+            error instanceof TransactionExpiredBlockheightExceededError &&
+            (await hasLandedSuccessfully(connection, signature))
+          ) {
+            return signature;
+          }
+          throw error;
+        }
         if (status.err) {
           if (signature) {
             throw new SendTransactionError({

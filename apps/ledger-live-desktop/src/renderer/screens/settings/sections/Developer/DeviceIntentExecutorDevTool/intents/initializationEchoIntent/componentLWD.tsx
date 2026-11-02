@@ -19,7 +19,7 @@ export function InitializationEchoIntentComponentLWD({
         {jobState?.type === "contextReceived" ? (
           <div className="flex flex-col gap-8">
             <span className="body-2 text-muted">Device context received by the intent job:</span>
-            <pre className="max-h-[260px] overflow-auto rounded-md bg-muted p-12 text-xs text-base">
+            <pre className="max-h-[260px] overflow-auto rounded-md bg-muted p-12 text-base">
               {JSON.stringify(jobState.deviceExtractedContext, null, 2)}
             </pre>
           </div>

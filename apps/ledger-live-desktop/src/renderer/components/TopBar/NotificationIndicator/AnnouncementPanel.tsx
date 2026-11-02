@@ -14,7 +14,7 @@ import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking/useDeepLinkH
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
 import { useMarkNotificationsAsReadOnOpen } from "~/renderer/hooks/useMarkNotificationsAsReadOnOpen";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
@@ -259,7 +259,7 @@ export function AnnouncementPanel() {
   if (!notificationsCards) {
     return (
       <PanelContainer>
-        <TrackPage category="Notification Center" name="notification_center_news" />
+        <TrackScreen category="Notification Center" name="notification_center_news" />
         <Text
           color="neutral.c100"
           ff="Inter|SemiBold"
@@ -284,7 +284,7 @@ export function AnnouncementPanel() {
   }
   return (
     <ScrollArea hideScrollbar>
-      <TrackPage category="Notification Center" name="notification_center_news" />
+      <TrackScreen category="Notification Center" name="notification_center_news" />
 
       <Box py="32px">
         <LNSUpsellBanner location="notification_center" />

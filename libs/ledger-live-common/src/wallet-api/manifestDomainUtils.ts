@@ -45,12 +45,35 @@ export function isSameDomain(url1: string | undefined, url2: string | undefined)
   return domain1 === domain2 && parsed1.protocol === parsed2.protocol;
 }
 
+export type ApplyCustomDappUrlOptions = {
+  /** Also require the custom URL's origin to be listed in the manifest's `domains` */
+  enforceManifestDomains?: boolean;
+};
+
+/**
+ * A custom URL may replace a manifest URL only if it stays on the same base domain
+ * and, when the manifest domains are enforced, its origin is listed in the manifest's `domains`.
+ */
+function isCustomDappUrlAllowed(
+  customDappUrl: string,
+  originalUrl: string | undefined,
+  domains: string[] | undefined,
+  enforceManifestDomains: boolean,
+): boolean {
+  return (
+    isSameDomain(customDappUrl, originalUrl) &&
+    (!enforceManifestDomains || isUrlAllowedByManifestDomains(customDappUrl, domains ?? []))
+  );
+}
+
 /**
  * Applies a custom dapp URL to a manifest if it's on the same domain as the original URL
+ * and, when the manifest domains are enforced, allowed by the manifest's domains
  */
 export function applyCustomDappUrl<T extends LiveAppManifest>(
   manifest: T | null | undefined,
   customDappUrl: string | null | undefined,
+  { enforceManifestDomains = false }: ApplyCustomDappUrlOptions = {},
 ): T | null | undefined {
   if (!customDappUrl || !manifest) {
     return manifest;
@@ -60,7 +83,12 @@ export function applyCustomDappUrl<T extends LiveAppManifest>(
   if (
     manifest.params &&
     "dappUrl" in manifest.params &&
-    isSameDomain(customDappUrl, manifest.params.dappUrl)
+    isCustomDappUrlAllowed(
+      customDappUrl,
+      manifest.params.dappUrl,
+      manifest.domains,
+      enforceManifestDomains,
+    )
   ) {
     return {
       ...manifest,
@@ -72,7 +100,15 @@ export function applyCustomDappUrl<T extends LiveAppManifest>(
   }
 
   // Handle manifest.dapp case
-  if (manifest.dapp && isSameDomain(customDappUrl, String(manifest.url))) {
+  if (
+    manifest.dapp &&
+    isCustomDappUrlAllowed(
+      customDappUrl,
+      String(manifest.url),
+      manifest.domains,
+      enforceManifestDomains,
+    )
+  ) {
     return {
       ...manifest,
       url: customDappUrl,

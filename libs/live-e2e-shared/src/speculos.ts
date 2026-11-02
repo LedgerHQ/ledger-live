@@ -17,6 +17,7 @@ import axios from "axios";
 import { getEnv } from "@shared/env";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { DeviceLabels } from "./enum/DeviceLabels";
+import { TIMEOUT } from "./timeouts";
 import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
@@ -68,16 +69,20 @@ import { sendAleo } from "./families/aleo";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 const SCREEN_POLL_INTERVAL_MS = 500;
-const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
+const SWAP_REVIEW_TRANSACTION_TIMEOUT_MS = TIMEOUT.xxxlarge;
 // Derived from timeout + interval so the budget can't silently drift if either changes.
 export const SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SWAP_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
 
-const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = 120_000;
-const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
+const SEND_REVIEW_TRANSACTION_TIMEOUT_MS = TIMEOUT.xxxlarge;
+export const SEND_REVIEW_TRANSACTION_MAX_ATTEMPTS = Math.ceil(
   SEND_REVIEW_TRANSACTION_TIMEOUT_MS / SCREEN_POLL_INTERVAL_MS,
 );
+
+/** The budget of a device-screen wait that does not set its own. */
+const SCREEN_WAIT_MAX_ATTEMPTS = Math.ceil(TIMEOUT.xlarge / SCREEN_POLL_INTERVAL_MS);
+
 export type Spec = {
   currency?: CryptoCurrency;
   appQuery: {
@@ -622,10 +627,20 @@ async function acceptTransactionCheckPrompt(screenTexts: string): Promise<boolea
   }
 }
 
+/**
+ * Polled by a device-screen wait after each miss: why the awaited screen can no longer come
+ * (e.g. the app already reported the request failed), or null to keep waiting.
+ */
+export type GiveUpCheck = () => string | null;
+
+type ScreenWaitOptions = { matchFullEvents?: boolean; giveUpWhen?: GiveUpCheck };
+
+type SwapReviewOptions = Pick<ScreenWaitOptions, "giveUpWhen">;
+
 export async function waitFor(
   text: string,
-  maxAttempts = 60,
-  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+  maxAttempts = SCREEN_WAIT_MAX_ATTEMPTS,
+  { matchFullEvents = false, giveUpWhen }: ScreenWaitOptions = {},
 ): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
   let texts = "";
@@ -635,6 +650,14 @@ export async function waitFor(
 
     if (texts.toLowerCase().includes(text.toLowerCase())) {
       return texts;
+    }
+
+    const giveUpReason = giveUpWhen?.();
+    if (giveUpReason) {
+      throw new Error(
+        `Stopped waiting for "${text}" on device screen after ${attempt + 1} attempts: ` +
+          `${giveUpReason}. Last screen text: "${texts}"`,
+      );
     }
 
     if (!transactionCheckAccepted) {
@@ -722,16 +745,22 @@ const SWAP_INIT_STALL_HINT =
   `delivered the swap payload, so "Review transaction" was never reached.\nSee the ` +
   `"⚠️ Swap-init error" attachment.`;
 
+/**
+ * The Exchange app's idle screen: "Exchange app is ready" on Nano S Plus and X, "Exchange is ready"
+ * on Nano S, and the app description on touch devices.
+ */
+const EXCHANGE_IDLE_SCREEN = /exchange (app )?is ready|this app enables swapping/i;
+
 function isExchangeAppReadyStall(screenText: string): boolean {
-  return screenText.toLowerCase().includes(DeviceLabels.EXCHANGE_APP_IS_READY.toLowerCase());
+  return EXCHANGE_IDLE_SCREEN.test(screenText);
 }
 
 export async function waitForReviewTransaction(
-  maxAttempts = 60,
-  { matchFullEvents = false }: { matchFullEvents?: boolean } = {},
+  maxAttempts = SCREEN_WAIT_MAX_ATTEMPTS,
+  options: ScreenWaitOptions = {},
 ): Promise<void> {
   try {
-    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, { matchFullEvents });
+    await waitFor(DeviceLabels.REVIEW_TRANSACTION, maxAttempts, options);
   } catch (error) {
     if (error instanceof Error && isExchangeAppReadyStall(error.message)) {
       error.message += SWAP_INIT_STALL_HINT;
@@ -804,6 +833,18 @@ export async function fetchAllEvents(speculosApiPort: number): Promise<string[]>
     ),
   );
   return response.data.events.map(event => event.text);
+}
+
+/** Clears the screen events recorded so far, so the next review is checked against its own pages only. */
+export async function resetSpeculosEvents(port?: number): Promise<void> {
+  const speculosAddress = getSpeculosAddress();
+  // The device controllers that sign read the same port.
+  const speculosApiPort = port ?? getEnv("SPECULOS_API_PORT");
+  await retryAxiosRequest(() =>
+    axios.delete(`${speculosAddress}:${speculosApiPort}/events`, {
+      headers: getSpeculosHeaders(),
+    }),
+  );
 }
 
 export const pressUntilTextFound = withDeviceController(
@@ -980,7 +1021,9 @@ export const activateLedgerSync = withDeviceController(({ getButtonsController }
   }
 });
 
-export async function waitUntilScreenLeavesIdle(maxAttempts = 60): Promise<void> {
+export async function waitUntilScreenLeavesIdle(
+  maxAttempts = SCREEN_WAIT_MAX_ATTEMPTS,
+): Promise<void> {
   const port = getEnv("SPECULOS_API_PORT");
 
   const poll = async (attempt: number): Promise<void> => {
@@ -1350,7 +1393,7 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
  */
 const waitForSwapReviewOnNanoS = withDeviceController(
   ({ getButtonsController }) =>
-    async (): Promise<boolean> => {
+    async (giveUpWhen?: GiveUpCheck): Promise<boolean> => {
       const port = Number(process.env.SPECULOS_API_PORT ?? 0);
       const review = DeviceLabels.REVIEW_TRANSACTION.toLowerCase();
       const warning = DeviceLabels.BLIND_SIGNING.toLowerCase();
@@ -1362,24 +1405,25 @@ const waitForSwapReviewOnNanoS = withDeviceController(
           await waitFor(DeviceLabels.REVIEW_TRANSACTION);
           return true;
         }
+        if (giveUpWhen?.()) break;
         await sleep(SCREEN_POLL_INTERVAL_MS);
       }
-      // Out of budget: one last look, which fails with the usual diagnostics.
-      await waitForReviewTransaction(1);
+      // Out of budget or given up: one last look, which fails with the usual diagnostics.
+      await waitForReviewTransaction(1, { giveUpWhen });
       return false;
     },
 );
 
 export const verifyAmountsAndAcceptSwap = withDeviceController(
   ({ getButtonsController }) =>
-    async (swap: Swap, amount: string) => {
+    async (swap: Swap, amount: string, { giveUpWhen }: SwapReviewOptions = {}) => {
       const buttons = getButtonsController();
       let confirmLabel: DeviceLabels = DeviceLabels.SIGN_TRANSACTION;
       if (getSpeculosModel() === DeviceModelId.nanoS) {
-        const blindSigned = await waitForSwapReviewOnNanoS();
+        const blindSigned = await waitForSwapReviewOnNanoS(giveUpWhen);
         confirmLabel = blindSigned ? DeviceLabels.ACCEPT_RISK : DeviceLabels.ACCEPT_AND_SEND;
       } else {
-        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, { giveUpWhen });
       }
       const events = await pressUntilTextFound(confirmLabel);
       verifySwapData(swap, events, amount);
@@ -1393,19 +1437,28 @@ export const verifyAmountsAndAcceptSwap = withDeviceController(
 
 export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
   ({ getButtonsController }) =>
-    async (swap: Swap, amount: string, errorMessage: string | null) => {
+    async (
+      swap: Swap,
+      amount: string,
+      errorMessage: string | null,
+      { giveUpWhen }: SwapReviewOptions = {},
+    ) => {
       const buttons = getButtonsController();
       if (errorMessage === null) {
         if (isTouchDevice()) {
-          await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+          await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG, SCREEN_WAIT_MAX_ATTEMPTS, {
+            giveUpWhen,
+          });
           await pressAndRelease(DeviceLabels.CONTINUE_ANYWAY);
         } else {
-          await waitFor(DeviceLabels.REVIEW_TRANSACTION, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+          await waitFor(DeviceLabels.REVIEW_TRANSACTION, SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, {
+            giveUpWhen,
+          });
           await pressUntilTextFound(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
           await buttons.both();
         }
       } else {
-        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+        await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, { giveUpWhen });
       }
 
       const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
@@ -1420,9 +1473,9 @@ export const verifyAmountsAndAcceptSwapForDifferentSeed = withDeviceController(
 
 export const verifyAmountsAndRejectSwap = withDeviceController(
   ({ getButtonsController }) =>
-    async (swap: Swap, amount: string) => {
+    async (swap: Swap, amount: string, { giveUpWhen }: SwapReviewOptions = {}) => {
       const buttons = getButtonsController();
-      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS);
+      await waitForReviewTransaction(SWAP_REVIEW_TRANSACTION_MAX_ATTEMPTS, { giveUpWhen });
       let events: string[] = [];
       if (isTouchDevice()) {
         events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);

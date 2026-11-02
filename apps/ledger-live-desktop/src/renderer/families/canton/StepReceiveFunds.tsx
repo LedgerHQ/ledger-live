@@ -4,7 +4,7 @@ import invariant from "invariant";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CantonAccount } from "@ledgerhq/coin-canton/types";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import useTheme from "~/renderer/hooks/useTheme";
 import { urls } from "~/config/urls";
@@ -235,7 +235,7 @@ const StepReceiveFunds = ({
   return (
     <>
       <Box px={2}>
-        <TrackPage
+        <TrackScreen
           category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
           name="Step 3"
           currencyName={currencyName}

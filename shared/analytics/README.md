@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Status: STABLE** — `track`, `trackPage`, and the host registry are the contract. Apps register their Segment client and consent here, along with any app-specific filters; they do not re-export `track` or `trackPage`. Import them from this package.
 
-React-free tracking pipeline. React adapters (`Track`, `TrackPage`, `TrackScreen`) live in [`@shared/analytics-react`](../analytics-react/README.md).
+React-free tracking pipeline. React adapters (`Track`, `TrackScreen`) live in [`@shared/analytics-react`](../analytics-react/README.md).
 
 ## Track events
 

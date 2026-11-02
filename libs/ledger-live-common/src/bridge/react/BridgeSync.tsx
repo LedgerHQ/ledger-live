@@ -1,8 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import shuffle from "lodash/shuffle";
 import priorityQueue from "async/priorityQueue";
-import { concat, from } from "rxjs";
-import { ignoreElements } from "rxjs/operators";
 import React, { useEffect, useCallback, useState, useRef, useMemo } from "react";
 import { isUpToDateAccount, getAccountCurrency } from "../../account";
 import { getAccountBridge } from "..";
@@ -12,7 +10,7 @@ import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { createSyncSessionManager } from "../syncSessionManager";
-import { legacySyncConfig } from "../syncConfig";
+import { syncLegacyAccount } from "../../account-data/full-sync/syncLegacyAccount";
 
 export type Props = {
   // this is a wrapping component that you need to put in your tree
@@ -202,15 +200,12 @@ function useSyncQueue({
           });
         };
 
-        const syncConfig = legacySyncConfig(account.currency.id, blacklistedTokenIds);
-        concat(
-          from(prepareCurrency(account.currency)).pipe(ignoreElements()),
-          bridge.sync(account, syncConfig),
-        ).subscribe({
-          next: accountUpdater => {
-            updateAccountWithUpdater(accountId, accountUpdater);
-          },
-          complete: () => {
+        syncLegacyAccount(account, {
+          prepareCurrency,
+          blacklistedTokenIds: blacklistedTokenIds ?? [],
+          updateAccountWithUpdater,
+        }).then(
+          () => {
             trackSyncSuccessEnd();
             setAccountSyncState(accountId, {
               pending: false,
@@ -219,7 +214,7 @@ function useSyncQueue({
             sessionManager.onAccountSyncDone(accountId, accounts);
             next();
           },
-          error: (raw: Error) => {
+          (raw: Error) => {
             const error = recoverError(raw);
 
             if (!error) {
@@ -240,7 +235,7 @@ function useSyncQueue({
             sessionManager.onAccountSyncDone(accountId, accounts, true);
             next();
           },
-        });
+        );
       }, onSyncFatalError);
     },
     [

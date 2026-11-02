@@ -18,10 +18,10 @@ const mockFetchAndActivate = jest.fn();
 const mockEnsureInitialized = jest.fn();
 const mockGetAll = jest.fn();
 
-jest.mock("firebase/app", () => ({
+jest.mock("@firebase/app", () => ({
   initializeApp: (...args: unknown[]) => mockInitializeApp(...(args as [])),
 }));
-jest.mock("firebase/remote-config", () => ({
+jest.mock("@firebase/remote-config", () => ({
   getRemoteConfig: (...args: unknown[]) => mockGetRemoteConfig(...(args as [])),
   fetchAndActivate: (...args: unknown[]) => mockFetchAndActivate(...(args as [])),
   ensureInitialized: (...args: unknown[]) => mockEnsureInitialized(...(args as [])),

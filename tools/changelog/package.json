@@ -1,0 +1,13 @@
+{
+  "name": "@ledgerhq/changelog",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Changelog generator for changeset version that never fails a release on GitHub API errors.",
+  "main": "./index.cjs",
+  "exports": {
+    ".": "./index.cjs"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.cjs\""
+  }
+}

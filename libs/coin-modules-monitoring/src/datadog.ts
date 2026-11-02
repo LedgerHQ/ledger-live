@@ -1,17 +1,5 @@
-import { client, v2 } from "@datadog/datadog-api-client";
 import { AccountType } from "./currencies";
 import { Dist } from "./measure";
-
-const configuration = client.createConfiguration({
-  authMethods: {
-    apiKeyAuth: process.env.DD_API_KEY,
-    appKeyAuth: process.env.DD_APP_KEY,
-  },
-});
-configuration.setServerVariables({
-  site: process.env.DD_DOMAIN ?? "datadoghq.eu",
-});
-const apiV2 = new v2.LogsApi(configuration);
 
 export interface LogEntry {
   duration: number;
@@ -32,11 +20,23 @@ export async function submitLogs(entries: LogEntry[]) {
     return;
   }
 
-  await apiV2.submitLog({
-    body: entries.map(entry => ({
-      ddtags: "env:prd",
-      message: JSON.stringify(entry),
-      service: "coin-modules-monitoring",
-    })),
+  const site = process.env.DD_DOMAIN ?? "datadoghq.eu";
+  const response = await fetch(`https://http-intake.logs.${site}/api/v2/logs`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "DD-API-KEY": process.env.DD_API_KEY ?? "",
+    },
+    body: JSON.stringify(
+      entries.map(entry => ({
+        ddtags: "env:prd",
+        message: JSON.stringify(entry),
+        service: "coin-modules-monitoring",
+      })),
+    ),
   });
+  if (!response.ok) {
+    throw new Error(`Datadog logs submission failed: ${response.status} ${await response.text()}`);
+  }
 }

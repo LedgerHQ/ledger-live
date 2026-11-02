@@ -3,7 +3,7 @@ import { TFunction } from "i18next";
 import { Virtualizer } from "@tanstack/react-virtual";
 import { TableRoot, Table, TableBody } from "@ledgerhq/lumen-ui-react";
 import { MarketCurrencyData } from "@ledgerhq/live-common/market/utils/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { MarketFavoritesEmptyState } from "../MarketFavoritesEmptyState";
 import { MarketNoAssetsEmptyState } from "../MarketNoAssetsEmptyState";
 import { MarketRow } from "../MarketRow";
@@ -63,7 +63,7 @@ export function MarketTableView({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
+      {search && currenciesLength > 0 && <TrackScreen category="Market Search" success={true} />}
       <TableRoot
         appearance="plain"
         className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg"

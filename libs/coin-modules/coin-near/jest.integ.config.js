@@ -1,23 +1,7 @@
-// near-api-js v7 depends on ESM-only @noble/@scure packages, which have to be transpiled for Jest.
-const esmPackages = ["@noble", "@scure"];
+const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");
 
-/** @type {import('jest').Config} */
-module.exports = {
-  testEnvironment: "node",
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
-  testRegex: ".integ.test.ts$",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
-  testTimeout: 60_000,
-  forceExit: true,
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
-  transformIgnorePatterns: [`node_modules/.pnpm/(?!(${esmPackages.join("|")}))`],
-};
+// near-api-js v7 depends on ESM-only @noble/@scure packages, which have to be transpiled for Jest.
+// The preset already keeps @noble transformed.
+const extraEsmDeps = ["@scure"];
+
+module.exports = createLibsCoinIntegJestConfig({ rootDir: __dirname }, { extraEsmDeps });

@@ -12,5 +12,6 @@ export const QUICK_ACTIONS_TEST_IDS = {
     receive: "transfer-action-receive",
     send: "transfer-action-send",
     bankTransfer: "transfer-action-bank-transfer",
+    assetPicker: "transfer-asset-picker",
   },
 } as const;

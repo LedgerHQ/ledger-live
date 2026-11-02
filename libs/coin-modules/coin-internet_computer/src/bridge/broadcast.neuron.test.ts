@@ -8,11 +8,11 @@ import {
 } from "../errors";
 import { broadcast } from "./broadcast";
 
-jest.mock("../api");
+jest.mock("../network/api");
 jest.mock("../logic/crypto");
 jest.mock("../common-logic/neuron");
 
-import * as api from "../api";
+import * as api from "../network/api";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import { toNeuronsData } from "../common-logic/neuron";
 

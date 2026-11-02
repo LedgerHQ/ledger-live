@@ -457,7 +457,7 @@ function RawDetails({ title, value }: Readonly<{ title: string; value: unknown }
   return (
     <div className="flex flex-col gap-8">
       <span className="body-2 text-muted">{title}</span>
-      <pre className="max-h-[260px] overflow-auto rounded-md bg-muted p-12 text-xs text-base">
+      <pre className="max-h-[260px] overflow-auto rounded-md bg-muted p-12 text-base">
         {formatJson(value)}
       </pre>
     </div>

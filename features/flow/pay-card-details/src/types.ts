@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { PayCardStatus } from "@domain/api-card-management";
 import type { CardAssetsProps } from "@features/flow-pay-card-assets";
 import type { CardTransactionFormatters } from "@features/flow-pay-card-transactions";
-import type { FormattedValue } from "@ledgerhq/lumen-utils-shared";
+import type { FormattedValue } from "@ledgerhq/lumen-ui-react";
 import type { CardDetailsSceneProps } from "./components/CardDetails/Scenes/types";
 import type { CardSettingsActions } from "./components/More/types";
 

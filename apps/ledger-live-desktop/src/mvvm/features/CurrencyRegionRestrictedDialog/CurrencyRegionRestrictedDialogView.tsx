@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { ExternalLink, Globe } from "@ledgerhq/lumen-ui-react/symbols";
-import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
+import { InfoState } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 import type { CurrencyRegionRestrictedDialogViewProps } from "./useCurrencyRegionRestrictedDialogViewModel";
 
 const CurrencyRegionRestrictedDialogView = ({

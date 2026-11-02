@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
+import { stacksMemoPatch } from "@ledgerhq/live-common/bridge/descriptor/send/memo";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stacks/types";
@@ -20,7 +21,7 @@ const MemoValueField = ({ onChange, account, transaction, status, autoFocus }: P
 
   const onMemoValueChange = useCallback(
     (memoValue: string) => {
-      onChange(bridge.updateTransaction(transaction, { memo: memoValue }));
+      onChange(bridge.updateTransaction(transaction, stacksMemoPatch(memoValue)));
     },
     [onChange, transaction, bridge],
   );

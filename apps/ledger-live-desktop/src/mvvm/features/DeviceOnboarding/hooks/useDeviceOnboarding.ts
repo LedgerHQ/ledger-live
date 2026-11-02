@@ -75,7 +75,6 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     startActor,
     discardActor,
     resetActor,
-    stopActor,
   } = useDeviceOnboardingActor({
     missingSessionMessage: "No desktop onboarding session",
     onSnapshot: (next, previous) => onSnapshotRef.current(next, previous),
@@ -322,9 +321,9 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
     releaseFirmwareDrawer();
     stopLockListener();
     dmkRef.current = null;
-    resetActor();
-    void portsRef.current?.closeSession();
+    const ports = portsRef.current;
     portsRef.current = null;
+    void resetActor().then(() => ports?.closeSession());
     transportLostRef.current = false;
     setStatus("idle");
     setDevice(null);
@@ -380,11 +379,11 @@ export function useDeviceOnboarding(): DeviceOnboardingToolProps {
       adoptGeneration.current += 1;
       releaseFirmwareDrawer();
       stopLockListener();
-      stopActor();
-      void portsRef.current?.closeSession();
+      const ports = portsRef.current;
       portsRef.current = null;
+      void resetActor().then(() => ports?.closeSession());
     },
-    [portsRef, releaseFirmwareDrawer, stopActor, stopLockListener],
+    [portsRef, releaseFirmwareDrawer, resetActor, stopLockListener],
   );
 
   return {

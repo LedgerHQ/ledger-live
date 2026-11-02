@@ -3,7 +3,6 @@ import { Linking, Platform } from "react-native";
 import { shouldUseKeyboardAvoidance, useKeyboardVisible } from "~/logic/keyboardVisible";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
-import { useContactsMeContact } from "@features/platform-contacts";
 import { useContactsCurrencySelectionAdapter } from "LLM/features/Contacts/hooks/useContactsCurrencySelectionAdapter";
 import type { ContactsAddAddressNameProps } from "@features/flow-contacts-add-address";
 import { resolveContactAddressSupportsDomain } from "@features/flow-contacts-detail";
@@ -41,11 +40,6 @@ export function useContactsAddAddressFlowDrawerViewModel({
   onQrCodeClick,
 }: ContactsAddAddressFlowDrawerProps) {
   const helpCenterUrl = useLocalizedUrl(urls.resources.helpCenter);
-  const meContact = useContactsMeContact();
-  const isMeContact =
-    (state.status === "namingAddress" || state.status === "confirmationRequired") &&
-    meContact !== undefined &&
-    state.selectedContactId === meContact.id;
   const handleSanctionedAddressLearnMore = useCallback(() => {
     void Linking.openURL(helpCenterUrl);
   }, [helpCenterUrl]);
@@ -67,7 +61,6 @@ export function useContactsAddAddressFlowDrawerViewModel({
     state.status === "namingAddress" || state.status === "confirmationRequired"
       ? {
           addressLabel: state.addressLabel,
-          showPrivacyPolicy: isMeContact,
           nextStep: "confirmation",
           bottomOffset,
           onChangeText: onAddressNameChange,

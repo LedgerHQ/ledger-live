@@ -72,7 +72,8 @@ jest.mock("LLM/hooks/useAccountUnit", () => ({
   useAccountUnit: () => ({ code: "ADA", magnitude: 6 }),
 }));
 
-jest.mock("@ledgerhq/live-common/explorers", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getDefaultExplorerView: jest.fn(),
   getStakePoolExplorer: jest.fn(),
 }));

@@ -45,14 +45,12 @@ describe("preload", () => {
     jest.useRealTimers();
   });
 
-  it("should expose the renderer reload and webview hooks through contextBridge", async () => {
+  it("should expose the renderer reload hook through contextBridge", async () => {
     jest.mocked(ipcRenderer.invoke).mockResolvedValue(undefined);
     const api = loadExposedApi();
 
     await api.reloadRenderer();
-    api.openWindow(4, ["ledger.com"]);
 
     expect(ipcRenderer.invoke).toHaveBeenCalledWith(CHANNELS.reloadRenderer);
-    expect(ipcRenderer.send).toHaveBeenCalledWith(CHANNELS.webviewDomReady, 4, ["ledger.com"]);
   });
 });

@@ -4,7 +4,7 @@ import { runTooLowAmountForQuoteSwapsTest } from "@e2e/specs/swap/otherTestCases
 const transactionE2E = {
   swap: new Swap(TokenAccount.ETH_USDT_1, Account.BTC_NATIVE_SEGWIT_1, "0.000001"),
   tmsLinks: ["B2CQA-3242"],
-  errorMessage: "Enter a higher amount and try again.",
+  errorMessage: /Enter at least \d+(\.\d+)? USDT and try again\./,
   ctaBanner: false,
   quotesVisible: false,
   tags: [

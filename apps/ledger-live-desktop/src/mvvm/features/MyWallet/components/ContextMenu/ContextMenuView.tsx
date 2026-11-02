@@ -6,7 +6,7 @@ import { MY_WALLET_TRACKING_PAGE_NAME } from "../../constants";
 import { ContextMenuTransition } from "./ContextMenuTransition";
 import { CONTEXT_MENU_REGISTRY } from "./registry";
 import type { ContextMenuViewProps } from "./types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 const side = "bottom";
 const align = "end";
@@ -25,7 +25,7 @@ export function ContextMenuView({
 
       <PopoverContent width="fixed" side={side} align={align} className="overflow-hidden">
         <ContextMenuContext.Provider value={contextValue}>
-          <TrackPage category={MY_WALLET_TRACKING_PAGE_NAME} />
+          <TrackScreen category={MY_WALLET_TRACKING_PAGE_NAME} />
           <ContextMenuTransition view={view} direction={direction}>
             <Screen />
           </ContextMenuTransition>

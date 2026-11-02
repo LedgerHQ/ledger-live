@@ -1,12 +1,8 @@
 ---
 name: feature-dev
-description: Guided feature development with codebase understanding and architecture focus
-disable-model-invocation: true
----
-
----
-description: Guided feature development with codebase understanding and architecture focus
+description: Guided feature development for Ledger Wallet, from placing the code in the right layer through exploration, design, implementation and review. Use when the user asks to build a new feature or capability end to end.
 argument-hint: Optional feature description
+disable-model-invocation: true
 ---
 
 # Feature Development
@@ -15,9 +11,9 @@ You are helping a developer implement a new feature for Ledger Wallet applicatio
 
 ## References
 
-New features must be implemented in `src/mvvm/` following the MVVM architecture (`.agents/skills/mvvm-architecture/SKILL.md`).
-
-Shared logic extracted out of an app goes to `shared/`, `domain/` or `features/`, not to `libs/`.
+- [structure-flow](../structure-flow/SKILL.md) decides which layer and package own each part of the feature.
+- [mvvm-architecture](../mvvm-architecture/SKILL.md) covers the app side in `apps/*/src/mvvm/`: screens composing `@features/*` and app-only code.
+- New code never goes to `libs/`.
 
 ## Core Principles
 
@@ -29,23 +25,35 @@ Shared logic extracted out of an app goes to `shared/`, `domain/` or `features/`
 
 ---
 
-## Phase 1: Discovery
+## Phase 1: Place the Code
 
-**Goal**: Understand what needs to be built
+**Goal**: Decide which layer and package own each part of the feature before anything else
 
 Initial request: $ARGUMENTS
 
 **Actions**:
 1. Create todo list with all phases
-2. If feature unclear, ask user for:
-   - What problem are they solving?
-   - What should the feature do?
-   - Any constraints or requirements?
-3. Summarize understanding and confirm with user
+2. Read [structure-flow](../structure-flow/SKILL.md) and split the request into concerns: user journey and its UI, capability shared by several flows, business object, data access, generic primitive, app wiring
+3. Give each concern the lowest layer that can own it, and name the package: an existing one first (`@features/flow-contacts`, `@domain/entity-contact`, `@domain/api-push-devices`, `@shared/schema-primitives`), a new one only when none fits
+4. Keep only the screen composing those packages, and app-only code, in `apps/*/src/mvvm/`
+5. Present the placement as a short table (concern, layer, package, new or existing). Later phases work inside it; changing it needs the user's agreement
 
 ---
 
-## Phase 2: Codebase Exploration
+## Phase 2: Discovery
+
+**Goal**: Understand what needs to be built
+
+**Actions**:
+1. If feature unclear, ask user for:
+   - What problem are they solving?
+   - What should the feature do?
+   - Any constraints or requirements?
+2. Summarize understanding and confirm with user
+
+---
+
+## Phase 3: Codebase Exploration
 
 **Goal**: Understand relevant existing code and patterns at both high and low levels
 
@@ -66,7 +74,7 @@ Initial request: $ARGUMENTS
 
 ---
 
-## Phase 3: Clarifying Questions
+## Phase 4: Clarifying Questions
 
 **Goal**: Fill in gaps and resolve all ambiguities before designing
 
@@ -82,19 +90,19 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
-## Phase 4: Architecture Design
+## Phase 5: Architecture Design
 
 **Goal**: Design multiple implementation approaches with different trade-offs
 
 **Actions**:
-1. Launch 2-3 code-architect agents in parallel with different focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), or pragmatic balance (speed + quality)
+1. Launch 2-3 code-architect agents in parallel, each working inside the Phase 1 placement, with different focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), or pragmatic balance (speed + quality)
 2. Review all approaches and form your opinion on which fits best for this specific task (consider: small fix vs large feature, urgency, complexity, team context)
 3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
 4. **Ask user which approach they prefer**
 
 ---
 
-## Phase 5: Implementation
+## Phase 6: Implementation
 
 **Goal**: Build the feature
 
@@ -110,7 +118,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
-## Phase 6: Quality Review
+## Phase 7: Quality Review
 
 **Goal**: Ensure code is simple, DRY, elegant, easy to read, and functionally correct
 
@@ -122,7 +130,7 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ---
 
-## Phase 7: Summary
+## Phase 8: Summary
 
 **Goal**: Document what was accomplished
 

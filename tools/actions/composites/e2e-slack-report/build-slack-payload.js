@@ -19,12 +19,12 @@ const RED = "#FF333C";
 const GREY = "#808080";
 
 /**
- * Build the list of result rows from ROW{1,2}_* env vars. A row with an empty label is skipped.
+ * Build the list of result rows from ROW{1,2,3}_* env vars. A row with an empty label is skipped.
  * @param {NodeJS.ProcessEnv} env
  */
 function rowsFromEnv(env) {
   const rows = [];
-  for (const i of [1, 2]) {
+  for (const i of [1, 2, 3]) {
     const label = env[`ROW${i}_LABEL`];
     if (!label) continue;
     rows.push({

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Linking, StyleSheet } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import type { AleoStakingPositionView } from "@ledgerhq/live-common/families/aleo/react";
 import type { AleoAccount } from "@ledgerhq/live-common/families/aleo/types";
 import { useTranslation } from "~/context/Locale";

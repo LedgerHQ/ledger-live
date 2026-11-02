@@ -1,7 +1,7 @@
 # @features/flow-app-availability
 
-> [!CAUTION]
-> **Status: STABLE** — Wired into Ledger Wallet Desktop and Mobile. 
+> [!NOTE]
+> **Status: STABLE** — Wired into Ledger Wallet Desktop and Mobile.
 
 Owns the launch availability check for Ledger Wallet. Apps wrap the tree with `AppAvailability`
 and read `useAppAvailability` from splash gates. Unavailable states render

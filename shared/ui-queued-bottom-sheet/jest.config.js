@@ -1,5 +1,5 @@
 const path = require("path");
-const { createSharedUiNativeJestConfig } = require("@support/jest-shared");
+const { createSharedUiNativeJestConfig } = require("@support/jest/shared");
 
 module.exports = createSharedUiNativeJestConfig({
   moduleNameMapper: {

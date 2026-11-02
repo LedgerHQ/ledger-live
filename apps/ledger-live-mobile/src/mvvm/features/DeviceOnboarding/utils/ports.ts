@@ -15,11 +15,18 @@ type CreateDeviceOnboardingPortsInput = {
 
 type MobileDmkTransport = DeviceManagementKitBLETransport | DeviceManagementKitHIDTransport;
 
+/**
+ * The last ports to open a transport own it. An older screen can close late (after its early-check
+ * Exit), once a newer screen has reused the same session: it must not close it under that screen.
+ */
+const owners = new WeakMap<MobileDmkTransport, symbol>();
+
 export function createDeviceOnboardingPorts({
   dmk,
   sessionId,
   wired,
 }: CreateDeviceOnboardingPortsInput): DeviceOnboardingPorts {
+  const owner = Symbol("ports");
   let heldTransport: MobileDmkTransport | null = null;
 
   const publishedTransport = (): MobileDmkTransport | null =>
@@ -40,6 +47,8 @@ export function createDeviceOnboardingPorts({
           : new DeviceManagementKitBLETransport(dmk, sessionId);
       }
 
+      owners.set(heldTransport, owner);
+
       if (wired) {
         activeHidDeviceSessionSubject.next({
           transport: heldTransport as DeviceManagementKitHIDTransport,
@@ -58,7 +67,18 @@ export function createDeviceOnboardingPorts({
       return liveTransport()?.sessionId ?? sessionId;
     },
     async closeSession() {
-      await heldTransport?.close();
+      const closing = heldTransport;
+      if (!closing) return;
+      heldTransport = null;
+      if (owners.get(closing) !== owner) return;
+      if (wired) {
+        if (activeHidDeviceSessionSubject.value?.transport === closing) {
+          activeHidDeviceSessionSubject.next(null);
+        }
+      } else if (activeDeviceSessionSubject.value?.transport === closing) {
+        activeDeviceSessionSubject.next(null);
+      }
+      await closing.close();
     },
   };
 }

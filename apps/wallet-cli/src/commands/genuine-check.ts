@@ -5,6 +5,7 @@ import { isCounterfeitError } from "@ledgerhq/live-common/hw/isCounterfeitError"
 import { TimeoutError, timeout } from "rxjs";
 import { createCommandOutput } from "../output";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
+import { getActiveSpeculosTarget } from "../device/speculos-target";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { withDmkDeviceSession } from "../session/bridge-device-session";
 import { deviceTimeoutOption, outputOption, resolveOutputFormat } from "./inputs";
@@ -17,6 +18,16 @@ class NonGenuineDeviceError extends Error {
   constructor() {
     super("Device is not genuine.");
     this.name = "NonGenuineDeviceError";
+  }
+}
+
+class GenuineCheckOnSpeculosError extends Error {
+  override name = "GenuineCheckOnSpeculosError";
+  constructor() {
+    super(
+      "genuine-check needs a physical Ledger: Speculos has no attestation keys. " +
+        "Unset SPECULOS_API_PORT to check a USB device.",
+    );
   }
 }
 
@@ -56,6 +67,8 @@ export default defineCommand({
     const out = createCommandOutput(resolveOutputFormat(flags.output), ctx);
 
     await out.run(async () => {
+      // The HSM attestation cannot pass on an emulator, so fail before opening a session.
+      if (getActiveSpeculosTarget()) throw new GenuineCheckOnSpeculosError();
       let isGenuine = false;
       const spin = out.spin("Connect and unlock your Ledger on the dashboard…");
 

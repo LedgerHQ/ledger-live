@@ -34,15 +34,3 @@ export const SIDEBAR_VALUE_TO_TRACK_ENTRY: Record<SideBarNavValue, string> = {
   card: "card",
   paytab: "paytab",
 } as const;
-
-/**
- * Special sidebar values that don't map to a simple path navigation.
- * These trigger custom handlers instead of standard push(path).
- */
-export const SIDEBAR_SPECIAL_VALUES = {
-  refer: "refer",
-  recover: "recover",
-} as const;
-
-export type SideBarSpecialValue =
-  (typeof SIDEBAR_SPECIAL_VALUES)[keyof typeof SIDEBAR_SPECIAL_VALUES];

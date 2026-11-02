@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
@@ -35,7 +35,7 @@ const StepConnectDevice = ({
   if (preparationError && !bridgePending) {
     return (
       <Box flow={4} alignItems="center" justifyContent="center" py={50}>
-        <TrackPage
+        <TrackScreen
           category="Unstake Flow"
           name="Step ConnectDevice Preparing Error"
           flow="stake"
@@ -54,7 +54,7 @@ const StepConnectDevice = ({
   if (bridgePending || !hasFee) {
     return (
       <Box flow={4} alignItems="center" justifyContent="center" py={50}>
-        <TrackPage
+        <TrackScreen
           category="Unstake Flow"
           name="Step ConnectDevice Preparing"
           flow="stake"
@@ -71,7 +71,7 @@ const StepConnectDevice = ({
 
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category="Unstake Flow"
         name="Step ConnectDevice"
         flow="stake"

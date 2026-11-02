@@ -25,7 +25,5 @@ export function getAssetFromToken(
     type: token.tokenType,
     assetReference: eip55.encode(token.contractAddress),
     assetOwner: owner,
-    name: token.name,
-    unit: token.units[0],
   };
 }

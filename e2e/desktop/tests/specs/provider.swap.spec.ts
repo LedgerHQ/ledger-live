@@ -9,8 +9,9 @@ import {
   setupEnv,
   performSwapUntilQuoteSelectionStep,
   ensureTokenApproval,
-  revokeTokenApproval,
+  tokenApprovalBroadcastAccounts,
 } from "tests/utils/swapUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 import { liveDataWithAddressCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { DEVICE_TAGS, deviceTagsWithoutLNS } from "tests/utils/tagsUtils";
 
@@ -25,8 +26,8 @@ const providerFlowTests = [
     bugTickets: ["LIVE-29454", "LIVE-29858"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: Account.ETH_1,
+    fromAccount: TokenAccount.ETH_USDT_5,
+    toAccount: Account.ETH_5,
     provider: SwapProvider.OKX,
     xrayTicket: "B2CQA-4728",
     bugTickets: ["LIVE-29858"],
@@ -34,13 +35,18 @@ const providerFlowTests = [
 ];
 
 for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of providerFlowTests) {
-  test.describe("Swap - DEX native flow", () => {
+  const approvalLock = exclusiveLockFor({
+    cliBroadcastAccounts: tokenApprovalBroadcastAccounts(fromAccount, provider),
+  });
+
+  test.describe("Swap - DEX native flow", { lock: approvalLock.names }, () => {
     setupEnv(true);
 
     test.use({
       teamOwner: Team.SWAP,
       userdata: "skip-onboarding-with-last-seen-device",
       speculosApp: provider.app,
+      ...approvalLock.fixtures,
 
       cliCommandsOnApp: [
         [
@@ -75,7 +81,6 @@ for (const { fromAccount, toAccount, provider, xrayTicket, bugTickets } of provi
       },
       async ({ app }) => {
         await app.speculos.enableBlindSigningOnNanoS();
-        await revokeTokenApproval(fromAccount, provider);
         const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
         await ensureTokenApproval(fromAccount, provider, minAmount);
         const swap = new Swap(fromAccount, toAccount, minAmount, provider);

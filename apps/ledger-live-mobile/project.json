@@ -29,12 +29,7 @@
       ]
     },
     "e2e:ci": {
-      "dependsOn": [
-        "^build",
-        "@ledgerhq/dummy-live-app:build",
-        "@ledgerhq/dummy-wallet-app:build",
-        "@ledgerhq/dummy-ptx-app:build"
-      ],
+      "dependsOn": ["^build"],
       "cache": true,
       "outputs": [
         "{projectRoot}/artifacts/**",

@@ -47,6 +47,7 @@ function context(overrides: Partial<DeviceOnboardingContext> = {}): DeviceOnboar
     lastGenuineFailure: null,
     onEarlyCheckScreen: false,
     checksPaused: false,
+    successAcknowledgedOnSession: null,
     firmware: null,
     currentSetupStep: null,
     ...overrides,
@@ -311,7 +312,7 @@ describe("stampSession", () => {
   });
 
   it("should leave the other events as they are", () => {
-    const event = { type: "RETRY" } as const;
+    const event = { type: "FIRMWARE_UPDATE_RECONNECT_REQUIRED" } as const;
 
     const sessionId = jest.fn(() => "session-2");
 
@@ -368,8 +369,21 @@ describe("nextStatesFrom", () => {
     } as Parameters<typeof nextStatesFrom>[0];
 
     expect(nextStatesFrom(snapshot)).toEqual([
+      {
+        event: "FIRMWARE_UPDATE_RECONNECT_REQUIRED",
+        state: "awaitingSessionAfterFirmwareUpdate",
+      },
       { event: "FIRMWARE_UPDATE_FLOW_CLOSED", state: "readingState" },
     ]);
+  });
+
+  it("lists the new session as the only way out of the post-update wait", () => {
+    const snapshot = {
+      status: "active",
+      value: "awaitingSessionAfterFirmwareUpdate",
+    } as Parameters<typeof nextStatesFrom>[0];
+
+    expect(nextStatesFrom(snapshot)).toEqual([{ event: "SESSION_READY", state: "readingState" }]);
   });
 });
 

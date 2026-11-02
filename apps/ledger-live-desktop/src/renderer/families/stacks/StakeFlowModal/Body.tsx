@@ -209,7 +209,9 @@ const Body = ({ stepId, params, onClose, onChangeStepId }: Props) => {
     steps,
     errorSteps: error ? [steps.findIndex(s => s.id === stepId)] : [],
     disabledSteps: [],
-    hideBreadcrumb: !!error,
+    // The pool and amount steps show an error as a banner above the form, so the steps stay visible;
+    // only the device and confirmation steps replace the whole step with the error.
+    hideBreadcrumb: !!error && ["connectDevice", "confirmation"].includes(stepId),
     device,
     account,
     transaction,

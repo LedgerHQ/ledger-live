@@ -29,9 +29,9 @@ jest.mock("@features/platform-contacts", () => ({
   useContactDisplayName: jest.requireActual<typeof import("@features/platform-contacts")>(
     "@features/platform-contacts",
   ).useContactDisplayName,
-  ContactAvatar: ({ name, testId }: { name: string; testId?: string }) => {
+  ContactAvatar: ({ name, testID }: { name: string; testID?: string }) => {
     const RN = jest.requireActual<typeof import("react-native")>("react-native");
-    return <RN.Text testID={testId}>{name}</RN.Text>;
+    return <RN.Text testID={testID}>{name}</RN.Text>;
   },
 }));
 

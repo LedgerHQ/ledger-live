@@ -3,7 +3,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ValidatorField from "../fields/ValidatorField";
@@ -29,7 +29,7 @@ export default function StepStake({
   const chosenVoteAccAddr = transaction.recipient || "";
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Delegation Flow"
         name="Step Starter"
         page="Step Validator"

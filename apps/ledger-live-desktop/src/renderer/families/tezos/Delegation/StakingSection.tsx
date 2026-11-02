@@ -3,7 +3,7 @@ import styled, { useTheme } from "styled-components";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch } from "LLD/hooks/redux";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import type { TezosStakingInfo } from "@ledgerhq/live-common/families/tezos/react";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";

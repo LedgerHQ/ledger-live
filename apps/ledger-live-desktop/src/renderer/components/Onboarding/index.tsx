@@ -1,5 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/devices";
-import React, { useEffect, useState, createContext, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Routes, Route } from "react-router";
 import { CSSTransition } from "react-transition-group";
 import { Flex } from "@ledgerhq/react-ui";
@@ -18,6 +17,9 @@ import Box from "../Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import SyncOnboarding from "../SyncOnboarding";
 import { OnboardingUseCase } from "./OnboardingUseCase";
+import { OnboardingContext, type NullableDeviceModelId } from "./OnboardingContext";
+
+export { OnboardingContext };
 
 const OnboardingContainer = styled(Flex).attrs({
   width: "100%",
@@ -41,19 +43,6 @@ const ScreenContainer = styled(Flex).attrs({
     transition: opacity ${DURATION}ms ease-in;
   }
 `;
-
-type NullableDeviceModelId = DeviceModelId | null;
-
-type OnboardingContextTypes = {
-  deviceModelId: NullableDeviceModelId;
-  setDeviceModelId: (deviceModelId: NullableDeviceModelId) => void;
-};
-
-export const OnboardingContext = createContext<OnboardingContextTypes>({
-  deviceModelId: null,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setDeviceModelId: () => {},
-});
 
 export function Onboarding() {
   const [useCase, setUseCase] = useState<OnboardingUseCase | null>(null);

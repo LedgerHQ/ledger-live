@@ -1,17 +1,24 @@
-import BigNumber from "bignumber.js";
 import "@polkadot/api/augment";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import { type ProviderInterface } from "@polkadot/rpc-provider/types";
 import { ApiPromise, Keyring, WsProvider } from "@polkadot/api";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { forbidRemoteRequests } from "@ledgerhq/coin-tester/localOnly";
+import type { Sandbox } from "@ledgerhq/coin-tester/sandbox";
 import { formatCurrencyUnit, parseCurrencyUnit } from "@ledgerhq/coin-module-framework/currencies";
-import { killChopsticksAndSidecar, spawnChopsticksAndSidecar } from "../chopsticks-sidecar";
 import type { PolkadotCoinConfig, PolkadotContext } from "@ledgerhq/coin-polkadot/config";
-import { ExplorerExtrinsic } from "@ledgerhq/coin-polkadot";
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeAccount } from "../fixtures";
-import { indexOperation } from "../indexer";
 import { assethub } from "../helpers";
+import {
+  claimableEra,
+  endpointOf,
+  startPolkadotSandbox,
+  toWs,
+  atlasOf,
+  waitForInclusion,
+  waitForUnlock,
+} from "../sandbox";
 import resolver from "@ledgerhq/coin-polkadot/signer/index";
 import {
   PolkadotAccount,
@@ -20,10 +27,15 @@ import {
 } from "@ledgerhq/coin-polkadot/types/bridge";
 import { buildSigner } from "../signer";
 
+// The transaction that waits for the era in which the unbonded funds can be withdrawn
+const WITHDRAW_NAME = "Withdraw 50 DOT";
+
 type PolkadotScenarioTransaction = ScenarioTransaction<PolkadotTransaction, PolkadotAccount>;
 
 let claimRewardEra: string | null = null;
 let claimRewardValidators: string[] | null = null;
+// Validators of the chain: the mainnet ones the scenario used on a fork do not exist on a sandbox
+let nominateValidators: string[] = [];
 
 const getTransactions = () => {
   const send1DotTransaction: PolkadotScenarioTransaction = {
@@ -135,11 +147,7 @@ const getTransactions = () => {
   const nomminateTransaction: PolkadotScenarioTransaction = {
     name: "Nominate",
     mode: "nominate",
-    // https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fpolkadot-rpc.publicnode.com#/staking
-    validators: [
-      "14uXNEUx4xqgBafCtxvZMxDEgHdjUTcSXKQqFjHCGXoAY4Kn",
-      "13qsqBRWCaH12UsuKuaLuvW9M29FRjfxtZMmMMZLLi9JmyZc",
-    ],
+    validators: nominateValidators,
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
@@ -170,9 +178,10 @@ const getTransactions = () => {
   };
 
   const withdraw250DotTransaction: PolkadotScenarioTransaction = {
-    name: "Withdraw 250 DOT",
+    name: WITHDRAW_NAME,
     recipient: "15oF4uVJwmo4TdGW7VfQxNLavjCXviqxT9S1MgbjMNHr6Sp5",
-    amount: parseCurrencyUnit(assethub.units[0], "250"),
+    // What the rebond left unbonding: 100 were unbonded, 50 bonded again
+    amount: parseCurrencyUnit(assethub.units[0], "50"),
     mode: "withdrawUnbonded",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
@@ -235,67 +244,17 @@ const getTransactions = () => {
   ];
 };
 
-const LOCAL_TESTNODE_WS_URL = "ws://127.0.0.1:8000";
-const SIDECAR_BASE_URL = "http://127.0.0.1:8080";
+/** DOT airdropped to the scenario's account, whole units. */
+const ACCOUNT_DOT = 100_000;
 
-async function createUnclaimedReward(
-  api: ApiPromise,
-  wsProvider: WsProvider,
-): Promise<{ era: number; validator: string }> {
-  const activeEraOpt = await api.query.staking.activeEra();
-
-  if (activeEraOpt.isNone) {
-    throw new Error("ActiveEra is None on AssetHub fork — cannot pick a claimable era");
-  }
-  const era = activeEraOpt.unwrap().index.toNumber() - 1;
-
-  const reward = await api.query.staking.erasValidatorReward(era);
-
-  if (reward.isNone) {
-    throw new Error(`No ErasValidatorReward stored at era ${era}`);
-  }
-
-  const stakingQuery = api.query.staking;
-
-  const overviewEntries = await stakingQuery.erasStakersOverview.entries(era);
-  if (overviewEntries.length === 0) {
-    throw new Error(`No validators elected at era ${era}`);
-  }
-  const validator = String(overviewEntries[0][0].args[1]);
-
-  // Force the validator's rewards at this era to "unclaimed" via chopsticks dev_setStorage,
-  // so the claim-reward extrinsic dry-run + broadcast succeed deterministically.
-  const claimedKey = stakingQuery.claimedRewards.key(era, validator);
-  await wsProvider.send("dev_setStorage", [[[claimedKey, null]]]);
-
-  return { era, validator };
-}
-
-const wsProvider = new WsProvider(LOCAL_TESTNODE_WS_URL, false);
-let api: ApiPromise;
-let unsubscribeNewBlockListener: () => void;
-
-const coinConfig: PolkadotCoinConfig = {
-  status: {
-    type: "active",
-    features: [
-      { id: "blockchain_txs", status: "active" },
-      { id: "staking_txs", status: "active" },
-    ],
-  },
-  name: "Polkadot",
-  unit: { name: "DOT", code: "DOT", magnitude: 10 },
-  node: {
-    url: LOCAL_TESTNODE_WS_URL,
-  },
-  indexer: {
-    url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
-  },
-  sidecar: {
-    url: SIDECAR_BASE_URL,
-  },
-  hasBeenMigrated: true,
-};
+let sandbox: Sandbox | undefined;
+let api: ApiPromise | undefined;
+let closeGuard: (() => void) | undefined;
+let coinConfig: PolkadotCoinConfig;
+let atlas: ReturnType<typeof atlasOf>;
+// The order the transactions run in, to wait for an era before the withdrawal
+let transactionNames: string[] = [];
+let transactionIndex = 0;
 
 const context: PolkadotContext = {
   config: async () => coinConfig,
@@ -306,18 +265,44 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
   name: "Polkadot AssetHub Ledger Live transactions",
 
   setup: async () => {
-    await spawnChopsticksAndSidecar("/coin-tester-polkadot/coin-tester-chopsticks/assethub.yml");
+    closeGuard = forbidRemoteRequests();
+    sandbox = await startPolkadotSandbox();
+    const nodeUrl = endpointOf(sandbox, "node");
+    const node = toWs(nodeUrl);
+
+    // Production's layout: the rest-api serves Asset Hub under `/v1`, Atlas under its own path
+    coinConfig = {
+      status: {
+        type: "active",
+        features: [
+          { id: "blockchain_txs", status: "active" },
+          { id: "staking_txs", status: "active" },
+        ],
+      },
+      name: "Polkadot",
+      unit: { name: "DOT", code: "DOT", magnitude: 10 },
+      // HTTP like production: a WebSocket would keep reconnecting after the teardown
+      node: { url: nodeUrl },
+      indexer: { url: `${endpointOf(sandbox, "indexer")}/blockchain/dot_asset_hub` },
+      sidecar: { url: `${endpointOf(sandbox, "restApi")}/v1` },
+      hasBeenMigrated: true,
+    };
+
+    atlas = atlasOf(coinConfig.indexer.url);
 
     await cryptoWaitReady();
-    await wsProvider.connect();
-    api = await ApiPromise.create({ provider: wsProvider as ProviderInterface, noInitWarn: true });
+    api = await ApiPromise.create({
+      provider: new WsProvider(node) as ProviderInterface,
+      noInitWarn: true,
+    });
 
-    const { era, validator } = await createUnclaimedReward(api, wsProvider);
-    claimRewardEra = String(era);
-    claimRewardValidators = [validator];
-
-    const keyring = new Keyring({ type: "sr25519" });
-    keyring.setSS58Format(0);
+    // The eras pass on their own: wait for one that has validators and can be claimed
+    const claim = await claimableEra(api);
+    claimRewardEra = String(claim.era);
+    claimRewardValidators = [claim.validators[0]];
+    nominateValidators = claim.validators.slice(0, 2);
+    transactionNames = getTransactions().map(transaction => transaction.name);
+    transactionIndex = 0;
 
     const signer = await buildSigner();
     const signerContext: Parameters<typeof resolver>[0] = (_, fn) => fn(signer);
@@ -331,20 +316,14 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
       derivationMode: "polkadotbip44",
     });
 
+    const keyring = new Keyring({ type: "sr25519" });
+    keyring.setSS58Format(0);
     const polkadotScenarioAccountPair = keyring.addFromAddress(address, {
       name: "BASIC_SCENARIO_ACCOUNT",
     });
 
-    // https://polkadot.js.org/docs/keyring/start/suri/#dev-accounts
-    const alice = keyring.addFromUri("//Alice");
-
-    const unsub = await api.tx.balances
-      .transferAll(polkadotScenarioAccountPair.address, false)
-      .signAndSend(alice, result => {
-        if (result.status.isFinalized) {
-          unsub();
-        }
-      });
+    await sandbox.airdrop(polkadotScenarioAccountPair.address, ACCOUNT_DOT);
+    await atlas.waitForBlock((await api.rpc.chain.getHeader()).number.toNumber());
 
     const account = makeAccount(polkadotScenarioAccountPair.address, assethub);
 
@@ -356,108 +335,28 @@ export const AssetHubScenario: Scenario<PolkadotTransaction, PolkadotAccount> = 
     };
   },
   getTransactions,
-  mockIndexer: async (account, optimistic) => {
-    unsubscribeNewBlockListener = await api.rpc.chain.subscribeNewHeads(async header => {
-      const blockHash = header.hash.toString();
-
-      const res = await fetch(`${SIDECAR_BASE_URL}/blocks/${blockHash}`);
-      const blockInfo = await res.json();
-
-      const extrinsic = blockInfo.extrinsics.find((extrinsic: any) => {
-        return extrinsic.hash === optimistic.hash;
-      });
-
-      // we only need the transactions made during the test
-      if (!extrinsic) {
-        return;
-      }
-
-      const { nonce } = (await api.query.system.account(account.freshAddress)) as any;
-
-      const polkadotExtra = optimistic.extra as PolkadotOperationExtra;
-      let amount = new BigNumber(0);
-      let staking: ExplorerExtrinsic["staking"] = {} as ExplorerExtrinsic["staking"];
-      let validatorStash = "";
-
-      switch (polkadotExtra.palletMethod) {
-        case "balances.transfer":
-        case "balances.transferAllowDeath":
-        case "balances.transferAll":
-        case "balances.transferKeepAlive":
-          amount = new BigNumber(polkadotExtra.transferAmount!);
-          break;
-        case "staking.bond":
-        case "staking.rebond":
-          amount = new BigNumber(polkadotExtra.bondedAmount!);
-          break;
-        case "staking.unbond":
-          amount = new BigNumber(polkadotExtra.unbondedAmount!);
-          break;
-        case "staking.withdrawUnbonded":
-          staking = {
-            validators: polkadotExtra.validators?.map(address => ({ address })) ?? [],
-            eventStaking: [
-              {
-                section: "staking",
-                method: "Withdraw",
-                value: polkadotExtra.withdrawUnbondedAmount!.toNumber(),
-              },
-            ],
-          };
-          break;
-        case "staking.nominate":
-          staking = {
-            validators: polkadotExtra.validators?.map(address => ({ address })) ?? [],
-            eventStaking: [
-              {
-                section: "staking",
-                method: "Nominate",
-                value: 0,
-              },
-            ],
-          };
-          break;
-        case "staking.chill":
-          break;
-        case "staking.payoutStakers":
-          validatorStash = extrinsic.args.validator_stash!;
-          break;
-        default:
-          throw new Error(`Unsupported pallet method: ${polkadotExtra.palletMethod}`);
-      }
-
-      indexOperation(account.freshAddress, {
-        blockNumber: blockInfo.number,
-        timestamp: optimistic.date.getTime(),
-        nonce,
-        hash: optimistic.hash,
-        signer: extrinsic.signature.signer.id,
-        affectedAddress1: optimistic.recipients[0],
-        method: extrinsic.method.method,
-        section: extrinsic.method.pallet,
-        isSuccess: extrinsic.success,
-        amount: amount.toNumber(),
-        partialFee: optimistic.fee.toNumber(),
-        staking: staking!,
-        validatorStash,
-        index: 2, // not used by coin-module
-        isBatch: false, // batch transactions are not supported in this coin module
-      });
-    });
-  },
   beforeAll: async account => {
     expect(formatCurrencyUnit(assethub.units[0], account.balance, { useGrouping: false })).toBe(
-      "99999.9",
+      String(ACCOUNT_DOT),
     );
   },
-  beforeSync: async () => {
-    await wsProvider.send("dev_newBlock", [{ count: 1 }]);
+  beforeEach: async account => {
+    // The unbonded funds can be withdrawn two eras after the unbonding
+    if (transactionNames[transactionIndex++] === WITHDRAW_NAME && api) {
+      await waitForUnlock(api, account.freshAddress);
+    }
   },
-  afterEach: async () => {
-    unsubscribeNewBlockListener();
+  // Atlas has indexed the block of the transaction before the tester asserts on it
+  mockIndexer: async (_account, optimistic) => {
+    const block = await waitForInclusion(api!, optimistic.hash);
+    await atlas.waitForBlock(block);
   },
   teardown: async () => {
-    await wsProvider.disconnect();
-    await killChopsticksAndSidecar();
+    await api?.disconnect();
+    api = undefined;
+    closeGuard?.();
+    closeGuard = undefined;
+    await sandbox?.down();
+    sandbox = undefined;
   },
 };

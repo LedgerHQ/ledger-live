@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor, userEvent } from "@testing-library/react-native";
 import { http, HttpResponse } from "msw";
 import { mockPayCardCashback } from "@domain/api-card-management/mock/card-cashback";
-import { CARD_CASHBACK_URL, listenToCardApi } from "@support/msw-features-flow-pay-card";
+import { CARD_CASHBACK_URL, listenToCardApi } from "@domain/api-card-management/mock/card-api";
 import type { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { cardApiWrapper } from "../../__tests__/cardApiStore";
 import { REWARD_SUBTITLE } from "../../__tests__/i18nWrapper";

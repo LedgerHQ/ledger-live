@@ -126,6 +126,74 @@ describe("Zcash operationDetails", () => {
 
       expect(screen.queryByText("Memo")).not.toBeInTheDocument();
     });
+
+    describe("block height", () => {
+      it("renders the height of a confirmed shielded operation, without a thousands separator", () => {
+        const operation = {
+          ...createOperation("SHIELDED_TX_ORCHARD_IN"),
+          blockHeight: 3428200,
+        } as Operation;
+
+        render(<OperationDetailsExtra account={zcashAccount} operation={operation} />);
+
+        expect(screen.getByText("Block height")).toBeInTheDocument();
+        expect(screen.getByText("3428200")).toBeInTheDocument();
+        // Copied into a shielded wallet as its birthday height.
+        expect(screen.getByText("3428200")).toHaveStyle("user-select: text");
+      });
+
+      it("renders the height of a transparent operation, which has no other extra section", () => {
+        const operation = { ...createOperation("IN"), blockHeight: 3428200 } as Operation;
+
+        const { container } = render(
+          <OperationDetailsExtra account={zcashAccount} operation={operation} />,
+        );
+
+        expect(container.firstChild).not.toBeNull();
+        expect(screen.getByText("Block height")).toBeInTheDocument();
+        expect(screen.getByText("3428200")).toBeInTheDocument();
+        expect(screen.queryByText("Transaction type")).not.toBeInTheDocument();
+      });
+
+      it("renders no block height for a pending operation", () => {
+        const operation = createOperation("SHIELDED_TX_ORCHARD_IN");
+
+        render(<OperationDetailsExtra account={zcashAccount} operation={operation} />);
+
+        expect(screen.queryByText("Block height")).not.toBeInTheDocument();
+      });
+
+      it("renders nothing for a pending transparent operation", () => {
+        const { container } = render(
+          <OperationDetailsExtra account={zcashAccount} operation={createOperation("IN")} />,
+        );
+
+        expect(container.firstChild).toBeNull();
+      });
+
+      it("renders no block height for a Bitcoin account", () => {
+        const operation = { ...createOperation("IN"), blockHeight: 3428200 } as Operation;
+
+        const { container } = render(
+          <OperationDetailsExtra account={bitcoinAccount} operation={operation} />,
+        );
+
+        expect(container.firstChild).toBeNull();
+      });
+    });
+  });
+
+  describe("getConfirmationsI18nKey", () => {
+    it("labels the confirmation count for Zcash", () => {
+      expect(operationDetails.getConfirmationsI18nKey({ currencyId: "zcash" })).toBe(
+        "zcash.operationDetails.confirmations",
+      );
+    });
+
+    it("keeps the bare count for Bitcoin and any other currency", () => {
+      expect(operationDetails.getConfirmationsI18nKey({ currencyId: "bitcoin" })).toBeNull();
+      expect(operationDetails.getConfirmationsI18nKey({ currencyId: "litecoin" })).toBeNull();
+    });
   });
 });
 

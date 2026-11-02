@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { useTheme } from "styled-components";
-import { StyleProvider } from "../StyleProvider.web";
+import { StyleProvider } from "../StyleProvider";
 
 function ThemeDisplay() {
   const theme = useTheme();

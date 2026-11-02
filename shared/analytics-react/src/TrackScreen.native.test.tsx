@@ -10,7 +10,7 @@ import {
   setEnabledFn,
   setTrackingSource,
 } from "@shared/analytics";
-import { TrackScreen } from "./TrackScreen.native";
+import { TrackScreen } from "./TrackScreen";
 
 const mockUseIsFocused = useIsFocused as jest.Mock;
 const track = jest.fn();

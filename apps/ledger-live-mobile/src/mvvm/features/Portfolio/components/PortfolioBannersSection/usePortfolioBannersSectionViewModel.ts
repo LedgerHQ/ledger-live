@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { NativeSyntheticEvent, NativeScrollEvent } from "react-native";
-import type { LazyOnboardingBannerViewProps } from "@features/flow-lazy-onboarding-banner";
+import type { LazyOnboardingBannerViewProps } from "@features/flow-lazy-onboarding-banner/native";
 import { useLazyOnboardingBannerViewModel } from "LLM/features/LazyOnboardingBanner";
 import { useTopWalletContentCardsPlacement } from "~/dynamicContent/useTopWalletContentCardsPlacement";
 import { useOnboardingWidgetVisibility } from "../../hooks/useOnboardingWidgetVisibility";

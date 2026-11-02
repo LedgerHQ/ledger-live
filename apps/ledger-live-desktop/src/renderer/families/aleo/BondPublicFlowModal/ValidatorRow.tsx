@@ -5,7 +5,7 @@ import styled from "styled-components";
 import type { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer, getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { AleoValidator } from "@ledgerhq/live-common/families/aleo/types";
 import { isValidatorBondable } from "@ledgerhq/live-common/families/aleo/utils";
 import { Flex, Icons } from "@ledgerhq/react-ui";

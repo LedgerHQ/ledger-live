@@ -18,6 +18,7 @@ object, so one reducer, one middleware and one cache serve every use case on a g
 | `services/card`          | `cardApi`          | `@domain/api-card-management`                                                        |
 | `services/coinmarketcap` | `coinMarketCapApi` | `@domain/api-market-index-altcoin-season`, `@domain/api-market-index-fear-and-greed` |
 | `services/countervalues` | `countervaluesApi` | `@domain/api-currency-fiat`, `@domain/api-market-countervalues`, `@domain/api-ofac`   |
+| `services/portfolio`     | `portfolioApi`     | `@domain/api-account-portfolio`                                                      |
 | `services/push-devices`  | `pushDevicesApi`   | `@domain/api-push-devices`                                                           |
 
 ## What lives here, and what does not
@@ -100,7 +101,7 @@ is never typed with anyone's endpoints — only the injected reference is.
 1. Add `src/services/<service>/` with the files above and
    `createApi({ ..., tagTypes: [], endpoints: () => ({}) })`.
 2. Re-export it from `src/services/index.ts`.
-3. Register it in both apps' `rtkQueryApi.ts`.
+3. Register it in the `rtkQueryApi.ts` of each app that calls it. A service one app never calls stays out of that app.
 
 Each service's `extraArgument` builder stays separate — there is deliberately no aggregate builder,
 because consumers like `apps/web-tools`, `apps/cli` and `buildStandaloneCryptoAssetsStore` configure

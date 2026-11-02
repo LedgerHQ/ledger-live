@@ -205,7 +205,7 @@ jest.mock("react-native-view-shot", () => ({
 }));
 
 // Global mocks for Lottie and env config (used by LaunchScreen and other components)
-jest.mock("@shared/lottie", () => {
+jest.mock("@shared/lottie/native", () => {
   const React = require("react");
   const { View, Text } = require("react-native");
   const MockLottie = ({ source, testID }) =>
@@ -326,10 +326,6 @@ jest.mock("@gorhom/bottom-sheet", () => {
 jest.mock("expo-application", () => ({
   nativeApplicationVersion: "1.0.0",
   nativeBuildVersion: "1",
-}));
-
-jest.mock("react-native-startup-time", () => ({
-  getStartupTime: jest.fn(),
 }));
 
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);

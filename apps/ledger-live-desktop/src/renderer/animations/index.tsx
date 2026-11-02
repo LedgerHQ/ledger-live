@@ -1,5 +1,5 @@
 import React, { useEffect, useSyncExternalStore } from "react";
-import { Lottie, type LottieProps } from "@shared/lottie";
+import { Lottie, type LottieProps } from "@shared/lottie/web";
 import { Flex } from "@ledgerhq/react-ui";
 import { getEnv } from "@shared/env";
 

@@ -37,7 +37,11 @@ export type Transaction = TransactionCommon & {
    * documented flag-flip PR routes Stacks through the generic bridge, which never sets `fee`. */
   fees?: BigNumber | null;
   nonce?: BigNumber;
+  /** Read by the legacy bridge. */
   memo?: string;
+  /** Mirror `memo` for the generic bridge, which builds the intent's memo from these two. */
+  memoType?: string | null;
+  memoValue?: string | null;
   /** Set by the legacy bridge's `createTransaction`; absent on a generic-bridge transaction, which
    * reads the configured network instead. Classic consumers narrow it before use. */
   network?: keyof typeof StacksNetwork;
@@ -59,6 +63,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   nonce?: string;
   memo?: string;
+  memoType?: string | null;
+  memoValue?: string | null;
   /** Absent on a generic-bridge transaction (see `Transaction.assetReference`). */
   network?: string;
   anchorMode?: number;

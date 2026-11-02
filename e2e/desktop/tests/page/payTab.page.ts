@@ -1,6 +1,7 @@
 import { expect, type Locator } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
+import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 
 const DEPOSIT_OPTION_IDS = ["bankTransfer", "swap", "receive", "buy"] as const;
 
@@ -149,7 +150,7 @@ export class PayTabPage extends AppPage {
   @step("Dismiss the verify address hint when it is shown")
   async dismissVerifyHintIfVisible() {
     try {
-      await this.requestVerifyHint.waitFor({ state: "visible", timeout: 2_000 });
+      await this.requestVerifyHint.waitFor({ state: "visible", timeout: TIMEOUT.xsmall });
     } catch {
       return;
     }

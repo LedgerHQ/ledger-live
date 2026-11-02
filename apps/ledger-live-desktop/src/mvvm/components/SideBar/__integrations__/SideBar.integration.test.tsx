@@ -65,36 +65,10 @@ describe("SideBar", () => {
       expect(screen.getByText("Card")).toBeVisible();
     });
 
-    it("should render trailing sidebar items when feature flags are enabled", () => {
+    it("should not render Refer a friend or Recover in the sidebar", () => {
       renderSideBarWithRoute(
         "/",
         withFeatureFlags({
-          referralProgramDesktopSidebar: { enabled: true, params: { path: "/refer" } },
-          protectServicesDesktop: { enabled: true },
-        }),
-      );
-
-      expect(screen.getByText("Refer a friend")).toBeVisible();
-      expect(screen.getByText("[L] Recover")).toBeVisible();
-    });
-
-    it("should hide Refer a friend when referralProgramDesktopSidebar feature flag is disabled", () => {
-      renderSideBarWithRoute("/");
-
-      expect(screen.queryByText("Refer a friend")).not.toBeInTheDocument();
-    });
-
-    it("should hide Recover when protectServicesDesktop feature flag is disabled", () => {
-      renderSideBarWithRoute("/");
-
-      expect(screen.queryByText("[L] Recover")).not.toBeInTheDocument();
-    });
-
-    it("should hide Recover and Refer a friend when My Wallet is enabled", () => {
-      renderSideBarWithRoute(
-        "/",
-        withFeatureFlags({
-          lwdWallet40: { enabled: true, params: { myWallet: true } },
           protectServicesDesktop: { enabled: true },
           referralProgramDesktopSidebar: { enabled: true, params: { path: "/refer" } },
         }),
@@ -299,24 +273,6 @@ describe("SideBar", () => {
 
       const homeButton = screen.getByText("Home").closest("button");
       expect(homeButton).not.toHaveAttribute("aria-current");
-    });
-  });
-
-  describe("Refer a friend", () => {
-    it("should navigate to refer path when clicking Refer a friend", async () => {
-      const { user } = renderSideBarWithRoute(
-        "/",
-        withFeatureFlags({
-          referralProgramDesktopSidebar: {
-            enabled: true,
-            params: { path: "/refer-a-friend", isNew: false },
-          },
-        }),
-      );
-
-      await user.click(screen.getByText("Refer a friend"));
-
-      expect(mockNavigate).toHaveBeenCalledWith("/refer-a-friend");
     });
   });
 

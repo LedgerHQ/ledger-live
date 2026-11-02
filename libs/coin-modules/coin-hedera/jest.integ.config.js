@@ -1,19 +1,6 @@
-/** @type {import('jest').Config} */
-module.exports = {
-  testEnvironment: "node",
-  setupFilesAfterEnv: ["@ledgerhq/wallet-framework-test-setup"],
-  testRegex: ".integ.test.ts$",
-  testPathIgnorePatterns: ["lib/", "lib-es/"],
+const { createLibsCoinIntegJestConfig } = require("@support/jest/libs-coin");
+
+module.exports = createLibsCoinIntegJestConfig({
+  rootDir: __dirname,
   testTimeout: 90_000,
-  forceExit: true,
-  transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
-};
+});

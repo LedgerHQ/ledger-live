@@ -5,26 +5,31 @@ describe("appConfigStorage", () => {
     localStorage.clear();
   });
 
-  it("holds no selections by default", () => {
-    expect(appConfigStorage.getAll()).toEqual({});
-  });
+  it("persists the selections and the dev values as JSON under their own localStorage key", () => {
+    appConfigStorage.selections.set("ledgerKeyRing", "dev");
+    appConfigStorage.devValues.set("keycloakBaseUrl", "http://localhost:8080");
 
-  it("persists the selections as JSON under appConfigSelections, keeping the other switches", () => {
-    appConfigStorage.set("ledgerKeyRing", "prod");
-    appConfigStorage.set("otherSwitch", "prod");
-    appConfigStorage.set("ledgerKeyRing", "staging");
-
-    expect(appConfigStorage.getAll()).toEqual({ ledgerKeyRing: "staging", otherSwitch: "prod" });
     expect(localStorage.getItem("appConfigSelections")).toBe(
-      JSON.stringify({ ledgerKeyRing: "staging", otherSwitch: "prod" }),
+      JSON.stringify({ ledgerKeyRing: "dev" }),
     );
+    expect(localStorage.getItem("appConfigDevValues")).toBe(
+      JSON.stringify({ keycloakBaseUrl: "http://localhost:8080" }),
+    );
+    expect(appConfigStorage.selections.getAll()).toEqual({ ledgerKeyRing: "dev" });
+    expect(appConfigStorage.devValues.getAll()).toEqual({
+      keycloakBaseUrl: "http://localhost:8080",
+    });
   });
 
-  it("clears the selections", () => {
-    appConfigStorage.set("ledgerKeyRing", "staging");
+  it("clears one storage, keeping the other", () => {
+    appConfigStorage.selections.set("ledgerKeyRing", "dev");
+    appConfigStorage.devValues.set("keycloakBaseUrl", "http://localhost:8080");
 
-    appConfigStorage.clear();
+    appConfigStorage.selections.clear();
 
     expect(localStorage.getItem("appConfigSelections")).toBeNull();
+    expect(appConfigStorage.devValues.getAll()).toEqual({
+      keycloakBaseUrl: "http://localhost:8080",
+    });
   });
 });

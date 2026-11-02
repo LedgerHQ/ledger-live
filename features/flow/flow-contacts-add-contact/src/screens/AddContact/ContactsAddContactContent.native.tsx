@@ -27,7 +27,7 @@ export function ContactsAddContactContent({
           errorMessage={nameValidationError}
           isEditable={!isSaving}
           autoFocus={autoFocus}
-          onChangeText={onDraftNameChange}
+          onChangeName={onDraftNameChange}
         />
         <Banner appearance="info" description={labels.namingDisclaimer} />
       </Box>

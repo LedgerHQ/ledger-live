@@ -1,16 +1,22 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Skeleton } from "@ledgerhq/lumen-ui-react";
 import { AssetSection } from "./components/AssetsSection";
+import { CRYPTOS_SECTION_ID } from "./constants";
 import { AssetsViewProps } from "./types";
 
-export const AssetsView = ({ isLoading, sections }: AssetsViewProps) => {
+export function AssetsView({ isLoading, sections, afterCryptosSection }: AssetsViewProps) {
   if (isLoading) return <Skeleton component="table" />;
 
   return (
     <div className="flex flex-col gap-32" data-testid="assets-view">
-      {sections.map(section => (
-        <AssetSection key={section.sectionId} {...section} />
-      ))}
+      {sections.map(function renderSection(section) {
+        return (
+          <Fragment key={section.sectionId}>
+            <AssetSection {...section} />
+            {section.sectionId === CRYPTOS_SECTION_ID && afterCryptosSection}
+          </Fragment>
+        );
+      })}
     </div>
   );
-};
+}

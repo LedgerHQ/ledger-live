@@ -4,7 +4,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useTranslation } from "react-i18next";
 import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { getDeviceModel } from "@ledgerhq/devices";
@@ -25,7 +25,7 @@ const ExitChecksDrawer: React.FC<Props> = ({ deviceModelId, onClose, onClickExit
   const { t } = useTranslation();
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
-      <TrackPage category={analyticsDrawerName} type="drawer" refreshSource={false} />
+      <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
       <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
         <ErrorBody
           Icon={ErrorIcon}

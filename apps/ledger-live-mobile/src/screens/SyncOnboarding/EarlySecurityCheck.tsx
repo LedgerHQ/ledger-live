@@ -10,7 +10,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckErrorDrawer from "LLM/components/GenuineCheckErrorDrawer";
 import GenuineCheckNonGenuineDrawer from "LLM/components/GenuineCheckNonGenuineDrawer";
-import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
+import FirmwareUpdateAvailableDrawer from "LLM/components/FirmwareUpdateAvailableDrawer";
 import { Linking, Platform } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";
 import { NavigatorName, ScreenName } from "~/const";
@@ -84,6 +84,11 @@ export type EarlySecurityCheckProps = SyncOnboardingScreenProps & {
   isPreviousUpdateCancelled?: boolean;
 
   /**
+   * The device already holds a seed, so an update must back up and restore its apps (optional)
+   */
+  isDeviceOnboarded?: boolean;
+
+  /**
    * Function to cancel the onboarding
    */
   onCancelOnboarding: () => void;
@@ -99,6 +104,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   notifyEarlySecurityCheckShouldReset,
   isAlreadyGenuine = false,
   isPreviousUpdateCancelled = false,
+  isDeviceOnboarded = false,
   onCancelOnboarding,
   navigation,
 }) => {
@@ -234,6 +240,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
             firmwareUpdateContext: latestFirmware,
             onBackFromUpdate,
             isBeforeOnboarding: true,
+            isDeviceOnboarded,
           },
         },
       });
@@ -248,7 +255,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       );
       setFirmwareUpdateCheckStatus("completed");
     }
-  }, [device, deviceInfo, latestFirmware, navigation, onBackFromUpdate]);
+  }, [device, deviceInfo, isDeviceOnboarded, latestFirmware, navigation, onBackFromUpdate]);
 
   // Check steps entry points
   useEffect(() => {

@@ -289,6 +289,9 @@ export type FeeDescriptor = {
   getFeeCurrencyAccountId?: (transaction: unknown) => string | null;
   /** Family-specific network-fees explanation derived from the tx status; `null` ⇒ generic copy. */
   getNetworkFeesInfo?: (ctx: { transaction: unknown; status: unknown }) => NetworkFeesInfo | null;
+  /** Whether a rented resource still on its way would lower this currency's send fee, so the Amount
+   * step tells the user it is arriving. Absent ⇒ never. */
+  rentChangesFee?: (currency: CryptoOrTokenCurrency) => boolean;
   /** Declares a single network-estimated fee for coins with no user-selectable presets (slow/med/fast)
    * but with custom fees. Lets the user return from a custom override to the network default. Intended
    * for preset-less + custom coins; the coin-module owns the revert patch (which override fields to clear). */
@@ -476,4 +479,15 @@ export type StakeDescriptor = {
 export type CoinDescriptor = {
   send: SendDescriptor;
   stake?: StakeDescriptor;
+  /**
+   * Account-level analytics attributes, added to events about that account. Declared per
+   * coin; generic callers never inspect the account themselves. Never returns keys,
+   * addresses or balances.
+   */
+  getAccountTrackingAttributes?: (account: AccountLike) => Record<string, string | boolean>;
+  /**
+   * User-level analytics attributes, computed over all the user's accounts. Every coin
+   * receives every account and keeps its own. Never returns keys, addresses or balances.
+   */
+  getUserTrackingAttributes?: (accounts: AccountLike[]) => Record<string, number>;
 };

@@ -15,7 +15,7 @@ describe("getBalance (integration)", () => {
   it("returns a zero native balance for a pristine address", async () => {
     const balances = await getBalance(PRISTINE_ADDRESS);
 
-    expect(balances).toEqual([{ value: 0n, asset: { type: "native", name: "KAS" } }]);
+    expect(balances).toEqual([{ value: 0n, asset: { type: "native" } }]);
   });
 
   describe("funded address", () => {
@@ -23,7 +23,7 @@ describe("getBalance (integration)", () => {
       const balances = await getBalance(FUNDED_ADDRESS);
 
       expect(balances).toHaveLength(1);
-      expect(balances[0].asset).toEqual({ type: "native", name: "KAS" });
+      expect(balances[0].asset).toEqual({ type: "native" });
       expect(balances[0].value).toBeGreaterThan(0n);
     });
   });

@@ -4,9 +4,12 @@ import { useSelector } from "~/context/hooks";
 import { useTranslation } from "~/context/Locale";
 import { BigNumber } from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
-import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import {
+  getAddressExplorer,
+  getDefaultExplorerView,
+  CryptoCurrency,
+} from "@domain/entity-currency-crypto";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { CryptoCurrency } from "@domain/entity-currency-crypto";
 import { Unit } from "@domain/entity-currency-unit";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";

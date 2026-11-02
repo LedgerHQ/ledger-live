@@ -18,7 +18,7 @@ const genericStepMock = jest.fn((_props: GenericStepConnectDeviceProps) => (
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/modals/Send/steps/GenericStepConnectDevice", () => ({
   __esModule: true,

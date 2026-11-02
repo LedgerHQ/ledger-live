@@ -12,12 +12,16 @@ import {
   CardTrailing,
   DialogBody,
   DialogFooter,
+  Link,
 } from "@ledgerhq/lumen-ui-react";
-import type { FeePaymentOption } from "../hooks/useFeePaymentViewModel";
+import type { FeePaymentOption } from "LLD/features/Send/types";
 
 type FeePaymentScreenViewProps = Readonly<{
   options: readonly FeePaymentOption[];
   disclaimer: string;
+  learnMoreLabel: string;
+  learnMoreUrl: string;
+  onLearnMore: () => void;
   confirmLabel: string;
   confirmDisabled: boolean;
   onSelect: (id: string) => void;
@@ -27,6 +31,9 @@ type FeePaymentScreenViewProps = Readonly<{
 export function FeePaymentScreenView({
   options,
   disclaimer,
+  learnMoreLabel,
+  learnMoreUrl,
+  onLearnMore,
   confirmLabel,
   confirmDisabled,
   onSelect,
@@ -86,7 +93,19 @@ export function FeePaymentScreenView({
           </Card>
         ))}
         <p className="m-0 body-3 text-muted" data-testid="send-fee-payment-disclaimer">
-          {disclaimer}
+          {disclaimer}{" "}
+          <Link
+            appearance="accent"
+            size="sm"
+            href={learnMoreUrl}
+            onClick={e => {
+              e.preventDefault();
+              onLearnMore();
+            }}
+            data-testid="send-fee-payment-learn-more"
+          >
+            {learnMoreLabel}
+          </Link>
         </p>
       </DialogBody>
       <DialogFooter className="flex flex-col">

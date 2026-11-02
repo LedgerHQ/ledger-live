@@ -35,7 +35,7 @@ export function ContactsMeListItem({
           name={contact.name}
           isMe={contact.isMe}
           size="md"
-          testId="contacts-me-avatar"
+          testID="contacts-me-avatar"
         />
         <ListItemContent>
           <ListItemTitle testID="contacts-me-name">{getDisplayName(contact)}</ListItemTitle>

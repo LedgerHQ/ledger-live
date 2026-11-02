@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import {
   Aptos,
   AptosConfig,
@@ -29,6 +30,41 @@ describe("richItemByVersion", () => {
       payload: { type: "entry_function_payload" },
       block: { height: expect.any(Number), hash: expect.any(String) },
     });
+  });
+});
+
+describe("getAllTransactions", () => {
+  const client = new AptosAPI("aptos");
+  // An account with ~5,000 transactions; versions above `gt` span several 100-row pages.
+  const address = "0x2031a03808c1201d71ab2d3c5fc52fc3347dfa251dcd9d2e60c92f371b8153d2";
+  const gt = "3046607837";
+
+  it("pages through every transaction once, in ascending version order", async () => {
+    const versions = (await client["getAllTransactions"](address, gt)).map(
+      ({ transaction_version }) => Number(transaction_version),
+    );
+
+    const { data } = await client["apolloClient"].query<{
+      account_transactions_aggregate: { aggregate: { count: number } };
+    }>({
+      query: gql`
+        query ($address: String, $gt: bigint) {
+          account_transactions_aggregate(
+            where: { account_address: { _eq: $address }, transaction_version: { _gt: $gt } }
+          ) {
+            aggregate {
+              count
+            }
+          }
+        }
+      `,
+      variables: { address, gt },
+      fetchPolicy: "network-only",
+    });
+
+    expect(versions.length).toBeGreaterThan(300);
+    expect(versions).toHaveLength(data.account_transactions_aggregate.aggregate.count);
+    versions.slice(1).forEach((version, i) => expect(version).toBeGreaterThan(versions[i]));
   });
 });
 

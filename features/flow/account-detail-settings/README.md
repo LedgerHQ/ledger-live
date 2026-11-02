@@ -13,7 +13,7 @@ Redux and navigation stay in the apps, which render these contents inside them.
 | --- | --- |
 | `AccountSettingsMenu` | Change name (current name on the right) · View advanced logs · Remove account from portfolio (destructive) |
 | `AdvancedLogsContent` | Takes the app's formatting `locale` (not the translation language) for the sync date · derivation tip banner (when `derivationTag` is passed) · sync date · logs JSON · "Copy logs" (`@shared/clipboard`, result through `onCopied`) |
-| `RemoveAccountContent` | Error spot · "Remove account?" · "Yes, remove." / "Keep" |
+| `RemoveAccountContent` | Error spot · "Remove account?" · "Yes, remove" / "Keep" |
 | `buildAdvancedLogs(input, locale)` | Pure: picks `{ xpub, index, freshAddressPath, id, blockHeight }` as pretty JSON and formats the sync date |
 
 Inputs are primitives: the apps map their account to `AdvancedLogsInput` and compute the derivation

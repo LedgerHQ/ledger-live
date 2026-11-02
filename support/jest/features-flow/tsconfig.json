@@ -1,0 +1,4 @@
+{
+  "extends": "@support/tsconfig/node",
+  "include": ["index.js", "mocks/**/*.js", "setup/**/*.js"]
+}

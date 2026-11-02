@@ -1,6 +1,5 @@
 import type {
   Balance,
-  MemoNotSupported,
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
@@ -11,9 +10,9 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { StacksStakeInPreparePhase } from "../../errors";
+import { StacksMemoTooLong, StacksStakeInPreparePhase } from "../../errors";
 import { fetchPoxInfo } from "../../network/pox";
-import type { StacksTxData } from "../../types";
+import type { StacksMemo, StacksTxData } from "../../types";
 import { MAX_NUM_CYCLES as LEGACY_MAX_NUM_CYCLES, validateIntent } from "../validateIntent";
 import { MAX_NUM_CYCLES } from "../../common-logic/staking";
 
@@ -33,8 +32,8 @@ const mockNextCycle = (blocksUntilPreparePhase: number, blocksUntilRewardPhase: 
   });
 
 function transferIntent(
-  overrides: Partial<TransactionIntent<MemoNotSupported, StacksTxData>> = {},
-): TransactionIntent<MemoNotSupported, StacksTxData> {
+  overrides: Partial<TransactionIntent<StacksMemo, StacksTxData>> = {},
+): TransactionIntent<StacksMemo, StacksTxData> {
   return {
     intentType: "transaction",
     type: "send",
@@ -135,10 +134,26 @@ describe("validateIntent", () => {
     expect(result.errors.amount).toBeInstanceOf(NotEnoughBalance);
   });
 
+  it("flags a memo longer than the 34 bytes a Stacks transfer can carry", async () => {
+    const { errors } = await validateIntent(
+      transferIntent({ memo: { type: "string", kind: "memo", value: "x".repeat(35) } }),
+      nativeBalance(10000n),
+    );
+    expect(errors.transaction).toBeInstanceOf(StacksMemoTooLong);
+  });
+
+  it("accepts a memo within the limit", async () => {
+    const { errors } = await validateIntent(
+      transferIntent({ memo: { type: "string", kind: "memo", value: "1234" } }),
+      nativeBalance(10000n),
+    );
+    expect(errors).toEqual({});
+  });
+
   describe("staking", () => {
     function stakingIntent(
-      overrides: Partial<StakingTransactionIntent<MemoNotSupported, StacksTxData>> = {},
-    ): TransactionIntent<MemoNotSupported, StacksTxData> {
+      overrides: Partial<StakingTransactionIntent<StacksMemo, StacksTxData>> = {},
+    ): TransactionIntent<StacksMemo, StacksTxData> {
       return {
         intentType: "staking",
         type: "stake",

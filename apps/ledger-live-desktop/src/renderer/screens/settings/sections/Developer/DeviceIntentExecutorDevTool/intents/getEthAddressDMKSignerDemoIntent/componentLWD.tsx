@@ -32,7 +32,7 @@ export function GetEthAddressDMKSignerDemoIntentComponentLWD({
         ) : jobState?.type === "derived" ? (
           <div className="flex flex-col gap-8">
             <span className="body-2-semi-bold text-success">ETH address derived (DMK Signer)</span>
-            <pre className="overflow-auto rounded-md bg-muted p-12 text-xs text-base">
+            <pre className="overflow-auto rounded-md bg-muted p-12 text-base">
               {jobState.address}
             </pre>
           </div>

@@ -16,7 +16,7 @@ import {
 import { useEvmStakingValidators } from "@ledgerhq/live-common/families/evm/staking/react";
 import { isStakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
 import type { StakingAccount } from "@ledgerhq/live-common/families/evm/staking/types";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { useFeature } from "@features/platform-feature-flags";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";

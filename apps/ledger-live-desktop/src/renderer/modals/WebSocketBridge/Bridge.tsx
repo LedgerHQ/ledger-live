@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Button from "~/renderer/components/Button";
 import InfoDisplay from "~/renderer/components/InfoDisplay";
 const Container = styled(Box).attrs(() => ({
@@ -30,7 +30,7 @@ const Bridge = ({
       title={t("bridge.modalTitle")}
       render={() => (
         <Box relative px={5}>
-          <TrackPage category="Modal" name="Bridge Sunset" origin={origin} appName={appName} />
+          <TrackScreen category="Modal" name="Bridge Sunset" origin={origin} appName={appName} />
           <Container>
             <InfoDisplay title={t("bridge.openHeader")} description={t("bridge.openDescription")} />
           </Container>

@@ -2,6 +2,9 @@
   "name": "@tools/danger",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"test/*.test.ts\""
+  },
   "devDependencies": {
     "@commitlint/config-conventional": "catalog:",
     "@commitlint/lint": "catalog:",

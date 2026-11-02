@@ -98,7 +98,7 @@ describe("buildSignOperation", () => {
     mockedVechainSDKTransaction.of.mockReturnValue(mockUnsignedTransaction as any);
     mockedBuildOptimisticOperation.mockResolvedValue(mockOperation);
     (mockSigner.signTransaction as jest.Mock).mockResolvedValue(Buffer.from("signature123", "hex"));
-    (mockSignerContext as jest.Mock).mockImplementation((deviceId, callback) =>
+    (mockSignerContext as jest.Mock).mockImplementation((_deviceId, callback) =>
       callback(mockSigner),
     );
   });

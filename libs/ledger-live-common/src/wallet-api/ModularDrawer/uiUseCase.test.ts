@@ -4,6 +4,8 @@ describe("getPerpsUiUseCase", () => {
   it("keeps each variant it knows", () => {
     expect(getPerpsUiUseCase(PERPS_UI_USE_CASE.receive)).toBe(PERPS_UI_USE_CASE.receive);
     expect(getPerpsUiUseCase(PERPS_UI_USE_CASE.fund)).toBe(PERPS_UI_USE_CASE.fund);
+    expect(getPerpsUiUseCase(PERPS_UI_USE_CASE.withdraw)).toBe(PERPS_UI_USE_CASE.withdraw);
+    expect(getPerpsUiUseCase("perpetuals:withdrawFrom")).toBe(PERPS_UI_USE_CASE.withdrawFrom);
     expect(getPerpsUiUseCase(PERPS_UI_USE_CASE.legacy)).toBe(PERPS_UI_USE_CASE.legacy);
   });
 

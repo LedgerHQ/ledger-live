@@ -68,6 +68,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     handleHeightChange,
     onBackFromUpdate,
     shouldDisplayOperationsList,
+    shouldDisplayPerpsEntryPoint,
     shouldAddBottomPaddingForLegacyAssets,
   } = usePortfolioViewModel(navigation);
 
@@ -136,7 +137,9 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
       </Box>,
     );
 
-    sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
+    if (shouldDisplayPerpsEntryPoint) {
+      sections.push(<PortfolioPerpsEntryPoint key="perpsEntryPoint" />);
+    }
 
     if (shouldDisplayAssetSection) {
       sections.push(<WalletAssetsView key="categorizedAssets" />);
@@ -174,6 +177,7 @@ export const PortfolioScreen = ({ navigation }: NavigationProps) => {
     isAWalletCardDisplayed,
     backgroundColor,
     shouldDisplayOperationsList,
+    shouldDisplayPerpsEntryPoint,
     shouldAddBottomPaddingForLegacyAssets,
   ]);
 

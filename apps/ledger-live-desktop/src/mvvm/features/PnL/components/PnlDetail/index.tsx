@@ -1,7 +1,7 @@
 import React from "react";
 import { Dialog, DialogContent, DialogHeader, DialogBody } from "@ledgerhq/lumen-ui-react";
 import { PnLinfoDetail } from "./PnLinfoDetail";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import type { PnlDetailProps } from "./types";
 
 export type { PnlDetailItem, PnlDetailProps } from "./types";
@@ -15,7 +15,7 @@ export const PnlDetail = ({
   onOpenChange,
 }: PnlDetailProps) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    {open ? <TrackPage category="Detailed PnL" refreshSource={false} /> : null}
+    {open ? <TrackScreen category="Detailed PnL" refreshSource={false} /> : null}
     <DialogContent data-testid="pnl-detail-dialog">
       <DialogHeader
         density="expanded"

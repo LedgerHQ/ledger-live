@@ -84,7 +84,7 @@ jest.mock("../../../../hooks/useSendFlowTrackingProperties", () => ({
 }));
 
 const mockedGetBalanceTypeConfig = jest.mocked(sendFeatures.getBalanceTypeConfig);
-const mockedTrackPage = jest.mocked(trackPage);
+const mockedTrackScreen = jest.mocked(trackPage);
 const mockedUseAccountBridgeOrNull = jest.mocked(useAccountBridgeOrNull);
 const mockedUseLLDCoinFamily = jest.mocked(useLLDCoinFamily);
 
@@ -396,8 +396,8 @@ describe("useBalanceTypeScreenViewModel", () => {
     test("emits the balance-type page event once ready, with the send-flow tracking properties", () => {
       renderViewModel();
 
-      expect(mockedTrackPage).toHaveBeenCalledTimes(1);
-      expect(mockedTrackPage).toHaveBeenCalledWith({
+      expect(mockedTrackScreen).toHaveBeenCalledTimes(1);
+      expect(mockedTrackScreen).toHaveBeenCalledWith({
         category: "Modal send - step balance type",
         props: { flow: "send" },
       });
@@ -408,14 +408,14 @@ describe("useBalanceTypeScreenViewModel", () => {
 
       renderViewModel();
 
-      expect(mockedTrackPage).not.toHaveBeenCalled();
+      expect(mockedTrackScreen).not.toHaveBeenCalled();
     });
 
     test("emits the page event only once across re-renders", () => {
       const { rerender } = render(<Harness ref={React.createRef()} />);
       rerender(<Harness ref={React.createRef()} />);
 
-      expect(mockedTrackPage).toHaveBeenCalledTimes(1);
+      expect(mockedTrackScreen).toHaveBeenCalledTimes(1);
     });
   });
 });

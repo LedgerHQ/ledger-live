@@ -42,7 +42,7 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("~/renderer/components/Modal/ModalContent", () => ({
   __esModule: true,

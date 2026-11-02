@@ -2,9 +2,12 @@ import type { DeviceManagementKit, DiscoveredDevice } from "@ledgerhq/device-man
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { firstValueFrom } from "rxjs";
+import type { SpeculosTarget } from "@ledgerhq/live-dmk-shared/transport/speculosTarget";
+import { firstValueFrom, from, TimeoutError } from "rxjs";
 import { filter, timeout } from "rxjs/operators";
 import { WalletCliDmkTransport } from "./wallet-cli-dmk-transport";
+import { WalletCliDeviceError } from "./wallet-cli-device-error";
+import { getActiveSpeculosTarget, setUsbOnly } from "./speculos-target";
 import type { WalletCliDmk } from "./dmk";
 import {
   hasWalletCliDeviceInterruptScope,
@@ -16,6 +19,8 @@ import { restoreTerminalCursor } from "../shared/ui";
 export const WALLET_CLI_DMK_DEVICE_ID = "wallet-cli-dmk";
 
 const CONNECT_TIMEOUT_MS = 60_000;
+/** Speculos answers discovery without any I/O, so the connect is the first HTTP call to bound. */
+const SPECULOS_CONNECT_TIMEOUT_MS = 10_000;
 
 /**
  * Bound on the dispose-time `dmk.disconnect`: under SIGINT / process exit the
@@ -80,7 +85,7 @@ function terminateWalletCliFromSignal(code: number): void {
 
 function getOrCreatePersistentDmk(): Promise<WalletCliDmk> {
   return (persistentDmk ??= import("./dmk")
-    .then(({ createDeviceManagementKit }) => createDeviceManagementKit())
+    .then(({ createDeviceManagementKit }) => createDeviceManagementKit(getActiveSpeculosTarget()))
     .catch(error => {
       persistentDmk = null;
       throw error;
@@ -166,6 +171,37 @@ async function teardownPersistentDmk(
   persistentDmk = null;
 }
 
+/**
+ * The Speculos transport always discovers its device, so a dead emulator only shows on connect.
+ * Its first APDU has no HTTP timeout, hence the bound; the cause stays in the message, since a
+ * running Speculos in an unexpected state rejects here too.
+ */
+async function connectSpeculos(connecting: Promise<string>, speculos: SpeculosTarget) {
+  try {
+    return await firstValueFrom(from(connecting).pipe(timeout(SPECULOS_CONNECT_TIMEOUT_MS)));
+  } catch (error) {
+    if (error instanceof TimeoutError) {
+      throw new WalletCliDeviceError(
+        { code: "timeout", speculosUrl: speculos.url },
+        { cause: error },
+      );
+    }
+    throw new WalletCliDeviceError(
+      { code: "disconnected", speculosUrl: speculos.url, detail: describeCause(error) },
+      { cause: error },
+    );
+  }
+}
+
+/** DMK errors are not `Error`s: they carry a `_tag` and wrap the cause in `originalError`. */
+function describeCause(error: unknown): string | undefined {
+  if (error instanceof Error) return error.message || error.name;
+  if (typeof error !== "object" || error === null || !("_tag" in error)) return undefined;
+  const tag = String(error._tag);
+  const cause = "originalError" in error ? describeCause(error.originalError) : undefined;
+  return cause ? `${tag}: ${cause}` : tag;
+}
+
 async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> {
   const discovered = await firstValueFrom(
     dmk.listenToAvailableDevices({}).pipe(
@@ -179,10 +215,12 @@ async function connectFirstUsbDevice(dmk: DeviceManagementKit): Promise<string> 
   if (!device) {
     throw new Error(NO_LEDGER_DEVICE_FOUND_MESSAGE);
   }
-  const sessionId = await dmk.connect({
+  const connecting = dmk.connect({
     device,
     sessionRefresherOptions: { isRefresherDisabled: true },
   });
+  const speculos = getActiveSpeculosTarget();
+  const sessionId = speculos ? await connectSpeculos(connecting, speculos) : await connecting;
 
   const sessionState = await firstValueFrom(dmk.getDeviceSessionState({ sessionId })).catch(
     () => null,
@@ -326,7 +364,9 @@ function registerWalletCliDmkProcessExitHooks(): void {
 
 let registered = false;
 
-export function registerWalletCliDmkTransport(): void {
+/** `usbOnly` ignores `SPECULOS_*` and always opens a USB Ledger; the latest call decides. */
+export function registerWalletCliDmkTransport(options: { usbOnly?: boolean } = {}): void {
+  setUsbOnly(options.usbOnly ?? false);
   if (registered) {
     return;
   }

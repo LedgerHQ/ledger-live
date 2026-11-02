@@ -1,8 +1,9 @@
 import "LLM/utils/logStartup/beforeJSImports";
+// Must run before any module that keeps a reference to the global WebSocket (e.g. isomorphic-ws)
+import "./iosWebsocketFix";
 require("./promise-polyfill");
 import "./polyfill";
 import "./live-common-setup";
-import "./iosWebsocketFix";
 import "./utils/tanstack-setup";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useMemo, useEffect, useRef } from "react";
@@ -16,6 +17,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import "./analytics/registerTransactionObserver";
+import "./datadogObservers";
 import Config from "react-native-config";
 import useEnv from "@features/platform-env";
 import { AppAvailability } from "@features/flow-app-availability";
@@ -72,6 +74,10 @@ import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakeProgr
 import { selectFeature, type FeatureId } from "@shared/feature-flags";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { installEarnLifecycleHost } from "@ledgerhq/transaction-observability";
+import {
+  coinObservabilityConfigFor,
+  setCoinObservabilityConfigReader,
+} from "@features/platform-coin-observability";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
@@ -94,6 +100,7 @@ import {
   customErrorEventMapper,
   customLogEventMapper,
   initializeDatadogProvider,
+  stopDatadogRecording,
 } from "./datadog";
 import { datadogIdSelector, isDummyDatadogId } from "@domain/entity-client-identity";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
@@ -142,6 +149,14 @@ store.subscribe(
     apiBaseUrl: Config.EARN_API_BASE_URL,
   }),
 );
+setCoinObservabilityConfigReader(() => {
+  const state = store.getState();
+  return coinObservabilityConfigFor({
+    consentGranted: reportErrorsEnabledSelector(state),
+    datadogEnabled: selectFeature(state, "llmDatadog")?.enabled ?? false,
+    coinObservability: selectFeature(state, "coinObservability"),
+  });
+});
 
 const styles = StyleSheet.create({
   root: {
@@ -263,7 +278,10 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!datadogFF?.enabled) return;
+    if (!datadogFF?.enabled) {
+      stopDatadogRecording();
+      return;
+    }
     const setUserEquipmentId = () => {
       if (isDummyDatadogId(datadogId)) return;
       DdSdkReactNative.setUserInfo({
@@ -281,6 +299,7 @@ function App() {
       .catch(e => {
         console.error("Datadog initialization failed", e);
       });
+    return stopDatadogRecording;
   }, [datadogFF?.params, datadogFF?.enabled, isTrackingEnabled, datadogId]);
 
   const checkAccountsWithFunds = useCheckAccountWithFunds();

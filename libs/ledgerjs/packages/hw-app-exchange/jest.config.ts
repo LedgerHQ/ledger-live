@@ -31,19 +31,6 @@ export default {
     "!src/**/__tests__/**",
     "!tests/**",
   ],
-  coverageReporters: ["json", ["lcov", { projectRoot: "../../../../" }], "json-summary", "text"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    [
-      "jest-sonar",
-      {
-        outputName: "sonar-executionTests-report.xml",
-        reportedFilePath: "absolute",
-      },
-    ],
-    "@ledgerhq/test-quarantine/jest",
-  ],
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts", "@ledgerhq/test-quarantine/jest-retries"],
   // Jest 20 is more strict about unhandled rejections
   // This allows tests to handle expected errors without failing

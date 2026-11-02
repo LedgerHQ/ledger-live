@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import type { Account } from "@ledgerhq/types-live";
-import { isAccountEmpty } from "@ledgerhq/ledger-wallet-framework/account/helpers";
 import { usePrecomputedAssetListData } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import type { AssetListItemViewModelResult } from "LLM/components/AssetListItem/usePrecomputedAssetListData";
 import { useCalculateCountervalueCallback } from "~/actions/general";
@@ -13,7 +12,6 @@ import type { Asset } from "~/types/asset";
 import { buildAccountAssets } from "../../../../utils/buildAccountAssets";
 
 export type AssetsSectionViewModel = Readonly<{
-  isVisible: boolean;
   assets: Asset[];
   precomputed: Map<string, AssetListItemViewModelResult>;
 }>;
@@ -34,7 +32,6 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
   );
 
   return {
-    isVisible: !isAccountEmpty(account),
     assets,
     precomputed: usePrecomputedAssetListData(assets),
   };

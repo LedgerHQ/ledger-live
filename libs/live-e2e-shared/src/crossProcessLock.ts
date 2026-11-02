@@ -1,10 +1,10 @@
+import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
 /**
- * Cross-process mutex: run a critical section while holding an exclusive lock
- * shared by every process on the machine.
+ * Cross-process mutex: an exclusive lock shared by every process on the machine.
  *
  * An in-memory mutex (a module-level promise chain, `async-mutex`, …) only
  * serializes within a single process — each OS process (e.g. a Playwright or
@@ -23,7 +23,7 @@ import path from "node:path";
  * Different keys are independent, so unrelated work runs in parallel.
  */
 
-export type CrossProcessLockOptions = {
+type CrossProcessLockOptions = {
   rootDir?: string;
   staleMs?: number;
   heartbeatMs?: number;
@@ -31,10 +31,10 @@ export type CrossProcessLockOptions = {
   backoffMs?: number;
 };
 
-export const DEFAULT_STALE_MS = 30_000;
-export const DEFAULT_HEARTBEAT_MS = 5_000;
-export const DEFAULT_ACQUIRE_TIMEOUT_MS = 600_000;
-export const DEFAULT_BACKOFF_MS = 200;
+const DEFAULT_STALE_MS = 30_000;
+const DEFAULT_HEARTBEAT_MS = 5_000;
+const DEFAULT_ACQUIRE_TIMEOUT_MS = 600_000;
+const DEFAULT_BACKOFF_MS = 200;
 
 // Kept local so this cross-process primitive pulls in no package-level deps.
 const delay = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
@@ -52,15 +52,37 @@ function sanitize(key: string): string {
   return Buffer.from(key, "utf8").toString("base64url");
 }
 
-export function lockDirFor(key: string, rootDir: string = defaultRootDir()): string {
+function lockDirFor(key: string, rootDir: string = defaultRootDir()): string {
   return path.join(rootDir, sanitize(key));
 }
 
-export async function runWithCrossProcessLock<T>(
+/**
+ * Moves a stale lock aside before removing it. Renaming is atomic, so of two waiters that saw it
+ * stale only one moves it; a slower one that moves the fresh lock the first just took puts it back.
+ */
+async function removeStaleLock(lockDir: string, staleMs: number): Promise<void> {
+  const movedDir = `${lockDir}.${randomUUID()}.stale`;
+  await fs.promises.rename(lockDir, movedDir);
+  const { mtimeMs } = await fs.promises.stat(movedDir);
+  if (Date.now() - mtimeMs > staleMs) {
+    await fs.promises.rm(movedDir, { recursive: true, force: true });
+  } else {
+    await fs.promises.rename(movedDir, lockDir);
+  }
+}
+
+/** Removes the lock at `lockDir` if stale, else gives its holder `backoffMs` to release it. */
+async function waitForLockDir(lockDir: string, staleMs: number, backoffMs: number): Promise<void> {
+  const { mtimeMs } = await fs.promises.stat(lockDir);
+  if (Date.now() - mtimeMs > staleMs) await removeStaleLock(lockDir, staleMs);
+  else await delay(backoffMs);
+}
+
+/** Holds `key` until the returned release function is called. */
+export async function acquireCrossProcessLock(
   key: string,
-  fn: () => Promise<T>,
   options: CrossProcessLockOptions = {},
-): Promise<T> {
+): Promise<() => Promise<void>> {
   const rootDir = options.rootDir ?? defaultRootDir();
   const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
   const heartbeatMs = options.heartbeatMs ?? DEFAULT_HEARTBEAT_MS;
@@ -71,46 +93,39 @@ export async function runWithCrossProcessLock<T>(
   await fs.promises.mkdir(rootDir, { recursive: true });
   const start = Date.now();
 
-  for (;;) {
+  const takeLockDir = async (): Promise<void> => {
     try {
       await fs.promises.mkdir(lockDir); // non-recursive → throws EEXIST if held
-      break;
+      return;
     } catch (err) {
       if (!isErrnoException(err) || err.code !== "EEXIST") throw err;
-
-      if (Date.now() - start > acquireTimeoutMs) {
-        throw new Error(
-          `[runWithCrossProcessLock]: timed out after ${acquireTimeoutMs}ms acquiring lock for "${key}"`,
-        );
-      }
-
-      try {
-        const { mtimeMs } = await fs.promises.stat(lockDir);
-        if (Date.now() - mtimeMs > staleMs) {
-          await fs.promises.rm(lockDir, { recursive: true, force: true });
-          continue;
-        }
-      } catch {
-        continue;
-      }
-      await delay(backoffMs);
     }
-  }
+    if (Date.now() - start > acquireTimeoutMs) {
+      throw new Error(
+        `[crossProcessLock]: timed out after ${acquireTimeoutMs}ms acquiring lock for "${key}"`,
+      );
+    }
+    await waitForLockDir(lockDir, staleMs, backoffMs).catch(() => {});
+    return takeLockDir();
+  };
+  await takeLockDir();
 
   // Hold: refresh mtime so a live-but-slow holder is never seen as stale.
   const heartbeat = setInterval(() => {
     const now = new Date();
     fs.promises.utimes(lockDir, now, now).catch(() => {});
   }, heartbeatMs);
+  heartbeat.unref();
 
-  try {
-    return await fn();
-  } finally {
+  let released = false;
+  return async () => {
+    if (released) return;
+    released = true;
     clearInterval(heartbeat);
     try {
       await fs.promises.rm(lockDir, { recursive: true, force: true });
     } catch (err) {
-      console.warn(`[runWithCrossProcessLock]: failed to release lock for "${key}"`, err);
+      console.warn(`[crossProcessLock]: failed to release lock for "${key}"`, err);
     }
-  }
+  };
 }

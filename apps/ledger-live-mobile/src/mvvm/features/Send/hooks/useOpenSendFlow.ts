@@ -222,5 +222,5 @@ export function useOpenSendFlow({
     ],
   );
 
-  return { handleOpenSendFlow };
+  return { handleOpenSendFlow, openSendFlowForAccount: navigateAfterAccountSelection };
 }

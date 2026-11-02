@@ -1,16 +1,39 @@
 import { act, renderHook } from "@testing-library/react";
 import { getAttachedWebview, useWebviewState } from "./helpers";
-import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { getInitialURL, resolveInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { track } from "@shared/analytics";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import type { WebviewAPI, WebviewTag } from "./types";
 import type { RefObject } from "react";
+import {
+  UNRESTRICTED_ORIGINS,
+  serializeAllowedOrigins,
+  serializeDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import {
+  reportBlockedInitialLoad,
+  reportGoToURLFallback,
+  reportRejectedLoadURL,
+} from "./domainCheckReport";
+
+jest.mock("./domainCheckReport", () => ({
+  reportBlockedInitialLoad: jest.fn(),
+  reportGoToURLFallback: jest.fn(),
+  reportRejectedLoadURL: jest.fn(),
+}));
 
 jest.mock("@ledgerhq/live-common/wallet-api/helpers", () => ({
   getInitialURL: jest.fn(),
+  resolveInitialURL: jest.fn(),
 }));
 
+const { resolveInitialURL: actualResolveInitialURL } = jest.requireActual<
+  typeof import("@ledgerhq/live-common/wallet-api/helpers")
+>("@ledgerhq/live-common/wallet-api/helpers");
+
 jest.mock("@ledgerhq/live-common/wallet-api/manifestDomainUtils", () => ({
+  ...jest.requireActual("@ledgerhq/live-common/wallet-api/manifestDomainUtils"),
   isUrlAllowedByManifestDomains: jest.fn(() => true),
 }));
 
@@ -90,6 +113,9 @@ describe("useWebviewState", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockTrack.mockClear();
+    jest
+      .mocked(resolveInitialURL)
+      .mockImplementation((...args) => ({ url: mockGetInitialURL(...args) }));
   });
 
   describe("webviewProps.src", () => {
@@ -147,6 +173,139 @@ describe("useWebviewState", () => {
       rerender({ manifest: updatedManifest });
 
       expect(result.current.webviewProps.src).toBe("https://new.example.com");
+    });
+
+    it("reports the initial load when the domain check keeps an empty domain list on about:blank", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com/swap?address=0xabc");
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(false);
+      const manifest = { ...mockManifest, domains: [] };
+
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.src).toBe("about:blank");
+      expect(reportBlockedInitialLoad).toHaveBeenCalledWith(
+        manifest,
+        "https://example.com/swap?address=0xabc",
+      );
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValue(true);
+    });
+
+    it("does not report an initial load the domain check allows", () => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+
+      renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+      expect(reportGoToURLFallback).not.toHaveBeenCalled();
+    });
+
+    it("reports a rejected goToURL that falls back to manifest.url", () => {
+      jest.mocked(resolveInitialURL).mockImplementation(actualResolveInitialURL);
+
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: mockManifest,
+            inputs: { goToURL: "https://evil.com/swap" },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.src).toBe("https://example.com/");
+      expect(reportGoToURLFallback).toHaveBeenCalledWith("test-app", "https://evil.com/swap");
+      expect(reportBlockedInitialLoad).not.toHaveBeenCalled();
+    });
+
+    it("does not report a goToURL on the manifest domain", () => {
+      jest.mocked(resolveInitialURL).mockImplementation(actualResolveInitialURL);
+
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: mockManifest,
+            inputs: { goToURL: "https://example.com/swap" },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.src).toBe("https://example.com/swap");
+      expect(reportGoToURLFallback).not.toHaveBeenCalled();
+    });
+
+    it("reports a loadURL the domain check rejects", async () => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+      const webviewAPIRef: RefObject<WebviewAPI | null> = { current: null };
+      renderHook(() =>
+        useWebviewState(
+          { manifest: mockManifest, manifestDomainCheckEnabled: true },
+          webviewAPIRef,
+        ),
+      );
+      jest.mocked(isUrlAllowedByManifestDomains).mockReturnValueOnce(false);
+
+      await expect(webviewAPIRef.current?.loadURL("https://evil.com/x")).rejects.toThrow(
+        "URL not allowed by manifest domains",
+      );
+      expect(reportRejectedLoadURL).toHaveBeenCalledWith("test-app", "https://evil.com/x");
+    });
+  });
+
+  describe("webviewProps.webpreferences", () => {
+    beforeEach(() => {
+      mockGetInitialURL.mockReturnValue("https://example.com");
+    });
+
+    it("carries the manifest domains when the domain check is on", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: true }, null),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins(["https://example.com"]),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: ["https://example.com"] }),
+        ].join(","),
+      );
+    });
+
+    it("carries an empty origin list when the manifest has no domains", () => {
+      const { result } = renderHook(() =>
+        useWebviewState(
+          {
+            manifest: { ...mockManifest, domains: undefined as unknown as string[] },
+            manifestDomainCheckEnabled: true,
+          },
+          null,
+        ),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins([]),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: [] }),
+        ].join(","),
+      );
+    });
+
+    it("marks the guest as unrestricted when the domain check is off", () => {
+      const { result } = renderHook(() =>
+        useWebviewState({ manifest: mockManifest, manifestDomainCheckEnabled: false }, null),
+      );
+
+      expect(result.current.webviewProps.webpreferences).toBe(
+        [
+          serializeAllowedOrigins(UNRESTRICTED_ORIGINS),
+          serializeDomainCheckReport({ manifestId: "test-app", domains: ["https://example.com"] }),
+        ].join(","),
+      );
     });
   });
 

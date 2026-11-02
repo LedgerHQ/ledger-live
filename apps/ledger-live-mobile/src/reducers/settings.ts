@@ -6,7 +6,7 @@ import type { Unit } from "@domain/entity-currency-unit";
 import {
   getFiatCurrencyByTicker,
   findFiatCurrencyByTicker,
-  OFAC_FIAT_TICKERS,
+  isSanctionedFiatTicker,
   selectSupportedFiats,
 } from "@domain/entity-currency-fiat";
 import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
@@ -720,7 +720,7 @@ export const migrateLegacyStarredMarketCoins = (starredMarketCoins: readonly str
   );
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
-  if (OFAC_FIAT_TICKERS.has(state.counterValue))
+  if (isSanctionedFiatTicker(state.counterValue))
     return getFiatCurrencyByTicker(DEFAULT_COUNTERVALUE_TICKER);
   return (
     findFiatCurrencyByTicker(state.counterValue) ||

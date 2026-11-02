@@ -1,23 +1,21 @@
-import { SIDEBAR_VALUE_TO_PATH, SIDEBAR_SPECIAL_VALUES } from "./constants";
-import type { SideBarNavValue, SideBarSpecialValue } from "./constants";
+import { SIDEBAR_VALUE_TO_PATH } from "./constants";
+import type { SideBarNavValue } from "./constants";
 
-export type SideBarActiveValue = SideBarNavValue | SideBarSpecialValue | "";
+export type SideBarActiveValue = SideBarNavValue | "";
 
 export const isSideBarNavValue = (value: string): value is SideBarNavValue =>
   value in SIDEBAR_VALUE_TO_PATH;
 
 /**
- * Resolves current pathname + optional refer path to the active sidebar value.
+ * Resolves the current pathname to the active sidebar value.
  * Returns an empty string when the pathname doesn't match any sidebar entry,
  * keeping the Lumen SideBar component in controlled mode at all times.
  */
 export function pathnameToActive(
   pathname: string,
-  referPath: string | undefined,
   shouldDisplayAssetSection = false,
   search = "",
 ): SideBarActiveValue {
-  if (referPath && pathname.startsWith(referPath)) return SIDEBAR_SPECIAL_VALUES.refer;
   if (pathname === "/") return "home";
   if (shouldDisplayAssetSection && pathname === "/cryptos") return "accounts";
   if (pathname.startsWith("/account")) return "accounts";

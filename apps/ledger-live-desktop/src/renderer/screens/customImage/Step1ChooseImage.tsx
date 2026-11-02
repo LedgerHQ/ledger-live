@@ -5,7 +5,7 @@ import ImportImage from "~/renderer/components/CustomImage/ImportImage";
 import { StepProps } from "./types";
 import StepContainer from "./StepContainer";
 import { Flex, IconsLegacy, InfiniteLoader, Link, Text } from "@ledgerhq/react-ui";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import STAX_CLS_PREVIEW from "~/renderer/animations/customLockScreen/stax.json";
@@ -54,7 +54,7 @@ const StepChooseImage: React.FC<Props> = props => {
 
   return (
     <StepContainer>
-      <TrackPage
+      <TrackScreen
         category={analyticsPageNames.chooseImage}
         type="drawer"
         flow={analyticsFlowName}

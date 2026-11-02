@@ -75,14 +75,13 @@ export function useOpenSwap({
       }
 
       // The Swap live app can't resolve a token account the user doesn't hold: send the parent.
-      if (isAccountEmpty(account)) {
-        const swapParams: DefaultAccountSwapParamList =
-          isTokenAccount(account) && parentAcc
-            ? { ...baseParams, defaultAccount: parentAcc }
-            : {
-                ...baseParams,
-                ...(currency && isTokenCurrency(currency) && { toTokenId: currency.id }),
-              };
+      if (isTokenAccount(account) && isAccountEmpty(account)) {
+        const swapParams: DefaultAccountSwapParamList = parentAcc
+          ? { ...baseParams, defaultAccount: parentAcc }
+          : {
+              ...baseParams,
+              ...(currency && isTokenCurrency(currency) && { toTokenId: currency.id }),
+            };
 
         navigateToSwapTab({ navigation, params: swapParams });
         return;
@@ -145,5 +144,5 @@ export function useOpenSwap({
     openAccountSelectionDrawer,
   ]);
 
-  return { handleOpenSwap };
+  return { handleOpenSwap, openSwapForAccount: navigateToSwap };
 }

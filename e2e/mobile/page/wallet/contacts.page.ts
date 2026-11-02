@@ -1,4 +1,5 @@
 import { Step } from "jest-allure2-reporter/api";
+import { TIMEOUT } from "@e2e/utils/timeouts";
 import ContactDetailPage from "@e2e/page/wallet/contactDetail.page";
 
 const ME_CONTACT_DISPLAY_NAME = "My addresses (Me)";
@@ -29,7 +30,8 @@ export default class ContactsPage {
     getElementById(`${rowId}-address-count`);
 
   @Step("Expect Contacts screen visible")
-  async expectScreenVisible() {
+  async expectScreenVisible(timeout = TIMEOUT.medium) {
+    await waitForElement(this.contactsContent(), timeout);
     await detoxExpect(this.contactsContent()).toBeVisible();
   }
 

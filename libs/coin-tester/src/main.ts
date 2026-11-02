@@ -63,9 +63,9 @@ export type ScenarioTransaction<T extends TransactionCommon, A extends Account> 
    * @description assert the account state after the transaction
    * @param previousAccount previousAccount returned by the latest sync before broadcasting this transaction
    * @param currentAccount currentAccount synced after broadcasting this transaction
-   * @returns void
+   * @returns void, or a promise the runner awaits before the next transaction
    */
-  expect?: (previousAccount: A, currentAccount: A) => void;
+  expect?: (previousAccount: A, currentAccount: A) => void | Promise<void>;
   /**
    * FOR DEV ONLY
    * if you want to temporarily disable the expect for a transaction
@@ -246,7 +246,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
         }
 
         try {
-          testTransaction.expect?.(previousAccount, scenarioAccount);
+          await testTransaction.expect?.(previousAccount, scenarioAccount);
         } catch (err: unknown) {
           if (isJestAssertionError(err) && err.matcherResult?.pass === false) {
             if (retry === 0) {
@@ -319,7 +319,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
           }
 
           try {
-            internalTestTransaction.expect?.(previousAccount, scenarioAccount);
+            await internalTestTransaction.expect?.(previousAccount, scenarioAccount);
           } catch (err: unknown) {
             if (isJestAssertionError(err) && err.matcherResult?.pass === false) {
               if (retry === 0) {

@@ -9,6 +9,7 @@ type LegacyIds = { userId: string; datadogId?: string };
 type PersistedIdentitiesShape = {
   userId?: string;
   datadogId?: string;
+  portfolioId?: string;
   deviceIds?: string[];
   pushDevicesSyncState?: "synced" | "unsynced";
   pushDevicesServiceUrl?: string | null;
@@ -59,6 +60,7 @@ export async function initIdentities(store: ReduxStore): Promise<boolean> {
       identitiesSlice.actions.initFromPersisted({
         userId,
         datadogId,
+        portfolioId: persisted.portfolioId,
         deviceIds: Array.isArray(persisted.deviceIds) ? persisted.deviceIds : [],
         pushDevicesSyncState: persisted.pushDevicesSyncState ?? "synced",
         pushDevicesServiceUrl: persisted.pushDevicesServiceUrl ?? null,

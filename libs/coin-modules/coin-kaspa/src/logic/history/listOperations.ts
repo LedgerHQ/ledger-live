@@ -10,7 +10,7 @@ import { getTransactions, MAX_PAGE_LIMIT } from "../../network";
 import type { ApiResponseTransaction } from "../../types";
 import { KaspaTransfer, parseKaspaTransfer } from "./scanOperations";
 
-const NATIVE_ASSET: AssetInfo = { type: "native", name: "KAS" };
+const NATIVE_ASSET: AssetInfo = { type: "native" };
 
 /**
  * Map a convention-neutral KaspaTransfer into the framework Operation shape.

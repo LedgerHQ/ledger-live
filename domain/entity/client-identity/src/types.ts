@@ -1,4 +1,4 @@
-import { DeviceId, UserId, DatadogId } from "./ids";
+import { DeviceId, UserId, DatadogId, PortfolioId } from "./ids";
 
 export type { UserId } from "./ids";
 
@@ -22,12 +22,16 @@ export const DUMMY_USER_ID = UserId.fromString(DUMMY_ID_STR);
  */
 export const DUMMY_DATADOG_ID = DatadogId.fromString(DUMMY_ID_STR);
 
+/** Placeholder portfolioId until the identities are initialized */
+export const DUMMY_PORTFOLIO_ID = PortfolioId.fromString(DUMMY_ID_STR);
+
 /**
  * Identities state managed by Redux
  */
 export interface IdentitiesState {
   userId: UserId;
   datadogId: DatadogId;
+  portfolioId: PortfolioId;
   deviceIds: DeviceId[];
   pushDevicesSyncState: PushDevicesSyncState;
   pushDevicesServiceUrl: string | null;
@@ -39,6 +43,7 @@ export interface IdentitiesState {
 export const initialIdentitiesState: IdentitiesState = {
   userId: DUMMY_USER_ID,
   datadogId: DUMMY_DATADOG_ID,
+  portfolioId: DUMMY_PORTFOLIO_ID,
   deviceIds: [],
   pushDevicesSyncState: "synced",
   pushDevicesServiceUrl: null,
@@ -50,4 +55,8 @@ export function isDummyUserId(userId: UserId): boolean {
 
 export function isDummyDatadogId(datadogId: DatadogId): boolean {
   return datadogId.equals(DUMMY_DATADOG_ID);
+}
+
+export function isDummyPortfolioId(portfolioId: PortfolioId): boolean {
+  return portfolioId.equals(DUMMY_PORTFOLIO_ID);
 }

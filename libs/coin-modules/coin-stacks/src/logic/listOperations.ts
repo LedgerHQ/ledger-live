@@ -7,6 +7,7 @@ import type {
 import { cvToJSON, deserializeCV } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 import { hexMemoToString, bufferMemoToString } from "../common-logic";
+import { STACKS_BOOT_ADDRESSES } from "../common-logic/staking";
 import { MAX_STACKS_PAGE_LIMIT, SEND_MANY_MEMO_CONTRACT_ID } from "../constants";
 import { fetchAllTransactions, fetchFungibleTokenMetadataCached } from "../network/api";
 import { findFinalTokenId, resolveTokenId } from "../network/transformers";
@@ -256,9 +257,27 @@ async function sip010TransferOperations(
   ];
 }
 
-/** Any other contract call (e.g. pox-5 `stake`/`unstake`) involving `address` as sender: a generic
- * operation carrying the function name as `type`, following Tron's `hasFailed`-independent
- * pattern of classifying every contract-call kind rather than only known transfer shapes. */
+/** The pox boot contract (`pox-5` today, any `pox-N` after it), so a user contract that happens to
+ * expose a `stake` function is not shown as a stake. */
+function isPoxContract(contractId: string): boolean {
+  const [deployer, name] = contractId.split(".");
+  return STACKS_BOOT_ADDRESSES.has(deployer) && /^pox(-\d+)?$/.test(name ?? "");
+}
+
+/** pox `stake`/`unstake` are typed like the optimistic operation the `delegate`/`undelegate` modes
+ * build, so the label does not change once the operation is synced. Every other call is a
+ * `CONTRACT_CALL`: the function name is not an operation type the apps can display. */
+function contractCallOperationType(contractId: string, functionName: string): string {
+  if (isPoxContract(contractId)) {
+    if (functionName === "stake") return "DELEGATE";
+    if (functionName === "unstake") return "UNDELEGATE";
+  }
+  return "CONTRACT_CALL";
+}
+
+/** Any other contract call (e.g. pox-5 `stake`/`unstake`) involving `address` as sender, following
+ * Tron's `hasFailed`-independent pattern of classifying every contract-call kind rather than only
+ * known transfer shapes. */
 function genericContractCallOperations(tx: TransactionResponse, address: string): Operation[] {
   const { tx_id, sender_address } = tx.tx;
   const contractCall = tx.tx.contract_call;
@@ -268,7 +287,7 @@ function genericContractCallOperations(tx: TransactionResponse, address: string)
     toOperation({
       ...txFields(tx),
       id: `${tx_id}-${contractCall.function_name}`,
-      type: contractCall.function_name,
+      type: contractCallOperationType(contractCall.contract_id, contractCall.function_name),
       senders: [sender_address],
       recipients: [],
       value: 0n,

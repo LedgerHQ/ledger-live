@@ -7,7 +7,6 @@ import {
   isTokenAccountFrozen,
 } from "@ledgerhq/live-common/families/solana/token";
 import { SolanaAccount, SolanaTokenAccount } from "@ledgerhq/live-common/families/solana/types";
-import AccountSubHeader from "~/components/AccountSubHeader";
 import TokenExtensionsInfoBox from "./Token2022/TokenExtensionsInfoBox";
 
 type Account = SolanaAccount | SolanaTokenAccount | TokenAccount;
@@ -20,7 +19,6 @@ function SolanaAccountSubHeader({ account }: Props) {
   const tokenExtensions = getTokenExtensions(account);
   return (
     <>
-      <AccountSubHeader family="Solana" team="Solana Labs" />
       {isTokenAccountFrozen(account) && (
         <Box mb={6}>
           <Alert type="warning">

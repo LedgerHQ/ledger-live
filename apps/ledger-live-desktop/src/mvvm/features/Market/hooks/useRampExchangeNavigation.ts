@@ -18,6 +18,7 @@ type RampExchangeKind = "buy" | "sell";
 
 export type RampExchangeNavigationOptions = Readonly<{
   currencyIds?: readonly string[];
+  source?: string;
 }>;
 
 type NavigateToRamp = (
@@ -74,6 +75,8 @@ export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRam
           currencies: currencyIds,
           areCurrenciesFiltered: true,
           useCase: kind,
+          flow: kind,
+          source: options?.source,
           drawerConfiguration: {},
           onSuccess: (account, parentAccount) => {
             navigate("/exchange", {
@@ -123,6 +126,8 @@ export function useRampExchangeNavigation(kind: RampExchangeKind): NavigateToRam
         currencies: [ledgerCurrency.id],
         areCurrenciesFiltered: true,
         useCase: kind,
+        flow: kind,
+        source: options?.source,
         drawerConfiguration: {},
         onSuccess: (account, parentAccount) => {
           navigate("/exchange", {

@@ -19,9 +19,6 @@ const CURRENCY = Currency.BTC;
 
 setTeamOwner(Team.WALLET_XP);
 describe("Market banner", () => {
-  testConfig.tmsLinks.forEach(link => $TmsLink(link));
-  testConfig.tags.forEach(tag => $Tag(tag));
-
   beforeAll(async () => {
     await app.init({
       userdata: "1AccountBTC1AccountETHReadOnlyFalse",
@@ -29,6 +26,9 @@ describe("Market banner", () => {
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
   });
+
+  testConfig.tmsLinks.forEach(link => $TmsLink(link));
+  testConfig.tags.forEach(tag => $Tag(tag));
 
   it(`[${CURRENCY.testLabel}] - Market banner elements, interactions and navigation`, async () => {
     await app.portfolio.expectMarketBannerVisible();

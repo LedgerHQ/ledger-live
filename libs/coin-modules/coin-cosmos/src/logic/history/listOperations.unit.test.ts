@@ -32,9 +32,56 @@ const makeTx = (overrides: Partial<{ txhash: string; height: string }> = {}): Co
     },
   }) as unknown as CosmosTx;
 
+const OTHER = "cosmos1other";
+
+const makeTxFrom = (
+  sender: string,
+  overrides: Partial<{ txhash: string; height: string }> = {},
+  recipient = "cosmos1recipient",
+): CosmosTx => {
+  const base = makeTx(overrides);
+  return {
+    ...base,
+    tx: {
+      ...base.tx,
+      body: {
+        messages: [
+          {
+            "@type": "/cosmos.bank.v1beta1.MsgSend",
+            from_address: sender,
+            to_address: recipient,
+            amount: [{ denom: "uatom", amount: "1000000" }],
+          },
+        ],
+        memo: "",
+      },
+    },
+  } as unknown as CosmosTx;
+};
+
+const withTransferTo = (tx: CosmosTx, recipient: string): CosmosTx =>
+  ({
+    ...tx,
+    events: [
+      ...tx.events,
+      {
+        type: "transfer",
+        attributes: [
+          { key: "recipient", value: recipient },
+          { key: "amount", value: "1500000uatom" },
+        ],
+      },
+    ],
+  }) as unknown as CosmosTx;
+
 const apiWith = (txs: CosmosTx[], hasMore = false): CosmosAPI =>
   ({
-    getTransactionsPage: jest.fn().mockResolvedValue({ txs, hasMore }),
+    getTransactionsPage: jest.fn().mockResolvedValue({ streams: [{ txs, hasMore }] }),
+  }) as unknown as CosmosAPI;
+
+const apiWithStreams = (streams: { txs: CosmosTx[]; hasMore: boolean }[]): CosmosAPI =>
+  ({
+    getTransactionsPage: jest.fn().mockResolvedValue({ streams }),
   }) as unknown as CosmosAPI;
 
 const makeUnknownTx = (overrides: { txhash: string; height: string }): CosmosTx =>
@@ -137,8 +184,7 @@ const makeRewardTx = (): CosmosTx =>
 const apiCounting = (allTxs: CosmosTx[]): CosmosAPI =>
   ({
     getTransactionsPage: jest.fn(async (_addr: string, count: number) => ({
-      txs: allTxs.slice(0, count),
-      hasMore: allTxs.length > count,
+      streams: [{ txs: allTxs.slice(0, count), hasMore: allTxs.length > count }],
     })),
   }) as unknown as CosmosAPI;
 
@@ -324,6 +370,265 @@ describe("logic/history/listOperations", () => {
     ]);
     const page = await listOperations(config, api, ADDR, { minHeight: 0 });
     expect(page.items.map(o => o.tx.hash)).toEqual(["AAA", "BBB"]);
+  });
+
+  describe("failed transactions", () => {
+    const makeFailedTx = (txhash = "FAILED"): CosmosTx =>
+      ({ ...makeTx({ txhash }), code: 5 }) as unknown as CosmosTx;
+
+    it("keeps a failed outbound send with its fees and a zero value", async () => {
+      const page = await listOperations(config, apiWith([makeFailedTx()]), ADDR, {
+        minHeight: 0,
+      });
+
+      expect(page.items).toEqual([
+        expect.objectContaining({
+          type: "OUT",
+          value: 0n,
+          tx: expect.objectContaining({ hash: "FAILED", fees: 500n, failed: true }),
+        }),
+      ]);
+    });
+
+    it("keeps a failed delegate with its fees and a zero value", async () => {
+      const failedDelegate = {
+        ...makeDelegateTx(),
+        txhash: "FAILED_DELEGATE",
+        code: 5,
+      } as unknown as CosmosTx;
+
+      const page = await listOperations(config, apiWith([failedDelegate]), ADDR, {
+        minHeight: 0,
+      });
+
+      expect(page.items).toEqual([
+        expect.objectContaining({
+          type: "DELEGATE",
+          value: 0n,
+          tx: expect.objectContaining({ hash: "FAILED_DELEGATE", fees: 500n, failed: true }),
+        }),
+      ]);
+    });
+
+    it("drops a failed tx sent by another account whose fees the address pays", async () => {
+      const sponsored = {
+        ...makeTxFrom(OTHER, { txhash: "GRANTED" }),
+        code: 5,
+      } as unknown as CosmosTx;
+
+      const page = await listOperations(config, apiWith([sponsored]), ADDR, { minHeight: 0 });
+
+      expect(page.items).toEqual([]);
+    });
+
+    it("drops a failed incoming transfer whose fees the address pays", async () => {
+      const sponsored = {
+        ...makeTxFrom(OTHER, { txhash: "FAILED_IN" }, ADDR),
+        code: 5,
+      } as unknown as CosmosTx;
+
+      const page = await listOperations(config, apiWith([sponsored]), ADDR, { minHeight: 0 });
+
+      expect(page.items).toEqual([]);
+    });
+
+    it("does not skip valid txs when dropped failed txs fill the fetch window", async () => {
+      const api = apiCounting([
+        { ...makeTxFrom(OTHER, { txhash: "G1", height: "400" }), code: 5 } as unknown as CosmosTx,
+        { ...makeTxFrom(OTHER, { txhash: "G2", height: "300" }), code: 5 } as unknown as CosmosTx,
+        makeTx({ txhash: "A", height: "200" }),
+        makeTx({ txhash: "B", height: "100" }),
+      ]);
+
+      const first = await listOperations(config, api, ADDR, { minHeight: 0, limit: 2 });
+      const second = await listOperations(config, api, ADDR, {
+        minHeight: 0,
+        limit: 2,
+        cursor: first.next,
+      });
+
+      expect(first.items).toEqual([]);
+      expect(first.next).toBe("2");
+      expect(second.items.map(o => o.tx.hash)).toEqual(["A", "B"]);
+    });
+
+    it("dedupes a failed tx returned by several streams", async () => {
+      const failed = makeFailedTx();
+
+      const page = await listOperations(
+        config,
+        apiWithStreams([
+          { txs: [failed], hasMore: false },
+          { txs: [failed], hasMore: false },
+        ]),
+        ADDR,
+        { minHeight: 0 },
+      );
+
+      expect(page.items).toEqual([
+        expect.objectContaining({ tx: expect.objectContaining({ hash: "FAILED" }) }),
+      ]);
+    });
+  });
+
+  describe("transactions sponsored by the address", () => {
+    const makeSponsoredReward = (): CosmosTx => {
+      const reward = makeRewardTx();
+      return {
+        ...reward,
+        txhash: "SPONSORED_REWARD",
+        tx: {
+          ...reward.tx,
+          body: {
+            messages: [
+              {
+                "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                delegator_address: OTHER,
+                validator_address: "cosmosvaloper1a",
+              },
+            ],
+            memo: "",
+          },
+        },
+      } as unknown as CosmosTx;
+    };
+
+    const makeSponsoredUndelegate = (): CosmosTx => {
+      const undelegate = makeTx({ txhash: "SPONSORED_UNDELEGATE" });
+      return {
+        ...undelegate,
+        tx: {
+          ...undelegate.tx,
+          body: {
+            messages: [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgUndelegate",
+                delegator_address: OTHER,
+                validator_address: "cosmosvaloper1v",
+                amount: { denom: "uatom", amount: "1000000" },
+              },
+            ],
+            memo: "",
+          },
+        },
+      } as unknown as CosmosTx;
+    };
+
+    it("drops a successful reward withdrawal of another account", async () => {
+      const page = await listOperations(config, apiWith([makeSponsoredReward()]), ADDR, {
+        minHeight: 0,
+      });
+
+      expect(page.items).toEqual([]);
+    });
+
+    it("drops a successful undelegation of another account", async () => {
+      const page = await listOperations(config, apiWith([makeSponsoredUndelegate()]), ADDR, {
+        minHeight: 0,
+      });
+
+      expect(page.items).toEqual([]);
+    });
+
+    it("keeps a successful reward withdrawal of another account paid to the address", async () => {
+      const page = await listOperations(
+        config,
+        apiWith([withTransferTo(makeSponsoredReward(), ADDR)]),
+        ADDR,
+        { minHeight: 0 },
+      );
+
+      expect(page.items).toEqual([
+        expect.objectContaining({
+          type: "REWARD",
+          tx: expect.objectContaining({ hash: "SPONSORED_REWARD", failed: false }),
+        }),
+      ]);
+    });
+
+    it("drops a successful reward withdrawal of another account paid to a third party", async () => {
+      const page = await listOperations(
+        config,
+        apiWith([withTransferTo(makeSponsoredReward(), "cosmos1third")]),
+        ADDR,
+        { minHeight: 0 },
+      );
+
+      expect(page.items).toEqual([]);
+    });
+
+    it("drops a failed reward withdrawal of another account even if a transfer credits the address", async () => {
+      const failed = { ...withTransferTo(makeSponsoredReward(), ADDR), code: 5 } as CosmosTx;
+
+      const page = await listOperations(config, apiWith([failed]), ADDR, { minHeight: 0 });
+
+      expect(page.items).toEqual([]);
+    });
+
+    it("keeps a successful incoming transfer", async () => {
+      const page = await listOperations(
+        config,
+        apiWith([makeTxFrom(OTHER, { txhash: "INCOMING" }, ADDR)]),
+        ADDR,
+        { minHeight: 0 },
+      );
+
+      expect(page.items).toEqual([
+        expect.objectContaining({ type: "IN", tx: expect.objectContaining({ hash: "INCOMING" }) }),
+      ]);
+    });
+
+    it("does not skip valid txs when dropped sponsored txs fill the fetch window", async () => {
+      const api = apiCounting([
+        { ...makeSponsoredReward(), height: "300" } as CosmosTx,
+        makeTx({ txhash: "A", height: "200" }),
+      ]);
+
+      const first = await listOperations(config, api, ADDR, { minHeight: 0, limit: 1 });
+      const second = await listOperations(config, api, ADDR, {
+        minHeight: 0,
+        limit: 1,
+        cursor: first.next,
+      });
+
+      expect(first.items).toEqual([]);
+      expect(first.next).toBe("1");
+      expect(second.items.map(o => o.tx.hash)).toEqual(["A"]);
+    });
+  });
+
+  describe("floor with several streams", () => {
+    const incoming = (txhash: string, height: string): CosmosTx =>
+      makeTxFrom(OTHER, { txhash, height }, ADDR);
+
+    it("keeps paging when only another stream has reached the floor", async () => {
+      const oldFailed = {
+        ...makeTx({ txhash: "OLD_FAILED", height: "100" }),
+        code: 5,
+      } as unknown as CosmosTx;
+      const api = apiWithStreams([
+        { txs: [], hasMore: false },
+        { txs: [incoming("R400", "400"), incoming("R300", "300")], hasMore: true },
+        { txs: [oldFailed], hasMore: false },
+      ]);
+
+      const page = await listOperations(config, api, ADDR, { minHeight: 150, limit: 2 });
+
+      expect(page.items.map(o => o.tx.hash)).toEqual(["R400", "R300"]);
+      expect(page.next).toBe("2");
+    });
+
+    it("stops once every stream with more results has reached the floor", async () => {
+      const api = apiWithStreams([
+        { txs: [incoming("R400", "400"), incoming("R100", "100")], hasMore: true },
+        { txs: [], hasMore: false },
+      ]);
+
+      const page = await listOperations(config, api, ADDR, { minHeight: 150, limit: 2 });
+
+      expect(page.items.map(o => o.tx.hash)).toEqual(["R400"]);
+      expect(page.next).toBeUndefined();
+    });
   });
 
   it("rejects ascending order (backend pages newest-first)", async () => {

@@ -1,8 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { http, HttpResponse, type JsonBodyType } from "msw";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
-import { listenToCardApi } from "@support/msw-features-flow-pay-card";
-import { CARD_TRANSACTIONS_URL, cardApiWrapper } from "../__tests__/cardApiStore";
+import { CARD_TRANSACTIONS_URL, listenToCardApi } from "@domain/api-card-management/mock/card-api";
+import { cardApiWrapper } from "../__tests__/cardApiStore";
 import { useCardTransactionsScreenViewModel } from "./useCardTransactionsScreenViewModel";
 
 const server = listenToCardApi();

@@ -11,6 +11,8 @@ import { RawPlatformSignedTransaction } from "@ledgerhq/live-common/platform/raw
 import { serializePlatformAccount } from "@ledgerhq/live-common/platform/serializers";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { BridgeSessionClosed } from "@ledgerhq/live-common/errors";
+import type { BridgeSession } from "@ledgerhq/live-common/wallet-api/bridgeSession";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { isPlatformSupportedCurrency } from "@ledgerhq/live-common/platform/helpers";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -74,6 +76,7 @@ export const broadcastTransactionLogic = (
   signedTransaction: RawPlatformSignedTransaction,
   pushToast: (data: ToastData) => void,
   t: TFunction,
+  session: BridgeSession,
 ): Promise<string> =>
   broadcastTransactionCommonLogic(
     { manifest, accounts, tracking },
@@ -85,6 +88,8 @@ export const broadcastTransactionLogic = (
       signedOperation: SignedOperation,
     ): Promise<string> => {
       const bridge = await getAccountBridge(account, parentAccount);
+      // The main frame may have moved to another origin while the transaction was prepared.
+      if (!session.isOpen) throw new BridgeSessionClosed();
       const mainAccount = getMainAccount(account, parentAccount);
 
       let optimisticOperation: Operation = signedOperation.operation;

@@ -1,6 +1,14 @@
 import { describe, expect, it, afterEach } from "bun:test";
 import { YAML } from "bun";
-import { statSync, mkdtempSync, mkdirSync, writeFileSync, chmodSync, rmSync } from "node:fs";
+import {
+  statSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  chmodSync,
+  rmSync,
+} from "node:fs";
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { generateLabel, getSessionPath, Session, withSessionLock } from "./session-store";
@@ -8,72 +16,72 @@ import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "main" },
+  network: "bitcoin",
   xpub: "xpub6BosfCnifzxcA",
   path: "m/84h/0h/0h",
 };
 
 const btcNative2: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "main" },
+  network: "bitcoin",
   xpub: "xpub6BosfCnifzxcB",
   path: "m/84h/0h/1h",
 };
 
 const btcLegacy: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "main" },
+  network: "bitcoin",
   xpub: "xpub6BosfCnifzxcC",
   path: "m/44h/0h/0h",
 };
 
 const btcSegwit: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "main" },
+  network: "bitcoin",
   xpub: "xpubSEGWIT",
   path: "m/49h/0h/0h",
 };
 
 const btcTaproot: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "main" },
+  network: "bitcoin",
   xpub: "xpubTAPROOT",
   path: "m/86h/0h/0h",
 };
 
 const btcTestnet: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "utxo",
-  network: { name: "bitcoin", env: "testnet" },
+  network: "bitcoin_testnet",
   xpub: "tpub1234",
   path: "m/84h/1h/0h",
 };
 
 const ethMain: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
-  network: { name: "ethereum", env: "main" },
+  network: "ethereum",
   address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
   path: "m/44h/60h/0h/0/0",
 };
 
 const ethGoerli: AccountDescriptorV1 = {
   purpose: "account",
-  version: "1",
+  version: "2",
   type: "address",
-  network: { name: "ethereum", env: "goerli" },
+  network: "ethereum_goerli",
   address: "0xabc",
   path: "m/44h/60h/0h/0/0",
 };
@@ -89,6 +97,7 @@ function makeAgentIntentProfile(overrides: Partial<Record<string, unknown>> = {}
     environment: "staging" as const,
     bffBaseUrl: "https://global.api.stg.ledger-test.com/agent-intent",
     publicKey: `02${"0".repeat(64)}`,
+    keyStore: "os-keychain" as const,
     enrollmentExpiresAt: "2026-06-01T00:00:00.000Z",
     createdAt: "2026-01-01T00:00:00.000Z",
     ...overrides,
@@ -112,16 +121,22 @@ describe("generateLabel", () => {
     expect(generateLabel(btcTaproot, new Set())).toBe("bitcoin-taproot-1");
   });
 
-  it("bitcoin testnet native → bitcoin-native-testnet-1", () => {
-    expect(generateLabel(btcTestnet, new Set())).toBe("bitcoin-native-testnet-1");
+  it("bitcoin testnet native → bitcoin_testnet-native-1", () => {
+    expect(generateLabel(btcTestnet, new Set())).toBe("bitcoin_testnet-native-1");
   });
 
   it("ethereum mainnet address-based → ethereum-1 (no derivation segment)", () => {
     expect(generateLabel(ethMain, new Set())).toBe("ethereum-1");
   });
 
-  it("ethereum goerli address-based → ethereum-goerli-1", () => {
-    expect(generateLabel(ethGoerli, new Set())).toBe("ethereum-goerli-1");
+  it("ethereum goerli address-based → ethereum_goerli-1", () => {
+    expect(generateLabel(ethGoerli, new Set())).toBe("ethereum_goerli-1");
+  });
+
+  it("bitcoin_cash → bitcoin_cash-1 (no derivation segment)", () => {
+    expect(
+      generateLabel({ ...btcNative, network: "bitcoin_cash", path: "m/44h/145h/0h" }, new Set()),
+    ).toBe("bitcoin_cash-1");
   });
 
   it("increments counter when label is taken", () => {
@@ -149,7 +164,7 @@ describe("Session.addDescriptors", () => {
     const existing = [
       {
         label: "bitcoin-native-1",
-        descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h",
+        descriptor: "account:2:utxo:bitcoin:xpub6BosfCnifzxcA:m/84h/0h/0h",
       },
     ];
     const session = Session.from(existing);
@@ -162,7 +177,7 @@ describe("Session.addDescriptors", () => {
     const existing = [
       {
         label: "bitcoin-native-1",
-        descriptor: "account:1:utxo:bitcoin:main:xpub6BosfCnifzxcA:m/84h/0h/0h",
+        descriptor: "account:2:utxo:bitcoin:xpub6BosfCnifzxcA:m/84h/0h/0h",
       },
     ];
     const session = Session.from(existing);
@@ -175,7 +190,7 @@ describe("Session.addDescriptors", () => {
     const existing = [
       {
         label: "bitcoin-native-1",
-        descriptor: "account:1:utxo:bitcoin:main:xpubOTHER:m/84h/0h/0h",
+        descriptor: "account:2:utxo:bitcoin:xpubOTHER:m/84h/0h/0h",
       },
     ];
     const session = Session.from(existing);
@@ -228,7 +243,7 @@ describe("ring-field resilience", () => {
         accounts: [
           {
             label: "ethereum-1",
-            descriptor: "account:1:address:ethereum:main:0xabc:m/44h/60h/0h/0/0",
+            descriptor: "account:2:address:ethereum:0xabc:m/44h/60h/0h/0/0",
           },
         ],
         passwordSalt: "NOT-A-VALID-SALT",
@@ -237,6 +252,31 @@ describe("ring-field resilience", () => {
     const session = await Session.read();
     expect(session.accounts).toHaveLength(1);
     expect(session.accounts[0].label).toBe("ethereum-1");
+  });
+
+  it("rewrites version 1 descriptors to version 2 on load, keeping their label", async () => {
+    useTmpState();
+    const address = "0x71c7656ec7ab88b098defb751b7401b5f6d8976f";
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [
+          {
+            label: "ethereum-sepolia-1",
+            descriptor: `account:1:address:ethereum:sepolia:${address}:m/44h/60h/0h/0/0`,
+          },
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.accounts).toEqual([
+      {
+        label: "ethereum-sepolia-1",
+        descriptor: `account:2:address:ethereum_sepolia:${address}:m/44h/60h/0h/0/0`,
+      },
+    ]);
+    session.write();
+    expect(readFileSync(getSessionPath(), "utf8")).not.toContain("account:1:");
   });
 
   it("drops a malformed passwordSalt to undefined instead of retaining it verbatim", async () => {
@@ -295,6 +335,34 @@ describe("ring-field resilience", () => {
     const session = await Session.read();
     expect(session.agentIntentProfiles.map(p => p.profileId)).toEqual(["good-profile"]);
     expect(session.invalidAgentIntentProfileIds).toEqual(["missing-fields"]);
+  });
+
+  it("defaults keyStore to os-keychain for a profile enrolled before the plaintext fallback", async () => {
+    useTmpState();
+    const { keyStore: _keyStore, ...legacyProfile } = makeAgentIntentProfile();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({ accounts: [], agentIntentProfiles: [legacyProfile] }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")?.keyStore).toBe("os-keychain");
+  });
+
+  it("keeps a plaintext-file keyStore and flags an unknown one as invalid", async () => {
+    useTmpState();
+    writeFileSync(
+      getSessionPath(),
+      YAML.stringify({
+        accounts: [],
+        agentIntentProfiles: [
+          makeAgentIntentProfile({ keyStore: "plaintext-file" }),
+          makeAgentIntentProfile({ profileId: "odd-store", keyStore: "usb-stick" }),
+        ],
+      }),
+    );
+    const session = await Session.read();
+    expect(session.getAgentIntentProfile("trading-bot")?.keyStore).toBe("plaintext-file");
+    expect(session.invalidAgentIntentProfileIds).toEqual(["odd-store"]);
   });
 
   it("flags a profile with a malformed enrollment expiry as invalid instead of pending", async () => {
@@ -396,22 +464,32 @@ describe("ring-field resilience", () => {
     expect(session.getAgentIntentProfile("trading-bot")?.pendingRecovery).toBeUndefined();
   });
 
-  it("keeps a profile but drops its malformed cached Ledger Sync version", async () => {
+  it("keeps a profile but drops its malformed cached Ledger Sync versions", async () => {
     useTmpState();
     writeFileSync(
       getSessionPath(),
       YAML.stringify({
         accounts: [],
         agentIntentProfiles: [
-          makeAgentIntentProfile({ profileId: "cached", ledgerSyncVersion: 7 }),
-          { ...makeAgentIntentProfile({ profileId: "corrupt" }), ledgerSyncVersion: "seven" },
+          makeAgentIntentProfile({
+            profileId: "cached",
+            ledgerSyncVersion: 7,
+            ledgerSyncCliVersion: "2.9.0",
+          }),
+          {
+            ...makeAgentIntentProfile({ profileId: "corrupt" }),
+            ledgerSyncVersion: "seven",
+            ledgerSyncCliVersion: 290,
+          },
         ],
       }),
     );
     const session = await Session.read();
     expect(session.getAgentIntentProfile("cached")?.ledgerSyncVersion).toBe(7);
+    expect(session.getAgentIntentProfile("cached")?.ledgerSyncCliVersion).toBe("2.9.0");
     expect(session.getAgentIntentProfile("corrupt")).toBeDefined();
     expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncVersion).toBeUndefined();
+    expect(session.getAgentIntentProfile("corrupt")?.ledgerSyncCliVersion).toBeUndefined();
   });
 
   it("write() carries a malformed agentIntentProfiles entry forward instead of erasing it", async () => {
@@ -478,7 +556,7 @@ describe("ring-field resilience", () => {
         accounts: [
           {
             label: "ethereum-1",
-            descriptor: "account:1:address:ethereum:main:0xabc:m/44h/60h/0h/0/0",
+            descriptor: "account:2:address:ethereum:0xabc:m/44h/60h/0h/0/0",
           },
         ],
         trustchain: "not-an-object", // malformed

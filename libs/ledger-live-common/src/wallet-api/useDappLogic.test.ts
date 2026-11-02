@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import React from "react";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act, waitFor } from "@testing-library/react";
 import { Provider, createStore, useSetAtom } from "jotai";
 import BigNumber from "bignumber.js";
 import { currentAccountAtomFamily, useDappLogic } from "./useDappLogic";
@@ -10,6 +10,7 @@ import { AppBranch, AppPlatform, Visibility } from "./types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { liveBlindSigningReporter } from "@ledgerhq/live-dmk-shared";
+import { BridgeSession } from "./bridgeSession";
 
 jest.mock("./converters", () => ({
   getWalletAPITransactionSignFlowInfos: jest.fn(),
@@ -168,6 +169,7 @@ function createWrapper(store: ReturnType<typeof createStore>) {
 
 async function renderWithAccount(
   uiHookOverrides: Partial<Parameters<typeof useDappLogic>[0]["uiHook"]> = {},
+  session?: BridgeSession,
 ) {
   const store = createStore();
   const postMessage = jest.fn();
@@ -188,6 +190,7 @@ async function renderWithAccount(
         postMessage,
         uiHook,
         tracking: mockTracking as never,
+        session,
       }),
     { wrapper: createWrapper(store) },
   );
@@ -484,5 +487,155 @@ describe("useDappLogic — liveBlindSigningReporter live-app context", () => {
     });
 
     expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+  });
+});
+
+describe("useDappLogic — requests of a closed bridge session", () => {
+  const signedOperation = {
+    operation: {
+      hash: "0xtxhash",
+      id: "op1",
+      recipients: [],
+      senders: [],
+      fee: new BigNumber(0),
+      value: new BigNumber(0),
+      blockHeight: null,
+      blockHash: null,
+      transactionSequenceNumber: new BigNumber(0),
+      accountId: mockAccount.id,
+      type: "OUT" as const,
+      date: new Date(),
+      extra: {},
+    },
+    signature: "0xsig",
+  };
+
+  const sendTransaction = {
+    jsonrpc: "2.0" as const,
+    method: "eth_sendTransaction",
+    params: [{ from: mockAccount.freshAddress, to: "0xRECIPIENT", value: "0x0" }],
+    id: 1,
+  };
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+    const { getCryptoAssetsStore } = jest.requireMock(
+      "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",
+    );
+    getCryptoAssetsStore.mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
+      findTokenById: jest.fn().mockResolvedValue(null),
+    });
+    const { getWalletAPITransactionSignFlowInfos } = jest.requireMock("./converters");
+    getWalletAPITransactionSignFlowInfos.mockResolvedValue({
+      canEditFees: true,
+      hasFeesProvided: false,
+      liveTx: { family: "evm", recipient: "0xRECIPIENT", amount: new BigNumber(0) },
+    });
+    const { prepareMessageToSign } = jest.requireMock("../hw/signMessage/index");
+    prepareMessageToSign.mockResolvedValue({ type: "message", message: "deadbeef" });
+    liveBlindSigningReporter.setContext({ liveAppContext: null });
+  });
+
+  it.each([
+    ["personal_sign", ["0xdeadbeef", mockAccount.freshAddress]],
+    ["eth_signTypedData", [mockAccount.freshAddress, '{"types":{},"domain":{},"message":{}}']],
+  ])(
+    "%s: rejects when the session closes while the signing flow is open, restoring the attribution",
+    async (method, params) => {
+      const session = new BridgeSession("https://a.com", jest.fn());
+      const { result, postMessage } = await renderWithAccount(
+        { "message.sign": jest.fn() }, // never answers: the flow stays open
+        session,
+      );
+
+      let request: Promise<void> = Promise.resolve();
+      act(() => {
+        request = result.current.onDappMessage({ jsonrpc: "2.0", method, params, id: 1 });
+      });
+      await waitFor(() =>
+        expect(liveBlindSigningReporter.getContext().liveAppContext).toBe(mockManifest.id),
+      );
+
+      act(() => session.close());
+      await act(async () => {
+        await request;
+      });
+
+      expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+      expect(postMessage).toHaveBeenCalledWith(expect.stringContaining('"error"'));
+    },
+  );
+
+  it("eth_sendTransaction: rejects when the session closes while the signing flow is open", async () => {
+    const session = new BridgeSession("https://a.com", jest.fn());
+    const { result } = await renderWithAccount({ "transaction.sign": jest.fn() }, session);
+
+    let request: Promise<void> = Promise.resolve();
+    act(() => {
+      request = result.current.onDappMessage(sendTransaction);
+    });
+    await waitFor(() =>
+      expect(liveBlindSigningReporter.getContext().liveAppContext).toBe(mockManifest.id),
+    );
+
+    act(() => session.close());
+    await act(async () => {
+      await request;
+    });
+
+    expect(liveBlindSigningReporter.getContext().liveAppContext).toBeNull();
+    expect(mockTracking.dappSendTransactionFail).toHaveBeenCalled();
+  });
+
+  it("eth_sendTransaction: does not broadcast a transaction signed for a session closed meanwhile", async () => {
+    const { getEnv } = jest.requireMock("@shared/env");
+    getEnv.mockReturnValue(false);
+    const broadcast = jest.fn().mockResolvedValue(signedOperation.operation);
+    const { getAccountBridge } = jest.requireMock("../bridge");
+    const session = new BridgeSession("https://a.com", jest.fn());
+    // The origin changes while the account bridge is prepared.
+    getAccountBridge.mockImplementation(async () => {
+      session.close();
+      return { broadcast };
+    });
+    const transactionBroadcast = jest.fn();
+    const { result, postMessage } = await renderWithAccount(
+      {
+        "transaction.sign": jest.fn(({ onSuccess }) => onSuccess(signedOperation)),
+        "transaction.broadcast": transactionBroadcast,
+      },
+      session,
+    );
+
+    await act(async () => {
+      await result.current.onDappMessage(sendTransaction);
+    });
+
+    expect(broadcast).not.toHaveBeenCalled();
+    expect(transactionBroadcast).not.toHaveBeenCalled();
+    expect(mockTracking.dappSendTransactionFail).toHaveBeenCalled();
+    expect(postMessage).not.toHaveBeenCalledWith(expect.stringContaining('"result"'));
+  });
+
+  it("eth_sendTransaction: broadcasts while the session is open", async () => {
+    const { getEnv } = jest.requireMock("@shared/env");
+    getEnv.mockReturnValue(false);
+    const broadcast = jest.fn().mockResolvedValue(signedOperation.operation);
+    const { getAccountBridge } = jest.requireMock("../bridge");
+    getAccountBridge.mockResolvedValue({ broadcast });
+    const { result } = await renderWithAccount(
+      {
+        "transaction.sign": jest.fn(({ onSuccess }) => onSuccess(signedOperation)),
+        "transaction.broadcast": jest.fn(),
+      },
+      new BridgeSession("https://a.com", jest.fn()),
+    );
+
+    await act(async () => {
+      await result.current.onDappMessage(sendTransaction);
+    });
+
+    expect(broadcast).toHaveBeenCalledTimes(1);
   });
 });

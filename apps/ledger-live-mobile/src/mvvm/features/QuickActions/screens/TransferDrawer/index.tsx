@@ -1,13 +1,9 @@
 import React from "react";
-import { CryptoOrTokenCurrency } from "@domain/entity-currency";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
+import { AccountAssetPickerSheet } from "LLM/components/AccountAssetPickerSheet";
 import { TransferDrawerView } from "./TransferDrawerView";
 import { useTransferDrawerViewModel } from "./useTransferDrawerViewModel";
-
-type Props = Readonly<{
-  currency?: CryptoOrTokenCurrency;
-  ledgerIds?: string[];
-}>;
+import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 
 /**
  * TransferDrawer - Bottom sheet with transfer action options
@@ -17,14 +13,18 @@ type Props = Readonly<{
  * - Send crypto: Navigates to send flow
  * - Bank transfer: Navigates to buy flow for stablecoin purchases
  */
-export const TransferDrawer = ({ currency, ledgerIds }: Props = {}) => {
-  const { isOpen, title, actions, handleClose, bottomInset } = useTransferDrawerViewModel({
-    currency,
-    ledgerIds,
-  });
+export const TransferDrawer = () => {
+  const { isOpen, title, actions, handleClose, bottomInset, assetPicker } =
+    useTransferDrawerViewModel();
   return (
-    <QueuedBottomSheet isForcingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
-      <TransferDrawerView actions={actions} title={title} bottomInset={bottomInset} />
-    </QueuedBottomSheet>
+    <>
+      <QueuedBottomSheet isForcingToBeOpened={isOpen} enableDynamicSizing onClose={handleClose}>
+        <TransferDrawerView actions={actions} title={title} bottomInset={bottomInset} />
+      </QueuedBottomSheet>
+      <AccountAssetPickerSheet
+        {...assetPicker}
+        testID={QUICK_ACTIONS_TEST_IDS.transferDrawer.assetPicker}
+      />
+    </>
   );
 };

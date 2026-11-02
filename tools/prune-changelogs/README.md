@@ -31,7 +31,7 @@ node tools/prune-changelogs/bin/prune-changelogs.mjs --keep=20
 | `--dry-run` | off | Report what would change without writing |
 | `--cwd=<dir>` | `process.cwd()` | Workspace root to scan |
 
-Requires Node ≥ 23.6 for TypeScript type stripping; the repo pins 24.14.0 in
+Requires Node ≥ 23.6 for TypeScript type stripping; the repo pins 24.22.1 in
 `mise.toml`.
 
 ## Where it runs

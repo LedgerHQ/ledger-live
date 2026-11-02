@@ -9,13 +9,8 @@ import BigNumber from "bignumber.js";
 // eslint-disable-next-line no-restricted-imports
 import flatMap from "lodash/flatMap";
 import { TonJettonTransfer, TonTransaction } from "../../bridge/bridgeHelpers/api.types";
-import {
-  dataToSlice,
-  decodeForwardPayload,
-  loadSnakeBytes,
-  mapJettonTxToOps,
-  mapTxToOps,
-} from "../../bridge/bridgeHelpers/txn";
+import { mapJettonTxToOps, mapTxToOps } from "../../bridge/bridgeHelpers/txn";
+import { dataToSlice, decodeForwardPayload, loadSnakeBytes } from "../../logic/forwardPayload";
 import {
   jettonTransferResponse,
   mockAccountId,

@@ -23,6 +23,7 @@ import { Text, Flex } from "@ledgerhq/native-ui";
 
 import { Trans } from "~/context/Locale";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
@@ -42,6 +43,9 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
 import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
+import { BackupBanner } from "LLM/features/OsUpdate/components/BackupBanner";
+import { hasBackupSelector, hasOsUpdatesSelector } from "LLM/features/OsUpdate/state/osUpdateSlice";
+import { useFeature } from "@features/platform-feature-flags";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
@@ -167,8 +171,12 @@ const AppsScreen = ({
   );
 
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
-  const showFwUpdateBanner = Boolean(latestFirmware);
+  const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
+  const hasOsUpdates = useSelector(hasOsUpdatesSelector);
+  const latestFirmware = useLatestFirmware(isOsUpdatesEnabled ? null : lastSeenDevice?.deviceInfo);
+  const hasBackup = useSelector(hasBackupSelector);
+  const showBackupBanner = isOsUpdatesEnabled && hasBackup;
+  const showFwUpdateBanner = isOsUpdatesEnabled ? hasOsUpdates : Boolean(latestFirmware);
 
   const appsToUpdate = getEnv("MOCK_APP_UPDATE") ? deviceApps : update;
   const showAppUpdate = appsToUpdate.length > 0;
@@ -216,6 +224,18 @@ const AppsScreen = ({
             <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
           </Flex>
         ) : null}
+        {showBackupBanner ? (
+          <Flex pb={16} testID="backup-banner-container">
+            <BackupBanner
+              device={{
+                id: device.deviceId,
+                name: device.deviceName ?? null,
+                deviceModelId: device.modelId,
+                transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
+              }}
+            />
+          </Flex>
+        ) : null}
         <DeviceCard
           distribution={distribution}
           state={state}
@@ -229,7 +249,7 @@ const AppsScreen = ({
           appList={deviceApps}
           onLanguageChange={onLanguageChange}
         >
-          {!showAppUpdate && !showFwUpdateBanner ? (
+          {!showAppUpdate && !showFwUpdateBanner && !showBackupBanner ? (
             <Flex m={6} mb={0}>
               <LedgerSyncEntryPoint entryPoint={EntryPoint.manager} page="Manager" />
               <LNUpsellBanner location="manager" />
@@ -264,6 +284,7 @@ const AppsScreen = ({
       result,
       showAppUpdate,
       showFwUpdateBanner,
+      showBackupBanner,
       state,
       updateModalOpened,
     ],

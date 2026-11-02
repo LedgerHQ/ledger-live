@@ -4,6 +4,7 @@ import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { Delegate } from "@ledgerhq/live-e2e-shared/models/Delegate";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import { exclusiveLockFor } from "tests/utils/exclusiveLock";
 
 // Shared modal/test config for the Tezos staking specs. DISABLE_TRANSACTION_BROADCAST is off by
 // default (CI never broadcasts); set it to "0" locally to broadcast + confirm the op on-chain.
@@ -56,10 +57,12 @@ test.describe("Staking - Tezos", () => {
   );
 });
 
-test.describe("Staking - Tezos", () => {
+const stakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_2] });
+
+test.describe("Staking - Tezos", { lock: stakeLock.names }, () => {
   const account = new Delegate(Account.XTZ_2, "0.005", "Ledger by Kiln");
 
-  test.use(tezosStakeUse(account));
+  test.use({ ...tezosStakeUse(account), ...stakeLock.fixtures });
 
   test(
     `[${account.account.currency.testLabel}] - Stake on a delegated account`,
@@ -84,10 +87,12 @@ test.describe("Staking - Tezos", () => {
   );
 });
 
-test.describe("Staking - Tezos", () => {
+const unstakeLock = exclusiveLockFor({ broadcastAccounts: [Account.XTZ_3] });
+
+test.describe("Staking - Tezos", { lock: unstakeLock.names }, () => {
   const account = new Delegate(Account.XTZ_3, "0.005", "Ledger by Kiln");
 
-  test.use(tezosStakeUse(account));
+  test.use({ ...tezosStakeUse(account), ...unstakeLock.fixtures });
 
   test(
     `[${account.account.currency.testLabel}] - Unstake from a staked account`,

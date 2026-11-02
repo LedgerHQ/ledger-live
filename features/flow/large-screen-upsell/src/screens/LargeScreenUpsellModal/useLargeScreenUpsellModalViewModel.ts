@@ -8,37 +8,16 @@ import {
   recordUpsellModalDisplay,
   resetUpsellModalRetries,
   rollbackUpsellModalDisplay,
-} from "../../state";
-import {
-  useLargeScreenUpsellDecision,
-  type UseLargeScreenUpsellDecisionInput,
-} from "../../hooks/useLargeScreenUpsellDecision";
-import {
-  buildLargeScreenUpsellContent,
-  type BuildLargeScreenUpsellContentInput,
-  type LargeScreenUpsellVariant,
-} from "../../utils/upsellContent";
+} from "../../state/slice";
+import { useLargeScreenUpsellDecision } from "../../hooks/useLargeScreenUpsellDecision";
+import { buildLargeScreenUpsellContent } from "../../utils/upsellContent";
+import type { LargeScreenUpsellDismissMethod } from "./analyticsPorts";
 import type {
-  LargeScreenUpsellDismissMethod,
-  LargeScreenUpsellModalAnalyticsPorts,
-} from "./analyticsPorts";
-import type { LargeScreenUpsellModalViewModel } from "./types";
+  LargeScreenUpsellModalViewModel,
+  UseLargeScreenUpsellModalViewModelInput,
+} from "./types";
 
 const LARGE_SCREEN_UPSELL_MODAL_ID = "large-screen-upsell-modal";
-
-export type UseLargeScreenUpsellModalViewModelInput = UseLargeScreenUpsellDecisionInput & {
-  medium: "mobile" | "desktop";
-  theme: "light" | "dark";
-  variant: LargeScreenUpsellVariant;
-  t: BuildLargeScreenUpsellContentInput["t"];
-  openUrl: (url: string) => void;
-  analytics?: LargeScreenUpsellModalAnalyticsPorts;
-  /**
-   * When false, close without counting a retry (e.g. another app-start modal has preference).
-   * The host still marks the session blocked so the upsell does not reopen later.
-   */
-  isAllowedToDisplay?: boolean;
-};
 
 export function useLargeScreenUpsellModalViewModel({
   seenNanoModelIds,

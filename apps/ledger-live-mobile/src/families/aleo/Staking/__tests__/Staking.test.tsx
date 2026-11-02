@@ -9,7 +9,7 @@ import type {
   AleoValidator,
 } from "@ledgerhq/live-common/families/aleo/types";
 import { Linking } from "react-native";
-import { getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getAddressExplorer } from "@domain/entity-currency-crypto";
 import { NavigatorName, ScreenName } from "~/const";
 import { ALEO_ACCOUNT_1 } from "../../__mocks__/account.mock";
 import Staking from "../index";
@@ -57,7 +57,8 @@ jest.mock("../useUnbondingState", () => ({
     }),
 }));
 
-jest.mock("@ledgerhq/live-common/explorers", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getDefaultExplorerView: jest.fn(),
   getAddressExplorer: jest.fn(),
 }));

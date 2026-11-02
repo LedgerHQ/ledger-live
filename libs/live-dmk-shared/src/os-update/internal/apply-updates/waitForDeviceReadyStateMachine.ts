@@ -6,6 +6,7 @@ import {
   type DeviceSessionId,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
+import { log } from "@ledgerhq/logs";
 import { assign, fromCallback, fromPromise, setup } from "xstate";
 import {
   DEVICE_CALL_TIMEOUT_MS,
@@ -24,6 +25,8 @@ import {
 } from "./types";
 import { isTargetReached } from "./utils/isTargetReached";
 import { matchesRebootedDevice } from "../shared/utils/matchesRebootedDevice";
+
+const LOG_TYPE = "OsUpdatesWaitForDeviceReady";
 
 /** The device to reopen the session on, which discovery replaced when the reboot moved it. */
 const deviceToConnect = (context: WaitForDeviceReadyContext) => ({
@@ -112,6 +115,11 @@ export const waitForDeviceReadyStateMachine: WaitForDeviceReadyStateMachine = se
       },
     ),
   },
+  actions: {
+    logState: ({ context }, name: string) => {
+      log(LOG_TYPE, `state: ${name}`, { target: context.target });
+    },
+  },
   delays: {
     rebootSettleDelay: REBOOT_SETTLE_DELAY_MS,
     poll: POLL_INTERVAL_MS,
@@ -131,6 +139,7 @@ export const waitForDeviceReadyStateMachine: WaitForDeviceReadyStateMachine = se
     // would leave the transport retrying the address that no longer exists. Wait the reboot out,
     // then drop the session and find the device again.
     Settling: {
+      entry: { type: "logState", params: "Settling" },
       after: {
         rebootSettleDelay: "Reconnecting",
       },
@@ -138,7 +147,7 @@ export const waitForDeviceReadyStateMachine: WaitForDeviceReadyStateMachine = se
     // Tear down, rediscover, reconnect under the same session id. A failure at any point starts
     // another discovery pass rather than probing the session that was just closed.
     Reconnecting: {
-      entry: assign({ rediscoveredDevice: null }),
+      entry: [{ type: "logState", params: "Reconnecting" }, assign({ rediscoveredDevice: null })],
       initial: "TearingDown",
       states: {
         TearingDown: {
@@ -175,6 +184,7 @@ export const waitForDeviceReadyStateMachine: WaitForDeviceReadyStateMachine = se
           },
         },
         AwaitingDiscoveryRetry: {
+          entry: { type: "logState", params: "AwaitingDiscoveryRetry" },
           after: {
             poll: "Discovering",
           },
@@ -251,6 +261,7 @@ export const waitForDeviceReadyStateMachine: WaitForDeviceReadyStateMachine = se
     },
     Ready: {
       type: "final",
+      entry: { type: "logState", params: "Ready" },
     },
   },
   output: ({ context }) => ({

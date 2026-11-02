@@ -1,3 +1,3 @@
-const { createSharedJestConfig } = require("@support/jest-shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
 module.exports = createSharedJestConfig();

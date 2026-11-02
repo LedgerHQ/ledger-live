@@ -4,6 +4,7 @@ import {
   type Backup,
   type CreateBackupDAInput,
 } from "@ledgerhq/dmk-ledger-wallet";
+import { log } from "@ledgerhq/logs";
 import { assign, enqueueActions, fromPromise, sendTo, setup } from "xstate";
 import { createDeviceActionStateMachine } from "../../../device-action/CreateDeviceActionStateMachine/createDeviceActionStateMachine";
 import { CreateBackupStateType, type CreateBackupState } from "../../api/model/CreateBackupState";
@@ -23,6 +24,8 @@ import {
 import { isSameState } from "./utils/isSameState";
 import { resumeTarget } from "./utils/resumeTarget";
 import { toCreateBackupState } from "./utils/toCreateBackupState";
+
+const LOG_TYPE = "OsUpdatesCreateBackup";
 
 export const createBackupStateMachine = setup({
   types: {
@@ -59,12 +62,22 @@ export const createBackupStateMachine = setup({
       if (context.lastSentState !== null && isSameState(context.lastSentState, state)) {
         return;
       }
+      log(LOG_TYPE, `state: ${state.type}`);
       enqueue.sendTo(context.parentRef, {
         type: OsUpdatesOrchestratorStateMachineEventType.STATE_UPDATE,
         state,
       });
       enqueue.assign({ lastSentState: state });
     }),
+    logState: (_, name: string) => {
+      log(LOG_TYPE, `state: ${name}`);
+    },
+    logError: ({ context }, name: string) => {
+      log(LOG_TYPE, `state: ${name}`, { error: context.error });
+    },
+    logEvent: (_, name: string) => {
+      log(LOG_TYPE, `event: ${name}`);
+    },
     sendStop: sendTo(({ context }) => context.parentRef, {
       type: OsUpdatesOrchestratorStateMachineEventType.STOP,
     } as const),
@@ -141,12 +154,21 @@ export const createBackupStateMachine = setup({
         }),
       },
       on: {
-        [CreateBackupStateMachineEventType.USE_EXISTING_BACKUP]: "Done",
-        [CreateBackupStateMachineEventType.CREATE_NEW_BACKUP]: "CreateBackup",
+        [CreateBackupStateMachineEventType.USE_EXISTING_BACKUP]: {
+          target: "Done",
+          actions: { type: "logEvent", params: "useExistingBackup" },
+        },
+        [CreateBackupStateMachineEventType.CREATE_NEW_BACKUP]: {
+          target: "CreateBackup",
+          actions: { type: "logEvent", params: "createNewBackup" },
+        },
       },
     },
     CreateBackup: {
-      entry: assign({ lastAction: CreateBackupStateMachineLastAction.CreateBackup }),
+      entry: [
+        { type: "logState", params: "CreateBackup" },
+        assign({ lastAction: CreateBackupStateMachineLastAction.CreateBackup }),
+      ],
       invoke: {
         src: "createBackup",
         input: ({ context }) => ({
@@ -196,10 +218,10 @@ export const createBackupStateMachine = setup({
       },
     },
     SaveBackup: {
-      entry: {
-        type: "sendStateUpdate",
-        params: { type: CreateBackupStateType.LOADING },
-      },
+      entry: [
+        { type: "logState", params: "SaveBackup" },
+        { type: "sendStateUpdate", params: { type: CreateBackupStateType.LOADING } },
+      ],
       invoke: {
         src: "saveBackup",
         input: ({ context }) => ({
@@ -226,11 +248,15 @@ export const createBackupStateMachine = setup({
         }),
       },
       on: {
-        [CreateBackupStateMachineEventType.RETRY]: "CreateBackup",
+        [CreateBackupStateMachineEventType.RETRY]: {
+          target: "CreateBackup",
+          actions: { type: "logEvent", params: "retry" },
+        },
         [CreateBackupStateMachineEventType.CANCEL]: "Canceled",
       },
     },
     CheckErrorCause: {
+      entry: { type: "logError", params: "CheckErrorCause" },
       invoke: {
         src: "checkErrorCause",
         input: ({ context, self }) => ({
@@ -258,10 +284,10 @@ export const createBackupStateMachine = setup({
       },
     },
     ResumeLastAction: {
-      entry: {
-        type: "sendStateUpdate",
-        params: { type: CreateBackupStateType.LOADING },
-      },
+      entry: [
+        { type: "logState", params: "ResumeLastAction" },
+        { type: "sendStateUpdate", params: { type: CreateBackupStateType.LOADING } },
+      ],
       always: Object.entries(resumeTarget).map(([lastAction, target]) => ({
         guard: ({ context }: { context: CreateBackupStateMachineContext }) =>
           context.lastAction === lastAction,
@@ -269,22 +295,27 @@ export const createBackupStateMachine = setup({
       })),
     },
     UnrecoverableError: {
-      entry: {
-        type: "sendStateUpdate",
-        params: ({ context }) => ({
-          type: CreateBackupStateType.UNEXPECTED_ERROR,
-          cancel: () => context.send({ type: CreateBackupStateMachineEventType.CANCEL }),
-        }),
-      },
+      entry: [
+        { type: "logError", params: "UnrecoverableError" },
+        {
+          type: "sendStateUpdate",
+          params: ({ context }) => ({
+            type: CreateBackupStateType.UNEXPECTED_ERROR,
+            error: context.error,
+            cancel: () => context.send({ type: CreateBackupStateMachineEventType.CANCEL }),
+          }),
+        },
+      ],
       on: {
         [CreateBackupStateMachineEventType.CANCEL]: "Canceled",
       },
     },
     Canceled: {
-      entry: "sendStop",
+      entry: [{ type: "logState", params: "Canceled" }, "sendStop"],
     },
     Done: {
       type: "final",
+      entry: { type: "logState", params: "Done" },
     },
   },
 });

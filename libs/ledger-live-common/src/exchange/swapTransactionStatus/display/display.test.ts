@@ -20,7 +20,8 @@ import {
   truncateSwapTransactionStatusIdentifier,
 } from "./index";
 
-jest.mock("../../../explorers", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getDefaultExplorerView: jest.fn(currency => ({ currencyId: currency.id })),
   getTransactionExplorer: jest.fn((_explorerView, operationHash) => {
     return `https://explorer.test/tx/${operationHash}`;

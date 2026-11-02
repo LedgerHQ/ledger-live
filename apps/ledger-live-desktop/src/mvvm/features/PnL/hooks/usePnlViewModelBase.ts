@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useSelector } from "LLD/hooks/redux";
 import {
   counterValueCurrencySelector,
@@ -44,7 +43,6 @@ export function usePnlViewModelBase({
   ...cardConfig
 }: UsePnlViewModelBaseInput): PnlViewModel {
   const { t } = useTranslation();
-  const { shouldDisplayPnl: isPnlFlagOn } = useWalletFeaturesConfig("desktop");
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
@@ -119,7 +117,7 @@ export function usePnlViewModelBase({
     [namespace, totalPnL, unrealisedPnL, realisedPnL, costBasis, lifetimeCost, formatFiat, t],
   );
 
-  const shouldDisplayPnl = isPnlFlagOn && accountsCount > 0;
+  const shouldDisplayPnl = accountsCount > 0;
 
   return {
     shouldDisplayPnl,

@@ -6,17 +6,13 @@ import type { Circus } from "@jest/types";
 
 const STALL_MS = 90_000;
 const BEAT_MS = 1_000;
-const THREAD_NAME = "main";
 
 type WatchdogState = { spec: string; phase: string };
-type ThreadPoll = typeof import("@sentry/node-native-stacktrace").threadPoll;
 
 const state: WatchdogState = { spec: "<idle>", phase: "idle" };
-let armed = false;
-let threadPoll: ThreadPoll | undefined;
+let watchdog: Worker | undefined;
 
-const ENABLE_LAST_SEEN_TRACKING = true;
-const beat = (): void => threadPoll?.(ENABLE_LAST_SEEN_TRACKING, { ...state });
+const beat = (): void => watchdog?.postMessage(state);
 
 function unrefTimer(handle: unknown): void {
   if (typeof handle === "object" && handle !== null && "unref" in handle) {
@@ -28,33 +24,18 @@ function disable(reason: string): void {
   console.warn(`[stall-watchdog] disabled: ${reason}`);
 }
 
-export async function armWorkerWatchdog(): Promise<void> {
+export function armWorkerWatchdog(): void {
   const isForkedJestWorker = typeof process.send === "function";
-  if (armed || !isForkedJestWorker || process.env.E2E_STALL_WATCHDOG === "0") return;
-  armed = true;
+  if (watchdog || !isForkedJestWorker || process.env.E2E_STALL_WATCHDOG === "0") return;
 
-  let native: typeof import("@sentry/node-native-stacktrace");
-  try {
-    native = await import("@sentry/node-native-stacktrace");
-    native.registerThread(THREAD_NAME);
-  } catch (error) {
-    disable(`could not load @sentry/node-native-stacktrace (${error})`);
-    return;
-  }
-  threadPoll = native.threadPoll;
-
-  beat();
-  unrefTimer(setInterval(beat, BEAT_MS));
-
-  const watchdog = new Worker(path.join(__dirname, "workerWatchdog.thread.cjs"), {
-    workerData: {
-      stallMs: STALL_MS,
-      threadName: THREAD_NAME,
-      reportDir: path.join(__dirname, "..", "artifacts"),
-    },
+  watchdog = new Worker(path.join(__dirname, "workerWatchdog.thread.cjs"), {
+    workerData: { stallMs: STALL_MS, reportDir: path.join(__dirname, "..", "artifacts") },
   });
   watchdog.on("error", error => disable(`watchdog thread failed (${error})`));
   watchdog.unref();
+
+  beat();
+  unrefTimer(setInterval(beat, BEAT_MS));
 }
 
 export function setWatchdogState(next: Partial<WatchdogState>): void {

@@ -1,9 +1,9 @@
 const React = require("react");
-const passthroughWeb = require("@support/jest-shared/mocks/passthrough-web");
+const passthroughWeb = require("@support/jest/shared/mocks/passthrough-web");
 
 // The shared web stub has no Banner case, so `title` and `description` are forwarded as DOM
 // attributes rather than rendered as text, and InfoState's tests assert both are visible.
-// Everything except Banner is delegated to @support/jest-shared so this stays in lockstep
+// Everything except Banner is delegated to @support/jest/shared so this stays in lockstep
 // with the shared stub instead of forking it.
 function Banner({ title, description, ...props }) {
   return React.createElement(

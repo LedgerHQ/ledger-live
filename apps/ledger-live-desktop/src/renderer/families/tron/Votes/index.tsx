@@ -10,7 +10,7 @@ import {
   getNextRewardDate,
 } from "@ledgerhq/live-common/families/tron/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { openURL } from "~/renderer/linking";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";

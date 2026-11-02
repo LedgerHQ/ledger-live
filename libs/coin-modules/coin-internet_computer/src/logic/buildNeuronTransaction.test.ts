@@ -1,5 +1,8 @@
-import { IDL } from "@dfinity/candid";
-import { Principal } from "@dfinity/principal";
+import { Cbor } from "@icp-sdk/core/agent";
+import { IDL } from "@icp-sdk/core/candid";
+import { Principal } from "@icp-sdk/core/principal";
+import { sha256 } from "@noble/hashes/sha2";
+import { bytesToHex } from "@noble/hashes/utils";
 import BigNumber from "bignumber.js";
 import { getCanisterIdlFunc, governanceIdlFactory } from "../network/candid";
 import { ICPNeuron, ICPTransactionType, InternetComputerOperation, Transaction } from "../types";
@@ -59,7 +62,7 @@ describe("createUnsignedNeuronCommandTransaction", () => {
     createUnsignedNeuronCommandTransaction(
       tx({ type: "split_neuron", amount: new BigNumber(200_000_000) }),
       XPUB,
-    ).arg as ArrayBuffer;
+    ).arg;
 
   // The device app reads the candid type table, not just the value, and refuses a Split record that
   // holds anything but one field — so the table itself is what has to be pinned.
@@ -169,6 +172,38 @@ describe("createReadStateRequest", () => {
     expect(readStateContent.paths).toHaveLength(1);
     expect(readStateContent.paths[0]).toHaveLength(2);
     expect(new Uint8Array(requestId)).toHaveLength(32);
+  });
+
+  // Cbor.encode writes keys in insertion order; the signed envelopes keep them sorted.
+  it("builds the call and read_state contents with sorted keys", () => {
+    const unsigned = createUnsignedListNeuronsTransaction(XPUB);
+    const { readStateContent } = createReadStateRequest(unsigned);
+    for (const content of [unsigned, readStateContent]) {
+      const keys = Object.keys(content);
+      expect(keys).toEqual([...keys].sort());
+    }
+  });
+
+  // The envelopes the device signs for a start_dissolving on neuron 123. The call carries the
+  // canister's full manage_neuron type table (1907 bytes), so it is pinned by digest.
+  it("encodes the exact call and read_state contents the device signs", () => {
+    jest.useFakeTimers({ now: 1_700_000_000_000 });
+    try {
+      const unsigned = createUnsignedNeuronCommandTransaction(tx({}), XPUB);
+      const { readStateContent, requestId } = createReadStateRequest(unsigned);
+
+      expect(bytesToHex(sha256(Cbor.encode({ content: unsigned })))).toBe(
+        "c94323eb28492ddc3100f17c430216daa102c88fac3a7dc57a13db94d2009aac",
+      );
+      expect(bytesToHex(new Uint8Array(requestId))).toBe(
+        "f0526b02a4dedac8591df348ff4ff61b2572686bb092b3e265918a68cad361c5",
+      );
+      expect(bytesToHex(Cbor.encode({ content: readStateContent }))).toBe(
+        "d9d9f7a167636f6e74656e74a46e696e67726573735f6578706972791b17979d316f2f980065706174687381824e726571756573745f7374617475735820f0526b02a4dedac8591df348ff4ff61b2572686bb092b3e265918a68cad361c56c726571756573745f747970656a726561645f73746174656673656e646572581d1f0c157211e5dade80b29c6808512eef175c880648ed91da077faa2c02",
+      );
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
 

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Routes, Route } from "react-router";
 import { useSelector } from "LLD/hooks/redux";
 import { userIdSelector } from "@domain/entity-client-identity";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import AllowExperimentalAppsToggle from "./AllowExperimentalAppsToggle";
 import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
@@ -181,7 +181,7 @@ const Default = () => {
 };
 const SectionDeveloper = () => (
   <>
-    <TrackPage category="Settings" name="Developer" />
+    <TrackScreen category="Settings" name="Developer" />
     <Routes>
       <Route path="custom-locksscreen-assets" element={<CustomLockScreenAssets />} />
       <Route path="analytics-consent-opt-in-qa" element={<AnalyticsConsentOptInDevScreen />} />

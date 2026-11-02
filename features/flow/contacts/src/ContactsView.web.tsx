@@ -1,10 +1,10 @@
 import React from "react";
 import { ContactsListView as ContactsListFlowView } from "@features/flow-contacts-list";
+import { isContactsLedgerSyncActivationRequired } from "@features/flow-contacts-introduction";
 import {
   ContactsFeatureIntroductionDialog,
   ContactsLedgerSyncIntroductionDialog,
-  isContactsLedgerSyncActivationRequired,
-} from "@features/flow-contacts-introduction";
+} from "@features/flow-contacts-introduction/web";
 import { ContactDetailView } from "@features/flow-contacts-detail";
 import type { ContactsViewProps } from "./ContactsView.types";
 

@@ -138,6 +138,22 @@ describe("datadog config", () => {
       );
     });
 
+    it("scrubs a Portfolio account id from a resource url before the event is sent", () => {
+      const beforeSend = buildBeforeSend(() => true);
+      const address = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
+      const event = {
+        resource: {
+          url: `https://svc.example/v1/portfolio/p/accounts/base:${address}/addresses?account=base:${address}&currency=usd`,
+        },
+      };
+      beforeSend(event, undefined);
+      const url = (event.resource as Record<string, unknown>).url as string;
+      expect(url).not.toContain(address);
+      expect(url).toContain("/accounts/[redacted]/addresses");
+      expect(url).toContain("account=%5Bredacted%5D");
+      expect(url).toContain("currency=usd");
+    });
+
     it("scrubs wallet address from action.target.name", () => {
       const beforeSend = buildBeforeSend(() => true);
       const event = {

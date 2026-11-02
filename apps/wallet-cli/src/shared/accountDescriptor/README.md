@@ -27,19 +27,20 @@ The `id` encodes `currencyId`, `seedIdentifier`, and `derivationMode` in the for
 
 ## AccountDescriptorV1 — ADR format
 
-The V1 format is the canonical, human-readable descriptor defined in the ADR.
+The canonical, human-readable descriptor defined in the ADR, implemented by `@domain/entity-account-descriptor`. Despite the `V1` name (as opposed to V0), it is written in the ADR's version 2.
 
 ### String representation
 
 ```
-account:1:<type>:<network_name>:<network_env>:<xpub_or_address>:<path>
+account:2:<type>:<network_id>:<xpub_or_address>:<path>
 ```
+
+Version 1 (`account:1:<type>:<network_name>:<network_env>:…`) is still read and converted: `bitcoin:testnet` → `bitcoin_testnet`. `session.yaml` entries are rewritten to version 2 on load.
 
 | Field             | Values                                             |
 | ----------------- | -------------------------------------------------- |
 | `type`            | `utxo` (Bitcoin family) or `address` (EVM, Solana) |
-| `network_name`    | `bitcoin`, `ethereum`, `solana`, …                 |
-| `network_env`     | `main`, `testnet`, `devnet`, `goerli`, `sepolia`, … |
+| `network_id`      | CAL network id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`, … |
 | `xpub_or_address` | xpub/ypub/zpub (UTXO) or derived address (ACCOUNT) |
 | `path`            | BIP32 derivation path (see below)                  |
 
@@ -70,10 +71,10 @@ The non-hardened change/address suffix (`/0/0`) is intentionally omitted. The xp
 ### Full examples
 
 ```
-account:1:utxo:bitcoin:main:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh:m/84'/0'/0'
-account:1:utxo:bitcoin:testnet:tpubD8Lg2gUVPCHWXFnFnqiKdPHZBVjGoMkL2YobGcqEUiE3K72TPFAG6Gjs1TK7d4yKnBqEhqawGXBpNxKzAYtSiRPBwwqvpyiNi4X6MHXTfHe:m/84'/1'/0'
-account:1:address:ethereum:main:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44'/60'/0'/0/0
-account:1:address:solana:main:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44'/501'/0'/0'
+account:2:utxo:bitcoin:xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh:m/84'/0'/0'
+account:2:utxo:bitcoin_testnet:tpubD8Lg2gUVPCHWXFnFnqiKdPHZBVjGoMkL2YobGcqEUiE3K72TPFAG6Gjs1TK7d4yKnBqEhqawGXBpNxKzAYtSiRPBwwqvpyiNi4X6MHXTfHe:m/84'/1'/0'
+account:2:address:ethereum:0x71C7656EC7ab88b098defB751B7401B5f6d8976F:m/44'/60'/0'/0/0
+account:2:address:solana:7xCU4XQfL8589X6vVt8q5F7J3Z9T1z6W6X6X6X6X6X:m/44'/501'/0'/0'
 ```
 
 ---

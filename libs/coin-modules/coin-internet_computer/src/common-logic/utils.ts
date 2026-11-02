@@ -1,4 +1,4 @@
-import type { Principal } from "@dfinity/principal";
+import type { Principal } from "@icp-sdk/core/principal";
 import { encodeOperationId } from "@ledgerhq/ledger-wallet-framework/operation";
 import { OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";

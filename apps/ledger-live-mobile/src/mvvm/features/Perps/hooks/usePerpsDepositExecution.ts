@@ -1,5 +1,5 @@
 import { track } from "@shared/analytics";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import type { SignedOperation } from "@ledgerhq/types-live";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/live-common/account/index";
@@ -11,7 +11,7 @@ import { executeSwap } from "@ledgerhq/live-common/wallet-api/Exchange/executeSw
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { ExchangeType, type SwapUiRequest } from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { getWalletApiIdFromAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { PERPS_DEPOSIT_QUOTE_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/depositQuote";
+import { PERPS_SWAPKIT_PROVIDER } from "@ledgerhq/live-common/wallet-api/Perps/constants";
 import type { PerpsDepositReviewParams } from "@ledgerhq/live-common/wallet-api/Perps/server";
 import type { Action } from "@ledgerhq/live-common/hw/actions/types";
 import type { Result as StartExchangeResult } from "@ledgerhq/live-common/hw/actions/startExchange";
@@ -34,7 +34,7 @@ import { isUserRefusal } from "../utils/isUserRefusal";
 import {
   getDepositRequestId,
   settleDepositRequest,
-} from "@ledgerhq/live-common/wallet-api/Perps/depositRequest";
+} from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 
 type StartResult = StartExchangeResult;
 type CompleteResult = CompleteExchangeResult;
@@ -78,6 +78,11 @@ export type PerpsDepositExecutionCallbacks = Readonly<{
 }>;
 
 const EXCHANGE_APP_NAME = "Exchange";
+
+// Named like the swap drawer's, so /swap/cancelled reports a closed deposit the same way.
+class DrawerClosedError extends Error {
+  override name = "DrawerClosedError";
+}
 const FEE_STRATEGY = "medium";
 
 /** The swap orchestration's analytics sink, pointed at the perps flow. */
@@ -95,6 +100,17 @@ export function usePerpsDepositExecution(
   { onDone, onRefused, onNotEnoughBalance }: PerpsDepositExecutionCallbacks,
 ): PerpsDepositExecution {
   const [deviceStep, setDeviceStep] = useState<PerpsDepositDeviceStep>(PROCESSING_STEP);
+
+  const cancelSwapRef = useRef<((error: Error) => void) | null>(null);
+  const closedRef = useRef(false);
+
+  useEffect(
+    () => () => {
+      closedRef.current = true;
+      cancelSwapRef.current?.(new DrawerClosedError("User closed the deposit"));
+    },
+    [],
+  );
 
   const dispatch = useDispatch();
 
@@ -146,7 +162,7 @@ export function usePerpsDepositExecution(
    * transaction with the coin app, then broadcasts it.
    */
   const confirmSignAndBroadcast = useCallback(
-    async (exchangeParams: SwapUiRequest) => {
+    async (exchangeParams: SwapUiRequest, onBroadcast: () => void) => {
       const completeResult = await runDeviceStep<CompleteResult>(onResult => ({
         kind: "device",
         stepId: "confirm",
@@ -154,7 +170,7 @@ export function usePerpsDepositExecution(
           render({
             action: completeAction,
             request: {
-              provider: exchangeParams.provider ?? PERPS_DEPOSIT_QUOTE_PROVIDER,
+              provider: exchangeParams.provider ?? PERPS_SWAPKIT_PROVIDER,
               transaction: exchangeParams.transaction,
               binaryPayload: exchangeParams.binaryPayload,
               signature: exchangeParams.signature,
@@ -191,6 +207,7 @@ export function usePerpsDepositExecution(
         throw signResult.transactionSignError;
       }
 
+      onBroadcast();
       const operation = await broadcast(signResult.signedOperation);
 
       const swapId = exchangeParams.swapId;
@@ -202,7 +219,7 @@ export function usePerpsDepositExecution(
           magnitudeAwareRate: finalTransaction.amount.isZero()
             ? new BigNumber(0)
             : quotedReceiveAmount.div(finalTransaction.amount),
-          provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+          provider: PERPS_SWAPKIT_PROVIDER,
         });
         if (accountId && updater) {
           dispatch(updateAccountWithUpdater({ accountId, updater }));
@@ -240,6 +257,10 @@ export function usePerpsDepositExecution(
           getFeature,
           uiHooks: {
             "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
+              if (closedRef.current) {
+                onCancel(new DrawerClosedError("User closed the deposit"));
+                return;
+              }
               void runDeviceStep<StartResult>(onResult => ({
                 kind: "device",
                 stepId: "start",
@@ -259,10 +280,28 @@ export function usePerpsDepositExecution(
               );
             },
             "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-              void confirmSignAndBroadcast(exchangeParams).then(result => {
+              if (closedRef.current) {
+                onCancel(new DrawerClosedError("User closed the deposit"));
+                return;
+              }
+              let settled = false;
+              const cancel = (error: Error) => {
+                if (settled) return;
+                settled = true;
+                cancelSwapRef.current = null;
+                onCancel(error);
+              };
+              cancelSwapRef.current = cancel;
+              const beginBroadcast = () => {
+                if (settled) throw new DrawerClosedError("User closed the deposit");
+                if (cancelSwapRef.current === cancel) cancelSwapRef.current = null;
+              };
+              void confirmSignAndBroadcast(exchangeParams, beginBroadcast).then(result => {
+                if (settled) return;
+                settled = true;
                 signed = result;
                 onSuccess({ operationHash: result.operation.hash, swapId: result.swapId ?? "" });
-              }, onCancel);
+              }, cancel);
             },
 
             "custom.exchange.error": ({ onCancel }) => onCancel(),
@@ -270,7 +309,7 @@ export function usePerpsDepositExecution(
         },
         {
           exchangeType: "SWAP",
-          provider: PERPS_DEPOSIT_QUOTE_PROVIDER,
+          provider: PERPS_SWAPKIT_PROVIDER,
           fromAccountId: getWalletApiIdFromAccountId(depositAccount.id),
           toAccountId: getWalletApiIdFromAccountId(receiverAccount.id),
           fromAmount: amountSent,
@@ -283,8 +322,10 @@ export function usePerpsDepositExecution(
       if (!signed) return;
 
       settleDepositRequest(requestId, { swapId: signed.swapId, amountTo });
+      if (closedRef.current) return;
       onDone({ swapId: signed.swapId });
     } catch (e) {
+      if (closedRef.current) return;
       if (isUserRefusal(e)) {
         onRefused();
         return;

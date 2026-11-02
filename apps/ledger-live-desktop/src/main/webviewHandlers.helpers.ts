@@ -3,6 +3,19 @@
  * imports so they can be unit-tested without mocking the Electron runtime.
  */
 import path from "node:path";
+import { isUrlAllowedByManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainUtils";
+import { getStrictManifestDomains } from "@ledgerhq/live-common/wallet-api/manifestDomainReport";
+import { isBridgeSenderAllowed } from "@ledgerhq/live-common/wallet-api/bridgeSession";
+import { WEBVIEW_BRIDGE_CHANNELS, type WebviewBridgeChannel } from "~/bridge/contract";
+import {
+  ALLOWED_ORIGINS_PREFERENCE,
+  DOMAIN_CHECK_REPORT_PREFERENCE,
+  UNRESTRICTED_ORIGINS,
+  parseAllowedOrigins,
+  parseDomainCheckReport,
+  type WebviewAllowedOrigins,
+  type WebviewDomainCheckReport,
+} from "~/bridge/webviewAllowedOrigins";
 
 const WEBVIEW_PRELOADS: ReadonlySet<string> = new Set([
   "webviewPreloader.bundle.js",
@@ -40,6 +53,93 @@ export function applyWebviewAttachPolicy(
   }
 
   return isSrcAllowed(src);
+}
+
+/**
+ * Removes the renderer-supplied allowed origins from a <webview>'s preferences
+ * (Electron does not know the key) and returns them.
+ */
+export function takeAllowedOrigins(
+  webPreferences: Electron.WebPreferences,
+): WebviewAllowedOrigins | undefined {
+  const preferences = webPreferences as Record<string, unknown>;
+  const allowedOrigins = parseAllowedOrigins(preferences[ALLOWED_ORIGINS_PREFERENCE]);
+  delete preferences[ALLOWED_ORIGINS_PREFERENCE];
+  return allowedOrigins;
+}
+
+/**
+ * Removes the renderer-supplied domain check report context from a <webview>'s
+ * preferences and returns it, with the manifest domains reduced to the strict list.
+ */
+export function takeDomainCheckReport(
+  webPreferences: Electron.WebPreferences,
+): WebviewDomainCheckReport | undefined {
+  const preferences = webPreferences as Record<string, unknown>;
+  const report = parseDomainCheckReport(preferences[DOMAIN_CHECK_REPORT_PREFERENCE]);
+  delete preferences[DOMAIN_CHECK_REPORT_PREFERENCE];
+  return report && { ...report, domains: getStrictManifestDomains(report.domains) };
+}
+
+/**
+ * Builds the main-frame origin check of Live App <webview> guests.
+ *
+ * A guest without allowed origins fails closed. `about:blank` always passes: it is
+ * where a blocked guest is sent. Ledger Live's own deep links pass for any guest
+ * that has allowed origins, since Ledger Live handles them itself.
+ */
+export function createMainFrameOriginChecker(
+  supportedSchemes: string[],
+): (url: string, allowedOrigins: WebviewAllowedOrigins | undefined) => boolean {
+  const deepLinkProtocols = new Set(supportedSchemes.map(scheme => `${scheme}:`));
+
+  return (url, allowedOrigins) => {
+    if (url === "about:blank") return true;
+    if (allowedOrigins === undefined) return false;
+
+    let protocol: string;
+    try {
+      protocol = new URL(url).protocol;
+    } catch {
+      return false;
+    }
+
+    if (deepLinkProtocols.has(protocol)) return true;
+    if (allowedOrigins === UNRESTRICTED_ORIGINS) return true;
+    return isUrlAllowedByManifestDomains(url, allowedOrigins);
+  };
+}
+
+/**
+ * Whether main hands a Live App bridge message over to the embedder: only the guest main
+ * frame is answered, on one of its allowed origins. A guest without allowed origins fails closed.
+ */
+export function isBridgeSenderFrameAllowed(
+  sender: { origin: string; isMainFrame: boolean },
+  allowedOrigins: WebviewAllowedOrigins | undefined,
+): boolean {
+  if (allowedOrigins === undefined || !sender.isMainFrame) return false;
+  return isBridgeSenderAllowed(
+    { url: sender.origin, isMainFrame: sender.isMainFrame },
+    allowedOrigins === UNRESTRICTED_ORIGINS ? undefined : allowedOrigins,
+  );
+}
+
+const webviewBridgeChannels: ReadonlySet<string> = new Set(WEBVIEW_BRIDGE_CHANNELS);
+
+export function isWebviewBridgeChannel(channel: unknown): channel is WebviewBridgeChannel {
+  return typeof channel === "string" && webviewBridgeChannels.has(channel);
+}
+
+/**
+ * Returns the origin of a URL for logs, without its path or query.
+ */
+export function getLoggableOrigin(url: string): string {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return "invalid URL";
+  }
 }
 
 /**

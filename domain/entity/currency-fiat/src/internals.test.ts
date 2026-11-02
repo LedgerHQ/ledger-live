@@ -1,5 +1,6 @@
 import { buildFallbackFiats } from "./internals";
-import { OFAC_FIAT_TICKERS, FALLBACK_FIAT_TICKERS } from "./constants";
+import { FALLBACK_FIAT_TICKERS } from "./constants";
+import { OFAC_FIAT_TICKERS } from "./constants.internals";
 
 describe("buildFallbackFiats", () => {
   it("returns a non-empty list", () => {

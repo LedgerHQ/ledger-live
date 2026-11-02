@@ -4,7 +4,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -46,7 +46,7 @@ const StepSummary = ({ account, parentAccount, transaction }: StepProps) => {
 
   return (
     <Box flow={4} mx={40}>
-      <TrackPage category="Sign Raw Transaction Flow" name="Step Summary" />
+      <TrackScreen category="Sign Raw Transaction Flow" name="Step Summary" />
       <FromToWrapper>
         <Box>
           <Box horizontal alignItems="center">

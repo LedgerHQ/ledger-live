@@ -1,22 +1,23 @@
 import type { BottomSheetBackgroundTone } from "@shared/ui-queued-bottom-sheet";
-import type { InfoStateProps } from "../types.native";
+import type { InfoStateProps } from "../InfoState.types";
 
 export function getInfoStateSheetTone(
-  preset: InfoStateProps["preset"],
+  props: InfoStateProps,
 ): BottomSheetBackgroundTone | undefined {
-  switch (preset) {
+  switch (props.preset) {
     case "error":
       return "error";
     case "info":
       return "info";
     case "success":
       return "success";
-    case "illustration":
     case "spot":
+      return props.backgroundTone;
+    case "illustration":
     case "text":
       return undefined;
     default:
-      return assertNever(preset);
+      return assertNever(props);
   }
 }
 

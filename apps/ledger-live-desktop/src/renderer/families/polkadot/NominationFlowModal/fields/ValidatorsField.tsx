@@ -5,7 +5,7 @@ import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,

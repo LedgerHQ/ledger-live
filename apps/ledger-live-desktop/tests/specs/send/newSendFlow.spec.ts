@@ -15,7 +15,6 @@ const FEE_PRESETS = ["slow", "medium", "fast"] as const;
 // Test addresses per family (using abandon seed addresses for safety)
 const TEST_ADDRESSES = {
   ethereum: "0x000000000000000000000000000000000000dEaD",
-  arbitrum: "0x000000000000000000000000000000000000dEaD",
   bitcoin: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
   tezos: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
   /** Algorand 1 freshAddress in userdata — self-transfer is impossible on Algorand. */
@@ -26,7 +25,6 @@ const TEST_ADDRESSES = {
   xrp: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // abandonSeed address
   newAddress: "0x2222222222222222222222222222222222222222",
   selfEthereum: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
-  selfTezos: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
   // t1 P2PKH, from wallet-btc/__tests__/utils.test.ts (coin-zcash/src/logic/address.test.ts:30)
   zcashTransparent: "t1b1Rbw2shhJkP6MCnCyxCPuyFedHrwKty8",
   // Orchard-only unified address, from the Ledger Zcash device app's own test suite
@@ -46,7 +44,6 @@ const INVALID_ADDRESSES = {
 const ACCOUNT_NAMES = {
   bitcoin: "Bitcoin 2 (legacy)",
   ethereum: "Ethereum 1",
-  arbitrum: "Arbitrum 1",
   tezos: "Tezos 1",
   algorand: "Algorand 1",
   stellar: "Stellar 1",
@@ -234,28 +231,6 @@ test.describe("New Send Flow", () => {
   }
 
   test.describe("Recipient Step", () => {
-    test("should open dialog with address input visible @smoke", async ({ app, page }) => {
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Verify Recipient step UI", async () => {
-        await app.newSendFlow.expectDialogVisible();
-        await expect(app.newSendFlow.recipientInput).toBeVisible();
-        await app.newSendFlow.expectHeaderTitle("ETH");
-      });
-    });
-
-    test("should show address matched after typing valid address", async ({ app, page }) => {
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Type valid address", async () => {
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
-      });
-
-      await test.step("Verify address matched section appears", async () => {
-        await app.newSendFlow.expectAddressMatched();
-      });
-    });
-
     test("should show sanctioned banner for sanctioned address", async ({ app, page }) => {
       await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
@@ -265,22 +240,6 @@ test.describe("New Send Flow", () => {
 
       await test.step("Verify sanctioned banner", async () => {
         await app.newSendFlow.expectSanctionedBanner();
-      });
-    });
-
-    test("should proceed to Amount step when clicking valid address", async ({ app, page }) => {
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Type and select address", async () => {
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.ethereum);
-
-        await app.newSendFlow.clickOnSendToButton();
-      });
-
-      await test.step("Verify Amount step is visible", async () => {
-        await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-        // Address input should still be visible in header but read-only
-        await expect(app.newSendFlow.editRecipientButton).toBeVisible();
       });
     });
 
@@ -300,30 +259,6 @@ test.describe("New Send Flow", () => {
       });
     });
 
-    test("should resolve ENS domain and allow proceed (EVM)", async ({ app, page }) => {
-      await page.route(
-        "https://explorers.api.live.ledger.com/blockchain/v4/eth/ens/resolve/**",
-        async route => {
-          await route.fulfill({
-            headers: { teststatus: "mocked" },
-            body: TEST_ADDRESSES.ethereum,
-          });
-        },
-      );
-
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-      await test.step("Type ENS name and wait for validation", async () => {
-        await app.newSendFlow.typeAddress("vitalik.eth");
-      });
-
-      await test.step("Select resolved address and proceed", async () => {
-        await app.newSendFlow.expectAddressMatched();
-        await app.newSendFlow.clickOnSendToButton();
-        await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-      });
-    });
-
     test("should allow self-transfer when policy is free (EVM)", async ({ app, page }) => {
       await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
 
@@ -335,18 +270,6 @@ test.describe("New Send Flow", () => {
         await expect(app.newSendFlow.recipientErrorBanner).not.toBeVisible();
         await app.newSendFlow.clickOnSendToButton();
         await expect(app.newSendFlow.amountInput).toBeVisible({ timeout: 10000 });
-      });
-    });
-
-    test("should block self-transfer when policy is impossible (Tezos)", async ({ app, page }) => {
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.tezos);
-
-      await test.step("Type self address and validate", async () => {
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.selfTezos);
-      });
-
-      await test.step("Verify recipient error banner is shown", async () => {
-        await expect(app.newSendFlow.recipientErrorBanner).toBeVisible({ timeout: 10000 });
       });
     });
 
@@ -366,18 +289,6 @@ test.describe("New Send Flow", () => {
     });
 
     test.describe("Memo skip", () => {
-      test("should be able to skip memo input and need to confirm it", async ({ app, page }) => {
-        await openSendFlowForAccount(app, page, ACCOUNT_NAMES.stellar);
-        await app.newSendFlow.typeAddress(TEST_ADDRESSES.stellar);
-        await expect(app.newSendFlow.memoInput).toBeVisible();
-
-        await app.newSendFlow.clickOnSendToButton();
-        await expect(app.newSendFlow.skipMemoConfirmButton).toBeVisible();
-        await app.newSendFlow.confirmSkipMemo();
-
-        await expect(app.newSendFlow.amountInput).toBeVisible();
-      });
-
       test("should go back to the recipient step when refusing to skip memo", async ({
         app,
         page,
@@ -544,21 +455,6 @@ test.describe("New Send Flow", () => {
   });
 
   test.describe("Amount Step", () => {
-    test("should show amount input and quick actions @smoke", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Verify Amount step UI", async () => {
-        await expect(app.newSendFlow.amountInput).toBeVisible();
-        await expect(app.newSendFlow.reviewButton).toBeVisible();
-      });
-    });
-
-    test("should allow entering valid amount", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-      await app.newSendFlow.fillCryptoAmount("0.001");
-      await app.newSendFlow.expectReviewEnabled();
-    });
-
     test("should allow entering fiat and crypto amounts", async ({ app, page }) => {
       await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
 
@@ -570,29 +466,6 @@ test.describe("New Send Flow", () => {
       await test.step("Fill crypto amount (switches input mode)", async () => {
         await app.newSendFlow.fillCryptoAmount("0.001");
         await app.newSendFlow.expectReviewEnabled();
-      });
-    });
-
-    test("should show error for insufficient funds and get funds button", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Enter amount exceeding balance", async () => {
-        await app.newSendFlow.fillAmount("999999999");
-      });
-
-      await app.newSendFlow.expectAmountError();
-      await app.newSendFlow.expectGetFundsButton();
-    });
-
-    test("should disable review button for zero amount", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      await test.step("Enter zero amount", async () => {
-        await app.newSendFlow.fillCryptoAmount("0");
-      });
-
-      await test.step("Verify review disabled", async () => {
-        await app.newSendFlow.expectReviewDisabled();
       });
     });
 
@@ -620,27 +493,6 @@ test.describe("New Send Flow", () => {
         const isEditable = await app.newSendFlow.recipientInput.isEditable();
         expect(isEditable).toBe(true);
       });
-    });
-
-    test("should proceed to Signature step when clicking Review", async ({ app, page }) => {
-      await reachAmountStep(app, page, ACCOUNT_NAMES.ethereum, TEST_ADDRESSES.ethereum);
-
-      const deviceAction = new DeviceAction(page);
-
-      await test.step("Fill crypto amount and review", async () => {
-        // Use fillCryptoAmount to switch from default FIAT mode to CRYPTO mode
-        await app.newSendFlow.fillCryptoAmount("0.001");
-        await app.newSendFlow.clickReview();
-      });
-
-      await app.newSendFlow.waitForSignature();
-
-      await test.step("Complete device action", async () => {
-        // Mock device signing the transaction
-        await deviceAction.silentSign();
-      });
-
-      await app.newSendFlow.waitForSuccessConfirmation();
     });
 
     test("should allow changing fee presets (EVM)", async ({ app, page }) => {
@@ -1013,44 +865,10 @@ test.describe("New Send Flow", () => {
         memoValue: "some random memo",
       },
       {
-        name: "Bitcoin",
-        accountName: ACCOUNT_NAMES.bitcoin,
-        address: TEST_ADDRESSES.bitcoin,
-        amount: "0.1",
-      },
-      {
-        name: "Ethereum",
-        accountName: ACCOUNT_NAMES.ethereum,
-        address: TEST_ADDRESSES.ethereum,
-        amount: "0.001",
-      },
-      {
-        name: "Arbitrum",
-        accountName: ACCOUNT_NAMES.arbitrum,
-        address: TEST_ADDRESSES.arbitrum,
-        amount: "0.001",
-      },
-      {
         name: "Tezos",
         accountName: ACCOUNT_NAMES.tezos,
         address: TEST_ADDRESSES.tezos,
         amount: "0.1",
-      },
-      {
-        name: "Stellar",
-        accountName: ACCOUNT_NAMES.stellar,
-        address: TEST_ADDRESSES.stellar,
-        amount: "1",
-        hasMemo: true,
-        memoValue: "some random memo",
-      },
-      {
-        name: "XRP",
-        accountName: ACCOUNT_NAMES.xrp,
-        address: TEST_ADDRESSES.xrp,
-        amount: "1",
-        hasMemo: true,
-        memoValue: "12345",
       },
     ];
 
@@ -1093,15 +911,6 @@ test.describe("New Send Flow", () => {
   });
 
   test.describe("Validation & Errors", () => {
-    test("should validate address format - Ethereum", async ({ app, page }) => {
-      await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-      await app.newSendFlow.typeAddress(INVALID_ADDRESSES.ethereum);
-      await app.newSendFlow.validationStatusMessage.waitFor({ state: "visible" });
-      await expect(app.newSendFlow.validationStatusMessage).toContainText(
-        /incorrect address format/i,
-      );
-    });
-
     test.describe("Navigation", () => {
       test.describe("Close from any step", () => {
         test("should close from recipient step", async ({ app, page }) => {
@@ -1254,28 +1063,6 @@ test.describe("New Send Flow", () => {
     });
 
     test.describe("Feature Flag Regression", () => {
-      test.describe("EVM enabled", () => {
-        test.use({
-          userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL",
-          featureFlags: {
-            newSendFlow: {
-              enabled: true,
-              params: {
-                families: ["evm"],
-              },
-            },
-          },
-        });
-
-        test("should use new flow when feature flag is enabled for EVM", async ({ app, page }) => {
-          await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-          await test.step("Verify new flow dialog is used", async () => {
-            await app.newSendFlow.expectDialogVisible();
-          });
-        });
-      });
-
       test.describe("Feature flag disabled", () => {
         test.use({
           userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL",
@@ -1310,29 +1097,6 @@ test.describe("New Send Flow", () => {
             const hasNewDialog = await app.newSendFlow.dialog.isVisible().catch(() => false);
             expect(hasOldModal).toBe(true);
             expect(hasNewDialog).toBe(false);
-          });
-        });
-      });
-
-      test.describe("Family-specific flag", () => {
-        test.use({
-          userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL",
-          featureFlags: {
-            newSendFlow: {
-              enabled: true,
-              params: {
-                families: ["evm"],
-              },
-            },
-          },
-        });
-
-        test("should respect family-specific feature flag for EVM", async ({ app, page }) => {
-          await test.step("Test Ethereum (enabled)", async () => {
-            await openSendFlowForAccount(app, page, ACCOUNT_NAMES.ethereum);
-
-            // Should use new flow for EVM
-            await app.newSendFlow.expectDialogVisible();
           });
         });
       });

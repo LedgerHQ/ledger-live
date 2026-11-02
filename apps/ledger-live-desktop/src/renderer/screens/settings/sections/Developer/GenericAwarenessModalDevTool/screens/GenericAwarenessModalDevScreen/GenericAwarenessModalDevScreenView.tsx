@@ -294,7 +294,7 @@ export function GenericAwarenessModalDevScreenView({
             }
           />
           {gamDismissedIds.length === 0 ? (
-            <p className="body-2 leading-relaxed text-muted">{COPY.noGamDismissedIds}</p>
+            <p className="body-2 text-muted">{COPY.noGamDismissedIds}</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {gamDismissedIds.map(id => (
@@ -307,7 +307,7 @@ export function GenericAwarenessModalDevScreenView({
         <section className="flex flex-col gap-6 py-24">
           <DevSectionHeader title={COPY.sectionSavedCards} />
           {savedCards.length === 0 ? (
-            <p className="body-2 leading-relaxed text-muted">{COPY.noSavedCards}</p>
+            <p className="body-2 text-muted">{COPY.noSavedCards}</p>
           ) : (
             <ul className="flex flex-col gap-8">
               {savedCards.map(card => (

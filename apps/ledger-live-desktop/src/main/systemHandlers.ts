@@ -12,9 +12,9 @@ ipcMain.handle(CHANNELS.openUserDataDirectory, () => shell.openPath(app.getPath(
 // openURL validates the scheme; do not swap it for shell.openExternal.
 ipcMain.on(CHANNELS.openExternal, (_event, url: string) => openURL(url));
 
-ipcMain.handle(CHANNELS.clipboardMatchesText, (_event, expected: string) => {
+ipcMain.handle(CHANNELS.clipboardMatchesText, async (_event, expected: string) => {
   try {
-    return clipboard.readText() === expected;
+    return (await clipboard.readText()) === expected;
   } catch {
     return null;
   }

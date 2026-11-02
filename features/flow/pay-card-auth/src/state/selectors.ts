@@ -1,4 +1,5 @@
-import type { PayCardAuthState, PayCardAuthStatus } from "./types";
+import type { PayCardAuthStatus } from "./hostTypes";
+import type { PayCardAuthState } from "./types";
 
 export type PayCardAuthStateRoot = {
   payCardAuth: PayCardAuthState;

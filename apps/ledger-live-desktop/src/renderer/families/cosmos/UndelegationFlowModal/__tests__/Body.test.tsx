@@ -141,4 +141,24 @@ describe("UndelegationFlowModal/Body", () => {
       }),
     );
   });
+
+  it("throws when the account has no staking resources", () => {
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    const noStaking = {
+      type: "Account",
+      freshAddress: "cosmos1test",
+      currency,
+    } as unknown as CosmosAccount;
+    expect(() =>
+      render(
+        <Body
+          account={noStaking}
+          stepId="amount"
+          onClose={jest.fn()}
+          onChangeStepId={jest.fn()}
+          validatorAddress="validatorA"
+        />,
+      ),
+    ).toThrow("cosmos staking account required");
+  });
 });

@@ -10,6 +10,7 @@ import {
   getEthDepositScreenSetting,
 } from "@ledgerhq/live-common/earn/stakePrograms/index";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getUserTrackingAttributes } from "@ledgerhq/live-common/bridge/descriptor/registry";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getEnv } from "@shared/env";
 import {
@@ -25,6 +26,8 @@ import { getDefaultAccountName } from "@domain/entity-account-name";
 import { selectContacts } from "@domain/entity-contact";
 import { buildContactsGlobalProperties } from "@features/platform-contacts";
 import { getPayAttributes } from "./getPayAttributes";
+import { getSwapConsoleAbtestAttributes } from "./getSwapConsoleAbtestAttributes";
+import { getServicesEntryPointsAttributes } from "@features/flow-portfolio-services-entry-points";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { idsToLanguage } from "@ledgerhq/types-live";
 import type { Feature, FeatureId, Features } from "@shared/feature-flags";
@@ -351,6 +354,12 @@ const extraProperties = (store: ReduxStore) => {
   );
   const newSendFlow = getNewSendFlowAttribute(analyticsFeatureFlagMethod);
   const recoverV2 = getRecoverV2Attribute(analyticsFeatureFlagMethod);
+  const lwdSwapConsoleAbtest = getSwapConsoleAbtestAttributes(
+    analyticsFeatureFlagMethod?.("lwdSwapConsoleAbtest"),
+  );
+  const entryPointsServices = getServicesEntryPointsAttributes(
+    analyticsFeatureFlagMethod?.("entryPointsServices"),
+  );
   const accountDetail = analyticsFeatureFlagMethod?.("accountDetail")?.enabled ?? false;
   const remoteABTestingAttributes = getRemoteABTestingAttributes(analyticsFeatureFlagMethod);
   const payAttributes = getPayAttributes(
@@ -405,10 +414,13 @@ const extraProperties = (store: ReduxStore) => {
     stakeableAssets: stakeableAssetsList,
     wallet40Attributes,
     ...payAttributes,
+    ...getUserTrackingAttributes(accounts),
     finishOnboardingWidget: onboardingWidgetFlag?.enabled,
     ...onboardingCounterfeitWarningAttributes,
     newSendFlow,
     recoverV2,
+    lwdSwapConsoleAbtest,
+    entryPointsServices,
     accountDetail,
     ...remoteABTestingAttributes,
   };

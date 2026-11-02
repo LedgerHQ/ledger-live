@@ -42,6 +42,7 @@ jest.mock("~/utils/urls", () => ({
 }));
 
 import { useAppVersionBlockCheck } from "@ledgerhq/live-common/hooks/useAppVersionBlockCheck";
+import { hide as hideSplashScreen } from "expo-splash-screen";
 
 const Text: React.FC<{ children: React.ReactNode }> = ({ children }) => <>{children}</>;
 
@@ -59,6 +60,7 @@ describe("AppVersionBlocker", () => {
       </AppVersionBlocker>,
     );
     expect(screen.toJSON()).toBe("Allowed");
+    expect(hideSplashScreen).not.toHaveBeenCalled();
   });
 
   it("renders block screen when blocked", () => {
@@ -71,5 +73,16 @@ describe("AppVersionBlocker", () => {
 
     const renderedNode = JSON.stringify(screen.toJSON());
     expect(renderedNode.includes("Allowed")).toBeFalsy();
+  });
+
+  it("hides the native splash screen when blocked, as the app that hides it never mounts", () => {
+    (useAppVersionBlockCheck as jest.Mock).mockReturnValue({ shouldUpdate: true });
+    render(
+      <AppVersionBlocker>
+        <Text>Allowed</Text>
+      </AppVersionBlocker>,
+    );
+
+    expect(hideSplashScreen).toHaveBeenCalledTimes(1);
   });
 });

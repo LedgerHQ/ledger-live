@@ -6,7 +6,7 @@ import { useTheme } from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import { analyticsFlowName } from "./shared";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -35,7 +35,7 @@ const TroubleshootingDrawer: React.FC<Props> = ({ onClose, lastKnownDeviceId }) 
 
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category="drawer troubleshoot USB connection"
         type="drawer"
         flow={analyticsFlowName}

@@ -1,24 +1,9 @@
-const { withEsmDeps } = require("@support/jest-shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 
-const config = {
-  transform: {
-    "^.+\\.(ts|tsx)?$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
+module.exports = createSharedJestConfig(
+  {
+    rootDir: __dirname,
+    testPathIgnorePatterns: ["lib/", "lib-es/", "node_modules/", ".*\\.integration\\.test\\.ts"],
   },
-  testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.ts"],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../" }], "text"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-  ],
-};
-
-module.exports = withEsmDeps(config);
+  { esm: true },
+);

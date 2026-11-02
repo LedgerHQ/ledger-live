@@ -54,6 +54,14 @@ function MyComponent() {
 }
 ```
 
+### Sensitive links
+
+Pass `{ sensitive: true }` when the URL carries user data (an address, an id). The platform still opens the full URL, but `onLinkOpened` only receives its origin, so analytics never see the data:
+
+```tsx
+openLink(explorerUrl, { sensitive: true });
+```
+
 ### Feature-colocated URLs
 
 Each feature owns its URLs:

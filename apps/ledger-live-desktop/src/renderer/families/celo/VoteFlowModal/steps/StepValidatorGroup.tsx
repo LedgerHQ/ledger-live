@@ -2,7 +2,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
@@ -65,7 +65,7 @@ const StepValidatorGroup = ({
   const chosenValidatorGroupAddress = transaction.recipient;
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Celo Vote"
         name="Step ValidatorGroup"
         flow="stake"

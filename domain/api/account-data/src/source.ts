@@ -27,6 +27,8 @@ export type AccountDataBatchReader<K extends AccountDataKind> = (
 /** Per kind, a single reader or a batch reader (only for a real multi-account call); with both, `readBatch` wins. */
 export type AccountDataSource = {
   readonly id: AccountDataSourceId;
+  /** The descriptor purposes it serves, `account` only by default. */
+  readonly purposes?: readonly AccountDescriptor["purpose"][];
   /** Pure and synchronous, decided from the descriptor alone. Only asked when the source has a reader for `kind`. */
   supports(descriptor: AccountDescriptor, kind: AccountDataKind): boolean;
   readonly read?: { readonly [K in AccountDataKind]?: AccountDataReader<K> };

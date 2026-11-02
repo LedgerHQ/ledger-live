@@ -19,6 +19,7 @@ type Props = RecentOperationsViewModel &
 
 export function RecentOperationsView({
   operations,
+  pendingOperationIds,
   accountByAddress,
   lastSeenTs,
   findAccount,
@@ -54,7 +55,7 @@ export function RecentOperationsView({
             account={resolved.account}
             parentAccount={resolved.parentAccount}
             accountByAddress={accountByAddress}
-            isPending={op.blockHeight == null}
+            isPending={pendingOperationIds.has(op.id)}
             lastSeenTs={lastSeenTs}
           />
         );

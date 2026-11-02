@@ -92,6 +92,11 @@ export const deviceOnboardingMachine = setup({
       !context.checksPaused && context.firmware?.kind === "offered",
     checksAlreadyPassed: ({ context }) =>
       currentVerdict(context)?.isGenuine === true && context.firmware?.kind === "checked",
+    successAlreadyAcknowledged: ({ context }) =>
+      context.successAcknowledgedOnSession === context.sessionId,
+    acknowledgedSeededDevice: ({ context }) =>
+      context.successAcknowledgedOnSession === context.sessionId &&
+      context.onboardedOnEntry === true,
     onEarlyCheckScreen: ({ context }) => context.onEarlyCheckScreen,
     isOnboarded: ({ context }) => context.isOnboarded,
     onboardedOnEntry: ({ context }) => context.onboardedOnEntry === true,
@@ -169,6 +174,8 @@ export const deviceOnboardingMachine = setup({
       initial: "checksIdle",
       states: {
         enteringEarlyCheckScreen: {
+          // On as soon as Enter is sent: a quit before the device answers must still leave it.
+          entry: "enterEarlyCheckScreen",
           invoke: {
             src: "toggleEarlyCheck",
             input: ({ context }) => ({
@@ -178,7 +185,7 @@ export const deviceOnboardingMachine = setup({
             }),
           },
           on: {
-            EARLY_CHECK_TOGGLED: { target: "checksIdle", actions: "enterEarlyCheckScreen" },
+            EARLY_CHECK_TOGGLED: "checksIdle",
             EARLY_CHECK_UNAVAILABLE: "checksIdle",
           },
         },
@@ -263,6 +270,11 @@ export const deviceOnboardingMachine = setup({
             LOCKED: stopsHere,
             TRANSPORT_LOST: stopsHere,
             QUIT: stopsHere,
+            SESSION_CHANGED: stopsHere,
+            FIRMWARE_UPDATE_RECONNECT_REQUIRED: {
+              target: "#deviceOnboarding.awaitingSessionAfterFirmwareUpdate",
+              actions: ["forgetFirmwareCheck", "clearGenuineVerdict"],
+            },
             FIRMWARE_UPDATE_FLOW_CLOSED: {
               target: "#deviceOnboarding.readingState",
               actions: ["forgetFirmwareCheck", "forgetAttestationAfterUpdate"],
@@ -297,14 +309,29 @@ export const deviceOnboardingMachine = setup({
 
         checksSucceeded: {
           always: [
-            { guard: "onboardedOnEntry", target: "#deviceOnboarding.onboardedExit" },
-            { target: "#deviceOnboarding.deviceSetup" },
+            { guard: "acknowledgedSeededDevice", target: "#deviceOnboarding.onboardedExit" },
+            { guard: "successAlreadyAcknowledged", target: "#deviceOnboarding.deviceSetup" },
           ],
+          on: {
+            SESSION_CHANGED: { target: "checksIdle", actions: "startNewSession" },
+            CONTINUE: [
+              {
+                guard: "onboardedOnEntry",
+                target: "#deviceOnboarding.onboardedExit",
+                actions: "acknowledgeSuccess",
+              },
+              { target: "#deviceOnboarding.deviceSetup", actions: "acknowledgeSuccess" },
+            ],
+          },
         },
       },
     },
 
     onboardedExit: {
+      always: [{ guard: "offerSync", target: "syncOffer" }, { target: "done" }],
+    },
+
+    setupExit: {
       always: [{ guard: "offerSync", target: "syncOffer" }, { target: "done" }],
     },
 
@@ -331,7 +358,7 @@ export const deviceOnboardingMachine = setup({
           },
           {
             guard: "deviceIsReady",
-            target: "#deviceOnboarding.done",
+            target: "#deviceOnboarding.setupExit",
             actions: "rememberSetupStep",
           },
           { guard: "stepNaming", target: ".naming", actions: "rememberSetupStep" },
@@ -375,6 +402,15 @@ export const deviceOnboardingMachine = setup({
     awaitingSession: {
       on: {
         SESSION_READY: { target: "readingState", actions: "startNewSession" },
+      },
+    },
+    awaitingSessionAfterFirmwareUpdate: {
+      on: {
+        SESSION_READY: { target: "readingState", actions: "startNewSession" },
+        QUIT: "#deviceOnboarding.exitOnboarding",
+        LOCKED: stopsHere,
+        TRANSPORT_LOST: stopsHere,
+        SESSION_CHANGED: stopsHere,
       },
     },
 

@@ -12,7 +12,7 @@ import { addExtraSessionTrackingPair } from "~/reducers/countervaluesExtraSessio
 import { setHideSmallValueTokenOperations } from "~/actions/settings";
 import { useSelector, useDispatch } from "~/context/hooks";
 import { useLocale, useTranslation } from "~/context/Locale";
-import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
+import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import { countervaluesStateSelector } from "@features/platform-market-countervalues";
 import { lastSeenOperationDateSelector, markOperationsAsSeen } from "~/reducers/history";
 import {
@@ -47,7 +47,7 @@ export function useOperationsListViewModel(
   cardAsset?: string,
 ) {
   const dispatch = useDispatch();
-  const allAccounts = useSelector(shallowAccountsSelector);
+  const allAccounts = useSelector(accountsSelector);
   const allFlattenedAccounts = useSelector(flattenAccountsSelector);
   const [opCount, setOpCount] = useState(INITIAL_OP_COUNT);
   const [isOptionsSheetOpen, setOptionsSheetOpen] = useState(false);

@@ -1,5 +1,6 @@
-import { Cbor, concat, requestIdOf } from "@dfinity/agent";
-import { Secp256k1KeyIdentity } from "@dfinity/identity-secp256k1";
+import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
+import { Secp256k1KeyIdentity } from "@icp-sdk/core/identity/secp256k1";
+import { concatBytes } from "@noble/hashes/utils";
 import { BigNumber } from "bignumber.js";
 import { ICP_FEES } from "../consts";
 import { createUnsignedSendTransaction } from "../logic/buildTransaction";
@@ -18,15 +19,8 @@ describe("Broadcast", () => {
     } as any;
     const { unsignedTransaction } = createUnsignedSendTransaction(transaction, xpub);
     const domainSeparator = new TextEncoder().encode("\x0Aic-request");
-    const rid = requestIdOf(unsignedTransaction as Record<string, unknown>);
-    const domainBuf = domainSeparator.buffer.slice(
-      domainSeparator.byteOffset,
-      domainSeparator.byteOffset + domainSeparator.byteLength,
-    ) as ArrayBuffer;
-    const challenge = new Uint8Array(concat(domainBuf, rid));
-    const sig = await identity.sign(
-      challenge.buffer.slice(challenge.byteOffset, challenge.byteOffset + challenge.byteLength),
-    );
+    const rid = requestIdOf(unsignedTransaction);
+    const sig = await identity.sign(concatBytes(domainSeparator, rid));
     const signatureRS = Buffer.from(sig);
     const callBody = {
       content: unsignedTransaction,

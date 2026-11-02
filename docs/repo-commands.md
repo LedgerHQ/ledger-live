@@ -59,6 +59,12 @@ pnpm test:family solana     # All solana-related packages
 
 ## CI checks
 
+Before pushing a change under `shared/`, `domain/`, `features/`, `support/` or `devtools/`, run the checks of CI's required module-boundaries job:
+
+```bash
+pnpm lint:arch    # lint:boundaries, lint:structure, lint:tool-config, lint:i18n-keys; stops at the first failure
+```
+
 You can read YAML in [.github/workflows](../.github/workflows/) to find exactly what runs in CI. This might be useful for validating complex changes.
 
 ## Nx, filtering and aliases

@@ -2,7 +2,7 @@ import { toBase58Witness } from "./stakingFixtures";
 
 describe("toBase58Witness", () => {
   it("converts a 41-prefixed hex witness address to base58check", () => {
-    // The tronbox/tre sole witness, read from a block header's `witness_address`.
+    // The sandbox's sole witness (Zion), read from a block header's `witness_address`.
     expect(toBase58Witness("417e5f4552091a69125d5dfcb7b8c2659029395bdf")).toMatch(
       /^T[1-9A-HJ-NP-Za-km-z]{33}$/,
     );

@@ -34,6 +34,7 @@ function StepContent(props: AccountSettingsDialogViewProps) {
           onClose={props.onClose}
           onShowChangeName={props.onShowChangeName}
           onShowAdvancedLogs={props.onShowAdvancedLogs}
+          explorerUrl={props.explorerUrl}
           onShowRemove={props.onShowRemove}
         />
       );
@@ -60,13 +61,7 @@ function StepContent(props: AccountSettingsDialogViewProps) {
         />
       );
     case "remove":
-      return (
-        <RemoveStep
-          onBack={props.onShowMenu}
-          onClose={props.onClose}
-          onConfirmRemove={props.onConfirmRemove}
-        />
-      );
+      return <RemoveStep onClose={props.onClose} onConfirmRemove={props.onConfirmRemove} />;
   }
 }
 

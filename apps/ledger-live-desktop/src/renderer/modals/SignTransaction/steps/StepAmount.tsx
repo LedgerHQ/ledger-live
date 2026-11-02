@@ -1,7 +1,7 @@
 import React, { Fragment, PureComponent } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
@@ -33,7 +33,7 @@ const StepAmount = ({
 
   return (
     <Box flow={4}>
-      <TrackPage category="Sign Transaction Flow" name="Step Amount" />
+      <TrackScreen category="Sign Transaction Flow" name="Step Amount" />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error || warning
         ? !gasPriceError && (

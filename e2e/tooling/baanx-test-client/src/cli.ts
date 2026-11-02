@@ -9,7 +9,7 @@ import type { BaanxAuthSession } from "./types";
 /**
  * CLI for Postman, curl and CI.
  *
- * `TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client token)` is the point
+ * `TOKEN=$(pnpm --silent --filter @ledgerhq/baanx-test-client baanx-token)` is the point
  * of this file, so stdout carries the bare token and nothing else. Progress and
  * failures go to stderr.
  *
@@ -33,7 +33,7 @@ function describeVars(): string {
   return rows.map(([name, note]) => `  ${name.padEnd(width)}  ${note}`).join("\n");
 }
 
-const USAGE = `Usage: pnpm --silent --filter @ledgerhq/baanx-test-client token [--json|--session]
+const USAGE = `Usage: pnpm --silent --filter @ledgerhq/baanx-test-client baanx-token [--json|--session]
 
 Prints a Baanx access token for the configured test user.
 

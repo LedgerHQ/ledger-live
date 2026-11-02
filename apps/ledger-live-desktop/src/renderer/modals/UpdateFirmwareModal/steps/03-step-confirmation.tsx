@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { log } from "@ledgerhq/logs";
-import { TrackPage, Track } from "@shared/analytics-react";
+import { TrackScreen, Track } from "@shared/analytics-react";
 import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
 import { StepProps } from "../types";
@@ -54,7 +54,7 @@ const StepConfirmation = ({
 
   return (
     <Container data-testid="firmware-update-done">
-      <TrackPage category="Manager" name="FirmwareConfirmation" />
+      <TrackScreen category="Manager" name="FirmwareConfirmation" />
       <BoxedIcon
         Icon={IconsLegacy.CheckAloneMedium}
         iconColor="success.c50"

@@ -45,12 +45,12 @@ export function parseShortAccountDescriptor(short: string): AccountDescriptor {
 }
 
 /**
- * Parse an account descriptor from either V1 format ("account:1:...") or the legacy V0 short
+ * Parse an account descriptor from either the ADR format ("account:2:...", or a legacy "account:1:...") or the legacy V0 short
  * format ("js:2:bitcoin:xpub...:native_segwit:0"). Returns a V0 AccountDescriptor suitable
  * for the bridge layer.
  */
 export function parseAccountDescriptor(input: string): AccountDescriptor {
-  if (input.startsWith("account:1:")) {
+  if (input.startsWith("account:")) {
     return toV0(parseV1(input));
   }
   return parseShortAccountDescriptor(input);

@@ -16,7 +16,7 @@ describe("RemoveAccountContent (Web)", () => {
     expect(screen.getByText("Remove account?")).toBeVisible();
     expect(screen.getByText(/will no longer be visible in your portfolio/)).toBeVisible();
 
-    await user.click(screen.getByRole("button", { name: "Yes, remove." }));
+    await user.click(screen.getByRole("button", { name: "Yes, remove" }));
     await user.click(screen.getByRole("button", { name: "Keep" }));
 
     expect(onConfirm).toHaveBeenCalledTimes(1);

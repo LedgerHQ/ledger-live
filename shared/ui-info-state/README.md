@@ -10,22 +10,15 @@ success, and error screens across both apps.
 
 ## Exports
 
-| Export | Description |
-| --- | --- |
-| `InfoState` | The layout component. Platform implementation picked automatically. |
-| `InfoStateProps`, `InfoStatePreset`, `InfoStateCta`, `InfoStateBanner`, `InfoStateSpotProps` | Component types. `InfoStateProps` and `InfoStateSpotProps` differ slightly per platform — see below. |
-| `DialogBackgroundContext`, `DialogBackgroundToneProvider`, `DialogBackgroundGradient`, `useDialogBackgroundTone` | Web-only. Tints the enclosing dialog with a status gradient behind an `InfoState`. Not exported on the native build — Mobile uses `BottomSheetBackgroundContext` / `useBottomSheetBackgroundTone` from [`@shared/ui-queued-bottom-sheet`](../ui-queued-bottom-sheet) instead. |
+| Entry | Export | Description |
+| --- | --- | --- |
+| `@shared/ui-info-state` | `InfoState` | The layout component. Each app's bundler picks the `.web` or `.native` implementation. |
+| `@shared/ui-info-state` | `InfoStateProps`, `InfoStateSpotProps`, `InfoStateSpotSize`, `InfoStateBackgroundTone` | The props contract, declared once in `InfoState.types.ts` for both platforms. |
+| `@shared/ui-info-state` | `InfoStatePreset`, `InfoStateCta`, `InfoStateBanner`, `InfoStateBaseProps` | Types shared by every preset. |
+| `@shared/ui-info-state/web` | `DialogBackgroundToneProvider` | Web only. Tints the enclosing dialog with the status gradient an `InfoState` requests. Import it from web code only: a `.web` file or the desktop app. |
 
-## Platform differences
-
-- **`content`** (a free-form node rendered between the copy and the banner) is web-only. Native
-  has no equivalent slot.
-- **`backgroundTone`** on the `spot` preset (an explicit dialog-tint override) is web-only.
-- **`InfoStateSpotProps.size`** (custom Spot size for the `spot` preset) is web-only; native always
-  renders the custom spot at the default size.
-
-These mirror the two original implementations exactly — they are not new gaps introduced by this
-migration.
+On native, the enclosing bottom sheet takes the tone through `useBottomSheetBackgroundTone` from
+[`@shared/ui-queued-bottom-sheet`](../ui-queued-bottom-sheet), so there is no native provider.
 
 ## Usage
 
@@ -40,11 +33,13 @@ import { InfoState } from "@shared/ui-info-state";
 />
 ```
 
-Web callers that want the dialog tinted with the InfoState's status tone wrap it in
-`DialogBackgroundToneProvider`:
+The status presets (`success`, `error`, `info`) tint the enclosing dialog or bottom sheet with
+their tone. The `spot` preset tints it only when given a `backgroundTone`. On web, the dialog
+draws the gradient when wrapped in `DialogBackgroundToneProvider`:
 
 ```tsx
-import { DialogBackgroundToneProvider, InfoState } from "@shared/ui-info-state";
+import { InfoState } from "@shared/ui-info-state";
+import { DialogBackgroundToneProvider } from "@shared/ui-info-state/web";
 
 <DialogBackgroundToneProvider>
   <InfoState preset="error" title="Something went wrong" />

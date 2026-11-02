@@ -1,5 +1,5 @@
 import React from "react";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import type { AleoAddAccountPageName, AleoAddAccountEventsParams } from "./addAccount.types";
 
 type AleoTrackAddAccountScreenProps<T extends AleoAddAccountPageName> = {
@@ -10,5 +10,5 @@ export const AleoTrackAddAccountScreen = <T extends AleoAddAccountPageName>({
   page,
   ...props
 }: AleoTrackAddAccountScreenProps<T>) => {
-  return <TrackPage category={page} {...props} />;
+  return <TrackScreen category={page} {...props} />;
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { AccountDetailView } from "./AccountDetailView";
 import { useAccountDetailViewModel } from "./hooks/useAccountDetailViewModel";
 
@@ -13,7 +13,7 @@ const AccountDetail = () => {
 
   return (
     <>
-      <TrackPage
+      <TrackScreen
         category="Account"
         currency={account.currency.id}
         operationsLength={account.operations.length}

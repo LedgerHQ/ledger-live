@@ -1,5 +1,4 @@
 import type {
-  MemoNotSupported,
   StakingTransactionIntent,
   TransactionIntent,
 } from "@ledgerhq/coin-module-framework/api/index";
@@ -19,11 +18,13 @@ import {
   createStxTransferTransaction,
   createTokenTransferTransaction,
   getConfiguredStacksNetwork,
+  memoFromIntent,
+  MIN_NUM_CYCLES,
   validateAddress,
 } from "../common-logic";
 import { STACKS_DUMMY_ADDRESS, STACKS_DUMMY_PUBLIC_KEY } from "../constants";
 import { fetchPoxInfo } from "../network/pox";
-import type { StacksTxData } from "../types";
+import type { StacksMemo, StacksTxData } from "../types";
 import { getBalance } from "./getBalance";
 import { getStakes } from "./getStakes";
 
@@ -80,7 +81,7 @@ function parseContractPrincipal(value: string, context: string): { address: stri
  * general-purpose, unlike the framework's own `prepareTransaction`), so it's resolved
  * defensively here too. Fee is native STX, so only subtracted for a native sweep. */
 async function resolveAmount(
-  intent: TransactionIntent<MemoNotSupported, StacksTxData>,
+  intent: TransactionIntent<StacksMemo, StacksTxData>,
   fee: bigint,
 ): Promise<BigNumber> {
   if (!intent.useAllAmount) {
@@ -118,7 +119,7 @@ async function resolveAmount(
 }
 
 async function buildTransfer(
-  intent: TransactionIntent<MemoNotSupported, StacksTxData>,
+  intent: TransactionIntent<StacksMemo, StacksTxData>,
   fee: bigint,
   nonce: bigint,
   forEstimation: boolean,
@@ -128,6 +129,7 @@ async function buildTransfer(
   const feeAmount = new BigNumber(fee.toString());
   const nonceAmount = new BigNumber(nonce.toString());
   const amount = await resolveAmount(intent, fee);
+  const memo = memoFromIntent("memo" in intent ? intent.memo : undefined);
   // Only guards the sweep case -- a not-yet-filled-in draft (amount 0) must still build, since
   // callers probe estimateFees before the user enters anything; validateIntent owns that check.
   // An estimation probe skips it too: estimateMaxSpendable sweeps every account, an empty one
@@ -146,6 +148,10 @@ async function buildTransfer(
       {
         fee: feeAmount,
         nonce: nonceAmount,
+        // A token-transfer memo is a fixed-width field, so leaving it out of a fee estimate keeps
+        // the length unchanged -- and keeps an oversized memo from throwing in `@stacks/transactions`
+        // before validateIntent can report it as `StacksMemoTooLong`.
+        memo: forEstimation ? undefined : memo,
       },
     );
   }
@@ -168,11 +174,12 @@ async function buildTransfer(
     publicKey: senderPublicKey,
     fee: feeAmount,
     nonce: nonceAmount,
+    memo,
   });
 }
 
 async function buildStaking(
-  intent: StakingTransactionIntent<MemoNotSupported, StacksTxData>,
+  intent: StakingTransactionIntent<StacksMemo, StacksTxData>,
   fee: bigint,
   nonce: bigint,
   forEstimation: boolean,
@@ -187,7 +194,14 @@ async function buildStaking(
   );
 
   if (intent.mode === "delegate") {
-    const { numCycles, startBurnHt, signerCalldata } = intent.data;
+    const { signerCalldata } = intent.data;
+    // The stake form probes the fee before the number of cycles is typed and while `startBurnHt`
+    // is still resolving; `validateIntent` reports those as status errors. A Clarity uint is
+    // fixed-size, so stand-ins leave the estimated length unchanged. Never reaches a real stake.
+    const numCycles = intent.data.numCycles ?? (forEstimation ? MIN_NUM_CYCLES : undefined);
+    const startBurnHt =
+      intent.data.startBurnHt ??
+      (forEstimation ? poxInfo.current_burnchain_block_height : undefined);
     if (numCycles === undefined || startBurnHt === undefined) {
       throw new Error("stacks: staking requires data.numCycles and data.startBurnHt");
     }
@@ -247,14 +261,14 @@ async function buildStaking(
 }
 
 export async function buildUnsignedTx(
-  intent: TransactionIntent<MemoNotSupported, StacksTxData>,
+  intent: TransactionIntent<StacksMemo, StacksTxData>,
   fee: bigint,
   nonce: bigint,
   { forEstimation = false }: { forEstimation?: boolean } = {},
 ): Promise<StacksTransactionWire> {
   if (intent.intentType === "staking") {
     return buildStaking(
-      intent as StakingTransactionIntent<MemoNotSupported, StacksTxData>,
+      intent as StakingTransactionIntent<StacksMemo, StacksTxData>,
       fee,
       nonce,
       forEstimation,

@@ -142,8 +142,8 @@ import { CardLoginView } from "./CardLoginView";
 
 | Platform         | Files resolved                                        |
 | ---------------- | ----------------------------------------------------- |
-| Mobile (Re.Pack) | `CardLogin/index.native.tsx` |
-| Desktop (Rspack) | `CardLogin/index.web.tsx` |
+| Mobile (Re.Pack) | `CardLogin/CardLogin.native.tsx` |
+| Desktop (Rspack) | `CardLogin/CardLogin.web.tsx` |
 
 ## Structure
 
@@ -156,16 +156,17 @@ pay-card-auth/
     ├── components/                         # Components shared by several screens
     │   └── CardLogin/
     │   │   ├── __tests__/                   # View, opener and ViewModel tests
+    │   │   ├── CardLogin.native.tsx         # Native component container
+    │   │   ├── CardLogin.types.ts           # `CardLoginProps`, the component's public contract
+    │   │   ├── CardLogin.web.tsx            # Web component container
     │   │   ├── CardLoginIntroView.native.tsx # Native login intro bottom sheet
     │   │   ├── CardLoginIntroView.web.tsx   # Web login intro dialog
     │   │   ├── CardLoginView.native.tsx     # Native login UI
     │   │   ├── CardLoginView.web.tsx        # Web login UI
-    │   │   ├── index.native.tsx             # Native component container
-    │   │   ├── index.web.tsx                # Web component container
     │   │   ├── openHostedLogin.native.ts    # Native secure-browser opener
     │   │   ├── openHostedLogin.web.ts       # Desktop browsing-context opener
     │   │   ├── payCardLoginIntro.webp       # The login intro hero image
-    │   │   ├── types.ts                     # Component contracts
+    │   │   ├── types.ts                     # View and ViewModel contracts
     │   │   └── useCardLoginViewModel.ts     # Shared state and orchestration
     ├── hooks/                              # Flow-local hooks
     │   ├── useIsCardSignedIn.ts             # Reads `payCardAuth.isSignedIn`
@@ -186,6 +187,7 @@ pay-card-auth/
     │   ├── crypto.native.ts                # CSPRNG and SHA-256 through expo-crypto
     │   ├── crypto.web.ts                   # CSPRNG and SHA-256 through WebCrypto
     │   ├── errors.ts                       # Error kinds, and the 401 test
+    │   ├── hostTypes.ts                    # Types the host app passes in or reads back
     │   ├── loginIntroSelectors.ts          # Login intro selectors, and its persistence lens
     │   ├── loginIntroSlice.ts              # The persisted `payCardLoginIntro` flag
     │   ├── machine.ts                      # States, guards and transitions
@@ -193,7 +195,7 @@ pay-card-auth/
     │   ├── selectors.ts                    # Auth selectors
     │   ├── slice.ts                        # Auth-only runtime state (`hasCard`, `isSignedIn`)
     │   ├── store.ts                        # Public state subpath
-    │   └── types.ts                        # Flow types, ports, machine types, Redux state
+    │   └── types.ts                        # Ports, machine types, Redux state
     ├── utils/                              # Flow-local helpers
     ├── assets.d.ts                         # Declares the `*.webp` module
     ├── index.native.ts                     # Native public API

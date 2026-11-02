@@ -65,6 +65,8 @@ export const urls = {
   feesMoreInfo: "https://support.ledger.com/article/360021039173-zd",
   feesEIP1559MoreInfo: "https://support.ledger.com/article/6018110754845-zd",
   feesTron: "https://support.ledger.com/article/6331588714141-zd",
+  // Support home until product publishes the gas sponsorship article.
+  gasSponsorship: "https://support.ledger.com/",
   recipientAddressInfo: "https://support.ledger.com/article/4404389453841-zd",
   managerAppLearnMore: "https://support.ledger.com/",
   privacyPolicy:

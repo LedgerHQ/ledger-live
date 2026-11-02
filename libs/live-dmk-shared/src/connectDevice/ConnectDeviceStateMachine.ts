@@ -52,16 +52,22 @@ const createConnectDeviceStateMachine = <
       connectDevice: fromPromise(
         async ({
           input,
+          signal,
         }: {
           input: {
             dmk: DeviceManagementKit;
             matchedDevice: MatchedDevice;
           };
+          signal: AbortSignal;
         }): Promise<string> => {
           const sessionId = await input.dmk.connect({
             device: input.matchedDevice.discoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
           });
+          if (signal.aborted) {
+            await input.dmk.disconnect({ sessionId }).catch(() => undefined);
+            throw new Error("Connect aborted");
+          }
           return sessionId;
         },
       ),

@@ -27,6 +27,7 @@ export enum DeviceLabels {
   DEPOSIT = "Deposit",
   EXPERT_MODE = "Expert mode",
   ENABLE_TRANSACTION_CHECK = "Enable Transaction Check",
+  ENERGY_RENTAL_TRONIFY = "Energy rental - Tronify",
   EXCHANGE_APP_IS_READY = "Exchange app is ready",
   FEES = "Fees",
   GET = "Get",

@@ -3,6 +3,7 @@ import { useAppAvailability } from "@features/flow-app-availability";
 import { selectRemoteFlagsReady } from "@shared/feature-flags";
 import { useSelector } from "~/context/hooks";
 import LoadingApp from "~/components/LoadingApp";
+import { useHideSplashScreen } from "../features/LaunchScreen/useHideSplashScreen";
 import { useWait } from "../hooks/useWait";
 import { logStartupEvent } from "../utils/logStartupTime";
 
@@ -20,8 +21,12 @@ export function WaitForAppReady({
   const isLoaded = currencyInitialized && !pendingAvailabilityCheck && remoteFlagsReady;
 
   const timedOut = useWait<boolean>(resolve => setTimeout(() => resolve(true), MAX_WAIT)) ?? false;
+  const showsChildren = timedOut || isLoaded;
 
-  if (!timedOut && !isLoaded) {
+  // The unavailable screen replaces the app, so the app never hides the splash itself.
+  useHideSplashScreen(showsChildren && availability.status === "unavailable");
+
+  if (!showsChildren) {
     return <LoadingApp />;
   }
 

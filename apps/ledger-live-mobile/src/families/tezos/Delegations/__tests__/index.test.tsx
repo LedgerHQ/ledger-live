@@ -32,7 +32,8 @@ jest.mock("@ledgerhq/live-common/families/tezos/react", () => ({
   isFinalizablePosition: (uid: string) => uid.includes("final"),
 }));
 
-jest.mock("@ledgerhq/live-common/explorers", () => ({
+jest.mock("@domain/entity-currency-crypto", () => ({
+  ...jest.requireActual("@domain/entity-currency-crypto"),
   getAddressExplorer: () => "https://tzkt.io/tz1abc/operations",
   getTransactionExplorer: () => "https://tzkt.io/tx/abc",
   getDefaultExplorerView: () => ({}),

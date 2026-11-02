@@ -9,7 +9,7 @@ const transaction = new Transaction(
 );
 runSendTest(
   transaction,
-  ["B2CQA-2949"],
+  ["B2CQA-6118"],
   ["@NanoSP", "@NanoX", "@Stax", "@Flex", "@NanoGen5", "@concordium", "@family-concordium"],
   {
     featureFlags: { currencyConcordiumTestnet: { enabled: true } },

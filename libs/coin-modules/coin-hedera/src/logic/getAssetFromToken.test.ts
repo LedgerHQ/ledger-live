@@ -19,9 +19,7 @@ describe("getAssetFromToken", () => {
     expect(getAssetFromToken(token, owner)).toEqual({
       assetReference: token.contractAddress,
       assetOwner: owner,
-      name: token.name,
       type: token.tokenType,
-      unit: token.units[0],
     });
   });
 });

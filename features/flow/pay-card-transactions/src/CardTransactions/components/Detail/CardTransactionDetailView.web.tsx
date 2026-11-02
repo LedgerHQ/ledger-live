@@ -1,7 +1,7 @@
 import React from "react";
 import { useCategoryVisual } from "../ListItem/useCategoryVisual";
 import { DetailRow } from "../DetailRow";
-import type { CardTransactionDetailViewProps } from "./types";
+import type { CardTransactionDetailViewProps } from "./CardTransactionDetail.types";
 
 export function CardTransactionDetailView({
   merchant,

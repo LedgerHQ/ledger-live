@@ -79,7 +79,7 @@ const mockedUseContactsFeatureIntroductionViewModel = jest.mocked(
 );
 const mockedUseDoNotAskAgainSkipMemo = jest.mocked(useDoNotAskAgainSkipMemo);
 const mockedUseFlowWizard = jest.mocked(useFlowWizard);
-const mockedTrackPage = jest.mocked(trackPage);
+const mockedTrackScreen = jest.mocked(trackPage);
 const setDoNotAskAgainSkipMemo = jest.fn();
 const goToStep = jest.fn();
 const setRecipientResolution = jest.fn();
@@ -270,7 +270,7 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     );
 
-    expect(mockedTrackPage).toHaveBeenCalledWith({
+    expect(mockedTrackScreen).toHaveBeenCalledWith({
       category: "Modal send - recipient result",
       props: expect.objectContaining({
         queryType: "address",
@@ -281,7 +281,7 @@ describe("useRecipientAddressModalViewModel", () => {
       }),
     });
     expect(setRecipientResolution).toHaveBeenCalledWith("unknown address", "external address");
-    expect(mockedTrackPage.mock.calls[0]?.[0]?.props).not.toHaveProperty("query");
+    expect(mockedTrackScreen.mock.calls[0]?.[0]?.props).not.toHaveProperty("query");
   });
 
   it("shows empty contacts state when the contacts feature is enabled and no contact matches the network", () => {

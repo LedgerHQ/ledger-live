@@ -9,10 +9,12 @@
  */
 
 import type { Spinner } from "yocto-spinner";
+import { z } from "zod";
 import { getCryptoAssetsStore } from "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore";
 import { CliProcessExitError } from "./cli-process-exit-error";
 import { type DeviceState, isTerminalDeviceState, renderDeviceState } from "./device/device-state";
 import { WalletCliDeviceError } from "./device/wallet-cli-device-error";
+import { KeychainUnavailableError } from "./key-ring/keychain-unavailable-error";
 import { HumanFormatter } from "./wallet/formatter/human";
 import { JsonFormatter } from "./wallet/formatter/json";
 import { makeEnvelope } from "./shared/response";
@@ -61,7 +63,7 @@ import type {
 export type OutputContext = {
   /** Command name as it appears in the JSON envelope, e.g. "balances", "account discover". */
   command: string;
-  /** Network string, e.g. "bitcoin", "ethereum:goerli". */
+  /** Network id, e.g. "bitcoin", "ethereum_sepolia". */
   network: string;
   /** Account identifier included in JSON envelopes (optional — not all commands have one). */
   account?: string;
@@ -329,6 +331,7 @@ export type AgentIntentEnrolled = {
   profileId: string;
   trustchainId: string;
   accountAccessEnvironment: string;
+  keyStore: AgentIntentProfileMeta["keyStore"];
 };
 
 function formatAccountAccess(profile: AgentIntentProfileMeta): string {
@@ -784,12 +787,12 @@ class HumanCommandOutput implements CommandOutput {
     const w = Math.max(7, ...profiles.map(p => p.profileId.length));
     writeStdout(
       `${colors.bold("PROFILE".padEnd(w))}  ${colors.bold("NAME")}  ${colors.bold("SOURCE")}  ` +
-        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("ACCOUNT ACCESS")}`,
+        `${colors.bold("ENVIRONMENT")}  ${colors.bold("STATUS")}  ${colors.bold("KEY STORE")}  ${colors.bold("ACCOUNT ACCESS")}`,
     );
     for (const p of profiles) {
       writeStdout(
         `${p.profileId.padEnd(w)}  ${p.displayName}  ${p.source}  ${p.environment}  ` +
-          `${agentIntentProfileStatus(p)}  ${formatAccountAccess(p)}`,
+          `${agentIntentProfileStatus(p)}  ${p.keyStore}  ${formatAccountAccess(p)}`,
       );
     }
   }
@@ -804,6 +807,7 @@ class HumanCommandOutput implements CommandOutput {
       "Status",
       "Public key",
       "Fingerprint",
+      "Key store",
       "BFF URL",
       "Keycloak URL",
       "Trustchain ID",
@@ -823,6 +827,7 @@ class HumanCommandOutput implements CommandOutput {
         line("Status", agentIntentProfileStatus(profile)),
         line("Public key", profile.publicKey),
         line("Fingerprint", formatAgentPublicKeyFingerprint(profile.publicKey)),
+        line("Key store", profile.keyStore),
         line("BFF URL", redactUrlCredentials(profile.bffBaseUrl)),
         ...(profile.keycloakBaseUrl === undefined
           ? []
@@ -894,10 +899,11 @@ class HumanCommandOutput implements CommandOutput {
     profileId,
     trustchainId,
     accountAccessEnvironment,
+    keyStore,
   }: AgentIntentEnrolled): void {
     writeStdout(
       `${colors.green("✔")} Agent Intent profile "${profileId}" enrolled. Trustchain ID: ` +
-        `${trustchainId} (account access: ${accountAccessEnvironment})`,
+        `${trustchainId} (account access: ${accountAccessEnvironment}, key store: ${keyStore})`,
     );
   }
 
@@ -956,14 +962,14 @@ class HumanCommandOutput implements CommandOutput {
       // Every cell comes from the service, so none may carry terminal control sequences.
       const rows = intents.map(i =>
         [
-          i.createdAt.replace("T", " ").slice(0, 16),
+          utcMinute(i.createdAt),
           i.status,
           i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
           i.recipient ?? "—",
           i.id,
         ].map(stripControlChars),
       );
-      const headers = ["CREATED", "STATUS", "AMOUNT", "TO", "ID"];
+      const headers = ["CREATED (UTC)", "STATUS", "AMOUNT", "TO", "ID"];
       const widths = headers.map((h, c) => Math.max(h.length, ...rows.map(r => r[c].length)));
       const format = (cells: string[]) =>
         cells.map((cell, c) => (c === cells.length - 1 ? cell : cell.padEnd(widths[c]))).join("  ");
@@ -971,8 +977,13 @@ class HumanCommandOutput implements CommandOutput {
       for (const row of rows) writeStdout(format(row));
     }
     if (nextCursor) {
+      const cursorIsSafeToPaste = BASE58_CURSOR.test(nextCursor);
       writeStdout(
-        colors.dim(`More intents: re-run with --cursor ${stripControlChars(nextCursor)}`),
+        colors.dim(
+          cursorIsSafeToPaste
+            ? `More intents: run \`wallet-cli agent-intent intents --profile ${profileId} --cursor ${nextCursor}\``
+            : `More intents: next cursor ${stripControlChars(nextCursor)}`,
+        ),
       );
     }
   }
@@ -1024,6 +1035,15 @@ class HumanCommandOutput implements CommandOutput {
     const terminal = isTerminalIntentStatus(intent.status);
     writeStdout([headline, ...intentDetailLines(profileId, intent, terminal)].join("\n"));
   }
+}
+
+const BASE58_CURSOR = /^[1-9A-HJ-NP-Za-km-z]+$/;
+const ISO_DATETIME_WITH_OFFSET = z.iso.datetime({ offset: true });
+
+/** "2026-10-07 10:00" in UTC, whatever offset the service sent; text without one is kept. */
+function utcMinute(timestamp: string): string {
+  if (!ISO_DATETIME_WITH_OFFSET.safeParse(timestamp).success) return timestamp;
+  return new Date(timestamp).toISOString().replace("T", " ").slice(0, 16);
 }
 
 /** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
@@ -1110,6 +1130,12 @@ class JsonCommandOutput implements CommandOutput {
           code: e.state.code,
           message,
         },
+      };
+    }
+    if (e instanceof KeychainUnavailableError) {
+      return {
+        ok: false,
+        error: { command: this._ctx.command, code: "keychain_unavailable", message: e.message },
       };
     }
     return {
@@ -1555,6 +1581,7 @@ function swapIntentSummaryJson(summary: SwapIntentSummary): Record<string, unkno
     toAmount: summary.toAmount,
     provider: summary.provider,
     quoted: summary.quoted,
+    needsTokenApproval: summary.needsTokenApproval,
     ...(summary.description ? { description: summary.description } : {}),
   };
 }

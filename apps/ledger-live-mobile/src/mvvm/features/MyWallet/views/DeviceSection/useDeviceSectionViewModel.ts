@@ -51,7 +51,7 @@ export const useDeviceSectionViewModel = (): DeviceSectionViewModel => {
   const [deviceToRemove, setDeviceToRemove] = useState<DeviceSectionDevice | null>(null);
   const [isRemoveDrawerOpen, setIsRemoveDrawerOpen] = useState(false);
   const { scannedDevices } = useBleDevicesScanning(true);
-  const managerAction = useManagerDeviceAction();
+  const managerAction = useManagerDeviceAction({ resolveOsUpdates: true });
   const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
 
   const devices = useMemo(

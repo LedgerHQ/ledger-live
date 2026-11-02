@@ -9,7 +9,7 @@ import type { StepProps } from "../types";
 
 jest.mock("@shared/analytics-react", () => ({
   ...jest.requireActual("@shared/analytics-react"),
-  TrackPage: () => null,
+  TrackScreen: () => null,
 }));
 jest.mock("@ledgerhq/live-common/bridge/react/index", () => ({
   __esModule: true,
@@ -21,14 +21,11 @@ jest.mock("~/renderer/hooks/useAccountUnit", () => ({
 
 const VALIDATOR_A = { validatorAddress: "validatorA", name: "Validator A" };
 
-jest.mock("@ledgerhq/live-common/families/cosmos/react", () => ({
-  useCosmosFamilyPreloadData: () => ({ validators: [VALIDATOR_A] }),
-}));
-
 const buildAccount = (): CosmosAccount =>
   ({
     type: "Account",
     currency: getCryptoCurrencyById("cosmos"),
+    stakingResources: { validators: [VALIDATOR_A] },
   }) as unknown as CosmosAccount;
 
 const buildOperation = (): Operation =>

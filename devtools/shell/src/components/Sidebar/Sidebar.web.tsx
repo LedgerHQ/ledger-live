@@ -40,7 +40,7 @@ function SidebarView({
         className="flex items-center gap-12 px-16 pt-16 w-full text-left bg-transparent border-none cursor-pointer hover:opacity-80"
       >
         <IconSquare category={Category.CONFIGURATION} variant="inverted" />
-        <span className="body-1 font-semibold">DevTools</span>
+        <span className="body-1">DevTools</span>
       </button>
 
       <div className="p-12">

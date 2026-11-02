@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "~/context/Locale";
 
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import {
   canNominate,
   hasExternalController,

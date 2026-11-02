@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import type { Store } from "redux";
-import { identitiesSlice } from "@domain/entity-client-identity";
+import { exportIdentitiesForPersistence, identitiesSlice } from "@domain/entity-client-identity";
 import { initIdentities } from "./identities";
 import { saveIdentities, deleteUser } from "../db";
 import type { State } from "../reducers/types";
+import type { User } from "../types/store";
 
 jest.mock("../db", () => ({
   saveIdentities: jest.fn(),
@@ -24,6 +25,25 @@ function createTestStore(): Store<State> {
 describe("initIdentities", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it.each<[string, User | null]>([
+    ["persisted identities", null],
+    ["a legacy user merged in", { id: "legacy-user-id", datadogId: "legacy-dd-id" }],
+  ])("keeps the persisted portfolio id from %s", async (_case, legacyUser) => {
+    const testStore = createTestStore();
+    const persisted = {
+      userId: "user-123",
+      portfolioId: "portfolio-789",
+      deviceIds: [],
+      pushDevicesSyncState: "synced" as const,
+      pushDevicesServiceUrl: null,
+    };
+
+    await initIdentities(testStore, persisted, legacyUser);
+
+    const state = testStore.getState() as State;
+    expect(exportIdentitiesForPersistence(state.identities).portfolioId).toBe("portfolio-789");
   });
 
   it("should use legacy user when present and merge with persisted deviceIds", async () => {

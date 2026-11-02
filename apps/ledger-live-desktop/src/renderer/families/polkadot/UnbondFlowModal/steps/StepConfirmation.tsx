@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -28,7 +28,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Unbond Flow"
           name="Step Confirmed"
           flow="stake"
@@ -45,7 +45,7 @@ function StepConfirmation({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Unbond Flow"
           name="Step Confirmation Error"
           flow="stake"

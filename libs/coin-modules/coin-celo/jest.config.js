@@ -1,29 +1,8 @@
-// `workerThreads: true` is required for validating object with `bigint` values
-module.exports = {
-  testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integ\\.test\\.[tj]s"],
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
   modulePathIgnorePatterns: ["lib/", "lib-es/"],
+  // `workerThreads: true` is required for validating object with `bigint` values
   workerThreads: true,
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
-};
+});

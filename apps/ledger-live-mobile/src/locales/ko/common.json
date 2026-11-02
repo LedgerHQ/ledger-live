@@ -1857,6 +1857,10 @@
       "title" : "요청이 전송되지 않았습니다",
       "description" : "Internet Computer 네트워크가 요청을 수락하지 않아 아무것도 전송되지 않았으며 변경 사항도 없습니다. 다시 시도해 주세요. {{reason}}"
     },
+    "ICPTransactionExpired" : {
+      "title" : "트랜잭션 만료",
+      "description" : "서명된 트랜잭션이 시간 내에 전송되지 않았습니다. 어떠한 내역도 전송되지 않았으며, 변경된 사항은 없습니다. 다시 서명해 주세요."
+    },
     "ICPCreateNeuronWarning" : {
       "title" : "새로운 뉴런에 ICP를 락업합니다",
       "description" : "뉴런의 기본 락업 해제 기간이 너무 짧아 투표 참여나 보상 수령이 불가능합니다. 'Manage Neurons(뉴런 관리)'에서 락업 해제 기간을 늘려주세요. 스테이킹된 자산은 해당 해제 기간이 지나야만 다시 출금하거나 사용할 수 있습니다."
@@ -1871,6 +1875,7 @@
     "menu" : {
       "changeName" : "이름 변경",
       "viewAdvancedLogs" : "고급 로그 보기",
+      "viewExplorer" : "탐색기에서 보기",
       "removeAccount" : "포트폴리오에서 계정 삭제"
     },
     "advancedLogs" : {
@@ -2587,6 +2592,10 @@
       "learnMore" : "자세히 알아보기",
       "activate" : "활성화하기",
       "skip" : "다음에"
+    },
+    "connection" : {
+      "connecting" : "장치 연결 중",
+      "failed" : "연결 실패"
     }
   },
   "onboarding" : {
@@ -3437,10 +3446,10 @@
       "skipCta" : "나중에 할게요",
       "skip" : {
         "title" : "정말 건너뛸까요?",
-        "description" : "이 단계를 건너뛰면 휴대폰이나 컴퓨터 변경 시 모든 계정, 잔액 및 트랜잭션 내역을 수동으로 다시 추가해야 합니다.",
-        "descriptionEmphasis" : "해당 기능은 설정에서 언제든지 비활성화할 수 있습니다.",
-        "skipCTA" : "네, 건너뛸게요",
-        "syncCTA" : "아니요, 지갑을 동기화할게요"
+        "description" : "스마트폰을 변경하거나 다른 스마트폰 또는 컴퓨터에서 Ledger Wallet을 사용하는 경우, 계정을 수동으로 동기화해야 합니다.",
+        "descriptionEmphasis" : "해당 기능의 활성화 여부는 설정에서 언제든지 변경할 수 있습니다.",
+        "skipCTA" : "네, 스킵합니다",
+        "syncCTA" : "아니요, 동기화를 활성화합니다"
       }
     },
     "seedStep" : {
@@ -3625,6 +3634,16 @@
       "upToDate" : "포트폴리오 업데이트 완료",
       "syncError" : "일부 계정 데이터를 로드하지 못했습니다",
       "offline" : "오프라인상태입니다. 인터넷 연결을 확인하세요."
+    }
+  },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "무기한 선물",
+      "description" : "레버리지로 투자하기"
+    },
+    "borrow" : {
+      "title" : "대출",
+      "description" : "스테이블코인 대출받기"
     }
   },
   "addAccountsModal" : {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other" : "+{{count}} 서브 계정"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "자세한 정보",
-      "cardTitle" : "{{team}} 기반",
-      "drawer" : {
-        "title" : "{{family}} 통합",
-        "subTitle" : "{{family}} 통합은 {{team}} 팀에서 수행했습니다.",
-        "description" : "Ledger Wallet은 오픈 소스 플랫폼입니다.",
-        "description2" : "전 세계 어디에서나 개발자가 Ledger Wallet과 통합할 수 있습니다.",
-        "description3" : "이 통합은 Ledger와 협력을 통해 {{team}} 에서 수행했습니다.",
-        "description3Link" : "이 통합은 Ledger와 협력을 통해 <1><0>{{team}}</0></1>에서 수행했습니다."
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}}가 {{to}}으로 마이그레이션되고 있습니다. <0>이 링크</0>에서 자세한 내용을 알아보고, 도움이 필요한 경우 지원팀에 문의하세요.",
       "contactSupport" : "지원 부서 연락"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment" : {
+        "title" : "수수료 결제 방식 선택",
+        "regular" : "정기 이체",
+        "sponsored" : "{{provider}}로 결제",
+        "payIn" : "{{feeCurrency}}로 네트워크 수수료 결제",
+        "paidIn" : "{{currency}}로 결제",
+        "nudge" : "{{provider}} 이용 시 {{amount}} 절약 가능",
+        "saved" : "{{provider}}로 절약한 금액",
+        "confirm" : "확인",
+        "disclaimer" : "서드파티 서비스 제공업체 {{provider}} 이용 시 수수료 결제 자산은 {{feeCurrency}} 입니다.",
         "insufficientFunds" : "결제 금액과 {{provider}} 에너지 대여 수수료를 충당할 {{feeCurrency}}이(가) 부족합니다."
       },
       "sponsoredRentSignature" : {
@@ -5871,6 +5887,39 @@
     }
   },
   "osUpdates" : {
+    "backupBanner" : {
+      "title" : "백업을 찾았습니다",
+      "description" : "앱과 설정이 장치에 완전히 복원되지 않았습니다.",
+      "restore" : "복구하기",
+      "delete" : "백업 삭제"
+    },
+    "bootloaderDiscovered" : {
+      "title" : "장치가 부트로더 모드에 있습니다.",
+      "description" : "\"계속\"을 클릭하여 업데이트하세요.",
+      "continue" : "계속"
+    },
+    "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "OS 업데이트 가능",
+          "manager" : "Ledger OS를 업데이트하실 수 있습니다"
+        },
+        "version" : "버전 {{firmwareVersion}}",
+        "cta" : "업데이트"
+      }
+    },
+    "restoreConfirmation" : {
+      "title" : "이전 구성을 복구하시겠습니까?",
+      "description" : "앱 및 설정을 이전 구성으로 복구하는 데 동의하며, 이후 생성된 모든 앱과 데이터가 삭제됨을 확인합니다.",
+      "confirm" : "복구하기",
+      "cancel" : "취소"
+    },
+    "deleteConfirmation" : {
+      "title" : "백업을 삭제하시겠습니까?",
+      "description" : "보안 키 인증 정보를 포함하여, 이전 구성과 마지막 백업의 앱 및 데이터가 모두 삭제된다는 점을 확인했습니다.",
+      "confirm" : "백업 삭제",
+      "cancel" : "취소"
+    },
     "actions" : {
       "retry" : "다시 시도",
       "cancel" : "취소",
@@ -10292,7 +10341,7 @@
             "steps" : {
               "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
               "step2" : "동기화하려는 Ledger Wallet 앱을 실행합니다.",
-              "step3" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>이미 켰습니다</0> <1>></1> <0>QR 코드 스캔</0>으로 차례로 이동하세요",
+              "step3" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>QR 코드 스캔</0>으로 이동하세요",
               "step4" : "QR 코드를 스캔합니다."
             }
           }
@@ -10305,7 +10354,7 @@
             "steps" : {
               "step1" : "앱 중 하나에서 Ledger Sync가 활성화되어 있는지 확인하세요.",
               "step2" : "동기화하려는 Ledger Wallet을 실행합니다.",
-              "step3" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>이미 켰습니다</0> <1>></1> <0>QR 표시</0>로 차례로 이동하세요",
+              "step3" : "<0>설정</0> <1>></1> <0>일반</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>QR 표시</0>로 차례로 이동하세요",
               "step4" : "QR 코드를 스캔합니다."
             }
           }
@@ -10416,9 +10465,58 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "아직 활동 내역이 없습니다.",
+      "description" : {
+        "receive" : "'받기' 메뉴로 자산을 추가하는 것부터 시작해 보세요.",
+        "receiveSwap" : "'받기' 또는 '스왑'을 통해 자산을 추가하는 것부터 시작해 보세요.",
+        "receiveBuy" : "'받기' 또는 '매수'를 통해 자산을 추가하는 것부터 시작해 보세요.",
+        "receiveSwapBuy" : "'받기', '스왑' 또는 '매수'를 통해 자산을 추가하는 것부터 시작해 보세요.",
+        "swap" : "'스왑' 메뉴로 자산을 추가하는 것부터 시작해 보세요.",
+        "buy" : "'매수' 메뉴로 자산을 추가하는 것부터 시작해 보세요.",
+        "swapBuy" : "'스왑' 또는 '매수'를 통해 자산을 추가하는 것부터 시작해 보세요."
+      }
+    },
+    "actions" : {
+      "transfer" : "전송",
+      "receive" : "받기",
+      "send" : "보내기",
+      "swap" : "스왑",
+      "buy" : "매수",
+      "sell" : "매도",
+      "earn" : "수익 창출",
+      "more" : "더 보기"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "자세히 알아보기",
+      "openPerps" : "무기한 선물 실행"
+    },
+    "migration" : {
+      "title" : "{{from}} 자산이 {{to}}으로 마이그레이션됩니다.",
+      "description" : "마이그레이션에 대해 자세히 알아보거나, 도움이 필요한 경우 고객 지원팀으로 문의하세요."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{date}}부터 {{currencyName}} 지원이 중단됩니다",
+      "description" : "자산은 여전히 Ledger 장치로 안전하게 보호됩니다. 자세한 내용은 지원 센터 페이지를 확인하세요."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "총 잔액에는 배당금이나 액면 분할 내역이 포함되지 않습니다."
+    },
+    "perps" : {
+      "title" : "Hyperliquid 계정 안내",
+      "description" : "무기한 선물 거래 전용 계정입니다. 이 계정에서는 일반 트랜잭션(입출금 및 전송 등) 기능이 지원되지 않습니다."
+    }
+  },
   "accountDetail" : {
     "assets" : {
       "title" : "자산"
+    },
+    "refreshStatus" : {
+      "upToDate" : "계정이 최신 상태입니다",
+      "syncError" : "계정 데이터를 로드하지 못했습니다"
     },
     "transactions" : {
       "title" : "트랜잭션"
@@ -10429,6 +10527,9 @@
       "label" : "주소 별칭",
       "submit" : "이름 변경"
     }
+  },
+  "accountAssetPicker" : {
+    "title" : "자산 선택"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10680,6 +10781,10 @@
     "selectAccountPerpsEmptyDescription" : "무기한 선물 거래 자금을 입금하려면 Hyperliquid 계정이 필요합니다. 먼저 계정을 추가하세요.",
     "selectDepositCurrencyTitle" : "입금할 자산 선택",
     "selectDepositCurrencyDescription" : "지원되는 모든 자산을 사용할 수 있습니다. 필요한 경우 자동으로 스왑됩니다.",
+    "selectWithdrawCurrencyTitle" : "출금받을 자산 선택",
+    "selectWithdrawCurrencyDescription" : "선택하신 자산으로 USDC가 자동 스왑됩니다.",
+    "selectAccountPerpsWithdrawFromDescription" : "자산을 출금할 계정을 선택하세요.",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "출금 트랜잭션을 실행하려면 Hyperliquid 계정이 필요합니다. 먼저 계정을 추가하세요.",
     "searchPlaceholder" : "이름 또는 주소로 검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "notAvailableYet" : "지원 예정",
@@ -10739,6 +10844,25 @@
     "formErrors" : {
       "amountExceedsBalance" : "보유 수량 부족",
       "quoteUnavailable" : "{{provider}}에서 견적을 불러올 수 없습니다. 다른 자산을 사용하거나 나중에 다시 시도하세요."
+    }
+  },
+  "perpsWithdraw" : {
+    "title" : "출금",
+    "review" : "검토",
+    "keypadDelete" : "마지막 자리 삭제",
+    "estimatedAmount" : "~{{value}} 출금",
+    "inputSubText" : "{{provider}}에서 스왑 및 출금",
+    "selectCurrencyTitle" : "{{currencyTicker}}로 출금",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "계정 없음",
+    "formErrors" : {
+      "insufficientBalance" : "보유 수량 부족",
+      "minimumAmount" : "최소 출금은 {{minAmount}} USDC입니다.",
+      "minimumAmountUnknown" : "최소 출금 수량 미만입니다.",
+      "lowLiquidity" : "이 자산은 일시적으로 사용할 수 없습니다. 나중에 다시 시도하거나 다른 자산을 선택하세요.",
+      "addressScreening" : "이 계정으로는 이 출금을 처리할 수 없습니다.",
+      "quoteUnavailable" : "{{provider}}에서 견적을 불러올 수 없습니다. 다른 자산을 사용하거나 나중에 다시 시도하세요.",
+      "currenciesUnavailable" : "출금 가능한 자산을 불러올 수 없습니다. 나중에 다시 시도하세요."
     }
   },
   "swapErrors" : {

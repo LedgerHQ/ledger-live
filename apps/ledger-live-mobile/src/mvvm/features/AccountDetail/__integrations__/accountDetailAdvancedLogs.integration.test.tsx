@@ -48,7 +48,7 @@ function renderAccountDetail() {
 
 async function openAdvancedLogs() {
   const view = renderAccountDetail();
-  await view.user.press(screen.getByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
+  await view.user.press(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.settingsButton));
   await view.user.press(screen.getByText("View advanced logs"));
   return view;
 }

@@ -93,7 +93,7 @@ const RSDOCTOR_LINTER = {
 
 function getRsdoctorPlugin() {
   if (!process.env.RSDOCTOR || process.env.RSDOCTOR === "0") return [];
-  const { RsdoctorRspackPlugin } = require("@rsdoctor/rspack-plugin");
+  const { RsdoctorRspackPlugin } = require("@rsdoctor/core");
   const isCI = process.env.CI === "true" || process.env.CI === "1";
   const reportDir = path.join(projectRootDir, "rsdoctor", "mobile");
   // Rsdoctor's loader interceptor crashes on Rspack v2's native resolver

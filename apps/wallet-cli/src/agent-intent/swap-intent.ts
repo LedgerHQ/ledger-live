@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type { SwapIntent } from "@ledgerhq/agent-intent-sdk";
+import { writeStderr } from "../shared/ui";
 import type { SwapAsset } from "./token-lookup";
 
 /**
@@ -28,8 +29,18 @@ export type SwapIntentSummary = {
   provider: string;
   /** False when `--to-amount` replaced the quote. */
   quoted: boolean;
+  needsTokenApproval: boolean;
   description?: string;
 };
+
+export function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
+  if (!summary.needsTokenApproval) return;
+  writeStderr(
+    `⚠ The ${summary.provider} quote needs a ${summary.from.ticker} approval first. The reviewer ` +
+      "approves it in Agent Intent, in a separate transaction with its own network fee, then " +
+      "reviews the swap.\n",
+  );
+}
 
 export function resolveAgentSwapProvider(provider: string): string {
   const resolved = PROVIDER_ALIAS[provider] ?? provider;

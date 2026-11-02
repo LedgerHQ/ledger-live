@@ -59,8 +59,8 @@ function main(): void {
   const serialize = createExchangeQueue();
   let wsIndex = 0;
 
-  // Registers the shared SIGINT/SIGTERM USB teardown hooks.
-  registerWalletCliDmkTransport();
+  // Registers the shared SIGINT/SIGTERM USB teardown hooks. The proxy relays USB only.
+  registerWalletCliDmkTransport({ usbOnly: true });
 
   const log = (message: string) => writeStderr(`${colors.dim("[proxy]")} ${message}\n`);
   const vlog = (message: string) => {

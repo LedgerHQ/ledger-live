@@ -1,6 +1,6 @@
 import React from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import { cn } from "@ledgerhq/lumen-utils-shared";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { ConfirmError } from "./ConfirmError";
 import { ConfirmPrompt } from "./ConfirmPrompt";
 import type { ConfirmSheetProps } from "../../../types";

@@ -6,7 +6,7 @@
  */
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { createBridges } from "./index";
-import { ZCASH_ESTIMATION_RECIPIENT } from "../constants";
+import { ZCASH_ESTIMATION_RECIPIENT, zainoEndpoint } from "../constants";
 import type { SignerContext } from "../types/signer";
 import type { ZcashAccount } from "../types/bridge";
 import { firstValueFrom, of } from "rxjs";
@@ -17,6 +17,7 @@ import { buildSignOperation } from "./signOperation";
 import { buildLegacySignOperation, buildPreparedLegacySignOperation } from "../legacy";
 import { getZCashClient } from "../logic/engineClient";
 import { testContext } from "../test/coinConfig";
+import { birthdayTimestamp } from "../logic/birthday";
 
 jest.mock("../logic/engineClient", () => ({ getZCashClient: jest.fn() }));
 
@@ -78,6 +79,20 @@ describe("createBridges", () => {
 
     expect(deriveShieldedAddress).toHaveBeenCalledWith("uview1testufvk");
     expect(result).toBe("u1derived");
+  });
+
+  it("exposes findBlockHeightAtDate, resolving the birthday through the account's Zaino client", async () => {
+    const findBlockHeight = jest.fn().mockResolvedValue(3_428_143);
+    mockedGetZCashClient.mockResolvedValue({ findBlockHeight } as any);
+    const { accountBridge } = createBridges(makeSignerContext(jest.fn()), testContext);
+
+    const result = await accountBridge.findBlockHeightAtDate(account, "2026-07-28");
+
+    expect(mockedGetZCashClient).toHaveBeenCalledWith(
+      zainoEndpoint((await testContext.config(currency.id)).zaino.url, currency.id),
+    );
+    expect(findBlockHeight).toHaveBeenCalledWith(birthdayTimestamp("2026-07-28"));
+    expect(result).toBe(3_428_143);
   });
 
   it("getShieldedAddress delegates to the signer with the account's freshAddressPath by default", async () => {

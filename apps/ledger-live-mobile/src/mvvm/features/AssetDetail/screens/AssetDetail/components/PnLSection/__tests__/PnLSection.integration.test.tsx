@@ -3,7 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import type { DistributionItem } from "@ledgerhq/types-live";
 import * as walletPnlHooks from "@ledgerhq/wallet-pnl/hooks";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import { PnLSection, ASSET_DETAIL_PNL_TEST_IDS } from "..";
 
 const btc = getCryptoCurrencyById("bitcoin");
@@ -23,48 +23,29 @@ const emptyDistributionItem: DistributionItem = {
   amount: 0,
 };
 
-const withPnl = (enabled: boolean) =>
-  withFlagOverrides({ lwmWallet40: { params: { pnl: enabled } } });
-
 describe("AssetDetail PnLSection", () => {
-  it("renders the section when the pnl flag is on and the asset has accounts", () => {
-    render(<PnLSection distributionItem={distributionItem} isLoading={false} />, {
-      overrideInitialState: withPnl(true),
-    });
+  it("renders the section when the asset has accounts", () => {
+    render(<PnLSection distributionItem={distributionItem} isLoading={false} />);
 
     expect(screen.getByTestId(ASSET_DETAIL_PNL_TEST_IDS.root)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_PNL_TEST_IDS.unrealisedCard)).toBeVisible();
     expect(screen.getByTestId(ASSET_DETAIL_PNL_TEST_IDS.secondaryCard)).toBeVisible();
   });
 
-  it("renders nothing when the pnl flag is off", () => {
-    render(<PnLSection distributionItem={distributionItem} isLoading={false} />, {
-      overrideInitialState: withPnl(false),
-    });
-
-    expect(screen.queryByTestId(ASSET_DETAIL_PNL_TEST_IDS.root)).toBeNull();
-  });
-
   it("renders nothing when the asset has no accounts", () => {
-    render(<PnLSection distributionItem={emptyDistributionItem} isLoading={false} />, {
-      overrideInitialState: withPnl(true),
-    });
+    render(<PnLSection distributionItem={emptyDistributionItem} isLoading={false} />);
 
     expect(screen.queryByTestId(ASSET_DETAIL_PNL_TEST_IDS.root)).toBeNull();
   });
 
   it("renders nothing when distributionItem is undefined and not loading", () => {
-    render(<PnLSection distributionItem={undefined} isLoading={false} />, {
-      overrideInitialState: withPnl(true),
-    });
+    render(<PnLSection distributionItem={undefined} isLoading={false} />);
 
     expect(screen.queryByTestId(ASSET_DETAIL_PNL_TEST_IDS.root)).toBeNull();
   });
 
   it("renders a skeleton when loading without a distributionItem", () => {
-    render(<PnLSection distributionItem={undefined} isLoading />, {
-      overrideInitialState: withPnl(true),
-    });
+    render(<PnLSection distributionItem={undefined} isLoading />);
 
     expect(screen.getByTestId("asset-detail-section-skeleton")).toBeVisible();
   });
@@ -83,18 +64,8 @@ describe("AssetDetail PnLSection", () => {
       spy.mockRestore();
     });
 
-    it("does not invoke useAssetGroupPnL when the flag is off (section unmounted)", () => {
-      render(<PnLSection distributionItem={distributionItem} isLoading={false} />, {
-        overrideInitialState: withPnl(false),
-      });
-
-      expect(spy).not.toHaveBeenCalled();
-    });
-
-    it("forwards the real accounts when the flag is on and the asset has accounts", () => {
-      render(<PnLSection distributionItem={distributionItem} isLoading={false} />, {
-        overrideInitialState: withPnl(true),
-      });
+    it("forwards the real accounts when the asset has accounts", () => {
+      render(<PnLSection distributionItem={distributionItem} isLoading={false} />);
 
       expect(spy).toHaveBeenCalledWith(
         distributionItem.accounts,

@@ -4,7 +4,7 @@ import { AccountLike, DailyOperationsSection, Operation, Account } from "@ledger
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import { currencySettingsDefaults } from "~/helpers/CurrencySettingsDefaults";
-import { flattenAccountsSelector, shallowAccountsSelector } from "~/reducers/accounts";
+import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 import type { CurrencySettings, State } from "~/reducers/types";
 
 export type OperationsListSection = DailyOperationsSection & { isPending?: boolean };
@@ -19,17 +19,14 @@ function resolveConfirmationsNb(
   return defaults.confirmationsNb?.def ?? 0;
 }
 
-function isPendingOp(
+function isPendingOperationOfAccount(
   op: Operation,
-  flattenedAccountsById: Map<string, AccountLike>,
+  acc: AccountLike,
   mainAccountById: Map<string, Account>,
   confirmationsNbByTicker: Map<string, number>,
   currenciesSettings: Record<string, CurrencySettings>,
 ): boolean {
   if (op.hasFailed) return false;
-
-  const acc = flattenedAccountsById.get(op.accountId);
-  if (!acc) return false;
 
   const parentAcc = acc.type === "Account" ? undefined : mainAccountById.get(acc.parentId);
   const mainAcc = getMainAccount(acc, parentAcc);
@@ -42,6 +39,25 @@ function isPendingOp(
   }
 
   return !isConfirmedOperation(op, mainAcc, confirmationsNb);
+}
+
+function isPendingOp(
+  op: Operation,
+  flattenedAccountsById: Map<string, AccountLike>,
+  mainAccountById: Map<string, Account>,
+  confirmationsNbByTicker: Map<string, number>,
+  currenciesSettings: Record<string, CurrencySettings>,
+): boolean {
+  const acc = flattenedAccountsById.get(op.accountId);
+  if (!acc) return false;
+
+  return isPendingOperationOfAccount(
+    op,
+    acc,
+    mainAccountById,
+    confirmationsNbByTicker,
+    currenciesSettings,
+  );
 }
 
 export function buildOperationsSections(
@@ -84,11 +100,41 @@ export function buildOperationsSections(
   return [{ isPending: true, day: new Date(), data: pendingOps }, ...regularSections];
 }
 
+function useMainAccountById(): Map<string, Account> {
+  const accounts = useSelector(accountsSelector);
+
+  return useMemo(() => {
+    const map = new Map<string, Account>();
+    for (const acc of accounts) {
+      map.set(acc.id, acc);
+    }
+    return map;
+  }, [accounts]);
+}
+
+export function useIsPendingOperation(): (op: Operation, account: AccountLike) => boolean {
+  const mainAccountById = useMainAccountById();
+  const currenciesSettings = useSelector((state: State) => state.settings.currenciesSettings);
+
+  return useMemo(() => {
+    const confirmationsNbByTicker = new Map<string, number>();
+
+    return function isPendingOperation(op: Operation, account: AccountLike) {
+      return isPendingOperationOfAccount(
+        op,
+        account,
+        mainAccountById,
+        confirmationsNbByTicker,
+        currenciesSettings,
+      );
+    };
+  }, [mainAccountById, currenciesSettings]);
+}
+
 export function useOperationsSections(
   rawSections: DailyOperationsSection[],
 ): OperationsListSection[] {
   const flattenedAccounts = useSelector(flattenAccountsSelector);
-  const accounts = useSelector(shallowAccountsSelector);
   const currenciesSettings = useSelector((state: State) => state.settings.currenciesSettings);
 
   const flattenedAccountsById = useMemo(() => {
@@ -99,13 +145,7 @@ export function useOperationsSections(
     return map;
   }, [flattenedAccounts]);
 
-  const mainAccountById = useMemo(() => {
-    const map = new Map<string, Account>();
-    for (const acc of accounts) {
-      map.set(acc.id, acc);
-    }
-    return map;
-  }, [accounts]);
+  const mainAccountById = useMainAccountById();
 
   return useMemo(
     () =>

@@ -60,7 +60,7 @@ describe("createApi (integration)", () => {
 
       expect(balances).toHaveLength(1);
       expect(balances[0].value).toBeGreaterThan(0n);
-      expect(balances[0].asset).toEqual({ type: "native", name: "KAS" });
+      expect(balances[0].asset).toEqual({ type: "native" });
     });
 
     it("lastBlock returns the latest confirmed block", async () => {

@@ -1,0 +1,8 @@
+{
+  "name": "@features/flow-portfolio-services-entry-points",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

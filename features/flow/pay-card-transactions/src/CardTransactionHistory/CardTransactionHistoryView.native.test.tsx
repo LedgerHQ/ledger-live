@@ -3,7 +3,7 @@ import { render, screen, userEvent } from "@testing-library/react-native";
 import { PayCardTransactionSchema } from "@domain/api-card-management";
 import { mockPayCardTransactions } from "@domain/api-card-management/mock/card-transactions";
 import { cardApiWrapper } from "../__tests__/cardApiStore";
-import { CardTransactionHistoryView } from "./CardTransactionHistoryView.native";
+import { CardTransactionHistoryView } from "./CardTransactionHistoryView";
 
 jest.mock("react-native", () => {
   const React = jest.requireActual("react");

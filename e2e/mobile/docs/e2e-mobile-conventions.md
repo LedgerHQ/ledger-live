@@ -2,31 +2,45 @@
 
 Detox rules for `e2e/mobile`. Shared rules: [E2E conventions](../../docs/e2e-conventions.md). Where files go and how to finish: [Add or update a mobile E2E test](e2e-mobile-add-or-update.md).
 
+MUST and MUST NOT are required. SHOULD is the default, and the same section states any exception.
+
 The Contacts suite is the reference: [`specs/contacts`](../specs/contacts), [`contacts.page.ts`](../page/wallet/contacts.page.ts), [`contactDetail.page.ts`](../page/wallet/contactDetail.page.ts), [`contactName.drawer.ts`](../page/drawer/contactName.drawer.ts).
 
-## Webview and native
+## Detox element creation and interactions MUST use an installed global function
 
-Webview operations use Detox web helpers. Native operations use regular Detox matchers. Mirror a desktop test id when the Live App shares it.
+Creating, finding, tapping, typing, reading, waiting, and scrolling a Detox element MUST use an installed global. `jest.environment.ts` installs selected functions from `NativeElementHelpers` and `WebElementHelpers` in [`elementHelpers`](../helpers/elementHelpers.ts), and `types/global.d.ts` declares those functions. Examples are `getElementById`, `tapById`, `getTextOfElement`, `waitForElementById`, `getWebElementByTestId`, and `tapWebElementByTestId`. A direct import of either object MUST be used only where those globals are not available.
+
+Code MUST NOT call `element(by...)`, `web.element(...)`, or the same operation on a raw Detox element. When no installed global performs the operation, that function MUST be added to `NativeElementHelpers` or `WebElementHelpers`, installed in `jest.environment.ts`, and declared in `types/global.d.ts`. `elementHelpers.ts` implements those globals, so it is the place that calls the Detox matchers.
+
+## A shared Live App test id SHOULD match the desktop test id
+
+When a Live App element already has a test id on desktop, the mobile selector SHOULD use that same id.
 
 ## Structure
 
-### Keep the spec thin
+### A spec MUST stay thin
 
-It declares only test metadata and invokes the sibling test function. The flow, feature-flag overrides, and the fixture live in the test function file so a second scenario can reuse `initApp`.
+A spec MUST declare only test metadata and invoke the sibling test function. The flow, feature-flag overrides, and the fixture MUST live in the test function file so a second scenario can reuse `initApp`.
 
-### Arrange state in fixtures and flags, not in UI steps
+### State MUST be arranged in fixtures and flags
 
-See [E2E conventions](../../docs/e2e-conventions.md#state). Entry-point flags belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
+See [E2E conventions](../../docs/e2e-conventions.md#setup-must-be-deterministic). Entry-point flags MUST belong in the test function file, combined with a preset from [`utils/featureFlagUtils`](../utils/featureFlagUtils.ts). `loadConfig` imports `data.settings`, `data.accounts`, `data.trustchain`, `data.postOnboarding`, and `data.payCard` when present. Other domain entities cannot be seeded this way.
 
-### No conditional steps
+### State MUST NOT be arranged in UI steps
 
-Never `completeXIfVisible`. It costs time on every run and hides the regression when the thing stops appearing. Remove the blocker in the fixture or the flags instead.
+A setup MUST NOT open screens or tap controls to reach the state under test.
 
-### Assert in the test function
+### Tests MUST NOT use conditional steps
 
-The test function decides which assertions run. The spec decides the scope by calling only the relevant test functions. Expected UI strings are passed in as parameters.
+A step MUST NOT branch on a condition and run only when that condition is met. The branch costs time on every run and hides the regression when the expected path stops happening. The cause MUST be removed in the fixture or the flags.
 
-One fact per method is the default, so a failing step names the broken claim. When the same checks on one component repeat across specs, a composite is fine. Name it after the state it proves, and build it from the single-fact methods so the report still shows which one failed:
+A conditional step MAY stay when the test documents why the branch is required.
+
+### The test function MUST decide which assertions run
+
+The spec MUST decide the scope by calling only the relevant test functions. Expected UI strings MUST be passed in as parameters.
+
+One fact per method MUST be the default, so a failing step names the broken claim. When the same checks on one component repeat across specs, a composite MAY be used. It MUST be named after the state it proves, and it MUST be built from the single-fact methods so the report still shows which one failed:
 
 ```ts
 @Step("Expect the Me contact with no address")
@@ -36,11 +50,11 @@ async expectMeWithoutAddress(expectedLabel: string) {
 }
 ```
 
-### A locator belongs to the page that renders it
+### A locator MUST belong to the page that renders it
 
-The Contacts button drawn by My Wallet lives on `myWallet.page.ts`. Move a misplaced locator and update its usages rather than duplicating it.
+The Contacts button drawn by My Wallet lives on `myWallet.page.ts`. A misplaced locator MUST be moved, and its usages updated, rather than duplicated.
 
-### Navigation methods land the destination
+### A navigation method MUST land on its destination
 
 That keeps `expectScreenVisible` out of every other line of the spec without coupling callers to the destination's internals:
 
@@ -52,19 +66,19 @@ async openContacts() {
 }
 ```
 
-Only call an explicit arrival assertion from the test function when the spec's scope includes that arrival, such as after a back navigation or a mutation that re-renders the list.
+An explicit arrival assertion MUST be called from the test function only when the spec's scope includes that arrival, such as after a back navigation or a mutation that re-renders the list.
 
-### Wrap a fixed tap sequence into one flow method
+### A fixed tap sequence MUST be one flow method
 
-On the page that owns its parameter. `deleteContact(rowId)` sits on the list page because the row id is a list concept, and delegates to `detail.deleteContact()`.
+The method MUST live on the page that owns its parameter. `deleteContact(rowId)` sits on the list page because the row id is a list concept, and delegates to `detail.deleteContact()`.
 
-### Compose, don't merge
+### A reached screen MUST stay its own class
 
-A screen reached from another screen is its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers stay drawers.
+A screen reached from another screen MUST be its own class held as a property: `app.contacts.detail`, `app.contacts.detail.renameDrawer`. Drawers MUST stay drawers.
 
-### Selector helpers are private readonly arrow-function properties
+### Selector helpers MUST be private readonly arrow functions
 
-Element getters and parameterized locator builders are private readonly arrow-function class properties. Static IDs passed to waits are private readonly strings; dynamic IDs use private readonly builder functions. Never build a matcher or ID inline in a step.
+Element getters and parameterized locator builders MUST be private readonly arrow-function class properties. Static IDs passed to waits MUST be private readonly strings. Dynamic IDs MUST use private readonly builder functions. A step MUST NOT build a matcher or ID inline.
 
 ```ts
 private readonly contactsContent = () => getElementById("contacts-content");
@@ -72,27 +86,37 @@ private readonly savedContactRowName = (rowId: string) => getElementById(`${rowI
 private readonly addContactContentId = "contacts-add-contact-content";
 ```
 
-### `@Step` on every public method
+### Every public method MUST use @Step
 
-Parameters are Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
+Parameters MUST be Handlebars placeholders: `{{0}}`, `{{1}}` by index, or named `@Step("Rename to {{name}}", ["name"])`. `$0` renders literally. Values are HTML-escaped, so use `{{{0}}}` for one containing `&`, `<`, or `'`. Arguments appear as Allure parameters even without a placeholder.
 
-### `$TmsLink` attaches the id
+### The test function MUST call $TmsLink
 
-The spec passes the `B2CQA-XXXX` id. The test function calls `$TmsLink` before its tests:
+The spec MUST pass the `B2CQA-XXXX` id and the test function MUST call `$TmsLink`. `$TmsLink`, `$Tag`, and `setTeamOwner` attach to the next `describe`, `it`, or hook defined after them, so placement decides which tests get them:
+
+- Inside a `describe`, `$TmsLink` and `$Tag` MUST be called right before **each** `it`, after the hooks. A `beforeAll` in between takes them, and one call before several `it`s only reaches the first.
+- `setTeamOwner` MUST be called before the `describe`, so every test in it gets the owner.
 
 ```ts
 // spec
 runBrowseAndSearchContactsTest(["B2CQA-6240"], tags);
 
 // test function
-tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+setTeamOwner(Team.WALLET_XP);
+describe("Contacts", () => {
+  beforeAll(async () => { /* ... */ });
+
+  tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+  tags.forEach(tag => $Tag(tag));
+  it("browses contacts", async () => { /* ... */ });
+});
 ```
 
 ## Stability
 
-### Wait for a sheet's own content anchor at 100% visibility
+### A sheet wait MUST use that sheet's content anchor at 100% visibility
 
-`toBeVisible()` defaults to 75%, which a bottom sheet satisfies while still sliding, so the next tap can hit a moving view. Wait on an id that proves the sheet is fully presented. Prefer a `-content` anchor on its container because controls usually mount before presentation; use an inset control only when a documented platform-specific visibility issue makes the container unsuitable.
+`toBeVisible()` defaults to 75%, which a bottom sheet satisfies while still sliding, so the next tap can hit a moving view. The wait MUST use an id that proves the sheet is fully presented. A `-content` anchor on its container SHOULD be used, because controls usually mount before presentation. An inset control MUST be used only when a documented platform-specific visibility issue makes the container unsuitable.
 
 ```ts
 await tapByElement(this.actionsTrigger());
@@ -101,21 +125,21 @@ await waitForFullyVisibleById(this.actionsMenuContentId);
 
 Measured on Contacts under a CPU-starved emulator: 2 failures in 4 at the default, 0 in 13 at 100%, costing about 4s per run.
 
-### Fix the wait - do not add retries
+### A failing wait MUST be fixed
 
-[`scripts/flake-check.sh`](../scripts/flake-check.sh) reproduces the conditions that expose a too-tight wait. How to run it: [Before committing a test change](../README.md#before-committing-a-test-change).
+[`scripts/flake-check.sh`](../scripts/flake-check.sh) reproduces the conditions that expose a too-tight wait. How to run it: [Before committing a test change](../README.md#before-committing-a-test-change). Tests MUST NOT add a retry to hide that wait.
 
-### Resolve an entity id before mutating what you match on
+### An entity id MUST be resolved before its label changes
 
-A row id survives a rename. The name does not. Detox has no data API, so resolve the id once through a label matcher, then use it for every later interaction.
+A row id survives a rename. The name does not. Detox has no data API, so the id MUST be resolved once through a label matcher, then used for every later interaction.
 
-### Navigate through the UI, not deeplinks
+### Navigation MUST go through the UI
 
-Unless the deeplink is what is under test. A deeplink blurs the current screen and closes open bottom sheets.
+A deeplink MUST NOT be used unless the deeplink is what is under test. A deeplink blurs the current screen and closes open bottom sheets.
 
-### Avoid hardcoded durations
+### Timeouts MUST use a named bucket
 
-Pass a timeout, delay, or poll interval as a `TIMEOUT` or `INTERVAL` bucket from [`utils/timeouts.ts`](../utils/timeouts.ts), not a bare number. Add a named constant in the file only when no bucket fits or the value needs its reason written down. Config files can keep literals, since the key already names them (`setupTimeout: 500000` in `detox.config.js`).
+A timeout, delay, or poll interval MUST be a `TIMEOUT` or `INTERVAL` bucket from [`utils/timeouts.ts`](../utils/timeouts.ts), not a bare number. A named constant in the file is allowed only when no bucket fits or the value needs its reason written down. Config files MAY keep literals, since the key already names them (`setupTimeout: 500000` in `detox.config.js`).
 
 ```ts
 await waitForElementById(this.screenId, TIMEOUT.small); // not 5000
@@ -123,17 +147,29 @@ await waitForElementById(this.screenId, TIMEOUT.small); // not 5000
 
 ## Test data
 
-### Generate values in `live-e2e-shared`, valid by construction
+### Generated values MUST come from live-e2e-shared and be valid by construction
 
-Builders are shared with desktop specs. Derive the shape from the product's validation rule and link that rule in JSDoc instead of restating it; use `randomUUID` where the product rejects duplicates.
+Builders are shared with desktop specs. The shape MUST be derived from the product's validation rule, and that rule MUST be linked in JSDoc instead of restated. Use `randomUUID` where the product rejects duplicates.
 
-### Mind cross-platform text rewriting
+### Fixtures MUST NOT rely on characters that iOS rewrites
 
-iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in a fixture fails on iOS only. Keep such characters out, and say why.
+iOS smart punctuation turns a typed `'` into `’`, so a straight apostrophe in a fixture fails on iOS only. Such characters MUST stay out of fixtures, and the test MUST say why.
 
-## Known failures and skips
+## Exclusive lock implementation
 
-A test that fails because of a tracked bug is flagged with `$KnownFailure`, not skipped. It still runs once and still fails the run, but Detox does not retry it, so it costs one attempt whatever the retry setting.
+What a test declares: [Exclusive lock](../../docs/e2e-conventions.md#tests-must-declare-what-they-broadcast-from-or-change). The test function calls `declareBroadcastAccounts`, `declareCliBroadcastAccounts` or `declareSharedResources` ([`helpers/exclusiveLock.ts`](../helpers/exclusiveLock.ts)) before its `describe`:
+
+```ts
+export function runDelegateTest(delegation: DelegateType /* … */) {
+  declareBroadcastAccounts(delegation.account);
+  describe("Delegate", () => {
+```
+
+The spec file holds the lock until its `describe` blocks have run. A file-level `afterAll` runs after the lock is released, so a cleanup that broadcasts goes inside a `describe`.
+
+## A tracked failure MUST use $KnownFailure
+
+A test that fails because of a tracked bug MUST be flagged with `$KnownFailure`. It MUST NOT be skipped. It still runs once and still fails the run, but Detox does not retry it, so it costs one attempt whatever the retry setting.
 
 ```ts
 import { $KnownFailure } from "@e2e/helpers/knownFailure";
@@ -149,20 +185,20 @@ it("shows the network fee", async () => {
 });
 ```
 
-- Pass the Jira key of the bug. It also becomes the test's Allure issue link.
-- Place it immediately before the `describe`, `it`, or test function call. A hook (`beforeAll`, `beforeEach`, …) in between takes the flag instead, and the run log warns that it landed on a hook.
-- Only for a deterministic failure with a ticket. A flake gets a fixed wait (see [Fix the wait - do not add retries.](#fix-the-wait---do-not-add-retries)). A test that must not run at all uses a `.skip.spec.ts` suffix (or `describe.skip`), not a comment that disables the body.
-- Remove the flag in the fix. A flagged test that passes just reports green.
+- The argument MUST be the Jira key of the bug. It also becomes the test's Allure issue link.
+- It MUST be placed immediately before the `describe`, `it`, or test function call. A hook (`beforeAll`, `beforeEach`, …) in between takes the flag instead, and the run log warns that it landed on a hook.
+- `$KnownFailure` MUST be used only for a deterministic failure with a ticket. A flake MUST get a fixed wait (see [A failing wait MUST be fixed](#a-failing-wait-must-be-fixed)). A test that must not run at all MUST use a `.skip.spec.ts` suffix (or `describe.skip`), not a comment that disables the body.
+- The flag MUST be removed in the fix. A flagged test that passes just reports green.
 
 The run log lists what was left out of the retry under `[known-failure]`. Mechanism: [`jest.reporter.js`](../jest.reporter.js).
 
-## Test IDs in product code
+## Each asserted label MUST have its own testID
 
-A testID is preferred over clever matching. Add:
+A testID MUST be preferred over text matching. Add:
 
 - One id per label you assert, not just per row: `contacts-me-name`, `contacts-me-address-count`.
-- The runtime id for per-entity rows: `contacts-saved-contact-${contactId}-name`. Never an id that can match twice.
+- The runtime id for per-entity rows: `contacts-saved-contact-${contactId}-name`. An id MUST NOT be able to match twice.
 - A `testIDPrefix` prop on shared components, so each host namespaces its instance and existing callers keep their default.
-- A content anchor per sheet, rendered only while it is open (see [Wait for a sheet's own content anchor at 100% visibility](#wait-for-a-sheets-own-content-anchor-at-100-visibility)).
+- A content anchor per sheet, rendered only while it is open (see [A sheet wait MUST use that sheet's content anchor at 100% visibility](#a-sheet-wait-must-use-that-sheets-content-anchor-at-100-visibility)).
 
-Grep the identifier across all test files before finishing. A shared component's testID is often asserted by desktop tests too.
+The identifier MUST be grepped across all test files before finishing. A shared component's testID is often asserted by desktop tests too.

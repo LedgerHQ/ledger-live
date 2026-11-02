@@ -551,6 +551,65 @@ export function publicKeyAccountIdBasis(
   return { xpubOrAddress: publicKey || address };
 }
 
+/**
+ * Whether the stored sync hash was written under the current `syncVersion`, so that a difference
+ * from the current hash can only come from its token list part. The caller checks that the two
+ * hashes differ.
+ *
+ * Relies on the format `genericGetAccountShape` writes: `<tokens>` without a `syncVersion`,
+ * `<tokens>-<syncVersion>` with one. `<tokens>` is the output of `getSyncHash`, `0x` followed by hex
+ * digits, which never holds a `-`. So the stored `syncVersion` is whatever follows the first `-`,
+ * and a hash without `-` has none. A `syncVersion` that holds a `-` is kept whole.
+ *
+ * A false result makes the caller resync from scratch, so the format assumption fails safe: if a
+ * token part ever held a `-`, its tail would read as a `syncVersion` that does not match, and the
+ * account would resync rather than skip a needed resync. A missing hash (an account a legacy bridge
+ * synced) also returns false.
+ *
+ * If `getSyncHash` or the `syncHash` composition in `genericGetAccountShape` changes format, update
+ * this function.
+ *
+ * @example
+ * isTokenListChangeOnly("0x1a2b", undefined) // true: no syncVersion before or now
+ * isTokenListChangeOnly("0x1a2b-2", "2") // true: same syncVersion
+ * isTokenListChangeOnly("0x1a2b", "2") // false: the syncVersion was added
+ * isTokenListChangeOnly("0x1a2b-1", "2") // false: the syncVersion changed
+ * isTokenListChangeOnly(undefined, undefined) // false: never synced by this bridge
+ */
+function isTokenListChangeOnly(
+  storedSyncHash: string | undefined,
+  syncVersion: string | undefined,
+): boolean {
+  if (!storedSyncHash) return false;
+  const separator = storedSyncHash.indexOf("-");
+  const storedSyncVersion = separator < 0 ? undefined : storedSyncHash.slice(separator + 1);
+  return storedSyncVersion === syncVersion;
+}
+
+/**
+ * Whether the balance holds a listed, non-blacklisted token the account has no sub-account for yet:
+ * only such a token needs the history a from-scratch sync walks. A failed lookup counts as one,
+ * so a CAL outage falls back to the from-scratch sync rather than to a missing sub-account.
+ */
+async function holdsNewlyListedToken(
+  tokenBalances: Balance[],
+  subAccounts: TokenAccount[],
+  getTokenFromAsset: BridgeApi["getTokenFromAsset"],
+  blacklistedTokenIds: string[],
+): Promise<boolean> {
+  if (!getTokenFromAsset || tokenBalances.length === 0) return false;
+  const knownTokenIds = new Set(subAccounts.map(subAccount => subAccount.token.id));
+  const blacklisted = new Set(blacklistedTokenIds);
+  try {
+    const tokens = await Promise.all(tokenBalances.map(b => getTokenFromAsset(b.asset)));
+    return tokens.some(
+      token => !!token && !blacklisted.has(token.id) && !knownTokenIds.has(token.id),
+    );
+  } catch {
+    return true;
+  }
+}
+
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode, rest } = info;
@@ -631,14 +690,26 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
     );
     const tokensSyncHash = await getSyncHash(currency.id, syncConfig.blacklistedTokenIds);
+    // `isTokenListChangeOnly` reads this format back: keep the two in step.
     const syncHash = bridgeApi.syncVersion
       ? `${tokensSyncHash}-${bridgeApi.syncVersion}`
       : tokensSyncHash;
-    const syncFromScratch = !initialAccount?.blockHeight || initialAccount?.syncHash !== syncHash;
+    // A token list change alone is settled once the balance is read, for a family whose balance
+    // lists every token (see `balanceListsEveryToken`): the sync resumes from its watermark unless
+    // a held token became newly listed. Any other change still resyncs from scratch.
+    const tokenListChangeOnly =
+      bridgeApi.balanceListsEveryToken === true &&
+      !bridgeApi.balanceOptions &&
+      !!initialAccount?.blockHeight &&
+      initialAccount.syncHash !== syncHash &&
+      isTokenListChangeOnly(initialAccount.syncHash, bridgeApi.syncVersion);
+    let syncFromScratch =
+      !initialAccount?.blockHeight ||
+      (initialAccount?.syncHash !== syncHash && !tokenListChangeOnly);
     // Resume position across syncs: `minHeight` alone, derived from the newest stored operation.
     // It is non-volatile by construction and already persisted, unlike a module cursor (coin-hypercore
     // documents its own as volatile). Only the cursor varies from page to page below.
-    const minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
+    let minHeight = syncFromScratch ? 0 : (oldOps[0]?.blockHeight ?? 0) + 1;
 
     // No options at all unless the family declares some: coin-tron and coin-casper wrap their
     // `getBalance` in `rejectBalanceOptions`, which throws on any truthy value, `{}` included.
@@ -760,6 +831,23 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         })
       : [];
     const allTokenAssetsBalances = [...freshTokenAssetsBalances, ...vanishedTokenBalances];
+
+    if (tokenListChangeOnly) {
+      const resync = await holdsNewlyListedToken(
+        freshTokenAssetsBalances,
+        initialAccount?.subAccounts ?? [],
+        bridgeApi.getTokenFromAsset,
+        syncConfig.blacklistedTokenIds ?? [],
+      );
+      if (resync) {
+        syncFromScratch = true;
+        minHeight = 0;
+      }
+      log("generic-coin-framework", "token list changed", {
+        currency: currency.id,
+        syncFromScratch: resync,
+      });
+    }
 
     const usesStakingPositions = bridgeApi.usesStakingPositions === true;
 

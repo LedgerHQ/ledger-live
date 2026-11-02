@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
+  mockserverIdentifier,
   rnBleTransportIdentifier,
   rnHidTransportIdentifier,
   speculosIdentifier,
@@ -126,7 +127,9 @@ function findMatchingKnownDevice(
   );
 
   const transportReportsUnstableDeviceId =
-    newDevice.transport === rnHidTransportIdentifier || newDevice.transport === speculosIdentifier;
+    newDevice.transport === rnHidTransportIdentifier ||
+    newDevice.transport === speculosIdentifier ||
+    newDevice.transport === mockserverIdentifier;
 
   if (transportReportsUnstableDeviceId) {
     return (

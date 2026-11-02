@@ -46,10 +46,7 @@ describe("listOperations", () => {
     const page = await listOperations(context, ADDRESS, { minHeight: 0 });
 
     expect(page.items).toHaveLength(2);
-    expect(page.items.find(op => op.id === "vet-op")?.asset).toEqual({
-      type: "native",
-      name: "VET",
-    });
+    expect(page.items.find(op => op.id === "vet-op")?.asset).toEqual({ type: "native" });
     expect(page.items.find(op => op.id === "vtho-op")?.asset.type).not.toBe("native");
     expect(page.items.find(op => op.id === "vet-op")?.details?.ledgerOpType).toBe("IN");
     expect(page.items.find(op => op.id === "vtho-op")?.details?.ledgerOpType).toBe("IN");

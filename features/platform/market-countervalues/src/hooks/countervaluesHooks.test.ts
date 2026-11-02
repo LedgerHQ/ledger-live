@@ -72,6 +72,7 @@ function createTestStore() {
 
 function wrapperFor(store: ReturnType<typeof createTestStore>["store"]) {
   return function Wrapper({ children }: { children: React.ReactNode }) {
+    // oxlint-disable-next-line react/no-children-prop
     return React.createElement(Provider, { store, children });
   };
 }

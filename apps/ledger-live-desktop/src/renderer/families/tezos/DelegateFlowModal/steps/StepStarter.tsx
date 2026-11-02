@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { openURL } from "~/renderer/linking";
 import CoinWallet from "~/renderer/icons/CoinWallet";
 import Check from "~/renderer/icons/CheckFull";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
@@ -32,7 +32,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
   const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   return (
     <Box flow={4} mx={4}>
-      <TrackPage
+      <TrackScreen
         category={`Delegation Flow`}
         name="Step Starter"
         flow="stake"

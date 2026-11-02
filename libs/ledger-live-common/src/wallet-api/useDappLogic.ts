@@ -11,6 +11,7 @@ import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { UiHook, SetCurrentAccountHistDb } from "./react";
+import type { BridgeSession } from "./bridgeSession";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic-public";
 import { SmartWebsocket } from "./SmartWebsocket";
@@ -219,6 +220,7 @@ export function useDappLogic({
   initialAccountId,
   referrer,
   mevProtected,
+  session,
 }: {
   manifest: AppManifest;
   postMessage: (message: string) => void;
@@ -230,6 +232,12 @@ export function useDappLogic({
   initialAccountId?: string;
   referrer?: string;
   mevProtected?: boolean;
+  /**
+   * The bridge session the requests come from: once it is closed, the signing flows awaited by a
+   * request are rejected (so `withLiveAppContext` restores the previous attribution) and the
+   * transaction is not broadcast.
+   */
+  session?: BridgeSession;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const dependencies = manifest.dapp?.dependencies;
@@ -328,6 +336,11 @@ export function useDappLogic({
       }
     }
   }, [currentNetwork?.nodeURL, postMessage]);
+
+  const untilSessionClosed = useCallback(
+    <T>(promise: Promise<T>): Promise<T> => (session ? session.cancelOnClose(promise) : promise),
+    [session],
+  );
 
   const onDappMessage = useCallback(
     async (data: JsonRpcRequestMessage) => {
@@ -520,9 +533,8 @@ export function useDappLogic({
                 : undefined;
               tracking.dappSendTransactionRequested(manifest, trackingData);
 
-              const signedTransaction = await withLiveAppContext(
-                manifest,
-                () =>
+              const signedTransaction = await withLiveAppContext(manifest, () =>
+                untilSessionClosed(
                   new Promise<SignedOperation>((resolve, reject) =>
                     uiHook["transaction.sign"]({
                       account: currentAccount,
@@ -537,10 +549,14 @@ export function useDappLogic({
                       },
                     }),
                   ),
+                ),
               );
 
               const bridge = await getAccountBridge(currentAccount, undefined);
               const mainAccount = getMainAccount(currentAccount, undefined);
+
+              // The main frame may have changed origin while the bridge was prepared.
+              session?.assertOpen();
 
               let optimisticOperation: Operation = signedTransaction.operation;
 
@@ -614,9 +630,8 @@ export function useDappLogic({
             );
 
             const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
-            const signedMessage = await withLiveAppContext(
-              manifest,
-              () =>
+            const signedMessage = await withLiveAppContext(manifest, () =>
+              untilSessionClosed(
                 new Promise<string>((resolve, reject) =>
                   uiHook["message.sign"]({
                     account: currentAccount,
@@ -629,6 +644,7 @@ export function useDappLogic({
                     },
                   }),
                 ),
+              ),
             );
 
             tracking.dappPersonalSignSuccess(manifest);
@@ -665,9 +681,8 @@ export function useDappLogic({
             );
 
             const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
-            const signedMessage = await withLiveAppContext(
-              manifest,
-              () =>
+            const signedMessage = await withLiveAppContext(manifest, () =>
+              untilSessionClosed(
                 new Promise<string>((resolve, reject) =>
                   uiHook["message.sign"]({
                     account: currentAccount,
@@ -680,6 +695,7 @@ export function useDappLogic({
                     },
                   }),
                 ),
+              ),
             );
 
             tracking.dappSignTypedDataSuccess(manifest);
@@ -731,8 +747,10 @@ export function useDappLogic({
       referrer,
       setCurrentAccount,
       setCurrentAccountHist,
+      session,
       tracking,
       uiHook,
+      untilSessionClosed,
     ],
   );
 

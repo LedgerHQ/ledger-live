@@ -13,8 +13,6 @@ describe("isFullSyncSupported", () => {
   });
 
   it("does not support a network no crypto currency matches", () => {
-    expect(isFullSyncSupported({ ...descriptor, network: { name: "nope", env: "main" } })).toBe(
-      false,
-    );
+    expect(isFullSyncSupported({ ...descriptor, network: "nope" })).toBe(false);
   });
 });

@@ -47,10 +47,21 @@ function parseAllowedTracingUrls(fromParams: string[] | undefined): (string | Re
 }
 
 let initialized = false;
+/** The consent predicate given to `initDatadog`, read live: the user can opt out after init. */
+let shouldSendNow: (() => boolean) | undefined;
+/** The `lldDatadog` kill switch: RUM stays initialized once started, custom actions stop. */
+let actionsEnabled = true;
 
 /** Reset module state for tests so suites are order-independent. Do not use in production. */
 export function __resetDatadogForTesting(): void {
   initialized = false;
+  shouldSendNow = undefined;
+  actionsEnabled = true;
+}
+
+/** Follows the `lldDatadog` feature flag (see `addAction`). */
+export function setDatadogActionsEnabled(enabled: boolean): void {
+  actionsEnabled = enabled;
 }
 
 export function isDatadogAvailable(): boolean {
@@ -125,6 +136,7 @@ export async function initDatadog(
       distributionChannel: getDistributionChannel(),
     });
 
+    shouldSendNow = shouldSend;
     initialized = true;
     return true;
   } catch (e) {
@@ -161,6 +173,21 @@ export function addBreadcrumb(breadcrumb: Breadcrumb): void {
     });
   } catch {
     // no-op
+  }
+}
+
+/**
+ * A custom RUM action whose attributes are queried as `@context.<key>`.
+ * Returns false when nothing was sent: RUM is not initialized, the `lldDatadog` flag is off, the
+ * user opted out (the action would be discarded) or the SDK threw.
+ */
+export function addAction(name: string, context: Record<string, unknown>): boolean {
+  if (!initialized || !actionsEnabled || !shouldSendNow?.()) return false;
+  try {
+    datadogRum.addAction(name, context);
+    return true;
+  } catch {
+    return false;
   }
 }
 

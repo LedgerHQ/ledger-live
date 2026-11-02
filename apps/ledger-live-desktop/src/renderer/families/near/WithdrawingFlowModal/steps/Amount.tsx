@@ -5,7 +5,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
 import { StepProps } from "../types";
 import { NearMappedStakingPosition, Transaction } from "@ledgerhq/live-common/families/near/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
@@ -65,7 +65,7 @@ export default function StepAmount({
   const notEnoughFundsError = status.errors?.amount?.name === "NotEnoughBalance";
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Withdrawing Flow"
         name="Step 1"
         flow="stake"

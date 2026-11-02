@@ -5,3 +5,5 @@ export type ResolveOsUpdatePathUseCaseInput = {
   sessionId: DeviceSessionId;
   unlockTimeout?: number;
 };
+
+export type { OsUpdate } from "@ledgerhq/dmk-ledger-wallet";

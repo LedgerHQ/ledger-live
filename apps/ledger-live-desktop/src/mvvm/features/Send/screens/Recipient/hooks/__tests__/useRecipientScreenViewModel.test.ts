@@ -42,7 +42,7 @@ const mockedUseFlowWizard = jest.mocked(useFlowWizard);
 const mockedUseSendFlowData = jest.mocked(useSendFlowData);
 const mockedUseSendFlowActions = jest.mocked(useSendFlowActions);
 const mockedUseRecipientScanner = jest.mocked(useRecipientScanner);
-const mockedTrackPage = jest.mocked(trackPage);
+const mockedTrackScreen = jest.mocked(trackPage);
 
 const account = createMockAccount();
 const setRecipient = jest.fn();
@@ -92,8 +92,8 @@ describe("useRecipientScreenViewModel", () => {
       recipientSupportsDomain: true,
       onClose: close,
     });
-    expect(mockedTrackPage).toHaveBeenCalledTimes(1);
-    expect(mockedTrackPage).toHaveBeenCalledWith({
+    expect(mockedTrackScreen).toHaveBeenCalledTimes(1);
+    expect(mockedTrackScreen).toHaveBeenCalledWith({
       category: "Modal send - step recipient",
       props: expect.objectContaining({
         hasContacts: false,

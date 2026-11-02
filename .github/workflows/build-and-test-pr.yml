@@ -147,9 +147,11 @@ jobs:
       smoke_tests: true
       ci_smoke: true
       macos_runner_label: performance-pool
-      android_runner_label: ledger-live-linux-8CPU-32RAM
+      android_runner_label: ledger-wallet-8cpu-github-public-cached
       max_shards: 1
       check_pod_lockfile: true
+      js_bundle_hash_ios: ${{ needs.determine-affected.outputs.mobile_js_hash_ios }}
+      js_bundle_hash_android: ${{ needs.determine-affected.outputs.mobile_js_hash_android }}
 
   # Tests
   test-libraries:
@@ -256,7 +258,7 @@ jobs:
       id-token: write
       contents: read
     needs: determine-affected
-    if: ${{(contains(needs.determine-affected.outputs.paths, 'domain') || contains(needs.determine-affected.outputs.paths, 'shared') || contains(needs.determine-affected.outputs.paths, 'features') || contains(needs.determine-affected.outputs.paths, 'enforce-i18n-keys') || contains(needs.determine-affected.outputs.paths, 'enforce-tool-config') || contains(needs.determine-affected.outputs.paths, 'devtools') || contains(needs.determine-affected.outputs.paths, 'support') || contains(needs.determine-affected.outputs.paths, 'tests/') || contains(needs.determine-affected.outputs.paths, 'tools/')) && !github.event.pull_request.head.repo.fork}}
+    if: ${{ !github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' }}
     uses: LedgerHQ/ledger-live/.github/workflows/test-boundaries-reusable.yml@develop
     secrets:
       AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -414,6 +416,22 @@ jobs:
       AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
       NX_KEY: ${{ secrets.NX_KEY }}
 
+  test-nx-generators:
+    name: "Nx Generators Test"
+    permissions:
+      id-token: write
+      contents: read
+    needs: determine-affected
+    if: ${{!github.event.pull_request.head.repo.fork && github.event.pull_request.base.ref == 'develop' && contains(needs.determine-affected.outputs.paths, 'tools/nx-plugins/generators')}}
+    uses: ./.github/workflows/test-nx-generators-reusable.yml
+    secrets:
+      AWS_ACCOUNT_ID_PROD: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+      AWS_CACHE_OIDC_ROLE_ARN_BRANCH: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_BRANCH }}
+      AWS_CACHE_OIDC_ROLE_ARN_DEVELOP: ${{ secrets.AWS_CACHE_OIDC_ROLE_ARN_DEVELOP }}
+      AWS_CACHE_REGION: ${{ secrets.AWS_CACHE_REGION }}
+      AWS_CACHE_ROLE_NAME: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+      NX_KEY: ${{ secrets.NX_KEY }}
+
   notify-e2e-required:
     name: "Notify E2E Required"
     permissions:
@@ -469,6 +487,7 @@ jobs:
       - test-domain
       - test-devtools
       - test-support
+      - enforce-boundaries
       - test-design-system
       - build-web-tools
       - test-cli
@@ -477,6 +496,7 @@ jobs:
       - test-mobile-e2e-lint
       - test-desktop-e2e-lint
       - test-e2e-tooling
+      - test-nx-generators
       - determine-affected
       - determine-renovate-dirty
     runs-on: ubuntu-22.04

@@ -25,6 +25,7 @@ type AmountFooterProps = Readonly<{
   reviewDisabled: boolean;
   reviewLoading: boolean;
   sponsoredFeeError: string | null;
+  sponsoredRentNotice: string | null;
   onReview: () => void;
   onGetFunds?: () => void;
 }>;
@@ -42,6 +43,7 @@ export function AmountFooter({
   reviewDisabled,
   reviewLoading,
   sponsoredFeeError,
+  sponsoredRentNotice,
   onReview,
   onGetFunds,
 }: AmountFooterProps) {
@@ -65,6 +67,14 @@ export function AmountFooter({
           />
         </div>
       )}
+      {sponsoredRentNotice && (
+        <output className="block pb-8">
+          <AmountMessageText
+            message={{ type: "info", text: sponsoredRentNotice }}
+            testId="send-sponsored-rent-arriving"
+          />
+        </output>
+      )}
       <div className="border-t border-muted-subtle" />
       <NetworkFeesMenu
         display={{
@@ -85,6 +95,7 @@ export function AmountFooter({
         onClick={reviewShowIcon ? onReview : onGetFunds}
         disabled={reviewDisabled}
         loading={reviewLoading}
+        aria-busy={reviewLoading}
         icon={reviewShowIcon ? LedgerLogo : undefined}
         data-testid={ctaTestId}
         className="rounded-full"

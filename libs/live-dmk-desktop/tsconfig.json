@@ -1,20 +1,9 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": ["@support/tsconfig/lib-react", "@support/tsconfig/lib/esm"],
   "compilerOptions": {
-    "jsx": "react",
-    "declaration": true,
-    "declarationMap": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "lib": ["es2020", "dom"],
-    "outDir": "lib-es",
-    "rootDir": "src",
-    "paths": { "*": ["./*"] },
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "paths": {
+      "*": ["./*"]
+    },
     "types": ["node", "jest", "@testing-library/jest-dom"]
-  },
-  "include": ["src"]
+  }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { render, screen } from "@tests/test-renderer";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE as portfolioBalanceDisplayInitialState } from "~/reducers/portfolioBalanceDisplay";
 import ChartSection from "..";
@@ -14,23 +14,20 @@ const btcAccount = genAccount("btc-1", {
 
 const withChartState =
   (balanceAvailable = true) =>
-  (state: State): State =>
-    withFlagOverrides({
-      lwmWallet40: { params: { pnl: true } },
-    })({
-      ...state,
-      accounts: { ...state.accounts, active: [btcAccount] },
-      portfolioBalanceDisplay: {
-        ...portfolioBalanceDisplayInitialState,
-        displayedBalance: 5000,
-        isBalanceAvailable: balanceAvailable,
-        isLoading: false,
-      },
-      settings: {
-        ...state.settings,
-        selectedTimeRange: "week",
-      },
-    });
+  (state: State): State => ({
+    ...state,
+    accounts: { ...state.accounts, active: [btcAccount] },
+    portfolioBalanceDisplay: {
+      ...portfolioBalanceDisplayInitialState,
+      displayedBalance: 5000,
+      isBalanceAvailable: balanceAvailable,
+      isLoading: false,
+    },
+    settings: {
+      ...state.settings,
+      selectedTimeRange: "week",
+    },
+  });
 
 describe("ChartSection", () => {
   it("renders the balance header and chart when balance is available", () => {

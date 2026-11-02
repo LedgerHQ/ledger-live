@@ -1,6 +1,8 @@
 import React, { memo } from "react";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { useFeature } from "@features/platform-feature-flags";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
+import { OsUpdateBanner } from "LLM/features/OsUpdate/components/OsUpdateBanner";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import type { ViewProps, DrawerProps } from "./ViewProps";
 import { getDeviceSymbol } from "LLM/utils/getDeviceIcon";
@@ -96,6 +98,14 @@ const UpdateBannerView = ({
   );
 };
 
-export default memo((props: FirmwareUpdateBannerProps) => (
+const FirmwareUpdateBanner = memo((props: FirmwareUpdateBannerProps) => (
   <UpdateBannerView {...useUpdateBannerViewModel(props)} />
 ));
+
+function UpdateBanner(props: Readonly<FirmwareUpdateBannerProps>) {
+  const isOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
+  if (isOsUpdatesEnabled) return <OsUpdateBanner />;
+  return <FirmwareUpdateBanner {...props} />;
+}
+
+export default memo(UpdateBanner);

@@ -6,7 +6,7 @@ import StepFooter from "./StepFooter";
 import { useTranslation } from "react-i18next";
 import StepContainer from "./StepContainer";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
@@ -59,7 +59,7 @@ const StepAdjustImage: React.FC<Props> = props => {
         />
       }
     >
-      <TrackPage
+      <TrackScreen
         category={analyticsPageNames.preview}
         type="drawer"
         flow={analyticsFlowName}

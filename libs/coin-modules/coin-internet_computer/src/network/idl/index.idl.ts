@@ -5,7 +5,7 @@
 // upstream file ships as ESM and would break this package's CommonJS build; excluded from oxfmt via
 // .prettierignore to preserve provenance. Only the type annotations below are added. Do not edit by
 // hand; refresh from the published package when the interface changes.
-import type { IDL } from "@dfinity/candid";
+import type { IDL } from "@icp-sdk/core/candid";
 
 export const idlFactory: IDL.InterfaceFactory = ({ IDL }) => {
   const InitArg = IDL.Record({ 'ledger_id' : IDL.Principal });

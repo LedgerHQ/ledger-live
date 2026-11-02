@@ -43,7 +43,7 @@ export const fundedStateProps = {
 
 export const depositActionTiles: ActionTilesProps = {
   page: "Pay",
-  tiles: [{ id: "deposit", onPress: () => undefined, appearance: "base" }],
+  tiles: [{ id: "deposit", onOpenFlow: () => undefined, appearance: "base" }],
 };
 
 export const BALANCE_RESOURCES = {

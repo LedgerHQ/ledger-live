@@ -1,4 +1,4 @@
-import { renderHook, withFlagOverrides } from "tests/testSetup";
+import { renderHook } from "tests/testSetup";
 import { buildDistributionItem } from "tests/utils/distributionTestUtils";
 import { BTC_ACCOUNT } from "LLD/features/__mocks__/accounts.mock";
 import { useStake } from "LLD/hooks/useStake";
@@ -9,9 +9,6 @@ jest.mock("LLD/hooks/useStake", () => ({
 }));
 
 const mockedUseStake = jest.mocked(useStake);
-
-const flagsOn = withFlagOverrides({ lwdWallet40: { enabled: true, params: { pnl: true } } });
-const flagsOff = withFlagOverrides({ lwdWallet40: { enabled: false } });
 
 const distributionItem = buildDistributionItem({
   currency: BTC_ACCOUNT.currency,
@@ -31,17 +28,14 @@ describe("useMetricsRowSectionViewModel", () => {
       getCanStakeCurrency: jest.fn().mockReturnValue(false),
     } as unknown as ReturnType<typeof useStake>);
 
-    const { result } = renderHook(() => useMetricsRowSectionViewModel({ distributionItem }), {
-      initialState: flagsOn,
-    });
+    const { result } = renderHook(() => useMetricsRowSectionViewModel({ distributionItem }));
 
     expect(result.current).toEqual({ shouldRenderSection: true });
   });
 
-  it("shows the section when staking is visible but PnL is off", () => {
-    const { result } = renderHook(() => useMetricsRowSectionViewModel({ distributionItem }), {
-      initialState: flagsOff,
-    });
+  it("shows the section when staking is visible and the asset has no accounts", () => {
+    const empty = buildDistributionItem({ currency: BTC_ACCOUNT.currency, accounts: [] });
+    const { result } = renderHook(() => useMetricsRowSectionViewModel({ distributionItem: empty }));
 
     expect(result.current).toEqual({ shouldRenderSection: true });
   });
@@ -52,21 +46,8 @@ describe("useMetricsRowSectionViewModel", () => {
     } as unknown as ReturnType<typeof useStake>);
 
     const empty = buildDistributionItem({ currency: BTC_ACCOUNT.currency, accounts: [] });
-    const { result } = renderHook(
-      () => useMetricsRowSectionViewModel({ distributionItem: empty }),
-      { initialState: flagsOff },
-    );
+    const { result } = renderHook(() => useMetricsRowSectionViewModel({ distributionItem: empty }));
 
     expect(result.current).toEqual({ shouldRenderSection: false });
-  });
-
-  it("shows the section for a stakeable asset without accounts when PnL is off", () => {
-    const empty = buildDistributionItem({ currency: BTC_ACCOUNT.currency, accounts: [] });
-    const { result } = renderHook(
-      () => useMetricsRowSectionViewModel({ distributionItem: empty }),
-      { initialState: flagsOff },
-    );
-
-    expect(result.current).toEqual({ shouldRenderSection: true });
   });
 });

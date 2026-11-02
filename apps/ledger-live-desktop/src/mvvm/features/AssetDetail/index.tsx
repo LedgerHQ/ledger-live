@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { ASSET_DETAIL_TRACKING_PAGE_NAME } from "LLD/features/AssetDetail/constants";
 import { AssetDetailView } from "./AssetDetailView";
 import { ScrubbedPriceProvider } from "./context/ScrubbedPriceContext";
@@ -22,7 +22,7 @@ const AssetDetail = () => {
 
   return (
     <>
-      <TrackPage category={ASSET_DETAIL_TRACKING_PAGE_NAME} currency={currencyId} />
+      <TrackScreen category={ASSET_DETAIL_TRACKING_PAGE_NAME} currency={currencyId} />
       <ScrubbedPriceProvider>
         <AssetDetailView viewModel={viewModel} />
       </ScrubbedPriceProvider>

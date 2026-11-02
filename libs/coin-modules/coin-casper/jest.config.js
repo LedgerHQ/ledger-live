@@ -1,34 +1,6 @@
-module.exports = {
-  passWithNoTests: true,
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/*.test.ts",
-    "!src/**/*.spec.ts",
-    "!src/test/**/*.ts",
-    "!src/__tests__/**/*.ts",
-  ],
-  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
-  testEnvironment: "node",
-  transform: {
-    "^.+\\.(ts|tsx)$": [
-      "@swc/jest",
-      {
-        jsc: {
-          target: "esnext",
-        },
-      },
-    ],
-  },
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts", "__tests__/"],
-  reporters: [
-    "default",
-    ...(process.env.CI ? ["github-actions"] : []),
-    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
-    "@ledgerhq/test-quarantine/jest",
-  ],
-  setupFilesAfterEnv: [
-    "@ledgerhq/wallet-framework-test-setup",
-    "@ledgerhq/disable-network-setup",
-    "@ledgerhq/test-quarantine/jest-retries",
-  ],
-};
+const { createLibsCoinJestConfig } = require("@support/jest/libs-coin");
+
+module.exports = createLibsCoinJestConfig({
+  rootDir: __dirname,
+  testPathIgnorePatterns: ["__tests__/"],
+});

@@ -6,7 +6,7 @@
 // dropped) and the `IDL.InterfaceFactory` type annotation + this header are added. Do not edit by
 // hand; refresh from the published package when the interface changes. Excluded from oxfmt via
 // .prettierignore to preserve provenance.
-import type { IDL } from "@dfinity/candid";
+import type { IDL } from "@icp-sdk/core/candid";
 /* Do not edit.  Compiled with ./scripts/compile-idl-js from packages/nns/candid/governance.did */
 export const idlFactory: IDL.InterfaceFactory = ({ IDL }) => {
   const ManageNeuronRequest = IDL.Rec();

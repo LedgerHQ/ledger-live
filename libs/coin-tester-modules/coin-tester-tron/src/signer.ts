@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { secp256k1 } from "@noble/curves/secp256k1.js";
 import { keccak_256 } from "@noble/hashes/sha3";
 import { sha256 } from "@noble/hashes/sha2";
@@ -38,4 +39,12 @@ export function buildTronTestSignerFromPrivateKeyHex(privateKeyHex: string): {
   };
 
   return { signer, address };
+}
+
+export type TronTestAccount = { privateKey: string; signer: TronSigner; address: string };
+
+/** A fresh account: the chain does not know it until something is sent to it. */
+export function generateTronTestAccount(): TronTestAccount {
+  const privateKey = randomBytes(32).toString("hex");
+  return { privateKey, ...buildTronTestSignerFromPrivateKeyHex(privateKey) };
 }

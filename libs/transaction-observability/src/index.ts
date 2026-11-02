@@ -53,6 +53,10 @@ export {
 
 export { toSegmentTrackEvent, type SegmentTrackEvent } from "./segmentEvent";
 
+export { toDatadogBroadcastLog, type DatadogBroadcastLog } from "./datadogEvent";
+
+export { MAX_ERROR_MESSAGE_LENGTH, sanitizeErrorMessage } from "./errorMessage";
+
 export {
   abandonPendingDappTxLifecycle,
   clearPendingDappTxLifecycle,

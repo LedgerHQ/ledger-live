@@ -1,3 +1,4 @@
+import { exportIdentitiesForPersistence } from "@domain/entity-client-identity";
 import { initIdentities } from "./identities";
 import { getKey } from "~/renderer/storage";
 import type { ReduxStore } from "~/state-manager/configureStore";
@@ -42,6 +43,27 @@ describe("initIdentities", () => {
     expect(store.getState().identities.userId.toString()).toBe("[UserId:REDACTED]");
     expect(store.getState().identities.userId.exportUserIdForPersistence()).toBe("user-123");
     expect(store.getState().identities.datadogId?.exportDatadogIdForPersistence()).toBe("dd-456");
+  });
+
+  it("keeps the persisted portfolio id across a restart", async () => {
+    const persisted = {
+      userId: "user-123",
+      datadogId: "dd-456",
+      portfolioId: "portfolio-789",
+      deviceIds: [],
+      pushDevicesSyncState: "synced" as const,
+      pushDevicesServiceUrl: null,
+    };
+    mockGetKey.mockImplementation(async (ns, keyPath) =>
+      ns === "app" && keyPath === "identities" ? persisted : undefined,
+    );
+
+    const store = createMockStore();
+    await initIdentities(store);
+
+    expect(exportIdentitiesForPersistence(store.getState().identities).portfolioId).toBe(
+      "portfolio-789",
+    );
   });
 
   it("should dispatch importFromLegacy and return false when legacy app/user has id", async () => {

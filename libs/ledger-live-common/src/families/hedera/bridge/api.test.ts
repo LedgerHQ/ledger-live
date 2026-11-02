@@ -138,8 +138,6 @@ describe("hedera bridge", () => {
         type: "hts",
         assetReference: "0.0.1234567",
         assetOwner: "0.0.7654321",
-        name: "Test Token",
-        unit: { name: "TEST", code: "TEST", magnitude: 8 },
       });
     });
 
@@ -148,8 +146,6 @@ describe("hedera bridge", () => {
         type: "erc20",
         assetReference: "0x915fe7c00730c08708581e30e27d9c0605be40bd",
         assetOwner: "0.0.7654321",
-        name: "Test ERC20 Token",
-        unit: { name: "TEST2", code: "TEST2", magnitude: 8 },
       });
     });
   });

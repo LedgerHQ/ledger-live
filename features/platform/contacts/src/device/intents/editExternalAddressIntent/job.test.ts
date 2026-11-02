@@ -409,6 +409,24 @@ describe("editExternalAddressIntentJob", () => {
       expect(job.scopeCancel(0)).toHaveBeenCalled();
     });
 
+    it("GIVEN the scope step loses the device THEN it reports the failure without a failed screen", () => {
+      // GIVEN
+      const job = startJob(COMBINED);
+      job.emitIdentifier(identifierCompletion([0x07, 0x08]));
+      const error = { _tag: "DeviceDisconnectedWhileSendingError" };
+
+      // WHEN
+      job.emitScope({ status: DeviceActionStatus.Error, error });
+
+      // THEN
+      expect(job.onResult).toHaveBeenCalledWith({
+        type: "failure",
+        error: expect.objectContaining({ message: error._tag }),
+      });
+      expect(job.states.find(state => state.type === "failed")).toBeUndefined();
+      expect(job.getError()).toBe(error);
+    });
+
     it("GIVEN the scope step's transport fails THEN it reports a terminal failure", () => {
       // GIVEN
       const job = startJob(COMBINED);

@@ -36,7 +36,7 @@ import {
   supportedFiatsSlice,
   setFiats,
   selectSupportedFiats,
-  OFAC_FIAT_TICKERS,
+  isSanctionedFiatTicker,
   type SupportedFiatsState,
 } from "@domain/entity-currency-fiat";
 ```
@@ -85,9 +85,9 @@ src/
   schema.ts       FiatCurrencySchema + inferred FiatCurrency type
   schema.mock.ts  mockFiatCurrency() factory
   constants.ts    FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS, FIAT_CURRENCIES_BY_TICKER
-                  OFAC_FIAT_TICKERS, FALLBACK_FIAT_TICKERS
+                  FALLBACK_FIAT_TICKERS
   types.ts        SupportedFiatsState
-  utils.ts        getFiatCurrencyByTicker
+  utils.ts        getFiatCurrencyByTicker, isSanctionedFiatTicker
   internals.ts    buildFallbackFiats (package-internal, not re-exported)
   slice.ts        supportedFiatsSlice, setFiats
   selector.ts     selectSupportedFiats

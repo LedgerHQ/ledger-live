@@ -10,7 +10,7 @@ import {
   getLastVotedDate,
   MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/families/tron/react";
-import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Box, Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";

@@ -7,7 +7,7 @@ import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { analyticsFlowName, analyticsPageNames } from "./shared";
 
 type Props = StepProps & {
@@ -62,7 +62,7 @@ const StepChooseContrast: React.FC<Props> = props => {
         />
       }
     >
-      <TrackPage
+      <TrackScreen
         category={analyticsPageNames.chooseContrast}
         type="drawer"
         flow={analyticsFlowName}

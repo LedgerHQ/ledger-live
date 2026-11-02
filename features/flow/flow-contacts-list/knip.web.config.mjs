@@ -4,5 +4,5 @@ export default createDualPlatformKnipConfig({
   packagePath: "features/flow/flow-contacts-list",
   platform: "web",
   entry: ["src/index.ts"],
-  additionalIgnoreDependencies: ["class-variance-authority", "clsx", "tailwind-merge"],
+  additionalIgnoreDependencies: ["class-variance-authority"],
 });

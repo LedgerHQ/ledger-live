@@ -10,7 +10,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Label from "~/renderer/components/Label";
 import Text from "~/renderer/components/Text";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
@@ -33,7 +33,7 @@ const StepAmount = ({
 
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Unstake Flow"
         name="Step Amount"
         flow="stake"

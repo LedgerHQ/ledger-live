@@ -13,6 +13,10 @@ inputs:
     description: "Android SDK packages to install"
     required: false
     default: "platform-tools"
+  install_sdk:
+    description: "Install the pinned cmdline-tools and android_packages. Only needed to run sdkmanager or avdmanager (creating an AVD); the runner image's SDK already has adb and build-tools"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -23,20 +27,37 @@ runs:
         distribution: ${{ inputs.jdk_distribution }}
         java-version: ${{ inputs.jdk_version }}
 
+    # Keeps only the pinned version, which setup-android installs to (and reuses from)
+    # cmdline-tools/<version>; runner images that bake it in skip the download.
     - name: Remove preinstalled cmdline-tools (force pinned install)
+      if: inputs.install_sdk == 'true'
       shell: bash
       run: |
         SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
+        PINNED="15859902"
         if [ -d "$SDK/cmdline-tools" ]; then
-          echo "Removing $SDK/cmdline-tools so pinned cmdline-tools are not skipped."
-          rm -rf "$SDK/cmdline-tools" 2>/dev/null || sudo rm -rf "$SDK/cmdline-tools"
+          for dir in "$SDK/cmdline-tools"/*; do
+            [ "$(basename "$dir")" = "$PINNED" ] && [ -x "$dir/bin/sdkmanager" ] && continue
+            echo "Removing $dir so pinned cmdline-tools are not skipped."
+            rm -rf "$dir" 2>/dev/null || sudo rm -rf "$dir"
+          done
         fi
 
     - name: Setup Android SDK
+      if: inputs.install_sdk == 'true'
       uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4.0.1
       with:
         packages: ${{ inputs.android_packages }}
         cmdline-tools-version: 15859902
+
+    # setup-android puts these on PATH, but jobs that skip it still call adb by name.
+    # The path comes from the runner's own SDK variables, not from workflow input.
+    - name: Put platform-tools on PATH
+      if: inputs.install_sdk != 'true'
+      shell: bash
+      run: | # zizmor: ignore[github-env]
+        SDK="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/.android/sdk}}"
+        echo "$SDK/platform-tools" >> "$GITHUB_PATH"
 
     - name: Enable Hardware Acceleration
       shell: bash

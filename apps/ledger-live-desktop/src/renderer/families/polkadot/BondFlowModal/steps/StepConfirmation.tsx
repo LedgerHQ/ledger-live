@@ -6,7 +6,7 @@ import styled from "styled-components";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -55,7 +55,7 @@ function StepConfirmation({ account, t, optimisticOperation, error, signed }: St
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Bond Flow"
           name="Step Confirmed"
           flow="stake"
@@ -76,7 +76,7 @@ function StepConfirmation({ account, t, optimisticOperation, error, signed }: St
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Bond Flow"
           name="Step Confirmation Error"
           flow="stake"

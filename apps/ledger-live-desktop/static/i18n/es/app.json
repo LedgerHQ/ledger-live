@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "Cambiar nombre",
       "viewAdvancedLogs" : "Ver registros avanzados",
+      "viewExplorer" : "Ver en el explorador",
       "removeAccount" : "Eliminar cuenta del Portfolio"
     },
     "changeName" : {
@@ -715,18 +716,6 @@
     "buttonTitle" : "Prueba"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Más información",
-      "cardTitle" : "Con tecnología de {{team}}",
-      "drawer" : {
-        "title" : "integración con {{family}}",
-        "subTitle" : "La integración con {{family}} ha sido realizada por el equipo {{team}}",
-        "description" : "Ledger Wallet es una plataforma de código abierto.",
-        "description2" : "Los desarrolladores de todo el mundo pueden integrar con Ledger Wallet",
-        "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger",
-        "description3Link" : "Esta integración la ha realizado <1><0>{{team}}</0></1> en colaboración con Ledger"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} está migrando a {{to}}. Visita este <0>enlace</0> para obtener más información o contacta con el equipo de soporte si necesitas ayuda.",
       "contactSupport" : "Ponte en contacto con Soporte"
@@ -3024,6 +3013,7 @@
       "paidIn" : "Pagado en {{currency}}",
       "nudge" : "Podrías ahorrar {{amount}} con {{provider}}",
       "saved" : "Ahorrado con {{provider}}",
+      "rentArriving" : "El alquiler de energía aún está en camino. La tarifa de red se actualizará cuando llegue.",
       "confirm" : "Confirmar",
       "disclaimer" : "Con {{provider}}, un proveedor externo de energía, las tarifas se pagan en {{feeCurrency}}.",
       "insufficientFunds" : "No tienes suficiente {{feeCurrency}} para cubrir la cantidad y la tarifa de alquiler de energía de {{provider}}."
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "Activos delegados",
       "undelegatingTooltip" : "Tras desdelegar un activo, hay que esperar un período de desvinculación de 10 días para retirarlo.",
       "undelegating" : "Retiros pendientes"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Con tecnología de MultiversX",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Integración con MultiversX",
-        "title" : "El token eGold (EGLD) de MultiversX ya está disponible en Ledger Wallet",
-        "description" : "Ahora puedes proteger de forma segura tus tokens eGold (EGLD) y administrarlos a través de Ledger Wallet.",
-        "description2" : "El token eGold (EGLD) de MultiversX es nativo de la red MultiversX y se utiliza para todo tipo de acciones, desde transacciones, puesta en participación y contratos inteligentes, hasta gobernanza y recompensas de validadores.",
-        "description3" : "Estamos trabajando activamente con el equipo de MultiversX para agregar más funcionalidades, como la puesta en participación, compatibilidad con ESDT (Elrond Standard Digital Token) nativo y más.",
-        "website" : "La cadena de bloques de Internet Scale"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Con tecnología de Figment",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Con tecnología de Figment",
-        "title" : "El token CELO ya está disponible en Ledger Wallet",
-        "description" : "Ahora puedes gestionar tus tokens CELO y protegerlos con Ledger Wallet.",
-        "description2" : "El token Celo es nativo de la cadena Celo y se utiliza para todas las transacciones, puesta en participación y muchas características futuras.",
-        "website" : "Con tecnología de Figment"
-      }
-    },
     "lockedBalance" : "Saldo bloqueado",
     "lockedTooltip" : "Los activos deben estar bloqueados y votados para grupos de validadores antes de obtener recompensas.",
     "nonvotingLockedBalance" : "Saldo bloqueado sin votación",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "Saldo pendiente",
       "pendingBalanceTooltip" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad.",
       "storageUsageBalance" : "Saldo mínimo",
-      "storageUsageBalanceTooltip" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa.",
-      "subHeader" : {
-        "cardTitle" : "Con tecnología de Figment",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Con tecnología de Figment",
-        "title" : "El token NEAR ya está disponible en Ledger Wallet",
-        "description" : "Ahora puedes gestionar tus tokens NEAR y protegerlos con Ledger Wallet.",
-        "description2" : "El token NEAR es nativo de la cadena NEAR y se utiliza para todas las transacciones, puesta en participación y muchas características futuras.",
-        "website" : "Con tecnología de Figment"
-      }
+      "storageUsageBalanceTooltip" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "Saldo pendiente",
       "pendingBalanceTooltip" : "Esta cantidad se ha quitado de participación y está pendiente de disponibilidad.",
       "storageUsageBalance" : "Saldo mínimo",
-      "storageUsageBalanceTooltip" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa.",
-      "subHeader" : {
-        "cardTitle" : "Con tecnología de Figment",
-        "moreInfo" : "Más información",
-        "drawerTitle" : "Con tecnología de Figment",
-        "title" : "El token SUI ya está disponible en Ledger Wallet",
-        "description" : "Ahora puedes gestionar tus tokens SUI y protegerlos con Ledger Wallet.",
-        "description2" : "El token SUI es nativo de la cadena SUI y se utiliza para transacciones, puesta en participación y muchas características futuras.",
-        "website" : "Con tecnología de Figment"
-      }
+      "storageUsageBalanceTooltip" : "Esta cantidad está reservada para almacenamiento y transacciones, y es el saldo mínimo que debe mantener tu cuenta para permanecer activa."
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
       "description" : "La app Concordium no pudo procesar la transacción. Si el problema persiste, ponte en contacto con el Soporte de Ledger."
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "Ingresa un número entero entre {{min}} y {{max}}."
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "Ingresa una dirección válida del contrato del pool bajo el siguiente formato: dirección.nombre-del-contrato."
+    },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "Solicitud no enviada",
       "description" : "Internet Computer no aceptó la solicitud, por lo que no se envió nada y nada ha cambiado. Inténtalo de nuevo. {{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "Transacción caducada",
+      "description" : "La transacción firmada no se envió a tiempo, por lo que no se envió nada y nada cambió. Vuelve a firmarla."
     },
     "ICPInvalidPercentage" : {
       "title" : "Porcentaje fuera de rango",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "Asegúrate de que Ledger Sync esté activado en una de tus aplicaciones.",
             "step2" : "Abre la aplicación Ledger Wallet que quieres sincronizar.",
-            "step3" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Ya lo he activado</0> > <0>Mostrar QR</0>.",
+            "step3" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Mostrar QR</0>",
             "step4" : "Escanea el código QR."
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "Asegúrate de que Ledger Sync esté activado en una de tus aplicaciones.",
             "step2" : "Abre la aplicación Ledger Wallet que quieres sincronizar.",
-            "step3" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Ya lo he activado</0> > <0>Usar tu Ledger</0>.",
+            "step3" : "Ve a <0>Ajustes</0> > <0>General</0> > <0>Ledger Sync</0> > <0>Usar tu Ledger</0>",
             "step4" : "Conecta tu Ledger."
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "Para aportar fondos a tus perpetuos, necesitas una cuenta de Hyperliquid. Agrega una para continuar.",
     "selectDepositCurrencyTitle" : "Selecciona el activo a depositar",
     "selectDepositCurrencyDescription" : "Cualquier activo compatible funciona. Se permutará automáticamente si es necesario.",
+    "selectWithdrawCurrencyTitle" : "Selecciona el activo de destino",
+    "selectWithdrawCurrencyDescription" : "Tus USDC se permutarán automáticamente por el activo que elijas.",
     "accountCount_one" : "Cuenta {{count}}",
     "accountCount_other" : "Cuentas de {{count}}",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "Tu wallet cripto segura"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Perpetuos",
+      "description" : "Invierte con apalancamiento"
+    },
+    "borrow" : {
+      "title" : "Préstamos",
+      "description" : "Pide un préstamo de monedas estables"
+    }
+  },
   "marketBanner" : {
     "title" : "Mercado",
     "genericError" : "La conexión ha fallado",
@@ -9736,6 +9707,7 @@
     "receive" : "Recibir",
     "buy" : "Comprar",
     "sell" : "Vender",
+    "swap" : "Permutar",
     "connect" : "Conectar",
     "buyALedger" : "Compra un Ledger"
   },
@@ -9941,7 +9913,8 @@
               "label" : "Altura de nacimiento",
               "tooltip" : "Valor predeterminado: La fecha de hoy. Cámbialo solo para las cuentas ya existentes con actividad privada (protegida) anterior.",
               "syncFromZero" : "Esta cuenta recibió ZEC blindado en el pasado, pero no puedo recuperar la altura de nacimiento. Escanea a partir del bloque 0 (este proceso puede llevar mucho tiempo).",
-              "error" : "Fecha no válida"
+              "error" : "Fecha no válida",
+              "height" : "Altura de bloque: {{height}}"
             },
             "ufvk" : {
               "text" : "Para comenzar, debes exportar tu Clave de Visualización Completa Unificada (UFVK). Debes confirmar esta acción con tu dispositivo Ledger."
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 Privada (Sapling)",
       "shieldedOrchardTx" : "🛡 Privada (Orchard)",
       "shieldedIronwoodTx" : "🛡 Private (Ironwood)",
-      "memo" : "Memo"
+      "memo" : "Memo",
+      "blockHeight" : "Altura de bloque",
+      "confirmations_one" : "{{count}} confirmación",
+      "confirmations_other" : "{{count}} confirmaciones"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Aún no hay actividad",
+      "description" : {
+        "receive" : "Comienza por añadir fondos desde Recibir.",
+        "receiveSwap" : "Comienza por añadir fondos desde Recibir o Permutar.",
+        "receiveBuy" : "Comienza por añadir fondos desde Recibir o Comprar.",
+        "receiveSwapBuy" : "Comienza por añadir fondos desde Recibir, Permutar o Comprar.",
+        "swap" : "Comienza por añadir fondos desde Permutar.",
+        "buy" : "Comienza por añadir fondos desde Comprar.",
+        "swapBuy" : "Comienza por añadir fondos desde Permutar o Comprar."
+      }
+    },
+    "assetPicker" : {
+      "title" : "Selecciona un activo"
+    },
+    "actions" : {
+      "receive" : "Recibir",
+      "send" : "Enviar",
+      "buy" : "Comprar",
+      "sell" : "Vender",
+      "earn" : "Earn"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "Más información",
+      "openPerps" : "Abrir Perpetuos"
+    },
+    "migration" : {
+      "title" : "{{from}} está migrando a {{to}}.",
+      "description" : "Obtén más información sobre la migración o ponte en contacto con el Soporte si necesitas ayuda."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}} dejará de ser compatible a partir del {{date}}",
+      "description" : "Seguirás protegido por tu dispositivo Ledger. Obtén más información en el Centro de Ayuda."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "El saldo total no incluye dividendos ni desdoblamientos de acciones."
+    },
+    "perps" : {
+      "title" : "Acerca de la cuenta de Hyperliquid",
+      "description" : "Esta cuenta está relacionada con las operaciones de Perpetuos. No se admiten acciones transaccionales para esta cuenta"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "Ajustes de cuenta"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "Elige una acción"
+  },
+  "perpsWithdraw" : {
+    "title" : "Retirar",
+    "review" : "Revisar",
+    "estimatedAmount" : "Retirar ~{{value}}",
+    "inputSubText" : "Permuta y retira a través de {{provider}}",
+    "selectCurrencyTitle" : "Retirar a {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Sin cuenta",
+    "formErrors" : {
+      "insufficientBalance" : "Saldo insuficiente",
+      "minimumAmount" : "El retiro mínimo es de {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Este importe es demasiado bajo para retirarlo.",
+      "lowLiquidity" : "Este activo no está disponible temporalmente. Inténtalo de nuevo más tarde o elige otro activo.",
+      "addressScreening" : "No es posible procesar este retiro a esta cuenta.",
+      "quoteUnavailable" : "No podemos obtener una cotización de {{provider}}. Prueba con otros activos o intenta más tarde.",
+      "currenciesUnavailable" : "No podemos cargar los activos de destino. Inténtalo de nuevo más tarde."
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Firma del depósito",

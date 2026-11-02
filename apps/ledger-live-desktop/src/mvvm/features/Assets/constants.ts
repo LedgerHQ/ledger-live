@@ -1,4 +1,5 @@
 export const MAX_ITEM_DISPLAYED = 6;
+export const CRYPTOS_SECTION_ID = "cryptos";
 export const EMPTY_STATE_STABLECOINS = 2;
 export const EMPTY_STATE_CRYPTOS = 4;
 export const MAX_STOCKS_TO_DISPLAY = 5;

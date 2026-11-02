@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@ledgerhq/lumen-design-core/cn";
 import { isContactsSearchNoResultsViewModel, type ContactsListViewProps } from "./types";
 import { useContactsListCopy } from "./copy/useContactsListCopy";
 import { ContactsLedgerSyncLoadingPane } from "./components/LedgerSyncLoadingPane/ContactsLedgerSyncLoadingPane.web";
@@ -30,7 +31,10 @@ export function ContactsListView(props: ContactsListViewProps): React.ReactNode 
     <div className="relative flex min-h-0 flex-1 flex-col pb-32" data-testid="contacts-page">
       <div
         aria-busy={isLedgerSyncChecking}
-        className={`flex min-h-0 flex-1 flex-col${isLedgerSyncChecking ? " pointer-events-none" : ""}`}
+        className={cn(
+          "flex min-h-0 flex-1 flex-col",
+          isLedgerSyncChecking && "pointer-events-none",
+        )}
         inert={isLedgerSyncChecking}
       >
         <ContactsPageLayout

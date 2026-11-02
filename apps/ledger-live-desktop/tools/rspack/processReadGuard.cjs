@@ -236,13 +236,14 @@ const ALLOWED = new Map(
     "msw/lib/browser/index.mjs :: stderr": { reason: "dev-only, behind ENABLE_MSW", max: 2 },
     "@open-draft/logger/lib/index.mjs :: stdout": { reason: "dev-only, pulled in by MSW", max: 1 },
     "@open-draft/logger/lib/index.mjs :: stderr": { reason: "dev-only, pulled in by MSW", max: 2 },
-    "@lottiefiles/dotlottie-react/dist/browser/index.js :: setImmediate": {
-      reason: "RAF fallback class, built only when `typeof requestAnimationFrame != function`",
-      max: 1,
+    "@lottiefiles/dotlottie-web/dist/index.js :: setImmediate": {
+      reason:
+        "RAF fallback class, built only when `typeof requestAnimationFrame != function`; second hit is the same class inside the inlined worker Blob string",
+      max: 2,
     },
-    "@lottiefiles/dotlottie-react/dist/browser/index.js :: clearImmediate": {
-      reason: "same RAF fallback class as above",
-      max: 1,
+    "@lottiefiles/dotlottie-web/dist/index.js :: clearImmediate": {
+      reason: "same RAF fallback class as above (main + inlined worker string)",
+      max: 2,
     },
     "scryptsy/lib/utils.js :: setImmediate": {
       reason:

@@ -10,7 +10,7 @@ import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
 import InstallSetOfApps from "./InstallSetOfApps";
 import LockedModal from "./LockedModal";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track, trackPage } from "@shared/analytics";
 import { analyticsFlowName } from "../SyncOnboarding/Manual/shared";
 
@@ -138,7 +138,7 @@ const OnboardingAppInstallStep = ({
   return (
     <>
       {isCancelModalOpen ? (
-        <TrackPage
+        <TrackScreen
           category={`App installation was cancelled on ${productName}`}
           flow={analyticsFlowName}
           type="modal"
@@ -153,7 +153,7 @@ const OnboardingAppInstallStep = ({
         onSkip={handleCancelModalSkipPressed}
       />
       <LockedModal isOpen={isLockedModalOpen} productName={productName} onClose={handleRetry} />
-      <TrackPage
+      <TrackScreen
         category={
           deviceToRestore
             ? `Set up ${productName}: Step 5 Restore Apps`

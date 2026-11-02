@@ -9,7 +9,7 @@ import { getEnv } from "@shared/env";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getDefaultAccountName } from "@domain/entity-account-name";
-import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getAddressExplorer } from "@domain/entity-currency-crypto";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -31,7 +31,7 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "~/renderer/modals/Receive/Body";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 
 const Separator = styled.div`
   border-top: 1px solid ${p => p.theme.colors.neutral.c30};
@@ -215,7 +215,9 @@ const StepReceiveFunds = ({
             <Trans i18nKey="families.concordium.receive.messageIfSkipped" />{" "}
             <LinkWithExternalIcon
               style={{ display: "inline-flex" }}
-              onClick={() => explorerUrl && openURL(explorerUrl)}
+              onClick={() =>
+                explorerUrl && openURL(explorerUrl, "OpenURL", {}, { sensitive: true })
+              }
               label={<Trans i18nKey="families.concordium.receive.verifyLink" />}
             />
           </Alert>
@@ -248,7 +250,7 @@ const StepReceiveFunds = ({
 
   return (
     <>
-      <TrackPage category={category} name="Step 3" currencyName={currencyName} />
+      <TrackScreen category={category} name="Step 3" currencyName={currencyName} />
 
       <Box px={2}>{renderContent()}</Box>
 

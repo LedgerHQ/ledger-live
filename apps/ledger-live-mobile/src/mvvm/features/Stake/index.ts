@@ -44,5 +44,6 @@ export function useOpenStakeDrawer({ sourceScreenName, currencies }: Props) {
 
   return {
     handleOpenStakeDrawer,
+    openStakeForAccount: goToAccountStakeFlow,
   };
 }

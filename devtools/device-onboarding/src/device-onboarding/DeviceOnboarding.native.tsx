@@ -9,7 +9,19 @@ import {
   Text,
   useTheme,
 } from "@ledgerhq/lumen-ui-rnative";
-import { ChevronDown, ChevronRight } from "@ledgerhq/lumen-ui-rnative/symbols";
+import {
+  Bluetooth,
+  CheckmarkCircle,
+  ChevronDown,
+  ChevronRight,
+  Circles,
+  Download,
+  ExitLogout,
+  Lock,
+  Nano,
+  ShieldCheck,
+  Warning,
+} from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { DeviceOnboardingToolProps } from "../types";
 import {
   emptyLogCopy,
@@ -25,8 +37,35 @@ import {
   type DisplayRow,
   type EventRow,
   type NextStateGroup,
+  type StateKind,
   type StateStep,
 } from "./useDeviceOnboardingViewModel";
+
+// IconProps is not exported from @ledgerhq/lumen-ui-rnative, so the type comes from a symbol.
+type IconComponent = typeof ShieldCheck;
+
+interface StepPresentation {
+  readonly Icon: IconComponent;
+  readonly backgroundColor:
+    | "mutedTransparent"
+    | "activeSubtle"
+    | "warningTransparent"
+    | "errorTransparent"
+    | "successTransparent";
+  readonly color: "muted" | "active" | "warning" | "error" | "success";
+}
+
+const stepPresentation: Record<StateKind, StepPresentation> = {
+  progress: { Icon: Circles, backgroundColor: "mutedTransparent", color: "muted" },
+  genuine: { Icon: ShieldCheck, backgroundColor: "activeSubtle", color: "active" },
+  firmware: { Icon: Download, backgroundColor: "activeSubtle", color: "active" },
+  setup: { Icon: Nano, backgroundColor: "activeSubtle", color: "active" },
+  locked: { Icon: Lock, backgroundColor: "warningTransparent", color: "warning" },
+  session: { Icon: Bluetooth, backgroundColor: "warningTransparent", color: "warning" },
+  failed: { Icon: Warning, backgroundColor: "errorTransparent", color: "error" },
+  succeeded: { Icon: CheckmarkCircle, backgroundColor: "successTransparent", color: "success" },
+  quit: { Icon: ExitLogout, backgroundColor: "mutedTransparent", color: "muted" },
+};
 
 const HEADER_LX = {
   flexDirection: "column",
@@ -48,6 +87,14 @@ const BUTTONS_LX = {
 const ROW_LX = { flexDirection: "row", alignItems: "baseline", gap: "s8" } as const;
 const HEADER_ACTIONS_LX = { flexDirection: "row", gap: "s4" } as const;
 const LOG_LX = { flexDirection: "column", alignItems: "flex-start", gap: "s4" } as const;
+const CHIP_LX = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: "s8",
+  paddingHorizontal: "s8",
+  paddingVertical: "s4",
+  borderRadius: "sm",
+} as const;
 
 function useToolStyles() {
   const { theme } = useTheme();
@@ -321,12 +368,20 @@ function PossibleEvents({ groups }: Readonly<{ groups: readonly NextStateGroup[]
 }
 
 function StateChip({ step }: Readonly<{ step: StateStep }>) {
-  const { mono, mutedMono } = useToolStyles();
+  const { Icon, backgroundColor, color } = stepPresentation[step.kind];
+  const { theme } = useToolStyles();
+  const tone = theme.colors.text[color];
 
   return (
-    <Text typography="body2" style={step.isCurrent ? { ...mono, fontWeight: "600" } : mutedMono}>
-      {step.label}
-    </Text>
+    <Box
+      lx={{ ...CHIP_LX, backgroundColor }}
+      style={{ borderWidth: 1, borderColor: step.isCurrent ? tone : "transparent" }}
+    >
+      <Icon size={16} color={color} />
+      <Text typography="body2" style={{ color: tone, fontFamily: "monospace" }}>
+        {step.label}
+      </Text>
+    </Box>
   );
 }
 

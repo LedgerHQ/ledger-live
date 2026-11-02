@@ -1,7 +1,9 @@
 import type { CryptoCurrency } from "@ledgerhq/ledger-wallet-framework/types";
-import { generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
+import { signTransaction } from "../common-logic/transaction/sign";
+import { createMockSigner, generateMockKeyPair, verifySignature } from "../test/cantonTestUtils";
 import { createMockCantonCurrency, setupMockCoinConfig } from "../test/fixtures";
 import type { OnboardingPrepareResponse, Party } from "../types/gateway";
+import type { CantonSignature } from "../types/signer";
 import {
   getBalance,
   getLedgerEnd,
@@ -108,6 +110,22 @@ async function getPartyByPubKeyWhenVisible(
   throw lastError ?? new Error("getPartyByPubKey timed out waiting for party to be visible");
 }
 
+async function signOnboarding(
+  keyPair: ReturnType<typeof generateMockKeyPair>,
+  pr: OnboardingPrepareResponse,
+): Promise<CantonSignature> {
+  const cantonSignature = await signTransaction(createMockSigner(keyPair), "", pr);
+  const verification = verifySignature(
+    keyPair.publicKeyHex,
+    cantonSignature.signature,
+    pr.transactions.combined_hash,
+  );
+  if (!verification.isValid) {
+    throw new Error(verification.error ?? "invalid onboarding signature");
+  }
+  return cantonSignature;
+}
+
 describe("gateway (devnet)", () => {
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -120,18 +138,13 @@ describe("gateway (devnet)", () => {
     setupMockCoinConfig();
     const keyPair = generateMockKeyPair();
     const pr = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
-    const signature = keyPair.sign(pr.transactions.combined_hash);
-    const verification = verifySignature(
+    const cantonSignature = await signOnboarding(keyPair, pr);
+    const response = await submitOnboarding(
+      mockCurrency,
       keyPair.publicKeyHex,
-      signature,
-      pr.transactions.combined_hash,
+      pr,
+      cantonSignature,
     );
-    if (!verification.isValid) {
-      throw new Error(verification.error ?? "invalid signature in onboarding beforeAll");
-    }
-    const response = await submitOnboarding(mockCurrency, keyPair.publicKeyHex, pr, {
-      signature,
-    });
     prepareResponse = pr;
     onboardedAccount = { keyPair, partyId: response.party.party_id };
   }, 120_000);
@@ -177,21 +190,14 @@ describe("gateway (devnet)", () => {
       async () => {
         // GIVEN
         const { keyPair } = getOnboardedAccount();
-        const signature = keyPair.sign(prepareResponse!.transactions.combined_hash);
-
-        const verification = verifySignature(
-          keyPair.publicKeyHex,
-          signature,
-          prepareResponse!.transactions.combined_hash,
-        );
-        expect(verification.isValid).toBe(true);
+        const cantonSignature = await signOnboarding(keyPair, prepareResponse!);
 
         // WHEN
         const response = await submitOnboarding(
           mockCurrency,
           keyPair.publicKeyHex,
           prepareResponse!,
-          { signature },
+          cantonSignature,
         );
 
         // THEN
@@ -206,20 +212,14 @@ describe("gateway (devnet)", () => {
     it("should handle PARTY_ALREADY_EXISTS error and return party_id and public_key", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const hashToSign = prepareResponse?.transactions?.combined_hash || "";
-      const signature = keyPair.sign(hashToSign);
-
-      const verification = verifySignature(keyPair.publicKeyHex, signature, hashToSign);
-      expect(verification.isValid).toBe(true);
+      const cantonSignature = await signOnboarding(keyPair, prepareResponse!);
 
       // WHEN
       const response = await submitOnboarding(
         mockCurrency,
         keyPair.publicKeyHex,
         prepareResponse!,
-        {
-          signature,
-        },
+        cantonSignature,
       );
 
       // THEN
@@ -228,6 +228,18 @@ describe("gateway (devnet)", () => {
       expect(response.party).toHaveProperty("public_key");
       expect(response.party.party_id).toBe(partyId);
       expect(response.party.public_key).toBe(keyPair.publicKeyHex);
+    }, 30000);
+
+    it("should reject onboarding without the device challenge signature", async () => {
+      // GIVEN
+      const keyPair = generateMockKeyPair();
+      const pr = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
+      const { signature } = await signOnboarding(keyPair, pr);
+
+      // WHEN / THEN
+      await expect(
+        submitOnboarding(mockCurrency, keyPair.publicKeyHex, pr, { signature }),
+      ).rejects.toThrow(/application signature is missing/);
     }, 30000);
   });
 

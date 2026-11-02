@@ -5,7 +5,9 @@
 
 RTK slice and WalletSync module for user-defined account names.
 
-State shape: `accountNames: Map<AnyAccountId, string>` (accountId → name; keys are branded ids from `@domain/entity-account`, not plain strings). Exports `accountNamesSlice`, actions (`setAccountName`, `bulkSetAccountNames`, `setNamesForAccounts`, `initFromUserData`), selectors (`accountNameSelector`, `accountNameWithDefaultSelector`) and `accountNamesSyncModule` — a `CloudSyncDataManager` that syncs account names across devices via `@shared/cloud-sync-module`.
+State shape: `accountNames: Map<AnyAccountId, string>` (accountId → name; keys are branded ids from `@domain/entity-account`, not plain strings). Exports `accountNamesSlice`, actions (`setAccountName`, `bulkSetAccountNames`, `setNamesForAccounts`, `initFromUserData`), selectors (`accountNameSelector`, `accountNameWithDefaultSelector`, `selectAccountNameByUUID`) and `accountNamesSyncModule` — a `CloudSyncDataManager` that syncs account names across devices via `@shared/cloud-sync-module`.
+
+Names stay keyed by legacy id so the Ledger Sync payload is unchanged. `selectAccountNameByUUID` reads one by `AccountUUID` through the `legacyId` the accounts slice (`@domain/entity-account`) holds next to it; an account that only exists remotely has no name yet.
 
 ## Related documentation
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { getEnv } from "@shared/env";
 import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../SettingsSection";
 import RowItem from "../../RowItem";
@@ -42,7 +42,7 @@ const SectionHelp = () => {
   }, [clickCounter, devMode, pushToast, t, dispatch]);
   return (
     <>
-      <TrackPage category="Settings" name="About" />
+      <TrackScreen category="Settings" name="About" />
       <Body>
         <Row
           dataTestId="version-row"

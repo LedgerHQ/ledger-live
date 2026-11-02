@@ -101,7 +101,10 @@ const OperationDetailsExtra = ({
 
   const memo = (operation.extra as { memo?: string } | undefined)?.memo;
 
-  if (!i18nKey && !memo) return null;
+  const { blockHeight } = operation;
+  const hasBlockHeight = typeof blockHeight === "number";
+
+  if (!i18nKey && !memo && !hasBlockHeight) return null;
 
   return (
     <>
@@ -113,6 +116,14 @@ const OperationDetailsExtra = ({
           <OpDetailsData>
             <Trans i18nKey={i18nKey} />
           </OpDetailsData>
+        </OpDetailsSection>
+      )}
+      {hasBlockHeight && (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey={"zcash.operationDetails.blockHeight"} />
+          </OpDetailsTitle>
+          <OpDetailsData selectable>{blockHeight}</OpDetailsData>
         </OpDetailsSection>
       )}
       {memo && (
@@ -162,6 +173,12 @@ export default {
     OUT: AddressCell,
   },
   OperationDetailsExtra,
+  getConfirmationsI18nKey: ({
+    currencyId,
+  }: {
+    currencyId: string;
+  }): "zcash.operationDetails.confirmations" | null =>
+    isZcashCurrencyId(currencyId) ? "zcash.operationDetails.confirmations" : null,
   splitAddress: {
     SHIELDED_TX_SAPLING_IN: SplitAddressComponent,
     SHIELDED_TX_SAPLING_OUT: SplitAddressComponent,

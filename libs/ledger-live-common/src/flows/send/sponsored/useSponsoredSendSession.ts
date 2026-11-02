@@ -12,8 +12,12 @@ import type {
 import type { GenericTransaction } from "../../../bridge/generic-coin-framework/types";
 import type { Transaction } from "../../../generated/types";
 import { findFeeTokenAccount } from "./feeAsset";
+import { markPendingRentDelivered, recordPendingRent } from "./pendingRents";
+import type { PendingRent } from "./pendingRents";
 import { buildRentReservationOperation } from "./rentReservation";
+import { SPONSORED_PHASE } from "./types";
 import type { SponsoredState } from "./types";
+import { usePendingRentDelivery } from "./usePendingRentDelivery";
 import { useSponsoredSendOrchestration } from "./useSponsoredSendOrchestration";
 import type { SponsoredSendActions } from "./useSponsoredSendOrchestration";
 
@@ -64,6 +68,10 @@ export type SponsoredSendSession = Readonly<{
   intentFailed: boolean;
   state: SponsoredState;
   actions: SponsoredSendActions;
+  /** A rent paid outside the active flow hasn't landed: the sponsored option stays off, or it would pay twice. */
+  rentArriving: boolean;
+  /** When that rent's energy landed, in ms since epoch. */
+  rentDeliveredAt: number | null;
 }>;
 
 /** The app-agnostic half of a sponsored send; fee selection and display stay with each app. */
@@ -148,42 +156,141 @@ export function useSponsoredSendSession({
     reservePendingOperationRef.current = reservePendingOperation;
   }, [reservePendingOperation]);
 
-  // Fired from the in-flight submit, even after a reset/unmount; dedupe by paymentTxId so a payment locks once.
+  // Fired from the in-flight submit, even after a reset/unmount; dedupe by paymentTxId so a payment
+  // is locked and remembered once.
   const reservedTxIdsRef = useRef<Set<string>>(new Set());
+  const recordedTxIdsRef = useRef<Set<string>>(new Set());
+  // Kept past the flow, so a reopened Send can't rent again before this one lands.
+  const rememberRent = useCallback(
+    (rent: Omit<PendingRent, "expiresAt">, paymentExpiresAt: number) => {
+      if (recordedTxIdsRef.current.has(rent.paymentTxId)) return;
+      recordedTxIdsRef.current.add(rent.paymentTxId);
+      recordPendingRent(rent, paymentExpiresAt);
+    },
+    [],
+  );
+
   const onRentPaymentBroadcast = useCallback(
     ({
       paymentTxId,
       payerAddress,
       rentPayment,
+      orderId,
+      receiverAddress,
+      energyNeeded,
+      paymentExpiresAt,
+      reportedFailed,
     }: {
       paymentTxId?: string;
       payerAddress: string;
       rentPayment: RentPayment;
+      orderId: string;
+      receiverAddress: string | null;
+      energyNeeded: bigint | null;
+      paymentExpiresAt: number;
+      reportedFailed?: boolean;
     }) => {
-      if (!mainAccount || !seam || !paymentTxId || reservedTxIdsRef.current.has(paymentTxId))
-        return;
-      const tokenAccount = findFeeTokenAccount(mainAccount, rentPayment.asset);
-      if (!tokenAccount) return;
-      const op = buildRentReservationOperation({
-        tokenAccountId: tokenAccount.id,
-        payerAddress,
-        paymentTxId,
-        rentAmount: rentPayment.amount,
-        reservationSequence: seam.reservationDedupKey(paymentTxId),
-      });
-      if (!op) return;
-      reservedTxIdsRef.current.add(paymentTxId);
-      // Filed on the parent: addPendingOperation routes the op to the sub-account it names.
-      reservePendingOperationRef.current(mainAccount.id, op);
+      if (!mainAccount || !paymentTxId) return;
+
+      // First, so a throw in the op path can't skip it.
+      if (receiverAddress && energyNeeded != null) {
+        rememberRent(
+          {
+            mainAccountId: mainAccount.id,
+            orderId,
+            payerAddress,
+            paymentTxId,
+            receiverAddress,
+            energyNeeded,
+          },
+          paymentExpiresAt,
+        );
+      }
+
+      // Reported failed, so the rent most likely never left the balance: held above, not locked.
+      if (seam && !reportedFailed && !reservedTxIdsRef.current.has(paymentTxId)) {
+        const tokenAccount = findFeeTokenAccount(mainAccount, rentPayment.asset);
+        const op =
+          tokenAccount &&
+          buildRentReservationOperation({
+            tokenAccountId: tokenAccount.id,
+            payerAddress,
+            paymentTxId,
+            rentAmount: rentPayment.amount,
+            reservationSequence: seam.reservationDedupKey(paymentTxId),
+          });
+        if (op) {
+          reservedTxIdsRef.current.add(paymentTxId);
+          // Filed on the parent: addPendingOperation routes the op to the sub-account it names.
+          reservePendingOperationRef.current(mainAccount.id, op);
+        }
+      }
     },
-    [mainAccount, seam],
+    [mainAccount, seam, rememberRent],
   );
 
+  const mainAccountId = mainAccount?.id ?? null;
   const { state, actions } = useSponsoredSendOrchestration({
     network,
     kind: SEAM_KIND,
     intent,
+    mainAccountId,
     onRentPaymentBroadcast,
+  });
+
+  // The flow saw its own energy land, so the record is spent.
+  useEffect(() => {
+    if (mainAccountId && state.phase === SPONSORED_PHASE.TRANSFER && state.paymentTxId) {
+      markPendingRentDelivered(mainAccountId, state.paymentTxId);
+    }
+  }, [mainAccountId, state.phase, state.paymentTxId]);
+
+  // A failed payment that may still land (hence the retry lock). The broadcast callback normally
+  // remembered it already, for DELIVERY_FAILURE too: this is a deduped backstop.
+  useEffect(() => {
+    if (
+      !mainAccountId ||
+      state.phase !== SPONSORED_PHASE.FAILED ||
+      state.retryLockedUntil == null
+    ) {
+      return;
+    }
+    if (
+      !state.order ||
+      !state.paymentTxId ||
+      !state.payerAddress ||
+      !state.receiverAddress ||
+      state.energyNeeded == null
+    ) {
+      return;
+    }
+    rememberRent(
+      {
+        mainAccountId,
+        orderId: state.order.orderId,
+        payerAddress: state.payerAddress,
+        paymentTxId: state.paymentTxId,
+        receiverAddress: state.receiverAddress,
+        energyNeeded: state.energyNeeded,
+      },
+      state.order.paymentExpiresAt,
+    );
+  }, [
+    mainAccountId,
+    state.phase,
+    state.retryLockedUntil,
+    state.order,
+    state.paymentTxId,
+    state.payerAddress,
+    state.receiverAddress,
+    state.energyNeeded,
+    rememberRent,
+  ]);
+
+  const { rentArriving, deliveredAt: rentDeliveredAt } = usePendingRentDelivery({
+    mainAccountId,
+    seam,
+    idle: state.phase === SPONSORED_PHASE.IDLE,
   });
 
   // Excludes `sponsored`: toggling the fee option must not discard a crafted order. A max send keys
@@ -206,7 +313,16 @@ export function useSponsoredSendSession({
   }, [rentIntentKey, actions]);
 
   return useMemo(
-    () => ({ mainAccount, seam, intent, intentFailed, state, actions }),
-    [mainAccount, seam, intent, intentFailed, state, actions],
+    () => ({
+      mainAccount,
+      seam,
+      intent,
+      intentFailed,
+      state,
+      actions,
+      rentArriving,
+      rentDeliveredAt,
+    }),
+    [mainAccount, seam, intent, intentFailed, state, actions, rentArriving, rentDeliveredAt],
   );
 }

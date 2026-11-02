@@ -7,6 +7,15 @@ readonly ARCHIVE="scrcpy-linux-x86_64-v${SCRCPY_VERSION}.tar.gz"
 readonly ARCHIVE_SHA256="0305d98c06178c67e12427bbf340c436d0d58c9e2a39bf9ffbbf8f54d7ef95a5"
 readonly RELEASE_URL="https://github.com/Genymobile/scrcpy/releases/download/v${SCRCPY_VERSION}/${ARCHIVE}"
 readonly RELEASE_DIRECTORY="scrcpy-linux-x86_64-v${SCRCPY_VERSION}"
+
+# Runner images that bake scrcpy in (the Android E2E image) already have this version.
+# sed reads the whole output, so scrcpy never hits a closed pipe under pipefail.
+installed="$(scrcpy --version 2>/dev/null | sed -n 1p || true)"
+if [[ "$installed" == "scrcpy ${SCRCPY_VERSION} "* ]]; then
+  echo "scrcpy ${SCRCPY_VERSION} is already installed."
+  exit 0
+fi
+
 readonly TEMP_DIRECTORY="$(mktemp -d)"
 trap 'rm -rf "$TEMP_DIRECTORY"' EXIT
 

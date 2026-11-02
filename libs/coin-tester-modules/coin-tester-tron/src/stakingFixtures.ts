@@ -1,18 +1,17 @@
 import { TronWeb } from "tronweb";
-import { TRON_LOCAL_RPC } from "./fixtures";
-import type { PrefundedAccount } from "./tronbox";
+import { getTronRpc } from "./fixtures";
+import type { TronTestAccount } from "./signer";
 
 /**
  * Devnet-only staking setup that the wallet itself cannot perform.
  *
  * The wallet models `unDelegateResource` but not `delegateResource`, so a delegation has to be created
- * out of band before the undelegate row can act on it — the same pattern `tokenFixtures.ts` uses to
- * issue the TRC-10 / TRC-20 assets the send rows spend. Stake 2.0 additionally requires a resource be
+ * out of band before the undelegate row can act on it. Stake 2.0 additionally requires a resource be
  * frozen before any of it can be delegated.
  */
 
 function tronWeb(privateKey: string): TronWeb {
-  return new TronWeb({ fullHost: TRON_LOCAL_RPC, privateKey });
+  return new TronWeb({ fullHost: getTronRpc(), privateKey });
 }
 
 /** Witness addresses arrive as 41-prefixed hex on the wire; votes are addressed in base58check. */
@@ -32,7 +31,7 @@ async function signAndBroadcast(tw: TronWeb, tx: unknown, label: string): Promis
 }
 
 async function currentBlockNumber(): Promise<number> {
-  const res = await fetch(`${TRON_LOCAL_RPC}/wallet/getnowblock`, { method: "POST" });
+  const res = await fetch(`${getTronRpc()}/wallet/getnowblock`, { method: "POST" });
   const body = (await res.json()) as { block_header?: { raw_data?: { number?: number } } };
   return body.block_header?.raw_data?.number ?? 0;
 }
@@ -48,7 +47,7 @@ async function waitForNextBlock(timeoutMs = 60_000): Promise<void> {
 }
 
 export async function listWitnessAddresses(): Promise<string[]> {
-  const res = await fetch(`${TRON_LOCAL_RPC}/wallet/listwitnesses`);
+  const res = await fetch(`${getTronRpc()}/wallet/listwitnesses`);
   const body = (await res.json()) as { witnesses?: Array<{ address: string }> };
   const addresses = (body.witnesses ?? []).map(w => toBase58Witness(w.address));
   if (!addresses.length) throw new Error("Devnet exposes no witnesses to vote for");
@@ -57,7 +56,7 @@ export async function listWitnessAddresses(): Promise<string[]> {
 
 /** Stake 2.0 freeze, so there is bandwidth available to delegate. */
 export async function freezeForDelegation(
-  owner: PrefundedAccount,
+  owner: TronTestAccount,
   amountSun: number,
 ): Promise<void> {
   const tw = tronWeb(owner.privateKey);
@@ -66,7 +65,7 @@ export async function freezeForDelegation(
 }
 
 export async function delegateBandwidth(
-  owner: PrefundedAccount,
+  owner: TronTestAccount,
   receiverAddress: string,
   amountSun: number,
 ): Promise<void> {

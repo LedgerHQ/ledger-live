@@ -9,7 +9,7 @@ import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { useFeature } from "@features/platform-feature-flags";
 
 import { useTheme } from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import OnboardingAppInstallStep from "~/renderer/components/OnboardingAppInstall";
 import SeedStep from "../components/SeedStep";
@@ -125,7 +125,7 @@ const useCompanionSteps = ({
         activeBackground,
         renderBody: () => (
           <Flex flexDirection="column">
-            <TrackPage
+            <TrackScreen
               category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
@@ -149,7 +149,7 @@ const useCompanionSteps = ({
         activeBackground,
         renderBody: () => (
           <Flex flexDirection="column">
-            <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
+            <TrackScreen category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
             <StepText>
               {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>
@@ -176,7 +176,7 @@ const useCompanionSteps = ({
           ) : null,
         renderBody: () => (
           <>
-            <TrackPage
+            <TrackScreen
               category={`Set up ${productName}: Step 3 Seed Intro`}
               flow={analyticsFlowName}
             />
@@ -201,7 +201,7 @@ const useCompanionSteps = ({
         activeBackground,
         renderBody: () => (
           <>
-            <TrackPage
+            <TrackScreen
               category={`Set up ${productName}: Step 4 Ledger Sync`}
               flow={analyticsFlowName}
               seedConfiguration={seedConfiguration}

@@ -1,5 +1,5 @@
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView } from "@domain/entity-currency-crypto";
 import { useSuiMappedStakingPositions } from "@ledgerhq/live-common/families/sui/react";
 import type { MappedStake, SuiAccount } from "@ledgerhq/live-common/families/sui/types";
 import { Account } from "@ledgerhq/types-live";

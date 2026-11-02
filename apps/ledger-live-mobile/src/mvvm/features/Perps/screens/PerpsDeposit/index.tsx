@@ -3,16 +3,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AmountInput, Box, Button, Skeleton, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useStyleSheet } from "@ledgerhq/lumen-ui-rnative/styles";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import type { TFunction } from "i18next";
 import { useTranslation } from "~/context/Locale";
 import { PERPS_DEPOSIT_PROVIDER_ID } from "../../constants/depositFunding";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
-import { DepositAccountSelector } from "./components/DepositAccountSelector";
+import { PerpsAccountSelector } from "../../components/PerpsAccountSelector";
 import { PerpsDepositSign } from "./components/PerpsDepositSign";
 import { PerpsReview } from "./components/PerpsReview";
 import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
 const QUOTED_AMOUNT_SKELETON_SIZE = { width: 112, height: 16 };
+
+/** An account with no price to show falls back to its name alone. */
+function describeAccount(
+  t: TFunction,
+  accountName: string | null,
+  counterValue: string | null,
+): string {
+  if (accountName === null) return t("perpsDeposit.selectCurrencyNoAccount");
+  if (counterValue === null) return accountName;
+  return t("perpsDeposit.selectCurrencyAccount", { accountName, counterValue });
+}
 
 function QuotedAmount({
   formattedQuotedAmount,
@@ -117,14 +129,14 @@ function DepositForm({
           <AmountMessage statusError={statusError} depositAmount={depositAmount} />
         </Box>
 
-        <DepositAccountSelector
+        <PerpsAccountSelector
+          title={t("perpsDeposit.selectCurrencyTitle", { currencyTicker: depositCurrencyTicker })}
           ticker={depositCurrencyTicker}
           ledgerId={depositCurrencyLedgerId}
-          accountName={depositAccountName}
-          counterValue={depositAccountCounterValue}
-          exceedsBalance={exceedsBalance}
-          missingAccount={missingAccount}
+          description={describeAccount(t, depositAccountName, depositAccountCounterValue)}
+          hasError={depositAccountName === null ? missingAccount : exceedsBalance}
           onSelect={pickDepositAccount}
+          testID="perps-deposit-select-currency"
         />
 
         <RatioPicker

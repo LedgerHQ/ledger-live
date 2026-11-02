@@ -7,7 +7,7 @@ import { prepareIntentDryRun, signAndBroadcastIntent } from "../wallet/sign-and-
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { getManagerAppNameForCurrencyId } from "../session/bridge-device-session";
-import { networkStringFromCurrencyId } from "../shared/accountDescriptor";
+import { networkFromCurrencyId } from "../shared/accountDescriptor";
 import { createCommandOutput } from "../output";
 import {
   trackSendCompleted,
@@ -162,7 +162,7 @@ export default defineCommand({
       const descriptor = await resolveAccountDescriptor(
         resolveAccountArg(flags.account, positional),
       );
-      ctx.network = networkStringFromCurrencyId(descriptor.currencyId);
+      ctx.network = networkFromCurrencyId(descriptor.currencyId);
       ctx.account = descriptor.id;
       const managerAppName = getManagerAppNameForCurrencyId(descriptor.currencyId);
       const assetClass = classifySendAssetClass(descriptor.currencyId);

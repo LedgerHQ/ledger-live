@@ -1,5 +1,5 @@
 import React, { ComponentType } from "react";
-import { Stax, Apex, Flex, Nano } from "@ledgerhq/lumen-ui-rnative/symbols";
+import { Stax, NanoGen5, Flex, Nano } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { IconButton, IconSize } from "@ledgerhq/lumen-ui-rnative";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { ICON_SIZE } from "../components/TopBar/const";
@@ -14,7 +14,7 @@ export function getDeviceSymbolByModelId(
     case DeviceModelId.europa:
       return Flex;
     case DeviceModelId.apex:
-      return Apex;
+      return NanoGen5;
     case DeviceModelId.stax:
       return Stax;
     default:
@@ -43,7 +43,7 @@ export function getDeviceIcon(
     case DeviceModelId.europa:
       return <Flex size={size ?? ICON_SIZE} style={style} color="base" />;
     case DeviceModelId.apex:
-      return <Apex size={size ?? ICON_SIZE} style={style} color="base" />;
+      return <NanoGen5 size={size ?? ICON_SIZE} style={style} color="base" />;
     case DeviceModelId.stax:
     default:
       return <Stax size={size ?? ICON_SIZE} style={style} color="base" />;

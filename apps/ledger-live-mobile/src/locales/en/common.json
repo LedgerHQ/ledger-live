@@ -1857,6 +1857,10 @@
       "title": "Request not sent",
       "description": "The Internet Computer did not take the request, so nothing was sent and nothing changed. Please try again. {{reason}}"
     },
+    "ICPTransactionExpired": {
+      "title": "Transaction expired",
+      "description": "The signed transaction was not sent in time, so nothing was sent and nothing changed. Please sign it again."
+    },
     "ICPCreateNeuronWarning": {
       "title": "This locks your ICP in a new neuron",
       "description": "The neuron starts with the shortest dissolve delay, which is too short to vote or earn rewards. Raise it from Manage Neurons, and expect to wait out the delay before the stake is spendable again."
@@ -1871,6 +1875,7 @@
     "menu": {
       "changeName": "Change name",
       "viewAdvancedLogs": "View advanced logs",
+      "viewExplorer": "View in explorer",
       "removeAccount": "Remove account from portfolio"
     },
     "advancedLogs": {
@@ -2587,6 +2592,10 @@
       "learnMore": "Learn more",
       "activate": "Activate",
       "skip": "Skip for now"
+    },
+    "connection": {
+      "connecting": "Connecting to your device",
+      "failed": "Connection failed"
     }
   },
   "onboarding": {
@@ -3437,10 +3446,10 @@
       "skipCta": "I’ll do it later",
       "skip": {
         "title": "Are you sure?",
-        "description": "If you skip this, you'll have to manually re-add all your accounts, balances, and history if you switch to a new phone or computer.",
-        "descriptionEmphasis": "You can always disable it from your settings.",
-        "skipCTA": "Yes, skip",
-        "syncCTA": "No, sync my wallet"
+        "description": "If you change phone or use Ledger Wallet on another phone or computer, you'll need to sync your accounts manually.",
+        "descriptionEmphasis": "Please note that you can always enable or disable it from your settings",
+        "skipCTA": "Yes skip",
+        "syncCTA": "No, enable sync"
       }
     },
     "seedStep": {
@@ -3625,6 +3634,16 @@
       "upToDate": "Portfolio up to date",
       "syncError": "Some account data couldn’t load",
       "offline": "You’re offline. Please check your connection"
+    }
+  },
+  "servicesEntryPoints": {
+    "perps": {
+      "title": "Perps",
+      "description": "Invest with leverage"
+    },
+    "borrow": {
+      "title": "Loans",
+      "description": "Borrow stablecoins"
     }
   },
   "addAccountsModal": {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other": "+{{count}} subaccounts"
   },
   "account": {
-    "subHeader": {
-      "moreInfo": "More info",
-      "cardTitle": "Powered by {{team}}",
-      "drawer": {
-        "title": "{{family}} integration",
-        "subTitle": "The {{family}} integration has been done by the {{team}} team",
-        "description": "Ledger Wallet is an open-source platform.",
-        "description2": "Developers from anywhere in the world can integrate with our Ledger Wallet",
-        "description3": "This integration has been carried out by {{team}} in collaboration with Ledger",
-        "description3Link": "This integration has been carried out by <1><0>{{team}}</0></1> in collaboration with Ledger"
-      }
-    },
     "migrationBanner": {
       "title": "{{from}} is migrating to {{to}}. Follow this <0>link</0> to know more or contact the support if you need assistance.",
       "contactSupport": "Contact support"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment": {
+        "title": "Select fee payment",
+        "regular": "Regular transfer",
+        "sponsored": "Pay with {{provider}}",
+        "payIn": "Pay network fee in {{feeCurrency}}",
+        "paidIn": "Paid in {{currency}}",
+        "nudge": "You could save {{amount}} with {{provider}}",
+        "saved": "Saved with {{provider}}",
+        "confirm": "Confirm",
+        "disclaimer": "With {{provider}}, a third-party energy provider, fees are paid in {{feeCurrency}}.",
         "insufficientFunds": "You don't have enough {{feeCurrency}} to cover the amount and the {{provider}} energy rental fee."
       },
       "sponsoredRentSignature": {
@@ -5869,6 +5885,39 @@
     }
   },
   "osUpdates": {
+    "backupBanner": {
+      "title": "Backup found",
+      "description": "Apps and settings were not fully restored on your device.",
+      "restore": "Restore",
+      "delete": "Delete backup"
+    },
+    "bootloaderDiscovered": {
+      "title": "Device in Bootloader mode.",
+      "description": "Click on \"Continue\" to update it.",
+      "continue": "Continue"
+    },
+    "banner": {
+      "wallet40": {
+        "title": {
+          "default": "OS update available",
+          "manager": "Ledger OS update available"
+        },
+        "version": "Version {{firmwareVersion}}",
+        "cta": "Update"
+      }
+    },
+    "restoreConfirmation": {
+      "title": "Restore your previous configuration?",
+      "description": "I confirm I want to restore apps & settings from my previous configuration and any app & data created since will be lost.",
+      "confirm": "Restore",
+      "cancel": "Cancel"
+    },
+    "deleteConfirmation": {
+      "title": "Delete your backup?",
+      "description": "I am aware previous configuration and app & data from my last backup, including Security Key credentials, will be lost.",
+      "confirm": "Delete backup",
+      "cancel": "Cancel"
+    },
     "actions": {
       "retry": "Retry",
       "cancel": "Cancel",
@@ -10298,7 +10347,7 @@
             "steps": {
               "step1": "Make sure Ledger Sync is activated on one of your apps.",
               "step2": "Open the Ledger Wallet app you want to sync.",
-              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Scan QR code</0>",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Scan QR code</0>",
               "step4": "Scan QR code."
             }
           }
@@ -10311,7 +10360,7 @@
             "steps": {
               "step1": "Make sure Ledger Sync is activated on one of your apps.",
               "step2": "Open the Ledger Wallet you want to sync with.",
-              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>I already turned it on</0> <1>></1> <0>Show QR</0>",
+              "step3": "Go to <0>Settings</0> <1>></1> <0>General</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Show QR</0>",
               "step4": "Scan QR code."
             }
           }
@@ -10422,9 +10471,58 @@
       }
     }
   },
+  "accountDetailHero": {
+    "emptyState": {
+      "title": "No activity yet",
+      "description": {
+        "receive": "Start by adding funds through Receive.",
+        "receiveSwap": "Start by adding funds through Receive or Swap.",
+        "receiveBuy": "Start by adding funds through Receive or Buy.",
+        "receiveSwapBuy": "Start by adding funds through Receive, Swap or Buy.",
+        "swap": "Start by adding funds through Swap.",
+        "buy": "Start by adding funds through Buy.",
+        "swapBuy": "Start by adding funds through Swap or Buy."
+      }
+    },
+    "actions": {
+      "transfer": "Transfer",
+      "receive": "Receive",
+      "send": "Send",
+      "swap": "Swap",
+      "buy": "Buy",
+      "sell": "Sell",
+      "earn": "Earn",
+      "more": "More"
+    }
+  },
+  "accountDetailNotices": {
+    "actions": {
+      "learnMore": "Learn more",
+      "openPerps": "Open Perps"
+    },
+    "migration": {
+      "title": "{{from}} is migrating to {{to}}",
+      "description": "Learn more about the migration, or contact support if you need assistance."
+    },
+    "willBeDeprecated": {
+      "title": "{{currencyName}} will not be supported as of {{date}}",
+      "description": "It will still be secured by your Ledger device. Learn more in the Help Center."
+    },
+    "robinhoodDisclaimer": {
+      "title": "Total balance does not include dividends or stock splits."
+    },
+    "perps": {
+      "title": "About Hyperliquid account",
+      "description": "This account is related to Perpetual trading. Transactional actions are not supported for this account"
+    }
+  },
   "accountDetail": {
     "assets": {
       "title": "Assets"
+    },
+    "refreshStatus": {
+      "upToDate": "Account up to date",
+      "syncError": "Account data couldn’t load"
     },
     "transactions": {
       "title": "Transactions"
@@ -10435,6 +10533,9 @@
       "label": "Address name",
       "submit": "Change name"
     }
+  },
+  "accountAssetPicker": {
+    "title": "Select an asset"
   },
   "assetDetail": {
     "balanceGraph": {
@@ -10686,6 +10787,10 @@
     "selectAccountPerpsEmptyDescription": "To fund your perps, you need a Hyperliquid account. Add one to continue.",
     "selectDepositCurrencyTitle": "Select asset to deposit",
     "selectDepositCurrencyDescription": "Any supported asset works. It will be swapped automatically if needed.",
+    "selectWithdrawCurrencyTitle": "Select asset to withdraw to",
+    "selectWithdrawCurrencyDescription": "Your USDC will be swapped automatically into the asset you choose.",
+    "selectAccountPerpsWithdrawFromDescription": "Select the account you want to withdraw funds from",
+    "selectAccountPerpsWithdrawFromEmptyDescription": "To withdraw, you need a Hyperliquid account. Add one to continue.",
     "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "notAvailableYet": "Not available yet",
@@ -10745,6 +10850,25 @@
     "formErrors": {
       "amountExceedsBalance": "Insufficient balance",
       "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later."
+    }
+  },
+  "perpsWithdraw": {
+    "title": "Withdraw",
+    "review": "Review",
+    "keypadDelete": "Delete last digit",
+    "estimatedAmount": "Withdraw ~{{value}}",
+    "inputSubText": "Swap and withdraw via {{provider}}",
+    "selectCurrencyTitle": "Withdraw to {{currencyTicker}}",
+    "selectCurrencyAccount": "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount": "No account",
+    "formErrors": {
+      "insufficientBalance": "Insufficient balance",
+      "minimumAmount": "The minimum withdrawal is {{minAmount}} USDC.",
+      "minimumAmountUnknown": "This amount is too low to withdraw.",
+      "lowLiquidity": "This asset is temporarily unavailable. Try again later or choose another asset.",
+      "addressScreening": "This withdrawal can’t be processed to this account.",
+      "quoteUnavailable": "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
+      "currenciesUnavailable": "We can’t load the assets you can withdraw to. Try again later."
     }
   },
   "swapErrors": {

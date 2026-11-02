@@ -1,10 +1,6 @@
 import { token } from "@domain/entity-currency-token";
 import type { PersistedTokenEntry } from "../types";
-import {
-  buildRestoreCacheEntries,
-  groupTokensByCurrency,
-  resolveCurrenciesToEvict,
-} from "./restore";
+import { buildRestoreCacheEntries, buildSyncHashCacheEntries } from "./restore";
 
 function entry(
   id: string,
@@ -26,23 +22,6 @@ function entry(
     ...(tokenIdentifier === undefined ? {} : { token_identifier: tokenIdentifier }),
   };
 }
-
-describe("groupTokensByCurrency", () => {
-  it("groups entries by parentCurrencyId", () => {
-    const grouped = groupTokensByCurrency([
-      entry("ethereum/erc20/a", "ethereum"),
-      entry("ethereum/erc20/b", "ethereum"),
-      entry("polygon/erc20/c", "polygon"),
-    ]);
-
-    expect(grouped.get("ethereum")).toHaveLength(2);
-    expect(grouped.get("polygon")).toHaveLength(1);
-  });
-
-  it("returns an empty map for no tokens", () => {
-    expect(groupTokensByCurrency([]).size).toBe(0);
-  });
-});
 
 describe("buildRestoreCacheEntries", () => {
   it("builds an id + address entry per token", () => {
@@ -73,63 +52,15 @@ describe("buildRestoreCacheEntries", () => {
   });
 });
 
-describe("resolveCurrenciesToEvict", () => {
-  type Dispatch = Parameters<typeof resolveCurrenciesToEvict>[0];
-
-  function currencies(...ids: string[]): Map<string, PersistedTokenEntry[]> {
-    const map = new Map<string, PersistedTokenEntry[]>();
-    for (const id of ids) map.set(id, []);
-    return map;
-  }
-
-  it("does not evict currencies without a stored hash", async () => {
-    const dispatch = jest.fn();
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {},
-    );
-
-    expect(evict.size).toBe(0);
-    expect(dispatch).not.toHaveBeenCalled();
+describe("buildSyncHashCacheEntries", () => {
+  it("builds a getTokensSyncHash entry per stored hash", () => {
+    expect(buildSyncHashCacheEntries({ ethereum: "hash1", polygon: "hash2" })).toEqual([
+      { endpointName: "getTokensSyncHash", arg: "ethereum", value: "hash1" },
+      { endpointName: "getTokensSyncHash", arg: "polygon", value: "hash2" },
+    ]);
   });
 
-  it("does not evict when the current hash matches the stored one", async () => {
-    const dispatch = jest.fn().mockResolvedValue({ data: "hash1" });
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(false);
-  });
-
-  it("evicts when the current hash differs", async () => {
-    const dispatch = jest.fn().mockResolvedValue({ data: "hash2" });
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(true);
-  });
-
-  it("evicts when the hash fetch fails", async () => {
-    const dispatch = jest.fn().mockRejectedValue(new Error("network"));
-    const evict = await resolveCurrenciesToEvict(
-      dispatch as unknown as Dispatch,
-      currencies("ethereum"),
-      {
-        ethereum: "hash1",
-      },
-    );
-
-    expect(evict.has("ethereum")).toBe(true);
+  it("builds no entry for no hashes", () => {
+    expect(buildSyncHashCacheEntries({})).toEqual([]);
   });
 });

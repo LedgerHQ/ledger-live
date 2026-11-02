@@ -1,43 +1,83 @@
 import type { NavigationProp, ParamListBase } from "@react-navigation/native";
 import type { DeviceOnboardingExitReason } from "@features/platform-device-onboarding";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  completeOnboarding,
-  setFromLedgerSyncOnboarding,
-  setHasOrderedNano,
-  setOnboardingType,
-  setReadOnlyMode,
-} from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import type { useDispatch } from "~/context/hooks";
-import { OnboardingType } from "~/reducers/types";
+import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
 
 type ExitDeps = {
   dispatch: ReturnType<typeof useDispatch>;
   navigation: NavigationProp<ParamListBase>;
   device: Device;
   shouldDisplayMyWallet: boolean;
+  wasReadOnlyAtEntry: boolean;
+  isGenuine: boolean;
+  deviceWasSeeded: boolean;
+  firmwareNeedsLegacyFlow: boolean;
+  hasCompletedOnboarding: boolean;
 };
 
-/** What the app does when the machine leaves with each reason. */
 export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) => void> = {
-  completed: ({ dispatch, navigation, device }) => {
-    dispatch(setReadOnlyMode(false));
-    dispatch(setHasOrderedNano(false));
-    dispatch(completeOnboarding());
-    resetToSyncOnboardingCompletion(navigation, device);
+  completed: ({ dispatch, navigation, wasReadOnlyAtEntry, hasCompletedOnboarding }) => {
+    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+    resetToPortfolio(navigation);
   },
-  offerLedgerSync: ({ dispatch, navigation, device }) => {
-    dispatch(setFromLedgerSyncOnboarding(true));
-    dispatch(setOnboardingType(OnboardingType.setupNew));
-    resetToWalletSync(navigation, device);
+  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry }) => {
+    navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
+      device,
+      wasReadOnlyAtEntry,
+    });
   },
   resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
     resetToMyLedger(navigation, device, shouldDisplayMyWallet),
-  legacyFallback: ({ navigation, device }) => resetToLegacyOnboarding(navigation, device),
-  // Quit stays on the devtool, so QA can read and export the run.
-  userQuit: () => undefined,
+  legacyFallback: ({
+    navigation,
+    device,
+    dispatch,
+    wasReadOnlyAtEntry,
+    isGenuine,
+    deviceWasSeeded,
+    firmwareNeedsLegacyFlow,
+    hasCompletedOnboarding,
+  }) => {
+    if (!deviceWasSeeded) {
+      resetToLegacyOnboarding(navigation, device);
+      return;
+    }
+    if (!isGenuine) {
+      if (firmwareNeedsLegacyFlow) {
+        resetToLegacySeededChecks(navigation, device);
+        return;
+      }
+      navigation.goBack();
+      return;
+    }
+    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+    resetToPortfolio(navigation);
+  },
+  userQuit: ({ dispatch, navigation, wasReadOnlyAtEntry, isGenuine, hasCompletedOnboarding }) => {
+    if (!isGenuine) {
+      navigation.goBack();
+      return;
+    }
+    completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
+    resetToPortfolio(navigation);
+  },
 };
+
+export function resetToPortfolio(navigation: NavigationProp<ParamListBase>) {
+  getRootNavigation(navigation).reset({
+    index: 0,
+    routes: [
+      {
+        name: NavigatorName.Base,
+        state: {
+          routes: [{ name: NavigatorName.Main }],
+        },
+      },
+    ],
+  });
+}
 
 function getRootNavigation(
   navigation: NavigationProp<ParamListBase>,
@@ -49,61 +89,6 @@ function getRootNavigation(
     parent = current.getParent();
   }
   return current;
-}
-
-function resetToSyncOnboardingCompletion(
-  navigation: NavigationProp<ParamListBase>,
-  device: Device,
-) {
-  getRootNavigation(navigation).reset({
-    index: 0,
-    routes: [
-      {
-        name: NavigatorName.BaseOnboarding,
-        state: {
-          routes: [
-            {
-              name: NavigatorName.SyncOnboarding,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.SyncOnboardingCompletion,
-                    params: { device },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  });
-}
-
-function resetToWalletSync(navigation: NavigationProp<ParamListBase>, device: Device) {
-  getRootNavigation(navigation).reset({
-    index: 0,
-    routes: [
-      {
-        name: NavigatorName.BaseOnboarding,
-        state: {
-          routes: [
-            {
-              name: NavigatorName.WalletSync,
-              state: {
-                routes: [
-                  {
-                    name: ScreenName.WalletSyncActivationProcess,
-                    params: { device },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
-    ],
-  });
 }
 
 function resetToMyLedger(
@@ -143,6 +128,34 @@ function resetToMyLedger(
         state: {
           index: 1,
           routes: [{ name: NavigatorName.Main }, managerRoute],
+        },
+      },
+    ],
+  });
+}
+
+function resetToLegacySeededChecks(navigation: NavigationProp<ParamListBase>, device: Device) {
+  getRootNavigation(navigation).reset({
+    index: 0,
+    routes: [
+      {
+        name: NavigatorName.BaseOnboarding,
+        state: {
+          index: 1,
+          routes: [
+            { name: NavigatorName.Onboarding },
+            {
+              name: NavigatorName.SyncOnboarding,
+              state: {
+                routes: [
+                  {
+                    name: ScreenName.SyncOnboardingCompanion,
+                    params: { device },
+                  },
+                ],
+              },
+            },
+          ],
         },
       },
     ],

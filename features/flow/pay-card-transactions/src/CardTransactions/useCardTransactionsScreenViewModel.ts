@@ -1,7 +1,10 @@
 import { useTranslation } from "@shared/i18n";
 import { useCardTransactionsViewModel } from "../hooks/useCardTransactionsViewModel";
 import { resolveCardTransactionsDisplayState } from "../logic/cardTransactionsDisplayState";
-import type { CardTransactionsProps, CardTransactionsScreenViewProps } from "./types";
+import type {
+  CardTransactionsProps,
+  CardTransactionsScreenViewProps,
+} from "./CardTransactions.types";
 
 export function useCardTransactionsScreenViewModel(
   props: CardTransactionsProps = {},

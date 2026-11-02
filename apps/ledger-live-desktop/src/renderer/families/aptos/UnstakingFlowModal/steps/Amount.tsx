@@ -8,7 +8,7 @@ import {
   AptosMappedStakingPosition,
   Transaction,
 } from "@ledgerhq/live-common/families/aptos/types";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import { ValidatorField, AmountField } from "../fields";
@@ -81,7 +81,7 @@ export default function StepAmount({
 
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="Unstaking Flow"
         name="Step 1"
         flow="stake"

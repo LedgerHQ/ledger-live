@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import PostOnboardingAction from "./components/PostOnboardingAction";
 import { cn } from "LLD/utils/cn";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import type { FinishOnboardingDialogViewProps } from "./hooks/useFinishOnboardingDialogViewModel";
 
 const FinishOnboardingDialogView = ({
@@ -30,7 +30,7 @@ const FinishOnboardingDialogView = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {isOpen && <TrackPage category="Post onboarding widget" flow="post-onboarding" />}
+      {isOpen && <TrackScreen category="Post onboarding widget" flow="post-onboarding" />}
       <DialogContent
         className="bg-canvas flex h-auto max-h-[90vh] flex-col gap-0 overflow-hidden rounded-2xl"
         aria-describedby={undefined}

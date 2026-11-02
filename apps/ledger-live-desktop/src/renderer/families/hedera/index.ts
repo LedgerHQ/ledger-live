@@ -5,7 +5,6 @@ import {
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBodyHeader from "./AccountBodyHeader";
-import AccountSubHeader from "./AccountSubHeader";
 import NoAssociatedAccounts from "./NoAssociatedAccounts";
 import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveAccountCustomAlert from "./StepReceiveAccountCustomAlert";
@@ -19,7 +18,6 @@ const family: HederaFamily = {
   sendRecipientFields,
   tokenList,
   operationDetails,
-  AccountSubHeader,
   AccountBodyHeader,
   AccountBalanceSummaryFooter,
   accountHeaderManageActions,

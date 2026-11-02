@@ -4,7 +4,7 @@ import invariant from "invariant";
 
 import { getDelegationOpMaxAmount, getStakingPosition } from "../logic/staking";
 import { AptosAPI } from "../network";
-import type { AptosAccount, Transaction, TransactionErrors } from "../types";
+import type { AptosAccount, Transaction, TransactionErrors, TransactionOptions } from "../types";
 import {
   APTOS_DELEGATION_RESERVE_IN_OCTAS,
   APTOS_MINIMUM_RESTAKE_IN_OCTAS,
@@ -84,15 +84,18 @@ const maxSendBalanceFor = (
     ? getMaxSendBalance(tokenAccount, account, gas, gasPrice)
     : getMaxSendBalance(account, undefined, gas, gasPrice);
 
-// For "use max" sends, reserve the default gas limit to avoid too-tight simulation estimates.
+// For "use max" sends, reserve at least the default gas limit to avoid too-tight simulation
+// estimates, but never less than the simulation: a transfer that creates the recipient's
+// primary store costs far more than the default.
 const applyMaxSend = (
   transaction: Transaction,
   account: AptosAccount,
   tokenAccount: TokenAccount,
+  estimate: TransactionOptions,
   errors: TransactionErrors,
 ): Transaction => {
-  const maxGas = BigNumber(DEFAULT_GAS);
-  const maxGasPrice = BigNumber(DEFAULT_GAS_PRICE);
+  const maxGas = BigNumber.max(DEFAULT_GAS, estimate.maxGasAmount);
+  const maxGasPrice = BigNumber.max(DEFAULT_GAS_PRICE, estimate.gasUnitPrice);
 
   transaction.amount = maxSendBalanceFor(account, tokenAccount, maxGas, maxGasPrice);
   transaction.fees = maxGas.multipliedBy(maxGasPrice);
@@ -152,7 +155,7 @@ const prepareTransaction = async (
 
     if (transaction.useAllAmount) {
       if (transaction.mode === "send") {
-        return applyMaxSend(transaction, account, tokenAccount, errors);
+        return applyMaxSend(transaction, account, tokenAccount, estimate, errors);
       }
 
       const gas = BigNumber(estimate.maxGasAmount);

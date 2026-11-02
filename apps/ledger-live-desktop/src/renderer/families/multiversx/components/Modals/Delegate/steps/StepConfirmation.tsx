@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import styled from "styled-components";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { track } from "@shared/analytics";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -51,7 +51,7 @@ const StepConfirmation = (props: StepProps) => {
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
+        <TrackScreen
           category="Delegation Cosmos"
           name="Step Confirmed"
           flow="stake"
@@ -70,7 +70,7 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage
+        <TrackScreen
           category="Delegation Elrond"
           name="Step Confirmation Error"
           flow="stake"

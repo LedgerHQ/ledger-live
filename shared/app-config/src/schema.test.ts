@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { z } from "zod";
-import { DuplicateConfigValueError } from "./errors";
+import { DuplicateConfigIdError, DuplicateConfigValueError } from "./errors";
 import { defineConfigSchema } from "./schema";
 import type { Zod } from "./types";
 
@@ -58,5 +58,16 @@ describe("defineConfigSchema", () => {
 
     expect(define).toThrow(DuplicateConfigValueError);
     expect(define).toThrow('Config value "apiUrl" is declared more than once in the schema');
+  });
+
+  it("rejects a switch id that is the name of a fixed value", () => {
+    const definition = {
+      switches: { clientVersion: { apiUrl: z.url() } },
+      fixed: { clientVersion: z.string() },
+    };
+    const define = () => defineConfigSchema(() => definition);
+
+    expect(define).toThrow(DuplicateConfigIdError);
+    expect(define).toThrow('Config switch "clientVersion" has the name of a fixed value');
   });
 });

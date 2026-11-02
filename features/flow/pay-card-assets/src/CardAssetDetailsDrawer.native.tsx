@@ -99,7 +99,7 @@ export function CardAssetDetailsDrawer({
                 key={item.transaction.id}
                 item={item}
                 formatters={formatters}
-                onPress={() => onTransactionPress(item)}
+                onOpenTransaction={() => onTransactionPress(item)}
               />
             ))}
           </Box>

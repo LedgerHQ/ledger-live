@@ -1,6 +1,6 @@
 import { openAuthSessionAsync, type AuthSessionOpenOptions } from "expo-web-browser";
 import { AppState } from "react-native";
-import type { HostedLoginResult } from "../../state/types";
+import type { HostedLoginResult } from "../../state/hostTypes";
 
 const keepBrowserAliveOnAppSwitch: AuthSessionOpenOptions = { createTask: false };
 

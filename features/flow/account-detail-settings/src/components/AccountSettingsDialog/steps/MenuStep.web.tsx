@@ -8,6 +8,7 @@ type Props = Readonly<{
   onClose: () => void;
   onShowChangeName: () => void;
   onShowAdvancedLogs: () => void;
+  explorerUrl?: string;
   onShowRemove: () => void;
 }>;
 
@@ -17,6 +18,7 @@ export function MenuStep({
   onClose,
   onShowChangeName,
   onShowAdvancedLogs,
+  explorerUrl,
   onShowRemove,
 }: Props) {
   return (
@@ -27,6 +29,7 @@ export function MenuStep({
           accountName={accountName}
           onChangeName={onShowChangeName}
           onViewAdvancedLogs={onShowAdvancedLogs}
+          explorerUrl={explorerUrl}
           onRemoveAccount={onShowRemove}
         />
       </DialogBody>

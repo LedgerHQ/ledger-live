@@ -6,7 +6,7 @@ import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { isAwaitingDelegation, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { useSelector } from "LLD/hooks/redux";
 import { accountSelector } from "~/renderer/reducers/accounts";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -81,7 +81,7 @@ const StepAmount = ({
     return (
       <Box flow={4}>
         <Box flow={4} alignItems="center" justifyContent="center" py={50}>
-          <TrackPage
+          <TrackScreen
             category="Stake Flow"
             name="Step Amount Pending Delegation"
             flow="stake"
@@ -99,7 +99,7 @@ const StepAmount = ({
 
   return (
     <Box flow={4}>
-      <TrackPage
+      <TrackScreen
         category="Stake Flow"
         name="Step Amount"
         flow="stake"

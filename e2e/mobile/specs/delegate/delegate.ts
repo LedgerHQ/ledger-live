@@ -23,6 +23,7 @@ import type { PartialFeatures } from "@shared/feature-flags";
 import { getCurrencyManagerApp } from "@e2e/models/currencies";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { describeIfNanoSSupports, describeIfNotNanoS } from "@e2e/helpers/commonHelpers";
+import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 
 const DELEGATE_FEATURE_FLAGS = new Map<string, PartialFeatures>([
   [Currency.BABY.id, FF_BABYLON_STAKING_ENABLED],
@@ -44,6 +45,7 @@ export function runDelegateTest(
   tags: string[],
   options?: { skipLNS?: boolean },
 ) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -94,16 +96,17 @@ export function runDelegateTest(
       await app.stake.expectProvider(currencyId, delegation.provider);
       await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode, fees);
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode, fees });
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode, fees);
+      await verifyStakeOperationDetailsInfo({ delegation, amountWithCode, fees });
     });
   });
 }
 
 export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -125,16 +128,17 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
       await app.stake.validateAmount(currencyId);
       await app.stake.summaryContinue(currencyId);
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode });
       await app.speculos.signDelegationTransaction(delegation);
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
     });
   });
 }
 
 export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -220,11 +224,11 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
         await app.stake.expectProvider(currencyId, delegation.provider);
         await app.stake.summaryContinue(currencyId);
 
-        await verifyAppValidationStakeInfo(delegation, amountWithCode);
+        await verifyAppValidationStakeInfo({ delegation, amountWithCode });
         await app.speculos.signDelegationTransaction(delegation);
         await app.common.successViewDetails();
 
-        await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+        await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
       },
       MINA_PAIR_TEST_TIMEOUT_MS,
     );
@@ -301,6 +305,7 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
 }
 
 export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -323,16 +328,17 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.stake.setCeloLockAmount(delegation.amount);
       await app.stake.validateAmount(currencyId);
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode });
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.common.successViewDetails();
-      await verifyStakeOperationDetailsInfo(delegation, amountWithCode);
+      await verifyStakeOperationDetailsInfo({ delegation, amountWithCode });
     });
   });
 }
 
 export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: string[]) {
+  declareBroadcastAccounts(delegation.account);
   setTeamOwner(delegateTeamOwner(delegation.account.currency.id));
   tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
   tags.forEach(tag => $Tag(tag));
@@ -359,12 +365,16 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       await app.stake.validateCeloVoteAmount();
       await app.stake.celoVoteSummaryContinue();
 
-      await verifyAppValidationStakeInfo(votedDelegation, amountWithCode);
+      await verifyAppValidationStakeInfo({ delegation: votedDelegation, amountWithCode });
       await app.speculos.signDelegationTransaction(votedDelegation);
 
       await app.common.successViewDetails();
 
-      await verifyStakeOperationDetailsInfo(votedDelegation, amountWithCode, undefined, "VOTE");
+      await verifyStakeOperationDetailsInfo({
+        delegation: votedDelegation,
+        amountWithCode,
+        operationType: "VOTE",
+      });
     });
   });
 }
@@ -393,7 +403,7 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
       await app.tezosStake.startEarning();
       await app.tezosStake.continueFromDelegationSummary();
 
-      await verifyAppValidationStakeInfo(delegation, amountWithCode);
+      await verifyAppValidationStakeInfo({ delegation, amountWithCode });
       await app.speculos.signDelegationTransaction(delegation);
 
       await app.tezosStake.verifyDelegationSuccess();

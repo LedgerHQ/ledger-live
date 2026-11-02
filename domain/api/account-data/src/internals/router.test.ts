@@ -196,8 +196,8 @@ describe("groupBySource", () => {
   it("groups the targets by source, failing alone a target no source serves or whose supports threw", async () => {
     const evm = source("evm", {
       supports: descriptor => {
-        if (descriptor.network.name === "solana") throw new Error("unknown network");
-        return descriptor.network.name === "ethereum";
+        if (descriptor.network === "solana") throw new Error("unknown network");
+        return descriptor.network === "ethereum";
       },
     });
     const context = createRouterContext([evm], 4);

@@ -10,12 +10,12 @@ jest.mock("@features/platform-pay-analytics", () =>
 
 const deposit: ActionTileInput = {
   id: "deposit",
-  onPress: jest.fn(),
+  onOpenFlow: jest.fn(),
   appearance: "base",
 };
 const request: ActionTileInput = {
   id: "request",
-  onPress: jest.fn(),
+  onOpenFlow: jest.fn(),
   appearance: "transparent",
 };
 
@@ -38,7 +38,7 @@ describe("useActionTilesViewModel", () => {
   it("should fire tracking then call the original handler on press", () => {
     const { result } = renderActionTilesViewModel(buildProps());
 
-    result.current.tiles[0].onPress();
+    result.current.tiles[0].onOpenFlow();
 
     expect(trackButtonClicked).toHaveBeenCalledTimes(1);
     expect(trackButtonClicked).toHaveBeenCalledWith({
@@ -46,13 +46,13 @@ describe("useActionTilesViewModel", () => {
       buttonLocation: "quick action",
       page: "Pay",
     });
-    expect(deposit.onPress).toHaveBeenCalledTimes(1);
+    expect(deposit.onOpenFlow).toHaveBeenCalledTimes(1);
   });
 
   it("should fire tracking with the correct button id per tile", () => {
     const { result } = renderActionTilesViewModel(buildProps());
 
-    result.current.tiles[1].onPress();
+    result.current.tiles[1].onOpenFlow();
 
     expect(trackButtonClicked).toHaveBeenCalledWith({
       button: "request",
@@ -64,7 +64,7 @@ describe("useActionTilesViewModel", () => {
   it("should expose all input tiles in the output", () => {
     const pay: ActionTileInput = {
       id: "pay",
-      onPress: jest.fn(),
+      onOpenFlow: jest.fn(),
       appearance: "transparent",
     };
     const { result } = renderActionTilesViewModel(buildProps({ tiles: [deposit, request, pay] }));

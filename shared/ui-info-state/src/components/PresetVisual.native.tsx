@@ -5,8 +5,8 @@ import {
   DeleteCircleFill,
   InformationFill,
 } from "@ledgerhq/lumen-ui-rnative/symbols";
-import type { InfoStateProps } from "../types.native";
-import { illustrationSlotStyle } from "../styles.native";
+import type { InfoStateProps } from "../InfoState.types";
+import { illustrationSlotStyle } from "../styles";
 
 const SPOT_SIZE = 72;
 

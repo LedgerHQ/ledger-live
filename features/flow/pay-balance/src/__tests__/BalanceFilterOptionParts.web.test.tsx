@@ -3,9 +3,9 @@ import { screen } from "@testing-library/react";
 import {
   FilterOptionAmounts,
   FilterOptionCard,
-} from "../components/Filter/BalanceFilterOptionParts.web";
+} from "../components/Filter/BalanceFilterOptionParts";
 import { USDC_ID } from "./fixtures";
-import { renderWithStyle } from "./renderWithStyle.web";
+import { renderWithStyle } from "./renderWithStyle";
 
 describe("BalanceFilterOptionParts (Web)", () => {
   it("should select the option when the card is clicked", async () => {

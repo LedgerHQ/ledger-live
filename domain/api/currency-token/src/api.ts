@@ -1,6 +1,6 @@
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import { calApi, getCalExtra, HEADER_X_LEDGER_CLIENT_VERSION } from "@shared/api-services";
-import { ApiTokenResponseSchema } from "./schema";
+import { calApi, getCalExtra } from "@shared/api-services";
+import { ApiNetworkTokenListHashResponseSchema, ApiTokenResponseSchema } from "./schema";
 import {
   type GetTokensDataParams,
   type PageParam,
@@ -12,9 +12,10 @@ import {
   commitHeaderMissingError,
   currencyNotFoundError,
   DEFAULT_PAGE_SIZE,
-  fetchCurrencyError,
-  fetchError,
+  EMPTY_TOKEN_LIST_HASH,
   HEADER_X_LEDGER_COMMIT,
+  invalidNetworkResponseError,
+  networkNotFoundError,
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
@@ -67,42 +68,35 @@ export const cryptoAssetsApi = calApi
         providesTags: [...TOKEN_TAGS],
       }),
 
+      /**
+       * The CAL commit, which changes on any CAL deployment. It validates the token cache, since a
+       * token's metadata (decimals, name, signature) can change without a token being added or
+       * removed. Account sync uses {@link getTokenListHash} instead.
+       */
       getTokensSyncHash: build.query<string, string>({
-        async queryFn(currencyId, queryApi) {
-          const extra = getCalExtra(queryApi);
-          try {
-            const url = new URL(`${extra.calServiceUrl}/v1/currencies`);
-            url.searchParams.set("output", "id");
-            url.searchParams.set("limit", "1");
-            url.searchParams.set("id", currencyId);
-
-            const response = await fetch(url, {
-              headers: {
-                "Content-Type": "application/json",
-                [HEADER_X_LEDGER_CLIENT_VERSION]: extra.ledgerClientVersion,
-              },
-            });
-
-            if (!response.ok) {
-              return fetchCurrencyError(response.status, response.statusText);
-            }
-
-            // Check if the response contains data (not an empty array)
-            const responseData = await response.json();
-            if (Array.isArray(responseData) && responseData.length === 0) {
-              return currencyNotFoundError(currencyId);
-            }
-
-            const hash = response.headers.get(HEADER_X_LEDGER_COMMIT);
-
-            if (!hash) {
-              return commitHeaderMissingError();
-            }
-
-            return { data: hash };
-          } catch (error) {
-            return fetchError(error);
+        async queryFn(currencyId, _queryApi, _extraOptions, baseQuery) {
+          const result = await baseQuery({
+            url: "/v1/currencies",
+            params: { output: "id", limit: "1", id: currencyId },
+            // A non-JSON error page keeps its HTTP status instead of a parsing error.
+            responseHandler: "content-type",
+          });
+          if (result.error) {
+            return { error: result.error };
           }
+
+          // Check if the response contains data (not an empty array)
+          if (Array.isArray(result.data) && result.data.length === 0) {
+            return currencyNotFoundError(currencyId);
+          }
+
+          const hash = result.meta?.response?.headers.get(HEADER_X_LEDGER_COMMIT);
+
+          if (!hash) {
+            return commitHeaderMissingError();
+          }
+
+          return { data: hash };
         },
         async onQueryStarted(currencyId, api) {
           const extra = getCalExtra(api);
@@ -120,6 +114,37 @@ export const cryptoAssetsApi = calApi
           } catch {
             // Query failed, skip eviction
           }
+        },
+      }),
+
+      /**
+       * The CAL's hash of the token list of one network. It changes only when a token of that
+       * network is added or removed, so an account resyncs its history only when its own network's
+       * token list changed, not on every CAL deployment.
+       */
+      getTokenListHash: build.query<string, string>({
+        async queryFn(currencyId, _queryApi, _extraOptions, baseQuery) {
+          const result = await baseQuery({
+            url: "/v1/networks",
+            params: { output: "id,token_list_hash", limit: "1", id: currencyId },
+            // A non-JSON error page keeps its HTTP status instead of a parsing error.
+            responseHandler: "content-type",
+          });
+          if (result.error) {
+            return { error: result.error };
+          }
+
+          const parsed = ApiNetworkTokenListHashResponseSchema.safeParse(result.data);
+          if (!parsed.success) {
+            return invalidNetworkResponseError();
+          }
+
+          const [network] = parsed.data;
+          if (!network) {
+            return networkNotFoundError(currencyId);
+          }
+
+          return { data: network.token_list_hash ?? EMPTY_TOKEN_LIST_HASH };
         },
       }),
 
@@ -158,6 +183,7 @@ export const {
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
   useGetTokensSyncHashQuery,
+  useGetTokenListHashQuery,
 } = cryptoAssetsApi;
 
 export type CryptoAssetsApi = typeof cryptoAssetsApi;

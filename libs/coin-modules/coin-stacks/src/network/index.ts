@@ -3,3 +3,4 @@ export * from "../types/api";
 export * from "./transformers";
 export * from "./blocks";
 export * from "./pox";
+export * from "./fees";

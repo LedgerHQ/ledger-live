@@ -1,4 +1,4 @@
-/* instanbul ignore file: don't test fixtures */
+/* istanbul ignore file: don't test fixtures */
 
 import BigNumber from "bignumber.js";
 import {
@@ -67,3 +67,20 @@ export const makeAccount = (
     },
   };
 };
+
+/**
+ * Account for the **generic-adapter** strategy. coin-bitcoin's Alpaca API manages a single address,
+ * so the account is that address: it is the `xpubOrAddress` segment of the id (which the generic
+ * framework passes to `getBalance` / `listOperations`) and the fresh address (the intent's sender).
+ * `freshAddressPath` is what the framework hands the signer.
+ */
+export const makeGenericAdapterAccount = (
+  address: string,
+  publicKey: string,
+  freshAddressPath: string,
+  currency: CryptoCurrency,
+): BitcoinAccount => ({
+  ...makeAccount(address, publicKey, address, currency, "native_segwit"),
+  id: `js:2:${currency.id}:${address}:native_segwit`,
+  freshAddressPath,
+});

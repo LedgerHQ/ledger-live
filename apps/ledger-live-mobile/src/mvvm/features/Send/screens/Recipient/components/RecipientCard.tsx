@@ -63,7 +63,7 @@ export function RecipientCard({
               name={contact.contactName}
               isMe={contact.isMe}
               size="md"
-              testId="send-recipient-card-avatar"
+              testID="send-recipient-card-avatar"
             />
           ) : (
             <Spot icon={Wallet} />

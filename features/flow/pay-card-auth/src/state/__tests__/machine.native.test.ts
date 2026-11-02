@@ -1,6 +1,7 @@
 import { createActor, waitFor, type Actor } from "xstate";
 import { cardLoginMachine } from "../machine";
-import type { CardLoginOauthConfig, CardLoginPorts, PayCardAuthCallback } from "../types";
+import type { CardLoginOauthConfig, PayCardAuthCallback } from "../hostTypes";
+import type { CardLoginPorts } from "../types";
 
 // Two different values on purpose: the provider gets the `https` redirect, and the browser session
 // ends on the app's deep link. A test that spelled them the same could not catch a swap.

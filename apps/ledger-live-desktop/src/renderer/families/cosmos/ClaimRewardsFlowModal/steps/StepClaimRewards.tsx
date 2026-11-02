@@ -1,3 +1,4 @@
+import { getValAddress } from "@ledgerhq/live-common/families/cosmos/buildTransaction";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -7,7 +8,7 @@ import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge"
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { isCompoundRewardSupported } from "@ledgerhq/live-common/families/cosmos/logic";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import ModeSelectorField from "../fields/ModeSelectorField";
@@ -55,7 +56,7 @@ export default function StepClaimRewards({
   );
   const compoundSupported = isCompoundRewardSupported(account.currency.id);
   const amount =
-    transaction.valAddress &&
+    getValAddress(transaction) &&
     formatCurrencyUnit(unit, transaction.amount, {
       disableRounding: true,
       alwaysShowSign: false,
@@ -67,17 +68,16 @@ export default function StepClaimRewards({
       if (!maybeValue) return;
       const { validatorAddress, pendingRewards } = maybeValue;
       updateClaimRewards({
-        ...transaction,
         valAddress: validatorAddress,
         amount: pendingRewards,
       });
     },
-    [updateClaimRewards, transaction],
+    [updateClaimRewards],
   );
   const key = transaction.mode === "claimReward" ? "claimInfo" : "compoundInfo";
   return (
     <Box flow={1}>
-      <TrackPage
+      <TrackScreen
         category="ClaimRewards Flow"
         name="Step 1"
         flow="stake"

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader, Alert } from "@ledgerhq/react-ui";
-import { TrackPage } from "@shared/analytics-react";
+import { TrackScreen } from "@shared/analytics-react";
 import { analyticsFlowName } from "../../utils/constants/analytics";
 
 type Props = {
@@ -46,7 +46,7 @@ export const DesyncOverlay = ({ isOpen, delay = 0, productName }: Props) => {
       backgroundColor="constant.overlay"
       data-testid="onboarding-desync-overlay"
     >
-      <TrackPage
+      <TrackScreen
         category="device connection lost"
         type="modal"
         flow={analyticsFlowName}

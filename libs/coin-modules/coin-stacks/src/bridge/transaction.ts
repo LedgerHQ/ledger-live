@@ -51,6 +51,9 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     network: tr.network as keyof typeof StacksNetwork | undefined,
     anchorMode: tr.anchorMode as AnchorMode | undefined,
     memo: tr.memo,
+    // The generic bridge builds the intent's memo from these two, not from `memo`.
+    ...(tr.memoType !== undefined && { memoType: tr.memoType }),
+    ...(tr.memoValue !== undefined && { memoValue: tr.memoValue }),
     mode: tr.mode,
     valAddress: tr.valAddress,
     familySpecificData: tr.familySpecificData,
@@ -72,6 +75,8 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     network: t.network,
     anchorMode: t.anchorMode,
     memo: t.memo,
+    ...(t.memoType !== undefined && { memoType: t.memoType }),
+    ...(t.memoValue !== undefined && { memoValue: t.memoValue }),
     mode: t.mode,
     valAddress: t.valAddress,
     familySpecificData: t.familySpecificData,

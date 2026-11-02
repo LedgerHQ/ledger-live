@@ -1,9 +1,9 @@
 import React from "react";
 import { screen } from "@testing-library/react";
-import { BalanceFilterPickerView } from "../components/Filter/BalanceFilterPickerView.web";
+import { BalanceFilterPickerView } from "../components/Filter/BalanceFilterPickerView";
 import type { BalanceFilterPickerViewProps } from "../types";
 import { USDC_ID, labels, options } from "./fixtures";
-import { renderWithStyle } from "./renderWithStyle.web";
+import { renderWithStyle } from "./renderWithStyle";
 
 function buildProps(
   overrides: Partial<BalanceFilterPickerViewProps> = {},

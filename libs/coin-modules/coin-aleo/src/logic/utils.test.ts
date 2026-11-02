@@ -91,6 +91,7 @@ import {
   determineTransactionType,
   patchAccountWithViewKey,
   toPublicOperation,
+  toPrivateFeeOperation,
   toPrivateOperation,
   getFees,
   findBondPublicTransition,
@@ -650,6 +651,84 @@ describe("toPublicOperation", () => {
     expect(result.type).toBe("IN");
   });
 
+  const feePublicPaidBy = (payer: string) =>
+    getMockedTransactionDetails("at1tx1", {
+      fee: { transition: getMockedFeePublicTransition({ payer }) },
+    });
+
+  it("should set type to OUT for a rejected public self-transfer the account paid for", () => {
+    const rawTx = getMockedPublicTransaction({
+      sender_address: testnetAddress,
+      recipient_address: testnetAddress,
+      transaction_status: "Rejected",
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details: feePublicPaidBy(testnetAddress),
+      address: testnetAddress,
+    });
+
+    expect(result.type).toBe("OUT");
+  });
+
+  it("should keep a rejected public self-transfer IN when its fee was sponsored", () => {
+    const rawTx = getMockedPublicTransaction({
+      sender_address: testnetAddress,
+      recipient_address: testnetAddress,
+      transaction_status: "Rejected",
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details: feePublicPaidBy(testnetSponsorAddress),
+      address: testnetAddress,
+    });
+
+    expect(result.type).toBe("IN");
+  });
+
+  it("should set type to OUT for a rejected unshield to self paid with a private fee", () => {
+    const rawTx = getMockedPublicTransaction({
+      function_id: "transfer_private_to_public",
+      sender_address: "",
+      recipient_address: testnetAddress,
+      transaction_status: "Rejected",
+    });
+    const details = getMockedTransactionDetails("at1tx1", {
+      fee: { transition: getMockedFeePrivateTransition() },
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details,
+      address: testnetAddress,
+      hasOwnedFeeRecord: true,
+    });
+
+    expect(result.type).toBe("OUT");
+    expect(result.details).toMatchObject({ transactionType: "private" });
+  });
+
+  it("should keep a rejected incoming transfer IN when another address paid the fee", () => {
+    const rawTx = getMockedPublicTransaction({
+      recipient_address: recipientAddress,
+      transaction_status: "Rejected",
+    });
+
+    const result = toPublicOperation({
+      ...publicOpArgs,
+      rawTx,
+      details: feePublicPaidBy(testnetSponsorAddress),
+      address: recipientAddress,
+    });
+
+    expect(result.type).toBe("IN");
+  });
+
   it("should keep a self shield OUT, since the explorer blanked the recipient", () => {
     const rawTx = getMockedPublicTransaction({
       sender_address: senderAddress,
@@ -946,6 +1025,52 @@ describe("toPrivateOperation", () => {
 
     expect(result.tx.fees).toBe(2318n);
     expect(result.tx.feesPayer).toBe(testnetAddress);
+  });
+});
+
+describe("toPrivateFeeOperation", () => {
+  const feeRecord = getMockedRecord({
+    transaction_id: "at1join  ",
+    block_height: 500,
+    block_timestamp: 1704067200,
+    function_name: "fee_private",
+  });
+  const fee = { transition: getMockedFeePrivateTransition({ base: 2308n, priority: 10n }) };
+
+  it("should charge the account the fee and nothing else", () => {
+    const result = toPrivateFeeOperation({
+      feeRecord,
+      details: getMockedTransactionDetails("at1join", { fee, block_hash: "ab1block" }),
+      address: testnetAddress,
+    });
+
+    expect(result).toEqual({
+      id: "at1join",
+      type: "FEES",
+      senders: [testnetAddress],
+      recipients: [],
+      value: 0n,
+      asset: { type: "native" },
+      details: { functionId: "fee_private", transactionType: "private", ledgerOpType: "FEES" },
+      tx: {
+        fees: 2318n,
+        feesPayer: testnetAddress,
+        hash: "at1join",
+        date: new Date(1704067200 * 1000),
+        block: { hash: "ab1block", height: 500, time: new Date(1704067200 * 1000) },
+        failed: false,
+      },
+    });
+  });
+
+  it("should mark a rejected transaction as failed", () => {
+    const result = toPrivateFeeOperation({
+      feeRecord,
+      details: getMockedTransactionDetails("at1join", { fee, status: "Rejected" }),
+      address: testnetAddress,
+    });
+
+    expect(result.tx).toEqual(expect.objectContaining({ fees: 2318n, failed: true }));
   });
 });
 
@@ -2556,8 +2681,6 @@ describe("createTransactionIntent", () => {
       asset: {
         type: tokenSubAccount.token.tokenType,
         assetReference: tokenSubAccount.token.contractAddress,
-        name: tokenSubAccount.token.name,
-        unit: tokenSubAccount.token.units[0],
       },
       type: mode,
       amount: BigInt(transaction.amount.toString()),
@@ -2620,8 +2743,6 @@ describe("createTransactionIntent", () => {
         asset: {
           type: tokenAccount.token.tokenType,
           assetReference: tokenAccount.token.contractAddress,
-          name: tokenAccount.token.name,
-          unit: tokenAccount.token.units[0],
         },
         data: {
           type: mode,
@@ -3965,6 +4086,18 @@ describe("parseTransactionFields", () => {
 
     expect(parseTransactionFields(rawTx, rawTx.recipient_address).type).toBe("IN");
     expect(parseTransactionFields(rawTx, rawTx.sender_address).type).toBe("OUT");
+  });
+
+  it("types a self-transfer IN, unless it was rejected", () => {
+    const selfTx = (transaction_status: string) =>
+      getMockedPublicTransaction({
+        sender_address: address,
+        recipient_address: address,
+        transaction_status,
+      });
+
+    expect(parseTransactionFields(selfTx("Accepted"), address).type).toBe("IN");
+    expect(parseTransactionFields(selfTx("Rejected"), address).type).toBe("OUT");
   });
 });
 

@@ -233,7 +233,7 @@ describe("swap execute command", () => {
     const data = await runExecuteSwapCommand();
 
     expect(data.command).toBe("swap execute");
-    expect(data.network).toBe("ethereum:main");
+    expect(data.network).toBe("ethereum");
     expect(data.from).toBe("ethereum");
     expect(data.to).toBe("bitcoin");
     expect(data.provider).toBe("changelly_v2");
@@ -367,7 +367,7 @@ describe("swap execute command", () => {
       const data = await runExecuteSwapCommand(dieBaseFlags);
 
       expect(data.command).toBe("swap execute");
-      expect(data.network).toBe("ethereum:main");
+      expect(data.network).toBe("ethereum");
       expect(data.plan).toBe("direct-swap");
       expect(data.from).toBe("ethereum");
       expect(data.to).toBe("bitcoin");

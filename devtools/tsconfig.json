@@ -8,6 +8,7 @@
     { "path": "./trustchain" },
     { "path": "./cloud-sync" },
     { "path": "./device-onboarding" },
+    { "path": "./app-config" },
     { "path": "./registry" },
     { "path": "./transport" },
     { "path": "./transport-panel" },

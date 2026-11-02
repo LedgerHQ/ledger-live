@@ -309,11 +309,13 @@ describe("renameContactIntentJob", () => {
     });
   });
 
-  it("GIVEN status word 0x6982 WHEN the device action errors THEN it reports existing-group-verification-failed", () => {
+  it("GIVEN status word 0x6982 WHEN the device action errors THEN it keeps the wrong-device screen open", () => {
     // GIVEN
     const job = startJob();
     // Rename always replays the group's existing name proof, so this is how a
-    // proof bound to another device surfaces.
+    // proof bound to another device surfaces. The device checks that proof
+    // before showing a confirmation, so closing the job here would dismiss the
+    // only error the wallet can show.
     const error = {
       _tag: "ContactsCommandError",
       errorCode: "6982",
@@ -328,6 +330,8 @@ describe("renameContactIntentJob", () => {
       type: "existing-group-verification-failed",
       error: expect.objectContaining({ message: "SWO_SECURITY_CONDITION_NOT_SATISFIED" }),
     });
+    expect(job.isCompleted()).toBe(false);
+    expect(job.onResult).not.toHaveBeenCalled();
   });
 
   it("GIVEN status word 0x6984 WHEN the device action errors THEN it reports unsupported-operation", () => {
@@ -435,6 +439,23 @@ describe("renameContactIntentJob", () => {
     // THEN
     expect(job.onResult).toHaveBeenCalledWith({ type: "failure", error: expect.any(Error) });
     expect(job.states).toContainEqual({ type: "failed", error: expect.any(Error) });
+  });
+
+  it("GIVEN the device disconnects during confirmation WHEN the device action errors THEN it rethrows instead of failing the screen", () => {
+    // GIVEN
+    const job = startJob();
+    const error = { _tag: "DeviceDisconnectedWhileSendingError" };
+
+    // WHEN
+    job.emit({ status: DeviceActionStatus.Error, error });
+
+    // THEN
+    expect(job.onResult).toHaveBeenCalledWith({
+      type: "failure",
+      error: expect.objectContaining({ message: error._tag }),
+    });
+    expect(job.states.find(state => state.type === "failed")).toBeUndefined();
+    expect(job.getError()).toBe(error);
   });
 
   it("GIVEN the device action observable errors WHEN reported THEN it reports failure with a terminal failed state", () => {

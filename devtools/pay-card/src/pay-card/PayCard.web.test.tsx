@@ -60,13 +60,11 @@ function buildProps(): PayCardToolProps {
       cardNativeParam: false,
       cardLiveAppParam: false,
       cardDisclaimerParam: false,
-      legacyTopUpParam: false,
       ptxCardEnabled: false,
       setPayTabEnabled: jest.fn(),
       setCardNativeParam: jest.fn(),
       setCardLiveAppParam: jest.fn(),
       setCardDisclaimerParam: jest.fn(),
-      setLegacyTopUpParam: jest.fn(),
       setPtxCardEnabled: jest.fn(),
     },
     cardOnboarding: {

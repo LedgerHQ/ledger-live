@@ -16,11 +16,11 @@ them fire, and the jest parent waits on the worker forever. jest does not detect
 1. **Arm.** `setup()` in `jest.environment.ts` calls `armWorkerWatchdog()` first, so device
    allocation and app install are watched too. Only forked workers arm: in-band, the process is the
    whole run, and killing it would lose Detox's cleanup.
-2. **Beat.** The worker's main thread beats every second through
-   [`@sentry/node-native-stacktrace`](https://www.npmjs.com/package/@sentry/node-native-stacktrace),
-   carrying the current spec and phase. It beats for the worker's whole life, idle included.
+2. **Beat.** The worker's main thread posts a beat to the watchdog thread every second, carrying
+   the current spec and phase. It beats for the worker's whole life, idle included.
 3. **Watch.** `helpers/workerWatchdog.thread.cjs` runs on its own thread and event loop. After 90s
-   without a beat it captures the frozen stack, writes `artifacts/stall-watchdog-<pid>.json`,
+   without a beat it captures the frozen stack through `node:inspector`
+   (`connectToMainThread()` then `Debugger.pause`), writes `artifacts/stall-watchdog-<pid>.json`,
    prints a `::error::[stall-watchdog]` annotation and SIGKILLs the worker.
 4. **Retry.** jest fails the spec ("A jest worker process was terminated") and Detox's `--retries`
    re-runs it.
@@ -51,14 +51,15 @@ The phase is what the worker last started (`watchdogPhase()` in `helpers/workerW
 
 ## Traps
 
-- `threadPoll(true, state)`: the first argument enables tracking. `false` silently disables it.
 - A beat tied to each spec's lifecycle false-kills idle workers and misses a freeze before the
   first beat, so the heartbeat runs for the worker's whole life.
-- The watchdog never breaks a suite: the native module is loaded lazily, and any failure of its own
-  logs `[stall-watchdog] disabled: …` and leaves the run unwatched. The thread's `error` listener
-  is required: without it, a thread error crashes the worker it protects.
+- The watchdog never breaks a suite: any failure of its own logs `[stall-watchdog] disabled: …` and
+  leaves the run unwatched. The thread's `error` listener is required: without it, a thread error
+  crashes the worker it protects.
 - A thread's `console` goes through the frozen main thread, so the thread writes to fd 2.
-- A thread blocked in native code (`execSync`, a syscall) is detected but has no JS frames.
+- `Debugger.pause` lands through a V8 interrupt, so a busy JS loop or `Atomics.wait` pauses with
+  its frames. A thread blocked in native code (`execSync`, a syscall) never pauses: after 5s the
+  watchdog kills it with no JS frames.
 - Log with `warn`: CI runs Detox with `--loglevel warn`, which hides `info`.
 
 ## Local use

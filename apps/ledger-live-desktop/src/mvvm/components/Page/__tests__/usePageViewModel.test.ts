@@ -1,5 +1,8 @@
 import { act, renderHook, withFlagOverrides } from "tests/testSetup";
 import { useLocation } from "react-router";
+import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { getAccountUrl } from "~/renderer/utils";
 import { useSwapAvailability } from "LLD/components/RightPanel/Swap/useSwapAvailability";
 import { SCROLL_TO_TOP_EVENT } from "../constants";
 import { usePageViewModel } from "../usePageViewModel";
@@ -102,6 +105,66 @@ describe("usePageViewModel", () => {
     });
 
     expect(result.current.shouldRenderRightPanel).toBe(true);
+  });
+
+  it("hides the swap console on asset detail routes when the A/B test disables it", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/asset/bitcoin"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        lwdWallet40: { enabled: true, params: { aggregatedAssets: true } },
+        ptxSwapLiveAppOnPortfolio: { enabled: true },
+        lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+      }),
+    });
+
+    expect(result.current.shouldRenderRightPanel).toBe(false);
+    expect(result.current.rightPanelVariant).toBeUndefined();
+  });
+
+  it("keeps the swap console outside asset detail routes when the A/B test disables it", () => {
+    mockedUseLocation.mockReturnValue(createLocation("/analytics"));
+    const { result } = renderHook(() => usePageViewModel(), {
+      initialState: withFlagOverrides({
+        ...wallet40WithRightPanelFlags,
+        lwdSwapConsoleAbtest: { enabled: true, params: { console: false, quickAction: true } },
+      }),
+    });
+
+    expect(result.current.rightPanelVariant).toBe("swap");
+  });
+
+  describe("account detail routes", () => {
+    const btcAccount = genAccount("page-view-model-btc", {
+      currency: getCryptoCurrencyById("bitcoin"),
+    });
+
+    const renderOnAccount = (accountDetail: { enabled: boolean }) => {
+      mockedUseLocation.mockReturnValue(createLocation(getAccountUrl(btcAccount.id)));
+      return renderHook(() => usePageViewModel(), {
+        initialState: {
+          ...withFlagOverrides({ ...wallet40WithRightPanelFlags, accountDetail }),
+          accounts: [btcAccount],
+        },
+      });
+    };
+
+    it("shows the swap console when the account detail page is on", () => {
+      mockedUseSwapAvailability.mockReturnValue(true);
+
+      expect(renderOnAccount({ enabled: true }).result.current.rightPanelVariant).toBe("swap");
+    });
+
+    it("hides the swap console when the account detail page is off", () => {
+      mockedUseSwapAvailability.mockReturnValue(true);
+
+      expect(renderOnAccount({ enabled: false }).result.current.shouldRenderRightPanel).toBe(false);
+    });
+
+    it("hides the swap console when swap does not support the account currency", () => {
+      mockedUseSwapAvailability.mockReturnValue(false);
+
+      expect(renderOnAccount({ enabled: true }).result.current.shouldRenderRightPanel).toBe(false);
+    });
   });
 
   it("hides the right panel on /asset routes when aggregated assets is disabled", () => {

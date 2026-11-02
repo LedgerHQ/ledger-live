@@ -68,7 +68,9 @@ import {
 } from "./Screen/DeviceDeprecationScreen";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FlowName, getCurrencyName, getFlowName } from "./utils";
+import { rnBleTransportIdentifier, rnHidTransportIdentifier } from "@ledgerhq/live-dmk-mobile";
 import { useFeature } from "@features/platform-feature-flags";
+import { BootloaderDiscovered } from "LLM/features/OsUpdate/components/BootloaderDiscovered";
 
 export type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -184,6 +186,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const { colors: colorsFromStyled } = useThemeFromStyledComponents();
 
   const llmNanoSDeprecation = useFeature("llmNanoSDeprecation");
+  const isLdmkOsUpdatesEnabled = useFeature("ldmkOsUpdates")?.enabled ?? false;
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
@@ -712,10 +715,19 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }
 
   if (deviceInfo && deviceInfo.isBootloader) {
-    return renderBootloaderStep({
-      onAutoRepair: onAutoRepair!,
-      t,
-    });
+    if (isLdmkOsUpdatesEnabled && device) {
+      return (
+        <BootloaderDiscovered
+          device={{
+            id: device.deviceId,
+            name: device.deviceName ?? null,
+            deviceModelId: device.modelId,
+            transport: device.wired ? rnHidTransportIdentifier : rnBleTransportIdentifier,
+          }}
+        />
+      );
+    }
+    return renderBootloaderStep({ onAutoRepair: onAutoRepair!, t });
   }
 
   if (request && device && deviceSignatureRequested) {

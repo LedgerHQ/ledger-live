@@ -1,16 +1,7 @@
 import React from "react";
 import { CONTACT_NAME_MAX_LENGTH } from "@domain/entity-contact";
 import { TextInput } from "@ledgerhq/lumen-ui-react";
-
-type ContactNameInputProps = Readonly<{
-  value: string;
-  placeholder: string;
-  errorMessage?: string;
-  isEditable?: boolean;
-  /** Namespaces the test ids, so each host dialog identifies its own input. */
-  testIDPrefix?: string;
-  onChange: (value: string) => void;
-}>;
+import type { ContactNameInputProps } from "./ContactNameInput.types";
 
 export function ContactNameInput({
   value,
@@ -18,14 +9,14 @@ export function ContactNameInput({
   errorMessage,
   isEditable = true,
   testIDPrefix = "contacts-add-contact",
-  onChange,
+  onChangeName,
 }: ContactNameInputProps): React.ReactNode {
   return (
     <TextInput
       data-testid={`${testIDPrefix}-name-input`}
       label={placeholder}
       value={value}
-      onChange={event => onChange(event.target.value)}
+      onChange={event => onChangeName(event.target.value)}
       maxLength={CONTACT_NAME_MAX_LENGTH}
       maxCount={CONTACT_NAME_MAX_LENGTH}
       helperText={errorMessage}

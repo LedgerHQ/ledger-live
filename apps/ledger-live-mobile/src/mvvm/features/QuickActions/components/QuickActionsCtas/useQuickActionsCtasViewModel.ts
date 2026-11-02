@@ -70,7 +70,7 @@ export const useQuickActionsCtasViewModel = ({
 
   const handleTransferPress = useCallback(() => {
     trackPress("transfer");
-    openTransferDrawer({ sourceScreenName: pageName });
+    openTransferDrawer({ sourceScreenName: pageName, scope: { type: "wallet" } });
   }, [trackPress, openTransferDrawer, pageName]);
 
   const handleSwapPress = useCallback(() => {

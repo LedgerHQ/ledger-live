@@ -1857,6 +1857,10 @@
       "title" : "请求未发送",
       "description" : "Internet Computer 未接受该请求，因此未发送任何内容，也未发生任何更改。请重试。{{reason}}"
     },
+    "ICPTransactionExpired" : {
+      "title" : "交易已过期",
+      "description" : "已签署的交易未及时发送，因此未发送任何内容，也未发生任何更改。请重新签署。"
+    },
     "ICPCreateNeuronWarning" : {
       "title" : "这会将您的 ICP 锁定在新的神经元中",
       "description" : "该神经元的初始解锁延迟最短，因时间过短而无法进行投票或赚取奖励。ß您可以在“管理神经元”中延长该延迟，且需在延迟结束之后，该质押才可再次使用。"
@@ -1871,6 +1875,7 @@
     "menu" : {
       "changeName" : "更改名称",
       "viewAdvancedLogs" : "查看高级日志",
+      "viewExplorer" : "在浏览器中查看",
       "removeAccount" : "从资产组合中删除账户"
     },
     "advancedLogs" : {
@@ -2587,6 +2592,10 @@
       "learnMore" : "了解更多",
       "activate" : "激活",
       "skip" : "暂时跳过"
+    },
+    "connection" : {
+      "connecting" : "正在连接您的设备",
+      "failed" : "连接失败"
     }
   },
   "onboarding" : {
@@ -3437,10 +3446,10 @@
       "skipCta" : "以后再说",
       "skip" : {
         "title" : "是否确定?",
-        "description" : "如果跳过此步骤，当您更换手机或电脑时，将需要手动重新添加所有账户、余额及历史记录。",
-        "descriptionEmphasis" : "您可以随时在设置中禁用此功能。",
+        "description" : "如果您更换手机，或在其他手机或电脑上使用 Ledger Wallet，您需要手动同步账户。",
+        "descriptionEmphasis" : "请注意，您随时可以在设置中启用或禁用此功能",
         "skipCTA" : "是，跳过",
-        "syncCTA" : "否，同步我的钱包"
+        "syncCTA" : "不，启用同步"
       }
     },
     "seedStep" : {
@@ -3625,6 +3634,16 @@
       "upToDate" : "资产组合已更新",
       "syncError" : "无法加载某些账户数据",
       "offline" : "您已离线。请检查您的连接"
+    }
+  },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "永续合约",
+      "description" : "杠杆投资"
+    },
+    "borrow" : {
+      "title" : "贷款",
+      "description" : "借入稳定币"
     }
   },
   "addAccountsModal" : {
@@ -3862,18 +3881,6 @@
     "subaccountCount_other" : "+{{count}} 个子账户"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "更多信息",
-      "cardTitle" : "由 {{team}} 提供支持",
-      "drawer" : {
-        "title" : "{{family}} 集成",
-        "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
-        "description" : "Ledger Wallet 是一个开源平台。",
-        "description2" : "全球各地的开发者都可以与我们的 Ledger Wallet 相集成",
-        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
-        "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} 正在迁移至 {{to}}。请点击此<0>链接</0>了解详情，如需帮助，请联系客服。",
       "contactSupport" : "联系客服"
@@ -5410,6 +5417,15 @@
         }
       },
       "feePayment" : {
+        "title" : "选择费用支付方式",
+        "regular" : "普通转账",
+        "sponsored" : "使用 {{provider}} 支付",
+        "payIn" : "以 {{feeCurrency}} 支付网络费用",
+        "paidIn" : "已用 {{currency}} 支付",
+        "nudge" : "使用 {{provider}}，您可节省 {{amount}}",
+        "saved" : "已通过 {{provider}} 节省",
+        "confirm" : "确认",
+        "disclaimer" : "通过第三方能量提供商 {{provider}}，费用以 {{feeCurrency}} 支付。",
         "insufficientFunds" : "您没有足够的 {{feeCurrency}} 支付数额以及 {{provider}} 能量租赁费用。"
       },
       "sponsoredRentSignature" : {
@@ -5871,6 +5887,39 @@
     }
   },
   "osUpdates" : {
+    "backupBanner" : {
+      "title" : "已找到备份",
+      "description" : "您设备上的应用程序和设置未完全恢复。",
+      "restore" : "恢复",
+      "delete" : "删除备份"
+    },
+    "bootloaderDiscovered" : {
+      "title" : "设备处于 Bootloader（引导加载程序）模式。",
+      "description" : "点击“Continue”（继续）进行更新。",
+      "continue" : "继续"
+    },
+    "banner" : {
+      "wallet40" : {
+        "title" : {
+          "default" : "操作系统有更新",
+          "manager" : "Ledger OS 有可用更新"
+        },
+        "version" : "版本 {{firmwareVersion}}",
+        "cta" : "更新"
+      }
+    },
+    "restoreConfirmation" : {
+      "title" : "恢复您之前的配置？",
+      "description" : "我确认要从我先前的配置中恢复应用程序与设置，并且在此之后创建的任何应用程序和数据都将丢失。",
+      "confirm" : "恢复",
+      "cancel" : "取消"
+    },
+    "deleteConfirmation" : {
+      "title" : "删除您的备份",
+      "description" : "我知晓我上一次备份中的先前配置以及应用程序和数据，包括 Security Key 安全密钥凭据，都将丢失。",
+      "confirm" : "删除备份",
+      "cancel" : "取消"
+    },
     "actions" : {
       "retry" : "重试",
       "cancel" : "取消",
@@ -10292,7 +10341,7 @@
             "steps" : {
               "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
               "step2" : "打开您要同步的 Ledger Wallet 钱包应用程序。",
-              "step3" : "前往<0>“设置”</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>我已打开</0> <1>></1> <0>扫描二维码</0>",
+              "step3" : "前往<0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>扫描二维码</0>",
               "step4" : "扫描二维码。"
             }
           }
@@ -10305,7 +10354,7 @@
             "steps" : {
               "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
               "step2" : "打开您要同步的 Ledger Wallet。",
-              "step3" : "前往<0>“设置”</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>我已打开</0> <1>></1> <0>显示二维码</0>",
+              "step3" : "前往 <0>设置</0> <1>></1> <0>常规</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>显示二维码</0>",
               "step4" : "扫描二维码。"
             }
           }
@@ -10416,9 +10465,58 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "暂无活动",
+      "description" : {
+        "receive" : "请先通过“接收”添加资金。",
+        "receiveSwap" : "请先通过“接收”或“互换”添加资金。",
+        "receiveBuy" : "请先通过“接收”或“买入”添加资金。",
+        "receiveSwapBuy" : "首先通过“接收”、“互换”或“买入”添加资金。",
+        "swap" : "请先通过“互换”添加资金。",
+        "buy" : "请先通过“买入”添加资金。",
+        "swapBuy" : "请先通过“互换”或“买入”添加资金。"
+      }
+    },
+    "actions" : {
+      "transfer" : "转账",
+      "receive" : "接收",
+      "send" : "发送",
+      "swap" : "互换",
+      "buy" : "买入",
+      "sell" : "卖出",
+      "earn" : "赚取",
+      "more" : "更多"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "了解更多",
+      "openPerps" : "打开永续合约 (Perps)"
+    },
+    "migration" : {
+      "title" : "{{from}} 正在迁移至 {{to}}",
+      "description" : "了解有关迁移的更多信息，如需帮助，请联系客服。"
+    },
+    "willBeDeprecated" : {
+      "title" : "自 {{date}} 起将不再支持 {{currencyName}}",
+      "description" : "其仍将受到您的 Ledger 设备的保护。在帮助中心了解更多。"
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "总余额不包括股息或股票拆分。"
+    },
+    "perps" : {
+      "title" : "关于 Hyperliquid 账户",
+      "description" : "此账户与永续合约交易相关。此账户不支持交易操作"
+    }
+  },
   "accountDetail" : {
     "assets" : {
       "title" : "资产"
+    },
+    "refreshStatus" : {
+      "upToDate" : "账户已是最新",
+      "syncError" : "无法加载账户数据"
     },
     "transactions" : {
       "title" : "交易"
@@ -10429,6 +10527,9 @@
       "label" : "地址名称",
       "submit" : "修改名称"
     }
+  },
+  "accountAssetPicker" : {
+    "title" : "选择资产"
   },
   "assetDetail" : {
     "balanceGraph" : {
@@ -10680,6 +10781,10 @@
     "selectAccountPerpsEmptyDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
     "selectDepositCurrencyTitle" : "选择要存入的资产",
     "selectDepositCurrencyDescription" : "任何支持的资产均可。必要时，该资产将自动互换。",
+    "selectWithdrawCurrencyTitle" : "选择要提取到的资产",
+    "selectWithdrawCurrencyDescription" : "您的 USDC 将自动互换为您选择的资产。",
+    "selectAccountPerpsWithdrawFromDescription" : "选择您想要从中提取资金的账户",
+    "selectAccountPerpsWithdrawFromEmptyDescription" : "若要提现，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
     "searchPlaceholder" : "按名称或地址搜索",
     "emptyAssetList" : "未找到资产",
     "notAvailableYet" : "暂不可用",
@@ -10739,6 +10844,25 @@
     "formErrors" : {
       "amountExceedsBalance" : "余额不足",
       "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。"
+    }
+  },
+  "perpsWithdraw" : {
+    "title" : "提取",
+    "review" : "审核",
+    "keypadDelete" : "删除末位数字",
+    "estimatedAmount" : "提取约 {{value}}",
+    "inputSubText" : "通过 {{provider}} 互换并提取",
+    "selectCurrencyTitle" : "提取至 {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · {{counterValue}}",
+    "selectCurrencyNoAccount" : "无账户",
+    "formErrors" : {
+      "insufficientBalance" : "余额不足",
+      "minimumAmount" : "最低提取数额为 {{minAmount}} USDC。",
+      "minimumAmountUnknown" : "此数额太低，无法提取。",
+      "lowLiquidity" : "该资产暂时不可用。请稍后重试或选择其他资产。",
+      "addressScreening" : "该笔提现无法处理至此账户。",
+      "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。",
+      "currenciesUnavailable" : "我们无法加载可供您提取至的资产。请稍后重试。"
     }
   },
   "swapErrors" : {

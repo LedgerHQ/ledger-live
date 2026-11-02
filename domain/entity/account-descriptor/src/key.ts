@@ -12,9 +12,13 @@ export const AccountUUIDSchema = z.uuid({ version: "v5" }).brand<"AccountUUID">(
 /** Deterministic identity of an account, the same on every device; carries neither xpub nor address. */
 export type AccountUUID = z.infer<typeof AccountUUIDSchema>;
 
-/** Canonical key and identity of an account: hardened marker and `0x` address case collapse to one key. */
+/** Canonical key and identity of an account: network case, hardened marker and `0x` address case collapse to one key. */
 export function accountDescriptorKey(descriptor: AccountDescriptor): string {
-  const normalized: AccountDescriptor = { ...descriptor, path: canonicalPath(descriptor.path) };
+  const normalized: AccountDescriptor = {
+    ...descriptor,
+    network: descriptor.network.toLowerCase(),
+    path: canonicalPath(descriptor.path),
+  };
   if (normalized.type === "address" && normalized.address.startsWith("0x")) {
     normalized.address = normalized.address.toLowerCase();
   }

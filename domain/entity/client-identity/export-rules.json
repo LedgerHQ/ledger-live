@@ -3,6 +3,9 @@
     "exportDeviceIdForPushDevicesService": ["domain/api/push-devices/src/api.ts"],
     "exportDeviceIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"]
   },
+  "domain/entity/client-identity/src/ids/PortfolioId.ts": {
+    "exportPortfolioIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"]
+  },
   "domain/entity/client-identity/src/ids/UserId.ts": {
     "exportUserIdForPushDevicesService": ["domain/api/push-devices/src/internals/middleware.ts"],
     "exportUserIdForPersistence": ["domain/entity/client-identity/src/persistence.ts"],
