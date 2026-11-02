@@ -12,6 +12,7 @@ const {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  SKIP_DIRS,
   SOURCE_EXTS,
   DEVTOOLS_ROOT,
 } = require("./validate");
@@ -24,6 +25,8 @@ const {
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
 } = require("./constraints");
+const { getGlobPatternsFromPackageManagerWorkspaces } = require("nx/src/devkit-internals");
+const ts = require("typescript");
 const { inferTags } = require("../project-tags/plugin");
 const projectJson = require("./project.json");
 
@@ -1003,19 +1006,25 @@ test("devtools: each source file is read and parsed once across type-only edges"
       "devtools/bindings/src/relay.ts": 'export const load = () => import("@devtools/relay");',
     },
   );
-  const sourceDir = path.join(root, "devtools/bindings/src");
+  const sourceFiles = ["env.ts", "flags.ts", "relay.ts"].map(f =>
+    path.join(root, "devtools/bindings/src", f),
+  );
   const readFileSync = t.mock.method(fs, "readFileSync");
+  const parse = t.mock.fn(ts.createSourceFile);
 
-  const violations = devtoolsViolations(graph, root);
+  const violations = findDevtoolsImportViolations(
+    graph,
+    root,
+    DEVTOOLS_ALLOWED_IMPORTS,
+    DEVTOOLS_TYPE_ONLY_IMPORTS,
+    parse,
+  );
 
   const sourceReads = readFileSync.mock.calls
     .map(call => String(call.arguments[0]))
-    .filter(file => file.startsWith(sourceDir + path.sep))
-    .sort();
-  assert.deepEqual(
-    sourceReads,
-    ["env.ts", "flags.ts", "relay.ts"].map(f => path.join(sourceDir, f)),
-  );
+    .filter(file => sourceFiles.includes(file));
+  assert.deepEqual(sourceReads.sort(), sourceFiles);
+  assert.deepEqual(parse.mock.calls.map(call => call.arguments[0]).sort(), sourceFiles);
   assert.deepEqual(violations.map(v => `${v.target} ${v.file}`).sort(), [
     `@devtools/env ${path.join("devtools/bindings/src/env.ts")}`,
     `@devtools/relay ${path.join("devtools/bindings/src/relay.ts")}`,
@@ -1027,17 +1036,37 @@ test("devtools: each source file is read and parsed once across type-only edges"
 const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
 
 /**
- * A sample project root for each `pnpm-workspace.yaml` package pattern, globs replaced by a name.
+ * A sample project root for each workspace package pattern Nx builds the graph from, globs
+ * replaced by a name. Exclusion patterns add no root, and the workspace root is left out.
  *
+ * @param {string} workspaceRoot
  * @returns {string[]}
  */
-function workspaceProjectRoots() {
-  const yaml = fs.readFileSync(path.join(WORKSPACE_ROOT, "pnpm-workspace.yaml"), "utf8");
-  const packagesBlock = yaml.split(/^packages:\n/m)[1].split(/^\S/m)[0];
-  return [...packagesBlock.matchAll(/^\s+-\s+"?([^"\n]+)"?$/gm)].map(([, pattern]) =>
-    pattern.replace(/\*\*?/g, "pkg"),
-  );
+function workspaceProjectRoots(workspaceRoot = WORKSPACE_ROOT) {
+  return getGlobPatternsFromPackageManagerWorkspaces(workspaceRoot)
+    .filter(manifestGlob => !manifestGlob.startsWith("!"))
+    .map(manifestGlob => path.posix.dirname(manifestGlob).replace(/\*\*?/g, "pkg"))
+    .filter(projectRoot => projectRoot !== ".");
 }
+
+test("workspace project roots follow the parsed pnpm-workspace.yaml, exclusions dropped", t => {
+  const root = makeTmpWorkspace({
+    "package.json": "{}",
+    "pnpm-workspace.yaml": [
+      "packages: [apps/*, 'libs/**'] # flow style",
+      "catalog:",
+      "  react: 19.0.0",
+    ].join("\n"),
+  });
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  assert.deepEqual(workspaceProjectRoots(root), ["apps/pkg", "libs/pkg"]);
+
+  fs.writeFileSync(
+    path.join(root, "pnpm-workspace.yaml"),
+    ["packages:", "  - apps/* # apps", '  - "!apps/legacy"', "  - docs"].join("\n"),
+  );
+  assert.deepEqual(workspaceProjectRoots(root), ["apps/pkg", "docs"]);
+});
 
 /**
  * Whether the cached `lint:boundaries` target hashes `file`: a positive input matches it and no
@@ -1056,7 +1085,13 @@ function isLintBoundariesInput(file) {
   );
 }
 
-test("lint:boundaries inputs cover every source file the checks read", () => {
+/**
+ * Roots whose source files a check reads: the legacy and devtools roots, and every project root
+ * tagged with a constrained source tag.
+ *
+ * @returns {string[]}
+ */
+function checkedSourceRoots() {
   const constrainedTags = new Set([
     ...DEP_CONSTRAINTS.map(c => c.sourceTag),
     ...BANNED_EXTERNALS_BY_TAG.map(r => r.sourceTag),
@@ -1064,13 +1099,32 @@ test("lint:boundaries inputs cover every source file the checks read", () => {
   const taggedRoots = workspaceProjectRoots().filter(projectRoot =>
     inferTags(projectRoot, undefined).some(tag => constrainedTags.has(tag)),
   );
-  const sourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT, ...taggedRoots];
-  const missed = sourceRoots.flatMap(sourceRoot =>
+  return [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT, ...taggedRoots];
+}
+
+test("lint:boundaries inputs cover every source file the checks read", () => {
+  const missed = checkedSourceRoots().flatMap(sourceRoot =>
     [...SOURCE_EXTS]
       .map(ext => `${sourceRoot}/pkg/src/nested/index${ext}`)
       .filter(file => !isLintBoundariesInput(file)),
   );
   assert.deepEqual(missed, []);
+});
+
+test("lint:boundaries inputs exclude exactly the directories the checks skip", () => {
+  /** @param {string} dir */
+  const sourceFilesUnder = dir =>
+    checkedSourceRoots().flatMap(sourceRoot => [
+      `${sourceRoot}/pkg/${dir}/index.ts`,
+      `${sourceRoot}/pkg/src/${dir}/nested/index.ts`,
+    ]);
+  assert.deepEqual([...SKIP_DIRS].flatMap(sourceFilesUnder).filter(isLintBoundariesInput), []);
+
+  const exclusionGlob = projectJson.targets["lint:boundaries"].inputs.find(input =>
+    input.startsWith("!"),
+  );
+  const excludedDirs = path.posix.basename(path.posix.dirname(exclusionGlob));
+  assert.equal(excludedDirs, `@(${[...SKIP_DIRS].join("|")})`);
 });
 
 test("lint:boundaries inputs cover the manifest and project file of every graph node", () => {

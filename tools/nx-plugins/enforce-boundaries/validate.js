@@ -102,12 +102,10 @@ function importSpecifiers(content) {
  * Specifiers a source file loads at runtime: every import but the type-only forms
  * `DEVTOOLS_TYPE_ONLY_RULE` allows, which the build erases.
  *
- * @param {string} file
- * @param {string} content
+ * @param {import("typescript").SourceFile} source
  * @returns {string[]}
  */
-function runtimeSpecifiers(file, content) {
-  const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
+function runtimeSpecifiers(source) {
   const specifiers = [];
   /** @param {import("typescript").Node} node */
   const visit = node => {
@@ -353,9 +351,16 @@ function allows(allowed, target) {
  * @param {string} workspaceRoot
  * @param {Record<string, string[] | "*">} allowedImports
  * @param {Record<string, string[] | "*">} typeOnlyImports
+ * @param {typeof ts.createSourceFile} parse
  * @returns {DevtoolsImportViolation[]}
  */
-function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
+function findDevtoolsImportViolations(
+  graph,
+  workspaceRoot,
+  allowedImports,
+  typeOnlyImports = {},
+  parse = ts.createSourceFile,
+) {
   const names = devtoolsPackageNames(graph, workspaceRoot);
   const byEdge = new Map();
   /** @type {Map<string, Array<{ file: string, specifiers: string[] }>>} */
@@ -366,7 +371,8 @@ function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, type
     if (!files) {
       files = [];
       walkSourceFiles(path.join(workspaceRoot, graph.nodes[nodeName].data.root), file => {
-        files.push({ file, specifiers: runtimeSpecifiers(file, fs.readFileSync(file, "utf8")) });
+        const source = parse(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, false);
+        files.push({ file, specifiers: runtimeSpecifiers(source) });
       });
       filesByNode.set(nodeName, files);
     }
@@ -542,6 +548,7 @@ module.exports = {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  SKIP_DIRS,
   SOURCE_EXTS,
   DEVTOOLS_ROOT,
 };
