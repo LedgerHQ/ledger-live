@@ -210,6 +210,23 @@ describe("useSwapNavigation (Market actions)", () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
+  test("should open the drawer when the only swappable network is not the currency", async () => {
+    const ethereum = getCryptoCurrencyById("ethereum");
+    serveAssetGroups({ ethereum: { base: "base" } });
+    const { result } = renderHook(() => useSwapNavigation(), {
+      initialState: { accounts: [] },
+    });
+
+    await act(async () => {
+      await result.current.navigateToSwap(ethereum, { ledgerIds: [ethereum.id, "base"] });
+    });
+
+    expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
+      expect.objectContaining({ currencies: ["base"] }),
+    );
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
   test("should swap to the network of the account picked in the drawer", async () => {
     const ethereum = getCryptoCurrencyById("ethereum");
     const base = getCryptoCurrencyById("base");

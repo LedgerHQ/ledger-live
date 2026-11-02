@@ -115,8 +115,11 @@ export function useOpenSwap({
       return;
     }
 
+    const isOnlyNetworkOtherThanCurrency =
+      currency !== undefined && resolvedCurrencyIds[0] !== currency.id;
+
     // Multi-network assets always open the drawer so the user can pick network → account.
-    if (resolvedCurrencyIds.length > 1) {
+    if (resolvedCurrencyIds.length > 1 || isOnlyNetworkOtherThanCurrency) {
       openAccountSelectionDrawer();
       return;
     }
@@ -137,9 +140,10 @@ export function useOpenSwap({
     openAccountSelectionDrawer();
   }, [
     accountsForCurrency,
+    currency,
     defaultAccount,
     defaultParentAccount,
-    resolvedCurrencyIds.length,
+    resolvedCurrencyIds,
     navigateToSwap,
     openAccountSelectionDrawer,
   ]);

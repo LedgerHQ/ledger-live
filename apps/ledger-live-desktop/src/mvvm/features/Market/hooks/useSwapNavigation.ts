@@ -48,17 +48,18 @@ export function useSwapNavigation(): UseSwapNavigationResult {
         ledgerCurrency.id,
         options?.ledgerIds,
       );
-      const hasSeveralNetworks = networkCurrencyIds.length > 1;
+      const isOnlyCurrencyNetwork =
+        networkCurrencyIds.length === 1 && networkCurrencyIds[0] === ledgerCurrency.id;
       const availableAccounts = getAvailableAccountsById(ledgerCurrency.id, flattenedAccounts);
 
-      if (!hasSeveralNetworks && availableAccounts.length === 0) {
+      if (isOnlyCurrencyNetwork && availableAccounts.length === 0) {
         navigate("/swap", {
           state: buildSwapNavigationState({ defaultCurrency: ledgerCurrency, fromPath }),
         });
         return;
       }
 
-      if (!hasSeveralNetworks && availableAccounts.length === 1) {
+      if (isOnlyCurrencyNetwork && availableAccounts.length === 1) {
         const account = availableAccounts[0];
         const parentAccount = isTokenAccount(account)
           ? allAccounts.find(a => a.id === account.parentId)

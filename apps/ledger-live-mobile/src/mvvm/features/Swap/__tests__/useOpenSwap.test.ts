@@ -105,6 +105,32 @@ describe("useOpenSwap (Market / QuickActions origin)", () => {
       expect(mockOpenDrawer).not.toHaveBeenCalled();
     });
 
+    test("should open the drawer when the only swappable network is not the currency", () => {
+      const { result } = renderHook(
+        () =>
+          useOpenSwap({
+            currency: ethereum,
+            currencyIds: ["base"],
+            sourceScreenName: SOURCE_SCREEN,
+          }),
+        {
+          overrideInitialState: state => ({
+            ...state,
+            accounts: { ...state.accounts, active: [] },
+          }),
+        },
+      );
+
+      act(() => {
+        result.current.handleOpenSwap();
+      });
+
+      expect(mockOpenDrawer).toHaveBeenCalledWith(
+        expect.objectContaining({ currencies: ["base"], flow: "swap" }),
+      );
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
     test("should navigate via Main → Swap with toTokenId when no account for token", () => {
       const { result } = renderHook(
         () => useOpenSwap({ currency: usdcToken, sourceScreenName: SOURCE_SCREEN }),
