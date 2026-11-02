@@ -267,8 +267,8 @@ catalogs:
       specifier: 0.2.0
       version: 0.2.0
     '@ledgerhq/device-signer-kit-solana':
-      specifier: 1.14.0
-      version: 1.14.0
+      specifier: 1.15.0
+      version: 1.15.0
     '@ledgerhq/device-signer-kit-tron':
       specifier: 0.3.0
       version: 0.3.0
@@ -291,8 +291,8 @@ catalogs:
       specifier: 1.2.4
       version: 1.2.4
     '@ledgerhq/dmk-ledger-wallet':
-      specifier: 0.7.1
-      version: 0.7.1
+      specifier: 0.8.0
+      version: 0.8.0
     '@ledgerhq/domain-service':
       specifier: 1.9.1
       version: 1.9.1
@@ -18485,7 +18485,7 @@ importers:
         version: 1.3.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
       '@ledgerhq/dmk-ledger-wallet':
         specifier: 'catalog:'
-        version: 0.7.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+        version: 0.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
       '@ledgerhq/hw-transport':
         specifier: 6.36.1
         version: 6.36.1
@@ -19315,7 +19315,7 @@ importers:
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 'catalog:'
-        version: 1.14.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
+        version: 1.15.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)
       '@ledgerhq/devices':
         specifier: 8.18.1
         version: 8.18.1
@@ -24818,8 +24818,8 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.8.0
 
-  '@ledgerhq/device-signer-kit-solana@1.14.0':
-    resolution: {integrity: sha512-WmCKfFFlurthX9yCSwgbN8DOwDFgAb8Qv8obOQB2D6C03kUR/pUTjovJBE/UfYAqiUS732VSBmlS5dr/G2CNWA==}
+  '@ledgerhq/device-signer-kit-solana@1.15.0':
+    resolution: {integrity: sha512-O8t4OgjnHS+pHu4Lcw+Xy4f73qbr4OHhLm2hmRikJsaIE7G/3MoZ1Anyjl3y3LOdzf18yFJWGlNb79Zy1RCBdQ==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.11.0
 
@@ -24875,8 +24875,8 @@ packages:
   '@ledgerhq/devices@8.18.1':
     resolution: {integrity: sha512-mOoW1neiE9/G+zbHbTkfRtYh7SHTUzxqVyCy4jMh2br/cBD56b6mFrQrj5xUXX6AYaw7yP1i/Wy/bGaHoBQkdA==}
 
-  '@ledgerhq/dmk-ledger-wallet@0.7.1':
-    resolution: {integrity: sha512-z//l64n7TnE/cGphVyCgYDy3Z92o9PVgm7MuLdzV36hTeXsV4cF+gc26UiM6X/4rcwfTtIq2BDMdQVJeqjNRIw==}
+  '@ledgerhq/dmk-ledger-wallet@0.8.0':
+    resolution: {integrity: sha512-+tCCr4XEF2CgWh+7goAj2GT2R0fJ0xmUnSmqaSGnGEciMQg9LfYkR6uwf3hDDy/T8K9rX1G+RHuSgPoHPC+zMA==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.11.0
 
@@ -43733,7 +43733,7 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.19.2
 
-  '@ledgerhq/device-signer-kit-solana@1.14.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)':
+  '@ledgerhq/device-signer-kit-solana@1.15.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(encoding@0.1.13)(utf-8-validate@6.0.6)':
     dependencies:
       '@ledgerhq/context-module': 2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -43833,7 +43833,7 @@ snapshots:
     dependencies:
       semver: 7.8.5
 
-  '@ledgerhq/dmk-ledger-wallet@0.7.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
+  '@ledgerhq/dmk-ledger-wallet@0.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))':
     dependencies:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/signer-utils': 1.3.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
