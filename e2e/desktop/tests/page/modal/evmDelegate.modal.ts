@@ -12,6 +12,10 @@ export class EvmDelegateModal extends Modal {
   private amountContinueButton = this.page.locator("#send-amount-continue-button");
   private transactionConfirm = this.page.getByTestId("device-action-transaction-confirm");
   private successMessageLabel = this.page.getByTestId("success-message-label");
+  private readonly seiActivationWarning = this.page.getByTestId("warning-box").filter({
+    hasText:
+      "To delegate, you need to activate your account by sending any amount to any address, including your own. This is a Sei network requirement.",
+  });
 
   @step("Start EVM delegation flow from account empty state")
   async startFromEmptyState() {
@@ -32,6 +36,12 @@ export class EvmDelegateModal extends Modal {
     if (await this.rewardsInfoContinueButton.isVisible()) {
       await this.rewardsInfoContinueButton.click();
     }
+  }
+
+  @step("Expect Sei account activation warning with Continue disabled")
+  async expectSeiActivationWarning() {
+    await expect(this.seiActivationWarning).toBeVisible();
+    await expect(this.rewardsInfoContinueButton).toBeDisabled();
   }
 
   @step("Expect validator list to be visible")

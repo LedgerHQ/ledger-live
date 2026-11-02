@@ -646,7 +646,7 @@ export class Account {
     index: 0,
     accountPath: "44'/60'/0'/0/0",
   });
-  static readonly SEI_EVM_2 = new Account({
+  static readonly SEI_EVM_UNASSOCIATED = new Account({
     currency: Currency.SEI_EVM,
     accountName: "SEI Network (EVM) 2",
     index: 1,
