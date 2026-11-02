@@ -281,10 +281,21 @@ export const asDerivationMode = (derivationMode: string): DerivationMode => {
   return derivationMode;
 };
 export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
-export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number => {
+// Per-currency gap limit, applied on top of the derivation mode one (the highest wins).
+// Hypercore shares the EVM derivation index with Arbitrum, so a legacy Perps account
+// can live on index N with no Hyperliquid activity on the lower indexes. A dedicated
+// derivation mode would change account ids.
+const mandatoryEmptyAccountSkipByCurrency: Partial<Record<string, number>> = {
+  hypercore: 10,
+};
+export const getMandatoryEmptyAccountSkip = (
+  derivationMode: DerivationMode,
+  currency: CryptoCurrency,
+): number => {
   const keychainObservableRange = getEnv("KEYCHAIN_OBSERVABLE_RANGE") ?? 0;
   const mandatoryEmptyAccountSkip = modes[derivationMode]?.mandatoryEmptyAccountSkip ?? 0;
-  return Math.max(mandatoryEmptyAccountSkip, keychainObservableRange);
+  const currencyEmptyAccountSkip = mandatoryEmptyAccountSkipByCurrency[currency.id] ?? 0;
+  return Math.max(mandatoryEmptyAccountSkip, currencyEmptyAccountSkip, keychainObservableRange);
 };
 export const isInvalidDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
