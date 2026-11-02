@@ -930,6 +930,10 @@ jobs:
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
 
+      - name: Check iOS simulators are ready
+        timeout-minutes: 10
+        uses: LedgerHQ/ledger-live/tools/actions/composites/check-ios-simulators@develop
+
       - name: Run iOS Detox shard ${{ matrix.shard }}/${{ matrix.total }}
         id: run-ios
         # A broadcast run can also wait up to 30 minutes for each busy exclusive lock.
