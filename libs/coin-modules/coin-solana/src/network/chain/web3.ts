@@ -392,7 +392,7 @@ export async function getStakeAccountAddressWithSeed({
 
 export async function getPriorityFee(api: ChainAPI, accounts: string[]): Promise<number> {
   const recentFees = await api.getRecentPrioritizationFees(uniq(accounts));
-  return median(recentFees.map(item => item.prioritizationFee));
+  return Math.ceil(median(recentFees.map(item => item.prioritizationFee)));
 }
 
 export async function appendMaybePriorityFeeInstructions(

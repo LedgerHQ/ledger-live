@@ -14,6 +14,7 @@ import {
   feesOf,
   ledgerFirstValidators,
   ledgerValidatorsOf,
+  median,
 } from "../../utils";
 
 const configWithRpcUrls = (rpcUrls: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
@@ -47,6 +48,18 @@ describe("utils - endpointByCurrencyId", () => {
     expect(() => endpointByCurrencyId(config, "solana_unknown")).toThrow(
       /unexpected currency id format/,
     );
+  });
+});
+
+describe("utils - median", () => {
+  it.each([
+    [[], 0],
+    [[30_000], 30_000],
+    [[20_001, 20_002], 20_001.5],
+    [[0, 90_000, 30_000], 30_000],
+    [[0, 20_000, 40_000, 90_000], 30_000],
+  ])("returns %d for %j", (values, expected) => {
+    expect(median(values)).toBe(expected);
   });
 });
 
