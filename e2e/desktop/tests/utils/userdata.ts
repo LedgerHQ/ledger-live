@@ -8,8 +8,9 @@ const getUserdata = async (userdataFile: string) => {
 
 export async function getUserdataUserId(userdataFile?: string): Promise<string> {
   if (!userdataFile) return "";
-  const parsed: { data?: { user?: { id?: string } } } = await getUserdata(userdataFile);
-  return parsed.data?.user?.id ?? "";
+  const parsed: { data?: { identities?: { userId?: string }; user?: { id?: string } } } =
+    await getUserdata(userdataFile);
+  return parsed.data?.identities?.userId || parsed.data?.user?.id || "";
 }
 
 /** A fresh install has not seen the analytics opt-in screen, so Get started opens it. */
