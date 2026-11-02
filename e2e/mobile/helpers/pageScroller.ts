@@ -25,7 +25,7 @@ const swipeDirectionFor = (direction: Direction): Direction => {
 export class PageScroller {
   async performScroll(
     matcher: NativeMatcher,
-    scrollViewId?: string | RegExp,
+    scrollViewId?: string | RegExp | NativeMatcher,
     pixels = 300,
     initialDirection: Direction = "down",
     timeout = TIMEOUT.xxxsmall,
@@ -88,14 +88,19 @@ export class PageScroller {
   }
 
   private async getScrollElement(
-    scrollViewId?: string | RegExp,
+    scrollViewId?: string | RegExp | NativeMatcher,
   ): Promise<Detox.IndexableNativeElement | NativeElement> {
     if (scrollViewId) {
-      const scrollElement = by.id(scrollViewId);
+      // string | RegExp serves the elementHelpers.ts globals: keep only NativeMatcher once that file is deleted.
+      const scrollElement =
+        typeof scrollViewId === "string" || scrollViewId instanceof RegExp
+          ? by.id(scrollViewId)
+          : scrollViewId;
       if (await this.isVisible(scrollElement, TIMEOUT.xsmall)) {
         return element(scrollElement);
       } else {
-        throw new Error(`Scroll view with id ${scrollViewId} not found or not visible.`);
+        const name = scrollElement === scrollViewId ? JSON.stringify(scrollViewId) : scrollViewId;
+        throw new Error(`Scroll view with id ${name} not found or not visible.`);
       }
     }
     const type = isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView";
