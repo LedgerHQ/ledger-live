@@ -1,10 +1,6 @@
 import { track } from "@shared/analytics";
 import React from "react";
-import {
-  renderWithReactQuery,
-  withReadOnlyDisabled,
-  withFlagOverrides,
-} from "@tests/test-renderer";
+import { renderWithReactQuery, withFlagOverrides } from "@tests/test-renderer";
 import { expectedNavigationParams } from "../const";
 import { TopBar } from "../index";
 import { NavigatorName, ScreenName } from "~/const/navigation";
@@ -39,20 +35,17 @@ describe("TopBar navigation", () => {
     mockedUseSyncIndicator.mockReturnValue(defaultSyncState);
   });
 
-  it("should navigate to MyLedger with expected params when myLedger button is pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
-      overrideInitialState: withReadOnlyDisabled,
+  it("should navigate to My Wallet when the avatar is pressed", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
+
+    await user.press(getByTestId("topbar-mywallet"));
+
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.MyWallet, {
+      screen: ScreenName.MyWallet,
     });
 
-    await user.press(getByTestId("topbar-myledger"));
-
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expectedNavigationParams.myLedger.name,
-      expectedNavigationParams.myLedger.params,
-    );
-
     expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "MyLedger",
+      button: "My Wallet",
       page: ScreenName.Portfolio,
     });
   });
@@ -69,35 +62,6 @@ describe("TopBar navigation", () => {
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       button: "Discover",
-      page: ScreenName.Portfolio,
-    });
-  });
-
-  it("should navigate to NotificationCenter with expected params when notifications button is pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
-
-    await user.press(getByTestId("topbar-notifications"));
-
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expectedNavigationParams.notifications.name,
-      expectedNavigationParams.notifications.params,
-    );
-
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Notifications",
-      page: ScreenName.Portfolio,
-    });
-  });
-
-  it("should navigate to Settings with expected params when settings button is pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
-
-    await user.press(getByTestId("topbar-settings"));
-
-    expect(mockNavigate).toHaveBeenCalledWith(expectedNavigationParams.settings.name);
-
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      button: "Settings",
       page: ScreenName.Portfolio,
     });
   });

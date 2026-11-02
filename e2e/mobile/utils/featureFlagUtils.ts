@@ -12,7 +12,6 @@ const FF_LWM_WALLET_40_Q1 = {
       brazePlacement: true,
       operationsList: false,
       aggregatedAssets: false,
-      myWallet: false,
       earnUpselling: false,
       earnSimulator: false,
       assetDiscoverability: false,
@@ -29,7 +28,6 @@ export const FF_LWM_WALLET_40_Q2 = {
       brazePlacement: true,
       operationsList: true,
       aggregatedAssets: true,
-      myWallet: true,
       earnUpselling: true,
       earnSimulator: true,
       assetDiscoverability: true,
@@ -223,11 +221,6 @@ export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
 export const isAssetSectionEnabled = async (): Promise<boolean> => {
   const lwmFlag = await getLwmFlag();
   return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetSection);
-};
-
-export const isMyWalletEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.myWallet);
 };
 
 export const isOperationsListEnabled = async (): Promise<boolean> => {

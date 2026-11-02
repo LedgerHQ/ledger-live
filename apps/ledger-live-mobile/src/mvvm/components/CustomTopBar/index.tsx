@@ -2,10 +2,9 @@ import React from "react";
 import { Platform } from "react-native";
 import { Box, IconButton, type IconButtonProps } from "@ledgerhq/lumen-ui-rnative";
 import { LumenViewStyle } from "@ledgerhq/lumen-ui-rnative/styles";
-import type { TopBarActionIcon } from "./useMyLedgerTopBarAction";
+import type { TopBarActionIcon } from "./types";
 
-export type { TopBarActionIcon } from "./useMyLedgerTopBarAction";
-export { useMyLedgerTopBarAction } from "./useMyLedgerTopBarAction";
+export type { TopBarActionIcon } from "./types";
 
 function renderIconButton(item: TopBarActionIcon, appearance: IconButtonProps["appearance"]) {
   const button = (
@@ -29,14 +28,14 @@ function renderIconButton(item: TopBarActionIcon, appearance: IconButtonProps["a
 
 type CustomTopBarProps = {
   leadingElement?: React.ReactNode;
-  leadingIcons: readonly TopBarActionIcon[];
-  trailingIcons: readonly TopBarActionIcon[];
+  leadingIcons?: readonly TopBarActionIcon[];
+  trailingIcons?: readonly TopBarActionIcon[];
 };
 
 export function CustomTopBar({
   leadingElement,
-  leadingIcons,
-  trailingIcons,
+  leadingIcons = [],
+  trailingIcons = [],
 }: Readonly<CustomTopBarProps>) {
   const isAndroid = Platform.OS === "android";
   const appearance: IconButtonProps["appearance"] = isAndroid ? "gray" : "transparent";

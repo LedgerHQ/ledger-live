@@ -867,7 +867,6 @@ type Feature_Wallet40_Params = {
   assetSection: boolean;
   operationsList: boolean;
   aggregatedAssets: boolean;
-  myWallet: boolean;
   pnl: boolean;
   assetDiscoverability: boolean;
   // Specifics

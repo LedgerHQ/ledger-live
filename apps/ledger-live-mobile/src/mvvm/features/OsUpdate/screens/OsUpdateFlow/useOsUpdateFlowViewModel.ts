@@ -3,7 +3,6 @@ import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-dmk-shared";
 import { OsUpdateFlowMode } from "@ledgerhq/live-common/os-update/types";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import {
   getActiveConnectedDevice,
   rnHidTransportIdentifier,
@@ -25,7 +24,6 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
   const navigation = useNavigation<BaseNavigation>();
   const dispatch = useDispatch();
   const dmk = useDeviceManagementKit();
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const resolvedOsUpdates = useSelector(osUpdatesSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -54,9 +52,8 @@ export function useOsUpdateFlowViewModel(device: Device, mode?: OsUpdateFlowMode
               modelId: device.deviceModelId,
               wired: device.transport === rnHidTransportIdentifier,
             },
-        shouldDisplayMyWallet,
       }),
-    [navigation, device, shouldDisplayMyWallet, isBootloaderRepair],
+    [navigation, device, isBootloaderRepair],
   );
 
   useEffect(() => {

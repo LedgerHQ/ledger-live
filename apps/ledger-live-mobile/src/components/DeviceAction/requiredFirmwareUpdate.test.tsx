@@ -25,7 +25,7 @@ const stateWithLastSeenDevice = (state: State): State => ({
 describe("RequiredFirmwareUpdate", () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it("should navigate to MyLedger", async () => {
+  it("should navigate to My Wallet", async () => {
     const { user } = render(<RequiredFirmwareUpdate navigation={mockNavigation} device={nanoX} />, {
       overrideInitialState: stateWithLastSeenDevice,
     });
@@ -33,16 +33,24 @@ describe("RequiredFirmwareUpdate", () => {
     await user.press(screen.getByText("Go to My Ledger"));
 
     expect(mockReset).toHaveBeenCalledWith({
-      index: 1,
+      index: 0,
       routes: [
-        { name: NavigatorName.Main },
         {
-          name: NavigatorName.MyLedger,
+          name: NavigatorName.Base,
           state: {
+            index: 1,
             routes: [
+              { name: NavigatorName.Main },
               {
-                name: ScreenName.MyLedgerChooseDevice,
-                params: { device: nanoX, firmwareUpdate: true },
+                name: NavigatorName.MyWallet,
+                state: {
+                  routes: [
+                    {
+                      name: ScreenName.MyWallet,
+                      params: { device: nanoX, firmwareUpdate: true },
+                    },
+                  ],
+                },
               },
             ],
           },

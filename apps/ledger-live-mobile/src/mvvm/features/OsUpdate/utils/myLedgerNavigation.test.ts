@@ -8,34 +8,23 @@ const createNavigation = () =>
   ({ navigate: jest.fn(), reset: jest.fn() }) as unknown as jest.Mocked<BaseNavigation>;
 
 describe("navigateToMyLedger", () => {
-  it("navigates to the Wallet 4.0 My Wallet screen", () => {
+  it("navigates to My Wallet", () => {
     const navigation = createNavigation();
 
-    navigateToMyLedger(navigation, { device, shouldDisplayMyWallet: true, firmwareUpdate: true });
+    navigateToMyLedger(navigation, { device, firmwareUpdate: true });
 
     expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.MyWallet, {
       screen: ScreenName.MyWallet,
       params: { device, firmwareUpdate: true },
     });
   });
-
-  it("navigates to the legacy My Ledger device selection", () => {
-    const navigation = createNavigation();
-
-    navigateToMyLedger(navigation, { device, shouldDisplayMyWallet: false, firmwareUpdate: true });
-
-    expect(navigation.navigate).toHaveBeenCalledWith(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
-      params: { device, firmwareUpdate: true },
-    });
-  });
 });
 
 describe("resetToMyLedger", () => {
-  it("resets to the Wallet 4.0 My Wallet screen with the device to reconnect", () => {
+  it("resets to My Wallet with the device to reconnect", () => {
     const navigation = createNavigation();
 
-    resetToMyLedger(navigation, { device, shouldDisplayMyWallet: true });
+    resetToMyLedger(navigation, { device });
 
     expect(navigation.reset).toHaveBeenCalledWith({
       index: 1,
@@ -44,23 +33,6 @@ describe("resetToMyLedger", () => {
         {
           name: NavigatorName.MyWallet,
           state: { routes: [{ name: ScreenName.MyWallet, params: { device } }] },
-        },
-      ],
-    });
-  });
-
-  it("resets to the legacy My Ledger device selection with the device to reconnect", () => {
-    const navigation = createNavigation();
-
-    resetToMyLedger(navigation, { device, shouldDisplayMyWallet: false });
-
-    expect(navigation.reset).toHaveBeenCalledWith({
-      index: 1,
-      routes: [
-        { name: NavigatorName.Main },
-        {
-          name: NavigatorName.MyLedger,
-          state: { routes: [{ name: ScreenName.MyLedgerChooseDevice, params: { device } }] },
         },
       ],
     });
