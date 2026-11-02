@@ -18,8 +18,9 @@ native-only variants), are built on one private core, `core/`, which is not expo
 the transform, the platform extensions, the jsdom web and node native projects, the Lumen,
 crypto-icons, react-native and image mocks, the web setup, coverage and reporters (sonar, test
 quarantine, `github-actions` on CI), and one override rule: in `webOverrides` / `nativeOverrides`,
-`moduleNameMapper` and `setupFilesAfterEnv` add to the project's own, every other key replaces
-it. A preset adds only its own mocks, test matching, resolver and transform allowlist. The core's
+every key replaces the project's value, as in jest. A preset adds only its own mocks, test
+matching, resolver and transform allowlist, and exports its projects' `moduleNameMapper` and
+`setupFilesAfterEnv` for a package that keeps them while adding its own. The core's
 mocks stay reachable as `@support/jest/shared/mocks/*`.
 
 The dual presets set `coverageReporters` at the top level, since jest ignores it inside a project.

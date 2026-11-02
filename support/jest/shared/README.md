@@ -54,14 +54,19 @@ const { createSharedUiJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiJestConfig();
 ```
 
-Per-project customisation via `webOverrides` / `nativeOverrides`. `moduleNameMapper` and
-`setupFilesAfterEnv` **add** to the project's defaults (an entry with the same pattern replaces
-that mock); any other key replaces the project's value:
+Per-project customisation via `webOverrides` / `nativeOverrides`: every key replaces the
+project's value, as in jest. To keep the project's mocks or setup files, spread the exported
+`webModuleNameMapper`, `nativeModuleNameMapper`, `webSetupFilesAfterEnv` or
+`nativeSetupFilesAfterEnv` (frozen) into the override. An entry with the same pattern replaces
+that mock in place:
 
 ```js
+const { createSharedUiJestConfig, nativeModuleNameMapper } = require("@support/jest/shared");
+
 module.exports = createSharedUiJestConfig({
   nativeOverrides: {
     moduleNameMapper: {
+      ...nativeModuleNameMapper,
       "^react-native$": path.join(__dirname, "jest/mocks/react-native.js"),
     },
   },
@@ -85,13 +90,15 @@ const { createSharedUiNativeJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiNativeJestConfig();
 ```
 
-`moduleNameMapper` and `setupFilesAfterEnv` add to the preset's, as in the dual preset; any other
-key replaces it. Pass extra `moduleNameMapper` entries to add package-specific mocks alongside the
-base ones:
+Every key replaces the preset's, as in the dual preset. To add package-specific mocks alongside
+the base ones, spread `nativeModuleNameMapper`:
 
 ```js
+const { createSharedUiNativeJestConfig, nativeModuleNameMapper } = require("@support/jest/shared");
+
 module.exports = createSharedUiNativeJestConfig({
   moduleNameMapper: {
+    ...nativeModuleNameMapper,
     "^my-custom-dep$": path.join(__dirname, "jest/mocks/my-custom-dep.js"),
   },
 });

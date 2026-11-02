@@ -86,24 +86,26 @@ module.exports = require("@support/jest/features-flow").createFlowJestConfig({
 
 ### Per-project overrides
 
-`webOverrides` and `nativeOverrides` merge into the web and the native project. Two keys add to
-the project's defaults instead of replacing them:
-
-- `setupFilesAfterEnv`: the files run after the project's own setup files.
-- `moduleNameMapper`: the entries join the default mocks; an entry with the same pattern replaces
-  that mock.
-
-Any other key replaces the project's value.
+In `webOverrides` and `nativeOverrides`, every key replaces the project's value, as in jest. To
+keep the project's setup files or mocks while adding your own, spread the exported
+`webSetupFilesAfterEnv`, `nativeSetupFilesAfterEnv`, `webModuleNameMapper` or
+`nativeModuleNameMapper` (frozen) into the override:
 
 ```js
 const path = require("path");
+const {
+  createFlowJestConfig,
+  nativeModuleNameMapper,
+  webSetupFilesAfterEnv,
+} = require("@support/jest/features-flow");
 
-module.exports = require("@support/jest/features-flow").createFlowJestConfig({
+module.exports = createFlowJestConfig({
   webOverrides: {
-    setupFilesAfterEnv: [path.resolve(__dirname, "jest/setup.web.js")],
+    setupFilesAfterEnv: [...webSetupFilesAfterEnv, path.resolve(__dirname, "jest/setup.web.js")],
   },
   nativeOverrides: {
     moduleNameMapper: {
+      ...nativeModuleNameMapper,
       "^my-native-dep$": path.resolve(__dirname, "jest/mocks/my-native-dep.js"),
     },
   },

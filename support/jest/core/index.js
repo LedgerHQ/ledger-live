@@ -53,15 +53,18 @@ function lcovRoot(rootDir, depth) {
   return rootDir === undefined ? depth : `${path.relative(rootDir, repositoryRoot)}/`;
 }
 
+// The core projects' mocks and setup files. An override replaces them, as in jest: a layer or a
+// package that keeps them spreads these tables into its own.
+
 // Redirect the heavy Lumen/crypto-icons ESM barrels to a generic passthrough stub so tests
 // don't need to transform them or install their peer graph. See mocks/*.js.
-const webMocks = {
+const webMocks = deepFreeze({
   "^@ledgerhq/lumen-ui-react(/.*)?$": path.join(__dirname, "mocks/passthrough-web.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-web.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
-};
+});
 
-const nativeMocks = {
+const nativeMocks = deepFreeze({
   // Stub react-native itself (Flow-typed ESM) so native tests run in a plain node env.
   // Mapped here (not jest.mock in a setup file) so it also intercepts react-native imports
   // from inside @testing-library/react-native.
@@ -70,7 +73,15 @@ const nativeMocks = {
   "^@ledgerhq/lumen-ui-rnative(/.*)?$": path.join(__dirname, "mocks/passthrough-native.js"),
   "^@ledgerhq/crypto-icons$": path.join(__dirname, "mocks/passthrough-native.js"),
   "\\.(webp|png|jpg|jpeg|gif|svg)$": path.join(__dirname, "mocks/file-stub.js"),
-};
+});
+
+const webSetupFiles = deepFreeze([
+  "@testing-library/jest-dom",
+  path.join(__dirname, "setup/web.js"),
+  quarantineRetries,
+]);
+
+const nativeSetupFiles = deepFreeze([quarantineRetries]);
 
 // Platform variants resolve like they do in the bundlers (Rspack `resolve.extensions`, Metro
 // platform extensions), so a `.web`/`.native` suffix stays confined to the file that needs one.
@@ -83,23 +94,20 @@ function platformExtensions(platform) {
 }
 
 /**
- * Applies a project override: `setupFilesAfterEnv` and `moduleNameMapper` add to the project's
- * own, every other key replaces the project's value.
+ * Applies a project override: every key replaces the project's value, as in jest. The mocks and
+ * setup files the result keeps go to jest as unfrozen copies, like `freshReporters`.
  *
  * @param {import('@jest/types').Config.InitialProjectOptions} project
  * @param {import('@jest/types').Config.InitialProjectOptions} overrides
  * @returns {import('@jest/types').Config.InitialProjectOptions}
  */
-function withProjectOverrides(project, { setupFilesAfterEnv, moduleNameMapper, ...overrides }) {
+function withProjectOverrides(project, overrides) {
+  const { moduleNameMapper, setupFilesAfterEnv } = { ...project, ...overrides };
   return {
     ...project,
     ...overrides,
-    ...(setupFilesAfterEnv && {
-      setupFilesAfterEnv: [...(project.setupFilesAfterEnv ?? []), ...setupFilesAfterEnv],
-    }),
-    ...(moduleNameMapper && {
-      moduleNameMapper: { ...project.moduleNameMapper, ...moduleNameMapper },
-    }),
+    ...(moduleNameMapper && { moduleNameMapper: { ...moduleNameMapper } }),
+    ...(setupFilesAfterEnv && { setupFilesAfterEnv: [...setupFilesAfterEnv] }),
   };
 }
 
@@ -117,12 +125,8 @@ function webProject() {
       "**/!(*.web|*.native).test.ts?(x)",
       "**/!(*.web|*.native).spec.ts?(x)",
     ],
-    moduleNameMapper: { ...webMocks },
-    setupFilesAfterEnv: [
-      "@testing-library/jest-dom",
-      path.join(__dirname, "setup/web.js"),
-      quarantineRetries,
-    ],
+    moduleNameMapper: webMocks,
+    setupFilesAfterEnv: webSetupFiles,
   };
 }
 
@@ -134,14 +138,14 @@ function nativeProject() {
     testEnvironment: "node",
     moduleFileExtensions: platformExtensions("native"),
     testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
-    moduleNameMapper: { ...nativeMocks },
-    setupFilesAfterEnv: [quarantineRetries],
+    moduleNameMapper: nativeMocks,
+    setupFilesAfterEnv: nativeSetupFiles,
   };
 }
 
 /**
- * A core project with the layer's additions, then the consumer's overrides, both by the
- * `withProjectOverrides` rule.
+ * A core project with the layer's keys, then the consumer's overrides, each replacing the value
+ * before it (`withProjectOverrides`).
  *
  * @param {import('@jest/types').Config.InitialProjectOptions} project
  * @param {import('@jest/types').Config.InitialProjectOptions} layer
@@ -155,9 +159,9 @@ function layerProject(project, layer, overrides) {
 /**
  * @typedef {object} DualLayer
  * @property {string} depth lcov root of a package of the layer, without `rootDir`
- * @property {import('@jest/types').Config.InitialProjectOptions} [web] what the layer adds to the
- *   web project, by the override rule; without it the config has the native project only
- * @property {import('@jest/types').Config.InitialProjectOptions} native what the layer adds to the
+ * @property {import('@jest/types').Config.InitialProjectOptions} [web] the layer's keys of the web
+ *   project, by the override rule; without it the config has the native project only
+ * @property {import('@jest/types').Config.InitialProjectOptions} native the layer's keys of the
  *   native project, by the override rule
  */
 
@@ -317,7 +321,7 @@ function presetFactories() {
  * tests), node native project (*.native.test.ts(x)), test quarantine, sonar and, on CI, the
  * github-actions reporter.
  *
- * `webOverrides` / `nativeOverrides` apply to each project after the layer's additions (see
+ * `webOverrides` / `nativeOverrides` apply to each project after the layer's keys (see
  * `layerProject`). Any other option is a top-level key and replaces the preset's.
  *
  * @param {DualLayer} layer
@@ -358,11 +362,14 @@ module.exports = {
   lcovCoverageReporters,
   lcovRoot,
   nativeMocks,
+  nativeSetupFiles,
   platformExtensions,
   presetFactories,
   presetFactory,
   quarantineReporter,
   quarantineRetries,
   swcTransform,
+  webMocks,
+  webSetupFiles,
   withProjectOverrides,
 };
