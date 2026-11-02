@@ -355,11 +355,8 @@ export const DeeplinksProvider = ({
   const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection, shouldDisplayAggregatedAssets } =
+    useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
@@ -712,7 +709,6 @@ export const DeeplinksProvider = ({
               hostname,
               pathname,
               shouldDisplayAggregatedAssets,
-              shouldDisplayAssetDiscoverability,
               categoryParam: searchParams.get("category"),
             });
 
@@ -946,7 +942,6 @@ export const DeeplinksProvider = ({
     dispatch,
     shouldDisplayAssetSection,
     shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,
     web3hubFlag?.enabled,

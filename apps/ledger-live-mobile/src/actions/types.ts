@@ -521,24 +521,17 @@ export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 // === MARKET ACTIONS ===
 export enum MarketStateActionTypes {
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
-  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
-  MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
   MARKET_SET_HIDE_TRANSACTIONS_ON_CHART = "MARKET_SET_HIDE_TRANSACTIONS_ON_CHART",
   MARKET_IMPORT = "MARKET_IMPORT",
 }
 
-export type MarketSetMarketFilterByStarredCurrenciesPayload =
-  MarketState["marketFilterByStarredCurrencies"];
-export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
 export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
 export type MarketSetHideTransactionsOnChartPayload = MarketState["hideTransactionsOnChart"];
 
 export type MarketImportPayload = Partial<MarketState>;
 
 export type MarketPayload =
-  | MarketSetMarketFilterByStarredCurrenciesPayload
   | MarketSetMarketRequestParamsPayload
-  | MarketSetCurrentPagePayload
   | MarketSetHideTransactionsOnChartPayload
   | MarketImportPayload;
 

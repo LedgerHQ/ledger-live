@@ -102,18 +102,8 @@ describe("TopBar navigation", () => {
     });
   });
 
-  it("should not render the search icon when asset discoverability is disabled", () => {
-    const { queryByTestId } = renderWithReactQuery(<TopBar />);
-
-    expect(queryByTestId("topbar-search")).toBeNull();
-  });
-
-  it("should navigate to GlobalSearch when the search icon is pressed and asset discoverability is enabled", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
-      overrideInitialState: withFlagOverrides({
-        lwmWallet40: { params: { assetDiscoverability: true } },
-      }),
-    });
+  it("should navigate to GlobalSearch when the search icon is pressed", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
 
     await user.press(getByTestId("topbar-search"));
 

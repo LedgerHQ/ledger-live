@@ -35,7 +35,6 @@ interface UsePortfolioViewModelResult {
   hideEmptyTokenAccount: boolean;
   isAWalletCardDisplayed: boolean;
   isAccountListUIEnabled: boolean;
-  shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayAssetSection: boolean;
   shouldDisplayOperationsList: boolean;
   shouldDisplayPerpsEntryPoint: boolean;
@@ -59,11 +58,8 @@ const usePortfolioViewModel = (navigation: {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayOperationsList,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection, shouldDisplayOperationsList } =
+    useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const llmDatadog = useFeature("llmDatadog");
@@ -151,7 +147,6 @@ const usePortfolioViewModel = (navigation: {
     hideEmptyTokenAccount,
     isAWalletCardDisplayed,
     isAccountListUIEnabled,
-    shouldDisplayAssetDiscoverability,
     shouldDisplayAssetSection,
     shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,

@@ -16,7 +16,6 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
     onMyWalletPress,
     shouldDisplayMyWallet,
     shouldDisplayOperationsList,
-    shouldDisplayAssetDiscoverability,
     onSearchPress,
     onDiscoverPress,
     onNotificationsPress,
@@ -41,7 +40,6 @@ export function TopBar({ screenName }: Readonly<TopBarProps>) {
       onMyWalletPress={onMyWalletPress}
       shouldDisplayMyWallet={shouldDisplayMyWallet}
       shouldDisplayOperationsList={shouldDisplayOperationsList}
-      shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
       onSearchPress={onSearchPress}
       onDiscoverPress={onDiscoverPress}
       onNotificationsPress={onNotificationsPress}

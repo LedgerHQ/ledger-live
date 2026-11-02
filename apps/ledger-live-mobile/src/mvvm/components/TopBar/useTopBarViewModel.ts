@@ -21,8 +21,7 @@ export function useTopBarViewModel(
 ) {
   const { notificationCards } = useDynamicContent();
   const web3hub = useFeature("web3hub");
-  const { shouldDisplayOperationsList, shouldDisplayMyWallet, shouldDisplayAssetDiscoverability } =
-    useWalletFeaturesConfig("mobile");
+  const { shouldDisplayOperationsList, shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
   const page = screenName ?? ScreenName.Portfolio;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const { navigateToRebornFlow } = useRebornFlow();
@@ -127,7 +126,6 @@ export function useTopBarViewModel(
   }, [navigation, page]);
 
   return {
-    shouldDisplayAssetDiscoverability,
     onSearchPress,
     onMyLedgerPress,
     onMyWalletPress,

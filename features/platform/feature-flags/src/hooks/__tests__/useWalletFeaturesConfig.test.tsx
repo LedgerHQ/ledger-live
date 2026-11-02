@@ -55,7 +55,6 @@ const makeConfig = (
   shouldDisplayOperationsList: value,
   shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
-  shouldDisplayAssetDiscoverability: value,
   shouldDisplayEarnUpselling: value,
   shouldDisplayEarnSimulator: value,
   ...overrides,
@@ -68,7 +67,6 @@ const makeParams = (value: boolean): Wallet40Params => ({
   operationsList: value,
   aggregatedAssets: value,
   myWallet: value,
-  assetDiscoverability: value,
   earnUpselling: value,
   earnSimulator: value,
 });

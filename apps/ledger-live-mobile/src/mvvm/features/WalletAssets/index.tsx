@@ -21,7 +21,6 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
     onPressShowAll,
     shouldAddBottomPadding,
     shouldDisplayAssetSection,
-    shouldDisplayAssetDiscoverability,
     shouldDisplayBorrowSection,
     shouldDisplayServicesEntryPoints,
     onBorrowPress,
@@ -40,7 +39,6 @@ export const WalletAssetsView: React.FC<WalletAssetsViewProps> = ({
       <AssetsSections
         variant={variant}
         shouldDisplayAssetSection={shouldDisplayAssetSection}
-        shouldDisplayAssetDiscoverability={shouldDisplayAssetDiscoverability}
         shouldDisplayServicesEntryPoints={
           variant !== "readOnly" && shouldDisplayServicesEntryPoints
         }

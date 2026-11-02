@@ -2,7 +2,6 @@ import { resolveMarketOrAssetDeeplinkIntent } from "../resolveMarketOrAssetDeepl
 
 const base = {
   shouldDisplayAggregatedAssets: true,
-  shouldDisplayAssetDiscoverability: true,
   categoryParam: null as string | null,
 };
 
@@ -67,7 +66,7 @@ describe("resolveMarketOrAssetDeeplinkIntent", () => {
       ).toEqual({ type: "market-banner" });
     });
 
-    it("pre-selects a category on the empty market path when discoverability is on", () => {
+    it("pre-selects a category on the empty market path", () => {
       expect(
         resolveMarketOrAssetDeeplinkIntent({
           ...base,
@@ -76,18 +75,6 @@ describe("resolveMarketOrAssetDeeplinkIntent", () => {
           categoryParam: "stocks",
         }),
       ).toEqual({ type: "market-banner", category: "stocks" });
-    });
-
-    it("omits the category on the empty market path when discoverability is off", () => {
-      expect(
-        resolveMarketOrAssetDeeplinkIntent({
-          ...base,
-          hostname: "market",
-          pathname: "/",
-          shouldDisplayAssetDiscoverability: false,
-          categoryParam: "stocks",
-        }),
-      ).toEqual({ type: "market-banner", category: undefined });
     });
 
     it("routes an unknown crypto asset id to the market banner", () => {

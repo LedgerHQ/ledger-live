@@ -1,12 +1,5 @@
 import * as React from "react";
-import {
-  act,
-  fireEvent,
-  renderWithReactQuery,
-  screen,
-  waitFor,
-  withFlagOverrides,
-} from "@tests/test-renderer";
+import { act, fireEvent, renderWithReactQuery, screen, waitFor } from "@tests/test-renderer";
 import { http, HttpResponse, server } from "@tests/server";
 import marketsMock from "@mocks/api/market/markets.json";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -26,10 +19,6 @@ const NavigatorWrapper = () => (
   </Stack.Navigator>
 );
 
-const enableAssetDiscoverability = withFlagOverrides({
-  lwmWallet40: { params: { assetDiscoverability: true } },
-});
-
 const daiMarket = {
   ...marketsMock[0],
   id: "dai",
@@ -39,13 +28,10 @@ const daiMarket = {
 };
 
 function withStarredMarketCoins(starredMarketCoins: string[] = []) {
-  return withFlagOverrides(
-    { lwmWallet40: { params: { assetDiscoverability: true } } },
-    (state: State): State => ({
-      ...state,
-      settings: { ...state.settings, starredMarketCoins },
-    }),
-  );
+  return (state: State): State => ({
+    ...state,
+    settings: { ...state.settings, starredMarketCoins },
+  });
 }
 
 function hasTestID(node: React.ReactNode, testID: string): boolean {
@@ -110,9 +96,7 @@ function installCapturedMarketHandlers(marketRequests: string[], dadaRequests: s
 
 describe("MarketScreen assets list (Block 3)", () => {
   it("renders the Assets subheader and the market rows from the API", async () => {
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableAssetDiscoverability,
-    });
+    renderWithReactQuery(<NavigatorWrapper />);
 
     await waitFor(
       () => {
@@ -144,9 +128,7 @@ describe("MarketScreen assets list (Block 3)", () => {
   });
 
   it("updates the search input and collapses the other market sections while searching", async () => {
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableAssetDiscoverability,
-    });
+    renderWithReactQuery(<NavigatorWrapper />);
 
     await waitFor(
       () => {
@@ -258,9 +240,7 @@ describe("MarketScreen assets list (Block 3)", () => {
     const dadaRequests: string[] = [];
     installCapturedMarketHandlers(marketRequests, dadaRequests);
 
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableAssetDiscoverability,
-    });
+    renderWithReactQuery(<NavigatorWrapper />);
 
     await waitFor(
       () => {
@@ -317,9 +297,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       }),
     );
 
-    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableAssetDiscoverability,
-    });
+    const { user } = renderWithReactQuery(<NavigatorWrapper />);
 
     await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
       timeout: 5000,
@@ -364,9 +342,7 @@ describe("MarketScreen assets list (Block 3)", () => {
       }),
     );
 
-    renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableAssetDiscoverability,
-    });
+    renderWithReactQuery(<NavigatorWrapper />);
 
     await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
       timeout: 5000,
@@ -395,9 +371,7 @@ describe("MarketScreen assets list (Block 3)", () => {
     const dadaRequests: string[] = [];
     installCapturedMarketHandlers(marketRequests, dadaRequests);
 
-    const { user } = renderWithReactQuery(<NavigatorWrapper />, {
-      overrideInitialState: enableAssetDiscoverability,
-    });
+    const { user } = renderWithReactQuery(<NavigatorWrapper />);
 
     await waitFor(() => expect(screen.getByTestId("marketItem-bitcoin")).toBeVisible(), {
       timeout: 5000,

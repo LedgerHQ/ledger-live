@@ -1,4 +1,4 @@
-import { renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { renderHook } from "@tests/test-renderer";
 import { useCategorizedAssetsFromPortfolio } from "LLM/hooks/useCategorizedAssetsFromPortfolio";
 import { State } from "~/reducers/types";
 
@@ -29,19 +29,11 @@ const withBlacklistedTokens =
     settings: { ...state.settings, blacklistedTokenIds: tokenIds },
   });
 
-const renderCategorized = (options?: {
-  discoverability?: boolean;
-  blacklistedTokenIds?: string[];
-}) =>
+const renderCategorized = (options?: { blacklistedTokenIds?: string[] }) =>
   renderHook(() => useCategorizedAssetsFromPortfolio(), {
-    overrideInitialState: withFlagOverrides(
-      {
-        lwmWallet40: {
-          params: { assetDiscoverability: options?.discoverability ?? true },
-        },
-      },
-      options?.blacklistedTokenIds ? withBlacklistedTokens(options.blacklistedTokenIds) : undefined,
-    ),
+    overrideInitialState: options?.blacklistedTokenIds
+      ? withBlacklistedTokens(options.blacklistedTokenIds)
+      : undefined,
   });
 
 const makeItem = (name: string, id: string, type: "CryptoCurrency" | "TokenCurrency") => ({
@@ -147,25 +139,6 @@ describe("useCategorizedAssetsFromPortfolio", () => {
 
       expect(result.current.categorizedAssets.cryptos).toHaveLength(1);
       expect(result.current.categorizedAssets.stocks).toEqual([]);
-    });
-
-    it("keeps stocks under cryptos when assetDiscoverability is off", () => {
-      const btc = makeItem("Bitcoin", "bitcoin", "CryptoCurrency");
-      const aapl = makeItem("Apple xStock", "aapl-x", "TokenCurrency");
-      mockUseCategorizedAssets.mockReturnValue({ cryptos: [btc, aapl], stablecoins: [] });
-      mockUseStockAssetIds.mockReturnValue({
-        ids: new Set(["aapl-x"]),
-        isLoading: false,
-        isError: false,
-      });
-
-      const { result } = renderCategorized({ discoverability: false });
-
-      expect(result.current.categorizedAssets.stocks).toEqual([]);
-      expect(result.current.categorizedAssets.cryptos.map(a => a.currency.id)).toEqual([
-        "bitcoin",
-        "aapl-x",
-      ]);
     });
   });
 

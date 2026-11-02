@@ -1,6 +1,6 @@
 import { track } from "@shared/analytics";
 import { useRoute } from "@react-navigation/native";
-import { act, renderHook, withFlagOverrides } from "@tests/test-renderer";
+import { act, renderHook } from "@tests/test-renderer";
 import { createMarketAssetDisplayData } from "../../../__tests__/helpers";
 import { useMarketAssets } from "../useMarketAssets";
 import { useMarketScreenViewModel } from "../useMarketScreenViewModel";
@@ -45,15 +45,6 @@ function mockMarketAssets(overrides: Partial<ReturnType<typeof useMarketAssets>>
     resetToFirstPage: jest.fn(),
     ...overrides,
   });
-}
-
-function withAssetDiscoverability(enabled: boolean, baseTransform?: (state: State) => State) {
-  return {
-    overrideInitialState: withFlagOverrides(
-      { lwmWallet40: { params: { assetDiscoverability: enabled } } },
-      baseTransform,
-    ),
-  };
 }
 
 const defaultMarketAssetsParams = {
@@ -183,13 +174,12 @@ describe("useMarketScreenViewModel", () => {
     const starredMarketCoins = ["bitcoin"];
     mockMarketListRoute("starred");
 
-    const { result } = renderHook(
-      () => useMarketScreenViewModel(),
-      withAssetDiscoverability(true, (state: State): State => ({
+    const { result } = renderHook(() => useMarketScreenViewModel(), {
+      overrideInitialState: (state: State): State => ({
         ...state,
         settings: { ...state.settings, starredMarketCoins },
-      })),
-    );
+      }),
+    });
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("starred");
     expect(mockedUseMarketAssets).toHaveBeenLastCalledWith({
@@ -231,13 +221,12 @@ describe("useMarketScreenViewModel", () => {
   it("maps the active sorting and starred category into the page tracking properties", () => {
     mockMarketListRoute("starred");
 
-    const { result } = renderHook(
-      () => useMarketScreenViewModel(),
-      withAssetDiscoverability(true, (state: State): State => ({
+    const { result } = renderHook(() => useMarketScreenViewModel(), {
+      overrideInitialState: (state: State): State => ({
         ...state,
         marketListConfig: { ...state.marketListConfig, sorting: "losers", timeframe: "7D" },
-      })),
-    );
+      }),
+    });
 
     expect(result.current.pageTracking).toEqual({
       sortVolume: "desc",
@@ -285,7 +274,7 @@ describe("useMarketScreenViewModel", () => {
   it("uses a valid route category as the initial category", () => {
     mockMarketListRoute("stocks");
 
-    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    const { result } = renderHook(() => useMarketScreenViewModel());
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("stocks");
   });
@@ -293,7 +282,7 @@ describe("useMarketScreenViewModel", () => {
   it("supports the starred route category", () => {
     mockMarketListRoute("starred");
 
-    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    const { result } = renderHook(() => useMarketScreenViewModel());
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("starred");
   });
@@ -301,7 +290,7 @@ describe("useMarketScreenViewModel", () => {
   it("allows switching category even when a category is pre-selected", () => {
     mockMarketListRoute("stocks");
 
-    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    const { result } = renderHook(() => useMarketScreenViewModel());
     expect(result.current.assetsList.categories.selectedCategory).toBe("stocks");
 
     act(() => result.current.assetsList.categories.onSelectCategory("all"));
@@ -314,7 +303,7 @@ describe("useMarketScreenViewModel", () => {
   });
 
   it("defaults to the all category when there is no route category", () => {
-    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
+    const { result } = renderHook(() => useMarketScreenViewModel());
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("all");
   });
@@ -322,18 +311,7 @@ describe("useMarketScreenViewModel", () => {
   it("defaults to the all category when the route category is invalid", () => {
     mockMarketListRoute("unknown");
 
-    const { result } = renderHook(() => useMarketScreenViewModel(), withAssetDiscoverability(true));
-
-    expect(result.current.assetsList.categories.selectedCategory).toBe("all");
-  });
-
-  it("ignores the route category when asset discoverability is disabled", () => {
-    mockMarketListRoute("stocks");
-
-    const { result } = renderHook(
-      () => useMarketScreenViewModel(),
-      withAssetDiscoverability(false),
-    );
+    const { result } = renderHook(() => useMarketScreenViewModel());
 
     expect(result.current.assetsList.categories.selectedCategory).toBe("all");
   });

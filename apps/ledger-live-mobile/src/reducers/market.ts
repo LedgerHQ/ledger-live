@@ -8,8 +8,6 @@ import {
   State,
 } from "./types";
 import {
-  MarketSetCurrentPagePayload,
-  MarketSetMarketFilterByStarredCurrenciesPayload,
   MarketSetMarketRequestParamsPayload,
   MarketSetHideTransactionsOnChartPayload,
   MarketStateActionTypes,
@@ -31,8 +29,6 @@ export const INITIAL_STATE: MarketState = {
     liveCompatible: false,
     counterCurrency: "USD",
   },
-  marketFilterByStarredCurrencies: false,
-  marketCurrentPage: 1,
   hideTransactionsOnChart: false,
 };
 
@@ -45,18 +41,6 @@ const handlers: ReducerMap<MarketState, MarketPayload> = {
       ...(action as Action<MarketSetMarketRequestParamsPayload>).payload,
     },
   }),
-  [MarketStateActionTypes.SET_MARKET_FILTER_BY_STARRED_CURRENCIES]: (state, action) => ({
-    ...state,
-    marketFilterByStarredCurrencies: (
-      action as Action<MarketSetMarketFilterByStarredCurrenciesPayload>
-    ).payload,
-  }),
-
-  [MarketStateActionTypes.MARKET_SET_CURRENT_PAGE]: (state, action) => ({
-    ...state,
-    marketCurrentPage: (action as Action<MarketSetCurrentPagePayload>).payload,
-  }),
-
   [MarketStateActionTypes.MARKET_SET_HIDE_TRANSACTIONS_ON_CHART]: (state, action) => ({
     ...state,
     hideTransactionsOnChart: (action as Action<MarketSetHideTransactionsOnChartPayload>).payload,
@@ -64,9 +48,6 @@ const handlers: ReducerMap<MarketState, MarketPayload> = {
 
   [MarketStateActionTypes.MARKET_IMPORT]: (state, action) => ({
     ...state,
-    marketFilterByStarredCurrencies:
-      (action as Action<MarketImportPayload>).payload.marketFilterByStarredCurrencies ??
-      state.marketFilterByStarredCurrencies,
     hideTransactionsOnChart:
       (action as Action<MarketImportPayload>).payload.hideTransactionsOnChart ??
       state.hideTransactionsOnChart,
@@ -84,9 +65,6 @@ const handlers: ReducerMap<MarketState, MarketPayload> = {
 // Selectors
 
 export const marketParamsSelector = (state: State) => state.market.marketParams;
-export const marketFilterByStarredCurrenciesSelector = (state: State) =>
-  state.market.marketFilterByStarredCurrencies;
-export const marketCurrentPageSelector = (state: State) => state.market.marketCurrentPage;
 export const hideTransactionsOnChartSelector = (state: State) =>
   state.market.hideTransactionsOnChart === true;
 export const exportMarketSelector = (s: State) => s.market;

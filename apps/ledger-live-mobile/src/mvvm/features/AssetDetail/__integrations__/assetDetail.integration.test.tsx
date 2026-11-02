@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import type { CurrencyResult } from "@features/platform-currencies";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
@@ -15,7 +16,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, NavigatorName, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
-import MarketList from "LLM/features/Market/screens/MarketList";
+import { MARKET_SCREEN_TEST_IDS } from "LLM/features/Market/screens/MarketScreen/testIds";
 import AssetDetailNavigator from "../Navigator";
 import { NotificationsPromptProvider } from "LLM/features/NotificationsPrompt";
 import { ASSET_DETAIL_TEST_IDS } from "../testIds";
@@ -74,6 +75,10 @@ jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
 
 const Stack = createNativeStackNavigator<BaseNavigatorStackParamList, typeof BASE_NAVIGATOR_ID>();
 
+function MarketScreenStub() {
+  return <View testID={MARKET_SCREEN_TEST_IDS.screen} />;
+}
+
 type NavigatorParams = {
   currencyId: string;
   source?: string;
@@ -97,7 +102,7 @@ function AssetDetailTestNavigator({
           }}
           options={{ headerShown: false }}
         />
-        <Stack.Screen name={ScreenName.MarketList} component={MarketList} />
+        <Stack.Screen name={ScreenName.MarketList} component={MarketScreenStub} />
       </Stack.Navigator>
     </NotificationsPromptProvider>
   );
@@ -535,7 +540,9 @@ describe("AssetDetail screen layout", () => {
           />,
         );
 
-        await waitFor(() => expect(screen.getByTestId("market-list")).toBeVisible());
+        await waitFor(() =>
+          expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeVisible(),
+        );
         expect(screen.queryByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeNull();
       },
     );
@@ -568,7 +575,7 @@ describe("AssetDetail screen layout", () => {
       );
 
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
-      expect(screen.queryByTestId("market-list")).toBeNull();
+      expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeNull();
     });
 
     it("keeps Asset Detail visible while the token lookup is loading", () => {
@@ -590,7 +597,7 @@ describe("AssetDetail screen layout", () => {
       );
 
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
-      expect(screen.queryByTestId("market-list")).toBeNull();
+      expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeNull();
     });
 
     it("keeps the Asset Detail screen on token lookup errors", () => {
@@ -612,7 +619,7 @@ describe("AssetDetail screen layout", () => {
       );
 
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
-      expect(screen.queryByTestId("market-list")).toBeNull();
+      expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeNull();
     });
 
     it("keeps market-only assets on Asset Detail outside deeplinks", () => {
@@ -633,7 +640,7 @@ describe("AssetDetail screen layout", () => {
       );
 
       expect(screen.getByTestId(ASSET_DETAIL_TEST_IDS.screen)).toBeVisible();
-      expect(screen.queryByTestId("market-list")).toBeNull();
+      expect(screen.queryByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeNull();
     });
   });
 });

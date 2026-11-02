@@ -9,14 +9,12 @@ import { WalletAssetsVariant } from "LLM/features/WalletAssets/types";
 interface AssetsSectionsProps {
   variant: WalletAssetsVariant;
   shouldDisplayAssetSection: boolean;
-  shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayServicesEntryPoints: boolean;
 }
 
 export const AssetsSections: React.FC<AssetsSectionsProps> = ({
   variant,
   shouldDisplayAssetSection,
-  shouldDisplayAssetDiscoverability,
   shouldDisplayServicesEntryPoints,
 }) => {
   if (shouldDisplayAssetSection) {
@@ -25,7 +23,7 @@ export const AssetsSections: React.FC<AssetsSectionsProps> = ({
         <PortfolioCryptosSection variant={variant} />
         {shouldDisplayServicesEntryPoints && <PortfolioServicesSection />}
         <PortfolioStablecoinsSection variant={variant} />
-        {shouldDisplayAssetDiscoverability && <PortfolioStocksSection variant={variant} />}
+        <PortfolioStocksSection variant={variant} />
       </Box>
     );
   }

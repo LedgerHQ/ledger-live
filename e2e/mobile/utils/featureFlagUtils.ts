@@ -15,7 +15,6 @@ const FF_LWM_WALLET_40_Q1 = {
       myWallet: false,
       earnUpselling: false,
       earnSimulator: false,
-      assetDiscoverability: false,
     },
   },
 } satisfies PartialFeatures;
@@ -32,7 +31,6 @@ export const FF_LWM_WALLET_40_Q2 = {
       myWallet: true,
       earnUpselling: true,
       earnSimulator: true,
-      assetDiscoverability: true,
     },
   },
 } satisfies PartialFeatures;
@@ -213,13 +211,8 @@ const getLwmFlag = async (): Promise<Features["lwmWallet40"] | undefined> => {
   return parsed.lwmWallet40;
 };
 
-export const isAssetDiscoverabilityEnabled = async (): Promise<boolean> => {
-  const lwmFlag = await getLwmFlag();
-  return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetDiscoverability);
-};
-
-// Distinct from `assetDiscoverability`: gates the new MVVM AssetDetail (with
-// coin-options) vs the legacy MarketDetail screen (see useAssetDetailNavigation).
+// Gates the new MVVM AssetDetail (with coin-options) vs the legacy MarketDetail
+// screen (see useAssetDetailNavigation).
 export const isAssetSectionEnabled = async (): Promise<boolean> => {
   const lwmFlag = await getLwmFlag();
   return Boolean(lwmFlag?.enabled && lwmFlag?.params?.assetSection);

@@ -7,6 +7,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { ScreenName } from "~/const";
 import MarketNavigator from "../Navigator";
 import MarketWalletTabNavigator from "../WalletTabNavigator";
+import { MARKET_SCREEN_TEST_IDS } from "../screens/MarketScreen/testIds";
 
 const COUNTERVALUES_API = "https://countervalues.live.ledger.com";
 
@@ -26,21 +27,21 @@ describe("Market Navigators", () => {
   });
 
   describe("MarketNavigator", () => {
-    it("should render MarketList as initial screen", async () => {
+    it("should render MarketScreen as initial screen", async () => {
       renderWithReactQuery(<NavigatorWrapper />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("market-list")).toBeOnTheScreen();
+        expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeOnTheScreen();
       });
     });
   });
 
   describe("MarketWalletTabNavigator", () => {
-    it("should render MarketList as initial screen", async () => {
+    it("should render MarketScreen as initial screen", async () => {
       renderWithReactQuery(<MarketWalletTabNavigator />);
 
       await waitFor(() => {
-        expect(screen.getByTestId("market-list")).toBeOnTheScreen();
+        expect(screen.getByTestId(MARKET_SCREEN_TEST_IDS.screen)).toBeOnTheScreen();
       });
     });
   });

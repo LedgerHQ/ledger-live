@@ -2,6 +2,11 @@ import React from "react";
 import { renderWithReactQuery, screen } from "@tests/test-renderer";
 import { server, http, HttpResponse, delay } from "@tests/server";
 import {
+  EMPTY_STATE_MAX_ASSETS,
+  EMPTY_STATE_MAX_STABLECOINS,
+  EMPTY_STATE_MAX_STOCKS,
+} from "LLM/features/WalletAssets/constants";
+import {
   PortfolioTest,
   ReadOnlyPortfolioTest,
   overrideInitialStateWithReadOnly,
@@ -230,7 +235,7 @@ describe("Portfolio Screen", () => {
       expect(errorStates.length).toBeGreaterThanOrEqual(2);
     });
 
-    it("should display skeleton items in both sections while DADA API is loading", async () => {
+    it("should display skeleton items in cryptos, stablecoins and stocks sections while DADA API is loading", async () => {
       setupDadaApiLoading();
 
       renderWithReactQuery(<PortfolioTest />, {
@@ -241,7 +246,10 @@ describe("Portfolio Screen", () => {
 
       expect(await screen.findByTestId("PortfolioCryptosList")).toBeVisible();
       expect(await screen.findByTestId("PortfolioStablecoinsList")).toBeVisible();
-      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(6);
+      expect(await screen.findByTestId("PortfolioStocksList")).toBeVisible();
+      expect(screen.getAllByTestId("asset-list-item-skeleton")).toHaveLength(
+        EMPTY_STATE_MAX_ASSETS + EMPTY_STATE_MAX_STABLECOINS + EMPTY_STATE_MAX_STOCKS,
+      );
     });
   });
 

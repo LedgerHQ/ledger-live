@@ -2,7 +2,6 @@ import { renderHook, act } from "@tests/test-renderer";
 import { useMarket } from "../useMarket";
 import { State } from "~/reducers/types";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
-import { withMarketState } from "../../__tests__/helpers";
 
 describe("useMarket", () => {
   it("should return default market params from Redux state", () => {
@@ -10,7 +9,6 @@ describe("useMarket", () => {
 
     expect(result.current.marketParams).toBeDefined();
     expect(result.current.marketParams.counterCurrency).toBeDefined();
-    expect(result.current.marketCurrentPage).toBeDefined();
   });
 
   it("should return starredMarketCoins from settings", () => {
@@ -25,15 +23,6 @@ describe("useMarket", () => {
     });
 
     expect(result.current.starredMarketCoins).toEqual(["bitcoin", "ethereum"]);
-  });
-
-  it("should return filterByStarredCurrencies from market state", () => {
-    const { result } = renderHook(
-      () => useMarket(),
-      withMarketState({ marketFilterByStarredCurrencies: true }),
-    );
-
-    expect(result.current.filterByStarredCurrencies).toBe(true);
   });
 
   it("should dispatch setMarketRequestParams when updateMarketParams is called", () => {

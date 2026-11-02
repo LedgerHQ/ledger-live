@@ -402,8 +402,6 @@ export type ProtectState = {
 
 export type MarketState = {
   marketParams: MarketListRequestParams;
-  marketFilterByStarredCurrencies: boolean;
-  marketCurrentPage: number;
   hideTransactionsOnChart: boolean;
 };
 

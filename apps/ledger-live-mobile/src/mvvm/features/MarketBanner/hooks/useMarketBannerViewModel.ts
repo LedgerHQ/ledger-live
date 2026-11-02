@@ -9,7 +9,6 @@ import { useAssetDetailNavigation } from "LLM/features/AssetDetail/hooks/useAsse
 import { PAGE_NAME, BANNER_NAME } from "../constants";
 import { UseMarketBannerViewModelResult } from "../types";
 import { useMarketBannerFilter } from "./useMarketBannerFilter";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { TIME_RANGE } from "@ledgerhq/live-common/market/constants";
 import { isMoodIndexAvailable } from "@features/flow-fear-and-greed";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
@@ -21,7 +20,6 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
  */
 const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   const baseNavigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
-  const { shouldDisplayAssetDiscoverability } = useWalletFeaturesConfig("mobile");
   const { openFromMarket } = useAssetDetailNavigation();
   const bannerFilter = useMarketBannerFilter();
 
@@ -65,7 +63,6 @@ const useMarketBannerViewModel = (): UseMarketBannerViewModelResult => {
   }, [navigateToMarket]);
 
   return {
-    showFilter: shouldDisplayAssetDiscoverability,
     bannerFilter,
     moodIndexAvailable: isMoodIndexAvailable(getCountryLocale()),
     range: TIME_RANGE,

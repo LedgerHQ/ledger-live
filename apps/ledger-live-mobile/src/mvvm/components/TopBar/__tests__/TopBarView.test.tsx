@@ -44,7 +44,6 @@ describe("TopBarView", () => {
     onMyWalletPress,
     shouldDisplayMyWallet: false,
     shouldDisplayOperationsList: false,
-    shouldDisplayAssetDiscoverability: false,
     onSearchPress,
     onDiscoverPress,
     onNotificationsPress,
@@ -85,17 +84,8 @@ describe("TopBarView", () => {
     expect(onTransactionHistoryPress).toHaveBeenCalledTimes(1);
   });
 
-  it("should not render the search icon when asset discoverability is disabled", () => {
-    const { queryByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayAssetDiscoverability={false} />,
-    );
-    expect(queryByTestId("topbar-search")).toBeNull();
-  });
-
-  it("should render the search icon and call onSearchPress when asset discoverability is enabled", async () => {
-    const { user, getByTestId } = renderWithReactQuery(
-      <TopBarView {...defaultProps} shouldDisplayAssetDiscoverability />,
-    );
+  it("should render the search icon and call onSearchPress", async () => {
+    const { user, getByTestId } = renderWithReactQuery(<TopBarView {...defaultProps} />);
 
     const searchIcon = getByTestId("topbar-search");
     expect(searchIcon).toBeVisible();

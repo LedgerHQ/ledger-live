@@ -540,7 +540,6 @@ export enum ScreenName {
   RequestAccountsSelectCrypto = "RequestAccountsSelectCrypto",
   RequestAccountsSelectAccount = "RequestAccountsSelectAccount",
   MarketList = "MarketList",
-  MarketCurrencySelect = "MarketCurrencySelect",
   MarketDetail = "MarketDetail",
   VerifyAccount = "VerifyAccount",
   AnalyticsOperations = "AnalyticsOperations",

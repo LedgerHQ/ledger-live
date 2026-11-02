@@ -34,7 +34,6 @@ export function TopBarView({
   onMyWalletPress,
   shouldDisplayMyWallet,
   shouldDisplayOperationsList,
-  shouldDisplayAssetDiscoverability,
   onSearchPress,
   onDiscoverPress,
   onNotificationsPress,
@@ -135,7 +134,7 @@ export function TopBarView({
     filterIcons([
       displayMyLedgerIconLeading && myLedgerAction,
       displayDiscoverIconLeading && discoverIcon,
-      shouldDisplayAssetDiscoverability && searchIcon,
+      searchIcon,
     ]);
 
   const displaySyncStatusIcon = hasAccounts && isSyncError;
