@@ -18,8 +18,8 @@ This package contains the deterministic testing infrastructure for EVM-based coi
   optimism chain type on Optimism, and for the scroll chain type on Scroll) on Optimism and Scroll. USDC (USDT on BNB) is
   preloaded by coin-sandbox at its mainnet address, and the account is funded by airdrop. No mock: the indexer is the explorer (and the gas tracker
   but on Optimism and Scroll, which ask their node), and any request that leaves the machine fails
-- The Robinhood scenario asks coin-sandbox for nitro 3.12.2 (the version of production) and Blockscout 12.0.3, which Live reads as a `blockscout` explorer. The chain preloads no
-  token and the account is funded by airdrop. No Anvil, no mock, and any request that leaves the machine fails
+- The Robinhood scenario asks coin-sandbox for nitro 3.12.2 (the version of production) and Blockscout 12.0.3, which Live reads as a `blockscout` explorer. USDG
+  is preloaded at its mainnet address and the account is funded by airdrop (ETH and USDG): the scenario sends 1 ETH, 1 USDG, all its USDG and all its ETH. No Anvil, no mock, and any request that leaves the machine fails
 - The Arc scenario asks coin-sandbox for arc-node 0.8.1 (Arc's execution client, alone) and Blockscout 12.0.3 built for the `arc` chain type, which Live reads as a `blockscout` explorer. USDC is the native coin of the chain
   (the explorer also reports each native transfer as a transfer of the USDC token `0x36…`, which `nativeContracts` makes Live drop, and the scenario checks both); the account is funded by airdrop. No Anvil, no mock, and any request that leaves the machine fails
 - The other scenarios still use Anvil, a mainnet fork, and a mocked explorer
