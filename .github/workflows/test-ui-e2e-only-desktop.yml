@@ -356,7 +356,6 @@ jobs:
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ matrix.device != 'nanoS' && 'latest' || 'speculos-38ccc68068db-coinapps-85c7e5c' }}
       # Pods report the host CPU count, so set workers explicitly rather than as a percentage.
       E2E_WORKERS: 8
-      COINAPPS: ${{ github.workspace }}/coin-apps
       E2E_PRIMARY_DEVICE: ${{ matrix.is_primary }}
       cache-bucket: ll-nx-cache
       USERDATA_CACHE_ENABLED: ${{ inputs.build_type != 'js' }}
@@ -373,9 +372,7 @@ jobs:
         with:
           client-id: ${{ secrets.GH_BOT_CLIENT_ID }}
           private-key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-          repositories: |
-            ledger-live
-            coin-apps
+          repositories: ledger-live
           permission-contents: read
 
       - name: Checkout ledger-live monorepo (shallow clone)
@@ -384,17 +381,6 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           repository: LedgerHQ/ledger-live
           token: ${{ steps.generate-token.outputs.token }}
-          fetch-depth: 1
-          persist-credentials: false
-
-      - name: Checkout coin-apps (device firmware binaries)
-        if: ${{ env.REMOTE_SPECULOS != 'true' }}
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          repository: LedgerHQ/coin-apps
-          ref: master
-          token: ${{ steps.generate-token.outputs.token }}
-          path: coin-apps
           fetch-depth: 1
           persist-credentials: false
 
@@ -411,11 +397,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
 
-      - name: Pull Speculos docker image
-        if: ${{ env.REMOTE_SPECULOS != 'true' }}
-        run: docker pull "$SPECULOS_IMAGE_TAG"
-        shell: bash
-
       - name: JFrog npm auth
         uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
         with:
@@ -428,17 +409,6 @@ jobs:
           build_type: ${{ inputs.build_type || 'testing' }}
           # The Nx run report goes to the e2e-logs artifact; the shard diagnostics sum it up.
           step_summary: false
-
-      - name: Verify Speculos Docker image is ready
-        if: ${{ env.REMOTE_SPECULOS != 'true' }}
-        run: |
-          while ! docker image inspect "$SPECULOS_IMAGE_TAG" > /dev/null 2>&1; do
-            echo "Waiting for Speculos image pull to complete..."
-            sleep 2
-          done
-          echo "Speculos image ready: $SPECULOS_IMAGE_TAG"
-          docker image inspect "$SPECULOS_IMAGE_TAG" --format '{{.Size}}' | numfmt --to=iec
-        shell: bash
 
       - name: Configure test environment (API endpoints, broadcast settings)
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-e2e-env@develop
@@ -546,7 +516,7 @@ jobs:
             broadcast=${{ env.E2E_BROADCAST_ENABLED }}
             exclusive_lock=${{ inputs.exclusive_lock || 'remote' }}
             firebase_env=${{ inputs.build_type || 'testing' }}
-            speculos=${{ env.REMOTE_SPECULOS == 'true' && 'Speculinho (remote)' || 'Docker' }}
+            speculos=Speculinho (remote)
             team=${{ inputs.team || 'all' }}
             test_filter=${{ inputs.test_filter }}
             invert_filter=${{ inputs.invert_filter || false }}
