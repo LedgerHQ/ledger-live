@@ -109,7 +109,7 @@ export function takeExclusiveLockWaitedMs(): number {
   return waited;
 }
 
-/** "local" locks on this machine only, even on CI, e.g. while R2 is down. */
+/** "local" locks on this machine only, even on CI: set when R2 fails the job's lock store check. */
 const EXCLUSIVE_LOCK_MODE_ENV = "E2E_EXCLUSIVE_LOCK_MODE";
 
 const isMachineLocalMode = (): boolean => {
@@ -135,8 +135,10 @@ const isHighPriority = (): boolean => {
   return priority === "high";
 };
 
-function remoteLockStoreFromEnv(): LockStore | undefined {
-  if (isMachineLocalMode()) return undefined;
+const remoteLockStoreFromEnv = (): LockStore | undefined =>
+  isMachineLocalMode() ? undefined : r2LockStoreFromEnv();
+
+function r2LockStoreFromEnv(): LockStore | undefined {
   const endpoint = process.env.E2E_EXCLUSIVE_LOCK_ENDPOINT;
   const bucket = process.env.E2E_EXCLUSIVE_LOCK_BUCKET;
   const accessKeyId = process.env.E2E_EXCLUSIVE_LOCK_ACCESS_KEY_ID;
@@ -153,6 +155,47 @@ function remoteLockStoreFromEnv(): LockStore | undefined {
     prefix: R2_KEY_PREFIX,
     credentials: { accessKeyId, secretAccessKey },
   });
+}
+
+const STORE_CHECK_KEY = "store-check";
+const STORE_CHECK_ATTEMPTS = 4;
+
+const isFatalStoreError = (error: unknown) =>
+  error instanceof Error && error.name === "ExclusiveLockStoreFatalError";
+
+const storeErrorMessage = (error: unknown): string => {
+  if (!(error instanceof Error)) return String(error);
+  // fetch only says "fetch failed"; its cause says why, e.g. ECONNREFUSED.
+  return error.cause instanceof Error ? `${error.message}: ${error.cause.message}` : error.message;
+};
+
+/**
+ * Why the R2 bucket E2E_EXCLUSIVE_LOCK_* points at cannot hold exclusive locks, or undefined when
+ * it answers. CI checks it before the tests, which lock on their machine only while it fails.
+ * Throws when E2E_EXCLUSIVE_LOCK_* is missing.
+ */
+export async function exclusiveLockStoreFailure({
+  sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms)),
+}: { readonly sleep?: (ms: number) => Promise<void> } = {}): Promise<string | undefined> {
+  const store = r2LockStoreFromEnv();
+  if (!store) {
+    throw new ExclusiveLockConfigError(
+      "[exclusiveLock] E2E_EXCLUSIVE_LOCK_ENDPOINT, _BUCKET, _ACCESS_KEY_ID and _SECRET_ACCESS_KEY must be set to check the lock store",
+    );
+  }
+  const check = async (attempt: number): Promise<string | undefined> => {
+    try {
+      await store.read(STORE_CHECK_KEY);
+      return undefined;
+    } catch (error) {
+      if (attempt >= STORE_CHECK_ATTEMPTS || isFatalStoreError(error)) {
+        return storeErrorMessage(error);
+      }
+      await sleep(POLL_MS);
+      return check(attempt + 1);
+    }
+  };
+  return check(1);
 }
 
 let warnedMachineLocal = false;
@@ -291,7 +334,7 @@ async function endAll(
 /**
  * Locks the on-chain accounts a broadcast mutates, or shared resources, across every CI machine
  * when E2E_EXCLUSIVE_LOCK_* points at an R2 bucket, otherwise, or when E2E_EXCLUSIVE_LOCK_MODE is
- * "local", across this machine only.
+ * "local" because R2 failed its check, across this machine only.
  * Calls made while an `allowNested` lock is held, e.g. a CLI token approval inside a spec, run
  * under it instead of waiting for it, and its release waits for them. Releasing a lease another
  * holder took over throws. Abandoning it instead, when nothing was broadcast under it, spares the

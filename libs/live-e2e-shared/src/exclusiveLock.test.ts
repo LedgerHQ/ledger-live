@@ -4,6 +4,7 @@ import test, { mock } from "node:test";
 import {
   accountLockKey,
   acquireExclusiveLock,
+  exclusiveLockStoreFailure,
   PAY_CARD,
   refuseExclusiveLocks,
   runWithExclusiveLock,
@@ -371,6 +372,79 @@ test("refuses an unknown lock priority", async () => {
     await assert.rejects(acquireExclusiveLock([Account.DOT_1], "unknown priority"), {
       name: "ExclusiveLockConfigError",
       message: /E2E_EXCLUSIVE_LOCK_PRIORITY must be "normal" or "high"/,
+    });
+  });
+});
+
+const mockR2Responses = (respond: (call: number) => Response) => {
+  let calls = 0;
+  const fetchMock = mock.method(globalThis, "fetch", async () => respond(++calls));
+  return { calls: () => calls, restore: () => fetchMock.mock.restore() };
+};
+
+const noSleep = async () => {};
+
+test("finds the lock store answering when its check key is missing", async () => {
+  const r2 = mockR2Responses(() => new Response(null, { status: 404 }));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.equal(r2.calls(), 1);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("finds the lock store answering once a retried request succeeds", async () => {
+  const r2 = mockR2Responses(call => new Response(null, { status: call === 1 ? 503 : 404 }));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
+    });
+    assert.equal(r2.calls(), 2);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store failure that retrying cannot fix at once", async () => {
+  const r2 = mockR2Responses(() => new Response("AccessDenied", { status: 403 }));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match((await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "", /failed with 403/);
+    });
+    assert.equal(r2.calls(), 1);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports why the lock store kept failing after retrying it", async () => {
+  const r2 = mockR2Responses(() => {
+    throw new TypeError("fetch failed", { cause: new Error("connect ECONNREFUSED") });
+  });
+  const sleeps: number[] = [];
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      const failure = await exclusiveLockStoreFailure({
+        sleep: async ms => {
+          sleeps.push(ms);
+        },
+      });
+      assert.equal(failure, "fetch failed: connect ECONNREFUSED");
+    });
+    assert.equal(r2.calls(), 4);
+    assert.equal(sleeps.length, 3);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("refuses to check the lock store without its configuration", async () => {
+  await withEnv({ ...NO_REMOTE_LOCK, CI: "true" }, async () => {
+    await assert.rejects(exclusiveLockStoreFailure({ sleep: noSleep }), {
+      name: "ExclusiveLockConfigError",
     });
   });
 });
