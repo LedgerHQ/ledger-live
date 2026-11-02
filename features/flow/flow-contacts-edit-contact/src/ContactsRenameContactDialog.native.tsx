@@ -1,23 +1,24 @@
 import React from "react";
-import { ContactNameInput } from "@features/platform-contacts";
-import { Banner, BottomSheetHeader, BottomSheetView, Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { ContactNameDisclaimer, ContactNameInput } from "@features/platform-contacts";
+import { BottomSheetHeader, BottomSheetView, Box, Text } from "@ledgerhq/lumen-ui-rnative";
+import { useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
 import { useEditContactLabels } from "./copy/useEditContactLabels";
-import type { ContactsRenameContactDrawerProps } from "./types";
+import type { ContactsRenameContactDialogProps } from "./ContactsRenameContactDialog.types";
 
-export function ContactsRenameContactDrawer({
+export function ContactsRenameContactDialog({
   isOpen,
   draftName,
   invalidNameError,
   autoFocus = false,
-  bottomInset = 0,
   onDraftNameChange,
-}: ContactsRenameContactDrawerProps): React.JSX.Element {
+}: ContactsRenameContactDialogProps): React.JSX.Element {
   const labels = useEditContactLabels();
+  const footerInset = useBottomSheetFooterInset();
   const nameValidationError =
     invalidNameError === null ? undefined : labels.nameValidationErrors[invalidNameError];
 
   return (
-    <BottomSheetView style={{ paddingBottom: bottomInset }}>
+    <BottomSheetView style={{ paddingBottom: footerInset }}>
       {isOpen ? (
         <Box testID="contacts-rename-contact-content" lx={{ gap: "s24" }}>
           <BottomSheetHeader />
@@ -33,7 +34,7 @@ export function ContactsRenameContactDrawer({
               autoFocus={autoFocus}
               onChangeName={onDraftNameChange}
             />
-            <Banner appearance="info" description={labels.namingDisclaimer} />
+            <ContactNameDisclaimer text={labels.namingDisclaimer} />
           </Box>
         </Box>
       ) : null}

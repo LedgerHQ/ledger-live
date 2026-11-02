@@ -4,12 +4,10 @@ import {
   ContactsEditSignerMismatchDialog,
 } from "@features/flow-contacts-detail";
 import { ContactsDeleteContactDialog } from "@features/flow-contacts-delete-contact";
-import {
-  ContactsRenameContactDrawer,
-  ContactsRenameContactFooter,
-} from "@features/flow-contacts-edit-contact";
+import { ContactsRenameContactDialog } from "@features/flow-contacts-edit-contact";
+import { ContactsRenameContactFooter } from "@features/flow-contacts-edit-contact/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { QueuedBottomSheet, useBottomSheetFooterInset } from "@shared/ui-queued-bottom-sheet";
+import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 import type { ContactDetailEditDeleteFlowProps } from "../../hooks/useContactDetailEditDeleteAdapter";
 
 type ContactDetailEditDeleteSheetsProps = ContactDetailEditDeleteFlowProps &
@@ -54,7 +52,7 @@ export function ContactDetailEditDeleteSheets({
         snapPoints="fullWithOffset"
         footer={renameDrawer.isOpen ? <ContactsRenameContactFooter {...renameDrawer} /> : null}
       >
-        <RenameContactDrawer {...renameDrawer} />
+        <ContactsRenameContactDialog {...renameDrawer} autoFocus />
       </QueuedBottomSheet>
       <QueuedBottomSheet
         isRequestingToBeOpened={deleteDrawer.isOpen}
@@ -77,11 +75,4 @@ export function ContactDetailEditDeleteSheets({
       </QueuedBottomSheet>
     </>
   );
-}
-
-function RenameContactDrawer(
-  props: ContactDetailEditDeleteFlowProps["renameDrawer"],
-): React.JSX.Element {
-  const footerInset = useBottomSheetFooterInset();
-  return <ContactsRenameContactDrawer {...props} autoFocus bottomInset={footerInset} />;
 }

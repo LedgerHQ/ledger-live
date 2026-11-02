@@ -2,8 +2,8 @@ import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react-native";
 import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import { I18nTestProvider } from "@shared/i18n/testing";
-import { ContactsRenameContactDrawer } from ".";
-import type { ContactsRenameContactDrawerProps } from "./types";
+import { ContactsRenameContactDialog } from ".";
+import type { ContactsRenameContactDialogProps } from "./ContactsRenameContactDialog.types";
 
 const mockFocus = jest.fn();
 
@@ -28,8 +28,8 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
 });
 
 function createViewModel(
-  overrides: Partial<ContactsRenameContactDrawerProps> = {},
-): ContactsRenameContactDrawerProps {
+  overrides: Partial<ContactsRenameContactDialogProps> = {},
+): ContactsRenameContactDialogProps {
   return {
     isOpen: true,
     isConfirmEnabled: false,
@@ -45,10 +45,10 @@ function createViewModel(
   };
 }
 
-describe("ContactsRenameContactDrawer", () => {
+describe("ContactsRenameContactDialog", () => {
   it("should render the validation state", () => {
     render(
-      <ContactsRenameContactDrawer
+      <ContactsRenameContactDialog
         {...createViewModel({
           draftName: "Ada",
           invalidNameError: INVALID_CONTACT_NAME_ERROR_NAME,
@@ -71,7 +71,7 @@ describe("ContactsRenameContactDrawer", () => {
   it("should forward name changes", () => {
     const onDraftNameChange = jest.fn();
 
-    render(<ContactsRenameContactDrawer {...createViewModel({ onDraftNameChange })} />, {
+    render(<ContactsRenameContactDialog {...createViewModel({ onDraftNameChange })} />, {
       wrapper: I18nTestProvider,
     });
 
@@ -81,7 +81,7 @@ describe("ContactsRenameContactDrawer", () => {
   });
 
   it("should leave the confirm action to the host, which pins it above the keyboard", () => {
-    render(<ContactsRenameContactDrawer {...createViewModel({ isConfirmEnabled: true })} />, {
+    render(<ContactsRenameContactDialog {...createViewModel({ isConfirmEnabled: true })} />, {
       wrapper: I18nTestProvider,
     });
 
@@ -89,19 +89,19 @@ describe("ContactsRenameContactDrawer", () => {
   });
 
   it("should withhold focus until the host grants it", () => {
-    const { rerender } = render(<ContactsRenameContactDrawer {...createViewModel()} />, {
+    const { rerender } = render(<ContactsRenameContactDialog {...createViewModel()} />, {
       wrapper: I18nTestProvider,
     });
 
     expect(mockFocus).not.toHaveBeenCalled();
 
-    rerender(<ContactsRenameContactDrawer {...createViewModel({ autoFocus: true })} />);
+    rerender(<ContactsRenameContactDialog {...createViewModel({ autoFocus: true })} />);
 
     expect(mockFocus).toHaveBeenCalledTimes(1);
   });
 
   it("should not render its content while closed", () => {
-    render(<ContactsRenameContactDrawer {...createViewModel({ isOpen: false })} />, {
+    render(<ContactsRenameContactDialog {...createViewModel({ isOpen: false })} />, {
       wrapper: I18nTestProvider,
     });
 

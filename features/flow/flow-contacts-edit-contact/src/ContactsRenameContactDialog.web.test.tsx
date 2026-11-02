@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { INVALID_CONTACT_NAME_ERROR_NAME } from "@domain/entity-contact";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameContactDialog } from ".";
-import type { ContactsRenameContactDialogProps } from "./types";
+import type { ContactsRenameContactDialogProps } from "./ContactsRenameContactDialog.types";
 
 function createViewModel(
   overrides: Partial<ContactsRenameContactDialogProps> = {},
