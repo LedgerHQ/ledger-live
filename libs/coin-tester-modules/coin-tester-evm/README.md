@@ -8,7 +8,7 @@ This package contains the deterministic testing infrastructure for EVM-based coi
 ## Features
 
 - Deterministic testing scenarios for EVM-based coins
-- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic)
+- Support for multiple EVM chains (Ethereum, Polygon, Scroll, Optimism, Sonic, Robinhood)
 - Local signer written in Typescript
 - The Base and Sonic scenarios ask coin-sandbox for reth 2.5.2 (Base's build, 1.5.0) and sonic 2.2.5 (the versions of production) and their `etherscan-stub` indexer: the Etherscan API of
   the chain, served from the node, which Live reads as an `etherscan` explorer (as in production) and which needs no wait for indexing. USDC (USDC.e on Sonic) is preloaded
@@ -18,6 +18,8 @@ This package contains the deterministic testing infrastructure for EVM-based coi
   optimism chain type on Optimism, and for the scroll chain type on Scroll) on Optimism and Scroll. USDC (USDT on BNB) is
   preloaded by coin-sandbox at its mainnet address, and the account is funded by airdrop. No mock: the indexer is the explorer (and the gas tracker
   but on Optimism and Scroll, which ask their node), and any request that leaves the machine fails
+- The Robinhood scenario asks coin-sandbox for nitro 3.12.2 (the version of production) and Blockscout 12.0.3, which Live reads as a `blockscout` explorer. The chain preloads no
+  token and the account is funded by airdrop. No Anvil, no mock, and any request that leaves the machine fails
 - The other scenarios still use Anvil, a mainnet fork, and a mocked explorer
 
 ## Usage
@@ -32,7 +34,7 @@ await executeScenario(scenarioEthereum);
 
 ## Development
 
-Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB, Optimism, Scroll, Base and Sonic scenarios need coin-sandbox's server running (`deno task
+Run the tests with `pnpm coin:tester:evm start`. The Ethereum, Polygon, BNB, Optimism, Scroll, Base, Sonic and Robinhood scenarios need coin-sandbox's server running (`deno task
 server` in its repository, port 8000; `COIN_SANDBOX_URL` points elsewhere) and a Docker daemon, and `docker login
 jfrog.ledgerlabs.net` for the Atlas images (amd64 only, so emulated on Apple Silicon; Optimism and Scroll have none, and Scroll's node image is amd64 only too). It takes about a minute. The
 others need Docker for Anvil and network access to their fork RPC. To run one scenario:
