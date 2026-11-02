@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import test from "node:test";
+import test, { after } from "node:test";
 import { fileURLToPath } from "node:url";
 import hygiene, { CHECKS, check } from "./hygiene.mjs";
 import { HYGIENE_DEBT } from "./hygiene-debt.mjs";
@@ -18,6 +18,13 @@ const MANIFEST = {
   devDependencies: { typescript: "catalog:" },
 };
 
+/** @type {string[]} */
+const workspaces = [];
+
+after(() => {
+  for (const root of workspaces) fs.rmSync(root, { recursive: true, force: true });
+});
+
 /**
  * @param {Record<string, string | null>} files paths relative to the workspace root; `null`
  *   leaves that file out
@@ -25,6 +32,7 @@ const MANIFEST = {
  */
 function workspace(files) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "tool-config-hygiene-test-"));
+  workspaces.push(root);
   for (const [file, content] of Object.entries(files)) {
     if (content === null) continue;
     const full = path.join(root, file);
@@ -53,6 +61,12 @@ function violations({
   return check({ workspaceRoot: root, projectRoot }, { debt });
 }
 
+const NO_LINT_SCRIPT = 'a "lint" script runs oxlint; this one has none: add "lint": "oxlint src"';
+
+const NO_FORMAT_CHECK_SCRIPT =
+  'a "format:check" script runs oxfmt --check; this one has none: add "format:check": ' +
+  '"oxfmt src --check", next to "format": "oxfmt src"';
+
 test("a conforming package passes, in every layer", () => {
   for (const projectRoot of ["shared/pkg", "domain/entity/pkg", "features/flow/pkg"]) {
     assert.deepEqual(violations({ projectRoot }), []);
@@ -66,13 +80,36 @@ test("a package outside the layers is not checked", () => {
   );
 });
 
+test("manifest: a package.json that is missing or not JSON is reported", () => {
+  const missing = workspace({ "shared/pkg/README.md": README });
+  assert.deepEqual(check({ workspaceRoot: missing, projectRoot: "shared/pkg" }, { debt: {} }), [
+    {
+      file: "shared/pkg/package.json",
+      message:
+        "a package has a package.json that parses as JSON; this one cannot be read: restore it",
+    },
+  ]);
+  const malformed = workspace({
+    "shared/pkg/package.json": '{ "name": "@shared/pkg", }',
+    "shared/pkg/README.md": README,
+  });
+  assert.deepEqual(check({ workspaceRoot: malformed, projectRoot: "shared/pkg" }, { debt: {} }), [
+    {
+      file: "shared/pkg/package.json",
+      message:
+        "a package has a package.json that parses as JSON; this one is not valid JSON: fix its " +
+        "syntax",
+    },
+  ]);
+});
+
 test("readme: a package without a README is reported", () => {
   assert.deepEqual(violations({ readme: null }), [
     {
       file: "shared/pkg/README.md",
       message:
-        "missing: write one that says in a line or two what the package is, and its status " +
-        "(docs/new-library.md#readme-status-marker)",
+        "a package has a README.md; this one has none: write one that says in a line or two " +
+        "what the package is, and its status (docs/new-library.md#readme-status-marker)",
     },
   ]);
 });
@@ -92,9 +129,9 @@ test("status-marker: a README without a marker, or with one GitHub does not rend
     {
       file: "shared/pkg/README.md",
       message:
-        'no status marker: under the title, add a callout with a line starting "> **Status: ' +
-        'STABLE**", "> **Status: UNSTABLE**" or "> **Status: DEPRECATED**" ' +
-        "(docs/new-library.md#readme-status-marker)",
+        "the README carries a status marker under its title; this one has none: add a callout " +
+        'with a line starting "> **Status: STABLE**", "> **Status: UNSTABLE**" or ' +
+        '"> **Status: DEPRECATED**" (docs/new-library.md#readme-status-marker)',
     },
   ];
   assert.deepEqual(violations({ readme: "# @shared/pkg\n\nWhat it does.\n" }), expected);
@@ -110,16 +147,16 @@ test("side-effects: anything but false is reported", () => {
     {
       file: "shared/pkg/package.json",
       message:
-        '"sideEffects" is ["./src/slice.ts"]: set it to false, and turn code that runs on ' +
-        "import into a function its consumers call",
+        '"sideEffects" is false; here it is ["./src/slice.ts"]: set it to false, and turn code ' +
+        "that runs on import into a function its consumers call",
     },
   ]);
   assert.deepEqual(violations({ manifest: { sideEffects: undefined } }), [
     {
       file: "shared/pkg/package.json",
       message:
-        '"sideEffects" is not set: set it to false, and turn code that runs on import into a ' +
-        "function its consumers call",
+        '"sideEffects" is false; here it is not set: set it to false, and turn code that runs ' +
+        "on import into a function its consumers call",
     },
   ]);
 });
@@ -133,14 +170,14 @@ test("lint-script: both spellings of the sources pass", () => {
 test("lint-script: a missing lint script, or one that does not run oxlint, is reported", () => {
   const { lint: _lint, ...withoutLint } = MANIFEST.scripts;
   assert.deepEqual(violations({ manifest: { scripts: withoutLint } }), [
-    { file: "shared/pkg/package.json", message: 'no "lint" script: add "lint": "oxlint src"' },
+    { file: "shared/pkg/package.json", message: NO_LINT_SCRIPT },
   ]);
   assert.deepEqual(
     violations({ manifest: { scripts: { ...MANIFEST.scripts, lint: "eslint src" } } }),
     [
       {
         file: "shared/pkg/package.json",
-        message: 'script "lint" does not run oxlint: make it "oxlint src"',
+        message: 'a "lint" script runs oxlint; this one does not: make it "oxlint src"',
       },
     ],
   );
@@ -160,18 +197,15 @@ test("format-check-script: every spelling in use passes", () => {
 test("format-check-script: a missing script, or one that does not check, is reported", () => {
   const { "format:check": _check, ...withoutCheck } = MANIFEST.scripts;
   assert.deepEqual(violations({ manifest: { scripts: withoutCheck } }), [
-    {
-      file: "shared/pkg/package.json",
-      message:
-        'no "format:check" script: add "format:check": "oxfmt src --check", next to ' +
-        '"format": "oxfmt src"',
-    },
+    { file: "shared/pkg/package.json", message: NO_FORMAT_CHECK_SCRIPT },
   ]);
   const scripts = { ...MANIFEST.scripts, "format:check": "oxfmt src" };
   assert.deepEqual(violations({ manifest: { scripts } }), [
     {
       file: "shared/pkg/package.json",
-      message: 'script "format:check" does not run oxfmt --check: make it "oxfmt src --check"',
+      message:
+        'a "format:check" script runs oxfmt --check; this one does not: make it ' +
+        '"oxfmt src --check"',
     },
   ]);
 });
@@ -188,12 +222,14 @@ test("tool-dependency: oxlint and oxfmt are reported in dependencies and devDepe
       {
         file: "shared/pkg/package.json",
         message:
-          "dependencies declares oxfmt: remove it, the binary resolves from the workspace root",
+          "no oxlint or oxfmt dependency, as the binaries resolve from the workspace root; " +
+          "dependencies declares oxfmt: remove it",
       },
       {
         file: "shared/pkg/package.json",
         message:
-          "devDependencies declares oxlint: remove it, the binary resolves from the workspace root",
+          "no oxlint or oxfmt dependency, as the binaries resolve from the workspace root; " +
+          "devDependencies declares oxlint: remove it",
       },
     ],
   );
@@ -204,11 +240,7 @@ test("a debt entry silences the checks it names, for its package only", () => {
   assert.deepEqual(violations({ manifest: { sideEffects: true }, debt }), []);
   assert.deepEqual(
     violations({ manifest: { sideEffects: true, scripts: {} }, debt }).map(v => v.message),
-    [
-      'no "lint" script: add "lint": "oxlint src"',
-      'no "format:check" script: add "format:check": "oxfmt src --check", next to ' +
-        '"format": "oxfmt src"',
-    ],
+    [NO_LINT_SCRIPT, NO_FORMAT_CHECK_SCRIPT],
   );
   assert.equal(
     violations({ projectRoot: "shared/other", manifest: { sideEffects: true }, debt }).length,
@@ -227,6 +259,7 @@ test("the debt list only shrinks: a check the package passes again is reported",
 });
 
 test("every debt entry names a layer package, known checks and an exit condition", () => {
+  const names = Object.keys(CHECKS);
   for (const [projectRoot, { checks, reason }] of Object.entries(HYGIENE_DEBT)) {
     assert.ok(
       fs.existsSync(path.join(WORKSPACE_ROOT, projectRoot, "package.json")),
@@ -234,7 +267,7 @@ test("every debt entry names a layer package, known checks and an exit condition
     );
     assert.match(projectRoot, /^(shared|domain|features)\//);
     assert.ok(checks.length > 0, `${projectRoot} lists no check`);
-    for (const name of checks) assert.ok(CHECKS.includes(name), `${name} is not a check`);
+    for (const name of checks) assert.ok(names.includes(name), `${name} is not a check`);
     assert.match(reason, /Exit condition: /);
   }
 });
