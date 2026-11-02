@@ -8528,6 +8528,10 @@
       "stakeActivePercent": "Active",
       "inactiveStake": "Withdrawable Rewards",
       "stakeAvailableBalance": "Available balance",
+      "delegatedInfoTooltip": "Total amount that is delegated to validators.",
+      "inactiveStakeTooltip": "Inactive stake that can be withdrawn without deactivating your delegation.",
+      "withdrawableTitle": "Withdrawable",
+      "withdrawableInfoTooltip": "Total amount that is withdrawable from delegations.",
       "actions": {
         "activate": "Activate",
         "deactivate": "Deactivate",

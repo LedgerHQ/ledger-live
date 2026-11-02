@@ -14,6 +14,7 @@ type FamilyComponents = Pick<
   | "AccountBodyHeader"
   | "AccountDetailDelegations"
   | "AccountBalanceSummaryFooter"
+  | "AccountDetailBalanceSummary"
 >;
 
 export type FamilyBlocksViewModel = Readonly<{

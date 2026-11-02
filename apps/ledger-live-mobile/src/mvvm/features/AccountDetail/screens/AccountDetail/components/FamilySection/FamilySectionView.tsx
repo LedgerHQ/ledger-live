@@ -7,6 +7,7 @@ import perFamilyAccountBalanceHeader from "~/generated/AccountBalanceHeader";
 import perFamilyAccountBodyHeader from "~/generated/AccountBodyHeader";
 import perFamilyAccountDetailDelegations from "~/generated/AccountDetailDelegations";
 import perFamilyAccountBalanceSummaryFooter from "~/generated/AccountBalanceSummaryFooter";
+import perFamilyAccountDetailBalanceSummary from "~/generated/AccountDetailBalanceSummary";
 import perFamilyPendingTransferProposals from "~/generated/PendingTransferProposals";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../../../testIds";
 import type { FamilySectionViewModel } from "./useFamilySectionViewModel";
@@ -30,6 +31,10 @@ export const FamilySectionView = ({
 }: FamilySectionViewModel) => {
   const { family } = account.currency;
   const blockProps = { account };
+  const balancesBlocks =
+    family in perFamilyAccountDetailBalanceSummary
+      ? perFamilyAccountDetailBalanceSummary
+      : perFamilyAccountBalanceSummaryFooter;
 
   return (
     <>
@@ -46,9 +51,7 @@ export const FamilySectionView = ({
         account,
         parentAccount: account,
       })}
-      {showEarnBlocks
-        ? renderFamilyBlock(perFamilyAccountBalanceSummaryFooter, family, blockProps)
-        : null}
+      {showEarnBlocks ? renderFamilyBlock(balancesBlocks, family, blockProps) : null}
       {showBodyBlocks ? (
         <React.Suspense fallback={null}>
           {renderFamilyBlock(
