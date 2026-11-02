@@ -9,14 +9,9 @@ export type ContactAddressDetailDialogProps = Readonly<{
   onSend?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  /** Hands the address to the host's share sheet. The share action shows only when it is set. */
+  onShareAddress?: (address: string) => void;
   canSend?: boolean;
   canEdit?: boolean;
   canDelete?: boolean;
 }>;
-
-export type ContactAddressDetailDialogNativeProps = ContactAddressDetailDialogProps &
-  Readonly<{
-    bottomInset?: number;
-    onCopyAddress?: (address: string) => Promise<boolean>;
-    onShareAddress?: (address: string) => void;
-  }>;

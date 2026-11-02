@@ -1,18 +1,13 @@
 import React from "react";
 import { ContactConfirmationDialog } from "@features/platform-contacts";
 import { useEditSignerMismatchCopy } from "../../copy/useEditSignerMismatchCopy";
-import type { ContactsEditSignerMismatchDialogProps } from "./types";
-
-export type ContactsEditSignerMismatchDrawerProps = ContactsEditSignerMismatchDialogProps &
-  Readonly<{
-    bottomInset?: number;
-  }>;
+import type { ContactsEditSignerMismatchDialogProps } from "./ContactsEditSignerMismatchDialog.types";
 
 export function ContactsEditSignerMismatchDialog({
   isOpen,
   onConnectDifferentDevice,
   onCancel,
-}: ContactsEditSignerMismatchDrawerProps): React.JSX.Element {
+}: ContactsEditSignerMismatchDialogProps): React.JSX.Element {
   const labels = useEditSignerMismatchCopy();
 
   return (

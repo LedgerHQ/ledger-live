@@ -5,8 +5,8 @@ import { I18nTestProvider } from "@shared/i18n/testing";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { mockContact, mockContactAddress } from "@domain/entity-contact/schema.mock";
 import { createContactDetailAddressRowIntent } from "../../model/viewModel";
-import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog.web";
-import type { ContactAddressDetailDialogProps } from "./types";
+import { ContactAddressDetailDialog } from "./ContactAddressDetailDialog";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
 
 jest.mock("@shared/clipboard");
 
@@ -91,6 +91,23 @@ describe("ContactAddressDetailDialog", () => {
         "contacts.addressDetail.copy",
       );
     });
+  });
+
+  it("should hide the share action when the host cannot share", () => {
+    render(<ContactAddressDetailDialog {...createProps()} />, { wrapper: I18nTestProvider });
+
+    expect(screen.queryByTestId("contacts-address-detail-share")).toBeNull();
+  });
+
+  it("should share the selected address when sharing is available", () => {
+    const onShareAddress = jest.fn();
+    render(<ContactAddressDetailDialog {...createProps({ onShareAddress })} />, {
+      wrapper: I18nTestProvider,
+    });
+
+    fireEvent.click(screen.getByTestId("contacts-address-detail-share"));
+
+    expect(onShareAddress).toHaveBeenCalledWith("0x1ad23b2cf8d2e0591ea417eb82f7cd9746c53034");
   });
 
   it("should render nothing when row or network is missing", () => {

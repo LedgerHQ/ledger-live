@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Tag, Text } from "@ledgerhq/lumen-ui-rnative";
 import { useTranslation } from "@shared/i18n";
 import { resolveContactAddressIconProps } from "../../model/resolveContactAddressIcon";
-import type { ContactAddressDetailDialogProps } from "./types";
-import { ContactAddressDetailQrCode } from "./ContactAddressDetailQrCode.native";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
+import { ContactAddressDetailQrCode } from "./ContactAddressDetailQrCode";
 
 type ContactAddressDetailSummaryProps = Readonly<{
   row: NonNullable<ContactAddressDetailDialogProps["row"]>;
