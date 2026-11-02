@@ -2,7 +2,12 @@ import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/sch
 import { AccountIdSchema } from "./legacy/schema";
 import { AccountsStateSchema, LegacyAccountEntrySchema, initialAccountsState } from "./schema";
 import { mockAccountEntry } from "./schema.mock";
-import { accountsSlice, legacyAccountsSynced } from "./slice";
+import {
+  accountsSlice,
+  legacyAccountsSynced,
+  remoteAccountsAdded,
+  remoteAccountsRemoved,
+} from "./slice";
 
 const { reducer } = accountsSlice;
 const {
@@ -61,5 +66,21 @@ describe("accountsSlice", () => {
     const state = reducer(withRemote, legacyAccountsSynced([local]));
     expect(selectAccountEntries(state)).toEqual([local]);
     expect(selectAccountUUIDByLegacyId(state, btcId)).toBe(remote.accountUUID);
+  });
+
+  it("adds remote-only accounts after the others, once each", () => {
+    const synced = reducer(initialAccountsState, legacyAccountsSynced([eth]));
+    const state = reducer(synced, remoteAccountsAdded([remote, remote]));
+    expect(selectAccountUUIDs(state)).toEqual([eth.accountUUID, remote.accountUUID]);
+    expect(reducer(state, legacyAccountsSynced([eth]))).toEqual(state);
+  });
+
+  it("removes remote-only accounts and keeps the legacy ones", () => {
+    const state = reducer(
+      reducer(withRemote, legacyAccountsSynced([eth])),
+      remoteAccountsRemoved([remote.accountUUID, eth.accountUUID]),
+    );
+    expect(selectAccountEntries(state)).toEqual([eth]);
+    expect(selectAccountUUIDByLegacyId(state, ethId)).toBe(eth.accountUUID);
   });
 });

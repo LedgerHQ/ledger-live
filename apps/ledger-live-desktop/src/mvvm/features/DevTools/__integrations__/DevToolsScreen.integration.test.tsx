@@ -41,6 +41,7 @@ jest.mock("@devtools/bindings", () => ({
   useAccountPortfolioToolProps: () => ({ marker: "account-portfolio-props" }),
   useAccountDataToolProps: () => ({ marker: "account-data-props" }),
   useAccountNameToolProps: () => ({ marker: "account-name-props" }),
+  useMockAccountsToolProps: () => ({ marker: "mock-accounts-props" }),
   createAccountDataRecorder: () => ({
     instrument: (sources: unknown) => sources,
     middleware: () => (next: (action: unknown) => unknown) => next,
@@ -91,6 +92,7 @@ describe("DevToolsScreen", () => {
           { id: "account-operation", config: { marker: "account-operation-props" } },
           { id: "account-name", config: { marker: "account-name-props" } },
           { id: "account-portfolio", config: { marker: "account-portfolio-props" } },
+          { id: "mock-accounts", config: { marker: "mock-accounts-props" } },
         ],
       }),
     );

@@ -20,3 +20,4 @@ export { createAccountDataRecorder } from "./accountDataRecorder";
 export type { AccountDataRecorder } from "./accountDataRecorder";
 export * from "./useAppConfigToolProps";
 export { useAccountPortfolioToolProps } from "./useAccountPortfolioToolProps";
+export { useMockAccountsToolProps } from "./useMockAccountsToolProps";

@@ -30,7 +30,8 @@
     "@devtools/account-descriptor": "workspace:*",
     "@devtools/account-data": "workspace:*",
     "@devtools/app-config": "workspace:*",
-    "@devtools/account-name": "workspace:*"
+    "@devtools/account-name": "workspace:*",
+    "@devtools/mock-accounts": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19"

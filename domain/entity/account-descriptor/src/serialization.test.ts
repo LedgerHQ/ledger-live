@@ -47,6 +47,14 @@ describe("parseAccountDescriptor", () => {
     expect(parseAccountDescriptor(serializeAccountDescriptor(descriptor))).toEqual(descriptor);
   });
 
+  it("round-trips a mock descriptor", () => {
+    const mock: AccountDescriptor = { ...ETH, purpose: "mock" };
+    expect(serializeAccountDescriptor(mock)).toBe(
+      `mock:2:address:ethereum:${ETH_ADDR}:m/44h/60h/0h/0/0`,
+    );
+    expect(parseAccountDescriptor(serializeAccountDescriptor(mock))).toEqual(mock);
+  });
+
   it.each([
     { descriptor: UTXO, path: "m/84'/0'/0'" },
     { descriptor: UTXO, path: "m/84H/0H/0H" },
