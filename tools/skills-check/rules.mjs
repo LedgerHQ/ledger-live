@@ -216,7 +216,7 @@ const checkReferences = (root, file, text, topLevel, report) => {
 
   const ignored = gitIgnored(root, [...new Set(missingPaths.map(({ path }) => path))]);
   for (const { path, number } of missingPaths)
-    if (!ignored.has(path)) report(number, "dead-path", `\`${path}\` does not exist`);
+    if (!ignored.has(path)) report(number, "dead-path", `\`${path}\` does not exist`, path);
 };
 
 const topLevelFolders = root =>
@@ -227,16 +227,51 @@ const topLevelFolders = root =>
       .map(entry => entry.name),
   );
 
-export const checkRepo = (root, files = listFiles(root)) => {
+const isWaived = (waiver, finding) =>
+  finding.code === "dead-path" && waiver.file === finding.file && waiver.path === finding.path;
+
+const isComplete = waiver => Boolean(waiver.file && waiver.path && waiver.reason?.trim());
+
+// A waiver needs a reason, and one that no longer matches is reported so the list cannot rot.
+export const applyWaivers = (findings, waivers, waiversFile) => {
+  const valid = waivers.filter(isComplete);
+  const kept = findings.filter(finding => !valid.some(waiver => isWaived(waiver, finding)));
+  waivers.forEach((waiver, index) => {
+    const entry = `entry ${index + 1} of ${waiversFile}`;
+    if (!isComplete(waiver))
+      kept.push({
+        file: waiversFile,
+        line: 1,
+        code: "waiver",
+        message: `${entry} needs a file, a path and a reason`,
+      });
+    else if (!findings.some(finding => isWaived(waiver, finding)))
+      kept.push({
+        file: waiver.file,
+        line: 1,
+        code: "stale-waiver",
+        message: `\`${waiver.path}\` is waived by ${entry} but no longer reported here`,
+      });
+  });
+  return kept;
+};
+
+export const checkRepo = (
+  root,
+  { files = listFiles(root), waivers = [], waiversFile = "waivers.json" } = {},
+) => {
   const topLevel = topLevelFolders(root);
   const findings = [];
   for (const file of files) {
     const text = readFileSync(join(root, file), "utf8");
-    const report = (line, code, message) => findings.push({ file, line, code, message });
+    const report = (line, code, message, path) =>
+      findings.push({ file, line, code, message, ...(path && { path }) });
     checkFrontmatter(file, text, report);
     checkReferences(root, file, text, topLevel, report);
   }
-  return findings.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
+  return applyWaivers(findings, waivers, waiversFile).sort(
+    (a, b) => a.file.localeCompare(b.file) || a.line - b.line,
+  );
 };
 
 export const formatFinding = ({ file, line, code, message }) =>

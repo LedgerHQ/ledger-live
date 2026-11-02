@@ -1,0 +1,32 @@
+[
+  {
+    "file": ".agents/skills/structure-flow/SKILL.md",
+    "path": "domain/aggregate",
+    "reason": "Says there is no domain/aggregate folder."
+  },
+  {
+    "file": ".agents/skills/structure-flow/references/layers.md",
+    "path": "domain/aggregate",
+    "reason": "Says there is no domain/aggregate folder yet."
+  },
+  {
+    "file": ".agents/skills/structure-flow/references/layers.md",
+    "path": "features/flow/contacts-list",
+    "reason": "The folder the package name would give, contrasted with the real one."
+  },
+  {
+    "file": ".agents/skills/legacy-migration/references/injection.md",
+    "path": "libs/ledgerjs/packages/errors",
+    "reason": "An example of a deleted package."
+  },
+  {
+    "file": ".agents/skills/legacy-migration/references/injection.md",
+    "path": "apps/react.ts",
+    "reason": "A path relative to libs/ledger-live-common/src."
+  },
+  {
+    "file": "docs/configuration.md",
+    "path": "apps/coin-service",
+    "reason": "A folder of another repository."
+  }
+]

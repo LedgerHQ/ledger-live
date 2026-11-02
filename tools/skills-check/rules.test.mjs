@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { after, describe, it } from "node:test";
@@ -176,6 +176,54 @@ describe("dead-path", () => {
     });
     execFileSync("git", ["init", "-q"], { cwd: root });
     assert.deepEqual(codes(root), ["AGENTS.md:1:dead-path"]);
+  });
+});
+
+const waived = (root, waivers) =>
+  checkRepo(root, { waivers, waiversFile: "waivers.json" }).map(
+    ({ file, line, code }) => `${file}:${line}:${code}`,
+  );
+
+describe("waivers", () => {
+  const files = {
+    "AGENTS.md": "There is no `apps/aggregate`.\n",
+    "docs/guide.md": "There is no `apps/aggregate` either.\n",
+    "apps/app.ts": "",
+  };
+
+  it("waives a missing path in the one file it names", () => {
+    const waivers = [{ file: "AGENTS.md", path: "apps/aggregate", reason: "Says it is absent." }];
+    assert.deepEqual(waived(repo(files), waivers), ["docs/guide.md:1:dead-path"]);
+  });
+
+  it("waives no other code than dead-path", () => {
+    const root = repo({ "AGENTS.md": "[a](apps/aggregate)\n" });
+    const waivers = [{ file: "AGENTS.md", path: "apps/aggregate", reason: "Says it is absent." }];
+    assert.deepEqual(waived(root, waivers), ["AGENTS.md:1:dead-link", "AGENTS.md:1:stale-waiver"]);
+  });
+
+  it("reports a waiver that matches nothing", () => {
+    const waivers = [{ file: "AGENTS.md", path: "apps/app.ts", reason: "Exists now." }];
+    const root = repo(files);
+    assert.deepEqual(waived(root, waivers), [
+      "AGENTS.md:1:dead-path",
+      "AGENTS.md:1:stale-waiver",
+      "docs/guide.md:1:dead-path",
+    ]);
+  });
+
+  it("reports a waiver without a reason", () => {
+    const waivers = [{ file: "AGENTS.md", path: "apps/aggregate", reason: " " }];
+    assert.deepEqual(waived(repo(files), waivers), [
+      "AGENTS.md:1:dead-path",
+      "docs/guide.md:1:dead-path",
+      "waivers.json:1:waiver",
+    ]);
+  });
+
+  it("give every shipped waiver a file, a path and a reason", () => {
+    const shipped = JSON.parse(readFileSync(new URL("./waivers.json", import.meta.url), "utf8"));
+    for (const waiver of shipped) assert.ok(waiver.file && waiver.path && waiver.reason?.trim());
   });
 });
 
