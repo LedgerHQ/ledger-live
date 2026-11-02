@@ -128,13 +128,13 @@ export class PageScroller {
     try {
       switch (direction) {
         case "down":
-          return await withHardTimeout(scrollContainer.scroll(pixels, "down", NaN, 0.8));
+          return await withHardTimeout(scrollContainer.scroll(pixels, "down", Number.NaN, 0.8));
         case "up":
-          return await withHardTimeout(scrollContainer.scroll(pixels, "up", NaN, 0.8));
+          return await withHardTimeout(scrollContainer.scroll(pixels, "up", Number.NaN, 0.8));
         case "right":
-          return await withHardTimeout(scrollContainer.scroll(pixels, "right", NaN, 0.5));
+          return await withHardTimeout(scrollContainer.scroll(pixels, "right", Number.NaN, 0.5));
         case "left":
-          return await withHardTimeout(scrollContainer.scroll(pixels, "left", NaN, 0.5));
+          return await withHardTimeout(scrollContainer.scroll(pixels, "left", Number.NaN, 0.5));
         case "bottom":
           return await withHardTimeout(scrollContainer.swipe(swipeDirection, "fast"));
         default:
