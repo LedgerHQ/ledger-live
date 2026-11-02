@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react-native";
 import { ContactAddressValueSchema } from "@domain/entity-contact";
 import { createInitialEditAddressEntryState } from "./model/addressEntryValidation";
-import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation.native";
+import { useEditAddressAddressEntryPresentation } from "./useEditAddressAddressEntryPresentation";
 
 const labels = {
   addressPlaceholder: "Address",

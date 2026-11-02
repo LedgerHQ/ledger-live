@@ -6,7 +6,7 @@ import {
 } from "@domain/entity-contact";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameAddressDialog } from ".";
-import type { ContactsRenameAddressDialogProps } from "./types";
+import type { ContactsRenameAddressDialogProps } from "./ContactsRenameAddressDialog.types";
 
 function createViewModel(
   overrides: Partial<ContactsRenameAddressDialogProps> = {},

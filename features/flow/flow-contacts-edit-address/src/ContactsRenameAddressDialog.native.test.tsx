@@ -6,9 +6,15 @@ import {
 } from "@domain/entity-contact";
 import { I18nTestProvider } from "@shared/i18n/testing";
 import { ContactsRenameAddressDialog } from ".";
-import type { ContactsRenameAddressDrawerProps } from "./types";
+import type { ContactsRenameAddressDialogProps } from "./ContactsRenameAddressDialog.types";
 
 const mockFocus = jest.fn();
+const mockBottomInset = jest.fn(() => 0);
+
+jest.mock("@shared/ui-queued-bottom-sheet", () => ({
+  ...jest.requireActual<Record<string, unknown>>("@shared/ui-queued-bottom-sheet"),
+  useBottomSheetBottomInset: () => mockBottomInset(),
+}));
 
 // The Lumen passthrough renders host elements whose refs stay null, so the focus call is
 // unobservable. Override just TextInput to expose a controllable imperative handle.
@@ -31,8 +37,8 @@ jest.mock("@ledgerhq/lumen-ui-rnative", () => {
 });
 
 function createViewModel(
-  overrides: Partial<ContactsRenameAddressDrawerProps> = {},
-): ContactsRenameAddressDrawerProps {
+  overrides: Partial<ContactsRenameAddressDialogProps> = {},
+): ContactsRenameAddressDialogProps {
   const address = ContactAddressValueSchema.parse("0x1234567890123456789012345678901234567890");
 
   return {
@@ -58,9 +64,10 @@ function createViewModel(
   };
 }
 
-describe("ContactsRenameAddressDrawer", () => {
+describe("ContactsRenameAddressDialog", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockBottomInset.mockReturnValue(0);
   });
 
   it("should render the validation state while open", () => {
@@ -108,11 +115,12 @@ describe("ContactsRenameAddressDrawer", () => {
     expect(screen.queryByText("contacts.editAddress.title")).not.toBeOnTheScreen();
   });
 
-  it("should clear the on-screen navigation area below the form", () => {
-    const { toJSON } = render(
-      <ContactsRenameAddressDialog {...createViewModel({ bottomInset: 8 })} />,
-      { wrapper: I18nTestProvider },
-    );
+  it("should clear the sheet's bottom inset below the form", () => {
+    mockBottomInset.mockReturnValue(8);
+
+    const { toJSON } = render(<ContactsRenameAddressDialog {...createViewModel()} />, {
+      wrapper: I18nTestProvider,
+    });
 
     expect(toJSON()).toMatchObject({ props: { style: { paddingBottom: 32 } } });
   });
