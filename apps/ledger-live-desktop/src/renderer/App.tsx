@@ -38,6 +38,7 @@ import { LinkingProviderWrapper } from "~/renderer/components/LinkingProviderWra
 import { MockServerDeviceWindow } from "LLD/components/MockServerDeviceWindow";
 import { FamilyAppEffects } from "LLD/components/FamilyAppEffects";
 import { DesktopAssetsTableProvider } from "LLD/components/AssetsTableProvider";
+import { DevToolsWindow } from "LLD/features/DevTools/components/DevToolsWindow";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -104,6 +105,7 @@ const InnerApp = () => {
                                 <Default />
                                 <MockServerDeviceWindow />
                                 <FamilyAppEffects />
+                                <DevToolsWindow />
                                 <ReactQueryDevtoolsProvider />
                               </QueryClientProvider>
                             </DrawerProvider>
