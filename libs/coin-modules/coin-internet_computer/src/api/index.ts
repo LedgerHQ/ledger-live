@@ -13,7 +13,7 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-module-framework/api/index";
 import { craftTransactionData } from "@ledgerhq/coin-module-framework/logic/craftTransactionData";
-import type { IcpContext, IcpCurrencyConfig } from "../config";
+import { type IcpContext, type IcpCurrencyConfig, nodeUrl } from "../config";
 import { AccountIdentifier } from "../logic/accountIdentifier";
 import { broadcast } from "../logic/broadcast";
 import { combine } from "../logic/combine";
@@ -34,11 +34,13 @@ export * from "../network/api";
 // unsigned update call, so it stays out of the read-only `call`.
 export { refreshNeuronStake } from "../logic/stakeTransfer";
 
+const hostOf = async (context: IcpContext): Promise<string> => nodeUrl(await context.config());
+
 // Runs a synchronous step as the Promise the contract expects, so a throw becomes a rejection.
 const settle = <T>(step: () => T): Promise<T> => Promise.resolve().then(step);
 
-// CoinModuleApi (Alpaca) factory for native ICP, alongside the account bridge. Endpoints and canister
-// ids are still constants, so the context is accepted and ignored.
+// CoinModuleApi (Alpaca) factory for native ICP, alongside the account bridge. The node URL comes
+// from the context's config (`node.url`, mainnet by default); canister ids stay the mainnet ids.
 //
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
 // survives and a caller sees exactly which methods exist.
@@ -70,19 +72,20 @@ const settle = <T>(step: () => T): Promise<T> => Promise.resolve().then(step);
 // wiring supplies them through the family mapping.
 export function createApi() {
   return {
-    lastBlock: (_context: IcpContext): Promise<BlockInfo> => lastBlock(),
-    getBlockInfo: (_context: IcpContext, height: number): Promise<BlockInfo> =>
-      getBlockInfo(height),
+    lastBlock: async (context: IcpContext): Promise<BlockInfo> => lastBlock(await hostOf(context)),
+    getBlockInfo: async (context: IcpContext, height: number): Promise<BlockInfo> =>
+      getBlockInfo(await hostOf(context), height),
     getBalance: (
-      _context: IcpContext,
+      context: IcpContext,
       address: string,
       options?: BalanceOptions,
-    ): Promise<Balance[]> => rejectBalanceOptions(() => getBalance(address), options),
-    listOperations: (
-      _context: IcpContext,
+    ): Promise<Balance[]> =>
+      rejectBalanceOptions(async () => getBalance(await hostOf(context), address), options),
+    listOperations: async (
+      context: IcpContext,
       address: string,
       options: ListOperationsOptions,
-    ): Promise<Page<Operation>> => listOperations(address, options),
+    ): Promise<Page<Operation>> => listOperations(await hostOf(context), address, options),
     craftTransaction: (
       _context: IcpContext,
       intent: IcpIntent,
@@ -96,14 +99,15 @@ export function createApi() {
       signature: string[],
       options?: { pubkey?: string },
     ): string => combine(tx, signature, options?.pubkey),
-    broadcast: (_context: IcpContext, tx: string): Promise<string> => broadcast(tx),
+    broadcast: async (context: IcpContext, tx: string): Promise<string> =>
+      broadcast(await hostOf(context), tx),
     validateIntent: (
-      _context: IcpContext,
+      context: IcpContext,
       intent: IcpIntent,
       balances: Balance[],
       options?: { customFees?: FeeEstimation },
     ): Promise<TransactionValidation> =>
-      validateIntentWithStakeAccount(intent, balances, options?.customFees),
+      validateIntentWithStakeAccount(() => hostOf(context), intent, balances, options?.customFees),
     validateAddress: (
       _context: IcpContext,
       address: string,

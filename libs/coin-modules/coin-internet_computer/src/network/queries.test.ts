@@ -1,11 +1,16 @@
 // Exercises the account read/query helpers' branch + pagination logic. The candid codec is
 // upstream-tested, so getAgent (the query transport) and the candid decode are mocked and we assert
 // the function's own handling of replied/non-replied, absent values, and pagination.
+const mockHost = "http://127.0.0.1:4943";
 const mockQuery = jest.fn();
 const mockDecode = jest.fn();
 
 jest.mock("./agent", () => ({
-  getAgent: jest.fn(async () => ({ query: mockQuery })),
+  getAgent: async (host: string) => {
+    // Every query goes to the node the caller names.
+    if (host !== mockHost) throw new Error(`Queried ${host}`);
+    return { query: mockQuery };
+  },
 }));
 jest.mock("./candid", () => ({
   getCanisterIdlFunc: jest.fn(() => ({ argTypes: [], retTypes: [] })),
@@ -28,6 +33,8 @@ import {
   queryBalance,
 } from "./api";
 
+const HOST = mockHost;
+
 const replied = () => ({ status: "replied", reply: { arg: new ArrayBuffer(0) } });
 
 afterEach(() => jest.clearAllMocks());
@@ -36,18 +43,18 @@ describe("fetchBalance", () => {
   it("returns the balance when the query replies", async () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([500n]);
-    expect((await fetchBalance("addr")).toString()).toBe("500");
+    expect((await fetchBalance(HOST, "addr")).toString()).toBe("500");
   });
 
   it("returns 0 when the query is not replied", async () => {
     mockQuery.mockResolvedValue({ status: "rejected" });
-    expect((await fetchBalance("addr")).toString()).toBe("0");
+    expect((await fetchBalance(HOST, "addr")).toString()).toBe("0");
   });
 
   it("returns 0 when the balance is absent", async () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([]);
-    expect((await fetchBalance("addr")).toString()).toBe("0");
+    expect((await fetchBalance(HOST, "addr")).toString()).toBe("0");
   });
 });
 
@@ -55,25 +62,25 @@ describe("fetchBlockHeight", () => {
   it("returns the ledger chain length", async () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ chain_length: 987n }]);
-    expect((await fetchBlockHeight()).toString()).toBe("987");
+    expect((await fetchBlockHeight(HOST)).toString()).toBe("987");
   });
 
   it("throws when the query is not replied", async () => {
     mockQuery.mockResolvedValue({ status: "rejected" });
-    await expect(fetchBlockHeight()).rejects.toThrow(/Query failed/);
+    await expect(fetchBlockHeight(HOST)).rejects.toThrow(/Query failed/);
   });
 });
 
 describe("fetchTxns", () => {
   it("short-circuits without querying when start <= stop", async () => {
-    expect(await fetchTxns("addr", 5n, 10n)).toEqual([]);
+    expect(await fetchTxns(HOST, "addr", 5n, 10n)).toEqual([]);
     expect(mockQuery).not.toHaveBeenCalled();
   });
 
   it("returns an empty list when the account has no transactions", async () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ Ok: { transactions: [] } }]);
-    expect(await fetchTxns("addr", 10n, 0n)).toEqual([]);
+    expect(await fetchTxns(HOST, "addr", 10n, 0n)).toEqual([]);
   });
 
   it("paginates across pages until an empty page", async () => {
@@ -81,13 +88,13 @@ describe("fetchTxns", () => {
     mockDecode
       .mockReturnValueOnce([{ Ok: { transactions: [{ id: 5n }, { id: 4n }] } }])
       .mockReturnValueOnce([{ Ok: { transactions: [] } }]);
-    expect(await fetchTxns("addr", 10n, 0n)).toEqual([{ id: 5n }, { id: 4n }]);
+    expect(await fetchTxns(HOST, "addr", 10n, 0n)).toEqual([{ id: 5n }, { id: 4n }]);
     expect(mockQuery).toHaveBeenCalledTimes(2);
   });
 
   it("throws when the transactions query is not replied", async () => {
     mockQuery.mockResolvedValue({ status: "rejected" });
-    await expect(fetchTxns("addr", 10n, 0n)).rejects.toThrow(/Query failed/);
+    await expect(fetchTxns(HOST, "addr", 10n, 0n)).rejects.toThrow(/Query failed/);
   });
 });
 
@@ -95,12 +102,12 @@ describe("queryBalance", () => {
   it("returns the balance when the query replies", async () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([500n]);
-    expect(await queryBalance("addr")).toBe(500n);
+    expect(await queryBalance(HOST, "addr")).toBe(500n);
   });
 
   it("returns undefined when the query is not replied", async () => {
     mockQuery.mockResolvedValue({ status: "rejected" });
-    expect(await queryBalance("addr")).toBeUndefined();
+    expect(await queryBalance(HOST, "addr")).toBeUndefined();
   });
 });
 
@@ -114,7 +121,7 @@ describe("fetchTxnsPage", () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ Ok: { transactions: [{ id: 5n }], oldest_tx_id: [1n] } }]);
 
-    expect(await fetchTxnsPage("addr", undefined)).toEqual({
+    expect(await fetchTxnsPage(HOST, "addr", undefined)).toEqual({
       transactions: [{ id: 5n }],
       oldestTxId: 1n,
     });
@@ -125,7 +132,7 @@ describe("fetchTxnsPage", () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ Ok: { transactions: [], oldest_tx_id: [] } }]);
 
-    expect(await fetchTxnsPage("addr", 7n, 10)).toEqual({
+    expect(await fetchTxnsPage(HOST, "addr", 7n, 10)).toEqual({
       transactions: [],
       oldestTxId: undefined,
     });
@@ -136,7 +143,7 @@ describe("fetchTxnsPage", () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ Err: { message: "bad account" } }]);
 
-    await expect(fetchTxnsPage("addr", undefined)).rejects.toThrow(/bad account/);
+    await expect(fetchTxnsPage(HOST, "addr", undefined)).rejects.toThrow(/bad account/);
   });
 });
 
@@ -148,7 +155,7 @@ describe("fetchEncodedBlock", () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ blocks: [block], archived_blocks: [] }]);
 
-    expect(await fetchEncodedBlock(9n)).toBe(block);
+    expect(await fetchEncodedBlock(HOST, 9n)).toBe(block);
     expect(mockQuery).toHaveBeenCalledTimes(1);
   });
 
@@ -166,7 +173,7 @@ describe("fetchEncodedBlock", () => {
       ])
       .mockReturnValueOnce([{ Ok: [block] }]);
 
-    expect(await fetchEncodedBlock(7n)).toBe(block);
+    expect(await fetchEncodedBlock(HOST, 7n)).toBe(block);
     expect(mockQuery).toHaveBeenLastCalledWith(
       ARCHIVE,
       expect.objectContaining({
@@ -179,7 +186,7 @@ describe("fetchEncodedBlock", () => {
     mockQuery.mockResolvedValue(replied());
     mockDecode.mockReturnValue([{ blocks: [], archived_blocks: [] }]);
 
-    expect(await fetchEncodedBlock(99n)).toBeUndefined();
+    expect(await fetchEncodedBlock(HOST, 99n)).toBeUndefined();
   });
 
   it("throws when the archive refuses", async () => {
@@ -190,6 +197,6 @@ describe("fetchEncodedBlock", () => {
       ])
       .mockReturnValueOnce([{ Err: { Other: {} } }]);
 
-    await expect(fetchEncodedBlock(3n)).rejects.toThrow(/Archive refused/);
+    await expect(fetchEncodedBlock(HOST, 3n)).rejects.toThrow(/Archive refused/);
   });
 });

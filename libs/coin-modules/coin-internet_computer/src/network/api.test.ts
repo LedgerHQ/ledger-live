@@ -1,3 +1,4 @@
+import { ICP_NETWORK_URL } from "../consts";
 import { ICPNodeRefused } from "../errors";
 import { broadcastTxn } from "./api";
 
@@ -10,9 +11,15 @@ const answering = (status: number, text = "") => {
   });
 };
 
-const submit = () => broadcastTxn(Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "call");
+const submit = () =>
+  broadcastTxn(ICP_NETWORK_URL, Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "call");
 const poll = () =>
-  broadcastTxn(Buffer.from("00", "hex"), "ryjl3-tyaaa-aaaaa-aaaba-cai", "read_state");
+  broadcastTxn(
+    ICP_NETWORK_URL,
+    Buffer.from("00", "hex"),
+    "ryjl3-tyaaa-aaaaa-aaaba-cai",
+    "read_state",
+  );
 
 describe("broadcastTxn answers", () => {
   const originalFetch = global.fetch;
@@ -70,8 +77,8 @@ describe("broadcastTxn endpoint routing", () => {
     (global as any).fetch = fetchMock;
 
     const canisterId = "ryjl3-tyaaa-aaaaa-aaaba-cai";
-    await broadcastTxn(Buffer.from("00", "hex"), canisterId, "call");
-    await broadcastTxn(Buffer.from("00", "hex"), canisterId, "read_state");
+    await broadcastTxn(ICP_NETWORK_URL, Buffer.from("00", "hex"), canisterId, "call");
+    await broadcastTxn(ICP_NETWORK_URL, Buffer.from("00", "hex"), canisterId, "read_state");
 
     expect(fetchMock.mock.calls[0][0]).toContain(`/api/v3/canister/${canisterId}/call`);
     expect(fetchMock.mock.calls[1][0]).toContain(`/api/v2/canister/${canisterId}/read_state`);
