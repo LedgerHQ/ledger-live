@@ -15,6 +15,7 @@ import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { useFeature } from "@features/platform-feature-flags";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingNavigatorParamList,
@@ -33,6 +34,10 @@ function PostWelcomeSelection() {
   const currentNavigation = navigation.getParent()?.getParent()?.getState().routes[0].name;
   const isInOnboarding = currentNavigation === NavigatorName.BaseOnboarding;
   const localizedRebornUrl = useLocalizedUrl(urls.reborn);
+  const deviceOnboarding = useFeature("deviceOnboarding");
+  const openUnseededFunnel = Boolean(
+    deviceOnboarding?.enabled && deviceOnboarding.params?.connectUnseededDevice,
+  );
 
   const identifyUser = useCallback(
     (hasDevice: boolean | null) => {
@@ -58,6 +63,13 @@ function PostWelcomeSelection() {
 
   const setupLedger = () => {
     identifyUser(null);
+    if (openUnseededFunnel) {
+      navigation.navigate(ScreenName.OnboardingPairNew, {
+        deviceModelId: undefined,
+        connectUnseededDevice: true,
+      });
+      return;
+    }
     navigation.navigate(ScreenName.OnboardingDeviceSelection);
   };
 
