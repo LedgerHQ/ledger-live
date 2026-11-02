@@ -292,27 +292,34 @@ const getContractCallResult = makeLRUCache(
 type FindTransactionByContractCallParams = {
   configOrCurrencyId: HederaCoinConfig | string;
   timestamp: string;
-  payerAddress: string;
+  // EVM transaction hash given by Hgraph (0x-prefixed, 32 bytes)
+  transactionHash: string;
 };
 
 const getFindTransactionByContractCallCacheKey = ({
   configOrCurrencyId,
-  timestamp,
-  payerAddress,
+  transactionHash,
 }: FindTransactionByContractCallParams) => {
   if (typeof configOrCurrencyId === "string") {
-    return `${configOrCurrencyId}-${payerAddress}-${timestamp}`;
+    return `${configOrCurrencyId}-${transactionHash}`;
   }
 
-  return `${configOrCurrencyId.networkType}-${payerAddress}-${timestamp}`;
+  return `${configOrCurrencyId.networkType}-${transactionHash}`;
 };
+
+const EVM_HASH_BYTE_LENGTH = 32;
+
+// the EVM transaction hash is the first 32 bytes of the 48-byte (SHA-384) mirror node transaction hash
+const matchesEvmHash = (mirrorHashBase64: string, evmHash: string): boolean =>
+  Buffer.from(mirrorHashBase64, "base64").subarray(0, EVM_HASH_BYTE_LENGTH).toString("hex") ===
+  evmHash.replace(/^0x/, "").toLowerCase();
 
 const findTransactionByContractCallV2: CacheRes<
   [FindTransactionByContractCallParams],
   HederaMirrorTransaction | null
 > = makeLRUCache(
   async args => {
-    const { configOrCurrencyId, timestamp, payerAddress } = args;
+    const { configOrCurrencyId, timestamp, transactionHash } = args;
     const config = resolveConfig(configOrCurrencyId);
 
     // Hgraph API returns timestamp as number and nanoseconds precision is lost during parsing
@@ -332,12 +339,12 @@ const findTransactionByContractCallV2: CacheRes<
       url: `${config.apiUrls.mirrorNode}/api/v1/transactions?${params.toString()}`,
     });
 
-    // try to find main CONTRACT_CALL transaction related to the given address
+    // match on the hash: the ±10 µs range can hold other contract calls
     const relatedTx = res.data.transactions.find(tx => {
       return (
         tx.name === HEDERA_TRANSACTION_NAMES.ContractCall &&
-        tx.transaction_id.startsWith(payerAddress) &&
-        tx.parent_consensus_timestamp === null
+        tx.parent_consensus_timestamp === null &&
+        matchesEvmHash(tx.transaction_hash, transactionHash)
       );
     });
 
