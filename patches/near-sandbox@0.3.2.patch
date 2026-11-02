@@ -1,0 +1,26 @@
+diff --git a/dist/cjs/index.cjs b/dist/cjs/index.cjs
+index d1e70cce6cb6a6ae1682b00ce9d2a9b8d23d12dc..4b59abb64a20da9e056ef47f13b11435c51dfd13 100644
+--- a/dist/cjs/index.cjs
++++ b/dist/cjs/index.cjs
+@@ -340,7 +340,7 @@ var Sandbox = class Sandbox {
+ 		let lastError = null;
+ 		for (let i = 0; i < attempts; i++) {
+ 			try {
+-				const response = await (0, got.default)(`${rpcUrl}/status`, { throwHttpErrors: false });
++				const response = await (0, got.default)(`${rpcUrl}/status`, { throwHttpErrors: false, retry: { limit: 0 } });
+ 				if (response.statusCode >= 200 && response.statusCode < 300) return;
+ 			} catch (error) {
+ 				lastError = error;
+diff --git a/dist/esm/index.mjs b/dist/esm/index.mjs
+index 62b4637945842b5a34a610ab78cec4fcdab5c098..84e936a4b5af28a90a64782b8ed2246f7ca3ab1f 100644
+--- a/dist/esm/index.mjs
++++ b/dist/esm/index.mjs
+@@ -344,7 +344,7 @@ var Sandbox = class Sandbox {
+ 		let lastError = null;
+ 		for (let i = 0; i < attempts; i++) {
+ 			try {
+-				const response = await got(`${rpcUrl}/status`, { throwHttpErrors: false });
++				const response = await got(`${rpcUrl}/status`, { throwHttpErrors: false, retry: { limit: 0 } });
+ 				if (response.statusCode >= 200 && response.statusCode < 300) return;
+ 			} catch (error) {
+ 				lastError = error;

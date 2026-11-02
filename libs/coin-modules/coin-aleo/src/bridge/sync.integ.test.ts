@@ -65,6 +65,31 @@ function makePrivateSyncArgs(provableApi: AleoResources["provableApi"] = null) {
   };
 }
 
+const SCANNER_CATCH_UP_ATTEMPTS = 8;
+const SCANNER_CATCH_UP_DELAY_MS = 10_000;
+
+// performPrivateSync resolves to null while the record scanner is catching up; poll instead of failing on it.
+async function performPrivateSyncWhenCaughtUp(
+  onProgress?: (pct: number) => void,
+): Promise<Partial<AleoAccount> | null> {
+  for (let attempt = 1; attempt <= SCANNER_CATCH_UP_ATTEMPTS; attempt++) {
+    const progress: number[] = [];
+    const result = await performPrivateSync({
+      ...makePrivateSyncArgs(),
+      onProgress: pct => progress.push(pct),
+    });
+    if (result !== null || attempt === SCANNER_CATCH_UP_ATTEMPTS) {
+      progress.forEach(pct => onProgress?.(pct));
+      return result;
+    }
+    await new Promise(resolve => setTimeout(resolve, SCANNER_CATCH_UP_DELAY_MS));
+  }
+  return null;
+}
+
+const SCANNER_CATCH_UP_TIMEOUT_MS =
+  SCANNER_CATCH_UP_ATTEMPTS * (SCANNER_CATCH_UP_DELAY_MS + 30_000);
+
 beforeAll(() => {
   aleoConfig.setCoinConfig(() => getTestnetIntegConfig());
   setupCalStore();
@@ -134,11 +159,8 @@ describe("performPrivateSync — account with private history", () => {
   const progress: number[] = [];
 
   beforeAll(async () => {
-    result = await performPrivateSync({
-      ...makePrivateSyncArgs(),
-      onProgress: pct => progress.push(pct),
-    });
-  });
+    result = await performPrivateSyncWhenCaughtUp(pct => progress.push(pct));
+  }, SCANNER_CATCH_UP_TIMEOUT_MS);
 
   // performPrivateSync resolves to null while the record scanner is still catching up, which it
   // is for a while after any new transaction on this account. Asserted on its own so that case
@@ -195,7 +217,7 @@ describe("private-only sync — deep-frozen account migrating to private tokens"
 
   beforeAll(async () => {
     const args = makePrivateSyncArgs();
-    tokensOffSync = await performPrivateSync(args);
+    tokensOffSync = await performPrivateSyncWhenCaughtUp();
 
     aleoConfig.setCoinConfig(() => ({ ...getTestnetIntegConfig(), enableTokens: true }));
     frozenAccount = deepFreezeLikeImmer({
@@ -208,7 +230,7 @@ describe("private-only sync — deep-frozen account migrating to private tokens"
         syncType: SYNC_TYPE_SHIELDED,
       }).pipe(toArray()),
     );
-  });
+  }, SCANNER_CATCH_UP_TIMEOUT_MS);
 
   afterAll(() => {
     aleoConfig.setCoinConfig(() => getTestnetIntegConfig());

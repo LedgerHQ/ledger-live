@@ -846,6 +846,7 @@ patchedDependencies:
   buffer@6.0.3: 42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d
   detox-allure2-adapter@1.0.0-alpha.42: ddb0dbcaa421672ba23c05f29c7a4578344f6680b23e32d8f8388038b1a6ecd8
   detox@20.51.3: 8190e283c5424261bca63aa233e6dd2d2fc76b75a40e5b33290c14e3eba0c89b
+  near-sandbox@0.3.2: 69ba8d25e4dbf129f2052ea2ebb471ec3ab9c043fe615345075248f890453ed9
   react-native-fast-pbkdf2@0.3.1: 9b199e9f649c144e6edf3cf2db68b2900f64612817b8bb70c972cb0e1c727170
   react-native-image-crop-tools@1.6.4: 8dc28ff513f78de4133eb71abe17699348337c4354a1e7fa23aeb5083009e0b2
   react-native-webview@13.16.1: a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a
@@ -15458,7 +15459,7 @@ importers:
         version: 7.3.1
       near-sandbox:
         specifier: ^0.3.2
-        version: 0.3.2
+        version: 0.3.2(patch_hash=69ba8d25e4dbf129f2052ea2ebb471ec3ab9c043fe615345075248f890453ed9)
     devDependencies:
       '@ledgerhq/wallet-framework-test-setup':
         specifier: workspace:^
@@ -56437,7 +56438,7 @@ snapshots:
       create-hmac: 1.1.7
       tweetnacl: 1.0.3
 
-  near-sandbox@0.3.2:
+  near-sandbox@0.3.2(patch_hash=69ba8d25e4dbf129f2052ea2ebb471ec3ab9c043fe615345075248f890453ed9):
     dependencies:
       got: 11.8.6
       json-merge-patch: 1.0.2

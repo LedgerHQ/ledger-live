@@ -253,17 +253,6 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 1`] = `
     "type": "TokenAccountRaw",
   },
   {
-    "balance": "20000",
-    "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx~!dash!~token%3A%3Aststx",
-    "operationsCount": 1,
-    "parentId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
-    "pendingOperations": [],
-    "spendableBalance": "20000",
-    "swapHistory": [],
-    "tokenId": "stacks/sip010/stacked_stx_token_sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx-token::ststx",
-    "type": "TokenAccountRaw",
-  },
-  {
     "balance": "12142",
     "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~btc~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststxbtc~!dash!~token~!dash!~v2%3A%3Aststxbtc",
     "operationsCount": 2,
@@ -272,6 +261,17 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 1`] = `
     "spendableBalance": "12142",
     "swapHistory": [],
     "tokenId": "stacks/sip010/stacked_stx_btc_token_sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststxbtc-token-v2::ststxbtc",
+    "type": "TokenAccountRaw",
+  },
+  {
+    "balance": "20000",
+    "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx~!dash!~token%3A%3Aststx",
+    "operationsCount": 1,
+    "parentId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
+    "pendingOperations": [],
+    "spendableBalance": "20000",
+    "swapHistory": [],
+    "tokenId": "stacks/sip010/stacked_stx_token_sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx-token::ststx",
     "type": "TokenAccountRaw",
   },
   {
@@ -1722,30 +1722,6 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
   ],
   [
     {
-      "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx~!dash!~token%3A%3Aststx",
-      "blockHash": "0xf5ac620e7c605964641dcf6c8333d1bf50f8e84c0983b945fd4b1ecaa0a87607",
-      "blockHeight": 989220,
-      "contract": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token::ststx",
-      "extra": {
-        "feePayer": "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
-      },
-      "fee": "3000",
-      "hasFailed": false,
-      "hash": "0x76fb93607bdb9af548e08ba9fda42b415e0c77465cc1d67c90a42994032abe4a",
-      "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx~!dash!~token%3A%3Aststx-0x76fb93607bdb9af548e08ba9fda42b415e0c77465cc1d67c90a42994032abe4a-IN",
-      "recipients": [
-        "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
-      ],
-      "senders": [
-        "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
-      ],
-      "transactionSequenceNumber": "387",
-      "type": "IN",
-      "value": "20000",
-    },
-  ],
-  [
-    {
       "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~btc~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststxbtc~!dash!~token~!dash!~v2%3A%3Aststxbtc",
       "blockHash": "0xd6d8ab6c57c06138a0623982a348f81cbdab19c2b0c8bc1957b31b9aec7d527d",
       "blockHeight": 2060898,
@@ -1788,6 +1764,30 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "transactionSequenceNumber": "386",
       "type": "IN",
       "value": "10000",
+    },
+  ],
+  [
+    {
+      "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx~!dash!~token%3A%3Aststx",
+      "blockHash": "0xf5ac620e7c605964641dcf6c8333d1bf50f8e84c0983b945fd4b1ecaa0a87607",
+      "blockHeight": 989220,
+      "contract": "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token::ststx",
+      "extra": {
+        "feePayer": "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
+      },
+      "fee": "3000",
+      "hasFailed": false,
+      "hash": "0x76fb93607bdb9af548e08ba9fda42b415e0c77465cc1d67c90a42994032abe4a",
+      "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2Fstacked~!underscore!~stx~!underscore!~token~!underscore!~sp4sze494vc2yc5jyg7ayfq44f5q4pyv7dvmdpbg.ststx~!dash!~token%3A%3Aststx-0x76fb93607bdb9af548e08ba9fda42b415e0c77465cc1d67c90a42994032abe4a-IN",
+      "recipients": [
+        "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
+      ],
+      "senders": [
+        "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
+      ],
+      "transactionSequenceNumber": "387",
+      "type": "IN",
+      "value": "20000",
     },
   ],
   [
