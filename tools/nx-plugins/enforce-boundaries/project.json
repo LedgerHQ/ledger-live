@@ -6,7 +6,11 @@
     "test": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*"],
+      "inputs": [
+        "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
+        "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
+        "{workspaceRoot}/pnpm-workspace.yaml"
+      ],
       "options": {
         "cwd": "{workspaceRoot}",
         "command": "node --test tools/nx-plugins/enforce-boundaries/validate.test.js"
@@ -18,11 +22,12 @@
       "inputs": [
         "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
         "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
-        "{workspaceRoot}/{domain,shared,features,support,devtools}/**/package.json",
         "{workspaceRoot}/{domain,shared,features,support,devtools}/**/*.@(ts|tsx|js|jsx|mjs|cjs)",
         "!{workspaceRoot}/{domain,shared,features,support,devtools}/**/@(node_modules|dist|lib|build|.turbo|.cache)/**",
-        "{workspaceRoot}/{apps,libs}/**/package.json",
+        "{workspaceRoot}/**/package.json",
+        "{workspaceRoot}/**/project.json",
         "{workspaceRoot}/pnpm-workspace.yaml",
+        "{workspaceRoot}/nx.json",
         "{workspaceRoot}/nx.cache-config.json"
       ],
       "options": {

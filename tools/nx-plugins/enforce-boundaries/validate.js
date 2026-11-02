@@ -38,6 +38,9 @@ const DEPENDENCY_FIELDS = [
 const SKIP_DIRS = new Set(["node_modules", "dist", "lib", "build", ".turbo", ".cache"]);
 const SOURCE_EXTS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
 
+/** Workspace root of the `@devtools/*` packages the devtools import check reads. */
+const DEVTOOLS_ROOT = "devtools";
+
 /**
  * @param {string} dir
  * @param {(file: string) => void} callback
@@ -96,24 +99,15 @@ function importSpecifiers(content) {
 }
 
 /**
- * Specifiers of a source file that load `pkg` at runtime, by name or by a relative path into
- * `pkgRoot`: every import of it but the type-only forms `DEVTOOLS_TYPE_ONLY_RULE` allows, which
- * the build erases.
+ * Specifiers a source file loads at runtime: every import but the type-only forms
+ * `DEVTOOLS_TYPE_ONLY_RULE` allows, which the build erases.
  *
  * @param {string} file
  * @param {string} content
- * @param {string} pkg
- * @param {string} pkgRoot absolute root of `pkg`
  * @returns {string[]}
  */
-function valueImportsOf(file, content, pkg, pkgRoot) {
+function runtimeSpecifiers(file, content) {
   const source = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, false);
-  /** @param {string} spec */
-  const loadsPkg = spec => {
-    if (!spec.startsWith(".")) return packageNameOf(spec) === pkg;
-    const resolved = path.resolve(path.dirname(file), spec);
-    return resolved === pkgRoot || resolved.startsWith(pkgRoot + path.sep);
-  };
   const specifiers = [];
   /** @param {import("typescript").Node} node */
   const visit = node => {
@@ -133,13 +127,25 @@ function valueImportsOf(file, content, pkg, pkgRoot) {
     ) {
       spec = node.arguments[0];
     }
-    if (spec && ts.isStringLiteralLike(spec) && loadsPkg(spec.text)) {
-      specifiers.push(spec.text);
-    }
+    if (spec && ts.isStringLiteralLike(spec)) specifiers.push(spec.text);
     ts.forEachChild(node, visit);
   };
   visit(source);
   return specifiers;
+}
+
+/**
+ * Whether `spec`, imported from `file`, names `pkg` or a relative path into `pkgRoot`.
+ *
+ * @param {string} file
+ * @param {string} spec
+ * @param {string} pkg
+ * @param {string} pkgRoot absolute root of `pkg`
+ */
+function specifierLoads(file, spec, pkg, pkgRoot) {
+  if (!spec.startsWith(".")) return packageNameOf(spec) === pkg;
+  const resolved = path.resolve(path.dirname(file), spec);
+  return resolved === pkgRoot || resolved.startsWith(pkgRoot + path.sep);
 }
 
 /**
@@ -323,7 +329,7 @@ function devtoolsPackageNames(graph, workspaceRoot) {
   const names = new Map();
   for (const [nodeName, node] of Object.entries(graph.nodes)) {
     const root = node.data?.root;
-    if (!root?.startsWith("devtools/")) continue;
+    if (!root?.startsWith(`${DEVTOOLS_ROOT}/`)) continue;
     const name = readManifest(workspaceRoot, root)?.pkg.name;
     if (name?.startsWith("@devtools/")) names.set(nodeName, name);
   }
@@ -352,6 +358,20 @@ function allows(allowed, target) {
 function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
   const names = devtoolsPackageNames(graph, workspaceRoot);
   const byEdge = new Map();
+  /** @type {Map<string, Array<{ file: string, specifiers: string[] }>>} */
+  const filesByNode = new Map();
+  /** @param {string} nodeName */
+  const runtimeImportsOf = nodeName => {
+    let files = filesByNode.get(nodeName);
+    if (!files) {
+      files = [];
+      walkSourceFiles(path.join(workspaceRoot, graph.nodes[nodeName].data.root), file => {
+        files.push({ file, specifiers: runtimeSpecifiers(file, fs.readFileSync(file, "utf8")) });
+      });
+      filesByNode.set(nodeName, files);
+    }
+    return files;
+  };
 
   for (const [sourceNode, edges] of Object.entries(graph.dependencies)) {
     const source = names.get(sourceNode);
@@ -367,12 +387,11 @@ function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, type
         continue;
       }
       const targetRoot = path.join(workspaceRoot, graph.nodes[edge.target].data.root);
-      walkSourceFiles(path.join(workspaceRoot, graph.nodes[sourceNode].data.root), file => {
-        const content = fs.readFileSync(file, "utf8");
-        if (valueImportsOf(file, content, target, targetRoot).length === 0) return;
+      for (const { file, specifiers } of runtimeImportsOf(sourceNode)) {
+        if (!specifiers.some(spec => specifierLoads(file, spec, target, targetRoot))) continue;
         const rel = path.relative(workspaceRoot, file);
         byEdge.set(`${source}\n${target}\n${rel}`, { source, target, file: rel });
-      });
+      }
     }
   }
 
@@ -523,6 +542,8 @@ module.exports = {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  SOURCE_EXTS,
+  DEVTOOLS_ROOT,
 };
 
 if (require.main === module) {

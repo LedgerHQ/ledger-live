@@ -12,14 +12,20 @@ const {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  SOURCE_EXTS,
+  DEVTOOLS_ROOT,
 } = require("./validate");
 const {
+  DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
+  LEGACY_SOURCE_ROOTS,
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
 } = require("./constraints");
+const { inferTags } = require("../project-tags/plugin");
+const projectJson = require("./project.json");
 
 /**
  * @param {Array<{name: string, tags: string[]}>} projects
@@ -980,4 +986,117 @@ test("devtools: edges to or from packages outside the scope are ignored", t => {
     ],
   );
   assert.deepEqual(devtoolsViolations(graph, root), []);
+});
+
+test("devtools: each source file is read and parsed once across type-only edges", t => {
+  const { root, graph } = manifestWorkspace(
+    t,
+    DEVTOOLS_MANIFESTS,
+    [
+      ["devtools/bindings", "devtools/env"],
+      ["devtools/bindings", "devtools/feature-flags"],
+      ["devtools/bindings", "devtools/relay"],
+    ],
+    {
+      "devtools/bindings/src/env.ts": 'import { EnvDevTool } from "@devtools/env";',
+      "devtools/bindings/src/flags.ts": 'import type { Flags } from "@devtools/feature-flags";',
+      "devtools/bindings/src/relay.ts": 'export const load = () => import("@devtools/relay");',
+    },
+  );
+  const sourceDir = path.join(root, "devtools/bindings/src");
+  const readFileSync = t.mock.method(fs, "readFileSync");
+
+  const violations = devtoolsViolations(graph, root);
+
+  const sourceReads = readFileSync.mock.calls
+    .map(call => String(call.arguments[0]))
+    .filter(file => file.startsWith(sourceDir + path.sep))
+    .sort();
+  assert.deepEqual(
+    sourceReads,
+    ["env.ts", "flags.ts", "relay.ts"].map(f => path.join(sourceDir, f)),
+  );
+  assert.deepEqual(violations.map(v => `${v.target} ${v.file}`).sort(), [
+    `@devtools/env ${path.join("devtools/bindings/src/env.ts")}`,
+    `@devtools/relay ${path.join("devtools/bindings/src/relay.ts")}`,
+  ]);
+});
+
+// --- lint:boundaries cache inputs ---
+
+const WORKSPACE_ROOT = path.resolve(__dirname, "../../..");
+
+/**
+ * A sample project root for each `pnpm-workspace.yaml` package pattern, globs replaced by a name.
+ *
+ * @returns {string[]}
+ */
+function workspaceProjectRoots() {
+  const yaml = fs.readFileSync(path.join(WORKSPACE_ROOT, "pnpm-workspace.yaml"), "utf8");
+  const packagesBlock = yaml.split(/^packages:\n/m)[1].split(/^\S/m)[0];
+  return [...packagesBlock.matchAll(/^\s+-\s+"?([^"\n]+)"?$/gm)].map(([, pattern]) =>
+    pattern.replace(/\*\*?/g, "pkg"),
+  );
+}
+
+/**
+ * Whether the cached `lint:boundaries` target hashes `file`: a positive input matches it and no
+ * negated one does.
+ *
+ * @param {string} file workspace-relative path
+ */
+function isLintBoundariesInput(file) {
+  const globs = projectJson.targets["lint:boundaries"].inputs.map(input =>
+    input.replace("{workspaceRoot}/", ""),
+  );
+  const included = globs.filter(g => !g.startsWith("!"));
+  const excluded = globs.filter(g => g.startsWith("!")).map(g => g.slice(1));
+  return (
+    included.some(g => path.matchesGlob(file, g)) && !excluded.some(g => path.matchesGlob(file, g))
+  );
+}
+
+test("lint:boundaries inputs cover every source file the checks read", () => {
+  const constrainedTags = new Set([
+    ...DEP_CONSTRAINTS.map(c => c.sourceTag),
+    ...BANNED_EXTERNALS_BY_TAG.map(r => r.sourceTag),
+  ]);
+  const taggedRoots = workspaceProjectRoots().filter(projectRoot =>
+    inferTags(projectRoot, undefined).some(tag => constrainedTags.has(tag)),
+  );
+  const sourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT, ...taggedRoots];
+  const missed = sourceRoots.flatMap(sourceRoot =>
+    [...SOURCE_EXTS]
+      .map(ext => `${sourceRoot}/pkg/src/nested/index${ext}`)
+      .filter(file => !isLintBoundariesInput(file)),
+  );
+  assert.deepEqual(missed, []);
+});
+
+test("lint:boundaries inputs cover the manifest and project file of every graph node", () => {
+  const files = ["", ...workspaceProjectRoots().map(r => `${r}/`)].flatMap(prefix => [
+    `${prefix}package.json`,
+    `${prefix}project.json`,
+  ]);
+  assert.ok(files.includes("e2e/pkg/package.json"));
+  assert.ok(files.includes("docs/package.json"));
+  assert.deepEqual(
+    files.filter(file => !isLintBoundariesInput(file)),
+    [],
+  );
+});
+
+test("lint:boundaries inputs cover the graph configuration and the tags plugin", () => {
+  const files = [
+    "pnpm-workspace.yaml",
+    "nx.json",
+    "nx.cache-config.json",
+    "tools/nx-plugins/project-tags/plugin.js",
+    "tools/nx-plugins/enforce-boundaries/constraints.js",
+    "tools/nx-plugins/enforce-boundaries/validate.js",
+  ];
+  assert.deepEqual(
+    files.filter(file => !isLintBoundariesInput(file)),
+    [],
+  );
 });
