@@ -43,6 +43,20 @@ function renderViewModel(overrides: Partial<AccountHeroPort> = {}) {
 
 const tileIds = (tiles: readonly { id: string }[]) => tiles.map(({ id }) => id);
 
+describe("useAccountHeroViewModel tag", () => {
+  it("passes the tag of the account through", () => {
+    const { result } = renderViewModel({ tag: "Taproot" });
+
+    expect(result.current.tag).toBe("Taproot");
+  });
+
+  it("has no tag by default", () => {
+    const { result } = renderViewModel();
+
+    expect(result.current.tag).toBeUndefined();
+  });
+});
+
 describe("useAccountHeroViewModel", () => {
   describe("mobile", () => {
     it("lays out Transfer · Swap · More with Buy, Sell and Earn in More", () => {

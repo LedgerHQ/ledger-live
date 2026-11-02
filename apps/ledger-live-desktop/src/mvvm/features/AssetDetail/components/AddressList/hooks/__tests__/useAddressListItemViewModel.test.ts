@@ -2,7 +2,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { WalletState } from "~/renderer/reducers/wallet";
 import { parseAnyAccountId } from "@domain/entity-account";
 import { renderHook } from "tests/testSetup";
-import { genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
+import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { useAddressListItemViewModel } from "../useAddressListItemViewModel";
@@ -91,4 +91,37 @@ describe("useAddressListItemViewModel", () => {
       expect(result.current.networkTicker).toBe(expectedTicker);
     },
   );
+
+  it("tags an account with its address type", () => {
+    const btcAccount: Account = {
+      ...genAccount("btc-address-tag", { currency: getCryptoCurrencyById("bitcoin") }),
+      derivationMode: "native_segwit",
+    };
+
+    const { result } = renderHook(
+      () =>
+        useAddressListItemViewModel(
+          btcAccount,
+          () => null,
+          () => {},
+        ),
+      { initialState },
+    );
+
+    expect(result.current.tag).toBe("Native segwit");
+  });
+
+  it("has no tag for an account without a notable address type", () => {
+    const { result } = renderHook(
+      () =>
+        useAddressListItemViewModel(
+          ETH_ACCOUNT,
+          () => null,
+          () => {},
+        ),
+      { initialState },
+    );
+
+    expect(result.current.tag).toBeUndefined();
+  });
 });

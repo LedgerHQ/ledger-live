@@ -45,6 +45,19 @@ function renderHero(overrides: Partial<AccountHeroPort> = {}) {
 }
 
 describe("AccountHero (Native)", () => {
+  it("shows the address type of the account above the balance", () => {
+    renderHero({ tag: "Native segwit" });
+
+    expect(screen.getByTestId(`${TEST_ID}-tag`)).toBeVisible();
+    expect(screen.getByText("Native segwit")).toBeVisible();
+  });
+
+  it("shows no tag when the account has none", () => {
+    renderHero();
+
+    expect(screen.queryByTestId(`${TEST_ID}-tag`)).toBeNull();
+  });
+
   it("renders the balance and the Transfer · Swap · More tiles", () => {
     renderHero();
 

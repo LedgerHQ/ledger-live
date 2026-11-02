@@ -106,6 +106,16 @@ const withBalance = (account: Account, balance: string): Account => ({
 });
 const fundedAccount = withBalance(ethRoot, "1000000000000000000");
 const emptyAccount = withBalance(ethRoot, "0");
+const taprootAccount: Account = {
+  ...withBalance(
+    genAccount("account-detail-hero-taproot", {
+      currency: getCryptoCurrencyById("bitcoin"),
+      operationsSize: 1,
+    }),
+    "100000",
+  ),
+  derivationMode: "taproot",
+};
 const usdcAccount = {
   ...genTokenAccount(0, ethRoot, usdcToken),
   balance: new BigNumber(5000000),
@@ -149,6 +159,20 @@ describe("AccountDetail hero", () => {
     expect(await screen.findByTestId(tile("transfer"))).toBeVisible();
     expect(screen.getByTestId(tile("swap"))).toBeVisible();
     expect(screen.getByTestId(tile("more"))).toBeVisible();
+  });
+
+  it("shows the address type of the account above the balance", async () => {
+    renderAccount(taprootAccount);
+
+    expect(await screen.findByTestId(`${ACCOUNT_DETAIL_TEST_IDS.hero}-tag`)).toBeVisible();
+    expect(screen.getByText("Taproot")).toBeVisible();
+  });
+
+  it("shows no tag for an account without a notable address type", async () => {
+    renderAccount(fundedAccount);
+
+    expect(await screen.findByTestId(tile("transfer"))).toBeVisible();
+    expect(screen.queryByTestId(`${ACCOUNT_DETAIL_TEST_IDS.hero}-tag`)).toBeNull();
   });
 
   it("opens Buy, Sell and Earn from More", async () => {

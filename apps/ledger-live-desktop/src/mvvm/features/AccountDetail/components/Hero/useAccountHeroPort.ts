@@ -9,6 +9,7 @@ import {
   type AccountHeroPort,
 } from "@features/flow-account-detail-hero";
 import { useSelector } from "LLD/hooks/redux";
+import { getAccountTag } from "LLD/utils/getAccountTag";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
@@ -57,6 +58,7 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
     port: {
       platform: "desktop",
       balance: { countervalue, formatter, discreet, isLoading: false },
+      tag: getAccountTag(account),
       ...status,
       onAction,
     },
