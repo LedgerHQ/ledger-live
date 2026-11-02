@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setSwapQuotesStore } from "@domain/api-swap-quotes/store";
-import { swapApi, swapApiExtra } from "@shared/api-services";
+import { defineApiServices, swapService } from "@shared/api-services";
 import { getEnv } from "@shared/env";
 import { ledgerClientVersion } from "../shared/client-version";
 import { createWalletCliAuthMiddleware } from "./middleware/auth";
+
+const services = defineApiServices([
+  swapService(() => ({ getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE") })),
+]);
 
 /**
  * Builds the Redux store behind `getQuotes` and registers its dispatch. Called once per CLI run, so
@@ -11,24 +15,16 @@ import { createWalletCliAuthMiddleware } from "./middleware/auth";
  */
 export function setupWalletCliStore() {
   const store = configureStore({
-    reducer: {
-      [swapApi.reducerPath]: swapApi.reducer,
-    },
+    reducer: { ...services.reducers },
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware({
         serializableCheck: false,
         thunk: {
-          extraArgument: {
-            ...swapApiExtra({
-              // Same definition as live-common's swap execute/status paths, read on every request.
-              getSwapApiBaseUrl: () => getEnv("SWAP_API_BASE"),
-              ledgerClientVersion,
-            }),
-          },
+          extraArgument: services.createExtra({ ledgerClientVersion }),
         },
       })
         .concat(createWalletCliAuthMiddleware())
-        .concat(swapApi.middleware),
+        .concat(services.middlewares),
   });
 
   setSwapQuotesStore(store.dispatch);
