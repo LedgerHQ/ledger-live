@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readdirSync, rmSync, utimesSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, rmSync, utimesSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -72,5 +72,22 @@ test("times out instead of waiting out a settle window longer than it may wait",
   );
 
   assert.deepEqual(readdirSync(rootDir), [settleFile]);
+  rmSync(rootDir, { recursive: true, force: true });
+});
+
+test("holds a key for its settle window when it cannot leave the window behind", async () => {
+  const rootDir = createRootDir();
+  const release = await acquireCrossProcessLock("key", { rootDir });
+  const [lockName] = readdirSync(rootDir);
+  mkdirSync(path.join(rootDir, `${lockName}.settled-until`));
+
+  const releasing = release(200);
+  await assert.rejects(
+    acquireCrossProcessLock("key", { rootDir, acquireTimeoutMs: 50, backoffMs: 5 }),
+    /timed out/,
+  );
+  await releasing;
+
+  assert.ok(!readdirSync(rootDir).includes(lockName));
   rmSync(rootDir, { recursive: true, force: true });
 });

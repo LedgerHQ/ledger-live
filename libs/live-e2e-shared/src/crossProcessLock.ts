@@ -139,14 +139,22 @@ export async function acquireCrossProcessLock(
   const release: ReleaseCrossProcessLock = async (settleMs = 0) => {
     if (released) return;
     released = true;
-    clearInterval(heartbeat);
     if (settleMs > 0) {
-      await fs.promises
+      const settleFileWritten = await fs.promises
         .writeFile(settleFileFor(lockDir), String(Date.now() + settleMs))
-        .catch(err =>
-          console.warn(`[crossProcessLock]: failed to keep "${key}" closed after its release`, err),
+        .then(
+          () => true,
+          err => {
+            console.warn(
+              `[crossProcessLock]: failed to keep "${key}" closed after its release, so holding it ${settleMs}ms instead`,
+              err,
+            );
+            return false;
+          },
         );
+      if (!settleFileWritten) await delay(settleMs);
     }
+    clearInterval(heartbeat);
     try {
       await fs.promises.rm(lockDir, { recursive: true, force: true });
     } catch (err) {

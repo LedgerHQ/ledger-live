@@ -37,9 +37,10 @@ after(() => rmSync(lockDirs, { recursive: true, force: true }));
 let lockDirCount = 0;
 
 // Each run gets a machine-local lock directory of its own, so no settle window an earlier test
-// left delays it.
+// left delays it. os.tmpdir() reads TMPDIR, or TEMP and TMP on Windows.
 const withEnv = async (runEnv: Env, fn: () => Promise<void>) => {
-  const env = { ...runEnv, TMPDIR: path.join(lockDirs, String(++lockDirCount)) };
+  const tmpDir = path.join(lockDirs, String(++lockDirCount));
+  const env = { ...runEnv, TMPDIR: tmpDir, TEMP: tmpDir, TMP: tmpDir };
   const previous = Object.fromEntries(Object.keys(env).map(name => [name, process.env[name]]));
   const apply = (values: Env) => {
     for (const [name, value] of Object.entries(values)) {
