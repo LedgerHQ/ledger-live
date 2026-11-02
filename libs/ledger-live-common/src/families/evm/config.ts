@@ -1244,7 +1244,8 @@ const evmCurrencies: CurrencyLiveConfigDefinition = {
       unit: { name: "ether", code: "ETH", magnitude: 18 },
       node: { type: "external", uri: "https://robinhood.coin.ledger.com" },
       explorer: {
-        type: "none",
+        type: "blockscout",
+        uri: "https://proxyblockscout.api.live.ledger.com/4663/api",
       },
     },
   },
