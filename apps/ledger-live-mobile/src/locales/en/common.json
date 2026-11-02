@@ -10508,6 +10508,9 @@
         "swapBuy": "Start by adding funds through Swap or Buy."
       }
     },
+    "assetPicker": {
+      "title": "Select an asset"
+    },
     "actions": {
       "transfer": "Transfer",
       "receive": "Receive",
@@ -10558,9 +10561,6 @@
       "label": "Address name",
       "submit": "Change name"
     }
-  },
-  "accountAssetPicker": {
-    "title": "Select an asset"
   },
   "assetDetail": {
     "balanceGraph": {

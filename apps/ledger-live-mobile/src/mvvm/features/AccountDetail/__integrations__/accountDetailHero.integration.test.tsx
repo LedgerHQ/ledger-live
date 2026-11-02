@@ -285,7 +285,7 @@ describe("useAccountHeroPort actions", () => {
         networksConfiguration: { rightElement: "undefined" },
       }),
     );
-    expect(result.current.assetPicker.isOpen).toBe(false);
+    expect(result.current.assetPicker.open).toBe(false);
 
     pickInDrawer(usdcToken);
 
@@ -382,14 +382,10 @@ describe("useAccountHeroPort actions", () => {
 
     act(() => result.current.port.onAction("sell"));
 
-    expect(result.current.assetPicker.isOpen).toBe(true);
-    expect(result.current.assetPicker.assets.map(({ currency }) => currency.id)).toEqual([
-      ETH,
-      usdcToken.id,
-    ]);
+    expect(result.current.assetPicker.open).toBe(true);
+    expect(result.current.assetPicker.rows.map(row => row.id)).toEqual([ETH, usdcToken.id]);
 
-    const [, usdcAsset] = result.current.assetPicker.assets;
-    act(() => result.current.assetPicker.onSelect(usdcAsset));
+    act(() => result.current.assetPicker.onSelect(usdcToken.id));
 
     expect(mockOpenBuySellForAccount).toHaveBeenCalledWith(
       "sell",
@@ -404,7 +400,7 @@ describe("useAccountHeroPort actions", () => {
 
     act(() => result.current.port.onAction("sell"));
 
-    expect(result.current.assetPicker.isOpen).toBe(false);
+    expect(result.current.assetPicker.open).toBe(false);
     expect(mockOpenBuySellForAccount).toHaveBeenCalledWith(
       "sell",
       expect.objectContaining({ id: usdcAccount.id }),

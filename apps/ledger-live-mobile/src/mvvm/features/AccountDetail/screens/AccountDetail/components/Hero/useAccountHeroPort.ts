@@ -7,15 +7,13 @@ import { formatCurrencyUnitFragment } from "@ledgerhq/live-common/currencies/ind
 import {
   useAccountCountervalue,
   useAccountHeroStatus,
+  type AccountAssetPickerProps,
   type AccountHeroPort,
 } from "@features/flow-account-detail-hero";
 import { useSelector } from "~/context/hooks";
 import { useLocale } from "~/context/Locale";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import {
-  useAccountAssetPicker,
-  type AccountAssetPickerSheetProps,
-} from "LLM/components/AccountAssetPickerSheet/useAccountAssetPicker";
+import { usePickAccountAsset } from "LLM/hooks/usePickAccountAsset";
 import { useCalculateCountervalueCallback } from "~/actions/general";
 import { useAccountHeroActions } from "./useAccountHeroActions";
 import { useAccountHeroAssets } from "./useAccountHeroAssets";
@@ -23,7 +21,7 @@ import { useAssetsByAction } from "./useAssetsByAction";
 
 export type AccountHeroPortResult = Readonly<{
   port: AccountHeroPort;
-  assetPicker: AccountAssetPickerSheetProps;
+  assetPicker: AccountAssetPickerProps;
 }>;
 
 function useBalanceFormatter(): (value: number) => FormattedValue {
@@ -45,7 +43,7 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
   const assets = useAccountHeroAssets(account);
   const countervalue = useAccountCountervalue(assets, useCalculateCountervalueCallback());
   const { byAction, deactivatedCurrencyIds } = useAssetsByAction(assets);
-  const { pickAsset, sheetProps: assetPicker } = useAccountAssetPicker();
+  const { pickAsset, pickerProps: assetPicker } = usePickAccountAsset();
   const onAction = useAccountHeroActions(account, assets, byAction, pickAsset);
 
   const status = useAccountHeroStatus(account, assets, byAction, {

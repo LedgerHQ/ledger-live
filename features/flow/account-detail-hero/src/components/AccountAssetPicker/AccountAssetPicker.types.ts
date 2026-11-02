@@ -14,3 +14,9 @@ export type AccountAssetPickerProps = Readonly<{
   onClose: () => void;
   testID?: string;
 }>;
+
+export type AccountAssetPickerSource<T> = Readonly<{
+  item: T;
+  row: AccountAssetPickerRow;
+  sortValue: number;
+}>;

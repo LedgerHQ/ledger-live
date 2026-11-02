@@ -5,5 +5,7 @@ export * from "./logic/resolveSwapConsole";
 export * from "./port/useAccountCountervalue";
 export * from "./port/useAccountHeroStatus";
 export * from "./port/useAvailableAssetsByAction";
-export * from "./components/AccountAssetPicker/types";
+export * from "./components/AccountAssetPicker/AccountAssetPicker.types";
+export * from "./components/AccountAssetPicker/useAccountAssetPicker";
+export * from "./components/AccountAssetPicker/usePickAccountAssets";
 export * from "./components/AccountEmptyState/types";
