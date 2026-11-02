@@ -4,7 +4,12 @@
 // This list only shrinks. The hygiene rule reports an entry the package no longer needs, so
 // fixing a package means deleting its entry here.
 
-/** @type {Record<string, { checks: string[], reason: string }>} */
+/**
+ * @type {Record<string, {
+ *   checks: (keyof typeof import("./hygiene.mjs").CHECKS)[],
+ *   reason: string,
+ * }>}
+ */
 export const HYGIENE_DEBT = {
   "shared/env": {
     checks: ["side-effects"],

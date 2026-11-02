@@ -16,7 +16,7 @@ const DEBT_FILE = "tools/nx-plugins/enforce-tool-config/rules/hygiene-debt.mjs";
 export const CHECKS = {
   manifest: "a package has a package.json that parses as JSON",
   readme: "a package has a README.md",
-  "status-marker": "the README carries a status marker under its title",
+  "status-marker": "the README carries a status marker",
   "side-effects": '"sideEffects" is false',
   "lint-script": 'a "lint" script runs oxlint',
   "format-check-script": 'a "format:check" script runs oxfmt --check',

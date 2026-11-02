@@ -16,7 +16,7 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 
 ## Package checklist
 
-`pnpm lint:tool-config` checks the README and its status marker, `"sideEffects": false`, the `lint` and `format:check` scripts and the absence of `oxlint` / `oxfmt` dependencies, as listed in [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs).
+`pnpm lint:tool-config` checks the items of this list that [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs) names.
 
 **`package.json` fields**
 - [ ] `"private": true`

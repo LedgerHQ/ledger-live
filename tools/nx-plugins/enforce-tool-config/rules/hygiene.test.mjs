@@ -129,7 +129,7 @@ test("status-marker: a README without a marker, or with one GitHub does not rend
     {
       file: "shared/pkg/README.md",
       message:
-        "the README carries a status marker under its title; this one has none: add a callout " +
+        "the README carries a status marker; this one has none: add a callout " +
         'with a line starting "> **Status: STABLE**", "> **Status: UNSTABLE**" or ' +
         '"> **Status: DEPRECATED**" (docs/new-library.md#readme-status-marker)',
     },
