@@ -12,8 +12,8 @@ type YesNo = "yes" | "no";
 
 export type FirmwareUpdateAvailability = YesNo | "unknown";
 
-/** What the seeded funnel knows about its outcome, carried from the checks to the Sync offer. */
-export type SeededOutcome = Readonly<{
+/** What the seeded funnel knows about its result, carried from the checks to the Sync offer. */
+export type SeededResult = Readonly<{
   deviceType: string;
   ledgerSyncEligible: boolean;
   firmwareUpdateAvailability: FirmwareUpdateAvailability;
@@ -70,10 +70,10 @@ function withSource<T extends object>(props: T): T & { source?: string } {
 }
 
 /** Null for an unseeded entry: only the seeded funnel is tracked. */
-export function toSeededOutcome(
+export function toSeededResult(
   context: DeviceOnboardingContext,
   firmwareUpdateDone: boolean,
-): SeededOutcome | null {
+): SeededResult | null {
   if (context.onboardedOnEntry !== true) return null;
   return {
     deviceType: context.deviceModelId,
@@ -156,14 +156,14 @@ export function restoreSeededPage(drawerPage: string, page: string): void {
   if (getCurrentTrackingPage() === drawerPage) setTrackingSource(page);
 }
 
-export function trackSeededStarted(outcome: SeededOutcome): void {
+export function trackSeededStarted(result: SeededResult): void {
   send(
     track(
       "onboarding_started",
       withSource({
-        ...seededProps(outcome.deviceType),
-        ledger_sync_eligibility: yesNo(outcome.ledgerSyncEligible),
-        firmware_update_availability: outcome.firmwareUpdateAvailability,
+        ...seededProps(result.deviceType),
+        ledger_sync_eligibility: yesNo(result.ledgerSyncEligible),
+        firmware_update_availability: result.firmwareUpdateAvailability,
       }),
     ),
   );
@@ -171,25 +171,25 @@ export function trackSeededStarted(outcome: SeededOutcome): void {
 
 function trackSeededEnd(
   event: "onboarding_done" | "onboarding_aborted",
-  outcome: SeededOutcome,
+  result: SeededResult,
   ledgerSyncDone: boolean,
 ): void {
   send(
     track(
       event,
       withSource({
-        ...seededProps(outcome.deviceType),
+        ...seededProps(result.deviceType),
         ledger_sync_done: yesNo(ledgerSyncDone),
-        firmware_update_done: yesNo(outcome.firmwareUpdateDone),
+        firmware_update_done: yesNo(result.firmwareUpdateDone),
       }),
     ),
   );
 }
 
-export function trackSeededDone(outcome: SeededOutcome, ledgerSyncDone = false): void {
-  trackSeededEnd("onboarding_done", outcome, ledgerSyncDone);
+export function trackSeededDone(result: SeededResult, ledgerSyncDone = false): void {
+  trackSeededEnd("onboarding_done", result, ledgerSyncDone);
 }
 
-export function trackSeededAborted(outcome: SeededOutcome): void {
-  trackSeededEnd("onboarding_aborted", outcome, false);
+export function trackSeededAborted(result: SeededResult): void {
+  trackSeededEnd("onboarding_aborted", result, false);
 }

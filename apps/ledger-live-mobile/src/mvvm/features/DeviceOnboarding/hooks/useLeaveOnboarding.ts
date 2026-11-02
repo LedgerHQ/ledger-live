@@ -7,7 +7,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useNotificationsPrompt } from "LLM/features/NotificationsPrompt";
 import { useDispatch, useSelector } from "~/context/hooks";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { toSeededOutcome } from "../analytics/seededTracking";
+import { toSeededResult } from "../analytics/seededTracking";
 import { exitActions, firmwareNeedsLegacyFlow } from "../utils/exitActions";
 import { isCurrentSessionGenuine } from "../utils/genuineSession";
 
@@ -44,7 +44,7 @@ export function useLeaveOnboarding({
       wasReadOnlyAtEntry,
       isGenuine: genuine,
       deviceWasSeeded: seeded,
-      seededOutcome: toSeededOutcome(context, firmwareUpdateDone),
+      seededResult: toSeededResult(context, firmwareUpdateDone),
       firmwareNeedsLegacyFlow: firmwareNeedsLegacyFlow(context),
       hasCompletedOnboarding,
     });

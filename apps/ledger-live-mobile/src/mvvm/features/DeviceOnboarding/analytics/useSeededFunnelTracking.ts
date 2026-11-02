@@ -4,19 +4,19 @@ import type {
   DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
 import { getPreviousTrackingPage } from "@shared/analytics";
-import { isLegacyHandoff } from "../utils/exitActions";
+import { isLegacyFlowExit } from "../utils/exitActions";
 import {
   restoreSeededPage,
   seededChecksPage,
   seededPages,
   toFirmwareUpdateAvailability,
-  toSeededOutcome,
+  toSeededResult,
   trackSeededAborted,
   trackSeededClick,
   trackSeededPage,
   trackSeededStarted,
   type SeededClickPage,
-  type SeededOutcome,
+  type SeededResult,
 } from "./seededTracking";
 
 type Input = Readonly<{
@@ -47,7 +47,7 @@ export function useSeededFunnelTracking({
     readFirmwareCheck(context),
     firmwareUpdateDone,
   );
-  const outcome = useMemo<SeededOutcome | null>(
+  const result = useMemo<SeededResult | null>(
     () =>
       seededOnEntry
         ? {
@@ -62,16 +62,16 @@ export function useSeededFunnelTracking({
   const started = useRef(false);
   const clickPage = useRef<SeededClickPage>({ page: "", source: "" });
 
-  const trackStarted = useCallback((startOutcome: SeededOutcome | null) => {
-    if (!startOutcome || started.current) return;
+  const trackStarted = useCallback((startResult: SeededResult | null) => {
+    if (!startResult || started.current) return;
     started.current = true;
-    trackSeededStarted(startOutcome);
+    trackSeededStarted(startResult);
   }, []);
 
   useEffect(() => {
-    if (outcome?.firmwareUpdateAvailability === "unknown") return;
-    trackStarted(outcome);
-  }, [outcome, trackStarted]);
+    if (result?.firmwareUpdateAvailability === "unknown") return;
+    trackStarted(result);
+  }, [result, trackStarted]);
 
   useEffect(() => {
     if (!page) return;
@@ -103,21 +103,21 @@ export function useSeededFunnelTracking({
     restoreSeededPage(seededPages.osUpdateUnsupported, clickPage.current.page);
   }, []);
 
-  /** Runs right before the exit actions, which track done or aborted. A legacy handoff has neither. */
+  /** Runs right before the exit actions, which track done or aborted. A legacy flow exit has neither. */
   const trackExit = useCallback(
     (reason: DeviceOnboardingExitReason, exitContext: DeviceOnboardingContext) => {
-      if (isLegacyHandoff(reason, exitContext)) return;
-      trackStarted(toSeededOutcome(exitContext, firmwareUpdateDone));
+      if (isLegacyFlowExit(reason, exitContext)) return;
+      trackStarted(toSeededResult(exitContext, firmwareUpdateDone));
     },
     [firmwareUpdateDone, trackStarted],
   );
 
   /** For a leave that does not go through the machine exit. */
   const trackAbort = useCallback(() => {
-    if (!outcome) return;
-    trackStarted(outcome);
-    trackSeededAborted(outcome);
-  }, [outcome, trackStarted]);
+    if (!result) return;
+    trackStarted(result);
+    trackSeededAborted(result);
+  }, [result, trackStarted]);
 
   return {
     page,

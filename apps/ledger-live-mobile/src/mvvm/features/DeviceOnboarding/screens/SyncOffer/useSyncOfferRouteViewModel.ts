@@ -32,7 +32,7 @@ type OfferRoute = RouteProp<OnboardingNavigatorParamList, ScreenName.DeviceOnboa
 export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const dispatch = useDispatch();
-  const { device, wasReadOnlyAtEntry, seededOutcome } = useRoute<OfferRoute>().params;
+  const { device, wasReadOnlyAtEntry, seededResult } = useRoute<OfferRoute>().params;
   const hasTrustchain = Boolean(useSelector(trustchainSelector)?.rootId);
   const [handoverStarted, setHandoverStarted] = useState(false);
   const completedOnSync = useRef(false);
@@ -54,15 +54,15 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
       if (completedOnSync.current) return;
       completedOnSync.current = true;
       allowLeave.current = true;
-      if (seededOutcome) {
-        if (syncDone) trackSeededPage(seededPages.ledgerSyncSuccess, seededOutcome.deviceType);
-        trackSeededDone(seededOutcome, syncDone);
+      if (seededResult) {
+        if (syncDone) trackSeededPage(seededPages.ledgerSyncSuccess, seededResult.deviceType);
+        trackSeededDone(seededResult, syncDone);
       }
       complete();
       notifyFlowCompleted("onboarding");
       closeOnboarding(navigation);
     },
-    [complete, navigation, notifyFlowCompleted, seededOutcome],
+    [complete, navigation, notifyFlowCompleted, seededResult],
   );
 
   useEffect(() => {
@@ -93,6 +93,6 @@ export function useSyncOfferRouteViewModel(): SyncOfferScreenProps {
     onSkip: finishWithoutSync,
     onQuit: finishWithoutSync,
     onLearnMore,
-    seededDeviceType: seededOutcome?.deviceType ?? null,
+    seededDeviceType: seededResult?.deviceType ?? null,
   };
 }

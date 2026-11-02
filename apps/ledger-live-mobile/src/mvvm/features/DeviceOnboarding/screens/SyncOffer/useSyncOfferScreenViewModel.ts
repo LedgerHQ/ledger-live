@@ -62,6 +62,13 @@ export function useSyncOfferScreenViewModel({
       source: offerSource.current,
     });
   };
+  const trackDrawerClick = (button: string) => {
+    if (!seededDeviceType) return;
+    trackSeededClick(button, seededDeviceType, {
+      page: seededPages.skipLedgerSyncDrawer,
+      source: seededPages.ledgerSync,
+    });
+  };
 
   return {
     title: t("deviceOnboarding.syncOffer.title"),
@@ -94,13 +101,13 @@ export function useSyncOfferScreenViewModel({
         restoreSeededPage(seededPages.skipLedgerSyncDrawer, seededPages.ledgerSync);
       },
       onSkip: () => {
-        trackClick(seededButtons.yesSkip);
+        trackDrawerClick(seededButtons.yesSkip);
         if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);
         closeSkipDrawer();
         onSkip();
       },
       onActivate: () => {
-        trackClick(seededButtons.enableSync);
+        trackDrawerClick(seededButtons.enableSync);
         closeSkipDrawer();
         onActivate();
       },

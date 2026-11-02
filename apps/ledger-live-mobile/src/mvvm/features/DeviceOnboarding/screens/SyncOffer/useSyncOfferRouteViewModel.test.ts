@@ -52,7 +52,7 @@ jest.mock("@react-navigation/native", () => ({
     params: {
       device,
       wasReadOnlyAtEntry: true,
-      seededOutcome: {
+      seededResult: {
         deviceType: "stax",
         ledgerSyncEligible: true,
         firmwareUpdateAvailability: "no",

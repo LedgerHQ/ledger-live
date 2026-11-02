@@ -52,7 +52,7 @@ describe("useLeaveOnboarding", () => {
     },
   );
 
-  it("should hand the seeded outcome to the sync offer", () => {
+  it("should give the seeded result to the sync offer", () => {
     const { result } = renderHook(() =>
       useLeaveOnboarding({
         device,
@@ -74,7 +74,7 @@ describe("useLeaveOnboarding", () => {
     expect(mockNavigate).toHaveBeenCalledWith(expect.any(String), {
       device,
       wasReadOnlyAtEntry: false,
-      seededOutcome: {
+      seededResult: {
         deviceType: DmkDeviceModelId.STAX,
         ledgerSyncEligible: true,
         firmwareUpdateAvailability: "yes",

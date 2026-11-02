@@ -10,7 +10,7 @@ import type { useDispatch } from "~/context/hooks";
 import {
   trackSeededAborted,
   trackSeededDone,
-  type SeededOutcome,
+  type SeededResult,
 } from "../analytics/seededTracking";
 import { completeSeededOnboarding } from "../hooks/useCompleteSeededOnboarding";
 import { isCurrentSessionGenuine } from "./genuineSession";
@@ -23,7 +23,7 @@ type ExitDeps = {
   isGenuine: boolean;
   deviceWasSeeded: boolean;
   /** Null when the device was not seeded on entry: only the seeded funnel is tracked. */
-  seededOutcome: SeededOutcome | null;
+  seededResult: SeededResult | null;
   firmwareNeedsLegacyFlow: boolean;
   hasCompletedOnboarding: boolean;
 };
@@ -34,20 +34,20 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     navigation,
     wasReadOnlyAtEntry,
     hasCompletedOnboarding,
-    seededOutcome,
+    seededResult,
   }) => {
-    if (seededOutcome) trackSeededDone(seededOutcome);
+    if (seededResult) trackSeededDone(seededResult);
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
-  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededOutcome }) =>
+  offerLedgerSync: ({ navigation, device, wasReadOnlyAtEntry, seededResult }) =>
     navigation.navigate(ScreenName.DeviceOnboardingSyncOffer, {
       device,
       wasReadOnlyAtEntry,
-      seededOutcome,
+      seededResult,
     }),
-  resumeFirmwareUpdate: ({ navigation, device, seededOutcome }) => {
-    if (seededOutcome) trackSeededAborted(seededOutcome);
+  resumeFirmwareUpdate: ({ navigation, device, seededResult }) => {
+    if (seededResult) trackSeededAborted(seededResult);
     resetToMyLedger(navigation, device);
   },
   legacyFallback: ({
@@ -57,7 +57,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     wasReadOnlyAtEntry,
     isGenuine,
     deviceWasSeeded,
-    seededOutcome,
+    seededResult,
     firmwareNeedsLegacyFlow,
     hasCompletedOnboarding,
   }) => {
@@ -70,11 +70,11 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
         resetToLegacySeededChecks(navigation, device);
         return;
       }
-      if (seededOutcome) trackSeededAborted(seededOutcome);
+      if (seededResult) trackSeededAborted(seededResult);
       navigation.goBack();
       return;
     }
-    if (seededOutcome) trackSeededDone(seededOutcome);
+    if (seededResult) trackSeededDone(seededResult);
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
@@ -84,14 +84,14 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
     wasReadOnlyAtEntry,
     isGenuine,
     hasCompletedOnboarding,
-    seededOutcome,
+    seededResult,
   }) => {
     if (!isGenuine) {
-      if (seededOutcome) trackSeededAborted(seededOutcome);
+      if (seededResult) trackSeededAborted(seededResult);
       navigation.goBack();
       return;
     }
-    if (seededOutcome) trackSeededDone(seededOutcome);
+    if (seededResult) trackSeededDone(seededResult);
     completeSeededOnboarding(dispatch, wasReadOnlyAtEntry, hasCompletedOnboarding);
     closeOnboarding(navigation);
   },
@@ -108,8 +108,8 @@ export function firmwareNeedsLegacyFlow(context: DeviceOnboardingContext): boole
   );
 }
 
-/** The exits that hand the device to a legacy flow: the funnel has no outcome to track. */
-export function isLegacyHandoff(
+/** The exits that hand the device to a legacy flow: the funnel has no result to track. */
+export function isLegacyFlowExit(
   reason: DeviceOnboardingExitReason,
   context: DeviceOnboardingContext,
 ): boolean {

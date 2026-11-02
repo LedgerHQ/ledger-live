@@ -4,13 +4,13 @@ import {
   seededChecksPage,
   seededPages,
   toFirmwareUpdateAvailability,
-  toSeededOutcome,
+  toSeededResult,
   trackSeededAborted,
   trackSeededClick,
   trackSeededDone,
   trackSeededPage,
   trackSeededStarted,
-  type SeededOutcome,
+  type SeededResult,
 } from "./seededTracking";
 
 jest.mock("@shared/analytics", () => ({
@@ -26,7 +26,7 @@ const shared = {
   deviceType: "stax",
 };
 
-const outcome: SeededOutcome = {
+const seeded: SeededResult = {
   deviceType: "stax",
   ledgerSyncEligible: true,
   firmwareUpdateAvailability: "no",
@@ -76,7 +76,7 @@ describe("toFirmwareUpdateAvailability", () => {
   });
 });
 
-describe("toSeededOutcome", () => {
+describe("toSeededResult", () => {
   const context = (overrides: Partial<DeviceOnboardingContext>) =>
     ({
       onboardedOnEntry: true,
@@ -87,11 +87,11 @@ describe("toSeededOutcome", () => {
     }) as DeviceOnboardingContext;
 
   it("is null for a device that was not seeded on entry", () => {
-    expect(toSeededOutcome(context({ onboardedOnEntry: false }), false)).toBeNull();
+    expect(toSeededResult(context({ onboardedOnEntry: false }), false)).toBeNull();
   });
 
   it("reports an unknown update availability before the OS check answers", () => {
-    expect(toSeededOutcome(context({}), false)).toEqual({
+    expect(toSeededResult(context({}), false)).toEqual({
       deviceType: "stax",
       ledgerSyncEligible: true,
       firmwareUpdateAvailability: "unknown",
@@ -100,7 +100,7 @@ describe("toSeededOutcome", () => {
   });
 
   it("reports an accepted update once the machine forgot it", () => {
-    expect(toSeededOutcome(context({ firmware: null }), true)).toMatchObject({
+    expect(toSeededResult(context({ firmware: null }), true)).toMatchObject({
       firmwareUpdateAvailability: "yes",
       firmwareUpdateDone: true,
     });
@@ -139,7 +139,7 @@ describe("events", () => {
   });
 
   it("tracks the start with the eligibility and update availability", () => {
-    trackSeededStarted({ ...outcome, firmwareUpdateAvailability: "unknown" });
+    trackSeededStarted({ ...seeded, firmwareUpdateAvailability: "unknown" });
 
     expect(track).toHaveBeenCalledWith("onboarding_started", {
       source: "Pairing",
@@ -150,7 +150,7 @@ describe("events", () => {
   });
 
   it("tracks done with the Ledger Sync and update results", () => {
-    trackSeededDone({ ...outcome, firmwareUpdateDone: true }, true);
+    trackSeededDone({ ...seeded, firmwareUpdateDone: true }, true);
 
     expect(track).toHaveBeenCalledWith("onboarding_done", {
       source: "Pairing",
@@ -161,7 +161,7 @@ describe("events", () => {
   });
 
   it("tracks aborted without Ledger Sync", () => {
-    trackSeededAborted(outcome);
+    trackSeededAborted(seeded);
 
     expect(track).toHaveBeenCalledWith("onboarding_aborted", {
       source: "Pairing",
