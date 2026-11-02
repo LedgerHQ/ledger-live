@@ -772,7 +772,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
 
       switch (id) {
         case "ethereum":
-        case "sonic":
         case "polygon":
         case "core":
         case "base":
@@ -791,7 +790,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
 
       switch (id) {
         case "ethereum":
-        case "sonic":
         case "polygon":
         case "core":
         case "base":
@@ -832,26 +830,6 @@ export const initMswHandlers = (currencyConfig: EvmConfigInfo) => {
             {
               code: "USDC",
               name: "USDC",
-              magnitude: 6,
-            },
-          ],
-          delisted: false,
-          standard: "erc20",
-          decimals: 6,
-        });
-      } else if (
-        id === "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894" ||
-        (contractAddress === "0x29219dd400f2Bf60E5a23d13Be72B486D4038894" && network === "sonic")
-      ) {
-        response.push({
-          id: "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
-          contract_address: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
-          ticker: "USDC.e",
-          name: "Bridged USDC (Sonic Labs)",
-          units: [
-            {
-              code: "USDC.e",
-              name: "USDC.e",
               magnitude: 6,
             },
           ],
