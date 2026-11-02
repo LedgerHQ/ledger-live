@@ -1,8 +1,4 @@
-import {
-  ICP_NETWORK_URL,
-  MAINNET_GOVERNANCE_CANISTER_ID,
-  MAINNET_LEDGER_CANISTER_ID,
-} from "../consts";
+import { MAINNET_GOVERNANCE_CANISTER_ID, MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import {
   ICPCallRejected,
   ICPCallUnconfirmed,
@@ -20,7 +16,9 @@ import * as api from "../network/api";
 import { derivePrincipalFromPubkey } from "../logic/crypto";
 import { toNeuronsData } from "../common-logic/neuron";
 
-const broadcast = buildBroadcast(() => ICP_NETWORK_URL);
+const LOCAL_NODE = "http://127.0.0.1:4943";
+
+const broadcast = buildBroadcast(() => LOCAL_NODE);
 const account = { xpub: "04abcd" } as any;
 const signed = (rawData: any) => ({
   account,
@@ -49,13 +47,13 @@ describe("broadcast routing", () => {
     );
 
     expect(api.broadcastTxn).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       expect.anything(),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
     );
     expect(api.claimOrRefreshNeuronFromAccount).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       { __principal: true },
       42n,
     );
@@ -264,7 +262,7 @@ describe("broadcast routing", () => {
     );
 
     expect(api.readReplyFromCanister).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       expect.anything(),
       expect.anything(),
       MAINNET_GOVERNANCE_CANISTER_ID,

@@ -1,7 +1,6 @@
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { Principal } from "@icp-sdk/core/principal";
-import { ICP_NETWORK_URL } from "../consts";
 import {
   ICPCallRejected,
   ICPCallUnconfirmed,
@@ -31,6 +30,8 @@ import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "./crypto";
 import { hashTransaction } from "./hashTransaction";
 import type { IcpStakingIntent } from "./intent";
 import { craftNeuronCommand } from "./neuronCommand";
+
+const LOCAL_NODE = "http://127.0.0.1:4943";
 
 jest.mock("../network/api", () => ({
   broadcastTxn: jest.fn(),
@@ -92,7 +93,7 @@ describe("broadcast", () => {
   it("submits the envelope and returns the hash listOperations reports", async () => {
     const tx = signedTransfer();
 
-    const hash = await broadcast(ICP_NETWORK_URL, tx);
+    const hash = await broadcast(LOCAL_NODE, tx);
 
     expect(hash).toBe(
       hashTransaction({
@@ -105,7 +106,7 @@ describe("broadcast", () => {
       }),
     );
     expect(mockBroadcastTxn).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       Buffer.from(tx, "hex"),
       "ryjl3-tyaaa-aaaaa-aaaba-cai",
       "call",
@@ -117,7 +118,7 @@ describe("broadcast", () => {
       PUBKEY,
     );
     expect(mockReadTransferOutcome).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       new Uint8Array([1]),
       Buffer.from(requestIdOf(unsignedTransaction)).toString("hex"),
     );
@@ -127,9 +128,9 @@ describe("broadcast", () => {
     ["from a subaccount", { from_subaccount: [new Uint8Array(32)] }, /subaccount/],
     ["without created_at_time", { created_at_time: [] }, /no created_at_time/],
   ])("refuses a transfer %s without submitting it", async (_, overrides, error) => {
-    await expect(
-      broadcast(ICP_NETWORK_URL, withTransfer(signedTransfer(), overrides)),
-    ).rejects.toThrow(error);
+    await expect(broadcast(LOCAL_NODE, withTransfer(signedTransfer(), overrides))).rejects.toThrow(
+      error,
+    );
     expect(mockBroadcastTxn).not.toHaveBeenCalled();
   });
 
@@ -137,14 +138,14 @@ describe("broadcast", () => {
     const tx = signedTransfer();
     jest.setSystemTime(NOW + 5 * 60 * 1000);
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).rejects.toThrow(ICPTransactionExpired);
+    await expect(broadcast(LOCAL_NODE, tx)).rejects.toThrow(ICPTransactionExpired);
     expect(mockBroadcastTxn).not.toHaveBeenCalled();
   });
 
   it("fails when the node returns no certificate", async () => {
     mockBroadcastTxn.mockResolvedValue(null);
 
-    await expect(broadcast(ICP_NETWORK_URL, signedTransfer())).rejects.toThrow(/no certificate/);
+    await expect(broadcast(LOCAL_NODE, signedTransfer())).rejects.toThrow(/no certificate/);
   });
 
   it("fails with the ledger's reason when it refuses the transfer", async () => {
@@ -152,7 +153,7 @@ describe("broadcast", () => {
       Err: { InsufficientFunds: { balance: { e8s: 0n } } },
     });
 
-    await expect(broadcast(ICP_NETWORK_URL, signedTransfer())).rejects.toThrow(/InsufficientFunds/);
+    await expect(broadcast(LOCAL_NODE, signedTransfer())).rejects.toThrow(/InsufficientFunds/);
   });
 
   it("refuses a call that is not a ledger transfer", async () => {
@@ -164,7 +165,7 @@ describe("broadcast", () => {
       Cbor.encode({ ...envelope, content: { ...envelope.content, canister_id: governance } }),
     ).toString("hex");
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).rejects.toThrow(/Not a ledger transfer/);
+    await expect(broadcast(LOCAL_NODE, tx)).rejects.toThrow(/Not a ledger transfer/);
     expect(mockBroadcastTxn).not.toHaveBeenCalled();
   });
 });
@@ -210,10 +211,10 @@ describe("broadcast a neuron command", () => {
     const tx = signedCommand();
     const { call, read_state } = decodeSigned(tx);
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).resolves.toBe(requestIdHex(tx));
+    await expect(broadcast(LOCAL_NODE, tx)).resolves.toBe(requestIdHex(tx));
     const [host, callBlob, readStateBlob, canisterId, requestId] =
       mockReadReplyFromCanister.mock.calls[0];
-    expect(host).toBe(ICP_NETWORK_URL);
+    expect(host).toBe(LOCAL_NODE);
     expect(canisterId).toBe("rrkah-fqaaa-aaaaa-aaaaq-cai");
     expect(requestId).toBe(requestIdHex(tx));
     expect(Buffer.from(Cbor.decode<SignedCommand["call"]>(callBlob).sender_sig)).toEqual(
@@ -231,7 +232,7 @@ describe("broadcast a neuron command", () => {
       }),
     );
 
-    const error = await broadcast(ICP_NETWORK_URL, signedCommand()).catch((e: unknown) => e);
+    const error = await broadcast(LOCAL_NODE, signedCommand()).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(ICPGovernanceRejected);
     expect(error).toMatchObject({ reason: "Neuron is already dissolving" });
   });
@@ -239,7 +240,7 @@ describe("broadcast a neuron command", () => {
   it("keeps the replica's rejection: the command never ran", async () => {
     mockReadReplyFromCanister.mockRejectedValue(new ICPCallRejected());
 
-    await expect(broadcast(ICP_NETWORK_URL, signedCommand())).rejects.toThrow(ICPCallRejected);
+    await expect(broadcast(LOCAL_NODE, signedCommand())).rejects.toThrow(ICPCallRejected);
   });
 
   it.each([
@@ -264,7 +265,7 @@ describe("broadcast a neuron command", () => {
     arrange();
     const tx = signedCommand();
 
-    const error = await broadcast(ICP_NETWORK_URL, tx).catch((e: unknown) => e);
+    const error = await broadcast(LOCAL_NODE, tx).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(ICPCallUnconfirmed);
     expect(error).toMatchObject({ requestId: requestIdHex(tx) });
   });
@@ -273,7 +274,7 @@ describe("broadcast a neuron command", () => {
     const tx = signedCommand();
     jest.setSystemTime(NOW + 5 * 60 * 1000);
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).rejects.toThrow(ICPTransactionExpired);
+    await expect(broadcast(LOCAL_NODE, tx)).rejects.toThrow(ICPTransactionExpired);
     expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
   });
 
@@ -292,7 +293,7 @@ describe("broadcast a neuron command", () => {
       }),
     ).toString("hex");
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).rejects.toThrow(/does not poll this call/);
+    await expect(broadcast(LOCAL_NODE, tx)).rejects.toThrow(/does not poll this call/);
     expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
   });
 
@@ -305,7 +306,7 @@ describe("broadcast a neuron command", () => {
       }),
     ).toString("hex");
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).rejects.toThrow(/Not a neuron command/);
+    await expect(broadcast(LOCAL_NODE, tx)).rejects.toThrow(/Not a neuron command/);
     expect(mockReadReplyFromCanister).not.toHaveBeenCalled();
   });
 });
@@ -354,23 +355,21 @@ describe("broadcast a stake transfer", () => {
     const tx = signedStake();
     const { transfer } = Cbor.decode<{ transfer: unknown }>(Buffer.from(tx, "hex"));
 
-    await expect(broadcast(ICP_NETWORK_URL, tx)).resolves.toBe(HASH);
+    await expect(broadcast(LOCAL_NODE, tx)).resolves.toBe(HASH);
     expect(mockBroadcastTxn).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       Buffer.from(Cbor.encode(transfer)),
       "ryjl3-tyaaa-aaaaa-aaaba-cai",
       "call",
     );
-    expect(mockClaim).toHaveBeenCalledWith(ICP_NETWORK_URL, CONTROLLER, NONCE);
+    expect(mockClaim).toHaveBeenCalledWith(LOCAL_NODE, CONTROLLER, NONCE);
   });
 
   it.each([
     ["another account", String(NONCE + 1n), /does not name/],
     ["no Nat64", "x", /Not a stake nonce/],
   ])("refuses a nonce that names %s without submitting it", async (_, nonce, error) => {
-    await expect(broadcast(ICP_NETWORK_URL, withNonce(signedStake(), nonce))).rejects.toThrow(
-      error,
-    );
+    await expect(broadcast(LOCAL_NODE, withNonce(signedStake(), nonce))).rejects.toThrow(error);
     expect(mockBroadcastTxn).not.toHaveBeenCalled();
   });
 
@@ -379,7 +378,7 @@ describe("broadcast a stake transfer", () => {
       Err: { InsufficientFunds: { balance: { e8s: 1n } } },
     });
 
-    await expect(broadcast(ICP_NETWORK_URL, signedStake())).rejects.toThrow(/InsufficientFunds/);
+    await expect(broadcast(LOCAL_NODE, signedStake())).rejects.toThrow(/InsufficientFunds/);
     expect(mockClaim).not.toHaveBeenCalled();
   });
 
@@ -387,14 +386,14 @@ describe("broadcast a stake transfer", () => {
   it("claims the neuron of a transfer the ledger already holds", async () => {
     mockReadTransferOutcome.mockResolvedValue({ Err: { TxDuplicate: { duplicate_of: 1n } } });
 
-    await expect(broadcast(ICP_NETWORK_URL, signedStake())).resolves.toBe(HASH);
-    expect(mockClaim).toHaveBeenCalledWith(ICP_NETWORK_URL, CONTROLLER, NONCE);
+    await expect(broadcast(LOCAL_NODE, signedStake())).resolves.toBe(HASH);
+    expect(mockClaim).toHaveBeenCalledWith(LOCAL_NODE, CONTROLLER, NONCE);
   });
 
   it("keeps the replica's rejection: the transfer never ran", async () => {
     mockReadTransferOutcome.mockRejectedValue(new ICPCallRejected());
 
-    await expect(broadcast(ICP_NETWORK_URL, signedStake())).rejects.toBeInstanceOf(ICPCallRejected);
+    await expect(broadcast(LOCAL_NODE, signedStake())).rejects.toBeInstanceOf(ICPCallRejected);
     expect(mockClaim).not.toHaveBeenCalled();
   });
 
@@ -407,7 +406,7 @@ describe("broadcast a stake transfer", () => {
   ])("reports a transfer with %s as unconfirmed, with its hash", async (_, arrange) => {
     arrange();
 
-    const error = await broadcast(ICP_NETWORK_URL, signedStake()).catch(e => e);
+    const error = await broadcast(LOCAL_NODE, signedStake()).catch(e => e);
 
     expect(error).toBeInstanceOf(ICPCallUnconfirmed);
     expect(error).toMatchObject(SETTLED);
@@ -417,7 +416,7 @@ describe("broadcast a stake transfer", () => {
   it("reports a refused claim with the settled transfer", async () => {
     mockClaim.mockRejectedValue(new ICPStakeNotRefreshed("refused", { reason: "refused" }));
 
-    const error = await broadcast(ICP_NETWORK_URL, signedStake()).catch(e => e);
+    const error = await broadcast(LOCAL_NODE, signedStake()).catch(e => e);
 
     expect(error).toBeInstanceOf(ICPStakeNotRefreshed);
     expect(error).toMatchObject({ ...SETTLED, reason: "refused" });
@@ -429,7 +428,7 @@ describe("broadcast a stake transfer", () => {
   ])("reports a claim that %s as unconfirmed, with the settled transfer", async (_, arrange) => {
     arrange();
 
-    const error = await broadcast(ICP_NETWORK_URL, signedStake()).catch(e => e);
+    const error = await broadcast(LOCAL_NODE, signedStake()).catch(e => e);
 
     expect(error).toBeInstanceOf(ICPCallUnconfirmed);
     expect(error).toMatchObject(SETTLED);
@@ -440,7 +439,7 @@ describe("broadcast a stake transfer", () => {
     const tx = signedStake();
     jest.setSystemTime(NOW + 10 * 60 * 1000);
 
-    const error = await broadcast(ICP_NETWORK_URL, tx).catch(e => e);
+    const error = await broadcast(LOCAL_NODE, tx).catch(e => e);
 
     expect(error).toBeInstanceOf(ICPTransactionExpired);
     expect(error).toMatchObject(SETTLED);

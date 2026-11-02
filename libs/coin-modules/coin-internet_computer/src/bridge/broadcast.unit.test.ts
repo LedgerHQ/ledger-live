@@ -1,6 +1,8 @@
 import { buildBroadcast } from "./broadcast";
-import { ICP_NETWORK_URL, MAINNET_LEDGER_CANISTER_ID } from "../consts";
+import { MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import { broadcastTxn, readTransferOutcome } from "../network/api";
+
+const LOCAL_NODE = "http://127.0.0.1:4943";
 
 // The ledger's verdict is read by a mock; what is made of it is the real thing.
 jest.mock("../network/api", () => ({
@@ -9,7 +11,7 @@ jest.mock("../network/api", () => ({
   throwIfLedgerTransferRefused: jest.requireActual("../network/api").throwIfLedgerTransferRefused,
 }));
 
-const broadcast = buildBroadcast(() => ICP_NETWORK_URL);
+const broadcast = buildBroadcast(() => LOCAL_NODE);
 
 describe("broadcast", () => {
   beforeEach(() => {
@@ -35,14 +37,14 @@ describe("broadcast", () => {
     expect(result).toEqual({ extra: { memo: 0 } });
     expect(broadcastTxn).toHaveBeenCalledTimes(1);
     expect(broadcastTxn).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       Buffer.from("00", "hex"),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
     );
     expect(readTransferOutcome).toHaveBeenCalledTimes(1);
     expect(readTransferOutcome).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       new Uint8Array([1, 2, 3]),
       "ab".repeat(32),
     );
@@ -70,7 +72,7 @@ describe("broadcast", () => {
 
     expect(broadcastTxn).toHaveBeenCalledTimes(1);
     expect(readTransferOutcome).toHaveBeenCalledWith(
-      ICP_NETWORK_URL,
+      LOCAL_NODE,
       new Uint8Array([1, 2, 3]),
       "ab".repeat(32),
     );

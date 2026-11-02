@@ -6,12 +6,7 @@ import {
   InvalidTransactionError,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import {
-  ICP_NETWORK_URL,
-  MAINNET_GOVERNANCE_CANISTER_ID,
-  MAX_NAT64,
-  MIN_NEURON_STAKE,
-} from "../consts";
+import { MAINNET_GOVERNANCE_CANISTER_ID, MAX_NAT64, MIN_NEURON_STAKE } from "../consts";
 import {
   ICPCallUnconfirmed,
   ICPNodeRefused,
@@ -40,6 +35,8 @@ import {
   refreshNeuronStake,
   stakeTransferOf,
 } from "./stakeTransfer";
+
+const LOCAL_NODE = "http://127.0.0.1:4943";
 
 jest.mock("../network/api", () => ({
   ...jest.requireActual("../network/api"),
@@ -262,7 +259,7 @@ describe("checkStakeAccount", () => {
   const STAKE_SUBACCOUNT = getNeuronStakeSubAccount(CONTROLLER, NONCE);
 
   const check = (neuronId: string | undefined, amount: bigint) =>
-    checkStakeAccount(ICP_NETWORK_URL, CONTROLLER, { nonce: NONCE, neuronId, amount });
+    checkStakeAccount(LOCAL_NODE, CONTROLLER, { nonce: NONCE, neuronId, amount });
 
   const holding = (neuronId: string | undefined, balance: bigint) => {
     mockFindNeuron.mockResolvedValue(neuronId);
@@ -274,8 +271,8 @@ describe("checkStakeAccount", () => {
 
     await check(undefined, STAKE);
 
-    expect(mockFindNeuron).toHaveBeenCalledWith(ICP_NETWORK_URL, STAKE_SUBACCOUNT);
-    expect(mockLedgerBalance).toHaveBeenCalledWith(ICP_NETWORK_URL, STAKE_ACCOUNT);
+    expect(mockFindNeuron).toHaveBeenCalledWith(LOCAL_NODE, STAKE_SUBACCOUNT);
+    expect(mockLedgerBalance).toHaveBeenCalledWith(LOCAL_NODE, STAKE_ACCOUNT);
   });
 
   it.each([
@@ -383,11 +380,9 @@ describe("refreshNeuronStake", () => {
   ])("reports %s as %p", async (_, failure, expected) => {
     mockClaim.mockRejectedValue(failure);
 
-    const error = await refreshNeuronStake(
-      ICP_NETWORK_URL,
-      CONTROLLER.toText(),
-      String(NONCE),
-    ).catch(e => e);
+    const error = await refreshNeuronStake(LOCAL_NODE, CONTROLLER.toText(), String(NONCE)).catch(
+      e => e,
+    );
 
     expect(error).toBeInstanceOf(expected);
   });
@@ -397,7 +392,7 @@ describe("refreshNeuronStake", () => {
     mockClaim.mockRejectedValue(failure);
 
     await expect(
-      refreshNeuronStake(ICP_NETWORK_URL, CONTROLLER.toText(), String(NONCE)),
+      refreshNeuronStake(LOCAL_NODE, CONTROLLER.toText(), String(NONCE)),
     ).rejects.toMatchObject({
       cause: failure,
     });
@@ -406,22 +401,22 @@ describe("refreshNeuronStake", () => {
   it("claims the neuron the controller and nonce name, and returns its id", async () => {
     mockClaim.mockResolvedValue(123n);
 
-    await expect(
-      refreshNeuronStake(ICP_NETWORK_URL, CONTROLLER.toText(), String(NONCE)),
-    ).resolves.toBe("123");
-    expect(mockClaim).toHaveBeenCalledWith(ICP_NETWORK_URL, CONTROLLER, NONCE);
+    await expect(refreshNeuronStake(LOCAL_NODE, CONTROLLER.toText(), String(NONCE))).resolves.toBe(
+      "123",
+    );
+    expect(mockClaim).toHaveBeenCalledWith(LOCAL_NODE, CONTROLLER, NONCE);
   });
 
   it("reports a claim no answer settles as unconfirmed", async () => {
     mockClaim.mockResolvedValue(undefined);
 
     await expect(
-      refreshNeuronStake(ICP_NETWORK_URL, CONTROLLER.toText(), String(NONCE)),
+      refreshNeuronStake(LOCAL_NODE, CONTROLLER.toText(), String(NONCE)),
     ).rejects.toBeInstanceOf(ICPCallUnconfirmed);
   });
 
   it("refuses a nonce that is not a Nat64", async () => {
-    await expect(refreshNeuronStake(ICP_NETWORK_URL, CONTROLLER.toText(), "x")).rejects.toThrow(
+    await expect(refreshNeuronStake(LOCAL_NODE, CONTROLLER.toText(), "x")).rejects.toThrow(
       /stake nonce/,
     );
     expect(mockClaim).not.toHaveBeenCalled();

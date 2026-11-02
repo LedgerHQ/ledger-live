@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
-import { ICP_NETWORK_URL } from "../consts";
 import { fetchBlockHeight, fetchEncodedBlock } from "../network/api";
 import { getBlockInfo, toBlockInfo } from "./getBlockInfo";
 import { lastBlock } from "./lastBlock";
+
+const LOCAL_NODE = "http://127.0.0.1:4943";
 
 jest.mock("../network/api", () => ({
   fetchBlockHeight: jest.fn(),
@@ -70,14 +71,14 @@ describe("toBlockInfo", () => {
 describe("getBlockInfo", () => {
   it("decodes the block fetched at the height", async () => {
     mockFetchEncodedBlock.mockResolvedValue(BLOCK_25132352);
-    const info = await getBlockInfo(ICP_NETWORK_URL, 25132352);
-    expect(mockFetchEncodedBlock).toHaveBeenCalledWith(ICP_NETWORK_URL, 25132352n);
+    const info = await getBlockInfo(LOCAL_NODE, 25132352);
+    expect(mockFetchEncodedBlock).toHaveBeenCalledWith(LOCAL_NODE, 25132352n);
     expect(info.hash).toBe("140ba81ec6f5b51f7833b0af174cb580b5faa2e5a5efaa90c5527c6f3e30c802");
   });
 
   it("throws above the chain tip", async () => {
     mockFetchEncodedBlock.mockResolvedValue(undefined);
-    await expect(getBlockInfo(ICP_NETWORK_URL, 99)).rejects.toThrow(/No block at height 99/);
+    await expect(getBlockInfo(LOCAL_NODE, 99)).rejects.toThrow(/No block at height 99/);
   });
 });
 
@@ -85,9 +86,9 @@ describe("lastBlock", () => {
   it("reads the block just below the chain length", async () => {
     mockFetchBlockHeight.mockResolvedValue(BigNumber(25132353));
     mockFetchEncodedBlock.mockResolvedValue(BLOCK_25132352);
-    const info = await lastBlock(ICP_NETWORK_URL);
-    expect(mockFetchBlockHeight).toHaveBeenCalledWith(ICP_NETWORK_URL);
-    expect(mockFetchEncodedBlock).toHaveBeenCalledWith(ICP_NETWORK_URL, 25132352n);
+    const info = await lastBlock(LOCAL_NODE);
+    expect(mockFetchBlockHeight).toHaveBeenCalledWith(LOCAL_NODE);
+    expect(mockFetchEncodedBlock).toHaveBeenCalledWith(LOCAL_NODE, 25132352n);
     expect(info.height).toBe(25132352);
   });
 });

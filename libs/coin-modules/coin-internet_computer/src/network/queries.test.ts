@@ -1,11 +1,16 @@
 // Exercises the account read/query helpers' branch + pagination logic. The candid codec is
 // upstream-tested, so getAgent (the query transport) and the candid decode are mocked and we assert
 // the function's own handling of replied/non-replied, absent values, and pagination.
+const mockHost = "http://127.0.0.1:4943";
 const mockQuery = jest.fn();
 const mockDecode = jest.fn();
 
 jest.mock("./agent", () => ({
-  getAgent: jest.fn(async () => ({ query: mockQuery })),
+  getAgent: async (host: string) => {
+    // Every query goes to the node the caller names.
+    if (host !== mockHost) throw new Error(`Queried ${host}`);
+    return { query: mockQuery };
+  },
 }));
 jest.mock("./candid", () => ({
   getCanisterIdlFunc: jest.fn(() => ({ argTypes: [], retTypes: [] })),
@@ -28,7 +33,7 @@ import {
   queryBalance,
 } from "./api";
 
-const HOST = "https://ic0.app";
+const HOST = mockHost;
 
 const replied = () => ({ status: "replied", reply: { arg: new ArrayBuffer(0) } });
 

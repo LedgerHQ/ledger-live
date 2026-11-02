@@ -2,6 +2,7 @@ import { Cbor, HttpAgent } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { firstValueFrom, toArray } from "rxjs";
 import type { IcpCurrencyConfig } from "../config";
 import { deriveAddressFromPubkey } from "../logic/crypto";
@@ -56,6 +57,12 @@ const replyTo = (method: string): Uint8Array => {
     return IDL.encode(
       getCanisterIdlFunc(indexIdlFactory, "get_account_identifier_balance").retTypes,
       [5n],
+    );
+  }
+  if (method === "get_account_identifier_transactions") {
+    return IDL.encode(
+      getCanisterIdlFunc(indexIdlFactory, "get_account_identifier_transactions").retTypes,
+      [{ Ok: { balance: 5n, transactions: [], oldest_tx_id: [] } }],
     );
   }
   throw new Error(`Unexpected query: ${method}`);
@@ -124,6 +131,30 @@ describe("createBridges node", () => {
     await sync(bridges);
     expect(reads).toBe(2);
     expect(queried).toEqual([urls[1], urls[1]]);
+  });
+
+  it("scans accounts against the node the config names", async () => {
+    const device = jest.fn(async (_deviceId: string, fn: (signer: unknown) => Promise<unknown>) =>
+      fn({
+        getAddressAndPubKey: async () => ({
+          address: Buffer.from(deriveAddressFromPubkey(XPUB), "hex"),
+          publicKey: Buffer.from(XPUB, "hex"),
+          principalText: "",
+        }),
+      }),
+    );
+    const { currencyBridge } = createBridges(device as never, () => localConfig);
+
+    const event = await firstValueFrom(
+      currencyBridge.scanAccounts({
+        currency: getCryptoCurrencyById("internet_computer"),
+        deviceId: "",
+        syncConfig: { paginationConfig: {} },
+      }),
+    );
+
+    expect(event.type).toBe("discovered");
+    expect(new Set(queried)).toEqual(new Set([LOCAL_NODE]));
   });
 
   it("fails the sync when the config provider throws", async () => {

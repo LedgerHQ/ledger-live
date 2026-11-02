@@ -7,7 +7,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/coin-module-framework/errors";
-import { ICP_NETWORK_URL, MAX_NAT64, MIN_NEURON_STAKE } from "../consts";
+import { MAX_NAT64, MIN_NEURON_STAKE } from "../consts";
 import {
   ICPInvalidDissolveDelayIncrease,
   ICPStakeMemoNotRecoverable,
@@ -19,6 +19,9 @@ import { deriveAddressFromPubkey, derivePrincipalFromPubkey } from "./crypto";
 import { findNeuronIdBySubaccount, queryLedgerBalance } from "../network/api";
 import type { IcpIntent, IcpStakingIntent } from "./intent";
 import { validateIntent, validateIntentWithStakeAccount } from "./validateIntent";
+
+const LOCAL_NODE = "http://127.0.0.1:4943";
+const localNode = async (): Promise<string> => LOCAL_NODE;
 
 jest.mock("../network/api", () => ({
   ...jest.requireActual("../network/api"),
@@ -273,8 +276,6 @@ describe("validateIntent for a stake transfer", () => {
     ...overrides,
   });
 
-  const mainnet = async (): Promise<string> => ICP_NETWORK_URL;
-
   // The node is resolved only to read a stake account, so a broken config cannot fail a send.
   it("validates a send without resolving the node", async () => {
     const resolveHost = jest.fn().mockRejectedValue(new Error("no coin config"));
@@ -305,20 +306,20 @@ describe("validateIntent for a stake transfer", () => {
 
     it("accepts a stake into an unused account", async () => {
       const { errors } = await validateIntentWithStakeAccount(
-        mainnet,
+        localNode,
         stake(),
         native(10n * STAKE),
       );
 
       expect(errors).toEqual({});
-      expect(mockLedgerBalance).toHaveBeenCalledWith(ICP_NETWORK_URL, STAKE_ACCOUNT);
+      expect(mockLedgerBalance).toHaveBeenCalledWith(LOCAL_NODE, STAKE_ACCOUNT);
     });
 
     it("reports a stake into an account in use", async () => {
       mockFindNeuron.mockResolvedValue("123");
 
       const { errors } = await validateIntentWithStakeAccount(
-        mainnet,
+        localNode,
         stake(),
         native(10n * STAKE),
       );
@@ -331,7 +332,7 @@ describe("validateIntent for a stake transfer", () => {
       const { senderPublicKey: _, ...keyless } = stake();
 
       const { errors } = await validateIntentWithStakeAccount(
-        mainnet,
+        localNode,
         keyless,
         native(10n * STAKE),
       );
@@ -341,7 +342,7 @@ describe("validateIntent for a stake transfer", () => {
     });
 
     it("reads nothing for a stake transfer the stateless checks refuse", async () => {
-      const { errors } = await validateIntentWithStakeAccount(mainnet, stake(), native(STAKE));
+      const { errors } = await validateIntentWithStakeAccount(localNode, stake(), native(STAKE));
 
       expect(errors.amount).toBeInstanceOf(NotEnoughBalance);
       expect(mockFindNeuron).not.toHaveBeenCalled();

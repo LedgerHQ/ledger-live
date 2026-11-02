@@ -4,10 +4,19 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { IcpContext, IcpCurrencyConfig } from "../config";
 import { broadcast } from "../logic/broadcast";
+import { getBlockInfo } from "../logic/getBlockInfo";
+import type { IcpIntent } from "../logic/intent";
+import { lastBlock } from "../logic/lastBlock";
+import { listOperations } from "../logic/listOperations";
+import { validateIntentWithStakeAccount } from "../logic/validateIntent";
 import { getCanisterIdlFunc, indexIdlFactory } from "../network/candid";
 import { createApi } from "./index";
 
 jest.mock("../logic/broadcast");
+jest.mock("../logic/getBlockInfo");
+jest.mock("../logic/lastBlock");
+jest.mock("../logic/listOperations");
+jest.mock("../logic/validateIntent");
 
 // The node signatures of a query reply cannot come from a test key, so the agent skips them.
 jest.mock("../network/agent", () => ({
@@ -43,6 +52,7 @@ beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
 afterAll(() => server.close());
 beforeEach(() => {
   queried = [];
+  jest.clearAllMocks();
 });
 
 describe("createApi node", () => {
@@ -67,5 +77,24 @@ describe("createApi node", () => {
     await api.broadcast(contextWith({ node: { url: LOCAL_NODE } }), "aa");
 
     expect(broadcast).toHaveBeenCalledWith(LOCAL_NODE, "aa");
+  });
+
+  it("reads the tip, a block and the history from the node the config names", async () => {
+    const context = contextWith({ node: { url: LOCAL_NODE } });
+
+    await api.lastBlock(context);
+    await api.getBlockInfo(context, 1);
+    await api.listOperations(context, ADDRESS, { minHeight: 0 });
+
+    expect(lastBlock).toHaveBeenCalledWith(LOCAL_NODE);
+    expect(getBlockInfo).toHaveBeenCalledWith(LOCAL_NODE, 1);
+    expect(listOperations).toHaveBeenCalledWith(LOCAL_NODE, ADDRESS, { minHeight: 0 });
+  });
+
+  it("reads a stake account from the node the config names", async () => {
+    await api.validateIntent(contextWith({ node: { url: LOCAL_NODE } }), {} as IcpIntent, []);
+
+    const [resolveHost] = jest.mocked(validateIntentWithStakeAccount).mock.calls[0];
+    await expect(resolveHost()).resolves.toBe(LOCAL_NODE);
   });
 });
