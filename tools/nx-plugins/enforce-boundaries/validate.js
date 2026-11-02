@@ -98,6 +98,18 @@ function importSpecifiers(content) {
   return ts.preProcessFile(content, true, true).importedFiles.map(f => f.fileName);
 }
 
+const sourceFiles = {
+  /**
+   * Read and parse a source file, without type information.
+   *
+   * @param {string} file
+   * @returns {import("typescript").SourceFile}
+   */
+  parse(file) {
+    return ts.createSourceFile(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, false);
+  },
+};
+
 /**
  * Specifiers a source file loads at runtime: every import but the type-only forms
  * `DEVTOOLS_TYPE_ONLY_RULE` allows, which the build erases.
@@ -351,16 +363,9 @@ function allows(allowed, target) {
  * @param {string} workspaceRoot
  * @param {Record<string, string[] | "*">} allowedImports
  * @param {Record<string, string[] | "*">} typeOnlyImports
- * @param {typeof ts.createSourceFile} parse
  * @returns {DevtoolsImportViolation[]}
  */
-function findDevtoolsImportViolations(
-  graph,
-  workspaceRoot,
-  allowedImports,
-  typeOnlyImports = {},
-  parse = ts.createSourceFile,
-) {
+function findDevtoolsImportViolations(graph, workspaceRoot, allowedImports, typeOnlyImports = {}) {
   const names = devtoolsPackageNames(graph, workspaceRoot);
   const byEdge = new Map();
   /** @type {Map<string, Array<{ file: string, specifiers: string[] }>>} */
@@ -371,8 +376,7 @@ function findDevtoolsImportViolations(
     if (!files) {
       files = [];
       walkSourceFiles(path.join(workspaceRoot, graph.nodes[nodeName].data.root), file => {
-        const source = parse(file, fs.readFileSync(file, "utf8"), ts.ScriptTarget.Latest, false);
-        files.push({ file, specifiers: runtimeSpecifiers(source) });
+        files.push({ file, specifiers: runtimeSpecifiers(sourceFiles.parse(file)) });
       });
       filesByNode.set(nodeName, files);
     }
@@ -548,6 +552,7 @@ module.exports = {
   findBannedDependencyViolations,
   findBannedExternalViolations,
   findDevtoolsImportViolations,
+  sourceFiles,
   SKIP_DIRS,
   SOURCE_EXTS,
   DEVTOOLS_ROOT,

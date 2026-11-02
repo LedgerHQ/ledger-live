@@ -9,7 +9,10 @@
       "inputs": [
         "{workspaceRoot}/tools/nx-plugins/enforce-boundaries/**/*",
         "{workspaceRoot}/tools/nx-plugins/project-tags/plugin.js",
-        "{workspaceRoot}/pnpm-workspace.yaml"
+        "{workspaceRoot}/**/package.json",
+        "{workspaceRoot}/**/project.json",
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        "{workspaceRoot}/nx.json"
       ],
       "options": {
         "cwd": "{workspaceRoot}",
