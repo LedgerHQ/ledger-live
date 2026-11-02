@@ -12,15 +12,17 @@ jest.mock("../../SettingsNavigationScrollView", () => {
 
 describe("Debug Performance screen", () => {
   const originalDev = __DEV__;
+  let getProcessStartTime: jest.SpyInstance;
 
   beforeEach(() => {
     startupEvents.splice(0);
     clearStartupOriginCache();
+    getProcessStartTime = jest.spyOn(NativeModules.AppStartupModule, "getProcessStartTime");
   });
 
   afterEach(() => {
     Object.defineProperty(global, "__DEV__", { value: originalDev, configurable: true });
-    jest.restoreAllMocks();
+    getProcessStartTime.mockRestore();
   });
 
   it("shows the startup time and each startup event relative to the JS start", () => {
@@ -62,9 +64,7 @@ describe("Debug Performance screen", () => {
 
   it("counts from the app process start in release builds", () => {
     Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
-    jest
-      .spyOn(NativeModules.AppStartupModule, "getProcessStartTime")
-      .mockReturnValue(startupFirstImportTime - 1000);
+    getProcessStartTime.mockReturnValue(startupFirstImportTime - 1000);
     startupEvents.push({ event: STARTUP_EVENTS.NAV_READY, time: startupFirstImportTime + 340 });
 
     render(<Performance />);

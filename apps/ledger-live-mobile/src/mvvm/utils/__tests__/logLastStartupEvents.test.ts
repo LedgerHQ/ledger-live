@@ -26,12 +26,14 @@ jest.mock("~/datadog", () => ({ viewNamePredicate: jest.fn() }));
 
 describe("logLastStartupEvents", () => {
   const originalDev = __DEV__;
+  let getProcessStartTime: jest.SpyInstance;
 
   beforeEach(async () => {
     jest.useFakeTimers();
     jest.clearAllMocks();
     startupEvents.splice(0);
     clearStartupOriginCache();
+    getProcessStartTime = jest.spyOn(NativeModules.AppStartupModule, "getProcessStartTime");
     await mmkvStorageWrapper.deleteAll();
   });
 
@@ -40,7 +42,7 @@ describe("logLastStartupEvents", () => {
     jest.clearAllTimers();
     jest.useRealTimers();
     Object.defineProperty(global, "__DEV__", { value: originalDev, configurable: true });
-    jest.restoreAllMocks();
+    getProcessStartTime.mockRestore();
   });
 
   it("tracks startup events after the buffer once both APP_STARTED and NAV_READY are logged", async () => {
@@ -72,9 +74,7 @@ describe("logLastStartupEvents", () => {
 
   it("tracks the startup time from the app process start in release builds", async () => {
     Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
-    jest
-      .spyOn(NativeModules.AppStartupModule, "getProcessStartTime")
-      .mockReturnValue(startupFirstImportTime - 1000);
+    getProcessStartTime.mockReturnValue(startupFirstImportTime - 1000);
     await logLastStartupEvents(STARTUP_EVENTS.NAV_READY);
     const appStartedEventPromise = logLastStartupEvents(STARTUP_EVENTS.APP_STARTED);
 

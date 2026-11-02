@@ -61,6 +61,7 @@ describe("logStartupTime", () => {
 describe("startup time base", () => {
   const originalDev = __DEV__;
   let getProcessStartTime: jest.SpyInstance;
+  let warn: jest.SpyInstance;
 
   beforeEach(() => {
     Object.defineProperty(global, "__DEV__", { value: false, configurable: true });
@@ -68,11 +69,13 @@ describe("startup time base", () => {
     startupEvents.push({ event: "Step 1", time: startupFirstImportTime + 42 });
     clearStartupOriginCache();
     getProcessStartTime = jest.spyOn(NativeModules.AppStartupModule, "getProcessStartTime");
+    warn = jest.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
     Object.defineProperty(global, "__DEV__", { value: originalDev, configurable: true });
-    jest.restoreAllMocks();
+    getProcessStartTime.mockRestore();
+    warn.mockRestore();
   });
 
   it("counts from the app process start in release builds", () => {
@@ -111,7 +114,6 @@ describe("startup time base", () => {
   });
 
   it("counts from the first JS import when the native module fails, and warns once", () => {
-    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     getProcessStartTime.mockImplementation(() => {
       throw new Error("native failure");
     });
@@ -122,7 +124,6 @@ describe("startup time base", () => {
   });
 
   it("counts from the first JS import, without warning, when the native module is missing", () => {
-    const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     const appStartupModule = NativeModules.AppStartupModule;
     delete NativeModules.AppStartupModule;
     try {

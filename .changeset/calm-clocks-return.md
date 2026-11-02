@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-fix(rn-upgrade): restore native startup time in debug performance (LIVE-40286)
+fix(rn-upgrade): restore native startup time in debug and analytics (LIVE-40286)

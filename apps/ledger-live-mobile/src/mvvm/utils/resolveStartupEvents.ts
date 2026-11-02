@@ -40,8 +40,8 @@ function readProcessStartTime(): number | null {
 }
 
 function computeStartupOrigin(): StartupOrigin {
-  // On dev the metro start time makes the process start meaningless
-  const processStartTime = __DEV__ ? null : readProcessStartTime();
+  const isProcessStartSkewedByMetro = __DEV__;
+  const processStartTime = isProcessStartSkewedByMetro ? null : readProcessStartTime();
   return processStartTime === null
     ? { base: "js", time: startupFirstImportTime }
     : { base: "process", time: processStartTime };

@@ -15,6 +15,8 @@
 		515E9C2C8C0049EC992210D9 /* Inter-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3B6982A2E67F482A8069215B /* Inter-Medium.otf */; };
 		98626A1E5A61599CA1723CF2 /* Pods_ledgerlivemobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FF455C6D480B1F5F19E871 /* Pods_ledgerlivemobile.framework */; };
 		9DB523402249BD405124BA05 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */; };
+		A5715A0E2F0C3A1100E1B2C1 /* AppStartupModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */; };
+		A5715B0E2F0C3A1100E1B2C1 /* AppStartupModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */; };
 		AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD106EA37CA467F9525D699 /* FontAwesome5_Pro_Brands.ttf */; };
 		AD7A77B84DF3487C812B091B /* FontAwesome5_Pro_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */; };
 		B116B48438CB416C980DD0E7 /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F3993D7FF61549FE9270BC06 /* Inter-SemiBold.otf */; };
@@ -40,8 +42,6 @@
 		F99BEAC629E8441C83104922 /* FontAwesome5_Pro_Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */; };
 		RED1A38082EDF3E62005A0FBB /* ReduceTransparencyModule.m in Sources */ = {isa = PBXBuildFile; fileRef = RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */; };
 		RED1B38082EDF3E62005A0FBC /* ReduceTransparencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */; };
-		A5715B0E2F0C3A1100E1B2C1 /* AppStartupModule.m in Sources */ = {isa = PBXBuildFile; fileRef = A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */; };
-		A5715A0E2F0C3A1100E1B2C1 /* AppStartupModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +64,8 @@
 		668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Regular.ttf; path = ../assets/fonts/FontAwesome5_Pro_Regular.ttf; sourceTree = "<group>"; };
 		6D891D99F1084D459DBF667F /* FontAwesome5_Pro_Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Light.ttf; path = ../assets/fonts/FontAwesome5_Pro_Light.ttf; sourceTree = "<group>"; };
 		991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Solid.ttf; path = ../assets/fonts/FontAwesome5_Pro_Solid.ttf; sourceTree = "<group>"; };
+		A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartupModule.swift; sourceTree = "<group>"; };
+		A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStartupModule.m; sourceTree = "<group>"; };
 		ADB2A550442C64936574B49B /* Pods-ledgerlivemobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.debug.xcconfig"; sourceTree = "<group>"; };
 		BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Production.plist"; sourceTree = "<group>"; };
 		BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
@@ -97,8 +99,6 @@
 		F837348622721A48009D747A /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		RED1A38072EDF3E62005A0FBB /* ReduceTransparencyModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReduceTransparencyModule.m; sourceTree = "<group>"; };
 		RED1B38072EDF3E62005A0FBC /* ReduceTransparencyModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReduceTransparencyModule.swift; sourceTree = "<group>"; };
-		A5715B0D2F0C3A1100E1B2C1 /* AppStartupModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppStartupModule.m; sourceTree = "<group>"; };
-		A5715A0D2F0C3A1100E1B2C1 /* AppStartupModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartupModule.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
