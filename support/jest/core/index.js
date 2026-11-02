@@ -53,8 +53,8 @@ function lcovRoot(rootDir, depth) {
   return rootDir === undefined ? depth : `${path.relative(rootDir, repositoryRoot)}/`;
 }
 
-// The core projects' mocks and setup files. An override replaces them, as in jest: a layer or a
-// package that keeps them spreads these tables into its own.
+// The core projects' mocks and setup files, which a layer or a package spreads to keep them (the
+// override rule of the `@support/jest` README).
 
 // Redirect the heavy Lumen/crypto-icons ESM barrels to a generic passthrough stub so tests
 // don't need to transform them or install their peer graph. See mocks/*.js.
@@ -144,8 +144,8 @@ function nativeProject() {
 }
 
 /**
- * A core project with the layer's keys, then the consumer's overrides, each replacing the value
- * before it (`withProjectOverrides`).
+ * A core project with the layer's keys, then the consumer's overrides, by the override rule of the
+ * `@support/jest` README (`withProjectOverrides`).
  *
  * @param {import('@jest/types').Config.InitialProjectOptions} project
  * @param {import('@jest/types').Config.InitialProjectOptions} layer

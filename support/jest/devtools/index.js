@@ -44,9 +44,8 @@ const WEB_TRANSFORM_ALLOWLIST = [
 // taking ~3s locally, so the timeout has to absorb runner contention rather than test cost.
 const TEST_TIMEOUT = 30_000;
 
-// The projects' mappers and setup files. An override replaces them, as in jest: a package that
-// keeps them spreads these tables into its own, after its own mapper entries since the first
-// matching pattern wins.
+// The projects' mappers and setup files, which a package spreads to keep them (the override rule
+// of the `@support/jest` README).
 const webModuleNameMapper = deepFreeze({
   "^jest/(.*)$": "<rootDir>/jest/$1",
   // Pin lumen to the consumer's copy. Two reasons: this package does not carry lumen's peer
@@ -73,7 +72,7 @@ const nativeSetupFilesAfterEnv = deepFreeze([here("setup/native.ts")]);
 /**
  * jsdom project for a devtools package's `*.web.test.*` files.
  *
- * @param {import('@jest/types').Config.InitialOptions} [overrides] each key replaces the preset's
+ * @param {import('@jest/types').Config.InitialOptions} [overrides] by the override rule of the `@support/jest` README
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function webJestConfig(overrides = {}) {
@@ -103,7 +102,7 @@ function webJestConfig(overrides = {}) {
  * rootDir, and babel-jest needs the React Native preset to parse the Flow-typed `.js` files that
  * ship inside react-native itself.
  *
- * @param {import('@jest/types').Config.InitialOptions} [overrides] each key replaces the preset's
+ * @param {import('@jest/types').Config.InitialOptions} [overrides] by the override rule of the `@support/jest` README
  * @returns {import('@jest/types').Config.InitialOptions}
  */
 function nativeJestConfig(overrides = {}) {

@@ -138,6 +138,45 @@ for (const [name, create, defaults] of dualPresets) {
   });
 }
 
+// The tables a layer builds on the core's keep the core's entries, before the layer's own.
+const coreReactNative = ["^react-native$", path.join(root, "core/mocks/react-native.js")];
+const coreWebSetup = path.join(root, "core/setup/web.js");
+const flowReanimated = [
+  "^react-native-reanimated$",
+  path.join(root, "features-flow/mocks/reanimated.js"),
+];
+const flowWebSetup = path.join(root, "features-flow/setup/web.js");
+
+for (const [name, config] of [
+  ["createSharedUiJestConfig", project(createSharedUiJestConfig(), "native")],
+  ["createSharedUiNativeJestConfig", createSharedUiNativeJestConfig()],
+]) {
+  test(`${name}: the core's react-native stub on the native side`, () => {
+    assert.equal(config.moduleNameMapper[coreReactNative[0]], coreReactNative[1]);
+  });
+}
+
+for (const [name, create] of [
+  ["createFlowJestConfig", createFlowJestConfig],
+  ["createFlowNativeJestConfig", createFlowNativeJestConfig],
+]) {
+  test(`${name}: the native mocks are the core's, then the flow's`, () => {
+    const entries = Object.entries(project(create(), "native").moduleNameMapper);
+    const at = ([key, value]) => entries.findIndex(([k, v]) => k === key && v === value);
+    assert.ok(at(coreReactNative) >= 0, "no core react-native stub");
+    assert.ok(at(flowReanimated) > at(coreReactNative), "no flow reanimated mock after it");
+  });
+}
+
+test("createFlowJestConfig: the web setup files are the core's, then the flow's", () => {
+  assert.deepEqual(project(createFlowJestConfig(), "web").setupFilesAfterEnv, [
+    "@testing-library/jest-dom",
+    coreWebSetup,
+    quarantineRetries,
+    flowWebSetup,
+  ]);
+});
+
 test("createFlowNativeJestConfig: a single native project", () => {
   const config = createFlowNativeJestConfig();
   assert.deepEqual(
@@ -158,6 +197,7 @@ test("createSharedUiNativeJestConfig: a flat native config, no projects", () => 
 });
 
 for (const [name, create, defaults] of nativeOnlyPresets) {
+  /** @param {import('@jest/types').Config.InitialOptions} options */
   const withNative = options =>
     create(name === "createFlowNativeJestConfig" ? { nativeOverrides: options } : options);
 

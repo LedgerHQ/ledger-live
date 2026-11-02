@@ -24,6 +24,10 @@ for (const [name, mapper, setupFiles] of factories) {
     assert.ok(!Object.isFrozen(moduleNameMapper) && !Object.isFrozen(setupFilesAfterEnv));
   });
 
+  test(`${name}: maps the package's jest/ folder`, () => {
+    assert.equal(create().moduleNameMapper["^jest/(.*)$"], "<rootDir>/jest/$1");
+  });
+
   test(`${name}: moduleNameMapper and setupFilesAfterEnv overrides replace the preset's`, () => {
     const config = create({
       moduleNameMapper: { "^extra$": "/extra.js" },

@@ -52,10 +52,8 @@ const lumenTransform = {
  * - web project: jsdom, matches *.web.test.ts(x) and unsuffixed tests, for Desktop.
  * - native project: node, matches *.native.test.ts(x), for Mobile.
  *
- * Per-project overrides via `webOverrides` / `nativeOverrides`: each key replaces the project's
- * value, as in jest. A package that keeps the project's mocks or setup files spreads the exported
- * `webModuleNameMapper`, `nativeModuleNameMapper`, `webSetupFilesAfterEnv` or
- * `nativeSetupFilesAfterEnv` into its own.
+ * Per-project overrides via `webOverrides` / `nativeOverrides`, by the override rule of the
+ * `@support/jest` README.
  *
  * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
@@ -70,9 +68,8 @@ function sharedUiJestConfig(overrides) {
 /**
  * Jest config for a shared/ui-* package with native-only tests (*.native.test.ts).
  *
- * Provides react-native, safe-area-context, Lumen native, and image stubs by default. Each override
- * key replaces the preset's, as in jest: a package that keeps the stubs spreads the exported
- * `nativeModuleNameMapper` into its own. Requires no web-only dependencies
+ * Provides react-native, safe-area-context, Lumen native, and image stubs by default; overrides
+ * follow the override rule of the `@support/jest` README. Requires no web-only dependencies
  * (jest-environment-jsdom, @testing-library/jest-dom).
  *
  * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]

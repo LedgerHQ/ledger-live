@@ -30,11 +30,7 @@ module.exports = require("@support/jest/devtools").createWebJestConfig();
 module.exports = require("@support/jest/devtools").createNativeJestConfig();
 ```
 
-Both factories take an optional overrides object, and every key replaces the preset's, as in jest.
-To keep the preset's mappers or setup files, spread the exported `webModuleNameMapper`,
-`nativeModuleNameMapper`, `webSetupFilesAfterEnv` or `nativeSetupFilesAfterEnv` (frozen). The
-first matching pattern wins, so a package's own mapper entries come before the spread prefix
-`^jest/(.*)$`:
+Both factories take an optional overrides object, by the [override rule](../README.md#overrides):
 
 ```js
 // jest.native.config.js, adding a package-local mock

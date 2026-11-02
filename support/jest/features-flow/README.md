@@ -86,10 +86,7 @@ module.exports = require("@support/jest/features-flow").createFlowJestConfig({
 
 ### Per-project overrides
 
-In `webOverrides` and `nativeOverrides`, every key replaces the project's value, as in jest. To
-keep the project's setup files or mocks while adding your own, spread the exported
-`webSetupFilesAfterEnv`, `nativeSetupFilesAfterEnv`, `webModuleNameMapper` or
-`nativeModuleNameMapper` (frozen) into the override:
+`webOverrides` and `nativeOverrides` follow the [override rule](../README.md#overrides):
 
 ```js
 const path = require("path");

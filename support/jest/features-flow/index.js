@@ -51,10 +51,8 @@ const flowLayer = {
  * - web project: jsdom, matches *.web.test.ts(x) and unsuffixed tests, for Desktop.
  * - native project: node, matches *.native.test.ts(x), for Mobile.
  *
- * Per-project overrides via `webOverrides` / `nativeOverrides`: each key replaces the project's
- * value, as in jest. A package that keeps the project's mocks or setup files spreads the exported
- * `webModuleNameMapper`, `nativeModuleNameMapper`, `webSetupFilesAfterEnv` or
- * `nativeSetupFilesAfterEnv` into its own.
+ * Per-project overrides via `webOverrides` / `nativeOverrides`, by the override rule of the
+ * `@support/jest` README.
  *
  * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}

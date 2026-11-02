@@ -54,11 +54,8 @@ const { createSharedUiJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiJestConfig();
 ```
 
-Per-project customisation via `webOverrides` / `nativeOverrides`: every key replaces the
-project's value, as in jest. To keep the project's mocks or setup files, spread the exported
-`webModuleNameMapper`, `nativeModuleNameMapper`, `webSetupFilesAfterEnv` or
-`nativeSetupFilesAfterEnv` (frozen) into the override. An entry with the same pattern replaces
-that mock in place:
+Per-project customisation via `webOverrides` / `nativeOverrides`, by the
+[override rule](../README.md#overrides):
 
 ```js
 const { createSharedUiJestConfig, nativeModuleNameMapper } = require("@support/jest/shared");
@@ -90,8 +87,7 @@ const { createSharedUiNativeJestConfig } = require("@support/jest/shared");
 module.exports = createSharedUiNativeJestConfig();
 ```
 
-Every key replaces the preset's, as in the dual preset. To add package-specific mocks alongside
-the base ones, spread `nativeModuleNameMapper`:
+Overrides follow the [override rule](../README.md#overrides):
 
 ```js
 const { createSharedUiNativeJestConfig, nativeModuleNameMapper } = require("@support/jest/shared");
