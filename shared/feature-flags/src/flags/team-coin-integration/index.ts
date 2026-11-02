@@ -23,8 +23,6 @@ export * from "./currencyBaseSepolia";
 export * from "./currencyBerachain";
 export * from "./currencyBitlayer";
 export * from "./currencyBittorrent";
-export * from "./currencyBlast";
-export * from "./currencyBlastSepolia";
 export * from "./currencyBoba";
 export * from "./currencyCantonNetwork";
 export * from "./currencyCantonNetworkDevnet";

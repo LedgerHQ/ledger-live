@@ -36,6 +36,8 @@ export type SolanaConfig = {
     blockhashRetries?: number;
     /** @default DEFAULT_BLOCKHASH_RETRY_DELAY_MS (5000) */
     blockhashRetryDelayMs?: number;
+    /** Floor for the compute-unit price, in microLamports per CU. @default DEFAULT_MIN_PRIORITY_FEE (10000) */
+    minPriorityFee?: number;
   };
   validators?: {
     /** @default DEFAULT_VALIDATORS_CACHE_TTL_MS (900000) */

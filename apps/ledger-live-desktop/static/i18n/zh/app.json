@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "更改名称",
       "viewAdvancedLogs" : "查看高级日志",
+      "viewExplorer" : "在浏览器中查看",
       "removeAccount" : "从资产组合中删除账户"
     },
     "changeName" : {
@@ -327,7 +328,7 @@
     "remove" : {
       "title" : "移除账号？",
       "description" : "与该账户关联的资产将不再显示在您的资产组合中。您在区块链上的资产不受影响。",
-      "confirm" : "是的，移除。",
+      "confirm" : "是的，移除",
       "cancel" : "保留"
     }
   },
@@ -715,18 +716,6 @@
     "buttonTitle" : "测试"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "更多信息",
-      "cardTitle" : "由 {{team}} 提供支持",
-      "drawer" : {
-        "title" : "{{family}} 集成",
-        "subTitle" : "{{family}} 集成已由 {{team}} 团队完成",
-        "description" : "Ledger Wallet 是一个开源平台。",
-        "description2" : "全球各地的开发者都可以与我们的 Ledger Wallet 相集成",
-        "description3" : "此集成由 {{team}} 与 Ledger 协作实施。",
-        "description3Link" : "此集成由 <1><0>{{team}}</0></1> 与 Ledger 协作实施"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} 正在迁移至 {{to}}。请点击此<0>链接</0>了解详情，如需帮助，请联系客服。",
       "contactSupport" : "联系客服"
@@ -3024,6 +3013,7 @@
       "paidIn" : "已用 {{currency}} 支付",
       "nudge" : "使用 {{provider}}，您可节省 {{amount}}",
       "saved" : "已通过 {{provider}} 节省",
+      "rentArriving" : "您的能量租赁仍在处理中。网络费用将在其到账后更新。",
       "confirm" : "确认",
       "disclaimer" : "通过第三方能量提供商 {{provider}}，费用以 {{feeCurrency}} 支付。",
       "insufficientFunds" : "您没有足够的 {{feeCurrency}} 来支付数额和 {{provider}} 能量租赁费用。"
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "已委托资产",
       "undelegatingTooltip" : "取消委托的资产需在 10 天解绑期结束后才能提取。",
       "undelegating" : "待处理的提取"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "由 MultiversX 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "MultiversX 集成",
-        "title" : "Ledger Wallet 现已支持 MultiversX eGold (EGLD) 代币",
-        "description" : "您现在可以安全地保护您的 eGold (EGLD) 代币，并通过 Ledger Wallet 管理它们。",
-        "description2" : "MultiversX eGold (EGLD) 代币是 MultiversX 网络的原生代币，将用于交易、权益质押、智能合约、治理和验证者奖励等所有用途。",
-        "description3" : "我们正在与 MultiversX 团队积极合作，努力添加更多功能，例如权益质押、原生 ESDT（Elrond 标准数字代币）支持等。",
-        "website" : "互联网规模的区块链"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "由 Figment 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "由 Figment 提供支持",
-        "title" : "Ledger Wallet 现已支持 CELO 代币",
-        "description" : "您现在可以通过 Ledger Wallet 管理并保护您的 CELO 代币。",
-        "description2" : "Celo 代币是 Celo 链的原生代币，可用于交易、权益质押以及即将推出的许多功能。",
-        "website" : "由 Figment 提供支持"
-      }
-    },
     "lockedBalance" : "已锁定余额",
     "lockedTooltip" : "赚取奖励之前，必须锁定资产并投票给验证者组。",
     "nonvotingLockedBalance" : "非投票锁定余额",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "待使用余额",
       "pendingBalanceTooltip" : "此数额已解除权益质押，目前等待使用。",
       "storageUsageBalance" : "最低余额",
-      "storageUsageBalanceTooltip" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。",
-      "subHeader" : {
-        "cardTitle" : "由 Figment 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "由 Figment 提供支持",
-        "title" : "Ledger Wallet 现已支持 NEAR 代币",
-        "description" : "您现在可以开始通过 Ledger Wallet 管理并保护您的 NEAR 代币。",
-        "description2" : "NEAR 代币是 NEAR 链的原生代币，可用于交易、权益质押以及即将推出的许多功能。",
-        "website" : "由 Figment 提供支持"
-      }
+      "storageUsageBalanceTooltip" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。"
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "待处理余额",
       "pendingBalanceTooltip" : "此数额已解除质押，目前正在等待成为可用余额。",
       "storageUsageBalance" : "最低余额",
-      "storageUsageBalanceTooltip" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。",
-      "subHeader" : {
-        "cardTitle" : "由 Figment 提供支持",
-        "moreInfo" : "更多信息",
-        "drawerTitle" : "由 Figment 提供支持",
-        "title" : "Ledger Wallet 现已支持 SUI 代币",
-        "description" : "您现在可以通过 Ledger Wallet 管理并保护您的 SUI 代币。",
-        "description2" : "SUI 代币是 SUI 链的原生代币，可用于交易、质押以及即将推出的许多功能。",
-        "website" : "由 Figment 提供支持"
-      }
+      "storageUsageBalanceTooltip" : "此数额是可用于存储和交易的账户保留数额，也是您的账户保持活跃所必须保有的最低余额。"
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "出错了。请重新连接您的设备",
       "description" : "Concordium 应用程序无法处理该交易。如果问题仍然存在，请联系 Ledger 客服。"
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "输入 {{min}}–{{max}} 之间的整数。"
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "输入有效的资金池合约地址，以 address.contract-name （地址.合约-名称）格式。"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "请求未发送",
       "description" : "Internet Computer 未接受该请求，因此未发送任何内容，也未发生任何更改。请重试。{{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "交易已过期",
+      "description" : "已签署的交易未及时发送，因此未发送任何内容，也未发生任何更改。请重新签署。"
     },
     "ICPInvalidPercentage" : {
       "title" : "百分比超出范围",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
             "step2" : "打开您要同步的 Ledger Wallet 钱包应用程序。",
-            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>显示二维码</0>",
+            "step3" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>显示二维码</0>",
             "step4" : "扫描二维码。"
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "确保您已在其中一个应用程序上激活 Ledger Sync。",
             "step2" : "打开您要同步的 Ledger Wallet 钱包应用程序。",
-            "step3" : "前往<0>“设置”</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>我已打开</0> > <0>使用您的 Ledger 设备</0>",
+            "step3" : "前往<0>设置</0> > <0>常规</0> > <0>Ledger Sync</0> > <0>使用您的 Ledger</0>",
             "step4" : "连接 Ledger 设备。"
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "若要为您的永续合约 (Perps) 提供资金，您需要一个 Hyperliquid 账户。添加一个账户以继续。",
     "selectDepositCurrencyTitle" : "选择要存入的资产",
     "selectDepositCurrencyDescription" : "任何支持的资产均可。必要时，该资产将自动互换。",
+    "selectWithdrawCurrencyTitle" : "选择要提取至的资产",
+    "selectWithdrawCurrencyDescription" : "您的 USDC 将自动互换为您选择的资产。",
     "accountCount_one" : "{{count}} 个账户",
     "accountCount_other" : "{{count}} 个账户",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "您的安全加密货币钱包"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "永续合约",
+      "description" : "杠杆投资"
+    },
+    "borrow" : {
+      "title" : "贷款",
+      "description" : "借入稳定币"
+    }
+  },
   "marketBanner" : {
     "title" : "市场",
     "genericError" : "连接失败",
@@ -9736,6 +9707,7 @@
     "receive" : "接收",
     "buy" : "买入",
     "sell" : "卖出",
+    "swap" : "互换",
     "connect" : "连接",
     "buyALedger" : "购买 Ledger 设备"
   },
@@ -9941,7 +9913,8 @@
               "label" : "起始高度",
               "tooltip" : "默认：今日日期。仅针对过去存在私密（屏蔽）交易活动的现有账户进行更改。",
               "syncFromZero" : "该账户过去接收过受屏蔽的 ZEC，但无法检索到其起始高度。从区块 0 开始扫描（可能需要较长时间）。",
-              "error" : "无效日期"
+              "error" : "无效日期",
+              "height" : "区块高度：{{height}}"
             },
             "ufvk" : {
               "text" : "首先，您必须导出您的\"统一完整查看密钥\"，即：Unified Full Viewing Key (UFVK)。此操作需要您在 Ledger 设备上确认。"
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 私密 (Sapling) ",
       "shieldedOrchardTx" : "🛡 私密 (Orchard) ",
       "shieldedIronwoodTx" : "🛡 私密 (Ironwood) ",
-      "memo" : "备注"
+      "memo" : "备注",
+      "blockHeight" : "区块高度",
+      "confirmations_one" : "{{count}} 确认数",
+      "confirmations_other" : "{{count}} 确认数"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "暂无活动",
+      "description" : {
+        "receive" : "首先通过“接收”添加资金。",
+        "receiveSwap" : "首先通过“接收”或“互换”添加资金。",
+        "receiveBuy" : "首先通过“接收”或“买入”添加资金。",
+        "receiveSwapBuy" : "首先通过“接收”、“互换”或“买入”添加资金。",
+        "swap" : "首先通过“互换”添加资金。",
+        "buy" : "首先通过“买入”添加资金。",
+        "swapBuy" : "首先通过“互换”或“买入”添加资金。"
+      }
+    },
+    "assetPicker" : {
+      "title" : "选择资产"
+    },
+    "actions" : {
+      "receive" : "接收",
+      "send" : "发送",
+      "buy" : "买入",
+      "sell" : "卖出",
+      "earn" : "赚取"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "了解更多",
+      "openPerps" : "打开永续合约 (Perps)"
+    },
+    "migration" : {
+      "title" : "{{from}} 正在迁移至 {{to}}",
+      "description" : "了解有关迁移的更多信息，如需帮助，请联系客服。"
+    },
+    "willBeDeprecated" : {
+      "title" : "自 {{date}} 起将不再支持 {{currencyName}}",
+      "description" : "其仍将受到您的 Ledger 设备的保护。在帮助中心了解更多信息。"
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "总余额不包括股息或股票拆分。"
+    },
+    "perps" : {
+      "title" : "关于 Hyperliquid 账户",
+      "description" : "此账户与永续合约交易相关。此账户不支持交易操作"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "账户设置"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "选择操作"
+  },
+  "perpsWithdraw" : {
+    "title" : "提取",
+    "review" : "审核",
+    "estimatedAmount" : "提取约 {{value}}",
+    "inputSubText" : "通过 {{provider}} 互换并提取",
+    "selectCurrencyTitle" : "提取至 {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "无账户",
+    "formErrors" : {
+      "insufficientBalance" : "余额不足",
+      "minimumAmount" : "最低提取数额为 {{minAmount}} USDC。",
+      "minimumAmountUnknown" : "此数额太低，无法提取。",
+      "lowLiquidity" : "该资产暂时不可用。请稍后重试或选择其他资产。",
+      "addressScreening" : "此笔提取无法处理至该账户。",
+      "quoteUnavailable" : "无法从 {{provider}} 获取报价，请尝试其他资产或稍后再试。",
+      "currenciesUnavailable" : "我们无法加载可供您提取至的资产。请稍后重试。"
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "存款签署",

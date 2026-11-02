@@ -208,8 +208,6 @@ export const coinModuleLoaders: CoinModuleLoader[] = [
       "lukso",
       "linea",
       "linea_sepolia",
-      "blast",
-      "blast_sepolia",
       "scroll",
       "shape",
       "story",

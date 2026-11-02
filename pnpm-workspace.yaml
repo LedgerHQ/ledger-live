@@ -131,7 +131,7 @@ catalog:
   "@rsbuild/plugin-node-polyfill": 1.4.6
   "@rsbuild/plugin-react": 2.1.1
   "@rsbuild/plugin-styled-components": 1.7.0
-  "@rsdoctor/core": 2.0.0
+  "@rsdoctor/core": 2.0.1
   "@rspack/cli": 2.3.0
   "@rspack/core": 2.3.0
   "@rspack/dev-server": 2.2.2
@@ -164,7 +164,7 @@ catalog:
   bs58check: ^2.1.2
   buffer: 6.0.3
   class-variance-authority: 0.7.1
-  electron: 45.0.0
+  electron: 45.2.1
   eslint-plugin-jest: 27.9.0
   ethers: 6.15.0
   "@noble/curves": 2.4.0

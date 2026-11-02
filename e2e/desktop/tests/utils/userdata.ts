@@ -31,6 +31,13 @@ export async function getSavedSpendableBalance(
   return { amount: new BigNumber(spendableBalance), magnitude: unit.magnitude };
 }
 
+export async function getUserdataUserId(userdataFile?: string): Promise<string> {
+  if (!userdataFile) return "";
+  const parsed: { data?: { identities?: { userId?: string }; user?: { id?: string } } } =
+    await getUserdata(userdataFile);
+  return parsed.data?.identities?.userId || parsed.data?.user?.id || "";
+}
+
 /** A fresh install has not seen the analytics opt-in screen, so Get started opens it. */
 export const FRESH_INSTALL_SETTINGS = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: false };
 
