@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Skeleton } from "@ledgerhq/lumen-ui-rnative";
-import { CardAssetRow } from "./CardAssetRow.native";
-import { CardAssetsEmptyState } from "./CardAssetsEmptyState.native";
+import { CardAssetRow } from "./CardAssetRow";
+import { CardAssetsEmptyState } from "./CardAssetsEmptyState";
 import type { CardAssetsViewModel } from "./types";
 
 type CardAssetsBodyProps = Readonly<

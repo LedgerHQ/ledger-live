@@ -17,10 +17,10 @@ import {
 } from "@ledgerhq/lumen-ui-react";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { useTranslation } from "@shared/i18n";
-import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog.web";
-import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog.web";
-import { CardAssetsEmptyState } from "./CardAssetsEmptyState.web";
-import { CardAssetsManageDialog } from "./CardAssetsManageDialog.web";
+import { CardAssetDetailsDialog } from "./CardAssetDetailsDialog";
+import { CardAssetDetailsWithdrawDialog } from "./CardAssetDetailsWithdrawDialog";
+import { CardAssetsEmptyState } from "./CardAssetsEmptyState";
+import { CardAssetsManageDialog } from "./CardAssetsManageDialog";
 import type { CardAssetRow, CardAssetsViewModel } from "./types";
 
 const ICON_SIZE = 48;

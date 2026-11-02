@@ -4,7 +4,7 @@ import {
   CardAssetDetailsWithdrawDrawer,
   CardAssetTransactionDetailDrawer,
   CardAssetsManageDrawer,
-} from "@features/flow-pay-card-assets";
+} from "@features/flow-pay-card-assets/native";
 import { AddToWalletScene } from "./AddToWalletScene";
 import { FreezeScene } from "./FreezeScene";
 import { MoreScene } from "./MoreScene";
