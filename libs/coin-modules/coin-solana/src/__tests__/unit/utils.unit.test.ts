@@ -119,6 +119,7 @@ describe("utils - tuning values from the coin config", () => {
       retries: undefined,
       retryDelayMs: undefined,
     });
+    expect(chainConfigFrom(TEST_CONFIG, "solana")).not.toHaveProperty("minPriorityFee");
   });
 
   it("reads the configured values", () => {
@@ -131,6 +132,7 @@ describe("utils - tuning values from the coin config", () => {
         defaultTxFee: 4,
         blockhashRetries: 5,
         blockhashRetryDelayMs: 6,
+        minPriorityFee: 7,
       },
     };
 
@@ -145,6 +147,7 @@ describe("utils - tuning values from the coin config", () => {
       confirmationTimeoutMs: 1,
       retries: 2,
       retryDelayMs: 3,
+      minPriorityFee: 7,
     });
   });
 });
