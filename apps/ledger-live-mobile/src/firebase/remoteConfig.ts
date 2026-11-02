@@ -31,15 +31,8 @@ let configured = false;
 let lastFetchedAt: number | null = null;
 const subscribers = new Set<Subscriber>();
 
-/**
- * Applies `minimumFetchIntervalMillis: 0` and seeds defaults from {@link FEATURE_FLAGS_DEFAULTS},
- * once, before either reader touches the SDK.
- *
- * The setters cannot be awaited: RNFB queues their native calls, and both `activate` and
- * `fetchAndActivate` wait for that queue, so each reader gets its barrier for free. RNFB drops
- * the setters' promises, so a native setter failure surfaces only as an unhandled rejection and
- * is not retried.
- */
+// RNFB queues these setters natively; `activate` and `fetchAndActivate` both wait for that queue.
+// RNFB drops their promises, so a native setter failure is an unhandled rejection, not retried.
 function configure(): void {
   if (configured) return;
   rc.settings = {
@@ -76,18 +69,8 @@ export function subscribeToRemoteFlags(callback: Subscriber): () => void {
  * network access. Wired into `createFeatureFlagsMiddleware` as `readCachedFlags` so boot
  * resolves on the last values the backend actually sent instead of on compiled defaults.
  *
- * Deliberately awaits `activate(rc)` rather than `ensureInitialized(rc)`: on Android the
- * latter performs a blocking `fetchAndActivate` internally, which would put this read back on
- * the network and defeat the point. `activate` returns native constants and hydrates the
- * JS-side value map from disk. It also activates a config fetched but left unactivated when an
- * earlier session died mid-`fetchAndActivate`, still a backend value.
- *
- * Only this reader activates, so a failing `activate` never keeps {@link fetchRemoteFlags} off
- * the network. The middleware settles this read before its first fetch, so a late `activate`
- * cannot land on top of fresher fetched values.
- *
- * A failing `activate` still leaves the value map that the queued setters hydrated from disk,
- * so the read falls back to it instead of to compiled defaults.
+ * Awaits `activate(rc)`, not `ensureInitialized(rc)`, which fetches over the network on Android.
+ * It also applies a config fetched but left unactivated by a session that died mid-fetch.
  *
  * Never throws: an unreadable cache is not an error, it just means there is nothing to prime
  * from, so the caller falls through to the network.

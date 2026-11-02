@@ -51,6 +51,8 @@ async function loadModule() {
   return await import("./remoteConfig");
 }
 
+let warnSpy: jest.SpyInstance;
+
 beforeEach(() => {
   jest.resetModules();
   mockSetSettings.mockReset();
@@ -59,11 +61,11 @@ beforeEach(() => {
   mockFetchAndActivate.mockReset().mockResolvedValue(true);
   mockEnsureInitialized.mockReset().mockResolvedValue(undefined);
   mockGetAll.mockReset().mockReturnValue({});
-  jest.spyOn(console, "warn").mockImplementation(() => {});
+  warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
 });
 
 afterEach(() => {
-  jest.restoreAllMocks();
+  warnSpy.mockRestore();
 });
 
 describe("readCachedFlags", () => {
@@ -148,11 +150,24 @@ describe("readCachedFlags", () => {
 
     await expect(readCachedFlags()).resolves.toEqual({ counterValue: { enabled: true } });
     expect(mockFetchAndActivate).not.toHaveBeenCalled();
-    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(warnSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("resolves empty when the native module cannot be reached", async () => {
+  it("resolves empty when the native module cannot be reached and only defaults remain", async () => {
     mockActivate.mockRejectedValue(new Error("native module unavailable"));
+    mockGetAll.mockReturnValue({
+      feature_counter_value: value(JSON.stringify({ enabled: true }), "default"),
+    });
+
+    const { readCachedFlags } = await loadModule();
+
+    await expect(readCachedFlags()).resolves.toEqual({});
+  });
+
+  it("never throws, even when reading the value map fails", async () => {
+    mockGetAll.mockImplementation(() => {
+      throw new Error("value map unavailable");
+    });
 
     const { readCachedFlags } = await loadModule();
 
@@ -160,8 +175,6 @@ describe("readCachedFlags", () => {
   });
 
   it("does not strand the network fetch when activate keeps failing", async () => {
-    // Only the cache read activates, so an `activate` that fails on every call must still leave
-    // `fetchRemoteFlags` its documented fall-through to the network.
     mockActivate.mockRejectedValue(new Error("Internal error activating config"));
 
     const { readCachedFlags, fetchRemoteFlags } = await loadModule();
