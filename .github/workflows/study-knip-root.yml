@@ -1,0 +1,133 @@
+name: "[Study] - Knip from root"
+
+# Study branch only: times one knip run from the repo root against the per-package
+# `unimported` fan-out (`nx run-many -t unimported`). Dispatch with:
+#   gh workflow run study-knip-root.yml --ref ci/knip-root-study [-f scope=all] [-f compare-fanout=true]
+# The push trigger only registers this workflow for dispatch from a non-default branch; its job is skipped.
+
+on:
+  push:
+    branches:
+      - ci/knip-root-study
+    paths:
+      - .github/workflows/study-knip-root.yml
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "migrated = only workspaces with an `unimported` script (same set as the fan-out), all = every workspace"
+        type: choice
+        options:
+          - migrated
+          - all
+        default: migrated
+      compare-fanout:
+        description: "Also time `nx run-many -t unimported` in the same job"
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: study-knip-root-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  knip-root:
+    name: Knip from root
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ledger-wallet-8cpu-aws-public-cached
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: "--max-old-space-size=16384"
+      CI_OS: ubuntu-22.04
+      FORCE_COLOR: 0
+      SCOPE: ${{ inputs.scope || 'migrated' }}
+      COMPARE_FANOUT: ${{ inputs.compare-fanout || false }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          use-mise: true
+          gh-token: ${{ secrets.GITHUB_TOKEN }}
+          skip-nx-cache: "true"
+
+      - name: JFrog npm auth
+        uses: LedgerHQ/ledger-live/tools/actions/composites/jfrog-npm-auth@develop
+        with:
+          registry: ${{ vars.ARTIFACTORY_URL }}
+
+      - name: Install all dependencies without lifecycle scripts
+        run: |
+          start=$(date +%s)
+          pnpm install --frozen-lockfile --ignore-scripts
+          echo "INSTALL_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+
+      - name: List workspaces that run knip through an `unimported` script
+        run: |
+          git ls-files '*package.json' | grep -v node_modules | node -e '
+            const fs = require("fs");
+            const files = fs.readFileSync(0, "utf8").trim().split("\n");
+            const workspaces = files.flatMap(file => {
+              const script = JSON.parse(fs.readFileSync(file, "utf8")).scripts?.unimported ?? "";
+              const match = script.match(/-W\s+(\S+)/);
+              return match ? [match[1]] : [];
+            });
+            fs.writeFileSync("knip-workspaces.txt", workspaces.join("\n") + "\n");
+            console.log(`${workspaces.length} workspaces`);
+          '
+
+      - name: Knip from root
+        run: |
+          args=()
+          if [ "$SCOPE" = "migrated" ]; then
+            while read -r ws; do args+=(-W "$ws"); done < knip-workspaces.txt
+          fi
+          start=$(date +%s)
+          set +e
+          pnpm exec knip --no-exit-code --no-progress --duration --memory "${args[@]}" 2>&1 | tee knip-root.log
+          echo "ROOT_EXIT=${PIPESTATUS[0]}" >> "$GITHUB_ENV"
+          echo "ROOT_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+
+      - name: Per-package fan-out (nx run-many -t unimported)
+        if: env.COMPARE_FANOUT == 'true'
+        run: |
+          start=$(date +%s)
+          set +e
+          pnpm exec nx run-many -t unimported --skip-nx-cache 2>&1 | tee knip-fanout.log
+          echo "FANOUT_EXIT=${PIPESTATUS[0]}" >> "$GITHUB_ENV"
+          echo "FANOUT_SECONDS=$(( $(date +%s) - start ))" >> "$GITHUB_ENV"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "## Knip from root"
+            echo
+            echo "| Step | Seconds | Exit |"
+            echo "| --- | --- | --- |"
+            echo "| pnpm install --ignore-scripts | ${INSTALL_SECONDS:-} | |"
+            echo "| knip from root (scope: $SCOPE, $(wc -l < knip-workspaces.txt) migrated workspaces) | ${ROOT_SECONDS:-} | ${ROOT_EXIT:-} |"
+            if [ "$COMPARE_FANOUT" = "true" ]; then
+              echo "| nx run-many -t unimported | ${FANOUT_SECONDS:-} | ${FANOUT_EXIT:-} |"
+            fi
+            echo
+            echo "Runner: ledger-wallet-8cpu-aws-public-cached, nproc reports $(nproc)."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: knip-root-study
+          path: |
+            knip-root.log
+            knip-fanout.log
+            knip-workspaces.txt
+          if-no-files-found: warn
