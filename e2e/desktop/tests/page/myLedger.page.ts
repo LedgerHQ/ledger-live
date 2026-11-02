@@ -87,6 +87,13 @@ export class MyLedgerPage extends AppPage {
     this.page.locator(`[id="managerAppsList-${app.name}"]`);
 
   private readonly updateFirmwareButton = this.page.getByTestId("manager-update-firmware-button");
+  private readonly firmwareUpdateDrawer = this.page.getByTestId("firmware-update-container");
+  private readonly installFirmwareUpdateButton =
+    this.firmwareUpdateDrawer.getByTestId("modal-continue-button");
+  private readonly firmwareUpdateDone = this.page.getByTestId("firmware-update-done");
+  private readonly finishFirmwareUpdateButton = this.firmwareUpdateDrawer.getByRole("button", {
+    name: "Finish",
+  });
 
   private readonly customImageInput = this.page.getByTestId("custom-image-import-image-input");
   private readonly cropContinueButton = this.page.getByTestId("custom-image-crop-continue-button");
@@ -359,5 +366,15 @@ export class MyLedgerPage extends AppPage {
   @step("Expect a firmware update to be offered")
   async expectFirmwareUpdateOffered() {
     await expect(this.updateFirmwareButton).toBeVisible();
+  }
+
+  /** The banner opens the release notes first; the update only starts from their install button. */
+  @step("Update the device OS")
+  async updateFirmware() {
+    await this.updateFirmwareButton.click();
+    await this.installFirmwareUpdateButton.click();
+    await expect(this.firmwareUpdateDone).toBeVisible();
+    await this.finishFirmwareUpdateButton.click();
+    await expect(this.firmwareUpdateDrawer).toBeHidden();
   }
 }
