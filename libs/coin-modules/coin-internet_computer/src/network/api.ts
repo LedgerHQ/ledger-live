@@ -13,7 +13,6 @@ import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import {
   FETCH_TXNS_LIMIT,
-  ICP_NETWORK_URL,
   MAINNET_GOVERNANCE_CANISTER_ID,
   MAINNET_INDEX_CANISTER_ID,
   MAINNET_LEDGER_CANISTER_ID,
@@ -52,13 +51,13 @@ function requestIdFromHex(hex: string): RequestId {
 // itself, which is the trust boundary for local dev. It is deliberately NOT fetched from the boundary
 // node whose replies we verify: doing so would let a compromised boundary supply both a forged
 // certificate and a matching forged root, defeating certificate verification.
-async function getRootKey(): Promise<Uint8Array> {
-  const agent = await getAgent(ICP_NETWORK_URL);
+async function getRootKey(host: string): Promise<Uint8Array> {
+  const agent = await getAgent(host);
   invariant(agent.rootKey, "[ICP](getRootKey) Root key unavailable");
   return agent.rootKey;
 }
 
-export const fetchBlockHeight = async (): Promise<BigNumber> => {
+export const fetchBlockHeight = async (host: string): Promise<BigNumber> => {
   const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
   const queryBlocksRawRequest = {
     start: BigInt(0),
@@ -68,7 +67,7 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
   const queryBlocksIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "query_blocks");
   const queryBlocksargs = encodeCanisterIdlFunc(queryBlocksIdlFunc, [queryBlocksRawRequest]);
 
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(host);
   const blockHeightRes = await agent.query(canisterId, {
     arg: queryBlocksargs,
     methodName: "query_blocks",
@@ -97,6 +96,7 @@ export const fetchBlockHeight = async (): Promise<BigNumber> => {
  * carries the call's expiry) or been rate-limited — so it counts as no answer, and the poll goes on.
  */
 export const broadcastTxn = async (
+  host: string,
   payload: Buffer,
   canisterId: string,
   type: "call" | "read_state",
@@ -104,7 +104,7 @@ export const broadcastTxn = async (
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
   // The IC serves the synchronous call on v3 but read_state only on v2 (there is no v3 read_state).
   const version = type === "read_state" ? "v2" : "v3";
-  const res = await fetch(`${ICP_NETWORK_URL}/api/${version}/canister/${canisterId}/${type}`, {
+  const res = await fetch(`${host}/api/${version}/canister/${canisterId}/${type}`, {
     body: payload as unknown as BodyInit,
     method: "POST",
     headers: {
@@ -127,8 +127,8 @@ export const broadcastTxn = async (
 };
 
 /** The account's balance in e8s, or undefined when the index canister did not answer. */
-export const queryBalance = async (address: string): Promise<bigint | undefined> => {
-  const agent = await getAgent(ICP_NETWORK_URL);
+export const queryBalance = async (host: string, address: string): Promise<bigint | undefined> => {
+  const agent = await getAgent(host);
   const indexCanister = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
   const getBalanceIdlFunc = getCanisterIdlFunc(indexIdlFactory, "get_account_identifier_balance");
   const getBalanceArgs = encodeCanisterIdlFunc(getBalanceIdlFunc, [address]);
@@ -151,8 +151,8 @@ export const queryBalance = async (address: string): Promise<bigint | undefined>
  * The account's balance in e8s, read from the ledger itself, as a neuron refresh reads it. Unlike
  * {@link queryBalance}, it does not lag behind the ledger. Throws when the query is not answered.
  */
-export const queryLedgerBalance = async (address: string): Promise<bigint> => {
-  const agent = await getAgent(ICP_NETWORK_URL);
+export const queryLedgerBalance = async (host: string, address: string): Promise<bigint> => {
+  const agent = await getAgent(host);
   const func = getCanisterIdlFunc(ledgerIdlFactory, "account_balance");
   const res = await agent.query(Principal.fromText(MAINNET_LEDGER_CANISTER_ID), {
     arg: encodeCanisterIdlFunc(func, [{ account: Buffer.from(address, "hex") }]),
@@ -170,9 +170,10 @@ export const queryLedgerBalance = async (address: string): Promise<bigint> => {
  * is not answered, so no answer is never read as "no neuron".
  */
 export const findNeuronIdBySubaccount = async (
+  host: string,
   subaccount: Uint8Array,
 ): Promise<string | undefined> => {
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(host);
   const func = getCanisterIdlFunc(governanceIdlFactory, "list_neurons");
   const res = await agent.query(Principal.fromText(MAINNET_GOVERNANCE_CANISTER_ID), {
     arg: encodeCanisterIdlFunc(func, [
@@ -198,8 +199,8 @@ export const findNeuronIdBySubaccount = async (
 };
 
 // The account bridge reads an unanswered balance query as 0 rather than failing the sync.
-export const fetchBalance = async (address: string): Promise<BigNumber> =>
-  BigNumber(((await queryBalance(address)) ?? 0n).toString());
+export const fetchBalance = async (host: string, address: string): Promise<BigNumber> =>
+  BigNumber(((await queryBalance(host, address)) ?? 0n).toString());
 
 export interface TxnsPage {
   /** Newest first. */
@@ -213,11 +214,12 @@ export interface TxnsPage {
  * the page begins with the newest transaction older than it, or with the newest one when absent.
  */
 export const fetchTxnsPage = async (
+  host: string,
   address: string,
   start: bigint | undefined,
   maxResults: number = FETCH_TXNS_LIMIT,
 ): Promise<TxnsPage> => {
-  const agent = await getAgent(ICP_NETWORK_URL);
+  const agent = await getAgent(host);
   const canisterId = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
   const transactionsRawRequest = {
     account_identifier: address,
@@ -252,6 +254,7 @@ export const fetchTxnsPage = async (
 };
 
 export const fetchTxns = async (
+  host: string,
   address: string,
   startBlockHeight: bigint,
   stopBlockHeight = BigInt(0),
@@ -260,12 +263,17 @@ export const fetchTxns = async (
     return [];
   }
 
-  const { transactions } = await fetchTxnsPage(address, startBlockHeight);
+  const { transactions } = await fetchTxnsPage(host, address, startBlockHeight);
   if (transactions.length === 0) {
     return [];
   }
 
-  const nextTxns = await fetchTxns(address, transactions.at(-1)?.id ?? BigInt(0), stopBlockHeight);
+  const nextTxns = await fetchTxns(
+    host,
+    address,
+    transactions.at(-1)?.id ?? BigInt(0),
+    stopBlockHeight,
+  );
 
   return [...transactions, ...nextTxns];
 };
@@ -281,8 +289,11 @@ interface QueryEncodedBlocksResponse {
  * its most recent blocks; for an older one it answers with the archive canister that holds it,
  * which is queried in turn.
  */
-export const fetchEncodedBlock = async (height: bigint): Promise<Uint8Array | undefined> => {
-  const agent = await getAgent(ICP_NETWORK_URL);
+export const fetchEncodedBlock = async (
+  host: string,
+  height: bigint,
+): Promise<Uint8Array | undefined> => {
+  const agent = await getAgent(host);
   const ledgerCanister = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
   const queryIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "query_encoded_blocks");
   const args = { start: height, length: BigInt(1) };
@@ -378,6 +389,7 @@ const throwIfRejectedBeforeReplication = (body: SyncCallBody): void => {
  * reads/claims may retry, non-idempotent governance ops must surface it as unconfirmed (not success).
  */
 export const readReplyFromCanister = async (
+  host: string,
   callBlob: Buffer,
   readStateBlob: Buffer | undefined,
   canisterIdStr: string,
@@ -385,9 +397,9 @@ export const readReplyFromCanister = async (
 ): Promise<Uint8Array | null> => {
   const canisterId = Principal.fromText(canisterIdStr);
   const requestId = requestIdFromHex(requestIdHex);
-  const rootKey = await getRootKey();
+  const rootKey = await getRootKey(host);
 
-  const callRes = await broadcastTxn(callBlob, canisterIdStr, "call");
+  const callRes = await broadcastTxn(host, callBlob, canisterIdStr, "call");
   if (callRes) {
     const top = Cbor.decode<SyncCallBody>(callRes);
     throwIfRejectedBeforeReplication(top);
@@ -402,7 +414,7 @@ export const readReplyFromCanister = async (
   if (!readStateBlob) return null;
   for (let attempt = 0; attempt < READ_STATE_POLL_ATTEMPTS; attempt += 1) {
     await delay(READ_STATE_POLL_INTERVAL_MS);
-    const readStateRes = await broadcastTxn(readStateBlob, canisterIdStr, "read_state");
+    const readStateRes = await broadcastTxn(host, readStateBlob, canisterIdStr, "read_state");
     if (!readStateRes) continue;
     const { certificate } = Cbor.decode<{ certificate?: Uint8Array }>(readStateRes);
     if (!certificate) continue;
@@ -428,6 +440,7 @@ export interface LedgerTransferOutcome {
  * transfer was for.
  */
 export const readTransferOutcome = async (
+  host: string,
   syncCallResponse: Uint8Array,
   transferRequestIdHex: string,
 ): Promise<LedgerTransferOutcome> => {
@@ -440,7 +453,7 @@ export const readTransferOutcome = async (
     "[ICP](readTransferOutcome) Decoding failed",
   );
 
-  const reply = await terminalReply(top.certificate, canisterId, requestId, await getRootKey());
+  const reply = await terminalReply(top.certificate, canisterId, requestId, await getRootKey(host));
   invariant(reply, "[ICP](readTransferOutcome) Reply status not found");
 
   const transferIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "transfer");
@@ -463,6 +476,7 @@ export const throwIfLedgerTransferRefused = (outcome: LedgerTransferOutcome): vo
  * retry after a transfer that succeeded but whose claim timed out. Returns the neuron id.
  */
 export const claimOrRefreshNeuronFromAccount = async (
+  host: string,
   controller: Principal,
   memo: bigint,
 ): Promise<bigint | undefined> => {
@@ -492,6 +506,7 @@ export const claimOrRefreshNeuronFromAccount = async (
   let reply: Uint8Array | null;
   try {
     reply = await readReplyFromCanister(
+      host,
       Buffer.from(Cbor.encode({ content })),
       Buffer.from(Cbor.encode({ content: readStateContent })),
       MAINNET_GOVERNANCE_CANISTER_ID,

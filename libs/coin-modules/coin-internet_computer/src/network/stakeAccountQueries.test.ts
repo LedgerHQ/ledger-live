@@ -2,6 +2,7 @@ import { Cbor, HttpAgent } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
+import { ICP_NETWORK_URL } from "../consts";
 import { findNeuronIdBySubaccount, queryLedgerBalance } from "./api";
 import {
   decodeCanisterIdlArgs,
@@ -74,7 +75,7 @@ describe("findNeuronIdBySubaccount", () => {
   it("asks governance for the neuron of that subaccount alone", async () => {
     server.use(answering(listing([])));
 
-    await findNeuronIdBySubaccount(SUBACCOUNT);
+    await findNeuronIdBySubaccount(ICP_NETWORK_URL, SUBACCOUNT);
 
     expect(received).toHaveLength(1);
     expect(received[0].content.method_name).toBe("list_neurons");
@@ -95,13 +96,13 @@ describe("findNeuronIdBySubaccount", () => {
   it("returns the id of the neuron listed for it", async () => {
     server.use(answering(listing([[123n, NEURON_INFO]])));
 
-    await expect(findNeuronIdBySubaccount(SUBACCOUNT)).resolves.toBe("123");
+    await expect(findNeuronIdBySubaccount(ICP_NETWORK_URL, SUBACCOUNT)).resolves.toBe("123");
   });
 
   it("returns undefined when no neuron is listed", async () => {
     server.use(answering(listing([])));
 
-    await expect(findNeuronIdBySubaccount(SUBACCOUNT)).resolves.toBeUndefined();
+    await expect(findNeuronIdBySubaccount(ICP_NETWORK_URL, SUBACCOUNT)).resolves.toBeUndefined();
   });
 
   it("throws when governance rejects the query", async () => {
@@ -109,7 +110,9 @@ describe("findNeuronIdBySubaccount", () => {
       answering({ status: "rejected", reject_code: 5, reject_message: "busy", error_code: "IC0" }),
     );
 
-    await expect(findNeuronIdBySubaccount(SUBACCOUNT)).rejects.toThrow(/Query failed|busy/);
+    await expect(findNeuronIdBySubaccount(ICP_NETWORK_URL, SUBACCOUNT)).rejects.toThrow(
+      /Query failed|busy/,
+    );
   });
 });
 
@@ -125,7 +128,7 @@ describe("queryLedgerBalance", () => {
       }),
     );
 
-    await expect(queryLedgerBalance(ACCOUNT)).resolves.toBe(42n);
+    await expect(queryLedgerBalance(ICP_NETWORK_URL, ACCOUNT)).resolves.toBe(42n);
     expect(received[0].content.method_name).toBe("account_balance");
     const [{ account }] = decodeCanisterIdlArgs<[{ account: Uint8Array }]>(
       accountBalance,
@@ -139,6 +142,6 @@ describe("queryLedgerBalance", () => {
       answering({ status: "rejected", reject_code: 5, reject_message: "busy", error_code: "IC0" }),
     );
 
-    await expect(queryLedgerBalance(ACCOUNT)).rejects.toThrow(/Query failed|busy/);
+    await expect(queryLedgerBalance(ICP_NETWORK_URL, ACCOUNT)).rejects.toThrow(/Query failed|busy/);
   });
 });

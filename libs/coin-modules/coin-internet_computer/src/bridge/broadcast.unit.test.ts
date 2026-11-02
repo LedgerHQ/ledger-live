@@ -1,5 +1,5 @@
-import { broadcast } from "./broadcast";
-import { MAINNET_LEDGER_CANISTER_ID } from "../consts";
+import { buildBroadcast } from "./broadcast";
+import { ICP_NETWORK_URL, MAINNET_LEDGER_CANISTER_ID } from "../consts";
 import { broadcastTxn, readTransferOutcome } from "../network/api";
 
 // The ledger's verdict is read by a mock; what is made of it is the real thing.
@@ -8,6 +8,8 @@ jest.mock("../network/api", () => ({
   readTransferOutcome: jest.fn(),
   throwIfLedgerTransferRefused: jest.requireActual("../network/api").throwIfLedgerTransferRefused,
 }));
+
+const broadcast = buildBroadcast(() => ICP_NETWORK_URL);
 
 describe("broadcast", () => {
   beforeEach(() => {
@@ -33,12 +35,17 @@ describe("broadcast", () => {
     expect(result).toEqual({ extra: { memo: 0 } });
     expect(broadcastTxn).toHaveBeenCalledTimes(1);
     expect(broadcastTxn).toHaveBeenCalledWith(
+      ICP_NETWORK_URL,
       Buffer.from("00", "hex"),
       MAINNET_LEDGER_CANISTER_ID,
       "call",
     );
     expect(readTransferOutcome).toHaveBeenCalledTimes(1);
-    expect(readTransferOutcome).toHaveBeenCalledWith(new Uint8Array([1, 2, 3]), "ab".repeat(32));
+    expect(readTransferOutcome).toHaveBeenCalledWith(
+      ICP_NETWORK_URL,
+      new Uint8Array([1, 2, 3]),
+      "ab".repeat(32),
+    );
   });
 
   it("rejects when transfer reply is Err (e.g. insufficient funds)", async () => {
@@ -62,6 +69,10 @@ describe("broadcast", () => {
     ).rejects.toThrow(/InsufficientFunds/);
 
     expect(broadcastTxn).toHaveBeenCalledTimes(1);
-    expect(readTransferOutcome).toHaveBeenCalledWith(new Uint8Array([1, 2, 3]), "ab".repeat(32));
+    expect(readTransferOutcome).toHaveBeenCalledWith(
+      ICP_NETWORK_URL,
+      new Uint8Array([1, 2, 3]),
+      "ab".repeat(32),
+    );
   });
 });

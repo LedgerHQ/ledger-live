@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { mapTxToOps } from "../bridge/bridgeHelpers/account";
+import { ICP_NETWORK_URL } from "../consts";
 import { fetchTxnsPage } from "../network/api";
 import type { Operation, TransactionWithId } from "../network/idl/index.types";
 import { getBlockInfo } from "./getBlockInfo";
@@ -132,9 +133,9 @@ describe("listOperations", () => {
     mockFetchTxnsPage.mockResolvedValue({ transactions: [txInfo], oldestTxId: 30n });
     mockGetBlockInfo.mockResolvedValue({ height: 30, hash: "h", time: new Date(5) });
 
-    const { items } = await listOperations(ME, { minHeight: 0 });
+    const { items } = await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0 });
 
-    expect(mockGetBlockInfo).toHaveBeenCalledWith(30);
+    expect(mockGetBlockInfo).toHaveBeenCalledWith(ICP_NETWORK_URL, 30);
     expect(items[0].tx.date).toEqual(new Date(5));
     expect(items[0].tx.block.time).toEqual(new Date(5));
   });
@@ -142,9 +143,9 @@ describe("listOperations", () => {
   it("queries the index with the lowercase address", async () => {
     mockFetchTxnsPage.mockResolvedValue({ transactions: [], oldestTxId: undefined });
 
-    await listOperations(ME.toUpperCase(), { minHeight: 0 });
+    await listOperations(ICP_NETWORK_URL, ME.toUpperCase(), { minHeight: 0 });
 
-    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ME, undefined, 100);
+    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ICP_NETWORK_URL, ME, undefined, 100);
   });
 
   it("returns the page newest first with the last id as cursor", async () => {
@@ -153,9 +154,9 @@ describe("listOperations", () => {
       oldestTxId: 10n,
     });
 
-    const page = await listOperations(ME, { minHeight: 0 });
+    const page = await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0 });
 
-    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ME, undefined, 100);
+    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ICP_NETWORK_URL, ME, undefined, 100);
     expect(page.items.map(op => op.tx.block.height)).toEqual([30, 20]);
     expect(page.next).toBe("20");
   });
@@ -163,17 +164,17 @@ describe("listOperations", () => {
   it("resumes after the cursor and clamps the limit to one index query", async () => {
     mockFetchTxnsPage.mockResolvedValue({ transactions: [], oldestTxId: 10n });
 
-    await listOperations(ME, { minHeight: 0, cursor: "20", limit: 5000 });
+    await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0, cursor: "20", limit: 5000 });
 
-    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ME, 20n, 100);
+    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ICP_NETWORK_URL, ME, 20n, 100);
   });
 
   it("rounds a fractional limit down to a whole number of transactions", async () => {
     mockFetchTxnsPage.mockResolvedValue({ transactions: [], oldestTxId: 10n });
 
-    await listOperations(ME, { minHeight: 0, limit: 2.5 });
+    await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0, limit: 2.5 });
 
-    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ME, undefined, 2);
+    expect(mockFetchTxnsPage).toHaveBeenCalledWith(ICP_NETWORK_URL, ME, undefined, 2);
   });
 
   it("ends the stream on the account's oldest transaction", async () => {
@@ -182,13 +183,16 @@ describe("listOperations", () => {
       oldestTxId: 10n,
     });
 
-    expect((await listOperations(ME, { minHeight: 0 })).next).toBeUndefined();
+    expect((await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0 })).next).toBeUndefined();
   });
 
   it("ends the stream on an empty page", async () => {
     mockFetchTxnsPage.mockResolvedValue({ transactions: [], oldestTxId: undefined });
 
-    expect(await listOperations(ME, { minHeight: 0 })).toEqual({ items: [], next: undefined });
+    expect(await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0 })).toEqual({
+      items: [],
+      next: undefined,
+    });
   });
 
   it("keeps operations at minHeight and stops below it", async () => {
@@ -201,7 +205,7 @@ describe("listOperations", () => {
       oldestTxId: 1n,
     });
 
-    const page = await listOperations(ME, { minHeight: 20 });
+    const page = await listOperations(ICP_NETWORK_URL, ME, { minHeight: 20 });
 
     expect(page.items.map(op => op.tx.block.height)).toEqual([30, 20]);
     expect(page.next).toBeUndefined();
@@ -213,19 +217,22 @@ describe("listOperations", () => {
       oldestTxId: 1n,
     });
 
-    expect(await listOperations(ME, { minHeight: 0 })).toEqual({ items: [], next: "30" });
+    expect(await listOperations(ICP_NETWORK_URL, ME, { minHeight: 0 })).toEqual({
+      items: [],
+      next: "30",
+    });
   });
 
   it("refuses ascending order", async () => {
-    await expect(listOperations(ME, { minHeight: 0, order: "asc" })).rejects.toThrow(
-      /ascending order is not supported/,
-    );
+    await expect(
+      listOperations(ICP_NETWORK_URL, ME, { minHeight: 0, order: "asc" }),
+    ).rejects.toThrow(/ascending order is not supported/);
   });
 
   it("refuses a cursor that is not a transaction id", async () => {
-    await expect(listOperations(ME, { minHeight: 0, cursor: "abc" })).rejects.toThrow(
-      /Invalid cursor/,
-    );
+    await expect(
+      listOperations(ICP_NETWORK_URL, ME, { minHeight: 0, cursor: "abc" }),
+    ).rejects.toThrow(/Invalid cursor/);
     expect(mockFetchTxnsPage).not.toHaveBeenCalled();
   });
 });
