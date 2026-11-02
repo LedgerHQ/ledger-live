@@ -15,12 +15,14 @@
     "./shared": "./shared.mts",
     "./support": "./support.mts",
     "./tools": "./tools.mts",
+    "./restricted-imports": "./restricted-imports.mts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
   "scripts": {
     "format": "oxfmt *.mts src",
     "format:check": "oxfmt *.mts src --check",
+    "lint": "oxlint *.mts src",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

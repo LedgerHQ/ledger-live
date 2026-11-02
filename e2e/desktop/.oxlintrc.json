@@ -1,5 +1,6 @@
 {
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../support/lint/restricted-imports/relative-imports.json"],
   "env": {
     "browser": true,
     "node": true
@@ -30,17 +31,6 @@
       }
     ],
     "unicorn/no-useless-fallback-in-spread": "off",
-    "unicorn/no-useless-spread": "off",
-    "eslint/no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          {
-            "group": ["**/../**"],
-            "message": "Relative imports are restricted. Please use bare imports or path aliases instead."
-          }
-        ]
-      }
-    ]
+    "unicorn/no-useless-spread": "off"
   }
 }
