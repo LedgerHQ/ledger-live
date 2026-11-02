@@ -6,10 +6,6 @@ import { shareViewKeyCommand } from "@ledgerhq/live-e2e-shared/families/aleo";
 
 const nativeSendTransactions: NewSendFlowEntry[] = [
   {
-    transaction: new Transaction(Account.sep_ETH_1, Account.sep_ETH_2, "0.00001", Fee.SLOW),
-    xrayTicket: "B2CQA-2574",
-  },
-  {
     transaction: new Transaction(Account.DOGE_1, Account.DOGE_2, "0.01", Fee.SLOW),
     xrayTicket: "B2CQA-2573",
   },

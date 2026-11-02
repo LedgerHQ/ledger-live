@@ -555,19 +555,6 @@ export class Account {
     accountPath: "44'/1729'/3'/0'",
   });
 
-  static readonly sep_ETH_1 = new Account({
-    currency: Currency.sepETH,
-    accountName: "Ethereum Sepolia 1",
-    index: 0,
-    accountPath: "44'/60'/0'/0/0",
-  });
-  static readonly sep_ETH_2 = new Account({
-    currency: Currency.sepETH,
-    accountName: "Ethereum Sepolia 2",
-    index: 1,
-    accountPath: "44'/60'/0'/1/0",
-  });
-
   static readonly SUI_1 = new Account({
     currency: Currency.SUI,
     accountName: "Sui 1",

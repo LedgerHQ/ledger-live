@@ -66,13 +66,6 @@ export class Currency {
     [Network.ETHEREUM],
     "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
   );
-  static readonly sepETH = new Currency(
-    "Ethereum Sepolia",
-    "ETH",
-    "ethereum_sepolia",
-    AppInfos.ETHEREUM_SEPOLIA,
-    [Network.ETHEREUM_SEPOLIA],
-  );
   static readonly ETC = new Currency(
     "Ethereum Classic",
     "ETC",
@@ -282,7 +275,6 @@ export class Currency {
 }
 
 const CURRENCY_TEST_LABELS = new Map<Currency, string>([
-  [Currency.sepETH, "ETH (Sepolia)"],
   [Currency.BASE, "ETH (Base)"],
   [Currency.ETH_USDT, "USDT (Ethereum)"],
   [Currency.ETH_USDC, "USDC (Ethereum)"],

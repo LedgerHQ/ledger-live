@@ -182,14 +182,6 @@ export const specs: Specs = {
     },
     dependencies: [],
   },
-  Ethereum_Sepolia: {
-    currency: getCryptoCurrencyById("ethereum_sepolia"),
-    appQuery: {
-      model: getSpeculosModel(),
-      appName: "Ethereum",
-    },
-    dependencies: [],
-  },
   Ethereum_Classic: {
     currency: getCryptoCurrencyById("ethereum_classic"),
     appQuery: {
@@ -1239,7 +1231,6 @@ export const expectValidAddressDevice = withDeviceController(
 export async function signSendTransaction(tx: Transaction) {
   const currencyId = tx.accountToDebit.currency.id;
   switch (currencyId) {
-    case Currency.sepETH.id:
     case Currency.BASE.id:
     case Currency.POL.id:
     case Currency.ETH.id:
