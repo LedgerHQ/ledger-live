@@ -54,7 +54,7 @@ export class ModularAssetDialog extends Dialog {
     await expect(row).toBeVisible();
     await this.softExpect(async soft => {
       await soft(row).toContainText("$***");
-      await soft(row).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
+      await soft(row).toContainText(new RegExp(String.raw`\*\*\*\s+${ticker}`, "i"));
     });
   }
 

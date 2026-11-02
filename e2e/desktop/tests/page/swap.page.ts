@@ -433,7 +433,7 @@ export class SwapPage extends WebViewAppPage {
         current && (!max || current.rate - current.fees > max.rate - max.fees) ? current : max,
       null,
     );
-    await this.softExpect(async soft => {
+    await this.softExpect(soft => {
       soft(bestOffer?.quote).toMatch(quoteContainers[0]);
     });
   }
@@ -865,7 +865,7 @@ export class SwapPage extends WebViewAppPage {
   async checkExportedFileContents(swap: Swap, provider: SwapProvider, id: string) {
     const fileContents = await readFile(SwapPage.EXPORT_ARTIFACT_PATH, "utf-8");
 
-    await this.softExpect(async soft => {
+    await this.softExpect(soft => {
       for (const expected of [
         provider.name,
         id,
@@ -925,11 +925,8 @@ export class SwapPage extends WebViewAppPage {
     tag: Locator,
     enabled: boolean,
   ) {
-    if (enabled) {
-      await soft(tag).not.toHaveClass(/cursor-not-allowed/);
-    } else {
-      await soft(tag).toHaveClass(/cursor-not-allowed/);
-    }
+    const tagMatcher = soft(tag);
+    await (enabled ? tagMatcher.not : tagMatcher).toHaveClass(/cursor-not-allowed/);
   }
 
   // Hovers a trigger and asserts the tooltip text. Radix keeps a just-left
@@ -985,13 +982,15 @@ export class SwapPage extends WebViewAppPage {
     await this.hoverAmountField();
     const webview = await this.getWebView();
     await this.softExpect(async soft => {
-      for (const key of ["25%", "50%", "75%"] as const) {
-        await this.softExpectEnabledByCursorClass(
-          soft,
-          webview.getByTestId(this.percentageButtonTestId(key)),
-          expected,
-        );
-      }
+      await Promise.all(
+        (["25%", "50%", "75%"] as const).map(key =>
+          this.softExpectEnabledByCursorClass(
+            soft,
+            webview.getByTestId(this.percentageButtonTestId(key)),
+            expected,
+          ),
+        ),
+      );
     });
   }
 
@@ -1057,7 +1056,7 @@ export class SwapPage extends WebViewAppPage {
     await expect(balance).toBeVisible();
     await this.softExpect(
       async soft => {
-        await soft(balance).toContainText(new RegExp(`\\*\\*\\*\\s+${ticker}`, "i"));
+        await soft(balance).toContainText(new RegExp(String.raw`\*\*\*\s+${ticker}`, "i"));
       },
       { timeout: TIMEOUT.medium },
     );
