@@ -1,5 +1,6 @@
 import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import type { BitcoinCoinConfig } from "@ledgerhq/coin-bitcoin/config";
+import { addSellOperation } from "../../../exchange/sell/sellOperations";
 import { getBitcoinCoinConfig } from "../coinConfig";
 import { isEditableOperation, isStuckOperation, getStuckAccountAndOperation } from "./operation";
 
@@ -72,6 +73,96 @@ describe("isEditableOperation", () => {
     expect(isEditableOperation(account, makeOperation({ type: "IN", blockHeight: null }))).toBe(
       false,
     );
+  });
+
+  it("returns false for an operation broadcast by a sell flow", () => {
+    const sellAccount = makeAccount({ sellOperationIds: ["op-1"] });
+    expect(isEditableOperation(sellAccount, makeOperation({ id: "op-1" }))).toBe(false);
+    expect(isEditableOperation(sellAccount, makeOperation({ id: "op-2" }))).toBe(true);
+  });
+
+  describe("when a pending sell spends unconfirmed change", () => {
+    const send = makeOperation({ id: "send", hash: "a", extra: { inputs: ["confirmed-0"] } });
+    const relay = makeOperation({ id: "relay", hash: "b", extra: { inputs: ["a-1"] } });
+    const other = makeOperation({ id: "other", hash: "c", extra: { inputs: ["confirmed-1"] } });
+
+    it("returns false for the send the sell spends from", () => {
+      const sell = makeOperation({ id: "sell", hash: "d", extra: { inputs: ["a-1"] } });
+      const sellAccount = makeAccount({
+        sellOperationIds: ["sell"],
+        pendingOperations: [sell, send, other],
+      });
+
+      expect(isEditableOperation(sellAccount, send)).toBe(false);
+      expect(isEditableOperation(sellAccount, other)).toBe(true);
+    });
+
+    it("returns false for every unconfirmed transaction up the chain", () => {
+      const sell = makeOperation({ id: "sell", hash: "d", extra: { inputs: ["b-1"] } });
+      const sellAccount = makeAccount({
+        sellOperationIds: ["sell"],
+        pendingOperations: [sell, relay],
+        operations: [send, other],
+      });
+
+      expect(isEditableOperation(sellAccount, relay)).toBe(false);
+      expect(isEditableOperation(sellAccount, send)).toBe(false);
+      expect(isEditableOperation(sellAccount, other)).toBe(true);
+    });
+
+    it("returns false for the send as soon as the sell is broadcast, before any sync", () => {
+      const sell = makeOperation({ id: "sell", hash: "d", extra: { inputs: ["a-1"] } });
+      const beforeSell = makeAccount({
+        id: send.accountId,
+        pendingOperations: [send],
+      });
+
+      const afterSell = addSellOperation(beforeSell, sell);
+
+      expect(isEditableOperation(beforeSell, send)).toBe(true);
+      expect(isEditableOperation(afterSell, send)).toBe(false);
+    });
+
+    it("returns false for the send when only the explorer's copy of the sell lists its inputs", () => {
+      const optimisticSell = makeOperation({ id: "sell", hash: "d", extra: { inputs: [] } });
+      const explorerSell = makeOperation({ id: "sell", hash: "d", extra: { inputs: ["a-1"] } });
+      const sellAccount = makeAccount({
+        sellOperationIds: ["sell"],
+        pendingOperations: [optimisticSell, send],
+        operations: [explorerSell],
+      });
+
+      expect(isEditableOperation(sellAccount, send)).toBe(false);
+    });
+
+    it("scans the history once for repeated checks of the same account", () => {
+      const sell = makeOperation({ id: "sell", hash: "d", extra: { inputs: ["a-1"] } });
+      let historyReads = 0;
+      const sellAccount = makeAccount({ sellOperationIds: ["sell"], pendingOperations: [sell] });
+      Object.defineProperty(sellAccount, "operations", {
+        get: () => {
+          historyReads++;
+          return [send, other];
+        },
+      });
+
+      expect(isEditableOperation(sellAccount, send)).toBe(false);
+      expect(isEditableOperation(sellAccount, other)).toBe(true);
+      expect(isEditableOperation(sellAccount, send)).toBe(false);
+      expect(historyReads).toBe(1);
+    });
+
+    it("returns true once the sell is confirmed", () => {
+      const sell = makeOperation({
+        id: "sell",
+        hash: "d",
+        blockHeight: 123456,
+        extra: { inputs: ["a-1"] },
+      });
+      const sellAccount = makeAccount({ sellOperationIds: ["sell"], operations: [sell, send] });
+
+      expect(isEditableOperation(sellAccount, send)).toBe(true);
+    });
   });
 });
 
