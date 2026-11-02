@@ -73,6 +73,19 @@ describe("createFullSyncSource", () => {
     expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
   });
 
+  it("reads the balance history of the synced account for the requested range", async () => {
+    const synced = { ...account, subAccounts: [createFixtureTokenAccount("01")] };
+    const history = await source(account, synced).read?.balanceHistory?.(target, {
+      range: "week",
+    });
+    expect(history?.range).toBe("week");
+    expect(history?.series.map(({ assetId }) => assetId)).toEqual([
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+    ]);
+    expect(syncLegacyAccount).toHaveBeenCalledTimes(1);
+  });
+
   it("fails when no legacy account backs the account", async () => {
     await expect(source(undefined).sync(target)).rejects.toThrow(FullSyncAccountNotFoundError);
     expect(syncLegacyAccount).not.toHaveBeenCalled();
