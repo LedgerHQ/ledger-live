@@ -22,7 +22,7 @@ The rules both platforms follow are in
 
 | Contract (`X.types.ts`)               | Native implementation (`X.native.tsx`)    |
 | ------------------------------------- | ----------------------------------------- |
-| Intent callback, `onOpenContacts()`   | `onPress={() => onOpenContacts()}`        |
+| Intent callback, `onOpenContacts()`   | `onPress={onOpenContacts}`                |
 | Value callback, `onSearchQueryChange` | `onChangeText={onSearchQueryChange}`      |
 | `testID`                              | `testID={testID}`                         |
 
@@ -39,7 +39,7 @@ import type { ContactsButtonProps } from "./ContactsButton.types";
 
 export function ContactsButton({ title, onOpenContacts, testID }: ContactsButtonProps) {
   return (
-    <Card type="interactive" onPress={() => onOpenContacts()} testID={testID}>
+    <Card type="interactive" onPress={onOpenContacts} testID={testID}>
       <CardHeader>
         <CardLeading>
           <CardContent>

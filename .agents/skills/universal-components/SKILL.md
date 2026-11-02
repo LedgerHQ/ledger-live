@@ -78,8 +78,6 @@ mapping table and the list of what stays in each platform file are in
 
 - **Callbacks are named after the intent** (`onEdit`, `onSelectAddress`), never after a gesture:
   R3 rejects gesture names, and [review check 3](#review-only-checks) rejects empty ones.
-- **Intent callbacks are wrapped.** Pass `() => onOpenContacts()` to the gesture prop, never
-  `onOpenContacts` itself, so the gesture's event object never reaches the contract.
 - **Value callbacks get the value.** Unwrap it from the event before calling the contract
   (`event.target.value` on web); a Lumen prop that already passes the bare value is wired directly.
 - **`testID` is the contract's name.** Each platform maps it to its own test attribute.

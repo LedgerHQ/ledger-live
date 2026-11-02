@@ -6,7 +6,7 @@ Details behind the slice part of [`domain-data`](../SKILL.md).
 
 An entity slice reaches the store through each app's root reducer. Add its state to the app
 `State` type and its reducer to `appReducer`, the `combineReducers` call, under the key its
-selectors' local root type names (`contacts` for `ContactsStateRoot`).
+selectors' local root type names (`accountOperations` for `WithAccountOperations`).
 
 | App | `State` type | `combineReducers` |
 | --- | --- | --- |
@@ -14,20 +14,24 @@ selectors' local root type names (`contacts` for `ContactsStateRoot`).
 | Mobile | [`src/reducers/types.ts`](../../../../apps/ledger-live-mobile/src/reducers/types.ts) | [`src/reducers/index.ts`](../../../../apps/ledger-live-mobile/src/reducers/index.ts) |
 
 ```ts
-import { contactsSlice, type ContactsState } from "@domain/entity-contact";
+import accountOperationsReducer, {
+  type AccountOperationsState,
+} from "@domain/entity-account-operation";
 
 export type State = {
   // ...
-  contacts: ContactsState;
+  accountOperations: AccountOperationsState;
 };
 
 const appReducer = combineReducers({
   // ...
-  contacts: contactsSlice.reducer,
+  accountOperations: accountOperationsReducer,
 });
 ```
 
-An entity with a default-exported reducer registers `contacts: contactsReducer` instead.
+`@domain/entity-contact` predates the default export, so both apps register
+`contactsSlice.reducer` for it. They also register `accountOperationsSlice.reducer` today, the same
+reducer as the default export.
 
 ## Async lifecycle in `extraReducers`
 
