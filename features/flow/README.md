@@ -52,4 +52,4 @@ Integration tests should cover app-owned wiring only: navigation, feature-flag g
 
 ## File Structure
 
-The layout of `src/` (flat or `screens/<Screen>/`, `state/`, `copy/`, `logic/`, `model/`, `exports.ts`) is in the [flow-package skill](../../.agents/skills/flow-package/SKILL.md), with an example package for each rule.
+The package layout of a flow is in the [flow-package skill](../../.agents/skills/flow-package/SKILL.md).

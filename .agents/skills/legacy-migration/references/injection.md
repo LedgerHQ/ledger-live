@@ -59,8 +59,8 @@ account type, so `@domain/entity-account` never names the legacy `Account`. The 
 
 ## Legacy consumes new
 
-Legacy code may import a new package when that moves callers forward: live-common's `apps/react.ts`
-reads flags through `@features/platform-feature-flags`, and live-common's `createFullSyncSource`
+Legacy code may import a new package when that moves callers forward: live-common's
+[`apps/react.ts`](../../../../libs/ledger-live-common/src/apps/react.ts) reads flags through `@features/platform-feature-flags`, and live-common's `createFullSyncSource`
 returns an `AccountDataSource`. `@ledgerhq/live-common` is private; for a published legacy package,
 the app injects the private new package at its composition root instead.
 

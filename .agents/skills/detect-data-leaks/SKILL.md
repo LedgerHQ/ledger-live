@@ -66,15 +66,16 @@ Treat any of these as high-risk when found in added lines:
 
 # Grep helpers (investigation only)
 
-`SRC` is the one list of folders this skill searches: the apps, every layer that ships runtime code and `devtools/`. It leaves out `support/`, which holds development-only presets and never sends data.
+`LAYERS` is a copy of the folders [`structure-flow`](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) names that ship runtime code, plus `devtools/`: keep it in step with that skill when a layer is added or removed. It leaves out `support/`, which holds development-only presets and never sends data. `SRC` adds the apps.
 
 ```bash
-SRC=(apps shared domain features devtools)
+LAYERS=(shared domain features devtools)
+SRC=(apps "${LAYERS[@]}")
 ```
 
 **Analytics call sites in the layers:**
 ```bash
-grep -rnE "\btrack(Page)?\(|<Track(Screen)?\b" shared domain features devtools --include="*.ts" --include="*.tsx" \
+grep -rnE "\btrack(Page)?\(|<Track(Screen)?\b" "${LAYERS[@]}" --include="*.ts" --include="*.tsx" \
   | grep -vE "\.test\.|/__tests__/|/node_modules/"
 ```
 
