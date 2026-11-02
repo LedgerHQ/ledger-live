@@ -1,4 +1,4 @@
-import { Expiry, SubmitRequestType } from "@icp-sdk/core/agent";
+import { Expiry, type Nonce, SubmitRequestType } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 import {
   DEFAULT_INGRESS_EXPIRY_DELTA_IN_MSECS,
@@ -17,6 +17,8 @@ export interface UnsignedTransaction extends Record<string, unknown> {
   canister_id: Principal;
   ingress_expiry: Expiry;
   method_name: string;
+  /** Set on governance calls, whose request id would otherwise repeat within a minute. */
+  nonce?: Nonce;
   request_type: SubmitRequestType;
   sender: Principal;
 }

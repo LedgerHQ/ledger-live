@@ -1,9 +1,9 @@
-// A pinned encoding needs a fixed nonce; every other call keeps the random one.
-const mockNonce: { fixed?: Uint8Array } = {};
-jest.mock("@icp-sdk/core/agent", () => {
-  const actual = jest.requireActual("@icp-sdk/core/agent");
-  return { ...actual, makeNonce: () => mockNonce.fixed ?? actual.makeNonce() };
-});
+// Each call takes the next nonce of a sequence, or the fixed one a pinned encoding sets.
+const mockNonce: { fixed?: Uint8Array; count: number } = { count: 0 };
+jest.mock("@icp-sdk/core/agent", () => ({
+  ...jest.requireActual("@icp-sdk/core/agent"),
+  makeNonce: () => mockNonce.fixed ?? new Uint8Array(16).fill(++mockNonce.count % 256),
+}));
 
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { IDL } from "@icp-sdk/core/candid";
@@ -169,6 +169,11 @@ describe("createUnsignedListNeuronsTransaction", () => {
 });
 
 describe("governance call nonce", () => {
+  it("fits the ICP app's nonce limit of 32 bytes", () => {
+    const { makeNonce } = jest.requireActual("@icp-sdk/core/agent");
+    expect(makeNonce().length).toBeLessThanOrEqual(32);
+  });
+
   it.each([
     ["list_neurons", () => createUnsignedListNeuronsTransaction(XPUB)],
     ["manage_neuron", () => createUnsignedNeuronCommandTransaction(tx({}), XPUB)],
@@ -177,7 +182,6 @@ describe("governance call nonce", () => {
     try {
       const [first, second] = [build(), build()];
       expect(first.ingress_expiry.toBigInt()).toBe(second.ingress_expiry.toBigInt());
-      expect(first.nonce).toHaveLength(16);
       expect(bytesToHex(new Uint8Array(requestIdOf(first)))).not.toBe(
         bytesToHex(new Uint8Array(requestIdOf(second))),
       );
