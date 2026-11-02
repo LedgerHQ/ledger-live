@@ -9590,8 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "Para adicionar fundos aos seus perpétuos, é necessária uma conta Hyperliquid. Adicione uma para continuar.",
     "selectDepositCurrencyTitle" : "Selecionar ativo para depositar",
     "selectDepositCurrencyDescription" : "Qualquer ativo compatível funciona. Será trocado automaticamente se necessário.",
-    "selectWithdrawCurrencyTitle" : "Select asset to withdraw to",
-    "selectWithdrawCurrencyDescription" : "Your USDC will be swapped automatically into the asset you choose.",
+    "selectWithdrawCurrencyTitle" : "Selecionar o ativo para o qual transferir",
+    "selectWithdrawCurrencyDescription" : "Seus USDC serão trocados automaticamente pelo ativo de sua escolha.",
     "accountCount_one" : "{{count}} conta",
     "accountCount_other" : "{{count}} contas",
     "accountsAdded" : {
@@ -9650,7 +9650,7 @@
   "servicesEntryPoints" : {
     "perps" : {
       "title" : "Perpétuos",
-      "description" : "Invista com alavancagem"
+      "description" : "Investir com alavancagem"
     },
     "borrow" : {
       "title" : "Empréstimos",
@@ -10613,13 +10613,13 @@
     "emptyState" : {
       "title" : "Nenhuma atividade ainda",
       "description" : {
-        "receive" : "Comece adicionando fundos por meio de Receber.",
-        "receiveSwap" : "Comece adicionando fundos por meio de Receber ou Trocar.",
-        "receiveBuy" : "Comece adicionando fundos por meio de Receber ou Comprar.",
-        "receiveSwapBuy" : "Comece adicionando fundos por meio de Receber, Trocar ou Comprar.",
-        "swap" : "Comece adicionando fundos por meio do trocar.",
-        "buy" : "Comece adicionando fundos por meio do Comprar.",
-        "swapBuy" : "Comece adicionando fundos por meio de trocar ou comprar."
+        "receive" : "Comece adicionando fundos em Receber.",
+        "receiveSwap" : "Comece adicionando fundos em Receber ou Trocar.",
+        "receiveBuy" : "Comece adicionando fundos em Receber ou Comprar.",
+        "receiveSwapBuy" : "Comece adicionando fundos em Receber, Trocar ou Comprar.",
+        "swap" : "Comece adicionando fundos em trocar.",
+        "buy" : "Comece adicionando fundos em Comprar.",
+        "swapBuy" : "Comece adicionando fundos em trocar ou comprar."
       }
     },
     "assetPicker" : {
@@ -10643,8 +10643,8 @@
       "description" : "Saiba mais sobre a migração ou entre em contato com o suporte caso precise de assistência."
     },
     "willBeDeprecated" : {
-      "title" : "{{currencyName}} não será compatível a partir de {{date}}",
-      "description" : "Ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
+      "title" : "{{currencyName}} não será mais suportada a partir de {{date}}",
+      "description" : "O ativo ainda estará protegido pelo seu dispositivo Ledger. Saiba mais no Centro de Ajuda."
     },
     "robinhoodDisclaimer" : {
       "title" : "O saldo total não inclui dividendos ou desdobramentos de ações."
@@ -11205,21 +11205,21 @@
     "a11yTitle" : "Selecione uma ação"
   },
   "perpsWithdraw" : {
-    "title" : "Withdraw",
-    "review" : "Review",
-    "estimatedAmount" : "Withdraw ~{{value}}",
-    "inputSubText" : "Swap and withdraw via {{provider}}",
-    "selectCurrencyTitle" : "Withdraw to {{currencyTicker}}",
+    "title" : "Sacar",
+    "review" : "Avaliação",
+    "estimatedAmount" : "Sacar ~{{value}}",
+    "inputSubText" : "Trocar e sacar via {{provider}}",
+    "selectCurrencyTitle" : "Sacar para {{currencyTicker}}",
     "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
-    "selectCurrencyNoAccount" : "No account",
+    "selectCurrencyNoAccount" : "Nenhuma conta",
     "formErrors" : {
-      "insufficientBalance" : "Insufficient balance",
-      "minimumAmount" : "The minimum withdrawal is {{minAmount}} USDC.",
-      "minimumAmountUnknown" : "This amount is too low to withdraw.",
-      "lowLiquidity" : "This asset is temporarily unavailable. Try again later or choose another asset.",
-      "addressScreening" : "This withdrawal can’t be processed to this account.",
-      "quoteUnavailable" : "We can’t get a quote from {{provider}}, try with a different asset or come back later.",
-      "currenciesUnavailable" : "We can’t load the assets you can withdraw to. Try again later."
+      "insufficientBalance" : "Saldo insuficiente",
+      "minimumAmount" : "O saque mínimo é de {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Esta quantia é muito baixa para realizar o saque.",
+      "lowLiquidity" : "Este ativo está temporariamente indisponível. Tente novamente mais tarde ou escolha outro ativo.",
+      "addressScreening" : "Este saque não pode ser processado para esta conta.",
+      "quoteUnavailable" : "Não foi possível obter uma cotação do {{provider}}. Tente com um ativo diferente ou volte mais tarde.",
+      "currenciesUnavailable" : "Não foi possível carregar os ativos para os quais realizar o saque. Tente novamente mais tarde."
     }
   },
   "perpsDepositSign" : {
