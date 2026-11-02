@@ -12,6 +12,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import { useOpenAddAccountDrawer } from "LLM/features/Accounts/hooks/useOpenAddAccountDrawer";
+import { getAccountTag } from "LLM/utils/getAccountTag";
 import { buildMainAccountByIdMap } from "@ledgerhq/asset-aggregation/assetDistribution/index";
 
 export const MAX_PREVIEW_ADDRESSES = 5;
@@ -21,6 +22,7 @@ export type AddressAccountData = Readonly<{
   account: Account;
   balanceAccount: AccountLike;
   name: string;
+  tag: string | undefined;
   truncatedAddress: string;
 }>;
 
@@ -71,6 +73,7 @@ export function useAddressesViewModel(
           account: parent,
           balanceAccount: acc,
           name: accountNameWithDefaultSelector(walletState, parent),
+          tag: getAccountTag(parent),
           truncatedAddress: formatAddress(parent.freshAddress, {
             prefixLength: 4,
             suffixLength: 4,

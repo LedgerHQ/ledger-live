@@ -116,6 +116,19 @@ describe("AccountDetail hero", () => {
     expect(screen.getByTestId(`${ACTIONS}-send`)).toBeEnabled();
   });
 
+  it("shows the address type of the account above the balance", async () => {
+    renderHero({ ...btcAccount, derivationMode: "native_segwit" });
+
+    expect(await screen.findByTestId(`${HERO}-tag`)).toHaveTextContent("Native segwit");
+  });
+
+  it("shows no tag for an account without a notable address type", async () => {
+    renderHero(ethAccount);
+
+    expect(await screen.findByTestId(ACTIONS)).toBeVisible();
+    expect(screen.queryByTestId(`${HERO}-tag`)).toBeNull();
+  });
+
   it("shows Buy, Sell and Earn when the asset supports them", async () => {
     mockRamp(["bitcoin"], ["bitcoin"]);
     mockGetCanStakeCurrency.mockReturnValue(true);

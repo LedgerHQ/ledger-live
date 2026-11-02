@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { PenEdit, Settings } from "@ledgerhq/lumen-ui-react/symbols";
 import type { computeAggregatedAccountsData } from "@ledgerhq/asset-aggregation/index";
 import { accountNameWithDefaultSelector, type WalletState } from "~/renderer/reducers/wallet";
+import { getAccountTag } from "LLD/utils/getAccountTag";
 import { getAccountAssetsCurrencies } from "LLD/features/CryptoAddresses/utils/getAccountAssetsCurrencies";
 import {
   AccountAddressCell,
@@ -46,7 +47,11 @@ export function NameCell({ row }: CryptoCellProps) {
   const displayName = accountNameWithDefaultSelector(walletState, row.original);
 
   return row.original.type === "Account" ? (
-    <AggregatedAccountNameCell account={row.original} displayName={displayName} />
+    <AggregatedAccountNameCell
+      account={row.original}
+      displayName={displayName}
+      tag={getAccountTag(row.original)}
+    />
   ) : (
     <AccountNameCell account={row.original} displayName={displayName} />
   );

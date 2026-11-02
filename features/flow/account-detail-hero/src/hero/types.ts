@@ -31,11 +31,14 @@ export type AccountHeroPort = Readonly<{
   availability: AccountHeroAvailability;
   hasFunds: boolean;
   hasActivity: boolean;
+  /** Ready-to-display address type of the account ("Native segwit"...), shown above the balance. */
+  tag?: string;
   onAction: (id: AccountHeroActionId) => void;
 }>;
 
 export type AccountHeroViewModel = Readonly<{
   balance: AccountHeroBalance;
+  tag: string | undefined;
   actions: readonly QuickAction[];
   tiles: readonly QuickActionTile[];
   moreActions: readonly QuickAction[];
