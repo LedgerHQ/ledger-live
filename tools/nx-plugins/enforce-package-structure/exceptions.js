@@ -85,11 +85,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactDetailView: componentWaiver("R3", "R5"),
     ContactsEditSignerMismatchDialog: componentWaiver("R2", "R4", "R5"),
   },
-  "features/flow/pay-card-details": {
-    CardArtwork: componentWaiver("R2"),
-    CardPrimaryActionButton: componentWaiver("R1"),
-    CardTopUpButton: componentWaiver("R1"),
-  },
   "features/flow/pay-contact": {
     Contacts: componentWaiver("R2", "R3"),
     PaySuccess: componentWaiver("R2", "R4"),

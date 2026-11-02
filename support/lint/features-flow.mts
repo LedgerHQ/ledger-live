@@ -35,7 +35,6 @@ const PLATFORM_SUFFIX_WAIVERS = [
   "market-banner",
   "pay-bank-transfer",
   "pay-card-auth",
-  "pay-card-details",
   "pay-card-widget",
   "pay-contact",
   "pay-deposit",
