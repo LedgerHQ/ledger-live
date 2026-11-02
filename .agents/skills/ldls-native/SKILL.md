@@ -17,7 +17,7 @@ depend on it, not at the repo root. If the path is missing, open `ai-rules/RULES
 ## Map the contract onto Lumen
 
 The rules both platforms follow are in
-[ldls-web's contract-mapping reference](../ldls-web/references/contract-mapping.md). On native,
+[universal-components](../universal-components/SKILL.md#map-the-contract-onto-lumen). On native,
 `X.native.tsx` maps:
 
 | Contract (`X.types.ts`)               | Native implementation (`X.native.tsx`)    |

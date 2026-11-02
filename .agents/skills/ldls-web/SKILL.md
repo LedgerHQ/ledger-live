@@ -17,7 +17,8 @@ depend on it, not at the repo root. If the path is missing, open `ai-rules/RULES
 ## Map the contract onto Lumen
 
 The rules both platforms follow are in
-[references/contract-mapping.md](references/contract-mapping.md). On web, `X.web.tsx` maps:
+[universal-components](../universal-components/SKILL.md#map-the-contract-onto-lumen). On web,
+`X.web.tsx` maps:
 
 | Contract (`X.types.ts`)               | Web implementation (`X.web.tsx`)                         |
 | ------------------------------------- | -------------------------------------------------------- |
