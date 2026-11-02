@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "เปลี่ยนชื่อ",
       "viewAdvancedLogs" : "ดู Log ขั้นสูง",
+      "viewExplorer" : "ดูใน Explorer",
       "removeAccount" : "นำบัญชีออกจากพอร์ตโฟลิโอ"
     },
     "changeName" : {
@@ -325,9 +326,9 @@
       "copied" : "คัดลอกแล้ว"
     },
     "remove" : {
-      "title" : "ต้องการนำบัญชีออก?",
+      "title" : "ต้องการลบบัญชีออกจากพอร์ต?",
       "description" : "สินทรัพย์ที่เชื่อมโยงกับบัญชีนี้จะไม่แสดงในพอร์ตการลงทุนของคุณอีกต่อไป สินทรัพย์ของคุณบนบล็อกเชนไม่ได้รับผลกระทบ",
-      "confirm" : "ใช่! ลบออกจากพอร์ต",
+      "confirm" : "ใช่! ลบบัญชีออกจากพอร์ต",
       "cancel" : "เก็บไว้"
     }
   },
@@ -715,18 +716,6 @@
     "buttonTitle" : "ทดสอบ"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "ข้อมูลเพิ่มเติม",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "{{family}} Integration",
-        "subTitle" : "ดำเนินการผสานรวม {{family}} แล้วโดยทีม {{team}}",
-        "description" : "แอป Ledger Wallet เป็นแพลตฟอร์มแบบโอเพนซอร์ส",
-        "description2" : "นักพัฒนาซอฟต์แวร์จากทุกที่ในโลกสามารถเชื่อมต่อกับแอป Ledger Wallet ของเราได้",
-        "description3" : "Integration นี้ดำเนินการโดย {{team}} ด้วยความร่วมมือกับ Ledger",
-        "description3Link" : "การดำเนินการนี้เป็นความร่วมมือระหว่าง <1><0>{{team}}</0></1>และ Ledger"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} กำลัง Migrate ไปที่ {{to}} ติดตาม<0>ลิงก์</0>นี้เพื่อเรียนรู้เพิ่มเติมหรือติดต่อฝ่ายสนับสนุนหากคุณต้องการขอความช่วยเหลือ",
       "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
@@ -3024,6 +3013,7 @@
       "paidIn" : "ชำระด้วย {{currency}}",
       "nudge" : "คุณประหยัดได้ถึง {{amount}} ผ่าน {{provider}}",
       "saved" : "ประหยัดได้เมื่อใช้ {{provider}}",
+      "rentArriving" : "การเช่า Energy ของคุณกำลังอยู่ระหว่างดำเนินการ ค่าธรรมเนียมเครือข่ายจะอัปเดตเมื่อ Energy มาถึง",
       "confirm" : "ยืนยัน",
       "disclaimer" : "เมื่อใช้ {{provider}} ซึ่งเป็นผู้ให้บริการ Energy บุคคลที่ 3 จะต้องจ่ายค่าธรรมเนียมด้วย {{feeCurrency}}",
       "insufficientFunds" : "คุณมี {{feeCurrency}} ไม่เพียงพอสำหรับยอดเงินและค่าเช่า Energy ที่ต้องจ่ายให้ {{provider}}"
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "สินทรัพย์ที่ Delegate",
       "undelegatingTooltip" : "สินทรัพย์ที่ Undelegate จะต้องผ่านช่วงเวลายกเลิกการผูกมัด 10 วัน ก่อนที่จะสามารถถอนออกได้",
       "undelegating" : "การถอนที่รอดำเนินการ"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by MultiversX",
-        "moreInfo" : "ข้อมูลเพิ่มเติม",
-        "drawerTitle" : "MultiversX Integration",
-        "title" : "โทเคน MultiversX eGold (EGLD) สามารถใช้ได้แล้วบนแอป Ledger Wallet",
-        "description" : "ตอนนี้คุณสามารถรักษาโทเคน eGold (EGLD) ของคุณได้อย่างปลอดภัยและจัดการผ่านแอป Ledger Wallet",
-        "description2" : "โทเคน MultiversX eGold (EGLD) เป็นโทเคนหลักของเครือข่าย MultiversX และจะใช้สำหรับทุกอย่างตั้งแต่ธุรกรรม การ Staking, สัญญาอัจฉริยะ (Smart Contract), การกำกับดูแล (governance) ตลอดจน Reward สำหรับผู้ตรวจสอบ",
-        "description3" : "เรากำลังทำงานอย่างแข็งขันกับทีมงาน MultiversX เพื่อเพิ่มฟังก์ชันต่าง ๆ เพิ่มเติม เช่น การ Staking, การรองรับ Native ESDT (Elrond Standard Digital Token) และอื่น ๆ อีกมากมาย",
-        "website" : "บล็อกเชนที่ขยายขนาดเพื่อรองรับการใช้งานอินเทอร์เน็ต"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "ข้อมูลเพิ่มเติม",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "สามารถใช้โทเคน CELO ได้ในตอนนี้ทางแอป Ledger Wallet",
-        "description" : "ตอนนี้คุณสามารถเริ่มจัดการกับโทเคน CELO ของคุณได้อย่างปลอดภัยและรักษาความปลอดภัยผ่านแอป Ledger Wallet",
-        "description2" : "โทเคน Celo เป็นโทเคนหลักของเครือข่าย Celo และใช้สำหรับทุกอย่างตั้งแต่ธุรกรรม, Staking, และคุณสมบัติใหม่ ๆ ที่กำลังจะมีขึ้นในอนาคตอีกมากมาย",
-        "website" : "Powered by Figment"
-      }
-    },
     "lockedBalance" : "ยอดคงเหลือที่ล็อกไว้",
     "lockedTooltip" : "ต้องมีการล็อกสินทรัพย์และโหวตให้กับกลุ่มผู้ตรวจสอบก่อนรับ Reward",
     "nonvotingLockedBalance" : "ยอดคงเหลือที่ล็อกไว้และไม่สามารถโหวตได้",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "ยอดคงเหลือที่รอดำเนินการ",
       "pendingBalanceTooltip" : "จำนวนนี้ได้รับการ Unstake แล้วและอยู่ระหว่างรอความพร้อมใช้งานในตอนนี้",
       "storageUsageBalance" : "ยอดคงเหลือขั้นต่ำ",
-      "storageUsageBalanceTooltip" : "จำนวนนี้สงวนไว้สำหรับการจัดเก็บและธุรกรรม และเป็นยอดคงเหลือขั้นต่ำที่บัญชีของคุณต้องรักษาไว้เพื่อให้ยังคงใช้งานได้",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "ข้อมูลเพิ่มเติม",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "สามารถใช้โทเคน NEAR ได้ในตอนนี้ทางแอป Ledger Wallet",
-        "description" : "ตอนนี้คุณสามารถเริ่มจัดการกับโทเคน NEAR ของคุณได้อย่างปลอดภัยและรักษาความปลอดภัยผ่านแอป Ledger Wallet",
-        "description2" : "โทเคน NEAR เป็นโทเคนหลักของเครือข่าย NEAR และใช้สำหรับทุกอย่างตั้งแต่ธุรกรรม, Staking, และคุณสมบัติใหม่ ๆ ที่กำลังจะมีขึ้นในอนาคตอีกมากมาย",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "จำนวนนี้สงวนไว้สำหรับการจัดเก็บและธุรกรรม และเป็นยอดคงเหลือขั้นต่ำที่บัญชีของคุณต้องรักษาไว้เพื่อให้ยังคงใช้งานได้"
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "ยอดคงเหลือที่รอดำเนินการ",
       "pendingBalanceTooltip" : "จำนวนนี้ถูกยกเลิกการสเตคแล้ว และอยู่ระหว่างรอก่อนสามารถถอนได้",
       "storageUsageBalance" : "ยอดคงเหลือขั้นต่ำ",
-      "storageUsageBalanceTooltip" : "จำนวนนี้สงวนไว้สำหรับการจัดเก็บและการทำธุรกรรม และเป็นยอดคงเหลือขั้นต่ำที่บัญชีของคุณต้องรักษาไว้เพื่อให้ยังสามารถใช้งานได้อยู่",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "ข้อมูลเพิ่มเติม",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "สามารถใช้โทเคน SUI ได้ในตอนนี้ทางแอป Ledger Wallet",
-        "description" : "ตอนนี้คุณสามารถเริ่มจัดการกับโทเคน SUI ของคุณได้อย่างปลอดภัยผ่านแอป Ledger Wallet",
-        "description2" : "โทเคน SUI เป็นโทเคนหลักของเครือข่าย SUI และใช้สำหรับทุกอย่างตั้งแต่การทำธุรกรรม, การสเตคกิ้ง และฟีเจอร์ใหม่ ๆ ในอนาคต",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "จำนวนนี้สงวนไว้สำหรับการจัดเก็บและการทำธุรกรรม และเป็นยอดคงเหลือขั้นต่ำที่บัญชีของคุณต้องรักษาไว้เพื่อให้ยังสามารถใช้งานได้อยู่"
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "มีบางอย่างผิดปกติ โปรดเชื่อมต่ออุปกรณ์ของคุณอีกครั้ง",
       "description" : "แอป Concordium ไม่สามารถประมวลผลธุรกรรมได้ หากยังพบปัญหา โปรดติดต่อ Ledger Support"
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "โปรดป้อนเป็นจำนวนเต็มระหว่าง {{min}} ถึง {{max}}"
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "ป้อน Contract Address ของพูลที่ถูกต้องใน address.contract-name รูปแบบ"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ยาวมากเกินไป"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "ไม่สามารถส่งคำขอได้",
       "description" : "ระบบ Internet Computer ไม่รับคำขอนี้ จึงไม่มีการส่งข้อมูลและไม่มีการเปลี่ยนแปลงใด ๆ โปรดลองอีกครั้ง {{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "ธุรกรรมนี้หมดอายุแล้ว",
+      "description" : "ส่งรายการไม่ทันเวลา ยอดเงินยังคงเดิมและไม่มีการเปลี่ยนแปลง โปรดลงนามอีกครั้ง"
     },
     "ICPInvalidPercentage" : {
       "title" : "เปอร์เซ็นต์อยู่นอกช่วงที่กำหนด",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
             "step2" : "เปิดแอปบน Ledger Wallet ที่คุณต้องการซิงค์",
-            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>Ledger Sync</0> > <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> > <0>แสดง QR</0>",
+            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>ฟีเจอร์ Ledger Sync</0> > <0>แสดง QR</0>",
             "step4" : "สแกน QR Code"
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "ตรวจสอบให้แน่ใจว่าเปิดใช้งาน Ledger Sync ในแอปใดแอปหนึ่งของคุณแล้ว",
             "step2" : "เปิดแอปบน Ledger Wallet ที่คุณต้องการซิงค์",
-            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>Ledger Sync</0> > <0>ซิงค์กับแอป Ledger Live อีกแอปหนึ่ง</0> > <0>ใช้ Ledger ของคุณ</0>",
+            "step3" : "ไปที่ <0>การตั้งค่า</0> > <0>ทั่วไป</0> > <0>ฟีเจอร์ Ledger Sync</0> > <0>ใช้ Ledger ของคุณ</0>",
             "step4" : "เชื่อมต่อ Ledger ของคุณ"
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "หากต้องการเติมเงินทุนสำหรับสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps) คุณต้องมีบัญชี Hyperliquid เพิ่มบัญชีเพื่อดำเนินการต่อ",
     "selectDepositCurrencyTitle" : "เลือกสินทรัพย์ที่จะฝาก",
     "selectDepositCurrencyDescription" : "สามารถใช้สินทรัพย์ใดรับรองก็ได้ ระบบจะสวอปให้โดยอัตโนมัติหากจำเป็น",
+    "selectWithdrawCurrencyTitle" : "เลือกสินทรัพย์ที่ต้องการถอน",
+    "selectWithdrawCurrencyDescription" : "USDC ของคุณจะได้รับการสวอปเป็นสินทรัพย์ที่คุณเลือกโดยอัตโนมัติ",
     "accountCount_one" : "{{count}} บัญชี",
     "accountCount_other" : "บัญชี {{count}}",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "คริปโตวอลเล็ตที่ปลอดภัยของคุณ"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Perps",
+      "description" : "ลงทุนแบบมีเลเวอเรจ"
+    },
+    "borrow" : {
+      "title" : "สินเชื่อ",
+      "description" : "กู้ยืมสเตเบิลคอยน์"
+    }
+  },
   "marketBanner" : {
     "title" : "ตลาด",
     "genericError" : "การเชื่อมต่อล้มเหลว",
@@ -9736,6 +9707,7 @@
     "receive" : "รับ",
     "buy" : "ซื้อ",
     "sell" : "ขาย",
+    "swap" : "สวอป",
     "connect" : "เชื่อมต่อ",
     "buyALedger" : "ซื้อ Ledger"
   },
@@ -9941,7 +9913,8 @@
               "label" : "ระดับบล็อก (Birthday Height)",
               "tooltip" : "ค่าเริ่มต้น: วันที่ปัจจุบัน การเปลี่ยนแปลงนี้จะเกิดเฉพาะกับบัญชีเดิมที่มีอยู่แล้วซึ่งเคยมีการใช้งานแบบส่วนตัว (ในโหมด Shielded) มาก่อนเท่านั้น",
               "syncFromZero" : "บัญชีนี้เคยใช้รับ ZEC ที่เปิดใช้โหมดการปกป้องข้อมูลมาก่อน แต่ฉันไม่สามารถดึงตำแหน่งของบล็อกของได้ สแกนจากบล็อก 0 (ขั้นตอนนี้อาจใช้เวลานาน)",
-              "error" : "วันที่ไม่ถูกต้อง"
+              "error" : "วันที่ไม่ถูกต้อง",
+              "height" : "ความสูงบล็อก: {{height}}"
             },
             "ufvk" : {
               "text" : "ในการเริ่มต้น คุณต้องทำการส่งออก UFVK (Unified Full Viewing Key) คุณต้องยืนยันการทำรายการนี้บนอุปกรณ์ Ledger ของคุณ"
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 แบบส่วนตัว (พูล Sapling)",
       "shieldedOrchardTx" : "🛡 แบบส่วนตัว (พูล Orchard)",
       "shieldedIronwoodTx" : "🛡 แบบส่วนตัว (Ironwood)",
-      "memo" : "Memo"
+      "memo" : "Memo",
+      "blockHeight" : "ความสูงบล็อก",
+      "confirmations_one" : "ยืนยันแล้ว {{count}} บล็อก",
+      "confirmations_other" : "ยืนยันแล้ว {{count}} บล็อก"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "ไม่มีความเคลื่อนไหว",
+      "description" : {
+        "receive" : "เริ่มใช้งานโดยเติมเงินผ่าน \"รับ\"",
+        "receiveSwap" : "เริ่มใช้งานโดยเติมเงินผ่าน \"รับ\" หรือ \"สวอป\"",
+        "receiveBuy" : "เริ่มใช้งานโดยเติมเงินผ่าน \"รับ\" หรือ \"ซื้อ\"",
+        "receiveSwapBuy" : "เริ่มใช้งานโดยเติมเงินผ่าน \"รับ\" \"สวอป\" หรือ \"ซื้อ\"",
+        "swap" : "เริ่มใช้งานโดยเติมเงินผ่าน \"สวอป\"",
+        "buy" : "เริ่มใช้งานโดยเติมเงินผ่าน \"ซื้อ\"",
+        "swapBuy" : "เริ่มใช้งานโดยเติมเงินผ่าน \"สวอป\" หรือ \"ซื้อ\""
+      }
+    },
+    "assetPicker" : {
+      "title" : "เลือกสินทรัพย์"
+    },
+    "actions" : {
+      "receive" : "รับ",
+      "send" : "ส่ง",
+      "buy" : "ซื้อ",
+      "sell" : "ขาย",
+      "earn" : "สร้างรายได้"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "เรียนรู้เพิ่มเติม",
+      "openPerps" : "เปิดสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perps)"
+    },
+    "migration" : {
+      "title" : "{{from}} กำลังย้ายไปยัง {{to}}",
+      "description" : "เรียนรู้เพิ่มเติมเกี่ยวกับการย้ายข้อมูล หรือติดต่อฝ่ายสนับสนุนหากคุณต้องการความช่วยเหลือ"
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}} จะไม่ได้รับการรองรับตั้งแต่วันที่ {{date}} เป็นต้นไป",
+      "description" : "โดยสินทรัพย์ยังปลอดภัยอยู่ด้วยอุปกรณ์ Ledger ของคุณ เรียนรู้เพิ่มเติมได้ที่ศูนย์ช่วยเหลือ"
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "ยอดคงเหลือในบัญชีที่แสดงผลไม่ได้รวมเงินปันผลหรือการแตกหุ้นไว้ด้วย"
+    },
+    "perps" : {
+      "title" : "เกี่ยวกับบัญชี Hyperliquid",
+      "description" : "บัญชีนี้เกี่ยวข้องกับการเทรดสัญญาซื้อขายคริปโตล่วงหน้าแบบไม่มีวันหมดอายุ (Perpetuals) ไม่สามารถดำเนินการธุรกรรมด้วยบัญชีนี้ได้"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "การตั้งค่าบัญชี"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "เลือกการดำเนินการ"
+  },
+  "perpsWithdraw" : {
+    "title" : "ถอน",
+    "review" : "ตรวจสอบ",
+    "estimatedAmount" : "ถอน ~{{value}}",
+    "inputSubText" : "สวอปและถอนผ่าน {{provider}}",
+    "selectCurrencyTitle" : "ถอนออกมาเป็น {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "ไม่พบบัญชี",
+    "formErrors" : {
+      "insufficientBalance" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
+      "minimumAmount" : "ยอดถอนขั้นต่ำคือ {{minAmount}} USDC",
+      "minimumAmountUnknown" : "ยอดนี้น้อยเกินกว่าจะถอนได้",
+      "lowLiquidity" : "สินทรัพย์นี้ไม่พร้อมให้บริการชั่วคราว ลองอีกครั้งในภายหลัง หรือเลือกสินทรัพย์อื่น",
+      "addressScreening" : "ไม่สามารถดำเนินการถอนนี้ไปยังบัญชีนี้ได้",
+      "quoteUnavailable" : "ไม่สามารถดึงราคาจาก {{provider}} ได้ โปรดลองสินทรัพย์อื่นหรือลองใหม่อีกครั้งในภายหลัง",
+      "currenciesUnavailable" : "ไม่สามารถโหลดรายการสินทรัพย์ปลายทางสำหรับการถอนได้ โปรดลองอีกครั้งในภายหลัง"
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "การลงนามเพื่อฝากเงิน",

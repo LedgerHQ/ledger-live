@@ -1,5 +1,51 @@
 # @ledgerhq/wallet-cli
 
+## 3.0.0
+
+### Major Changes
+
+- [#23710](https://github.com/LedgerHQ/ledger-live/pull/23710) [`fd6a3a3`](https://github.com/LedgerHQ/ledger-live/commit/fd6a3a341b07baa2849a9e79e3a05b73863034b7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(account-descriptor): identify the network by its CAL network_id
+
+  The descriptor becomes `account:2:<type>:<network_id>:<key>:<path>` and the entity only reads version 2.
+
+  wallet-cli, breaking:
+
+  - The upgrade is one-way: `session.yaml` is rewritten to version 2 on the next write (e.g. `account discover`), and an older wallet-cli can no longer read it. Don't roll back, pin an older install or run two versions on the same session.
+  - `network` in the JSON envelope and in analytics events is now the network id (`ethereum`, `bitcoin_testnet`), no longer `<name>:<env>` (`ethereum:main`).
+
+### Minor Changes
+
+- [#23774](https://github.com/LedgerHQ/ledger-live/pull/23774) [`b3291d7`](https://github.com/LedgerHQ/ledger-live/commit/b3291d7f9f68daffe2f2561a4cc2c60138e59b8f) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` proposes a swap whose best quote needs an ERC-20 approval the Agent Intent frontend can send, and says so on stderr and in JSON (`needsTokenApproval`)
+
+- [#23292](https://github.com/LedgerHQ/ledger-live/pull/23292) [`9e6bc0e`](https://github.com/LedgerHQ/ledger-live/commit/9e6bc0eeeb0cb72e6aa9712eaf60ae87b1ac83d6) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent intents` shows creation times in UTC, prints the full command for the next page, and refuses `--status` and `--page-size` with `--cursor`
+
+- [#23309](https://github.com/LedgerHQ/ledger-live/pull/23309) [`86d5ce5`](https://github.com/LedgerHQ/ledger-live/commit/86d5ce54ceeba8aa1c8e391f2e2eb5aa64d471db) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` resolves a token from the `--amount` ticker without `--token`, and fails with the candidates when the ticker is ambiguous
+
+- [#23290](https://github.com/LedgerHQ/ledger-live/pull/23290) [`94470c1`](https://github.com/LedgerHQ/ledger-live/commit/94470c16c59c772094836fa0afd397d86dbd0c73) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` warns on stderr when `--to-amount` is more than 5% above the quote
+
+## 3.0.0-next.0
+
+### Major Changes
+
+- [#23710](https://github.com/LedgerHQ/ledger-live/pull/23710) [`fd6a3a3`](https://github.com/LedgerHQ/ledger-live/commit/fd6a3a341b07baa2849a9e79e3a05b73863034b7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - feat(account-descriptor): identify the network by its CAL network_id
+
+  The descriptor becomes `account:2:<type>:<network_id>:<key>:<path>` and the entity only reads version 2.
+
+  wallet-cli, breaking:
+
+  - The upgrade is one-way: `session.yaml` is rewritten to version 2 on the next write (e.g. `account discover`), and an older wallet-cli can no longer read it. Don't roll back, pin an older install or run two versions on the same session.
+  - `network` in the JSON envelope and in analytics events is now the network id (`ethereum`, `bitcoin_testnet`), no longer `<name>:<env>` (`ethereum:main`).
+
+### Minor Changes
+
+- [#23774](https://github.com/LedgerHQ/ledger-live/pull/23774) [`b3291d7`](https://github.com/LedgerHQ/ledger-live/commit/b3291d7f9f68daffe2f2561a4cc2c60138e59b8f) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` proposes a swap whose best quote needs an ERC-20 approval the Agent Intent frontend can send, and says so on stderr and in JSON (`needsTokenApproval`)
+
+- [#23292](https://github.com/LedgerHQ/ledger-live/pull/23292) [`9e6bc0e`](https://github.com/LedgerHQ/ledger-live/commit/9e6bc0eeeb0cb72e6aa9712eaf60ae87b1ac83d6) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent intents` shows creation times in UTC, prints the full command for the next page, and refuses `--status` and `--page-size` with `--cursor`
+
+- [#23309](https://github.com/LedgerHQ/ledger-live/pull/23309) [`86d5ce5`](https://github.com/LedgerHQ/ledger-live/commit/86d5ce54ceeba8aa1c8e391f2e2eb5aa64d471db) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent send` resolves a token from the `--amount` ticker without `--token`, and fails with the candidates when the ticker is ambiguous
+
+- [#23290](https://github.com/LedgerHQ/ledger-live/pull/23290) [`94470c1`](https://github.com/LedgerHQ/ledger-live/commit/94470c16c59c772094836fa0afd397d86dbd0c73) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` warns on stderr when `--to-amount` is more than 5% above the quote
+
 ## 2.13.0
 
 ### Minor Changes
@@ -325,57 +371,5 @@
 
   - `/quote` now goes through the authenticated base query, where the legacy axios call sent no credentials. Both apps already register an auth provider on their store's `extra`, so whether a request carries an `Authorization` header is controlled entirely by the `lwdAuth`/`lwmAuth` feature flags. They are disabled by default; enabling either one makes `/quote` send the user's bearer token to the aggregator, and makes a 401/403 trigger the adapter's refresh-and-retry.
   - An aggregator HTTP error (4xx/5xx) now resolves to an empty result, so the caller surfaces the `noQuotes` global. Previously the shared axios error interceptor turned these into `LedgerAPI4xx`/`LedgerAPI5xx`, which propagated to the live app as an error. Only transport failures (no HTTP response) still reject, now with a `SwapQuotesRequestFailed` error rather than a bare RTK Query error object.
-
-## 2.3.0-next.0
-
-### Minor Changes
-
-- [#20423](https://github.com/LedgerHQ/ledger-live/pull/20423) [`44694e5`](https://github.com/LedgerHQ/ledger-live/commit/44694e54fa5b48e47595840638aee94a98213a37) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Complete the WalletSync DDD extraction: apps now compose the DDD slices directly
-
-  `@ledgerhq/live-wallet` no longer owns sync infrastructure. `src/cloudsync/`, `src/walletsync/`,
-  `src/accountName.ts` and `src/store.ts` are removed in favour of `@shared/cloud-sync`,
-  `@shared/wallet-sync`, `@features/platform-wallet-sync`, `@domain/entity-account-name` and
-  `@domain/entity-recent-addresses`. What remains is the account list sync module (`src/accounts/`)
-  plus `src/walletSyncComposition.ts`, which assembles the sync modules into the wallet-sync schema.
-
-  Desktop and mobile replace the monolithic `wallet` reducer with a `combineReducers` of the entity
-  slices (`accountNames`, `starredAccountIds`, `walletSync`, `recentAddresses`, `nonImportedAccountInfos`)
-  and wire the watch loop and trustchain lifecycle from `@features/platform-wallet-sync` at bootstrap.
-  `@ledgerhq/live-common` drops its `@ledgerhq/live-wallet` runtime dependency: the wallet-api,
-  platform and CSV-export helpers now take an `AccountNamesState` instead of the whole `WalletState`.
-
-- [#20539](https://github.com/LedgerHQ/ledger-live/pull/20539) [`60b4626`](https://github.com/LedgerHQ/ledger-live/commit/60b462653bad19429c46ebef439ec2b5bb234140) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Scope `@ledgerhq/live-wallet` down to wallet sync only
-
-  The package now exposes `./accounts` and `./walletSyncComposition` and nothing else.
-  `ordering.ts` and `addAccounts.ts` move to `@ledgerhq/live-common/account/*`, and
-  `accountRawToAccountUserData` joins `live-common/account/serialization` next to `fromAccountRaw`.
-  The `liveqr/` folder is gone: `importAccounts.ts` and `accountToAccountData` were unreachable, and
-  `accountDataToAccount` — whose only callers rehydrated a wallet-sync descriptor — becomes
-  `accounts/descriptorToAccount`. `live-common` no longer depends on `live-wallet`.
-
-- [#18764](https://github.com/LedgerHQ/ledger-live/pull/18764) [`d266e13`](https://github.com/LedgerHQ/ledger-live/commit/d266e13aa8e8b34ca74beaa09687b6e8d426f821) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - Migrate the swap `fetchQuotes` helper from axios to an RTK Query endpoint (`swapQuotesApi`). The aggregator `/quote` request now flows through the Redux data layer, and the rawQuotes/providerErrors split is unchanged. Desktop and mobile register the new API and inject their store dispatch at startup via `setSwapQuotesStore`; wallet-cli, which has no app store, sets up a standalone one.
-
-  The endpoint itself now lives in the new `@domain/api-swap-quotes` package; live-common re-exports it, so existing call sites are unchanged.
-
-  Two behaviour changes to be aware of:
-
-  - `/quote` now goes through the authenticated base query, where the legacy axios call sent no credentials. Both apps already register an auth provider on their store's `extra`, so whether a request carries an `Authorization` header is controlled entirely by the `lwdAuth`/`lwmAuth` feature flags. They are disabled by default; enabling either one makes `/quote` send the user's bearer token to the aggregator, and makes a 401/403 trigger the adapter's refresh-and-retry.
-  - An aggregator HTTP error (4xx/5xx) now resolves to an empty result, so the caller surfaces the `noQuotes` global. Previously the shared axios error interceptor turned these into `LedgerAPI4xx`/`LedgerAPI5xx`, which propagated to the live app as an error. Only transport failures (no HTTP response) still reject, now with a `SwapQuotesRequestFailed` error rather than a bare RTK Query error object.
-
-## 2.2.0
-
-### Minor Changes
-
-- [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) [`ba6e9c1`](https://github.com/LedgerHQ/ledger-live/commit/ba6e9c1e542ad28a59b0163e3b453e2f047a48b9) Thanks [@ysitbon](https://github.com/ysitbon)! - Import currency accessors from the domain layer instead of the `@ledgerhq/live-common/currencies` barrel.
-
-  Crypto accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByTicker`, `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `hasCryptoCurrencyId`) now come from `@domain/entity-currency-crypto`, and fiat accessors (`getFiatCurrencyByTicker`, `findFiatCurrencyByTicker`, `listFiatCurrencies`, `hasFiatCurrencyTicker`) from `@domain/entity-currency-fiat`. The re-exports that forwarded them through `@ledgerhq/live-common/currencies` are removed; the barrel keeps its formatting, colour, helper, marketcap, support and URI-scheme exports. Behaviour is unchanged — the barrel already delegated to these same domain functions.
-
-## 2.2.0-next.0
-
-### Minor Changes
-
-- [#20261](https://github.com/LedgerHQ/ledger-live/pull/20261) [`ba6e9c1`](https://github.com/LedgerHQ/ledger-live/commit/ba6e9c1e542ad28a59b0163e3b453e2f047a48b9) Thanks [@ysitbon](https://github.com/ysitbon)! - Import currency accessors from the domain layer instead of the `@ledgerhq/live-common/currencies` barrel.
-
-  Crypto accessors (`getCryptoCurrencyById`, `findCryptoCurrencyById`, `findCryptoCurrencyByKeyword`, `findCryptoCurrencyByTicker`, `listCryptoCurrencies`, `findCryptoCurrency`, `findCryptoCurrencyByScheme`, `hasCryptoCurrencyId`) now come from `@domain/entity-currency-crypto`, and fiat accessors (`getFiatCurrencyByTicker`, `findFiatCurrencyByTicker`, `listFiatCurrencies`, `hasFiatCurrencyTicker`) from `@domain/entity-currency-fiat`. The re-exports that forwarded them through `@ledgerhq/live-common/currencies` are removed; the barrel keeps its formatting, colour, helper, marketcap, support and URI-scheme exports. Behaviour is unchanged — the barrel already delegated to these same domain functions.
 
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

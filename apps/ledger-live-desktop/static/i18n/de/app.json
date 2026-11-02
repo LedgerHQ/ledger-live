@@ -309,6 +309,7 @@
     "menu" : {
       "changeName" : "Namen ändern",
       "viewAdvancedLogs" : "Erweiterte Logs anzeigen",
+      "viewExplorer" : "Im Explorer ansehen",
       "removeAccount" : "Konto aus Portfolio entfernen"
     },
     "changeName" : {
@@ -327,7 +328,7 @@
     "remove" : {
       "title" : "Konto entfernen",
       "description" : "Die mit diesem Konto verknüpften Assets werden in deinem Portfolio nicht mehr sichtbar sein. Deine Assets auf der Blockchain bleiben unberührt.",
-      "confirm" : "Ja, entfernen.",
+      "confirm" : "Ja, entfernen",
       "cancel" : "Behalten"
     }
   },
@@ -715,18 +716,6 @@
     "buttonTitle" : "Testen"
   },
   "account" : {
-    "subHeader" : {
-      "moreInfo" : "Mehr Infos",
-      "cardTitle" : "Powered by {{team}}",
-      "drawer" : {
-        "title" : "{{family}}-Integration",
-        "subTitle" : "Die {{family}}-Integration wurde vom {{team}}-Team durchgeführt",
-        "description" : "Ledger Wallet ist eine Open-Source-Plattform.",
-        "description2" : "Entwickler aus aller Welt können sich mit unserem Ledger Wallet integrieren",
-        "description3" : "Diese Integration wurde von {{team}} in Zusammenarbeit mit Ledger durchgeführt",
-        "description3Link" : "Diese Integration wurde von <1><0>{{team}}</0></1> in Zusammenarbeit mit Ledger durchgeführt"
-      }
-    },
     "migrationBanner" : {
       "title" : "{{from}} migriert zu {{to}}. Folge diesem <0>Link</0>, um mehr zu erfahren, oder wende dich an den Kundenservice, falls du Hilfe benötigst.",
       "contactSupport" : "Support kontaktieren"
@@ -3024,6 +3013,7 @@
       "paidIn" : "Bezahlt in {{currency}}",
       "nudge" : "Sie könnten {{amount}} mit {{provider}} sparen",
       "saved" : "Gespart mit {{provider}}",
+      "rentArriving" : "Deine Energiemiete ist noch unterwegs. Die Netzwerkgebühr wird aktualisiert, sobald sie eintrifft.",
       "confirm" : "Bestätigen",
       "disclaimer" : "Mit {{provider}}, einem Drittanbieter für Energie, werden Gebühren in {{feeCurrency}} bezahlt.",
       "insufficientFunds" : "Du hast nicht genügend {{feeCurrency}}, um den Betrag und die Energiemietgebühr von {{provider}} zu decken."
@@ -3204,18 +3194,6 @@
       "delegatedAssets" : "Delegierte Vermögenswerte",
       "undelegatingTooltip" : "Assets, deren Delegierung aufgehoben wurde, unterliegen einer 10-tägigen Frist für die Aufhebung der Bindung, bevor sie abgehoben werden können.",
       "undelegating" : "Ausstehende Abhebungen"
-    },
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by MultiversX",
-        "moreInfo" : "Mehr Infos",
-        "drawerTitle" : "MultiversX Integration",
-        "title" : "MultiversX eGold (EGLD) Token ist jetzt auf Ledger Wallet verfügbar",
-        "description" : "Du kannst deine eGold (EGLD)-Token jetzt sicher schützen und über Ledger Wallet verwalten.",
-        "description2" : "Der MultiversX eGold (EGLD) Token ist nativ im MultiversX Netzwerk und wird für alle Transaktionen verwendet, für staken, intelligente Verträge, Governance und Validator-Belohnungen.",
-        "description3" : "Wir arbeiten aktiv mit dem MultiversX Team zusammen, um mehr Funktionalitäten wie Staking, native ESDT (Elrond Standard Digital Token) Unterstützung und mehr hinzuzufügen.",
-        "website" : "Die Internet Scale Blockchain"
-      }
     },
     "delegation" : {
       "emptyState" : {
@@ -3562,17 +3540,6 @@
     }
   },
   "celo" : {
-    "account" : {
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mehr Infos",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "Das CELO-Token ist jetzt in Ledger Wallet verfügbar",
-        "description" : "Du kannst jetzt damit beginnen, deine CELO-Token zu verwalten und sie über Ledger Wallet abzusichern.",
-        "description2" : "Der Celo-Token ist Teil der Celo-Blockchain und wird für alle Transaktionen, Einsätze und viele zukünftige Funktionen verwendet.",
-        "website" : "Powered by Figment"
-      }
-    },
     "lockedBalance" : "Gesperrtes Guthaben",
     "lockedTooltip" : "Damit Belohnungen verdient werden können, müssen Vermögenswerte gesperrt worden sein, und das Voting für Validatorgruppen muss stattgefunden haben.",
     "nonvotingLockedBalance" : "Nicht-abgestimmtes gesperrtes Guthaben",
@@ -4970,16 +4937,7 @@
       "pendingBalance" : "Ausstehender Saldo",
       "pendingBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung.",
       "storageUsageBalance" : "Minimales Guthaben",
-      "storageUsageBalanceTooltip" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben.",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mehr Infos",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "Das NEAR-Token ist jetzt in Ledger Wallet verfügbar",
-        "description" : "Du kannst jetzt damit beginnen, deine NEAR-Token zu verwalten und sie über Ledger Wallet abzusichern.",
-        "description2" : "Der NEAR-Token ist Teil der NEAR-Blockchain und wird für alle Transaktionen, Einsätze und viele zukünftige Funktionen verwendet.",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben."
     },
     "operationDetails" : {
       "extra" : {
@@ -5105,16 +5063,7 @@
       "pendingBalance" : "Ausstehender Saldo",
       "pendingBalanceTooltip" : "Dieser Betrag wird nicht mehr gestaked, steht aber derzeit noch nicht zur Verfügung.",
       "storageUsageBalance" : "Minimales Guthaben",
-      "storageUsageBalanceTooltip" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und ist das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben.",
-      "subHeader" : {
-        "cardTitle" : "Powered by Figment",
-        "moreInfo" : "Mehr Infos",
-        "drawerTitle" : "Powered by Figment",
-        "title" : "Das SUI-Token ist jetzt in Ledger Wallet verfügbar",
-        "description" : "Du kannst deine SUI-Token jetzt über Ledger Wallet verwalten und schützen.",
-        "description2" : "Das SUI-Token ist Teil der SUI-Chain und wird für alle möglichen Funktionen verwendet – von Transaktionen über Staking bis hin zu vielen neuen Features, die demnächst kommen.",
-        "website" : "Powered by Figment"
-      }
+      "storageUsageBalanceTooltip" : "Dieser Betrag ist für Speicherung und Transaktionen reserviert und ist das Mindestguthaben, das auf deinem Konto verfügbar sein muss, um aktiv zu bleiben."
     },
     "operationDetails" : {
       "extra" : {
@@ -8288,6 +8237,12 @@
       "title" : "Ein Problem ist aufgetreten. Bitte schließe dein Gerät erneut an.",
       "description" : "Die Concordium-App konnte die Transaktion nicht verarbeiten. Wenn das Problem weiterhin besteht, kontaktiere bitte den Ledger-Kundenservice."
     },
+    "StacksInvalidNumCycles" : {
+      "title" : "Gib eine ganze Zahl zwischen {{min}} und {{max}} ein."
+    },
+    "StacksInvalidPoolAddress" : {
+      "title" : "Gib eine gültige Pool-Contract-Adresse im adress.contract-name Format ein."
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
     },
@@ -8835,6 +8790,10 @@
     "ICPNodeRefused" : {
       "title" : "Anfrage nicht gesendet",
       "description" : "Der Internet Computer hat die Anfrage nicht angenommen, sodass nichts gesendet wurde und sich nichts geändert hat. Bitte versuche es noch einmal. {{reason}}"
+    },
+    "ICPTransactionExpired" : {
+      "title" : "Transaktion abgelaufen",
+      "description" : "Die signierte Transaktion wurde nicht rechtzeitig gesendet, sodass nichts gesendet wurde und sich nichts geändert hat. Bitte signiere sie erneut."
     },
     "ICPInvalidPercentage" : {
       "title" : "Prozentsatz außerhalb des Bereichs",
@@ -9471,7 +9430,7 @@
           "steps" : {
             "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
             "step2" : "Öffne die Ledger Wallet-App, die du synchronisieren möchtest.",
-            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Show QR</0> (QR-Code anzeigen).",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Show QR</0> (QR-Code anzeigen)",
             "step4" : "Scanne den QR-Code."
           }
         },
@@ -9480,7 +9439,7 @@
           "steps" : {
             "step1" : "Vergewissere dich, dass Ledger Sync in einer deiner Apps aktiviert ist.",
             "step2" : "Öffne die Ledger Wallet-App, die du synchronisieren möchtest.",
-            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>I already turned it on</0> (Ich habe Sync schon aktiviert) > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden).",
+            "step3" : "Gehe zu <0>Settings</0> (Einstellungen) > <0>General</0> (Allgemein) > <0>Ledger Sync</0> > <0>Use your Ledger</0> (Dein Ledger-Gerät verwenden)",
             "step4" : "Stelle eine Verbindung mit deinem Ledger-Gerät her."
           }
         }
@@ -9631,6 +9590,8 @@
     "selectAccountPerpsEmptyDescription" : "Um deine Perps mit Guthaben aufzuladen, benötigst du ein Hyperliquid-Konto. Füge eines hinzu, um fortzufahren.",
     "selectDepositCurrencyTitle" : "Asset zum Einzahlen auswählen",
     "selectDepositCurrencyDescription" : "Jedes unterstützte Asset kann verwendet werden. Es wird bei Bedarf automatisch geswappt.",
+    "selectWithdrawCurrencyTitle" : "Wähle das Asset für deine Auszahlung aus",
+    "selectWithdrawCurrencyDescription" : "Deine USDC werden automatisch in das von dir gewählte Asset geswappt.",
     "accountCount_one" : "{{count}} Konto",
     "accountCount_other" : "{{count}} Konten",
     "accountsAdded" : {
@@ -9686,6 +9647,16 @@
     },
     "noDeviceTitle" : "Deine sichere Krypto-Wallet"
   },
+  "servicesEntryPoints" : {
+    "perps" : {
+      "title" : "Perps",
+      "description" : "Mit Hebel investieren"
+    },
+    "borrow" : {
+      "title" : "Darlehen",
+      "description" : "Stablecoins ausleihen"
+    }
+  },
   "marketBanner" : {
     "title" : "Markt",
     "genericError" : "Verbindung fehlgeschlagen",
@@ -9736,6 +9707,7 @@
     "receive" : "Empfangen",
     "buy" : "Kaufen",
     "sell" : "Verkaufen",
+    "swap" : "Swappen",
     "connect" : "Verbinden",
     "buyALedger" : "Ledger-Gerät kaufen"
   },
@@ -9941,7 +9913,8 @@
               "label" : "Wiederherstellungshöhe",
               "tooltip" : "Standard: das heutige Datum. Nur ändern für Bestandskonten mit früheren privaten Aktivitäten (Shielded-Aktivitäten).",
               "syncFromZero" : "Dieses Konto hat in der Vergangenheit Shielded ZEC erhalten, aber die Wiederherstellungshöhe kann nicht abgerufen werden. Scanne ab Block 0 (dies kann einige Zeit in Anspruch nehmen).",
-              "error" : "Ungültiges Datum"
+              "error" : "Ungültiges Datum",
+              "height" : "Blockhöhe: {{height}}"
             },
             "ufvk" : {
               "text" : "Zunächst musst du deinen Unified Full Viewing Key (UFVK) exportieren. Dieser Vorgang erfordert deine Bestätigung auf dem Ledger-Gerät."
@@ -9970,7 +9943,10 @@
       "shieldedSaplingTx" : "🛡 Privat (Sapling)",
       "shieldedOrchardTx" : "🛡 Privat (Orchard)",
       "shieldedIronwoodTx" : "🛡 Privat (Ironwood)",
-      "memo" : "Memo"
+      "memo" : "Memo",
+      "blockHeight" : "Blockhöhe",
+      "confirmations_one" : "{{count}} Bestätigung",
+      "confirmations_other" : "{{count}} Bestätigungen"
     }
   },
   "aleo" : {
@@ -10633,6 +10609,51 @@
       }
     }
   },
+  "accountDetailHero" : {
+    "emptyState" : {
+      "title" : "Noch keine Aktivitäten",
+      "description" : {
+        "receive" : "Beginne, indem du Guthaben über „Empfangen“ hinzufügst.",
+        "receiveSwap" : "Füge zuerst Guthaben über „Empfangen“ oder „Swap“ hinzu.",
+        "receiveBuy" : "Füge zuerst Guthaben über „Empfangen“ oder „Kaufen“ hinzu.",
+        "receiveSwapBuy" : "Füge zuerst Guthaben über „Empfangen“, „Swap“ oder „Kaufen“ hinzu.",
+        "swap" : "Füge zuerst Guthaben über „Swap“ hinzu.",
+        "buy" : "Beginne, indem du Guthaben über „Kaufen“ hinzufügst.",
+        "swapBuy" : "Füge zuerst Guthaben über „Swap“ oder „Kaufen“ hinzu."
+      }
+    },
+    "assetPicker" : {
+      "title" : "Asset auswählen"
+    },
+    "actions" : {
+      "receive" : "Empfangen",
+      "send" : "Senden",
+      "buy" : "Kaufen",
+      "sell" : "Verkaufen",
+      "earn" : "Verdienen"
+    }
+  },
+  "accountDetailNotices" : {
+    "actions" : {
+      "learnMore" : "Weitere Informationen",
+      "openPerps" : "Perps öffnen"
+    },
+    "migration" : {
+      "title" : "{{from}} migriert zu {{to}}.",
+      "description" : "Erfahre mehr über die Migration oder kontaktiere den Support, wenn du Hilfe benötigst."
+    },
+    "willBeDeprecated" : {
+      "title" : "{{currencyName}} wird ab dem {{date}} nicht mehr unterstützt",
+      "description" : "Es wird weiterhin durch dein Ledger-Gerät gesichert. Erfahre mehr im Hilfe-Center."
+    },
+    "robinhoodDisclaimer" : {
+      "title" : "Der Gesamtkontostand enthält keine Dividenden oder Aktiensplits."
+    },
+    "perps" : {
+      "title" : "Über das Hyperliquid-Konto",
+      "description" : "Dieses Konto steht im Zusammenhang mit dem Perpetual-Handel. Transaktionsaktionen werden für dieses Konto nicht unterstützt"
+    }
+  },
   "accountDetail" : {
     "header" : {
       "settings" : "Konto-Einstellungen"
@@ -11182,6 +11203,24 @@
   },
   "actionMenuDialog" : {
     "a11yTitle" : "Aktion auswählen"
+  },
+  "perpsWithdraw" : {
+    "title" : "Abheben",
+    "review" : "Prüfen",
+    "estimatedAmount" : "~{{value}} abheben",
+    "inputSubText" : "Swappen und Auszahlen via {{provider}}",
+    "selectCurrencyTitle" : "Auszahlen auf {{currencyTicker}}",
+    "selectCurrencyAccount" : "{{accountName}} · <balance>{{counterValue}}</balance>",
+    "selectCurrencyNoAccount" : "Kein Konto",
+    "formErrors" : {
+      "insufficientBalance" : "Unzureichendes Guthaben",
+      "minimumAmount" : "Die Mindestabhebung beträgt {{minAmount}} USDC.",
+      "minimumAmountUnknown" : "Dieser Betrag ist zu niedrig zum Abheben.",
+      "lowLiquidity" : "Dieses Asset ist vorübergehend nicht verfügbar. Versuche es später erneut oder wähle ein anderes Asset.",
+      "addressScreening" : "Diese Abhebung kann für dieses Konto nicht verarbeitet werden.",
+      "quoteUnavailable" : "Wir können kein Angebot von {{provider}} erhalten. Versuche es mit einem anderen Asset oder komm später wieder.",
+      "currenciesUnavailable" : "Wir können die Assets, auf die du auszahlen kannst, nicht laden. Versuche es später noch einmal."
+    }
   },
   "perpsDepositSign" : {
     "a11yTitle" : "Einzahlung signieren",
