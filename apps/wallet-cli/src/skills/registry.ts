@@ -133,6 +133,11 @@ async function isSymlink(p: string): Promise<boolean> {
   }
 }
 
+async function writeFileReplacingLink(target: string, content: string): Promise<void> {
+  if (await isSymlink(target)) await unlink(target);
+  await writeFile(target, content, "utf8");
+}
+
 async function isDirectory(p: string): Promise<boolean> {
   try {
     return (await stat(p)).isDirectory();
@@ -181,8 +186,7 @@ export async function writeSkill(
     skill.files.map(async file => {
       const target = path.join(skillRoot, file.path);
       await mkdir(path.dirname(target), { recursive: true });
-      if (await isSymlink(target)) await unlink(target);
-      await writeFile(target, file.content, "utf8");
+      await writeFileReplacingLink(target, file.content);
       return target;
     }),
   );
@@ -210,7 +214,7 @@ async function writeSidecar(skillRoot: string, skill: SkillManifest): Promise<vo
     installedAt: new Date().toISOString(),
   };
   await mkdir(skillRoot, { recursive: true });
-  await writeFile(sidecarPath(skillRoot), `${JSON.stringify(sidecar, null, 2)}\n`, "utf8");
+  await writeFileReplacingLink(sidecarPath(skillRoot), `${JSON.stringify(sidecar, null, 2)}\n`);
 }
 
 /** Read and parse a skill's sidecar, or undefined if absent/unparseable. */

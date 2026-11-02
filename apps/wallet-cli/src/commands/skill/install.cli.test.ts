@@ -187,6 +187,23 @@ describe("skill install", () => {
     expect(await readFile(reference, "utf8")).toBe(shippedReference);
   });
 
+  it("replaces a linked sidecar instead of writing through it", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+    expect(first.exitCode).toBe(0);
+    const sidecar = path.join(tmpDir, SKILL_NAME, SIDECAR_FILENAME);
+    const userFile = path.join(tmpDir, "notes.txt");
+    await writeFile(userFile, "my own notes\n", "utf8");
+    await rm(sidecar);
+    await symlink(userFile, sidecar);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(userFile, "utf8")).toBe("my own notes\n");
+    expect(JSON.parse(await readFile(sidecar, "utf8")).name).toBe(SKILL_NAME);
+  });
+
   it("keeps a skill edited since install without --force, then overwrites it with --force", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
 
