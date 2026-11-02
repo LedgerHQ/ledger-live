@@ -86,7 +86,7 @@ describe("Aleo SendAmountFooterRow", () => {
     expect(await screen.findByText("How estimated time works")).toBeVisible();
     expect(
       screen.getByText(
-        "Sending more ALEO uses more records, and each one adds processing time. Larger amounts take longer to confirm.",
+        "Sending more from your private balance can use more records, and each one adds processing time. Larger amounts take longer to confirm.",
       ),
     ).toBeVisible();
 
