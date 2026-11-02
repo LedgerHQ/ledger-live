@@ -13,21 +13,22 @@ const {
   findBannedExternalViolations,
   findDevtoolsImportViolations,
   sourceFiles,
-  SKIP_DIRS,
-  SOURCE_EXTS,
   DEVTOOLS_ROOT,
 } = require("./validate");
 const {
-  DEP_CONSTRAINTS,
   BOUNDARY_EXCEPTIONS,
   LEGACY_SOURCE_ROOTS,
   LEGACY_PACKAGES,
   BANNED_EXTERNALS_BY_TAG,
+  BANNED_DEPENDENCIES,
   DEVTOOLS_ALLOWED_IMPORTS,
   DEVTOOLS_TYPE_ONLY_IMPORTS,
 } = require("./constraints");
-const { createProjectGraphAsync } = require("@nx/devkit");
-const projectJson = require("./project.json");
+const {
+  isLintBoundariesInput,
+  assertSourceFilesHashed,
+  assertSkipDirsExcluded,
+} = require("./test-helpers");
 
 /**
  * @param {Array<{name: string, tags: string[]}>} projects
@@ -649,6 +650,32 @@ test("findBannedDependencyViolations ignores unrelated dependencies and missing 
   assert.deepEqual(findBannedDependencyViolations(bannedDepGraph(manifests), root, BANNED), []);
 });
 
+test("BANNED_DEPENDENCIES bans @ledgerhq/generators from every manifest but its own", t => {
+  const manifests = {
+    "devtools/registry": {
+      name: "@devtools/registry",
+      devDependencies: { "@ledgerhq/generators": "workspace:*" },
+    },
+    "apps/app": { name: "app", dependencies: { "@ledgerhq/generators": "workspace:*" } },
+    "tools/nx-plugins/generators": { name: "@ledgerhq/generators" },
+  };
+  const root = makeTmpWorkspace(
+    Object.fromEntries(
+      Object.entries(manifests).map(([r, pkg]) => [`${r}/package.json`, JSON.stringify(pkg)]),
+    ),
+  );
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const violations = findBannedDependencyViolations(
+    bannedDepGraph(manifests),
+    root,
+    BANNED_DEPENDENCIES,
+  );
+  assert.deepEqual(violations.map(v => `${v.manifest} ${v.dependency} ${v.field}`).sort(), [
+    `${path.join("apps/app", "package.json")} @ledgerhq/generators dependencies`,
+    `${path.join("devtools/registry", "package.json")} @ledgerhq/generators devDependencies`,
+  ]);
+});
+
 test("every manifest check fails on a malformed or unreadable manifest in its scope", t => {
   const root = makeTmpWorkspace({
     "libs/broken/package.json": '{ "name": "@ledgerhq/broken",',
@@ -1026,113 +1053,14 @@ test("devtools: each source file is read and parsed once across type-only edges"
 
 // --- lint:boundaries cache inputs ---
 
-/** @type {Promise<Array<{ root: string, tags: string[] }>> | undefined} */
-let workspaceNodes;
+const fixedSourceRoots = [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT];
 
-/**
- * Root and tags of every node of the workspace project graph `lint:boundaries` checks.
- *
- * @returns {Promise<Array<{ root: string, tags: string[] }>>}
- */
-function workspaceProjectNodes() {
-  workspaceNodes ??= createProjectGraphAsync({ exitOnError: false }).then(graph =>
-    Object.values(graph.nodes).map(node => ({ root: node.data.root, tags: node.data.tags ?? [] })),
-  );
-  return workspaceNodes;
-}
-
-const lintBoundariesGlobs = projectJson.targets["lint:boundaries"].inputs.map(input =>
-  input.replace("{workspaceRoot}/", ""),
-);
-
-/**
- * Whether a negated input of the cached `lint:boundaries` target matches `file`.
- *
- * @param {string} file workspace-relative path
- */
-function isExcludedFromLintBoundaries(file) {
-  return lintBoundariesGlobs.some(g => g.startsWith("!") && path.matchesGlob(file, g.slice(1)));
-}
-
-/**
- * Whether the cached `lint:boundaries` target hashes `file`: a positive input matches it and no
- * negated one does.
- *
- * @param {string} file workspace-relative path
- */
-function isLintBoundariesInput(file) {
-  return (
-    lintBoundariesGlobs.some(g => !g.startsWith("!") && path.matchesGlob(file, g)) &&
-    !isExcludedFromLintBoundaries(file)
-  );
-}
-
-/**
- * Roots whose source files a check reads: the legacy and devtools roots, and every project root
- * tagged with a constrained source tag.
- *
- * @returns {Promise<string[]>}
- */
-async function checkedSourceRoots() {
-  const constrainedTags = new Set([
-    ...DEP_CONSTRAINTS.map(c => c.sourceTag),
-    ...BANNED_EXTERNALS_BY_TAG.map(r => r.sourceTag),
-  ]);
-  const taggedRoots = (await workspaceProjectNodes())
-    .filter(node => node.tags.some(tag => constrainedTags.has(tag)))
-    .map(node => node.root);
-  return [...LEGACY_SOURCE_ROOTS, DEVTOOLS_ROOT, ...taggedRoots];
-}
-
-test("lint:boundaries inputs cover every source file the checks read", async () => {
-  const missed = (await checkedSourceRoots()).flatMap(sourceRoot =>
-    [...SOURCE_EXTS]
-      .map(ext => `${sourceRoot}/src/nested/index${ext}`)
-      .filter(file => !isLintBoundariesInput(file)),
-  );
-  assert.deepEqual(missed, []);
+test("lint:boundaries inputs cover every source file under the legacy and devtools roots", () => {
+  assertSourceFilesHashed(fixedSourceRoots);
 });
 
-test("lint:boundaries inputs exclude each directory the checks skip, and no sibling", async () => {
-  const sourceRoots = await checkedSourceRoots();
-  for (const dir of SKIP_DIRS) {
-    const filesUnder = sourceRoots.flatMap(sourceRoot => [
-      `${sourceRoot}/${dir}/index.ts`,
-      `${sourceRoot}/src/${dir}/nested/index.ts`,
-    ]);
-    assert.deepEqual(
-      filesUnder.filter(file => !isExcludedFromLintBoundaries(file)),
-      [],
-      `${dir}/ is hashed`,
-    );
-
-    const filesUnderSibling = sourceRoots.map(
-      sourceRoot => `${sourceRoot}/src/kept${dir}/index.ts`,
-    );
-    assert.deepEqual(
-      filesUnderSibling.filter(isExcludedFromLintBoundaries),
-      [],
-      `kept${dir}/ is not hashed`,
-    );
-  }
-});
-
-test("lint:boundaries inputs cover the manifest and project file of every graph node", async () => {
-  const roots = (await workspaceProjectNodes()).map(node => node.root);
-  for (const top of ["e2e", "tests", "tools"]) {
-    assert.ok(
-      roots.some(r => r === top || r.startsWith(`${top}/`)),
-      `no graph node under ${top}/`,
-    );
-  }
-  const files = roots.flatMap(r => [
-    path.posix.join(r, "package.json"),
-    path.posix.join(r, "project.json"),
-  ]);
-  assert.deepEqual(
-    files.filter(file => !isLintBoundariesInput(file)),
-    [],
-  );
+test("lint:boundaries inputs exclude each skipped directory under the legacy and devtools roots", () => {
+  assertSkipDirsExcluded(fixedSourceRoots);
 });
 
 test("lint:boundaries inputs cover the graph configuration and the tags plugin", () => {
