@@ -150,6 +150,7 @@ features/platform/quick-actions/                         @ledgerhq/wallet-xp
 
 # Wallet — Portfolio
 features/flow/portfolio-services-entry-points/           @ledgerhq/wallet-xp
+features/platform/assets-table/                          @ledgerhq/wallet-xp
 
 # Wallet — Intents
 features/platform/verify-address-intent/                 @ledgerhq/wallet-xp

@@ -6,6 +6,6 @@ type TrendCellProps = {
   readonly trend?: number | null;
 };
 
-export const TrendCell = ({ trend }: TrendCellProps) => (
-  <TrendCellView {...useTrendCellViewModel(trend)} />
-);
+export function TrendCell({ trend }: TrendCellProps) {
+  return <TrendCellView {...useTrendCellViewModel(trend)} />;
+}

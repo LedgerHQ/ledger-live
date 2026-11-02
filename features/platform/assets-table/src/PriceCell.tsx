@@ -1,5 +1,5 @@
 import React from "react";
-import { Currency } from "@domain/entity-currency";
+import type { Currency } from "@domain/entity-currency";
 import { PriceCellView } from "./PriceCellView";
 import { usePriceCellViewModel } from "./usePriceCellViewModel";
 
@@ -8,6 +8,6 @@ type PriceCellProps = {
   readonly marketPrice?: number;
 };
 
-export const PriceCell = ({ currency, marketPrice }: PriceCellProps) => (
-  <PriceCellView {...usePriceCellViewModel(currency, marketPrice)} />
-);
+export function PriceCell({ currency, marketPrice }: PriceCellProps) {
+  return <PriceCellView {...usePriceCellViewModel(currency, marketPrice)} />;
+}

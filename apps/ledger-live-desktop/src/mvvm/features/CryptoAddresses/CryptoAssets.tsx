@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import type { Row } from "@tanstack/react-table";
-import { useAssetsTable } from "LLD/components/AssetsTable/useAssetsTable";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import { useAssetsTable, type AssetTableItem } from "@features/platform-assets-table";
 import { CryptoAssetsView } from "./CryptoAssetsView";
 import useCryptoAssetsViewModel from "./hooks/useCryptoAssetsViewModel";
 

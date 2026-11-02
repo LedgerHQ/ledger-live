@@ -22,7 +22,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { TokenCurrencyIdSchema } from "@domain/entity-currency-token";
 import type { TokenCurrency } from "@domain/entity-currency-token";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import type { AssetTableItem } from "@features/platform-assets-table";
 import type { AssetsDataWithPagination } from "@domain/api-aggregated-assets";
 import { AFTER_ONBOARDING_STATE } from "~/renderer/reducers/settings";
 import useCryptoAssetsViewModel from "LLD/features/CryptoAddresses/hooks/useCryptoAssetsViewModel";

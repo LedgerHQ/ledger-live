@@ -1,29 +1,24 @@
 import React, { useMemo } from "react";
-import {
-  TableCellItem,
-  TableCellContent,
-  TableCellContentTitle,
-  TableCellContentDescription,
-  TableInfoIcon,
-  useLumenDataTable,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@ledgerhq/lumen-ui-react";
 import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { CryptoIcon } from "@ledgerhq/crypto-icons";
-import { getValidCryptoIconSize } from "~/renderer/utils/cryptoIconSize";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "LLD/hooks/redux";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { ColumnDef } from "@tanstack/react-table";
-import { PriceCell } from "./Cells/PriceCell";
-import { BalanceCell } from "LLD/components/Cells/BalanceCell";
-import { CounterValueCell } from "LLD/components/Cells/CounterValueCell";
-import { TrendCell } from "./Cells/TrendCell";
-import { TruncatedText } from "LLD/components/TruncatedText";
-import { sanitizeAssetNameForTestId } from "./utils/sanitizeAssetNameForTestId";
+import {
+  TableCellContent,
+  TableCellContentDescription,
+  TableCellContentTitle,
+  TableCellItem,
+  TableInfoIcon,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  useLumenDataTable,
+} from "@ledgerhq/lumen-ui-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslation } from "@shared/i18n";
+import { useAssetsTablePorts } from "./assetsTablePorts";
+import { PriceCell } from "./PriceCell";
+import type { AssetsTablePorts } from "./ports";
+import { sanitizeAssetNameForTestId } from "./sanitizeAssetNameForTestId";
+import { TrendCell } from "./TrendCell";
 import type { AssetTableItem } from "./types";
 
 export type UseAssetTableOptions = {
@@ -33,26 +28,27 @@ export type UseAssetTableOptions = {
   readonly showPriceColumn?: boolean;
 };
 
-function columnHeader(label: string) {
-  return () => <TruncatedText as="span" text={label} />;
+function columnHeader(Label: AssetsTablePorts["TruncatedText"], label: string) {
+  return () => <Label as="span" text={label} />;
 }
 
-export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTableOptions) => {
+export function useAssetsTable(assets: readonly AssetTableItem[], options?: UseAssetTableOptions) {
   const showTrendColumnTooltip = options?.showTrendColumnTooltip ?? true;
   const showPriceColumn = options?.showPriceColumn ?? true;
   const { t } = useTranslation();
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const { counterValueCurrency, formatCounterValue, BalanceCell, CounterValueCell, TruncatedText } =
+    useAssetsTablePorts();
 
   const emptyFiatValue = useMemo(
-    () => formatCurrencyUnit(counterValueCurrency.units[0], new BigNumber(0), { showCode: true }),
-    [counterValueCurrency],
+    () => formatCounterValue(counterValueCurrency.units[0], new BigNumber(0), { showCode: true }),
+    [counterValueCurrency, formatCounterValue],
   );
 
   const columns = useMemo<ColumnDef<AssetTableItem>[]>(
     () => [
       {
         accessorKey: "currency",
-        header: columnHeader(t("assets.columns.name")),
+        header: columnHeader(TruncatedText, t("assets.columns.name")),
         enableSorting: false,
         cell: ({ row }) => {
           const assetTestId = sanitizeAssetNameForTestId(
@@ -63,7 +59,7 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
               <CryptoIcon
                 ledgerId={row.original.currency.id}
                 ticker={row.original.currency.ticker}
-                size={getValidCryptoIconSize(40)}
+                size={40}
               />
               <TableCellContent>
                 <TableCellContentTitle>
@@ -79,7 +75,7 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
       },
       {
         accessorKey: "price",
-        header: columnHeader(t("assets.columns.price")),
+        header: columnHeader(TruncatedText, t("assets.columns.price")),
         enableSorting: false,
         cell: ({ row }) => (
           <PriceCell currency={row.original.currency} marketPrice={row.original.marketPrice} />
@@ -88,7 +84,7 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
       },
       {
         accessorKey: "balance",
-        header: columnHeader(t("assets.columns.balance")),
+        header: columnHeader(TruncatedText, t("assets.columns.balance")),
         enableSorting: false,
         cell: ({ row }) => (
           <BalanceCell currency={row.original.currency} balance={row.original.balance} />
@@ -97,7 +93,7 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
       },
       {
         accessorKey: "value",
-        header: columnHeader(t("assets.columns.value")),
+        header: columnHeader(TruncatedText, t("assets.columns.value")),
         enableSorting: false,
         cell: ({ row }) => {
           const assetValueTestId = sanitizeAssetNameForTestId(
@@ -121,7 +117,7 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
       },
       {
         accessorKey: "trend",
-        header: columnHeader(t("assets.columns.trend")),
+        header: columnHeader(TruncatedText, t("assets.columns.trend")),
         enableSorting: false,
         cell: ({ row }) =>
           row.original.isPlaceholder ? (
@@ -152,15 +148,13 @@ export const useAssetsTable = (assets: AssetTableItem[], options?: UseAssetTable
         },
       },
     ],
-    [t, emptyFiatValue, showTrendColumnTooltip],
+    [t, emptyFiatValue, showTrendColumnTooltip, BalanceCell, CounterValueCell, TruncatedText],
   );
 
-  const table = useLumenDataTable({
-    data: assets,
+  return useLumenDataTable({
+    data: assets as AssetTableItem[],
     columns,
     autoResetPageIndex: false,
     state: { columnVisibility: { price: showPriceColumn } },
   });
-
-  return table;
-};
+}

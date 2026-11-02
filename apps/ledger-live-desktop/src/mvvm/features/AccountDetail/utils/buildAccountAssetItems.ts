@@ -2,7 +2,7 @@ import type { BigNumber } from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency } from "@domain/entity-currency";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import type { AssetTableItem } from "@features/platform-assets-table";
 
 type Options = Readonly<{
   hideEmptyTokenAccounts: boolean;

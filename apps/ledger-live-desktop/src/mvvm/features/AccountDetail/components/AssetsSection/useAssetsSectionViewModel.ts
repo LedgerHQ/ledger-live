@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import type { Table } from "@tanstack/react-table";
 import type { Account } from "@ledgerhq/types-live";
-import { useAllCurrencyTrends } from "LLD/components/AssetsTable/useAllCurrencyTrends";
-import { useAssetsTable } from "LLD/components/AssetsTable/useAssetsTable";
-import type { AssetTableItem } from "LLD/components/AssetsTable/types";
+import {
+  useAllCurrencyTrends,
+  useAssetsTable,
+  type AssetTableItem,
+} from "@features/platform-assets-table";
 import { useSelector } from "LLD/hooks/redux";
 import { useCalculateCountervalueCallback } from "~/renderer/actions/general";
 import {
