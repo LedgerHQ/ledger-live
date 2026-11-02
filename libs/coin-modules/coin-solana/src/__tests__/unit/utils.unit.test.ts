@@ -1,71 +1,50 @@
-import { clusterApiUrl } from "@solana/web3.js";
-import { getEnv } from "@ledgerhq/live-env";
 import type { SolanaCoinConfig } from "../../config";
 import {
-  endpointByCurrencyId,
-  LEDGER_VALIDATOR_BY_FIGMENT,
+  DEFAULT_LEDGER_VALIDATORS,
+  DEFAULT_TX_FEE,
   LEDGER_VALIDATOR_BY_BITWISE,
-  LEDGER_VALIDATOR_DEFAULT,
+  LEDGER_VALIDATOR_BY_FIGMENT,
+} from "../../constants";
+import type { ValidatorsAppValidator } from "../../network/validator-app";
+import { TEST_CONFIG } from "../../test/coinConfig";
+import {
+  chainConfigFrom,
+  defaultLedgerValidatorOf,
+  endpointByCurrencyId,
+  feesOf,
+  ledgerFirstValidators,
+  ledgerValidatorsOf,
 } from "../../utils";
 
-jest.mock("@ledgerhq/live-env", () => ({ getEnv: jest.fn() }));
-
-const mockGetEnv = getEnv as jest.Mock;
-
-const configWithRpcUrls = (rpcUrls?: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
+const configWithRpcUrls = (rpcUrls: SolanaCoinConfig["rpcUrls"]): SolanaCoinConfig =>
   ({ token2022Enabled: false, legacyOCMSMaxVersion: "1.0.0", rpcUrls }) as SolanaCoinConfig;
 
 describe("utils - endpointByCurrencyId", () => {
-  beforeEach(() => {
-    mockGetEnv.mockReturnValue("https://proxy.solana.example.com");
+  const config = configWithRpcUrls({
+    solana: "https://custom-mainnet.example.com",
+    solana_devnet: "https://custom-devnet.example.com",
+    solana_testnet: "https://custom-testnet.example.com",
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
+  it.each([
+    ["solana", "https://custom-mainnet.example.com"],
+    ["solana_devnet", "https://custom-devnet.example.com"],
+    ["solana_testnet", "https://custom-testnet.example.com"],
+  ])("uses the configured URL for %s", (currencyId, url) => {
+    expect(endpointByCurrencyId(config, currencyId)).toBe(url);
   });
 
-  describe("when coin config has no rpcUrls", () => {
-    const config = configWithRpcUrls(undefined);
-
-    it("falls back to API_SOLANA_PROXY for solana", () => {
-      expect(endpointByCurrencyId(config, "solana")).toBe("https://proxy.solana.example.com");
-    });
-
-    it("falls back to clusterApiUrl for solana_devnet", () => {
-      expect(endpointByCurrencyId(config, "solana_devnet")).toBe(clusterApiUrl("devnet"));
-    });
-
-    it("falls back to clusterApiUrl for solana_testnet", () => {
-      expect(endpointByCurrencyId(config, "solana_testnet")).toBe(clusterApiUrl("testnet"));
-    });
-  });
-
-  describe("when coin config provides rpcUrls", () => {
-    const config = configWithRpcUrls({
-      solana: "https://custom-mainnet.example.com",
-      solana_devnet: "https://custom-devnet.example.com",
-      solana_testnet: "https://custom-testnet.example.com",
-    });
-
-    it("uses the configured mainnet URL", () => {
-      expect(endpointByCurrencyId(config, "solana")).toBe("https://custom-mainnet.example.com");
-    });
-
-    it("uses the configured devnet URL", () => {
-      expect(endpointByCurrencyId(config, "solana_devnet")).toBe(
-        "https://custom-devnet.example.com",
+  it.each(["solana", "solana_devnet", "solana_testnet"])(
+    "throws when the coin config has no URL for %s",
+    currencyId => {
+      expect(() => endpointByCurrencyId(configWithRpcUrls({}), currencyId)).toThrow(
+        `no rpcUrls.${currencyId}`,
       );
-    });
-
-    it("uses the configured testnet URL", () => {
-      expect(endpointByCurrencyId(config, "solana_testnet")).toBe(
-        "https://custom-testnet.example.com",
-      );
-    });
-  });
+    },
+  );
 
   it("throws for unknown currency ids", () => {
-    expect(() => endpointByCurrencyId(configWithRpcUrls(undefined), "solana_unknown")).toThrow(
+    expect(() => endpointByCurrencyId(config, "solana_unknown")).toThrow(
       /unexpected currency id format/,
     );
   });
@@ -80,7 +59,92 @@ describe("utils - Default Validators", () => {
     expect(LEDGER_VALIDATOR_BY_FIGMENT.apy).not.toBe(LEDGER_VALIDATOR_BY_BITWISE.apy);
   });
 
-  it("should reference correct default", () => {
-    expect(LEDGER_VALIDATOR_DEFAULT).toBe(LEDGER_VALIDATOR_BY_FIGMENT);
+  it("puts the Figment validator first", () => {
+    expect(DEFAULT_LEDGER_VALIDATORS[0]).toBe(LEDGER_VALIDATOR_BY_FIGMENT);
+  });
+});
+
+const validator = (voteAccount: string): ValidatorsAppValidator => ({
+  voteAccount,
+  activeStake: 1,
+  commission: 1,
+  totalScore: 1,
+});
+
+describe("utils - Ledger validators from the coin config", () => {
+  it("falls back to the module default", () => {
+    expect(ledgerValidatorsOf(TEST_CONFIG)).toBe(DEFAULT_LEDGER_VALIDATORS);
+    expect(defaultLedgerValidatorOf(TEST_CONFIG)).toBe(LEDGER_VALIDATOR_BY_FIGMENT);
+  });
+
+  it("reads the configured list, default validator first", () => {
+    const configured = [validator("ledger-a"), validator("ledger-b")];
+    const config = { ...TEST_CONFIG, staking: { ledgerValidators: configured } };
+
+    expect(ledgerValidatorsOf(config)).toBe(configured);
+    expect(defaultLedgerValidatorOf(config)).toBe(configured[0]);
+  });
+
+  it("puts the configured Ledger validators first", () => {
+    const ledgerList = [validator("ledger-a"), validator("ledger-b")];
+    const fetched = [validator("other"), validator("ledger-b"), validator("ledger-a")];
+
+    expect(ledgerFirstValidators(fetched, ledgerList).map(v => v.voteAccount)).toEqual([
+      "ledger-a",
+      "ledger-b",
+      "other",
+    ]);
+  });
+
+  it("prepends the configured list when the backend misses one of them", () => {
+    const ledgerList = [validator("ledger-a"), validator("ledger-b")];
+
+    expect(ledgerFirstValidators([validator("other")], ledgerList).map(v => v.voteAccount)).toEqual(
+      ["ledger-a", "ledger-b", "other"],
+    );
+  });
+});
+
+describe("utils - tuning values from the coin config", () => {
+  it("falls back to the module defaults", () => {
+    expect(feesOf(TEST_CONFIG)).toEqual({
+      computeUnitMargin: 0.1,
+      defaultTxFee: DEFAULT_TX_FEE,
+      blockhashRetries: 5,
+      blockhashRetryDelayMs: 5000,
+    });
+    expect(chainConfigFrom(TEST_CONFIG, "solana")).toEqual({
+      endpoint: "https://solana.test.invalid",
+      confirmationTimeoutMs: undefined,
+      retries: undefined,
+      retryDelayMs: undefined,
+    });
+  });
+
+  it("reads the configured values", () => {
+    const config = {
+      ...TEST_CONFIG,
+      broadcast: { timeoutMs: 1 },
+      node: { retries: 2, retryDelayMs: 3 },
+      fees: {
+        computeUnitMargin: 0.2,
+        defaultTxFee: 4,
+        blockhashRetries: 5,
+        blockhashRetryDelayMs: 6,
+      },
+    };
+
+    expect(feesOf(config)).toEqual({
+      computeUnitMargin: 0.2,
+      defaultTxFee: 4,
+      blockhashRetries: 5,
+      blockhashRetryDelayMs: 6,
+    });
+    expect(chainConfigFrom(config, "solana")).toEqual({
+      endpoint: "https://solana.test.invalid",
+      confirmationTimeoutMs: 1,
+      retries: 2,
+      retryDelayMs: 3,
+    });
   });
 });

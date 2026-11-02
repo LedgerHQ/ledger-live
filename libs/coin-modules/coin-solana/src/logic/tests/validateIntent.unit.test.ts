@@ -123,6 +123,7 @@ function makeStakeBalances(
 const CONFIG: SolanaCoinConfig = {
   token2022Enabled: false,
   legacyOCMSMaxVersion: "1.0.0",
+  rpcUrls: { solana: "https://solana.test.invalid" },
   status: { type: "active" },
   name: "Solana",
   unit: { name: "SOL", code: "SOL", magnitude: 9 },
