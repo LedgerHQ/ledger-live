@@ -14,10 +14,11 @@ export class SegmentTracking {
     );
 
   @step("Record the events the app sends to Segment")
-  async recordTrackedEvents() {
+  recordTrackedEvents(): Promise<void> {
     this.page.on("response", response => {
       if (response.url() === SEGMENT_TRACK_URL) this.trackResponses.push(response);
     });
+    return Promise.resolve();
   }
 
   @step("Expect Segment to accept an event tracked with the user id")
