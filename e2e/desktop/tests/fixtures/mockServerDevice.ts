@@ -10,6 +10,7 @@ import { MockServerDevicePage } from "tests/page/mockServerDevice.page";
 import base from "tests/fixtures/common";
 import { TIMEOUT } from "@ledgerhq/live-e2e-shared/timeouts";
 import { getPreviousFirmwareVersion } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
+import { getUserdataUserId } from "tests/utils/userdata";
 
 const SESSION_TOKEN_TIMEOUT_MS = TIMEOUT.xlarge;
 
@@ -33,10 +34,11 @@ export const test = base.extend<MockServerFixtures>({
   osUpdateAvailable: [false, { option: true }],
   catalogProvider: [1, { option: true }],
 
-  mockDevice: async ({ mockDeviceParams, osUpdateAvailable }, use) => {
+  mockDevice: async ({ mockDeviceParams, osUpdateAvailable, userdataOriginalFile }, use) => {
     const device = { ...deviceUnderTest(), ...mockDeviceParams };
     if (osUpdateAvailable) {
-      device.firmware_version = await getPreviousFirmwareVersion(device.modelId);
+      const userId = await getUserdataUserId(userdataOriginalFile);
+      device.firmware_version = await getPreviousFirmwareVersion(device.modelId, userId);
     }
     await use(device);
   },

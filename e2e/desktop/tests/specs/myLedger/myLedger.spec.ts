@@ -18,6 +18,7 @@ test.describe("My Ledger (mock server)", () => {
     async ({ app }) => {
       await app.mainNavigation.openMyLedger();
       await app.myLedger.waitForDashboard();
+      await app.myLedger.expectFirmwareUpdateOffered();
       const offeredOsVersion = await app.myLedger.readOfferedOsVersion();
       await app.myLedger.updateFirmware();
       await app.myLedger.expectOsVersion(offeredOsVersion);

@@ -96,7 +96,10 @@ export async function getDeviceFirmwareVersion(device: DeviceModelId): Promise<s
  * is published. Each version is looked up by name, as Ledger Wallet looks up the connected
  * device, so a device booted on it is offered that update.
  */
-export async function getPreviousFirmwareVersion(device: DeviceModelId): Promise<string> {
+export async function getPreviousFirmwareVersion(
+  device: DeviceModelId,
+  userId: string,
+): Promise<string> {
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), liveCommonVersion);
   const { deviceVersionId, firmwares } = await newestProviderFirmwares(repository, device);
 
@@ -110,7 +113,7 @@ export async function getPreviousFirmwareVersion(device: DeviceModelId): Promise
       current_se_firmware_final_version: current.id,
       device_version: deviceVersionId,
       providerId: nanoAppProviderId,
-      userId: "",
+      userId,
     });
     if (update) return version;
   }
