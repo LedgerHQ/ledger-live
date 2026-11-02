@@ -14,8 +14,8 @@ export async function spawnSandbox(): Promise<{ sandbox: Sandbox; explorerUrl: s
   sandbox = await startSandbox(
     { family: "bitcoin", network: "bitcoin_regtest" },
     {
-      node: { implementation: "bitcoin-core", version: "28.0" },
-      indexer: { implementation: "atlas", version: "2.38.16" },
+      node: { implementation: "bitcoin-core", version: "31.1" },
+      indexer: { implementation: "atlas", version: "2.38.24" },
     },
   );
   const { node, indexer } = sandbox.endpoints;
