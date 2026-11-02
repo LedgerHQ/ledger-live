@@ -40,7 +40,6 @@
   "devDependencies": {
     "@types/react": "catalog:",
     "react": "catalog:",
-    "typescript": "catalog:",
-    "@ledgerhq/generators": "workspace:*"
+    "typescript": "catalog:"
   }
 }
