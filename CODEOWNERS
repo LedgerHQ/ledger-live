@@ -17,9 +17,9 @@
 
 # Platform & Wallet XP teams catchall
 CODEOWNERS                                               @ledgerhq/platform
-apps/cli/src/commands/live                               @ledgerhq/platform
+apps/cli/                                                @ledgerhq/platform
 apps/web-tools/                                          @ledgerhq/platform
-libs/ledger-live-common/src/                             @ledgerhq/platform
+libs/ledger-live-common/                                 @ledgerhq/platform
 apps/ledger-live-desktop/                                @ledgerhq/platform
 apps/ledger-live-mobile/                                 @ledgerhq/platform
 apps/ledger-live-desktop/src/                            @ledgerhq/wallet-xp
@@ -63,17 +63,11 @@ libs/disable-network-setup/                              @ledgerhq/platform
 libs/feature-flag-module/                                @ledgerhq/platform
 
 # Platform — devtools
-devtools/transport/                                      @ledgerhq/platform
-devtools/protocols/                                      @ledgerhq/platform
-devtools/wire/                                           @ledgerhq/platform
-devtools/relay/                                          @ledgerhq/platform
+/devtools/                                               @ledgerhq/platform
 tools/nx-plugins/generators/                             @ledgerhq/platform
 
 # Platform — support
-support/fmt/                                             @ledgerhq/platform
-support/jest/                                            @ledgerhq/platform
-support/lint/                                            @ledgerhq/platform
-support/tsconfig/                                        @ledgerhq/platform
+/support/                                                @ledgerhq/platform
 support/lint/libs-coin.mts                               @ledgerhq/coin-integration @ledgerhq/platform
 support/jest/libs-coin/                                  @ledgerhq/coin-integration @ledgerhq/platform
 
@@ -175,6 +169,7 @@ domain/api/ofac/                                         @ledgerhq/wallet-xp
 
 # Wallet — devtools
 devtools/pay-card/                                       @ledgerhq/wallet-xp
+devtools/account-portfolio/                              @ledgerhq/wallet-xp
 
 # Platform — desktop mvvm overrides (override WXP mvvm catch-all)
 apps/ledger-live-desktop/src/mvvm/features/AppBlockers/  @ledgerhq/platform
@@ -244,6 +239,7 @@ features/flow/fear-and-greed/                            @ledgerhq/wallet-xp
 domain/api/account-portfolio/                            @ledgerhq/wallet-xp
 /shared/api-services/src/services/portfolio/             @ledgerhq/wallet-xp
 
+libs/ledgerjs/                                           @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/coin-integration
 libs/ledgerjs/packages/hw-bolos/                         @ledgerhq/coin-integration
 libs/ethereum-provider/                                  @ledgerhq/coin-integration
@@ -320,6 +316,7 @@ apps/ledger-live-mobile/src/screens/PTX/                             					@ledge
 apps/ledger-live-mobile/src/screens/Swap/                            					@ledgerhq/ptx
 libs/ledger-live-common/src/exchange/                                					@ledgerhq/ptx
 libs/exchange-module/                                                					@ledgerhq/ptx
+tests/dummy-ptx-app/                                                 					@ledgerhq/ptx
 libs/ledgerjs/packages/hw-app-exchange/                              					@ledgerhq/ptx
 libs/ledger-services/cal/src/partners/                                 					@ledgerhq/ptx
 libs/types-live/src/swap.ts                        					@ledgerhq/ptx
@@ -360,6 +357,9 @@ apps/ledger-live-mobile/src/screens/Discover/            @ledgerhq/coin-integrat
 apps/ledger-live-mobile/src/screens/Platform/            @ledgerhq/coin-integration
 libs/ledger-live-common/src/platform/                    @ledgerhq/coin-integration
 libs/ledger-live-common/src/wallet-api/                  @ledgerhq/coin-integration
+libs/deeplink-module/                                    @ledgerhq/coin-integration
+tests/dummy-live-app/                                    @ledgerhq/coin-integration
+tests/dummy-wallet-app/                                  @ledgerhq/coin-integration
 **/platformAdapter.ts                                    @ledgerhq/coin-integration
 **/walletApiAdapter.ts                                   @ledgerhq/coin-integration
 **/liveapp-sdk.spec.ts                                   @ledgerhq/coin-integration
@@ -438,6 +438,8 @@ libs/live-signer-cosmos/                                           @ledgerhq/liv
 libs/live-signer-hyperliquid/                                      @ledgerhq/live-devices
 libs/live-signer-polkadot/                                         @ledgerhq/live-devices
 libs/live-signer-xrp/                                              @ledgerhq/live-devices
+libs/live-signer-icp/                                              @ledgerhq/live-devices
+libs/live-signer-tron/                                             @ledgerhq/live-devices
 libs/live-dmk-speculos/                                            @ledgerhq/live-devices
 apps/ledger-live-desktop/src/renderer/hooks/useDeeplinking/handlers/manager.handler.ts  @ledgerhq/live-devices
 apps/ledger-live-desktop/src/mvvm/components/MockServerDeviceWindow/ @ledgerhq/live-devices
