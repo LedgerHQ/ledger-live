@@ -1,7 +1,7 @@
-/** Key order is not meaning: `{ cursor, limit }` and `{ limit, cursor }` ask the same question. */
+/** Where a query is stored: field order and unset fields are not meaning, `{}` is no query. */
 export function accountDataQueryKey(query: unknown): string {
   if (query === undefined) return "";
-  return JSON.stringify(query, (_key, nested: unknown) =>
+  const key = JSON.stringify(query, (_key, nested: unknown) =>
     nested && typeof nested === "object" && !Array.isArray(nested)
       ? Object.fromEntries(
           Object.entries(nested).sort(([a], [b]) => {
@@ -11,4 +11,5 @@ export function accountDataQueryKey(query: unknown): string {
         )
       : nested,
   );
+  return key === "{}" ? "" : key;
 }

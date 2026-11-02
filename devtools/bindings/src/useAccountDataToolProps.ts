@@ -31,22 +31,24 @@ export function useAccountDataToolProps(recorder: AccountDataRecorder): AccountD
   const statuses = useMemo(
     () =>
       Object.entries(accountData).flatMap(([kind, byAccount]) =>
-        Object.entries(byAccount ?? {}).flatMap(([accountUUID, status]) =>
-          status
-            ? [
-                {
-                  kind,
-                  accountUUID,
-                  descriptor: descriptors.get(accountUUID),
-                  reading: status.request && (status.request.append ? "next page" : "head"),
-                  error: status.error && `${status.error.name}: ${status.error.message}`,
-                  sourceId: status.sourceId,
-                  queryKey: status.queryKey,
-                  readAt: status.readAt,
-                  hasMore: status.nextCursor !== undefined,
-                } as const,
-              ]
-            : [],
+        Object.entries(byAccount ?? {}).flatMap(([accountUUID, byQuery]) =>
+          Object.entries(byQuery ?? {}).flatMap(([queryKey, status]) =>
+            status
+              ? [
+                  {
+                    kind,
+                    accountUUID,
+                    descriptor: descriptors.get(accountUUID),
+                    reading: status.request && (status.request.append ? "next page" : "head"),
+                    error: status.error && `${status.error.name}: ${status.error.message}`,
+                    sourceId: status.sourceId,
+                    queryKey,
+                    readAt: status.readAt,
+                    hasMore: status.nextCursor !== undefined,
+                  } as const,
+                ]
+              : [],
+          ),
         ),
       ),
     [accountData, descriptors],

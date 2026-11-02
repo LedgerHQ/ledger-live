@@ -38,11 +38,19 @@ export type AccountBalanceHistoryQuery = {
   range: BalanceHistoryRange;
 };
 
+/** The series of one range, and the `revision` of the answer they come from. */
+export const BalanceHistoryEntrySchema = z.object({
+  revision: z.number(),
+  series: z.array(AssetBalanceHistorySchema),
+});
+
 /** The series of each account, by the range they were read for. */
 export const AccountBalanceHistoriesStateSchema = z.partialRecord(
   AccountUUIDSchema,
-  z.partialRecord(BalanceHistoryRangeSchema, z.array(AssetBalanceHistorySchema)),
+  z.partialRecord(BalanceHistoryRangeSchema, BalanceHistoryEntrySchema),
 );
+
+export type BalanceHistoryEntry = z.infer<typeof BalanceHistoryEntrySchema>;
 
 export type AccountBalanceHistoriesState = z.infer<typeof AccountBalanceHistoriesStateSchema>;
 
