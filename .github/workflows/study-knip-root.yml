@@ -4,7 +4,7 @@ name: "[Study] - Knip from root"
 # platform) with grouped knip runs from the repo root: one run for the packages using the root
 # knip.json, and one per (platform, tsConfig) for dual-platform packages, using a merged config.
 # Logic lives in .github/knip-study/run.mjs. Dispatch with:
-#   gh workflow run study-knip-root.yml --ref ci/knip-root-study [-f compare-fanout=false] [-f fanout-parallel=3]
+#   gh workflow run study-knip-root.yml --ref ci/knip-root-study [-f compare-fanout=false] [-f fanout-parallel=3] [-f runner=ledger-wallet-4cpu-aws-public-cached]
 # The push trigger only registers this workflow for dispatch from a non-default branch; its job is skipped.
 
 on:
@@ -23,27 +23,35 @@ on:
         description: "Per-package invocations run at once (Nx run-many defaults to 3)"
         type: string
         default: "3"
+      runner:
+        description: "Runner to measure on"
+        type: choice
+        options:
+          - ledger-wallet-8cpu-aws-public-cached
+          - ledger-wallet-4cpu-aws-public-cached
+        default: ledger-wallet-8cpu-aws-public-cached
 
 permissions:
   id-token: write
   contents: read
 
 concurrency:
-  group: study-knip-root-${{ github.ref }}
+  group: study-knip-root-${{ github.ref }}-${{ inputs.runner }}
   cancel-in-progress: true
 
 jobs:
   knip-root:
     name: Knip from root
     if: github.event_name == 'workflow_dispatch'
-    runs-on: ledger-wallet-8cpu-aws-public-cached
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: 60
     env:
-      NODE_OPTIONS: "--max-old-space-size=16384"
+      NODE_OPTIONS: "--max-old-space-size=6144"
       CI_OS: ubuntu-22.04
       FORCE_COLOR: 0
       COMPARE_FANOUT: ${{ inputs.compare-fanout }}
       FANOUT_PARALLEL: ${{ inputs.fanout-parallel }}
+      RUNNER: ${{ inputs.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -76,7 +84,7 @@ jobs:
         if: env.COMPARE_FANOUT == 'true'
         run: |
           node .github/knip-study/run.mjs compare | tee -a "$GITHUB_STEP_SUMMARY"
-          echo "Runner: ledger-wallet-8cpu-aws-public-cached, fan-out parallelism $FANOUT_PARALLEL." >> "$GITHUB_STEP_SUMMARY"
+          echo "Runner: $RUNNER, fan-out parallelism $FANOUT_PARALLEL." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload results
         if: always()
