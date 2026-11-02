@@ -11,7 +11,7 @@ test("each JSON fragment matches restricted-imports.mts", () => {
     assert.deepEqual(
       written,
       fragmentConfig(options),
-      `${file} is stale: run \`node src/restricted-imports-fragments.js\` in support/lint`,
+      `${file} is stale: run \`pnpm --filter @support/lint generate:restricted-imports\``,
     );
   }
 });

@@ -3,10 +3,10 @@ import lumen from "@ledgerhq/lumen-lint-plugin/oxlint";
 import { defineConfig } from "oxlint";
 import base from "./base.mts";
 import {
-  CLIPBOARD_MESSAGE,
   EXPO_CLIPBOARD,
   LIVE_COMMON_LIB,
   LODASH,
+  NAVIGATOR_CLIPBOARD,
 } from "./restricted-imports.mts";
 import { platformSuffixWaivers } from "./src/suffix-imports.js";
 
@@ -69,14 +69,7 @@ export default defineConfig({
         patterns: [LIVE_COMMON_LIB],
       },
     ],
-    "eslint/no-restricted-properties": [
-      "error",
-      {
-        object: "navigator",
-        property: "clipboard",
-        message: `${CLIPBOARD_MESSAGE} navigator.clipboard.`,
-      },
-    ],
+    "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "react-hooks/exhaustive-deps": [
       "error",
       {

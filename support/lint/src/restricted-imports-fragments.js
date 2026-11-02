@@ -1,5 +1,5 @@
 // Writes the JSON fragments of `restricted-imports/` from `JSON_FRAGMENTS`, for the oxlint configs
-// that stay JSON. Run `node src/restricted-imports-fragments.js` from the package.
+// that stay JSON. Run it with `pnpm --filter @support/lint generate:restricted-imports`.
 
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";

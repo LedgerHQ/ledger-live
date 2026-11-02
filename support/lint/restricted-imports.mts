@@ -1,17 +1,29 @@
 // The `eslint/no-restricted-imports` entries that several oxlint configs share. A config that sets
 // the rule replaces any extended one as a whole, so each config spreads the entries it needs into
 // its own list. A JSON config cannot import this module: it extends one of the fragments in
-// `restricted-imports/`, which `node src/restricted-imports-fragments.js` writes from
-// `JSON_FRAGMENTS` and the package tests keep in sync.
+// `restricted-imports/`, which the package's `generate:restricted-imports` script writes from
+// `JSON_FRAGMENTS` and its tests keep in sync.
 
-export const CLIPBOARD_MESSAGE =
-  "Use copyToClipboard / readClipboard from @shared/clipboard instead of";
+const USE_SHARED_CLIPBOARD = "Use copyToClipboard / readClipboard from @shared/clipboard";
 
 export const LODASH = "lodash";
 
 export const EXPO_CLIPBOARD = {
   name: "expo-clipboard",
-  message: `${CLIPBOARD_MESSAGE} expo-clipboard.`,
+  message: `${USE_SHARED_CLIPBOARD} instead of expo-clipboard.`,
+};
+
+export const ELECTRON_CLIPBOARD = {
+  name: "electron",
+  importNames: ["clipboard"],
+  message: `${USE_SHARED_CLIPBOARD}. Electron's clipboard is reserved to main/systemHandlers (address-hijack check).`,
+};
+
+// An `eslint/no-restricted-properties` entry, not a `no-restricted-imports` one.
+export const NAVIGATOR_CLIPBOARD = {
+  object: "navigator",
+  property: "clipboard",
+  message: `${USE_SHARED_CLIPBOARD} instead of navigator.clipboard.`,
 };
 
 const WALLET_FRAMEWORK_CURRENCY_TYPES_RESTRICTION = {

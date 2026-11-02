@@ -1,11 +1,12 @@
 import { defineConfig } from "oxlint";
 import {
-  CLIPBOARD_MESSAGE,
+  ELECTRON_CLIPBOARD,
   EXPO_CLIPBOARD,
   LIVE_COMMON_CURRENCY_ACCESSORS,
   LIVE_COMMON_FEATURE_FLAGS,
   LIVE_COMMON_LIB,
   LODASH,
+  NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
 
@@ -55,14 +56,7 @@ export default defineConfig({
     "jest/no-disabled-tests": "warn",
     "typescript/no-explicit-any": "error",
     "typescript/no-deprecated": "error",
-    "eslint/no-restricted-properties": [
-      "error",
-      {
-        object: "navigator",
-        property: "clipboard",
-        message: `${CLIPBOARD_MESSAGE} navigator.clipboard.`,
-      },
-    ],
+    "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "eslint/no-restricted-imports": [
@@ -71,12 +65,7 @@ export default defineConfig({
         paths: [
           LODASH,
           EXPO_CLIPBOARD,
-          {
-            name: "electron",
-            importNames: ["clipboard"],
-            message:
-              "Use copyToClipboard / readClipboard from @shared/clipboard. Electron's clipboard is reserved to main/systemHandlers (address-hijack check).",
-          },
+          ELECTRON_CLIPBOARD,
           {
             name: "react-redux",
             importNames: ["useSelector", "useDispatch", "useStore"],

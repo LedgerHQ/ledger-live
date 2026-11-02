@@ -22,6 +22,7 @@
   "scripts": {
     "format": "oxfmt *.mts src",
     "format:check": "oxfmt *.mts src --check",
+    "generate:restricted-imports": "node src/restricted-imports-fragments.js",
     "lint": "oxlint *.mts src",
     "typecheck": "tsc --noEmit"
   },

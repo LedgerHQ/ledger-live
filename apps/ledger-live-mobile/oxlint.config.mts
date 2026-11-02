@@ -1,11 +1,11 @@
 import { defineConfig } from "oxlint";
 import {
-  CLIPBOARD_MESSAGE,
   EXPO_CLIPBOARD,
   LIVE_COMMON_CURRENCY_ACCESSORS,
   LIVE_COMMON_FEATURE_FLAGS,
   LIVE_COMMON_LIB,
   LODASH,
+  NAVIGATOR_CLIPBOARD,
   WALLET_FRAMEWORK_CURRENCY_TYPES,
 } from "@support/lint/restricted-imports";
 
@@ -13,6 +13,43 @@ const MVVM_ALIAS = {
   group: ["~/mvvm", "~/mvvm/*", "~/mvvm/**"],
   message: "Use 'LLM' alias instead of '~/mvvm'. Replace '~/mvvm' with 'LLM' in your imports.",
 };
+
+const RESTRICTED_PATHS = [LODASH, EXPO_CLIPBOARD, ...WALLET_FRAMEWORK_CURRENCY_TYPES];
+
+// Test and debug files may import these directly.
+const APP_INSTANCE_PATHS = [
+  {
+    name: "react-redux",
+    importNames: ["useSelector", "useDispatch", "useStore"],
+    message:
+      "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "reselect",
+    importNames: ["createStructuredSelector", "createSelector"],
+    message:
+      "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
+  },
+  {
+    name: "react-i18next",
+    importNames: ["useTranslation", "Trans"],
+    message:
+      "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance.",
+  },
+  {
+    name: "i18next",
+    importNames: ["default", "t", "i18n"],
+    message:
+      "The app no longer initialises the i18next global singleton. Import the app instance from '~/i18n/instance' (or the hooks from '~/context/Locale').",
+  },
+];
+
+const RESTRICTED_PATTERNS = [
+  LIVE_COMMON_LIB,
+  MVVM_ALIAS,
+  LIVE_COMMON_FEATURE_FLAGS,
+  LIVE_COMMON_CURRENCY_ACCESSORS,
+];
 
 export default defineConfig({
   env: { browser: true, es6: true, node: true },
@@ -49,52 +86,9 @@ export default defineConfig({
     "eslint/no-console": ["error", { allow: ["warn", "error"] }],
     "eslint/no-restricted-imports": [
       "error",
-      {
-        paths: [
-          LODASH,
-          EXPO_CLIPBOARD,
-          {
-            name: "react-redux",
-            importNames: ["useSelector", "useDispatch", "useStore"],
-            message:
-              "Import typed hooks from '~/context/hooks' instead of 'react-redux' to ensure proper TypeScript typing.",
-          },
-          {
-            name: "reselect",
-            importNames: ["createStructuredSelector", "createSelector"],
-            message:
-              "Import typed hooks from '~/context/selectors' instead of 'reselect' to ensure proper TypeScript typing.",
-          },
-          {
-            name: "react-i18next",
-            importNames: ["useTranslation", "Trans"],
-            message:
-              "Use the locale hooks from '~/context/Locale' instead of 'react-i18next' to ensure correct injection of the i18n instance.",
-          },
-          {
-            name: "i18next",
-            importNames: ["default", "t", "i18n"],
-            message:
-              "The app no longer initialises the i18next global singleton. Import the app instance from '~/i18n/instance' (or the hooks from '~/context/Locale').",
-          },
-          ...WALLET_FRAMEWORK_CURRENCY_TYPES,
-        ],
-        patterns: [
-          LIVE_COMMON_LIB,
-          MVVM_ALIAS,
-          LIVE_COMMON_FEATURE_FLAGS,
-          LIVE_COMMON_CURRENCY_ACCESSORS,
-        ],
-      },
+      { paths: [...RESTRICTED_PATHS, ...APP_INSTANCE_PATHS], patterns: RESTRICTED_PATTERNS },
     ],
-    "eslint/no-restricted-properties": [
-      "error",
-      {
-        object: "navigator",
-        property: "clipboard",
-        message: `${CLIPBOARD_MESSAGE} navigator.clipboard.`,
-      },
-    ],
+    "eslint/no-restricted-properties": ["error", NAVIGATOR_CLIPBOARD],
     "import/no-duplicates": "error",
     "import/no-named-as-default": "off",
     "typescript/no-explicit-any": "error",
@@ -146,15 +140,7 @@ export default defineConfig({
         "eslint/no-console": "off",
         "eslint/no-restricted-imports": [
           "error",
-          {
-            paths: [LODASH, EXPO_CLIPBOARD, ...WALLET_FRAMEWORK_CURRENCY_TYPES],
-            patterns: [
-              LIVE_COMMON_LIB,
-              MVVM_ALIAS,
-              LIVE_COMMON_FEATURE_FLAGS,
-              LIVE_COMMON_CURRENCY_ACCESSORS,
-            ],
-          },
+          { paths: RESTRICTED_PATHS, patterns: RESTRICTED_PATTERNS },
         ],
       },
     },
