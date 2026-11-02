@@ -19,6 +19,6 @@ describe("Market integration test", () => {
 
     await user.press(screen.getByText("Bitcoin (BTC)"));
 
-    expect(await screen.findByText("Price Statistics")).toBeOnTheScreen();
+    expect(await screen.findByTestId("asset-detail-scroll-view-bitcoin")).toBeOnTheScreen();
   });
 });

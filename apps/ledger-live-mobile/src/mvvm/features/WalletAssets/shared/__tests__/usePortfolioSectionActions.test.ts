@@ -1,10 +1,7 @@
 import { track } from "@shared/analytics";
 import { act } from "@testing-library/react-native";
 import { renderHook, withFlagOverrides } from "@tests/test-renderer";
-import {
-  mockBtcCryptoCurrency,
-  mockEthCryptoCurrency,
-} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { mockBtcCryptoCurrency } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigatorName, ScreenName } from "~/const";
 import { Asset } from "~/types/asset";
 import { usePortfolioSectionActions } from "../usePortfolioSectionActions";
@@ -23,26 +20,14 @@ const btcAsset: Asset = {
   amount: 100000,
 };
 
-const ethPlaceholderAsset: Asset = {
-  currency: mockEthCryptoCurrency,
-  accounts: [],
-  amount: 0,
-  isPlaceholder: true,
-  marketId: "ethereum",
-};
-
 describe("usePortfolioSectionActions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   describe("onItemPress", () => {
-    it("navigates to AssetDetail when aggregatedAssets is enabled", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { aggregatedAssets: true } },
-        }),
-      });
+    it("navigates to AssetDetail", () => {
+      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"));
 
       act(() => {
         result.current.onItemPress(btcAsset);
@@ -55,11 +40,7 @@ describe("usePortfolioSectionActions", () => {
     });
 
     it("forwards the canonical Market id from a portfolio asset", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "stablecoin"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { enabled: true, params: { aggregatedAssets: true } },
-        }),
-      });
+      const { result } = renderHook(() => usePortfolioSectionActions(false, "stablecoin"));
 
       act(() => {
         result.current.onItemPress({ ...btcAsset, marketId: "dai" });
@@ -75,45 +56,8 @@ describe("usePortfolioSectionActions", () => {
       });
     });
 
-    it("navigates to MarketDetail for placeholder assets when aggregatedAssets is disabled", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { aggregatedAssets: false } },
-        }),
-      });
-
-      act(() => {
-        result.current.onItemPress(ethPlaceholderAsset);
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.MarketDetail, {
-        currencyId: "ethereum",
-      });
-    });
-
-    it("navigates to Accounts > Asset for non-placeholder assets when aggregatedAssets is disabled", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { aggregatedAssets: false } },
-        }),
-      });
-
-      act(() => {
-        result.current.onItemPress(btcAsset);
-      });
-
-      expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-        screen: ScreenName.Asset,
-        params: { currency: mockBtcCryptoCurrency },
-      });
-    });
-
     it("fires asset_clicked analytics with asset name and page", () => {
-      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"), {
-        overrideInitialState: withFlagOverrides({
-          lwmWallet40: { params: { aggregatedAssets: true } },
-        }),
-      });
+      const { result } = renderHook(() => usePortfolioSectionActions(false, "crypto"));
 
       act(() => {
         result.current.onItemPress(btcAsset);

@@ -30,8 +30,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
         platform === "desktop" ? true : isEnabled && Boolean(params?.assetSection),
       shouldDisplayBrazePlacement: isEnabled && Boolean(params?.brazePlacement),
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
-      shouldDisplayAggregatedAssets:
-        platform === "desktop" ? true : isEnabled && Boolean(params?.aggregatedAssets),
       shouldDisplayMyWallet: platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
       shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
@@ -70,8 +68,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayBrazePlacement: boolean;
   /** Whether to show the TX History section */
   readonly shouldDisplayOperationsList: boolean;
-  /** Whether to show the aggregated assets */
-  readonly shouldDisplayAggregatedAssets: boolean;
   /** Whether to show the My Wallet component */
   readonly shouldDisplayMyWallet: boolean;
   /** Whether to show the Asset Discoverability feature */

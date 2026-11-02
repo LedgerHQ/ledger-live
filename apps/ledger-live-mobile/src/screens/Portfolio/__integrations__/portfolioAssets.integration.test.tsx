@@ -11,6 +11,17 @@ import TestNavigator, {
 } from "./shared";
 import type { Account } from "@ledgerhq/types-live";
 
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useChunkedAssetsData: () => ({
+    data: { cryptoAssets: {}, markets: {} },
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+    refetch: jest.fn(),
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
   useAccountBridgeOrNull: jest.fn(),

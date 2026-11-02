@@ -869,7 +869,6 @@ type Feature_Wallet40_Params = {
   lazyOnboarding: boolean;
   assetSection: boolean;
   operationsList: boolean;
-  aggregatedAssets: boolean;
   myWallet: boolean;
   pnl: boolean;
   assetDiscoverability: boolean;

@@ -230,10 +230,6 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.EditCurrencyUnits]: {
     currency: CryptoCurrency;
   };
-  [ScreenName.MarketDetail]: {
-    currencyId: string;
-    resetSearchOnUmount?: boolean;
-  };
   [NavigatorName.Settings]: NavigatorScreenParams<SettingsNavigatorStackParamList>;
   [NavigatorName.ReceiveFunds]?: NavigatorScreenParams<ReceiveFundsStackParamList>;
   [NavigatorName.SendFunds]: NavigatorScreenParams<SendFundsNavigatorStackParamList>;

@@ -96,9 +96,9 @@ describe("usePortfolioStocksSectionViewModel", () => {
       result.current.onItemPress(result.current.stocksToDisplay[0]);
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
-      params: { currency: ethereum },
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+      screen: ScreenName.AssetDetail,
+      params: { currencyId: ethereum.id, source: "portfolio" },
     });
   });
 });

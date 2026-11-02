@@ -1,11 +1,7 @@
 import { Step } from "jest-allure2-reporter/api";
 import { openDeeplink } from "@e2e/helpers/commonHelpers";
-import { TIMEOUT } from "@e2e/utils/timeouts";
 
-import {
-  isAssetDiscoverabilityEnabled,
-  isAggregatedAssetsEnabled,
-} from "@e2e/utils/featureFlagUtils";
+import { isAssetDiscoverabilityEnabled } from "@e2e/utils/featureFlagUtils";
 
 import type { CurrencyType } from "@ledgerhq/live-e2e-shared/enum/Currency";
 
@@ -19,16 +15,11 @@ export default class MarketPage {
   marketFilterCurrencyButton = () => getElementById("market-filter-currency");
   searchBarId = async () =>
     (await isAssetDiscoverabilityEnabled()) ? "market-screen-search-bar" : "search-box";
-  starButton = () => getElementById("star-asset");
-  backButtonId = "market-back-btn";
-  assetDetailBackBtn = () => getElementById(this.backButtonId);
   marketRowTitle = (currency: CurrencyType) =>
     getElementById(`${this.marketRowTitleBaseId}${currency.ticker}`);
   marketScreenItemWithTitle = (marketId: string, title: string) =>
     getElementByIdWithDescendantTexts(this.marketItemId(marketId), title);
   starMarketListButton = () => getElementById("toggle-starred-currencies");
-  marketQuickActionButton = (action: "send" | "receive" | "buy" | "sell" | "swap") =>
-    getElementById(`market-quick-action-button-${action}`);
   marketListHeaderLeft = () => getElementById("market-list-header-left");
 
   marketCategorySwitcherId = "market-screen-assets-category-switcher";
@@ -59,36 +50,24 @@ export default class MarketPage {
 
   @Step("Expect market detail page")
   async expectMarketDetailPage(currencyId?: string) {
-    if (await isAggregatedAssetsEnabled()) {
-      const scrollViewId = currencyId
-        ? `asset-detail-scroll-view-${currencyId.toLowerCase()}`
-        : /^asset-detail-scroll-view-.*/;
-      await waitForElementById(scrollViewId);
-    } else {
-      await detoxExpect(this.starButton()).toBeVisible();
-    }
+    const scrollViewId = currencyId
+      ? `asset-detail-scroll-view-${currencyId.toLowerCase()}`
+      : /^asset-detail-scroll-view-.*/;
+    await waitForElementById(scrollViewId);
   }
 
   @Step("Expect asset page")
   async expectAssetPageVisible() {
-    if (await isAggregatedAssetsEnabled()) {
-      await waitForElementById(this.assetDetailScrollViewId);
-      await detoxExpect(getElementById(this.assetDetailScrollViewId)).toBeVisible();
-      await detoxExpect(getElementById(this.assetDetailMarketPriceId)).toBeVisible();
-      await detoxExpect(getElementById(this.assetDetailCoinCapsuleId)).toBeVisible();
-      await detoxExpect(getElementById(this.assetDetailCoinOptionsTrailingId)).toBeVisible();
-    } else {
-      await this.expectMarketDetailPage();
-    }
+    await waitForElementById(this.assetDetailScrollViewId);
+    await detoxExpect(getElementById(this.assetDetailScrollViewId)).toBeVisible();
+    await detoxExpect(getElementById(this.assetDetailMarketPriceId)).toBeVisible();
+    await detoxExpect(getElementById(this.assetDetailCoinCapsuleId)).toBeVisible();
+    await detoxExpect(getElementById(this.assetDetailCoinOptionsTrailingId)).toBeVisible();
   }
 
   @Step("Leave asset page")
   async leaveAssetPage() {
-    if (await isAggregatedAssetsEnabled()) {
-      await tapById(this.headerBackButtonId);
-    } else {
-      await this.leaveMarketDetailPage();
-    }
+    await tapById(this.headerBackButtonId);
   }
 
   @Step("Expect market screen")
@@ -103,17 +82,6 @@ export default class MarketPage {
       await this.goBack();
     } else {
       await tapByElement(this.marketListHeaderLeft());
-    }
-  }
-
-  @Step("Leave market detail page")
-  async leaveMarketDetailPage() {
-    if (await isAggregatedAssetsEnabled()) {
-      await waitForElementById(this.headerBackButtonId);
-      await tapById(this.headerBackButtonId);
-    } else {
-      await waitForElementById(this.backButtonId, TIMEOUT.small);
-      await tapById(this.backButtonId);
     }
   }
 
@@ -133,23 +101,15 @@ export default class MarketPage {
 
   @Step("Star favorite coin")
   async starFavoriteCoin() {
-    if (await isAggregatedAssetsEnabled()) {
-      await tapByElement(this.coinOptionsTrigger());
-      await tapByElement(this.coinOptionsFavouriteRow());
-    } else {
-      await tapByElement(this.starButton());
-    }
+    await tapByElement(this.coinOptionsTrigger());
+    await tapByElement(this.coinOptionsFavouriteRow());
   }
 
   @Step("Back to asset list")
   async backToAssetList() {
-    if (await isAggregatedAssetsEnabled()) {
-      await waitForElementById(this.headerBackButtonId);
-      await tapById(this.headerBackButtonId);
-      await waitForElementById(await this.searchBarId());
-    } else {
-      await tapByElement(this.assetDetailBackBtn());
-    }
+    await waitForElementById(this.headerBackButtonId);
+    await tapById(this.headerBackButtonId);
+    await waitForElementById(await this.searchBarId());
   }
 
   @Step("Filter starred asset")
@@ -191,18 +151,14 @@ export default class MarketPage {
 
   @Step("Tap on market quick action button {{{0}}}")
   async tapOnMarketQuickActionButton(action: "send" | "receive" | "buy" | "sell" | "swap") {
-    if (await isAggregatedAssetsEnabled()) {
-      const q2TestIds: Partial<Record<typeof action, string>> = {
-        buy: "asset-detail-buy-button",
-        swap: "asset-detail-swap-button",
-        receive: "asset-detail-footer-receive-button",
-      };
-      const testId = q2TestIds[action] ?? `asset-quick-action-button-${action}`;
-      await waitForElementById(testId);
-      await tapById(testId);
-    } else {
-      await tapByElement(this.marketQuickActionButton(action));
-    }
+    const q2TestIds: Partial<Record<typeof action, string>> = {
+      buy: "asset-detail-buy-button",
+      swap: "asset-detail-swap-button",
+      receive: "asset-detail-footer-receive-button",
+    };
+    const testId = q2TestIds[action] ?? `asset-quick-action-button-${action}`;
+    await waitForElementById(testId);
+    await tapById(testId);
   }
 
   @Step("Expect filters visible")

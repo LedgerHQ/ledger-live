@@ -14,6 +14,17 @@ import type { Account } from "@ledgerhq/types-live";
 
 const mockNavigate = jest.fn();
 
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useChunkedAssetsData: () => ({
+    data: { cryptoAssets: {}, markets: {} },
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+    refetch: jest.fn(),
+  }),
+}));
+
 jest.mock("@ledgerhq/live-common/bridge/useAccountBridge", () => ({
   useAccountBridge: jest.fn(),
   useAccountBridgeOrNull: jest.fn(),
@@ -45,9 +56,6 @@ describe("AnalyticsMain Integration Tests", () => {
 
     return withFlagOverrides({
       ptxServiceCtaExchangeDrawer: { enabled: isExchangeEnabled },
-      lwmWallet40: {
-        params: { aggregatedAssets: false },
-      },
     })({
       ...state,
       accounts: {

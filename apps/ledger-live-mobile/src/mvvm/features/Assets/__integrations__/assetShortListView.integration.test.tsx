@@ -22,6 +22,17 @@ const createMockEthAccountWithUSDC = (): Account => {
   };
 };
 
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useChunkedAssetsData: () => ({
+    data: { cryptoAssets: {}, markets: {} },
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+    refetch: jest.fn(),
+  }),
+}));
+
 jest.mock("@features/platform-market-countervalues", () => ({
   ...jest.requireActual("@features/platform-market-countervalues"),
   useCalculate: ({ value }: { value: number }) => value,

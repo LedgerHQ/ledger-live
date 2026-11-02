@@ -108,7 +108,6 @@ export function runUserCanSelectCounterValueToDisplayAmountInLedgerLive(
       await app.settingsGeneral.expectCounterValue("EUR");
       await app.mainNavigation.openPortfolioViaDeeplink();
       await app.portfolio.expectTotalBalanceCounterValue("€");
-      await app.portfolio.expectBalanceDiffToBeVisible();
       await app.portfolio.expectAssetRowCounterValue(account.currency.name, "€");
       await app.portfolio.expectOperationCounterValue("€");
     });

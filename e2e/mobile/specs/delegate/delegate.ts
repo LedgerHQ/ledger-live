@@ -71,7 +71,7 @@ export function runDelegateTest(
         await app.speculos.activateExpertMode();
       }
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.portfolio.goToAccounts();
 
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
@@ -120,7 +120,7 @@ export function runSuiDelegateTest(delegation: DelegateType, tmsLinks: string[],
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.portfolio.goToAccounts();
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 
@@ -149,7 +149,7 @@ export function runSuiUndelegateTest(delegation: DelegateType, tmsLinks: string[
     });
 
     it(`[${delegation.account.currency.testLabel}] - Undelegate`, async () => {
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.portfolio.goToAccounts();
       await app.common.goToAccountByName(delegation.account.accountName);
 
       const currencyId = delegation.account.currency.id;
@@ -215,7 +215,7 @@ export function runMinaDelegateTest(tmsLinks: string[], tags: string[]) {
         const amountWithCode = delegation.amount + " " + Currency.MINA.ticker;
         const currencyId = Currency.MINA.id;
 
-        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.portfolio.goToAccounts();
         await app.common.goToAccountByName(account.accountName);
         await app.account.tapEarn();
 
@@ -249,7 +249,7 @@ export function runMinaRedelegateTest(tmsLinks: string[], tags: string[]) {
         const delegation = new Delegate(account, "N/A", validator.name, validator.address);
         const currencyId = Currency.MINA.id;
 
-        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.portfolio.goToAccounts();
         await app.common.goToAccountByName(account.accountName);
 
         // Redelegating reopens the delegate flow on the validator list.
@@ -285,7 +285,7 @@ export function runMinaUndelegateTest(tmsLinks: string[], tags: string[]) {
         const { account, address } = await pickMinaAccountToUndelegate();
         const delegation = new Delegate(account, "N/A", "N/A", address);
 
-        await app.portfolio.goToAccounts(Currency.MINA.name);
+        await app.portfolio.goToAccounts();
         await app.common.goToAccountByName(account.accountName);
 
         // Undelegating returns the whole balance, so the action prepares the transaction itself and
@@ -319,7 +319,7 @@ export function runLockCelo(delegation: DelegateType, tmsLinks: string[], tags: 
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.portfolio.goToAccounts();
 
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
@@ -351,7 +351,7 @@ export function runVoteCelo(delegation: DelegateType, tmsLinks: string[], tags: 
     it(`[${delegation.account.currency.testLabel}] - Vote`, async () => {
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.portfolio.goToAccounts();
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();
 
@@ -396,7 +396,7 @@ export function runDelegateTezos(delegation: DelegateType, tmsLinks: string[], t
       await app.speculos.goToSettings();
       await app.speculos.activateExpertMode();
 
-      await app.portfolio.goToAccounts(delegation.account.currency.name);
+      await app.portfolio.goToAccounts();
 
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();

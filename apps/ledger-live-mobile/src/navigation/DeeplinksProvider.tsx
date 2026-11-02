@@ -164,10 +164,6 @@ const linkingOptions = () => ({
             },
           },
           [ScreenName.Recover]: "recover/:platform",
-          /**
-           * ie: "ledgerlive://market/:currencyId" will open the market detail page for the given currency
-           */
-          [ScreenName.MarketDetail]: "market/:currencyId",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -328,11 +324,8 @@ export const DeeplinksProvider = ({
   const llmAccountListUI = useFeature("llmAccountListUI");
   const genericAwarenessModalFlag = useFeature("lwmGenericAwarenessModal");
 
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("mobile");
   const web3hubFlag = useFeature("web3hub");
   const lwmProductTourFlag = useFeature("lwmProductTour");
   const lwmBackupHubFlag = useFeature("lwmBackupHub");
@@ -684,7 +677,6 @@ export const DeeplinksProvider = ({
             const intent = resolveMarketOrAssetDeeplinkIntent({
               hostname,
               pathname,
-              shouldDisplayAggregatedAssets,
               shouldDisplayAssetDiscoverability,
               categoryParam: searchParams.get("category"),
             });
@@ -696,15 +688,10 @@ export const DeeplinksProvider = ({
                   source: intent.source,
                   marketState: intent.marketState,
                 });
-              case "legacy-path":
-                url.pathname = `/${intent.currencyId}`;
-                return getStateFromPath(url.href?.split("://")[1], config);
               case "market-banner":
                 return handleMarketBannerDeeplink(intent.category);
               case "portfolio":
                 return getStateFromPath("portfolio", config);
-              case "continue":
-                break;
             }
           }
 
@@ -907,7 +894,6 @@ export const DeeplinksProvider = ({
     buySellUiManifestId,
     dispatch,
     shouldDisplayAssetSection,
-    shouldDisplayAggregatedAssets,
     shouldDisplayAssetDiscoverability,
     liveAppProviderInitialized,
     manifests,

@@ -1,19 +1,7 @@
 import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
-import { FF_LWM_WALLET_40_Q2 } from "@e2e/utils/featureFlagUtils";
 
 const TAGS = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"];
-
-// TODO: temporary override until LIVE-29336 is done
-const FF_WALLET_ASSETS = {
-  lwmWallet40: {
-    ...FF_LWM_WALLET_40_Q2.lwmWallet40,
-    params: {
-      ...FF_LWM_WALLET_40_Q2.lwmWallet40.params,
-      aggregatedAssets: false,
-    },
-  },
-};
 
 setTeamOwner(Team.WALLET_XP);
 describe("Wallet assets", () => {
@@ -23,7 +11,6 @@ describe("Wallet assets", () => {
     await app.init({
       userdata: "skip-onboarding",
       speculosApp: currency.speculosApp,
-      featureFlags: FF_WALLET_ASSETS,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
@@ -55,7 +42,6 @@ describe("Wallet assets", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-btc-only",
-      featureFlags: FF_WALLET_ASSETS,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();
@@ -77,7 +63,6 @@ describe("Wallet assets", () => {
   beforeAll(async () => {
     await app.init({
       userdata: "wallet40-many-stablecoins",
-      featureFlags: FF_WALLET_ASSETS,
     });
     await app.mainNavigation.waitForWallet40Ready();
     await app.wallet40Drawers.closeWallet40BlockingDrawersIfVisible();

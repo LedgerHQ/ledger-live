@@ -27,6 +27,17 @@ const createMockEthAccountWithUSDC = (): Account => {
 
 import { NavigatorName, ScreenName } from "~/const";
 
+jest.mock("@features/platform-aggregated-assets", () => ({
+  ...jest.requireActual("@features/platform-aggregated-assets"),
+  useChunkedAssetsData: () => ({
+    data: { cryptoAssets: {}, markets: {} },
+    isLoading: false,
+    isSuccess: true,
+    isError: false,
+    refetch: jest.fn(),
+  }),
+}));
+
 const mockNavigate = jest.fn();
 
 jest.mock("@react-navigation/native", () => ({
@@ -176,10 +187,11 @@ describe("DetailedAllocation Integration Tests", () => {
       page: "Detailed Allocation",
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.Accounts, {
-      screen: ScreenName.Asset,
+    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.AssetDetail, {
+      screen: ScreenName.AssetDetail,
       params: {
-        currency: mockBitcoinCurrency,
+        currencyId: mockBitcoinCurrency.id,
+        source: "detailed_allocation",
       },
     });
   });
