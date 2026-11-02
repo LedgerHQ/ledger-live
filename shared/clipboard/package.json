@@ -43,8 +43,6 @@
     "expo-clipboard": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

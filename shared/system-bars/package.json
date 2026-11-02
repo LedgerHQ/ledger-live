@@ -45,8 +45,6 @@
     "@types/node": "catalog:",
     "expo-navigation-bar": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react-native": "catalog:",
     "typescript": "catalog:"
   }

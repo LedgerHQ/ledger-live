@@ -51,8 +51,6 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "msw": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

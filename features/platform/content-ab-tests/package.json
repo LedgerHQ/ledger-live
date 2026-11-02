@@ -31,8 +31,6 @@
     "@types/jest": "catalog:",
     "i18next": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

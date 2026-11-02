@@ -1,5 +1,8 @@
 # @shared/ui-queued-bottom-sheet
 
+> [!CAUTION]
+> **Status: UNSTABLE.** In active development; API may change.
+
 Shared queue-aware Lumen bottom sheet for React Native. Provides a single global FIFO queue so that only one sheet is ever open at a time, plus the Lumen `QueuedBottomSheet` UI that consumes it.
 
 `QueuedBottomSheet` is the new Lumen-based component. The legacy `QueuedDrawer` (Flex/`react-native-modal`) stays in the app under `apps/ledger-live-mobile/src/mvvm/components/QueuedDrawer/` and is not part of this package.

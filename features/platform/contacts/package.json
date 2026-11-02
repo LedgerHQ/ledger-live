@@ -81,8 +81,6 @@
     "@testing-library/react-native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

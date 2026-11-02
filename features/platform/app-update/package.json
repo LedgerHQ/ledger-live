@@ -33,8 +33,6 @@
     "@types/node": "catalog:",
     "@types/trust__keyto": "1.0.4",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -35,7 +35,6 @@
     "react-dom": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "oxfmt": "catalog:",
     "typescript": "catalog:",
     "@support/jest": "workspace:*"
   }

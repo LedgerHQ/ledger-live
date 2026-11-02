@@ -32,7 +32,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
     "typescript": "catalog:"
   }
 }

@@ -54,8 +54,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-native-svg": "catalog:",

@@ -16,11 +16,13 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 
 ## Package checklist
 
+`pnpm lint:tool-config` checks the README and its status marker, `"sideEffects": false`, the `lint` and `format:check` scripts and the absence of `oxlint` / `oxfmt` dependencies, as listed in [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs).
+
 **`package.json` fields**
 - [ ] `"private": true`
 - [ ] `"sideEffects": false` — enables bundler tree-shaking
 - [ ] `"main"`, `"types"`, `"exports"` — source-only packages (domain/, features/, shared/) point directly to `src/index.ts` and expose `"./package.json"`; built/published libs/ packages use the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries — copy from a neighbouring package of the same type
-- [ ] `devDependencies` via `catalog:` entries — `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `oxfmt`, `oxlint` (never pin versions directly)
+- [ ] `devDependencies` via `catalog:` entries (never pin versions directly): `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`. Not `oxlint` or `oxfmt`: the scripts run the workspace root binaries
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
 - [ ] `scripts.format: "oxfmt src"` — required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`)

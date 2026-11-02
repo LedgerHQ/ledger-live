@@ -57,8 +57,6 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
     "react-test-renderer": "catalog:",

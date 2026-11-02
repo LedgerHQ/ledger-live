@@ -52,7 +52,6 @@
     "@types/react-dom": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "oxfmt": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",

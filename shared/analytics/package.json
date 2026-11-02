@@ -31,8 +31,6 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "typescript": "catalog:",
     "@support/jest": "workspace:*"
   }

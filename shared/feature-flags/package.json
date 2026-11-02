@@ -34,7 +34,6 @@
     "@types/jest": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
     "typescript": "catalog:"
   }
 }

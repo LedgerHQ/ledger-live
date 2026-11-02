@@ -30,7 +30,6 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "oxfmt": "catalog:",
     "typescript": "catalog:"
   }
 }

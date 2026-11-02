@@ -29,8 +29,6 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "tailwindcss": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "@gorhom/bottom-sheet": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",

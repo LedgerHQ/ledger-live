@@ -38,8 +38,6 @@
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:"
   }

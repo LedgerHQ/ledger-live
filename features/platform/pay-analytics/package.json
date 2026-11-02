@@ -42,8 +42,6 @@
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
     "jest": "catalog:",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   }

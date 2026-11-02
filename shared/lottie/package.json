@@ -50,8 +50,6 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "lottie-react-native": "7.3.8",
-    "oxfmt": "catalog:",
-    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-native": "catalog:",
