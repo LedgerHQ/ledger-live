@@ -175,7 +175,7 @@ export default class NewSendFlowPage {
   @Step("Confirm the fee payment option")
   async confirmFeePayment() {
     await this.feePaymentConfirm.tap();
-    await this.feePaymentConfirm.waitGone();
+    await this.feePaymentConfirm.waitNotVisible();
   }
 
   @Step("Pay the network fee with fee payment option: {{{0}}}")
@@ -202,7 +202,7 @@ export default class NewSendFlowPage {
 
   @Step("Verify no rent is offered")
   async expectNoFeePaymentOffer() {
-    await this.feePaymentEntry.waitGone();
+    await this.feePaymentEntry.waitNotVisible();
   }
 
   // TRX is the main value without a countervalue, else the secondary value after the fiat one.
@@ -228,7 +228,7 @@ export default class NewSendFlowPage {
 
   @Step("Verify the network fee dropped below {{{0}}} TRX once the rent landed")
   async expectFeeDroppedOnRentDelivery(feeBefore: number) {
-    await this.sponsoredRentArriving.waitGone();
+    await this.sponsoredRentArriving.waitNotVisible();
     await this.waitForNetworkFeeTrx(fee => fee < feeBefore, `below ${feeBefore} TRX`);
   }
 
@@ -253,7 +253,7 @@ export default class NewSendFlowPage {
   async expectRetryLocked() {
     await this.retryBlockedBanner.waitVisible();
     await this.sponsoredFailureRetry.tap();
-    await jestExpect(this.sponsoredFailure.waitGone(TIMEOUT.small)).rejects.toThrow(
+    await jestExpect(this.sponsoredFailure.waitNotVisible(TIMEOUT.small)).rejects.toThrow(
       "did not become hidden",
     );
     await this.retryBlockedBanner.waitVisible();
@@ -262,14 +262,14 @@ export default class NewSendFlowPage {
   @Step("Verify Retry is offered as {{{0}}}, with no banner blocking it")
   async expectRetryOffered(label: string) {
     await this.sponsoredFailureRetryShowing(label).waitVisible();
-    await this.retryBlockedBanner.waitGone();
+    await this.retryBlockedBanner.waitNotVisible();
   }
 
   @Step("Cancel the failed sponsored send")
   async cancelSponsoredFailure() {
     await this.sponsoredFailureCancel.tap();
-    await this.sponsoredFailure.waitGone();
-    await this.amountInput.waitGone();
+    await this.sponsoredFailure.waitNotVisible();
+    await this.amountInput.waitNotVisible();
   }
 
   @Step("Wait for signature screen or device action loader")
