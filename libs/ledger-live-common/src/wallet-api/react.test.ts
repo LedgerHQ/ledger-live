@@ -846,9 +846,11 @@ describe("bitcoin.signPsbt handler", () => {
     return { account, uiTxSignRaw };
   }
 
-  it("forwards the request options to the raw signing UI", async () => {
+  it.each([
+    ["an allowed app", { hwAppId: "Hashi Test" }],
+    ["an allowed app with dependencies", { hwAppId: "Hashi Test", dependencies: ["Bitcoin Test"] }],
+  ])("forwards the request options to the raw signing UI for %s", async (_case, options) => {
     const { account, uiTxSignRaw } = renderWithSignRaw();
-    const options = { hwAppId: "Hashi Test" };
 
     await expect(
       getHandler()({ accountId: "wallet-account-id", psbt: "cHNidP8", options }),
@@ -875,7 +877,6 @@ describe("bitcoin.signPsbt handler", () => {
     ["an unknown app", "bitcoin_testnet", { hwAppId: "Jibberish" }],
     ["an app allowed on another currency", "bitcoin", { hwAppId: "Hashi Test" }],
     ["an app on a currency without allowed apps", "litecoin", { hwAppId: "Hashi" }],
-    ["extra app dependencies", "bitcoin_testnet", { hwAppId: "Hashi Test", dependencies: ["X"] }],
   ])("rejects %s before opening the raw signing UI", async (_case, currencyId, options) => {
     const { uiTxSignRaw } = renderWithSignRaw(CRYPTO_CURRENCIES_REGISTRY[currencyId]);
 

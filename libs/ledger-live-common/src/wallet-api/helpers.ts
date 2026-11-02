@@ -28,14 +28,13 @@ export function isWalletAPISupportedCurrency(
 
 /**
  * Whether `bitcoin.signPsbt` may sign with the requested options on an account of `currencyId`.
- * No `hwAppId` keeps the default app. A named app must be allowed for that currency, and extra
- * app dependencies are not accepted.
+ * No `hwAppId` keeps the default app. A named app must be allowed for that currency. Dependencies
+ * are not checked: they only get installed, the signing app is still `hwAppId`.
  */
 export function isBitcoinSignPsbtOptionsAllowed(
   currencyId: string,
   options: { hwAppId?: string; dependencies?: string[] } | undefined,
 ): boolean {
-  if (options?.dependencies?.length) return false;
   if (options?.hwAppId === undefined) return true;
   return BITCOIN_SIGN_PSBT_ALLOWED_APPS[currencyId]?.has(options.hwAppId) ?? false;
 }

@@ -650,8 +650,9 @@ describe("wallet-api helpers", () => {
       ["bitcoin", { hwAppId: "hashi" }, false],
       ["bitcoin", { hwAppId: "" }, false],
       ["litecoin", { hwAppId: "Hashi" }, false],
-      ["bitcoin", { hwAppId: "Hashi", dependencies: ["Bitcoin"] }, false],
-      ["bitcoin", { dependencies: ["Bitcoin"] }, false],
+      ["bitcoin", { hwAppId: "Hashi", dependencies: ["Bitcoin"] }, true],
+      ["bitcoin", { dependencies: ["Bitcoin"] }, true],
+      ["bitcoin", { hwAppId: "Jibberish", dependencies: ["Bitcoin"] }, false],
     ])("%s with %j is allowed: %s", (currencyId, options, expected) => {
       expect(isBitcoinSignPsbtOptionsAllowed(currencyId, options)).toBe(expected);
     });
