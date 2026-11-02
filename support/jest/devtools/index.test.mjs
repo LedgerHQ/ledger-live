@@ -3,7 +3,9 @@
 
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
+import path from "node:path";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const {
@@ -15,17 +17,28 @@ const {
   webSetupFilesAfterEnv,
 } = require("./index.js");
 
+const here = path.dirname(fileURLToPath(import.meta.url));
+
 const factories = [
-  ["createWebJestConfig", createWebJestConfig, webModuleNameMapper, webSetupFilesAfterEnv],
+  [
+    "createWebJestConfig",
+    createWebJestConfig,
+    webModuleNameMapper,
+    webSetupFilesAfterEnv,
+    ["^@ledgerhq/lumen-ui-react$", "<rootDir>/node_modules/@ledgerhq/lumen-ui-react"],
+    path.join(here, "setup/web.js"),
+  ],
   [
     "createNativeJestConfig",
     createNativeJestConfig,
     nativeModuleNameMapper,
     nativeSetupFilesAfterEnv,
+    ["^expo-haptics$", path.join(here, "mocks/expo-haptics.ts")],
+    path.join(here, "setup/native.ts"),
   ],
 ];
 
-for (const [name, create, mapper, setupFiles] of factories) {
+for (const [name, create, mapper, setupFiles, [mappedModule, mappedTo], setupFile] of factories) {
   test(`${name}: the exported mapper and setup files, as unfrozen copies`, () => {
     const { moduleNameMapper, setupFilesAfterEnv } = create();
     assert.deepEqual(moduleNameMapper, mapper);
@@ -36,6 +49,12 @@ for (const [name, create, mapper, setupFiles] of factories) {
 
   test(`${name}: maps the package's jest/ folder`, () => {
     assert.equal(create().moduleNameMapper["^jest/(.*)$"], "<rootDir>/jest/$1");
+  });
+
+  test(`${name}: maps ${mappedModule} and runs its setup file`, () => {
+    const config = create();
+    assert.equal(config.moduleNameMapper[mappedModule], mappedTo);
+    assert.ok(config.setupFilesAfterEnv.includes(setupFile), `no ${setupFile}`);
   });
 
   test(`${name}: moduleNameMapper and setupFilesAfterEnv overrides replace the preset's`, () => {
