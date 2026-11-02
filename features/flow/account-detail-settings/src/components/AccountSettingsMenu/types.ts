@@ -1,5 +1,8 @@
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
+
 export type AccountSettingsMenuProps = Readonly<{
   accountName: string;
+  onEvent?: AccountSettingsEventHandler;
   explorerUrl?: string;
   onChangeName: () => void;
   onViewAdvancedLogs: () => void;

@@ -2,7 +2,12 @@ import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import type { Row, Table } from "@tanstack/react-table";
 import type { Account } from "@ledgerhq/types-live";
-import { setTrackingSource } from "@shared/analytics";
+import {
+  ACCOUNT_DETAIL_EVENTS,
+  ACCOUNT_DETAIL_PAGES,
+  accountAssetClickedProps,
+} from "@features/flow-account-detail";
+import { setTrackingSource, track } from "@shared/analytics";
 import {
   useAllCurrencyTrends,
   useAssetsTable,
@@ -15,7 +20,7 @@ import {
   blacklistedTokenIdsSelector,
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
-import { ACCOUNT_DETAIL_TRACKING_PAGE_NAME } from "../../constants";
+import { getAccountTrackingFacts } from "../../utils/accountTracking";
 import { buildAccountAssetItems } from "../../utils/buildAccountAssetItems";
 
 export type AssetsSectionViewModel = Readonly<{
@@ -47,10 +52,14 @@ export function useAssetsSectionViewModel(account: Account): AssetsSectionViewMo
 
   const onRowClick = useCallback(
     ({ original }: Row<AssetTableItem>) => {
-      setTrackingSource(ACCOUNT_DETAIL_TRACKING_PAGE_NAME);
+      track(
+        ACCOUNT_DETAIL_EVENTS.assetClicked,
+        accountAssetClickedProps(getAccountTrackingFacts(account), original.currency.ticker),
+      );
+      setTrackingSource(ACCOUNT_DETAIL_PAGES.account);
       navigate(getAssetDetailPath(original.currency.id));
     },
-    [navigate],
+    [account, navigate],
   );
 
   return {

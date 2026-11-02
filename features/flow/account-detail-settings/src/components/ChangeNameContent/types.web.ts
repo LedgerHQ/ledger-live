@@ -1,8 +1,11 @@
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
+
 export type ChangeNameContentProps = Readonly<{
   initialName: string;
   maxLength: number;
   isDisabled?: boolean;
   onConfirm: (name: string) => void;
+  onEvent?: AccountSettingsEventHandler;
 }>;
 
 export type ChangeNameContentViewProps = Readonly<{

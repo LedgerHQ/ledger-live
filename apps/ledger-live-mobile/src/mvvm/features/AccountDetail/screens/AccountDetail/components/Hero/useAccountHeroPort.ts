@@ -1,4 +1,6 @@
 import { useCallback } from "react";
+import { track } from "@shared/analytics";
+import { ACCOUNT_DETAIL_EVENTS, quickActionClickedProps } from "@features/flow-account-detail";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import type { FormattedValue } from "@ledgerhq/lumen-ui-rnative";
@@ -16,6 +18,7 @@ import { useLocale } from "~/context/Locale";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { usePickAccountAsset } from "LLM/hooks/usePickAccountAsset";
 import { useCalculateCountervalueCallback } from "~/actions/general";
+import { getAccountTrackingFacts } from "../../../../utils/accountTracking";
 import { useAccountHeroActions } from "./useAccountHeroActions";
 import { useAccountHeroAssets } from "./useAccountHeroAssets";
 import { useAssetsByAction } from "./useAssetsByAction";
@@ -46,6 +49,14 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
   const { byAction, deactivatedCurrencyIds } = useAssetsByAction(assets);
   const { pickAsset, pickerProps: assetPicker } = usePickAccountAsset();
   const onAction = useAccountHeroActions(account, assets, byAction, pickAsset);
+  const onOpenMore = useCallback(
+    () =>
+      track(
+        ACCOUNT_DETAIL_EVENTS.buttonClicked,
+        quickActionClickedProps(getAccountTrackingFacts(account), "More"),
+      ),
+    [account],
+  );
 
   const status = useAccountHeroStatus(account, assets, byAction, {
     isCurrencySupported: !deactivatedCurrencyIds.has(account.currency.id),
@@ -60,6 +71,7 @@ export function useAccountHeroPort(account: Account): AccountHeroPortResult {
       tag: getAccountTag(account),
       ...status,
       onAction,
+      onOpenMore,
     },
     assetPicker,
   };

@@ -1,3 +1,4 @@
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
 import type { AdvancedLogsInput } from "../../logic/buildAdvancedLogs";
 
 export type AdvancedLogsContentProps = Readonly<{
@@ -5,6 +6,7 @@ export type AdvancedLogsContentProps = Readonly<{
   locale: string;
   derivationTag?: string;
   onCopied?: (copied: boolean) => void;
+  onEvent?: AccountSettingsEventHandler;
 }>;
 
 export type AdvancedLogsContentViewProps = Readonly<{

@@ -43,6 +43,22 @@ import { AccountSettingsMenu, AdvancedLogsContent } from "@features/flow-account
 />;
 ```
 
+## Events
+
+The contents tell what the user did through one optional callback, `onEvent`, and the apps decide
+what to do with it (analytics). The package knows nothing about tracking.
+
+`AccountSettings` (web) and `AccountSettingsSheet` (native) take `onEvent`, and so do the contents
+they are made of (`AccountSettingsMenu`, `RemoveAccountContent`, `AdvancedLogsContent`, and
+`ChangeNameContent` on web). The events (`AccountSettingsEvent`) are `changeName`,
+`validateChangeName`, `viewLogs`, `copyLogs`, `viewExplorer`, `removeFromPortfolio`,
+`validateRemove` and `cancelRemove`. The settings being opened is not an event: the app that opens
+them knows it.
+
+```tsx
+<AccountSettings account={account} adapter={adapter} isOpen onClose={close} onEvent={onSettingsEvent} />
+```
+
 ## i18n
 
 Copy lives under `accountDetailSettings.*` in each app's English catalog (LWD `app.json`, LWM

@@ -1,3 +1,4 @@
+import type { AccountSettingsEventHandler } from "../../logic/accountSettingsEvent";
 import type { AccountExplorerSource } from "../../logic/getAccountExplorerUrl";
 
 export type AccountSettingsSheetStep = "menu" | "remove";
@@ -11,6 +12,7 @@ export type AccountSettingsSheetProps = Readonly<{
   account: AccountExplorerSource;
   onConfirmRemove: () => void;
   onHidden?: () => void;
+  onEvent?: AccountSettingsEventHandler;
   testID?: string;
 }>;
 

@@ -19,6 +19,10 @@ export type RecentOperationsParams = Readonly<{
   accountIds: readonly string[];
   trackingPage: string;
   trackingCurrencyId?: string;
+  /** Replaces the default payload of the header click (a page with its own tracking plan). */
+  headerTracking?: Readonly<Record<string, unknown>>;
+  /** Added to the `transaction_clicked` event of each operation. */
+  operationTracking?: Readonly<Record<string, unknown>>;
 }>;
 
 type ResolvedAccount = Readonly<{ account: AccountLike; parentAccount: Account | undefined }>;
@@ -30,6 +34,7 @@ export type RecentOperationsViewModel = Readonly<{
   lastSeenTs: number | null;
   findAccount: (accountId: string) => ResolvedAccount | null;
   onHeaderPress: () => void;
+  operationTracking: Readonly<Record<string, unknown>> | undefined;
   hasData: boolean;
 }>;
 
@@ -59,6 +64,8 @@ export function useRecentOperationsViewModel({
   accountIds,
   trackingPage,
   trackingCurrencyId,
+  headerTracking,
+  operationTracking,
 }: RecentOperationsParams): RecentOperationsViewModel {
   const navigation = useNavigation<BaseNavigation>();
   const allAccounts = useSelector(accountsSelector);
@@ -148,16 +155,19 @@ export function useRecentOperationsViewModel({
   );
 
   const onHeaderPress = useCallback(() => {
-    track("button_clicked", {
-      button: "Transactions",
-      currency: trackingCurrencyId,
-      page: trackingPage,
-    });
+    track(
+      "button_clicked",
+      headerTracking ?? {
+        button: "Transactions",
+        currency: trackingCurrencyId,
+        page: trackingPage,
+      },
+    );
     navigation.navigate(NavigatorName.OperationsHistory, {
       screen: ScreenName.OperationsList,
       params: { accountIds: Array.from(allowedIds) },
     });
-  }, [navigation, trackingCurrencyId, trackingPage, allowedIds]);
+  }, [navigation, trackingCurrencyId, trackingPage, headerTracking, allowedIds]);
 
   return {
     operations,
@@ -166,6 +176,7 @@ export function useRecentOperationsViewModel({
     lastSeenTs,
     findAccount,
     onHeaderPress,
+    operationTracking,
     hasData: operations.length > 0,
   };
 }
