@@ -6,7 +6,12 @@ import { defineConfig } from "@rslib/core";
 // them at build time.
 export default defineConfig({
   source: { entry: { cli: "./src/cli.ts" } },
-  output: { target: "node", distPath: { root: "lib" }, minify: false },
-  // autoExternal defaults to externalizing all deps; bundle the @ledgerhq ones in.
-  lib: [{ format: "cjs", bundle: true, autoExternal: { dependencies: false } }],
+  output: {
+    target: "node",
+    distPath: { root: "lib" },
+    minify: false,
+    // autoExternal defaults to externalizing all deps; bundle the @ledgerhq ones in.
+    autoExternal: { dependencies: false },
+  },
+  lib: [{ format: "cjs", bundle: true }],
 });
