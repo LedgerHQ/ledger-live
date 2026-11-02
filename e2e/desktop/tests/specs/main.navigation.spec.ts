@@ -14,12 +14,14 @@ test.describe("Main navigation", () => {
       tag: [...DEVICE_TAGS],
       annotation: {
         type: "TMS",
-        description: "B2CQA-4384",
+        description: "B2CQA-4384, B2CQA-1837",
       },
     },
     async ({ app }) => {
       await app.mainNavigation.openTargetFromMainNavigation("home");
       await app.mainNavigation.validateTargetFromMainNavigation("home");
+      await app.mainNavigation.openDeeplink("ledgerwallet://discover");
+      await app.mainNavigation.validateTargetFromMainNavigation("discover");
       await app.mainNavigation.openTargetFromMainNavigation("accounts");
       await app.mainNavigation.validateTargetFromMainNavigation("accounts");
       await app.mainNavigation.openTargetFromMainNavigation("swap");
