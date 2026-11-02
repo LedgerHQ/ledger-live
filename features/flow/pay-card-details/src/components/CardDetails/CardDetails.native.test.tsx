@@ -85,18 +85,18 @@ describe("CardDetails (native)", () => {
         withdrawDescription: "Continue to withdraw",
         continue: "Continue",
       },
-      onAssetPress: jest.fn((asset: CardAssetRow) => {
+      onOpenAsset: jest.fn((asset: CardAssetRow) => {
         viewModel.selectedAsset = asset;
       }),
       onDialogClose: jest.fn(),
-      onTopUpPress: jest.fn(),
-      onWithdrawPress: jest.fn(),
+      onTopUpAsset: jest.fn(),
+      onOpenWithdraw: jest.fn(),
       onWithdrawClose: jest.fn(),
-      onShowHistoryPress: jest.fn(),
+      onShowHistory: jest.fn(),
       onWithdrawContinue: jest.fn(),
-      onManagePress: jest.fn(),
-      onRetryPress: jest.fn(),
-      onAddAssetPress: jest.fn(),
+      onManageAssets: jest.fn(),
+      onRetry: jest.fn(),
+      onAddAsset: jest.fn(),
       onMoveAsset: jest.fn(),
       reorderingAssetIds: new Set(),
     } satisfies CardAssetsViewModel;
@@ -252,7 +252,7 @@ describe("CardDetails (native)", () => {
     await user.press(await screen.findByTestId("card-asset-w-usdc"));
     await user.press(screen.getByText("Top up"));
 
-    expect(mockUseCardAssetsViewModel.mock.results[0].value.onTopUpPress).toHaveBeenCalledTimes(1);
+    expect(mockUseCardAssetsViewModel.mock.results[0].value.onTopUpAsset).toHaveBeenCalledTimes(1);
     expect(screen.queryByTestId("card-asset-details-drawer")).not.toBeOnTheScreen();
     expect(screen.queryByText(CARD_COPY.freeze)).toBeNull();
   });
