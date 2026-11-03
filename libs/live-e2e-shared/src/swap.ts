@@ -12,7 +12,7 @@ const FALLBACK_TARGET_USD = 50;
 const DEFAULT_SWAP_API_BASE = "https://global.api.stg.ledger-test.com/swap/v5";
 
 /** Same source as the app under test: CI exports SWAP_API_BASE; STG when unset. */
-const SWAP_API_BASE = (process.env.SWAP_API_BASE || DEFAULT_SWAP_API_BASE).replace(/\/+$/, "");
+const SWAP_API_BASE = (process.env.SWAP_API_BASE || DEFAULT_SWAP_API_BASE).replace(/\/$/, "");
 
 const SWAP_QUOTE_URL = `${SWAP_API_BASE}/quote`;
 
