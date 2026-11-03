@@ -39,7 +39,6 @@
     "@types/ws": "^8.5.3",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
-    "knip": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

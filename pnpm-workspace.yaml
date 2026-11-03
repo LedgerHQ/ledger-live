@@ -247,7 +247,6 @@ catalog:
   "@nx/s3-cache": 5.0.7
   oxlint: 1.82.0
   oxfmt: 0.67.0
-  knip: 6.32.2
   # Modules published by coin-modules
   "@ledgerhq/coin-evm": 16.2.0
   "@ledgerhq/coin-hypercore": 4.0.2

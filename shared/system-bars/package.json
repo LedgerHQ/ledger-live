@@ -46,7 +46,6 @@
     "@typescript/native": "catalog:",
     "expo-navigation-bar": "catalog:",
     "jest": "catalog:",
-    "knip": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react-native": "catalog:",

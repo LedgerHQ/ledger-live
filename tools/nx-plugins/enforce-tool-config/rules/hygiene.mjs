@@ -35,7 +35,6 @@ const STATUS_LINES = STATUSES.map(status => `"> **Status: ${status}**"`);
 // Each root tool, by the executable a script runs, and the package that supplies it.
 const TOOLS = {
   tsc: "@typescript/native",
-  knip: "knip",
   oxlint: "oxlint",
   oxfmt: "oxfmt",
   rimraf: "rimraf",

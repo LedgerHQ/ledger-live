@@ -60,7 +60,6 @@
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "knip": "catalog:",
     "msw": "catalog:",
     "react-redux": "catalog:",
     "oxfmt": "catalog:",

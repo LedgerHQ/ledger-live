@@ -222,7 +222,6 @@ const TOOL_DEPENDENCY =
 
 for (const [tool, supplier, script] of [
   ["tsc", "@typescript/native", "tsc --noEmit -p tsconfig.web.json"],
-  ["knip", "knip", "pnpm knip --directory ../.. -W shared/pkg"],
   ["oxlint", "oxlint", "oxlint src"],
   ["oxfmt", "oxfmt", "oxfmt src --check"],
   ["rimraf", "rimraf", "rimraf lib"],
@@ -277,7 +276,7 @@ test("tool-dependency: the tool is the executable of a command, behind pnpm, pnp
 });
 
 test("tool-dependency: a declared tool that no script runs passes", () => {
-  const devDependencies = { ...MANIFEST.devDependencies, knip: "catalog:", zx: "8.0.0" };
+  const devDependencies = { ...MANIFEST.devDependencies, rimraf: "catalog:", zx: "8.0.0" };
   assert.deepEqual(violations({ manifest: { devDependencies } }), []);
 });
 

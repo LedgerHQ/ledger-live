@@ -35,7 +35,6 @@
     "@types/node": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
-    "knip": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"

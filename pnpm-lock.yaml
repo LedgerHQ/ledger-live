@@ -668,9 +668,6 @@ catalogs:
     jest-file-snapshot:
       specifier: 0.7.0
       version: 0.7.0
-    knip:
-      specifier: 6.32.2
-      version: 6.32.2
     msw:
       specifier: ^2.7.3
       version: 2.7.3
@@ -5373,9 +5370,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5422,9 +5416,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5492,9 +5483,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5553,9 +5541,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -5617,9 +5602,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5690,9 +5672,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -5766,9 +5745,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5830,9 +5806,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5891,9 +5864,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -5946,9 +5916,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -6007,9 +5974,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6065,9 +6029,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -6114,9 +6075,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6160,9 +6118,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6215,9 +6170,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6267,9 +6219,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6310,9 +6259,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6353,9 +6299,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6405,9 +6348,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6457,9 +6397,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6497,9 +6434,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6537,9 +6471,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6573,9 +6504,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6619,9 +6547,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6671,9 +6596,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6717,9 +6639,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6760,9 +6679,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6806,9 +6722,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6852,9 +6765,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6892,9 +6802,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6932,9 +6839,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -6984,9 +6888,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7024,9 +6925,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7064,9 +6962,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7104,9 +6999,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7150,9 +7042,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7193,9 +7082,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7233,9 +7119,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7615,9 +7498,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7679,9 +7559,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7752,9 +7629,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7840,9 +7714,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -7937,9 +7808,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8028,9 +7896,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8137,9 +8002,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8195,9 +8057,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8268,9 +8127,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8353,9 +8209,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8426,9 +8279,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8493,9 +8343,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8572,9 +8419,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8642,9 +8486,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8760,9 +8601,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8866,9 +8704,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -8975,9 +8810,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9066,9 +8898,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9151,9 +8980,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9236,9 +9062,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9351,9 +9174,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9445,9 +9265,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9533,9 +9350,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9618,9 +9432,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9712,9 +9523,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9794,9 +9602,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9848,9 +9653,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -9926,9 +9728,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10038,9 +9837,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10132,9 +9928,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10238,9 +10031,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10365,9 +10155,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10504,9 +10291,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10640,9 +10424,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -10758,9 +10539,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -10843,9 +10621,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -10940,9 +10715,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11052,9 +10824,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11155,9 +10924,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11255,9 +11021,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11367,9 +11130,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11473,9 +11233,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11527,9 +11284,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11585,9 +11339,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11652,9 +11403,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11728,9 +11476,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11813,9 +11558,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11871,9 +11613,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -11956,9 +11695,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12014,9 +11750,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12047,9 +11780,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12171,9 +11901,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12229,9 +11956,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12375,9 +12099,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12448,9 +12169,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12509,9 +12227,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12537,9 +12252,6 @@ importers:
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12595,9 +12307,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12647,9 +12356,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12720,9 +12426,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12775,9 +12478,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12815,9 +12515,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12848,9 +12545,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -12955,9 +12649,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -13004,9 +12695,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -21724,9 +21412,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -21791,9 +21476,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -21858,9 +21540,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -21913,9 +21592,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -21959,9 +21635,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -22010,9 +21683,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22077,9 +21747,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -22123,9 +21790,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22166,9 +21830,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22218,9 +21879,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22279,9 +21937,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22333,9 +21988,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22400,9 +22052,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       lottie-react-native:
         specifier: 7.3.8
         version: 7.3.8(@lottiefiles/dotlottie-react@0.20.0(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
@@ -22472,9 +22121,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22520,9 +22166,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22563,9 +22206,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22605,9 +22245,6 @@ importers:
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22662,9 +22299,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22731,9 +22365,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22816,9 +22447,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0
@@ -22943,9 +22571,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      knip:
-        specifier: 'catalog:'
-        version: 6.32.2
       oxfmt:
         specifier: 'catalog:'
         version: 0.67.0

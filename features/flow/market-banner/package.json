@@ -29,7 +29,6 @@
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@typescript/native": "catalog:",
-    "knip": "catalog:",
     "tailwindcss": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

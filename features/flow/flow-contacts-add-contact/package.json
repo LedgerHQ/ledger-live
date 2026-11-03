@@ -67,7 +67,6 @@
     "class-variance-authority": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "knip": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",

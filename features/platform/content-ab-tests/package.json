@@ -32,7 +32,6 @@
     "@typescript/native": "catalog:",
     "i18next": "catalog:",
     "jest": "catalog:",
-    "knip": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"

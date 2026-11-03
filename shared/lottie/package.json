@@ -50,7 +50,6 @@
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
-    "knip": "catalog:",
     "lottie-react-native": "7.3.8",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

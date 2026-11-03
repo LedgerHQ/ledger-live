@@ -34,7 +34,6 @@
     "@types/trust__keyto": "1.0.4",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
-    "knip": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
