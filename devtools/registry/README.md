@@ -57,6 +57,8 @@ Run the generator — it handles all wiring automatically:
 pnpm --filter @devtools/registry add-tool
 ```
 
+`add-tool` and `reformat` run `nx g @ledgerhq/generators:...`, and Nx resolves `@ledgerhq/generators` as a local plugin from the workspace. Do not add it to this package's dependencies: the apps reach the registry through `@devtools/shell` and `@devtools/bindings`, so that edge would make them nx-affected by every edit to a skill or lint tool the generators read.
+
 The generator will rewrite the following files on every run — **do not edit them manually**:
 
 - `src/registry.ts` — `tools` map, `DevToolConfig` union, all imports; fully rebuilt from the metadata folder
