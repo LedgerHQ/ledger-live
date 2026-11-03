@@ -39,7 +39,10 @@ import {
 } from "~/reducers/settings";
 import { OnboardingType } from "~/reducers/types";
 import { useFeature } from "@features/platform-feature-flags";
-import { isSeededDeviceFunnelOn } from "LLM/features/DeviceOnboarding/utils/seededFunnel";
+import {
+  isSeededDeviceFunnelOn,
+  isUnseededDeviceFunnelOn,
+} from "LLM/features/DeviceOnboarding/utils/seededFunnel";
 
 const StyledContainerView = styled(Flex)`
   padding-left: 16px;
@@ -105,15 +108,22 @@ export default memo(function () {
     fromAccessExistingWallet,
     isRestoreSeed,
     connectSeededDevice,
+    connectUnseededDevice,
   } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const onboardingType = useSelector(onboardingTypeSelector);
 
   const isFundWalletEnabled = Boolean(useFeature("llmNanoOnboardingFundWallet")?.enabled);
+  const deviceOnboardingEnabled = Boolean(useFeature("deviceOnboarding")?.enabled);
   const seededFunnel = isSeededDeviceFunnelOn(
-    Boolean(useFeature("deviceOnboarding")?.enabled),
+    deviceOnboardingEnabled,
     connectSeededDevice === true,
   );
+  const unseededFunnel = isUnseededDeviceFunnelOn(
+    deviceOnboardingEnabled,
+    connectUnseededDevice === true,
+  );
+  const opensConnectNewDevice = seededFunnel || unseededFunnel;
   const isFundWalletNewSetup = isFundWalletEnabled && onboardingType === OnboardingType.setupNew;
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [wasReadOnlyAtEntry] = useState(readOnlyModeEnabled);
@@ -137,10 +147,11 @@ export default memo(function () {
         });
         return;
       }
-      if (seededFunnel) {
+      if (opensConnectNewDevice) {
         navigation.navigate(ScreenName.DeviceOnboardingFunnel, {
           pairedDeviceId: pairedDevice?.deviceId,
           wasReadOnlyAtEntry,
+          ...(unseededFunnel ? { connectUnseededDevice: true } : {}),
         });
         return;
       }
@@ -188,7 +199,8 @@ export default memo(function () {
       notifyFlowCompleted,
       isFundWalletNewSetup,
       seedConfiguration,
-      seededFunnel,
+      opensConnectNewDevice,
+      unseededFunnel,
       wasReadOnlyAtEntry,
     ],
   );
@@ -214,7 +226,7 @@ export default memo(function () {
     navigation.navigate(ScreenName.OnboardingDeviceSelection, { missingDevice: true });
   }, [navigation]);
 
-  if (seededFunnel) {
+  if (opensConnectNewDevice) {
     return (
       <Box
         lx={{ flex: 1, backgroundColor: "canvas", paddingTop: "s8" }}

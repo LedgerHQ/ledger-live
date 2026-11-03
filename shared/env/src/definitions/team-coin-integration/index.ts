@@ -47,21 +47,6 @@ const teamCoinIntegration = {
     def: "https://delegations-elrond.coin.ledger.com",
     desc: "MultiversX DELEGATION API url",
   },
-  API_STELLAR_HORIZON: {
-    parser: stringParser,
-    def: "https://stellar.coin.ledger.com",
-    desc: "Stellar Horizon API url",
-  },
-  API_STELLAR_HORIZON_FETCH_LIMIT: {
-    parser: intParser,
-    def: 100,
-    desc: "Limit of operation that Horizon will fetch per page",
-  },
-  API_STELLAR_HORIZON_STATIC_FEE: {
-    def: false,
-    parser: boolParser,
-    desc: "Static fee for Stellar account",
-  },
   API_TRONGRID_PROXY: {
     parser: stringParser,
     def: "https://tron.coin.ledger.com",

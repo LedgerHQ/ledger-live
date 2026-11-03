@@ -13,8 +13,16 @@ function makeAccount(
 function renderTool(accounts: AccountBalanceToolAccount[]) {
   const onRead = jest.fn();
   const onReadAll = jest.fn();
-  render(<AccountBalance accounts={accounts} onRead={onRead} onReadAll={onReadAll} />);
-  return { onRead, onReadAll };
+  const onReadOperations = jest.fn();
+  render(
+    <AccountBalance
+      accounts={accounts}
+      onRead={onRead}
+      onReadAll={onReadAll}
+      onReadOperations={onReadOperations}
+    />,
+  );
+  return { onRead, onReadAll, onReadOperations };
 }
 
 describe("AccountBalance", () => {
@@ -67,5 +75,19 @@ describe("AccountBalance", () => {
     const { onReadAll } = renderTool([makeAccount()]);
     await userEvent.click(screen.getByRole("button", { name: "Read all" }));
     expect(onReadAll).toHaveBeenCalledTimes(1);
+  });
+
+  it("reads the operations of the clicked asset", async () => {
+    const { onReadOperations } = renderTool([
+      makeAccount({
+        readAt: 0,
+        rows: [
+          { assetId: "ethereum", balance: "1 ETH", empty: false },
+          { assetId: "ethereum/erc20/usd__coin", balance: "5 USDC", empty: false },
+        ],
+      }),
+    ]);
+    await userEvent.click(screen.getAllByRole("button", { name: "Operations" })[1]);
+    expect(onReadOperations).toHaveBeenCalledWith("uuid-1", "ethereum/erc20/usd__coin");
   });
 });

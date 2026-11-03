@@ -36,6 +36,7 @@ function StepContent(props: AccountSettingsDialogViewProps) {
           onShowAdvancedLogs={props.onShowAdvancedLogs}
           explorerUrl={props.explorerUrl}
           onShowRemove={props.onShowRemove}
+          onEvent={props.onEvent}
         />
       );
     case "changeName":
@@ -49,6 +50,7 @@ function StepContent(props: AccountSettingsDialogViewProps) {
           onBack={props.onShowMenu}
           onClose={props.onClose}
           onConfirmName={props.onConfirmName}
+          onEvent={props.onEvent}
         />
       );
     case "advancedLogs":
@@ -58,10 +60,17 @@ function StepContent(props: AccountSettingsDialogViewProps) {
           advancedLogs={props.advancedLogs}
           onBack={props.onShowMenu}
           onClose={props.onClose}
+          onEvent={props.onEvent}
         />
       );
     case "remove":
-      return <RemoveStep onClose={props.onClose} onConfirmRemove={props.onConfirmRemove} />;
+      return (
+        <RemoveStep
+          onClose={props.onClose}
+          onConfirmRemove={props.onConfirmRemove}
+          onEvent={props.onEvent}
+        />
+      );
   }
 }
 

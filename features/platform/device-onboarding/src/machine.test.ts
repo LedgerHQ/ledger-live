@@ -1349,7 +1349,7 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
-  it("follows a new seed on a touchscreen, then offers Ledger Sync", async () => {
+  it("follows a new seed on a touchscreen straight to done", async () => {
     const { actor } = await enterSetup({ offerSync: true });
 
     await follow(actor, [
@@ -1362,7 +1362,7 @@ describe("device setup", () => {
 
     actor.send(stepChanged(OnboardingStep.Ready));
 
-    expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
   it("skips naming on a nano and still reaches done", async () => {
@@ -1446,13 +1446,13 @@ describe("device setup", () => {
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
-  it("offers Ledger Sync when a device was just set up", async () => {
+  it("finishes a device that was just set up without offering Ledger Sync", async () => {
     const { actor } = await enterSetup({ offerSync: true });
 
     actor.send(stepChanged(OnboardingStep.Pin));
     actor.send(stepChanged(OnboardingStep.Ready));
 
-    expect(exitOf(actor)).toMatchObject({ reason: "offerLedgerSync" });
+    expect(exitOf(actor)).toMatchObject({ reason: "completed" });
   });
 
   it("still treats a device as unseeded after a seed appears mid-setup", async () => {

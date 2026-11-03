@@ -13,7 +13,7 @@ import { Card } from "@features/flow-pay-card";
 
 <Card
   login={{ oauthConfig, callback }}
-  assets={{ currencies, priceWallet, formatCountervalue }}
+  assets={{ currencies, getCounterValue, formatCountervalue, onAddAsset }}
   formatters={{ countervalue, transactionAmount, transactionDate }}
   balanceLabel={balanceLabel}
 />;
@@ -21,14 +21,16 @@ import { Card } from "@features/flow-pay-card";
 
 `Card` mounts the card visual and the authentication controls together:
 
-- The card face from [`@features/flow-pay-card-details`](../pay-card-details/README.md): `CardVisual`
-  once the host provides a countervalue formatter and a balance label, the bare `CardArtwork`
-  otherwise. Freeze and More also come from that package (`CardDetails` on both platforms).
+- The card block from [`@features/flow-pay-card-details`](../pay-card-details/README.md):
+  `CardDetails` on both platforms, which overlays the balance on the card face once the host
+  provides a countervalue formatter and a balance label, and holds the freeze and More controls.
+  The bare `CardArtwork` shows before sign-in, and `CardPrimaryActionButton` (from its `./web`
+  entry) offers the next step on web.
 - The funding wallets, when the host passes `assets`. Rendered by
   [`@features/flow-pay-card-assets`](../pay-card-assets/README.md). A row carries the currency's icon,
   its name and ticker, what the wallet holds and what that is worth. Pricing needs the countervalues
   state, which the two apps reach differently, so the host passes the resolved currencies, a
-  `priceWallet` and a `formatCountervalue` (which returns the display string) rather than this package
+  `getCounterValue` and a `formatCountervalue` (which returns the display string) rather than this package
   reaching for rates. Omit `assets` and the list is not rendered.
 - `CardLogin` from [`@features/flow-pay-card-auth`](../pay-card-auth/README.md) — it shows while
   nobody is signed in, and `useCardLogout` ends the session from the More menu.

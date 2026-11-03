@@ -30,8 +30,10 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

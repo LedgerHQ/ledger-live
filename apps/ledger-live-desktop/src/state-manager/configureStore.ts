@@ -20,7 +20,7 @@ import reducers, { State } from "~/renderer/reducers";
 import { apiServices, applyLldRTKApiMiddlewares } from "~/renderer/reducers/rtkQueryApi";
 import { createIdentitiesSyncMiddleware } from "@domain/api-push-devices";
 import { accountDataExtra } from "@domain/api-account-data";
-import { accountDataRecorder, accountDataSources } from "~/config/account-data-setup";
+import { accountDataSources, accountDataTaps } from "~/config/account-data-setup";
 import { canPushDeviceIdsSelector } from "~/renderer/reducers/settings";
 import { loadAppConfig } from "~/setup";
 import { sleepingListener } from "./sleepingListener";
@@ -95,7 +95,7 @@ const customCreateStore = ({
         .concat(createDesktopFeatureFlagsMiddleware({ fetchRemoteFlags, readCachedFlags }))
         .concat(sleepingListener.middleware)
         .concat(createDesktopCountervaluesMiddleware(countervalues))
-        .concat(accountDataRecorder.middleware),
+        .concat(accountDataTaps.middleware),
     devTools: __DEV__
       ? {
           actionSanitizer: action => redactPortfolioApiAction(redactCardApiAction(action)),

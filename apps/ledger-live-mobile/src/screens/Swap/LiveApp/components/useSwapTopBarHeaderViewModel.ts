@@ -16,11 +16,9 @@ export function useSwapTopBarHeaderViewModel() {
     isSyncError,
     isSyncPending,
     listOfErrorAccountNames,
-    onMyLedgerPress,
     onMyWalletPress,
     onTryRefresh,
     openSyncDrawer,
-    shouldDisplayMyWallet,
     syncAccessibilityLabel,
   } = useTopBarViewModel(navigation, ScreenName.SwapTab);
 
@@ -39,12 +37,10 @@ export function useSwapTopBarHeaderViewModel() {
     isSyncError,
     isSyncPending,
     listOfErrorAccountNames,
-    onMyLedgerPress,
     onMyWalletPress,
     onSwapHistoryPress,
     onTryRefresh,
     openSyncDrawer,
-    shouldDisplayMyWallet,
     syncAccessibilityLabel,
   };
 }

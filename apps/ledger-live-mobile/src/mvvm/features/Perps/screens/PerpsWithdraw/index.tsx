@@ -8,6 +8,7 @@ import { useTranslation } from "~/context/Locale";
 import { AmountKeypad } from "LLM/components/AmountKeypad";
 import { RatioPicker } from "LLM/components/RatioPicker";
 import { PerpsAccountSelector } from "../../components/PerpsAccountSelector";
+import { PerpsWithdrawSummary } from "./components/PerpsWithdrawSummary";
 import type { PerpsWithdrawViewModel } from "./usePerpsWithdrawViewModel";
 
 const TEST_ID_PREFIX = "perps-withdraw";
@@ -103,6 +104,10 @@ export function PerpsWithdrawView({
   exceedsBalance,
   canReview,
   handleReview,
+  isSummaryOpen,
+  summaryKey,
+  summaryParams,
+  closeSummary,
 }: Readonly<PerpsWithdrawViewModel>) {
   const { t } = useTranslation();
   const styles = useStyleSheet(
@@ -171,6 +176,15 @@ export function PerpsWithdrawView({
           {t("perpsWithdraw.review")}
         </Button>
       </Box>
+
+      {summaryParams ? (
+        <PerpsWithdrawSummary
+          key={summaryKey}
+          {...summaryParams}
+          isOpen={isSummaryOpen}
+          onClose={closeSummary}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }

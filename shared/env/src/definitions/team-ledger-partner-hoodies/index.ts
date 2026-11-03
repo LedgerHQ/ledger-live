@@ -1,4 +1,4 @@
-import { intParser, boolParser, stringParser } from "@ledgerhq/live-env";
+import { boolParser, stringParser } from "@ledgerhq/live-env";
 
 const teamLedgerPartnerHoodies = {
   API_CELO_INDEXER: {
@@ -16,30 +16,10 @@ const teamLedgerPartnerHoodies = {
     parser: boolParser,
     desc: "Enable token send and receive for Celo",
   },
-  API_TEZOS_BAKER: {
-    parser: stringParser,
-    def: "https://tezos-bakers.api.live.ledger.com",
-    desc: "bakers API for tezos",
-  },
   API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://xtz-explorer.api.live.ledger.com/explorer",
     parser: stringParser,
     desc: "Ledger explorer API for tezos",
-  },
-  API_TEZOS_TZKT_API: {
-    def: "https://xtz-tzkt-explorer.api.live.ledger.com",
-    parser: stringParser,
-    desc: "tzkt.io explorer",
-  },
-  API_TEZOS_NODE: {
-    def: "https://xtz-node.api.live.ledger.com",
-    parser: stringParser,
-    desc: "node API for tezos (for broadcast only)",
-  },
-  TEZOS_MAX_TX_QUERIES: {
-    def: 100,
-    parser: intParser,
-    desc: "safe max on maximum number of queries to synchronize a tezos account",
   },
   API_SUI_GRAPHQL_PROXY: {
     parser: stringParser,

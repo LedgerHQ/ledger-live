@@ -1,11 +1,7 @@
 import React from "react";
 import { CardLogin } from "@features/flow-pay-card-auth";
-import {
-  CardArtwork,
-  CardDetails,
-  CardLoadingVisual,
-  CardPrimaryActionButton,
-} from "@features/flow-pay-card-details";
+import { CardArtwork, CardDetails, CardLoadingVisual } from "@features/flow-pay-card-details";
+import { CardPrimaryActionButton } from "@features/flow-pay-card-details/web";
 import { CardTransactions } from "@features/flow-pay-card-transactions";
 import { CardOnboardingWidget } from "@features/flow-pay-card-widget";
 import { CardAssets } from "@features/flow-pay-card-assets/web";

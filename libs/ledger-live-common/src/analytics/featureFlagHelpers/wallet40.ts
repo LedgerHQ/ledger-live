@@ -24,7 +24,6 @@ export const getWallet40Attributes = (
     brazePlacement: params?.brazePlacement ?? false,
     operationsList:
       platform === "lwd" || Boolean(params && "operationsList" in params && params.operationsList),
-    myWallet: platform === "lwd" || Boolean(params && "myWallet" in params && params.myWallet),
     assetDiscoverability:
       platform === "lwd" ||
       Boolean(params && "assetDiscoverability" in params && params.assetDiscoverability),

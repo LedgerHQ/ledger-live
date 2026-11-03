@@ -70,17 +70,17 @@ export type CardAssetsViewModel = Readonly<{
   formatBalance?: (value: number) => FormattedValue;
   formatters?: CardTransactionFormatters;
   dialogCopy: CardAssetDialogCopy;
-  onAssetPress: (asset: CardAssetRow) => void;
+  onOpenAsset: (asset: CardAssetRow) => void;
   onDialogClose: () => void;
-  onTopUpPress: () => void;
-  onWithdrawPress: () => void;
+  onTopUpAsset: () => void;
+  onOpenWithdraw: () => void;
   /** Withdraw is nested in details: dismissing it returns to details, it does not close both. */
   onWithdrawClose: () => void;
-  onShowHistoryPress: () => void;
+  onShowHistory: () => void;
   onWithdrawContinue: () => void;
-  onManagePress: () => void;
-  onRetryPress: () => void;
-  onAddAssetPress?: () => void;
+  onManageAssets: () => void;
+  onRetry: () => void;
+  onAddAsset?: () => void;
   onMoveAsset: (id: string, toIndex: number) => Promise<void>;
   /** Wallets with an in-flight priority update. Multiple moves can be in flight at once — each
    * drop is issued independently rather than waiting for the previous one to settle. */

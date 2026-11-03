@@ -33,7 +33,6 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";
@@ -792,7 +791,6 @@ export function RequiredFirmwareUpdate({
 }) {
   const { t } = useTranslation();
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const usbFwUpdateActivated = !!lastSeenDevice;
   const deviceName = getDeviceModel(device.modelId).productName;
@@ -806,47 +804,29 @@ export function RequiredFirmwareUpdate({
       page: "Update_OS_To_Continue",
     });
 
-    if (shouldDisplayMyWallet) {
-      const myWalletState = {
-        routes: [
-          {
-            name: ScreenName.MyWallet,
-            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+    const myWalletState = {
+      routes: [
+        {
+          name: ScreenName.MyWallet,
+          params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+        },
+      ],
+    };
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.Base,
+          state: {
+            index: 1,
+            routes: [
+              { name: NavigatorName.Main },
+              { name: NavigatorName.MyWallet, state: myWalletState },
+            ],
           },
-        ],
-      };
-      navigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.Base,
-            state: {
-              index: 1,
-              routes: [
-                { name: NavigatorName.Main },
-                { name: NavigatorName.MyWallet, state: myWalletState },
-              ],
-            },
-          },
-        ],
-      });
-    } else {
-      const myLedgerState = {
-        routes: [
-          {
-            name: ScreenName.MyLedgerChooseDevice,
-            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
-          },
-        ],
-      };
-      navigation.reset({
-        index: 1,
-        routes: [
-          { name: NavigatorName.Main },
-          { name: NavigatorName.MyLedger, state: myLedgerState },
-        ],
-      });
-    }
+        },
+      ],
+    });
   };
 
   return (

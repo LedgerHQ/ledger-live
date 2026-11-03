@@ -170,6 +170,7 @@ function renderPairNew(
   deviceOnboardingEnabled: boolean,
   readOnlyModeEnabled = false,
   fromWelcome = false,
+  connectUnseededDevice?: boolean,
 ) {
   return render(
     <Stack.Navigator
@@ -189,13 +190,14 @@ function renderPairNew(
                 deviceModelId: DeviceModelId.stax,
                 fromAccessExistingWallet: true,
                 connectSeededDevice,
+                connectUnseededDevice,
               }
         }
       />
       <Stack.Screen name={ScreenName.DeviceOnboardingFunnel}>
         {({ route }) => (
           <Placeholder
-            label={`seeded funnel ${route.params.pairedDeviceId} ${String(route.params.wasReadOnlyAtEntry)}`}
+            label={`funnel ${route.params.pairedDeviceId} ${String(route.params.wasReadOnlyAtEntry)} ${String(Boolean(route.params.connectUnseededDevice))}`}
           />
         )}
       </Stack.Screen>
@@ -247,7 +249,7 @@ describe("PairNew", () => {
     await pair(user);
 
     expect(await screen.findByText("portfolio")).toBeVisible();
-    expect(screen.queryByText(/seeded funnel/)).toBeNull();
+    expect(screen.queryByText(/funnel /)).toBeNull();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
   });
 
@@ -307,9 +309,71 @@ describe("PairNew", () => {
     });
     await user.press(screen.getByLabelText("Connect Ledger Stax"));
 
-    expect(await screen.findByText("seeded funnel paired-id true")).toBeVisible();
+    expect(await screen.findByText("funnel paired-id true false")).toBeVisible();
     expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
     expect(store.getState().settings.readOnlyModeEnabled).toBe(true);
+  });
+
+  it.each([
+    ["the flag is off", false, true],
+    ["connectUnseededDevice is off", true, false],
+  ] as const)(
+    "should complete onboarding from setup when %s",
+    async (_, flagEnabled, connectUnseededDevice) => {
+      const { user, store } = renderPairNew(
+        undefined,
+        flagEnabled,
+        false,
+        false,
+        connectUnseededDevice,
+      );
+
+      await pair(user);
+
+      expect(await screen.findByText("portfolio")).toBeVisible();
+      expect(screen.queryByText(/funnel /)).toBeNull();
+      expect(store.getState().settings.hasCompletedOnboarding).toBe(true);
+    },
+  );
+
+  it("should open the funnel without completing onboarding when setup connects", async () => {
+    const { user, store } = renderPairNew(undefined, true, true, false, true);
+    const result = connectionResult();
+
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+    emit({
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [
+        {
+          key: pairedDevice.id,
+          device: pairedDevice,
+          isAvailable: true,
+          onSelect: () => mockedConnectNewDevice.mock.calls.at(-1)?.[0].onConnected(result),
+        },
+      ],
+      scanningTransports: [rnBleTransportIdentifier],
+      showDeviceNotFound: false,
+    });
+    await user.press(screen.getByLabelText("Connect Ledger Stax"));
+
+    expect(await screen.findByText("funnel paired-id true true")).toBeVisible();
+    expect(store.getState().settings.hasCompletedOnboarding).toBe(false);
+  });
+
+  it("should open device selection when setup cannot find a device", async () => {
+    const { user } = renderPairNew(undefined, true, false, false, true);
+
+    expect(await screen.findByText("Looking for your Ledger devices")).toBeVisible();
+    emit({
+      type: ConnectNewDeviceUIStateTypes.Discovering,
+      devices: [],
+      scanningTransports: [rnBleTransportIdentifier],
+      showDeviceNotFound: true,
+    });
+
+    await user.press(screen.getByText("I don’t see my device"));
+
+    expect(await screen.findByText("Select the Ledger you want to set up:")).toBeVisible();
   });
 
   it("should let pairing clear read-only mode when the funnel is off", async () => {

@@ -1,6 +1,7 @@
 # Pay Balance
 
-> [!CAUTION] > **Status: UNSTABLE** — In active development; API may change.
+> [!CAUTION]
+> **Status: UNSTABLE.** In active development; API may change.
 
 Shared Pay hero (Desktop and Mobile) for the aggregated stablecoin balance. Chrome follows
 the held-stablecoin list:

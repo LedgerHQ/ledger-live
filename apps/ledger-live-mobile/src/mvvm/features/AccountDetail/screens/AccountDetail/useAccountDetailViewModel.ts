@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation, useRoute, type RouteProp } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { Account } from "@ledgerhq/types-live";
+import type { AccountSettingsEventHandler } from "@features/flow-account-detail-settings";
 import { formatAddress } from "@ledgerhq/live-common/utils/addressUtils";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
 import { useMaybeAccountName } from "~/reducers/wallet";
@@ -12,6 +13,7 @@ import type {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import type { AccountDetailNavigatorParamsList } from "../../types";
+import { useAccountSettingsTracking } from "../../hooks/useAccountSettingsTracking";
 import { useAccountRefresh, type AccountRefresh } from "./useAccountRefresh";
 import { useDeferredAccountRemoval } from "./useDeferredAccountRemoval";
 
@@ -34,6 +36,7 @@ export type AccountDetailViewModel = Readonly<{
   onChangeName: () => void;
   onViewAdvancedLogs: () => void;
   onConfirmRemove: () => void;
+  onSettingsEvent: AccountSettingsEventHandler;
 }>;
 
 type SettingsScreen = ScreenName.AccountDetailEditName | ScreenName.AccountDetailAdvancedLogs;
@@ -55,7 +58,7 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
   const mainAccount = account?.type === "Account" ? account : undefined;
 
   const removeAccount = useDeferredAccountRemoval(mainAccount);
-  const refresh = useAccountRefresh(mainAccount?.id);
+  const refresh = useAccountRefresh(mainAccount);
 
   useEffect(() => {
     if (mainAccount) return;
@@ -80,7 +83,11 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
   );
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const onOpenSettings = useCallback(() => setIsSettingsOpen(true), []);
+  const { onSettingsEvent, onSettingsOpened } = useAccountSettingsTracking(mainAccount);
+  const onOpenSettings = useCallback(() => {
+    onSettingsOpened();
+    setIsSettingsOpen(true);
+  }, [onSettingsOpened]);
   const onCloseSettings = useCallback(() => setIsSettingsOpen(false), []);
   const screenToOpenAfterSettings = useRef<SettingsScreen | undefined>(undefined);
   const openSettingsScreen = useCallback((screen: SettingsScreen) => {
@@ -119,5 +126,6 @@ export function useAccountDetailViewModel(): AccountDetailViewModel {
     onChangeName,
     onViewAdvancedLogs,
     onConfirmRemove,
+    onSettingsEvent,
   };
 }

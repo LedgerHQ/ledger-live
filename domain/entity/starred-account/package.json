@@ -9,11 +9,11 @@
     ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
-  "sideEffects": [
-    "./src/slice.ts"
-  ],
+  "sideEffects": false,
   "scripts": {
     "lint": "oxlint ./src",
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -30,7 +30,10 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

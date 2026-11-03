@@ -45,6 +45,10 @@ export type PerpsWithdrawFormParams = Readonly<{
 
 export type PerpsWithdrawForm = Readonly<{
   destinationAccount: AccountLike | undefined;
+  /** The typed amount in USDC, the amount quoted and signed; null when there is no rate. */
+  usdcAmount: BigNumber | null;
+  /** The accounts the quote resolves against, with a picked account the user never held. */
+  quoteAccounts: AccountLike[];
   quote: WithdrawQuote | undefined;
   isQuoteLoading: boolean;
   quotedAmount: string | null;
@@ -227,6 +231,8 @@ export function usePerpsWithdrawForm({
 
   return {
     destinationAccount,
+    usdcAmount,
+    quoteAccounts,
     quote,
     isQuoteLoading,
     quotedAmount,

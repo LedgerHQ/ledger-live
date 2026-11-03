@@ -11,7 +11,6 @@ export const WALLET_40_PARAMS = [
   { key: "brazePlacement", label: "Braze Placement (ContentBanner)" },
   { key: "operationsList", label: "TX History" },
   { key: "aggregatedAssets", label: "Aggregated Assets" },
-  { key: "myWallet", label: "My Wallet" },
   { key: "assetDiscoverability", label: "Asset Discoverability" },
   { key: "earnUpselling", label: "Earn Upselling" },
   { key: "earnSimulator", label: "Earn Simulator" },

@@ -49,6 +49,12 @@ jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawQuote", ()
   usePerpsWithdrawQuote: (params: unknown) => mockUsePerpsWithdrawQuote(params),
 }));
 
+const mockUseSummaryQuote = jest.fn();
+jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawSummaryQuote", () => ({
+  usePerpsWithdrawSummaryQuote: (initialQuote: unknown, params: unknown) =>
+    mockUseSummaryQuote(initialQuote, params),
+}));
+
 function createAccount(id: string, currencyId: string, balance: BigNumber.Value): Account {
   return {
     ...genAccount(id, { currency: getCryptoCurrencyById(currencyId), operationsSize: 0 }),
@@ -109,6 +115,11 @@ describe("PerpsWithdraw integration", () => {
     });
     mockUsePerpsWithdrawQuote.mockReturnValue({ quote, isLoading: false, error: null });
     mockOpenDrawer.mockImplementation(({ onAccountSelected }) => onAccountSelected(btcAccount));
+    mockUseSummaryQuote.mockImplementation((initialQuote: unknown) => ({
+      quote: initialQuote,
+      isRefreshing: false,
+      error: null,
+    }));
   });
 
   it("should show the available balance and label the amount in the counter value", () => {
@@ -287,5 +298,43 @@ describe("PerpsWithdraw integration", () => {
     unmount();
 
     expect(await outcome).toBeInstanceOf(UserRefusedOnDevice);
+  });
+
+  it("should open the summary with the quote and what leaves the Perps balance", async () => {
+    const { user } = renderWithdraw();
+
+    await typeAmount(user, "500");
+    await user.press(reviewCta());
+
+    expect(await screen.findByTestId("perps-withdraw-cta")).toBeEnabled();
+    // $500 at $2 per USDC is the USDC amount signed; the Hyperliquid fee comes on top.
+    expect(screen.getByTestId("perps-withdraw-amount-sent")).toHaveTextContent(/250\s?USDC/);
+    expect(screen.getByTestId("perps-withdraw-amount-received")).toHaveTextContent(/~0\.3\s?ETH/);
+    expect(screen.getByTestId("perps-withdraw-network-fees")).toHaveTextContent(
+      /0\.0004\s?ETH \+ 1\s?USDC/,
+    );
+    expect(screen.getByTestId("perps-withdraw-total-debited")).toHaveTextContent(/251\s?USDC/);
+    expect(mockUseSummaryQuote).toHaveBeenLastCalledWith(
+      quote,
+      expect.objectContaining({
+        amount: "250",
+        destinationAccount: expect.objectContaining({ id: ethAccount.id }),
+        counterValueCurrency: "USD",
+      }),
+    );
+  });
+
+  it("should not allow Withdraw while the summary refreshes its quote", async () => {
+    mockUseSummaryQuote.mockImplementation((initialQuote: unknown) => ({
+      quote: initialQuote,
+      isRefreshing: true,
+      error: null,
+    }));
+    const { user } = renderWithdraw();
+
+    await typeAmount(user, "500");
+    await user.press(reviewCta());
+
+    expect(await screen.findByTestId("perps-withdraw-cta")).toBeDisabled();
   });
 });

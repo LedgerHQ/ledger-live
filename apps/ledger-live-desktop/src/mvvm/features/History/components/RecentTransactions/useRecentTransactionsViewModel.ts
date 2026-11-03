@@ -21,6 +21,10 @@ export type RecentTransactionsParams = Readonly<{
   trackingPage: string;
   trackingCurrencyId?: string;
   backPath: string;
+  /** Replaces the default `transaction_clicked` event, for a page that has its own tracking plan. */
+  onTrackTransactionClick?: (operationType: string) => void;
+  /** Replaces the default "see all" `button_clicked` event. */
+  onTrackSeeAll?: () => void;
 }>;
 
 export type RecentTransactionsViewModel = Readonly<{
@@ -35,6 +39,8 @@ export function useRecentTransactionsViewModel({
   trackingPage,
   trackingCurrencyId,
   backPath,
+  onTrackTransactionClick,
+  onTrackSeeAll,
 }: RecentTransactionsParams): RecentTransactionsViewModel {
   const navigate = useNavigate();
   const allAccounts = useSelector(accountsSelector);
@@ -65,31 +71,39 @@ export function useRecentTransactionsViewModel({
   const onRowClick = useCallback(
     (row: OperationRow) => {
       const { operation, account, parentAccount } = row.original;
-      track("transaction_clicked", {
-        transaction: operation.type,
-        page: trackingPage,
-        currency: trackingCurrencyId,
-      });
+      if (onTrackTransactionClick) {
+        onTrackTransactionClick(operation.type);
+      } else {
+        track("transaction_clicked", {
+          transaction: operation.type,
+          page: trackingPage,
+          currency: trackingCurrencyId,
+        });
+      }
       setDrawer(OperationDetails, {
         operationId: operation.id,
         accountId: account.id,
         parentId: parentAccount?.id,
       });
     },
-    [trackingPage, trackingCurrencyId],
+    [trackingPage, trackingCurrencyId, onTrackTransactionClick],
   );
 
   const onSeeAll = useCallback(() => {
-    track("button_clicked", {
-      button: "Transactions",
-      currency: trackingCurrencyId,
-      page: trackingPage,
-    });
+    if (onTrackSeeAll) {
+      onTrackSeeAll();
+    } else {
+      track("button_clicked", {
+        button: "Transactions",
+        currency: trackingCurrencyId,
+        page: trackingPage,
+      });
+    }
     navigate(
       `/history?accountIds=${encodeURIComponent(accountIdsKey)}`,
       buildNavigationBackState("historyBackPath", backPath),
     );
-  }, [accountIdsKey, backPath, navigate, trackingCurrencyId, trackingPage]);
+  }, [accountIdsKey, backPath, navigate, onTrackSeeAll, trackingCurrencyId, trackingPage]);
 
   return {
     visible: scopedOperationItems.length > 0,

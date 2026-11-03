@@ -15,6 +15,7 @@ binary.
 | `auth-routes`, `swap-quote-routes` | Keycloak + LKRP auth routes, and swap API routes recording each quote's `authorization` header |
 | `authenticated-quote-server` | Both of the above behind one server, with a helper that runs `swap quote` and returns its signed challenge |
 | `human-device-error-exit` | Standalone script spawned to assert human-output exit codes |
+| `output-loads-solana-sdk` | Standalone script spawned to assert that loading `output.ts` leaves the Solana SDK unloaded |
 | `os-keychain` | A failing Linux Secret Service probe, and a `process.platform` override |
 | `in-memory-keychain` | OS keychain fake for `_setTestKeychain` |
 | `fake-spinner` | Spinner fake for `_setTestSpinner` that records what it shows |

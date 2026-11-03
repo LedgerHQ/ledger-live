@@ -37,7 +37,7 @@ describe("Card asset drawers (native)", () => {
         onTopUp={onTopUp}
         onWithdraw={onWithdraw}
         onShowHistory={jest.fn()}
-        onTransactionPress={jest.fn()}
+        onOpenTransaction={jest.fn()}
       />,
       { wrapper: I18nWrapper },
     );

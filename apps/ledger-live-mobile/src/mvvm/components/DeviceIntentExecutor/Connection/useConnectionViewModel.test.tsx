@@ -63,7 +63,6 @@ type ViewModelStateParams = {
   knownDevices?: KnownDevice[];
   bleKnownDevices?: DeviceLike[];
   buyDeviceFromLiveEnabled?: boolean;
-  myWalletEnabled?: boolean;
 };
 
 function mockConnectDeviceSubscription() {
@@ -81,15 +80,11 @@ function withViewModelState({
   knownDevices = [],
   bleKnownDevices = [],
   buyDeviceFromLiveEnabled,
-  myWalletEnabled,
 }: ViewModelStateParams = {}) {
   const featureFlagOverrides: Parameters<typeof withFlagOverrides>[0] = {
     ...(buyDeviceFromLiveEnabled === undefined
       ? {}
       : { buyDeviceFromLive: { enabled: buyDeviceFromLiveEnabled } }),
-    ...(myWalletEnabled === undefined
-      ? {}
-      : { lwmWallet40: { params: { myWallet: myWalletEnabled } } }),
   };
 
   return {
@@ -270,24 +265,9 @@ describe("useConnectionViewModel", () => {
     expect(mockedConnectDevice).not.toHaveBeenCalled();
   });
 
-  it("should navigate to My Ledger when connecting a Ledger device and My Wallet is disabled", () => {
+  it("should navigate to My Wallet when connecting a Ledger device", () => {
     // GIVEN
     const { result } = renderViewModel();
-
-    // WHEN
-    act(() => result.current.onConnectLedgerDevice());
-
-    // THEN
-    expect(mockNavigate).toHaveBeenCalledWith(NavigatorName.MyLedger, {
-      state: {
-        routes: [{ name: ScreenName.MyLedgerChooseDevice, params: undefined }],
-      },
-    });
-  });
-
-  it("should navigate to My Wallet when connecting a Ledger device and My Wallet is enabled", () => {
-    // GIVEN
-    const { result } = renderViewModel({}, { myWalletEnabled: true });
 
     // WHEN
     act(() => result.current.onConnectLedgerDevice());

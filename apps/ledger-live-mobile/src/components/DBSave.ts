@@ -19,6 +19,7 @@ import {
   saveKnownDevices,
   saveLargeMoverState,
   saveLargeScreenUpsellModalState,
+  savePredictionsState,
   saveMarketState,
   saveMarketListConfig,
   saveMarketBannerState,
@@ -184,6 +185,8 @@ const getPostOnboardingStateChanged = (a: State, b: State) =>
 const getLargeScreenUpsellModalStateChanged = (a: State, b: State) =>
   !isEqual(a.largeScreenUpsellModal, b.largeScreenUpsellModal);
 
+const predictionsNotEquals = (a: State, b: State) => a.predictions !== b.predictions;
+
 const marketNotEquals = (a: State, b: State) => a.market !== b.market;
 const marketListConfigNotEquals = (a: State, b: State) => a.marketListConfig !== b.marketListConfig;
 const marketBannerNotEquals = (a: State, b: State) => a.marketBanner !== b.marketBanner;
@@ -298,6 +301,13 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: getLargeScreenUpsellModalStateChanged,
     lense: largeScreenUpsellModalSelector,
+  });
+  useDBSaveEffect({
+    stateSelector: (state: State) => state.predictions,
+    save: savePredictionsState,
+    throttle: 500,
+    getChangesStats: predictionsNotEquals,
+    lense: (state: State) => state.predictions,
   });
 
   useDBSaveEffect({

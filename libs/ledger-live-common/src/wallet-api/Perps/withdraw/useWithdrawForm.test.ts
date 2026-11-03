@@ -109,6 +109,7 @@ describe("usePerpsWithdrawForm", () => {
       accounts,
       counterValueCurrency: "USD",
     });
+    expect(form.usdcAmount?.toFixed()).toBe("250");
     expect(form.destinationAccount).toBe(ethAccount);
     expect(form.statusError).toBeNull();
     expect(form.canReview).toBe(true);
@@ -148,6 +149,7 @@ describe("usePerpsWithdrawForm", () => {
 
     expect(form.statusError).toEqual({ labelKey: "perpsWithdraw.formErrors.quoteUnavailable" });
     expect(lastQuoteRequest()).toMatchObject({ amount: "" });
+    expect(form.usdcAmount).toBeNull();
   });
 
   it("falls back to the USDC balance when it has no counter value", () => {

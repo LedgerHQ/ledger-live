@@ -1,8 +1,14 @@
 import React from "react";
+import type { Account } from "@ledgerhq/types-live";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { TrackScreen } from "@shared/analytics-react";
 import { AccountDetailView } from "./AccountDetailView";
 import { useAccountDetailViewModel } from "./hooks/useAccountDetailViewModel";
+import { useAccountPageTracking } from "./hooks/useAccountPageTracking";
+
+const AccountPageTracking = ({ account }: Readonly<{ account: Account }>) => {
+  useAccountPageTracking(account);
+  return null;
+};
 
 const AccountDetail = () => {
   const viewModel = useAccountDetailViewModel();
@@ -13,11 +19,7 @@ const AccountDetail = () => {
 
   return (
     <>
-      <TrackScreen
-        category="Account"
-        currency={account.currency.id}
-        operationsLength={account.operations.length}
-      />
+      <AccountPageTracking account={account} />
       <SyncOneAccountOnMount reason="view-account" priority={10} accountId={account.id} />
       <AccountDetailView key={account.id} account={account} />
     </>

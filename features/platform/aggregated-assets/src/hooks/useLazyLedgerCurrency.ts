@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { assetsDataApi, type GetAssetsDataParams } from "@domain/api-aggregated-assets";
-import useEnv from "@features/platform-env";
+import type { GetAssetsDataParams } from "@domain/api-aggregated-assets";
 import { selectCurrency } from "../currencySelection";
+import { useLazyAssetData } from "./useLazyAssetData";
 
 /* Structural: the caller passes live-common's MarketCurrencyData, which this layer cannot import. */
 interface CurrencyWithLedgerIds {
@@ -15,30 +15,14 @@ export function useLazyLedgerCurrency(
   options: LazyLedgerCurrencyOptions,
   currency?: CurrencyWithLedgerIds | null,
 ) {
-  const devMode = useEnv("MANAGER_DEV_MODE");
-
-  const [triggerGetAssetData] = assetsDataApi.useLazyGetAssetDataQuery();
+  const getAssetData = useLazyAssetData(options);
 
   const getLedgerCurrency = useCallback(async () => {
     if (!currency?.ledgerIds || currency.ledgerIds.length === 0) return undefined;
 
-    try {
-      const result = await triggerGetAssetData(
-        {
-          currencyIds: currency.ledgerIds,
-          product: options.product,
-          version: options.version,
-          isStaging: false,
-          includeTestNetworks: devMode,
-        },
-        true, // prefer cached data
-      ).unwrap();
-
-      return selectCurrency(result);
-    } catch {
-      return undefined;
-    }
-  }, [currency, devMode, options, triggerGetAssetData]);
+    const result = await getAssetData({ currencyIds: currency.ledgerIds });
+    return result && selectCurrency(result);
+  }, [currency, getAssetData]);
 
   return { getLedgerCurrency };
 }

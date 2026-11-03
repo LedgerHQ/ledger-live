@@ -57,7 +57,8 @@ export function createFullSyncSource(host: FullSyncHost): FullSyncSource {
     // One line per kind, mapping the synced account with its own file.
     read: {
       balance: target => sync(target).then(toAccountBalances),
-      operations: target => sync(target).then(toAccountOperations),
+      operations: (target, query) =>
+        sync(target).then(account => toAccountOperations(account, query)),
       balanceHistory: (target, query) =>
         sync(target).then(account => toAccountBalanceHistory(account, query)),
     },
