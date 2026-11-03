@@ -29,7 +29,7 @@
     "@rspack/core": "catalog:",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/events": "^3.0.3",
+    "@types/events": "3.0.3",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",

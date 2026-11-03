@@ -72,7 +72,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
-    "dotenv": "^16.4.5",
+    "dotenv": "16.4.7",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",

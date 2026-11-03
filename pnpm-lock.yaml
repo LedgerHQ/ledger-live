@@ -907,7 +907,7 @@ importers:
         specifier: 1.12.1
         version: 1.12.1(@swc/core@1.15.11(@swc/helpers@0.5.23))(@swc/types@0.1.25)(@typescript/typescript6@6.0.2)
       '@ton/crypto':
-        specifier: ^3.3.0
+        specifier: 3.3.0
         version: 3.3.0
       '@typescript-eslint/parser':
         specifier: 'catalog:'
@@ -3176,7 +3176,7 @@ importers:
         specifier: 19.0.14
         version: 19.0.14
       '@types/w3c-web-usb':
-        specifier: ^1.0.10
+        specifier: 1.0.10
         version: 1.0.10
       axios:
         specifier: 'catalog:'
@@ -3528,7 +3528,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@tailwindcss/postcss':
-        specifier: ^4.1.0
+        specifier: 4.1.18
         version: 4.1.18
       '@testing-library/dom':
         specifier: 'catalog:'
@@ -3540,7 +3540,7 @@ importers:
         specifier: 'catalog:'
         version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -3552,7 +3552,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/qrcode':
-        specifier: ^1.5.6
+        specifier: 1.5.6
         version: 1.5.6
       '@types/react':
         specifier: 19.0.14
@@ -3561,19 +3561,19 @@ importers:
         specifier: 19.0.0
         version: 19.0.0
       '@types/react-inspector':
-        specifier: ^4.0.6
+        specifier: 4.0.6
         version: 4.0.6
       '@types/react-table':
-        specifier: ^7.7.20
+        specifier: 7.7.20
         version: 7.7.20
       '@types/semver':
         specifier: 'catalog:'
         version: 7.7.1
       autoprefixer:
-        specifier: ^10.4.21
+        specifier: 10.4.22
         version: 10.4.22(postcss@8.5.6)
       concurrently:
-        specifier: ^8.0.0
+        specifier: 8.2.2
         version: 8.2.2
       jest:
         specifier: 'catalog:'
@@ -4917,7 +4917,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/qrcode-terminal':
-        specifier: ^0.12.0
+        specifier: 0.12.2
         version: 0.12.2
       '@types/ws':
         specifier: 'catalog:'
@@ -5770,7 +5770,7 @@ importers:
         specifier: 'catalog:'
         version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
       typescript:
         specifier: 'catalog:'
@@ -7229,7 +7229,7 @@ importers:
         specifier: 'catalog:'
         version: 1.63.0
       tsx:
-        specifier: ^4.19.3
+        specifier: 4.20.6
         version: 4.20.6
 
   e2e/mobile:
@@ -7395,7 +7395,7 @@ importers:
         specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       tsconfig-paths:
-        specifier: ^4.2.0
+        specifier: 4.2.0
         version: 4.2.0
       ws:
         specifier: 'catalog:'
@@ -13093,7 +13093,7 @@ importers:
         specifier: 14.0.3
         version: 14.0.3(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       tsx:
-        specifier: ^4.7.1
+        specifier: 4.20.6
         version: 4.20.6
       typescript:
         specifier: 'catalog:'
@@ -13160,7 +13160,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13236,7 +13236,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13330,7 +13330,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13442,7 +13442,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/bchaddrjs':
-        specifier: ^0.4.3
+        specifier: 0.4.3
         version: 0.4.3
       '@types/bs58':
         specifier: 'catalog:'
@@ -13451,13 +13451,13 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2
       '@types/cashaddrjs':
-        specifier: ^0.3.3
+        specifier: 0.3.3
         version: 0.3.3
       '@types/create-hmac':
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13469,16 +13469,16 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/object-hash':
-        specifier: ^2.1.0
+        specifier: 2.2.1
         version: 2.2.1
       '@types/ripemd160':
-        specifier: ^2.0.3
+        specifier: 2.0.3
         version: 2.0.3
       '@types/sha.js':
-        specifier: ^2.4.4
+        specifier: 2.4.4
         version: 2.4.4
       bip32:
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0
       bip39:
         specifier: 'catalog:'
@@ -13496,7 +13496,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       object-hash:
-        specifier: ^2.2.0
+        specifier: 2.2.0
         version: 2.2.0
       oxfmt:
         specifier: 'catalog:'
@@ -13566,7 +13566,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13575,7 +13575,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 30.5.0
@@ -13666,7 +13666,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13742,7 +13742,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13845,10 +13845,10 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/imurmurhash':
-        specifier: ^0.1.4
+        specifier: 0.1.4
         version: 0.1.4
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13860,7 +13860,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 30.5.0
@@ -13942,7 +13942,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -13951,7 +13951,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 30.5.0
@@ -14045,7 +14045,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14142,7 +14142,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14239,7 +14239,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14318,7 +14318,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14388,7 +14388,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14494,7 +14494,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14506,10 +14506,10 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/numeral':
-        specifier: ^2.0.2
+        specifier: 2.0.5
         version: 2.0.5
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       jest:
         specifier: 'catalog:'
@@ -14527,7 +14527,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
       typescript:
         specifier: 'catalog:'
@@ -14591,7 +14591,7 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14667,7 +14667,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14679,7 +14679,7 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 30.5.0
@@ -14767,7 +14767,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14846,7 +14846,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14943,7 +14943,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -14955,13 +14955,13 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       jest-expect-message:
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3
       msw:
         specifier: 'catalog:'
@@ -14973,7 +14973,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
@@ -15058,7 +15058,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.4
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -15155,7 +15155,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -15164,7 +15164,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       jest:
         specifier: 'catalog:'
@@ -15179,7 +15179,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       ripple-keypairs:
-        specifier: ^2.0.0
+        specifier: 2.0.0
         version: 2.0.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       typescript:
         specifier: 'catalog:'
@@ -15258,7 +15258,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -15267,7 +15267,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       graphql:
-        specifier: ^16.10.0
+        specifier: 16.14.2
         version: 16.14.2
       jest:
         specifier: 'catalog:'
@@ -15343,7 +15343,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -15422,7 +15422,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       jest:
         specifier: 'catalog:'
@@ -15498,7 +15498,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -15510,7 +15510,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       jest:
         specifier: 'catalog:'
@@ -15601,7 +15601,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.4
       '@types/invariant':
-        specifier: ^2.2.37
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -15717,7 +15717,7 @@ importers:
         specifier: 'catalog:'
         version: 30.0.0
       '@types/libsodium-wrappers':
-        specifier: ^0.7.13
+        specifier: 0.7.14
         version: 0.7.14
       '@types/node':
         specifier: 'catalog:'
@@ -15726,7 +15726,7 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       libsodium-wrappers:
-        specifier: ^0.8.4
+        specifier: 0.8.4
         version: 0.8.4
       oxfmt:
         specifier: 'catalog:'
@@ -15735,7 +15735,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -15820,7 +15820,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       tsx:
-        specifier: ^4.19.3
+        specifier: 4.20.6
         version: 4.20.6
       typescript:
         specifier: 'catalog:'
@@ -15899,7 +15899,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -15969,7 +15969,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16045,7 +16045,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16124,7 +16124,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16203,7 +16203,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16273,7 +16273,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16337,7 +16337,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16468,7 +16468,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16532,7 +16532,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16605,7 +16605,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16684,7 +16684,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16757,7 +16757,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16830,7 +16830,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16897,7 +16897,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -16967,7 +16967,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^5.0.5
+        specifier: 5.0.10
         version: 5.0.10
       typescript:
         specifier: 'catalog:'
@@ -17052,7 +17052,7 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       bs58check:
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0
       jest:
         specifier: 'catalog:'
@@ -17098,7 +17098,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
 
   libs/deeplink-module:
@@ -17172,7 +17172,7 @@ importers:
         specifier: 'catalog:'
         version: 7.7.1
       '@types/sha.js':
-        specifier: ^2.4.4
+        specifier: 2.4.4
         version: 2.4.4
       axios:
         specifier: 'catalog:'
@@ -17297,7 +17297,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/events':
-        specifier: ^3.0.3
+        specifier: 3.0.3
         version: 3.0.3
       '@types/jest':
         specifier: 'catalog:'
@@ -17399,13 +17399,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledger-live-common:
@@ -17985,7 +17985,7 @@ importers:
         specifier: 6.0.0
         version: 6.0.0
       '@types/invariant':
-        specifier: ^2.2.36
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -18000,25 +18000,25 @@ importers:
         specifier: 19.0.14
         version: 19.0.14
       benchmark:
-        specifier: ^2.1.4
+        specifier: 2.1.4
         version: 2.1.4
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       camelcase:
-        specifier: ^6.2.1
+        specifier: 6.3.0
         version: 6.3.0
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       env-cmd:
-        specifier: '*'
+        specifier: 10.1.0
         version: 10.1.0
       esbuild:
         specifier: 0.25.5
         version: 0.25.5
       fs:
-        specifier: ^0.0.1-security
+        specifier: 0.0.1-security
         version: 0.0.1-security
       glob:
         specifier: ^7.2.0
@@ -18036,7 +18036,7 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       nock:
-        specifier: ^13.0.5
+        specifier: 13.5.4
         version: 13.5.4
       oxfmt:
         specifier: 'catalog:'
@@ -18063,10 +18063,10 @@ importers:
         specifier: 2.6.5
         version: 2.6.5
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       typescript:
         specifier: 'catalog:'
@@ -18109,7 +18109,7 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 30.5.0
@@ -18127,7 +18127,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledger-services/trust:
@@ -18158,7 +18158,7 @@ importers:
         specifier: 'catalog:'
         version: 1.20.0(debug@4.4.3)
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.7
         version: 16.4.7
       expect:
         specifier: 30.5.0
@@ -18176,7 +18176,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledger-wallet-framework:
@@ -18261,10 +18261,10 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/imurmurhash':
-        specifier: ^0.1.4
+        specifier: 0.1.4
         version: 0.1.4
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -18276,10 +18276,10 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/numeral':
-        specifier: ^2.0.2
+        specifier: 2.0.5
         version: 2.0.5
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       jest:
         specifier: 'catalog:'
@@ -18291,7 +18291,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
 
   libs/ledgerjs:
@@ -18371,13 +18371,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-aptos:
@@ -18417,13 +18417,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-btc:
@@ -18496,13 +18496,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-canton:
@@ -18548,13 +18548,13 @@ importers:
         specifier: 2.4.1
         version: 2.4.1(protobufjs@8.4.1)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-celo:
@@ -18603,13 +18603,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-cosmos:
@@ -18649,13 +18649,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-eth:
@@ -18698,13 +18698,13 @@ importers:
         version: 7.8.5
     devDependencies:
       '@ethersproject/bignumber':
-        specifier: ^5.7.0
+        specifier: 5.8.0
         version: 5.8.0
       '@ethersproject/constants':
-        specifier: ^5.7.0
+        specifier: 5.8.0
         version: 5.8.0
       '@ethersproject/units':
-        specifier: ^5.7.0
+        specifier: 5.7.0
         version: 5.7.0
       '@ledgerhq/ledger-libs':
         specifier: workspace:*
@@ -18731,7 +18731,7 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       nock:
-        specifier: ^13.0.5
+        specifier: 13.5.4
         version: 13.5.4
       oxfmt:
         specifier: 'catalog:'
@@ -18740,13 +18740,13 @@ importers:
         specifier: 19.1.4
         version: 19.1.4
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-exchange:
@@ -18798,13 +18798,13 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       bip32-path:
-        specifier: ^0.4.2
+        specifier: 0.4.2
         version: 0.4.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-hedera:
@@ -18841,13 +18841,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-icon:
@@ -18887,13 +18887,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-kaspa:
@@ -18936,7 +18936,7 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       ts-node:
-        specifier: ^10.9.2
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-multiversx:
@@ -18985,13 +18985,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-near:
@@ -19031,13 +19031,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-polkadot:
@@ -19080,13 +19080,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-solana:
@@ -19129,13 +19129,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-str:
@@ -19172,13 +19172,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-sui:
@@ -19218,19 +19218,19 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/semver':
-        specifier: ^7.7.1
+        specifier: 7.7.1
         version: 7.7.1
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-tezos:
@@ -19276,13 +19276,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-trx:
@@ -19319,13 +19319,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-vet:
@@ -19365,10 +19365,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-app-xrp:
@@ -19408,13 +19408,13 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ledgerjs/packages/hw-bolos:
@@ -19445,10 +19445,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-dmk-desktop:
@@ -19894,7 +19894,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       tsx:
-        specifier: ^4.19.3
+        specifier: 4.20.6
         version: 4.20.6
 
   libs/live-engagement:
@@ -20008,10 +20008,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
@@ -20063,10 +20063,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-celo:
@@ -20112,10 +20112,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-concordium:
@@ -20161,10 +20161,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-cosmos:
@@ -20225,10 +20225,10 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-evm:
@@ -20289,10 +20289,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
@@ -20341,10 +20341,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-icp:
@@ -20393,10 +20393,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-polkadot:
@@ -20451,10 +20451,10 @@ importers:
         specifier: 'catalog:'
         version: 0.67.0
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-solana:
@@ -20542,10 +20542,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-tron:
@@ -20594,10 +20594,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-xrp:
@@ -20640,10 +20640,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/live-signer-zcash:
@@ -20683,10 +20683,10 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       ws:
         specifier: 'catalog:'
@@ -20753,13 +20753,13 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/pako':
-        specifier: ^2.0.0
+        specifier: 2.0.3
         version: 2.0.3
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
       '@types/ws':
-        specifier: ^8.5.3
+        specifier: 8.5.10
         version: 8.5.10
       jest:
         specifier: 'catalog:'
@@ -20768,13 +20768,13 @@ importers:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       timemachine:
-        specifier: ^0.3.2
+        specifier: 0.3.2
         version: 0.3.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
       ws:
-        specifier: ^8.16.0
+        specifier: 8.22.0
         version: 8.22.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
 
   libs/speculos-transport:
@@ -20812,7 +20812,7 @@ importers:
         version: 6.1.5
     devDependencies:
       '@types/serve-handler':
-        specifier: ^6.1.1
+        specifier: 6.1.4
         version: 6.1.4
 
   libs/transaction-observability:
@@ -20879,13 +20879,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/types-live:
@@ -20922,13 +20922,13 @@ importers:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       source-map-support:
-        specifier: ^0.5.21
+        specifier: 0.5.21
         version: 0.5.21
       ts-node:
-        specifier: ^10.4.0
+        specifier: 10.9.2
         version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
 
   libs/ui:
@@ -20946,13 +20946,13 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       json:
-        specifier: ^11.0.0
+        specifier: 11.0.0
         version: 11.0.0
       lint-staged:
-        specifier: ^14.0.0
+        specifier: 14.0.1
         version: 14.0.1(enquirer@2.4.1)
 
   libs/ui/packages/icons:
@@ -20961,13 +20961,13 @@ importers:
         specifier: 'catalog:'
         version: 2.3.0(@swc/helpers@0.5.23)
       '@svgr/core':
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0(@typescript/typescript6@6.0.2)
       '@svgr/plugin-jsx':
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0(@svgr/core@8.1.0(@typescript/typescript6@6.0.2))
       '@svgr/plugin-svgo':
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0(@svgr/core@8.1.0(@typescript/typescript6@6.0.2))(@typescript/typescript6@6.0.2)
       '@types/react':
         specifier: 19.0.14
@@ -20976,10 +20976,10 @@ importers:
         specifier: 19.0.0
         version: 19.0.0
       '@types/styled-system':
-        specifier: ^5.1.13
+        specifier: 5.1.22
         version: 5.1.22
       camelcase:
-        specifier: ^6.2.1
+        specifier: 6.3.0
         version: 6.3.0
       glob:
         specifier: ^7.2.0
@@ -20994,7 +20994,7 @@ importers:
         specifier: 'catalog:'
         version: 15.15.4(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       styled-components:
         specifier: 'catalog:'
@@ -21006,7 +21006,7 @@ importers:
         specifier: 'catalog:'
         version: 4.0.0
       tiny-glob:
-        specifier: ^0.2.9
+        specifier: 0.2.9
         version: 0.2.9
       typescript:
         specifier: 'catalog:'
@@ -21061,10 +21061,10 @@ importers:
         specifier: 7.28.4
         version: 7.28.4
       '@emotion/core':
-        specifier: ^11.0.0
+        specifier: 11.0.0
         version: 11.0.0
       '@emotion/native':
-        specifier: ^11.0.0
+        specifier: 11.11.0
         version: 11.11.0(@emotion/react@11.14.0(@types/react@19.0.14)(react@19.1.4))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
       '@react-native-async-storage/async-storage':
         specifier: 2.1.2
@@ -21073,7 +21073,7 @@ importers:
         specifier: 6.7.5
         version: 6.7.5
       '@react-native-community/slider':
-        specifier: ^4.5.7
+        specifier: 4.5.7
         version: 4.5.7
       '@react-native/assets-registry':
         specifier: 'catalog:'
@@ -21091,10 +21091,10 @@ importers:
         specifier: 14.5.2
         version: 14.5.2(@testing-library/dom@10.4.1)
       '@types/color':
-        specifier: ^3.0.3
+        specifier: 3.0.6
         version: 3.0.6
       '@types/hoist-non-react-statics':
-        specifier: ^3.3.1
+        specifier: 3.3.5
         version: 3.3.5
       '@types/lodash':
         specifier: 'catalog:'
@@ -21103,13 +21103,13 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/prop-types':
-        specifier: ^15.7.5
+        specifier: 15.7.12
         version: 15.7.12
       '@types/react':
         specifier: 19.0.14
         version: 19.0.14
       '@types/styled-system':
-        specifier: ^5.1.13
+        specifier: 5.1.22
         version: 5.1.22
       babel-loader:
         specifier: 10.0.0
@@ -21118,19 +21118,19 @@ importers:
         specifier: 5.0.2
         version: 5.0.2
       babel-plugin-react-docgen-typescript:
-        specifier: ^1.5.1
+        specifier: 1.5.1
         version: 1.5.1(@babel/core@7.28.5)(@typescript/typescript6@6.0.2)
       buffer:
         specifier: 'catalog:'
         version: 6.0.3(patch_hash=42321bf7b7c77317e644bb216138271640fb39808e74312037dac216f4b9bc5d)
       camelcase:
-        specifier: ^6.2.1
+        specifier: 6.3.0
         version: 6.3.0
       csstype:
         specifier: 3.2.3
         version: 3.2.3
       fs-extra:
-        specifier: ^10.0.1
+        specifier: 10.1.0
         version: 10.1.0
       glob:
         specifier: ^7.2.0
@@ -21148,7 +21148,7 @@ importers:
         specifier: 'catalog:'
         version: 1.82.0
       prop-types:
-        specifier: ^15.8.1
+        specifier: 15.8.1
         version: 15.8.1
       react:
         specifier: 19.1.4
@@ -21178,28 +21178,28 @@ importers:
         specifier: 'catalog:'
         version: 0.18.0
       regenerator-runtime:
-        specifier: ^0.14.0
+        specifier: 0.14.1
         version: 0.14.1
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       styled-components:
         specifier: 'catalog:'
         version: 6.1.19(patch_hash=810073718ccefe69fd016893be54d80d86cc6e5ee521455028b93c7cbf3103d7)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       stylelint:
-        specifier: ^14.9.1
+        specifier: 14.16.1
         version: 14.16.1
       stylelint-config-recommended:
-        specifier: ^13.0.0
+        specifier: 13.0.0
         version: 13.0.0(stylelint@14.16.1)
       stylelint-config-styled-components:
-        specifier: ^0.1.1
+        specifier: 0.1.1
         version: 0.1.1
       stylelint-processor-styled-components:
-        specifier: ^1.10.0
+        specifier: 1.10.0
         version: 1.10.0
       util:
-        specifier: ^0.12.5
+        specifier: 0.12.5
         version: 0.12.5
 
   libs/ui/packages/react:
@@ -21245,10 +21245,10 @@ importers:
         specifier: 'catalog:'
         version: 2.3.0(@swc/helpers@0.5.23)
       '@types/color':
-        specifier: ^3.0.2
+        specifier: 3.0.6
         version: 3.0.6
       '@types/hoist-non-react-statics':
-        specifier: ^3.3.1
+        specifier: 3.3.5
         version: 3.3.5
       '@types/lodash':
         specifier: 'catalog:'
@@ -21260,13 +21260,13 @@ importers:
         specifier: 19.0.0
         version: 19.0.0
       '@types/react-transition-group':
-        specifier: ^4.4.2
+        specifier: 4.4.10
         version: 4.4.10
       '@types/styled-components':
-        specifier: ^5.1.14
+        specifier: 5.1.34
         version: 5.1.34
       '@types/styled-system':
-        specifier: ^5.1.12
+        specifier: 5.1.22
         version: 5.1.22
       csstype:
         specifier: 3.2.3
@@ -21275,7 +21275,7 @@ importers:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17
       fs-extra:
-        specifier: ^10.0.1
+        specifier: 10.1.0
         version: 10.1.0
       oxfmt:
         specifier: 'catalog:'
@@ -21290,25 +21290,25 @@ importers:
         specifier: 19.1.4
         version: 19.1.4(react@19.1.4)
       rimraf:
-        specifier: ^4.4.1
+        specifier: 4.4.1
         version: 4.4.1
       styled-components:
-        specifier: ^5.3.3
+        specifier: 5.3.11
         version: 5.3.11(@babel/core@7.28.5)(react-dom@19.1.4(react@19.1.4))(react-is@19.2.8)(react@19.1.4)
       stylelint:
-        specifier: ^14.9.1
+        specifier: 14.16.1
         version: 14.16.1
       stylelint-config-recommended:
-        specifier: ^13.0.0
+        specifier: 13.0.0
         version: 13.0.0(stylelint@14.16.1)
       stylelint-config-styled-components:
-        specifier: ^0.1.1
+        specifier: 0.1.1
         version: 0.1.1
       stylelint-processor-styled-components:
-        specifier: ^1.10.0
+        specifier: 1.10.0
         version: 1.10.0
       tiny-glob:
-        specifier: ^0.2.9
+        specifier: 0.2.9
         version: 0.2.9
       typescript:
         specifier: 'catalog:'
@@ -21320,7 +21320,7 @@ importers:
         specifier: 'catalog:'
         version: 2.3.0(@swc/helpers@0.5.23)
       tiny-glob:
-        specifier: ^0.2.9
+        specifier: 0.2.9
         version: 0.2.9
 
   libs/wallet-analytics:
@@ -21448,7 +21448,7 @@ importers:
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
       '@types/bchaddrjs':
-        specifier: ^0.4.3
+        specifier: 0.4.3
         version: 0.4.3
       '@types/bs58':
         specifier: 'catalog:'
@@ -21457,10 +21457,10 @@ importers:
         specifier: 'catalog:'
         version: 2.1.2
       '@types/create-hmac':
-        specifier: ^1.1.3
+        specifier: 1.1.3
         version: 1.1.3
       '@types/invariant':
-        specifier: ^2.2.2
+        specifier: 2.2.37
         version: 2.2.37
       '@types/jest':
         specifier: 'catalog:'
@@ -21472,7 +21472,7 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       bip32:
-        specifier: ^4.0.0
+        specifier: 4.0.0
         version: 4.0.0
       bip39:
         specifier: 'catalog:'
@@ -21935,10 +21935,10 @@ importers:
         specifier: 'catalog:'
         version: 24.12.0
       '@types/pako':
-        specifier: ^2.0.0
+        specifier: 2.0.3
         version: 2.0.3
       '@types/ws':
-        specifier: ^8.5.3
+        specifier: 8.5.10
         version: 8.5.10
       '@typescript/native':
         specifier: 'catalog:'
