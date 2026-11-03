@@ -20,13 +20,6 @@ export const getMainMessage = (messages: CosmosEventMessage[]): CosmosEventMessa
   return sortedTypes[0];
 };
 
-export function isAccountEmpty({
-  sequence,
-  balance,
-  cosmosResources,
-}: Pick<CosmosAccount, "balance"> & {
-  sequence?: number;
-  cosmosResources?: { sequence?: number };
-}) {
-  return (sequence ?? cosmosResources?.sequence) === 0 && balance.isZero();
+export function isAccountEmpty({ sequence, balance }: Pick<CosmosAccount, "sequence" | "balance">) {
+  return sequence === 0 && balance.isZero();
 }

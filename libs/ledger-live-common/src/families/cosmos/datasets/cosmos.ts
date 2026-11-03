@@ -14,12 +14,7 @@ import { CosmosTooManyRedelegations } from "@ledgerhq/coin-cosmos/errors";
 import { COSMOS_MAX_REDELEGATIONS } from "@ledgerhq/coin-cosmos/logic";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources",
-    "stakingResources",
-    "operationsCount",
-    "operations",
-  ],
+  FIXME_ignoreAccountFields: ["sequence", "stakingResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {
@@ -100,8 +95,6 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: true,
             family: "cosmos",
             networkInfo: null,
-            validators: [],
-            sourceValidator: null,
             fees: null,
             gas: null,
             memo: null,
@@ -139,8 +132,6 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: true,
             family: "cosmos",
             networkInfo: null,
-            validators: [],
-            sourceValidator: null,
             fees: null,
             gas: null,
             memo: "test",
@@ -190,13 +181,8 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             amount: new BigNumber(100),
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(100),
-              },
-            ],
-            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            dstValAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
+            valAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
             mode: "redelegate",
           }),
           expectedStatus: (a, t) => {
@@ -219,13 +205,8 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "redelegate",
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(0),
-              },
-            ],
-            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            dstValAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
+            valAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: a => {
             const errors: Record<string, Error> = {};
@@ -248,13 +229,8 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "redelegate",
-            validators: [
-              {
-                address: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
-                amount: new BigNumber(100),
-              },
-            ],
-            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            dstValAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            valAddress: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: a => {
             const errors: Record<string, Error> = {};
@@ -264,7 +240,7 @@ const dataset: CurrenciesData<Transaction> = {
             ) {
               errors.redelegation = new CosmosTooManyRedelegations();
             } else {
-              errors.redelegation = new InvalidAddressBecauseDestinationIsAlsoSource();
+              errors.dstValAddress = new InvalidAddressBecauseDestinationIsAlsoSource();
             }
             return {
               errors,
@@ -276,20 +252,13 @@ const dataset: CurrenciesData<Transaction> = {
           name: "Unbonding - success",
           transaction: t => ({
             ...t,
+            amount: new BigNumber(100),
             mode: "undelegate",
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(100),
-              },
-            ],
+            valAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
         {
@@ -297,12 +266,7 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "undelegate",
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(0),
-              },
-            ],
+            valAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
           }),
           expectedStatus: {
             errors: {
@@ -316,15 +280,9 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "delegate",
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(100),
-              },
-            ],
+            valAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
+          expectedStatus: () => {
             return {
               errors: { amount: new AmountRequired() },
               warnings: {},
@@ -336,16 +294,11 @@ const dataset: CurrenciesData<Transaction> = {
           transaction: t => ({
             ...t,
             mode: "delegate",
-            validators: [
-              {
-                address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-                amount: new BigNumber(100),
-              },
-            ],
+            valAddress: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
           }),
           expectedStatus: {
             errors: {
-              recipient: new InvalidAddress(),
+              valAddress: new InvalidAddress(),
             },
             warnings: {},
           },
@@ -354,37 +307,24 @@ const dataset: CurrenciesData<Transaction> = {
           name: "ClaimReward - success",
           transaction: t => ({
             ...t,
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(0),
-              },
-            ],
+            valAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
             mode: "claimReward",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
         {
           name: "ClaimReward - not a cosmosvaloper",
           transaction: t => ({
             ...t,
-            validators: [
-              {
-                address: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-                amount: new BigNumber(0),
-              },
-            ],
+            valAddress: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
             mode: "claimReward",
           }),
           expectedStatus: {
             errors: {
-              recipient: new InvalidAddress(),
+              valAddress: new InvalidAddress(),
             },
             warnings: {},
           },
@@ -393,20 +333,13 @@ const dataset: CurrenciesData<Transaction> = {
           name: "claimRewardCompound - success",
           transaction: t => ({
             ...t,
-            validators: [
-              {
-                address: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
-                amount: new BigNumber(100),
-              },
-            ],
-            mode: "claimRewardCompound",
+            amount: new BigNumber(100),
+            valAddress: "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
+            mode: "compoundReward",
           }),
-          expectedStatus: (a, t) => {
-            invariant(t.memo === "Ledger Live", "Should have a memo");
-            return {
-              errors: {},
-              warnings: {},
-            };
+          expectedStatus: {
+            errors: {},
+            warnings: {},
           },
         },
       ],
