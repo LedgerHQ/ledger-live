@@ -53,6 +53,8 @@ That does not make the change untestable. Run the child yourself from a scratch 
    gh workflow run build-desktop-reusable.yml --ref ci-test/<topic> -f ref=ci-test/<topic>
    gh run list -w build-desktop-reusable.yml -b ci-test/<topic> -L1   # get the run id, then: gh run watch <id>
    ```
+   Do not open a PR for the scratch branch. The dispatch does not need one, and a PR gets a Copilot
+   review and runs the PR checks.
 4. Put the run URL in the PR's **Tested** section, then delete the scratch branch.
 
 If the reusable has no `workflow_dispatch` (`grep -L workflow_dispatch .github/workflows/*-reusable.yml`),
@@ -69,20 +71,39 @@ dependency version or lockfile entry), or if you cannot tell. Then branch from `
 
 ### Gotcha: a cache replay is not a test
 
-Nx hashes project files, root config files and named env vars (`nx.workspace.json` → `namedInputs`).
-It does not hash `.github/**` or `tools/actions/**`. If your change alters how a step runs an Nx target
-(flags, env, runner, install options), the task hash stays the same. The run then replays the cached
-result and does not run your change. The run is green, but nothing was tested.
+Jobs pass builds to each other through caches keyed on source files, not on CI files. If your change
+alters how something is built, a cache hit hands the next job a build that an older CI made. The run
+is green, but nothing was tested.
 
-- On the scratch branch, set `skip-nx-cache: "true"` on the `setup-caches` step of every job you test.
-  That makes the run execute every Nx task again (`NX_SKIP_NX_CACHE=true`).
-- Read the log, not only the status. These lines show a replay:
-  `[local cache]`, `[remote cache]`, `existing outputs match the cache, left as is`,
-  `Nx read the output from the cache instead of running the command for N out of M tasks`.
-  If a task you meant to test shows one of them, the run does not count.
+- **Nx tasks**: Nx hashes project files, root config files and named env vars (`nx.workspace.json` →
+  `namedInputs`), not `.github/**` or `tools/actions/**`. Set `skip-nx-cache: "true"` on the
+  `setup-caches` step of every job you test (`NX_SKIP_NX_CACHE=true`). In the log, `[local cache]`,
+  `[remote cache]`, `existing outputs match the cache, left as is` or
+  `Nx read the output from the cache instead of running the command` mean a replay.
+- **Mobile native builds** (`test-mobile-e2e-reusable.yml`): `determine-builds` looks up the iOS and
+  Android native builds in the S3 cache, keyed on the app's native folders and a version suffix.
+  On a hit, the build job skips the native build, and `skip-nx-cache` does not change that. On the
+  scratch branch, change the suffix in the `Determine cache keys` step (e.g. `-detox-native-ios-4` →
+  `-detox-native-ios-4-ci-test`). Then check that `ios_native_exists` / `android_native_exists` is
+  `false` and that the native build step ran.
+- **Desktop e2e userdata** is always restored from develop's cache. A change to how it is generated
+  cannot be tested through an e2e run.
+- **Artifacts within one run** (`upload-artifact` → `download-artifact`) are safe only if the job that
+  uploads them ran the step you changed.
 
-The same blind spot affects PR checks. `build-and-test-pr.yml` starts jobs only for projects that
-`nx-affected` reports. A PR that changes only CI files affects no project, so those jobs do not start.
+### Gotcha: a skipped job is green too
+
+- In `build-and-test-pr.yml`, a child job runs only if `nx-affected` lists its path
+  (`if: contains(needs.determine-affected.outputs.paths, '<path>')`). A green `nx-affected` does not
+  mean the job you changed ran. A PR that changes only CI files affects no project, so those jobs do
+  not start.
+- Some children get values from the root as inputs (`js_bundle_hash_*`, `build-web-tools`,
+  `affected_paths`). A dispatch does not run the root. `-f` can only set inputs declared under
+  `workflow_dispatch`. An input declared only under `workflow_call` is empty in a dispatch: its
+  default does not apply, and `-f` rejects it. To set one, declare it under `workflow_dispatch`
+  on the scratch branch. Steps gated on these inputs can behave differently from the PR path.
+- Before a run counts, open the job you changed and check that it ran and that the step you changed
+  ran. It must not be skipped, and it must not be a cache replay.
 
 ### Quick local check
 
@@ -91,7 +112,7 @@ as the runner. This catches mistakes faster than CI, but it does not replace the
 
 ### What to write in the PR
 
-- ✅ `CI | Dispatched build-desktop-reusable on ci-test/<topic> with the action repointed and the Nx cache skipped: <run URL> (macOS green)`
+- ✅ `CI | Dispatched build-desktop-reusable on ci-test/<topic> with the action repointed and the Nx cache skipped. Job "macOS Build", step "Build desktop" ran: <run URL>`
 - ✅ `Release callers | Same dispatch from a branch of origin/release: <run URL>` (only when you ran it)
 - ❌ `Not testable before merge: PR builds run this action @develop.` Use the steps above instead.
   Write "not testable" only for something a dispatch cannot run (a `schedule`, `merge_group` or
