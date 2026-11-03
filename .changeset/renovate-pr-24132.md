@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/wallet-cli": patch
 "@ledgerhq/web-tools": patch
 ---
 

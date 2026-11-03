@@ -1,5 +1,35 @@
 # @ledgerhq/wallet-cli
 
+## 3.2.0
+
+### Minor Changes
+
+- [#23979](https://github.com/LedgerHQ/ledger-live/pull/23979) [`4271aa7`](https://github.com/LedgerHQ/ledger-live/commit/4271aa759904a9c3029f3cfe7c26340fab511e7f) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent sync` pulls every Ledger Sync account again only when the families, currencies or derivation modes this wallet-cli can import change, not after every upgrade
+
+- [#23935](https://github.com/LedgerHQ/ledger-live/pull/23935) [`26c277d`](https://github.com/LedgerHQ/ledger-live/commit/26c277d4a667f5e02b0f4284d01612fa3629e4c3) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `skill install` no longer needs `--force` to replace a skill that wallet-cli installed earlier; it still needs it for a skill edited since then. `skill install` and `skill doctor --fix` now delete the unedited files a newer skill dropped.
+
+- [#23291](https://github.com/LedgerHQ/ledger-live/pull/23291) [`0f7ec9c`](https://github.com/LedgerHQ/ledger-live/commit/0f7ec9c49f815b5275f2285ec0f2d1559608738b) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent intents`, `status` and `cancel` show a swap's pair, amounts and provider (`displayAmount` was `null` for swaps) and a Solana send's amount and memo; `status` and `cancel` also name a token send's contract or mint
+
+- [#23794](https://github.com/LedgerHQ/ledger-live/pull/23794) [`5cf4b8c`](https://github.com/LedgerHQ/ledger-live/commit/5cf4b8c918b9cd698eb0b9bc9ec71f5d5e0192ab) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - The `wallet-cli-usage` skill says how to enroll with the Agent Intent app named in its setup prompt (`--environment`, `--app-url`), to send the enrollment URL back right away and to keep credentials private.
+
+- [#24049](https://github.com/LedgerHQ/ledger-live/pull/24049) [`7efbe00`](https://github.com/LedgerHQ/ledger-live/commit/7efbe007233285e87c57fee88fdde680aa35b1aa) Thanks [@michaldebek-ext-max](https://github.com/michaldebek-ext-max)! - `agent-intent swap` words its token approval hint for a `--to-amount` proposal too
+
+### Patch Changes
+
+- [#23755](https://github.com/LedgerHQ/ledger-live/pull/23755) [`a825d96`](https://github.com/LedgerHQ/ledger-live/commit/a825d967ec4ccf5b29be953291893c01b9a63b23) Thanks [@mateuszmarcinkowski-ext-afk](https://github.com/mateuszmarcinkowski-ext-afk)! - The embedded wallet-cli skill moves its details to references and adds the rules for agents that propose payments from a machine without a Ledger
+
+- [#23896](https://github.com/LedgerHQ/ledger-live/pull/23896) [`a27b28a`](https://github.com/LedgerHQ/ledger-live/commit/a27b28a890df7ee744fd0df643ffe59e99c057c5) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Reject descriptors whose purpose is not `account`
+
+- [#24290](https://github.com/LedgerHQ/ledger-live/pull/24290) [`94df3d0`](https://github.com/LedgerHQ/ledger-live/commit/94df3d0acc235f2aa429ffaea4f21bf327469fe3) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - [LWDM] chore(deps): update dependency oxfmt to v0.75.0
+
+  - Updated `oxfmt` to `0.75.0`
+
+- [#24291](https://github.com/LedgerHQ/ledger-live/pull/24291) [`4fc4674`](https://github.com/LedgerHQ/ledger-live/commit/4fc4674c788390588d2d3733fc5928372d2c8382) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): update dependency oxlint to v1.90.0
+
+  - Updated `oxlint` to `1.90.0`
+
+- [#24132](https://github.com/LedgerHQ/ledger-live/pull/24132) [`b04b778`](https://github.com/LedgerHQ/ledger-live/commit/b04b77802057f880ef2f0e15d21500233a03fa5a) Thanks [@renovate-operator-ledger](https://github.com/apps/renovate-operator-ledger)! - chore(deps): pin dependencies
+
 ## 3.0.0
 
 ### Major Changes
