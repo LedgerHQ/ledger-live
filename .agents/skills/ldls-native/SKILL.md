@@ -16,9 +16,9 @@ depend on it, not at the repo root. If the path is missing, open `ai-rules/RULES
 
 ## Map the contract onto Lumen
 
-A universal component has one platform-neutral contract in `X.types.ts`, see the
-[universal components ADR](../../../docs/adr/universal-components.md). The native file `X.native.tsx`
-translates it to Lumen, one line per prop:
+The rules both platforms follow are in
+[universal-components](../universal-components/SKILL.md#map-the-contract-onto-lumen). On native,
+`X.native.tsx` maps:
 
 | Contract (`X.types.ts`)               | Native implementation (`X.native.tsx`)    |
 | ------------------------------------- | ----------------------------------------- |
@@ -58,10 +58,7 @@ These never appear in the contract. The native file owns them:
 
 - Lumen imports and Lumen props types (`@ledgerhq/lumen-ui-rnative`), and any `react-native*` import.
 - Gesture and input props: `onPress`, `onLongPress`, `onChangeText`, `onSubmitEditing`, `onFocus`, `onBlur`.
-- Event objects: `GestureResponderEvent`, `NativeSyntheticEvent`. Unwrap the value before calling the contract.
+- Event objects: `GestureResponderEvent`, `NativeSyntheticEvent`.
 - `lx`, `style`, `StyleProp<ViewStyle>`.
-- Refs to native views. A component that needs imperative access fills the contract's handle type with `useImperativeHandle`.
+- Refs to native views.
 - Values the native file can read itself, such as the safe area under a sheet (`useBottomSheetBottomInset()`), instead of a `bottomInset` prop.
-
-A contract callback is named after the intent (`onEdit`, `onSelectAddress`), never after a gesture
-(`onPress`, `onEditPress`).

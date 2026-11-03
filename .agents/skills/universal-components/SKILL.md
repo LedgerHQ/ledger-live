@@ -69,9 +69,26 @@ export type ContactAvatarProps = Readonly<{
 }>;
 ```
 
-Each implementation maps the contract onto Lumen in one line per prop: `testID` to `data-testid`
-on web, an intent callback to `onClick` on web and `onPress` on native. How to use Lumen itself is
-in [ldls-web](../ldls-web/SKILL.md) and [ldls-native](../ldls-native/SKILL.md).
+## Map the contract onto Lumen
+
+`X.web.tsx` and `X.native.tsx` each translate the contract to Lumen, one line per prop. The
+mapping table and the list of what stays in each platform file are in
+[ldls-web](../ldls-web/SKILL.md#map-the-contract-onto-lumen) and
+[ldls-native](../ldls-native/SKILL.md#map-the-contract-onto-lumen); both follow these rules:
+
+- **Callbacks are named after the intent** (`onEdit`, `onSelectAddress`), never after a gesture:
+  R3 rejects gesture names, and [review check 3](#review-only-checks) rejects empty ones.
+- **Value callbacks get the value.** Unwrap it from the event before calling the contract
+  (`event.target.value` on web); a Lumen prop that already passes the bare value is wired directly.
+- **`testID` is the contract's name.** Each platform maps it to its own test attribute.
+- **Imperative access goes through a handle type in the contract**, filled with
+  `useImperativeHandle` on each platform, never a platform element ref. The
+  [ADR's authoring steps](../../../docs/adr/universal-components.md#authoring-a-universal-component)
+  show a `ContactsSearchHandle`.
+
+What stays in each platform file is listed in
+[ldls-web](../ldls-web/SKILL.md#what-stays-in-the-web-file) and
+[ldls-native](../ldls-native/SKILL.md#what-stays-in-the-native-file).
 
 ## R1 to R5, linted
 

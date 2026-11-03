@@ -149,9 +149,8 @@ parallel runs flaky: [references/mocks.md](references/mocks.md).
 
 Packages under `shared/`, `domain/`, `features/` and `devtools/` have no app harness. Each one:
 
-- builds its `jest.config.js` from a `@support/jest` preset (`shared`, `features-flow`, `devtools`,
-  `libs-coin`) with the default call: `createSharedJestConfig({ rootDir: __dirname })` for node
-  code, `createFlowJestConfig()` for a flow. Options and overrides: `support/jest/README.md`.
+- builds its `jest.config.js` from a `@support/jest` preset, with the default call its
+  [preset table](references/packages.md#presets) gives.
 - splits UI tests into a `web` and a `native` jest project by suffix: `X.web.test.tsx`,
   `X.native.test.tsx`.
 - keeps tests next to the code in `src/`, and mock factories in `*.mock.ts` out of the barrel.

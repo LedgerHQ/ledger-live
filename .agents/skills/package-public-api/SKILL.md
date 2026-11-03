@@ -133,10 +133,9 @@ is gone or clean, so fixing a file means deleting its entry.
 
 ## Universal components
 
-A React component exported from an entry that resolves per platform takes one props contract,
-`X.types.ts`, on both platforms, or sits behind a `./web` or `./native` subpath. `lint:structure`
-checks this as rules R1 to R5, next to the barrel rules above. The shapes, the rules and their
-codes, the review-only checks and how to clear a waiver are in
+`lint:structure` also checks rules R1 to R5 on the React components a dual-platform package
+exports, next to the barrel rules above. The `X.types.ts` contract, the rules and their codes, the
+review-only checks and how to clear a waiver are in
 [universal-components](../universal-components/SKILL.md).
 
 ## Traps

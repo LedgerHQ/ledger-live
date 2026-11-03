@@ -69,7 +69,9 @@ const useMyNewDialogViewModel = () => {
 
 ### Step 4: Mount in GlobalDialogs
 
-Add the dialog component to `mvvm/features/GlobalDialogs/index.tsx`:
+Add the dialog component to
+[`mvvm/features/GlobalDialogs/index.tsx`](../../../apps/ledger-live-desktop/src/mvvm/features/GlobalDialogs/index.tsx),
+lazy-loaded and in its own `Suspense` like the dialogs already there. A sketch of that file:
 
 ```typescript
 const MyNewDialog = lazy(() => import("LLD/features/MyFeature"));
@@ -104,6 +106,6 @@ dispatch(openMyNewDialog());
 
 ## Reference
 
-- Slice: `apps/ledger-live-desktop/src/renderer/reducers/dialogs.ts`
-- Mount point: `apps/ledger-live-desktop/src/mvvm/features/GlobalDialogs/index.tsx`
-- Example: `apps/ledger-live-desktop/src/mvvm/features/ReleaseNotes/releaseNotesDialog.ts`
+- Slice: [`apps/ledger-live-desktop/src/renderer/reducers/dialogs.ts`](../../../apps/ledger-live-desktop/src/renderer/reducers/dialogs.ts)
+- Mount point: [`apps/ledger-live-desktop/src/mvvm/features/GlobalDialogs/index.tsx`](../../../apps/ledger-live-desktop/src/mvvm/features/GlobalDialogs/index.tsx)
+- Example: [`apps/ledger-live-desktop/src/mvvm/features/ReleaseNotes/releaseNotesDialog.ts`](../../../apps/ledger-live-desktop/src/mvvm/features/ReleaseNotes/releaseNotesDialog.ts)
