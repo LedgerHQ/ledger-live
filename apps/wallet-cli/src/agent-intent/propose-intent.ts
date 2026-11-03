@@ -2,7 +2,6 @@ import { option } from "@bunli/core";
 import { z } from "zod";
 import { createAgentIntentClient, type AgentIntentClient } from "@ledgerhq/agent-intent-sdk";
 import { outputOption } from "../commands/inputs";
-import { writeStderr } from "../shared/ui";
 import type { EnrolledAgentIntentProfile } from "./enrolled-profile";
 import { PROFILE_ID_MESSAGE, PROFILE_ID_RE } from "./profile-format";
 import { loadProfileIdentity } from "./profile-identity";
@@ -68,21 +67,6 @@ export async function submitAgentIntent(
     deeplink = null;
   }
   return { deeplink, intentId: deeplink ? intentIdFromDeeplink(deeplink) : null };
-}
-
-/** Warns, after the result is printed, when the created intent can't be found from it. */
-export function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent): void {
-  if (!deeplink) {
-    writeStderr(
-      "⚠ The Agent Intent service accepted the intent but returned no readable review link. " +
-        "Find it in the Agent Intent frontend — don't re-run, or you'll propose a duplicate.\n",
-    );
-  } else if (!intentId) {
-    writeStderr(
-      "⚠ The review link has an unexpected shape, so no intent id could be extracted. " +
-        "The intent was created — use the review link to find it.\n",
-    );
-  }
 }
 
 /** The id in the service's `<frontend>/intents/<id>` link; null for any other shape. */
