@@ -1,3 +1,9 @@
+const mockParityNonce = new Uint8Array(16).fill(7);
+jest.mock("@icp-sdk/core/agent", () => ({
+  ...jest.requireActual("@icp-sdk/core/agent"),
+  makeNonce: () => mockParityNonce,
+}));
+
 import { Cbor, requestIdOf } from "@icp-sdk/core/agent";
 import { Principal } from "@icp-sdk/core/principal";
 import { InvalidTransactionError } from "@ledgerhq/coin-module-framework/errors";
