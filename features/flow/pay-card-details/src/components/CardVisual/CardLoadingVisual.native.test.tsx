@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 import { I18nWrapper } from "../../__tests__/i18nWrapper";
-import { CardLoadingVisual } from "./CardLoadingVisual.native";
+import { CardLoadingVisual } from "./CardLoadingVisual";
 import type { FormattedValue } from "../../types";
 
 const formatCountervalue = (value: number): FormattedValue => ({

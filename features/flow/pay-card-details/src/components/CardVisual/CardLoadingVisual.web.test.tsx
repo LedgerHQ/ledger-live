@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
-import { CardLoadingVisual } from "./CardLoadingVisual.web";
+import { CardLoadingVisual } from "./CardLoadingVisual";
 import type { FormattedValue } from "../../types";
 
 const formatCountervalue = (value: number): FormattedValue => ({

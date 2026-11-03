@@ -41,16 +41,16 @@ const ready: CardAssetsViewModel = {
     withdrawDescription: "Withdraw funds from your Monavate account to your Ledger wallet address.",
     continue: "Continue",
   },
-  onAssetPress: jest.fn(),
+  onOpenAsset: jest.fn(),
   onDialogClose: jest.fn(),
-  onTopUpPress: jest.fn(),
-  onWithdrawPress: jest.fn(),
+  onTopUpAsset: jest.fn(),
+  onOpenWithdraw: jest.fn(),
   onWithdrawClose: jest.fn(),
-  onShowHistoryPress: jest.fn(),
+  onShowHistory: jest.fn(),
   onWithdrawContinue: jest.fn(),
-  onManagePress: jest.fn(),
-  onRetryPress: jest.fn(),
-  onAddAssetPress: jest.fn(),
+  onManageAssets: jest.fn(),
+  onRetry: jest.fn(),
+  onAddAsset: jest.fn(),
   onMoveAsset: jest.fn(),
   reorderingAssetIds: new Set(),
 };
@@ -139,14 +139,14 @@ describe("CardAssetsView (native)", () => {
 
   it("should open the selected asset", async () => {
     const user = userEvent.setup();
-    const onAssetPress = jest.fn();
-    render(<CardAssetsView {...ready} onAssetPress={onAssetPress} />, {
+    const onOpenAsset = jest.fn();
+    render(<CardAssetsView {...ready} onOpenAsset={onOpenAsset} />, {
       wrapper: I18nWrapper,
     });
 
     await user.press(screen.getByText("USD Coin"));
 
-    expect(onAssetPress).toHaveBeenCalledWith(usdc);
+    expect(onOpenAsset).toHaveBeenCalledWith(usdc);
   });
 
   it("should keep the assets info clear of the navigation bar", () => {
@@ -159,8 +159,8 @@ describe("CardAssetsView (native)", () => {
 
   it("should open asset management", async () => {
     const user = userEvent.setup();
-    const onManagePress = jest.fn();
-    render(<CardAssetsView {...ready} onManagePress={onManagePress} />, {
+    const onManageAssets = jest.fn();
+    render(<CardAssetsView {...ready} onManageAssets={onManageAssets} />, {
       wrapper: I18nWrapper,
     });
 
@@ -170,7 +170,7 @@ describe("CardAssetsView (native)", () => {
     );
     await user.press(screen.getByText(CARD_ASSETS_COPY.manage));
 
-    expect(onManagePress).toHaveBeenCalledTimes(1);
+    expect(onManageAssets).toHaveBeenCalledTimes(1);
   });
 
   it("should hide Manage until the asset list is ready", () => {

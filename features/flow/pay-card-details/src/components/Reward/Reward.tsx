@@ -1,5 +1,5 @@
 import React from "react";
-import { RewardView } from "./RewardView.web";
+import { RewardView } from "./RewardView";
 import { useRewardViewModel } from "./useRewardViewModel";
 import type { RewardProps } from "./types";
 
