@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/serve-handler": "6.1.4",
     "@typescript/native": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "exports": {

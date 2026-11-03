@@ -64,7 +64,8 @@
     "rxjs": "catalog:",
     "typescript": "catalog:",
     "ws": "catalog:",
-    "@typescript/native": "catalog:"
+    "@typescript/native": "catalog:",
+    "rimraf": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

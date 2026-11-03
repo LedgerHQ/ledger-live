@@ -56,7 +56,8 @@
     "typescript": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "tsx": "4.20.6"
+    "tsx": "4.20.6",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

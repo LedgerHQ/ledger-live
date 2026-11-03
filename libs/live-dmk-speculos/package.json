@@ -72,7 +72,8 @@
     "rxjs": "catalog:",
     "ws": "catalog:",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0",

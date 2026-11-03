@@ -232,7 +232,6 @@
     "nyc": "15.1.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "rimraf": "4.4.1",
     "typescript": "catalog:",
     "zx": "8.8.5"
   },

@@ -135,7 +135,8 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "files": [
     "lib",

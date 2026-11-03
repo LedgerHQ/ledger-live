@@ -48,7 +48,8 @@
     "timemachine": "0.3.2",
     "typescript": "catalog:",
     "ws": "8.22.0",
-    "@typescript/native": "catalog:"
+    "@typescript/native": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

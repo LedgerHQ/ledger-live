@@ -45,7 +45,8 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "@typescript/native": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "rimraf": "catalog:"
   },
   "exports": {
     ".": {
