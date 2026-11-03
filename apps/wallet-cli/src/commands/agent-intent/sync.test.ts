@@ -333,7 +333,8 @@ describe("agent-intent sync", () => {
     },
   );
 
-  it("should not cache the pulled version when an entry is invalid", async () => {
+  it("should cache neither the pulled version nor the support when an entry is invalid", async () => {
+    storedProfile = makeProfile({ ledgerSyncSupport: "other-support" });
     pullSyncedAccountsImpl = () => ({ status: "new-data", accounts: [], version: 42 });
     mergeSyncedAccountsImpl = () => ({
       ...emptyReport,
@@ -343,6 +344,7 @@ describe("agent-intent sync", () => {
     await runSync();
 
     expect(storedProfile?.ledgerSyncVersion).toBe(5);
+    expect(storedProfile?.ledgerSyncSupport).toBe("other-support");
     expect(writeCalls).toBe(1);
   });
 

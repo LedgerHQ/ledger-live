@@ -3,6 +3,7 @@ import { describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
 import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 import {
+  importSupport,
   mergeSyncedAccounts,
   pullSyncedAccounts,
   supportFingerprint,
@@ -357,6 +358,16 @@ describe("supportFingerprint", () => {
     ["derivation mode", { derivationModes: [...support.derivationModes, "taproot"] }],
   ])("changes when a %s is added", (_kind, added) => {
     expect(supportFingerprint({ ...support, ...added })).not.toBe(supportFingerprint(support));
+  });
+});
+
+describe("importSupport", () => {
+  it("includes testnet currencies and every derivation mode, but no unsupported family's currency", () => {
+    const { currencies, derivationModes } = importSupport();
+
+    expect([...currencies]).toContain("ethereum_sepolia");
+    expect([...currencies]).not.toContain("cardano");
+    expect([...derivationModes]).toContain("taproot");
   });
 });
 

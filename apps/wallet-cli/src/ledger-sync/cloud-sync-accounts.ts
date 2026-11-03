@@ -137,7 +137,7 @@ const SUPPORTED_FAMILIES = new Set<string>(SUPPORTED_TRANSACTION_FAMILIES);
 // Not `isDerivationMode`: it checks `mode in modes`, so inherited keys such as "toString" pass it.
 const KNOWN_DERIVATION_MODES = new Set<string>(getAllDerivationModes());
 
-type ImportSupport = {
+export type ImportSupport = {
   families: Iterable<string>;
   currencies: Iterable<string>;
   derivationModes: Iterable<string>;
@@ -162,15 +162,20 @@ export function supportFingerprint({
     .slice(0, 16);
 }
 
-/** What this build can import from Ledger Sync: `agent-intent sync` re-pulls when it changes. */
-export function ledgerSyncSupport(): string {
-  return supportFingerprint({
+/** Every input of a `skipped` result in `convertSyncedAccount`. */
+export function importSupport(): ImportSupport {
+  return {
     families: SUPPORTED_FAMILIES,
     currencies: listCryptoCurrencies(true)
       .filter(currency => SUPPORTED_FAMILIES.has(currency.family))
       .map(currency => currency.id),
     derivationModes: KNOWN_DERIVATION_MODES,
-  });
+  };
+}
+
+/** What this build can import from Ledger Sync: `agent-intent sync` re-pulls when it changes. */
+export function ledgerSyncSupport(): string {
+  return supportFingerprint(importSupport());
 }
 
 function issues(error: { issues: ReadonlyArray<{ message: string }> }): string {
