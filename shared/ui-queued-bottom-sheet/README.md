@@ -133,7 +133,8 @@ consumer's decision, and the test should be able to assert it. It exposes open s
 `accessibilityState.expanded` (either `isRequestingToBeOpened` or `isForcingToBeOpened`), fires
 `onOpened` when the sheet becomes open, and wires each close/back callback to a pressable derived
 from the sheet `testID`: `-dismiss` → `onClose`, `-header-close` → `onHeaderClosePressed`,
-`-backdrop` → `onBackdropPress`, `-back` → `onBack`. Sheets that pass no `testID` fall back to
+`-backdrop` → `onBackdropPress`, `-back` → `onBack`, `-hidden` → `onModalHide` (available while
+closed, because the real sheet fires it after the close animation). Sheets that pass no `testID` fall back to
 `QUEUED_BOTTOM_SHEET_MOCK_TEST_ID`.
 
 ```tsx

@@ -9,7 +9,7 @@ import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useOpenSwap } from "LLM/features/Swap";
 import { useSelector } from "~/context/hooks";
 import { modularDrawerSourceSelector } from "~/reducers/modularDrawer";
-import type { useAccountAssetPicker } from "LLM/components/AccountAssetPickerSheet/useAccountAssetPicker";
+import type { PickAccountAsset } from "LLM/hooks/usePickAccountAsset";
 import type { AssetActionId } from "@features/platform-quick-actions";
 import type { AccountAsset, AccountAssetsByAction } from "LLM/utils/accountAssets";
 import {
@@ -18,7 +18,7 @@ import {
   ACCOUNT_SCOPED_NETWORKS_CONFIGURATION,
 } from "./constants";
 
-export type PickAsset = ReturnType<typeof useAccountAssetPicker>["pickAsset"];
+export type PickAsset = PickAccountAsset;
 
 type NetworkAssetAction = "buy" | "swap";
 type HeldAssetAction = "sell" | "earn";

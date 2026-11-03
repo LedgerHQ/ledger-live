@@ -373,7 +373,7 @@ describe("TransferDrawer account scope", () => {
     findAction(result, "send").onPress();
 
     expect(mockOpenSendFlowForAccount).toHaveBeenCalledWith(account, undefined);
-    expect(result.current.assetPicker.isOpen).toBe(false);
+    expect(result.current.assetPicker.open).toBe(false);
     expect(mockHandleOpenSendFlow).not.toHaveBeenCalled();
     expect(mockNavigate).not.toHaveBeenCalled();
   });
@@ -383,8 +383,8 @@ describe("TransferDrawer account scope", () => {
 
     act(() => findAction(result, "send").onPress());
 
-    expect(result.current.assetPicker.isOpen).toBe(true);
-    expect(result.current.assetPicker.assets.map(({ currency }) => currency.id)).toEqual([
+    expect(result.current.assetPicker.open).toBe(true);
+    expect(result.current.assetPicker.rows.map(row => row.id)).toEqual([
       ethAccount.currency.id,
       usdcToken.id,
     ]);
@@ -397,17 +397,16 @@ describe("TransferDrawer account scope", () => {
 
     act(() => findAction(result, "send").onPress());
 
-    expect(result.current.assetPicker.isOpen).toBe(true);
-    expect(result.current.assetPicker.assets.map(({ currency }) => currency.id)).toEqual([
+    expect(result.current.assetPicker.open).toBe(true);
+    expect(result.current.assetPicker.rows.map(row => row.id)).toEqual([
       account.currency.id,
       usdcToken.id,
     ]);
     expect(mockOpenSendFlowForAccount).not.toHaveBeenCalled();
 
-    const [, usdcAsset] = result.current.assetPicker.assets;
-    act(() => result.current.assetPicker.onSelect(usdcAsset));
+    act(() => result.current.assetPicker.onSelect(usdcToken.id));
 
-    expect(result.current.assetPicker.isOpen).toBe(false);
+    expect(result.current.assetPicker.open).toBe(false);
     expect(mockOpenSendFlowForAccount).toHaveBeenCalledWith(
       expect.objectContaining({ id: usdcAccount.id }),
       expect.objectContaining({ id: account.id }),
@@ -446,7 +445,7 @@ describe("TransferDrawer account scope", () => {
     act(() => findAction(result, "send").onPress());
     act(() => result.current.assetPicker.onClose());
 
-    expect(result.current.assetPicker.isOpen).toBe(false);
+    expect(result.current.assetPicker.open).toBe(false);
     expect(mockOpenSendFlowForAccount).not.toHaveBeenCalled();
   });
 
