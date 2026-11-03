@@ -131,6 +131,8 @@ pnpm --silent wallet-cli start send ethereum-1 --to 0xDEF... --amount '0.5 ETH' 
 
 ## References: load when
 
+The paths are relative to this skill's folder. If you read this skill through `skill retrieve` rather than from disk, load a reference with `pnpm --silent wallet-cli start skill retrieve wallet-cli-usage --file references/<name>.md`.
+
 | Reference | Load when |
 |---|---|
 | [`references/agent-intent.md`](references/agent-intent.md) | the request is about enrolling or recovering an agent, agent-intent profiles, importing accounts from Ledger Sync, proposing a payment or swap for approval, or checking or cancelling a proposal; or you are about to run any `pnpm --silent wallet-cli start agent-intent` command |
