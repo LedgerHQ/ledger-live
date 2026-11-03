@@ -60,9 +60,12 @@ add one on the scratch branch only. Declare any inputs it reads.
 
 ### Test older callers (release, hotfix)
 
-The risk this skill describes is new child YAML running against old code. To test that, branch from
-`origin/release` (or the hotfix branch). Change only the child refs to `@ci-test/<topic>`, push, then
-dispatch with `-f ref=<that branch>`. The run uses your new child on release code.
+Your dispatch from the PR branch tests the child against develop. After merge, release, hotfix and
+main also run it, against older code. Use the checklist below first. Run a second dispatch only if
+the change depends on something those branches may not have (a script, Nx target, file, input,
+dependency version or lockfile entry), or if you cannot tell. Then branch from `origin/release`
+(or the hotfix branch), change only the child refs to `@ci-test/<topic>`, push, and dispatch with
+`-f ref=<that branch>`.
 
 ### Gotcha: a cache replay is not a test
 
@@ -89,7 +92,7 @@ as the runner. This catches mistakes faster than CI, but it does not replace the
 ### What to write in the PR
 
 - ✅ `CI | Dispatched build-desktop-reusable on ci-test/<topic> with the action repointed and the Nx cache skipped: <run URL> (macOS green)`
-- ✅ `Release callers | Same dispatch from a branch of origin/release: <run URL>`
+- ✅ `Release callers | Same dispatch from a branch of origin/release: <run URL>` (only when you ran it)
 - ❌ `Not testable before merge: PR builds run this action @develop.` Use the steps above instead.
   Write "not testable" only for something a dispatch cannot run (a `schedule`, `merge_group` or
   push-to-develop trigger, or a secret only develop can read). Name that part and say what you checked instead.
