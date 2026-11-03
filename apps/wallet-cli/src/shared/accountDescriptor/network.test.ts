@@ -4,9 +4,13 @@ import {
   mainnetOf,
   networkFromCurrencyId,
   currencyIdFromNetwork,
+  NetworkIdSchema,
   UnknownNetworkError,
   UnsupportedNetworkError,
 } from "./network";
+import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+
+const net = (id: string) => NetworkIdSchema.parse(id);
 
 describe("parseNetworkArg", () => {
   it.each([
@@ -15,7 +19,7 @@ describe("parseNetworkArg", () => {
     ["bitcoin_testnet", "bitcoin_testnet"],
     ["Ethereum_Sepolia", "ethereum_sepolia"],
   ])("reads the network id %s", (input, network) => {
-    expect(parseNetworkArg(input)).toBe(network);
+    expect(parseNetworkArg(input)).toBe(net(network));
   });
 
   it.each([
@@ -26,7 +30,7 @@ describe("parseNetworkArg", () => {
     ["solana:devnet", "solana_devnet"],
     ["Bitcoin:TESTNET", "bitcoin_testnet"],
   ])("reads the deprecated <name>:<env> form %s", (input, network) => {
-    expect(parseNetworkArg(input)).toBe(network);
+    expect(parseNetworkArg(input)).toBe(net(network));
   });
 });
 
@@ -38,11 +42,12 @@ describe("parseNetworkArg rejects", () => {
 
 describe("currencyIdFromNetwork", () => {
   it.each(["bitcoin", "bitcoin_testnet", "solana_devnet", "ethereum"])("round-trips %s", id => {
-    expect(currencyIdFromNetwork(networkFromCurrencyId(id))).toBe(id);
+    const currencyId = CryptoCurrencyIdSchema.parse(id);
+    expect(currencyIdFromNetwork(networkFromCurrencyId(currencyId))).toBe(currencyId);
   });
 
   it("throws UnknownNetworkError for unknown network", () => {
-    expect(() => currencyIdFromNetwork("notachain")).toThrow(UnknownNetworkError);
+    expect(() => currencyIdFromNetwork(net("notachain"))).toThrow(UnknownNetworkError);
   });
 
   it("throws UnsupportedNetworkError for a known network wallet-cli does not support", () => {
@@ -68,13 +73,13 @@ describe("currencyIdFromNetwork", () => {
 
 describe("mainnetOf", () => {
   it("maps a testnet to its mainnet and keeps a mainnet", () => {
-    expect(mainnetOf("solana_testnet")).toBe("solana");
-    expect(mainnetOf("solana_devnet")).toBe("solana");
-    expect(mainnetOf("ethereum_sepolia")).toBe("ethereum");
-    expect(mainnetOf("solana")).toBe("solana");
+    expect(mainnetOf(net("solana_testnet"))).toBe(net("solana"));
+    expect(mainnetOf(net("solana_devnet"))).toBe(net("solana"));
+    expect(mainnetOf(net("ethereum_sepolia"))).toBe(net("ethereum"));
+    expect(mainnetOf(net("solana"))).toBe(net("solana"));
   });
 
   it("throws on an unknown network", () => {
-    expect(() => mainnetOf("nope")).toThrow(UnknownNetworkError);
+    expect(() => mainnetOf(net("nope"))).toThrow(UnknownNetworkError);
   });
 });

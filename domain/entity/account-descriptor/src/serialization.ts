@@ -6,8 +6,7 @@ import {
   UtxoAccountDescriptorSchema,
   type AccountDescriptor,
 } from "./schema";
-
-const SEP = ":";
+import { SEP, formatDescriptorFields } from "./serialization.internals";
 
 function validate<T>(schema: ZodType<T>, value: unknown): T {
   const result = schema.safeParse(value);
@@ -21,9 +20,8 @@ function validate<T>(schema: ZodType<T>, value: unknown): T {
 
 /** `<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`, the purpose being `account` or `mock` */
 export function serializeAccountDescriptor(descriptor: AccountDescriptor): string {
-  const { purpose, version, type, network, path } = descriptor;
   const subject = descriptor.type === "utxo" ? descriptor.xpub : descriptor.address;
-  return [purpose, version, type, network, subject, path].join(SEP);
+  return formatDescriptorFields({ ...descriptor, subject });
 }
 
 export function parseAccountDescriptor(input: string): AccountDescriptor {

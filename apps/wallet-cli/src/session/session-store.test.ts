@@ -12,13 +12,13 @@ import {
 import { dirname, join } from "node:path";
 import { tmpdir } from "node:os";
 import { generateLabel, getSessionPath, Session, withSessionLock } from "./session-store";
-import type { AccountDescriptorV1 } from "../shared/accountDescriptor";
+import { NetworkIdSchema, type AccountDescriptorV1 } from "../shared/accountDescriptor";
 
 const btcNative: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
+  network: NetworkIdSchema.parse("bitcoin"),
   xpub: "xpub6BosfCnifzxcA",
   path: "m/84h/0h/0h",
 };
@@ -27,7 +27,7 @@ const btcNative2: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
+  network: NetworkIdSchema.parse("bitcoin"),
   xpub: "xpub6BosfCnifzxcB",
   path: "m/84h/0h/1h",
 };
@@ -36,7 +36,7 @@ const btcLegacy: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
+  network: NetworkIdSchema.parse("bitcoin"),
   xpub: "xpub6BosfCnifzxcC",
   path: "m/44h/0h/0h",
 };
@@ -45,7 +45,7 @@ const btcSegwit: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
+  network: NetworkIdSchema.parse("bitcoin"),
   xpub: "xpubSEGWIT",
   path: "m/49h/0h/0h",
 };
@@ -54,7 +54,7 @@ const btcTaproot: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin",
+  network: NetworkIdSchema.parse("bitcoin"),
   xpub: "xpubTAPROOT",
   path: "m/86h/0h/0h",
 };
@@ -63,7 +63,7 @@ const btcTestnet: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "utxo",
-  network: "bitcoin_testnet",
+  network: NetworkIdSchema.parse("bitcoin_testnet"),
   xpub: "tpub1234",
   path: "m/84h/1h/0h",
 };
@@ -72,7 +72,7 @@ const ethMain: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "address",
-  network: "ethereum",
+  network: NetworkIdSchema.parse("ethereum"),
   address: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
   path: "m/44h/60h/0h/0/0",
 };
@@ -81,7 +81,7 @@ const ethGoerli: AccountDescriptorV1 = {
   purpose: "account",
   version: "2",
   type: "address",
-  network: "ethereum_goerli",
+  network: NetworkIdSchema.parse("ethereum_goerli"),
   address: "0xabc",
   path: "m/44h/60h/0h/0/0",
 };
@@ -135,7 +135,10 @@ describe("generateLabel", () => {
 
   it("bitcoin_cash → bitcoin_cash-1 (no derivation segment)", () => {
     expect(
-      generateLabel({ ...btcNative, network: "bitcoin_cash", path: "m/44h/145h/0h" }, new Set()),
+      generateLabel(
+        { ...btcNative, network: NetworkIdSchema.parse("bitcoin_cash"), path: "m/44h/145h/0h" },
+        new Set(),
+      ),
     ).toBe("bitcoin_cash-1");
   });
 

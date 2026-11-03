@@ -8,7 +8,11 @@ import {
   accountDataSlice,
   isAccountDataReceived,
 } from "@domain/entity-account-data";
-import type { AccountDescriptor, AccountUUID } from "@domain/entity-account-descriptor";
+import {
+  NetworkIdSchema,
+  type AccountDescriptor,
+  type AccountUUID,
+} from "@domain/entity-account-descriptor";
 import { useAccountData } from "./useAccountData";
 
 // Everything a new `@domain/entity-account-*` package adds; no framework file changes for it.
@@ -45,7 +49,7 @@ describe("a kind added from outside the framework packages", () => {
       purpose: "account",
       version: "2",
       type: "address",
-      network: "cosmos",
+      network: NetworkIdSchema.parse("cosmos"),
       address: "cosmos1abc",
       path: "m/44h/118h/0h/0/0",
     };

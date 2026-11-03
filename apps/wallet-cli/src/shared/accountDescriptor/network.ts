@@ -1,9 +1,15 @@
 import {
+  NetworkIdSchema,
   UnknownNetworkError,
   currencyIdFromNetwork as currencyIdFromKnownNetwork,
-  type Network,
+  networkFromCurrencyId,
+  type NetworkId,
 } from "@domain/entity-account-descriptor";
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import {
+  CryptoCurrencyIdSchema,
+  getCryptoCurrencyById,
+  type CryptoCurrencyId,
+} from "@domain/entity-currency-crypto";
 import {
   isWalletCliSupportedCurrency,
   listWalletCliSupportedCurrencyIds,
@@ -11,11 +17,17 @@ import {
 import { networkFromLegacy } from "./v1";
 
 export {
-  NetworkSchema,
+  NetworkIdSchema,
   UnknownNetworkError,
   networkFromCurrencyId,
 } from "@domain/entity-account-descriptor";
-export type { Network } from "@domain/entity-account-descriptor";
+export type { NetworkId } from "@domain/entity-account-descriptor";
+
+function toNetworkId(id: string, input: string): NetworkId {
+  const parsed = NetworkIdSchema.safeParse(id);
+  if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${input}"`);
+  return parsed.data;
+}
 
 /**
  * Parse a CLI network argument into a network id.
@@ -28,16 +40,19 @@ export type { Network } from "@domain/entity-account-descriptor";
  *   "ethereum:mainnet"  → "ethereum"
  *   "bitcoin:testnet"   → "bitcoin_testnet"
  */
-export function parseNetworkArg(input: string): Network {
+export function parseNetworkArg(input: string): NetworkId {
   const [name, env, ...extra] = input.toLowerCase().split(":");
-  if (env === undefined) return name;
+  if (env === undefined) return toNetworkId(name, input);
   if (!env || extra.length > 0) throw new UnknownNetworkError(`Unknown network "${input}"`);
-  return networkFromLegacy(name, env === "mainnet" ? "main" : env);
+  return toNetworkId(networkFromLegacy(name, env === "mainnet" ? "main" : env), input);
 }
 
 /** The mainnet a testnet network belongs to (`solana_devnet` → `solana`), else the network itself. */
-export function mainnetOf(network: Network): Network {
-  return getCryptoCurrencyById(currencyIdFromKnownNetwork(network)).isTestnetFor ?? network;
+export function mainnetOf(network: NetworkId): NetworkId {
+  const mainnet = getCryptoCurrencyById(currencyIdFromKnownNetwork(network)).isTestnetFor;
+  return mainnet === undefined
+    ? network
+    : networkFromCurrencyId(CryptoCurrencyIdSchema.parse(mainnet));
 }
 
 // ---------------------------------------------------------------------------
@@ -57,7 +72,7 @@ export class UnsupportedNetworkError extends Error {
  * Throws UnknownNetworkError if the resulting currencyId is not known.
  * Throws UnsupportedNetworkError if it is known but not supported by wallet-cli (e.g. "base").
  */
-export function currencyIdFromNetwork(network: Network): string {
+export function currencyIdFromNetwork(network: NetworkId): CryptoCurrencyId {
   const currencyId = currencyIdFromKnownNetwork(network);
   if (!isWalletCliSupportedCurrency(getCryptoCurrencyById(currencyId))) {
     throw new UnsupportedNetworkError(

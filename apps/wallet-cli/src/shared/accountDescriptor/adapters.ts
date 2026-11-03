@@ -10,7 +10,7 @@
  * @ledgerhq/ledger-wallet-framework/derivation — no hardcoded coin types or path tables.
  */
 
-import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   getDerivationScheme,
   runDerivationScheme,
@@ -140,7 +140,7 @@ function matchSchemeToPath(
  * Throws UnsupportedFamilyError if the derivation scheme cannot be determined.
  */
 export function toV1(v0: AccountDescriptorV0): AccountDescriptorV1 {
-  const network = networkFromCurrencyId(v0.currencyId);
+  const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(v0.currencyId));
   const currency = getCryptoCurrencyById(v0.currencyId);
   const derivationMode = asDerivationMode(v0.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });

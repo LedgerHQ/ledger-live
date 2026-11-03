@@ -34,4 +34,9 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 | `serializeAccountDescriptor` / `parseAccountDescriptor` | `<purpose>:2:<type>:<network_id>:<xpub or address>:<path>`; a parsed descriptor always has `h` markers |
 | `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`) |
 | `computeAccountUUID` | uuid v5 of the canonical key; same on every device, no xpub nor address |
-| `networkFromCurrencyId` / `currencyIdFromNetwork` | network id ↔ currency id, the same id for now |
+| `NetworkIdSchema` / `NetworkId` | branded network id; parsed and deserialized descriptors carry it |
+| `networkFromCurrencyId` / `currencyIdFromNetwork` | the only bridge between `NetworkId` and `CryptoCurrencyId` |
+
+## NetworkId vs CryptoCurrencyId
+
+A `NetworkId` names the chain a descriptor lives on; a `CryptoCurrencyId` (`@domain/entity-currency-crypto`) names a currency. Both are branded, so one cannot be passed for the other. They hold the same string for now, but `networkFromCurrencyId` and `currencyIdFromNetwork` are the only way to convert, and they throw `UnknownNetworkError` for an unknown id. Keep their call sites few: carry a `NetworkId` where code is about the network, and get a `NetworkId` from `NetworkIdSchema.parse` or a parsed descriptor.

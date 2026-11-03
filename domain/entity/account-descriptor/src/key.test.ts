@@ -2,12 +2,13 @@ import { ETH_ADDR, SOL_ADDR, XPUB } from "./test-fixtures";
 import { AccountUUIDSchema, accountDescriptorKey, computeAccountUUID } from "./key";
 import { mockAddressAccountDescriptor } from "./schema.mock";
 import type { AccountDescriptor } from "./schema";
+import { NetworkIdSchema } from "./network";
 
 const utxo = (path: string, network = "bitcoin"): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "utxo",
-  network,
+  network: NetworkIdSchema.parse(network),
   xpub: XPUB,
   path,
 });
@@ -16,7 +17,7 @@ const address = (addr: string, network = "ethereum"): AccountDescriptor => ({
   purpose: "account",
   version: "2",
   type: "address",
-  network,
+  network: NetworkIdSchema.parse(network),
   address: addr,
   path: "m/44h/60h/0h/0/0",
 });

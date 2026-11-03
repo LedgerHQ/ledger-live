@@ -1,21 +1,34 @@
 import { z } from "zod";
-import { CRYPTO_CURRENCIES_IDS } from "@domain/entity-currency-crypto";
+import {
+  CRYPTO_CURRENCIES_IDS,
+  CryptoCurrencyIdSchema,
+  type CryptoCurrencyId,
+} from "@domain/entity-currency-crypto";
 import { UnknownNetworkError } from "./errors";
 
-/** The CAL network id, for now the same as the currency id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`. */
-export const NetworkSchema = z
+/** The CAL network id: `bitcoin`, `bitcoin_testnet`, `ethereum_sepolia`. Not a {@link CryptoCurrencyId}. */
+export const NetworkIdSchema = z
   .string()
   .min(1)
-  .regex(/^[^\s:]+$/, "Network id must not contain ':' or whitespace");
+  .regex(/^[^\s:]+$/, "Network id must not contain ':' or whitespace")
+  .brand<"NetworkId">();
 
-export type Network = z.infer<typeof NetworkSchema>;
+export type NetworkId = z.infer<typeof NetworkIdSchema>;
 
 const KNOWN_NETWORKS: ReadonlySet<string> = new Set(CRYPTO_CURRENCIES_IDS);
 
-export function currencyIdFromNetwork(network: Network): string {
-  if (!KNOWN_NETWORKS.has(network)) throw new UnknownNetworkError(`Unknown network "${network}"`);
-  return network;
+function assertKnownNetwork(id: string): void {
+  if (!KNOWN_NETWORKS.has(id)) throw new UnknownNetworkError(`Unknown network "${id}"`);
 }
 
-export const networkFromCurrencyId = (currencyId: string): Network =>
-  currencyIdFromNetwork(currencyId);
+/** Bridge from a network id to its currency id, the same string for now. */
+export function currencyIdFromNetwork(network: NetworkId): CryptoCurrencyId {
+  assertKnownNetwork(network);
+  return CryptoCurrencyIdSchema.parse(network);
+}
+
+/** Bridge from a currency id to its network id, the same string for now. */
+export function networkFromCurrencyId(currencyId: CryptoCurrencyId): NetworkId {
+  assertKnownNetwork(currencyId);
+  return NetworkIdSchema.parse(currencyId);
+}

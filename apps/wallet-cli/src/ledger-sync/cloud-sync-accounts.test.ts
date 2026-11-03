@@ -11,7 +11,7 @@ import {
   type CreateCloudSyncSdk,
 } from "./cloud-sync-accounts";
 import { walletCliLoaders } from "../coin-module-loaders";
-import { parseV1 } from "../shared/accountDescriptor";
+import { NetworkIdSchema, parseV1 } from "../shared/accountDescriptor";
 import { XPUB, ETH_ADDR, SOL_ADDR } from "../shared/accountDescriptor/test-fixtures";
 
 const BTC_RAW = {
@@ -299,7 +299,7 @@ describe("mergeSyncedAccounts", () => {
     ]);
     expect(report.imported).toEqual([expect.objectContaining({ network: "bitcoin" })]);
     expect(session.accounts.map(({ descriptor }) => parseV1(descriptor).network)).toEqual([
-      "bitcoin",
+      NetworkIdSchema.parse("bitcoin"),
     ]);
   });
 
