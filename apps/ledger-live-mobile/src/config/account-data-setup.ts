@@ -4,7 +4,9 @@ import {
   connectAccountsStore,
   type AccountsReduxStore,
 } from "@domain/entity-account";
+import { createCoinModuleSource } from "@features/platform-account-source-coin-module";
 import { fromLegacyAccount } from "@ledgerhq/live-common/account/accountDescriptor";
+import { createCoinModuleHost } from "@ledgerhq/live-common/account-data/coin-module/createCoinModuleHost";
 import { createFullSyncSource } from "@ledgerhq/live-common/account-data/full-sync/createFullSyncSource";
 import { updateAccountWithUpdater } from "~/actions/accounts";
 import { prepareCurrency } from "~/bridge/cache";
@@ -20,6 +22,9 @@ export function accountDataSources(
   dispatch: (action: { type: string }) => unknown,
 ): readonly AccountDataSource[] {
   return [
+    createCoinModuleSource(
+      createCoinModuleHost({ blacklistedTokenIds: () => blacklistedTokenIdsSelector(getState()) }),
+    ),
     createFullSyncSource({
       findAccount: accountUUID => {
         const state = getState();
