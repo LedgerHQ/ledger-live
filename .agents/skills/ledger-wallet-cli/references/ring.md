@@ -71,7 +71,7 @@ The ring's keys derive from an encryption key that rotates whenever a member is 
 | `A member credential already exists in the OS keychain but this session has no Ledger Key Ring metadata` | stray key, e.g. after `session reset` | the human runs `ring destroy` (wipes the stray key locally), then `ring init` |
 | `Lost the race` | another process initialized the ring meanwhile | tell the human this device is still registered as a member remotely; they can remove it from another member or from Ledger Live |
 | `Password required but no TTY available and WALLET_PASS is not set` | no password source | inject `WALLET_PASS` as above |
-| `WALLET_PASS is set but empty` | keychain lookup returned nothing | check the keychain entry with the human |
+| `Password must not be empty.` (`init`, `encrypt`, `decrypt`) / `WALLET_PASS is set but empty` (`destroy`) | keychain lookup returned nothing | check the keychain entry with the human |
 | `wrong key name, corrupted data, or the Ledger Key Ring rotated` | different `--key`, damaged file, or rotation | confirm the key name with the human; otherwise see Rotation |
 | `--output json requires --out <file>` | JSON format without an output file | add `-o <file>` or drop `--output json` |
 | `No input: provide --input FILE or pipe data to stdin` | no `-i` and nothing piped | pass `-i` or pipe the data |

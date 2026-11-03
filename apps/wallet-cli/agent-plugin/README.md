@@ -77,7 +77,7 @@ An agent on a remote box or in a container (Grok Bot, a VPS, CI) has no USB acce
 
 ## Agent Intent setup
 
-The skill treats the agent as a remote agent: it runs on a machine without a Ledger, holds its own software key, and proposes payments and swaps that only you can approve. It enrolls against the production Agent Intent service and declares the runtime it runs in with `--source` (`openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot` or `other`).
+The skill treats the agent as a remote agent: it runs on a machine without a Ledger, holds its own software key, and proposes payments and swaps that only you can approve. It enrolls against the production Agent Intent service, unless you give it another Agent Intent app to use, and declares the runtime it runs in with `--source` (`openclaw`, `hermes`, `claude-code`, `codex`, `cursor`, `muse`, `grok-bot` or `other`).
 
 Your part takes two steps:
 

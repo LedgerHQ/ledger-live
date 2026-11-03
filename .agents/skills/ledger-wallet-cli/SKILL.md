@@ -18,7 +18,7 @@ When this skill disagrees with `pnpm --silent wallet-cli start <command> --help`
 | `session view` | no | no | no | no |
 | `session reset` | no | yes (writes the state dir, may check the ring credential) | no | no |
 | `account discover` | yes | no | yes | approve app on device |
-| `receive` | yes (no with `--no-verify`) | no | no | compare address on device |
+| `receive` | yes (no with `--no-verify`) | no | yes | compare address on device |
 | `balances`, `operations` | no | no | yes | no |
 | `send` | yes (no with `--dry-run`) | no | yes | approve on device |
 | `genuine-check` | yes | no | yes | device on dashboard |

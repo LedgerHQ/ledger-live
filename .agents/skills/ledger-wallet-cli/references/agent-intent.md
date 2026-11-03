@@ -168,7 +168,7 @@ pnpm --silent wallet-cli start agent-intent send --profile <id> --account <label
 
 Show the human the summary (`sender`, `recipient`, `displayAmount`, `asset`, and `feeStrategy` on Ethereum or `memo` on Solana) and get their confirmation, then run the same command without `--dry-run`. When the rule does not apply, run it without `--dry-run` directly. Before every run without `--dry-run`, note the time with `date -u +%Y-%m-%dT%H:%M:%SZ` in its own call: step 11, No blind retry, matches on it.
 
-Done when the human has the review link (`deeplink`) and the `intentId` from the output. When the service returned no readable link, pass on the warning "accepted the intent but returned no readable review link" and find the intent as step 11, No blind retry, says; after a timeout or an HTTP 5xx, do the same before any new proposal. An intent that exists changes only through step 9 (cancel, then a new proposal).
+Done when the human has the review link (`deeplink`) and the `intentId` from the output. When the service returned no readable link, pass on the warning "accepted the intent but returned no readable review link" and find the intent as step 11, No blind retry, says. When the warning is "The review link has an unexpected shape", `deeplink` is set but `intentId` is not: send the link only if it passes step 11, One host, and take the id from that same lookup; after a timeout or an HTTP 5xx, do the same before any new proposal. An intent that exists changes only through step 9 (cancel, then a new proposal).
 
 wallet-cli does not check the sender's balance. The human reviews the intent and approves or rejects it on their Ledger.
 
@@ -266,7 +266,7 @@ Messages are substrings of the CLI output; a `code` row matches `error.code`. Th
 | code `enrollment_expired` (from `wait`) | the link expired without an approval (also a keychain unlock prompt answered too late) | step 2, new id |
 | code `profile_not_found` (from `wait`) | no profile with that id in this machine's state dir | check the id with step 1; otherwise step 2, new id |
 | `An enrollment listener for profile ... is already running` | `enroll --detach` on a profile whose listener still waits | step 5, `wait` on that profile |
-| `The enrollment listener ... before printing anything` / `printed nothing within` / `printed an unexpected first line` | the `--detach` listener failed to start; the log path is in the message | report the message to the human; step 1: an id missing from `list` is still free, so re-run the same `enroll`, otherwise step 3 |
+| `The enrollment listener ... before printing its first event` / `did not start` / `printed an unexpected first line` | the `--detach` listener failed to start; the log path is in the message | report the message to the human; step 1: an id missing from `list` is still free, so re-run the same `enroll`, otherwise step 3 |
 | `--detach is not supported on Windows` | Windows | step 4, Background job |
 | the enrollment page says "Agent link not valid" | the URL was damaged on the way, has expired, is for another environment or comes from an outdated CLI; the sentence under it says which | step 5, Relay the URL whole |
 | the enrollment page says "This agent source is not supported" | the frontend does not accept that `--source` | the id is burned (Windows: stop the `enroll` job). Tell the human the frontend refused source `<source>`; enroll again only under the source you run in, when the human asks |

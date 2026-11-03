@@ -28,7 +28,7 @@ pnpm --silent wallet-cli start earn positions solana-1 --fresh
 
 - Account-based networks only (ethereum, solana).
 - `--fresh` asks the backend to refresh stale rows; the refreshed data appears on a **re-run**, not in the same response. A `(stale)` marker means re-run.
-- **Solana stake accounts** come only from here: each prints `→ --stake-account <address>`, its `state` (active, inactive, activating, deactivating), balance and validator. In JSON they form a top-level `stakes[]` array beside `positions` (fields `stakeAccount`, `validator`, `state`, `stakeBalance`, `withdrawable`), omitted when there are none. They show up right after a deposit even when the backend snapshot is still empty. When the chain cannot be reached, the command prints the backend snapshot with a warning.
+- **Solana stake accounts** come only from here: each prints `→ --stake-account <address>`, its `state` (active, inactive, activating, deactivating), balance and validator. In JSON they form a top-level `stakes[]` array beside `positions` (fields `stakeAccount`, `validator`, `state`, `stakeBalance`, `withdrawable`), empty when there are none. A missing `stakes` key on Solana means the on-chain lookup failed (stderr warns); re-run before telling the human nothing is staked. They show up right after a deposit even when the backend snapshot is still empty. When the chain cannot be reached, the command prints the backend snapshot with a warning.
 
 ## Deposit
 
