@@ -10940,6 +10940,9 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../../domain/entity/account-descriptor
+      '@domain/entity-account-operation':
+        specifier: workspace:*
+        version: link:../../../domain/entity/account-operation
       '@ledgerhq/coin-module-framework':
         specifier: 'catalog:'
         version: 11.0.1

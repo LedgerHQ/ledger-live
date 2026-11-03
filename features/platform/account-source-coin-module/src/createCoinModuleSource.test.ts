@@ -2,8 +2,14 @@ import { createAccountDataRouter, type AccountDataSource } from "@domain/api-acc
 import { AccountDataSourceIdSchema } from "@domain/entity-account-data";
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { Balance } from "@ledgerhq/coin-module-framework/api/types";
-import type { CoinModuleBalanceApi, CoinModuleHost } from "./host";
+import type {
+  CoinModuleBalanceApi,
+  CoinModuleHost,
+  CoinModuleOperation,
+  CoinModuleOperationsPage,
+} from "./host";
 import { createCoinModuleSource } from "./createCoinModuleSource";
+import { MAX_PAGES_PER_READ } from "./internals/readOperationsPage";
 
 const XPUB =
   "xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSE1S2G4UrqdKFNvJx3bR7MNfYTc4FXnAFzBVNMcJYHx5ENKnG9WNzh";
@@ -62,8 +68,38 @@ const hostOf = (
 const fallback: AccountDataSource = {
   id: AccountDataSourceIdSchema.parse("full-sync"),
   supports: () => true,
-  read: { balance: async () => [] },
+  read: { balance: async () => [], operations: async () => ({ operations: [] }) },
 };
+
+const nativeOperation = (hash: string, date: string): CoinModuleOperation => ({
+  id: `${hash}-IN`,
+  type: "IN",
+  senders: ["0xdef"],
+  recipients: ["0xabc"],
+  value: 1n,
+  asset: { type: "native" },
+  tx: { hash, block: { height: 1 }, fees: 0n, date: new Date(date), failed: false },
+});
+
+/** The coin module's pages of `0xabc`, keyed by the cursor that reads each; the first one by `""`. */
+const operationsHostOf = (
+  pages: Record<string, CoinModuleOperationsPage>,
+  { paginates = true }: { paginates?: boolean } = {},
+) => {
+  const listOperations = jest.fn(
+    async (_subject: string, { cursor }: { cursor?: string; limit?: number }) =>
+      pages[cursor ?? ""] ?? { items: [] },
+  );
+  const getOperationsApi = jest.fn(async (_currencyId: string) => ({ listOperations }));
+  const host: CoinModuleHost = {
+    ...hostOf({}).host,
+    paginatesOperations: id => paginates && id === "ethereum",
+    getOperationsApi,
+  };
+  return { host, listOperations, getOperationsApi };
+};
+
+const idsOf = ({ operations }: { operations: { id: string }[] }) => operations.map(({ id }) => id);
 
 const readBalance = (host: CoinModuleHost, descriptor: AccountDescriptor) =>
   createAccountDataRouter([createCoinModuleSource(host)]).read("balance", descriptor);
@@ -89,6 +125,16 @@ describe("createCoinModuleSource", () => {
     it("leaves out a currency without coin module, and a network no currency has", () => {
       expect(supports(address("ethereum_sepolia", "0x1"), "balance")).toBe(false);
       expect(supports(address("not_a_network", "0x1"), "balance")).toBe(false);
+    });
+
+    it("serves the operations of a currency only where its coin module pages them", () => {
+      const paging = createCoinModuleSource(operationsHostOf({}).host);
+      const notPaging = createCoinModuleSource(operationsHostOf({}, { paginates: false }).host);
+
+      expect(paging.supports(ethereum, "operations")).toBe(true);
+      expect(notPaging.supports(ethereum, "operations")).toBe(false);
+      expect(notPaging.supports(ethereum, "balance")).toBe(true);
+      expect(supports(ethereum, "operations")).toBe(false);
     });
   });
 
@@ -312,5 +358,141 @@ describe("createCoinModuleSource", () => {
 
     expect(answer.sourceId).toBe("full-sync");
     expect(getApi).not.toHaveBeenCalled();
+  });
+
+  describe("operations", () => {
+    const pages = {
+      "": {
+        items: [
+          nativeOperation("0x1", "2026-01-01T00:00:00.000Z"),
+          nativeOperation("0x2", "2026-03-01T00:00:00.000Z"),
+        ],
+        next: "page-2",
+      },
+      "page-2": { items: [nativeOperation("0x3", "2025-12-01T00:00:00.000Z")], next: "page-3" },
+      "page-3": { items: [nativeOperation("0x4", "2025-11-01T00:00:00.000Z")] },
+    };
+
+    it("reads the first page newest first, by the account's address and the query's limit", async () => {
+      const { host, listOperations } = operationsHostOf(pages);
+      const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+      const { data, sourceId } = await router.read("operations", ethereum, {
+        query: { limit: 2 },
+      });
+
+      expect(sourceId).toBe("coin-module");
+      expect(listOperations).toHaveBeenCalledWith("0xabc", { cursor: undefined, limit: 2 });
+      expect(idsOf(data)).toEqual(["ethereum-0x2-IN", "ethereum-0x1-IN"]);
+      expect(data.nextCursor).toBe("page-2");
+    });
+
+    it("reads the next pages from the cursor each page handed out, until the list ends", async () => {
+      const { host, listOperations } = operationsHostOf(pages);
+      const router = createAccountDataRouter([createCoinModuleSource(host), fallback]);
+      const sourceId = AccountDataSourceIdSchema.parse("coin-module");
+
+      const second = await router.read("operations", ethereum, { cursor: "page-2", sourceId });
+      const last = await router.read("operations", ethereum, {
+        cursor: second.data.nextCursor,
+        sourceId,
+      });
+
+      expect(listOperations.mock.calls.map(([, { cursor }]) => cursor)).toEqual([
+        "page-2",
+        "page-3",
+      ]);
+      expect(idsOf(second.data)).toEqual(["ethereum-0x3-IN"]);
+      expect(idsOf(last.data)).toEqual(["ethereum-0x4-IN"]);
+      expect(last.data.nextCursor).toBeUndefined();
+    });
+
+    it("fills a page its filters emptied from the next coin module pages", async () => {
+      const nft = { ...nativeOperation("0xnft", "2026-02-01T00:00:00.000Z"), type: "NFT_IN" };
+      const { host, listOperations } = operationsHostOf({
+        "": { items: [nft], next: "page-2" },
+        "page-2": { items: [nativeOperation("0x5", "2026-01-01T00:00:00.000Z")], next: "page-3" },
+      });
+      const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+      const { data } = await router.read("operations", ethereum, { query: { limit: 1 } });
+
+      expect(listOperations.mock.calls.map(([, { cursor }]) => cursor)).toEqual([
+        undefined,
+        "page-2",
+      ]);
+      expect(idsOf(data)).toEqual(["ethereum-0x5-IN"]);
+      expect(data.nextCursor).toBe("page-3");
+    });
+
+    it("stops filling after a few coin module pages, handing the cursor on", async () => {
+      const nft = { ...nativeOperation("0xnft", "2026-02-01T00:00:00.000Z"), type: "NFT_IN" };
+      const { host, listOperations } = operationsHostOf({});
+      listOperations.mockImplementation(async (_subject, { cursor }) => ({
+        items: [nft],
+        next: `${cursor ?? ""}+`,
+      }));
+      const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+      const { data } = await router.read("operations", ethereum);
+
+      expect(listOperations).toHaveBeenCalledTimes(MAX_PAGES_PER_READ);
+      expect(data).toEqual({ operations: [], nextCursor: "+".repeat(MAX_PAGES_PER_READ) });
+    });
+
+    it("ends the list on a cursor that does not advance", async () => {
+      const { host, listOperations } = operationsHostOf({
+        "page-2": { items: [], next: "page-2" },
+      });
+      const router = createAccountDataRouter([createCoinModuleSource(host)]);
+
+      const { data } = await router.read("operations", ethereum, {
+        cursor: "page-2",
+        sourceId: AccountDataSourceIdSchema.parse("coin-module"),
+      });
+
+      expect(listOperations).toHaveBeenCalledTimes(1);
+      expect(data).toEqual({ operations: [] });
+    });
+
+    it("answers an empty list for an account the coin module knows no operation of", async () => {
+      const { host } = operationsHostOf({});
+
+      await expect(
+        createAccountDataRouter([createCoinModuleSource(host)]).read("operations", ethereum),
+      ).resolves.toEqual({ data: { operations: [] }, sourceId: "coin-module" });
+    });
+
+    it("fails the page when the coin module does", async () => {
+      const { host, listOperations } = operationsHostOf(pages);
+      listOperations.mockRejectedValueOnce(new Error("explorer down"));
+
+      await expect(
+        createAccountDataRouter([createCoinModuleSource(host), fallback]).read(
+          "operations",
+          ethereum,
+        ),
+      ).rejects.toThrow("explorer down");
+    });
+
+    it("falls through to the next ranked source for a currency whose coin module does not page its operations", async () => {
+      const { host, getOperationsApi } = operationsHostOf(pages, { paginates: false });
+      const router = createAccountDataRouter([createCoinModuleSource(host), fallback]);
+
+      const answer = await router.read("operations", ethereum);
+
+      expect(answer.sourceId).toBe("full-sync");
+      expect(getOperationsApi).not.toHaveBeenCalled();
+    });
+
+    it("falls through to the next ranked source when the coin module implements no operations read", async () => {
+      const { host } = operationsHostOf(pages);
+      host.getOperationsApi = async () => undefined;
+      const router = createAccountDataRouter([createCoinModuleSource(host), fallback]);
+
+      await expect(router.read("operations", ethereum)).resolves.toMatchObject({
+        sourceId: "full-sync",
+      });
+    });
   });
 });
