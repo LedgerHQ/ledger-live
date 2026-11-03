@@ -103,7 +103,7 @@
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
-    "@types/invariant": "^2.2.2",
+    "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
