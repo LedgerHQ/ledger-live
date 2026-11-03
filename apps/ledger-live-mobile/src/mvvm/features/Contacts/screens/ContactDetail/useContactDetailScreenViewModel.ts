@@ -17,7 +17,7 @@ import {
   trackContactsLedgerSyncDismiss,
 } from "@features/flow-contacts";
 import {
-  type ContactAddressDetailDialogNativeProps,
+  type ContactAddressDetailDialogProps,
   type ContactDetailViewProps,
   useContactDetailSharedState,
   useContactAddressDetailDialog,
@@ -79,7 +79,7 @@ type ContactDetailScreenViewModel =
       addAddressFlowState: AddAddressFlowState;
       addAddressFlowProps: ContactsAddAddressFlowDrawerProps;
       pageProps: ContactDetailViewProps;
-      addressDetailDialog: ContactAddressDetailDialogNativeProps;
+      addressDetailDialog: ContactAddressDetailDialogProps;
       isAddressDetailActionSheetOpen: boolean;
       addressDetailActions: ReturnType<typeof useContactAddressDetailActionsAdapter>;
       editDeleteFlow: ContactDetailEditDeleteFlowProps;
@@ -122,7 +122,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const {
     isOpen,
     selection,
-    onAddressRowPress,
+    onOpenAddressDetail,
     onClose: onCloseAddressDetail,
   } = useContactAddressDetailDialog(populatedContactDetail);
   const contact = populatedContactDetail?.contact ?? emptyContact;
@@ -245,7 +245,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     },
     [addAddressFlowState, completeCurrencySelection],
   );
-  const onLedgerWalletAccountsPress = useCallback(() => {
+  const onOpenLedgerWalletAccounts = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.CryptoAddresses,
       params: {
@@ -380,7 +380,7 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
 
     onCloseAddressDetail();
   }, [isAddressDetailActionSheetOpen, onCloseAddressDetail]);
-  if (editDeleteFlow.deleteDrawer.isOpen) {
+  if (editDeleteFlow.deleteSheet.isOpen) {
     deleteSheetWasOpenRef.current = true;
   }
   const contactMissing = !isEnabled || !contact;
@@ -390,21 +390,21 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
   const shouldRedirect = contactMissing && !waitingForDeleteSheet;
 
   useEffect(() => {
-    if (editDeleteFlow.deleteDrawer.isOpen && deleteSheetDismissed) {
+    if (editDeleteFlow.deleteSheet.isOpen && deleteSheetDismissed) {
       setDeleteSheetDismissed(false);
     }
-  }, [deleteSheetDismissed, editDeleteFlow.deleteDrawer.isOpen]);
+  }, [deleteSheetDismissed, editDeleteFlow.deleteSheet.isOpen]);
 
-  const isDeleteDrawerOpen = editDeleteFlow.deleteDrawer.isOpen;
-  const cancelDeleteDrawer = editDeleteFlow.deleteDrawer.onCancel;
+  const isDeleteSheetOpen = editDeleteFlow.deleteSheet.isOpen;
+  const cancelDeleteSheet = editDeleteFlow.deleteSheet.onCancel;
 
   useEffect(() => {
-    if (!waitingForDeleteSheet || !isDeleteDrawerOpen) {
+    if (!waitingForDeleteSheet || !isDeleteSheetOpen) {
       return;
     }
 
-    cancelDeleteDrawer();
-  }, [cancelDeleteDrawer, isDeleteDrawerOpen, waitingForDeleteSheet]);
+    cancelDeleteSheet();
+  }, [cancelDeleteSheet, isDeleteSheetOpen, waitingForDeleteSheet]);
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -478,11 +478,11 @@ export function useContactDetailScreenViewModel(): ContactDetailScreenViewModel 
     contact,
     onAddAddress,
     ledgerWalletAccountsIntent: detailSharedState?.ledgerWalletAccountsIntent,
-    onLedgerWalletAccountsPress,
+    onOpenLedgerWalletAccounts,
     ...(populatedContactDetail
       ? {
           addressGroups: populatedContactDetail.addressGroups,
-          onAddressRowPress,
+          onOpenAddressDetail,
         }
       : {}),
   };

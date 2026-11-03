@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import type { ContactAddressDetailDialogNativeProps } from "./types";
+import { copyToClipboard } from "@shared/clipboard";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
 
 const COPY_FEEDBACK_MS = 3000;
 
 type ContactAddressDetailDialogViewModelInput = Pick<
-  ContactAddressDetailDialogNativeProps,
-  "isOpen" | "row" | "network" | "onCopyAddress" | "onShareAddress"
+  ContactAddressDetailDialogProps,
+  "isOpen" | "row" | "network" | "onShareAddress"
 >;
 
 export type ContactAddressDetailDialogViewModel = Readonly<{
@@ -19,7 +20,6 @@ export function useContactAddressDetailDialogViewModel({
   isOpen,
   row,
   network,
-  onCopyAddress,
   onShareAddress,
 }: ContactAddressDetailDialogViewModelInput): ContactAddressDetailDialogViewModel {
   const [hasCopied, setHasCopied] = useState(false);
@@ -41,13 +41,13 @@ export function useContactAddressDetailDialogViewModel({
   }, [hasCopied]);
 
   const onCopy = useCallback(async () => {
-    if (row === undefined || onCopyAddress === undefined) {
+    if (row === undefined) {
       return;
     }
 
-    if (!(await onCopyAddress(row.address))) return;
+    if (!(await copyToClipboard(row.address))) return;
     setHasCopied(true);
-  }, [onCopyAddress, row]);
+  }, [row]);
 
   const onShare = useCallback(() => {
     if (row === undefined || onShareAddress === undefined) {

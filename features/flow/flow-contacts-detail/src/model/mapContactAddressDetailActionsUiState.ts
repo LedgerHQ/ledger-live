@@ -1,5 +1,5 @@
 import type { ContactsDeleteAddressDialogProps } from "@features/flow-contacts-delete-address";
-import type { ContactsEditSignerMismatchDialogProps } from "../components/ContactsEditSignerMismatchDialog/types";
+import type { ContactsEditSignerMismatchDialogProps } from "../components/ContactsEditSignerMismatchDialog/ContactsEditSignerMismatchDialog.types";
 import type {
   ContactsRenameAddressDialogProps,
   RenameAddressDialogViewModel,

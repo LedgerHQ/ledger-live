@@ -2,9 +2,9 @@ import React from "react";
 import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { Plus } from "@ledgerhq/lumen-ui-rnative/symbols";
 import { useContactDisplayName } from "@features/platform-contacts";
-import type { ContactDetailViewProps } from "../types";
-import { useContactDetailHeaderCopy } from "../copy/useContactDetailHeaderCopy";
-import { ContactDetailAvatar } from "./ContactDetailAvatar.native";
+import type { ContactDetailViewProps } from "../../ContactDetailView.types";
+import { useContactDetailHeaderCopy } from "../../copy/useContactDetailHeaderCopy";
+import { ContactDetailAvatar } from "../ContactDetailAvatar";
 
 type ContactDetailHeaderProps = Pick<ContactDetailViewProps, "contact" | "onAddAddress">;
 

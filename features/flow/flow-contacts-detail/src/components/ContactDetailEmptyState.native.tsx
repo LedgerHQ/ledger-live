@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Text } from "@ledgerhq/lumen-ui-rnative";
-import type { ContactDetailViewProps } from "../types";
+import type { ContactDetailViewProps } from "../ContactDetailView.types";
 import { useContactDetailEmptyStateCopy } from "../copy/useContactDetailEmptyStateCopy";
 
 type ContactDetailEmptyStateProps = Pick<ContactDetailViewProps, "contact">;

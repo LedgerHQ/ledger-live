@@ -3,7 +3,7 @@ import { CryptoIcon } from "@ledgerhq/crypto-icons";
 import { Tag } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
 import { resolveContactAddressIconProps } from "../../model/resolveContactAddressIcon";
-import type { ContactAddressDetailDialogProps } from "./types";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
 
 const ADDRESS_ICON_SIZE = 64;
 

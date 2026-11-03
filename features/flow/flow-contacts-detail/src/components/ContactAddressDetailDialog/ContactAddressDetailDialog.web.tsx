@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { copyToClipboard } from "@shared/clipboard";
-import { ContactAddressDetailActions } from "./ContactAddressDetailActions.web";
-import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary.web";
-import type { ContactAddressDetailDialogProps } from "./types";
+import { ContactAddressDetailActions } from "./ContactAddressDetailActions";
+import { ContactAddressDetailSummary } from "./ContactAddressDetailSummary";
+import type { ContactAddressDetailDialogProps } from "./ContactAddressDetailDialog.types";
 
 const COPY_FEEDBACK_MS = 3000;
 
@@ -16,6 +16,7 @@ export function ContactAddressDetailDialog({
   onSend,
   onEdit,
   onDelete,
+  onShareAddress,
   canSend = false,
   canEdit = false,
   canDelete = false,
@@ -69,6 +70,7 @@ export function ContactAddressDetailDialog({
           <ContactAddressDetailActions
             hasCopied={hasCopied}
             onCopy={() => void handleCopy()}
+            onShare={onShareAddress === undefined ? undefined : () => onShareAddress(row.address)}
             onSend={onSend}
             onEdit={onEdit}
             onDelete={onDelete}

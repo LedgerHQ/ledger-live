@@ -1,20 +1,20 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import type { ContactDetailViewProps } from "./types";
-import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList.web";
-import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState.web";
-import { ContactDetailHeader } from "./components/ContactDetailHeader/ContactDetailHeader.web";
-import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard.web";
+import type { ContactDetailViewProps } from "./ContactDetailView.types";
+import { ContactDetailAddressList } from "./components/ContactDetailAddressList/ContactDetailAddressList";
+import { ContactDetailEmptyState } from "./components/ContactDetailEmptyState";
+import { ContactDetailHeader } from "./components/ContactDetailHeader/ContactDetailHeader";
+import { LedgerWalletAddressesCard } from "./components/LedgerWalletAddressesCard";
 
 export function ContactDetailView({
   contact,
   onAddAddress,
   ledgerWalletAccountsIntent,
-  onLedgerWalletAccountsPress,
+  onOpenLedgerWalletAccounts,
   addressGroups,
-  onAddressRowPress,
+  onOpenAddressDetail,
   detailActions,
 }: ContactDetailViewProps): React.ReactNode {
-  const hasPopulatedAddresses = addressGroups !== undefined && onAddressRowPress !== undefined;
+  const hasPopulatedAddresses = addressGroups !== undefined && onOpenAddressDetail !== undefined;
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [isContactSwitching, setIsContactSwitching] = useState(true);
 
@@ -30,10 +30,10 @@ export function ContactDetailView({
   }, [isContactSwitching]);
 
   const ledgerWalletCard =
-    ledgerWalletAccountsIntent && onLedgerWalletAccountsPress ? (
+    ledgerWalletAccountsIntent && onOpenLedgerWalletAccounts ? (
       <LedgerWalletAddressesCard
         intent={ledgerWalletAccountsIntent}
-        onPress={onLedgerWalletAccountsPress}
+        onPress={onOpenLedgerWalletAccounts}
       />
     ) : null;
 
@@ -92,7 +92,7 @@ export function ContactDetailView({
       <ContactDetailAddressList
         key={contact.id}
         addressGroups={addressGroups}
-        onAddressRowPress={onAddressRowPress}
+        onAddressRowPress={onOpenAddressDetail}
         onCollapseChange={setIsHeaderCollapsed}
         header={expandedHeader}
       />

@@ -182,7 +182,7 @@ describe("useContactDetailScreenViewModel", () => {
     };
 
     act(() => ready().editDeleteFlow.actionsMenu.onDelete());
-    expect(ready().editDeleteFlow.deleteDrawer.isOpen).toBe(true);
+    expect(ready().editDeleteFlow.deleteSheet.isOpen).toBe(true);
 
     act(() => store.dispatch(setContacts([mockMeContact()])));
 
@@ -192,7 +192,7 @@ describe("useContactDetailScreenViewModel", () => {
     if (result.current.status !== "closing-delete-sheet") {
       throw new Error("delete sheet is not closing");
     }
-    expect(result.current.editDeleteFlow.deleteDrawer.isOpen).toBe(false);
+    expect(result.current.editDeleteFlow.deleteSheet.isOpen).toBe(false);
     expect(mockPopTo).not.toHaveBeenCalled();
 
     act(() => {
