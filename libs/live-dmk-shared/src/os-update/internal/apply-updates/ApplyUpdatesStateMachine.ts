@@ -323,7 +323,7 @@ export const applyUpdatesStateMachine: ApplyUpdatesStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toApplyUpdatesState(event.situation),
+        params: ({ event }) => toApplyUpdatesState(event),
       },
     },
   },

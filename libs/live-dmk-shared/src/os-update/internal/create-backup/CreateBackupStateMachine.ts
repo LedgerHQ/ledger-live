@@ -104,7 +104,7 @@ export const createBackupStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toCreateBackupState(event.situation),
+        params: ({ event }) => toCreateBackupState(event),
       },
     },
   },

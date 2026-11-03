@@ -10,6 +10,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { assign, enqueueActions, fromCallback, fromPromise, setup } from "xstate";
 import {
+  CONNECTION_TIMEOUT_MS,
   DEVICE_CALL_TIMEOUT_MS,
   DISCOVERY_TIMEOUT_MS,
   POLL_INTERVAL_MS,
@@ -21,6 +22,7 @@ import {
   CheckErrorCauseStateMachineEventType,
   DeviceSituation,
   DeviceSituationEventType,
+  type DeviceSituationUpdate,
   type CheckErrorCauseStateMachine,
   type CheckErrorCauseStateMachineContext,
   type CheckErrorCauseStateMachineEvent,
@@ -171,10 +173,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     ),
   },
   actions: {
-    sendDeviceSituation: enqueueActions(({ context, enqueue }, params: DeviceSituation) => {
+    sendDeviceSituation: enqueueActions(({ context, enqueue }, params: DeviceSituationUpdate) => {
       enqueue.sendTo(context.hostRef, {
         type: DeviceSituationEventType.DEVICE_SITUATION_UPDATE,
-        situation: params,
+        ...params,
       });
     }),
     logState: (_, name: string) => {
@@ -187,6 +189,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
   guards: {
     isDeviceLocked: ({ context }) => isDeviceLockedError(context.error),
     isDeviceDisconnected: ({ context }) => isDeviceDisconnectedError(context.error),
+    isConnectionTimedOut: ({ context }) => context.isConnectionTimedOut,
   },
   delays: {
     deviceCallTimeout: DEVICE_CALL_TIMEOUT_MS,
@@ -194,13 +197,16 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     sessionSettleTimeout: SESSION_SETTLE_TIMEOUT_MS,
     sessionTeardownTimeout: SESSION_TEARDOWN_TIMEOUT_MS,
     discoveryTimeout: DISCOVERY_TIMEOUT_MS,
+    connectionTimeout: CONNECTION_TIMEOUT_MS,
   },
 }).createMachine({
   id: "checkErrorCause",
-  context: ({ input }) => ({
+  context: ({ input, self }) => ({
     ...input,
     result: null,
     rediscoveredDevice: null,
+    isConnectionTimedOut: false,
+    send: self.send,
   }),
   initial: "CheckErrorCause",
   states: {
@@ -289,7 +295,7 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     AwaitingDeviceUnlock: {
       entry: [
         { type: "logState", params: "AwaitingDeviceUnlock" },
-        { type: "sendDeviceSituation", params: DeviceSituation.LOCKED },
+        { type: "sendDeviceSituation", params: { situation: DeviceSituation.LOCKED } },
       ],
       initial: "Waiting",
       states: {
@@ -318,12 +324,35 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
     },
     // One cycle: drop the session, find the device again, connect it, prove it answers. As long as
     // it does not, start the cycle over, since the transport may have handed back a link that is
-    // already dead.
+    // already dead. Past the connection timeout the cycle goes on, but a device that answers waits
+    // in Reconnected for the user to restart the update; a restart before that starts over.
     AwaitingDeviceReconnection: {
       entry: [
         { type: "logState", params: "AwaitingDeviceReconnection" },
-        { type: "sendDeviceSituation", params: DeviceSituation.DISCONNECTED },
+        assign({ isConnectionTimedOut: false }),
+        { type: "sendDeviceSituation", params: { situation: DeviceSituation.DISCONNECTED } },
       ],
+      after: {
+        connectionTimeout: {
+          actions: [
+            { type: "logState", params: "ConnectionTimedOut" },
+            assign({ isConnectionTimedOut: true }),
+            {
+              type: "sendDeviceSituation",
+              params: ({ context }) => ({
+                situation: DeviceSituation.CONNECTION_TIMED_OUT,
+                retry: () => context.send({ type: CheckErrorCauseStateMachineEventType.RETRY }),
+              }),
+            },
+          ],
+        },
+      },
+      on: {
+        [CheckErrorCauseStateMachineEventType.RETRY]: {
+          target: "AwaitingDeviceReconnection",
+          reenter: true,
+        },
+      },
       initial: "TearDownSession",
       states: {
         // Bounded by a timeout because the React Native HID transport hops the native bridge and
@@ -396,9 +425,10 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
               dmk: context.dmk,
               sessionId: context.connectedDevice.sessionId,
             }),
-            onDone: {
-              target: "#checkErrorCause.Recovered",
-            },
+            onDone: [
+              { guard: "isConnectionTimedOut", target: "Reconnected" },
+              { target: "#checkErrorCause.Recovered" },
+            ],
             onError: {
               target: "Retrying",
             },
@@ -415,6 +445,12 @@ export const checkErrorCauseStateMachine: CheckErrorCauseStateMachine = setup({
           entry: { type: "logState", params: "Retrying" },
           after: {
             poll: "TearDownSession",
+          },
+        },
+        Reconnected: {
+          entry: { type: "logState", params: "Reconnected" },
+          on: {
+            [CheckErrorCauseStateMachineEventType.RETRY]: "#checkErrorCause.Recovered",
           },
         },
       },

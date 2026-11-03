@@ -11,6 +11,7 @@ export enum RestoreBackupStateType {
   AWAITING_CONFIRM_LOAD_IMAGE = "AWAITING_CONFIRM_LOAD_IMAGE",
   AWAITING_CONFIRM_COMMIT_IMAGE = "AWAITING_CONFIRM_COMMIT_IMAGE",
   DEVICE_DISCONNECTED = "DEVICE_DISCONNECTED",
+  CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT",
   OUT_OF_MEMORY = "OUT_OF_MEMORY",
   BACKUP_RESTORED = "BACKUP_RESTORED",
   UNEXPECTED_ERROR = "UNEXPECTED_ERROR",
@@ -49,6 +50,10 @@ export type RestoreBackupState =
     }
   | {
       type: RestoreBackupStateType.DEVICE_DISCONNECTED;
+    }
+  | {
+      type: RestoreBackupStateType.CONNECTION_TIMED_OUT;
+      retry: () => void;
     }
   | {
       type: RestoreBackupStateType.OUT_OF_MEMORY;
