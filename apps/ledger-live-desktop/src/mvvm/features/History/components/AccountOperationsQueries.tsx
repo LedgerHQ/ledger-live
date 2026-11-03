@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useAccountData } from "@features/platform-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { Account } from "@ledgerhq/types-live";
-import type { AccountDataTarget } from "../hooks/useAccountDataTargets";
+import type { AccountDataTarget } from "LLD/hooks/useAccountDataTargets";
 import { operationsRevision } from "../utils/operationsRevision";
 
 function AccountOperationsQuery({

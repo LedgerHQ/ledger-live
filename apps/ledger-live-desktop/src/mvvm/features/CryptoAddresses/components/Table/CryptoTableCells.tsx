@@ -21,6 +21,7 @@ export type CryptoTableCellData = {
   readonly lookupParentAccount: (id: string) => Account | undefined | null;
   readonly blacklistedTokenIds: string[];
   readonly aggregatedDataByAccountId: ReturnType<typeof computeAggregatedAccountsData>;
+  readonly isNativeBalanceZero: (account: Account) => boolean;
   readonly isSyncing: boolean;
   readonly onEditName: (account: AccountLike) => void;
   readonly hasAccountSettings: (account: AccountLike) => boolean;
@@ -58,9 +59,15 @@ export function AddressCell({ row }: CryptoCellProps) {
 }
 
 export function AssetsCell({ row }: CryptoCellProps) {
-  const { blacklistedTokenIds } = useCryptoTableCellData();
+  const { blacklistedTokenIds, isNativeBalanceZero } = useCryptoTableCellData();
   return (
-    <AccountAssetsCell currencies={getAccountAssetsCurrencies(row.original, blacklistedTokenIds)} />
+    <AccountAssetsCell
+      currencies={getAccountAssetsCurrencies(
+        row.original,
+        blacklistedTokenIds,
+        isNativeBalanceZero,
+      )}
+    />
   );
 }
 

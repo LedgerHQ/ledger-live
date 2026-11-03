@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { OperationTableItem } from "../types";
 import { scopeHistoryOperationItems } from "../utils/scopeHistoryOperationItems";
 import { useAccountDataOperationItems } from "./useAccountDataOperationItems";
-import type { AccountDataTarget } from "./useAccountDataTargets";
+import type { AccountDataTarget } from "LLD/hooks/useAccountDataTargets";
 import { useHistoryAccountScope } from "./useHistoryAccountScope";
 import { useHistoryContact } from "./useHistoryContact";
 
