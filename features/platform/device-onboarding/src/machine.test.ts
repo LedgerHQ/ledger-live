@@ -25,6 +25,7 @@ import { createOsVersionResponse, type OsVersionResponseOptions } from "./tests/
 import {
   OnboardingStep,
   RecoveryKeyStatus,
+  SeedPath,
   type AvailableFirmwareUpdate,
   type DeviceOnboardingContext,
   type DeviceOnboardingState,
@@ -90,6 +91,7 @@ describe("routing", () => {
     const { actor, fake } = await start({ osVersion: [os(seeded)], ...passingChecks });
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBeNull();
     expect(fake.earlyCheckToggles()).toEqual([]);
   });
 
@@ -1212,6 +1214,7 @@ describe("device setup", () => {
     );
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
   it.each([RecoveryKeyStatus.Choice, RecoveryKeyStatus.Running, RecoveryKeyStatus.Naming])(
@@ -1360,9 +1363,12 @@ describe("device setup", () => {
       OnboardingStep.NewDeviceConfirming,
     ]);
 
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
   it("skips naming on a nano and still reaches done", async () => {
@@ -1372,6 +1378,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
   });
 
   it("advances the word index while restoring a recovery phrase", async () => {
@@ -1391,6 +1398,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.RestorePhrase);
   });
 
   it("follows a Recover restore to done", async () => {
@@ -1405,6 +1413,7 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.Recover);
   });
 
   it("follows a Recovery Key restore to done", async () => {
@@ -1419,6 +1428,25 @@ describe("device setup", () => {
     actor.send(stepChanged(OnboardingStep.Ready));
 
     expect(exitOf(actor)).toMatchObject({ reason: "completed" });
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.RecoveryKey);
+  });
+
+  it("clears the seed path when the device restarts and records the next one", async () => {
+    const { actor } = await enterSetup();
+
+    actor.send(stepChanged(OnboardingStep.NewDevice));
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.NewSeed);
+
+    actor.send(stepChanged(OnboardingStep.WelcomeScreen1));
+    await settle();
+
+    expect(actor.getSnapshot().context.seedPath).toBeNull();
+    await expectChecksPassed(actor);
+
+    actor.send(stepChanged(OnboardingStep.RestoreSeed));
+
+    expect(actor.getSnapshot().context.seedPath).toBe(SeedPath.RestorePhrase);
+    actor.stop();
   });
 
   it("returns to routing when the device goes back to welcome after setup has started", async () => {
