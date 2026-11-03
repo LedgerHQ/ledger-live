@@ -113,6 +113,6 @@ Pull request titles use the same structure as commit messages, with the option o
 
 A GitHub workflow may automatically prepend a prefix based on PR labels (possible values `[LWD] `, `[LWM] ` or `[LWDM] `). Leave that prefix in place if automation adds it.
 
-The base PR title maximum length is 72 characters. When the label workflow adds a platform prefix, Danger excludes exactly that automated prefix from the limit: `[LWD] ` and `[LWM] ` permit 78-character final titles, and `[LWDM] ` permits 79. The workflow does not append a Jira ticket; add an optional `(LIVE-XXXX)` ticket to the base title yourself.
+The max length of the PR title is 72 characters. With the potential of a 7-character prefix, write titles that are 65 characters or less.
 
 When creating a merge commit, use a valid pull request title because it is used for the merge commit message.
