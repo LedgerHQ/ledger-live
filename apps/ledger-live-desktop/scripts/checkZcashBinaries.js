@@ -1,21 +1,31 @@
 const fs = require("fs");
 const path = require("path");
+const { Arch } = require("electron-builder");
 
-// zcash-utils binaries each platform's package must ship. The universal mac app needs both archs
-// (install with `--cpu=arm64 --cpu=x64`).
+// zcash-utils package each target needs. A universal mac build runs afterPack on its x64 slice,
+// its arm64 slice and the merged app: the merged app needs both (install with `--cpu=arm64 --cpu=x64`).
+const MAC = {
+  [Arch.x64]: ["darwin-x64"],
+  [Arch.arm64]: ["darwin-arm64"],
+  [Arch.universal]: ["darwin-arm64", "darwin-x64"],
+};
 const EXPECTED = {
-  darwin: ["darwin-arm64", "darwin-x64"],
-  mas: ["darwin-arm64", "darwin-x64"],
-  linux: ["linux-x64-gnu"],
-  win32: ["win32-x64-msvc"],
+  darwin: MAC,
+  mas: MAC,
+  linux: { [Arch.x64]: ["linux-x64-gnu"] },
+  win32: { [Arch.x64]: ["win32-x64-msvc"] },
 };
 
 // electron-builder silently skips a missing `files` source: fail instead of shipping an app
 // that cannot load zcash-utils.
 exports.default = function checkZcashBinaries(context) {
-  const { appOutDir, electronPlatformName, packager } = context;
-  const targets = EXPECTED[electronPlatformName];
-  if (!targets) return;
+  const { appOutDir, arch, electronPlatformName, packager } = context;
+  const platform = EXPECTED[electronPlatformName];
+  if (!platform) return;
+  const targets = platform[arch];
+  if (!targets) {
+    throw new Error(`zcash-utils has no package for ${electronPlatformName} ${Arch[arch]}.`);
+  }
 
   const resources =
     electronPlatformName === "darwin" || electronPlatformName === "mas"
@@ -28,7 +38,7 @@ exports.default = function checkZcashBinaries(context) {
   if (missing.length > 0) {
     throw new Error(
       `zcash-utils binaries missing from the packaged app:\n${missing.join("\n")}\n` +
-        "Install the platform's zcash-utils package (the mac app needs `pnpm i --cpu=arm64 --cpu=x64`).",
+        "Install the platform's zcash-utils package (the universal mac app needs `pnpm i --cpu=arm64 --cpu=x64`).",
     );
   }
 };
