@@ -43,7 +43,6 @@ interface ViewProps {
   currency?: MarketCurrencyData;
   refetch: () => void;
   ledgerCurrency?: CryptoOrTokenCurrency;
-  swapCurrencyIds?: string[];
 }
 
 function View({
@@ -58,7 +57,6 @@ function View({
   counterCurrency,
   allAccounts,
   ledgerCurrency,
-  swapCurrencyIds,
   range,
   updateMarketParams,
 }: ViewProps) {
@@ -149,12 +147,8 @@ function View({
           currency={ledgerCurrency}
         />
 
-        {ledgerCurrency && swapCurrencyIds && (
-          <MarketQuickActions
-            currency={ledgerCurrency}
-            accounts={accounts}
-            swapCurrencyIds={swapCurrencyIds}
-          />
+        {ledgerCurrency && (
+          <MarketQuickActions currency={ledgerCurrency} accounts={accounts} ledgerIds={ledgerIds} />
         )}
 
         {accounts?.length > 0 ? (

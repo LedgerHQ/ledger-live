@@ -12,7 +12,7 @@ import { useMarket } from "LLM/features/Market/hooks/useMarket";
 import { useMarketCoinDataWithChart } from "LLM/features/Market/hooks/useMarketCoinData";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
 import { appVersion } from "LLM/utils/appVersion";
-import { selectAssetCurrencyIds, selectCurrency } from "@features/platform-aggregated-assets";
+import { selectCurrency } from "@features/platform-aggregated-assets";
 import { assetsDataApi } from "@domain/api-aggregated-assets";
 
 type NavigationProps = BaseComposite<
@@ -54,27 +54,6 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { name } = currency || {};
 
   const ledgerCurrency = data && selectCurrency(data);
-
-  const { data: swappableAssets, isLoading: isLoadingSwappableAssets } =
-    assetsDataApi.useGetAssetDataQuery(
-      {
-        currencyIds: currency?.ledgerIds,
-        useCase: "swap",
-        product: "llm",
-        version: appVersion,
-        isStaging: false,
-        includeTestNetworks: false,
-      },
-      {
-        skip: !currency?.ledgerIds?.length,
-      },
-    );
-
-  const swapCurrencyIds = useMemo(() => {
-    if (isLoadingSwappableAssets) return undefined;
-    if (!swappableAssets || !ledgerCurrency) return [];
-    return selectAssetCurrencyIds(swappableAssets, ledgerCurrency.id);
-  }, [isLoadingSwappableAssets, swappableAssets, ledgerCurrency]);
 
   useEffect(() => {
     if (name) {
@@ -138,7 +117,6 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     loading: loading || isLoadingAsset,
     toggleStar,
     ledgerCurrency,
-    swapCurrencyIds,
   };
 }
 

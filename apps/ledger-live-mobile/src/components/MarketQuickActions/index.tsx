@@ -11,7 +11,7 @@ import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/u
 
 const stakeLabel = getStakeLabelLocaleBased();
 type MarketQuickActionsProps = Required<Pick<QuickActionProps, "currency" | "accounts">> &
-  Pick<QuickActionProps, "swapCurrencyIds">;
+  Pick<QuickActionProps, "ledgerIds">;
 
 export const MarketQuickActions = (quickActionsProps: MarketQuickActionsProps) => {
   const { t } = useTranslation();

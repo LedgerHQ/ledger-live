@@ -245,19 +245,19 @@ describe("MarketQuickActions", () => {
     expect(getByText(/(earn|yield)/i)).toBeVisible();
   });
 
-  it("should open swap on every network of a multi-network asset", () => {
-    const swapCurrencyIds = [ethereumCurrency.id, "base", "arbitrum"];
+  it("should pass the asset ledger ids to swap", () => {
+    const ledgerIds = [ethereumCurrency.id, "base", "arbitrum"];
     renderWithReactQuery(
       <TestNavigator>
         <MarketQuickActions
           currency={ethereumCurrency}
           accounts={[ethereumAccount]}
-          swapCurrencyIds={swapCurrencyIds}
+          ledgerIds={ledgerIds}
         />
       </TestNavigator>,
     );
     expect(mockUseOpenSwap).toHaveBeenCalledWith(
-      expect.objectContaining({ currency: ethereumCurrency, currencyIds: swapCurrencyIds }),
+      expect.objectContaining({ currency: ethereumCurrency, currencyIds: ledgerIds }),
     );
   });
 

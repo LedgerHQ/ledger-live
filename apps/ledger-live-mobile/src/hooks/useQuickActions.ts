@@ -43,10 +43,10 @@ type Actions =
 export type QuickActionProps = {
   currency?: CryptoOrTokenCurrency;
   accounts?: AccountLike[];
-  swapCurrencyIds?: string[];
+  ledgerIds?: string[];
 };
 
-function useQuickActions({ currency, accounts, swapCurrencyIds }: QuickActionProps = {}) {
+function useQuickActions({ currency, accounts, ledgerIds }: QuickActionProps = {}) {
   const route = useRoute();
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -96,7 +96,7 @@ function useQuickActions({ currency, accounts, swapCurrencyIds }: QuickActionPro
 
   const { handleOpenSwap } = useOpenSwap({
     currency,
-    currencyIds: swapCurrencyIds,
+    currencyIds: ledgerIds,
     sourceScreenName: route.name,
   });
   const { handleOpenBuySell } = useOpenBuySell({
