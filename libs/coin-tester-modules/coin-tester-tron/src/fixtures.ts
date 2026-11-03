@@ -109,14 +109,19 @@ export function registerTronTokensInMockStore(trc10: TokenCurrency, trc20: Token
   setCryptoAssetsStore({
     findTokenById: async (id: string) =>
       id === trc10.id ? trc10 : id === trc20.id ? trc20 : undefined,
-    findTokenByAddressInCurrency: async (address: string, currencyId: string) => {
+    findTokenByAddressInCurrency: async (
+      address: string,
+      currencyId: string,
+      tokenIdentifier?: string,
+    ) => {
       if (currencyId !== "tron") return undefined;
+      if (tokenIdentifier !== undefined) {
+        return tokenIdentifier === trc10.tokenIdentifier ? trc10 : undefined;
+      }
       if (address === trc10.contractAddress) return trc10;
       if (address === trc20.contractAddress) return trc20;
       return undefined;
     },
-    findTokenByTokenIdentifierInCurrency: async (tokenIdentifier: string, currencyId: string) =>
-      currencyId === "tron" && tokenIdentifier === trc10.tokenIdentifier ? trc10 : undefined,
     getTokensSyncHash: async () => "",
   });
 }

@@ -7,10 +7,6 @@ export type FrameworkCryptoAssetsStore = {
     currencyId: string,
     tokenIdentifier?: string,
   ): Promise<TokenCurrency | undefined>;
-  findTokenByTokenIdentifierInCurrency?(
-    tokenIdentifier: string,
-    currencyId: string,
-  ): Promise<TokenCurrency | undefined>;
   getTokensSyncHash(currencyId: string): Promise<string>;
 };
 

@@ -1,8 +1,4 @@
 ---
-"@domain/api-currency-token": minor
-"@features/platform-currencies": minor
-"@ledgerhq/ledger-wallet-framework": minor
-"@ledgerhq/types-live": minor
 "@ledgerhq/live-common": minor
 "ledger-live-desktop": minor
 "live-mobile": minor

@@ -8,7 +8,7 @@ describe("saveCryptoAssetsCacheState", () => {
   });
 
   it("saves a CAL cache that holds hashes but no token, so an eviction replaces stale tokens", async () => {
-    const persisted: PersistedCAL = { version: 3, tokens: [], hashes: { ethereum: "new-hash" } };
+    const persisted: PersistedCAL = { version: 2, tokens: [], hashes: { ethereum: "new-hash" } };
 
     await saveCryptoAssetsCacheState(persisted);
 
@@ -16,7 +16,7 @@ describe("saveCryptoAssetsCacheState", () => {
   });
 
   it("does not save a CAL cache with neither tokens nor hashes", async () => {
-    await saveCryptoAssetsCacheState({ version: 3, tokens: [] });
+    await saveCryptoAssetsCacheState({ version: 2, tokens: [] });
 
     expect(await storage.get("cryptoAssetsCache")).toBeFalsy();
   });

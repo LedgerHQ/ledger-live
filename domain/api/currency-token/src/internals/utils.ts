@@ -2,11 +2,7 @@ import type { FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import { ApiResponseSchema } from "../schema";
 import { convertApiToken } from "../converter";
-import type {
-  ApiTokenResponse,
-  TokenByTokenIdentifierInCurrencyParams,
-  TokensDataWithPagination,
-} from "../types";
+import type { ApiTokenResponse, TokensDataWithPagination } from "../types";
 import { HEADER_X_LEDGER_NEXT } from "./constants";
 
 /** Maps a paginated CAL token response to {@link TokenCurrency} entities + the next-page cursor. */
@@ -67,22 +63,4 @@ export function validateAndTransformSingleTokenResponse(
       : {}),
     ...(apiToken.live_signature !== undefined ? { ledgerSignature: apiToken.live_signature } : {}),
   });
-}
-
-export function validateAndTransformTokenIdentifierResponse(
-  response: unknown,
-  params: TokenByTokenIdentifierInCurrencyParams,
-): TokenCurrency | undefined {
-  if (response === undefined || response === null) {
-    return undefined;
-  }
-  const apiTokens = ApiResponseSchema.parse(response);
-  if (apiTokens.length > 1) {
-    const ids = apiTokens.map(token => token.id).join(", ");
-    throw new Error(
-      `token_identifier "${params.token_identifier}" matches several ${params.network} tokens: ${ids}`,
-    );
-  }
-  const apiToken = apiTokens[0];
-  return apiToken ? transformApiTokenToTokenCurrency(apiToken) : undefined;
 }

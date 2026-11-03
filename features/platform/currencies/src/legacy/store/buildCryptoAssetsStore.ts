@@ -45,7 +45,7 @@ export interface BuildCryptoAssetsStoreConfig {
  *
  * @returns
  * A {@link CryptoAssetsStore} — async `findTokenById`, `findTokenByAddressInCurrency`,
- * `findTokenByTokenIdentifierInCurrency`, and `getTokensSyncHash`.
+ * and `getTokensSyncHash`.
  *
  * @example
  * ```ts
@@ -71,17 +71,6 @@ export function buildCryptoAssetsStore({
           contract_address: address,
           network: currencyId,
           ...(tokenIdentifier === undefined ? {} : { token_identifier: tokenIdentifier }),
-        }),
-      );
-      if (error) throw remapRtkQueryError(error);
-      return data;
-    },
-
-    async findTokenByTokenIdentifierInCurrency(tokenIdentifier, currencyId) {
-      const { data, error } = await dispatch(
-        api.endpoints.findTokenByTokenIdentifierInCurrency.initiate({
-          token_identifier: tokenIdentifier,
-          network: currencyId,
         }),
       );
       if (error) throw remapRtkQueryError(error);

@@ -6,7 +6,6 @@ import {
   type PageParam,
   type TokenByAddressInCurrencyParams,
   type TokenByIdParams,
-  type TokenByTokenIdentifierInCurrencyParams,
   type TokensDataWithPagination,
 } from "./types";
 import {
@@ -20,11 +19,9 @@ import {
   TOKEN_TAGS,
   transformTokensResponse,
   validateAndTransformSingleTokenResponse,
-  validateAndTransformTokenIdentifierResponse,
 } from "./internals";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
-const ENOUGH_MATCHES_TO_DETECT_AMBIGUITY = "2";
 
 /**
  * CAL token endpoints, injected into the shared CAL service api.
@@ -68,24 +65,6 @@ export const cryptoAssetsApi = calApi
           },
         }),
         transformResponse: validateAndTransformSingleTokenResponse,
-        providesTags: [...TOKEN_TAGS],
-      }),
-
-      findTokenByTokenIdentifierInCurrency: build.query<
-        TokenCurrency | undefined,
-        TokenByTokenIdentifierInCurrencyParams
-      >({
-        query: params => ({
-          url: "/v1/tokens",
-          params: {
-            token_identifier: params.token_identifier,
-            network: params.network,
-            limit: ENOUGH_MATCHES_TO_DETECT_AMBIGUITY,
-            output: TOKEN_OUTPUT_FIELDS.join(","),
-          },
-        }),
-        transformResponse: (response, _meta, params) =>
-          validateAndTransformTokenIdentifierResponse(response, params),
         providesTags: [...TOKEN_TAGS],
       }),
 
@@ -203,7 +182,6 @@ export const {
   useGetTokensDataInfiniteQuery,
   useFindTokenByIdQuery,
   useFindTokenByAddressInCurrencyQuery,
-  useFindTokenByTokenIdentifierInCurrencyQuery,
   useGetTokensSyncHashQuery,
   useGetTokenListHashQuery,
 } = cryptoAssetsApi;

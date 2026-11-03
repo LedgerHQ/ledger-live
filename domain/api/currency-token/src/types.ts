@@ -16,11 +16,6 @@ export interface TokenByAddressInCurrencyParams {
   token_identifier?: string;
 }
 
-export interface TokenByTokenIdentifierInCurrencyParams {
-  token_identifier: string;
-  network: string;
-}
-
 /** Parameters for the `getTokensData` query. */
 export interface GetTokensDataParams {
   /** Filter by network family (e.g. "ethereum", "polygon"). */

@@ -38,7 +38,10 @@ export async function buildAccountShape(address: string): Promise<FamilyAccountS
   return { tronResources: await fetchTronResources(context.logger, config, accounts[0]) };
 }
 
-// CAL keeps a TRC10 asset id in `tokenIdentifier`; its `contractAddress` is the issuer address.
+// CAL keeps a TRC10 asset id in `tokenIdentifier`; its `contractAddress` is the issuer address,
+// which a TRC10 operation does not carry, so the lookup goes by `tokenIdentifier` alone.
+const TRC10_ISSUER_UNKNOWN = "";
+
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
   asset: AssetInfo,
@@ -48,10 +51,11 @@ export async function getTokenFromAsset(
   }
   const store = getCryptoAssetsStore();
   if (asset.type === "trc10") {
-    if (!store.findTokenByTokenIdentifierInCurrency) {
-      throw new Error("The crypto assets store cannot look up TRC10 tokens by token_identifier");
-    }
-    return await store.findTokenByTokenIdentifierInCurrency(asset.assetReference, currency.id);
+    return await store.findTokenByAddressInCurrency(
+      TRC10_ISSUER_UNKNOWN,
+      currency.id,
+      asset.assetReference,
+    );
   }
   return await store.findTokenByAddressInCurrency(asset.assetReference, currency.id);
 }

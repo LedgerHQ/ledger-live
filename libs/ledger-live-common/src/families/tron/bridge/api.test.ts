@@ -214,17 +214,14 @@ describe("tron bridge", () => {
       CryptoAssetsStore["findTokenByAddressInCurrency"]
     >;
     const mockFindTokenById = jest.fn() as jest.MockedFunction<CryptoAssetsStore["findTokenById"]>;
-    const mockFindTokenByTokenIdentifierInCurrency = jest.fn() as jest.MockedFunction<
-      NonNullable<CryptoAssetsStore["findTokenByTokenIdentifierInCurrency"]>
-    >;
-    const { getCryptoAssetsStore } = jest.requireMock(
-      "@ledgerhq/ledger-wallet-framework/cryptoAssetsStore",
-    ) as { getCryptoAssetsStore: jest.Mock };
 
-    getCryptoAssetsStore.mockReturnValue({
+    (
+      jest.requireMock("@ledgerhq/ledger-wallet-framework/cryptoAssetsStore") as {
+        getCryptoAssetsStore: jest.Mock;
+      }
+    ).getCryptoAssetsStore.mockReturnValue({
       findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
       findTokenById: mockFindTokenById,
-      findTokenByTokenIdentifierInCurrency: mockFindTokenByTokenIdentifierInCurrency,
     });
 
     afterEach(() => {
@@ -266,29 +263,14 @@ describe("tron bridge", () => {
     });
 
     it("should resolve a TRC10 token by its asset id as the CAL token_identifier", async () => {
-      mockFindTokenByTokenIdentifierInCurrency.mockResolvedValue(trc10Token);
+      mockFindTokenByAddressInCurrency.mockResolvedValue(trc10Token);
       const asset: AssetInfo = { type: "trc10", assetReference: "1002000" };
 
       const result = await getTokenFromAsset(tron, asset);
 
-      expect(mockFindTokenByTokenIdentifierInCurrency).toHaveBeenCalledWith("1002000", tron.id);
+      expect(mockFindTokenByAddressInCurrency).toHaveBeenCalledWith("", tron.id, "1002000");
       expect(mockFindTokenById).not.toHaveBeenCalled();
-      expect(mockFindTokenByAddressInCurrency).not.toHaveBeenCalled();
       expect(result).toBe(trc10Token);
-    });
-
-    it("should throw for a TRC10 asset when the store cannot look up by token_identifier", async () => {
-      getCryptoAssetsStore.mockReturnValueOnce({
-        findTokenByAddressInCurrency: mockFindTokenByAddressInCurrency,
-        findTokenById: mockFindTokenById,
-      });
-      const asset: AssetInfo = { type: "trc10", assetReference: "1002000" };
-
-      await expect(getTokenFromAsset(tron, asset)).rejects.toThrow(
-        "The crypto assets store cannot look up TRC10 tokens by token_identifier",
-      );
-      expect(mockFindTokenById).not.toHaveBeenCalled();
-      expect(mockFindTokenByAddressInCurrency).not.toHaveBeenCalled();
     });
 
     it("should return undefined when token is not found", async () => {
