@@ -25,10 +25,16 @@ function readJson(rel: string): Record<string, unknown> {
   return JSON.parse(readFileSync(path.join(target, rel), "utf8"));
 }
 
-function exportTo(dir: string): void {
-  execFileSync(process.execPath, [path.join(root, "scripts/export-agent-plugin.mjs"), dir], {
-    stdio: "pipe",
-  });
+function exportTo(dir: string, ...args: string[]): void {
+  execFileSync(
+    process.execPath,
+    [path.join(root, "scripts/export-agent-plugin.mjs"), dir, ...args],
+    { stdio: "pipe" },
+  );
+}
+
+function exportedSkillMd(dir: string): string {
+  return readFileSync(path.join(dir, "skills", "wallet-cli-usage", "SKILL.md"), "utf8");
 }
 
 beforeAll(async () => {
@@ -79,6 +85,10 @@ describe("export-agent-plugin", () => {
     expect(skillMd).toContain("name: wallet-cli-usage");
     expect(skillMd).not.toContain("pnpm --silent wallet-cli start");
     expect(existsSync(path.join(skillDir, "references", "agent-intent.md"))).toBe(true);
+  });
+
+  it("stamps the wallet-cli version into the skill", () => {
+    expect(exportedSkillMd(target)).toContain(`This copy documents wallet-cli ${version}.`);
   });
 
   it("lists only wallet-cli-usage as the OpenClaw skill root", () => {
@@ -137,6 +147,36 @@ describe("export-agent-plugin over a previous export", () => {
       expect(() => exportTo(escape)).toThrow();
     } finally {
       await rm(escape, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("export-agent-plugin with a version", () => {
+  let dir = "";
+
+  beforeAll(async () => {
+    dir = await mkdtemp(path.join(tmpdir(), "export-agent-plugin-version-"));
+    exportTo(dir, "9.8.7-nightly.1");
+  });
+
+  afterAll(async () => {
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  it("stamps that version instead of package.json's", () => {
+    expect(JSON.parse(readFileSync(path.join(dir, "plugin.json"), "utf8")).version).toBe(
+      "9.8.7-nightly.1",
+    );
+    expect(exportedSkillMd(dir)).toContain("This copy documents wallet-cli 9.8.7-nightly.1.");
+  });
+
+  it("refuses a value that is not a version before writing anything", async () => {
+    const empty = await mkdtemp(path.join(tmpdir(), "export-agent-plugin-bad-version-"));
+    try {
+      expect(() => exportTo(empty, "latest")).toThrow();
+      expect(existsSync(path.join(empty, "plugin.json"))).toBe(false);
+    } finally {
+      await rm(empty, { recursive: true, force: true });
     }
   });
 });

@@ -17,6 +17,7 @@ import {
   rewriteReferenceFile,
   rewriteSkillFile,
   rewriteSkillMd,
+  stampSkillVersion,
 } from "./standalone-skill-transform.mjs";
 
 /** A minimal but structurally faithful stand-in for the canonical SKILL.md. */
@@ -174,6 +175,26 @@ describe("rewriteReferenceFile", () => {
     expect(() =>
       rewriteReferenceFile("pnpm --filter @ledgerhq/wallet-cli start send\n", "references/x.md"),
     ).toThrow(/in references\/x\.md/);
+  });
+});
+
+describe("stampSkillVersion", () => {
+  it("names the version right after the install line", () => {
+    const stamped = stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "3.1.0-nightly.1");
+    expect(stamped).toContain(
+      `${STANDALONE_INSTALL_LINE}\n\nThis copy documents wallet-cli 3.1.0-nightly.1.`,
+    );
+    expect(stamped).toContain("`wallet-cli --version`");
+  });
+
+  it("throws on a value that is not a version", () => {
+    expect(() => stampSkillVersion(rewriteSkillMd(sourceSkillMd()), "latest")).toThrow(
+      /"latest" is not a wallet-cli version/,
+    );
+  });
+
+  it("throws on a skill that was not rewritten first", () => {
+    expect(() => stampSkillVersion(sourceSkillMd(), "3.0.0")).toThrow(/no install line/);
   });
 });
 

@@ -1,7 +1,8 @@
 // Export the agent plugin in its installable form: the files in agent-plugin/, the
-// wallet-cli version stamped into every manifest that has one, and the skill under
-// skills/ as export-standalone-skill.mjs writes it, so the plugin and the copy
-// published to LedgerHQ/agent-skills go through the same transform.
+// wallet-cli version stamped into every manifest that has one and into the skill, and
+// the skill under skills/ as export-standalone-skill.mjs writes it, so the plugin and
+// the copy published to LedgerHQ/agent-skills go through the same transform. The
+// version defaults to package.json's; the sync passes the one published to npm.
 //
 // The sync-wallet-cli-skill workflow runs it against the root of a LedgerHQ/agent-skills
 // checkout. That repository owns its README.md, so the export leaves out
@@ -10,14 +11,14 @@
 // this one no longer writes, so a file removed from agent-plugin/ leaves agent-skills too.
 //
 // Usage:
-//   node ./scripts/export-agent-plugin.mjs <target-dir>
+//   node ./scripts/export-agent-plugin.mjs <target-dir> [version]
 
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { collectSkillFiles } from "./collect-skill-files.mjs";
-import { STANDALONE_SKILL_NAME } from "./standalone-skill-transform.mjs";
+import { STANDALONE_SKILL_NAME, assertSkillVersion } from "./standalone-skill-transform.mjs";
 
 const scriptsDir = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(scriptsDir, "..");
@@ -85,12 +86,14 @@ async function previousExport(targetDir) {
 }
 
 async function main() {
-  const [targetDir] = process.argv.slice(2);
+  const [targetDir, versionArg] = process.argv.slice(2);
   if (!targetDir) {
-    throw new Error("Usage: node ./scripts/export-agent-plugin.mjs <target-dir>");
+    throw new Error("Usage: node ./scripts/export-agent-plugin.mjs <target-dir> [version]");
   }
 
-  const { version } = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
+  const version =
+    versionArg || JSON.parse(await readFile(path.join(root, "package.json"), "utf8")).version;
+  assertSkillVersion(version);
   const files = (
     await collectSkillFiles(pluginDir, { boundary: pluginDir, label: "agent-plugin" })
   ).filter(rel => !NOT_EXPORTED.has(rel.split("/")[0]));
@@ -113,6 +116,7 @@ async function main() {
       path.join(scriptsDir, "export-standalone-skill.mjs"),
       skillDir,
       path.join(targetDir, "skills", STANDALONE_SKILL_NAME),
+      version,
     ],
     { stdio: "inherit" },
   );
