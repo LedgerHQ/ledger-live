@@ -1,4 +1,5 @@
 import type { DeviceManagementKit, TransportIdentifier } from "@ledgerhq/device-management-kit";
+import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import {
   connectDeviceUseCase,
   DefaultDeviceDiscoveryService,
@@ -45,8 +46,14 @@ export function connectDevice(input: ConnectDeviceInput): Observable<MobileConne
     discoverySources.set(speculosSource.transportId, speculosSource);
   }
 
+  // Only mock devices can be discovered in mock mode: a physical known device would never match.
+  const knownDevices = input.isMockServerEnabled
+    ? input.knownDevices.filter(device => device.transport === mockserverIdentifier)
+    : input.knownDevices;
+
   return connectDeviceUseCase({
     ...input,
+    knownDevices,
     deviceDiscoveryService: new DefaultDeviceDiscoveryService<MobileDiscoveryError>(
       discoverySources,
     ),

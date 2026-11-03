@@ -65,6 +65,14 @@ export const isMockServerReachable = async (url: string): Promise<boolean> => {
 
 export type MockServerConnectionStatus = "connected" | "unreachable" | "sessionExpired";
 
+const REJECTED_TOKEN_STATUSES: ReadonlySet<number> = new Set([401, 403]);
+
+const isRejectedToken = (error: unknown): boolean =>
+  error instanceof Error &&
+  "status" in error &&
+  typeof error.status === "number" &&
+  REJECTED_TOKEN_STATUSES.has(error.status);
+
 export const getMockServerStatus = async ({
   url,
   token,
@@ -73,7 +81,7 @@ export const getMockServerStatus = async ({
   try {
     const session = await getMockServerSession({ url, token });
     return { status: "connected", sessionId: session.id };
-  } catch {
-    return { status: "sessionExpired", sessionId: null };
+  } catch (error) {
+    return { status: isRejectedToken(error) ? "sessionExpired" : "unreachable", sessionId: null };
   }
 };

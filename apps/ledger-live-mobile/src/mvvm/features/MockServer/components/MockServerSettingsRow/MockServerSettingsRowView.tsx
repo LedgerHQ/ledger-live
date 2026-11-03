@@ -1,6 +1,15 @@
 import React from "react";
-import { IconsLegacy } from "@ledgerhq/native-ui";
-import SettingsRow from "~/components/SettingsRow";
+import {
+  Box,
+  ListItem,
+  ListItemContent,
+  ListItemDescription,
+  ListItemLeading,
+  ListItemTitle,
+  ListItemTrailing,
+  Spot,
+} from "@ledgerhq/lumen-ui-rnative";
+import { ChevronRight, Servers } from "@ledgerhq/lumen-ui-rnative/symbols";
 import type { MockServerSettingsRowViewModel } from "./useMockServerSettingsRowViewModel";
 
 export function MockServerSettingsRowView({
@@ -8,16 +17,21 @@ export function MockServerSettingsRowView({
   onPress,
 }: Readonly<MockServerSettingsRowViewModel>) {
   return (
-    <SettingsRow
-      title="Mock server"
-      desc={
-        isEnabled
-          ? "On. Manage the session and the mocked devices."
-          : "Replace physical devices with the devices of a mock server session."
-      }
-      iconLeft={<IconsLegacy.ServerMedium size={32} color="black" />}
-      onPress={onPress}
-      arrowRight
-    />
+    <Box lx={{ paddingHorizontal: "s16" }}>
+      <ListItem onPress={onPress}>
+        <ListItemLeading>
+          <Spot size={48} icon={Servers} />
+          <ListItemContent>
+            <ListItemTitle>Mock server</ListItemTitle>
+            <ListItemDescription>
+              {isEnabled ? "On: manage the session" : "Replace physical devices with mock ones"}
+            </ListItemDescription>
+          </ListItemContent>
+        </ListItemLeading>
+        <ListItemTrailing>
+          <ChevronRight size={24} />
+        </ListItemTrailing>
+      </ListItem>
+    </Box>
   );
 }

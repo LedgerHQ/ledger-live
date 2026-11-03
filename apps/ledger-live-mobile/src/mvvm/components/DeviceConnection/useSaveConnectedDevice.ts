@@ -29,10 +29,10 @@ export function useSaveConnectedDevice({ isNewDevice = false }: SaveConnectedDev
     (connectedDevice: ConnectedDevice) => {
       const modelId = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
       const wired = connectedDevice.type === "USB";
-      const legacyDeviceId =
-        connectedDevice.transport === mockserverIdentifier
-          ? buildMockServerCompatDeviceId(connectedDevice.id)
-          : connectedDevice.id;
+      const isMockServerDevice = connectedDevice.transport === mockserverIdentifier;
+      const legacyDeviceId = isMockServerDevice
+        ? buildMockServerCompatDeviceId(connectedDevice.id)
+        : connectedDevice.id;
 
       dispatch(
         setLastConnectedDevice({
@@ -54,7 +54,7 @@ export function useSaveConnectedDevice({ isNewDevice = false }: SaveConnectedDev
         }),
       );
 
-      if (!wired) {
+      if (!wired && !isMockServerDevice) {
         const bleDevice = { id: connectedDevice.id, name: connectedDevice.name, modelId };
         dispatch(isNewDevice ? addKnownBleDevice(bleDevice) : updateKnownBleDevice(bleDevice));
       }

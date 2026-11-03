@@ -39,6 +39,7 @@ import Config from "react-native-config";
 import type { FeatureId, Feature, PartialFeatures } from "@shared/feature-flags";
 import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
+import { mockServerSettingsSelector } from "~/reducers/settings";
 import {
   buildSpeculosLegacyDeviceId,
   getDeviceManagementKit,
@@ -115,6 +116,14 @@ function applyMockServerLaunchArgs() {
   const provider = readLaunchForceProvider(args["forceProvider"]);
   if (provider !== undefined) {
     setEnv("FORCE_PROVIDER", provider);
+  }
+  const previousSettings = mockServerSettingsSelector(store.getState());
+  const isNewSession = previousSettings.url !== url || previousSettings.token !== token;
+  if (isNewSession) {
+    const mockDeviceIds = knownDevicesSelector(store.getState())
+      .filter(device => device.transport === mockserverIdentifier)
+      .map(device => device.id);
+    store.dispatch(removeKnownDevices(mockDeviceIds));
   }
   store.dispatch(setMockServerSettings({ enabled: true, url, token }));
 

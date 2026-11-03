@@ -137,6 +137,15 @@ describe("mockServerApi", () => {
     });
   });
 
+  it("should report an unreachable server, not an expired session, when the session request fails", async () => {
+    endpoints.session.mockImplementation(() => HttpResponse.json({}, { status: 500 }));
+
+    await expect(getMockServerStatus({ url: URL, token: "token-1" })).resolves.toEqual({
+      status: "unreachable",
+      sessionId: null,
+    });
+  });
+
   it("should report an unreachable server without checking the session", async () => {
     endpoints.health.mockImplementation(() => HttpResponse.error());
 
