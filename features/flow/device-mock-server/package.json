@@ -15,6 +15,9 @@
     "format:check": "oxfmt src --check",
     "lint": "oxlint src",
     "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -W features/flow/device-mock-server"
   },
   "dependencies": {
@@ -28,12 +31,22 @@
   },
   "devDependencies": {
     "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@testing-library/react-native": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   }
 }

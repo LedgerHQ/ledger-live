@@ -1,3 +1,6 @@
 {
-  "extends": "@support/tsconfig/native"
+  "extends": "@support/tsconfig/native",
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  }
 }
