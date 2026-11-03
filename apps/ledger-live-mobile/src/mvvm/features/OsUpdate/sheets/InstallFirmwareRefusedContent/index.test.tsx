@@ -2,21 +2,38 @@ import React from "react";
 import { render, screen } from "@tests/test-renderer";
 import { InstallFirmwareRefusedContent } from ".";
 
+function renderContent({ onRetry = jest.fn(), onCancel = jest.fn() } = {}) {
+  return render(
+    <InstallFirmwareRefusedContent
+      productName="Ledger Stax"
+      onRetry={onRetry}
+      onCancel={onCancel}
+    />,
+  );
+}
+
 describe("InstallFirmwareRefusedContent", () => {
-  it("shows the error", () => {
-    render(<InstallFirmwareRefusedContent onCancel={jest.fn()} />);
+  it("names the device the installation was cancelled on", () => {
+    renderContent();
 
     expect(screen.getByTestId("os-update-install-firmware-refused")).toBeVisible();
-    expect(screen.getByText("Installation refused")).toBeVisible();
+    expect(screen.getByText("OS update installation cancelled on Ledger Stax")).toBeVisible();
+    expect(screen.getByText("If this was a mistake, restart the update.")).toBeVisible();
   });
 
-  it("only offers cancel", async () => {
+  it("restarts and cancels the update independently", async () => {
+    const onRetry = jest.fn();
     const onCancel = jest.fn();
-    const { user } = render(<InstallFirmwareRefusedContent onCancel={onCancel} />);
+    const { user } = renderContent({ onRetry, onCancel });
 
-    expect(screen.queryByText("Retry")).toBeNull();
-    await user.press(screen.getByText("Cancel"));
+    await user.press(screen.getByText("Restart OS update"));
+
+    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(onCancel).not.toHaveBeenCalled();
+
+    await user.press(screen.getByText("Cancel OS update"));
 
     expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onRetry).toHaveBeenCalledTimes(1);
   });
 });

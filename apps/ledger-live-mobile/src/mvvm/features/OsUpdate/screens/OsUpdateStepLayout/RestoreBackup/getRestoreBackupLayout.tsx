@@ -115,6 +115,7 @@ function getSheet({
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
       };
     }
