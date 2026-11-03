@@ -152,7 +152,7 @@ export function useMockServerSettingsFormViewModel({
   const onConfirmActivation = useCallback(() => {
     if (!activation || pendingAction !== null) return;
     setUrlDraft(activation.url);
-    if (activation.token) setTokenDraft(activation.token);
+    setTokenDraft(activation.token ?? "");
     onCloseActivationWarning();
     run("activate", () => activate(activation));
   }, [activate, activation, onCloseActivationWarning, pendingAction, run]);
