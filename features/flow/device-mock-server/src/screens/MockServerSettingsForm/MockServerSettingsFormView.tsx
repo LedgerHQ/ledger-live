@@ -32,6 +32,7 @@ export function MockServerSettingsFormView({
   isFloatingButtonHidden,
   isActivationWarningOpen,
   activationUrl,
+  activationToken,
   onToggle,
   onChangeUrlDraft,
   onChangeTokenDraft,
@@ -170,6 +171,7 @@ export function MockServerSettingsFormView({
       <MockServerActivationWarning
         isOpen={isActivationWarningOpen}
         url={activationUrl}
+        token={activationToken}
         onConfirm={onConfirmActivation}
         onClose={onCloseActivationWarning}
       />

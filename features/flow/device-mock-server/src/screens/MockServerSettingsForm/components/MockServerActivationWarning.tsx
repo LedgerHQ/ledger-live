@@ -13,6 +13,7 @@ import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
 type MockServerActivationWarningProps = {
   isOpen: boolean;
   url: string;
+  token: string | null;
   onConfirm: () => void;
   onClose: () => void;
 };
@@ -20,6 +21,7 @@ type MockServerActivationWarningProps = {
 export function MockServerActivationWarning({
   isOpen,
   url,
+  token,
   onConfirm,
   onClose,
 }: Readonly<MockServerActivationWarningProps>) {
@@ -44,13 +46,23 @@ export function MockServerActivationWarning({
               Do not continue unless you know what you are doing.
             </Text>
           </Box>
-          <Box lx={{ width: "full", gap: "s4" }}>
-            <Text typography="body3" lx={{ color: "muted" }}>
-              Server
-            </Text>
-            <Text typography="body2" lx={{ color: "base" }}>
-              {url}
-            </Text>
+          <Box lx={{ width: "full", gap: "s12" }}>
+            <Box lx={{ gap: "s4" }}>
+              <Text typography="body3" lx={{ color: "muted" }}>
+                Server
+              </Text>
+              <Text typography="body2" lx={{ color: "base" }}>
+                {url}
+              </Text>
+            </Box>
+            <Box lx={{ gap: "s4" }}>
+              <Text typography="body3" lx={{ color: "muted" }}>
+                Session token
+              </Text>
+              <Text typography="body2" lx={{ color: "base" }}>
+                {token ?? "None, a new session starts"}
+              </Text>
+            </Box>
           </Box>
           <Box lx={{ width: "full", gap: "s8" }}>
             <Button appearance="red" size="lg" onPress={onConfirm} lx={{ width: "full" }}>

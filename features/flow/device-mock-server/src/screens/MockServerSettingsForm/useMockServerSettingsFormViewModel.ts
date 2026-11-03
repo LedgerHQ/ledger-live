@@ -31,6 +31,7 @@ export type MockServerSettingsFormViewModel = {
   isFloatingButtonHidden: boolean;
   isActivationWarningOpen: boolean;
   activationUrl: string;
+  activationToken: string | null;
   onToggle: (enabled: boolean) => void;
   onChangeUrlDraft: (url: string) => void;
   onChangeTokenDraft: (token: string) => void;
@@ -185,6 +186,7 @@ export function useMockServerSettingsFormViewModel({
     isFloatingButtonHidden,
     isActivationWarningOpen: activation !== null,
     activationUrl: activation?.url ?? "",
+    activationToken: activation?.token ?? null,
     onToggle,
     onChangeUrlDraft: setUrlDraft,
     onChangeTokenDraft: setTokenDraft,
