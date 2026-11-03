@@ -16,7 +16,7 @@ The app renders `MockServerSettingsForm` in its settings screen and passes:
 - `settings`: the `{ enabled, url, token }` it persists;
 - `defaultUrl`: the server URL shown when none is saved;
 - `sessionImport` and `seed`: what a new session imports;
-- `onApply`: receives a `MockServerChange`, the new settings and the devices of the session. The
+- `onApply`: receives a `MockServerSessionChange`, the new settings and the devices of the session. The
   app saves the settings, forgets the mock devices outside the session and restarts.
 
 The server calls come from [`@features/platform-device-mock-server`](../../platform/device-mock-server).

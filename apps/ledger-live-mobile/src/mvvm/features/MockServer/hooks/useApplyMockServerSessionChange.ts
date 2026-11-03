@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import RNRestart from "react-native-restart";
-import type { MockServerChange } from "@features/flow-device-mock-server";
+import type { MockServerSessionChange } from "@features/flow-device-mock-server";
 import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
 import {
   getMockServerDeviceIdFromCompatId,
@@ -17,11 +17,13 @@ import {
 import { lastConnectedDeviceSelector, settingsStoreSelector } from "~/reducers/settings";
 
 /** Ends with an app restart: the DMK only picks up the mock server transport at build time. */
-export function useApplyMockServerChange(): (change: MockServerChange) => Promise<void> {
+export function useApplyMockServerSessionChange(): (
+  change: MockServerSessionChange,
+) => Promise<void> {
   const store = useStore();
 
   return useCallback(
-    async ({ settings, sessionDeviceIds }: MockServerChange) => {
+    async ({ settings, sessionDeviceIds }: MockServerSessionChange) => {
       const state = store.getState();
       const removedDeviceIds = knownDevicesSelector(state)
         .filter(

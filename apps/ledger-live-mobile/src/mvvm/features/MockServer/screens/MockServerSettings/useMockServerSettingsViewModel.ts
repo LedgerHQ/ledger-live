@@ -2,11 +2,11 @@ import { getEnv } from "@shared/env";
 import type { MockServerSettingsFormProps } from "@features/flow-device-mock-server";
 import { useSelector } from "~/context/hooks";
 import { mockServerSettingsSelector } from "~/reducers/settings";
-import { useApplyMockServerChange } from "../../hooks/useApplyMockServerChange";
+import { useApplyMockServerSessionChange } from "../../hooks/useApplyMockServerSessionChange";
 
 export function useMockServerSettingsViewModel(): MockServerSettingsFormProps {
   const settings = useSelector(mockServerSettingsSelector);
-  const onApply = useApplyMockServerChange();
+  const onApply = useApplyMockServerSessionChange();
 
   return {
     settings,
