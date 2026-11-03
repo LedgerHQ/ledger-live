@@ -513,12 +513,18 @@ describe("pullSyncedAccounts", () => {
         job: (jwt: JWT) => Promise<T>,
       ) => job({ accessToken: "jwt" }),
     } as unknown as TrustchainSDK;
-    let requestedUrls: URL[];
+    let requestedVersions: (string | null)[];
 
     beforeEach(() => {
-      requestedUrls = [];
-      globalThis.fetch = (async (input: RequestInfo | URL) => {
-        requestedUrls.push(new URL(String(input)));
+      requestedVersions = [];
+      globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const isLiveDocumentPull =
+          (init?.method ?? "GET") === "GET" &&
+          url.pathname === "/atomic/v1/live" &&
+          url.searchParams.get("id") === trustchain.rootId;
+        if (!isLiveDocumentPull) return new Response(null, { status: 404 });
+        requestedVersions.push(url.searchParams.get("version"));
         return Response.json({ status: "no-data" });
       }) as typeof fetch;
     });
@@ -536,7 +542,7 @@ describe("pullSyncedAccounts", () => {
         () => undefined,
       );
 
-      expect(requestedUrls.map(url => url.searchParams.get("version"))).toEqual([null]);
+      expect(requestedVersions).toEqual([null]);
       expect(result).toEqual({ status: "up-to-date" });
     });
 
@@ -549,7 +555,7 @@ describe("pullSyncedAccounts", () => {
         () => 4,
       );
 
-      expect(requestedUrls.map(url => url.searchParams.get("version"))).toEqual(["4"]);
+      expect(requestedVersions).toEqual(["4"]);
       expect(result).toEqual({ status: "deleted" });
     });
   });
