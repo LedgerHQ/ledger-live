@@ -103,7 +103,13 @@ const BANNED_EXTERNALS_BY_TAG = [
  * A workspace package does not resolve from the pnpm virtual store, so banning
  * the declaration bans the import too — an undeclared import fails to resolve.
  */
-const BANNED_DEPENDENCIES = [];
+const BANNED_DEPENDENCIES = [
+  {
+    name: "@ledgerhq/generators",
+    reason:
+      "Nx resolves it as a local workspace plugin; a declared edge makes the project nx-affected by every skill or lint-tool edit.",
+  },
+];
 
 /**
  * The `@devtools/*` packages each `@devtools/*` package may depend on; "*" allows them all.
