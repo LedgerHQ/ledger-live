@@ -82,12 +82,12 @@ describe("currencyIdFromNetwork", () => {
   });
 
   it("throws UnsupportedNetworkError for a known network wallet-cli does not support", () => {
-    expect(() => currencyIdFromNetwork("base")).toThrow(UnsupportedNetworkError);
-    expect(() => currencyIdFromNetwork("base")).toThrow(/"base" is not supported/);
+    expect(() => currencyIdFromNetwork(net("base"))).toThrow(UnsupportedNetworkError);
+    expect(() => currencyIdFromNetwork(net("base"))).toThrow(/"base" is not supported/);
   });
 
   it("throws UnsupportedNetworkError for a testnet of an unsupported network", () => {
-    expect(() => currencyIdFromNetwork("base_sepolia")).toThrow(UnsupportedNetworkError);
+    expect(() => currencyIdFromNetwork(net("base_sepolia"))).toThrow(UnsupportedNetworkError);
   });
 
   it.each([
@@ -98,7 +98,7 @@ describe("currencyIdFromNetwork", () => {
     "solana_devnet",
     "solana_testnet",
   ])("accepts the %s testnet of a supported network", network => {
-    expect(currencyIdFromNetwork(network)).toBe(network);
+    expect(currencyIdFromNetwork(net(network))).toBe(CryptoCurrencyIdSchema.parse(network));
   });
 });
 

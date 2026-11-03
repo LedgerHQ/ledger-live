@@ -6,7 +6,6 @@ import type { CurrencyProvider, DefiProduct, GrowItem } from "./api.types";
 import {
   currencyIdFromNetwork,
   parseV1,
-  toNetworkId,
   toV0,
   type NetworkId,
 } from "../../shared/accountDescriptor";
@@ -34,8 +33,7 @@ export type EarnYieldSession = {
 
 export type ListEarnYieldRowsArgs = {
   session: EarnYieldSession;
-  /** A normalized `--network` value, checked as a network id only once it is used. */
-  network?: string;
+  network?: NetworkId;
   limit: number;
   all?: boolean;
   accountLabel?: string;
@@ -307,8 +305,7 @@ export async function listEarnYieldRows({
   accountLabel,
 }: ListEarnYieldRowsArgs): Promise<EarnYieldRow[]> {
   if (network) {
-    const networkId = toNetworkId(network);
-    const currencyId = currencyIdFromNetwork(networkId);
+    const currencyId = currencyIdFromNetwork(network);
     const parentAccountIds = parentAccountIdsByNetwork(session, accountLabel);
     const grow = await getGrow({ dashboardSupported: true });
     const growRows = grow
@@ -316,8 +313,8 @@ export async function listEarnYieldRows({
       .map(item => growItemToRow(item, parentAccountIds));
 
     const providers = await getCurrencyProviders(currencyId);
-    const providerRows = providers.filter(p => p.active).map(p => providerToRow(p, networkId));
-    const productRows = await depositProductRows(networkId, limit);
+    const providerRows = providers.filter(p => p.active).map(p => providerToRow(p, network));
+    const productRows = await depositProductRows(network, limit);
 
     return [...growRows, ...providerRows, ...productRows];
   }

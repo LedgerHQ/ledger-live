@@ -15,6 +15,13 @@ export const NetworkIdSchema = z
 
 export type NetworkId = z.infer<typeof NetworkIdSchema>;
 
+/** A network id; throws UnknownNetworkError for an empty or malformed id. */
+export function toNetworkId(id: string): NetworkId {
+  const parsed = NetworkIdSchema.safeParse(id);
+  if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${id}"`);
+  return parsed.data;
+}
+
 const KNOWN_NETWORKS: ReadonlySet<string> = new Set(CRYPTO_CURRENCIES_IDS);
 
 function assertKnownNetwork(id: string): void {

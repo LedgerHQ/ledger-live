@@ -1,8 +1,8 @@
 import {
-  NetworkIdSchema,
   UnknownNetworkError,
   currencyIdFromNetwork as currencyIdFromKnownNetwork,
   networkFromCurrencyId,
+  toNetworkId,
   type NetworkId,
 } from "@domain/entity-account-descriptor";
 import {
@@ -21,15 +21,9 @@ export {
   NetworkIdSchema,
   UnknownNetworkError,
   networkFromCurrencyId,
+  toNetworkId,
 } from "@domain/entity-account-descriptor";
 export type { NetworkId } from "@domain/entity-account-descriptor";
-
-/** A network id; throws UnknownNetworkError for an empty or malformed id. */
-export function toNetworkId(id: string): NetworkId {
-  const parsed = NetworkIdSchema.safeParse(id);
-  if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${id}"`);
-  return parsed.data;
-}
 
 /** The network of a V0 descriptor; throws UnknownNetworkError for an empty or unknown currency id. */
 export function networkOfV0(descriptor: Pick<AccountDescriptorV0, "currencyId">): NetworkId {
@@ -66,7 +60,7 @@ export function normalizeNetworkArg(input: string): string {
 /** The mainnet a testnet network belongs to (`solana_devnet` → `solana`), else the network itself. */
 export function mainnetOf(network: NetworkId): NetworkId {
   const mainnet = getCryptoCurrencyById(currencyIdFromKnownNetwork(network)).isTestnetFor;
-  return mainnet === undefined ? network : NetworkIdSchema.parse(mainnet);
+  return mainnet === undefined ? network : toNetworkId(mainnet);
 }
 
 // ---------------------------------------------------------------------------

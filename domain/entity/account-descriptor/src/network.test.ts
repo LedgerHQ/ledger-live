@@ -1,6 +1,11 @@
 import { CRYPTO_CURRENCIES_IDS, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { UnknownNetworkError } from "./errors";
-import { NetworkIdSchema, currencyIdFromNetwork, networkFromCurrencyId } from "./network";
+import {
+  NetworkIdSchema,
+  currencyIdFromNetwork,
+  networkFromCurrencyId,
+  toNetworkId,
+} from "./network";
 
 describe("currencyIdFromNetwork", () => {
   it.each(CRYPTO_CURRENCIES_IDS)("round-trips %s", id => {
@@ -17,5 +22,15 @@ describe("currencyIdFromNetwork", () => {
     expect(() => networkFromCurrencyId(CryptoCurrencyIdSchema.parse("notachain"))).toThrow(
       UnknownNetworkError,
     );
+  });
+});
+
+describe("toNetworkId", () => {
+  it("reads a network id", () => {
+    expect(toNetworkId("bitcoin_testnet")).toBe(NetworkIdSchema.parse("bitcoin_testnet"));
+  });
+
+  it.each(["", "bit coin", "ethereum:mainnet"])("throws UnknownNetworkError for %p", id => {
+    expect(() => toNetworkId(id)).toThrow(new UnknownNetworkError(`Unknown network "${id}"`));
   });
 });

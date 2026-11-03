@@ -214,7 +214,11 @@ describe("earn yields (no --network): --account override", () => {
     expect(stdout.trimEnd().split("\n")).toHaveLength(1);
     expect(JSON.parse(stdout)).toEqual({
       ok: false,
-      error: { command: "earn yields", message: 'Unknown network "bit coin"' },
+      error: {
+        command: "earn yields",
+        code: "UnknownNetworkError",
+        message: 'Unknown network "bit coin"',
+      },
     });
   });
 });

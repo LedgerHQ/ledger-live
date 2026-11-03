@@ -1,7 +1,6 @@
 import {
-  NetworkIdSchema,
-  UnknownNetworkError,
   currencyIdFromNetwork,
+  toNetworkId,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -20,9 +19,7 @@ export function mockDescriptors(
   count: number,
   existing: readonly AccountDescriptor[],
 ): AccountDescriptor[] {
-  const parsed = NetworkIdSchema.safeParse(network);
-  if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${network}"`);
-  const networkId = parsed.data;
+  const networkId = toNetworkId(network);
   const currency = getCryptoCurrencyById(currencyIdFromNetwork(networkId));
   const family = familyOf(currency);
   const first =

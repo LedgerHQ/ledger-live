@@ -35,6 +35,7 @@ mock:2:address:ethereum:0x0000000000000000000000000000000000000001:m/44h/60h/0h/
 | `accountDescriptorKey` | canonical key: the serialized descriptor, normalized (see `key.ts`) |
 | `computeAccountUUID` | uuid v5 of the canonical key; same on every device, no xpub nor address |
 | `NetworkIdSchema` / `NetworkId` | branded network id; parsed and deserialized descriptors carry it |
+| `toNetworkId` | a `NetworkId` from a string; throws `UnknownNetworkError` for an empty or malformed id |
 | `networkFromCurrencyId` / `currencyIdFromNetwork` | the only bridge between `NetworkId` and `CryptoCurrencyId` |
 
 ## NetworkId vs CryptoCurrencyId
