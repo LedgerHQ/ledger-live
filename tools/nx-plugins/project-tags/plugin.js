@@ -33,6 +33,9 @@ function inferTags(projectRoot, packageName) {
     tags.add("scope:features");
     if (projectRoot.startsWith("features/platform/")) {
       tags.add("type:feature-platform");
+      if (projectRoot.startsWith("features/platform/account-source-")) {
+        tags.add("type:account-data-source");
+      }
     } else if (projectRoot.startsWith("features/flow/")) {
       tags.add("type:feature-flow");
     }

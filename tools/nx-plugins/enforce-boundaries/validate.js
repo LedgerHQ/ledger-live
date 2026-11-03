@@ -411,10 +411,19 @@ function findViolations(graph, exceptions = []) {
         exceptions.some(e => e.sourceRoot === sourceRoot && e.targetRoot === targetRoot);
       if (isExcepted) continue;
 
-      for (const { sourceTag, onlyDependOnLibsWithTags } of DEP_CONSTRAINTS) {
+      for (const {
+        sourceTag,
+        onlyDependOnLibsWithTags,
+        notDependOnLibsWithTags,
+      } of DEP_CONSTRAINTS) {
         if (!sourceTags.includes(sourceTag)) continue;
-        const allowed = targetTags.some(t => onlyDependOnLibsWithTags.includes(t));
-        if (allowed) continue;
+        const missesAllowedTag =
+          onlyDependOnLibsWithTags !== undefined &&
+          !targetTags.some(t => onlyDependOnLibsWithTags.includes(t));
+        const hasForbiddenTag =
+          notDependOnLibsWithTags !== undefined &&
+          targetTags.some(t => notDependOnLibsWithTags.includes(t));
+        if (!missesAllowedTag && !hasForbiddenTag) continue;
 
         const key = `${sourceName}
 ${edge.target}`;
