@@ -12,6 +12,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { MockServerSettingsRow } from "LLM/features/MockServer";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const connectivityHeaderOptions: ReactNavigationHeaderOptions = {
@@ -42,6 +43,7 @@ export default function Connectivity() {
 
   return (
     <SettingsNavigationScrollView>
+      <MockServerSettingsRow />
       <SettingsRow
         title="HTTP Transport"
         desc="Configure how LLM sees a proxy device"

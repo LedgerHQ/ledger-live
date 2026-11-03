@@ -36,6 +36,8 @@
   "dependencies": {
     "@domain/entity-client-identity": "workspace:*",
     "@ledgerhq/context-module": "catalog:",
+    "@ledgerhq/device-mockserver-client": "catalog:",
+    "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/dmk-ledger-wallet": "catalog:",
     "@ledgerhq/hw-transport": "catalog:",
@@ -60,6 +62,7 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "msw": "catalog:",
     "oxfmt": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",

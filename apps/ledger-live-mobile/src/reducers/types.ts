@@ -251,6 +251,12 @@ export type supportedCountervaluesData = {
 /** Debug-only override for the OS update banner. */
 export type DebugOsUpdateBannerMode = "off" | "card" | "compact";
 
+export type MockServerSettings = {
+  enabled: boolean;
+  url: string;
+  token: string;
+};
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
@@ -319,6 +325,7 @@ export type SettingsState = {
   };
   hasSeenAnalyticsOptInPrompt: boolean;
   debugOsUpdateBannerMode: DebugOsUpdateBannerMode;
+  mockServer: MockServerSettings;
   dismissedContentCards: { [id: string]: number };
   starredMarketCoins: string[];
   fromLedgerSyncOnboarding: boolean;

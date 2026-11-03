@@ -2,7 +2,7 @@ import { Platform, DeviceEventEmitter } from "react-native";
 import invariant from "invariant";
 import { Subject } from "rxjs";
 import { store } from "~/state-manager/configureStore";
-import { importSettings, setLastConnectedDevice } from "~/actions/settings";
+import { importSettings, setLastConnectedDevice, setMockServerSettings } from "~/actions/settings";
 import {
   setOverride,
   setAllOverrides,
@@ -41,10 +41,7 @@ import { bleDevicesSelector } from "~/reducers/ble";
 import { addKnownDevice, knownDevicesSelector, removeKnownDevices } from "~/reducers/knownDevices";
 import {
   buildSpeculosLegacyDeviceId,
-  configureMockServerTransport,
-  DEFAULT_MOCK_SERVER_TRANSPORT_URL,
   getDeviceManagementKit,
-  getMockScriptRunnerBaseUrl,
   isSpeculosLegacyDeviceId,
   mockserverIdentifier,
   speculosIdentifier,
@@ -105,24 +102,21 @@ function overrideLedgerSyncEnvironment() {
   );
 }
 
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === "string" && value !== "";
+
 function applyMockServerLaunchArgs() {
   const args = LaunchArguments.value();
+  const url = args["mockServerUrl"];
   const token = args["mockServerToken"];
   const model = args["mockServerModel"];
-  if (typeof token !== "string" || !token || typeof model !== "string" || !model) return;
+  if (!isNonEmptyString(url) || !isNonEmptyString(token) || !isNonEmptyString(model)) return;
 
   const provider = readLaunchForceProvider(args["forceProvider"]);
   if (provider !== undefined) {
     setEnv("FORCE_PROVIDER", provider);
   }
-  const launchUrl = args["mockServerUrl"];
-  const url =
-    typeof launchUrl === "string" && launchUrl ? launchUrl : DEFAULT_MOCK_SERVER_TRANSPORT_URL;
-  configureMockServerTransport({ url, token });
-  const scriptRunnerUrl = getMockScriptRunnerBaseUrl(url, token);
-  if (scriptRunnerUrl) {
-    setEnv("BASE_SOCKET_URL", scriptRunnerUrl);
-  }
+  store.dispatch(setMockServerSettings({ enabled: true, url, token }));
 
   seedMockServerKnownDevice(model as DeviceModelId);
 }

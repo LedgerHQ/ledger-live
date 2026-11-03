@@ -64,6 +64,7 @@ import type {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDebugOsUpdateBannerMode,
+  SettingsSetMockServerSettingsPayload,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
   SettingsAddStarredMarketcoinsPayload,
@@ -169,6 +170,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   hasSeenAnalyticsOptInPrompt: false,
   debugOsUpdateBannerMode: "off",
+  mockServer: { enabled: false, url: "", token: "" },
   dismissedContentCards: {},
   starredMarketCoins: [],
   fromLedgerSyncOnboarding: false,
@@ -593,6 +595,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     debugOsUpdateBannerMode: (action as Action<SettingsSetDebugOsUpdateBannerMode>).payload,
   }),
+  [SettingsActionTypes.SET_MOCK_SERVER_SETTINGS]: (state, action) => ({
+    ...state,
+    mockServer: (action as Action<SettingsSetMockServerSettingsPayload>).payload,
+  }),
   [SettingsActionTypes.SET_DISMISSED_CONTENT_CARD]: (state, action) => ({
     ...state,
     dismissedContentCards: {
@@ -956,6 +962,15 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const debugOsUpdateBannerModeSelector = (state: State) =>
   state.settings.debugOsUpdateBannerMode;
+export const mockServerSettingsSelector = (state: State) => state.settings.mockServer;
+export const mockServerConfigSelector = createSelector(
+  mockServerSettingsSelector,
+  ({ enabled, url, token }) => (enabled && url && token ? { url, token } : null),
+);
+export const isMockServerEnabledSelector = createSelector(
+  mockServerConfigSelector,
+  config => config !== null,
+);
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const isFromLedgerSyncOnboardingSelector = (state: State) =>
   state.settings.fromLedgerSyncOnboarding;
