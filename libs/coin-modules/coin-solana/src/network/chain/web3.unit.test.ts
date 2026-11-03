@@ -1,7 +1,19 @@
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  ComputeBudgetInstruction,
+  ComputeBudgetProgram,
+  PublicKey,
+  SystemProgram,
+  TransactionInstruction,
+} from "@solana/web3.js";
 import { PARSED_PROGRAMS } from "./program/constants";
 import type { ChainAPI } from "../index";
-import { buildCreateAssociatedTokenAccountInstruction, getPriorityFee } from "./web3";
+import {
+  appendMaybePriorityFeeInstructions,
+  buildCreateAssociatedTokenAccountInstruction,
+  buildStakeCreateAccountInstructions,
+  getPriorityFee,
+} from "./web3";
 
 const OWNER = "7V4CBuNyQaAhZVHf3fgsNxpk32bR61XRVZuAdR7isRu9";
 const MINT = "63LfDmNb3MQ8mw9MtZ2To9bEA2M71kZUUGq5tiJxcqj9";
@@ -55,5 +67,65 @@ describe("buildCreateAssociatedTokenAccountInstruction", () => {
     );
 
     expect(instruction.keys.some(key => key.pubkey.equals(expected))).toBe(true);
+  });
+});
+
+const computeBudgetOf = (instructions: TransactionInstruction[]) =>
+  instructions
+    .filter(ix => ix.programId.equals(ComputeBudgetProgram.programId))
+    .map(ix => ComputeBudgetInstruction.decodeInstructionType(ix));
+
+describe("appendMaybePriorityFeeInstructions", () => {
+  const transfer = () =>
+    SystemProgram.transfer({
+      fromPubkey: new PublicKey(OWNER),
+      toPubkey: new PublicKey(ATA),
+      lamports: 1,
+    });
+
+  it.each([
+    [2, ["SetComputeUnitLimit", "SetComputeUnitPrice"], 1],
+    // A stake creation with its delegation, or a token transfer creating the recipient account
+    // with a memo.
+    [3, ["SetComputeUnitPrice"], 0],
+  ])(
+    "keeps %i instructions within the 4 the Nano S app parses",
+    async (length, computeBudget, simulations) => {
+      const api = mockApi([]);
+      jest.mocked(api.getSimulationComputeUnits).mockResolvedValue(1_000);
+
+      const instructions = await appendMaybePriorityFeeInstructions(
+        api,
+        Array.from({ length }, transfer),
+        new PublicKey(OWNER),
+        0.1,
+      );
+
+      expect(instructions).toHaveLength(4);
+      expect(computeBudgetOf(instructions)).toEqual(computeBudget);
+      expect(api.getSimulationComputeUnits).toHaveBeenCalledTimes(simulations);
+    },
+  );
+
+  it("prices a stake creation with its delegation without a limit", async () => {
+    const api = mockApi([]);
+    jest.mocked(api.getSimulationComputeUnits).mockResolvedValue(1_000);
+
+    const instructions = await buildStakeCreateAccountInstructions(
+      api,
+      {
+        kind: "stake.createAccount",
+        fromAccAddress: OWNER,
+        stakeAccAddress: ATA,
+        seed: "stake:0",
+        amount: 1,
+        stakeAccRentExemptAmount: 1,
+        delegate: { voteAccAddress: MINT },
+      },
+      0.1,
+    );
+
+    expect(instructions).toHaveLength(4);
+    expect(computeBudgetOf(instructions)).toEqual(["SetComputeUnitPrice"]);
   });
 });

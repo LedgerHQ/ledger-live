@@ -403,6 +403,8 @@ export async function getPriorityFee(api: ChainAPI, accounts: string[]): Promise
   return Math.ceil(Math.max(median(recentFees.map(item => item.prioritizationFee)), floor));
 }
 
+const NANO_S_MAX_INSTRUCTIONS = 4;
+
 export async function appendMaybePriorityFeeInstructions(
   api: ChainAPI,
   ixs: TransactionInstruction[],
@@ -413,9 +415,15 @@ export async function appendMaybePriorityFeeInstructions(
   const writableAccs = instructions
     .map(ix => ix.keys.filter(acc => acc.isWritable).map(acc => acc.pubkey.toBase58()))
     .flat();
+  // The Nano S app (app-solana's `nanos` branch) asks for blind signing over 4 instructions. When the
+  // price and the limit don't both fit, the price stays and the runtime defaults the limit, which
+  // costs more.
+  const fitsComputeUnitLimit = instructions.length + 2 <= NANO_S_MAX_INSTRUCTIONS;
   const [priorityFeeIx, computeUnitsIx] = await Promise.all([
     buildMaybePriorityFeeInstruction(api, writableAccs),
-    buildComputeUnitInstruction(api, instructions, payer, computeUnitMargin),
+    fitsComputeUnitLimit
+      ? buildComputeUnitInstruction(api, instructions, payer, computeUnitMargin)
+      : null,
   ]);
 
   instructions.unshift(priorityFeeIx);
