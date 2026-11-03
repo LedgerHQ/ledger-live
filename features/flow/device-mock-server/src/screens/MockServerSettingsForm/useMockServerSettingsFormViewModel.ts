@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Alert, Linking } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { copyToClipboard } from "@shared/clipboard";
@@ -76,7 +76,17 @@ export function useMockServerSettingsFormViewModel({
         : null,
     [requestedToken, requestedUrl],
   );
-  const activation = requestedActivation ?? toggleActivation;
+  // A restart replays the launch deeplink: a request for the active server is already handled.
+  const isRequestAlreadyActive =
+    requestedActivation !== null &&
+    config !== null &&
+    requestedActivation.url === config.url &&
+    (requestedActivation.token === undefined || requestedActivation.token === config.token);
+  const activation = (isRequestAlreadyActive ? null : requestedActivation) ?? toggleActivation;
+
+  useEffect(() => {
+    if (isRequestAlreadyActive) onActivationRequestHandled?.();
+  }, [isRequestAlreadyActive, onActivationRequestHandled]);
 
   const draftUrl = normalizeUrl(urlDraft);
   const draftToken = tokenDraft.trim();
@@ -140,10 +150,12 @@ export function useMockServerSettingsFormViewModel({
   }, [onActivationRequestHandled]);
 
   const onConfirmActivation = useCallback(() => {
-    if (!activation) return;
+    if (!activation || pendingAction !== null) return;
+    setUrlDraft(activation.url);
+    if (activation.token) setTokenDraft(activation.token);
     onCloseActivationWarning();
     run("activate", () => activate(activation));
-  }, [activate, activation, onCloseActivationWarning, run]);
+  }, [activate, activation, onCloseActivationWarning, pendingAction, run]);
 
   const onApply = useCallback(() => {
     run("apply", () => activate(draftActivation));

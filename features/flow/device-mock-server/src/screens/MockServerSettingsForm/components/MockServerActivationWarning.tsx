@@ -1,7 +1,7 @@
 import React from "react";
 import {
   BottomSheetHeader,
-  BottomSheetView,
+  BottomSheetScrollView,
   Box,
   Button,
   Spot,
@@ -27,7 +27,7 @@ export function MockServerActivationWarning({
 }: Readonly<MockServerActivationWarningProps>) {
   return (
     <QueuedBottomSheet isRequestingToBeOpened={isOpen} onClose={onClose} enableDynamicSizing>
-      <BottomSheetView>
+      <BottomSheetScrollView>
         <BottomSheetHeader />
         <Box lx={{ alignItems: "center", padding: "s16", paddingBottom: "s24", gap: "s24" }}>
           <Spot appearance="error" icon={WarningFill} size={72} />
@@ -73,7 +73,7 @@ export function MockServerActivationWarning({
             </Button>
           </Box>
         </Box>
-      </BottomSheetView>
+      </BottomSheetScrollView>
     </QueuedBottomSheet>
   );
 }

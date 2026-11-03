@@ -37,10 +37,22 @@ const withOpenPanel = (state: State): State => ({
 
 const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
 
-const renderSettingsScreen = (overrideInitialState: (state: State) => State) =>
+const withMockServerOff = (state: State): State => ({
+  ...state,
+  settings: { ...state.settings, mockServer: { enabled: false, url: "", token: "" } },
+});
+
+const renderSettingsScreen = (
+  overrideInitialState: (state: State) => State,
+  initialParams?: SettingsNavigatorStackParamList[ScreenName.DebugMockServer],
+) =>
   render(
     <Stack.Navigator>
-      <Stack.Screen name={ScreenName.DebugMockServer} component={MockServerSettingsScreen} />
+      <Stack.Screen
+        name={ScreenName.DebugMockServer}
+        component={MockServerSettingsScreen}
+        initialParams={initialParams}
+      />
     </Stack.Navigator>,
     { overrideInitialState },
   );
@@ -237,6 +249,83 @@ describe("MockServer", () => {
         token: "",
       });
       expect(store.getState().knownDevices.knownDevices).toEqual([]);
+    });
+  });
+
+  describe("deeplink activation", () => {
+    it("should join the linked session without creating one once the warning is confirmed", async () => {
+      const { store, user } = renderSettingsScreen(withMockServerOff, {
+        url: MOCK_SERVER_URL,
+        token: "shared-token",
+      });
+
+      expect(await screen.findByText("Mock devices have no security")).toBeVisible();
+      await user.press(screen.getByText("I understand, restart"));
+
+      await waitFor(() => expect(RNRestart.restart).toHaveBeenCalledTimes(1));
+      expect(endpoints.auth).not.toHaveBeenCalled();
+      expect(store.getState().settings.mockServer).toEqual({
+        enabled: true,
+        url: MOCK_SERVER_URL,
+        token: "shared-token",
+      });
+    });
+
+    it("should start a session on the linked server when the link has no token", async () => {
+      const { store, user } = renderSettingsScreen(withMockServerOff, { url: MOCK_SERVER_URL });
+
+      await user.press(await screen.findByText("I understand, restart"));
+
+      await waitFor(() => expect(RNRestart.restart).toHaveBeenCalledTimes(1));
+      expect(endpoints.auth).toHaveBeenCalledTimes(1);
+      expect(store.getState().settings.mockServer).toEqual({
+        enabled: true,
+        url: MOCK_SERVER_URL,
+        token: "token-2",
+      });
+    });
+
+    it("should leave the settings unchanged when the warning is cancelled", async () => {
+      const { store, user } = renderSettingsScreen(withMockServerOff, {
+        url: MOCK_SERVER_URL,
+        token: "shared-token",
+      });
+
+      await user.press(await screen.findByText("Cancel"));
+
+      expect(RNRestart.restart).not.toHaveBeenCalled();
+      expect(store.getState().settings.mockServer).toEqual({ enabled: false, url: "", token: "" });
+    });
+
+    it("should keep the settings and the linked token for a retry when the server rejects it", async () => {
+      endpoints.session.mockImplementation(() => HttpResponse.json({}, { status: 401 }));
+      const { store, user } = renderSettingsScreen(withMockServerOff, {
+        url: MOCK_SERVER_URL,
+        token: "shared-token",
+      });
+
+      await user.press(await screen.findByText("I understand, restart"));
+
+      expect(await screen.findByText("Mock server error")).toBeVisible();
+      expect(RNRestart.restart).not.toHaveBeenCalled();
+      expect(store.getState().settings.mockServer).toEqual({ enabled: false, url: "", token: "" });
+      expect(screen.getByDisplayValue("shared-token")).toBeVisible();
+    });
+
+    it("should treat a link that matches the active session as handled", async () => {
+      const { store, user } = renderSettingsScreen(withMockServerOn, {
+        url: MOCK_SERVER_URL,
+        token: "token-1",
+      });
+
+      await user.press(await screen.findByText("I understand, restart"));
+
+      expect(RNRestart.restart).not.toHaveBeenCalled();
+      expect(store.getState().settings.mockServer).toEqual({
+        enabled: true,
+        url: MOCK_SERVER_URL,
+        token: "token-1",
+      });
     });
   });
 });
