@@ -15,7 +15,7 @@ export function Actionable<I extends Array<unknown>, A>({
   buttonTitle: string;
   inputs: I | null;
   action: (...inputs: I) => Promise<A> | A;
-  valueDisplay?: (value: A) => ReactNode;
+  valueDisplay?: (value: A) => string;
   value?: A | null;
   setValue?: (value: A | null) => void;
   className?: string;
@@ -70,10 +70,13 @@ export function Actionable<I extends Array<unknown>, A>({
       </div>
       {display ? (
         <TextInput
+          multiline
           readOnly
           label="Result"
-          value={typeof display === "string" ? display : ""}
-          className="[&_input]:font-mono"
+          minLines={1}
+          maxLines={10}
+          value={display}
+          className="[&_textarea]:font-mono"
           hideClearButton
         />
       ) : null}
