@@ -133,7 +133,8 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
-    "react": "catalog:"
+    "react": "catalog:",
+    "rimraf": "catalog:"
   },
   "files": [
     "lib",

@@ -76,6 +76,7 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "ts-node": "^10.9.2"
   },
   "scripts": {

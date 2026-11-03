@@ -189,6 +189,7 @@
     "graphql": "^16.10.0",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   }
 }

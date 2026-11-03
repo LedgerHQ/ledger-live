@@ -143,6 +143,7 @@
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
     "protobufjs-cli": "2.4.1",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

@@ -129,6 +129,7 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "timemachine": "^0.3.2",
     "typescript": "catalog:"
   },

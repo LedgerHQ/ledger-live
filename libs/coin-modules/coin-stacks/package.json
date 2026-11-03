@@ -132,6 +132,7 @@
     "msw": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "ripple-keypairs": "^2.0.0",
     "typescript": "catalog:"
   },

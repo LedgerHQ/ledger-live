@@ -63,7 +63,8 @@
     "react-native-ble-plx": "3.5.1",
     "rxjs": "catalog:",
     "typescript": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "rimraf": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:",

@@ -34,7 +34,8 @@
     "@swc/jest": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

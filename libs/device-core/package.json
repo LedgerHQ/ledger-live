@@ -41,7 +41,8 @@
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

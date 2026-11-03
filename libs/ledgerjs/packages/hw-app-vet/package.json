@@ -57,6 +57,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "jest": "catalog:",
+    "rimraf": "catalog:",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.4.0"
   },

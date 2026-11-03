@@ -47,7 +47,8 @@
     "msw": "catalog:",
     "timemachine": "^0.3.2",
     "typescript": "catalog:",
-    "ws": "^8.16.0"
+    "ws": "^8.16.0",
+    "rimraf": "catalog:"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

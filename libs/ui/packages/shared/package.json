@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@rspack/core": "catalog:",
+    "rimraf": "catalog:",
     "tiny-glob": "^0.2.9"
   }
 }

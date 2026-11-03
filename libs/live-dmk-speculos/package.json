@@ -70,7 +70,8 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxjs": "catalog:",
-    "ws": "catalog:"
+    "ws": "catalog:",
+    "rimraf": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0",

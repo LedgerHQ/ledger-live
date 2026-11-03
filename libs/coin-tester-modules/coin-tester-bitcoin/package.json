@@ -84,6 +84,7 @@
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "tsx": "^4.19.3",
     "typescript": "catalog:"
   }

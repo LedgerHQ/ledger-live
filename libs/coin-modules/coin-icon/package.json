@@ -69,7 +69,8 @@
     "@types/node": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   },
   "files": [
     "lib",

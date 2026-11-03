@@ -99,6 +99,7 @@
     "object-hash": "^2.2.0",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "rimraf": "catalog:",
     "typescript": "catalog:"
   },
   "files": [

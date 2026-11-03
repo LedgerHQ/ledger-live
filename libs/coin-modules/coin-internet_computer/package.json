@@ -119,7 +119,8 @@
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",
-    "oxlint": "catalog:"
+    "oxlint": "catalog:",
+    "rimraf": "catalog:"
   },
   "files": [
     "lib",
