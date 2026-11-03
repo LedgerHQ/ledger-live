@@ -147,7 +147,9 @@ function View({
           currency={ledgerCurrency}
         />
 
-        {ledgerCurrency && <MarketQuickActions currency={ledgerCurrency} accounts={accounts} />}
+        {ledgerCurrency && (
+          <MarketQuickActions currency={ledgerCurrency} accounts={accounts} ledgerIds={ledgerIds} />
+        )}
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>

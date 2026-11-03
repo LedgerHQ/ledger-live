@@ -177,7 +177,7 @@ export function useModularDialogFlowState({
       if (hasMultipleNetworks) {
         handleMultipleNetworks(currency, networks);
       } else {
-        handleSingleNetwork(currency);
+        handleSingleNetwork(networks[0] ?? currency);
       }
     },
     [

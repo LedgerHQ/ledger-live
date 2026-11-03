@@ -40,9 +40,13 @@ type Actions =
   | "WALLET_CONNECT"
   | "RECOVER";
 
-export type QuickActionProps = { currency?: CryptoOrTokenCurrency; accounts?: AccountLike[] };
+export type QuickActionProps = {
+  currency?: CryptoOrTokenCurrency;
+  accounts?: AccountLike[];
+  ledgerIds?: string[];
+};
 
-function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
+function useQuickActions({ currency, accounts, ledgerIds }: QuickActionProps = {}) {
   const route = useRoute();
 
   const { isCurrencyAvailable } = useRampCatalog();
@@ -90,7 +94,11 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     sourceScreenName: route.name,
   });
 
-  const { handleOpenSwap } = useOpenSwap({ currency, sourceScreenName: route.name });
+  const { handleOpenSwap } = useOpenSwap({
+    currency,
+    currencyIds: ledgerIds,
+    sourceScreenName: route.name,
+  });
   const { handleOpenBuySell } = useOpenBuySell({
     currency,
     sourceScreenName: route.name,
