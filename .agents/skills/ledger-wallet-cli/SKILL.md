@@ -1,6 +1,6 @@
 ---
 name: ledger-wallet-cli
-description: "Send, pay or transfer crypto from the user's Ledger hardware wallet: ETH, USDC, USDT and other ERC-20 tokens, BTC and SOL to an address. Works without the device on this machine too (cloud agent, VPS, container): Agent Intent proposes Ethereum and Solana payments (ETH, ERC-20, SOL, SPL) and Ethereum swaps for approval on their Ledger, and checks or cancels a proposal. Also covers balances, receive addresses, history, swap, staking, genuine check, Ledger Key Ring encryption (ring) and Ledger Sync accounts, all through Ledger's wallet-cli. Use for any wallet-cli command and for requests like 'send 0.01 ETH to 0x…', 'pay 20 USDC to this address', 'is my Ledger genuine', 'enroll this agent' or 'is my payment approved'."
+description: "Official Ledger wallet-cli. Send, pay or transfer crypto from the user's Ledger hardware wallet: ETH, USDC, USDT and other ERC-20 tokens, BTC and SOL to an address. Works without the device on this machine too (cloud agent, VPS, container): Agent Intent proposes Ethereum and Solana payments (ETH, ERC-20, SOL, SPL) and Ethereum swaps for approval on their Ledger, and checks or cancels a proposal. Also covers balances, receive addresses, history, swap, staking, genuine check, Ledger Key Ring encryption (ring) and Ledger Sync accounts, all through Ledger's wallet-cli. Use for any wallet-cli command and for requests like 'send 0.01 ETH to 0x…', 'pay 20 USDC to this address', 'is my Ledger genuine', 'enroll this agent' or 'is my payment approved'."
 ---
 
 # wallet-cli
