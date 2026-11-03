@@ -32,11 +32,23 @@ Release and hotfix pipelines are the worst place to find this out.
 - To make a new check mandatory everywhere, land the code first, then wire it into the root workflow (which runs at the commit) rather than the `@develop` child. Or wait until the change has reached `main` before you make the child depend on it.
 - Composite actions are local to the repo, but `@develop` pins them the same way, so the same rules apply.
 
+### Clean up guards and deprecations
+
+A presence guard, a `run-many` no-op or a deprecated input is temporary. It is needed only until
+release, hotfix and main have the change. When you add one:
+
+- Create a Jira ticket to remove it after two release cycles. In the ticket, name the guard (file and
+  step) and the check that shows it can go, e.g. `git ls-tree origin/hotfix -- <path>` or
+  `git show origin/main:package.json` has the script.
+- Put the ticket key in the comment at the guard, e.g.
+  `# Guard until hotfix has <path>. Remove in LIVE-1234.`
+
 ## Checklist
 
 - [ ] Every command the changed child runs exists on `release` and `main` today (`git show origin/release:package.json`, `git ls-tree origin/main -- <path>`)
 - [ ] New inputs are optional with defaults, and no inputs or outputs were removed
 - [ ] Any guard you rely on is explained in a short comment at the step
+- [ ] Each guard or deprecated input has a cleanup ticket, and its key is in the comment at the step
 
 ## Test a child change before merge
 
