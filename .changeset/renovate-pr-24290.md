@@ -5,6 +5,6 @@
 "live-mobile": minor
 ---
 
-chore(deps): update dependency oxfmt to v0.75.0
+[LWDM] chore(deps): update dependency oxfmt to v0.75.0
 
 - Updated `oxfmt` to `0.75.0`
