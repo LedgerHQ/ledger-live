@@ -286,7 +286,6 @@ export function useDeviceOnboardingFunnelViewModel(): DeviceOnboardingFunnelMode
             }
           : undefined,
       onUnsupportedUpdate: seededTracking.trackUnsupportedUpdate,
-      onUnsupportedUpdateClosed: seededTracking.trackUnsupportedUpdateClosed,
       onQuit: closeFromHeader,
     },
   };

@@ -129,7 +129,6 @@ export function useChecksScreenViewModel({
   onAcceptUpdate,
   onDeclineUpdate,
   onUnsupportedUpdate,
-  onUnsupportedUpdateClosed,
 }: ChecksScreenProps): ChecksViewProps {
   const { t } = useTranslation();
   const layout = checksLayout(state);
@@ -234,7 +233,6 @@ export function useChecksScreenViewModel({
       onClose: () => {
         suppressOfferCloseFor.current = null;
         setUnsupportedFor(null);
-        onUnsupportedUpdateClosed?.();
       },
     },
     errorDrawer: {

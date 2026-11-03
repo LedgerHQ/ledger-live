@@ -1,10 +1,4 @@
-import {
-  getCurrentTrackingPage,
-  getPreviousTrackingPage,
-  setTrackingSource,
-  track,
-  trackPage,
-} from "@shared/analytics";
+import { getPreviousTrackingPage, track, trackPage } from "@shared/analytics";
 import type { DeviceOnboardingContext } from "@features/platform-device-onboarding";
 import { toChecksError, toChecksScreenState } from "../utils/checksPhase";
 
@@ -138,22 +132,8 @@ export function trackSeededPage(
   );
 }
 
-/** The screen a click happens on, and that screen's own source. */
-export type SeededClickPage = Readonly<{ page: string; source: string }>;
-
-/** Takes the page explicitly: a drawer over the screen moves the shared page refs. */
-export function trackSeededClick(
-  button: string,
-  deviceType: string,
-  { page, source }: SeededClickPage,
-): void {
-  const props = { ...seededProps(deviceType), button, page };
-  send(track("button_clicked", source ? { source, ...props } : props));
-}
-
-/** Puts a screen back as the current page once a drawer over it is dismissed. */
-export function restoreSeededPage(drawerPage: string, page: string): void {
-  if (getCurrentTrackingPage() === drawerPage) setTrackingSource(page);
+export function trackSeededClick(button: string, deviceType: string): void {
+  send(track("button_clicked", withSource({ ...seededProps(deviceType), button })));
 }
 
 export function trackSeededStarted(result: SeededResult): void {

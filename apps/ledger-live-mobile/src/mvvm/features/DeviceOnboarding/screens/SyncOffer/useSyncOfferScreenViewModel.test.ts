@@ -48,9 +48,7 @@ describe("useSyncOfferScreenViewModel", () => {
     act(() => screen.result.current[press]());
 
     expect(screen[action]).toHaveBeenCalledTimes(1);
-    expect(clicks()).toEqual([
-      { source: "Page Before", ...shared, button, page: seededPages.ledgerSync },
-    ]);
+    expect(clicks()).toEqual([{ source: "Page Before", ...shared, button }]);
   });
 
   it.each([
@@ -66,13 +64,8 @@ describe("useSyncOfferScreenViewModel", () => {
     expect(screen.result.current.skipDrawer.isOpen).toBe(false);
     expect(screen[action]).toHaveBeenCalledTimes(1);
     expect(clicks()).toEqual([
-      expect.objectContaining({ button: "Skip", page: seededPages.ledgerSync }),
-      {
-        source: seededPages.ledgerSync,
-        ...shared,
-        button,
-        page: seededPages.skipLedgerSyncDrawer,
-      },
+      { source: "Page Before", ...shared, button: "Skip" },
+      { source: "Page Before", ...shared, button },
     ]);
   });
 

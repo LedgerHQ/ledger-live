@@ -117,24 +117,13 @@ describe("events", () => {
     );
   });
 
-  it("tracks a click with the page it happens on and that page's source", () => {
-    trackSeededClick("Skip", "stax", { page: "Ledger Sync", source: "Pairing" });
+  it("tracks a click with the previous page as source", () => {
+    trackSeededClick("Skip", "stax");
 
     expect(track).toHaveBeenCalledWith("button_clicked", {
       source: "Pairing",
       ...shared,
       button: "Skip",
-      page: "Ledger Sync",
-    });
-  });
-
-  it("leaves the source out when the page has none", () => {
-    trackSeededClick("Skip", "stax", { page: "Ledger Sync", source: "" });
-
-    expect(track).toHaveBeenCalledWith("button_clicked", {
-      ...shared,
-      button: "Skip",
-      page: "Ledger Sync",
     });
   });
 

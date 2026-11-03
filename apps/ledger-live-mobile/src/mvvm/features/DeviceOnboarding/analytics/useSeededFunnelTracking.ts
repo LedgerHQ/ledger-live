@@ -3,10 +3,8 @@ import type {
   DeviceOnboardingContext,
   DeviceOnboardingExitReason,
 } from "@features/platform-device-onboarding";
-import { getPreviousTrackingPage } from "@shared/analytics";
 import { isLegacyFlowExit } from "../utils/exitActions";
 import {
-  restoreSeededPage,
   seededChecksPage,
   seededPages,
   toFirmwareUpdateAvailability,
@@ -15,7 +13,6 @@ import {
   trackSeededClick,
   trackSeededPage,
   trackSeededStarted,
-  type SeededClickPage,
   type SeededResult,
 } from "./seededTracking";
 
@@ -60,7 +57,6 @@ export function useSeededFunnelTracking({
     [seededOnEntry, deviceType, offerSync, firmwareUpdateAvailability, firmwareUpdateDone],
   );
   const started = useRef(false);
-  const clickPage = useRef<SeededClickPage>({ page: "", source: "" });
 
   const trackStarted = useCallback((startResult: SeededResult | null) => {
     if (!startResult || started.current) return;
@@ -79,12 +75,11 @@ export function useSeededFunnelTracking({
       trackSeededPage(seededPages.genuineCheckSuccess, deviceType);
     }
     trackSeededPage(page, deviceType);
-    clickPage.current = { page, source: getPreviousTrackingPage() };
   }, [page, deviceType]);
 
   const trackClick = useCallback(
     (button: string) => {
-      if (seededOnEntry) trackSeededClick(button, deviceType, clickPage.current);
+      if (seededOnEntry) trackSeededClick(button, deviceType);
     },
     [seededOnEntry, deviceType],
   );
@@ -98,10 +93,6 @@ export function useSeededFunnelTracking({
     },
     [seededOnEntry, deviceType],
   );
-
-  const trackUnsupportedUpdateClosed = useCallback(() => {
-    restoreSeededPage(seededPages.osUpdateUnsupported, clickPage.current.page);
-  }, []);
 
   /** Runs right before the exit actions, which track done or aborted. A legacy flow exit has neither. */
   const trackExit = useCallback(
@@ -123,7 +114,6 @@ export function useSeededFunnelTracking({
     page,
     trackClick,
     trackUnsupportedUpdate,
-    trackUnsupportedUpdateClosed,
     trackExit,
     trackAbort,
   };

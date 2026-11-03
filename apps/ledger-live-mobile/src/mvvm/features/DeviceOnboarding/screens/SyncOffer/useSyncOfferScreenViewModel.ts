@@ -1,8 +1,6 @@
-import { useRef, useState } from "react";
-import { getPreviousTrackingPage } from "@shared/analytics";
+import { useState } from "react";
 import { useTranslation } from "~/context/Locale";
 import {
-  restoreSeededPage,
   seededButtons,
   seededPages,
   seededProps,
@@ -51,23 +49,9 @@ export function useSyncOfferScreenViewModel({
 }: SyncOfferScreenProps): SyncOfferViewProps {
   const { t } = useTranslation();
   const [isSkipDrawerOpen, setIsSkipDrawerOpen] = useState(false);
-  // The offer's source, read on the first click: its page is tracked by then, no drawer yet.
-  const offerSource = useRef<string | null>(null);
   const closeSkipDrawer = () => setIsSkipDrawerOpen(false);
   const trackClick = (button: string) => {
-    if (!seededDeviceType) return;
-    offerSource.current ??= getPreviousTrackingPage();
-    trackSeededClick(button, seededDeviceType, {
-      page: seededPages.ledgerSync,
-      source: offerSource.current,
-    });
-  };
-  const trackDrawerClick = (button: string) => {
-    if (!seededDeviceType) return;
-    trackSeededClick(button, seededDeviceType, {
-      page: seededPages.skipLedgerSyncDrawer,
-      source: seededPages.ledgerSync,
-    });
+    if (seededDeviceType) trackSeededClick(button, seededDeviceType);
   };
 
   return {
@@ -96,18 +80,15 @@ export function useSyncOfferScreenViewModel({
     trackingProps: seededDeviceType ? seededProps(seededDeviceType) : null,
     skipDrawer: {
       isOpen: isSkipDrawerOpen,
-      onClose: () => {
-        closeSkipDrawer();
-        restoreSeededPage(seededPages.skipLedgerSyncDrawer, seededPages.ledgerSync);
-      },
+      onClose: closeSkipDrawer,
       onSkip: () => {
-        trackDrawerClick(seededButtons.yesSkip);
+        trackClick(seededButtons.yesSkip);
         if (seededDeviceType) trackSeededPage(seededPages.ledgerSyncRefused, seededDeviceType);
         closeSkipDrawer();
         onSkip();
       },
       onActivate: () => {
-        trackDrawerClick(seededButtons.enableSync);
+        trackClick(seededButtons.enableSync);
         closeSkipDrawer();
         onActivate();
       },
