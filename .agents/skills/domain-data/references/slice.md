@@ -31,9 +31,9 @@ const appReducer = combineReducers({
 
 `@domain/entity-contact` predates the default export, so both apps register
 `contactsSlice.reducer` for it. They also register `accountOperationsSlice.reducer` today, the same
-reducer as the default export
-([desktop](../../../../apps/ledger-live-desktop/src/renderer/reducers/index.ts#L176),
-[mobile](../../../../apps/ledger-live-mobile/src/reducers/index.ts#L124)).
+reducer as the default export (`accountOperations: accountOperationsSlice.reducer` in
+[desktop `appReducer`](../../../../apps/ledger-live-desktop/src/renderer/reducers/index.ts) and
+[mobile `appReducer`](../../../../apps/ledger-live-mobile/src/reducers/index.ts)).
 
 ## Async lifecycle in `extraReducers`
 

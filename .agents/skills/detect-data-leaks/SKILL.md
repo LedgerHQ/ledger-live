@@ -66,28 +66,26 @@ Treat any of these as high-risk when found in added lines:
 
 # Grep helpers (investigation only)
 
-`LAYERS` is a copy of the folders [`structure-flow`](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) names that ship runtime code, plus `devtools/`: keep it in step with that skill when a layer is added or removed. It leaves out `support/`, which holds development-only presets and never sends data. `SRC` adds the apps.
+Run these from the repo root. They scope runtime TypeScript with `git grep` exclusions
+(`:!libs/**`, `:!support/**`; `git grep` already skips `node_modules`). Coin-module checks
+grep `libs/` on their own.
 
+**Analytics call sites outside the apps:**
 ```bash
-LAYERS=(shared domain features devtools)
-SRC=(apps "${LAYERS[@]}")
-```
-
-**Analytics call sites in the layers:**
-```bash
-grep -rnE "\btrack(Page)?\(|<Track(Screen)?\b" "${LAYERS[@]}" --include="*.ts" --include="*.tsx" \
-  | grep -vE "\.test\.|/__tests__/|/node_modules/"
+git grep -nE 'track(Page)?\(|<Track(Screen)?' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**' \
+  | grep -vE '\.test\.|/__tests__/' | grep -v '^apps/'
 ```
 
 **`location.pathname` flowing into `track()`** — pathname often assigned before the call:
 ```bash
-find "${SRC[@]}" -path "*/node_modules" -prune -o \( -name "*.ts" -o -name "*.tsx" \) -print | grep -vE "\.test\.|/__tests__/|/tests/" | \
-  xargs perl -0777 -ne 'BEGIN { exit unless @ARGV } print "$ARGV\n" if /track(?:Page)?\([\s\S]{0,500}?location\.pathname/'
+git grep -l -E 'track(Page)?\(' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**' \
+  | grep -vE '\.test\.|/__tests__/|/tests/' \
+  | xargs perl -0777 -ne 'BEGIN { exit unless @ARGV } print "$ARGV\n" if /track(?:Page)?\([\s\S]{0,500}?location\.pathname/'
 ```
 
 **`window.location.hash` in analytics:**
 ```bash
-grep -rn "window\.location\.hash" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx"
+git grep -n 'window\.location\.hash' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**'
 ```
 
 **Address interpolated into `new Error(...)` in coin modules:**
@@ -98,20 +96,20 @@ find libs \( -name "*.ts" -o -name "*.tsx" \) | grep -vE "live-e2e-shared|coin-t
 
 **Signed tx payload on broadcast failure:**
 ```bash
-grep -rn -E "broadcast_failure|broadcastLogger" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" | grep -v "\.test\."
+git grep -nE 'broadcast_failure|broadcastLogger' -- '*.ts' ':!libs/**' ':!support/**' | grep -v '\.test\.'
 ```
 
 **Full transaction object spread into analytics:**
 ```bash
-grep -rn -E "value:[[:space:]]*(params|transaction)\b" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx" \
-  | grep -v "\.test\." \
-  | grep -vE "value:[[:space:]]*(params|transaction)\."
+git grep -nE 'value:[[:space:]]*(params|transaction)\b' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**' \
+  | grep -v '\.test\.' \
+  | grep -vE 'value:[[:space:]]*(params|transaction)\.'
 ```
 
 **Signed payload fields in `track()`:**
 ```bash
-grep -rn -E "binaryPayload|payinAddress|fromAccountAddress|toAccountAddress" libs "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx" \
-  | grep -vE "\.test\.|/__tests__/|/tests/"
+git grep -nE 'binaryPayload|payinAddress|fromAccountAddress|toAccountAddress' -- '*.ts' '*.tsx' ':!support/**' \
+  | grep -vE '\.test\.|/__tests__/|/tests/'
 ```
 
 **Props filter registration (the shared pipeline applies it to both `track()` and `trackPage()`):**

@@ -86,8 +86,9 @@ mapping table and the list of what stays in each platform file are in
   [ADR's authoring steps](../../../docs/adr/universal-components.md#authoring-a-universal-component)
   show a `ContactsSearchHandle`.
 
-Lumen imports, gesture and event props, event objects, styles and refs stay in the platform file
-and never appear in the contract.
+What stays in each platform file is listed in
+[ldls-web](../ldls-web/SKILL.md#what-stays-in-the-web-file) and
+[ldls-native](../ldls-native/SKILL.md#what-stays-in-the-native-file).
 
 ## R1 to R5, linted
 
