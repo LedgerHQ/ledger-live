@@ -225,8 +225,8 @@ catalogs:
       specifier: 12.1.1
       version: 12.1.1
     '@ledgerhq/coin-tezos':
-      specifier: 14.0.0
-      version: 14.0.0
+      specifier: 14.1.0
+      version: 14.1.0
     '@ledgerhq/coin-xrp':
       specifier: 13.0.0
       version: 13.0.0
@@ -16728,7 +16728,7 @@ importers:
         version: link:../coin-modules/coin-sui
       '@ledgerhq/coin-tezos':
         specifier: 'catalog:'
-        version: 14.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)
+        version: 14.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)
       '@ledgerhq/coin-ton':
         specifier: workspace:^
         version: link:../coin-modules/coin-ton
@@ -25021,8 +25021,8 @@ packages:
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
-  '@ledgerhq/coin-tezos@14.0.0':
-    resolution: {integrity: sha512-1+sJF5Hmsh9vS/ZBzXkVjCNZwqt3XDzbKF5HvhcVNXHIQxpNku0yJVLkjH3Wx+YLJFVwfjFobz0QLiEU1orrAQ==}
+  '@ledgerhq/coin-tezos@14.1.0':
+    resolution: {integrity: sha512-hhXaIT91bBPAko0N3YuhVwKpgyiMvoQcC0KvRSxBTEQHQM2IKsVDDRHMJSAjEGrEUqeJJf2kT/ljy/f8fqoIkw==}
     peerDependencies:
       '@ledgerhq/live-network': ^3.1.0
 
@@ -43870,7 +43870,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  '@ledgerhq/coin-tezos@14.0.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)':
+  '@ledgerhq/coin-tezos@14.1.0(@ledgerhq/live-network@3.2.0(axios@1.20.0(debug@4.4.3)))(encoding@0.1.13)':
     dependencies:
       '@ledgerhq/coin-module-framework': 11.0.1
       '@ledgerhq/live-network': 3.2.0(axios@1.20.0(debug@4.4.3))
