@@ -88,12 +88,17 @@ describe("MockServerSettingsForm", () => {
     expect(await screen.findByText("Session expired")).toBeTruthy();
   });
 
-  it("should start a session and apply it when turned on", async () => {
-    confirmRestart();
+  it("should start a session and apply it when turned on after the warning", async () => {
     const { onApply } = renderForm({ settings: disabledSettings });
 
     fireEvent(screen.getByTestId("mock-server-toggle"), "checkedChange", true);
 
+    expect(screen.getByTestId("queued-bottom-sheet")).toBeExpanded();
+    expect(screen.getByText(SERVER_URL)).toBeTruthy();
+    expect(screen.getByText("None, a new session starts")).toBeTruthy();
+    fireEvent.press(screen.getByText("I understand, restart"));
+
+    expect(screen.getByTestId("queued-bottom-sheet")).toBeCollapsed();
     await waitFor(() =>
       expect(onApply).toHaveBeenCalledWith({
         settings: { enabled: true, url: SERVER_URL, token: "token-2" },
@@ -181,5 +186,50 @@ describe("MockServerSettingsForm", () => {
     );
 
     expect(store.getState().mockServerOverlay.isFloatingButtonHidden).toBe(true);
+  });
+
+  it("should keep the mock server off when the warning is cancelled", () => {
+    const { onApply } = renderForm({ settings: disabledSettings });
+
+    fireEvent(screen.getByTestId("mock-server-toggle"), "checkedChange", true);
+    fireEvent.press(screen.getByText("Cancel"));
+
+    expect(screen.getByTestId("queued-bottom-sheet")).toBeCollapsed();
+    expect(onApply).not.toHaveBeenCalled();
+  });
+
+  it("should join the requested session once its warning is confirmed", async () => {
+    const onActivationRequestHandled = jest.fn();
+    const { onApply } = renderForm({
+      settings: disabledSettings,
+      activationRequest: { url: `${SERVER_URL}/`, token: " shared-token " },
+      onActivationRequestHandled,
+    });
+
+    expect(screen.getByTestId("queued-bottom-sheet")).toBeExpanded();
+    expect(screen.getByText("shared-token")).toBeTruthy();
+    fireEvent.press(screen.getByText("I understand, restart"));
+
+    await waitFor(() =>
+      expect(onApply).toHaveBeenCalledWith({
+        settings: { enabled: true, url: SERVER_URL, token: "shared-token" },
+        sessionDeviceIds: new Set(["device-1"]),
+      }),
+    );
+    expect(onActivationRequestHandled).toHaveBeenCalled();
+    expect(endpoints.auth).not.toHaveBeenCalled();
+    expect(screen.getByDisplayValue("shared-token")).toBeTruthy();
+  });
+
+  it("should ignore a request for the server and session already on", () => {
+    const onActivationRequestHandled = jest.fn();
+    const { onApply } = renderForm({
+      activationRequest: { url: SERVER_URL, token: "token-1" },
+      onActivationRequestHandled,
+    });
+
+    expect(screen.getByTestId("queued-bottom-sheet")).toBeCollapsed();
+    expect(onActivationRequestHandled).toHaveBeenCalled();
+    expect(onApply).not.toHaveBeenCalled();
   });
 });
