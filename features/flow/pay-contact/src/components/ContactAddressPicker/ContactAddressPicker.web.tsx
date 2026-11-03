@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
-import type { ContactAddressPickerProps } from "../../types";
-import { ContactAddressPickerAddAddress } from "./components/ContactAddressPickerAddAddress/ContactAddressPickerAddAddress.web";
-import { ContactAddressPickerNetworkSection } from "./components/ContactAddressPickerNetworkSection/ContactAddressPickerNetworkSection.web";
+import type { ContactAddressPickerProps } from "./ContactAddressPicker.types";
+import { ContactAddressPickerAddAddress } from "./components/ContactAddressPickerAddAddress/ContactAddressPickerAddAddress";
+import { ContactAddressPickerNetworkSection } from "./components/ContactAddressPickerNetworkSection/ContactAddressPickerNetworkSection";
 
 export function ContactAddressPicker({
   isOpen,

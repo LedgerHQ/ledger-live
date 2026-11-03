@@ -77,10 +77,6 @@ const COMPONENT_EXCEPTIONS = {
     ContactsButton: componentWaiver("R2", "R4"),
     ContactsView: componentWaiver("R2", "R3"),
   },
-  "features/flow/pay-contact": {
-    Contacts: componentWaiver("R2", "R3"),
-    PaySuccess: componentWaiver("R2", "R4"),
-  },
 };
 
 // Files allowed to keep their violations, keyed by posix path from the repo root. These are the

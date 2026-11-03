@@ -2,9 +2,9 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { Box, BottomSheetHeader, BottomSheetView } from "@ledgerhq/lumen-ui-rnative";
 import { QueuedBottomSheet, useBottomSheetBottomInset } from "@shared/ui-queued-bottom-sheet";
-import type { ContactAddressPickerProps } from "../../types";
-import { ContactAddressPickerAddAddress } from "./components/ContactAddressPickerAddAddress/ContactAddressPickerAddAddress.native";
-import { ContactAddressPickerNetworkSection } from "./components/ContactAddressPickerNetworkSection/ContactAddressPickerNetworkSection.native";
+import type { ContactAddressPickerProps } from "./ContactAddressPicker.types";
+import { ContactAddressPickerAddAddress } from "./components/ContactAddressPickerAddAddress/ContactAddressPickerAddAddress";
+import { ContactAddressPickerNetworkSection } from "./components/ContactAddressPickerNetworkSection/ContactAddressPickerNetworkSection";
 
 export function ContactAddressPicker({
   isOpen,

@@ -3,9 +3,9 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { DEFAULT_ME_CONTACT_NAME } from "@domain/entity-contact";
 import { mockContact } from "@domain/entity-contact/schema.mock";
-import { ContactsView } from "../ContactsView.web";
+import { ContactsView } from "../ContactsView";
 import { makeContactsViewProps, renderWithContacts } from "./shared";
-import type { ContactsViewProps } from "../../../types";
+import type { ContactsViewProps } from "../ContactsView";
 
 function renderView(props: Partial<ContactsViewProps> = {}) {
   return renderWithContacts([], <ContactsView {...makeContactsViewProps(props)} />);

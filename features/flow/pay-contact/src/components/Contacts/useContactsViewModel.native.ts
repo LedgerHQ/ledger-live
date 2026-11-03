@@ -5,7 +5,8 @@ import {
   summarizeOutgoingOperationsByContact,
   useContacts,
 } from "@features/platform-contacts";
-import type { ContactsNativeProps, ContactsViewNativeProps } from "../../types";
+import type { ContactsNativeProps } from "./Contacts";
+import type { ContactsViewNativeProps } from "./ContactsView";
 
 const MAX_CONTACTS_DISPLAYED = 8;
 

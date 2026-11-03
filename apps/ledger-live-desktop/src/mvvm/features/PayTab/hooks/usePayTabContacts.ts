@@ -15,8 +15,8 @@ import type { ContactsLedgerSyncIntroductionDialogProps } from "@features/flow-c
 import {
   useContactAddressPickerViewModel,
   type ContactAddressPickerProps,
-  type ContactsProps,
 } from "@features/flow-pay-contact";
+import type { ContactsProps } from "@features/flow-pay-contact/web";
 import { trackButtonClicked } from "@features/platform-pay-analytics";
 import { useDispatch } from "LLD/hooks/redux";
 import { useActivationDrawer } from "LLD/features/LedgerSyncEntryPoints/hooks/useActivationDrawer";
