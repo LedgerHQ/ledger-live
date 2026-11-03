@@ -134,7 +134,7 @@ describe("AccountDetail assets", () => {
     await user.press(await screen.findByTestId("assetItem-Ethereum"));
 
     expect(await screen.findByTestId("asset-detail-target")).toHaveTextContent(
-      `${ScreenName.AssetDetail}|ethereum|account_detail`,
+      `${ScreenName.AssetDetail}|ethereum|Account`,
     );
   });
 
@@ -144,7 +144,7 @@ describe("AccountDetail assets", () => {
     await user.press(await screen.findByTestId("assetItem-USD Coin"));
 
     expect(await screen.findByTestId("asset-detail-target")).toHaveTextContent(
-      `${ScreenName.AssetDetail}|${usdcToken.id}|account_detail`,
+      `${ScreenName.AssetDetail}|${usdcToken.id}|Account`,
     );
   });
 

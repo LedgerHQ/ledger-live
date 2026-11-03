@@ -4,6 +4,7 @@ import { useNavigation, useRoute, type RouteProp } from "@react-navigation/nativ
 import type { Account } from "@ledgerhq/types-live";
 import { MAX_ACCOUNT_NAME_LENGTH, validateNameEdition } from "@domain/entity-account-name";
 import { useAccountScreen } from "LLM/hooks/useAccountScreen";
+import { useAccountSettingsTracking } from "../../hooks/useAccountSettingsTracking";
 import { useDispatch } from "~/context/hooks";
 import { updateAccount } from "~/actions/accounts";
 import { setAccountName, useMaybeAccountName } from "~/reducers/wallet";
@@ -32,6 +33,7 @@ export function useEditNameViewModel(): EditNameViewModel {
   const mainAccount = account?.type === "Account" ? account : undefined;
   const currentName = useMaybeAccountName(mainAccount) ?? "";
   const [name, setName] = useState(currentName);
+  const { onSettingsEvent } = useAccountSettingsTracking(mainAccount);
 
   const isSubmitDisabled = useMemo(() => {
     const trimmed = name.trim();
@@ -42,10 +44,11 @@ export function useEditNameViewModel(): EditNameViewModel {
 
   const onSubmit = useCallback(() => {
     if (!mainAccount || isSubmitDisabled) return;
+    onSettingsEvent("validateChangeName");
     dispatch(updateAccount(mainAccount));
     dispatch(setAccountName(mainAccount.id, validateNameEdition(mainAccount, name)));
     navigation.goBack();
-  }, [mainAccount, isSubmitDisabled, dispatch, name, navigation]);
+  }, [mainAccount, isSubmitDisabled, dispatch, name, navigation, onSettingsEvent]);
 
   return {
     account: mainAccount,

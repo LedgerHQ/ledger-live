@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
 import { track } from "@shared/analytics";
+import type { Account } from "@ledgerhq/types-live";
+import { ACCOUNT_DETAIL_EVENTS, accountPullToRefreshProps } from "@features/flow-account-detail";
+import { getAccountTrackingFacts } from "../../utils/accountTracking";
 import { useNetworkState } from "@shared/network-status";
 import { useCountervaluesPolling } from "@features/platform-market-countervalues";
 import { useAccountSyncState, useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
@@ -12,12 +14,12 @@ export type AccountRefresh = Readonly<{
   lastOfflineAttemptTimestamp: number;
 }>;
 
-export function useAccountRefresh(accountId: string | undefined): AccountRefresh {
+export function useAccountRefresh(account: Account | undefined): AccountRefresh {
+  const accountId = account?.id;
   const setSyncBehavior = useBridgeSync();
   const { poll } = useCountervaluesPolling();
   const { error } = useAccountSyncState({ accountId });
   const { isConnected, isInternetReachable } = useNetworkState();
-  const route = useRoute();
 
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [lastClickTimestamp, setLastClickTimestamp] = useState(0);
@@ -44,19 +46,20 @@ export function useAccountRefresh(accountId: string | undefined): AccountRefresh
     });
     setIsRefreshing(true);
     setLastClickTimestamp(Date.now());
-    track("button_clicked", {
-      button: "pull to refresh",
-      page: route.name,
-      triggeredAfterSyncError: Boolean(error),
-    });
+    if (account) {
+      track(
+        ACCOUNT_DETAIL_EVENTS.buttonClicked,
+        accountPullToRefreshProps(getAccountTrackingFacts(account), Boolean(error)),
+      );
+    }
   }, [
+    account,
     accountId,
     isRefreshing,
     isConnected,
     isInternetReachable,
     poll,
     setSyncBehavior,
-    route.name,
     error,
   ]);
 

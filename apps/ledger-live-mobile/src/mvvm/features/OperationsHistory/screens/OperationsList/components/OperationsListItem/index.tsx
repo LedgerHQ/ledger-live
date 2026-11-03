@@ -26,6 +26,7 @@ type Props = {
   accountByAddress: Map<string, AccountLike>;
   isPending: boolean;
   lastSeenTs: number | null;
+  trackingProps?: Readonly<Record<string, unknown>>;
 };
 
 function OperationsListItem({
@@ -35,6 +36,7 @@ function OperationsListItem({
   accountByAddress,
   isPending,
   lastSeenTs,
+  trackingProps,
 }: Readonly<Props>) {
   const { t } = useTranslation();
   const {
@@ -56,6 +58,7 @@ function OperationsListItem({
     parentAccount,
     accountByAddress,
     lastSeenTs,
+    trackingProps,
   });
 
   const title = t(`operations.types.${operationType}`);

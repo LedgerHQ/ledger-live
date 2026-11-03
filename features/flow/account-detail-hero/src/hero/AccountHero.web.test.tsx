@@ -103,6 +103,6 @@ describe("AccountHero (Web)", () => {
 
     await user.click(screen.getByRole("button", { name: "Earn" }));
 
-    expect(port.onAction).toHaveBeenCalledWith("earn");
+    expect(port.onAction).toHaveBeenCalledWith("earn", "quick_action");
   });
 });

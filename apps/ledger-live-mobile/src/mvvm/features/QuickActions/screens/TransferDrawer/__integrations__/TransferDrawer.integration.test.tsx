@@ -1,4 +1,4 @@
-import { track } from "@shared/analytics";
+import { track, trackPage } from "@shared/analytics";
 import React from "react";
 import { act, render, renderHook, screen, within, withFlagOverrides } from "@tests/test-renderer";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -61,6 +61,7 @@ jest.mock("LLM/features/Noah/useNoahEntryPoint", () => ({
 }));
 
 const SOURCE_SCREEN = "Portfolio";
+const BALANCE_FEATURES = { balance: true, market_trend: false, apy: false, filter: false };
 
 const overrideWithOpenDrawer =
   (scope: TransferDrawerScope = { type: "wallet" }) =>
@@ -411,6 +412,30 @@ describe("TransferDrawer account scope", () => {
       expect.objectContaining({ id: usdcAccount.id }),
       expect.objectContaining({ id: account.id }),
     );
+  });
+
+  it("tracks the send asset picker like the modular asset drawer", () => {
+    const { result } = renderForAccount(withUsdc(1, 5));
+
+    act(() => findAction(result, "send").onPress());
+
+    expect(trackPage).toHaveBeenCalledWith(
+      {
+        category: "Asset Selection",
+        props: { flow: "send", source: SOURCE_SCREEN, asset_component_features: BALANCE_FEATURES },
+      },
+      { updateRoutes: false },
+    );
+
+    act(() => result.current.assetPicker.onSelect(usdcToken.id));
+
+    expect(track).toHaveBeenCalledWith("asset_clicked", {
+      flow: "send",
+      source: SOURCE_SCREEN,
+      asset_component_features: BALANCE_FEATURES,
+      asset: usdcToken.name,
+      page: "Asset Selection",
+    });
   });
 
   it("enables send when only a token has a spendable balance", () => {
