@@ -14,8 +14,6 @@ import { getBridges } from "../helpers";
 
 type CosmosScenarioTransaction = ScenarioTransaction<GenericTransaction, Account>;
 
-const LOCAL_LCD = "http://127.0.0.1:1317";
-
 // Query the local node for the first bonded validator. The validator's operator
 // address is dynamic per devnet run (the entrypoint's gentx mints fresh keys),
 // so scenarios resolve it at runtime rather than hardcoding it.
@@ -61,9 +59,9 @@ export type CosmosScenarioOptions = CosmosScenarioStaking & {
   minGasPrice: number;
   /**
    * Bring the chain up, funding the dev account / tear it down. `spawn` resolves to the LCD of the node
-   * when it is somewhere else than the local devnets' (coin-sandbox gives it).
+   * (coin-sandbox gives it).
    */
-  spawn: (devAddress: string) => Promise<string | void>;
+  spawn: (devAddress: string) => Promise<string>;
   kill: () => Promise<void>;
   /**
    * Retry budget for the LCD to reflect a broadcast. Babylon's delegate is
@@ -227,15 +225,13 @@ export function makeCosmosScenario(
 
       // Derive the dev account from the (random) seed BEFORE the chain boots, then
       // hand its address to the chain so that it funds exactly that account.
-      // entrypoint.sh reads DEV_ADDRESS from the environment via docker-compose.
       const { bech32_address: address } = await signer.getAddressAndPubKey(
         [44, coinType, 0, 0, 0],
         hrp,
       );
-      process.env.DEV_ADDRESS = address;
 
       // The coin config needs the node's URL, so the chain comes up before the bridges are made
-      const lcd = (await spawn(address)) ?? LOCAL_LCD;
+      const lcd = await spawn(address);
       const coinConfig = makeCoinConfig(lcd);
 
       // generic-adapter reads its config from LiveConfig; harmless for the legacy
