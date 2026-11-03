@@ -72,6 +72,25 @@ describe("resolveTransactionsAlertsAddressesByAccount", () => {
       [secondAccount.id]: [makeAddress("0x02")],
     });
   });
+
+  it("should leave out an account whose addresses cannot be resolved", async () => {
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+    mockedGetAccountBridge.mockResolvedValue({
+      getAddressesToWatch: (account: Account) =>
+        account.freshAddress === "0x01"
+          ? Promise.reject(new Error("corrupt wallet state"))
+          : Promise.resolve([account.freshAddress]),
+    } as unknown as Awaited<ReturnType<typeof getAccountBridge>>);
+    const failingAccount = makeAccount("account-1", "0x01");
+    const workingAccount = makeAccount("account-2", "0x02");
+
+    const addresses = await resolveTransactionsAlertsAddressesByAccount([
+      failingAccount,
+      workingAccount,
+    ]);
+
+    expect(addresses).toEqual({ [workingAccount.id]: [makeAddress("0x02")] });
+  });
 });
 
 describe("mergeTransactionsAlertsAddresses", () => {
@@ -80,6 +99,7 @@ describe("mergeTransactionsAlertsAddresses", () => {
       mergeTransactionsAlertsAddresses(
         { account: [makeAddress("0x01"), makeAddress("0x02")] },
         { account: [makeAddress("0x02"), makeAddress("0x03")] },
+        ["account"],
       ),
     ).toEqual({ account: [makeAddress("0x01"), makeAddress("0x02"), makeAddress("0x03")] });
   });
@@ -90,6 +110,7 @@ describe("mergeTransactionsAlertsAddresses", () => {
     const merged = mergeTransactionsAlertsAddresses(
       { account: [makeAddress("0xa"), ...remembered] },
       { account: [makeAddress("0xa"), makeAddress("0xb")] },
+      ["account"],
     );
 
     expect(merged.account).toEqual([
@@ -104,9 +125,12 @@ describe("mergeTransactionsAlertsAddresses", () => {
     const watched = mergeTransactionsAlertsAddresses(
       { account: remembered },
       { account: [makeAddress("0x1"), makeAddress("0xb")] },
+      ["account"],
     );
 
-    const merged = mergeTransactionsAlertsAddresses(watched, { account: [makeAddress("0xc")] });
+    const merged = mergeTransactionsAlertsAddresses(watched, { account: [makeAddress("0xc")] }, [
+      "account",
+    ]);
 
     expect(merged.account).toHaveLength(101);
     expect(merged.account).toContainEqual(makeAddress("0x1"));
@@ -118,8 +142,22 @@ describe("mergeTransactionsAlertsAddresses", () => {
       mergeTransactionsAlertsAddresses(
         { removed: [makeAddress("0x01")], kept: [makeAddress("0x02")] },
         { kept: [makeAddress("0x02")] },
+        ["kept"],
       ),
     ).toEqual({ kept: [makeAddress("0x02")] });
+  });
+
+  it("should keep the watched addresses of an account that could not be resolved", () => {
+    expect(
+      mergeTransactionsAlertsAddresses(
+        { failed: [makeAddress("0x01")], resolved: [makeAddress("0x02")] },
+        { resolved: [makeAddress("0x03")] },
+        ["failed", "resolved"],
+      ),
+    ).toEqual({
+      failed: [makeAddress("0x01")],
+      resolved: [makeAddress("0x02"), makeAddress("0x03")],
+    });
   });
 });
 

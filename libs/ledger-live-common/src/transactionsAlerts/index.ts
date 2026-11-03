@@ -34,21 +34,30 @@ export const getTransactionsAlertsAddresses = (accounts: Account[]) =>
 
 export type TransactionsAlertsAddressesByAccount = Record<string, TransactionsAlertsAddress[]>;
 
+const resolveAccountAddresses = async (account: Account) => {
+  const bridge = await getAccountBridge(account);
+  const addresses = await bridge.getAddressesToWatch(account);
+  return addresses.map(address => ({ currencyId: account.currency.id, address }));
+};
+
+/**
+ * Accounts whose addresses cannot be resolved are left out of the result, so one failing account
+ * does not block the others.
+ */
 export const resolveTransactionsAlertsAddressesByAccount = async (
   accounts: Account[],
-): Promise<TransactionsAlertsAddressesByAccount> =>
-  Object.fromEntries(
-    await Promise.all(
-      accounts.map(async account => {
-        const bridge = await getAccountBridge(account);
-        const addresses = await bridge.getAddressesToWatch(account);
-        return [
-          account.id,
-          addresses.map(address => ({ currencyId: account.currency.id, address })),
-        ] as const;
-      }),
-    ),
-  );
+): Promise<TransactionsAlertsAddressesByAccount> => {
+  const results = await Promise.allSettled(accounts.map(resolveAccountAddresses));
+  const resolved: TransactionsAlertsAddressesByAccount = {};
+  results.forEach((result, index) => {
+    if (result.status === "fulfilled") {
+      resolved[accounts[index].id] = result.value;
+    } else {
+      console.warn("Transactions alerts: cannot resolve the addresses to watch", result.reason);
+    }
+  });
+  return resolved;
+};
 
 const maxRememberedAddressesPerAccount = 100;
 
@@ -56,25 +65,33 @@ const maxRememberedAddressesPerAccount = 100;
  * Adds the resolved addresses of each account to the ones already watched for it, so an address
  * stays watched after the account stops returning it (e.g. once emptied by a pending send).
  * Only the 100 addresses most recently returned are remembered per account; resolved addresses
- * are always kept. Accounts missing from `resolved` were removed from the wallet: their addresses
- * are dropped.
+ * are always kept. Accounts of `accountIds` missing from `resolved` could not be resolved: they keep
+ * their watched addresses. Accounts missing from `accountIds` were removed from the wallet: their
+ * addresses are dropped.
  */
 export const mergeTransactionsAlertsAddresses = (
   watched: TransactionsAlertsAddressesByAccount,
   resolved: TransactionsAlertsAddressesByAccount,
+  accountIds: readonly string[],
 ): TransactionsAlertsAddressesByAccount =>
   Object.fromEntries(
-    Object.entries(resolved).map(([accountId, addresses]) => {
+    accountIds.flatMap((accountId): [string, TransactionsAlertsAddress[]][] => {
+      const addresses = resolved[accountId];
+      if (!addresses) {
+        return watched[accountId] ? [[accountId, watched[accountId]]] : [];
+      }
       const resolvedKeys = new Set(addresses.map(getAddressKey));
       const remembered = (watched[accountId] ?? []).filter(
         address => !resolvedKeys.has(getAddressKey(address)),
       );
       return [
-        accountId,
-        deduplicateTransactionsAlertsAddresses([
-          ...remembered.slice(-maxRememberedAddressesPerAccount),
-          ...addresses,
-        ]),
+        [
+          accountId,
+          deduplicateTransactionsAlertsAddresses([
+            ...remembered.slice(-maxRememberedAddressesPerAccount),
+            ...addresses,
+          ]),
+        ],
       ];
     }),
   );

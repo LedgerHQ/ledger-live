@@ -69,7 +69,11 @@ const TransactionsAlerts = () => {
       resolved => {
         if (!cancelled) {
           setWatchedAddressesByAccount(watched =>
-            mergeTransactionsAlertsAddresses(watched, resolved),
+            mergeTransactionsAlertsAddresses(
+              watched,
+              resolved,
+              accountsFilteredBySupportedChains.map(({ id }) => id),
+            ),
           );
         }
       },
