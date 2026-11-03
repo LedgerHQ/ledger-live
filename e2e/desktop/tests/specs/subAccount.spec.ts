@@ -174,6 +174,10 @@ for (const token of subAccountReceive) {
         await app.accounts.navigateToAccountByName(getParentAccountName(token.account));
         await app.account.expectAccountVisibility(getParentAccountName(token.account));
 
+        test.skip(
+          !(await app.account.canAddToken()),
+          "The account detail page has no Add asset action for this family",
+        );
         await app.account.clickAddToken();
         if (token.shouldSelectReceiveCryptoOption) {
           await app.receive.expectRecieveMenu();

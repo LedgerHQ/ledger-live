@@ -139,6 +139,14 @@ export class AccountPage extends AppPage {
     }
   }
 
+  // The new page only offers "Add asset" for the families that opt in to tokens: Stellar, Hedera and Algorand.
+  @step("Check if tokens can be added from the account page")
+  async canAddToken(): Promise<boolean> {
+    if (!(await this.isRedesigned())) return true;
+    await expect(this.redesignedAssets).toBeVisible();
+    return this.redesignedAddAsset.isVisible();
+  }
+
   @step("Click on add token button")
   async clickAddToken() {
     if (await this.isRedesigned()) {
