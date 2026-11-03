@@ -39,13 +39,22 @@ export const AssetChangeSchema = z.object({
   currency_value: z.number().nullish(),
 });
 
+export const OperationBlockSchema = z.object({
+  hash: z.string(),
+  height: z.number().int().nonnegative(),
+  time: z.string(),
+});
+
 export const UpdateViewSchema = z.object({
   network: z.string(),
   account_id: z.string(),
   time: z.string(),
-  block: z.unknown().nullish(),
+  /** Null while pending. */
+  block: OperationBlockSchema.nullish(),
   tx: z.object({ hash: z.string() }),
   failed: z.boolean(),
+  senders: z.array(z.string()).optional(),
+  recipients: z.array(z.string()).optional(),
   deltas: z.array(AssetChangeSchema).optional(),
   fee: AssetChangeSchema,
 });
