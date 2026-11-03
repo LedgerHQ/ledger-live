@@ -87,6 +87,16 @@ only legacy code has through injection: [legacy-migration](../legacy-migration/S
 the layers; only `apps/` depends on it, never `shared/`, `domain/` or `features/`. App state reaches a tool as props built in `@devtools/bindings`.
 Imports between devtools packages: [devtools-import-boundary](../devtools-import-boundary/SKILL.md).
 
+## New packages and follow-up skills
+
+Once the decision tree lands on a layer:
+
+- Scaffold the folder with [new-package](../new-package/SKILL.md).
+- Shape `domain/` packages with [domain-data](../domain-data/SKILL.md).
+- Author platform-split React with [universal-components](../universal-components/SKILL.md).
+- Fix or extend tsconfig, jest, lint or format with [support-config](../support-config/SKILL.md).
+- Before pushing, run [validate-changes](../validate-changes/SKILL.md).
+
 ## Review
 
 - The decision tree, asked in order, lands on the package's layer.
