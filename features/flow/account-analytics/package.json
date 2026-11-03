@@ -19,6 +19,9 @@
     "coverage": "jest --coverage",
     "unimported": "pnpm knip --directory ../../.. -c features/flow/account-analytics/knip.web.config.mjs -W features/flow/account-analytics --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-analytics/knip.native.config.mjs -W features/flow/account-analytics --tsConfig tsconfig.native.json"
   },
+  "dependencies": {
+    "@domain/entity-currency-fiat": "workspace:*"
+  },
   "peerDependencies": {
     "react": "catalog:"
   },

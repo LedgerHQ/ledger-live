@@ -4,7 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { CounterValuesState } from "@domain/entity-market-countervalues";
 import { CryptoCurrency, CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
 import { TokenCurrency, TokenCurrencyIdSchema } from "@domain/entity-currency-token";
-import { FiatCurrency } from "@domain/entity-currency-fiat";
+import { FiatCurrency, FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 import { marketCountervaluesApi } from "@domain/api-market-countervalues";
@@ -27,7 +27,7 @@ bitcoinCurrency.units[0].magnitude = 8;
 
 export const mockFiatCurrency: FiatCurrency = {
   type: "FiatCurrency",
-  ticker: "USD",
+  ticker: FiatCurrencyTickerSchema.parse("USD"),
   name: "US Dollar",
   symbol: "$",
   units: [

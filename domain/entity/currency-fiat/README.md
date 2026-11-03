@@ -14,23 +14,28 @@ Zod-first canonical schema and static registry for the `FiatCurrency` domain ent
 
 ## Source of truth
 
-This registry is the **sole** source of truth for fiat-currency data — add or edit a currency here. The
-legacy entry carries no `id`; the domain `id` is the lower-cased ticker (e.g. `USD` → `usd`), and the
-parity test compares on that.
+This registry is the **sole** source of truth for fiat-currency data: add or edit a currency here. A
+fiat currency is identified by its ticker, branded `FiatCurrencyTicker`. The lookups
+(`findFiatCurrencyByTicker`, `getFiatCurrencyByTicker`, `hasFiatCurrencyTicker`, `isSanctionedFiatTicker`)
+take a plain `string`, so persisted settings reach the registry without a cast.
 
 ## Dependencies
 
 | Package | Why |
 |---|---|
-| `@shared/schema-primitives` | `FiatCurrencyIdSchema` branded value object |
 | `@domain/entity-currency-unit` | `UnitSchema` embedded value object |
 | `@reduxjs/toolkit` | `createSlice` for `supportedFiatsSlice` |
 
 ## Public API
 
 ```typescript
-import { FiatCurrencySchema, type FiatCurrency } from "@domain/entity-currency-fiat";
-import { FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS } from "@domain/entity-currency-fiat";
+import {
+  FiatCurrencySchema,
+  FiatCurrencyTickerSchema,
+  type FiatCurrency,
+  type FiatCurrencyTicker,
+} from "@domain/entity-currency-fiat";
+import { FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_TICKERS } from "@domain/entity-currency-fiat";
 import { fiat } from "@domain/entity-currency-fiat";
 import {
   supportedFiatsSlice,
@@ -50,7 +55,6 @@ import { fiat } from "@domain/entity-currency-fiat";
 
 const usd = fiat({
   type: "FiatCurrency",
-  id: "usd",
   name: "US Dollar",
   ticker: "USD",
   symbol: "$",
@@ -63,9 +67,8 @@ const usd = fiat({
 | Field                 | Type            | Required | Description                                      |
 | --------------------- | --------------- | -------- | ------------------------------------------------ |
 | `type`                | `"FiatCurrency"` | yes     | Discriminant literal                             |
-| `id`                  | `FiatCurrencyId`    | yes      | Unique opaque id (e.g. `"usd"`, `"eur"`)         |
 | `name`                | `string`        | yes      | Human-readable name (e.g. `"US Dollar"`)         |
-| `ticker`              | `string`        | yes      | ISO 4217 ticker (e.g. `"USD"`, `"EUR"`)          |
+| `ticker`              | `FiatCurrencyTicker` | yes | ISO 4217 ticker, three uppercase letters (e.g. `"USD"`) |
 | `units`               | `Unit[]`        | yes      | Display units — at least one required            |
 | `symbol`              | `string`        | no       | Currency symbol (e.g. `"$"`, `"€"`, `"£"`)      |
 | `disableCountervalue` | `boolean`       | no       | Disable countervalue display when `true`         |
@@ -74,7 +77,7 @@ const usd = fiat({
 ## Registry
 
 `FIAT_CURRENCIES_REGISTRY` covers 163 fiat currencies. Each currency lives in its own file under
-`src/currencies/` (named by its `id`, the lower-cased ticker) and is exported via
+`src/currencies/` (named by the lower-cased ticker) and is exported via
 `src/currencies/index.ts`.
 
 ## File structure
@@ -82,9 +85,9 @@ const usd = fiat({
 ```
 src/
   define.ts       fiat() helper — parses input through FiatCurrencySchema
-  schema.ts       FiatCurrencySchema + inferred FiatCurrency type
+  schema.ts       FiatCurrencySchema, FiatCurrencyTickerSchema + inferred types
   schema.mock.ts  mockFiatCurrency() factory
-  constants.ts    FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_IDS, FIAT_CURRENCIES_BY_TICKER
+  constants.ts    FIAT_CURRENCIES_REGISTRY, FIAT_CURRENCIES_TICKERS, FIAT_CURRENCIES_BY_TICKER
                   FALLBACK_FIAT_TICKERS
   types.ts        SupportedFiatsState
   utils.ts        getFiatCurrencyByTicker, isSanctionedFiatTicker
@@ -93,7 +96,7 @@ src/
   selector.ts     selectSupportedFiats
   currencies/
     index.ts      barrel export
-    usd.ts  eur.ts  gbp.ts  ...   one file per currency (named by id)
+    usd.ts  eur.ts  gbp.ts  ...   one file per currency (named by ticker)
 ```
 
 ## Testing
@@ -108,5 +111,9 @@ Mock factory:
 ```ts
 import { mockFiatCurrency } from "@domain/entity-currency-fiat/schema.mock";
 
-const eur = mockFiatCurrency({ id: "eur", name: "Euro", ticker: "EUR", symbol: "€" });
+const eur = mockFiatCurrency({
+  name: "Euro",
+  ticker: FiatCurrencyTickerSchema.parse("EUR"),
+  symbol: "€",
+});
 ```
