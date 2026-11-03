@@ -40,6 +40,11 @@ jest.mock("@domain/entity-market-countervalues", () => ({
     isHyperCore(from) ? value / USDC_TO_FIAT : value,
 }));
 
+const mockOpenPerpsWithdrawSummary = jest.fn();
+jest.mock("../../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog", () => ({
+  openPerpsWithdrawSummary: (data: unknown) => mockOpenPerpsWithdrawSummary(data),
+}));
+
 const mockUseWithdrawCurrencies = jest.fn();
 jest.mock("@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawCurrencies", () => ({
   useWithdrawCurrencies: () => mockUseWithdrawCurrencies(),
@@ -309,10 +314,47 @@ describe("PerpsWithdraw integration", () => {
     renderWithdraw();
     openWithdraw({
       ...withdrawData,
-      draft: { destinationAccountId: btcAccount.id, amountText: "250" },
+      draft: { picked: { account: btcAccount }, amountText: "250" },
     });
 
     expect(input()).toHaveValue("250");
     expect(screen.getByText("Withdraw to BTC")).toBeVisible();
+  });
+
+  it("should restore a picked token account the user never held", () => {
+    const emptyUsdc = { ...genTokenAccount(0, ethAccount, usdcToken), balance: new BigNumber(0) };
+    renderWithdraw();
+    openWithdraw({
+      ...withdrawData,
+      draft: { picked: { account: emptyUsdc, parentAccount: ethAccount }, amountText: "250" },
+    });
+
+    expect(screen.getByText("Withdraw to USDC")).toBeVisible();
+    expect(mockUsePerpsWithdrawQuote).toHaveBeenLastCalledWith(
+      expect.objectContaining({ destinationAccount: emptyUsdc }),
+    );
+  });
+
+  it("should hand the quote and the draft to the summary on Review", async () => {
+    const { user } = renderWithdraw();
+    openWithdraw();
+
+    await user.type(input(), "500");
+    await user.click(reviewCta());
+
+    // $500 at $2 per USDC: the summary shows and refreshes the USDC amount that is signed.
+    expect(mockOpenPerpsWithdrawSummary).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sourceAccount: expect.objectContaining({ id: sourceAccount.id }),
+        destinationAccount: expect.objectContaining({ id: ethAccount.id }),
+        quote,
+        quoteParams: expect.objectContaining({ amount: "250", counterValueCurrency: "USD" }),
+        draft: {
+          picked: { account: expect.objectContaining({ id: ethAccount.id }) },
+          amountText: "500",
+        },
+      }),
+    );
+    expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();
   });
 });
