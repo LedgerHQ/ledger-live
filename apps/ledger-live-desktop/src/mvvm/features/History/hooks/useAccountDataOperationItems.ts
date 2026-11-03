@@ -10,7 +10,7 @@ import {
   toAccountDataOperationItems,
 } from "../utils/accountDataOperationItems";
 import { parseLastSeenMs } from "../utils/historyOperationItems";
-import { useAccountDataTargets, type AccountDataTarget } from "./useAccountDataTargets";
+import { useAccountDataTargets, type AccountDataTarget } from "LLD/hooks/useAccountDataTargets";
 import { useHistoryOperationFilter } from "./useHistoryOperationFilter";
 
 export function useAccountDataOperationItems(rootAccounts: Account[]): {
