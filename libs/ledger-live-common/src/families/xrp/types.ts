@@ -5,6 +5,8 @@ export * from "@ledgerhq/coin-xrp/types";
 import type { NetworkInfo, NetworkInfoRaw } from "@ledgerhq/coin-xrp/types";
 import type {
   Operation,
+  TokenAccount,
+  TokenAccountRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -18,10 +20,22 @@ export type XrpOperationExtra = {
 
 export type XrpOperation = Operation<XrpOperationExtra>;
 
-// "changeTrust" opts in to a token: a TrustSet for an IOU, an MPTokenAuthorize for an MPT
-type XrpTransactionMode = "send" | "changeTrust";
+/**
+ * `isLocked` when the issuer froze or locked the token, or has yet to authorize it. IOU only: `limit`
+ * is the trust limit in the token's base units, and `isRippling` when the account's side of the line
+ * lacks No Ripple.
+ */
+export type XrpTokenResources = { isLocked: boolean; limit?: BigNumber; isRippling?: boolean };
+export type XrpTokenResourcesRaw = Omit<XrpTokenResources, "limit"> & { limit?: string };
 
-// An opt-in names its token here, since the account has no token account for it yet
+export type XrpTokenAccount = TokenAccount & { xrpResources?: XrpTokenResources };
+export type XrpTokenAccountRaw = TokenAccountRaw & { xrpResources?: XrpTokenResourcesRaw };
+
+// "changeTrust" opts in to a token, or edits an IOU's limit: a TrustSet for an IOU, an
+// MPTokenAuthorize for an MPT. "optOut" removes a held token.
+type XrpTransactionMode = "send" | "changeTrust" | "optOut";
+
+// An opt-in or an opt-out names its token here, without a token account
 type XrpOptInFields = {
   mode?: XrpTransactionMode;
   assetReference?: string;

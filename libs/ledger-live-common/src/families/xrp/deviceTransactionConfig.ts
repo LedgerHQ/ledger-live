@@ -32,7 +32,8 @@ async function getDeviceTransactionConfig({
 
   // app-xrp shows the trust line's currency and issuer for a TrustSet
   const hasToken = assetReference && assetOwner;
-  if (mode === "changeTrust" && hasToken) {
+  const isTrustSet = mode === "changeTrust" || mode === "optOut";
+  if (isTrustSet && hasToken) {
     fields.push({
       type: "text",
       label: "Currency",

@@ -169,7 +169,9 @@ export async function buildSubAccounts({
             );
 
       tokenAccounts.push({
-        ...familyShapes?.[token.contractAddress],
+        // TODO: confirm the `token.id` key with the generic bridge owners. XRP needs it: one issuer
+        // (`contractAddress`) can issue several tokens
+        ...(familyShapes?.[token.id] ?? familyShapes?.[token.contractAddress]),
         ...buildTokenAccount({
           id: encodeTokenAccountId(accountId, token),
           parentAccountId: accountId,

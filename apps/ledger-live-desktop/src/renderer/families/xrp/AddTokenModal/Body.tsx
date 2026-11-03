@@ -1,4 +1,5 @@
 import invariant from "invariant";
+import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -10,8 +11,9 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import { Track } from "@shared/analytics-react";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useAccountBridge } from "@ledgerhq/live-common/bridge/useAccountBridge";
-import { StepProps, StepId, AddTokenStep } from "./types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { StepProps, StepId, AddTokenStep, TokenAction, ACTION_I18N } from "./types";
+import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { TokenCurrency } from "@domain/entity-currency-token";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
@@ -23,10 +25,16 @@ import StepToken, { StepTokenFooter } from "./steps/StepToken";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
-import { Transaction as XrpTransaction } from "@ledgerhq/live-common/families/xrp/types";
+import {
+  Transaction as XrpTransaction,
+  XrpTokenAccount,
+} from "@ledgerhq/live-common/families/xrp/types";
 
+// With a token account, the modal edits its IOU limit or removes it instead of adding a token
 export type Data = {
   account: Account;
+  tokenAccount?: TokenAccount;
+  action?: Exclude<TokenAction, "add">;
 };
 
 type OwnProps = {
@@ -75,9 +83,13 @@ function Body({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
   const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
+  // Kept here, not in StepToken: a retry remounts the step, which would drop the Max button
+  const [maxLimit, setMaxLimit] = useState<BigNumber | null>(null);
 
   const dispatch = useDispatch();
   const bridge = useAccountBridge<XrpTransaction>(params.account, undefined);
+  const { tokenAccount } = params;
+  const action: TokenAction = tokenAccount && params.action ? params.action : "add";
 
   const {
     transaction,
@@ -92,7 +104,16 @@ function Body({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     invariant(params.account, "xrp: account required");
 
     const baseTransaction = bridge.createTransaction(params.account);
-    const transaction = bridge.updateTransaction(baseTransaction, { mode: "changeTrust" });
+    const token: TokenCurrency | undefined = tokenAccount?.token;
+    const limit = (tokenAccount as XrpTokenAccount | undefined)?.xrpResources?.limit;
+    const transaction = bridge.updateTransaction(baseTransaction, {
+      mode: action === "remove" ? "optOut" : "changeTrust",
+      ...(token && {
+        assetReference: token.tokenIdentifier,
+        assetOwner: token.contractAddress,
+        amount: action === "edit" && limit ? limit : new BigNumber(0),
+      }),
+    });
 
     return { transaction, account: params.account, parentAccount: undefined };
   });
@@ -157,7 +178,11 @@ function Body({ t, stepId, device, onClose, openModal, onChangeStepId, params }:
     setSigned,
     t,
     bridgePending,
-    title: t("xrp.addToken.title"),
+    maxLimit,
+    setMaxLimit,
+    action,
+    tokenAccount,
+    title: t(`${ACTION_I18N[action]}.title`),
     disabledSteps: [],
     hideBreadcrumb: !!error || !!warning,
     onRetry: handleRetry,

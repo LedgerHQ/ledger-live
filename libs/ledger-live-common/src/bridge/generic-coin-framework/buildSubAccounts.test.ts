@@ -423,6 +423,23 @@ describe("buildSubAccounts family shapes", () => {
     expect(subAccounts[0].id).not.toBe("hijacked");
     expect(subAccounts[0].balance).toEqual(new BigNumber(20));
   });
+
+  it("tells apart the tokens of one contract address by their id", async () => {
+    const subAccounts = await buildSubAccounts({
+      accountId: "accountId",
+      allTokenAssetsBalances: balances,
+      syncConfig: { blacklistedTokenIds: [] } as unknown as SyncConfig,
+      operations: [],
+      getTokenFromAsset: async asset =>
+        asset.type === "token"
+          ? ({ id: asset.assetReference, contractAddress: asset.assetOwner } as TokenCurrency)
+          : undefined,
+      familyShapes: { usdt: { state: "frozen" } },
+    });
+
+    expect(subAccounts[0]).not.toHaveProperty("state");
+    expect(subAccounts[1]).toMatchObject({ state: "frozen" });
+  });
 });
 
 describe("mergeSubAccounts", () => {

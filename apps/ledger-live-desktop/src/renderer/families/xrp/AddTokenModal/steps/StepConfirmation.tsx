@@ -11,7 +11,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { StepProps } from "../types";
+import { ACTION_I18N, StepProps } from "../types";
 import { findDevToken } from "./StepToken";
 import invariant from "invariant";
 
@@ -25,11 +25,20 @@ const Container = styled(Box).attrs(() => ({
   justify-content: ${p => (p.$shouldSpace ? "space-between" : "center")};
 `;
 
-function StepConfirmation({ account, optimisticOperation, error, signed, transaction }: StepProps) {
+function StepConfirmation({
+  account,
+  optimisticOperation,
+  error,
+  signed,
+  transaction,
+  action,
+  tokenAccount,
+}: StepProps) {
   invariant(account, "Account should be present");
   invariant(transaction, "Transaction should be present");
 
-  const token = findDevToken(transaction);
+  const token = tokenAccount?.token ?? findDevToken(transaction);
+  const successKey = `${ACTION_I18N[action]}.steps.confirmation.success`;
 
   if (optimisticOperation) {
     return (
@@ -41,18 +50,10 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
           accountId={optimisticOperation.accountId}
         />
         <SuccessDisplay
-          title={
-            <Trans
-              i18nKey={`xrp.addToken.steps.confirmation.success.title`}
-              values={{ token: token?.name }}
-            />
-          }
+          title={<Trans i18nKey={`${successKey}.title`} values={{ token: token?.name }} />}
           description={
             <div>
-              <Trans
-                i18nKey={`xrp.addToken.steps.confirmation.success.text`}
-                values={{ token: token?.name }}
-              >
+              <Trans i18nKey={`${successKey}.text`} values={{ token: token?.name }}>
                 <b></b>
               </Trans>
             </div>

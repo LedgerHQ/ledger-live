@@ -8068,6 +8068,18 @@
       "title": "The network would reject this transaction",
       "description": "XRP Ledger result: {{code}}. Please retry or contact Ledger Support."
     },
+    "XrpTrustLimitZero": {
+      "title": "Enter a trust limit above 0",
+      "description": "To remove the token, use Remove token instead."
+    },
+    "XrpTokenNotHeld": {
+      "title": "You don't hold this token",
+      "description": "There is nothing to remove."
+    },
+    "XrpTokenBalanceNotZero": {
+      "title": "This token still holds a balance",
+      "description": "Send your whole balance of this token before removing it."
+    },
     "XrpReserveIncrease": {
       "title": "{{amount}} will be reserved",
       "description": "Holding this token locks {{amount}} of your balance. You get it back when you remove the token."
@@ -11323,6 +11335,8 @@
         "token": {
           "title": "Token",
           "selectLabel": "Choose a token",
+          "limitLabel": "Trust limit",
+          "limitMax": "Max",
           "info": "Adding a token sends a transaction that pays a network fee and reserves XRP while you hold the token. It appears in your transaction history."
         },
         "connectDevice": {
@@ -11337,6 +11351,61 @@
           },
           "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
         }
+      }
+    },
+    "editLimit": {
+      "title": "Edit trust limit",
+      "steps": {
+        "token": {
+          "info": "Editing the limit sends a transaction that pays a network fee. It appears in your transaction history."
+        },
+        "confirmation": {
+          "success": {
+            "title": "{{token}} trust limit updated",
+            "text": "Your XRP account now accepts <0>{{token}}</0> up to the new limit."
+          }
+        }
+      }
+    },
+    "removeToken": {
+      "title": "Remove token",
+      "steps": {
+        "token": {
+          "info": "Removing a token sends a transaction that pays a network fee and frees the XRP reserved for the token. It appears in your transaction history."
+        },
+        "confirmation": {
+          "success": {
+            "title": "{{token}} token removed",
+            "text": "Your XRP account no longer holds <0>{{token}}</0>, and its reserve is freed."
+          }
+        }
+      }
+    },
+    "tokenAccount": {
+      "editLimit": "Edit limit",
+      "removeToken": "Remove token",
+      "removeDisabled": "Send your whole balance of this token before removing it.",
+      "trustLimit": "Trust limit",
+      "trustLimitTooltip": "The most of this token your account accepts to hold.",
+      "limitZero": {
+        "title": "Your trust limit is 0",
+        "description": "You can't receive more {{token}}. The token stays in your account, and keeps its XRP reserved, until your balance is 0. It's removed, and its reserve freed, once you send your whole balance."
+      },
+      "rippling": {
+        "title": "Rippling is on",
+        "description": "Other people's payments can pass through your account and swap your {{token}} for the same currency from another issuer you trust. Edit the limit to turn rippling off.",
+        "keepOff": "Rippling stays off for this token",
+        "explanation": "With rippling on, other people's payments could pass through your account and swap your {{token}} for the same currency from another issuer.",
+        "turnOff": "Rippling is on for this token. This transaction turns it off, so other people's payments can no longer pass through your account and swap your {{token}} for the same currency from another issuer."
+      },
+      "removed": {
+        "title": "You no longer hold this token",
+        "description": "{{token}} was removed from your XRP account, and the XRP reserved for it is back in your balance. This page only shows your past {{token}} transactions. To receive {{token}} again, add the token back first.",
+        "addAgain": "Add token again"
+      },
+      "locked": {
+        "title": "Locked by its issuer",
+        "description": "The issuer has frozen, locked or not yet authorized this token. You may only be able to send it back to the issuer."
       }
     }
   }
