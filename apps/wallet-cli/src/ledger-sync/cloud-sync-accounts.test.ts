@@ -54,6 +54,17 @@ const UNSUPPORTED_FAMILY_RAW = {
   index: 0,
 };
 
+// A known currency of a supported family (evm) on a network wallet-cli does not support: it
+// converts to V1, but toV0() rejects the network, which must be classified as "skipped".
+const UNSUPPORTED_NETWORK_RAW = {
+  id: `js:2:base:${ETH_ADDR}:`,
+  currencyId: "base",
+  freshAddress: ETH_ADDR,
+  seedIdentifier: ETH_ADDR,
+  derivationMode: "",
+  index: 0,
+};
+
 // Fails accountDescriptorSchema itself (missing required fields) — must be isolated as "invalid"
 // without affecting any other entry in the same import.
 const MALFORMED_RAW = { id: "not-a-real-descriptor" };
@@ -126,6 +137,19 @@ describe("mergeSyncedAccounts", () => {
       expect.objectContaining({ status: "skipped", id: UNSUPPORTED_FAMILY_RAW.id }),
     ]);
     expect(report.skipped[0]?.reason).toContain("polkadot");
+    expect(report.invalid).toEqual([]);
+    expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
+  it("reports a supported family on an unsupported network as skipped, not invalid", () => {
+    const session = Session.from([]);
+    const report = mergeSyncedAccounts(session, [UNSUPPORTED_NETWORK_RAW, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: UNSUPPORTED_NETWORK_RAW.id }),
+    ]);
+    expect(report.skipped[0]?.reason).toContain('Network "base" is not supported by wallet-cli');
     expect(report.invalid).toEqual([]);
     expect(report.imported).toEqual([expect.objectContaining({ status: "imported" })]);
     expect(session.accounts).toHaveLength(1);

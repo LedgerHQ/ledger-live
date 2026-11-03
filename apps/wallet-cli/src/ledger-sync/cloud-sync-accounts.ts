@@ -17,6 +17,9 @@ import {
   toV1,
   UnsupportedFamilyError,
   UnknownNetworkError,
+  UnsupportedNetworkError,
+  currencyIdFromNetwork,
+  networkFromCurrencyId,
   AccountDescriptorV1Schema,
   AccountDescriptorV0Schema,
   type AccountDescriptorV0,
@@ -255,9 +258,14 @@ function convertSyncedAccount(
 
   let v1: AccountDescriptorV1;
   try {
+    // A supported family on an unsupported network ("base" under evm) must be skipped here:
+    // toV0() below would otherwise report it as invalid.
+    currencyIdFromNetwork(networkFromCurrencyId(descriptor.currencyId));
     v1 = toV1(withSeedIdentifierFromId(descriptor));
   } catch (e) {
-    return e instanceof UnsupportedFamilyError || e instanceof UnknownNetworkError
+    return e instanceof UnsupportedFamilyError ||
+      e instanceof UnknownNetworkError ||
+      e instanceof UnsupportedNetworkError
       ? { status: "skipped", id: descriptor.id, reason: e.message }
       : { status: "invalid", id: descriptor.id, reason: errMessage(e) };
   }
