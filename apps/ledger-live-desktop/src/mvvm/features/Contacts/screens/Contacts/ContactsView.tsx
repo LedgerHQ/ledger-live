@@ -4,10 +4,9 @@ import {
   type AddContactAppAdapterResult,
   type ContactsViewProps as ContactsFlowViewProps,
 } from "@features/flow-contacts";
-import {
-  isContactsLedgerSyncActivationRequired,
-  type ContactsFeatureIntroduction,
-  type ContactsLedgerSyncIntroduction,
+import type {
+  ContactsFeatureIntroduction,
+  ContactsLedgerSyncIntroduction,
 } from "@features/flow-contacts-introduction";
 import {
   ContactsFeatureIntroductionDialog,
@@ -63,9 +62,7 @@ export function ContactsView({
       <ContactsFlowView {...pageProps} ledgerSyncStatus={ledgerSyncStatus} />
       <ContactsFeatureIntroductionDialog {...featureIntroduction} />
       <ContactsLedgerSyncIntroductionDialog
-        open={
-          isContactsLedgerSyncActivationRequired(ledgerSyncStatus) && ledgerSyncIntroduction.isOpen
-        }
+        open={ledgerSyncIntroduction.isOpen}
         onActivate={ledgerSyncIntroduction.onActivate}
         onDismiss={ledgerSyncIntroduction.onDismiss}
       />

@@ -128,13 +128,7 @@ function renderContactsScreen(extraInitialState: Record<string, unknown> = {}) {
   );
 }
 
-function ContactsViewModelProbe({
-  contactId,
-  contactType,
-}: Readonly<{
-  contactId: ContactId;
-  contactType: "me" | "saved";
-}>) {
+function ContactsViewModelProbe({ contactId }: Readonly<{ contactId: ContactId }>) {
   const viewModel = useContactsViewModel();
   const stateLabel =
     viewModel.addAddressFlowState.status === "closed"
@@ -638,7 +632,7 @@ describe("Contacts integration", () => {
   it("should ignore review continuation when the address flow is closed", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+        <ContactsViewModelProbe contactId={meContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,
@@ -711,7 +705,7 @@ describe("Contacts integration", () => {
   it("should expose the Add Address session started for Me", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+        <ContactsViewModelProbe contactId={meContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,
@@ -736,7 +730,7 @@ describe("Contacts integration", () => {
     mockedContactsLedgerSyncStatus.mockReturnValue("inactive");
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+        <ContactsViewModelProbe contactId={meContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,
@@ -753,7 +747,7 @@ describe("Contacts integration", () => {
   it("should expose the Add Address session started for a saved contact", async () => {
     const { user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={savedContactId} contactType="saved" />
+        <ContactsViewModelProbe contactId={savedContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,
@@ -775,7 +769,7 @@ describe("Contacts integration", () => {
   it("should enter the address step with the exact selected contact and currency", async () => {
     const { store, user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={savedContactId} contactType="saved" />
+        <ContactsViewModelProbe contactId={savedContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,
@@ -803,7 +797,7 @@ describe("Contacts integration", () => {
   it("should close the Add Address session when MAD is cancelled", async () => {
     const { store, user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+        <ContactsViewModelProbe contactId={meContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,
@@ -827,7 +821,7 @@ describe("Contacts integration", () => {
   it("should keep the Add Address session closed when no network is eligible", async () => {
     const { store, user } = render(
       <MemoryRouter initialEntries={["/contacts"]}>
-        <ContactsViewModelProbe contactId={meContactId} contactType="me" />
+        <ContactsViewModelProbe contactId={meContactId} />
       </MemoryRouter>,
       {
         skipRouter: true,

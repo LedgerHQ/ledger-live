@@ -50,6 +50,22 @@ journeys. Applications mount those dialogs or sheets at the screen layer; they a
 directly when they mount its dialog or drawer content. Contacts feature configuration and eligible
 network resolution are provided by `@features/platform-contacts`.
 
+`@features/flow-contacts-edit-contact` owns the Edit contact journey. Applications import its Web
+dialog or Native drawer directly; the orchestrator composes its state with Contact Detail.
+
+`@features/flow-contacts-edit-address` owns the Edit address journey. Applications import its Web
+dialog or Native drawer directly; the orchestrator composes its state with Contact Detail.
+
+`@features/flow-contacts-delete-contact` owns Contact deletion. Applications import its Web dialog
+or Native drawer directly; the orchestrator coordinates its invocation from Contact Detail.
+
+`@features/flow-contacts-delete-address` owns address deletion. Applications import its Web dialog
+or Native drawer directly; Contact Detail coordinates when the journey opens.
+
+Web and React Native export `ContactsView` and `ContactsButton` through the root entry point. Mobile
+imports `ContactsAddContactHeaderButton` from `@features/flow-contacts-list/native`. Contact
+Detail rendering lives in `@features/flow-contacts-detail`.
+
 `@features/platform-contacts` provides `useContacts`, `useContactsMeContact`, and related hooks.
 This package no longer re-exports them.
 
@@ -61,6 +77,9 @@ This package no longer re-exports them.
   dual-platform flow packages.
 
 ## Structure
+
+Journey screens live in their own flow packages. This package composes those leaves and keeps the
+hooks that connect them.
 
 ```
 src/
@@ -75,5 +94,12 @@ src/
 └── ledgerSync/
 ```
 
-Journey screens live in their own flow packages. This package composes those leaves and keeps the
-hooks that connect them.
+`@features/flow-contacts-add-contact` owns the Add contact journey. Applications import this leaf
+directly when they mount its dialog or drawer content.
+
+`@features/flow-contacts-introduction` owns both introduction journeys. Desktop and Mobile mount
+them at the screen layer alongside `ContactsView`.
+
+`@features/platform-contacts` owns `ContactAvatar`: flows and applications consume it from the
+package root for a Me profile image or a saved-contact avatar with deterministic color and Unicode
+initial. The target platform configuration resolves its implementation.
