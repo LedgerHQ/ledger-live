@@ -3,6 +3,7 @@ import {
   currencyIdFromNetwork,
   AccountDescriptorSchema,
   networkFromCurrencyId,
+  UnknownNetworkError,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
 import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
@@ -83,7 +84,11 @@ export function fromLegacyAccount(account: LegacyAccountIdentity): AccountDescri
 
 function buildDescriptor(account: LegacyAccountIdentity): AccountDescriptor {
   const currency = getCryptoCurrencyById(account.currency.id);
-  const network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(account.currency.id));
+  const currencyId = CryptoCurrencyIdSchema.safeParse(account.currency.id);
+  if (!currencyId.success) {
+    throw new UnknownNetworkError(`Unknown network "${account.currency.id}"`);
+  }
+  const network = networkFromCurrencyId(currencyId.data);
   const derivationMode = asDerivationMode(account.derivationMode);
   const scheme = getDerivationScheme({ derivationMode, currency });
 

@@ -1,7 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { createCommandOutput } from "../../output";
-import { parseNetworkArg } from "../../shared/accountDescriptor";
+import { normalizeNetworkArg } from "../../shared/accountDescriptor";
 import { Session } from "../../session/session-store";
 import { DEFAULT_STAKE_VALIDATORS_LIMIT, listEarnYieldRows } from "../../wallet/earn/yields";
 import { outputOption, resolveOutputFormat } from "../inputs";
@@ -36,7 +36,7 @@ export default defineCommand({
     const networkArg = flags.network;
 
     // Empty when listing all networks.
-    const parsedNetwork = networkArg ? parseNetworkArg(networkArg) : undefined;
+    const parsedNetwork = networkArg ? normalizeNetworkArg(networkArg) : undefined;
     const trackedNetwork = parsedNetwork ?? "";
 
     const out = createCommandOutput(output, {

@@ -2,8 +2,10 @@ import { listCryptoCurrencies } from "@domain/entity-currency-crypto";
 import {
   NetworkIdSchema,
   networkFromCurrencyId,
+  UnknownNetworkError,
   type AccountDescriptor,
 } from "@domain/entity-account-descriptor";
+import * as currencies from "@ledgerhq/ledger-wallet-framework/currencies";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import type { DerivationMode } from "@ledgerhq/types-live";
 import {
@@ -148,6 +150,22 @@ describe("fromLegacyAccount validation", () => {
     expect(() => fromLegacyAccount(account("ethereum", "", 0, { freshAddress: "" }))).toThrow(
       /address/,
     );
+  });
+
+  it("rejects an empty currency id as an unknown currency", () => {
+    expect(() => fromLegacyAccount(account("", "", 0, { freshAddress: ETH_ADDR }))).toThrow(
+      new Error('currency with id "" not found'),
+    );
+  });
+
+  it("rejects a currency id that is not a network with UnknownNetworkError", () => {
+    const resolvesEveryId = jest
+      .spyOn(currencies, "getCryptoCurrencyById")
+      .mockReturnValue(getCryptoCurrencyById("ethereum"));
+    expect(() => fromLegacyAccount(account("", "", 0, { freshAddress: ETH_ADDR }))).toThrow(
+      new UnknownNetworkError('Unknown network ""'),
+    );
+    resolvesEveryId.mockRestore();
   });
 });
 

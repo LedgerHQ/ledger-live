@@ -15,6 +15,8 @@ export type { NetworkId } from "./network";
 export {
   NetworkIdSchema,
   parseNetworkArg,
+  normalizeNetworkArg,
+  toNetworkId,
   networkFromCurrencyId,
   currencyIdFromNetwork,
   mainnetOf,

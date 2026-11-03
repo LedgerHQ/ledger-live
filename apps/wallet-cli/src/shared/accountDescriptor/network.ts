@@ -24,7 +24,8 @@ export {
 } from "@domain/entity-account-descriptor";
 export type { NetworkId } from "@domain/entity-account-descriptor";
 
-function toNetworkId(id: string): NetworkId {
+/** A network id; throws UnknownNetworkError for an empty or malformed id. */
+export function toNetworkId(id: string): NetworkId {
   const parsed = NetworkIdSchema.safeParse(id);
   if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${id}"`);
   return parsed.data;
@@ -51,18 +52,21 @@ export function networkOfV0(descriptor: Pick<AccountDescriptorV0, "currencyId">)
  *   "bitcoin:testnet"   → "bitcoin_testnet"
  */
 export function parseNetworkArg(input: string): NetworkId {
+  return toNetworkId(normalizeNetworkArg(input));
+}
+
+/** {@link parseNetworkArg} without the network id check: only a malformed `<name>:<env>` form throws. */
+export function normalizeNetworkArg(input: string): string {
   const [name, env, ...extra] = input.toLowerCase().split(":");
-  if (env === undefined) return toNetworkId(name);
+  if (env === undefined) return name;
   if (!env || extra.length > 0) throw new UnknownNetworkError(`Unknown network "${input}"`);
-  return toNetworkId(networkFromLegacy(name, env === "mainnet" ? "main" : env));
+  return networkFromLegacy(name, env === "mainnet" ? "main" : env);
 }
 
 /** The mainnet a testnet network belongs to (`solana_devnet` → `solana`), else the network itself. */
 export function mainnetOf(network: NetworkId): NetworkId {
   const mainnet = getCryptoCurrencyById(currencyIdFromKnownNetwork(network)).isTestnetFor;
-  return mainnet === undefined
-    ? network
-    : networkFromCurrencyId(CryptoCurrencyIdSchema.parse(mainnet));
+  return mainnet === undefined ? network : NetworkIdSchema.parse(mainnet);
 }
 
 // ---------------------------------------------------------------------------

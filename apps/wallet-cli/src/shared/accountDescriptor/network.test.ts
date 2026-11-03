@@ -1,6 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import {
   parseNetworkArg,
+  normalizeNetworkArg,
   mainnetOf,
   networkOfV0,
   networkFromCurrencyId,
@@ -9,7 +10,7 @@ import {
   UnknownNetworkError,
   UnsupportedNetworkError,
 } from "./network";
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
+import { CryptoCurrencyIdSchema, listCryptoCurrencies } from "@domain/entity-currency-crypto";
 
 const net = (id: string) => NetworkIdSchema.parse(id);
 
@@ -42,6 +43,19 @@ describe("parseNetworkArg rejects", () => {
       expect(() => parseNetworkArg(input)).toThrow(UnknownNetworkError);
     },
   );
+});
+
+describe("normalizeNetworkArg", () => {
+  it.each([
+    ["Bit Coin", "bit coin"],
+    ["Bitcoin:TESTNET", "bitcoin_testnet"],
+  ])("normalizes %p without checking the network id", (input, network) => {
+    expect(normalizeNetworkArg(input)).toBe(network);
+  });
+
+  it.each(["ethereum:main:sepolia", "ethereum:"])("rejects the malformed form %p", input => {
+    expect(() => normalizeNetworkArg(input)).toThrow(UnknownNetworkError);
+  });
 });
 
 describe("networkOfV0", () => {
@@ -98,5 +112,17 @@ describe("mainnetOf", () => {
 
   it("throws on an unknown network", () => {
     expect(() => mainnetOf(net("nope"))).toThrow(UnknownNetworkError);
+  });
+
+  it("maps alpen_testnet to alpen, which is not a known network", () => {
+    expect(mainnetOf(net("alpen_testnet"))).toBe(net("alpen"));
+  });
+
+  it.each(
+    listCryptoCurrencies(true).flatMap(c =>
+      c.isTestnetFor === undefined ? [] : [[c.id, c.isTestnetFor]],
+    ),
+  )("maps the testnet %s to its isTestnetFor %s", (testnet, mainnet) => {
+    expect(mainnetOf(net(testnet))).toBe(net(mainnet));
   });
 });
