@@ -25,6 +25,7 @@ export class AccountPage extends AppPage {
     this.redesignedAssets.getByRole("button", {
       name: new RegExp(String.raw`\b${escapeRegExp(tokenAccount.currency.ticker)} \d`),
     });
+  private redesignedAddAsset = this.page.getByTestId("account-detail-add-asset");
   private redesignedBalance = this.page.getByTestId("account-detail-hero-balance");
   private redesignedTransactions = this.page.getByTestId("account-detail-transactions-section");
   private redesignedMenuEntry = (entry: string) =>
@@ -88,6 +89,17 @@ export class AccountPage extends AppPage {
     await legacyButton.click();
   }
 
+  // Earn lists the stakable assets of the account, the first one is the account currency.
+  private async pickFirstAssetIfAsked() {
+    const firstRow = this.page.locator("[data-testid^='account-detail-asset-picker-']").first();
+    try {
+      await firstRow.waitFor({ state: "visible", timeout: TIMEOUT.small });
+    } catch {
+      return; // a single asset opens the flow straight away
+    }
+    await firstRow.click();
+  }
+
   // Buy opens the modular asset selector, which lists "Ethereum ETH $2,286.45 +0.15%".
   private async pickAssetInSelector(asset: AccountType) {
     const { name, ticker } = asset.currency;
@@ -129,6 +141,10 @@ export class AccountPage extends AppPage {
 
   @step("Click on add token button")
   async clickAddToken() {
+    if (await this.isRedesigned()) {
+      await this.redesignedAddAsset.click();
+      return;
+    }
     await this.addTokenButton.click();
   }
 
@@ -202,6 +218,12 @@ export class AccountPage extends AppPage {
   async startStakingFlowFromMainStakeButton(options?: SyncWaitOptions) {
     // Wait if a sync is in progress to avoid empty stake modal
     await this.layout.waitForSyncButtonToBeEnabled(options);
+    if (await this.isRedesigned()) {
+      // Earn replaces the Stake button on the new page, and goes to the same stake flow.
+      await this.redesignedHeroAction("earn").click();
+      await this.pickFirstAssetIfAsked();
+      return;
+    }
     await this.stakeButton.click();
   }
 

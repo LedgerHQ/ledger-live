@@ -95,7 +95,7 @@ export async function openNewSendFromAccount(
   if (tx.accountToDebit instanceof TokenAccount) {
     await app.account.navigateToTokenInAccount(tx.accountToDebit);
   }
-  await app.account.clickSend();
+  await app.account.clickSend(tx.accountToDebit.currency.id);
   await app.newSendFlow.waitForDialog();
   if (balanceType) {
     await app.newSendFlow.selectBalanceType(balanceType);
@@ -113,7 +113,7 @@ export async function reachAmountStep(
 
 /** Reaches the Amount step from the account page the app is already on. */
 export async function reachAmountStepFromCurrentAccount(app: Application, tx: Transaction) {
-  await app.account.clickSend();
+  await app.account.clickSend(tx.accountToDebit.currency.id);
   await app.newSendFlow.waitForDialog();
   await passRecipientStep(app, tx);
 }
