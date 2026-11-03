@@ -43,6 +43,21 @@ module.exports = createSharedJestConfig({ rootDir: __dirname }, { esm: true });
 Tests live in `src/` and match `*.test.ts`; a package whose tests live elsewhere overrides `roots`
 and `testMatch`. The preset reports to `github-actions` on CI.
 
+## TypeScript run by Node
+
+The presets are `.mts` files that Node runs as they are, stripping their types at load: there is
+no build step. A consumer's `jest.config.js` keeps calling `require("@support/jest/<preset>")`,
+which loads the ES module through `require(esm)`. Two rules follow:
+
+- **Erasable syntax only.** No `enum`, `namespace`, parameter properties or `import x = require()`:
+  Node rejects what it cannot strip.
+- **`.mts`, not `.ts`.** The package has no `"type": "module"`, so TypeScript would read a `.ts`
+  file as CommonJS and reject `import.meta`. Imports name the `.mts` file.
+
+`pnpm typecheck` checks the presets against `@jest/types`, so a wrong option type
+(`testTimeout: "60s"`) fails it. The mocks and setup files stay `.js`: jest loads them through its
+own transform, not Node.
+
 ## Overrides
 
 Every key a package passes to a preset factory, top level or in `webOverrides` /
@@ -113,7 +128,7 @@ What the package needs on top of the preset goes through the factory's overrides
 `jest` rule of `pnpm lint:tool-config` checks that every jest config of a consumer exports a
 `create*Config` call from `@support/jest/*`. The factories check their arguments themselves. An
 option a factory does not read throws, naming the ones it reads. A key the preset owns
-(`PRESET_KEYS` in [`core/index.js`](./core/index.js)), at the top level or in `webOverrides` /
+(`PRESET_KEYS` in [`core/index.mts`](./core/index.mts)), at the top level or in `webOverrides` /
 `nativeOverrides`, throws with the fix to use instead: `extraEsmDeps` for a dependency jest must
 transform in the node presets, the preset's transform allowlist in the others. The packages that
 still override one are listed, by package path and factory and with their reason, in

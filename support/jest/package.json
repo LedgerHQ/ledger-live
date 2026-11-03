@@ -5,12 +5,12 @@
   "description": "Shared jest presets per layer, with their setup files, mocks and render fixtures",
   "sideEffects": false,
   "exports": {
-    "./devtools": "./devtools/index.js",
+    "./devtools": "./devtools/index.mts",
     "./devtools/native": "./devtools/src/index.native.ts",
     "./devtools/web": "./devtools/src/index.web.ts",
-    "./features-flow": "./features-flow/index.js",
-    "./libs-coin": "./libs-coin/index.js",
-    "./shared": "./shared/index.js",
+    "./features-flow": "./features-flow/index.mts",
+    "./libs-coin": "./libs-coin/index.mts",
+    "./shared": "./shared/index.mts",
     "./shared/mocks/*": "./core/mocks/*.js",
     "./package.json": "./package.json"
   },
@@ -18,7 +18,7 @@
     "format": "oxfmt core devtools features-flow internals libs-coin shared",
     "format:check": "oxfmt core devtools features-flow internals libs-coin shared --check",
     "lint": "oxlint core devtools features-flow internals libs-coin shared",
-    "typecheck": "tsc --noEmit -p core && tsc --noEmit -p devtools/tsconfig.web.json && tsc --noEmit -p devtools/tsconfig.native.json && tsc --noEmit -p features-flow && tsc --noEmit -p internals && tsc --noEmit -p libs-coin && tsc --noEmit -p shared"
+    "typecheck": "tsc --noEmit -p core && tsc --noEmit -p devtools/tsconfig.web.json && tsc --noEmit -p devtools/tsconfig.native.json && tsc --noEmit -p devtools/tsconfig.preset.json && tsc --noEmit -p features-flow && tsc --noEmit -p internals && tsc --noEmit -p libs-coin && tsc --noEmit -p shared"
   },
   "peerDependencies": {
     "@gorhom/bottom-sheet": "catalog:",
@@ -85,6 +85,7 @@
   },
   "devDependencies": {
     "@gorhom/bottom-sheet": "catalog:",
+    "@jest/types": "30.5.0",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",

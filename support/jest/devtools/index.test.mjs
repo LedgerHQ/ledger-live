@@ -15,7 +15,7 @@ const {
   nativeSetupFilesAfterEnv,
   webModuleNameMapper,
   webSetupFilesAfterEnv,
-} = require("./index.js");
+} = require("@support/jest/devtools");
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 

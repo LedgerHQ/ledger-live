@@ -1,8 +1,9 @@
+// @ts-check
 // The packages allowed to override a key their preset owns, keyed by package path from the
 // repository root, then by the factory their config calls. A factory finds the entry from the
 // `rootDir` it gets. This list only shrinks: a listed key the config no longer overrides throws.
 
-const { deepFreeze } = require("../internals/freeze");
+const { deepFreeze } = require("../internals/freeze.mts");
 
 /** @type {Record<string, { reason: string, overrides: Record<string, string[]> }>} */
 const PRESET_OVERRIDES = {

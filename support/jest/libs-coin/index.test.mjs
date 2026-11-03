@@ -12,7 +12,7 @@ const {
   createLibsCoinIntegJestConfig,
   createLibsCoinJestProject,
   libsCoinDefaults,
-} = require(".");
+} = require("@support/jest/libs-coin");
 
 test("createLibsCoinJestConfig: the defaults are the unit lists, an override replaces one", () => {
   const unit = createLibsCoinJestConfig();
@@ -71,7 +71,11 @@ test("createLibsCoinJestProject: the unit config's project options, every overri
 });
 
 test("the node presets' reporter tables cannot change, and each config gets its own copies", () => {
-  const { createSharedJestConfig, jestSonarReporter, sharedReporters } = require("../shared");
+  const {
+    createSharedJestConfig,
+    jestSonarReporter,
+    sharedReporters,
+  } = require("@support/jest/shared");
   const tail = structuredClone(sharedReporters);
   assert.throws(() => sharedReporters.splice(0), TypeError);
   assert.throws(() => sharedReporters.push("extra"), TypeError);

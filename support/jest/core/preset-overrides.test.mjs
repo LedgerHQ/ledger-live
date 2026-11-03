@@ -12,18 +12,24 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const PRESET_OVERRIDES = require("./preset-overrides");
-const { ALLOWLIST_FIX, ESM_FIX, PRESET_KEYS, PROJECT_FACTORIES, presetFactories } = require(".");
+const {
+  ALLOWLIST_FIX,
+  ESM_FIX,
+  PRESET_KEYS,
+  PROJECT_FACTORIES,
+  presetFactories,
+} = require("./index.mts");
 // Loading the presets registers their factories.
 const PRESETS = ["shared", "features-flow", "libs-coin", "devtools"].map(name => [
   name,
-  require(`../${name}`),
+  require(`@support/jest/${name}`),
 ]);
-const { createSharedJestConfig } = require("../shared");
+const { createSharedJestConfig } = require("@support/jest/shared");
 const {
   createLibsCoinJestConfig,
   createLibsCoinIntegJestConfig,
   createLibsCoinJestProject,
-} = require("../libs-coin");
+} = require("@support/jest/libs-coin");
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 /**
@@ -187,7 +193,7 @@ for (const [preset, factory] of [
 ]) {
   test(`a projects error names the project factory and its module when only ${preset} loaded`, () => {
     const script = `
-      try { require(${JSON.stringify(path.join(repository, "support/jest", preset))})
+      try { require(${JSON.stringify(require.resolve(`@support/jest/${preset}`))})
         .${factory}({ projects: [{ displayName: "raw" }] }); }
       catch (error) { process.stdout.write(error.message); }`;
     assert.equal(
