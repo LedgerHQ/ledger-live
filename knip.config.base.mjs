@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { globSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -75,16 +75,10 @@ export function createDualPlatformKnipConfig({
  * @returns {string[]} the per-package `knip.<platform>.config.mjs` files, relative to the repo root
  */
 function platformConfigPaths(platform) {
-  return execFileSync(
-    "git",
-    ["ls-files", "--cached", "--others", "--exclude-standard", `*/knip.${platform}.config.mjs`],
-    {
-      cwd: repoRoot,
-      encoding: "utf8",
-    },
-  )
-    .trim()
-    .split("\n");
+  return globSync(`*/**/knip.${platform}.config.mjs`, {
+    cwd: repoRoot,
+    exclude: ["**/node_modules"],
+  });
 }
 
 /**
