@@ -25,6 +25,7 @@ export class AccountPage extends AppPage {
     this.redesignedAssets.getByRole("button", {
       name: new RegExp(String.raw`\b${escapeRegExp(tokenAccount.currency.ticker)} \d`),
     });
+  private assetPicker = this.page.getByTestId("account-detail-asset-picker");
   private redesignedAddAsset = this.page.getByTestId("account-detail-add-asset");
   private redesignedBalance = this.page.getByTestId("account-detail-hero-balance");
   private redesignedTransactions = this.page.getByTestId("account-detail-transactions-section");
@@ -118,13 +119,12 @@ export class AccountPage extends AppPage {
   private async pickAssetIfAsked(assetCurrencyId?: string) {
     const currencyId = assetCurrencyId ?? this.tokenInFocus;
     if (!currencyId) return;
-    const pickerRow = this.page.getByTestId(`account-detail-asset-picker-${currencyId}`);
     try {
-      await pickerRow.waitFor({ state: "visible", timeout: TIMEOUT.small });
+      await this.assetPicker.waitFor({ state: "visible", timeout: TIMEOUT.small });
     } catch {
       return; // a single asset opens the flow straight away
     }
-    await pickerRow.click();
+    await this.page.getByTestId(`account-detail-asset-picker-${currencyId}`).click();
   }
 
   @step("Click `Receive` button")
