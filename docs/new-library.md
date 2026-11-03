@@ -14,9 +14,17 @@ a new coin module or its coin-tester; a package published to npm (`shared/`, `do
 `libs/ui/` and `libs/ledgerjs/` are frozen. `libs/ledger-live-common` takes no new features, and
 code extracted from it goes to the layers above, not to a new `libs/*` package.
 
+## Creating a package
+
+`pnpm nx g @ledgerhq/generators:package <name> --layer <shared|domain-entity|domain-api|feature-platform|feature-flow> --platform <logic|web|native|dual>`, then `pnpm i`.
+
+The generator names the package from its folder, rejects a platform the layer does not allow, and
+writes a package that passes the checklist below: a placeholder module, its test and an
+`internals.ts` you replace with your code.
+
 ## Package checklist
 
-`pnpm lint:tool-config` checks the items of this list that [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs) names.
+Use it to review an existing package. `pnpm lint:tool-config` checks the items of this list that [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs) names.
 
 **`package.json` fields**
 - [ ] `"private": true`
