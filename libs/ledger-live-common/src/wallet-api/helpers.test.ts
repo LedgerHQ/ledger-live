@@ -1,3 +1,4 @@
+import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { getInitialURL, isBitcoinSignPsbtOptionsAllowed, resolveInitialURL } from "./helpers";
 
 describe("wallet-api helpers", () => {
@@ -653,8 +654,15 @@ describe("wallet-api helpers", () => {
       ["bitcoin", { hwAppId: "Hashi", dependencies: ["Bitcoin"] }, true],
       ["bitcoin", { dependencies: ["Bitcoin"] }, true],
       ["bitcoin", { hwAppId: "Jibberish", dependencies: ["Bitcoin"] }, false],
+      ["bitcoin", { hwAppId: "Bitcoin" }, true],
+      ["bitcoin_testnet", { hwAppId: "Bitcoin Test" }, true],
+      ["litecoin", { hwAppId: "Litecoin" }, true],
+      ["bitcoin", { hwAppId: "Bitcoin Test" }, false],
+      ["bitcoin_testnet", { hwAppId: "Bitcoin" }, false],
     ])("%s with %j is allowed: %s", (currencyId, options, expected) => {
-      expect(isBitcoinSignPsbtOptionsAllowed(currencyId, options)).toBe(expected);
+      expect(isBitcoinSignPsbtOptionsAllowed(getCryptoCurrencyById(currencyId), options)).toBe(
+        expected,
+      );
     });
   });
 });

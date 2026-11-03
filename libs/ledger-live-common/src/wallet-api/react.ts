@@ -827,12 +827,12 @@ export function useWalletAPIServer({
         psbt,
         (account, parentAccount, tx) =>
           sessionPromise(bridgeSession, (resolve, reject) => {
-            const currencyId = getMainAccount(account, parentAccount).currency.id;
-            if (!isBitcoinSignPsbtOptionsAllowed(currencyId, options)) {
+            const { currency } = getMainAccount(account, parentAccount);
+            if (!isBitcoinSignPsbtOptionsAllowed(currency, options)) {
               tracking.signRawTransactionFail(manifest);
               reject(
                 new SignPsbtAppNotAllowed(
-                  `Device app "${options?.hwAppId}" is not allowed for ${currencyId}`,
+                  `Device app "${options?.hwAppId}" is not allowed for ${currency.id}`,
                 ),
               );
               return;

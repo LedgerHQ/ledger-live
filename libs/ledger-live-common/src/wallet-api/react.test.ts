@@ -849,6 +849,7 @@ describe("bitcoin.signPsbt handler", () => {
   it.each([
     ["an allowed app", { hwAppId: "Hashi Test" }],
     ["an allowed app with dependencies", { hwAppId: "Hashi Test", dependencies: ["Bitcoin Test"] }],
+    ["the currency's own app", { hwAppId: "Bitcoin Test" }],
   ])("forwards the request options to the raw signing UI for %s", async (_case, options) => {
     const { account, uiTxSignRaw } = renderWithSignRaw();
 
