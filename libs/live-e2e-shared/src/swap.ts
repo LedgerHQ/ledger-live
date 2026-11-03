@@ -4,21 +4,19 @@ import axios, { AxiosRequestConfig } from "axios";
 import { getFamilyByCurrencyId } from "@ledgerhq/live-common/currencies/helpers";
 import { SwapProvider } from "./enum/Provider";
 import { getAmountFromUSD } from "./currencyUtils";
+import { getSwapAPIEnv } from "@ledgerhq/live-common/exchange/swap/index";
 
 // Target a sensible USD amount that works for most pairs
 const FALLBACK_TARGET_USD = 50;
 
-const SWAP_API_BASES = {
-  stg: "https://global.api.stg.ledger-test.com/swap/v5",
-  prd: "https://global.api.prd.ledger.com/swap/v5",
-};
+const DEFAULT_SWAP_API_BASE = "https://global.api.stg.ledger-test.com/swap/v5";
 
 /** Same source as the app under test: CI exports SWAP_API_BASE; STG when unset. */
-const SWAP_API_BASE = (process.env.SWAP_API_BASE || SWAP_API_BASES.stg).replace(/\/+$/, "");
+const SWAP_API_BASE = (process.env.SWAP_API_BASE || DEFAULT_SWAP_API_BASE).replace(/\/+$/, "");
 
 const SWAP_QUOTE_URL = `${SWAP_API_BASE}/quote`;
 
-const IS_PRD_SWAP_API = SWAP_API_BASE === SWAP_API_BASES.prd;
+const IS_PRD_SWAP_API = getSwapAPIEnv(SWAP_API_BASE) === "prd";
 
 /** Smallest amount sent to the quote API to discover minimum thresholds. */
 const PROBE_AMOUNT = 0.0001;
