@@ -71,6 +71,37 @@ export function createDualPlatformKnipConfig({
 }
 
 /**
+ * @param {"native" | "web"} platform
+ * @returns {string[]} the per-package `knip.<platform>.config.mjs` files, relative to the repo root
+ */
+function platformConfigPaths(platform) {
+  return execFileSync(
+    "git",
+    ["ls-files", "--cached", "--others", "--exclude-standard", `*/knip.${platform}.config.mjs`],
+    {
+      cwd: repoRoot,
+      encoding: "utf8",
+    },
+  )
+    .trim()
+    .split("\n");
+}
+
+/**
+ * Creates the Knip configuration of the root run: every workspace not ignored in `knip.json`,
+ * except the packages with a `knip.<platform>.config.mjs`, which the platform runs check.
+ */
+export function createMonorepoRootKnipConfig() {
+  const platformPackages = [...platformConfigPaths("web"), ...platformConfigPaths("native")].map(
+    path => dirname(path),
+  );
+  return {
+    ...rootConfig,
+    ignoreWorkspaces: [...rootConfig.ignoreWorkspaces, ...new Set(platformPackages)],
+  };
+}
+
+/**
  * Creates the Knip configuration that checks one platform of every dual-platform package in a
  * single run from the repo root. It merges the per-package `knip.<platform>.config.mjs` files,
  * which all come from `createDualPlatformKnipConfig` and differ only in `workspaces`.
@@ -78,14 +109,8 @@ export function createDualPlatformKnipConfig({
  * @param {"native" | "web"} platform
  */
 export async function createMonorepoPlatformKnipConfig(platform) {
-  const configPaths = execFileSync("git", ["ls-files", `*/knip.${platform}.config.mjs`], {
-    cwd: repoRoot,
-    encoding: "utf8",
-  })
-    .trim()
-    .split("\n");
   const configs = await Promise.all(
-    configPaths.map(
+    platformConfigPaths(platform).map(
       async path => (await import(pathToFileURL(resolve(repoRoot, path)).href)).default,
     ),
   );

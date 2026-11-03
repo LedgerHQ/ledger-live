@@ -84,7 +84,7 @@
     "knip-check": "nx run-many -t knip-check",
     "unimported": "nx run-many -t unimported",
     "deadcode": "nx run-many -t unimported -t knip-check",
-    "knip:all": "knip && knip -c knip.web.config.mjs --tsConfig tsconfig.web.json && knip -c knip.native.config.mjs --tsConfig tsconfig.native.json",
+    "knip:all": "knip -c knip.root.config.mjs && knip -c knip.web.config.mjs --tsConfig tsconfig.web.json && knip -c knip.native.config.mjs --tsConfig tsconfig.native.json",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
     "e2e-cli": "pnpm --filter @ledgerhq/live-e2e-shared e2e-cli",

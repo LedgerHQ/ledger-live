@@ -92,19 +92,19 @@ jobs:
         run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys
 
       # The knip steps skip older branches (e.g. release), which call this workflow from develop without the monorepo knip configs.
-      - name: Knip (packages allow-listed in knip.json)
+      - name: Knip (packages without platform configs)
         if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('knip.web.config.mjs') != '' }}
-        run: pnpm exec knip
+        run: pnpm exec knip -c knip.root.config.mjs
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"
 
-      - name: Knip (dual-platform packages, web)
+      - name: Knip (packages with platform configs, web)
         if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('knip.web.config.mjs') != '' }}
         run: pnpm exec knip -c knip.web.config.mjs --tsConfig tsconfig.web.json
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"
 
-      - name: Knip (dual-platform packages, native)
+      - name: Knip (packages with platform configs, native)
         if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('knip.web.config.mjs') != '' }}
         run: pnpm exec knip -c knip.native.config.mjs --tsConfig tsconfig.native.json
         env:
