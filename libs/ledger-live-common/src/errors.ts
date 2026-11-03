@@ -754,6 +754,13 @@ export class AccountAwaitingSendPendingOperations extends Error {
   }
 }
 
+export class TokenNonTransferable extends Error {
+  override name = "TokenNonTransferable";
+  constructor(message?: string) {
+    super(message || "TokenNonTransferable");
+  }
+}
+
 export class NoAddressesFound extends Error {
   override name = "NoAddressesFound";
   constructor(message?: string) {

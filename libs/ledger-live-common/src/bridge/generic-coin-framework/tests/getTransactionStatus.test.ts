@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
+import { TokenNonTransferable } from "../../../errors";
 import { genericGetTransactionStatus } from "../getTransactionStatus";
 import { getCoinModuleApi } from "../api";
 import { getBridgeApi } from "../bridge";
@@ -305,6 +306,83 @@ describe("genericGetTransactionStatus", () => {
       } as any);
 
       expect("sponsored" in readParameters()).toBe(false);
+    });
+  });
+
+  describe("token sends", () => {
+    const tokenAccount = (id: string, tokenId: string) => ({ id, token: { id: tokenId } });
+    const accountWithTokens = {
+      ...account,
+      subAccounts: [
+        tokenAccount("pseth-account", "ethereum/erc20/pooled_staked_eth"),
+        tokenAccount("usdt-account", "ethereum/erc20/usd_tether__erc20_"),
+      ],
+    };
+    const tokenSend = (subAccountId: string | undefined) =>
+      ({
+        amount: new BigNumber(100),
+        useAllAmount: false,
+        recipient: "0xRecipient",
+        family: "evm",
+        subAccountId,
+        fees: new BigNumber(0),
+      }) as any;
+    const feeErrors = { gasLimit: new FeeNotLoaded(), gasPrice: new FeeNotLoaded() };
+
+    it("replaces the fee errors of a non-transferable token send with TokenNonTransferable", async () => {
+      validateIntent.mockResolvedValue({ ...validateIntentResult, errors: feeErrors });
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      const result = await getStatus(accountWithTokens, tokenSend("pseth-account"));
+
+      expect(Object.keys(result.errors)).toEqual(["amount"]);
+      expect(result.errors.amount).toBeInstanceOf(TokenNonTransferable);
+    });
+
+    it("keeps what the recipient step reads for a non-transferable token", async () => {
+      const recipient = new Error("InvalidAddress");
+      const sender = new Error("InvalidSender");
+      const warnings = { recipient: new Error("RecipientIsNewAccount") };
+      validateIntent.mockResolvedValue({
+        ...validateIntentResult,
+        errors: { ...feeErrors, recipient, sender },
+        warnings,
+      });
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      const result = await getStatus(accountWithTokens, tokenSend("pseth-account"));
+
+      expect(result.errors).toEqual({
+        recipient,
+        sender,
+        amount: expect.any(TokenNonTransferable),
+      });
+      expect(result.warnings).toEqual(warnings);
+    });
+
+    it("resolves rather than rejects a non-transferable token send whose estimation failed", async () => {
+      validateIntent.mockResolvedValue({ ...validateIntentResult, errors: {} });
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      const result = await getStatus(accountWithTokens, {
+        ...tokenSend("pseth-account"),
+        feesEstimationFailed: true,
+      });
+
+      expect(result.errors.amount).toBeInstanceOf(TokenNonTransferable);
+    });
+
+    it.each([
+      ["a transferable token", "usdt-account"],
+      ["the native coin", undefined],
+    ])("passes the coin module's errors through for %s", async (_label, subAccountId) => {
+      validateIntent.mockResolvedValue({ ...validateIntentResult, errors: feeErrors });
+      const getStatus = genericGetTransactionStatus("mainnet", "evm");
+
+      const result = await getStatus(accountWithTokens, tokenSend(subAccountId));
+
+      expect(result.errors).toEqual(feeErrors);
+      expect(result.amount).toEqual(new BigNumber(validatedAmount.toString()));
     });
   });
 

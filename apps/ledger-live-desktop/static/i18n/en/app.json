@@ -7251,6 +7251,9 @@
       "title": "There is a pending operation for this account.",
       "description": "Wait for the operation to go through."
     },
+    "TokenNonTransferable": {
+      "title": "This token can't be sent. Its smart contract doesn't allow transfers."
+    },
     "AccountNameRequired": {
       "title": "An account name is required",
       "description": "Please enter an account name"
