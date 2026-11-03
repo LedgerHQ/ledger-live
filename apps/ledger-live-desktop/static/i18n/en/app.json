@@ -10731,6 +10731,12 @@
     }
   },
   "accountDetail": {
+    "analyticsIntroduction": {
+      "title": "Looking for your account performance?",
+      "description": "All your performance data now lives on the Analytics page.",
+      "cta": "Go to Analytics",
+      "dismiss": "Dismiss Analytics introduction"
+    },
     "header": {
       "settings": "Account settings"
     },
