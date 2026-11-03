@@ -8,9 +8,9 @@ description: |
 # Dead-code detection: explicit exports + knip
 
 Dead-code / unused-dependency detection runs on **`knip`**. The legacy `unimported` tool is gone
-and the dependency checks deny it. CI (the Enforce Module Boundaries job, `pnpm knip:all` locally)
+and the dependency checks deny it. CI (the Monorepo Checks job, `pnpm knip:all` locally)
 checks **every** workspace except the legacy packages listed in
-[`knip.json`](../../../knip.json)`#ignoreWorkspaces`. That list only shrinks: a migrated package
+[`support/knip/knip.json`](../../../support/knip/knip.json)`#ignoreWorkspaces`. That list only shrinks: a migrated package
 leaves it, and a new package never joins it. A package needs no `workspaces` entry either, since
 knip derives its entry files from `package.json` (`main`, `bin`, `exports`) and its own defaults
 ([entry files](https://knip.dev/explanations/entry-files)).
@@ -66,9 +66,10 @@ that may do so, but not under `devtools/`, where `suffix-imports/no-platform-suf
 suffixed specifier a lint error.
 
 So a package with platform twins gets two passes, through the shared helper
-[`knip.config.base.mjs`](../../../knip.config.base.mjs). The root `knip.web.config.mjs` and
-`knip.native.config.mjs` merge every per-package config into one run per platform, and the root
-run (`knip.root.config.mjs`) skips any package that has one. A native-only package adds only the
+`@support/knip`, re-exported at the root as `knip.config.base.mjs` while package configs import it
+by path. [`support/knip`](../../../support/knip)'s `web.config.mjs` and `native.config.mjs` merge
+every per-package config into one run per platform, and its `root.config.mjs` skips any package
+that has one. A native-only package adds only the
 native config.
 
 ```js
@@ -137,7 +138,7 @@ For a **new** package, flag this and point here:
 - a **`./*` wildcard** in `package.json#exports` — new packages must enumerate explicit exports
   so knip can detect zombie files.
 
-## The `workspaces` block in `knip.json` is a temporary workaround
+## The `workspaces` block in `support/knip/knip.json` is a temporary workaround
 
 Everything must work without touching `knip.json`. The `workspaces` entries that remain are
 band-aids for packages that don't declare their surface properly yet — deep imports behind a `./*`

@@ -93,19 +93,19 @@ jobs:
 
       # The knip steps skip older branches (e.g. release), which call this workflow from develop without the monorepo knip configs.
       - name: Knip (packages without platform configs)
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('knip.web.config.mjs') != '' }}
-        run: pnpm exec knip -c knip.root.config.mjs
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}
+        run: pnpm exec knip -c support/knip/root.config.mjs
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"
 
       - name: Knip (packages with platform configs, web)
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('knip.web.config.mjs') != '' }}
-        run: pnpm exec knip -c knip.web.config.mjs --tsConfig tsconfig.web.json
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}
+        run: pnpm exec knip -c support/knip/web.config.mjs --tsConfig tsconfig.web.json
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"
 
       - name: Knip (packages with platform configs, native)
-        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('knip.web.config.mjs') != '' }}
-        run: pnpm exec knip -c knip.native.config.mjs --tsConfig tsconfig.native.json
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && hashFiles('support/knip/web.config.mjs') != '' }}
+        run: pnpm exec knip -c support/knip/native.config.mjs --tsConfig tsconfig.native.json
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"

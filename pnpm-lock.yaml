@@ -897,6 +897,9 @@ importers:
       '@support/fmt':
         specifier: workspace:*
         version: link:support/fmt
+      '@support/knip':
+        specifier: workspace:*
+        version: link:support/knip
       '@support/lint':
         specifier: workspace:*
         version: link:support/lint
@@ -22054,6 +22057,8 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
+
+  support/knip: {}
 
   support/lint:
     devDependencies:

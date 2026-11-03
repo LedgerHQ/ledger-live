@@ -39,6 +39,7 @@ Two kinds of preset:
 | --- | --- |
 | [`fmt`](./fmt) | every package: the repository's only oxfmt config, re-exported by the root `oxfmt.config.mts`. Packages carry none and pass no `-c` |
 | [`jest`](./jest) | jest presets per layer (`devtools`, `features-flow`, `shared`) with their setup files, mocks and fixtures |
+| [`knip`](./knip) | the repository's knip configs: shared settings, the `ignoreWorkspaces` list and the three monorepo runs, re-exported at the root as `knip.config.js` and `knip.config.base.mjs` |
 | [`lint`](./lint) | oxlint presets, one per layer that differs, and the monorepo-wide custom rules |
 | [`tsconfig`](./tsconfig) | every package: TypeScript presets, one per project archetype |
 
@@ -54,7 +55,7 @@ Follow [docs/new-library.md](../docs/new-library.md), then:
 
 - Add a row to the table above.
 - Add a `CODEOWNERS` entry.
-- If the entry points sit outside `src/`, add a `workspaces` entry to `knip.json`.
+- If the entry points sit outside `src/`, add a `workspaces` entry to `support/knip/knip.json`.
 
 An override that shows up in more than one consumer belongs in a preset instead. Keeping the override
 in the consumer is fine when it is genuinely package-specific — but it is visible in the diff, so it
