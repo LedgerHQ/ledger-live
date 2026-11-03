@@ -121,7 +121,7 @@ describe("MockServer", () => {
         },
       }));
 
-      fireEvent(screen.getByTestId("mock-server-toggle"), "valueChange", true);
+      fireEvent.press(screen.getByTestId("mock-server-toggle"));
 
       await waitFor(() => expect(RNRestart.restart).toHaveBeenCalledTimes(1));
       expect(endpoints.auth).toHaveBeenCalledTimes(1);
@@ -154,7 +154,7 @@ describe("MockServer", () => {
         },
       }));
 
-      fireEvent(screen.getByTestId("mock-server-toggle"), "valueChange", false);
+      fireEvent.press(screen.getByTestId("mock-server-toggle"));
 
       await waitFor(() => expect(RNRestart.restart).toHaveBeenCalledTimes(1));
       expect(store.getState().settings.mockServer).toEqual({

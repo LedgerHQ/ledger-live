@@ -9,9 +9,9 @@ import { speculosDmkTransportFactory } from "../transport/SpeculosDmkTransport";
 import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mockserver";
 import {
   getMockServerSecureChannelUrl,
-  LedgerLiveLogger,
   stripTrailingSlashes,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-mock-server";
+import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { getEnv } from "@shared/env";
 import { LocalTracer } from "@ledgerhq/logs";
 

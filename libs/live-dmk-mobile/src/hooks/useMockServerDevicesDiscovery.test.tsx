@@ -1,10 +1,13 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { listMockServerDevices, type MockServerDevice } from "@ledgerhq/live-dmk-shared";
+import {
+  listMockServerDevices,
+  type MockServerDevice,
+} from "@features/platform-device-mock-server";
 import { useMockServerDevicesDiscovery } from "./useMockServerDevicesDiscovery";
 
-jest.mock("@ledgerhq/live-dmk-shared", () => ({
-  ...jest.requireActual("@ledgerhq/live-dmk-shared"),
+jest.mock("@features/platform-device-mock-server", () => ({
+  ...jest.requireActual("@features/platform-device-mock-server"),
   listMockServerDevices: jest.fn(),
 }));
 

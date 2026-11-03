@@ -1,0 +1,43 @@
+{
+  "name": "@features/platform-device-mock-server",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Device mock server client, URLs and settings shared by Ledger Wallet Desktop, Ledger Wallet Mobile and the DMK libs",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -W features/platform/device-mock-server"
+  },
+  "dependencies": {
+    "@ledgerhq/device-mockserver-client": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:"
+  },
+  "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@support/jest": "workspace:*",
+    "@swc/core": "catalog:",
+    "@swc/jest": "catalog:",
+    "@types/jest": "catalog:",
+    "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "jest": "catalog:",
+    "msw": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getEnv } from "@shared/env";
 import { getMockServerSessionToken, getMockServerTransportUrl } from "@ledgerhq/live-dmk-desktop";
-import { isMockServerReachable } from "@ledgerhq/live-dmk-shared";
+import { isMockServerReachable } from "@features/platform-device-mock-server";
 
 export type MockServerStatus = {
   enabled: boolean;

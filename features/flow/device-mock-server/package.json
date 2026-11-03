@@ -1,0 +1,39 @@
+{
+  "name": "@features/flow-device-mock-server",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Device mock server settings: turn it on, start or join a session",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "format": "oxfmt src",
+    "format:check": "oxfmt src --check",
+    "lint": "oxlint src",
+    "typecheck": "tsc --noEmit",
+    "unimported": "pnpm knip --directory ../../.. -W features/flow/device-mock-server"
+  },
+  "dependencies": {
+    "@features/platform-device-mock-server": "workspace:*",
+    "@shared/clipboard": "workspace:*"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "react": ">=19.0.0",
+    "react-native": ">=0.70.0"
+  },
+  "devDependencies": {
+    "@ledgerhq/lumen-ui-rnative": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-native": "catalog:",
+    "typescript": "catalog:"
+  }
+}

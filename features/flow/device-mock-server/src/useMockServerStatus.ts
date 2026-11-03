@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getMockServerStatus } from "@ledgerhq/live-dmk-shared";
-import type { MockServerConfig, MockServerStatus } from "../types";
+import { getMockServerStatus, type MockServerConfig } from "@features/platform-device-mock-server";
+import type { MockServerStatus } from "./types";
 
 const STATUS_POLL_INTERVAL_MS = 5000;
 

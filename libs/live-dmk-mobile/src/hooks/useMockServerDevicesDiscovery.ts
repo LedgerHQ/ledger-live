@@ -7,12 +7,11 @@ import type {
 } from "@ledgerhq/device-management-kit";
 import { mockserverIdentifier } from "@ledgerhq/device-transport-kit-mockserver";
 import {
-  buildMockServerCompatDeviceId,
-  dmkToLedgerDeviceIdMap,
   listMockServerDevices,
   type MockServerConfig,
   type MockServerDevice,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-mock-server";
+import { buildMockServerCompatDeviceId, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 
 const POLL_INTERVAL_MS = 2000;

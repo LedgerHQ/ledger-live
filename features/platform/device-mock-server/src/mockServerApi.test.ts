@@ -65,7 +65,7 @@ describe("mockServerApi", () => {
 
     await expect(
       createMockServerSession({ url: URL, sessionImport: { devices: [] }, seed: "not a mnemonic" }),
-    ).rejects.toThrow();
+    ).rejects.toThrow(DmkNetworkClientError);
     expect(endpoints.import).not.toHaveBeenCalled();
   });
 

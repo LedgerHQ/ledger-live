@@ -1,5 +1,5 @@
 import { setEnvUnsafe } from "@shared/env";
-import { getMockServerSecureChannelUrl } from "@ledgerhq/live-dmk-shared";
+import { getMockServerSecureChannelUrl } from "@features/platform-device-mock-server";
 import { useEffect } from "react";
 import { useSelector } from "~/context/hooks";
 import {

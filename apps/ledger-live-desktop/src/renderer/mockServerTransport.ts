@@ -9,8 +9,8 @@ import {
   createMockServerSession,
   getMockServerSecureChannelUrl,
   parseMockServerSessionImport,
-  type KnownDevice,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-mock-server";
+import type { KnownDevice } from "@ledgerhq/live-dmk-shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setEnvOnAllThreads } from "~/helpers/env";
 

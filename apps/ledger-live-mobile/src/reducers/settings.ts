@@ -9,6 +9,7 @@ import {
   isSanctionedFiatTicker,
   selectSupportedFiats,
 } from "@domain/entity-currency-fiat";
+import { getMockServerConfig } from "@features/platform-device-mock-server";
 import { buildSupportedCounterValues } from "~/logic/buildSupportedCounterValues";
 import { getEnv } from "@shared/env";
 import { createSelector } from "~/context/selectors";
@@ -967,7 +968,7 @@ export const debugOsUpdateBannerModeSelector = (state: State) =>
 export const mockServerSettingsSelector = (state: State) => state.settings.mockServer;
 export const mockServerConfigSelector = createSelector(
   mockServerSettingsSelector,
-  ({ enabled, url, token }) => (enabled && url && token ? { url, token } : null),
+  getMockServerConfig,
 );
 export const isMockServerEnabledSelector = createSelector(
   mockServerConfigSelector,

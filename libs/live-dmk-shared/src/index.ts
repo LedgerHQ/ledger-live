@@ -108,24 +108,6 @@ export {
   getMockServerDeviceIdFromCompatId,
   isMockServerCompatDeviceId,
 } from "./mockServer/mockServerCompatDeviceId";
-export {
-  getMockServerSecureChannelUrl,
-  getMockServerConfigurationUiUrl,
-  stripTrailingSlashes,
-} from "./mockServer/mockServerUrls";
-export {
-  createMockServerSession,
-  getMockServerSession,
-  getMockServerStatus,
-  isMockServerReachable,
-  listMockServerDevices,
-  parseMockServerSessionImport,
-  type MockServerConfig,
-  type MockServerDevice,
-  type MockServerSession,
-  type MockServerSessionImport,
-  type MockServerConnectionStatus,
-} from "./mockServer/mockServerApi";
 
 export { ConnectAppDeviceAction } from "./device-action/ConnectApp/ConnectAppDeviceAction";
 export {

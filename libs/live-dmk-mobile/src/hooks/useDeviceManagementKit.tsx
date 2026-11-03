@@ -8,10 +8,10 @@ import { mockserverTransportFactory } from "@ledgerhq/device-transport-kit-mocks
 import { RNBleTransportFactory } from "@ledgerhq/device-transport-kit-react-native-ble";
 import {
   getMockServerSecureChannelUrl,
-  LedgerLiveLogger,
   stripTrailingSlashes,
   type MockServerConfig,
-} from "@ledgerhq/live-dmk-shared";
+} from "@features/platform-device-mock-server";
+import { LedgerLiveLogger } from "@ledgerhq/live-dmk-shared";
 import { RNHidTransportFactory } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
 import { httpProxyTransportFactory, httpProxyUrlSubject } from "../transport/HttpProxyDmkTransport";

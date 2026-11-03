@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Devices } from "@ledgerhq/lumen-ui-react/symbols";
 import { getMockServerTransportUrl } from "@ledgerhq/live-dmk-desktop";
-import { getMockServerConfigurationUiUrl } from "@ledgerhq/live-dmk-shared";
+import { getMockServerConfigurationUiUrl } from "@features/platform-device-mock-server";
 import { openURL } from "~/renderer/linking";
 import { useMockServerStatus } from "./useMockServerStatus";
 import { useCopyToClipboard } from "LLD/hooks/useCopyToClipboard";

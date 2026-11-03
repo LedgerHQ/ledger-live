@@ -1,4 +1,5 @@
 ---
+"@features/flow-device-mock-server": minor
 "@ledgerhq/live-dmk-mobile": minor
 "live-mobile": minor
 ---

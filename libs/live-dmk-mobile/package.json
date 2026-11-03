@@ -31,6 +31,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@features/platform-device-mock-server": "workspace:*",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/device-transport-kit-mockserver": "catalog:",
     "@ledgerhq/device-transport-kit-react-native-ble": "catalog:",

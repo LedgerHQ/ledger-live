@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "@ledgerhq/lumen-ui-rnative";
-import type { MockServerStatus } from "../../types";
+import type { MockServerStatus } from "./types";
 
 const STATUS_LABELS: Record<MockServerStatus, string> = {
   checking: "Checking…",

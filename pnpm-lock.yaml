@@ -1331,6 +1331,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-device-mock-server':
+        specifier: workspace:^
+        version: link:../../features/platform/device-mock-server
       '@features/platform-device-onboarding':
         specifier: workspace:^
         version: link:../../features/platform/device-onboarding
@@ -2163,6 +2166,9 @@ importers:
       '@features/flow-contacts-list':
         specifier: workspace:^
         version: link:../../features/flow/flow-contacts-list
+      '@features/flow-device-mock-server':
+        specifier: workspace:^
+        version: link:../../features/flow/device-mock-server
       '@features/flow-fear-and-greed':
         specifier: workspace:^
         version: link:../../features/flow/fear-and-greed
@@ -2247,6 +2253,9 @@ importers:
       '@features/platform-device-intent':
         specifier: workspace:^
         version: link:../../features/platform/device-intent
+      '@features/platform-device-mock-server':
+        specifier: workspace:^
+        version: link:../../features/platform/device-mock-server
       '@features/platform-device-onboarding':
         specifier: workspace:^
         version: link:../../features/platform/device-onboarding
@@ -9110,6 +9119,40 @@ importers:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
 
+  features/flow/device-mock-server:
+    dependencies:
+      '@features/platform-device-mock-server':
+        specifier: workspace:*
+        version: link:../../platform/device-mock-server
+      '@shared/clipboard':
+        specifier: workspace:*
+        version: link:../../../shared/clipboard
+    devDependencies:
+      '@ledgerhq/lumen-ui-rnative':
+        specifier: 'catalog:'
+        version: 0.1.72(e755af7aad84351b5896efdfe084257a)
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-native:
+        specifier: 'catalog:'
+        version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
+
   features/flow/fear-and-greed:
     dependencies:
       '@domain/api-market-index-fear-and-greed':
@@ -12774,6 +12817,49 @@ importers:
       xstate:
         specifier: 'catalog:'
         version: 5.19.2
+
+  features/platform/device-mock-server:
+    dependencies:
+      '@ledgerhq/device-mockserver-client':
+        specifier: 'catalog:'
+        version: 1.4.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+    devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.23)
+      '@swc/jest':
+        specifier: 'catalog:'
+        version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.12.0
+      '@typescript/native':
+        specifier: 'catalog:'
+        version: typescript@7.0.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      msw:
+        specifier: 'catalog:'
+        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
+      oxfmt:
+        specifier: 'catalog:'
+        version: 0.75.0
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.90.0
+      typescript:
+        specifier: 'catalog:'
+        version: '@typescript/typescript6@6.0.2'
 
   features/platform/device-onboarding:
     dependencies:
@@ -20453,6 +20539,9 @@ importers:
 
   libs/live-dmk-desktop:
     dependencies:
+      '@features/platform-device-mock-server':
+        specifier: workspace:*
+        version: link:../../features/platform/device-mock-server
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -20547,6 +20636,9 @@ importers:
 
   libs/live-dmk-mobile:
     dependencies:
+      '@features/platform-device-mock-server':
+        specifier: workspace:*
+        version: link:../../features/platform/device-mock-server
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
         version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
@@ -20656,9 +20748,6 @@ importers:
       '@ledgerhq/context-module':
         specifier: 2.8.0
         version: 2.8.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      '@ledgerhq/device-mockserver-client':
-        specifier: 'catalog:'
-        version: 1.4.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
       '@ledgerhq/device-transport-kit-mockserver':
         specifier: 'catalog:'
         version: 1.1.2(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(rxjs@7.8.2)
@@ -20732,9 +20821,6 @@ importers:
       jest-environment-jsdom:
         specifier: 'catalog:'
         version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
-      msw:
-        specifier: 'catalog:'
-        version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
       oxfmt:
         specifier: 'catalog:'
         version: 0.75.0
