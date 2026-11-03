@@ -35,7 +35,6 @@ export type SponsoredRentSignatureViewModel = Readonly<{
   feeLabel: string;
   feeAmountLabel: string | null;
   providerName: string;
-  /** Signing the rent payment accepts these terms; null hides the notice. */
   termsUrl: string | null;
   onOpenTerms: () => void;
   request: SponsoredRentSignatureRequest | null;

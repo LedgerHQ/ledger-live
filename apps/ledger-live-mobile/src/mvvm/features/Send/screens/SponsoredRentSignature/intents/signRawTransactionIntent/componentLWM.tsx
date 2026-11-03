@@ -11,7 +11,6 @@ export type RentSignatureExtraProps = Readonly<{
   strategyLabel: string;
   feeLabel: string | null;
   providerName: string;
-  /** Signing the rent payment accepts these terms; null hides the notice. */
   termsUrl: string | null;
 }>;
 

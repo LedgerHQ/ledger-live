@@ -7,7 +7,6 @@ type SponsoredRentSignatureScreenViewProps = Readonly<{
   feeLabel: string;
   feeAmountLabel: string | null;
   providerName: string;
-  /** Null hides the terms notice. */
   termsUrl: string | null;
   onOpenTerms: () => void;
   children: ReactNode;
@@ -16,7 +15,6 @@ type SponsoredRentSignatureScreenViewProps = Readonly<{
 type TermsLinkProps = Readonly<{
   href: string;
   onOpen: () => void;
-  // Filled in by Trans with the link text.
   children?: ReactNode;
 }>;
 

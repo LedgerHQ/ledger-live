@@ -48,7 +48,6 @@ type SponsoredSendContextValue = Readonly<{
   sponsoredSelected: boolean;
   sponsoredFeeOptionId: string;
   providerName: string;
-  /** The provider's terms the rent payment's signer accepts; null without a provider. */
   providerTermsUrl: string | null;
   waivesErrorKeys: readonly string[];
   waivesWarningKeys: readonly string[];

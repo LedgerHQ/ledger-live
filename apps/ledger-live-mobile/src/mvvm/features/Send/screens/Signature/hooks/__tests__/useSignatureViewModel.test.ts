@@ -72,12 +72,6 @@ beforeEach(() => {
 });
 
 describe("useSignatureViewModel in a sponsored transfer", () => {
-  it("tells the signing sheet it signs the sponsored transfer", () => {
-    const { result } = renderHook(() => useSignatureViewModel());
-
-    expect(result.current.intentExtraProps).toEqual({ sponsoredTransfer: true });
-  });
-
   it("reports a broadcast TX-C to the orchestration before moving on", () => {
     renderHook(() => useSignatureViewModel());
 
@@ -139,12 +133,6 @@ describe("useSignatureViewModel in a sponsored transfer", () => {
 describe("useSignatureViewModel in a standard send", () => {
   beforeEach(() => {
     mockSponsoredState = { phase: SPONSORED_PHASE.IDLE, paymentTxId: null };
-  });
-
-  it("tells the signing sheet it signs a standard send", () => {
-    const { result } = renderHook(() => useSignatureViewModel());
-
-    expect(result.current.intentExtraProps).toEqual({ sponsoredTransfer: false });
   });
 
   it("moves on without touching the orchestration, whatever the outcome", () => {

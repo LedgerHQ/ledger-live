@@ -6,7 +6,6 @@ import { DeviceActionContent } from "LLM/components/DeviceActionContent";
 
 type SimplifiedTransactionConfirmProps = Readonly<{
   deviceModelId: DeviceModelId;
-  /** Replaces the generic "Continue on your device" title. */
   title?: string;
 }>;
 

@@ -16,7 +16,7 @@ export function useSponsoredPollingViewModel(): SponsoredPollingViewModel {
 
   return {
     title: t("newSendFlow.sponsoredPolling.title"),
-    // The English copy no longer names the provider; translations that still do need the value.
+    // Translations still name the provider.
     waitingLabel: t("newSendFlow.sponsoredPolling.waiting", { provider: providerName }),
     elapsedLabel: t("newSendFlow.sponsoredPolling.elapsed", { time: elapsed }),
   };

@@ -29,7 +29,6 @@ function TermsLink({ children, href }: TermsLinkProps) {
   );
 }
 
-/** The provider's terms, which signing the rent payment accepts. */
 export function RentTermsNotice({ providerName, termsUrl }: RentTermsNoticeProps) {
   return (
     <Text
