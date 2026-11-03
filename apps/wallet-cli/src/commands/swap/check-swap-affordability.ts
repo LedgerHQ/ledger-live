@@ -37,8 +37,15 @@ function formatAmount(account: AccountLike, value: BigNumber): string | undefine
   return formatted.replaceAll(NON_BREAKING_SPACE, " ");
 }
 
+function describeNetworkFees(mainAccount: Account, fees: BigNumber | undefined) {
+  if (!fees) return "network fees";
+  const formatted = formatAmount(mainAccount, fees);
+  return formatted && `${formatted} network fees`;
+}
+
 function withMessage(error: Error, message: string): Error {
-  return Object.assign(new Error(message, { cause: error }), { name: error.name });
+  const reworded = Object.assign(new Error(message, { cause: error }), error);
+  return Object.setPrototypeOf(reworded, Object.getPrototypeOf(error));
 }
 
 function rewordForSwap(
@@ -52,19 +59,17 @@ function rewordForSwap(
     account: AccountLike;
     mainAccount: Account;
     amount: BigNumber;
-    fees: BigNumber;
+    fees?: BigNumber;
   },
 ): Error {
   const swapAmount = formatAmount(account, amount);
-  const networkFees = formatAmount(mainAccount, fees);
+  const networkFees = describeNetworkFees(mainAccount, fees);
   const spendable = formatAmount(account, account.spendableBalance);
   if (!swapAmount || !networkFees || !spendable) return error;
 
   if (INSUFFICIENT_FUNDS_ERRORS.has(error.name)) {
     const feesPaidFromSameBalance = account.type === "Account";
-    const spent = feesPaidFromSameBalance
-      ? `${swapAmount} plus ${networkFees} network fees`
-      : swapAmount;
+    const spent = feesPaidFromSameBalance ? `${swapAmount} plus ${networkFees}` : swapAmount;
     return withMessage(
       error,
       `Insufficient balance: swapping ${spent} exceeds the spendable ${spendable}.`,
@@ -73,14 +78,15 @@ function rewordForSwap(
   if (INSUFFICIENT_FEE_FUNDS_ERRORS.has(error.name)) {
     return withMessage(
       error,
-      `Not enough ${mainAccount.currency.ticker} to pay the ${networkFees} network fees for this swap.`,
+      `Not enough ${mainAccount.currency.ticker} to pay the ${networkFees} for this swap.`,
     );
   }
   return error;
 }
 
 /**
- * Throws the bridge's shortfall error (funds, fee funds, dust) before any device or swap API call.
+ * Throws the bridge's shortfall error (funds, fee funds, dust) before any device or swap API call,
+ * whether the bridge reports it in the transaction status or throws it while preparing the transaction.
  * Any other error, such as coin-evm's `FeeNotLoaded` when gas estimation fails, leaves the check inconclusive.
  * The payin address only exists after the swap API call, so the check sends to self and ignores `recipient` errors.
  * Fees are those of a plain transfer, lower than a DEX swap's or one with extra transaction parameters,
@@ -103,6 +109,9 @@ export async function checkSwapAffordability({
       ...(account.type === "Account" ? {} : { subAccountId: account.id }),
     });
   } catch (error) {
+    if (error instanceof Error && BLOCKING_ERRORS.has(error.name)) {
+      throw rewordForSwap(error, { account, mainAccount, amount });
+    }
     return { checked: false, reason: error instanceof Error ? error.message : String(error) };
   }
 

@@ -17,7 +17,9 @@ import { CliProcessExitError } from "../../cli-process-exit-error";
 import type { AccountDescriptor } from "../../wallet/models";
 import { MOCK_ETH_DESCRIPTOR } from "../../testing/constants";
 import { USDT_CONTRACT } from "../../testing/cal-fixtures";
+import { NotEnoughBalance } from "@ledgerhq/ledger-wallet-framework/errors";
 import { executeSwapCommand, type SwapExecuteFlags } from "./execute";
+import { checkSwapAffordability } from "./check-swap-affordability";
 
 import type { FullSwapPipelineInput } from "./cli-swap-pipeline";
 import type { CliSwapDieInput, CliSwapDieResult } from "./cli-swap-die-pipeline";
@@ -534,6 +536,29 @@ describe("swap execute command", () => {
       expect(bridgeNotEnoughBalance.message).toBe("NotEnoughBalance");
     });
 
+    it("keeps the bridge error's class and fields when rewording it", async () => {
+      const bridgeNotEnoughBalance = new NotEnoughBalance(undefined, { minimum: "1" });
+      transactionStatusErrors = { amount: bridgeNotEnoughBalance };
+
+      const rejection = checkSwapAffordability({
+        account: makeAccount(fromDescriptor),
+        parentAccount: undefined,
+        amount: new BigNumber("1000000000000000000"),
+        feeStrategy: "MEDIUM",
+        getAccountBridge: getAccountBridgeMock,
+      });
+
+      const error = await rejection.catch((e: unknown) => e);
+      expect(error).toBeInstanceOf(NotEnoughBalance);
+      expect(error).toMatchObject({
+        name: "NotEnoughBalance",
+        minimum: "1",
+        cause: bridgeNotEnoughBalance,
+        message:
+          "Insufficient balance: swapping 1 ETH plus 0.00042 ETH network fees exceeds the spendable 0 ETH.",
+      });
+    });
+
     it("checks the amount the user asked to swap, in atomic units", async () => {
       await runExecuteSwapCommand();
 
@@ -625,6 +650,32 @@ describe("swap execute command", () => {
         reason: "gas estimation RPC unavailable",
       });
       expect(runFullSwapPipelineMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("rejects a shortfall the bridge throws while preparing the transaction", async () => {
+      prepareTransactionMock.mockImplementationOnce(async () => {
+        throw bridgeError("NotEnoughBalance");
+      });
+
+      const data = await runFailingExecuteSwapCommand({ ...baseFlags, amount: "1" });
+
+      expect(data.error.code).toBe("NotEnoughBalance");
+      expect(data.error.message).toBe(
+        "Insufficient balance: swapping 1 ETH plus network fees exceeds the spendable 0 ETH.",
+      );
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
+    });
+
+    it("rejects a fee shortfall the bridge throws while preparing the transaction", async () => {
+      prepareTransactionMock.mockImplementationOnce(async () => {
+        throw bridgeError("NotEnoughGas");
+      });
+
+      const data = await runFailingExecuteSwapCommand(baseFlags);
+
+      expect(data.error.code).toBe("NotEnoughGas");
+      expect(data.error.message).toBe("Not enough ETH to pay the network fees for this swap.");
+      expect(runFullSwapPipelineMock).not.toHaveBeenCalled();
     });
 
     it("lets the swap proceed when the bridge could not estimate the fees", async () => {
