@@ -19,6 +19,7 @@ import {
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 
@@ -196,6 +197,25 @@ describe("useAccountOperationToolProps", () => {
       [queryKey, "limit 50"],
     ]);
     expect(filtered().rows).toEqual([expect.objectContaining({ id: "op-1" })]);
+
+    act(() => result.current.onReadMore(ethereumUUID, queryKey));
+    await waitFor(() => expect(reads).toHaveLength(3));
+    expect(reads[2]).toEqual(expect.objectContaining({ cursor: "page-2", query }));
+  });
+
+  it("reads a window filtered on an asset, labelled by it, and pages it with its filter", async () => {
+    const { result, reads } = setup();
+    const query = { filterAsset: BalanceAssetIdSchema.parse("ethereum") };
+    const queryKey = accountDataQueryKey(query);
+    act(() => result.current.onReadAll({ filterAsset: "ethereum" }));
+    await waitFor(() => expect(reads).toHaveLength(2));
+    expect(reads.map(r => r.query)).toEqual([query, query]);
+    const ethereumRead = reads.find(r => r.accountUUID === ethereumUUID);
+    await act(async () =>
+      ethereumRead?.call.resolve({ operations: [mockAccountOperation()], nextCursor: "page-2" }),
+    );
+    await waitFor(() => expect(result.current.accounts[0].windows[1]?.hasMore).toBe(true));
+    expect(result.current.accounts[0].windows[1].label).toBe("filter ethereum");
 
     act(() => result.current.onReadMore(ethereumUUID, queryKey));
     await waitFor(() => expect(reads).toHaveLength(3));

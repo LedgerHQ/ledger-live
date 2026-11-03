@@ -10,13 +10,23 @@ import type {
 type OnWindow = (accountUUID: string, queryKey: string) => void;
 
 /** The form's options, the empty ones left out. */
-function queryOf(limit: string): AccountOperationToolQuery {
+function queryOf(limit: string, filterAsset: string): AccountOperationToolQuery {
   const count = Number.parseInt(limit, 10);
-  return count > 0 ? { limit: count } : {};
+  return {
+    ...(count > 0 ? { limit: count } : {}),
+    ...(filterAsset.trim() ? { filterAsset: filterAsset.trim() } : {}),
+  };
 }
 
-function AccountOperation({ accounts, onRead, onReadMore, onReadAll }: AccountOperationToolProps) {
+function AccountOperation({
+  accounts,
+  assetIds,
+  onRead,
+  onReadMore,
+  onReadAll,
+}: AccountOperationToolProps) {
   const [limit, setLimit] = useState("");
+  const [filterAsset, setFilterAsset] = useState("");
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
       <div className="px-16 py-8 border-b border-base flex items-center gap-8 flex-shrink-0">
@@ -32,9 +42,24 @@ function AccountOperation({ accounts, onRead, onReadMore, onReadAll }: AccountOp
           onChange={event => setLimit(event.target.value)}
           className="w-64 font-mono"
         />
+        <input
+          aria-label="Filter asset"
+          list="account-operation-assets"
+          placeholder="filter asset"
+          value={filterAsset}
+          onChange={event => setFilterAsset(event.target.value)}
+          className="w-176 font-mono"
+        />
+        <datalist id="account-operation-assets">
+          {assetIds.map(assetId => (
+            <option key={assetId} value={assetId}>
+              {assetId}
+            </option>
+          ))}
+        </datalist>
         <button
           type="button"
-          onClick={() => onReadAll(queryOf(limit))}
+          onClick={() => onReadAll(queryOf(limit, filterAsset))}
           className="body-3-semi-bold text-base"
         >
           Read all

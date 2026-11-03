@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import { AmountStrSchema, BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import {
+  AmountStrSchema,
+  BalanceAssetIdSchema,
+  type BalanceAssetId,
+} from "@domain/entity-account-balance";
 
 export const OperationIdSchema = z.string().min(1).brand<"OperationId">();
 export const TransactionHashSchema = z.string().min(1).brand<"TransactionHash">();
@@ -99,6 +103,8 @@ export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 export type AccountOperationsQuery = {
   /** Rows wished per page; a source may return more or fewer, only `nextCursor` says more exist. */
   limit?: number;
+  /** Only the operations of this asset of the account, e.g. one of its tokens. */
+  filterAsset?: BalanceAssetId;
 };
 
 export type AccountOperationsPage = {

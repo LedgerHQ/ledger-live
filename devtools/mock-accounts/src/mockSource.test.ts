@@ -1,4 +1,5 @@
 import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
+import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
 import type { AccountOperation, AccountOperationsPage } from "@domain/entity-account-operation";
 import { MockCursorError } from "./errors";
@@ -217,6 +218,51 @@ describe("mockSource", () => {
     const tokens = operations.filter(op => op.assetId !== "ethereum");
     expect(tokens.length).toBeGreaterThan(0);
     for (const op of tokens) expect(op.fee).toBe("0");
+  });
+
+  it("keeps only the rows of the asset filtered on", async () => {
+    const read = mockSource.read?.operations;
+    if (!read) throw new Error("no operations reader");
+    const usdc = BalanceAssetIdSchema.parse("ethereum/erc20/usd__coin");
+    let kept = 0;
+    for (const account of mockDescriptors("ethereum", 40, [])) {
+      const all = await allOperationsOf(account);
+      const target = { accountUUID: computeAccountUUID(account), descriptor: account };
+      const filtered = await read(target, { filterAsset: usdc, limit: ALL });
+      expect(filtered.operations).toEqual(all.filter(op => op.assetId === usdc));
+      kept += filtered.operations.length;
+    }
+    expect(kept).toBeGreaterThan(0);
+  });
+
+  it("pages the filtered rows, full pages of the asset until its whole history", async () => {
+    const read = mockSource.read?.operations;
+    if (!read) throw new Error("no operations reader");
+    const usdc = BalanceAssetIdSchema.parse("ethereum/erc20/usd__coin");
+    const limit = 3;
+    let walkedAccounts = 0;
+    for (const account of mockDescriptors("ethereum", 40, [])) {
+      const all = await allOperationsOf(account);
+      const expected = all.filter(op => op.assetId === usdc);
+      if (expected.length <= limit || expected.length === all.length) continue;
+      const accountUUID = computeAccountUUID(account);
+      const pages: AccountOperationsPage[] = [];
+      let cursor: string | undefined;
+      do {
+        const page = await read(
+          { accountUUID, descriptor: account, cursor },
+          { filterAsset: usdc, limit },
+        );
+        pages.push(page);
+        cursor = page.nextCursor;
+      } while (cursor);
+      for (const page of pages.slice(0, -1)) expect(page.operations).toHaveLength(limit);
+      const walked = pages.flatMap(page => page.operations);
+      expect(walked).toEqual(expected);
+      expect(new Set(walked.map(op => op.id)).size).toBe(walked.length);
+      walkedAccounts++;
+    }
+    expect(walkedAccounts).toBeGreaterThan(0);
   });
 });
 
