@@ -538,6 +538,7 @@ jobs:
             remote_config_templates=${{ steps.capture-proxy.outputs.templates }}
 
       - name: Upload Allure test results artifact
+        id: upload-allure
         if: ${{ !cancelled() || steps.run-playwright.outcome == 'cancelled' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
@@ -568,7 +569,7 @@ jobs:
         if: ${{ !cancelled() }}
         env:
           STATUS_KEY: ${{ !matrix.is_primary && 'device2_' || '' }}status_${{ matrix.shard }}
-          RUN_OUTCOME: ${{ steps.run-playwright.outcome }}
+          RUN_OUTCOME: ${{ steps.upload-allure.outcome == 'success' && steps.run-playwright.outcome || 'skipped' }}
         run: echo "${STATUS_KEY}=${RUN_OUTCOME}" >> "$GITHUB_OUTPUT"
         shell: bash
 
