@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import type { ConnectedDevice } from "@ledgerhq/device-management-kit";
-import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
+import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
+import { buildMockServerCompatDeviceId, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { setHasConnectedDevice } from "~/actions/appstate";
 import { addKnownBleDevice, updateKnownBleDevice } from "~/actions/ble";
 import { setLastConnectedDevice } from "~/actions/settings";
@@ -28,10 +29,14 @@ export function useSaveConnectedDevice({ isNewDevice = false }: SaveConnectedDev
     (connectedDevice: ConnectedDevice) => {
       const modelId = dmkToLedgerDeviceIdMap[connectedDevice.modelId];
       const wired = connectedDevice.type === "USB";
+      const legacyDeviceId =
+        connectedDevice.transport === mockserverIdentifier
+          ? buildMockServerCompatDeviceId(connectedDevice.id)
+          : connectedDevice.id;
 
       dispatch(
         setLastConnectedDevice({
-          deviceId: connectedDevice.id,
+          deviceId: legacyDeviceId,
           deviceName: connectedDevice.name,
           modelId,
           wired,

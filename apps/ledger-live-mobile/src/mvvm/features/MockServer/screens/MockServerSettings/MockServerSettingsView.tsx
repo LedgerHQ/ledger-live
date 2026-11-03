@@ -48,8 +48,8 @@ export function MockServerSettingsView({
         </Box>
       ) : null}
 
-      {isEnabled ? (
-        <Box lx={{ padding: "s16", gap: "s12" }}>
+      <Box lx={{ padding: "s16", gap: "s12" }}>
+        {isEnabled ? (
           <Box>
             <MockServerStatusText status={status} />
             {sessionId ? (
@@ -58,67 +58,71 @@ export function MockServerSettingsView({
               </Text>
             ) : null}
           </Box>
+        ) : null}
 
-          <TextInput
-            label="Server URL"
-            value={urlDraft}
-            onChangeText={onChangeUrlDraft}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="url"
-          />
-          <TextInput
-            label="Session token"
-            value={tokenDraft}
-            onChangeText={onChangeTokenDraft}
-            autoCapitalize="none"
-            autoCorrect={false}
-            hideClearButton
-            suffix={
-              <IconButton
-                appearance="no-background"
-                size="xs"
-                icon={Copy}
-                accessibilityLabel="Copy session token"
-                onPress={onCopyToken}
-              />
-            }
-          />
+        <TextInput
+          label="Server URL"
+          value={urlDraft}
+          onChangeText={onChangeUrlDraft}
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="url"
+        />
+        <TextInput
+          label="Session token"
+          value={tokenDraft}
+          onChangeText={onChangeTokenDraft}
+          autoCapitalize="none"
+          autoCorrect={false}
+          hideClearButton
+          suffix={
+            <IconButton
+              appearance="no-background"
+              size="xs"
+              icon={Copy}
+              accessibilityLabel="Copy session token"
+              onPress={onCopyToken}
+            />
+          }
+        />
 
-          <Box lx={{ flexDirection: "row", gap: "s8" }}>
-            <Button
-              appearance="accent"
-              size="sm"
-              lx={{ flex: 1 }}
-              disabled={!hasDraftChanges || isBusy}
-              loading={pendingAction === "apply"}
-              onPress={onApply}
-            >
-              Apply & restart
-            </Button>
+        {isEnabled ? (
+          <>
+            <Box lx={{ flexDirection: "row", gap: "s8" }}>
+              <Button
+                appearance="accent"
+                size="sm"
+                lx={{ flex: 1 }}
+                disabled={!hasDraftChanges || isBusy}
+                loading={pendingAction === "apply"}
+                onPress={onApply}
+              >
+                Apply & restart
+              </Button>
+              <Button
+                appearance="gray"
+                size="sm"
+                lx={{ flex: 1 }}
+                disabled={isBusy}
+                loading={pendingAction === "newSession"}
+                onPress={onNewSession}
+              >
+                New session
+              </Button>
+            </Box>
+
             <Button
               appearance="gray"
               size="sm"
-              lx={{ flex: 1 }}
+              icon={ExternalLink}
               disabled={isBusy}
-              loading={pendingAction === "newSession"}
-              onPress={onNewSession}
+              onPress={onOpenConfigurationUi}
             >
-              New session
+              Open in browser
             </Button>
-          </Box>
-
-          <Button
-            appearance="gray"
-            size="sm"
-            icon={ExternalLink}
-            disabled={isBusy}
-            onPress={onOpenConfigurationUi}
-          >
-            Open in browser
-          </Button>
-        </Box>
-      ) : null}
+          </>
+        ) : null}
+      </Box>
     </SettingsNavigationScrollView>
   );
 }

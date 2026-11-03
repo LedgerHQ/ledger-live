@@ -286,10 +286,9 @@ export default function SelectDevice({
       });
 
       const isMockEnv = getEnv("MOCK");
+      const isMockServerDevice = isMockServerCompatDeviceId(deviceId);
       const isNonBleDebugDevice =
-        deviceId.includes("httpdebug") ||
-        deviceId.startsWith("speculos|") ||
-        isMockServerCompatDeviceId(deviceId);
+        deviceId.includes("httpdebug") || deviceId.startsWith("speculos|") || isMockServerDevice;
       if (!wired && !isMockEnv && !isNonBleDebugDevice) {
         setSelectedBleDevice(displayedDevice);
       } else {
@@ -301,7 +300,8 @@ export default function SelectDevice({
         }
 
         // Non-BLE debug devices can be selected without scan availability.
-        if (isNonBleDebugDevice) {
+        const canSelectWithoutScan = isNonBleDebugDevice && !isMockServerDevice;
+        if (canSelectWithoutScan) {
           checkDeviceStatus({
             device: displayedDevice.device,
             available: true,

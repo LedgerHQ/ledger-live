@@ -37,7 +37,7 @@ export function useMockServerSettingsViewModel(): MockServerSettingsViewModel {
   const { url } = useSelector(mockServerSettingsSelector);
   const { status, sessionId } = useMockServerStatus(config);
   const { startNewSession, joinSession, disable } = useMockServerSessionActions();
-  const [urlDraft, setUrlDraft] = useState(url);
+  const [urlDraft, setUrlDraft] = useState(url || getEnv("MOCK_SERVER_TRANSPORT_URL"));
   const [tokenDraft, setTokenDraft] = useState(config?.token ?? "");
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +46,7 @@ export function useMockServerSettingsViewModel(): MockServerSettingsViewModel {
   const draftToken = tokenDraft.trim();
   const isTokenChanged = draftToken !== (config?.token ?? "");
   const isUrlChanged = draftUrl !== url;
+  const joinsDraftSession = isTokenChanged && draftToken !== "";
 
   const run = useCallback(async (action: PendingAction, task: () => Promise<void>) => {
     setPendingAction(action);
@@ -58,6 +59,11 @@ export function useMockServerSettingsViewModel(): MockServerSettingsViewModel {
     }
   }, []);
 
+  const applyDrafts = useCallback(
+    () => (joinsDraftSession ? joinSession(draftUrl, draftToken) : startNewSession(draftUrl)),
+    [draftToken, draftUrl, joinSession, joinsDraftSession, startNewSession],
+  );
+
   const onToggle = useCallback(
     (nextEnabled: boolean) => {
       Alert.alert(
@@ -67,24 +73,17 @@ export function useMockServerSettingsViewModel(): MockServerSettingsViewModel {
           { text: "Cancel", style: "cancel" },
           {
             text: "Restart",
-            onPress: () =>
-              run("toggle", () =>
-                nextEnabled
-                  ? startNewSession(url || getEnv("MOCK_SERVER_TRANSPORT_URL"))
-                  : disable(),
-              ),
+            onPress: () => run("toggle", () => (nextEnabled ? applyDrafts() : disable())),
           },
         ],
       );
     },
-    [disable, run, startNewSession, url],
+    [applyDrafts, disable, run],
   );
 
   const onApply = useCallback(() => {
-    run("apply", () =>
-      isTokenChanged ? joinSession(draftUrl, draftToken) : startNewSession(draftUrl),
-    );
-  }, [draftToken, draftUrl, isTokenChanged, joinSession, run, startNewSession]);
+    run("apply", applyDrafts);
+  }, [applyDrafts, run]);
 
   const onNewSession = useCallback(() => {
     run("newSession", () => startNewSession(draftUrl));
@@ -107,7 +106,7 @@ export function useMockServerSettingsViewModel(): MockServerSettingsViewModel {
     sessionId,
     urlDraft,
     tokenDraft,
-    hasDraftChanges: (isTokenChanged && draftToken !== "") || isUrlChanged,
+    hasDraftChanges: joinsDraftSession || isUrlChanged,
     pendingAction,
     error,
     onToggle,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { from, of, timer } from "rxjs";
-import { catchError, switchMap } from "rxjs/operators";
+import { catchError, exhaustMap } from "rxjs/operators";
 import type {
   DeviceModelId as DmkDeviceModelId,
   DiscoveredDevice,
@@ -66,7 +66,7 @@ export const useMockServerDevicesDiscovery = (
 
     const subscription = timer(0, POLL_INTERVAL_MS)
       .pipe(
-        switchMap(() =>
+        exhaustMap(() =>
           from(listMockServerDevices({ url, token })).pipe(
             catchError(() => of<MockServerDevice[]>([])),
           ),
