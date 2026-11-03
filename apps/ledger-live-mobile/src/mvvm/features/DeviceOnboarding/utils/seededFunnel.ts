@@ -4,3 +4,10 @@ export function isSeededDeviceFunnelOn(
 ): boolean {
   return deviceOnboardingEnabled && connectSeededDevice;
 }
+
+export function isUnseededDeviceFunnelOn(
+  deviceOnboardingEnabled: boolean,
+  connectUnseededDevice: boolean,
+): boolean {
+  return deviceOnboardingEnabled && connectUnseededDevice;
+}

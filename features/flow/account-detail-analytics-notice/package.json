@@ -2,12 +2,13 @@
   "name": "@features/flow-account-detail-analytics-notice",
   "version": "0.1.0",
   "private": true,
-  "description": "Analytics introduction eligibility and installation-wide dismissal for Account Detail",
+  "description": "Analytics introduction eligibility, dismissal and UI for the Account Detail page",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./state": "./src/state/index.ts",
+    "./web": "./src/web/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -24,21 +25,46 @@
     "unimported": "pnpm knip --directory ../../.. -c features/flow/account-detail-analytics-notice/knip.web.config.mjs -W features/flow/account-detail-analytics-notice --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/account-detail-analytics-notice/knip.native.config.mjs -W features/flow/account-detail-analytics-notice --tsConfig tsconfig.native.json"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/i18n": "workspace:*"
   },
   "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
+    "@testing-library/dom": "catalog:",
     "@testing-library/jest-dom": "catalog:",
+    "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
     "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@ledgerhq/lumen-design-core": {
+      "optional": true
+    },
+    "@ledgerhq/lumen-ui-react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   }
 }

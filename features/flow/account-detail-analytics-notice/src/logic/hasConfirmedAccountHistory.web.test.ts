@@ -1,4 +1,4 @@
-import { hasConfirmedAccountHistory } from "./hasConfirmedAccountHistory";
+import { hasConfirmedAccountHistory } from "@features/flow-account-detail-analytics-notice";
 
 type HistoricalOperation = Readonly<{ confirmed: boolean }>;
 

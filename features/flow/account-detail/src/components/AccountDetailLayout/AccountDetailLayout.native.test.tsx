@@ -11,7 +11,27 @@ const slotIds = () =>
     .children.map((child: LayoutChild) => (typeof child === "string" ? child : child.props.testID));
 
 describe("AccountDetailLayout (Native)", () => {
-  it("renders the sections in page order", () => {
+  it("should place the Analytics notice before the custom place", () => {
+    render(
+      <AccountDetailLayout
+        hero={<View testID="hero" />}
+        customPlace={<View testID="custom-place" />}
+        analyticsNotice={<View testID="analytics-notice" />}
+        assets={<View testID="assets" />}
+        transactions={<View testID="transactions" />}
+      />,
+    );
+
+    expect(slotIds()).toEqual([
+      "hero",
+      "analytics-notice",
+      "custom-place",
+      "assets",
+      "transactions",
+    ]);
+  });
+
+  it("should preserve the section order when no Analytics notice is supplied", () => {
     render(
       <AccountDetailLayout
         hero={<View testID="hero" />}

@@ -20,6 +20,7 @@ import type { RootComposite, StackNavigatorProps } from "~/components/RootNaviga
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { applyAmountKey, toAmountText } from "../../utils/amountKeys";
+import type { PerpsWithdrawSummaryParams } from "./components/PerpsWithdrawSummary";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PerpsWithdraw>
@@ -46,6 +47,11 @@ export type PerpsWithdrawViewModel = Readonly<{
   exceedsBalance: boolean;
   canReview: boolean;
   handleReview: () => void;
+  isSummaryOpen: boolean;
+  /** Changes on every Review, so the summary starts again from the latest quote. */
+  summaryKey: number;
+  summaryParams: PerpsWithdrawSummaryParams | null;
+  closeSummary: () => void;
 }>;
 
 export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWithdrawViewModel {
@@ -63,6 +69,9 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
 
   const [amountText, setAmountText] = useState("");
   const [picked, setPicked] = useState<PickedWithdrawAccount | undefined>();
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+  const [summaryKey, setSummaryKey] = useState(0);
+  const [summaryParams, setSummaryParams] = useState<PerpsWithdrawSummaryParams | null>(null);
 
   // Leaving before the withdrawal is submitted abandons it; after that this is a no-op.
   useEffect(() => cancelWithdrawRequest, []);
@@ -81,7 +90,7 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     locale,
     discreet,
   });
-  const { destinationAccount } = form;
+  const { destinationAccount, usdcAmount, quote, quoteAccounts } = form;
   const destinationCurrency = destinationAccount
     ? getAccountCurrency(destinationAccount)
     : undefined;
@@ -108,8 +117,38 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     });
   }, [openDrawer]);
 
-  // TODO(LIVE-39368): open the withdraw summary.
-  const handleReview = useCallback(() => undefined, []);
+  const handleReview = useCallback(() => {
+    if (!form.canReview || !destinationAccount || !usdcAmount || !quote) return;
+
+    setSummaryParams({
+      sourceAccount,
+      destinationAccount,
+      quote,
+      quoteParams: {
+        amount: usdcAmount.toFixed(),
+        sourceAccount,
+        destinationAccount,
+        accounts: quoteAccounts,
+        counterValueCurrency: counterValueCurrency.ticker,
+      },
+    });
+    // Pinned so closing the sheet shows the reviewed receiver, not a recomputed default.
+    if (!picked) setPicked({ account: destinationAccount });
+    setSummaryKey(key => key + 1);
+    setIsSummaryOpen(true);
+  }, [
+    picked,
+    counterValueCurrency.ticker,
+    destinationAccount,
+    form.canReview,
+    quote,
+    quoteAccounts,
+    sourceAccount,
+    usdcAmount,
+  ]);
+
+  // The form stays mounted under the summary, so closing it keeps the amount and destination.
+  const closeSummary = useCallback(() => setIsSummaryOpen(false), []);
 
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
 
@@ -136,5 +175,9 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
     exceedsBalance: form.exceedsBalance,
     canReview: form.canReview,
     handleReview,
+    isSummaryOpen,
+    summaryKey,
+    summaryParams,
+    closeSummary,
   };
 }

@@ -933,6 +933,21 @@ describe("output command handling", () => {
     import.meta.dir,
     "./testing/human-device-error-exit.ts",
   );
+  const OUTPUT_LOADS_SOLANA_SDK = path.resolve(
+    import.meta.dir,
+    "./testing/output-loads-solana-sdk.ts",
+  );
+
+  it("loads no Solana SDK, which every command would pay for at startup", async () => {
+    const proc = Bun.spawn(["bun", "--cwd", ROOT, OUTPUT_LOADS_SOLANA_SDK], {
+      stdin: "ignore",
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+
+    expect(await proc.exited).toBe(0);
+    expect((await new Response(proc.stdout).text()).trim()).toBe("not loaded");
+  });
 
   it("human output exits with the WalletCliDeviceError exit code", async () => {
     const proc = Bun.spawn(["bun", "--cwd", ROOT, HUMAN_DEVICE_ERROR_EXIT], {

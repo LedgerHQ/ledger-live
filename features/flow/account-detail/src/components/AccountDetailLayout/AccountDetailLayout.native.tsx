@@ -4,6 +4,7 @@ import type { AccountDetailLayoutProps } from "./AccountDetailLayout.types";
 
 export function AccountDetailLayout({
   hero,
+  analyticsNotice,
   customPlace,
   assets,
   transactions,
@@ -11,6 +12,7 @@ export function AccountDetailLayout({
   return (
     <Box lx={{ flexDirection: "column", gap: "s24" }} testID="account-detail-layout">
       {hero}
+      {analyticsNotice}
       {customPlace}
       {assets}
       {transactions}

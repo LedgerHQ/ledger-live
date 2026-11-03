@@ -7,6 +7,7 @@ import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { FamilySection } from "./components/FamilySection";
 import { Transactions } from "./components/Transactions";
+import { AnalyticsIntroduction } from "./components/AnalyticsIntroduction";
 import { useAccountDetailContentViewModel } from "./hooks/useAccountDetailContentViewModel";
 
 type Props = Readonly<{ account: Account }>;
@@ -19,6 +20,7 @@ export function AccountDetailView({ account }: Props) {
       <Header account={account} />
       <AccountDetailLayout
         hero={<Hero {...hero} />}
+        analyticsNotice={<AnalyticsIntroduction account={account} />}
         customPlace={<FamilySection account={account} />}
         assets={
           emptyState.isVisible ? (
