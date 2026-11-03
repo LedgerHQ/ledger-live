@@ -1,6 +1,5 @@
 import type { BalanceGroup } from "@domain/api-account-portfolio";
-import { serverAccountId } from "../../evm";
-import { ETH, entry, group } from "../fakeService.mock";
+import { ETH, entry, group, serverAccountId } from "../fakeService.mock";
 import { verdictOf } from "./verdict";
 
 const readOf = (groups: BalanceGroup[], truncated = false) => ({
@@ -19,7 +18,7 @@ describe("verdictOf", () => {
         entry(ETH, { amount: "100", status: "pending" }),
       ]),
     ]);
-    expect(verdictOf(ETH, read)).toEqual({
+    expect(verdictOf(ETH, serverAccountId(ETH), read)).toEqual({
       status: "served",
       rows: [
         { assetId: "ethereum", balance: "10", spendableBalance: "7" },
@@ -30,7 +29,7 @@ describe("verdictOf", () => {
   });
 
   it("serves a zero native balance when the service has no group for it", () => {
-    expect(verdictOf(ETH, readOf([]))).toEqual({
+    expect(verdictOf(ETH, serverAccountId(ETH), readOf([]))).toEqual({
       status: "served",
       rows: [{ assetId: "ethereum", balance: "0", spendableBalance: "0" }],
     });
@@ -38,7 +37,11 @@ describe("verdictOf", () => {
 
   it("puts a zero native coin first when the service lists only tokens", () => {
     expect(
-      verdictOf(ETH, readOf([group(ETH, [entry(ETH, { asset: "token", cal_id: "t" })])])),
+      verdictOf(
+        ETH,
+        serverAccountId(ETH),
+        readOf([group(ETH, [entry(ETH, { asset: "token", cal_id: "t" })])]),
+      ),
     ).toMatchObject({
       status: "served",
       rows: [{ assetId: "ethereum", balance: "0" }, { assetId: "t" }],
@@ -46,7 +49,12 @@ describe("verdictOf", () => {
   });
 
   it("fails an account whose own filtered call failed", () => {
-    expect(verdictOf(ETH, { ...readOf([]), failed: new Set([serverAccountId(ETH)]) })).toEqual({
+    expect(
+      verdictOf(ETH, serverAccountId(ETH), {
+        ...readOf([]),
+        failed: new Set([serverAccountId(ETH)]),
+      }),
+    ).toEqual({
       status: "failed",
       detail: "Its balance call failed",
     });
@@ -78,6 +86,9 @@ describe("verdictOf", () => {
       detail: "The balance scan stopped before the end",
     },
   ])("fails when $reason", ({ groups, truncated, detail }) => {
-    expect(verdictOf(ETH, readOf(groups, truncated))).toEqual({ status: "failed", detail });
+    expect(verdictOf(ETH, serverAccountId(ETH), readOf(groups, truncated))).toEqual({
+      status: "failed",
+      detail,
+    });
   });
 });

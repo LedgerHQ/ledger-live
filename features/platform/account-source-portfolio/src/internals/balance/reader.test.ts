@@ -4,7 +4,6 @@ import {
   type AccountDescriptor,
   type AddressAccountDescriptor,
 } from "@domain/entity-account-descriptor";
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import {
   ETH,
   depsOf,
@@ -15,8 +14,9 @@ import {
   reasonOf,
   serviceAccount,
   synced,
+  serverAccountId,
+  DOT,
 } from "../fakeService.mock";
-import { serverAccountId } from "../../evm";
 import { PortfolioReadError } from "../readiness";
 import { balanceReader } from "./reader";
 
@@ -142,14 +142,14 @@ describe("balanceReader", () => {
 
   it("fails an account that is not EVM", async () => {
     const { read, deps } = setup(fakeService({ portfolio: synced([]) }));
-    const utxo = mockUtxoAccountDescriptor();
+    const utxo = DOT;
 
     const [settled] = await read([utxo]);
 
     expect(reasonOf(settled)).toBeInstanceOf(PortfolioReadError);
     expect(deps.store.get().outcomes[computeAccountUUID(utxo)]).toMatchObject({
       status: "failed",
-      detail: "Not an EVM account",
+      detail: "Not an account the Portfolio service serves",
     });
   });
 

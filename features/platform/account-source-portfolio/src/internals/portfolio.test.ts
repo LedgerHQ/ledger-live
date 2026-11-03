@@ -88,7 +88,8 @@ describe("reconcile", () => {
         ...portfolio,
         registrations: [
           ...(portfolio.registrations ?? []),
-          { id: "btc", type: "auto_derive", network: "bitcoin", xpub: "xpub-1" },
+          { id: "dot", type: "account", network: "polkadot", addresses: ["1abc"] },
+          { id: "sol", type: "solana", address: "9x" },
         ],
       },
     });

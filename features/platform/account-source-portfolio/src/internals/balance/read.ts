@@ -39,36 +39,53 @@ async function readPages(
   return readPages(read, keep, next, calls + 1);
 }
 
+const keeperOf = (groups: Map<string, BalanceGroup>) => (page: BalancePage) =>
+  page.items.forEach(group =>
+    groups.set(group.account_id, mergeGroup(groups.get(group.account_id), group)),
+  );
+
+/** One read per account, following its own page tokens. */
+async function readEach(
+  client: PortfolioClient,
+  portfolioId: () => PortfolioId,
+  serverIds: readonly string[],
+  callsBefore = 0,
+): Promise<BalanceRead> {
+  const groups = new Map<string, BalanceGroup>();
+  const keep = keeperOf(groups);
+  const reads = await Promise.allSettled(
+    serverIds.map(account =>
+      readPages(
+        token => client.getBalance(portfolioId(), { account, size: PAGE_SIZE, token }),
+        keep,
+      ),
+    ),
+  );
+  const failed = new Set<string>();
+  let calls = callsBefore;
+  reads.forEach((read, index) => {
+    calls += read.status === "fulfilled" ? read.value.calls : 1;
+    if (read.status === "rejected" || !read.value.ended) failed.add(serverIds[index]);
+  });
+  return { groups, truncated: false, calls, failed };
+}
+
 export async function readBalanceGroups(
   client: PortfolioClient,
   portfolioId: () => PortfolioId,
   serverIds: readonly string[],
 ): Promise<BalanceRead> {
+  if (serverIds.length <= FILTERED_READS_UP_TO) return readEach(client, portfolioId, serverIds);
   const groups = new Map<string, BalanceGroup>();
-  const keep = (page: BalancePage) =>
-    page.items.forEach(group =>
-      groups.set(group.account_id, mergeGroup(groups.get(group.account_id), group)),
-    );
-  if (serverIds.length <= FILTERED_READS_UP_TO) {
-    const reads = await Promise.allSettled(
-      serverIds.map(account =>
-        readPages(
-          token => client.getBalance(portfolioId(), { account, size: PAGE_SIZE, token }),
-          keep,
-        ),
-      ),
-    );
-    const failed = new Set<string>();
-    let calls = 0;
-    reads.forEach((read, index) => {
-      calls += read.status === "fulfilled" ? read.value.calls : 1;
-      if (read.status === "rejected" || !read.value.ended) failed.add(serverIds[index]);
-    });
-    return { groups, truncated: false, calls, failed };
+  let scanned = 0;
+  try {
+    const { calls, ended } = await readPages(token => {
+      scanned += 1;
+      return client.getBalance(portfolioId(), { size: PAGE_SIZE, token });
+    }, keeperOf(groups));
+    return { groups, truncated: !ended, calls };
+  } catch {
+    // The scan of a portfolio holding a heavy EVM address times out (504): one read per account still answers.
+    return readEach(client, portfolioId, serverIds, scanned);
   }
-  const { calls, ended } = await readPages(
-    token => client.getBalance(portfolioId(), { size: PAGE_SIZE, token }),
-    keep,
-  );
-  return { groups, truncated: !ended, calls };
 }

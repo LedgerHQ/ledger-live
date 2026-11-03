@@ -1,25 +1,28 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import { isEvmAccount, serverAccountId } from "../evm";
+import { portfolioAccountOf } from "../registration";
 
 export type Readiness =
-  | { state: "ready" }
+  | { state: "ready"; serverAccountId: string }
   | { state: "pending"; detail: string }
   | { state: "failed"; detail: string };
 
 /** Whether the service can answer the account: ready once its service account is synchronized. */
 export function readinessOf(descriptor: AccountDescriptor, portfolio: Portfolio): Readiness {
-  if (!isEvmAccount(descriptor)) return { state: "failed", detail: "Not an EVM account" };
-  const id = serverAccountId(descriptor);
+  const ref = portfolioAccountOf(descriptor);
+  if (!ref) return { state: "failed", detail: "Not an account the Portfolio service serves" };
+  const { registration, serverAccountId } = ref;
   const accounts = portfolio.accounts ?? [];
-  const account = accounts.find(each => each.id === id);
+  const account = accounts.find(each => each.id === serverAccountId);
   if (!account) {
-    const address = descriptor.address.toLowerCase();
-    return accounts.some(each => each.id.endsWith(`:${address}`))
+    const fannedOut =
+      registration.type === "evm" &&
+      accounts.some(each => each.id.endsWith(`:${registration.address.toLowerCase()}`));
+    return fannedOut
       ? { state: "failed", detail: `The fan-out tracks no ${descriptor.network} account` }
       : { state: "pending", detail: "Service account not created yet" };
   }
-  if (account.status === "synchronized") return { state: "ready" };
+  if (account.status === "synchronized") return { state: "ready", serverAccountId };
   if (account.status === "registration_failure") {
     return { state: "failed", detail: "Service account registration_failure" };
   }

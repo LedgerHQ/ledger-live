@@ -2,7 +2,7 @@ import type { Portfolio } from "@domain/api-account-portfolio";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import { PortfolioServiceError, type PortfolioClient } from "../client";
-import { missingRegistrations, realAccounts, unneededRegistrations } from "../evm";
+import { missingRegistrations, realAccounts, unneededRegistrations } from "../registration";
 import type { SerialQueue } from "./queue";
 import { readinessOf } from "./readiness";
 import { logActivity, recordListing, type PortfolioStore } from "./snapshot";

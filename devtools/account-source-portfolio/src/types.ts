@@ -10,7 +10,7 @@ export interface PortfolioSourceToolOutcome {
 export interface PortfolioSourceToolAccount {
   readonly accountUUID: string;
   readonly label: string;
-  /** False when the source does not support it (not an EVM account). */
+  /** False when the source does not serve its family or network. */
   readonly supported: boolean;
   /** The service lists its registration. */
   readonly registered: boolean;

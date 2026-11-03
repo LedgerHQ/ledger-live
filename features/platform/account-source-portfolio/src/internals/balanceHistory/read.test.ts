@@ -1,5 +1,11 @@
-import { serverAccountId } from "../../evm";
-import { ETH, PORTFOLIO_ID, evm, fakeService, historyGroup } from "../fakeService.mock";
+import {
+  ETH,
+  PORTFOLIO_ID,
+  evm,
+  fakeService,
+  historyGroup,
+  serverAccountId,
+} from "../fakeService.mock";
 import { readHistory } from "./read";
 
 describe("readHistory", () => {
@@ -11,7 +17,7 @@ describe("readHistory", () => {
         : { items: [historyGroup(ETH), historyGroup(evm(2))], nextToken: "t2" },
     );
 
-    const read = await readHistory(client, PORTFOLIO_ID, ETH, "week");
+    const read = await readHistory(client, PORTFOLIO_ID, serverAccountId(ETH), "week");
 
     expect(client.getBalanceHistory.mock.calls.map(([, params]) => params)).toEqual([
       { account: serverAccountId(ETH), range: "week", size: 100, token: undefined },
@@ -25,7 +31,7 @@ describe("readHistory", () => {
     const { client } = fakeService();
     client.getBalanceHistory.mockResolvedValue({ items: [historyGroup(ETH)], nextToken: "more" });
 
-    const read = await readHistory(client, PORTFOLIO_ID, ETH, "all");
+    const read = await readHistory(client, PORTFOLIO_ID, serverAccountId(ETH), "all");
 
     expect(read).toMatchObject({ truncated: true, calls: 20 });
   });

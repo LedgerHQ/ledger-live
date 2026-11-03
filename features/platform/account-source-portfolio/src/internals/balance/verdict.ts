@@ -2,8 +2,7 @@ import {
   AccountAssetBalanceSchema,
   type AccountAssetBalance,
 } from "@domain/entity-account-balance";
-import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
-import { serverAccountId } from "../../evm";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { toAccountBalances } from "./map";
 import type { BalanceRead } from "./read";
 
@@ -12,7 +11,7 @@ export type Verdict =
   | { status: "failed"; detail: string };
 
 /** The native coin comes first in every balance: a synchronized account the service lists without it holds none. */
-const zeroNative = (descriptor: AddressAccountDescriptor): AccountAssetBalance =>
+const zeroNative = (descriptor: AccountDescriptor): AccountAssetBalance =>
   AccountAssetBalanceSchema.parse({
     assetId: descriptor.network,
     balance: "0",
@@ -21,10 +20,10 @@ const zeroNative = (descriptor: AddressAccountDescriptor): AccountAssetBalance =
 
 /** The balance of a synchronized account: no group means it holds nothing; a scan that stopped short serves none. */
 export function verdictOf(
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
+  id: string,
   { groups, truncated, failed }: Pick<BalanceRead, "groups" | "truncated" | "failed">,
 ): Verdict {
-  const id = serverAccountId(descriptor);
   if (failed?.has(id)) return { status: "failed", detail: "Its balance call failed" };
   // A capped scan can have more groups of any account beyond its last page.
   if (truncated) return { status: "failed", detail: "The balance scan stopped before the end" };

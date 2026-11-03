@@ -1,11 +1,11 @@
 import type { UpdatesPage } from "@domain/api-account-portfolio";
 import type { BalanceAssetId } from "@domain/entity-account-balance";
 import type { AccountOperationsQuery, CountervalueTicker } from "@domain/entity-account-operation";
-import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
 import type { PortfolioClient } from "../../client";
-import { serverAccountId } from "../../evm";
+import { isEvmAccount } from "../../evm";
 
 const DEFAULT_LIMIT = 20;
 
@@ -42,10 +42,12 @@ export function fiatOf(query: AccountOperationsQuery | undefined): Fiat | undefi
  */
 export async function serviceAssetOf(
   client: PortfolioClient,
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   filterAsset: BalanceAssetId | undefined,
 ): Promise<{ asset?: string } | undefined> {
   if (filterAsset === undefined || filterAsset === descriptor.network) return {};
+  // Outside EVM the service's token asset (`token.trc20.<base58>`) cannot be spelled: filtered locally.
+  if (!isEvmAccount(descriptor)) return {};
   const token = await client.findToken(filterAsset);
   if (!token || token.parentCurrencyId !== descriptor.network) return undefined;
   return { asset: `${token.tokenType}.${token.contractAddress.toLowerCase()}` };
@@ -57,11 +59,11 @@ export type UpdatesRequest = { limit: number; cursor?: string; asset?: string; f
 export const readUpdates = (
   client: PortfolioClient,
   portfolioId: () => PortfolioId,
-  descriptor: AddressAccountDescriptor,
+  account: string,
   { limit, cursor, asset, fiat }: UpdatesRequest,
 ): Promise<UpdatesPage> =>
   client.getUpdates(portfolioId(), {
-    account: serverAccountId(descriptor),
+    account,
     size: limit,
     token: cursor,
     ...(asset === undefined ? {} : { asset }),

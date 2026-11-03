@@ -5,7 +5,6 @@ import {
   type AccountBalanceHistory,
   type BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
-import { isEvmAccount } from "../../evm";
 import { describeError, whenReady, type PortfolioDeps } from "../portfolio";
 import { failedRead, readinessOf } from "../readiness";
 import { logActivity } from "../snapshot";
@@ -19,12 +18,11 @@ async function readOne(
   range: BalanceHistoryRange,
 ): Promise<{ verdict: Verdict; calls: number }> {
   const readiness = readinessOf(descriptor, portfolio);
-  if (readiness.state !== "ready" || !isEvmAccount(descriptor)) {
-    const detail = readiness.state === "ready" ? "Not an EVM account" : readiness.detail;
-    return { verdict: { status: "failed", detail }, calls: 0 };
+  if (readiness.state !== "ready") {
+    return { verdict: { status: "failed", detail: readiness.detail }, calls: 0 };
   }
   try {
-    const read = await readHistory(client, portfolioId, descriptor, range);
+    const read = await readHistory(client, portfolioId, readiness.serverAccountId, range);
     return { verdict: verdictOf(descriptor, range, read), calls: read.calls };
   } catch (error) {
     return { verdict: { status: "failed", detail: describeError(error) }, calls: 1 };

@@ -1,10 +1,10 @@
-import type { Portfolio, PortfolioRegistration } from "@domain/api-account-portfolio";
 import {
   currencyIdFromNetwork,
   type AccountDescriptor,
   type AddressAccountDescriptor,
 } from "@domain/entity-account-descriptor";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import type { PortfolioFamily } from "./family";
 
 /** Ethereum uses coin type 60, Ethereum Classic 61. */
 const EVM_PATH = /^m\/44h\/(?:60|61)h\//;
@@ -30,60 +30,15 @@ export function isEvmAccount(
   );
 }
 
-/** One registration per address: the service fans it out to every EVM network. */
-export const evmRegistration = (descriptor: AddressAccountDescriptor): PortfolioRegistration => ({
-  type: "evm",
-  address: descriptor.address,
-});
-
-/** The id the fan-out gives the account on its network. */
-export const serverAccountId = (descriptor: AddressAccountDescriptor) =>
-  `${descriptor.network}:${descriptor.address.toLowerCase()}`;
-
-/** Matches a local registration with a server one; undefined for anything but an EVM address. */
-export const registrationKey = (registration: {
-  readonly type: string;
-  readonly address?: string;
-}): string | undefined =>
-  registration.type === "evm" && registration.address
-    ? registration.address.toLowerCase()
-    : undefined;
-
-/** Mock accounts never reach the service: their addresses are synthetic. */
-export const realAccounts = (descriptors: readonly AccountDescriptor[]) =>
-  descriptors.filter(descriptor => descriptor.purpose === "account");
-
-/** One registration per address: an address shared by two networks registers once. */
-function wantedRegistrations(descriptors: readonly AccountDescriptor[]) {
-  const wanted = new Map<string, PortfolioRegistration>();
-  for (const descriptor of realAccounts(descriptors)) {
-    if (!isEvmAccount(descriptor)) continue;
-    const registration = evmRegistration(descriptor);
-    const key = registrationKey(registration);
-    if (key) wanted.set(key, registration);
-  }
-  return wanted;
-}
-
-/** What the accounts need and the service does not list yet. */
-export function missingRegistrations(
-  portfolio: Portfolio,
-  descriptors: readonly AccountDescriptor[],
-): PortfolioRegistration[] {
-  const known = new Set((portfolio.registrations ?? []).map(registrationKey));
-  return [...wantedRegistrations(descriptors)]
-    .filter(([key]) => !known.has(key))
-    .map(([, registration]) => registration);
-}
-
-/** The EVM registrations the service lists and no account needs; others are not this source's to judge. */
-export function unneededRegistrations(
-  portfolio: Portfolio,
-  descriptors: readonly AccountDescriptor[],
-) {
-  const wanted = wantedRegistrations(descriptors);
-  return (portfolio.registrations ?? []).filter(entry => {
-    const key = entry.type === "evm" ? registrationKey(entry) : undefined;
-    return key !== undefined && !wanted.has(key);
-  });
-}
+/** One `evm` registration per address, which the service fans out to every EVM network as `<network>:<lowercase address>`. */
+export const evmFamily: PortfolioFamily = {
+  accountOf: descriptor =>
+    isEvmAccount(descriptor)
+      ? {
+          registration: { type: "evm", address: descriptor.address },
+          serverAccountId: `${descriptor.network}:${descriptor.address.toLowerCase()}`,
+        }
+      : undefined,
+  keyOf: ({ type, address }) =>
+    type === "evm" && address ? `evm:${address.toLowerCase()}` : undefined,
+};

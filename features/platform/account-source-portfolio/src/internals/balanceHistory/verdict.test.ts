@@ -1,5 +1,4 @@
-import { serverAccountId } from "../../evm";
-import { ETH, historyGroup, point } from "../fakeService.mock";
+import { ETH, historyGroup, point, serverAccountId } from "../fakeService.mock";
 import { verdictOf } from "./verdict";
 
 const read = (groups: Parameters<typeof verdictOf>[2]["groups"], truncated = false) => ({

@@ -8,10 +8,8 @@ import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { portfolioIdSelector, type IdentitiesState } from "@domain/entity-client-identity";
 import {
   createPortfolioSource,
-  evmRegistration,
-  isEvmAccount,
+  portfolioAccountOf,
   registrationKey,
-  serverAccountId,
   unneededRegistrations,
   type PortfolioClient,
   type PortfolioSource,
@@ -101,15 +99,15 @@ export function useAccountSourcePortfolioToolProps({
         label: labelOf(descriptor),
         outcome: snapshot.outcomes[accountUUID],
       };
-      if (!isEvmAccount(descriptor)) return { ...base, supported: false, registered: false };
-      const key = registrationKey(evmRegistration(descriptor));
-      const id = serverAccountId(descriptor);
+      const ref = portfolioAccountOf(descriptor);
+      if (!ref) return { ...base, supported: false, registered: false };
+      const key = registrationKey(ref.registration);
       return {
         ...base,
         supported: true,
         registered: key !== undefined && registered.has(key),
-        serverAccountId: id,
-        serverStatus: statuses.get(id),
+        serverAccountId: ref.serverAccountId,
+        serverStatus: statuses.get(ref.serverAccountId),
       };
     });
   }, [entries, portfolio, snapshot.outcomes]);
@@ -120,7 +118,12 @@ export function useAccountSourcePortfolioToolProps({
         ? unneededRegistrations(portfolio, descriptors).map(entry => ({
             id: entry.id,
             type: entry.type,
-            label: entry.address ?? entry.xpub ?? entry.network ?? entry.id,
+            label:
+              entry.address ??
+              entry.xpub ??
+              entry.addresses?.join(", ") ??
+              entry.network ??
+              entry.id,
           }))
         : [],
     [portfolio, descriptors],

@@ -1,8 +1,15 @@
 import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
 import { CountervalueTickerSchema } from "@domain/entity-account-operation";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
-import { serverAccountId } from "../../evm";
-import { ETH, PORTFOLIO_ID, POLYGON, fakeService, update } from "../fakeService.mock";
+import {
+  ETH,
+  PORTFOLIO_ID,
+  POLYGON,
+  TRX,
+  fakeService,
+  serverAccountId,
+  update,
+} from "../fakeService.mock";
 import { fiatOf, limitOf, readUpdates, serviceAssetOf } from "./read";
 
 const USD = CountervalueTickerSchema.parse("USD");
@@ -73,6 +80,14 @@ describe("serviceAssetOf", () => {
     );
     await expect(serviceAssetOf(client, POLYGON, asset(USDT.id))).resolves.toBe(undefined);
   });
+
+  it("keeps a token filter local outside EVM, where the service's asset cannot be spelled", async () => {
+    const { client: own } = fakeService({ tokens: [USDT] });
+    await expect(
+      serviceAssetOf(own, TRX, asset("tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t")),
+    ).resolves.toEqual({});
+    expect(own.findToken).not.toHaveBeenCalled();
+  });
 });
 
 describe("readUpdates", () => {
@@ -81,7 +96,10 @@ describe("readUpdates", () => {
       updates: [update(ETH, { tx: { hash: "0x1" } }), update(ETH, { tx: { hash: "0x2" } })],
     });
 
-    const page = await readUpdates(client, PORTFOLIO_ID, ETH, { limit: 1, cursor: "1" });
+    const page = await readUpdates(client, PORTFOLIO_ID, serverAccountId(ETH), {
+      limit: 1,
+      cursor: "1",
+    });
 
     expect(client.getUpdates.mock.calls.map(([, params]) => params)).toEqual([
       { account: serverAccountId(ETH), size: 1, token: "1" },
@@ -92,7 +110,7 @@ describe("readUpdates", () => {
   it("forwards the service asset and the fiat as currency", async () => {
     const { client } = fakeService();
 
-    await readUpdates(client, PORTFOLIO_ID, ETH, {
+    await readUpdates(client, PORTFOLIO_ID, serverAccountId(ETH), {
       limit: 5,
       asset: "erc20.0xabc",
       fiat: { ticker: USD, currency: "USD", magnitude: 2 },

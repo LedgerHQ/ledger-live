@@ -1,11 +1,19 @@
 import type { Portfolio } from "@domain/api-account-portfolio";
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
-import { ETH, evm, serviceAccount, synced } from "./fakeService.mock";
+import {
+  BTC,
+  DOT,
+  ETH,
+  TRX,
+  evm,
+  serverAccountId,
+  serviceAccount,
+  synced,
+} from "./fakeService.mock";
 import { readinessOf } from "./readiness";
 
 describe("readinessOf", () => {
   it.each<[string, Portfolio, object]>([
-    ["synchronized", synced([ETH]), { state: "ready" }],
+    ["synchronized", synced([ETH]), { state: "ready", serverAccountId: serverAccountId(ETH) }],
     [
       "not created yet",
       synced([]),
@@ -30,10 +38,24 @@ describe("readinessOf", () => {
     expect(readinessOf(ETH, portfolio)).toEqual(readiness);
   });
 
-  it("fails an account that is not EVM", () => {
-    expect(readinessOf(mockUtxoAccountDescriptor(), synced([]))).toEqual({
+  it("fails an account the service does not serve", () => {
+    expect(readinessOf(DOT, synced([]))).toEqual({
       state: "failed",
-      detail: "Not an EVM account",
+      detail: "Not an account the Portfolio service serves",
+    });
+  });
+
+  it.each([
+    ["Bitcoin", BTC],
+    ["Tron", TRX],
+  ])("finds a %s account under its own service id", (_, descriptor) => {
+    expect(readinessOf(descriptor, synced([descriptor]))).toEqual({
+      state: "ready",
+      serverAccountId: serverAccountId(descriptor),
+    });
+    expect(readinessOf(descriptor, synced([]))).toEqual({
+      state: "pending",
+      detail: "Service account not created yet",
     });
   });
 });
