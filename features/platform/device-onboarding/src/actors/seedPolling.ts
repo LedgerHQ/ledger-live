@@ -20,7 +20,7 @@ export type SeedPollingInput = {
 };
 
 export const defaultSeedPollingIntervalMs = 1000;
-export const defaultSeedPollingFailureThreshold = 3;
+export const defaultSeedPollingFailureThreshold = 60;
 
 /**
  * The loop is chained rather than scheduled on an interval so two APDUs can never overlap, and a

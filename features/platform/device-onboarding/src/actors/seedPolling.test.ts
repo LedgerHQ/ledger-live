@@ -5,7 +5,12 @@ import { createDeviceManagementKit } from "../tests/createDeviceManagementKit";
 import { createFakeCommandDmk, type ScriptedCommand } from "../tests/fakeDmk";
 import { createOsVersionResponse, type OsVersionResponseOptions } from "../tests/osVersionResponse";
 import { OnboardingStep, RecoveryKeyStatus } from "../types";
-import { defaultSeedPollingIntervalMs, seedPolling, type SeedPollingEvent } from "./seedPolling";
+import {
+  defaultSeedPollingFailureThreshold,
+  defaultSeedPollingIntervalMs,
+  seedPolling,
+  type SeedPollingEvent,
+} from "./seedPolling";
 
 const restoringWord = (currentWordIndex: number): OsVersionResponseOptions => ({
   onboardingState: "restore-recovery-phrase",
@@ -150,6 +155,27 @@ describe("seedPolling", () => {
     await jest.advanceTimersByTimeAsync(6 * defaultSeedPollingIntervalMs);
 
     expect(received.map(event => event.type)).toEqual(["STEP_CHANGED", "STEP_CHANGED"]);
+    stop();
+  });
+
+  it("stays quiet through fifty-nine refused reads, then reports the next step", async () => {
+    const refused = { throws: new Error("device refused the read") };
+    const { dmk, sendCommand } = createFakeCommandDmk([
+      ...Array.from({ length: defaultSeedPollingFailureThreshold - 1 }, () => refused),
+      reads(restoringWord(4)),
+    ]);
+    const { received, stop } = runActor<SeedPollingEvent>(seedPolling, {
+      dmk,
+      sessionId: "session",
+    });
+
+    await jest.advanceTimersByTimeAsync(
+      (defaultSeedPollingFailureThreshold - 1) * defaultSeedPollingIntervalMs,
+    );
+
+    expect(defaultSeedPollingFailureThreshold).toBe(60);
+    expect(received).toEqual([expect.objectContaining({ type: "STEP_CHANGED" })]);
+    expect(sendCommand).toHaveBeenCalledTimes(defaultSeedPollingFailureThreshold);
     stop();
   });
 
