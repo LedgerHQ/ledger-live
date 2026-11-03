@@ -245,7 +245,7 @@ catalog:
   "@nx/devkit": 24.0.2
   detox: 20.51.3
   "@nx/s3-cache": 5.0.7
-  oxlint: 1.82.0
+  oxlint: 1.90.0
   oxfmt: 0.67.0
   # Modules published by coin-modules
   "@ledgerhq/coin-evm": 16.2.0
