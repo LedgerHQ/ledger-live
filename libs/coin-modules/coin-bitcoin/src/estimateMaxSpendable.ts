@@ -5,6 +5,7 @@ import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import wallet from "@ledgerhq/wallet-btc/index";
 import { getWalletAccount } from "./getWalletAccount";
 import type { Transaction } from "./types";
+import { getExcludeUTXOsFromPendingOperations } from "./pendingInputs";
 import type { Logger } from "@ledgerhq/coin-module-framework/config";
 
 /**
@@ -32,7 +33,10 @@ export const estimateMaxSpendable = async (
     logger,
     walletAccount,
     feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
-    transaction?.utxoStrategy?.excludeUTXOs || [],
+    [
+      ...(transaction?.utxoStrategy?.excludeUTXOs || []),
+      ...getExcludeUTXOsFromPendingOperations(mainAccount, transaction?.replaceTxId),
+    ],
     transaction ? [transaction.recipient] : [],
     transaction?.opReturnData,
   );

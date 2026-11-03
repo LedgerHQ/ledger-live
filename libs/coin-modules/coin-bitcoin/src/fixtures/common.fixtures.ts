@@ -65,7 +65,7 @@ export function createFixtureAccount(account?: Partial<BitcoinAccount>): Bitcoin
     currency,
     operationsCount: 0,
     operations: [],
-    pendingOperations: [],
+    pendingOperations: account?.pendingOperations ?? [],
     lastSyncDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
