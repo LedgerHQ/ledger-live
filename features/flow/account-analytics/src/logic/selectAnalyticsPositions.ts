@@ -2,7 +2,7 @@ import type { AnalyticsCatalog, AnalyticsPosition, AnalyticsSelection } from "..
 
 export function selectAnalyticsPositions(
   catalog: AnalyticsCatalog,
-  selection: AnalyticsSelection,
+  selection: Pick<AnalyticsSelection, "assetId" | "accountId">,
 ): readonly AnalyticsPosition[] {
   return catalog.positions.filter(
     position =>

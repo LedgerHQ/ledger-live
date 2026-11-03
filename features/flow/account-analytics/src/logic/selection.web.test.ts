@@ -86,7 +86,6 @@ describe("Analytics selection", () => {
     const selected = selectAnalyticsPositions(analyticsCatalog, {
       assetId: "usdc",
       accountId: "tron-account",
-      metric: "balance",
     });
     expect(selected.map(p => p.positionId)).toEqual(["tron-usdc"]);
   });

@@ -20,7 +20,7 @@ partial result. Ports receive an AbortSignal; the ViewModel also rejects outdate
 when a port cannot cancel its work. Changing the port callback refreshes the current selection
 when host accounts or countervalues change.
 
-The chart range preserves asset/account selection and affects only the chart, not the current
+The chart range preserves asset/account selection and affects the chart and its variation, not the current
 balance or PnL cards/details. The PnL result key excludes both the chart metric and its range;
 existing current/lifetime PnL definitions remain unchanged. Historical return-series definitions
 and data are delivered separately.

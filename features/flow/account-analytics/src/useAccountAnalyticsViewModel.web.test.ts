@@ -29,7 +29,9 @@ describe("useAccountAnalyticsViewModel", () => {
     act(() => result.current.selectAsset("btc"));
     act(() => result.current.selectAccount("btc-account"));
     await waitFor(() => expect(result.current.balance.status).toBe("ready"));
+    const positionIds = result.current.context.positionIds;
     rerender({ period: "1m" });
+    expect(result.current.context.positionIds).toBe(positionIds);
     expect(result.current.selection).toEqual({
       assetId: "btc",
       accountId: "btc-account",

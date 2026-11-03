@@ -70,18 +70,20 @@ export function useAccountAnalyticsViewModel({
           metric: state.selection.metric,
         };
   }, [readyCatalog, state, entry]);
+  const { assetId, accountId } = selection;
   const positions = useMemo(
-    () => (readyCatalog ? selectAnalyticsPositions(readyCatalog, selection) : []),
-    [readyCatalog, selection],
+    () => (readyCatalog ? selectAnalyticsPositions(readyCatalog, { assetId, accountId }) : []),
+    [readyCatalog, assetId, accountId],
   );
+  const positionIds = useMemo(() => positions.map(position => position.positionId), [positions]);
   const context = useMemo<AnalyticsQueryContext>(
     () => ({
       ...selection,
       fiatCurrencyId,
       period,
-      positionIds: positions.map(position => position.positionId),
+      positionIds,
     }),
-    [selection, fiatCurrencyId, period, positions],
+    [selection, fiatCurrencyId, period, positionIds],
   );
   const contextKey = createAnalyticsQueryKey(context);
   if (readyCatalog && (!state.initialized || selection !== state.selection)) {
