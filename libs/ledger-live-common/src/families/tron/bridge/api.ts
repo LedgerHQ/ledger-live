@@ -38,10 +38,7 @@ export async function buildAccountShape(address: string): Promise<FamilyAccountS
   return { tronResources: await fetchTronResources(context.logger, config, accounts[0]) };
 }
 
-// A TRC10 transfer is crafted with the numeric asset id (encoded into the TransferAssetContract
-// `asset_name`), which CAL exposes as the token's `tokenIdentifier`; the token's `contractAddress`
-// holds the issuer address, not the asset id. A TRC10 balance names its asset by that id alone, so
-// the reverse lookup goes by identifier, not by address.
+// CAL keeps a TRC10 asset id in `tokenIdentifier`; its `contractAddress` is the issuer address.
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
   asset: AssetInfo,

@@ -69,11 +69,6 @@ export function validateAndTransformSingleTokenResponse(
   });
 }
 
-/**
- * Validates a `token_identifier` lookup response and converts its only entry. Throws when CAL
- * returned more than one match: a token_identifier is unique per contract, not per network on every
- * chain, and picking one of several matches would silently resolve to the wrong token.
- */
 export function validateAndTransformTokenIdentifierResponse(
   response: unknown,
   params: TokenByTokenIdentifierInCurrencyParams,

@@ -44,12 +44,7 @@ export const PersistedTokenEntrySchema = z.object({
    * `contract_address` alone is not unique (e.g. MultiversX, Algorand, Cardano).
    */
   token_identifier: z.string().optional(),
-  /**
-   * The `token_identifier` of a `findTokenByTokenIdentifierInCurrency` query that resolved to this
-   * token, if any. Taken from that query, never derived from the token: an identifier names a single
-   * token on some networks (TRON TRC10 asset ids) but not on others (Tezos FA2 ids restart at 0 in
-   * every contract), and only a fulfilled lookup shows CAL found exactly one match.
-   */
+  /** Set only from a fulfilled lookup: an identifier is not unique per network on every chain. */
   token_identifier_lookup: z.string().optional(),
 });
 

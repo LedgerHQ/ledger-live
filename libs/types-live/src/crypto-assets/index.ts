@@ -57,10 +57,7 @@ export type CryptoAssetsStore = {
   ): Promise<TokenCurrency | undefined>;
 
   /**
-   * Finds a token by its `token_identifier` alone within a specific parent currency, for chains
-   * where an operation names a token only by that identifier (e.g. a TRON TRC10 asset id) and the
-   * contract address is unknown.
-   * Optional so stores that never serve such a lookup (test doubles) need not stub it.
+   * Finds a token by its `token_identifier` alone within a specific parent currency.
    *
    * @param tokenIdentifier - The token identifier (e.g. "1002000" for a TRC10 asset)
    * @param currencyId - The ID of the parent currency/blockchain (e.g. "tron")

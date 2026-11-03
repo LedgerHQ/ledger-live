@@ -22,7 +22,7 @@ type RestoreCacheEntry =
  * Builds the RTK Query cache entries to upsert for the given persisted tokens: a `findTokenById`
  * and a `findTokenByAddressInCurrency` entry per token, plus an address-only key when a
  * `token_identifier` is present (so lookups without it still hit the cache), and a
- * `findTokenByTokenIdentifierInCurrency` entry only for a token that such a lookup resolved.
+ * `findTokenByTokenIdentifierInCurrency` entry for a token that lookup resolved.
  */
 export function buildRestoreCacheEntries(tokens: PersistedTokenEntry[]): RestoreCacheEntry[] {
   return tokens.flatMap(({ data: token, token_identifier, token_identifier_lookup }) => {

@@ -24,6 +24,7 @@ import {
 } from "./internals";
 
 const TOKEN_OUTPUT_FIELDS = Object.keys(ApiTokenResponseSchema.shape);
+const ENOUGH_MATCHES_TO_DETECT_AMBIGUITY = "2";
 
 /**
  * CAL token endpoints, injected into the shared CAL service api.
@@ -79,9 +80,7 @@ export const cryptoAssetsApi = calApi
           params: {
             token_identifier: params.token_identifier,
             network: params.network,
-            // Two, not one: a second match means the identifier does not name a single token on
-            // this network, which the response transform reports instead of picking one.
-            limit: "2",
+            limit: ENOUGH_MATCHES_TO_DETECT_AMBIGUITY,
             output: TOKEN_OUTPUT_FIELDS.join(","),
           },
         }),

@@ -253,8 +253,7 @@ describe("cryptoAssetsApi requests", () => {
   });
 
   it("findTokenByTokenIdentifierInCurrency errors instead of picking one of several matches", async () => {
-    // RTK Query logs the error thrown by the response transform.
-    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    const silencedRtkQueryErrorLog = jest.spyOn(console, "error").mockImplementation(() => {});
     calEndpoints.tokens.mockImplementation(() =>
       HttpResponse.json([
         mockApiTokenResponse,
@@ -277,7 +276,7 @@ describe("cryptoAssetsApi requests", () => {
       });
       expect(mockConvert).not.toHaveBeenCalled();
     } finally {
-      consoleError.mockRestore();
+      silencedRtkQueryErrorLog.mockRestore();
     }
   });
 

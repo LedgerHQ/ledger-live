@@ -76,9 +76,7 @@ export function makeTrc10Token(asset: Trc10Asset, issuerAddress: string): TokenC
   return {
     type: "TokenCurrency",
     id: `tron/trc10/${asset.assetId}`,
-    // CAL stores the issuer address here, not the numeric asset id (which is the `tokenIdentifier`)
-    // — mirror that so the craft path is exercised realistically. A TRC10 transfer's asset_name
-    // comes from the identifier via getAssetFromToken; putting the id here would mask that.
+    // Like CAL: the issuer address, while the asset id is the `tokenIdentifier`.
     contractAddress: issuerAddress,
     tokenIdentifier: asset.assetId,
     parentCurrencyId: TRON.id,

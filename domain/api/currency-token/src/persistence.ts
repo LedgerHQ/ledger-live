@@ -43,8 +43,7 @@ const PERSISTED_TOKEN_ENDPOINTS = new Set([
 
 /**
  * Extracts all cached tokens from RTK Query state. Only fulfilled token queries are considered,
- * deduplicated by token id. A token reached through several queries keeps its latest fetched body
- * but collects each query's lookup arguments, so restoring it rebuilds all those cache keys.
+ * deduplicated by token id.
  */
 export function extractTokensFromState(state: WithCryptoAssetsApi): PersistedTokenEntry[] {
   const rtkState = state[cryptoAssetsApi.reducerPath];
@@ -167,8 +166,6 @@ export function persistedCALContentEqual(a: PersistedCAL | null, b: PersistedCAL
   return true;
 }
 
-// A lookup argument gained after the token was first persisted must count as a change, or the blob
-// is never rewritten and that cache key is never restored.
 function tokenEntryContentEqual(a: PersistedTokenEntry, b: PersistedTokenEntry): boolean {
   return (
     isEqual(a.data, b.data) &&
