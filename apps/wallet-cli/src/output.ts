@@ -49,6 +49,7 @@ import type { SubmittedIntent } from "./agent-intent/propose-intent";
 import { formatAgentPublicKeyFingerprint } from "@ledgerhq/agent-intent-sdk";
 import type { LedgerSyncImportReport } from "./ledger-sync/cloud-sync-accounts";
 import type { SwapPayloadResponse } from "@ledgerhq/live-common/exchange/swap/types";
+import type { SwapBalanceCheck } from "./commands/swap/check-swap-affordability";
 import type {
   EarnDepositResult,
   EarnPositionRow,
@@ -204,6 +205,7 @@ export interface CommandOutput {
     amountExpectedToAtomic?: string;
     /** Atomic-to over atomic-from. */
     magnitudeAwareRate?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void;
 
   swapExecuteDieResult(args: {
@@ -215,6 +217,7 @@ export interface CommandOutput {
     quoteId: string | null;
     approvalTxHash?: string;
     swapTxHash?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void;
 
   // ---- Earn ----
@@ -696,6 +699,7 @@ class HumanCommandOutput implements CommandOutput {
     amountExpectedTo?: string;
     amountExpectedToAtomic?: string;
     magnitudeAwareRate?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     writeStdout(`${colors.bold("From:")} ${args.from}\n`);
     writeStdout(`${colors.bold("To:")} ${args.to}\n`);
@@ -717,6 +721,7 @@ class HumanCommandOutput implements CommandOutput {
     quoteId: string | null;
     approvalTxHash?: string;
     swapTxHash?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     writeStdout(`${colors.bold("Pipeline:")} (${args.plan})\n`);
     writeStdout(`${colors.bold("From:")} ${args.from}\n`);
@@ -1174,6 +1179,17 @@ function sendIntentSummaryLines(summary: SendIntentSummary): string[] {
 // JsonCommandOutput
 // ---------------------------------------------------------------------------
 
+const BUILT_IN_ERROR_NAMES = new Set([
+  "Error",
+  "TypeError",
+  "RangeError",
+  "ReferenceError",
+  "SyntaxError",
+  "EvalError",
+  "URIError",
+  "AggregateError",
+]);
+
 class JsonCommandOutput implements CommandOutput {
   private readonly _jsonFmt: JsonFormatter;
   private readonly _discoveredAccounts: DiscoveredAccount[] = [];
@@ -1208,12 +1224,16 @@ class JsonCommandOutput implements CommandOutput {
         error: { command: this._ctx.command, code: "keychain_unavailable", message: e.message },
       };
     }
+    const hasCustomName = e instanceof Error && !BUILT_IN_ERROR_NAMES.has(e.name);
+    const httpStatus = hasCustomName && "httpStatus" in e ? e.httpStatus : undefined;
     return {
       ok: false,
       error: {
         command: this._ctx.command,
+        ...(hasCustomName ? { code: e.name } : {}),
         ...(e instanceof CodedCommandError ? { code: e.code } : {}),
         message: HumanFormatter.formatError(e),
+        ...(typeof httpStatus === "number" ? { http_status: httpStatus } : {}),
       },
     };
   }
@@ -1420,6 +1440,7 @@ class JsonCommandOutput implements CommandOutput {
     amountExpectedTo?: string;
     amountExpectedToAtomic?: string;
     magnitudeAwareRate?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     this._writeNdjson(
       this._envelope({
@@ -1434,6 +1455,7 @@ class JsonCommandOutput implements CommandOutput {
         amountExpectedTo: args.amountExpectedTo,
         amountExpectedToAtomic: args.amountExpectedToAtomic,
         magnitudeAwareRate: args.magnitudeAwareRate,
+        balanceCheck: args.balanceCheck,
       }),
     );
   }
@@ -1447,6 +1469,7 @@ class JsonCommandOutput implements CommandOutput {
     quoteId: string | null;
     approvalTxHash?: string;
     swapTxHash?: string;
+    balanceCheck: SwapBalanceCheck;
   }): void {
     this._writeNdjson(
       this._envelope({
@@ -1458,6 +1481,7 @@ class JsonCommandOutput implements CommandOutput {
         quoteId: args.quoteId,
         approvalTxHash: args.approvalTxHash,
         swapTxHash: args.swapTxHash,
+        balanceCheck: args.balanceCheck,
       }),
     );
   }
