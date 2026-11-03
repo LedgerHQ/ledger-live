@@ -228,10 +228,7 @@ export default memo(function () {
 
   if (opensConnectNewDevice) {
     return (
-      <Box
-        lx={{ flex: 1, backgroundColor: "canvas", paddingTop: "s8" }}
-        style={{ paddingBottom: bottomInset }}
-      >
+      <Box lx={{ flex: 1, backgroundColor: "canvas" }} style={{ paddingBottom: bottomInset }}>
         <DeviceOnboardingCloseBar
           label={t("common.close")}
           testID="onboarding-connect-close"

@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useExperimental } from "~/experimental";
 
 const HEADER_CONTENT_HEIGHT = 44;
+const HEADER_OFFSET_TOP = 8;
 
 type DeviceOnboardingCloseBarProps = Readonly<{
   label: string;
@@ -20,7 +21,7 @@ export function DeviceOnboardingCloseBar({
 }: DeviceOnboardingCloseBarProps) {
   const { top } = useSafeAreaInsets();
   const hasExperimentalHeader = useExperimental();
-  const paddingTop = hasExperimentalHeader ? 0 : top;
+  const paddingTop = (hasExperimentalHeader ? 0 : top) + HEADER_OFFSET_TOP;
 
   return (
     <View style={{ paddingTop }}>
