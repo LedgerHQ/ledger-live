@@ -8,6 +8,8 @@ A plugin that gives AI agents one skill, `wallet-cli-usage`, for driving the Led
 
 Every platform installs from this git repository. The plugin is called `ledger` and its skill `wallet-cli-usage`.
 
+Install the skill one way only: this plugin, or `wallet-cli skill install`, which copies the skill embedded in your wallet-cli into the agent's skills folder. With both, the agent loads two `wallet-cli-usage` copies that can be at different versions, and `wallet-cli skill doctor` updates only the copy `skill install` wrote. If you switch to the plugin, delete that copy (e.g. `.claude/skills/wallet-cli-usage`).
+
 ### OpenClaw
 
 ```bash
