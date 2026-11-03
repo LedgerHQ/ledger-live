@@ -54,7 +54,7 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugStartTour]: undefined;
   [ScreenName.DebugConnectivity]: undefined;
-  [ScreenName.DebugMockServer]: undefined;
+  [ScreenName.DebugMockServer]: { url?: string; token?: string } | undefined;
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugContentCards]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;

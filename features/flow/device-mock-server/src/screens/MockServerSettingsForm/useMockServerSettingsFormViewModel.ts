@@ -15,9 +15,9 @@ import {
 import { selectIsMockServerFloatingButtonHidden } from "../../state/selectors";
 import { setMockServerFloatingButtonHidden, setMockServerOverlayMode } from "../../state/slice";
 import { useMockServerStatus, type MockServerStatus } from "../../useMockServerStatus";
-import type { MockServerSettingsFormProps } from "./types";
+import type { MockServerActivation, MockServerSettingsFormProps } from "./types";
 
-type PendingAction = "toggle" | "apply" | "newSession";
+type PendingAction = "activate" | "disable" | "apply" | "newSession";
 
 export type MockServerSettingsFormViewModel = {
   isEnabled: boolean;
@@ -29,6 +29,8 @@ export type MockServerSettingsFormViewModel = {
   pendingAction: PendingAction | null;
   error: string | null;
   isFloatingButtonHidden: boolean;
+  isActivationWarningOpen: boolean;
+  activationUrl: string;
   onToggle: (enabled: boolean) => void;
   onChangeUrlDraft: (url: string) => void;
   onChangeTokenDraft: (token: string) => void;
@@ -38,6 +40,8 @@ export type MockServerSettingsFormViewModel = {
   onOpenConfigurationUi: () => void;
   onSetFloatingButtonHidden: (hidden: boolean) => void;
   onOpenPanel: () => void;
+  onConfirmActivation: () => void;
+  onCloseActivationWarning: () => void;
 };
 
 const normalizeUrl = (url: string) => stripTrailingSlashes(url.trim());
@@ -49,6 +53,8 @@ export function useMockServerSettingsFormViewModel({
   sessionImport,
   seed,
   onApply: applyChange,
+  activationRequest,
+  onActivationRequestHandled,
 }: MockServerSettingsFormProps): MockServerSettingsFormViewModel {
   const dispatch = useDispatch();
   const config = useMemo(() => getMockServerConfig({ enabled, url, token }), [enabled, url, token]);
@@ -58,12 +64,28 @@ export function useMockServerSettingsFormViewModel({
   const [tokenDraft, setTokenDraft] = useState(config?.token ?? "");
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toggleActivation, setToggleActivation] = useState<MockServerActivation | null>(null);
+
+  const requestedUrl = activationRequest?.url;
+  const requestedToken = activationRequest?.token;
+  const requestedActivation = useMemo<MockServerActivation | null>(
+    () =>
+      requestedUrl
+        ? { url: normalizeUrl(requestedUrl), token: requestedToken?.trim() || undefined }
+        : null,
+    [requestedToken, requestedUrl],
+  );
+  const activation = requestedActivation ?? toggleActivation;
 
   const draftUrl = normalizeUrl(urlDraft);
   const draftToken = tokenDraft.trim();
   const isTokenChanged = draftToken !== (config?.token ?? "");
   const isUrlChanged = draftUrl !== url;
   const joinsDraftSession = isTokenChanged && draftToken !== "";
+  const draftActivation = useMemo<MockServerActivation>(
+    () => ({ url: draftUrl, token: joinsDraftSession ? draftToken : undefined }),
+    [draftToken, draftUrl, joinsDraftSession],
+  );
 
   const run = useCallback(async (action: PendingAction, task: () => Promise<void>) => {
     setPendingAction(action);
@@ -82,37 +104,49 @@ export function useMockServerSettingsFormViewModel({
     [applyChange, seed, sessionImport],
   );
 
-  const applyDrafts = useCallback(
-    async () =>
-      joinsDraftSession
-        ? applyChange(await joinMockServerSession(draftUrl, draftToken))
-        : startNewSession(draftUrl),
-    [applyChange, draftToken, draftUrl, joinsDraftSession, startNewSession],
+  const activate = useCallback(
+    async ({ url: activationUrl, token: activationToken }: MockServerActivation) =>
+      activationToken
+        ? applyChange(await joinMockServerSession(activationUrl, activationToken))
+        : startNewSession(activationUrl),
+    [applyChange, startNewSession],
   );
 
   const onToggle = useCallback(
     (nextEnabled: boolean) => {
+      if (nextEnabled) {
+        setToggleActivation(draftActivation);
+        return;
+      }
       Alert.alert(
-        nextEnabled ? "Turn on the mock server?" : "Turn off the mock server?",
+        "Turn off the mock server?",
         "The app will restart to apply the mock server settings.",
         [
           { text: "Cancel", style: "cancel" },
           {
             text: "Restart",
-            onPress: () =>
-              run("toggle", () =>
-                nextEnabled ? applyDrafts() : applyChange(disableMockServer(url)),
-              ),
+            onPress: () => run("disable", () => applyChange(disableMockServer(url))),
           },
         ],
       );
     },
-    [applyChange, applyDrafts, run, url],
+    [applyChange, draftActivation, run, url],
   );
 
+  const onCloseActivationWarning = useCallback(() => {
+    onActivationRequestHandled?.();
+    setToggleActivation(null);
+  }, [onActivationRequestHandled]);
+
+  const onConfirmActivation = useCallback(() => {
+    if (!activation) return;
+    onCloseActivationWarning();
+    run("activate", () => activate(activation));
+  }, [activate, activation, onCloseActivationWarning, run]);
+
   const onApply = useCallback(() => {
-    run("apply", applyDrafts);
-  }, [applyDrafts, run]);
+    run("apply", () => activate(draftActivation));
+  }, [activate, draftActivation, run]);
 
   const onNewSession = useCallback(() => {
     run("newSession", () => startNewSession(draftUrl));
@@ -149,6 +183,8 @@ export function useMockServerSettingsFormViewModel({
     pendingAction,
     error,
     isFloatingButtonHidden,
+    isActivationWarningOpen: activation !== null,
+    activationUrl: activation?.url ?? "",
     onToggle,
     onChangeUrlDraft: setUrlDraft,
     onChangeTokenDraft: setTokenDraft,
@@ -158,5 +194,7 @@ export function useMockServerSettingsFormViewModel({
     onOpenConfigurationUi,
     onSetFloatingButtonHidden,
     onOpenPanel,
+    onConfirmActivation,
+    onCloseActivationWarning,
   };
 }

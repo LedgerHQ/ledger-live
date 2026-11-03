@@ -215,6 +215,7 @@ const linkingOptions = () => ({
               [ScreenName.ExperimentalSettings]: "settings/experimental",
               [ScreenName.DeveloperSettings]: "settings/developer",
               [ScreenName.NotificationsSettings]: "settings/notifications",
+              [ScreenName.DebugMockServer]: "mockserver/config",
             },
           },
 
@@ -276,6 +277,11 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
               [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
+              [NavigatorName.Settings]: {
+                screens: {
+                  [ScreenName.DebugMockServer]: "mockserver/config",
+                },
+              },
             },
           },
         },

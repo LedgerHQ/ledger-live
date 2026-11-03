@@ -24,7 +24,8 @@
     "@features/platform-device-mock-server": "workspace:*",
     "@ledgerhq/device-mockserver-react-native": "catalog:",
     "@reduxjs/toolkit": "catalog:",
-    "@shared/clipboard": "workspace:*"
+    "@shared/clipboard": "workspace:*",
+    "@shared/ui-queued-bottom-sheet": "workspace:*"
   },
   "peerDependencies": {
     "@ledgerhq/device-management-kit": "catalog:",

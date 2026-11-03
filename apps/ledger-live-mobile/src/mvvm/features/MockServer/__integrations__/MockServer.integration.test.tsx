@@ -186,10 +186,7 @@ describe("MockServer", () => {
     });
 
     it("should start a session on the default server and restart when turned on", async () => {
-      jest.spyOn(Alert, "alert").mockImplementation((_title, _message, buttons) => {
-        buttons?.find(button => button.text === "Restart")?.onPress?.();
-      });
-      const { store } = renderSettingsScreen(state => ({
+      const { store, user } = renderSettingsScreen(state => ({
         ...state,
         settings: {
           ...state.settings,
@@ -198,6 +195,7 @@ describe("MockServer", () => {
       }));
 
       fireEvent.press(screen.getByTestId("mock-server-toggle"));
+      await user.press(await screen.findByText("I understand, restart"));
 
       await waitFor(() => expect(RNRestart.restart).toHaveBeenCalledTimes(1));
       expect(endpoints.auth).toHaveBeenCalledTimes(1);

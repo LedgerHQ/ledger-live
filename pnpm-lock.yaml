@@ -9157,6 +9157,9 @@ importers:
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
+      '@shared/ui-queued-bottom-sheet':
+        specifier: workspace:*
+        version: link:../../../shared/ui-queued-bottom-sheet
     devDependencies:
       '@ledgerhq/device-management-kit':
         specifier: 'catalog:'
