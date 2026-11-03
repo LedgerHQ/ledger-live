@@ -22,6 +22,7 @@ import { setCryptoAssetsStore as setFrameworkCryptoAssetsStore } from "@ledgerhq
 import { calApiConfig } from "./shared/cal-config";
 import { ledgerClientVersion } from "./shared/client-version";
 import { withDefaultUserAgent } from "./shared/default-user-agent";
+import { applySwapApiBaseOverride } from "./shared/swap-api-base";
 
 /**
  * Ensure USER_ID is set so DMK firmware distribution salt is stable for this CLI.
@@ -32,6 +33,7 @@ if (!process.env.USER_ID) {
 
 setEnv("LEDGER_CLIENT_VERSION", ledgerClientVersion);
 process.env.LEDGER_CLIENT_VERSION = ledgerClientVersion;
+applySwapApiBaseOverride(process.env);
 globalThis.fetch = withDefaultUserAgent(globalThis.fetch, ledgerClientVersion);
 bridgeEnvToNetworkState();
 

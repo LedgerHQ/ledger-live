@@ -11,6 +11,8 @@ import { KEYCLOAK_TOKEN, makeAuthRoutes } from "../../testing/auth-routes";
 import { SWAP_QUOTE_ARGS, makeSwapQuoteRoutes } from "../../testing/swap-quote-routes";
 import { makeAuthenticatedQuoteServer } from "../../testing/authenticated-quote-server";
 import { resetTestSeams } from "../../shared/test-seam";
+import { applySwapApiBaseOverride } from "../../shared/swap-api-base";
+import { getEnvDefault, setEnv } from "@shared/env";
 
 const ACCOUNTS = [{ label: "ethereum-1", descriptor: ETH_DESCRIPTOR }];
 const JSON_QUOTE_ARGS = [...SWAP_QUOTE_ARGS, "--output", "json"];
@@ -35,6 +37,7 @@ describe("quote command", () => {
     challengeCookie = null;
     quote.quoteAuthorizations.length = 0;
     quote.quoteUserAgents.length = 0;
+    quote.quotePaths.length = 0;
     fixture = makeSessionDir(ACCOUNTS);
   });
   afterEach(() => {
@@ -106,6 +109,21 @@ describe("quote command", () => {
 
     expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
     expect(quote.quoteUserAgents).toEqual([ledgerClientVersion]);
+  });
+
+  it("sends the quote to the Swap API named by SWAP_API_BASE", async () => {
+    applySwapApiBaseOverride({ SWAP_API_BASE: "https://swap.staging.test/swap/v5" });
+    try {
+      const { exitCode, stdout, stderr } = await runCli(JSON_QUOTE_ARGS, {
+        WALLET_CLI_MOCK_PORT: String(server.port),
+        ...fixture.env,
+      });
+
+      expect(exitCode, `stdout: ${stdout}\nstderr: ${stderr}`).toBe(0);
+      expect(quote.quotePaths).toEqual(["/swap/v5/quote"]);
+    } finally {
+      setEnv("SWAP_API_BASE", getEnvDefault("SWAP_API_BASE"));
+    }
   });
 
   it("rejects swap currencies outside wallet-cli supported list", async () => {

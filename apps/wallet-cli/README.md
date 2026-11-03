@@ -56,7 +56,9 @@ wallet-cli skill doctor --fix             # reinstall outdated or missing skills
 
 - `USER_ID` defaults to `wallet-cli`, so the DMK firmware distribution salt stays stable.
 - `swap quote`, `swap execute` and `agent-intent swap` authenticate their quote requests to the Ledger API with a dedicated key. The key is stored in the OS keychain as `api-auth-key-<hash>` (service `ledger-wallet-cli`). Without a usable OS keychain (on Linux: no Secret Service), or when the key can't be saved there, quote requests are sent without a token and a warning is printed on stderr; no throwaway key is generated. It is not the Key Ring key, and `session reset` and `ring destroy` do not remove it. If authentication fails or takes more than 10 s (not counting a keychain dialog waiting for the user), the request is sent without a token.
-- `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults for development. The swap API stays on production.
+- `LEDGER_AUTH_KEYCLOAK_BASE_URL`, `LEDGER_AUTH_KEYCLOAK_REALM` and `LEDGER_AUTH_CLIENT_ID` override the Keycloak defaults for development.
+- `SWAP_API_BASE` points `swap quote`, `swap execute`, `swap status` and `agent-intent swap` at another Swap API, such as staging (`https://global.api.stg.ledger-test.com/swap/v5`), for development. Quote requests send their token there. The default is `https://swap.ledger.com/v5`.
+- wallet-cli also reads these variables from a `.env` file in the folder it runs in.
 
 ## Speculos
 
