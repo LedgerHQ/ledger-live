@@ -149,8 +149,8 @@ export interface SidecarRuntimeSpec {
   properties: IChainProperties;
 }
 
-//BlockInfo
-export type BlockInfo = {
+// https://paritytech.github.io/polkadot-rest-api/#endpoint-GET__v1_blocks__blockId_
+export type SidecarBlock = {
   number: string;
   hash: string;
   parentHash: string;
@@ -159,7 +159,7 @@ export type BlockInfo = {
   authorId: string;
   logs: Log[];
   // onInitialize: OnInitialize;
-  extrinsics: Extrinsic[];
+  extrinsics: SidecarExtrinsic[];
   onFinalize: {
     events: any[];
   };
@@ -170,22 +170,27 @@ type Log = {
   index: string;
   value: string[];
 };
-type Extrinsic = {
+export type SidecarExtrinsic = {
   method: Method;
-  signature: any;
-  nonce: any;
+  signature: SidecarExtrinsicSignature | null;
+  nonce: string | null;
   args: Args;
-  tip: any;
+  tip: string | null;
   hash: string;
   era: {
     immortalEra: string;
   };
-  events: {
-    method: Method;
-    data: any[];
-  }[];
+  events: SidecarEvent[];
   success: boolean;
   paysFee: boolean;
+};
+type SidecarExtrinsicSignature = {
+  signature: string;
+  signer: { id: string };
+};
+export type SidecarEvent = {
+  method: Method;
+  data: unknown[];
 };
 type Method = {
   pallet: string;

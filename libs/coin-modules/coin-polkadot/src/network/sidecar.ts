@@ -31,7 +31,7 @@ import type {
   SidecarTransactionBroadcast,
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
-  BlockInfo,
+  SidecarBlock,
 } from "./types";
 
 /**
@@ -817,8 +817,20 @@ export const getLastBlock = async (
   config: PolkadotCoinConfig,
   currencyId?: string,
 ): Promise<{ hash: string; height: number; time: Date }> => {
-  const { data } = await callSidecar<BlockInfo>(config, "/blocks/head", currencyId);
+  const { data } = await callSidecar<SidecarBlock>(config, "/blocks/head", currencyId);
   return { hash: data.hash, height: parseInt(data.number), time: new Date() };
+};
+
+/**
+ * Get a block, with its extrinsics and their events, by height or hash
+ */
+export const getBlock = async (
+  config: PolkadotCoinConfig,
+  blockId: number | string,
+  currencyId?: string,
+): Promise<SidecarBlock> => {
+  const { data } = await callSidecar<SidecarBlock>(config, `/blocks/${blockId}`, currencyId);
+  return data;
 };
 
 /*

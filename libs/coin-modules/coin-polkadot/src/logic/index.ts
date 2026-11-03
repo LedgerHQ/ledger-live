@@ -16,5 +16,6 @@ export { signExtrinsic } from "./signTransaction";
 export { broadcast } from "./broadcast";
 export { getBalance } from "./getBalance";
 export { estimateFees } from "./estimateFees";
+export { getBlock } from "./getBlock";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";

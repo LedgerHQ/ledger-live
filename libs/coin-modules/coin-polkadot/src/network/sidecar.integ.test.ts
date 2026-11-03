@@ -12,6 +12,7 @@ import {
   getTransactionParams,
   getRegistry,
   getLastBlock,
+  getBlock,
   fetchChainSpec,
 } from "./sidecar";
 
@@ -228,6 +229,25 @@ describe("sidecar integration test", () => {
             height: expect.any(Number),
             time: expect.any(Date),
           });
+        });
+      });
+
+      describe("getBlock", () => {
+        it(`returns the same block by height and by hash with ${currencyId}`, async () => {
+          const { height } = await getLastBlock(config, currencyId);
+
+          const byHeight = await getBlock(config, height, currencyId);
+          const byHash = await getBlock(config, byHeight.hash, currencyId);
+
+          expect(byHeight.number).toEqual(String(height));
+          expect(byHash).toMatchObject({ number: byHeight.number, hash: byHeight.hash });
+          expect(byHeight.extrinsics.length).toBeGreaterThan(0);
+        });
+
+        it(`rejects a block that does not exist yet with ${currencyId}`, async () => {
+          await expect(getBlock(config, Number.MAX_SAFE_INTEGER, currencyId)).rejects.toThrow(
+            /not found/,
+          );
         });
       });
 
