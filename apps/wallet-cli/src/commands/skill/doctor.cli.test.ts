@@ -95,6 +95,7 @@ describe("skill doctor", () => {
     const fixed = await runCli(["skill", "doctor", "--dir", dir, "--fix"]);
     expect(fixed.exitCode, `stderr: ${fixed.stderr}`).toBe(0);
     expect(await readFile(skillMd, "utf8")).toBe(shipped);
+    expect(await exists(path.join(skillRoot, dropped.path))).toBe(false);
   });
 
   it("reports modified-locally for a user's file where a newer skill adds one", async () => {

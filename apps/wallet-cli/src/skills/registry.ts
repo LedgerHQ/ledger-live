@@ -146,10 +146,40 @@ async function isDirectory(p: string): Promise<boolean> {
   }
 }
 
+function isWithinSkillDir(skillRoot: string, filePath: string): boolean {
+  const root = path.resolve(skillRoot);
+  const resolved = path.resolve(root, filePath);
+  return resolved === root || resolved.startsWith(root + path.sep);
+}
+
+async function isUneditedFile(p: string, recordedHash: string): Promise<boolean> {
+  try {
+    if (!(await lstat(p)).isFile()) return false;
+    return hashOne(await readFile(p, "utf8")) === recordedHash;
+  } catch {
+    return false;
+  }
+}
+
+async function removeDroppedFiles(skillRoot: string, skill: SkillManifest): Promise<void> {
+  const previous = await readSidecar(skillRoot);
+  const shipped = new Set(skill.files.map(f => f.path));
+  const dropped = Object.entries(previous?.files ?? {}).filter(
+    ([filePath]) => !shipped.has(filePath) && isWithinSkillDir(skillRoot, filePath),
+  );
+  await Promise.all(
+    dropped.map(async ([filePath, recordedHash]) => {
+      const target = path.resolve(skillRoot, filePath);
+      if (await isUneditedFile(target, recordedHash)) await unlink(target);
+    }),
+  );
+}
+
 /**
  * Write every file of `skill` under `destRoot/<name>/<relativePath>`.
  * Creates parent directories as needed. Returns the absolute written paths.
- * Refuses to overwrite existing files unless `force` is set.
+ * Refuses to overwrite existing files unless `force` is set. Deletes the unedited
+ * files the previous install recorded that `skill` no longer ships.
  */
 export async function writeSkill(
   skill: SkillManifest,
@@ -161,10 +191,8 @@ export async function writeSkill(
   // Defense in depth: file paths come from our own generated manifest, but since
   // this writes to disk from data embedded in a published binary, refuse any
   // path that would escape the skill directory (absolute or `..` segments).
-  const rootPrefix = path.resolve(skillRoot) + path.sep;
   for (const file of skill.files) {
-    const resolved = path.resolve(skillRoot, file.path);
-    if (resolved !== path.resolve(skillRoot) && !resolved.startsWith(rootPrefix)) {
+    if (!isWithinSkillDir(skillRoot, file.path)) {
       throw new Error(
         `Refusing to write "${file.path}" outside the skill directory "${skillRoot}".`,
       );
@@ -181,6 +209,9 @@ export async function writeSkill(
       );
     }
   }
+
+  // Before the writes: on a case-insensitive disk a dropped path can name a shipped file.
+  await removeDroppedFiles(skillRoot, skill);
 
   const written = await Promise.all(
     skill.files.map(async file => {

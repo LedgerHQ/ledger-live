@@ -50,6 +50,23 @@ async function installOlderSkillWithoutTheReference(
   return { reference, shippedReference };
 }
 
+const DROPPED = { path: "references/dropped.md", content: "a reference since removed\n" };
+
+async function installOlderSkillWithAFileThisOneDropped(
+  dir: string,
+  dropped: { path: string; content: string },
+): Promise<{ skillRoot: string; shippedSkillMd: string }> {
+  const first = await runCli(["skill", "install", SKILL_NAME, "--dir", dir]);
+  expect(first.exitCode).toBe(0);
+  const skillRoot = path.join(dir, SKILL_NAME);
+  const skillMd = path.join(skillRoot, "SKILL.md");
+  const shippedSkillMd = await readFile(skillMd, "utf8");
+  await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
+  await writeFile(path.resolve(skillRoot, dropped.path), dropped.content, "utf8");
+  await stampSidecar(skillRoot, "0.0.1", [...(await readTrackedFromDisk(skillRoot)), dropped]);
+  return { skillRoot, shippedSkillMd };
+}
+
 describe("skill install", () => {
   it("writes SKILL.md and reference files under --dir", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
@@ -96,23 +113,42 @@ describe("skill install", () => {
     expect(await readFile(skillMd, "utf8")).toBe(shipped);
   });
 
-  it("replaces an older skill that had a file this one dropped, without --force", async () => {
+  it("replaces an older skill that had a file this one dropped, and deletes that file, without --force", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
-    const first = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
-    expect(first.exitCode).toBe(0);
-    const skillRoot = path.join(tmpDir, SKILL_NAME);
-    const skillMd = path.join(skillRoot, "SKILL.md");
-    const shipped = await readFile(skillMd, "utf8");
-    await appendFile(skillMd, "\n<!-- shipped by older wallet-cli -->\n");
-    const dropped = { path: "references/dropped.md", content: "a reference since removed\n" };
-    await writeFile(path.join(skillRoot, dropped.path), dropped.content, "utf8");
-    await stampSidecar(skillRoot, "0.0.1", [...(await readTrackedFromDisk(skillRoot)), dropped]);
+    const { skillRoot, shippedSkillMd } = await installOlderSkillWithAFileThisOneDropped(
+      tmpDir,
+      DROPPED,
+    );
 
     const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
 
     expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
-    expect(await readFile(skillMd, "utf8")).toBe(shipped);
-    expect(await readFile(path.join(skillRoot, dropped.path), "utf8")).toBe(dropped.content);
+    expect(await readFile(path.join(skillRoot, "SKILL.md"), "utf8")).toBe(shippedSkillMd);
+    expect(await exists(path.join(skillRoot, DROPPED.path))).toBe(false);
+  });
+
+  it("keeps a file this skill dropped if it was edited since install, even with --force", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const { skillRoot } = await installOlderSkillWithAFileThisOneDropped(tmpDir, DROPPED);
+    const droppedOnDisk = path.join(skillRoot, DROPPED.path);
+    await appendFile(droppedOnDisk, "my own notes\n");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(droppedOnDisk, "utf8")).toBe(`${DROPPED.content}my own notes\n`);
+  });
+
+  it("doesn't delete a dropped file the sidecar records outside the skill directory", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const outside = { path: "../outside.md", content: "not part of the skill\n" };
+    await installOlderSkillWithAFileThisOneDropped(tmpDir, outside);
+    const outsideOnDisk = path.join(tmpDir, "outside.md");
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(outsideOnDisk, "utf8")).toBe(outside.content);
   });
 
   it("adds a file an older skill lacked without --force", async () => {
