@@ -1,32 +1,29 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 import { TIMEOUT } from "@e2e/utils/timeouts";
 
 export default class PasswordEntryPage {
-  private readonly passwordTextInputId = "password-text-input";
-
-  getPasswordTextInput = () => getElementById(this.passwordTextInputId);
-  getLogin = () => getElementByText("Log in");
+  private readonly passwordTextInput = byId("password-text-input");
+  private readonly loginButton = byId("enabled-auth-unlock-login-button");
 
   @Step("Enter password")
   async enterPassword(password: string) {
-    await tapByElement(this.getPasswordTextInput()); //prevent flakiness with Log in button not appearing
-    await typeTextByElement(this.getPasswordTextInput(), password, false);
+    // The Log in button only renders while the input is focused, so the keyboard must stay open.
+    await this.passwordTextInput.replaceTextKeepKeyboard(password);
   }
 
   @Step("Login")
   async login() {
-    await tapByElement(this.getLogin());
+    await this.loginButton.tap();
   }
 
   @Step("Expect lock")
   async expectLock() {
-    await detoxExpect(this.getPasswordTextInput()).toBeVisible();
-    await detoxExpect(this.getPasswordTextInput()).toBeVisible();
+    await this.passwordTextInput.expectVisible();
   }
 
   @Step("Expect no lock")
   async expectNoLock() {
-    await waitForElementNotVisible(this.passwordTextInputId, TIMEOUT.medium);
-    await detoxExpect(this.getPasswordTextInput()).not.toBeVisible();
+    await this.passwordTextInput.waitNotVisible(TIMEOUT.medium);
   }
 }

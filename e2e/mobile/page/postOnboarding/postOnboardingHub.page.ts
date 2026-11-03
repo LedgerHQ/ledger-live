@@ -1,61 +1,60 @@
 import { Step } from "jest-allure2-reporter/api";
+import { byId } from "@e2e/helpers/elements/native";
 
 export default class PostOnboardingHubPage {
-  onboardingWidgetId = "onboarding-widget";
-  hubContainerId = "post-onboarding-hub-container";
-  mockCompleteAndBackToHubId = "post-onboarding-mock-complete-and-back-to-hub";
-  hubCompleteButtonId = "post-onboarding-hub-complete-button";
-
-  hubActionId = (actionId: string) => `post-onboarding-hub-action-${actionId}`;
+  private readonly onboardingWidget = byId("onboarding-widget");
+  private readonly hubContainer = byId("post-onboarding-hub-container");
+  private readonly mockCompleteAndBackToHub = byId("post-onboarding-mock-complete-and-back-to-hub");
+  private readonly hubCompleteButton = byId("post-onboarding-hub-complete-button");
+  private readonly hubAction = (actionId: string) => byId(`post-onboarding-hub-action-${actionId}`);
+  private readonly hubActionDescription = (actionId: string) =>
+    byId(`post-onboarding-hub-action-${actionId}-description`);
 
   @Step("Expect onboarding widget to be visible")
   async expectWidgetVisible(): Promise<void> {
-    await waitForFullyVisibleById(this.onboardingWidgetId);
+    await this.onboardingWidget.waitFullyVisible();
   }
 
   @Step("Expect onboarding widget to be hidden")
   async expectWidgetHidden(): Promise<void> {
-    await waitForElementNotVisible(this.onboardingWidgetId);
+    await this.onboardingWidget.waitNotVisible();
   }
 
   @Step("Open post-onboarding hub from portfolio widget")
   async openHubFromWidget(): Promise<void> {
-    await tapById(this.onboardingWidgetId);
-    await waitForFullyVisibleById(this.hubContainerId);
+    await this.onboardingWidget.tap();
+    await this.hubContainer.waitFullyVisible();
   }
 
   @Step("Expect hub action {{0}} to be pending")
   async expectActionPending(actionId: string): Promise<void> {
-    await waitForFullyVisibleById(this.hubActionId(actionId));
+    await this.hubAction(actionId).waitFullyVisible();
   }
 
   @Step("Tap post-onboarding hub action {{0}}")
   async tapAction(actionId: string): Promise<void> {
-    await tapById(this.hubActionId(actionId));
+    await this.hubAction(actionId).tap();
   }
 
   @Step("Complete mock action and return to post-onboarding hub")
   async completeMockActionAndReturnToHub(): Promise<void> {
-    await waitForFullyVisibleById(this.mockCompleteAndBackToHubId);
-    await tapById(this.mockCompleteAndBackToHubId);
-    await waitForFullyVisibleById(this.hubContainerId);
+    await this.mockCompleteAndBackToHub.tap();
+    await this.hubContainer.waitFullyVisible();
   }
 
   @Step("Expect hub action {{0}} to be completed")
   async expectActionCompleted(actionId: string, completedLabel: string): Promise<void> {
-    await waitForFullyVisibleById(this.hubActionId(actionId));
-    await detoxExpect(
-      getElementByIdWithDescendantTexts(this.hubActionId(actionId), completedLabel),
-    ).toBeVisible();
+    await this.hubAction(actionId).waitFullyVisible();
+    await this.hubActionDescription(actionId).expectText(completedLabel);
   }
 
   @Step("Expect all post-onboarding hub actions to be completed")
   async expectAllActionsCompleted(): Promise<void> {
-    await waitForFullyVisibleById(this.hubCompleteButtonId);
+    await this.hubCompleteButton.waitFullyVisible();
   }
 
   @Step("Tap post-onboarding hub complete button")
   async tapCompleteButton(): Promise<void> {
-    await tapById(this.hubCompleteButtonId);
+    await this.hubCompleteButton.tap();
   }
 }
