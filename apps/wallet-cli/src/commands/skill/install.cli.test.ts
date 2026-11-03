@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach } from "bun:test";
 import {
   access,
   appendFile,
+  chmod,
   lstat,
   mkdir,
   mkdtemp,
@@ -178,6 +179,30 @@ describe("skill install", () => {
     expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
     expect(await readFile(outsideOnDisk, "utf8")).toBe(outside.content);
   });
+
+  it.skipIf(process.platform === "win32" || process.getuid?.() === 0)(
+    "updates the skill when a dropped file can't be deleted",
+    async () => {
+      tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+      const lockedDir = path.join(tmpDir, SKILL_NAME, "old-references");
+      await mkdir(lockedDir, { recursive: true });
+      const dropped = { path: "old-references/dropped.md", content: DROPPED.content };
+      const { skillRoot, shippedSkillMd } = await installOlderSkillWithAFileThisOneDropped(
+        tmpDir,
+        dropped,
+      );
+      await chmod(lockedDir, 0o555);
+
+      try {
+        const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+        expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+        expect(await readFile(path.join(skillRoot, "SKILL.md"), "utf8")).toBe(shippedSkillMd);
+      } finally {
+        await chmod(lockedDir, 0o755);
+      }
+    },
+  );
 
   it("adds a file an older skill lacked without --force", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));

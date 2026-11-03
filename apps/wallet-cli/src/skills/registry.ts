@@ -185,7 +185,7 @@ async function removeDroppedFiles(skillRoot: string, skill: SkillManifest): Prom
       const deletable =
         (await resolvesInsideSkillDir(skillRoot, target)) &&
         (await isUneditedFile(target, recordedHash));
-      if (deletable) await unlink(target);
+      if (deletable) await unlink(target).catch(() => undefined);
     }),
   );
 }
