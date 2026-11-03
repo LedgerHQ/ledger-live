@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { Account, Operation } from "@ledgerhq/types-live";
-import { render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { act, render, screen, withFlagOverrides } from "@tests/test-renderer";
+import { updateAccount } from "~/actions/accounts";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { BASE_NAVIGATOR_ID, ScreenName } from "~/const";
 import type { State } from "~/reducers/types";
@@ -121,6 +122,25 @@ describe("AccountDetail empty state", () => {
   it("leaves the empty state once a first transaction is pending", async () => {
     const [pending]: Operation[] = usedAccount.operations;
     renderAccount({ ...neverUsedAccount, pendingOperations: [pending] });
+
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.assets)).toBeVisible();
+    expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeNull();
+  });
+
+  it("leaves the empty state when a receive updates the balance before any operation", async () => {
+    const { store } = renderAccount(neverUsedAccount);
+
+    expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeVisible();
+
+    await act(() => {
+      store.dispatch(
+        updateAccount({
+          id: neverUsedAccount.id,
+          balance: new BigNumber(1),
+          spendableBalance: new BigNumber(1),
+        }),
+      );
+    });
 
     expect(await screen.findByTestId(ACCOUNT_DETAIL_TEST_IDS.assets)).toBeVisible();
     expect(screen.queryByTestId(ACCOUNT_DETAIL_TEST_IDS.emptyState)).toBeNull();
