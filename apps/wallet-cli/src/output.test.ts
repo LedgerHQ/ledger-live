@@ -856,7 +856,7 @@ describe("output command handling", () => {
     });
 
     expect(await proc.exited).toBe(0);
-    expect((await new Response(proc.stdout).text()).trim()).toBe("false");
+    expect((await new Response(proc.stdout).text()).trim()).toBe("not loaded");
   });
 
   it("human output exits with the WalletCliDeviceError exit code", async () => {
