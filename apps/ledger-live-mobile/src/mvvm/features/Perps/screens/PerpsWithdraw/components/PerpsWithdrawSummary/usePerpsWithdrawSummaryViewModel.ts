@@ -1,12 +1,10 @@
-import { useCallback, useMemo } from "react";
-import BigNumber from "bignumber.js";
+import { useCallback } from "react";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type {
   PerpsWithdrawQuoteParams,
   WithdrawQuote,
 } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/quote";
-import { getPerpsWithdrawSummary } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/summary";
-import { usePerpsWithdrawSummaryQuote } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawSummaryQuote";
+import { usePerpsWithdrawSummary } from "@ledgerhq/live-common/wallet-api/Perps/withdraw/useWithdrawSummary";
 import { useTranslation } from "~/context/Locale";
 import { useSelector } from "~/context/hooks";
 import { localeSelector } from "~/reducers/settings";
@@ -39,68 +37,27 @@ export type PerpsWithdrawSummaryViewModel = Readonly<{
 export function usePerpsWithdrawSummaryViewModel({
   isOpen,
   onClose,
-  sourceAccount,
   destinationAccount,
-  quote: initialQuote,
+  quote,
   quoteParams,
 }: PerpsWithdrawSummaryProps): PerpsWithdrawSummaryViewModel {
   const { t } = useTranslation();
   const walletState = useSelector(walletSelector);
   const locale = useSelector(localeSelector);
 
-  // The closed sheet stays mounted for its exit animation, so it must stop refreshing.
-  const { quote, isRefreshing, error } = usePerpsWithdrawSummaryQuote(initialQuote, quoteParams, {
+  const formatApproximate = useCallback(
+    (value: string) => t("perpsReview.approximateValue", { value }),
+    [t],
+  );
+  const { swapDetails, withdrawDetails, canWithdraw } = usePerpsWithdrawSummary({
+    initialQuote: quote,
+    quoteParams,
+    receiverName: accountNameWithDefaultSelector(walletState, destinationAccount),
+    locale,
+    formatApproximate,
+    // The closed sheet stays mounted for its exit animation, so it must stop refreshing.
     enabled: isOpen,
   });
-
-  const summary = useMemo(
-    () =>
-      getPerpsWithdrawSummary({
-        amount: new BigNumber(quoteParams.amount),
-        quote,
-        sourceAccount,
-        destinationAccount,
-        locale,
-      }),
-    [destinationAccount, locale, quote, quoteParams.amount, sourceAccount],
-  );
-
-  const swapDetails = useMemo<readonly PerpsReviewDetailItem[]>(
-    () => [
-      {
-        labelKey: "perpsReview.amountSendLabel",
-        value: summary.amountSent,
-        testID: "perps-withdraw-amount-sent",
-      },
-      {
-        labelKey: "perpsReview.amountReceiveLabel",
-        value: t("perpsReview.approximateValue", { value: summary.amountReceived }),
-        testID: "perps-withdraw-amount-received",
-      },
-    ],
-    [summary, t],
-  );
-
-  const withdrawDetails = useMemo<readonly PerpsReviewDetailItem[]>(
-    () => [
-      {
-        labelKey: "perpsReview.withdrawReceiveLabel",
-        value: accountNameWithDefaultSelector(walletState, destinationAccount),
-        testID: "perps-withdraw-receiver-account",
-      },
-      {
-        labelKey: "perpsReview.networkFeesLabel",
-        value: summary.networkFees,
-        testID: "perps-withdraw-network-fees",
-      },
-      {
-        labelKey: "perpsReview.totalDebitedLabel",
-        value: summary.totalDebited,
-        testID: "perps-withdraw-total-debited",
-      },
-    ],
-    [destinationAccount, summary, walletState],
-  );
 
   // TODO(LIVE-39369): sign the withdrawal on the device.
   const handleWithdraw = useCallback(() => undefined, []);
@@ -109,7 +66,7 @@ export function usePerpsWithdrawSummaryViewModel({
     drawerOpen: isOpen,
     swapDetails,
     withdrawDetails,
-    canWithdraw: !isRefreshing && error === null,
+    canWithdraw,
     handleDrawerClose: onClose,
     handleWithdraw,
   };

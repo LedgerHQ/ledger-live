@@ -349,7 +349,10 @@ describe("PerpsWithdraw integration", () => {
         destinationAccount: expect.objectContaining({ id: ethAccount.id }),
         quote,
         quoteParams: expect.objectContaining({ amount: "250", counterValueCurrency: "USD" }),
-        draft: { picked: undefined, amountText: "500" },
+        draft: {
+          picked: { account: expect.objectContaining({ id: ethAccount.id }) },
+          amountText: "500",
+        },
       }),
     );
     expect(screen.queryByTestId("perps-withdraw-amount-input")).not.toBeInTheDocument();

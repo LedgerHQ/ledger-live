@@ -140,7 +140,8 @@ export function usePerpsWithdrawViewModel(
         accounts: quoteAccounts,
         counterValueCurrency: counterValueCurrency.ticker,
       },
-      draft: { picked, amountText },
+      // Pinned so Back shows the reviewed receiver, not a recomputed default.
+      draft: { picked: picked ?? { account: destinationAccount }, amountText },
     });
     onClose();
   }, [

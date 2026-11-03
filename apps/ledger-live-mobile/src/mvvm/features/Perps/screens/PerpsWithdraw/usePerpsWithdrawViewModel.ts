@@ -132,9 +132,12 @@ export function usePerpsWithdrawViewModel({ route }: NavigationProps): PerpsWith
         counterValueCurrency: counterValueCurrency.ticker,
       },
     });
+    // Pinned so closing the sheet shows the reviewed receiver, not a recomputed default.
+    if (!picked) setPicked({ account: destinationAccount });
     setSummaryKey(key => key + 1);
     setIsSummaryOpen(true);
   }, [
+    picked,
     counterValueCurrency.ticker,
     destinationAccount,
     form.canReview,
