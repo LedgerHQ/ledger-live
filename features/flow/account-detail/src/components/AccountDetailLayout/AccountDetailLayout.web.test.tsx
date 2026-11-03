@@ -11,7 +11,7 @@ const slotIds = () =>
     .filter(id => id !== "account-detail-layout-sections");
 
 describe("AccountDetailLayout (Web)", () => {
-  it("renders the sections in page order", () => {
+  it("should place the Analytics notice before the custom place", () => {
     render(
       <AccountDetailLayout
         hero={<div data-testid="hero" />}
@@ -24,8 +24,8 @@ describe("AccountDetailLayout (Web)", () => {
 
     expect(slotIds()).toEqual([
       "hero",
-      "custom-place",
       "analytics-notice",
+      "custom-place",
       "assets",
       "transactions",
     ]);

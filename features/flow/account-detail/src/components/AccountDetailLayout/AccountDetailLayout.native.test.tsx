@@ -11,7 +11,7 @@ const slotIds = () =>
     .children.map((child: LayoutChild) => (typeof child === "string" ? child : child.props.testID));
 
 describe("AccountDetailLayout (Native)", () => {
-  it("renders the sections in page order", () => {
+  it("should place the Analytics notice before the custom place", () => {
     render(
       <AccountDetailLayout
         hero={<View testID="hero" />}
@@ -24,8 +24,8 @@ describe("AccountDetailLayout (Native)", () => {
 
     expect(slotIds()).toEqual([
       "hero",
-      "custom-place",
       "analytics-notice",
+      "custom-place",
       "assets",
       "transactions",
     ]);

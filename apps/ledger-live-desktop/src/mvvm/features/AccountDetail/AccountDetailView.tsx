@@ -20,8 +20,8 @@ export function AccountDetailView({ account }: Props) {
       <Header account={account} />
       <AccountDetailLayout
         hero={<Hero {...hero} />}
-        customPlace={<FamilySection account={account} />}
         analyticsNotice={<AnalyticsIntroduction account={account} />}
+        customPlace={<FamilySection account={account} />}
         assets={
           emptyState.isVisible ? (
             <AccountEmptyState

@@ -4,4 +4,4 @@
 "ledger-live-desktop": minor
 ---
 
-Add the Account Detail Analytics introduction in a dedicated layout slot, with dismissal persisted across desktop restarts and account entry context.
+Add the Account Detail Analytics introduction in a dedicated layout slot above the custom place, with dismissal persisted across desktop restarts and account entry context.

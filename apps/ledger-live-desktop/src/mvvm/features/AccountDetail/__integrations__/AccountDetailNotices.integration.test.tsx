@@ -52,16 +52,18 @@ const renderAccount = (account: Account, flags: Record<string, { enabled: boolea
 };
 
 describe("AccountDetail notices", () => {
-  it("should place the Analytics introduction after existing notices and before assets", async () => {
+  it("should place the Analytics introduction before the custom place and assets", async () => {
     renderAccount(accountOf("robinhood"), { llRobinhoodDisclaimer: { enabled: true } });
 
     const existingNotice = await screen.findByTestId(notice("robinhoodDisclaimer"));
     const introduction = screen.getByTestId("account-analytics-introduction");
+    const familySection = screen.getByTestId("account-detail-family");
     const assets = screen.getByTestId("account-detail-assets");
 
     expect(introduction).toBeVisible();
+    expect(existingNotice).toBeVisible();
     expect(
-      existingNotice.compareDocumentPosition(introduction) & Node.DOCUMENT_POSITION_FOLLOWING,
+      introduction.compareDocumentPosition(familySection) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
     expect(introduction.compareDocumentPosition(assets) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
