@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import type { AccountAssetPickerRow } from "./AccountAssetPicker.types";
+import type { AccountAssetPickerRow } from "../AccountAssetPicker.types";
 import { useAccountAssetPickerViewModel } from "./useAccountAssetPickerViewModel";
 
 const row = (id: string): AccountAssetPickerRow => ({

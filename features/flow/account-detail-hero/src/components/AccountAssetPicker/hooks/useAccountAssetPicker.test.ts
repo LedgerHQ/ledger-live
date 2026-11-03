@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import type { AccountAssetPickerSource } from "./AccountAssetPicker.types";
+import type { AccountAssetPickerSource } from "../AccountAssetPicker.types";
 import { useAccountAssetPicker } from "./useAccountAssetPicker";
 
 type Asset = Readonly<{ id: string; value: number }>;

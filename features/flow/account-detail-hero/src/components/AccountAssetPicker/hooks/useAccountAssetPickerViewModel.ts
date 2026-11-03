@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { AccountAssetPickerRow } from "./AccountAssetPicker.types";
+import type { AccountAssetPickerRow } from "../AccountAssetPicker.types";
 
 const NO_ROWS: readonly AccountAssetPickerRow[] = [];
 

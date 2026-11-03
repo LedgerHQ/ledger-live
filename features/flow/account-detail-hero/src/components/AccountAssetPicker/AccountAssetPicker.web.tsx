@@ -1,50 +1,9 @@
 import React from "react";
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogHeader,
-  ListItem,
-  ListItemContent,
-  ListItemDescription,
-  ListItemLeading,
-  ListItemTitle,
-  ListItemTrailing,
-} from "@ledgerhq/lumen-ui-react";
-import { CryptoIcon } from "@ledgerhq/crypto-icons";
+import { Dialog, DialogBody, DialogContent, DialogHeader } from "@ledgerhq/lumen-ui-react";
 import { useTranslation } from "@shared/i18n";
-import type { AccountAssetPickerProps, AccountAssetPickerRow } from "./AccountAssetPicker.types";
-import { useAccountAssetPickerViewModel } from "./useAccountAssetPickerViewModel";
-
-const ICON_SIZE = 48;
-
-function AccountAssetPickerListItem({
-  row,
-  onSelect,
-  testID,
-}: Readonly<{
-  row: AccountAssetPickerRow;
-  onSelect: (id: string) => void;
-  testID?: string;
-}>) {
-  return (
-    <ListItem onClick={() => onSelect(row.id)} data-testid={testID}>
-      <ListItemLeading>
-        <CryptoIcon ledgerId={row.ledgerId} ticker={row.ticker} size={ICON_SIZE} />
-        <ListItemContent>
-          <ListItemTitle>{row.name}</ListItemTitle>
-          <ListItemDescription>{row.ticker}</ListItemDescription>
-        </ListItemContent>
-      </ListItemLeading>
-      <ListItemTrailing>
-        <ListItemContent className="items-end text-end">
-          <ListItemTitle>{row.countervalue ?? row.cryptoAmount}</ListItemTitle>
-          {row.countervalue ? <ListItemDescription>{row.cryptoAmount}</ListItemDescription> : null}
-        </ListItemContent>
-      </ListItemTrailing>
-    </ListItem>
-  );
-}
+import type { AccountAssetPickerProps } from "./AccountAssetPicker.types";
+import { AccountAssetPickerContent } from "./Content/AccountAssetPickerContent.web";
+import { useAccountAssetPickerViewModel } from "./hooks/useAccountAssetPickerViewModel";
 
 export function AccountAssetPicker({
   open,
@@ -65,16 +24,7 @@ export function AccountAssetPicker({
           onClose={onClose}
         />
         <DialogBody>
-          <div className="-mx-8 flex flex-col">
-            {shownRows.map(row => (
-              <AccountAssetPickerListItem
-                key={row.id}
-                row={row}
-                onSelect={onSelect}
-                testID={testID && `${testID}-${row.id}`}
-              />
-            ))}
-          </div>
+          <AccountAssetPickerContent rows={shownRows} onSelect={onSelect} testID={testID} />
         </DialogBody>
       </DialogContent>
     </Dialog>

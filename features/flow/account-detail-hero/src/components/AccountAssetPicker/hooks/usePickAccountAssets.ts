@@ -1,5 +1,8 @@
 import { useCallback, useMemo } from "react";
-import type { AccountAssetPickerProps, AccountAssetPickerSource } from "./AccountAssetPicker.types";
+import type {
+  AccountAssetPickerProps,
+  AccountAssetPickerSource,
+} from "../AccountAssetPicker.types";
 import { useAccountAssetPicker } from "./useAccountAssetPicker";
 
 type Countervalue = Readonly<{ toNumber: () => number }>;

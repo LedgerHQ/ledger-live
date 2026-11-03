@@ -1,6 +1,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { sortAssetsByValue } from "@features/platform-quick-actions";
-import type { AccountAssetPickerProps, AccountAssetPickerSource } from "./AccountAssetPicker.types";
+import type {
+  AccountAssetPickerProps,
+  AccountAssetPickerSource,
+} from "../AccountAssetPicker.types";
 
 type Pending<T> = Readonly<{
   items: readonly T[];
