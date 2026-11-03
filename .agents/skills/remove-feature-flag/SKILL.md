@@ -2,10 +2,9 @@
 name: remove-feature-flag
 description: >-
   Remove a Ledger Wallet feature flag while preserving its resolved production
-  behavior, then validate, create a draft PR, and watch CI to green through
-  the /remove-feature-flag command (may stash local work, push a branch,
-  create or update Jira work, and publish a PR). Use when running
-  /remove-feature-flag.
+  behavior, then validate, create a draft PR, and watch CI to green. Use only
+  when the user runs /remove-feature-flag; it may stash local work, push a
+  branch, create or update Jira work, and publish a PR.
 disable-model-invocation: true
 ---
 
