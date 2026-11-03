@@ -140,6 +140,28 @@ describe("Polkadot Api", () => {
     });
   });
 
+  describe("getBlockInfo", () => {
+    it("returns the block info with its timestamp and parent", async () => {
+      const info = await module.getBlockInfo(context, 22653132);
+
+      expect(info).toEqual({
+        height: 22653132,
+        hash: "0xdfb85c23d2f195e70e87418cb8d3889b1a5a7cb22d46447b6c5d40b9b7eae1fc",
+        time: new Date(1793704368000),
+        parent: {
+          height: 22653131,
+          hash: "0xcfd1fab61599d8545e3f74f127fcd05ebfba9ec374ddf6bb227ae8b123d06ec1",
+        },
+      });
+    });
+
+    it("rejects a block that does not exist yet", async () => {
+      await expect(module.getBlockInfo(context, Number.MAX_SAFE_INTEGER)).rejects.toThrow(
+        /not found/,
+      );
+    });
+  });
+
   describe("getBalance", () => {
     it("should fetch balance", async () => {
       // When

@@ -42,7 +42,8 @@ function decoded(block: SidecarBlock): DecodedBlock {
   return { ...block, extrinsics };
 }
 
-function toBlockInfo(block: DecodedBlock): BlockInfo {
+// Reads the header and the timestamp only, so extrinsics it cannot decode or price do not matter
+export function toBlockInfo(block: SidecarBlock): BlockInfo {
   const height = Number(block.number);
   return {
     height,
@@ -52,8 +53,9 @@ function toBlockInfo(block: DecodedBlock): BlockInfo {
   };
 }
 
-function blockTime(block: DecodedBlock): Date {
-  const timestampMs = block.extrinsics.find(isPalletMethod("timestamp", "set"))?.args.now;
+function blockTime(block: SidecarBlock): Date {
+  const timestampMs = block.extrinsics.filter(isDecoded).find(isPalletMethod("timestamp", "set"))
+    ?.args.now;
   if (timestampMs === undefined) {
     throw new Error(`Polkadot block ${block.number} has no timestamp`);
   }

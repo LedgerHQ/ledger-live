@@ -20,6 +20,7 @@ import {
   estimateFees,
   getBalance,
   getBlock,
+  getBlockInfo,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -31,7 +32,7 @@ import { validateAddress } from "../logic/validateAddress";
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
 // survives and a caller sees exactly which methods exist.
 //
-// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getBlockInfo`, `getStakes`,
+// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getStakes`,
 // `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. The consumer resolver
 // applies `withDefaults`, which answers "not supported" for each.
 //
@@ -66,6 +67,10 @@ export function createApi(currencyId: string) {
     getBlock: async (context, height) => {
       const config = await context.config();
       return getBlock(config, height);
+    },
+    getBlockInfo: async (context, height) => {
+      const config = await context.config();
+      return getBlockInfo(config, height);
     },
     lastBlock: async context => {
       const config = await context.config();
