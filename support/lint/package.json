@@ -26,6 +26,7 @@
   "devDependencies": {
     "@ledgerhq/lumen-lint-plugin": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "oxlint": "catalog:",
     "typescript": "catalog:"
   }

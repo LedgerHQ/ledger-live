@@ -36,6 +36,7 @@
     "@types/command-line-args": "5.2.3",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "bignumber.js": "9.1.2",
     "jest": "catalog:",

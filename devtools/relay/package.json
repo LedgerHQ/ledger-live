@@ -30,6 +30,7 @@
     "@types/node": "catalog:",
     "@types/qrcode-terminal": "0.12.2",
     "@types/ws": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "tsx": "catalog:",

@@ -22,6 +22,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "jest": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@typescript/native": "catalog:"
   }
 }

@@ -66,6 +66,7 @@
     "@types/invariant": "2.2.37",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",

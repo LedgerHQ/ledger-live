@@ -68,7 +68,8 @@
     "@radix-ui/react-tooltip": "catalog:",
     "@tanstack/react-table": "catalog:",
     "class-variance-authority": "catalog:",
-    "react-test-renderer": "catalog:"
+    "react-test-renderer": "catalog:",
+    "@typescript/native": "catalog:"
   },
   "peerDependencies": {
     "react": ">=19",

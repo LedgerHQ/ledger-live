@@ -39,6 +39,8 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "rimraf": "4.4.1",
     "source-map-support": "0.5.21",

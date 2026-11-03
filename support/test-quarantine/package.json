@@ -21,6 +21,7 @@
     "@jest/test-result": "catalog:",
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "typescript": "catalog:"
   }

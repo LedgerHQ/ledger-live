@@ -77,6 +77,7 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "msw": "catalog:",
     "oxfmt": "catalog:",

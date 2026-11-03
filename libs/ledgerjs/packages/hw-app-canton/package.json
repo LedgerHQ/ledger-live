@@ -56,6 +56,8 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "protobufjs-cli": "2.4.1",
     "rimraf": "4.4.1",

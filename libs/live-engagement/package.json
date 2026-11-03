@@ -15,6 +15,8 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:"
   },
   "scripts": {

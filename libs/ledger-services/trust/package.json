@@ -68,6 +68,8 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "axios": "catalog:",
     "dotenv": "16.4.7",
     "expect": "catalog:",

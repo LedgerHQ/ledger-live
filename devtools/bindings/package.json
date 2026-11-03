@@ -70,6 +70,7 @@
     "@testing-library/react": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "jest-sonar": "0.2.16",

@@ -81,6 +81,8 @@
     "@types/jest": "catalog:",
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
+    "typescript": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:"

@@ -53,6 +53,7 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "babel-jest": "catalog:",
     "class-variance-authority": "catalog:",
     "expo-haptics": "catalog:",

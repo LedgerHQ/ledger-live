@@ -81,6 +81,7 @@
     "@types/bs58": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "axios": "catalog:",
     "bs58check": "4.0.0",
     "jest": "catalog:",

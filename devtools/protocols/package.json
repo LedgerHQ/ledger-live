@@ -28,6 +28,7 @@
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
-    "jest": "catalog:"
+    "jest": "catalog:",
+    "@typescript/native": "catalog:"
   }
 }

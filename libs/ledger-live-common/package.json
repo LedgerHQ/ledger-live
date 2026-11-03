@@ -457,6 +457,7 @@
     "@types/lodash": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "benchmark": "2.1.4",
     "buffer": "catalog:",
     "camelcase": "6.3.0",
