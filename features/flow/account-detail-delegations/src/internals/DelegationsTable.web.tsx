@@ -61,7 +61,7 @@ export const DelegationsTable = ({
           {hasActions ? <TableCol className="w-80" /> : null}
         </TableColGroup>
         <TableHeader>
-          <TableHeaderRow>
+          <TableHeaderRow stickyHeader={false}>
             <TableHeaderCell>{validatorColumnLabel}</TableHeaderCell>
             {statusColumnLabel ? <TableHeaderCell>{statusColumnLabel}</TableHeaderCell> : null}
             {columns.map(({ id, label, align = DEFAULT_ALIGN }) => (

@@ -11,6 +11,7 @@ Accounts are identified by an `AccountDescriptor` and keyed by its `AccountUUID`
 | [`@domain/entity-account-data`](../domain/entity/account-data) | `AccountDataRegistry`, the open map of kinds; the `accountData` status slice and the `accountDataReceived` action entities store from |
 | [`@domain/api-account-data`](../domain/api/account-data) | `AccountDataSource`, `createAccountDataRouter`, `fetchAccountData`, `fetchMoreAccountData`; `./testing` holds two toy kinds |
 | [`@features/platform-account-data`](../features/platform/account-data) | `useAccountData` |
+| [`@features/platform-account-source-coin-module`](../features/platform/account-source-coin-module) | the `coin-module` source, reading coin modules directly (`balance`; `operations` once it lists pending operations) |
 | `@domain/entity-account-<kind>` | one kind: its models, its data slice, and the `declare module` adding the kind |
 | apps, `src/config/account-data-setup.ts` | the ranked sources, spread into the thunk `extraArgument` |
 
@@ -39,10 +40,11 @@ sequenceDiagram
     S->>E: the entity's own selectors
 ```
 
-- **Status.** `accountData[kind][accountUUID]` holds the read in flight, the last error (`{ name, message }`), and the `sourceId`, query and time of the stored data. One action stores both the data and its status, so they never disagree. It is not persisted: data restored from an earlier session is read once again.
-- **Freshness.** A head read of the stored query younger than `maxAge` (30 s by default) is skipped; one already in flight is joined. `refresh` reads whatever the age.
-- **Latest wins.** An answer arriving after a newer read of the same account started is dropped.
-- **Next page.** A paginated kind's result carries `nextCursor`, opaque to everyone but the source that wrote it. `fetchMoreAccountData` hands it back to that source only, for the stored head's query.
+- **Status.** `accountData[kind][accountUUID][queryKey]` holds the read in flight, the last error (`{ name, message }`), and the `sourceId` and time of the stored data. `queryKey` is `accountDataQueryKey(query)`: two screens reading one account with different queries (all operations, one token's) never replace each other's data. One action stores both the data and its status, so they never disagree. It is not persisted: data restored from an earlier session is read once again.
+- **Queries.** Every source honours the whole query, in memory if it has to: `supports` does not see the query, so the router cannot route by it. The entity stores each query's answer under the `queryKey` of `accountDataReceived`, and its selectors take the query.
+- **Freshness.** A head read of a query younger than `maxAge` (30 s by default) is skipped; one already in flight is joined. `refresh` reads whatever the age.
+- **Latest wins.** An answer arriving after a newer read of the same account and query started is dropped.
+- **Next page.** A paginated kind's result carries `nextCursor`, opaque to everyone but the source that wrote it. `fetchMoreAccountData` hands it back to that source only, for the same query.
 - **Many accounts.** Reads issued in the same tick for one kind, query and source are routed together: one call per chunk of `maxBatchSize` on a source with a batch reader, otherwise its single reader once per account. Either way, at most `concurrency` calls (default 4) are in flight per source. "Refresh all" is one `fetchAccountData` per account, dispatched in one go.
 - **Failures** are per account: an account no source serves fails with `NoAccountDataSourceError`; a failed batch call fails its chunk only, without retrying account by account. A source that cannot serve one account after all rejects it with `AccountDataNotServedError`: the router asks the next ranked source, each source at most once, except on a next page.
 
@@ -62,7 +64,7 @@ In a new `domain/entity/account-<kind>` package:
    }
    ```
 
-2. Write the slice: it stores the data keyed by `AccountUUID`, from the answers of its kind. `append` is `true` on a next page, to merge rather than replace:
+2. Write the slice: it stores the data keyed by `AccountUUID`, from the answers of its kind. A kind with a query also keys it by `payload.queryKey` (see [`@domain/entity-account-operation`](../domain/entity/account-operation)). `append` is `true` on a next page, to merge rather than replace:
 
    ```ts
    extraReducers: builder => {
@@ -111,6 +113,6 @@ export const portfolioSource: AccountDataSource = {
 - `purposes` lists the descriptor purposes a source serves, `["account"]` by default: a `mock` descriptor (a generated account) only reaches the mock source of [`@devtools/mock-accounts`](../devtools/mock-accounts), which that tool adds at runtime with `addAccountDataSource`.
 - On a next page, each target carries the `cursor` the source wrote in the previous page's `nextCursor`.
 - A source with both readers for a kind is always read through `readBatch`: its `read` is never called.
-- Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order.
+- Add the source to `accountDataSources` in each app's `account-data-setup.ts`. The order is the fallback order: `coin-module` first, then `full-sync`.
 
 Without React or Redux, `createAccountDataRouter(sources).read(kind, descriptor)` answers the same.

@@ -3,6 +3,7 @@ import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import {
   registerCoinModules,
   getRegisteredFamilies,
+  hasLocalApi,
   isCurrencySupported,
   listSupportedCurrencies,
   resetCoinModulesForTests,
@@ -58,6 +59,31 @@ describe("supported currencies", () => {
     expect(isCurrencySupported(getCryptoCurrencyById("bitcoin"))).toBe(true);
     expect(isCurrencySupported(getCryptoCurrencyById("litecoin"))).toBe(true);
     expect(isCurrencySupported(getCryptoCurrencyById("ethereum"))).toBe(false);
+  });
+
+  it("hasLocalApi holds only for a supported currency whose loader ships a local api", () => {
+    registerCoinModules([
+      makeLoader("bitcoin", {
+        supportedCoins: ["bitcoin"],
+        loadLocalApi: () => Promise.reject(new Error("not loaded")),
+      }),
+      makeLoader("evm", { supportedCoins: ["ethereum"] }),
+    ]);
+    expect(hasLocalApi(getCryptoCurrencyById("bitcoin"))).toBe(true);
+    expect(hasLocalApi(getCryptoCurrencyById("ethereum"))).toBe(false);
+    expect(hasLocalApi(getCryptoCurrencyById("litecoin"))).toBe(false);
+  });
+
+  it("hasLocalApi is false for a currency another loader supports under the family of a loader with a local api", () => {
+    registerCoinModules([
+      makeLoader("bitcoin", {
+        supportedCoins: ["bitcoin"],
+        loadLocalApi: () => Promise.reject(new Error("not loaded")),
+      }),
+      makeLoader("zcash", { supportedCoins: ["zcash"] }),
+    ]);
+    expect(getCryptoCurrencyById("zcash").family).toBe("bitcoin");
+    expect(hasLocalApi(getCryptoCurrencyById("zcash"))).toBe(false);
   });
 
   it("listSupportedCurrencies unions all registered loaders", () => {

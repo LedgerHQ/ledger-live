@@ -11,6 +11,10 @@ inputs:
   install_node_gyp:
     description: "install node-gyp"
     required: false
+  step_summary:
+    description: "Let Nx write its run report to the job summary ('false' writes it to $RUNNER_TEMP/nx-run-report.md instead)"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -29,7 +33,14 @@ runs:
       run: pnpm e2e:desktop test:playwright:setup
       shell: bash
     - name: Build dependencies
-      run: pnpm exec nx run ledger-live-desktop:build-lib-deps
+      env:
+        INPUTS_STEP_SUMMARY: ${{ inputs.step_summary }}
+      run: |
+        # Nx appends an "Nx Run Report" to GITHUB_STEP_SUMMARY, with no setting to turn it off.
+        if [ "${INPUTS_STEP_SUMMARY}" = "false" ]; then
+          GITHUB_STEP_SUMMARY="${RUNNER_TEMP}/nx-run-report.md"
+        fi
+        pnpm exec nx run ledger-live-desktop:build-lib-deps
       shell: bash
     - name: Build LLD app for testing
       env:

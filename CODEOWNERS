@@ -135,6 +135,7 @@ features/platform/pay-analytics/                         @ledgerhq/wallet-xp
 
 # Wallet — Account Detail
 features/flow/account-detail/                            @ledgerhq/wallet-xp
+features/flow/account-detail-analytics-notice/      @ledgerhq/wallet-xp
 features/flow/account-detail-balance-summary/                   @ledgerhq/wallet-xp
 features/flow/account-detail-delegations/                @ledgerhq/wallet-xp
 features/flow/account-detail-hero/                       @ledgerhq/wallet-xp
@@ -600,6 +601,7 @@ libs/ui/packages/native/src/components/Layout/Slides/                           
 apps/ledger-live-mobile/src/e2e/                                            @ledgerhq/qaa
 libs/live-e2e-shared/                                                       @ledgerhq/qaa
 tools/actions/composites/merge-e2e-detox-timings/                           @ledgerhq/qaa
+tools/actions/composites/e2e-shard-diagnostics/                             @ledgerhq/qaa
 
 # Wallet XP — mobile app mocks
 apps/ledger-live-mobile/e2e/                                                @ledgerhq/wallet-xp

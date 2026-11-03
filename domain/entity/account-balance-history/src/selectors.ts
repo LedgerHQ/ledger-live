@@ -14,7 +14,7 @@ export const selectAccountBalanceHistory = (
   state: WithAccountBalanceHistories,
   accountUUID: AccountUUID,
   range: BalanceHistoryRange,
-): AssetBalanceHistory[] | undefined => state.accountBalanceHistories[accountUUID]?.[range];
+): AssetBalanceHistory[] | undefined => state.accountBalanceHistories[accountUUID]?.[range]?.series;
 
 export const selectAccountAssetBalanceHistory = (
   state: WithAccountBalanceHistories,
@@ -22,4 +22,6 @@ export const selectAccountAssetBalanceHistory = (
   range: BalanceHistoryRange,
   assetId: BalanceAssetId,
 ): AssetBalanceHistory | undefined =>
-  state.accountBalanceHistories[accountUUID]?.[range]?.find(series => series.assetId === assetId);
+  state.accountBalanceHistories[accountUUID]?.[range]?.series.find(
+    series => series.assetId === assetId,
+  );

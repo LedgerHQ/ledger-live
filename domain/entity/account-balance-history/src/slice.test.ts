@@ -1,4 +1,8 @@
-import { AccountDataSourceIdSchema, accountDataReceived } from "@domain/entity-account-data";
+import {
+  AccountDataSourceIdSchema,
+  accountDataQueryKey,
+  accountDataReceived,
+} from "@domain/entity-account-data";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAssetBalanceHistory } from "./schema.mock";
@@ -31,15 +35,24 @@ const reduce = (...actions: Parameters<typeof accountBalanceHistoriesReducer>[1]
     initialAccountBalanceHistoriesState,
   );
 
-const receive = (range: BalanceHistoryRange, series: AssetBalanceHistory[], uuid = accountUUID) =>
+const at0 = (series: AssetBalanceHistory[]) => ({ revision: 0, series });
+
+const receive = (
+  range: BalanceHistoryRange,
+  series: AssetBalanceHistory[],
+  uuid = accountUUID,
+  revision = 0,
+) =>
   accountDataReceived({
     kind: "balanceHistory",
     accountUUID: uuid,
+    queryKey: accountDataQueryKey({ range }),
     requestId: "r",
     data: { range, series },
     sourceId,
     append: false,
     readAt: 0,
+    revision,
   });
 
 describe("accountBalanceHistoriesSlice", () => {
@@ -50,27 +63,37 @@ describe("accountBalanceHistoriesSlice", () => {
   });
 
   it("should store the series under the range they were read for", () => {
-    expect(reduce(receive("week", [eth, usdt]))[accountUUID]).toEqual({ week: [eth, usdt] });
+    expect(reduce(receive("week", [eth, usdt]))[accountUUID]).toEqual({ week: at0([eth, usdt]) });
   });
 
   it("should keep the series of the other ranges", () => {
     const state = reduce(receive("week", [eth]), receive("year", [usdt]));
-    expect(state[accountUUID]).toEqual({ week: [eth], year: [usdt] });
+    expect(state[accountUUID]).toEqual({ week: at0([eth]), year: at0([usdt]) });
   });
 
   it("should replace the series of a range read again", () => {
     expect(reduce(receive("week", [eth, usdt]), receive("week", [eth]))[accountUUID]).toEqual({
-      week: [eth],
+      week: at0([eth]),
     });
   });
 
+  it("should keep the newer series when an older answer of another query reads the same range", () => {
+    const state = reduce(
+      receive("month", [eth, usdt], accountUUID, 2),
+      receive("month", [eth], accountUUID, 1),
+    );
+    expect(state[accountUUID]).toEqual({ month: { revision: 2, series: [eth, usdt] } });
+  });
+
   it("should store an empty list when the read returns no series", () => {
-    expect(reduce(receive("week", [eth]), receive("week", []))[accountUUID]).toEqual({ week: [] });
+    expect(reduce(receive("week", [eth]), receive("week", []))[accountUUID]).toEqual({
+      week: at0([]),
+    });
   });
 
   it("should leave the other account unchanged when one account is updated", () => {
     const state = reduce(receive("week", [usdt], otherAccountUUID), receive("week", [eth]));
-    expect(state[otherAccountUUID]).toEqual({ week: [usdt] });
+    expect(state[otherAccountUUID]).toEqual({ week: at0([usdt]) });
   });
 
   it("should keep the stored series when another kind is received", () => {
@@ -79,13 +102,15 @@ describe("accountBalanceHistoriesSlice", () => {
       accountDataReceived({
         kind: "staking",
         accountUUID,
+        queryKey: "",
         requestId: "r",
         data: { staked: "1" },
         sourceId,
         append: false,
         readAt: 0,
+        revision: 0,
       }),
     );
-    expect(state[accountUUID]).toEqual({ week: [eth] });
+    expect(state[accountUUID]).toEqual({ week: at0([eth]) });
   });
 });

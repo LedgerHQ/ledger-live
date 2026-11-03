@@ -36,7 +36,8 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   const { account } = useAccountScreen(route);
   const currency = route.params.currency;
   const cardRef = useRef<View>(null);
-  const { openIntro, verifyAddress, dieActive, onReady, onExit } = usePayTabVerifyAddress(goBack);
+  const { openIntro, verifyAddress, dieActive, selection, onReady, onExit } =
+    usePayTabVerifyAddress(goBack);
 
   const data = useMemo(
     () => (account?.type === "Account" ? deriveRequestReceiveData(account, currency) : undefined),
@@ -102,10 +103,10 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
   }, [markHintSeen]);
 
   const onVerify = useCallback(() => {
-    if (!account) return;
+    if (!mainAccount) return;
     markHintSeen();
-    openIntro();
-  }, [account, markHintSeen, openIntro]);
+    openIntro({ mainAccount, tokenCurrency });
+  }, [mainAccount, tokenCurrency, markHintSeen, openIntro]);
 
   const requestReceive = useMemo<RequestReceiveProps>(
     () => ({
@@ -147,10 +148,10 @@ export function usePayTabRequestReceiveViewModel(): PayTabRequestReceiveViewProp
     requestReceive,
     verifyAddress,
     verifyDevice:
-      dieActive && mainAccount
+      dieActive && selection
         ? {
-            mainAccount,
-            tokenCurrency,
+            mainAccount: selection.mainAccount,
+            tokenCurrency: selection.tokenCurrency,
             page: verifyAddress.page,
             onReady,
             onExit,

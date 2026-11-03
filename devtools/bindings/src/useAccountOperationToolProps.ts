@@ -6,7 +6,12 @@ import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data
 import { accountsSlice, type AccountsState } from "@domain/entity-account";
 import type { AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import type { AccountOperation, WithAccountOperations } from "@domain/entity-account-operation";
+import {
+  selectAccountOperations,
+  type AccountOperation,
+  type AccountOperationsQuery,
+  type WithAccountOperations,
+} from "@domain/entity-account-operation";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
 type AccountOperationToolProps = Extract<
@@ -14,12 +19,26 @@ type AccountOperationToolProps = Extract<
   { id: "account-operation" }
 >["config"];
 
+type AccountOperationToolQuery = Parameters<AccountOperationToolProps["onReadAll"]>[0];
+
 /** Both apps mount the accounts slice at `accountEntries`. */
 type State = AccountDataRootState & WithAccountOperations & { accountEntries: AccountsState };
 
 type Dispatch = ThunkDispatch<State, unknown, UnknownAction>;
 
 const { selectAccountEntries } = accountsSlice.getSelectors((state: State) => state.accountEntries);
+
+const labelOf = (query: AccountOperationsQuery | undefined): string =>
+  query?.limit === undefined ? "default" : `limit ${query.limit}`;
+
+/** The query a window key stands for: the key is the query's JSON, `""` for no query. */
+function queryOf(queryKey: string): AccountOperationsQuery | undefined {
+  if (!queryKey) return undefined;
+  const parsed: unknown = JSON.parse(queryKey);
+  if (typeof parsed !== "object" || parsed === null) return undefined;
+  const limit = "limit" in parsed ? parsed.limit : undefined;
+  return { limit: typeof limit === "number" ? limit : undefined };
+}
 
 export function useAccountOperationToolProps(): AccountOperationToolProps {
   const dispatch = useDispatch<Dispatch>();
@@ -29,7 +48,11 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
 
   const assetIds = useMemo(
     () => [
-      ...new Set(Object.values(operations).flatMap(rows => rows?.map(row => row.assetId) ?? [])),
+      ...new Set(
+        Object.values(operations).flatMap(entry =>
+          Object.values(entry?.byId ?? {}).flatMap(row => (row ? [row.assetId] : [])),
+        ),
+      ),
     ],
     [operations],
   );
@@ -41,28 +64,34 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
   );
 
   const read = useCallback(
-    (descriptor: AccountDescriptor) =>
-      dispatch(fetchAccountData("operations", descriptor, { maxAge: 0 })),
+    (descriptor: AccountDescriptor, query: AccountOperationsQuery | undefined) =>
+      dispatch(fetchAccountData("operations", descriptor, { query, maxAge: 0 })),
     [dispatch],
   );
 
   const onRead = useCallback(
-    (accountUUID: string) => {
+    (accountUUID: string, queryKey: string) => {
       const descriptor = descriptors.get(accountUUID);
-      if (descriptor) read(descriptor);
+      if (descriptor) read(descriptor, queryOf(queryKey));
     },
     [descriptors, read],
   );
 
   const onReadMore = useCallback(
-    (accountUUID: string) => {
+    (accountUUID: string, queryKey: string) => {
       const descriptor = descriptors.get(accountUUID);
-      if (descriptor) dispatch(fetchMoreAccountData("operations", descriptor));
+      const query = queryOf(queryKey);
+      if (descriptor) dispatch(fetchMoreAccountData("operations", descriptor, { query }));
     },
     [descriptors, dispatch],
   );
 
-  const onReadAll = useCallback(() => descriptors.forEach(read), [descriptors, read]);
+  const onReadAll = useCallback(
+    (query: AccountOperationToolQuery) => {
+      descriptors.forEach(descriptor => read(descriptor, query));
+    },
+    [descriptors, read],
+  );
 
   const accounts = useMemo(() => {
     const toRow = (operation: AccountOperation) => {
@@ -81,16 +110,30 @@ export function useAccountOperationToolProps(): AccountOperationToolProps {
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID];
+      const byQuery = statuses?.[accountUUID] ?? {};
+      const windows = operations[accountUUID]?.windows ?? {};
+      const queryKeys = [...new Set(["", ...Object.keys(byQuery), ...Object.keys(windows)])];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),
-        reading: status?.request !== undefined,
-        error: status?.error && `${status.error.name}: ${status.error.message}`,
-        sourceId: status?.sourceId,
-        readAt: status?.readAt,
-        hasMore: status?.nextCursor !== undefined,
-        rows: operations[accountUUID]?.map(toRow),
+        windows: queryKeys.map(queryKey => {
+          const status = byQuery[queryKey];
+          const query = queryOf(queryKey);
+          return {
+            queryKey,
+            label: labelOf(query),
+            reading: status?.request !== undefined,
+            error: status?.error && `${status.error.name}: ${status.error.message}`,
+            sourceId: status?.sourceId,
+            readAt: status?.readAt,
+            hasMore: status?.nextCursor !== undefined,
+            rows: selectAccountOperations(
+              { accountOperations: operations },
+              accountUUID,
+              query,
+            )?.map(toRow),
+          };
+        }),
       };
     });
   }, [entries, statuses, operations, unitOf]);

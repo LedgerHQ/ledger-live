@@ -24,10 +24,8 @@ import { useTransferDrawerController } from "../../hooks/useTransferDrawerContro
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 import { hasAnyFunds, listHeldAssets } from "@features/platform-quick-actions";
 import type { AccountAsset } from "LLM/utils/accountAssets";
-import {
-  useAccountAssetPicker,
-  type AccountAssetPickerSheetProps,
-} from "LLM/components/AccountAssetPickerSheet/useAccountAssetPicker";
+import { usePickAccountAsset } from "LLM/hooks/usePickAccountAsset";
+import type { AccountAssetPickerProps } from "@features/flow-account-detail-hero";
 import { TransferAction } from "../../types";
 import { QUICK_ACTIONS_TEST_IDS } from "../../testIds";
 import { useTranslation } from "~/context/Locale";
@@ -47,7 +45,7 @@ interface TransferDrawerViewModel {
   actions: readonly TransferAction[];
   handleClose: () => void;
   bottomInset: number;
-  assetPicker: AccountAssetPickerSheetProps;
+  assetPicker: AccountAssetPickerProps;
 }
 
 function listSendableAssets(
@@ -150,7 +148,7 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
     return getSendFlowTrackingProperties(null, null, shouldOpenNewSendFlow);
   }, [shouldOpenNewSendFlow]);
 
-  const { pickAsset, sheetProps: assetPicker } = useAccountAssetPicker();
+  const { pickAsset, pickerProps: assetPicker } = usePickAccountAsset();
   const sendFromAccountAsset = useCallback(() => {
     pickAsset(sendableAssets, ({ account: assetAccount, parentAccount }) =>
       openSendFlowForAccount(assetAccount, parentAccount),

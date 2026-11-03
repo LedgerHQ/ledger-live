@@ -12,7 +12,7 @@ const eth = mockAssetBalanceHistory();
 const usdt = mockAssetBalanceHistory({ assetId: "ethereum/erc20/usd-tether" });
 const state = {
   accountBalanceHistories: mockAccountBalanceHistoriesState({
-    [accountUUID]: { week: [eth, usdt] },
+    [accountUUID]: { week: { revision: 0, series: [eth, usdt] } },
   }),
 };
 

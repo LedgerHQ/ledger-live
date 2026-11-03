@@ -30,13 +30,17 @@ module.exports = require("@support/jest/devtools").createWebJestConfig();
 module.exports = require("@support/jest/devtools").createNativeJestConfig();
 ```
 
-Both factories take an optional overrides object. `moduleNameMapper` is merged into the preset's;
-every other key replaces it.
+Both factories take an optional overrides object, by the [override rule](../README.md#overrides):
 
 ```js
 // jest.native.config.js, adding a package-local mock
-module.exports = require("@support/jest/devtools").createNativeJestConfig({
-  moduleNameMapper: { "^jest/mocks/transport$": "<rootDir>/jest/mocks/transport.ts" },
+const { createNativeJestConfig, nativeModuleNameMapper } = require("@support/jest/devtools");
+
+module.exports = createNativeJestConfig({
+  moduleNameMapper: {
+    "^jest/mocks/transport$": "<rootDir>/jest/mocks/transport.ts",
+    ...nativeModuleNameMapper,
+  },
 });
 ```
 

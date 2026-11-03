@@ -17,6 +17,9 @@ const resources = {
             swapBuy: "Start by adding funds through Swap or Buy.",
           },
         },
+        assetPicker: {
+          title: "Select an asset",
+        },
         actions: {
           transfer: "Transfer",
           receive: "Receive",

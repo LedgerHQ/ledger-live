@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { ThunkDispatch, UnknownAction } from "@reduxjs/toolkit";
+import { fetchAccountData, fetchMoreAccountData } from "@domain/api-account-data";
 import {
   accountDataQueryKey,
-  fetchAccountData,
-  fetchMoreAccountData,
-} from "@domain/api-account-data";
-import {
   selectAccountDataStatus,
   type AccountDataError,
   type AccountDataKind,
@@ -68,7 +65,7 @@ export function useAccountData<K extends AccountDataKind>(
   }, [dispatch, kind, account, maxAge, accountQuery]);
 
   const status = useSelector((state: AccountDataRootState) =>
-    accountUUID ? selectAccountDataStatus(state, kind, accountUUID) : undefined,
+    accountUUID ? selectAccountDataStatus(state, kind, accountUUID, accountQuery) : undefined,
   );
 
   const refresh = useCallback(async () => {
@@ -83,7 +80,7 @@ export function useAccountData<K extends AccountDataKind>(
 
   const pending = status?.request !== undefined;
   const error = status?.error;
-  const hasMore = status?.nextCursor !== undefined && status.queryKey === queryKey;
+  const hasMore = status?.nextCursor !== undefined;
   return useMemo(
     () => ({ accountUUID, pending, error, hasMore, refresh, loadMore }),
     [accountUUID, pending, error, hasMore, refresh, loadMore],

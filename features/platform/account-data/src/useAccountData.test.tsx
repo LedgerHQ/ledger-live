@@ -3,11 +3,13 @@ import { Provider } from "react-redux";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { AccountDataSource, AccountTarget } from "@domain/api-account-data";
 import {
+  type FeedQuery,
   accountUUID,
   descriptor,
   descriptorOf,
   indexOf,
   makeStore,
+  selectFeed,
   sourceIdOf,
 } from "@domain/api-account-data/testing";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
@@ -119,7 +121,34 @@ describe("useAccountData", () => {
     const { result } = renderHook(() => useAccountData("feed", descriptor), { wrapper });
     await waitFor(() => expect(result.current.hasMore).toBe(true));
     await act(() => result.current.loadMore());
-    expect(store.getState().feed[accountUUID]).toEqual(["a", "b"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["a", "b"]);
     expect(result.current.hasMore).toBe(false);
+  });
+
+  it("keeps two mounted queries of one account apart, each paging its own window", async () => {
+    const feed = jest.fn(async (target: AccountTarget, query?: FeedQuery) => {
+      const prefix = query?.filter ?? "all";
+      return target.cursor === undefined
+        ? { items: [`${prefix}-1`], nextCursor: `${prefix}-c1` }
+        : { items: [`${prefix}-2`] };
+    });
+    const filtered = { filter: "usdt" };
+    const { store, wrapper } = setup({ feed });
+    const { result } = renderHook(
+      () => ({
+        all: useAccountData("feed", descriptor),
+        usdt: useAccountData("feed", descriptor, { query: filtered }),
+      }),
+      { wrapper },
+    );
+    await waitFor(() => expect(result.current.usdt.hasMore).toBe(true));
+    await waitFor(() => expect(result.current.all.hasMore).toBe(true));
+
+    await act(() => result.current.usdt.loadMore());
+    expect(selectFeed(store.getState(), accountUUID, filtered)).toEqual(["usdt-1", "usdt-2"]);
+    expect(selectFeed(store.getState(), accountUUID)).toEqual(["all-1"]);
+    expect(result.current.usdt.hasMore).toBe(false);
+    expect(result.current.all.hasMore).toBe(true);
+    expect(feed.mock.lastCall?.[0].cursor).toBe("usdt-c1");
   });
 });
