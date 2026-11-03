@@ -1,27 +1,21 @@
 import { track } from "@shared/analytics";
 import React, { useCallback, useEffect, useState } from "react";
-import { Linking } from "react-native";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { Box } from "@ledgerhq/lumen-ui-rnative";
-import { useWalletFeaturesConfig } from "@features/platform-feature-flags";
 import { useUnifiedAddDevice } from "LLM/features/DeviceOnboarding/hooks/useUnifiedAddDevice";
 import { NavigatorName, ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import { MY_WALLET_TRACKING_PAGE_NAME } from "../constants";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import { useAutoRedirectToPostOnboarding } from "~/hooks/useAutoRedirectToPostOnboarding";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { urls } from "~/utils/urls";
-import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { LNUpsellBanner } from "LLM/features/LNUpsell";
 import type { LumenNativeStackNavigationOptions } from "LLM/components/Navigation";
 import type { MyWalletNavigatorStackParamList } from "../types";
-import { ExploreDevicesItem } from "./DeviceSection/components/ExploreDevicesItem";
 import { MyWalletHeaderTrailing } from "./Header";
 
 type MyLedgerSectionProps = {
@@ -46,18 +40,9 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
   useEffect(() => {
     setDevice(params?.device);
   }, [params?.device]);
-  // TODO(wallet40-myWallet): enable ExploreDevicesItem when ready
-  const { shouldDisplayMyWallet } = useWalletFeaturesConfig("mobile");
 
   const navigation =
     useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
-
-  const exploreDevicesUrl = useLocalizedUrl(urls.exploreLedgerDevices);
-
-  const onExploreDevices = useCallback(() => {
-    track("button_clicked", { button: "ExploreDevices", page: MY_WALLET_TRACKING_PAGE_NAME });
-    Linking.openURL(exploreDevicesUrl);
-  }, [exploreDevicesUrl]);
 
   const onAddDevice = useUnifiedAddDevice();
 
@@ -141,8 +126,6 @@ function MyLedgerSectionContent({ onPairingStateChanged }: MyLedgerSectionProps)
           <Box lx={{ paddingHorizontal: "s16", paddingTop: "s16" }}>
             <LNUpsellBanner location="profile" />
           </Box>
-          {/* TODO(wallet40-myWallet): enable ExploreDevicesItem when ready */}
-          {!shouldDisplayMyWallet && <ExploreDevicesItem onPress={onExploreDevices} />}
         </SelectDevice2>
       </Box>
       <DeviceActionModal

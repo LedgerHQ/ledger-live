@@ -5,7 +5,10 @@ import { setTeamOwner } from "@e2e/helpers/allure/allure-helper";
 import { declareBroadcastAccounts } from "@e2e/helpers/exclusiveLock";
 import { beforeAllFunction, SendTestOptions } from "@e2e/specs/send/send";
 
-const beforeAllTokenFunction = async (transaction: TransactionType, options?: SendTestOptions) => {
+export const beforeAllTokenFunction = async (
+  transaction: TransactionType,
+  options?: SendTestOptions,
+) => {
   await app.init({
     speculosApp: transaction.accountToDebit.currency.speculosApp,
     ...(options?.userdata !== undefined ? { userdata: options.userdata } : {}),

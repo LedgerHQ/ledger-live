@@ -53,6 +53,7 @@ export function createCoinModuleSource(host: CoinModuleHost): AccountDataSource 
       subject: subjectOf(descriptor),
       cursor,
       limit: query?.limit,
+      filterAsset: query?.filterAsset,
       blacklistedTokenIds: new Set(host.blacklistedTokenIds?.()),
     });
   };

@@ -11,7 +11,7 @@ import {
   useBottomSheetBottomInset,
   useBottomSheetFooterInset,
 } from "@shared/ui-queued-bottom-sheet";
-import { CardTopUpButton } from "../CardTopUp";
+import { CardTopUpButton } from "../CardTopUp/CardTopUpButton";
 import { CardDetailsScene } from "./Scenes/CardDetailsScene";
 import { CARD_DETAILS_SCENES } from "./Scenes/registry";
 import type { CardDetailsSceneProps } from "./Scenes/types";

@@ -9,10 +9,10 @@ export function CardAssetsView({
   isVisible,
   status,
   rows,
-  onAssetPress,
-  onManagePress,
-  onRetryPress,
-  onAddAssetPress,
+  onOpenAsset,
+  onManageAssets,
+  onRetry,
+  onAddAsset,
 }: CardAssetsViewModel) {
   const { t } = useTranslation();
   const title = t("payTab.card.assets.title");
@@ -33,7 +33,7 @@ export function CardAssetsView({
                 appearance="accent"
                 size="sm"
                 underline={false}
-                onPress={onManagePress}
+                onPress={onManageAssets}
                 testID="card-assets-manage"
               >
                 {manageLabel}
@@ -46,9 +46,9 @@ export function CardAssetsView({
       <CardAssetsBody
         status={status}
         rows={rows}
-        onAssetPress={onAssetPress}
-        onRetryPress={onRetryPress}
-        onAddAssetPress={onAddAssetPress}
+        onOpenAsset={onOpenAsset}
+        onRetry={onRetry}
+        onAddAsset={onAddAsset}
       />
     </Box>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { CardPrimaryActionButton } from "./CardPrimaryActionButton.web";
+import { CardPrimaryActionButton } from "./CardPrimaryActionButton";
 
 describe("CardPrimaryActionButton (web)", () => {
   afterEach(cleanup);

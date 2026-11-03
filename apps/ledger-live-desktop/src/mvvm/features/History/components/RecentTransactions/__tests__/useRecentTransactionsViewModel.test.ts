@@ -142,6 +142,43 @@ describe("useRecentTransactionsViewModel", () => {
     );
   });
 
+  it("hands the row click to the page tracking instead of its own event", () => {
+    const onTrackTransactionClick = jest.fn();
+    const account = genAccount("btc-root-own-tracking", { currency: btc, operationsSize: 2 });
+    const { result } = renderHook(
+      () =>
+        useRecentTransactionsViewModel(
+          params({ accountIds: [account.id], onTrackTransactionClick }),
+        ),
+      { initialState: { accounts: [account] } },
+    );
+
+    const row = result.current.table.getRowModel().rows[0];
+    act(() => {
+      result.current.onRowClick(row);
+    });
+
+    expect(onTrackTransactionClick).toHaveBeenCalledWith(row.original.operation.type);
+    expect(track).not.toHaveBeenCalled();
+  });
+
+  it("hands see all to the page tracking instead of its own event", () => {
+    const onTrackSeeAll = jest.fn();
+    const account = genAccount("btc-root-own-see-all", { currency: btc });
+    const { result } = renderHook(
+      () => useRecentTransactionsViewModel(params({ accountIds: [account.id], onTrackSeeAll })),
+      { initialState: { accounts: [account] } },
+    );
+
+    act(() => {
+      result.current.onSeeAll();
+    });
+
+    expect(onTrackSeeAll).toHaveBeenCalledTimes(1);
+    expect(track).not.toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+  });
+
   it("scopes an account to its own and its token sub-accounts operations", () => {
     const ethRoot = genAccount("eth-account-scope", {
       currency: ethereumCurrency,

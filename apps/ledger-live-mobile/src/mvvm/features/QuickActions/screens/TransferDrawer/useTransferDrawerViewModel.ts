@@ -150,10 +150,13 @@ export const useTransferDrawerViewModel = (): TransferDrawerViewModel => {
 
   const { pickAsset, pickerProps: assetPicker } = usePickAccountAsset();
   const sendFromAccountAsset = useCallback(() => {
-    pickAsset(sendableAssets, ({ account: assetAccount, parentAccount }) =>
-      openSendFlowForAccount(assetAccount, parentAccount),
+    pickAsset(
+      sendableAssets,
+      ({ account: assetAccount, parentAccount }) =>
+        openSendFlowForAccount(assetAccount, parentAccount),
+      { flow: "send", source: sourceScreenName },
     );
-  }, [openSendFlowForAccount, pickAsset, sendableAssets]);
+  }, [openSendFlowForAccount, pickAsset, sendableAssets, sourceScreenName]);
 
   const handleSendPress = useCallback(() => {
     track("button_clicked", {

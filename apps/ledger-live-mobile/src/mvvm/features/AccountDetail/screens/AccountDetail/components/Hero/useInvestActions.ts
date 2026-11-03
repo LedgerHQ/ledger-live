@@ -102,7 +102,10 @@ export function useInvestActions(
   return useCallback(
     (id: AssetActionId) => {
       if (isHeldAssetAction(id)) {
-        pickAsset(byAction[id], asset => openForHeldAsset(id, asset));
+        pickAsset(byAction[id], asset => openForHeldAsset(id, asset), {
+          flow: id,
+          source: ACCOUNT_DETAIL_PAGE,
+        });
         return;
       }
       openDrawer({

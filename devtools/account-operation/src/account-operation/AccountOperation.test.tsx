@@ -38,6 +38,7 @@ function renderTool(accounts: AccountOperationToolAccount[]) {
   render(
     <AccountOperation
       accounts={accounts}
+      assetIds={["ethereum", "ethereum/erc20/usd__coin"]}
       onRead={onRead}
       onReadMore={onReadMore}
       onReadAll={onReadAll}
@@ -132,5 +133,12 @@ describe("AccountOperation", () => {
     await userEvent.type(screen.getByLabelText("Limit"), "50");
     await userEvent.click(screen.getByRole("button", { name: "Read all" }));
     expect(onReadAll).toHaveBeenCalledWith({ limit: 50 });
+  });
+
+  it("reads every account with the asset filter filled in the header", async () => {
+    const { onReadAll } = renderTool([makeAccount()]);
+    await userEvent.type(screen.getByLabelText("Filter asset"), "ethereum/erc20/usd__coin");
+    await userEvent.click(screen.getByRole("button", { name: "Read all" }));
+    expect(onReadAll).toHaveBeenCalledWith({ filterAsset: "ethereum/erc20/usd__coin" });
   });
 });

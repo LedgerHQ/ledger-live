@@ -16,6 +16,8 @@ export interface AccountOperationToolRow {
 /** The options of a read, each one optional: unset reads the default window. */
 export interface AccountOperationToolQuery {
   readonly limit?: number;
+  /** An asset id of the account, e.g. `ethereum/erc20/usd__coin`. */
+  readonly filterAsset?: string;
 }
 
 /** The loaded window of one query of an account. */
@@ -49,4 +51,6 @@ export interface AccountOperationToolProps {
   readonly onReadMore: (accountUUID: string, queryKey: string) => void;
   /** Reads every account with these options, into their window. */
   readonly onReadAll: (query: AccountOperationToolQuery) => void;
+  /** The asset ids the accounts hold, suggested for the filter. */
+  readonly assetIds: readonly string[];
 }

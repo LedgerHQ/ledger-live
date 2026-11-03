@@ -1,7 +1,7 @@
 import "../live-common-setup";
-import { describe, expect, it } from "bun:test";
+import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
-import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
+import type { JWT, MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 import {
   mergeSyncedAccounts,
   pullSyncedAccounts,
@@ -502,5 +502,61 @@ describe("pullSyncedAccounts", () => {
     expect(created[0]?.getCurrentVersion()).toBe(42);
     expect(created[0]?.slug).toBe("live");
     expect(created[0]?.trustchainSdk).toBe(trustchainSdk);
+  });
+
+  describe("with the real CloudSyncSDK and a deleted document", () => {
+    const realFetch = globalThis.fetch;
+    const authorizedTrustchainSdk = {
+      withAuth: <T>(
+        _trustchain: Trustchain,
+        _credentials: MemberCredentials,
+        job: (jwt: JWT) => Promise<T>,
+      ) => job({ accessToken: "jwt" }),
+    } as unknown as TrustchainSDK;
+    let requestedVersions: (string | null)[];
+
+    beforeEach(() => {
+      requestedVersions = [];
+      globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = new URL(String(input));
+        const isLiveDocumentPull =
+          (init?.method ?? "GET") === "GET" &&
+          url.pathname === "/atomic/v1/live" &&
+          url.searchParams.get("id") === trustchain.rootId;
+        if (!isLiveDocumentPull) return new Response(null, { status: 404 });
+        requestedVersions.push(url.searchParams.get("version"));
+        return Response.json({ status: "no-data" });
+      }) as typeof fetch;
+    });
+
+    afterEach(() => {
+      globalThis.fetch = realFetch;
+    });
+
+    it("reads it as up-to-date when pulled without a version, so agent-intent sync detects the deletion itself", async () => {
+      const result = await pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        authorizedTrustchainSdk,
+        "production",
+        () => undefined,
+      );
+
+      expect(requestedVersions).toEqual([null]);
+      expect(result).toEqual({ status: "up-to-date" });
+    });
+
+    it("reports it as deleted when pulled from a cached version", async () => {
+      const result = await pullSyncedAccounts(
+        trustchain,
+        memberCredentials,
+        authorizedTrustchainSdk,
+        "production",
+        () => 4,
+      );
+
+      expect(requestedVersions).toEqual(["4"]);
+      expect(result).toEqual({ status: "deleted" });
+    });
   });
 });

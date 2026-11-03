@@ -155,4 +155,73 @@ describe("AccountSettingsDialog (Web)", () => {
     expect(screen.queryByRole("button", { name: "Go back" })).not.toBeInTheDocument();
     expect(screen.getByText("Remove account?")).toBeVisible();
   });
+
+  describe("events", () => {
+    const eventsOf = (onEvent: jest.Mock) => onEvent.mock.calls.map(([event]) => event);
+
+    it("tells which menu entry the user picked", async () => {
+      const onEvent = jest.fn();
+      const { user } = renderDialog({ onEvent });
+
+      await user.click(screen.getByTestId("account-settings-change-name"));
+      await user.click(screen.getByRole("button", { name: "Go back" }));
+      await user.click(screen.getByTestId("account-settings-advanced-logs"));
+      await user.click(screen.getByRole("button", { name: "Go back" }));
+      await user.click(screen.getByTestId("account-settings-remove-account"));
+
+      expect(eventsOf(onEvent)).toEqual(["changeName", "viewLogs", "removeFromPortfolio"]);
+    });
+
+    it("tells when the new name is validated", async () => {
+      const onEvent = jest.fn();
+      const { user } = renderDialog({ onEvent });
+
+      await user.click(screen.getByTestId("account-settings-change-name"));
+      const input = screen.getByTestId("account-settings-change-name-input");
+      await user.clear(input);
+      await user.type(input, "My savings");
+      await user.click(screen.getByRole("button", { name: "Change name" }));
+
+      expect(eventsOf(onEvent)).toEqual(["changeName", "validateChangeName"]);
+    });
+
+    it("tells when the logs are copied", async () => {
+      mockCopyToClipboard.mockResolvedValue(true);
+      const onEvent = jest.fn();
+      const { user } = renderDialog({ onEvent });
+
+      await user.click(screen.getByTestId("account-settings-advanced-logs"));
+      await user.click(screen.getByRole("button", { name: "Copy logs" }));
+
+      expect(eventsOf(onEvent)).toEqual(["viewLogs", "copyLogs"]);
+    });
+
+    it("tells whether the removal is validated or cancelled", async () => {
+      const validated = jest.fn();
+      const first = renderDialog({ onEvent: validated });
+      await first.user.click(screen.getByTestId("account-settings-remove-account"));
+      await first.user.click(screen.getByRole("button", { name: "Yes, remove" }));
+      expect(eventsOf(validated)).toEqual(["removeFromPortfolio", "validateRemove"]);
+    });
+
+    it("tells when the explorer is opened", async () => {
+      const onEvent = jest.fn();
+      const { user } = renderDialog({
+        onEvent,
+        explorerUrl: "https://explorer.test/address/bc1qaddress",
+      });
+
+      await user.click(screen.getByTestId("account-settings-view-explorer"));
+
+      expect(eventsOf(onEvent)).toEqual(["viewExplorer"]);
+    });
+
+    it("stays silent without a handler", async () => {
+      const { user } = renderDialog();
+
+      await user.click(screen.getByTestId("account-settings-remove-account"));
+
+      expect(screen.getByText("Remove account?")).toBeVisible();
+    });
+  });
 });

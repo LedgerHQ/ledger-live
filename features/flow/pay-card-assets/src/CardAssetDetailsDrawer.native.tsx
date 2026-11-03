@@ -37,7 +37,7 @@ export type CardAssetDetailsDrawerProps = Pick<
     onTopUp: () => void;
     onWithdraw: () => void;
     onShowHistory: () => void;
-    onTransactionPress: (transaction: CardTransactionItem) => void;
+    onOpenTransaction: (transaction: CardTransactionItem) => void;
   }>;
 
 export function CardAssetDetailsDrawer({
@@ -50,7 +50,7 @@ export function CardAssetDetailsDrawer({
   onTopUp,
   onWithdraw,
   onShowHistory,
-  onTransactionPress,
+  onOpenTransaction,
 }: CardAssetDetailsDrawerProps) {
   const { t } = useTranslation();
   const isAmountLoading = asset.countervalueAmount === null || !formatBalance;
@@ -100,7 +100,7 @@ export function CardAssetDetailsDrawer({
                 key={item.transaction.id}
                 item={item}
                 formatters={formatters}
-                onOpenTransaction={() => onTransactionPress(item)}
+                onOpenTransaction={() => onOpenTransaction(item)}
               />
             ))}
           </Box>

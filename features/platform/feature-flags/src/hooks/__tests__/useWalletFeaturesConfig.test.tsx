@@ -38,7 +38,6 @@ function withDesktopGraduatedFlags(
     ? {
         ...config,
         shouldDisplayAssetSection: true,
-        shouldDisplayMyWallet: true,
         shouldDisplayAggregatedAssets: true,
       }
     : config;
@@ -53,7 +52,6 @@ const makeConfig = (
   shouldDisplayAssetSection: value,
   shouldDisplayBrazePlacement: value,
   shouldDisplayOperationsList: value,
-  shouldDisplayMyWallet: value,
   shouldDisplayAggregatedAssets: value,
   shouldDisplayAssetDiscoverability: value,
   shouldDisplayEarnUpselling: value,
@@ -67,7 +65,6 @@ const makeParams = (value: boolean): Wallet40Params => ({
   brazePlacement: value,
   operationsList: value,
   aggregatedAssets: value,
-  myWallet: value,
   assetDiscoverability: value,
   earnUpselling: value,
   earnSimulator: value,
@@ -116,7 +113,6 @@ describe("useWalletFeaturesConfig hook", () => {
         ["brazePlacement", { brazePlacement: true }, { shouldDisplayBrazePlacement: true }],
         ["operationsList", { operationsList: true }, { shouldDisplayOperationsList: true }],
         ["aggregatedAssets", { aggregatedAssets: true }, { shouldDisplayAggregatedAssets: true }],
-        ["myWallet", { myWallet: true }, { shouldDisplayMyWallet: true }],
         ["earnUpselling", { earnUpselling: true }, { shouldDisplayEarnUpselling: true }],
         ["earnSimulator", { earnSimulator: true }, { shouldDisplayEarnSimulator: true }],
       ])("returns the correct config when only %s is enabled", (_, params, expectedOverrides) => {

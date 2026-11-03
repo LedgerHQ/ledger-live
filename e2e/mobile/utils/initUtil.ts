@@ -47,8 +47,6 @@ type CliCommand = ((
   canUseGeneratedUserdata?: () => boolean;
 };
 
-export let isMyWalletEnabled = false;
-
 export type InitOptions = {
   speculosApp?: SpeculosAppType;
   cliCommands?: CliCommand[];
@@ -472,8 +470,6 @@ export class InitializationManager {
 
   static async setFeatureFlags(featureFlags: PartialFeatures) {
     const mergedFeatureFlags = getMergedFeatureFlags({ testFlags: featureFlags });
-    const wallet40 = mergedFeatureFlags.lwmWallet40;
-    isMyWalletEnabled = Boolean(wallet40?.enabled && wallet40?.params?.myWallet);
 
     globalThis.mergedFeatureFlags = mergedFeatureFlags;
 

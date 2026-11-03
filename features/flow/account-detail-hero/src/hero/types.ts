@@ -8,6 +8,9 @@ import type {
 
 export type AccountHeroActionId = Exclude<QuickActionId, "connect" | "buyLedger">;
 
+/** Where an action was picked: straight from the hero, or from the "More" sheet (LWM). */
+export type AccountHeroActionLocation = "quick_action" | "more";
+
 export type AccountHeroBalance = Readonly<{
   countervalue: number | undefined;
   formatter: (value: number) => FormattedValue;
@@ -33,7 +36,9 @@ export type AccountHeroPort = Readonly<{
   hasActivity: boolean;
   /** Ready-to-display address type of the account ("Native segwit"...), shown above the balance. */
   tag?: string;
-  onAction: (id: AccountHeroActionId) => void;
+  onAction: (id: AccountHeroActionId, location?: AccountHeroActionLocation) => void;
+  /** The "More" tile was pressed (LWM). */
+  onOpenMore?: () => void;
 }>;
 
 export type AccountHeroViewModel = Readonly<{

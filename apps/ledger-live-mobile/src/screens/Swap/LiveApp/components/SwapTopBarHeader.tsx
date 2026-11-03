@@ -7,11 +7,7 @@ import {
   useAdjustedSafeAreaInsets,
 } from "LLM/hooks/useNavigationBarHeights";
 import { useSwapTopBarHeaderViewModel } from "./useSwapTopBarHeaderViewModel";
-import {
-  CustomTopBar,
-  TopBarActionIcon,
-  useMyLedgerTopBarAction,
-} from "LLM/components/CustomTopBar";
+import { CustomTopBar, TopBarActionIcon } from "LLM/components/CustomTopBar";
 import { MyWalletTopBarAction } from "LLM/components/TopBar/components/MyWalletTopBarAction";
 import { SyncErrorBottomSheet } from "LLM/components/TopBar/components/SyncErrorBottomSheet";
 import { ICON_SIZE } from "LLM/components/TopBar/const";
@@ -25,9 +21,7 @@ const syncIcon: IconButtonProps["icon"] = ({ size, style }) => (
 export function SwapTopBarHeader() {
   const insets = useAdjustedSafeAreaInsets();
   const {
-    onMyLedgerPress,
     onMyWalletPress,
-    shouldDisplayMyWallet,
     hasUnreadNotifications,
     onSwapHistoryPress,
     hasAccounts,
@@ -40,19 +34,13 @@ export function SwapTopBarHeader() {
     closeSyncDrawer,
     onTryRefresh,
   } = useSwapTopBarHeaderViewModel();
-  const myLedgerAction = useMyLedgerTopBarAction(onMyLedgerPress);
   const containerStyle = useMemo(
     () => [styles.container, { marginTop: insets.top + TOP_BAR_WRAPPER_PADDING_TOP }],
     [insets.top],
   );
 
-  const leadingElement = shouldDisplayMyWallet ? (
+  const leadingElement = (
     <MyWalletTopBarAction onPress={onMyWalletPress} showNotification={hasUnreadNotifications} />
-  ) : undefined;
-
-  const leadingIcons = useMemo(
-    () => (shouldDisplayMyWallet ? [] : [myLedgerAction]),
-    [shouldDisplayMyWallet, myLedgerAction],
   );
 
   const displaySyncStatusIcon = hasAccounts && isSyncError;
@@ -90,11 +78,7 @@ export function SwapTopBarHeader() {
 
   return (
     <Box style={containerStyle}>
-      <CustomTopBar
-        leadingElement={leadingElement}
-        leadingIcons={leadingIcons}
-        trailingIcons={trailingIcons}
-      />
+      <CustomTopBar leadingElement={leadingElement} trailingIcons={trailingIcons} />
 
       <SyncErrorBottomSheet
         isOpen={isSyncDrawerOpen}

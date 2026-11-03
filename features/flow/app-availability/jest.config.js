@@ -1,17 +1,7 @@
 const path = require("path");
-const {
-  createFlowJestConfig,
-  nativeModuleNameMapper,
-  webSetupFilesAfterEnv,
-} = require("@support/jest/features-flow");
+const { createFlowJestConfig, nativeModuleNameMapper } = require("@support/jest/features-flow");
 
 module.exports = createFlowJestConfig({
-  webOverrides: {
-    setupFilesAfterEnv: [
-      ...webSetupFilesAfterEnv,
-      path.resolve(__dirname, "jest/setupUnrefSchedulerMessageChannel.js"),
-    ],
-  },
   nativeOverrides: {
     moduleNameMapper: {
       ...nativeModuleNameMapper,

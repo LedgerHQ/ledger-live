@@ -4,6 +4,7 @@ import { genAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import type { SyncState } from "@ledgerhq/live-common/bridge/react/types";
 import { useNetworkState } from "@shared/network-status";
+import { track } from "@shared/analytics";
 import { countervaluesSyncSlice } from "@features/platform-market-countervalues";
 import { act, render, screen, withFlagOverrides } from "@tests/test-renderer";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -89,6 +90,17 @@ function finishSync(error: Error | null = null) {
 }
 
 const status = (suffix: string) => `${ACCOUNT_DETAIL_TEST_IDS.refreshStatus}-${suffix}`;
+
+const pulled = (triggeredAfterSyncError: boolean) => [
+  "button_clicked",
+  {
+    currency: "ethereum",
+    isTokenAccount: false,
+    button: "pull to refresh",
+    page: "Account",
+    triggeredAfterSyncError,
+  },
+];
 
 describe("AccountDetail pull-to-refresh", () => {
   beforeEach(() => {
@@ -196,5 +208,26 @@ describe("AccountDetail pull-to-refresh", () => {
     pullToRefresh();
 
     expect(mockSetSyncBehavior).toHaveBeenCalledTimes(1);
+  });
+
+  describe("tracking", () => {
+    it("tracks the pull to refresh", () => {
+      jest.mocked(track).mockClear();
+      renderAccount();
+
+      pullToRefresh();
+
+      expect(track).toHaveBeenCalledWith(...pulled(false));
+    });
+
+    it("tells when the pull follows a sync error", () => {
+      mockSyncState.current = { pending: false, error: new Error("previous sync failed") };
+      jest.mocked(track).mockClear();
+      renderAccount();
+
+      pullToRefresh();
+
+      expect(track).toHaveBeenCalledWith(...pulled(true));
+    });
   });
 });

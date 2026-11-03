@@ -127,7 +127,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     return "ready";
   }, [isLoading, isError, rows.length]);
 
-  const onAssetPress = useCallback((asset: CardAssetRow) => {
+  const onOpenAsset = useCallback((asset: CardAssetRow) => {
     setSelectedAssetId(asset.id);
     setDialogState("details");
   }, []);
@@ -145,12 +145,12 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     setSelectedAssetId(null);
   }, [dialogState, rows]);
 
-  const onTopUpPress = useCallback(() => {
+  const onTopUpAsset = useCallback(() => {
     if (selectedAsset) onTopUp?.(selectedAsset);
     onDialogClose();
   }, [onDialogClose, onTopUp, selectedAsset]);
 
-  const onWithdrawPress = useCallback(() => {
+  const onOpenWithdraw = useCallback(() => {
     setDialogState("withdraw");
   }, []);
 
@@ -158,7 +158,7 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     setDialogState("details");
   }, []);
 
-  const onShowHistoryPress = useCallback(() => {
+  const onShowSelectedAssetHistory = useCallback(() => {
     if (selectedAsset) onShowHistory?.(selectedAsset);
     onDialogClose();
   }, [onDialogClose, onShowHistory, selectedAsset]);
@@ -168,19 +168,15 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
     onDialogClose();
   }, [onDialogClose, onWithdraw, selectedAsset]);
 
-  const onManagePress = useCallback(() => {
+  const onManageAssets = useCallback(() => {
     manageInitialOrder.current = rows.map(row => row.currency);
     trackButtonClicked({ button: "debit order", page: "Card details" });
     setDialogState("manage");
   }, [rows]);
 
-  const onRetryPress = useCallback(() => {
+  const onRetry = useCallback(() => {
     refetch();
   }, [refetch]);
-
-  const onAddAssetPress = useCallback(() => {
-    onAddAsset?.();
-  }, [onAddAsset]);
 
   const onMoveAsset = useCallback(
     async (id: string, toIndex: number) => {
@@ -242,16 +238,16 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
         withdrawDescription: t(`${KEY_PREFIX}.withdraw.description`),
         continue: t(`${KEY_PREFIX}.withdraw.continue`),
       },
-      onAssetPress,
+      onOpenAsset,
       onDialogClose,
-      onTopUpPress,
-      onWithdrawPress,
+      onTopUpAsset,
+      onOpenWithdraw,
       onWithdrawClose,
-      onShowHistoryPress,
+      onShowHistory: onShowSelectedAssetHistory,
       onWithdrawContinue,
-      onManagePress,
-      onRetryPress,
-      onAddAssetPress: onAddAsset ? onAddAssetPress : undefined,
+      onManageAssets,
+      onRetry,
+      onAddAsset,
       onMoveAsset,
       reorderingAssetIds,
       discreet,
@@ -267,17 +263,16 @@ export function useCardAssetsViewModel(props?: CardAssetsProps): CardAssetsViewM
       selectedAssetTransactions,
       formatBalance,
       formatters,
-      onAssetPress,
+      onOpenAsset,
       onDialogClose,
-      onTopUpPress,
-      onWithdrawPress,
+      onTopUpAsset,
+      onOpenWithdraw,
       onWithdrawClose,
-      onShowHistoryPress,
+      onShowSelectedAssetHistory,
       onWithdrawContinue,
-      onManagePress,
-      onRetryPress,
+      onManageAssets,
+      onRetry,
       onAddAsset,
-      onAddAssetPress,
       onMoveAsset,
       reorderingAssetIds,
       discreet,
