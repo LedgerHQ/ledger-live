@@ -1,8 +1,7 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
 import { WalletAdapter } from "../wallet";
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import { toV1, serializeV1, networkFromCurrencyId } from "../shared/accountDescriptor";
+import { toV1, serializeV1, networkOfV0 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
 import { createCommandOutput } from "../output";
 import {
@@ -39,7 +38,7 @@ export default defineCommand({
       const descriptor = await resolveAccountDescriptor(
         resolveAccountArg(flags.account, positional),
       );
-      ctx.network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(descriptor.currencyId));
+      ctx.network = networkOfV0(descriptor);
       // accountId remapped to V1 descriptor — internal live-common id is intentionally dropped
       ctx.account = serializeV1(toV1(descriptor));
       walletCliDebug(

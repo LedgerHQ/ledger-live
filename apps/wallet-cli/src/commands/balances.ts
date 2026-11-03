@@ -1,7 +1,6 @@
 import { defineCommand } from "@bunli/core";
 import { WalletAdapter } from "../wallet";
-import { CryptoCurrencyIdSchema } from "@domain/entity-currency-crypto";
-import { networkFromCurrencyId } from "../shared/accountDescriptor";
+import { networkOfV0 } from "../shared/accountDescriptor";
 import { walletCliDebug } from "../shared/log";
 import { createCommandOutput } from "../output";
 import {
@@ -30,7 +29,7 @@ export default defineCommand({
       const descriptor = await resolveAccountDescriptor(
         resolveAccountArg(flags.account, positional),
       );
-      ctx.network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(descriptor.currencyId));
+      ctx.network = networkOfV0(descriptor);
       ctx.account = descriptor.id;
       walletCliDebug(`balances: account=${descriptor.id}, output=${output}`);
       const wallet = new WalletAdapter();

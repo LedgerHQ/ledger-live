@@ -14,6 +14,7 @@ import {
   isWalletCliSupportedCurrency,
   listWalletCliSupportedCurrencyIds,
 } from "../supported-currencies";
+import type { AccountDescriptorV0 } from "./v0";
 import { networkFromLegacy } from "./v1";
 
 export {
@@ -23,10 +24,19 @@ export {
 } from "@domain/entity-account-descriptor";
 export type { NetworkId } from "@domain/entity-account-descriptor";
 
-function toNetworkId(id: string, input: string): NetworkId {
+function toNetworkId(id: string): NetworkId {
   const parsed = NetworkIdSchema.safeParse(id);
-  if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${input}"`);
+  if (!parsed.success) throw new UnknownNetworkError(`Unknown network "${id}"`);
   return parsed.data;
+}
+
+/** The network of a V0 descriptor; throws UnknownNetworkError for an empty or unknown currency id. */
+export function networkOfV0(descriptor: Pick<AccountDescriptorV0, "currencyId">): NetworkId {
+  const parsed = CryptoCurrencyIdSchema.safeParse(descriptor.currencyId);
+  if (!parsed.success) {
+    throw new UnknownNetworkError(`Unknown network "${descriptor.currencyId}"`);
+  }
+  return networkFromCurrencyId(parsed.data);
 }
 
 /**
@@ -42,9 +52,9 @@ function toNetworkId(id: string, input: string): NetworkId {
  */
 export function parseNetworkArg(input: string): NetworkId {
   const [name, env, ...extra] = input.toLowerCase().split(":");
-  if (env === undefined) return toNetworkId(name, input);
+  if (env === undefined) return toNetworkId(name);
   if (!env || extra.length > 0) throw new UnknownNetworkError(`Unknown network "${input}"`);
-  return toNetworkId(networkFromLegacy(name, env === "mainnet" ? "main" : env), input);
+  return toNetworkId(networkFromLegacy(name, env === "mainnet" ? "main" : env));
 }
 
 /** The mainnet a testnet network belongs to (`solana_devnet` → `solana`), else the network itself. */

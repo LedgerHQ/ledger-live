@@ -18,6 +18,7 @@ export {
   networkFromCurrencyId,
   currencyIdFromNetwork,
   mainnetOf,
+  networkOfV0,
   UnknownNetworkError,
   UnsupportedNetworkError,
 } from "./network";

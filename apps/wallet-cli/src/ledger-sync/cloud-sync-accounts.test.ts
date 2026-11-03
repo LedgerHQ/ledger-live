@@ -131,6 +131,22 @@ describe("mergeSyncedAccounts", () => {
     expect(session.accounts).toHaveLength(1);
   });
 
+  it("reports an empty currencyId as skipped, not invalid", () => {
+    const session = Session.from([]);
+    const empty = {
+      ...BTC_RAW,
+      id: `js:2::${XPUB}:native_segwit`,
+      currencyId: "",
+    };
+    const report = mergeSyncedAccounts(session, [empty, ETH_RAW]);
+
+    expect(report.skipped).toEqual([
+      expect.objectContaining({ status: "skipped", id: empty.id, reason: 'Unknown network ""' }),
+    ]);
+    expect(report.invalid).toEqual([]);
+    expect(session.accounts).toHaveLength(1);
+  });
+
   it("reports a resolvable but wallet-cli-unsupported currency family as skipped, before toV1()", () => {
     const session = Session.from([]);
     const report = mergeSyncedAccounts(session, [UNSUPPORTED_FAMILY_RAW, ETH_RAW]);

@@ -1,17 +1,13 @@
 import { defineCommand, option } from "@bunli/core";
 import { z } from "zod";
-import {
-  CryptoCurrencyIdSchema,
-  findCryptoCurrencyById,
-  getCryptoCurrencyById,
-} from "@domain/entity-currency-crypto";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "@domain/entity-currency-crypto";
 import { WalletAdapter } from "../wallet";
 import { TransactionIntentSchema } from "../wallet/intents";
 import { prepareIntentDryRun, signAndBroadcastIntent } from "../wallet/sign-and-broadcast";
 import { WalletCliDeviceError } from "../device/wallet-cli-device-error";
 import { WALLET_CLI_DMK_DEVICE_ID } from "../device/register-dmk-transport";
 import { getManagerAppNameForCurrencyId } from "../session/bridge-device-session";
-import { networkFromCurrencyId } from "../shared/accountDescriptor";
+import { networkOfV0 } from "../shared/accountDescriptor";
 import { createCommandOutput } from "../output";
 import {
   trackSendCompleted,
@@ -166,7 +162,7 @@ export default defineCommand({
       const descriptor = await resolveAccountDescriptor(
         resolveAccountArg(flags.account, positional),
       );
-      ctx.network = networkFromCurrencyId(CryptoCurrencyIdSchema.parse(descriptor.currencyId));
+      ctx.network = networkOfV0(descriptor);
       ctx.account = descriptor.id;
       const managerAppName = getManagerAppNameForCurrencyId(descriptor.currencyId);
       const assetClass = classifySendAssetClass(descriptor.currencyId);

@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
 import {
   parseNetworkArg,
   mainnetOf,
+  networkOfV0,
   networkFromCurrencyId,
   currencyIdFromNetwork,
   NetworkIdSchema,
@@ -35,8 +36,24 @@ describe("parseNetworkArg", () => {
 });
 
 describe("parseNetworkArg rejects", () => {
-  it.each(["ethereum:main:sepolia", "ethereum:"])("the malformed selector %s", input => {
-    expect(() => parseNetworkArg(input)).toThrow(UnknownNetworkError);
+  it.each(["ethereum:main:sepolia", "ethereum:", "", "bit coin", "bitcoin ", "bit coin:testnet"])(
+    "the malformed selector %p",
+    input => {
+      expect(() => parseNetworkArg(input)).toThrow(UnknownNetworkError);
+    },
+  );
+});
+
+describe("networkOfV0", () => {
+  it("reads the network of the currency id", () => {
+    expect(networkOfV0({ currencyId: "bitcoin_testnet" })).toBe(net("bitcoin_testnet"));
+  });
+
+  it.each([
+    ["", 'Unknown network ""'],
+    ["notachain", 'Unknown network "notachain"'],
+  ])("throws UnknownNetworkError for the currency id %p", (currencyId, message) => {
+    expect(() => networkOfV0({ currencyId })).toThrow(new UnknownNetworkError(message));
   });
 });
 
