@@ -32,7 +32,7 @@ jobs:
   enforce-boundaries:
     name: Enforce Module Boundaries
     runs-on: ledger-wallet-4cpu-aws-public-cached
-    timeout-minutes: 10
+    timeout-minutes: 15
     env:
       NODE_OPTIONS: "--max-old-space-size=4096"
       CI_OS: ubuntu-22.04
@@ -89,3 +89,15 @@ jobs:
 
       - name: Check i18n keys exist in the Desktop and Mobile catalogs
         run: pnpm exec nx run-many -t lint:i18n-keys -p enforce-i18n-keys
+
+      - name: Install all workspace dependencies for knip
+        id: install-all
+        # Older branches (e.g. release) call this workflow from develop without the grouped knip script.
+        if: ${{ !cancelled() && hashFiles('tools/knip/run-grouped.mjs') != '' }}
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Check for dead code and unused dependencies
+        if: ${{ !cancelled() && steps.install-all.outcome == 'success' }}
+        run: pnpm run knip:grouped
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
