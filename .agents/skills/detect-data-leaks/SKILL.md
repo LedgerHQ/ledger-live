@@ -27,7 +27,7 @@ Prioritize these, but do not exclude others:
 - Sentry
 - Mixpanel
 
-Analytics also leave from the [monorepo layers](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) and `devtools/`, not only the apps:
+Analytics also leave from the monorepo layers (`shared/`, `domain/`, `features/`, `devtools/`), not only the apps:
 
 - `@shared/analytics` owns `track()` and `trackPage()`; `@shared/analytics-react` wraps them in `<Track>` and `<TrackScreen>` (universal, web and native). The apps plug their vendor (`setAnalytics`) and filters into this pipeline, so a layer call reaches the same vendor as an app call.
 - Feature packages send events either through those functions (`@features/flow-fear-and-greed`, and `@features/platform-pay-analytics`, which builds `createPayAnalyticsHelper` on `@shared/analytics`'s `track`) or through an adapter the app injects (`createContactsAnalyticsHelper` in `@features/flow-contacts`). For an injected adapter, read the app side that builds it: that is where the payload reaches the vendor.
@@ -46,7 +46,7 @@ Treat any of these as high-risk when found in added lines:
 2. In added lines, identify:
    - Assignments of high-risk variables (see above)
    - New calls to third-party sinks or wrappers: `track()`, `trackPage()`, `<Track>`, `<TrackScreen>`, analytics adapter methods (`adapter.track()`, `analytics.trackPage()`, `track*()` helpers), `logger.*()`, `captureException()`
-   - Added lines in the layers and `devtools/` count as much as added lines under `apps/`
+   - Added lines under `shared/`, `domain/`, `features/` and `devtools/` count as much as added lines under `apps/`
 
 3. In removed lines, identify:
    - Removed guards: `confidentialityFilter`, scrubbing calls, PII-stripping wrappers — flag each removal as a potential leak enabler.
@@ -66,26 +66,27 @@ Treat any of these as high-risk when found in added lines:
 
 # Grep helpers (investigation only)
 
-Run these from the repo root. They scope runtime TypeScript with `git grep` exclusions
-(`:!libs/**`, `:!support/**`; `git grep` already skips `node_modules`). Coin-module checks
-grep `libs/` on their own.
+`SRC` covers the apps and the layers that ship runtime code; `support/` holds development-only presets and never sends data.
 
-**Analytics call sites outside the apps:**
 ```bash
-git grep -nE 'track(Page)?\(|<Track(Screen)?' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**' \
-  | grep -vE '\.test\.|/__tests__/' | grep -v '^apps/'
+SRC=(apps shared domain features devtools)
+```
+
+**Analytics call sites in the layers:**
+```bash
+grep -rnE "\btrack(Page)?\(|<Track(Screen)?\b" shared domain features devtools --include="*.ts" --include="*.tsx" \
+  | grep -vE "\.test\.|/__tests__/|/node_modules/"
 ```
 
 **`location.pathname` flowing into `track()`** — pathname often assigned before the call:
 ```bash
-git grep -l -E 'track(Page)?\(' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**' \
-  | grep -vE '\.test\.|/__tests__/|/tests/' \
-  | xargs perl -0777 -ne 'BEGIN { exit unless @ARGV } print "$ARGV\n" if /track(?:Page)?\([\s\S]{0,500}?location\.pathname/'
+find "${SRC[@]}" -path "*/node_modules" -prune -o \( -name "*.ts" -o -name "*.tsx" \) -print | grep -vE "\.test\.|/__tests__/|/tests/" | \
+  xargs perl -0777 -ne 'BEGIN { exit unless @ARGV } print "$ARGV\n" if /track(?:Page)?\([\s\S]{0,500}?location\.pathname/'
 ```
 
 **`window.location.hash` in analytics:**
 ```bash
-git grep -n 'window\.location\.hash' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**'
+grep -rn "window\.location\.hash" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx"
 ```
 
 **Address interpolated into `new Error(...)` in coin modules:**
@@ -96,20 +97,20 @@ find libs \( -name "*.ts" -o -name "*.tsx" \) | grep -vE "live-e2e-shared|coin-t
 
 **Signed tx payload on broadcast failure:**
 ```bash
-git grep -nE 'broadcast_failure|broadcastLogger' -- '*.ts' ':!libs/**' ':!support/**' | grep -v '\.test\.'
+grep -rn -E "broadcast_failure|broadcastLogger" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" | grep -v "\.test\."
 ```
 
 **Full transaction object spread into analytics:**
 ```bash
-git grep -nE 'value:[[:space:]]*(params|transaction)\b' -- '*.ts' '*.tsx' ':!libs/**' ':!support/**' \
-  | grep -v '\.test\.' \
-  | grep -vE 'value:[[:space:]]*(params|transaction)\.'
+grep -rn -E "value:[[:space:]]*(params|transaction)\b" "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx" \
+  | grep -v "\.test\." \
+  | grep -vE "value:[[:space:]]*(params|transaction)\."
 ```
 
 **Signed payload fields in `track()`:**
 ```bash
-git grep -nE 'binaryPayload|payinAddress|fromAccountAddress|toAccountAddress' -- '*.ts' '*.tsx' ':!support/**' \
-  | grep -vE '\.test\.|/__tests__/|/tests/'
+grep -rn -E "binaryPayload|payinAddress|fromAccountAddress|toAccountAddress" libs "${SRC[@]}" --exclude-dir=node_modules --include="*.ts" --include="*.tsx" \
+  | grep -vE "\.test\.|/__tests__/|/tests/"
 ```
 
 **Props filter registration (the shared pipeline applies it to both `track()` and `trackPage()`):**

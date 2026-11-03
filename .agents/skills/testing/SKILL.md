@@ -147,8 +147,7 @@ parallel runs flaky: [references/mocks.md](references/mocks.md).
 
 ## Packages in the Layers
 
-Packages of the [monorepo layers](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) and
-`devtools/` have no app harness. Each one:
+Packages under `shared/`, `domain/`, `features/` and `devtools/` have no app harness. Each one:
 
 - builds its `jest.config.js` from a `@support/jest` preset, with the default call its
   [preset table](references/packages.md#presets) gives.

@@ -32,7 +32,7 @@ Generate a formatted Slack message to announce a pull request.
 
 When multiple non-app packages are impacted alongside an app, use the app prefix. Combine prefixes only when both apps are affected.
 
-A package of the [layers](../structure-flow/SKILL.md#decide-the-layer-first-yes-wins) or `devtools/`, `support/` aside, takes the prefix of the app(s) it reaches, not `Common`: `@features/flow-app-unlock` only ships on mobile, so a change to it is `LWM`. Derive the apps from the changed files with the Nx command in the [run-builds](../run-builds/SKILL.md) skill, then narrow by platform suffix (`*.web.tsx` → `LWD`, `*.native.tsx` → `LWM`).
+A package under `shared/`, `domain/`, `features/` or `devtools/` takes the prefix of the app(s) it reaches, not `Common`: `@features/flow-app-unlock` only ships on mobile, so a change to it is `LWM`. Derive the apps from the changed files with the Nx command in the [run-builds](../run-builds/SKILL.md) skill, then narrow by platform suffix (`*.web.tsx` → `LWD`, `*.native.tsx` → `LWM`).
 
 ## Example
 
