@@ -1,7 +1,8 @@
 name: "[Wallet CLI] - Sync Plugin"
 
 # Run by hand once a wallet-cli release is on npm, with the ref it was published
-# from. The manifests carry that release's version, and agents pin a plugin by
+# from, and its version when the release used version_override. The manifests and
+# the skill carry that release's version, and agents pin a plugin by
 # version, so a sync from develop would ship unreleased flags under the last
 # released number and leave them on users' machines until the next bump.
 on:
@@ -10,6 +11,10 @@ on:
       source_ref:
         description: "ledger-live ref the wallet-cli release was published from"
         required: true
+      version:
+        description: "wallet-cli version published to npm (default: package.json at source_ref); set it when the release used version_override"
+        required: false
+        default: ""
       target_base:
         description: "agent-skills base branch"
         required: false
@@ -74,6 +79,22 @@ jobs:
           path: ledger-live
           persist-credentials: false
 
+      # The plugin is pinned by this version, so it must be one users can install.
+      - name: Resolve published version
+        id: version
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          version="${VERSION_INPUT:-$(node -p 'require("./ledger-live/apps/wallet-cli/package.json").version')}"
+          published=$(npm view "@ledgerhq/wallet-cli@$version" version 2>/dev/null || true)
+          if [ "$published" != "$version" ]; then
+            echo "::error::@ledgerhq/wallet-cli@$version is not on npm. Pass the published version as the version input."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       # The plugin export writes the manifests to the agent-skills root and the
       # skill to skills/wallet-cli-usage through the same transform as the copy
       # embedded in the binary — as a `sed` pipeline here it drifted. The scripts
@@ -82,15 +103,18 @@ jobs:
       # The same skill also goes to skills/wallet-cli/wallet-cli-usage, where it
       # lived before the plugin, because developers.ledger.com links that path.
       - name: Export wallet-cli plugin
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
 
           scripts="$GITHUB_WORKSPACE/ledger-live/apps/wallet-cli/scripts"
-          node "$scripts/export-agent-plugin.mjs" "$GITHUB_WORKSPACE"
+          node "$scripts/export-agent-plugin.mjs" "$GITHUB_WORKSPACE" "$VERSION"
           # todo: two copies of one skill; drop this once developers.ledger.com links skills/wallet-cli-usage
           node "$scripts/export-standalone-skill.mjs" \
             "$GITHUB_WORKSPACE/ledger-live/.agents/skills/ledger-wallet-cli" \
-            "$GITHUB_WORKSPACE/skills/wallet-cli/wallet-cli-usage"
+            "$GITHUB_WORKSPACE/skills/wallet-cli/wallet-cli-usage" \
+            "$VERSION"
 
       # ghcommit-action (below) creates the commit through GitHub's API so it is
       # signed server-side — agent-skills' `main` ruleset requires signed commits.
