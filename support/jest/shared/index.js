@@ -2,9 +2,11 @@ const {
   createDualJestConfig,
   jestSonarReporter,
   nativeMocks,
+  nativeSetupFiles,
   platformExtensions,
   presetFactory,
-  quarantineRetries,
+  webMocks,
+  webSetupFiles,
   withProjectOverrides,
 } = require("../core");
 const {
@@ -50,8 +52,8 @@ const lumenTransform = {
  * - web project: jsdom, matches *.web.test.ts(x) and unsuffixed tests, for Desktop.
  * - native project: node, matches *.native.test.ts(x), for Mobile.
  *
- * Per-project overrides via `webOverrides` / `nativeOverrides`: `setupFilesAfterEnv` and
- * `moduleNameMapper` add to the project's defaults, any other key replaces them.
+ * Per-project overrides via `webOverrides` / `nativeOverrides`, by the override rule of the
+ * `@support/jest` README.
  *
  * @param {{ webOverrides?: object, nativeOverrides?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
@@ -66,9 +68,9 @@ function sharedUiJestConfig(overrides) {
 /**
  * Jest config for a shared/ui-* package with native-only tests (*.native.test.ts).
  *
- * Provides react-native, safe-area-context, Lumen native, and image stubs by default.
- * `moduleNameMapper` and `setupFilesAfterEnv` overrides add to the preset's (an entry with the
- * same pattern replaces that mock); any other key replaces it. Requires no web-only dependencies (jest-environment-jsdom, @testing-library/jest-dom).
+ * Provides react-native, safe-area-context, Lumen native, and image stubs by default; overrides
+ * follow the override rule of the `@support/jest` README. Requires no web-only dependencies
+ * (jest-environment-jsdom, @testing-library/jest-dom).
  *
  * @param {{ moduleNameMapper?: object } & import('@jest/types').Config.InitialOptions} [overrides]
  * @returns {import('@jest/types').Config.InitialOptions}
@@ -80,8 +82,8 @@ function sharedUiNativeJestConfig(overrides = {}) {
         collectCoverage: true,
         testMatch: ["**/*.native.test.ts?(x)", "**/*.native.spec.ts?(x)"],
         moduleFileExtensions: platformExtensions("native"),
-        moduleNameMapper: { ...nativeMocks },
-        setupFilesAfterEnv: [quarantineRetries],
+        moduleNameMapper: nativeMocks,
+        setupFilesAfterEnv: nativeSetupFiles,
       },
       overrides,
     ),
@@ -97,6 +99,10 @@ module.exports = {
     sharedUiNativeJestConfig,
   ),
   jestSonarReporter,
+  nativeModuleNameMapper: nativeMocks,
+  nativeSetupFilesAfterEnv: nativeSetupFiles,
   sharedReporters,
+  webModuleNameMapper: webMocks,
+  webSetupFilesAfterEnv: webSetupFiles,
   withEsmDeps,
 };
