@@ -268,6 +268,17 @@ describe("the options", () => {
     ).rejects.toThrow("must be kebab-case");
   });
 
+  it.each(["index", "internals"])("rejects the reserved name %s", async name => {
+    await expect(
+      packageGenerator(createTreeWithEmptyWorkspace(), {
+        name,
+        layer: "shared",
+        platform: "logic",
+        skipFormat: true,
+      }),
+    ).rejects.toThrow("reserved because it would overwrite scaffold files");
+  });
+
   it("refuses to overwrite an existing package", async () => {
     const tree = createTreeWithEmptyWorkspace();
     tree.write("shared/thing-box/package.json", "{}");

@@ -110,6 +110,8 @@ const TEMPLATES = dirname(fileURLToPath(import.meta.url));
 
 const KEBAB_CASE = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 
+const RESERVED_NAMES = new Set(["index", "internals"]);
+
 const DEFAULT_DESCRIPTION = "TODO: one line on what this package owns.";
 
 // Every package runs these tools from its scripts and jest config.
@@ -152,6 +154,11 @@ function resolvePackage(options: Pick<PackageGeneratorSchema, "name" | "layer" |
   }
   if (!KEBAB_CASE.test(options.name)) {
     throw new Error(`Package name "${options.name}" must be kebab-case, e.g. "my-package".`);
+  }
+  if (RESERVED_NAMES.has(options.name)) {
+    throw new Error(
+      `Package name "${options.name}" is reserved because it would overwrite scaffold files in src/.`,
+    );
   }
   const shape = layer.platforms[options.platform];
   if (!shape) {
