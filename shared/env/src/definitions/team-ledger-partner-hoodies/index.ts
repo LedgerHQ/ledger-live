@@ -78,16 +78,6 @@ const teamLedgerPartnerHoodies = {
     parser: stringParser,
     desc: "(dev feature) Switch Canton gateway nodeId for testing different presets.",
   },
-  CARDANO_API_ENDPOINT: {
-    def: "https://cardano.coin.ledger.com/api",
-    parser: stringParser,
-    desc: "Cardano API url",
-  },
-  CARDANO_TESTNET_API_ENDPOINT: {
-    def: "https://ledger-preprod.cardanoscan.io/api",
-    parser: stringParser,
-    desc: "Cardano API url",
-  },
   CARDANO_EPOCH_PARAMS_ENDPOINT: {
     def: "https://ada.api.live.ledger.com/api/rest/params",
     parser: stringParser,

@@ -7,10 +7,12 @@ export const cardanoCoinConfig: CardanoCoinConfig = {
   maxFeesWarning: 0,
   maxFeesError: 0,
   testnet: false,
+  infra: { CARDANO_API_ENDPOINT: "https://cardano.coin.ledger.com/api" },
 };
 
 export const cardanoTestnetCoinConfig: CardanoCoinConfig = {
   ...cardanoCoinConfig,
   name: "Cardano Testnet",
   testnet: true,
+  infra: { CARDANO_API_ENDPOINT: "https://ledger-preprod.cardanoscan.io/api" },
 };

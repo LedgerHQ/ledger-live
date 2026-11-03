@@ -27,6 +27,7 @@ describe("getAllTransactionsByKeys", () => {
     expect(res.blockHeight).toBe(12); // max across pages
     expect(mockNetwork.mock.calls[0][0]).toMatchObject({
       method: "POST",
+      url: "https://cardano.coin.ledger.com/api/v1/transaction",
       data: { paymentKeys: ["k1", "k2"], pageNo: 1, blockHeight: 5 },
     });
     expect(mockNetwork.mock.calls[1][0]).toMatchObject({ data: { pageNo: 2 } });

@@ -1,3 +1,4 @@
+import type { CardanoInfra } from "@ledgerhq/coin-cardano/config";
 import { getCryptoCurrencyById } from "@ledgerhq/ledger-wallet-framework/currencies";
 import { decodeAccountId } from "@ledgerhq/ledger-wallet-framework/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/ledger-wallet-framework/types";
@@ -10,9 +11,15 @@ export const CARDANO = getCryptoCurrencyById("cardano");
 export const CARDANO_TESTNET = getCryptoCurrencyById("cardano_testnet");
 export const FRESH_ADDRESS_PATH = "1852'/1815'/0'/0/0";
 
-// Base URL the coin-cardano network layer is pointed at (via CARDANO_API_ENDPOINT) and that MSW
-// intercepts. Not a real host.
 export const MOCK_API = "https://cardano-coin-tester.mock";
+
+export const MOCK_INFRA: CardanoInfra = {
+  CARDANO_API_ENDPOINT: MOCK_API,
+};
+
+export const MOCK_TESTNET_INFRA: CardanoInfra = {
+  CARDANO_API_ENDPOINT: MOCK_API,
+};
 
 // A Cardano native asset used by the token-send scenario. policyId is a 28-byte (56 hex) hash and
 // assetName is hex ("4d59544f4b454e" = "MYTOKEN"). The canonical Cardano asset id is policyId
