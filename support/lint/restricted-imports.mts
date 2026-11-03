@@ -91,6 +91,25 @@ export const LIVE_COMMON_CURRENCY_ACCESSORS = {
     "@domain/entity-currency-crypto and fiat accessors from @domain/entity-currency-fiat.",
 };
 
+export const ACCOUNT_DATA_SOURCES = {
+  group: [
+    "@ledgerhq/live-common/account-data/**",
+    "@features/platform-account-source-*",
+    "@devtools/account-source-*",
+  ],
+  message:
+    "UI must not know the account data source. Read with useAccountData and the entity's " +
+    "selectors; if a field is missing, add it to the entity. Sources are wired only in " +
+    "src/config/account-data-setup.ts.",
+};
+
+// The app file that wires the account data sources, and its test, are the only ones allowed to
+// import them.
+export const ACCOUNT_DATA_SETUP_FILES = [
+  "src/config/account-data-setup.ts",
+  "src/config/account-data-setup.test.ts",
+];
+
 export const COIN_MODULE_CREATE_API = {
   group: ["@ledgerhq/coin-*/api", "@ledgerhq/coin-*/api/*"],
   importNamePattern: "^createApi$",

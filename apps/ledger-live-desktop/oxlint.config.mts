@@ -1,5 +1,7 @@
 import { defineConfig } from "oxlint";
 import {
+  ACCOUNT_DATA_SETUP_FILES,
+  ACCOUNT_DATA_SOURCES,
   ELECTRON_CLIPBOARD,
   EXPO_CLIPBOARD,
   LIVE_COMMON_CURRENCY_ACCESSORS,
@@ -94,6 +96,7 @@ export default defineConfig({
           },
           LIVE_COMMON_FEATURE_FLAGS,
           LIVE_COMMON_CURRENCY_ACCESSORS,
+          ACCOUNT_DATA_SOURCES,
         ],
       },
     ],
@@ -103,6 +106,7 @@ export default defineConfig({
       files: ["src/main/systemHandlers.ts", "src/main/systemHandlers.test.ts"],
       rules: { "eslint/no-restricted-imports": "off" },
     },
+    { files: ACCOUNT_DATA_SETUP_FILES, rules: { "eslint/no-restricted-imports": "off" } },
     { files: ["src/renderer/families/**"], rules: { "eslint/no-restricted-imports": "off" } },
     {
       files: [

@@ -1,5 +1,7 @@
 import { defineConfig } from "oxlint";
 import {
+  ACCOUNT_DATA_SETUP_FILES,
+  ACCOUNT_DATA_SOURCES,
   EXPO_CLIPBOARD,
   LIVE_COMMON_CURRENCY_ACCESSORS,
   LIVE_COMMON_FEATURE_FLAGS,
@@ -49,6 +51,7 @@ const RESTRICTED_PATTERNS = [
   MVVM_ALIAS,
   LIVE_COMMON_FEATURE_FLAGS,
   LIVE_COMMON_CURRENCY_ACCESSORS,
+  ACCOUNT_DATA_SOURCES,
 ];
 
 export default defineConfig({
@@ -153,5 +156,6 @@ export default defineConfig({
       files: ["src/mvvm/features/WalletSync/hooks/useFollowInstructionDrawer.ts"],
       rules: { "react-hooks/exhaustive-deps": "off" },
     },
+    { files: ACCOUNT_DATA_SETUP_FILES, rules: { "eslint/no-restricted-imports": "off" } },
   ],
 });
