@@ -1,5 +1,17 @@
 # @features/flow-account-detail-settings
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24040](https://github.com/LedgerHQ/ledger-live/pull/24040) [`d185364`](https://github.com/LedgerHQ/ledger-live/commit/d185364617d5f4d2f52d05cc2d137055227dc6d3) Thanks [@ysitbon](https://github.com/ysitbon)! - `AccountSettings` moves to the web platform entry `@features/flow-account-detail-settings/web` and `AccountSettingsSheet` to the native platform entry `@features/flow-account-detail-settings/native`; `AccountSettingsDialog` becomes internal. The universal entry is one unconditioned `src/index.ts` holding the menu, advanced logs and remove contents and `buildAdvancedLogs`, and imports carry no platform suffix.
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @domain/entity-account-name@0.3.1-next.0
+
 ## 0.2.0
 
 ### Minor Changes

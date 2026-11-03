@@ -1,5 +1,11 @@
 # @ledgerhq/live-dmk
 
+## 0.38.0-next.0
+
+### Minor Changes
+
+- [#24147](https://github.com/LedgerHQ/ledger-live/pull/24147) [`a49773f`](https://github.com/LedgerHQ/ledger-live/commit/a49773f51027c607adac26d1133a36a37ada456c) Thanks [@OlivierFreyssinet](https://github.com/OlivierFreyssinet)! - Bump `@ledgerhq/dmk-ledger-wallet` to 0.8.0 and `@ledgerhq/device-signer-kit-solana` to 1.15.0, and keep the backup and show the out-of-memory screen when the OS update restore ends with an out-of-memory status
+
 ## 0.37.0
 
 ### Minor Changes

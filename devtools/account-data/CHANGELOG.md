@@ -1,5 +1,11 @@
 # @devtools/account-data
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24185](https://github.com/LedgerHQ/ledger-live/pull/24185) [`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Store account data status and the operations windows per query, and keep the newest copy of an operation shared by several queries
+
 ## 0.2.0
 
 ### Minor Changes

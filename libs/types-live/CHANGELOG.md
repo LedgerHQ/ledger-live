@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.130.0-next.0
+
+### Minor Changes
+
+- [#24024](https://github.com/LedgerHQ/ledger-live/pull/24024) [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137) Thanks [@qperrot](https://github.com/qperrot)! - Remove Blast and Blast Sepolia, whose chain shut down
+
+- [#22966](https://github.com/LedgerHQ/ledger-live/pull/22966) [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf) Thanks [@qperrot](https://github.com/qperrot)! - Remove deprecated Moonbeam and Moonriver blockchains and the `currencyMoonriver` feature flag
+
 ## 6.129.0
 
 ### Minor Changes

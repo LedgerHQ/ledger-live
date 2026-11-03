@@ -1,5 +1,31 @@
 # @devtools/registry
 
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#24169](https://github.com/LedgerHQ/ledger-live/pull/24169) [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account balance histories slice, add a Balance history page to the DevTools Accounts section and serve the balanceHistory kind for mock accounts
+
+- [#24071](https://github.com/LedgerHQ/ledger-live/pull/24071) [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account operations slice and add an Operations page to the DevTools Accounts section
+
+- [#23985](https://github.com/LedgerHQ/ledger-live/pull/23985) [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Name every devtool by its technical id, tag each with the kind of package it inspects (entity, api, feature, shared or lib), and give account-balance to Wallet XP
+
+- [#23787](https://github.com/LedgerHQ/ledger-live/pull/23787) [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations
+
+- [#23772](https://github.com/LedgerHQ/ledger-live/pull/23772) [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - feat(devtools): add the account-portfolio devtool to call the Portfolio service, with a balance history chart and paged history
+
+### Patch Changes
+
+- Updated dependencies [[`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9)]:
+  - @devtools/account-data@0.3.0-next.0
+  - @devtools/account-operation@0.2.0-next.0
+  - @devtools/account-balance-history@0.1.0-next.0
+  - @devtools/mock-accounts@0.2.0-next.0
+  - @devtools/account-descriptor@0.3.0-next.0
+  - @devtools/account-portfolio@0.2.0-next.0
+  - @devtools/feature-flags@0.11.1-next.0
+  - @devtools/device-onboarding@0.5.1-next.0
+
 ## 0.6.0
 
 ### Minor Changes

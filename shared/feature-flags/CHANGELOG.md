@@ -1,5 +1,21 @@
 # @shared/feature-flags
 
+## 0.29.0-next.0
+
+### Minor Changes
+
+- [#24024](https://github.com/LedgerHQ/ledger-live/pull/24024) [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137) Thanks [@qperrot](https://github.com/qperrot)! - Remove Blast and Blast Sepolia, whose chain shut down
+
+- [#23972](https://github.com/LedgerHQ/ledger-live/pull/23972) [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show desktop aggregated assets, drop the lwdWallet40 param, and align desktop e2e
+
+- [#24068](https://github.com/LedgerHQ/ledger-live/pull/24068) [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Show desktop asset discoverability without a feature flag
+
+- [#24100](https://github.com/LedgerHQ/ledger-live/pull/24100) [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Always show the desktop asset section and drop the lwdWallet40 assetSection param
+
+- [#24046](https://github.com/LedgerHQ/ledger-live/pull/24046) [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4) Thanks [@tonykhaov](https://github.com/tonykhaov)! - Add unifiedEntryPoints param to the deviceOnboarding feature flag, off by default. Mobile DevTools › Onboarding shows its switch automatically
+
+- [#22966](https://github.com/LedgerHQ/ledger-live/pull/22966) [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf) Thanks [@qperrot](https://github.com/qperrot)! - Remove deprecated Moonbeam and Moonriver blockchains and the `currencyMoonriver` feature flag
+
 ## 0.28.0
 
 ### Minor Changes

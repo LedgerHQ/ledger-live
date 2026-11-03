@@ -1,5 +1,47 @@
 # @devtools/bindings
 
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#24185](https://github.com/LedgerHQ/ledger-live/pull/24185) [`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Store account data status and the operations windows per query, and keep the newest copy of an operation shared by several queries
+
+- [#24169](https://github.com/LedgerHQ/ledger-live/pull/24169) [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account balance histories slice, add a Balance history page to the DevTools Accounts section and serve the balanceHistory kind for mock accounts
+
+- [#24071](https://github.com/LedgerHQ/ledger-live/pull/24071) [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Mount the account operations slice and add an Operations page to the DevTools Accounts section
+
+- [#23787](https://github.com/LedgerHQ/ledger-live/pull/23787) [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Add a `mock-accounts` devtool: `mock:2:…` descriptors served by a lazy-loaded MockSource, with their balances and paginated operations
+
+- [#23772](https://github.com/LedgerHQ/ledger-live/pull/23772) [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - feat(devtools): add the account-portfolio devtool to call the Portfolio service, with a balance history chart and paged history
+
+### Patch Changes
+
+- Updated dependencies [[`eebea9e`](https://github.com/LedgerHQ/ledger-live/commit/eebea9eabe809bf103fb3b7337d091a17a5faa64), [`304b8b2`](https://github.com/LedgerHQ/ledger-live/commit/304b8b2575f6adfa895b50b6697febd1ccab7e7e), [`08324bd`](https://github.com/LedgerHQ/ledger-live/commit/08324bd138b45b83dc0b763cddc284411a4e9577), [`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`a9d19d0`](https://github.com/LedgerHQ/ledger-live/commit/a9d19d080fbf0310c6fb7454784e8ac0682dfb51), [`566902e`](https://github.com/LedgerHQ/ledger-live/commit/566902e2101f69e0216ced4fe000daba775ff6bb), [`97be95e`](https://github.com/LedgerHQ/ledger-live/commit/97be95ecba1a1989b8d5ccfc5c4bdf96cc60e767), [`b79c360`](https://github.com/LedgerHQ/ledger-live/commit/b79c360ab24df820c11299c080538fd40ddef820), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`33fc619`](https://github.com/LedgerHQ/ledger-live/commit/33fc61994dcf0265a4f98e77a2f6947f455ae6de), [`5a6a32d`](https://github.com/LedgerHQ/ledger-live/commit/5a6a32df1c7d16cd6f3e4797002224f352cb2ba9), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @domain/entity-account-operation@0.1.0-next.0
+  - @domain/entity-account-data@0.4.0-next.0
+  - @domain/api-account-data@0.4.0-next.0
+  - @domain/entity-account-balance-history@0.1.0-next.0
+  - @shared/api-services@0.12.0-next.0
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @shared/feature-flags@0.29.0-next.0
+  - @features/platform-feature-flags@0.11.0-next.0
+  - @devtools/registry@0.7.0-next.0
+  - @domain/entity-account-descriptor@0.4.0-next.0
+  - @domain/entity-account@0.2.0-next.0
+  - @features/platform-device-onboarding@0.4.0-next.0
+  - @shared/env@0.12.0-next.0
+  - @domain/entity-account-balance@0.2.2-next.0
+  - @domain/api-account-portfolio@0.1.1-next.0
+  - @domain/api-card-management@0.8.4-next.0
+  - @domain/api-currency-token@0.7.1-next.0
+  - @features/platform-card@0.8.3-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @features/flow-pay-feature-tour@0.8.3-next.0
+  - @domain/entity-account-name@0.3.1-next.0
+  - @features/flow-pay-card-auth@0.11.1-next.0
+  - @features/flow-pay-card-wallets@0.6.3-next.0
+  - @features/flow-pay-card-widget@0.6.2-next.0
+
 ## 0.13.0
 
 ### Minor Changes

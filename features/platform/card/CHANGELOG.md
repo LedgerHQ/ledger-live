@@ -1,5 +1,13 @@
 # @features/platform-card
 
+## 0.8.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9)]:
+  - @shared/api-services@0.12.0-next.0
+  - @domain/api-card-management@0.8.4-next.0
+
 ## 0.8.2
 
 ### Patch Changes

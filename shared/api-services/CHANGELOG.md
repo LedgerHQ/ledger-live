@@ -1,5 +1,16 @@
 # @shared/api-services
 
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#23983](https://github.com/LedgerHQ/ledger-live/pull/23983) [`0c62d35`](https://github.com/LedgerHQ/ledger-live/commit/0c62d3533f72e450c2235f8d23aa1cdb101486a9) Thanks [@ysitbon](https://github.com/ysitbon)! - Add `defineApiServices` and one descriptor per service, so an app lists its service apis and their lazy config once
+
+### Patch Changes
+
+- Updated dependencies [[`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e)]:
+  - @shared/auth@0.8.0-next.0
+
 ## 0.11.0
 
 ### Minor Changes

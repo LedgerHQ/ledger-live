@@ -1,5 +1,18 @@
 # @features/platform-aggregated-assets
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#23978](https://github.com/LedgerHQ/ledger-live/pull/23978) [`604337a`](https://github.com/LedgerHQ/ledger-live/commit/604337ae838d77457b41bf42ad075a3016edf80d) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Skip the account buy sheet when only one asset can be bought
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-aggregated-assets@0.6.3-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @features/platform-env@0.4.4-next.0
+
 ## 0.5.8
 
 ### Patch Changes

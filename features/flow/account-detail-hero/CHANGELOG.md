@@ -1,5 +1,11 @@
 # @features/flow-account-detail-hero
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24111](https://github.com/LedgerHQ/ledger-live/pull/24111) [`c1c388f`](https://github.com/LedgerHQ/ledger-live/commit/c1c388f850e9d045f87acb13b9af8fc71e546b45) Thanks [@claudiiafg](https://github.com/claudiiafg)! - Center the account empty state and show the coins icon without a background
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,19 @@
 # @features/flow-account-detail
 
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#24082](https://github.com/LedgerHQ/ledger-live/pull/24082) [`a9aac86`](https://github.com/LedgerHQ/ledger-live/commit/a9aac86b79c371c0b98bd8f16c966dadb81e07d6) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add the shared delegation section of Account Detail (Lumen table on LWD, list with a bottom sheet on LWM) and the family slot that lets a family use it
+
+### Patch Changes
+
+- Updated dependencies [[`c1c388f`](https://github.com/LedgerHQ/ledger-live/commit/c1c388f850e9d045f87acb13b9af8fc71e546b45), [`d185364`](https://github.com/LedgerHQ/ledger-live/commit/d185364617d5f4d2f52d05cc2d137055227dc6d3), [`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf)]:
+  - @features/flow-account-detail-hero@0.3.0-next.0
+  - @features/flow-account-detail-settings@0.3.0-next.0
+  - @shared/feature-flags@0.29.0-next.0
+  - @features/platform-feature-flags@0.11.0-next.0
+
 ## 0.2.0
 
 ### Minor Changes

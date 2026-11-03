@@ -1,5 +1,68 @@
 # @ledgerhq/coin-solana
 
+## 2.7.0-next.0
+
+### Minor Changes
+
+- [#23736](https://github.com/LedgerHQ/ledger-live/pull/23736) [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea) Thanks [@qperrot](https://github.com/qperrot)! - fix(coin-solana): read endpoints and tuning values from the coin config
+
+  `rpcUrls` is now a required field of `SolanaCoinConfig` and `endpointByCurrencyId` resolves the
+  endpoint of a currency from `rpcUrls[<currencyId>]` alone: the `API_SOLANA_PROXY` env and the
+  web3.js `clusterApiUrl` fallbacks are removed, and a missing entry throws. live-common registers
+  `config_currency_solana_devnet` and `config_currency_solana_testnet` next to
+  `config_currency_solana`, each carrying its own endpoint, and the legacy coin config resolves the
+  configuration of the requested currency instead of always reading the mainnet one.
+
+  The legacy validators list is read from `validatorsUrl` of the requested currency, the field the
+  Alpaca `getValidators` already reads: `config_currency_solana` defaults to the production Earn API
+  list (`/v0/network/solana/validator-details`) and `config_currency_solana_testnet` to the
+  `validators-solana` testnet list. `solana_devnet` still derives its validators from the RPC vote
+  accounts. A missing `validatorsUrl` on mainnet or testnet throws.
+
+  The validator APY is read from `staking.validatorsSummaryUrl` (default in `config_currency_solana`:
+  the production Figment summary on the Earn API) in both the legacy and the Alpaca paths, at call
+  time instead of once at module load. A currency without it lists its validators without APY, so
+  `solana_testnet` no longer fetches the mainnet APY through the Alpaca API.
+
+  The tuning values are read from the coin config at call time, each falling back to one exported
+  module default in `constants`: `broadcast.timeoutMs` (`DEFAULT_BROADCAST_TIMEOUT_MS`, 100000),
+  `node.retries` / `node.retryDelayMs` (`DEFAULT_NODE_RETRIES` 3, `DEFAULT_NODE_RETRY_DELAY_MS` 500),
+  `node.maxTxQuery` / `node.batchSize` (100 / 100), `fees.computeUnitMargin` (0.1),
+  `fees.defaultTxFee` (5000, also replacing the `?? 5000` copies in `craftTransaction`),
+  `fees.blockhashRetries` / `fees.blockhashRetryDelayMs` (5 / 5000), `staking.ledgerValidators`
+  (`DEFAULT_LEDGER_VALIDATORS`) and `validators.cacheTtlMs` (`DEFAULT_VALIDATORS_CACHE_TTL_MS`,
+  900000). The ky HTTP retry on status codes stays a constant.
+
+  The module keeps no configuration state: `config.ts` holds types only and every reader resolves
+  `config_currency_<id>` through a `SolanaContext` at call time. live-common builds it with
+  `buildContext` for the message signer and the validators hook.
+
+  Breaking: the `API_SOLANA_PROXY`, `SOLANA_VALIDATORS_APP_BASE_URL`,
+  `SOLANA_TESTNET_VALIDATORS_APP_BASE_URL`, `SOLANA_VALIDATORS_SUMMARY_BASE_URL` and
+  `SOLANA_TX_CONFIRMATION_TIMEOUT` env definitions are removed; override `rpcUrls.<id>`, `validatorsUrl` and `staking.validatorsSummaryUrl` in
+  `config_currency_<id>` instead. The legacy `getValidators` of `network/validator-app` now takes
+  `(validatorsUrl, validatorsSummaryUrl?)` instead of a cluster, and the Alpaca `getValidators` takes
+  the summary URL as its second argument. `craftTransaction`, `estimateFees`, `estimateTxFee`,
+  `unstakeReserve`, `computeUnstakeReserve`, `getBalance` and `listOperations` take the
+  `SolanaCoinConfig` as their second argument, `buildVersionedTransaction` as its fourth, and the
+  `network/chain/web3` instruction builders take the resolved `computeUnitMargin`.
+  `getChainAPI` accepts `confirmationTimeoutMs`, `retries` and `retryDelayMs`; build its config with
+  `chainConfigFrom(config, currencyId)`. `LEDGER_VALIDATOR_DEFAULT`, `LEDGER_VALIDATOR_LIST` and
+  `LEDGER_VALIDATORS_VOTE_ACCOUNTS` are removed: use `ledgerValidatorsOf(config)` /
+  `defaultLedgerValidatorOf(config)`; `LEDGER_VALIDATOR_BY_FIGMENT` / `_BY_BITWISE` moved to
+  `constants`. `ledgerFirstValidators` takes the Ledger list as its second argument. The `coinConfig` default export of `config` (`setCoinConfig` / `getCoinConfig`) is removed:
+  `getSolanaValidators(context, currencyId)` and `fetchValidators(config, currencyId)` take the
+  config explicitly, and `signMessage(signerContext, contextOf)` resolves the account's currency
+  context when signing.
+
+- [#23633](https://github.com/LedgerHQ/ledger-live/pull/23633) [`dbe42b3`](https://github.com/LedgerHQ/ledger-live/commit/dbe42b3c907c59d822419c8444ce1074d1863407) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): clamp the compute-unit price to a minimum floor (`fees.minPriorityFee`, default 10,000 microLamports/CU, also used when the configured value is not positive) instead of sending unpriced transactions. Also simulates compute units with the price instruction, estimates a SOL or token transfer with its memo (whose compute units the price now charges), makes the priority-fee median return the middle sample for an odd count and the average of the two middle samples for an even count, fixes the Solana mock bridge recursing forever on `api.config`, and adapts the coin tester's staking checks to the priority fee
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`8854aff`](https://github.com/LedgerHQ/ledger-live/commit/8854aff9cace72ad17c6d9fd7ee98a4dcd65ecb1), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`c50f3fa`](https://github.com/LedgerHQ/ledger-live/commit/c50f3fac1c822d61332dbb512b21cdda6bb57210)]:
+  - @ledgerhq/types-live@6.130.0-next.0
+  - @ledgerhq/ledger-wallet-framework@3.10.0-next.0
+
 ## 2.6.0
 
 ### Minor Changes

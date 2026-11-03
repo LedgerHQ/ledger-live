@@ -1,6 +1,6 @@
 {
   "name": "@domain/entity-account-operation",
-  "version": "0.0.0",
+  "version": "0.1.0-next.0",
   "private": true,
   "description": "Account operation entity: the paginated operations of an account, token operations included",
   "main": "src/index.ts",

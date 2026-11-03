@@ -1,5 +1,17 @@
 # @features/platform-contacts
 
+## 0.12.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9907890`](https://github.com/LedgerHQ/ledger-live/commit/9907890790bf8b804d7cc454a067508df0969137), [`7aeab58`](https://github.com/LedgerHQ/ledger-live/commit/7aeab582f0f6c8d38cf88af0c559dd37d77b9a1c), [`68196b4`](https://github.com/LedgerHQ/ledger-live/commit/68196b4642ad26ccce9b3263e45ee718572acb11), [`f95b426`](https://github.com/LedgerHQ/ledger-live/commit/f95b4268782b5cfd8cb4c14c9b0e5c6384cafa4d), [`e275739`](https://github.com/LedgerHQ/ledger-live/commit/e27573929d3e688afbb6544c58274e025867e6e4), [`77a85a3`](https://github.com/LedgerHQ/ledger-live/commit/77a85a30abe7b42e5f5b4e0478bec14fa39033cf), [`797b1ab`](https://github.com/LedgerHQ/ledger-live/commit/797b1ab63e4099c962a74170b43275f149c6fbea)]:
+  - @domain/entity-currency-crypto@0.18.0-next.0
+  - @shared/feature-flags@0.29.0-next.0
+  - @features/platform-feature-flags@0.11.0-next.0
+  - @shared/env@0.12.0-next.0
+  - @domain/entity-contact@0.12.3-next.0
+  - @domain/entity-currency-token@0.5.8-next.0
+
 ## 0.12.0
 
 ### Minor Changes

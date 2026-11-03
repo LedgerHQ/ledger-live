@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-polkadot
 
+## 0.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-polkadot@9.1.1-next.0
+
 ## 0.1.3
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @features/flow-fear-and-greed
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-market-index-fear-and-greed@0.4.4-next.0
+
 ## 0.5.0
 
 ### Minor Changes

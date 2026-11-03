@@ -1,5 +1,12 @@
 # @devtools/device-onboarding
 
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`33fc619`](https://github.com/LedgerHQ/ledger-live/commit/33fc61994dcf0265a4f98e77a2f6947f455ae6de)]:
+  - @features/platform-device-onboarding@0.4.0-next.0
+
 ## 0.5.0
 
 ### Minor Changes

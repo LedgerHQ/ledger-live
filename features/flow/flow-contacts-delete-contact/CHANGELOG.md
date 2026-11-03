@@ -1,5 +1,17 @@
 # @features/flow-contacts-delete-contact
 
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#24038](https://github.com/LedgerHQ/ledger-live/pull/24038) [`55dc039`](https://github.com/LedgerHQ/ledger-live/commit/55dc0396b8bea844c6b745dc54f8b5b7a01c0ecd) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsDeleteContactDialog` takes one props contract, `ContactsDeleteContactDialogProps`, on both platforms. `ContactsDeleteContactDrawerProps` and its unused `bottomInset` are gone: the native content reads the inset from its sheet. The `.` entry is one `src/index.ts`, with no `react-native` condition, and the package gets a `lint` script.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-contact@0.12.3-next.0
+  - @features/platform-contacts@0.12.1-next.0
+
 ## 0.4.0
 
 ### Minor Changes

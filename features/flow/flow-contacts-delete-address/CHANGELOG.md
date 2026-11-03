@@ -1,5 +1,17 @@
 # @features/flow-contacts-delete-address
 
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#24030](https://github.com/LedgerHQ/ledger-live/pull/24030) [`0c9ce30`](https://github.com/LedgerHQ/ledger-live/commit/0c9ce30960837b6cf52f5df9be2999a5c7377abf) Thanks [@ysitbon](https://github.com/ysitbon)! - `ContactsDeleteAddressDialog` takes one props contract, `ContactsDeleteAddressDialogProps`, on both platforms. `ContactsDeleteAddressDrawerProps` and its unused `bottomInset` are gone: the native content reads the inset from its sheet. The `.` entry is one `src/index.ts`, with no `react-native` condition.
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/entity-contact@0.12.3-next.0
+  - @features/platform-contacts@0.12.1-next.0
+
 ## 0.3.0
 
 ### Minor Changes

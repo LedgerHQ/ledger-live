@@ -1,5 +1,11 @@
 # @shared/auth
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#23894](https://github.com/LedgerHQ/ledger-live/pull/23894) [`4be13d5`](https://github.com/LedgerHQ/ledger-live/commit/4be13d5ee940cb84794b33bed7320287647cc82e) Thanks [@thesan](https://github.com/thesan)! - `@shared/auth` replaces `authApiExtra` with `createAuthMiddleware`: the auth provider is held by a store middleware instead of the thunk `extraArgument`, and `getAuthProvider(dispatch)` reads it.
+
 ## 0.7.0
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # @features/flow-pay-card-widget
 
+## 0.6.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @domain/api-card-management@0.8.4-next.0
+  - @domain/entity-currency@0.4.9-next.0
+  - @features/flow-pay-card-wallets@0.6.3-next.0
+
 ## 0.6.1
 
 ### Patch Changes
