@@ -2,6 +2,7 @@
 // the native-only shapes, the flow additions and the quarantine wiring.
 
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import path from "node:path";
 import test from "node:test";
@@ -191,6 +192,34 @@ test("createFlowJestConfig: the web setup files are the core's, then the flow's"
     quarantineRetries,
     flowWebSetup,
   ]);
+});
+
+// A child node stands in for a jsdom worker: no MessageChannel and no setImmediate, so React's
+// scheduler posts its work on the setup's MessageChannel, whose ports must not hold the process.
+test("createFlowJestConfig: the web setup lets the process exit after React's scheduler ran", () => {
+  const child = spawnSync(
+    process.execPath,
+    [
+      "-e",
+      `delete globalThis.MessageChannel;
+      delete globalThis.setImmediate;
+      const [setup, reactDom] = process.argv.slice(1);
+      require(setup);
+      const scheduler = require("node:module").createRequire(reactDom)("scheduler");
+      const test = setInterval(() => {}, 1000);
+      scheduler.unstable_scheduleCallback(scheduler.unstable_NormalPriority, () => {
+        console.log("ran");
+        clearInterval(test);
+      });`,
+      flowWebSetup,
+      require.resolve("react-dom"),
+    ],
+    { encoding: "utf8", timeout: 10_000 },
+  );
+
+  assert.equal(child.signal, null, "the process did not exit on its own");
+  assert.equal(child.status, 0, child.stderr);
+  assert.equal(child.stdout.trim(), "ran");
 });
 
 test("createFlowNativeJestConfig: a single native project", () => {
