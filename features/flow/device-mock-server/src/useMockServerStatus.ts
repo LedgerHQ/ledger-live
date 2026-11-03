@@ -19,17 +19,19 @@ export function useMockServerStatus(config: MockServerConfig | null): {
   useEffect(() => {
     if (!config) return;
     let isActive = true;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    // The next check starts once this one ends, so a slow check never overwrites a newer one.
     const poll = async () => {
       const next = await getMockServerStatus(config);
       if (!isActive) return;
       setStatus(next.status);
       setSessionId(next.sessionId);
+      timeoutId = setTimeout(poll, STATUS_POLL_INTERVAL_MS);
     };
     void poll();
-    const intervalId = setInterval(poll, STATUS_POLL_INTERVAL_MS);
     return () => {
       isActive = false;
-      clearInterval(intervalId);
+      clearTimeout(timeoutId);
     };
   }, [config]);
 
