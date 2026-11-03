@@ -65,10 +65,12 @@ export type OnboardingNavigatorParamList = {
     fromAccessExistingWallet?: boolean;
     isRestoreSeed?: boolean;
     connectSeededDevice?: boolean;
+    connectUnseededDevice?: boolean;
   };
   [ScreenName.DeviceOnboardingFunnel]: {
     pairedDeviceId?: string;
     wasReadOnlyAtEntry: boolean;
+    connectUnseededDevice?: boolean;
   };
   [ScreenName.DeviceOnboardingSyncOffer]: {
     device: Device;
