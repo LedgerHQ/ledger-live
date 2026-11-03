@@ -12,15 +12,26 @@ function mockBlock(testID: string) {
 jest.mock("@features/flow-account-detail-notices", () => ({
   AccountNotices: () => null,
 }));
-jest.mock("~/generated/AccountHeader", () => ({ solana: mockBlock("header") }));
-jest.mock("~/generated/AccountBalanceHeader", () => ({ solana: mockBlock("balance-header") }));
-jest.mock("~/generated/AccountSubHeader", () => ({ solana: mockBlock("sub-header") }));
+jest.mock("~/generated/AccountHeader", () => ({
+  solana: mockBlock("header"),
+  near: mockBlock("near-header"),
+}));
+jest.mock("~/generated/AccountBalanceHeader", () => ({
+  solana: mockBlock("balance-header"),
+  near: mockBlock("near-balance-header"),
+}));
+jest.mock("~/generated/AccountSubHeader", () => ({
+  solana: mockBlock("sub-header"),
+  near: mockBlock("near-sub-header"),
+}));
 jest.mock("~/generated/PendingTransferProposals", () => ({
   solana: mockBlock("pending-transfer-proposals"),
+  near: mockBlock("near-pending-transfer-proposals"),
 }));
 jest.mock("~/generated/AccountBodyHeader", () => ({
   solana: mockBlock("body-header"),
   cosmos: mockBlock("cosmos-body-header"),
+  near: mockBlock("near-body-header"),
 }));
 jest.mock("~/generated/AccountDetailDelegations", () => ({
   solana: mockBlock("detail-delegations"),

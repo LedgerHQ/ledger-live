@@ -91,7 +91,7 @@ describe("FamilyBlocksView", () => {
 
   it("renders the account detail section instead of the legacy blocks", () => {
     renderView({
-      family: { AccountDetailSection: block("detail-section") },
+      family: { ...family, AccountDetailSection: block("detail-section") },
       showBalanceSummaryFooter: true,
       showBodyBlocks: true,
     });
