@@ -1,6 +1,6 @@
 ---
 name: runner-images
-description: Self-hosted CI runner images in LedgerHQ/ledger-wallet-runners bake this repo's toolchain. Read before changing a version in `mise.toml` or `mise.lock` (mise itself, node, pnpm, bun or any other mise tool) or the Android AVD configuration (`tools/actions/composites/setup-android-avd`, including `avd.env`, or `tools/scripts/patch-avd-config.sh`).
+description: Self-hosted CI runner images in LedgerHQ/ledger-wallet-runners bake this repo's toolchain. Read when changing a version in `mise.toml` or `mise.lock` (mise itself, node, pnpm, bun or any other mise tool) or the Android AVD configuration (`tools/actions/composites/setup-android-avd`, including `avd.env`, or `tools/scripts/patch-avd-config.sh`).
 ---
 
 # Runner images

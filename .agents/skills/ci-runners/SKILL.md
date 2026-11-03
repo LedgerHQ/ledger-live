@@ -1,6 +1,6 @@
 ---
 name: ci-runners
-description: Pick a self-hosted runner for a GitHub Actions job. Read before adding or changing any `runs-on` (or a runner label passed as an input or matrix value) in `.github/workflows/**`.
+description: Pick a self-hosted runner for a GitHub Actions job. Read when adding or changing any `runs-on` (or a runner label passed as an input or matrix value) in `.github/workflows/**`.
 ---
 
 # CI Runners

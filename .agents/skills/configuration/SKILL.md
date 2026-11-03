@@ -4,7 +4,7 @@ description: |
   Pick the home for a configuration value — environment variable, backend URL, partner key,
   public token, per-environment constant, build secret — and take an existing one out of
   `@shared/env` / `@ledgerhq/live-env` (`getEnv`, `setEnv`, `useEnv`, `injectDefinitions`).
-  Read before adding or changing any env var, `.env` entry or `getEnv` call site.
+  Read when adding or changing any env var, `.env` entry or `getEnv` call site.
 ---
 
 # Configuration
