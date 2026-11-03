@@ -395,6 +395,34 @@ async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolea
   return (await readTrackedFile(skillRoot, file.path))?.content !== file.content;
 }
 
+async function changedSinceInstall(
+  skillRoot: string,
+  skill: SkillManifest,
+  recordedFiles: Record<string, string>,
+): Promise<string[]> {
+  const recorded = await Promise.all(
+    Object.entries(recordedFiles).map(async ([filePath, recordedHash]) => {
+      const onDisk = await readTrackedFile(skillRoot, filePath);
+      return onDisk && hashOne(onDisk.content) === recordedHash ? undefined : filePath;
+    }),
+  );
+  const newlyShipped = skill.files.filter(f => !Object.hasOwn(recordedFiles, f.path));
+  const taken = await Promise.all(
+    newlyShipped.map(async file =>
+      (await differsOnDisk(skillRoot, file)) ? file.path : undefined,
+    ),
+  );
+  return [...recorded, ...taken]
+    .filter(filePath => filePath !== undefined)
+    .map(filePath => path.join(skillRoot, filePath));
+}
+
+export async function findChangedFiles(skill: SkillManifest, root: string): Promise<string[]> {
+  const skillRoot = path.join(root, skill.name);
+  const sidecar = await readSidecar(skillRoot);
+  return sidecar ? changedSinceInstall(skillRoot, skill, sidecar.files) : [];
+}
+
 /**
  * Diagnose one shipped `skill` at `root` (which must contain `<root>/<name>`).
  * Recomputes the disk hash over the files the sidecar recorded (so a file a newer
@@ -420,17 +448,12 @@ export async function diagnoseSkill(skill: SkillManifest, root: string): Promise
   ).filter(file => file !== undefined);
   const diskHash = hashSkillFiles(onDisk);
 
-  const newlyShipped = sidecar
-    ? skill.files.filter(f => !Object.hasOwn(recordedFiles, f.path))
-    : [];
-  const userFileAtNewlyShippedPath = (
-    await Promise.all(newlyShipped.map(file => differsOnDisk(skillRoot, file)))
-  ).includes(true);
+  const changedFiles = sidecar ? await changedSinceInstall(skillRoot, skill, recordedFiles) : [];
 
   let status: DiagnosisStatus;
   if (!sidecar) {
     status = diskHash === skill.contentHash ? "up-to-date" : "modified-locally";
-  } else if (diskHash !== sidecar.contentHash || userFileAtNewlyShippedPath) {
+  } else if (diskHash !== sidecar.contentHash || changedFiles.length > 0) {
     status = "modified-locally";
   } else if (sidecar.contentHash === skill.contentHash) {
     status = "up-to-date";

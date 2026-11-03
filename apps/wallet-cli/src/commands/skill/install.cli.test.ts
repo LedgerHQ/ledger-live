@@ -348,7 +348,9 @@ describe("skill install", () => {
     expect(second.exitCode).toBe(1);
     const err = JSON.parse(second.stdout);
     expect(err.ok).toBe(false);
-    expect(err.error.message).toMatch(/overwrite/i);
+    expect(err.error.message).toBe(
+      `Refusing to overwrite skill "${SKILL_NAME}", whose files changed since wallet-cli installed it:\n  ${skillMd}\nRe-run with --force to overwrite.`,
+    );
     expect(await readFile(skillMd, "utf8")).toBe(`${shipped}\nlocal hand edit\n`);
 
     const forced = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir, "--force"]);
