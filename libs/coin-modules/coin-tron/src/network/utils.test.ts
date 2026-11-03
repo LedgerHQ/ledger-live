@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
 import {
+  abiDecodeTrc20Approve,
   abiDecodeTrc20Transfer,
   abiEncodeTrc20Transfer,
   decodeTrc20TransferLog,
@@ -183,6 +184,26 @@ const constructorMintLog = {
 const trc20ContractHex = "411fd80baee7c53e92e69447ff8c48d6b3a008572f";
 const zeroAddressHex = "41" + "0".repeat(40);
 const minterHex = "41679c8dd7488038252f935ca3465fbc94d29a940f";
+
+describe("abiDecodeTrc20Approve", () => {
+  const spenderHex = "a614f803b6fd780986a42c78ec9c7f77e6ded13c";
+
+  it("decodes TRC20 approve data", () => {
+    const data = "095ea7b3" + spenderHex.padStart(64, "0") + "f".repeat(64);
+
+    expect(abiDecodeTrc20Approve(data)).toEqual({
+      spender: "41" + spenderHex,
+      amount: new BigNumber("f".repeat(64), 16),
+    });
+  });
+
+  it("returns null for another selector, including transfer", () => {
+    const data = "a9059cbb" + spenderHex.padStart(64, "0") + "64".padStart(64, "0");
+
+    expect(abiDecodeTrc20Approve(data)).toBeNull();
+    expect(abiDecodeTrc20Approve("095ea7b3")).toBeNull();
+  });
+});
 
 describe("decodeTrc20TransferLog", () => {
   it("decodes the token, both parties and the amount of a Transfer event", () => {
