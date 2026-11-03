@@ -48,11 +48,15 @@ describe("CreateBackup step", () => {
     const createNewBackup = jest.fn();
     const { user } = renderView({
       type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+      backupCreatedAt: new Date(2026, 8, 12, 0, 30),
       useExistingBackup,
       createNewBackup,
     });
 
     expect(hasCloseButton()).toBe(false);
+    expect(screen.getByTestId("os-update-backup-selection-last-save")).toHaveTextContent(
+      "Last saveSeptember 12, 12:30AM",
+    );
 
     await user.press(screen.getByTestId("os-update-use-existing-backup"));
     await user.press(screen.getByTestId("os-update-create-new-backup"));

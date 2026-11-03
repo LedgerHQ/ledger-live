@@ -147,6 +147,7 @@ export const createBackupStateMachine = setup({
         type: "sendStateUpdate",
         params: ({ context }) => ({
           type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+          backupCreatedAt: context.existingBackup!.createdAt,
           useExistingBackup: () =>
             context.send({ type: CreateBackupStateMachineEventType.USE_EXISTING_BACKUP }),
           createNewBackup: () =>

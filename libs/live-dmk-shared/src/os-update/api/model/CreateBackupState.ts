@@ -14,6 +14,7 @@ export type CreateBackupState =
     }
   | {
       type: CreateBackupStateType.AWAITING_BACKUP_SELECTION;
+      backupCreatedAt: Date;
       useExistingBackup: () => void;
       createNewBackup: () => void;
     }

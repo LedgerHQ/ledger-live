@@ -257,6 +257,7 @@ describe("OsUpdateFlow tracking", () => {
         step: OsUpdatesSteps.CREATE_BACKUP,
         state: {
           type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+          backupCreatedAt: new Date(),
           useExistingBackup,
           createNewBackup: jest.fn(),
         },

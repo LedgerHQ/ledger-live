@@ -59,6 +59,7 @@ describe("getPageEvent", () => {
         step: OsUpdatesSteps.CREATE_BACKUP,
         state: {
           type: CreateBackupStateType.AWAITING_BACKUP_SELECTION,
+          backupCreatedAt: new Date(),
           useExistingBackup: jest.fn(),
           createNewBackup: jest.fn(),
         },
