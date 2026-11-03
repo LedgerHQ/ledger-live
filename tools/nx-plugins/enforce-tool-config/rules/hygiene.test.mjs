@@ -15,7 +15,7 @@ const MANIFEST = {
   name: "@shared/pkg",
   sideEffects: false,
   scripts: { lint: "oxlint src", format: "oxfmt src", "format:check": "oxfmt src --check" },
-  devDependencies: { typescript: "catalog:" },
+  devDependencies: { oxfmt: "catalog:", oxlint: "catalog:", typescript: "catalog:" },
 };
 
 /** @type {string[]} */
@@ -216,29 +216,69 @@ test("format-check-script: a missing script, or one that does not check, is repo
   }
 });
 
-test("tool-dependency: oxlint and oxfmt are reported in dependencies and devDependencies", () => {
-  assert.deepEqual(
-    violations({
-      manifest: {
-        dependencies: { oxfmt: "catalog:" },
-        devDependencies: { oxlint: "catalog:", typescript: "catalog:" },
-      },
-    }),
-    [
+const TOOL_DEPENDENCY =
+  'each tool a script runs is in devDependencies as "catalog:", so Nx hashes its version ' +
+  "(ADR-0003)";
+
+for (const [tool, supplier, script] of [
+  ["tsc", "@typescript/native", "tsc --noEmit -p tsconfig.web.json"],
+  ["knip", "knip", "pnpm knip --directory ../.. -W shared/pkg"],
+  ["oxlint", "oxlint", "oxlint src"],
+  ["oxfmt", "oxfmt", "oxfmt src --check"],
+  ["rimraf", "rimraf", "rimraf lib"],
+  ["zx", "zx", "zx scripts/build.mjs"],
+  ["nx", "nx", "nx run-many -t build"],
+]) {
+  test(`tool-dependency: a script that runs ${tool} needs ${supplier} as "catalog:"`, () => {
+    const scripts = { ...MANIFEST.scripts, tool: script };
+    const devDependencies = { ...MANIFEST.devDependencies, [supplier]: "catalog:" };
+    assert.deepEqual(violations({ manifest: { scripts, devDependencies } }), []);
+
+    const { [supplier]: _supplier, ...undeclared } = devDependencies;
+    assert.deepEqual(violations({ manifest: { scripts, devDependencies: undeclared } }), [
       {
         file: "shared/pkg/package.json",
         message:
-          "no oxlint or oxfmt dependency, as the binaries resolve from the workspace root; " +
-          "dependencies declares oxfmt: remove it",
+          `${TOOL_DEPENDENCY}; a script runs ${tool} and devDependencies has no ${supplier}: ` +
+          `add "${supplier}": "catalog:"`,
       },
-      {
-        file: "shared/pkg/package.json",
-        message:
-          "no oxlint or oxfmt dependency, as the binaries resolve from the workspace root; " +
-          "devDependencies declares oxlint: remove it",
-      },
-    ],
-  );
+    ]);
+  });
+}
+
+test('tool-dependency: a tool declared with a version, not "catalog:", is reported', () => {
+  const devDependencies = { ...MANIFEST.devDependencies, oxlint: "1.82.0" };
+  assert.deepEqual(violations({ manifest: { devDependencies } }), [
+    {
+      file: "shared/pkg/package.json",
+      message:
+        `${TOOL_DEPENDENCY}; devDependencies has oxlint as "1.82.0": ` +
+        'make it "oxlint": "catalog:"',
+    },
+  ]);
+});
+
+test("tool-dependency: the tool is the executable of a command, behind pnpm, pnpm exec or npx", () => {
+  for (const script of ["pnpm tsc --noEmit", "pnpm exec tsc --noEmit", "npx tsc --noEmit"]) {
+    const scripts = { ...MANIFEST.scripts, typecheck: script };
+    assert.deepEqual(
+      violations({ manifest: { scripts } }).map(v => v.message),
+      [
+        `${TOOL_DEPENDENCY}; a script runs tsc and devDependencies has no @typescript/native: ` +
+          'add "@typescript/native": "catalog:"',
+      ],
+      script,
+    );
+  }
+  for (const script of ["echo tsc", "jest --passWithNoTests", "pnpm run typecheck"]) {
+    const scripts = { ...MANIFEST.scripts, other: script };
+    assert.deepEqual(violations({ manifest: { scripts } }), [], script);
+  }
+});
+
+test("tool-dependency: a declared tool that no script runs passes", () => {
+  const devDependencies = { ...MANIFEST.devDependencies, knip: "catalog:", zx: "8.0.0" };
+  assert.deepEqual(violations({ manifest: { devDependencies } }), []);
 });
 
 test("a debt entry silences the checks it names, for its package only", () => {

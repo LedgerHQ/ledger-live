@@ -21,7 +21,8 @@ export const CHECKS = {
   "lint-script": 'a "lint" script runs oxlint',
   "format-check-script": 'a "format:check" script runs oxfmt --check',
   "tool-dependency":
-    "no oxlint or oxfmt dependency, as the binaries resolve from the workspace root",
+    'each tool a script runs is in devDependencies as "catalog:", so Nx hashes its version ' +
+    "(ADR-0003)",
 };
 
 const STATUSES = ["STABLE", "UNSTABLE", "DEPRECATED"];
@@ -31,9 +32,16 @@ const STATUS_MARKER = new RegExp(`^> \\*\\*Status: (${STATUSES.join("|")})\\b`, 
 
 const STATUS_LINES = STATUSES.map(status => `"> **Status: ${status}**"`);
 
-const TOOLS = ["oxlint", "oxfmt"];
-
-const DEPENDENCY_FIELDS = ["dependencies", "devDependencies"];
+// Each root tool, by the executable a script runs, and the package that supplies it.
+const TOOLS = {
+  tsc: "@typescript/native",
+  knip: "knip",
+  oxlint: "oxlint",
+  oxfmt: "oxfmt",
+  rimraf: "rimraf",
+  zx: "zx",
+  nx: "nx",
+};
 
 const STATUS_DOC = "docs/new-library.md#readme-status-marker";
 
@@ -61,7 +69,7 @@ function runs(script, predicate) {
   return (script ?? "").split(/&&|\|\||;|\|/).some(command => predicate(command.trim()));
 }
 
-const EXECUTABLE = /^(?:pnpm\s+exec\s+)?(\S+)/;
+const EXECUTABLE = /^(?:(?:pnpm(?:\s+exec)?|npx)\s+)?(\S+)/;
 
 /**
  * @param {string} tool
@@ -166,14 +174,27 @@ function manifestFindings(workspaceRoot, projectRoot) {
     );
   }
 
-  for (const field of DEPENDENCY_FIELDS) {
-    for (const tool of TOOLS) {
-      if (manifest[field] && Object.hasOwn(manifest[field], tool)) {
-        found.push(
-          finding("tool-dependency", manifestFile, `${field} declares ${tool}`, "remove it"),
-        );
-      }
-    }
+  const devDependencies = manifest.devDependencies ?? {};
+  for (const [tool, supplier] of Object.entries(TOOLS)) {
+    if (!Object.values(scripts).some(script => runs(script, callsTool(tool)))) continue;
+    const declared = devDependencies[supplier];
+    if (declared === "catalog:") continue;
+    const add = `"${supplier}": "catalog:"`;
+    found.push(
+      declared === undefined
+        ? finding(
+            "tool-dependency",
+            manifestFile,
+            `a script runs ${tool} and devDependencies has no ${supplier}`,
+            `add ${add}`,
+          )
+        : finding(
+            "tool-dependency",
+            manifestFile,
+            `devDependencies has ${supplier} as ${JSON.stringify(declared)}`,
+            `make it ${add}`,
+          ),
+    );
   }
 
   return found;

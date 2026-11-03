@@ -43,8 +43,12 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "expo-navigation-bar": "catalog:",
     "jest": "catalog:",
+    "knip": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react-native": "catalog:",
     "typescript": "catalog:"
   }

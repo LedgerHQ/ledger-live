@@ -37,7 +37,11 @@
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
+    "knip": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "rxjs": "catalog:",
     "typescript": "catalog:"
   }
