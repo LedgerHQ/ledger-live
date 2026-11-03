@@ -8,8 +8,14 @@ export const accountBalanceHistoriesSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addMatcher(isAccountDataReceived("balanceHistory"), (state, { payload }) => {
-      const { accountUUID, data } = payload;
-      state[accountUUID] = { ...state[accountUUID], [data.range]: data.series };
+      const { accountUUID, data, revision } = payload;
+      // Two queries may answer one range (no range reads the default one): the older answer never wins.
+      const stored = state[accountUUID]?.[data.range];
+      if (stored && stored.revision > revision) return;
+      state[accountUUID] = {
+        ...state[accountUUID],
+        [data.range]: { revision, series: data.series },
+      };
     });
   },
 });

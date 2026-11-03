@@ -7,7 +7,9 @@ export function mockAccountBalanceHistoriesState(
   overrides: AccountBalanceHistoriesState = {},
 ): AccountBalanceHistoriesState {
   return {
-    [computeAccountUUID(mockAddressAccountDescriptor())]: { month: [mockAssetBalanceHistory()] },
+    [computeAccountUUID(mockAddressAccountDescriptor())]: {
+      month: { revision: 0, series: [mockAssetBalanceHistory()] },
+    },
     ...overrides,
   };
 }

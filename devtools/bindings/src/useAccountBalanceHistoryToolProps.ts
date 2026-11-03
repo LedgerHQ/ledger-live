@@ -12,7 +12,7 @@ import {
   type BalanceHistoryRange,
   type WithAccountBalanceHistories,
 } from "@domain/entity-account-balance-history";
-import type { AccountDataRootState } from "@domain/entity-account-data";
+import { accountDataQueryKey, type AccountDataRootState } from "@domain/entity-account-data";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { formatAmount, useAssetUnits } from "./useAssetUnits";
 
@@ -39,7 +39,7 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
     () => [
       ...new Set(
         Object.values(histories).flatMap(byRange =>
-          Object.values(byRange ?? {}).flatMap(series => series?.map(s => s.assetId) ?? []),
+          Object.values(byRange ?? {}).flatMap(entry => entry?.series.map(s => s.assetId) ?? []),
         ),
       ),
     ],
@@ -89,7 +89,7 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
       };
     };
     return entries.map(({ accountUUID, descriptor }) => {
-      const status = statuses?.[accountUUID];
+      const status = statuses?.[accountUUID]?.[accountDataQueryKey({ range })];
       return {
         accountUUID,
         descriptor: JSON.stringify(descriptor, null, 2),
@@ -97,7 +97,7 @@ export function useAccountBalanceHistoryToolProps(): AccountBalanceHistoryToolPr
         error: status?.error && `${status.error.name}: ${status.error.message}`,
         sourceId: status?.sourceId,
         readAt: status?.readAt,
-        series: histories[accountUUID]?.[range]?.map(toSeries),
+        series: histories[accountUUID]?.[range]?.series.map(toSeries),
       };
     });
   }, [entries, statuses, histories, range, unitOf]);

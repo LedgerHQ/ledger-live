@@ -95,7 +95,7 @@ export type Address = z.infer<typeof AddressSchema>;
 export type OperationType = z.infer<typeof OperationTypeSchema>;
 export type AccountOperation = z.infer<typeof AccountOperationSchema>;
 
-/** What a read asks for; the cursor is not part of it, the framework carries it. */
+/** What a read asks for; the cursor is not part of it, the framework carries it. Each query has its own window. */
 export type AccountOperationsQuery = {
   /** Rows wished per page; a source may return more or fewer, only `nextCursor` says more exist. */
   limit?: number;
@@ -107,11 +107,22 @@ export type AccountOperationsPage = {
   nextCursor?: string;
 };
 
-/** The loaded window of each account, newest first. */
+/** The operations of one account: each row once, and the loaded window of each query. */
+export const AccountOperationsEntrySchema = z.object({
+  /** Every row a window lists, whatever query read it. */
+  byId: z.partialRecord(OperationIdSchema, AccountOperationSchema),
+  /** By query, as `accountDataQueryKey` writes it: its loaded window, newest first. */
+  windows: z.partialRecord(z.string(), z.array(OperationIdSchema)),
+  /** The `revision` of the answer each row of `byId` comes from: an older answer of another query never overwrites it. */
+  revisionById: z.partialRecord(OperationIdSchema, z.number()),
+});
+
 export const AccountOperationsStateSchema = z.partialRecord(
   AccountUUIDSchema,
-  z.array(AccountOperationSchema),
+  AccountOperationsEntrySchema,
 );
+
+export type AccountOperationsEntry = z.infer<typeof AccountOperationsEntrySchema>;
 
 export type AccountOperationsState = z.infer<typeof AccountOperationsStateSchema>;
 

@@ -73,19 +73,24 @@ describe("AccountBalanceHistoriesStateSchema", () => {
   });
 
   it("should accept series keyed by AccountUUID then range", () => {
-    const stored = { [accountUUID]: { week: [mockAssetBalanceHistory()] } };
+    const stored = {
+      [accountUUID]: { week: { revision: 0, series: [mockAssetBalanceHistory()] } },
+    };
     expect(AccountBalanceHistoriesStateSchema.parse(stored)).toEqual(stored);
   });
 
   it("should reject a key that is not an AccountUUID", () => {
-    expect(AccountBalanceHistoriesStateSchema.safeParse({ nope: { week: [] } }).success).toBe(
-      false,
-    );
+    expect(
+      AccountBalanceHistoriesStateSchema.safeParse({ nope: { week: { revision: 0, series: [] } } })
+        .success,
+    ).toBe(false);
   });
 
   it("should reject a key that is not a range", () => {
     expect(
-      AccountBalanceHistoriesStateSchema.safeParse({ [accountUUID]: { decade: [] } }).success,
+      AccountBalanceHistoriesStateSchema.safeParse({
+        [accountUUID]: { decade: { revision: 0, series: [] } },
+      }).success,
     ).toBe(false);
   });
 });

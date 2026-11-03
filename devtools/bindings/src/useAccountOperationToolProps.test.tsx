@@ -4,7 +4,11 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { accountDataExtra } from "@domain/api-account-data";
 import { AccountIdSchema, accountsSlice, legacyAccountsSynced } from "@domain/entity-account";
-import { AccountDataSourceIdSchema, accountDataSlice } from "@domain/entity-account-data";
+import {
+  AccountDataSourceIdSchema,
+  accountDataQueryKey,
+  accountDataSlice,
+} from "@domain/entity-account-data";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import {
   mockAddressAccountDescriptor,
@@ -13,6 +17,7 @@ import {
 import {
   accountOperationsSlice,
   type AccountOperationsPage,
+  type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
@@ -39,7 +44,12 @@ function deferred() {
 }
 
 function setup() {
-  const reads: { accountUUID: string; cursor?: string; call: ReturnType<typeof deferred> }[] = [];
+  const reads: {
+    accountUUID: string;
+    cursor?: string;
+    query?: AccountOperationsQuery;
+    call: ReturnType<typeof deferred>;
+  }[] = [];
   const store = configureStore({
     reducer: {
       accountEntries: accountsSlice.reducer,
@@ -54,9 +64,9 @@ function setup() {
               id: AccountDataSourceIdSchema.parse("controlled"),
               supports: () => true,
               read: {
-                operations: async ({ accountUUID, cursor }) => {
+                operations: async ({ accountUUID, cursor }, query) => {
                   const call = deferred();
-                  reads.push({ accountUUID, cursor, call });
+                  reads.push({ accountUUID, cursor, query, call });
                   return call.promise;
                 },
               },
@@ -75,22 +85,30 @@ function setup() {
     <Provider store={store}>{children}</Provider>
   );
   const { result } = renderHook(() => useAccountOperationToolProps(), { wrapper });
-  return { result, reads };
+  /** The no-query window of the `index`th account. */
+  const head = (index: number) => result.current.accounts[index].windows[0];
+  return { result, reads, head };
 }
 
 describe("useAccountOperationToolProps", () => {
   it("lists every account, unread", () => {
     const { result } = setup();
     expect(result.current.accounts).toEqual([
-      expect.objectContaining({ accountUUID: ethereumUUID, reading: false, hasMore: false }),
-      expect.objectContaining({ accountUUID: bitcoinUUID, rows: undefined, readAt: undefined }),
+      expect.objectContaining({
+        accountUUID: ethereumUUID,
+        windows: [expect.objectContaining({ queryKey: "", reading: false, hasMore: false })],
+      }),
+      expect.objectContaining({
+        accountUUID: bitcoinUUID,
+        windows: [expect.objectContaining({ rows: undefined, readAt: undefined })],
+      }),
     ]);
   });
 
   it("reads one account, pending then answered with its rows and source", async () => {
-    const { result, reads } = setup();
-    act(() => result.current.onRead(ethereumUUID));
-    await waitFor(() => expect(result.current.accounts[0].reading).toBe(true));
+    const { result, reads, head } = setup();
+    act(() => result.current.onRead(ethereumUUID, ""));
+    await waitFor(() => expect(head(0).reading).toBe(true));
     expect(reads.map(r => r.accountUUID)).toEqual([ethereumUUID]);
 
     await act(async () =>
@@ -101,8 +119,8 @@ describe("useAccountOperationToolProps", () => {
         ],
       }),
     );
-    await waitFor(() => expect(result.current.accounts[0].reading).toBe(false));
-    expect(result.current.accounts[0]).toEqual(
+    await waitFor(() => expect(head(0).reading).toBe(false));
+    expect(head(0)).toEqual(
       expect.objectContaining({
         sourceId: "controlled",
         hasMore: false,
@@ -122,36 +140,65 @@ describe("useAccountOperationToolProps", () => {
   });
 
   it("reads the next page with the cursor of the last one, appending its rows", async () => {
-    const { result, reads } = setup();
-    act(() => result.current.onRead(ethereumUUID));
+    const { result, reads, head } = setup();
+    act(() => result.current.onRead(ethereumUUID, ""));
     await waitFor(() => expect(reads).toHaveLength(1));
     await act(async () =>
       reads[0].call.resolve({ operations: [mockAccountOperation()], nextCursor: "page-2" }),
     );
-    await waitFor(() => expect(result.current.accounts[0].hasMore).toBe(true));
+    await waitFor(() => expect(head(0).hasMore).toBe(true));
 
-    act(() => result.current.onReadMore(ethereumUUID));
+    act(() => result.current.onReadMore(ethereumUUID, ""));
     await waitFor(() => expect(reads).toHaveLength(2));
     expect(reads[1].cursor).toBe("page-2");
     await act(async () =>
       reads[1].call.resolve({ operations: [mockAccountOperation({ id: "op-2" })] }),
     );
-    await waitFor(() => expect(result.current.accounts[0].hasMore).toBe(false));
-    expect(result.current.accounts[0].rows?.map(row => row.id)).toEqual(["op-1", "op-2"]);
+    await waitFor(() => expect(head(0).hasMore).toBe(false));
+    expect(head(0).rows?.map(row => row.id)).toEqual(["op-1", "op-2"]);
   });
 
   it("shows the error of a failed read", async () => {
-    const { result, reads } = setup();
-    act(() => result.current.onRead(ethereumUUID));
+    const { result, reads, head } = setup();
+    act(() => result.current.onRead(ethereumUUID, ""));
     await waitFor(() => expect(reads).toHaveLength(1));
     await act(async () => reads[0].call.reject(new Error("down")));
-    await waitFor(() => expect(result.current.accounts[0].error).toBe("Error: down"));
+    await waitFor(() => expect(head(0).error).toBe("Error: down"));
   });
 
   it("reads every account on read all", async () => {
     const { result, reads } = setup();
-    act(() => result.current.onReadAll());
+    act(() => result.current.onReadAll({}));
     await waitFor(() => expect(reads).toHaveLength(2));
     expect(reads.map(r => r.accountUUID).sort()).toEqual([ethereumUUID, bitcoinUUID].sort());
+  });
+
+  it("lists the window of each query read, reading it again and paging it with its query", async () => {
+    const { result, reads } = setup();
+    const query = { limit: 50 };
+    const queryKey = accountDataQueryKey(query);
+    act(() => result.current.onReadAll(query));
+    await waitFor(() => expect(reads).toHaveLength(2));
+    expect(reads.map(r => r.query)).toEqual([query, query]);
+    const ethereumRead = reads.find(r => r.accountUUID === ethereumUUID);
+    await act(async () =>
+      ethereumRead?.call.resolve({
+        operations: [mockAccountOperation()],
+        nextCursor: "page-2",
+      }),
+    );
+    const filtered = () => result.current.accounts[0].windows[1];
+    await waitFor(() => expect(filtered()?.hasMore).toBe(true));
+    expect(
+      result.current.accounts[0].windows.map(({ queryKey: key, label }) => [key, label]),
+    ).toEqual([
+      ["", "default"],
+      [queryKey, "limit 50"],
+    ]);
+    expect(filtered().rows).toEqual([expect.objectContaining({ id: "op-1" })]);
+
+    act(() => result.current.onReadMore(ethereumUUID, queryKey));
+    await waitFor(() => expect(reads).toHaveLength(3));
+    expect(reads[2]).toEqual(expect.objectContaining({ cursor: "page-2", query }));
   });
 });

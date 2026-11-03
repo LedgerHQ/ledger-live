@@ -57,7 +57,10 @@ function AccountData({ statuses, events, maxAge, onClearEvents }: AccountDataToo
           </thead>
           <tbody className="text-base">
             {statuses.map(status => (
-              <tr key={`${status.kind}:${status.accountUUID}`} className="border-b border-base">
+              <tr
+                key={JSON.stringify([status.kind, status.accountUUID, status.queryKey])}
+                className="border-b border-base"
+              >
                 <td className="px-12 py-6">{status.kind}</td>
                 <td className="px-12 py-6 align-top" aria-label={status.accountUUID}>
                   <details>
