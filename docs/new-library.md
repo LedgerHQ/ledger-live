@@ -16,11 +16,13 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 
 ## Package checklist
 
+`pnpm lint:tool-config` checks the items of this list that [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs) names.
+
 **`package.json` fields**
 - [ ] `"private": true`
 - [ ] `"sideEffects": false` — enables bundler tree-shaking
 - [ ] `"main"`, `"types"`, `"exports"` — source-only packages (domain/, features/, shared/) point directly to `src/index.ts` and expose `"./package.json"`; built/published libs/ packages use the `@ledgerhq/source` condition + `lib/`/`lib-es/` entries — copy from a neighbouring package of the same type
-- [ ] `devDependencies` via `catalog:` entries — `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `oxfmt`, `oxlint` (never pin versions directly)
+- [ ] `devDependencies` via `catalog:` entries (never pin versions directly): `typescript`, `jest`, `@swc/core`, `@swc/jest`, `@types/jest`, `@typescript/native` (for `tsc`), `oxlint`, `oxfmt`, and `rimraf`, `zx` or `nx` when a script runs them (see [ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553) and [`rules/hygiene.mjs`](../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs))
 - [ ] `scripts.typecheck: "tsc --noEmit"` — required for the Nx `typecheck` target
 - [ ] `scripts.test` and `scripts.coverage` — `jest` / `jest --coverage`
 - [ ] `scripts.format: "oxfmt src"` — required for the Nx `format` target; add `tests` if the package keeps tests outside `src/` (e.g. `"oxfmt src tests"`)

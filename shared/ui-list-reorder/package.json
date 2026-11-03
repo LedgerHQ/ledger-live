@@ -28,9 +28,11 @@
     "@testing-library/jest-dom": "catalog:",
     "@types/jest": "catalog:",
     "@types/node": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
     "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "typescript": "catalog:"
   }
 }

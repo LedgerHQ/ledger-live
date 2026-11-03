@@ -41,6 +41,7 @@
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
     "jest": "catalog:",
     "oxfmt": "catalog:",
     "oxlint": "catalog:",
