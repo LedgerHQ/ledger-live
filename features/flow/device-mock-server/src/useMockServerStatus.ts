@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { getMockServerStatus, type MockServerConfig } from "@features/platform-device-mock-server";
-import type { MockServerStatus } from "./types";
+import {
+  getMockServerStatus,
+  type MockServerConfig,
+  type MockServerConnectionStatus,
+} from "@features/platform-device-mock-server";
+
+export type MockServerStatus = "checking" | MockServerConnectionStatus;
 
 const STATUS_POLL_INTERVAL_MS = 5000;
 

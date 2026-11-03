@@ -1,5 +1,5 @@
 import React from "react";
-import type { MockServerSettingsFormProps } from "./MockServerSettingsForm.types";
+import type { MockServerSettingsFormProps } from "./types";
 import { MockServerSettingsFormView } from "./MockServerSettingsFormView";
 import { useMockServerSettingsFormViewModel } from "./useMockServerSettingsFormViewModel";
 

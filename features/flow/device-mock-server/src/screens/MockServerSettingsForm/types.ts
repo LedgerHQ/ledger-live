@@ -1,5 +1,5 @@
 import type { MockServerSettings } from "@features/platform-device-mock-server";
-import type { MockServerChange } from "./mockServerSession";
+import type { MockServerChange } from "../../mockServerSession";
 
 export type MockServerSettingsFormProps = Readonly<{
   settings: MockServerSettings;

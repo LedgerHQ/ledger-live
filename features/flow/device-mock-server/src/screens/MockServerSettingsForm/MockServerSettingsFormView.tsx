@@ -16,7 +16,7 @@ import {
   TextInput,
 } from "@ledgerhq/lumen-ui-rnative";
 import { Copy, ExternalLink, Servers } from "@ledgerhq/lumen-ui-rnative/symbols";
-import { MockServerStatusText } from "./MockServerStatusText";
+import { MockServerStatusText } from "../../components/MockServerStatusText";
 import type { MockServerSettingsFormViewModel } from "./useMockServerSettingsFormViewModel";
 
 export function MockServerSettingsFormView({

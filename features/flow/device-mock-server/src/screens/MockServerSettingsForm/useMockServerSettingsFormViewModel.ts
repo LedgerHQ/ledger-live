@@ -6,14 +6,13 @@ import {
   getMockServerConfigurationUiUrl,
   stripTrailingSlashes,
 } from "@features/platform-device-mock-server";
-import type { MockServerSettingsFormProps } from "./MockServerSettingsForm.types";
 import {
   disableMockServer,
   joinMockServerSession,
   startMockServerSession,
-} from "./mockServerSession";
-import type { MockServerStatus } from "./types";
-import { useMockServerStatus } from "./useMockServerStatus";
+} from "../../mockServerSession";
+import { useMockServerStatus, type MockServerStatus } from "../../useMockServerStatus";
+import type { MockServerSettingsFormProps } from "./types";
 
 type PendingAction = "toggle" | "apply" | "newSession";
 
