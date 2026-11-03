@@ -208,6 +208,77 @@ describe("shouldRetainPendingOperation", () => {
     expect(shouldRetainPending).toBe(true);
   });
 
+  it("keeps the pending UTXO operations that spend different inputs", () => {
+    const account = createAccount("12");
+    const tx1 = { ...createOperation("12"), hash: "tx1", extra: { inputs: ["utxoA-0"] } };
+    const tx2 = { ...createOperation("12"), hash: "tx2", extra: { inputs: ["utxoB-1"] } };
+
+    const result = addPendingOperation(addPendingOperation(account, tx1), tx2);
+
+    expect(result.pendingOperations).toEqual([tx2, tx1]);
+  });
+
+  it("replaces the pending UTXO operation whose input the new one spends (RBF)", () => {
+    const account = createAccount("12");
+    const original = {
+      ...createOperation("12"),
+      hash: "original",
+      extra: { inputs: ["utxoA-0", "utxoB-1"] },
+    };
+    const other = { ...createOperation("12"), hash: "other", extra: { inputs: ["utxoC-0"] } };
+    const replacement = {
+      ...createOperation("12"),
+      hash: "replacement",
+      extra: { inputs: ["utxoA-0", "utxoB-1"] },
+    };
+
+    const result = [original, other, replacement].reduce(addPendingOperation, account);
+
+    expect(result.pendingOperations).toEqual([replacement, other]);
+  });
+
+  it("removes the unconfirmed descendants of a replaced UTXO operation", () => {
+    const account = createAccount("12");
+    const parent = { ...createOperation("12"), hash: "parent", extra: { inputs: ["utxoA-0"] } };
+    const child = {
+      ...createOperation("12"),
+      hash: "child",
+      extra: { inputs: ["parent-1", "utxoC-0"] },
+    };
+    const grandchild = {
+      ...createOperation("12"),
+      hash: "grandchild",
+      extra: { inputs: ["child-0"] },
+    };
+    const unrelated = {
+      ...createOperation("12"),
+      hash: "unrelated",
+      extra: { inputs: ["utxoD-0"] },
+    };
+    const replacement = {
+      ...createOperation("12"),
+      hash: "replacement",
+      extra: { inputs: ["utxoA-0"] },
+    };
+
+    const result = [parent, child, grandchild, unrelated, replacement].reduce(
+      addPendingOperation,
+      account,
+    );
+
+    expect(result.pendingOperations).toEqual([replacement, unrelated]);
+  });
+
+  it("replaces the pending operation when neither has a sequence number nor inputs", () => {
+    const account = createAccount("12");
+    const op1 = { ...createOperation("12"), hash: "op1" };
+    const op2 = { ...createOperation("12"), hash: "op2" };
+
+    const result = addPendingOperation(addPendingOperation(account, op1), op2);
+
+    expect(result.pendingOperations).toEqual([op2]);
+  });
+
   it("should replace existing pending operation with same transactionSequenceNumber", () => {
     const account = createAccount("12");
     const op1 = createOperation("12", ["addr"], BigInt(5));

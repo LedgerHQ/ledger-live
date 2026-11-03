@@ -300,20 +300,45 @@ export const isOldestPendingOperation = (account: Account, nonce: BigNumber): bo
   });
 };
 
+const spentTxHashes = (operation: Operation): Set<string> | undefined => {
+  const inputs = (operation.extra as { inputs?: unknown } | undefined)?.inputs;
+  if (!Array.isArray(inputs)) return undefined;
+  return new Set(
+    inputs
+      .filter((input): input is string => typeof input === "string" && input.includes("-"))
+      .map(input => input.slice(0, input.lastIndexOf("-"))),
+  );
+};
+
 /**
+ * Whether a pending bitcoin operation can be edited (sped up) now.
+ *
+ * Bitcoin has no nonce: unconfirmed operations spending different UTXOs are replaced
+ * independently. Only an unconfirmed parent — an operation of the account whose output this one
+ * spends — must be edited first. Operations without `extra.inputs` fall back to "no older
+ * unconfirmed operation".
+ *
  * @param account The account of the transaction to edit
- * @param date The date of the transaction to edit
- * @returns true if the date corresponds to the oldest pending operation
+ * @param operation The transaction to edit
  */
-export const isOldestBitcoinPendingOperation = (account: Account, date: Date): boolean => {
-  /**
-   * The selected pending operation is the oldest if there is no pending
-   * operation with a lower date
-   */
+export const isOldestBitcoinPendingOperation = (
+  account: Account,
+  operation: Operation,
+): boolean => {
+  const parentHashes = spentTxHashes(operation);
+  if (parentHashes) {
+    const unconfirmed = [
+      ...account.pendingOperations,
+      ...account.operations.filter(op => !op.blockHeight),
+    ];
+    return !unconfirmed.some(op => op.hash !== operation.hash && parentHashes.has(op.hash));
+  }
+
+  const date = operation.date;
   if (account.pendingOperations.length === 0) {
-    return !account.operations.some(operation => {
-      if (!operation.blockHeight) {
-        return operation.date.getTime() < date.getTime();
+    return !account.operations.some(op => {
+      if (!op.blockHeight) {
+        return op.date.getTime() < date.getTime();
       }
       return false;
     });

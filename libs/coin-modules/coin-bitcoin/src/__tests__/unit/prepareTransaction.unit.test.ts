@@ -1,7 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import { prepareTransaction, sameExcludeUTXOs } from "../../prepareTransaction";
+import { getExcludeUTXOsFromPendingOperations } from "../../pendingInputs";
 import { createFixtureAccount, networkInfo } from "../../fixtures/common.fixtures";
-import { bitcoinPickingStrategy, BitcoinAccount, Transaction } from "../../types";
+import {
+  bitcoinPickingStrategy,
+  BitcoinAccount,
+  BtcOperation,
+  BtcOperationExtra,
+  Transaction,
+} from "../../types";
 
 jest.mock("../../getAccountNetworkInfo", () => ({
   getAccountNetworkInfo: jest.fn(),
@@ -96,6 +103,75 @@ describe("sameExcludeUTXOs", () => {
       { hash: "tx1", outputIndex: 0 },
     ];
     expect(sameExcludeUTXOs(a, b)).toBe(false);
+  });
+});
+
+const makePendingOperation = (hash: string, extra: BtcOperationExtra): BtcOperation =>
+  ({ hash, extra }) as BtcOperation;
+
+describe("getExcludeUTXOsFromPendingOperations", () => {
+  it("returns the inputs of every pending operation", () => {
+    const account = createFixtureAccount({
+      pendingOperations: [
+        makePendingOperation("pending1", {
+          inputRefs: [
+            { hash: "utxoA", outputIndex: 0, address: "addr1" },
+            { hash: "utxoB", outputIndex: 2, address: "addr2" },
+          ],
+        }),
+        makePendingOperation("pending2", {
+          inputRefs: [{ hash: "utxoC", outputIndex: 1, address: "addr1" }],
+        }),
+      ],
+    });
+
+    expect(getExcludeUTXOsFromPendingOperations(account)).toEqual([
+      { hash: "utxoA", outputIndex: 0 },
+      { hash: "utxoB", outputIndex: 2 },
+      { hash: "utxoC", outputIndex: 1 },
+    ]);
+  });
+
+  it("reads the txid-index outpoints of operations without input references", () => {
+    const account = createFixtureAccount({
+      pendingOperations: [makePendingOperation("pending1", { inputs: ["utxoA-0", "utxoB-12"] })],
+    });
+
+    expect(getExcludeUTXOsFromPendingOperations(account)).toEqual([
+      { hash: "utxoA", outputIndex: 0 },
+      { hash: "utxoB", outputIndex: 12 },
+    ]);
+  });
+
+  it("skips malformed outpoints", () => {
+    const account = createFixtureAccount({
+      pendingOperations: [
+        makePendingOperation("pending1", { inputs: ["noindex", "-1", "utxoA-x"] }),
+      ],
+    });
+
+    expect(getExcludeUTXOsFromPendingOperations(account)).toEqual([]);
+  });
+
+  it("keeps the inputs of the operation being replaced available", () => {
+    const account = createFixtureAccount({
+      pendingOperations: [
+        makePendingOperation("replaced", {
+          inputRefs: [{ hash: "utxoA", outputIndex: 0, address: "addr1" }],
+        }),
+        makePendingOperation("other", {
+          inputRefs: [{ hash: "utxoB", outputIndex: 1, address: "addr1" }],
+        }),
+      ],
+    });
+
+    expect(getExcludeUTXOsFromPendingOperations(account, "replaced")).toEqual([
+      { hash: "utxoB", outputIndex: 1 },
+    ]);
+  });
+
+  it("returns nothing when there is no pending operation", () => {
+    expect(getExcludeUTXOsFromPendingOperations(createFixtureAccount())).toEqual([]);
   });
 });
 
@@ -231,5 +307,66 @@ describe("prepareTransaction", () => {
 
     expect(result).not.toBe(transaction);
     expect(result.networkInfo).toEqual(mockNetworkInfo);
+  });
+
+  it("excludes the UTXOs spent by pending operations", async () => {
+    const account = createFixtureAccount({
+      bitcoinResources: { utxos: [] },
+      pendingOperations: [
+        makePendingOperation("pending1", {
+          inputRefs: [{ hash: "utxoA", outputIndex: 1, address: "addr1" }],
+        }),
+      ],
+    }) as BitcoinAccount;
+    const transaction = makeTransaction({
+      utxoStrategy: {
+        strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+        excludeUTXOs: [{ hash: "userExcluded", outputIndex: 0 }],
+      },
+    });
+
+    const result = await prepareTransaction(account, transaction);
+
+    expect(result.utxoStrategy?.excludeUTXOs).toEqual([
+      { hash: "userExcluded", outputIndex: 0 },
+      { hash: "utxoA", outputIndex: 1 },
+    ]);
+  });
+
+  it("returns the same transaction once the pending inputs are already excluded", async () => {
+    const account = createFixtureAccount({
+      bitcoinResources: { utxos: [] },
+      pendingOperations: [
+        makePendingOperation("pending1", {
+          inputRefs: [{ hash: "utxoA", outputIndex: 1, address: "addr1" }],
+        }),
+      ],
+    }) as BitcoinAccount;
+    const transaction = makeTransaction({
+      utxoStrategy: {
+        strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+        excludeUTXOs: [{ hash: "utxoA", outputIndex: 1 }],
+      },
+    });
+
+    const result = await prepareTransaction(account, transaction);
+
+    expect(result).toBe(transaction);
+  });
+
+  it("does not exclude the inputs of the operation an RBF edit replaces", async () => {
+    const account = createFixtureAccount({
+      bitcoinResources: { utxos: [] },
+      pendingOperations: [
+        makePendingOperation("replaced", {
+          inputRefs: [{ hash: "utxoA", outputIndex: 1, address: "addr1" }],
+        }),
+      ],
+    }) as BitcoinAccount;
+    const transaction = makeTransaction({ replaceTxId: "replaced" });
+
+    const result = await prepareTransaction(account, transaction);
+
+    expect(result.utxoStrategy?.excludeUTXOs).toEqual([]);
   });
 });
