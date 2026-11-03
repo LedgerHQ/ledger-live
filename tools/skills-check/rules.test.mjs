@@ -91,7 +91,15 @@ describe("description", () => {
     assert.equal(describeProblem("Prefer Set.has() for allowlists; use when reviewing."), null);
   });
 
-  it("reports a description without a Use when or Read when clause", () => {
+  it("accepts Use before and Read before clauses", () => {
+    assert.equal(describeProblem("Pick a self-hosted runner. Read before changing runs-on."), null);
+    assert.equal(
+      describeProblem("Wrap third-party libs at the lowest layer. Use before adding deps."),
+      null,
+    );
+  });
+
+  it("reports a description without a Use when, Read when, Use before or Read before clause", () => {
     assert.match(describeProblem("Fetch and summarize review comments"), /no "Use when"/);
     const root = repo({
       ".agents/skills/fmt/SKILL.md": skill("name: fmt\ndescription: Format the changed files."),

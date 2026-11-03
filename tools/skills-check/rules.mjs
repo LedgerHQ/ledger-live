@@ -17,7 +17,7 @@ const REFERENCE_LINK = /^\s{0,3}\[[^\]]+\]:\s*<?([^\s>]+)>?/;
 const URL_SCHEME = /^[a-z][a-z\d+.-]*:/i;
 const PLAIN_PATH = /^[\w.@+-]+(?:\/[\w.@+-]+)*\/?$/;
 // Sentence ends at a period followed by a space or the end, so `Set.has()` stays in the clause.
-const WHEN_CLAUSE = /\b(?:use|read) when\b(?:[^.]|\.(?!\s|$))*(?:\.|$)/i;
+const WHEN_CLAUSE = /\b(?:use|read) (?:when|before)\b(?:[^.]|\.(?!\s|$))*(?:\.|$)/i;
 const MIN_WHAT_WORDS = 3;
 
 const toPosix = path => path.split(sep).join(posix.sep);
@@ -92,7 +92,7 @@ export const parseFrontmatter = text => {
 
 export const describeProblem = description => {
   const clause = WHEN_CLAUSE.exec(description);
-  if (!clause) return 'has no "Use when" or "Read when" clause';
+  if (!clause) return 'has no "Use when", "Read when", "Use before" or "Read before" clause';
   const what = description
     .replace(WHEN_CLAUSE, " ")
     .split(/\s+/)
