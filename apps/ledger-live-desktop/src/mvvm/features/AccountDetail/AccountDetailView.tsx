@@ -21,18 +21,16 @@ export function AccountDetailView({ account }: Props) {
       <AccountDetailLayout
         hero={<Hero {...hero} />}
         customPlace={<FamilySection account={account} />}
+        analyticsNotice={<AnalyticsIntroduction account={account} />}
         assets={
-          <>
-            <AnalyticsIntroduction account={account} />
-            {emptyState.isVisible ? (
-              <AccountEmptyState
-                fundingActions={emptyState.fundingActions}
-                testID="account-detail-empty-state"
-              />
-            ) : (
-              <AssetsSection account={account} />
-            )}
-          </>
+          emptyState.isVisible ? (
+            <AccountEmptyState
+              fundingActions={emptyState.fundingActions}
+              testID="account-detail-empty-state"
+            />
+          ) : (
+            <AssetsSection account={account} />
+          )
         }
         transactions={emptyState.isVisible ? null : <Transactions account={account} />}
       />

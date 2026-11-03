@@ -25,3 +25,5 @@ error handling stay in the host; durable dismissal across restarts requires a su
 The single introduction component uses Container → ViewModel → View at `src/`. The host supplies
 confirmed history, dismissal state and callbacks; navigation and physical storage stay in the apps.
 The web entry owns its English wording keys through `@shared/i18n`; no native UI is introduced yet.
+
+Its barrel lives under `src/web/` so platform module suffixes cannot shadow the neutral root API.

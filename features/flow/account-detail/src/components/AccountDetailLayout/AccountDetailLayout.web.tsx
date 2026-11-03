@@ -4,6 +4,7 @@ import type { AccountDetailLayoutProps } from "./AccountDetailLayout.types";
 export function AccountDetailLayout({
   hero,
   customPlace,
+  analyticsNotice,
   assets,
   transactions,
 }: AccountDetailLayoutProps) {
@@ -12,6 +13,7 @@ export function AccountDetailLayout({
       {hero}
       <div className="flex flex-col gap-24" data-testid="account-detail-layout-sections">
         {customPlace}
+        {analyticsNotice}
         {assets}
         {transactions}
       </div>

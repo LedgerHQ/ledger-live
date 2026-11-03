@@ -16,6 +16,26 @@ describe("AccountDetailLayout (Native)", () => {
       <AccountDetailLayout
         hero={<View testID="hero" />}
         customPlace={<View testID="custom-place" />}
+        analyticsNotice={<View testID="analytics-notice" />}
+        assets={<View testID="assets" />}
+        transactions={<View testID="transactions" />}
+      />,
+    );
+
+    expect(slotIds()).toEqual([
+      "hero",
+      "custom-place",
+      "analytics-notice",
+      "assets",
+      "transactions",
+    ]);
+  });
+
+  it("should preserve the section order when no Analytics notice is supplied", () => {
+    render(
+      <AccountDetailLayout
+        hero={<View testID="hero" />}
+        customPlace={<View testID="custom-place" />}
         assets={<View testID="assets" />}
         transactions={<View testID="transactions" />}
       />,

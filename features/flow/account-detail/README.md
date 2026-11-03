@@ -19,9 +19,12 @@ passed to the layout as slots.
 
 | Export | Description |
 | --- | --- |
-| `AccountDetailLayout` | Lays out the page in Figma order: hero → custom place → assets → transactions (`.web` / `.native`) |
+| `AccountDetailLayout` | Lays out the page: hero → custom place → optional Analytics notice → assets → transactions (`.web` / `.native`) |
 | `useAccountDetailFeature(currencyId)` | `true` when the `accountDetail` flag is on and the currency is not in `excludedCurrencyIds` |
 | `isAccountDetailEnabledFor(feature, currencyId)` | Pure version of the gate, for code that already holds the flag |
+
+The optional `analyticsNotice` slot follows `customPlace` and precedes `assets`. Hosts pass the
+notice separately from asset content; omitting it adds no section or wrapper.
 
 ## Feature flag
 

@@ -8,7 +8,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./state": "./src/state/index.ts",
-    "./web": "./src/index.web.ts",
+    "./web": "./src/web/index.web.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,

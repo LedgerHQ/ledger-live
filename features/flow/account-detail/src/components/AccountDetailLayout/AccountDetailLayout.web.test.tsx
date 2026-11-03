@@ -16,6 +16,26 @@ describe("AccountDetailLayout (Web)", () => {
       <AccountDetailLayout
         hero={<div data-testid="hero" />}
         customPlace={<div data-testid="custom-place" />}
+        analyticsNotice={<div data-testid="analytics-notice" />}
+        assets={<div data-testid="assets" />}
+        transactions={<div data-testid="transactions" />}
+      />,
+    );
+
+    expect(slotIds()).toEqual([
+      "hero",
+      "custom-place",
+      "analytics-notice",
+      "assets",
+      "transactions",
+    ]);
+  });
+
+  it("should preserve the section order when no Analytics notice is supplied", () => {
+    render(
+      <AccountDetailLayout
+        hero={<div data-testid="hero" />}
+        customPlace={<div data-testid="custom-place" />}
         assets={<div data-testid="assets" />}
         transactions={<div data-testid="transactions" />}
       />,
