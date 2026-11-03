@@ -27,16 +27,21 @@ describe("phaseOf", () => {
     expect(phaseOf("readingState")).not.toBe("connecting");
   });
 
-  it("should prepare while the device state is being read", () => {
-    expect(phaseOf("readingState")).toBe("preparing");
-    expect(phaseOf("routing")).toBe("preparing");
+  it("should synchronize while the device state is being read", () => {
+    expect(phaseOf("readingState")).toBe("synchronizing");
+    expect(phaseOf("routing")).toBe("synchronizing");
+  });
+
+  it("should synchronize while the device is locked or being set up", () => {
+    expect(phaseOf("deviceLocked")).toBe("synchronizing");
+    expect(phaseOf("deviceSetup.pin")).toBe("synchronizing");
   });
 
   it("should keep a seeded sync exit on the checks screen", () => {
     expect(phaseOf("syncOffer", true)).toBe("checks");
     expect(phaseOf("done", true)).toBe("checks");
-    expect(phaseOf("syncOffer", false)).toBe("leaving");
-    expect(phaseOf("done")).toBe("leaving");
+    expect(phaseOf("syncOffer", false)).toBe("synchronizing");
+    expect(phaseOf("done")).toBe("synchronizing");
   });
 
   it("should not claim to know a state the machine does not have", () => {
@@ -46,10 +51,9 @@ describe("phaseOf", () => {
 
 describe("checksScreenForPhase", () => {
   it("should show synchronizing for every phase that is not a connection or the checks", () => {
-    expect(checksScreenForPhase("preparing", "readingState", false, false)).toBe("synchronizing");
-    expect(checksScreenForPhase("locked", "deviceLocked", false, false)).toBe("synchronizing");
-    expect(checksScreenForPhase("leaving", "quitting", false, false)).toBe("synchronizing");
-    expect(checksScreenForPhase("setup", "deviceSetup.pin", false, false)).toBe("synchronizing");
+    expect(checksScreenForPhase("synchronizing", "readingState", false, false)).toBe(
+      "synchronizing",
+    );
     expect(checksScreenForPhase(null, "notAState", false, false)).toBe("synchronizing");
   });
 

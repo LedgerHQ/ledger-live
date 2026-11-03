@@ -1,41 +1,32 @@
 import type { ChecksScreenState } from "LLM/features/DeviceOnboarding/types";
 import { toChecksScreenState } from "./checksPhase";
 
-export type FunnelPhase =
-  | "connecting"
-  | "failed"
-  | "preparing"
-  | "locked"
-  | "leaving"
-  | "setup"
-  | "checks";
+export type FunnelPhase = "connecting" | "failed" | "checks" | "synchronizing";
 
 const topLevel = {
-  readingState: "preparing",
-  routing: "preparing",
+  readingState: "synchronizing",
+  routing: "synchronizing",
   awaitingStart: "checks",
-  deviceLocked: "locked",
+  deviceLocked: "synchronizing",
   awaitingSession: "failed",
   awaitingSessionAfterFirmwareUpdate: "connecting",
-  onboardedExit: "leaving",
-  setupExit: "leaving",
-  quitting: "leaving",
-  leavingOnQuit: "leaving",
-  legacyFallback: "leaving",
-  bootloaderRecovery: "leaving",
-  exitOnboarding: "leaving",
-  syncOffer: "leaving",
-  done: "leaving",
+  onboardedExit: "synchronizing",
+  setupExit: "synchronizing",
+  quitting: "synchronizing",
+  leavingOnQuit: "synchronizing",
+  legacyFallback: "synchronizing",
+  bootloaderRecovery: "synchronizing",
+  exitOnboarding: "synchronizing",
+  syncOffer: "synchronizing",
+  done: "synchronizing",
 } as const satisfies Record<string, FunnelPhase>;
-
-const synchronizingPhases = new Set<FunnelPhase>(["preparing", "locked", "leaving", "setup"]);
 
 const seededSuccessExits = new Set(["syncOffer", "done"]);
 
 export function phaseOf(machineState: string | null, onboardedOnEntry = false): FunnelPhase | null {
   if (machineState === null) return "connecting";
   if (machineState.startsWith("checks.")) return "checks";
-  if (machineState.startsWith("deviceSetup.")) return "setup";
+  if (machineState.startsWith("deviceSetup.")) return "synchronizing";
   if (onboardedOnEntry && seededSuccessExits.has(machineState)) return "checks";
   if (machineState in topLevel) return topLevel[machineState as keyof typeof topLevel];
   return null;
@@ -47,10 +38,9 @@ export function checksScreenForPhase(
   checksPaused: boolean,
   onboardedOnEntry: boolean,
 ): ChecksScreenState | null {
+  if (phase === "connecting" || phase === "failed") return null;
   if (phase === "checks") {
     return toChecksScreenState(machineState, checksPaused, onboardedOnEntry) ?? "synchronizing";
   }
-  if (phase !== null && synchronizingPhases.has(phase)) return "synchronizing";
-  if (phase === null && machineState !== null) return "synchronizing";
-  return null;
+  return "synchronizing";
 }
