@@ -3,7 +3,8 @@
 The check lives in [`tools/nx-plugins/enforce-tool-config`](../../../../tools/nx-plugins/enforce-tool-config),
 one module per rule under `rules/`. Each violation prints as `[rule] file: message`. Find the start of
 the message in the section of its rule; the linked rule file holds the exact wording and the logic.
-The fix is always to move the setting into its preset, never to keep it in the package.
+For a tool rule, the fix is always to move the setting into its preset, never to keep it in the
+package.
 
 ## `[fmt]`
 
@@ -71,6 +72,32 @@ The list only shrinks.
 | `compilerOptions.<key> may only relax the preset` | Delete the option, or set it to the relaxed value the message prints if the list names it. |
 | `tools/nx-plugins/enforce-tool-config/rules/tsconfig-debt.mjs lists compilerOptions.<key>` | Delete the entry: the package is clean. |
 | `lists <file>, which does not exist` | Delete the entry. |
+
+## `[hygiene]`
+
+Messages from [`rules/hygiene.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs),
+on the packages of `shared/`, `domain/` and `features/`. Each message names the check, what the
+package does instead and the fix; the fix it prints is the one to apply.
+
+| Message starts with | Fix |
+| --- | --- |
+| `a package has a package.json that parses as JSON` | Fix the JSON syntax, or restore the file. |
+| `a package has a README.md` | Write one: what the package is, in a line or two, and its [status marker](../../../../docs/new-library.md#readme-status-marker). |
+| `the README carries a status marker` | Add the callout with a `> **Status: STABLE**`, `UNSTABLE` or `DEPRECATED` line. |
+| `"sideEffects" is false` | Set it to `false`, and turn code that runs on import into a function its consumers call. |
+| `a "lint" script runs oxlint` | Make it `"lint": "oxlint src"`. |
+| `a "format:check" script runs oxfmt --check` | Make it `"format:check": "oxfmt src --check"`, next to `"format": "oxfmt src"`. |
+| `each tool a script runs is in devDependencies as "catalog:"` | Add the package the message names (`@typescript/native` for `tsc`) as `"catalog:"`, or change its version to `"catalog:"`. |
+
+### The `hygiene-debt` list
+
+[`rules/hygiene-debt.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene-debt.mjs)
+silences named checks for one package, each entry with its reason and exit condition. The list
+only shrinks.
+
+| Message starts with | Fix |
+| --- | --- |
+| `lists "<check>" for <package>, which the package now passes` | Delete the check from the entry, and the entry once it is empty. |
 
 ## Exclusions
 

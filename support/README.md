@@ -1,62 +1,66 @@
 # support/
 
 > [!CAUTION]
-> **Status: UNSTABLE** — The layer was just introduced; only the jest preset below exists so far.
+> **Status: UNSTABLE**. Each tool has its preset package; the presets still change.
 
 Development-only tooling: shared test, TypeScript, lint and format configuration. Packages here
 never ship runtime code, and consumers depend on them through `devDependencies` only. They carry no
 domain or feature knowledge: a support package depends only on `support/` and `shared/` packages,
 which `pnpm lint:boundaries` enforces. Mocks and fixtures of a domain live in that domain package.
 
-## Why a package per preset, and not a file at the workspace root
+## Why a package per tool, and not a file at the workspace root
 
-Configuration in this monorepo is not just `tsconfig.json`. Packages also carry `.oxlintrc.json`,
-`oxfmt` settings, and a jest setup that includes setup files, environment mocks and transform rules.
-A jest preset is therefore not a single JSON file — it is code — and some packages need several jest
-projects in one run. That is not expressible as a root-level file.
-
-Making each preset a package also makes it a node in the Nx graph, so `nx affected` resolves the real
-blast radius when a preset changes, and `extends` / `require` names the preset explicitly instead of
-relying on convention.
+Configuration in this monorepo is not just `tsconfig.json`. A jest preset holds setup files,
+environment mocks and transform rules: it is code, and some packages need several jest projects in
+one run. A package per tool makes each preset a node in the Nx graph, so `nx affected` resolves the
+real blast radius when a preset changes, and `extends` / `require` names the preset explicitly.
 
 See [ADR: Shared Tooling Configuration via `support/` Packages](https://ledgerhq.atlassian.net/wiki/spaces/WXP/pages/7353892916/2026-07-23+ADR+Shared+Tooling+Configuration+via+support+Packages).
 
-## Naming
-
-`support/<name>` → `@support/<name>`, following `{tool}-{preset}`.
-
-Two kinds of preset:
-
-- **Runtime presets** are defined by the execution environment a package targets: `base` (universal),
-  `web` (browser, and the Electron renderer), `react-native`, `node`.
-- **Product presets** are defined by what a group of packages *does* rather than what it targets,
-  e.g. `coin`, `domain`, `features-flow`, `devtools`. A product preset must build on a runtime
-  preset, must not redefine baseline options, and must document which packages it applies to.
-
 ## Packages
 
-| Package | Applies to |
-| --- | --- |
-| [`fmt`](./fmt) | every package: the repository's only oxfmt config, re-exported by the root `oxfmt.config.mts`. Packages carry none and pass no `-c` |
-| [`jest`](./jest) | jest presets per layer (`devtools`, `features-flow`, `shared`) with their setup files, mocks and fixtures |
-| [`knip`](./knip) | the repository's knip configs: shared settings, the `ignoreWorkspaces` list and the three monorepo runs, re-exported at the root as `knip.config.js` and `knip.config.base.mjs` |
-| [`lint`](./lint) | oxlint presets, one per layer that differs, and the monorepo-wide custom rules |
-| [`tsconfig`](./tsconfig) | every package: TypeScript presets, one per project archetype |
+One package per tool. Each README holds the presets, their options and the details.
+
+| Package | A consumer gets it through | It may add |
+| --- | --- | --- |
+| [`@support/tsconfig`](./tsconfig) | `extends` of a preset, one per project archetype, in each `tsconfig*.json` | `types`, `paths`, `references`, `include` / `exclude` / `files` |
+| [`@support/jest`](./jest) | a one-line `jest.config.js` calling its layer's factory, and `"@support/jest": "workspace:*"` in `devDependencies` | the factory's overrides argument |
+| [`@support/lint`](./lint) | nothing: the layer root's one-line `oxlint.config.mts` re-exports the layer's preset | a rule flag on its `lint` script, from the allowlist |
+| `@support/fmt` | nothing: the workspace-root `oxfmt.config.mts` re-exports [the one config](./fmt/oxfmt.config.mts) | nothing |
+
+`oxlint` and `oxfmt` find their config by walking up from the file they process, so a package runs
+plain `oxlint src` and `oxfmt src`, with no config file and no `-c`. `@support/tsconfig`,
+`@support/lint` and `@support/fmt` resolve from the workspace root; only `@support/jest` is
+declared, because its presets carry code and peer dependencies.
+
+Two more packages live here. `@support/knip` holds the repository's knip configs, which the root
+`knip.config.js` and `knip.config.base.mjs` re-export. [`@ledgerhq/test-quarantine`](./test-quarantine)
+reports flaky jest and Playwright tests.
 
 ## Conformance
 
-`pnpm lint:tool-config` checks that each package carries only what its tool cannot inherit from its
-preset, one rule per tool ([the plugin](../tools/nx-plugins/enforce-tool-config/)). Packages not on a
-preset yet are listed in its `exclusions.mjs`.
+`pnpm lint:tool-config`, part of `pnpm lint:arch`, checks that each package carries only what its
+tool cannot inherit from its preset, one rule per tool, plus a `hygiene` rule on the packages of
+`shared/`, `domain/` and `features/` ([the plugin](../tools/nx-plugins/enforce-tool-config/)).
+Its messages and their fixes are in the
+[`support-config` skill](../.agents/skills/support-config/references/tool-config-rules.md).
+Packages not on a preset yet are listed in the plugin's `exclusions.mjs`.
 
 ## Adding a package
 
-Follow [docs/new-library.md](../docs/new-library.md), then:
+A package of `shared/`, `domain/` or `features/` starts from the generator, which writes the
+configs these presets expect:
+
+```sh
+pnpm nx g @ledgerhq/generators:package <name> --layer <layer> --platform <platform>
+```
+
+A new package in `support/` follows [docs/new-library.md](../docs/new-library.md), then:
 
 - Add a row to the table above.
 - Add a `CODEOWNERS` entry.
 - If the entry points sit outside `src/`, add a `workspaces` entry to `support/knip/knip.json`.
 
-An override that shows up in more than one consumer belongs in a preset instead. Keeping the override
-in the consumer is fine when it is genuinely package-specific — but it is visible in the diff, so it
-is reviewable.
+An override that shows up in more than one consumer belongs in a preset instead. Keeping it in the
+consumer is fine when it is genuinely package-specific: it is visible in the diff, so it is
+reviewable.
