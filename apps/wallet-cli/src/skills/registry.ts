@@ -306,7 +306,7 @@ export function resolveInstallRoot({ agent, global, dir }: ResolveInstallRootOpt
 }
 
 // ---------------------------------------------------------------------------
-// Drift diagnosis (used by `skill doctor`)
+// Drift diagnosis (used by `skill doctor` and `skill install`)
 // ---------------------------------------------------------------------------
 
 export type DiagnosisStatus = "up-to-date" | "outdated" | "modified-locally" | "missing";
