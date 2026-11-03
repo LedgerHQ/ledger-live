@@ -155,6 +155,7 @@ export function MockServerSettingsFormView({
               <Switch
                 checked={isFloatingButtonHidden}
                 onCheckedChange={onSetFloatingButtonHidden}
+                accessibilityLabel="Hide floating button until restart"
               />
             </Box>
           </>

@@ -45,7 +45,12 @@ export function MockServerBarButtons({
 
   return (
     <View style={styles.row}>
-      <Pressable onPress={onPressMain} testID="mock-server-floating-button">
+      <Pressable
+        onPress={onPressMain}
+        testID="mock-server-floating-button"
+        accessibilityRole="button"
+        accessibilityLabel="Open the mock server panel"
+      >
         <Box
           style={styles.button}
           lx={{ backgroundColor: MAIN_BUTTON_BACKGROUNDS[status], borderRadius: "md" }}
