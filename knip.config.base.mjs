@@ -1,7 +1,11 @@
+import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const require = createRequire(import.meta.url);
 const rootConfig = require("./knip.json");
+const repoRoot = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Creates a Knip configuration for one platform of a dual-platform package.
@@ -63,5 +67,32 @@ export function createDualPlatformKnipConfig({
     workspaces: {
       [packagePath]: workspace,
     },
+  };
+}
+
+/**
+ * Creates the Knip configuration that checks one platform of every dual-platform package in a
+ * single run from the repo root. It merges the per-package `knip.<platform>.config.mjs` files,
+ * which all come from `createDualPlatformKnipConfig` and differ only in `workspaces`.
+ *
+ * @param {"native" | "web"} platform
+ */
+export async function createMonorepoPlatformKnipConfig(platform) {
+  const configPaths = execFileSync("git", ["ls-files", `*/knip.${platform}.config.mjs`], {
+    cwd: repoRoot,
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n");
+  const configs = await Promise.all(
+    configPaths.map(
+      async path => (await import(pathToFileURL(resolve(repoRoot, path)).href)).default,
+    ),
+  );
+  const workspaces = Object.assign({}, ...configs.map(config => config.workspaces));
+  return {
+    ...configs[0],
+    ignoreWorkspaces: ["**", ...Object.keys(workspaces).map(path => `!${path}`)],
+    workspaces,
   };
 }

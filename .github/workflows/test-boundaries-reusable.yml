@@ -92,12 +92,24 @@ jobs:
 
       - name: Install all workspace dependencies for knip
         id: install-all
-        # Older branches (e.g. release) call this workflow from develop without the grouped knip script.
-        if: ${{ !cancelled() && hashFiles('tools/knip/run-grouped.mjs') != '' }}
+        # Older branches (e.g. release) call this workflow from develop without the monorepo knip configs.
+        if: ${{ !cancelled() && hashFiles('knip.web.config.mjs') != '' }}
         run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Check for dead code and unused dependencies
+      - name: Knip (packages allow-listed in knip.json)
         if: ${{ !cancelled() && steps.install-all.outcome == 'success' }}
-        run: pnpm run knip:grouped
+        run: pnpm exec knip
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+
+      - name: Knip (dual-platform packages, web)
+        if: ${{ !cancelled() && steps.install-all.outcome == 'success' }}
+        run: pnpm exec knip -c knip.web.config.mjs --tsConfig tsconfig.web.json
+        env:
+          NODE_OPTIONS: "--max-old-space-size=6144"
+
+      - name: Knip (dual-platform packages, native)
+        if: ${{ !cancelled() && steps.install-all.outcome == 'success' }}
+        run: pnpm exec knip -c knip.native.config.mjs --tsConfig tsconfig.native.json
         env:
           NODE_OPTIONS: "--max-old-space-size=6144"
