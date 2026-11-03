@@ -5,7 +5,11 @@ import type {
   BlockTransaction,
 } from "@ledgerhq/coin-module-framework/api/types";
 import { promiseAllBatched } from "@ledgerhq/coin-module-framework/promises";
-import { FINALITY_MS, HEDERA_TRANSACTION_NAMES } from "../constants";
+import {
+  FINALITY_MS,
+  HEDERA_TRANSACTION_NAMES,
+  MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE,
+} from "../constants";
 import { apiClient } from "../network/api";
 import { hgraphClient } from "../network/hgraph";
 import { enrichERC20Transfers, analyzeStakingOperation } from "../network/utils";
@@ -259,6 +263,15 @@ export async function getBlockV2({
     };
 
     let operations: BlockOperation[];
+    // Ledger operation type `listOperations` gives a transaction whose operations are plain transfers
+    // here (CONTRACT_CALL, non-staking UPDATE_ACCOUNT). Same mapping and same scope as `listOperations`:
+    // HBAR-only mirror transactions, as token transfers (HTS, ERC20) are typed from their transfers there.
+    // Absent for plain transfers and for transactions that already produce an "other" operation.
+    const mappedLedgerOpType =
+      item.type === "mirror" && mirrorTx.token_transfers.length === 0
+        ? MAP_TX_NAME_TO_CUSTOM_OPERATION_TYPE[mirrorTx.name]
+        : undefined;
+    let ledgerOpType: string | undefined;
 
     // "other" operations carry the transaction's familyExtra plus their own keys, so they hold the
     // whole bag the matching `listOperations` operation has
@@ -300,6 +313,7 @@ export async function getBlockV2({
         ...(item.type === "erc20" ? item.data.transfers : []),
       ];
 
+      ledgerOpType = mappedLedgerOpType;
       operations = allTransfers.flatMap(transfer => {
         if ("token_evm_address" in transfer) {
           return createBlockOperationFromERC20TokenTransfer({ transfer });
@@ -328,6 +342,7 @@ export async function getBlockV2({
       feesPayer: payerAccount,
       details: {
         ...(memo && { memo }),
+        ...(ledgerOpType && { ledgerOpType }),
         familyExtra,
       },
     };

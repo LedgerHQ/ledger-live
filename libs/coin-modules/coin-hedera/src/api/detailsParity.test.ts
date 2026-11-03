@@ -59,6 +59,8 @@ const TRANSACTION_ID = `${ACCOUNT.account}-1704067200-000000000`;
 
 // `listOperations` ledgerOpTypes that `getBlock` emits as an "other" operation
 const OTHER_OP_TYPES = new Set(["ASSOCIATE_TOKEN", "DELEGATE", "UNDELEGATE", "REDELEGATE"]);
+// `listOperations` ledgerOpTypes that `getBlock` puts in the transaction details
+const TX_OP_TYPES = new Set(["CONTRACT_CALL", "UPDATE_ACCOUNT"]);
 
 type Scenario = {
   name: string;
@@ -154,6 +156,29 @@ const scenarios: Scenario[] = [
     expectedTypes: ["OUT"],
   },
   {
+    name: "CONTRACT_CALL",
+    mirrorTx: baseTx({
+      name: HEDERA_TRANSACTION_NAMES.ContractCall,
+      transfers: [
+        { account: ACCOUNT.account, amount: -1000 - FEE },
+        { account: PEER, amount: 1000 },
+        { account: NODE, amount: FEE },
+      ],
+    }),
+    expectedTypes: ["CONTRACT_CALL"],
+  },
+  {
+    name: "UPDATE_ACCOUNT",
+    mirrorTx: baseTx({
+      name: HEDERA_TRANSACTION_NAMES.UpdateAccount,
+      transfers: [
+        { account: ACCOUNT.account, amount: -FEE },
+        { account: NODE, amount: FEE },
+      ],
+    }),
+    expectedTypes: ["UPDATE_ACCOUNT"],
+  },
+  {
     name: "ASSOCIATE_TOKEN",
     mirrorTx: baseTx({
       name: HEDERA_TRANSACTION_NAMES.TokenAssociate,
@@ -205,6 +230,7 @@ function historyView(op: Operation) {
     memo,
     familyExtra,
     ...(OTHER_OP_TYPES.has(String(ledgerOpType)) && { ledgerOpType, stakedAmount }),
+    ...(TX_OP_TYPES.has(String(ledgerOpType)) && { ledgerOpType }),
   };
 }
 
