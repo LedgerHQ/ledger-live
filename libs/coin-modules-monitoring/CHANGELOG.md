@@ -1,5 +1,12 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.27.1-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.0-next.1
+
 ## 2.27.1-next.0
 
 ### Patch Changes

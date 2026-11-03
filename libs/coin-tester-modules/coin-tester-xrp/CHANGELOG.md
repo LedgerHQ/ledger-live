@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-xrp
 
+## 0.7.5-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.0-next.1
+
 ## 0.7.5-next.0
 
 ### Patch Changes

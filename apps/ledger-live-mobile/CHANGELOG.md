@@ -1,5 +1,16 @@
 # live-mobile
 
+## 4.27.0-next.1
+
+### Minor Changes
+
+- [#24258](https://github.com/LedgerHQ/ledger-live/pull/24258) [`16ef2fa`](https://github.com/LedgerHQ/ledger-live/commit/16ef2fab932ca52098c9029467faf627076de0c8) Thanks [@henri-ly](https://github.com/henri-ly)! - fix(coin-solana): keep transactions within the 4 instructions the Nano S app parses, by leaving out the compute-unit limit when it and the price don't both fit (a stake creation with its delegation, a token transfer creating the recipient account with a memo), instead of requiring blind signing
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-send@0.1.6-next.1
+
 ## 4.27.0-next.0
 
 ### Minor Changes

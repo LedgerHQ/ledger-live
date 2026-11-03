@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-zcash
 
+## 0.3.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@38.6.0-next.1
+
 ## 0.3.2-next.0
 
 ### Patch Changes
