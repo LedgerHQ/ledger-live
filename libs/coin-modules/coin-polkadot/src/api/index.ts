@@ -19,6 +19,7 @@ import {
   defaultExtrinsicArg,
   estimateFees,
   getBalance,
+  getBlock,
   lastBlock,
   listOperations,
 } from "../logic";
@@ -30,9 +31,9 @@ import { validateAddress } from "../logic/validateAddress";
 // Checked against CoinModuleImpl with `satisfies` rather than annotated as it, so the precise shape
 // survives and a caller sees exactly which methods exist.
 //
-// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getBlock`, `getBlockInfo`,
-// `getStakes`, `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. The consumer
-// resolver applies `withDefaults`, which answers "not supported" for each.
+// Omitted rather than stubbed: `call`, `register`, `craftRawTransaction`, `getBlockInfo`, `getStakes`,
+// `getRewards`, `getValidators`, `validateIntent` and `getNextSequence`. The consumer resolver
+// applies `withDefaults`, which answers "not supported" for each.
 //
 // `combine` stays and keeps throwing: it is a required method, so it cannot be omitted — the device
 // signature is attached by the signer rather than here.
@@ -61,6 +62,10 @@ export function createApi(currencyId: string) {
     getBalance: async (context: PolkadotContext, address: string, options?: BalanceOptions) => {
       const config = await context.config();
       return rejectBalanceOptions(() => getBalance(config, address), options);
+    },
+    getBlock: async (context, height) => {
+      const config = await context.config();
+      return getBlock(config, height);
     },
     lastBlock: async context => {
       const config = await context.config();

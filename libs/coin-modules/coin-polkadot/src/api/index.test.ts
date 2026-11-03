@@ -18,6 +18,7 @@ const mockCraftTransaction = jest.fn();
 const mockEstimateFees = jest.fn();
 const mockCraftEstimationTransaction = jest.fn();
 const mockListOperations = jest.fn();
+const mockGetBlock = jest.fn();
 
 jest.mock("../logic", () => ({
   ...jest.requireActual("../logic"),
@@ -26,6 +27,7 @@ jest.mock("../logic", () => ({
   estimateFees: (...args: unknown[]) => mockEstimateFees(...args),
   craftEstimationTransaction: (...args: unknown[]) => mockCraftEstimationTransaction(...args),
   listOperations: (...args: unknown[]) => mockListOperations(...args),
+  getBlock: (...args: unknown[]) => mockGetBlock(...args),
 }));
 
 function generateApi() {
@@ -39,7 +41,6 @@ describe("index", () => {
       unsupported: [
         "call",
         "craftRawTransaction",
-        "getBlock",
         "getBlockInfo",
         "getNextSequence",
         "getRewards",
@@ -64,6 +65,7 @@ describe("index", () => {
         craftTransaction: expect.any(Function),
         estimateFees: expect.any(Function),
         getBalance: expect.any(Function),
+        getBlock: expect.any(Function),
         listOperations: expect.any(Function),
         validateAddress: expect.any(Function),
         craftTransactionData: expect.any(Function),
@@ -215,6 +217,16 @@ describe("index", () => {
       );
 
       expect(mockListOperations.mock.lastCall[0]).toBe(logger);
+    });
+  });
+
+  describe("getBlock", () => {
+    it("returns the block of the logic layer for the given height", async () => {
+      const block = { info: { height: 42, hash: "0x42", time: new Date(0) }, transactions: [] };
+      mockGetBlock.mockResolvedValueOnce(block);
+
+      await expect(generateApi().getBlock(context, 42)).resolves.toBe(block);
+      expect(mockGetBlock).toHaveBeenCalledWith(polkadotMainnetConfigValue, 42);
     });
   });
 
