@@ -9,12 +9,12 @@ describe("downloadJson", () => {
   });
 
   it("clicks a download link for the contents, then releases the blob URL", async () => {
-    const click = jest
-      .spyOn(HTMLAnchorElement.prototype, "click")
-      .mockImplementation(function (this: HTMLAnchorElement) {
-        expect(this.href).toBe("blob:manifest");
-        expect(this.download).toBe("app-manifest.json");
-      });
+    const click = jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function (
+      this: HTMLAnchorElement,
+    ) {
+      expect(this.href).toBe("blob:manifest");
+      expect(this.download).toBe("app-manifest.json");
+    });
 
     downloadJson("app-manifest.json", '{"id":"app"}');
 
