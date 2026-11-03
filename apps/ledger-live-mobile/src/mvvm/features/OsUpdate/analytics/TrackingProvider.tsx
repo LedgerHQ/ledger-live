@@ -225,7 +225,8 @@ export function TrackingProvider({
       track("button_clicked", {
         button,
         page: currentPage?.page,
-        ...(currentPage?.page === OsUpdatePage.ERROR && button === OsUpdateButton.CANCEL
+        ...(currentPage?.page === OsUpdatePage.ERROR &&
+        (button === OsUpdateButton.CANCEL || button === OsUpdateButton.RETRY)
           ? {
               step: currentPage.step,
               failureType: currentPage.failureType,

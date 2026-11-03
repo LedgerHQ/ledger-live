@@ -252,7 +252,7 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
       on: {
         [RestoreBackupStateMachineEventType.RETRY]: {
           target: "RestoreBackup",
-          actions: { type: "logEvent", params: "retry" },
+          actions: [{ type: "logEvent", params: "retry" }, assign({ lastProgress: 0 })],
         },
         [RestoreBackupStateMachineEventType.CANCEL]: "Canceled",
       },
@@ -286,6 +286,7 @@ export const restoreBackupStateMachine: RestoreBackupStateMachine = setup({
             actions: assign({
               connectedDevice: ({ context, event }) =>
                 isRecovered(event.output) ? event.output.connectedDevice : context.connectedDevice,
+              lastProgress: 0,
             }),
             target: "RestoreBackup",
           },

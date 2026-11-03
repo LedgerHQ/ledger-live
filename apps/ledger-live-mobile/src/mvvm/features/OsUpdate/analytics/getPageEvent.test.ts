@@ -127,6 +127,7 @@ describe("getPageEvent", () => {
         state: {
           type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED,
           error: undefined,
+          retry: jest.fn(),
           cancel,
         },
       },

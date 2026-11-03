@@ -262,7 +262,7 @@ describe("RestoreBackupStateMachine", () => {
       });
     });
 
-    it("should keep the bar from moving backwards when a recovered failure restarts the restore", async () => {
+    it("should take the bar back when a recovered failure restarts the restore", async () => {
       await start();
       await emitPending({
         requiredUserInteraction: UserInteractionRequired.None,
@@ -281,11 +281,10 @@ describe("RestoreBackupStateMachine", () => {
       const progresses = sentStatesOfType(RestoreBackupStateType.RESTORING).map(
         state => state.progress,
       );
-      const heldAt = progresses.findIndex(progress => progress > 0);
-      expect(progresses.slice(heldAt)).toEqual([expect.closeTo(0.275), expect.closeTo(0.275)]);
+      expect(progresses.slice(-2)).toEqual([expect.closeTo(0.275), 0]);
     });
 
-    it("should advance the bar once the restarted restore passes where it was", async () => {
+    it("should follow the restarted restore from its start", async () => {
       await start();
       await emitPending({
         requiredUserInteraction: UserInteractionRequired.None,
@@ -479,6 +478,33 @@ describe("RestoreBackupStateMachine", () => {
       await settle();
 
       expect(actor.getSnapshot().value).toBe("RestoreBackup");
+    });
+
+    it("should take the bar back when the restore is retried after a refused secure connection", async () => {
+      await start();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+        progress: 0.5,
+      });
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.AllowSecureConnection,
+        step: RestoreBackupStepValue.InstallOrUpdateApps,
+      });
+      await failDeviceAction(new RefusedByUserDAError());
+
+      sentStatesOfType(RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED)[0].retry();
+      await settle();
+      await emitPending({
+        requiredUserInteraction: UserInteractionRequired.None,
+        step: RestoreBackupStepValue.InstallLanguagePackage,
+        progress: 0,
+      });
+
+      const progresses = sentStatesOfType(RestoreBackupStateType.RESTORING).map(
+        state => state.progress,
+      );
+      expect(progresses.slice(-2)).toEqual([expect.closeTo(0.275), 0]);
     });
 
     it("should ask the host to stop when cancel is called after a refused secure connection", async () => {

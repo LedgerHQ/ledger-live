@@ -6007,8 +6007,10 @@
       "description": "You refused the secure connection on your device. Retry to continue."
     },
     "installFirmwareRefused": {
-      "title": "Installation refused",
-      "description": "The installation was refused on your device, so the update cannot continue."
+      "title": "OS update installation cancelled on {{productName}}",
+      "description": "If this was a mistake, restart the update.",
+      "restart": "Restart OS update",
+      "cancel": "Cancel OS update"
     },
     "outOfMemory": {
       "title": "Not enough space on your device",

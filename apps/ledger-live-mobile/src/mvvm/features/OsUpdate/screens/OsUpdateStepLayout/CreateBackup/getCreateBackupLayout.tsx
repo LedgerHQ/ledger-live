@@ -37,6 +37,7 @@ function getSheet({
         state.createNewBackup();
       };
       return {
+        hideHeader: true,
         content: <BackupSelectionContent onUseExisting={onUseExisting} onCreateNew={onCreateNew} />,
       };
     }
@@ -58,6 +59,7 @@ function getSheet({
         state.cancel();
       };
       return {
+        hideHeader: true,
         content: <SecureConnectionRefusedContent onRetry={onRetry} onCancel={onCancel} />,
       };
     }

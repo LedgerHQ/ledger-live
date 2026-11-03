@@ -33,6 +33,8 @@ jest.mock("@shared/ui-queued-bottom-sheet", () => {
 const isSheetRequested = () =>
   jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].isRequestingToBeOpened;
 
+const hasCloseButton = () => !jest.mocked(QueuedBottomSheet).mock.lastCall?.[0].noCloseButton;
+
 describe("ApplyUpdates step", () => {
   it("never shows the preparing screen, and does nothing while loading", () => {
     renderView({ type: ApplyUpdatesStateType.LOADING });
@@ -44,6 +46,8 @@ describe("ApplyUpdates step", () => {
 
   it("keeps the progress screen behind a sheet", () => {
     renderView({ type: ApplyUpdatesStateType.DEVICE_LOCKED });
+
+    expect(hasCloseButton()).toBe(true);
 
     expect(screen.queryByTestId("os-update-preparing-screen")).toBeNull();
     expect(screen.getByTestId("os-update-progress-screen")).toBeVisible();
@@ -120,6 +124,8 @@ describe("ApplyUpdates step", () => {
       cancel,
     });
 
+    expect(hasCloseButton()).toBe(false);
+
     await user.press(screen.getByText("Retry"));
     await user.press(screen.getByText("Cancel"));
 
@@ -127,8 +133,28 @@ describe("ApplyUpdates step", () => {
     expect(cancel).toHaveBeenCalledTimes(1);
   });
 
+  it("offers to restart or cancel the update when the install is refused", async () => {
+    const retry = jest.fn();
+    const cancel = jest.fn();
+    const { user } = renderView({
+      type: ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED,
+      error: new Error("refused"),
+      retry,
+      cancel,
+    });
+
+    expect(hasCloseButton()).toBe(false);
+
+    expect(screen.getByText("OS update installation cancelled on Ledger Stax")).toBeVisible();
+
+    await user.press(screen.getByText("Restart OS update"));
+    await user.press(screen.getByText("Cancel OS update"));
+
+    expect(retry).toHaveBeenCalledTimes(1);
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
   it.each([
-    [ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED, "os-update-install-firmware-refused"],
     [ApplyUpdatesStateType.OUT_OF_MEMORY, "os-update-out-of-memory"],
     [ApplyUpdatesStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"],
   ] as const)("only offers cancel for %s", async (type, testID) => {
