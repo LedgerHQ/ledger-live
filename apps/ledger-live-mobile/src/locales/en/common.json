@@ -10852,7 +10852,14 @@
     "depositDetailTitle": "Deposit details",
     "depositAmountLabel": "Deposit amount",
     "depositReceiveLabel": "Receiver account",
-    "depositCTA": "Deposit"
+    "depositCTA": "Deposit",
+    "withdrawTitle": "Withdraw via SwapKit",
+    "withdrawSubtitle": "Our partner SwapKit manages your swap and withdrawal in one transaction - all secured by your Ledger device.",
+    "withdrawDetailTitle": "Withdraw details",
+    "withdrawReceiveLabel": "Receiver account",
+    "networkFeesLabel": "Network fees",
+    "totalDebitedLabel": "Total debited",
+    "withdrawCTA": "Withdraw"
   },
   "perpsDepositSign": {
     "terms": "By signing this transaction, I accept <termsLink>SwapKit by NEAR Intents T&C</termsLink>"

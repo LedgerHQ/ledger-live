@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from "LLD/hooks/redux";
 import { useOpenAssetAndAccount } from "LLD/features/ModularDialog/Web3AppWebview/AssetAndAccountDrawer";
 import { applyRatio } from "LLD/features/Perps/utils/applyRatio";
+import { openPerpsWithdrawSummary } from "../PerpsWithdrawSummary/PerpsWithdrawSummaryDialog";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { setFlowValue } from "~/renderer/reducers/modularDialog";
 import {
@@ -22,7 +23,8 @@ import { accountNameWithDefaultSelector, walletSelector } from "~/renderer/reduc
 
 /** Snapshot of the form, used to restore it when coming back from the summary. */
 export type PerpsWithdrawDraft = Readonly<{
-  destinationAccountId: string;
+  /** Kept whole: a token account the user never held is not in the store to be found by id. */
+  picked: PickedWithdrawAccount | undefined;
   amountText: string;
 }>;
 
@@ -60,7 +62,10 @@ export type PerpsWithdrawViewModel = Readonly<{
   handleReview: () => void;
 }>;
 
-export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdrawViewModel {
+export function usePerpsWithdrawViewModel(
+  data: PerpsWithdrawData,
+  onClose: () => void,
+): PerpsWithdrawViewModel {
   const { draft } = data;
   const walletState = useSelector(walletSelector);
   const accounts = useSelector(flattenAccountsSelector);
@@ -75,10 +80,7 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
   const counterValueUnit = counterValueCurrency.units[0];
 
   const [amountText, setAmountText] = useState(draft?.amountText ?? EMPTY_AMOUNT_TEXT);
-  const [picked, setPicked] = useState<PickedWithdrawAccount | undefined>(() => {
-    const account = accounts.find(({ id }) => id === draft?.destinationAccountId);
-    return account ? { account } : undefined;
-  });
+  const [picked, setPicked] = useState<PickedWithdrawAccount | undefined>(draft?.picked);
 
   const amount = useMemo(() => {
     const parsed = Number(amountText.replace(/[^0-9.]/g, ""));
@@ -94,7 +96,7 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
     locale,
     discreet,
   });
-  const { destinationAccount, maxAmount } = form;
+  const { destinationAccount, maxAmount, usdcAmount, quote, quoteAccounts } = form;
   const destinationCurrency = destinationAccount
     ? getAccountCurrency(destinationAccount)
     : undefined;
@@ -124,8 +126,35 @@ export function usePerpsWithdrawViewModel(data: PerpsWithdrawData): PerpsWithdra
       .catch(() => undefined);
   }, [dispatch, openAssetAndAccountPromise]);
 
-  // TODO(LIVE-39368): open the withdraw summary with the quote and this draft.
-  const handleReview = useCallback(() => undefined, []);
+  const handleReview = useCallback(() => {
+    if (!form.canReview || !destinationAccount || !usdcAmount || !quote) return;
+
+    openPerpsWithdrawSummary({
+      sourceAccount,
+      destinationAccount,
+      quote,
+      quoteParams: {
+        amount: usdcAmount.toFixed(),
+        sourceAccount,
+        destinationAccount,
+        accounts: quoteAccounts,
+        counterValueCurrency: counterValueCurrency.ticker,
+      },
+      draft: { picked, amountText },
+    });
+    onClose();
+  }, [
+    amountText,
+    counterValueCurrency.ticker,
+    destinationAccount,
+    form.canReview,
+    onClose,
+    picked,
+    quote,
+    quoteAccounts,
+    sourceAccount,
+    usdcAmount,
+  ]);
 
   const sourceName = accountNameWithDefaultSelector(walletState, sourceAccount);
 
