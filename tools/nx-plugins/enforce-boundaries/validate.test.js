@@ -319,6 +319,93 @@ test("feature-platform -> legacy libs is forbidden", () => {
   assert.ok(v[0].sourceTags.includes("type:feature-platform"));
 });
 
+const ACCOUNT_DATA_SOURCE_TAGS = [
+  "scope:features",
+  "type:feature-platform",
+  "type:account-data-source",
+];
+
+test("feature-flow -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-flow"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
+  assert.equal(v[0].target, "b");
+});
+
+test("feature-platform -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:features", "type:feature-platform"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.deepEqual(v[0].sourceTags, ["scope:features"]);
+});
+
+test("domain-api -> account-data source is forbidden", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:domain", "type:domain-api"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  const v = findViolations(graph);
+  assert.equal(v.length, 1);
+  assert.ok(v[0].sourceTags.includes("scope:domain"));
+});
+
+test("devtools -> account-data source is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ["scope:devtools"] },
+      { name: "b", tags: ACCOUNT_DATA_SOURCE_TAGS },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("account-data source -> feature-platform is allowed", () => {
+  const graph = buildGraph(
+    [
+      { name: "a", tags: ACCOUNT_DATA_SOURCE_TAGS },
+      { name: "b", tags: ["scope:features", "type:feature-platform"] },
+    ],
+    [{ source: "a", target: "b" }],
+  );
+  assert.deepEqual(findViolations(graph), []);
+});
+
+test("findViolations: BOUNDARY_EXCEPTIONS skips a notDependOnLibsWithTags edge", () => {
+  const graph = {
+    nodes: {
+      a: { data: { root: "features/flow/a", tags: ["scope:features", "type:feature-flow"] } },
+      b: { data: { root: "features/platform/account-source-b", tags: ACCOUNT_DATA_SOURCE_TAGS } },
+    },
+    dependencies: { a: [{ target: "b" }], b: [] },
+  };
+  const exceptions = [
+    {
+      sourceRoot: "features/flow/a",
+      targetRoot: "features/platform/account-source-b",
+      allowedImport: "@features/platform-account-source-b",
+    },
+  ];
+  assert.deepEqual(findViolations(graph, exceptions), []);
+  assert.equal(findViolations(graph, []).length, 1);
+});
+
 test("missing tags default to empty array (no crash)", () => {
   const graph = {
     nodes: {
