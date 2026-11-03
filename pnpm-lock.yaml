@@ -245,6 +245,9 @@ catalogs:
     '@ledgerhq/device-mockserver-react':
       specifier: 0.1.1
       version: 0.1.1
+    '@ledgerhq/device-mockserver-react-native':
+      specifier: 0.1.0
+      version: 0.1.0
     '@ledgerhq/device-signer-kit-aleo':
       specifier: 0.4.0
       version: 0.4.0
@@ -9145,10 +9148,19 @@ importers:
       '@features/platform-device-mock-server':
         specifier: workspace:*
         version: link:../../platform/device-mock-server
+      '@ledgerhq/device-mockserver-react-native':
+        specifier: 'catalog:'
+        version: 0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
       '@shared/clipboard':
         specifier: workspace:*
         version: link:../../../shared/clipboard
     devDependencies:
+      '@ledgerhq/device-management-kit':
+        specifier: 'catalog:'
+        version: 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       '@ledgerhq/lumen-ui-rnative':
         specifier: 'catalog:'
         version: 0.1.72(e755af7aad84351b5896efdfe084257a)
@@ -9197,6 +9209,18 @@ importers:
       react-native:
         specifier: 'catalog:'
         version: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
+      react-native-safe-area-context:
+        specifier: 'catalog:'
+        version: 5.7.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-native-screens:
+        specifier: 'catalog:'
+        version: 4.24.0(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-native-webview:
+        specifier: 13.16.1
+        version: 13.16.1(patch_hash=a146323144a9d19c5db1e0869477abc1386e1e81527e954761d6602330c3478a)(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)
+      react-redux:
+        specifier: 'catalog:'
+        version: 9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1)
       react-test-renderer:
         specifier: 'catalog:'
         version: 19.1.4(react@19.1.4)
@@ -12887,18 +12911,27 @@ importers:
       '@swc/jest':
         specifier: 'catalog:'
         version: 0.2.39(@swc/core@1.15.11(@swc/helpers@0.5.23))
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4)
       '@types/jest':
         specifier: 'catalog:'
         version: 30.0.0
       '@types/node':
         specifier: 'catalog:'
         version: 24.12.0
+      '@types/react':
+        specifier: 19.0.14
+        version: 19.0.14
       '@typescript/native':
         specifier: 'catalog:'
         version: typescript@7.0.2
       jest:
         specifier: 'catalog:'
         version: 30.5.0(@types/node@24.12.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.23))(@types/node@24.12.0)(@typescript/typescript6@6.0.2))
+      jest-environment-jsdom:
+        specifier: 'catalog:'
+        version: 30.5.0(bufferutil@4.1.0)(utf-8-validate@6.0.6)
       msw:
         specifier: 'catalog:'
         version: 2.7.3(@types/node@24.12.0)(@typescript/typescript6@6.0.2)
@@ -12908,6 +12941,15 @@ importers:
       oxlint:
         specifier: 'catalog:'
         version: 1.90.0
+      react:
+        specifier: 19.1.4
+        version: 19.1.4
+      react-dom:
+        specifier: 19.1.4
+        version: 19.1.4(react@19.1.4)
+      rxjs:
+        specifier: 'catalog:'
+        version: 7.8.2
       typescript:
         specifier: 'catalog:'
         version: '@typescript/typescript6@6.0.2'
@@ -27555,6 +27597,19 @@ packages:
     resolution: {integrity: sha512-nJ2D6qhpQ7biblQtumBsns287j9f1lfpVg04fCOwzuMRpS4tavHJaZJ7PsGQfzkCKiRS51LhKKDy8LCX00mhGQ==}
     peerDependencies:
       '@ledgerhq/device-management-kit': ^1.11.0
+
+  '@ledgerhq/device-mockserver-react-core@0.1.0':
+    resolution: {integrity: sha512-B8rypiq7tj7e+APhzX21QOdx4YrnNRIjVwf6/j8sdlTIJE0DMPGgKUF86+Zm9fgwycZ6PCfWcGIvfb76K3mXiA==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.11.0
+      react: 19.1.4
+
+  '@ledgerhq/device-mockserver-react-native@0.1.0':
+    resolution: {integrity: sha512-O0OGfKt5DGFWWxolm+mJvKS1FcIXaC0w9gE2kMEd+VT/Ihs6HYrUkJZc5D6FLxxpwhHxPJi2gujfYQyqyAZNkg==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': ^1.11.0
+      react: 19.1.4
+      react-native: '>0.74.1'
 
   '@ledgerhq/device-mockserver-react@0.1.1':
     resolution: {integrity: sha512-1YIMhmw3TKzh4IZFWJeMsaFnKjymftSRUNpu6AAOZI4Ui4SaU9JsNBCJhYw2TsBXl9eJm/9kDeFVWzjoaspvXg==}
@@ -46472,6 +46527,20 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
       purify-ts: 2.1.0
+
+  '@ledgerhq/device-mockserver-react-core@0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(react@19.1.4)':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      '@ledgerhq/device-mockserver-client': 1.4.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+      react: 19.1.4
+
+  '@ledgerhq/device-mockserver-react-native@0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(react-native@0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6))(react@19.1.4)':
+    dependencies:
+      '@ledgerhq/device-management-kit': 1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6)
+      '@ledgerhq/device-mockserver-client': 1.4.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))
+      '@ledgerhq/device-mockserver-react-core': 0.1.0(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(react@19.1.4)
+      react: 19.1.4
+      react-native: 0.81.6(patch_hash=fbb22f6ab81c7336a446f504c4aef2f23fc558838854399c868c5590e29ac9f1)(@babel/core@7.28.5)(@react-native-community/cli@20.2.0(@typescript/typescript6@6.0.2)(bufferutil@4.1.0)(utf-8-validate@6.0.6))(@types/react@19.0.14)(bufferutil@4.1.0)(react@19.1.4)(utf-8-validate@6.0.6)
 
   '@ledgerhq/device-mockserver-react@0.1.1(@ledgerhq/device-management-kit@1.11.0(bufferutil@4.1.0)(rxjs@7.8.2)(utf-8-validate@6.0.6))(@ledgerhq/lumen-ui-react@0.1.69(@base-ui/react@1.8.0(@types/react@19.0.14)(date-fns@2.30.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@ledgerhq/lumen-design-core@0.1.34)(@radix-ui/react-dialog@1.1.15(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@radix-ui/react-slot@1.2.4(@types/react@19.0.14)(react@19.1.4))(@radix-ui/react-tooltip@1.2.8(@types/react-dom@19.0.0)(@types/react@19.0.14)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(@tanstack/react-table@8.21.3(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(class-variance-authority@0.7.1)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(react-dom@19.1.4(react@19.1.4))(react@19.1.4)':
     dependencies:

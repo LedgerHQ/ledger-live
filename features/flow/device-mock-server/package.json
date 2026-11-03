@@ -7,6 +7,7 @@
   "types": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./state": "./src/state/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -21,14 +22,22 @@
   },
   "dependencies": {
     "@features/platform-device-mock-server": "workspace:*",
+    "@ledgerhq/device-mockserver-react-native": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
     "@shared/clipboard": "workspace:*"
   },
   "peerDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "react": ">=19.0.0",
-    "react-native": ">=0.70.0"
+    "react-native": ">=0.70.0",
+    "react-native-safe-area-context": ">=5.0.0",
+    "react-native-screens": ">=4.0.0",
+    "react-native-webview": ">=13.0.0",
+    "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/lumen-ui-rnative": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",
     "@support/jest": "workspace:*",
@@ -45,6 +54,10 @@
     "oxlint": "catalog:",
     "react": "catalog:",
     "react-native": "catalog:",
+    "react-native-safe-area-context": "catalog:",
+    "react-native-screens": "catalog:",
+    "react-native-webview": "13.16.1",
+    "react-redux": "catalog:",
     "react-test-renderer": "catalog:",
     "typescript": "catalog:"
   }

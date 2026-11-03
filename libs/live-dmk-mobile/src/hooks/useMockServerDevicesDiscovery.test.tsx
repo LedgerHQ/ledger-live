@@ -1,17 +1,14 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
-  listMockServerDevices,
-  type MockServerDevice,
-} from "@features/platform-device-mock-server";
+import { useMockServerDevices, type MockServerDevice } from "@features/platform-device-mock-server";
 import { useMockServerDevicesDiscovery } from "./useMockServerDevicesDiscovery";
 
 jest.mock("@features/platform-device-mock-server", () => ({
   ...jest.requireActual("@features/platform-device-mock-server"),
-  listMockServerDevices: jest.fn(),
+  useMockServerDevices: jest.fn(),
 }));
 
-const listMockServerDevicesMock = jest.mocked(listMockServerDevices);
+const useMockServerDevicesMock = jest.mocked(useMockServerDevices);
 
 const staxOverBle: MockServerDevice = {
   id: "device-1",
@@ -28,21 +25,16 @@ const nanoXOverUsb: MockServerDevice = {
 
 describe("useMockServerDevicesDiscovery", () => {
   beforeEach(() => {
-    listMockServerDevicesMock.mockReset();
+    useMockServerDevicesMock.mockReset();
   });
 
-  it("should list every session device with its compat id and connectivity when given a connection", async () => {
-    listMockServerDevicesMock.mockResolvedValue([staxOverBle, nanoXOverUsb]);
+  it("should list every session device with its compat id and connectivity when given a connection", () => {
+    useMockServerDevicesMock.mockReturnValue([staxOverBle, nanoXOverUsb]);
+    const config = { url: "https://mock.example", token: "token-1" };
 
-    const { result } = renderHook(() =>
-      useMockServerDevicesDiscovery({ url: "https://mock.example", token: "token-1" }),
-    );
+    const { result } = renderHook(() => useMockServerDevicesDiscovery(config));
 
-    await waitFor(() => expect(result.current).toHaveLength(2));
-    expect(listMockServerDevicesMock).toHaveBeenCalledWith({
-      url: "https://mock.example",
-      token: "token-1",
-    });
+    expect(useMockServerDevicesMock).toHaveBeenCalledWith(config);
     expect(
       result.current.map(({ deviceId, wired, modelId }) => ({ deviceId, wired, modelId })),
     ).toEqual([
@@ -56,9 +48,11 @@ describe("useMockServerDevicesDiscovery", () => {
   });
 
   it("should list nothing without a connection", () => {
+    useMockServerDevicesMock.mockReturnValue([]);
+
     const { result } = renderHook(() => useMockServerDevicesDiscovery(null));
 
+    expect(useMockServerDevicesMock).toHaveBeenCalledWith(null);
     expect(result.current).toEqual([]);
-    expect(listMockServerDevicesMock).not.toHaveBeenCalled();
   });
 });
