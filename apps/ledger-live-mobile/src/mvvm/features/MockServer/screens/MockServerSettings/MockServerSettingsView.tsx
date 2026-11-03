@@ -24,7 +24,7 @@ export function MockServerSettingsView({
   onNewSession,
   onCopyToken,
   onOpenConfigurationUi,
-}: MockServerSettingsViewModel) {
+}: Readonly<MockServerSettingsViewModel>) {
   const isBusy = pendingAction !== null;
 
   return (

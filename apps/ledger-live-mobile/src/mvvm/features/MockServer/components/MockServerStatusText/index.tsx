@@ -16,7 +16,7 @@ const STATUS_COLORS: Record<MockServerStatus, "muted" | "success" | "error" | "w
   sessionExpired: "warning",
 };
 
-export function MockServerStatusText({ status }: { status: MockServerStatus }) {
+export function MockServerStatusText({ status }: Readonly<{ status: MockServerStatus }>) {
   return (
     <Text typography="body2" lx={{ color: STATUS_COLORS[status] }}>
       {STATUS_LABELS[status]}

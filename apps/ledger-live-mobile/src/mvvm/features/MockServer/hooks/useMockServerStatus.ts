@@ -20,7 +20,7 @@ export function useMockServerStatus(config: MockServerConfig | null): {
       setStatus(next.status);
       setSessionId(next.sessionId);
     };
-    poll();
+    void poll();
     const intervalId = setInterval(poll, STATUS_POLL_INTERVAL_MS);
     return () => {
       isActive = false;

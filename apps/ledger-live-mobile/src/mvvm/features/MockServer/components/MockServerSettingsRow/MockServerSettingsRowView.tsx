@@ -3,7 +3,10 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import type { MockServerSettingsRowViewModel } from "./useMockServerSettingsRowViewModel";
 
-export function MockServerSettingsRowView({ isEnabled, onPress }: MockServerSettingsRowViewModel) {
+export function MockServerSettingsRowView({
+  isEnabled,
+  onPress,
+}: Readonly<MockServerSettingsRowViewModel>) {
   return (
     <SettingsRow
       title="Mock server"
