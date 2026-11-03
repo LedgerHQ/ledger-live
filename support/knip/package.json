@@ -1,0 +1,12 @@
+{
+  "name": "@support/knip",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The repository's knip configs: the shared settings, the ignore list and the three monorepo runs",
+  "exports": {
+    ".": "./base.mjs",
+    "./knip.json": "./knip.json",
+    "./package.json": "./package.json"
+  }
+}

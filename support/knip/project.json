@@ -1,0 +1,8 @@
+{
+  "name": "@support/knip",
+  "targets": {
+    "build": {
+      "executor": "nx:noop"
+    }
+  }
+}

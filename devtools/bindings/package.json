@@ -11,14 +11,14 @@
   },
   "sideEffects": false,
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "format": "oxfmt src",
     "format:check": "oxfmt src --check",
     "test": "jest",
     "test:watch": "jest --watch",
     "coverage": "jest --coverage",
     "lint": "oxlint src",
-    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.json"
+    "unimported": "pnpm knip --directory ../.. -c devtools/bindings/knip.web.config.mjs -W devtools/bindings --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/bindings/knip.native.config.mjs -W devtools/bindings --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@devtools/env": "workspace:*",

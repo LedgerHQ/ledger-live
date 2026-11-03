@@ -1,5 +1,5 @@
 name: nx-codechecks
-description: Runs format:check, lint, typecheck and unimported for a set of Nx projects
+description: Runs format:check, lint and typecheck for a set of Nx projects
 
 inputs:
   projects:
@@ -37,14 +37,6 @@ runs:
     - name: Typecheck
       id: typecheck
       run: pnpm exec nx run-many -t typecheck --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false
-      shell: bash
-      env:
-        PROJECTS: ${{ inputs.projects }}
-        PARALLEL: ${{ inputs.parallel }}
-
-    - name: Test unimported files
-      id: unimported
-      run: pnpm exec nx run-many -t unimported --projects="$PROJECTS" --parallel="$PARALLEL" --nxBail=false
       shell: bash
       env:
         PROJECTS: ${{ inputs.projects }}
