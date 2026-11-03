@@ -27,6 +27,9 @@
     "class-variance-authority": "catalog:"
   },
   "devDependencies": {
+    "@ledgerhq/lumen-design-core": "catalog:",
+    "@ledgerhq/lumen-ui-react": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
     "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
@@ -36,14 +39,14 @@
     "@testing-library/user-event": "catalog:",
     "@types/jest": "catalog:",
     "@types/react": "catalog:",
+    "@typescript/native": "catalog:",
+    "class-variance-authority": "catalog:",
     "jest": "catalog:",
     "jest-environment-jsdom": "catalog:",
+    "oxfmt": "catalog:",
+    "oxlint": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "typescript": "catalog:",
-    "@ledgerhq/lumen-design-core": "catalog:",
-    "@ledgerhq/lumen-ui-react": "catalog:",
-    "@radix-ui/react-slot": "catalog:",
-    "class-variance-authority": "catalog:"
+    "typescript": "catalog:"
   }
 }

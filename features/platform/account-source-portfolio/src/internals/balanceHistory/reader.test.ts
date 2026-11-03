@@ -1,7 +1,6 @@
 import type { AccountTarget } from "@domain/api-account-data";
 import type { AccountBalanceHistoryQuery } from "@domain/entity-account-balance-history";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import {
   ETH,
   depsOf,
@@ -12,6 +11,7 @@ import {
   serviceAccount,
   synced,
   targetOf,
+  DOT,
 } from "../fakeService.mock";
 import { PortfolioReadError } from "../readiness";
 import { balanceHistoryReader } from "./reader";
@@ -54,7 +54,7 @@ describe("balanceHistoryReader", () => {
   });
 
   it("registers, waits, then fails the accounts the service never gets ready", async () => {
-    const utxo = mockUtxoAccountDescriptor();
+    const utxo = DOT;
     const { read, client } = setup(
       fakeService({ portfolio: synced([], { accounts: [serviceAccount(ETH, "uninitialized")] }) }),
     );
@@ -71,7 +71,7 @@ describe("balanceHistoryReader", () => {
     expect(settled.map(each => String(reasonOf(each)))).toEqual([
       expect.stringContaining("Service account uninitialized"),
       expect.stringContaining("Service account not created yet"),
-      expect.stringContaining("Not an EVM account"),
+      expect.stringContaining("Not an account the Portfolio service serves"),
     ]);
   });
 

@@ -1,6 +1,6 @@
 import type { UpdatesPage } from "@domain/api-account-portfolio";
 import type { AccountOperationsPage } from "@domain/entity-account-operation";
-import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { toAccountOperations, type MapOptions } from "./map";
 
 export type Verdict =
@@ -8,7 +8,7 @@ export type Verdict =
   | { status: "failed"; detail: string };
 
 export function verdictOf(
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   page: UpdatesPage,
   options?: MapOptions,
 ): Verdict {

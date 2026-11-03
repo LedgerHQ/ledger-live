@@ -1,3 +1,4 @@
+import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import { ETH, point } from "../fakeService.mock";
 import { toAssetHistories } from "./map";
 
@@ -6,9 +7,14 @@ const USDC = "ethereum/erc20/usd__coin";
 describe("toAssetHistories", () => {
   it("groups points per asset, native coin first, each oldest point first", () => {
     const mapped = toAssetHistories(ETH, [
-      point(ETH, { asset: "0xusdc", cal_id: USDC, time: "2026-10-02T00:00:00Z", value: "7" }),
-      point(ETH, { time: "2026-10-02T00:00:00Z", value: "12" }),
-      point(ETH, { time: "2026-10-01T00:00:00+02:00", value: "10" }),
+      point(ETH, {
+        asset: "0xusdc",
+        cal_id: USDC,
+        time: DateTimeIsoSchema.parse("2026-10-02T00:00:00Z"),
+        value: "7",
+      }),
+      point(ETH, { time: DateTimeIsoSchema.parse("2026-10-02T00:00:00Z"), value: "12" }),
+      point(ETH, { time: DateTimeIsoSchema.parse("2026-10-01T00:00:00+02:00"), value: "10" }),
     ]);
 
     expect(mapped).toEqual({
@@ -31,7 +37,7 @@ describe("toAssetHistories", () => {
     const mapped = toAssetHistories(ETH, [
       point(ETH, { asset: "0xunknown", cal_id: null }),
       point(ETH, { asset: "0xusdc", cal_id: USDC, value: "1.5" }),
-      point(ETH, { time: "not a date" }),
+      point(ETH, { value: "not a number" }),
     ]);
 
     expect(mapped).toEqual({ series: [], unmapped: 1, unreadable: 2 });

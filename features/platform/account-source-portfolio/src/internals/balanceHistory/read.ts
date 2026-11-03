@@ -1,9 +1,7 @@
 import type { BalanceHistoryGroup } from "@domain/api-account-portfolio";
 import type { BalanceHistoryRange } from "@domain/entity-account-balance-history";
-import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import type { PortfolioClient } from "../../client";
-import { serverAccountId } from "../../evm";
 
 const PAGE_SIZE = 100;
 const MAX_PAGES = 20;
@@ -19,10 +17,9 @@ export type HistoryRead = {
 export async function readHistory(
   client: PortfolioClient,
   portfolioId: () => PortfolioId,
-  descriptor: AddressAccountDescriptor,
+  account: string,
   range: BalanceHistoryRange,
 ): Promise<HistoryRead> {
-  const account = serverAccountId(descriptor);
   const readFrom = async (token: string | undefined, read: HistoryRead): Promise<HistoryRead> => {
     const page = await client.getBalanceHistory(portfolioId(), {
       account,

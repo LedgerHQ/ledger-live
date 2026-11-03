@@ -22,7 +22,9 @@ describe("verdictOf", () => {
   });
 
   it("fails a page with an unreadable update", () => {
-    expect(verdictOf(ETH, { items: [update(ETH, { time: "" })] })).toEqual({
+    expect(
+      verdictOf(ETH, { items: [update(ETH, { fee: { asset: "native", amount: "1.5" } })] }),
+    ).toEqual({
       status: "failed",
       detail: "1 unreadable updates",
     });

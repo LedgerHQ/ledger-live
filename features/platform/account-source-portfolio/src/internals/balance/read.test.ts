@@ -1,5 +1,4 @@
-import { serverAccountId } from "../../evm";
-import { PORTFOLIO_ID, entry, evm, fakeService, group } from "../fakeService.mock";
+import { PORTFOLIO_ID, entry, evm, fakeService, group, serverAccountId } from "../fakeService.mock";
 import { readBalanceGroups } from "./read";
 
 const accounts = (count: number) => Array.from({ length: count }, (_, index) => evm(index + 1));
@@ -44,6 +43,27 @@ describe("readBalanceGroups", () => {
     ]);
     expect([...read.groups.keys()]).toEqual(descriptors.map(serverAccountId));
     expect(read).toMatchObject({ truncated: false, calls: 2 });
+  });
+
+  it("falls back to one read per account when the scan fails, dropping its partial pages", async () => {
+    const descriptors = accounts(4);
+    const { client } = fakeService({ groups: descriptors.map(each => group(each)), pageSize: 2 });
+    const scan = client.getBalance.getMockImplementation();
+    client.getBalance.mockImplementation(async (id, params) => {
+      if (params.account === undefined && params.token !== undefined) throw new Error("504");
+      if (!scan) throw new Error("no fake");
+      return scan(id, params);
+    });
+
+    const read = await readBalanceGroups(client, PORTFOLIO_ID, descriptors.map(serverAccountId));
+
+    expect(client.getBalance.mock.calls.map(([, params]) => params.account)).toEqual([
+      undefined,
+      undefined,
+      ...descriptors.map(serverAccountId),
+    ]);
+    expect([...read.groups.keys()]).toEqual(descriptors.map(serverAccountId));
+    expect(read).toMatchObject({ truncated: false, calls: 6, failed: new Set() });
   });
 
   it("stops at 50 pages and says pages were left", async () => {

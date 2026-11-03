@@ -1,12 +1,9 @@
 import type { AccountTarget } from "@domain/api-account-data";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
-import {
-  CountervalueTickerSchema,
-  type AccountOperationsQuery,
-} from "@domain/entity-account-operation";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import type { AccountOperationsQuery } from "@domain/entity-account-operation";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
-import { mockUtxoAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import {
   ETH,
   depsOf,
@@ -17,6 +14,7 @@ import {
   synced,
   targetOf,
   update,
+  DOT,
 } from "../fakeService.mock";
 import { PortfolioReadError } from "../readiness";
 import { operationsReader } from "./reader";
@@ -85,7 +83,7 @@ describe("operationsReader", () => {
   });
 
   it("registers, waits, then fails the accounts the service never gets ready", async () => {
-    const utxo = mockUtxoAccountDescriptor();
+    const utxo = DOT;
     const { read, client } = setup(
       fakeService({ portfolio: synced([], { accounts: [serviceAccount(ETH, "uninitialized")] }) }),
     );
@@ -102,7 +100,7 @@ describe("operationsReader", () => {
     expect(settled.map(each => String(reasonOf(each)))).toEqual([
       expect.stringContaining("Service account uninitialized"),
       expect.stringContaining("Service account not created yet"),
-      expect.stringContaining("Not an EVM account"),
+      expect.stringContaining("Not an account the Portfolio service serves"),
     ]);
   });
 
@@ -139,7 +137,7 @@ describe("operationsReader", () => {
   describe("with a query", () => {
     it("asks the service for a token's updates and serves only its rows", async () => {
       const { settled, client } = await readWith({
-        filterAsset: BalanceAssetIdSchema.parse(USDT.id),
+        filterAsset: CryptoOrTokenCurrencyIdSchema.parse(USDT.id),
       });
 
       expect(client.getUpdates).toHaveBeenCalledWith(
@@ -155,7 +153,7 @@ describe("operationsReader", () => {
 
     it("filters the coin locally, keeping the fee of a token send", async () => {
       const { settled, client } = await readWith({
-        filterAsset: BalanceAssetIdSchema.parse("ethereum"),
+        filterAsset: CryptoOrTokenCurrencyIdSchema.parse("ethereum"),
       });
 
       expect(client.getUpdates.mock.calls[0]?.[1]).not.toHaveProperty("asset");
@@ -166,7 +164,7 @@ describe("operationsReader", () => {
 
     it("serves no row, without a call, for a token the account cannot hold", async () => {
       const { settled, client } = await readWith({
-        filterAsset: BalanceAssetIdSchema.parse("polygon/erc20/unknown"),
+        filterAsset: CryptoOrTokenCurrencyIdSchema.parse("polygon/erc20/unknown"),
       });
 
       expect(client.getUpdates).not.toHaveBeenCalled();
@@ -177,14 +175,17 @@ describe("operationsReader", () => {
       const svc = queryService();
       svc.client.findToken.mockRejectedValue(new Error("CAL down"));
 
-      const { settled } = await readWith({ filterAsset: BalanceAssetIdSchema.parse(USDT.id) }, svc);
+      const { settled } = await readWith(
+        { filterAsset: CryptoOrTokenCurrencyIdSchema.parse(USDT.id) },
+        svc,
+      );
 
       expect(reasonOf(settled)).toBeInstanceOf(PortfolioReadError);
     });
 
     it("values the rows in the fiat the service is asked for", async () => {
       const { settled, client } = await readWith({
-        countervalue: CountervalueTickerSchema.parse("EUR"),
+        countervalue: FiatCurrencyTickerSchema.parse("EUR"),
       });
 
       expect(client.getUpdates).toHaveBeenCalledWith(

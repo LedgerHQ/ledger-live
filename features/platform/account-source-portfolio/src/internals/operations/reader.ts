@@ -4,7 +4,6 @@ import type {
   AccountOperationsPage,
   AccountOperationsQuery,
 } from "@domain/entity-account-operation";
-import { isEvmAccount } from "../../evm";
 import { describeError, whenReady, type PortfolioDeps } from "../portfolio";
 import { failedRead, readinessOf } from "../readiness";
 import { logActivity } from "../snapshot";
@@ -18,9 +17,8 @@ async function readOne(
   query: AccountOperationsQuery | undefined,
 ): Promise<{ verdict: Verdict; called: boolean }> {
   const readiness = readinessOf(descriptor, portfolio);
-  if (readiness.state !== "ready" || !isEvmAccount(descriptor)) {
-    const detail = readiness.state === "ready" ? "Not an EVM account" : readiness.detail;
-    return { verdict: { status: "failed", detail }, called: false };
+  if (readiness.state !== "ready") {
+    return { verdict: { status: "failed", detail: readiness.detail }, called: false };
   }
   try {
     const filterAsset = query?.filterAsset;
@@ -30,7 +28,7 @@ async function readOne(
     }
     const fiat = fiatOf(query);
     const limit = limitOf(query);
-    const page = await readUpdates(client, portfolioId, descriptor, {
+    const page = await readUpdates(client, portfolioId, readiness.serverAccountId, {
       limit,
       cursor,
       asset: filter.asset,

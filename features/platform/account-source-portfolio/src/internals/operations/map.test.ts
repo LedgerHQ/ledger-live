@@ -1,9 +1,9 @@
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
-import { CountervalueTickerSchema } from "@domain/entity-account-operation";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { ETH, update } from "../fakeService.mock";
 import { toAccountOperations } from "./map";
 
-const fiat = { ticker: CountervalueTickerSchema.parse("USD"), currency: "USD", magnitude: 2 };
+const fiat = { ticker: FiatCurrencyTickerSchema.parse("USD"), currency: "USD", magnitude: 2 };
 
 const USDT = "ethereum/erc20/usdt";
 
@@ -97,14 +97,13 @@ describe("toAccountOperations", () => {
     ]);
   });
 
-  it("counts an update with an unreadable amount or date and leaves it out", () => {
+  it("counts an update with an unreadable amount and leaves it out", () => {
     expect(
       toAccountOperations(ETH, [
         update(ETH, { fee: { asset: "native", amount: "1.5" } }),
-        update(ETH, { time: "yesterday" }),
         update(ETH, { tx: { hash: "0x2" } }),
       ]),
-    ).toMatchObject({ rows: [{ hash: "0x2" }], unreadable: 2 });
+    ).toMatchObject({ rows: [{ hash: "0x2" }], unreadable: 1 });
   });
 
   it("values each row with its changes' worth in the fiat's smallest unit, half up", () => {
@@ -157,7 +156,7 @@ describe("toAccountOperations", () => {
     ];
     const rowsOf = (filterAsset: string) =>
       toAccountOperations(ETH, updates, {
-        filterAsset: BalanceAssetIdSchema.parse(filterAsset),
+        filterAsset: CryptoOrTokenCurrencyIdSchema.parse(filterAsset),
       }).rows.map(({ hash, type, assetId }) => [hash, type, assetId]);
 
     expect(rowsOf("ethereum")).toEqual([

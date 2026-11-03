@@ -1,13 +1,20 @@
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
-import { CountervalueTickerSchema } from "@domain/entity-account-operation";
+import { CryptoOrTokenCurrencyIdSchema } from "@domain/entity-currency";
+import { FiatCurrencyTickerSchema } from "@domain/entity-currency-fiat";
 import { mockTokenCurrency } from "@domain/entity-currency-token/schema.mock";
-import { serverAccountId } from "../../evm";
-import { ETH, PORTFOLIO_ID, POLYGON, fakeService, update } from "../fakeService.mock";
+import {
+  ETH,
+  PORTFOLIO_ID,
+  POLYGON,
+  TRX,
+  fakeService,
+  serverAccountId,
+  update,
+} from "../fakeService.mock";
 import { fiatOf, limitOf, readUpdates, serviceAssetOf } from "./read";
 
-const USD = CountervalueTickerSchema.parse("USD");
+const USD = FiatCurrencyTickerSchema.parse("USD");
 const USDT = mockTokenCurrency();
-const asset = (id: string) => BalanceAssetIdSchema.parse(id);
+const asset = (id: string) => CryptoOrTokenCurrencyIdSchema.parse(id);
 
 describe("limitOf", () => {
   it.each([
@@ -24,7 +31,7 @@ describe("limitOf", () => {
 describe("fiatOf", () => {
   it("reads a known fiat with its smallest unit's magnitude", () => {
     expect(fiatOf({ countervalue: USD })).toEqual({ ticker: "USD", currency: "USD", magnitude: 2 });
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("JPY") })).toEqual({
+    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("JPY") })).toEqual({
       ticker: "JPY",
       currency: "JPY",
       magnitude: 0,
@@ -32,14 +39,14 @@ describe("fiatOf", () => {
   });
 
   it("keeps a fiat ticker a crypto shares, as Mantle does the tögrög's MNT", () => {
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("MNT") })).toMatchObject({
+    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("MNT") })).toMatchObject({
       ticker: "MNT",
       currency: "MNT",
     });
   });
 
   it("names a crypto countervalue by its CAL id, as the service takes it", () => {
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("BTC") })).toEqual({
+    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("BTC") })).toEqual({
       ticker: "BTC",
       currency: "bitcoin",
       magnitude: 8,
@@ -48,7 +55,7 @@ describe("fiatOf", () => {
 
   it("reads no fiat when none or an unknown one is asked", () => {
     expect(fiatOf(undefined)).toBeUndefined();
-    expect(fiatOf({ countervalue: CountervalueTickerSchema.parse("XYZ") })).toBeUndefined();
+    expect(fiatOf({ countervalue: FiatCurrencyTickerSchema.parse("XYZ") })).toBeUndefined();
   });
 });
 
@@ -73,6 +80,14 @@ describe("serviceAssetOf", () => {
     );
     await expect(serviceAssetOf(client, POLYGON, asset(USDT.id))).resolves.toBe(undefined);
   });
+
+  it("keeps a token filter local outside EVM, where the service's asset cannot be spelled", async () => {
+    const { client: own } = fakeService({ tokens: [USDT] });
+    await expect(
+      serviceAssetOf(own, TRX, asset("tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t")),
+    ).resolves.toEqual({});
+    expect(own.findToken).not.toHaveBeenCalled();
+  });
 });
 
 describe("readUpdates", () => {
@@ -81,7 +96,10 @@ describe("readUpdates", () => {
       updates: [update(ETH, { tx: { hash: "0x1" } }), update(ETH, { tx: { hash: "0x2" } })],
     });
 
-    const page = await readUpdates(client, PORTFOLIO_ID, ETH, { limit: 1, cursor: "1" });
+    const page = await readUpdates(client, PORTFOLIO_ID, serverAccountId(ETH), {
+      limit: 1,
+      cursor: "1",
+    });
 
     expect(client.getUpdates.mock.calls.map(([, params]) => params)).toEqual([
       { account: serverAccountId(ETH), size: 1, token: "1" },
@@ -92,7 +110,7 @@ describe("readUpdates", () => {
   it("forwards the service asset and the fiat as currency", async () => {
     const { client } = fakeService();
 
-    await readUpdates(client, PORTFOLIO_ID, ETH, {
+    await readUpdates(client, PORTFOLIO_ID, serverAccountId(ETH), {
       limit: 5,
       asset: "erc20.0xabc",
       fiat: { ticker: USD, currency: "USD", magnitude: 2 },

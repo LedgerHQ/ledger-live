@@ -5,18 +5,21 @@ import type {
   BalanceHistoryPoint,
   Portfolio,
   PortfolioAccount,
+  PortfolioRegistration,
+  PortfolioRegistrationEntry,
   UpdateView,
 } from "@domain/api-account-portfolio";
 import type { AccountTarget } from "@domain/api-account-data";
+import { computeAccountUUID, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import {
-  computeAccountUUID,
-  type AddressAccountDescriptor,
-} from "@domain/entity-account-descriptor";
-import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
+  mockAddressAccountDescriptor,
+  mockUtxoAccountDescriptor,
+} from "@domain/entity-account-descriptor/schema.mock";
 import { PortfolioId } from "@domain/entity-client-identity";
+import { DateTimeIsoSchema } from "@shared/schema-primitives";
 import type { TokenCurrency } from "@domain/entity-currency-token";
 import type { PortfolioClient } from "../client";
-import { serverAccountId } from "../evm";
+import { portfolioAccountOf } from "../registration";
 import type { PortfolioDeps } from "./portfolio";
 import { createSerialQueue } from "./queue";
 import { createPortfolioStore } from "./snapshot";
@@ -26,21 +29,45 @@ const addressOf = (index: number) => `0x${index.toString(16).padStart(40, "0")}`
 export const evm = (index: number, network = "ethereum") =>
   mockAddressAccountDescriptor({ network, address: addressOf(index), path: "m/44h/60h/0h/0/0" });
 
+/** The service's id of an account the source serves. */
+export function serverAccountId(descriptor: AccountDescriptor): string {
+  const ref = portfolioAccountOf(descriptor);
+  if (!ref) throw new Error("Not an account the source serves");
+  return ref.serverAccountId;
+}
+
 export const ETH = evm(1);
 export const POLYGON = evm(1, "polygon");
+export const BTC = mockUtxoAccountDescriptor();
+export const ADA = mockUtxoAccountDescriptor({
+  network: "cardano",
+  xpub: "ab".repeat(64),
+  path: "m/1852h/1815h/0h",
+});
+export const TRX = mockAddressAccountDescriptor({
+  network: "tron",
+  address: `T${"A".repeat(33)}`,
+  path: "m/44h/195h/0h/0/0",
+});
+/** An account of a network the service does not synchronize. */
+export const DOT = mockAddressAccountDescriptor({
+  network: "polkadot",
+  address: `1${"A".repeat(46)}`,
+  path: "m/44h/354h/0h/0h/0h",
+});
 
-export const targetOf = (descriptor: AddressAccountDescriptor): AccountTarget => ({
+export const targetOf = (descriptor: AccountDescriptor): AccountTarget => ({
   accountUUID: computeAccountUUID(descriptor),
   descriptor,
 });
 
 export const serviceAccount = (
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   status: PortfolioAccount["status"] = "synchronized",
 ): PortfolioAccount => ({ id: serverAccountId(descriptor), network: descriptor.network, status });
 
 export const entry = (
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   overrides: Partial<BalanceEntry> = {},
 ): BalanceEntry => ({
   network: descriptor.network,
@@ -57,7 +84,7 @@ export const entry = (
 });
 
 export const group = (
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   items: BalanceEntry[] = [entry(descriptor)],
 ): BalanceGroup => ({
   type: "success",
@@ -67,19 +94,19 @@ export const group = (
 });
 
 export const point = (
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   overrides: Partial<BalanceHistoryPoint> = {},
 ): BalanceHistoryPoint => ({
   network: descriptor.network,
   account_id: serverAccountId(descriptor),
   asset: "native",
-  time: "2026-10-01T00:00:00Z",
+  time: DateTimeIsoSchema.parse("2026-10-01T00:00:00Z"),
   value: "10",
   ...overrides,
 });
 
 export const historyGroup = (
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   items: BalanceHistoryPoint[] = [point(descriptor)],
 ): BalanceHistoryGroup => ({
   type: "success",
@@ -89,12 +116,12 @@ export const historyGroup = (
 });
 
 export const update = (
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   overrides: Partial<UpdateView> = {},
 ): UpdateView => ({
   network: descriptor.network,
   account_id: serverAccountId(descriptor),
-  time: "2026-10-01T00:00:00Z",
+  time: DateTimeIsoSchema.parse("2026-10-01T00:00:00Z"),
   block: { hash: "0xb100", height: 100, time: "2026-10-01T00:00:00Z" },
   tx: { hash: "0xabc" },
   failed: false,
@@ -103,17 +130,41 @@ export const update = (
   ...overrides,
 });
 
+/** A registration as the service lists it: an `account` one without the id we gave it. */
+export function listed(
+  registration: PortfolioRegistration,
+  id: string,
+): PortfolioRegistrationEntry {
+  switch (registration.type) {
+    case "account":
+      return {
+        id,
+        type: registration.type,
+        network: registration.network,
+        addresses: registration.addresses,
+      };
+    case "auto_derive":
+      return {
+        id,
+        type: registration.type,
+        network: registration.network,
+        xpub: registration.xpub,
+      };
+    default:
+      return { id, type: registration.type, address: registration.address };
+  }
+}
+
 /** A portfolio registering and tracking every descriptor, synchronized. */
 export const synced = (
-  descriptors: AddressAccountDescriptor[],
+  descriptors: AccountDescriptor[],
   extra: Partial<Portfolio> = {},
 ): Portfolio => ({
   id: "p",
-  registrations: descriptors.map((descriptor, index) => ({
-    id: `known-${index}`,
-    type: "evm",
-    address: descriptor.address,
-  })),
+  registrations: descriptors.flatMap((descriptor, index) => {
+    const ref = portfolioAccountOf(descriptor);
+    return ref ? [listed(ref.registration, `known-${index}`)] : [];
+  }),
   accounts: descriptors.map(descriptor => serviceAccount(descriptor)),
   ...extra,
 });
@@ -149,11 +200,7 @@ export function fakeService({
         ...current(),
         registrations: [
           ...(current().registrations ?? []),
-          ...registrations.map(registration => ({
-            id: `reg-${nextId++}`,
-            type: registration.type,
-            address: "address" in registration ? registration.address : undefined,
-          })),
+          ...registrations.map(registration => listed(registration, `reg-${nextId++}`)),
         ],
       }),
     ),

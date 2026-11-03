@@ -20,6 +20,7 @@ export const PortfolioRegistrationEntrySchema = z.object({
   id: z.string(),
   type: z.string(),
   address: z.string().optional(),
+  addresses: z.array(z.string()).optional(),
   network: z.string().optional(),
   xpub: z.string().optional(),
 });

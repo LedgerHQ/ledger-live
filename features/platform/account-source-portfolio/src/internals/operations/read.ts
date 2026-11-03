@@ -1,11 +1,11 @@
 import type { UpdatesPage } from "@domain/api-account-portfolio";
-import type { BalanceAssetId } from "@domain/entity-account-balance";
-import type { AccountOperationsQuery, CountervalueTicker } from "@domain/entity-account-operation";
-import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
+import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
+import type { AccountOperationsQuery } from "@domain/entity-account-operation";
+import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
-import { findFiatCurrencyByTicker } from "@domain/entity-currency-fiat";
+import { findFiatCurrencyByTicker, type FiatCurrencyTicker } from "@domain/entity-currency-fiat";
 import type { PortfolioClient } from "../../client";
-import { serverAccountId } from "../../evm";
+import { isEvmAccount } from "../../evm";
 
 const DEFAULT_LIMIT = 20;
 
@@ -16,7 +16,7 @@ export function limitOf(query: AccountOperationsQuery | undefined): number {
 }
 
 /** The countervalue currency, how the service names it, and how many decimals its smallest unit has. */
-export type Fiat = { ticker: CountervalueTicker; currency: string; magnitude: number };
+export type Fiat = { ticker: FiatCurrencyTicker; currency: string; magnitude: number };
 
 /** The countervalues that are not ISO 4217 codes, by the CAL id the service takes for them. */
 const CRYPTO_COUNTERVALUES: Readonly<Record<string, string>> = { BTC: "bitcoin" };
@@ -42,12 +42,16 @@ export function fiatOf(query: AccountOperationsQuery | undefined): Fiat | undefi
  */
 export async function serviceAssetOf(
   client: PortfolioClient,
-  descriptor: AddressAccountDescriptor,
-  filterAsset: BalanceAssetId | undefined,
+  descriptor: AccountDescriptor,
+  filterAsset: CryptoOrTokenCurrencyId | undefined,
 ): Promise<{ asset?: string } | undefined> {
-  if (filterAsset === undefined || filterAsset === descriptor.network) return {};
+  if (filterAsset === undefined || filterAsset === currencyIdFromNetwork(descriptor.network))
+    return {};
+  // Outside EVM the service's token asset (`token.trc20.<base58>`) cannot be spelled: filtered locally.
+  if (!isEvmAccount(descriptor)) return {};
   const token = await client.findToken(filterAsset);
-  if (!token || token.parentCurrencyId !== descriptor.network) return undefined;
+  if (!token || token.parentCurrencyId !== currencyIdFromNetwork(descriptor.network))
+    return undefined;
   return { asset: `${token.tokenType}.${token.contractAddress.toLowerCase()}` };
 }
 
@@ -57,11 +61,11 @@ export type UpdatesRequest = { limit: number; cursor?: string; asset?: string; f
 export const readUpdates = (
   client: PortfolioClient,
   portfolioId: () => PortfolioId,
-  descriptor: AddressAccountDescriptor,
+  account: string,
   { limit, cursor, asset, fiat }: UpdatesRequest,
 ): Promise<UpdatesPage> =>
   client.getUpdates(portfolioId(), {
-    account: serverAccountId(descriptor),
+    account,
     size: limit,
     token: cursor,
     ...(asset === undefined ? {} : { asset }),

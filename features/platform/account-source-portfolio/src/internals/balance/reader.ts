@@ -1,6 +1,5 @@
 import type { AccountDataBatchReader, AccountTarget } from "@domain/api-account-data";
 import type { AccountAssetBalance } from "@domain/entity-account-balance";
-import { isEvmAccount, serverAccountId } from "../../evm";
 import { describeError, whenReady, type PortfolioDeps } from "../portfolio";
 import { failedRead, readinessOf } from "../readiness";
 import { logActivity, recordOutcomes } from "../snapshot";
@@ -20,10 +19,8 @@ async function readBalances(
       targets.map(target => target.descriptor),
     );
     const readiness = targets.map(({ descriptor }) => readinessOf(descriptor, portfolio));
-    const ids = targets.flatMap(({ descriptor }, index) =>
-      readiness[index].state === "ready" && isEvmAccount(descriptor)
-        ? [serverAccountId(descriptor)]
-        : [],
+    const ids = readiness.flatMap(state =>
+      state.state === "ready" ? [state.serverAccountId] : [],
     );
     const read =
       ids.length === 0
@@ -31,10 +28,9 @@ async function readBalances(
         : await store.track(() => readBalanceGroups(client, portfolioId, [...new Set(ids)]));
     const verdicts = targets.map(({ descriptor }, index): Verdict => {
       const state = readiness[index];
-      if (state.state !== "ready") return { status: "failed", detail: state.detail };
-      return isEvmAccount(descriptor)
-        ? verdictOf(descriptor, read)
-        : { status: "failed", detail: "Not an EVM account" };
+      return state.state === "ready"
+        ? verdictOf(descriptor, state.serverAccountId, read)
+        : { status: "failed", detail: state.detail };
     });
     const at = Date.now();
     recordOutcomes(

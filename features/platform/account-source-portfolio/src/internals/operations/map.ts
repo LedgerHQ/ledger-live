@@ -1,6 +1,6 @@
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import type { AssetChange, UpdateView } from "@domain/api-account-portfolio";
-import type { BalanceAssetId } from "@domain/entity-account-balance";
+import type { CryptoOrTokenCurrencyId } from "@domain/entity-currency";
 import {
   AccountOperationSchema,
   type AccountOperation,
@@ -21,7 +21,7 @@ export type MapOptions = {
   /** Values each row with the changes' `currency_value`, read in this fiat. */
   fiat?: Fiat;
   /** Keeps only the rows of this asset. */
-  filterAsset?: BalanceAssetId;
+  filterAsset?: CryptoOrTokenCurrencyId;
 };
 
 const SIGNED_INTEGER = /^-?\d+$/;

@@ -2,7 +2,7 @@ import type {
   AccountBalanceHistory,
   BalanceHistoryRange,
 } from "@domain/entity-account-balance-history";
-import type { AddressAccountDescriptor } from "@domain/entity-account-descriptor";
+import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import { toAssetHistories } from "./map";
 import type { HistoryRead } from "./read";
 
@@ -11,7 +11,7 @@ export type Verdict =
   | { status: "failed"; detail: string };
 
 export function verdictOf(
-  descriptor: AddressAccountDescriptor,
+  descriptor: AccountDescriptor,
   range: BalanceHistoryRange,
   { groups, truncated }: Pick<HistoryRead, "groups" | "truncated">,
 ): Verdict {

@@ -4,8 +4,12 @@ import {
   mockUtxoAccountDescriptor,
 } from "@domain/entity-account-descriptor/schema.mock";
 import {
+  ADA,
+  BTC,
+  DOT,
   ETH,
   PORTFOLIO_ID,
+  TRX,
   evm,
   fakeService,
   group,
@@ -25,17 +29,17 @@ function setup(service = fakeService()) {
 }
 
 describe("createPortfolioSource", () => {
-  it("supports EVM balances and operations only, from the descriptor alone", () => {
+  it("supports the families the service synchronizes, from the descriptor alone", () => {
     const { handle, client } = setup();
     const { supports } = handle.source;
-    expect(supports(ETH, "balance")).toBe(true);
-    expect(supports(ETH, "operations")).toBe(true);
-    expect(supports(ETH, "balanceHistory")).toBe(true);
-    expect(supports(mockUtxoAccountDescriptor(), "balanceHistory")).toBe(false);
-    expect(supports(mockUtxoAccountDescriptor(), "operations")).toBe(false);
-    expect(supports(evm(2, "ethereum_classic"), "balance")).toBe(true);
+    for (const descriptor of [ETH, evm(2, "ethereum_classic"), BTC, ADA, TRX]) {
+      expect(supports(descriptor, "balance")).toBe(true);
+      expect(supports(descriptor, "operations")).toBe(true);
+      expect(supports(descriptor, "balanceHistory")).toBe(true);
+    }
     expect(supports(evm(2, "hypercore"), "balance")).toBe(false);
-    expect(supports(mockUtxoAccountDescriptor(), "balance")).toBe(false);
+    expect(supports(mockUtxoAccountDescriptor({ path: "m/49h/0h/0h" }), "balance")).toBe(false);
+    expect(supports(DOT, "balance")).toBe(false);
     expect(
       supports(
         mockAddressAccountDescriptor({ network: "solana", address: "9x", path: "m/44h/501h/0h" }),
@@ -101,6 +105,45 @@ describe("createPortfolioSource", () => {
         },
       },
     ]);
+  });
+
+  it("registers each family with its own shape, then reads every kind of each", async () => {
+    const descriptors = [BTC, ADA, TRX];
+    const service = fakeService({
+      groups: descriptors.map(each => group(each)),
+      histories: descriptors.map(each => historyGroup(each)),
+      updates: descriptors.map(each => update(each)),
+    });
+    const { handle, client, state } = setup(service);
+    client.addRegistrations.mockImplementationOnce(async () => {
+      state.portfolio = synced(descriptors);
+      return state.portfolio;
+    });
+    const targets = descriptors.map(descriptor => ({
+      accountUUID: computeAccountUUID(descriptor),
+      descriptor,
+    }));
+
+    const balances = await handle.source.readBatch?.balance?.(targets, undefined);
+    const histories = await handle.source.readBatch?.balanceHistory?.(targets, { range: "week" });
+    const operations = await handle.source.readBatch?.operations?.(targets, { limit: 10 });
+
+    expect(client.addRegistrations.mock.calls[0]?.[1].map(each => each.type)).toEqual([
+      "auto_derive",
+      "auto_derive",
+      "account",
+    ]);
+    expect(balances?.map(each => each.status === "fulfilled" && each.value[0])).toEqual(
+      descriptors.map(({ network }) => ({
+        assetId: network,
+        balance: "10",
+        spendableBalance: "10",
+      })),
+    );
+    expect(histories?.every(each => each.status === "fulfilled")).toBe(true);
+    expect(
+      operations?.map(each => each.status === "fulfilled" && each.value.operations[0]?.id),
+    ).toEqual(descriptors.map(({ network }) => `${network}-0xabc-IN`));
   });
 
   it("keeps a stable snapshot between changes and notifies its listeners", async () => {

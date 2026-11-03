@@ -1,5 +1,5 @@
-import { serverAccountId } from "../../evm";
-import { ETH, historyGroup, point } from "../fakeService.mock";
+import { DateTimeIsoSchema } from "@shared/schema-primitives";
+import { ETH, historyGroup, point, serverAccountId } from "../fakeService.mock";
 import { verdictOf } from "./verdict";
 
 const read = (groups: Parameters<typeof verdictOf>[2]["groups"], truncated = false) => ({
@@ -13,7 +13,9 @@ describe("verdictOf", () => {
       ETH,
       "month",
       read([
-        historyGroup(ETH, [point(ETH, { time: "2026-10-02T00:00:00Z", value: "12" })]),
+        historyGroup(ETH, [
+          point(ETH, { time: DateTimeIsoSchema.parse("2026-10-02T00:00:00Z"), value: "12" }),
+        ]),
         historyGroup(ETH, [
           point(ETH),
           point(ETH, { asset: "0xunknown", cal_id: null, value: "3" }),

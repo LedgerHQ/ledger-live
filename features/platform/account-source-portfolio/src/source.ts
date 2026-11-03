@@ -3,7 +3,7 @@ import { AccountDataSourceIdSchema, type AccountDataKind } from "@domain/entity-
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
 import type { PortfolioId } from "@domain/entity-client-identity";
 import { portfolioClientOf, type PortfolioClient, type PortfolioDispatch } from "./client";
-import { isEvmAccount } from "./evm";
+import { isPortfolioAccount } from "./registration";
 import { balanceReader } from "./internals/balance/reader";
 import { balanceHistoryReader } from "./internals/balanceHistory/reader";
 import { operationsReader } from "./internals/operations/reader";
@@ -57,7 +57,7 @@ export function createPortfolioSource({
   return {
     source: {
       id: PORTFOLIO_SOURCE_ID,
-      supports: (descriptor, kind) => KINDS.has(kind) && isEvmAccount(descriptor),
+      supports: (descriptor, kind) => KINDS.has(kind) && isPortfolioAccount(descriptor),
       maxBatchSize: 100,
       concurrency: 1,
       readBatch: {

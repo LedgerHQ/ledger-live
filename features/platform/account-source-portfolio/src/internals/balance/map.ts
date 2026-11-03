@@ -3,7 +3,7 @@ import {
   AccountAssetBalanceSchema,
   type AccountAssetBalance,
 } from "@domain/entity-account-balance";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
 
 /** `unmapped`: tokens with no CAL id, left out. `unreadable`: assets whose amount could not be read. */
 export type MappedBalances = { rows: AccountAssetBalance[]; unmapped: number; unreadable: number };
@@ -46,7 +46,8 @@ export function toAccountBalances(
     unreadable += 1;
     return [];
   });
-  const isNative = (row: AccountAssetBalance) => row.assetId === descriptor.network;
+  const isNative = (row: AccountAssetBalance) =>
+    row.assetId === currencyIdFromNetwork(descriptor.network);
   rows.sort((a, b) => Number(isNative(b)) - Number(isNative(a)));
   return { rows, unmapped, unreadable };
 }

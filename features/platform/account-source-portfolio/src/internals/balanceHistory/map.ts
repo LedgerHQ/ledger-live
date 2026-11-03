@@ -3,7 +3,7 @@ import {
   AssetBalanceHistorySchema,
   type AssetBalanceHistory,
 } from "@domain/entity-account-balance-history";
-import type { AccountDescriptor } from "@domain/entity-account-descriptor";
+import { currencyIdFromNetwork, type AccountDescriptor } from "@domain/entity-account-descriptor";
 
 /** `unmapped`: token points with no CAL id, left out. `unreadable`: assets with a point that could not be read. */
 export type MappedHistory = { series: AssetBalanceHistory[]; unmapped: number; unreadable: number };
@@ -44,7 +44,8 @@ export function toAssetHistories(
     unreadable += 1;
     return [];
   });
-  const isNative = (each: AssetBalanceHistory) => each.assetId === descriptor.network;
+  const isNative = (each: AssetBalanceHistory) =>
+    each.assetId === currencyIdFromNetwork(descriptor.network);
   series.sort((a, b) => Number(isNative(b)) - Number(isNative(a)));
   return { series, unmapped, unreadable };
 }

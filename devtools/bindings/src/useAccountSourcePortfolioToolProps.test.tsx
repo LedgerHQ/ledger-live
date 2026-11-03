@@ -26,7 +26,8 @@ import { useAccountSourcePortfolioToolProps } from "./useAccountSourcePortfolioT
 const ADDRESS = "0xabababababababababababababababababababab";
 const ACCOUNT_ID = `ethereum:${ADDRESS}`;
 const ethereum = mockAddressAccountDescriptor({ address: ADDRESS, path: "m/44h/60h/0h/0/0" });
-const bitcoin = mockUtxoAccountDescriptor();
+/** Segwit (purpose 49): the service refuses to derive it. */
+const bitcoin = mockUtxoAccountDescriptor({ path: "m/49h/0h/0h" });
 
 type Listed = Awaited<ReturnType<PortfolioClient["createPortfolio"]>>;
 
