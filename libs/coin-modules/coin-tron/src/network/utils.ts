@@ -169,6 +169,18 @@ const decodeTrc20TokenEventLog = (
   return { contractAddress, from, to };
 };
 
+/**
+ * Decodes a TRC20 `Approval(address,address,uint256)` event log: the token contract, the owner
+ * (`from`) and the spender (`to`). A TRC721 `Approval` shares the signature but indexes the token
+ * id as a fourth topic and carries no data: it is not a TRC20 approval, so null is returned.
+ */
+export const decodeTrc20ApprovalLog = (log: TransactionLogAPI): Trc20TokenEventLog | null => {
+  if (log.topics?.length !== 3) return null;
+  const data = (log.data ?? "").replace(/^0x/, "");
+  if (data.length !== UINT256_HEX_LENGTH || !HEX_REGEX.test(data)) return null;
+  return decodeTrc20TokenEventLog(log, TRC20_APPROVAL_EVENT_TOPIC);
+};
+
 export type Trc20TransferLog = Trc20TokenEventLog & { amount: BigNumber };
 
 /**

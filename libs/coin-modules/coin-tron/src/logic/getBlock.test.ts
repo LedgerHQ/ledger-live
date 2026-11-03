@@ -606,6 +606,53 @@ describe("getBlock", () => {
         expect.objectContaining({ type: "other", operationType: "APPROVE" }),
       ]);
     });
+
+    // TRC721 `approve(address,uint256)` has the same selector as the TRC20 one: only the receipt
+    // tells them apart, since an NFT `Approval` indexes the token id as a fourth topic.
+    it("should not map an NFT approve() call to an APPROVE operation", async () => {
+      const approveData = "095ea7b3" + slot(routerHex.slice(2)) + slot("07");
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, approveData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([
+        {
+          id: "tx1",
+          fee: 0,
+          log: [
+            {
+              address: tokenAHex.slice(2),
+              topics: [
+                "8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+                addressTopic(callerHex),
+                addressTopic(routerHex),
+                slot("07"),
+              ],
+              data: "",
+            },
+          ],
+        },
+      ]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        { type: "other", operationType: "NONE", contractType: "TriggerSmartContract" },
+      ]);
+    });
+
+    it("should map an approve() call with no receipt from its call data", async () => {
+      const approveData = "095ea7b3" + slot(routerHex.slice(2)) + "f".repeat(64);
+      (getBlockWithTransactions as jest.Mock).mockResolvedValue(
+        triggerSmartContractBlock(tokenAHex, approveData),
+      );
+      mockGetTransactionInfoByBlockNum.mockResolvedValue([]);
+
+      const result = await getBlock(mockLogger, mockConfig, 100);
+
+      expect(result.transactions[0].operations).toEqual([
+        expect.objectContaining({ type: "other", operationType: "APPROVE" }),
+      ]);
+    });
   });
 
   it("should map non-transfer contracts to other operations", async () => {

@@ -3,6 +3,7 @@ import {
   abiDecodeTrc20Approve,
   abiDecodeTrc20Transfer,
   abiEncodeTrc20Transfer,
+  decodeTrc20ApprovalLog,
   decodeTrc20TransferLog,
   TRC20_APPROVAL_EVENT_TOPIC,
   TRC20_TRANSFER_EVENT_TOPIC,
@@ -202,6 +203,42 @@ describe("abiDecodeTrc20Approve", () => {
 
     expect(abiDecodeTrc20Approve(data)).toBeNull();
     expect(abiDecodeTrc20Approve("095ea7b3")).toBeNull();
+  });
+});
+
+describe("decodeTrc20ApprovalLog", () => {
+  const approvalLog = {
+    address: constructorMintLog.address,
+    topics: [
+      TRC20_APPROVAL_EVENT_TOPIC,
+      constructorMintLog.topics[2],
+      constructorMintLog.topics[1],
+    ],
+    data: "f".repeat(64),
+  };
+
+  it("decodes the token, the owner and the spender of a TRC20 Approval event", () => {
+    expect(decodeTrc20ApprovalLog(approvalLog)).toEqual({
+      contractAddress: trc20ContractHex,
+      from: minterHex,
+      to: zeroAddressHex,
+    });
+  });
+
+  // TRC721 `Approval(owner, approved, tokenId)` has the same signature, but indexes the token id
+  // as a fourth topic and carries no data.
+  it("returns null for a TRC721 Approval event", () => {
+    expect(
+      decodeTrc20ApprovalLog({
+        ...approvalLog,
+        topics: [...approvalLog.topics, "7".padStart(64, "0")],
+        data: "",
+      }),
+    ).toBeNull();
+  });
+
+  it("returns null for an event that is not an Approval", () => {
+    expect(decodeTrc20ApprovalLog(constructorMintLog)).toBeNull();
   });
 });
 
