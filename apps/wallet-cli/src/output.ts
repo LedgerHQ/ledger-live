@@ -1031,7 +1031,10 @@ class HumanCommandOutput implements CommandOutput {
         [
           utcMinute(i.createdAt),
           i.status,
-          i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          amountWithProvider(
+            i,
+            i.displayAmount ?? (i.amount === null ? i.type : `${i.amount} (base units)`),
+          ),
           i.recipient ?? "—",
           i.id,
         ].map(stripControlChars),
@@ -1116,6 +1119,10 @@ function utcMinute(timestamp: string): string {
   return new Date(timestamp).toISOString().replace("T", " ").slice(0, 16);
 }
 
+function amountWithProvider(i: IntentListEntry, amount: string): string {
+  return i.swap ? `${amount} via ${i.swap.provider}` : amount;
+}
+
 /** Without control characters: an agent's note could otherwise rewrite what the user confirms. */
 function intentDetailLines(
   profileId: string,
@@ -1124,15 +1131,19 @@ function intentDetailLines(
 ): string[] {
   const state = terminal === null ? `${i.status} (unknown to this wallet-cli version)` : i.status;
   const baseUnits = i.amount ? `${i.amount} (base units)` : undefined;
-  const amount = i.displayAmount ?? baseUnits;
+  const tokenAddress = i.asset?.assetReference;
+  const tokenAmount =
+    i.displayAmount && tokenAddress ? `${i.displayAmount} (${tokenAddress})` : null;
+  const amount = tokenAmount ?? i.displayAmount ?? baseUnits;
   return [
     `Intent:  ${i.id}`,
     `Status:  ${state}${terminal ? " (final)" : ""}`,
     `Profile: ${profileId}`,
-    ...(amount ? [`Amount:  ${amount}`] : []),
+    ...(amount ? [`Amount:  ${amountWithProvider(i, amount)}`] : []),
     ...(i.sender ? [`From:    ${i.sender}`] : []),
     ...(i.recipient ? [`To:      ${i.recipient}`] : []),
     ...(i.network ? [`Network: ${i.network}`] : []),
+    ...(i.memo ? [`Memo:    ${i.memo}`] : []),
     ...(i.description ? [`Note:    ${i.description}`] : []),
     ...(i.failureReason ? [`Failure: ${i.failureReason}`] : []),
     `Created: ${i.createdAt}`,
