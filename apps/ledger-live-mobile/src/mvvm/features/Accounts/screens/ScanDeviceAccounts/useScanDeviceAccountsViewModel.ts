@@ -401,7 +401,8 @@ export default function useScanDeviceAccountsViewModel({
   ]);
 
   useEffect(() => {
-    const hasScannedAccounts = scannedAccounts.length > 0 || !!latestScannedAccount;
+    const hasProcessedLatestScannedAccount =
+      !latestScannedAccount || scannedAccounts.some(({ id }) => id === latestScannedAccount.id);
 
     if (!isAddingAccounts && !scanning) {
       if (alreadyEmptyAccount && !hasImportableAccounts) {
@@ -412,7 +413,11 @@ export default function useScanDeviceAccountsViewModel({
           context,
           onCloseNavigation,
         });
-      } else if (!hasScannedAccounts && CustomNoAssociatedAccounts) {
+      } else if (
+        hasProcessedLatestScannedAccount &&
+        noImportableAccounts &&
+        CustomNoAssociatedAccounts
+      ) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
           onCloseNavigation,
@@ -430,8 +435,9 @@ export default function useScanDeviceAccountsViewModel({
     CustomNoAssociatedAccounts,
     context,
     onCloseNavigation,
-    scannedAccounts.length,
     latestScannedAccount,
+    noImportableAccounts,
+    scannedAccounts,
   ]);
 
   const scanDeviceAccountsBack = customFlow?.onScanDeviceAccountsBack
