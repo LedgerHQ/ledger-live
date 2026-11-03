@@ -22,10 +22,15 @@
     "unimported": "pnpm knip --directory ../../.. -W domain/api/market-countervalues"
   },
   "dependencies": {
+    "@domain/api-account-data": "workspace:*",
+    "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-market-countervalues": "workspace:*",
-    "@shared/api-services": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
+    "@shared/api-services": "workspace:*",
+    "bignumber.js": "catalog:",
     "prando": "6",
     "zod": "catalog:"
   },
@@ -34,8 +39,8 @@
     "react-redux": ">=9.0.0"
   },
   "devDependencies": {
+    "@domain/entity-account-descriptor": "workspace:*",
     "@domain/entity-currency-crypto": "workspace:*",
-    "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",

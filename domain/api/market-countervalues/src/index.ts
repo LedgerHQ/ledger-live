@@ -4,3 +4,4 @@ export * from "./loadCountervalues";
 export * from "./rateSource";
 export * from "./schema";
 export * from "./types";
+export * from "./withOperationCountervalues";

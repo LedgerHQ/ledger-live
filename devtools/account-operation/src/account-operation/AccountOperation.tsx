@@ -10,23 +10,30 @@ import type {
 type OnWindow = (accountUUID: string, queryKey: string) => void;
 
 /** The form's options, the empty ones left out. */
-function queryOf(limit: string, filterAsset: string): AccountOperationToolQuery {
+function queryOf(
+  limit: string,
+  filterAsset: string,
+  countervalue: boolean,
+): AccountOperationToolQuery {
   const count = Number.parseInt(limit, 10);
   return {
     ...(count > 0 ? { limit: count } : {}),
     ...(filterAsset.trim() ? { filterAsset: filterAsset.trim() } : {}),
+    ...(countervalue ? { countervalue } : {}),
   };
 }
 
 function AccountOperation({
   accounts,
   assetIds,
+  fiat,
   onRead,
   onReadMore,
   onReadAll,
 }: AccountOperationToolProps) {
   const [limit, setLimit] = useState("");
   const [filterAsset, setFilterAsset] = useState("");
+  const [countervalue, setCountervalue] = useState(false);
   return (
     <div className="flex flex-col h-full overflow-hidden select-text">
       <div className="px-16 py-8 border-b border-base flex items-center gap-8 flex-shrink-0">
@@ -57,9 +64,20 @@ function AccountOperation({
             </option>
           ))}
         </datalist>
+        <label
+          className="flex items-center gap-4 body-3 text-muted"
+          title="The app's countervalue: change it in Settings"
+        >
+          <input
+            type="checkbox"
+            checked={countervalue}
+            onChange={event => setCountervalue(event.target.checked)}
+          />
+          {fiat}
+        </label>
         <button
           type="button"
-          onClick={() => onReadAll(queryOf(limit, filterAsset))}
+          onClick={() => onReadAll(queryOf(limit, filterAsset, countervalue))}
           className="body-3-semi-bold text-base"
         >
           Read all
@@ -182,6 +200,9 @@ function OperationRow({ row }: Readonly<{ row: AccountOperationToolRow }>) {
         <span className={row.failed ? "text-muted" : "body-3-semi-bold text-base"}>
           {row.value}
         </span>
+        {row.countervalues?.length ? (
+          <span className="body-3-semi-bold text-success">{row.countervalues.join(" · ")}</span>
+        ) : null}
       </summary>
       <div className="pl-16 text-muted break-all">
         <div>id {row.id}</div>

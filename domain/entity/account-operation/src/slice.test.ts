@@ -7,6 +7,7 @@ import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountOperation } from "./schema.mock";
 import {
+  CountervalueTickerSchema,
   initialAccountOperationsState,
   type AccountOperation,
   type AccountOperationsQuery,
@@ -123,6 +124,81 @@ describe("accountOperationsSlice", () => {
     const state = reduce(receive([op1, op2]), receive([op2], { query: otherQuery }), receive([]));
     expect(windowOf(state)).toEqual([]);
     expect(windowOf(state, otherQuery)).toEqual([op2]);
+  });
+
+  it("should keep the countervalues of a query in its own window only", () => {
+    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const eur = { countervalue: CountervalueTickerSchema.parse("EUR") };
+    const inUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
+    const inEur = mockAccountOperation({ id: "op-1", countervalues: { EUR: "90" } });
+    const state = reduce(
+      receive([inUsd], { query: usd }),
+      receive([inEur], { query: eur }),
+      receive([op1]),
+    );
+    expect(windowOf(state)).toEqual([op1]);
+    expect(windowOf(state, usd)).toEqual([inUsd]);
+    expect(windowOf(state, eur)).toEqual([inEur]);
+    expect(selectAccountOperation({ accountOperations: state }, accountUUID, op1.id)).toEqual(op1);
+  });
+
+  it("should extend the countervalues of a window with its next page, and replace them on a head read", () => {
+    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const op1InUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
+    const op2InUsd = mockAccountOperation({ id: "op-2", countervalues: { USD: "200" } });
+    const paged = reduce(
+      receive([op1InUsd], { query: usd }),
+      receive([op2InUsd], { query: usd, append: true }),
+    );
+    expect(windowOf(paged, usd)).toEqual([op1InUsd, op2InUsd]);
+    const reread = accountOperationsSlice.reducer(paged, receive([op1], { query: usd }));
+    expect(windowOf(reread, usd)).toEqual([op1]);
+  });
+
+  it("should drop the countervalue of a row a next page repeats without one", () => {
+    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const op1InUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
+    const state = reduce(
+      receive([op1InUsd], { query: usd }),
+      receive([op1, op2], { query: usd, append: true }),
+    );
+    expect(windowOf(state, usd)).toEqual([op1, op2]);
+  });
+
+  describe("a row valued while pending, then confirmed at another date", () => {
+    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const pending = mockAccountOperation({ id: "op-1", date: "2026-01-01T00:00:00.000Z" });
+    const pendingInUsd = { ...pending, countervalues: { USD: "100" } };
+    const confirmed = mockAccountOperation({ id: "op-1", date: "2026-01-02T00:00:00.000Z" });
+
+    it("should not value the newer row with an older answer's countervalue", () => {
+      const state = reduce(
+        receive([confirmed], { revision: 2 }),
+        receive([pendingInUsd], { query: usd, revision: 1 }),
+      );
+      expect(windowOf(state, usd)).toEqual([confirmed]);
+    });
+
+    it("should drop the countervalue once another query updates the row", () => {
+      const state = reduce(
+        receive([pendingInUsd], { query: usd, revision: 1 }),
+        receive([confirmed], { revision: 2 }),
+      );
+      expect(windowOf(state, usd)).toEqual([confirmed]);
+    });
+  });
+
+  it("should keep the countervalue of an older answer whose row did not change", () => {
+    const usd = { countervalue: CountervalueTickerSchema.parse("USD") };
+    const eur = { countervalue: CountervalueTickerSchema.parse("EUR") };
+    const inUsd = mockAccountOperation({ id: "op-1", countervalues: { USD: "100" } });
+    const inEur = mockAccountOperation({ id: "op-1", countervalues: { EUR: "90" } });
+    const state = reduce(
+      receive([inEur], { query: eur, revision: 2 }),
+      receive([inUsd], { query: usd, revision: 1 }),
+    );
+    expect(windowOf(state, usd)).toEqual([inUsd]);
+    expect(windowOf(state, eur)).toEqual([inEur]);
   });
 
   it("should not let an older answer of another query overwrite a newer row", () => {
