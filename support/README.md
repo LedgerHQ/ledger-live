@@ -48,16 +48,13 @@ Packages not on a preset yet are listed in the plugin's `exclusions.mjs`.
 
 ## Adding a package
 
-A package of `shared/`, `domain/` or `features/` starts from the generator, which writes the
-configs these presets expect:
-
-```sh
-pnpm nx g @ledgerhq/generators:package <name> --layer <layer> --platform <platform>
-```
+A package of `shared/`, `domain/` or `features/` starts from the generator in the
+[`support-config` skill](../.agents/skills/support-config/SKILL.md#create-a-package-with-the-generator),
+which writes the configs these presets expect.
 
 A new package in `support/` follows [docs/new-library.md](../docs/new-library.md), then:
 
-- Add a row to the table above.
+- Describe it in the Packages section (the table lists one package per tool; other packages go in prose).
 - Add a `CODEOWNERS` entry.
 - If the entry points sit outside `src/`, add a `workspaces` entry to `support/knip/knip.json`.
 

@@ -76,18 +76,19 @@ The list only shrinks.
 ## `[hygiene]`
 
 Messages from [`rules/hygiene.mjs`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs),
-on the packages of `shared/`, `domain/` and `features/`. Each message names the check, what the
-package does instead and the fix; the fix it prints is the one to apply.
+on the packages of `shared/`, `domain/` and `features/`. Each violation message starts with the
+string for its check in [`CHECKS`](../../../../tools/nx-plugins/enforce-tool-config/rules/hygiene.mjs),
+then names what the package does instead and the fix; the fix it prints is the one to apply.
 
-| Message starts with | Fix |
+| Check (`CHECKS` key) | Fix |
 | --- | --- |
-| `a package has a package.json that parses as JSON` | Fix the JSON syntax, or restore the file. |
-| `a package has a README.md` | Write one: what the package is, in a line or two, and its [status marker](../../../../docs/new-library.md#readme-status-marker). |
-| `the README carries a status marker` | Add the callout with a `> **Status: STABLE**`, `UNSTABLE` or `DEPRECATED` line. |
-| `"sideEffects" is false` | Set it to `false`, and turn code that runs on import into a function its consumers call. |
-| `a "lint" script runs oxlint` | Make it `"lint": "oxlint src"`. |
-| `a "format:check" script runs oxfmt --check` | Make it `"format:check": "oxfmt src --check"`, next to `"format": "oxfmt src"`. |
-| `each tool a script runs is in devDependencies as "catalog:"` | Add the package the message names (`@typescript/native` for `tsc`) as `"catalog:"`, or change its version to `"catalog:"`. |
+| `manifest` | Fix the JSON syntax, or restore the file. |
+| `readme` | Write one: what the package is, in a line or two, and its [status marker](../../../../docs/new-library.md#readme-status-marker). |
+| `status-marker` | Add the callout with a `> **Status: STABLE**`, `UNSTABLE` or `DEPRECATED` line. |
+| `side-effects` | Set it to `false`, and turn code that runs on import into a function its consumers call. |
+| `lint-script` | Make it `"lint": "oxlint src"`. |
+| `format-check-script` | Make it `"format:check": "oxfmt src --check"`, next to `"format": "oxfmt src"`. |
+| `tool-dependency` | Add the package the message names (`@typescript/native` for `tsc`) as `"catalog:"`, or change its version to `"catalog:"`. |
 
 ### The `hygiene-debt` list
 

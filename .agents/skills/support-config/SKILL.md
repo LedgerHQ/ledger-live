@@ -42,8 +42,8 @@ Each tool a script runs is in `devDependencies` as `"catalog:"`, so Nx hashes it
 ([ADR-0003](https://github.com/LedgerHQ/architecture-as-code/pull/553)): `tsc` is
 `"@typescript/native": "catalog:"`, and `oxlint`, `oxfmt`, `rimraf`, `zx` and `nx` are declared
 under their own names. The `hygiene` rule checks it for `shared/`, `domain/` and `features/`.
-`rimraf` and `zx` have no entry in the `catalog:` of `pnpm-workspace.yaml` yet: a script that runs
-one needs that entry first.
+`rimraf` and `zx` have no entry in the `catalog:` of `pnpm-workspace.yaml` yet; that ends when the
+catalog defines them there. Until then, a script that runs one needs that entry first.
 
 The tsconfig, lint and fmt presets resolve from the workspace root, so the package does not declare
 them. `@support/jest` is the one preset a consumer declares, because its presets carry code and peer
