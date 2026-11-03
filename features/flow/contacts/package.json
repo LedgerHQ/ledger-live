@@ -4,14 +4,9 @@
   "private": true,
   "description": "Shared Contacts flow package",
   "main": "src/index.ts",
-  "react-native": "src/index.native.ts",
   "types": "src/index.ts",
   "exports": {
-    ".": {
-      "react-native": "./src/index.native.ts",
-      "default": "./src/index.ts"
-    },
-    "./jest.native": "./src/jest.native.ts",
+    ".": "./src/index.ts",
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -22,7 +17,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.native.json",
     "test": "jest",
     "test:watch": "jest --watch",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "unimported": "pnpm knip --directory ../../.. -c features/flow/contacts/knip.web.config.mjs -W features/flow/contacts --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/flow/contacts/knip.native.config.mjs -W features/flow/contacts --tsConfig tsconfig.native.json"
   },
   "dependencies": {
     "@domain/entity-contact": "workspace:*",

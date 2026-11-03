@@ -73,9 +73,9 @@ function entryWaiver() {
 
 /** @type {Record<string, Record<string, { rules: string[], reason: string }>>} */
 const COMPONENT_EXCEPTIONS = {
-  "features/flow/contacts": {
-    ContactsButton: componentWaiver("R2", "R4"),
-    ContactsView: componentWaiver("R2", "R3"),
+  "features/flow/pay-contact": {
+    Contacts: componentWaiver("R2", "R3"),
+    PaySuccess: componentWaiver("R2", "R4"),
   },
 };
 
@@ -107,11 +107,6 @@ const INTERNALS_REEXPORT =
 const FILE_EXCEPTIONS = {
   "domain/entity/client-identity/src/types.ts": NAMED_REEXPORT,
   "domain/entity/contact/src/cloudSync/module.ts": NAMED_REEXPORT,
-  "features/flow/contacts/src/contactsListFacade.native.ts": WORKSPACE_PROXY,
-  "features/flow/contacts/src/contactsListFacade.web.ts": WORKSPACE_PROXY,
-  "features/flow/contacts/src/contactsViewFacade.native.ts": NAMED_REEXPORT,
-  "features/flow/contacts/src/contactsViewFacade.web.ts": NAMED_REEXPORT,
-  "features/flow/contacts/src/hooks/contactsHooks.ts": WORKSPACE_PROXY,
   "features/platform/contacts/src/contactDeviceIntentsPort.ts": NAMED_REEXPORT,
   "features/platform/content-ab-tests/src/store.ts": INTERNALS_REEXPORT,
   "features/platform/style/src/hooks/useTheme.native.ts": THIRD_PARTY_PROXY,

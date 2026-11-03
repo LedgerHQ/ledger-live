@@ -152,12 +152,7 @@ function ContactsViewModelProbe({
   return (
     <>
       <div data-testid="contacts-add-address-flow-state">{stateLabel}</div>
-      <button
-        type="button"
-        onClick={() =>
-          contactType === "me" ? viewModel.onOpenMe(contactId) : viewModel.onOpenContact(contactId)
-        }
-      >
+      <button type="button" onClick={() => viewModel.onOpenContact(contactId)}>
         Open contact
       </button>
       <button type="button" onClick={viewModel.detail?.onAddAddress} disabled={!viewModel.detail}>
