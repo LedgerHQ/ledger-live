@@ -9,7 +9,6 @@ type ExitDeps = {
   dispatch: ReturnType<typeof useDispatch>;
   navigation: NavigationProp<ParamListBase>;
   device: Device;
-  shouldDisplayMyWallet: boolean;
   wasReadOnlyAtEntry: boolean;
   isGenuine: boolean;
   deviceWasSeeded: boolean;
@@ -28,8 +27,7 @@ export const exitActions: Record<DeviceOnboardingExitReason, (deps: ExitDeps) =>
       wasReadOnlyAtEntry,
     });
   },
-  resumeFirmwareUpdate: ({ navigation, device, shouldDisplayMyWallet }) =>
-    resetToMyLedger(navigation, device, shouldDisplayMyWallet),
+  resumeFirmwareUpdate: ({ navigation, device }) => resetToMyLedger(navigation, device),
   legacyFallback: ({
     navigation,
     device,
@@ -100,35 +98,7 @@ function getRootNavigation(
   return current;
 }
 
-function resetToMyLedger(
-  navigation: NavigationProp<ParamListBase>,
-  device: Device,
-  shouldDisplayMyWallet: boolean,
-) {
-  const managerRoute = shouldDisplayMyWallet
-    ? {
-        name: NavigatorName.MyWallet,
-        state: {
-          routes: [
-            {
-              name: ScreenName.MyWallet,
-              params: { device, firmwareUpdate: device.wired },
-            },
-          ],
-        },
-      }
-    : {
-        name: NavigatorName.MyLedger,
-        state: {
-          routes: [
-            {
-              name: ScreenName.MyLedgerChooseDevice,
-              params: { device, firmwareUpdate: device.wired },
-            },
-          ],
-        },
-      };
-
+function resetToMyLedger(navigation: NavigationProp<ParamListBase>, device: Device) {
   getRootNavigation(navigation).reset({
     index: 0,
     routes: [
@@ -136,7 +106,20 @@ function resetToMyLedger(
         name: NavigatorName.Base,
         state: {
           index: 1,
-          routes: [{ name: NavigatorName.Main }, managerRoute],
+          routes: [
+            { name: NavigatorName.Main },
+            {
+              name: NavigatorName.MyWallet,
+              state: {
+                routes: [
+                  {
+                    name: ScreenName.MyWallet,
+                    params: { device, firmwareUpdate: device.wired },
+                  },
+                ],
+              },
+            },
+          ],
         },
       },
     ],

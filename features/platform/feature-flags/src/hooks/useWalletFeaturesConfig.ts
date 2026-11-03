@@ -32,7 +32,6 @@ export function useWalletFeaturesConfig(platform: WalletPlatform): WalletFeature
       shouldDisplayOperationsList: isEnabled && Boolean(params?.operationsList),
       shouldDisplayAggregatedAssets:
         platform === "desktop" ? true : isEnabled && Boolean(params?.aggregatedAssets),
-      shouldDisplayMyWallet: platform === "desktop" ? true : isEnabled && Boolean(params?.myWallet),
       shouldDisplayAssetDiscoverability: isEnabled && Boolean(params?.assetDiscoverability),
       shouldDisplayEarnUpselling: isEnabled && Boolean(params?.earnUpselling),
       shouldDisplayEarnSimulator: isEnabled && Boolean(params?.earnSimulator),
@@ -72,8 +71,6 @@ export interface WalletFeaturesConfig {
   readonly shouldDisplayOperationsList: boolean;
   /** Whether to show the aggregated assets */
   readonly shouldDisplayAggregatedAssets: boolean;
-  /** Whether to show the My Wallet component */
-  readonly shouldDisplayMyWallet: boolean;
   /** Whether to show the Asset Discoverability feature */
   readonly shouldDisplayAssetDiscoverability: boolean;
   /** Whether to show the Earn Upselling component */
