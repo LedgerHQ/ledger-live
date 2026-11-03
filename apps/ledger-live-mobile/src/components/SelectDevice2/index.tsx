@@ -49,7 +49,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedAvailableDevice, DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
-import { lastConnectedDeviceSelector, mockServerConfigSelector } from "~/reducers/settings";
+import {
+  isMockServerEnabledSelector,
+  lastConnectedDeviceSelector,
+  mockServerConfigSelector,
+} from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
 import { DeviceLockedCheckDrawer } from "./DeviceLockedCheckDrawer";
 import { useMockBleDevicesScanning } from "~/transport/bleTransport/useMockBle";
@@ -172,14 +176,19 @@ export default function SelectDevice({
    */
   const isMockMode = Boolean(Config.MOCK || Config.DETOX);
   const mockServerConfig = useSelector(mockServerConfigSelector);
+  const isMockServerEnabled = useSelector(isMockServerEnabledSelector);
   const mockServerDevices = useMockServerDevicesDiscovery(isFocused ? mockServerConfig : null);
 
-  const mockHidState = useMockHidDevicesDiscovery(isMockMode);
-  const realHidState = useHidDevicesDiscovery(!isMockMode);
+  const mockHidState = useMockHidDevicesDiscovery(isMockMode && !isMockServerEnabled);
+  const realHidState = useHidDevicesDiscovery(!isMockMode && !isMockServerEnabled);
   const { hidDevices } = isMockMode ? mockHidState : realHidState;
 
   const scanningEnabled =
-    isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus;
+    isFocused &&
+    !isMockServerEnabled &&
+    !stopBleScanning &&
+    pairingFlowStep !== "pairing" &&
+    !deviceToCheckLockedStatus;
 
   const mockScanningState = useMockBleDevicesScanning(isMockMode && scanningEnabled);
   const realScanningState = useBleDevicesScanning(!isMockMode && scanningEnabled);
@@ -388,7 +397,7 @@ export default function SelectDevice({
    * Auto selection of the last connected device
    */
   useAutoSelectDevice({
-    enabled: isFocused,
+    enabled: isFocused && !isMockServerEnabled,
     deviceToAutoSelect: autoSelectLastConnectedDevice ? lastConnectedDevice : null,
     hidDevices,
     onAutoSelect: handleOnSelect,
@@ -396,6 +405,13 @@ export default function SelectDevice({
   });
 
   const deviceList = useMemo(() => {
+    if (isMockServerEnabled) {
+      const devices = mockServerDevices.map(mapMockServerDeviceToDisplayedAvailableDevice);
+      return filterByDeviceModelId
+        ? devices.filter(d => d.device.modelId === filterByDeviceModelId)
+        : devices;
+    }
+
     let devices: DisplayedDevice[] = bleKnownDevices
       .map((knownDevice): DisplayedDevice => {
         const matchingNewDevice = findMatchingNewDevice(
@@ -425,12 +441,12 @@ export default function SelectDevice({
         ...devices,
       ];
     }
-    devices = [...mockServerDevices.map(mapMockServerDeviceToDisplayedAvailableDevice), ...devices];
 
     return filterByDeviceModelId
       ? devices.filter(d => d.device.modelId === filterByDeviceModelId)
       : devices;
   }, [
+    isMockServerEnabled,
     mockServerDevices,
     bleKnownDevices,
     filteredScannedDevices,

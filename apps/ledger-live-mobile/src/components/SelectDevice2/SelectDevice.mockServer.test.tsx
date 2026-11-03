@@ -44,17 +44,13 @@ describe("SelectDevice in mock server mode", () => {
     server.use(http.get(`${MOCK_SERVER_URL}/devices`, endpoints.devices));
   });
 
-  it("should list the mock server session devices above the paired devices", async () => {
+  it("should list only the mock server session devices when mock server mode is on", async () => {
     render(<SelectDevice onSelect={jest.fn()} requestToSetHeaderOptions={jest.fn()} />, {
       overrideInitialState: withPairedBleNanoX,
     });
 
     expect(await screen.findByText("Mock Stax")).toBeVisible();
-    expect(screen.getByText("Mocked")).toBeVisible();
-    expect(screen.getByText("Paired Nano X")).toBeVisible();
-    expect(screen.getAllByTestId(/^device-item-/).map(item => item.props.testID as string)).toEqual(
-      ["device-item-mockserver|device-1", "device-item-ble-nano-x"],
-    );
+    expect(screen.queryByText("Paired Nano X")).toBeNull();
   });
 
   it("should select a BLE mock device without the Bluetooth and locked checks", async () => {
