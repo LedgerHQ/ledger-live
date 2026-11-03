@@ -5,7 +5,7 @@ import {
   resolveInitialAnalyticsSelection,
 } from "./resolveAnalyticsSelection";
 import { selectAnalyticsAccounts, selectAnalyticsPositions } from "./selectAnalyticsPositions";
-import { createAnalyticsPnlQueryKey, createAnalyticsQueryKey } from "./createAnalyticsQueryContext";
+import { createAnalyticsPnlQueryKey, createAnalyticsQueryKey } from "./createAnalyticsQueryKeys";
 import {
   analyticsSelectionReducer,
   INITIAL_ANALYTICS_SELECTION_STATE,

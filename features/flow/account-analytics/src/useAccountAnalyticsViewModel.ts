@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { createAnalyticsCatalogKey } from "./logic/createAnalyticsCatalogKey";
-import { createAnalyticsQueryKey } from "./logic/createAnalyticsQueryContext";
+import { createAnalyticsQueryKey } from "./logic/createAnalyticsQueryKeys";
 import {
   resolveAnalyticsSelection,
   resolveInitialAnalyticsSelection,
