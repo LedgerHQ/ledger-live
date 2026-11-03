@@ -1,4 +1,4 @@
-import { combine } from "./combine";
+import { combine } from "../combine";
 
 describe("combine", () => {
   it("responds with a Stringify version of the payload to broadcast", () => {

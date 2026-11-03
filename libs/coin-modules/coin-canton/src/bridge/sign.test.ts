@@ -2,9 +2,9 @@ import {
   createMockCantonSigner,
   createMockOnboardingPrepareResponse,
   createMockPrepareTransferResponse,
-} from "../../test/fixtures";
-import type { TopologyTransactions } from "../../types/gateway";
-import type { CantonSigner } from "../../types/signer";
+} from "../test/fixtures";
+import type { TopologyTransactions } from "../types/gateway";
+import type { CantonSigner } from "../types/signer";
 import { signTransaction } from "./sign";
 
 const createMockSigner = (signTransactionImpl: CantonSigner["signTransaction"]): CantonSigner => {

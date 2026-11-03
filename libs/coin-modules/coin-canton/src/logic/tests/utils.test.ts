@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { isRecipientValid, validateTag } from "./utils";
+import { isRecipientValid, validateTag } from "../utils";
 
 const VALID_HEX_68 = "1220691e945dc1b210f3b6be9fbad73efaf642bfb96022552f66c9e2b83b00cb20e8";
 

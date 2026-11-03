@@ -1,5 +1,5 @@
 import { OperationType } from "@ledgerhq/types-live";
-import type { OperationTypeView, OperationType as GatewayOperationType } from "../../types/gateway";
+import type { OperationTypeView, OperationType as GatewayOperationType } from "../types/gateway";
 
 const OPERATION_TYPE_MAP: Readonly<Partial<Record<GatewayOperationType, OperationType>>> = {
   "transfer-proposal": "TRANSFER_PROPOSAL",

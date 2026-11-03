@@ -419,7 +419,7 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeInstanceOf(TopologyChangeError);
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        mockCoinConfig.getCoinConfig(),
         "test-public-key",
       );
     });
@@ -446,7 +446,7 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        mockCoinConfig.getCoinConfig(),
         "test-public-key",
       );
     });
@@ -473,7 +473,7 @@ describe("getTransactionStatus", () => {
       // THEN
       expect(result.errors.topologyChange).toBeUndefined();
       expect(mockedGateway.isTopologyChangeRequiredCached).toHaveBeenCalledWith(
-        accountWithPartyId.currency,
+        mockCoinConfig.getCoinConfig(),
         "test-public-key",
       );
     });
