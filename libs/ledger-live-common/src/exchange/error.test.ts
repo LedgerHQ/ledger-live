@@ -264,6 +264,43 @@ describe("exchange/error", () => {
       // The error code should be overridden to INVALID_ADDRESS for this step
     });
 
+    it("should keep the title and message of a mapped status code", () => {
+      const result = convertTransportError("INIT", new TransportStatusError(0x6a84));
+
+      expect(result).toMatchObject({ title: "userRefused", message: "User refused" });
+    });
+
+    it("should keep the raw status code in the message of an unmapped status code", () => {
+      const result = convertTransportError("SET_PARTNER_KEY", new TransportStatusError(0x6807));
+
+      expect(result).toBeInstanceOf(CompleteExchangeError);
+      expect(result).toMatchObject({
+        step: "SET_PARTNER_KEY",
+        title: undefined,
+        message: "Unknown device status 0x6807 (UNKNOWN_ERROR)",
+      });
+    });
+
+    it("should keep the known status text of an unmapped status code", () => {
+      const transportError = new TransportStatusError(0x6985);
+
+      const result = convertTransportError("CHECK_REFUND_ADDRESS", transportError);
+
+      expect(result).toMatchObject({
+        step: "CHECK_REFUND_ADDRESS",
+        title: undefined,
+        message: "Unknown device status 0x6985 (CONDITIONS_OF_USE_NOT_SATISFIED)",
+      });
+    });
+
+    it("should omit the status text when the error has none", () => {
+      const error = { name: "TransportStatusError", statusCode: 0x6807 };
+
+      const result = convertTransportError("SET_PARTNER_KEY", error);
+
+      expect(result).toMatchObject({ title: undefined, message: "Unknown device status 0x6807" });
+    });
+
     it("should preserve error for non-TransportStatusError", () => {
       const error = new Error("Regular error");
       const result = convertTransportError("INIT", error);
