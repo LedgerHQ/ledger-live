@@ -3933,9 +3933,6 @@ importers:
         specifier: workspace:*
         version: link:../../shared/app-config
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -4205,9 +4202,6 @@ importers:
         specifier: workspace:^
         version: link:../../shared/cloud-sync
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -4323,9 +4317,6 @@ importers:
         specifier: workspace:*
         version: link:../../features/platform/device-onboarding
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -4519,9 +4510,6 @@ importers:
         specifier: workspace:^
         version: link:../../shared/feature-flags
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -4718,9 +4706,6 @@ importers:
 
   devtools/pay-card:
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -4977,9 +4962,6 @@ importers:
         specifier: workspace:*
         version: link:../registry
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -5137,9 +5119,6 @@ importers:
         specifier: workspace:*
         version: link:../transport
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)
@@ -5254,9 +5233,6 @@ importers:
 
   devtools/trustchain:
     devDependencies:
-      '@babel/plugin-transform-export-namespace-from':
-        specifier: 7.27.1
-        version: 7.27.1(@babel/core@7.28.5)
       '@gorhom/bottom-sheet':
         specifier: 'catalog:'
         version: 5.2.6(db28dd4150d1c921a8a8f9e748e99a4b)

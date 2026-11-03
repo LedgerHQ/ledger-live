@@ -29,7 +29,6 @@
     "unimported": "pnpm knip --directory ../.. -c devtools/trustchain/knip.web.config.mjs -W devtools/trustchain --tsConfig tsconfig.web.json && pnpm knip --directory ../.. -c devtools/trustchain/knip.native.config.mjs -W devtools/trustchain --tsConfig tsconfig.native.json"
   },
   "devDependencies": {
-    "@babel/plugin-transform-export-namespace-from": "7.27.1",
     "@gorhom/bottom-sheet": "catalog:",
     "@ledgerhq/lumen-design-core": "catalog:",
     "@ledgerhq/lumen-ui-react": "catalog:",
