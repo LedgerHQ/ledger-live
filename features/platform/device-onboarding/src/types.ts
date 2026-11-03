@@ -31,6 +31,15 @@ export const OnboardingStep = {
 
 export type OnboardingStep = (typeof OnboardingStep)[keyof typeof OnboardingStep];
 
+export const SeedPath = {
+  NewSeed: "newSeed",
+  RestorePhrase: "restorePhrase",
+  Recover: "recover",
+  RecoveryKey: "recoveryKey",
+} as const;
+
+export type SeedPath = (typeof SeedPath)[keyof typeof SeedPath];
+
 export const RecoveryKeyStatus = {
   None: "none",
   Unknown: "unknown",
@@ -174,6 +183,7 @@ export type DeviceOnboardingContext = Omit<DeviceOnboardingInput, "hostsSeedSetu
   successAcknowledgedOnSession: DeviceSessionId | null;
   firmware: FirmwareCheck | null;
   currentSetupStep: OnboardingStep | null;
+  seedPath: SeedPath | null;
   recoveryKeyBackupOpen: boolean;
 };
 
