@@ -17,6 +17,12 @@ import {
 import { outputOption, resolveOutputFormat } from "../inputs";
 import { emitJson, failSkill, skillEnvelope } from "./shared";
 
+async function installSkill(skill: SkillManifest, root: string, force: boolean): Promise<string[]> {
+  const { status } = await diagnoseSkill(skill, root);
+  const unedited = status === "up-to-date" || status === "outdated";
+  return writeSkill(skill, root, { force: force || unedited });
+}
+
 export default defineCommand({
   name: "install",
   description:
@@ -70,15 +76,11 @@ export default defineCommand({
         skillsToInstall.push(skill);
       }
 
-      const installed = (
-        await Promise.all(
-          skillsToInstall.map(async skill => {
-            const { status } = await diagnoseSkill(skill, root);
-            const unedited = status === "up-to-date" || status === "outdated";
-            return writeSkill(skill, root, { force: flags.force || unedited });
-          }),
-        )
-      ).flat();
+      // Sequential: a skill that fails must stop the ones after it.
+      const installed: string[] = [];
+      for (const skill of skillsToInstall) {
+        installed.push(...(await installSkill(skill, root, flags.force)));
+      }
 
       if (format === "json") {
         emitJson(
