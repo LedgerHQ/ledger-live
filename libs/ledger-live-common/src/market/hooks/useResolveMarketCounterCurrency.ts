@@ -1,4 +1,5 @@
-import { useSupportedCounterCurrencies } from "../../cg-client/hooks/useCoingeckoDataProvider";
+import { useGetSupportedChartCounterCurrenciesQuery } from "../state-manager/api";
+import { ONE_DAY } from "../utils/timers";
 
 export type MarketCounterCurrencyResolution = {
   requestCounterCurrency: string | undefined;
@@ -15,20 +16,24 @@ type UseResolveMarketCounterCurrencyParams = {
 };
 
 /**
- * Resolve the market endpoint countervalue. Unsupported fiat support depends on
- * CoinGecko's supported list; while it is loading, callers should skip fetching
- * so they don't fire a native request that will be replaced by the USD fallback.
- * If the supported list errors, the hook stops blocking and returns the user's value.
+ * Currencies absent from `/v3/supported/markets/chart/to` are requested in USD
+ * and rescaled. A crypto counter value falls back to USD even when its ticker
+ * is in that list. Callers skip the request while the list is loading. A list
+ * error stops blocking and sends the user's currency.
  */
 export function useResolveMarketCounterCurrency({
   counterCurrency,
   fallbackForCryptoCountervalues = false,
   isCryptoCountervalue,
 }: UseResolveMarketCounterCurrencyParams): MarketCounterCurrencyResolution {
-  const { data: supportedCounterCurrencies, isError } = useSupportedCounterCurrencies();
+  const { data: supportedCounterCurrencies, isError } = useGetSupportedChartCounterCurrenciesQuery(
+    undefined,
+    {
+      pollingInterval: ONE_DAY,
+    },
+  );
   const displayCounterCurrency = counterCurrency?.toLowerCase();
   const isUsd = displayCounterCurrency === "usd";
-
   const cryptoFallback = fallbackForCryptoCountervalues && isCryptoCountervalue;
   const unsupportedFiatFallback = Boolean(
     displayCounterCurrency &&

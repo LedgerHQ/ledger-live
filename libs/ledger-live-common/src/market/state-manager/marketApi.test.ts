@@ -509,4 +509,20 @@ describe("marketApi", () => {
       consoleErrorSpy.mockRestore();
     });
   });
+
+  describe("[endpoint] getSupportedChartCounterCurrencies", () => {
+    it("normalizes the chart counter currency allowlist", async () => {
+      server.use(
+        http.get("*/v3/supported/markets/chart/to", () =>
+          HttpResponse.json(["EUR", "bitcoin", "USD"]),
+        ),
+      );
+
+      const result = await store.dispatch(
+        marketApi.endpoints.getSupportedChartCounterCurrencies.initiate(),
+      );
+
+      expect(result.data).toEqual(["eur", "bitcoin", "usd"]);
+    });
+  });
 });
