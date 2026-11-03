@@ -23,6 +23,8 @@ const PROBE_AMOUNT = 0.0001;
 const PROBE_NETWORK_FEES = 0.001;
 
 const MIN_AMOUNT_MARGIN = 1.2;
+/** Fewest decimals any swappable asset supports (e.g. USDT, USDC). */
+const AMOUNT_DECIMALS = 6;
 const BUMP_FACTOR = 1.5;
 const MAX_QUOTE_ATTEMPTS = 3;
 
@@ -70,6 +72,12 @@ function extractMinimumAmounts(items: unknown[]): number[] {
     .filter((amount: number) => !Number.isNaN(amount) && amount > 0);
 }
 
+/** Rounds up so the margin holds and the app shows the exact amount. */
+function roundUpAmount(amount: number): number {
+  const scale = 10 ** AMOUNT_DECIMALS;
+  return Math.ceil(amount * scale) / scale;
+}
+
 /** Quotes the amount and bumps it until a provider returns a usable quote. */
 async function findQuotableAmount(
   initialAmount: number,
@@ -82,7 +90,7 @@ async function findQuotableAmount(
       return amount;
     }
     const newMinimum = Math.max(0, ...extractMinimumAmounts(items)) * MIN_AMOUNT_MARGIN;
-    amount = newMinimum > amount ? newMinimum : amount * BUMP_FACTOR;
+    amount = roundUpAmount(newMinimum > amount ? newMinimum : amount * BUMP_FACTOR);
     console.warn(
       `No usable quote (attempt ${attempt}/${MAX_QUOTE_ATTEMPTS}), retrying with ${amount}`,
     );
@@ -100,10 +108,11 @@ export async function getMinimumSwapAmount(
     return minimum;
   }
   const addressFrom = accountFrom.address || accountFrom.parentAccount?.address;
+  const marginAmount = roundUpAmount(minimum * MIN_AMOUNT_MARGIN);
   if (!addressFrom) {
-    return minimum * MIN_AMOUNT_MARGIN;
+    return marginAmount;
   }
-  return findQuotableAmount(minimum * MIN_AMOUNT_MARGIN, async amount => {
+  return findQuotableAmount(marginAmount, async amount => {
     try {
       const data = await requestQuotes(
         accountFrom,
