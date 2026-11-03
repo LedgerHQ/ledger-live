@@ -16,6 +16,10 @@ import { isReceiveBlockedOnLNS } from "@ledgerhq/live-e2e-shared/nanoSSupport";
 import { getSpeculosModel } from "@ledgerhq/live-e2e-shared/speculosAppVersion";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { buildTags } from "tests/utils/tagsUtils";
+import {
+  ACCOUNT_DETAIL_FLAG_STATES,
+  FF_ACCOUNT_DETAIL_DISABLED,
+} from "tests/utils/featureFlagUtils";
 
 type ReceiveTestCase = {
   account: Account;
@@ -54,47 +58,58 @@ async function verifySendCurrencyTokensWarning(app: Application, account: Accoun
   }
 }
 
-for (const receive of nativeAccounts) {
-  const receiveBlockedOnLNS = isReceiveBlockedOnLNS(receive.account.currency.id);
-  const owner = ownedBy(coinTeamOwner(receive.account.currency.id), { folder: TestFolder.RECEIVE });
-  test.describe("Receive", owner, () => {
-    test.skip(
-      receiveBlockedOnLNS && getSpeculosModel() === DeviceModelId.nanoS,
-      "Receive is blocked on Nano S",
-    );
-    test.use({
-      userdata: "skip-onboarding-with-last-seen-device",
-      speculosApp: receive.account.currency.speculosApp,
-      cliCommands: [liveDataCommand(receive.account)],
-    });
+// Both pages open the same receive modal, so only two currencies pay for the flag-on run.
+const withAccountDetailVariants = [Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1];
 
-    test(
-      `[${receive.account.currency.testLabel}] - Verify address`,
-      {
-        tag: buildTags({
-          currencyId: receive.account.currency.id,
-          skipLNS: receiveBlockedOnLNS,
-          extraTags: receive.account === Account.ETH_1 ? ["@smoke"] : [],
-        }),
-        annotation: {
-          type: "TMS",
-          description: receive.xrayTicket,
+for (const receive of nativeAccounts) {
+  const flagStates = withAccountDetailVariants.includes(receive.account)
+    ? ACCOUNT_DETAIL_FLAG_STATES
+    : [{ label: "account detail off", featureFlags: FF_ACCOUNT_DETAIL_DISABLED }];
+  for (const { label, featureFlags } of flagStates) {
+    const receiveBlockedOnLNS = isReceiveBlockedOnLNS(receive.account.currency.id);
+    const owner = ownedBy(coinTeamOwner(receive.account.currency.id), {
+      folder: TestFolder.RECEIVE,
+    });
+    test.describe("Receive", owner, () => {
+      test.skip(
+        receiveBlockedOnLNS && getSpeculosModel() === DeviceModelId.nanoS,
+        "Receive is blocked on Nano S",
+      );
+      test.use({
+        userdata: "skip-onboarding-with-last-seen-device",
+        speculosApp: receive.account.currency.speculosApp,
+        cliCommands: [liveDataCommand(receive.account)],
+        featureFlags,
+      });
+
+      test(
+        `[${receive.account.currency.testLabel}] [${label}] - Verify address`,
+        {
+          tag: buildTags({
+            currencyId: receive.account.currency.id,
+            skipLNS: receiveBlockedOnLNS,
+            extraTags: receive.account === Account.ETH_1 ? ["@smoke"] : [],
+          }),
+          annotation: {
+            type: "TMS",
+            description: receive.xrayTicket,
+          },
         },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(receive.account.accountName);
-        await app.account.expectAccountVisibility(receive.account.accountName);
-        await app.account.clickReceive();
-        await verifySendCurrencyTokensWarning(app, receive.account);
-        await app.receive.continue();
-        const displayedAddress = await app.receive.getAddressDisplayed();
-        await app.receive.expectValidReceiveAddress(displayedAddress);
-        await app.speculos.expectValidAddressDevice(receive.account, displayedAddress);
-        await app.receive.expectApproveLabel();
-      },
-    );
-  });
+        async ({ app }) => {
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
+          await app.accounts.navigateToAccountByName(receive.account.accountName);
+          await app.account.expectAccountVisibility(receive.account.accountName);
+          await app.account.clickReceive();
+          await verifySendCurrencyTokensWarning(app, receive.account);
+          await app.receive.continue();
+          const displayedAddress = await app.receive.getAddressDisplayed();
+          await app.receive.expectValidReceiveAddress(displayedAddress);
+          await app.speculos.expectValidAddressDevice(receive.account, displayedAddress);
+          await app.receive.expectApproveLabel();
+        },
+      );
+    });
+  }
 }
 
 const zecOwner = ownedBy(coinTeamOwner(Account.ZEC_1.currency.id), { folder: TestFolder.RECEIVE });

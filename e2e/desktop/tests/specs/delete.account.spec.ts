@@ -3,6 +3,10 @@ import { Team } from "@ledgerhq/live-e2e-shared/enum/Team";
 import { Account } from "@ledgerhq/live-e2e-shared/enum/Account";
 import { liveDataCommand } from "@ledgerhq/live-e2e-shared/cliCommandsUtils";
 import { buildTags } from "tests/utils/tagsUtils";
+import {
+  ACCOUNT_DETAIL_FLAG_STATES,
+  FF_ACCOUNT_DETAIL_DISABLED,
+} from "tests/utils/featureFlagUtils";
 
 const accounts = [
   { account: Account.BTC_NATIVE_SEGWIT_1, xrayTicket: "B2CQA-2548" },
@@ -22,36 +26,45 @@ const accounts = [
   { account: Account.ZEC_1, xrayTicket: "B2CQA-5668" },
 ];
 
+// Both pages share the removal flow, so only two currencies pay for the flag-on run.
+const withAccountDetailVariants = [Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1];
+
 for (const account of accounts) {
-  test.describe("Delete account", () => {
-    test.use({
-      teamOwner: Team.WALLET_XP,
-      userdata: "skip-onboarding-with-last-seen-device",
-      cliCommands: [liveDataCommand(account.account)],
-      speculosApp: account.account.currency.speculosApp,
-      speculosForSetupOnly: true,
-    });
+  const flagStates = withAccountDetailVariants.includes(account.account)
+    ? ACCOUNT_DETAIL_FLAG_STATES
+    : [{ label: "account detail off", featureFlags: FF_ACCOUNT_DETAIL_DISABLED }];
+  for (const { label, featureFlags } of flagStates) {
+    test.describe("Delete account", () => {
+      test.use({
+        teamOwner: Team.WALLET_XP,
+        featureFlags,
+        userdata: "skip-onboarding-with-last-seen-device",
+        cliCommands: [liveDataCommand(account.account)],
+        speculosApp: account.account.currency.speculosApp,
+        speculosForSetupOnly: true,
+      });
 
-    test(
-      `[${account.account.currency.testLabel}] - Delete account`,
-      {
-        tag: buildTags({
-          currencyId: account.account.currency.id,
-          extraTags: account.account === Account.ETH_1 ? ["@smoke"] : [],
-        }),
-        annotation: {
-          type: "TMS",
-          description: account.xrayTicket,
+      test(
+        `[${account.account.currency.testLabel}] [${label}] - Delete account`,
+        {
+          tag: buildTags({
+            currencyId: account.account.currency.id,
+            extraTags: account.account === Account.ETH_1 ? ["@smoke"] : [],
+          }),
+          annotation: {
+            type: "TMS",
+            description: account.xrayTicket,
+          },
         },
-      },
-      async ({ app }) => {
-        await app.mainNavigation.openTargetFromMainNavigation("accounts");
-        await app.accounts.navigateToAccountByName(account.account.accountName);
-        await app.account.expectAccountVisibility(account.account.accountName);
+        async ({ app }) => {
+          await app.mainNavigation.openTargetFromMainNavigation("accounts");
+          await app.accounts.navigateToAccountByName(account.account.accountName);
+          await app.account.expectAccountVisibility(account.account.accountName);
 
-        await app.account.deleteAccount();
-        await app.accounts.expectAccountAbsence(account.account.accountName);
-      },
-    );
-  });
+          await app.account.deleteAccount();
+          await app.accounts.expectAccountAbsence(account.account.accountName);
+        },
+      );
+    });
+  }
 }
