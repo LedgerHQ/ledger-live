@@ -31,7 +31,7 @@ import {
 } from "@devtools/bindings";
 import type { DevToolsConfig } from "@devtools/shell";
 import { useDevToolsRelay } from "./useDevToolsRelay";
-import { useDeviceOnboarding } from "../../../DeviceOnboarding/hooks/useDeviceOnboarding";
+import { useDeviceOnboardingTool } from "../../DeviceOnboarding/useDeviceOnboardingTool";
 import { useAccountDataRecorder } from "../../accountDataRecorder";
 import { getPortfolioServiceUrl } from "~/config/portfolioService";
 
@@ -96,7 +96,7 @@ export function useDevToolsScreenViewModel(onCloseOverride?: () => void) {
     prodToggle.cloudSyncApiBaseUrl,
     prodToggle.trustchainApiBaseUrl,
   );
-  const deviceOnboardingProps = useDeviceOnboarding();
+  const deviceOnboardingProps = useDeviceOnboardingTool();
   const accountDescriptorToolProps = useAccountDescriptorToolProps();
   const accountBalanceToolProps = useAccountBalanceToolProps();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);

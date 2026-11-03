@@ -2,7 +2,12 @@ import { useCallback, useMemo } from "react";
 import { useFeature } from "@features/platform-feature-flags";
 import { featureFlagsOverridesSelector, flagRegistry, setOverride } from "@shared/feature-flags";
 import { useDispatch, useSelector } from "~/context/hooks";
-import type { DeviceOnboardingToolProps } from "../utils/toolState";
+import type { DevToolsConfig } from "@devtools/shell";
+
+type DeviceOnboardingToolProps = Extract<
+  DevToolsConfig[number],
+  { id: "device-onboarding" }
+>["config"];
 
 type FeatureFlag = NonNullable<DeviceOnboardingToolProps["featureFlag"]>;
 
