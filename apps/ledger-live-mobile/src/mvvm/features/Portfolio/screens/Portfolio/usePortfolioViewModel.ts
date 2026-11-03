@@ -37,7 +37,6 @@ interface UsePortfolioViewModelResult {
   isAccountListUIEnabled: boolean;
   shouldDisplayAssetDiscoverability: boolean;
   shouldDisplayAssetSection: boolean;
-  shouldDisplayOperationsList: boolean;
   shouldDisplayPerpsEntryPoint: boolean;
   showAssets: boolean;
   isLNUpsellBannerShown: boolean;
@@ -59,11 +58,8 @@ const usePortfolioViewModel = (navigation: {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { isAWalletCardDisplayed } = useDynamicContent();
   const accountListFF = useFeature("llmAccountListUI");
-  const {
-    shouldDisplayAssetSection,
-    shouldDisplayOperationsList,
-    shouldDisplayAssetDiscoverability,
-  } = useWalletFeaturesConfig("mobile");
+  const { shouldDisplayAssetSection, shouldDisplayAssetDiscoverability } =
+    useWalletFeaturesConfig("mobile");
   const isAccountListUIEnabled = accountListFF?.enabled ?? false;
   const { isEnabled: shouldDisplayServicesEntryPoints } = useServicesEntryPointsFeature();
   const llmDatadog = useFeature("llmDatadog");
@@ -144,8 +140,7 @@ const usePortfolioViewModel = (navigation: {
   const { syncPhase } = usePortfolioBalance();
   const isSyncError = syncPhase === "failed";
 
-  const shouldAddBottomPaddingForLegacyAssets =
-    !isAWalletCardDisplayed && shouldDisplayOperationsList;
+  const shouldAddBottomPaddingForLegacyAssets = !isAWalletCardDisplayed;
 
   return {
     hideEmptyTokenAccount,
@@ -153,7 +148,6 @@ const usePortfolioViewModel = (navigation: {
     isAccountListUIEnabled,
     shouldDisplayAssetDiscoverability,
     shouldDisplayAssetSection,
-    shouldDisplayOperationsList,
     shouldDisplayPerpsEntryPoint: !shouldDisplayServicesEntryPoints,
     showAssets,
     isLNUpsellBannerShown,

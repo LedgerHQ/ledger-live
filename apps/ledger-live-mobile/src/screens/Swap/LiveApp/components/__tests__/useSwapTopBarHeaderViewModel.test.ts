@@ -30,7 +30,6 @@ describe("useSwapTopBarHeaderViewModel", () => {
       onMyWalletPress: mockOnMyWalletPress,
       shouldDisplayAssetDiscoverability: false,
       onSearchPress: noop,
-      shouldDisplayOperationsList: false,
       onDiscoverPress: noop,
       onTransactionHistoryPress: noop,
       hasUnreadNotifications: true,

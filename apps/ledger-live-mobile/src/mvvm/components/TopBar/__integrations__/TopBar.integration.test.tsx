@@ -93,11 +93,7 @@ describe("TopBar navigation", () => {
   });
 
   it("should navigate to operations list with expected params when transaction history button is pressed", async () => {
-    const { user, getByTestId } = renderWithReactQuery(<TopBar />, {
-      overrideInitialState: withFlagOverrides({
-        lwmWallet40: { params: { operationsList: true } },
-      }),
-    });
+    const { user, getByTestId } = renderWithReactQuery(<TopBar />);
 
     await user.press(getByTestId("topbar-transaction-history"));
 

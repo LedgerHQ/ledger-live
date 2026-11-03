@@ -9,7 +9,6 @@ export const WALLET_40_PARAMS = [
   { key: "lazyOnboarding", label: "Lazy Onboarding" },
   { key: "assetSection", label: "Asset Section" },
   { key: "brazePlacement", label: "Braze Placement (ContentBanner)" },
-  { key: "operationsList", label: "TX History" },
   { key: "aggregatedAssets", label: "Aggregated Assets" },
   { key: "assetDiscoverability", label: "Asset Discoverability" },
   { key: "earnUpselling", label: "Earn Upselling" },
