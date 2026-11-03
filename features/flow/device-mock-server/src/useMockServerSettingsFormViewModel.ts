@@ -6,8 +6,12 @@ import {
   getMockServerConfigurationUiUrl,
   stripTrailingSlashes,
 } from "@features/platform-device-mock-server";
-import { createMockServerSessionActions } from "./model/mockServerSessionActions";
 import type { MockServerSettingsFormProps } from "./MockServerSettingsForm.types";
+import {
+  disableMockServer,
+  joinMockServerSession,
+  startMockServerSession,
+} from "./mockServerSession";
 import type { MockServerStatus } from "./types";
 import { useMockServerStatus } from "./useMockServerStatus";
 
@@ -37,14 +41,12 @@ const toErrorMessage = (e: unknown) => (e instanceof Error ? e.message : String(
 export function useMockServerSettingsFormViewModel({
   settings: { enabled, url, token },
   defaultUrl,
-  host,
+  sessionImport,
+  seed,
+  onApply: applyChange,
 }: MockServerSettingsFormProps): MockServerSettingsFormViewModel {
   const config = useMemo(() => getMockServerConfig({ enabled, url, token }), [enabled, url, token]);
   const { status, sessionId } = useMockServerStatus(config);
-  const { startNewSession, joinSession, disable } = useMemo(
-    () => createMockServerSessionActions(host),
-    [host],
-  );
   const [urlDraft, setUrlDraft] = useState(url || defaultUrl);
   const [tokenDraft, setTokenDraft] = useState(config?.token ?? "");
   const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
@@ -67,9 +69,18 @@ export function useMockServerSettingsFormViewModel({
     }
   }, []);
 
+  const startNewSession = useCallback(
+    async (sessionUrl: string) =>
+      applyChange(await startMockServerSession(sessionUrl, { sessionImport, seed })),
+    [applyChange, seed, sessionImport],
+  );
+
   const applyDrafts = useCallback(
-    () => (joinsDraftSession ? joinSession(draftUrl, draftToken) : startNewSession(draftUrl)),
-    [draftToken, draftUrl, joinSession, joinsDraftSession, startNewSession],
+    async () =>
+      joinsDraftSession
+        ? applyChange(await joinMockServerSession(draftUrl, draftToken))
+        : startNewSession(draftUrl),
+    [applyChange, draftToken, draftUrl, joinsDraftSession, startNewSession],
   );
 
   const onToggle = useCallback(
@@ -81,12 +92,15 @@ export function useMockServerSettingsFormViewModel({
           { text: "Cancel", style: "cancel" },
           {
             text: "Restart",
-            onPress: () => run("toggle", () => (nextEnabled ? applyDrafts() : disable(url))),
+            onPress: () =>
+              run("toggle", () =>
+                nextEnabled ? applyDrafts() : applyChange(disableMockServer(url)),
+              ),
           },
         ],
       );
     },
-    [applyDrafts, disable, run, url],
+    [applyChange, applyDrafts, run, url],
   );
 
   const onApply = useCallback(() => {

@@ -1,8 +1,10 @@
 import type { MockServerSettings } from "@features/platform-device-mock-server";
-import type { MockServerHost } from "./model/ports";
+import type { MockServerChange } from "./mockServerSession";
 
 export type MockServerSettingsFormProps = Readonly<{
   settings: MockServerSettings;
   defaultUrl: string;
-  host: MockServerHost;
+  sessionImport: unknown;
+  seed?: string;
+  onApply: (change: MockServerChange) => Promise<void>;
 }>;
