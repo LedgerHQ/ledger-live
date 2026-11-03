@@ -1,6 +1,7 @@
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountDetailDelegations from "./AccountDetailDelegations";
+import AccountDetailSection from "./AccountDetailSection";
 import AccountSubHeader from "./AccountSubHeader";
 import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
@@ -16,6 +17,7 @@ const family: SolanaFamily = {
   accountHeaderManageActions,
   AccountBodyHeader,
   AccountDetailDelegations,
+  AccountDetailSection,
   AccountSubHeader,
   sendRecipientFields,
   AccountBalanceSummaryFooter,

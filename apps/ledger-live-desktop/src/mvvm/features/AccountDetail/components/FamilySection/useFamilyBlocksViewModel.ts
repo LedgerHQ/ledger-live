@@ -9,6 +9,7 @@ import { counterValueCurrencySelector, discreetModeSelector } from "~/renderer/r
 
 type FamilyComponents = Pick<
   LLDCoinFamily<Account, never, never, never>,
+  | "AccountDetailSection"
   | "AccountSubHeader"
   | "PendingTransferProposals"
   | "AccountBodyHeader"

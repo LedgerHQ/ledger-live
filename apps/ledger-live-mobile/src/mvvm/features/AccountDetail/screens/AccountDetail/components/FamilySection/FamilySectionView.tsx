@@ -9,6 +9,7 @@ import perFamilyAccountDetailDelegations from "~/generated/AccountDetailDelegati
 import perFamilyAccountBalanceSummaryFooter from "~/generated/AccountBalanceSummaryFooter";
 import perFamilyAccountDetailBalanceSummary from "~/generated/AccountDetailBalanceSummary";
 import perFamilyPendingTransferProposals from "~/generated/PendingTransferProposals";
+import perFamilyAccountDetailSection from "~/generated/AccountDetailSection";
 import { ACCOUNT_DETAIL_TEST_IDS } from "../../../../testIds";
 import type { FamilySectionViewModel } from "./useFamilySectionViewModel";
 
@@ -31,6 +32,26 @@ export const FamilySectionView = ({
 }: FamilySectionViewModel) => {
   const { family } = account.currency;
   const blockProps = { account };
+  const noticesBlock = (
+    <AccountNotices
+      notices={notices}
+      onOpenLink={onOpenLink}
+      onOpenPerps={onOpenPerps}
+      testID={ACCOUNT_DETAIL_TEST_IDS.notices}
+    />
+  );
+
+  if (family in perFamilyAccountDetailSection) {
+    return (
+      <>
+        {noticesBlock}
+        <React.Suspense fallback={null}>
+          {renderFamilyBlock(perFamilyAccountDetailSection, family, blockProps)}
+        </React.Suspense>
+      </>
+    );
+  }
+
   const balancesBlocks =
     family in perFamilyAccountDetailBalanceSummary
       ? perFamilyAccountDetailBalanceSummary
@@ -38,12 +59,7 @@ export const FamilySectionView = ({
 
   return (
     <>
-      <AccountNotices
-        notices={notices}
-        onOpenLink={onOpenLink}
-        onOpenPerps={onOpenPerps}
-        testID={ACCOUNT_DETAIL_TEST_IDS.notices}
-      />
+      {noticesBlock}
       {showEarnBlocks ? renderFamilyBlock(perFamilyAccountHeader, family, blockProps) : null}
       {renderFamilyBlock(perFamilyAccountBalanceHeader, family, blockProps)}
       {renderFamilyBlock(perFamilyAccountSubHeader, family, blockProps)}

@@ -271,6 +271,17 @@ export type LLDCoinFamily<
   };
 
   /**
+   * Coin section of the new Account Detail page. Replaces the legacy account blocks
+   * there (`AccountSubHeader`, `AccountBodyHeader`, `AccountBalanceSummaryFooter`,
+   * `PendingTransferProposals`, and their Account Detail successors). The legacy
+   * account page keeps those blocks. Contract: coin families skill.
+   */
+  AccountDetailSection?: React.ComponentType<{
+    account: A | TokenAccount;
+    parentAccount?: A | null;
+  }>;
+
+  /**
    * Allow to add component between graph and delegations / operation details section
    */
   AccountBodyHeader?: React.ComponentType<{

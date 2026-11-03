@@ -32,6 +32,10 @@ jest.mock("~/generated/AccountBalanceSummaryFooter", () => ({
   solana: mockBlock("balance-summary-footer"),
   cosmos: mockBlock("cosmos-balance-summary-footer"),
   tron: mockBlock("tron-balance-summary-footer"),
+  near: mockBlock("near-balance-summary-footer"),
+}));
+jest.mock("~/generated/AccountDetailSection", () => ({
+  near: mockBlock("detail-section"),
 }));
 
 const viewModel = (family: string): FamilySectionViewModel => ({
@@ -47,6 +51,12 @@ const renderedBlocks = (ids: readonly string[]) =>
   ids.filter(id => screen.queryByTestId(id) !== null);
 
 describe("FamilySectionView", () => {
+  it("renders the account detail section instead of the legacy blocks", () => {
+    render(<FamilySectionView {...viewModel("near")} />);
+
+    expect(screen.getAllByTestId(/.+/).map(node => node.props.testID)).toEqual(["detail-section"]);
+  });
+
   it("renders the Account Detail delegations last, instead of the legacy body header", () => {
     render(<FamilySectionView {...viewModel("solana")} />);
 

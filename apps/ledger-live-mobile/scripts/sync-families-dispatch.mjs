@@ -25,6 +25,7 @@ const targets = [
   "accountActions",
   "TransactionConfirmFields",
   "AccountHeader",
+  "AccountDetailSection",
   "AccountBodyHeader",
   "AccountDetailDelegations",
   "AccountSubHeader",

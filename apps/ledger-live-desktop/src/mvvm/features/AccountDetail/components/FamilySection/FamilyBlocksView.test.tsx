@@ -89,6 +89,20 @@ describe("FamilyBlocksView", () => {
     expect(screen.queryByTestId("balance-summary-footer")).toBeNull();
   });
 
+  it("renders the account detail section instead of the legacy blocks", () => {
+    renderView({
+      family: { AccountDetailSection: block("detail-section") },
+      showBalanceSummaryFooter: true,
+      showBodyBlocks: true,
+    });
+
+    expect(screen.getByTestId("detail-section")).toBeVisible();
+    expect(screen.queryByTestId("sub-header")).toBeNull();
+    expect(screen.queryByTestId("body-header")).toBeNull();
+    expect(screen.queryByTestId("balance-summary-footer")).toBeNull();
+    expect(screen.queryByTestId("pending-transfer-proposals")).toBeNull();
+  });
+
   it("renders nothing for a family without blocks", () => {
     const { container } = renderView({ family: {} });
 

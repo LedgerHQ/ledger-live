@@ -16,6 +16,11 @@ export const FamilyBlocksView = ({
   showBalanceSummaryFooter,
   showBodyBlocks,
 }: FamilyBlocksViewModel) => {
+  const AccountDetailSection = family.AccountDetailSection;
+  if (AccountDetailSection) {
+    return <AccountDetailSection account={account} />;
+  }
+
   return (
     <>
       {renderFamilyBlock(family.PendingTransferProposals, { account, parentAccount: account })}
