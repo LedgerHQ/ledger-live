@@ -2624,6 +2624,43 @@
       "activate": "Activate",
       "skip": "Skip for now"
     },
+    "setup": {
+      "progress": "{{current}} of {{total}}",
+      "indicator": {
+        "loading": "Checking"
+      },
+      "checks": {
+        "title": "Genuine check",
+        "description": "Confirming your Ledger is genuine and up to date."
+      },
+      "naming": {
+        "title": "Device name",
+        "description": "Choose a name on your Ledger."
+      },
+      "pin": {
+        "title": "PIN",
+        "description": "Choose a PIN on your Ledger."
+      },
+      "setupChoice": {
+        "title": "Setup choice",
+        "description": "Set up as new or restore an existing wallet."
+      },
+      "security": {
+        "title": "Security setup",
+        "description": "Copy the recovery phrase from your Ledger onto your Recovery sheet.",
+        "recoveryKeyDescription": "Back up your Secret Recovery Phrase on your Recovery Key."
+      },
+      "restore": {
+        "title": "Restore access",
+        "description": "Restore access on your Ledger."
+      },
+      "quit": {
+        "title": "Leave setup?",
+        "description": "Your device setup is not finished. You can come back and continue later.",
+        "continue": "Continue setup",
+        "leave": "Leave"
+      }
+    },
     "connection": {
       "connecting": "Connecting to your device",
       "failed": "Connection failed"

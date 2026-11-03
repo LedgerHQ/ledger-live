@@ -3,6 +3,7 @@ import { Box, Button, Text } from "@ledgerhq/lumen-ui-rnative";
 import { QuitConfirmation } from "LLM/features/DeviceOnboarding/components/QuitConfirmation";
 import { ChecksScreen } from "LLM/features/DeviceOnboarding/screens/Checks";
 import { KaraokeScreen } from "LLM/features/DeviceOnboarding/screens/Karaoke";
+import { SetupScreen } from "LLM/features/DeviceOnboarding/screens/Setup";
 import {
   useDeviceOnboardingFunnelViewModel,
   type DeviceOnboardingFunnelModel,
@@ -14,6 +15,9 @@ function FunnelBody({ screen }: Readonly<{ screen: DeviceOnboardingFunnelModel }
   }
   if (screen.status === "checks") {
     return <ChecksScreen {...screen.checks} />;
+  }
+  if (screen.status === "setup") {
+    return <SetupScreen {...screen.setup} />;
   }
 
   return (
