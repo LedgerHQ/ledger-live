@@ -3,9 +3,6 @@ import { http, HttpResponse } from "msw";
 const BASE_URL = "https://proxycg.api.live.ledger.com/api/v3";
 
 const handlers = [
-  http.get(`${BASE_URL}/simple/supported_vs_currencies`, () => {
-    return HttpResponse.json(["usd", "eur", "gbp"]);
-  }),
   http.get(`${BASE_URL}/coins/:coin/market_chart`, () => {
     return HttpResponse.json({
       prices: [

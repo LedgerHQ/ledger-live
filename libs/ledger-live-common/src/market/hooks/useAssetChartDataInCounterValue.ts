@@ -1,9 +1,8 @@
 import { useMemo } from "react";
-import { useUsdToFiatRate } from "@features/platform-market-countervalues";
 import { scaleMarketChartData } from "../utils/scaleMarketChartData";
 import type { MarketAssetChartDataRequestParams, MarketCoinDataChart } from "../utils/types";
 import { useAssetChartData, type UseAssetChartDataOptions } from "./useAssetChartData";
-import { useResolveMarketCounterCurrency } from "./useResolveMarketCounterCurrency";
+import { useMarketCounterValueRate } from "./useMarketCounterValueRate";
 
 type UseAssetChartDataInCounterValueParams = MarketAssetChartDataRequestParams & {
   isCryptoCountervalue: boolean;
@@ -20,20 +19,26 @@ export type UseAssetChartDataInCounterValueResult = {
 };
 
 /**
- * Fetch an asset's price chart in the user's countervalue. For countervalues the
- * chart endpoint can't serve (crypto, or fiats like COP) it fetches in USD and
- * rescales by the USD->countervalue rate; supported fiats are passed through.
+ * Fetch an asset's price chart in the user's countervalue. Currencies the chart
+ * endpoint cannot serve, and crypto counter values, are fetched in USD and
+ * rescaled by the USD->countervalue rate.
  */
 export function useAssetChartDataInCounterValue(
   { id, counterCurrency, range, isCryptoCountervalue }: UseAssetChartDataInCounterValueParams,
   options?: UseAssetChartDataOptions,
 ): UseAssetChartDataInCounterValueResult {
-  const { requestCounterCurrency, displayCounterCurrency, needsUsdFallback, isResolutionLoading } =
-    useResolveMarketCounterCurrency({
-      counterCurrency,
-      fallbackForCryptoCountervalues: true,
-      isCryptoCountervalue,
-    });
+  const {
+    requestCounterCurrency,
+    rate,
+    isResolutionLoading,
+    isLoading: isCounterValueLoading,
+    isError: isCounterValueError,
+  } = useMarketCounterValueRate({
+    counterCurrency,
+    fallbackForCryptoCountervalues: true,
+    isCryptoCountervalue,
+    skip: options?.skip,
+  });
   const skipChart = options?.skip || isResolutionLoading;
 
   const { data, currentData, isLoading, isFetching, isError } = useAssetChartData(
@@ -46,32 +51,21 @@ export function useAssetChartDataInCounterValue(
     },
   );
 
-  // Passing "usd" short-circuits the rate hook to 1 without a request.
-  const { rate, status } = useUsdToFiatRate(
-    needsUsdFallback ? (displayCounterCurrency ?? "usd") : "usd",
-    { skip: skipChart },
+  const canScale = !skipChart && rate != null;
+  const scaledData = useMemo(
+    () => (canScale ? scaleMarketChartData(data, rate) : undefined),
+    [data, rate, canScale],
   );
-
-  const scaledData = useMemo(() => {
-    if (skipChart) return undefined;
-    if (!needsUsdFallback) return data;
-    // Withhold data until the rate resolves, rather than showing USD as the countervalue.
-    if (rate == null) return undefined;
-    return scaleMarketChartData(data, rate);
-  }, [data, needsUsdFallback, rate, skipChart]);
-
-  const scaledCurrentData = useMemo(() => {
-    if (skipChart) return undefined;
-    if (!needsUsdFallback) return currentData;
-    if (rate == null) return undefined;
-    return scaleMarketChartData(currentData, rate);
-  }, [currentData, needsUsdFallback, rate, skipChart]);
+  const scaledCurrentData = useMemo(
+    () => (canScale ? scaleMarketChartData(currentData, rate) : undefined),
+    [currentData, rate, canScale],
+  );
 
   return {
     data: scaledData,
     currentData: scaledCurrentData,
-    isLoading: isLoading || isResolutionLoading || (needsUsdFallback && status === "loading"),
+    isLoading: isLoading || isCounterValueLoading,
     isFetching,
-    isError: isError || (needsUsdFallback && status === "error"),
+    isError: isError || isCounterValueError,
   };
 }

@@ -81,7 +81,6 @@ libs/wallet-analytics/                                   @ledgerhq/wallet-xp
 libs/live-wallet/                                        @ledgerhq/wallet-xp
 shared/linking/                                          @ledgerhq/wallet-xp
 libs/ledger-live-common/src/modularDrawer/               @ledgerhq/wallet-xp
-libs/ledger-live-common/src/cg-client/                   @ledgerhq/wallet-xp
 libs/ledger-live-common/src/account/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/deposit/                     @ledgerhq/wallet-xp
 libs/ledger-live-common/src/icons/                        @ledgerhq/wallet-xp

@@ -1,6 +1,5 @@
 import { Tuple, type Middleware } from "@reduxjs/toolkit";
 import { marketApi } from "@ledgerhq/live-common/market/state-manager/api";
-import { cgApi } from "@ledgerhq/live-common/cg-client/state-manager/api";
 import { aleoApi } from "@ledgerhq/live-common/families/aleo/state-manager/api";
 import { hederaApi } from "@ledgerhq/live-common/families/hedera/state-manager/api";
 import {
@@ -31,7 +30,6 @@ const EXPECTED_REDUCER_PATHS = [
   "assetsDataApi",
   "calApi",
   "cardApi",
-  "cgApi",
   "coinMarketCapApi",
   "countervaluesApi",
   "hederaApi",
@@ -47,7 +45,6 @@ const EXPECTED_APIS = [
   cardApi,
   coinMarketCapApi,
   countervaluesApi,
-  cgApi,
   hederaApi,
   marketApi,
   pushDevicesApi,
@@ -121,7 +118,6 @@ describe("apiServices", () => {
 
 const LEGACY_API_MODULES = [
   ["@ledgerhq/live-common/market/state-manager/api", "marketApi"],
-  ["@ledgerhq/live-common/cg-client/state-manager/api", "cgApi"],
   ["@ledgerhq/live-common/families/aleo/state-manager/api", "aleoApi"],
   ["@ledgerhq/live-common/families/hedera/state-manager/api", "hederaApi"],
 ] as const;

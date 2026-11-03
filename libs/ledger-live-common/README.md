@@ -29,7 +29,6 @@ published to npm — consume it through the workspace.
 Narrower local docs:
 
 - [DADA Client](src/dada-client/README.md)
-- [CG Client](src/cg-client/README.md)
 - [CMC Client](src/cmc-client/README.md)
 - [Portfolio bot helpers](src/bot/portfolio/README.md)
 - [Ensure App Ready](src/device/use-cases/ensureAppReady/README.md)

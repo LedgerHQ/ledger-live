@@ -9,6 +9,7 @@ export enum MarketDataTags {
   Performers = "Performers",
   CurrencyData = "CurrencyData",
   ChartData = "ChartData",
+  ChartCounterCurrencies = "ChartCounterCurrencies",
   GlobalData = "GlobalData",
   TrendingCategories = "TrendingCategories",
   TrendingPerformers = "TrendingPerformers",
@@ -39,6 +40,11 @@ export interface MarketsByLedgerIdsQueryParams {
 export const MarketChartApiResponseSchema = z.object({
   values: z.array(z.tuple([z.number(), z.number()])),
 });
+
+// /v3/supported/markets/chart/to mixes fiat tickers (EUR) and coin ids (bitcoin).
+export const SupportedChartCounterCurrenciesSchema = z
+  .array(z.string().min(1))
+  .transform(currencies => currencies.map(currency => currency.toLowerCase()));
 
 export type MarketChartApiResponse = z.infer<typeof MarketChartApiResponseSchema>;
 
