@@ -24,8 +24,10 @@
   "dependencies": {
     "@domain/api-account-data": "workspace:*",
     "@domain/entity-account-balance": "workspace:*",
+    "@domain/entity-account-balance-history": "workspace:*",
     "@domain/entity-account-operation": "workspace:*",
     "@domain/entity-currency": "workspace:*",
+    "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-fiat": "workspace:*",
     "@domain/entity-market-countervalues": "workspace:*",
     "@reduxjs/toolkit": "catalog:",
@@ -40,7 +42,6 @@
   },
   "devDependencies": {
     "@domain/entity-account-descriptor": "workspace:*",
-    "@domain/entity-currency-crypto": "workspace:*",
     "@domain/entity-currency-token": "workspace:*",
     "@jest/globals": "catalog:",
     "@ledgerhq/test-quarantine": "workspace:*",

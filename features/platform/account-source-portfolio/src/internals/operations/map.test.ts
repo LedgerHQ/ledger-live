@@ -1,5 +1,4 @@
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
-import { CountervalueTickerSchema } from "@domain/entity-account-operation";
+import { BalanceAssetIdSchema, CountervalueTickerSchema } from "@domain/entity-account-balance";
 import { ETH, update } from "../fakeService.mock";
 import { toAccountOperations } from "./map";
 

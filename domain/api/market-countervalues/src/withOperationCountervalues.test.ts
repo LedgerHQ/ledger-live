@@ -1,11 +1,8 @@
 import type { AccountDataSource, AccountTarget } from "@domain/api-account-data";
 import { descriptorOf, sourceIdOf } from "@domain/api-account-data/testing";
-import type { BalanceAssetId } from "@domain/entity-account-balance";
+import { CountervalueTickerSchema, type BalanceAssetId } from "@domain/entity-account-balance";
 import { AccountUUIDSchema } from "@domain/entity-account-descriptor";
-import {
-  CountervalueTickerSchema,
-  type AccountOperationsPage,
-} from "@domain/entity-account-operation";
+import type { AccountOperationsPage } from "@domain/entity-account-operation";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import type { Currency } from "@domain/entity-currency";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
@@ -54,6 +51,13 @@ describe("valueOperations", () => {
     const rates = ratesOf({ "USD ethereum": { "2026-01-01": 2000 } });
     const token = mockAccountOperation({ id: "usdt-op", assetId: usdt.id, value: "10" });
     expect(valued(pageOf(oneEth(), token), rates)).toEqual([{ USD: "200000" }, undefined]);
+  });
+
+  it("values in Bitcoin with the rates held for the crypto currency", () => {
+    const btc = CountervalueTickerSchema.parse("BTC");
+    const rates = ratesOf({ "bitcoin ethereum": { "2026-01-01": 0.05 } });
+    const [row] = valueOperations(pageOf(oneEth()), btc, rates, currencyOf).operations;
+    expect(row?.countervalues).toEqual({ BTC: "5000000" });
   });
 
   it("values a token row with the token's own rate, in the token's unit", () => {

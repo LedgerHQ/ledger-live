@@ -55,6 +55,15 @@ const receive = (
     revision,
   });
 
+const valued = (usd: string, balance = "5") =>
+  mockAssetBalanceHistory({
+    points: [{ date: "2026-01-01T00:00:00.000Z", balance, countervalues: { USD: usd } }],
+  });
+const plain = (balance = "5") =>
+  mockAssetBalanceHistory({ points: [{ date: "2026-01-01T00:00:00.000Z", balance }] });
+const pointOf = (state: AccountBalanceHistoriesState) =>
+  state[accountUUID]?.week?.series[0]?.points[0];
+
 describe("accountBalanceHistoriesSlice", () => {
   it("should start from the initial state", () => {
     expect(accountBalanceHistoriesReducer(undefined, { type: "" })).toEqual(
@@ -112,5 +121,56 @@ describe("accountBalanceHistoriesSlice", () => {
       }),
     );
     expect(state[accountUUID]).toEqual({ week: at0([eth]) });
+  });
+
+  describe("countervalues", () => {
+    it("stores the countervalues a read returned with its points", () => {
+      expect(pointOf(reduce(receive("week", [valued("100")])))).toMatchObject({
+        countervalues: { USD: "100" },
+      });
+    });
+
+    it("keeps them through a read without countervalue while the point is unchanged", () => {
+      const state = reduce(receive("week", [valued("100")]), receive("week", [plain()]));
+      expect(pointOf(state)).toMatchObject({ countervalues: { USD: "100" } });
+    });
+
+    it("drops them once the point's balance changed", () => {
+      const state = reduce(receive("week", [valued("100")]), receive("week", [plain("6")]));
+      expect(pointOf(state)).not.toHaveProperty("countervalues");
+    });
+
+    it("adds another countervalue next to the kept one, the latest read winning its own", () => {
+      const eur = mockAssetBalanceHistory({
+        points: [{ date: "2026-01-01T00:00:00.000Z", balance: "5", countervalues: { EUR: "90" } }],
+      });
+      const state = reduce(receive("week", [valued("100")]), receive("week", [eur]));
+      expect(pointOf(state)).toMatchObject({ countervalues: { USD: "100", EUR: "90" } });
+    });
+
+    it("adds the countervalues of an older answer to the unchanged points of the newer series", () => {
+      const state = reduce(
+        receive("week", [plain()], accountUUID, 2),
+        receive("week", [valued("100")], accountUUID, 1),
+      );
+      expect(state[accountUUID]?.week?.revision).toBe(2);
+      expect(pointOf(state)).toMatchObject({ balance: "5", countervalues: { USD: "100" } });
+    });
+
+    it("keeps the newer series' own countervalues over an older answer's", () => {
+      const state = reduce(
+        receive("week", [valued("120")], accountUUID, 2),
+        receive("week", [valued("100")], accountUUID, 1),
+      );
+      expect(pointOf(state)).toMatchObject({ countervalues: { USD: "120" } });
+    });
+
+    it("leaves out an older answer's countervalues when the point's balance changed", () => {
+      const state = reduce(
+        receive("week", [plain("6")], accountUUID, 2),
+        receive("week", [valued("100")], accountUUID, 1),
+      );
+      expect(pointOf(state)).toEqual({ date: "2026-01-01T00:00:00.000Z", balance: "6" });
+    });
   });
 });

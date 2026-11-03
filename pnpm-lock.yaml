@@ -5786,12 +5786,18 @@ importers:
       '@domain/entity-account-balance':
         specifier: workspace:*
         version: link:../../entity/account-balance
+      '@domain/entity-account-balance-history':
+        specifier: workspace:*
+        version: link:../../entity/account-balance-history
       '@domain/entity-account-operation':
         specifier: workspace:*
         version: link:../../entity/account-operation
       '@domain/entity-currency':
         specifier: workspace:*
         version: link:../../entity/currency
+      '@domain/entity-currency-crypto':
+        specifier: workspace:*
+        version: link:../../entity/currency-crypto
       '@domain/entity-currency-fiat':
         specifier: workspace:*
         version: link:../../entity/currency-fiat
@@ -5817,9 +5823,6 @@ importers:
       '@domain/entity-account-descriptor':
         specifier: workspace:*
         version: link:../../entity/account-descriptor
-      '@domain/entity-currency-crypto':
-        specifier: workspace:*
-        version: link:../../entity/currency-crypto
       '@domain/entity-currency-token':
         specifier: workspace:*
         version: link:../../entity/currency-token

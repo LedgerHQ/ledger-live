@@ -6,8 +6,8 @@ import {
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAccountOperation } from "./schema.mock";
+import { CountervalueTickerSchema } from "@domain/entity-account-balance";
 import {
-  CountervalueTickerSchema,
   initialAccountOperationsState,
   type AccountOperation,
   type AccountOperationsQuery,

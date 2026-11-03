@@ -8,7 +8,7 @@ import {
   type OperationType,
 } from "@domain/entity-account-operation";
 import type { AccountDescriptor } from "@domain/entity-account-descriptor";
-import type { Fiat } from "./read";
+import { countervaluesOf, type Fiat } from "../fiat";
 
 /** `unmapped`: token changes with no CAL id, left out. `unreadable`: updates that could not be read. */
 export type MappedOperations = {
@@ -63,13 +63,6 @@ function changesOf(descriptor: AccountDescriptor, deltas: readonly AssetChange[]
     });
   }
   return { changes, unmapped };
-}
-
-/** The fiat's smallest unit, half up, as the operations entity stores a countervalue. */
-function countervaluesOf(worth: BigNumber | null, fiat: Fiat | undefined) {
-  if (!fiat || worth === null) return undefined;
-  const value = worth.abs().shiftedBy(fiat.magnitude).integerValue(BigNumber.ROUND_HALF_UP);
-  return { countervalues: { [fiat.ticker]: value.toFixed(0) } };
 }
 
 /** The native row, then one row per token changed, pointing at it. Undefined when unreadable. */

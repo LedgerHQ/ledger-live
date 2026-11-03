@@ -24,17 +24,21 @@ function renderTool(accounts: AccountBalanceHistoryToolAccount[]) {
   const onRead = jest.fn();
   const onReadAll = jest.fn();
   const onRangeChange = jest.fn();
+  const onCountervalueChange = jest.fn();
   render(
     <AccountBalanceHistory
       ranges={["day", "week", "month"]}
       range="week"
       onRangeChange={onRangeChange}
+      fiat="USD"
+      countervalue={false}
+      onCountervalueChange={onCountervalueChange}
       accounts={accounts}
       onRead={onRead}
       onReadAll={onReadAll}
     />,
   );
-  return { onRead, onReadAll, onRangeChange };
+  return { onRead, onReadAll, onRangeChange, onCountervalueChange };
 }
 
 describe("AccountBalanceHistory", () => {
@@ -75,6 +79,21 @@ describe("AccountBalanceHistory", () => {
     expect(screen.getByRole("combobox")).toHaveValue("week");
     await userEvent.selectOptions(screen.getByRole("combobox"), "month");
     expect(onRangeChange).toHaveBeenCalledWith("month");
+  });
+
+  it("shows the fiat value of the last point of a valued series", () => {
+    renderTool([
+      makeAccount({
+        series: [{ ...series, firstCountervalue: "$0.00", lastCountervalue: "$3,000.00" }],
+      }),
+    ]);
+    expect(screen.getByText("$3,000.00")).toBeVisible();
+  });
+
+  it("reads in the app's fiat once its checkbox is checked", async () => {
+    const { onCountervalueChange } = renderTool([makeAccount()]);
+    await userEvent.click(screen.getByRole("checkbox", { name: "USD" }));
+    expect(onCountervalueChange).toHaveBeenCalledWith(true);
   });
 
   it("reads the account of the clicked row", async () => {

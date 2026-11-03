@@ -16,11 +16,10 @@ import {
 } from "@domain/entity-account-descriptor/schema.mock";
 import {
   accountOperationsSlice,
-  CountervalueTickerSchema,
   type AccountOperationsPage,
   type AccountOperationsQuery,
 } from "@domain/entity-account-operation";
-import { BalanceAssetIdSchema } from "@domain/entity-account-balance";
+import { BalanceAssetIdSchema, CountervalueTickerSchema } from "@domain/entity-account-balance";
 import { mockAccountOperation } from "@domain/entity-account-operation/schema.mock";
 import { useAccountOperationToolProps } from "./useAccountOperationToolProps";
 

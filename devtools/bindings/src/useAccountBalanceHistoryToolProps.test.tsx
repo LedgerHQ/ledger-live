@@ -20,7 +20,7 @@ const ethereumUUID = computeAccountUUID(ethereum);
 const bitcoinUUID = computeAccountUUID(bitcoin);
 
 function setup({ fail = false } = {}) {
-  const reads: { accountUUID: string; range?: string }[] = [];
+  const reads: { accountUUID: string; range?: string; countervalue?: string }[] = [];
   const store = configureStore({
     reducer: {
       accountEntries: accountsSlice.reducer,
@@ -36,15 +36,24 @@ function setup({ fail = false } = {}) {
               supports: () => true,
               read: {
                 balanceHistory: async ({ accountUUID }, query) => {
-                  reads.push({ accountUUID, range: query?.range });
+                  reads.push({
+                    accountUUID,
+                    range: query?.range,
+                    ...(query?.countervalue && { countervalue: query.countervalue }),
+                  });
                   if (fail) throw new Error("down");
+                  const valued = query?.countervalue === "USD";
                   return {
                     range: query?.range ?? "month",
                     series: [
                       mockAssetBalanceHistory({
                         points: [
                           { date: "2026-01-01T00:00:00.000Z", balance: "0" },
-                          { date: "2026-01-02T00:00:00.000Z", balance: "1500000000000000000" },
+                          {
+                            date: "2026-01-02T00:00:00.000Z",
+                            balance: "1500000000000000000",
+                            ...(valued && { countervalues: { USD: "300000" } }),
+                          },
                         ],
                       }),
                     ],
@@ -65,7 +74,7 @@ function setup({ fail = false } = {}) {
   const wrapper = ({ children }: PropsWithChildren) => (
     <Provider store={store}>{children}</Provider>
   );
-  const { result } = renderHook(() => useAccountBalanceHistoryToolProps(), { wrapper });
+  const { result } = renderHook(() => useAccountBalanceHistoryToolProps("USD"), { wrapper });
   return { result, reads };
 }
 
@@ -103,6 +112,24 @@ describe("useAccountBalanceHistoryToolProps", () => {
         ],
       }),
     );
+  });
+
+  it("reads in the app's fiat once checked and shows the last point's value in it", async () => {
+    const { result, reads } = setup();
+    expect(result.current.fiat).toBe("USD");
+    act(() => result.current.onCountervalueChange(true));
+    act(() => result.current.onRead(ethereumUUID));
+    await waitFor(() => expect(result.current.accounts[0].series).toBeDefined());
+    expect(reads).toEqual([{ accountUUID: ethereumUUID, range: "month", countervalue: "USD" }]);
+    expect(result.current.accounts[0].sourceId).toBe("controlled");
+    expect(result.current.accounts[0].series?.[0]).toEqual(
+      expect.objectContaining({
+        firstCountervalue: undefined,
+        lastCountervalue: expect.stringMatching(/3,000\.00/),
+      }),
+    );
+    act(() => result.current.onCountervalueChange(false));
+    expect(result.current.accounts[0].series?.[0].lastCountervalue).toBeUndefined();
   });
 
   it("shows the series of the selected range only", async () => {

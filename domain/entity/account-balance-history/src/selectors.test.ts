@@ -1,3 +1,4 @@
+import { CountervalueTickerSchema } from "@domain/entity-account-balance";
 import { computeAccountUUID } from "@domain/entity-account-descriptor";
 import { mockAddressAccountDescriptor } from "@domain/entity-account-descriptor/schema.mock";
 import { mockAssetBalanceHistory } from "./schema.mock";
@@ -50,5 +51,42 @@ describe("selectAccountAssetBalanceHistory", () => {
     expect(
       selectAccountAssetBalanceHistory(state, accountUUID, "day", eth.assetId),
     ).toBeUndefined();
+  });
+});
+
+describe("selectAccountBalanceHistory with a countervalue", () => {
+  const point = { date: "2026-01-01T00:00:00.000Z", balance: "5" };
+  const valued = mockAssetBalanceHistory({
+    points: [{ ...point, countervalues: { USD: "100", EUR: "90" } }],
+  });
+  const valuedState = {
+    accountBalanceHistories: { [accountUUID]: { week: { revision: 0, series: [valued] } } },
+  };
+  const USD = CountervalueTickerSchema.parse("USD");
+
+  it("keeps only the asked countervalue on each point", () => {
+    expect(selectAccountBalanceHistory(valuedState, accountUUID, "week", USD)).toEqual([
+      { assetId: "ethereum", points: [{ ...point, countervalues: { USD: "100" } }] },
+    ]);
+  });
+
+  it("shows no countervalue without one asked, or for one never read", () => {
+    expect(selectAccountBalanceHistory(valuedState, accountUUID, "week")).toEqual([
+      { assetId: "ethereum", points: [point] },
+    ]);
+    expect(
+      selectAccountBalanceHistory(
+        valuedState,
+        accountUUID,
+        "week",
+        CountervalueTickerSchema.parse("JPY"),
+      ),
+    ).toEqual([{ assetId: "ethereum", points: [point] }]);
+  });
+
+  it("returns the same series while the state and the arguments stay the same", () => {
+    expect(selectAccountBalanceHistory(valuedState, accountUUID, "week", USD)).toBe(
+      selectAccountBalanceHistory(valuedState, accountUUID, "week", USD),
+    );
   });
 });
