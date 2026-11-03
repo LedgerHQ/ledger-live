@@ -196,18 +196,4 @@
 - Updated dependencies [[`ce4ae4a`](https://github.com/LedgerHQ/ledger-live/commit/ce4ae4a61b4721d8d1ad7b9e8c82a182350d3be4), [`132ae4a`](https://github.com/LedgerHQ/ledger-live/commit/132ae4a0776bc04797e0344d7123cef0d1124bb4)]:
   - @devtools/registry@0.4.0-next.0
 
-## 0.8.1
-
-### Patch Changes
-
-- Updated dependencies [[`dd0e578`](https://github.com/LedgerHQ/ledger-live/commit/dd0e578b82b8fc94fa8690cd8111f5826254b197)]:
-  - @devtools/registry@0.3.0
-
-## 0.8.1-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @devtools/registry@0.3.0-next.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

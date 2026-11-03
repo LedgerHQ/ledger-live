@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-hedera": patch
+"@ledgerhq/coin-hedera": minor
 ---
 
 fix(coin-hedera): match an ERC20 transfer to its contract call by hash

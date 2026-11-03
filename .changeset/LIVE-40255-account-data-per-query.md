@@ -3,7 +3,7 @@
 "@domain/api-account-data": minor
 "@domain/entity-account-operation": minor
 "@domain/entity-account-balance-history": minor
-"@devtools/account-data": patch
+"@devtools/account-data": minor
 "@features/platform-account-data": minor
 "@devtools/account-operation": minor
 "@devtools/bindings": minor

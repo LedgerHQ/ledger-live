@@ -569,26 +569,4 @@
   - @shared/cloud-sync@0.3.0
   - @shared/cloud-sync-module@0.4.0
 
-## 0.11.0-next.4
-
-### Patch Changes
-
-- Updated dependencies [[`8993c24`](https://github.com/LedgerHQ/ledger-live/commit/8993c242de8ed57617fb74ac9a3b1af047638914)]:
-  - @shared/feature-flags@0.22.0-next.1
-  - @ledgerhq/live-common@37.6.0-next.4
-
-## 0.11.0-next.3
-
-### Patch Changes
-
-- Updated dependencies [[`6ad68ad`](https://github.com/LedgerHQ/ledger-live/commit/6ad68ad4358d6a1126f300c3855cab33a918c017)]:
-  - @ledgerhq/live-common@37.6.0-next.3
-
-## 0.11.0-next.2
-
-### Patch Changes
-
-- Updated dependencies [[`800e718`](https://github.com/LedgerHQ/ledger-live/commit/800e71806a6b743161ae1eb4f163d6a9ca654f85)]:
-  - @ledgerhq/live-common@37.6.0-next.2
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

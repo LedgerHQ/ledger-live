@@ -2668,22 +2668,4 @@
   - @ledgerhq/coin-aleo@2.3.0-next.0
   - @ledgerhq/coin-hedera@2.3.0-next.0
 
-## 37.6.0-next.3
-
-### Minor Changes
-
-- [#21854](https://github.com/LedgerHQ/ledger-live/pull/21854) [`6ad68ad`](https://github.com/LedgerHQ/ledger-live/commit/6ad68ad4358d6a1126f300c3855cab33a918c017) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(llc): update Arc mainnet native contract address
-
-## 37.6.0-next.2
-
-### Minor Changes
-
-- [#21800](https://github.com/LedgerHQ/ledger-live/pull/21800) [`800e718`](https://github.com/LedgerHQ/ledger-live/commit/800e71806a6b743161ae1eb4f163d6a9ca654f85) Thanks [@henri-ly](https://github.com/henri-ly)! - Guard against a bridge extension returning an undefined spendable balance, which crashed the wallet-api serializer when selecting an Aleo token with no synced sub-account
-
-## 37.6.0-next.1
-
-### Minor Changes
-
-- [#21746](https://github.com/LedgerHQ/ledger-live/pull/21746) [`12199a1`](https://github.com/LedgerHQ/ledger-live/commit/12199a1c615ccd21c1f3574b0f1868dbf0800ba2) Thanks [@amaslakov](https://github.com/amaslakov)! - Pass the coin-tezos context to the baker lookups, which now resolve the config themselves instead of taking a resolved one
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

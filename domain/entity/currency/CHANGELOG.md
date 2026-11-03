@@ -228,28 +228,4 @@
 - Updated dependencies [[`6a531c5`](https://github.com/LedgerHQ/ledger-live/commit/6a531c54ccd1c65df122286de6f136f9d73b9002)]:
   - @domain/entity-currency-crypto@0.9.0-next.0
 
-## 0.3.0
-
-### Minor Changes
-
-- [#20075](https://github.com/LedgerHQ/ledger-live/pull/20075) [`1e4e519`](https://github.com/LedgerHQ/ledger-live/commit/1e4e51913a9b1971056789ac24ed05092529d799) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the specialized re-exports from `@domain/entity-currency`; it now exposes only the cross-package unions (`Currency`/`CurrencySchema`, `CryptoOrTokenCurrency`/`CryptoOrTokenCurrencySchema`). Import specialized types (`CryptoCurrency`, `TokenCurrency`, `FiatCurrency`, `Unit`) directly from their own `@domain/entity-currency-*` package.
-
-### Patch Changes
-
-- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c)]:
-  - @domain/entity-currency-crypto@0.8.0
-  - @domain/entity-currency-token@0.3.0
-
-## 0.3.0-next.0
-
-### Minor Changes
-
-- [#20075](https://github.com/LedgerHQ/ledger-live/pull/20075) [`1e4e519`](https://github.com/LedgerHQ/ledger-live/commit/1e4e51913a9b1971056789ac24ed05092529d799) Thanks [@ysitbon](https://github.com/ysitbon)! - Remove the specialized re-exports from `@domain/entity-currency`; it now exposes only the cross-package unions (`Currency`/`CurrencySchema`, `CryptoOrTokenCurrency`/`CryptoOrTokenCurrencySchema`). Import specialized types (`CryptoCurrency`, `TokenCurrency`, `FiatCurrency`, `Unit`) directly from their own `@domain/entity-currency-*` package.
-
-### Patch Changes
-
-- Updated dependencies [[`4148019`](https://github.com/LedgerHQ/ledger-live/commit/414801922232b6d9514270e8876e783c11555c2c)]:
-  - @domain/entity-currency-crypto@0.8.0-next.0
-  - @domain/entity-currency-token@0.3.0-next.0
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

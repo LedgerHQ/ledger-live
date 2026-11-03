@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-hedera": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-hedera": minor
+"@ledgerhq/live-common": minor
 ---
 
 fix(coin-hedera): split a native operation's HBAR change like getBlock does

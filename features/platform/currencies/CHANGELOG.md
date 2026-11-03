@@ -268,21 +268,4 @@
   - @domain/api-currency-token@0.5.1-next.0
   - @features/platform-feature-flags@0.6.7-next.0
 
-## 0.6.1
-
-### Patch Changes
-
-- Updated dependencies [[`e07e0ba`](https://github.com/LedgerHQ/ledger-live/commit/e07e0baca2e4edfe90163367047459257034f7cc), [`79882e2`](https://github.com/LedgerHQ/ledger-live/commit/79882e26a14f246f1cc969937e011b16e701b8f2)]:
-  - @shared/api-services@0.4.0
-  - @domain/entity-currency-token@0.5.0
-  - @domain/api-currency-token@0.5.0
-  - @features/platform-feature-flags@0.6.6
-
-## 0.6.1-next.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @features/platform-feature-flags@0.6.6-next.1
-
 <!-- changelog-pruned: older entries were removed to keep this file small. Full history is in `git log -p CHANGELOG.md` and in the GitHub release for each version. -->

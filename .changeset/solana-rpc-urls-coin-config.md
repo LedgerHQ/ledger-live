@@ -2,7 +2,7 @@
 "@ledgerhq/coin-solana": minor
 "@ledgerhq/live-common": minor
 "@shared/env": minor
-"ledger-live-desktop": patch
+"ledger-live-desktop": minor
 ---
 
 fix(coin-solana): read endpoints and tuning values from the coin config
