@@ -49,8 +49,9 @@ Android nightly, and `enable_broadcast` runs. CLI token approvals broadcast what
    of waiting for it. The test's release waits for the approval to finish.
 8. **Without R2.** If `E2E_EXCLUSIVE_LOCK_*` is unset, or `E2E_EXCLUSIVE_LOCK_MODE` is `local`, a
    file lock under `$TMPDIR/ll-e2e-locks` serializes processes on this machine only. It keeps the
-   settle window: the next holder takes the lock, then waits out what is left of it. On CI (`CI`
-   set), only `local` allows it.
+   settle window: the next holder takes the lock, then waits out what is left of it. A dead
+   holder's lock is taken over 30 s after its last heartbeat, or 75 s on an account, to cover its
+   settle window. On CI (`CI` set), only `local` allows it.
 
 If a mobile spec cannot get its lock, its tests fail. Its other hooks still run, so the app starts
 with broadcast disabled, and any later lock on those keys in the spec fails at once.

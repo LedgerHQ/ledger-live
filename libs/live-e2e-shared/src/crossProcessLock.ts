@@ -31,7 +31,7 @@ type CrossProcessLockOptions = {
   backoffMs?: number;
 };
 
-const DEFAULT_STALE_MS = 30_000;
+export const DEFAULT_STALE_MS = 30_000;
 const DEFAULT_HEARTBEAT_MS = 5_000;
 const DEFAULT_ACQUIRE_TIMEOUT_MS = 600_000;
 const DEFAULT_BACKOFF_MS = 200;
@@ -152,7 +152,15 @@ export async function acquireCrossProcessLock(
             return false;
           },
         );
-      if (!settleFileWritten) await delay(settleMs);
+      if (!settleFileWritten) {
+        await delay(settleMs);
+        // Whatever the failed write left there would fail the next holder's read.
+        await fs.promises
+          .rm(settleFileFor(lockDir), { recursive: true, force: true })
+          .catch(err =>
+            console.warn(`[crossProcessLock]: failed to clear "${key}"'s settle file`, err),
+          );
+      }
     }
     clearInterval(heartbeat);
     try {

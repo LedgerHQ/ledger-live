@@ -5,7 +5,7 @@ import { byCodeUnit } from "./exclusiveLock/byCodeUnit";
 import { acquireDistributedLock } from "./exclusiveLock/distributedLock";
 import { ExclusiveLockConfigError, ExclusiveLockRefusedError } from "./errors";
 import { createR2LockStore } from "./exclusiveLock/r2LockStore";
-import { acquireCrossProcessLock } from "./crossProcessLock";
+import { acquireCrossProcessLock, DEFAULT_STALE_MS } from "./crossProcessLock";
 import type {
   AbandonableLease,
   Lease,
@@ -268,7 +268,11 @@ async function acquireMachineLocalLock(
       `[exclusiveLock] ${reason}: broadcasts are only serialized between processes on this machine`,
     );
   }
-  const release = await acquireCrossProcessLock(key, { acquireTimeoutMs });
+  // A holder that dies leaves no settle window, so its lock turns stale only once one would end.
+  const release = await acquireCrossProcessLock(key, {
+    acquireTimeoutMs,
+    staleMs: DEFAULT_STALE_MS + settleMs,
+  });
   return { release: () => release(settleMs), abandon: () => release() };
 }
 

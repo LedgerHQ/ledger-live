@@ -75,7 +75,7 @@ test("times out instead of waiting out a settle window longer than it may wait",
   rmSync(rootDir, { recursive: true, force: true });
 });
 
-test("holds a key for its settle window when it cannot leave the window behind", async () => {
+test("holds a key for its settle window when it cannot leave the window behind, then hands it on", async () => {
   const rootDir = createRootDir();
   const release = await acquireCrossProcessLock("key", { rootDir });
   const [lockName] = readdirSync(rootDir);
@@ -88,6 +88,8 @@ test("holds a key for its settle window when it cannot leave the window behind",
   );
   await releasing;
 
-  assert.ok(!readdirSync(rootDir).includes(lockName));
+  const next = await acquireCrossProcessLock("key", { rootDir, acquireTimeoutMs: 0 });
+  assert.deepEqual(readdirSync(rootDir), [lockName]);
+  await next();
   rmSync(rootDir, { recursive: true, force: true });
 });

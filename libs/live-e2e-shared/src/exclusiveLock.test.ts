@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, utimesSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import test, { after, mock } from "node:test";
@@ -390,6 +390,30 @@ test("keeps the settle window on this machine only after a broadcast from an acc
     assert.equal(ethSettle?.key, accountLockKey(Account.ETH_1));
     assert.ok(ethSettle.leftMs > 40_000 && ethSettle.leftMs <= 45_000);
     assert.deepEqual(others, []);
+  });
+});
+
+/** Leaves the machine-local lock on `key` the way a holder that died `ageMs` ago does. */
+const leaveDeadHolderLock = (key: string, ageMs: number) => {
+  const lockDir = path.join(os.tmpdir(), "ll-e2e-locks", Buffer.from(key).toString("base64url"));
+  mkdirSync(lockDir, { recursive: true });
+  const diedAt = new Date(Date.now() - ageMs);
+  utimesSync(lockDir, diedAt, diedAt);
+};
+
+test("takes over an account on this machine only once a dead holder's settle window ends", async () => {
+  await withEnv(NO_REMOTE_LOCK, async () => {
+    leaveDeadHolderLock(PAY_CARD.lockKey, 31_000);
+    leaveDeadHolderLock(accountLockKey(Account.ETH_1), 74_000);
+
+    const startedAt = Date.now();
+    await (await acquireExclusiveLock([PAY_CARD], "after a dead holder")).abandon();
+    const cardWaitedMs = Date.now() - startedAt;
+    await (await acquireExclusiveLock([Account.ETH_1], "after a dead holder")).abandon();
+    const accountWaitedMs = Date.now() - startedAt;
+
+    assert.ok(cardWaitedMs < 500, `waited ${cardWaitedMs}ms for the card`);
+    assert.ok(accountWaitedMs >= 700, `waited ${accountWaitedMs}ms for the account`);
   });
 });
 
