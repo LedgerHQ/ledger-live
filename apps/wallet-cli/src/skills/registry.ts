@@ -372,8 +372,12 @@ async function readTrackedFile(
   skillRoot: string,
   filePath: string,
 ): Promise<{ path: string; content: string } | undefined> {
+  const target = path.join(skillRoot, filePath);
   try {
-    return { path: filePath, content: await readFile(path.join(skillRoot, filePath), "utf8") };
+    if (!(await lstat(target)).isFile() || !(await resolvesInsideSkillDir(skillRoot, target))) {
+      return undefined;
+    }
+    return { path: filePath, content: await readFile(target, "utf8") };
   } catch {
     // Tracked file missing on disk — counts as local modification (hash drifts).
     return undefined;
@@ -382,11 +386,13 @@ async function readTrackedFile(
 
 async function differsOnDisk(skillRoot: string, file: SkillFile): Promise<boolean> {
   const target = path.join(skillRoot, file.path);
-  try {
-    return (await readFile(target, "utf8")) !== file.content;
-  } catch {
-    return holdsAnything(target);
+  if (!(await holdsAnything(target))) {
+    return (
+      (await holdsAnything(path.dirname(target))) &&
+      !(await resolvesInsideSkillDir(skillRoot, target))
+    );
   }
+  return (await readTrackedFile(skillRoot, file.path))?.content !== file.content;
 }
 
 /**
