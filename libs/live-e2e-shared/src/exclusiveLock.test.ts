@@ -472,7 +472,13 @@ const recordingSleep = () => {
 
 test("finds the lock store taking locks when it creates, reads and replaces its check key", async () => {
   const r2 = mockR2Responses(
-    answering(writtenAt('"created"'), storedAt('"created"'), writtenAt('"replaced"')),
+    answering(
+      writtenAt('"created"'),
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"created"'),
+      writtenAt('"replaced"'),
+    ),
   );
   try {
     await withEnv(REMOTE_LOCK, async () => {
@@ -480,6 +486,8 @@ test("finds the lock store taking locks when it creates, reads and replaces its 
     });
     assert.deepEqual(conditions(r2.requests), [
       ["PUT", "*"],
+      ["PUT", "*"],
+      ["PUT", '"no-such-etag"'],
       ["GET", ""],
       ["PUT", '"created"'],
     ]);
@@ -490,7 +498,12 @@ test("finds the lock store taking locks when it creates, reads and replaces its 
 
 test("finds the lock store taking locks when its check key already exists", async () => {
   const r2 = mockR2Responses(
-    answering(preconditionFailed, storedAt('"stored"'), writtenAt('"replaced"')),
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      writtenAt('"replaced"'),
+    ),
   );
   try {
     await withEnv(REMOTE_LOCK, async () => {
@@ -498,6 +511,7 @@ test("finds the lock store taking locks when its check key already exists", asyn
     });
     assert.deepEqual(conditions(r2.requests), [
       ["PUT", "*"],
+      ["PUT", '"no-such-etag"'],
       ["GET", ""],
       ["PUT", '"stored"'],
     ]);
@@ -508,13 +522,19 @@ test("finds the lock store taking locks when its check key already exists", asyn
 
 test("finds the lock store taking locks when another job's check replaced the key first", async () => {
   const r2 = mockR2Responses(
-    answering(preconditionFailed, storedAt('"stored"'), preconditionFailed, storedAt('"theirs"')),
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      preconditionFailed,
+      storedAt('"theirs"'),
+    ),
   );
   try {
     await withEnv(REMOTE_LOCK, async () => {
       assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
     });
-    assert.equal(r2.requests.length, 4);
+    assert.equal(r2.requests.length, 5);
   } finally {
     r2.restore();
   }
@@ -524,8 +544,9 @@ test("finds the lock store taking locks once a retried request succeeds", async 
   const r2 = mockR2Responses(
     answering(
       () => new Response(null, { status: 503 }),
-      writtenAt('"created"'),
-      storedAt('"created"'),
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
       writtenAt('"replaced"'),
     ),
   );
@@ -533,7 +554,7 @@ test("finds the lock store taking locks once a retried request succeeds", async 
     await withEnv(REMOTE_LOCK, async () => {
       assert.equal(await exclusiveLockStoreFailure({ sleep: noSleep }), undefined);
     });
-    assert.equal(r2.requests.length, 4);
+    assert.equal(r2.requests.length, 5);
   } finally {
     r2.restore();
   }
@@ -541,7 +562,13 @@ test("finds the lock store taking locks once a retried request succeeds", async 
 
 test("reports a lock store that keeps rejecting If-Match although nothing rewrote the key", async () => {
   const r2 = mockR2Responses(
-    answering(preconditionFailed, storedAt('"stored"'), preconditionFailed, storedAt('"stored"')),
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      preconditionFailed,
+      storedAt('"stored"'),
+    ),
   );
   const { sleeps, sleep } = recordingSleep();
   try {
@@ -551,8 +578,58 @@ test("reports a lock store that keeps rejecting If-Match although nothing rewrot
         /rejected If-Match "stored" .* although nothing rewrote it/,
       );
     });
-    assert.equal(r2.requests.length, 16);
+    assert.equal(r2.requests.length, 20);
     assert.equal(sleeps.length, 3);
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that lets a create overwrite the key", async () => {
+  const r2 = mockR2Responses(answering(writtenAt('"created"'), writtenAt('"again"')));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /ignored If-None-Match: it created "store-check" twice/,
+      );
+    });
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that replaces the key at an ETag it never had", async () => {
+  const r2 = mockR2Responses(answering(preconditionFailed, writtenAt('"replaced"')));
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /ignored If-Match: it replaced "store-check" at ETag "no-such-etag"/,
+      );
+    });
+  } finally {
+    r2.restore();
+  }
+});
+
+test("reports a lock store that loses the key after rejecting its replacement", async () => {
+  const r2 = mockR2Responses(
+    answering(
+      preconditionFailed,
+      preconditionFailed,
+      storedAt('"stored"'),
+      preconditionFailed,
+      () => new Response("<Error><Code>NoSuchKey</Code></Error>", { status: 404 }),
+    ),
+  );
+  try {
+    await withEnv(REMOTE_LOCK, async () => {
+      assert.match(
+        (await exclusiveLockStoreFailure({ sleep: noSleep })) ?? "",
+        /lost "store-check" after rejecting its replacement/,
+      );
+    });
   } finally {
     r2.restore();
   }
@@ -560,7 +637,12 @@ test("reports a lock store that keeps rejecting If-Match although nothing rewrot
 
 test("reports at once a lock store that writes but refuses reads", async () => {
   const r2 = mockR2Responses(
-    answering(writtenAt('"created"'), () => new Response("AccessDenied", { status: 403 })),
+    answering(
+      writtenAt('"created"'),
+      preconditionFailed,
+      preconditionFailed,
+      () => new Response("AccessDenied", { status: 403 }),
+    ),
   );
   try {
     await withEnv(REMOTE_LOCK, async () => {
@@ -569,7 +651,7 @@ test("reports at once a lock store that writes but refuses reads", async () => {
         /R2 GET .* failed with 403/,
       );
     });
-    assert.equal(r2.requests.length, 2);
+    assert.equal(r2.requests.length, 4);
   } finally {
     r2.restore();
   }

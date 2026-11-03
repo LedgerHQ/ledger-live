@@ -85,8 +85,8 @@ next pass waits for busy locks.
 Before its tests, each desktop, iOS and Android job runs
 `pnpm --dir libs/live-e2e-shared e2e-cli check-exclusive-lock`. It creates, reads and replaces a
 check key the way a lock claim does, so a missing bucket, credentials that cannot read or write, a
-write outage or an If-Match R2 ignores fail it too. It retries for about 15 s while R2 fails. When
-R2 fails, the job's tests lock in `local` mode and the job shows an
+write outage, or an If-None-Match or If-Match that R2 ignores fail it too. It retries for about
+15 s while R2 fails. When R2 fails, the job's tests lock in `local` mode and the job shows an
 `Exclusive lock on this machine only` warning annotation with the R2 error. The machine still keeps
 its own tests apart, but no longer keeps other CI machines away. When `E2E_EXCLUSIVE_LOCK_*` is
 missing, the check fails the job.

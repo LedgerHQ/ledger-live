@@ -165,6 +165,8 @@ function r2LockStoreFromEnv(): LockStore | undefined {
 
 // No lock key looks like it: those are "<currency>:<path>" or a shared resource's.
 const STORE_CHECK_KEY = "store-check";
+// R2 ETags are hex digests, so no object ever has this one.
+const UNKNOWN_ETAG = '"no-such-etag"';
 const STORE_CHECK_ATTEMPTS = 4;
 
 const isFatalStoreError = (error: unknown) =>
@@ -178,8 +180,8 @@ const storeErrorMessage = (error: unknown): string => {
 
 /**
  * Creates, reads and replaces the check key the way a claim does, so a bucket that is missing,
- * cannot be read or written, or ignores If-Match fails too. A replacement rejected because another
- * job's check moved the ETag first still passes.
+ * cannot be read or written, or ignores If-None-Match or If-Match fails too. A replacement rejected
+ * because another job's check moved the ETag first still passes.
  */
 async function checkLockStore(store: LockStore): Promise<void> {
   const record: LockRecord = {
@@ -189,14 +191,26 @@ async function checkLockStore(store: LockStore): Promise<void> {
     settleMs: 0,
     released: true,
   };
-  await store.create(STORE_CHECK_KEY, record);
-  const current = await store.read(STORE_CHECK_KEY);
-  if (!current) {
-    throw new Error(`[exclusiveLock] R2 lost "${STORE_CHECK_KEY}" right after writing it`);
+  const readCheckKey = async (when: string) => {
+    const stored = await store.read(STORE_CHECK_KEY);
+    if (!stored) throw new Error(`[exclusiveLock] R2 lost "${STORE_CHECK_KEY}" ${when}`);
+    return stored;
+  };
+  const createdIt = await store.create(STORE_CHECK_KEY, record);
+  if (createdIt && (await store.create(STORE_CHECK_KEY, record))) {
+    throw new Error(
+      `[exclusiveLock] R2 ignored If-None-Match: it created "${STORE_CHECK_KEY}" twice`,
+    );
   }
+  if (await store.replace(STORE_CHECK_KEY, record, UNKNOWN_ETAG)) {
+    throw new Error(
+      `[exclusiveLock] R2 ignored If-Match: it replaced "${STORE_CHECK_KEY}" at ETag ${UNKNOWN_ETAG}`,
+    );
+  }
+  const current = await readCheckKey("right after writing it");
   if (await store.replace(STORE_CHECK_KEY, record, current.etag)) return;
-  const after = await store.read(STORE_CHECK_KEY);
-  if (after?.etag === current.etag) {
+  const after = await readCheckKey("after rejecting its replacement");
+  if (after.etag === current.etag) {
     throw new Error(
       `[exclusiveLock] R2 rejected If-Match ${current.etag} on "${STORE_CHECK_KEY}" although nothing rewrote it`,
     );
