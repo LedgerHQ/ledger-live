@@ -20,7 +20,6 @@ $env:WALLET_PASS=(Get-StoredCredential -Target ledger-wallet-cli).GetNetworkCred
 - **The human owns the secret.** When the keychain has no entry yet, ask the human to store the password once themselves (`security add-generic-password -a default -s ledger-wallet-cli -w` on macOS, `secret-tool store --label=ledger-wallet-cli service ledger-wallet-cli account default` on Linux; both prompt for the value). A throwaway test password goes into the keychain the same way.
 - **Only the substitution appears in your commands.** A literal password in a command, flag or tool call (`WALLET_PASS=hunter2 ...`), test passwords included, leaks into shell history, `ps` output, CI logs and your transcript.
 - Even substituted, the value sits in the child process environment, readable with `ps eww` by the same user. That is acceptable; keep it out of logs and `--output json` sinks.
-- **Provision with a password.** `ring init` also has `--unsecure-no-password`, which stores the member key unencrypted in the keychain. You never pass it; a human who wants it runs it themselves.
 
 ## Init (device, once per machine)
 
