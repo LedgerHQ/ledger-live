@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { AccountAssetBalance } from "@domain/entity-account-balance";
+import { selectAccountBalances, type AccountAssetBalance } from "@domain/entity-account-balance";
 import {
   computeAggregatedAccountsData,
   type AggregatedAccountEntry,
@@ -36,7 +36,8 @@ function useAccountDataBalances(
 
   const rowsByAccountId = useMemo(() => {
     const byId = new Map<string, readonly AccountAssetBalance[] | undefined>();
-    for (const target of targets) byId.set(target.account.id, accountBalances[target.accountUUID]);
+    for (const target of targets)
+      byId.set(target.account.id, selectAccountBalances({ accountBalances }, target.accountUUID));
     return byId;
   }, [accountBalances, targets]);
 

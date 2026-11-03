@@ -3,6 +3,7 @@ import { Route, Routes, useLocation } from "react-router";
 import { genAccount, genTokenAccount } from "@ledgerhq/ledger-wallet-framework/mocks/account";
 import { usdcToken } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { getCryptoCurrencyById } from "@domain/entity-currency-crypto";
+import { selectAccountOperations } from "@domain/entity-account-operation";
 import type { Account } from "@ledgerhq/types-live";
 import { render, screen, within, withFlagOverrides } from "tests/testSetup";
 import { connectAccounts } from "~/config/account-data-setup";
@@ -76,8 +77,11 @@ describe("AccountDetail transactions", () => {
     const { store } = renderAccount(ethAccount);
 
     const section = await screen.findByTestId("account-detail-transactions-section");
+    const state = store.getState();
     expect(
-      Object.values(store.getState().accountOperations).some(rows => (rows?.length ?? 0) > 0),
+      state.accountEntries.ids.some(
+        accountUUID => (selectAccountOperations(state, accountUUID)?.length ?? 0) > 0,
+      ),
     ).toBe(true);
     const rows = within(section).getAllByTestId(/^history-operation-row-/);
 

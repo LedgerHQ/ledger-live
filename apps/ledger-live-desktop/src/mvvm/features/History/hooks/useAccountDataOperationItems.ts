@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { selectAccountDataStatus } from "@domain/entity-account-data";
+import { selectAccountOperations } from "@domain/entity-account-operation";
 import type { Account } from "@ledgerhq/types-live";
 import { useSelector } from "LLD/hooks/redux";
 import { lastSeenOperationDateSelector } from "~/renderer/reducers/history";
@@ -24,7 +25,7 @@ export function useAccountDataOperationItems(rootAccounts: Account[]): {
   const targets = useAccountDataTargets(rootAccounts);
   const pending = useSelector((state: State) =>
     targets.some(target => {
-      const stored = state.accountOperations[target.accountUUID];
+      const stored = selectAccountOperations(state, target.accountUUID);
       if ((stored?.length ?? 0) > 0) return false;
       const status = selectAccountDataStatus(state, "operations", target.accountUUID);
       if (status?.request) return true;
@@ -34,7 +35,7 @@ export function useAccountDataOperationItems(rootAccounts: Account[]): {
 
   const items = useMemo(() => {
     const rows = targets.flatMap(target => {
-      const operations = accountOperations[target.accountUUID];
+      const operations = selectAccountOperations({ accountOperations }, target.accountUUID);
       if (!operations) return [];
       return toAccountDataOperationItems(target.account, operations, lastSeenTs, filterOperation);
     });
