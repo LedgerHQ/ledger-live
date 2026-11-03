@@ -1,7 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { FeeNotLoaded } from "@ledgerhq/ledger-wallet-framework/errors";
 import { AccountAwaitingSendPendingOperations, TokenNonTransferable } from "../../errors";
-import { isNonTransferableToken } from "../../account/support";
+import { isNonTransferableToken } from "../../account/nonTransferableTokens";
 import BigNumber from "bignumber.js";
 import { getCoinModuleApi } from "./api";
 import { buildContext } from "./api/context";
