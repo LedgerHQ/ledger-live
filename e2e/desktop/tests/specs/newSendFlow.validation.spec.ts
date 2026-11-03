@@ -123,6 +123,7 @@ test.describe("Send - new flow - max amount", ethSendFlow(SendScenario.MAX_AMOUN
       annotation: { type: "TMS", description: "B2CQA-6124, B2CQA-6028, B2CQA-115" },
     },
     async ({ app, speculos, userdataFile }) => {
+      await app.layout.syncAccountsAndWaitForSync();
       await reachAmountStep(app, tx);
       const spendableBalance = await getSavedSpendableBalance(userdataFile, tx.accountToDebit);
       for (const action of Object.values(AmountQuickAction)) {
