@@ -15,7 +15,6 @@ import {
   TEZOS_RPC,
 } from "../flextesa";
 import { indexBlocks, initMswHandlers, resetIndexer } from "../indexer";
-import { getEnv } from "@shared/env";
 
 global.console = require("console");
 jest.setTimeout(600_000);
@@ -146,7 +145,7 @@ export const scenarioTezosTz1: Scenario<GenericTransaction, Account> = {
       status: { type: "active" as const },
       name: "Tezos",
       unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
-      baker: { url: getEnv("API_TEZOS_BAKER") },
+      baker: { url: "https://tezos-bakers.api.live.ledger.com" },
       explorer: { url: TZKT_MOCK_URL, maxTxQuery: 100 },
       node: { url: TEZOS_RPC },
       fees: {
@@ -238,7 +237,7 @@ export const scenarioTezosTz2: Scenario<GenericTransaction, Account> = {
       status: { type: "active" as const },
       name: "Tezos",
       unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
-      baker: { url: getEnv("API_TEZOS_BAKER") },
+      baker: { url: "https://tezos-bakers.api.live.ledger.com" },
       explorer: { url: TZKT_MOCK_URL, maxTxQuery: 100 },
       node: { url: TEZOS_RPC },
       fees: {
