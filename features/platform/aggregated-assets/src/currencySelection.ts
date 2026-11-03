@@ -44,12 +44,11 @@ export function selectCurrency(
 }
 
 export function selectAssetCurrencyIds(data: AssetsData, currencyId: string): string[] {
-  const groupWithCurrency = Object.values(data.cryptoAssets).find(group =>
+  const assetGroups = Object.values(data.cryptoAssets);
+  const groupWithCurrency = assetGroups.find(group =>
     Object.values(group.assetsIds).includes(currencyId),
   );
-  const firstMetaCurrencyId = data.currenciesOrder.metaCurrencyIds?.[0];
-  const assetGroup =
-    groupWithCurrency ?? (firstMetaCurrencyId ? data.cryptoAssets[firstMetaCurrencyId] : undefined);
+  const assetGroup = groupWithCurrency ?? (assetGroups.length === 1 ? assetGroups[0] : undefined);
   if (!assetGroup) return [];
 
   const groupTicker = assetGroup.ticker?.toUpperCase();

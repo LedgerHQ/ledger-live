@@ -127,11 +127,24 @@ describe("currencySelection", () => {
       ]);
     });
 
-    it("falls back to the first asset group when no group holds the currency", () => {
-      expect(selectAssetCurrencyIds(usdcData, "algorand/asa/31566704")).toEqual([
-        usdcOnEthereum,
-        usdcOnSolana,
-      ]);
+    it("uses the only group when no group holds the currency", () => {
+      const ethereumOnBaseData = {
+        ...usdcData,
+        cryptoAssets: {
+          ethereum: {
+            id: "ethereum",
+            ticker: "ETH",
+            name: "Ethereum",
+            assetsIds: { base: "base" },
+          },
+        },
+      } as AssetsDataWithPagination;
+
+      expect(selectAssetCurrencyIds(ethereumOnBaseData, "ethereum")).toEqual(["base"]);
+    });
+
+    it("returns no ids when several groups exist and none holds the currency", () => {
+      expect(selectAssetCurrencyIds(usdcData, "algorand/asa/31566704")).toEqual([]);
     });
   });
 });

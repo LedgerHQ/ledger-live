@@ -127,11 +127,11 @@ export function useOpenSwap({
         ? await getSwapNetworkCurrencyIds(currency.id, resolvedCurrencyIds)
         : resolvedCurrencyIds;
 
-    const isOnlyNetworkOtherThanCurrency =
-      currency !== undefined && swapCurrencyIds[0] !== currency.id;
+    const isOnlyCurrencyNetwork =
+      swapCurrencyIds.length === 1 && swapCurrencyIds[0] === currency?.id;
 
     // Multi-network assets always open the drawer so the user can pick network → account.
-    if (swapCurrencyIds.length > 1 || isOnlyNetworkOtherThanCurrency) {
+    if (swapCurrencyIds.length > 0 && !isOnlyCurrencyNetwork) {
       openAccountSelectionDrawer(swapCurrencyIds);
       return;
     }
