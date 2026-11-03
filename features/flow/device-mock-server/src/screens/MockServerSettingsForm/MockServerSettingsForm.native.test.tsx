@@ -1,9 +1,12 @@
 import React from "react";
 import { Alert, Linking } from "react-native";
+import { Provider } from "react-redux";
+import { configureStore } from "@reduxjs/toolkit";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react-native";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { MockServerSessionChange } from "../../mockServerSession";
+import { mockServerOverlaySlice } from "../../state/slice";
 import { MockServerSettingsForm } from "./MockServerSettingsForm";
 import type { MockServerSettingsFormProps } from "./types";
 
@@ -34,16 +37,21 @@ const disabledSettings = { enabled: false, url: "", token: "" };
 
 const renderForm = (props: Partial<MockServerSettingsFormProps> = {}) => {
   const onApply = jest.fn<Promise<void>, [MockServerSessionChange]>().mockResolvedValue(undefined);
+  const store = configureStore({
+    reducer: { mockServerOverlay: mockServerOverlaySlice.reducer },
+  });
   render(
-    <MockServerSettingsForm
-      settings={enabledSettings}
-      defaultUrl={SERVER_URL}
-      sessionImport={{ devices: [] }}
-      onApply={onApply}
-      {...props}
-    />,
+    <Provider store={store}>
+      <MockServerSettingsForm
+        settings={enabledSettings}
+        defaultUrl={SERVER_URL}
+        sessionImport={{ devices: [] }}
+        onApply={onApply}
+        {...props}
+      />
+    </Provider>,
   );
-  return { onApply };
+  return { onApply, store };
 };
 
 const confirmRestart = () =>
@@ -153,5 +161,25 @@ describe("MockServerSettingsForm", () => {
     fireEvent.press(await screen.findByText("Open in browser"));
 
     expect(Linking.openURL).toHaveBeenCalledWith(`${SERVER_URL}/#token=token-1`);
+  });
+
+  it("should open the mock server panel", async () => {
+    const { store } = renderForm();
+
+    fireEvent.press(await screen.findByText("Open mock server panel"));
+
+    expect(store.getState().mockServerOverlay.mode).toEqual({ type: "main" });
+  });
+
+  it("should hide the floating button until restart", async () => {
+    const { store } = renderForm();
+
+    fireEvent(
+      await screen.findByLabelText("Hide floating button until restart"),
+      "checkedChange",
+      true,
+    );
+
+    expect(store.getState().mockServerOverlay.isFloatingButtonHidden).toBe(true);
   });
 });
