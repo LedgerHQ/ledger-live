@@ -1,6 +1,5 @@
 import { TezosCoinConfig } from "@ledgerhq/coin-tezos/config";
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-import { getEnv } from "@shared/env";
 
 export const tezosConfig: Record<string, ConfigInfo> = {
   config_currency_tezos: {
@@ -16,14 +15,14 @@ export const tezosConfig: Record<string, ConfigInfo> = {
       name: "Tezos",
       unit: { name: "XTZ", code: "XTZ", magnitude: 6 },
       baker: {
-        url: getEnv("API_TEZOS_BAKER"),
+        url: "https://tezos-bakers.api.live.ledger.com",
       },
       explorer: {
-        url: getEnv("API_TEZOS_TZKT_API"),
-        maxTxQuery: getEnv("TEZOS_MAX_TX_QUERIES"),
+        url: "https://xtz-tzkt-explorer.api.live.ledger.com",
+        maxTxQuery: 100,
       },
       node: {
-        url: getEnv("API_TEZOS_NODE"),
+        url: "https://xtz-node.api.live.ledger.com",
       },
       fees: {
         minGasLimit: 600,
