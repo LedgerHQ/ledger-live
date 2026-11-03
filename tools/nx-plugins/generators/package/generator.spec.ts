@@ -8,7 +8,27 @@ import packageGenerator, { LAYERS } from "./generator";
 import type { Layer, Platform } from "./schema";
 
 const WORKSPACE_ROOT = path.resolve(__dirname, "../../../..");
-const ALL_PLATFORMS: Platform[] = ["logic", "web", "native", "dual"];
+const GENERATOR_DIR = __dirname;
+
+const schemaJson = JSON.parse(
+  fs.readFileSync(path.join(GENERATOR_DIR, "schema.json"), "utf-8"),
+) as {
+  properties: {
+    layer: { enum: Layer[]; "x-prompt": { items: Layer[] } };
+    platform: { enum: Platform[]; "x-prompt": { items: Platform[] } };
+  };
+};
+
+const ALL_PLATFORMS = schemaJson.properties.platform.enum;
+
+function unionMembersFromSchemaDts(typeName: "Layer" | "Platform"): string[] {
+  const text = fs.readFileSync(path.join(GENERATOR_DIR, "schema.d.ts"), "utf-8");
+  const match = text.match(new RegExp(`export type ${typeName} =\\s*([^;]+);`));
+  if (!match) {
+    throw new Error(`Could not parse ${typeName} in schema.d.ts`);
+  }
+  return match[1].split("|").map(part => part.trim().replace(/^"|"$/g, ""));
+}
 
 const temporaryWorkspaces: string[] = [];
 
@@ -60,6 +80,23 @@ function structureViolations(tree: Tree, projectRoot: string): string[] {
     (v: { rule?: string; code: string; file: string }) => `${v.rule ?? "-"} ${v.code} ${v.file}`,
   );
 }
+
+describe("schema and types stay aligned with LAYERS", () => {
+  const layerKeys = Object.keys(LAYERS);
+
+  it("keeps layer names in schema.json, schema.d.ts and LAYERS in sync", () => {
+    expect(schemaJson.properties.layer.enum).toEqual(layerKeys);
+    expect(schemaJson.properties.layer["x-prompt"].items).toEqual(layerKeys);
+    expect(unionMembersFromSchemaDts("Layer")).toEqual(layerKeys);
+  });
+
+  it("keeps platform names in schema.json, schema.d.ts and ALL_PLATFORMS in sync", () => {
+    const { enum: platformEnum, "x-prompt": platformPrompt } = schemaJson.properties.platform;
+    expect(platformPrompt.items).toEqual(platformEnum);
+    expect(unionMembersFromSchemaDts("Platform")).toEqual(platformEnum);
+    expect(ALL_PLATFORMS).toEqual(platformEnum);
+  });
+});
 
 describe("the layer table", () => {
   it.each(PAIRS)(
