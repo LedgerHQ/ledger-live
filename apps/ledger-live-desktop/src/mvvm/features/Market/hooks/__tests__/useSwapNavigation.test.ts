@@ -28,18 +28,21 @@ function serveAssetGroups(assetGroups: Record<string, Record<string, string>>) {
   const requests: URL[] = [];
   server.use(
     http.get(DADA_API, ({ request }) => {
-      requests.push(new URL(request.url));
+      const url = new URL(request.url);
+      requests.push(url);
+      const pageSize = Number(url.searchParams.get("pageSize"));
+      const pageGroups = Object.entries(assetGroups).slice(0, pageSize);
       return HttpResponse.json({
         ...EMPTY_DADA_RESPONSE,
         cryptoAssets: Object.fromEntries(
-          Object.entries(assetGroups).map(([groupId, assetsIds]) => [
+          pageGroups.map(([groupId, assetsIds]) => [
             groupId,
             { id: groupId, ticker: groupId, name: groupId, assetsIds },
           ]),
         ),
         currenciesOrder: {
           ...EMPTY_DADA_RESPONSE.currenciesOrder,
-          metaCurrencyIds: Object.keys(assetGroups),
+          metaCurrencyIds: pageGroups.map(([groupId]) => groupId),
         },
       });
     }),
@@ -208,6 +211,27 @@ describe("useSwapNavigation (Market actions)", () => {
       expect.objectContaining({ currencies: [usdcToken.id, usdcOnSolana], useCase: "swap" }),
     );
     expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  test("should open the drawer on the asset group of the currency when it is not the first group", async () => {
+    const usdcOnSolana = "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v";
+    serveAssetGroups({
+      "urn:crypto:meta-currency:arc_native_usdc": { arc: "arc" },
+      "urn:crypto:meta-currency:usd_coin": { ethereum: usdcToken.id, solana: usdcOnSolana },
+    });
+    const { result } = renderHook(() => useSwapNavigation(), {
+      initialState: { accounts: [] },
+    });
+
+    await act(async () => {
+      await result.current.navigateToSwap(usdcToken as CryptoOrTokenCurrency, {
+        ledgerIds: [usdcToken.id, usdcOnSolana, "arc"],
+      });
+    });
+
+    expect(mockOpenAssetAndAccount).toHaveBeenCalledWith(
+      expect.objectContaining({ currencies: [usdcToken.id, usdcOnSolana] }),
+    );
   });
 
   test("should open the drawer when the only swappable network is not the currency", async () => {

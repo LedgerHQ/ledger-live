@@ -6,15 +6,21 @@ export type LazyAssetDataOptions = Pick<GetAssetsDataParams, "product" | "versio
 
 type LazyAssetDataQuery = Pick<GetAssetsDataParams, "currencyIds" | "useCase">;
 
-export function useLazyAssetData({ product, version, isStaging = false }: LazyAssetDataOptions) {
-  const devMode = useEnv("MANAGER_DEV_MODE");
+type LazyAssetDataTrigger<Result> = (
+  queryArg: GetAssetsDataParams,
+  preferCacheValue: boolean,
+) => { unwrap: () => Promise<Result> };
 
-  const [triggerGetAssetData] = assetsDataApi.useLazyGetAssetDataQuery();
+function useLazyAssetDataQuery<Result>(
+  triggerQuery: LazyAssetDataTrigger<Result>,
+  { product, version, isStaging = false }: LazyAssetDataOptions,
+) {
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
   return useCallback(
     async (query: LazyAssetDataQuery) => {
       try {
-        return await triggerGetAssetData(
+        return await triggerQuery(
           { ...query, product, version, isStaging, includeTestNetworks: devMode },
           true, // prefer cached data
         ).unwrap();
@@ -22,6 +28,16 @@ export function useLazyAssetData({ product, version, isStaging = false }: LazyAs
         return undefined;
       }
     },
-    [devMode, isStaging, product, triggerGetAssetData, version],
+    [devMode, isStaging, product, triggerQuery, version],
   );
+}
+
+export function useLazyAssetData(options: LazyAssetDataOptions) {
+  const [triggerGetAssetData] = assetsDataApi.useLazyGetAssetDataQuery();
+  return useLazyAssetDataQuery(triggerGetAssetData, options);
+}
+
+export function useLazyAllAssetGroupsData(options: LazyAssetDataOptions) {
+  const [triggerGetChunkedAssetsData] = assetsDataApi.useLazyGetChunkedAssetsDataQuery();
+  return useLazyAssetDataQuery(triggerGetChunkedAssetsData, options);
 }
