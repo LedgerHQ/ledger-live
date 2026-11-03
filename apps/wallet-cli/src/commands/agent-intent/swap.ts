@@ -26,12 +26,7 @@ import {
   proposalOptions,
   submitAgentIntent,
 } from "../../agent-intent/propose-intent";
-import {
-  createCommandOutput,
-  warnIfReviewLinkUnusable,
-  warnIfTokenApprovalNeeded,
-  type CommandOutput,
-} from "../../output";
+import { createCommandOutput, type CommandOutput } from "../../output";
 import { writeStderr } from "../../shared/ui";
 
 async function resolveSwapAsset(id: string, flag: "from" | "to"): Promise<SwapAsset> {
@@ -195,14 +190,11 @@ export default defineCommand({
 
       if (flags["dry-run"]) {
         out.agentIntentSwapDryRun(summary);
-        warnIfTokenApprovalNeeded(summary);
         return;
       }
 
       const submitted = await submitAgentIntent(profile, client => client.createSwapIntent(intent));
       out.agentIntentSwap({ ...summary, ...submitted });
-      warnIfTokenApprovalNeeded(summary);
-      warnIfReviewLinkUnusable(submitted);
     });
   },
 });

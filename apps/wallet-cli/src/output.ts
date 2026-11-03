@@ -271,7 +271,8 @@ export interface CommandOutput {
   /** `agent-intent sync` report (human: grouped lines; json: envelope with the four
    * imported/unchanged/skipped/invalid arrays). */
   agentIntentSync(report: LedgerSyncImportReport): void;
-  /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope). */
+  /** Output a submitted `agent-intent send` proposal (human: review link first; json: envelope),
+   * then warn on stderr when its review link is unusable. */
   agentIntentSend(
     result: SendIntentSummary & { intentId: string | null; deeplink: string | null },
   ): void;
@@ -280,11 +281,13 @@ export interface CommandOutput {
   /** One page of `agent-intent intents` (human: table + next-page hint; json: envelope with
    * `intents`, `count` and `nextCursor`, `null` on the last page). */
   agentIntentIntents(result: AgentIntentIntentsPage): void;
-  /** Output a submitted `agent-intent swap` proposal (human: review link first; json: envelope). */
+  /** Output a submitted `agent-intent swap` proposal (human: review link first; json: envelope),
+   * then warn on stderr about a token approval and an unusable review link. */
   agentIntentSwap(
     result: SwapIntentSummary & { intentId: string | null; deeplink: string | null },
   ): void;
-  /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted. */
+  /** Output a quoted and validated `agent-intent swap --dry-run` proposal that was not submitted,
+   * then warn on stderr about a token approval. */
   agentIntentSwapDryRun(summary: SwapIntentSummary): void;
   /** One intent from `agent-intent status` (human: labeled lines; json: envelope with the intent's
    * fields, `profileId` and `terminal`, `null` for a state this version doesn't know). */
@@ -1011,6 +1014,7 @@ class HumanCommandOutput implements CommandOutput {
     writeStdout(
       colors.dim("Open the link to review it; it only executes once approved on a Ledger device."),
     );
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSendDryRun(summary: SendIntentSummary): void {
@@ -1070,11 +1074,14 @@ class HumanCommandOutput implements CommandOutput {
           "executes once approved on a Ledger device.",
       ),
     );
+    warnIfTokenApprovalNeeded(result);
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSwapDryRun(summary: SwapIntentSummary): void {
     writeStdout(`Dry run — intent validated, nothing was submitted.`);
     writeStdout(swapIntentSummaryLines(summary).join("\n"));
+    warnIfTokenApprovalNeeded(summary);
   }
 
   agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
@@ -1589,6 +1596,7 @@ class JsonCommandOutput implements CommandOutput {
         submitted: true,
       }),
     );
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSendDryRun(summary: SendIntentSummary): void {
@@ -1611,12 +1619,15 @@ class JsonCommandOutput implements CommandOutput {
         submitted: true,
       }),
     );
+    warnIfTokenApprovalNeeded(result);
+    warnIfReviewLinkUnusable(result);
   }
 
   agentIntentSwapDryRun(summary: SwapIntentSummary): void {
     this._writeNdjson(
       this._envelope({ ...swapIntentSummaryJson(summary), submitted: false, dryRun: true }),
     );
+    warnIfTokenApprovalNeeded(summary);
   }
 
   agentIntentStatus({ profileId, intent, terminal }: AgentIntentStatusResult): void {
@@ -1682,7 +1693,7 @@ function sendIntentSummaryJson(summary: SendIntentSummary): Record<string, unkno
 // Proposal warnings (stderr, in both formats, after the result)
 // ---------------------------------------------------------------------------
 
-export function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
+function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
   if (!summary.needsTokenApproval) return;
   writeStderr(
     `⚠ Swapping ${summary.from.ticker} through ${summary.provider} needs an approval first. The ` +
@@ -1692,7 +1703,7 @@ export function warnIfTokenApprovalNeeded(summary: SwapIntentSummary): void {
 }
 
 /** Warns, after the result is printed, when the created intent can't be found from it. */
-export function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent): void {
+function warnIfReviewLinkUnusable({ deeplink, intentId }: SubmittedIntent): void {
   if (!deeplink) {
     writeStderr(
       "⚠ The Agent Intent service accepted the intent but returned no readable review link. " +

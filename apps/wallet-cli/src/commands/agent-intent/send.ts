@@ -33,7 +33,7 @@ import {
   proposalOptions,
   submitAgentIntent,
 } from "../../agent-intent/propose-intent";
-import { createCommandOutput, warnIfReviewLinkUnusable, type CommandOutput } from "../../output";
+import { createCommandOutput, type CommandOutput } from "../../output";
 import { mainnetOf } from "../../shared/accountDescriptor";
 
 const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
@@ -310,7 +310,6 @@ export default defineCommand({
 
       const submitted = await submitAgentIntent(profile, client => client.createSendIntent(intent));
       out.agentIntentSend({ ...summary, ...submitted });
-      warnIfReviewLinkUnusable(submitted);
     });
   },
 });
