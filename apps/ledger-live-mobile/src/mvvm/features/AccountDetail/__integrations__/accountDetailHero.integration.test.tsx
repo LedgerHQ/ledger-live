@@ -246,6 +246,28 @@ describe("AccountDetail hero", () => {
 
     expect(await screen.findByTestId(tile("swap"))).toBeVisible();
   });
+
+  it("leaves Buy out of More when the currency is not on the ramp", async () => {
+    setAvailability({ buy: [] });
+    const { user } = renderAccount(fundedAccount);
+
+    await user.press(await screen.findByTestId(tile("more")));
+
+    expect(screen.getByTestId(moreItem("sell"))).toBeVisible();
+    expect(screen.getByTestId(moreItem("earn"))).toBeVisible();
+    expect(screen.queryByTestId(moreItem("buy"))).toBeNull();
+  });
+
+  it("leaves Earn out of More when staking does not support the currency", async () => {
+    setAvailability({ stake: [] });
+    const { user } = renderAccount(fundedAccount);
+
+    await user.press(await screen.findByTestId(tile("more")));
+
+    expect(screen.getByTestId(moreItem("buy"))).toBeVisible();
+    expect(screen.getByTestId(moreItem("sell"))).toBeVisible();
+    expect(screen.queryByTestId(moreItem("earn"))).toBeNull();
+  });
 });
 
 function renderPort(account: Account) {
