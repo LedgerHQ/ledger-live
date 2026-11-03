@@ -1,9 +1,8 @@
 ---
 name: docs-update-or-create
 description: |
-  Guidelines that must be followed when creating or updating docs in this repo.
-  Applies to AGENTS.md, README.md, **/docs/**/*.md, skill and sub-agent files.
-  Use when creating or updating documentation in this repo.
+  Guidelines for creating or updating documentation in this repo (AGENTS.md, README.md, **/docs/**/*.md, skills and sub-agents).
+  Read when editing those files or adding new docs content.
 ---
 
 # Create or Update Docs
