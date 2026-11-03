@@ -1,7 +1,7 @@
 import "../live-common-setup";
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
 import { Session } from "../session/session-store";
-import type { MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
+import type { JWT, MemberCredentials, Trustchain, TrustchainSDK } from "@shared/cloud-sync";
 import {
   mergeSyncedAccounts,
   pullSyncedAccounts,
@@ -505,23 +505,29 @@ describe("pullSyncedAccounts", () => {
   });
 
   describe("with the real CloudSyncSDK and a deleted document", () => {
-    type AuthorizedJob = (jwt: { accessToken: string }) => Promise<unknown>;
     const realFetch = globalThis.fetch;
     const authorizedTrustchainSdk = {
-      withAuth: (_trustchain: Trustchain, _credentials: MemberCredentials, job: AuthorizedJob) =>
-        job({ accessToken: "jwt" }),
+      withAuth: <T>(
+        _trustchain: Trustchain,
+        _credentials: MemberCredentials,
+        job: (jwt: JWT) => Promise<T>,
+      ) => job({ accessToken: "jwt" }),
     } as unknown as TrustchainSDK;
+    let requestedUrls: URL[];
 
     beforeEach(() => {
-      globalThis.fetch = (async (_input: URL) =>
-        Response.json({ status: "no-data" })) as typeof fetch;
+      requestedUrls = [];
+      globalThis.fetch = (async (input: RequestInfo | URL) => {
+        requestedUrls.push(new URL(String(input)));
+        return Response.json({ status: "no-data" });
+      }) as typeof fetch;
     });
 
     afterEach(() => {
       globalThis.fetch = realFetch;
     });
 
-    it("reads it as up-to-date when pulled without a version", async () => {
+    it("reads it as up-to-date when pulled without a version, so agent-intent sync detects the deletion itself", async () => {
       const result = await pullSyncedAccounts(
         trustchain,
         memberCredentials,
@@ -530,6 +536,7 @@ describe("pullSyncedAccounts", () => {
         () => undefined,
       );
 
+      expect(requestedUrls.map(url => url.searchParams.get("version"))).toEqual([null]);
       expect(result).toEqual({ status: "up-to-date" });
     });
 
@@ -542,6 +549,7 @@ describe("pullSyncedAccounts", () => {
         () => 4,
       );
 
+      expect(requestedUrls.map(url => url.searchParams.get("version"))).toEqual(["4"]);
       expect(result).toEqual({ status: "deleted" });
     });
   });
