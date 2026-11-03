@@ -1,0 +1,6 @@
+# <%= packageName %>
+
+> [!CAUTION]
+> **Status: UNSTABLE**. New package, in active development.
+
+<%= description %>
