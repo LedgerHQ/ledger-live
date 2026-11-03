@@ -512,14 +512,16 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
-    ...state,
-    lastConnectedDevice: (action as Action<SettingsSetLastConnectedDevicePayload>).payload,
-    knownDeviceModelIds: {
-      ...state.knownDeviceModelIds,
-      [(action as Action<SettingsSetLastConnectedDevicePayload>).payload.modelId]: true,
-    },
-  }),
+  [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => {
+    const device = (action as Action<SettingsSetLastConnectedDevicePayload>).payload;
+    return {
+      ...state,
+      lastConnectedDevice: device,
+      knownDeviceModelIds: device
+        ? { ...state.knownDeviceModelIds, [device.modelId]: true }
+        : state.knownDeviceModelIds,
+    };
+  },
 
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
     ...state,

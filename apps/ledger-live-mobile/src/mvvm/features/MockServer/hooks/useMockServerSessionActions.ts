@@ -4,18 +4,20 @@ import { getEnv } from "@shared/env";
 import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
 import {
   createMockServerSession,
+  getMockServerDeviceIdFromCompatId,
   getMockServerSession,
+  isMockServerCompatDeviceId,
   parseMockServerSessionImport,
 } from "@ledgerhq/live-dmk-shared";
 import { useStore } from "~/context/hooks";
 import { saveKnownDevices, saveSettings } from "~/db";
-import { setMockServerSettings } from "~/actions/settings";
+import { setLastConnectedDevice, setMockServerSettings } from "~/actions/settings";
 import {
   exportSelector as knownDevicesExportSelector,
   knownDevicesSelector,
   removeKnownDevices,
 } from "~/reducers/knownDevices";
-import { settingsStoreSelector } from "~/reducers/settings";
+import { lastConnectedDeviceSelector, settingsStoreSelector } from "~/reducers/settings";
 
 export type MockServerSessionActions = {
   startNewSession: (url: string) => Promise<void>;
@@ -27,12 +29,24 @@ export type MockServerSessionActions = {
 export function useMockServerSessionActions(): MockServerSessionActions {
   const store = useStore();
 
-  const removeMockServerKnownDevices = useCallback(() => {
-    const mockServerKnownDeviceIds = knownDevicesSelector(store.getState())
-      .filter(device => device.transport === mockserverIdentifier)
-      .map(device => device.id);
-    store.dispatch(removeKnownDevices(mockServerKnownDeviceIds));
-  }, [store]);
+  const removeMockServerDevicesExcept = useCallback(
+    (keptDeviceIds: ReadonlySet<string>) => {
+      const state = store.getState();
+      const removedDeviceIds = knownDevicesSelector(state)
+        .filter(
+          device => device.transport === mockserverIdentifier && !keptDeviceIds.has(device.id),
+        )
+        .map(device => device.id);
+      store.dispatch(removeKnownDevices(removedDeviceIds));
+
+      const lastConnectedDeviceId = lastConnectedDeviceSelector(state)?.deviceId ?? "";
+      const isLastConnectedDeviceRemoved =
+        isMockServerCompatDeviceId(lastConnectedDeviceId) &&
+        !keptDeviceIds.has(getMockServerDeviceIdFromCompatId(lastConnectedDeviceId));
+      if (isLastConnectedDeviceRemoved) store.dispatch(setLastConnectedDevice(null));
+    },
+    [store],
+  );
 
   const persistAndRestart = useCallback(async () => {
     const state = store.getState();
@@ -43,12 +57,12 @@ export function useMockServerSessionActions(): MockServerSessionActions {
 
   const joinSession = useCallback(
     async (url: string, token: string) => {
-      await getMockServerSession({ url, token });
-      removeMockServerKnownDevices();
+      const session = await getMockServerSession({ url, token });
+      removeMockServerDevicesExcept(new Set(session.devices.map(device => device.id)));
       store.dispatch(setMockServerSettings({ enabled: true, url, token }));
       await persistAndRestart();
     },
-    [persistAndRestart, removeMockServerKnownDevices, store],
+    [persistAndRestart, removeMockServerDevicesExcept, store],
   );
 
   const startNewSession = useCallback(
@@ -65,11 +79,11 @@ export function useMockServerSessionActions(): MockServerSessionActions {
   );
 
   const disable = useCallback(async () => {
-    removeMockServerKnownDevices();
+    removeMockServerDevicesExcept(new Set());
     const { mockServer } = settingsStoreSelector(store.getState());
     store.dispatch(setMockServerSettings({ enabled: false, url: mockServer.url, token: "" }));
     await persistAndRestart();
-  }, [persistAndRestart, removeMockServerKnownDevices, store]);
+  }, [persistAndRestart, removeMockServerDevicesExcept, store]);
 
   return { startNewSession, joinSession, disable };
 }

@@ -87,6 +87,7 @@ const setupTest = () => {
     dmk: {} as DeviceManagementKit,
     onConnected: jest.fn(),
     onClose: jest.fn(),
+    isMockServerEnabled: false,
   };
   const states: Array<MobileConnectNewDeviceUIState> = [];
   const subscription = connectNewDevice(input).subscribe(state => states.push(state));
@@ -150,6 +151,7 @@ describe("mobile connectNewDevice", () => {
       dmk: {} as DeviceManagementKit,
       onConnected: jest.fn(),
       onClose: jest.fn(),
+      isMockServerEnabled: false,
       deviceNotFoundDelay: 3_000,
       successDelay: 500,
     };

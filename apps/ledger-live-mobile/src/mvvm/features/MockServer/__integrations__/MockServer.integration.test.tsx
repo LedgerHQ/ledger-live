@@ -77,7 +77,7 @@ describe("MockServer", () => {
           knownDevices: [
             {
               transport: mockserverIdentifier,
-              id: "device-1",
+              id: "previous-session-device",
               name: "Mock Stax",
               deviceModelId: staxDevice.device_type as never,
             },
