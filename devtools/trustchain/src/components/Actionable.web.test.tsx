@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { Actionable } from "./Actionable.web";
+import { Actionable } from "./Actionable";
 
 describe("Actionable (web)", () => {
   it("shows a multiline result with its line breaks", () => {
