@@ -3,7 +3,7 @@ import { exclusiveLockStoreFailure } from "../exclusiveLock";
 
 // A workflow command ends with its line.
 const escapeCommandData = (data: string) =>
-  data.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+  data.replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A");
 
 /**
  * Sets the `mode` output of a CI step, for the E2E_EXCLUSIVE_LOCK_MODE of the tests after it:
