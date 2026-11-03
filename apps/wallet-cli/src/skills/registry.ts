@@ -2,7 +2,7 @@
 // Content is inlined into the binary at build time, so these helpers work
 // identically in dev, tests, and the compiled standalone binary.
 
-import { mkdir, readFile, writeFile, lstat, stat, unlink } from "node:fs/promises";
+import { mkdir, readFile, writeFile, lstat, realpath, stat, unlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { CLI_VERSION, SKILLS, type SkillFile, type SkillManifest } from "./manifest.gen";
@@ -152,6 +152,18 @@ function isWithinSkillDir(skillRoot: string, filePath: string): boolean {
   return resolved === root || resolved.startsWith(root + path.sep);
 }
 
+async function resolvesInsideSkillDir(skillRoot: string, target: string): Promise<boolean> {
+  try {
+    const [realRoot, realParent] = await Promise.all([
+      realpath(skillRoot),
+      realpath(path.dirname(target)),
+    ]);
+    return isWithinSkillDir(realRoot, realParent);
+  } catch {
+    return false;
+  }
+}
+
 async function isUneditedFile(p: string, recordedHash: string): Promise<boolean> {
   try {
     if (!(await lstat(p)).isFile()) return false;
@@ -170,7 +182,10 @@ async function removeDroppedFiles(skillRoot: string, skill: SkillManifest): Prom
   await Promise.all(
     dropped.map(async ([filePath, recordedHash]) => {
       const target = path.resolve(skillRoot, filePath);
-      if (await isUneditedFile(target, recordedHash)) await unlink(target);
+      const deletable =
+        (await resolvesInsideSkillDir(skillRoot, target)) &&
+        (await isUneditedFile(target, recordedHash));
+      if (deletable) await unlink(target);
     }),
   );
 }

@@ -139,6 +139,21 @@ describe("skill install", () => {
     expect(await readFile(droppedOnDisk, "utf8")).toBe(`${DROPPED.content}my own notes\n`);
   });
 
+  it("doesn't delete a dropped file through a linked directory", async () => {
+    tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
+    const outsideDir = path.join(tmpDir, "outside");
+    await mkdir(outsideDir);
+    await mkdir(path.join(tmpDir, SKILL_NAME));
+    await symlink(outsideDir, path.join(tmpDir, SKILL_NAME, "old-references"));
+    const dropped = { path: "old-references/dropped.md", content: DROPPED.content };
+    await installOlderSkillWithAFileThisOneDropped(tmpDir, dropped);
+
+    const update = await runCli(["skill", "install", SKILL_NAME, "--dir", tmpDir]);
+
+    expect(update.exitCode, `stderr: ${update.stderr}`).toBe(0);
+    expect(await readFile(path.join(outsideDir, "dropped.md"), "utf8")).toBe(DROPPED.content);
+  });
+
   it("doesn't delete a dropped file the sidecar records outside the skill directory", async () => {
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "wallet-cli-skilltest-"));
     const outside = { path: "../outside.md", content: "not part of the skill\n" };
