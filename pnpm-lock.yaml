@@ -13770,6 +13770,18 @@ importers:
 
   features/platform/wallet-sync:
     dependencies:
+      '@domain/entity-wallet-sync':
+        specifier: workspace:*
+        version: link:../../../domain/entity/wallet-sync
+      '@ledgerhq/ledger-key-ring-protocol':
+        specifier: 'catalog:'
+        version: 1.1.0(@typescript/typescript6@6.0.2)(axios@1.20.0(debug@4.4.3))(bufferutil@4.1.0)(utf-8-validate@6.0.6)
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.11.2(react-redux@9.2.0(@types/react@19.0.14)(react@19.1.4)(redux@5.0.1))(react@19.1.4)
+      '@shared/analytics':
+        specifier: workspace:*
+        version: link:../../../shared/analytics
       '@shared/cloud-sync':
         specifier: workspace:^
         version: link:../../../shared/cloud-sync
@@ -13783,6 +13795,9 @@ importers:
       '@ledgerhq/test-quarantine':
         specifier: workspace:*
         version: link:../../../support/test-quarantine
+      '@support/jest':
+        specifier: workspace:*
+        version: link:../../../support/jest
       '@swc/core':
         specifier: 'catalog:'
         version: 1.15.11(@swc/helpers@0.5.23)

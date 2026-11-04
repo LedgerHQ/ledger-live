@@ -20,12 +20,17 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "@domain/entity-wallet-sync": "workspace:*",
+    "@ledgerhq/ledger-key-ring-protocol": "catalog:",
+    "@reduxjs/toolkit": "catalog:",
+    "@shared/analytics": "workspace:*",
     "@shared/cloud-sync": "workspace:^",
     "@shared/cloud-sync-module": "workspace:^",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@ledgerhq/test-quarantine": "workspace:*",
+    "@support/jest": "workspace:*",
     "@swc/core": "catalog:",
     "@swc/jest": "catalog:",
     "@types/jest": "catalog:",

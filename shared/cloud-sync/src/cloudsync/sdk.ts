@@ -16,6 +16,14 @@ export class CloudSyncInvalidPayload extends Error {
   }
 }
 
+/** Another push, pull or destroy is running on the same SDK. */
+export class CloudSyncSDKLocked extends Error {
+  override name = "CloudSyncSDKLocked";
+  constructor(runningMethod: string) {
+    super(`CloudSyncSDK locked (${runningMethod})`);
+  }
+}
+
 export type UpdateEvent<Data> =
   | { type: "new-data"; data: Data; version: number }
   | { type: "pushed-data"; data: Data; version: number }
@@ -145,7 +153,7 @@ export class CloudSyncSDK<
   ): (...args: A) => Promise<R> {
     return async (...args) => {
       const { lock } = this;
-      if (lock) throw new Error("CloudSyncSDK locked (" + this.lock + ")");
+      if (lock) throw new CloudSyncSDKLocked(lock);
       try {
         this.lock = methodName;
         return await f.apply(this, args);
