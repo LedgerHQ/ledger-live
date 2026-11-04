@@ -10,6 +10,7 @@ import type {
 import { getWalletApiIdFromAccountId, setWalletApiIdForAccountId } from "../../converters";
 import { getQuotes } from "../../Exchange/quotes/getQuotes";
 import { PERPS_SWAPKIT_PROVIDER } from "../constants";
+import { findDepositParentAccount } from "./formError";
 
 export type PerpsDepositQuoteParams = {
   accounts: AccountLike[];
@@ -48,15 +49,16 @@ function registerQuoteAccounts(
   depositAccount: AccountLike,
   receiverAccount: AccountLike,
 ) {
-  const parentAccount =
-    depositAccount.type === "TokenAccount"
-      ? accounts.find(account => account.id === depositAccount.parentId)
-      : undefined;
+  const parentAccount = findDepositParentAccount(depositAccount, accounts);
   setWalletApiIdForAccountId(depositAccount.id);
   if (parentAccount) setWalletApiIdForAccountId(parentAccount.id);
   setWalletApiIdForAccountId(receiverAccount.id);
 }
 
+/**
+ * Quotes `amount` from `depositAccount` to `receiverAccount` against
+ * `swapkit_hyperliquid` and returns the first quote with the global errors.
+ */
 export async function fetchPerpsDepositQuote({
   accounts,
   depositAccount,

@@ -13,13 +13,14 @@ import { PerpsAccountSelector } from "LLD/features/Perps/components/PerpsAccount
 import { PerpsAmountStatus } from "LLD/features/Perps/components/PerpsAmountStatus";
 import { RatioPicker } from "LLD/features/Perps/components/RatioPicker";
 import { PERPS_DEPOSIT_PROVIDER_ID } from "LLD/features/Perps/constants/depositFunding";
-import type { PerpsDepositDetails, PerpsDepositViewModel } from "./usePerpsDepositViewModel";
+import type { DepositErrorDetails } from "@ledgerhq/live-common/wallet-api/Perps/deposit/formError";
+import type { PerpsDepositViewModel } from "./usePerpsDepositViewModel";
 
 function PerpsDepositDetailsView({
   details,
   onBack,
   onBuy,
-}: Readonly<{ details: PerpsDepositDetails; onBack: () => void; onBuy: () => void }>) {
+}: Readonly<{ details: DepositErrorDetails; onBack: () => void; onBuy: () => void }>) {
   const { t } = useTranslation();
 
   return (
@@ -59,6 +60,7 @@ export function PerpsDepositView({
   selectMax,
   statusError,
   canLearnMore,
+  isDetailsOpen,
   details,
   openDetails,
   closeDetails,
@@ -72,7 +74,7 @@ export function PerpsDepositView({
   const { t } = useTranslation();
   const provider = getProviderName(PERPS_DEPOSIT_PROVIDER_ID);
 
-  if (details) {
+  if (isDetailsOpen && details) {
     return (
       <PerpsDepositDetailsView details={details} onBack={closeDetails} onBuy={buyFromDetails} />
     );

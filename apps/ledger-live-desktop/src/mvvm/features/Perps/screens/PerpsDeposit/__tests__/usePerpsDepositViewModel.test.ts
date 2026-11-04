@@ -445,13 +445,16 @@ describe("usePerpsDepositViewModel", () => {
       expect(mockUsePerpsDepositQuote.mock.lastCall?.[0].isOffline).toBe(true);
     });
 
-    it("tracks each new error once", async () => {
+    it("tracks each new error once, across the quote reloads in between", async () => {
       mockUsePerpsDepositQuote.mockReturnValue(amountTooLowResult);
       const { result } = renderViewModel();
 
       await pickFundingAccount(result);
       act(() => result.current.changeDepositAmount("20"));
+      mockUsePerpsDepositQuote.mockReturnValue({ result: undefined, isLoading: true });
       act(() => result.current.changeDepositAmount("21"));
+      mockUsePerpsDepositQuote.mockReturnValue(amountTooLowResult);
+      act(() => result.current.changeDepositAmount("22"));
 
       const errorEvents = jest
         .mocked(track)
@@ -518,8 +521,22 @@ describe("usePerpsDepositViewModel", () => {
       act(() => result.current.openDetails());
       act(() => result.current.closeDetails());
 
-      expect(result.current.details).toBeNull();
+      expect(result.current.isDetailsOpen).toBe(false);
       expect(result.current.amountText).toBe("20");
+    });
+
+    it("keeps the details open while a quote reload clears the error", async () => {
+      mockUsePerpsDepositQuote.mockReturnValue(amountTooLowResult);
+      const { result } = renderViewModel();
+
+      await pickFundingAccount(result);
+      act(() => result.current.changeDepositAmount("20"));
+      act(() => result.current.openDetails());
+      mockUsePerpsDepositQuote.mockReturnValue({ result: undefined, isLoading: true });
+      act(() => result.current.changeDepositAmount("21"));
+
+      expect(result.current.isDetailsOpen).toBe(true);
+      expect(result.current.details?.titleKey).toBe("perpsDeposit.details.amountTooLow.title");
     });
 
     it("buys the parent currency when a token deposit cannot pay the fees", () => {

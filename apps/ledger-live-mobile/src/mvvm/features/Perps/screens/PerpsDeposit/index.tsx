@@ -97,16 +97,17 @@ function AmountMessage({
 }
 
 function DepositDetailsSheet({
+  isDetailsOpen,
   details,
   closeDetails,
   buyFromDetails,
-}: Pick<PerpsDepositViewModel, "details" | "closeDetails" | "buyFromDetails">) {
+}: Pick<PerpsDepositViewModel, "isDetailsOpen" | "details" | "closeDetails" | "buyFromDetails">) {
   const { t } = useTranslation();
   const { bottom: bottomInset } = useSafeAreaInsets();
 
   return (
     <QueuedBottomSheet
-      isRequestingToBeOpened={details !== null}
+      isRequestingToBeOpened={isDetailsOpen}
       onClose={closeDetails}
       enableDynamicSizing
       testID="perps-deposit-details"
@@ -253,6 +254,7 @@ export function PerpsDepositView(viewModel: Readonly<PerpsDepositViewModel>) {
     <SafeAreaView edges={["bottom"]} style={styles.root}>
       <DepositForm {...viewModel} />
       <DepositDetailsSheet
+        isDetailsOpen={viewModel.isDetailsOpen}
         details={viewModel.details}
         closeDetails={viewModel.closeDetails}
         buyFromDetails={viewModel.buyFromDetails}

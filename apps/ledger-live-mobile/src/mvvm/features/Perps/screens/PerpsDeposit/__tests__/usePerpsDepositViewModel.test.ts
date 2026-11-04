@@ -91,11 +91,15 @@ function withUsdcAccounts(...tokenAccounts: TokenAccount[]): Account[] {
   return [{ ...usdcParent, subAccounts: tokenAccounts }, fundedAccount];
 }
 
-function createProps(navigate = jest.fn(), replace = jest.fn()) {
+function createProps(navigate = jest.fn(), replace = jest.fn(), dispatch = jest.fn()) {
   return {
-    props: { navigation: { navigate, replace }, route: { params: { receiverAccount } } } as never,
+    props: {
+      navigation: { navigate, replace, dispatch },
+      route: { key: "perps-deposit-route", params: { receiverAccount } },
+    } as never,
     navigate,
     replace,
+    dispatch,
   };
 }
 
@@ -654,7 +658,7 @@ describe("usePerpsDepositViewModel", () => {
       isLoading: false,
     });
     const request = beginDepositRequest();
-    const { props } = createProps();
+    const { props, dispatch } = createProps();
     const { result } = renderViewModel(props);
 
     act(() => result.current.pickDepositAccount());
@@ -667,7 +671,13 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.buyFromDetails());
 
     expect(mockOpenBuySellForAccount).toHaveBeenCalledWith("buy", fundedAccount, undefined);
-    expect(result.current.details).toBeNull();
+    expect(result.current.isDetailsOpen).toBe(false);
+    const removeDepositRoute = dispatch.mock.lastCall?.[0];
+    expect(
+      removeDepositRoute({
+        routes: [{ key: "live-app" }, { key: "perps-deposit-route" }, { key: "exchange" }],
+      }).payload.routes,
+    ).toEqual([{ key: "live-app" }, { key: "exchange" }]);
     await expect(request).rejects.toBeInstanceOf(UserRefusedOnDevice);
   });
 });

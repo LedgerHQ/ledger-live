@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import BigNumber from "bignumber.js";
-import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
+import type { AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   useCalculateCountervalueCallback,
@@ -18,9 +18,13 @@ import { useNetworkState } from "@shared/network-status";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import {
   DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES,
+  PERPS_DEPOSIT_ANALYTICS_CONTEXT,
+  findDepositParentAccount,
   getDepositBaseError,
-  getDepositFeeAccount,
+  getDepositBuyTarget,
   resolveDepositFormError,
+  type DepositBuyTarget,
+  type DepositErrorDetails,
   type DepositFormError,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/formError";
 import { PERPS_UI_USE_CASE } from "@ledgerhq/live-common/wallet-api/ModularDrawer/uiUseCase";
@@ -56,22 +60,6 @@ export type PerpsDepositData = PerpsDepositUiParams & {
 
 const EMPTY_AMOUNT_TEXT = "0";
 
-const DEPOSIT_PAGE = "perps_deposit";
-const PERPS_FLOW = "perps";
-
-export type PerpsDepositDetails = Readonly<{
-  titleKey: string;
-  descriptionKey: string;
-  values: Record<string, string>;
-  buyTicker: string;
-}>;
-
-type BuyTarget = Readonly<{
-  account: AccountLike;
-  parentAccount: Account | undefined;
-  details: PerpsDepositDetails;
-}>;
-
 /** Serializes a computed amount (ratio, max, draft) as input text. */
 function toAmountText(amount: number | undefined): string {
   return amount ? new BigNumber(amount).toFixed() : EMPTY_AMOUNT_TEXT;
@@ -96,7 +84,8 @@ export type PerpsDepositViewModel = Readonly<{
   selectMax: () => void;
   statusError: DepositFormError | null;
   canLearnMore: boolean;
-  details: PerpsDepositDetails | null;
+  isDetailsOpen: boolean;
+  details: DepositErrorDetails | null;
   openDetails: () => void;
   closeDetails: () => void;
   buyFromDetails: () => void;
@@ -166,10 +155,7 @@ export function usePerpsDepositViewModel(
   );
 
   const parentAccount = useMemo(
-    () =>
-      depositAccount?.type === "TokenAccount"
-        ? accounts.find((account): account is Account => account.id === depositAccount.parentId)
-        : undefined,
+    () => (depositAccount ? findDepositParentAccount(depositAccount, accounts) : undefined),
     [accounts, depositAccount],
   );
 
@@ -305,6 +291,7 @@ export function usePerpsDepositViewModel(
   });
   const quote = quoteResult?.quote;
 
+  /** What the user typed comes first; a missing quote only matters once it is valid. */
   const statusError = useMemo(
     () =>
       resolveDepositFormError({
@@ -315,6 +302,7 @@ export function usePerpsDepositViewModel(
         depositAmount,
         sentAmountAtomic,
         quoteResult,
+        locale,
       }),
     [
       baseError,
@@ -324,6 +312,7 @@ export function usePerpsDepositViewModel(
       parentAccount,
       quoteResult,
       sentAmountAtomic,
+      locale,
     ],
   );
 
@@ -340,72 +329,51 @@ export function usePerpsDepositViewModel(
 
   const trackedErrorCodeRef = useRef<string | null>(null);
   useEffect(() => {
+    if (isQuoteLoading) return;
     const code = statusError?.code ?? null;
     if (code === trackedErrorCodeRef.current) return;
     trackedErrorCodeRef.current = code;
     if (!code) return;
     track("swap error message", {
       message: DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES[code],
-      page: DEPOSIT_PAGE,
-      flow: PERPS_FLOW,
+      ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
       ...analyticsCurrencies,
     });
-  }, [analyticsCurrencies, statusError?.code]);
+  }, [analyticsCurrencies, isQuoteLoading, statusError?.code]);
 
-  const buyTarget = useMemo((): BuyTarget | null => {
-    if (!depositAccount || !depositCurrency) return null;
-    if (statusError?.code === "notEnoughFees") {
-      const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
-      if (!feeAccount) return null;
-      const ticker = getAccountCurrency(feeAccount).ticker;
-      return {
-        account: feeAccount,
-        parentAccount: undefined,
-        details: {
-          titleKey: "perpsDeposit.details.notEnoughFees.title",
-          descriptionKey: "perpsDeposit.details.notEnoughFees.description",
-          values: { ticker, account: accountNameWithDefaultSelector(walletState, feeAccount) },
-          buyTicker: ticker,
-        },
-      };
-    }
-    if (statusError?.code === "amountTooLow") {
-      return {
-        account: depositAccount,
+  const buyTarget = useMemo(
+    () =>
+      getDepositBuyTarget({
+        statusError,
+        depositAccount,
         parentAccount,
-        details: {
-          titleKey: "perpsDeposit.details.amountTooLow.title",
-          descriptionKey: "perpsDeposit.details.amountTooLow.description",
-          values: { ticker: depositCurrency.ticker, amount: statusError.values?.amount ?? "" },
-          buyTicker: depositCurrency.ticker,
-        },
-      };
-    }
-    return null;
-  }, [depositAccount, depositCurrency, parentAccount, statusError, walletState]);
+        getAccountName: account => accountNameWithDefaultSelector(walletState, account),
+      }),
+    [depositAccount, parentAccount, statusError, walletState],
+  );
 
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  if (isDetailsOpen && !buyTarget) setIsDetailsOpen(false);
+  const [openedBuyTarget, setOpenedBuyTarget] = useState<DepositBuyTarget | null>(null);
 
   const openDetails = useCallback(() => {
+    if (!buyTarget) return;
     track("button_clicked", {
       button: "learn more",
-      page: DEPOSIT_PAGE,
-      flow: PERPS_FLOW,
+      ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
       ...analyticsCurrencies,
     });
+    setOpenedBuyTarget(buyTarget);
     setIsDetailsOpen(true);
-  }, [analyticsCurrencies]);
+  }, [analyticsCurrencies, buyTarget]);
 
   const closeDetails = useCallback(() => setIsDetailsOpen(false), []);
 
   const buyFromDetails = useCallback(() => {
-    if (!buyTarget) return;
-    const { account, parentAccount: buyParentAccount, details } = buyTarget;
+    if (!openedBuyTarget) return;
+    const { account, parentAccount: buyParentAccount, details } = openedBuyTarget;
     track("button_clicked", {
       button: "buy more crypto",
-      page: DEPOSIT_PAGE,
-      flow: PERPS_FLOW,
+      ...PERPS_DEPOSIT_ANALYTICS_CONTEXT,
       currency: details.buyTicker,
       ...analyticsCurrencies,
     });
@@ -418,7 +386,7 @@ export function usePerpsDepositViewModel(
       }),
     });
     onClose();
-  }, [analyticsCurrencies, buyTarget, navigate, onClose]);
+  }, [analyticsCurrencies, navigate, onClose, openedBuyTarget]);
 
   const receiverUnit = receiverCurrency.units[0];
 
@@ -495,7 +463,8 @@ export function usePerpsDepositViewModel(
     selectMax,
     statusError,
     canLearnMore: buyTarget !== null,
-    details: isDetailsOpen && buyTarget ? buyTarget.details : null,
+    isDetailsOpen,
+    details: openedBuyTarget?.details ?? null,
     openDetails,
     closeDetails,
     buyFromDetails,

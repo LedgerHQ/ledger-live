@@ -2,7 +2,9 @@ import BigNumber from "bignumber.js";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { QuoteErrorCodes, QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import {
+  findDepositParentAccount,
   getDepositBaseError,
+  getDepositBuyTarget,
   getDepositFeeAccount,
   resolveDepositFormError,
   type ResolveDepositFormErrorParams,
@@ -56,6 +58,7 @@ function resolve(overrides: Partial<ResolveDepositFormErrorParams> = {}) {
     depositAmount: 20,
     sentAmountAtomic: new BigNumber("20000000"),
     quoteResult: { quote: quote(), errors: [] },
+    locale: "en",
     ...overrides,
   });
 }
@@ -155,7 +158,7 @@ describe("resolveDepositFormError", () => {
       ).toEqual({
         code: "amountTooHigh",
         labelKey: "perpsDeposit.formErrors.amountTooHigh",
-        values: { amount: "1000", ticker: "USDC" },
+        values: { amount: "1,000", ticker: "USDC" },
       });
     });
 
@@ -216,9 +219,10 @@ describe("resolveDepositFormError", () => {
       ).toBe("notEnoughFees");
     });
 
-    it("obeys the quote flag even when the balance covers the estimate", () => {
+    it("uses the current balance, not the balance the quote saw", () => {
       expect(
         resolve({
+          parentAccount: mainAccount("1000"),
           quoteResult: {
             quote: quote({
               estimatedNetworkFee: fee("100"),
@@ -226,8 +230,21 @@ describe("resolveDepositFormError", () => {
             }),
             errors: [],
           },
-        })?.code,
-      ).toBe("notEnoughFees");
+        }),
+      ).toBeNull();
+    });
+
+    it("formats the fee for the user locale", () => {
+      expect(
+        resolve({
+          locale: "fr",
+          parentAccount: mainAccount("0.5e18"),
+          quoteResult: {
+            quote: quote({ estimatedNetworkFee: fee("1500000000000000000") }),
+            errors: [],
+          },
+        })?.values?.fees,
+      ).toBe("1,5");
     });
 
     it("skips the quote fee check when the quote has no fee fields", () => {
@@ -250,10 +267,6 @@ describe("resolveDepositFormError", () => {
         { baseError: { code: "noQuotes", labelKey: "x" }, quoteResult: undefined },
       ],
       [
-        "a fee in another currency",
-        { quoteResult: { quote: quote({ estimatedNetworkFee: fee("1", "vethor") }), errors: [] } },
-      ],
-      [
         "a chain that pays fees in another currency",
         {
           depositAccount: mainAccount("1", { feesCurrency: usdc } as unknown as Partial<Account>),
@@ -269,5 +282,68 @@ describe("resolveDepositFormError", () => {
     it("waits for the quote before it reports anything from it", () => {
       expect(resolve({ quoteResult: undefined })).toBeNull();
     });
+  });
+});
+
+describe("findDepositParentAccount", () => {
+  it("finds the main account of a token", () => {
+    const parent = mainAccount("1");
+    expect(findDepositParentAccount(tokenAccount, [tokenAccount, parent])).toBe(parent);
+  });
+
+  it("finds nothing for a main account or a missing parent", () => {
+    expect(findDepositParentAccount(mainAccount("1"), [])).toBeUndefined();
+    expect(findDepositParentAccount(tokenAccount, [tokenAccount])).toBeUndefined();
+  });
+});
+
+describe("getDepositBuyTarget", () => {
+  const parentAccount = mainAccount("0");
+  const getAccountName = (account: { id: string }) => `name of ${account.id}`;
+
+  it("buys the fee currency in the fee account for a fee error", () => {
+    expect(
+      getDepositBuyTarget({
+        statusError: { code: "notEnoughFees", labelKey: "x" },
+        depositAccount: tokenAccount,
+        parentAccount,
+        getAccountName,
+      }),
+    ).toEqual({
+      account: parentAccount,
+      parentAccount: undefined,
+      details: {
+        titleKey: "perpsDeposit.details.notEnoughFees.title",
+        descriptionKey: "perpsDeposit.details.notEnoughFees.description",
+        values: { ticker: "ETH", account: `name of ${parentAccount.id}` },
+        buyTicker: "ETH",
+      },
+    });
+  });
+
+  it("buys the funding asset for a minimum amount error", () => {
+    expect(
+      getDepositBuyTarget({
+        statusError: { code: "amountTooLow", labelKey: "x", values: { amount: "12" } },
+        depositAccount: tokenAccount,
+        parentAccount,
+        getAccountName,
+      }),
+    ).toMatchObject({
+      account: tokenAccount,
+      parentAccount,
+      details: { values: { ticker: "USDC", amount: "12" }, buyTicker: "USDC" },
+    });
+  });
+
+  it("offers no Buy for the other errors", () => {
+    expect(
+      getDepositBuyTarget({
+        statusError: { code: "amountTooHigh", labelKey: "x" },
+        depositAccount: tokenAccount,
+        parentAccount,
+        getAccountName,
+      }),
+    ).toBeNull();
   });
 });

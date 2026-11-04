@@ -5,10 +5,10 @@ import {
   getFeesCurrency,
 } from "@ledgerhq/ledger-wallet-framework/account/index";
 import {
-  QuoteErrorCodes,
   QuotesErrorCodes,
   type QuoteEstimatedNetworkFee,
 } from "@ledgerhq/wallet-api-exchange-module";
+import { toLocaleString } from "@ledgerhq/live-currency-format";
 import type { PerpsDepositQuote, PerpsDepositQuoteResult } from "./quote";
 
 export type DepositFormErrorCode =
@@ -35,7 +35,20 @@ export const DEPOSIT_FORM_ERROR_ANALYTICS_MESSAGES: Record<DepositFormErrorCode,
   noQuotes: "no_result",
 };
 
+export const PERPS_DEPOSIT_ANALYTICS_CONTEXT = { page: "perps_deposit", flow: "perps" } as const;
+
 const FEE_DISPLAY_DECIMALS = 7;
+
+function formatDisplayAmount(
+  amount: BigNumber,
+  decimals: number,
+  roundingMode: BigNumber.RoundingMode,
+  locale: string,
+): string {
+  return toLocaleString(amount.decimalPlaces(decimals, roundingMode), locale, {
+    maximumFractionDigits: decimals,
+  });
+}
 
 const OFFLINE_ERROR: DepositFormError = {
   code: "offline",
@@ -72,6 +85,15 @@ export function getDepositBaseError({
   return null;
 }
 
+export function findDepositParentAccount(
+  depositAccount: AccountLike,
+  accounts: readonly AccountLike[],
+): Account | undefined {
+  if (depositAccount.type !== "TokenAccount") return undefined;
+  const parentAccount = accounts.find(account => account.id === depositAccount.parentId);
+  return parentAccount?.type === "Account" ? parentAccount : undefined;
+}
+
 export function getDepositFeeAccount(
   depositAccount: AccountLike,
   parentAccount: Account | undefined,
@@ -88,15 +110,15 @@ function presentFeeFields(quote: PerpsDepositQuote): QuoteEstimatedNetworkFee[] 
   );
 }
 
-function hasForeignFeeCurrency(quote: PerpsDepositQuote, feeAccount: Account): boolean {
-  return presentFeeFields(quote).some(fee => fee.currencyId !== feeAccount.currency.id);
-}
-
 function toAtomic(fee: QuoteEstimatedNetworkFee | undefined): BigNumber {
   return new BigNumber(fee?.amount ?? 0);
 }
 
-function notEnoughFeesError(feeAccount: Account, feeAtomic: BigNumber): DepositFormError {
+function notEnoughFeesError(
+  feeAccount: Account,
+  feeAtomic: BigNumber,
+  locale: string,
+): DepositFormError {
   const ticker = getAccountCurrency(feeAccount).ticker;
   if (feeAtomic.isZero()) {
     return {
@@ -110,10 +132,12 @@ function notEnoughFeesError(feeAccount: Account, feeAtomic: BigNumber): DepositF
     code: "notEnoughFees",
     labelKey: "perpsDeposit.formErrors.notEnoughFees",
     values: {
-      fees: feeAtomic
-        .shiftedBy(-magnitude)
-        .decimalPlaces(FEE_DISPLAY_DECIMALS, BigNumber.ROUND_UP)
-        .toFixed(),
+      fees: formatDisplayAmount(
+        feeAtomic.shiftedBy(-magnitude),
+        FEE_DISPLAY_DECIMALS,
+        BigNumber.ROUND_UP,
+        locale,
+      ),
       ticker,
     },
   };
@@ -124,57 +148,74 @@ function getFeeError({
   feeAccount,
   quote,
   sentAmountAtomic,
+  locale,
 }: {
   depositAccount: AccountLike;
   feeAccount: Account;
   quote: PerpsDepositQuote | undefined;
   sentAmountAtomic: BigNumber | undefined;
+  locale: string;
 }): DepositFormError | null {
   const isTokenDeposit = depositAccount.type !== "Account";
 
   if (isTokenDeposit && feeAccount.spendableBalance.isZero()) {
-    return notEnoughFeesError(feeAccount, new BigNumber(0));
+    return notEnoughFeesError(feeAccount, new BigNumber(0), locale);
   }
 
-  if (!quote || hasForeignFeeCurrency(quote, feeAccount)) return null;
+  if (!quote) return null;
 
   const estimatedFee = toAtomic(quote.estimatedNetworkFee);
-  const totalFee = estimatedFee.plus(toAtomic(quote.approvalNetworkFee));
-  const isFlaggedByQuote = quote.errors.some(
-    error => error.code === QuoteErrorCodes.NOT_ENOUGH_BALANCE_FOR_FEES,
-  );
 
   if (isTokenDeposit) {
+    const totalFee = estimatedFee.plus(toAtomic(quote.approvalNetworkFee));
     const exceedsBalance =
       presentFeeFields(quote).length > 0 && totalFee.gt(feeAccount.spendableBalance);
-    return isFlaggedByQuote || exceedsBalance ? notEnoughFeesError(feeAccount, totalFee) : null;
+    return exceedsBalance ? notEnoughFeesError(feeAccount, totalFee, locale) : null;
   }
 
   const exceedsBalance =
     quote.estimatedNetworkFee !== undefined &&
     sentAmountAtomic !== undefined &&
     sentAmountAtomic.plus(estimatedFee).gt(feeAccount.spendableBalance);
-  if (exceedsBalance) return notEnoughFeesError(feeAccount, estimatedFee);
-  return isFlaggedByQuote ? notEnoughFeesError(feeAccount, totalFee) : null;
+  return exceedsBalance ? notEnoughFeesError(feeAccount, estimatedFee, locale) : null;
 }
 
 function getAmountLimitError(
   result: PerpsDepositQuoteResult,
-  ticker: string,
+  depositAccount: AccountLike,
+  locale: string,
 ): DepositFormError | null {
+  const { ticker, units } = getAccountCurrency(depositAccount);
+  const decimals = units[0].magnitude;
   for (const error of result.errors) {
     if (error.code === QuotesErrorCodes.AMOUNT_TOO_LOW) {
       return {
         code: "amountTooLow",
         labelKey: "perpsDeposit.formErrors.amountTooLow",
-        values: { amount: error.minAmount, ticker },
+        values: {
+          amount: formatDisplayAmount(
+            new BigNumber(error.minAmount),
+            decimals,
+            BigNumber.ROUND_UP,
+            locale,
+          ),
+          ticker,
+        },
       };
     }
     if (error.code === QuotesErrorCodes.AMOUNT_TOO_HIGH) {
       return {
         code: "amountTooHigh",
         labelKey: "perpsDeposit.formErrors.amountTooHigh",
-        values: { amount: error.maxAmount, ticker },
+        values: {
+          amount: formatDisplayAmount(
+            new BigNumber(error.maxAmount),
+            decimals,
+            BigNumber.ROUND_DOWN,
+            locale,
+          ),
+          ticker,
+        },
       };
     }
   }
@@ -189,6 +230,7 @@ export type ResolveDepositFormErrorParams = Readonly<{
   depositAmount: number;
   sentAmountAtomic: BigNumber | undefined;
   quoteResult: PerpsDepositQuoteResult | undefined;
+  locale: string;
 }>;
 
 export function resolveDepositFormError({
@@ -199,6 +241,7 @@ export function resolveDepositFormError({
   depositAmount,
   sentAmountAtomic,
   quoteResult,
+  locale,
 }: ResolveDepositFormErrorParams): DepositFormError | null {
   if (isOffline) return OFFLINE_ERROR;
   if (baseError?.code === "insufficientBalance") return baseError;
@@ -212,18 +255,73 @@ export function resolveDepositFormError({
     feeAccount,
     quote: quoteResult?.quote,
     sentAmountAtomic,
+    locale,
   });
   if (feeError) return feeError;
   if (baseError) return baseError;
   if (!quoteResult) return null;
 
-  const amountLimitError = getAmountLimitError(
-    quoteResult,
-    getAccountCurrency(depositAccount).ticker,
-  );
+  const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
   if (amountLimitError) return amountLimitError;
 
-  const { quote } = quoteResult;
-  if (!quote || hasForeignFeeCurrency(quote, feeAccount)) return NO_QUOTES_ERROR;
+  return quoteResult.quote ? null : NO_QUOTES_ERROR;
+}
+
+export type DepositErrorDetails = Readonly<{
+  titleKey: string;
+  descriptionKey: string;
+  values: Record<string, string>;
+  buyTicker: string;
+}>;
+
+export type DepositBuyTarget = Readonly<{
+  account: AccountLike;
+  parentAccount: Account | undefined;
+  details: DepositErrorDetails;
+}>;
+
+export function getDepositBuyTarget({
+  statusError,
+  depositAccount,
+  parentAccount,
+  getAccountName,
+}: Readonly<{
+  statusError: DepositFormError | null;
+  depositAccount: AccountLike | undefined;
+  parentAccount: Account | undefined;
+  getAccountName: (account: AccountLike) => string;
+}>): DepositBuyTarget | null {
+  if (!depositAccount) return null;
+
+  if (statusError?.code === "notEnoughFees") {
+    const feeAccount = getDepositFeeAccount(depositAccount, parentAccount);
+    if (!feeAccount) return null;
+    const ticker = getAccountCurrency(feeAccount).ticker;
+    return {
+      account: feeAccount,
+      parentAccount: undefined,
+      details: {
+        titleKey: "perpsDeposit.details.notEnoughFees.title",
+        descriptionKey: "perpsDeposit.details.notEnoughFees.description",
+        values: { ticker, account: getAccountName(feeAccount) },
+        buyTicker: ticker,
+      },
+    };
+  }
+
+  if (statusError?.code === "amountTooLow") {
+    const ticker = getAccountCurrency(depositAccount).ticker;
+    return {
+      account: depositAccount,
+      parentAccount,
+      details: {
+        titleKey: "perpsDeposit.details.amountTooLow.title",
+        descriptionKey: "perpsDeposit.details.amountTooLow.description",
+        values: { ticker, amount: statusError.values?.amount ?? "" },
+        buyTicker: ticker,
+      },
+    };
+  }
+
   return null;
 }
