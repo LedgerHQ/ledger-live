@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { Keyboard } from "react-native";
 import RNRestart from "react-native-restart";
 import type { MockServerSessionChange } from "@features/flow-device-mock-server";
 import { mockserverIdentifier } from "@ledgerhq/live-dmk-mobile";
@@ -43,7 +44,9 @@ export function useApplyMockServerSessionChange(): (
       const nextState = store.getState();
       await saveSettings(settingsStoreSelector(nextState));
       await saveKnownDevices(knownDevicesExportSelector(nextState));
-      // Deferred: reloading while the settings change still renders crashes the app on iOS
+      // A field still focused at the restart blurs itself while the old app is torn down, which
+      // crashes iOS: blur it now and restart once that blur went through.
+      Keyboard.dismiss();
       setTimeout(() => RNRestart.restart(), 0);
     },
     [store],
