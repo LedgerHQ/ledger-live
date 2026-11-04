@@ -3,7 +3,6 @@ import {
   ListItemLeading,
   Spot,
   ListItemContent,
-  ListItemContentRow,
   ListItemDescription,
   ListItemTitle,
   ListItemTrailing,
