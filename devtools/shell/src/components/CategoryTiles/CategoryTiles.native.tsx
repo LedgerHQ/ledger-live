@@ -8,12 +8,13 @@ import {
 } from "@ledgerhq/lumen-ui-rnative";
 import type { CatalogItem } from "../Catalog/Catalog";
 
+// Columns are half-width wrappers with their own padding rather than a gap, so two of them always
+// fit side by side, even on a 320-point-wide host.
 const GRID_LX = {
   flexDirection: "row",
   flexWrap: "wrap",
-  gap: "s12",
-  paddingHorizontal: "s12",
-  paddingVertical: "s8",
+  paddingHorizontal: "s6",
+  paddingVertical: "s2",
 } as const;
 
 interface CategoryTilesProps {
@@ -25,7 +26,7 @@ export function CategoryTiles({ items }: CategoryTilesProps) {
   return (
     <Box lx={GRID_LX}>
       {items.map(({ key, title, logo, count, onPress }) => (
-        <Box key={key} style={{ width: "48%" }}>
+        <Box key={key} lx={{ padding: "s6" }} style={{ width: "50%" }}>
           <Tile appearance="card" onPress={onPress} accessibilityLabel={title}>
             {logo && <Spot icon={logo} />}
             <TileContent>
