@@ -35,8 +35,9 @@ import {
   settleDepositRequest,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import {
-  isDepositGenericSignError,
   shouldReturnToDepositForm,
+  toDepositSignErrorStep,
+  type DepositSignErrorStep,
 } from "@ledgerhq/live-common/wallet-api/Perps/deposit/signError";
 
 type StartResult = StartExchangeResult;
@@ -45,7 +46,7 @@ type SignResult = { signedOperation: SignedOperation } | { transactionSignError:
 
 export type PerpsDepositDeviceStep =
   | { kind: "processing" }
-  | { kind: "error"; error: Error; isGeneric: boolean }
+  | DepositSignErrorStep
   | {
       kind: "device";
       stepId: "start" | "confirm" | "sign";
@@ -332,21 +333,7 @@ export function usePerpsDepositExecution(
         onRefused();
         return;
       }
-      const isGeneric = isDepositGenericSignError(e);
-      if (isGeneric) {
-        track("swap error message", {
-          message: "deposit_sign_failed",
-          page: "perps_deposit_sign",
-          flow: "perps",
-          sourceCurrency: getAccountCurrency(depositAccount).ticker,
-          targetCurrency: getAccountCurrency(receiverAccount).ticker,
-        });
-      }
-      setDeviceStep({
-        kind: "error",
-        error: e instanceof Error ? e : new Error(String(e)),
-        isGeneric,
-      });
+      setDeviceStep(toDepositSignErrorStep(e, { depositAccount, receiverAccount, track }));
     }
   }, [
     accounts,
