@@ -1,30 +1,91 @@
 import React from "react";
+import { RestoreBackupStatus } from "@ledgerhq/live-dmk-shared";
 import { render, screen } from "@tests/test-renderer";
 import { UpdatesAppliedScreen } from ".";
 
+const PARTIAL_BANNER = /You didn't reinstall your apps and lock screen/;
+const OUT_OF_MEMORY_BANNER = /Not enough storage available while reinstalling/;
+
 describe("UpdatesAppliedScreen", () => {
-  it("shows the update summary for an OS update", () => {
+  it("shows the OS version the device is now up to date with", () => {
     render(
-      <UpdatesAppliedScreen productName="Ledger Stax" isRestoreOnly={false} onClose={jest.fn()} />,
+      <UpdatesAppliedScreen
+        productName="Ledger Stax"
+        isRestoreOnly={false}
+        osVersion="2.0.0"
+        restoreStatus={RestoreBackupStatus.FULL}
+        onClose={jest.fn()}
+      />,
     );
 
-    expect(screen.getByText("Update complete")).toBeVisible();
-    expect(screen.getByText("Your Ledger Stax is up to date.")).toBeVisible();
+    expect(screen.getByText("Your Ledger Stax is now up to date")).toBeVisible();
+    expect(screen.getByText("OS version: 2.0.0")).toBeVisible();
   });
 
-  it("shows the restore summary for a standalone restore", () => {
-    render(<UpdatesAppliedScreen productName="Ledger Stax" isRestoreOnly onClose={jest.fn()} />);
+  it("shows no OS version for a standalone restore", () => {
+    render(
+      <UpdatesAppliedScreen
+        productName="Ledger Stax"
+        isRestoreOnly
+        restoreStatus={RestoreBackupStatus.FULL}
+        onClose={jest.fn()}
+      />,
+    );
 
-    expect(screen.getByText("Backup restored")).toBeVisible();
+    expect(screen.getByText("Apps and settings reinstalled on your Ledger Stax")).toBeVisible();
+    expect(screen.queryByText(/OS version/)).toBeNull();
   });
 
-  it("closes on press", async () => {
+  describe.each([
+    ["an OS update", { isRestoreOnly: false, osVersion: "2.0.0" } as const],
+    ["a standalone restore", { isRestoreOnly: true } as const],
+  ])("after %s", (_flow, flowProps) => {
+    it.each([
+      ["a full", RestoreBackupStatus.FULL],
+      ["no", undefined],
+    ])("shows no banner when %s restore ran", (_restore, restoreStatus) => {
+      render(
+        <UpdatesAppliedScreen
+          productName="Ledger Stax"
+          {...flowProps}
+          restoreStatus={restoreStatus}
+          onClose={jest.fn()}
+        />,
+      );
+
+      expect(screen.queryByTestId("os-update-restore-banner")).toBeNull();
+    });
+
+    it.each([
+      [RestoreBackupStatus.PARTIAL, PARTIAL_BANNER],
+      [RestoreBackupStatus.OUT_OF_MEMORY, OUT_OF_MEMORY_BANNER],
+    ])("explains what was not reinstalled for a %s restore", (restoreStatus, banner) => {
+      render(
+        <UpdatesAppliedScreen
+          productName="Ledger Stax"
+          {...flowProps}
+          restoreStatus={restoreStatus}
+          onClose={jest.fn()}
+        />,
+      );
+
+      expect(screen.getByTestId("os-update-restore-banner")).toHaveTextContent(banner);
+    });
+  });
+
+  it("closes on finish", async () => {
     const onClose = jest.fn();
     const { user } = render(
-      <UpdatesAppliedScreen productName="Ledger Stax" isRestoreOnly={false} onClose={onClose} />,
+      <UpdatesAppliedScreen
+        productName="Ledger Stax"
+        isRestoreOnly={false}
+        osVersion="2.0.0"
+        restoreStatus={RestoreBackupStatus.FULL}
+        onClose={onClose}
+      />,
     );
 
-    await user.press(screen.getByText("Close"));
+    await user.press(screen.getByText("Finish"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
   });

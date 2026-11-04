@@ -2,6 +2,7 @@ import React from "react";
 import {
   OsUpdatesSteps,
   RestoreBackupStateType,
+  RestoreBackupStatus,
   type RestoreBackupState,
 } from "@ledgerhq/live-dmk-shared";
 import { QueuedBottomSheet } from "@shared/ui-queued-bottom-sheet";
@@ -66,10 +67,26 @@ describe("RestoreBackup step", () => {
       { onClose },
     );
 
-    expect(screen.getByText("Backup restored")).toBeVisible();
-    await user.press(screen.getByText("Close"));
+    expect(screen.getByText("Apps and settings reinstalled on your Ledger Stax")).toBeVisible();
+    await user.press(screen.getByText("Finish"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("tells on the restored summary that the restore was partial", () => {
+    renderView({
+      type: RestoreBackupStateType.BACKUP_RESTORED,
+      restoreResult: {
+        restoreStatus: RestoreBackupStatus.PARTIAL,
+        restoredLanguage: undefined,
+        restoredCLS: undefined,
+        restoredApps: undefined,
+      },
+    });
+
+    expect(screen.getByTestId("os-update-restore-banner")).toHaveTextContent(
+      /You didn't reinstall your apps and lock screen/,
+    );
   });
 
   it.each([
@@ -102,18 +119,18 @@ describe("RestoreBackup step", () => {
     expect(cancel).toHaveBeenCalledTimes(1);
   });
 
-  it.each([
-    [RestoreBackupStateType.OUT_OF_MEMORY, "os-update-out-of-memory"],
-    [RestoreBackupStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"],
-  ] as const)("only offers cancel for %s", async (type, testID) => {
-    const cancel = jest.fn();
-    const { user } = renderView({ type, error: new Error("boom"), cancel });
+  it.each([[RestoreBackupStateType.UNEXPECTED_ERROR, "os-update-unexpected-error"]] as const)(
+    "only offers cancel for %s",
+    async (type, testID) => {
+      const cancel = jest.fn();
+      const { user } = renderView({ type, error: new Error("boom"), cancel });
 
-    expect(screen.getByTestId(testID)).toBeVisible();
-    await user.press(screen.getByText("Cancel"));
+      expect(screen.getByTestId(testID)).toBeVisible();
+      await user.press(screen.getByText("Cancel"));
 
-    expect(cancel).toHaveBeenCalledTimes(1);
-  });
+      expect(cancel).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it.each([
     [RestoreBackupStateType.DEVICE_LOCKED, "os-update-device-locked"],

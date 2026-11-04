@@ -5961,7 +5961,8 @@
     "actions": {
       "retry": "Retry",
       "cancel": "Cancel",
-      "close": "Close"
+      "close": "Close",
+      "finish": "Finish"
     },
     "closeConfirmation": {
       "title": "OS update is in progress",
@@ -5987,12 +5988,15 @@
       "restoringDescription": "Almost done. Your settings are being reinstalled on your {{productName}}."
     },
     "applied": {
-      "title": "Update complete",
-      "description": "Your {{productName}} is up to date."
+      "title": "Your {{productName}} is now up to date",
+      "version": "OS version: {{version}}"
     },
     "restored": {
-      "title": "Backup restored",
-      "description": "Your apps and settings are back on your {{productName}}."
+      "title": "Apps and settings reinstalled on your {{productName}}"
+    },
+    "restoreResult": {
+      "partial": "You didn't reinstall your apps and lock screen. Your crypto is safe. You can reinstall your apps and lock screen at any time.",
+      "outOfMemory": "Not enough storage available while reinstalling your apps and lock screen. Your crypto is safe. Reinstall your apps and lock screen at any time."
     },
     "continueOnDevice": {
       "title": "Continue on your {{productName}}",
@@ -6036,10 +6040,6 @@
       "description": "If this was a mistake, restart the update.",
       "restart": "Restart OS update",
       "cancel": "Cancel OS update"
-    },
-    "outOfMemory": {
-      "title": "Not enough space on your device",
-      "description": "Your device does not have enough memory to continue. Free some space and try again."
     }
   },
   "deviceIntentExecutor": {

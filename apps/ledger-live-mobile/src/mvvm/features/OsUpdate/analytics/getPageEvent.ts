@@ -4,6 +4,7 @@ import {
   OsUpdatesSteps,
   PreChecksStateType,
   RestoreBackupStateType,
+  RestoreBackupStatus,
   type ApplyUpdatesState,
   type OsUpdate,
   type OsUpdatesProgress,
@@ -41,6 +42,9 @@ export function getOsUpdateFlowStep(step: OsUpdatesSteps): OsUpdateFlowStep {
 
 function getRestoreStatus(restoreResult: RestoreResult): OsUpdateRestoreStatus {
   if (!restoreResult) return OsUpdateRestoreStatus.NONE;
+  if (restoreResult.restoreStatus === RestoreBackupStatus.OUT_OF_MEMORY) {
+    return OsUpdateRestoreStatus.OUT_OF_MEMORY;
+  }
 
   const outcomes = [
     restoreResult.restoredLanguage,
@@ -174,8 +178,6 @@ export function getPageEvent(
           return { page: OsUpdatePage.SECURE_CONNECTION_REFUSED, step };
         case ApplyUpdatesStateType.ALLOW_INSTALL_FIRMWARE_REFUSED:
           return error(OsUpdateFailureType.INSTALL_FIRMWARE_REFUSED);
-        case ApplyUpdatesStateType.OUT_OF_MEMORY:
-          return error(OsUpdateFailureType.OUT_OF_MEMORY);
         case ApplyUpdatesStateType.UNEXPECTED_ERROR:
           return error(OsUpdateFailureType.UNEXPECTED_ERROR);
         default: {
@@ -213,8 +215,6 @@ export function getPageEvent(
           return continueOnDevice(OsUpdateDeviceAction.CONFIRM_COMMIT_IMAGE);
         case RestoreBackupStateType.ALLOW_SECURE_CONNECTION_REFUSED:
           return { page: OsUpdatePage.SECURE_CONNECTION_REFUSED, step };
-        case RestoreBackupStateType.OUT_OF_MEMORY:
-          return error(OsUpdateFailureType.OUT_OF_MEMORY);
         case RestoreBackupStateType.UNEXPECTED_ERROR:
           return error(OsUpdateFailureType.UNEXPECTED_ERROR);
         default: {

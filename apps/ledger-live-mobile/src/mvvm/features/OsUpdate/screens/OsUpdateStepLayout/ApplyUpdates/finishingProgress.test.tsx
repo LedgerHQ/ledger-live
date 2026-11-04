@@ -2,6 +2,7 @@ import React from "react";
 import {
   OsUpdatesSteps,
   ApplyUpdatesStateType,
+  RestoreBackupStatus,
   type ApplyUpdatesState,
 } from "@ledgerhq/live-dmk-shared";
 import { act, render, screen } from "@tests/test-renderer";
@@ -15,10 +16,17 @@ const updating = (progress: number): ApplyUpdatesState => ({
   updateIndex: 2,
   updateCount: 3,
 });
-const applied: ApplyUpdatesState = {
+const appliedWith = (restoreStatus: RestoreBackupStatus | undefined): ApplyUpdatesState => ({
   type: ApplyUpdatesStateType.UPDATES_APPLIED,
-  restoreResult: undefined,
-};
+  osVersion: "2.0.0",
+  restoreResult: restoreStatus && {
+    restoreStatus,
+    restoredLanguage: undefined,
+    restoredCLS: undefined,
+    restoredApps: undefined,
+  },
+});
+const applied = appliedWith(undefined);
 
 const element = (state: ApplyUpdatesState) => (
   <OsUpdateStep
@@ -48,10 +56,15 @@ describe("ApplyUpdates finishing progress", () => {
     jest.useRealTimers();
   });
 
-  it("fills the bar up to 100% before showing the success screen", () => {
+  it.each([
+    RestoreBackupStatus.FULL,
+    RestoreBackupStatus.PARTIAL,
+    RestoreBackupStatus.OUT_OF_MEMORY,
+    undefined,
+  ])("fills the bar up to 100%% before showing the success screen (restore: %s)", restoreStatus => {
     const { rerender } = render(element(updating(0.9)));
 
-    rerender(element(applied));
+    rerender(element(appliedWith(restoreStatus)));
 
     expect(progressBarValue()).toBe(100);
     expect(screen.queryByTestId("os-update-applied-screen")).toBeNull();

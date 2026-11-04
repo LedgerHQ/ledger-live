@@ -137,12 +137,13 @@ describe("OsUpdateStep", () => {
         <OsUpdateStep
           {...applyUpdates({
             type: ApplyUpdatesStateType.UPDATES_APPLIED,
+            osVersion: "2.0.0",
             restoreResult: undefined,
           })}
         />,
       );
 
-      fireEvent.press(screen.getByText("Close"));
+      fireEvent.press(screen.getByText("Finish"));
 
       expect(baseProps.onUserClose).toHaveBeenCalledTimes(1);
     });

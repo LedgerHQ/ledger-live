@@ -5,17 +5,21 @@ import { ErrorContent } from ".";
 describe("ErrorContent", () => {
   it("renders the title and description from the i18n prefix", () => {
     render(
-      <ErrorContent i18nKeyPrefix="osUpdates.outOfMemory" testID="error" onCancel={jest.fn()} />,
+      <ErrorContent
+        i18nKeyPrefix="osUpdates.unexpectedError"
+        testID="error"
+        onCancel={jest.fn()}
+      />,
     );
 
     expect(screen.getByTestId("error")).toBeVisible();
-    expect(screen.getByText("Not enough space on your device")).toBeVisible();
+    expect(screen.getByText("Something went wrong")).toBeVisible();
   });
 
   it("only offers cancel without a retry handler", async () => {
     const onCancel = jest.fn();
     const { user } = render(
-      <ErrorContent i18nKeyPrefix="osUpdates.outOfMemory" testID="error" onCancel={onCancel} />,
+      <ErrorContent i18nKeyPrefix="osUpdates.unexpectedError" testID="error" onCancel={onCancel} />,
     );
 
     expect(screen.queryByText("Retry")).toBeNull();

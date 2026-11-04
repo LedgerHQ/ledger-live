@@ -302,7 +302,11 @@ describe("OsUpdatesOrchestratorComponent", () => {
         "apply-updates",
         {
           step: OsUpdatesSteps.APPLY_UPDATES,
-          state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+          state: {
+            type: ApplyUpdatesStateType.UPDATES_APPLIED,
+            osVersion: "2.0.0",
+            restoreResult: undefined,
+          },
         },
       ],
       [
@@ -335,7 +339,11 @@ describe("OsUpdatesOrchestratorComponent", () => {
 
       mockProgress({
         step: OsUpdatesSteps.APPLY_UPDATES,
-        state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+        state: {
+          type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: "2.0.0",
+          restoreResult: undefined,
+        },
       });
       rerender(
         <OsUpdatesOrchestratorComponent {...input} platformComponents={platformComponents} />,
@@ -367,7 +375,11 @@ describe("OsUpdatesOrchestratorComponent", () => {
     it("is called when the updates are applied", () => {
       mockProgress({
         step: OsUpdatesSteps.APPLY_UPDATES,
-        state: { type: ApplyUpdatesStateType.UPDATES_APPLIED, restoreResult: undefined },
+        state: {
+          type: ApplyUpdatesStateType.UPDATES_APPLIED,
+          osVersion: "2.0.0",
+          restoreResult: undefined,
+        },
       });
       const onCompleted = jest.fn();
 

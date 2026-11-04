@@ -43,6 +43,17 @@ describe("InfoState", () => {
     expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner title");
   });
 
+  it("should display a banner that only has a description", () => {
+    render(
+      <InfoState
+        preset="success"
+        banner={{ description: "Banner description", testID: "info-banner" }}
+      />,
+    );
+
+    expect(screen.getByTestId("info-banner")).toHaveTextContent("Banner description");
+  });
+
   it("should give the description a testID derived from the InfoState's testID", () => {
     render(<InfoState preset="error" description="State description" testID="info-state" />);
 
