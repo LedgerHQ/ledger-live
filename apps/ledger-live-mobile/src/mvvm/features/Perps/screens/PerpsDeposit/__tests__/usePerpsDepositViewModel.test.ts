@@ -159,7 +159,10 @@ describe("usePerpsDepositViewModel", () => {
     });
   });
 
-  afterEach(() => cancelDepositRequest());
+  afterEach(() => {
+    cancelDepositRequest();
+    jest.restoreAllMocks();
+  });
 
   it("starts with an empty amount and no funding account", () => {
     const { props } = createProps();
@@ -700,6 +703,5 @@ describe("usePerpsDepositViewModel", () => {
     act(() => result.current.openDetails());
 
     expect(openURL).toHaveBeenCalledWith(result.current.statusError?.supportUrl);
-    openURL.mockRestore();
   });
 });

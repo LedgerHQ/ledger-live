@@ -48,6 +48,7 @@ import {
 import type { PerpsDepositOutcome } from "../../hooks/usePerpsDepositExecution";
 import { cancelDepositRequest } from "@ledgerhq/live-common/wallet-api/Perps/deposit/request";
 import { getDepositSpendableBalance } from "@ledgerhq/live-common/wallet-api/Perps/deposit/coinErrors";
+import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { Linking } from "react-native";
 import type { PerpsReviewParams } from "./components/PerpsReview";
 import { usePerpsDepositQuote } from "./usePerpsDepositQuote";
@@ -227,7 +228,9 @@ export function usePerpsDepositViewModel({
 
   const depositAccountBalanceCounterValue = useMemo(() => {
     if (!depositAccount || !depositCurrency) return null;
-    return calculateCountervalue(depositCurrency, depositAccount.spendableBalance) ?? null;
+    return (
+      calculateCountervalue(depositCurrency, getDepositSpendableBalance(depositAccount)) ?? null
+    );
   }, [calculateCountervalue, depositAccount, depositCurrency]);
 
   const depositAccountCounterValue = useMemo(() => {
@@ -239,14 +242,11 @@ export function usePerpsDepositViewModel({
     });
   }, [counterValueUnit, depositAccountBalanceCounterValue, discreet, locale]);
 
-  const maxAmount = useMemo(() => {
-    if (!depositAccount || !depositCurrency) return null;
-    return (
-      calculateCountervalue(depositCurrency, getDepositSpendableBalance(depositAccount))
-        ?.shiftedBy(-counterValueUnit.magnitude)
-        .toNumber() ?? null
-    );
-  }, [calculateCountervalue, counterValueUnit.magnitude, depositAccount, depositCurrency]);
+  const maxAmount = useMemo(
+    () =>
+      depositAccountBalanceCounterValue?.shiftedBy(-counterValueUnit.magnitude).toNumber() ?? null,
+    [counterValueUnit.magnitude, depositAccountBalanceCounterValue],
+  );
 
   const tradeMaxConstant = useFeature("ptxTradeMaxConstant");
   const maxBuffer = useMemo(() => {
@@ -278,8 +278,9 @@ export function usePerpsDepositViewModel({
         depositAmount,
         maxAmount,
         hasConversion: convertedAmount !== null,
+        parentAccount,
       }),
-    [convertedAmount, depositAccount, depositAmount, maxAmount],
+    [convertedAmount, depositAccount, depositAmount, maxAmount, parentAccount],
   );
 
   const missingAccount = !depositAccount && depositAmount > 0;
@@ -371,7 +372,8 @@ export function usePerpsDepositViewModel({
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [openedBuyTarget, setOpenedBuyTarget] = useState<DepositBuyTarget | null>(null);
 
-  const supportUrl = statusError?.supportUrl;
+  const localizedSupportUrl = useLocalizedUrl(statusError?.supportUrl ?? "");
+  const supportUrl = statusError?.supportUrl ? localizedSupportUrl : undefined;
 
   const openDetails = useCallback(() => {
     if (!buyTarget && !supportUrl) return;

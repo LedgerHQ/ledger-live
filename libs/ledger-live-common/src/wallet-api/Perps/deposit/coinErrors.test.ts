@@ -2,18 +2,31 @@ import BigNumber from "bignumber.js";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { QuotesErrorCodes } from "@ledgerhq/wallet-api-exchange-module";
 import { getDepositSpendableBalance } from "./coinErrors";
-import { resolveDepositFormError, type ResolveDepositFormErrorParams } from "./formError";
+import {
+  getDepositBaseError,
+  resolveDepositFormError,
+  type ResolveDepositFormErrorParams,
+} from "./formError";
 import type { PerpsDepositQuote } from "./quote";
 
-function currency(id: string, ticker: string, magnitude: number) {
-  return { type: "CryptoCurrency", id, ticker, units: [{ name: ticker, code: ticker, magnitude }] };
+const MAGNITUDES: Record<string, number> = { assethub_polkadot: 10, stellar: 7 };
+
+function currency(id: string, ticker: string) {
+  const magnitude = MAGNITUDES[id] ?? 6;
+  return {
+    type: "CryptoCurrency",
+    id,
+    family: id,
+    ticker,
+    units: [{ name: ticker, code: ticker, magnitude }],
+  };
 }
 
 function account(currencyId: string, spendableBalance: string, extra: object = {}): Account {
   return {
     type: "Account",
     id: `js:2:${currencyId}:0xfunding:`,
-    currency: currency(currencyId, currencyId.toUpperCase(), 6),
+    currency: currency(currencyId, currencyId.toUpperCase()),
     spendableBalance: new BigNumber(spendableBalance),
     ...extra,
   } as unknown as Account;
@@ -86,6 +99,17 @@ describe("coin errors in the deposit resolver", () => {
       expect(resolve(token(parentAccount), { parentAccount })?.code).toBe(code);
     });
 
+    it("blocks the quote request of a blocked account in the base check", () => {
+      expect(
+        getDepositBaseError({
+          depositAccount: account("tezos", "1000", notReady),
+          depositAmount: 20,
+          maxAmount: 50,
+          hasConversion: true,
+        })?.code,
+      ).toBe("tezosUnrevealed");
+    });
+
     it("treats a missing readiness as ready", () => {
       expect(resolve(account("tezos", "1000"))).toBeNull();
     });
@@ -109,6 +133,18 @@ describe("coin errors in the deposit resolver", () => {
         code: "aleoPrivateBalance",
         values: { ticker: "ALEO" },
         supportUrl: "https://support.ledger.com/article/Aleo-ALEO",
+      });
+    });
+
+    it("uses only the public balance of the parent to pay the fees of a token", () => {
+      const parentAccount = aleo("0", "500");
+      const aleoToken = token(parentAccount, {
+        transparentBalance: new BigNumber(10),
+        privateBalance: null,
+      });
+      expect(resolve(aleoToken, { parentAccount })).toMatchObject({
+        code: "notEnoughFees",
+        labelKey: "perpsDeposit.formErrors.feeAccountEmpty",
       });
     });
 

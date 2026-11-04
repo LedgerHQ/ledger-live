@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { DepositFormError } from "./formError";
+import { formatDisplayAmount } from "./formatAmount";
 import type { PerpsDepositQuote } from "./quote";
 
 const SEI_EVM_ERROR: DepositFormError = {
@@ -16,6 +17,8 @@ const TEZOS_ERROR: DepositFormError = {
     "https://support.ledger.com/article/360016057774-zd?redirect=false#:~:text=Swapping%20Tezos%20(XTZ)%20in%20Ledger%20Live&text=As%20of%20December%202023%2C%20a,your%20Tezos%20(XTZ)%20account",
 };
 
+const ALEO_CURRENCY_IDS: ReadonlySet<string> = new Set(["aleo", "aleo_testnet"]);
+
 const ALEO_SUPPORT_URL = "https://support.ledger.com/article/Aleo-ALEO";
 
 const MINIMUM_BALANCE_RULES: Record<
@@ -27,7 +30,6 @@ const MINIMUM_BALANCE_RULES: Record<
     error: {
       code: "dotMinimumBalance",
       labelKey: "perpsDeposit.formErrors.dotMinimumBalance",
-      values: { minValue: "1" },
       supportUrl: "https://support.ledger.com/article/360016289919-zd?redirect=false",
     },
   },
@@ -36,7 +38,6 @@ const MINIMUM_BALANCE_RULES: Record<
     error: {
       code: "xlmMinimumBalance",
       labelKey: "perpsDeposit.formErrors.xlmMinimumBalance",
-      values: { minValue: "0.0000001" },
       supportUrl: "https://support.ledger.com/article/8278286499997-zd?redirect=false",
     },
   },
@@ -58,10 +59,10 @@ function isAleoBalances(value: unknown): value is AleoBalances {
 
 function getAleoBalances(account: AccountLike): AleoBalances | undefined {
   if (account.type === "Account") {
-    if (account.currency.id !== "aleo" || !("aleoResources" in account)) return undefined;
+    if (account.currency.family !== "aleo" || !("aleoResources" in account)) return undefined;
     return isAleoBalances(account.aleoResources) ? account.aleoResources : undefined;
   }
-  if (account.type !== "TokenAccount" || account.token.parentCurrencyId !== "aleo") {
+  if (account.type !== "TokenAccount" || !ALEO_CURRENCY_IDS.has(account.token.parentCurrencyId)) {
     return undefined;
   }
   return isAleoBalances(account) ? account : undefined;
@@ -71,25 +72,16 @@ export function getDepositSpendableBalance(account: AccountLike): BigNumber {
   return getAleoBalances(account)?.transparentBalance ?? account.spendableBalance;
 }
 
-function isNotReady(depositAccount: AccountLike, parentAccount: Account | undefined): boolean {
-  const mainAccount = depositAccount.type === "Account" ? depositAccount : parentAccount;
-  return mainAccount?.readiness?.ready === false;
-}
-
 export function getAccountStateError(
   depositAccount: AccountLike,
   parentAccount: Account | undefined,
 ): DepositFormError | null {
   const mainAccount = depositAccount.type === "Account" ? depositAccount : parentAccount;
+  const isNotReady = mainAccount?.readiness?.ready === false;
   const mainCurrencyId = mainAccount?.currency.id;
 
-  if (mainCurrencyId === "sei_evm" && isNotReady(depositAccount, parentAccount)) {
-    return SEI_EVM_ERROR;
-  }
-
-  if (mainCurrencyId === "tezos" && isNotReady(depositAccount, parentAccount)) {
-    return TEZOS_ERROR;
-  }
+  if (isNotReady && mainCurrencyId === "sei_evm") return SEI_EVM_ERROR;
+  if (isNotReady && mainCurrencyId === "tezos") return TEZOS_ERROR;
 
   const aleoBalances = getAleoBalances(depositAccount);
   const hasOnlyPrivateFunds =
@@ -127,13 +119,27 @@ export function getMinimumBalanceError(
   depositAccount: AccountLike,
   quote: PerpsDepositQuote | undefined,
   sentAmountAtomic: BigNumber | undefined,
+  locale: string,
 ): DepositFormError | null {
   const rule = getMinimumBalanceRule(depositAccount);
   const fee = quote?.estimatedNetworkFee;
-  if (!rule || !fee || !sentAmountAtomic) return null;
+  if (!rule || !fee || !sentAmountAtomic || depositAccount.type !== "Account") return null;
 
   const remaining = depositAccount.spendableBalance
     .minus(sentAmountAtomic)
     .minus(new BigNumber(fee.amount));
-  return remaining.lt(rule.minimumAtomic) ? rule.error : null;
+  if (!remaining.lt(rule.minimumAtomic)) return null;
+
+  const magnitude = depositAccount.currency.units[0].magnitude;
+  return {
+    ...rule.error,
+    values: {
+      minValue: formatDisplayAmount(
+        rule.minimumAtomic.shiftedBy(-magnitude),
+        magnitude,
+        BigNumber.ROUND_UP,
+        locale,
+      ),
+    },
+  };
 }

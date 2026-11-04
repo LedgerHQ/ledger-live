@@ -8,7 +8,7 @@ import {
   QuotesErrorCodes,
   type QuoteEstimatedNetworkFee,
 } from "@ledgerhq/wallet-api-exchange-module";
-import { toLocaleString } from "@ledgerhq/live-currency-format";
+import { formatDisplayAmount } from "./formatAmount";
 import {
   getAccountStateError,
   getDepositSpendableBalance,
@@ -55,17 +55,6 @@ export const PERPS_DEPOSIT_ANALYTICS_CONTEXT = { page: "perps_deposit", flow: "p
 
 const FEE_DISPLAY_DECIMALS = 7;
 
-function formatDisplayAmount(
-  amount: BigNumber,
-  decimals: number,
-  roundingMode: BigNumber.RoundingMode,
-  locale: string,
-): string {
-  return toLocaleString(amount.decimalPlaces(decimals, roundingMode), locale, {
-    maximumFractionDigits: decimals,
-  });
-}
-
 const OFFLINE_ERROR: DepositFormError = {
   code: "offline",
   labelKey: "perpsDeposit.formErrors.offline",
@@ -86,6 +75,7 @@ export type DepositBaseCheckParams = Readonly<{
   depositAmount: number;
   maxAmount: number | null;
   hasConversion: boolean;
+  parentAccount?: Account;
 }>;
 
 export function getDepositBaseError({
@@ -93,8 +83,11 @@ export function getDepositBaseError({
   depositAmount,
   maxAmount,
   hasConversion,
+  parentAccount,
 }: DepositBaseCheckParams): DepositFormError | null {
   if (!depositAccount || depositAmount <= 0) return null;
+  const accountStateError = getAccountStateError(depositAccount, parentAccount);
+  if (accountStateError) return accountStateError;
   if (maxAmount === null) return NO_QUOTES_ERROR;
   if (depositAmount > maxAmount) return INSUFFICIENT_BALANCE_ERROR;
   if (!hasConversion) return NO_QUOTES_ERROR;
@@ -174,7 +167,9 @@ function getFeeError({
 }): DepositFormError | null {
   const isTokenDeposit = depositAccount.type !== "Account";
 
-  if (isTokenDeposit && feeAccount.spendableBalance.isZero()) {
+  const feeBalance = getDepositSpendableBalance(feeAccount);
+
+  if (isTokenDeposit && feeBalance.isZero()) {
     return notEnoughFeesError(feeAccount, new BigNumber(0), locale);
   }
 
@@ -184,15 +179,14 @@ function getFeeError({
 
   if (isTokenDeposit) {
     const totalFee = estimatedFee.plus(toAtomic(quote.approvalNetworkFee));
-    const exceedsBalance =
-      presentFeeFields(quote).length > 0 && totalFee.gt(feeAccount.spendableBalance);
+    const exceedsBalance = presentFeeFields(quote).length > 0 && totalFee.gt(feeBalance);
     return exceedsBalance ? notEnoughFeesError(feeAccount, totalFee, locale) : null;
   }
 
   const exceedsBalance =
     quote.estimatedNetworkFee !== undefined &&
     sentAmountAtomic !== undefined &&
-    sentAmountAtomic.plus(estimatedFee).gt(getDepositSpendableBalance(feeAccount));
+    sentAmountAtomic.plus(estimatedFee).gt(feeBalance);
   return exceedsBalance ? notEnoughFeesError(feeAccount, estimatedFee, locale) : null;
 }
 
@@ -281,7 +275,12 @@ export function resolveDepositFormError({
   if (!quoteResult) return null;
 
   const { quote } = quoteResult;
-  const minimumBalanceError = getMinimumBalanceError(depositAccount, quote, sentAmountAtomic);
+  const minimumBalanceError = getMinimumBalanceError(
+    depositAccount,
+    quote,
+    sentAmountAtomic,
+    locale,
+  );
   if (minimumBalanceError) return minimumBalanceError;
 
   const amountLimitError = getAmountLimitError(quoteResult, depositAccount, locale);
