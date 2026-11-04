@@ -10,8 +10,8 @@
 # - the E2E bridge starts only on a launch that passes wsPort (the injection), 20 s after the store
 #   is ready, so measured launches run no bridge code;
 # - the iOS blur is the real one: rspack aliases it to the E2E mock for any "mock" env file;
-# - a "JS start epoch <ms>" startup event gives the wall clock of the JS start, from which run.mjs
-#   adds the native start that the Debug value leaves out since 2026-10-26.
+# - a "JS start epoch <ms>" startup event gives the wall clock of the JS start, from which the
+#   analysis counts every build from its process start, whichever start its Debug value uses.
 #
 # Every anchor is checked before anything is edited, and a missing one exits non-zero (::error::).
 # The edited lines carry "startup-perf", so a patched checkout can be recognised.
