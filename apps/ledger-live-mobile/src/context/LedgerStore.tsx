@@ -254,7 +254,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
       }
 
-      backfillOnboardingDate(store);
+      // The backfill saves at once, so it must not run over an unreadable value.
+      if (!unreadableKeys.includes("postOnboarding")) {
+        backfillOnboardingDate(store);
+      }
 
       if (largeScreenUpsellModalState) {
         store.dispatch(restoreLargeScreenUpsellModalState(largeScreenUpsellModalState));

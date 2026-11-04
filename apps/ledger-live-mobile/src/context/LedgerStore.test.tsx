@@ -16,6 +16,7 @@ const mockGetAccounts = jest.fn<Promise<unknown>, []>(() => Promise.resolve(unde
 const mockGetMarketState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetKnownDevices = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockSaveAccounts = jest.fn(() => Promise.resolve());
+const mockGetPostOnboardingState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockGetFeatureFlagsState = jest.fn<Promise<unknown>, []>(() => Promise.resolve(undefined));
 const mockSaveFeatureFlagsState = jest.fn(() => Promise.resolve());
 
@@ -35,7 +36,7 @@ jest.mock("../db", () => {
     getKnownDevices: () => mockGetKnownDevices(),
     getLargeScreenUpsellModalState: empty,
     getPredictionsState: empty,
-    getPostOnboardingState: empty,
+    getPostOnboardingState: () => mockGetPostOnboardingState(),
     getProtect: empty,
     getMarketState: () => mockGetMarketState(),
     getMarketListConfig: empty,
@@ -50,8 +51,9 @@ jest.mock("../db", () => {
   };
 });
 jest.mock("../helpers/identities", () => ({ initIdentities: () => Promise.resolve() }));
+const mockBackfillOnboardingDate = jest.fn();
 jest.mock("~/logic/postOnboarding/backfillOnboardingDate", () => ({
-  backfillOnboardingDate: () => {},
+  backfillOnboardingDate: () => mockBackfillOnboardingDate(),
 }));
 const mockBootstrapCardSession = jest.fn(() => Promise.resolve());
 jest.mock("LLM/utils/bootstrapCardSession", () => ({
@@ -93,6 +95,8 @@ describe("LedgerStoreProvider", () => {
     mockGetMarketState.mockReset().mockResolvedValue(undefined);
     mockGetKnownDevices.mockReset().mockResolvedValue(undefined);
     mockSaveAccounts.mockClear();
+    mockGetPostOnboardingState.mockReset().mockResolvedValue(undefined);
+    mockBackfillOnboardingDate.mockClear();
     mockGetFeatureFlagsState.mockReset().mockResolvedValue(undefined);
     mockSaveFeatureFlagsState.mockClear();
     jest.spyOn(console, "error").mockImplementation(() => {});
@@ -297,5 +301,17 @@ describe("LedgerStoreProvider", () => {
 
     expect(screen.getByText("ready")).toBeOnTheScreen();
     expect(mockSaveFeatureFlagsState).not.toHaveBeenCalled();
+  });
+
+  it("should not backfill the onboarding date over an unreadable value", async () => {
+    mockGetPostOnboardingState.mockRejectedValue(corruptValueError());
+    const store = createStore();
+    store.dispatch(setCachedFlagsSettled());
+
+    renderProvider(store);
+    await act(() => jest.runAllTimersAsync());
+
+    expect(screen.getByText("ready")).toBeOnTheScreen();
+    expect(mockBackfillOnboardingDate).not.toHaveBeenCalled();
   });
 });
