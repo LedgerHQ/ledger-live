@@ -6005,6 +6005,12 @@
       "title": "Device disconnected",
       "description": "Reconnect your Ledger device to continue. The update will resume automatically."
     },
+    "connectionTimedOut": {
+      "title": "Connection timed out",
+      "description": "Restart the update.",
+      "restart": "Restart OS update",
+      "sendReport": "Send report to Ledger"
+    },
     "unexpectedError": {
       "title": "Something went wrong",
       "description": "The OS update could not continue. Contact Ledger support if the problem persists."

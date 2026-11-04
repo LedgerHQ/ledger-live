@@ -173,7 +173,7 @@ export const preChecksStateMachine = setup({
     [DeviceSituationEventType.DEVICE_SITUATION_UPDATE]: {
       actions: {
         type: "sendStateUpdate",
-        params: ({ event }) => toPreChecksState(event.situation),
+        params: ({ event }) => toPreChecksState(event),
       },
     },
   },

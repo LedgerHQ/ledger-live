@@ -113,6 +113,14 @@ describe("getPageEvent", () => {
       { page: OsUpdatePage.DEVICE_LOCKED, step: OsUpdateFlowStep.APPLY_UPDATES },
     ],
     [
+      "Connection Timed Out with the step it happened in",
+      {
+        step: OsUpdatesSteps.PRE_CHECKS,
+        state: { type: PreChecksStateType.CONNECTION_TIMED_OUT, retry: jest.fn() },
+      },
+      { page: OsUpdatePage.CONNECTION_TIMED_OUT, step: OsUpdateFlowStep.PRE_CHECKS },
+    ],
+    [
       "Restoring during an inline restore",
       {
         step: OsUpdatesSteps.APPLY_UPDATES,

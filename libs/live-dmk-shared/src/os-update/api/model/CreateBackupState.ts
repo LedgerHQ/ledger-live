@@ -5,6 +5,7 @@ export enum CreateBackupStateType {
   AWAITING_ALLOW_SECURE_CONNECTION = "AWAITING_ALLOW_SECURE_CONNECTION",
   ALLOW_SECURE_CONNECTION_REFUSED = "ALLOW_SECURE_CONNECTION_REFUSED",
   DEVICE_DISCONNECTED = "DEVICE_DISCONNECTED",
+  CONNECTION_TIMED_OUT = "CONNECTION_TIMED_OUT",
   UNEXPECTED_ERROR = "UNEXPECTED_ERROR",
 }
 
@@ -30,6 +31,10 @@ export type CreateBackupState =
     }
   | {
       type: CreateBackupStateType.DEVICE_DISCONNECTED;
+    }
+  | {
+      type: CreateBackupStateType.CONNECTION_TIMED_OUT;
+      retry: () => void;
     }
   | {
       type: CreateBackupStateType.UNEXPECTED_ERROR;

@@ -1,5 +1,6 @@
 import {
   DeviceActionStatus,
+  DeviceDisconnectedWhileSendingError,
   DeviceLockedError,
   DeviceModelId,
   DmkResultStatus,
@@ -29,7 +30,11 @@ import {
   type OsUpdatesOrchestratorStateMachineActorRef,
   type OsUpdatesOrchestratorStateMachineEvent,
 } from "../orchestrator/types";
-import { POLL_INTERVAL_MS, SESSION_SETTLE_TIMEOUT_MS } from "../shared/constants";
+import {
+  CONNECTION_TIMEOUT_MS,
+  POLL_INTERVAL_MS,
+  SESSION_SETTLE_TIMEOUT_MS,
+} from "../shared/constants";
 import { RestoreBackupStepValue } from "../restore-backup/constants";
 import { applyUpdatesStateMachine } from "./ApplyUpdatesStateMachine";
 import {
@@ -867,6 +872,25 @@ describe("ApplyUpdatesStateMachine", () => {
 
       await failDeviceAction(new DeviceLockedError());
       await jest.advanceTimersByTimeAsync(POLL_INTERVAL_MS);
+      await settle();
+
+      expect(actor.getSnapshot().value).toBe("InstallOsu");
+      expect(lastProgressOf(ApplyUpdatesStateType.UPDATING)).toBe(startProgress);
+    });
+
+    it("should take the bar back to the start of the OSU install when restarted after a connection timeout", async () => {
+      await reachUpdateStart();
+      const startProgress = await progressFromStartToPeak();
+      await failDeviceAction(new DeviceDisconnectedWhileSendingError());
+      await jest.advanceTimersByTimeAsync(CONNECTION_TIMEOUT_MS);
+      await settle();
+      expect(lastSentStateType()).toBe(ApplyUpdatesStateType.CONNECTION_TIMED_OUT);
+
+      availableDevices$.next([REDISCOVERED_DEVICE]);
+      await settle();
+      expect(actor.getSnapshot().value).toBe("CheckErrorCause");
+
+      sentStatesOfType(ApplyUpdatesStateType.CONNECTION_TIMED_OUT)[0].retry();
       await settle();
 
       expect(actor.getSnapshot().value).toBe("InstallOsu");
