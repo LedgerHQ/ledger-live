@@ -43,7 +43,8 @@ export function useApplyMockServerSessionChange(): (
       const nextState = store.getState();
       await saveSettings(settingsStoreSelector(nextState));
       await saveKnownDevices(knownDevicesExportSelector(nextState));
-      RNRestart.restart();
+      // Deferred: reloading while the settings change still renders crashes the app on iOS
+      setTimeout(() => RNRestart.restart(), 0);
     },
     [store],
   );
