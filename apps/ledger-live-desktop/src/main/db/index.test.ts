@@ -436,4 +436,28 @@ describe("db saves", () => {
     await flushing;
     expect(writtenFile("app")).toEqual({ settings: { theme: "light" } });
   });
+
+  it("waits on flush for a write that starts while the flush waits", async () => {
+    let finishFirstWrite: (() => void) | undefined;
+    let finishSecondWrite: (() => void) | undefined;
+    writeFileMock
+      .mockImplementationOnce(() => new Promise<void>(resolve => (finishFirstWrite = resolve)))
+      .mockImplementationOnce(() => new Promise<void>(resolve => (finishSecondWrite = resolve)));
+    void db.setKey("app", "settings", { theme: "dark" });
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    let flushed = false;
+    const flushing = db.flush().then(() => (flushed = true));
+    // The timer of this save expires while the first write is blocked.
+    void db.setKey("app", "settings", { theme: "light" });
+    await new Promise(resolve => setTimeout(resolve, 50));
+    finishFirstWrite?.();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(finishSecondWrite).toBeDefined();
+    expect(flushed).toBe(false);
+
+    finishSecondWrite?.();
+    await flushing;
+    expect(writtenFile("app")).toEqual({ settings: { theme: "light" } });
+  });
 });
