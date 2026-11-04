@@ -20,15 +20,7 @@ code extracted from it goes to the layers above, not to a new `libs/*` package.
 ## Creating a package
 
 Run the generator, then finish README, CODEOWNERS and knip as in
-[new-package](../.agents/skills/new-package/SKILL.md):
-
-```bash
-pnpm nx g @ledgerhq/generators:package <name> \
-  --layer <shared|domain-entity|domain-api|feature-platform|feature-flow> \
-  --platform <logic|web|native|dual> \
-  [--description "One line on what the package owns"]
-pnpm i
-```
+[new-package](../.agents/skills/new-package/SKILL.md) (command, options and `pnpm i` there).
 
 The generator names the package from its folder, rejects a platform the layer does not allow, and
 writes a package that passes the checklist below: a placeholder module, its test and an

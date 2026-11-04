@@ -21,13 +21,10 @@ pnpm nx g @ledgerhq/generators:package <name> \
 pnpm i
 ```
 
-| Option | Required | Meaning |
-| --- | --- | --- |
-| `name` | yes | Folder name in kebab-case (e.g. `contacts`). The layer prefixes it to the npm name (`shared/contacts` → `@shared/contacts`, `domain/entity/contact` → `@domain/entity-contact`). |
-| `layer` | yes | `shared`, `domain-entity`, `domain-api`, `feature-platform` or `feature-flow`. |
-| `platform` | yes | `logic`, `web`, `native` or `dual`. A pair the layer docs forbid is rejected with the allowed list. |
-| `description` | no | One line for `package.json` and the README title block. |
-| `skipFormat` | no | Internal: skip formatting generated files (default false). |
+You choose **`name`** (kebab-case folder; the layer prefixes the npm name), **`layer`**, and
+**`platform`** (a forbidden pair is rejected with the allowed list). Optional **`description`** is
+one line for `package.json` and the README title. Every option is defined in
+[`tools/nx-plugins/generators/package/schema.json`](../../../tools/nx-plugins/generators/package/schema.json).
 
 The generator creates a placeholder module and test, a pure `export *` barrel, an `internals.ts` stub
 per [package-public-api](../package-public-api/SKILL.md), explicit `exports` (no `./*` wildcard),
@@ -64,7 +61,26 @@ domain/entity/contact/    @ledgerhq/wallet-xp
 New layer packages start knip-clean: explicit `exports` only, no entry in
 [`support/knip/knip.json`](../../../support/knip/knip.json). Dual-platform packages add
 `knip.web.config.mjs` and `knip.native.config.mjs` per
-[knip-migration](../knip-migration/SKILL.md). Run knip on the package before the PR merges.
+[knip-migration](../knip-migration/SKILL.md).
+
+Before the PR merges, run knip on the package alone (from the repository root), then copy the
+command into a `scripts.unimported` line in `package.json` like neighbouring packages. Use
+`--directory` with the relative hop from the package to the root (`../..` under `shared/` or
+`devtools/`, `../../..` under `domain/`, `features/` or `libs/coin-modules/`):
+
+```bash
+pnpm knip --directory ../../.. -W domain/api/my-package
+```
+
+Dual-platform packages run web and native in one line (copy from a neighbour, e.g.
+`features/platform/contacts`):
+
+```bash
+pnpm knip --directory ../../.. -c features/platform/my-package/knip.web.config.mjs -W features/platform/my-package --tsConfig tsconfig.web.json && pnpm knip --directory ../../.. -c features/platform/my-package/knip.native.config.mjs -W features/platform/my-package --tsConfig tsconfig.native.json
+```
+
+Until a shared dual-platform knip script exists, that pasted line is allowed; the PR must name the
+follow-up to replace it (house rule Q8).
 
 ## After the scaffold
 
